@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { createRef } from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
@@ -122,23 +122,19 @@ class ModalContent extends React.Component {
     super(props)
     this.state = {
       mode: 'default',
-      pickup_addr: props.order.restaurant.address,
-      dropoff_addr: props.order.shippingAddress,
-      map: null
+      pickupAddress: props.order.restaurant.address,
+      dropoffAddress: props.order.shippingAddress,
     }
     this.cancelOrder = this.cancelOrder.bind(this)
+    this.mapRef = createRef();
   }
 
   componentDidMount() {
-    if (!this.state.map) {
-      try {
-        this.setState({
-          map: new DeliveryMap('map', {
-            pickup: [this.state.pickup_addr.geo.latitude, this.state.pickup_addr.geo.longitude],
-            dropoff: [this.state.dropoff_addr.geo.latitude, this.state.dropoff_addr.geo.longitude]
-          })
-        })
-      } catch (e) { }
+    if (!this.mapRef.current.classList.contains('leaflet-container')) {
+      new DeliveryMap('order_minimap', {
+        pickup: [this.state.pickupAddress.geo.latitude, this.state.pickupAddress.geo.longitude],
+        dropoff: [this.state.dropoffAddress.geo.latitude, this.state.dropoffAddress.geo.longitude]
+      })
     }
   }
 
@@ -400,9 +396,14 @@ class ModalContent extends React.Component {
           <OrderTotal order={order} />
           {order.notes && this.renderNotes()}
           {(order.restaurant.loopeatEnabled && order.reusablePackagingEnabled) && this.renderLoopeatSection()}
-          <h5>{this.props.t('ADMIN_DASHBOARD_ORDERS_TIMELINE')}</h5>
-          <Timeline order={order} />
-          <div id="map" style={{ height: '300px', width: '300px' }} />
+
+          <div className="d-flex flex-row justify-content-between mb-4">
+            <div>
+              <h5>{this.props.t('ADMIN_DASHBOARD_ORDERS_TIMELINE')}</h5>
+              <Timeline order={order} />
+            </div>
+            <div id="order_minimap" style={{ width: '260px', height: '195px' }} ref={ this.mapRef } />
+          </div>
           {errorMessage ? <div className="alert alert-danger">{errorMessage}</div> : null}
           {this.renderButtons()}
         </div>
