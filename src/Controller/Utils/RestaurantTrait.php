@@ -38,6 +38,7 @@ use AppBundle\Form\Sylius\Promotion\ItemsTotalBasedPromotionType;
 use AppBundle\Form\Sylius\Promotion\OfferDeliveryType;
 use AppBundle\Form\Type\ProductTaxCategoryChoiceType;
 use AppBundle\LoopEat\Client as LoopeatClient;
+use AppBundle\Message\CopyProducts;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Product\ProductInterface;
@@ -77,6 +78,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -736,7 +738,11 @@ trait RestaurantTrait
     }
 
     #[HideSoftDeleted]
-    public function restaurantProductsAction($id, Request $request, IriConverterInterface $iriConverter, PaginatorInterface $paginator)
+    public function restaurantProductsAction($id, Request $request,
+        IriConverterInterface $iriConverter,
+        PaginatorInterface $paginator,
+        TranslatorInterface $translator,
+        MessageBusInterface $messageBus)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
@@ -791,11 +797,25 @@ trait RestaurantTrait
                 ->getRepository(LocalBusiness::class)
                 ->find($destId);
 
-            $this->getDoctrine()
-                ->getRepository(LocalBusiness::class)
-                ->copyProducts($restaurant, $dest);
+            if (count($dest->getProducts()) > 0) {
 
-            $this->redirectToRoute($routes['products'], ['id' => $destId]);
+                $this->addFlash(
+                    'error',
+                    $translator->trans('restaurant.copy_products.not_empty')
+                );
+
+                return $this->redirectToRoute($routes['products'], ['id' => $id]);
+            }
+
+            // Run this asynchronously, because it may be long
+            $messageBus->dispatch(new CopyProducts($id, $destId));
+
+            $this->addFlash(
+                'notice',
+                $translator->trans('restaurant.copy_products.copying')
+            );
+
+            return $this->redirectToRoute($routes['products'], ['id' => $destId]);
         }
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([

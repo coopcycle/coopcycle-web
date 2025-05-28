@@ -557,6 +557,16 @@ class LocalBusinessRepository extends EntityRepository
             $product->setReusablePackagingEnabled(false);
             $product->clearReusablePackagings();
 
+            // Re-set original attribute, because translations are without ID
+            $srcAttributes = array_map(fn ($attr) => $attr->getAttribute(), $product->getAttributes()->toArray());
+            foreach ($copy->getAttributes() as $attributeValue) {
+                foreach ($srcAttributes as $srcAttribute) {
+                    if ($attributeValue->getAttribute()->getId() === $srcAttribute->getId()) {
+                        $attributeValue->setAttribute($srcAttribute);
+                    }
+                }
+            }
+
             $this->getEntityManager()->persist($copy);
         }
 
