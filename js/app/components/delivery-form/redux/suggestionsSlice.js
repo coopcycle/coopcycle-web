@@ -4,6 +4,7 @@ import { createSelector } from 'reselect'
 const initialState = {
   showSuggestions: false,
   suggestions: [],
+  rejectedSuggestedOrder: null,
 }
 
 const slice = createSlice({
@@ -14,9 +15,10 @@ const slice = createSlice({
       state.showSuggestions = true
       state.suggestions = action.payload
     },
-    rejectSuggestions: state => {
+    rejectSuggestions: (state, action) => {
       state.showSuggestions = false
       state.suggestions = []
+      state.rejectedSuggestedOrder = action.payload
     },
     acceptSuggestions: state => {
       state.showSuggestions = false
@@ -31,7 +33,7 @@ export const { showSuggestions, rejectSuggestions, acceptSuggestions } =
 
 export const suggestionsSlice = slice
 
-export const selectSuggestions = state => state.suggestions.suggestions
+const selectSuggestions = state => state.suggestions.suggestions
 
 export const selectShowSuggestions = state => state.suggestions.showSuggestions
 
@@ -44,3 +46,6 @@ export const selectSuggestedGain = createSelector(
   selectSuggestions,
   suggestions => (suggestions.length > 0 ? suggestions[0].gain : { amount: 0 }),
 )
+
+export const selectRejectedSuggestedOrder = state =>
+  state.suggestions.rejectedSuggestedOrder

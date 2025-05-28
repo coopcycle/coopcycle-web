@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import Modal from 'react-modal'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -6,7 +6,6 @@ import { Timeline } from 'antd'
 import {
   rejectSuggestions,
   acceptSuggestions,
-  selectSuggestions,
   selectSuggestedGain,
   selectSuggestedOrder,
   selectShowSuggestions,
@@ -16,13 +15,13 @@ import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikConte
 import './SuggestionModal.scss'
 
 const SuggestionsModal = () => {
-  const { values } = useDeliveryFormFormikContext()
+  const { values, setFieldValue, setSubmitting, submitForm } =
+    useDeliveryFormFormikContext()
 
   const tasks = useMemo(() => {
     return values.tasks || []
   }, [values.tasks])
 
-  const suggestions = useSelector(selectSuggestions)
   const suggestedGain = useSelector(selectSuggestedGain)
   const suggestedOrder = useSelector(selectSuggestedOrder)
 
@@ -45,13 +44,42 @@ const SuggestionsModal = () => {
 
   const dispatch = useDispatch()
 
+  const accept = useCallback(() => {
+    dispatch(acceptSuggestions(suggestedOrder))
+
+    setSubmitting(false)
+
+    const reOrderedTasks = []
+
+    suggestedOrder.forEach(oldIndex => {
+      reOrderedTasks.push(tasks[oldIndex])
+    })
+
+    setFieldValue('tasks', reOrderedTasks)
+
+    submitForm()
+  }, [
+    dispatch,
+    setFieldValue,
+    suggestedOrder,
+    tasks,
+    setSubmitting,
+    submitForm,
+  ])
+
+  const reject = useCallback(() => {
+    dispatch(rejectSuggestions(suggestedOrder))
+
+    setSubmitting(false)
+    submitForm()
+  }, [dispatch, suggestedOrder, setSubmitting, submitForm])
+
   return (
     <Modal
       isOpen={isOpen}
       shouldCloseOnOverlayClick={false}
       className="ReactModal__Content--optimization-suggestions"
-      overlayClassName="ReactModal__Overlay--zIndex-1001"
-    >
+      overlayClassName="ReactModal__Overlay--zIndex-1001">
       <p>{t('DELIVERY_OPTIMIZATION_SUGGESTION_TITLE')}</p>
       <p>
         {t('DELIVERY_OPTIMIZATION_SUGGESTION_GAIN', {
@@ -92,13 +120,13 @@ const SuggestionsModal = () => {
           <button
             className="btn btn-default"
             type="button"
-            onClick={() => dispatch(rejectSuggestions())}>
+            onClick={() => reject()}>
             {t('DELIVERY_OPTIMIZATION_SUGGESTION_NO')}
           </button>
           <button
             className="btn btn-primary ml-4"
             type="button"
-            onClick={() => dispatch(acceptSuggestions(suggestions))}>
+            onClick={() => accept()}>
             {t('DELIVERY_OPTIMIZATION_SUGGESTION_YES')}
           </button>
         </div>

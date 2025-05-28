@@ -6,8 +6,11 @@ import {
   usePutDeliveryMutation,
   useSuggestOptimizationsMutation,
 } from '../../../api/slice'
-import { useDispatch } from 'react-redux'
-import { showSuggestions } from '../redux/suggestionsSlice'
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  selectRejectedSuggestedOrder,
+  showSuggestions,
+} from '../redux/suggestionsSlice'
 
 function serializeAddress(address) {
   if (Object.prototype.hasOwnProperty.call(address, '@id')) {
@@ -28,6 +31,8 @@ export default function useSubmit(
   isCreateOrderMode,
 ) {
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
+
+  const rejectedSuggestionsOrder = useSelector(selectRejectedSuggestedOrder)
 
   const [suggestOptimizations] = useSuggestOptimizationsMutation()
   const [createDelivery] = usePostDeliveryMutation()
@@ -73,33 +78,45 @@ export default function useSubmit(
     [storeNodeId],
   )
 
-  const checkSuggestionsOnSubmit = async values => {
-    if (!values.tasks.length > 2) {
-      return false
-    }
+  const checkSuggestionsOnSubmit = useCallback(
+    async values => {
+      if (!values.tasks.length > 2) {
+        return false
+      }
 
-    const body = {
-      tasks: values.tasks.slice(0).map(t => ({
-        ...t,
-        address: serializeAddress(t.address),
-      })),
-    }
+      const body = {
+        tasks: values.tasks.slice(0).map(t => ({
+          ...t,
+          address: serializeAddress(t.address),
+        })),
+      }
 
-    const result = await suggestOptimizations(body)
+      const result = await suggestOptimizations(body)
 
-    const { data, error } = result
+      const { data, error } = result
 
-    if (error) {
-      return false
-    }
+      if (error) {
+        return false
+      }
 
-    if (data.suggestions.length > 0) {
+      if (data.suggestions.length === 0) {
+        return false
+      }
+
+      //The suggestion was rejected previously
+      if (
+        rejectedSuggestionsOrder &&
+        JSON.stringify(data.suggestions[0].order) ===
+          JSON.stringify(rejectedSuggestionsOrder)
+      ) {
+        return false
+      }
+
       dispatch(showSuggestions(data.suggestions))
       return true
-    }
-
-    return false
-  }
+    },
+    [dispatch, rejectedSuggestionsOrder, suggestOptimizations],
+  )
 
   const handleSubmit = useCallback(
     async values => {
@@ -176,6 +193,7 @@ export default function useSubmit(
       modifyDelivery,
       createAddress,
       modifyAddress,
+      checkSuggestionsOnSubmit,
     ],
   )
 
