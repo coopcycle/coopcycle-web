@@ -1,6 +1,6 @@
 context('Delivery (role: admin); store with time slot pricing', () => {
   beforeEach(() => {
-    cy.loadFixturesWithSetup(["user_admin.yml", "../../features/fixtures/ORM/store_w_time_slot_pricing.yml"])
+    cy.loadFixturesWithSetup(["../cypress/fixtures/user_admin.yml", "../features/fixtures/ORM/store_w_time_slot_pricing.yml"])
 
     cy.setMockDateTime('2025-04-23 8:30:00')
 

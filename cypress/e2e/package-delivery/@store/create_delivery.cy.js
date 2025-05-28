@@ -1,6 +1,6 @@
 context('Delivery (role: store)', () => {
   beforeEach(() => {
-    cy.loadFixtures('stores.yml')
+    cy.loadFixtures('../cypress/fixtures/stores.yml')
   })
 
   it('create delivery', () => {

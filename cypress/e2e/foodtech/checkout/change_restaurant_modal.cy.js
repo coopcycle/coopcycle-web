@@ -2,7 +2,7 @@ context(
   'start ordering in one restaurant, then navigate to another restaurant',
   () => {
     beforeEach(() => {
-      cy.loadFixtures('checkout.yml')
+      cy.loadFixtures('../cypress/fixtures/checkout.yml')
     })
 
     it('should show a prompt to either start a new order or return to a previous order', () => {

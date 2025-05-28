@@ -1,6 +1,6 @@
 context('Managing recurrence rules (role: admin)', () => {
   beforeEach(() => {
-    cy.loadFixtures('stores.yml')
+    cy.loadFixtures('../cypress/fixtures/stores.yml')
 
     // Login
     cy.login('admin', '12345678')
