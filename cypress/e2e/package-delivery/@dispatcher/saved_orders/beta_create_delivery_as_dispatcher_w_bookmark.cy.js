@@ -1,11 +1,11 @@
-context('Delivery (role: admin) and add to bookmarks (saved orders)', () => {
+context('Delivery (role: dispatcher) and add to bookmarks (saved orders)', () => {
   beforeEach(() => {
-    cy.loadFixturesWithSetup(['ORM/user_admin.yml', 'ORM/store_basic.yml'])
+    cy.loadFixturesWithSetup(['ORM/user_dispatcher.yml', 'ORM/store_basic.yml'])
 
     cy.setMockDateTime('2025-04-23 8:30:00')
 
     cy.visit('/login')
-    cy.login('admin', '12345678')
+    cy.login('dispatcher', 'dispatcher')
   })
 
   afterEach(() => {

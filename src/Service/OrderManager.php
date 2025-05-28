@@ -11,6 +11,7 @@ use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -22,7 +23,9 @@ class OrderManager
         private readonly StateMachineFactoryInterface $stateMachineFactory,
         private MessageBusInterface $commandBus,
         private readonly EntityManagerInterface $entityManager,
-        private readonly Security $security)
+        private readonly Security $security,
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
+    )
     {
     }
 
@@ -114,16 +117,15 @@ class OrderManager
     public function setBookmark(OrderInterface $order, bool $isBookmarked): void
     {
         $user = $this->security->getUser();
-        $roles = $user->getRoles();
 
         //Only admins can bookmark orders at the moment
-        if (!in_array('ROLE_ADMIN', $roles)) {
+        if (!$this->authorizationChecker->isGranted('ROLE_DISPATCHER')) {
             return;
         }
 
         if ($isBookmarked) {
             if (!$this->hasBookmark($order)) {
-                $bookmark = new OrderBookmark($order, $user, 'ROLE_ADMIN');
+                $bookmark = new OrderBookmark($order, $user, 'ROLE_DISPATCHER');
                 $this->entityManager->persist($bookmark);
             }
         } else {
