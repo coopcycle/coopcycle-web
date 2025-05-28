@@ -1369,7 +1369,7 @@ form.failure_reason.description.label: Description
 basics.manage: Gérer
 basics.settings: Paramètres
 form.store_type.failure_reason_set.label: "Motifs d'échec"
-form.store_type.failure_reason_set.help: Sélectionnez une liste de <a href="%failure_reason_set%">raisons d\'échec</a> à utiliser dans ce %entity%.
+form.store_type.failure_reason_set.help: Sélectionnez une liste de <a href="%failure_reason_set%">motifs dʼéchec</a> à utiliser dans ce %entity%.
 profile.delete_my_account: "Supprimer mon compte"
 profile.type_username_to_confirm: "Saisissez votre nom d'utilisateur pour confirmer la suppression du compte"
 form.pricing_rule_set.options.label: Options
@@ -1618,3 +1618,5 @@ form.settings.on_demand_delivery_product_name.label: "Nom du produit"
 form.settings.on_demand_delivery_product_name.help: "Le nom qui apparaîtra dans le récapitulatif de commande et la facture"
 form.settings.accounting_account.label: "Code comptable"
 form.settings.accounting_account.help: "Le code comptable par défaut pour enregistrer les commandes de livraison à la demande dans le système comptable."
+restaurant.stats.show_only_meal_vouchers: Afficher uniquement les commandes payées en titres-restaurant
+restaurant.stats.show_all: Afficher toutes les commandes

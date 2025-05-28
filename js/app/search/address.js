@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 
 import Modal from 'react-modal'
 import store from './address-storage'
@@ -32,7 +32,7 @@ document.querySelectorAll('[data-search="address"]').forEach(container => {
       ? JSON.parse(container.dataset.restaurants)
       : []
 
-    render(
+    createRoot(el).render(
       <AddressAutosuggest
         address={resolveAddress(form)}
         addresses={addresses}
@@ -98,11 +98,9 @@ document.querySelectorAll('[data-search="address"]').forEach(container => {
             form.submit()
           }
         }}
-        required={false}
-        preciseOnly={false}
-        reportValidity={false}
-      />,
-      el,
+        required={ false }
+        preciseOnly={ false }
+        reportValidity={ false } />
     )
   }
 })

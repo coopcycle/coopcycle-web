@@ -2,7 +2,7 @@
 
 namespace AppBundle\Api\EventSubscriber;
 
-use ApiPlatform\Core\EventListener\EventPriorities;
+use ApiPlatform\Symfony\EventListener\EventPriorities;
 use AppBundle\Service\MaintenanceManager;
 use Redis;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

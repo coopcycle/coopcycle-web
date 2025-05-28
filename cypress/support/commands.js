@@ -62,10 +62,10 @@ Cypress.Commands.add('setMockDateTime', dateTime => {
   cy.symfonyConsole(`coopcycle:datetime:mock -d "${dateTime}"`)
 
   cy.clock(new Date(dateTime), ['Date']).then((clock) => {
-    // Set up a timer to tick the clock forward every second (1000ms)
+    // Set up a timer to tick the clock forward every 100ms
     const timer = setInterval(() => {
-      clock.tick(1000);
-    }, 1000);
+      clock.tick(100, { log: false });
+    }, 100);
 
     // Store the timer ID so it can be cleared later
     Cypress.env('clockTimer', timer);
@@ -92,11 +92,12 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
   // open select
   cy.get(selector).click()
 
-  cy.wait(100)
+  cy.wait(300)
 
   cy.root()
-    .parents('body')
-    .find('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
+    .closest('body')
+    .find('.ant-select-dropdown')
+    .not('.ant-select-dropdown-hidden')
     .within(() => {
       let attempts = 0
       const maxAttempts = 10
@@ -121,9 +122,11 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
             }
 
             attempts++
-            cy.get('.rc-virtual-list-holder').trigger('wheel', {
+
+            // .ant-select-dropdown
+            cy.root().trigger('wheel', {
               deltaX: 0,
-              deltaY: 150,
+              deltaY: 32 * 6, // 1 row = ~32px
               deltaMode: 0,
             })
             cy.wait(100)
@@ -218,29 +221,29 @@ Cypress.Commands.add('newPickupAddress',
     cy.get('#delivery_tasks_0_address_contactName__display').type(contactName)
   })
 
-  Cypress.Commands.add('betaEnterAddressAtPosition',
-    (taskFormIndex, addressSearch, addressMatch,
-      businessName, telephone, contactName, comments) => {
+Cypress.Commands.add('betaEnterAddressAtPosition',
+  (taskFormIndex, addressSearch, addressMatch,
+    businessName, telephone, contactName, comments) => {
 
-      cy.searchAddress(
-        `[data-testid-form=task-${taskFormIndex}]`,
-        addressSearch,
-        addressMatch,
-      )
+    cy.searchAddress(
+      `[data-testid=form-task-${taskFormIndex}]`,
+      addressSearch,
+      addressMatch,
+    )
 
-      cy.get(`input[name="tasks[${taskFormIndex}].address.name"]`).clear()
-      cy.get(`input[name="tasks[${taskFormIndex}].address.name"]`).type(businessName)
+    cy.get(`input[name="tasks[${taskFormIndex}].address.name"]`).clear()
+    cy.get(`input[name="tasks[${taskFormIndex}].address.name"]`).type(businessName)
 
-      cy.get(`input[name="tasks[${taskFormIndex}].address.formattedTelephone"]`).clear()
-      cy.get(`input[name="tasks[${taskFormIndex}].address.formattedTelephone"]`).type(telephone)
+    cy.get(`input[name="tasks[${taskFormIndex}].address.formattedTelephone"]`).clear()
+    cy.get(`input[name="tasks[${taskFormIndex}].address.formattedTelephone"]`).type(telephone)
 
-      cy.get(`input[name="tasks[${taskFormIndex}].address.contactName"]`).clear()
-      cy.get(`input[name="tasks[${taskFormIndex}].address.contactName"]`).type(contactName)
+    cy.get(`input[name="tasks[${taskFormIndex}].address.contactName"]`).clear()
+    cy.get(`input[name="tasks[${taskFormIndex}].address.contactName"]`).type(contactName)
 
-      cy.get(`[name="tasks[${taskFormIndex}].comments"]`).clear()
-      cy.get(`[name="tasks[${taskFormIndex}].comments"]`).type(comments)
+    cy.get(`[name="tasks[${taskFormIndex}].comments"]`).clear()
+    cy.get(`[name="tasks[${taskFormIndex}].comments"]`).type(comments)
 
-    })
+  })
 
 Cypress.Commands.add('chooseSavedPickupAddress',
   (index) => {
@@ -272,6 +275,111 @@ Cypress.Commands.add('chooseSavedDropoff1Address',
     cy.get('#rc_select_1').click()
     cy.get(`.rc-virtual-list-holder-inner > :nth-child(${ index }):visible`).click()
   })
+
+Cypress.Commands.add('betaChooseSavedAddressAtPosition',
+  (taskFormIndex, addressIndex) => {
+
+    cy.get(`[data-testid="form-task-${taskFormIndex}"]`).within(() => {
+      cy.get('[data-testid="address-select"]').click()
+      cy.wait(300)
+      cy.root()
+        .closest('body')
+        .find('.ant-select-dropdown')
+        .not('.ant-select-dropdown-hidden')
+        .within(() => {
+          cy.get(`.rc-virtual-list-holder-inner > :nth-child(${ addressIndex })`).click()
+        })
+    })
+  })
+
+Cypress.Commands.add(
+  'betaTaskShouldHaveValue',
+  ({
+    taskFormIndex,
+    addressName,
+    telephone,
+    contactName,
+    address,
+    date,
+    hourRange,
+    timeAfter,
+    timeBefore,
+    packages,
+    weight,
+    comments,
+    tags,
+  }) => {
+    cy.get(`[data-testid="form-task-${taskFormIndex}"]`).within(() => {
+      cy.get('.task__header').contains(address).should('exist')
+
+      cy.get(`[data-testid=address-select]`).within(() => {
+        cy.contains(addressName).should('exist')
+      })
+
+      cy.get(`.address-infos`).within(() => {
+        cy.get(`[name="tasks[${taskFormIndex}].address.name"]`).should(
+          'have.value',
+          addressName,
+        )
+        cy.get(
+          `[name="tasks[${taskFormIndex}].address.formattedTelephone"]`,
+        ).should('have.value', telephone)
+        cy.get(`[name="tasks[${taskFormIndex}].address.contactName"]`).should(
+          'have.value',
+          contactName,
+        )
+      })
+
+      cy.get(`.address__autosuggest`).within(() => {
+        cy.get('input')
+          .invoke('val')
+          .should('match', address)
+      })
+
+      cy.get(`[data-testid=date-picker]`).should('have.value', date)
+
+      if (hourRange) {
+        cy.get(`[data-testid=hour-picker]`).within(() => {
+          cy.contains(hourRange).should('exist')
+        })
+      }
+
+      if (timeAfter && timeBefore) {
+        cy.get(`[data-testid=select-after]`).within(() => {
+          cy.contains(timeAfter).should('exist')
+        })
+        cy.get(`[data-testid=select-before]`).within(() => {
+          cy.contains(timeBefore).should('exist')
+        })
+      }
+
+      if (packages) {
+        packages.forEach(pkg => {
+          cy.get(`[data-testid="${pkg.nodeId}"]`).within(() => {
+            cy.get('input').should('have.value', pkg.quantity)
+          })
+        })
+      }
+
+      if (weight !== undefined) {
+        cy.get(`[name="tasks[${taskFormIndex}].weight"]`).should(
+          'have.value',
+          weight,
+        )
+      }
+
+      cy.get(`[name="tasks[${taskFormIndex}].comments"]`)
+        .contains(comments)
+        .should('exist')
+
+      cy.get(`[data-testid=tags-select]`).within(() => {
+        tags.forEach(tag => {
+          cy.contains(tag).should('exist')
+        })
+      })
+    })
+  },
+)
 
 Cypress.Commands.add('enterCreditCard', () => {
   const date = new Date(),
@@ -369,13 +477,16 @@ Cypress.Commands.add('closeRestaurantForToday',
   })
 
 Cypress.Commands.add('chooseDaysOfTheWeek', (daysOfTheWeek) => {
-  for (let i = 1; i < 7; i++) {
-    if (daysOfTheWeek.includes(i)) {
-      cy.get(`:nth-child(${ i }) > .ant-checkbox > .ant-checkbox-input`)
-        .check()
-    } else {
-      cy.get(`:nth-child(${ i }) > .ant-checkbox > .ant-checkbox-input`)
-        .uncheck()
-    }
-  }
+  cy.get('[data-testid="recurrence__modal__content"]')
+    .within(() => {
+      for (let i = 1; i < 7; i++) {
+        if (daysOfTheWeek.includes(i)) {
+          cy.get(`:nth-child(${ i }) > .ant-checkbox > .ant-checkbox-input`)
+            .check()
+        } else {
+          cy.get(`:nth-child(${ i }) > .ant-checkbox > .ant-checkbox-input`)
+            .uncheck()
+        }
+      }
+    })
 })

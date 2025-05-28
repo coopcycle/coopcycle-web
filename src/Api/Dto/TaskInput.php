@@ -8,6 +8,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 final class TaskInput
 {
+    // used only in a PUT request
+    #[Groups(['delivery_create'])]
+    public int|null $id = null;
+
     #[Groups(['pricing_deliveries', 'delivery_create'])]
     public string|null $type = null;
 
@@ -56,7 +60,7 @@ final class TaskInput
     public int|null $weight = null;
 
     /**
-     * @var TaskPackageInput[]|null
+     * @var DeliveryFormTaskPackageDto[]|null
      */
     #[Groups(['pricing_deliveries', 'delivery_create'])]
     public array|null $packages = null;
@@ -64,8 +68,10 @@ final class TaskInput
     /**
      * FIXME: parse metadata in a separate denormalizer
      */
+    // array in a PUT request
+    // string in a POST request
     #[Groups(['pricing_deliveries', 'delivery_create'])]
-    public string|null $metadata = null;
+    public array|string|null $metadata = null;
 
     /**
      * FIXME: parse username in a separate denormalizer

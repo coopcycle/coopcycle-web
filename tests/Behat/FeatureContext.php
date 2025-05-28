@@ -3,7 +3,7 @@
 namespace Tests\Behat;
 
 use ACSEO\TypesenseBundle\Manager\CollectionManager;
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Base\GeoCoordinates;
@@ -41,6 +41,7 @@ use Fidry\AliceDataFixtures\Persistence\PurgeMode;
 use Nucleos\UserBundle\Model\UserManager;
 use Nucleos\UserBundle\Util\UserManipulator;
 use PHPUnit\Framework\Assert;
+use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Redis;
 use Stripe\Stripe;
@@ -102,7 +103,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
         protected OrderRepository $orderRepository,
         protected KernelInterface $kernel,
         protected UserManager $userManager,
-        protected CollectionManager $typesenseCollectionManager
+        protected CollectionManager $typesenseCollectionManager,
+        protected LoggerInterface $logger,
     )
     {
         $this->tokens = [];
@@ -113,6 +115,15 @@ class FeatureContext implements Context, SnippetAcceptingContext
     protected function getContainer()
     {
         return $this->kernel->getContainer();
+    }
+
+    /**
+     * @BeforeScenario
+     */
+    public function logScenarioName(BeforeScenarioScope $scope)
+    {
+        $scenario = $scope->getScenario();
+        $this->logger->info(sprintf("TestRun: Before test: %s", $scenario->getTitle()));
     }
 
     /**
@@ -160,7 +171,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->fixturesLoader->load([
             __DIR__.'/../../fixtures/ORM/settings_mandatory.yml',
             __DIR__.'/../../fixtures/ORM/sylius_channels.yml'
-        ]);
+        ], $_SERVER, [], PurgeMode::createNoPurgeMode());
     }
 
     /**
@@ -968,7 +979,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $jwtEncoder = $this->getContainer()->get('lexik_jwt_authentication.encoder');
 
         $payload = [
-            'sub' => $this->iriConverter->getIriFromItem($cart, \ApiPlatform\Core\Api\UrlGeneratorInterface::ABS_URL),
+            'sub' => $this->iriConverter->getIriFromResource($cart, \ApiPlatform\Api\UrlGeneratorInterface::ABS_URL),
         ];
         $this->jwt = $jwtEncoder->encode($payload);
     }
@@ -984,7 +995,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $jwtEncoder = $this->getContainer()->get('lexik_jwt_authentication.encoder');
 
         $payload = [
-            'sub' => $this->iriConverter->getIriFromItem($cart, \ApiPlatform\Core\Api\UrlGeneratorInterface::ABS_URL),
+            'sub' => $this->iriConverter->getIriFromResource($cart, \ApiPlatform\Api\UrlGeneratorInterface::ABS_URL),
             'exp' => time() - (60 * 60),
         ];
         $this->jwt = $jwtEncoder->encode($payload);
@@ -1025,7 +1036,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $jwtEncoder = $this->getContainer()->get('lexik_jwt_authentication.encoder');
 
         $payload = [
-            'sub' => $this->iriConverter->getIriFromItem($cart, \ApiPlatform\Core\Api\UrlGeneratorInterface::ABS_URL),
+            'sub' => $this->iriConverter->getIriFromResource($cart, \ApiPlatform\Api\UrlGeneratorInterface::ABS_URL),
         ];
 
         $this->restContext->iAddHeaderEqualTo($headerName, sprintf('Bearer %s', $jwtEncoder->encode($payload)));

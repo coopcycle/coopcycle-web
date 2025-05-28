@@ -2,7 +2,7 @@
 
 namespace AppBundle\Action\Order;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
@@ -40,13 +40,13 @@ class SearchAdhoc
 
     public function __invoke(Request $request)
     {
-        $restaurant = $this->iriConverter->getItemFromIri($request->query->get('restaurant'));
+        $restaurant = $this->iriConverter->getResourceFromIri($request->query->get('restaurant'));
 
         if (!$restaurant) {
             throw new BadRequestException("Restaurant not found");
         }
 
-        $hub = $this->iriConverter->getItemFromIri($request->query->get('hub'));
+        $hub = $this->iriConverter->getResourceFromIri($request->query->get('hub'));
 
         if (!$hub) {
             throw new BadRequestException("Hub not found");

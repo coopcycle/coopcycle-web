@@ -209,7 +209,7 @@ class PricingManager
         return $order;
     }
 
-    public function duplicateOrder($store, $orderId): array | null
+    public function duplicateOrder($store, $orderId): OrderDuplicate | null
     {
         $previousOrder = $this->entityManager
             ->getRepository(Order::class)
@@ -239,10 +239,10 @@ class PricingManager
 
         $previousDeliveryPrice = $previousOrder->getDeliveryPrice();
 
-        return [
-            'delivery' => $delivery,
-            'previousArbitraryPrice' => $previousDeliveryPrice instanceof ArbitraryPrice ? $previousDeliveryPrice : null,
-        ];
+        return new OrderDuplicate(
+            $delivery,
+            $previousDeliveryPrice instanceof ArbitraryPrice ? $previousDeliveryPrice : null
+        );
     }
 
     public function createRecurrenceRule(Store $store, Delivery $delivery, Rule $rule, PricingStrategy $pricingStrategy): ?RecurrenceRule

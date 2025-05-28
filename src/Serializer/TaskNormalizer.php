@@ -2,9 +2,10 @@
 
 namespace AppBundle\Serializer;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
-use ApiPlatform\Core\Exception\InvalidArgumentException;
-use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Exception\InvalidArgumentException;
+use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\Metadata\Resource\Factory\ResourceMetadataCollectionFactoryInterface;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Package;
 use AppBundle\Service\Geocoder;
@@ -15,10 +16,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\ContextAwareDenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
+class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInterface
 {
     public function __construct(
         private readonly ItemNormalizer $normalizer,
@@ -28,12 +29,19 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         private readonly Geocoder $geocoder,
         private readonly EntityManagerInterface $entityManager,
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly LoggerInterface $logger,
+        private readonly ResourceMetadataCollectionFactoryInterface $resourceMetadataFactory,
+        private readonly LoggerInterface $logger
     )
     {}
 
     public function normalize($object, $format = null, array $context = array())
     {
+        // Since API Platform 2.7, IRIs for custom operations have changed
+        // It means that when doing PUT /api/tasks/{id}/assign, the @id will be /api/tasks/{id}/assign, not /api/tasks/{id} like before
+        // In our JS code, we often override the state with the entire response
+        // This custom code makes sure it works like before, by tricking IriConverter
+        $context['operation'] = $this->resourceMetadataFactory->create(Task::class)->getOperation();
+
         $data = $this->normalizer->normalize($object, $format, $context);
 
         if (!is_array($data)) {
@@ -69,12 +77,12 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 
             $data['previous'] = null;
             if ($object->hasPrevious()) {
-                $data['previous'] = $this->iriConverter->getIriFromItem($object->getPrevious());
+                $data['previous'] = $this->iriConverter->getIriFromResource($object->getPrevious());
             }
 
             $data['next'] = null;
             if ($object->hasNext()) {
-                $data['next'] = $this->iriConverter->getIriFromItem($object->getNext());
+                $data['next'] = $this->iriConverter->getIriFromResource($object->getNext());
             }
         }
 
@@ -205,7 +213,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         $address = null;
         if (isset($data['address']) && is_string($data['address'])) {
             try {
-                $this->iriConverter->getItemFromIri($data['address']);
+                $this->iriConverter->getResourceFromIri($data['address']);
             } catch (InvalidArgumentException $e) {
                 $addressAsString = $data['address'];
                 unset($data['address']);
@@ -295,8 +303,12 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         return $task;
     }
 
-    public function supportsDenormalization($data, $type, $format = null)
+    public function supportsDenormalization($data, string $type, ?string $format = null, array $context = [])
     {
+        if (isset($context['input'])) {
+            return false;
+        }
+
         return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === Task::class;
     }
 }

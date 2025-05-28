@@ -2,7 +2,8 @@
 
 namespace AppBundle\Serializer;
 
-use AppBundle\Api\Dto\UrbantzOrderInput;
+use AppBundle\Api\Resource\UrbantzWebhook;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -21,14 +22,19 @@ class UrbantzOrderNormalizer implements NormalizerInterface, DenormalizerInterfa
 
     public function denormalize($data, $class, $format = null, array $context = array())
     {
-        $object = new UrbantzOrderInput();
+        $object = $context[AbstractNormalizer::OBJECT_TO_POPULATE];
+
         $object->tasks = $data;
+
+        if (isset($data['extTrackId'])) {
+            $object->extTrackId = $data['extTrackId'];
+        }
 
         return $object;
     }
 
     public function supportsDenormalization($data, $type, $format = null)
     {
-        return $type === UrbantzOrderInput::class;
+        return $type === UrbantzWebhook::class;
     }
 }

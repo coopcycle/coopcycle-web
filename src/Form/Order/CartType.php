@@ -103,7 +103,7 @@ class CartType extends AbstractType
             $form = $event->getForm();
             $order = $form->getData();
 
-            $timeSlot = $form->get('timeSlot')->getData();
+            $timeSlot = $form->get('timeSlot')->getData() ?? '';
 
             $pattern = '/^(?<date>[0-9]{4}-[0-9]{2}-[0-9]{2}) (?<start>[0-9]{2}:[0-9]{2})-(?<end>[0-9]{2}:[0-9]{2})$/';
 

@@ -176,6 +176,7 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
       )}
       <div className="picker-container">
         <DatePicker
+          data-testid="date-picker"
           className="picker-container__datepicker mr-2"
           format={format}
           // defaultValue={afterValue || defaultAfterValue}

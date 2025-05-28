@@ -2,6 +2,9 @@
 
 namespace AppBundle\Controller\Utils;
 
+use AppBundle\Api\Dto\DeliveryFormDeliveryMapper;
+use AppBundle\Api\Dto\DeliveryFormDeliveryOutput;
+use AppBundle\Api\Dto\DeliveryFormTaskOutput;
 use AppBundle\Entity\Address;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Entity\Delivery;
@@ -14,6 +17,7 @@ use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Sylius\PricingStrategy;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\UsePricingRules;
+use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\AddUserType;
@@ -24,6 +28,7 @@ use AppBundle\Form\StoreType;
 use AppBundle\Form\AddressType;
 use AppBundle\Form\DeliveryImportType;
 use AppBundle\Message\ImportDeliveries;
+use AppBundle\Pricing\OrderDuplicate;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
@@ -302,8 +307,8 @@ trait StoreTrait
             // pre-fill fields with the data from a previous order
             $data = $this->duplicateOrder($request, $store, $pricingManager);
             if (null !== $data) {
-                $delivery = $data['delivery'];
-                $previousArbitraryPrice = $data['previousArbitraryPrice'];
+                $delivery = $data->delivery;
+                $previousArbitraryPrice = $data->previousArbitraryPrice;
             }
         }
 
@@ -378,16 +383,27 @@ trait StoreTrait
     public function newStoreDeliveryReactFormAction(
         $id,
         Request $request,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        PricingManager $pricingManager,
+        DeliveryFormDeliveryMapper $deliveryMapper,
     ) {
-        $routes = $request->attributes->get('routes');
-
         $store = $entityManager
             ->getRepository(Store::class)
             ->find($id);
 
         $this->accessControl($store, 'edit_delivery');
+
         $delivery = $store->createDelivery();
+
+        /** @var DeliveryFormDeliveryOutput|null $deliveryData */
+        $deliveryData = null;
+
+        // pre-fill fields with the data from a previous order
+        if ($this->isGranted('ROLE_DISPATCHER') && $data = $this->duplicateOrder($request, $store, $pricingManager)) {
+            $deliveryData = $deliveryMapper->map($data->delivery, $data->previousArbitraryPrice);
+        }
+
+        $routes = $request->attributes->get('routes');
 
         return $this->render(
             'store/deliveries/beta_new.html.twig',
@@ -396,6 +412,7 @@ trait StoreTrait
                 'store' => $store,
                 'order' => null,
                 'delivery' => $delivery,
+                'deliveryData' => $deliveryData,
                 'stores_route' => $routes['stores'],
                 'store_route' => $routes['store'],
                 'back_route' => $routes['back'],
@@ -405,7 +422,7 @@ trait StoreTrait
         ]));
     }
 
-    private function duplicateOrder(Request $request, Store $store, PricingManager $pricingManager)
+    private function duplicateOrder(Request $request, Store $store, PricingManager $pricingManager): OrderDuplicate | null
     {
         $hashid = $request->query->get('frmrdr');
 
@@ -738,7 +755,8 @@ trait StoreTrait
     public function storeRecurrenceRulesAction($id, Request $request,
         EntityManagerInterface $entityManager,
         DeliveryManager $deliveryManager,
-        PricingManager $pricingManager
+        PricingManager $pricingManager,
+        PaginatorInterface $paginator
     )
     {
         $store = $entityManager
@@ -751,9 +769,19 @@ trait StoreTrait
 
         $data = [];
         $this->entityManager->getFilters()->enable('soft_deleteable');
-        $recurrenceRules = $this->entityManager->getRepository(RecurrenceRule::class)->findBy(
-            array('store' => $store),
-            array('createdAt' => 'DESC')
+
+        $qb = $this->entityManager->getRepository(RecurrenceRule::class)->createQueryBuilder('o');
+        $qb->andWhere('o.store = :store');
+        $qb->addOrderBy('o.createdAt', 'DESC');
+        $qb->setParameter('store', $store);
+
+        $recurrenceRules = $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            10,
+            [
+                PaginatorInterface::DISTINCT => false,
+            ]
         );
 
         // The date is not relevant while viewing/editing the recurrence rules (only the time is),
@@ -790,6 +818,7 @@ trait StoreTrait
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'recurrence_rules' => $data,
+            'pagination' => $recurrenceRules,
             'routes' => [
                 'view' => $routes['store_recurrence_rule'],
             ],

@@ -43,6 +43,8 @@ service:
       icms: 0.17
     gh:
       standard: 0.125
+    ch:
+      standard: 0.081
 
 service_tax_exempt:
   rates:
@@ -85,6 +87,8 @@ service_tax_exempt:
     br-rs:
       zero: 0.0
     gh:
+      zero: 0.0
+    ch:
       zero: 0.0
 
 drink:
@@ -171,6 +175,8 @@ base_standard:
       icms: 0.17
     gh:
       standard: 0.125
+    ch:
+      standard: 0.081
 
 base_intermediary:
   rates:
@@ -199,6 +205,8 @@ base_intermediary:
       intermediary: 0.13
     gh:
       intermediary: 0.05
+    ch:
+      intermediary: 0.038
 
 base_reduced:
   rates:
@@ -230,6 +238,8 @@ base_reduced:
       reduced: 0.05
     gh:
       reduced: 0.03
+    ch:
+      reduced: 0.026
 
 base_exempt:
   rates:
@@ -273,4 +283,6 @@ base_exempt:
     br-rs:
       zero: 0.00
     gh:
+      zero: 0.00
+    ch:
       zero: 0.00

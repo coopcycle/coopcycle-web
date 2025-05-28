@@ -10,26 +10,24 @@ use AppBundle\Entity\Tour;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use SimpleBus\Message\Recorder\ContainsRecordedMessages;
-use SimpleBus\Message\Recorder\PrivateMessageRecorderCapabilities;
 
-class EntityChangeSetProcessor implements ContainsRecordedMessages
+class EntityChangeSetProcessor
 {
-    use PrivateMessageRecorderCapabilities;
-
+    public $recordedMessages = [];
     private $taskListProvider;
     private $logger;
-    private $tourRepository;
 
     public function __construct(
         TaskListProvider $taskListProvider,
-        LoggerInterface $logger = null,
-        EntityManagerInterface $entityManager
+        LoggerInterface $logger = null
     )
     {
         $this->taskListProvider = $taskListProvider;
         $this->logger = $logger ? $logger : new NullLogger();
-        $this->tourRepository = $entityManager->getRepository(Tour::class);
+    }
+
+    public function eraseMessages() {
+        $this->recordedMessages = [];
     }
 
     public function process(Task $task, array $entityChangeSet)
@@ -63,6 +61,7 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
                 // When tasks have been assigned via the web interface $taskList->containsTask($task) will return true, because we call Action\TaskList\SetItems
                 // the smartphone app calls AssignTrait->assign which set assignment on the task but not on the tasklist, so set it here
                 // FIXME : the smartphone app should create/set the taskslit on api/task_list/set_items so to avoid this "backward sync" from task to tasklist
+                // @phpstan-ignore-next-line
                 if ($wasAssigned && !$wasAssignedToSameUser) {
                     $this->logger->debug(sprintf('Removing Task#%d from previous TaskList', $task->getId()));
 
@@ -86,7 +85,7 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
                 $event = new TaskAssigned($task, $newValue);
 
                 $exists = false;
-                foreach ($this->recordedMessages() as $recordedMessage) {
+                foreach ($this->recordedMessages as $recordedMessage) {
                     if ($recordedMessage instanceof TaskAssigned) {
                         if ($recordedMessage->getTask() === $event->getTask() && $recordedMessage->getUser() === $event->getUser()) {
                             $exists = true;
@@ -97,7 +96,7 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
 
                 if (!$exists) {
                     $this->logger->debug(sprintf('Task#%d has been assigned, emit new event', $task->getId()));
-                    $this->record($event);
+                    $this->recordedMessages[] = $event;
                 } else {
                     $this->logger->debug(sprintf('Assign event for Task#%d already existed', $task->getId()));
                 }
@@ -112,7 +111,7 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
                 $event = new TaskUnassigned($task, $oldValue);
 
                 $exists = false;
-                foreach ($this->recordedMessages() as $recordedMessage) {
+                foreach ($this->recordedMessages as $recordedMessage) {
                     if ($recordedMessage instanceof TaskUnassigned) {
                         if ($recordedMessage->getTask() === $event->getTask() && $recordedMessage->getUser() === $event->getUser()) {
                             $exists = true;
@@ -126,7 +125,7 @@ class EntityChangeSetProcessor implements ContainsRecordedMessages
                     $task->unassign();
                     $taskList->removeTask($task);
                     $this->logger->debug(sprintf('Recording event for Task#%d', $task->getId()));
-                    $this->record($event);
+                    $this->recordedMessages[] = $event;
                 } else {
                     $this->logger->debug(sprintf('Unassign event for Task#%d already existed', $task->getId()));
                 }

@@ -104,7 +104,7 @@ Feature: Dispatch
       """
       {
         "@context":"/api/contexts/TaskList",
-        "@id":"/api/task_lists",
+        "@id":"/api/task_lists/v2",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
@@ -624,6 +624,8 @@ Feature: Dispatch
 
   Scenario: Create delivery from tasks
     Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_ADMIN"
     And the user "sarah" is authenticated
@@ -666,6 +668,8 @@ Feature: Dispatch
 
   Scenario: Create delivery from tasks (multiple)
     Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_ADMIN"
     And the user "sarah" is authenticated
@@ -857,7 +861,7 @@ Feature: Dispatch
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
+        "@id":"/api/tasks/assign",
         "@type":"hydra:Collection",
         "hydra:member": [
           {

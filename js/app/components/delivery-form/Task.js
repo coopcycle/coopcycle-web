@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Field } from 'formik'
 import AddressBookNew from './AddressBook'
 import { Input, Button } from 'antd'
@@ -10,19 +10,21 @@ import './Task.scss'
 import TagsSelect from '../TagsSelect'
 import { TaskDateTime } from './TaskDateTime'
 import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
+import {
+  useGetStorePackagesQuery,
+  useGetStoreTimeSlotsQuery,
+} from '../../api/slice'
 
 
 export default ({
   isDispatcher,
-  storeId,
+  storeNodeId,
   addresses,
   index,
   storeDeliveryInfos,
   onRemove,
   showRemoveButton,
-  packages,
   tags,
-  timeSlotLabels,
 }) => {
   const { t } = useTranslation()
 
@@ -30,7 +32,6 @@ export default ({
     values,
     taskValues,
     isCreateOrderMode,
-    isModifyOrderMode,
     setFieldValue,
   } = useDeliveryFormFormikContext({
     taskIndex: index,
@@ -40,8 +41,25 @@ export default ({
     taskValues.type === 'DROPOFF' && values.tasks.length > 2,
   )
 
+  const { data: timeSlotsData } = useGetStoreTimeSlotsQuery(storeNodeId)
+  const { data: packagesData } = useGetStorePackagesQuery(storeNodeId)
+
+  const timeSlotLabels = useMemo(() => {
+    if (timeSlotsData) {
+      return timeSlotsData['hydra:member']
+    }
+    return []
+  }, [timeSlotsData])
+
+  const packages = useMemo(() => {
+    if (packagesData) {
+      return packagesData['hydra:member']
+    }
+    return null
+  }, [packagesData])
+
   return (
-    <div className="task border p-4 mb-4" data-testid-form={`task-${index}`}>
+    <div className="task border p-4 mb-4" data-testid={`form-task-${index}`}>
       <div
         className={
           taskValues.type === 'PICKUP'
@@ -96,7 +114,7 @@ export default ({
 
         <TaskDateTime
           isDispatcher={isDispatcher}
-          storeId={storeId}
+          storeNodeId={storeNodeId}
           timeSlots={timeSlotLabels}
           index={index}
         />
@@ -105,10 +123,8 @@ export default ({
           <div className="mt-4">
             {packages && packages.length ? (
               <Packages
-                storeId={storeId}
                 index={index}
                 packages={packages}
-                isEdit={isModifyOrderMode}
               />
             ) : null}
             <TotalWeight index={index} />
@@ -133,14 +149,16 @@ export default ({
         {isDispatcher && (
           <div className="mt-4 mb-4">
             <div className="tags__title block mb-2 font-weight-bold">Tags</div>
-            <TagsSelect
-              tags={tags}
-              defaultValue={values.tasks[index].tags || []}
-              onChange={values => {
-                const tags = values.map(tag => tag.value)
-                setFieldValue(`tasks[${index}].tags`, tags)
-              }}
-            />
+            <div data-testid="tags-select">
+              <TagsSelect
+                tags={tags}
+                defaultValue={values.tasks[index].tags || []}
+                onChange={values => {
+                  const tags = values.map(tag => tag.value)
+                  setFieldValue(`tasks[${index}].tags`, tags)
+                }}
+              />
+            </div>
           </div>
         )}
       </div>

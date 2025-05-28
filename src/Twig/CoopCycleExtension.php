@@ -2,7 +2,7 @@
 
 namespace AppBundle\Twig;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Address;
 use AppBundle\OpeningHours\SpatieOpeningHoursRegistry;
 use AppBundle\Sylius\Product\ProductOptionInterface;
@@ -56,7 +56,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('time_range_for_humans_short', array(OrderRuntime::class, 'timeRangeForHumansShort')),
             new TwigFilter('promotion_rule_for_humans', array(PromotionRuntime::class, 'ruleForHumans')),
             new TwigFilter('promotion_action_for_humans', array(PromotionRuntime::class, 'actionForHumans')),
-            new TwigFilter('get_iri_from_item', array($this, 'getIriFromItem')),
+            new TwigFilter('get_iri_from_item', array($this, 'getIriFromResource')),
             new TwigFilter('oauth2_proxy', array(OAuthRuntime::class, 'modifyUrl')),
             new TwigFilter('restaurant_microdata', array(LocalBusinessRuntime::class, 'seo')),
             new TwigFilter('delay_for_humans', array(LocalBusinessRuntime::class, 'delayForHumans')),
@@ -99,6 +99,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('should_show_pre_order', array(LocalBusinessRuntime::class, 'shouldShowPreOrder')),
             new TwigFunction('loopeat_authorization_url', array(LoopeatRuntime::class, 'getAuthorizationUrl')),
             new TwigFunction('loopeat_name', array(LoopeatRuntime::class, 'getName')),
+            new TwigFunction('loopeat_returns_fee', array(LoopeatRuntime::class, 'getReturnsFee')),
             new TwigFunction('restaurant_tags', array(LocalBusinessRuntime::class, 'tags')),
             new TwigFunction('restaurant_badges', array(LocalBusinessRuntime::class, 'badges')),
             new TwigFunction('coopcycle_configtest', array(SettingResolver::class, 'configTest')),
@@ -154,8 +155,6 @@ class CoopCycleExtension extends AbstractExtension
         if ('jsonld' === $format) {
             $context = array_merge($context, [
                 'resource_class' => $resourceClass,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
             ]);
         }
 
@@ -200,9 +199,9 @@ class CoopCycleExtension extends AbstractExtension
         return $var instanceof $class;
     }
 
-    public function getIriFromItem($item)
+    public function getIriFromResource($item)
     {
-        return $this->iriConverter->getIriFromItem($item);
+        return $this->iriConverter->getIriFromResource($item);
     }
 
     public function gramsToKilos($grams)

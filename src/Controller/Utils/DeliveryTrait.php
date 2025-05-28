@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Utils;
 
+use AppBundle\Api\Dto\DeliveryFormDeliveryMapper;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
@@ -25,6 +26,7 @@ trait DeliveryTrait
         $id,
         Request $request,
         EntityManagerInterface $entityManager,
+        DeliveryFormDeliveryMapper $deliveryMapper,
     ) {
         $delivery = $entityManager
             ->getRepository(Delivery::class)
@@ -32,13 +34,22 @@ trait DeliveryTrait
 
         $this->accessControl($delivery, 'view');
 
+        $order = $delivery->getOrder();
+        $price = $order?->getDeliveryPrice();
+
+        $deliveryData = $deliveryMapper->map(
+            $delivery,
+            $price instanceof ArbitraryPrice ? $price : null
+        );
+
         $routes = $request->attributes->get('routes');
 
         return $this->render('store/deliveries/beta_new.html.twig', $this->auth([
-            'delivery' => $delivery,
-            'order' => $delivery->getOrder(),
-            'store' => $delivery->getStore(),
             'layout' => $request->attributes->get('layout'),
+            'store' => $delivery->getStore(),
+            'order' => $order,
+            'delivery' => $delivery,
+            'deliveryData' => $deliveryData,
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
             'back_route' => $routes['back'],

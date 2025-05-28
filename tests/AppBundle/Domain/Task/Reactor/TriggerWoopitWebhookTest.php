@@ -2,14 +2,14 @@
 
 namespace Tests\AppBundle\Domain\Task\Reactor;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Domain\Task\Event;
-use AppBundle\Domain\Task\Reactor\TriggerWebhook;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Woopit\Delivery as WoopitDelivery;
 use AppBundle\Message\WoopitWebhook;
+use AppBundle\MessageHandler\Task\TriggerWebhook;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\Assert;
@@ -34,7 +34,7 @@ class TriggerWoopitWebhookTest extends TestCase
 
         $this->iriConverter = $this->prophesize(IriConverterInterface::class);
         $this->iriConverter
-            ->getIriFromItem(Argument::type(Delivery::class))
+            ->getIriFromResource(Argument::type(Delivery::class))
             ->willReturn('/api/deliveries/1');
 
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);

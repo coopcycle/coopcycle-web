@@ -51,6 +51,6 @@ class CreateSetupIntentOrAttachPM
             throw new BadRequestHttpException($e->getMessage());
         }
 
-        return [];
+        return $data;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace AppBundle\Service;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\TaskList;
 use AppBundle\Entity\TaskList\Item;
 use AppBundle\Entity\Tour;
@@ -39,7 +39,7 @@ class TaskListManager {
                 $taskList->addItem($existingItem);
             // items that were added to the tasklist
             } else {
-                $taskOrTour = $this->iriConverter->getItemFromIri($newItemIri);
+                $taskOrTour = $this->iriConverter->getResourceFromIri($newItemIri);
                 $item = new Item();
                 $item->setPosition($position);
                 if ($taskOrTour instanceof Tour) {

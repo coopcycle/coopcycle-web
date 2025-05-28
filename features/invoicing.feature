@@ -15,11 +15,11 @@ Feature: Invoicing
       """
       {
         "@context":"/api/contexts/Order",
-        "@id":"/api/orders",
+        "@id":"/api/invoice_line_items",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
-            "@type":"Order",
+            "@type":"InvoiceLineItem",
             "@id":@string@,
             "storeId":@integer@,
             "date":"@string@.isDateTime()",
@@ -29,9 +29,7 @@ Feature: Invoicing
             "subTotal":@integer@,
             "tax":@integer@,
             "total":@integer@,
-            "exports":[],
-            "invitation":null,
-            "paymentGateway":@string@
+            "exports":[]
           },
           "@array_previous_repeat@"
         ],
@@ -88,6 +86,31 @@ Feature: Invoicing
         }
       }
       """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items?page=34"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/invoice_line_items",
+        "@type":"hydra:Collection",
+        "hydra:member":"@array@.count(10)",
+        "hydra:totalItems":1000,
+        "hydra:view":{
+          "@id":"/api/invoice_line_items?page=34",
+          "@type":"hydra:PartialCollectionView",
+          "hydra:first":"/api/invoice_line_items?page=1",
+          "hydra:last":"/api/invoice_line_items?page=34",
+          "hydra:previous":"/api/invoice_line_items?page=33"
+        },
+        "hydra:search":{
+          "@*@":"@*@"
+        }
+      }
+      """
 
   Scenario: Get invoice line items filtered by store
     Given the fixtures files are loaded with purge:
@@ -104,11 +127,11 @@ Feature: Invoicing
       """
       {
         "@context":"/api/contexts/Order",
-        "@id":"/api/orders",
+        "@id":"/api/invoice_line_items",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
-            "@type":"Order",
+            "@type":"InvoiceLineItem",
             "@id":@string@,
             "storeId":@integer@,
             "date":"@string@.isDateTime()",
@@ -118,9 +141,7 @@ Feature: Invoicing
             "subTotal":@integer@,
             "tax":@integer@,
             "total":@integer@,
-            "exports":[],
-            "invitation":null,
-            "paymentGateway":@string@
+            "exports":[]
           },
           "@array_previous_repeat@"
         ],
@@ -193,11 +214,11 @@ Feature: Invoicing
       """
       {
         "@context":"/api/contexts/Order",
-        "@id":"/api/orders",
+        "@id":"/api/invoice_line_items",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
-            "@type":"Order",
+            "@type":"InvoiceLineItem",
             "@id":@string@,
             "storeId":@integer@,
             "date":"@string@.isDateTime()",
@@ -207,9 +228,7 @@ Feature: Invoicing
             "subTotal":@integer@,
             "tax":@integer@,
             "total":@integer@,
-            "exports":[],
-            "invitation":null,
-            "paymentGateway":@string@
+            "exports":[]
           },
           "@array_previous_repeat@"
         ],
@@ -282,12 +301,11 @@ Feature: Invoicing
       """
       {
         "@context":"/api/contexts/Order",
-        "@id":"/api/orders",
+        "@id":"/api/invoice_line_items/grouped_by_organization",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
             "@type":"InvoiceLineItemGroupedByOrganization",
-            "@id":@string@,
             "storeId":@integer@,
             "organizationLegalName":@string@,
             "ordersCount":@integer@,
@@ -347,6 +365,35 @@ Feature: Invoicing
               "required":false
             }
           ]
+        }
+      }
+      """
+
+  Scenario: Get invoice line items by date
+    Given the fixtures files are loaded with purge:
+      | cypress://setup_default.yml |
+    Given the fixtures files are loaded:
+      | cypress://package_delivery_orders.yml |
+    Given the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items?date[after]=2025-01-01&date[before]=2025-01-03"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/invoice_line_items",
+        "@type":"hydra:Collection",
+        "hydra:member":[],
+        "hydra:totalItems":0,
+        "hydra:view":{
+          "@id":"/api/invoice_line_items?date%5Bafter%5D=2025-01-01&date%5Bbefore%5D=2025-01-03",
+          "@type":"hydra:PartialCollectionView"
+        },
+        "hydra:search":{
+          "@*@":"@*@"
         }
       }
       """

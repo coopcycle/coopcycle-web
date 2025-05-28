@@ -2,7 +2,7 @@
 
 namespace AppBundle\Serializer\JsonLd;
 
-use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Enum\Allergen;
 use AppBundle\Enum\RestrictedDiet;
 use Sylius\Component\Locale\Provider\LocaleProvider;

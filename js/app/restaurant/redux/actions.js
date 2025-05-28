@@ -579,8 +579,8 @@ export function setPlayer({ email, name } = {}) {
       name = user.username
     }
 
-    const { cart: { id, invitation: slug } } = getState()
-    const url = window.Routing.generate('api_orders_add_player_item', getRoutingParams({ id }))
+    const { cart: {id, invitation: slug} } = getState()
+    const url = window.Routing.generate('_api_/orders/{id}/players_post', getRoutingParams({ id }))
 
     // Set player
     if (email && slug && name) {
@@ -605,9 +605,15 @@ export function createInvitation() {
   return (dispatch, getState) => {
     dispatch(invitePeopleRequest())
 
+<<<<<<< HEAD
     const { cart: { id } } = getState()
     const { jwt, user } = window._auth
     const url = window.Routing.generate('api_orders_create_invitation_item', getRoutingParams({ id }))
+=======
+    const { cart: {id} } = getState()
+    const {jwt, user} = window._auth
+    const url = window.Routing.generate('_api_/orders/{id}/create_invitation_post', getRoutingParams({id}))
+>>>>>>> master
     httpClient.request({
       method: 'post',
       url,

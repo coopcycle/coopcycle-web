@@ -62,6 +62,17 @@ const formatValue = (value, type) => {
   return numbro.unformat(value) * (isK(type) ? 1000 : 1)
 }
 
+const getStepForType = (type) => {
+
+  // As it returns float, it will never work when comparing to floats
+  // https://github.com/coopcycle/coopcycle-web/issues/5002
+  if (type === 'packages.totalVolumeUnits()') {
+    return '1';
+  }
+
+  return '0.1';
+}
+
 class RulePickerLine extends React.Component {
 
   constructor (props) {
@@ -237,10 +248,10 @@ class RulePickerLine extends React.Component {
       return (
         <div className="d-flex justify-content-between">
           <div className="mr-2">
-            <input className="form-control input-sm" value={ (this.state.value[0] / (isK(this.state.type) ? 1000 : 1))  } onChange={this.handleFirstBoundChange} type="number" min="0" required step="0.1"></input>
+            <input className="form-control input-sm" value={ (this.state.value[0] / (isK(this.state.type) ? 1000 : 1))  } onChange={this.handleFirstBoundChange} type="number" min="0" required step={ getStepForType(this.state.type) }></input>
           </div>
           <div>
-            <input className="form-control input-sm" value={ (this.state.value[1] / (isK(this.state.type) ? 1000 : 1)) } onChange={this.handleSecondBoundChange} type="number" min="0" required step="0.1"></input>
+            <input className="form-control input-sm" value={ (this.state.value[1] / (isK(this.state.type) ? 1000 : 1)) } onChange={this.handleSecondBoundChange} type="number" min="0" required step={ getStepForType(this.state.type) }></input>
           </div>
         </div>
       )

@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Controller\Utils\InjectAuthTrait;
@@ -26,6 +26,8 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\TopBarNotifications;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\TaskManager;
+use AppBundle\Sylius\Customer\CustomerInterface;
+use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderEventCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
@@ -40,7 +42,6 @@ use Cocur\Slugify\SlugifyInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use phpcent\Client as CentrifugoClient;
-use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -99,7 +100,7 @@ class ProfileController extends AbstractController
             // Use a JWT as the "state" parameter
             $state = $jwtEncoder->encode([
                 'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
-                'sub' => $iriConverter->getIriFromItem($customer),
+                'sub' => $iriConverter->getIriFromResource($customer),
                 // The "iss" (Issuer) claim contains a redirect URL
                 'iss' => $redirectAfterUri,
             ]);
@@ -189,8 +190,10 @@ class ProfileController extends AbstractController
         NormalizerInterface $normalizer,
         CentrifugoClient $centrifugoClient)
     {
+        /** @var OrderInterface|null */
         $order = $this->orderRepository->find($id);
 
+        /** @var CustomerInterface */
         $customer = $order->getCustomer();
 
         if ($customer->hasUser() && $customer->getUser() !== $this->getUser()) {

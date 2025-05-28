@@ -2,15 +2,39 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
-use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
+use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(attributes: ['normalization_context' => ['groups' => ['vehicle', 'warehouse']], 'denormalization_context' => ['groups' => ['vehicle_create']]], collectionOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_DISPATCHER')"], 'post' => ['method' => 'POST', 'access_control' => "is_granted('ROLE_ADMIN')"]], itemOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_ADMIN')"], 'patch' => ['method' => 'PATCH', 'access_control' => "is_granted('ROLE_ADMIN')"], 'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN')"]], order: ['name' => 'ASC'])]
-class Vehicle
+#[ApiResource(
+    operations: [
+        new Get(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new Patch(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new Delete(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\')'),
+        new Post(security: 'is_granted(\'ROLE_ADMIN\')')
+    ],
+    normalizationContext: [
+        'groups' => [
+            'vehicle',
+            'warehouse'
+        ]
+    ],
+    denormalizationContext: ['groups' => ['vehicle_create']],
+    order: ['name' => 'ASC']
+)]
+class Vehicle implements SoftDeleteableInterface
 {
     use Timestampable;
     use SoftDeleteable;
@@ -233,7 +257,7 @@ class Vehicle
 
     /**
      * Get the value of co2emissions
-     */ 
+     */
     public function getCo2emissions()
     {
         return $this->co2emissions;
@@ -243,7 +267,7 @@ class Vehicle
      * Set the value of co2emissions
      *
      * @return  self
-     */ 
+     */
     public function setCo2emissions($co2emissions)
     {
         $this->co2emissions = $co2emissions;

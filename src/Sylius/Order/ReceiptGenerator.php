@@ -11,6 +11,7 @@ use Sylius\Component\Order\Model\AdjustableInterface;
 use Sylius\Component\Order\Model\Adjustment;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
+use Sylius\Component\Taxation\Model\TaxRateInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment as TwigEnvironment;
@@ -55,6 +56,7 @@ class ReceiptGenerator
         }
 
         foreach ($taxRates as $taxRate) {
+            /** @var TaxRateInterface $taxRate */
             $taxTotal = $order->getTaxTotalByRate($taxRate);
             if ($taxTotal > 0) {
                 $receipt->addFooterItem(

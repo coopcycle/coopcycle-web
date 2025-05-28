@@ -2,7 +2,7 @@
 
 namespace AppBundle\Serializer;
 
-use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Trailer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 

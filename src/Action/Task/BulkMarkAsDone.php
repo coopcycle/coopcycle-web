@@ -2,7 +2,7 @@
 
 namespace AppBundle\Action\Task;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Task;
 use AppBundle\Service\TaskManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+
 
 class BulkMarkAsDone extends Base
 {
@@ -25,7 +26,8 @@ class BulkMarkAsDone extends Base
         TaskManager $taskManager,
         IriConverterInterface $iriConverter,
         EntityManagerInterface $entityManager,
-        NormalizerInterface $normalizerInterface)
+        NormalizerInterface $normalizerInterface
+    )
     {
         parent::__construct($tokenStorage, $taskManager);
 
@@ -44,7 +46,7 @@ class BulkMarkAsDone extends Base
         }
 
         $tasks = $payload["tasks"];
-        $tasksObjs = array_map(function ($taskIri) { return $this->iriConverter->getItemFromIri($taskIri); }, $tasks);
+        $tasksObjs = array_map(function ($taskIri) { return $this->iriConverter->getResourceFromIri($taskIri); }, $tasks);
 
         $tasksResults= [];
         $tasksFailed= [];
@@ -65,7 +67,7 @@ class BulkMarkAsDone extends Base
             try {
                 $tasksResults[] = $this->done($task, $request);
             } catch(BadRequestHttpException $e) {
-                $tasksFailed[$this->iriConverter->getIriFromItem($task)] = $e->getMessage();
+                $tasksFailed[$this->iriConverter->getIriFromResource($task)] = $e->getMessage();
             }
         }
 

@@ -9,13 +9,13 @@ import 'skeleton-screen-css/dist/index.scss'
 async function _fetchTimeSlots() {
   const httpClient = new window._auth.httpClient();
   return await httpClient.get(
-    window.Routing.generate("api_time_slots_get_collection", { pagination: new Boolean(false).toString() }),
+    window.Routing.generate("_api_/time_slots.{_format}_get_collection", { pagination: new Boolean(false).toString() }),
   );
 }
 
 async function _putTimeSlots(id, data) {
   const httpClient = new window._auth.httpClient();
-  const uri = window.Routing.generate('api_stores_get_item', { id })
+  const uri = window.Routing.generate('_api_/stores/{id}.{_format}_patch', { id })
 
   return await httpClient.patch(uri, {
     '@id': uri,

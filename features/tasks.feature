@@ -327,7 +327,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
+        "@id":"/api/tasks/2/events",
         "@type":"hydra:Collection",
         "hydra:member":@array@,
         "hydra:totalItems":2,
@@ -796,7 +796,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
+        "@id":"/api/tasks/2/events",
         "@type":"hydra:Collection",
         "hydra:member":[
           "@...@",
@@ -2147,7 +2147,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Delivery",
-        "@id":"/api/deliveries/1",
+        "@id":"/api/deliveries/1/pick",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
         "pickup":{
@@ -2206,7 +2206,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Delivery",
-        "@id":"/api/deliveries/1",
+        "@id":"/api/deliveries/1/drop",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
         "pickup":{
@@ -2597,7 +2597,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
+        "@id":"/api/tasks/1/events",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
@@ -2877,7 +2877,6 @@ Feature: Tasks
       """
     Then the response status code should be 200
     And the response should be in JSON
-    Then print last JSON response
     And the JSON should match:
       """
       {
@@ -2977,7 +2976,7 @@ Feature: Tasks
       """
         {
           "@context":"/api/contexts/Task",
-          "@id":"/api/tasks",
+          "@id":"/api/tasks/images",
           "@type":"hydra:Collection",
           "hydra:member": [
             {
@@ -3022,6 +3021,37 @@ Feature: Tasks
         "@type":"http://schema.org/MediaObject",
         "imageName":@string@,
         "thumbnail":@string@
+      }
+      """
+
+  Scenario: Upload image with wrong format
+    Given the fixtures files are loaded:
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "multipart/form-data"
+    And the user "bob" sends a "POST" request to "/api/task_images" with parameters:
+      | key      | value           |
+      | file     | @at3_1m4_01.tif |
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ConstraintViolationList",
+        "@type":"ConstraintViolationList",
+        "hydra:title":"An error occurred",
+        "hydra:description":@string@,
+        "violations":[
+          {
+            "propertyPath":"file",
+            "message":@string@,
+            "code":"744f00bc-4389-4c74-92de-9a43cde55534"
+          }
+        ]
       }
       """
 
@@ -3097,19 +3127,17 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
+        "@id":"/api/tasks/2/failure_reasons",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
             "@type":"FailureReason",
-            "@id":"@string@",
             "code":"DAMAGED",
             "description":"Damaged",
             "metadata":[]
           },
           {
             "@type":"FailureReason",
-            "@id":"@string@",
             "code":"REFUSED",
             "description":"Refused",
             "metadata":[]
@@ -3143,7 +3171,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
+        "@id":"/api/tasks/2/failure_reasons",
         "@type":"hydra:Collection",
         "hydra:member":@array@,
         "hydra:totalItems":22,

@@ -43,9 +43,9 @@ const InputLabel = () => {
   return (<div className="mb-2 font-weight-bold title-slot">{t('ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE')}</div>)
 }
 
-export default ({ storeId, index, timeSlotLabels }) => {
+export default ({ storeNodeId, index, timeSlotLabels }) => {
 
-  const { data: store } = useGetStoreQuery(storeId)
+  const { data: store } = useGetStoreQuery(storeNodeId)
   const { httpClient } = useHttpClient()
 
   const { t } = useTranslation()
@@ -190,6 +190,7 @@ export default ({ storeId, index, timeSlotLabels }) => {
       { hourOptions.length > 0 ?
         <div style={{ display: 'flex', marginTop: '0.5em' }}>
           <DatePicker
+            data-testid="date-picker"
             format="LL"
             style={{ width: '60%' }}
             className="mr-2"
@@ -201,6 +202,7 @@ export default ({ storeId, index, timeSlotLabels }) => {
             }}
           />
           <Select
+            data-testid="hour-picker"
             style={{ width: '35%' }}
             onChange={option => {
               handleHourChange(option)

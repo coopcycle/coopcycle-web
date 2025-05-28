@@ -2,33 +2,39 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
+use AppBundle\Api\State\ValidationAwareRemoveProcessor;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use ApiPlatform\Core\Annotation\ApiResource;
 use AppBundle\Validator\Constraints\WarehouseDelete as AssertCanDelete;
+use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Gedmo\Timestampable\Traits\Timestampable;
 
 #[ApiResource(
-    attributes: [
-        'normalization_context' => ['groups' => ['warehouse', 'address']],
-        'denormalization_context' => ['groups' => ['warehouse_create', 'address_create']]
+    operations: [
+        new Get(security: "is_granted('ROLE_DISPATCHER')"),
+        new Delete(
+            security: 'is_granted(\'ROLE_ADMIN\')',
+            validationContext: ['groups' => ['deleteValidation']],
+            processor: ValidationAwareRemoveProcessor::class
+        ),
+        new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\')'),
+        new Post(security: 'is_granted(\'ROLE_ADMIN\')')
     ],
-    collectionOperations: [
-        'get' => ['method' => 'GET', 'security' => "is_granted('ROLE_DISPATCHER')"],
-        'post' => ['method' => 'POST', 'security' => "is_granted('ROLE_ADMIN')"]
-    ],
-    itemOperations: [
-        'get' => ['method' => 'GET', 'security' => "is_granted('ROLE_DISPATCHER')"],
-        'delete' => [
-            'method' => 'DELETE',
-            'security' => "is_granted('ROLE_ADMIN')",
-            'validation_groups' => ['deleteValidation']
-        ],
-    ]
+    normalizationContext: ['groups' => ['warehouse', 'address']],
+    denormalizationContext: ['groups' => ['warehouse_create', 'address_create']]
 )]
 #[AssertCanDelete(groups: ['deleteValidation'])]
-class Warehouse
+class Warehouse implements SoftDeleteableInterface
 {
     use Timestampable;
     use SoftDeleteable;

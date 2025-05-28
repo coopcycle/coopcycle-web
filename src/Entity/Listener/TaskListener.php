@@ -2,7 +2,7 @@
 
 namespace AppBundle\Entity\Listener;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Woopit\Delivery as WoopitDelivery;
 use AppBundle\Message\WoopitDocumentWebhook;
@@ -36,7 +36,7 @@ class TaskListener
                 foreach($task->getImages() as $taskImage) {
                     $this->messageBus->dispatch(
                         new WoopitDocumentWebhook(
-                            $this->iriConverter->getIriFromItem($taskImage),
+                            $this->iriConverter->getIriFromResource($taskImage),
                             'EVIDENCE'
                         )
                     );

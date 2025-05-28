@@ -2,8 +2,9 @@
 
 namespace AppBundle\Serializer\JsonLd;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
-use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\Metadata\Resource\Factory\ResourceMetadataCollectionFactoryInterface;
 use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\LoopEat\Client as LoopeatClient;
@@ -24,11 +25,11 @@ use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\ContextAwareDenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
-class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
+class OrderNormalizer implements NormalizerInterface, ContextAwareDenormalizerInterface
 {
     public function __construct(
         private ItemNormalizer $normalizer,
@@ -48,7 +49,9 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         private LoopeatClient $loopeatClient,
         private LoopeatContextInitializer $loopeatContextInitializer,
         private GatewayResolver $paymentGatewayResolver,
-        private EdenredClient $edenredClient)
+        private EdenredClient $edenredClient,
+        private readonly ResourceMetadataCollectionFactoryInterface $resourceMetadataFactory
+        )
     {}
 
     public function normalize($object, $format = null, array $context = array())
@@ -75,6 +78,12 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                 $shippingAddressData = $this->objectNormalizer->normalize($shippingAddress, $format, $context);
                 $fixShippingAddress = true;
             }
+
+            // Since API Platform 2.7, IRIs for custom operations have changed
+            // It means that when doing PUT /api/orders/{id}/accept, the @id will be /api/orders/{id}/accept, not /api/orders/{id} like before
+            // In our JS code, we often override the state with the entire response
+            // This custom code makes sure it works like before, by tricking IriConverter
+            $context['operation'] = $this->resourceMetadataFactory->create(Order::class)->getOperation();
 
             $data = $this->normalizer->normalize($object, $format, $context);
 
@@ -214,7 +223,7 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
                 }
 
                 if (is_array($item['product']) && isset($item['product']['@id'])) {
-                    $product = $this->iriConverter->getItemFromIri($item['product']['@id']);
+                    $product = $this->iriConverter->getResourceFromIri($item['product']['@id']);
                 } else {
                     $product = $this->productRepository->findOneByCode($item['product']);
                 }
@@ -259,8 +268,12 @@ class OrderNormalizer implements NormalizerInterface, DenormalizerInterface
         return $order;
     }
 
-    public function supportsDenormalization($data, $type, $format = null)
+    public function supportsDenormalization($data, $type, $format = null, array $context = [])
     {
+        if (isset($context['input'])) {
+            return false;
+        }
+
         return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === Order::class;
     }
 }

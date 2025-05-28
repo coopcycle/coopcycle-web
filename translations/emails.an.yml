@@ -87,20 +87,6 @@ task.failed.body: |
 order.payment.subject: 'Pago d''o tuyo pediu %order.number%'
 order.payment.body: "Ola,\n<br>\nHemos completau una entrega que nos ha pediu.\n<br>\n\
   Aquí abaixo trobará un vinclo que le permite pagar con tarcheta de credito.\n"
-covid_19.subject: 'COVID-19 | Instruccions importants pa lo tuyo pediu'
-covid_19.body: "<h1>Instruccions a seguir pa la suya entrega</h1>\n<p>Dada la pandemia\
-  \ actual de COVID-19 (Coronavirus), vusté <strong>must strictly</strong> siga las\
-  \ siguients instruccions:</p>\n<h2>1. Guarda la distancia social</h2>\n<p>Deixaremos\
-  \ lo suyo pediu en a suya puerta, pa que no haiga d'acercar-se a la persona que\
-  \ viene a entregar. Puede u no deixar propina.</p>\n<h2>2. Desempaque lo suyo pediu\
-  \ dimpués de recibir-lo</h2>\n<p>Lo virus puede sobrevivir en superficies de cartón\
-  \ y plastico qualques días. L'empaquetache ye, per tanto, una rota d'alto risgo\
-  \ de transmisión d'o virus.\nPor lo tanto, le pedimos que <strong>desempaquete lo\
-  \ suyo pediu y transfiera lo conteniu a platos</strong>.</p>\n<h2>3. Tire l'empaquetache.</h2>\n\
-  <p>Una vegada que lo suyo pediu sía desempaquetau, s'asegure de <strong>tirar l'empaquetache\
-  \ a una vasuera zarrada</strong> Pa privar tocar-la distraitament mas tarde.</p>\n\
-  <h2>4. Limpie-se las mans!</h2>\n<p>Una vegada que haiga desempacau lo suyo pediu\
-  \ y repuyau l'embalache,<strong>limpie-se las mans!</strong></p>\n"
 
 order.expiring_authorization.subject: 'L''autorización de pago vencerá luego'
 order.expiring_authorization.text: 'L''autorización de pago pa lo pediu <strong>%order.number%</strong>

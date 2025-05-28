@@ -41,7 +41,8 @@ class ExportOrdersHandler
             $message->isWithMessenger(),
             $this->nonProfitsEnabled,
             $message->isWithBillingMethod(),
-            $message->isIncludeTaxes()
+            $message->isIncludeTaxes(),
+            includePaymentGateway: false
         );
 
         if ($stats->count() === 0) {

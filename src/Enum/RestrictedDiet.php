@@ -2,7 +2,7 @@
 
 namespace AppBundle\Enum;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\ApiResource;
 use MyCLabs\Enum\Enum;
 
 /**
@@ -10,7 +10,7 @@ use MyCLabs\Enum\Enum;
  *
  * @see http://schema.org/RestrictedDiet Documentation on Schema.org
  */
-#[ApiResource(iri: 'http://schema.org/RestrictedDiet')]
+#[ApiResource(types: ['http://schema.org/RestrictedDiet'])]
 class RestrictedDiet extends Enum
 {
     /**

@@ -2,9 +2,15 @@
 
 namespace AppBundle\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
+use AppBundle\Api\State\StoreAddressProcessor;
 use AppBundle\Action\MyStores;
 use AppBundle\Action\Store\AddAddress;
 use AppBundle\Entity\Base\LocalBusiness;
@@ -19,6 +25,7 @@ use AppBundle\Entity\Package;
 use AppBundle\Entity\Task\RecurrenceRule;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -26,81 +33,48 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
-use AppBundle\Action\TimeSlot\StoreTimeSlots as TimeSlots;
-use AppBundle\Action\Store\Packages as Packages;
+use AppBundle\Action\TimeSlot\StoreTimeSlots;
+use AppBundle\Action\Store\Packages;
 
 
 /**
  * A retail good store.
  *
  * @see http://schema.org/Store Documentation on Schema.org
- *
- * @Vich\Uploadable
  */
+#[Vich\Uploadable]
 #[ApiResource(
-    collectionOperations: [
-        'get' => [
-            'method' => 'GET',
-            'access_control' => "is_granted('ROLE_DISPATCHER')"
-        ],
-        'me_stores' => [
-            'method' => 'GET',
-            'path' => '/me/stores',
-            'controller' => MyStores::class
-        ]
+    types: ['http://schema.org/Store'],
+    operations: [
+        new Get(security: 'is_granted(\'edit\', object)'),
+        new Delete(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new Patch(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new Get(
+            uriTemplate: '/stores/{id}/time_slots',
+            controller: StoreTimeSlots::class,
+            normalizationContext: ['groups' => ['store_time_slots']],
+            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'edit\', object)'
+        ),
+        new Get(
+            uriTemplate: '/stores/{id}/packages',
+            controller: Packages::class,
+            normalizationContext: ['groups' => ['store_packages']],
+            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'edit\', object)'
+        ),
+        new Post(
+            uriTemplate: '/stores/{id}/addresses',
+            security: 'is_granted(\'edit\', object)',
+            input: Address::class,
+            processor: StoreAddressProcessor::class
+        ),
+        new GetCollection(
+            security: 'is_granted(\'ROLE_DISPATCHER\')'
+        ),
+        new GetCollection(uriTemplate: '/me/stores', controller: MyStores::class)
     ],
-    iri: 'http://schema.org/Store',
-    itemOperations: [
-        'get' => [
-            'method' => 'GET',
-            'security' => "is_granted('edit', object)"
-        ],
-        'delete' => [
-            'method' => 'DELETE',
-            'security' => "is_granted('ROLE_ADMIN')"
-        ],
-        'patch' => [
-            'method' => 'PATCH',
-            'security' => "is_granted('ROLE_ADMIN')"
-        ],
-        'time_slots' => [
-            'method' => 'GET',
-            'path' => '/stores/{id}/time_slots',
-            'controller' => TimeSlots::class,
-            'normalization_context' => [
-                'groups' => ['store_time_slots']
-            ],
-            'security' => "is_granted('ROLE_DISPATCHER') or is_granted('edit', object)"
-        ],
-        'packages' => [
-            'method' => 'GET',
-            'path' => '/stores/{id}/packages',
-            'controller' => Packages::class,
-            'normalization_context' => [
-                'groups' => ['store_packages']
-            ],
-            'security' => "is_granted('ROLE_DISPATCHER') or is_granted('edit', object)"
-        ],
-        'add_address' => [
-            'method' => 'POST',
-            'path' => '/stores/{id}/addresses',
-            'security' => "is_granted('edit', object)",
-            'input' => Address::class,
-            'controller' => AddAddress::class
-        ]
-    ],
-    subresourceOperations: [
-        'deliveries_get_subresource' => [
-            'security' => "is_granted('edit', object)"
-        ]
-    ],
-    attributes: [
-        'normalization_context' => [
-            'groups' => ['store', 'address']
-        ]
-    ]
+    normalizationContext: ['groups' => ['store', 'address']]
 )]
-class Store extends LocalBusiness implements TaggableInterface, OrganizationAwareInterface, CustomFailureReasonInterface
+class Store extends LocalBusiness implements TaggableInterface, OrganizationAwareInterface, CustomFailureReasonInterface, SoftDeleteableInterface
 {
     use SoftDeleteable;
     use TaggableTrait;
@@ -116,8 +90,8 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     /**
      * @var string The name of the item
      */
+    #[ApiProperty(iris: ['http://schema.org/name'])]
     #[Assert\Type(type: 'string')]
-    #[ApiProperty(iri: 'http://schema.org/name')]
     #[Groups(['store'])]
     protected $name;
 
@@ -128,9 +102,9 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     protected $enabled = false;
 
     /**
-     * @Vich\UploadableField(mapping="store_image", fileNameProperty="imageName")
      * @var File
      */
+    #[Vich\UploadableField(mapping: "store_image", fileNameProperty: "imageName")]
     #[Assert\File(maxSize: '1024k', mimeTypes: ['image/jpg', 'image/jpeg', 'image/png'])]
     private $imageFile;
 
@@ -145,7 +119,7 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     /**
      * @var string The website.
      */
-    #[ApiProperty(iri: 'https://schema.org/URL')]
+    #[ApiProperty(iris: ['https://schema.org/URL'])]
     private $website;
 
     /**
@@ -159,7 +133,6 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private $pricingRuleSet;
 
-    #[ApiSubresource]
     private $deliveries;
 
     private $rrules;
@@ -169,7 +142,6 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     #[Groups(['store'])]
     private $prefillPickupAddress = false;
 
-    #[ApiSubresource]
     private $addresses;
 
     #[Groups(['store'])]

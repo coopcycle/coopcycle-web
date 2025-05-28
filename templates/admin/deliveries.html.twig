@@ -135,9 +135,9 @@
           <tr class="{{ import_queue.status == 'failed' ? 'danger' : '' }}"
             data-delivery-import
             data-delivery-import-filename="{{ import_queue.filename }}"
-            data-delivery-import-queue="{{ path('api_delivery_import_queues_get_item', { id: import_queue.id }) }}"
-            data-delivery-import-csv="{{ path('api_delivery_import_queues_csv_item', { id: import_queue.id }) }}"
-            data-delivery-import-redownload="{{ path('api_delivery_import_queues_redownload_item', { id: import_queue.id }) }}">
+            data-delivery-import-queue="{{ path('_api_/delivery_import_queues/{id}.{_format}_get', { id: import_queue.id }) }}"
+            data-delivery-import-csv="{{ path('_api_/delivery_import_queues/{id}/csv_get', { id: import_queue.id }) }}"
+            data-delivery-import-redownload="{{ path('_api_/delivery_import_queues/{id}/redownload_get', { id: import_queue.id }) }}">
             <td width="5%"><i class="fa fa-{{ import_status_icon[import_queue.status] }}" data-delivery-import-status></i></td>
             <td>{{ import_queue.filename }}</td>
             <td>{{ import_queue.createdAt|time_diff }}</td>
@@ -161,7 +161,7 @@
     </table>
     <div id="delivery_import_spreadsheet"></div>
   {% else %}
-    {% include '_partials/delivery/list.html.twig' with { with_store: true, with_order: true } %}
+    {% include '_partials/delivery/list.html.twig' with { with_store: true } %}
     <nav class="text-center">
       {{ knp_pagination_render(deliveries) }}
     </nav>

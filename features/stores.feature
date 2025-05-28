@@ -66,7 +66,7 @@ Feature: Stores
       """
       {
         "@context":"/api/contexts/Store",
-        "@id":"/api/stores",
+        "@id":"/api/me/stores",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
@@ -162,7 +162,8 @@ Feature: Stores
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "telephone":null,
           "name":null,
-          "description": null
+          "description": null,
+          "contactName": null
         },
         "timeSlot":"/api/time_slots/1",
         "timeSlots":@array@,
@@ -203,7 +204,8 @@ Feature: Stores
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "telephone":null,
           "name":null,
-          "description": null
+          "description": null,
+          "contactName": null
         },
         "timeSlot":"/api/time_slots/1",
         "timeSlots":@array@,
@@ -688,6 +690,7 @@ Feature: Stores
       }
       """
 
+  @deprecated
   Scenario: Retrieve store dropoff addresses
     Given the fixtures files are loaded:
       | deliveries.yml      |
@@ -759,7 +762,7 @@ Feature: Stores
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     When the user "bob" sends a "GET" request to "/api/stores/2/addresses"
-    And the response should be in JSON
+    Then the response should be in JSON
     And the JSON should match:
       """
       {
@@ -826,7 +829,6 @@ Feature: Stores
     When the user "bob" sends a "PATCH" request to "/api/stores/6" with body:
       """
       {
-        "@id": "/api/stores/6",
         "timeSlots": [
           "/api/time_slots/2",
           "/api/time_slots/1",
@@ -877,7 +879,7 @@ Feature: Stores
       """
       {
         "@context": "/api/contexts/Store",
-        "@id": "/api/stores",
+        "@id": "/api/stores/1/time_slots",
         "@type": "hydra:Collection",
         "hydra:member": [
             {
@@ -956,7 +958,7 @@ Feature: Stores
       """
       {
            "@context": "/api/contexts/Store",
-           "@id": "/api/stores",
+           "@id": "/api/stores/1/packages",
            "@type": "hydra:Collection",
            "hydra:member": [
                {

@@ -2,7 +2,8 @@
 
 namespace AppBundle\Controller\Utils;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Metadata\GetCollection;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Edenred\SynchronizerClient;
@@ -37,6 +38,7 @@ use AppBundle\Form\Sylius\Promotion\ItemsTotalBasedPromotionType;
 use AppBundle\Form\Sylius\Promotion\OfferDeliveryType;
 use AppBundle\Form\Type\ProductTaxCategoryChoiceType;
 use AppBundle\LoopEat\Client as LoopeatClient;
+use AppBundle\Message\CopyProducts;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Product\ProductInterface;
@@ -65,6 +67,8 @@ use Sylius\Component\Product\Repository\ProductOptionRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Form\ChoiceList\Loader\CallbackChoiceLoader;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -74,9 +78,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -257,7 +262,7 @@ trait RestaurantTrait
             // Use a JWT as the "state" parameter
             $state = $jwtEncoder->encode([
                 'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
-                'sub' => $iriConverter->getIriFromItem($restaurant),
+                'sub' => $iriConverter->getIriFromResource($restaurant),
                 // The "iss" (Issuer) claim contains a redirect URL
                 'iss' => $redirectAfterUri,
             ]);
@@ -298,9 +303,6 @@ trait RestaurantTrait
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
             $restaurantNormalized = $this->get('serializer')->normalize($restaurant, 'jsonld', [
-                'resource_class' => LocalBusiness::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
                 'groups' => ['restaurant']
             ]);
 
@@ -348,9 +350,6 @@ trait RestaurantTrait
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant_normalized' => $this->get('serializer')->normalize($restaurant, 'jsonld', [
-                'resource_class' => LocalBusiness::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
                 'groups' => ['restaurant']
             ]),
             'restaurant' => $restaurant,
@@ -382,7 +381,7 @@ trait RestaurantTrait
                 return $this->redirectToRoute($request->attributes->get('_route'), [
                     'restaurantId' => $restaurant->getId(),
                     'date' => $date->format('Y-m-d'),
-                    'order' => $iriConverter->getItemIriFromResourceClass(Order::class, [$order])
+                    'order' => $iriConverter->getIriFromResource(Order::class, context: ['uri_variables' => ['id' => $order]])
                 ], 301);
             }
         }
@@ -405,15 +404,11 @@ trait RestaurantTrait
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'restaurant_normalized' => $this->get('serializer')->normalize($restaurant, 'jsonld', [
-                'resource_class' => LocalBusiness::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
                 'groups' => ['restaurant']
             ]),
             'orders_normalized' => $this->get('serializer')->normalize($orders, 'jsonld', [
                 'resource_class' => Order::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
+                'operation' => new GetCollection(),
                 'groups' => ['order_minimal']
             ]),
             'initial_order' => $request->query->get('order'),
@@ -743,7 +738,11 @@ trait RestaurantTrait
     }
 
     #[HideSoftDeleted]
-    public function restaurantProductsAction($id, Request $request, IriConverterInterface $iriConverter, PaginatorInterface $paginator)
+    public function restaurantProductsAction($id, Request $request,
+        IriConverterInterface $iriConverter,
+        PaginatorInterface $paginator,
+        TranslatorInterface $translator,
+        MessageBusInterface $messageBus)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
@@ -772,11 +771,59 @@ trait RestaurantTrait
 
         $routes = $request->attributes->get('routes');
 
+        $copyForm = $this->createFormBuilder()
+            ->add('restaurant', ChoiceType::class, [
+                'choice_loader' => new CallbackChoiceLoader(function () use ($restaurant) {
+                    $otherRestaurants = $this->getDoctrine()
+                        ->getRepository(LocalBusiness::class)
+                        ->findOthers($restaurant);
+
+                    $choices = [];
+                    foreach ($otherRestaurants as $otherRestaurant) {
+                        $choices[$otherRestaurant['name']] = $otherRestaurant['id'];
+                    }
+
+                    return $choices;
+                })
+            ])
+            ->getForm();
+
+        $copyForm->handleRequest($request);
+        if ($copyForm->isSubmitted() && $copyForm->isValid()) {
+
+            $destId = $copyForm->get('restaurant')->getData();
+
+            $dest = $this->getDoctrine()
+                ->getRepository(LocalBusiness::class)
+                ->find($destId);
+
+            if (count($dest->getProducts()) > 0) {
+
+                $this->addFlash(
+                    'error',
+                    $translator->trans('restaurant.copy_products.not_empty')
+                );
+
+                return $this->redirectToRoute($routes['products'], ['id' => $id]);
+            }
+
+            // Run this asynchronously, because it may be long
+            $messageBus->dispatch(new CopyProducts($id, $destId));
+
+            $this->addFlash(
+                'notice',
+                $translator->trans('restaurant.copy_products.copying')
+            );
+
+            return $this->redirectToRoute($routes['products'], ['id' => $destId]);
+        }
+
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'products' => $products,
             'restaurant' => $restaurant,
-            'restaurant_iri' => $iriConverter->getIriFromItem($restaurant),
+            'restaurant_iri' => $iriConverter->getIriFromResource($restaurant),
+            'copy_form' => $copyForm->createView(),
         ], $routes));
     }
 
@@ -949,7 +996,7 @@ trait RestaurantTrait
 
     public function restaurantProductOptionPreviewAction(Request $request,
         FactoryInterface $productOptionFactory,
-        NormalizerInterface $serializer,
+        ObjectNormalizer $normalizer,
         LocaleProviderInterface $localeProvider)
     {
         $productOption = $productOptionFactory
@@ -979,8 +1026,13 @@ trait RestaurantTrait
                 }
             }
 
+
             return new JsonResponse(
-                $serializer->normalize($productOption, 'json', ['groups' => ['product_option']])
+                $normalizer->normalize($productOption, context: [
+                    'groups' => ['product_option'],
+                    // Disable IRI generation as objects don't have ids
+                    'iri' => false,
+                ])
             );
         }
 
@@ -1133,7 +1185,7 @@ trait RestaurantTrait
             // The "iss" (Issuer) claim contains a redirect URL
             'iss' => $redirectAfterUri,
             // The "sub" (Subject) claim contains a restaurant IRI
-            'sub' => $iriConverter->getIriFromItem($restaurant),
+            'sub' => $iriConverter->getIriFromResource($restaurant),
             // The custom "mplm" (Mercado Pago livemode) contains a boolean
             'mplm' => 'no',
         ]);
@@ -1259,6 +1311,8 @@ trait RestaurantTrait
                 $end
             );
 
+        $showOnlyMealVouchers = $request->query->has('show_only') && 'meal_vouchers' === $request->query->get('show_only');
+
         $stats = new RestaurantStats(
             $entityManager,
             $start,
@@ -1268,8 +1322,10 @@ trait RestaurantTrait
             $this->getParameter('kernel.default_locale'),
             $translator,
             $taxesHelper,
-            false, false,
-            $this->getParameter('nonprofits_enabled')
+            withVendorName: false,
+            withMessenger: false,
+            nonProfitsEnabled: $this->getParameter('nonprofits_enabled'),
+            showOnlyMealVouchers: $showOnlyMealVouchers
         );
 
         if ($request->isMethod('POST')) {
@@ -1300,6 +1356,7 @@ trait RestaurantTrait
             'cube_token' => $tokenFactory->createToken(['vendor_id' => $restaurant->getId()]),
             'picker_type' => $request->query->has('date') ? 'date' : 'month',
             'with_details' => $request->query->getBoolean('details', false),
+            'show_only_meal_vouchers' => $showOnlyMealVouchers
         ]));
     }
 

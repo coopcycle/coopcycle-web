@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { Switch, Modal, Input, Image } from 'antd'
 import Dropzone from 'dropzone'
 import _ from 'lodash'
@@ -51,7 +51,7 @@ function renderSwitch($input) {
 
   $input.closest('div.checkbox').remove()
 
-  render(
+  createRoot($switch.get(0)).render(
     <Switch defaultChecked={ checked }
       checkedChildren={ i18n.t('ENABLED') }
       unCheckedChildren={ i18n.t('DISABLED') }
@@ -62,7 +62,7 @@ function renderSwitch($input) {
           $hidden.remove()
         }
       }}
-      disabled={disabled} />, $switch.get(0)
+      disabled={disabled} />
   )
 }
 
@@ -225,7 +225,7 @@ $(function() {
 
   const imageFromURL = window.Routing.generate(formData.dataset.imageFromUrlRoute, { id: formData.dataset.restaurantId })
 
-  render(<StockPhotoSearch url={ imageFromURL } />, $bannerStockPhotoContainer.get(0))
+  createRoot($bannerStockPhotoContainer.get(0)).render(<StockPhotoSearch url={ imageFromURL } />)
 
   $bannerDropzoneContainer.appendTo($bannerContainer)
   $bannerStockPhotoContainer.appendTo($bannerContainer)
@@ -252,14 +252,15 @@ $(function() {
     const cuisines = JSON.parse(cuisinesEl.dataset.values)
     const cuisinesTargetEl = document.querySelector(cuisinesEl.dataset.target)
 
-    render(
+    createRoot(cuisinesEl).render(
       <Select
         defaultValue={ _.map(JSON.parse(cuisinesTargetEl.value || '[]'), cuisineAsOption) }
         isMulti
         options={ _.map(cuisines, cuisineAsOption) }
         onChange={ cuisines => {
           cuisinesTargetEl.value = JSON.stringify(cuisines || [])
-        }} />, cuisinesEl)
+        }} />
+    )
   }
 
   $('#restaurant_useDifferentBusinessAddress').on('change', function() {

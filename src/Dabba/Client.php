@@ -2,7 +2,7 @@
 
 namespace AppBundle\Dabba;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Dabba\OAuthCredentialsInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -191,7 +191,7 @@ class Client
     {
         return $this->jwtEncoder->encode([
             'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
-            'sub' => $this->iriConverter->getIriFromItem($order),
+            'sub' => $this->iriConverter->getIriFromResource($order),
         ]);
     }
 }

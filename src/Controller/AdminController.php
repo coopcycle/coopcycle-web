@@ -4,8 +4,10 @@ namespace AppBundle\Controller;
 
 use ACSEO\TypesenseBundle\Finder\CollectionFinderInterface;
 use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Metadata\GetCollection;
 use AppBundle\Annotation\HideSoftDeleted;
+use AppBundle\Api\Dto\ResourceApplication;
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\AdminDashboardTrait;
 use AppBundle\Controller\Utils\DeliveryTrait;
@@ -40,6 +42,7 @@ use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderVendor;
 use AppBundle\Entity\Sylius\OrderRepository;
+use AppBundle\Entity\Sylius\TaxRate;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
@@ -93,6 +96,7 @@ use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Utils\Settings;
 use Carbon\Carbon;
 use Cocur\Slugify\SlugifyInterface;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Exception\ForeignKeyConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -113,9 +117,11 @@ use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Sylius\Component\Promotion\Factory\PromotionCouponFactoryInterface;
 use Sylius\Component\Promotion\Model\PromotionCouponInterface;
+use Sylius\Component\Promotion\Model\PromotionInterface;
 use Sylius\Component\Promotion\Repository\PromotionCouponRepositoryInterface;
 use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
+use Sylius\Component\Taxation\Model\TaxCategoryInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -130,6 +136,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client as OAuth2Client;
@@ -387,14 +394,14 @@ class AdminController extends AbstractController
         ]));
     }
 
-    public function foodtechDashboardAction($date, Request $request, Redis $redis, IriConverterInterface $iriConverter)
+    public function foodtechDashboardAction($date, Request $request, Redis $redis, IriConverterInterface $iriConverter, NormalizerInterface $normalizer)
     {
         if ($request->query->has('order')) {
             $order = $request->query->get('order');
             if (is_numeric($order)) {
                 return $this->redirectToRoute($request->attributes->get('_route'), [
                     'date' => $date,
-                    'order' => $iriConverter->getItemIriFromResourceClass(Order::class, [$order])
+                    'order' => $iriConverter->getIriFromResource(Order::class, context: ['uri_variables' => ['id' => $order]])
                 ], 301);
             }
         }
@@ -403,10 +410,9 @@ class AdminController extends AbstractController
 
         $orders = $this->orderRepository->findOrdersByDate($date);
 
-        $ordersNormalized = $this->get('serializer')->normalize($orders, 'jsonld', [
+        $ordersNormalized = $normalizer->normalize($orders, 'jsonld', [
             'resource_class' => Order::class,
-            'operation_type' => 'item',
-            'item_operation_name' => 'get',
+            'operation' => new GetCollection(),
             'groups' => ['order_minimal']
         ]);
 
@@ -963,27 +969,28 @@ class AdminController extends AbstractController
         $categories = [];
         $countries = [];
 
+        /** @var TaxCategoryInterface[] */
         $taxCategories = $taxCategoryRepository->findBy([], ['name' => 'ASC']);
         foreach ($taxCategories as $c) {
-            $isLegacy = count($c->getRates()) === 1 && null === $c->getRates()->first()->getCountry();
-            if (!$isLegacy) {
-                foreach ($c->getRates() as $r) {
-                    $countries[] = $r->getCountry();
-                }
-            }
+
+            /** @var Collection<array-key, TaxRate> */
+            $rates = $c->getRates();
+
+            $isLegacy = count($rates) === 1 && null === $rates->first()->getCountry();
 
             if ($isLegacy) {
                 continue;
             }
 
-            $rates = [];
-            foreach ($c->getRates() as $rate) {
-                $rates[$rate->getCountry()][] = $rate;
+            $ratesByCountry = [];
+            foreach ($rates as $rate) {
+                $countries[] = $rate->getCountry();
+                $ratesByCountry[$rate->getCountry()][] = $rate;
             }
 
             $categories[] = [
                 'name' => $this->translator->trans($c->getName(), [], 'taxation'),
-                'rates' => $rates,
+                'rates' => $ratesByCountry,
             ];
         }
 
@@ -1046,7 +1053,9 @@ class AdminController extends AbstractController
         array_map(
             function ($ruleSet) use (&$relatedEntitiesByPricingRuleSetId, $normalizer, $pricingRuleSetManager) {
                 $normalizedRelatedEntities = array_map(
-                    function ($entity) use ($normalizer) { return $normalizer->normalize($entity);},
+                    function ($entity) use ($normalizer) {
+                        return $normalizer->normalize(new ResourceApplication($entity));
+                    },
                     $pricingRuleSetManager->getPricingRuleSetApplications($ruleSet)
                 );
                 $relatedEntitiesByPricingRuleSetId[$ruleSet->getId()] = $normalizedRelatedEntities;
@@ -1879,6 +1888,7 @@ class AdminController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
+        /** @var PromotionInterface */
         $promotion = $promotionRepository->find($id);
 
         $promotionCoupon = $promotionCouponFactory->createForPromotion($promotion);
@@ -1887,6 +1897,7 @@ class AdminController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+
             $promotionCoupon = $form->getData();
             $promotion->addCoupon($promotionCoupon);
 
@@ -2145,7 +2156,9 @@ class AdminController extends AbstractController
         array_map(
             function ($ruleSet) use (&$relatedEntitiesByTimeSlotId, $normalizer, $timeSlotManager) {
                 $normalizedRelatedEntities = array_map(
-                    function ($entity) use ($normalizer) { return $normalizer->normalize($entity);},
+                    function ($entity) use ($normalizer) {
+                        return $normalizer->normalize(new ResourceApplication($entity));
+                    },
                     $timeSlotManager->getTimeSlotApplications($ruleSet)
                 );
                 $relatedEntitiesByTimeSlotId[$ruleSet->getId()] = $normalizedRelatedEntities;
@@ -2254,7 +2267,9 @@ class AdminController extends AbstractController
         array_map(
             function ($packageSet) use (&$relatedEntitiesByPackageSetId, $normalizer, $packageSetManager) {
                 $normalizedRelatedEntities = array_map(
-                    function ($entity) use ($normalizer) { return $normalizer->normalize($entity);},
+                    function ($entity) use ($normalizer) {
+                        return $normalizer->normalize(new ResourceApplication($entity));
+                    },
                     $packageSetManager->getPackageSetApplications($packageSet)
                 );
                 $relatedEntitiesByPackageSetId[$packageSet->getId()] = $normalizedRelatedEntities;

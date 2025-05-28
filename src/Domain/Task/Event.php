@@ -27,9 +27,6 @@ abstract class Event extends BaseEvent implements SerializableEventInterface, Hu
     public function normalize(NormalizerInterface $serializer)
     {
         $normalized = $serializer->normalize($this->getTask(), 'jsonld', [
-            'resource_class' => Task::class,
-            'operation_type' => 'item',
-            'item_operation_name' => 'get',
             'groups' => ['task', 'delivery', 'address']
         ]);
 

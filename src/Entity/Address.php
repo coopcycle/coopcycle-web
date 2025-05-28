@@ -2,32 +2,56 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\CreateAddress;
+use AppBundle\Api\State\StoreAddressesProvider;
 use AppBundle\Entity\Base\BaseAddress;
 use AppBundle\Entity\Base\GeoCoordinates;
+use AppBundle\Entity\Store;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
-use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
  * @see http://schema.org/Place Documentation on Schema.org
  */
-#[ApiResource(iri: 'http://schema.org/Place', attributes: ['normalization_context' => ['groups' => ['address']]], collectionOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_ADMIN')"], 'create_address' => ['method' => 'POST', 'path' => '/me/addresses', 'controller' => CreateAddress::class]], itemOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_ADMIN')"], 'patch' => ['method' => 'PATCH', 'access_control' => "is_granted('edit', object)"]], subresourceOperations: ['api_stores_addresses_get_subresource' => ['method' => 'GET', 'normalization_context' => ['groups' => ['address', 'delivery']]]])]
+#[ApiResource(
+    types: ['http://schema.org/Place'],
+    operations: [
+        new Get(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new Patch(security: 'is_granted(\'edit\', object)'),
+        new GetCollection(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new Post(uriTemplate: '/me/addresses', controller: CreateAddress::class)
+    ],
+    normalizationContext: ['groups' => ['address']]
+)]
+#[ApiResource(
+    uriTemplate: '/stores/{id}/addresses',
+    types: ['http://schema.org/Place'],
+    operations: [new GetCollection()],
+    uriVariables: [
+        'id' => new Link(fromClass: Store::class, fromProperty: 'addresses')
+    ],
+    status: 200,
+    normalizationContext: ['groups' => ['address']],
+    provider: StoreAddressesProvider::class
+)]
 class Address extends BaseAddress
 {
     /**
      * @var int
      */
     private $id;
-
     private $company;
-
-    #[Groups(['task', 'warehouse', 'delivery', 'delivery_create', 'task_create', 'task_edit'])]
+    #[Groups(['task', 'warehouse', 'delivery', 'delivery_create', 'task_create', 'task_edit', 'address'])]
     private $contactName;
-
-
     private $complete;
-
 
     private bool $isMapPicked = false;
 
@@ -40,19 +64,16 @@ class Address extends BaseAddress
     {
         return $this->id;
     }
-
     public function getCompany()
     {
         return $this->company;
     }
-
     public function setCompany($company)
     {
         $this->company = $company;
 
         return $this;
     }
-
     /**
      * @return mixed
      */
@@ -60,7 +81,6 @@ class Address extends BaseAddress
     {
         return $this->contactName;
     }
-
     /**
      * @param mixed $contactName
      *
@@ -72,7 +92,6 @@ class Address extends BaseAddress
 
         return $this;
     }
-
     #[SerializedName('firstName')]
     #[Groups(['task'])]
     public function getFirstName()
@@ -91,7 +110,6 @@ class Address extends BaseAddress
 
         return null;
     }
-
     #[SerializedName('lastName')]
     #[Groups(['task'])]
     public function getLastName()
@@ -110,7 +128,6 @@ class Address extends BaseAddress
 
         return null;
     }
-
     #[SerializedName('latLng')]
     #[Groups(['delivery_create', 'pricing_deliveries'])]
     public function setLatLng(array $latLng)
@@ -121,18 +138,15 @@ class Address extends BaseAddress
 
         return $this;
     }
-
     public function setComplete(bool $complete): self
     {
         $this->complete = $complete;
         return $this;
     }
-
     public function getComplete(): bool
     {
         return $this->complete;
     }
-
 
     #[Groups(['address', 'address_create', 'task', 'task_create', 'task_edit', 'order_update', 'restaurant_delivery'])]
     public function getIsMapPicked(): bool

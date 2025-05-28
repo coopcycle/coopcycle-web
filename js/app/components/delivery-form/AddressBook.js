@@ -116,6 +116,7 @@ export default function AddressBook({ index, addresses, storeDeliveryInfos, shal
       <div className="row">
         <div className="col-sm-12 mb-3">
           <Select
+            data-testid="address-select"
             style={{ width: '100%' }}
             showSearch
             placeholder={t('TASK_FORM_SEARCH_SAVED_ADDRESS_BY_NAME')}
@@ -272,7 +273,7 @@ export default function AddressBook({ index, addresses, storeDeliveryInfos, shal
         }}
         shouldCloseOnOverlayClick={false}
         contentLabel={t('ADDRESS_BOOK_PROP_CHANGED_DISCLAIMER')}
-        overlayClassName="ReactModal__Overlay--addressProp"
+        overlayClassName="ReactModal__Overlay--zIndex-1001"
         className="ReactModal__Content--addressProp"
         htmlOpenClassName="ReactModal__Html--open"
         bodyOpenClassName="ReactModal__Body--open">

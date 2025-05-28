@@ -2,7 +2,7 @@
 
 namespace AppBundle\Entity\Model;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Metadata\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 

@@ -7,7 +7,7 @@ use AppBundle\Message\DeliveryCreated;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\DeliveryManager;
 use Doctrine\Persistence\ManagerRegistry;
-use ApiPlatform\Core\EventListener\EventPriorities;
+use ApiPlatform\Symfony\EventListener\EventPriorities;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,16 +20,13 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 final class DeliverySubscriber implements EventSubscriberInterface
 {
-
     private static $matchingRoutes = [
-        'api_deliveries_get_item',
-        'api_deliveries_post_collection',
-        'api_deliveries_check_collection',
-        'api_deliveries_suggest_optimizations_collection',
+        '_api_/deliveries/assert_post',
+        '_api_/deliveries/suggest_optimizations_post',
     ];
 
     public function __construct(
-        private  ManagerRegistry $doctrine,
+        private ManagerRegistry $doctrine,
         private TokenStoreExtractor $storeExtractor,
         protected DeliveryManager $deliveryManager)
     {
@@ -46,7 +43,6 @@ final class DeliverySubscriber implements EventSubscriberInterface
         // @see https://api-platform.com/docs/core/events/#built-in-event-listeners
         return [
             KernelEvents::REQUEST => [
-                ['setStore', EventPriorities::POST_DESERIALIZE],
                 ['setDefaults', EventPriorities::POST_DESERIALIZE],
             ],
             KernelEvents::VIEW => [
@@ -61,29 +57,10 @@ final class DeliverySubscriber implements EventSubscriberInterface
         return in_array($request->attributes->get('_route'), self::$matchingRoutes);
     }
 
-    public function setStore(RequestEvent $event)
-    {
-        $request = $event->getRequest();
-
-        if ('api_deliveries_post_collection' !== $request->attributes->get('_route')) {
-            return;
-        }
-
-        $store = $this->storeExtractor->extractStore();
-
-        if (null === $store) {
-            return;
-        }
-
-        $delivery = $request->attributes->get('data');
-
-        $delivery->setStore($store);
-    }
-
+    /**
+     * After denormalizing the request, we may deduce missing data from the delivery's store or from the pickup.
+     */
     public function setDefaults(RequestEvent $event)
-        /*
-        After denormalizing the request, we may deduce missing data from the delivery's store or from the pickup.
-        */
     {
         $request = $event->getRequest();
         if (!$this->matchRoute($request)) {
@@ -99,7 +76,7 @@ final class DeliverySubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
 
-        if ('api_deliveries_post_collection' !== $request->attributes->get('_route')) {
+        if ('_api_/deliveries.{_format}_post' !== $request->attributes->get('_route')) {
             return;
         }
 
@@ -123,7 +100,7 @@ final class DeliverySubscriber implements EventSubscriberInterface
     public function handleCheckResponse(ViewEvent $event)
     {
         $request = $event->getRequest();
-        if ('api_deliveries_check_collection' !== $request->attributes->get('_route')) {
+        if ('_api_/deliveries/assert_post' !== $request->attributes->get('_route')) {
             return;
         }
 

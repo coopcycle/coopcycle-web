@@ -2,10 +2,10 @@
 
 namespace AppBundle\Api\Filter;
 
-use ApiPlatform\Core\Api\IdentifiersExtractorInterface;
-use ApiPlatform\Core\Api\IriConverterInterface;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use ApiPlatform\Metadata\Operation;
 use AppBundle\Entity\Sylius\Order;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -21,11 +21,9 @@ final class OrderStoreFilter extends SearchFilter
 
     public function __construct(
         ManagerRegistry $managerRegistry,
-        ?RequestStack $requestStack,
         IriConverterInterface $iriConverter,
         PropertyAccessorInterface $propertyAccessor = null,
         LoggerInterface $logger = null,
-        IdentifiersExtractorInterface $identifiersExtractor = null,
         NameConverterInterface $nameConverter = null
     )
     {
@@ -33,10 +31,10 @@ final class OrderStoreFilter extends SearchFilter
             $this->storeIdProperty => 'exact',
         ];
 
-        parent::__construct($managerRegistry, $requestStack, $iriConverter, $propertyAccessor, $logger, $properties, $identifiersExtractor, $nameConverter);
+        parent::__construct($managerRegistry, $iriConverter, $propertyAccessor, $logger, $properties, $nameConverter);
     }
 
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = []): void
     {
         if ($resourceClass !== Order::class) {
             return;
@@ -44,7 +42,7 @@ final class OrderStoreFilter extends SearchFilter
 
         // expose alias in the API instead of a path to a nested property
         if ($this->storeIdAlias === $property) {
-            parent::filterProperty('delivery.store.id', $value, $queryBuilder, $queryNameGenerator, $resourceClass, $operationName);
+            parent::filterProperty('delivery.store.id', $value, $queryBuilder, $queryNameGenerator, $resourceClass, $operation, $context);
         }
     }
 

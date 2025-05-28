@@ -1,6 +1,5 @@
 {% extends layout %}
 
-
 {% set is_new = delivery.id is null %}
 
 {% block dashboard_subnav %}
@@ -29,7 +28,6 @@
         {#      TODO: display properly the restaurant(s) for foodtech orders #}
       {% endif %}
 
-      {% set order = delivery.order %}
       {% if order is not null %}
         <li>{% trans %}adminDashboard.orders.title{% endtrans %}</li>
         <li><a href="{{ path('admin_order', { id: order.id }) }}" data-testid="order_id">{{ order.number }}</a></li>
@@ -49,12 +47,10 @@
   {% block alerts %}
   {% endblock %}
 
-  {% set order = delivery.order is null ? null : delivery.order|serialize %}
-
-  {% if delivery.order is not empty %}
-    <h3 class="text-center">{{ 'stores.deliveries.heading2'|trans({ '%delivery_id%': delivery.order.number }) }}</h3>
+  {% if order is not null %}
+    <h3 class="text-center">{{ 'stores.deliveries.heading2'|trans({ '%delivery_id%': order.number }) }}</h3>
   {% endif %}
-  
+
 
   {% if not is_new %}
     {% set tracking_link = url('public_delivery', { hashid: delivery|hashid }) %}
@@ -65,8 +61,11 @@
   <div {{ react_component('Delivery/DeliveryForm', {
         isNew: is_new,
         storeId: store.id,
+        storeNodeId: store|get_iri_from_item,
+        order: order is not null ? order|serialize : null,
         deliveryId: delivery.id,
-        order: order,
+        deliveryNodeId: is_new ? null : delivery|get_iri_from_item,
+        delivery: deliveryData ? deliveryData|serialize('jsonld', {groups: ['delivery', 'address', 'barcode']}) : null,
         trackingLink: tracking_link,
         isDispatcher: isDispatcher,
         isDebugPricing: debug_pricing

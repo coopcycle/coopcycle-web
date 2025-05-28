@@ -8,12 +8,24 @@ use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\Sylius\Product;
+use AppBundle\Entity\Sylius\ProductImage;
+use AppBundle\Entity\Sylius\ProductOption;
+use AppBundle\Entity\Sylius\ProductOptions;
+use AppBundle\Entity\Sylius\ProductOptionValue;
+use AppBundle\Entity\Sylius\ProductVariant;
 use AppBundle\Utils\RestaurantFilter;
 use Carbon\Carbon;
+use DeepCopy\Filter\KeepFilter;
+use DeepCopy\Filter\ReplaceFilter;
+use DeepCopy\Filter\SetNullFilter;
+use DeepCopy\Matcher\PropertyMatcher;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
+use Ramsey\Uuid\Uuid;
 use Sylius\Component\Order\Model\OrderInterface;
+use Sylius\Component\Product\Model\ProductAttributeValue;
+use Sylius\Resource\Model\AbstractTranslation;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class LocalBusinessRepository extends EntityRepository
@@ -447,5 +459,117 @@ class LocalBusinessRepository extends EntityRepository
                 ->innerJoin(BusinessAccount::class, 'ba', Expr\Join::WITH, 'ba.businessRestaurantGroup = g.businessRestaurantGroup and ba.id = :business_account')
                 ->setParameter(':business_account', $this->businessContext->getBusinessAccount());
         }
+    }
+
+    public function findOthers(LocalBusiness $restaurant)
+    {
+        $qb = $this->createQueryBuilder('r');
+
+        $qb->select('r.id')->addSelect('r.name');
+        $qb->andWhere('r.id != :restaurant_id');
+        $qb->setParameter('restaurant_id', $restaurant);
+
+        $qb
+            ->orderBy('r.name', 'ASC');
+
+        return $qb->getQuery()->getArrayResult();
+    }
+
+    public function copyProducts(LocalBusiness $src, LocalBusiness $dest)
+    {
+        if ($src === $dest) {
+            throw new \Exception('Source and destination are the same');
+        }
+
+        $copier = new \DeepCopy\DeepCopy();
+        $copier->addFilter(new \DeepCopy\Filter\ChainableFilter(
+            new \DeepCopy\Filter\Doctrine\DoctrineProxyFilter()),
+            new \DeepCopy\Matcher\Doctrine\DoctrineProxyMatcher()
+        );
+        $copier->addFilter(new \DeepCopy\Filter\Doctrine\DoctrineCollectionFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
+
+        // Set "id" to NULL so that new entities are created
+        $copier->addFilter(new SetNullFilter(), new PropertyMatcher(Product::class, 'id'));
+        $copier->addFilter(new SetNullFilter(), new PropertyMatcher(ProductAttributeValue::class, 'id'));
+        $copier->addFilter(new SetNullFilter(), new PropertyMatcher(ProductOption::class, 'id'));
+        $copier->addFilter(new SetNullFilter(), new PropertyMatcher(ProductOptions::class, 'id'));
+        $copier->addFilter(new SetNullFilter(), new PropertyMatcher(ProductOptionValue::class, 'id'));
+        $copier->addFilter(new SetNullFilter(), new PropertyMatcher(ProductVariant::class, 'id'));
+        $copier->addFilter(new SetNullFilter(), new PropertyMatcher(AbstractTranslation::class, 'id'));
+
+        // FIXME
+        // If original image is removed, both images will be removed
+        // We should copy also the file
+        $copier->addFilter(new SetNullFilter(), new PropertyMatcher(ProductImage::class, 'id'));
+
+        $generateUUID = function ($currentValue) {
+            return Uuid::uuid4()->toString();
+        };
+
+        $replaceRestaurant = function ($currentValue) use ($dest) {
+            return $dest;
+        };
+
+        // Generate new UUIDs for "code"
+        $copier->addFilter(new ReplaceFilter($generateUUID), new PropertyMatcher(Product::class, 'code'));
+        $copier->addFilter(new ReplaceFilter($generateUUID), new PropertyMatcher(ProductOption::class, 'code'));
+        $copier->addFilter(new ReplaceFilter($generateUUID), new PropertyMatcher(ProductOptionValue::class, 'code'));
+        $copier->addFilter(new ReplaceFilter($generateUUID), new PropertyMatcher(ProductVariant::class, 'code'));
+
+        // Replace restaurant to dest
+        $copier->addFilter(new ReplaceFilter($replaceRestaurant), new PropertyMatcher(Product::class, 'restaurant'));
+        $copier->addFilter(new ReplaceFilter($replaceRestaurant), new PropertyMatcher(ProductOption::class, 'restaurant'));
+
+        // Keep configured tax category
+        $copier->addFilter(new KeepFilter(), new PropertyMatcher(ProductVariant::class, 'taxCategory'));
+
+        $productOptions = [];
+        foreach ($src->getProductOptions() as $productOption) {
+
+            $copy = $copier->copy($productOption);
+
+            $productOptions[$productOption->getCode()] = $copy;
+
+            $this->getEntityManager()->persist($copy);
+        }
+
+        foreach ($src->getProducts() as $product) {
+
+            $copy = $copier->copy($product);
+
+            $copy->setSlug($copy->getCode());
+
+            // Avoid duplicating options
+            if (count($product->getProductOptions()) > 0) {
+                $copy->getProductOptions()->clear();
+                foreach ($product->getOptions() as $option) {
+                    $optionCopy = $productOptions[$option->getCode()];
+                    $copy->addOption($optionCopy);
+                }
+            }
+
+            // Keep only the "default" variant
+            $defaultVariant = $copy->getVariants()->first();
+            $copy->getVariants()->clear();
+            $copy->addVariant($defaultVariant);
+
+            // Ignore reusable packagings
+            $product->setReusablePackagingEnabled(false);
+            $product->clearReusablePackagings();
+
+            // Re-set original attribute, because translations are without ID
+            $srcAttributes = array_map(fn ($attr) => $attr->getAttribute(), $product->getAttributes()->toArray());
+            foreach ($copy->getAttributes() as $attributeValue) {
+                foreach ($srcAttributes as $srcAttribute) {
+                    if ($attributeValue->getAttribute()->getId() === $srcAttribute->getId()) {
+                        $attributeValue->setAttribute($srcAttribute);
+                    }
+                }
+            }
+
+            $this->getEntityManager()->persist($copy);
+        }
+
+        $this->getEntityManager()->flush();
     }
 }

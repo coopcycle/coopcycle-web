@@ -2,19 +2,41 @@
 
 namespace AppBundle\Api\Resource;
 
-use ApiPlatform\Core\Action\NotFoundAction;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
-use AppBundle\Action\Urbantz\ReceiveWebhook as ReceiveWebhookController;
-use AppBundle\Api\Dto\UrbantzOrderInput;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Action\NotFoundAction;
+use AppBundle\Api\State\UrbantzWebhookProvider;
+use AppBundle\Api\State\UrbantzWebhookProcessor;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
-#[ApiResource(collectionOperations: [], itemOperations: ['get' => ['method' => 'GET', 'controller' => NotFoundAction::class, 'read' => false, 'output' => false], 'receive_webhook' => ['method' => 'POST', 'path' => '/urbantz/webhook/{id}', 'input' => UrbantzOrderInput::class, 'controller' => ReceiveWebhookController::class, 'denormalization_context' => ['groups' => ['urbantz_input']], 'normalization_context' => ['groups' => ['urbantz_output']], 'security' => "is_granted('ROLE_API_KEY')", 'status' => 200, 'openapi_context' => ['summary' => 'Receives a webhook from Urbantz.']]])]
+#[ApiResource(
+    operations: [
+        new Get(
+            controller: NotFoundAction::class,
+            output: false,
+            read: false
+        ),
+        new Post(
+            uriTemplate: '/urbantz/webhook/{id}',
+            status: 200,
+            openapiContext: ['summary' => 'Receives a webhook from Urbantz.'],
+            normalizationContext: ['groups' => ['urbantz_output']],
+            denormalizationContext: ['groups' => ['urbantz_input']],
+            security: 'is_granted(\'ROLE_API_KEY\')',
+            provider: UrbantzWebhookProvider::class,
+            processor: UrbantzWebhookProcessor::class
+        )
+    ]
+)]
 final class UrbantzWebhook
 {
     const TASKS_ANNOUNCED = 'tasks_announced';
     const TASK_CHANGED    = 'task_changed';
+    const TASK_UNASSOCIATED = 'task_unassociated';
 
     /**
      * @var string
@@ -28,7 +50,8 @@ final class UrbantzWebhook
     #[Groups(['urbantz_output'])]
     public $deliveries = [];
 
-    public $hub;
+    #[Groups(['urbantz_input'])]
+    public $extTrackId;
 
     public function __construct(string $id = null)
     {
@@ -40,6 +63,7 @@ final class UrbantzWebhook
         return in_array($eventName, [
             self::TASKS_ANNOUNCED,
             self::TASK_CHANGED,
+            self::TASK_UNASSOCIATED,
         ]);
     }
 }

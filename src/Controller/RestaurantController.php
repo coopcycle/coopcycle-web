@@ -2,8 +2,8 @@
 
 namespace AppBundle\Controller;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
-use ApiPlatform\Core\Exception\ItemNotFoundException;
+use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Exception\ItemNotFoundException;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Controller\Utils\InjectAuthTrait;
@@ -41,7 +41,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Geotools\Geotools;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Psr\Log\LoggerInterface;
-use SimpleBus\SymfonyBridge\Bus\EventBus;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
@@ -53,6 +52,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -82,7 +82,7 @@ class RestaurantController extends AbstractController
         private Serializer $serializer,
         private RestaurantFilter $restaurantFilter,
         private RestaurantResolver $restaurantResolver,
-        private EventBus $eventBus,
+        private MessageBusInterface $eventBus,
         protected JWTTokenManagerInterface $JWTTokenManager,
         private TimingRegistry $timingRegistry,
         private OrderAccessTokenManager $orderAccessTokenManager,
@@ -500,7 +500,7 @@ class RestaurantController extends AbstractController
 
             try {
 
-                $shippingAddress = $iriConverter->getItemFromIri($addressIRI);
+                $shippingAddress = $iriConverter->getResourceFromIri($addressIRI);
 
                 if ($user->getAddresses()->contains($shippingAddress)) {
                     $cart->setShippingAddress($shippingAddress);
@@ -576,7 +576,7 @@ class RestaurantController extends AbstractController
             $this->persistAndFlushCart($cart);
         }
 
-        $this->eventBus->handle(new OrderUpdated($cart));
+        $this->eventBus->dispatch(new OrderUpdated($cart));
         return $this->jsonResponse($cart, $errors);
     }
 
@@ -636,7 +636,7 @@ class RestaurantController extends AbstractController
         $errors = $this->validator->validate($cart);
         $errors = ValidationUtils::serializeViolationList($errors);
 
-        $this->eventBus->handle(new OrderUpdated($cart));
+        $this->eventBus->dispatch(new OrderUpdated($cart));
 
         return $this->jsonResponse($cart, $errors);
     }
@@ -691,7 +691,7 @@ class RestaurantController extends AbstractController
         $errors = $this->validator->validate($cart);
         $errors = ValidationUtils::serializeViolationList($errors);
 
-        $this->eventBus->handle(new OrderUpdated($cart));
+        $this->eventBus->dispatch(new OrderUpdated($cart));
         return $this->jsonResponse($cart, $errors);
     }
 
@@ -714,7 +714,7 @@ class RestaurantController extends AbstractController
         $errors = $this->validator->validate($cart);
         $errors = ValidationUtils::serializeViolationList($errors);
 
-        $this->eventBus->handle(new OrderUpdated($cart));
+        $this->eventBus->dispatch(new OrderUpdated($cart));
         return $this->jsonResponse($cart, $errors);
     }
 
