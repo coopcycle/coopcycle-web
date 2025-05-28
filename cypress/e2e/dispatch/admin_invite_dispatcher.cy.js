@@ -1,6 +1,6 @@
 describe('Dispatch; admin; invite dispatcher', () => {
   beforeEach(() => {
-    cy.loadFixturesWithSetup('../cypress/fixtures/user_admin.yml')
+    cy.loadFixturesWithSetup('ORM/user_admin.yml')
     cy.login('admin', '12345678')
   })
 
