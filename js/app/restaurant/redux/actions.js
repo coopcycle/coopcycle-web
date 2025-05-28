@@ -605,15 +605,10 @@ export function createInvitation() {
   return (dispatch, getState) => {
     dispatch(invitePeopleRequest())
 
-<<<<<<< HEAD
     const { cart: { id } } = getState()
     const { jwt, user } = window._auth
-    const url = window.Routing.generate('api_orders_create_invitation_item', getRoutingParams({ id }))
-=======
-    const { cart: {id} } = getState()
-    const {jwt, user} = window._auth
-    const url = window.Routing.generate('_api_/orders/{id}/create_invitation_post', getRoutingParams({id}))
->>>>>>> master
+    const url = window.Routing.generate('_api_/orders/{id}/create_invitation_post', getRoutingParams({ id }))
+
     httpClient.request({
       method: 'post',
       url,
