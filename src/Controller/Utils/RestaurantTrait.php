@@ -66,6 +66,8 @@ use Sylius\Component\Product\Repository\ProductOptionRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Form\ChoiceList\Loader\CallbackChoiceLoader;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -763,11 +765,45 @@ trait RestaurantTrait
 
         $routes = $request->attributes->get('routes');
 
+        $copyForm = $this->createFormBuilder()
+            ->add('restaurant', ChoiceType::class, [
+                'choice_loader' => new CallbackChoiceLoader(function () use ($restaurant) {
+                    $otherRestaurants = $this->getDoctrine()
+                        ->getRepository(LocalBusiness::class)
+                        ->findOthers($restaurant);
+
+                    $choices = [];
+                    foreach ($otherRestaurants as $otherRestaurant) {
+                        $choices[$otherRestaurant['name']] = $otherRestaurant['id'];
+                    }
+
+                    return $choices;
+                })
+            ])
+            ->getForm();
+
+        $copyForm->handleRequest($request);
+        if ($copyForm->isSubmitted() && $copyForm->isValid()) {
+
+            $destId = $copyForm->get('restaurant')->getData();
+
+            $dest = $this->getDoctrine()
+                ->getRepository(LocalBusiness::class)
+                ->find($destId);
+
+            $this->getDoctrine()
+                ->getRepository(LocalBusiness::class)
+                ->copyProducts($restaurant, $dest);
+
+            $this->redirectToRoute($routes['products'], ['id' => $destId]);
+        }
+
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'products' => $products,
             'restaurant' => $restaurant,
             'restaurant_iri' => $iriConverter->getIriFromResource($restaurant),
+            'copy_form' => $copyForm->createView(),
         ], $routes));
     }
 

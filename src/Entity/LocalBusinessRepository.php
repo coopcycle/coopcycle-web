@@ -10,9 +10,13 @@ use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Utils\RestaurantFilter;
 use Carbon\Carbon;
+use DeepCopy\Filter\KeepFilter;
+use DeepCopy\Filter\ReplaceFilter;
+use DeepCopy\Matcher\PropertyMatcher;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
+use Ramsey\Uuid\Uuid;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -447,5 +451,98 @@ class LocalBusinessRepository extends EntityRepository
                 ->innerJoin(BusinessAccount::class, 'ba', Expr\Join::WITH, 'ba.businessRestaurantGroup = g.businessRestaurantGroup and ba.id = :business_account')
                 ->setParameter(':business_account', $this->businessContext->getBusinessAccount());
         }
+    }
+
+    public function findOthers(LocalBusiness $restaurant)
+    {
+        $qb = $this->createQueryBuilder('r');
+
+        $qb->select('r.id')->addSelect('r.name');
+        $qb->andWhere('r.id != :restaurant_id');
+        $qb->setParameter('restaurant_id', $restaurant);
+
+        $qb
+            ->orderBy('r.name', 'ASC');
+
+        return $qb->getQuery()->getArrayResult();
+    }
+
+    public function copyProducts(LocalBusiness $src, LocalBusiness $dest)
+    {
+        if ($src === $dest) {
+            throw new \Exception('Source and destination are the same');
+        }
+
+        $copier = new \DeepCopy\DeepCopy();
+        $copier->addFilter(new \DeepCopy\Filter\ChainableFilter(
+            new \DeepCopy\Filter\Doctrine\DoctrineProxyFilter()),
+            new \DeepCopy\Matcher\Doctrine\DoctrineProxyMatcher()
+        );
+        $copier->addFilter(new \DeepCopy\Filter\Doctrine\DoctrineCollectionFilter(), new \DeepCopy\Matcher\PropertyTypeMatcher('Doctrine\Common\Collections\Collection'));
+
+        // Set "id" to NULL so that new entities are created
+        $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new PropertyMatcher('AppBundle\Entity\Sylius\Product', 'id'));
+        $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new PropertyMatcher('AppBundle\Entity\Sylius\ProductOption', 'id'));
+        $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new PropertyMatcher('AppBundle\Entity\Sylius\ProductOptions', 'id'));
+        $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new PropertyMatcher('AppBundle\Entity\Sylius\ProductOptionValue  ', 'id'));
+        $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new PropertyMatcher('AppBundle\Entity\Sylius\ProductVariant', 'id'));
+        $copier->addFilter(new \DeepCopy\Filter\SetNullFilter(), new PropertyMatcher('Sylius\Resource\Model\AbstractTranslation', 'id'));
+
+        $generateUUID = function ($currentValue) {
+            return Uuid::uuid4()->toString();
+        };
+
+        $replaceRestaurant = function ($currentValue) use ($dest) {
+            return $dest;
+        };
+
+        // Generate new UUIDs for "code"
+        $copier->addFilter(new ReplaceFilter($generateUUID), new PropertyMatcher('AppBundle\Entity\Sylius\Product', 'code'));
+        $copier->addFilter(new ReplaceFilter($generateUUID), new PropertyMatcher('AppBundle\Entity\Sylius\ProductOption', 'code'));
+        $copier->addFilter(new ReplaceFilter($generateUUID), new PropertyMatcher('AppBundle\Entity\Sylius\ProductOptionValue', 'code'));
+        $copier->addFilter(new ReplaceFilter($generateUUID), new PropertyMatcher('AppBundle\Entity\Sylius\ProductVariant', 'code'));
+
+        // Replace restaurant to dest
+        $copier->addFilter(new ReplaceFilter($replaceRestaurant), new PropertyMatcher('AppBundle\Entity\Sylius\Product', 'restaurant'));
+        $copier->addFilter(new ReplaceFilter($replaceRestaurant), new PropertyMatcher('AppBundle\Entity\Sylius\ProductOption', 'restaurant'));
+
+        // Keep configured tax category
+        $copier->addFilter(new KeepFilter(), new PropertyMatcher('AppBundle\Entity\Sylius\ProductVariant', 'taxCategory'));
+
+        $productOptions = [];
+        foreach ($src->getProductOptions() as $productOption) {
+
+            $copy = $copier->copy($productOption);
+
+            $productOptions[$productOption->getCode()] = $copy;
+
+            $this->getEntityManager()->persist($copy);
+        }
+
+        foreach ($src->getProducts() as $product) {
+
+            $copy = $copier->copy($product);
+
+            $copy->setSlug($copy->getCode());
+
+            // Avoid duplicating options
+            if (count($product->getProductOptions()) > 0) {
+                $copy->getProductOptions()->clear();
+                foreach ($product->getOptions() as $option) {
+                    $optionCopy = $productOptions[$option->getCode()];
+                    $copy->addOption($optionCopy);
+                }
+            }
+
+            // Keep only the "default" variant
+            $defaultVariant = $copy->getVariants()->first();
+            $copy->getVariants()->clear();
+
+            $copy->addVariant($defaultVariant);
+
+            $this->getEntityManager()->persist($copy);
+        }
+
+        $this->getEntityManager()->flush();
     }
 }
