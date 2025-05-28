@@ -1,6 +1,6 @@
 context('Delivery (role: admin) and add to bookmarks (saved orders)', () => {
   beforeEach(() => {
-    cy.loadFixtures('stores.yml')
+    cy.loadFixturesWithSetup(['ORM/user_admin.yml', 'ORM/store_basic.yml'])
 
     cy.setMockDateTime('2025-04-23 8:30:00')
 
@@ -12,7 +12,7 @@ context('Delivery (role: admin) and add to bookmarks (saved orders)', () => {
     cy.resetMockDateTime()
   })
 
-  it('create delivery order and add to bookmarks (saved orders)', function () {
+  it('[beta form] create delivery order and add to bookmarks (saved orders)', function () {
     cy.visit('/admin/stores')
 
     cy.get('[data-testid=store_Acme__list_item]')
@@ -39,15 +39,16 @@ context('Delivery (role: admin) and add to bookmarks (saved orders)', () => {
 
     cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
-    cy.get('#delivery_bookmark').check()
+    cy.get('[name="delivery.saved_order"]').check()
 
-    cy.get('#delivery-submit').click()
+    cy.get('button[type="submit"]').click()
 
     // list of deliveries page
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/admin\/stores\/[0-9]+\/deliveries$/,
-    )
+    // TODO : check for proper redirect when implemented
+    // cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
+
+    cy.urlmatch(/\/admin\/deliveries$/)
+
     cy.get('[data-testid=delivery__list_item]')
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
       .should('exist')
@@ -55,7 +56,11 @@ context('Delivery (role: admin) and add to bookmarks (saved orders)', () => {
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
       .should('exist')
 
-    cy.get('[data-testid="breadcrumb"]').find('[data-testid="store"]').click()
+    // cy.get('[data-testid="breadcrumb"]').find('[data-testid="store"]').click()
+
+    // FIXME when proper redirect is implemented
+    cy.get('[href="/admin/stores"]').click()
+    cy.get('[data-testid="store_Acme__list_item"] > :nth-child(1) > a').click()
 
     // Store page
 

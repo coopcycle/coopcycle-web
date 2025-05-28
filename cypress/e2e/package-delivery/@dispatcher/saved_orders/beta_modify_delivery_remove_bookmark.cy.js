@@ -27,10 +27,12 @@ context('Bookmarks (Saved orders) (role: admin)', () => {
 
     cy.get('[data-tax="included"]').contains('4,99 €')
 
+    cy.get('#delivery_bookmark').check()
+
     cy.get('#delivery-submit').click()
   })
 
-  it('[beta form] should add a bookmark to an existing order', function () {
+  it('[beta form] should remove a bookmark from an existing order', function () {
     // List of deliveries page
     cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
 
@@ -44,8 +46,8 @@ context('Bookmarks (Saved orders) (role: admin)', () => {
       .contains('click here')
       .click()
 
-    cy.get('[name="delivery.saved_order"]').should('not.be.checked')
-    cy.get('[name="delivery.saved_order"]').check()
+    cy.get('[name="delivery.saved_order"]').should('be.checked')
+    cy.get('[name="delivery.saved_order"]').uncheck()
 
     cy.get('button[type="submit"]').click()
 
@@ -60,11 +62,6 @@ context('Bookmarks (Saved orders) (role: admin)', () => {
 
     // Saved orders page
 
-    cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
-      .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
-      .should('exist')
-    cy.get('[data-testid=delivery__list_item]')
-      .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
-      .should('exist')
+    cy.get('[data-testid=delivery__list_item]').should('not.exist')
   })
 })
