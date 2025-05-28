@@ -102,6 +102,7 @@ class OrderManager
     {
         $user = $this->security->getUser();
 
+        // Users can only see their own bookmarks and those added by users with the same role
         $bookmarks = $order->getBookmarks()->filter(function ($bookmark) use ($user) {
             return $bookmark->getOwner() === $user || ($bookmark->getRole() && in_array($bookmark->getRole(), $user->getRoles()));
         });
@@ -118,14 +119,13 @@ class OrderManager
     {
         $user = $this->security->getUser();
 
-        //Only admins can bookmark orders at the moment
         if (!$this->authorizationChecker->isGranted('ROLE_DISPATCHER')) {
             return;
         }
 
         if ($isBookmarked) {
             if (!$this->hasBookmark($order)) {
-                $bookmark = new OrderBookmark($order, $user, 'ROLE_DISPATCHER');
+                $bookmark = new OrderBookmark($order, $user, $this->authorizationChecker->isGranted('ROLE_ADMIN') ? 'ROLE_ADMIN' : 'ROLE_DISPATCHER');
                 $this->entityManager->persist($bookmark);
             }
         } else {

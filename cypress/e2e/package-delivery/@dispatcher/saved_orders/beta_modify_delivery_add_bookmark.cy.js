@@ -1,9 +1,9 @@
-context('Bookmarks (Saved orders) (role: admin)', () => {
+context('Bookmarks (Saved orders) (role: dispatcher)', () => {
   beforeEach(() => {
-    cy.loadFixturesWithSetup(['ORM/user_admin.yml', 'ORM/store_basic.yml'])
+    cy.loadFixturesWithSetup(['ORM/user_dispatcher.yml', 'ORM/store_basic.yml'])
 
     // Login
-    cy.login('admin', '12345678')
+    cy.login('dispatcher', 'dispatcher')
 
     // Create a delivery order
     cy.visit('/admin/stores')

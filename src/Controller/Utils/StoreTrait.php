@@ -532,7 +532,7 @@ trait StoreTrait
 
     private function handleBookmark(OrderManager $orderManager, FormInterface $form, OrderInterface $order): void
     {
-        if (!$this->isGranted('ROLE_ADMIN')) {
+        if (!$this->isGranted('ROLE_DISPATCHER')) {
             return;
         }
 
