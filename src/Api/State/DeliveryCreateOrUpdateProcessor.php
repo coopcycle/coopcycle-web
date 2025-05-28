@@ -60,18 +60,18 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
             );
         }
 
+        $pricingStrategy = new UsePricingRules();
+
+        if (!is_null($arbitraryPrice)) {
+            $pricingStrategy = new UseArbitraryPrice($arbitraryPrice);
+        }
+
         $isCreateOrderMode = is_null($delivery->getId());
 
         /** @var OrderInterface $order */
         $order = null;
         if ($isCreateOrderMode) {
             // New delivery/order
-
-            $pricingStrategy = new UsePricingRules();
-
-            if (!is_null($arbitraryPrice)) {
-                $pricingStrategy = new UseArbitraryPrice($arbitraryPrice);
-            }
 
             $order = $this->pricingManager->createOrder(
                 $delivery,
