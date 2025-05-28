@@ -52,6 +52,9 @@ class UrbantzWebhookProcessor implements ProcessorInterface
                         $data->deliveries[] = $delivery;
                     }
                     break;
+                case UrbantzWebhook::TASK_UNASSOCIATED:
+                    $this->onTaskUnassociated($data->extTrackId);
+                    return $data;
             }
         }
 
@@ -207,6 +210,20 @@ class UrbantzWebhookProcessor implements ProcessorInterface
         }
 
         return null;
+    }
+
+    private function onTaskUnassociated(string $extTrackId): void
+    {
+        $delivery = $this->deliveryRepository->findOneByHashId($extTrackId);
+
+        if (!$delivery) {
+            $this->logger->error(sprintf('Could not find delivery corresponding to hash "%s"', $extTrackId));
+            return;
+        }
+
+        foreach ($delivery->getTasks() as $task) {
+            $this->taskManager->cancel($task);
+        }
     }
 
     private function resolveStore(array $task)

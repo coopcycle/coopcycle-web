@@ -1678,3 +1678,5 @@ form.settings.company_gln.label: Company GLN
 form.task.barcode.label: Barcode
 restaurant.stats.show_only_meal_vouchers: Show only orders paid with meal vouchers
 restaurant.stats.show_all: Show all orders
+restaurant.copy_products.not_empty: The target restaurant already has products
+restaurant.copy_products.copying: Copying the products, please refresh this page in a few minutes

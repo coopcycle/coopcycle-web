@@ -23,7 +23,12 @@ class UrbantzOrderNormalizer implements NormalizerInterface, DenormalizerInterfa
     public function denormalize($data, $class, $format = null, array $context = array())
     {
         $object = $context[AbstractNormalizer::OBJECT_TO_POPULATE];
+
         $object->tasks = $data;
+
+        if (isset($data['extTrackId'])) {
+            $object->extTrackId = $data['extTrackId'];
+        }
 
         return $object;
     }

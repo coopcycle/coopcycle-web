@@ -247,8 +247,9 @@ admin_restaurant_products:
             restaurants: admin_restaurants
             restaurant: admin_restaurant
             product: admin_restaurant_product
+            products: admin_restaurant_products
             new_product: admin_restaurant_product_new
-    methods: [ GET ]
+    methods: [ GET, POST ]
 
 admin_restaurant_product_new:
     path: /admin/restaurants/{id}/products/new

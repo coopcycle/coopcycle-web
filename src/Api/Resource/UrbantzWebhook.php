@@ -36,6 +36,7 @@ final class UrbantzWebhook
 {
     const TASKS_ANNOUNCED = 'tasks_announced';
     const TASK_CHANGED    = 'task_changed';
+    const TASK_UNASSOCIATED = 'task_unassociated';
 
     /**
      * @var string
@@ -49,6 +50,9 @@ final class UrbantzWebhook
     #[Groups(['urbantz_output'])]
     public $deliveries = [];
 
+    #[Groups(['urbantz_input'])]
+    public $extTrackId;
+
     public function __construct(string $id = null)
     {
         $this->id = $id;
@@ -59,6 +63,7 @@ final class UrbantzWebhook
         return in_array($eventName, [
             self::TASKS_ANNOUNCED,
             self::TASK_CHANGED,
+            self::TASK_UNASSOCIATED,
         ]);
     }
 }

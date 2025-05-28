@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\AppBundle\Domain\Order\Reactor;
+namespace Tests\AppBundle\MessageHandler\Order;
 
 use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Order\Event\OrderAccepted;
-use AppBundle\Domain\Order\Reactor\CreateTasks;
+use AppBundle\MessageHandler\Order\CreateTasks;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
