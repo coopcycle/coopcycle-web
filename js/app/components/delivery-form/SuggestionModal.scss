@@ -1,0 +1,14 @@
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
+@import "../../../../assets/css/vars.scss";
+
+.ReactModal__Content--optimization-suggestions {
+  @media (min-width: $screen-lg-min) {
+    width: 50%;
+  }
+  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+    width: 66%;
+  }
+  @media (max-width: $screen-xs-max) {
+    width: calc(100% - 30px);
+  }
+}

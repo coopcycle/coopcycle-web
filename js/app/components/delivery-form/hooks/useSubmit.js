@@ -4,7 +4,21 @@ import {
   usePostDeliveryMutation,
   usePostStoreAddressMutation,
   usePutDeliveryMutation,
+  useSuggestOptimizationsMutation,
 } from '../../../api/slice'
+import { useDispatch } from 'react-redux'
+import { showSuggestions } from '../redux/suggestionsSlice'
+
+function serializeAddress(address) {
+  if (Object.prototype.hasOwnProperty.call(address, '@id')) {
+    return address['@id']
+  }
+
+  return {
+    streetAddress: address.streetAddress,
+    latLng: [address.geo.latitude, address.geo.longitude],
+  }
+}
 
 export default function useSubmit(
   storeId,
@@ -15,10 +29,13 @@ export default function useSubmit(
 ) {
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
 
+  const [suggestOptimizations] = useSuggestOptimizationsMutation()
   const [createDelivery] = usePostDeliveryMutation()
   const [modifyDelivery] = usePutDeliveryMutation()
   const [createAddress] = usePostStoreAddressMutation()
   const [modifyAddress] = usePatchAddressMutation()
+
+  const dispatch = useDispatch()
 
   const convertValuesToPayload = useCallback(
     values => {
@@ -56,8 +73,41 @@ export default function useSubmit(
     [storeNodeId],
   )
 
+  const checkSuggestionsOnSubmit = async values => {
+    if (!values.tasks.length > 2) {
+      return false
+    }
+
+    const body = {
+      tasks: values.tasks.slice(0).map(t => ({
+        ...t,
+        address: serializeAddress(t.address),
+      })),
+    }
+
+    const result = await suggestOptimizations(body)
+
+    const { data, error } = result
+
+    if (error) {
+      return false
+    }
+
+    if (data.suggestions.length > 0) {
+      dispatch(showSuggestions(data.suggestions))
+      return true
+    }
+
+    return false
+  }
+
   const handleSubmit = useCallback(
     async values => {
+      const hasSuggestions = await checkSuggestionsOnSubmit(values)
+      if (hasSuggestions) {
+        return
+      }
+
       let result
       if (isCreateOrderMode) {
         result = await createDelivery(convertValuesToPayload(values))
