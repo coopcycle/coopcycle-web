@@ -8,6 +8,7 @@ use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\Sylius\Product;
+use AppBundle\Entity\Sylius\ProductImage;
 use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Entity\Sylius\ProductOptions;
 use AppBundle\Entity\Sylius\ProductOptionValue;
@@ -23,6 +24,7 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Order\Model\OrderInterface;
+use Sylius\Component\Product\Model\ProductAttributeValue;
 use Sylius\Resource\Model\AbstractTranslation;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -488,11 +490,17 @@ class LocalBusinessRepository extends EntityRepository
 
         // Set "id" to NULL so that new entities are created
         $copier->addFilter(new SetNullFilter(), new PropertyMatcher(Product::class, 'id'));
+        $copier->addFilter(new SetNullFilter(), new PropertyMatcher(ProductAttributeValue::class, 'id'));
         $copier->addFilter(new SetNullFilter(), new PropertyMatcher(ProductOption::class, 'id'));
         $copier->addFilter(new SetNullFilter(), new PropertyMatcher(ProductOptions::class, 'id'));
         $copier->addFilter(new SetNullFilter(), new PropertyMatcher(ProductOptionValue::class, 'id'));
         $copier->addFilter(new SetNullFilter(), new PropertyMatcher(ProductVariant::class, 'id'));
         $copier->addFilter(new SetNullFilter(), new PropertyMatcher(AbstractTranslation::class, 'id'));
+
+        // FIXME
+        // If original image is removed, both images will be removed
+        // We should copy also the file
+        $copier->addFilter(new SetNullFilter(), new PropertyMatcher(ProductImage::class, 'id'));
 
         $generateUUID = function ($currentValue) {
             return Uuid::uuid4()->toString();
@@ -543,8 +551,11 @@ class LocalBusinessRepository extends EntityRepository
             // Keep only the "default" variant
             $defaultVariant = $copy->getVariants()->first();
             $copy->getVariants()->clear();
-
             $copy->addVariant($defaultVariant);
+
+            // Ignore reusable packagings
+            $product->setReusablePackagingEnabled(false);
+            $product->clearReusablePackagings();
 
             $this->getEntityManager()->persist($copy);
         }
