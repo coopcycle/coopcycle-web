@@ -55,7 +55,8 @@
 {% block content %}
   {% if is_granted('ROLE_DISPATCHER') %}
     <div class="alert alert-info">
-      You can access the more-friendly, beta version of the delivery form <a class="text-decoration-underline" href="{{ path('admin_delivery_beta', { id: delivery.id }) }}">click here</a>.
+      This legacy version of the delivery form will be removed soon. If you still need it, please let us know on Stack #dev channel ASAP.
+      To access the more-friendly, new version of the delivery form <a class="text-decoration-underline" href="{{ path('admin_delivery', { id: delivery.id }) }}">click here</a>.
     </div>
   {% endif %}
 

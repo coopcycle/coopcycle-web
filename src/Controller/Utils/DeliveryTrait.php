@@ -46,7 +46,7 @@ trait DeliveryTrait
 
         $routes = $request->attributes->get('routes');
 
-        return $this->render('store/deliveries/beta_new.html.twig', $this->auth([
+        return $this->render('store/deliveries/form.html.twig', $this->auth([
             'layout' => $request->attributes->get('layout'),
             'store' => $delivery->getStore(),
             'order' => $order,
@@ -123,7 +123,7 @@ trait DeliveryTrait
             return $this->redirectToRoute($routes['success']);
         }
 
-        return $this->render('delivery/item.html.twig', $this->auth([
+        return $this->render('delivery/item_legacy.html.twig', $this->auth([
             'delivery' => $delivery,
             'layout' => $request->attributes->get('layout'),
             'form' => $form->createView(),

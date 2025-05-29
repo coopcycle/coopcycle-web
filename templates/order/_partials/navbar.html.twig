@@ -33,7 +33,7 @@
             </a>
           </li>
           <li>
-            <a href="{{ path('admin_store_delivery_new_beta', { id: order.delivery.store.id, frmrdr: order|hashid(16) }) }}" data-testid="order_clone">
+            <a href="{{ path('admin_store_delivery_new', { id: order.delivery.store.id, frmrdr: order|hashid(16) }) }}" data-testid="order_clone">
               <i class="fa fa-clone"></i>  {% trans %}basics.clone{% endtrans %}
             </a>
           </li>

@@ -368,7 +368,7 @@ trait StoreTrait
             }
         }
 
-        return $this->render('store/deliveries/new.html.twig', [
+        return $this->render('store/deliveries/new_legacy.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'form' => $form->createView(),
@@ -410,7 +410,7 @@ trait StoreTrait
         $routes = $request->attributes->get('routes');
 
         return $this->render(
-            'store/deliveries/beta_new.html.twig',
+            'store/deliveries/form.html.twig',
             $this->auth([
                 'layout' => $request->attributes->get('layout'),
                 'store' => $store,

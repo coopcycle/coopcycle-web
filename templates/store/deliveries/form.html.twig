@@ -44,6 +44,18 @@
 
   {% include 'delivery/_partials/navbar.html.twig' %}
 
+  {% if is_granted('ROLE_DISPATCHER') %}
+    {% if is_new %}
+      <div class="alert alert-info">
+        To access the legacy version of the delivery form <a class="text-decoration-underline" href="{{ path('admin_store_delivery_new_legacy', { id: store.id }) }}">click here</a>.
+      </div>
+    {% else %}
+      <div class="alert alert-info">
+        To access the legacy version of the delivery form <a class="text-decoration-underline" href="{{ path('admin_delivery_legacy', { id: delivery.id }) }}">click here</a>.
+      </div>
+    {% endif %}
+  {% endif %}
+
   {% block alerts %}
   {% endblock %}
 
