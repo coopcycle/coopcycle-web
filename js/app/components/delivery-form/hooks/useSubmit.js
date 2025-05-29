@@ -80,12 +80,13 @@ export default function useSubmit(
 
   const checkSuggestionsOnSubmit = useCallback(
     async values => {
-      if (!values.tasks.length > 2) {
+      // no point in checking suggestions for only one pickup and one dropoff task
+      if (values.tasks.length < 3) {
         return false
       }
 
       const body = {
-        tasks: values.tasks.slice(0).map(t => ({
+        tasks: structuredClone(values.tasks).map(t => ({
           ...t,
           address: serializeAddress(t.address),
         })),
@@ -103,7 +104,7 @@ export default function useSubmit(
         return false
       }
 
-      //The suggestion was rejected previously
+      //The same suggestion was rejected previously
       if (
         rejectedSuggestionsOrder &&
         JSON.stringify(data.suggestions[0].order) ===
@@ -122,6 +123,7 @@ export default function useSubmit(
     async values => {
       const hasSuggestions = await checkSuggestionsOnSubmit(values)
       if (hasSuggestions) {
+        // the form will be submitted again after the user accepts or rejects the suggestions (see SuggestionModal)
         return
       }
 
