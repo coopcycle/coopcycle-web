@@ -397,6 +397,7 @@ export default function({
                             className="new-order__dropoffs__add p-4 border mb-4">
                             <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
                             <Button
+                              data-testid="add-dropoff-button"
                               disabled={false}
                               onClick={() => {
                                 const newDeliverySchema = {
