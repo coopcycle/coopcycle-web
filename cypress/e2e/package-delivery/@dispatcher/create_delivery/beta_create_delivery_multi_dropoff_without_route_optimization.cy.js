@@ -15,7 +15,7 @@ context('Delivery (role: admin)', () => {
     cy.resetMockDateTime()
   })
 
-  it('[beta form] create delivery order with multiple dropoff points and route optimization', function () {
+  it('[beta form] create delivery order with multiple dropoff points WITHOUT route optimization', function () {
     cy.visit('/admin/stores')
 
     cy.get('[data-testid=store_Acme__list_item]')
@@ -64,11 +64,11 @@ context('Delivery (role: admin)', () => {
 
     cy.get('button[type="submit"]').click()
 
-    // accept suggestion
+    // reject suggestion
     cy.get('[data-testid="delivery-optimization-suggestion-title"]').should(
       'be.visible',
     )
-    cy.get('[data-testid="delivery-optimization-suggestion-accept"]').click()
+    cy.get('[data-testid="delivery-optimization-suggestion-reject"]').click()
 
     // list of deliveries page
     // TODO : check for proper redirect when implemented
@@ -103,12 +103,12 @@ context('Delivery (role: admin)', () => {
 
     cy.betaTaskCollapsedShouldHaveValue({
       taskFormIndex: 1,
-      address: /72,? Rue Saint-Maur,? 75011,? Paris,? France/,
+      address: /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
     })
 
     cy.betaTaskCollapsedShouldHaveValue({
       taskFormIndex: 2,
-      address: /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
+      address: /72,? Rue Saint-Maur,? 75011,? Paris,? France/,
     })
 
     cy.betaTaskCollapsedShouldHaveValue({

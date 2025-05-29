@@ -26,7 +26,7 @@ AppBundle\Entity\Address:
     streetAddress: '23, Avenue Claude Vellefaux, 75010 Paris, France'
     geo: "@geo_warehouse"
   client_1:
-    name: 'Office'
+    name: 'Client 1'
     contactName: 'Jane smith'
     telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33112121414'))>
     addressLocality: 'Paris'

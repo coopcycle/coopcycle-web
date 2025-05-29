@@ -26,9 +26,14 @@ context('Delivery (role: admin)', () => {
       .contains('Créer une livraison')
       .click()
 
+    // Edit Delivery page
+    cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries\/new$/)
     cy.get('body > div.content > div > div > div > a')
       .contains('click here')
       .click()
+
+    // Edit Delivery page (new)
+    cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries\/new\/beta$/)
 
     // Pickup
 
@@ -74,10 +79,14 @@ context('Delivery (role: admin)', () => {
       .click()
 
     // Edit Delivery page
+    cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
 
     cy.get('body > div.content > div > div > div > a')
       .contains('click here')
       .click()
+
+    // Edit Delivery page (new)
+    cy.urlmatch(/\/admin\/deliveries\/[0-9]+\/beta$/)
 
     //verify that all the fields are saved correctly
 

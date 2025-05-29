@@ -80,7 +80,7 @@ const SuggestionsModal = () => {
       shouldCloseOnOverlayClick={false}
       className="ReactModal__Content--optimization-suggestions"
       overlayClassName="ReactModal__Overlay--zIndex-1001">
-      <p>{t('DELIVERY_OPTIMIZATION_SUGGESTION_TITLE')}</p>
+      <p data-testid='delivery-optimization-suggestion-title'>{t('DELIVERY_OPTIMIZATION_SUGGESTION_TITLE')}</p>
       <p>
         {t('DELIVERY_OPTIMIZATION_SUGGESTION_GAIN', {
           distance: (suggestedGain.amount / 1000).toFixed(2) + ' Km',
@@ -118,12 +118,14 @@ const SuggestionsModal = () => {
         </div>
         <div className="d-flex align-items-center justify-content-center">
           <button
+            data-testid="delivery-optimization-suggestion-reject"
             className="btn btn-default"
             type="button"
             onClick={() => reject()}>
             {t('DELIVERY_OPTIMIZATION_SUGGESTION_NO')}
           </button>
           <button
+            data-testid="delivery-optimization-suggestion-accept"
             className="btn btn-primary ml-4"
             type="button"
             onClick={() => accept()}>
