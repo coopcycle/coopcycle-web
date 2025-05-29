@@ -2,6 +2,28 @@
 
 {% set is_new = delivery.id is null %}
 
+{% block prepare_title %}
+  {% if is_new %}
+    {{ add_title_prefix('orders.new'|trans) }}
+  {% else %}
+    {% if is_granted('ROLE_DISPATCHER') %}
+      {% set order = delivery.order %}
+      {% if order is not null %}
+        {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ 'order.summary.heading'|trans({ '%number%': order.number })) }}
+      {% else %}
+        {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ 'delivery.with_id'|trans({ '%id%': delivery.id })) }}
+      {% endif %}
+    {% else %}
+      {% set order = delivery.order %}
+      {% if order is not null %}
+        {{ add_title_prefix('order.summary.heading'|trans({ '%number%': order.number })) }}
+      {% else %}
+        {{ add_title_prefix('delivery.with_id'|trans({ '%id%': delivery.id })) }}
+      {% endif %}
+    {% endif %}
+  {% endif %}
+{% endblock %}
+
 {% block dashboard_subnav %}
   <div>
     <a href="{{ path(back_route) }}">
@@ -9,7 +31,6 @@
     </a>
   </div>
 {% endblock %}
-
 
 {% block breadcrumb %}
 
