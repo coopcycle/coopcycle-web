@@ -5,6 +5,8 @@ AppBundle\Entity\Base\GeoCoordinates:
     __construct: [ "48.8758311", "2.3675732" ]
   geo_client_1:
     __construct: [ "48.8638614", "2.3762269" ]
+  geo_point_not_optimized:
+    __construct: [ "48.878304", "2.3737405" ]
 
 AppBundle\Entity\Address:
   address_1:
@@ -31,6 +33,14 @@ AppBundle\Entity\Address:
     postalCode: '75009'
     streetAddress: '72, Rue Saint-Maur, 75011 Paris, France'
     geo: "@geo_client_1"
+  point_not_optimized:
+    name: 'Not Optimized Point'
+    contactName: 'Jane smith'
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33112121416'))>
+    addressLocality: 'Paris'
+    postalCode: '75019'
+    streetAddress: '26, Av. Mathurin Moreau, 75019 Paris, France'
+    geo: "@geo_point_not_optimized"
 
 AppBundle\Entity\Delivery\PricingRuleSet:
   pricing_rule_set_1:
@@ -55,3 +65,4 @@ AppBundle\Entity\Store:
       - addAddress: [ "@address_1" ]
       - addAddress: [ "@warehouse" ]
       - addAddress: [ "@client_1" ]
+      - addAddress: [ "@point_not_optimized" ]
