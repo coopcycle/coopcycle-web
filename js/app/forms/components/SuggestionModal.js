@@ -1,7 +1,7 @@
 import React from 'react'
 import Modal from 'react-modal'
 import { connect } from 'react-redux'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import { Timeline } from 'antd'
 import {
   rejectSuggestions,
@@ -22,7 +22,15 @@ const SuggestionsModal = ({ isOpen, onClickYes, onClickNo, tasks, suggestedTasks
       className="ReactModal__Content--optimization-suggestions"
       overlayClassName="ReactModal__Overlay--optimization-suggestions">
       <p>{ t('DELIVERY_OPTIMIZATION_SUGGESTION_TITLE') }</p>
-      <p>{ t('DELIVERY_OPTIMIZATION_SUGGESTION_GAIN', { distance: (suggestedGain.amount / 1000).toFixed(2) + ' Km' }) }</p>
+      <p>
+        <Trans
+          i18nKey="DELIVERY_OPTIMIZATION_SUGGESTION_GAIN"
+          values={{
+            distance: (suggestedGain.amount / 1000).toFixed(2) + ' Km',
+          }}
+          components={{ b: <strong /> }}
+        />
+      </p>
       <div className="d-flex my-4 border-bottom">
         <div className="w-50 mr-3">
           <strong className="mb-4 d-block">{ t('DELIVERY_OPTIMIZATION_SUGGESTION_CURRENT') }</strong>

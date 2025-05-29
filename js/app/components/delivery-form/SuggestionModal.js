@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react'
 import Modal from 'react-modal'
 import { useDispatch, useSelector } from 'react-redux'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import {
   rejectSuggestions,
   acceptSuggestions,
@@ -80,14 +80,20 @@ const SuggestionsModal = () => {
       shouldCloseOnOverlayClick={false}
       className="ReactModal__Content--optimization-suggestions"
       overlayClassName="ReactModal__Overlay--zIndex-1001">
-      <p data-testid="delivery-optimization-suggestion-title">
+      <h3
+        className="text-center"
+        data-testid="delivery-optimization-suggestion-title">
         {t('DELIVERY_OPTIMIZATION_SUGGESTION_TITLE')}
-      </p>
-      <p>
-        {t('DELIVERY_OPTIMIZATION_SUGGESTION_GAIN', {
-          distance: (suggestedGain.amount / 1000).toFixed(2) + ' Km',
-        })}
-      </p>
+      </h3>
+      <h4 className="text-center">
+        <Trans
+          i18nKey="DELIVERY_OPTIMIZATION_SUGGESTION_GAIN"
+          values={{
+            distance: (suggestedGain.amount / 1000).toFixed(2) + ' Km',
+          }}
+          components={{ b: <strong /> }}
+        />
+      </h4>
       <div className="d-flex my-4 border-bottom">
         <div className="w-50 mr-3">
           <strong className="mb-4 d-block">
@@ -102,11 +108,11 @@ const SuggestionsModal = () => {
           <Itinerary tasks={suggestedTasks} />
         </div>
       </div>
-      <div className="text-center">
-        <div className="mb-2">
+      <div>
+        <h4 className="text-center">
           {t('DELIVERY_OPTIMIZATION_SUGGESTION_CONFIRM')}
-        </div>
-        <div className="d-flex align-items-center justify-content-center">
+        </h4>
+        <div className="my-3 d-flex align-items-center justify-content-center">
           <button
             data-testid="delivery-optimization-suggestion-reject"
             className="btn btn-default"
