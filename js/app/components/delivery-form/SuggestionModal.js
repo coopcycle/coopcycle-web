@@ -2,7 +2,6 @@ import React, { useCallback, useMemo } from 'react'
 import Modal from 'react-modal'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { Timeline } from 'antd'
 import {
   rejectSuggestions,
   acceptSuggestions,
@@ -13,6 +12,7 @@ import {
 import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
 
 import './SuggestionModal.scss'
+import Itinerary from './Itinerary'
 
 const SuggestionsModal = () => {
   const { values, setFieldValue, setSubmitting, submitForm } =
@@ -80,7 +80,9 @@ const SuggestionsModal = () => {
       shouldCloseOnOverlayClick={false}
       className="ReactModal__Content--optimization-suggestions"
       overlayClassName="ReactModal__Overlay--zIndex-1001">
-      <p data-testid='delivery-optimization-suggestion-title'>{t('DELIVERY_OPTIMIZATION_SUGGESTION_TITLE')}</p>
+      <p data-testid="delivery-optimization-suggestion-title">
+        {t('DELIVERY_OPTIMIZATION_SUGGESTION_TITLE')}
+      </p>
       <p>
         {t('DELIVERY_OPTIMIZATION_SUGGESTION_GAIN', {
           distance: (suggestedGain.amount / 1000).toFixed(2) + ' Km',
@@ -91,25 +93,13 @@ const SuggestionsModal = () => {
           <strong className="mb-4 d-block">
             {t('DELIVERY_OPTIMIZATION_SUGGESTION_CURRENT')}
           </strong>
-          <Timeline>
-            {tasks.map((task, index) => (
-              <Timeline.Item key={`current-order-${index}`}>
-                {task.address?.streetAddress}
-              </Timeline.Item>
-            ))}
-          </Timeline>
+          <Itinerary tasks={tasks} />
         </div>
         <div className="w-50">
           <strong className="mb-4 d-block">
             {t('DELIVERY_OPTIMIZATION_SUGGESTION_SUGGESTED')}
           </strong>
-          <Timeline>
-            {suggestedTasks.map((task, index) => (
-              <Timeline.Item key={`suggested-order-${index}`}>
-                {task.address?.streetAddress}
-              </Timeline.Item>
-            ))}
-          </Timeline>
+          <Itinerary tasks={suggestedTasks} />
         </div>
       </div>
       <div className="text-center">
