@@ -71,8 +71,10 @@
     </div>
   </div>
   <div class="flex-fill ml-md-4">
-    {% if delivery is not empty %}
-    {% include 'order/_partials/delivery.html.twig' %}
+    {% if deliveryData is not empty %}
+      <div id="delivery-info" data-delivery="{{ deliveryData|serialize('jsonld', {groups: ['delivery', 'address']}) }}">
+        {# rendered by React #}
+      </div>
     {% endif %}
   </div>
 </div>
@@ -114,15 +116,10 @@
 {% endblock %}
 
 {% block scripts %}
+{{ encore_entry_script_tags('admin-order') }}
 {{ encore_entry_script_tags('delivery-map') }}
 <script>
 new ClipboardJS('#copy');
-{% if delivery is not empty %}
-new CoopCycle.DeliveryMap('map', {
-  pickup: [ {{ delivery.pickup.address.geo.latitude }}, {{ delivery.pickup.address.geo.longitude }} ],
-  dropoff: [ {{ delivery.dropoff.address.geo.latitude }}, {{ delivery.dropoff.address.geo.longitude }} ]
-});
-{% endif %}
 $('[data-change-state] button[type="submit"]').on('click', function(e) {
   var message = $(e.target).data('message');
   if (!window.confirm(message || '{{ 'basics.are_you_sure'|trans }}')) {

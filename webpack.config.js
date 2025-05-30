@@ -21,6 +21,7 @@ Encore
   .addEntry('adhoc-order', './js/app/adhoc_order/index.js')
   .addEntry('admin-cube', './js/app/admin/cube.js')
   .addEntry('admin-orders', './js/app/admin/orders.js')
+  .addEntry('admin-order', './js/app/admin/orders/id/index.js')
   .addEntry('admin-restaurants', './js/app/admin/restaurants.js')
   .addEntry('admin-foodtech-dashboard', './js/app/admin/foodtech/dashboard.js')
   .addEntry('admin-version', './js/app/admin/version.js')

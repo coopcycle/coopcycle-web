@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 import { useTranslation } from 'react-i18next'
-import Itinerary from './Itinerary'
+import Itinerary from '../DeliveryItinerary'
 
 export default ({ tasks }) => {
   const [createdTasks, setCreatedTasks] = useState(null)
@@ -15,9 +15,7 @@ export default ({ tasks }) => {
 
   return (
     <div className="resume mt-3 pt-3">
-      <div className="resumer__tasks">
-        {createdTasks ? <Itinerary tasks={createdTasks} withPackages /> : null}
-      </div>
+      {createdTasks ? <Itinerary tasks={createdTasks} withPackages /> : null}
     </div>
   )
 }

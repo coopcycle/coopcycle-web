@@ -25,7 +25,7 @@ import useSubmit from './hooks/useSubmit'
 import Price from './Price'
 import SuggestionModal from './SuggestionModal'
 import DeliveryResume from './DeliveryResume'
-import Map from '../Map'
+import Map from '../DeliveryMap'
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
