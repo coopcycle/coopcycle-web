@@ -602,7 +602,6 @@ admin_store_delivery_new_legacy:
         routes:
             stores: admin_stores
             store: admin_store
-            success: admin_store_deliveries
             back: admin_deliveries
     methods:  [ GET, POST ]
 
@@ -614,7 +613,6 @@ admin_store_delivery_new:
         routes:
             stores: admin_stores
             store: admin_store
-            success: admin_store_deliveries
             back: admin_deliveries
     methods:  [ GET ]
 
@@ -624,7 +622,6 @@ admin_delivery_legacy:
       _controller: AppBundle\Controller\AdminController::deliveryAction
       layout: 'admin.html.twig'
       routes:
-          success: admin_deliveries
           back: admin_deliveries
   methods:  [ GET, POST ]
 
@@ -637,7 +634,6 @@ admin_delivery:
       routes:
         stores: admin_stores
         store: admin_store
-        success: admin_store_deliveries
         back: admin_deliveries
   methods:  [ GET ]
 

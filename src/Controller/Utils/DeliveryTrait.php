@@ -11,6 +11,7 @@ use AppBundle\Form\Order\ExistingOrderType;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderFactory;
+use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -113,15 +114,17 @@ trait DeliveryTrait
             if ($form->has('bookmark')) {
                 $isBookmarked = true === $form->get('bookmark')->getData();
 
-                $order = $delivery->getOrder();
-
                 if (null !== $order) {
                     $orderManager->setBookmark($order, $isBookmarked);
                     $entityManager->flush();
                 }
             }
 
-            return $this->redirectToRoute($routes['success']);
+            if (!is_null($order)) {
+                return $this->redirectToRoute('admin_order', [ 'id' => $order->getId() ]);
+            } else {
+                return $this->redirectToRoute('admin_deliveries');
+            }
         }
 
         return $this->render('delivery/item_legacy.html.twig', $this->auth([

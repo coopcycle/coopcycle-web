@@ -364,7 +364,7 @@ trait StoreTrait
 
                 // TODO Add flash message
 
-                return $this->redirectToRoute($routes['success'], ['id' => $id]);
+                return $this->redirectToRoute('admin_order', [ 'id' => $order->getId() ]);
             }
         }
 
