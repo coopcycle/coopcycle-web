@@ -24,6 +24,7 @@ import {
 import { RecurrenceRules } from './RecurrenceRules'
 import useSubmit from './hooks/useSubmit'
 import Price from './Price'
+import SuggestionModal from './SuggestionModal'
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -396,6 +397,7 @@ export default function({
                             className="new-order__dropoffs__add p-4 border mb-4">
                             <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
                             <Button
+                              data-testid="add-dropoff-button"
                               disabled={false}
                               onClick={() => {
                                 const newDeliverySchema = {
@@ -465,6 +467,7 @@ export default function({
 
                     {isCreateOrderMode || isDispatcher ? (
                       <div className="order-informations__complete-order border-top py-3">
+                        <SuggestionModal />
                         <Button
                           type="primary"
                           style={{ height: '2.5em' }}

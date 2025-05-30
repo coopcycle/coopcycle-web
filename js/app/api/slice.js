@@ -77,6 +77,15 @@ export const apiSlice = createApi({
         }
       },
     }),
+    suggestOptimizations: builder.mutation({
+      query(body) {
+        return {
+          url: `/api/deliveries/suggest_optimizations`,
+          method: 'POST',
+          body,
+        }
+      },
+    }),
     postDelivery: builder.mutation({
       query(body) {
         return {
@@ -147,6 +156,7 @@ export const {
   usePostStoreAddressMutation,
   usePatchAddressMutation,
   useCalculatePriceMutation,
+  useSuggestOptimizationsMutation,
   usePostDeliveryMutation,
   usePutDeliveryMutation,
   useRecurrenceRulesGenerateOrdersMutation,
