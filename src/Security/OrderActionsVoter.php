@@ -48,7 +48,7 @@ class OrderActionsVoter extends Voter
     {
     }
 
-    protected function supports($attribute, $subject)
+    protected function supports($attribute, $subject): bool
     {
         if (!in_array($attribute, self::$actions)) {
             return false;
@@ -61,7 +61,7 @@ class OrderActionsVoter extends Voter
         return true;
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
         if (self::VIEW_PUBLIC === $attribute) {
 

@@ -4,10 +4,11 @@ namespace AppBundle\Security\OAuth\ResourceOwner;
 
 use Http\Client\Common\HttpMethodsClient;
 use HWI\Bundle\OAuthBundle\OAuth\RequestDataStorageInterface;
-use HWI\Bundle\OAuthBundle\OAuth\ResourceOwner\FacebookResourceOwner as BaseFacebookResourceOwner;
+use HWI\Bundle\OAuthBundle\OAuth\ResourceOwner\GenericOAuth2ResourceOwner;
+// use HWI\Bundle\OAuthBundle\OAuth\ResourceOwner\FacebookResourceOwner as BaseFacebookResourceOwner;
 use Symfony\Component\Security\Http\HttpUtils;
 
-class FacebookResourceOwner extends BaseFacebookResourceOwner
+class FacebookResourceOwner extends GenericOAuth2ResourceOwner
 {
     private $proxyUri;
     private $enabled;
