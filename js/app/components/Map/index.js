@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react'
-import Spinner from '../core/Spinner'
+import React, { useEffect, useMemo, useState } from 'react'
 import L from 'leaflet'
-import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet'
-import MapHelper from '../../MapHelper'
-import 'leaflet/dist/leaflet.css'
 import 'leaflet-arrowheads'
 require('beautifymarker')
-import DeliveryResume from './DeliveryResume'
+import { MapContainer, Marker, TileLayer, useMap } from 'react-leaflet'
 import { taskTypeColor, taskTypeMapIcon } from '../../styles'
+import MapHelper from '../../MapHelper'
+import { useTranslation } from 'react-i18next'
+
+import './Map.scss'
 
 const createMarkerIcon = (icon, iconShape, color) => {
   return L.BeautifyIcon.icon({
@@ -64,20 +64,22 @@ const FitBoundsToMarkers = ({ positions, maxZoom = 17 }) => {
   }, [map, positions, maxZoom])
 }
 
-export default ({ storeDeliveryInfos, tasks }) => {
-  const [storeGeo, setStoreGeo] = useState(null)
+export default ({ defaultAddress, tasks }) => {
+  const defaultGeo = useMemo(() => {
+    if (defaultAddress) {
+      return {
+        latitude: defaultAddress.geo.latitude,
+        longitude: defaultAddress.geo.longitude,
+      }
+    }
+    return null
+  }, [defaultAddress])
+
   const [deliveryGeo, setDeliveryGeo] = useState([])
   const [deliveryRoute, setDeliveryRoute] = useState('')
   const [distance, setDistance] = useState({ kms: 0 })
 
-  useEffect(() => {
-    if (storeDeliveryInfos.address) {
-      setStoreGeo({
-        latitude: storeDeliveryInfos.address.geo.latitude,
-        longitude: storeDeliveryInfos.address.geo.longitude,
-      })
-    }
-  }, [storeDeliveryInfos])
+  const { t } = useTranslation()
 
   useEffect(() => {
     const allLatLng = tasks
@@ -91,7 +93,6 @@ export default ({ storeDeliveryInfos, tasks }) => {
     if (JSON.stringify(allLatLng) !== JSON.stringify(deliveryGeo)) {
       setDeliveryGeo(allLatLng)
     }
-
   }, [tasks, deliveryGeo, setDeliveryGeo])
 
   useEffect(() => {
@@ -107,54 +108,48 @@ export default ({ storeDeliveryInfos, tasks }) => {
         setDistance({ kms })
       })
     }
-
   }, [deliveryGeo])
 
   return (
-    <>
-      {storeGeo ? (
-        <>
-          <MapContainer
-            className="mb-3"
-            scrollWheelZoom={false}
-            style={{ height: '250px', width: '100%' }}>
-            <TileLayer
-              url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-              subdomains="abcd"
-              maxZoom={19}
-            />
+    <div className="embed-responsive embed-responsive-4by3">
+      <MapContainer className="embed-responsive-item" scrollWheelZoom={false}>
+        <TileLayer
+          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          subdomains="abcd"
+          maxZoom={19}
+        />
 
-            {deliveryGeo.length > 0
-              ? deliveryGeo.map((geo, index) => (
-                  <CustomMarker
-                    key={index}
-                    position={geo.latLng}
-                    icon={taskTypeMapIcon(geo.type)}
-                    iconShape="marker"
-                    color={taskTypeColor(geo.type)}
-                  />
-                ))
-              : null}
-            {deliveryGeo.length > 1 ? (
-              <ArrowheadPolyline
-                positions={deliveryRoute}
-                options={{
-                  color: '#3498DB',
-                }}
+        {deliveryGeo.length > 0
+          ? deliveryGeo.map((geo, index) => (
+              <CustomMarker
+                key={index}
+                position={geo.latLng}
+                icon={taskTypeMapIcon(geo.type)}
+                iconShape="marker"
+                color={taskTypeColor(geo.type)}
               />
-            ) : null}
-            {deliveryGeo.length > 0 ? (
-              <FitBoundsToMarkers positions={deliveryGeo} />
-            ) : (
-              <FitBoundsToMarkers positions={storeGeo} />
-            )}
-          </MapContainer>
-          <DeliveryResume distance={distance.kms} tasks={tasks} />
-        </>
-      ) : (
-        <Spinner />
-      )}
-    </>
+            ))
+          : null}
+        {deliveryGeo.length > 1 ? (
+          <ArrowheadPolyline
+            positions={deliveryRoute}
+            options={{
+              color: '#3498DB',
+            }}
+          />
+        ) : null}
+        {deliveryGeo.length > 0 ? (
+          <FitBoundsToMarkers positions={deliveryGeo} />
+        ) : (
+          <FitBoundsToMarkers positions={defaultGeo} />
+        )}
+      </MapContainer>
+      <div className="map-distance-overlay p-2">
+        <span className="font-weight-bold" data-testid="delivery-distance">
+          {t('ADMIN_DASHBOARD_DISTANCE', { distance: distance.kms })}
+        </span>
+      </div>
+    </div>
   )
 }

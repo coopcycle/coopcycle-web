@@ -3,7 +3,6 @@ import { Button, Checkbox } from 'antd'
 import { Formik, Form, FieldArray } from 'formik'
 import moment from 'moment'
 
-import Map from '../../components/delivery-form/Map.js'
 import Spinner from '../../components/core/Spinner.js'
 import BarcodesModal from '../../../../assets/react/controllers/BarcodesModal.jsx'
 import Task from '../../components/delivery-form/Task.js'
@@ -25,6 +24,8 @@ import { RecurrenceRules } from './RecurrenceRules'
 import useSubmit from './hooks/useSubmit'
 import Price from './Price'
 import SuggestionModal from './SuggestionModal'
+import DeliveryResume from './DeliveryResume'
+import Map from '../Map'
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -430,10 +431,8 @@ export default function({
                     )}
 
                     <div className="order-informations__map">
-                      <Map
-                        storeDeliveryInfos={storeDeliveryInfos}
-                        tasks={values.tasks}
-                      />
+                      <Map defaultAddress={storeDeliveryInfos.address} tasks={values.tasks} />
+                      <DeliveryResume tasks={values.tasks} />
                     </div>
 
                     <div className="order-informations__total-price border-top py-3">
