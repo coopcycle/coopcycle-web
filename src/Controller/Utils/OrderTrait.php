@@ -286,7 +286,7 @@ trait OrderTrait
             throw $this->createNotFoundException(sprintf('Order #%d does not have a delivery', $id));
         }
 
-        $this->accessControl($delivery, 'view');
+        $this->denyAccessUnlessGranted('view', $delivery);
 
         return $this->redirectToRoute('admin_delivery', ['id' => $delivery->getId()]);
     }
