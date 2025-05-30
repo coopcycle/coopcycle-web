@@ -202,3 +202,7 @@ services:
   AppBundle\Command\SyncPaygreenOrders:
     tags:
       - { name: 'console.command', command: 'coopcycle:paygreen:sync' }
+
+  AppBundle\Command\ImportDeliveriesCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:deliveries:import' }
