@@ -19,7 +19,8 @@ class DeliveryFormDeliveryMapper
 
     public function map(
         Delivery $deliveryEntity,
-        ?ArbitraryPrice $arbitraryPrice
+        ?ArbitraryPrice $arbitraryPrice,
+        bool $isSavedOrder
     ): DeliveryFormDeliveryOutput {
         $deliveryData = new DeliveryFormDeliveryOutput();
 
@@ -49,6 +50,8 @@ class DeliveryFormDeliveryMapper
             $arbitraryPrice->getValue(),
             $arbitraryPrice->getVariantName()
         ) : null;
+
+        $deliveryData->isSavedOrder = $isSavedOrder;
 
         if ($deliveryEntity->getId()) {
             $deliveryData->id = $deliveryEntity->getId();

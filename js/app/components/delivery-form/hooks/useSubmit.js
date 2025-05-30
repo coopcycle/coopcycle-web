@@ -44,6 +44,13 @@ export default function useSubmit(
         }
       }
 
+      if (null !== values.isSavedOrder) {
+        data = {
+          ...data,
+          isSavedOrder: values.isSavedOrder,
+        }
+      }
+
       return data
     },
     [storeNodeId],

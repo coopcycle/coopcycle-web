@@ -710,6 +710,7 @@
         "DELIVERY_FORM_PRODUCT_NAME": "Product name",
         "DELIVERY_FORM_NAME_INSTRUCTION": "The name that will appear in the order summary and invoice",
         "DELIVERY_FORM_VAT_PRICE": "Price including VAT",
+        "DELIVERY_FORM_SAVED_ORDER": "Add to Saved orders",
         "SHOW_BARCODES": "View barcodes",
         "DELIVERY_FORM_EXVAT_PRICE" : "Price excluding VAT",
         "SWITCH_TIMESLOTPICKER": "Select a custom time slot",

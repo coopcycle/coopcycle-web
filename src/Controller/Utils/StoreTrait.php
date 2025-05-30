@@ -400,7 +400,11 @@ trait StoreTrait
 
         // pre-fill fields with the data from a previous order
         if ($this->isGranted('ROLE_DISPATCHER') && $data = $this->duplicateOrder($request, $store, $pricingManager)) {
-            $deliveryData = $deliveryMapper->map($data->delivery, $data->previousArbitraryPrice);
+            $deliveryData = $deliveryMapper->map(
+                $data->delivery,
+                $data->previousArbitraryPrice,
+                false
+            );
         }
 
         $routes = $request->attributes->get('routes');
@@ -528,7 +532,7 @@ trait StoreTrait
 
     private function handleBookmark(OrderManager $orderManager, FormInterface $form, OrderInterface $order): void
     {
-        if (!$this->isGranted('ROLE_ADMIN')) {
+        if (!$this->isGranted('ROLE_DISPATCHER')) {
             return;
         }
 

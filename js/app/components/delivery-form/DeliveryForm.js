@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Button } from 'antd'
+import { Button, Checkbox } from 'antd'
 import { Formik, Form, FieldArray } from 'formik'
 import moment from 'moment'
 
@@ -448,6 +448,18 @@ export default function({
                     {isCreateOrderMode && isDispatcher ? (
                       <div className="border-top pt-2 pb-3" data-testid="recurrence__container">
                         <RecurrenceRules />
+                      </div>
+                    ) : null}
+
+                    {isDispatcher ? (
+                      <div className="border-top py-3" data-testid="saved_order__container">
+                        <Checkbox
+                          name="delivery.saved_order"
+                          checked={values.isSavedOrder}
+                          onChange={e => {
+                            e.stopPropagation()
+                            setFieldValue('isSavedOrder', e.target.checked)
+                          }}>{t('DELIVERY_FORM_SAVED_ORDER')}</Checkbox>
                       </div>
                     ) : null}
 

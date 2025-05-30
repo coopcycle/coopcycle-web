@@ -42,4 +42,7 @@ final class DeliveryInput
     // used only in a POST request
     #[Groups(['delivery_create'])]
     public string|null $rrule = null;
+
+    #[Groups(['delivery_create'])]
+    public bool|null $isSavedOrder = null;
 }

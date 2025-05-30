@@ -27,6 +27,7 @@ trait DeliveryTrait
         Request $request,
         EntityManagerInterface $entityManager,
         DeliveryFormDeliveryMapper $deliveryMapper,
+        OrderManager $orderManager,
     ) {
         $delivery = $entityManager
             ->getRepository(Delivery::class)
@@ -39,7 +40,8 @@ trait DeliveryTrait
 
         $deliveryData = $deliveryMapper->map(
             $delivery,
-            $price instanceof ArbitraryPrice ? $price : null
+            $price instanceof ArbitraryPrice ? $price : null,
+            !is_null($order) && $orderManager->hasBookmark($order)
         );
 
         $routes = $request->attributes->get('routes');

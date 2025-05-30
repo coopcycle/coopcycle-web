@@ -46,29 +46,29 @@ use AppBundle\Action\Store\Packages;
 #[ApiResource(
     types: ['http://schema.org/Store'],
     operations: [
-        new Get(security: 'is_granted(\'edit\', object)'),
-        new Delete(security: 'is_granted(\'ROLE_ADMIN\')'),
-        new Patch(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new Get(security: "is_granted('ROLE_DISPATCHER') or is_granted('edit', object)"),
+        new Delete(security: "is_granted('ROLE_ADMIN')"),
+        new Patch(security: "is_granted('ROLE_ADMIN')"),
         new Get(
             uriTemplate: '/stores/{id}/time_slots',
             controller: StoreTimeSlots::class,
             normalizationContext: ['groups' => ['store_time_slots']],
-            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'edit\', object)'
+            security: "is_granted('ROLE_DISPATCHER') or is_granted('edit', object)"
         ),
         new Get(
             uriTemplate: '/stores/{id}/packages',
             controller: Packages::class,
             normalizationContext: ['groups' => ['store_packages']],
-            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'edit\', object)'
+            security: "is_granted('ROLE_DISPATCHER') or is_granted('edit', object)"
         ),
         new Post(
             uriTemplate: '/stores/{id}/addresses',
-            security: 'is_granted(\'edit\', object)',
+            security: "is_granted('edit', object)",
             input: Address::class,
             processor: StoreAddressProcessor::class
         ),
         new GetCollection(
-            security: 'is_granted(\'ROLE_DISPATCHER\')'
+            security: "is_granted('ROLE_DISPATCHER')"
         ),
         new GetCollection(uriTemplate: '/me/stores', controller: MyStores::class)
     ],
