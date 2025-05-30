@@ -9,7 +9,7 @@ context('Delivery (role: admin)', () => {
     cy.resetMockDateTime()
   })
 
-  it('update arbitrary price', function () {
+  it('[legacy] update arbitrary price', function () {
     // Create a delivery order with abritrary price
 
     cy.visit('/admin/stores')

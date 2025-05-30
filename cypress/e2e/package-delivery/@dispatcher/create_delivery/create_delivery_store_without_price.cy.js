@@ -1,4 +1,5 @@
 context('Delivery (role: admin)', () => {
+
   beforeEach(() => {
     cy.loadFixtures('../cypress/fixtures/stores.yml')
     cy.setMockDateTime('2025-04-23 8:30:00')
@@ -9,18 +10,16 @@ context('Delivery (role: admin)', () => {
     cy.resetMockDateTime()
   })
 
-  it('[beta form] create delivery for store with invalid pricing', function () {
+  it('create delivery for store without pricing', function () {
     cy.visit('/admin/stores')
 
-    cy.get('[data-testid=store_Acme_with_invalid_pricing__list_item]')
+    cy.get('[data-testid=store_Acme_without_pricing__list_item]')
       .find('.dropdown-toggle')
       .click()
 
-    cy.get('[data-testid=store_Acme_with_invalid_pricing__list_item]')
+    cy.get('[data-testid=store_Acme_without_pricing__list_item]')
       .contains('Créer une livraison')
       .click()
-
-    cy.wait(500)
 
     cy.get('body > div.content > div > div > div > a')
       .contains('click here')
@@ -53,13 +52,6 @@ context('Delivery (role: admin)', () => {
     cy.get(`[name="tasks[1].weight"]`).clear()
     cy.get(`[name="tasks[1].weight"]`).type(2.5)
 
-    cy.get('[data-testid="tax-included"]').should('not.exist')
-
-    cy.get('.alert-danger', { timeout: 10000 }).should(
-      'contain',
-      "Le prix n'a pas pu être calculé. Vous pouvez créer la livraison, n'oubliez pas de corriger la règle de prix liée à ce magasin.",
-    )
-
     cy.get('button[type="submit"]').click()
 
     // TODO : check for proper redirect when implemented
@@ -77,4 +69,5 @@ context('Delivery (role: admin)', () => {
       .contains(/€0.00/)
       .should('exist')
   })
+
 })

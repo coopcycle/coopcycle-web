@@ -12,8 +12,8 @@ context('Delivery (role: admin)', () => {
     cy.resetMockDateTime()
   })
 
-  it('[beta form] update price calculated by pricing rules', function () {
-    // Create a delivery order with a price calculated by pricing rules
+  it('update arbitrary price', function () {
+    // Create a delivery order with abritrary price
 
     cy.visit('/admin/stores')
 
@@ -39,6 +39,10 @@ context('Delivery (role: admin)', () => {
 
     cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
+    cy.get('[name="delivery.override_price"]').check()
+    cy.get('[name="variantName"]').type('Test product')
+    cy.get('#variantPriceVAT').type('72')
+
     cy.get('button[type="submit"]').click()
 
     // list of deliveries page
@@ -48,7 +52,7 @@ context('Delivery (role: admin)', () => {
     cy.urlmatch(/\/admin\/deliveries$/)
 
     cy.get('[data-testid=delivery__list_item]')
-      .contains(/€4.99/)
+      .contains(/€72.00/)
       .should('exist')
 
     cy.get('[data-testid="delivery__list_item"]')
@@ -62,15 +66,15 @@ context('Delivery (role: admin)', () => {
       .contains('click here')
       .click()
 
-    cy.get('[data-testid="tax-included-previous"]').contains('4,99 €')
+    cy.get('[data-testid="tax-included-previous"]').contains('72,00 €')
 
     cy.get('[name="delivery.override_price"]').check()
 
     cy.get('[name="variantName"]').type('Test product')
-    cy.get('#variantPriceVAT').type('72')
+    cy.get('#variantPriceVAT').type('34')
 
-    cy.get('s[data-testid="tax-included-previous"]').contains('4,99 €')
-    cy.get('[data-testid="tax-included"]').contains('72,00 €')
+    cy.get('s[data-testid="tax-included-previous"]').contains('72,00 €')
+    cy.get('[data-testid="tax-included"]').contains('34,00 €')
 
     cy.get('button[type="submit"]').click()
 
@@ -86,7 +90,7 @@ context('Delivery (role: admin)', () => {
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
       .should('exist')
     cy.get('[data-testid=delivery__list_item]')
-      .contains(/€72.00/)
+      .contains(/€34.00/)
       .should('exist')
   })
 })

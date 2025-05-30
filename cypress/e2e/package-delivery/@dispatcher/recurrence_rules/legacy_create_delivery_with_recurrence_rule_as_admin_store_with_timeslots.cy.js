@@ -5,7 +5,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
   })
 
   describe('store with time slots', function () {
-    it('[beta form] create delivery order and a recurrence rule', function () {
+    it('[legacy] create delivery order and a recurrence rule', function () {
       cy.visit('/admin/stores')
 
       cy.get('[data-testid=store_Acme__list_item]')
@@ -16,34 +16,29 @@ describe('Delivery with recurrence rule (role: admin)', () => {
         .contains('Créer une livraison')
         .click()
 
-      cy.get('body > div.content > div > div > div > a')
-        .contains('click here')
-        .click()
-
       // Pickup
-      cy.betaChooseSavedAddressAtPosition(0, 1)
+      cy.chooseSavedPickupAddress(1)
+
+      cy.get('#delivery_tasks_0_comments').type('Pickup comments')
 
       // Dropoff
-      cy.betaChooseSavedAddressAtPosition(1, 2)
+      cy.chooseSavedDropoff1Address(2)
 
-      cy.get(`[name="tasks[1].weight"]`).clear()
-      cy.get(`[name="tasks[1].weight"]`).type(2.5)
+      cy.get('#delivery_tasks_1_weight').clear()
+      cy.get('#delivery_tasks_1_weight').type(2.5)
 
-      cy.get('[data-testid="tax-included"]').contains('4,99 €')
+      cy.get('#delivery_tasks_1_comments').type('Dropoff comments')
 
-      cy.get('[data-testid="recurrence__container"]').find('a').click()
+      cy.get('[data-tax="included"]').contains('4,99 €')
+
+      cy.get('#delivery_form__recurrence__container').find('a').click()
       cy.chooseDaysOfTheWeek([5, 6])
       cy.get('[data-testid=save]').click()
 
-      cy.get('button[type="submit"]').click()
+      cy.get('#delivery-submit').click()
 
       // list of deliveries page
-
-      // TODO : check for proper redirect when implemented
-      // cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
-
-      cy.urlmatch(/\/admin\/deliveries$/)
-
+      cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
       cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
         .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
         .should('exist')

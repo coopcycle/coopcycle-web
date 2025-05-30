@@ -32,7 +32,7 @@ context('Bookmarks (Saved orders) (role: dispatcher)', () => {
     cy.get('#delivery-submit').click()
   })
 
-  it('[beta form] should remove a bookmark from an existing order', function () {
+  it('should remove a bookmark from an existing order', function () {
     // List of deliveries page
     cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
 

@@ -1,10 +1,7 @@
-context('Delivery (role: admin) with arbitrary price', () => {
+context('Delivery (role: admin)', () => {
   beforeEach(() => {
     cy.loadFixtures('../cypress/fixtures/stores.yml')
-
     cy.setMockDateTime('2025-04-23 8:30:00')
-
-    cy.visit('/login')
     cy.login('admin', '12345678')
   })
 
@@ -23,49 +20,55 @@ context('Delivery (role: admin) with arbitrary price', () => {
       .contains('Créer une livraison')
       .click()
 
+    cy.get('body > div.content > div > div > div > a')
+      .contains('click here')
+      .click()
+
     // Pickup
 
-    cy.newPickupAddress(
-      '[data-form="task"]:nth-of-type(1)',
+    cy.betaEnterAddressAtPosition(
+      0,
       '23 Avenue Claude Vellefaux, 75010 Paris, France',
       /^23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/i,
       'Office',
       '+33112121212',
       'John Doe',
+      'Pickup comments'
     )
-
-    cy.get('#delivery_tasks_0_comments').type('Pickup comments')
 
     // Dropoff
 
-    cy.newDropoff1Address(
-      '[data-form="task"]:nth-of-type(2)',
+    cy.betaEnterAddressAtPosition(
+      1,
       '72 Rue Saint-Maur, 75011 Paris, France',
       /^72,? Rue Saint-Maur,? 75011,? Paris,? France/i,
       'Office',
       '+33112121212',
       'Jane smith',
+      'Dropoff comments'
     )
 
-    cy.get('#delivery_tasks_1_weight').clear()
-    cy.get('#delivery_tasks_1_weight').type(2.5)
+    cy.get(`[name="tasks[1].weight"]`).clear()
+    cy.get(`[name="tasks[1].weight"]`).type(2.5)
 
-    cy.get('#delivery_tasks_1_comments').type('Dropoff comments')
+    cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
-    cy.get('#delivery_arbitraryPrice').check()
-    cy.get('#delivery_variantName').clear()
-    cy.get('#delivery_variantName').type('Test product')
-    cy.get('#delivery_variantPrice').clear()
-    cy.get('#delivery_variantPrice').type('72')
+    cy.get('[name="delivery.override_price"]').check()
 
-    cy.get('#delivery-submit').click()
+    cy.get('[name="variantName"]').clear()
+    cy.get('[name="variantName"]').type('Test product')
 
-    // list of deliveries page
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/admin\/stores\/[0-9]+\/deliveries$/,
-    )
-    cy.get('[data-testid=delivery__list_item]')
+    cy.get('#variantPriceVAT').clear()
+    cy.get('#variantPriceVAT').type('72')
+
+    cy.get('button[type="submit"]').click()
+
+    // TODO : check for proper redirect when implemented
+    // cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
+
+    cy.urlmatch(/\/admin\/deliveries$/)
+
+    cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
       .should('exist')
     cy.get('[data-testid=delivery__list_item]')
@@ -89,15 +92,11 @@ context('Delivery (role: admin) with arbitrary price', () => {
       .click()
 
     // Order page
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/admin\/orders\/[0-9]+$/,
-    )
-    cy.get('[data-testid="order_item"]')
-      .find('[data-testid="name"]')
+    cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
+    cy.get('[data-testid="name"]')
       .contains('Test product')
-    cy.get('[data-testid="order_item"]')
-      .find('[data-testid="total"]')
+
+    cy.get('[data-testid="total"]')
       .contains('€72.00')
   })
 })

@@ -1,4 +1,4 @@
-context('Delivery (role: admin) for a store without pricing', () => {
+context('Delivery (role: admin) for a store with invalid pricing', () => {
   beforeEach(() => {
     cy.loadFixtures('../cypress/fixtures/stores.yml')
 
@@ -12,14 +12,14 @@ context('Delivery (role: admin) for a store without pricing', () => {
     cy.resetMockDateTime()
   })
 
-  it('create delivery for store without pricing', function () {
+  it('[legacy] create delivery for store with invalid pricing', function () {
     cy.visit('/admin/stores')
 
-    cy.get('[data-testid=store_Acme_without_pricing__list_item]')
+    cy.get('[data-testid=store_Acme_with_invalid_pricing__list_item]')
       .find('.dropdown-toggle')
       .click()
 
-    cy.get('[data-testid=store_Acme_without_pricing__list_item]')
+    cy.get('[data-testid=store_Acme_with_invalid_pricing__list_item]')
       .contains('Créer une livraison')
       .click()
 
@@ -54,18 +54,9 @@ context('Delivery (role: admin) for a store without pricing', () => {
 
     cy.get('#delivery-submit').click()
 
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/admin\/stores\/[0-9]+\/deliveries$/,
+    cy.get('.alert-danger', { timeout: 10000 }).should(
+      'contain',
+      "Le prix de la course n'a pas pu être calculé.",
     )
-    cy.get('[data-testid=delivery__list_item]')
-      .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
-      .should('exist')
-    cy.get('[data-testid=delivery__list_item]')
-      .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
-      .should('exist')
-    cy.get('[data-testid=delivery__list_item]')
-      .contains(/€0.00/)
-      .should('exist')
   })
 })

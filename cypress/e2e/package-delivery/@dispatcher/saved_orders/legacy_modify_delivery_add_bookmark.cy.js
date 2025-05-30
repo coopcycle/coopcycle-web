@@ -1,9 +1,9 @@
-context('Bookmarks (Saved orders) (role: dispatcher)', () => {
+context('Bookmarks (Saved orders) (role: admin)', () => {
   beforeEach(() => {
-    cy.loadFixturesWithSetup(['ORM/user_dispatcher.yml', 'ORM/store_basic.yml'])
+    cy.loadFixtures('../cypress/fixtures/stores.yml')
 
     // Login
-    cy.login('dispatcher', 'dispatcher')
+    cy.login('admin', '12345678')
 
     // Create a delivery order
     cy.visit('/admin/stores')
@@ -19,18 +19,24 @@ context('Bookmarks (Saved orders) (role: dispatcher)', () => {
     // Pickup
     cy.chooseSavedPickupAddress(1)
 
+    cy.get('#delivery_tasks_0_comments').type('Pickup comments')
+
     // Dropoff
     cy.chooseSavedDropoff1Address(2)
 
     cy.get('#delivery_tasks_1_weight').clear()
     cy.get('#delivery_tasks_1_weight').type(2.5)
 
+    cy.get('#delivery_tasks_1_comments').type('Dropoff comments')
+
     cy.get('[data-tax="included"]').contains('4,99 €')
 
     cy.get('#delivery-submit').click()
   })
 
-  it('[beta form] should add a bookmark to an existing order', function () {
+  // adding a bookmark to a new order is tested in create_delivery tests
+
+  it('[legacy] should add a bookmark to an existing order', function () {
     // List of deliveries page
     cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
 
@@ -40,14 +46,9 @@ context('Bookmarks (Saved orders) (role: dispatcher)', () => {
 
     // Delivery page
 
-    cy.get('body > div.content > div > div > div > a')
-      .contains('click here')
-      .click()
-
-    cy.get('[name="delivery.saved_order"]').should('not.be.checked')
-    cy.get('[name="delivery.saved_order"]').check()
-
-    cy.get('button[type="submit"]').click()
+    cy.get('#delivery_bookmark').should('not.be.checked')
+    cy.get('#delivery_bookmark').check()
+    cy.get('#delivery-submit').click()
 
     // (all) Deliveries page
     cy.urlmatch(/\/admin\/deliveries$/)

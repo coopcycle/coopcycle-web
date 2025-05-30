@@ -12,7 +12,7 @@ context('Delivery (role: admin); store with time slot pricing', () => {
     cy.resetMockDateTime()
   })
 
-  it('[beta form] create delivery order', function () {
+  it('create delivery order', function () {
     cy.visit('/admin/stores')
 
     cy.get('[data-testid=store_Acme__list_item]')

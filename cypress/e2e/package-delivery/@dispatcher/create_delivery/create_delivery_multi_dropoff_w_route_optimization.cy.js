@@ -15,7 +15,7 @@ context('Delivery (role: dispatcher)', () => {
     cy.resetMockDateTime()
   })
 
-  it('[beta form] create delivery order with multiple dropoff points and route optimization', function () {
+  it('create delivery order with multiple dropoff points and route optimization', function () {
     cy.visit('/admin/stores')
 
     cy.get('[data-testid=store_Acme__list_item]')

@@ -16,29 +16,34 @@ describe('Delivery with recurrence rule (role: admin)', () => {
         .contains('Créer une livraison')
         .click()
 
-      // Pickup
-      cy.chooseSavedPickupAddress(1)
+      cy.get('body > div.content > div > div > div > a')
+        .contains('click here')
+        .click()
 
-      cy.get('#delivery_tasks_0_comments').type('Pickup comments')
+      // Pickup
+      cy.betaChooseSavedAddressAtPosition(0, 1)
 
       // Dropoff
-      cy.chooseSavedDropoff1Address(2)
+      cy.betaChooseSavedAddressAtPosition(1, 2)
 
-      cy.get('#delivery_tasks_1_weight').clear()
-      cy.get('#delivery_tasks_1_weight').type(2.5)
+      cy.get(`[name="tasks[1].weight"]`).clear()
+      cy.get(`[name="tasks[1].weight"]`).type(2.5)
 
-      cy.get('#delivery_tasks_1_comments').type('Dropoff comments')
+      cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
-      cy.get('[data-tax="included"]').contains('4,99 €')
-
-      cy.get('#delivery_form__recurrence__container').find('a').click()
+      cy.get('[data-testid="recurrence__container"]').find('a').click()
       cy.chooseDaysOfTheWeek([5, 6])
       cy.get('[data-testid=save]').click()
 
-      cy.get('#delivery-submit').click()
+      cy.get('button[type="submit"]').click()
 
       // list of deliveries page
-      cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
+
+      // TODO : check for proper redirect when implemented
+      // cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
+
+      cy.urlmatch(/\/admin\/deliveries$/)
+
       cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
         .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
         .should('exist')

@@ -15,7 +15,7 @@ context('Delivery (role: dispatcher)', () => {
     cy.resetMockDateTime()
   })
 
-  it('[beta form] create delivery order with multiple dropoff points', function () {
+  it('create delivery order with multiple dropoff points WITHOUT route optimization', function () {
     cy.visit('/admin/stores')
 
     cy.get('[data-testid=store_Acme__list_item]')
@@ -39,48 +39,48 @@ context('Delivery (role: dispatcher)', () => {
 
     cy.betaChooseSavedAddressAtPosition(0, 1)
 
-    // Dropoff
+    // Dropoffs
 
     cy.betaChooseSavedAddressAtPosition(1, 2)
+    cy.get(`[data-testid="form-task-1"]`).within(() => {
+      // increase time window to have some room for route optimization
+      cy.antdSelect('.ant-select[data-testid="select-before"]', '11:00')
+    })
 
     cy.get('[data-testid="add-dropoff-button"]').click()
-
     cy.get(`[data-testid="form-task-2"]`).within(() => {
       cy.get('[data-testid="toggle-button"]').click()
     })
-
     cy.betaChooseSavedAddressAtPosition(2, 3)
+
+    // Not optimized point
+    cy.get('[data-testid="add-dropoff-button"]').click()
+    cy.get(`[data-testid="form-task-3"]`).within(() => {
+      cy.get('[data-testid="toggle-button"]').click()
+    })
+    cy.betaChooseSavedAddressAtPosition(3, 4)
 
     cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
     cy.get('button[type="submit"]').click()
+
+    // reject suggestion
+    cy.get('[data-testid="delivery-optimization-suggestion-title"]').should(
+      'be.visible',
+    )
+    cy.get('[data-testid="delivery-optimization-suggestion-reject"]').click()
 
     // list of deliveries page
     // TODO : check for proper redirect when implemented
     // cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
 
     cy.urlmatch(/\/admin\/deliveries$/)
-
-    cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
-      .contains(/272,? rue Saint Honoré,? 75001,? Paris/)
-      .should('exist')
-    cy.get('[data-testid=delivery__list_item]')
-      .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
-      .should('exist')
-    cy.get('[data-testid=delivery__list_item]')
-      .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
-      .should('exist')
-    cy.get('[data-testid=delivery__list_item]')
-      .contains(/€4.99/)
-      .should('exist')
-
     cy.get('[data-testid="delivery__list_item"]')
       .find('[data-testid="delivery_id"]')
       .click()
 
     // Edit Delivery page
     cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
-
     cy.get('body > div.content > div > div > div > a')
       .contains('click here')
       .click()
@@ -88,7 +88,7 @@ context('Delivery (role: dispatcher)', () => {
     // Edit Delivery page (new)
     cy.urlmatch(/\/admin\/deliveries\/[0-9]+\/beta$/)
 
-    //verify that all the fields are saved correctly
+    //verify that the points are in the right order
 
     cy.betaTaskShouldHaveValue({
       taskFormIndex: 0,
@@ -109,6 +109,11 @@ context('Delivery (role: dispatcher)', () => {
     cy.betaTaskCollapsedShouldHaveValue({
       taskFormIndex: 2,
       address: /72,? Rue Saint-Maur,? 75011,? Paris,? France/,
+    })
+
+    cy.betaTaskCollapsedShouldHaveValue({
+      taskFormIndex: 3,
+      address: /26,? Av. Mathurin Moreau,? 75019,? Paris,? France/,
     })
 
     cy.get('[data-testid="tax-included-previous"]').contains('4,99 €')

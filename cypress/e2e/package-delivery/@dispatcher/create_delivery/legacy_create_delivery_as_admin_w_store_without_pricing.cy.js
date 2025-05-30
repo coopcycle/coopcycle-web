@@ -1,4 +1,4 @@
-context('Delivery (role: admin) and add to bookmarks (saved orders)', () => {
+context('Delivery (role: admin) for a store without pricing', () => {
   beforeEach(() => {
     cy.loadFixtures('../cypress/fixtures/stores.yml')
 
@@ -12,14 +12,14 @@ context('Delivery (role: admin) and add to bookmarks (saved orders)', () => {
     cy.resetMockDateTime()
   })
 
-  it('create delivery order and add to bookmarks (saved orders)', function () {
+  it('[legacy] create delivery for store without pricing', function () {
     cy.visit('/admin/stores')
 
-    cy.get('[data-testid=store_Acme__list_item]')
+    cy.get('[data-testid=store_Acme_without_pricing__list_item]')
       .find('.dropdown-toggle')
       .click()
 
-    cy.get('[data-testid=store_Acme__list_item]')
+    cy.get('[data-testid=store_Acme_without_pricing__list_item]')
       .contains('Créer une livraison')
       .click()
 
@@ -52,13 +52,8 @@ context('Delivery (role: admin) and add to bookmarks (saved orders)', () => {
 
     cy.get('#delivery_tasks_1_comments').type('Dropoff comments')
 
-    cy.get('[data-tax="included"]').contains('4,99 €')
-
-    cy.get('#delivery_bookmark').check()
-
     cy.get('#delivery-submit').click()
 
-    // list of deliveries page
     cy.location('pathname', { timeout: 10000 }).should(
       'match',
       /\/admin\/stores\/[0-9]+\/deliveries$/,
@@ -69,20 +64,8 @@ context('Delivery (role: admin) and add to bookmarks (saved orders)', () => {
     cy.get('[data-testid=delivery__list_item]')
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
       .should('exist')
-
-    cy.get('[data-testid="breadcrumb"]').find('[data-testid="store"]').click()
-
-    // Store page
-
-    cy.get('[data-testid="sidenav"]').find('[data-testid="bookmarks"]').click()
-
-    // Saved orders page
-
     cy.get('[data-testid=delivery__list_item]')
-      .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
-      .should('exist')
-    cy.get('[data-testid=delivery__list_item]')
-      .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
+      .contains(/€0.00/)
       .should('exist')
   })
 })

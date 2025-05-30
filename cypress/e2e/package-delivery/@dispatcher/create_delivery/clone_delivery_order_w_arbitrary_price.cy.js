@@ -15,7 +15,7 @@ context('Delivery (role: admin)', () => {
     cy.resetMockDateTime()
   })
 
-  it('[beta form] clone delivery order with arbitrary price', function () {
+  it('clone delivery order with arbitrary price', function () {
     cy.visit('/admin/stores')
 
     // List of stores

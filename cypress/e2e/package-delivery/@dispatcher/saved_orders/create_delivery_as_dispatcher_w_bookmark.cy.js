@@ -17,7 +17,7 @@ context(
       cy.resetMockDateTime()
     })
 
-    it('[beta form] create delivery order and add to bookmarks (saved orders)', function () {
+    it('create delivery order and add to bookmarks (saved orders)', function () {
       cy.visit('/admin/stores')
 
       cy.get('[data-testid=store_Acme__list_item]')
