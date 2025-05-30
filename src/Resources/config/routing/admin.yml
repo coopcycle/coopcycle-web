@@ -613,6 +613,7 @@ admin_store_delivery_new:
         routes:
             stores: admin_stores
             store: admin_store
+            store_deliveries: admin_store_deliveries
             back: admin_deliveries
     methods:  [ GET ]
 

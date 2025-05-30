@@ -420,6 +420,7 @@ trait StoreTrait
                 'deliveryData' => $deliveryData,
                 'stores_route' => $routes['stores'],
                 'store_route' => $routes['store'],
+                'store_deliveries_route' => $routes['store_deliveries'],
                 'back_route' => $routes['back'],
                 'show_left_menu' => true,
                 'isDispatcher' => $this->isGranted('ROLE_DISPATCHER'),

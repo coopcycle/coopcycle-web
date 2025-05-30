@@ -37,6 +37,7 @@
   {% if is_new %}
     <li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
     <li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
+    <li><a href="{{ path(store_deliveries_route, { id: store.id }) }}">{% trans %}stores.deliveries{% endtrans %}</a></li>
     <li>{% trans %}orders.new{% endtrans %}</li>
   {% else %}
     {% if is_granted('ROLE_DISPATCHER') %}
@@ -45,18 +46,21 @@
       {% if store is not null %}
         <li><a href="{{ path('admin_stores') }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
         <li><a href="{{ path('admin_store', { id: store.id }) }}">{{ store.name }}</a></li>
+        <li><a href="{{ path('admin_store_deliveries', { id: store.id }) }}">{% trans %}stores.deliveries{% endtrans %}</a></li>
+        {% if order is not null %}
+          <li><a href="{{ path('admin_order', { id: order.id }) }}" data-testid="order_id">{{ order.number }}</a></li>
+        {% else %}
+          <li>#{{ delivery.id }}</li>
+        {% endif %}
+        <li>{% trans %}basics.editing{% endtrans %}</li>
       {% else %}
         {#      TODO: display properly the restaurant(s) for foodtech orders #}
-      {% endif %}
-
-      {% if order is not null %}
         <li>{% trans %}adminDashboard.orders.title{% endtrans %}</li>
         <li><a href="{{ path('admin_order', { id: order.id }) }}" data-testid="order_id">{{ order.number }}</a></li>
         <li>{% trans %}basics.editing{% endtrans %}</li>
-      {% else %}
-        <li>{% trans %}adminDashboard.deliveries.title{% endtrans %}</li>
-        <li>#{{ delivery.id }}</li>
       {% endif %}
+
+
     {% endif %}
   {% endif %}
 {% endblock %}
