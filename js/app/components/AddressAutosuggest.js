@@ -163,6 +163,7 @@ const generic = {
       suggestions,
       multiSection,
       loading: false,
+      showMapPicker: false,
     }
   },
   onSuggestionsFetchRequested: function() {
@@ -345,6 +346,7 @@ const SuggestionsContainer = ({
               aria-hidden="true"
               style={{ marginRight: '5px' }}></i>
             <button
+              type="button"
               className="btn btn-link p-0"
               onClick={() => {
                 onMapPickerLabelClick()
@@ -435,10 +437,7 @@ class AddressAutosuggest extends Component {
     this.getSuggestionsLength = this.getSuggestionsLength.bind(this)
     this.handleKeyDown = this.handleKeyDown.bind(this)
 
-    this.state = {
-      ...this.getInitialState(),
-      showMapPicker: false,
-    }
+    this.state = this.getInitialState()
   }
 
   componentDidMount() {
@@ -649,12 +648,6 @@ class AddressAutosuggest extends Component {
   }
 
   renderSuggestionsContainer({ containerProps, children }) {
-
-    // Hide suggestions when the map picker is open to avoid
-    // the map picker to be covered by the suggestions
-    if (this.state.showMapPicker) {
-      return null;
-    }
 
     // https://github.com/moroshko/react-autosuggest/issues/699#issuecomment-568798287
     if (this.props.attachToBody && this.autosuggest) {

@@ -84,7 +84,7 @@ export default function MapPicker({ onSelect, onClose = () => { }, isOpen }) {
 
   return (
     <Modal
-      overlayClassName="ReactModal__Overlay ReactModal__Overlay--zIndex-1001"
+      overlayClassName="ReactModal__Overlay ReactModal__Overlay--zIndex-2001"
       className="ReactModal__Content--mappicker"
       onRequestClose={onClose}
       isOpen={isOpen}>
