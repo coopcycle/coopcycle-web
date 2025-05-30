@@ -40,6 +40,7 @@ trait DeliveryTrait
 
         $deliveryData = $deliveryMapper->map(
             $delivery,
+            $order,
             $price instanceof ArbitraryPrice ? $price : null,
             !is_null($order) && $orderManager->hasBookmark($order)
         );

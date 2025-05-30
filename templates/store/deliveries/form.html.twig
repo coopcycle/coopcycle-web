@@ -93,7 +93,6 @@
 
   <div {{ react_component('Delivery/DeliveryForm', {
         isNew: is_new,
-        storeId: store.id,
         storeNodeId: store|get_iri_from_item,
         order: order is not null ? order|serialize : null,
         deliveryId: delivery.id,

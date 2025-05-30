@@ -10,6 +10,9 @@ final class DeliveryFormDeliveryOutput
     #[Groups(['delivery'])]
     public int|null $id = null;
 
+    #[Groups(['delivery'])]
+    public string|null $order = null;
+
     /**
      * @var DeliveryFormTaskOutput[]|null
      */

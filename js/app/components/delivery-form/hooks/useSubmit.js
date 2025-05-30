@@ -24,7 +24,6 @@ function serializeAddress(address) {
 }
 
 export default function useSubmit(
-  storeId,
   storeNodeId,
   deliveryNodeId,
   isDispatcher,
@@ -178,15 +177,20 @@ export default function useSubmit(
           }
         }
 
-        // TODO : when we are not on the beta URL/page anymore for this form, redirect to document.refferer
+        const deliveryId = data.id
+
+        // "/api/orders/783"
+        const orderNodeId = data.order
+        const orderId = orderNodeId.split('/').pop()
+
         window.location = isDispatcher
-          ? '/admin/deliveries'
-          : `/dashboard/stores/${storeId}/deliveries`
+          ? `/admin/orders/${orderId}`
+          : `/dashboard/deliveries/${deliveryId}`
+
       }
     },
     [
       convertValuesToPayload,
-      storeId,
       storeNodeId,
       deliveryNodeId,
       isDispatcher,

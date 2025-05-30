@@ -5,6 +5,8 @@ namespace AppBundle\Api\State;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use ApiPlatform\Symfony\Validator\Exception\ValidationException;
+use AppBundle\Api\Dto\DeliveryFormDeliveryMapper;
+use AppBundle\Api\Dto\DeliveryFormDeliveryOutput;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Entity\Delivery;
@@ -29,6 +31,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         private readonly PricingManager $pricingManager,
         private readonly OrderFactory $orderFactory,
         private readonly OrderManager $orderManager,
+        private readonly DeliveryFormDeliveryMapper $deliveryMapper,
         private readonly AuthorizationCheckerInterface $authorizationCheckerInterface,
         private readonly ValidatorInterface $validator,
         private readonly LoggerInterface $logger,
@@ -38,7 +41,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
     /**
      * @param DeliveryInput|DeliveryFromTasksInput $data
      */
-    public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
+    public function process($data, Operation $operation, array $uriVariables = [], array $context = []): DeliveryFormDeliveryOutput
     {
         /** @var Delivery $delivery */
         $delivery = $this->decorated->process($data, $operation, $uriVariables, $context);
@@ -139,10 +142,19 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
             }
         }
 
+        $isSavedOrder = false;
         if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $data instanceof DeliveryInput && !is_null($data->isSavedOrder)) {
-            $this->orderManager->setBookmark($order, $data->isSavedOrder);
+            $isSavedOrder = $data->isSavedOrder;
+            $this->orderManager->setBookmark($order, $isSavedOrder);
         }
 
-        return $this->persistProcessor->process($delivery, $operation, $uriVariables, $context);
+        $this->persistProcessor->process($delivery, $operation, $uriVariables, $context);
+
+        return $this->deliveryMapper->map(
+            $delivery,
+            $order,
+            $arbitraryPrice,
+            $isSavedOrder,
+        );
     }
 }

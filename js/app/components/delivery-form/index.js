@@ -16,7 +16,6 @@ const buildInitialState = () => {
 const store = createStoreFromPreloadedState(buildInitialState())
 
 export default function ({
-  storeId,
   storeNodeId,
   deliveryId,
   deliveryNodeId,
@@ -34,7 +33,6 @@ export default function ({
       <Provider store={store}>
         <ConfigProvider locale={antdLocale}>
           <DeliveryForm
-            storeId={storeId}
             storeNodeId={storeNodeId}
             deliveryId={deliveryId}
             deliveryNodeId={deliveryNodeId}

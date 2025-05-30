@@ -110,7 +110,6 @@ const pickupSchema = {
 }
 
 export default function({
-  storeId, // prefer using storeNodeId
   storeNodeId,
   deliveryId, // prefer using deliveryNodeId
   deliveryNodeId,
@@ -156,7 +155,7 @@ export default function({
 
   const [priceLoading, setPriceLoading] = useState(false)
 
-  const { handleSubmit, error } = useSubmit(storeId, storeNodeId, deliveryNodeId, isDispatcher, isCreateOrderMode)
+  const { handleSubmit, error } = useSubmit(storeNodeId, deliveryNodeId, isDispatcher, isCreateOrderMode)
 
   const { t } = useTranslation()
 

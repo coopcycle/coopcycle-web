@@ -2,9 +2,11 @@
 
 namespace AppBundle\Api\Dto;
 
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Task;
+use AppBundle\Sylius\Order\OrderInterface;
 use Hashids\Hashids;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -14,11 +16,13 @@ class DeliveryFormDeliveryMapper
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly Hashids $hashids8,
+        private readonly IriConverterInterface $iriConverter,
     ) {
     }
 
     public function map(
         Delivery $deliveryEntity,
+        ?OrderInterface $order,
         ?ArbitraryPrice $arbitraryPrice,
         bool $isSavedOrder
     ): DeliveryFormDeliveryOutput {
@@ -59,6 +63,10 @@ class DeliveryFormDeliveryMapper
             $deliveryData->trackingUrl = $this->urlGenerator->generate('public_delivery', [
                 'hashid' => $this->hashids8->encode($deliveryEntity->getId()),
             ], UrlGeneratorInterface::ABSOLUTE_URL);
+        }
+
+        if (!is_null($order)) {
+            $deliveryData->order = $this->iriConverter->getIriFromResource($order);
         }
 
         return $deliveryData;

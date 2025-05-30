@@ -402,6 +402,7 @@ trait StoreTrait
         if ($this->isGranted('ROLE_DISPATCHER') && $data = $this->duplicateOrder($request, $store, $pricingManager)) {
             $deliveryData = $deliveryMapper->map(
                 $data->delivery,
+                null,
                 $data->previousArbitraryPrice,
                 false
             );
