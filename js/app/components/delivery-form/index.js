@@ -1,11 +1,10 @@
-import React, { StrictMode, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { Provider } from 'react-redux'
-import { ConfigProvider } from 'antd'
-import { antdLocale } from '../../i18n'
 import { accountSlice } from '../../entities/account/reduxSlice'
 import DeliveryForm from './DeliveryForm.js'
 import { createStoreFromPreloadedState } from './redux/store'
 import Modal from 'react-modal'
+import { RootWithDefaults } from '../../utils/react'
 
 const buildInitialState = () => {
   return {
@@ -25,24 +24,22 @@ export default function ({
   isDebugPricing,
 }) {
   useEffect(() => {
-    Modal.setAppElement('.content');
+    Modal.setAppElement('.content')
   }, [])
 
   return (
-    <StrictMode>
+    <RootWithDefaults>
       <Provider store={store}>
-        <ConfigProvider locale={antdLocale}>
-          <DeliveryForm
-            storeNodeId={storeNodeId}
-            deliveryId={deliveryId}
-            deliveryNodeId={deliveryNodeId}
-            preLoadedDeliveryData={delivery ? JSON.parse(delivery) : null}
-            order={order ? JSON.parse(order) : null}
-            isDispatcher={isDispatcher}
-            isDebugPricing={isDebugPricing}
-          />
-        </ConfigProvider>
+        <DeliveryForm
+          storeNodeId={storeNodeId}
+          deliveryId={deliveryId}
+          deliveryNodeId={deliveryNodeId}
+          preLoadedDeliveryData={delivery ? JSON.parse(delivery) : null}
+          order={order ? JSON.parse(order) : null}
+          isDispatcher={isDispatcher}
+          isDebugPricing={isDebugPricing}
+        />
       </Provider>
-    </StrictMode>
+    </RootWithDefaults>
   )
 }
