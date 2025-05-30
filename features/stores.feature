@@ -158,7 +158,7 @@ Feature: Stores
             "@type":"GeoCoordinates",
             "latitude":48.864577,
             "longitude":2.333338
-          },
+          , "isMapPicked": false},
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "telephone":null,
           "name":null,
@@ -200,7 +200,7 @@ Feature: Stores
             "@type":"GeoCoordinates",
             "latitude":48.864577,
             "longitude":2.333338
-          },
+          , "isMapPicked": false},
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "telephone":null,
           "name":null,
@@ -725,8 +725,7 @@ Feature: Stores
             "telephone":null,
             "name":null,
             "description": null
-          }
-        ],
+          , "isMapPicked": false}],
         "hydra:totalItems":1,
         "hydra:view":{
           "@id":"/api/stores/2/addresses?type=dropoff",
@@ -892,8 +891,7 @@ Feature: Stores
                 "@id": "/api/time_slots/2",
                 "@type": "TimeSlot",
                 "name": @string@
-            }
-        ],
+            , "isMapPicked": false}],
         "hydra:totalItems": 2
       }
       """
@@ -972,8 +970,7 @@ Feature: Stores
                    "@type": "Package",
                    "@id": @string@,
                    "name": "XL"
-               }
-           ],
+               , "isMapPicked": false}],
            "hydra:totalItems": 2
       }
       """
