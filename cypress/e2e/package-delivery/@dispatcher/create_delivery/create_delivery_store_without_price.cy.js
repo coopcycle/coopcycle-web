@@ -1,5 +1,4 @@
 context('Delivery (role: admin)', () => {
-
   beforeEach(() => {
     cy.loadFixtures('../cypress/fixtures/stores.yml')
     cy.setMockDateTime('2025-04-23 8:30:00')
@@ -21,9 +20,8 @@ context('Delivery (role: admin)', () => {
       .contains('Créer une livraison')
       .click()
 
-    cy.get('body > div.content > div > div > div > a')
-      .contains('click here')
-      .click()
+    // Create delivery page
+    cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries\/new$/)
 
     // Pickup
 
@@ -34,7 +32,7 @@ context('Delivery (role: admin)', () => {
       'Office',
       '+33112121212',
       'John Doe',
-      'Pickup comments'
+      'Pickup comments',
     )
 
     // Dropoff
@@ -46,7 +44,7 @@ context('Delivery (role: admin)', () => {
       'Office',
       '+33112121212',
       'Jane smith',
-      'Dropoff comments'
+      'Dropoff comments',
     )
 
     cy.get(`[name="tasks[1].weight"]`).clear()
@@ -54,20 +52,18 @@ context('Delivery (role: admin)', () => {
 
     cy.get('button[type="submit"]').click()
 
-    // TODO : check for proper redirect when implemented
-    // cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
+    // Order page
+    cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.urlmatch(/\/admin\/deliveries$/)
+    cy.get('[data-testid="order_item"]')
+      .find('[data-testid="total"]')
+      .contains('€0.00')
 
-    cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
+    cy.get('[data-testid=delivery-itinerary]')
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
       .should('exist')
-    cy.get('[data-testid=delivery__list_item]')
+    cy.get('[data-testid=delivery-itinerary]')
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
       .should('exist')
-    cy.get('[data-testid=delivery__list_item]')
-      .contains(/€0.00/)
-      .should('exist')
   })
-
 })

@@ -28,9 +28,8 @@ context(
         .contains('Créer une livraison')
         .click()
 
-      cy.get('body > div.content > div > div > div > a')
-        .contains('click here')
-        .click()
+      // Create delivery page
+      cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries\/new$/)
 
       // Pickup
 
@@ -48,26 +47,21 @@ context(
 
       cy.get('button[type="submit"]').click()
 
-      // list of deliveries page
-      // TODO : check for proper redirect when implemented
-      // cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
+      // Order page
+      cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-      cy.urlmatch(/\/admin\/deliveries$/)
+      cy.get('[data-testid="order_item"]')
+        .find('[data-testid="total"]')
+        .contains('€4.99')
 
-      cy.get('[data-testid=delivery__list_item]')
+      cy.get('[data-testid=delivery-itinerary]')
         .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
         .should('exist')
-      cy.get('[data-testid=delivery__list_item]')
+      cy.get('[data-testid=delivery-itinerary]')
         .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
         .should('exist')
 
-      // cy.get('[data-testid="breadcrumb"]').find('[data-testid="store"]').click()
-
-      // FIXME when proper redirect is implemented
-      cy.get('[href="/admin/stores"]').click()
-      cy.get(
-        '[data-testid="store_Acme__list_item"] > :nth-child(1) > a',
-      ).click()
+      cy.get('[data-testid="breadcrumb"]').find('[data-testid="store"]').click()
 
       // Store page
 

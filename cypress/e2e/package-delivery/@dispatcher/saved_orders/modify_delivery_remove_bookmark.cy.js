@@ -17,44 +17,36 @@ context('Bookmarks (Saved orders) (role: dispatcher)', () => {
       .click()
 
     // Pickup
-    cy.chooseSavedPickupAddress(1)
+    cy.betaChooseSavedAddressAtPosition(0, 1)
 
     // Dropoff
-    cy.chooseSavedDropoff1Address(2)
+    cy.betaChooseSavedAddressAtPosition(1, 2)
 
-    cy.get('#delivery_tasks_1_weight').clear()
-    cy.get('#delivery_tasks_1_weight').type(2.5)
+    cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
-    cy.get('[data-tax="included"]').contains('4,99 €')
+    cy.get('[name="delivery.saved_order"]').check()
 
-    cy.get('#delivery_bookmark').check()
-
-    cy.get('#delivery-submit').click()
+    cy.get('button[type="submit"]').click()
   })
 
   it('should remove a bookmark from an existing order', function () {
-    // List of deliveries page
-    cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
+    // Order page
+    cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.get('[data-testid="delivery__list_item"]')
-      .find('[data-testid="delivery_id"]')
-      .click()
+    cy.get('[data-testid="order-edit"]').click()
 
-    // Delivery page
-
-    cy.get('body > div.content > div > div > div > a')
-      .contains('click here')
-      .click()
+    // Edit delivery page
+    cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
 
     cy.get('[name="delivery.saved_order"]').should('be.checked')
     cy.get('[name="delivery.saved_order"]').uncheck()
 
     cy.get('button[type="submit"]').click()
 
-    // (all) Deliveries page
-    cy.urlmatch(/\/admin\/deliveries$/)
-    cy.get('[href="/admin/stores"]').click()
-    cy.get('[data-testid="store_Acme__list_item"] > :nth-child(1) > a').click()
+    // Order page
+    cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
+
+    cy.get('[data-testid="breadcrumb"]').find('[data-testid="store"]').click()
 
     // Store page
 

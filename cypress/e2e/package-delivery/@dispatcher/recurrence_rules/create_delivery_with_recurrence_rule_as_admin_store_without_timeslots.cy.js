@@ -21,9 +21,8 @@ describe('Delivery with recurrence rule (role: admin)', () => {
         .contains('Créer une livraison')
         .click()
 
-      cy.get('body > div.content > div > div > div > a')
-        .contains('click here')
-        .click()
+      // Create delivery page
+      cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries\/new$/)
 
       // Pickup
       cy.betaChooseSavedAddressAtPosition(0, 1)
@@ -57,60 +56,20 @@ describe('Delivery with recurrence rule (role: admin)', () => {
 
       cy.get('button[type="submit"]').click()
 
-      // list of deliveries page
+      // Order page
+      cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-      // TODO : check for proper redirect when implemented
-      // cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
+      cy.get('[data-testid="order_item"]')
+        .find('[data-testid="total"]')
+        .contains('€4.99')
 
-      cy.urlmatch(/\/admin\/deliveries$/)
-
-      cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
+      cy.get('[data-testid=delivery-itinerary]')
         .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
         .should('exist')
-      cy.get('[data-testid=delivery__list_item]')
+      cy.get('[data-testid=delivery-itinerary]')
         .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
         .should('exist')
 
-      cy.get('[data-testid="delivery__list_item"]')
-        .find('[data-testid="delivery_id"]')
-        .click()
-
-      // Delivery page
-      cy.get('#delivery_form__recurrence__container').should('not.exist')
-
-      //pickup time range:
-      cy.get(
-        '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(1) > input',
-      ).should($input => {
-        const val = $input.val()
-        expect(val).to.include(':10')
-      })
-      cy.get(
-        '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(3) > input',
-      ).should($input => {
-        const val = $input.val()
-        expect(val).to.include(':20')
-      })
-
-      //dropoff time range:
-      cy.get(
-        '#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(1) > input',
-      ).should($input => {
-        const val = $input.val()
-        expect(val).to.include(':30')
-      })
-      cy.get(
-        '#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(3) > input',
-      ).should($input => {
-        const val = $input.val()
-        expect(val).to.include(':40')
-      })
-
-      cy.get('[data-testid="breadcrumb"]')
-        .find('[data-testid="order_id"]')
-        .click()
-
-      // Order page
       cy.get('a[href*="recurrence-rules"]').click()
 
       // Recurrence rule page
@@ -149,6 +108,35 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       cy.get('#delivery_form__recurrence__container').contains(
         'chaque semaine le vendredi, samedi',
       )
+
+      cy.go('back')
+
+      cy.get('[data-testid="order-edit"]').click()
+
+      // Delivery page
+      cy.get('[data-testid="recurrence__container"]').should('not.exist')
+
+      cy.betaTaskShouldHaveValue({
+        taskFormIndex: 0,
+        addressName: 'Warehouse',
+        telephone: '01 12 12 12 12',
+        contactName: 'John Doe',
+        address: /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
+        date: '23 avril 2025',
+        timeAfter: '10:10',
+        timeBefore: '11:20',
+      })
+
+      cy.betaTaskShouldHaveValue({
+        taskFormIndex: 1,
+        addressName: 'Office',
+        telephone: '01 12 12 14 14',
+        contactName: 'Jane smith',
+        address: /72,? Rue Saint-Maur,? 75011,? Paris,? France/,
+        date: '23 avril 2025',
+        timeAfter: '11:30',
+        timeBefore: '12:40',
+      })
     })
   })
 })

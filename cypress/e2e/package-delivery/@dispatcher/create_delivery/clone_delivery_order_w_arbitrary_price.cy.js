@@ -29,12 +29,6 @@ context('Delivery (role: admin)', () => {
 
     // Create delivery page
     cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries\/new$/)
-    cy.get('body > div.content > div > div > div > a')
-      .contains('click here')
-      .click()
-
-    // Create delivery page (new)
-    cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries\/new\/beta$/)
 
     // Pickup
     cy.betaChooseSavedAddressAtPosition(0, 1)
@@ -69,26 +63,16 @@ context('Delivery (role: admin)', () => {
 
     cy.get('button[type="submit"]').click()
 
-    // list of deliveries page
-    // TODO : check for proper redirect when implemented
-    // cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
-
-    cy.urlmatch(/\/admin\/deliveries$/)
+    // Order page
+    cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
     // Advance to the next day to test that the time range is correct
     cy.setMockDateTime('2025-04-24 12:30:00')
 
-    cy.get('[data-testid="delivery__list_item"]')
-      .find('[data-testid="order_id"]')
-      .contains('1')
-      .click()
-
-    // Order page
-    cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
     cy.get('[data-testid="order_clone"]').click()
 
-    // Create delivery page (new)
-    cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries\/new\/beta$/)
+    // Create delivery page
+    cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries\/new$/)
 
     //verify that all the fields are pre-loaded correctly
 
@@ -129,25 +113,15 @@ context('Delivery (role: admin)', () => {
 
     cy.get('button[type="submit"]').click()
 
-    // list of deliveries page
-    // TODO : check for proper redirect when implemented
-    // cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
+    // Order page
+    cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.urlmatch(/\/admin\/deliveries$/)
-
-    cy.get('[data-testid="delivery__list_item"]')
-      .find('[data-testid="delivery_id"]')
-      .click()
+    cy.get('[data-testid="order-edit"]').click()
 
     // Edit Delivery page
     // hardcode the delivery id to make sure that we are on the right page (cloned order)
     cy.urlmatch(/\/admin\/deliveries\/2$/)
-    cy.get('body > div.content > div > div > div > a')
-      .contains('click here')
-      .click()
 
-    // Edit Delivery page (new)
-    cy.urlmatch(/\/admin\/deliveries\/2\/beta$/)
     //verify that all the fields are saved correctly
 
     cy.betaTaskShouldHaveValue({

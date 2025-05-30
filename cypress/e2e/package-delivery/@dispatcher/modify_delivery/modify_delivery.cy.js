@@ -14,7 +14,7 @@ context('Delivery (role: admin)', () => {
   })
 
   it('modify delivery', function () {
-    cy.visit('/admin/stores/1/deliveries/new/beta')
+    cy.visit('/admin/stores/1/deliveries/new')
 
     // Pickup
 
@@ -61,19 +61,13 @@ context('Delivery (role: admin)', () => {
 
     cy.get('button[type="submit"]').click()
 
-    // list of deliveries page
-    // TODO : check for proper redirect when implemented
-    // cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
+    // Order page
+    cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.get('[data-testid="delivery__list_item"]')
-      .find('[data-testid="delivery_id"]')
-      .click()
+    cy.get('[data-testid="order-edit"]').click()
 
     // Edit Delivery page
-
-    cy.get('body > div.content > div > div > div > a')
-      .contains('click here')
-      .click()
+    cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
 
     //verify all fields BEFORE modifications
 
@@ -117,19 +111,13 @@ context('Delivery (role: admin)', () => {
 
     cy.get('button[type="submit"]').click()
 
-    // list of deliveries page
-    // TODO : check for proper redirect when implemented
-    // cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
+    // Order page
+    cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.get('[data-testid="delivery__list_item"]')
-      .find('[data-testid="delivery_id"]')
-      .click()
+    cy.get('[data-testid="order-edit"]').click()
 
     // Edit Delivery page
-
-    cy.get('body > div.content > div > div > div > a')
-      .contains('click here')
-      .click()
+    cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
 
     //verify all fields AFTER modifications
 

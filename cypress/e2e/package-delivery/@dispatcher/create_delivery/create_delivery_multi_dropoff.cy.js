@@ -26,14 +26,8 @@ context('Delivery (role: dispatcher)', () => {
       .contains('Créer une livraison')
       .click()
 
-    // Edit Delivery page
+    // Create delivery page
     cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries\/new$/)
-    cy.get('body > div.content > div > div > div > a')
-      .contains('click here')
-      .click()
-
-    // Edit Delivery page (new)
-    cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries\/new\/beta$/)
 
     // Pickup
 
@@ -55,38 +49,27 @@ context('Delivery (role: dispatcher)', () => {
 
     cy.get('button[type="submit"]').click()
 
-    // list of deliveries page
-    // TODO : check for proper redirect when implemented
-    // cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
+    // Order page
+    cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.urlmatch(/\/admin\/deliveries$/)
+    cy.get('[data-testid="order_item"]')
+      .find('[data-testid="total"]')
+      .contains('€4.99')
 
-    cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
+    cy.get('[data-testid=delivery-itinerary]')
       .contains(/272,? rue Saint Honoré,? 75001,? Paris/)
       .should('exist')
-    cy.get('[data-testid=delivery__list_item]')
+    cy.get('[data-testid=delivery-itinerary]')
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
       .should('exist')
-    cy.get('[data-testid=delivery__list_item]')
+    cy.get('[data-testid=delivery-itinerary]')
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
       .should('exist')
-    cy.get('[data-testid=delivery__list_item]')
-      .contains(/€4.99/)
-      .should('exist')
 
-    cy.get('[data-testid="delivery__list_item"]')
-      .find('[data-testid="delivery_id"]')
-      .click()
+    cy.get('[data-testid="order-edit"]').click()
 
     // Edit Delivery page
     cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
-
-    cy.get('body > div.content > div > div > div > a')
-      .contains('click here')
-      .click()
-
-    // Edit Delivery page (new)
-    cy.urlmatch(/\/admin\/deliveries\/[0-9]+\/beta$/)
 
     //verify that all the fields are saved correctly
 
@@ -112,20 +95,5 @@ context('Delivery (role: dispatcher)', () => {
     })
 
     cy.get('[data-testid="tax-included-previous"]').contains('4,99 €')
-
-    cy.get('[data-testid="breadcrumb"]')
-      .find('[data-testid="order_id"]')
-      .should('exist')
-
-    cy.get('[data-testid="breadcrumb"]')
-      .find('[data-testid="order_id"]')
-      .click()
-
-    // Order page
-    cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
-
-    cy.get('[data-testid="order_item"]')
-      .find('[data-testid="total"]')
-      .contains('€4.99')
   })
 })
