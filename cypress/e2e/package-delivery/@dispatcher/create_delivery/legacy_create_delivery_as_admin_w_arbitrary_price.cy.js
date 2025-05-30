@@ -23,6 +23,8 @@ context('Delivery (role: admin) with arbitrary price', () => {
       .contains('Créer une livraison')
       .click()
 
+    cy.get('[data-testid=go-to-legacy-form]').click()
+
     // Pickup
 
     cy.newPickupAddress(
@@ -60,44 +62,21 @@ context('Delivery (role: admin) with arbitrary price', () => {
 
     cy.get('#delivery-submit').click()
 
-    // list of deliveries page
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/admin\/stores\/[0-9]+\/deliveries$/,
-    )
-    cy.get('[data-testid=delivery__list_item]')
-      .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
-      .should('exist')
-    cy.get('[data-testid=delivery__list_item]')
-      .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
-      .should('exist')
-    cy.get('[data-testid=delivery__list_item]')
-      .contains(/€72.00/)
-      .should('exist')
-
-    cy.get('[data-testid="delivery__list_item"]')
-      .find('[data-testid="delivery_id"]')
-      .click()
-
-    // Delivery page
-    cy.get('[data-testid="breadcrumb"]')
-      .find('[data-testid="order_id"]')
-      .should('exist')
-
-    cy.get('[data-testid="breadcrumb"]')
-      .find('[data-testid="order_id"]')
-      .click()
-
     // Order page
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/admin\/orders\/[0-9]+$/,
-    )
+    cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
+
     cy.get('[data-testid="order_item"]')
       .find('[data-testid="name"]')
       .contains('Test product')
     cy.get('[data-testid="order_item"]')
       .find('[data-testid="total"]')
       .contains('€72.00')
+
+    cy.get('[data-testid=delivery-itinerary]')
+      .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
+      .should('exist')
+    cy.get('[data-testid=delivery-itinerary]')
+      .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
+      .should('exist')
   })
 })

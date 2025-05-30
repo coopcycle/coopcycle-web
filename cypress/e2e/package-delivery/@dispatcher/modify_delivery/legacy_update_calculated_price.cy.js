@@ -24,6 +24,8 @@ context('Delivery (role: admin)', () => {
 
     // New delivery order page
 
+    cy.get('[data-testid=go-to-legacy-form]').click()
+
     // Pickup
     cy.chooseSavedPickupAddress(1)
     cy.get('#delivery_tasks_0_comments').type('Pickup comments')
@@ -36,19 +38,20 @@ context('Delivery (role: admin)', () => {
     cy.get('[data-tax="included"]').contains('4,99 €')
     cy.get('#delivery-submit').click()
 
-    // list of deliveries page
-    cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
+    // Order page
+    cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.get('[data-testid=delivery__list_item]')
-      .contains(/€4.99/)
-      .should('exist')
+    cy.get('[data-testid="order_item"]')
+      .find('[data-testid="total"]')
+      .contains('€4.99')
 
-    cy.get('[data-testid="delivery__list_item"]')
-      .find('[data-testid="delivery_id"]')
-      .click()
+    cy.get('[data-testid="order-edit"]').click()
 
-    // Delivery page
+    // Edit Delivery page
     cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
+
+    cy.get('[data-testid=go-to-legacy-form]').click()
+
     cy.get('#delivery_arbitraryPrice').check()
     cy.get('#delivery_variantName').clear()
     cy.get('#delivery_variantName').type('Test product')
@@ -56,19 +59,11 @@ context('Delivery (role: admin)', () => {
     cy.get('#delivery_variantPrice').type('72')
     cy.get('#delivery-submit').click()
 
-    // list of deliveries page
-    cy.urlmatch(/\/admin\/deliveries$/)
+    // Order page
+    cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    // first, try to find it in the list of current deliveries page
-    cy.getIfExists('[data-testid=delivery__list_item]', (selector) => {
-        // then, try to find it in the list of upcoming deliveries page
-        cy.visit('/admin/deliveries?section=upcoming')
-        cy.get(selector)
-          .contains(/€72.00/)
-          .should('exist')
-      })
-      .contains(/€72.00/)
-      .should('exist')
+    cy.get('[data-testid="order_item"]')
+      .find('[data-testid="total"]')
+      .contains('€72.00')
   })
-
 })

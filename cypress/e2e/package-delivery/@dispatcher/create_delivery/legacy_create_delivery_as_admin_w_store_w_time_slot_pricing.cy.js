@@ -1,6 +1,9 @@
 context('Delivery (role: admin)', () => {
   beforeEach(() => {
-    cy.loadFixturesWithSetup(["ORM/user_admin.yml", "../features/fixtures/ORM/store_w_time_slot_pricing.yml"])
+    cy.loadFixturesWithSetup([
+      'ORM/user_admin.yml',
+      '../features/fixtures/ORM/store_w_time_slot_pricing.yml',
+    ])
 
     cy.setMockDateTime('2025-04-23 8:30:00')
 
@@ -22,6 +25,8 @@ context('Delivery (role: admin)', () => {
     cy.get('[data-testid=store_Acme__list_item]')
       .contains('Créer une livraison')
       .click()
+
+    cy.get('[data-testid=go-to-legacy-form]').click()
 
     // Pickup
 
@@ -56,43 +61,18 @@ context('Delivery (role: admin)', () => {
 
     cy.get('#delivery-submit').click()
 
-    // list of deliveries page
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/admin\/stores\/[0-9]+\/deliveries$/,
-    )
-    cy.get('[data-testid=delivery__list_item]')
-      .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
-      .should('exist')
-    cy.get('[data-testid=delivery__list_item]')
-      .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
-      .should('exist')
-    cy.get('[data-testid=delivery__list_item]')
-      .contains(/€6.99/)
-      .should('exist')
-
-    cy.get('[data-testid="delivery__list_item"]')
-      .find('[data-testid="delivery_id"]')
-      .click()
-
-    // Delivery page
-    //TODO: verify that all input data is saved correctly
-    cy.get('[data-testid="breadcrumb"]')
-      .find('[data-testid="order_id"]')
-      .should('exist')
-
-    cy.get('[data-testid="breadcrumb"]')
-      .find('[data-testid="order_id"]')
-      .click()
-
     // Order page
-    cy.location('pathname', { timeout: 10000 }).should(
-      'match',
-      /\/admin\/orders\/[0-9]+$/,
-    )
+    cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
     cy.get('[data-testid="order_item"]')
       .find('[data-testid="total"]')
       .contains('€6.99')
+
+    cy.get('[data-testid=delivery-itinerary]')
+      .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
+      .should('exist')
+    cy.get('[data-testid=delivery-itinerary]')
+      .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
+      .should('exist')
   })
 })

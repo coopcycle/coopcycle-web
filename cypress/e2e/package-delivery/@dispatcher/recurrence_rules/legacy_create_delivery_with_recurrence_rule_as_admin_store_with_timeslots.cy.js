@@ -16,6 +16,8 @@ describe('Delivery with recurrence rule (role: admin)', () => {
         .contains('Créer une livraison')
         .click()
 
+      cy.get('[data-testid=go-to-legacy-form]').click()
+
       // Pickup
       cy.chooseSavedPickupAddress(1)
 
@@ -37,26 +39,16 @@ describe('Delivery with recurrence rule (role: admin)', () => {
 
       cy.get('#delivery-submit').click()
 
-      // list of deliveries page
-      cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
-      cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
+      // Order page
+      cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
+
+      cy.get('[data-testid=delivery-itinerary]')
         .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
         .should('exist')
-      cy.get('[data-testid=delivery__list_item]')
+      cy.get('[data-testid=delivery-itinerary]')
         .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
         .should('exist')
 
-      cy.get('[data-testid="delivery__list_item"]')
-        .find('[data-testid="delivery_id"]')
-        .click()
-
-      // Delivery page
-      cy.get('#delivery_form__recurrence__container').should('not.exist')
-      cy.get('[data-testid="breadcrumb"]')
-        .find('[data-testid="order_id"]')
-        .click()
-
-      // Order page
       cy.get('a[href*="recurrence-rules"]').click()
 
       // Recurrence rule page
@@ -65,6 +57,20 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       cy.get('#delivery_form__recurrence__container').contains(
         'chaque semaine le vendredi, samedi',
       )
+
+      cy.go('back')
+
+      cy.get('[data-testid="order-edit"]').click()
+
+      // Edit Delivery page
+      cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
+
+      cy.get('[data-testid=go-to-legacy-form]').click()
+
+      cy.get('#delivery_form__recurrence__container').should('not.exist')
+      cy.get('[data-testid="breadcrumb"]')
+        .find('[data-testid="order_id"]')
+        .click()
     })
   })
 })

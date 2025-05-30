@@ -22,7 +22,7 @@ export default ({
   const { t } = useTranslation()
 
   return (
-    <Timeline>
+    <Timeline data-testid="delivery-itinerary">
       {tasks.map((task, index) => (
         <Timeline.Item dot={<Dot type={task.type} />} key={`task-${index}`}>
           <div>

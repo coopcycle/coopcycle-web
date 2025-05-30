@@ -16,6 +16,8 @@ context('Bookmarks (Saved orders) (role: admin)', () => {
       .contains('Créer une livraison')
       .click()
 
+    cy.get('[data-testid=go-to-legacy-form]').click()
+
     // Pickup
     cy.chooseSavedPickupAddress(1)
 
@@ -37,23 +39,24 @@ context('Bookmarks (Saved orders) (role: admin)', () => {
   // adding a bookmark to a new order is tested in create_delivery tests
 
   it('[legacy] should add a bookmark to an existing order', function () {
-    // List of deliveries page
-    cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
+    // Order page
+    cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.get('[data-testid="delivery__list_item"]')
-      .find('[data-testid="delivery_id"]')
-      .click()
+    cy.get('[data-testid="order-edit"]').click()
 
-    // Delivery page
+    // Edit Delivery page
+    cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
+
+    cy.get('[data-testid=go-to-legacy-form]').click()
 
     cy.get('#delivery_bookmark').should('not.be.checked')
     cy.get('#delivery_bookmark').check()
     cy.get('#delivery-submit').click()
 
-    // (all) Deliveries page
-    cy.urlmatch(/\/admin\/deliveries$/)
-    cy.get('[href="/admin/stores"]').click()
-    cy.get('[data-testid="store_Acme__list_item"] > :nth-child(1) > a').click()
+    // Order page
+    cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
+
+    cy.get('[data-testid="breadcrumb"]').find('[data-testid="store"]').click()
 
     // Store page
 

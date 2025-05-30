@@ -23,6 +23,8 @@ context('Delivery (role: admin) for a store with invalid pricing', () => {
       .contains('Créer une livraison')
       .click()
 
+    cy.get('[data-testid=go-to-legacy-form]').click()
+
     // Pickup
 
     cy.newPickupAddress(
