@@ -83,6 +83,11 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                 ]
             );
 
+            // automatically accept order created by dispatchers
+            if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER')) {
+                $order->setState(OrderInterface::STATE_ACCEPTED);
+            }
+
         } else {
             // Existing delivery/order
 

@@ -356,7 +356,7 @@ trait StoreTrait
 
                 $this->handleNewRecurrenceRule($pricingManager, $logger, $store, $form, $delivery, $order, $priceForOrder);
 
-                if ($this->isGranted('ROLE_ADMIN')) {
+                if ($this->isGranted('ROLE_DISPATCHER')) {
                     $order->setState(OrderInterface::STATE_ACCEPTED);
                 }
 
