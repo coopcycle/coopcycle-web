@@ -48,7 +48,7 @@
 {% endif %}
 
 <div class="d-md-flex flex-md-row">
-  <div class="flex-fill mr-md-4" data-change-state>
+  <div class="flex-1 mr-md-4" data-change-state>
     <div class="mb-4">
       {% include '_partials/order/items.html.twig' with { with_total_excluding_tax: true } %}
       {% if order.customer is not empty %}
@@ -70,7 +70,7 @@
       {% endif %}
     </div>
   </div>
-  <div class="flex-fill ml-md-4">
+  <div class="flex-1 ml-md-4">
     {% if deliveryData is not empty %}
       <div id="delivery-info" data-delivery="{{ deliveryData|serialize('jsonld', {groups: ['delivery', 'address']}) }}">
         {# rendered by React #}
