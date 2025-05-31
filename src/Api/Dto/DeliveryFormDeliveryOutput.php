@@ -19,6 +19,18 @@ final class DeliveryFormDeliveryOutput
     #[Groups(['delivery'])]
     public array|null $tasks = null;
 
+    /**
+     * @deprecated Legacy field for compatibility with the existing API. Use `tasks` instead.
+     */
+    #[Groups(['delivery'])]
+    public DeliveryFormTaskOutput|null $pickup = null;
+
+    /**
+     * @deprecated Legacy field for compatibility with the existing API. Use `tasks` instead.
+     */
+    #[Groups(['delivery'])]
+    public DeliveryFormTaskOutput|null $dropoff = null;
+
     #[Groups(['delivery'])]
     public ArbitraryPriceDto|null $arbitraryPrice = null;
 

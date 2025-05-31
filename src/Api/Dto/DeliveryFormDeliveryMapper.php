@@ -50,6 +50,9 @@ class DeliveryFormDeliveryMapper
             return $taskData;
         }, $deliveryEntity->getTasks());
 
+        $deliveryData->pickup = $deliveryData->tasks[0] ?? null;
+        $deliveryData->dropoff = end($deliveryData->tasks) ?: null;
+
         $deliveryData->arbitraryPrice = $arbitraryPrice ? new ArbitraryPriceDto(
             $arbitraryPrice->getValue(),
             $arbitraryPrice->getVariantName()
