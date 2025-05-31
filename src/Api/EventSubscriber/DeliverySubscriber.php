@@ -2,11 +2,7 @@
 
 namespace AppBundle\Api\EventSubscriber;
 
-use AppBundle\Entity\Store;
-use AppBundle\Message\DeliveryCreated;
-use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\DeliveryManager;
-use Doctrine\Persistence\ManagerRegistry;
 use ApiPlatform\Symfony\EventListener\EventPriorities;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,9 +10,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 final class DeliverySubscriber implements EventSubscriberInterface
 {
@@ -26,13 +19,8 @@ final class DeliverySubscriber implements EventSubscriberInterface
     ];
 
     public function __construct(
-        private ManagerRegistry $doctrine,
-        private TokenStoreExtractor $storeExtractor,
         protected DeliveryManager $deliveryManager)
     {
-        $this->doctrine = $doctrine;
-        $this->storeExtractor = $storeExtractor;
-        $this->deliveryManager = $deliveryManager;
     }
 
     /**
@@ -47,7 +35,6 @@ final class DeliverySubscriber implements EventSubscriberInterface
             ],
             KernelEvents::VIEW => [
                 ['handleCheckResponse', EventPriorities::POST_VALIDATE],
-                ['addToStore', EventPriorities::POST_WRITE],
             ],
         ];
     }
@@ -70,26 +57,6 @@ final class DeliverySubscriber implements EventSubscriberInterface
         $delivery = $request->attributes->get('data');
 
         $this->deliveryManager->setDefaults($delivery);
-    }
-
-    public function addToStore(ViewEvent $event)
-    {
-        $request = $event->getRequest();
-
-        if ('_api_/deliveries.{_format}_post' !== $request->attributes->get('_route')) {
-            return;
-        }
-
-        $store = $this->storeExtractor->extractStore();
-
-        if (null === $store) {
-            return;
-        }
-
-        $delivery = $event->getControllerResult();
-
-        $store->addDelivery($delivery);
-        $this->doctrine->getManagerForClass(Store::class)->flush();
     }
 
     // FIXME
