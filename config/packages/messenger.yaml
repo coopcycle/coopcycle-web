@@ -1,4 +1,3 @@
-
 framework:
     messenger:
         default_bus: event.bus
@@ -68,3 +67,4 @@ framework:
             'AppBundle\Message\WoopitDocumentWebhook': async
             'AppBundle\Message\ImportDeliveries': async
             'AppBundle\Message\CalculateTaskDistance': async
+            'AppBundle\Message\CopyProducts': async

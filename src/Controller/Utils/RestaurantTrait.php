@@ -38,6 +38,7 @@ use AppBundle\Form\Sylius\Promotion\ItemsTotalBasedPromotionType;
 use AppBundle\Form\Sylius\Promotion\OfferDeliveryType;
 use AppBundle\Form\Type\ProductTaxCategoryChoiceType;
 use AppBundle\LoopEat\Client as LoopeatClient;
+use AppBundle\Message\CopyProducts;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Product\ProductInterface;
@@ -66,6 +67,8 @@ use Sylius\Component\Product\Repository\ProductOptionRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Form\ChoiceList\Loader\CallbackChoiceLoader;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -75,6 +78,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -734,7 +738,11 @@ trait RestaurantTrait
     }
 
     #[HideSoftDeleted]
-    public function restaurantProductsAction($id, Request $request, IriConverterInterface $iriConverter, PaginatorInterface $paginator)
+    public function restaurantProductsAction($id, Request $request,
+        IriConverterInterface $iriConverter,
+        PaginatorInterface $paginator,
+        TranslatorInterface $translator,
+        MessageBusInterface $messageBus)
     {
         $restaurant = $this->getDoctrine()
             ->getRepository(LocalBusiness::class)
@@ -763,11 +771,59 @@ trait RestaurantTrait
 
         $routes = $request->attributes->get('routes');
 
+        $copyForm = $this->createFormBuilder()
+            ->add('restaurant', ChoiceType::class, [
+                'choice_loader' => new CallbackChoiceLoader(function () use ($restaurant) {
+                    $otherRestaurants = $this->getDoctrine()
+                        ->getRepository(LocalBusiness::class)
+                        ->findOthers($restaurant);
+
+                    $choices = [];
+                    foreach ($otherRestaurants as $otherRestaurant) {
+                        $choices[$otherRestaurant['name']] = $otherRestaurant['id'];
+                    }
+
+                    return $choices;
+                })
+            ])
+            ->getForm();
+
+        $copyForm->handleRequest($request);
+        if ($copyForm->isSubmitted() && $copyForm->isValid()) {
+
+            $destId = $copyForm->get('restaurant')->getData();
+
+            $dest = $this->getDoctrine()
+                ->getRepository(LocalBusiness::class)
+                ->find($destId);
+
+            if (count($dest->getProducts()) > 0) {
+
+                $this->addFlash(
+                    'error',
+                    $translator->trans('restaurant.copy_products.not_empty')
+                );
+
+                return $this->redirectToRoute($routes['products'], ['id' => $id]);
+            }
+
+            // Run this asynchronously, because it may be long
+            $messageBus->dispatch(new CopyProducts($id, $destId));
+
+            $this->addFlash(
+                'notice',
+                $translator->trans('restaurant.copy_products.copying')
+            );
+
+            return $this->redirectToRoute($routes['products'], ['id' => $destId]);
+        }
+
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'products' => $products,
             'restaurant' => $restaurant,
             'restaurant_iri' => $iriConverter->getIriFromResource($restaurant),
+            'copy_form' => $copyForm->createView(),
         ], $routes));
     }
 

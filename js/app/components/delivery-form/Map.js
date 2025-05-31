@@ -7,6 +7,7 @@ import 'leaflet/dist/leaflet.css'
 import 'leaflet-arrowheads'
 require('beautifymarker')
 import DeliveryResume from './DeliveryResume'
+import { taskTypeColor, taskTypeMapIcon } from '../../styles'
 
 const createMarkerIcon = (icon, iconShape, color) => {
   return L.BeautifyIcon.icon({
@@ -36,7 +37,7 @@ const ArrowheadPolyline = ({ positions, options }) => {
     return () => {
       map.removeLayer(polyline)
     }
-  }, [positions, options])
+  }, [positions, options, map])
 
   return null
 }
@@ -60,7 +61,7 @@ const FitBoundsToMarkers = ({ positions, maxZoom = 17 }) => {
         map.fitBounds(bounds, { padding: [50, 50], maxZoom })
       }
     }
-  }, [map, positions])
+  }, [map, positions, maxZoom])
 }
 
 export default ({ storeDeliveryInfos, tasks }) => {
@@ -129,9 +130,9 @@ export default ({ storeDeliveryInfos, tasks }) => {
                   <CustomMarker
                     key={index}
                     position={geo.latLng}
-                    icon={geo.type === 'PICKUP' ? 'cube' : 'arrow-down'}
+                    icon={taskTypeMapIcon(geo.type)}
                     iconShape="marker"
-                    color="#ff0000"
+                    color={taskTypeColor(geo.type)}
                   />
                 ))
               : null}

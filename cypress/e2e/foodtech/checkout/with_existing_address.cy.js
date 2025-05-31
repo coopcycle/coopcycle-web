@@ -1,6 +1,6 @@
 context('Checkout', () => {
   beforeEach(() => {
-    cy.loadFixtures('checkout.yml')
+    cy.loadFixtures('../cypress/fixtures/checkout.yml')
   })
 
   it('order something at restaurant with existing address', () => {

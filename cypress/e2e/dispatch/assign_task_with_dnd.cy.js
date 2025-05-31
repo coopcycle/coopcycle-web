@@ -1,6 +1,6 @@
 context('Dispatch', () => {
   beforeEach(() => {
-    cy.loadFixtures('dispatch.yml')
+    cy.loadFixtures('../cypress/fixtures/dispatch.yml')
 
     cy.intercept('POST', '/api/tasks').as('postTask')
     cy.intercept('POST', '/admin/task-lists/**/jane').as('postTaskList')

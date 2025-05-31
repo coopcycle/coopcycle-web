@@ -52,6 +52,7 @@
             {{ 'stores.users'|trans }}
           </a>
         </li>
+        {% endif %}
         <li role="presentation">
           <a href="{{ path('admin_store_deliveries', { id: store.id }) }}">
             {{ 'stores.deliveries'|trans }}
@@ -67,7 +68,6 @@
             {{ 'stores.recurrence_rules'|trans }}
           </a>
         </li>
-        {% endif %}
         {% endif %}
       </ul>
     </div>

@@ -6,7 +6,7 @@ describe(
       describe(` (${ customerType })`, () => {
 
         beforeEach(() => {
-          cy.loadFixtures('checkout.yml')
+          cy.loadFixtures('../cypress/fixtures/checkout.yml')
           cy.login('bob', '12345678')
         })
 

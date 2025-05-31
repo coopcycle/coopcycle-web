@@ -1,6 +1,6 @@
 describe('Platform catering; manager; modify company data', () => {
   beforeEach(() => {
-    cy.loadFixtures('checkout_platform_catering.yml')
+    cy.loadFixtures('../cypress/fixtures/checkout_platform_catering.yml')
   })
 
   it("should change company (business account's) name", () => {

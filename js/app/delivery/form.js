@@ -11,6 +11,7 @@ import axios from 'axios'
 const baseURL = location.protocol + '//' + location.host
 
 import './form.scss'
+import { taskTypeColor, taskTypeMapIcon } from '../styles'
 
 let map
 let polylineLayerGroup
@@ -44,8 +45,8 @@ function route(delivery) {
 }
 
 const markerIcons = {
-  pickup:  { icon: 'cube', color: '#E74C3C' },
-  dropoff: { icon: 'flag', color: '#2ECC71' }
+  pickup:  { icon: taskTypeMapIcon('PICKUP'), color: taskTypeColor('PICKUP') },
+  dropoff: { icon: taskTypeMapIcon('DROPOFF'), color: taskTypeColor('DROPOFF') }
 }
 
 function createMarker(location, index, addressType) {
@@ -192,9 +193,9 @@ const checkSuggestionsOnSubmit = async (form, formHTMLEl, delivery) => {
 
   const jwtResp = await $.getJSON(window.Routing.generate('profile_jwt'))
   const jwt = jwtResp.jwt
-  const url = `${baseURL}/api/deliveries/suggest_optimizations` 
+  const url = `${baseURL}/api/deliveries/suggest_optimizations`
   const response = await axios.post(
-    url, 
+    url,
     {
       ...delivery,
       tasks: delivery.tasks.slice(0).map(t => ({
@@ -209,7 +210,7 @@ const checkSuggestionsOnSubmit = async (form, formHTMLEl, delivery) => {
         Authorization: `Bearer ${jwt}`
       }
     })
-  
+
   if (response.data.suggestions.length > 0) {
     form.showSuggestions(response.data.suggestions)
   } else {

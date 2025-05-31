@@ -1,0 +1,8 @@
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
+@import "../../../../assets/css/vars.scss";
+
+.ReactModal__Content--recurrence {
+  min-width: 50%;
+  max-height: calc(100vh - 30px);
+  padding: 0;
+}

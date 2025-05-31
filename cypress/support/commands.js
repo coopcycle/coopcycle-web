@@ -34,7 +34,7 @@ Cypress.Commands.add('symfonyConsole', command => {
 })
 
 Cypress.Commands.add('loadFixtures', (fixtures, setup=false) => {
-  const fixturesString = (Array.isArray(fixtures) ? fixtures : [fixtures]).map(f => `-f cypress/fixtures/${f}`).join(' ')
+  const fixturesString = (Array.isArray(fixtures) ? fixtures : [fixtures]).map(f => `-f fixtures/${f}`).join(' ')
   cy.symfonyConsole(`coopcycle:fixtures:load${setup ? ' -s cypress/fixtures/setup_default.yml' : ''} ${fixturesString}`)
 })
 
@@ -331,9 +331,7 @@ Cypress.Commands.add(
       })
 
       cy.get(`.address__autosuggest`).within(() => {
-        cy.get('input')
-          .invoke('val')
-          .should('match', address)
+        cy.get('input').invoke('val').should('match', address)
       })
 
       cy.get(`[data-testid=date-picker]`).should('have.value', date)
@@ -353,7 +351,7 @@ Cypress.Commands.add(
         })
       }
 
-      if (packages) {
+      if (packages !== undefined) {
         packages.forEach(pkg => {
           cy.get(`[data-testid="${pkg.nodeId}"]`).within(() => {
             cy.get('input').should('have.value', pkg.quantity)
@@ -368,15 +366,30 @@ Cypress.Commands.add(
         )
       }
 
-      cy.get(`[name="tasks[${taskFormIndex}].comments"]`)
-        .contains(comments)
-        .should('exist')
+      if (comments !== undefined) {
+        cy.get(`[name="tasks[${taskFormIndex}].comments"]`)
+          .contains(comments)
+          .should('exist')
+      }
 
-      cy.get(`[data-testid=tags-select]`).within(() => {
-        tags.forEach(tag => {
-          cy.contains(tag).should('exist')
+      if (tags !== undefined) {
+        cy.get(`[data-testid=tags-select]`).within(() => {
+          tags.forEach(tag => {
+            cy.contains(tag).should('exist')
+          })
         })
-      })
+      }
+    })
+  },
+)
+
+Cypress.Commands.add(
+  'betaTaskCollapsedShouldHaveValue',
+  ({ taskFormIndex, address }) => {
+    cy.get(`[data-testid="form-task-${taskFormIndex}"]`).within(() => {
+      cy.get('.task__header').contains(address).should('exist')
+
+      cy.get(`[data-testid=address-select]`).should('not.be.visible')
     })
   },
 )

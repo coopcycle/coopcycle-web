@@ -9,6 +9,7 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Pricing\PricingManager;
+use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
@@ -26,6 +27,10 @@ class RecurrenceRuleBetweenTest extends TestCase
         $this->denormalizer = $this->prophesize(DenormalizerInterface::class);
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
         $this->pricingManager = $this->prophesize(PricingManager::class);
+
+        $this->pricingManager
+            ->createOrder(Argument::type(Delivery::class))
+            ->willReturn($this->prophesize(OrderInterface::class));
 
         $this->action = new RecurrenceRuleBetween(
             $this->denormalizer->reveal(),

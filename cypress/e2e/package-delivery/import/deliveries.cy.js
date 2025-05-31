@@ -1,6 +1,6 @@
 context('Import deliveries (role: admin)', () => {
   beforeEach(() => {
-    cy.loadFixturesWithSetup(["user_admin.yml", "../../features/fixtures/ORM/store_w_time_slot_pricing.yml"])
+    cy.loadFixturesWithSetup(["ORM/user_admin.yml", "../features/fixtures/ORM/store_w_time_slot_pricing.yml"])
 
     cy.setMockDateTime('2019-12-12 8:00:00')
 

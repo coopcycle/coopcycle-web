@@ -4,7 +4,24 @@ import {
   usePostDeliveryMutation,
   usePostStoreAddressMutation,
   usePutDeliveryMutation,
+  useSuggestOptimizationsMutation,
 } from '../../../api/slice'
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  selectRejectedSuggestedOrder,
+  showSuggestions,
+} from '../redux/suggestionsSlice'
+
+function serializeAddress(address) {
+  if (Object.prototype.hasOwnProperty.call(address, '@id')) {
+    return address['@id']
+  }
+
+  return {
+    streetAddress: address.streetAddress,
+    latLng: [address.geo.latitude, address.geo.longitude],
+  }
+}
 
 export default function useSubmit(
   storeId,
@@ -15,10 +32,15 @@ export default function useSubmit(
 ) {
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
 
+  const rejectedSuggestionsOrder = useSelector(selectRejectedSuggestedOrder)
+
+  const [suggestOptimizations] = useSuggestOptimizationsMutation()
   const [createDelivery] = usePostDeliveryMutation()
   const [modifyDelivery] = usePutDeliveryMutation()
   const [createAddress] = usePostStoreAddressMutation()
   const [modifyAddress] = usePatchAddressMutation()
+
+  const dispatch = useDispatch()
 
   const convertValuesToPayload = useCallback(
     values => {
@@ -44,13 +66,67 @@ export default function useSubmit(
         }
       }
 
+      if (null !== values.isSavedOrder) {
+        data = {
+          ...data,
+          isSavedOrder: values.isSavedOrder,
+        }
+      }
+
       return data
     },
     [storeNodeId],
   )
 
+  const checkSuggestionsOnSubmit = useCallback(
+    async values => {
+      // no point in checking suggestions for only one pickup and one dropoff task
+      if (values.tasks.length < 3) {
+        return false
+      }
+
+      const body = {
+        tasks: structuredClone(values.tasks).map(t => ({
+          ...t,
+          address: serializeAddress(t.address),
+        })),
+      }
+
+      const result = await suggestOptimizations(body)
+
+      const { data, error } = result
+
+      if (error) {
+        return false
+      }
+
+      if (data.suggestions.length === 0) {
+        return false
+      }
+
+      //The same suggestion was rejected previously
+      if (
+        rejectedSuggestionsOrder &&
+        JSON.stringify(data.suggestions[0].order) ===
+          JSON.stringify(rejectedSuggestionsOrder)
+      ) {
+        return false
+      }
+
+      dispatch(showSuggestions(data.suggestions))
+      return true
+    },
+    [dispatch, rejectedSuggestionsOrder, suggestOptimizations],
+  )
+
   const handleSubmit = useCallback(
     async values => {
+      const hasSuggestions = await checkSuggestionsOnSubmit(values)
+      if (hasSuggestions) {
+        // the form will be submitted again after the user accepts or rejects the suggestions (see SuggestionModal)
+        return
+      }
+
       let result
       if (isCreateOrderMode) {
         result = await createDelivery(convertValuesToPayload(values))
@@ -119,6 +195,7 @@ export default function useSubmit(
       modifyDelivery,
       createAddress,
       modifyAddress,
+      checkSuggestionsOnSubmit,
     ],
   )
 
