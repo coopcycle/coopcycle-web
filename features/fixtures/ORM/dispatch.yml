@@ -1,48 +1,10 @@
 include:
+  - users.yml
+  - addresses.yml
+  - sylius_taxation.yml
+  - products.yml
+  - restaurants.yml
   - packages.yml
-
-AppBundle\Entity\Base\GeoCoordinates:
-  geo_1:
-    __construct: [ "48.864577", "2.333338" ]
-  geo_2:
-    __construct: [ "48.846656", "2.369052" ]
-  geo_3:
-    __construct: [ "48.878658", "2.341055" ]
-
-AppBundle\Entity\User:
-  bob:
-    __factory:
-      '@Nucleos\UserBundle\Util\UserManipulator::create':
-        - 'bob'
-        - '123456'
-        - 'bob@demo.coopcycle.org'
-        - true
-        - false
-  sarah:
-    __factory:
-      '@Nucleos\UserBundle\Util\UserManipulator::create':
-        - 'sarah'
-        - '123456'
-        - 'sarah@demo.coopcycle.org'
-        - true
-        - false
-
-AppBundle\Entity\Address:
-  address_1:
-    addressLocality: Paris
-    postalCode: '75010'
-    streetAddress: 272, rue Saint Honoré 75001 Paris 1er
-    geo: "@geo_1"
-  address_2:
-    addressLocality: 'Paris'
-    postalCode: '75010'
-    streetAddress: 18, avenue Ledru-Rollin 75012 Paris 12ème
-    geo: "@geo_2"
-  address_3:
-    addressLocality: Paris
-    postalCode: '75010'
-    streetAddress: 17, rue Milton 75009 Paris 9ème
-    geo: "@geo_3"
 
 AppBundle\Entity\Task:
   task_1:
@@ -134,6 +96,24 @@ AppBundle\Entity\Task:
     doneBefore: <identity(new \DateTime('2024-12-01 12:30:00'))>
     __calls:
       - assignTo: [ "@bob", <identity(new \DateTime('2024-12-01'))> ]
+  task_15:
+    address: "@address_1"
+    type: PICKUP
+    doneAfter: <identity(new \DateTime('2025-05-28 10:30:00'))>
+    doneBefore: <identity(new \DateTime('2025-05-28 11:00:00'))>
+    __calls:
+      - assignTo: [ "@sarah", <identity(new \DateTime('2025-05-28'))> ]
+    metadata:
+      foo: bar
+      baz: bat
+  task_16:
+    address: "@address_2"
+    type: DROPOFF
+    doneAfter: <identity(new \DateTime('2025-05-28 11:30:00'))>
+    doneBefore: <identity(new \DateTime('2025-05-28 12:00:00'))>
+    previous: "@task_15"
+    __calls:
+      - assignTo: [ "@sarah", <identity(new \DateTime('2025-05-28'))> ]
 
 AppBundle\Entity\Tag:
   tag_important:
@@ -146,3 +126,32 @@ AppBundle\Entity\Delivery:
       createWithTasks:
         - '@task_11'
         - '@task_12'
+  delivery_2:
+    __factory:
+      createWithTasks:
+        - '@task_15'
+        - '@task_16'
+    __calls:
+      - setOrder:
+          - '@order_1'
+      - setPickupRange:
+        - <identity(new \DateTime('2025-05-28 10:30:00'))>
+        - <identity(new \DateTime('2025-05-28 11:00:00'))>
+      - setDropoffRange:
+        - <identity(new \DateTime('2025-05-28 11:30:00'))>
+        - <identity(new \DateTime('2025-05-28 12:00:00'))>
+
+AppBundle\Entity\Sylius\PricingRulesBasedPrice:
+  price_1:
+    __construct:
+      - <numberBetween(500, 20000)>
+
+AppBundle\Entity\Sylius\Order:
+  order_1:
+    __factory:
+      '@sylius.factory.order::createForRestaurant':
+        - "@restaurant_1"
+    __calls:
+      #      FIXME: that does not set an order number on each task (normally it's handled by OrderSubscriber)
+      - setNumber: [ "ORDER1" ]
+      - setState: [ 'new' ]
