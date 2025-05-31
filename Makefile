@@ -1,10 +1,10 @@
-.PHONY: setup install osrm phpunit phpunit-only behat behat-only cypress cypress-only cypress-only-until-fail cypress-open cypress-install jest migrations migrations-diff migrations-migrate email-preview enable-xdebug start start-fresh fresh fresh-db perms lint test testdata testdata-dispatch testdata-foodtech testdata-high-volume-instance demodata testserver console log log-requests ftp
+.PHONY: setup install install-db osrm phpunit phpunit-only behat behat-only cypress cypress-only cypress-only-until-fail cypress-open cypress-install jest migrations migrations-diff migrations-migrate email-preview enable-xdebug start start-fresh fresh fresh-db perms lint test testdata-dispatch testdata-foodtech testdata-high-volume-instance demodata testserver console log log-requests ftp
 
-setup: install migrations perms demodata testdata
+setup: install migrations perms demodata
 
-install:
-	@printf "\e[0;32mCalculating cycling routes for Paris..\e[0m\n"
-	@$(MAKE) osrm
+install: osrm install-db
+
+install-db:
 	@printf "\e[0;32mPopulating schema..\e[0m\n"
 	@docker compose exec php php bin/console doctrine:schema:create --env=dev
 	@docker compose exec php php bin/console doctrine:schema:create --env=test
@@ -14,6 +14,7 @@ install:
 	@docker compose exec php php bin/console doctrine:migrations:version --no-interaction --quiet --add --all
 
 osrm:
+	@printf "\e[0;32mCalculating cycling routes for Paris..\e[0m\n"
 	@docker compose run --rm osrm wget --no-check-certificate https://coopcycle-assets.sfo2.digitaloceanspaces.com/osm/paris-france.osm.pbf -O /data/data.osm.pbf
 	@docker compose run --rm osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
 	@docker compose run --rm osrm osrm-partition /data/data.osrm
@@ -36,7 +37,7 @@ behat:
 # @only
 # Scenario: Some description..
 behat-only:
-	@clear && docker compose exec php php vendor/bin/behat --tags="@only"
+	@clear && docker compose exec php php vendor/bin/behat -v --tags="@only"
 
 cypress:
 	@npm run e2e
@@ -78,6 +79,7 @@ start:
 	@clear && docker compose up --remove-orphans
 
 # Once everything is restarted, you need to run in another terminal: `make setup`
+# After setup is done, you may need to stop the web server and start it again with: `make start`
 start-fresh: fresh-db fresh
 
 fresh:
@@ -98,8 +100,6 @@ lint:
 	@docker compose exec php php vendor/bin/phpstan analyse -v
 
 test: phpunit jest behat cypress
-
-testdata: testdata-dispatch
 
 testdata-dispatch:
 	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/dispatch.yml --env test

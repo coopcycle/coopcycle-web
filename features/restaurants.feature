@@ -695,8 +695,6 @@ Feature: Manage restaurants
     And I add "Content-Type" header equal to "application/ld+json"
     When I send a "GET" request to "/api/restaurants/1/products"
     Then the response status code should be 200
-    # TODO Remove, this will force the test to fail..!
-    Then the response should be empty
     And the response should be in JSON
     And the JSON should match:
       """
