@@ -16,6 +16,7 @@ use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Action\Delivery\BulkAsync as BulkAsyncDelivery;
 use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
+use AppBundle\Api\Dto\DeliveryFormDeliveryOutput;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInput;
 use AppBundle\Api\Dto\OptimizationSuggestions;
@@ -45,6 +46,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             denormalizationContext: ['groups' => ['delivery_create']],
             security: 'is_granted(\'edit\', object)',
             input: DeliveryInput::class,
+            output: DeliveryFormDeliveryOutput::class,
             processor: DeliveryCreateOrUpdateProcessor::class
         ),
         new Put(
@@ -88,6 +90,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             denormalizationContext: ['groups' => ['delivery_create']],
             securityPostDenormalize: 'is_granted(\'create\', object)',
             input: DeliveryInput::class,
+            output: DeliveryFormDeliveryOutput::class,
             processor: DeliveryCreateOrUpdateProcessor::class
         ),
         new Post(

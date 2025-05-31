@@ -1,0 +1,28 @@
+{% extends 'delivery/form.html.twig' %}
+
+{% block prepare_title %}
+  {{ add_title_prefix('orders.new'|trans) }}
+{% endblock %}
+
+{% block breadcrumb %}
+  <li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+  <li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
+  <li>{% trans %}orders.new{% endtrans %}</li>
+{% endblock %}
+
+{% if is_granted('ROLE_DISPATCHER') %}
+  {% set title = 'orders.new'|trans %}
+{% endif %}
+
+
+{% block content %}
+  {% if is_granted('ROLE_DISPATCHER') %}
+    <div class="alert alert-info">
+      This legacy version of the delivery form will be removed soon. If you still need it, please let us know on Stack #dev channel ASAP.
+      To access the more-friendly, new version of the delivery form <a class="text-decoration-underline" href="{{ path('admin_store_delivery_new', { id: store.id }) }}">click here</a>.
+    </div>
+  {% endif %}
+
+ {{ parent() }}
+
+{% endblock %}

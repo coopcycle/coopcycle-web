@@ -356,7 +356,7 @@ trait StoreTrait
 
                 $this->handleNewRecurrenceRule($pricingManager, $logger, $store, $form, $delivery, $order, $priceForOrder);
 
-                if ($this->isGranted('ROLE_ADMIN')) {
+                if ($this->isGranted('ROLE_DISPATCHER')) {
                     $order->setState(OrderInterface::STATE_ACCEPTED);
                 }
 
@@ -364,11 +364,11 @@ trait StoreTrait
 
                 // TODO Add flash message
 
-                return $this->redirectToRoute($routes['success'], ['id' => $id]);
+                return $this->redirectToRoute('admin_order', [ 'id' => $order->getId() ]);
             }
         }
 
-        return $this->render('store/deliveries/new.html.twig', [
+        return $this->render('store/deliveries/new_legacy.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'form' => $form->createView(),
@@ -402,6 +402,7 @@ trait StoreTrait
         if ($this->isGranted('ROLE_DISPATCHER') && $data = $this->duplicateOrder($request, $store, $pricingManager)) {
             $deliveryData = $deliveryMapper->map(
                 $data->delivery,
+                null,
                 $data->previousArbitraryPrice,
                 false
             );
@@ -410,7 +411,7 @@ trait StoreTrait
         $routes = $request->attributes->get('routes');
 
         return $this->render(
-            'store/deliveries/beta_new.html.twig',
+            'store/deliveries/form.html.twig',
             $this->auth([
                 'layout' => $request->attributes->get('layout'),
                 'store' => $store,
@@ -419,6 +420,7 @@ trait StoreTrait
                 'deliveryData' => $deliveryData,
                 'stores_route' => $routes['stores'],
                 'store_route' => $routes['store'],
+                'store_deliveries_route' => $routes['store_deliveries'],
                 'back_route' => $routes['back'],
                 'show_left_menu' => true,
                 'isDispatcher' => $this->isGranted('ROLE_DISPATCHER'),
