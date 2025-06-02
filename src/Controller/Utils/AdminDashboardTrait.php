@@ -114,7 +114,7 @@ trait AdminDashboardTrait
             return $response;
         }
 
-        $couriers = $this->getDoctrine()
+        $couriers = $this->entityManager
             ->getRepository(User::class)
             ->createQueryBuilder('u')
             ->select('u.username')
@@ -124,19 +124,19 @@ trait AdminDashboardTrait
             ->getQuery()
             ->getArrayResult();
 
-        $this->getDoctrine()->getManager()->getFilters()->enable('soft_deleteable');
+        $this->entityManager->getFilters()->enable('soft_deleteable');
         // insert here all queries for soft deletable that you don't want to show in the dashboard
 
         $recurrenceRules =
-            $this->getDoctrine()->getRepository(TaskRecurrenceRule::class)->findByGenerateOrders(false);
+            $this->entityManager->getRepository(TaskRecurrenceRule::class)->findByGenerateOrders(false);
 
         $recurrenceRulesNormalized = array_map(function (TaskRecurrenceRule $recurrenceRule) {
             return $this->get('serializer')->normalize($recurrenceRule, 'jsonld');
         }, $recurrenceRules);
 
-        $stores = $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']);
+        $stores = $this->entityManager->getRepository(Store::class)->findBy([], ['name' => 'ASC']);
 
-        $this->getDoctrine()->getManager()->getFilters()->disable('soft_deleteable');
+        $this->entityManager->getFilters()->disable('soft_deleteable');
 
         $storesNormalized = array_map(function (Store $store) {
             return $this->get('serializer')->normalize($store, 'jsonld', [
@@ -144,7 +144,7 @@ trait AdminDashboardTrait
             ]);
         }, $stores);
 
-        $qb = $this->getDoctrine()
+        $qb = $this->entityManager
             ->getRepository(Address::class)
             ->createQueryBuilder('a');
         $qb
@@ -239,7 +239,7 @@ trait AdminDashboardTrait
     protected function getTaskList(\DateTime $date, UserInterface $user)
     {
         $this->denyAccessUnlessGranted('ROLE_DISPATCHER');
-        $taskList = $this->getDoctrine()
+        $taskList = $this->entityManager
             ->getRepository(TaskList::class)
             ->findOneBy(['date' => $date, 'courier' => $user]);
 
@@ -263,12 +263,8 @@ trait AdminDashboardTrait
         $taskList = $this->getTaskList($date, $user);
 
         if (null === $taskList->getId()) {
-            $this->getDoctrine()
-                ->getManagerForClass(TaskList::class)
-                ->persist($taskList);
-            $this->getDoctrine()
-                ->getManagerForClass(TaskList::class)
-                ->flush();
+            $this->entityManager->persist($taskList);
+            $this->entityManager->flush();
         }
 
         $taskListNormalized = $this->get('serializer')->normalize($taskList, 'jsonld', [
@@ -286,7 +282,7 @@ trait AdminDashboardTrait
     {
         $this->denyAccessUnlessGranted('ROLE_DISPATCHER');
 
-        $image = $this->getDoctrine()->getRepository(TaskImage::class)->find($imageId);
+        $image = $this->entityManager->getRepository(TaskImage::class)->find($imageId);
 
         if (!$image) {
             throw new NotFoundHttpException(sprintf('Image #%d not found', $imageId));

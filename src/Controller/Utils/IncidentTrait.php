@@ -6,6 +6,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Incident\IncidentImage;
 use AppBundle\Entity\Incident\IncidentRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Liip\ImagineBundle\Service\FilterService;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,11 +16,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 trait IncidentTrait {
 
-    public function incidentListAction(Request $request, PaginatorInterface $paginator)
+    public function incidentListAction(Request $request, EntityManagerInterface $entityManager, PaginatorInterface $paginator)
     {
 
         /** @var IncidentRepository $repo */
-        $repo =  $this->getDoctrine()
+        $repo =  $entityManager
             ->getRepository(Incident::class);
 
         $incidents = $repo->getAllIncidents();
@@ -31,9 +32,9 @@ trait IncidentTrait {
         ]));
     }
 
-    public function incidentAction($id, Request $request) {
+    public function incidentAction($id, Request $request, EntityManagerInterface $entityManager) {
         /** @var ?Incident $incident */
-        $incident = $this->getDoctrine()->getRepository(Incident::class)->find($id);
+        $incident = $entityManager->getRepository(Incident::class)->find($id);
 
         if (!$incident) {
             throw $this->createNotFoundException();

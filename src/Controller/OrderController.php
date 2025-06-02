@@ -502,7 +502,8 @@ class OrderController extends AbstractController
         JWSProviderInterface $jwsProvider,
         IriConverterInterface $iriConverter,
         Filesystem $assetsFilesystem,
-        CentrifugoClient $centrifugoClient)
+        CentrifugoClient $centrifugoClient,
+        Request $request)
     {
         $hashids = new Hashids($this->getParameter('secret'), 16);
 
@@ -707,7 +708,6 @@ class OrderController extends AbstractController
             'cart_form' => $cartForm->createView(),
             'cart_timing' => $orderTimeHelper->getTimeInfo($order),
             'order_access_token' => $this->orderAccessTokenManager->create($order),
-            'addresses_normalized' => $this->getUserAddresses(),
             'is_player' => true,
         ]));
     }

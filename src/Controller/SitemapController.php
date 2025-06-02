@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\LocalBusiness;
 use Cocur\Slugify\SlugifyInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,9 +15,9 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 class SitemapController extends AbstractController
 {
     #[Route(path: '/sitemap.xml', name: 'sitemap')]
-    public function indexAction(SlugifyInterface $slugify)
+    public function indexAction(SlugifyInterface $slugify, EntityManagerInterface $entityManager)
     {
-        $restaurants = $this->getDoctrine()
+        $restaurants = $entityManager
             ->getRepository(LocalBusiness::class)
             ->findBy(['enabled' => true]);
 

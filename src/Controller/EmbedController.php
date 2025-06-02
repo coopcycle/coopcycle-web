@@ -108,7 +108,7 @@ class EmbedController extends AbstractController
         }
 
         $id = current($decoded);
-        $deliveryForm = $this->getDoctrine()->getRepository(DeliveryForm::class)->find($id);
+        $deliveryForm = $this->entityManager->getRepository(DeliveryForm::class)->find($id);
 
         if (null === $deliveryForm) {
             throw $this->createNotFoundException(sprintf('DeliveryForm #%d does not exist', $id));
@@ -120,7 +120,7 @@ class EmbedController extends AbstractController
     #[Route(path: '/embed/delivery/start', name: 'embed_delivery_start_legacy')]
     public function deliveryStartLegacyAction()
     {
-        $qb = $this->getDoctrine()
+        $qb = $this->entityManager
             ->getRepository(DeliveryForm::class)
             ->createQueryBuilder('df');
 
