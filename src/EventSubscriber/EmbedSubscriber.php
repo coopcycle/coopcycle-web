@@ -2,8 +2,7 @@
 
 namespace AppBundle\EventSubscriber;
 
-use Symfony\Component\HttpFoundation\Session\Storage\SessionStorageInterface;
-use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
+use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorageFactory;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
@@ -12,11 +11,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class EmbedSubscriber implements EventSubscriberInterface
 {
-    private $storage;
+    private $factory;
 
-    public function __construct(SessionStorageInterface $storage)
+    public function __construct(NativeSessionStorageFactory $factory)
     {
-        $this->storage = $storage;
+        $this->factory = $factory;
     }
 
     /**
@@ -25,26 +24,28 @@ class EmbedSubscriber implements EventSubscriberInterface
      */
     public function setCookieSameSiteNoneSecure(RequestEvent $event)
     {
-        // Make sure to set a default value for cookie_samesite
-        if ($this->storage instanceof NativeSessionStorage) {
-            $this->storage->setOptions([
-                'cookie_samesite' => Cookie::SAMESITE_LAX,
-            ]);
-        }
-
         if (!$event->isMainRequest()) {
             return;
         }
 
         $request = $event->getRequest();
 
+        $storage = $this->factory->createStorage($request);
+
+        // Make sure to set a default value for cookie_samesite
+        if ($storage instanceof NativeSessionStorage) {
+            $storage->setOptions([
+                'cookie_samesite' => Cookie::SAMESITE_LAX,
+            ]);
+        }
+
         $hasEmbedParam = $request->query->has('embed')
             && ('' === $request->query->get('embed') || true === $request->query->getBoolean('embed'));
 
         if ($hasEmbedParam) {
             // @see Symfony\Component\HttpKernel\EventListener\AbstractSessionListener
-            if ($this->storage instanceof NativeSessionStorage) {
-                $this->storage->setOptions([
+            if ($storage instanceof NativeSessionStorage) {
+                $storage->setOptions([
                     // We also change the name of the session cookie,
                     // to make sure it will not be recycled
                     'name' => sprintf('%s_EMBED', $this->storage->getName()),

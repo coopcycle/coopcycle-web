@@ -224,6 +224,7 @@ services:
   Sylius\Component\Resource\Factory\FactoryInterface $orderItemFactory: '@sylius.factory.order_item'
   Sylius\Component\Resource\Repository\RepositoryInterface $customerRepository: '@sylius.repository.customer'
   Sylius\Component\Resource\Factory\FactoryInterface $customerFactory: '@sylius.factory.customer'
+  Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorageFactory: '@session.storage.factory.native'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:

@@ -19,7 +19,7 @@ use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 
-class EmbedAwareRouter implements WarmableInterface, ServiceSubscriberInterface, RouterInterface, RequestMatcherInterface
+class EmbedAwareRouter implements WarmableInterface, RouterInterface, RequestMatcherInterface
 {
     /**
      * @var Router
@@ -55,13 +55,6 @@ class EmbedAwareRouter implements WarmableInterface, ServiceSubscriberInterface,
     public function warmUp(string $cacheDir)
     {
         return $this->router->warmUp($cacheDir);
-    }
-
-    public static function getSubscribedServices(): array
-    {
-        return [
-            'routing.loader' => LoaderInterface::class,
-        ];
     }
 
     public function setContext(RequestContext $context)
