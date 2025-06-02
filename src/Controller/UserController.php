@@ -187,7 +187,7 @@ class UserController extends AbstractController
         Security $security,
         TokenGeneratorInterface $tokenGenerator)
     {
-        $repository = $this->getDoctrine()->getRepository(Invitation::class);
+        $repository = $objectManager->getRepository(Invitation::class);
 
         if (null === $invitation = $repository->findOneByCode($code)) {
             throw $this->createNotFoundException();

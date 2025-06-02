@@ -12,7 +12,7 @@ trait UserTrait
 {
     protected function userTracking(UserInterface $user, \DateTime $date, $layout = 'profile')
     {
-        $qb = $this->getDoctrine()
+        $qb = $this->entityManager
             ->getRepository(TrackingPosition::class)->createQueryBuilder('tp');
         $qb
             ->andWhere('tp.courier = :user')

@@ -4,13 +4,14 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Tag;
 use AppBundle\Form\TagType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class TagController extends AbstractController
 {
-    public function newTagAction(Request $request)
+    public function newTagAction(Request $request, EntityManagerInterface $entityManager)
     {
         $tag = new Tag();
 
@@ -20,8 +21,8 @@ class TagController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $tag = $form->getData();
 
-            $this->getDoctrine()->getManagerForClass(Tag::class)->persist($tag);
-            $this->getDoctrine()->getManagerForClass(Tag::class)->flush();
+            $entityManager->persist($tag);
+            $entityManager->flush();
 
             return $this->redirectToRoute($request->attributes->get('redirect_route'));
         }
@@ -32,10 +33,10 @@ class TagController extends AbstractController
         ]);
     }
 
-    public function tagAction($slug, Request $request)
+    public function tagAction($slug, Request $request, EntityManagerInterface $entityManager)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $tag = $this->getDoctrine()->getRepository(Tag::class)->findOneBySlug($slug);
+        $tag = $entityManager->getRepository(Tag::class)->findOneBySlug($slug);
 
         $form = $this->createForm(TagType::class, $tag);
 
@@ -43,7 +44,7 @@ class TagController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $tag = $form->getData();
 
-            $this->getDoctrine()->getManagerForClass(Tag::class)->flush();
+            $entityManager->flush();
 
             return $this->redirectToRoute($request->attributes->get('redirect_route'));
         }

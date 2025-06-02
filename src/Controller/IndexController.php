@@ -14,6 +14,7 @@ use AppBundle\Enum\Store;
 use AppBundle\Form\DeliveryEmbedType;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Utils\SortableRestaurantIterator;
+use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use MyCLabs\Enum\Enum;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -76,7 +77,8 @@ class IndexController extends AbstractController
         TimingRegistry $timingRegistry,
         UrlGeneratorInterface $urlGenerator,
         TranslatorInterface $translator,
-        BusinessContext $businessContext)
+        BusinessContext $businessContext,
+        EntityManagerInterface $entityManager)
     {
         $user = $this->getUser();
 
@@ -175,11 +177,11 @@ class IndexController extends AbstractController
             }
         }
 
-        $hubs = $this->getDoctrine()->getRepository(Hub::class)->findBy([
+        $hubs = $entityManager->getRepository(Hub::class)->findBy([
             'enabled' => true
         ]);
 
-        $deliveryForm = $this->getDeliveryForm();
+        $deliveryForm = $this->getDeliveryForm($entityManager);
 
         $hashids = new Hashids($this->getParameter('secret'), 12);
 
@@ -221,9 +223,9 @@ class IndexController extends AbstractController
         return new RedirectResponse(sprintf('/%s/', $this->getParameter('locale')), 302);
     }
 
-    private function getDeliveryForm(): ?DeliveryForm
+    private function getDeliveryForm(EntityManagerInterface $entityManager): ?DeliveryForm
     {
-        $qb = $this->getDoctrine()
+        $qb = $entityManager
             ->getRepository(DeliveryForm::class)
             ->createQueryBuilder('f');
 
