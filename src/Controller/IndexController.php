@@ -4,7 +4,6 @@ namespace AppBundle\Controller;
 
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Business\Context as BusinessContext;
-use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Hub;
@@ -31,8 +30,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class IndexController extends AbstractController
 {
-    use UserTrait;
-
     const EXPIRES_AFTER = 300;
     const MAX_SECTIONS = 8;
     const MIN_SHOPS_PER_CUISINE = 3;
