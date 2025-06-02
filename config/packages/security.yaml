@@ -4,9 +4,14 @@ security:
 
     enable_authenticator_manager: true
 
-    encoders:
-        Symfony\Component\Security\Core\User\User: plaintext
-        Nucleos\UserBundle\Model\UserInterface: sha512
+    password_hashers:
+        legacy:
+            algorithm: sha512
+        Nucleos\UserBundle\Model\UserInterface:
+            algorithm: 'auto'
+            # https://symfony.com/doc/6.4/security/passwords.html#security-password-migration
+            migrate_from:
+                - legacy
 
     role_hierarchy:
 #        ROLE_AD_HOC_CUSTOMER (base role)
