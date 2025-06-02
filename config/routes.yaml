@@ -1,17 +1,17 @@
 # https://github.com/hwi/HWIOAuthBundle/blob/master/docs/1-setting_up_the_bundle.md
 # To prevent strange issues, this route should be imported before your custom ones.
 
-hwi_oauth_redirect:
-    resource: "@HWIOAuthBundle/Resources/config/routing/redirect.xml"
-    prefix:   /connect
+# hwi_oauth_redirect:
+#     resource: "@HWIOAuthBundle/Resources/config/routing/redirect.xml"
+#     prefix:   /connect
 
-hwi_oauth_connect:
-    resource: "@HWIOAuthBundle/Resources/config/routing/connect.xml"
-    prefix:   /connect
+# hwi_oauth_connect:
+#     resource: "@HWIOAuthBundle/Resources/config/routing/connect.xml"
+#     prefix:   /connect
 
-hwi_oauth_login:
-    resource: "@HWIOAuthBundle/Resources/config/routing/login.xml"
-    prefix:   /login
+# hwi_oauth_login:
+#     resource: "@HWIOAuthBundle/Resources/config/routing/login.xml"
+#     prefix:   /login
 
 foodtech:
     resource: .
