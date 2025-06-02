@@ -137,6 +137,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client as OAuth2Client;
@@ -207,7 +208,9 @@ class AdminController extends AbstractController
         protected Filesystem $edifactFilesystem,
         protected PricingRuleSetManager $pricingRuleSetManager,
         protected JWTTokenManagerInterface $JWTTokenManager,
-        protected TimeSlotManager $timeSlotManager)
+        protected TimeSlotManager $timeSlotManager,
+        protected NormalizerInterface $normalizer,
+        protected SerializerInterface $serializer)
     {}
 
     #[Route(path: '/admin', name: 'admin_index')]
@@ -448,7 +451,10 @@ class AdminController extends AbstractController
     }
 
     #[Route(path: '/admin/users', name: 'admin_users')]
-    public function usersAction(Request $request, PaginatorInterface $paginator, EntityManagerInterface $entityManager)
+    public function usersAction(Request $request,
+        PaginatorInterface $paginator,
+        EntityManagerInterface $entityManager,
+        SerializerInterface $serializer)
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
             return new RedirectResponse($this->generateUrl('admin_users_invite'));
@@ -528,7 +534,7 @@ class AdminController extends AbstractController
 
                 $optinsResult = $optinsQB->getQuery()->getResult();
 
-                $csv = $this->get('serializer')->serialize($optinsResult, 'csv');
+                $csv = $serializer->serialize($optinsResult, 'csv');
 
                 $filename = sprintf('coopcycle-users-for-%s-.csv', $optinSelected);
 
@@ -2351,11 +2357,11 @@ class AdminController extends AbstractController
         ]);
     }
 
-    public function taskReceiptAction($id)
+    public function taskReceiptAction($id, TwigEnvironment $twig)
     {
         $task = $this->entityManager->getRepository(Task::class)->find($id);
 
-        $html = $this->get('twig')->render('task/receipt.pdf.twig', [
+        $html = $twig->render('task/receipt.pdf.twig', [
             'task' => $task,
         ]);
 

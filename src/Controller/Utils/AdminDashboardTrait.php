@@ -42,6 +42,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Vich\UploaderBundle\Storage\StorageInterface;
 
 trait AdminDashboardTrait
@@ -68,10 +69,11 @@ trait AdminDashboardTrait
         CentrifugoClient $centrifugoClient,
         Redis $tile38,
         IriConverterInterface $iriConverter,
-        TagManager $tagManager)
+        TagManager $tagManager,
+        NormalizerInterface $normalizer)
     {
         return $this->dashboardFullscreenAction((new \DateTime())->format('Y-m-d'),
-            $request, $taskManager, $jwtManager, $centrifugoClient, $tile38, $iriConverter, $tagManager);
+            $request, $taskManager, $jwtManager, $centrifugoClient, $tile38, $iriConverter, $tagManager, $normalizer);
     }
 
     #[Route("/admin/dashboard/fullscreen/{date}", name: "admin_dashboard_fullscreen", requirements: ["date" => "[0-9]{4}-[0-9]{2}-[0-9]{2}"])]
@@ -81,7 +83,8 @@ trait AdminDashboardTrait
         CentrifugoClient $centrifugoClient,
         Redis $tile38,
         IriConverterInterface $iriConverter,
-        TagManager $tagManager)
+        TagManager $tagManager,
+        NormalizerInterface $normalizer)
     {
         new Hashids($this->getParameter('secret'), 8);
 
@@ -130,16 +133,16 @@ trait AdminDashboardTrait
         $recurrenceRules =
             $this->entityManager->getRepository(TaskRecurrenceRule::class)->findByGenerateOrders(false);
 
-        $recurrenceRulesNormalized = array_map(function (TaskRecurrenceRule $recurrenceRule) {
-            return $this->get('serializer')->normalize($recurrenceRule, 'jsonld');
+        $recurrenceRulesNormalized = array_map(function (TaskRecurrenceRule $recurrenceRule) use ($normalizer) {
+            return $normalizer->normalize($recurrenceRule, 'jsonld');
         }, $recurrenceRules);
 
         $stores = $this->entityManager->getRepository(Store::class)->findBy([], ['name' => 'ASC']);
 
         $this->entityManager->getFilters()->disable('soft_deleteable');
 
-        $storesNormalized = array_map(function (Store $store) {
-            return $this->get('serializer')->normalize($store, 'jsonld', [
+        $storesNormalized = array_map(function (Store $store) use ($normalizer) {
+            return $normalizer->normalize($store, 'jsonld', [
                 'groups' => ['store', 'store_with_packages']
             ]);
         }, $stores);
@@ -253,7 +256,7 @@ trait AdminDashboardTrait
     }
 
     #[Route("/admin/task-lists/{date}/{username}", name: "admin_task_list_create", requirements: ["date" => "[0-9]{4}-[0-9]{2}-[0-9]{2}"], methods: ["POST"])]
-    public function createTaskListAction($date, $username, Request $request, UserManagerInterface $userManager)
+    public function createTaskListAction($date, $username, Request $request, UserManagerInterface $userManager, NormalizerInterface $normalizer)
     {
         $this->denyAccessUnlessGranted('ROLE_DISPATCHER');
 
@@ -267,7 +270,7 @@ trait AdminDashboardTrait
             $this->entityManager->flush();
         }
 
-        $taskListNormalized = $this->get('serializer')->normalize($taskList, 'jsonld', [
+        $taskListNormalized = $normalizer->normalize($taskList, 'jsonld', [
             'groups' => ['task_list']
         ]);
 

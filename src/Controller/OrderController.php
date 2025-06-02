@@ -503,7 +503,8 @@ class OrderController extends AbstractController
         IriConverterInterface $iriConverter,
         Filesystem $assetsFilesystem,
         CentrifugoClient $centrifugoClient,
-        Request $request)
+        Request $request,
+        NormalizerInterface $normalizer)
     {
         $hashids = new Hashids($this->getParameter('secret'), 16);
 
@@ -566,7 +567,7 @@ class OrderController extends AbstractController
         return $this->render('order/foodtech.html.twig', $this->auth([
             'order' => $order,
             'orderAccessToken' => $this->orderAccessTokenManager->create($order), // token to pull order state from the api during guest checkout
-            'order_normalized' => $this->get('serializer')->normalize($order, 'jsonld', [
+            'order_normalized' => $normalizer->normalize($order, 'jsonld', [
                 'groups' => ['order'],
                 'is_web' => true
             ]),
@@ -649,7 +650,7 @@ class OrderController extends AbstractController
     }
 
     #[Route(path: '/order/{hashid}/preview', name: 'order_preview')]
-    public function dataPreviewAction($hashid, OrderRepository $orderRepository)
+    public function dataPreviewAction($hashid, OrderRepository $orderRepository, NormalizerInterface $normalizer)
     {
         $hashids = new Hashids($this->getParameter('secret'), 16);
 
@@ -666,7 +667,7 @@ class OrderController extends AbstractController
             throw $this->createNotFoundException(sprintf('Order #%d does not exist', $id));
         }
 
-        $orderNormalized = $this->get('serializer')->normalize($order, 'jsonld', [
+        $orderNormalized = $normalizer->normalize($order, 'jsonld', [
             'groups' => ['order', 'address']
         ]);
 
