@@ -30,7 +30,6 @@ use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 class DeliveryProcessor implements ProcessorInterface
 {
@@ -39,7 +38,6 @@ class DeliveryProcessor implements ProcessorInterface
     public function __construct(
         private readonly TokenStoreExtractor $storeExtractor,
         private readonly AuthorizationCheckerInterface $authorizationChecker,
-        private readonly DenormalizerInterface $denormalizer,
         private readonly IriConverterInterface $iriConverter,
         private readonly TagManager $tagManager,
         private readonly UserManagerInterface $userManager,
@@ -271,8 +269,10 @@ class DeliveryProcessor implements ProcessorInterface
                 } else {
                     $address = $this->geocoder->geocode($data->address);
                 }
-            } elseif (is_array($data->address)) {
-                $address = $this->denormalizer->denormalize($data->address, Address::class, 'jsonld');
+            } elseif ($data->address instanceof Address) {
+                $address = $data->address;
+            } else {
+                throw new InvalidArgumentException('task.address');
             }
 
             if (null === $address->getGeo()) {

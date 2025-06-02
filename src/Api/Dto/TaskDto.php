@@ -17,12 +17,8 @@ final class TaskDto
     #[Groups(['delivery', 'pricing_deliveries', 'delivery_create'])]
     public string|null $type = null;
 
-    /**
-     * FIXME: Ideally, an Address object should be denormalized by a standard API platform denormalizer,
-     * but for now we are doing it manually
-     */
     #[Groups(['delivery', 'pricing_deliveries', 'delivery_create'])]
-    public Address|array|string|null $address = null;
+    public Address|string|null $address = null;
 
     #[Groups(['pricing_deliveries', 'delivery_create'])]
     public array|null $latLng = null;
