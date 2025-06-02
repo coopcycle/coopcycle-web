@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Incident\IncidentImage;
 use AppBundle\Entity\TaskImage;
 use AppBundle\Pixabay\Client as PixabayClient;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToCheckFileExistence;
 use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
@@ -104,9 +105,9 @@ class AssetsController extends AbstractController
 
 
     #[Route(path: '/media/tasks/images/{path}', name: 'task_image_public', methods: ['GET'])]
-    public function taskImagePublicAction($path, Request $request): Response
+    public function taskImagePublicAction($path, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $object = $this->getDoctrine()->getRepository(TaskImage::class)->findOneBy([
+        $object = $entityManager->getRepository(TaskImage::class)->findOneBy([
             'imageName' => $path
         ]);
         if (is_null($object)) {
@@ -126,9 +127,9 @@ class AssetsController extends AbstractController
     }
 
     #[Route(path: '/media/incidents/images/{path}', name: 'incident_image_public', methods: ['GET'])]
-    public function incidentImagePublicAction($path, Request $request): Response
+    public function incidentImagePublicAction($path, Request $request, EntityManagerInterface $entityManager): Response
     {
-        $object = $this->getDoctrine()->getRepository(IncidentImage::class)->findOneBy([
+        $object = $entityManager->getRepository(IncidentImage::class)->findOneBy([
             'imageName' => $path
         ]);
         if (is_null($object)) {

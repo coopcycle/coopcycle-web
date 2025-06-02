@@ -53,7 +53,7 @@ class BarcodeController extends AbstractController
         $barcode = $this->barcodeUtils::parse($request->get('code'));
 
         /** @var ?Task $task */
-        $task = $this->getDoctrine()
+        $task = $this->doctrine
             ->getRepository(Task::class)
             ->findByBarcode($barcode->getRawBarcode());
 
@@ -184,7 +184,7 @@ class BarcodeController extends AbstractController
 
         $phoneUtil = $phoneUtil::getInstance();
         /** @var ?Task $ressource */
-        $ressource = $this->getDoctrine()
+        $ressource = $this->doctrine
             ->getRepository(Task::class)
             ->find($barcode->getEntityId());
 
@@ -195,7 +195,7 @@ class BarcodeController extends AbstractController
         $package = null;
         if ($barcode->isContainsPackages()) {
             //NOTE: Dont rely on lazy loading
-            $package = $this->getDoctrine()
+            $package = $this->doctrine
                 ->getRepository(Package::class)
                 ->find($barcode->getPackageTaskId())?->getPackage()?->getName();
         }

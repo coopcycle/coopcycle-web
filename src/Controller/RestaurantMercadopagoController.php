@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Service\SettingsManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -11,14 +12,10 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class RestaurantMercadopagoController extends AbstractController
 {
-    public function __construct()
-    {
-    }
-
     #[Route(path: '/restaurant/{id}/mercadopago-account', name: 'restaurant-mercadopago-account', methods: ['GET'])]
-    public function getMercadopagoAccount($id)
+    public function getMercadopagoAccount($id, EntityManagerInterface $entityManager)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $entityManager
             ->getRepository(LocalBusiness::class)->find($id);
 
         $mp_account = $restaurant->getMercadopagoAccount();
@@ -35,5 +32,4 @@ class RestaurantMercadopagoController extends AbstractController
 
         return new JsonResponse($data, Response::HTTP_OK);
     }
-
 }

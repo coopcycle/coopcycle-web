@@ -588,7 +588,7 @@ Feature: Food Tech
       """
       {
         "@context":"/api/contexts/Restaurant",
-        "@id":@string@,
+        "@id":"/api/restaurants/1",
         "@type":"http://schema.org/Restaurant",
         "id":@integer@,
         "name":"Nodaiwa",

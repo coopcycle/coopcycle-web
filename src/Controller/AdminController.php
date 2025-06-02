@@ -460,13 +460,13 @@ class AdminController extends AbstractController
     }
 
     #[Route(path: '/admin/users', name: 'admin_users')]
-    public function usersAction(Request $request, PaginatorInterface $paginator)
+    public function usersAction(Request $request, PaginatorInterface $paginator, EntityManagerInterface $entityManager)
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
             return new RedirectResponse($this->generateUrl('admin_users_invite'));
         }
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $qb = $this->getDoctrine()
+        $qb = $entityManager
             ->getRepository(Customer::class)
             ->createQueryBuilder('c');
 
@@ -530,7 +530,7 @@ class AdminController extends AbstractController
             if ($usersExportForm->isSubmitted() && $usersExportForm->isValid()) {
                 $optinSelected = $usersExportForm->get('optins')->getData();
 
-                $optinsQB = $this->getDoctrine()
+                $optinsQB = $entityManager
                     ->getRepository(User::class)
                     ->createQueryBuilder('u')
                     ->select('u.username, u.email')
@@ -742,7 +742,7 @@ class AdminController extends AbstractController
 
     protected function getRestaurantList(Request $request)
     {
-        $repository = $this->getDoctrine()->getRepository(LocalBusiness::class);
+        $repository = $this->entityManager->getRepository(LocalBusiness::class);
 
         $countAll = $repository
             ->createQueryBuilder('r')->select('COUNT(r)')
@@ -881,11 +881,11 @@ class AdminController extends AbstractController
             ]
         );
 
-        $this->getDoctrine()->getManager()->getFilters()->enable('soft_deleteable');
+        $this->entityManager->getFilters()->enable('soft_deleteable');
 
-        $stores = $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']);
+        $stores = $this->entityManager->getRepository(Store::class)->findBy([], ['name' => 'ASC']);
 
-        $this->getDoctrine()->getManager()->getFilters()->disable('soft_deleteable');
+        $this->entityManager->getFilters()->disable('soft_deleteable');
 
         $importDate = new \DateTime($request->query->get('date', 'now'));
 
@@ -925,7 +925,7 @@ class AdminController extends AbstractController
     }
 
     #[Route(path: '/admin/tasks', name: 'admin_tasks')]
-    public function tasksAction(Request $request, PaginatorInterface $paginator)
+    public function tasksAction(Request $request, PaginatorInterface $paginator, EntityManagerInterface $entityManager)
     {
         $form = $this->createForm(AttachToOrganizationType::class);
 
@@ -942,13 +942,13 @@ class AdminController extends AbstractController
                     }
                 }
 
-                $this->getDoctrine()->getManagerForClass(Task::class)->flush();
+                $entityManager->flush();
             }
 
             return $this->redirectToRoute('admin_tasks');
         }
 
-        $qb = $this->getDoctrine()
+        $qb = $entityManager
             ->getRepository(Task::class)
             ->createQueryBuilder('t');
 
@@ -1041,11 +1041,11 @@ class AdminController extends AbstractController
     }
 
     #[Route(path: '/admin/deliveries/pricing', name: 'admin_deliveries_pricing')]
-    public function pricingRuleSetsAction(Request $request, PaginatorInterface $paginator, PricingRuleSetManager $pricingRuleSetManager, ApplicationsNormalizer $normalizer)
+    public function pricingRuleSetsAction(Request $request, PaginatorInterface $paginator, PricingRuleSetManager $pricingRuleSetManager, ApplicationsNormalizer $normalizer, EntityManagerInterface $entityManager)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $qb = $this->getDoctrine()->getRepository(Delivery\PricingRuleSet::class)
+        $qb = $entityManager->getRepository(Delivery\PricingRuleSet::class)
             ->createQueryBuilder('rs')
             ->orderBy('rs.name', 'ASC')
             ->setFirstResult(max(($request->query->getInt('page', 1) - 1), 0) * self::ITEMS_PER_PAGE / 2)
@@ -1093,7 +1093,7 @@ class AdminController extends AbstractController
             $originalRules->add($rule);
         }
 
-        $packageSets = $this->getDoctrine()->getRepository(PackageSet::class)->findAll();
+        $packageSets = $this->entityManager->getRepository(PackageSet::class)->findAll();
 
         $packageNames = [];
         foreach ($packageSets as $packageSet) {
@@ -1108,13 +1108,11 @@ class AdminController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $ruleSet = $form->getData();
 
-            $em = $this->getDoctrine()->getManagerForClass(Delivery\PricingRule::class);
-
             foreach ($originalRules as $originalRule) {
                 if (!$ruleSet->getRules()->contains($originalRule)) {
                     // When duplicating a pricing rule, entities are detached
-                    if ($em->contains($originalRule)) {
-                        $em->remove($originalRule);
+                    if ($this->entityManager->contains($originalRule)) {
+                        $this->entityManager->remove($originalRule);
                     }
                 }
             }
@@ -1124,10 +1122,10 @@ class AdminController extends AbstractController
             }
 
             if (null === $ruleSet->getId()) {
-                $em->persist($ruleSet);
+                $this->entityManager->persist($ruleSet);
             }
 
-            $em->flush();
+            $this->entityManager->flush();
 
             $this->addFlash(
                 'notice',
@@ -1159,7 +1157,7 @@ class AdminController extends AbstractController
     public function pricingRuleSetAction($id, Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $ruleSet = $this->getDoctrine()
+        $ruleSet = $this->entityManager
             ->getRepository(Delivery\PricingRuleSet::class)
             ->find($id);
 
@@ -1170,7 +1168,7 @@ class AdminController extends AbstractController
     public function duplicatePricingRuleSetAction($id, Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $ruleSet = $this->getDoctrine()
+        $ruleSet = $this->entityManager
             ->getRepository(Delivery\PricingRuleSet::class)
             ->find($id);
 
@@ -1194,11 +1192,9 @@ class AdminController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $failureReasonSet = $form->getData();
 
-            $em = $this->getDoctrine()->getManagerForClass(Delivery\PricingRule::class);
-
             foreach ($originalReasons as $originalReason) {
                 if (!$failureReasonSet->getReasons()->contains($originalReason)) {
-                    $em->remove($originalReason);
+                    $this->entityManager->remove($originalReason);
                 }
             }
 
@@ -1207,10 +1203,10 @@ class AdminController extends AbstractController
             }
 
             if (null === $failureReasonSet->getId()) {
-                $em->persist($failureReasonSet);
+                $this->entityManager->persist($failureReasonSet);
             }
 
-            $em->flush();
+            $this->entityManager->flush();
 
             $this->addFlash(
                 'notice',
@@ -1229,7 +1225,7 @@ class AdminController extends AbstractController
     public function failuresAction()
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $failureReasonSets = $this->getDoctrine()
+        $failureReasonSets = $this->entityManager
             ->getRepository(Delivery\FailureReasonSet::class)
             ->findBy(array(), array('name' => 'ASC'));
 
@@ -1251,7 +1247,7 @@ class AdminController extends AbstractController
     public function failureReasonSetAction($id, Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $failureReasonSet = $this->getDoctrine()
+        $failureReasonSet = $this->entityManager
             ->getRepository(Delivery\FailureReasonSet::class)
             ->find($id);
 
@@ -1262,13 +1258,11 @@ class AdminController extends AbstractController
     public function deleteFailureReasonSetAction($id)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $failureReasonSet = $this->getDoctrine()->getRepository(Delivery\FailureReasonSet::class)->find($id);
-
-        $em = $this->getDoctrine()->getManagerForClass(Delivery\FailureReason::class);
+        $failureReasonSet = $this->entityManager->getRepository(Delivery\FailureReasonSet::class)->find($id);
 
         try {
-            $em->remove($failureReasonSet);
-            $em->flush();
+            $this->entityManager->remove($failureReasonSet);
+            $this->entityManager->flush();
             $this->addFlash(
                 'notice',
                 $this->translator->trans('global.changesSaved')
@@ -1287,10 +1281,10 @@ class AdminController extends AbstractController
     public function deleteZoneAction($id)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $zone = $this->getDoctrine()->getRepository(Zone::class)->find($id);
+        $zone = $this->entityManager->getRepository(Zone::class)->find($id);
 
-        $this->getDoctrine()->getManagerForClass(Zone::class)->remove($zone);
-        $this->getDoctrine()->getManagerForClass(Zone::class)->flush();
+        $this->entityManager->remove($zone);
+        $this->entityManager->flush();
 
         return $this->redirectToRoute('admin_zones');
     }
@@ -1310,10 +1304,10 @@ class AdminController extends AbstractController
             $zoneCollection = $zoneCollectionForm->getData();
 
             foreach ($zoneCollection->zones as $zone) {
-                $this->getDoctrine()->getManagerForClass(Zone::class)->persist($zone);
+                $this->entityManager->persist($zone);
             }
 
-            $this->getDoctrine()->getManagerForClass(Zone::class)->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('admin_zones');
         }
@@ -1330,7 +1324,7 @@ class AdminController extends AbstractController
             $zoneCollectionForm->setData($zoneCollection);
         }
 
-        $zones = $this->getDoctrine()->getRepository(Zone::class)->findAll();
+        $zones = $this->entityManager->getRepository(Zone::class)->findAll();
 
         return $this->render('admin/zones.html.twig', [
             'zones' => $zones,
@@ -1369,7 +1363,7 @@ class AdminController extends AbstractController
     #[Route(path: '/admin/restaurant/{restaurantId}/menus', name: 'admin_restaurant_menus')]
     public function searchRestaurantMenusAction($restaurantId)
     {
-        $restaurant = $this->getDoctrine()->getRepository(LocalBusiness::class)->find($restaurantId);
+        $restaurant = $this->entityManager->getRepository(LocalBusiness::class)->find($restaurantId);
 
         $data = [];
         foreach($restaurant->getTaxons() as $taxon) {
@@ -1385,7 +1379,7 @@ class AdminController extends AbstractController
     #[Route(path: '/admin/stores/search', name: 'admin_stores_search')]
     public function searchStoresAction(Request $request)
     {
-        $repository = $this->getDoctrine()->getRepository(Store::class);
+        $repository = $this->entityManager->getRepository(Store::class);
 
         $qb = $repository->createQueryBuilder('s');
         $qb
@@ -1418,7 +1412,7 @@ class AdminController extends AbstractController
     #[Route(path: '/admin/users/search', name: 'admin_users_search')]
     public function searchUsersAction(Request $request)
     {
-        $repository = $this->getDoctrine()->getRepository(User::class);
+        $repository = $this->entityManager->getRepository(User::class);
 
         $results = $repository->search($request->query->get('q'));
 
@@ -1606,18 +1600,14 @@ class AdminController extends AbstractController
 
             // Disable "Show on Home Page" on all forms ONLY if this new form is setted true
             if($deliveryForm->getShowHomepage()){
-                $forms = $this->getDoctrine()->getRepository(DeliveryForm::class)->findAll();
+                $forms = $this->entityManager->getRepository(DeliveryForm::class)->findAll();
                 foreach ($forms as $formTemp) {
                     $formTemp->setShowHomepage(false);
                 }
             }
 
-            $this->getDoctrine()
-                ->getManagerForClass(DeliveryForm::class)
-                ->persist($deliveryForm);
-            $this->getDoctrine()
-                ->getManagerForClass(DeliveryForm::class)
-                ->flush();
+            $this->entityManager->persist($deliveryForm);
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('admin_forms');
         }
@@ -1631,7 +1621,7 @@ class AdminController extends AbstractController
     public function formAction($id, Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $deliveryForm = $this->getDoctrine()->getRepository(DeliveryForm::class)->find($id);
+        $deliveryForm = $this->entityManager->getRepository(DeliveryForm::class)->find($id);
 
         $form = $this->createForm(EmbedSettingsType::class, $deliveryForm);
 
@@ -1640,7 +1630,7 @@ class AdminController extends AbstractController
 
             // Disable "Show on Home Page" on all forms except current form if setted true
             if($deliveryForm->getShowHomepage()){
-                $forms = $this->getDoctrine()->getRepository(DeliveryForm::class)->findAll();
+                $forms = $this->entityManager->getRepository(DeliveryForm::class)->findAll();
                 foreach ($forms as $formTemp) {
                     if($deliveryForm->getId() != $formTemp->getId()){ //except current form
                         $formTemp->setShowHomepage(false);
@@ -1648,9 +1638,7 @@ class AdminController extends AbstractController
                 }
             }
 
-            $this->getDoctrine()
-                ->getManagerForClass(DeliveryForm::class)
-                ->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('admin_forms');
         }
@@ -1663,7 +1651,7 @@ class AdminController extends AbstractController
     #[Route(path: '/admin/forms', name: 'admin_forms')]
     public function formsAction()
     {
-        $forms = $this->getDoctrine()->getRepository(DeliveryForm::class)->findBy(array(), array('id' => 'ASC'));
+        $forms = $this->entityManager->getRepository(DeliveryForm::class)->findBy(array(), array('id' => 'ASC'));
         return $this->render('admin/forms.html.twig', $this->auth(['forms' => $forms]));
     }
 
@@ -1726,13 +1714,8 @@ class AdminController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $apiApp = $form->getData();
 
-            $this->getDoctrine()
-                ->getManagerForClass(ApiApp::class)
-                ->persist($apiApp);
-
-            $this->getDoctrine()
-                ->getManagerForClass(ApiApp::class)
-                ->flush();
+            $this->entityManager->persist($apiApp);
+            $this->entityManager->flush();
 
             $this->addFlash(
                 'notice',
@@ -1752,7 +1735,7 @@ class AdminController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $apiApp = $this->getDoctrine()
+        $apiApp = $this->entityManager
             ->getRepository(ApiApp::class)
             ->find($id);
 
@@ -1762,9 +1745,7 @@ class AdminController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $apiApp = $form->getData();
 
-            $this->getDoctrine()
-                ->getManagerForClass(ApiApp::class)
-                ->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('admin_api_apps');
         }
@@ -1826,13 +1807,8 @@ class AdminController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $woopitIntegration = $form->getData();
 
-            $this->getDoctrine()
-                ->getManagerForClass(WoopitIntegration::class)
-                ->persist($woopitIntegration);
-
-            $this->getDoctrine()
-                ->getManagerForClass(WoopitIntegration::class)
-                ->flush();
+            $this->entityManager->persist($woopitIntegration);
+            $this->entityManager->flush();
 
             $this->addFlash(
                 'notice',
@@ -1852,7 +1828,7 @@ class AdminController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $apiApp = $this->getDoctrine()
+        $apiApp = $this->entityManager
             ->getRepository(WoopitIntegration::class)
             ->find($id);
 
@@ -1862,9 +1838,7 @@ class AdminController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $apiApp = $form->getData();
 
-            $this->getDoctrine()
-                ->getManagerForClass(WoopitIntegration::class)
-                ->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute('admin_integrations_woopit');
         }
@@ -2025,7 +1999,7 @@ class AdminController extends AbstractController
     #[Route(path: '/admin/tasks/{id}/emails', name: 'admin_task_email_preview')]
     public function taskEmailPreviewAction($id, Request $request, EmailManager $emailManager)
     {
-        $task = $this->getDoctrine()->getRepository(Task::class)->find($id);
+        $task = $this->entityManager->getRepository(Task::class)->find($id);
 
         if (!$task) {
             throw $this->createNotFoundException(sprintf('Task #%d does not exist', $id));
@@ -2091,19 +2065,19 @@ class AdminController extends AbstractController
     }
 
     #[Route(path: '/admin/restaurants/pledges', name: 'admin_restaurants_pledges')]
-    public function restaurantsPledgesListAction(Request $request, EntityManagerInterface $manager)
+    public function restaurantsPledgesListAction(Request $request, EntityManagerInterface $entityManager)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $pledges = $this->getDoctrine()->getRepository(Pledge::class)->findAll();
+        $pledges = $entityManager->getRepository(Pledge::class)->findAll();
 
         if ($request->isMethod('POST')) {
             $id = $request->request->get('pledge');
-            $pledge = $this->getDoctrine()->getRepository(Pledge::class)->find($id);
+            $pledge = $entityManager->getRepository(Pledge::class)->find($id);
             if ($request->request->has('accept')) {
                 $restaurant = $pledge->accept();
-                $manager->persist($restaurant);
-                $manager->flush();
+                $entityManager->persist($restaurant);
+                $entityManager->flush();
 
                 return $this->redirectToRoute('admin_restaurant', [
                     'id' => $restaurant->getId()
@@ -2111,7 +2085,7 @@ class AdminController extends AbstractController
             }
             if ($request->request->has('reject')) {
                 $pledge->setState('refused');
-                $manager->flush();
+                $entityManager->flush();
                 return $this->redirectToRoute('admin_restaurants_pledges');
             }
         }
@@ -2126,7 +2100,7 @@ class AdminController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $pledge = $this->getDoctrine()->getRepository(Pledge::class)->find($id);
+        $pledge = $this->entityManager->getRepository(Pledge::class)->find($id);
 
         if (!$pledge) {
             throw $this->createNotFoundException(sprintf('Pledge #%d does not exist', $id));
@@ -2246,7 +2220,7 @@ class AdminController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $timeSlot = $this->getDoctrine()->getRepository(TimeSlot::class)->find($id);
+        $timeSlot = $this->entityManager->getRepository(TimeSlot::class)->find($id);
 
         if (!$timeSlot) {
             throw $this->createNotFoundException(sprintf('Time slot #%d does not exist', $id));
@@ -2260,7 +2234,7 @@ class AdminController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $qb = $this->getDoctrine()->getRepository(PackageSet::class)
+        $qb = $this->entityManager->getRepository(PackageSet::class)
             ->createQueryBuilder('ps')
             ->orderBy('ps.name', 'ASC')
             ->setFirstResult(($request->query->getInt('page', 1) - 1) * self::ITEMS_PER_PAGE / 2)
@@ -2343,7 +2317,7 @@ class AdminController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $packageSet = $this->getDoctrine()->getRepository(PackageSet::class)->find($id);
+        $packageSet = $this->entityManager->getRepository(PackageSet::class)->find($id);
 
 
         if (!$packageSet) {
@@ -2391,7 +2365,7 @@ class AdminController extends AbstractController
 
     public function taskReceiptAction($id)
     {
-        $task = $this->getDoctrine()->getRepository(Task::class)->find($id);
+        $task = $this->entityManager->getRepository(Task::class)->find($id);
 
         $html = $this->get('twig')->render('task/receipt.pdf.twig', [
             'task' => $task,
@@ -2444,8 +2418,8 @@ class AdminController extends AbstractController
         $form = $this->createForm(HubType::class, $hub);
 
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
-            $this->getDoctrine()->getManager()->persist($hub);
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->persist($hub);
+            $this->entityManager->flush();
 
             $this->addFlash(
                 'notice',
@@ -2513,7 +2487,7 @@ class AdminController extends AbstractController
     public function hubAction($id, Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $hub = $this->getDoctrine()->getRepository(Hub::class)->find($id);
+        $hub = $this->entityManager->getRepository(Hub::class)->find($id);
 
         if (!$hub) {
             throw $this->createNotFoundException(sprintf('Hub #%d does not exist', $id));
@@ -2525,7 +2499,7 @@ class AdminController extends AbstractController
     public function businessRestaurantGroupAction($id, Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $businessRestaurantGroup = $this->getDoctrine()->getRepository(BusinessRestaurantGroup::class)->find($id);
+        $businessRestaurantGroup = $this->entityManager->getRepository(BusinessRestaurantGroup::class)->find($id);
 
         if (!$businessRestaurantGroup) {
             throw $this->createNotFoundException(sprintf('Restaurants For Business #%d does not exist', $id));
@@ -2537,7 +2511,7 @@ class AdminController extends AbstractController
     public function businessRestaurantGroupListAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $businessRestaurantGroupList = $this->getDoctrine()->getRepository(BusinessRestaurantGroup::class)->findAll();
+        $businessRestaurantGroupList = $this->entityManager->getRepository(BusinessRestaurantGroup::class)->findAll();
 
         return $this->render('admin/business_restaurant_group_list.html.twig', [
             'business_restaurant_group_list' => $businessRestaurantGroupList,
@@ -2547,7 +2521,7 @@ class AdminController extends AbstractController
     public function hubsAction(Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $hubs = $this->getDoctrine()->getRepository(Hub::class)->findAll();
+        $hubs = $this->entityManager->getRepository(Hub::class)->findAll();
 
         return $this->render('admin/hubs.html.twig', [
             'hubs' => $hubs,
@@ -2557,7 +2531,7 @@ class AdminController extends AbstractController
     public function businessAccountsAction()
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
-        $accounts = $this->getDoctrine()->getRepository(BusinessAccount::class)->findBy(array(), array('name' => 'ASC'));
+        $accounts = $this->entityManager->getRepository(BusinessAccount::class)->findBy(array(), array('name' => 'ASC'));
 
         return $this->render('admin/business_accounts.html.twig', [
             'accounts' => $accounts,
@@ -2699,7 +2673,7 @@ class AdminController extends AbstractController
             $businessAccount = $this->getUser()->getBusinessAccount();
         } else {
             $this->denyAccessUnlessGranted('ROLE_ADMIN');
-            $businessAccount = $this->getDoctrine()->getRepository(BusinessAccount::class)->find($id);
+            $businessAccount = $this->entityManager->getRepository(BusinessAccount::class)->find($id);
         }
 
         if (!$businessAccount) {
@@ -2717,7 +2691,7 @@ class AdminController extends AbstractController
 
         $routes = $request->attributes->get('routes');
 
-        $pledgeCount = $this->getDoctrine()
+        $pledgeCount = $this->entityManager
             ->getRepository(Pledge::class)
             ->createQueryBuilder('p')
             ->select('COUNT(p.id)')
@@ -2787,8 +2761,8 @@ class AdminController extends AbstractController
         $form = $this->createForm(NonprofitType::class, $nonprofit);
 
         if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
-            $this->getDoctrine()->getManager()->persist($nonprofit);
-            $this->getDoctrine()->getManager()->flush();
+            $this->entityManager->persist($nonprofit);
+            $this->entityManager->flush();
 
             $this->addFlash(
                 'notice',
@@ -2824,7 +2798,7 @@ class AdminController extends AbstractController
      */
     public function nonprofitAction(int $id, Request $request)
     {
-        $nonprofit = $this->getDoctrine()->getRepository(Nonprofit::class)->find($id);
+        $nonprofit = $this->entityManager->getRepository(Nonprofit::class)->find($id);
 
         if (!$nonprofit) {
             throw $this->createNotFoundException(sprintf('Nonprofit #%d does not exist', $id));
@@ -2835,7 +2809,7 @@ class AdminController extends AbstractController
 
     public function deleteNonprofitAction(int $id, Request $request): RedirectResponse
     {
-        $nonprofit = $this->getDoctrine()->getRepository(Nonprofit::class)->find($id);
+        $nonprofit = $this->entityManager->getRepository(Nonprofit::class)->find($id);
         $this->entityManager->remove($nonprofit);
         $this->entityManager->flush();
 

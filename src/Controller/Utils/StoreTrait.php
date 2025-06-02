@@ -69,7 +69,7 @@ trait StoreTrait
     #[HideSoftDeleted]
     public function storeListAction(Request $request, PaginatorInterface $paginator, JWTManagerInterface $jwtManager)
     {
-        $qb = $this->getDoctrine()
+        $qb = $this->entityManager
         ->getRepository(Store::class)
         ->createQueryBuilder('c')
         ->orderBy('c.name', 'ASC');
@@ -97,7 +97,7 @@ trait StoreTrait
         UserManagerInterface $userManager,
         InvitationManager $invitationManager)
     {
-        $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
+        $store = $this->entityManager->getRepository(Store::class)->find($id);
 
         $this->accessControl($store);
 
@@ -159,11 +159,11 @@ trait StoreTrait
 
     public function storeAddressAction($storeId, $addressId, Request $request, TranslatorInterface $translator)
     {
-        $store = $this->getDoctrine()->getRepository(Store::class)->find($storeId);
+        $store = $this->entityManager->getRepository(Store::class)->find($storeId);
 
         $this->accessControl($store, 'view');
 
-        $address = $this->getDoctrine()->getRepository(Address::class)->find($addressId);
+        $address = $this->entityManager->getRepository(Address::class)->find($addressId);
 
         if (!$store->getAddresses()->contains($address)) {
             throw new AccessDeniedHttpException('Access denied');
@@ -174,7 +174,7 @@ trait StoreTrait
 
     public function newStoreAddressAction($id, Request $request, TranslatorInterface $translator)
     {
-        $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
+        $store = $this->entityManager->getRepository(Store::class)->find($id);
 
         $this->accessControl($store, 'edit_delivery');
 
@@ -196,19 +196,18 @@ trait StoreTrait
 
             /** @var Store $store */
             $store = $form->getData();
-            $objectManager = $this->getDoctrine()->getManagerForClass(Store::class);
 
             if ($form->getClickedButton() && 'delete' === $form->getClickedButton()->getName()) {
 
-                $this->getDoctrine()->getManagerForClass(Store::class)->remove($store);
-                $this->getDoctrine()->getManagerForClass(Store::class)->flush();
+                $this->entityManager->remove($store);
+                $this->entityManager->flush();
 
                 return $this->redirectToRoute($routes['stores']);
             }
 
             if ($store->isTransporterEnabled()) {
                 $transporter = $store->getTransporter();
-                $fstore = $objectManager->getRepository(Store::class)->findOneBy([
+                $fstore = $this->entityManager->getRepository(Store::class)->findOneBy([
                     'transporter' => $transporter
                 ]);
 
@@ -223,8 +222,8 @@ trait StoreTrait
 
             }
 
-            $objectManager->persist($store);
-            $objectManager->flush();
+            $this->entityManager->persist($store);
+            $this->entityManager->flush();
 
             $this->addFlash(
                 'notice',
@@ -264,7 +263,7 @@ trait StoreTrait
                 $store->setAddress($address);
             }
 
-            $this->getDoctrine()->getManagerForClass(Store::class)->flush();
+            $this->entityManager->flush();
 
             $this->addFlash(
                 'notice',
@@ -616,7 +615,7 @@ trait StoreTrait
 
     public function storeAction($id, Request $request, TranslatorInterface $translator)
     {
-        $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
+        $store = $this->entityManager->getRepository(Store::class)->find($id);
 
         $this->accessControl($store, 'view');
 
@@ -632,7 +631,7 @@ trait StoreTrait
         SlugifyInterface $slugify,
     )
     {
-        $store = $this->getDoctrine()
+        $store = $this->entityManager
             ->getRepository(Store::class)
             ->find($id);
 
@@ -836,7 +835,7 @@ trait StoreTrait
 
     public function storeAddressesAction($id, Request $request, TranslatorInterface $translator)
     {
-        $store = $this->getDoctrine()
+        $store = $this->entityManager
             ->getRepository(Store::class)
             ->find($id);
 
@@ -849,7 +848,7 @@ trait StoreTrait
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $this->getDoctrine()->getManagerForClass(Store::class)->flush();
+            $this->entityManager->flush();
 
             $this->addFlash(
                 'notice',
@@ -890,7 +889,7 @@ trait StoreTrait
         StorageInterface $storage,
         Filesystem $taskImagesFilesystem)
     {
-        $delivery = $this->getDoctrine()
+        $delivery = $this->entityManager
             ->getRepository(Delivery::class)
             ->find($deliveryId);
 

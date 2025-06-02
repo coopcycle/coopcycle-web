@@ -110,6 +110,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('add_title_prefix', array(PageTitlePrefixResolver::class, 'addTitlePrefix')),
             new TwigFunction('coopcycle_version', array(SettingResolver::class, 'getVersion')),
             new TwigFunction('coopcycle_github_release_link', array(SettingResolver::class, 'getGithubReleaseLink')),
+            new TwigFunction('addresses_normalized', array(UserRuntime::class, 'getUserAddresses')),
         );
     }
 

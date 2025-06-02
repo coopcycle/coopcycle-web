@@ -257,7 +257,6 @@ services:
 
   AppBundle\Controller\RestaurantController:
     arguments:
-      $orderManager: '@sylius.manager.order'
       $validator: '@validator'
       $productRepository: '@sylius.repository.product'
       $orderItemRepository: '@sylius.repository.order_item'

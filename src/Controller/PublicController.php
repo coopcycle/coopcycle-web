@@ -123,7 +123,8 @@ class PublicController extends AbstractController
     #[Route(path: '/d/{hashid}', name: 'public_delivery')]
     public function deliveryAction($hashid, Request $request,
         CentrifugoClient $centrifugoClient,
-        Hashids $hashids8)
+        Hashids $hashids8,
+        EntityManagerInterface $entityManager)
     {
         $decoded = $hashids8->decode($hashid);
 
@@ -132,7 +133,7 @@ class PublicController extends AbstractController
         }
 
         $id = current($decoded);
-        $delivery = $this->getDoctrine()->getRepository(Delivery::class)->find($id);
+        $delivery = $entityManager->getRepository(Delivery::class)->find($id);
 
         if (null === $delivery) {
             throw $this->createNotFoundException(sprintf('Delivery #%d does not exist', $id));
