@@ -24,7 +24,6 @@ use AppBundle\Sylius\Product\ProductVariantInterface;
 use AppBundle\Utils\OptionsPayloadConverter;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\RestaurantFilter;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Prophecy\Argument;
@@ -93,8 +92,7 @@ class RestaurantControllerTest extends WebTestCase
 
         $this->localBusinessRepository = $this->prophesize(LocalBusinessRepository::class);
 
-        $this->doctrine = $this->prophesize(ManagerRegistry::class);
-        $this->doctrine
+        $this->objectManager
             ->getRepository(LocalBusiness::class)
             ->willReturn($this->localBusinessRepository->reveal());
 
@@ -109,12 +107,6 @@ class RestaurantControllerTest extends WebTestCase
             });
 
         $container = $this->prophesize(ContainerInterface::class);
-        $container
-            ->has('doctrine')
-            ->willReturn(true);
-        $container
-            ->get('doctrine')
-            ->willReturn($this->doctrine->reveal());
 
         $parameterBag = $this->prophesize(ParameterBagInterface::class);
         $parameterBag->get('country_iso')->willReturn('fr');
@@ -288,6 +280,9 @@ class RestaurantControllerTest extends WebTestCase
         $this->assertEquals(['latlng' => [48.856613, 2.352222]], $vendor['address']);
         $this->assertEquals(['delivery'], $vendor['fulfillmentMethods']);
         $this->assertFalse($vendor['variableCustomerAmountEnabled']);
+
+        $this->objectManager->persist($cart)->shouldHaveBeenCalled();
+        $this->objectManager->flush()->shouldHaveBeenCalled();
     }
 
     public function testAddProductToCartActionWithRestaurantMismatch(): void
