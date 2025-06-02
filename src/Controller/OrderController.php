@@ -52,7 +52,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -87,8 +86,7 @@ class OrderController extends AbstractController
         OrderProcessorInterface $orderProcessor,
         TranslatorInterface $translator,
         SettingsManager $settingsManager,
-        EmbedContext $embedContext,
-        SessionInterface $session)
+        EmbedContext $embedContext)
     {
         if (!$settingsManager->get('guest_checkout_enabled')) {
             if (!$embedContext->isEnabled()) {
@@ -127,6 +125,8 @@ class OrderController extends AbstractController
                 sprintf('dabba.order.%d.access_token', $order->getId());
             $dabbaRefreshTokenKey =
                 sprintf('dabba.order.%d.refresh_token', $order->getId());
+
+            $session = $request->getSession();
 
             if ($session->has($dabbaAccessTokenKey) && $session->has($dabbaRefreshTokenKey)) {
                 $order->getCustomer()->setDabbaAccessToken(
@@ -501,7 +501,6 @@ class OrderController extends AbstractController
         FlashBagInterface $flashBag,
         JWSProviderInterface $jwsProvider,
         IriConverterInterface $iriConverter,
-        SessionInterface $session,
         Filesystem $assetsFilesystem,
         CentrifugoClient $centrifugoClient)
     {
@@ -528,6 +527,8 @@ class OrderController extends AbstractController
             sprintf('dabba.order.%d.access_token', $id);
         $dabbaRefreshTokenKey =
             sprintf('dabba.order.%d.refresh_token', $id);
+
+        $session = $request->getSession();
 
         if ($session->has($dabbaAccessTokenKey) && $session->has($dabbaRefreshTokenKey)) {
 
