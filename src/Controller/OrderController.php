@@ -502,7 +502,8 @@ class OrderController extends AbstractController
         JWSProviderInterface $jwsProvider,
         IriConverterInterface $iriConverter,
         Filesystem $assetsFilesystem,
-        CentrifugoClient $centrifugoClient)
+        CentrifugoClient $centrifugoClient,
+        Request $request)
     {
         $hashids = new Hashids($this->getParameter('secret'), 16);
 
