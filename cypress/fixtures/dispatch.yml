@@ -1,9 +1,19 @@
 include:
-  - setup_default.yml
-  - user_admin.yml
+  - stores_excl_setup.yml
   - user_dispatcher.yml
-  - user_courier.yml
-  - addresses.yml
+  - restaurants.yml
+
+AppBundle\Entity\User:
+  courier_{1..50}:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - '<username()>'
+        - '12345678'
+        - '<email()>'
+        - true
+        - false
+    roles: [ 'ROLE_COURIER' ]
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
 
 AppBundle\Entity\Task:
   task_1:
@@ -15,51 +25,29 @@ AppBundle\Entity\Task:
     doneAfter: <identity(new \DateTime('today 11:30:00'))>
     doneBefore: <identity(new \DateTime('today 12:00:00'))>
 
-AppBundle\Entity\Base\GeoCoordinates:
-  geo_warehouse:
-    __construct: [ "48.8758311", "2.3675732" ]
-
-AppBundle\Entity\Delivery\PricingRuleSet:
-  pricing_rule_set_1:
-    name: Default
-    rules: [ '@pricing_rule_1' ]
-
-AppBundle\Entity\Delivery\PricingRule:
-  pricing_rule_1:
-    expression: 'distance \> 0'
-    price: 499
-    position: 1
-    ruleSet: '@pricing_rule_set_1'
-
-AppBundle\Entity\TimeSlot:
-  time_slot_1:
-    name: 'Acme time slot'
-    openingHours:
-      - 'Mo-Su 00:00-11:59'
-      - 'Mo-Su 12:00-23:59'
-
-AppBundle\Entity\Address:
-  warehouse:
-    name: 'Warehouse'
-    contactName: 'John Doe'
-    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33112121212'))>
-    addressLocality: 'Paris'
-    postalCode: '75001'
-    streetAddress: '23, Avenue Claude Vellefaux, 75010 Paris, France'
-    geo: "@geo_warehouse"
-
-AppBundle\Entity\Store:
-  store_1:
-    name: 'Acme'
-    address: "@address_1"
-    enabled: true
-    pricingRuleSet: '@pricing_rule_set_1'
-    timeSlot: '@time_slot_1'
+AppBundle\Entity\Delivery:
+  delivery_{1..5}:
+    __factory:
+      createWithTasks:
+        - '@task_1'
+        - '@task_2'
     __calls:
-      - addAddress: [ "@warehouse" ]
+      - setOrder:
+          - '@order_<current()>'
+      - setPickupRange:
+          - <identity(new \DateTime('today 18:00:00'))>
+          - <identity(new \DateTime('today 18:30:00'))>
+      - setDropoffRange:
+          - <identity(new \DateTime('today 19:00:00'))>
+          - <identity(new \DateTime('today 19:30:00'))>
+    store: "@store_1"
 
-AppBundle\Entity\DeliveryForm:
-  delivery_form:
-    pricingRuleSet: '@pricing_rule_set_1'
-    withVehicle: false
-    withWeight: false
+AppBundle\Entity\Sylius\Order:
+  order_{1..5}:
+    __factory:
+      '@sylius.factory.order::createForRestaurant':
+        - "@pizza_express"
+    __calls:
+      #      FIXME: that does not set an order number on each task (normally it's handled by OrderSubscriber)
+      - setNumber: [ "ORDER <current()>" ]
+      - setState: [ 'new' ]

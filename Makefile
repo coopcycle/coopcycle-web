@@ -79,7 +79,7 @@ start:
 	@clear && docker compose up --remove-orphans
 
 # Once everything is restarted, you need to run in another terminal: `make setup`
-# After setup is done, you may need to stop the web server and start it again with: `make start`
+# And after setup is done, you need to stop/restart the containers again with: `make start`
 start-fresh: fresh-db fresh
 
 fresh:
