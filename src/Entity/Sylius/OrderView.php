@@ -197,7 +197,7 @@ class OrderView
         $order->takeaway          = $data['takeaway'];
         $order->itemsTotal        = $data['itemsTotal'];
         $order->total             = $data['total'];
-        $order->incidents         = explode('\n', $data['incident_titles'] ?? []);
+        $order->incidents         = explode('\n', $data['incident_titles'] ?? '');
 
         if (isset($data['nonprofit_id'])) {
             $order->nonprofitId = $data['nonprofit_id'];
