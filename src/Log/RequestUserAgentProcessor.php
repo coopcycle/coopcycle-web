@@ -2,6 +2,7 @@
 
 namespace AppBundle\Log;
 
+use Monolog\LogRecord;
 use Monolog\Processor\ProcessorInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -13,7 +14,7 @@ class RequestUserAgentProcessor implements ProcessorInterface
     {
     }
 
-    public function __invoke(array $record): array
+    public function __invoke(LogRecord $record): array
     {
 
         $request = $this->requestStack->getCurrentRequest();
