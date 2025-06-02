@@ -29,21 +29,4 @@ trait UserTrait
             'positions' => $positions,
         ]);
     }
-
-    protected function getUserAddresses()
-    {
-        $addresses = [];
-
-        $user = $this->getUser();
-        if ($user) {
-            $addresses = $user->getAddresses()->toArray();
-        }
-
-        return array_map(function ($address) {
-
-            return $this->get('serializer')->normalize($address, 'jsonld', [
-                'groups' => ['address']
-            ]);
-        }, $addresses);
-    }
 }

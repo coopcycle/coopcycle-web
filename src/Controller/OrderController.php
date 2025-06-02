@@ -707,7 +707,6 @@ class OrderController extends AbstractController
             'cart_form' => $cartForm->createView(),
             'cart_timing' => $orderTimeHelper->getTimeInfo($order),
             'order_access_token' => $this->orderAccessTokenManager->create($order),
-            'addresses_normalized' => $this->getUserAddresses(),
             'is_player' => true,
         ]));
     }

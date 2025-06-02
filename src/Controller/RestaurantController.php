@@ -180,7 +180,6 @@ class RestaurantController extends AbstractController
 
             return $this->render('restaurant/list_map.html.twig', [
                 'geohash' => $request->query->get('geohash'),
-                'addresses_normalized' => $this->getUserAddresses(),
             ]);
         }
 
@@ -303,7 +302,6 @@ class RestaurantController extends AbstractController
             'page' => $page,
             'pages' => $pages,
             'geohash' => $request->query->get('geohash'),
-            'addresses_normalized' => $this->getUserAddresses(),
             'address' => $request->query->get('address'),
             'types' => $types,
             'cuisines' => $cuisines,
@@ -470,7 +468,6 @@ class RestaurantController extends AbstractController
             'cart_form' => $cartForm->createView(),
             'cart_timing' => $this->getOrderTiming($order),
             'order_access_token' => $this->getOrderAccessToken($order),
-            'addresses_normalized' => $this->getUserAddresses(),
             'available_for_business_account' => $restaurantAvailableForBusinessAccount
         ]));
     }

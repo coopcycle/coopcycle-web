@@ -191,7 +191,6 @@ class IndexController extends AbstractController
         return $this->render('index/index.html.twig', array(
             'sections' => $sections,
             'hubs' => $hubs,
-            'addresses_normalized' => $this->getUserAddresses(),
             'delivery_form' => $deliveryForm ?
                 $this->getDeliveryFormForm($deliveryForm)->createView() : null,
             'hashid' => $deliveryForm ? $hashids->encode($deliveryForm->getId()) : '',
