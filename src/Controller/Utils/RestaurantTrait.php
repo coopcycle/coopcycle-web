@@ -81,6 +81,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -284,7 +285,7 @@ trait RestaurantTrait
             'form' => $form->createView(),
             'layout' => $request->attributes->get('layout'),
             'loopeat_authorize_url' => $loopeatAuthorizeUrl,
-            'cuisines' => $this->get('serializer')->normalize($cuisines, 'json', ['groups' => ['restaurant']]),
+            'cuisines' => $this->normalizer->normalize($cuisines, 'json', ['groups' => ['restaurant']]),
         ], $routes));
     }
 
@@ -302,7 +303,7 @@ trait RestaurantTrait
         $this->accessControl($restaurant);
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
-            $restaurantNormalized = $this->get('serializer')->normalize($restaurant, 'jsonld', [
+            $restaurantNormalized = $this->normalizer->normalize($restaurant, 'jsonld', [
                 'groups' => ['restaurant']
             ]);
 
@@ -349,7 +350,7 @@ trait RestaurantTrait
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
-            'restaurant_normalized' => $this->get('serializer')->normalize($restaurant, 'jsonld', [
+            'restaurant_normalized' => $this->normalizer->normalize($restaurant, 'jsonld', [
                 'groups' => ['restaurant']
             ]),
             'restaurant' => $restaurant,
@@ -403,10 +404,10 @@ trait RestaurantTrait
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
-            'restaurant_normalized' => $this->get('serializer')->normalize($restaurant, 'jsonld', [
+            'restaurant_normalized' => $this->normalizer->normalize($restaurant, 'jsonld', [
                 'groups' => ['restaurant']
             ]),
-            'orders_normalized' => $this->get('serializer')->normalize($orders, 'jsonld', [
+            'orders_normalized' => $this->normalizer->normalize($orders, 'jsonld', [
                 'resource_class' => Order::class,
                 'operation' => new GetCollection(),
                 'groups' => ['order_minimal']
@@ -698,7 +699,7 @@ trait RestaurantTrait
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
-            'closing_rules_json' => $this->get('serializer')->serialize($restaurant->getClosingRules(), 'json', ['groups' => ['planning']]),
+            'closing_rules_json' => $this->serializer->serialize($restaurant->getClosingRules(), 'json', ['groups' => ['planning']]),
             'restaurant' => $restaurant,
             'routes' => $routes,
             'form' => $form->createView()

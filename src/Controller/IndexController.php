@@ -20,6 +20,7 @@ use MyCLabs\Enum\Enum;
 use Symfony\Contracts\Cache\CacheInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -78,7 +79,8 @@ class IndexController extends AbstractController
         UrlGeneratorInterface $urlGenerator,
         TranslatorInterface $translator,
         BusinessContext $businessContext,
-        EntityManagerInterface $entityManager)
+        EntityManagerInterface $entityManager,
+        FormFactoryInterface $formFactory)
     {
         $user = $this->getUser();
 
@@ -191,7 +193,7 @@ class IndexController extends AbstractController
             'sections' => $sections,
             'hubs' => $hubs,
             'delivery_form' => $deliveryForm ?
-                $this->getDeliveryFormForm($deliveryForm)->createView() : null,
+                $this->getDeliveryFormForm($formFactory, $deliveryForm)->createView() : null,
             'hashid' => $deliveryForm ? $hashids->encode($deliveryForm->getId()) : '',
             'zero_waste_count' => $countZeroWaste,
         ));
@@ -236,11 +238,11 @@ class IndexController extends AbstractController
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    private function getDeliveryFormForm(?DeliveryForm $deliveryForm = null)
+    private function getDeliveryFormForm(FormFactoryInterface $formFactory, ?DeliveryForm $deliveryForm = null)
     {
         if ($deliveryForm) {
 
-            return $this->get('form.factory')->createNamed('delivery', DeliveryEmbedType::class, new Delivery(), [
+            return $formFactory->createNamed('delivery', DeliveryEmbedType::class, new Delivery(), [
                 'with_weight'      => $deliveryForm->getWithWeight(),
                 'with_vehicle'     => $deliveryForm->getWithVehicle(),
                 'with_time_slot'   => $deliveryForm->getTimeSlot(),

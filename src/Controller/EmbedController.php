@@ -29,6 +29,7 @@ use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -45,7 +46,8 @@ class EmbedController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly RepositoryInterface $customerRepository,
         private readonly FactoryInterface $customerFactory,
-        private readonly TranslatorInterface $translator)
+        private readonly TranslatorInterface $translator,
+        private readonly FormFactoryInterface $formFactory)
     {
     }
 
@@ -73,7 +75,7 @@ class EmbedController extends AbstractController
             }
         }
 
-        return $this->get('form.factory')->createNamed('delivery', DeliveryEmbedType::class, $delivery, $options);
+        return $this->formFactory->createNamed('delivery', DeliveryEmbedType::class, $delivery, $options);
     }
 
     private function findOrCreateCustomer($email, PhoneNumber $telephone, CanonicalizerInterface $canonicalizer)

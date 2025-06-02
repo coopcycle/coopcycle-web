@@ -20,6 +20,8 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DashboardController extends AbstractController
@@ -35,7 +37,9 @@ class DashboardController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly TranslatorInterface $translator,
         private readonly bool $adhocOrderEnabled,
-        private readonly JWTTokenManagerInterface $JWTTokenManager
+        private readonly JWTTokenManagerInterface $JWTTokenManager,
+        protected NormalizerInterface $normalizer,
+        protected SerializerInterface $serializer
     )
     {
     }
