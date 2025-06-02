@@ -65,7 +65,8 @@ class ProfileController extends AbstractController
     public function __construct(
         protected OrderRepositoryInterface $orderRepository,
         protected JWTTokenManagerInterface $JWTTokenManager,
-        protected EntityManagerInterface $entityManager
+        protected EntityManagerInterface $entityManager,
+        protected NormalizerInterface $normalizer
     )
     { }
 

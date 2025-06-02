@@ -9,13 +9,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class SpreadsheetController extends AbstractController
 {
     #[Route(path: '/spreadsheets/examples/coopcycle-products-example.csv', name: 'spreadsheet_example_products')]
-    public function productsExampleCsvAction(ProductSpreadsheetParser $parser)
+    public function productsExampleCsvAction(ProductSpreadsheetParser $parser, SerializerInterface $serializer)
     {
-        $csv = $this->get('serializer')->serialize($parser->getExampleData(), 'csv');
+        $csv = $serializer->serialize($parser->getExampleData(), 'csv');
 
         $response = new Response($csv);
         $response->headers->set('Content-Type', 'text/csv');
@@ -28,9 +29,9 @@ class SpreadsheetController extends AbstractController
     }
 
     #[Route(path: '/spreadsheets/examples/coopcycle-tasks-example.csv', name: 'spreadsheet_example_tasks')]
-    public function tasksExampleCsvAction(TaskSpreadsheetParser $parser)
+    public function tasksExampleCsvAction(TaskSpreadsheetParser $parser, SerializerInterface $serializer)
     {
-        $csv = $this->get('serializer')->serialize($parser->getExampleData(), 'csv');
+        $csv = $serializer->serialize($parser->getExampleData(), 'csv');
 
         $response = new Response($csv);
         $response->headers->set('Content-Type', 'text/csv');
@@ -43,9 +44,9 @@ class SpreadsheetController extends AbstractController
     }
 
     #[Route(path: '/spreadsheets/examples/coopcycle-deliveries-example.csv', name: 'spreadsheet_example_deliveries')]
-    public function deliveriesExampleCsvAction(DeliverySpreadsheetParser $parser)
+    public function deliveriesExampleCsvAction(DeliverySpreadsheetParser $parser, SerializerInterface $serializer)
     {
-        $csv = $this->get('serializer')->serialize($parser->getExampleData(), 'csv');
+        $csv = $serializer->serialize($parser->getExampleData(), 'csv');
 
         $response = new Response($csv);
         $response->headers->set('Content-Type', 'text/csv');
