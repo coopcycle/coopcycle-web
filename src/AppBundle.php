@@ -13,6 +13,6 @@ class AppBundle extends Bundle
         parent::build($container);
 
         $extension = $container->getExtension('security');
-        $extension->addSecurityListenerFactory(new TokenBearerFactory());
+        $extension->addAuthenticatorFactory(new TokenBearerFactory());
     }
 }
