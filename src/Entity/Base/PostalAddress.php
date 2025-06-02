@@ -42,7 +42,7 @@ abstract class PostalAddress
     /**
      * @var string The name of the item.
      */
-    #[Groups(['address', 'address_create', 'task_create', 'task_edit'])]
+    #[Groups(['address', 'address_create', 'task_create', 'task_edit', 'delivery_create', 'pricing_deliveries'])]
     #[Assert\Type(type: 'string')]
     #[ApiProperty(types: ['https://schema.org/name'])]
     private $name;
@@ -65,7 +65,7 @@ abstract class PostalAddress
     /**
      * @var string The street address. For example, 1600 Amphitheatre Pkwy.
      */
-    #[Groups(['address', 'address_create', 'task_create', 'task_edit', 'order_update', 'cart', 'delivery_create', 'pricing_deliveries'])]
+    #[Groups(['address', 'address_create', 'task_create', 'task_edit', 'delivery_create', 'pricing_deliveries', 'order_update', 'cart'])]
     #[Assert\Type(type: 'string')]
     #[Assert\NotBlank]
     #[ApiProperty(types: ['https://schema.org/streetAddress'])]
@@ -76,7 +76,7 @@ abstract class PostalAddress
      *
      * @AssertPhoneNumber(groups={"Default", "cart"})
      */
-    #[Groups(['address', 'address_create', 'task_create', 'task_edit', 'order_update', 'cart', 'delivery_create'])]
+    #[Groups(['address', 'address_create', 'task_create', 'task_edit', 'delivery_create', 'pricing_deliveries', 'order_update', 'cart'])]
     #[ApiProperty(types: ['https://schema.org/telephone'])]
     protected $telephone;
 
