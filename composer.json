@@ -195,6 +195,9 @@
         "league/flysystem-memory": "^3.0",
         "rector/rector": "^1.2"
     },
+    "replace": {
+        "cache/array-adapter": "*"
+    },
     "repositories": [
         {
             "type": "vcs",
