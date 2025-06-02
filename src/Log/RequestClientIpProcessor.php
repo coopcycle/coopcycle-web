@@ -14,7 +14,7 @@ class RequestClientIpProcessor implements ProcessorInterface
     {
     }
 
-    public function __invoke(LogRecord $record): array
+    public function __invoke(LogRecord $record): LogRecord
     {
         $request = $this->requestStack->getCurrentRequest();
 

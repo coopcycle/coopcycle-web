@@ -15,7 +15,7 @@ class RequestUriProcessor implements ProcessorInterface
         $this->requestStack = $requestStack;
     }
 
-    public function __invoke(LogRecord $record): array
+    public function __invoke(LogRecord $record): LogRecord
     {
 
         $request = $this->requestStack->getCurrentRequest();

@@ -2,14 +2,15 @@
 
 namespace AppBundle\Log;
 
+use Monolog\LogRecord;
 use Monolog\Processor\ProcessorInterface;
 
 class ApiRequestResponseProcessor
 {
-    public function __invoke(array $record)
+    public function __invoke(LogRecord $record): ?LogRecord
     {
         if (!isset($record['context']['request'], $record['context']['response'])) {
-            return;
+            return null;
         }
 
         $request = $record['context']['request'];
