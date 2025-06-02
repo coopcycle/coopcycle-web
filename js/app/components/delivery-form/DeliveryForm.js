@@ -226,24 +226,26 @@ export default function({
     if (!isDataReady) return
 
     if (preLoadedDeliveryData) {
-      const initialValues = {
-        ...preLoadedDeliveryData,
-        tasks: preLoadedDeliveryData.tasks.map(task => {
-          return {
-            ...task,
-            address: {
-              ...task.address,
-              formattedTelephone: getFormattedValue(task.address.telephone)
-            },
-          }
-        })
-      }
+      const initialValues = structuredClone(preLoadedDeliveryData)
 
-      if (preLoadedDeliveryData.arbitraryPrice) {
-        delete initialValues.arbitraryPrice
+      initialValues.tasks = preLoadedDeliveryData.tasks.map(task => {
+        return {
+          ...task,
+          address: {
+            ...task.address,
+            formattedTelephone: getFormattedValue(task.address.telephone),
+          },
+        }
+      })
 
-        initialValues.variantName = preLoadedDeliveryData.arbitraryPrice.variantName
-        initialValues.variantIncVATPrice = preLoadedDeliveryData.arbitraryPrice.variantPrice
+      if (preLoadedDeliveryData.order?.arbitraryPrice) {
+        // remove a previously copied value (different formats between API and the frontend)
+        delete initialValues.order.arbitraryPrice
+
+        initialValues.variantName =
+          preLoadedDeliveryData.order.arbitraryPrice.variantName
+        initialValues.variantIncVATPrice =
+          preLoadedDeliveryData.order.arbitraryPrice.variantPrice
       }
 
       setInitialValues(initialValues)
@@ -252,21 +254,14 @@ export default function({
     } else {
       if (isCreateOrderMode) {
         setInitialValues({
-          tasks: [
-            { ...pickupSchema },
-            { ...dropoffSchema }
-          ],
+          tasks: [{ ...pickupSchema }, { ...dropoffSchema }],
+          order: {},
         })
       }
     }
 
     setIsLoading(false)
-  }, [
-    isDataReady,
-    preLoadedDeliveryData,
-    isCreateOrderMode,
-    isModifyOrderMode
-  ])
+  }, [isDataReady, preLoadedDeliveryData, isCreateOrderMode, isModifyOrderMode])
 
   return (
     isLoading ?
@@ -455,10 +450,10 @@ export default function({
                       <div className="border-top py-3" data-testid="saved_order__container">
                         <Checkbox
                           name="delivery.saved_order"
-                          checked={values.isSavedOrder}
+                          checked={values.order.isSavedOrder}
                           onChange={e => {
                             e.stopPropagation()
-                            setFieldValue('isSavedOrder', e.target.checked)
+                            setFieldValue('order.isSavedOrder', e.target.checked)
                           }}>{t('DELIVERY_FORM_SAVED_ORDER')}</Checkbox>
                       </div>
                     ) : null}

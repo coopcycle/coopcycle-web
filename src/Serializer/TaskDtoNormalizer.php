@@ -2,19 +2,19 @@
 
 namespace AppBundle\Serializer;
 
-use AppBundle\Api\Dto\DeliveryFormTaskOutput;
+use AppBundle\Api\Dto\TaskDto;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
 
-class DeliveryFormTaskOutputNormalizer implements ContextAwareNormalizerInterface, NormalizerAwareInterface
+class TaskDtoNormalizer implements ContextAwareNormalizerInterface, NormalizerAwareInterface
 {
     use NormalizerAwareTrait;
 
-    private const ALREADY_CALLED = 'DeliveryFormTaskOutputNormalizer_ALREADY_CALLED';
+    private const ALREADY_CALLED = 'TaskDtoNormalizer_ALREADY_CALLED';
 
     /**
-     * @param DeliveryFormTaskOutput $object
+     * @param TaskDto $object
      */
     public function normalize($object, $format = null, array $context = array())
     {
@@ -40,6 +40,6 @@ class DeliveryFormTaskOutputNormalizer implements ContextAwareNormalizerInterfac
             return false;
         }
 
-        return $data instanceof DeliveryFormTaskOutput;
+        return $data instanceof TaskDto;
     }
 }

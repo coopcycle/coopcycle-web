@@ -15,10 +15,13 @@ services:
       $normalizer: '@api_platform.jsonld.normalizer.item'
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
-  AppBundle\Serializer\DeliveryFormDeliveryOutputNormalizer:
+  AppBundle\Serializer\DeliveryDtoNormalizer:
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
-  AppBundle\Serializer\DeliveryFormTaskOutputNormalizer:
+  AppBundle\Serializer\TaskDtoNormalizer:
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  AppBundle\Serializer\DeliveryOrderDtoNormalizer:
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   AppBundle\Serializer\RestaurantNormalizer:

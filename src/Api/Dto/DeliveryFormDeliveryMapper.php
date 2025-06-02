@@ -2,7 +2,6 @@
 
 namespace AppBundle\Api\Dto;
 
-use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Task;
@@ -16,7 +15,6 @@ class DeliveryFormDeliveryMapper
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly Hashids $hashids8,
-        private readonly IriConverterInterface $iriConverter,
     ) {
     }
 
@@ -25,11 +23,11 @@ class DeliveryFormDeliveryMapper
         ?OrderInterface $order,
         ?ArbitraryPrice $arbitraryPrice,
         bool $isSavedOrder
-    ): DeliveryFormDeliveryOutput {
-        $deliveryData = new DeliveryFormDeliveryOutput();
+    ): DeliveryDto {
+        $deliveryData = new DeliveryDto();
 
         $deliveryData->tasks = array_map(function (Task $taskEntity) {
-            $taskData = new DeliveryFormTaskOutput();
+            $taskData = new TaskDto();
 
             $taskData->id = $taskEntity->getId();
             $taskData->type = $taskEntity->getType();
@@ -40,7 +38,7 @@ class DeliveryFormDeliveryMapper
             $taskData->tags = $taskEntity->getTags();
             $taskData->weight = $taskEntity->getWeight();
             $taskData->packages = array_map(function (Task\Package $taskPackage) {
-                $packageData = new DeliveryFormTaskPackageDto();
+                $packageData = new TaskPackageDto();
                 $packageData->type = $taskPackage->getPackage()->getName();
                 $packageData->quantity = $taskPackage->getQuantity();
                 return $packageData;
@@ -53,12 +51,19 @@ class DeliveryFormDeliveryMapper
         $deliveryData->pickup = $deliveryData->tasks[0] ?? null;
         $deliveryData->dropoff = end($deliveryData->tasks) ?: null;
 
-        $deliveryData->arbitraryPrice = $arbitraryPrice ? new ArbitraryPriceDto(
+        $deliveryOrderData = new DeliveryOrderDto();
+        $deliveryData->order = $deliveryOrderData;
+
+        if (!is_null($order?->getId())) {
+            $deliveryOrderData->id = $order->getId();
+        }
+
+        $deliveryOrderData->arbitraryPrice = $arbitraryPrice ? new ArbitraryPriceDto(
             $arbitraryPrice->getValue(),
             $arbitraryPrice->getVariantName()
         ) : null;
 
-        $deliveryData->isSavedOrder = $isSavedOrder;
+        $deliveryOrderData->isSavedOrder = $isSavedOrder;
 
         if ($deliveryEntity->getId()) {
             $deliveryData->id = $deliveryEntity->getId();
@@ -66,10 +71,6 @@ class DeliveryFormDeliveryMapper
             $deliveryData->trackingUrl = $this->urlGenerator->generate('public_delivery', [
                 'hashid' => $this->hashids8->encode($deliveryEntity->getId()),
             ], UrlGeneratorInterface::ABSOLUTE_URL);
-        }
-
-        if (!is_null($order)) {
-            $deliveryData->order = $this->iriConverter->getIriFromResource($order);
         }
 
         return $deliveryData;

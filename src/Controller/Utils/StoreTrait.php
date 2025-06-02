@@ -2,9 +2,8 @@
 
 namespace AppBundle\Controller\Utils;
 
+use AppBundle\Api\Dto\DeliveryDto;
 use AppBundle\Api\Dto\DeliveryFormDeliveryMapper;
-use AppBundle\Api\Dto\DeliveryFormDeliveryOutput;
-use AppBundle\Api\Dto\DeliveryFormTaskOutput;
 use AppBundle\Entity\Address;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Entity\Delivery;
@@ -394,7 +393,7 @@ trait StoreTrait
 
         $delivery = $store->createDelivery();
 
-        /** @var DeliveryFormDeliveryOutput|null $deliveryData */
+        /** @var DeliveryDto|null $deliveryData */
         $deliveryData = null;
 
         // pre-fill fields with the data from a previous order

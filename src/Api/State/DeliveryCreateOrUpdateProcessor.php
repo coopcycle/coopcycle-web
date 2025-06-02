@@ -6,9 +6,8 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use ApiPlatform\Symfony\Validator\Exception\ValidationException;
 use AppBundle\Api\Dto\DeliveryFormDeliveryMapper;
-use AppBundle\Api\Dto\DeliveryFormDeliveryOutput;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
-use AppBundle\Api\Dto\DeliveryInput;
+use AppBundle\Api\Dto\DeliveryDto;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
@@ -39,9 +38,9 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
     {}
 
     /**
-     * @param DeliveryInput|DeliveryFromTasksInput $data
+     * @param DeliveryDto|DeliveryFromTasksInput $data
      */
-    public function process($data, Operation $operation, array $uriVariables = [], array $context = []): DeliveryFormDeliveryOutput
+    public function process($data, Operation $operation, array $uriVariables = [], array $context = []): DeliveryDto
     {
         /** @var Delivery $delivery */
         $delivery = $this->decorated->process($data, $operation, $uriVariables, $context);
@@ -56,10 +55,10 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
 
         /** @var ArbitraryPrice|null $arbitraryPrice */
         $arbitraryPrice = null;
-        if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $data instanceof DeliveryInput && $data->arbitraryPrice) {
+        if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $data instanceof DeliveryDto && $data->order?->arbitraryPrice) {
             $arbitraryPrice = new ArbitraryPrice(
-                $data->arbitraryPrice->variantName,
-                $data->arbitraryPrice->variantPrice
+                $data->order->arbitraryPrice->variantName,
+                $data->order->arbitraryPrice->variantPrice
             );
         }
 
@@ -111,7 +110,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
 
         /** @var string $rrule */
         $rrule = null;
-        if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $data instanceof DeliveryInput && $isCreateOrderMode) {
+        if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $data instanceof DeliveryDto && $isCreateOrderMode) {
             $rrule = $data->rrule;
         }
 
@@ -146,10 +145,10 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                 }
             }
         }
-
+        
         $isSavedOrder = false;
-        if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $data instanceof DeliveryInput && !is_null($data->isSavedOrder)) {
-            $isSavedOrder = $data->isSavedOrder;
+        if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $data instanceof DeliveryDto && !is_null($data->order?->isSavedOrder)) {
+            $isSavedOrder = $data->order->isSavedOrder;
             $this->orderManager->setBookmark($order, $isSavedOrder);
         }
 

@@ -46,16 +46,7 @@ export default function useSubmit(
       let data = {
         store: storeNodeId,
         tasks: structuredClone(values.tasks),
-      }
-
-      if (values.variantIncVATPrice) {
-        data = {
-          ...data,
-          arbitraryPrice: {
-            variantPrice: values.variantIncVATPrice,
-            variantName: values.variantName ?? '',
-          },
-        }
+        order: structuredClone(values.order),
       }
 
       if (values.rrule) {
@@ -65,10 +56,10 @@ export default function useSubmit(
         }
       }
 
-      if (null !== values.isSavedOrder) {
-        data = {
-          ...data,
-          isSavedOrder: values.isSavedOrder,
+      if (values.variantIncVATPrice) {
+        data.order.arbitraryPrice = {
+          variantName: values.variantName ?? '',
+          variantPrice: values.variantIncVATPrice,
         }
       }
 
@@ -178,15 +169,13 @@ export default function useSubmit(
         }
 
         const deliveryId = data.id
+        const orderId = data.order?.id
 
-        // "/api/orders/783"
-        const orderNodeId = data.order
-        const orderId = orderNodeId.split('/').pop()
-
-        window.location = isDispatcher
-          ? `/admin/orders/${orderId}`
-          : `/dashboard/deliveries/${deliveryId}`
-
+        if (isDispatcher && orderId) {
+          window.location = `/admin/orders/${orderId}`
+        } else {
+          window.location = `/dashboard/deliveries/${deliveryId}`
+        }
       }
     },
     [

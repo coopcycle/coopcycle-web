@@ -222,11 +222,18 @@ class TaskListRepository extends ServiceEntityRepository
                 $task->getComments(),
                 array_map(function (Task\Package $taskPackage) {
                     $package = $taskPackage->getPackage();
-                    return new TaskPackageDto(
-                        $package->getShortCode(),
-                        $package->getName(),
-                        $package->getAverageVolumeUnits(),
-                        $taskPackage->getQuantity());
+
+                    $packageData = new TaskPackageDto();
+
+                    $packageData->short_code = $package->getShortCode();
+                    $packageData->name = $package->getName();
+                    //FIXME; why do we have name and type with the same value?
+                    $packageData->type = $package->getName();
+                    $packageData->volume_per_package = $package->getAverageVolumeUnits();
+                    $packageData->quantity = $taskPackage->getQuantity();
+
+                    return $packageData;
+
                 }, $taskPackages),
                 $weight,
                 ($tasksWithIncidents[$task->getId()] ?? 0) > 0,

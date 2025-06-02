@@ -9,8 +9,8 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\State\ProcessorInterface;
 use ApiPlatform\Exception\InvalidArgumentException;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
-use AppBundle\Api\Dto\DeliveryInput;
-use AppBundle\Api\Dto\TaskInput;
+use AppBundle\Api\Dto\DeliveryDto;
+use AppBundle\Api\Dto\TaskDto;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
@@ -53,7 +53,7 @@ class DeliveryProcessor implements ProcessorInterface
     }
 
     /**
-     * @param DeliveryInput|DeliveryFromTasksInput $data
+     * @param DeliveryDto|DeliveryFromTasksInput $data
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
@@ -68,7 +68,7 @@ class DeliveryProcessor implements ProcessorInterface
 
         $isPutOperation = $operation instanceof Put;
 
-        if ($data instanceof DeliveryInput) {
+        if ($data instanceof DeliveryDto) {
             $id = $uriVariables['id'] ?? null;
             if ($id && $isPutOperation) {
                 $delivery = $this->entityManager->getRepository(Delivery::class)->find($id);
@@ -84,7 +84,7 @@ class DeliveryProcessor implements ProcessorInterface
 
             if (is_array($data->tasks) && count($data->tasks) > 0) {
                 if ($isPutOperation) {
-                    $tasks = array_map(fn(TaskInput $taskInput) => $this->transformIntoExistingTask($taskInput, $delivery->getTasks(), $store), $data->tasks);
+                    $tasks = array_map(fn(TaskDto $taskInput) => $this->transformIntoExistingTask($taskInput, $delivery->getTasks(), $store), $data->tasks);
 
                     //remove tasks that are not in the request
                     foreach ($delivery->getTasks() as $task) {
@@ -95,7 +95,7 @@ class DeliveryProcessor implements ProcessorInterface
                     }
 
                 } else {
-                    $tasks = array_map(fn(TaskInput $taskInput) => $this->transformIntoNewTask($taskInput, $store), $data->tasks);
+                    $tasks = array_map(fn(TaskDto $taskInput) => $this->transformIntoNewTask($taskInput, $store), $data->tasks);
                     $delivery->withTasks(...$tasks);
                 }
 
@@ -116,7 +116,7 @@ class DeliveryProcessor implements ProcessorInterface
 
         $this->deliveryManager->setDefaults($delivery);
 
-        if ($data instanceof DeliveryInput) {
+        if ($data instanceof DeliveryDto) {
             if ($data->packages) {
                 $packageRepository = $this->entityManager->getRepository(Package::class);
 
@@ -137,7 +137,7 @@ class DeliveryProcessor implements ProcessorInterface
     }
 
     private function transformIntoNewTask(
-        TaskInput $data,
+        TaskDto $data,
         Store|null $store = null
     ): Task
     {
@@ -148,7 +148,7 @@ class DeliveryProcessor implements ProcessorInterface
      * @param Task[] $tasks
      */
     private function transformIntoExistingTask(
-        TaskInput $data,
+        TaskDto $data,
         array $tasks,
         Store|null $store = null
     ): Task
@@ -166,7 +166,7 @@ class DeliveryProcessor implements ProcessorInterface
     }
 
     private function transformIntoDeliveryTask(
-        TaskInput|null $data,
+        TaskDto|null $data,
         Task $outputTask,
         string $taskType,
         Store|null $store = null,
@@ -180,7 +180,7 @@ class DeliveryProcessor implements ProcessorInterface
     }
 
     private function transformIntoTaskImpl(
-        TaskInput $data,
+        TaskDto $data,
         Task $task,
         Store|null $store = null,
         string|null $taskType = null,
