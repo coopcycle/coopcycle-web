@@ -135,6 +135,7 @@ Feature: Deliveries
           "packages": [],
           "barcode":{"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -167,10 +168,12 @@ Feature: Deliveries
           "packages": [],
           "barcode":{"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -293,13 +296,7 @@ Feature: Deliveries
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {
-          "@id":"@string@.startsWith('/api/orders')",
-          "@type": "Order",
-          "id":@integer@,
-          "arbitraryPrice": null,
-          "isSavedOrder": @boolean@
-        }
+        "order": {"@*@": "@*@"}
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -396,6 +393,7 @@ Feature: Deliveries
           ],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -437,10 +435,12 @@ Feature: Deliveries
           ],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -524,6 +524,7 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -556,10 +557,12 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
 
@@ -625,6 +628,7 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -657,10 +661,12 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
 
@@ -730,6 +736,7 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -762,10 +769,12 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
 
@@ -835,6 +844,7 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -867,10 +877,12 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
 
@@ -940,6 +952,7 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -972,10 +985,12 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
 
@@ -1048,6 +1063,7 @@ Feature: Deliveries
             "packages": [],
             "barcode": {"@*@":"@*@"},
             "createdAt":"@string@.isDateTime()",
+            "updatedAt":"@string@.isDateTime()",
             "tags": [],
             "metadata": {"@*@": "@*@"}
           },
@@ -1080,10 +1096,12 @@ Feature: Deliveries
             "packages": [],
             "barcode": {"@*@":"@*@"},
             "createdAt":"@string@.isDateTime()",
+            "updatedAt":"@string@.isDateTime()",
             "tags": [],
             "metadata": {"@*@": "@*@"}
           },
-          "trackingUrl": @string@
+          "trackingUrl": @string@,
+          "order": {"@*@": "@*@"}
         }
       """
 
@@ -1156,6 +1174,7 @@ Feature: Deliveries
             "packages": [],
             "barcode": {"@*@":"@*@"},
             "createdAt":"@string@.isDateTime()",
+            "updatedAt":"@string@.isDateTime()",
             "tags": [],
             "metadata": {"@*@": "@*@"}
           },
@@ -1188,10 +1207,12 @@ Feature: Deliveries
             "packages": [],
             "barcode": {"@*@":"@*@"},
             "createdAt":"@string@.isDateTime()",
+            "updatedAt":"@string@.isDateTime()",
             "tags": [],
             "metadata": {"@*@": "@*@"}
           },
-          "trackingUrl": @string@
+          "trackingUrl": @string@,
+          "order": {"@*@": "@*@"}
         }
       """
 
@@ -1348,6 +1369,7 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -1380,10 +1402,12 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
 
@@ -1454,6 +1478,7 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -1486,10 +1511,12 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
 
@@ -1560,6 +1587,7 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -1592,10 +1620,12 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
 
@@ -1657,6 +1687,7 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -1689,10 +1720,12 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
 
@@ -1757,6 +1790,7 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -1789,11 +1823,13 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "tasks":@array@,
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
 
@@ -1861,6 +1897,7 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -1893,10 +1930,12 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
 
@@ -1962,6 +2001,7 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -1994,10 +2034,12 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
 
@@ -2064,6 +2106,7 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -2096,10 +2139,12 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
 
@@ -2148,6 +2193,7 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -2180,10 +2226,12 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
 
@@ -2361,6 +2409,7 @@ Feature: Deliveries
             },
             "comments": "",
             "createdAt": "@string@.isDateTime()",
+            "updatedAt":"@string@.isDateTime()",
             "weight": null,
             "after": "@string@.isDateTime()",
             "before": "@string@.isDateTime()",
@@ -2393,6 +2442,7 @@ Feature: Deliveries
             },
             "comments": "",
             "createdAt": "@string@.isDateTime()",
+            "updatedAt":"@string@.isDateTime()",
             "weight": null,
             "after": "@string@.isDateTime()",
             "before": "@string@.isDateTime()",
@@ -2403,7 +2453,8 @@ Feature: Deliveries
             "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
     }
   """
 
@@ -2480,6 +2531,7 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -2512,10 +2564,12 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
 
@@ -2606,6 +2660,7 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -2638,10 +2693,12 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [{"name": "COLD", "slug": "cold", "color": "#FF0000"}],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -2693,6 +2750,7 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -2725,10 +2783,12 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [{"name": "COLD", "slug": "cold", "color": "#FF0000"}, {"name": "MON TAG", "slug": "mon-tag", "color": "#FF00B4"}],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
 
@@ -2846,6 +2906,7 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -2878,10 +2939,12 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
     Then the database should contain an order with a total price 1200
@@ -3164,6 +3227,7 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -3196,10 +3260,12 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
     Then the database should contain an order with a total price 499
@@ -3271,6 +3337,7 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -3303,10 +3370,12 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -3472,6 +3541,7 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -3504,10 +3574,12 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
     Given the user "bob" is authenticated
