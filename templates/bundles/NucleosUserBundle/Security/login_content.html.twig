@@ -8,6 +8,7 @@
         <div class="alert alert-danger">{{ error }}</div>
         {% endif %}
 
+        {#
         <div class="text-center">
           <a href="{{ hwi_oauth_authorization_url('facebook')|oauth2_proxy }}" class="btn btn-facebook" alt="{{ 'social.sign_in_with_facebook'|trans }}" rel="nofollow">
             <i class="fa fa-facebook-official"></i>  {{ 'social.sign_in_with_facebook'|trans({}, 'messages') }}
@@ -15,6 +16,7 @@
         </div>
 
         <hr>
+        #}
 
         <form action="{{ path("nucleos_user_security_check") }}" method="post">
           <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
