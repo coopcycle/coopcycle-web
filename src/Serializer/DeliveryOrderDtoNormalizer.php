@@ -26,7 +26,9 @@ class DeliveryOrderDtoNormalizer implements ContextAwareNormalizerInterface, Nor
         }
 
         // override json-ld to match the existing API
-        $data['@context'] = '/api/contexts/Order';
+        if (isset($data['@context'])) {
+            $data['@context'] = '/api/contexts/Order';
+        }
         $data['@type'] = 'Order';
         $data['@id'] = "/api/orders/" . $object->id;
 

@@ -26,7 +26,9 @@ class TaskDtoNormalizer implements ContextAwareNormalizerInterface, NormalizerAw
         }
 
         // override json-ld to match the existing API
-        $data['@context'] = '/api/contexts/Task';
+        if (isset($data['@context'])) {
+            $data['@context'] = '/api/contexts/Task';
+        }
         $data['@type'] = 'Task';
         $data['@id'] = "/api/tasks/" . $object->id;
 
