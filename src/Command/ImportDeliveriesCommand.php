@@ -33,12 +33,13 @@ class ImportDeliveriesCommand extends Command {
     private ?TransporterTransformerInterface $transformer = null;
 
     public function __construct(
-        private readonly ContainerInterface $container,
         private readonly EntityManagerInterface $entityManager,
         private readonly IriConverterInterface $iriConverter,
         private readonly Hashids $hashids8,
         private readonly MessageBusInterface $messageBus,
         private readonly Filesystem $deliveryImportsFilesystem,
+        private readonly array $importers,
+        private readonly array $transformers
     )
     {
         parent::__construct();
@@ -51,8 +52,8 @@ class ImportDeliveriesCommand extends Command {
         $this->addArgument('store', InputArgument::REQUIRED, 'Store name');
         $this->addArgument('csv', InputArgument::OPTIONAL, 'CSV content');
 
-        $this->addOption('transformer', 't', InputOption::VALUE_REQUIRED, 'FQN transformer classname');
-        $this->addOption('importer', 'i', InputOption::VALUE_REQUIRED, 'FQN importer classname');
+        $this->addOption('transformer', 't', InputOption::VALUE_REQUIRED, 'transformer name');
+        $this->addOption('importer', 'i', InputOption::VALUE_REQUIRED, 'importer name');
 
         $this->addOption('dry-run', 'd', InputOption::VALUE_NONE, 'Dry run mode');
 
@@ -60,30 +61,37 @@ class ImportDeliveriesCommand extends Command {
 
     private function setup(): void {
 
-        $importerClassName = $this->input->getOption('importer');
-        $transformerClassName = $this->input->getOption('transformer');
+        $importer = $this->input->getOption('importer');
+        $transformer = $this->input->getOption('transformer');
 
-        if (!$this->input->hasArgument('csv') && !is_null($importerClassName)) {
+        if (!$this->input->hasArgument('csv') && !is_null($importer)) {
             throw new \InvalidArgumentException('No CSV content or importer specified');
         }
 
-        if (!is_null($importerClassName)) {
-            // Check if class exists and implement TransporterImporterInterface
-            $importerClass = new \ReflectionClass($importerClassName);
-            if (!$importerClass->implementsInterface(TransporterImporterInterface::class)) {
-                throw new \InvalidArgumentException('Importer class must implement TransporterImporterInterface');
+        if (!is_null($importer)) {
+            if (!isset($this->importers[$importer])) {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'Unknown importer "%s", available importers: "%s"',
+                        $importer, implode('", "', array_keys($this->importers))
+                    )
+                );
             }
-            $this->importer = $this->container->get($importerClassName);
+            $this->importer = $this->importers[$importer];
         }
 
-        if (!is_null($transformerClassName)) {
-            // Check if class exists and implement TransporterTransformerInterface
-            $transformerClass = new \ReflectionClass($transformerClassName);
-            if (!$transformerClass->implementsInterface(TransporterTransformerInterface::class)) {
-                throw new \InvalidArgumentException('Transformer class must implement TransporterTransformerInterface');
+        if (!is_null($transformer)) {
+            if (!isset($this->transformers[$transformer])) {
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'Unknown transformer "%s", available transformers: "%s"',
+                        $transformer, implode('", "', array_keys($this->transformers))
+                    )
+                );
             }
-            $this->transformer = $this->container->get($transformerClassName);
+            $this->transformer = $this->transformers[$transformer];
         }
+
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int {

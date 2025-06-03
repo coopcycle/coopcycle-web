@@ -1636,9 +1636,7 @@ services:
       - '@monolog.logger.loopeat'
 
   AppBundle\Transporter\Proximus\ProximusImporter:
-    public: true
     arguments:
       - "%env(PROXIMUS_SYNC_URI)%"
 
-  AppBundle\Transporter\Proximus\ProximusTransformer:
-    public: true
+  AppBundle\Transporter\Proximus\ProximusTransformer: ~
