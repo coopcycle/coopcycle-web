@@ -51,6 +51,7 @@ use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -545,7 +546,9 @@ class OrderController extends AbstractController
             $session->remove($dabbaRefreshTokenKey);
         }
 
-        $flashBag = $request->getSession()->getFlashBag();
+        /** @var Session $session */
+        $session = $request->getSession();
+        $flashBag = $session->getFlashBag();
 
         $resetSession = $flashBag->has('reset_session') && !empty($flashBag->get('reset_session'));
         $trackGoal = $flashBag->has('track_goal') && !empty($flashBag->get('track_goal'));
