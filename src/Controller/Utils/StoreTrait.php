@@ -3,7 +3,7 @@
 namespace AppBundle\Controller\Utils;
 
 use AppBundle\Api\Dto\DeliveryDto;
-use AppBundle\Api\Dto\DeliveryFormDeliveryMapper;
+use AppBundle\Api\Dto\DeliveryMapper;
 use AppBundle\Entity\Address;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Entity\Delivery;
@@ -383,7 +383,7 @@ trait StoreTrait
         Request $request,
         EntityManagerInterface $entityManager,
         PricingManager $pricingManager,
-        DeliveryFormDeliveryMapper $deliveryMapper,
+        DeliveryMapper $deliveryMapper,
     ) {
         $store = $entityManager
             ->getRepository(Store::class)

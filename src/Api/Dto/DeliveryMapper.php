@@ -10,7 +10,7 @@ use Hashids\Hashids;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class DeliveryFormDeliveryMapper
+class DeliveryMapper
 {
 
     public function __construct(

@@ -7,7 +7,7 @@ use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
 use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Metadata\GetCollection;
 use AppBundle\Annotation\HideSoftDeleted;
-use AppBundle\Api\Dto\DeliveryFormDeliveryMapper;
+use AppBundle\Api\Dto\DeliveryMapper;
 use AppBundle\Api\Dto\ResourceApplication;
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\AdminDashboardTrait;
@@ -293,7 +293,7 @@ class AdminController extends AbstractController
         Request $request,
         OrderManager $orderManager,
         DeliveryManager $deliveryManager,
-        DeliveryFormDeliveryMapper $deliveryMapper,
+        DeliveryMapper $deliveryMapper,
         EmailManager $emailManager
     )
     {

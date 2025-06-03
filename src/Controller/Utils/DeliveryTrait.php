@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller\Utils;
 
-use AppBundle\Api\Dto\DeliveryFormDeliveryMapper;
+use AppBundle\Api\Dto\DeliveryMapper;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
@@ -27,7 +27,7 @@ trait DeliveryTrait
         $id,
         Request $request,
         EntityManagerInterface $entityManager,
-        DeliveryFormDeliveryMapper $deliveryMapper,
+        DeliveryMapper $deliveryMapper,
         OrderManager $orderManager,
     ) {
         $delivery = $entityManager
