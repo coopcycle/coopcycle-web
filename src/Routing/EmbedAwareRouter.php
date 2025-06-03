@@ -57,9 +57,9 @@ class EmbedAwareRouter implements WarmableInterface, RouterInterface, RequestMat
         return $this->router->warmUp($cacheDir);
     }
 
-    public function setContext(RequestContext $context)
+    public function setContext(RequestContext $context): void
     {
-        return $this->router->setContext($context);
+        $this->router->setContext($context);
     }
 
     public function getContext(): RequestContext

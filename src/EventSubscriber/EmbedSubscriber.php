@@ -3,6 +3,7 @@
 namespace AppBundle\EventSubscriber;
 
 use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorageFactory;
+use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\EventListener\AbstractSessionListener;
