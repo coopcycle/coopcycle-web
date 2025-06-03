@@ -617,7 +617,7 @@ class RestaurantController extends AbstractController
             if (!$request->request->has('options') && !$product->hasNonAdditionalOptions()) {
                 $productVariant = $this->productVariantResolver->getVariant($product);
             } else {
-                $optionValues = $optionsPayloadConverter->convert($product, $request->request->get('options'));
+                $optionValues = $optionsPayloadConverter->convert($product, $request->request->all('options'));
                 $productVariant = $this->productVariantResolver->getVariantForOptionValues($product, $optionValues);
             }
         }
