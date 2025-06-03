@@ -170,7 +170,7 @@ class EmbedController extends AbstractController
 
                 $submission = new DeliveryFormSubmission();
                 $submission->setDeliveryForm($this->getDeliveryForm($request));
-                $submission->setData(serialize($request->request->get($form->getName())));
+                $submission->setData(serialize($request->request->all($form->getName())));
                 $submission->setPrice($price);
 
                 $entityManager->persist($submission);
