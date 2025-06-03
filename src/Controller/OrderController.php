@@ -51,7 +51,6 @@ use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -498,7 +497,6 @@ class OrderController extends AbstractController
     #[Route(path: '/order/confirm/{hashid}', name: 'order_confirm')]
     public function confirmAction($hashid,
         OrderRepository $orderRepository,
-        FlashBagInterface $flashBag,
         JWSProviderInterface $jwsProvider,
         IriConverterInterface $iriConverter,
         Filesystem $assetsFilesystem,
@@ -546,6 +544,8 @@ class OrderController extends AbstractController
             $session->remove($dabbaAccessTokenKey);
             $session->remove($dabbaRefreshTokenKey);
         }
+
+        $flashBag = $request->getSession()->getFlashBag();
 
         $resetSession = $flashBag->has('reset_session') && !empty($flashBag->get('reset_session'));
         $trackGoal = $flashBag->has('track_goal') && !empty($flashBag->get('track_goal'));
