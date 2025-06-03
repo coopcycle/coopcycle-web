@@ -6,16 +6,16 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 class TaskPackageDto
 {
-    #[Groups(['task'])]
+    #[Groups(['task', 'delivery'])]
     public string $short_code;
 
-    #[Groups(['task'])]
+    #[Groups(['task', 'delivery'])]
     public string $name;
 
     #[Groups(['task', 'delivery', 'pricing_deliveries', 'delivery_create'])]
     public string $type;
 
-    #[Groups(['task'])]
+    #[Groups(['task', 'delivery'])]
     public int $volume_per_package;
 
     #[Groups(['task', 'delivery', 'pricing_deliveries', 'delivery_create'])]

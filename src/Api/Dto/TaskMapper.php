@@ -58,7 +58,9 @@ class TaskMapper
                     continue;
                 }
 
-                $weight += $t->getWeight();
+                if (!is_null($t->getWeight())) {
+                    $weight += $t->getWeight();
+                }
             }
         } else {
             $weight = $task->getWeight();
