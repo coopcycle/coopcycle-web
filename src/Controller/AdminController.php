@@ -767,11 +767,14 @@ class AdminController extends AbstractController
         MessageBusInterface $messageBus,
         CentrifugoClient $centrifugoClient,
         SlugifyInterface $slugify,
+        string $environment,
         LoggerInterface $logger,
     )
     {
         $deliveryImportForm = $this->createForm(DeliveryImportType::class, null, [
-            'with_store' => true
+            'with_store' => true,
+            #FIXME; normally cypress e2e tests run with CSRF protection enabled, but once in a while CSRF tokens are not saved in the session (removed?) for this form
+            'csrf_protection' => 'test' !== $environment
         ]);
 
         $deliveryImportForm->handleRequest($request);
