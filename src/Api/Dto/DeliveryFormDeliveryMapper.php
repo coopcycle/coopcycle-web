@@ -8,6 +8,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Sylius\Order\OrderInterface;
 use Hashids\Hashids;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class DeliveryFormDeliveryMapper
 {
@@ -15,6 +16,7 @@ class DeliveryFormDeliveryMapper
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly Hashids $hashids8,
+        private readonly NormalizerInterface $normalizer,
     ) {
     }
 
@@ -31,7 +33,7 @@ class DeliveryFormDeliveryMapper
 
             $taskData->id = $taskEntity->getId();
             $taskData->type = $taskEntity->getType();
-            $taskData->address = $taskEntity->getAddress();
+            $taskData->address = $this->normalizer->normalize($taskEntity->getAddress(), 'jsonld');
             $taskData->after = $taskEntity->getAfter();
             $taskData->before = $taskEntity->getBefore();
             $taskData->comments = $taskEntity->getComments();

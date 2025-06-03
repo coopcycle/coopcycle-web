@@ -3,7 +3,6 @@
 namespace AppBundle\Api\Dto;
 
 use AppBundle\DataType\TsRange;
-use AppBundle\Entity\Address;
 use AppBundle\Entity\TimeSlot;
 use DateTime;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -17,8 +16,13 @@ final class TaskDto
     #[Groups(['delivery', 'pricing_deliveries', 'delivery_create'])]
     public string|null $type = null;
 
+    /**
+     * FIXME: Ideally, an Address object should be normalized/denormalized by a standard API platform denormalizer,
+     * but we can't support both Address object and plain text in the same field
+     * until we upgrade to API Platform 3.2?: https://github.com/api-platform/core/pull/5470
+     */
     #[Groups(['delivery', 'pricing_deliveries', 'delivery_create'])]
-    public Address|string|null $address = null;
+    public array|string|null $address = null;
 
     #[Groups(['pricing_deliveries', 'delivery_create'])]
     public array|null $latLng = null;
