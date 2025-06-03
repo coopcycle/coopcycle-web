@@ -39,7 +39,7 @@ class CancelOrderHandlerTest extends KernelTestCase
         $this->eventBus = $this->prophesize(MessageBusInterface::class);
 
         // @see https://symfony.com/blog/new-in-symfony-4-1-simpler-service-testing
-        $this->stateMachineFactory = self::$container->get(FactoryInterface::class);
+        $this->stateMachineFactory = self::getContainer()->get(FactoryInterface::class);
 
         $this->handler = new CancelOrderHandler(
             $this->eventBus->reveal(),

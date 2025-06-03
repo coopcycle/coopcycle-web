@@ -32,7 +32,7 @@ class SendRemotePushNotificationTest extends KernelTestCase
         self::bootKernel();
 
         // @see https://symfony.com/blog/new-in-symfony-4-1-simpler-service-testing
-        $iriConverter = self::$container->get(IriConverterInterface::class);
+        $iriConverter = self::getContainer()->get(IriConverterInterface::class);
 
         $this->messageBus = $this->prophesize(MessageBusInterface::class);
 

@@ -23,8 +23,8 @@ class TaskSubscriberFunctionalTest extends KernelTestCase
     {
         parent::setUp();
         self::bootKernel();
-        $this->entityManager = self::$container->get(EntityManagerInterface::class);
-        $this->taskManager = self::$container->get(TaskManager::class);
+        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        $this->taskManager = self::getContainer()->get(TaskManager::class);
 
         $purger = new ORMPurger($this->entityManager);
         $purger->purge();

@@ -43,7 +43,7 @@ class UpdateStateTest extends KernelTestCase
         self::bootKernel();
 
         // @see https://symfony.com/blog/new-in-symfony-4-1-simpler-service-testing
-        $this->stateMachineFactory = self::$container->get(FactoryInterface::class);
+        $this->stateMachineFactory = self::getContainer()->get(FactoryInterface::class);
 
         $this->orderProcessor = $this->prophesize(OrderProcessorInterface::class);
         $this->eventBus = $this->prophesize(MessageBusInterface::class);
