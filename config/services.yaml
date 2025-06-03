@@ -1635,3 +1635,7 @@ services:
     arguments:
       - '@AppBundle\LoopEat\Client'
       - '@monolog.logger.loopeat'
+
+  AppBundle\Session\NativeSessionStorageFactory:
+    decorates: session.storage.factory.native
+    arguments: ['@.inner']
