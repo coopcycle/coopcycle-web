@@ -255,6 +255,7 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -287,11 +288,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "tasks":@array@,
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type": "Order",
+          "id":@integer@,
+          "arbitraryPrice": null,
+          "isSavedOrder": @boolean@
+        }
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
