@@ -3,224 +3,147 @@
 namespace AppBundle\Transporter\Proximus;
 
 use AppBundle\Transporter\TransporterTransformerInterface;
+use DateTime;
 use League\Csv\Reader;
 use League\Csv\Writer;
+use Symfony\Component\Yaml\Parser as YamlParser;
+use Symfony\Component\Yaml\Yaml;
 
-/**
- * Rayon9Convert - Hardcoded PHP conversion of Rayon9 Proximus logic
- *
- * Specific implementation for processing Proximus delivery routes
- */
 class ProximusTransformer implements TransporterTransformerInterface {
 
-    /**
-     * Create a date range for pickup (9:00-10:00)
-     *
-     * @param \DateTime $date The base date
-     * @return array Associative array with 'from' and 'to' DateTime objects
-     */
-    public function createPickupDateRange(\DateTime $date): array {
-        $from = clone $date;
-        $to = clone $date;
+    private readonly array $addresses;
 
-        $from->setTime(9, 0, 0);
-        $to->setTime(10, 0, 0);
-
-        return ['from' => $from, 'to' => $to];
+    public function __construct()
+    {
+        $path = realpath(__DIR__ . '/../../Resources/config/r9_proximus_addresses.yml');
+        $parser = new YamlParser();
+        $this->addresses = $parser->parseFile($path, Yaml::PARSE_CONSTANT);
     }
 
     /**
-     * Create a date range for dropoff (9:45-15:00)
-     *
-     * @param \DateTime $date The base date
-     * @return array Associative array with 'from' and 'to' DateTime objects
+     * Create date range for pickup or dropoff
+     * @return array<int,DateTime>
      */
-    public function createDropoffDateRange(\DateTime $date): array {
+    private function createDateRange(\DateTime $date, string $type): array
+    {
         $from = clone $date;
         $to = clone $date;
 
-        $from->setTime(9, 45, 0);
-        $to->setTime(15, 0, 0);
+        switch ($type) {
+            case 'pickup':
+                $from->setTime(9, 0, 0);
+                $to->setTime(10, 0, 0);
+                break;
+            case 'dropoff':
+                $from->setTime(9, 45, 0);
+                $to->setTime(15, 0, 0);
+                break;
+            default:
+                throw new \InvalidArgumentException("Invalid type: {$type}. Expected 'pickup' or 'dropoff'.");
+        }
 
-        return ['from' => $from, 'to' => $to];
+        return [$from, $to];
     }
 
     /**
-     * Convert DateTime to formatted string
-     *
-     * @param \DateTime $datetime The datetime to format
-     * @return string Formatted datetime string (Y-m-d H:i)
+     * Convert datetime to string format
      */
-    public function datetimeToString(\DateTime $datetime): string {
+    private function datetimeToString(\DateTime $datetime): string
+    {
         return $datetime->format('Y-m-d H:i');
-
-    }
-
-
-    /**
-     * Convert a date range to string
-     *
-     * @param array $dateRange Array with 'from' and 'to' keys containing DateTime objects
-     * @return string Formatted date range string
-     */
-    public function dateRangeToString(array $dateRange): string {
-        return $this->datetimeToString($dateRange['from']) . ' - ' . $this->datetimeToString($dateRange['to']);
     }
 
     /**
-     * Parse CSV content to array using League\Csv
-     *
-     * @param string $content CSV content
-     * @return array Array of data rows
+     * Convert date range to string format
+     * @param array<int,DateTime> $dateRange
      */
-    public function parseCsvContent(string $content): array {
-        $stream = fopen('php://temp', 'r+');
-        fwrite($stream, $content);
-        rewind($stream);
-
-        $csv = Reader::createFromStream($stream);
-        $csv->setDelimiter(',');
-        $csv->setEnclosure('"');
-        $csv->setEscape('\\');
-        $csv->setHeaderOffset(0);
-
-        $records = iterator_to_array($csv->getRecords());
-
-        fclose($stream);
-        return $records;
+    private function dateRangeToString(array $dateRange): string
+    {
+        return $this->datetimeToString($dateRange[0]) . ' - ' . $this->datetimeToString($dateRange[1]);
     }
 
     /**
-     * Convert processed data to CSV using League\Csv
-     *
-     * @param array $data Array of data rows
-     * @return string CSV content
+     * Transform the CSV data
      */
-    public function convertToCsv(array $data): string {
-        if (empty($data)) {
-            return '';
-        }
+    public function transform($tournee_csv): string
+    {
+        $routeReader = Reader::createFromString($tournee_csv);
+        $routeReader->setDelimiter(';');
+        $routeReader->setHeaderOffset(0);
+        $routeRecords = $routeReader->getRecords();
 
-        $stream = fopen('php://temp', 'r+');
+        $output = Writer::createFromString();
 
-        $csv = Writer::createFromStream($stream);
-        $csv->setDelimiter(',');
-        $csv->setEnclosure('"');
-        $csv->setEscape('\\');
+        $headers = [
+            'pickup.address',
+            'pickup.address.name',
+            'pickup.address.description',
+            'pickup.address.telephone',
+            'pickup.comments',
+            'pickup.timeslot',
+            'pickup.tags',
+            'pickup.metadata',
+            'dropoff.address',
+            'dropoff.address.name',
+            'dropoff.address.description',
+            'dropoff.address.telephone',
+            'dropoff.comments',
+            'dropoff.timeslot',
+            'dropoff.tags',
+            'dropoff.metadata',
+            'weight'
+        ];
 
-        // Write headers
-        $csv->insertOne(array_keys(reset($data)));
+        $output->insertOne($headers);
 
-        // Write data
-        $csv->insertAll(array_map('array_values', $data));
+        foreach ($routeRecords as $routeRecord) {
+            $addressCode = $routeRecord['Leveradres colli'];
 
-        rewind($stream);
-        $content = stream_get_contents($stream);
-        fclose($stream);
-
-        return $content;
-    }
-
-    /**
-     * Handle the conversion of route and address data
-     *
-     * @param array $routeData Array of route data rows
-     * @param array $addressData Array of address data rows
-     * @return array Processed data for export
-     */
-    public function handle(array $routeData, array $addressData): array {
-        // Create a lookup for address data by code
-        $addressLookup = [];
-        foreach ($addressData as $address) {
-            $code = $address['Code'] ?? null;
-            if ($code) {
-                $addressLookup[$code] = $address;
-            }
-        }
-
-        $result = [];
-
-        foreach ($routeData as $route) {
-            $addressCode = $route['Leveradres colli'] ?? null;
-
-            // Skip if we can't find matching address or missing address code
-            if (!$addressCode || !isset($addressLookup[$addressCode])) {
+            if (!isset($this->addresses[$addressCode])) {
                 continue;
             }
 
-            $address = $addressLookup[$addressCode];
+            $addressRecord = $this->addresses[$addressCode];
 
-            // Get delivery date
-            $deliveryDate = $route['Leverdatum'] ?? null;
-            if (!$deliveryDate) {
-                continue;
-            }
-
-            // Parse the delivery date (format: Y/m/d H:i:s)
-            $date = \DateTime::createFromFormat('Y/m/d H:i:s', $deliveryDate);
+            $dateStr = $routeRecord['Leverdatum'];
+            $date = \DateTime::createFromFormat('d/m/Y', $dateStr);
 
             if (!$date) {
-                continue; // Skip if date parsing fails
+                // Try alternative format with leading zeros
+                $date = \DateTime::createFromFormat('j/n/Y', $dateStr);
             }
 
-            $pickupDateRange = $this->createPickupDateRange($date);
-            $dropoffDateRange = $this->createDropoffDateRange($date);
+            if (!$date) {
+                continue;
+            }
 
-            $parcelNumber = isset($route['Nummer Colli']) ? (int)$route['Nummer Colli'] : '';
-            $weight = $route['Gewicht'] ?? '';
+            // Create pickup and dropoff timeslots
+            $pickupRange = $this->createDateRange($date, 'pickup');
+            $dropoffRange = $this->createDateRange($date, 'dropoff');
 
-            $result[] = [
+            $transformedRecord = [
                 'pickup.address' => 'Rue du Nord Belge 6, 4020 Liège, Belgique',
                 'pickup.address.name' => 'Centre logistique Proximus',
                 'pickup.address.description' => 'LSP53',
                 'pickup.address.telephone' => '',
                 'pickup.comments' => '',
-                'pickup.timeslot' => $this->dateRangeToString($pickupDateRange),
+                'pickup.timeslot' => $this->dateRangeToString($pickupRange),
                 'pickup.tags' => '',
                 'pickup.metadata' => '',
-                'dropoff.address' => $address['Adress'] ?? '',
-                'dropoff.address.name' => $address['Adress.name'] ?? '',
+                'dropoff.address' => $addressRecord['address_name'] ?? '',
+                'dropoff.address.name' => $addressRecord['street_name'] ?? '',
                 'dropoff.address.description' => '',
                 'dropoff.address.telephone' => '',
                 'dropoff.comments' => '',
-                'dropoff.timeslot' => $this->dateRangeToString($dropoffDateRange),
+                'dropoff.timeslot' => $this->dateRangeToString($dropoffRange),
                 'dropoff.tags' => '',
-                'dropoff.metadata' => 'barcode=' . $parcelNumber,
-                'weight' => $weight
+                'dropoff.metadata' => 'barcode=' . $routeRecord['Nummer Colli'],
+                'weight' => $routeRecord['Gewicht'] ?? ''
             ];
+
+            $output->insertOne($transformedRecord);
         }
 
-        return $result;
+        return $output->toString();
     }
-
-    /**
-     * Process CSV content and return processed data
-     *
-     * @param string $routeCsvContent Route CSV content (Tournée CSV)
-     * @param string $addressCsvContent Address CSV content (Code addresses CSV)
-     * @return array Processed data
-     */
-    public function process(string $routeCsvContent, string $addressCsvContent): array {
-        $routeData = $this->parseCsvContent($routeCsvContent);
-        $addressData = $this->parseCsvContent($addressCsvContent);
-
-        return $this->handle($routeData, $addressData);
-    }
-
-    /**
-     * Process CSVs and return CSV output string
-     *
-     * @param string $routeCsvContent Route CSV content (Tournée CSV)
-     * @param string $addressCsvContent Address CSV content (Code addresses CSV)
-     * @return string Processed CSV content ready for export
-     */
-    public function processAndGetCsv(string $routeCsvContent, string $addressCsvContent): string {
-        $processedData = $this->process($routeCsvContent, $addressCsvContent);
-        return $this->convertToCsv($processedData);
-    }
-
-    public function transform($data): string
-    {
-        return $this->processAndGetCsv($data, '[HARDCODED]');
-    }
-}
+  }

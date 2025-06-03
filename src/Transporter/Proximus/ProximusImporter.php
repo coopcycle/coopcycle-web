@@ -11,30 +11,23 @@ class ProximusImporter implements TransporterImporterInterface
 
     private Filesystem $fs;
 
-    /**
-     * @param array<string, mixed> $sync_config
-     */
-    public function __construct(
-        array $sync_config
-    )
+    public function __construct(string $sync_uri)
     {
-        if (!isset($sync_config['proximus_sync_uri'])) {
-            throw new \Exception('Missing Proximus sync URI');
-        }
-
-        $this->fs = TransporterHelpers::parseSyncOptions($sync_config['proximus_sync_uri']);
-
+        $this->fs = TransporterHelpers::parseSyncOptions($sync_uri);
     }
 
     public function pull(array $options = []): array
     {
-        $csv = $this->fs->read(sprintf('/%s.csv', date('Y-m-d', time())));
+        $csv = $this->fs->read(sprintf('/rayon9_%s.csv', date('Ymd', time())));
         return [$csv];
     }
 
     public function flush(bool $dry_run = false): void
     {
-        $this->fs->delete(sprintf('/%s.csv', date('Y-m-d', time())));
+        if ($dry_run) {
+            return;
+        }
+        $this->fs->delete(sprintf('/rayon9_%s.csv', date('Ymd', time())));
     }
 
 }
