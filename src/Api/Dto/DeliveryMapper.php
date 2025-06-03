@@ -14,6 +14,7 @@ class DeliveryMapper
 {
 
     public function __construct(
+        private readonly TaskMapper $taskMapper,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly Hashids $hashids8,
         private readonly NormalizerInterface $normalizer,
@@ -28,23 +29,35 @@ class DeliveryMapper
     ): DeliveryDto {
         $deliveryData = new DeliveryDto();
 
-        $deliveryData->tasks = array_map(function (Task $taskEntity) {
+        $tasks = $deliveryEntity->getTasks();
+
+        $deliveryData->tasks = array_map(function (Task $taskEntity) use ($tasks) {
             $taskData = new TaskDto();
 
             $taskData->id = $taskEntity->getId();
+            $taskData->createdAt = $taskEntity->getCreatedAt();
+            $taskData->updatedAt = $taskEntity->getUpdatedAt();
+
             $taskData->type = $taskEntity->getType();
+            $taskData->status = $taskEntity->getStatus();
+
             $taskData->address = $this->normalizer->normalize($taskEntity->getAddress(), 'jsonld');
+            // Workaround to properly normalize embedded relation
+            // Should become unnecessary when we normalise address using built-in normalizer
+            // See a comment at TaskDto Address property
+            if (isset($taskData->address['@context'])) {
+                unset($taskData->address['@context']);
+            }
+
             $taskData->after = $taskEntity->getAfter();
             $taskData->before = $taskEntity->getBefore();
+            $taskData->doneAfter = $taskEntity->getAfter();
+            $taskData->doneBefore = $taskEntity->getBefore();
+
             $taskData->comments = $taskEntity->getComments();
             $taskData->tags = $taskEntity->getTags();
-            $taskData->weight = $taskEntity->getWeight();
-            $taskData->packages = array_map(function (Task\Package $taskPackage) {
-                $packageData = new TaskPackageDto();
-                $packageData->type = $taskPackage->getPackage()->getName();
-                $packageData->quantity = $taskPackage->getQuantity();
-                return $packageData;
-            }, $taskEntity->getPackages()->toArray());
+            $taskData->weight = $this->taskMapper->getWeight($taskEntity, $tasks);
+            $taskData->packages = $this->taskMapper->getPackages($taskEntity, $tasks);
             $taskData->metadata = $taskEntity->getMetadata();
 
             return $taskData;

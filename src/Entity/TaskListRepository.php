@@ -5,7 +5,7 @@ namespace AppBundle\Entity;
 use AppBundle\Api\Dto\MyTaskListDto;
 use AppBundle\Api\Dto\MyTaskDto;
 use AppBundle\Api\Dto\MyTaskMetadataDto;
-use AppBundle\Api\Dto\TaskPackageDto;
+use AppBundle\Api\Dto\TaskMapper;
 use AppBundle\Entity\Sylius\Order;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,6 +16,7 @@ class TaskListRepository extends ServiceEntityRepository
 {
     public function __construct(
         ManagerRegistry $registry,
+        private readonly TaskMapper $taskMapper,
         private readonly EntityManagerInterface $entityManager
     )
     {
@@ -185,26 +186,7 @@ class TaskListRepository extends ServiceEntityRepository
             $deliveryId = $row['deliveryId'] ?? null;
             $orderId = $row['orderId'] ?? null;
 
-            $taskPackages = [];
-            $weight = null;
-
             $tasksInTheSameDelivery = $deliveryId ? $tasksByDeliveryId[$deliveryId] : [];
-
-            if ($task->isPickup()) {
-                // for a pickup in a delivery, the serialized weight is the sum of the dropoff weight and
-                // the packages are the "sum" of the dropoffs packages
-                foreach ($tasksInTheSameDelivery as $t) {
-                    if ($t->isPickup()) {
-                        continue;
-                    }
-
-                    $taskPackages = array_merge($taskPackages, $t->getPackages()->toArray());
-                    $weight += $t->getWeight();
-                }
-            } else {
-                $taskPackages = $task->getPackages()->toArray();
-                $weight = $task->getWeight();
-            }
 
             return new MyTaskDto(
                 $task->getId(),
@@ -220,22 +202,8 @@ class TaskListRepository extends ServiceEntityRepository
                 $task->getTags(),
                 $task->isDoorstep(),
                 $task->getComments(),
-                array_map(function (Task\Package $taskPackage) {
-                    $package = $taskPackage->getPackage();
-
-                    $packageData = new TaskPackageDto();
-
-                    $packageData->short_code = $package->getShortCode();
-                    $packageData->name = $package->getName();
-                    //FIXME; why do we have name and type with the same value?
-                    $packageData->type = $package->getName();
-                    $packageData->volume_per_package = $package->getAverageVolumeUnits();
-                    $packageData->quantity = $taskPackage->getQuantity();
-
-                    return $packageData;
-
-                }, $taskPackages),
-                $weight,
+                $this->taskMapper->getPackages($task, $tasksInTheSameDelivery),
+                $this->taskMapper->getWeight($task, $tasksInTheSameDelivery),
                 ($tasksWithIncidents[$task->getId()] ?? 0) > 0,
                 $row['organizationName'],
                 new MyTaskMetadataDto(

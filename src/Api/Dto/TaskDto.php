@@ -7,14 +7,24 @@ use AppBundle\Entity\TimeSlot;
 use DateTime;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+// Merge with MyTaskDto in the future
 final class TaskDto
 {
     // null in POST input data
     #[Groups(['delivery', 'delivery_create'])]
     public int|null $id = null;
 
+    #[Groups(['delivery'])]
+    public DateTime|null $createdAt = null;
+
+    #[Groups(['delivery'])]
+    public DateTime|null $updatedAt = null;
+
     #[Groups(['delivery', 'pricing_deliveries', 'delivery_create'])]
     public string|null $type = null;
+
+    #[Groups(["delivery"])]
+    public string|null $status = null;
 
     /**
      * FIXME: Ideally, an Address object should be normalized/denormalized by a standard API platform denormalizer,
@@ -28,24 +38,23 @@ final class TaskDto
     public array|null $latLng = null;
 
     #[Groups(['delivery', 'pricing_deliveries', 'delivery_create'])]
-    public DateTime|string|null $after = null;
+    public DateTime|null $after = null;
 
     #[Groups(['delivery', 'pricing_deliveries', 'delivery_create'])]
-    public DateTime|string|null $before = null;
+    public DateTime|null $before = null;
 
     /**
      * @deprecated: use $after instead
      */
-    #[Groups(['pricing_deliveries', 'delivery_create'])]
-    public string|null $doneAfter = null;
+    #[Groups(['delivery', 'pricing_deliveries', 'delivery_create'])]
+    public DateTime|null $doneAfter = null;
 
     /**
      * @deprecated: use $before instead
      */
-    #[Groups(['pricing_deliveries', 'delivery_create'])]
-    public string|null $doneBefore = null;
+    #[Groups(['delivery', 'pricing_deliveries', 'delivery_create'])]
+    public DateTime|null $doneBefore = null;
 
-    //FIXME: set type to TimeSlot?
     #[Groups(['pricing_deliveries', 'delivery_create'])]
     public TimeSlot|null $timeSlotUrl = null;
 
