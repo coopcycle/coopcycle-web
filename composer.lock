@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "239958ed71c897b9ce9f1adfe19e4777",
+    "content-hash": "ba192b92bfac7fd1db2cd166d79e71ae",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -280,16 +280,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.343.22",
+            "version": "3.343.23",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "174cc187df3bde52c21e9c00a4e99610a08732a3"
+                "reference": "010869992129557cfbf2740d94d82ef3b5228462"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/174cc187df3bde52c21e9c00a4e99610a08732a3",
-                "reference": "174cc187df3bde52c21e9c00a4e99610a08732a3",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/010869992129557cfbf2740d94d82ef3b5228462",
+                "reference": "010869992129557cfbf2740d94d82ef3b5228462",
                 "shasum": ""
             },
             "require": {
@@ -371,30 +371,30 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.343.22"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.343.23"
             },
-            "time": "2025-05-30T18:11:02+00:00"
+            "time": "2025-06-02T18:04:47+00:00"
         },
         {
             "name": "azimolabs/apple-sign-in-php-sdk",
-            "version": "2.2.0",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/AzimoLabs/apple-sign-in-php-sdk.git",
-                "reference": "e98b43936d48be5d799c6dd1ebb51538e7aa4645"
+                "reference": "2b757220007cb8b6f8f79031eb25f04d45013598"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/AzimoLabs/apple-sign-in-php-sdk/zipball/e98b43936d48be5d799c6dd1ebb51538e7aa4645",
-                "reference": "e98b43936d48be5d799c6dd1ebb51538e7aa4645",
+                "url": "https://api.github.com/repos/AzimoLabs/apple-sign-in-php-sdk/zipball/2b757220007cb8b6f8f79031eb25f04d45013598",
+                "reference": "2b757220007cb8b6f8f79031eb25f04d45013598",
                 "shasum": ""
             },
             "require": {
                 "ext-mbstring": "*",
                 "ext-openssl": "*",
                 "guzzlehttp/guzzle": "^6.0|^7.0",
-                "lcobucci/jwt": "^4.0",
-                "php": "^7.4 || ^8.0",
+                "lcobucci/jwt": "^5.0",
+                "php": "^8.1",
                 "phpseclib/phpseclib": "^3.0"
             },
             "require-dev": {
@@ -428,9 +428,9 @@
             ],
             "support": {
                 "issues": "https://github.com/AzimoLabs/apple-sign-in-php-sdk/issues",
-                "source": "https://github.com/AzimoLabs/apple-sign-in-php-sdk/tree/2.2.0"
+                "source": "https://github.com/AzimoLabs/apple-sign-in-php-sdk/tree/3.0.0"
             },
-            "time": "2022-02-04T11:11:44+00:00"
+            "time": "2023-08-09T11:30:18+00:00"
         },
         {
             "name": "azuyalabs/yasumi",
@@ -7639,55 +7639,56 @@
         },
         {
             "name": "kreait/firebase-php",
-            "version": "7.10.0",
+            "version": "7.18.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kreait/firebase-php.git",
-                "reference": "a0e50e4db4f14aa070b45dfda6bb2678b1e24d66"
+                "reference": "f43bc2509721ae2bff77f5232e5f56225440393b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kreait/firebase-php/zipball/a0e50e4db4f14aa070b45dfda6bb2678b1e24d66",
-                "reference": "a0e50e4db4f14aa070b45dfda6bb2678b1e24d66",
+                "url": "https://api.github.com/repos/kreait/firebase-php/zipball/f43bc2509721ae2bff77f5232e5f56225440393b",
+                "reference": "f43bc2509721ae2bff77f5232e5f56225440393b",
                 "shasum": ""
             },
             "require": {
                 "beste/clock": "^3.0",
-                "beste/in-memory-cache": "^1.0",
-                "beste/json": "^1.2.1",
+                "beste/in-memory-cache": "^1.3.1",
+                "beste/json": "^1.5.1",
                 "ext-ctype": "*",
                 "ext-filter": "*",
                 "ext-json": "*",
                 "ext-mbstring": "*",
-                "ext-openssl": "*",
                 "fig/http-message-util": "^1.1.5",
-                "firebase/php-jwt": "^6.3.2",
-                "google/auth": "^1.24",
-                "google/cloud-storage": "^1.30.1",
-                "guzzlehttp/guzzle": "^7.5",
-                "guzzlehttp/promises": "^2.0",
-                "guzzlehttp/psr7": "^2.6",
-                "kreait/firebase-tokens": "^4.2",
-                "lcobucci/jwt": "^4.3.0|^5.0",
-                "mtdowling/jmespath.php": "^2.6.1",
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
+                "firebase/php-jwt": "^6.10.2",
+                "google/auth": "^v1.45",
+                "google/cloud-storage": "^1.45",
+                "guzzlehttp/guzzle": "^7.9.2",
+                "guzzlehttp/promises": "^2.0.4",
+                "guzzlehttp/psr7": "^2.7",
+                "kreait/firebase-tokens": "^5.2",
+                "lcobucci/jwt": "^4.3|^5.3",
+                "mtdowling/jmespath.php": "^2.8.0",
+                "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
                 "psr/cache": "^1.0.1|^2.0|^3.0",
                 "psr/clock": "^1.0",
-                "psr/http-client": "^1.0",
-                "psr/http-factory": "^1.0",
+                "psr/http-client": "^1.0.3",
+                "psr/http-factory": "^1.1",
                 "psr/http-message": "^1.1 || ^2.0",
-                "psr/log": "^1.1|^2.0|^3.0"
+                "psr/log": "^1.1|^2.0|^3.0.2"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.51.0",
-                "google/cloud-firestore": "^1.41.1",
-                "phpstan/extension-installer": "^1.3.1",
-                "phpstan/phpstan": "^1.10.59",
-                "phpstan/phpstan-phpunit": "^1.3.16",
-                "phpunit/phpunit": "^10.5.11",
-                "rector/rector": "^1.0.1",
-                "shipmonk/composer-dependency-analyser": "^1.5.0",
-                "symfony/var-dumper": "^6.3.5 || ^7.0.4"
+                "google/cloud-firestore": "^1.47.2",
+                "php-cs-fixer/shim": "^3.68.5",
+                "phpstan/extension-installer": "^1.4.3",
+                "phpstan/phpstan": "^2.0.4",
+                "phpstan/phpstan-deprecation-rules": "^2.0.1",
+                "phpstan/phpstan-phpunit": "^2.0.3",
+                "phpunit/phpunit": "^10.5.39",
+                "rector/rector": "^2.0.3",
+                "shipmonk/composer-dependency-analyser": "^1.8.1",
+                "symfony/var-dumper": "^6.4.15 || ^7.2.0",
+                "vlucas/phpdotenv": "^5.6.1"
             },
             "suggest": {
                 "google/cloud-firestore": "^1.0 to use the Firestore component"
@@ -7733,20 +7734,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-04-25T10:28:06+00:00"
+            "time": "2025-03-08T22:54:18+00:00"
         },
         {
             "name": "kreait/firebase-tokens",
-            "version": "4.3.0",
+            "version": "5.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kreait/firebase-tokens-php.git",
-                "reference": "e5a4f09d6fd5b976263e1f3418a4c19bce254ffa"
+                "reference": "df6f9d153f3bbe671c3247576d2a45cbd0a79620"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kreait/firebase-tokens-php/zipball/e5a4f09d6fd5b976263e1f3418a4c19bce254ffa",
-                "reference": "e5a4f09d6fd5b976263e1f3418a4c19bce254ffa",
+                "url": "https://api.github.com/repos/kreait/firebase-tokens-php/zipball/df6f9d153f3bbe671c3247576d2a45cbd0a79620",
+                "reference": "df6f9d153f3bbe671c3247576d2a45cbd0a79620",
                 "shasum": ""
             },
             "require": {
@@ -7754,22 +7755,20 @@
                 "ext-json": "*",
                 "ext-openssl": "*",
                 "fig/http-message-util": "^1.1.5",
-                "guzzlehttp/guzzle": "^7.5",
-                "lcobucci/clock": "^3.0",
-                "lcobucci/jwt": "^4.3.0|^5.0",
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0",
+                "guzzlehttp/guzzle": "^7.8",
+                "lcobucci/jwt": "^5.2",
+                "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0",
                 "psr/cache": "^1.0|^2.0|^3.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.40",
-                "phpstan/extension-installer": "^1.2",
-                "phpstan/phpstan": "^1.9.2",
-                "phpstan/phpstan-phpunit": "^1.2.2",
-                "phpunit/phpunit": "^9.5.26",
-                "rector/rector": "^0.12.23",
-                "roave/backward-compatibility-check": "^8.1",
-                "symfony/cache": "^5.4|^6.1.7",
-                "symfony/var-dumper": "^5.3|^6.1.6"
+                "friendsofphp/php-cs-fixer": "^3.62.0",
+                "phpstan/extension-installer": "^1.4.1",
+                "phpstan/phpstan": "^1.11.10",
+                "phpstan/phpstan-phpunit": "^1.4.0",
+                "phpunit/phpunit": "^10.5.30",
+                "rector/rector": "^1.2.3",
+                "symfony/cache": "^6.4.3 || ^7.1.3",
+                "symfony/var-dumper": "^6.4.3 || ^7.1.3"
             },
             "suggest": {
                 "psr/cache-implementation": "to cache fetched remote public keys"
@@ -7801,7 +7800,7 @@
             ],
             "support": {
                 "issues": "https://github.com/kreait/firebase-tokens-php/issues",
-                "source": "https://github.com/kreait/firebase-tokens-php/tree/4.3.0"
+                "source": "https://github.com/kreait/firebase-tokens-php/tree/5.2.1"
             },
             "funding": [
                 {
@@ -7809,7 +7808,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-11-30T23:04:35+00:00"
+            "time": "2024-12-20T11:29:43+00:00"
         },
         {
             "name": "laminas/laminas-code",
@@ -8090,39 +8089,38 @@
         },
         {
             "name": "lcobucci/jwt",
-            "version": "4.3.0",
+            "version": "5.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lcobucci/jwt.git",
-                "reference": "4d7de2fe0d51a96418c0d04004986e410e87f6b4"
+                "reference": "a835af59b030d3f2967725697cf88300f579088e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lcobucci/jwt/zipball/4d7de2fe0d51a96418c0d04004986e410e87f6b4",
-                "reference": "4d7de2fe0d51a96418c0d04004986e410e87f6b4",
+                "url": "https://api.github.com/repos/lcobucci/jwt/zipball/a835af59b030d3f2967725697cf88300f579088e",
+                "reference": "a835af59b030d3f2967725697cf88300f579088e",
                 "shasum": ""
             },
             "require": {
-                "ext-hash": "*",
-                "ext-json": "*",
-                "ext-mbstring": "*",
                 "ext-openssl": "*",
                 "ext-sodium": "*",
-                "lcobucci/clock": "^2.0 || ^3.0",
-                "php": "^7.4 || ^8.0"
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
+                "psr/clock": "^1.0"
             },
             "require-dev": {
-                "infection/infection": "^0.21",
-                "lcobucci/coding-standard": "^6.0",
-                "mikey179/vfsstream": "^1.6.7",
+                "infection/infection": "^0.29",
+                "lcobucci/clock": "^3.2",
+                "lcobucci/coding-standard": "^11.0",
                 "phpbench/phpbench": "^1.2",
-                "phpstan/extension-installer": "^1.0",
-                "phpstan/phpstan": "^1.4",
-                "phpstan/phpstan-deprecation-rules": "^1.0",
-                "phpstan/phpstan-phpunit": "^1.0",
-                "phpstan/phpstan-strict-rules": "^1.0",
-                "phpunit/php-invoker": "^3.1",
-                "phpunit/phpunit": "^9.5"
+                "phpstan/extension-installer": "^1.2",
+                "phpstan/phpstan": "^1.10.7",
+                "phpstan/phpstan-deprecation-rules": "^1.1.3",
+                "phpstan/phpstan-phpunit": "^1.3.10",
+                "phpstan/phpstan-strict-rules": "^1.5.0",
+                "phpunit/phpunit": "^11.1"
+            },
+            "suggest": {
+                "lcobucci/clock": ">= 3.2"
             },
             "type": "library",
             "autoload": {
@@ -8148,7 +8146,7 @@
             ],
             "support": {
                 "issues": "https://github.com/lcobucci/jwt/issues",
-                "source": "https://github.com/lcobucci/jwt/tree/4.3.0"
+                "source": "https://github.com/lcobucci/jwt/tree/5.5.0"
             },
             "funding": [
                 {
@@ -8160,7 +8158,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-01-02T13:28:00+00:00"
+            "time": "2025-01-26T21:29:45+00:00"
         },
         {
             "name": "league/commonmark",
@@ -9316,47 +9314,44 @@
         },
         {
             "name": "lexik/jwt-authentication-bundle",
-            "version": "v2.21.0",
+            "version": "v3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/lexik/LexikJWTAuthenticationBundle.git",
-                "reference": "d57159da3f572b42ab609630edb6e27d71b37eca"
+                "reference": "ebe0e2c6a0ae17b4702feffc89e32e3aaba6cb61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/lexik/LexikJWTAuthenticationBundle/zipball/d57159da3f572b42ab609630edb6e27d71b37eca",
-                "reference": "d57159da3f572b42ab609630edb6e27d71b37eca",
+                "url": "https://api.github.com/repos/lexik/LexikJWTAuthenticationBundle/zipball/ebe0e2c6a0ae17b4702feffc89e32e3aaba6cb61",
+                "reference": "ebe0e2c6a0ae17b4702feffc89e32e3aaba6cb61",
                 "shasum": ""
             },
             "require": {
                 "ext-openssl": "*",
-                "lcobucci/clock": "^1.2|^2.0|^3.0",
-                "lcobucci/jwt": "^3.4.6|^4.1|^5.0",
-                "namshi/jose": "^7.2",
-                "php": ">=7.1",
-                "symfony/config": "^4.4|^5.4|^6.0|^7.0",
-                "symfony/dependency-injection": "^4.4|^5.4|^6.0|^7.0",
+                "lcobucci/clock": "^3.0",
+                "lcobucci/jwt": "^5.0",
+                "php": ">=8.2",
+                "symfony/config": "^6.4|^7.0",
+                "symfony/dependency-injection": "^6.4|^7.0",
                 "symfony/deprecation-contracts": "^2.4|^3.0",
-                "symfony/event-dispatcher": "^4.4|^5.4|^6.0|^7.0",
-                "symfony/http-foundation": "^4.4|^5.4|^6.0|^7.0",
-                "symfony/http-kernel": "^4.4|^5.4|^6.0|^7.0",
-                "symfony/property-access": "^4.4|^5.4|^6.0|^7.0",
-                "symfony/security-bundle": "^4.4|^5.4|^6.0|^7.0",
+                "symfony/event-dispatcher": "^6.4|^7.0",
+                "symfony/http-foundation": "^6.4|^7.0",
+                "symfony/http-kernel": "^6.4|^7.0",
+                "symfony/property-access": "^6.4|^7.0",
+                "symfony/security-bundle": "^6.4|^7.0",
                 "symfony/translation-contracts": "^1.0|^2.0|^3.0"
             },
-            "conflict": {
-                "symfony/console": "<4.4"
-            },
             "require-dev": {
-                "symfony/browser-kit": "^5.4|^6.0|^7.0",
-                "symfony/console": "^4.4|^5.4|^6.0|^7.0",
-                "symfony/dom-crawler": "^5.4|^6.0|^7.0",
-                "symfony/filesystem": "^4.4|^5.4|^6.0|^7.0",
-                "symfony/framework-bundle": "^4.4|^5.4|^6.0|^7.0",
-                "symfony/phpunit-bridge": "^7.0.1",
-                "symfony/security-guard": "^4.4|^5.4|^6.0|^7.0",
-                "symfony/var-dumper": "^4.4|^5.4|^6.0|^7.0",
-                "symfony/yaml": "^4.4|^5.4|^6.0|^7.0"
+                "api-platform/core": "^3.0|^4.0",
+                "rector/rector": "^1.2",
+                "symfony/browser-kit": "^6.4|^7.0",
+                "symfony/console": "^6.4|^7.0",
+                "symfony/dom-crawler": "^6.4|^7.0",
+                "symfony/filesystem": "^6.4|^7.0",
+                "symfony/framework-bundle": "^6.4|^7.0",
+                "symfony/phpunit-bridge": "^6.4|^7.0",
+                "symfony/var-dumper": "^6.4|^7.0",
+                "symfony/yaml": "^6.4|^7.0"
             },
             "suggest": {
                 "gesdinet/jwt-refresh-token-bundle": "Implements a refresh token system over Json Web Tokens in Symfony",
@@ -9419,7 +9414,7 @@
             ],
             "support": {
                 "issues": "https://github.com/lexik/LexikJWTAuthenticationBundle/issues",
-                "source": "https://github.com/lexik/LexikJWTAuthenticationBundle/tree/v2.21.0"
+                "source": "https://github.com/lexik/LexikJWTAuthenticationBundle/tree/v3.1.1"
             },
             "funding": [
                 {
@@ -9431,7 +9426,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-04-27T15:46:45+00:00"
+            "time": "2025-01-06T16:34:57+00:00"
         },
         {
             "name": "liip/imagine-bundle",
@@ -10336,73 +10331,6 @@
             "time": "2025-01-14T11:49:03+00:00"
         },
         {
-            "name": "namshi/jose",
-            "version": "7.2.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/namshi/jose.git",
-                "reference": "89a24d7eb3040e285dd5925fcad992378b82bcff"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/namshi/jose/zipball/89a24d7eb3040e285dd5925fcad992378b82bcff",
-                "reference": "89a24d7eb3040e285dd5925fcad992378b82bcff",
-                "shasum": ""
-            },
-            "require": {
-                "ext-date": "*",
-                "ext-hash": "*",
-                "ext-json": "*",
-                "ext-pcre": "*",
-                "ext-spl": "*",
-                "php": ">=5.5",
-                "symfony/polyfill-php56": "^1.0"
-            },
-            "require-dev": {
-                "phpseclib/phpseclib": "^2.0",
-                "phpunit/phpunit": "^4.5|^5.0",
-                "satooshi/php-coveralls": "^1.0"
-            },
-            "suggest": {
-                "ext-openssl": "Allows to use OpenSSL as crypto engine.",
-                "phpseclib/phpseclib": "Allows to use Phpseclib as crypto engine, use version ^2.0."
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Namshi\\JOSE\\": "src/Namshi/JOSE/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Alessandro Nadalin",
-                    "email": "alessandro.nadalin@gmail.com"
-                },
-                {
-                    "name": "Alessandro Cinelli (cirpo)",
-                    "email": "alessandro.cinelli@gmail.com"
-                }
-            ],
-            "description": "JSON Object Signing and Encryption library for PHP.",
-            "keywords": [
-                "JSON Web Signature",
-                "JSON Web Token",
-                "JWS",
-                "json",
-                "jwt",
-                "token"
-            ],
-            "support": {
-                "issues": "https://github.com/namshi/jose/issues",
-                "source": "https://github.com/namshi/jose/tree/master"
-            },
-            "time": "2016-12-05T07:27:31+00:00"
-        },
-        {
             "name": "nelmio/alice",
             "version": "3.14.2",
             "source": {
@@ -10731,16 +10659,16 @@
         },
         {
             "name": "nette/utils",
-            "version": "v4.0.6",
+            "version": "v4.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/utils.git",
-                "reference": "ce708655043c7050eb050df361c5e313cf708309"
+                "reference": "e67c4061eb40b9c113b218214e42cb5a0dda28f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/utils/zipball/ce708655043c7050eb050df361c5e313cf708309",
-                "reference": "ce708655043c7050eb050df361c5e313cf708309",
+                "url": "https://api.github.com/repos/nette/utils/zipball/e67c4061eb40b9c113b218214e42cb5a0dda28f2",
+                "reference": "e67c4061eb40b9c113b218214e42cb5a0dda28f2",
                 "shasum": ""
             },
             "require": {
@@ -10811,9 +10739,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/utils/issues",
-                "source": "https://github.com/nette/utils/tree/v4.0.6"
+                "source": "https://github.com/nette/utils/tree/v4.0.7"
             },
-            "time": "2025-03-30T21:06:30+00:00"
+            "time": "2025-06-03T04:55:08+00:00"
         },
         {
             "name": "notfloran/mjml-bundle",
@@ -21628,74 +21556,6 @@
                 }
             ],
             "time": "2024-12-23T08:48:59+00:00"
-        },
-        {
-            "name": "symfony/polyfill-php56",
-            "version": "v1.20.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/polyfill-php56.git",
-                "reference": "54b8cd7e6c1643d78d011f3be89f3ef1f9f4c675"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php56/zipball/54b8cd7e6c1643d78d011f3be89f3ef1f9f4c675",
-                "reference": "54b8cd7e6c1643d78d011f3be89f3ef1f9f4c675",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.1"
-            },
-            "type": "metapackage",
-            "extra": {
-                "thanks": {
-                    "url": "https://github.com/symfony/polyfill",
-                    "name": "symfony/polyfill"
-                },
-                "branch-alias": {
-                    "dev-main": "1.20-dev"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Nicolas Grekas",
-                    "email": "p@tchwork.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony polyfill backporting some PHP 5.6+ features to lower PHP versions",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "compatibility",
-                "polyfill",
-                "portable",
-                "shim"
-            ],
-            "support": {
-                "source": "https://github.com/symfony/polyfill-php56/tree/v1.20.0"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "time": "2020-10-23T14:02:19+00:00"
         },
         {
             "name": "symfony/polyfill-php72",
