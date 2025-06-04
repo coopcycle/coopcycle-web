@@ -2,7 +2,7 @@
 
 namespace AppBundle\Action;
 
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class Token

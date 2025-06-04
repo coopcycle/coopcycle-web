@@ -139,7 +139,7 @@ class SendEmail
             ...$ownerMails
         );
         foreach ($ownerMails as $ownerMail) {
-            $address = Address::fromString($ownerMail);
+            $address = Address::create($ownerMail);
             $this->messageBus->dispatch(new EmailSent($order, $address->getAddress()));
         }
     }

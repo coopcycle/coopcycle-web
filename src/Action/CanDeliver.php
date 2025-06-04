@@ -8,7 +8,7 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use AppBundle\ExpressionLanguage\ExpressionLanguage;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
