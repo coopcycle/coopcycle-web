@@ -111,7 +111,7 @@ class DeliveryProcessor implements ProcessorInterface
         }
 
         if ($store) {
-            $store->addDelivery($delivery);
+            $delivery->setStore($store);
         }
 
         $this->deliveryManager->setDefaults($delivery);
