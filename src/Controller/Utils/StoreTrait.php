@@ -628,6 +628,7 @@ trait StoreTrait
         Hashids $hashids8,
         Filesystem $deliveryImportsFilesystem,
         SlugifyInterface $slugify,
+        LoggerInterface $logger,
     )
     {
         $store = $this->entityManager
@@ -647,12 +648,13 @@ trait StoreTrait
             return $this->handleDeliveryImportForStore(
                 store: $store,
                 form: $deliveryImportForm,
-                routeTo: $routes['import_success'],
-                messageBus: $messageBus,
                 entityManager: $entityManager,
                 hashids: $hashids8,
                 filesystem: $deliveryImportsFilesystem,
-                slugify: $slugify
+                messageBus: $messageBus,
+                slugify: $slugify,
+                routeTo: $routes['import_success'],
+                logger: $logger
             );
         }
 
@@ -939,7 +941,9 @@ trait StoreTrait
         Filesystem $filesystem,
         MessageBusInterface $messageBus,
         SlugifyInterface $slugify,
-        string $routeTo)
+        string $routeTo,
+        LoggerInterface $logger,
+    )
     {
 
         /** @var UploadedFile $uploadedFile */
@@ -981,6 +985,11 @@ trait StoreTrait
             );
 
         } catch (FilesystemException | UnableToWriteFile $e) {
+
+            $logger->error('Error while writing delivery import file', [
+                'exception' => $e,
+                'filename' => $filename,
+            ]);
 
             $entityManager->remove($queue);
             $entityManager->flush();

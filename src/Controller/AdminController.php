@@ -770,9 +770,6 @@ class AdminController extends AbstractController
     #[Route(path: '/admin/deliveries', name: 'admin_deliveries')]
     public function deliveriesAction(Request $request,
         PaginatorInterface $paginator,
-        DeliveryManager $deliveryManager,
-        OrderFactory $orderFactory,
-        OrderManager $orderManager,
         DeliveryRepository $deliveryRepository,
         Hashids $hashids8,
         Filesystem $deliveryImportsFilesystem,
@@ -797,12 +794,13 @@ class AdminController extends AbstractController
                 return $this->handleDeliveryImportForStore(
                     store: $store,
                     form: $deliveryImportForm,
-                    messageBus: $messageBus,
                     entityManager: $this->entityManager,
-                    filesystem: $deliveryImportsFilesystem,
                     hashids: $hashids8,
+                    filesystem: $deliveryImportsFilesystem,
+                    messageBus: $messageBus,
+                    slugify: $slugify,
                     routeTo: 'admin_deliveries',
-                    slugify: $slugify
+                    logger: $logger,
                 );
             } else {
                 $logger->warning('Delivery import form is not valid', [
