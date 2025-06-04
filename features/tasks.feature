@@ -1,5 +1,5 @@
 Feature: Tasks
-    Scenario: Retrieve tasks check order task.doneBefore ASC and pickup before dropoff (GH #4277)
+  Scenario: Retrieve tasks check order task.doneBefore ASC and pickup before dropoff (GH #4277)
       Given the fixtures files are loaded:
         | tasks.yml           |
       And the courier "bob" is loaded:
@@ -190,8 +190,7 @@ Feature: Tasks
           }
       }
       """
-
-
+      
   Scenario: Retrieve assigned tasks
     Given the fixtures files are loaded:
       | tasks.yml           |
