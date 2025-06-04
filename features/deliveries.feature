@@ -3136,7 +3136,7 @@ Feature: Deliveries
         ],
         "itemsTotal": 1200,
         "total": 1200,
-        "state": "new",
+        "state": "accepted",
         "paymentMethod": "CARD",
         "assignedTo": null,
         "adjustments": {
@@ -3238,7 +3238,7 @@ Feature: Deliveries
                   "email": "bob@coopcycle.org",
                   "phoneNumber": null,
                   "tags": [],
-          "metadata": {"@*@": "@*@"},
+                  "metadata": {"@*@": "@*@"},
                   "telephone": null,
                   "username": "bob",
                   "fullName": ""
@@ -3247,7 +3247,7 @@ Feature: Deliveries
       ],
       "itemsTotal": 2000,
       "total": 2000,
-      "state": "new",
+      "state": "accepted",
       "paymentMethod": "CARD",
       "assignedTo": null,
       "adjustments": {
