@@ -2966,9 +2966,11 @@ Feature: Deliveries
         "address": "48, Rue de Rivoli",
         "doneBefore": "tomorrow 13:30"
       },
-      "arbitraryPrice": {
-        "variantPrice": 1200,
-        "variantName": "my custom variant"
+      "order": {
+        "arbitraryPrice": {
+          "variantPrice": 1200,
+          "variantName": "my custom variant"
+        }
       }
     }
     """
@@ -3155,9 +3157,11 @@ Feature: Deliveries
     And the user "bob" sends a "PUT" request to "/api/deliveries/1" with body:
     """
       {
-        "arbitraryPrice": {
-          "variantPrice": 2000,
-          "variantName": "my new product name"
+        "order": {
+          "arbitraryPrice": {
+            "variantPrice": 2000,
+            "variantName": "my new product name"
+          }
         }
       }
     """
@@ -3287,9 +3291,11 @@ Feature: Deliveries
         "address": "48, Rue de Rivoli",
         "doneBefore": "tomorrow 13:30"
       },
-      "arbitraryPrice": {
-        "variantPrice": 1200,
-        "variantName": "my custom variant"
+      "order": {
+        "arbitraryPrice": {
+          "variantPrice": 1200,
+          "variantName": "my custom variant"
+        }
       }
     }
     """
