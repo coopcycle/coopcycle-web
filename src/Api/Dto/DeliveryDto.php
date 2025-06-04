@@ -33,13 +33,13 @@ final class DeliveryDto
     public array|null $tasks = null;
 
     /**
-     * @deprecated Set weight via TaskInput
+     * @deprecated Set weight via TaskDto
      */
     #[Groups(['pricing_deliveries', 'delivery_create'])]
     public int|null $weight = null;
 
     /**
-     * @deprecated set packages via TaskInput
+     * @deprecated set packages via TaskDto
      * @var TaskPackageDto[]|null
      */
     #[Groups(['pricing_deliveries', 'delivery_create'])]
