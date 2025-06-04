@@ -2097,6 +2097,7 @@ Feature: Tasks
           "after":"2019-11-12T18:00:00+01:00",
           "before":"2019-11-12T18:30:00+01:00",
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"},
           "weight":null,
@@ -2116,14 +2117,16 @@ Feature: Tasks
           "after":"2019-11-12T19:00:00+01:00",
           "before":"2019-11-12T19:30:00+01:00",
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"},
           "weight":null,
           "packages":[],
           "barcode":{"@*@":"@*@"}
         },
+        "tasks":@array@,
         "trackingUrl": @string@,
-        "tasks":@array@
+        "order": {"@*@": "@*@"}
       }
       """
 
