@@ -11,12 +11,10 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Package;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\TagManager;
-use AppBundle\Utils\Barcode\BarcodeUtils;
 use Carbon\CarbonPeriod;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\ContextAwareDenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -29,7 +27,6 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
         private readonly UserManagerInterface $userManager,
         private readonly Geocoder $geocoder,
         private readonly EntityManagerInterface $entityManager,
-        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly ResourceMetadataCollectionFactoryInterface $resourceMetadataFactory,
         private readonly TaskMapper $taskMapper,
         private readonly LoggerInterface $logger
