@@ -62,6 +62,8 @@ class DeliveryMapper
             $taskData->packages = $this->taskMapper->getPackages($taskEntity, $tasks);
             $taskData->metadata = $taskEntity->getMetadata();
 
+            $taskData->barcode = $this->taskMapper->getBarcode($taskEntity);
+
             return $taskData;
         }, $deliveryEntity->getTasks());
 

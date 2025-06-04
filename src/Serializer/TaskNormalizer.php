@@ -88,19 +88,7 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
             }
         }
 
-        $barcode = BarcodeUtils::getRawBarcodeFromTask($object);
-        $barcode_token = BarcodeUtils::getToken($barcode);
-        $data['barcode'] = [
-            'barcode' => $barcode,
-            'label' => [
-                'token' => $barcode_token,
-                'url' => $this->urlGenerator->generate(
-                    'task_label_pdf',
-                    ['code' => $barcode, 'token' => $barcode_token],
-                    UrlGeneratorInterface::ABSOLUTE_URL
-                )
-            ]
-        ];
+        $data['barcode'] = $this->taskMapper->getBarcode($object);
 
         $data['packages'] = [];
 

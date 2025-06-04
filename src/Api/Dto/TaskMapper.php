@@ -101,4 +101,21 @@ class TaskMapper
 
         return $labels;
     }
+
+    public function getBarcode(Task $task): array
+    {
+        $barcode = BarcodeUtils::getRawBarcodeFromTask($task);
+        $barcode_token = BarcodeUtils::getToken($barcode);
+        return [
+            'barcode' => $barcode,
+            'label' => [
+                'token' => $barcode_token,
+                'url' => $this->urlGenerator->generate(
+                    'task_label_pdf',
+                    ['code' => $barcode, 'token' => $barcode_token],
+                    UrlGeneratorInterface::ABSOLUTE_URL
+                )
+            ]
+        ];
+    }
 }

@@ -88,4 +88,11 @@ final class TaskDto
      */
     #[Groups(['pricing_deliveries', 'delivery_create'])]
     public string|null $assignedTo = null;
+
+    /**
+     * returns an array of key-value pairs; replace with an object in the future?
+     * @var array|null
+     */
+    #[Groups(['delivery'])]
+    public array|null $barcode = null;
 }
