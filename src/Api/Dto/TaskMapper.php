@@ -19,43 +19,67 @@ class TaskMapper
      * @return TaskPackageDto[]
      */
     public function getPackages(Task $task, array $tasksInTheSameDelivery): array {
-        $taskPackages = [];
-
         if ($task->isPickup()) {
-            // for a pickup in a delivery, the serialized weight is the sum of the dropoff weight and
-            // the packages are the "sum" of the dropoffs packages
+            /**
+             * @var TaskPackageDto[] $packageDtos
+             */
+            $packageDtos = [];
+
+            // for a pickup in a delivery, the packages are the "sum" of the dropoffs packages
             foreach ($tasksInTheSameDelivery as $t) {
                 if ($t->isPickup()) {
                     continue;
                 }
 
-                $taskPackages = array_merge($taskPackages, $t->getPackages()->toArray());
+                foreach ($t->getPackages() as $taskPackage) {
+                    $packageId = $taskPackage->getPackage()->getId();
+                    if (!isset($packageDtos[$packageId])) {
+                        $packageDtos[$packageId] = $this->toPackageDto($taskPackage);
+                    } else {
+                        $existingPackageDto = $packageDtos[$packageId];
+
+                        $thisTaskPackageDto = $this->toPackageDto($taskPackage);
+
+                        $existingPackageDto->quantity = $existingPackageDto->quantity + $thisTaskPackageDto->quantity;
+                        $existingPackageDto->labels = array_merge(
+                            $existingPackageDto->labels,
+                            $thisTaskPackageDto->labels
+                        );
+                    }
+                }
             }
+
+            return array_values($packageDtos);
+
         } else {
-            $taskPackages = $task->getPackages()->toArray();
+            return array_map(function (Task\Package $taskPackage) {
+                return $this->toPackageDto($taskPackage);
+
+            }, $task->getPackages()->toArray());
         }
+    }
 
-        return array_map(function (Task\Package $taskPackage) use ($task) {
-            $package = $taskPackage->getPackage();
+    private function toPackageDto(Task\Package $taskPackage): TaskPackageDto
+    {
+        $task = $taskPackage->getTask();
+        $package = $taskPackage->getPackage();
 
-            $packageData = new TaskPackageDto();
+        $packageData = new TaskPackageDto();
 
-            $packageData->short_code = $package->getShortCode();
-            $packageData->name = $package->getName();
-            //FIXME; why do we have name and type with the same value?
-            $packageData->type = $package->getName();
-            $packageData->volume_per_package = $package->getAverageVolumeUnits();
-            $packageData->quantity = $taskPackage->getQuantity();
+        $packageData->short_code = $package->getShortCode();
+        $packageData->name = $package->getName();
+        //FIXME; why do we have name and type with the same value?
+        $packageData->type = $package->getName();
+        $packageData->volume_per_package = $package->getAverageVolumeUnits();
+        $packageData->quantity = $taskPackage->getQuantity();
 
-            $packageData->labels = $this->getLabels(
-                $task->getId(),
-                $package->getId(),
-                $taskPackage->getQuantity()
-            );
+        $packageData->labels = $this->getLabels(
+            $task->getId(),
+            $package->getId(),
+            $taskPackage->getQuantity()
+        );
 
-            return $packageData;
-
-        }, $taskPackages);
+        return $packageData;
     }
 
     /**
@@ -65,8 +89,7 @@ class TaskMapper
         $weight = null;
 
         if ($task->isPickup()) {
-            // for a pickup in a delivery, the serialized weight is the sum of the dropoff weight and
-            // the packages are the "sum" of the dropoffs packages
+            // for a pickup in a delivery, the serialized weight is the sum of the dropoff weight
             foreach ($tasksInTheSameDelivery as $t) {
                 if ($t->isPickup()) {
                     continue;
@@ -114,8 +137,8 @@ class TaskMapper
                     'task_label_pdf',
                     ['code' => $barcode, 'token' => $barcode_token],
                     UrlGeneratorInterface::ABSOLUTE_URL
-                )
-            ]
+                ),
+            ],
         ];
     }
 }
