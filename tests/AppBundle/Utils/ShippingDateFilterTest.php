@@ -36,7 +36,7 @@ class ShippingDateFilterTest extends KernelTestCase
         $this->restaurant = $this->prophesize(LocalBusiness::class);
         $this->orderTimelineCalculator = $this->prophesize(OrderTimelineCalculator::class);
         $this->rateLimiter = $this->prophesize(OrdersRateLimit::class);
-        $this->redis = self::$container->get(Redis::class);
+        $this->redis = self::getContainer()->get(Redis::class);
         $this->resolver = $this->prophesize(FulfillmentMethodResolver::class);
 
         $this->filter = new ShippingDateFilter(

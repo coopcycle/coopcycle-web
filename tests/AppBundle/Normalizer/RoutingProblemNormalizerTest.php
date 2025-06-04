@@ -60,7 +60,7 @@ class RoutingProblemNormalizerTest extends KernelTestCase
             $task_id += 1;
         }
 
-        $iriConverter = self::$container->get(IriConverterInterface::class);
+        $iriConverter = self::getContainer()->get(IriConverterInterface::class);
 
         $vehicle1 = new Vehicle(1, 'bike', $address1->getGeo()->toGeocoderCoordinates(), $address1->getGeo()->toGeocoderCoordinates());
         $routingProblem = new RoutingProblem();

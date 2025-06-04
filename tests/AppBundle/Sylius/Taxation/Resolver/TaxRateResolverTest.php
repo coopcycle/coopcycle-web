@@ -26,14 +26,14 @@ class TaxRateResolverTest extends KernelTestCase implements TaxableInterface
 
         self::bootKernel();
 
-        $this->doctrine = self::$container->get('doctrine');
+        $this->doctrine = self::getContainer()->get('doctrine');
 
         $purger = new ORMPurger($this->doctrine->getManager());
         $purger->purge();
 
-        $this->taxCategoryRepository = self::$container->get('sylius.repository.tax_category');
-        $this->taxesProvider = self::$container->get(TaxesProvider::class);
-        $this->taxRateRepository = self::$container->get('sylius.repository.tax_rate');
+        $this->taxCategoryRepository = self::getContainer()->get('sylius.repository.tax_category');
+        $this->taxesProvider = self::getContainer()->get(TaxesProvider::class);
+        $this->taxRateRepository = self::getContainer()->get('sylius.repository.tax_rate');
 
         $this->taxesInitializer = new TaxesInitializer(
             $this->doctrine->getConnection(),
