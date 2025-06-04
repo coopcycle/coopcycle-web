@@ -3,9 +3,17 @@
 namespace AppBundle\Api\Dto;
 
 use AppBundle\Entity\Task;
+use AppBundle\Utils\Barcode\BarcodeUtils;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class TaskMapper
 {
+    public function __construct(
+        private readonly UrlGeneratorInterface $urlGenerator,
+    )
+    {
+    }
+
     /**
      * @param Task[] $tasksInTheSameDelivery
      * @return TaskPackageDto[]
@@ -27,7 +35,7 @@ class TaskMapper
             $taskPackages = $task->getPackages()->toArray();
         }
 
-        return array_map(function (Task\Package $taskPackage) {
+        return array_map(function (Task\Package $taskPackage) use ($task) {
             $package = $taskPackage->getPackage();
 
             $packageData = new TaskPackageDto();
@@ -38,6 +46,12 @@ class TaskMapper
             $packageData->type = $package->getName();
             $packageData->volume_per_package = $package->getAverageVolumeUnits();
             $packageData->quantity = $taskPackage->getQuantity();
+
+            $packageData->labels = $this->getLabels(
+                $task->getId(),
+                $package->getId(),
+                $taskPackage->getQuantity()
+            );
 
             return $packageData;
 
@@ -67,5 +81,24 @@ class TaskMapper
         }
 
         return $weight;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getLabels(int $taskId, int $packageId, int $quantity): array {
+        $labels = [];
+
+        $barcodes = BarcodeUtils::getBarcodesFromTaskAndPackageIds($taskId, $packageId, $quantity);
+        foreach ($barcodes as $barcode) {
+            $labelUrl = $this->urlGenerator->generate(
+                'task_label_pdf',
+                ['code' => $barcode, 'token' => BarcodeUtils::getToken($barcode)],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            );
+            $labels[] = $labelUrl;
+        }
+
+        return $labels;
     }
 }

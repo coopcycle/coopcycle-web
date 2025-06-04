@@ -21,4 +21,10 @@ class TaskPackageDto
     #[Groups(['task', 'delivery', 'pricing_deliveries', 'delivery_create'])]
     public int $quantity;
 
+    /**
+     * @var string[]
+     */
+    #[Groups(['task', 'delivery'])]
+    public array $labels = [];
+
 }
