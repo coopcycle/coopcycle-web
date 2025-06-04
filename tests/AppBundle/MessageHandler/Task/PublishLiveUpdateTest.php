@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\AppBundle\Domain\Task\Reactor;
+namespace Tests\AppBundle\MessageHandler\Task;
 
 use AppBundle\Domain\Task\Event;
 use AppBundle\Domain\Task\Event\TaskAssigned;
@@ -8,16 +8,11 @@ use AppBundle\Domain\Task\Event\TaskCancelled;
 use AppBundle\Domain\Task\Event\TaskCreated;
 use AppBundle\Domain\Task\Event\TaskDone;
 use AppBundle\Domain\Task\Event\TaskFailed;
-use AppBundle\Domain\TaskList\Event\TaskListUpdated;
-use AppBundle\Domain\TaskList\Event\TaskListUpdatedv2;
 use AppBundle\Domain\Task\Event\TaskRescheduled;
 use AppBundle\Domain\Task\Event\TaskStarted;
 use AppBundle\Domain\Task\Event\TaskUnassigned;
 use AppBundle\Domain\Task\Event\TaskUpdated;
 use AppBundle\MessageHandler\Task\PublishLiveUpdate;
-use AppBundle\Domain\Tour\Event\TourCreated;
-use AppBundle\Domain\Tour\Event\TourUpdated;
-use AppBundle\Entity\TaskList;
 use AppBundle\Service\LiveUpdates;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -38,18 +33,6 @@ class PublishLiveUpdateTest extends TestCase
         );
     }
 
-    public function testTaskListUpdated()
-    {
-        $user = $this->prophesize(User::class);
-        $event = $this->prophesize(TaskListUpdated::class);
-
-        $this->liveUpdates->toAdmins(
-            $event->reveal()
-        )->shouldBeCalledOnce();
-
-        ($this->publishLiveUpdate)($event->reveal());
-    }
-
     public function testTaskEventsForAdminsAndDispatchers()
     {
         $taskEvents = [
@@ -65,43 +48,6 @@ class PublishLiveUpdateTest extends TestCase
         ];
 
         foreach ($taskEvents as $eventClass) {
-            $event = $this->prophesize($eventClass);
-
-            $this->liveUpdates->toAdmins(
-                $event->reveal()
-            )->shouldBeCalledOnce();
-
-            ($this->publishLiveUpdate)($event->reveal());
-
-            // Reset mock expectations for next iteration
-            $this->liveUpdates = $this->prophesize(LiveUpdates::class);
-            $this->publishLiveUpdate = new PublishLiveUpdate(
-                $this->liveUpdates->reveal()
-            );
-        }
-    }
-
-    public function testTaskListUpdatedv2()
-    {
-        $user = $this->prophesize(User::class);
-        $event = $this->prophesize(TaskListUpdatedv2::class);
-        $taskList = $this->prophesize(TaskList::class);
-
-        $this->liveUpdates->toAdmins(
-            $event->reveal()
-        )->shouldBeCalledOnce();
-
-        ($this->publishLiveUpdate)($event->reveal());
-    }
-
-    public function testTourEvents()
-    {
-        $tourEvents = [
-            TourCreated::class,
-            TourUpdated::class,
-        ];
-
-        foreach ($tourEvents as $eventClass) {
             $event = $this->prophesize($eventClass);
 
             $this->liveUpdates->toAdmins(
