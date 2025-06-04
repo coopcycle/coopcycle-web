@@ -83,6 +83,7 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
             return $payment->getState() === $targetState;
         });
 
+        /** @var Collection $paymentsToKeep */
         $paymentsToKeep = new ArrayCollection();
 
         switch ($this->paymentContext->getMethod()) {
