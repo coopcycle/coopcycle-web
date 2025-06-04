@@ -19,7 +19,7 @@ class TaskPackageDto
     public int $volume_per_package;
 
     #[Groups(['task', 'delivery', 'pricing_deliveries', 'delivery_create'])]
-    public int $quantity;
+    public string|int $quantity;
 
     /**
      * @var string[]
