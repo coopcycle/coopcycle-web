@@ -5,6 +5,7 @@ namespace AppBundle\Api\Dto;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Task;
+use AppBundle\Service\TagManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use Hashids\Hashids;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -15,6 +16,7 @@ class DeliveryMapper
 
     public function __construct(
         private readonly TaskMapper $taskMapper,
+        private readonly TagManager $tagManager,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly Hashids $hashids8,
         private readonly NormalizerInterface $normalizer,
@@ -55,7 +57,7 @@ class DeliveryMapper
             $taskData->doneBefore = $taskEntity->getBefore();
 
             $taskData->comments = $taskEntity->getComments();
-            $taskData->tags = $taskEntity->getTags();
+            $taskData->tags = $this->tagManager->expand($taskEntity->getTags());
             $taskData->weight = $this->taskMapper->getWeight($taskEntity, $tasks);
             $taskData->packages = $this->taskMapper->getPackages($taskEntity, $tasks);
             $taskData->metadata = $taskEntity->getMetadata();
