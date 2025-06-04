@@ -123,6 +123,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             denormalizationContext: ['groups' => ['delivery_create_from_tasks']],
             security: 'is_granted(\'ROLE_ADMIN\')',
             input: DeliveryFromTasksInput::class,
+            output: DeliveryDto::class,
             processor: DeliveryCreateOrUpdateProcessor::class
         ),
         new Post(
