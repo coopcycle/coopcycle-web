@@ -70,6 +70,13 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
 
         $isCreateOrderMode = is_null($delivery->getId());
 
+        if ($isCreateOrderMode) {
+            $store = $delivery->getStore();
+            if (!is_null($store)) {
+                $store->addDelivery($delivery);
+            }
+        }
+
         /** @var OrderInterface $order */
         $order = null;
         if ($isCreateOrderMode) {
