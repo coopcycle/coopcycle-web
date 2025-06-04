@@ -11,6 +11,7 @@ use AppBundle\Entity\Store;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Transporter\ImportFromPoint;
 use AppBundle\Transporter\ReportFromCC;
+use AppBundle\Transporter\TransporterHelpers;
 use Carbon\Carbon;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -367,6 +368,9 @@ class SyncTransportersCommand extends Command {
         return $edi;
     }
 
+    /**
+     * @param array<string,mixed> $config
+     */
     private function initTransporterSyncOptions(array $config = []): TransporterSyncOptions
     {
         // This is used for testing purposes
@@ -376,49 +380,14 @@ class SyncTransportersCommand extends Command {
             ]);
         }
 
-        $auth_details = parse_url($config['uri']);
-
-        //Enjoy the ugly hack :)
-        if (!$auth_details && str_starts_with($config['uri'], 'memory://')) {
-            $auth_details = ['scheme' => 'memory'];
+        try {
+            $fs = TransporterHelpers::parseSyncOptions($config['uri']);
+        } catch (\Exception $e) {
+            $this->logger->critical($e->getMessage(), ['transporter' => $this->transporter]);
+            throw $e;
         }
 
-        switch ($auth_details['scheme']) {
-            case 'ftp':
-                $adapter = new FtpAdapter(
-                    FtpConnectionOptions::fromArray([
-                        'host' => $auth_details['host'],
-                        'username' => $auth_details['user'],
-                        'password' => $auth_details['pass'],
-                        'port' => $auth_details['port'] ?? 21,
-                        'root' => $auth_details['path'] ?? '',
-                        'ssl' => false,
-                    ])
-                );
-                break;
-            case 'sftp':
-                $adapter = new SftpAdapter(
-                    SftpConnectionProvider::fromArray([
-                        'host' => $auth_details['host'],
-                        'username' => $auth_details['user'],
-                        'password' => $auth_details['pass'],
-                        'port' => $auth_details['port'] ?? 22,
-                    ]),
-                    $auth_details['path'] ?? ''
-                );
-                break;
-            case 'file':
-                $adapter = new LocalFilesystemAdapter($auth_details['path']);
-                break;
-            case 'memory':
-                $adapter = new InMemoryFilesystemAdapter();
-                break;
-            default:
-                $this->logger->critical('Unknown scheme: '.$auth_details['scheme'], ['transporter' => $this->transporter]);
-                throw new Exception(sprintf('Unknown scheme %s', $auth_details['scheme']));
-        }
 
-        $fs = new Filesystem($adapter);
         return new TransporterSyncOptions($fs, [
             'filemask' => $config['filemask'] ?? null
         ]);

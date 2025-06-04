@@ -1634,3 +1634,11 @@ services:
     arguments:
       - '@AppBundle\LoopEat\Client'
       - '@monolog.logger.loopeat'
+
+  AppBundle\Transporter\Proximus\ProximusImporter:
+    lazy: true
+    arguments:
+      - "%env(PROXIMUS_SYNC_URI)%"
+
+  AppBundle\Transporter\Proximus\ProximusTransformer:
+    lazy: true
