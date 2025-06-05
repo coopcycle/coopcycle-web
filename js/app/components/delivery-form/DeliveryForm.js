@@ -26,7 +26,7 @@ import Price from './Price'
 import SuggestionModal from './SuggestionModal'
 import DeliveryResume from './DeliveryResume'
 import Map from '../DeliveryMap'
-import { Mode } from './mode'
+import { Mode, modeIn } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
 
@@ -450,7 +450,7 @@ export default function({
                       <DeliveryResume tasks={values.tasks} />
                     </div>
 
-                    {order ? (
+                    {order || mode === Mode.RECURRENCE_RULE_UPDATE ? (
                       <div className="order-informations__total-price border-top py-3">
                         <Price
                           storeNodeId={storeNodeId}
@@ -462,13 +462,13 @@ export default function({
                       </div>
                     ) : null}
 
-                    {mode === Mode.DELIVERY_CREATE && isDispatcher ? (
+                    {modeIn(mode, [Mode.DELIVERY_CREATE, Mode.RECURRENCE_RULE_UPDATE]) && isDispatcher ? (
                       <div className="border-top pt-2 pb-3" data-testid="recurrence__container">
                         <RecurrenceRules />
                       </div>
                     ) : null}
 
-                    {isDispatcher && order ? (
+                    { modeIn(mode, [Mode.DELIVERY_CREATE, Mode.DELIVERY_UPDATE]) && order && isDispatcher ? (
                       <div
                         className="border-top py-3"
                         data-testid="saved_order__container">

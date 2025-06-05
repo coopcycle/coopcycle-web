@@ -39,7 +39,7 @@ export const TaskDateTime = ({ isDispatcher, storeNodeId, timeSlots, index }) =>
   if (!Array.isArray(timeSlotIds)) {
     // not loaded yet
     return <Spinner />
-  } else if (timeSlotIds.length > 0 && !(mode === Mode.DELIVERY_UPDATE)) {
+  } else if (timeSlotIds.length > 0 && mode === Mode.DELIVERY_CREATE) {
     if (isDispatcher) {
       return (
         <SwitchTimeSlotFreePicker

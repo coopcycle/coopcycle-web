@@ -122,11 +122,13 @@ export default function useSubmit(
       let result
       if (mode === Mode.DELIVERY_CREATE) {
         result = await createDelivery(convertValuesToPayload(values))
-      } else {
+      } else if (mode === Mode.DELIVERY_UPDATE) {
         result = await modifyDelivery({
           nodeId: deliveryNodeId,
           ...convertValuesToPayload(values),
         })
+      } else {
+        console.error('Unknown mode:', mode)
       }
 
       const { data, error } = result

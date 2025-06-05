@@ -12,7 +12,7 @@ import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikConte
 import _ from 'lodash'
 import OverridePriceForm from './OverridePriceForm'
 import { useCalculatePriceMutation, useGetTaxRatesQuery } from '../../api/slice'
-import { Mode } from './mode'
+import { Mode, modeIn } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
 
@@ -27,7 +27,7 @@ export default ({
   const { values, setFieldValue } = useDeliveryFormFormikContext()
 
   const [overridePrice, setOverridePrice] = useState(() => {
-    if (mode === Mode.DELIVERY_CREATE) {
+    if (modeIn(mode, [Mode.DELIVERY_CREATE, Mode.RECURRENCE_RULE_UPDATE])) {
       // when cloning an order that has an arbitrary price
       if (
         values.variantIncVATPrice !== undefined &&
