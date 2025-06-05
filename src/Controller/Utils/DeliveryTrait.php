@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller\Utils;
 
-use AppBundle\Api\Dto\DeliveryFormDeliveryMapper;
+use AppBundle\Api\Dto\DeliveryMapper;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
@@ -11,6 +11,7 @@ use AppBundle\Form\Order\ExistingOrderType;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderFactory;
+use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -26,7 +27,7 @@ trait DeliveryTrait
         $id,
         Request $request,
         EntityManagerInterface $entityManager,
-        DeliveryFormDeliveryMapper $deliveryMapper,
+        DeliveryMapper $deliveryMapper,
         OrderManager $orderManager,
     ) {
         $delivery = $entityManager
@@ -40,13 +41,14 @@ trait DeliveryTrait
 
         $deliveryData = $deliveryMapper->map(
             $delivery,
+            $order,
             $price instanceof ArbitraryPrice ? $price : null,
             !is_null($order) && $orderManager->hasBookmark($order)
         );
 
         $routes = $request->attributes->get('routes');
 
-        return $this->render('store/deliveries/beta_new.html.twig', $this->auth([
+        return $this->render('store/deliveries/form.html.twig', $this->auth([
             'layout' => $request->attributes->get('layout'),
             'store' => $delivery->getStore(),
             'order' => $order,
@@ -112,18 +114,20 @@ trait DeliveryTrait
             if ($form->has('bookmark')) {
                 $isBookmarked = true === $form->get('bookmark')->getData();
 
-                $order = $delivery->getOrder();
-
                 if (null !== $order) {
                     $orderManager->setBookmark($order, $isBookmarked);
                     $entityManager->flush();
                 }
             }
 
-            return $this->redirectToRoute($routes['success']);
+            if (!is_null($order)) {
+                return $this->redirectToRoute('admin_order', [ 'id' => $order->getId() ]);
+            } else {
+                return $this->redirectToRoute('admin_deliveries');
+            }
         }
 
-        return $this->render('delivery/item.html.twig', $this->auth([
+        return $this->render('delivery/item_legacy.html.twig', $this->auth([
             'delivery' => $delivery,
             'layout' => $request->attributes->get('layout'),
             'form' => $form->createView(),

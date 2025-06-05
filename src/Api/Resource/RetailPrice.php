@@ -10,7 +10,7 @@ use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Action\NotFoundAction;
 use AppBundle\Action\Delivery\CalculateRetailPrice as CalculateController;
 use AppBundle\Api\Dto\CalculationOutput;
-use AppBundle\Api\Dto\DeliveryInput;
+use AppBundle\Api\Dto\DeliveryDto;
 use AppBundle\Entity\Delivery\OrderItem;
 use AppBundle\Api\State\CalculateRetailPriceProcessor;
 use Ramsey\Uuid\Uuid;
@@ -30,7 +30,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
             openapiContext: ['summary' => 'Calculates price of a Delivery'],
             denormalizationContext: ['groups' => ['pricing_deliveries']],
             security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_STORE\') or is_granted(\'ROLE_OAUTH2_DELIVERIES\')',
-            input: DeliveryInput::class,
+            input: DeliveryDto::class,
             processor: CalculateRetailPriceProcessor::class
         )
     ],

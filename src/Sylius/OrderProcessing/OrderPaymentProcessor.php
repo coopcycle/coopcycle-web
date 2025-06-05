@@ -23,14 +23,10 @@ use Webmozart\Assert\Assert;
 
 final class OrderPaymentProcessor implements OrderProcessorInterface
 {
-    private $paymentMethodRepository;
-    private $paymentFactory;
-    private $currencyContext;
-
     public function __construct(
-        PaymentMethodRepositoryInterface $paymentMethodRepository,
-        PaymentFactoryInterface $paymentFactory,
-        CurrencyContextInterface $currencyContext,
+        private PaymentMethodRepositoryInterface $paymentMethodRepository,
+        private PaymentFactoryInterface $paymentFactory,
+        private CurrencyContextInterface $currencyContext,
         private PaymentContext $paymentContext,
         private EdenredClient $edenredClient,
         private StripeManager $stripeManager,
@@ -39,9 +35,6 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
         private LoggerInterface $checkoutLogger,
         private LoggingUtils $loggingUtils)
     {
-        $this->paymentMethodRepository = $paymentMethodRepository;
-        $this->paymentFactory = $paymentFactory;
-        $this->currencyContext = $currencyContext;
     }
 
     /**
@@ -65,10 +58,20 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
             return;
         }
 
-        $targetStates = [
-            OrderInterface::STATE_CART => PaymentInterface::STATE_CART,
-            OrderInterface::STATE_NEW  => PaymentInterface::STATE_NEW
-        ];
+        if ($order->isFoodtech()) {
+            $targetStates = [
+                OrderInterface::STATE_CART => PaymentInterface::STATE_CART,
+                OrderInterface::STATE_NEW  => PaymentInterface::STATE_NEW
+            ];
+        } else {
+            // non-foodtech/Package Delivery orders
+            $targetStates = [
+                OrderInterface::STATE_CART => PaymentInterface::STATE_CART,
+                OrderInterface::STATE_NEW  => PaymentInterface::STATE_NEW,
+                // Allow to have an "accepted" order with incomplete payment
+                OrderInterface::STATE_ACCEPTED  => PaymentInterface::STATE_NEW
+            ];
+        }
 
         if (!in_array($order->getState(), array_keys($targetStates))) {
             return;
@@ -80,7 +83,7 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
             return $payment->getState() === $targetState;
         });
 
-        /** @var Collection */
+        /** @var Collection $paymentsToKeep */
         $paymentsToKeep = new ArrayCollection();
 
         switch ($this->paymentContext->getMethod()) {

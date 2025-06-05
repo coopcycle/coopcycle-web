@@ -17,6 +17,7 @@ use Hashids\Hashids;
 use Knp\Component\Pager\PaginatorInterface;
 use League\Flysystem\Filesystem;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -99,7 +100,8 @@ class DashboardController extends AbstractController
         DeliveryRepository $deliveryRepository,
         MessageBusInterface $messageBus,
         Hashids $hashids8,
-        Filesystem $deliveryImportsFilesystem
+        Filesystem $deliveryImportsFilesystem,
+        LoggerInterface $logger,
     )
     {
         $user = $this->getUser();
@@ -121,11 +123,12 @@ class DashboardController extends AbstractController
                 $request,
                 $paginator,
                 deliveryRepository: $deliveryRepository,
+                messageBus: $messageBus,
                 entityManager: $entityManager,
                 hashids8: $hashids8,
                 deliveryImportsFilesystem: $deliveryImportsFilesystem,
-                messageBus: $messageBus,
-                slugify: $slugify
+                slugify: $slugify,
+                logger: $logger,
             );
         }
 

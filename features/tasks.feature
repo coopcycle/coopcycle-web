@@ -1,5 +1,5 @@
 Feature: Tasks
-    Scenario: Retrieve tasks check order task.doneBefore ASC and pickup before dropoff (GH #4277)
+  Scenario: Retrieve tasks check order task.doneBefore ASC and pickup before dropoff (GH #4277)
       Given the fixtures files are loaded:
         | tasks.yml           |
       And the courier "bob" is loaded:
@@ -190,8 +190,7 @@ Feature: Tasks
           }
       }
       """
-
-
+      
   Scenario: Retrieve assigned tasks
     Given the fixtures files are loaded:
       | tasks.yml           |
@@ -2202,6 +2201,7 @@ Feature: Tasks
           "after":"2019-11-12T18:00:00+01:00",
           "before":"2019-11-12T18:30:00+01:00",
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"},
           "weight":null,
@@ -2221,14 +2221,16 @@ Feature: Tasks
           "after":"2019-11-12T19:00:00+01:00",
           "before":"2019-11-12T19:30:00+01:00",
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"},
           "weight":null,
           "packages":[],
           "barcode":{"@*@":"@*@"}
         },
+        "tasks":@array@,
         "trackingUrl": @string@,
-        "tasks":@array@
+        "order": {"@*@": "@*@"}
       }
       """
 

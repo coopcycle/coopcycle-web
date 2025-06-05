@@ -7,6 +7,7 @@ use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
 use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Metadata\GetCollection;
 use AppBundle\Annotation\HideSoftDeleted;
+use AppBundle\Api\Dto\DeliveryMapper;
 use AppBundle\Api\Dto\ResourceApplication;
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\AdminDashboardTrait;
@@ -292,6 +293,7 @@ class AdminController extends AbstractController
         Request $request,
         OrderManager $orderManager,
         DeliveryManager $deliveryManager,
+        DeliveryMapper $deliveryMapper,
         EmailManager $emailManager
     )
     {
@@ -388,10 +390,20 @@ class AdminController extends AbstractController
             $delivery = $deliveryManager->createFromOrder($order);
         }
 
+        $price = $order->getDeliveryPrice();
+
+        $deliveryData = $deliveryMapper->map(
+            $delivery,
+            $order,
+            $price instanceof ArbitraryPrice ? $price : null,
+            $orderManager->hasBookmark($order)
+        );
+
         return $this->render('order/item.html.twig', $this->auth([
             'layout' => 'admin.html.twig',
             'order' => $order,
             'delivery' => $delivery,
+            'deliveryData' => $deliveryData,
             'form' => $form->createView(),
             'email_form' => $emailForm->createView(),
         ]));
@@ -758,9 +770,6 @@ class AdminController extends AbstractController
     #[Route(path: '/admin/deliveries', name: 'admin_deliveries')]
     public function deliveriesAction(Request $request,
         PaginatorInterface $paginator,
-        DeliveryManager $deliveryManager,
-        OrderFactory $orderFactory,
-        OrderManager $orderManager,
         DeliveryRepository $deliveryRepository,
         Hashids $hashids8,
         Filesystem $deliveryImportsFilesystem,
@@ -785,12 +794,13 @@ class AdminController extends AbstractController
                 return $this->handleDeliveryImportForStore(
                     store: $store,
                     form: $deliveryImportForm,
-                    messageBus: $messageBus,
                     entityManager: $this->entityManager,
-                    filesystem: $deliveryImportsFilesystem,
                     hashids: $hashids8,
+                    filesystem: $deliveryImportsFilesystem,
+                    messageBus: $messageBus,
+                    slugify: $slugify,
                     routeTo: 'admin_deliveries',
-                    slugify: $slugify
+                    logger: $logger,
                 );
             } else {
                 $logger->warning('Delivery import form is not valid', [

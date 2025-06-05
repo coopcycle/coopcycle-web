@@ -9,7 +9,7 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 // use AppBundle\Action\PricingRule\Evaluate as EvaluateController;
 use AppBundle\Api\State\EvaluatePricingRuleProcessor;
-use AppBundle\Api\Dto\DeliveryInput;
+use AppBundle\Api\Dto\DeliveryDto;
 use AppBundle\Api\Dto\YesNoOutput;
 use AppBundle\Validator\Constraints\PricingRule as AssertPricingRule;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -25,7 +25,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             openapiContext: ['summary' => 'Evaluates a PricingRule'],
             denormalizationContext: ['groups' => ['delivery_create', 'pricing_deliveries']],
             security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_STORE\')',
-            input: DeliveryInput::class,
+            input: DeliveryDto::class,
             output: YesNoOutput::class,
             processor: EvaluatePricingRuleProcessor::class
         )

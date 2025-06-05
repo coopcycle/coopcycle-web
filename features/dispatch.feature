@@ -662,7 +662,8 @@ Feature: Dispatch
             "@*@":"@*@"
          },
          "tasks":@array@,
-         "trackingUrl":@string@
+         "trackingUrl": @string@,
+         "order": {"@*@": "@*@"}
       }
       """
 
@@ -709,7 +710,8 @@ Feature: Dispatch
             "id":8,
             "@*@":"@*@"
          },
-         "trackingUrl":@string@
+         "trackingUrl": @string@,
+         "order": {"@*@": "@*@"}
       }
       """
 

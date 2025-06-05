@@ -21,132 +21,122 @@ describe('Delivery with recurrence rule (role: admin)', () => {
         .contains('Créer une livraison')
         .click()
 
+      // Create delivery page
+      cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries\/new$/)
+
       // Pickup
-      cy.chooseSavedPickupAddress(1)
+      cy.betaChooseSavedAddressAtPosition(0, 1)
 
-      // set pickup time range to XX:12 - XX:27
-      cy.get(
-        '#delivery_tasks_0_doneBefore_widget > .ant-picker > .ant-picker-input-active > input',
-      ).click()
-      cy.get(
-        '#delivery_tasks_0_doneBefore_widget > .ant-picker > .ant-picker-input-active > input',
-      ).type('{backspace}{backspace}12')
-      cy.get('.ant-picker-ok:visible > .ant-btn').click()
-      cy.get(
-        '#delivery_tasks_0_doneBefore_widget > .ant-picker > .ant-picker-input-active > input',
-      ).type('{backspace}{backspace}27')
-      cy.get('.ant-picker-ok:visible > .ant-btn').click()
+      //Set pickup time range to 10:10 - 11:20 manually
+      cy.get('[data-testid="form-task-0"]').within(() => {
+        cy.antdSelect('.ant-select[data-testid="select-after"]', '10:10')
+        cy.antdSelect('.ant-select[data-testid="select-before"]', '11:20')
+      })
 
-      cy.get('#delivery_tasks_0_comments').type('Pickup comments')
+      cy.get(`[name="tasks[0].comments"]`).type('Pickup comments')
 
       // Dropoff
-      cy.chooseSavedDropoff1Address(2)
+      cy.betaChooseSavedAddressAtPosition(1, 2)
 
-      // set dropoff time range to XX:24 - XX:58
-      cy.get(
-        '#delivery_tasks_1_doneBefore_widget > .ant-picker > .ant-picker-input-active > input',
-      ).click()
-      cy.get(
-        '#delivery_tasks_1_doneBefore_widget > .ant-picker > .ant-picker-input-active > input',
-      ).type('{backspace}{backspace}24')
-      cy.get('.ant-picker-ok:visible > .ant-btn').click()
-      cy.get(
-        '#delivery_tasks_1_doneBefore_widget > .ant-picker > .ant-picker-input-active > input',
-      ).type('{backspace}{backspace}58')
-      cy.get('.ant-picker-ok:visible > .ant-btn').click()
+      //Set pickup time range to 11:30 - 12:40 manually
+      cy.get('[data-testid="form-task-1"]').within(() => {
+        cy.antdSelect('.ant-select[data-testid="select-after"]', '11:30')
+        cy.antdSelect('.ant-select[data-testid="select-before"]', '12:40')
+      })
 
-      cy.get('#delivery_tasks_1_weight').clear()
-      cy.get('#delivery_tasks_1_weight').type(2.5)
+      cy.get(`[name="tasks[1].weight"]`).type(2.5)
 
-      cy.get('#delivery_tasks_1_comments').type('Dropoff comments')
+      cy.get(`[name="tasks[1].comments"]`).type('Dropoff comments')
 
-      cy.get('[data-tax="included"]').contains('4,99 €')
+      cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
-      cy.get('#delivery_form__recurrence__container').find('a').click()
+      cy.get('[data-testid="recurrence__container"]').find('a').click()
       cy.chooseDaysOfTheWeek([5, 6])
       cy.get('[data-testid=save]').click()
 
-      cy.get('#delivery-submit').click()
+      cy.get('button[type="submit"]').click()
 
-      // list of deliveries page
-      cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
-      cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
+      // Order page
+      cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
+
+      cy.get('[data-testid="order_item"]')
+        .find('[data-testid="total"]')
+        .contains('€4.99')
+
+      cy.get('[data-testid=delivery-itinerary]')
         .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
         .should('exist')
-      cy.get('[data-testid=delivery__list_item]')
+      cy.get('[data-testid=delivery-itinerary]')
         .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
         .should('exist')
 
-      cy.get('[data-testid="delivery__list_item"]')
-        .find('[data-testid="delivery_id"]')
-        .click()
-
-      // Delivery page
-      cy.get('#delivery_form__recurrence__container').should('not.exist')
-
-      //pickup time range:
-      cy.get('#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(1) > input')
-        .should($input => {
-          const val = $input.val()
-          expect(val).to.include(':12')
-        })
-      cy.get('#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(3) > input')
-        .should($input => {
-          const val = $input.val()
-          expect(val).to.include(':27')
-        })
-
-      //dropoff time range:
-      cy.get('#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(1) > input')
-        .should($input => {
-          const val = $input.val()
-          expect(val).to.include(':24')
-        })
-      cy.get('#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(3) > input')
-        .should($input => {
-          const val = $input.val()
-          expect(val).to.include(':58')
-        })
-
-      cy.get('[data-testid="breadcrumb"]')
-        .find('[data-testid="order_id"]')
-        .click()
-
-      // Order page
       cy.get('a[href*="recurrence-rules"]').click()
 
       // Recurrence rule page
       cy.urlmatch(/\/admin\/stores\/[0-9]+\/recurrence-rules\/[0-9]+$/)
 
       //pickup time range:
-      cy.get('#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(1) > input')
-        .should($input => {
-          const val = $input.val()
-          expect(val).to.include(':12')
-        })
-      cy.get('#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(3) > input')
-        .should($input => {
-          const val = $input.val()
-          expect(val).to.include(':27')
-        })
+      cy.get(
+        '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(1) > input',
+      ).should($input => {
+        const val = $input.val()
+        expect(val).to.include(':10')
+      })
+      cy.get(
+        '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(3) > input',
+      ).should($input => {
+        const val = $input.val()
+        expect(val).to.include(':20')
+      })
 
       //dropoff time range:
-      cy.get('#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(1) > input')
-        .should($input => {
-          const val = $input.val()
-          expect(val).to.include(':24')
-        })
-      cy.get('#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(3) > input')
-        .should($input => {
-          const val = $input.val()
-          expect(val).to.include(':58')
-        })
+      cy.get(
+        '#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(1) > input',
+      ).should($input => {
+        const val = $input.val()
+        expect(val).to.include(':30')
+      })
+      cy.get(
+        '#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(3) > input',
+      ).should($input => {
+        const val = $input.val()
+        expect(val).to.include(':40')
+      })
 
       cy.get('[data-tax="included"]').contains('4,99 €')
 
       cy.get('#delivery_form__recurrence__container').contains(
         'chaque semaine le vendredi, samedi',
       )
+
+      cy.go('back')
+
+      cy.get('[data-testid="order-edit"]').click()
+
+      // Delivery page
+      cy.get('[data-testid="recurrence__container"]').should('not.exist')
+
+      cy.betaTaskShouldHaveValue({
+        taskFormIndex: 0,
+        addressName: 'Warehouse',
+        telephone: '01 12 12 12 12',
+        contactName: 'John Doe',
+        address: /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
+        date: '23 avril 2025',
+        timeAfter: '10:10',
+        timeBefore: '11:20',
+      })
+
+      cy.betaTaskShouldHaveValue({
+        taskFormIndex: 1,
+        addressName: 'Office',
+        telephone: '01 12 12 14 14',
+        contactName: 'Jane smith',
+        address: /72,? Rue Saint-Maur,? 75011,? Paris,? France/,
+        date: '23 avril 2025',
+        timeAfter: '11:30',
+        timeBefore: '12:40',
+      })
     })
   })
 })

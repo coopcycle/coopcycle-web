@@ -344,6 +344,9 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         return $this->deliveries;
     }
 
+    /**
+     * Important: this method might automatically persist the delivery in some situations (cascade: persist)
+     */
     public function addDelivery(Delivery $delivery)
     {
         $delivery->setStore($this);

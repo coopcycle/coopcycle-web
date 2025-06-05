@@ -1,0 +1,65 @@
+{% extends 'delivery/form.html.twig' %}
+
+{% block prepare_title %}
+  {% if is_granted('ROLE_DISPATCHER') %}
+    {% set order = delivery.order %}
+    {% if order is not null %}
+      {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ 'order.summary.heading'|trans({ '%number%': order.number })) }}
+    {% else %}
+      {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ 'delivery.with_id'|trans({ '%id%': delivery.id })) }}
+    {% endif %}
+  {% else %}
+    {% set order = delivery.order %}
+    {% if order is not null %}
+      {{ add_title_prefix('stores.deliveries.heading2'|trans({ '%delivery_id%': order.number })) }}
+    {% else %}
+      {{ add_title_prefix('stores.deliveries.heading2'|trans({ '%delivery_id%': delivery.id })) }}
+    {% endif %}
+  {% endif %}
+{% endblock %}
+
+{% block breadcrumb %}
+
+  {% if is_granted('ROLE_DISPATCHER') %}
+    {% set store = delivery.store %}
+
+    {% if store is not null %}
+      <li><a href="{{ path('admin_stores') }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+      <li><a href="{{ path('admin_store', { id: store.id }) }}">{{ store.name }}</a></li>
+    {% else %}
+      {#      TODO: display properly the restaurant(s) for foodtech orders #}
+    {% endif %}
+
+    {% set order = delivery.order %}
+    {% if order is not null %}
+      <li>{% trans %}adminDashboard.orders.title{% endtrans %}</li>
+      <li><a href="{{ path('admin_order', { id: order.id }) }}" data-testid="order_id">{{ order.number }}</a></li>
+      <li>{% trans %}basics.editing{% endtrans %}</li>
+    {% else %}
+      <li>{% trans %}adminDashboard.deliveries.title{% endtrans %}</li>
+      <li>#{{ delivery.id }}</li>
+    {% endif %}
+  {% endif %}
+
+{% endblock %}
+
+{% if delivery.order is not empty %}
+  {% set title = 'stores.deliveries.heading2'|trans({ '%delivery_id%': delivery.order.number }) %}
+{% else %}
+  {% set title = 'stores.deliveries.heading2'|trans({ '%delivery_id%': delivery.id }) %}
+{% endif %}
+
+{% block alerts %}
+{% endblock %}
+
+{% block content %}
+  {% if is_granted('ROLE_DISPATCHER') %}
+    <div class="alert alert-info">
+      This legacy version of the delivery form will be removed soon. If you still need it, please let us know on Stack #dev channel ASAP.
+      To access the more-friendly, new version of the delivery form <a class="text-decoration-underline" href="{{ path('admin_delivery', { id: delivery.id }) }}">click here</a>.
+    </div>
+  {% endif %}
+
+ {{ parent() }}
+
+{% endblock %}
