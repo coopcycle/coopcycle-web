@@ -11,6 +11,7 @@ import {
   selectRejectedSuggestedOrder,
   showSuggestions,
 } from '../redux/suggestionsSlice'
+import { Mode } from '../Mode'
 
 function serializeAddress(address) {
   if (Object.prototype.hasOwnProperty.call(address, '@id')) {
@@ -27,7 +28,7 @@ export default function useSubmit(
   storeNodeId,
   deliveryNodeId,
   isDispatcher,
-  isCreateOrderMode,
+  mode,
 ) {
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
 
@@ -118,7 +119,7 @@ export default function useSubmit(
       }
 
       let result
-      if (isCreateOrderMode) {
+      if (mode === Mode.DELIVERY_CREATE) {
         result = await createDelivery(convertValuesToPayload(values))
       } else {
         result = await modifyDelivery({
@@ -187,7 +188,7 @@ export default function useSubmit(
       storeNodeId,
       deliveryNodeId,
       isDispatcher,
-      isCreateOrderMode,
+      mode,
       createDelivery,
       modifyDelivery,
       createAddress,

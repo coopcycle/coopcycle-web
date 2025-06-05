@@ -14,6 +14,7 @@ import {
   useGetStorePackagesQuery,
   useGetStoreTimeSlotsQuery,
 } from '../../api/slice'
+import { Mode } from './Mode'
 
 
 export default ({
@@ -31,7 +32,7 @@ export default ({
   const {
     values,
     taskValues,
-    isCreateOrderMode,
+    mode,
     setFieldValue,
   } = useDeliveryFormFormikContext({
     taskIndex: index,
@@ -110,7 +111,7 @@ export default ({
           storeDeliveryInfos={storeDeliveryInfos}
           shallPrefillAddress={Boolean(
             taskValues.type === 'PICKUP' &&
-              isCreateOrderMode &&
+              (mode === Mode.DELIVERY_CREATE) &&
               storeDeliveryInfos.prefillPickupAddress,
           )}
         />

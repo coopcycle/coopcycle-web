@@ -7,6 +7,7 @@ import { createStoreFromPreloadedState } from '../delivery-form/redux/store'
 import Modal from 'react-modal'
 import { RootWithDefaults } from '../../utils/react'
 import { createRoot } from 'react-dom/client'
+import { Mode } from '../delivery-form/Mode'
 
 const buildInitialState = () => {
   return {
@@ -35,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     root.render(
       <Provider store={store}>
         <DeliveryForm
+          mode={Mode.RECURRENCE_RULE_UPDATE}
           storeNodeId={storeNodeId}
           //FIXME; might lead to bugs
           deliveryId={recurrenceRuleId}

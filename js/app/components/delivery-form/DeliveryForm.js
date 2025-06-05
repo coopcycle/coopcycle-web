@@ -26,6 +26,7 @@ import Price from './Price'
 import SuggestionModal from './SuggestionModal'
 import DeliveryResume from './DeliveryResume'
 import Map from '../DeliveryMap'
+import { Mode } from './Mode'
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -111,21 +112,16 @@ const pickupSchema = {
 }
 
 export default function({
+  mode,
   storeNodeId,
-  deliveryId, // prefer using deliveryNodeId
+  // prefer using deliveryNodeId
+  deliveryId,
+  // Delivery or RecurrenceRule node
   deliveryNodeId,
   preLoadedDeliveryData,
   isDispatcher,
   isDebugPricing
 }) {
-  const isCreateOrderMode = useMemo(() => {
-    return !Boolean(deliveryNodeId)
-  }, [deliveryNodeId])
-
-  const isModifyOrderMode = useMemo(() => {
-    return !isCreateOrderMode
-  }, [isCreateOrderMode])
-
   const [isLoading, setIsLoading] = useState(true)
 
   const { data: storeData } = useGetStoreQuery(storeNodeId)
@@ -156,7 +152,7 @@ export default function({
   const [priceLoading, setPriceLoading] = useState(false)
 
   const order = useMemo(() => {
-    if (isCreateOrderMode) {
+    if (mode === Mode.DELIVERY_CREATE) {
       if (preLoadedDeliveryData && preLoadedDeliveryData.order) {
         return preLoadedDeliveryData.order
       }
@@ -168,7 +164,7 @@ export default function({
       }
     }
 
-    if (isModifyOrderMode) {
+    if (mode === Mode.DELIVERY_UPDATE) {
       if (preLoadedDeliveryData.order.id) {
         return preLoadedDeliveryData.order
       } else {
@@ -178,9 +174,9 @@ export default function({
     }
 
     return null
-  }, [preLoadedDeliveryData, isCreateOrderMode, isModifyOrderMode])
+  }, [preLoadedDeliveryData, mode])
 
-  const { handleSubmit, error } = useSubmit(storeNodeId, deliveryNodeId, isDispatcher, isCreateOrderMode)
+  const { handleSubmit, error } = useSubmit(storeNodeId, deliveryNodeId, isDispatcher, mode)
 
   const { t } = useTranslation()
 
@@ -251,6 +247,7 @@ export default function({
 
     if (preLoadedDeliveryData) {
       const initialValues = structuredClone(preLoadedDeliveryData)
+      initialValues._mode = mode
 
       initialValues.tasks = preLoadedDeliveryData.tasks.map(task => {
         return {
@@ -276,7 +273,7 @@ export default function({
 
       setTrackingLink(preLoadedDeliveryData.trackingUrl)
     } else {
-      if (isCreateOrderMode) {
+      if (mode === Mode.DELIVERY_CREATE) {
         setInitialValues({
           tasks: [{ ...pickupSchema }, { ...dropoffSchema }],
           order: {},
@@ -285,7 +282,7 @@ export default function({
     }
 
     setIsLoading(false)
-  }, [isDataReady, preLoadedDeliveryData, isCreateOrderMode, isModifyOrderMode])
+  }, [isDataReady, preLoadedDeliveryData, mode])
 
   return (
     isLoading ?
@@ -374,7 +371,6 @@ export default function({
                               return (
                                 <div className='new-order__pickups__item' key={originalIndex}>
                                   <Task
-                                    isEditMode={isModifyOrderMode}
                                     key={originalIndex}
                                     task={task}
                                     index={originalIndex}
@@ -398,7 +394,6 @@ export default function({
                               return (
                                 <div className='new-order__dropoffs__item' key={originalIndex}>
                                   <Task
-                                    isEditMode={isModifyOrderMode}
                                     index={originalIndex}
                                     addresses={addresses}
                                     storeNodeId={storeNodeId}
@@ -412,7 +407,7 @@ export default function({
                               );
                             })}
 
-                          {storeDeliveryInfos.multiDropEnabled && (isCreateOrderMode || isDispatcher) ? <div
+                          {storeDeliveryInfos.multiDropEnabled && (mode === Mode.DELIVERY_CREATE || isDispatcher) ? <div
                             className="new-order__dropoffs__add p-4 border mb-4">
                             <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
                             <Button
@@ -437,7 +432,7 @@ export default function({
                   </FieldArray>
 
                   <div className="order-informations">
-                    {isModifyOrderMode && (
+                    {mode === Mode.DELIVERY_UPDATE && (
                       <div className="order-informations__tracking alert alert-info">
                         <a target="_blank" rel="noreferrer" href={trackingLink}>
                           {t("DELIVERY_FORM_TRACKING_LINK")}
@@ -466,7 +461,7 @@ export default function({
                       </div>
                     ) : null}
 
-                    {isCreateOrderMode && isDispatcher ? (
+                    {mode === Mode.DELIVERY_CREATE && isDispatcher ? (
                       <div className="border-top pt-2 pb-3" data-testid="recurrence__container">
                         <RecurrenceRules />
                       </div>
@@ -491,7 +486,7 @@ export default function({
                       </div>
                     ) : null}
 
-                    {isCreateOrderMode || isDispatcher ? (
+                    {mode === Mode.DELIVERY_CREATE || isDispatcher ? (
                       <div className="order-informations__complete-order border-top py-3">
                         <SuggestionModal />
                         <Button

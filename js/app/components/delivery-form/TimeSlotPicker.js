@@ -10,6 +10,7 @@ import {
 } from './hooks/useDeliveryFormFormikContext'
 import { useGetStoreQuery } from '../../api/slice'
 import { useHttpClient } from '../../user/useHttpClient'
+import { Mode } from './Mode'
 
 const baseURL = location.protocol + '//' + location.host
 
@@ -50,7 +51,7 @@ export default ({ storeNodeId, index, timeSlotLabels }) => {
 
   const { t } = useTranslation()
 
-  const { isModifyOrderMode, taskValues, setFieldValue } = useDeliveryFormFormikContext({
+  const { mode, taskValues, setFieldValue } = useDeliveryFormFormikContext({
     taskIndex: index,
   })
 
@@ -79,7 +80,7 @@ export default ({ storeNodeId, index, timeSlotLabels }) => {
 
   // Preselect a time slot if no time slot is selected
   useEffect(() => {
-    if (isModifyOrderMode) {
+    if (mode === Mode.DELIVERY_UPDATE) {
       return
     }
 
@@ -93,7 +94,7 @@ export default ({ storeNodeId, index, timeSlotLabels }) => {
 
     setTimeSlotUrl(storeDefaultTimeSlotId ?? storeTimeSlotIds[0])
 
-  }, [storeTimeSlotIds, storeDefaultTimeSlotId, taskValues.timeSlotUrl, setTimeSlotUrl, isModifyOrderMode])
+  }, [storeTimeSlotIds, storeDefaultTimeSlotId, taskValues.timeSlotUrl, setTimeSlotUrl, mode])
 
   // Load time slot choices when timeSlotUrl changes
   useEffect(() => {
