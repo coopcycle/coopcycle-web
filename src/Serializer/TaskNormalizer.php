@@ -156,8 +156,15 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
             unset($data['packages'][$i]['task_package_id']);
         }
 
+        // Set metadata
         if (isset($data['metadata']) && is_array($data['metadata'])) {
             $data['metadata']['zero_waste'] = $object->isZeroWaste();
+
+            if (null !== ($delivery = $object->getDelivery())) {
+                if (null !== ($order = $delivery->getOrder())) {
+                    $data['metadata']['order_total'] = $order->getTotal();
+                }
+            }
         }
 
         return $data;
