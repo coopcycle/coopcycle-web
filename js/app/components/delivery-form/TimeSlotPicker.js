@@ -10,7 +10,7 @@ import {
 } from './hooks/useDeliveryFormFormikContext'
 import { useGetStoreQuery } from '../../api/slice'
 import { useHttpClient } from '../../user/useHttpClient'
-import { Mode } from './Mode'
+import { Mode } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
 

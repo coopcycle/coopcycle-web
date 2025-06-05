@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { Mode } from '../Mode'
+import { Mode } from '../mode'
 
 const initialState = {
   mode: Mode.DELIVERY_CREATE,

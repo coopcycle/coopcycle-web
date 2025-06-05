@@ -11,7 +11,7 @@ import {
   selectRejectedSuggestedOrder,
   showSuggestions,
 } from '../redux/suggestionsSlice'
-import { Mode } from '../Mode'
+import { Mode } from '../mode'
 import { selectMode } from '../redux/formSlice'
 
 function serializeAddress(address) {

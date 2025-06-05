@@ -5,7 +5,7 @@ import DeliveryForm from './DeliveryForm.js'
 import { createStoreFromPreloadedState } from './redux/store'
 import Modal from 'react-modal'
 import { RootWithDefaults } from '../../utils/react'
-import { Mode } from './Mode'
+import { Mode } from './mode'
 import { setMode } from './redux/formSlice'
 
 const buildInitialState = () => {

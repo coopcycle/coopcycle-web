@@ -5,7 +5,7 @@ import TimeSlotPicker from './TimeSlotPicker'
 import DateRangePicker from './DateRangePicker'
 import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
 import { useGetStoreQuery } from '../../api/slice'
-import { Mode } from './Mode'
+import { Mode } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
 
