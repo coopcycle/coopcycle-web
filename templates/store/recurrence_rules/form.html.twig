@@ -39,6 +39,7 @@
     data-store-node-id="{{ store|get_iri_from_item }}"
     data-recurrence-rule-id="{{ recurrenceRule.id }}"
     data-recurrence-rule-node-id="{{ recurrenceRule|get_iri_from_item }}"
+    data-recurrence-rule="{{ recurrenceRule.rule.getString() }}"
     data-delivery="{{ deliveryData ? deliveryData|serialize('jsonld', {groups: ['delivery', 'address', 'barcode']}) : '' }}"
     data-is-dispatcher="{{ isDispatcher ? 'true' : 'false' }}"
     data-is-debug-pricing="{{ debug_pricing ? 'true' : 'false' }}"

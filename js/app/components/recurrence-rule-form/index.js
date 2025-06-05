@@ -28,9 +28,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const storeNodeId = container.dataset.storeNodeId
     const recurrenceRuleId = container.dataset.recurrenceRuleId
     const recurrenceRuleNodeId = container.dataset.recurrenceRuleNodeId
-    const delivery = container.dataset.delivery
+
+    const preLoadedDeliveryData = container.dataset.delivery
       ? JSON.parse(container.dataset.delivery)
       : null
+    preLoadedDeliveryData.rrule = container.dataset.recurrenceRule
+
     const isDispatcher = container.dataset.isDispatcher === 'true'
     const isDebugPricing = container.dataset.isDebugPricing === 'true'
 
