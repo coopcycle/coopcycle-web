@@ -98,7 +98,6 @@
   <div {{ react_component('Delivery/DeliveryForm', {
         isNew: is_new,
         storeNodeId: store|get_iri_from_item,
-        order: order is not null ? order|serialize : null,
         deliveryId: delivery.id,
         deliveryNodeId: is_new ? null : delivery|get_iri_from_item,
         delivery: deliveryData ? deliveryData|serialize('jsonld', {groups: ['delivery', 'address', 'barcode']}) : null,

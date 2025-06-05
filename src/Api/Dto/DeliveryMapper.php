@@ -79,6 +79,9 @@ class DeliveryMapper
             $deliveryOrderData->id = $order->getId();
         }
 
+        $deliveryOrderData->total = $order->getTotal();
+        $deliveryOrderData->taxTotal = $order->getTaxTotal();
+
         $deliveryOrderData->arbitraryPrice = $arbitraryPrice ? new ArbitraryPriceDto(
             $arbitraryPrice->getValue(),
             $arbitraryPrice->getVariantName()

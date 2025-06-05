@@ -115,7 +115,6 @@ export default function({
   deliveryId, // prefer using deliveryNodeId
   deliveryNodeId,
   preLoadedDeliveryData,
-  order,
   isDispatcher,
   isDebugPricing
 }) {
@@ -155,6 +154,13 @@ export default function({
   const [initialValues, setInitialValues] = useState({ tasks: [] })
 
   const [priceLoading, setPriceLoading] = useState(false)
+
+  const order = useMemo(() => {
+    if (preLoadedDeliveryData && preLoadedDeliveryData.order) {
+      return preLoadedDeliveryData.order
+    }
+    return {}
+  }, [preLoadedDeliveryData])
 
   const { handleSubmit, error } = useSubmit(storeNodeId, deliveryNodeId, isDispatcher, isCreateOrderMode)
 
