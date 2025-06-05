@@ -2230,7 +2230,7 @@ Feature: Tasks
         },
         "tasks":@array@,
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": null
       }
       """
 
