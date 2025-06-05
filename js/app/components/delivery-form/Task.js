@@ -15,6 +15,8 @@ import {
   useGetStoreTimeSlotsQuery,
 } from '../../api/slice'
 import { Mode } from './Mode'
+import { useSelector } from 'react-redux'
+import { selectMode } from './redux/formSlice'
 
 
 export default ({
@@ -29,10 +31,10 @@ export default ({
 }) => {
   const { t } = useTranslation()
 
+  const mode = useSelector(selectMode)
   const {
     values,
     taskValues,
-    mode,
     setFieldValue,
   } = useDeliveryFormFormikContext({
     taskIndex: index,

@@ -6,13 +6,16 @@ import DateRangePicker from './DateRangePicker'
 import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
 import { useGetStoreQuery } from '../../api/slice'
 import { Mode } from './Mode'
+import { useSelector } from 'react-redux'
+import { selectMode } from './redux/formSlice'
 
 export const TaskDateTime = ({ isDispatcher, storeNodeId, timeSlots, index }) => {
   const format = 'LL'
 
   const { data: store } = useGetStoreQuery(storeNodeId)
 
-  const { mode, setFieldValue } = useDeliveryFormFormikContext({
+  const mode = useSelector(selectMode)
+  const { setFieldValue } = useDeliveryFormFormikContext({
     taskIndex: index,
   })
 

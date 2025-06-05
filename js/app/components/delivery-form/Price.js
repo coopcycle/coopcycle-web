@@ -13,6 +13,8 @@ import _ from 'lodash'
 import OverridePriceForm from './OverridePriceForm'
 import { useCalculatePriceMutation, useGetTaxRatesQuery } from '../../api/slice'
 import { Mode } from './Mode'
+import { useSelector } from 'react-redux'
+import { selectMode } from './redux/formSlice'
 
 export default ({
   storeNodeId,
@@ -21,8 +23,8 @@ export default ({
   isDispatcher,
   setPriceLoading,
 }) => {
-  const { values, mode, setFieldValue } =
-    useDeliveryFormFormikContext()
+  const mode = useSelector(selectMode)
+  const { values, setFieldValue } = useDeliveryFormFormikContext()
 
   const [overridePrice, setOverridePrice] = useState(() => {
     if (mode === Mode.DELIVERY_CREATE) {

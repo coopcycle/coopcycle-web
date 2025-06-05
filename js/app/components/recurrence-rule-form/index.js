@@ -5,13 +5,17 @@ import DeliveryForm from '../delivery-form/DeliveryForm.js'
 //FIXME: temporary re-use of the delivery-form store, to be replaced with a dedicated store
 import { createStoreFromPreloadedState } from '../delivery-form/redux/store'
 import Modal from 'react-modal'
-import { RootWithDefaults } from '../../utils/react'
 import { createRoot } from 'react-dom/client'
 import { Mode } from '../delivery-form/Mode'
+import { formSlice } from '../delivery-form/redux/formSlice'
 
 const buildInitialState = () => {
   return {
     [accountSlice.name]: accountSlice.getInitialState(),
+    [formSlice.name]: {
+      ...formSlice.getInitialState(),
+      mode: Mode.RECURRENCE_RULE_UPDATE,
+    },
   }
 }
 
@@ -36,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
     root.render(
       <Provider store={store}>
         <DeliveryForm
-          mode={Mode.RECURRENCE_RULE_UPDATE}
           storeNodeId={storeNodeId}
           //FIXME; might lead to bugs
           deliveryId={recurrenceRuleId}

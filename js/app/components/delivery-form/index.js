@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react'
-import { Provider } from 'react-redux'
+import React, { useEffect, useLayoutEffect } from 'react'
+import { Provider, useDispatch } from 'react-redux'
 import { accountSlice } from '../../entities/account/reduxSlice'
 import DeliveryForm from './DeliveryForm.js'
 import { createStoreFromPreloadedState } from './redux/store'
 import Modal from 'react-modal'
 import { RootWithDefaults } from '../../utils/react'
 import { Mode } from './Mode'
+import { setMode } from './redux/formSlice'
 
 const buildInitialState = () => {
   return {
@@ -15,14 +16,37 @@ const buildInitialState = () => {
 
 const store = createStoreFromPreloadedState(buildInitialState())
 
-export default function ({
+const Form = ({
   storeNodeId,
   deliveryId,
   deliveryNodeId,
   delivery,
   isDispatcher,
   isDebugPricing,
-}) {
+}) => {
+  const dispatch = useDispatch()
+
+  useLayoutEffect(() => {
+    dispatch(
+      setMode(
+        Boolean(deliveryNodeId) ? Mode.DELIVERY_UPDATE : Mode.DELIVERY_CREATE,
+      ),
+    )
+  }, [dispatch, deliveryNodeId])
+
+  return (
+    <DeliveryForm
+      storeNodeId={storeNodeId}
+      deliveryId={deliveryId}
+      deliveryNodeId={deliveryNodeId}
+      preLoadedDeliveryData={delivery ? JSON.parse(delivery) : null}
+      isDispatcher={isDispatcher}
+      isDebugPricing={isDebugPricing}
+    />
+  )
+}
+
+export default function (props) {
   useEffect(() => {
     Modal.setAppElement('.content')
   }, [])
@@ -30,19 +54,7 @@ export default function ({
   return (
     <RootWithDefaults>
       <Provider store={store}>
-        <DeliveryForm
-          mode={
-            Boolean(deliveryNodeId)
-              ? Mode.DELIVERY_UPDATE
-              : Mode.DELIVERY_CREATE
-          }
-          storeNodeId={storeNodeId}
-          deliveryId={deliveryId}
-          deliveryNodeId={deliveryNodeId}
-          preLoadedDeliveryData={delivery ? JSON.parse(delivery) : null}
-          isDispatcher={isDispatcher}
-          isDebugPricing={isDebugPricing}
-        />
+        <Form {...props} />
       </Provider>
     </RootWithDefaults>
   )

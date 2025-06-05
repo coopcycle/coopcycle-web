@@ -12,6 +12,7 @@ import {
   showSuggestions,
 } from '../redux/suggestionsSlice'
 import { Mode } from '../Mode'
+import { selectMode } from '../redux/formSlice'
 
 function serializeAddress(address) {
   if (Object.prototype.hasOwnProperty.call(address, '@id')) {
@@ -28,8 +29,8 @@ export default function useSubmit(
   storeNodeId,
   deliveryNodeId,
   isDispatcher,
-  mode,
 ) {
+  const mode = useSelector(selectMode)
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
 
   const rejectedSuggestionsOrder = useSelector(selectRejectedSuggestedOrder)

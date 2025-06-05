@@ -11,6 +11,8 @@ import {
 import { useGetStoreQuery } from '../../api/slice'
 import { useHttpClient } from '../../user/useHttpClient'
 import { Mode } from './Mode'
+import { useSelector } from 'react-redux'
+import { selectMode } from './redux/formSlice'
 
 const baseURL = location.protocol + '//' + location.host
 
@@ -51,7 +53,8 @@ export default ({ storeNodeId, index, timeSlotLabels }) => {
 
   const { t } = useTranslation()
 
-  const { mode, taskValues, setFieldValue } = useDeliveryFormFormikContext({
+  const mode = useSelector(selectMode)
+  const { taskValues, setFieldValue } = useDeliveryFormFormikContext({
     taskIndex: index,
   })
 

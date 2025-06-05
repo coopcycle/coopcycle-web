@@ -27,6 +27,8 @@ import SuggestionModal from './SuggestionModal'
 import DeliveryResume from './DeliveryResume'
 import Map from '../DeliveryMap'
 import { Mode } from './Mode'
+import { useSelector } from 'react-redux'
+import { selectMode } from './redux/formSlice'
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -112,7 +114,6 @@ const pickupSchema = {
 }
 
 export default function({
-  mode,
   storeNodeId,
   // prefer using deliveryNodeId
   deliveryId,
@@ -122,6 +123,7 @@ export default function({
   isDispatcher,
   isDebugPricing
 }) {
+  const mode = useSelector(selectMode)
   const [isLoading, setIsLoading] = useState(true)
 
   const { data: storeData } = useGetStoreQuery(storeNodeId)
@@ -176,7 +178,7 @@ export default function({
     return null
   }, [preLoadedDeliveryData, mode])
 
-  const { handleSubmit, error } = useSubmit(storeNodeId, deliveryNodeId, isDispatcher, mode)
+  const { handleSubmit, error } = useSubmit(storeNodeId, deliveryNodeId, isDispatcher)
 
   const { t } = useTranslation()
 
@@ -247,7 +249,6 @@ export default function({
 
     if (preLoadedDeliveryData) {
       const initialValues = structuredClone(preLoadedDeliveryData)
-      initialValues._mode = mode
 
       initialValues.tasks = preLoadedDeliveryData.tasks.map(task => {
         return {
