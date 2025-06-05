@@ -169,10 +169,15 @@ export default function({
     }
 
     if (isModifyOrderMode) {
-      return preLoadedDeliveryData.order
+      if (preLoadedDeliveryData.order.id) {
+        return preLoadedDeliveryData.order
+      } else {
+        // A case where the delivery is not linked to an order
+        return null
+      }
     }
 
-    return {}
+    return null
   }, [preLoadedDeliveryData, isCreateOrderMode, isModifyOrderMode])
 
   const { handleSubmit, error } = useSubmit(storeNodeId, deliveryNodeId, isDispatcher, isCreateOrderMode)
