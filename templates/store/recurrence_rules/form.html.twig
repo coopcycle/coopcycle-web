@@ -34,14 +34,19 @@
 
   <h3 class="text-center">{{ 'subscription.title'|trans({ '%id%': recurrenceRule.id }) }}</h3>
 
-  <div {{ react_component('Delivery/DeliveryForm', {
-        isNew: is_new,
-        storeNodeId: store|get_iri_from_item,
-        deliveryId: delivery.id,
-        deliveryNodeId: is_new ? null : delivery|get_iri_from_item,
-        delivery: deliveryData ? deliveryData|serialize('jsonld', {groups: ['delivery', 'address', 'barcode']}) : null,
-        isDispatcher: isDispatcher,
-        isDebugPricing: debug_pricing
-      })
-  }}></div>
+  <div
+    id="recurrence-rule-form"
+    data-store-node-id="{{ store|get_iri_from_item }}"
+    data-recurrence-rule-id="{{ recurrenceRule.id }}"
+    data-recurrence-rule-node-id="{{ recurrenceRule|get_iri_from_item }}"
+    data-delivery="{{ deliveryData ? deliveryData|serialize('jsonld', {groups: ['delivery', 'address', 'barcode']}) : '' }}"
+    data-is-dispatcher="{{ isDispatcher ? 'true' : 'false' }}"
+    data-is-debug-pricing="{{ debug_pricing ? 'true' : 'false' }}"
+  >
+    {# Managed with React #}
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('recurrence-rule-form-react') }}
 {% endblock %}

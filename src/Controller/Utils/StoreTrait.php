@@ -480,8 +480,6 @@ trait StoreTrait
             false
         );
 
-        $routes = $request->attributes->get('routes');
-
         return $this->render('store/recurrence_rules/form.html.twig', $this->auth([
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
