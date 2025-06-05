@@ -3573,6 +3573,7 @@ Feature: Deliveries
             },
             "store": "\/api\/stores\/1",
             "orgName": "Acme",
+            "arbitraryPriceTemplate": null,
             "isCancelled": false
           }
         ],
