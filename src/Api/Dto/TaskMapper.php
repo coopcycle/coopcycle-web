@@ -73,11 +73,15 @@ class TaskMapper
         $packageData->volume_per_package = $package->getAverageVolumeUnits();
         $packageData->quantity = $taskPackage->getQuantity();
 
-        $packageData->labels = $this->getLabels(
-            $task->getId(),
-            $package->getId(),
-            $taskPackage->getQuantity()
-        );
+        if (!is_null($task->getId())) {
+            $packageData->labels = $this->getLabels(
+                $task->getId(),
+                $package->getId(),
+                $taskPackage->getQuantity()
+            );
+        } else {
+            $packageData->labels = [];
+        }
 
         return $packageData;
     }
