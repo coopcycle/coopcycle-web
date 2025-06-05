@@ -88,7 +88,7 @@
               class="text-muted">{% trans %}recurrence_rule.legacy{% endtrans %}</span>
           {% else %}
             <a
-              href="{{ path(routes.view, { storeId: store.id, recurrenceRuleId: recurrenceRule.id }) }}">{{ 'basics.view'|trans }}</a>
+              href="{{ path(routes.view, { storeId: store.id, recurrenceRuleId: recurrenceRule.id }) }}">{{ 'basics.edit'|trans }}</a>
           {% endif %}
         </td>
       </tr>
