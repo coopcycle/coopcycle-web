@@ -3821,6 +3821,8 @@ Feature: Deliveries
           "@id":"@string@.startsWith('/api/orders')",
           "@type":"Order",
           "id":@integer@,
+          "total": @integer@,
+          "taxTotal": @integer@,
           "arbitraryPrice":null,
           "isSavedOrder":true
         }
