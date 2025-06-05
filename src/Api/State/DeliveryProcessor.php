@@ -297,6 +297,12 @@ class DeliveryProcessor implements ProcessorInterface
         }
 
         if ($data->tags) {
+            // Convert array of tag objects to array of tag slugs if needed
+            if (is_array($data->tags) && !empty($data->tags) && isset($data->tags[0]['slug'])) {
+                $data->tags = array_map(function($tag) {
+                    return $tag['slug'];
+                }, $data->tags);
+            }
             $task->setTags($data->tags);
             $this->tagManager->update($task);
         }
