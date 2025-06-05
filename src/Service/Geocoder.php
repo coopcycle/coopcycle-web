@@ -12,6 +12,7 @@ use Geocoder\Provider\Addok\Addok as AddokProvider;
 use Geocoder\Provider\Chain\Chain as ChainProvider;
 use Geocoder\Provider\GeocodeEarth\GeocodeEarth as GeocodeEarthProvider;
 use Geocoder\Provider\GoogleMaps\GoogleMaps as GoogleMapsProvider;
+use Geocoder\Provider\GoogleMaps\Model\GoogleAddress;
 use Geocoder\Provider\OpenCage\OpenCage as OpenCageProvider;
 use Geocoder\Provider\OpenCage\Model\OpenCageAddress;
 use Geocoder\Query\GeocodeQuery;
@@ -102,18 +103,15 @@ class Geocoder
 
         $rateLimiter =
             RateLimiterMiddleware::perSecond($this->rateLimitPerSecond, $this->rateLimiterStore);
-
         $decider = function ($retries, $request, $response, $exception) {
             // Limit the number
             if ($retries >= 10) {
                 return false;
             }
-
             // Retry on network exceptions
             if ($exception instanceof NetworkException) {
                 return true;
             }
-
             return false;
         };
         $retryMiddleware = Middleware::retry($decider);
@@ -243,6 +241,10 @@ class Geocoder
             case 'opencage':
                 Assert::isInstanceOf($location, OpenCageAddress::class);
 
+                return $location->getFormattedAddress();
+
+            case 'google_maps':
+                Assert::isInstanceOf($location, GoogleAddress::class);
                 return $location->getFormattedAddress();
         }
 

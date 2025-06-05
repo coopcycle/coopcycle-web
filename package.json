@@ -134,6 +134,7 @@
     "ngeohash": "^0.6.3",
     "numbro": "^2.3.6",
     "object-hash": "^2.2.0",
+    "open-location-code": "^1.0.3",
     "papaparse": "^5.5.3",
     "payment-icons": "^1.2.1",
     "postcss-loader": "^8.0.0",

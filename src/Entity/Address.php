@@ -52,6 +52,9 @@ class Address extends BaseAddress
     #[Groups(['task', 'warehouse', 'delivery', 'delivery_create', 'task_create', 'task_edit', 'address'])]
     private $contactName;
     private $complete;
+
+    private bool $isMapPicked = false;
+
     /**
      * Gets id.
      *
@@ -144,6 +147,18 @@ class Address extends BaseAddress
     {
         return $this->complete;
     }
+
+    #[Groups(['address', 'address_create', 'task', 'task_create', 'task_edit', 'order_update', 'restaurant_delivery'])]
+    public function getIsMapPicked(): bool
+    {
+        return $this->isMapPicked;
+    }
+
+    public function setIsMapPicked(bool $isMapPicked)
+    {
+        $this->isMapPicked = $isMapPicked;
+    }
+
     public function clone()
     {
         $address = new Address();
@@ -160,6 +175,7 @@ class Address extends BaseAddress
         $address->setTelephone($this->telephone);
         $address->setName($this->getName());
         $address->setPostalCode($this->postalCode);
+        $address->setIsMapPicked($this->isMapPicked);
 
         return $address;
     }
