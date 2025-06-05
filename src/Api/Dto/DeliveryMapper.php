@@ -72,22 +72,24 @@ class DeliveryMapper
         $deliveryData->pickup = $deliveryData->tasks[0] ?? null;
         $deliveryData->dropoff = end($deliveryData->tasks) ?: null;
 
-        $deliveryOrderData = new DeliveryOrderDto();
-        $deliveryData->order = $deliveryOrderData;
+        if (!is_null($order)) {
+            $deliveryOrderData = new DeliveryOrderDto();
+            $deliveryData->order = $deliveryOrderData;
 
-        if (!is_null($order?->getId())) {
-            $deliveryOrderData->id = $order->getId();
+            if (!is_null($order->getId())) {
+                $deliveryOrderData->id = $order->getId();
+            }
+
+            $deliveryOrderData->total = $order->getTotal();
+            $deliveryOrderData->taxTotal = $order->getTaxTotal();
+
+            $deliveryOrderData->arbitraryPrice = $arbitraryPrice ? new ArbitraryPriceDto(
+                $arbitraryPrice->getValue(),
+                $arbitraryPrice->getVariantName()
+            ) : null;
+
+            $deliveryOrderData->isSavedOrder = $isSavedOrder;
         }
-
-        $deliveryOrderData->total = $order->getTotal();
-        $deliveryOrderData->taxTotal = $order->getTaxTotal();
-
-        $deliveryOrderData->arbitraryPrice = $arbitraryPrice ? new ArbitraryPriceDto(
-            $arbitraryPrice->getValue(),
-            $arbitraryPrice->getVariantName()
-        ) : null;
-
-        $deliveryOrderData->isSavedOrder = $isSavedOrder;
 
         if ($deliveryEntity->getId()) {
             $deliveryData->id = $deliveryEntity->getId();

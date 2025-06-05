@@ -171,8 +171,12 @@ export default function useSubmit(
         const deliveryId = data.id
         const orderId = data.order?.id
 
-        if (isDispatcher && orderId) {
-          window.location = `/admin/orders/${orderId}`
+        if (isDispatcher) {
+          if (orderId) {
+            window.location = `/admin/orders/${orderId}`
+          } else {
+            window.location = `/admin/deliveries/${deliveryId}`
+          }
         } else {
           window.location = `/dashboard/deliveries/${deliveryId}`
         }

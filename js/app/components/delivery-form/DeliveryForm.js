@@ -156,11 +156,24 @@ export default function({
   const [priceLoading, setPriceLoading] = useState(false)
 
   const order = useMemo(() => {
-    if (preLoadedDeliveryData && preLoadedDeliveryData.order) {
+    if (isCreateOrderMode) {
+      if (preLoadedDeliveryData && preLoadedDeliveryData.order) {
+        return preLoadedDeliveryData.order
+      }
+
+      return {
+        total: 0,
+        taxTotal: 0,
+        isSavedOrder: false,
+      }
+    }
+
+    if (isModifyOrderMode) {
       return preLoadedDeliveryData.order
     }
+
     return {}
-  }, [preLoadedDeliveryData])
+  }, [preLoadedDeliveryData, isCreateOrderMode, isModifyOrderMode])
 
   const { handleSubmit, error } = useSubmit(storeNodeId, deliveryNodeId, isDispatcher, isCreateOrderMode)
 
@@ -436,15 +449,17 @@ export default function({
                       <DeliveryResume tasks={values.tasks} />
                     </div>
 
-                    <div className="order-informations__total-price border-top py-3">
-                      <Price
-                        storeNodeId={storeNodeId}
-                        order={order}
-                        isDispatcher={isDispatcher}
-                        isDebugPricing={isDebugPricing}
-                        setPriceLoading={setPriceLoading}
-                      />
-                    </div>
+                    {order ? (
+                      <div className="order-informations__total-price border-top py-3">
+                        <Price
+                          storeNodeId={storeNodeId}
+                          order={order}
+                          isDispatcher={isDispatcher}
+                          isDebugPricing={isDebugPricing}
+                          setPriceLoading={setPriceLoading}
+                        />
+                      </div>
+                    ) : null}
 
                     {isCreateOrderMode && isDispatcher ? (
                       <div className="border-top pt-2 pb-3" data-testid="recurrence__container">
@@ -452,15 +467,22 @@ export default function({
                       </div>
                     ) : null}
 
-                    {isDispatcher ? (
-                      <div className="border-top py-3" data-testid="saved_order__container">
+                    {isDispatcher && order ? (
+                      <div
+                        className="border-top py-3"
+                        data-testid="saved_order__container">
                         <Checkbox
                           name="delivery.saved_order"
                           checked={values.order.isSavedOrder}
                           onChange={e => {
                             e.stopPropagation()
-                            setFieldValue('order.isSavedOrder', e.target.checked)
-                          }}>{t('DELIVERY_FORM_SAVED_ORDER')}</Checkbox>
+                            setFieldValue(
+                              'order.isSavedOrder',
+                              e.target.checked,
+                            )
+                          }}>
+                          {t('DELIVERY_FORM_SAVED_ORDER')}
+                        </Checkbox>
                       </div>
                     ) : null}
 
