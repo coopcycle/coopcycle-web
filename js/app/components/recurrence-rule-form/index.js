@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
           deliveryId={recurrenceRuleId}
           //FIXME; might lead to bugs
           deliveryNodeId={recurrenceRuleNodeId}
-          preLoadedDeliveryData={delivery}
+          preLoadedDeliveryData={preLoadedDeliveryData}
           isDispatcher={isDispatcher}
           isDebugPricing={isDebugPricing}
         />
