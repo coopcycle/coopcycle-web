@@ -25,7 +25,7 @@ export const TaskDateTime = ({ isDispatcher, storeNodeId, timeSlots, index }) =>
   useEffect(() => {
     if (mode === Mode.DELIVERY_UPDATE) {
       setFieldValue(`tasks[${index}].timeSlot`, null)
-    } else {
+    } else if (mode === Mode.DELIVERY_CREATE) {
       if (isTimeSlotSelect && timeSlotIds?.length > 0) {
         setFieldValue(`tasks[${index}].after`, null)
         setFieldValue(`tasks[${index}].before`, null)
