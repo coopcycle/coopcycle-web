@@ -30,7 +30,7 @@ context('Managing recurrence rules (role: admin)', () => {
 
     cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
-    cy.get('[data-testid="recurrence__container"]').find('a').click()
+    cy.get('[data-testid="recurrence-add"]').click()
     cy.chooseDaysOfTheWeek([5, 6])
     cy.get('[data-testid=save]').click()
 

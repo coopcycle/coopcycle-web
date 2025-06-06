@@ -50,7 +50,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
 
       cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
-      cy.get('[data-testid="recurrence__container"]').find('a').click()
+      cy.get('[data-testid="recurrence-add"]').click()
       cy.chooseDaysOfTheWeek([5, 6])
       cy.get('[data-testid=save]').click()
 
@@ -98,7 +98,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       })
 
       cy.get('[data-testid="tax-included"]').contains('4,99 €')
-      cy.get('[data-testid="recurrence__container"]').contains(
+      cy.get('[data-testid="recurrence-container"]').contains(
         'chaque semaine le vendredi, samedi',
       )
 
@@ -107,7 +107,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       cy.get('[data-testid="order-edit"]').click()
 
       // Delivery page
-      cy.get('[data-testid="recurrence__container"]').should('not.exist')
+      cy.get('[data-testid="recurrence-container"]').should('not.exist')
 
       cy.betaTaskShouldHaveValue({
         taskFormIndex: 0,

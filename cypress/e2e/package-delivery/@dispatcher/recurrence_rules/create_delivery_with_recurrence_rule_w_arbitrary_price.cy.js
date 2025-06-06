@@ -35,7 +35,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
     cy.get('[name="variantName"]').type('Test product')
     cy.get('#variantPriceVAT').type('72')
 
-    cy.get('[data-testid="recurrence__container"]').find('a').click()
+    cy.get('[data-testid="recurrence-add"]').click()
     cy.chooseDaysOfTheWeek([5, 6])
     cy.get('[data-testid=save]').click()
 
@@ -62,7 +62,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
     cy.get('[name="delivery.override_price"]').should('be.checked')
     cy.get('[name="variantName"]').should('have.value', 'Test product')
     cy.get('#variantPriceVAT').should('have.value', '72')
-    cy.get('[data-testid="recurrence__container"]').contains(
+    cy.get('[data-testid="recurrence-container"]').contains(
       'chaque semaine le vendredi, samedi',
     )
 
@@ -73,6 +73,6 @@ describe('Delivery with recurrence rule (role: admin)', () => {
     // Edit Delivery page
     cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
 
-    cy.get('[data-testid="recurrence__container"]').should('not.exist')
+    cy.get('[data-testid="recurrence-container"]').should('not.exist')
   })
 })
