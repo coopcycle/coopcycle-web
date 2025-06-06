@@ -15,6 +15,7 @@ use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Action\Delivery\BulkAsync as BulkAsyncDelivery;
+use AppBundle\Action\Delivery\PODExport as PODExportDelivery;
 use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryDto;
@@ -31,6 +32,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Validator\Constraints\CheckDelivery as AssertCheckDelivery;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use AppBundle\Vroom\Shipment as VroomShipment;
+use DeliveryPODExportInput;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -163,6 +165,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
             inputFormats: ['csv' => ['text/csv']],
             controller: BulkAsyncDelivery::class,
             security: 'is_granted(\'ROLE_OAUTH2_DELIVERIES\')',
+            deserialize: false
+        ),
+        new Post(
+            uriTemplate: '/deliveries/pod_export',
+            controller: PODExportDelivery::class,
+            /* input: DeliveryPODExportInput::class, */
+            write: false,
             deserialize: false
         )
     ],
