@@ -4,6 +4,7 @@ import {
   usePostDeliveryMutation,
   usePostStoreAddressMutation,
   usePutDeliveryMutation,
+  usePutRecurrenceRuleMutation,
   useSuggestOptimizationsMutation,
 } from '../../../api/slice'
 import { useDispatch, useSelector } from 'react-redux'
@@ -11,7 +12,7 @@ import {
   selectRejectedSuggestedOrder,
   showSuggestions,
 } from '../redux/suggestionsSlice'
-import { Mode } from '../mode'
+import { Mode, modeIn } from '../mode'
 import { selectMode } from '../redux/formSlice'
 
 function serializeAddress(address) {
@@ -25,8 +26,72 @@ function serializeAddress(address) {
   }
 }
 
+function convertValuesToDeliveryPayload(storeNodeId, values) {
+  let data = {
+    store: storeNodeId,
+    tasks: structuredClone(values.tasks),
+    order: structuredClone(values.order),
+  }
+
+  if (values.rrule) {
+    data = {
+      ...data,
+      rrule: values.rrule,
+    }
+  }
+
+  if (values.variantIncVATPrice) {
+    data.order.arbitraryPrice = {
+      variantName: values.variantName ?? '',
+      variantPrice: values.variantIncVATPrice,
+    }
+  }
+
+  return data
+}
+
+function convertValuesToRecurrenceRulePayload(values) {
+  let data = {
+    rule: values.rrule,
+    template: {
+      '@type': 'hydra:Collection',
+      'hydra:member': structuredClone(values.tasks),
+    },
+  }
+
+  for (const task of data.template['hydra:member']) {
+    delete task['@id']
+
+    delete task['doneAfter']
+    delete task['doneBefore']
+
+    // Keep only the time part (HH:mm) of the date in the template
+    // task[field] - ISO date string
+    for (const field of ['after', 'before']) {
+      if (task[field]) {
+        const date = new Date(task[field])
+        task[field] = date.toLocaleTimeString('en-US', {
+          hour12: false,
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+      }
+    }
+  }
+
+  if (values.variantIncVATPrice) {
+    data.arbitraryPriceTemplate = {
+      variantName: values.variantName ?? '',
+      variantPrice: values.variantIncVATPrice,
+    }
+  }
+
+  return data
+}
+
 export default function useSubmit(
   storeNodeId,
+  // nodeId: Delivery or RecurrenceRule node
   deliveryNodeId,
   isDispatcher,
 ) {
@@ -36,39 +101,15 @@ export default function useSubmit(
   const rejectedSuggestionsOrder = useSelector(selectRejectedSuggestedOrder)
 
   const [suggestOptimizations] = useSuggestOptimizationsMutation()
+
   const [createDelivery] = usePostDeliveryMutation()
   const [modifyDelivery] = usePutDeliveryMutation()
+  const [modifyRecurrenceRule] = usePutRecurrenceRuleMutation()
+
   const [createAddress] = usePostStoreAddressMutation()
   const [modifyAddress] = usePatchAddressMutation()
 
   const dispatch = useDispatch()
-
-  const convertValuesToPayload = useCallback(
-    values => {
-      let data = {
-        store: storeNodeId,
-        tasks: structuredClone(values.tasks),
-        order: structuredClone(values.order),
-      }
-
-      if (values.rrule) {
-        data = {
-          ...data,
-          rrule: values.rrule,
-        }
-      }
-
-      if (values.variantIncVATPrice) {
-        data.order.arbitraryPrice = {
-          variantName: values.variantName ?? '',
-          variantPrice: values.variantIncVATPrice,
-        }
-      }
-
-      return data
-    },
-    [storeNodeId],
-  )
 
   const checkSuggestionsOnSubmit = useCallback(
     async values => {
@@ -121,11 +162,16 @@ export default function useSubmit(
 
       let result
       if (mode === Mode.DELIVERY_CREATE) {
-        result = await createDelivery(convertValuesToPayload(values))
+        result = await createDelivery(convertValuesToDeliveryPayload(values))
       } else if (mode === Mode.DELIVERY_UPDATE) {
         result = await modifyDelivery({
           nodeId: deliveryNodeId,
-          ...convertValuesToPayload(values),
+          ...convertValuesToDeliveryPayload(values),
+        })
+      } else if (mode === Mode.RECURRENCE_RULE_UPDATE) {
+        result = await modifyRecurrenceRule({
+          nodeId: deliveryNodeId,
+          ...convertValuesToRecurrenceRulePayload(values),
         })
       } else {
         console.error('Unknown mode:', mode)
@@ -175,25 +221,30 @@ export default function useSubmit(
         const deliveryId = data.id
         const orderId = data.order?.id
 
-        if (isDispatcher) {
-          if (orderId) {
-            window.location = `/admin/orders/${orderId}`
+        if (modeIn(mode, [Mode.DELIVERY_CREATE, Mode.DELIVERY_UPDATE])) {
+          if (isDispatcher) {
+            if (orderId) {
+              window.location = `/admin/orders/${orderId}`
+            } else {
+              window.location = `/admin/deliveries/${deliveryId}`
+            }
           } else {
-            window.location = `/admin/deliveries/${deliveryId}`
+            window.location = `/dashboard/deliveries/${deliveryId}`
           }
-        } else {
-          window.location = `/dashboard/deliveries/${deliveryId}`
+        } else if (mode === Mode.RECURRENCE_RULE_UPDATE) {
+          const storeId = storeNodeId.split('/').pop()
+          window.location = `/admin/stores/${storeId}/recurrence-rules`
         }
       }
     },
     [
-      convertValuesToPayload,
       storeNodeId,
       deliveryNodeId,
       isDispatcher,
       mode,
       createDelivery,
       modifyDelivery,
+      modifyRecurrenceRule,
       createAddress,
       modifyAddress,
       checkSuggestionsOnSubmit,

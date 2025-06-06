@@ -117,7 +117,7 @@ export default function({
   storeNodeId,
   // prefer using deliveryNodeId
   deliveryId,
-  // Delivery or RecurrenceRule node
+  // nodeId: Delivery or RecurrenceRule node
   deliveryNodeId,
   preLoadedDeliveryData,
   isDispatcher,

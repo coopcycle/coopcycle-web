@@ -133,6 +133,15 @@ export const apiSlice = createApi({
       },
     }),
 
+    putRecurrenceRule: builder.mutation({
+      query({ nodeId, ...body }) {
+        return {
+          url: nodeId,
+          method: 'PUT',
+          body,
+        }
+      },
+    }),
     recurrenceRulesGenerateOrders: builder.mutation({
       query: date => ({
         url: 'api/recurrence_rules/generate_orders',
@@ -187,6 +196,7 @@ export const {
   useSuggestOptimizationsMutation,
   usePostDeliveryMutation,
   usePutDeliveryMutation,
+  usePutRecurrenceRuleMutation,
   useRecurrenceRulesGenerateOrdersMutation,
   useLazyGetInvoiceLineItemsGroupedByOrganizationQuery,
   useGetInvoiceLineItemsQuery,
