@@ -37,7 +37,7 @@ class TaskImageNormalizer implements NormalizerInterface, DenormalizerInterface
 
         try {
             $imagePath = $this->uploaderHelper->asset($object, 'file');
-            $data['thumbnail'] = $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'task_image_thumbnail');
+            $data['thumbnail'] = ''; //$this->imagineFilter->getUrlOfFilteredImage($imagePath, 'task_image_thumbnail');
         } catch (NotLoadableException | FilesystemException | ImagineRuntimeException | LiipLogicException $e) {
             return $data;
         }
