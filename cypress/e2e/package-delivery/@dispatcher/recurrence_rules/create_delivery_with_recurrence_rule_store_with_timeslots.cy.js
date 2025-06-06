@@ -58,15 +58,6 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       cy.get('[data-testid="recurrence-container"]').contains(
         'chaque semaine le vendredi, samedi',
       )
-
-      cy.go('back')
-
-      cy.get('[data-testid="order-edit"]').click()
-
-      // Edit Delivery page
-      cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
-
-      cy.get('[data-testid="recurrence-container"]').should('not.exist')
     })
   })
 })

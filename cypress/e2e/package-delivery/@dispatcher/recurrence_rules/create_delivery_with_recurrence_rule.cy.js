@@ -1,4 +1,4 @@
-context('Delivery (role: admin)', () => {
+describe('Delivery with recurrence rule (role: admin)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
       'ORM/user_admin.yml',
@@ -11,11 +11,7 @@ context('Delivery (role: admin)', () => {
     cy.login('admin', '12345678')
   })
 
-  afterEach(() => {
-    cy.resetMockDateTime()
-  })
-
-  it('create delivery order', function () {
+  it('create delivery order and a recurrence rule', function () {
     cy.visit('/admin/stores')
 
     cy.get('[data-testid=store_Acme__list_item]')
@@ -72,26 +68,19 @@ context('Delivery (role: admin)', () => {
 
     cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
+    cy.get('[data-testid="recurrence-add"]').click()
+    cy.chooseDaysOfTheWeek([5, 6])
+    cy.get('[data-testid=save]').click()
+
     cy.get('button[type="submit"]').click()
 
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.get('[data-testid="order_item"]')
-      .find('[data-testid="total"]')
-      .contains('€4.99')
+    cy.get('a[href*="recurrence-rules"]').click()
 
-    cy.get('[data-testid=delivery-itinerary]')
-      .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
-      .should('exist')
-    cy.get('[data-testid=delivery-itinerary]')
-      .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
-      .should('exist')
-
-    cy.get('[data-testid="order-edit"]').click()
-
-    // Edit Delivery page
-    cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
+    // Recurrence rule page
+    cy.urlmatch(/\/admin\/stores\/[0-9]+\/recurrence-rules\/[0-9]+$/)
 
     //verify that all the fields are saved correctly
 
@@ -101,7 +90,6 @@ context('Delivery (role: admin)', () => {
       telephone: '01 12 12 12 12',
       contactName: 'John Doe',
       address: /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
-      date: '23 avril 2025',
       timeAfter: '00:00',
       timeBefore: '11:59',
       comments: 'Pickup comments',
@@ -114,7 +102,6 @@ context('Delivery (role: admin)', () => {
       telephone: '01 12 12 14 14',
       contactName: 'Jane smith',
       address: /72,? Rue Saint-Maur,? 75011,? Paris,? France/,
-      date: '23 avril 2025',
       timeAfter: '00:00',
       timeBefore: '11:59',
       packages: [
@@ -128,6 +115,19 @@ context('Delivery (role: admin)', () => {
       tags: ['Perishable'],
     })
 
-    cy.get('[data-testid="tax-included-previous"]').contains('4,99 €')
+    cy.get('[data-testid="tax-included"]').contains('4,99 €')
+
+    cy.get('[data-testid="recurrence-container"]').contains(
+      'chaque semaine le vendredi, samedi',
+    )
+
+    cy.go('back')
+
+    cy.get('[data-testid="order-edit"]').click()
+
+    // Edit Delivery page
+    cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
+
+    cy.get('[data-testid="recurrence-container"]').should('not.exist')
   })
 })
