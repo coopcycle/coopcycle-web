@@ -194,7 +194,11 @@ Cypress.Commands.add('searchAddress', (selector, search, match, index = 0) => {
 
   cy.get(`${ selector } input[type="search"][data-is-address-picker="true"]`)
     .eq(index)
-    .type(search, { timeout: 5000, delay: 100 })
+    .clear()
+
+  cy.get(`${ selector } input[type="search"][data-is-address-picker="true"]`)
+    .eq(index)
+    .type(search, { timeout: 5000, delay: 50 })
 
   cy.get(selector)
     .find('ul[role="listbox"] li', { timeout: 10000 })
