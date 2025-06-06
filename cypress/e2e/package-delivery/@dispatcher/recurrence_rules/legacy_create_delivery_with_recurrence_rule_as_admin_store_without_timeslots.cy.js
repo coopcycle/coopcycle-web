@@ -122,6 +122,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
         .click()
 
       // Order page
+      cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
       cy.get('a[href*="recurrence-rules"]').click()
 
       // Recurrence rule page
