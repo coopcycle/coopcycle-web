@@ -37,7 +37,7 @@ class MockGeocoderProvider implements GeocoderInterface
                 new AdminLevelCollection([
                     new AdminLevel(1, 'Île-de-France', 'IDF')
                 ]),
-                new Coordinates(48.8566, 2.3522),
+                new Coordinates(48.8699159, 2.3321065),
                 new Bounds(48.815573, 2.224199, 48.902144, 2.469920),
                 '24',
                 'Rue de la Paix',
@@ -55,7 +55,7 @@ class MockGeocoderProvider implements GeocoderInterface
                 new AdminLevelCollection([
                     new AdminLevel(1, 'Île-de-France', 'IDF')
                 ]),
-                new Coordinates(48.8566, 2.3522),
+                new Coordinates(48.8567828, 2.3550686),
                 new Bounds(48.815573, 2.224199, 48.902144, 2.469920),
                 '44',
                 'Rue de Rivoli',
