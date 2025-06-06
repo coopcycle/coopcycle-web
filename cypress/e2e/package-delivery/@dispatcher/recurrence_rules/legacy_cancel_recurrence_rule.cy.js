@@ -42,6 +42,7 @@ context('Managing recurrence rules (role: admin)', () => {
     cy.get('a[href*="recurrence-rules"]').click()
 
     // Recurrence rule page
+    cy.get('[data-testid=go-to-legacy-form]').click()
     cy.get('#delivery_form__recurrence__container').contains(
       'chaque semaine le vendredi, samedi',
     )
@@ -52,11 +53,12 @@ context('Managing recurrence rules (role: admin)', () => {
 
     cy.get('#delivery-submit').click()
 
+    cy.visit('/admin/orders/1')
     // Order page
-    cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
     cy.get('a[href*="recurrence-rules"]').click()
 
     // Recurrence rule page
+    cy.get('[data-testid=go-to-legacy-form]').click()
     cy.get('#delivery_form__recurrence__container').contains(
       'Règle de récurrence annulée',
     )
