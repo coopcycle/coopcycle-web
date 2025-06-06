@@ -68,6 +68,9 @@
       <ul class="nav navbar-nav navbar-right">
         {% if choices|length > 0 %}
           {% if selected_choice is instanceof('AppBundle\\Entity\\Store') %}
+          <li {{ react_component('Delivery/DeliveriesProofs', {
+            store_id: selected_choice.id
+          }) }} ></li>
           <li>
             <a href="{{ path('dashboard_store_addresses', { id: selected_choice.id }) }}">
               <i class="fa fa-address-book-o mr-2"></i>
