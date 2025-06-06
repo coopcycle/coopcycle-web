@@ -10,6 +10,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use Hashids\Hashids;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class DeliveryMapper
 {
@@ -20,6 +21,7 @@ class DeliveryMapper
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly Hashids $hashids8,
         private readonly NormalizerInterface $normalizer,
+        private readonly ObjectNormalizer $symfonyNormalizer
     ) {
     }
 
@@ -43,12 +45,19 @@ class DeliveryMapper
             $taskData->type = $taskEntity->getType();
             $taskData->status = $taskEntity->getStatus();
 
-            $taskData->address = $this->normalizer->normalize($taskEntity->getAddress(), 'jsonld');
-            // Workaround to properly normalize embedded relation
-            // Should become unnecessary when we normalise address using built-in normalizer
-            // See a comment at TaskDto Address property
-            if (isset($taskData->address['@context'])) {
-                unset($taskData->address['@context']);
+            $address = $taskEntity->getAddress();
+            if ($address->getId() !== null) {
+                $taskData->address = $this->normalizer->normalize($address, 'jsonld');
+                // Workaround to properly normalize embedded relation
+                // Should become unnecessary when we normalise address using built-in normalizer
+                // See a comment at TaskDto Address property
+                if (isset($taskData->address['@context'])) {
+                    unset($taskData->address['@context']);
+                }
+            } else {
+                // a case when address doesn't have an ID (for example, in Recurrence rules)
+                // (we can't use API platform normalizer here, as it fails with: Unable to generate an IRI for the item)
+                $taskData->address = $this->symfonyNormalizer->normalize($address, 'json');
             }
 
             $taskData->after = $taskEntity->getAfter();

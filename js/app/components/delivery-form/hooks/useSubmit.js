@@ -50,33 +50,43 @@ function convertValuesToDeliveryPayload(storeNodeId, values) {
   return data
 }
 
+function convertDateInRecurrenceRulePayload(value) {
+  // Keep only the time part (HH:mm) of the date in the template
+  // task[field] - ISO date string
+
+  const date = new Date(value)
+  return date.toLocaleTimeString('en-US', {
+    hour12: false,
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
 function convertValuesToRecurrenceRulePayload(values) {
   let data = {
     rule: values.rrule,
     template: {
       '@type': 'hydra:Collection',
-      'hydra:member': structuredClone(values.tasks),
+      'hydra:member': structuredClone(values.tasks).map(task => {
+        return {
+          type: task.type,
+          address: {
+            streetAddress: task.address.streetAddress,
+            name: task.address.name,
+            telephone: task.address.telephone,
+            contactName: task.address.contactName,
+          },
+          after: convertDateInRecurrenceRulePayload(task.after),
+          before: convertDateInRecurrenceRulePayload(task.before),
+          //FIXME; figure out how to correctly update pickup packages when dropoff tasks are modified
+          //TODO: check is it handled by TaskNormalizer?
+          packages: task.packages,
+          weight: task.weight,
+          comments: task.comments,
+          tags: task.tags,
+        }
+      }),
     },
-  }
-
-  for (const task of data.template['hydra:member']) {
-    delete task['@id']
-
-    delete task['doneAfter']
-    delete task['doneBefore']
-
-    // Keep only the time part (HH:mm) of the date in the template
-    // task[field] - ISO date string
-    for (const field of ['after', 'before']) {
-      if (task[field]) {
-        const date = new Date(task[field])
-        task[field] = date.toLocaleTimeString('en-US', {
-          hour12: false,
-          hour: '2-digit',
-          minute: '2-digit',
-        })
-      }
-    }
   }
 
   if (values.variantIncVATPrice) {

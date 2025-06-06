@@ -369,6 +369,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
     private $delivery;
 
+    /**
+     * @var Address
+     */
     #[Assert\NotNull]
     #[Assert\Valid]
     #[Groups(['task', 'task_create', 'task_edit', 'address', 'address_create', 'delivery_create'])]
