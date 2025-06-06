@@ -33,7 +33,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
         cy.antdSelect('.ant-select[data-testid="select-before"]', '11:20')
       })
 
-      cy.get(`[name="tasks[0].comments"]`).type('Pickup comments')
+      cy.betaEnterCommentAtPosition(0, 'Pickup comments')
 
       // Dropoff
       cy.betaChooseSavedAddressAtPosition(1, 2)
@@ -44,9 +44,9 @@ describe('Delivery with recurrence rule (role: admin)', () => {
         cy.antdSelect('.ant-select[data-testid="select-before"]', '12:40')
       })
 
-      cy.get(`[name="tasks[1].weight"]`).type(2.5)
+      cy.betaEnterWeightAtPosition(1, 2.5)
 
-      cy.get(`[name="tasks[1].comments"]`).type('Dropoff comments')
+      cy.betaEnterCommentAtPosition(1, 'Dropoff comments')
 
       cy.get('[data-testid="tax-included"]').contains('4,99 €')
 

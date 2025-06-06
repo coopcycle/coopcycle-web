@@ -227,7 +227,7 @@ Cypress.Commands.add('newPickupAddress',
 
 Cypress.Commands.add('betaEnterAddressAtPosition',
   (taskFormIndex, addressSearch, addressMatch,
-    businessName, telephone, contactName, comments) => {
+    businessName, telephone, contactName) => {
 
     cy.searchAddress(
       `[data-testid=form-task-${taskFormIndex}]`,
@@ -243,6 +243,19 @@ Cypress.Commands.add('betaEnterAddressAtPosition',
 
     cy.get(`input[name="tasks[${taskFormIndex}].address.contactName"]`).clear()
     cy.get(`input[name="tasks[${taskFormIndex}].address.contactName"]`).type(contactName)
+
+  })
+
+Cypress.Commands.add('betaEnterWeightAtPosition',
+  (taskFormIndex, weight) => {
+
+    cy.get(`[name="tasks[${taskFormIndex}].weight"]`).clear()
+    cy.get(`[name="tasks[${taskFormIndex}].weight"]`).type(weight)
+
+  })
+
+Cypress.Commands.add('betaEnterCommentAtPosition',
+  (taskFormIndex, comments) => {
 
     cy.get(`[name="tasks[${taskFormIndex}].comments"]`).clear()
     cy.get(`[name="tasks[${taskFormIndex}].comments"]`).type(comments)

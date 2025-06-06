@@ -25,8 +25,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       // Dropoff
       cy.betaChooseSavedAddressAtPosition(1, 2)
 
-      cy.get(`[name="tasks[1].weight"]`).clear()
-      cy.get(`[name="tasks[1].weight"]`).type(2.5)
+      cy.betaEnterWeightAtPosition(1, 2.5)
 
       cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
