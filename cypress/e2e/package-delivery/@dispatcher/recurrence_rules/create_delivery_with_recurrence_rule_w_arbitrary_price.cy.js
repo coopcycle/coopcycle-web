@@ -59,8 +59,10 @@ describe('Delivery with recurrence rule (role: admin)', () => {
 
     // Recurrence rule page
     cy.urlmatch(/\/admin\/stores\/[0-9]+\/recurrence-rules\/[0-9]+$/)
-    cy.get('[data-tax="included"]').contains('72,00 €')
-    cy.get('#delivery_form__recurrence__container').contains(
+    cy.get('[name="delivery.override_price"]').should('be.checked')
+    cy.get('[name="variantName"]').should('have.value', 'Test product')
+    cy.get('#variantPriceVAT').should('have.value', '72')
+    cy.get('[data-testid="recurrence__container"]').contains(
       'chaque semaine le vendredi, samedi',
     )
 
