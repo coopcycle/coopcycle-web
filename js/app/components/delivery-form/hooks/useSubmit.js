@@ -162,11 +162,11 @@ export default function useSubmit(
 
       let result
       if (mode === Mode.DELIVERY_CREATE) {
-        result = await createDelivery(convertValuesToDeliveryPayload(values))
+        result = await createDelivery(convertValuesToDeliveryPayload(storeNodeId, values))
       } else if (mode === Mode.DELIVERY_UPDATE) {
         result = await modifyDelivery({
           nodeId: deliveryNodeId,
-          ...convertValuesToDeliveryPayload(values),
+          ...convertValuesToDeliveryPayload(storeNodeId, values),
         })
       } else if (mode === Mode.RECURRENCE_RULE_UPDATE) {
         result = await modifyRecurrenceRule({
