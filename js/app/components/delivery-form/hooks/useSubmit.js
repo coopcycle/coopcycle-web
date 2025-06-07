@@ -101,6 +101,8 @@ function convertValuesToRecurrenceRulePayload(values) {
       variantName: values.variantName ?? '',
       variantPrice: values.variantIncVATPrice,
     }
+  } else {
+    data.arbitraryPriceTemplate = null
   }
 
   return data
