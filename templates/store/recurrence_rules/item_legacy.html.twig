@@ -20,3 +20,17 @@
 {% if is_granted('ROLE_DISPATCHER') %}
   {% set title = 'subscription.title'|trans({ '%id%': recurrenceRule.id }) %}
 {% endif %}
+
+{% block content %}
+  {% if is_granted('ROLE_DISPATCHER') %}
+    {% set store = delivery.store %}
+
+    <div class="alert alert-info">
+      This legacy version of the page will be removed soon. If you still need it, please let us know on Stack #dev channel ASAP.
+      To access the more-friendly, new version of the page <a class="text-decoration-underline" href="{{ path('admin_store_recurrence_rule', { storeId: store.id, recurrenceRuleId: recurrenceRule.id }) }}">click here</a>.
+    </div>
+  {% endif %}
+
+  {{ parent() }}
+
+{% endblock %}

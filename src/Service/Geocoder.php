@@ -67,7 +67,7 @@ class Geocoder
             $geocodingProvider = $geocodingProvider ?? 'opencage';
 
             if ('mock' === $geocodingProvider) {
-                $providers[] = new MockGeocoderProvider();
+                $providers[] = new MockGeocoderProvider($this->logger);
                 // Add OpenCage provider only if api key is configured
             } else if ('opencage' === $geocodingProvider && !empty($this->openCageApiKey)) {
                 $providers[] = $this->createOpenCageProvider();

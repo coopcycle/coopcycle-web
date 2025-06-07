@@ -5,13 +5,17 @@ import TimeSlotPicker from './TimeSlotPicker'
 import DateRangePicker from './DateRangePicker'
 import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
 import { useGetStoreQuery } from '../../api/slice'
+import { Mode } from './mode'
+import { useSelector } from 'react-redux'
+import { selectMode } from './redux/formSlice'
 
 export const TaskDateTime = ({ isDispatcher, storeNodeId, timeSlots, index }) => {
   const format = 'LL'
 
   const { data: store } = useGetStoreQuery(storeNodeId)
 
-  const { isModifyOrderMode, setFieldValue } = useDeliveryFormFormikContext({
+  const mode = useSelector(selectMode)
+  const { setFieldValue } = useDeliveryFormFormikContext({
     taskIndex: index,
   })
 
@@ -19,9 +23,9 @@ export const TaskDateTime = ({ isDispatcher, storeNodeId, timeSlots, index }) =>
   const [isTimeSlotSelect, setIsTimeSlotSelect] = useState(true)
 
   useEffect(() => {
-    if (isModifyOrderMode) {
+    if (mode === Mode.DELIVERY_UPDATE) {
       setFieldValue(`tasks[${index}].timeSlot`, null)
-    } else {
+    } else if (mode === Mode.DELIVERY_CREATE) {
       if (isTimeSlotSelect && timeSlotIds?.length > 0) {
         setFieldValue(`tasks[${index}].after`, null)
         setFieldValue(`tasks[${index}].before`, null)
@@ -30,12 +34,12 @@ export const TaskDateTime = ({ isDispatcher, storeNodeId, timeSlots, index }) =>
         setFieldValue(`tasks[${index}].timeSlotUrl`, null)
       }
     }
-  }, [isTimeSlotSelect, timeSlotIds, index, setFieldValue, isModifyOrderMode])
+  }, [isTimeSlotSelect, timeSlotIds, index, setFieldValue, mode])
 
   if (!Array.isArray(timeSlotIds)) {
     // not loaded yet
     return <Spinner />
-  } else if (timeSlotIds.length > 0 && !isModifyOrderMode) {
+  } else if (timeSlotIds.length > 0 && mode === Mode.DELIVERY_CREATE) {
     if (isDispatcher) {
       return (
         <SwitchTimeSlotFreePicker

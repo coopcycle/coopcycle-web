@@ -25,12 +25,11 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       // Dropoff
       cy.betaChooseSavedAddressAtPosition(1, 2)
 
-      cy.get(`[name="tasks[1].weight"]`).clear()
-      cy.get(`[name="tasks[1].weight"]`).type(2.5)
+      cy.betaEnterWeightAtPosition(1, 2.5)
 
       cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
-      cy.get('[data-testid="recurrence__container"]').find('a').click()
+      cy.get('[data-testid="recurrence-add"]').click()
       cy.chooseDaysOfTheWeek([5, 6])
       cy.get('[data-testid=save]').click()
 
@@ -54,19 +53,10 @@ describe('Delivery with recurrence rule (role: admin)', () => {
 
       // Recurrence rule page
       cy.urlmatch(/\/admin\/stores\/[0-9]+\/recurrence-rules\/[0-9]+$/)
-      cy.get('[data-tax="included"]').contains('4,99 €')
-      cy.get('#delivery_form__recurrence__container').contains(
+      cy.get('[data-testid="tax-included"]').contains('4,99 €')
+      cy.get('[data-testid="recurrence-container"]').contains(
         'chaque semaine le vendredi, samedi',
       )
-
-      cy.go('back')
-
-      cy.get('[data-testid="order-edit"]').click()
-
-      // Edit Delivery page
-      cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
-
-      cy.get('[data-testid="recurrence__container"]').should('not.exist')
     })
   })
 })

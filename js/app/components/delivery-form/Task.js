@@ -14,6 +14,9 @@ import {
   useGetStorePackagesQuery,
   useGetStoreTimeSlotsQuery,
 } from '../../api/slice'
+import { Mode } from './mode'
+import { useSelector } from 'react-redux'
+import { selectMode } from './redux/formSlice'
 
 
 export default ({
@@ -28,10 +31,10 @@ export default ({
 }) => {
   const { t } = useTranslation()
 
+  const mode = useSelector(selectMode)
   const {
     values,
     taskValues,
-    isCreateOrderMode,
     setFieldValue,
   } = useDeliveryFormFormikContext({
     taskIndex: index,
@@ -110,7 +113,7 @@ export default ({
           storeDeliveryInfos={storeDeliveryInfos}
           shallPrefillAddress={Boolean(
             taskValues.type === 'PICKUP' &&
-              isCreateOrderMode &&
+              (mode === Mode.DELIVERY_CREATE) &&
               storeDeliveryInfos.prefillPickupAddress,
           )}
         />

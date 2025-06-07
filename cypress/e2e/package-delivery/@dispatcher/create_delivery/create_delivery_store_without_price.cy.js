@@ -32,8 +32,9 @@ context('Delivery (role: admin)', () => {
       'Office',
       '+33112121212',
       'John Doe',
-      'Pickup comments',
     )
+
+    cy.betaEnterCommentAtPosition(0, 'Pickup comments')
 
     // Dropoff
 
@@ -44,11 +45,11 @@ context('Delivery (role: admin)', () => {
       'Office',
       '+33112121212',
       'Jane smith',
-      'Dropoff comments',
     )
 
-    cy.get(`[name="tasks[1].weight"]`).clear()
-    cy.get(`[name="tasks[1].weight"]`).type(2.5)
+    cy.betaEnterWeightAtPosition(1, 2.5)
+
+    cy.betaEnterCommentAtPosition(1, 'Dropoff comments')
 
     cy.get('button[type="submit"]').click()
 

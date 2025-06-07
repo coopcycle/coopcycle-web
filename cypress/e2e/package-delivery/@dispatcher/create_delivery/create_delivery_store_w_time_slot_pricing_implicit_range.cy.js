@@ -38,7 +38,6 @@ context('Delivery (role: admin); store with time slot pricing', () => {
       'Office',
       '+33112121212',
       'John Doe',
-      'Pickup comments',
     )
 
     //Set pickup time range to 12:00 - 14:00 manually
@@ -47,6 +46,8 @@ context('Delivery (role: admin); store with time slot pricing', () => {
       cy.antdSelect('.ant-select[data-testid="select-after"]', '12:00')
       cy.antdSelect('.ant-select[data-testid="select-before"]', '14:00')
     })
+
+    cy.betaEnterCommentAtPosition(0, 'Pickup comments')
 
     // Dropoff
 
@@ -57,11 +58,11 @@ context('Delivery (role: admin); store with time slot pricing', () => {
       'Office',
       '+33112121212',
       'Jane smith',
-      'Dropoff comments',
     )
 
-    cy.get(`[name="tasks[1].weight"]`).clear()
-    cy.get(`[name="tasks[1].weight"]`).type(2.5)
+    cy.betaEnterWeightAtPosition(1, 2.5)
+
+    cy.betaEnterCommentAtPosition(1, 'Dropoff comments')
 
     cy.get('[data-testid="tax-included"]').contains('6,99 €')
 

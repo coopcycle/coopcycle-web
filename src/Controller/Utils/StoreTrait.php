@@ -444,7 +444,56 @@ trait StoreTrait
         return $pricingManager->duplicateOrder($store, $fromOrder);
     }
 
-    public function recurrenceRuleAction($storeId,
+    public function recurrenceRuleReactFormAction(
+        $recurrenceRuleId,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        DeliveryManager $deliveryManager,
+        DeliveryMapper $deliveryMapper,
+    ) {
+        $recurrenceRule = $entityManager
+            ->getRepository(RecurrenceRule::class)
+            ->find($recurrenceRuleId);
+
+        $store = $recurrenceRule->getStore();
+
+        // Currently the route is only accessible by ROLE_DISPATCHER,
+        // so this check is not doing much, but it would be useful
+        // if we decide to open the route to store owners
+        $this->denyAccessUnlessGranted('view', $store);
+
+        // The date is not relevant while viewing/editing the recurrence rules (only the time is),
+        // but as we have to provide it, we set it to tomorrow
+        // to make sure that tasks' after/before dates are in the future
+        $startDate = Carbon::now()->addDay()->format('Y-m-d');
+        $tempDelivery = $deliveryManager->createDeliveryFromRecurrenceRule($recurrenceRule, $startDate, false);
+
+        $arbitraryPrice = null;
+        if ($arbitraryPriceTemplate = $recurrenceRule->getArbitraryPriceTemplate()) {
+            $arbitraryPrice = new ArbitraryPrice($arbitraryPriceTemplate['variantName'], $arbitraryPriceTemplate['variantPrice']);
+        }
+
+        $deliveryData = $deliveryMapper->map(
+            $tempDelivery,
+            null,
+            $arbitraryPrice,
+            false
+        );
+
+        return $this->render('store/recurrence_rules/form.html.twig', $this->auth([
+            'layout' => $request->attributes->get('layout'),
+            'store' => $store,
+            'recurrenceRule' => $recurrenceRule,
+            'order' => null,
+            'delivery' => $tempDelivery,
+            'deliveryData' => $deliveryData,
+            'isDispatcher' => $this->isGranted('ROLE_DISPATCHER'),
+            'debug_pricing' => $request->query->getBoolean('debug', false),
+        ]));
+    }
+
+    public function recurrenceRuleAction(
+        $storeId,
         $recurrenceRuleId,
         Request $request,
         DeliveryManager $deliveryManager,
@@ -502,11 +551,10 @@ trait StoreTrait
                 $pricingManager->cancelRecurrenceRule($recurrenceRule, $tempDelivery);
             }
 
-            $redirectUri = $form->has('__redirect_to') ? $form->get('__redirect_to')->getData() : null;
-            return $redirectUri ? $this->redirect($redirectUri) : $this->redirectToRoute($routes['redirect_default'], ['id' => $storeId]);
+            return $this->redirectToRoute($routes['redirect_default'], ['id' => $storeId]);
         }
 
-        return $this->render('store/subscriptions/item.html.twig', [
+        return $this->render('store/recurrence_rules/item_legacy.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'recurrenceRule' => $recurrenceRule,
             'delivery' => $tempDelivery,

@@ -73,6 +73,14 @@ export const onSuggestionsFetchRequested = function({ value }) {
 
       this._autocompleteCallback(predictionsAsSuggestions, value)
     })
+    .catch((error) => {
+      if (error.response && error.response.status === 429) {
+        // ignore rate limit errors (mostly for e2e tests)
+        console.warn('rate limit exceeded for LocationIQ API')
+      } else {
+        throw error
+      }
+    })
 }
 
 export function poweredBy() {

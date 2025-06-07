@@ -11,6 +11,7 @@ export default ({ rrule, onClick }) => {
 
   return (
     <span
+      data-testid="recurrence-rule"
       className="list-group-item text-info cursor-pointer"
       onClick={onClick}>
       <i className="fa fa-clock-o mr-2"></i>

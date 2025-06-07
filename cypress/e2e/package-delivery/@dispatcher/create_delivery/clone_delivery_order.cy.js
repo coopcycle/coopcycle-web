@@ -33,7 +33,7 @@ context('Delivery (role: admin)', () => {
     // Pickup
     cy.betaChooseSavedAddressAtPosition(0, 1)
 
-    cy.get(`[name="tasks[0].comments"]`).type('Pickup comments')
+    cy.betaEnterCommentAtPosition(0, 'Pickup comments')
 
     cy.get(`[data-testid="form-task-0"]`).within(() => {
       cy.get(`[data-testid=tags-select]`).click()
@@ -48,9 +48,9 @@ context('Delivery (role: admin)', () => {
         '[data-testid="/api/packages/1"] > .packages-item__quantity > :nth-child(3)',
       ).click()
     })
-    cy.get(`[name="tasks[1].weight"]`).type(2.5)
 
-    cy.get(`[name="tasks[1].comments"]`).type('Dropoff comments')
+    cy.betaEnterWeightAtPosition(1, 2.5)
+    cy.betaEnterCommentAtPosition(1, 'Dropoff comments')
 
     cy.get(`[data-testid="form-task-1"]`).within(() => {
       cy.get(`[data-testid=tags-select]`).click()

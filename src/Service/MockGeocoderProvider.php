@@ -13,9 +13,16 @@ use Geocoder\Model\Country;
 use Geocoder\Model\AddressCollection;
 use Geocoder\Query\GeocodeQuery;
 use Geocoder\Query\ReverseQuery;
+use Psr\Log\LoggerInterface;
 
 class MockGeocoderProvider implements GeocoderInterface
 {
+
+    public function __construct(
+        private readonly LoggerInterface $logger,
+    )
+    {
+    }
 
     public function geocode(string $value): Collection
     {
@@ -30,11 +37,11 @@ class MockGeocoderProvider implements GeocoderInterface
                 new AdminLevelCollection([
                     new AdminLevel(1, 'Île-de-France', 'IDF')
                 ]),
-                new Coordinates(48.8566, 2.3522),
+                new Coordinates(48.8699159, 2.3321065),
                 new Bounds(48.815573, 2.224199, 48.902144, 2.469920),
                 '24',
                 'Rue de la Paix',
-                '75001',
+                '75002',
                 'Paris',
                 null,
                 new Country('France', 'FR'),
@@ -48,11 +55,11 @@ class MockGeocoderProvider implements GeocoderInterface
                 new AdminLevelCollection([
                     new AdminLevel(1, 'Île-de-France', 'IDF')
                 ]),
-                new Coordinates(48.8566, 2.3522),
+                new Coordinates(48.8567828, 2.3550686),
                 new Bounds(48.815573, 2.224199, 48.902144, 2.469920),
                 '44',
                 'Rue de Rivoli',
-                '75001',
+                '75004',
                 'Paris',
                 null,
                 new Country('France', 'FR'),
@@ -97,6 +104,7 @@ class MockGeocoderProvider implements GeocoderInterface
 
             return new AddressCollection([$address]);
         }  {
+            $this->logger->warning('MockGeocoderProvider:geocode No mock found for the given value: ' . $value);
             return new AddressCollection([]);
         }
     }

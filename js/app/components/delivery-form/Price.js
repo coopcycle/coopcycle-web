@@ -12,6 +12,9 @@ import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikConte
 import _ from 'lodash'
 import OverridePriceForm from './OverridePriceForm'
 import { useCalculatePriceMutation, useGetTaxRatesQuery } from '../../api/slice'
+import { Mode, modeIn } from './mode'
+import { useSelector } from 'react-redux'
+import { selectMode } from './redux/formSlice'
 
 export default ({
   storeNodeId,
@@ -20,11 +23,11 @@ export default ({
   isDispatcher,
   setPriceLoading,
 }) => {
-  const { values, isCreateOrderMode, isModifyOrderMode, setFieldValue } =
-    useDeliveryFormFormikContext()
+  const mode = useSelector(selectMode)
+  const { values, setFieldValue } = useDeliveryFormFormikContext()
 
   const [overridePrice, setOverridePrice] = useState(() => {
-    if (isCreateOrderMode) {
+    if (modeIn(mode, [Mode.DELIVERY_CREATE, Mode.RECURRENCE_RULE_UPDATE])) {
       // when cloning an order that has an arbitrary price
       if (
         values.variantIncVATPrice !== undefined &&
@@ -41,10 +44,10 @@ export default ({
 
   // aka "old price"
   const currentPrice = useMemo(() => {
-    if (isModifyOrderMode && order) {
+    if (mode === Mode.DELIVERY_UPDATE && order) {
       return { exVAT: +order.total - +order.taxTotal, VAT: +order.total }
     }
-  }, [order, isModifyOrderMode])
+  }, [order, mode])
 
   const [newPrice, setNewPrice] = useState(0)
 
@@ -137,7 +140,7 @@ export default ({
   }, [calculatePriceData, calculatePriceError])
 
   useEffect(() => {
-    if (isModifyOrderMode) {
+    if (mode === Mode.DELIVERY_UPDATE) {
       return
     }
 
@@ -168,7 +171,7 @@ export default ({
 
     calculatePriceDebounced(infos)
   }, [
-    isModifyOrderMode,
+    mode,
     overridePrice,
     values,
     convertValuesToPayload,
@@ -188,7 +191,7 @@ export default ({
 
   return (
     <div className="pl-2">
-      {isModifyOrderMode ? (
+      {(mode === Mode.DELIVERY_UPDATE) ? (
         <>
           <div className="font-weight-bold mb-1 total__price">
             {overridePrice

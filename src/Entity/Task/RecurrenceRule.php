@@ -78,6 +78,7 @@ class RecurrenceRule implements SoftDeleteableInterface
     #[AssertRecurrenceRuleTemplate]
     private $template = [];
 
+    #[Groups(['task_recurrence_rule'])]
     private ?array $arbitraryPriceTemplate = null;
 
     /**

@@ -29,6 +29,10 @@ context('Managing recurrence rules (role: admin)', () => {
 
     cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
+    cy.get('[name="delivery.override_price"]').check()
+    cy.get('[name="variantName"]').type('Test product')
+    cy.get('#variantPriceVAT').type('72')
+
     cy.get('[data-testid="recurrence-add"]').click()
     cy.chooseDaysOfTheWeek([5, 6])
     cy.get('[data-testid=save]').click()
@@ -36,20 +40,21 @@ context('Managing recurrence rules (role: admin)', () => {
     cy.get('button[type="submit"]').click()
   })
 
-  it('modify recurrence rule', function () {
+  it('modify arbitrary price in recurrence rule', function () {
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
     cy.get('a[href*="recurrence-rules"]').click()
 
     // Recurrence rule page
     cy.urlmatch(/\/admin\/stores\/[0-9]+\/recurrence-rules\/[0-9]+$/)
-    cy.get('[data-testid="recurrence-container"]').contains(
-      'chaque semaine le vendredi, samedi',
-    )
+    cy.get('[name="delivery.override_price"]').should('be.checked')
+    cy.get('[name="variantName"]').should('have.value', 'Test product')
+    cy.get('#variantPriceVAT').should('have.value', '72')
 
-    cy.get('[data-testid="recurrence-rule"]').click()
-    cy.chooseDaysOfTheWeek([1])
-    cy.get('[data-testid=save]').click()
+    cy.get('[name="variantName"]').clear()
+    cy.get('[name="variantName"]').type('New product')
+    cy.get('#variantPriceVAT').clear()
+    cy.get('#variantPriceVAT').type('34')
 
     cy.get('button[type="submit"]').click()
 
@@ -61,8 +66,7 @@ context('Managing recurrence rules (role: admin)', () => {
 
     // Recurrence rule page
     cy.urlmatch(/\/admin\/stores\/[0-9]+\/recurrence-rules\/[0-9]+$/)
-    cy.get('[data-testid="recurrence-container"]').contains(
-      'chaque semaine le lundi',
-    )
+    cy.get('[name="variantName"]').should('have.value', 'New product')
+    cy.get('#variantPriceVAT').should('have.value', '34')
   })
 })

@@ -34,6 +34,7 @@ function Content() {
   if (!recurrenceRule) {
     return (
       <a
+        data-testid="recurrence-add"
         href="#"
         className="mr-3"
         onClick={e => {

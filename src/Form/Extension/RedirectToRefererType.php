@@ -10,6 +10,28 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * To be used in a form to redirect to the referer after submission.
+ *
+ * Usage example:
+ *
+ * 1. Enable the feature in your form type:
+ *
+ * public function configureOptions(OptionsResolver $resolver)
+ * {
+ * $resolver->setDefaults(array(
+ * ...
+ * 'redirect_to_enabled' => true,
+ * ...
+ * ));
+ * }
+ *
+ * 2. Redirect to the referer after form submission:
+ *
+ * $redirectUri = $form->has('__redirect_to') ? $form->get('__redirect_to')->getData() : null;
+ * return $redirectUri ? $this->redirect($redirectUri) : [fallback redirect url];
+ *
+ */
 class RedirectToRefererType extends AbstractTypeExtension
 {
     public function __construct(
