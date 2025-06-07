@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .summary {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .summary-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            min-width: 120px;
+        }
+
+        .summary-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1a73e8;
+        }
+
+        .summary-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #555;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-todo {
+            color: #666;
+            background: #f1f3f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.85em;
+        }
+
+        .status-done {
+            color: #137333;
+            background: #e6f4ea;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.85em;
+        }
+
+        .delivery-link {
+            color: #1a73e8;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .delivery-link:hover {
+            text-decoration: underline;
+        }
+
+        .pods {
+            font-size: 0.85em;
+            color: #666;
+            max-width: 200px;
+        }
+
+        .pod-image {
+            max-width: 80px;
+            max-height: 50px;
+            margin: 2px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pod-image:hover {
+            border-color: #1a73e8;
+            transform: scale(1.05);
+        }
+
+        .incidents-count {
+            color: #d93025;
+            background: #fce8e6;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .incidents-none {
+            color: #137333;
+            background: #e6f4ea;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.85em;
+        }
+
+        .filter-bar {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .filter-bar select, .filter-bar input {
+            margin: 0 10px 10px 0;
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Delivery Report</h1>
+
+        <div class="summary">
+            <div class="summary-card">
+                <div class="summary-number">{{ deliveries|length }}</div>
+                <div class="summary-label">Total Deliveries</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-number">{{ deliveries|filter(d => d.status == 'DONE')|length }}</div>
+                <div class="summary-label">Completed</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-number">{{ deliveries|filter(d => d.status == 'TODO')|length }}</div>
+                <div class="summary-label">Pending</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-number">{{ deliveries|map(d => d.incidents)|reduce((carry, incidents) => carry + incidents, 0) }}</div>
+                <div class="summary-label">Total Incidents</div>
+            </div>
+        </div>
+
+        <div class="filter-bar">
+            <label>
+                Status:
+                <select id="statusFilter">
+                    <option value="">All</option>
+                    <option value="TODO">TODO</option>
+                    <option value="DONE">DONE</option>
+                </select>
+            </label>
+            <label>
+                Incidents:
+                <select id="incidentFilter">
+                    <option value="">All</option>
+                    <option value="0">No incidents</option>
+                    <option value=">0">With incidents</option>
+                </select>
+            </label>
+            <label>
+                Search:
+                <input type="text" id="searchFilter" placeholder="Search recipient...">
+            </label>
+        </div>
+
+        <table id="deliveryTable">
+            <thead>
+                <tr>
+                    <th>Delivery</th>
+                    <th>Order #</th>
+                    <th>Recipient</th>
+                    <th>Status</th>
+                    <th>Comment</th>
+                    <th>Pods</th>
+                    <th>Incidents</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for delivery in deliveries %}
+                <tr data-status="{{ delivery.status }}" data-incidents="{{ delivery.incidents }}" data-recipient="{{ delivery.recipient|lower }}">
+                    <td>
+                        <a href="{{ delivery.delivery_url }}" class="delivery-link">
+                            {{ delivery.delivery_id }}
+                        </a>
+                    </td>
+                    <td>{{ delivery.order_number }}</td>
+                    <td>{{ delivery.recipient }}</td>
+                    <td>
+                        <span class="status-{{ delivery.status|lower }}">
+                            {{ delivery.status }}
+                        </span>
+                    </td>
+                    <td>{{ delivery.comment }}</td>
+                    <td class="pods">
+                        {% for pod in delivery.pod_paths %}
+                            <img src=".{{ pod }}" alt="POD Image" class="pod-image" onclick="window.open(this.src, '_blank')" title="{{ pod|split('/')|last }}">
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% if delivery.incidents > 0 %}
+                            <span class="incidents-count">{{ delivery.incidents }}</span>
+                        {% else %}
+                            <span class="incidents-none">0</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Simple filtering functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusFilter = document.getElementById('statusFilter');
+            const incidentFilter = document.getElementById('incidentFilter');
+            const searchFilter = document.getElementById('searchFilter');
+            const table = document.getElementById('deliveryTable');
+            const rows = table.querySelectorAll('tbody tr');
+
+            function filterTable() {
+                const statusValue = statusFilter.value;
+                const incidentValue = incidentFilter.value;
+                const searchValue = searchFilter.value.toLowerCase();
+
+                rows.forEach(row => {
+                    let show = true;
+
+                    // Status filter
+                    if (statusValue && row.dataset.status !== statusValue) {
+                        show = false;
+                    }
+
+                    // Incident filter
+                    if (incidentValue) {
+                        const incidents = parseInt(row.dataset.incidents);
+                        if (incidentValue === '0' && incidents !== 0) show = false;
+                        if (incidentValue === '>0' && incidents === 0) show = false;
+                    }
+
+                    // Search filter
+                    if (searchValue && !row.dataset.recipient.includes(searchValue)) {
+                        show = false;
+                    }
+
+                    row.style.display = show ? '' : 'none';
+                });
+            }
+
+            statusFilter.addEventListener('change', filterTable);
+            incidentFilter.addEventListener('change', filterTable);
+            searchFilter.addEventListener('input', filterTable);
+        });
+    </script>
+</body>
+</html>
