@@ -1,5 +1,6 @@
 import { useCallback, useState } from 'react'
 import {
+  useDeleteRecurrenceRuleMutation,
   usePatchAddressMutation,
   usePostDeliveryMutation,
   usePostStoreAddressMutation,
@@ -124,6 +125,7 @@ export default function useSubmit(
   const [createDelivery] = usePostDeliveryMutation()
   const [modifyDelivery] = usePutDeliveryMutation()
   const [modifyRecurrenceRule] = usePutRecurrenceRuleMutation()
+  const [deleteRecurrenceRule] = useDeleteRecurrenceRuleMutation()
 
   const [createAddress] = usePostStoreAddressMutation()
   const [modifyAddress] = usePatchAddressMutation()
@@ -190,10 +192,14 @@ export default function useSubmit(
           ...convertValuesToDeliveryPayload(storeNodeId, values),
         })
       } else if (mode === Mode.RECURRENCE_RULE_UPDATE) {
-        result = await modifyRecurrenceRule({
-          nodeId: deliveryNodeId,
-          ...convertValuesToRecurrenceRulePayload(values),
-        })
+        if (values.rrule) {
+          result = await modifyRecurrenceRule({
+            nodeId: deliveryNodeId,
+            ...convertValuesToRecurrenceRulePayload(values),
+          })
+        } else {
+          result = await deleteRecurrenceRule(deliveryNodeId)
+        }
       } else {
         console.error('Unknown mode:', mode)
       }
@@ -209,53 +215,51 @@ export default function useSubmit(
       }
 
       // Order creation is successful, now we can proceed with secondary items
-      if (data) {
-        for (const task of values.tasks) {
-          if (task.saveInStoreAddresses) {
-            const { error } = await createAddress({
-              storeNodeId: storeNodeId,
-              ...task.address,
+      for (const task of values.tasks) {
+        if (task.saveInStoreAddresses) {
+          const { error } = await createAddress({
+            storeNodeId: storeNodeId,
+            ...task.address,
+          })
+          if (error) {
+            setError({
+              isError: true,
+              errorMessage: error.data['hydra:description'],
             })
-            if (error) {
-              setError({
-                isError: true,
-                errorMessage: error.data['hydra:description'],
-              })
-              return
-            }
-          }
-          if (task.updateInStoreAddresses) {
-            const { error } = await modifyAddress({
-              nodeId: task.address['@id'],
-              ...task.address,
-            })
-            if (error) {
-              setError({
-                isError: true,
-                errorMessage: error.data['hydra:description'],
-              })
-              return
-            }
+            return
           }
         }
+        if (task.updateInStoreAddresses) {
+          const { error } = await modifyAddress({
+            nodeId: task.address['@id'],
+            ...task.address,
+          })
+          if (error) {
+            setError({
+              isError: true,
+              errorMessage: error.data['hydra:description'],
+            })
+            return
+          }
+        }
+      }
 
+      if (modeIn(mode, [Mode.DELIVERY_CREATE, Mode.DELIVERY_UPDATE])) {
         const deliveryId = data.id
         const orderId = data.order?.id
 
-        if (modeIn(mode, [Mode.DELIVERY_CREATE, Mode.DELIVERY_UPDATE])) {
-          if (isDispatcher) {
-            if (orderId) {
-              window.location = `/admin/orders/${orderId}`
-            } else {
-              window.location = `/admin/deliveries/${deliveryId}`
-            }
+        if (isDispatcher) {
+          if (orderId) {
+            window.location = `/admin/orders/${orderId}`
           } else {
-            window.location = `/dashboard/deliveries/${deliveryId}`
+            window.location = `/admin/deliveries/${deliveryId}`
           }
-        } else if (mode === Mode.RECURRENCE_RULE_UPDATE) {
-          const storeId = storeNodeId.split('/').pop()
-          window.location = `/admin/stores/${storeId}/recurrence-rules`
+        } else {
+          window.location = `/dashboard/deliveries/${deliveryId}`
         }
+      } else if (mode === Mode.RECURRENCE_RULE_UPDATE) {
+        const storeId = storeNodeId.split('/').pop()
+        window.location = `/admin/stores/${storeId}/recurrence-rules`
       }
     },
     [
@@ -266,6 +270,7 @@ export default function useSubmit(
       createDelivery,
       modifyDelivery,
       modifyRecurrenceRule,
+      deleteRecurrenceRule,
       createAddress,
       modifyAddress,
       checkSuggestionsOnSubmit,

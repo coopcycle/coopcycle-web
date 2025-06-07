@@ -142,6 +142,12 @@ export const apiSlice = createApi({
         }
       },
     }),
+    deleteRecurrenceRule: builder.mutation({
+      query: nodeId => ({
+        url: nodeId,
+        method: 'DELETE',
+      }),
+    }),
     recurrenceRulesGenerateOrders: builder.mutation({
       query: date => ({
         url: 'api/recurrence_rules/generate_orders',
@@ -197,6 +203,7 @@ export const {
   usePostDeliveryMutation,
   usePutDeliveryMutation,
   usePutRecurrenceRuleMutation,
+  useDeleteRecurrenceRuleMutation,
   useRecurrenceRulesGenerateOrdersMutation,
   useLazyGetInvoiceLineItemsGroupedByOrganizationQuery,
   useGetInvoiceLineItemsQuery,
