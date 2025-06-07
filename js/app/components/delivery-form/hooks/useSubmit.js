@@ -68,14 +68,21 @@ function convertValuesToRecurrenceRulePayload(values) {
     template: {
       '@type': 'hydra:Collection',
       'hydra:member': structuredClone(values.tasks).map(task => {
+        const address = {
+          streetAddress: task.address.streetAddress,
+          name: task.address.name,
+          telephone: task.address.telephone,
+          contactName: task.address.contactName,
+        }
+
+        // Preserve the '@id' if it exists
+        if ('@id' in task.address) {
+          address['@id'] = task.address['@id']
+        }
+
         return {
           type: task.type,
-          address: {
-            streetAddress: task.address.streetAddress,
-            name: task.address.name,
-            telephone: task.address.telephone,
-            contactName: task.address.contactName,
-          },
+          address: address,
           after: convertDateInRecurrenceRulePayload(task.after),
           before: convertDateInRecurrenceRulePayload(task.before),
           //FIXME; figure out how to correctly update pickup packages when dropoff tasks are modified
@@ -172,7 +179,9 @@ export default function useSubmit(
 
       let result
       if (mode === Mode.DELIVERY_CREATE) {
-        result = await createDelivery(convertValuesToDeliveryPayload(storeNodeId, values))
+        result = await createDelivery(
+          convertValuesToDeliveryPayload(storeNodeId, values),
+        )
       } else if (mode === Mode.DELIVERY_UPDATE) {
         result = await modifyDelivery({
           nodeId: deliveryNodeId,
