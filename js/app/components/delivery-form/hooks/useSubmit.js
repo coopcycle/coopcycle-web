@@ -15,6 +15,7 @@ import {
 } from '../redux/suggestionsSlice'
 import { Mode, modeIn } from '../mode'
 import { selectMode } from '../redux/formSlice'
+import { useDatadog } from '../../../hooks/useDatadog'
 
 function serializeAddress(address) {
   if (Object.prototype.hasOwnProperty.call(address, '@id')) {
@@ -132,6 +133,8 @@ export default function useSubmit(
 
   const dispatch = useDispatch()
 
+  const { logger } = useDatadog()
+
   const checkSuggestionsOnSubmit = useCallback(
     async values => {
       // no point in checking suggestions for only one pickup and one dropoff task
@@ -201,7 +204,7 @@ export default function useSubmit(
           result = await deleteRecurrenceRule(deliveryNodeId)
         }
       } else {
-        console.error('Unknown mode:', mode)
+        logger.error('Unknown mode:', mode)
       }
 
       const { data, error } = result
@@ -274,6 +277,7 @@ export default function useSubmit(
       createAddress,
       modifyAddress,
       checkSuggestionsOnSubmit,
+      logger,
     ],
   )
 
