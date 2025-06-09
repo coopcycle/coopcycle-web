@@ -19,7 +19,7 @@ module.exports = defineConfig({
 
   retries: {
     // Configure retry attempts for `cypress run`
-    runMode: 9,
+    runMode: 4,
     // Configure retry attempts for `cypress open`
     openMode: 0
   },
