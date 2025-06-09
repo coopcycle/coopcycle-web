@@ -13,6 +13,7 @@ import TimeRange from '../../utils/TimeRange'
 import RecurrenceRuleAsText from './RecurrenceRuleAsText'
 import { closeRecurrenceModal } from './redux/recurrenceSlice'
 import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
+import HelpIcon from '../HelpIcon'
 
 const { Panel } = Collapse
 
@@ -166,20 +167,26 @@ export default function ModalContent() {
 
             <Collapse defaultActiveKey={isOverrideRule ? ['1'] : []}>
               <Panel header={t('RECURRENCE_ADVANCED')} key="1">
-                <Checkbox
-                  checked={isOverrideRule}
-                  onChange={e => {
-                    const isChecked = e.target.checked
+                <div>
+                  <Checkbox
+                    checked={isOverrideRule}
+                    onChange={e => {
+                      const isChecked = e.target.checked
 
-                    // Reset rule to default to prevent errors from invalid manual input
-                    if (!isChecked) {
-                      setFieldValue('rule', defaultRecurrenceRule)
-                    }
+                      // Reset rule to default to prevent errors from invalid manual input
+                      if (!isChecked) {
+                        setFieldValue('rule', defaultRecurrenceRule)
+                      }
 
-                    setIsOverrideRule(isChecked)
-                  }}>
-                  {t('RECURRENCE_OVERRIDE_RULE')}
-                </Checkbox>
+                      setIsOverrideRule(isChecked)
+                    }}>
+                    {t('RECURRENCE_OVERRIDE_RULE')}
+                  </Checkbox>
+                  <HelpIcon
+                    className="ml-1"
+                    docsPath="/en/package-delivery/local_commerce/recurrence-rules/"
+                  />
+                </div>
                 <Input
                   disabled={!isOverrideRule}
                   className="mt-2"
