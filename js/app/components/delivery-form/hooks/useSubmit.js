@@ -86,10 +86,10 @@ function convertValuesToRecurrenceRulePayload(values) {
           address: address,
           after: convertDateInRecurrenceRulePayload(task.after),
           before: convertDateInRecurrenceRulePayload(task.before),
-          //FIXME; figure out how to correctly update pickup packages when dropoff tasks are modified
-          //TODO: check is it handled by TaskNormalizer?
-          packages: task.packages,
-          weight: task.weight,
+          //FIXME; might need to be adjusted when multiple pickups are introduced
+          //FIXME: move to the backend; for Delivery entity the same logic is already on the backend side: https://github.com/coopcycle/coopcycle-web/blob/master/src/Api/State/DeliveryProcessor.php#L302-L307
+          packages: task.type === 'DROPOFF' ? task.packages : [],
+          weight: task.type === 'DROPOFF' ? task.weight : [],
           comments: task.comments,
           tags: task.tags,
         }
