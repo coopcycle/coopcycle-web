@@ -167,7 +167,7 @@ export default function({
     }
 
     if (mode === Mode.DELIVERY_UPDATE) {
-      if (preLoadedDeliveryData.order.id) {
+      if (preLoadedDeliveryData.order?.id) {
         return preLoadedDeliveryData.order
       } else {
         // A case where the delivery is not linked to an order
