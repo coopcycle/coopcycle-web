@@ -148,6 +148,14 @@ AppBundle\Entity\Sylius\Order:
       #      FIXME: that does not set an order number on each task (normally it's handled by OrderSubscriber)
       - setNumber: [ "ORDER <current()>" ]
       - setState: [ 'new' ]
+      - setShippingTimeRange: [ '@range_1' ]
+
+AppBundle\DataType\TsRange:
+  range_1:
+    __factory:
+      create:
+        - <identity(new \DateTime('today 10:00:00'))>
+        - <identity(new \DateTime('today 20:00:00'))>
 
 ### All the following fixtures are duplicated from other files,
 ### but since the fixtures are A REAL MESS/PAIN... I have no choice.
