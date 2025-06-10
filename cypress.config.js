@@ -1,7 +1,7 @@
 // override: false means that we won't override env vars from the command line
 require('dotenv').config({override: false})
 const { defineConfig } = require('cypress')
-const webpackConfig = require('./webpack.config')
+const webpackConfig = require('./webpack.cypress.js')
 const env = process.env
 
 module.exports = defineConfig({
