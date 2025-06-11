@@ -5,6 +5,7 @@ namespace Tests\Behat;
 use ACSEO\TypesenseBundle\Manager\CollectionManager;
 use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\DataType\TsRange;
+use AppBundle\Doctrine\EventSubscriber\MockDateSubscriber;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\ClosingRule;
@@ -104,6 +105,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         protected KernelInterface $kernel,
         protected UserManager $userManager,
         protected CollectionManager $typesenseCollectionManager,
+        protected MockDateSubscriber $mockDateSubscriber,
         protected LoggerInterface $logger,
     )
     {
@@ -297,6 +299,12 @@ class FeatureContext implements Context, SnippetAcceptingContext
         Carbon::setTestNow(Carbon::parse($datetime));
 
         $this->redis->set('datetime:now', Carbon::now()->toAtomString());
+
+        // Mock createdAt and updatedAt fields in the database
+        $em = $this->doctrine->getManager();
+        $em->getEventManager()->addEventSubscriber(
+            $this->mockDateSubscriber
+        );
     }
 
     /**
