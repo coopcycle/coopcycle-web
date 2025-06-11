@@ -10,7 +10,6 @@ use AppBundle\Entity\Incident\IncidentImage;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskEvent;
 use AppBundle\Entity\TaskImage;
-use Doctrine\ORM\EntityManagerInterface;
 use League\Csv\Writer;
 use League\Flysystem\Filesystem;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -35,8 +34,7 @@ class PODExport extends Base
         private readonly Filesystem $incidentImagesFilesystem,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly Environment $twig,
-        private readonly DeliveryRepository $deliveryRepository,
-        EntityManagerInterface $entityManager
+        private readonly DeliveryRepository $deliveryRepository
     ) { }
 
     public function __invoke(Request $request): Response
