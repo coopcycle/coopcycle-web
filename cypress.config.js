@@ -13,8 +13,6 @@ module.exports = defineConfig({
     coverage: false
   },
 
-  viewportWidth: 1600,
-
   defaultCommandTimeout: 10000,
 
   retries: {
@@ -25,6 +23,8 @@ module.exports = defineConfig({
   },
 
   e2e: {
+    viewportWidth: 1920,
+    viewportHeight: 1080,
     baseUrl: "http://localhost:9080",
     experimentalStudio: true,
     experimentalMemoryManagement: true,
@@ -32,6 +32,8 @@ module.exports = defineConfig({
   },
 
   component: {
+    viewportWidth: 1000,
+    viewportHeight: 1000,
     devServer: {
       framework: 'react',
       bundler: 'webpack',
