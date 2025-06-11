@@ -36,7 +36,7 @@ context('Managing recurrence rules (role: admin)', () => {
     cy.get('button[type="submit"]').click()
   })
 
-  it('modify recurrence rule', function () {
+  it('modify standard recurrence rule', function () {
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
     cy.get('a[href*="recurrence-rules"]').click()
