@@ -9,3 +9,13 @@ AppBundle\Entity\User:
         - false
     roles: [ 'ROLE_COURIER' ]
     telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+  zak:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - 'zak'
+        - '12345678'
+        - 'zak@demo.coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_COURIER' ]
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>

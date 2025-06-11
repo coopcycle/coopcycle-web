@@ -211,7 +211,9 @@ class AdminController extends AbstractController
         protected JWTTokenManagerInterface $JWTTokenManager,
         protected TimeSlotManager $timeSlotManager,
         protected NormalizerInterface $normalizer,
-        protected SerializerInterface $serializer)
+        protected SerializerInterface $serializer,
+        protected string $environment,
+    )
     {}
 
     #[Route(path: '/admin', name: 'admin_index')]
@@ -776,14 +778,13 @@ class AdminController extends AbstractController
         MessageBusInterface $messageBus,
         CentrifugoClient $centrifugoClient,
         SlugifyInterface $slugify,
-        string $environment,
         LoggerInterface $logger,
     )
     {
         $deliveryImportForm = $this->createForm(DeliveryImportType::class, null, [
             'with_store' => true,
             #FIXME; normally cypress e2e tests run with CSRF protection enabled, but once in a while CSRF tokens are not saved in the session (removed?) for this form
-            'csrf_protection' => 'test' !== $environment
+            'csrf_protection' => 'test' !== $this->environment
         ]);
 
         $deliveryImportForm->handleRequest($request);
@@ -1109,7 +1110,10 @@ class AdminController extends AbstractController
             }
         }
 
-        $form = $this->createForm(PricingRuleSetType::class, $ruleSet);
+        $form = $this->createForm(PricingRuleSetType::class, $ruleSet, [
+            #FIXME; normally cypress e2e tests run with CSRF protection enabled, but once in a while CSRF tokens are not saved in the session (removed?) for this form
+            'csrf_protection' => 'test' !== $this->environment
+        ]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
