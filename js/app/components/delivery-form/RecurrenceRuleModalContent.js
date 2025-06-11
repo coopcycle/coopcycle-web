@@ -169,6 +169,7 @@ export default function ModalContent() {
               <Panel header={t('RECURRENCE_ADVANCED')} key="1">
                 <div>
                   <Checkbox
+                    data-testid="recurrence-override-rule-checkbox"
                     checked={isOverrideRule}
                     onChange={e => {
                       const isChecked = e.target.checked
@@ -188,6 +189,7 @@ export default function ModalContent() {
                   />
                 </div>
                 <Input
+                  data-testid="recurrence-override-rule-input"
                   disabled={!isOverrideRule}
                   className="mt-2"
                   type="text"
