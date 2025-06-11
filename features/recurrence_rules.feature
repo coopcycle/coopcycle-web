@@ -472,6 +472,7 @@ Feature: Task recurrence rules
       """
 
   Scenario: Generate orders based on the recurrence rules with an implicit timeSlot
+    Given the current time is "2025-04-14 9:00:00"
     Given the fixtures files are loaded:
       | sylius_products.yml  |
       | sylius_taxation.yml  |
@@ -480,7 +481,6 @@ Feature: Task recurrence rules
       | recurrence_rules_w_time_slot_pricing.yml |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
-    Given the current time is "2025-04-14 9:00:00"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-04-14"
@@ -510,6 +510,7 @@ Feature: Task recurrence rules
     Then the database should contain an order with a total price 699
 
   Scenario: Generate orders based on the recurrence rules with a range not belonging to a timeSlot
+    Given the current time is "2025-04-21 11:00:00"
     Given the fixtures files are loaded:
       | sylius_products.yml  |
       | sylius_taxation.yml  |
@@ -518,7 +519,6 @@ Feature: Task recurrence rules
       | recurrence_rules_w_distance_pricing.yml |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
-    Given the current time is "2025-04-21 11:00:00"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-04-21"
