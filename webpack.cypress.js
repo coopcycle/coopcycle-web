@@ -1,6 +1,6 @@
 // Webpack configuration used mainly in Cypress Component Testing
 
-let Encore = require('@symfony/webpack-encore')
+const Encore = require('@symfony/webpack-encore')
 require('./webpack.config.js')
 
 Encore

@@ -1,7 +1,8 @@
 // override: false means that we won't override env vars from the command line
-require('dotenv').config({override: false})
+require('dotenv').config({ override: false })
 const { defineConfig } = require('cypress')
 const webpackConfig = require('./webpack.cypress.js')
+
 const env = process.env
 
 module.exports = defineConfig({
@@ -9,8 +10,8 @@ module.exports = defineConfig({
 
   env: {
     ...env,
-    COMMAND_PREFIX: "docker compose exec -T php",
-    coverage: false
+    COMMAND_PREFIX: 'docker compose exec -T php',
+    coverage: false,
   },
 
   defaultCommandTimeout: 10000,
@@ -19,16 +20,16 @@ module.exports = defineConfig({
     // Configure retry attempts for `cypress run`
     runMode: 4,
     // Configure retry attempts for `cypress open`
-    openMode: 0
+    openMode: 0,
   },
 
   e2e: {
     viewportWidth: 1920,
     viewportHeight: 1080,
-    baseUrl: "http://localhost:9080",
+    baseUrl: 'http://localhost:9080',
     experimentalStudio: true,
     experimentalMemoryManagement: true,
-    experimentalSourceRewriting: true
+    experimentalSourceRewriting: true,
   },
 
   component: {
@@ -38,7 +39,7 @@ module.exports = defineConfig({
       framework: 'react',
       bundler: 'webpack',
       // optionally pass in webpack config
-      webpackConfig
-    }
-  }
+      webpackConfig,
+    },
+  },
 })
