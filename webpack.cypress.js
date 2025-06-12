@@ -1,5 +1,7 @@
-var Encore = require('@symfony/webpack-encore')
-require("./webpack.config.js")
+// Webpack configuration used mainly in Cypress Component Testing
+
+let Encore = require('@symfony/webpack-encore')
+require('./webpack.config.js')
 
 Encore
 
@@ -7,13 +9,11 @@ Encore
   .setPublicPath('/build-cypress')
 
 // Fixes an issue on macOS: Error: EPERM: operation not permitted, mkdir '/Users/../Library/Caches/Cypress/../Cypress.app/Contents/Resources/app/packages/server/node_modules/@cypress/webpack-dev-server/dist/dist'
-Encore.configureManifestPlugin((options) => {
+Encore.configureManifestPlugin(options => {
   options.writeToFileEmit = false
 })
 
 let webpackConfig = Encore.getWebpackConfig()
-
-module.exports = webpackConfig
 
 //FIXME: re-enable if still needed or remove
 // module.exports = {
@@ -39,3 +39,15 @@ module.exports = webpackConfig
 //   devtool: false,
 //   plugins: webpackConfig.plugins,
 // }
+
+// Babel configuration
+webpackConfig.module.rules[0].use[0].options.plugins = [
+  // https://babeljs.io/docs/en/babel-plugin-transform-modules-commonjs
+  // loose ES6 modules allow us to dynamically mock imports during tests
+  // from
+  // https://github.com/cypress-io/cypress/tree/master/npm/react/cypress/component/advanced/mocking-imports
+  // https://github.com/cypress-io/cypress/discussions/16741#discussioncomment-7212638
+  ['@babel/plugin-transform-modules-commonjs', { loose: true }],
+]
+
+module.exports = webpackConfig
