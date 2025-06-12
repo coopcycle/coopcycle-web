@@ -6,16 +6,15 @@ use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Exception\InvalidArgumentException;
 use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
 use ApiPlatform\Metadata\Resource\Factory\ResourceMetadataCollectionFactoryInterface;
+use AppBundle\Api\Dto\TaskMapper;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Package;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\TagManager;
-use AppBundle\Utils\Barcode\BarcodeUtils;
 use Carbon\CarbonPeriod;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\ContextAwareDenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -28,8 +27,8 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
         private readonly UserManagerInterface $userManager,
         private readonly Geocoder $geocoder,
         private readonly EntityManagerInterface $entityManager,
-        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly ResourceMetadataCollectionFactoryInterface $resourceMetadataFactory,
+        private readonly TaskMapper $taskMapper,
         private readonly LoggerInterface $logger
     )
     {}
@@ -86,19 +85,7 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
             }
         }
 
-        $barcode = BarcodeUtils::getRawBarcodeFromTask($object);
-        $barcode_token = BarcodeUtils::getToken($barcode);
-        $data['barcode'] = [
-            'barcode' => $barcode,
-            'label' => [
-                'token' => $barcode_token,
-                'url' => $this->urlGenerator->generate(
-                    'task_label_pdf',
-                    ['code' => $barcode, 'token' => $barcode_token],
-                    UrlGeneratorInterface::ABSOLUTE_URL
-                )
-            ]
-        ];
+        $data['barcode'] = $this->taskMapper->getBarcode($object);
 
         $data['packages'] = [];
 
@@ -158,17 +145,12 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
         // Add labels
         foreach ($data['packages'] as $i => $p) {
 
-            $data['packages'][$i]['labels'] = [];
-
-            $barcodes = BarcodeUtils::getBarcodesFromTaskAndPackageIds($object->getId(), $p['task_package_id'], $p['quantity']);
-            foreach ($barcodes as $barcode) {
-                $labelUrl = $this->urlGenerator->generate(
-                    'task_label_pdf',
-                    ['code' => $barcode, 'token' => BarcodeUtils::getToken($barcode)],
-                    UrlGeneratorInterface::ABSOLUTE_URL
-                );
-                $data['packages'][$i]['labels'][] = $labelUrl;
-            }
+            $data['packages'][$i]['labels'] = $this->taskMapper->getLabels(
+                $object->getId(),
+                //FIXME: should it be package_id instead of task_package_id?
+                $p['task_package_id'],
+                $p['quantity']
+            );
 
             unset($data['packages'][$i]['id']);
             unset($data['packages'][$i]['task_package_id']);

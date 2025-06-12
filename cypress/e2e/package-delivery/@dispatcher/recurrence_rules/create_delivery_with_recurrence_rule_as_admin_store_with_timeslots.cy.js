@@ -16,47 +16,40 @@ describe('Delivery with recurrence rule (role: admin)', () => {
         .contains('Créer une livraison')
         .click()
 
-      // Pickup
-      cy.chooseSavedPickupAddress(1)
+      // Create delivery page
+      cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries\/new$/)
 
-      cy.get('#delivery_tasks_0_comments').type('Pickup comments')
+      // Pickup
+      cy.betaChooseSavedAddressAtPosition(0, 1)
 
       // Dropoff
-      cy.chooseSavedDropoff1Address(2)
+      cy.betaChooseSavedAddressAtPosition(1, 2)
 
-      cy.get('#delivery_tasks_1_weight').clear()
-      cy.get('#delivery_tasks_1_weight').type(2.5)
+      cy.get(`[name="tasks[1].weight"]`).clear()
+      cy.get(`[name="tasks[1].weight"]`).type(2.5)
 
-      cy.get('#delivery_tasks_1_comments').type('Dropoff comments')
+      cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
-      cy.get('[data-tax="included"]').contains('4,99 €')
-
-      cy.get('#delivery_form__recurrence__container').find('a').click()
+      cy.get('[data-testid="recurrence__container"]').find('a').click()
       cy.chooseDaysOfTheWeek([5, 6])
       cy.get('[data-testid=save]').click()
 
-      cy.get('#delivery-submit').click()
+      cy.get('button[type="submit"]').click()
 
-      // list of deliveries page
-      cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries$/)
-      cy.get('[data-testid=delivery__list_item]', { timeout: 10000 })
+      // Order page
+      cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
+
+      cy.get('[data-testid="order_item"]')
+        .find('[data-testid="total"]')
+        .contains('€4.99')
+
+      cy.get('[data-testid=delivery-itinerary]')
         .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
         .should('exist')
-      cy.get('[data-testid=delivery__list_item]')
+      cy.get('[data-testid=delivery-itinerary]')
         .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
         .should('exist')
 
-      cy.get('[data-testid="delivery__list_item"]')
-        .find('[data-testid="delivery_id"]')
-        .click()
-
-      // Delivery page
-      cy.get('#delivery_form__recurrence__container').should('not.exist')
-      cy.get('[data-testid="breadcrumb"]')
-        .find('[data-testid="order_id"]')
-        .click()
-
-      // Order page
       cy.get('a[href*="recurrence-rules"]').click()
 
       // Recurrence rule page
@@ -65,6 +58,15 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       cy.get('#delivery_form__recurrence__container').contains(
         'chaque semaine le vendredi, samedi',
       )
+
+      cy.go('back')
+
+      cy.get('[data-testid="order-edit"]').click()
+
+      // Edit Delivery page
+      cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
+
+      cy.get('[data-testid="recurrence__container"]').should('not.exist')
     })
   })
 })

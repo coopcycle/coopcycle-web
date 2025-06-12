@@ -3,7 +3,6 @@ import { Button, Checkbox } from 'antd'
 import { Formik, Form, FieldArray } from 'formik'
 import moment from 'moment'
 
-import Map from '../../components/delivery-form/Map.js'
 import Spinner from '../../components/core/Spinner.js'
 import BarcodesModal from '../../../../assets/react/controllers/BarcodesModal.jsx'
 import Task from '../../components/delivery-form/Task.js'
@@ -25,6 +24,8 @@ import { RecurrenceRules } from './RecurrenceRules'
 import useSubmit from './hooks/useSubmit'
 import Price from './Price'
 import SuggestionModal from './SuggestionModal'
+import DeliveryResume from './DeliveryResume'
+import Map from '../DeliveryMap'
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -110,12 +111,10 @@ const pickupSchema = {
 }
 
 export default function({
-  storeId, // prefer using storeNodeId
   storeNodeId,
   deliveryId, // prefer using deliveryNodeId
   deliveryNodeId,
   preLoadedDeliveryData,
-  order,
   isDispatcher,
   isDebugPricing
 }) {
@@ -156,7 +155,32 @@ export default function({
 
   const [priceLoading, setPriceLoading] = useState(false)
 
-  const { handleSubmit, error } = useSubmit(storeId, storeNodeId, deliveryNodeId, isDispatcher, isCreateOrderMode)
+  const order = useMemo(() => {
+    if (isCreateOrderMode) {
+      if (preLoadedDeliveryData && preLoadedDeliveryData.order) {
+        return preLoadedDeliveryData.order
+      }
+
+      return {
+        total: 0,
+        taxTotal: 0,
+        isSavedOrder: false,
+      }
+    }
+
+    if (isModifyOrderMode) {
+      if (preLoadedDeliveryData.order.id) {
+        return preLoadedDeliveryData.order
+      } else {
+        // A case where the delivery is not linked to an order
+        return null
+      }
+    }
+
+    return null
+  }, [preLoadedDeliveryData, isCreateOrderMode, isModifyOrderMode])
+
+  const { handleSubmit, error } = useSubmit(storeNodeId, deliveryNodeId, isDispatcher, isCreateOrderMode)
 
   const { t } = useTranslation()
 
@@ -226,24 +250,26 @@ export default function({
     if (!isDataReady) return
 
     if (preLoadedDeliveryData) {
-      const initialValues = {
-        ...preLoadedDeliveryData,
-        tasks: preLoadedDeliveryData.tasks.map(task => {
-          return {
-            ...task,
-            address: {
-              ...task.address,
-              formattedTelephone: getFormattedValue(task.address.telephone)
-            },
-          }
-        })
-      }
+      const initialValues = structuredClone(preLoadedDeliveryData)
 
-      if (preLoadedDeliveryData.arbitraryPrice) {
-        delete initialValues.arbitraryPrice
+      initialValues.tasks = preLoadedDeliveryData.tasks.map(task => {
+        return {
+          ...task,
+          address: {
+            ...task.address,
+            formattedTelephone: getFormattedValue(task.address.telephone),
+          },
+        }
+      })
 
-        initialValues.variantName = preLoadedDeliveryData.arbitraryPrice.variantName
-        initialValues.variantIncVATPrice = preLoadedDeliveryData.arbitraryPrice.variantPrice
+      if (preLoadedDeliveryData.order?.arbitraryPrice) {
+        // remove a previously copied value (different formats between API and the frontend)
+        delete initialValues.order.arbitraryPrice
+
+        initialValues.variantName =
+          preLoadedDeliveryData.order.arbitraryPrice.variantName
+        initialValues.variantIncVATPrice =
+          preLoadedDeliveryData.order.arbitraryPrice.variantPrice
       }
 
       setInitialValues(initialValues)
@@ -252,21 +278,14 @@ export default function({
     } else {
       if (isCreateOrderMode) {
         setInitialValues({
-          tasks: [
-            { ...pickupSchema },
-            { ...dropoffSchema }
-          ],
+          tasks: [{ ...pickupSchema }, { ...dropoffSchema }],
+          order: {},
         })
       }
     }
 
     setIsLoading(false)
-  }, [
-    isDataReady,
-    preLoadedDeliveryData,
-    isCreateOrderMode,
-    isModifyOrderMode
-  ])
+  }, [isDataReady, preLoadedDeliveryData, isCreateOrderMode, isModifyOrderMode])
 
   return (
     isLoading ?
@@ -431,21 +450,21 @@ export default function({
                     )}
 
                     <div className="order-informations__map">
-                      <Map
-                        storeDeliveryInfos={storeDeliveryInfos}
-                        tasks={values.tasks}
-                      />
+                      <Map defaultAddress={storeDeliveryInfos.address} tasks={values.tasks} />
+                      <DeliveryResume tasks={values.tasks} />
                     </div>
 
-                    <div className="order-informations__total-price border-top py-3">
-                      <Price
-                        storeNodeId={storeNodeId}
-                        order={order}
-                        isDispatcher={isDispatcher}
-                        isDebugPricing={isDebugPricing}
-                        setPriceLoading={setPriceLoading}
-                      />
-                    </div>
+                    {order ? (
+                      <div className="order-informations__total-price border-top py-3">
+                        <Price
+                          storeNodeId={storeNodeId}
+                          order={order}
+                          isDispatcher={isDispatcher}
+                          isDebugPricing={isDebugPricing}
+                          setPriceLoading={setPriceLoading}
+                        />
+                      </div>
+                    ) : null}
 
                     {isCreateOrderMode && isDispatcher ? (
                       <div className="border-top pt-2 pb-3" data-testid="recurrence__container">
@@ -453,15 +472,22 @@ export default function({
                       </div>
                     ) : null}
 
-                    {isDispatcher ? (
-                      <div className="border-top py-3" data-testid="saved_order__container">
+                    {isDispatcher && order ? (
+                      <div
+                        className="border-top py-3"
+                        data-testid="saved_order__container">
                         <Checkbox
                           name="delivery.saved_order"
-                          checked={values.isSavedOrder}
+                          checked={values.order.isSavedOrder}
                           onChange={e => {
                             e.stopPropagation()
-                            setFieldValue('isSavedOrder', e.target.checked)
-                          }}>{t('DELIVERY_FORM_SAVED_ORDER')}</Checkbox>
+                            setFieldValue(
+                              'order.isSavedOrder',
+                              e.target.checked,
+                            )
+                          }}>
+                          {t('DELIVERY_FORM_SAVED_ORDER')}
+                        </Checkbox>
                       </div>
                     ) : null}
 

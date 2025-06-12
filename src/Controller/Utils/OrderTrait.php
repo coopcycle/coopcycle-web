@@ -280,13 +280,13 @@ trait OrderTrait
     {
         $order = $entityManager->getRepository(Order::class)->find($id);
 
-        $this->denyAccessUnlessGranted('edit', $order);
-
         $delivery = $order->getDelivery();
 
         if (null === $delivery) {
             throw $this->createNotFoundException(sprintf('Order #%d does not have a delivery', $id));
         }
+
+        $this->denyAccessUnlessGranted('view', $delivery);
 
         return $this->redirectToRoute('admin_delivery', ['id' => $delivery->getId()]);
     }

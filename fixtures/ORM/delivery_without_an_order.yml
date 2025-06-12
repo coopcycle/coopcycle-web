@@ -1,0 +1,14 @@
+AppBundle\Entity\Delivery:
+  delivery_1:
+    __factory:
+      createWithAddress:
+        - "@warehouse"
+        - "@client_1"
+    __calls:
+      - setPickupRange:
+          - <identity(new \DateTime('today 18:00:00'))>
+          - <identity(new \DateTime('today 18:30:00'))>
+      - setDropoffRange:
+          - <identity(new \DateTime('today 19:00:00'))>
+          - <identity(new \DateTime('today 19:30:00'))>
+    store: "@store_1"

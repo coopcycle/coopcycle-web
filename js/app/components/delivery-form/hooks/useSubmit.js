@@ -24,7 +24,6 @@ function serializeAddress(address) {
 }
 
 export default function useSubmit(
-  storeId,
   storeNodeId,
   deliveryNodeId,
   isDispatcher,
@@ -47,16 +46,7 @@ export default function useSubmit(
       let data = {
         store: storeNodeId,
         tasks: structuredClone(values.tasks),
-      }
-
-      if (values.variantIncVATPrice) {
-        data = {
-          ...data,
-          arbitraryPrice: {
-            variantPrice: values.variantIncVATPrice,
-            variantName: values.variantName ?? '',
-          },
-        }
+        order: structuredClone(values.order),
       }
 
       if (values.rrule) {
@@ -66,10 +56,10 @@ export default function useSubmit(
         }
       }
 
-      if (null !== values.isSavedOrder) {
-        data = {
-          ...data,
-          isSavedOrder: values.isSavedOrder,
+      if (values.variantIncVATPrice) {
+        data.order.arbitraryPrice = {
+          variantName: values.variantName ?? '',
+          variantPrice: values.variantIncVATPrice,
         }
       }
 
@@ -178,15 +168,22 @@ export default function useSubmit(
           }
         }
 
-        // TODO : when we are not on the beta URL/page anymore for this form, redirect to document.refferer
-        window.location = isDispatcher
-          ? '/admin/deliveries'
-          : `/dashboard/stores/${storeId}/deliveries`
+        const deliveryId = data.id
+        const orderId = data.order?.id
+
+        if (isDispatcher) {
+          if (orderId) {
+            window.location = `/admin/orders/${orderId}`
+          } else {
+            window.location = `/admin/deliveries/${deliveryId}`
+          }
+        } else {
+          window.location = `/dashboard/deliveries/${deliveryId}`
+        }
       }
     },
     [
       convertValuesToPayload,
-      storeId,
       storeNodeId,
       deliveryNodeId,
       isDispatcher,

@@ -334,9 +334,11 @@ Cypress.Commands.add(
         cy.get('input').invoke('val').should('match', address)
       })
 
-      cy.get(`[data-testid=date-picker]`).should('have.value', date)
+      if (date !== undefined) {
+        cy.get(`[data-testid=date-picker]`).should('have.value', date)
+      }
 
-      if (hourRange) {
+      if (hourRange !== undefined) {
         cy.get(`[data-testid=hour-picker]`).within(() => {
           cy.contains(hourRange).should('exist')
         })

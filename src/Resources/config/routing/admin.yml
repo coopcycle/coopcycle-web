@@ -594,50 +594,47 @@ admin_store_recurrence_rules:
       store_recurrence_rule: admin_store_recurrence_rule
   methods:  [ GET ]
 
-admin_store_delivery_new:
-    path: /admin/stores/{id}/deliveries/new
+admin_store_delivery_new_legacy:
+    path: /admin/stores/{id}/deliveries/new/legacy
     defaults:
         _controller: AppBundle\Controller\AdminController::newStoreDeliveryAction
         layout: 'admin.html.twig'
         routes:
             stores: admin_stores
             store: admin_store
-            success: admin_store_deliveries
             back: admin_deliveries
     methods:  [ GET, POST ]
 
-admin_store_delivery_new_beta:
-    path: /admin/stores/{id}/deliveries/new/beta
+admin_store_delivery_new:
+    path: /admin/stores/{id}/deliveries/new
     defaults:
         _controller: AppBundle\Controller\AdminController::newStoreDeliveryReactFormAction
         layout: 'admin.html.twig'
         routes:
             stores: admin_stores
             store: admin_store
-            success: admin_store_deliveries
+            store_deliveries: admin_store_deliveries
             back: admin_deliveries
     methods:  [ GET ]
 
-admin_delivery:
-  path: /admin/deliveries/{id}
+admin_delivery_legacy:
+  path: /admin/deliveries/{id}/legacy
   defaults:
       _controller: AppBundle\Controller\AdminController::deliveryAction
       layout: 'admin.html.twig'
       routes:
-          success: admin_deliveries
           back: admin_deliveries
   methods:  [ GET, POST ]
 
 
-admin_delivery_beta:
-  path: /admin/deliveries/{id}/beta
+admin_delivery:
+  path: /admin/deliveries/{id}
   defaults:
       _controller: AppBundle\Controller\AdminController::deliveryItemReactFormAction
       layout: 'admin.html.twig'
       routes:
         stores: admin_stores
         store: admin_store
-        success: admin_store_deliveries
         back: admin_deliveries
   methods:  [ GET ]
 
