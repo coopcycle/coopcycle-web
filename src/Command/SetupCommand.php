@@ -168,7 +168,7 @@ class SetupCommand extends Command
 
     private function createSyliusLocale($code, OutputInterface $output)
     {
-        $locale = $this->localeRepository->findOneByCode($code);
+        $locale = $this->localeRepository->findOneBy(['code' => $code]);
 
         if (null !== $locale) {
             $output->writeln(sprintf('Sylius locale "%s" already exists', $code));
@@ -202,7 +202,7 @@ class SetupCommand extends Command
 
     private function createSyliusCurrency($code, OutputInterface $output)
     {
-        $currency = $this->currencyRepository->findOneByCode($code);
+        $currency = $this->currencyRepository->findOneBy(['code' => $code]);
 
         if (null !== $currency) {
             $output->writeln(sprintf('Sylius currency "%s" already exists', $code));
@@ -298,7 +298,7 @@ class SetupCommand extends Command
 
     private function createOnDemandDeliveryProduct(OutputInterface $output)
     {
-        $product = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
+        $product = $this->productRepository->findOneBy(['code' => 'CPCCL-ODDLVR']);
 
         if (null === $product) {
 
@@ -337,7 +337,7 @@ class SetupCommand extends Command
 
     private function createAllergensAttributes(OutputInterface $output)
     {
-        $attribute = $this->productAttributeRepository->findOneByCode('ALLERGENS');
+        $attribute = $this->productAttributeRepository->findOneBy(['code' => 'ALLERGENS']);
 
         if (null === $attribute) {
 
@@ -370,7 +370,8 @@ class SetupCommand extends Command
 
     private function createRestrictedDietsAttributes(OutputInterface $output)
     {
-        $attribute = $this->productAttributeRepository->findOneByCode('RESTRICTED_DIETS');
+        /** @var ProductAttribute|null $attribute */
+        $attribute = $this->productAttributeRepository->findOneBy(['code' => 'RESTRICTED_DIETS']);
 
         if (null === $attribute) {
 
@@ -403,7 +404,7 @@ class SetupCommand extends Command
 
     private function createFreeDeliveryPromotion(OutputInterface $output)
     {
-        $promotion = $this->promotionRepository->findOneByCode('FREE_DELIVERY');
+        $promotion = $this->promotionRepository->findOneBy(['code' => 'FREE_DELIVERY']);
 
         if (null === $promotion) {
 
@@ -438,7 +439,7 @@ class SetupCommand extends Command
         $flush = false;
         foreach ($slugs as $slug) {
 
-            $cuisine = $cuisineRepository->findOneByName($slug);
+            $cuisine = $cuisineRepository->findOneBy(['name' => $slug]);
 
             if (null === $cuisine) {
 
