@@ -15,6 +15,7 @@ use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Restaurant\Pledge;
+use AppBundle\Entity\Sylius\Product;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Form\Checkout\Action\AddProductToCartAction as CheckoutAddProductToCart;
@@ -585,7 +586,8 @@ class RestaurantController extends AbstractController
         $this->entityManager
             ->getRepository(LocalBusiness::class)->find($id);
 
-        $product = $this->productRepository->findOneByCode($code);
+        /** @var Product|null $product */
+        $product = $this->productRepository->findOneBy(['code' => $code]);
 
         $cart = $cartContext->getCart();
 
