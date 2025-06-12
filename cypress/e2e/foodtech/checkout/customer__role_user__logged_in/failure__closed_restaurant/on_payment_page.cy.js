@@ -7,7 +7,14 @@ describe(
 
         beforeEach(() => {
           cy.loadFixtures('../cypress/fixtures/checkout.yml')
+
+          cy.setMockDateTime('2025-01-10 21:30:00')
+          
           cy.login('bob', '12345678')
+        })
+
+        afterEach(() => {
+          cy.resetMockDateTime()
         })
 
         context(
