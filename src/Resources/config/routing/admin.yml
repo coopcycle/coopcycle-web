@@ -647,6 +647,15 @@ admin_store_delivery_download_images:
 admin_store_recurrence_rule:
   path: /admin/stores/{storeId}/recurrence-rules/{recurrenceRuleId}
   defaults:
+    _controller: AppBundle\Controller\AdminController::recurrenceRuleReactFormAction
+    layout: 'admin.html.twig'
+    routes:
+      redirect_default: admin_store_recurrence_rules
+  methods:  [ GET ]
+
+admin_store_recurrence_rule_legacy:
+  path: /admin/stores/{storeId}/recurrence-rules/{recurrenceRuleId}/legacy
+  defaults:
     _controller: AppBundle\Controller\AdminController::recurrenceRuleAction
     layout: 'admin.html.twig'
     routes:

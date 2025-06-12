@@ -1,20 +1,27 @@
-context('Delivery (role: admin)', () => {
+describe('Delivery with recurrence rule (role: admin)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
       'ORM/user_admin.yml',
       'ORM/tags.yml',
       'ORM/store_advanced.yml',
     ])
+
     cy.setMockDateTime('2025-04-23 8:30:00')
+
     cy.login('admin', '12345678')
-  })
 
-  afterEach(() => {
-    cy.resetMockDateTime()
-  })
+    cy.visit('/admin/stores')
 
-  it('modify delivery', function () {
-    cy.visit('/admin/stores/1/deliveries/new')
+    cy.get('[data-testid=store_Acme__list_item]')
+      .find('.dropdown-toggle')
+      .click()
+
+    cy.get('[data-testid=store_Acme__list_item]')
+      .contains('Créer une livraison')
+      .click()
+
+    // Create delivery page
+    cy.urlmatch(/\/admin\/stores\/[0-9]+\/deliveries\/new$/)
 
     // Pickup
 
@@ -54,59 +61,28 @@ context('Delivery (role: admin)', () => {
 
     cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
-    cy.get('button[type="submit"]').click()
+    cy.get('[data-testid="recurrence-add"]').click()
+    cy.chooseDaysOfTheWeek([5, 6])
+    cy.get('[data-testid=save]').click()
 
+    cy.get('button[type="submit"]').click()
+  })
+
+  it('modify recurrence task data', function () {
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.get('[data-testid="order-edit"]').click()
+    cy.get('a[href*="recurrence-rules"]').click()
 
-    // Edit Delivery page
-    cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
+    // Recurrence rule page
+    cy.urlmatch(/\/admin\/stores\/[0-9]+\/recurrence-rules\/[0-9]+$/)
 
-    //verify all fields BEFORE modifications
-
-    cy.betaTaskShouldHaveValue({
-      taskFormIndex: 0,
-      addressName: 'Warehouse',
-      telephone: '01 12 12 12 12',
-      contactName: 'John Doe',
-      address: /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
-      date: '23 avril 2025',
-      timeAfter: '00:00',
-      timeBefore: '11:59',
-      comments: 'Pickup comments',
-      tags: ['Important'],
-    })
-
-    cy.betaTaskShouldHaveValue({
-      taskFormIndex: 1,
-      addressName: 'Office',
-      telephone: '01 12 12 14 14',
-      contactName: 'Jane smith',
-      address: /72,? Rue Saint-Maur,? 75011,? Paris,? France/,
-      date: '23 avril 2025',
-      timeAfter: '00:00',
-      timeBefore: '11:59',
-      packages: [
-        {
-          nodeId: '/api/packages/1',
-          quantity: 1,
-        },
-      ],
-      weight: 2.5,
-      comments: 'Dropoff comments',
-      tags: ['Perishable'],
-    })
-
-    cy.get('[data-testid="tax-included-previous"]').contains('4,99 €')
-
-    // Modify data
+    // Modify task-related data
 
     cy.betaEnterAddressAtPosition(
       0,
-      '72 Rue Saint-Maur, 75011 Paris, France',
-      /^72,? Rue Saint-Maur,? 75011,? Paris,? France/i,
+      '24 Rue de la Paix, 75002 Paris, France',
+      /^24,? Rue de la Paix,? 75002,? Paris,? France/i,
       'Point 1',
       '+33110101010',
       'Name 1',
@@ -119,16 +95,17 @@ context('Delivery (role: admin)', () => {
 
     cy.betaEnterCommentAtPosition(0, 'Comment 1')
 
+    // tags
     cy.get(`[data-testid="form-task-0"]`).within(() => {
       cy.get('[aria-label="Remove Important"]').click()
       cy.get(`[data-testid=tags-select]`).click()
     })
-    cy.get('#react-select-3-option-1').click()
+    cy.get('#react-select-2-option-1').click()
 
     cy.betaEnterAddressAtPosition(
       1,
-      '23 Avenue Claude Vellefaux, 75010 Paris, France',
-      /^23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/i,
+      '44 Rue de Rivoli, 75004 Paris, France',
+      /^44,? Rue de Rivoli,? 75004,? Paris,? France/i,
       'Point 2',
       '+33120202020',
       'Name 2',
@@ -152,31 +129,32 @@ context('Delivery (role: admin)', () => {
 
     cy.betaEnterCommentAtPosition(1, 'Comment 2')
 
+    // tags
     cy.get(`[data-testid="form-task-1"]`).within(() => {
       cy.get('[aria-label="Remove Perishable"]').click()
       cy.get(`[data-testid=tags-select]`).click()
     })
-    cy.get('#react-select-5-option-0').click()
+    cy.get('#react-select-3-option-0').click()
 
     cy.get('button[type="submit"]').click()
 
-    // Order page
-    cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
+    // Recurrence rules list
+    cy.urlmatch(/\/admin\/stores\/[0-9]+\/recurrence-rules$/)
+    cy.get('[data-testid=recurrence-list-item]')
+      .find('[data-testid="recurrence-edit"]')
+      .click()
 
-    cy.get('[data-testid="order-edit"]').click()
+    // Recurrence rule page
+    cy.urlmatch(/\/admin\/stores\/[0-9]+\/recurrence-rules\/[0-9]+$/)
 
-    // Edit Delivery page
-    cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
-
-    //verify all fields AFTER modifications
+    //verify that all the fields are saved correctly
 
     cy.betaTaskShouldHaveValue({
       taskFormIndex: 0,
       addressName: 'Point 1',
       telephone: '01 10 10 10 10',
       contactName: 'Name 1',
-      address: /72,? Rue Saint-Maur,? 75011,? Paris,? France/,
-      date: '23 avril 2025',
+      address: /^24,? Rue de la Paix,? 75002,? Paris,? France/,
       timeAfter: '10:00',
       timeBefore: '12:00',
       comments: 'Comment 1',
@@ -188,8 +166,7 @@ context('Delivery (role: admin)', () => {
       addressName: 'Point 2',
       telephone: '01 20 20 20 20',
       contactName: 'Name 2',
-      address: /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
-      date: '23 avril 2025',
+      address: /^44,? Rue de Rivoli,? 75004,? Paris,? France/,
       timeAfter: '12:00',
       timeBefore: '14:00',
       packages: [
@@ -202,5 +179,11 @@ context('Delivery (role: admin)', () => {
       comments: 'Comment 2',
       tags: ['Important'],
     })
+
+    cy.get('[data-testid="tax-included"]').contains('4,99 €')
+
+    cy.get('[data-testid="recurrence-container"]').contains(
+      'chaque semaine le vendredi, samedi',
+    )
   })
 })

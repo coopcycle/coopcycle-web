@@ -36,33 +36,31 @@ context('Managing recurrence rules (role: admin)', () => {
     cy.get('button[type="submit"]').click()
   })
 
-  it('modify recurrence rule', function () {
+  it('cancel recurrence rule', function () {
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
     cy.get('a[href*="recurrence-rules"]').click()
 
     // Recurrence rule page
-    cy.urlmatch(/\/admin\/stores\/[0-9]+\/recurrence-rules\/[0-9]+$/)
-    cy.get('[data-testid="recurrence-container"]').contains(
+    cy.get('[data-testid=go-to-legacy-form]').click()
+    cy.get('#delivery_form__recurrence__container').contains(
       'chaque semaine le vendredi, samedi',
     )
 
-    cy.get('[data-testid="recurrence-rule"]').click()
-    cy.chooseDaysOfTheWeek([1])
-    cy.get('[data-testid=save]').click()
+    cy.get('#delivery_form__recurrence__container').click()
+    cy.get('.ant-btn-danger > :nth-child(2)').click()
+    cy.get('.ant-popover-buttons > .ant-btn-primary > span').click()
 
-    cy.get('button[type="submit"]').click()
+    cy.get('#delivery-submit').click()
 
-    // Recurrence rules list
-    cy.urlmatch(/\/admin\/stores\/[0-9]+\/recurrence-rules$/)
-    cy.get('[data-testid=recurrence-list-item]')
-      .find('[data-testid="recurrence-edit"]')
-      .click()
+    cy.visit('/admin/orders/1')
+    // Order page
+    cy.get('a[href*="recurrence-rules"]').click()
 
     // Recurrence rule page
-    cy.urlmatch(/\/admin\/stores\/[0-9]+\/recurrence-rules\/[0-9]+$/)
-    cy.get('[data-testid="recurrence-container"]').contains(
-      'chaque semaine le lundi',
+    cy.get('[data-testid=go-to-legacy-form]').click()
+    cy.get('#delivery_form__recurrence__container').contains(
+      'Règle de récurrence annulée',
     )
   })
 })

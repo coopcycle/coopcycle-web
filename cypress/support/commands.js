@@ -194,7 +194,11 @@ Cypress.Commands.add('searchAddress', (selector, search, match, index = 0) => {
 
   cy.get(`${ selector } input[type="search"][data-is-address-picker="true"]`)
     .eq(index)
-    .type(search, { timeout: 5000, delay: 100 })
+    .clear()
+
+  cy.get(`${ selector } input[type="search"][data-is-address-picker="true"]`)
+    .eq(index)
+    .type(search, { timeout: 5000, delay: 50 })
 
   cy.get(selector)
     .find('ul[role="listbox"] li', { timeout: 10000 })
@@ -223,7 +227,7 @@ Cypress.Commands.add('newPickupAddress',
 
 Cypress.Commands.add('betaEnterAddressAtPosition',
   (taskFormIndex, addressSearch, addressMatch,
-    businessName, telephone, contactName, comments) => {
+    businessName, telephone, contactName) => {
 
     cy.searchAddress(
       `[data-testid=form-task-${taskFormIndex}]`,
@@ -239,6 +243,19 @@ Cypress.Commands.add('betaEnterAddressAtPosition',
 
     cy.get(`input[name="tasks[${taskFormIndex}].address.contactName"]`).clear()
     cy.get(`input[name="tasks[${taskFormIndex}].address.contactName"]`).type(contactName)
+
+  })
+
+Cypress.Commands.add('betaEnterWeightAtPosition',
+  (taskFormIndex, weight) => {
+
+    cy.get(`[name="tasks[${taskFormIndex}].weight"]`).clear()
+    cy.get(`[name="tasks[${taskFormIndex}].weight"]`).type(weight)
+
+  })
+
+Cypress.Commands.add('betaEnterCommentAtPosition',
+  (taskFormIndex, comments) => {
 
     cy.get(`[name="tasks[${taskFormIndex}].comments"]`).clear()
     cy.get(`[name="tasks[${taskFormIndex}].comments"]`).type(comments)

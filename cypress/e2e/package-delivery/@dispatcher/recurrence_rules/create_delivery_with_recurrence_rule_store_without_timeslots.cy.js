@@ -33,7 +33,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
         cy.antdSelect('.ant-select[data-testid="select-before"]', '11:20')
       })
 
-      cy.get(`[name="tasks[0].comments"]`).type('Pickup comments')
+      cy.betaEnterCommentAtPosition(0, 'Pickup comments')
 
       // Dropoff
       cy.betaChooseSavedAddressAtPosition(1, 2)
@@ -44,13 +44,13 @@ describe('Delivery with recurrence rule (role: admin)', () => {
         cy.antdSelect('.ant-select[data-testid="select-before"]', '12:40')
       })
 
-      cy.get(`[name="tasks[1].weight"]`).type(2.5)
+      cy.betaEnterWeightAtPosition(1, 2.5)
 
-      cy.get(`[name="tasks[1].comments"]`).type('Dropoff comments')
+      cy.betaEnterCommentAtPosition(1, 'Dropoff comments')
 
       cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
-      cy.get('[data-testid="recurrence__container"]').find('a').click()
+      cy.get('[data-testid="recurrence-add"]').click()
       cy.chooseDaysOfTheWeek([5, 6])
       cy.get('[data-testid=save]').click()
 
@@ -75,37 +75,30 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       // Recurrence rule page
       cy.urlmatch(/\/admin\/stores\/[0-9]+\/recurrence-rules\/[0-9]+$/)
 
-      //pickup time range:
-      cy.get(
-        '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(1) > input',
-      ).should($input => {
-        const val = $input.val()
-        expect(val).to.include(':10')
-      })
-      cy.get(
-        '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(3) > input',
-      ).should($input => {
-        const val = $input.val()
-        expect(val).to.include(':20')
+      // verify pickup time range:
+      cy.betaTaskShouldHaveValue({
+        taskFormIndex: 0,
+        addressName: 'Warehouse',
+        telephone: '01 12 12 12 12',
+        contactName: 'John Doe',
+        address: /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
+        timeAfter: '10:10',
+        timeBefore: '11:20',
       })
 
-      //dropoff time range:
-      cy.get(
-        '#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(1) > input',
-      ).should($input => {
-        const val = $input.val()
-        expect(val).to.include(':30')
-      })
-      cy.get(
-        '#delivery_tasks_1_doneBefore_widget > .ant-picker > :nth-child(3) > input',
-      ).should($input => {
-        const val = $input.val()
-        expect(val).to.include(':40')
+      // verify dropoff time range:
+      cy.betaTaskShouldHaveValue({
+        taskFormIndex: 1,
+        addressName: 'Office',
+        telephone: '01 12 12 14 14',
+        contactName: 'Jane smith',
+        address: /72,? Rue Saint-Maur,? 75011,? Paris,? France/,
+        timeAfter: '11:30',
+        timeBefore: '12:40',
       })
 
-      cy.get('[data-tax="included"]').contains('4,99 €')
-
-      cy.get('#delivery_form__recurrence__container').contains(
+      cy.get('[data-testid="tax-included"]').contains('4,99 €')
+      cy.get('[data-testid="recurrence-container"]').contains(
         'chaque semaine le vendredi, samedi',
       )
 
@@ -114,7 +107,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       cy.get('[data-testid="order-edit"]').click()
 
       // Delivery page
-      cy.get('[data-testid="recurrence__container"]').should('not.exist')
+      cy.get('[data-testid="recurrence-container"]').should('not.exist')
 
       cy.betaTaskShouldHaveValue({
         taskFormIndex: 0,

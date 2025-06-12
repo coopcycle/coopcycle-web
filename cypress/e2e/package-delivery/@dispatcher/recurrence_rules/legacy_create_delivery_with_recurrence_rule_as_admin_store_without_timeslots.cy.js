@@ -122,11 +122,12 @@ describe('Delivery with recurrence rule (role: admin)', () => {
         .click()
 
       // Order page
+      cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
       cy.get('a[href*="recurrence-rules"]').click()
 
       // Recurrence rule page
       cy.urlmatch(/\/admin\/stores\/[0-9]+\/recurrence-rules\/[0-9]+$/)
-
+      cy.get('[data-testid=go-to-legacy-form]').click()
       //pickup time range:
       cy.get(
         '#delivery_tasks_0_doneBefore_widget > .ant-picker > :nth-child(1) > input',

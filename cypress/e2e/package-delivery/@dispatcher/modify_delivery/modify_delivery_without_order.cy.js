@@ -37,8 +37,7 @@ context('Delivery (role: admin)', () => {
       address: /72,? Rue Saint-Maur,? 75011,? Paris,? France/,
     })
 
-    cy.get(`[name="tasks[1].comments"]`).clear()
-    cy.get(`[name="tasks[1].comments"]`).type('New comment on a Dropoff task')
+    cy.betaEnterCommentAtPosition(1, 'New comment on a Dropoff task')
 
     cy.get('button[type="submit"]').click()
 

@@ -25,12 +25,11 @@ context('Managing recurrence rules (role: admin)', () => {
     // Dropoff
     cy.betaChooseSavedAddressAtPosition(1, 2)
 
-    cy.get(`[name="tasks[1].weight"]`).clear()
-    cy.get(`[name="tasks[1].weight"]`).type(2.5)
+    cy.betaEnterWeightAtPosition(1, 2.5)
 
     cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
-    cy.get('[data-testid="recurrence__container"]').find('a').click()
+    cy.get('[data-testid="recurrence-add"]').click()
     cy.chooseDaysOfTheWeek([5, 6])
     cy.get('[data-testid=save]').click()
 
@@ -49,10 +48,10 @@ context('Managing recurrence rules (role: admin)', () => {
 
     // Recurrence rules page
     cy.urlmatch(/\/admin\/stores\/[0-9]+\/recurrence-rules$/)
-    cy.get('[data-testid=recurrence_rule__list_item]')
+    cy.get('[data-testid=recurrence-list-item]')
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
       .should('exist')
-    cy.get('[data-testid=recurrence_rule__list_item]')
+    cy.get('[data-testid=recurrence-list-item]')
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
       .should('exist')
   })
