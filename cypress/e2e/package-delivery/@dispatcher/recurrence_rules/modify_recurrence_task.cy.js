@@ -11,6 +11,10 @@ describe('Delivery with recurrence rule (role: admin)', () => {
     cy.login('admin', '12345678')
   })
 
+  afterEach(() => {
+    cy.resetMockDateTime()
+  })
+
   it('modify recurrence task data', function () {
     const createOrderWithRecurrence = () => {
       cy.log('Create order with recurrence')
