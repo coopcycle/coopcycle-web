@@ -36,6 +36,7 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Testwork\Tester\Result\TestResult;
 use Behat\Testwork\Tester\Result\ExceptionResult;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Faker\Generator as FakerGenerator;
 use Fidry\AliceDataFixtures\Persistence\PurgeMode;
@@ -88,6 +89,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function __construct(
         protected ManagerRegistry $doctrine,
+        protected EntityManagerInterface $entityManager,
         protected DatabasePurger $databasePurger,
         protected PhoneNumberUtil $phoneNumberUtil,
         protected LoaderInterface $fixturesLoader,
@@ -301,8 +303,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->redis->set('datetime:now', Carbon::now()->toAtomString());
 
         // Mock createdAt and updatedAt fields in the database
-        $em = $this->doctrine->getManager();
-        $em->getEventManager()->addEventSubscriber(
+        $this->entityManager->getEventManager()->addEventSubscriber(
             $this->mockDateSubscriber
         );
     }
