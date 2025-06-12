@@ -301,7 +301,7 @@ Cypress.Commands.add('betaChooseSavedAddressAtPosition',
       cy.wait(300)
       cy.root()
         .closest('body')
-        .find('.ant-select-dropdown')
+        .find('.ant-select-dropdown:visible')
         .not('.ant-select-dropdown-hidden')
         .within(() => {
           cy.get(`.rc-virtual-list-holder-inner > :nth-child(${ addressIndex })`).click()
