@@ -23,6 +23,7 @@
     <field name="company" type="string" column="company" nullable="true"/>
     <field name="telephone" type="phone_number" column="telephone" nullable="true"/>
     <field name="contactName" type="string" column="contact_name" nullable="true"/>
+    <field name="isMapPicked" type="boolean" column="is_map_picked" />
     <entity-listeners>
       <entity-listener class="AppBundle\Entity\Listener\AddressListener">
         <lifecycle-callback type="preUpdate" method="preUpdate"/>
