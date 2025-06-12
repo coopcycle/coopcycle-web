@@ -25,8 +25,10 @@
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
 Cypress.Commands.add('terminal', command => {
+  cy.log(`exec: ${command}`)
+
   const prefix = Cypress.env('COMMAND_PREFIX')
-  cy.exec(prefix ? `${prefix} ${command}` : command, {timeout: 60000})
+  cy.exec(prefix ? `${prefix} ${command}` : command, {timeout: 60000, log: false})
 })
 
 Cypress.Commands.add('symfonyConsole', command => {
