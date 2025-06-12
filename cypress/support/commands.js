@@ -96,7 +96,7 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
 
   cy.root()
     .closest('body')
-    .find('.ant-select-dropdown')
+    .find('.ant-select-dropdown:visible')
     .not('.ant-select-dropdown-hidden')
     .within(() => {
       let attempts = 0
