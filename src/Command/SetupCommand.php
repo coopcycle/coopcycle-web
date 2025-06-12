@@ -337,6 +337,7 @@ class SetupCommand extends Command
 
     private function createAllergensAttributes(OutputInterface $output)
     {
+        /** @var ProductAttribute|null $attribute */
         $attribute = $this->productAttributeRepository->findOneBy(['code' => 'ALLERGENS']);
 
         if (null === $attribute) {
