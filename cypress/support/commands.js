@@ -94,7 +94,7 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
 
   cy.wait(300)
 
-  cy.root()
+  cy.root({ log: false })
     .closest('body')
     .find('.ant-select-dropdown:visible')
     .not('.ant-select-dropdown-hidden')
@@ -104,7 +104,7 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
 
       function tryFindOption() {
         return cy
-          .get('.rc-virtual-list-holder-inner .ant-select-item-option')
+          .get('.rc-virtual-list-holder-inner .ant-select-item-option', { log: false })
           .then($options => {
             const option = $options.filter((_, el) =>
               el.textContent.includes(text),
@@ -124,7 +124,7 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
             attempts++
 
             // .ant-select-dropdown
-            cy.root().trigger('wheel', {
+            cy.root({ log: false }).trigger('wheel', {
               deltaX: 0,
               deltaY: 32 * 6, // 1 row = ~32px
               deltaMode: 0,
