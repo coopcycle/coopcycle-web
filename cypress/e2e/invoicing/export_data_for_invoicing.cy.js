@@ -37,7 +37,9 @@ context('Invoicing (role: admin)', () => {
 
     // Verify that the orders from A1 to A10 are displayed
     for (let i = 1; i <= 10; i++) {
-      cy.get('.ant-table-cell').filter(`:contains("A${i}")`).should('exist')
+      cy.get('.ant-table-cell')
+        .contains(new RegExp(`^A${i}$`))
+        .should('exist')
     }
 
     // Verify pagination
@@ -49,7 +51,16 @@ context('Invoicing (role: admin)', () => {
 
     // Verify that the orders from A11 to A20 are displayed
     for (let i = 11; i <= 20; i++) {
-      cy.get('.ant-table-cell').filter(`:contains("A${i}")`).should('exist')
+      cy.get('.ant-table-cell')
+        .contains(new RegExp(`^A${i}$`))
+        .should('exist')
+    }
+
+    // Verify that the first page is not displayed
+    for (let i = 1; i <= 10; i++) {
+      cy.get(`.ant-table-cell`)
+        .contains(new RegExp(`^A${i}$`))
+        .should('not.exist')
     }
   })
 })
