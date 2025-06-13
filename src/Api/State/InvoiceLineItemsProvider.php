@@ -6,7 +6,6 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use ApiPlatform\State\Pagination\PaginatorInterface;
 use ApiPlatform\State\Pagination\TraversablePaginator;
-use ApiPlatform\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGenerator;
 use AppBundle\Api\Dto\InvoiceLineItem;
@@ -30,7 +29,7 @@ final class InvoiceLineItemsProvider implements ProviderInterface
         private readonly SettingsManager $settingsManager,
         private readonly TranslatorInterface $translator,
         private readonly string $locale,
-        private readonly iterable $collectionExtensions
+        private readonly iterable $collectionExtensions,
     )
     {
     }
@@ -110,7 +109,7 @@ final class InvoiceLineItemsProvider implements ProviderInterface
             );
         }
 
-        return $data;
+        return $invoiceLineItems;
     }
 
     private function preloadEntities(array $orders): void
