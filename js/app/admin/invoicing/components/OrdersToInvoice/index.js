@@ -79,6 +79,7 @@ export default () => {
       />
       <div className="d-flex justify-content-end" style={{ marginTop: '24px' }}>
         <Button
+          testID="invoicing.download"
           primary
           onClick={() => {
             if (!params) {

@@ -6,7 +6,7 @@ context('Invoicing (role: admin)', () => {
     cy.login('admin', '12345678')
   })
 
-  it('show data for invoicing using custom date picker', function () {
+  it('export data for invoicing in odoo format', function () {
     cy.visit('/admin/invoicing')
     cy.get('[data-testid="invoicing.toggleRangePicker"]').click()
 
@@ -29,42 +29,6 @@ context('Invoicing (role: admin)', () => {
       .contains(/Acme/)
       .should('exist')
 
-    // Expand the first row to see the orders
-    cy.get('[data-row-key="1"]').within(() => {
-      cy.get('[aria-label="Développer la ligne"]').first().click()
-    })
-
-    // Verify that only the first row is expanded
-    cy.get('[aria-label="Réduire la ligne"]').should('have.length', 1)
-
-    // Verify that the orders from A1 to A10 are displayed
-    for (let i = 1; i <= 10; i++) {
-      cy.get('.ant-table-cell')
-        .contains(new RegExp(`^A${i}$`))
-        .should('exist')
-    }
-
-    // Verify pagination
-
-    // Go to the second page of orders
-    cy.get('[data-testid="invoicing.orders.1"]').within(() => {
-      cy.get('.ant-pagination-item-2').click()
-    })
-
-    // Verify that the orders from A11 to A20 are displayed
-    for (let i = 11; i <= 20; i++) {
-      cy.get('.ant-table-cell')
-        .contains(new RegExp(`^A${i}$`))
-        .should('exist')
-    }
-
-    // Verify that the first page is not displayed
-    for (let i = 1; i <= 10; i++) {
-      cy.get(`.ant-table-cell`)
-        .contains(new RegExp(`^A${i}$`))
-        .should('not.exist')
-    }
-
     // Select the first organisation
     cy.get('[data-row-key="1"]').within(() => {
       cy.get('.ant-checkbox-input').check()
@@ -72,7 +36,11 @@ context('Invoicing (role: admin)', () => {
 
     cy.get('[data-testid="invoicing.download"]').click()
 
-    cy.intercept('GET', '/api/invoice_line_items/export?**').as('exportData')
+    cy.get('[value="odoo"]').click()
+
+    cy.intercept('GET', '/api/invoice_line_items/export/odoo?**').as(
+      'exportData',
+    )
 
     // Download the file in the standard format
     cy.get('[data-testid="invoicing.download.file"]').click()
@@ -84,15 +52,15 @@ context('Invoicing (role: admin)', () => {
       // split by line
       const lines = content.split('\n').map(line => line.trim())
 
-      // Organization,Description,"Total products (excl. VAT)",Taxes,"Total products (incl. VAT)"
+      // "External ID","Invoice Date",Partner,"Invoice lines / Account","Invoice lines / Product","Invoice lines / Label","Invoice lines / Unit Price","Invoice lines / Quantity"
       expect(lines[0]).to.equal(
-        'Organization,Description,"Total products (excl. VAT)",Taxes,"Total products (incl. VAT)"',
+        '"External ID","Invoice Date",Partner,"Invoice lines / Account","Invoice lines / Product","Invoice lines / Label","Invoice lines / Unit Price","Invoice lines / Quantity"',
       )
       for (let i = 1; i <= 250; i++) {
-        // Acme,"Livraison à la demande - 0.00 km - Retrait: Warehouse - Dépôt: Office - 13/06/2025 (Commande #A1)",124.82,24.96,149.78
+        // a809477e-2a06-45cc-811a-7679b2501311-6b86b27,2025-06-13,Acme,411100,"Livraison à la demande","Livraison à la demande - 0.00 km - Retrait: Warehouse - Dépôt: Office - 13/06/2025 (Commande #A1)",124.82,1
         expect(lines[i]).to.match(
           new RegExp(
-            `^Acme,"Livraison à la demande - 0.00 km - Retrait: Warehouse - Dépôt: Office - \\d{2}/\\d{2}/\\d{4} \\(Commande #A${i}\\)",[0-9]+(\\.[0-9]+)?,[0-9]+(\\.[0-9]+)?,[0-9]+(\\.[0-9]+)?$`,
+            `^[a-f0-9-]+,\\d{4}-\\d{2}-\\d{2},Acme,\\d+,"[^"]+","Livraison à la demande - 0\\.00 km - Retrait: Warehouse - Dépôt: Office - \\d{2}/\\d{2}/\\d{4} \\(Commande #A${i}\\)",[0-9]+(\\.[0-9]+)?,1$`,
           ),
         )
       }
