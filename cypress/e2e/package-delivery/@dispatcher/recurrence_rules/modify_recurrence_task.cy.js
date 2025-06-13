@@ -166,7 +166,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       addressName: 'Point 1',
       telephone: '01 10 10 10 10',
       contactName: 'Name 1',
-      address: /^24,? Rue de la Paix,? 75002,? Paris,? France/,
+      address: /^24,? Rue de la Paix,? 75002,? Paris,? France/i,
       timeAfter: '10:00',
       timeBefore: '12:00',
       comments: 'Comment 1',
@@ -178,7 +178,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       addressName: 'Point 2',
       telephone: '01 20 20 20 20',
       contactName: 'Name 2',
-      address: /^44,? Rue de Rivoli,? 75004,? Paris,? France/,
+      address: /^44,? Rue de Rivoli,? 75004,? Paris,? France/i,
       timeAfter: '12:00',
       timeBefore: '14:00',
       packages: [
