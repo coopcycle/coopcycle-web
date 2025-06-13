@@ -1649,3 +1649,10 @@ services:
 
   AppBundle\Transporter\Proximus\ProximusTransformer:
     lazy: true
+
+  hwi_oauth.user.provider.entity:
+    class: HWI\Bundle\OAuthBundle\Security\Core\User\EntityUserProvider
+    arguments:
+      $class: AppBundle\Entity\User
+      $properties:
+        'facebook': 'facebook'
