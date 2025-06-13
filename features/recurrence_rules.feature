@@ -571,3 +571,118 @@ Feature: Task recurrence rules
       "trace":@array@
       }
       """
+
+  Scenario: Generate orders by-weekly based on the recurrence rules
+    Given the current time is "2025-04-21 11:00:00"
+    Given the fixtures files are loaded:
+      | sylius_products.yml  |
+      | sylius_taxation.yml  |
+      | payment_methods.yml  |
+      | users.yml            |
+      | recurrence_rules_byweekly.yml |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-04-21"
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/RecurrenceRule",
+        "@id": "/api/recurrence_rules/generate_orders",
+        "@type": "hydra:Collection",
+        "hydra:member": [
+          {
+            "@id": "/api/orders/1",
+            "@type": "http://schema.org/Order",
+            "invitation": null,
+            "paymentGateway": "stripe"
+          }
+        ],
+        "hydra:totalItems": 1,
+        "hydra:view": {
+          "@id": "/api/recurrence_rules/generate_orders?date=2025-04-21",
+          "@type": "hydra:PartialCollectionView"
+        }
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-04-28"
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/RecurrenceRule",
+        "@id": "/api/recurrence_rules/generate_orders",
+        "@type": "hydra:Collection",
+        "hydra:member": [
+        ],
+        "hydra:totalItems": 0,
+        "hydra:view": {
+          "@id": "/api/recurrence_rules/generate_orders?date=2025-04-28",
+          "@type": "hydra:PartialCollectionView"
+        }
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-05-05"
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/RecurrenceRule",
+        "@id": "/api/recurrence_rules/generate_orders",
+        "@type": "hydra:Collection",
+        "hydra:member": [
+          {
+            "@id": "/api/orders/2",
+            "@type": "http://schema.org/Order",
+            "invitation": null,
+            "paymentGateway": "stripe"
+          }
+        ],
+        "hydra:totalItems": 1,
+        "hydra:view": {
+          "@id": "/api/recurrence_rules/generate_orders?date=2025-05-05",
+          "@type": "hydra:PartialCollectionView"
+        }
+      }
+      """
+
+  Scenario: Dont generate orders based on the disabled recurrence rule
+    Given the current time is "2025-04-14 9:00:00"
+    Given the fixtures files are loaded:
+      | sylius_products.yml  |
+      | sylius_taxation.yml  |
+      | payment_methods.yml  |
+      | users.yml            |
+      | recurrence_rules_disabled.yml |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-04-15"
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/RecurrenceRule",
+        "@id": "/api/recurrence_rules/generate_orders",
+        "@type": "hydra:Collection",
+        "hydra:member": [
+        ],
+        "hydra:totalItems": 0,
+        "hydra:view": {
+          "@id": "/api/recurrence_rules/generate_orders?date=2025-04-15",
+          "@type": "hydra:PartialCollectionView"
+        }
+      }
+      """
+
