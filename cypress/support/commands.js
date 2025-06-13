@@ -24,6 +24,8 @@
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
+import moment from 'moment'
+
 Cypress.Commands.add('terminal', command => {
   cy.log(`exec: ${command}`)
 
@@ -96,6 +98,17 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
 
   cy.wait(300)
 
+  const toMoment = textValue => {
+    if (/^\d{1,2}:\d{2}$/.test(textValue)) {
+      const [hours, minutes] = textValue.split(':').map(Number)
+      if (hours >= 0 && hours < 24 && minutes >= 0 && minutes < 60) {
+        return moment().hours(hours).minutes(minutes)
+      }
+    }
+
+    return null
+  }
+
   cy.root({ log: false })
     .closest('body')
     .find('.ant-select-dropdown:visible')
@@ -110,6 +123,15 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
             log: false,
           })
           .then($options => {
+            if ($options.length === 0) {
+              cy.log(
+                `No options found for selector "${selector}" with text "${text}"`,
+              )
+              throw new Error(
+                `No options found for selector "${selector}" with text "${text}"`,
+              )
+            }
+
             cy.log(
               `Searching for option with text "${text}"; elements: "${$options
                 .toArray()
@@ -125,7 +147,28 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
               return
             }
 
+            // Fail early to debug test failures on CI
+            const textMoment = toMoment(text)
+            const firstOptionMoment = toMoment(
+              $options.toArray()[0].textContent,
+            )
+            if (
+              textMoment &&
+              firstOptionMoment &&
+              textMoment.isBefore(firstOptionMoment)
+            ) {
+              cy.log(
+                `The text "${text}" is before the first option, skipping further attempts.`,
+              )
+              throw new Error(
+                `The text "${text}" is before the first option, skipping further attempts.`,
+              )
+            }
+
             if (attempts >= maxAttempts) {
+              cy.log(
+                `Could not find option with text "${text}" after ${maxAttempts} scroll attempts`,
+              )
               throw new Error(
                 `Could not find option with text "${text}" after ${maxAttempts} scroll attempts`,
               )
