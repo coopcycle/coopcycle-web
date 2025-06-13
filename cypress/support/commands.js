@@ -138,7 +138,7 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
               deltaY: 32 * 6, // 1 row = ~32px
               deltaMode: 0,
             })
-            cy.wait(100)
+            cy.wait(500)
             tryFindOption()
           })
       }
