@@ -128,7 +128,7 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
             // .ant-select-dropdown
             cy.root({ log: false }).trigger('wheel', {
               deltaX: 0,
-              deltaY: 32 * 6, // 1 row = ~32px
+              deltaY: 32 * 5, // 1 row = ~32px
               deltaMode: 0,
             })
             cy.wait(100)
