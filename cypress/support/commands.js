@@ -106,11 +106,19 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
 
       function tryFindOption() {
         return cy
-          .get('.rc-virtual-list-holder-inner .ant-select-item-option', { log: false })
+          .get('.rc-virtual-list-holder-inner .ant-select-item-option', {
+            log: false,
+          })
           .then($options => {
-            const option = $options.filter((_, el) =>
-              el.textContent.includes(text),
-            )
+            const option = $options.filter((index, el) => {
+              if (index === 0) {
+                cy.log(
+                  `Searching for option with text "${text}"; first element: "${el.textContent}"`,
+                )
+              }
+
+              el.textContent.includes(text)
+            })
 
             if (option.length) {
               cy.wrap(option).click()
