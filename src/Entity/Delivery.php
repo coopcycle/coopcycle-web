@@ -17,7 +17,7 @@ use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Action\Delivery\BulkAsync as BulkAsyncDelivery;
 use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
-use AppBundle\Api\Dto\DeliveryInput;
+use AppBundle\Api\Dto\DeliveryDto;
 use AppBundle\Api\Dto\OptimizationSuggestions;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
 use AppBundle\Api\State\DeliveryCreateOrUpdateProcessor;
@@ -44,7 +44,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Put(
             denormalizationContext: ['groups' => ['delivery_create']],
             security: 'is_granted(\'edit\', object)',
-            input: DeliveryInput::class,
+            input: DeliveryDto::class,
+            output: DeliveryDto::class,
             processor: DeliveryCreateOrUpdateProcessor::class
         ),
         new Put(
@@ -87,7 +88,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
             ],
             denormalizationContext: ['groups' => ['delivery_create']],
             securityPostDenormalize: 'is_granted(\'create\', object)',
-            input: DeliveryInput::class,
+            input: DeliveryDto::class,
+            output: DeliveryDto::class,
             processor: DeliveryCreateOrUpdateProcessor::class
         ),
         new Post(
@@ -121,6 +123,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             denormalizationContext: ['groups' => ['delivery_create_from_tasks']],
             security: 'is_granted(\'ROLE_ADMIN\')',
             input: DeliveryFromTasksInput::class,
+            output: DeliveryDto::class,
             processor: DeliveryCreateOrUpdateProcessor::class
         ),
         new Post(

@@ -1004,7 +1004,8 @@ services:
     arguments:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
 
-  AppBundle\Api\Dto\DeliveryFormDeliveryMapper:
+  AppBundle\Api\Dto\DeliveryMapper:
+  AppBundle\Api\Dto\TaskMapper:
 
   AppBundle\Utils\RestaurantFilter:
     arguments:
@@ -1636,6 +1637,15 @@ services:
       - '@AppBundle\LoopEat\Client'
       - '@monolog.logger.loopeat'
 
+
   AppBundle\Session\NativeSessionStorageFactory:
     decorates: session.storage.factory.native
     arguments: ['@.inner']
+
+  AppBundle\Transporter\Proximus\ProximusImporter:
+    lazy: true
+    arguments:
+      - "%env(PROXIMUS_SYNC_URI)%"
+
+  AppBundle\Transporter\Proximus\ProximusTransformer:
+    lazy: true

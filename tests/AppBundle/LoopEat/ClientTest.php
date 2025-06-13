@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use PHPUnit\Framework\TestCase;
@@ -129,5 +130,80 @@ class ClientTest extends TestCase
     	], $payload);
 
     	$this->assertEquals($loopeatOrder, $result);
+    }
+
+    public function testUpdateDeliverFormatsWithRepeatingFormat()
+    {
+        $restaurant = new Restaurant();
+
+        $order = $this->prophesize(OrderInterface::class);
+
+        $order
+            ->getId()
+            ->willReturn(1);
+
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+
+        $order->getNumber()
+            ->willReturn('ABC');
+
+        $order->getLoopeatOrderId()
+            ->willReturn(123);
+
+        $order->getLoopeatDeliver()->willReturn([
+            1 => [
+                ['format_id' => 1, 'quantity' => 1],
+                ['format_id' => 2, 'quantity' => 1]
+            ],
+            2 => [
+                ['format_id' => 1, 'quantity' => 1],
+                ['format_id' => 2, 'quantity' => 2]
+            ]
+        ]);
+
+        $this->mockHandler->append(
+            new Response(200, [], json_encode([
+                'data' => [
+                    [
+                        'id' => 11,
+                        'act' => 'deliver',
+                        'details' => ['id' => 1]
+                    ],
+                    [
+                        'id' => 12,
+                        'act' => 'deliver',
+                        'details' => ['id' => 2]
+                    ]
+                ]
+            ])),
+            new Response(200, []),
+            new Response(200, []),
+        );
+
+        $result = $this->client->updateDeliverFormats($order->reveal());
+
+        $firstPatch = $this->historyContainer[1]['request'];
+        $this->assertRequest($firstPatch, 'PATCH', '/api/v1/partners/orders/123/formats/11');
+        $this->assertRequestBody($firstPatch, ['order_format' => ['quantity' => 2]]);
+
+        $secondPatch = $this->historyContainer[2]['request'];
+        $this->assertRequest($secondPatch, 'PATCH', '/api/v1/partners/orders/123/formats/12');
+        $this->assertRequestBody($secondPatch, ['order_format' => ['quantity' => 3]]);
+    }
+
+    private function assertRequest(Request $request, string $method, string $uri)
+    {
+        $this->assertEquals($method, $request->getMethod());
+        $this->assertEquals($uri, $request->getUri());
+    }
+
+    private function assertRequestBody(Request $request, array $expected)
+    {
+        $body = (string) $request->getBody();
+        $payload = json_decode($body, true);
+
+        $this->assertEquals($expected, $payload);
     }
 }

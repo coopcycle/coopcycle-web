@@ -202,3 +202,12 @@ services:
   AppBundle\Command\SyncPaygreenOrders:
     tags:
       - { name: 'console.command', command: 'coopcycle:paygreen:sync' }
+
+  AppBundle\Command\ImportDeliveriesCommand:
+    arguments:
+      $importers:
+        proximus: '@AppBundle\Transporter\Proximus\ProximusImporter'
+      $transformers:
+        proximus: '@AppBundle\Transporter\Proximus\ProximusTransformer'
+    tags:
+      - { name: 'console.command', command: 'coopcycle:deliveries:import' }

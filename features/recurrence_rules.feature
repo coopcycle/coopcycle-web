@@ -44,6 +44,7 @@ Feature: Task recurrence rules
           "after":"11:30",
           "before":"12:00"
         },
+        "arbitraryPriceTemplate": null,
         "isCancelled":false
       }
       """
@@ -119,6 +120,90 @@ Feature: Task recurrence rules
             }
           ]
         },
+        "arbitraryPriceTemplate": null,
+        "isCancelled":false
+      }
+      """
+
+  Scenario: Create recurrence rule (arbitrary price)
+    Given the fixtures files are loaded:
+      | users.yml           |
+      | stores.yml          |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/recurrence_rules" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "rule":"FREQ=WEEKLY;",
+        "template": {
+          "@type":"hydra:Collection",
+          "hydra:member": [
+            {
+              "@type":"Task",
+              "address": {
+                "streetAddress": "1, Rue de Rivoli, 75004 Paris",
+                "telephone": "+33612345678"
+              },
+              "after":"11:30",
+              "before":"12:00"
+            },
+            {
+              "@type":"Task",
+              "address": {
+                "streetAddress": "10, Rue de Rivoli, 75004 Paris"
+              },
+              "after":"12:00",
+              "before":"12:30"
+            }
+          ]
+        },
+        "arbitraryPriceTemplate": {
+          "variantName":"Test product",
+          "variantPrice":7200
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RecurrenceRule",
+        "@id":"/api/recurrence_rules/1",
+        "@type":"RecurrenceRule",
+        "rule":"FREQ=WEEKLY",
+        "store":"/api/stores/1",
+        "orgName":"Acme",
+        "name":null,
+        "template": {
+          "@type":"hydra:Collection",
+          "hydra:member": [
+            {
+              "@type":"Task",
+              "address": {
+                "streetAddress": @string@,
+                "telephone": "+33612345678"
+              },
+              "after":"11:30",
+              "before":"12:00"
+            },
+            {
+              "@type":"Task",
+              "address": {
+                "streetAddress": @string@
+              },
+              "after":"12:00",
+              "before":"12:30"
+            }
+          ]
+        },
+        "arbitraryPriceTemplate": {
+          "variantName":"Test product",
+          "variantPrice":7200
+        },
         "isCancelled":false
       }
       """
@@ -165,6 +250,7 @@ Feature: Task recurrence rules
           "after":"11:30",
           "before":"12:30"
         },
+        "arbitraryPriceTemplate": null,
         "isCancelled":false
       }
       """
@@ -239,6 +325,7 @@ Feature: Task recurrence rules
         "store":"/api/stores/1",
         "orgName":"Acme",
         "name":null,
+        "arbitraryPriceTemplate": null,
         "isCancelled":false
       }
       """

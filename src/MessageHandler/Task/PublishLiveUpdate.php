@@ -18,7 +18,7 @@ class PublishLiveUpdate
         $this->liveUpdates = $liveUpdates;
     }
     
-    public function __invoke(TaskEvent|TaskListEvent|TourEvent $event)
+    public function __invoke(TaskEvent $event)
     {
         $this->liveUpdates->toAdmins($event);
     }

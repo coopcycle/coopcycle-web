@@ -6,6 +6,7 @@ use AppBundle\Entity\Address;
 use DateTime;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+// Merge with TaskDto in the future
 final class MyTaskDto
 {
     #[Groups(["task"])]

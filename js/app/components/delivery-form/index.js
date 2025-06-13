@@ -1,11 +1,12 @@
-import React, { StrictMode, useEffect } from 'react'
-import { Provider } from 'react-redux'
-import { ConfigProvider } from 'antd'
-import { antdLocale } from '../../i18n'
+import React, { useEffect, useLayoutEffect } from 'react'
+import { Provider, useDispatch } from 'react-redux'
 import { accountSlice } from '../../entities/account/reduxSlice'
 import DeliveryForm from './DeliveryForm.js'
 import { createStoreFromPreloadedState } from './redux/store'
 import Modal from 'react-modal'
+import { RootWithDefaults } from '../../utils/react'
+import { Mode } from './mode'
+import { setMode } from './redux/formSlice'
 
 const buildInitialState = () => {
   return {
@@ -15,36 +16,46 @@ const buildInitialState = () => {
 
 const store = createStoreFromPreloadedState(buildInitialState())
 
-export default function ({
-  storeId,
+const Form = ({
   storeNodeId,
   deliveryId,
   deliveryNodeId,
   delivery,
-  order,
   isDispatcher,
   isDebugPricing,
-}) {
+}) => {
+  const dispatch = useDispatch()
+
+  useLayoutEffect(() => {
+    dispatch(
+      setMode(
+        Boolean(deliveryNodeId) ? Mode.DELIVERY_UPDATE : Mode.DELIVERY_CREATE,
+      ),
+    )
+  }, [dispatch, deliveryNodeId])
+
+  return (
+    <DeliveryForm
+      storeNodeId={storeNodeId}
+      deliveryId={deliveryId}
+      deliveryNodeId={deliveryNodeId}
+      preLoadedDeliveryData={delivery ? JSON.parse(delivery) : null}
+      isDispatcher={isDispatcher}
+      isDebugPricing={isDebugPricing}
+    />
+  )
+}
+
+export default function (props) {
   useEffect(() => {
-    Modal.setAppElement('.content');
+    Modal.setAppElement('.content')
   }, [])
 
   return (
-    <StrictMode>
+    <RootWithDefaults>
       <Provider store={store}>
-        <ConfigProvider locale={antdLocale}>
-          <DeliveryForm
-            storeId={storeId}
-            storeNodeId={storeNodeId}
-            deliveryId={deliveryId}
-            deliveryNodeId={deliveryNodeId}
-            preLoadedDeliveryData={delivery ? JSON.parse(delivery) : null}
-            order={order ? JSON.parse(order) : null}
-            isDispatcher={isDispatcher}
-            isDebugPricing={isDebugPricing}
-          />
-        </ConfigProvider>
+        <Form {...props} />
       </Provider>
-    </StrictMode>
+    </RootWithDefaults>
   )
 }

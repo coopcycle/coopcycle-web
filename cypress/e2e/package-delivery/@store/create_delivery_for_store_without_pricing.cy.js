@@ -21,8 +21,9 @@ context('store without pricing (role: store)', () => {
       'Office',
       '+33112121212',
       'John Doe',
-      'Pickup comments'
     )
+
+    cy.betaEnterCommentAtPosition(0, 'Pickup comments')
 
     // Dropoff
 
@@ -33,23 +34,23 @@ context('store without pricing (role: store)', () => {
       'Office',
       '+33112121212',
       'Jane smith',
-      'Dropoff comments'
     )
 
-    cy.get(`[name="tasks[1].weight"]`).clear()
-    cy.get(`[name="tasks[1].weight"]`).type(2.5)
+    cy.betaEnterWeightAtPosition(1, 2.5)
+
+    cy.betaEnterCommentAtPosition(1, 'Dropoff comments')
 
     cy.get('button[type="submit"]').click()
 
-    cy.urlmatch(/\/dashboard\/stores\/[0-9]+\/deliveries$/)
-    cy.get('[data-testid=delivery__list_item]')
+    // Delivery page (view mode)
+    cy.urlmatch(/\/dashboard\/deliveries\/[0-9]+$/)
+    cy.get('[data-testid=delivery-itinerary]')
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
       .should('exist')
-    cy.get('[data-testid=delivery__list_item]')
+    cy.get('[data-testid=delivery-itinerary]')
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
       .should('exist')
-    cy.get('[data-testid=delivery__list_item]')
-      .contains(/€0.00/)
-      .should('exist')
+    cy.get('[data-testid=tax-included-previous]')
+      .contains(/0.00/)
   })
 })
