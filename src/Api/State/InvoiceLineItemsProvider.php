@@ -194,6 +194,7 @@ final class InvoiceLineItemsProvider implements ProviderInterface
         $exports = $order->getExports()->map(fn($export) => $export->getExportCommand())->toArray();
 
         return new InvoiceLineItem(
+            sprintf('%s-%d', $invoiceId, $order->getId()),
             $invoiceId,
             $invoiceDate,
             $store?->getId(),
