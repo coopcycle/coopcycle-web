@@ -110,15 +110,15 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
             log: false,
           })
           .then($options => {
-            const option = $options.filter((index, el) => {
-              if (index === 0) {
-                cy.log(
-                  `Searching for option with text "${text}"; first element: "${el.textContent}"`,
-                )
-              }
-
-              el.textContent.includes(text)
-            })
+            cy.log(
+              `Searching for option with text "${text}"; elements: "${$options
+                .toArray()
+                .map(el => el.textContent)
+                .join(', ')}"`,
+            )
+            const option = $options.filter((index, el) =>
+              el.textContent.includes(text),
+            )
 
             if (option.length) {
               cy.wrap(option).click()
@@ -133,10 +133,9 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
 
             attempts++
 
-            // .ant-select-dropdown
-            cy.root({ log: false }).trigger('wheel', {
+            cy.get('.rc-virtual-list-holder').trigger('wheel', {
               deltaX: 0,
-              deltaY: 32 * 5, // 1 row = ~32px
+              deltaY: 32 * 6, // 1 row = ~32px
               deltaMode: 0,
             })
             cy.wait(100)
