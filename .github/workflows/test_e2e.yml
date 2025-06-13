@@ -26,6 +26,15 @@ jobs:
         timeout-minutes: 5
       - name: Setup CoopCycle
         run: docker compose exec -T php bin/console coopcycle:setup --env=test
+      - name: Run selected Cypress tests
+        uses: cypress-io/github-action@v6
+        with:
+          # Maybe we could run a build step before starting tests
+          # https://symfony.com/doc/current/frontend/encore/installation.html
+          # https://github.com/cypress-io/github-action?tab=readme-ov-file#build-app
+          # build: npm run dev
+          spec: |
+            cypress/e2e/package-delivery/@dispatcher/create_delivery/create_delivery_store_w_time_slot_pricing_w_range_not_time_slot.cy.js
       - name: Run Cypress
         uses: cypress-io/github-action@v6
         with:
