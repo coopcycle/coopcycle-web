@@ -1,2 +1,13 @@
-imports:
-    - { resource: ../dev/monolog.yaml }
+monolog:
+  # channels to use with autowire are configured in config.yml
+  # https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels
+  handlers:
+    main:
+      type: rotating_file
+      path: "%env(APP_LOG_DIR)%/%kernel.environment%.log"
+      level: debug
+      max_files: 3
+      channels: ["!event"]
+    console:
+      type:   console
+      channels: ["!event", "!doctrine"]
