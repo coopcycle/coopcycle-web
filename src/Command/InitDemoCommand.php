@@ -11,6 +11,7 @@ use AppBundle\Faker\RestaurantProvider;
 use AppBundle\Service\Geocoder;
 use Craue\ConfigBundle\Util\Config;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Faker;
@@ -87,6 +88,7 @@ class InitDemoCommand extends Command
 
     public function __construct(
         private ManagerRegistry $doctrine,
+        private EntityManagerInterface $entityManager,
         private UserManipulator $userManipulator,
         private LoaderInterface $fixturesLoader,
         private Faker\Generator $faker,
@@ -116,7 +118,7 @@ class InitDemoCommand extends Command
 
         $this->faker->addProvider($restaurantProvider);
 
-        $this->ormPurger = new ORMPurger($this->doctrine->getManager(), $this->excludedTables);
+        $this->ormPurger = new ORMPurger($this->entityManager, $this->excludedTables);
         // $this->ormPurger->setPurgeMode(ORMPurger::PURGE_MODE_TRUNCATE);
 
         $store = new FlockStore();
@@ -531,7 +533,7 @@ class InitDemoCommand extends Command
     private function createRestaurants(OutputInterface $output)
     {
         $foodTaxCategory =
-            $this->taxCategoryRepository->findOneByCode('BASE_REDUCED');
+            $this->taxCategoryRepository->findOneBy(['code' => 'BASE_REDUCED']);
 
         $em = $this->doctrine->getManagerForClass(Entity\LocalBusiness::class);
 
@@ -556,7 +558,7 @@ class InitDemoCommand extends Command
                 $em->clear();
 
                 // As we have cleared the whole UnitOfWork, we need to restore the TaxCategory entity
-                $foodTaxCategory = $this->taxCategoryRepository->findOneByCode('BASE_REDUCED');
+                $foodTaxCategory = $this->taxCategoryRepository->findOneBy(['code' => 'BASE_REDUCED']);
             }
         }
 

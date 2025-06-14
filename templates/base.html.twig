@@ -116,11 +116,14 @@
       {% block scripts %}{% endblock %}
     {% endblock %}
 
-    {% if app.environment == "test" %}
-    <script>
-    {% include '_partials/error_handler.js.twig' %}
-    </script>
-    {% endif %}
+{#    FIXME: temporarily disable this script as it behaves weirdly in some cypress e2e tests: #}
+{#    For example inside cypress/e2e/foodtech/checkout/with_existing_address.cy.js it gets truncated #}
+{#    after a saved address is selected #}
+{#    {% if app.environment == "test" %}#}
+{#      <script type='text/javascript'>#}
+{#        {% include '_partials/error_handler.js.twig' %}#}
+{#      </script>#}
+{#    {% endif %}#}
 
     {% include "_partials/analytics.html.twig" %}
   </body>

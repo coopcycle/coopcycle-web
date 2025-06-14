@@ -9,7 +9,6 @@ context(
 
       cy.setMockDateTime('2025-04-23 8:30:00')
 
-      cy.visit('/login')
       cy.login('dispatcher', 'dispatcher')
     })
 

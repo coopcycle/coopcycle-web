@@ -1,69 +1,53 @@
-var Encore = require('@symfony/webpack-encore')
-var webpack = require('webpack')
+// Webpack configuration used mainly in Cypress Component Testing
 
-// Manually configure the runtime environment if not already configured yet by the "encore" command.
-// It's useful when you use tools that rely on webpack.config.js file.
-if (!Encore.isRuntimeEnvironmentConfigured()) {
-  Encore.configureRuntimeEnvironment('dev');
-}
+const Encore = require('@symfony/webpack-encore')
+require('./webpack.config.js')
 
 Encore
 
   .setOutputPath(__dirname + '/web/build-cypress')
   .setPublicPath('/build-cypress')
 
-  .addEntry('common', './js/app/common.js')
-
-  .enableSingleRuntimeChunk()
-  .splitEntryChunks()
-
-  .enablePostCssLoader()
-  .enableSassLoader(function(sassLoaderOptions) {
-    // https://github.com/twbs/bootstrap-sass#sass-number-precision
-    if (sassLoaderOptions.sassOptions) {
-      sassLoaderOptions.sassOptions.precision = 8
-    } else {
-      sassLoaderOptions.sassOptions = { precision: 8 }
-    }
-  }, {
-    resolveUrlLoader: false
-  })
-  .enableLessLoader(function(lessLoaderOptions) {
-    // Avoid error "Inline JavaScript is not enabled. Is it set in your options?"
-    // https://github.com/ant-design/ant-motion/issues/44
-    if (lessLoaderOptions.lessOptions) {
-      lessLoaderOptions.lessOptions.javascriptEnabled = true
-    } else {
-      lessLoaderOptions.lessOptions = { javascriptEnabled: true }
-    }
-  })
-
-  .autoProvidejQuery()
-
-  .disableCssExtraction()
+// Fixes an issue on macOS: Error: EPERM: operation not permitted, mkdir '/Users/../Library/Caches/Cypress/../Cypress.app/Contents/Resources/app/packages/server/node_modules/@cypress/webpack-dev-server/dist/dist'
+Encore.configureManifestPlugin(options => {
+  options.writeToFileEmit = false
+})
 
 let webpackConfig = Encore.getWebpackConfig()
 
-module.exports = {
-  mode: 'development',
-  module: {
-    rules: [
-      webpackConfig.module.rules[0],
-      // Do *NOT* use the configuration returned by Encore for images,
-      // to avoid the error "Automatic publicPath is not supported in this browser"
-      // https://github.com/cypress-io/cypress/issues/8900
-      {
-        test: /\.(png|jpg|jpeg|gif|ico|svg|webp)$/i,
-        use: [
-          {
-            loader: 'url-loader',
-          },
-        ],
-      },
-      webpackConfig.module.rules[1],
-      webpackConfig.module.rules[4],
-    ],
-  },
-  devtool: false,
-  plugins: webpackConfig.plugins,
-}
+//FIXME: re-enable if still needed or remove
+// module.exports = {
+//   mode: 'development',
+//   module: {
+//     rules: [
+//       webpackConfig.module.rules[0],
+//       // Do *NOT* use the configuration returned by Encore for images,
+//       // to avoid the error "Automatic publicPath is not supported in this browser"
+//       // https://github.com/cypress-io/cypress/issues/8900
+//       {
+//         test: /\.(png|jpg|jpeg|gif|ico|svg|webp)$/i,
+//         use: [
+//           {
+//             loader: 'url-loader',
+//           },
+//         ],
+//       },
+//       webpackConfig.module.rules[1],
+//       webpackConfig.module.rules[4],
+//     ],
+//   },
+//   devtool: false,
+//   plugins: webpackConfig.plugins,
+// }
+
+// Babel configuration
+webpackConfig.module.rules[0].use[0].options.plugins = [
+  // https://babeljs.io/docs/en/babel-plugin-transform-modules-commonjs
+  // loose ES6 modules allow us to dynamically mock imports during tests
+  // from
+  // https://github.com/cypress-io/cypress/tree/master/npm/react/cypress/component/advanced/mocking-imports
+  // https://github.com/cypress-io/cypress/discussions/16741#discussioncomment-7212638
+  ['@babel/plugin-transform-modules-commonjs', { loose: true }],
+]
+
+module.exports = webpackConfig

@@ -215,20 +215,11 @@ make cypress-install
 docker compose exec -T php bin/console typesense:create --env=test
 ```
 
-Launch php container on his own in the test env:
-```sh
-docker compose run --service-ports -e APP_ENV=test php
-docker compose up
-# might need to reboot the PHP container here because the link with nginx is not good
-```
-
-(FIXME : it is a pitty to launch with two commands the containers, it is because `docker compose up` doesn't accept `-e APP_ENV=test` arg, you can also set `APP_ENV=test` in your `.env` file)
-
 In the `.env` file you need to set `GEOCODE_EARTH_API_KEY` to a valid API key. You need also Stripe configured on the platform or in the `.env` file (`STRIPE_PUBLISHABLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_CONNECT_CLIENT_ID`).
 
 and then this command will lead you to Cypress GUI
 ```sh
-cypress open
+make cypress-open
 ```
 
 The Cypress tests will run automatically in Github CI on the `master` branch. You can get screenshots of the failed tests from the `Upload images for failed test` step (there is a link there to download the failed steps).

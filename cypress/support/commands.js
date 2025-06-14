@@ -24,9 +24,13 @@
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
+import moment from 'moment'
+
 Cypress.Commands.add('terminal', command => {
+  cy.log(`exec: ${command}`)
+
   const prefix = Cypress.env('COMMAND_PREFIX')
-  cy.exec(prefix ? `${prefix} ${command}` : command, {timeout: 60000})
+  cy.exec(prefix ? `${prefix} ${command}` : command, {timeout: 60000, log: false})
 })
 
 Cypress.Commands.add('symfonyConsole', command => {
@@ -94,9 +98,20 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
 
   cy.wait(300)
 
-  cy.root()
+  const toMoment = textValue => {
+    if (/^\d{1,2}:\d{2}$/.test(textValue)) {
+      const [hours, minutes] = textValue.split(':').map(Number)
+      if (hours >= 0 && hours < 24 && minutes >= 0 && minutes < 60) {
+        return moment().hours(hours).minutes(minutes)
+      }
+    }
+
+    return null
+  }
+
+  cy.root({ log: false })
     .closest('body')
-    .find('.ant-select-dropdown')
+    .find('.ant-select-dropdown:visible')
     .not('.ant-select-dropdown-hidden')
     .within(() => {
       let attempts = 0
@@ -104,9 +119,26 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
 
       function tryFindOption() {
         return cy
-          .get('.rc-virtual-list-holder-inner .ant-select-item-option')
+          .get('.rc-virtual-list-holder-inner .ant-select-item-option', {
+            log: false,
+          })
           .then($options => {
-            const option = $options.filter((_, el) =>
+            if ($options.length === 0) {
+              cy.log(
+                `No options found for selector "${selector}" with text "${text}"`,
+              )
+              throw new Error(
+                `No options found for selector "${selector}" with text "${text}"`,
+              )
+            }
+
+            cy.log(
+              `Searching for option with text "${text}"; elements: "${$options
+                .toArray()
+                .map(el => el.textContent)
+                .join(', ')}"`,
+            )
+            const option = $options.filter((index, el) =>
               el.textContent.includes(text),
             )
 
@@ -115,7 +147,28 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
               return
             }
 
+            // Fail early to debug test failures on CI
+            const textMoment = toMoment(text)
+            const firstOptionMoment = toMoment(
+              $options.toArray()[0].textContent,
+            )
+            if (
+              textMoment &&
+              firstOptionMoment &&
+              textMoment.isBefore(firstOptionMoment)
+            ) {
+              cy.log(
+                `The text "${text}" is before the first option, skipping further attempts.`,
+              )
+              throw new Error(
+                `The text "${text}" is before the first option, skipping further attempts.`,
+              )
+            }
+
             if (attempts >= maxAttempts) {
+              cy.log(
+                `Could not find option with text "${text}" after ${maxAttempts} scroll attempts`,
+              )
               throw new Error(
                 `Could not find option with text "${text}" after ${maxAttempts} scroll attempts`,
               )
@@ -123,13 +176,12 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
 
             attempts++
 
-            // .ant-select-dropdown
-            cy.root().trigger('wheel', {
+            cy.get('.rc-virtual-list-holder').trigger('wheel', {
               deltaX: 0,
               deltaY: 32 * 6, // 1 row = ~32px
               deltaMode: 0,
             })
-            cy.wait(100)
+            cy.wait(500)
             tryFindOption()
           })
       }
@@ -301,7 +353,7 @@ Cypress.Commands.add('betaChooseSavedAddressAtPosition',
       cy.wait(300)
       cy.root()
         .closest('body')
-        .find('.ant-select-dropdown')
+        .find('.ant-select-dropdown:visible')
         .not('.ant-select-dropdown-hidden')
         .within(() => {
           cy.get(`.rc-virtual-list-holder-inner > :nth-child(${ addressIndex })`).click()

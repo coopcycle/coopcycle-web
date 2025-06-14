@@ -213,6 +213,7 @@ class AdminController extends AbstractController
         protected NormalizerInterface $normalizer,
         protected SerializerInterface $serializer,
         protected string $environment,
+        protected LoggerInterface $logger,
     )
     {}
 
@@ -448,7 +449,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    public function foodtechSettingsAction(Request $request, Redis $redis, LoggerInterface $logger)
+    public function foodtechSettingsAction(Request $request, Redis $redis)
     {
         $preparationDelay = $request->request->get('preparation_delay', 0);
         if (0 === $preparationDelay) {
@@ -457,7 +458,7 @@ class AdminController extends AbstractController
             $redis->set('foodtech:dispatch_delay_for_pickup', $preparationDelay);
         }
 
-        $logger->info(sprintf('Set foodtech delay to %s', strval($preparationDelay)));
+        $this->logger->info(sprintf('Set foodtech delay to %s', strval($preparationDelay)));
 
         return new JsonResponse([
             'preparation_delay' => $preparationDelay,
@@ -778,7 +779,6 @@ class AdminController extends AbstractController
         MessageBusInterface $messageBus,
         CentrifugoClient $centrifugoClient,
         SlugifyInterface $slugify,
-        LoggerInterface $logger,
     )
     {
         $deliveryImportForm = $this->createForm(DeliveryImportType::class, null, [
@@ -801,10 +801,10 @@ class AdminController extends AbstractController
                     messageBus: $messageBus,
                     slugify: $slugify,
                     routeTo: 'admin_deliveries',
-                    logger: $logger,
+                    logger: $this->logger,
                 );
             } else {
-                $logger->warning('Delivery import form is not valid', [
+                $this->logger->warning('Delivery import form is not valid', [
                     'errors' => $deliveryImportForm->getErrors(true, false),
                 ]);
             }
@@ -2605,44 +2605,53 @@ class AdminController extends AbstractController
         EntityManagerInterface $objectManager,
         PaginatorInterface $paginator)
     {
-        $form = $this->createForm(BusinessAccountType::class, $businessAccount);
+        $form = $this->createForm(BusinessAccountType::class, $businessAccount, [
+            #FIXME; normally cypress e2e tests run with CSRF protection enabled, but once in a while CSRF tokens are not saved in the session (removed?) for this form
+            'csrf_protection' => 'test' !== $this->environment
+        ]);
 
-        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
-            if (null === $businessAccount->getId()) {
-                $managerEmail = $form->get('managerEmail')->getData();
+        if ($request->isMethod('POST')) {
+            if ($form->handleRequest($request)->isValid()) {
+                if (null === $businessAccount->getId()) {
+                    $managerEmail = $form->get('managerEmail')->getData();
 
-                $invitation = new Invitation();
-                $invitation->setEmail($canonicalizer->canonicalize($managerEmail));
-                $invitation->setUser($this->getUser());
-                $invitation->setCode($tokenGenerator->generateToken());
-                $invitation->addRole('ROLE_BUSINESS_ACCOUNT');
+                    $invitation = new Invitation();
+                    $invitation->setEmail($canonicalizer->canonicalize($managerEmail));
+                    $invitation->setUser($this->getUser());
+                    $invitation->setCode($tokenGenerator->generateToken());
+                    $invitation->addRole('ROLE_BUSINESS_ACCOUNT');
 
-                // Send invitation email
-                $message = $emailManager->createBusinessAccountInvitationMessage($invitation, $businessAccount);
-                $emailManager->sendTo($message, $invitation->getEmail());
-                $invitation->setSentAt(new \DateTime());
+                    // Send invitation email
+                    $message = $emailManager->createBusinessAccountInvitationMessage($invitation, $businessAccount);
+                    $emailManager->sendTo($message, $invitation->getEmail());
+                    $invitation->setSentAt(new \DateTime());
 
-                $businessAccountInvitation = new BusinessAccountInvitation();
-                $businessAccountInvitation->setBusinessAccount($businessAccount);
-                $businessAccountInvitation->setInvitation($invitation);
+                    $businessAccountInvitation = new BusinessAccountInvitation();
+                    $businessAccountInvitation->setBusinessAccount($businessAccount);
+                    $businessAccountInvitation->setInvitation($invitation);
 
-                $objectManager->persist($businessAccountInvitation);
+                    $objectManager->persist($businessAccountInvitation);
 
-                $this->addFlash(
-                    'notice',
-                    $this->translator->trans('form.business_acount.send_invitation.confirm')
-                );
+                    $this->addFlash(
+                        'notice',
+                        $this->translator->trans('form.business_acount.send_invitation.confirm')
+                    );
+                } else {
+                    $this->addFlash(
+                        'notice',
+                        $this->translator->trans('global.changesSaved')
+                    );
+                }
+
+                $objectManager->persist($businessAccount);
+                $objectManager->flush();
+
+                return $this->redirectToRoute('admin_business_accounts');
             } else {
-                $this->addFlash(
-                    'notice',
-                    $this->translator->trans('global.changesSaved')
-                );
+                $this->logger->warning('handleBusinessAccountForm; form is not valid', [
+                    'errors' => $form->getErrors(true, false),
+                ]);
             }
-
-            $objectManager->persist($businessAccount);
-            $objectManager->flush();
-
-            return $this->redirectToRoute('admin_business_accounts');
         }
 
         $orders = [];
