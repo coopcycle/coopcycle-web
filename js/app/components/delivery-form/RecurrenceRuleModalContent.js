@@ -136,7 +136,7 @@ export default function ModalContent() {
         onSubmit={values => {
           let rrule
           if (isOverrideRule) {
-            rrule = values.rule
+            rrule = values.rule.trim()
           } else {
             // If no days are selected, consider it as no recurrence
             rrule = getByDayValue(values.rule) ? values.rule : null
