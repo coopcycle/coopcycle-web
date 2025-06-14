@@ -51,9 +51,9 @@ cypress-only-until-fail: TESTFILE?=local-commerce/@admin/update_price.cy.js
 cypress-only-until-fail:
 	@while clear && cypress run --browser chrome --headless --no-runner-ui --spec cypress/e2e/${TESTFILE}; do :; done
 cypress-open:
-	@cypress open
+	@npm run cy:open
 cypress-install:
-	@npm install -g cypress@14.3.2 @cypress/webpack-preprocessor@6.0.4
+	@npm install
 
 jest:
 	@docker compose exec -e APP_ENV=test -e NODE_ENV=test webpack npm run jest

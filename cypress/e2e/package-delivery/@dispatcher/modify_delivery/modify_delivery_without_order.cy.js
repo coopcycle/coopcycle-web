@@ -9,10 +9,6 @@ context('Delivery (role: admin)', () => {
     cy.login('admin', '12345678')
   })
 
-  afterEach(() => {
-    cy.resetMockDateTime()
-  })
-
   it('modify a delivery without an order', function () {
     cy.visit('/admin/deliveries/1/')
 
