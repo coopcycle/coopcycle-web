@@ -76,6 +76,7 @@ export default ({ dateRange, params, setModalOpen }) => {
       </main>
       <footer className="modal-footer">
         <Button
+          testID="invoicing.download.file"
           primary
           block
           icon="download"

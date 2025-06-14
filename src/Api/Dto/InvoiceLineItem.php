@@ -12,18 +12,20 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 #[ApiResource(
     operations: [
         new Get(
-            uriTemplate: '/invoice_line_items/{invoiceId}',
+            uriTemplate: '/invoice_line_items/{id}',
+            requirements: ['id' => '^(?!.*grouped_by_organization|.*export).*$'],
             controller: NotFoundAction::class,
-            read: false,
             output: false,
             // Make sure to add requirements for operations like "/invoice_line_items/grouped_by_organization" to work
-            requirements: ['invoiceId' => '^(?!.*grouped_by_organization|.*export).*$']
+            read: false
         )
     ]
 )]
 class InvoiceLineItem
 {
     #[ApiProperty(identifier: true)]
+    public string $id;
+
     public string $invoiceId;
 
     public readonly \DateTime $invoiceDate;
@@ -62,6 +64,7 @@ class InvoiceLineItem
     public readonly array $exports;
 
     public function __construct(
+        string $id,
         string $invoiceId,
         \DateTime $invoiceDate,
         ?int $storeId,
@@ -78,6 +81,7 @@ class InvoiceLineItem
         array $exports,
     )
     {
+        $this->id = $id;
         $this->invoiceId = $invoiceId;
         $this->invoiceDate = $invoiceDate;
         $this->storeId = $storeId;
