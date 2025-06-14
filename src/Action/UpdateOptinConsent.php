@@ -6,7 +6,7 @@ use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Entity\OptinConsent;
 use Doctrine\Persistence\ManagerRegistry;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class UpdateOptinConsent

@@ -6,7 +6,7 @@ use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Message\UpdateLocation as UpdateLocationMessage;
 use phpcent\Client as CentrifugoClient;
 use Redis;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;

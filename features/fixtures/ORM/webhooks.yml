@@ -1,8 +1,8 @@
-League\Bundle\OAuth2ServerBundle\Model\Grant:
+League\Bundle\OAuth2ServerBundle\ValueObject\Grant:
   oauth2_grant_client_credentials:
     __construct: [ <(League\Bundle\OAuth2ServerBundle\OAuth2Grants::CLIENT_CREDENTIALS)> ]
 
-League\Bundle\OAuth2ServerBundle\Model\Scope:
+League\Bundle\OAuth2ServerBundle\ValueObject\Scope:
   oauth2_scope_tasks:
     __construct: [ 'tasks' ]
   oauth2_scope_deliveries:

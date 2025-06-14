@@ -21,7 +21,7 @@ return RectorConfig::configure()
         SetList::PHP_83,
         // SymfonySetList::SYMFONY_CODE_QUALITY,
         // SymfonySetList::SYMFONY_CONSTRUCTOR_INJECTION,
-        SymfonySetList::SYMFONY_54
+        SymfonySetList::SYMFONY_64
     ])
     ->withPaths([
         __DIR__ . '/app',
@@ -32,7 +32,7 @@ return RectorConfig::configure()
         ActionSuffixRemoverRector::class,
         ReduceAlwaysFalseIfOrRector::class
     ])
-    ->withSymfonyContainerXml(__DIR__ . '/var/cache/dev/AppKernelDevDebugContainer.xml')
+    ->withSymfonyContainerXml(__DIR__ . '/var/cache/dev/AppBundle_KernelDevDebugContainer.xml')
     ->withAttributesSets()
     ->withSets([
         ApiPlatformSetList::ANNOTATIONS_TO_ATTRIBUTES,
