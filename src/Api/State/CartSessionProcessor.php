@@ -10,7 +10,6 @@ use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Security\OrderAccessTokenManager;
 use AppBundle\Service\LoggingUtils;
 use Doctrine\ORM\EntityManagerInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authenticator\Token\JWTPostAuthenticationToken;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -32,7 +31,7 @@ class CartSessionProcessor implements ProcessorInterface
     private function getCartFromSession()
     {
         if (null !== $token = $this->tokenStorage->getToken()) {
-            if (($token instanceof JWTUserToken || $token instanceof JWTPostAuthenticationToken) && $token->hasAttribute('cart')) {
+            if ($token instanceof JWTPostAuthenticationToken && $token->hasAttribute('cart')) {
                 return $token->getAttribute('cart');
             }
         }
@@ -41,7 +40,7 @@ class CartSessionProcessor implements ProcessorInterface
     private function getUserFromToken()
     {
         if (null !== $token = $this->tokenStorage->getToken()) {
-            if (($token instanceof JWTUserToken || $token instanceof JWTPostAuthenticationToken) && is_object($token->getUser())) {
+            if ($token instanceof JWTPostAuthenticationToken && is_object($token->getUser())) {
                 return $token->getUser();
             }
         }

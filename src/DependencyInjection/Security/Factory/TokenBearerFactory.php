@@ -9,9 +9,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AuthenticatorFactoryInterface;
-use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\SecurityFactoryInterface;
 
-class TokenBearerFactory implements SecurityFactoryInterface, AuthenticatorFactoryInterface
+class TokenBearerFactory implements AuthenticatorFactoryInterface
 {
     public function create(ContainerBuilder $container, $id, $config, $userProvider, $defaultEntryPoint)
     {
@@ -23,13 +22,18 @@ class TokenBearerFactory implements SecurityFactoryInterface, AuthenticatorFacto
         return 'pre_auth';
     }
 
-    public function getKey()
+    public function getKey(): string
     {
         return 'bearer_token';
     }
 
     public function addConfiguration(NodeDefinition $node)
     {
+    }
+
+    public function getPriority(): int
+    {
+        return 1;
     }
 
     public function createAuthenticator(ContainerBuilder $container, string $firewallName, array $config, string $userProviderId): string
