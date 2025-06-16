@@ -95,7 +95,7 @@
         "jmikola/geojson": "~1.0",
         "sylius/channel-bundle": "^1.7.5",
         "liip/imagine-bundle": "^2.3",
-        "oneup/uploader-bundle": "^4.0.1",
+        "oneup/uploader-bundle": "^5.0",
         "sylius/promotion-bundle": "^1.7.5",
         "notfloran/mjml-bundle": "^3.0",
         "martin-georgiev/postgresql-for-doctrine": "^1.3",
