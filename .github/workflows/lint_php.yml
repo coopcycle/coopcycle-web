@@ -30,3 +30,7 @@ jobs:
         run: bin/console cache:clear
       - name: Warmup Symfony cache
         run: bin/console cache:warmup
+      - name: Clear Symfony cache (prod)
+        run: bin/console cache:clear --env=prod --no-debug
+      - name: Warmup Symfony cache (prod)
+        run: bin/console cache:warmup --env=prod --no-debug
