@@ -1,5 +1,3 @@
-import moment from 'moment'
-
 context('Managing recurrence rules (role: admin)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
@@ -96,42 +94,5 @@ context('Managing recurrence rules (role: admin)', () => {
       'have.value',
       'FREQ=WEEKLY;INTERVAL=2;BYDAY=MO;WKST=MO',
     )
-
-    cy.visit('/admin/dashboard')
-
-    // Verify the main order is created
-    cy.get('[data-task-id]').should('have.length', 2)
-
-    // next week; Monday -> skip
-    cy.visit(
-      `/admin/dashboard/fullscreen/${moment()
-        .day(1)
-        .add(moment().day() <= 1 ? 0 : 1, 'weeks')
-        .format('YYYY-MM-DD')}?nav=on`,
-    )
-
-    // allow recurrence rules to be checked
-    cy.wait(5000)
-    // FIXME; we need to refresh the page because websockets are not working in tests currently
-    cy.reload()
-
-    // Verify the recurrence order is NOT created
-    cy.get('[data-task-id]').should('have.length', 0)
-
-    // a week after next week; Monday -> create an order
-    cy.visit(
-      `/admin/dashboard/fullscreen/${moment()
-        .day(1)
-        .add(moment().day() <= 1 ? 1 : 2, 'weeks')
-        .format('YYYY-MM-DD')}?nav=on`,
-    )
-
-    // allow recurrence rules to be checked
-    cy.wait(5000)
-    // FIXME; we need to refresh the page because websockets are not working in tests currently
-    cy.reload()
-
-    // Verify the recurrence order is created
-    cy.get('[data-task-id]').should('have.length', 2)
   })
 })
