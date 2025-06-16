@@ -1,0 +1,6 @@
+AppBundle\Entity\TimeSlot:
+  time_slot_{1..120}:
+    name: 'Acme time slot <current()>'
+    openingHours:
+      - 'Mo-Su 00:00-11:59'
+      - 'Mo-Su 12:00-23:59'
