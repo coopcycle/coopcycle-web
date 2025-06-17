@@ -713,6 +713,16 @@
         "TRY_AGAIN": "Intentar de nuevo",
         "DEPRECATED": "Obsoleto",
         "LOADING": "Cargando...",
-        "VIEW_DOCUMENTATION": "Ver documentación"
+        "VIEW_DOCUMENTATION": "Ver documentación",
+        "DELIVERY_PROOFS_LINK_TEXT": "Pruebas de Entrega",
+        "DELIVERY_PROOFS_MODAL_TITLE": "Descargar Pruebas de Entrega",
+        "DELIVERY_PROOFS_DOWNLOAD_BUTTON": "Descargar",
+        "DELIVERY_PROOFS_CHOOSE_WEEK": "Elige una semana",
+        "DELIVERY_PROOFS_TOTAL_DELIVERIES": "Total de Entregas",
+        "DELIVERY_PROOFS_DELIVERIES_COUNT": "{{count}} entregas",
+        "DELIVERY_PROOFS_CONTENTS": "Contenido",
+        "DELIVERY_PROOFS_CONTENTS_VALUE": "Fotos e Informes",
+        "DELIVERY_PROOFS_FILE_TYPE": "Tipo de Archivo",
+        "DELIVERY_PROOFS_FILE_TYPE_VALUE": "Archivo ZIP"
     }
 }
