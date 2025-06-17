@@ -22,12 +22,3 @@ framework:
 parameters:
     router.request_context.scheme: 'https'
     nucleos_profile.registration.confirmation.enabled: true
-
-services:
-    Sentry\Integration\IgnoreErrorsIntegration:
-        arguments:
-            $options:
-                ignore_exceptions:
-                    - Symfony\Component\Security\Core\Exception\AccessDeniedException
-                    - Symfony\Component\HttpKernel\Exception\NotFoundHttpException
-                    - ApiPlatform\Symfony\Validator\Exception\ValidationException

@@ -9,8 +9,10 @@ when@prod:
         options:
             tags:
                 coopcycle_app_name: '%env(COOPCYCLE_APP_NAME)%'
-            integrations:
-                - 'Sentry\Integration\IgnoreErrorsIntegration'
+            ignore_exceptions:
+                    - 'Symfony\Component\Security\Core\Exception\AccessDeniedException'
+                    - 'Symfony\Component\HttpKernel\Exception\NotFoundHttpException'
+                    - 'ApiPlatform\Symfony\Validator\Exception\ValidationException'
 
 #        If you are using Monolog, you also need this additional configuration to log the errors correctly:
 #        https://docs.sentry.io/platforms/php/guides/symfony/#monolog-integration
