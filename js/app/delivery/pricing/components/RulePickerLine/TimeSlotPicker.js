@@ -4,17 +4,11 @@ import PickerIsLoading from './PickerIsLoading'
 import PickerIsError from './PickerIsError'
 
 export default function TimeSlotPicker({ value, onChange }) {
-  const { data, isFetching } = useGetTimeSlotsQuery()
+  const { data: timeSlots, isFetching } = useGetTimeSlotsQuery()
 
   if (isFetching) {
     return <PickerIsLoading />
   }
-
-  if (!data) {
-    return <PickerIsError />
-  }
-
-  const timeSlots = data['hydra:member']
 
   if (!timeSlots) {
     return <PickerIsError />

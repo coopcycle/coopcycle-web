@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { Field } from 'formik'
 import AddressBookNew from './AddressBook'
 import { Input, Button } from 'antd'
@@ -44,22 +44,8 @@ export default ({
     taskValues.type === 'DROPOFF' && values.tasks.length > 2,
   )
 
-  const { data: timeSlotsData } = useGetStoreTimeSlotsQuery(storeNodeId)
-  const { data: packagesData } = useGetStorePackagesQuery(storeNodeId)
-
-  const timeSlotLabels = useMemo(() => {
-    if (timeSlotsData) {
-      return timeSlotsData['hydra:member']
-    }
-    return []
-  }, [timeSlotsData])
-
-  const packages = useMemo(() => {
-    if (packagesData) {
-      return packagesData['hydra:member']
-    }
-    return null
-  }, [packagesData])
+  const { data: timeSlotLabels } = useGetStoreTimeSlotsQuery(storeNodeId)
+  const { data: packages } = useGetStorePackagesQuery(storeNodeId)
 
   return (
     <div className="task border p-4 mb-4" data-testid={`form-task-${index}`}>

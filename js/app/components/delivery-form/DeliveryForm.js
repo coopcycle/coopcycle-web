@@ -129,24 +129,10 @@ export default function({
   const { data: storeData } = useGetStoreQuery(storeNodeId)
   const storeDeliveryInfos = useMemo(() => storeData ?? {}, [storeData])
 
-  const { data: tagsData } = useGetTagsQuery(undefined, {
+  const { data: tags } = useGetTagsQuery(undefined, {
     skip: !isDispatcher,
   })
-  const { data: addressesData } = useGetStoreAddressesQuery(storeNodeId)
-
-  const tags = useMemo(() => {
-    if (tagsData) {
-      return tagsData['hydra:member']
-    }
-    return []
-  }, [tagsData])
-
-  const addresses = useMemo(() => {
-    if (addressesData) {
-      return addressesData['hydra:member']
-    }
-    return []
-  }, [addressesData])
+  const { data: addresses } = useGetStoreAddressesQuery(storeNodeId)
 
   const [trackingLink, setTrackingLink] = useState('#')
   const [initialValues, setInitialValues] = useState({ tasks: [] })
@@ -230,17 +216,17 @@ export default function({
   const isDataReady = useMemo(() => {
     if (!storeData) return false
 
-    if (!addressesData) return false
+    if (!addresses) return false
 
-    if (isDispatcher && !tagsData) {
+    if (isDispatcher && !tags) {
       return false
     }
 
     return true
   }, [
     storeData,
-    addressesData,
-    tagsData,
+    addresses,
+    tags,
     isDispatcher
   ])
 
