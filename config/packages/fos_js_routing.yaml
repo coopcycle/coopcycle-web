@@ -103,3 +103,5 @@ fos_js_routing:
         - _api_/trailers/{id}.{_format}_patch
         - _api_/trailers/{id}/vehicles_put
         - task_label_pdf
+        - _api_/stores/{id}/deliveries_get_collection
+        - _api_/deliveries/pod_export_post
