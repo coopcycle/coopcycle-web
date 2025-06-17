@@ -105,17 +105,15 @@ export default ({
           index={index}
         />
 
-        {taskValues.type === 'DROPOFF' ? (
-          <div className="mt-4">
-            {packages && packages.length ? (
-              <Packages
-                index={index}
-                packages={packages}
-              />
-            ) : null}
-            <TotalWeight index={index} />
-          </div>
-        ) : null}
+        <div className="mt-4">
+          {packages && packages.length ? (
+            <Packages
+              index={index}
+              packages={packages}
+            />
+          ) : null}
+          <TotalWeight index={index} />
+        </div>
 
         <div className="mt-4 mb-4">
           <label
