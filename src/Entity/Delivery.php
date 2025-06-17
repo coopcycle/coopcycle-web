@@ -21,6 +21,7 @@ use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryDto;
 use AppBundle\Api\Dto\OptimizationSuggestions;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
+use AppBundle\Api\Filter\DeliveryTaskDateFilter;
 use AppBundle\Api\State\DeliveryCreateOrUpdateProcessor;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
@@ -184,6 +185,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[AssertCheckDelivery(groups: ['delivery_check'])]
 #[ApiFilter(filterClass: OrderFilter::class, properties: ['createdAt'])]
 #[ApiFilter(filterClass: DeliveryOrderFilter::class, properties: ['dropoff.before'])]
+#[ApiFilter(filterClass: DeliveryTaskDateFilter::class)]
 #[ApiResource(
     uriTemplate: '/stores/{id}/deliveries',
     types: ['http://schema.org/ParcelDelivery'],
