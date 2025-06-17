@@ -50,11 +50,7 @@ export default ({
   return (
     <div className="task border p-4 mb-4" data-testid={`form-task-${index}`}>
       <div
-        className={
-          taskValues.type === 'PICKUP'
-            ? 'task__header task__header--pickup'
-            : 'task__header task__header--dropoff'
-        }
+        className={`task__header task__header--${taskValues.type.toLowerCase()}`}
         onClick={() => setShowLess(!showLess)}>
         {taskValues.type === 'PICKUP' ? (
           <i className="fa fa-arrow-up"></i>
@@ -64,9 +60,7 @@ export default ({
         <h4 className="task__header__title ml-2 mb-4">
           {taskValues.address?.streetAddress
             ? taskValues.address.streetAddress
-            : taskValues.type === 'PICKUP'
-              ? t('DELIVERY_FORM_PICKUP_INFORMATIONS')
-              : t('DELIVERY_FORM_DROPOFF_INFORMATIONS')}
+            : t(`DELIVERY_FORM_${taskValues.type}_INFORMATIONS`)}
         </h4>
 
         <button
