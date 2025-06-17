@@ -47,7 +47,7 @@ export default function OrganizationsTable({
 
     return {
       dataSource: data['hydra:member'].map(item => ({
-        rowKey: item['@id'],
+        rowKey: item.storeId,
         storeId: item.storeId,
         name: `${item.organizationLegalName} (${item.ordersCount})`,
         subTotal: money(item.subTotal),

@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 describe('Delivery with recurrence rule (role: admin)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
@@ -135,5 +137,25 @@ describe('Delivery with recurrence rule (role: admin)', () => {
     cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
 
     cy.get('[data-testid="recurrence-container"]').should('not.exist')
+
+    cy.visit('/admin/dashboard/fullscreen/2025-04-23?nav=on')
+
+    // Verify the first order is created
+    cy.get('[data-task-id]').should('have.length', 2)
+
+    // Verify the recurring order is created on this Friday
+    cy.visit(
+      `/admin/dashboard/fullscreen/${moment()
+        .day(5)
+        .format('YYYY-MM-DD')}?nav=on`,
+    )
+
+    // allow recurrence rules to be checked
+    cy.wait(5000)
+    // FIXME; we need to refresh the page because websockets are not working in tests currently
+    cy.reload()
+
+    // Verify the recurrence order is created
+    cy.get('[data-task-id]').should('have.length', 2)
   })
 })
