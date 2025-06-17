@@ -357,6 +357,7 @@ export default function({
                           {pickups
                             .map((task) => {
                               const originalIndex = values.tasks.findIndex(t => t === task);
+                              const pickupIndex = pickups.findIndex(t => t === task);
                               return (
                                 <div className='new-order__pickups__item' key={originalIndex}>
                                   <Task
@@ -366,6 +367,8 @@ export default function({
                                     addresses={addresses}
                                     storeNodeId={storeNodeId}
                                     storeDeliveryInfos={storeDeliveryInfos}
+                                    onRemove={arrayHelpers.remove}
+                                    showRemoveButton={pickupIndex > 0}
                                     isDispatcher={isDispatcher}
                                     tags={tags}
                                   />

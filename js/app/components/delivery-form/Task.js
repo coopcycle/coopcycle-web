@@ -154,6 +154,7 @@ export default ({
           </div>
         )}
       </div>
+      {/* TODO Also make it work for pickups */}
       {taskValues.type === 'DROPOFF' && (
         <div className={!showLess ? 'task__footer' : 'task__footer--hidden'}>
           {showRemoveButton && (
