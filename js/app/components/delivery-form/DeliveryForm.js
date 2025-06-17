@@ -370,6 +370,31 @@ export default function({
                                 </div>
                               );
                             })}
+
+                            {storeDeliveryInfos.multiDropEnabled && (mode === Mode.DELIVERY_CREATE || isDispatcher) ? <div
+                            className="new-order__pickups__add p-4 border mb-4">
+                            <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
+                            <Button
+                              data-testid="add-pickup-button"
+                              disabled={false}
+                              onClick={() => {
+
+                                const pickupIndex = values.tasks.filter((task) => task.type === 'PICKUP').length
+                                console.log('pickupIndex', pickupIndex)
+
+                                const newDeliverySchema = {
+                                  ...pickupSchema,
+                                  before: values.tasks.slice(-1)[0].before,
+                                  after: values.tasks.slice(-1)[0].after,
+                                  timeSlot: values.tasks.slice(-1)[0].timeSlot,
+                                  timeSlotUrl: values.tasks.slice(-1)[0].timeSlotUrl
+                                }
+                                arrayHelpers.insert(pickupIndex, newDeliverySchema)
+                              }}>
+                              {t('DELIVERY_FORM_ADD_PICKUP')}
+                            </Button>
+                          </div> : null}
+
                         </div>
 
 
