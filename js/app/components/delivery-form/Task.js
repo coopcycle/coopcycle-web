@@ -40,9 +40,9 @@ export default ({
     taskIndex: index,
   })
 
-  const [showLess, setShowLess] = useState(
-    taskValues.type === 'DROPOFF' && values.tasks.length > 2,
-  )
+  const otherTasksOfSameType = values.tasks.filter(t => t.type === taskValues.type && t !== taskValues)
+
+  const [showLess, setShowLess] = useState(otherTasksOfSameType.length > 0)
 
   const { data: timeSlotLabels } = useGetStoreTimeSlotsQuery(storeNodeId)
   const { data: packages } = useGetStorePackagesQuery(storeNodeId)
