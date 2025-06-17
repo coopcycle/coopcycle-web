@@ -154,19 +154,16 @@ export default ({
           </div>
         )}
       </div>
-      {/* TODO Also make it work for pickups */}
-      {taskValues.type === 'DROPOFF' && (
-        <div className={!showLess ? 'task__footer' : 'task__footer--hidden'}>
-          {showRemoveButton && (
-            <Button
-              onClick={() => onRemove(index)}
-              type="button"
-              className="mb-4">
-              {t('DELIVERY_FORM_REMOVE_DROPOFF')}
-            </Button>
-          )}
-        </div>
-      )}
+      <div className={!showLess ? 'task__footer' : 'task__footer--hidden'}>
+        {showRemoveButton && (
+          <Button
+            onClick={() => onRemove(index)}
+            type="button"
+            className="mb-4">
+            {t(`DELIVERY_FORM_REMOVE_${taskValues.type}`)}
+          </Button>
+        )}
+      </div>
     </div>
   )
 }
