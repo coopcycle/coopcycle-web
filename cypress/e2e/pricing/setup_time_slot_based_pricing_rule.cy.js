@@ -37,7 +37,7 @@ context('Setup pricing based on time slots (role: admin)', () => {
       ).select('time_slot')
       cy.get('[width="20%"] > .form-control').select('==')
       cy.get('[width="25%"] > .form-control').select('/api/time_slots/75')
-      cy.get('#pricing_rule_set_rules_0_price').type('15')
+      cy.get('#pricing_rule_set_rules_1_price').type('15')
     })
 
     // Save button
