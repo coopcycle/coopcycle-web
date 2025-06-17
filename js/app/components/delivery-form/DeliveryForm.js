@@ -342,6 +342,9 @@ export default function({
 
             }, [values, previousValues, setFieldValue]);
 
+            const pickups = values.tasks.filter((task) => task.type === 'PICKUP')
+            const dropoffs = values.tasks.filter((task) => task.type === 'DROPOFF')
+
             return (
               <Form >
                 <div className='delivery-form' >
@@ -351,8 +354,7 @@ export default function({
                       <div className="new-order">
 
                         <div className="new-order__pickups">
-                          {values.tasks
-                            .filter((task) => task.type === 'PICKUP')
+                          {pickups
                             .map((task) => {
                               const originalIndex = values.tasks.findIndex(t => t === task);
                               return (
@@ -378,10 +380,6 @@ export default function({
                               data-testid="add-pickup-button"
                               disabled={false}
                               onClick={() => {
-
-                                const pickupIndex = values.tasks.filter((task) => task.type === 'PICKUP').length
-                                console.log('pickupIndex', pickupIndex)
-
                                 const newDeliverySchema = {
                                   ...pickupSchema,
                                   before: values.tasks.slice(-1)[0].before,
@@ -389,7 +387,8 @@ export default function({
                                   timeSlot: values.tasks.slice(-1)[0].timeSlot,
                                   timeSlotUrl: values.tasks.slice(-1)[0].timeSlotUrl
                                 }
-                                arrayHelpers.insert(pickupIndex, newDeliverySchema)
+                                // Insert after the last pickup using pickups.length
+                                arrayHelpers.insert(pickups.length, newDeliverySchema)
                               }}>
                               {t('DELIVERY_FORM_ADD_PICKUP')}
                             </Button>
@@ -399,10 +398,10 @@ export default function({
 
 
                         <div className="new-order__dropoffs" style={{ display: 'flex', flexDirection: 'column' }}>
-                          {values.tasks
-                            .filter((task) => task.type === 'DROPOFF')
+                          {dropoffs
                             .map((task) => {
                               const originalIndex = values.tasks.findIndex(t => t === task);
+                              const dropoffIndex = dropoffs.findIndex(t => t === task);
                               return (
                                 <div className='new-order__dropoffs__item' key={originalIndex}>
                                   <Task
@@ -411,7 +410,7 @@ export default function({
                                     storeNodeId={storeNodeId}
                                     storeDeliveryInfos={storeDeliveryInfos}
                                     onRemove={arrayHelpers.remove}
-                                    showRemoveButton={originalIndex > 1}
+                                    showRemoveButton={dropoffIndex > 0}
                                     isDispatcher={isDispatcher}
                                     tags={tags}
                                   />
