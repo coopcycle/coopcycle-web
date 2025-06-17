@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react'
 import { Modal, DatePicker, Card, Spin } from 'antd'
+import { useTranslation } from 'react-i18next'
 
 function _dateWeekRange(picked) {
   return {
@@ -56,6 +57,7 @@ async function downloadZIP(id, { from, to }) {
 }
 
 export default function DeliveriesProofs({ store_id = null }) {
+  const { t } = useTranslation()
   const storeID = JSON.parse(store_id)
   const [visible, setVisible] = useState(false)
   const [deliveries, setDeliveries] = useState(null)
@@ -66,19 +68,19 @@ export default function DeliveriesProofs({ store_id = null }) {
     <>
       <a href="#" onClick={() => setVisible(true)}>
         <i class="fa fa-flag-checkered mr-2"></i>
-        <span>Deliveries proofs</span>
+        <span>{t('DELIVERY_PROOFS_LINK_TEXT')}</span>
       </a>
       <Modal
-        title="Download Proof of Deliveries"
+        title={t('DELIVERY_PROOFS_MODAL_TITLE')}
         open={visible}
         onCancel={() => setVisible(false)}
         okButtonProps={{ disabled: loading || !deliveries }}
         onOk={() => {
           downloadZIP(storeID, week.current)
         }}
-        okText="Download">
+        okText={t('DELIVERY_PROOFS_DOWNLOAD_BUTTON')}>
         <p>
-          Select week:
+          {t('DELIVERY_PROOFS_CHOOSE_WEEK')}:
           <DatePicker
             picker="week"
             className="mx-2"
@@ -92,18 +94,18 @@ export default function DeliveriesProofs({ store_id = null }) {
         </p>
         <Card>
           <div className="d-flex align-items-center justify-content-between">
-            <strong>Deliveries</strong>
+            <strong>{t('DELIVERY_PROOFS_TOTAL_DELIVERIES')}</strong>
             <span>
-              {loading ? <Spin size="small" /> : (deliveries ?? '-')} items
+              {loading ? <Spin size="small" /> : t('DELIVERY_PROOFS_DELIVERIES_COUNT', { count: deliveries ?? 0, defaultValue: '—' })}
             </span>
           </div>
           <div className="d-flex align-items-center justify-content-between">
-            <strong>Includes</strong>
-            <span>Proofs + Report</span>
+            <strong>{t('DELIVERY_PROOFS_CONTENTS')}</strong>
+            <span>{t('DELIVERY_PROOFS_CONTENTS_VALUE')}</span>
           </div>
           <div className="d-flex align-items-center justify-content-between">
-            <strong>Format</strong>
-            <span>ZIP file</span>
+            <strong>{t('DELIVERY_PROOFS_FILE_TYPE')}</strong>
+            <span>{t('DELIVERY_PROOFS_FILE_TYPE_VALUE')}</span>
           </div>
         </Card>
       </Modal>
