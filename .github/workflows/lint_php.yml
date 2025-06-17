@@ -20,6 +20,7 @@ jobs:
           php-version: ${{ matrix.php_version }}
           tools: composer:v2, phpstan:1
           extensions: redis, intl
+          ini-file: development
       - name: Install PHP dependencies
         run: |
           composer install --prefer-dist --no-progress --no-scripts
