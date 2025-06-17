@@ -29,6 +29,12 @@ jobs:
         run: bin/console cache:clear
       - name: Warmup Symfony cache
         run: bin/console cache:warmup
+      - name: Install PHP dependencies (prod)
+        run: |
+          composer install --prefer-dist --no-progress --no-scripts --no-dev --optimize-autoloader
+        env:
+          APP_ENV: prod
+          APP_DEBUG: '0'
       - name: Clear Symfony cache (prod)
         run: bin/console cache:clear
         env:
