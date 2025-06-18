@@ -419,7 +419,7 @@ export function changeAddress(address) {
       restaurant
     } = getState()
 
-    if (address.isPrecise || address.isMapPicked) {
+    if (address.isPrecise || address.provider === 'MAP_PICKER') {
 
       // Change field value immediately
       dispatch(setStreetAddress(address.streetAddress))
@@ -579,7 +579,7 @@ export function setPlayer({ email, name } = {}) {
       name = user.username
     }
 
-    const { cart: {id, invitation: slug} } = getState()
+    const { cart: { id, invitation: slug } } = getState()
     const url = window.Routing.generate('_api_/orders/{id}/players_post', getRoutingParams({ id }))
 
     // Set player

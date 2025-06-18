@@ -786,7 +786,7 @@ class AddressAutosuggest extends Component {
           onClose={() => this.setState({ showMapPicker: false })}
           onSelect={address => {
             this.setState({ showMapPicker: false })
-            this.props.onAddressSelected('[isMapPicked]', address)
+            this.props.onAddressSelected('[MAP_PICKER]', address)
           }}
         />}
       </>

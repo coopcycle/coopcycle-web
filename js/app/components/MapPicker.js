@@ -59,7 +59,7 @@ async function reverseGeocode([lat, lng]) {
     streetAddress: req.data.address,
     isPrecise: true,
     needsGeocoding: false,
-    isMapPicked: true,
+    provider: 'MAP_PICKER',
   }
 }
 
