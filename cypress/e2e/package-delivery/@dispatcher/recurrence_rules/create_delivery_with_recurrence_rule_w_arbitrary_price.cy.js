@@ -1,11 +1,11 @@
-describe('Delivery with recurrence rule (role: admin)', () => {
+describe('Delivery with recurrence rule (role: dispatcher)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      'ORM/user_admin.yml',
+      'ORM/user_dispatcher.yml',
       'ORM/tags.yml',
       'ORM/store_basic.yml',
     ])
-    cy.login('admin', '12345678')
+    cy.login('dispatcher', 'dispatcher')
   })
 
   it('create delivery order and a recurrence rule with arbitrary price', function () {

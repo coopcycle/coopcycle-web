@@ -1,6 +1,7 @@
 # 'excl_setup' means that the file does not include the 'setup_default.yml' file; see the 'setup_default.yml' file for more information.
 include:
   - user_admin.yml
+  - user_dispatcher.yml
   - user_courier.yml
   - addresses.yml
   - packages.yml

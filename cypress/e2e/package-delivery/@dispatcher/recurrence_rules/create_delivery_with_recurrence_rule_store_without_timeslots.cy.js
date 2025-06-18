@@ -1,8 +1,8 @@
-describe('Delivery with recurrence rule (role: admin)', () => {
+describe('Delivery with recurrence rule (role: dispatcher)', () => {
   beforeEach(() => {
     cy.loadFixtures('../cypress/fixtures/stores.yml')
     cy.setMockDateTime('2025-04-23 8:30:00')
-    cy.login('admin', '12345678')
+    cy.login('dispatcher', 'dispatcher')
   })
 
   afterEach(() => {

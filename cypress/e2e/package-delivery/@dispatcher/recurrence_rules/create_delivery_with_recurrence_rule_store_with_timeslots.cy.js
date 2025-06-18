@@ -1,7 +1,7 @@
-describe('Delivery with recurrence rule (role: admin)', () => {
+describe('Delivery with recurrence rule (role: dispatcher)', () => {
   beforeEach(() => {
     cy.loadFixtures('../cypress/fixtures/stores.yml')
-    cy.login('admin', '12345678')
+    cy.login('dispatcher', 'dispatcher')
   })
 
   describe('store with time slots', function () {

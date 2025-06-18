@@ -1,9 +1,9 @@
-context('Managing recurrence rules (role: admin)', () => {
+context('Managing recurrence rules (role: dispatcher)', () => {
   beforeEach(() => {
     cy.loadFixtures('../cypress/fixtures/stores.yml')
 
     // Login
-    cy.login('admin', '12345678')
+    cy.login('dispatcher', 'dispatcher')
 
     // Create a delivery order and a recurrence rule
     cy.visit('/admin/stores')
