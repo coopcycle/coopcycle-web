@@ -306,8 +306,7 @@ class PODExport extends Base
 
         $filesystem = match (true) {
             $image instanceof TaskImage => $this->taskImagesFilesystem,
-            $image instanceof IncidentImage => $this->incidentImagesFilesystem,
-            default => null
+            $image instanceof IncidentImage => $this->incidentImagesFilesystem
         };
 
         return $filesystem?->fileExists($path) ? $path : null;
