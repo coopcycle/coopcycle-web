@@ -59,7 +59,7 @@ class Address extends BaseAddress
     private $contactName;
     private $complete;
 
-    private ?string $provider;
+    private ?string $provider = null;
 
     /**
      * Gets id.
