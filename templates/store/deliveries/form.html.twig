@@ -2,34 +2,27 @@
 
 {% set is_new = delivery.id is null %}
 
+{% if is_new %}
+  {% set title = 'orders.new'|trans %}
+{% else %}
+  {% set order = delivery.order %}
+  {% if order is not null %}
+    {% set title = 'order.summary.heading'|trans({ '%number%': order.number }) %}
+  {% else %}
+    {% set title = 'delivery.with_id'|trans({ '%id%': delivery.id }) %}
+  {% endif %}
+{% endif %}
+
 {% block prepare_title %}
   {% if is_new %}
-    {{ add_title_prefix('orders.new'|trans) }}
+    {{ add_title_prefix(title) }}
   {% else %}
     {% if is_granted('ROLE_DISPATCHER') %}
-      {% set order = delivery.order %}
-      {% if order is not null %}
-        {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ 'order.summary.heading'|trans({ '%number%': order.number })) }}
-      {% else %}
-        {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ 'delivery.with_id'|trans({ '%id%': delivery.id })) }}
-      {% endif %}
+      {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ title) }}
     {% else %}
-      {% set order = delivery.order %}
-      {% if order is not null %}
-        {{ add_title_prefix('order.summary.heading'|trans({ '%number%': order.number })) }}
-      {% else %}
-        {{ add_title_prefix('delivery.with_id'|trans({ '%id%': delivery.id })) }}
-      {% endif %}
+      {{ add_title_prefix(title) }}
     {% endif %}
   {% endif %}
-{% endblock %}
-
-{% block dashboard_subnav %}
-  <div>
-    <a href="{{ path(back_route) }}">
-      <i class="fa fa-arrow-left mr-2"></i>{{ 'stores.deliveries'|trans }}
-    </a>
-  </div>
 {% endblock %}
 
 {% block breadcrumb %}
@@ -65,9 +58,22 @@
   {% endif %}
 {% endblock %}
 
-{% block content %}
+{% block subnav %}
+  {% if is_granted('ROLE_DISPATCHER') %}
+    {% include 'delivery/_partials/navbar.html.twig' %}
+  {% endif %}
+{% endblock %}
 
-  {% include 'delivery/_partials/navbar.html.twig' %}
+{% block dashboard_subnav %}
+  <div>
+    <a href="{{ path(back_route) }}">
+      <i class="fa fa-arrow-left mr-2"></i>{{ 'stores.deliveries'|trans }}
+    </a>
+    <h3 class="text-center">{{ title }}</h3>
+  </div>
+{% endblock %}
+
+{% block content %}
 
   {% if is_granted('ROLE_DISPATCHER') %}
     {% if is_new %}
@@ -83,11 +89,6 @@
 
   {% block alerts %}
   {% endblock %}
-
-  {% if order is not null %}
-    <h3 class="text-center">{{ 'stores.deliveries.heading2'|trans({ '%delivery_id%': order.number }) }}</h3>
-  {% endif %}
-
 
   {% if not is_new %}
     {% set tracking_link = url('public_delivery', { hashid: delivery|hashid }) %}

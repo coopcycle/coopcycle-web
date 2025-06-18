@@ -1,9 +1,9 @@
 {% extends layout %}
 
-{% set is_new = delivery.id is null %}
+{% set title = 'subscription.title'|trans({ '%id%': recurrenceRule.id }) %}
 
 {% block prepare_title %}
-  {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ 'subscription.title'|trans({ '%id%': recurrenceRule.id })) }}
+  {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ title) }}
 {% endblock %}
 
 {% block breadcrumb %}
@@ -19,9 +19,13 @@
 
 {% endblock %}
 
-{% block content %}
+{% block subnav %}
+  {% if is_granted('ROLE_DISPATCHER') %}
+    {% include 'delivery/_partials/navbar.html.twig' %}
+  {% endif %}
+{% endblock %}
 
-  {% include 'delivery/_partials/navbar.html.twig' %}
+{% block content %}
 
   {% if is_granted('ROLE_DISPATCHER') %}
     <div class="alert alert-info">
@@ -31,8 +35,6 @@
 
   {% block alerts %}
   {% endblock %}
-
-  <h3 class="text-center">{{ 'subscription.title'|trans({ '%id%': recurrenceRule.id }) }}</h3>
 
   <div
     id="recurrence-rule-form"
