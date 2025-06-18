@@ -1,14 +1,14 @@
-describe('Delivery with recurrence rule (role: admin)', () => {
+describe('Delivery with recurrence rule (role: dispatcher)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      'ORM/user_admin.yml',
+      'ORM/user_dispatcher.yml',
       'ORM/tags.yml',
       'ORM/store_advanced.yml',
     ])
 
     cy.setMockDateTime('2025-04-23 8:30:00')
 
-    cy.login('admin', '12345678')
+    cy.login('dispatcher', 'dispatcher')
   })
 
   afterEach(() => {

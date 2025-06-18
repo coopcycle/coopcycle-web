@@ -1,12 +1,12 @@
-context('Delivery (role: admin)', () => {
+context('Delivery (role: dispatcher)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      'ORM/user_admin.yml',
+      'ORM/user_dispatcher.yml',
       'ORM/tags.yml',
       'ORM/store_basic.yml',
       'ORM/delivery_without_an_order.yml',
     ])
-    cy.login('admin', '12345678')
+    cy.login('dispatcher', 'dispatcher')
   })
 
   it('modify a delivery without an order', function () {

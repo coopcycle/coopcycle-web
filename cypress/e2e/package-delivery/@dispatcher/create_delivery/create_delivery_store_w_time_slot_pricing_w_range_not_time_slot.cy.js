@@ -1,13 +1,13 @@
-context('Delivery (role: admin); store with time slot pricing', () => {
+context('Delivery (role: dispatcher); store with time slot pricing', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      'ORM/user_admin.yml',
+      'ORM/user_dispatcher.yml',
       '../features/fixtures/ORM/store_w_time_slot_pricing.yml',
     ])
 
     cy.setMockDateTime('2025-04-23 8:30:00')
 
-    cy.login('admin', '12345678')
+    cy.login('dispatcher', 'dispatcher')
   })
 
   afterEach(() => {
