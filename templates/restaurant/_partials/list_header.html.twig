@@ -1,5 +1,5 @@
 <header class="restaurant-list-header" data-search="address"
-  data-addresses="{{ addresses_normalized|json_encode()|e('html') }}"
+  data-addresses="{{ addresses_normalized()|json_encode()|e('html') }}"
   data-tracking-category="RestaurantList">
   <div class="container">
     <div class="row">

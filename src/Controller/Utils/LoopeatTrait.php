@@ -63,7 +63,19 @@ trait LoopeatTrait {
             $resultSet = json_decode($content, true);
 
             $csv = CsvWriter::createFromString('');
-            $csv->insertOne(array_keys($resultSet['data'][0]));
+
+            $columns = array_keys($resultSet['data'][0]);
+            $csv->insertOne($columns);
+
+            // Add formatter to make sure records are in same order as columns
+            $csv->addFormatter(function ($record) use ($columns) {
+                $rec = [];
+                foreach ($columns as $col) {
+                        $rec[] = $record[$col];
+                }
+
+                return $rec;
+            });
             $csv->insertAll($resultSet['data']);
 
             $response = new Response($csv->getContent());

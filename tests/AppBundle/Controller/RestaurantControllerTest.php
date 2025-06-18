@@ -11,7 +11,6 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
-use AppBundle\Form\Checkout\Action\Validator\AddProductToCart as AssertAddProductToCart;
 use AppBundle\Security\OrderAccessTokenManager;
 use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Service\TimingRegistry;
@@ -24,7 +23,6 @@ use AppBundle\Sylius\Product\ProductVariantInterface;
 use AppBundle\Utils\OptionsPayloadConverter;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\RestaurantFilter;
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Prophecy\Argument;
@@ -46,21 +44,12 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
-
-class FindOneByCodeRepository extends SyliusEntityRepository
-{
-    public function findOneByCode($code)
-    {
-    }
-}
 
 class RestaurantControllerTest extends WebTestCase
 {
@@ -77,7 +66,7 @@ class RestaurantControllerTest extends WebTestCase
         $this->objectManager = $this->prophesize(EntityManagerInterface::class);
         $this->uploaderHelper = $this->prophesize(UploaderHelper::class);
         $this->validator = $this->prophesize(ValidatorInterface::class);
-        $this->productRepository = $this->prophesize(FindOneByCodeRepository::class);
+        $this->productRepository = $this->prophesize(SyliusEntityRepository::class);
         $this->orderItemRepository = $this->prophesize(RepositoryInterface::class);
         $this->orderItemFactory = $this->prophesize(FactoryInterface::class);
         $this->productVariantResolver = $this->prophesize(LazyProductVariantResolverInterface::class);
@@ -93,8 +82,7 @@ class RestaurantControllerTest extends WebTestCase
 
         $this->localBusinessRepository = $this->prophesize(LocalBusinessRepository::class);
 
-        $this->doctrine = $this->prophesize(ManagerRegistry::class);
-        $this->doctrine
+        $this->objectManager
             ->getRepository(LocalBusiness::class)
             ->willReturn($this->localBusinessRepository->reveal());
 
@@ -109,12 +97,6 @@ class RestaurantControllerTest extends WebTestCase
             });
 
         $container = $this->prophesize(ContainerInterface::class);
-        $container
-            ->has('doctrine')
-            ->willReturn(true);
-        $container
-            ->get('doctrine')
-            ->willReturn($this->doctrine->reveal());
 
         $parameterBag = $this->prophesize(ParameterBagInterface::class);
         $parameterBag->get('country_iso')->willReturn('fr');
@@ -234,7 +216,9 @@ class RestaurantControllerTest extends WebTestCase
             ->willReturn(new \SplObjectStorage());
 
         $this->productRepository
-            ->findOneByCode($productCode)
+            ->findOneBy([
+                'code' => $productCode,
+            ])
             ->willReturn($product->reveal());
 
         $orderItem = $this->prophesize(OrderItemInterface::class);
@@ -288,6 +272,9 @@ class RestaurantControllerTest extends WebTestCase
         $this->assertEquals(['latlng' => [48.856613, 2.352222]], $vendor['address']);
         $this->assertEquals(['delivery'], $vendor['fulfillmentMethods']);
         $this->assertFalse($vendor['variableCustomerAmountEnabled']);
+
+        $this->objectManager->persist($cart)->shouldHaveBeenCalled();
+        $this->objectManager->flush()->shouldHaveBeenCalled();
     }
 
     public function testAddProductToCartActionWithRestaurantMismatch(): void
@@ -351,7 +338,9 @@ class RestaurantControllerTest extends WebTestCase
             ->willReturn([]);
 
         $this->productRepository
-            ->findOneByCode($productCode)
+            ->findOneBy([
+                'code' => $productCode,
+            ])
             ->willReturn($product->reveal());
 
         $errors = $this->prophesize(ConstraintViolationListInterface::class);

@@ -2,7 +2,7 @@
 
 namespace AppBundle\Security;
 
-use AppBundle\Api\Dto\DeliveryInput;
+use AppBundle\Api\Dto\DeliveryDto;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -36,7 +36,7 @@ class DeliveriesVoter extends Voter
             return false;
         }
 
-        if (!$subject instanceof Delivery && !$subject instanceof DeliveryInput) {
+        if (!$subject instanceof Delivery && !$subject instanceof DeliveryDto) {
             return false;
         }
 
@@ -63,7 +63,7 @@ class DeliveriesVoter extends Voter
 
     private function getStore($subject)
     {
-        if ($subject instanceof DeliveryInput) {
+        if ($subject instanceof DeliveryDto) {
             return $subject->store;
         }
 

@@ -1,6 +1,6 @@
 describe('Failed checkout; time range is not valid any more', () => {
   beforeEach(() => {
-    cy.loadFixtures('checkout.yml')
+    cy.loadFixtures('../cypress/fixtures/checkout.yml')
 
     cy.login('bob', '12345678')
 

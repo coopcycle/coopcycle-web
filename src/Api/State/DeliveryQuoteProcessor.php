@@ -4,7 +4,7 @@ namespace AppBundle\Api\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
-use AppBundle\Api\Dto\DeliveryInput;
+use AppBundle\Api\Dto\DeliveryDto;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryQuote;
 use AppBundle\Pricing\PricingManager;
@@ -25,7 +25,7 @@ class DeliveryQuoteProcessor implements ProcessorInterface
     {}
 
     /**
-     * @param DeliveryInput $data
+     * @param DeliveryDto $data
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {

@@ -1,5 +1,5 @@
 Feature: Tasks
-    Scenario: Retrieve tasks check order task.doneBefore ASC and pickup before dropoff (GH #4277)
+  Scenario: Retrieve tasks check order task.doneBefore ASC and pickup before dropoff (GH #4277)
       Given the fixtures files are loaded:
         | tasks.yml           |
       And the courier "bob" is loaded:
@@ -190,8 +190,7 @@ Feature: Tasks
           }
       }
       """
-
-
+      
   Scenario: Retrieve assigned tasks
     Given the fixtures files are loaded:
       | tasks.yml           |
@@ -1961,6 +1960,110 @@ Feature: Tasks
       }
       """
 
+  Scenario: Retrieve order tasks with correct metadata
+    Given the fixtures files are loaded:
+      | dispatch.yml        |
+    And the user "sarah" has role "ROLE_DISPATCHER"
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "GET" request to "/api/tasks?date=2025-05-28"
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/Task",
+        "@id": "/api/tasks",
+        "@type": "hydra:Collection",
+        "hydra:member": [
+          {
+            "@id": "/api/tasks/@string@",
+            "@type": "Task",
+            "id": "@integer@.greaterThan(0)",
+            "type": "PICKUP",
+            "status": "TODO",
+            "address": {"@*@":"@*@"},
+            "comments": "",
+            "createdAt": "@string@.isDateTime()",
+            "updatedAt": "@string@.isDateTime()",
+            "group": null,
+            "doorstep": false,
+            "ref": null,
+            "recurrenceRule": null,
+            "metadata":{
+              "foo": "bar",
+              "baz": "bat",
+              "delivery_position": 1,
+              "zero_waste": false,
+              "order_total": "@integer@"
+            },
+            "weight": null,
+            "incidents": [],
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@",
+            "tags": [],
+            "after": "2025-05-28T10:30:00+@string@",
+            "before": "2025-05-28T11:00:00+@string@",
+            "doneAfter": "2025-05-28T10:30:00+@string@",
+            "doneBefore": "2025-05-28T11:00:00+@string@",
+            "isAssigned": true,
+            "assignedTo": "sarah",
+            "orgName": "Nodaiwa",
+            "images": [],
+            "hasIncidents": false,
+            "previous": null,
+            "next": "/api/tasks/@string@",
+            "barcode": {"@*@":"@*@"},
+            "packages": []
+          },
+          {
+            "@id": "/api/tasks/@string@",
+            "@type": "Task",
+            "id": "@integer@.greaterThan(0)",
+            "type": "DROPOFF",
+            "status": "TODO",
+            "address": {"@*@":"@*@"},
+            "comments": "",
+            "createdAt": "@string@.isDateTime()",
+            "updatedAt": "@string@.isDateTime()",
+            "group": null,
+            "doorstep": false,
+            "ref": null,
+            "recurrenceRule": null,
+            "metadata":{
+              "delivery_position": 2,
+              "zero_waste": false,
+              "order_total": "@integer@"
+            },
+            "weight": null,
+            "incidents": [],
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@",
+            "tags": [],
+            "after": "2025-05-28T11:30:00+@string@",
+            "before": "2025-05-28T12:00:00+@string@",
+            "doneAfter": "2025-05-28T11:30:00+@string@",
+            "doneBefore": "2025-05-28T12:00:00+@string@",
+            "isAssigned": true,
+            "assignedTo": "sarah",
+            "orgName": "Nodaiwa",
+            "images": [],
+            "hasIncidents": false,
+            "previous": "/api/tasks/@string@",
+            "next": null,
+            "barcode": {"@*@":"@*@"},
+            "packages": []
+          }
+        ],
+        "hydra:totalItems": 2,
+        "hydra:view":{
+          "@id": "/api/tasks?date=2025-05-28",
+          "@type": "hydra:PartialCollectionView"
+        },
+        "hydra:search": {"@*@":"@*@"}
+      }
+      """
+
   Scenario: Duplicate task
     Given the fixtures files are loaded:
       | dispatch.yml        |
@@ -2098,6 +2201,7 @@ Feature: Tasks
           "after":"2019-11-12T18:00:00+01:00",
           "before":"2019-11-12T18:30:00+01:00",
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"},
           "weight":null,
@@ -2117,14 +2221,16 @@ Feature: Tasks
           "after":"2019-11-12T19:00:00+01:00",
           "before":"2019-11-12T19:30:00+01:00",
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"},
           "weight":null,
           "packages":[],
           "barcode":{"@*@":"@*@"}
         },
+        "tasks":@array@,
         "trackingUrl": @string@,
-        "tasks":@array@
+        "order": {"@*@": "@*@"}
       }
       """
 

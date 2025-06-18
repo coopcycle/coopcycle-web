@@ -130,7 +130,8 @@ class ModalContent extends React.Component {
   }
 
   componentDidMount() {
-    if (!this.mapRef.current.classList.contains('leaflet-container')) {
+    // for takeaway orders dropoffAddress is not set
+    if (!this.mapRef.current.classList.contains('leaflet-container') && this.state.dropoffAddress) {
       new DeliveryMap('order_minimap', {
         pickup: [this.state.pickupAddress.geo.latitude, this.state.pickupAddress.geo.longitude],
         dropoff: [this.state.dropoffAddress.geo.latitude, this.state.dropoffAddress.geo.longitude]

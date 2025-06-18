@@ -151,21 +151,23 @@ export default function OrdersTable({
   }, [reloadKey, previousReloadKey, refetch])
 
   return (
-    <Table
-      style={{ marginTop: '48px' }}
-      columns={columns}
-      loading={isFetching}
-      dataSource={dataSource}
-      rowKey="rowKey"
-      pagination={{
-        pageSize,
-        total,
-        showSizeChanger: true,
-      }}
-      onChange={pagination => {
-        setCurrentPage(pagination.current)
-        setPageSize(pagination.pageSize)
-      }}
-    />
+    <div data-testid={`invoicing.orders.${storeId}`}>
+      <Table
+        style={{ marginTop: '48px' }}
+        columns={columns}
+        loading={isFetching}
+        dataSource={dataSource}
+        rowKey="rowKey"
+        pagination={{
+          pageSize,
+          total,
+          showSizeChanger: true,
+        }}
+        onChange={pagination => {
+          setCurrentPage(pagination.current)
+          setPageSize(pagination.pageSize)
+        }}
+      />
+    </div>
   )
 }

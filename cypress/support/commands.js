@@ -24,9 +24,13 @@
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
+import moment from 'moment'
+
 Cypress.Commands.add('terminal', command => {
+  cy.log(`exec: ${command}`)
+
   const prefix = Cypress.env('COMMAND_PREFIX')
-  cy.exec(prefix ? `${prefix} ${command}` : command, {timeout: 60000})
+  cy.exec(prefix ? `${prefix} ${command}` : command, {timeout: 60000, log: false})
 })
 
 Cypress.Commands.add('symfonyConsole', command => {
@@ -34,7 +38,7 @@ Cypress.Commands.add('symfonyConsole', command => {
 })
 
 Cypress.Commands.add('loadFixtures', (fixtures, setup=false) => {
-  const fixturesString = (Array.isArray(fixtures) ? fixtures : [fixtures]).map(f => `-f cypress/fixtures/${f}`).join(' ')
+  const fixturesString = (Array.isArray(fixtures) ? fixtures : [fixtures]).map(f => `-f fixtures/${f}`).join(' ')
   cy.symfonyConsole(`coopcycle:fixtures:load${setup ? ' -s cypress/fixtures/setup_default.yml' : ''} ${fixturesString}`)
 })
 
@@ -94,9 +98,20 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
 
   cy.wait(300)
 
-  cy.root()
+  const toMoment = textValue => {
+    if (/^\d{1,2}:\d{2}$/.test(textValue)) {
+      const [hours, minutes] = textValue.split(':').map(Number)
+      if (hours >= 0 && hours < 24 && minutes >= 0 && minutes < 60) {
+        return moment().hours(hours).minutes(minutes)
+      }
+    }
+
+    return null
+  }
+
+  cy.root({ log: false })
     .closest('body')
-    .find('.ant-select-dropdown')
+    .find('.ant-select-dropdown:visible')
     .not('.ant-select-dropdown-hidden')
     .within(() => {
       let attempts = 0
@@ -104,9 +119,26 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
 
       function tryFindOption() {
         return cy
-          .get('.rc-virtual-list-holder-inner .ant-select-item-option')
+          .get('.rc-virtual-list-holder-inner .ant-select-item-option', {
+            log: false,
+          })
           .then($options => {
-            const option = $options.filter((_, el) =>
+            if ($options.length === 0) {
+              cy.log(
+                `No options found for selector "${selector}" with text "${text}"`,
+              )
+              throw new Error(
+                `No options found for selector "${selector}" with text "${text}"`,
+              )
+            }
+
+            cy.log(
+              `Searching for option with text "${text}"; elements: "${$options
+                .toArray()
+                .map(el => el.textContent)
+                .join(', ')}"`,
+            )
+            const option = $options.filter((index, el) =>
               el.textContent.includes(text),
             )
 
@@ -115,7 +147,28 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
               return
             }
 
+            // Fail early to debug test failures on CI
+            const textMoment = toMoment(text)
+            const firstOptionMoment = toMoment(
+              $options.toArray()[0].textContent,
+            )
+            if (
+              textMoment &&
+              firstOptionMoment &&
+              textMoment.isBefore(firstOptionMoment)
+            ) {
+              cy.log(
+                `The text "${text}" is before the first option, skipping further attempts.`,
+              )
+              throw new Error(
+                `The text "${text}" is before the first option, skipping further attempts.`,
+              )
+            }
+
             if (attempts >= maxAttempts) {
+              cy.log(
+                `Could not find option with text "${text}" after ${maxAttempts} scroll attempts`,
+              )
               throw new Error(
                 `Could not find option with text "${text}" after ${maxAttempts} scroll attempts`,
               )
@@ -123,13 +176,12 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
 
             attempts++
 
-            // .ant-select-dropdown
-            cy.root().trigger('wheel', {
+            cy.get('.rc-virtual-list-holder').trigger('wheel', {
               deltaX: 0,
               deltaY: 32 * 6, // 1 row = ~32px
               deltaMode: 0,
             })
-            cy.wait(100)
+            cy.wait(500)
             tryFindOption()
           })
       }
@@ -194,7 +246,11 @@ Cypress.Commands.add('searchAddress', (selector, search, match, index = 0) => {
 
   cy.get(`${ selector } input[type="search"][data-is-address-picker="true"]`)
     .eq(index)
-    .type(search, { timeout: 5000, delay: 100 })
+    .clear()
+
+  cy.get(`${ selector } input[type="search"][data-is-address-picker="true"]`)
+    .eq(index)
+    .type(search, { timeout: 5000, delay: 50 })
 
   cy.get(selector)
     .find('ul[role="listbox"] li', { timeout: 10000 })
@@ -223,7 +279,7 @@ Cypress.Commands.add('newPickupAddress',
 
 Cypress.Commands.add('betaEnterAddressAtPosition',
   (taskFormIndex, addressSearch, addressMatch,
-    businessName, telephone, contactName, comments) => {
+    businessName, telephone, contactName) => {
 
     cy.searchAddress(
       `[data-testid=form-task-${taskFormIndex}]`,
@@ -239,6 +295,19 @@ Cypress.Commands.add('betaEnterAddressAtPosition',
 
     cy.get(`input[name="tasks[${taskFormIndex}].address.contactName"]`).clear()
     cy.get(`input[name="tasks[${taskFormIndex}].address.contactName"]`).type(contactName)
+
+  })
+
+Cypress.Commands.add('betaEnterWeightAtPosition',
+  (taskFormIndex, weight) => {
+
+    cy.get(`[name="tasks[${taskFormIndex}].weight"]`).clear()
+    cy.get(`[name="tasks[${taskFormIndex}].weight"]`).type(weight)
+
+  })
+
+Cypress.Commands.add('betaEnterCommentAtPosition',
+  (taskFormIndex, comments) => {
 
     cy.get(`[name="tasks[${taskFormIndex}].comments"]`).clear()
     cy.get(`[name="tasks[${taskFormIndex}].comments"]`).type(comments)
@@ -284,7 +353,7 @@ Cypress.Commands.add('betaChooseSavedAddressAtPosition',
       cy.wait(300)
       cy.root()
         .closest('body')
-        .find('.ant-select-dropdown')
+        .find('.ant-select-dropdown:visible')
         .not('.ant-select-dropdown-hidden')
         .within(() => {
           cy.get(`.rc-virtual-list-holder-inner > :nth-child(${ addressIndex })`).click()
@@ -331,14 +400,14 @@ Cypress.Commands.add(
       })
 
       cy.get(`.address__autosuggest`).within(() => {
-        cy.get('input')
-          .invoke('val')
-          .should('match', address)
+        cy.get('input').invoke('val').should('match', address)
       })
 
-      cy.get(`[data-testid=date-picker]`).should('have.value', date)
+      if (date !== undefined) {
+        cy.get(`[data-testid=date-picker]`).should('have.value', date)
+      }
 
-      if (hourRange) {
+      if (hourRange !== undefined) {
         cy.get(`[data-testid=hour-picker]`).within(() => {
           cy.contains(hourRange).should('exist')
         })
@@ -353,7 +422,7 @@ Cypress.Commands.add(
         })
       }
 
-      if (packages) {
+      if (packages !== undefined) {
         packages.forEach(pkg => {
           cy.get(`[data-testid="${pkg.nodeId}"]`).within(() => {
             cy.get('input').should('have.value', pkg.quantity)
@@ -368,15 +437,30 @@ Cypress.Commands.add(
         )
       }
 
-      cy.get(`[name="tasks[${taskFormIndex}].comments"]`)
-        .contains(comments)
-        .should('exist')
+      if (comments !== undefined) {
+        cy.get(`[name="tasks[${taskFormIndex}].comments"]`)
+          .contains(comments)
+          .should('exist')
+      }
 
-      cy.get(`[data-testid=tags-select]`).within(() => {
-        tags.forEach(tag => {
-          cy.contains(tag).should('exist')
+      if (tags !== undefined) {
+        cy.get(`[data-testid=tags-select]`).within(() => {
+          tags.forEach(tag => {
+            cy.contains(tag).should('exist')
+          })
         })
-      })
+      }
+    })
+  },
+)
+
+Cypress.Commands.add(
+  'betaTaskCollapsedShouldHaveValue',
+  ({ taskFormIndex, address }) => {
+    cy.get(`[data-testid="form-task-${taskFormIndex}"]`).within(() => {
+      cy.get('.task__header').contains(address).should('exist')
+
+      cy.get(`[data-testid=address-select]`).should('not.be.visible')
     })
   },
 )

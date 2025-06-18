@@ -24,6 +24,7 @@ export const toTextArgs = t => {
     tokenForLocale(locale, t),
     {
       dayNames: moment.localeData(locale).weekdays(),
+      monthNames: moment.localeData(locale).months()
     },
   ]
 }

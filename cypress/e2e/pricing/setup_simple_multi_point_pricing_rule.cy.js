@@ -1,6 +1,6 @@
 context('Setup simple multi-point pricing (role: admin)', () => {
   beforeEach(() => {
-    cy.loadFixturesWithSetup('pricing.yml')
+    cy.loadFixturesWithSetup(['ORM/user_admin.yml', 'ORM/packages.yml'])
     cy.login('admin', '12345678')
   })
 
@@ -11,6 +11,7 @@ context('Setup simple multi-point pricing (role: admin)', () => {
     cy.get('[data-testid="pricing_rule_sets_add"]').click()
 
     // New pricing rule set page
+    cy.urlmatch(/\/admin\/deliveries\/pricing\/new$/)
     cy.get('#pricing_rule_set_name').type('Multi-point pricing')
 
     // Select strategy: All the matching rules
@@ -44,6 +45,9 @@ context('Setup simple multi-point pricing (role: admin)', () => {
     cy.intercept('POST', '/admin/deliveries/pricing/new').as('submit')
     cy.get('.btn-block').click()
     cy.wait('@submit', { timeout: 10000 })
+
+    // Pricing rule page
+    cy.urlmatch(/\/admin\/deliveries\/pricing\/[0-9]+$/)
 
     cy.get('.alert-success', { timeout: 10000 })
       .should('contain', 'Changements sauvegardés')

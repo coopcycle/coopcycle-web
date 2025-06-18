@@ -1,0 +1,10 @@
+@import 'leaflet/dist/leaflet.css';
+
+.map-distance-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 1001;
+  background-color: #0984e3;
+  color: #ffffff;
+}

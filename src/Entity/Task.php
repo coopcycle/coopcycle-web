@@ -369,6 +369,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
     private $delivery;
 
+    /**
+     * @var Address
+     */
     #[Assert\NotNull]
     #[Assert\Valid]
     #[Groups(['task', 'task_create', 'task_edit', 'address', 'address_create', 'delivery_create'])]
@@ -440,7 +443,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
      * We actually don't expose the 'weight' property in the API, we expose :
      * - DROPOFF : weight property
      * - PICKUP : sum of weight of all the dropoffs
-     * @var int
+     * @var int|null
      */
     #[Groups(['task', 'task_create', 'task_edit', 'delivery', 'delivery_create'])]
     private $weight;
@@ -1127,10 +1130,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         })->toArray());
     }
 
-    /**
-     * @return int
-     */
-    public function getWeight()
+    public function getWeight() : int|null
     {
         return $this->weight;
     }

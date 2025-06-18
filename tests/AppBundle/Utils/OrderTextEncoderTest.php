@@ -29,11 +29,11 @@ class OrderTextEncoderTest extends KernelTestCase
         self::bootKernel();
 
         // @see https://symfony.com/blog/new-in-symfony-4-1-simpler-service-testing
-        $twig = self::$container->get(TwigEnvironment::class);
+        $twig = self::getContainer()->get(TwigEnvironment::class);
 
         $this->encoder = new OrderTextEncoder($twig);
 
-        $this->priceFormatter = self::$container->get(PriceFormatter::class);
+        $this->priceFormatter = self::getContainer()->get(PriceFormatter::class);
     }
 
     private function createOrder(int $tipAmount = 0): OrderInterface

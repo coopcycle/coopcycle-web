@@ -3,13 +3,9 @@
 namespace AppBundle\Controller;
 
 use ApiPlatform\Api\IriConverterInterface;
-use AppBundle\Controller\Utils\AccessControlTrait;
-use AppBundle\Controller\Utils\DeliveryTrait;
 use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\LoopeatTrait;
 use AppBundle\Controller\Utils\OrderTrait;
-use AppBundle\Controller\Utils\RestaurantTrait;
-use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Edenred\Authentication as EdenredAuthentication;
 use AppBundle\Entity\Address;
@@ -68,7 +64,9 @@ class ProfileController extends AbstractController
 
     public function __construct(
         protected OrderRepositoryInterface $orderRepository,
-        protected JWTTokenManagerInterface $JWTTokenManager
+        protected JWTTokenManagerInterface $JWTTokenManager,
+        protected EntityManagerInterface $entityManager,
+        protected NormalizerInterface $normalizer
     )
     { }
 
@@ -249,7 +247,7 @@ class ProfileController extends AbstractController
     }
 
     #[Route(path: '/profile/addresses/new', name: 'profile_address_new')]
-    public function newAddressAction(Request $request)
+    public function newAddressAction(Request $request, EntityManagerInterface $entityManager)
     {
         $address = new Address();
 
@@ -265,9 +263,8 @@ class ProfileController extends AbstractController
 
             $this->getUser()->addAddress($address);
 
-            $manager = $this->getDoctrine()->getManagerForClass(Address::class);
-            $manager->persist($address);
-            $manager->flush();
+            $entityManager->persist($address);
+            $entityManager->flush();
 
             return $this->redirectToRoute('profile_addresses');
         }
@@ -286,14 +283,14 @@ class ProfileController extends AbstractController
     }
 
     #[Route(path: '/profile/tasks', name: 'profile_tasks')]
-    public function tasksAction(Request $request)
+    public function tasksAction(Request $request, EntityManagerInterface $entityManager)
     {
         $date = new \DateTime();
         if ($request->query->has('date')) {
             $date = new \DateTime($request->query->get('date'));
         }
 
-        $taskList = $this->getDoctrine()
+        $taskList = $entityManager
             ->getRepository(TaskList::class)
             ->findOneBy([
                 'courier' => $this->getUser(),
@@ -312,9 +309,9 @@ class ProfileController extends AbstractController
     }
 
     #[Route(path: '/profile/tasks/{id}/complete', name: 'profile_task_complete')]
-    public function completeTaskAction($id, Request $request, TaskManager $taskManager, TranslatorInterface $translator)
+    public function completeTaskAction($id, Request $request, TaskManager $taskManager, TranslatorInterface $translator, EntityManagerInterface $entityManager)
     {
-        $task = $this->getDoctrine()
+        $task = $entityManager
             ->getRepository(Task::class)
             ->find($id);
 
@@ -337,9 +334,7 @@ class ProfileController extends AbstractController
                         $taskManager->markAsFailed($task, $notes);
                     }
 
-                    $this->getDoctrine()
-                        ->getManagerForClass(Task::class)
-                        ->flush();
+                    $entityManager->flush();
 
                 } catch (\Exception $e) {
                     $this->addFlash(

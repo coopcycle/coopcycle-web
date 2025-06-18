@@ -441,36 +441,43 @@ class Client
             }
         };
 
-        foreach ($order->getLoopeatDeliver() as $formats) {
-
+        $groupedFormats = array_reduce($order->getLoopeatDeliver(), function ($carry, $formats) {
             foreach ($formats as $format) {
-
-                try {
-
-                    $this->logger->info(sprintf('Updating "deliver" formats for order "%s", setting format "%s" quantity to "%s"',
-                        $order->getNumber(), $format['format_id'], $format['quantity']));
-
-                    $restaurant = $order->getRestaurant();
-
-                    $url = sprintf('/api/v1/partners/orders/%s/formats/%s', $order->getLoopeatOrderId(), $getOrderFormatId($format['format_id']));
-
-                    $response = $this->client->request('PATCH', $url, [
-                        'headers' => [
-                            'Authorization' => sprintf('Bearer %s', $restaurant->getLoopeatAccessToken())
-                        ],
-                        'oauth_credentials' => $restaurant,
-                        'json' => [
-                            'order_format' => [
-                                'quantity' => $format['quantity'],
-                            ]
-                        ],
-                    ]);
-
-                    $res = json_decode((string) $response->getBody(), true);
-
-                } catch (RequestException $e) {
-                    $this->logger->error($e->getMessage());
+                if (isset($carry[$format['format_id']])) {
+                    $carry[$format['format_id']] += $format['quantity'];
+                } else {
+                    $carry[$format['format_id']] = $format['quantity'];
                 }
+            }
+
+            return $carry;
+        }, []);
+
+        foreach ($groupedFormats as $formatId => $quantity) {
+
+            try {
+
+                $this->logger->info(sprintf('Updating "deliver" formats for order "%s", setting format "%s" quantity to "%s"',
+                    $order->getNumber(), $formatId, $quantity));
+
+                $restaurant = $order->getRestaurant();
+
+                $url = sprintf('/api/v1/partners/orders/%s/formats/%s', $order->getLoopeatOrderId(), $getOrderFormatId($formatId));
+
+                $this->client->request('PATCH', $url, [
+                    'headers' => [
+                        'Authorization' => sprintf('Bearer %s', $restaurant->getLoopeatAccessToken())
+                    ],
+                    'oauth_credentials' => $restaurant,
+                    'json' => [
+                        'order_format' => [
+                            'quantity' => $quantity,
+                        ]
+                    ],
+                ]);
+
+            } catch (RequestException $e) {
+                $this->logger->error($e->getMessage());
             }
         }
     }

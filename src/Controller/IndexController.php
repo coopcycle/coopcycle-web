@@ -4,7 +4,6 @@ namespace AppBundle\Controller;
 
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Business\Context as BusinessContext;
-use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Hub;
@@ -15,11 +14,13 @@ use AppBundle\Enum\Store;
 use AppBundle\Form\DeliveryEmbedType;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Utils\SortableRestaurantIterator;
+use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use MyCLabs\Enum\Enum;
 use Symfony\Contracts\Cache\CacheInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -31,8 +32,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class IndexController extends AbstractController
 {
-    use UserTrait;
-
     const EXPIRES_AFTER = 300;
     const MAX_SECTIONS = 8;
     const MIN_SHOPS_PER_CUISINE = 3;
@@ -79,7 +78,9 @@ class IndexController extends AbstractController
         TimingRegistry $timingRegistry,
         UrlGeneratorInterface $urlGenerator,
         TranslatorInterface $translator,
-        BusinessContext $businessContext)
+        BusinessContext $businessContext,
+        EntityManagerInterface $entityManager,
+        FormFactoryInterface $formFactory)
     {
         $user = $this->getUser();
 
@@ -178,11 +179,11 @@ class IndexController extends AbstractController
             }
         }
 
-        $hubs = $this->getDoctrine()->getRepository(Hub::class)->findBy([
+        $hubs = $entityManager->getRepository(Hub::class)->findBy([
             'enabled' => true
         ]);
 
-        $deliveryForm = $this->getDeliveryForm();
+        $deliveryForm = $this->getDeliveryForm($entityManager);
 
         $hashids = new Hashids($this->getParameter('secret'), 12);
 
@@ -191,9 +192,8 @@ class IndexController extends AbstractController
         return $this->render('index/index.html.twig', array(
             'sections' => $sections,
             'hubs' => $hubs,
-            'addresses_normalized' => $this->getUserAddresses(),
             'delivery_form' => $deliveryForm ?
-                $this->getDeliveryFormForm($deliveryForm)->createView() : null,
+                $this->getDeliveryFormForm($formFactory, $deliveryForm)->createView() : null,
             'hashid' => $deliveryForm ? $hashids->encode($deliveryForm->getId()) : '',
             'zero_waste_count' => $countZeroWaste,
         ));
@@ -225,9 +225,9 @@ class IndexController extends AbstractController
         return new RedirectResponse(sprintf('/%s/', $this->getParameter('locale')), 302);
     }
 
-    private function getDeliveryForm(): ?DeliveryForm
+    private function getDeliveryForm(EntityManagerInterface $entityManager): ?DeliveryForm
     {
-        $qb = $this->getDoctrine()
+        $qb = $entityManager
             ->getRepository(DeliveryForm::class)
             ->createQueryBuilder('f');
 
@@ -238,11 +238,11 @@ class IndexController extends AbstractController
         return $qb->getQuery()->getOneOrNullResult();
     }
 
-    private function getDeliveryFormForm(?DeliveryForm $deliveryForm = null)
+    private function getDeliveryFormForm(FormFactoryInterface $formFactory, ?DeliveryForm $deliveryForm = null)
     {
         if ($deliveryForm) {
 
-            return $this->get('form.factory')->createNamed('delivery', DeliveryEmbedType::class, new Delivery(), [
+            return $formFactory->createNamed('delivery', DeliveryEmbedType::class, new Delivery(), [
                 'with_weight'      => $deliveryForm->getWithWeight(),
                 'with_vehicle'     => $deliveryForm->getWithVehicle(),
                 'with_time_slot'   => $deliveryForm->getTimeSlot(),

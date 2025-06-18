@@ -18,12 +18,15 @@ use AppBundle\Entity\Task;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderTransitions;
 use AppBundle\Utils\OrderTimeHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 
 /**
  * This Reactor is responsible for updating the state of the aggregate.
@@ -37,7 +40,9 @@ use Symfony\Component\Messenger\MessageBusInterface;
         private readonly StateMachineFactoryInterface $stateMachineFactory,
         private readonly OrderProcessorInterface $orderProcessor,
         private readonly MessageBusInterface $eventBus,
-        private readonly OrderTimeHelper $orderTimeHelper)
+        private readonly OrderTimeHelper $orderTimeHelper,
+        private readonly EntityManagerInterface $entityManager,
+    )
     {
 
         $this->eventNameToTransition = [
@@ -115,6 +120,8 @@ use Symfony\Component\Messenger\MessageBusInterface;
                 }
             }
         }
+
+        $this->entityManager->flush();
     }
 
     private function handleCheckoutEvent(CheckoutSucceeded|CheckoutFailed $event)
@@ -187,7 +194,8 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
             if ($stateMachine->apply($transition, true) && $generateEvent) {
                 $orderStateChangeEvent = new OrderStateChanged($order, $event);
-                $this->eventBus->dispatch($orderStateChangeEvent);
+                $this->eventBus->dispatch(
+                    (new Envelope($orderStateChangeEvent))->with(new DispatchAfterCurrentBusStamp()));
             }
         }
     }

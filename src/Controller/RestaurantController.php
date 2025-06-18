@@ -15,6 +15,7 @@ use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Restaurant\Pledge;
+use AppBundle\Entity\Sylius\Product;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Form\Checkout\Action\AddProductToCartAction as CheckoutAddProductToCart;
@@ -70,7 +71,7 @@ class RestaurantController extends AbstractController
     const ITEMS_PER_PAGE = 21;
 
     public function __construct(
-        private EntityManagerInterface $orderManager,
+        private EntityManagerInterface $entityManager,
         private ValidatorInterface $validator,
         private RepositoryInterface $productRepository,
         private RepositoryInterface $orderItemRepository,
@@ -180,7 +181,6 @@ class RestaurantController extends AbstractController
 
             return $this->render('restaurant/list_map.html.twig', [
                 'geohash' => $request->query->get('geohash'),
-                'addresses_normalized' => $this->getUserAddresses(),
             ]);
         }
 
@@ -303,7 +303,6 @@ class RestaurantController extends AbstractController
             'page' => $page,
             'pages' => $pages,
             'geohash' => $request->query->get('geohash'),
-            'addresses_normalized' => $this->getUserAddresses(),
             'address' => $request->query->get('address'),
             'types' => $types,
             'cuisines' => $cuisines,
@@ -314,7 +313,7 @@ class RestaurantController extends AbstractController
     public function hubAction($id, $slug, Request $request,
         SlugifyInterface $slugify)
     {
-        $hub = $this->getDoctrine()->getRepository(Hub::class)->find($id);
+        $hub = $this->entityManager->getRepository(Hub::class)->find($id);
 
         if (!$hub) {
             throw new NotFoundHttpException();
@@ -341,7 +340,7 @@ class RestaurantController extends AbstractController
     public function businessRestaurantGroupAction($id, $slug, Request $request,
         SlugifyInterface $slugify)
     {
-        $businessRestaurantGroup = $this->getDoctrine()->getRepository(BusinessRestaurantGroup::class)->find($id);
+        $businessRestaurantGroup = $this->entityManager->getRepository(BusinessRestaurantGroup::class)->find($id);
 
         if (!$businessRestaurantGroup) {
             throw new NotFoundHttpException();
@@ -441,7 +440,7 @@ class RestaurantController extends AbstractController
             // The cart is valid, and the user clicked on the submit button
             if ($cartForm->isValid()) {
 
-                $this->orderManager->flush();
+                $this->entityManager->flush();
 
                 return $this->redirectToRoute('order');
             }
@@ -470,7 +469,6 @@ class RestaurantController extends AbstractController
             'cart_form' => $cartForm->createView(),
             'cart_timing' => $this->getOrderTiming($order),
             'order_access_token' => $this->getOrderAccessToken($order),
-            'addresses_normalized' => $this->getUserAddresses(),
             'available_for_business_account' => $restaurantAvailableForBusinessAccount
         ]));
     }
@@ -480,7 +478,7 @@ class RestaurantController extends AbstractController
         CartContextInterface $cartContext,
         IriConverterInterface $iriConverter)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)->find($id);
 
         if (!$restaurant) {
@@ -526,7 +524,7 @@ class RestaurantController extends AbstractController
     public function cartAction($id, Request $request,
         CartContextInterface $cartContext)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)->find($id);
 
         if (!$restaurant) {
@@ -585,10 +583,11 @@ class RestaurantController extends AbstractController
         CartContextInterface $cartContext,
         OptionsPayloadConverter $optionsPayloadConverter)
     {
-        $this->getDoctrine()
+        $this->entityManager
             ->getRepository(LocalBusiness::class)->find($id);
 
-        $product = $this->productRepository->findOneByCode($code);
+        /** @var Product|null $product */
+        $product = $this->productRepository->findOneBy(['code' => $code]);
 
         $cart = $cartContext->getCart();
 
@@ -645,7 +644,7 @@ class RestaurantController extends AbstractController
     public function clearCartTimeAction($id, Request $request,
         CartContextInterface $cartContext)
     {
-        $this->getDoctrine()
+        $this->entityManager
             ->getRepository(LocalBusiness::class)->find($id);
 
         $cart = $cartContext->getCart();
@@ -667,7 +666,7 @@ class RestaurantController extends AbstractController
         CartContextInterface $cartContext,
         OrderProcessorInterface $orderProcessor)
     {
-        $this->getDoctrine()
+        $this->entityManager
             ->getRepository(LocalBusiness::class)->find($id);
 
         $cart = $cartContext->getCart();
@@ -699,7 +698,7 @@ class RestaurantController extends AbstractController
     public function removeFromCartAction($id, $cartItemId, Request $request,
         CartContextInterface $cartContext)
     {
-        $this->getDoctrine()
+        $this->entityManager
             ->getRepository(LocalBusiness::class)->find($id);
 
         $cart = $cartContext->getCart();
@@ -741,7 +740,7 @@ class RestaurantController extends AbstractController
                         'slug' => $slugify->slugify($restaurant->getName())
                     ])
                 ];
-            }, $this->getDoctrine()->getRepository(LocalBusiness::class)->findBy(['enabled' => true]));
+            }, $this->entityManager->getRepository(LocalBusiness::class)->findBy(['enabled' => true]));
         });
 
         return $this->render('restaurant/map.html.twig', [
@@ -803,14 +802,14 @@ class RestaurantController extends AbstractController
             throw new NotFoundHttpException();
         }
 
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)->find($id);
 
         $user = $this->getUser();
 
         if ($restaurant->getPledge() !== null) {
             $restaurant->getPledge()->addVote($user);
-            $this->orderManager->flush();
+            $this->entityManager->flush();
         }
 
         return $this->redirectToRoute('restaurant', [ 'id' => $id ]);
@@ -873,8 +872,8 @@ class RestaurantController extends AbstractController
     private function persistAndFlushCart($cart): void {
         $isExisting = $cart->getId() !== null;
 
-        $this->orderManager->persist($cart);
-        $this->orderManager->flush();
+        $this->entityManager->persist($cart);
+        $this->entityManager->flush();
 
         if ($isExisting) {
             $this->checkoutLogger->info('Order updated in the database', ['file' => 'RestaurantController', 'order' => $this->loggingUtils->getOrderId($cart)]);

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { Field } from 'formik'
 import AddressBookNew from './AddressBook'
 import { Input, Button } from 'antd'
@@ -14,6 +14,9 @@ import {
   useGetStorePackagesQuery,
   useGetStoreTimeSlotsQuery,
 } from '../../api/slice'
+import { Mode } from './mode'
+import { useSelector } from 'react-redux'
+import { selectMode } from './redux/formSlice'
 
 
 export default ({
@@ -28,10 +31,10 @@ export default ({
 }) => {
   const { t } = useTranslation()
 
+  const mode = useSelector(selectMode)
   const {
     values,
     taskValues,
-    isCreateOrderMode,
     setFieldValue,
   } = useDeliveryFormFormikContext({
     taskIndex: index,
@@ -41,22 +44,8 @@ export default ({
     taskValues.type === 'DROPOFF' && values.tasks.length > 2,
   )
 
-  const { data: timeSlotsData } = useGetStoreTimeSlotsQuery(storeNodeId)
-  const { data: packagesData } = useGetStorePackagesQuery(storeNodeId)
-
-  const timeSlotLabels = useMemo(() => {
-    if (timeSlotsData) {
-      return timeSlotsData['hydra:member']
-    }
-    return []
-  }, [timeSlotsData])
-
-  const packages = useMemo(() => {
-    if (packagesData) {
-      return packagesData['hydra:member']
-    }
-    return null
-  }, [packagesData])
+  const { data: timeSlotLabels } = useGetStoreTimeSlotsQuery(storeNodeId)
+  const { data: packages } = useGetStorePackagesQuery(storeNodeId)
 
   return (
     <div className="task border p-4 mb-4" data-testid={`form-task-${index}`}>
@@ -80,7 +69,10 @@ export default ({
               : t('DELIVERY_FORM_DROPOFF_INFORMATIONS')}
         </h4>
 
-        <button type="button" className="task__button">
+        <button
+          data-testid="toggle-button"
+          type="button"
+          className="task__button">
           <i
             className={!showLess ? 'fa fa-chevron-up' : 'fa fa-chevron-down'}
             title={
@@ -107,7 +99,7 @@ export default ({
           storeDeliveryInfos={storeDeliveryInfos}
           shallPrefillAddress={Boolean(
             taskValues.type === 'PICKUP' &&
-              isCreateOrderMode &&
+              (mode === Mode.DELIVERY_CREATE) &&
               storeDeliveryInfos.prefillPickupAddress,
           )}
         />

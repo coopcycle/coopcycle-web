@@ -46,7 +46,9 @@ class TopBarNotificationHandler
             if ($length > self::MAX_NOTIFICATIONS) {
                 $itemsToRemove = $this->redis->lRange($listKey, self::MAX_NOTIFICATIONS, $length - 1);
                 $this->redis->lTrim($listKey, 0, self::MAX_NOTIFICATIONS - 1);
-                $this->redis->hDel($hashKey, ...$itemsToRemove);
+                if (count($itemsToRemove) > 0) {
+                    $this->redis->hDel($hashKey, ...$itemsToRemove);
+                }
             }
 
             $notificationsPayload = [

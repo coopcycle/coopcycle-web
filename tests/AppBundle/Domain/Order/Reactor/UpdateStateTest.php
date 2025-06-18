@@ -17,6 +17,7 @@ use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Entity\Task;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\OrderTimeHelper;
+use Doctrine\ORM\EntityManagerInterface;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use SM\Factory\FactoryInterface;
@@ -43,7 +44,7 @@ class UpdateStateTest extends KernelTestCase
         self::bootKernel();
 
         // @see https://symfony.com/blog/new-in-symfony-4-1-simpler-service-testing
-        $this->stateMachineFactory = self::$container->get(FactoryInterface::class);
+        $this->stateMachineFactory = self::getContainer()->get(FactoryInterface::class);
 
         $this->orderProcessor = $this->prophesize(OrderProcessorInterface::class);
         $this->eventBus = $this->prophesize(MessageBusInterface::class);
@@ -58,11 +59,14 @@ class UpdateStateTest extends KernelTestCase
             ->getShippingTimeRange(Argument::type(OrderInterface::class))
             ->willReturn($this->shippingTimeRange);
 
+        $this->entityManager = $this->prophesize(EntityManagerInterface::class);
+
         $this->updateState = new UpdateState(
             $this->stateMachineFactory,
             $this->orderProcessor->reveal(),
             $this->eventBus->reveal(),
-            $this->orderTimeHelper->reveal()
+            $this->orderTimeHelper->reveal(),
+            $this->entityManager->reveal()
         );
     }
 
@@ -107,7 +111,8 @@ class UpdateStateTest extends KernelTestCase
         $order->setState(OrderInterface::STATE_CART);
 
         $this->eventBus
-            ->dispatch(Argument::that(function (OrderStateChanged $event) {
+            ->dispatch(Argument::that(function (Envelope $message) {
+                $event = $message->getMessage();
                 $this->assertInstanceOf(OrderCreated::class, $event->getTriggeredBy());
                 return true;
             }))
@@ -136,7 +141,8 @@ class UpdateStateTest extends KernelTestCase
         $order->setState(OrderInterface::STATE_NEW);
 
         $this->eventBus
-            ->dispatch(Argument::that(function (OrderStateChanged $event) {
+            ->dispatch(Argument::that(function (Envelope $message) {
+                $event = $message->getMessage();
                 $this->assertInstanceOf(OrderAccepted::class, $event->getTriggeredBy());
                 return true;
             }))
@@ -164,7 +170,8 @@ class UpdateStateTest extends KernelTestCase
         $order->setDelivery($delivery);
 
         $this->eventBus
-            ->dispatch(Argument::that(function (OrderStateChanged $event) {
+            ->dispatch(Argument::that(function (Envelope $message) {
+                $event = $message->getMessage();
                 $this->assertInstanceOf(OrderFulfilled::class, $event->getTriggeredBy());
                 return true;
             }))
@@ -210,7 +217,8 @@ class UpdateStateTest extends KernelTestCase
         $order->addPayment($payment);
 
         $this->eventBus
-            ->dispatch(Argument::that(function (OrderStateChanged $event) {
+            ->dispatch(Argument::that(function (Envelope $message) {
+                $event = $message->getMessage();
                 $this->assertInstanceOf(OrderCancelled::class, $event->getTriggeredBy());
                 return true;
             }))

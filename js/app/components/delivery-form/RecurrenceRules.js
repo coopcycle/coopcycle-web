@@ -12,6 +12,8 @@ import {
 import { useTranslation } from 'react-i18next'
 import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
 
+import './RecurrenceRules.scss'
+
 function Content() {
   const { rruleValue: recurrenceRule } = useDeliveryFormFormikContext()
 
@@ -32,6 +34,7 @@ function Content() {
   if (!recurrenceRule) {
     return (
       <a
+        data-testid="recurrence-add"
         href="#"
         className="mr-3"
         onClick={e => {

@@ -17,9 +17,12 @@ use Hashids\Hashids;
 use Knp\Component\Pager\PaginatorInterface;
 use League\Flysystem\Filesystem;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DashboardController extends AbstractController
@@ -35,7 +38,9 @@ class DashboardController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly TranslatorInterface $translator,
         private readonly bool $adhocOrderEnabled,
-        private readonly JWTTokenManagerInterface $JWTTokenManager
+        private readonly JWTTokenManagerInterface $JWTTokenManager,
+        protected NormalizerInterface $normalizer,
+        protected SerializerInterface $serializer
     )
     {
     }
@@ -95,7 +100,8 @@ class DashboardController extends AbstractController
         DeliveryRepository $deliveryRepository,
         MessageBusInterface $messageBus,
         Hashids $hashids8,
-        Filesystem $deliveryImportsFilesystem
+        Filesystem $deliveryImportsFilesystem,
+        LoggerInterface $logger,
     )
     {
         $user = $this->getUser();
@@ -117,11 +123,12 @@ class DashboardController extends AbstractController
                 $request,
                 $paginator,
                 deliveryRepository: $deliveryRepository,
+                messageBus: $messageBus,
                 entityManager: $entityManager,
                 hashids8: $hashids8,
                 deliveryImportsFilesystem: $deliveryImportsFilesystem,
-                messageBus: $messageBus,
-                slugify: $slugify
+                slugify: $slugify,
+                logger: $logger,
             );
         }
 

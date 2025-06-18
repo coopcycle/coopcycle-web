@@ -12,7 +12,7 @@ trait UserTrait
 {
     protected function userTracking(UserInterface $user, \DateTime $date, $layout = 'profile')
     {
-        $qb = $this->getDoctrine()
+        $qb = $this->entityManager
             ->getRepository(TrackingPosition::class)->createQueryBuilder('tp');
         $qb
             ->andWhere('tp.courier = :user')
@@ -28,22 +28,5 @@ trait UserTrait
             'date' => $date,
             'positions' => $positions,
         ]);
-    }
-
-    protected function getUserAddresses()
-    {
-        $addresses = [];
-
-        $user = $this->getUser();
-        if ($user) {
-            $addresses = $user->getAddresses()->toArray();
-        }
-
-        return array_map(function ($address) {
-
-            return $this->get('serializer')->normalize($address, 'jsonld', [
-                'groups' => ['address']
-            ]);
-        }, $addresses);
     }
 }

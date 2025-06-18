@@ -68,6 +68,7 @@ Feature: Multi-step deliveries
           "packages": [],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -100,10 +101,12 @@ Feature: Multi-step deliveries
           "packages": [],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
 
@@ -196,6 +199,7 @@ Feature: Multi-step deliveries
           ],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -237,10 +241,12 @@ Feature: Multi-step deliveries
           ],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
 
@@ -329,6 +335,7 @@ Feature: Multi-step deliveries
           ],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -370,10 +377,12 @@ Feature: Multi-step deliveries
           ],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
 
@@ -460,6 +469,7 @@ Feature: Multi-step deliveries
           ],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -501,10 +511,12 @@ Feature: Multi-step deliveries
           ],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {"@*@": "@*@"}
       }
       """
 

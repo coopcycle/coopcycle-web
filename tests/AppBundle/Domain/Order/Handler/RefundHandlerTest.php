@@ -33,7 +33,7 @@ class RefundHandlerTest extends KernelTestCase
 
         $this->gateway = $this->prophesize(Gateway::class);
         // @see https://symfony.com/blog/new-in-symfony-4-1-simpler-service-testing
-        $this->stateMachineFactory = self::$container->get(FactoryInterface::class);
+        $this->stateMachineFactory = self::getContainer()->get(FactoryInterface::class);
         $this->eventBus = $this->prophesize(MessageBusInterface::class);
 
         $this->handler = new RefundHandler(

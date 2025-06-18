@@ -1,6 +1,6 @@
 context('Import deliveries (role: admin)', () => {
   beforeEach(() => {
-    cy.loadFixturesWithSetup(["user_admin.yml", "../../features/fixtures/ORM/store_w_time_slot_pricing.yml"])
+    cy.loadFixturesWithSetup(["ORM/user_admin.yml", "../features/fixtures/ORM/store_w_time_slot_pricing.yml"])
 
     cy.setMockDateTime('2019-12-12 8:00:00')
 
@@ -50,8 +50,11 @@ context('Import deliveries (role: admin)', () => {
     cy.reload()
     cy.get('i.fa-check[data-delivery-import-status]').should('exist')
 
-    // verify imported deliveries
     cy.get('[data-testid="tab:/admin/deliveries"]').click()
+
+    // Verify the import is successful
+
+    // Deliveries list
     cy.urlmatch(/\/admin\/deliveries$/)
 
     // deliveries.csv; line 2; pricing_rule_2
@@ -63,5 +66,19 @@ context('Import deliveries (role: admin)', () => {
     cy.get('[data-testid=delivery__list_item]')
       .contains(/€6.99/)
       .should('exist')
+
+    cy.visit('/admin/orders')
+
+    // Orders list
+    cy.urlmatch(/\/admin\/orders$/)
+
+    // deliveries.csv; line 2; pricing_rule_2
+    cy.get('[data-testid="order-list-item-1"]')
+      .contains(/€2.00/)
+      .should('exist')
+
+    // deliveries.csv; line 3; pricing_rule_1 + pricing_rule_2
+    cy.get('[data-testid="order-list-item-2"]')
+      .contains(/€6.99/)
   })
 })

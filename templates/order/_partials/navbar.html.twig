@@ -28,12 +28,12 @@
       <div class="nav navbar-nav navbar-right">
         {% if is_granted('ROLE_DISPATCHER') and order.isDeliveryForStore() %}
           <li>
-            <a href="{{ path('admin_order_edit', { id: order.id }) }}">
+            <a href="{{ path('admin_order_edit', { id: order.id }) }}" data-testid="order-edit">
               <i class="fa fa-pencil"></i>  {% trans %}basics.edit{% endtrans %}
             </a>
           </li>
           <li>
-            <a href="{{ path('admin_store_delivery_new_beta', { id: order.delivery.store.id, frmrdr: order|hashid(16) }) }}" data-testid="order_clone">
+            <a href="{{ path('admin_store_delivery_new', { id: order.delivery.store.id, frmrdr: order|hashid(16) }) }}" data-testid="order_clone">
               <i class="fa fa-clone"></i>  {% trans %}basics.clone{% endtrans %}
             </a>
           </li>

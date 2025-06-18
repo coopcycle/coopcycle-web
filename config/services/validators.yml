@@ -17,6 +17,7 @@ services:
     arguments:
       $cashEnabled: '%env(bool:CASH_ON_DELIVERY_ENABLED)%'
       $stripeConnectRequired: '%env(bool:STRIPE_CONNECT_REQUIRED)%'
+      $mercadopagoConnectRequired: '%env(bool:MERCADOPAGO_CONNECT_REQUIRED)%'
     tags:
       - { name: validator.constraint_validator }
 

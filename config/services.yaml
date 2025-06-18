@@ -257,7 +257,6 @@ services:
 
   AppBundle\Controller\RestaurantController:
     arguments:
-      $orderManager: '@sylius.manager.order'
       $validator: '@validator'
       $productRepository: '@sylius.repository.product'
       $orderItemRepository: '@sylius.repository.order_item'
@@ -1004,7 +1003,8 @@ services:
     arguments:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
 
-  AppBundle\Api\Dto\DeliveryFormDeliveryMapper:
+  AppBundle\Api\Dto\DeliveryMapper:
+  AppBundle\Api\Dto\TaskMapper:
 
   AppBundle\Utils\RestaurantFilter:
     arguments:
@@ -1635,3 +1635,11 @@ services:
     arguments:
       - '@AppBundle\LoopEat\Client'
       - '@monolog.logger.loopeat'
+
+  AppBundle\Transporter\Proximus\ProximusImporter:
+    lazy: true
+    arguments:
+      - "%env(PROXIMUS_SYNC_URI)%"
+
+  AppBundle\Transporter\Proximus\ProximusTransformer:
+    lazy: true

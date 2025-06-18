@@ -44,6 +44,7 @@ Feature: Task recurrence rules
           "after":"11:30",
           "before":"12:00"
         },
+        "arbitraryPriceTemplate": null,
         "isCancelled":false
       }
       """
@@ -119,6 +120,90 @@ Feature: Task recurrence rules
             }
           ]
         },
+        "arbitraryPriceTemplate": null,
+        "isCancelled":false
+      }
+      """
+
+  Scenario: Create recurrence rule (arbitrary price)
+    Given the fixtures files are loaded:
+      | users.yml           |
+      | stores.yml          |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/recurrence_rules" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "rule":"FREQ=WEEKLY;",
+        "template": {
+          "@type":"hydra:Collection",
+          "hydra:member": [
+            {
+              "@type":"Task",
+              "address": {
+                "streetAddress": "1, Rue de Rivoli, 75004 Paris",
+                "telephone": "+33612345678"
+              },
+              "after":"11:30",
+              "before":"12:00"
+            },
+            {
+              "@type":"Task",
+              "address": {
+                "streetAddress": "10, Rue de Rivoli, 75004 Paris"
+              },
+              "after":"12:00",
+              "before":"12:30"
+            }
+          ]
+        },
+        "arbitraryPriceTemplate": {
+          "variantName":"Test product",
+          "variantPrice":7200
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RecurrenceRule",
+        "@id":"/api/recurrence_rules/1",
+        "@type":"RecurrenceRule",
+        "rule":"FREQ=WEEKLY",
+        "store":"/api/stores/1",
+        "orgName":"Acme",
+        "name":null,
+        "template": {
+          "@type":"hydra:Collection",
+          "hydra:member": [
+            {
+              "@type":"Task",
+              "address": {
+                "streetAddress": @string@,
+                "telephone": "+33612345678"
+              },
+              "after":"11:30",
+              "before":"12:00"
+            },
+            {
+              "@type":"Task",
+              "address": {
+                "streetAddress": @string@
+              },
+              "after":"12:00",
+              "before":"12:30"
+            }
+          ]
+        },
+        "arbitraryPriceTemplate": {
+          "variantName":"Test product",
+          "variantPrice":7200
+        },
         "isCancelled":false
       }
       """
@@ -165,6 +250,7 @@ Feature: Task recurrence rules
           "after":"11:30",
           "before":"12:30"
         },
+        "arbitraryPriceTemplate": null,
         "isCancelled":false
       }
       """
@@ -239,6 +325,7 @@ Feature: Task recurrence rules
         "store":"/api/stores/1",
         "orgName":"Acme",
         "name":null,
+        "arbitraryPriceTemplate": null,
         "isCancelled":false
       }
       """
@@ -385,6 +472,7 @@ Feature: Task recurrence rules
       """
 
   Scenario: Generate orders based on the recurrence rules with an implicit timeSlot
+    Given the current time is "2025-04-14 9:00:00"
     Given the fixtures files are loaded:
       | sylius_products.yml  |
       | sylius_taxation.yml  |
@@ -393,7 +481,6 @@ Feature: Task recurrence rules
       | recurrence_rules_w_time_slot_pricing.yml |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
-    Given the current time is "2025-04-14 9:00:00"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-04-14"
@@ -423,6 +510,7 @@ Feature: Task recurrence rules
     Then the database should contain an order with a total price 699
 
   Scenario: Generate orders based on the recurrence rules with a range not belonging to a timeSlot
+    Given the current time is "2025-04-21 11:00:00"
     Given the fixtures files are loaded:
       | sylius_products.yml  |
       | sylius_taxation.yml  |
@@ -431,7 +519,6 @@ Feature: Task recurrence rules
       | recurrence_rules_w_distance_pricing.yml |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
-    Given the current time is "2025-04-21 11:00:00"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-04-21"
@@ -484,3 +571,118 @@ Feature: Task recurrence rules
       "trace":@array@
       }
       """
+
+  Scenario: Generate orders by-weekly based on the recurrence rules
+    Given the current time is "2025-04-21 11:00:00"
+    Given the fixtures files are loaded:
+      | sylius_products.yml  |
+      | sylius_taxation.yml  |
+      | payment_methods.yml  |
+      | users.yml            |
+      | recurrence_rules_byweekly.yml |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-04-21"
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/RecurrenceRule",
+        "@id": "/api/recurrence_rules/generate_orders",
+        "@type": "hydra:Collection",
+        "hydra:member": [
+          {
+            "@id": "/api/orders/1",
+            "@type": "http://schema.org/Order",
+            "invitation": null,
+            "paymentGateway": "stripe"
+          }
+        ],
+        "hydra:totalItems": 1,
+        "hydra:view": {
+          "@id": "/api/recurrence_rules/generate_orders?date=2025-04-21",
+          "@type": "hydra:PartialCollectionView"
+        }
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-04-28"
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/RecurrenceRule",
+        "@id": "/api/recurrence_rules/generate_orders",
+        "@type": "hydra:Collection",
+        "hydra:member": [
+        ],
+        "hydra:totalItems": 0,
+        "hydra:view": {
+          "@id": "/api/recurrence_rules/generate_orders?date=2025-04-28",
+          "@type": "hydra:PartialCollectionView"
+        }
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-05-05"
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/RecurrenceRule",
+        "@id": "/api/recurrence_rules/generate_orders",
+        "@type": "hydra:Collection",
+        "hydra:member": [
+          {
+            "@id": "/api/orders/2",
+            "@type": "http://schema.org/Order",
+            "invitation": null,
+            "paymentGateway": "stripe"
+          }
+        ],
+        "hydra:totalItems": 1,
+        "hydra:view": {
+          "@id": "/api/recurrence_rules/generate_orders?date=2025-05-05",
+          "@type": "hydra:PartialCollectionView"
+        }
+      }
+      """
+
+  Scenario: Dont generate orders based on the disabled recurrence rule
+    Given the current time is "2025-04-14 9:00:00"
+    Given the fixtures files are loaded:
+      | sylius_products.yml  |
+      | sylius_taxation.yml  |
+      | payment_methods.yml  |
+      | users.yml            |
+      | recurrence_rules_disabled.yml |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/recurrence_rules/generate_orders?date=2025-04-15"
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/RecurrenceRule",
+        "@id": "/api/recurrence_rules/generate_orders",
+        "@type": "hydra:Collection",
+        "hydra:member": [
+        ],
+        "hydra:totalItems": 0,
+        "hydra:view": {
+          "@id": "/api/recurrence_rules/generate_orders?date=2025-04-15",
+          "@type": "hydra:PartialCollectionView"
+        }
+      }
+      """
+

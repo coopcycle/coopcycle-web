@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Intl\Languages;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class SearchController extends AbstractController
 {
@@ -67,7 +68,8 @@ class SearchController extends AbstractController
     public function deliveriesAction(Request $request,
         EntityManagerInterface $entityManager,
         Client $client,
-        UrlGeneratorInterface $urlGenerator)
+        UrlGeneratorInterface $urlGenerator,
+        NormalizerInterface $normalizer)
     {
         $user = $this->getUser();
 
@@ -114,7 +116,7 @@ class SearchController extends AbstractController
 
         $hits = [];
         foreach ($results as $result) {
-            $hits[] = $this->get('serializer')->normalize($result, 'jsonld', [
+            $hits[] = $normalizer->normalize($result, 'jsonld', [
                 'groups' => ['delivery', 'task', 'address']
             ]);
         }

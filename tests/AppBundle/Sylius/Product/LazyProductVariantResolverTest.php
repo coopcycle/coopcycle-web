@@ -36,8 +36,8 @@ class LazyProductVariantResolverTest extends KernelTestCase
 
         self::bootKernel();
 
-        $this->doctrine = self::$container->get('doctrine');
-        $this->entityManager = self::$container->get(EntityManagerInterface::class);
+        $this->doctrine = self::getContainer()->get('doctrine');
+        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
 
         $this->defaultVariantResolver = $this->prophesize(ProductVariantResolverInterface::class);
         $this->variantFactory = $this->prophesize(ProductVariantFactoryInterface::class);
@@ -52,9 +52,9 @@ class LazyProductVariantResolverTest extends KernelTestCase
             $this->entityManager
         );
 
-        $this->taxCategoryRepository = self::$container->get('sylius.repository.tax_category');
-        $this->taxesProvider = self::$container->get(TaxesProvider::class);
-        $this->taxRateRepository = self::$container->get('sylius.repository.tax_rate');
+        $this->taxCategoryRepository = self::getContainer()->get('sylius.repository.tax_category');
+        $this->taxesProvider = self::getContainer()->get(TaxesProvider::class);
+        $this->taxRateRepository = self::getContainer()->get('sylius.repository.tax_rate');
 
         $this->taxesInitializer = new TaxesInitializer(
             $this->doctrine->getConnection(),

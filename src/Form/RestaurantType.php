@@ -71,6 +71,7 @@ class RestaurantType extends LocalBusinessType
                 'with_description' => false,
                 'label' => false,
                 'help' => 'localBusiness.form.business_address.help',
+                'required' => false,
             ])
             ;
 

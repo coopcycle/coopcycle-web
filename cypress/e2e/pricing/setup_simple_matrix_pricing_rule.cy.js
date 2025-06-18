@@ -1,6 +1,6 @@
 context('Setup simple matrix pricing (role: admin)', () => {
   beforeEach(() => {
-    cy.loadFixturesWithSetup('pricing.yml')
+    cy.loadFixturesWithSetup(['ORM/user_admin.yml', 'ORM/packages.yml'])
     cy.login('admin', '12345678')
   })
 
@@ -11,6 +11,7 @@ context('Setup simple matrix pricing (role: admin)', () => {
     cy.get('[data-testid="pricing_rule_sets_add"]').click()
 
     // New pricing rule set page
+    cy.urlmatch(/\/admin\/deliveries\/pricing\/new$/)
     // Matrix:
     // columns: packages = SMALL, XL;
     // rows: diff_hours(pickup) > 4, < 4
@@ -80,6 +81,9 @@ context('Setup simple matrix pricing (role: admin)', () => {
 
     // Save button
     cy.get('.btn-block').click()
+
+    // Pricing rule page
+    cy.urlmatch(/\/admin\/deliveries\/pricing\/[0-9]+$/)
 
     cy.get('.alert-success', { timeout: 10000 })
       .should('contain', 'Changements sauvegardés')

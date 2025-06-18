@@ -2,9 +2,8 @@
 
 namespace AppBundle\Controller\Utils;
 
-use AppBundle\Api\Dto\DeliveryFormDeliveryMapper;
-use AppBundle\Api\Dto\DeliveryFormDeliveryOutput;
-use AppBundle\Api\Dto\DeliveryFormTaskOutput;
+use AppBundle\Api\Dto\DeliveryDto;
+use AppBundle\Api\Dto\DeliveryMapper;
 use AppBundle\Entity\Address;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Entity\Delivery;
@@ -69,7 +68,7 @@ trait StoreTrait
     #[HideSoftDeleted]
     public function storeListAction(Request $request, PaginatorInterface $paginator, JWTManagerInterface $jwtManager)
     {
-        $qb = $this->getDoctrine()
+        $qb = $this->entityManager
         ->getRepository(Store::class)
         ->createQueryBuilder('c')
         ->orderBy('c.name', 'ASC');
@@ -97,7 +96,7 @@ trait StoreTrait
         UserManagerInterface $userManager,
         InvitationManager $invitationManager)
     {
-        $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
+        $store = $this->entityManager->getRepository(Store::class)->find($id);
 
         $this->accessControl($store);
 
@@ -159,11 +158,11 @@ trait StoreTrait
 
     public function storeAddressAction($storeId, $addressId, Request $request, TranslatorInterface $translator)
     {
-        $store = $this->getDoctrine()->getRepository(Store::class)->find($storeId);
+        $store = $this->entityManager->getRepository(Store::class)->find($storeId);
 
         $this->accessControl($store, 'view');
 
-        $address = $this->getDoctrine()->getRepository(Address::class)->find($addressId);
+        $address = $this->entityManager->getRepository(Address::class)->find($addressId);
 
         if (!$store->getAddresses()->contains($address)) {
             throw new AccessDeniedHttpException('Access denied');
@@ -174,7 +173,7 @@ trait StoreTrait
 
     public function newStoreAddressAction($id, Request $request, TranslatorInterface $translator)
     {
-        $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
+        $store = $this->entityManager->getRepository(Store::class)->find($id);
 
         $this->accessControl($store, 'edit_delivery');
 
@@ -196,19 +195,18 @@ trait StoreTrait
 
             /** @var Store $store */
             $store = $form->getData();
-            $objectManager = $this->getDoctrine()->getManagerForClass(Store::class);
 
             if ($form->getClickedButton() && 'delete' === $form->getClickedButton()->getName()) {
 
-                $this->getDoctrine()->getManagerForClass(Store::class)->remove($store);
-                $this->getDoctrine()->getManagerForClass(Store::class)->flush();
+                $this->entityManager->remove($store);
+                $this->entityManager->flush();
 
                 return $this->redirectToRoute($routes['stores']);
             }
 
             if ($store->isTransporterEnabled()) {
                 $transporter = $store->getTransporter();
-                $fstore = $objectManager->getRepository(Store::class)->findOneBy([
+                $fstore = $this->entityManager->getRepository(Store::class)->findOneBy([
                     'transporter' => $transporter
                 ]);
 
@@ -223,8 +221,8 @@ trait StoreTrait
 
             }
 
-            $objectManager->persist($store);
-            $objectManager->flush();
+            $this->entityManager->persist($store);
+            $this->entityManager->flush();
 
             $this->addFlash(
                 'notice',
@@ -264,7 +262,7 @@ trait StoreTrait
                 $store->setAddress($address);
             }
 
-            $this->getDoctrine()->getManagerForClass(Store::class)->flush();
+            $this->entityManager->flush();
 
             $this->addFlash(
                 'notice',
@@ -356,7 +354,7 @@ trait StoreTrait
 
                 $this->handleNewRecurrenceRule($pricingManager, $logger, $store, $form, $delivery, $order, $priceForOrder);
 
-                if ($this->isGranted('ROLE_ADMIN')) {
+                if ($this->isGranted('ROLE_DISPATCHER')) {
                     $order->setState(OrderInterface::STATE_ACCEPTED);
                 }
 
@@ -364,11 +362,11 @@ trait StoreTrait
 
                 // TODO Add flash message
 
-                return $this->redirectToRoute($routes['success'], ['id' => $id]);
+                return $this->redirectToRoute('admin_order', [ 'id' => $order->getId() ]);
             }
         }
 
-        return $this->render('store/deliveries/new.html.twig', [
+        return $this->render('store/deliveries/new_legacy.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'form' => $form->createView(),
@@ -385,7 +383,7 @@ trait StoreTrait
         Request $request,
         EntityManagerInterface $entityManager,
         PricingManager $pricingManager,
-        DeliveryFormDeliveryMapper $deliveryMapper,
+        DeliveryMapper $deliveryMapper,
     ) {
         $store = $entityManager
             ->getRepository(Store::class)
@@ -395,18 +393,23 @@ trait StoreTrait
 
         $delivery = $store->createDelivery();
 
-        /** @var DeliveryFormDeliveryOutput|null $deliveryData */
+        /** @var DeliveryDto|null $deliveryData */
         $deliveryData = null;
 
         // pre-fill fields with the data from a previous order
         if ($this->isGranted('ROLE_DISPATCHER') && $data = $this->duplicateOrder($request, $store, $pricingManager)) {
-            $deliveryData = $deliveryMapper->map($data->delivery, $data->previousArbitraryPrice);
+            $deliveryData = $deliveryMapper->map(
+                $data->delivery,
+                null,
+                $data->previousArbitraryPrice,
+                false
+            );
         }
 
         $routes = $request->attributes->get('routes');
 
         return $this->render(
-            'store/deliveries/beta_new.html.twig',
+            'store/deliveries/form.html.twig',
             $this->auth([
                 'layout' => $request->attributes->get('layout'),
                 'store' => $store,
@@ -415,6 +418,7 @@ trait StoreTrait
                 'deliveryData' => $deliveryData,
                 'stores_route' => $routes['stores'],
                 'store_route' => $routes['store'],
+                'store_deliveries_route' => $routes['store_deliveries'],
                 'back_route' => $routes['back'],
                 'show_left_menu' => true,
                 'isDispatcher' => $this->isGranted('ROLE_DISPATCHER'),
@@ -440,7 +444,56 @@ trait StoreTrait
         return $pricingManager->duplicateOrder($store, $fromOrder);
     }
 
-    public function recurrenceRuleAction($storeId,
+    public function recurrenceRuleReactFormAction(
+        $recurrenceRuleId,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        DeliveryManager $deliveryManager,
+        DeliveryMapper $deliveryMapper,
+    ) {
+        $recurrenceRule = $entityManager
+            ->getRepository(RecurrenceRule::class)
+            ->find($recurrenceRuleId);
+
+        $store = $recurrenceRule->getStore();
+
+        // Currently the route is only accessible by ROLE_DISPATCHER,
+        // so this check is not doing much, but it would be useful
+        // if we decide to open the route to store owners
+        $this->denyAccessUnlessGranted('view', $store);
+
+        // The date is not relevant while viewing/editing the recurrence rules (only the time is),
+        // but as we have to provide it, we set it to tomorrow
+        // to make sure that tasks' after/before dates are in the future
+        $startDate = Carbon::now()->addDay()->format('Y-m-d');
+        $tempDelivery = $deliveryManager->createDeliveryFromRecurrenceRule($recurrenceRule, $startDate, false);
+
+        $arbitraryPrice = null;
+        if ($arbitraryPriceTemplate = $recurrenceRule->getArbitraryPriceTemplate()) {
+            $arbitraryPrice = new ArbitraryPrice($arbitraryPriceTemplate['variantName'], $arbitraryPriceTemplate['variantPrice']);
+        }
+
+        $deliveryData = $deliveryMapper->map(
+            $tempDelivery,
+            null,
+            $arbitraryPrice,
+            false
+        );
+
+        return $this->render('store/recurrence_rules/form.html.twig', $this->auth([
+            'layout' => $request->attributes->get('layout'),
+            'store' => $store,
+            'recurrenceRule' => $recurrenceRule,
+            'order' => null,
+            'delivery' => $tempDelivery,
+            'deliveryData' => $deliveryData,
+            'isDispatcher' => $this->isGranted('ROLE_DISPATCHER'),
+            'debug_pricing' => $request->query->getBoolean('debug', false),
+        ]));
+    }
+
+    public function recurrenceRuleAction(
+        $storeId,
         $recurrenceRuleId,
         Request $request,
         DeliveryManager $deliveryManager,
@@ -498,11 +551,10 @@ trait StoreTrait
                 $pricingManager->cancelRecurrenceRule($recurrenceRule, $tempDelivery);
             }
 
-            $redirectUri = $form->has('__redirect_to') ? $form->get('__redirect_to')->getData() : null;
-            return $redirectUri ? $this->redirect($redirectUri) : $this->redirectToRoute($routes['redirect_default'], ['id' => $storeId]);
+            return $this->redirectToRoute($routes['redirect_default'], ['id' => $storeId]);
         }
 
-        return $this->render('store/subscriptions/item.html.twig', [
+        return $this->render('store/recurrence_rules/item_legacy.html.twig', [
             'layout' => $request->attributes->get('layout'),
             'recurrenceRule' => $recurrenceRule,
             'delivery' => $tempDelivery,
@@ -528,7 +580,7 @@ trait StoreTrait
 
     private function handleBookmark(OrderManager $orderManager, FormInterface $form, OrderInterface $order): void
     {
-        if (!$this->isGranted('ROLE_ADMIN')) {
+        if (!$this->isGranted('ROLE_DISPATCHER')) {
             return;
         }
 
@@ -610,7 +662,7 @@ trait StoreTrait
 
     public function storeAction($id, Request $request, TranslatorInterface $translator)
     {
-        $store = $this->getDoctrine()->getRepository(Store::class)->find($id);
+        $store = $this->entityManager->getRepository(Store::class)->find($id);
 
         $this->accessControl($store, 'view');
 
@@ -624,9 +676,10 @@ trait StoreTrait
         Hashids $hashids8,
         Filesystem $deliveryImportsFilesystem,
         SlugifyInterface $slugify,
+        LoggerInterface $logger,
     )
     {
-        $store = $this->getDoctrine()
+        $store = $this->entityManager
             ->getRepository(Store::class)
             ->find($id);
 
@@ -643,12 +696,13 @@ trait StoreTrait
             return $this->handleDeliveryImportForStore(
                 store: $store,
                 form: $deliveryImportForm,
-                routeTo: $routes['import_success'],
-                messageBus: $messageBus,
                 entityManager: $entityManager,
                 hashids: $hashids8,
                 filesystem: $deliveryImportsFilesystem,
-                slugify: $slugify
+                messageBus: $messageBus,
+                slugify: $slugify,
+                routeTo: $routes['import_success'],
+                logger: $logger
             );
         }
 
@@ -830,7 +884,7 @@ trait StoreTrait
 
     public function storeAddressesAction($id, Request $request, TranslatorInterface $translator)
     {
-        $store = $this->getDoctrine()
+        $store = $this->entityManager
             ->getRepository(Store::class)
             ->find($id);
 
@@ -843,7 +897,7 @@ trait StoreTrait
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $this->getDoctrine()->getManagerForClass(Store::class)->flush();
+            $this->entityManager->flush();
 
             $this->addFlash(
                 'notice',
@@ -884,7 +938,7 @@ trait StoreTrait
         StorageInterface $storage,
         Filesystem $taskImagesFilesystem)
     {
-        $delivery = $this->getDoctrine()
+        $delivery = $this->entityManager
             ->getRepository(Delivery::class)
             ->find($deliveryId);
 
@@ -935,7 +989,9 @@ trait StoreTrait
         Filesystem $filesystem,
         MessageBusInterface $messageBus,
         SlugifyInterface $slugify,
-        string $routeTo)
+        string $routeTo,
+        LoggerInterface $logger,
+    )
     {
 
         /** @var UploadedFile $uploadedFile */
@@ -977,6 +1033,11 @@ trait StoreTrait
             );
 
         } catch (FilesystemException | UnableToWriteFile $e) {
+
+            $logger->error('Error while writing delivery import file', [
+                'exception' => $e,
+                'filename' => $filename,
+            ]);
 
             $entityManager->remove($queue);
             $entityManager->flush();

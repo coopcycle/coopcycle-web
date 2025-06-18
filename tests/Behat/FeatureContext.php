@@ -5,6 +5,7 @@ namespace Tests\Behat;
 use ACSEO\TypesenseBundle\Manager\CollectionManager;
 use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\DataType\TsRange;
+use AppBundle\Doctrine\EventSubscriber\MockDateSubscriber;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\ClosingRule;
@@ -35,6 +36,7 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Testwork\Tester\Result\TestResult;
 use Behat\Testwork\Tester\Result\ExceptionResult;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Faker\Generator as FakerGenerator;
 use Fidry\AliceDataFixtures\Persistence\PurgeMode;
@@ -87,6 +89,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function __construct(
         protected ManagerRegistry $doctrine,
+        protected EntityManagerInterface $entityManager,
         protected DatabasePurger $databasePurger,
         protected PhoneNumberUtil $phoneNumberUtil,
         protected LoaderInterface $fixturesLoader,
@@ -104,6 +107,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         protected KernelInterface $kernel,
         protected UserManager $userManager,
         protected CollectionManager $typesenseCollectionManager,
+        protected MockDateSubscriber $mockDateSubscriber,
         protected LoggerInterface $logger,
     )
     {
@@ -297,6 +301,11 @@ class FeatureContext implements Context, SnippetAcceptingContext
         Carbon::setTestNow(Carbon::parse($datetime));
 
         $this->redis->set('datetime:now', Carbon::now()->toAtomString());
+
+        // Mock createdAt and updatedAt fields in the database
+        $this->entityManager->getEventManager()->addEventSubscriber(
+            $this->mockDateSubscriber
+        );
     }
 
     /**

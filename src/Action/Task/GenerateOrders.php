@@ -16,7 +16,8 @@ class GenerateOrders
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly PricingManager $pricingManager)
+        private readonly PricingManager $pricingManager,
+    )
     {
     }
 
@@ -59,7 +60,7 @@ class GenerateOrders
         return $orders;
     }
 
-    private function filterByDate(Task\RecurrenceRule $subscription, string $startDate): bool
+    private function filterByDate(Task\RecurrenceRule $recurrence, string $startDate): bool
     {
         $after = new \DateTime($startDate . ' 00:00');
         $before = new \DateTime($startDate . ' 23:59');
@@ -71,10 +72,10 @@ class GenerateOrders
             $inc = true
         );
 
-        $rule = $subscription->getRule();
+        $rule = $recurrence->getRule();
 
-        $rule->setStartDate($after);
-        $rule->setEndDate($before);
+        $rule->setStartDate($recurrence->getCreatedAt());
+        $rule->setEndDate(null);
 
         $occurrences = $transformer->transform($rule, $constraint);
 

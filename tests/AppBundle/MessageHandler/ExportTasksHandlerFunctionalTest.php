@@ -25,9 +25,9 @@ class ExportTasksHandlerFunctionalTest extends KernelTestCase
         parent::setUp();
         self::bootKernel();
 
-        $this->priceFormatter = self::$container->get(PriceFormatter::class);
+        $this->priceFormatter = self::getContainer()->get(PriceFormatter::class);
 
-        $this->entityManager = self::$container->get(EntityManagerInterface::class);
+        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
         $this->handler = new ExportTasksHandler(
             $this->entityManager,
             $this->priceFormatter
@@ -43,7 +43,7 @@ class ExportTasksHandlerFunctionalTest extends KernelTestCase
             $connection->executeQuery(sprintf('ALTER SEQUENCE %s RESTART WITH 1', $row['sequence_name']));
         }
 
-        $this->fixturesLoader = self::$container->get('fidry_alice_data_fixtures.loader.doctrine');
+        $this->fixturesLoader = self::getContainer()->get('fidry_alice_data_fixtures.loader.doctrine');
     }
 
     public function testExport()

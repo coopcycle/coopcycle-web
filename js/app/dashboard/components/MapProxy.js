@@ -138,7 +138,7 @@ export default class MapProxy {
 
     this.map.selectArea.enable()
 
-    this.map.on('areaselected', (e) => {
+    this.map.on('selectarea:selected', (e) => {
       L.Util.requestAnimFrame(() => {
         const markers = []
         this.map.eachLayer((layer) => {

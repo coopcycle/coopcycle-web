@@ -2,7 +2,6 @@
 
 namespace AppBundle\Embed;
 
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class Context

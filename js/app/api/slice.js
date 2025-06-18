@@ -1,5 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { baseQueryWithReauth } from './baseQuery'
+import { fetchAllRecordsUsingFetchWithBQ } from './utils'
 
 // Define our single API slice object
 export const apiSlice = createApi({
@@ -12,7 +13,9 @@ export const apiSlice = createApi({
       query: () => `api/tax_rates`,
     }),
     getTags: builder.query({
-      query: () => `api/tags`,
+      queryFn: async (args, queryApi, extraOptions, baseQuery) => {
+        return await fetchAllRecordsUsingFetchWithBQ(baseQuery, 'api/tags', 100)
+      },
     }),
 
     getOrderTiming: builder.query({
@@ -33,7 +36,13 @@ export const apiSlice = createApi({
     }),
 
     getTimeSlots: builder.query({
-      query: () => `api/time_slots`,
+      queryFn: async (args, queryApi, extraOptions, baseQuery) => {
+        return await fetchAllRecordsUsingFetchWithBQ(
+          baseQuery,
+          'api/time_slots',
+          100,
+        )
+      },
     }),
 
     patchAddress: builder.mutation({
@@ -50,13 +59,31 @@ export const apiSlice = createApi({
       query: nodeId => nodeId,
     }),
     getStoreAddresses: builder.query({
-      query: storeNodeId => `${storeNodeId}/addresses`,
+      queryFn: async (args, queryApi, extraOptions, baseQuery) => {
+        return await fetchAllRecordsUsingFetchWithBQ(
+          baseQuery,
+          `${args}/addresses`,
+          100,
+        )
+      },
     }),
     getStoreTimeSlots: builder.query({
-      query: storeNodeId => `${storeNodeId}/time_slots`,
+      queryFn: async (args, queryApi, extraOptions, baseQuery) => {
+        return await fetchAllRecordsUsingFetchWithBQ(
+          baseQuery,
+          `${args}/time_slots`,
+          100,
+        )
+      },
     }),
     getStorePackages: builder.query({
-      query: storeNodeId => `${storeNodeId}/packages`,
+      queryFn: async (args, queryApi, extraOptions, baseQuery) => {
+        return await fetchAllRecordsUsingFetchWithBQ(
+          baseQuery,
+          `${args}/packages`,
+          100,
+        )
+      },
     }),
     postStoreAddress: builder.mutation({
       query({ storeNodeId, ...body }) {
@@ -72,6 +99,15 @@ export const apiSlice = createApi({
       query(body) {
         return {
           url: `/api/retail_prices/calculate`,
+          method: 'POST',
+          body,
+        }
+      },
+    }),
+    suggestOptimizations: builder.mutation({
+      query(body) {
+        return {
+          url: `/api/deliveries/suggest_optimizations`,
           method: 'POST',
           body,
         }
@@ -96,6 +132,21 @@ export const apiSlice = createApi({
       },
     }),
 
+    putRecurrenceRule: builder.mutation({
+      query({ nodeId, ...body }) {
+        return {
+          url: nodeId,
+          method: 'PUT',
+          body,
+        }
+      },
+    }),
+    deleteRecurrenceRule: builder.mutation({
+      query: nodeId => ({
+        url: nodeId,
+        method: 'DELETE',
+      }),
+    }),
     recurrenceRulesGenerateOrders: builder.mutation({
       query: date => ({
         url: 'api/recurrence_rules/generate_orders',
@@ -147,8 +198,11 @@ export const {
   usePostStoreAddressMutation,
   usePatchAddressMutation,
   useCalculatePriceMutation,
+  useSuggestOptimizationsMutation,
   usePostDeliveryMutation,
   usePutDeliveryMutation,
+  usePutRecurrenceRuleMutation,
+  useDeleteRecurrenceRuleMutation,
   useRecurrenceRulesGenerateOrdersMutation,
   useLazyGetInvoiceLineItemsGroupedByOrganizationQuery,
   useGetInvoiceLineItemsQuery,

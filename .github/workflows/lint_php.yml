@@ -2,7 +2,6 @@ name: Lint PHP
 on: push
 env:
   APP_ENV: test
-  NODE_ENV: test
 jobs:
   LINT_PHP:
     name: Lint PHP
@@ -20,7 +19,8 @@ jobs:
         with:
           php-version: ${{ matrix.php_version }}
           tools: composer:v2, phpstan:1
-          extensions: redis
+          extensions: redis, intl
+          ini-file: development
       - name: Install PHP dependencies
         run: |
           composer install --prefer-dist --no-progress --no-scripts
@@ -30,3 +30,19 @@ jobs:
         run: bin/console cache:clear
       - name: Warmup Symfony cache
         run: bin/console cache:warmup
+      - name: Install PHP dependencies (prod)
+        run: |
+          composer install --prefer-dist --no-progress --no-scripts --no-dev --optimize-autoloader
+        env:
+          APP_ENV: prod
+          APP_DEBUG: '0'
+      - name: Clear Symfony cache (prod)
+        run: bin/console cache:clear
+        env:
+          APP_ENV: prod
+          APP_DEBUG: '0'
+      - name: Warmup Symfony cache (prod)
+        run: bin/console cache:warmup
+        env:
+          APP_ENV: prod
+          APP_DEBUG: '0'

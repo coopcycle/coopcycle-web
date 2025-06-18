@@ -3,7 +3,7 @@
 {% block body %}
 
 <section class="homepage-search" data-search="address"
-  data-addresses="{{ addresses_normalized|json_encode()|e('html') }}"
+  data-addresses="{{ addresses_normalized()|json_encode()|e('html') }}"
   data-tracking-category="Homepage"
   data-restaurants="{{ coopcycle_restaurants_suggestions()|json_encode()|e('html') }}">
   <div class="homepage-search-container">
