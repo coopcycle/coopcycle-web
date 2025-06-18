@@ -309,6 +309,6 @@ class PODExport extends Base
             $image instanceof IncidentImage => $this->incidentImagesFilesystem
         };
 
-        return $filesystem?->fileExists($path) ? $path : null;
+        return $filesystem->fileExists($path) ? $path : null;
     }
 }
