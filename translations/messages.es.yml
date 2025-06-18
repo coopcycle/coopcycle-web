@@ -707,6 +707,7 @@ delivery.with_id: 'Entrega #%id%'
 subscription.title: 'Regla de recurrencia #%id%'
 subscription.generated_order: 'Este pedido fue generado por una regla de recurrencia'
 subscription.view: 'Ver regla de recurrencia'
+subscription.deleted.warning: Esta regla de recurrencia ha sido eliminada. Ya no puede editarla.
 help.title: Ayuda
 help.home: Casa
 restaurant.stats.order_number: Número de pedido

@@ -91,6 +91,7 @@ delivery.with_id: 'Livraison #%id%'
 subscription.title: 'Règle de récurrence #%id%'
 subscription.generated_order: 'Cette commande a été générée par une règle de récurrence'
 subscription.view: 'Voir la règle de récurrence'
+subscription.deleted.warning: Cette règle de récurrence a été supprimée. Vous ne pouvez plus la modifier.
 restaurants.no_results: Nous n'avons pas trouvé de restaurant correspondant à votre
   recherche ☹<br>Essayez avec une autre adresse ou d'autres filtres
 localBusiness.form.orderingDelayMinutes: Délai additionnel pour les prises de commandes
