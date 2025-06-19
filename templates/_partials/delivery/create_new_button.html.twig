@@ -1,6 +1,12 @@
+{# Choose a store (from a multiple stores) to create a new delivery, typically used by dispatchers #}
 {% if stores is defined and routes is defined %}
 <span {{ react_component('Delivery/CreateNewButton', {
   stores: stores|map(s => {id: s.id, name: s.name}),
   routes: routes
 }) }}></span>
+{# Create a new delivery as a current store #}
+{% elseif store is defined and routes is defined %}
+  <a href="{{ path(routes.store_new, { id: store.id }) }}" class="btn btn-success">
+    <i class="fa fa-plus"></i> {{ 'delivery.createNew'|trans }}
+  </a>
 {% endif %}

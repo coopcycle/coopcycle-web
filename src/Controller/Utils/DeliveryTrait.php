@@ -46,17 +46,13 @@ trait DeliveryTrait
             !is_null($order) && $orderManager->hasBookmark($order)
         );
 
-        $routes = $request->attributes->get('routes');
-
         return $this->render('store/deliveries/form.html.twig', $this->auth([
             'layout' => $request->attributes->get('layout'),
             'store' => $delivery->getStore(),
             'order' => $order,
             'delivery' => $delivery,
             'deliveryData' => $deliveryData,
-            'stores_route' => $routes['stores'],
-            'store_route' => $routes['store'],
-            'back_route' => $routes['back'],
+            'routes' => $request->attributes->get('routes'),
             'show_left_menu' => true,
             'isDispatcher' => $this->isGranted('ROLE_DISPATCHER'),
             'debug_pricing' => $request->query->getBoolean('debug', false),
