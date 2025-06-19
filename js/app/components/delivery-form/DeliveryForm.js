@@ -376,9 +376,9 @@ export default function({
                               );
                             })}
 
-                            {storeDeliveryInfos.multiDropEnabled && (mode === Mode.DELIVERY_CREATE || isDispatcher) ? <div
+                            {storeDeliveryInfos.multiPickupEnabled && (mode === Mode.DELIVERY_CREATE || isDispatcher) ? <div
                             className="new-order__pickups__add p-4 border mb-4">
-                            <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
+                            <p>{t('DELIVERY_FORM_MULTIPICKUP')}</p>
                             <Button
                               data-testid="add-pickup-button"
                               disabled={false}
