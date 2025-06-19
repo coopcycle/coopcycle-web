@@ -114,14 +114,12 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
 
             $delivery = $object->getDelivery();
 
-            $pkgs = $this->taskMapper->getPackages(
+            $packages = $this->taskMapper->getPackages(
                 $object,
                 $delivery?->getTasks() ?? []
             );
 
-            $pkgsData = array_map(fn ($p) => $this->objectNormalizer->normalize($p, 'json'), $pkgs);
-
-            $data['packages'] = $pkgsData;
+            $data['packages'] = array_map(fn ($package) => $this->objectNormalizer->normalize($package, 'json'), $packages);
             $data['weight'] = $this->taskMapper->getWeight(
                 $object,
                 $delivery?->getTasks() ?? []
