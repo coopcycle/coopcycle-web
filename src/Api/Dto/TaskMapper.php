@@ -24,32 +24,29 @@ class TaskMapper
         $dropoffs = array_filter($tasksInTheSameDelivery, fn($t) => $t->isDropoff());
         $otherTasks = array_filter($tasksInTheSameDelivery, fn($t) => $t !== $task);
 
+        $pickupsWithPackages = array_filter($pickups, fn($t) => count($t->getPackages()) > 0);
+        $dropoffsWithPackages = array_filter($dropoffs, fn($t) => count($t->getPackages()) > 0);
+
         $isSimple = count($pickups) === 1 && count($dropoffs) === 1;
         $isMultiDropoffs = count($pickups) === 1 && count($dropoffs) > 1;
         $isMultiPickups = count($pickups) > 1 && count($dropoffs) === 1;
         $isMultiMulti = count($pickups) > 1 && count($dropoffs) > 1;
 
-        if ($isMultiMulti) {
-            return $this->toPackages($task);
-        }
+        $isCleanMultiPickups = $isMultiPickups && count($dropoffsWithPackages) === 0;
+        $isCleanMultiDropoffs = $isMultiDropoffs && count($pickupsWithPackages) === 0;
 
-        if ($isMultiDropoffs) {
+        if ($isCleanMultiDropoffs || $isSimple) {
             if ($task->isPickup()) {
                 return $this->toSumOfPackages($otherTasks);
             }
             return $this->toPackages($task);
         }
 
-        if ($isMultiPickups) {
+        if ($isCleanMultiPickups) {
             if ($task->isDropoff()) {
                 return $this->toSumOfPackages($otherTasks);
             }
             return $this->toPackages($task);
-        }
-
-        // Simple delivery, 1 pickup + 1 dropoff
-        if ($task->isPickup()) {
-            return $this->toSumOfPackages($otherTasks);
         }
 
         return $this->toPackages($task);
