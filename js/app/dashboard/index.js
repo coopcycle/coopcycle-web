@@ -4,7 +4,6 @@ import { Provider } from 'react-redux'
 import lottie from 'lottie-web'
 import { I18nextProvider } from 'react-i18next'
 import moment from 'moment'
-import { ConfigProvider } from 'antd'
 import Split from 'react-split'
 
 import i18n, { antdLocale } from '../i18n'
@@ -24,6 +23,7 @@ import './dashboard.scss'
 import { organizationAdapter, taskAdapter, taskListAdapter, tourAdapter, trailerAdapter, vehicleAdapter, warehouseAdapter } from '../coopcycle-frontend-js/logistics/redux'
 import _ from 'lodash'
 import { createClient } from './utils/client'
+import { RootWithDefaults } from '../utils/react'
 
 const dashboardEl = document.getElementById('dashboard')
 const date = moment(dashboardEl.dataset.date)
@@ -142,9 +142,9 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
   const root = createRoot(document.getElementById('dashboard'))
 
   root.render(
+    <RootWithDefaults>
       <Provider store={ store }>
         <I18nextProvider i18n={ i18n }>
-          <ConfigProvider locale={antdLocale}>
             <div className="dashboard__toolbar-container">
               <Navbar />
             </div>
@@ -179,9 +179,9 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
               </Split>
             </div>
             <Modals />
-          </ConfigProvider>
         </I18nextProvider>
       </Provider>
+    </RootWithDefaults>
   )
 
   // hide export modal after button click

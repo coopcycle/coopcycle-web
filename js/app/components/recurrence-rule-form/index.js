@@ -8,6 +8,7 @@ import Modal from 'react-modal'
 import { createRoot } from 'react-dom/client'
 import { Mode } from '../delivery-form/mode'
 import { formSlice } from '../delivery-form/redux/formSlice'
+import { RootWithDefaults } from '../../utils/react'
 
 const buildInitialState = () => {
   return {
@@ -41,18 +42,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const root = createRoot(container)
     root.render(
-      <Provider store={store}>
-        <DeliveryForm
-          storeNodeId={storeNodeId}
-          //FIXME; might lead to bugs
-          deliveryId={recurrenceRuleId}
-          //FIXME; might lead to bugs
-          deliveryNodeId={recurrenceRuleNodeId}
-          preLoadedDeliveryData={preLoadedDeliveryData}
-          isDispatcher={isDispatcher}
-          isDebugPricing={isDebugPricing}
-        />
-      </Provider>,
+      <RootWithDefaults>
+        <Provider store={store}>
+          <DeliveryForm
+            storeNodeId={storeNodeId}
+            //FIXME; might lead to bugs
+            deliveryId={recurrenceRuleId}
+            //FIXME; might lead to bugs
+            deliveryNodeId={recurrenceRuleNodeId}
+            preLoadedDeliveryData={preLoadedDeliveryData}
+            isDispatcher={isDispatcher}
+            isDebugPricing={isDebugPricing}
+          />
+        </Provider>
+      </RootWithDefaults>,
     )
   }
 })
