@@ -62,6 +62,11 @@ class StoreType extends LocalBusinessType
                     'help' => 'form.store_type.multi_drop_enabled.help',
                     'required' => false,
                 ])
+                ->add('multiPickupEnabled', CheckboxType::class, [
+                    'label' => 'form.store_type.multi_pickup_enabled.label',
+                    'help' => 'form.store_type.multi_pickup_enabled.help',
+                    'required' => false,
+                ])
                 ->add('tags', TagsType::class)
                 ->add('failureReasonSet', EntityType::class, array(
                     'label' => 'form.store_type.failure_reason_set.label',

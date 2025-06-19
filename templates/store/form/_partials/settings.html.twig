@@ -26,6 +26,9 @@
 {% if form.multiDropEnabled is defined %}
   {{ form_row(form.multiDropEnabled) }}
 {% endif %}
+{% if form.multiPickupEnabled is defined %}
+  {{ form_row(form.multiPickupEnabled) }}
+{% endif %}
 {% if form.checkExpression is defined %}
   {{ form_row(form.checkExpression) }}
 {% endif %}
