@@ -160,6 +160,9 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     #[Groups(['store'])]
     private $multiDropEnabled = false;
 
+    #[Groups(['store'])]
+    private $multiPickupEnabled = false;
+
     /**
      * @var Collection<int, StoreTimeSlot>
      */
@@ -634,5 +637,15 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     public function getStoreGLN(): ?string
     {
         return $this->storeGLN;
+    }
+
+    public function isMultiPickupEnabled(): bool
+    {
+        return $this->multiPickupEnabled;
+    }
+
+    public function setMultiPickupEnabled(bool $enabled)
+    {
+        $this->multiPickupEnabled = $enabled;
     }
 }
