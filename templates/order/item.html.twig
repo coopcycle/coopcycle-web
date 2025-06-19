@@ -35,14 +35,16 @@
 
 {{ form_start(form) }}
 
-<div class="d-flex">
-  <div class="flex-grow-1">
-    {% include 'order/_partials/navbar.html.twig' %}
+{% if is_granted('ROLE_DISPATCHER') %}
+  <div class="d-flex">
+    <div class="flex-grow-1">
+      {% include 'order/_partials/navbar.html.twig' %}
+    </div>
+    <div class="ml-2">
+      {% include '_partials/delivery/create_new_button.html.twig' %}
+    </div>
   </div>
-  <div class="ml-2">
-    {% include '_partials/delivery/create_new_button.html.twig' %}
-  </div>
-</div>
+{% endif %}
 
 {% if form.accept is defined %}
   <div class="alert alert-info">
