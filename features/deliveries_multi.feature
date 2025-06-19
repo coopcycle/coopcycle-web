@@ -250,7 +250,6 @@ Feature: Multi-step deliveries
       }
       """
 
-  @debug
   Scenario: Create delivery with multiple pickups & 1 dropoff + packages with OAuth
     Given the fixtures files are loaded:
       | sylius_products.yml |
@@ -696,5 +695,29 @@ Feature: Multi-step deliveries
         ],
         "trackingUrl":@string@,
         "order":{"@*@":"@*@"}
+      }
+      """
+    Given I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "GET" request to "/api/tasks/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """git
+      {
+        "@id":"/api/tasks/1",
+        "type":"PICKUP",
+        "status":"TODO",
+        "packages":[
+          {
+            "name":"XL",
+            "type":"XL",
+            "quantity":2,
+            "volume_per_package":3,
+            "short_code":"AB",
+            "labels":"@array@.count(2)"
+          }
+        ],
+        "@*@":"@*@"
       }
       """
