@@ -250,6 +250,7 @@ Feature: Multi-step deliveries
       }
       """
 
+  @debug
   Scenario: Create delivery with multiple pickups & 1 dropoff + packages with OAuth
     Given the fixtures files are loaded:
       | sylius_products.yml |
@@ -296,7 +297,38 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
-        "tasks":@array@,
+        "tasks":[
+          {
+            "@type":"Task",
+            "@id":"/api/tasks/1",
+            "type":"PICKUP",
+            "packages":[],
+            "@*@":"@*@"
+          },
+          {
+            "@type":"Task",
+            "type":"PICKUP",
+            "@id":"/api/tasks/2",
+            "packages":[],
+            "@*@":"@*@"
+          },
+          {
+            "@type":"Task",
+            "type":"DROPOFF",
+            "@id":"/api/tasks/3",
+            "packages":[
+              {
+                "type":"XL",
+                "name":"XL",
+                "quantity":2,
+                "volume_per_package": 3,
+                "short_code": "AB",
+                "labels":@array@
+              }
+            ],
+            "@*@":"@*@"
+          }
+        ],
         "pickup":{
           "@id":"/api/tasks/1",
           "@type":"Task",
@@ -323,16 +355,7 @@ Feature: Multi-step deliveries
           "before":"@string@.isDateTime()",
           "doneAfter":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
-          "packages":[
-            {
-              "type":"XL",
-              "name":"XL",
-              "quantity":2,
-              "volume_per_package": 3,
-              "short_code": "AB",
-              "labels":@array@
-            }
-          ],
+          "packages":[],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
           "updatedAt":"@string@.isDateTime()",
