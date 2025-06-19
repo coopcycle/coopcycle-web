@@ -371,6 +371,8 @@ export default function({
                                     showRemoveButton={pickupIndex > 0}
                                     isDispatcher={isDispatcher}
                                     tags={tags}
+                                    // Show packages on pickups conditionally
+                                    showPackages={storeDeliveryInfos.multiPickupEnabled}
                                   />
                                 </div>
                               );
@@ -416,6 +418,8 @@ export default function({
                                     showRemoveButton={dropoffIndex > 0}
                                     isDispatcher={isDispatcher}
                                     tags={tags}
+                                    // Always show packages on dropoffs
+                                    showPackages={true}
                                   />
                                 </div>
                               );

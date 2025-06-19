@@ -28,6 +28,7 @@ export default ({
   onRemove,
   showRemoveButton,
   tags,
+  showPackages,
 }) => {
   const { t } = useTranslation()
 
@@ -105,15 +106,17 @@ export default ({
           index={index}
         />
 
-        <div className="mt-4">
-          {packages && packages.length ? (
-            <Packages
-              index={index}
-              packages={packages}
-            />
-          ) : null}
-          <TotalWeight index={index} />
-        </div>
+        { showPackages ? (
+          <div className="mt-4">
+            {packages && packages.length ? (
+              <Packages
+                index={index}
+                packages={packages}
+              />
+            ) : null}
+            <TotalWeight index={index} />
+          </div>
+        ) : null }
 
         <div className="mt-4 mb-4">
           <label
