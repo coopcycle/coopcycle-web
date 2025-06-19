@@ -19,44 +19,81 @@ class TaskMapper
      * @return TaskPackageDto[]
      */
     public function getPackages(Task $task, array $tasksInTheSameDelivery): array {
+
+        $pickups = array_filter($tasksInTheSameDelivery, fn($t) => $t->isPickup());
+        $dropoffs = array_filter($tasksInTheSameDelivery, fn($t) => $t->isDropoff());
+        $otherTasks = array_filter($tasksInTheSameDelivery, fn($t) => $t !== $task);
+
+        $isSimple = count($pickups) === 1 && count($dropoffs) === 1;
+        $isMultiDropoffs = count($pickups) === 1 && count($dropoffs) > 1;
+        $isMultiPickups = count($pickups) > 1 && count($dropoffs) === 1;
+        $isMultiMulti = count($pickups) > 1 && count($dropoffs) > 1;
+
+        if ($isMultiMulti) {
+            return $this->toPackages($task);
+        }
+
+        if ($isMultiDropoffs) {
+            if ($task->isPickup()) {
+                return $this->toSumOfPackages($otherTasks);
+            }
+            return $this->toPackages($task);
+        }
+
+        if ($isMultiPickups) {
+            if ($task->isDropoff()) {
+                return $this->toSumOfPackages($otherTasks);
+            }
+            return $this->toPackages($task);
+        }
+
+        // Simple delivery, 1 pickup + 1 dropoff
         if ($task->isPickup()) {
-            /**
-             * @var TaskPackageDto[] $packageDtos
-             */
-            $packageDtos = [];
+            return $this->toSumOfPackages($otherTasks);
+        }
 
-            // for a pickup in a delivery, the packages are the "sum" of the dropoffs packages
-            foreach ($tasksInTheSameDelivery as $t) {
-                if ($t->isPickup()) {
-                    continue;
-                }
+        return $this->toPackages($task);
+    }
 
-                foreach ($t->getPackages() as $taskPackage) {
-                    $packageId = $taskPackage->getPackage()->getId();
-                    if (!isset($packageDtos[$packageId])) {
-                        $packageDtos[$packageId] = $this->toPackageDto($taskPackage);
-                    } else {
-                        $existingPackageDto = $packageDtos[$packageId];
+    /**
+     * @param Task[] $tasks
+     * @return TaskPackageDto[]
+     */
+    private function toSumOfPackages(array $tasks): array
+    {
+        /**
+         * @var TaskPackageDto[] $packageDtos
+         */
+        $packageDtos = [];
 
-                        $thisTaskPackageDto = $this->toPackageDto($taskPackage);
+        foreach ($tasks as $t) {
+            foreach ($t->getPackages() as $taskPackage) {
+                $packageId = $taskPackage->getPackage()->getId();
+                if (!isset($packageDtos[$packageId])) {
+                    $packageDtos[$packageId] = $this->toPackageDto($taskPackage);
+                } else {
+                    $existingPackageDto = $packageDtos[$packageId];
 
-                        $existingPackageDto->quantity = $existingPackageDto->quantity + $thisTaskPackageDto->quantity;
-                        $existingPackageDto->labels = array_merge(
-                            $existingPackageDto->labels,
-                            $thisTaskPackageDto->labels
-                        );
-                    }
+                    $thisTaskPackageDto = $this->toPackageDto($taskPackage);
+
+                    $existingPackageDto->quantity = $existingPackageDto->quantity + $thisTaskPackageDto->quantity;
+                    $existingPackageDto->labels = array_merge(
+                        $existingPackageDto->labels,
+                        $thisTaskPackageDto->labels
+                    );
                 }
             }
-
-            return array_values($packageDtos);
-
-        } else {
-            return array_map(function (Task\Package $taskPackage) {
-                return $this->toPackageDto($taskPackage);
-
-            }, $task->getPackages()->toArray());
         }
+
+        return array_values($packageDtos);
+    }
+
+    private function toPackages(Task $task): array
+    {
+        return array_map(function (Task\Package $taskPackage) {
+            return $this->toPackageDto($taskPackage);
+
+        }, $task->getPackages()->toArray());
     }
 
     private function toPackageDto(Task\Package $taskPackage): TaskPackageDto

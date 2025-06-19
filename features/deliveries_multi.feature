@@ -577,3 +577,110 @@ Feature: Multi-step deliveries
           ]
       }
       """
+
+  Scenario: Create delivery with multiple pickups & 1 dropoff + packages in pickups with OAuth
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the setting "latlng" has value "48.856613,2.352222"
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "tasks": [
+          {
+            "type": "pickup",
+            "address": "24, Rue de la Paix Paris",
+            "before": "tomorrow 13:00",
+            "weight": 1500,
+            "packages": [
+              {"type": "XL", "quantity": 2}
+            ]
+          },
+          {
+            "type": "pickup",
+            "address": "22, Rue de la Paix Paris",
+            "before": "tomorrow 13:15",
+            "weight": 1500,
+            "packages": [
+              {"type": "XL", "quantity": 3}
+            ]
+          },
+          {
+            "type": "dropoff",
+            "address": "48, Rue de Rivoli Paris",
+            "before": "tomorrow 13:30"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@type":"http://schema.org/ParcelDelivery",
+        "@id":"/api/deliveries/1",
+        "id":@integer@,
+        "pickup":{"@*@":"@*@"},
+        "dropoff":{"@*@":"@*@"},
+        "tasks":[
+          {
+            "@type":"Task",
+            "@id":"/api/tasks/1",
+            "type":"PICKUP",
+            "packages":[
+              {
+                "type":"XL",
+                "name":"XL",
+                "quantity":2,
+                "volume_per_package": 3,
+                "short_code": "AB",
+                "labels":@array@
+              }
+            ],
+            "@*@":"@*@"
+          },
+          {
+            "@type":"Task",
+            "type":"PICKUP",
+            "@id":"/api/tasks/2",
+            "packages":[
+              {
+                "type":"XL",
+                "name":"XL",
+                "quantity":3,
+                "volume_per_package": 3,
+                "short_code": "AB",
+                "labels":@array@
+              }
+            ],
+            "@*@":"@*@"
+          },
+          {
+            "@type":"Task",
+            "type":"DROPOFF",
+            "@id":"/api/tasks/3",
+            "packages":[
+              {
+                "type":"XL",
+                "name":"XL",
+                "quantity":5,
+                "volume_per_package": 3,
+                "short_code": "AB",
+                "labels":@array@
+              }
+            ],
+            "@*@":"@*@"
+          }
+        ],
+        "trackingUrl":@string@,
+        "order":{"@*@":"@*@"}
+      }
+      """
