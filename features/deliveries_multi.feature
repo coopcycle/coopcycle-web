@@ -480,16 +480,7 @@ Feature: Multi-step deliveries
           "before":"@string@.isDateTime()",
           "doneAfter":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
-          "packages":[
-            {
-              "type":"XL",
-              "name":"XL",
-              "quantity":2,
-              "volume_per_package": 3,
-              "short_code": "AB",
-              "labels":@array@
-            }
-          ],
+          "packages":[],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
           "updatedAt":"@string@.isDateTime()",
