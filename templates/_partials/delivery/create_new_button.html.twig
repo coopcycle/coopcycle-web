@@ -1,0 +1,6 @@
+{% if stores is defined and routes is defined %}
+<span {{ react_component('Delivery/CreateNewButton', {
+  stores: stores|map(s => {id: s.id, name: s.name}),
+  routes: routes
+}) }}></span>
+{% endif %}
