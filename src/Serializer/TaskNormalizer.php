@@ -97,19 +97,6 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
             $data['packages'] = !is_null($object->getPrefetchedPackagesAndWeight()['packages']) ? $object->getPrefetchedPackagesAndWeight()['packages'] : [];
             $data['weight'] = $object->getPrefetchedPackagesAndWeight()['weight'];
 
-            // Add labels
-            foreach ($data['packages'] as $i => $p) {
-
-                $data['packages'][$i]['labels'] = $this->taskMapper->getLabels(
-                    $object->getId(),
-                    //FIXME: should it be package_id instead of task_package_id?
-                    $p['task_package_id'],
-                    $p['quantity']
-                );
-
-                unset($data['packages'][$i]['id']);
-                unset($data['packages'][$i]['task_package_id']);
-            }
         } else {
 
             $delivery = $object->getDelivery();
