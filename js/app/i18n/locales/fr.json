@@ -509,6 +509,7 @@
         "PLEASE_SELECT_A_VALID_DATE": "Veuillez sélectionner une date valide",
         "PLEASE_SELECT_A_DATE_IN_THE_FUTURE": "Veuillez sélectionner une date future",
         "SOMETHING_WENT_WRONG": "Quelque chose s'est mal passé",
+        "ERROR_BOUNDARY_FALLBACK_MESSAGE": "Une erreur s'est produite. Veuillez recharger la page",
         "THERE_IS_ALREADY_COUNT_REPORTS_FOR_THIS_INCIDENT": "Il y a déjà {{ count }} rapport(s) pour cet incident",
         "FAILURE_REASON": "Raison de l'échec",
         "PLEASE_SELECT_A_REASON": "Veuillez sélectionner une raison",

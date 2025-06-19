@@ -595,6 +595,7 @@
         "PLEASE_SELECT_A_VALID_DATE": "Seleccione una fecha válida",
         "PLEASE_SELECT_A_DATE_IN_THE_FUTURE": "Seleccione una fecha futura",
         "SOMETHING_WENT_WRONG": "Algo ha ido mal",
+        "ERROR_BOUNDARY_FALLBACK_MESSAGE": "Algo salió mal. Por favor, recargue la página",
         "THERE_IS_ALREADY_COUNT_REPORTS_FOR_THIS_INCIDENT": "Ya hay {{ count }} informe(s) para este incidente",
         "FAILURE_REASON": "Seleccione la incidencia",
         "PLEASE_SELECT_A_REASON": "Seleccione un motivo",
