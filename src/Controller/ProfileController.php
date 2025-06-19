@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use ApiPlatform\Api\IriConverterInterface;
+use AppBundle\Api\Dto\DeliveryMapper;
 use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\LoopeatTrait;
 use AppBundle\Controller\Utils\OrderTrait;
@@ -10,6 +11,7 @@ use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Edenred\Authentication as EdenredAuthentication;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
@@ -182,6 +184,7 @@ class ProfileController extends AbstractController
     public function orderAction($id, Request $request,
         OrderManager $orderManager,
         DeliveryManager $deliveryManager,
+        DeliveryMapper $deliveryMapper,
         JWTManagerInterface $jwtManager,
         JWSProviderInterface $jwsProvider,
         IriConverterInterface $iriConverter,
@@ -229,10 +232,18 @@ class ProfileController extends AbstractController
             $delivery = $deliveryManager->createFromOrder($order);
         }
 
+        $deliveryData = $deliveryMapper->map(
+            $delivery,
+            $order,
+            null,
+            false
+        );
+
         return $this->render('order/item.html.twig', [
             'layout' => 'profile.html.twig',
             'order' => $order,
             'delivery' => $delivery,
+            'deliveryData' => $deliveryData,
             'form' => $form->createView(),
             'show_buttons' => false,
         ]);
