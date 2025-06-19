@@ -94,7 +94,7 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
         // Happens when loading multiple tasks via the GET /api/tasks endpoint
         if (!is_null($object->getPrefetchedPackagesAndWeight())) {
 
-            $data['packages'] = !is_null($object->getPrefetchedPackagesAndWeight()['packages']) ? $object->getPrefetchedPackagesAndWeight()['packages'] : [];
+            $data['packages'] = $object->getPrefetchedPackagesAndWeight()['packages'] ?? [];
             $data['weight'] = $object->getPrefetchedPackagesAndWeight()['weight'];
 
         } else {
