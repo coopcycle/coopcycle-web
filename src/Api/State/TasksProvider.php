@@ -7,6 +7,7 @@ use ApiPlatform\State\ProviderInterface;
 use ApiPlatform\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGenerator;
+use AppBundle\Api\Dto\TaskMapper;
 use AppBundle\Entity\Task;
 use Doctrine\ORM\EntityManagerInterface;
 use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
@@ -16,6 +17,7 @@ final class TasksProvider implements ProviderInterface
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly TaskMapper $taskMapper,
         private readonly iterable $collectionExtensions,
     )
     {
@@ -109,8 +111,25 @@ final class TasksProvider implements ProviderInterface
 
         foreach ($tasks as $task) {
             $input = $res[$task->getId()];
+
+            $packages = json_decode($input['packages'] ?? '[]', true);
+
+            // Add labels
+            foreach ($packages as $i => $p) {
+
+                $packages[$i]['labels'] = $this->taskMapper->getLabels(
+                    $task->getId(),
+                    //FIXME: should it be package_id instead of task_package_id?
+                    $p['task_package_id'],
+                    $p['quantity']
+                );
+
+                unset($packages[$i]['id']);
+                unset($packages[$i]['task_package_id']);
+            }
+
             $task->setPrefetchedPackagesAndWeight([
-                    'packages' => json_decode($input['packages'] ?? '[]', true),
+                    'packages' => $packages,
                     'weight' => $input['weight']]
             );
         }

@@ -17,6 +17,7 @@ use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Normalizer\ContextAwareDenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInterface
 {
@@ -29,6 +30,7 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
         private readonly EntityManagerInterface $entityManager,
         private readonly ResourceMetadataCollectionFactoryInterface $resourceMetadataFactory,
         private readonly TaskMapper $taskMapper,
+        private ObjectNormalizer $objectNormalizer,
         private readonly LoggerInterface $logger
     )
     {}
@@ -89,71 +91,30 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
 
         $data['packages'] = [];
 
+        // Happens when loading multiple tasks via the GET /api/tasks endpoint
         if (!is_null($object->getPrefetchedPackagesAndWeight())) {
-            $data['packages'] = !is_null($object->getPrefetchedPackagesAndWeight()['packages']) ? $object->getPrefetchedPackagesAndWeight()['packages'] : [];
+
+            $data['packages'] = $object->getPrefetchedPackagesAndWeight()['packages'] ?? [];
             $data['weight'] = $object->getPrefetchedPackagesAndWeight()['weight'];
-        } elseif ($object->isPickup()) {
-            // for a pickup in a delivery, the serialized weight is the sum of the dropoff weight and the packages are the "sum" of the dropoffs packages
-            $delivery = $object->getDelivery();
 
-            if (null !== $delivery) {
-                $deliveryId = $delivery->getId();
-
-                $qb =  $this->entityManager
-                    ->getRepository(Task::class)
-                    ->createQueryBuilder('t');
-
-                $query = $qb
-                    ->select('p.id', 'MAX(tp.id) as task_package_id', 'p.name AS name', 'p.name AS type', 'sum(tp.quantity) AS quantity', 'p.averageVolumeUnits AS volume_per_package', 'p.shortCode AS short_code')
-                    ->join('t.packages', 'tp', 'WITH', 'tp.task = t.id')
-                    ->join('tp.package', 'p', 'WITH', 'tp.package = p.id')
-                    ->join('t.delivery', 'd', 'WITH', 'd.id = :deliveryId')
-                    ->groupBy('p.id', 'p.name', 'p.averageVolumeUnits', 'p.shortCode')
-                    ->setParameter('deliveryId', $deliveryId)
-                    ->getQuery();
-
-                $data['packages'] = $query->getResult();
-
-                $qbWeight =  $this->entityManager
-                    ->getRepository(Task::class)
-                    ->createQueryBuilder('t');
-
-                $data['weight'] = $qbWeight
-                    ->select('sum(t.weight)')
-                    ->join('t.delivery', 'd', 'WITH', 'd.id = :deliveryId')
-                    ->setParameter('deliveryId', $deliveryId)
-                    ->groupBy('d.id')
-                    ->getQuery()
-                    ->getResult()[0]["1"];
-            }
         } else {
 
-            $qb =  $this->entityManager
-                ->getRepository(Task::class)
-                ->createQueryBuilder('t');
+            $delivery = $object->getDelivery();
 
-            $data['packages'] = $qb
-                ->select('p.id', 'tp.id as task_package_id', 'p.name AS name', 'p.name AS type', 'tp.quantity AS quantity', 'p.averageVolumeUnits AS volume_per_package', 'p.shortCode AS short_code')
-                ->join('t.packages', 'tp', 'WITH', 'tp.task = t.id')
-                ->join('tp.package', 'p', 'WITH', 'tp.package = p.id')
-                ->andWhere('t.id = :taskId')
-                ->setParameter('taskId', $object->getId())
-                ->getQuery()
-                ->getResult();
-        }
-
-        // Add labels
-        foreach ($data['packages'] as $i => $p) {
-
-            $data['packages'][$i]['labels'] = $this->taskMapper->getLabels(
-                $object->getId(),
-                //FIXME: should it be package_id instead of task_package_id?
-                $p['task_package_id'],
-                $p['quantity']
+            $packages = $this->taskMapper->getPackages(
+                $object,
+                $delivery?->getTasks() ?? []
             );
 
-            unset($data['packages'][$i]['id']);
-            unset($data['packages'][$i]['task_package_id']);
+            $data['packages'] = array_map(fn ($package) => $this->objectNormalizer->normalize($package, 'json'), $packages);
+
+            if ($object->isPickup()) {
+                $data['weight'] = $this->taskMapper->getWeight(
+                    $object,
+                    $delivery?->getTasks() ?? []
+                );
+            }
+
         }
 
         // Set metadata
