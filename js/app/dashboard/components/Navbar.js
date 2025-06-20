@@ -1,13 +1,78 @@
 import React from 'react'
-import { connect } from 'react-redux'
-import { withTranslation } from 'react-i18next'
+import { connect, useDispatch, useSelector } from 'react-redux'
+import { useTranslation, withTranslation } from 'react-i18next'
 import moment from 'moment'
-import { DatePicker } from 'antd'
+import { DatePicker, Dropdown } from 'antd'
 import _ from 'lodash'
 
-import { openFiltersModal, resetFilters, openSettings, openImportModal, openExportModal } from '../redux/actions'
+import {
+  openFiltersModal,
+  resetFilters,
+  openSettings,
+  openImportModal,
+  openExportModal,
+  openNewTaskModal,
+  openNewRecurrenceRuleModal,
+} from '../redux/actions'
 import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 import SearchInput from './SearchInput'
+import DeliveryCreateNewButton from '../../components/DeliveryCreateNewButton'
+import { selectStores } from '../redux/selectors'
+
+const CreateNewDeliveryButton = () => {
+  const { t } = useTranslation()
+
+  const stores = useSelector(selectStores)
+
+  return (
+    <DeliveryCreateNewButton
+      stores={stores}
+      routes={{
+        store_new: 'admin_store_delivery_new',
+      }}
+      buttonComponent={
+        <a href="#" onClick={e => e.preventDefault()}>
+          <i className="fa fa-plus"></i> {t('CREATE_NEW_DELIVERY')}
+        </a>
+      }
+    />
+  )
+}
+
+const LegacyItems = () => {
+  const { t } = useTranslation()
+  const dispatch = useDispatch()
+
+  const overflowMenuItems = [
+    {
+      key: 'create-task',
+      label: t('ADMIN_DASHBOARD_CREATE_TASK'),
+      icon: <i className="fa fa-plus"></i>,
+      onClick: () => {
+        dispatch(openNewTaskModal())
+      },
+    },
+    {
+      key: 'create-recurrence-rule',
+      label: t('ADMIN_DASHBOARD_CREATE_RECURRENCE_RULE'),
+      icon: <i className="fa fa-clock-o"></i>,
+      onClick: () => {
+        dispatch(openNewRecurrenceRuleModal())
+      },
+    },
+  ]
+
+  return (
+    <Dropdown
+      menu={{ items: overflowMenuItems }}
+      trigger={['click']}
+      placement="bottomRight">
+      <a href="#" className="mr-3" onClick={e => e.preventDefault()}>
+        <i className="fa fa-ellipsis-h"></i>
+      </a>
+    </Dropdown>
+  )
+}
 
 class Navbar extends React.Component {
 
@@ -147,6 +212,12 @@ class Navbar extends React.Component {
               { !this.props.isDefaultFilters && this.renderReset() }
             </ul>
             <ul className="nav navbar-nav navbar-right">
+              <li>
+                <CreateNewDeliveryButton />
+              </li>
+              <li>
+                <LegacyItems/>
+              </li>
               <li>
                 <a href="#" onClick={ this._onSettingsClick.bind(this) }>
                   <i className="fa fa-cog mr-1" aria-hidden="true"></i>
