@@ -44,12 +44,12 @@ export default function DeliveryCreateNewButton({
           type="primary"
           icon={<PlusOutlined />}
           onClick={showModal}>
-          {t('CREATE_NEW_DELIVERY')}
+          {t('CREATE_NEW_ORDER')}
         </Button>
       )}
 
       <Modal
-        title={t('CREATE_NEW_DELIVERY')}
+        title={t('CREATE_NEW_ORDER')}
         open={isModalVisible}
         onCancel={handleCancel}
         footer={null}>

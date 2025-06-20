@@ -697,6 +697,7 @@ roles.ROLE_STORE.help: 'Magasin : gérer les magasins qui lui sont assignés, cr
 stores.manage: Gérer
 stores.settings: Paramètres
 stores.createNewDelivery: Créer une livraison
+stores.createNewOrder: Créer une nouvelle commande
 stores.users: Utilisateurs
 stores.pricing_rule_set: Tarification
 stores.deliveries: Livraisons
@@ -704,6 +705,7 @@ stores.deliveries.heading: 'Livraison %delivery_id% - %delivery_distance%'
 stores.deliveries.heading2: 'Livraison %delivery_id%'
 stores.api_keys: Clés d'API
 stores.deliveries.task_unassigned: Non assignée
+stores.orders: Commandes
 stores.addresses: Adresses
 stores.deliveries.bookmarks: Commandes enregistrées
 stores.deliveries.bookmarks.empty_message: Marquez les commandes sur la page de Livraison pour les retrouver facilement plus tard

@@ -870,6 +870,7 @@ roles.ROLE_STORE.help: 'Store owner: manage assigned stores, manage deliveriesâ€
 stores.manage: Manage
 stores.settings: Settings
 stores.createNewDelivery: Create new delivery
+stores.createNewOrder: Create new order
 stores.users: Users
 stores.pricing_rule_set: Pricing
 stores.api_keys: API keys
@@ -879,6 +880,7 @@ stores.deliveries.heading2: 'Delivery %delivery_id%'
 stores.deliveries.task_unassigned: Unassigned
 stores.deliveries.bookmarks: Saved orders
 stores.deliveries.bookmarks.empty_message: Bookmark orders on the Delivery page to find them easily later
+stores.orders: Orders
 stores.addresses: Addresses
 stores.recurrence_rules: Recurrence rules
 stores.recurrence_rules.empty_message: When a recurring order is created, the recurrence rules will appear here

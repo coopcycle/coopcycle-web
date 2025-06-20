@@ -20,7 +20,7 @@
     {% if store is not null %}
       <li><a href="{{ path('admin_stores') }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
       <li><a data-testid="store" href="{{ path('admin_store', { id: store.id }) }}">{{ store.name }}</a></li>
-      <li><a href="{{ path('admin_store_deliveries', { id: store.id }) }}">{% trans %}stores.deliveries{% endtrans %}</a></li>
+      <li><a href="{{ path('admin_store_deliveries', { id: store.id }) }}">{% trans %}stores.orders{% endtrans %}</a></li>
       <li>{{ order.number }}</li>
     {% else %}
       {# TODO: display properly the restaurant(s) for foodtech orders #}

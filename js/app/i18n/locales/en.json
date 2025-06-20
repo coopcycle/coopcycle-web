@@ -494,7 +494,6 @@
         "ADHOC_ORDER_FAILURE": "There was an error trying to save the order. Please check the information and try again.",
         "CREATE_ORDER": "Create order",
         "CREATE_NEW_ORDER": "Create new order",
-        "CREATE_NEW_DELIVERY": "Create new delivery",
         "SEARCH_EXISTING_ORDER": "Search an existing order",
         "ORDER_NUMBER": "Order number",
         "CONTINUE_EXISTING_ORDER": "Continue an existing order",

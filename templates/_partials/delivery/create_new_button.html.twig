@@ -7,6 +7,6 @@
 {# Create a new delivery as a current store #}
 {% elseif store is defined and routes is defined %}
   <a href="{{ path(routes.store_new, { id: store.id }) }}" class="btn btn-success">
-    <i class="fa fa-plus"></i> {{ 'delivery.createNew'|trans }}
+    <i class="fa fa-plus"></i> {{ 'stores.createNewOrder'|trans }}
   </a>
 {% endif %}

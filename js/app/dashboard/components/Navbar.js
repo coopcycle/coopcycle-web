@@ -32,7 +32,7 @@ const CreateNewDeliveryButton = () => {
       }}
       buttonComponent={
         <a href="#" onClick={e => e.preventDefault()}>
-          <i className="fa fa-plus"></i> {t('CREATE_NEW_DELIVERY')}
+          <i className="fa fa-plus"></i> {t('CREATE_NEW_ORDER')}
         </a>
       }
     />
