@@ -28,6 +28,7 @@ export default ({
   onRemove,
   showRemoveButton,
   tags,
+  showPackages,
 }) => {
   const { t } = useTranslation()
 
@@ -40,9 +41,9 @@ export default ({
     taskIndex: index,
   })
 
-  const [showLess, setShowLess] = useState(
-    taskValues.type === 'DROPOFF' && values.tasks.length > 2,
-  )
+  const otherTasksOfSameType = values.tasks.filter(t => t.type === taskValues.type && t !== taskValues)
+
+  const [showLess, setShowLess] = useState(otherTasksOfSameType.length > 0)
 
   const { data: timeSlotLabels } = useGetStoreTimeSlotsQuery(storeNodeId)
   const { data: packages } = useGetStorePackagesQuery(storeNodeId)
@@ -50,11 +51,7 @@ export default ({
   return (
     <div className="task border p-4 mb-4" data-testid={`form-task-${index}`}>
       <div
-        className={
-          taskValues.type === 'PICKUP'
-            ? 'task__header task__header--pickup'
-            : 'task__header task__header--dropoff'
-        }
+        className={`task__header task__header--${taskValues.type.toLowerCase()}`}
         onClick={() => setShowLess(!showLess)}>
         {taskValues.type === 'PICKUP' ? (
           <i className="fa fa-arrow-up"></i>
@@ -64,9 +61,7 @@ export default ({
         <h4 className="task__header__title ml-2 mb-4">
           {taskValues.address?.streetAddress
             ? taskValues.address.streetAddress
-            : taskValues.type === 'PICKUP'
-              ? t('DELIVERY_FORM_PICKUP_INFORMATIONS')
-              : t('DELIVERY_FORM_DROPOFF_INFORMATIONS')}
+            : t(`DELIVERY_FORM_${taskValues.type}_INFORMATIONS`)}
         </h4>
 
         <button
@@ -111,7 +106,7 @@ export default ({
           index={index}
         />
 
-        {taskValues.type === 'DROPOFF' ? (
+        { showPackages ? (
           <div className="mt-4">
             {packages && packages.length ? (
               <Packages
@@ -121,7 +116,7 @@ export default ({
             ) : null}
             <TotalWeight index={index} />
           </div>
-        ) : null}
+        ) : null }
 
         <div className="mt-4 mb-4">
           <label
@@ -154,18 +149,16 @@ export default ({
           </div>
         )}
       </div>
-      {taskValues.type === 'DROPOFF' && (
-        <div className={!showLess ? 'task__footer' : 'task__footer--hidden'}>
-          {showRemoveButton && (
-            <Button
-              onClick={() => onRemove(index)}
-              type="button"
-              className="mb-4">
-              {t('DELIVERY_FORM_REMOVE_DROPOFF')}
-            </Button>
-          )}
-        </div>
-      )}
+      <div className={!showLess ? 'task__footer' : 'task__footer--hidden'}>
+        {showRemoveButton && (
+          <Button
+            onClick={() => onRemove(index)}
+            type="button"
+            className="mb-4">
+            {t(`DELIVERY_FORM_REMOVE_${taskValues.type}`)}
+          </Button>
+        )}
+      </div>
     </div>
   )
 }
