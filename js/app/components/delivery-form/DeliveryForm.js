@@ -218,6 +218,15 @@ export default function({
       }
     }
 
+    // expand all tasks with errors
+    if (Object.keys(errors.tasks).length > 0) {
+      Object.values(expandedTasks).forEach((isExpanded, index) => {
+        if (!isExpanded && Object.keys(errors.tasks).includes(`${index}`)) {
+          handleTaskExpansion(index, true)
+        }
+      })
+    }
+
     return Object.keys(errors.tasks).length > 0 || errors.variantName ? errors : {};
   }
 
