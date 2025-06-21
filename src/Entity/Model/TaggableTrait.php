@@ -13,6 +13,8 @@ trait TaggableTrait
      */
     protected array $tags = [];
 
+    protected $tagsCallable = null;
+
     public function getTaggableResourceClass(): string
     {
         return ClassUtils::getClass($this);
@@ -22,15 +24,24 @@ trait TaggableTrait
     #[Groups(['task', 'order', 'order_minimal', 'delivery'])]
     public function getTags(): array
     {
+        if (is_callable($this->tagsCallable)) {
+            $this->tags = call_user_func($this->tagsCallable);
+            $this->tagsCallable = null;
+        }
+
         return $this->tags;
     }
 
     #[SerializedName('tags')]
     #[Groups(['task_create', 'task_edit'])]
-    public function setTags(array|string $tags): void
+    public function setTags(array|string|callable $tags): void
     {
-        $this->tags = is_array($tags) ? $tags : explode(' ', $tags);
-        $this->tags = array_unique($this->tags);
+        if (is_callable($tags)) {
+            $this->tagsCallable = $tags;
+        } else {
+            $this->tags = is_array($tags) ? $tags : explode(' ', $tags);
+            $this->tags = array_unique($this->tags);
+        }
     }
 
     public function addTags(array|string $tags): void
