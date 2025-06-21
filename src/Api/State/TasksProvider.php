@@ -8,6 +8,7 @@ use ApiPlatform\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGenerator;
 use AppBundle\Entity\Task;
+use AppBundle\Service\TagManager;
 use Doctrine\ORM\EntityManagerInterface;
 use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
 
@@ -16,6 +17,7 @@ final class TasksProvider implements ProviderInterface
 
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly TagManager $tagManager,
         private readonly iterable $collectionExtensions,
     )
     {
@@ -54,6 +56,8 @@ final class TasksProvider implements ProviderInterface
     private function postProcessResult(iterable $data): iterable
     {
         $tasks = iterator_to_array($data);
+
+        $this->tagManager->warmupCache(...$tasks);
 
         // Optimization: to avoid extra queries preload one-to-many relations that will be used later
         $this->preloadEntities($tasks);

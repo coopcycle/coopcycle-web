@@ -53,7 +53,7 @@ class TasksFunctionalTest extends ApiTestCase
         ], $_SERVER);
 
         $fixturesLoader->load([
-            __DIR__.'/../../../features/fixtures/ORM/dispatch.yml',
+            __DIR__.'/../../../features/fixtures/ORM/dispatch_with_packages.yml',
         ], $_SERVER, [], PurgeMode::createNoPurgeMode());
 
         $userManipulator->addRole('sarah', 'ROLE_ADMIN');
@@ -79,7 +79,7 @@ class TasksFunctionalTest extends ApiTestCase
         $profile = $client->getProfile();
 
         $this->assertLessThanOrEqual(
-            12,
+            11,
             $profile->getCollector('db')->getQueryCount()
         );
     }
