@@ -1347,7 +1347,7 @@ trait RestaurantTrait
             return $response;
         }
 
-        return $this->render('restaurant/stats.html.twig', $this->withRoutes([
+        return $this->render('restaurant/stats.html.twig', $this->auth($this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'stats' => $stats,
@@ -1359,7 +1359,7 @@ trait RestaurantTrait
             'picker_type' => $request->query->has('date') ? 'date' : 'month',
             'with_details' => $request->query->getBoolean('details', false),
             'show_only_meal_vouchers' => $showOnlyMealVouchers
-        ]));
+        ])));
     }
 
     private function extractRange(Request $request)

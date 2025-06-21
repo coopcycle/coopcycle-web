@@ -16,7 +16,8 @@ class httpClient {
     this.jwt = jwt;
   }
 
-  async request({ method, url, data, params, headers }, depth = 0) {
+  async request({ method, url, data, params, headers, options }, depth = 0) {
+
     const sendHeaders = {
       'Accept': 'application/ld+json',
       'Content-Type': 'application/ld+json',
@@ -31,6 +32,7 @@ class httpClient {
         data,
         params,
         headers: sendHeaders,
+        ...options
       });
       return { response: response.data, error: null };
     } catch (err) {
@@ -44,7 +46,8 @@ class httpClient {
                 url,
                 data,
                 params,
-                headers: sendHeaders
+                headers: sendHeaders,
+                options
               },
               depth + 1,
             );
@@ -55,28 +58,28 @@ class httpClient {
     }
   }
 
-  async get(url, params = {}, headers = {}) {
-    return await this.request({ method: "GET", url, params, headers });
+  async get(url, params = {}, headers = {}, options = {}) {
+    return await this.request({ method: "GET", url, params, headers, options });
   }
 
-  async head(url, headers = {}) {
-    return await this.request({ method: "HEAD", url, headers });
+  async head(url, headers = {}, options = {}) {
+    return await this.request({ method: "HEAD", url, headers, options });
   }
 
-  async post(url, data, headers = {}) {
-    return await this.request({ method: "POST", url, data, headers });
+  async post(url, data, headers = {}, options = {}) {
+    return await this.request({ method: "POST", url, data, headers, options });
   }
 
-  async put(url, data, headers = {}) {
-    return await this.request({ method: "PUT", url, data, headers });
+  async put(url, data, headers = {}, options = {}) {
+    return await this.request({ method: "PUT", url, data, headers, options });
   }
 
-  async patch(url, data, headers = {}) {
-    return await this.request({ method: "PATCH", url, data, headers });
+  async patch(url, data, headers = {}, options = {}) {
+    return await this.request({ method: "PATCH", url, data, headers, options });
   }
 
-  async delete(url, headers = {}) {
-    return await this.request({ method: "DELETE", url, headers });
+  async delete(url, headers = {}, options = {}) {
+    return await this.request({ method: "DELETE", url, headers, options });
   }
 
   async _refreshToken() {
