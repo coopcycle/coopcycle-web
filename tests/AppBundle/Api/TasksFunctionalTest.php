@@ -3,7 +3,7 @@
 namespace Tests\AppBundle\Api;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use AppBundle\Fixtures\DatabasePurger;
 use Doctrine\ORM\EntityManagerInterface;
 use Fidry\AliceDataFixtures\Persistence\PurgeMode;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
@@ -22,8 +22,10 @@ class TasksFunctionalTest extends ApiTestCase
 
         $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
 
-        $purger = new ORMPurger($this->entityManager);
-        $purger->purge();
+        $dbPurger = self::getContainer()->get(DatabasePurger::class);
+
+        $dbPurger->purge();
+        $dbPurger->resetSequences();
     }
 
     protected function tearDown(): void
