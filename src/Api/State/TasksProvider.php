@@ -72,6 +72,9 @@ final class TasksProvider implements ProviderInterface
 
         $delivery = $preloader->preload($tasks, 'delivery');
 
+        // Optimization when calling $delivery->getTasks()
+        $taskCollectionItems = $preloader->preload($delivery, 'items');
+
         $order = $preloader->preload($delivery, 'order');
         $orderItems = $preloader->preload($order, 'items');
         $preloader->preload($orderItems, 'variant');
