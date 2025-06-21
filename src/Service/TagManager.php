@@ -26,6 +26,10 @@ class TagManager
 
     public function getTags(TaggableInterface $taggable)
     {
+        if (null === $taggable->getId()) {
+            return [];
+        }
+
         return $this->cache->get($this->getCacheKey($taggable), function (ItemInterface $item) use ($taggable) {
 
             // Cache for 1 day
