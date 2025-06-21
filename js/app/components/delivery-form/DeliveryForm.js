@@ -165,7 +165,7 @@ export default function({
     return null
   }, [preLoadedDeliveryData, mode])
 
-  const { handleSubmit, error } = useSubmit(storeNodeId, deliveryNodeId, isDispatcher)
+  const { handleSubmit, error, isSubmitted } = useSubmit(storeNodeId, deliveryNodeId, isDispatcher)
 
   const { t } = useTranslation()
 
@@ -525,7 +525,7 @@ export default function({
                           type="primary"
                           style={{ height: '2.5em' }}
                           htmlType="submit"
-                          disabled={isSubmitting || priceLoading}>
+                          disabled={isSubmitting || priceLoading || isSubmitted}>
                           {t('DELIVERY_FORM_SUBMIT')}
                         </Button>
                       </div>
