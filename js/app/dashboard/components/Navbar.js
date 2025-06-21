@@ -235,7 +235,11 @@ const LegacyItems = () => {
         menu={{ items: menuItems }}
         trigger={['click']}
         placement="bottomRight">
-        <Button type="text" icon={<EllipsisOutlined />} />
+        <Button
+          data-testid="more-button"
+          type="text"
+          icon={<EllipsisOutlined />}
+        />
       </Dropdown>
     </Tooltip>
   )
