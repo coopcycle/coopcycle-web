@@ -257,4 +257,67 @@ class TagManager
             ->getArrayResult()
             ;
     }
+
+    public function warmupCache(TaggableInterface ...$taggables)
+    {
+        $resourceClasses = [];
+        $taggablesById = [];
+
+        foreach ($taggables as $taggable) {
+            $resourceClasses[] = $taggable->getTaggableResourceClass();
+            $taggablesById[$taggable->getId()] = $taggable;
+        }
+
+        $resourceClasses = array_unique($resourceClasses);
+
+        if (count($resourceClasses) > 1) {
+            throw new \Exception('It is not possible to warmup cache of different classes.');
+        }
+
+        $taggingRepository = $this->entityManager->getRepository(Tagging::class);
+
+        $qb = $taggingRepository
+            ->createQueryBuilder('tagging')
+            ->andWhere('tagging.resourceClass = :resource_class')
+            ->andWhere('tagging.resourceId IN (:resource_ids)')
+            ->setParameter('resource_class', current($resourceClasses))
+            ->setParameter('resource_ids', array_map(fn($t) => $t->getId(), $taggables));
+
+        $taggings = $qb->getQuery()->getResult();
+
+        $tagsByTaggable = new \SplObjectStorage();
+
+        foreach ($taggings as $tagging) {
+            $taggable = $taggablesById[$tagging->getResourceId()];
+            $tags = isset($tagsByTaggable[$taggable]) ? $tagsByTaggable[$taggable] : [];
+
+            $tagsByTaggable[$taggable] = array_merge($tags, [
+                $tagging->getTag()
+            ]);
+        }
+
+        foreach ($tagsByTaggable as $taggable) {
+
+            $cacheKey = $this->getCacheKey($taggable);
+
+            $tags = [];
+            foreach ($tagsByTaggable[$taggable] as $tag) {
+                $tags[] = [
+                    'name' => $tag->getName(),
+                    'slug' => $tag->getSlug(),
+                    'color' => $tag->getColor(),
+                ];
+            }
+
+            if (count($tags) === 0) {
+                continue;
+            }
+
+            $cacheItem = $this->cache->getItem($cacheKey);
+            if (!$cacheItem->isHit()) {
+                $cacheItem->set($tags);
+                $this->cache->save($cacheItem);
+            }
+        }
+    }
 }
