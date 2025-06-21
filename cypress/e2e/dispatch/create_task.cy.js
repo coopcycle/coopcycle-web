@@ -60,9 +60,9 @@ context('Dispatch', () => {
     // Create a task
     //
 
-    cy.get('.dashboard__aside .dashboard__panel:first-child .fa.fa-plus')
-      .click()
-
+    cy.get('[data-testid="more-button"]').click();
+    cy.contains('span.ant-dropdown-menu-title-content', 'Créer une tâche autonome (obsolète)').click();
+    
     cy.get('.ReactModal__Content--task-form input[type="search"]')
       .type('91 rue de rivoli paris', { timeout: 5000, delay: 30 })
 

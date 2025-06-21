@@ -232,15 +232,18 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .dashboard-subnav {
-  background-color: #ECFFFD;
-  border-bottom: 1px solid #BDFFF6;
+  background-color: $primary-default;
+  border-bottom: 1px solid darken($primary-default, 20%);
   margin-top: -20px;
   h3 {
     color: white;
   }
+  a {
+    color: white;
+  }
   .navbar {
     .navbar-toggle {
-      background-color: darken(#ECFFFD, 50%);
+      background-color: darken($primary-default, 50%);
       border-color: white;
       .icon-bar {
         background-color: white;

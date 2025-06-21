@@ -2,51 +2,42 @@
 
 {% set is_new = delivery.id is null %}
 
+{% if is_new %}
+  {% set title = 'orders.new'|trans %}
+{% else %}
+  {% set order = delivery.order %}
+  {% if order is not null %}
+    {% set title = 'order.summary.heading'|trans({ '%number%': order.number }) %}
+  {% else %}
+    {% set title = 'delivery.with_id'|trans({ '%id%': delivery.id }) %}
+  {% endif %}
+{% endif %}
+
 {% block prepare_title %}
   {% if is_new %}
-    {{ add_title_prefix('orders.new'|trans) }}
+    {{ add_title_prefix(title) }}
   {% else %}
     {% if is_granted('ROLE_DISPATCHER') %}
-      {% set order = delivery.order %}
-      {% if order is not null %}
-        {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ 'order.summary.heading'|trans({ '%number%': order.number })) }}
-      {% else %}
-        {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ 'delivery.with_id'|trans({ '%id%': delivery.id })) }}
-      {% endif %}
+      {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ title) }}
     {% else %}
-      {% set order = delivery.order %}
-      {% if order is not null %}
-        {{ add_title_prefix('order.summary.heading'|trans({ '%number%': order.number })) }}
-      {% else %}
-        {{ add_title_prefix('delivery.with_id'|trans({ '%id%': delivery.id })) }}
-      {% endif %}
+      {{ add_title_prefix(title) }}
     {% endif %}
   {% endif %}
-{% endblock %}
-
-{% block dashboard_subnav %}
-  <div>
-    <a href="{{ path(back_route) }}">
-      <i class="fa fa-arrow-left mr-2"></i>{{ 'stores.deliveries'|trans }}
-    </a>
-  </div>
 {% endblock %}
 
 {% block breadcrumb %}
 
   {% if is_new %}
-    <li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
-    <li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
-    <li><a href="{{ path(store_deliveries_route, { id: store.id }) }}">{% trans %}stores.deliveries{% endtrans %}</a></li>
+    <li><a href="{{ path(routes.stores) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+    <li><a href="{{ path(routes.store, { id: store.id }) }}">{{ store.name }}</a></li>
+    <li><a href="{{ path(routes.store_deliveries, { id: store.id }) }}">{% trans %}stores.orders{% endtrans %}</a></li>
     <li>{% trans %}orders.new{% endtrans %}</li>
   {% else %}
     {% if is_granted('ROLE_DISPATCHER') %}
-      {% set store = delivery.store %}
-
       {% if store is not null %}
-        <li><a href="{{ path('admin_stores') }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
-        <li><a href="{{ path('admin_store', { id: store.id }) }}">{{ store.name }}</a></li>
-        <li><a href="{{ path('admin_store_deliveries', { id: store.id }) }}">{% trans %}stores.deliveries{% endtrans %}</a></li>
+        <li><a href="{{ path(routes.stores) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+        <li><a href="{{ path(routes.store, { id: store.id }) }}">{{ store.name }}</a></li>
+        <li><a href="{{ path(routes.store_deliveries, { id: store.id }) }}">{% trans %}stores.orders{% endtrans %}</a></li>
         {% if order is not null %}
           <li><a href="{{ path('admin_order', { id: order.id }) }}" data-testid="order_id">{{ order.number }}</a></li>
         {% else %}
@@ -65,9 +56,27 @@
   {% endif %}
 {% endblock %}
 
-{% block content %}
+{% block subnav %}
+  {% if is_granted('ROLE_DISPATCHER') %}
+    {% include 'delivery/_partials/navbar.html.twig' %}
+  {% endif %}
+{% endblock %}
 
-  {% include 'delivery/_partials/navbar.html.twig' %}
+{% block dashboard_subnav %}
+  <div class="d-flex justify-content-between align-items-center">
+    <a href="{{ path(routes.back) }}">
+      <i class="fa fa-arrow-left mr-2"></i>{{ 'stores.orders'|trans }}
+    </a>
+    <h3 class="my-0 flex-grow-1 text-center">{{ title }}</h3>
+    {% if not is_new %}
+      <div>
+        {% include '_partials/delivery/create_new_button.html.twig' %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block content %}
 
   {% if is_granted('ROLE_DISPATCHER') %}
     {% if is_new %}
@@ -83,11 +92,6 @@
 
   {% block alerts %}
   {% endblock %}
-
-  {% if order is not null %}
-    <h3 class="text-center">{{ 'stores.deliveries.heading2'|trans({ '%delivery_id%': order.number }) }}</h3>
-  {% endif %}
-
 
   {% if not is_new %}
     {% set tracking_link = url('public_delivery', { hashid: delivery|hashid }) %}

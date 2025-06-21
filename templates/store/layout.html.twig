@@ -55,7 +55,7 @@
         {% endif %}
         <li role="presentation">
           <a href="{{ path('admin_store_deliveries', { id: store.id }) }}">
-            {{ 'stores.deliveries'|trans }}
+            {{ 'stores.orders'|trans }}
           </a>
         </li>
         <li role="presentation" {% if app.request.attributes.get('_route') == 'admin_store_orders_saved' %}class="active"{% endif %}>

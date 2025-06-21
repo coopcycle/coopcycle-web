@@ -46,3 +46,5 @@ adminDashboard.dashboard.add: Toevoegen
 help.title: hulp
 profile.addresses.add: Toevoegen
 basics.add: Toevoegen
+stores.createNewOrder: 'Nieuwe bestelling aanmaken'
+stores.orders: 'Bestellingen'

@@ -185,7 +185,7 @@ export default function ModalContent() {
                   </Checkbox>
                   <HelpIcon
                     className="ml-1"
-                    docsPath="/en/package-delivery/local_commerce/recurrence-rules/"
+                    docsPath="/en/package-delivery/local-commerce/recurrence-rules/"
                   />
                 </div>
                 <Input

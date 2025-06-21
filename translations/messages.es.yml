@@ -545,6 +545,7 @@ roles.ROLE_STORE.help: 'Propietario de tienda: gestionar tiendas asignadas, gest
 stores.manage: Gestionar
 stores.settings: Ajustes
 stores.createNewDelivery: Crear entrega
+stores.createNewOrder: Crear nuevo pedido
 stores.users: Usuarios
 stores.pricing_rule_set: Tarificación
 stores.deliveries: Entregas
@@ -552,6 +553,7 @@ stores.deliveries.heading: 'Entrega %delivery_id% - %delivery_distance%'
 stores.deliveries.heading2: 'Entrega %delivery_id%'
 stores.api_keys: Llaves API
 stores.deliveries.task_unassigned: No asignada
+stores.orders: Pedidos
 stores.addresses: Direcciones
 stores.deliveries.bookmarks: Pedidos guardados
 stores.deliveries.bookmarks.empty_message: Marca los pedidos en la página de Entrega
@@ -707,6 +709,7 @@ delivery.with_id: 'Entrega #%id%'
 subscription.title: 'Regla de recurrencia #%id%'
 subscription.generated_order: 'Este pedido fue generado por una regla de recurrencia'
 subscription.view: 'Ver regla de recurrencia'
+subscription.deleted.warning: Esta regla de recurrencia ha sido eliminada. Ya no puede editarla.
 help.title: Ayuda
 help.home: Casa
 restaurant.stats.order_number: Número de pedido

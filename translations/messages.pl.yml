@@ -535,11 +535,13 @@ form.time_slot.prior_notice_hours.label: Wstępne powiadomienie (godziny)
 form.package_set.name.label: Nazwa
 form.package_set.packages.label: Paczki
 stores.createNewDelivery: Stwórz nową dostawę
+stores.createNewOrder: Stwórz nowe zamówienie
 stores.users: Użytkownicy
 stores.pricing_rule_set: Cennik
 stores.api_keys: Klucze API
 stores.deliveries: Dostawy
 stores.deliveries.task_unassigned: Nieprzypisana
+stores.orders: Zamówienia
 stores.addresses: Adresy
 meta.title: Platforma dostawcza dla spółdzielców
 index.map.tip: Użyj poniższej mapy, aby znaleźć restauracje

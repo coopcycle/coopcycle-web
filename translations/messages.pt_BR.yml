@@ -665,12 +665,14 @@ roles.ROLE_STORE.help: 'Dono de loja: gerenciar lojas designadas, gerenciar entr
 stores.manage: Gerenciar
 stores.settings: Configurações
 stores.createNewDelivery: Criar nova entrega
+stores.createNewOrder: Criar novo pedido
 stores.users: Usuários
 stores.pricing_rule_set: Preço
 stores.api_keys: Chave de API
 stores.deliveries: Entregas
 stores.deliveries.heading: 'Entrega #%delivery_id% - %delivery_distance%'
 stores.deliveries.task_unassigned: Não designada
+stores.orders: Pedidos
 stores.addresses: Endereços
 meta.title: Plataforma de entregas para empresa de propriedade do trabalhador
 admin.settings.missing_mandatory_settings: "Configurações obrigatórias pendentes.\n\

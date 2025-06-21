@@ -402,6 +402,10 @@ class AdminController extends AbstractController
             $orderManager->hasBookmark($order)
         );
 
+        $this->entityManager->getFilters()->enable('soft_deleteable');
+        $stores = $this->entityManager->getRepository(Store::class)->findBy([], ['name' => 'ASC']);
+        $this->entityManager->getFilters()->disable('soft_deleteable');
+
         return $this->render('order/item.html.twig', $this->auth([
             'layout' => 'admin.html.twig',
             'order' => $order,
@@ -409,6 +413,8 @@ class AdminController extends AbstractController
             'deliveryData' => $deliveryData,
             'form' => $form->createView(),
             'email_form' => $emailForm->createView(),
+            'stores' => $stores,
+            'routes' => $this->getDeliveryRoutes(),
         ]));
     }
 

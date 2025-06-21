@@ -516,12 +516,14 @@ roles.ROLE_STORE.help: 'Propietari de la botiga: gestiona les botigues assignade
 stores.manage: Gestiona
 stores.settings: Configuració
 stores.createNewDelivery: Crea un nou lliurament
+stores.createNewOrder: Crea una nova comanda
 stores.users: Usuaris
 stores.pricing_rule_set: Preu
 stores.api_keys: Claus API
 stores.deliveries: Entregues
 stores.deliveries.heading: 'Entrega #%delivery_id% - %delivery_distance%'
 stores.deliveries.task_unassigned: No adscrit
+stores.orders: Comandes
 stores.addresses: Adreces
 meta.title: Plataforma de entrega per a empreses de treballadors
 admin.settings.missing_mandatory_settings: "Falta la configuració obligatòria.\nAnar\
