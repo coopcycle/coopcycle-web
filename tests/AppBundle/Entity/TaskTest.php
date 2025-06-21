@@ -262,6 +262,16 @@ class TaskTest extends TestCase
         $this->assertEquals(0, $task->getQuantityForPackage($mediumPackage));
     }
 
+    public function testSetTagsOverridesCallable()
+    {
+        $task = new Task();
+
+        $task->setTags(fn () =>  ['foo', 'bar']);
+        $task->setTags(['baz', 'bat']);
+
+        $this->assertEquals(['baz', 'bat'], $task->getTags());
+    }
+
     public function testTaggableFunctions()
     {
         $task = new Task();

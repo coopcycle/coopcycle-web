@@ -41,6 +41,7 @@ trait TaggableTrait
         } else {
             $this->tags = is_array($tags) ? $tags : explode(' ', $tags);
             $this->tags = array_unique($this->tags);
+            $this->tagsCallable = null;
         }
     }
 
