@@ -39,10 +39,6 @@ context('Delivery (role: dispatcher)', () => {
 
     cy.get('[data-testid="add-dropoff-button"]').click()
 
-    cy.get(`[data-testid="form-task-2"]`).within(() => {
-      cy.get('[data-testid="toggle-button"]').click()
-    })
-
     cy.betaChooseSavedAddressAtPosition(2, 3)
 
     cy.get('[data-testid="tax-included"]').contains('4,99 €')
