@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import moment from "moment";
 import {
-  PageHeader,
   Row,
   Statistic,
   Dropdown,
   Select,
   notification,
 } from "antd";
+import { PageHeader } from '@ant-design/pro-components';
 import { useTranslation } from "react-i18next";
 
 import store from "./incidentStore";
@@ -54,7 +54,7 @@ function _statusBtn(status) {
   }
 }
 
-export default function () {
+export default function() {
   const { loaded, incident } = store.getState();
   const [priority, setPriority] = useState(incident.priority);
   const [status, setStatus] = useState(incident.status);
