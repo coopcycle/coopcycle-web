@@ -113,7 +113,7 @@ class ImportDeliveriesCommand extends Command {
 
         foreach ($csvs as $csv) {
 
-            if (!is_null($this->transformer)) {
+            if ($this->transformer instanceof TransporterTransformerInterface) {
                 $csv = $this->transformer->transform($csv);
             }
 
@@ -129,8 +129,8 @@ class ImportDeliveriesCommand extends Command {
             );
         }
 
-        if (!is_null($this->importer) && !$this->dryRun) {
-            $this->importer->flush();
+        if ($this->importer instanceof TransporterImporterInterface) {
+            $this->importer->flush($this->dryRun);
         }
 
         // Count deliveries
@@ -157,7 +157,7 @@ class ImportDeliveriesCommand extends Command {
             return [$csv];
         }
 
-        if (!is_null($this->importer)) {
+        if ($this->importer instanceof TransporterImporterInterface) {
             return $this->importer->pull();
         }
 
