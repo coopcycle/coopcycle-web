@@ -118,12 +118,12 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
       const maxAttempts = 10
 
       function tryFindOption() {
-        return cy
+        cy
           .get('.rc-virtual-list-holder-inner .ant-select-item-option', {
             log: false,
           })
           .then($options => {
-            if ($options.length === 0) {
+            if (!$options || $options.length === 0) {
               cy.log(
                 `No options found for selector "${selector}" with text "${text}"`,
               )
