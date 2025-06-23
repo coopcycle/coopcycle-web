@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@ant-design/icons": "^4.7.0",
+    "@ant-design/moment-webpack-plugin": "^1.0.0",
     "@babel/core": "^7.27.1",
     "@babel/plugin-proposal-object-rest-spread": "^7.19.4",
     "@babel/preset-react": "^7.27.1",
