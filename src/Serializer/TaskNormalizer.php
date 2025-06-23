@@ -91,30 +91,20 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
 
         $data['packages'] = [];
 
-        // Happens when loading multiple tasks via the GET /api/tasks endpoint
-        if (!is_null($object->getPrefetchedPackagesAndWeight())) {
+        $delivery = $object->getDelivery();
 
-            $data['packages'] = $object->getPrefetchedPackagesAndWeight()['packages'] ?? [];
-            $data['weight'] = $object->getPrefetchedPackagesAndWeight()['weight'];
+        $packages = $this->taskMapper->getPackages(
+            $object,
+            $delivery?->getTasks() ?? []
+        );
 
-        } else {
+        $data['packages'] = array_map(fn ($package) => $this->objectNormalizer->normalize($package, 'json'), $packages);
 
-            $delivery = $object->getDelivery();
-
-            $packages = $this->taskMapper->getPackages(
+        if ($object->isPickup()) {
+            $data['weight'] = $this->taskMapper->getWeight(
                 $object,
                 $delivery?->getTasks() ?? []
             );
-
-            $data['packages'] = array_map(fn ($package) => $this->objectNormalizer->normalize($package, 'json'), $packages);
-
-            if ($object->isPickup()) {
-                $data['weight'] = $this->taskMapper->getWeight(
-                    $object,
-                    $delivery?->getTasks() ?? []
-                );
-            }
-
         }
 
         // Set metadata

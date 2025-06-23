@@ -89,6 +89,7 @@ class ProximusTransformer implements TransporterTransformerInterface {
             'dropoff.address.telephone',
             'dropoff.comments',
             'dropoff.timeslot',
+            'dropoff.packages',
             'dropoff.tags',
             'dropoff.metadata',
             'weight'
@@ -136,6 +137,7 @@ class ProximusTransformer implements TransporterTransformerInterface {
                 'dropoff.address.telephone' => '',
                 'dropoff.comments' => '',
                 'dropoff.timeslot' => $this->dateRangeToString($dropoffRange),
+                'dropoff.packages' => 'Box proximus=1',
                 'dropoff.tags' => '',
                 'dropoff.metadata' => 'barcode=' . $routeRecord['Nummer Colli'],
                 'weight' => $routeRecord['Gewicht'] ?? ''

@@ -16,7 +16,7 @@ interface TaggableInterface
      * 
      * @param string|string[] $tags
      */
-    public function setTags(array|string $tags): void;
+    public function setTags(array|string|callable $tags): void;
 
     /**
      * @param string|string[] $tags
