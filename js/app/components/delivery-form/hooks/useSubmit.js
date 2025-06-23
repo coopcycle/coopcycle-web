@@ -118,6 +118,7 @@ export default function useSubmit(
 ) {
   const mode = useSelector(selectMode)
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
+  const [isSubmitted, setIsSubmitted] = useState(false)
 
   const rejectedSuggestionsOrder = useSelector(selectRejectedSuggestedOrder)
 
@@ -247,6 +248,8 @@ export default function useSubmit(
         }
       }
 
+      setIsSubmitted(true)
+
       if (modeIn(mode, [Mode.DELIVERY_CREATE, Mode.DELIVERY_UPDATE])) {
         const deliveryId = data.id
         const orderId = data.order?.id
@@ -281,5 +284,5 @@ export default function useSubmit(
     ],
   )
 
-  return { handleSubmit, error }
+  return { handleSubmit, isSubmitted, error }
 }
