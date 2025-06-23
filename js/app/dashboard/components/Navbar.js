@@ -191,7 +191,7 @@ const Filters = ({ withOpenLabel = false, withClearLabel = false }) => {
   )
 }
 
-const CreateNewDeliveryButton = () => {
+const CreateNewOrderButton = () => {
   const { t } = useTranslation()
   const stores = useSelector(selectStores)
 
@@ -210,7 +210,7 @@ const CreateNewDeliveryButton = () => {
   )
 }
 
-const LegacyItems = () => {
+const LegacyCreateNewButtons = () => {
   const { t } = useTranslation()
   const dispatch = useDispatch()
 
@@ -288,6 +288,31 @@ const OverflowButton = ({ setIsOverflowMenuVisible }) => {
   )
 }
 
+const OverflowMenu = ({
+  isOverflowMenuVisible,
+  setIsOverflowMenuVisible,
+  children,
+}) => {
+  const { t } = useTranslation()
+  return (
+    <Drawer
+      title={t('MORE')}
+      placement="right"
+      onClose={() => setIsOverflowMenuVisible(false)}
+      open={isOverflowMenuVisible}
+      width={300}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+        }}>
+        {children}
+      </div>
+    </Drawer>
+  )
+}
+
 const Bar = ({ children }) => {
   return (
     <div
@@ -305,23 +330,6 @@ const Bar = ({ children }) => {
   )
 }
 
-const OverflowMenu = ({
-  isOverflowMenuVisible,
-  setIsOverflowMenuVisible,
-  children,
-}) => {
-  const { t } = useTranslation()
-  return (
-    <Drawer
-      title={t('MORE')}
-      placement="right"
-      onClose={() => setIsOverflowMenuVisible(false)}
-      open={isOverflowMenuVisible}
-      width={300}>
-      {children}
-    </Drawer>
-  )
-}
 const NavbarAntd = () => {
   const { t } = useTranslation()
   const dispatch = useDispatch()
@@ -363,8 +371,8 @@ const NavbarAntd = () => {
         </Space>
 
         <Space>
-          <CreateNewDeliveryButton />
-          <LegacyItems />
+          <CreateNewOrderButton />
+          <LegacyCreateNewButtons />
         </Space>
 
         <Space>
@@ -388,8 +396,8 @@ const NavbarAntd = () => {
           </Space>
 
           <Space>
-            <CreateNewDeliveryButton />
-            <LegacyItems />
+            <CreateNewOrderButton />
+            <LegacyCreateNewButtons />
           </Space>
 
           <Space>
@@ -402,19 +410,14 @@ const NavbarAntd = () => {
         <OverflowMenu
           isOverflowMenuVisible={isOverflowMenuVisible}
           setIsOverflowMenuVisible={setIsOverflowMenuVisible}>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px',
-            }}>
+          <>
             <ExportButton onClick={() => setIsOverflowMenuVisible(false)} />
             <ImportButton onClick={() => setIsOverflowMenuVisible(false)} />
             <SettingsButton
               withLabel
               onClick={() => setIsOverflowMenuVisible(false)}
             />
-          </div>
+          </>
         </OverflowMenu>
       </>
     )
@@ -441,10 +444,10 @@ const NavbarAntd = () => {
       <OverflowMenu
         isOverflowMenuVisible={isOverflowMenuVisible}
         setIsOverflowMenuVisible={setIsOverflowMenuVisible}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <>
           <ExportButton onClick={() => setIsOverflowMenuVisible(false)} />
           <ImportButton onClick={() => setIsOverflowMenuVisible(false)} />
-          <CreateNewDeliveryButton />
+          <CreateNewOrderButton />
           <Button
             type="text"
             block
@@ -469,7 +472,7 @@ const NavbarAntd = () => {
             withLabel
             onClick={() => setIsOverflowMenuVisible(false)}
           />
-        </div>
+        </>
       </OverflowMenu>
     </>
   )
