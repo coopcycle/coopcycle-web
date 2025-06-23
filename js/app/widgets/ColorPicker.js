@@ -15,9 +15,9 @@ const PRESETS = [
       '#9013FE',
       '#4A90E2',
       '#50E3C2',
-      '#B8E986'
-    ]
-  }
+      '#B8E986',
+    ],
+  },
 ]
 
 export default function(el) {
@@ -31,9 +31,9 @@ export default function(el) {
       disabledAlpha
       presets={PRESETS}
       defaultValue={initialValue}
-      onChangeComplete={(color) => {
+      onChangeComplete={color => {
         el.value = '#' + color.toHex()
       }}
-    />
+    />,
   )
 }
