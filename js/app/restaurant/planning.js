@@ -5,7 +5,8 @@ import moment from 'moment'
 import _ from 'lodash'
 import axios from 'axios'
 
-import 'antd/es/select/style/index.css'
+// import 'antd/es/select/style/index.css'
+
 
 import { antdLocale, localeDetector } from '../i18n'
 

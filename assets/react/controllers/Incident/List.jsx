@@ -2,10 +2,10 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Table, Tag, Avatar, Row, Col, Badge } from "antd";
 import IncidentItem from "./IncidentItem";
 import _ from "lodash";
-import "antd/lib/pagination/style/index.css";
-import "antd/lib/tree/style/index.css";
-import "antd/lib/table/style/index.css";
-import "antd/lib/tooltip/style/index.css";
+// import "antd/lib/pagination/style/index.css";
+// import "antd/lib/tree/style/index.css";
+// import "antd/lib/table/style/index.css";
+// import "antd/lib/tooltip/style/index.css";
 import { useTranslation } from "react-i18next";
 
 async function _fetchIncidents() {
@@ -64,7 +64,7 @@ function _storeFilter(value, record) {
   }
 }
 
-export default function () {
+export default function() {
   const { t } = useTranslation();
   const [incidents, setIncidents] = useState(null);
 

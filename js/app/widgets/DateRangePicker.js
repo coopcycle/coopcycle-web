@@ -5,7 +5,8 @@ import { ConfigProvider, DatePicker } from 'antd';
 
 import { timePickerProps } from '../utils/antd'
 
-import 'antd/es/input/style/index.css'
+// import 'antd/es/input/style/index.css'
+
 
 import { antdLocale } from '../i18n'
 

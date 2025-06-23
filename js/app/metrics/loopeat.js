@@ -8,8 +8,9 @@ import qs from 'qs'
 
 import { antdLocale } from '../i18n'
 
-import 'antd/lib/pagination/style/index.css'
-import 'antd/lib/select/style/index.css'
+
+
+
 
 const rootElement = document.getElementById('cubejs');
 

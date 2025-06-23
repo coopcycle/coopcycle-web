@@ -3,7 +3,8 @@ import { createRoot } from 'react-dom/client'
 import moment from 'moment'
 import { ConfigProvider, DatePicker, Form, TimePicker } from 'antd';
 
-import 'antd/es/input/style/index.css'
+// import 'antd/es/input/style/index.css'
+
 
 import { antdLocale } from '../i18n'
 

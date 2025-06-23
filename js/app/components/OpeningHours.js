@@ -6,7 +6,7 @@ import classNames from 'classnames'
 import PropTypes from 'prop-types'
 import { withTranslation } from 'react-i18next'
 
-import 'antd/lib/button/style/index.css'
+
 
 import openingHourIntervalToReadable from '../restaurant/parseOpeningHours'
 import TimeRange from '../utils/TimeRange'
