@@ -100,12 +100,10 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
 
         $data['packages'] = array_map(fn ($package) => $this->objectNormalizer->normalize($package, 'json'), $packages);
 
-        if ($object->isPickup()) {
-            $data['weight'] = $this->taskMapper->getWeight(
-                $object,
-                $delivery?->getTasks() ?? []
-            );
-        }
+        $data['weight'] = $this->taskMapper->getWeight(
+            $object,
+            $delivery?->getTasks() ?? []
+        );
 
         // Set metadata
         if (isset($data['metadata']) && is_array($data['metadata'])) {
