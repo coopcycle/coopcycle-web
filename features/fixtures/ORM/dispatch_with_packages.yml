@@ -1,0 +1,36 @@
+include:
+  - users.yml
+  - sylius_taxation.yml
+  - packages.yml
+
+AppBundle\Entity\Tag:
+  tag_important:
+    name: "Important"
+    color: "#000000"
+  tag_fast:
+    name: "Fast"
+    color: "#000000"
+
+AppBundle\Entity\Task:
+  pickup_{1..50}:
+    type: "PICKUP"
+    address: "<randomAddress()>"
+    after: "<dateTimeBetween('2024-12-01 00:00', '2024-12-01 23:59')>"
+    before: "<dateTimeBetween('2024-12-01 00:00', '2024-12-01 23:59')>"
+    tags: [ 'important' ]
+  dropoff_{1..50}:
+    type: "DROPOFF"
+    address: "<randomAddress()>"
+    after: "<dateTimeBetween('2024-12-01 00:00', '2024-12-01 23:59')>"
+    before: "<dateTimeBetween('2024-12-01 00:00', '2024-12-01 23:59')>"
+    tags: [ 'important', 'fast' ]
+    __calls:
+      - addPackageWithQuantity: [ "@package_small", 2 ]
+      - addPackageWithQuantity: [ "@package_xl", 4 ]
+
+AppBundle\Entity\Delivery:
+  delivery_{1..50}:
+    __factory:
+      createWithTasks:
+        - '@pickup_$current'
+        - '@dropoff_$current'

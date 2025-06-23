@@ -79,14 +79,14 @@ class TaggableSubscriber implements EventSubscriber
 
         if ($entity instanceof TaggableInterface) {
 
-            $tags = array_map(
-                fn ($tag) => $tag['slug'],
-                $this->tagManager->getTags($entity)
-            );
+            $entity->setTags(function () use ($entity) {
+                $tags = array_map(
+                    fn ($tag) => $tag['slug'],
+                    $this->tagManager->getTags($entity)
+                );
 
-            if (count($tags) > 0) {
-                $entity->setTags($tags);
-            }
+                return $tags;
+            });
         }
     }
 
