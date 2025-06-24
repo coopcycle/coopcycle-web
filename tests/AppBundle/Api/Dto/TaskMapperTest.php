@@ -35,13 +35,17 @@ class TaskMapperTest extends TestCase
         $pickup = $this->createTask(Task::TYPE_PICKUP);
 
         $dropoff1 = $this->createTask(Task::TYPE_DROPOFF);
-        $dropoff1->setWeight(5000);
+        $dropoff1->setWeight(3000);
         $dropoff2 = $this->createTask(Task::TYPE_DROPOFF);
-        $dropoff2->setWeight(5000);
+        $dropoff2->setWeight(4000);
         $dropoff3 = $this->createTask(Task::TYPE_DROPOFF);
         $dropoff3->setWeight(5000);
 
-        $this->assertEquals(15000, $this->taskMapper->getWeight($pickup, [$pickup, $dropoff1, $dropoff2, $dropoff3]));
+        $this->assertEquals(12000, $this->taskMapper->getWeight($pickup, [$pickup, $dropoff1, $dropoff2, $dropoff3]));
+
+        $this->assertEquals(3000, $this->taskMapper->getWeight($dropoff1, [$pickup, $dropoff1, $dropoff2, $dropoff3]));
+
+        $this->assertEquals(4000, $this->taskMapper->getWeight($dropoff2, [$pickup, $dropoff1, $dropoff2, $dropoff3]));
     }
 
     public function testGetPackagesForMultiDropoff()
