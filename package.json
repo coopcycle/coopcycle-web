@@ -32,7 +32,7 @@
     "whatwg-fetch": "^2.0.4"
   },
   "devDependencies": {
-    "@ant-design/icons": "^4.7.0",
+    "@ant-design/icons": "^5.6.1",
     "@ant-design/moment-webpack-plugin": "^1.0.0",
     "@babel/core": "^7.27.1",
     "@babel/plugin-proposal-object-rest-spread": "^7.19.4",
