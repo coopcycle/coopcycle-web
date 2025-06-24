@@ -276,14 +276,13 @@ class TagManager
 
         $taggingRepository = $this->entityManager->getRepository(Tagging::class);
 
-        $qb = $taggingRepository
-            ->createQueryBuilder('tagging')
-            ->andWhere('tagging.resourceClass = :resource_class')
-            ->andWhere('tagging.resourceId IN (:resource_ids)')
-            ->setParameter('resource_class', current($resourceClasses))
-            ->setParameter('resource_ids', array_map(fn($t) => $t->getId(), $taggables));
+        // Use a "fetch join" in DQL,
+        // so that calling $tagging->getTag() doesn't fire an additional query
+        $query = $this->entityManager->createQuery('SELECT tagging, tag FROM AppBundle\Entity\Tagging tagging JOIN tagging.tag tag WHERE tagging.resourceClass = :resource_class AND tagging.resourceId IN (:resource_ids)');
+        $query->setParameter('resource_class', current($resourceClasses));
+        $query->setParameter('resource_ids', array_map(fn($t) => $t->getId(), $taggables));
 
-        $taggings = $qb->getQuery()->getResult();
+        $taggings = $query->getResult();
 
         $tagsByTaggable = new \SplObjectStorage();
 
@@ -315,6 +314,8 @@ class TagManager
 
             $cacheItem = $this->cache->getItem($cacheKey);
             if (!$cacheItem->isHit()) {
+                // Cache for 1 day
+                $cacheItem->expiresAfter(60 * 60 * 24);
                 $cacheItem->set($tags);
                 $this->cache->save($cacheItem);
             }

@@ -79,7 +79,7 @@ class TasksFunctionalTest extends ApiTestCase
         $profile = $client->getProfile();
 
         $this->assertLessThanOrEqual(
-            11,
+            9,
             $profile->getCollector('db')->getQueryCount()
         );
     }
