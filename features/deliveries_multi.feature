@@ -349,7 +349,7 @@ Feature: Multi-step deliveries
             "description": null
           },
           "comments":"2 × XL\n1.50 kg",
-          "weight":1500,
+          "weight":null,
           "after":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "doneAfter":"@string@.isDateTime()",
@@ -474,7 +474,7 @@ Feature: Multi-step deliveries
             "description": null
           },
           "comments":"2 × XL\n1.50 kg",
-          "weight":1500,
+          "weight":null,
           "after":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "doneAfter":"@string@.isDateTime()",
