@@ -436,6 +436,17 @@ export default function({
                                 }
                                 // Insert after the last pickup using pickups.length
                                 arrayHelpers.insert(pickups.length, newDeliverySchema)
+
+                                // Auto-expand the newly added task and collapse all previous tasks
+                                const newTaskIndex = pickups.length // Index of the new task after it's added
+                                const totalTasks = values.tasks.length + 1
+
+                                const newExpandedState = {}
+                                for (let i = 0; i < totalTasks; i++) {
+                                  newExpandedState[i] = i === newTaskIndex
+                                }
+                                setExpandedTasks(newExpandedState)
+
                               }}>
                               {t('DELIVERY_FORM_ADD_PICKUP')}
                             </Button>
