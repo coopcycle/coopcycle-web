@@ -28,23 +28,32 @@ final class Version20250624085045 extends AbstractMigration
 
             if ($template['@type'] === 'hydra:Collection') {
 
+                $shouldUpdate = false;
+
                 foreach ($template['hydra:member'] as $i => $task) {
 
-                    $tags = array_map(function ($tag) {
-                        if (is_array($tag)) {
-                            return $tag['slug'];
-                        }
-                        return $tag;
-                    }, $task['tags']);
+                    if (isset($task['tags']) && is_array($task['tags'])) {
 
-                    $template['hydra:member'][$i]['tags'] = $tags;
+                        $tags = array_map(function ($tag) {
+                            if (is_array($tag)) {
+                                return $tag['slug'];
+                            }
+                            return $tag;
+                        }, $task['tags']);
+
+                        $template['hydra:member'][$i]['tags'] = $tags;
+
+                        $shouldUpdate = true;
+                    }
 
                 }
 
-                $this->addSql('UPDATE task_rrule SET template = :template WHERE id = :id', [
-                            'template' => json_encode($template),
-                            'id' => $rule['id']
-                        ]);
+                if ($shouldUpdate) {
+                    $this->addSql('UPDATE task_rrule SET template = :template WHERE id = :id', [
+                                'template' => json_encode($template),
+                                'id' => $rule['id']
+                            ]);
+                }
             }
 
         }
