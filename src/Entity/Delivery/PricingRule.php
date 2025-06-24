@@ -38,6 +38,7 @@ class PricingRule
     /**
      * @var int
      */
+    #[Groups(['pricing_rule_set:read'])]
     protected $id;
 
     const TARGET_DELIVERY = 'DELIVERY';
@@ -51,20 +52,20 @@ class PricingRule
      */
     const LEGACY_TARGET_DYNAMIC = 'LEGACY_TARGET_DYNAMIC';
 
-    #[Groups(['pricing_deliveries'])]
+    #[Groups(['pricing_deliveries', 'pricing_rule_set:read', 'pricing_rule_set:write'])]
     #[Assert\Choice(choices: ["DELIVERY", "TASK", "LEGACY_TARGET_DYNAMIC"])]
     protected string $target = self::TARGET_DELIVERY;
 
-    #[Groups(['original_rules', 'pricing_deliveries'])]
+    #[Groups(['original_rules', 'pricing_deliveries', 'pricing_rule_set:read', 'pricing_rule_set:write'])]
     #[Assert\Type(type: 'string')]
     #[Assert\NotBlank]
     protected $expression;
 
-    #[Groups(['original_rules', 'pricing_deliveries'])]
+    #[Groups(['original_rules', 'pricing_deliveries', 'pricing_rule_set:read', 'pricing_rule_set:write'])]
     #[Assert\Type(type: 'string')]
     protected $price;
 
-    #[Groups(['original_rules', 'pricing_deliveries'])]
+    #[Groups(['original_rules', 'pricing_deliveries', 'pricing_rule_set:read', 'pricing_rule_set:write'])]
     protected $position;
 
     protected $ruleSet;
@@ -72,6 +73,7 @@ class PricingRule
     /**
      * @var ?ProductOption
      */
+    #[Groups(['pricing_rule_set:read', 'pricing_rule_set:write'])]
     protected $productOption;
 
     /**

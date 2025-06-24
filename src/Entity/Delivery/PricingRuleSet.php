@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
@@ -14,12 +15,21 @@ use AppBundle\Action\PricingRuleSet\Applications;
 use AppBundle\Api\State\ValidationAwareRemoveProcessor;
 use AppBundle\Validator\Constraints\PricingRuleSetDelete as AssertCanDelete;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[ApiResource(
     operations: [
-        new Get(controller: NotFoundAction::class),
+        new Get(
+            normalizationContext: ['groups' => ['pricing_rule_set:read']],
+            security: 'is_granted(\'ROLE_ADMIN\')'
+        ),
+        new Put(
+            denormalizationContext: ['groups' => ['pricing_rule_set:write']],
+            normalizationContext: ['groups' => ['pricing_rule_set:read']],
+            security: 'is_granted(\'ROLE_ADMIN\')'
+        ),
         new Delete(
             security: 'is_granted(\'ROLE_ADMIN\')',
             validationContext: ['groups' => ['deleteValidation']],
@@ -31,8 +41,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
             openapiContext: ['summary' => 'Get the objects to which this pricing rule set is applied'],
             security: 'is_granted(\'ROLE_ADMIN\')'
         ),
-        new Post(),
-        new GetCollection()
+        new Post(
+            denormalizationContext: ['groups' => ['pricing_rule_set:write']],
+            normalizationContext: ['groups' => ['pricing_rule_set:read']],
+            security: 'is_granted(\'ROLE_ADMIN\')'
+        ),
+        new GetCollection(
+            normalizationContext: ['groups' => ['pricing_rule_set:read']],
+            security: 'is_granted(\'ROLE_ADMIN\')'
+        )
     ]
 )]
 #[AssertCanDelete(groups: ['deleteValidation'])]
@@ -41,15 +58,20 @@ class PricingRuleSet
     /**
      * @var int
      */
+    #[Groups(['pricing_rule_set:read'])]
     protected $id;
 
     #[Assert\Valid]
+    #[Groups(['pricing_rule_set:read', 'pricing_rule_set:write'])]
     protected $rules;
 
+    #[Groups(['pricing_rule_set:read', 'pricing_rule_set:write'])]
     protected $name;
 
+    #[Groups(['pricing_rule_set:read', 'pricing_rule_set:write'])]
     protected $strategy = 'find';
 
+    #[Groups(['pricing_rule_set:read', 'pricing_rule_set:write'])]
     protected array $options = [];
 
     public function __construct()

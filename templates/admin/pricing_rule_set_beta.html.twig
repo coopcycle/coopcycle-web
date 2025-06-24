@@ -1,0 +1,49 @@
+{% extends "deliveries.html.twig" %}
+
+{% block prepare_title %}
+  {% if isNew %}
+    {{ add_title_prefix('pricing_rule_set.new'|trans) }}
+  {% else %}
+    {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ ruleSet.name) }}
+  {% endif %}
+{% endblock %}
+
+{% block docs %}
+  {% include '_partials/docs.html.twig' with { docsPath: 'adminDashboard.pricing.docs_path' } %}
+{% endblock %}
+
+{% block breadcrumb %}
+{{ parent() }}
+<li><a href="{{ path('admin_deliveries_pricing') }}">{% trans %}adminDashboard.pricing.title{% endtrans %}</a></li>
+<li>
+  {% if isNew %}
+    {% trans %}pricing_rule_set.new{% endtrans %} (Beta)
+  {% else %}
+    {{ ruleSet.name }} (Beta)
+  {% endif %}
+</li>
+{% endblock %}
+
+{% block content %}
+  <div class="alert alert-info">
+    <i class="fa fa-info-circle"></i>
+    {{ 'adminDashboard.pricing.MODERN_VERSION_INFO'|trans }}
+    <a href="{{ isNew ? path('admin_deliveries_pricing_ruleset_new') : path('admin_deliveries_pricing_ruleset', { id: ruleSetId }) }}" class="btn btn-sm btn-default pull-right">
+      {{ 'adminDashboard.pricing.SWITCH_TO_CLASSIC'|trans }}
+    </a>
+  </div>
+
+  <div
+    id="pricing-rule-set-form-react"
+    data-rule-set-id="{{ ruleSetId }}"
+    data-is-new="{{ isNew ? 'true' : 'false' }}"
+  ></div>
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('pricing-rule-set-form-react') }}
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('pricing-rule-set-form-react') }}
+{% endblock %}
