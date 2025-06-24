@@ -20,7 +20,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@ant-design/pro-components": "^2.8.9",
     "@geoman-io/leaflet-geoman-free": "^2.18.3",
     "@hello-pangea/dnd": "^16.6.0",
     "dotenv": "^8.6.0",

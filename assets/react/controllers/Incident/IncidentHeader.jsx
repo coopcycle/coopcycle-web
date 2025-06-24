@@ -7,7 +7,7 @@ import {
   Select,
   notification,
 } from "antd";
-import { PageHeader } from '@ant-design/pro-components';
+import PageHeader from '../../../../js/app/components/PageHeader'
 import { useTranslation } from "react-i18next";
 
 import store from "./incidentStore";
@@ -136,7 +136,7 @@ export default function() {
           onChange={(tags) => setTags(tags)}
           options={tags.map((t) => ({ label: t, value: t }))}
           style={{ marginLeft: "2px", width: "300px" }}
-          bordered={false}
+          variant="borderless"
         />
         <div>
           <div className="pb-1">{t("INCIDENT_REPORTED_AT")} :</div>
