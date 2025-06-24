@@ -9,9 +9,6 @@ import qs from 'qs'
 import { antdLocale } from '../i18n'
 
 
-
-
-
 const rootElement = document.getElementById('cubejs');
 
 if (rootElement) {
@@ -46,7 +43,7 @@ if (rootElement) {
   const ChartRenderer = () => {
     return (
       <QueryRenderer
-        query={ JSON.parse(rootElement.dataset.query) }
+        query={JSON.parse(rootElement.dataset.query)}
         cubejsApi={cubejsApi}
         resetResultSetOnChange={false}
         render={(props) => renderChart({
@@ -72,14 +69,14 @@ if (rootElement) {
 }
 
 const monthPickerEl = document.querySelector('#month-picker')
-const defaultValue  = monthPickerEl.dataset.defaultValue
+const defaultValue = monthPickerEl.dataset.defaultValue
 
 createRoot(monthPickerEl).render(
-  <ConfigProvider locale={ antdLocale }>
+  <ConfigProvider locale={antdLocale}>
     <DatePicker
       picker="month"
-      value={ moment(defaultValue) }
-      onChange={ (date, dateString) => {
+      value={moment(defaultValue)}
+      onChange={(date, dateString) => {
         window.location.href = window.location.pathname + '?' + qs.stringify({ month: dateString })
       }} />
   </ConfigProvider>)

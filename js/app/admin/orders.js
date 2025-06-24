@@ -2,10 +2,6 @@ import { createRoot } from 'react-dom/client'
 import cubejs from '@cubejs-client/core';
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin } from 'antd';
-
-// import 'antd/dist/antd.css';
-
-
 import React from 'react';
 import 'chart.js/auto'; // ideally we should only import the component that we need: https://react-chartjs-2.js.org/docs/migration-to-v4/#tree-shaking
 import { Line } from 'react-chartjs-2';

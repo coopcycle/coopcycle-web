@@ -6,8 +6,6 @@ import classNames from 'classnames'
 import PropTypes from 'prop-types'
 import { withTranslation } from 'react-i18next'
 
-
-
 import openingHourIntervalToReadable from '../restaurant/parseOpeningHours'
 import TimeRange from '../utils/TimeRange'
 import { timePickerProps } from '../utils/antd'
@@ -36,7 +34,7 @@ class OpeningHours extends React.Component {
   }
 
   componentDidMount() {
-    let rows = [ this.createRowData() ]
+    let rows = [this.createRowData()]
     if (this.props.value) {
       rows = _.map(this.props.value, (value) => this.parseOpeningHours(value))
     }
@@ -161,41 +159,41 @@ class OpeningHours extends React.Component {
     return (
       <Draggable key={index} draggableId={index.toString()} index={index}>
         {(provided) => (
-          <tr key={ `${index}-${rev}` } ref={provided.innerRef} { ...provided.draggableProps }
-            className={ classNames({ 'danger': (-1 !== this.props.rowsWithErrors.indexOf(index)) }) }>
+          <tr key={`${index}-${rev}`} ref={provided.innerRef} {...provided.draggableProps}
+            className={classNames({ 'danger': (-1 !== this.props.rowsWithErrors.indexOf(index)) })}>
             <td width="50%">
               <span className="d-block">
                 <i {...provided.dragHandleProps} className="fa fa-bars mr-3"></i>
                 <TimePicker.RangePicker
-                  { ...timePickerProps }
+                  {...timePickerProps}
                   defaultValue={[startValue, endValue]}
                   disabledMinutes={this.disabledMinutes}
-                  disabled={ this.state.disabled }
+                  disabled={this.state.disabled}
                   hideDisabledOptions
-                  placeholder={["Heure","Heure"]}
+                  placeholder={["Heure", "Heure"]}
                   onChange={(value) => {
                     this.onRangeChange(index, value)
                   }}
                 />
               </span>
-              <small className="text-muted">{ openingHourIntervalToReadable(this.rowToString(row), this.props.locale, this.state.behavior) }</small>
+              <small className="text-muted">{openingHourIntervalToReadable(this.rowToString(row), this.props.locale, this.state.behavior)}</small>
             </td>
             {_.map(weekdays, (weekday) => (
-              <td key={weekday.key} className={ _.includes(['Sa', 'Su'], weekday.key) ? 'active text-center' : 'text-center'}>
+              <td key={weekday.key} className={_.includes(['Sa', 'Su'], weekday.key) ? 'active text-center' : 'text-center'}>
                 <input type="checkbox"
-                  disabled={ this.state.disabled }
+                  disabled={this.state.disabled}
                   onChange={this.onCheckboxChange.bind(this, index, weekday.key)}
                   checked={this.isWeekdayChecked(row, weekday.key)}
                   className="form-input" />
               </td>
             ))}
             <td className="text-center">
-              { !this.state.disabled && (
+              {!this.state.disabled && (
                 <button type="button" className="button-icon" onClick={this.removeRow.bind(this, index)}>
                   <i className="fa fa-times"></i>
                 </button>
               )}
-              { this.state.disabled && (
+              {this.state.disabled && (
                 <button type="button" className="button-icon">
                   <i className="fa fa-times text-muted"></i>
                 </button>
@@ -246,14 +244,14 @@ class OpeningHours extends React.Component {
   render() {
     const { weekdays } = this.state
     return (
-      <ConfigProvider locale={ antdLocale }>
+      <ConfigProvider locale={antdLocale}>
         <div>
           <table className="table">
             <thead>
               <tr>
                 <th>{this.props.t('DELIVERY_TIME_SLOTS')}</th>
                 {_.map(weekdays, (weekday) => (
-                  <th key={weekday.key} className={ _.includes(['Sa', 'Su'], weekday.key) ? 'active text-center' : 'text-center'}>{weekday.name}</th>
+                  <th key={weekday.key} className={_.includes(['Sa', 'Su'], weekday.key) ? 'active text-center' : 'text-center'}>{weekday.name}</th>
                 ))}
                 <th></th>
               </tr>
@@ -272,23 +270,23 @@ class OpeningHours extends React.Component {
           </table>
           <div className="d-flex flex-row align-items-center justify-content-between">
             <div>
-              { this.props.withBehavior && (
+              {this.props.withBehavior && (
                 <Radio.Group
-                  disabled={ this.state.disabled }
-                  onChange={ (e) => {
+                  disabled={this.state.disabled}
+                  onChange={(e) => {
                     this.setState({ behavior: e.target.value })
                     if (this.props.onChangeBehavior && typeof this.props.onChangeBehavior === 'function') {
                       this.props.onChangeBehavior(e.target.value)
                     }
                   }}
-                  value={ this.state.behavior }>
-                  <Radio value={ 'asap' }>{ this.props.t('OPENING_HOURS_BEHAVIOR.asap') }</Radio>
-                  <Radio value={ 'time_slot' }>{ this.props.t('OPENING_HOURS_BEHAVIOR.time_slot') }</Radio>
+                  value={this.state.behavior}>
+                  <Radio value={'asap'}>{this.props.t('OPENING_HOURS_BEHAVIOR.asap')}</Radio>
+                  <Radio value={'time_slot'}>{this.props.t('OPENING_HOURS_BEHAVIOR.time_slot')}</Radio>
                 </Radio.Group>
               )}
             </div>
-            <button className="btn btn-sm btn-success" onClick={ this.addRow.bind(this) } disabled={ this.state.disabled }>
-              { this.props.t('ADD_BUTTON') }
+            <button className="btn btn-sm btn-success" onClick={this.addRow.bind(this)} disabled={this.state.disabled}>
+              {this.props.t('ADD_BUTTON')}
             </button>
           </div>
         </div>

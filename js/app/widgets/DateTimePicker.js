@@ -2,10 +2,6 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import moment from 'moment'
 import { ConfigProvider, DatePicker, Form, TimePicker } from 'antd';
-
-// import 'antd/es/input/style/index.css'
-
-
 import { antdLocale } from '../i18n'
 
 const today = moment().startOf('day')
@@ -113,7 +109,7 @@ class DateTimePicker extends React.Component {
             format={dateFormat}
             placeholder="Date"
             defaultValue={this.props.defaultValue}
-            { ...datePickerProps }
+            {...datePickerProps}
           />
           <TimePicker
             disabledMinutes={this.disabledMinutes}
@@ -122,7 +118,7 @@ class DateTimePicker extends React.Component {
             format={timeFormat}
             hideDisabledOptions
             placeholder="Heure"
-            { ...timePickerProps }
+            {...timePickerProps}
           />
         </Form.Item>
       </div>
@@ -135,7 +131,7 @@ export default function(el, options) {
   const defaultProps = {
     getDatePickerContainer: null,
     getTimePickerContainer: null,
-    onChange: () => {}
+    onChange: () => { }
   }
 
   if (null !== options.defaultValue) {
@@ -147,7 +143,7 @@ export default function(el, options) {
   const props = { ...defaultProps, ...options }
 
   createRoot(el).render(
-    <ConfigProvider locale={ antdLocale }>
-      <DateTimePicker { ...props } />
+    <ConfigProvider locale={antdLocale}>
+      <DateTimePicker {...props} />
     </ConfigProvider>)
 }

@@ -17,8 +17,6 @@ import {
   selectFiltersSetting,
 } from "../redux/selectors";
 
-
-
 import OrganizationsOrTagsSelect from "./OrganizationsOrTagsSelect";
 
 function isHidden(hiddenCouriers, username) {
