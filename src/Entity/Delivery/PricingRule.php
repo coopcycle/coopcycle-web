@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Api\State\EvaluatePricingRuleProcessor;
 use AppBundle\Api\Dto\DeliveryDto;
 use AppBundle\Api\Dto\YesNoOutput;
+use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Validator\Constraints\PricingRule as AssertPricingRule;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -67,6 +68,11 @@ class PricingRule
     protected $position;
 
     protected $ruleSet;
+
+    /**
+     * @var ?ProductOption
+     */
+    protected $productOption;
 
     /**
      * Gets id.
@@ -132,6 +138,18 @@ class PricingRule
     public function setRuleSet(PricingRuleSet $ruleSet)
     {
         $this->ruleSet = $ruleSet;
+
+        return $this;
+    }
+
+    public function getProductOption(): ?ProductOption
+    {
+        return $this->productOption;
+    }
+
+    public function setProductOption(?ProductOption $productOption): self
+    {
+        $this->productOption = $productOption;
 
         return $this;
     }
