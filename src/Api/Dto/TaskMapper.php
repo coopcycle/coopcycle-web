@@ -140,10 +140,12 @@ class TaskMapper
                 if ($task->isPickup()) {
                     return $this->sumOfWeight($otherTasks);
                 }
+                break;
             case self::TYPE_MULTI_PICKUP:
                 if ($task->isDropoff()) {
                     return $this->sumOfWeight($otherTasks);
                 }
+                break;
         }
 
         return $task->getWeight();
