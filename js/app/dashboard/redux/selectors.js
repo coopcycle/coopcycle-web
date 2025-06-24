@@ -54,6 +54,8 @@ export const selectPolylineEnabledByUsername = username => state => state.polyli
 export const selectTourPolylinesEnabledById = tourId => state => state.tourPolylinesEnabled[tourId]
 export const selectAllTags = state => state.config.tags
 
+export const selectStores = state => state.config.stores
+
 export const getProductNameById = id => store => {
   return store.dashboard.dashboards.filter(({ Id }) => Id === id)[0]
     .Name;

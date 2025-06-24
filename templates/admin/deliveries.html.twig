@@ -24,9 +24,7 @@
         <i class="fa fa-download"></i> {% trans %}basics.export{% endtrans %}
       </a>
       {% endif %}
-      <a href="#" class="btn btn-success" data-toggle="modal" data-target="#choose-store-modal">
-        <i class="fa fa-plus"></i> {% trans %}delivery.createNew{% endtrans %}
-      </a>
+      {% include '_partials/delivery/create_new_button.html.twig' %}
     </div>
   </div>
 
@@ -167,27 +165,7 @@
     </nav>
   {% endif %}
 
-  <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="choose-store-modal-label" id="choose-store-modal">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="choose-store-modal-label">{% trans %}delivery.createNew{% endtrans %}</h4>
-        </div>
-        <div class="modal-body">
-          <select class="form-control" id="stores">
-            <option></option>
-            {% for store in stores %}
-            <option value="{{ path(routes.store_new, { id: store.id }) }}">{{ store.name }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">{% trans %}basics.cancel{% endtrans %}</button>
-        </div>
-      </div>
-    </div>
-  </div>
+
 
   <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="import-deliveries-modal-label" id="import-deliveries-modal">
     <div class="modal-dialog" role="document">
@@ -235,9 +213,4 @@
 
 {% block scripts %}
 {{ encore_entry_script_tags('delivery-list') }}
-<script>
-$('#stores').on('change', function(e) {
-  window.location.href = $(this).val();
-});
-</script>
 {% endblock %}

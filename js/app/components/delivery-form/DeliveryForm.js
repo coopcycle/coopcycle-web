@@ -125,6 +125,7 @@ export default function({
 }) {
   const mode = useSelector(selectMode)
   const [isLoading, setIsLoading] = useState(true)
+  const [expandedTasks, setExpandedTasks] = useState({})
 
   const { data: storeData } = useGetStoreQuery(storeNodeId)
   const storeDeliveryInfos = useMemo(() => storeData ?? {}, [storeData])
@@ -164,9 +165,16 @@ export default function({
     return null
   }, [preLoadedDeliveryData, mode])
 
-  const { handleSubmit, error } = useSubmit(storeNodeId, deliveryNodeId, isDispatcher)
+  const { handleSubmit, error, isSubmitted } = useSubmit(storeNodeId, deliveryNodeId, isDispatcher)
 
   const { t } = useTranslation()
+
+  const handleTaskExpansion = (taskIndex, isExpanded) => {
+    setExpandedTasks(prev => ({
+      ...prev,
+      [taskIndex]: isExpanded
+    }))
+  }
 
   const validate = (values) => {
     const errors = { tasks: [] };
@@ -210,6 +218,15 @@ export default function({
       }
     }
 
+    // expand all tasks with errors
+    if (Object.keys(errors.tasks).length > 0) {
+      Object.values(expandedTasks).forEach((isExpanded, index) => {
+        if (!isExpanded && Object.keys(errors.tasks).includes(`${index}`)) {
+          handleTaskExpansion(index, true)
+        }
+      })
+    }
+
     return Object.keys(errors.tasks).length > 0 || errors.variantName ? errors : {};
   }
 
@@ -233,6 +250,7 @@ export default function({
   useEffect(() => {
     if (!isDataReady) return
 
+    const initialExpandedState = {}
     if (preLoadedDeliveryData) {
       const initialValues = structuredClone(preLoadedDeliveryData)
 
@@ -258,15 +276,37 @@ export default function({
 
       setInitialValues(initialValues)
 
+      // For simple deliveries, expand all tasks by default
+      if (initialValues.tasks.length <= 2) {
+        initialValues.tasks.forEach((_, index) => {
+          initialExpandedState[index] = true
+        })
+        // For complex deliveries, collapse all tasks by default
+      } else {
+        initialValues.tasks.forEach((_, index) => {
+          initialExpandedState[index] = false
+        })
+      }
+
       setTrackingLink(preLoadedDeliveryData.trackingUrl)
+
     } else {
       if (mode === Mode.DELIVERY_CREATE) {
+        const tasks = [{ ...pickupSchema }, { ...dropoffSchema }]
+
         setInitialValues({
-          tasks: [{ ...pickupSchema }, { ...dropoffSchema }],
+          tasks: tasks,
           order: {},
+        })
+
+        // For new deliveries - expand all tasks by default
+        tasks.forEach((task, index) => {
+          initialExpandedState[index] = true
         })
       }
     }
+
+    setExpandedTasks(initialExpandedState)
 
     setIsLoading(false)
   }, [isDataReady, preLoadedDeliveryData, mode])
@@ -371,6 +411,8 @@ export default function({
                                     showRemoveButton={pickupIndex > 0}
                                     isDispatcher={isDispatcher}
                                     tags={tags}
+                                    isExpanded={expandedTasks[originalIndex]}
+                                    onToggleExpanded={(isExpanded) => handleTaskExpansion(originalIndex, isExpanded)}
                                     // Show packages on pickups conditionally
                                     showPackages={storeDeliveryInfos.multiPickupEnabled}
                                   />
@@ -418,6 +460,8 @@ export default function({
                                     showRemoveButton={dropoffIndex > 0}
                                     isDispatcher={isDispatcher}
                                     tags={tags}
+                                    isExpanded={expandedTasks[originalIndex]}
+                                    onToggleExpanded={(isExpanded) => handleTaskExpansion(originalIndex, isExpanded)}
                                     // Always show packages on dropoffs
                                     showPackages={true}
                                   />
@@ -440,6 +484,16 @@ export default function({
                                   timeSlotUrl: values.tasks.slice(-1)[0].timeSlotUrl
                                 }
                                 arrayHelpers.push(newDeliverySchema)
+
+                                // Auto-expand the newly added task and collapse all previous tasks
+                                const newTaskIndex = values.tasks.length // Index of the new task after it's added
+                                const totalTasks = values.tasks.length + 1
+
+                                const newExpandedState = {}
+                                for (let i = 0; i < totalTasks; i++) {
+                                  newExpandedState[i] = i === newTaskIndex
+                                }
+                                setExpandedTasks(newExpandedState)
                               }}>
                               {t('DELIVERY_FORM_ADD_DROPOFF')}
                             </Button>
@@ -511,7 +565,7 @@ export default function({
                           type="primary"
                           style={{ height: '2.5em' }}
                           htmlType="submit"
-                          disabled={isSubmitting || priceLoading}>
+                          disabled={isSubmitting || priceLoading || isSubmitted}>
                           {t('DELIVERY_FORM_SUBMIT')}
                         </Button>
                       </div>

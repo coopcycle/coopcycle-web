@@ -9,8 +9,25 @@ import Task from './Task'
 import TaskGroup from './TaskGroup'
 import RecurrenceRule from './RecurrenceRule'
 import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
-import { setTaskListGroupMode, openNewTaskModal, setCurrentRecurrenceRule, openNewRecurrenceRuleModal, deleteGroup, editGroup, showRecurrenceRules, appendToUnassignedTasks } from '../redux/actions'
-import { selectGroups, selectStandaloneTasks, selectRecurrenceRules, selectIsRecurrenceRulesVisible, selectAreToursEnabled, selectTaskListGroupMode, selectIsTourDragging, selectOrderOfUnassignedTasks, selectUnassignedTasksLoading } from '../redux/selectors'
+import {
+  setTaskListGroupMode,
+  setCurrentRecurrenceRule,
+  deleteGroup,
+  editGroup,
+  showRecurrenceRules,
+  appendToUnassignedTasks,
+} from '../redux/actions'
+import {
+  selectGroups,
+  selectStandaloneTasks,
+  selectRecurrenceRules,
+  selectIsRecurrenceRulesVisible,
+  selectAreToursEnabled,
+  selectTaskListGroupMode,
+  selectIsTourDragging,
+  selectOrderOfUnassignedTasks,
+  selectUnassignedTasksLoading,
+} from '../redux/selectors'
 import { getDroppableListStyle } from '../utils'
 import classNames from 'classnames'
 import UnassignedTasksFilters from '../../components/UnassignedTasksFilters'
@@ -41,18 +58,6 @@ const Buttons = () => {
 
   return (
     <React.Fragment>
-      <a href="#" className="mr-3" onClick={ e => {
-        e.preventDefault()
-        dispatch(openNewRecurrenceRuleModal())
-      }}>
-        <i className="fa fa-clock-o"></i>
-      </a>
-      <a href="#" className="mr-3" onClick={ e => {
-        e.preventDefault()
-        dispatch(openNewTaskModal())
-      }}>
-        <i className="fa fa-plus"></i>
-      </a>
       <Popover
         placement="leftTop"
         arrowPointAtCenter

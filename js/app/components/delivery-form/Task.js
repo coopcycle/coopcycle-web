@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Field } from 'formik'
 import AddressBookNew from './AddressBook'
 import { Input, Button } from 'antd'
@@ -28,6 +28,8 @@ export default ({
   onRemove,
   showRemoveButton,
   tags,
+  isExpanded,
+  onToggleExpanded,
   showPackages,
 }) => {
   const { t } = useTranslation()
@@ -41,10 +43,6 @@ export default ({
     taskIndex: index,
   })
 
-  const otherTasksOfSameType = values.tasks.filter(t => t.type === taskValues.type && t !== taskValues)
-
-  const [showLess, setShowLess] = useState(otherTasksOfSameType.length > 0)
-
   const { data: timeSlotLabels } = useGetStoreTimeSlotsQuery(storeNodeId)
   const { data: packages } = useGetStorePackagesQuery(storeNodeId)
 
@@ -52,7 +50,9 @@ export default ({
     <div className="task border p-4 mb-4" data-testid={`form-task-${index}`}>
       <div
         className={`task__header task__header--${taskValues.type.toLowerCase()}`}
-        onClick={() => setShowLess(!showLess)}>
+        onClick={() => {
+          onToggleExpanded(!isExpanded)
+        }}>
         {taskValues.type === 'PICKUP' ? (
           <i className="fa fa-arrow-up"></i>
         ) : (
@@ -69,11 +69,9 @@ export default ({
           type="button"
           className="task__button">
           <i
-            className={!showLess ? 'fa fa-chevron-up' : 'fa fa-chevron-down'}
+            className={isExpanded ? 'fa fa-chevron-up' : 'fa fa-chevron-down'}
             title={
-              showLess
-                ? t('DELIVERY_FORM_SHOW_MORE')
-                : t('DELIVERY_FORM_SHOW_LESS')
+              isExpanded ? t('DELIVERY_FORM_SHOW_LESS') : t('DELIVERY_FORM_SHOW_MORE')
             }></i>
         </button>
 
@@ -87,7 +85,7 @@ export default ({
       </div>
 
       <div
-        className={!showLess ? 'task__body' : 'task__body task__body--hidden'}>
+        className={isExpanded ? 'task__body' : 'task__body task__body--hidden'}>
         <AddressBookNew
           addresses={addresses}
           index={index}
@@ -149,7 +147,7 @@ export default ({
           </div>
         )}
       </div>
-      <div className={!showLess ? 'task__footer' : 'task__footer--hidden'}>
+      <div className={isExpanded ? 'task__footer' : 'task__footer--hidden'}>
         {showRemoveButton && (
           <Button
             onClick={() => onRemove(index)}

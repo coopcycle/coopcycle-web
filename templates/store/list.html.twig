@@ -53,12 +53,12 @@
               </li>
               <li>
                 <a href="{{ path(store_deliveries_route, { id: store.id }) }}">
-                  {% trans %}stores.deliveries{% endtrans %}
+                  {% trans %}stores.orders{% endtrans %}
                 </a>
               </li>
               <li>
                 <a href="{{ path(store_delivery_new_route, { id: store.id }) }}">
-                  {% trans %}stores.createNewDelivery{% endtrans %}
+                  {% trans %}stores.createNewOrder{% endtrans %}
                 </a>
               </li>
               {% if is_granted('ROLE_ADMIN') %}

@@ -734,10 +734,12 @@ stores.addresses: Adresy
 stores.deliveries.task_unassigned: Nepřiřazeno
 stores.deliveries.heading: 'Doručení %delivery_id% - %delivery_distance%'
 stores.deliveries: Dodávky
+stores.orders: Objednávky
 stores.api_keys: API klíče
 stores.pricing_rule_set: Ceny
 stores.users: Uživatelé
 stores.createNewDelivery: Vytvořit novou dodávku
+stores.createNewOrder: Vytvořit novou objednávku
 stores.settings: Nastavení
 stores.manage: Spravovat
 roles.ROLE_STORE.help: 'Majitel obchodu: spravuje přiřazené obchody, spravuje dodávky

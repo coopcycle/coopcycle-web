@@ -381,7 +381,9 @@ dashboard_delivery:
       routes:
         stores: dashboard_stores
         store: dashboard_store
+        store_deliveries: dashboard_store
         back: dashboard
+        store_new: dashboard_store_delivery_new
   methods:  [ GET, POST ]
 
 dashboard_store_delivery_new:
@@ -394,6 +396,7 @@ dashboard_store_delivery_new:
             store: dashboard_store
             store_deliveries: dashboard_store_deliveries
             back: dashboard
+            store_new: dashboard_store_delivery_new
         show_left_menu: false
     methods:  [ GET, POST ]
 

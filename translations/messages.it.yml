@@ -690,9 +690,11 @@ user.edit.roles.help: Configura i permessi degli utenti
 roles.ROLE_STORE.help: 'Proprietario del negozio: gestire i negozi assegnati, gestire
   le consegne …'
 stores.createNewDelivery: Crea un nuovo ordine
+stores.createNewOrder: Crea un nuovo ordine
 stores.users: Utenti
 stores.deliveries.heading: 'Consegna #%delivery_id% - %delivery_distance%'
 stores.deliveries.task_unassigned: Non assegnato
+stores.orders: Ordini
 stores.addresses: Indirizzi
 index.map.tip: Usa la mappa qui sotto per trovare ristoranti
 index.our_restaurants: I nostri ristoranti

@@ -25,7 +25,7 @@ describe('Delivery with recurrence rule (role: dispatcher)', () => {
       .click()
 
     cy.get('[data-testid=store_Acme__list_item]')
-      .contains('Créer une livraison')
+      .contains('Créer une nouvelle commande')
       .click()
 
     // Create delivery page
@@ -76,6 +76,7 @@ describe('Delivery with recurrence rule (role: dispatcher)', () => {
 
     cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
+    // Choose Friday and Saturday
     cy.get('[data-testid="recurrence-add"]').click()
     cy.chooseDaysOfTheWeek([5, 6])
     cy.get('[data-testid=save]').click()
@@ -143,9 +144,10 @@ describe('Delivery with recurrence rule (role: dispatcher)', () => {
     // Verify the first order is created
     cy.get('[data-task-id]').should('have.length', 2)
 
-    // Verify the recurring order is created on this Friday
+    // Verify the recurring order is created on the next Friday
     cy.visit(
       `/admin/dashboard/fullscreen/${moment()
+        .add(1, 'week')
         .day(5)
         .format('YYYY-MM-DD')}?nav=on`,
     )
