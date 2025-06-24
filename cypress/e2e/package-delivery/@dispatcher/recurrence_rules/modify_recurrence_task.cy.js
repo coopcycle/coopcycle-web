@@ -26,7 +26,7 @@ describe('Delivery with recurrence rule (role: dispatcher)', () => {
         .click()
 
       cy.get('[data-testid=store_Acme__list_item]')
-        .contains('Créer une livraison')
+        .contains('Créer une nouvelle commande')
         .click()
 
       // Create delivery page

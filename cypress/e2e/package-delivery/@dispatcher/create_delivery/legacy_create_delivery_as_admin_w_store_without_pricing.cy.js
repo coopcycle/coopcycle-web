@@ -19,7 +19,7 @@ context('Delivery (role: admin) for a store without pricing', () => {
       .click()
 
     cy.get('[data-testid=store_Acme_without_pricing__list_item]')
-      .contains('Créer une livraison')
+      .contains('Créer une nouvelle commande')
       .click()
 
     cy.get('[data-testid=go-to-legacy-form]').click()

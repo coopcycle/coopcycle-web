@@ -16,6 +16,7 @@ fos_js_routing:
         - admin_deliveries
         - admin_delivery
         - admin_deliveries_pricing_ruleset
+        - admin_store_delivery_new
         - admin_dashboard_fullscreen
         - admin_foodtech_dashboard
         - admin_foodtech_settings

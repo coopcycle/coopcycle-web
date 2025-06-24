@@ -615,6 +615,7 @@ admin_store_delivery_new:
             store: admin_store
             store_deliveries: admin_store_deliveries
             back: admin_deliveries
+            store_new: admin_store_delivery_new
     methods:  [ GET ]
 
 admin_delivery_legacy:
@@ -635,7 +636,9 @@ admin_delivery:
       routes:
         stores: admin_stores
         store: admin_store
+        store_deliveries: admin_store_deliveries
         back: admin_deliveries
+        store_new: admin_store_delivery_new
   methods:  [ GET ]
 
 admin_store_delivery_download_images:

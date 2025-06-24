@@ -63,16 +63,19 @@ Cypress.Commands.add('getIfExists', (selector, callbackWhenNotFound=null) => {
 })
 
 Cypress.Commands.add('setMockDateTime', dateTime => {
+  // Reset previous mocks (if any)
+  cy.resetMockDateTime()
+
   cy.symfonyConsole(`coopcycle:datetime:mock -d "${dateTime}"`)
 
-  cy.clock(new Date(dateTime), ['Date']).then((clock) => {
+  cy.clock(new Date(dateTime), ['Date']).then(clock => {
     // Set up a timer to tick the clock forward every 100ms
-    const timer = setInterval(() => {
-      clock.tick(100, { log: false });
-    }, 100);
+    const timerId = setInterval(() => {
+      clock.tick(100, { log: false })
+    }, 100)
 
     // Store the timer ID so it can be cleared later
-    Cypress.env('clockTimer', timer);
+    Cypress.env('clockTimer', timerId)
   })
 })
 
@@ -80,9 +83,10 @@ Cypress.Commands.add('resetMockDateTime', () => {
   cy.symfonyConsole('coopcycle:datetime:mock --reset')
 
   // Clear the interval that's advancing the clock
-  const timer = Cypress.env('clockTimer');
-  if (timer) {
-    clearInterval(timer);
+  const timerId = Cypress.env('clockTimer')
+
+  if (timerId) {
+    clearInterval(timerId)
   }
 
   // cy.clock() will be reset automatically
@@ -118,12 +122,12 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
       const maxAttempts = 10
 
       function tryFindOption() {
-        return cy
+        cy
           .get('.rc-virtual-list-holder-inner .ant-select-item-option', {
             log: false,
           })
           .then($options => {
-            if ($options.length === 0) {
+            if (!$options || $options.length === 0) {
               cy.log(
                 `No options found for selector "${selector}" with text "${text}"`,
               )
