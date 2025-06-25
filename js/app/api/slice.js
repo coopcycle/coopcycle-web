@@ -215,9 +215,6 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['PricingRuleSet'],
     }),
-    getPricingRuleSetApplications: builder.query({
-      query: id => `api/pricing_rule_sets/${id}/applications`,
-    }),
   }),
 })
 
@@ -249,5 +246,4 @@ export const {
   useCreatePricingRuleSetMutation,
   useUpdatePricingRuleSetMutation,
   useDeletePricingRuleSetMutation,
-  useGetPricingRuleSetApplicationsQuery,
 } = apiSlice
