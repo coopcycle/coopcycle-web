@@ -93,10 +93,6 @@ adminDashboard.pricing.noPricings: There are no pricings yet
 adminDashboard.pricing.createNew: Create a new pricing
 adminDashboard.pricing.noRuleFound: No pricing rule found. Pricing rules define how
   the delivery cost is calculated.
-adminDashboard.pricing.MODERN_VERSION_INFO: This is the modern React version of the pricing rule set form.
-adminDashboard.pricing.SWITCH_TO_CLASSIC: Switch to Classic Version
-adminDashboard.pricing.CLASSIC_VERSION_INFO: This is the classic version of the pricing rule set form.
-adminDashboard.pricing.TRY_REACT_VERSION: Try New React Version
 adminDashboard.tags.title: Tags
 adminDashboard.tags.createNew: Create new tag
 adminDashboard.tags.name: Name

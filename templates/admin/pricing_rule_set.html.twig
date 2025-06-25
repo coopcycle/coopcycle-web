@@ -25,9 +25,9 @@
 
   <div class="alert alert-info">
     <i class="fa fa-info-circle"></i>
-    {{ 'adminDashboard.pricing.CLASSIC_VERSION_INFO'|trans }}
+    {{ 'This is the classic version of the pricing rule set form.' }}
     <a href="{{ pricing_rule_set.id ? path('admin_deliveries_pricing_ruleset_beta', { id: pricing_rule_set.id }) : path('admin_deliveries_pricing_ruleset_beta_new') }}" class="btn btn-sm btn-primary pull-right">
-      {{ 'adminDashboard.pricing.TRY_REACT_VERSION'|trans }}
+      {{ 'Try New Beta Version' }}
     </a>
   </div>
 
