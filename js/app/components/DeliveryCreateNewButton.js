@@ -3,8 +3,6 @@ import { Button, Modal, Select } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { useTranslation } from 'react-i18next'
 
-const { Option } = Select
-
 export default function DeliveryCreateNewButton({
   stores,
   routes,
@@ -57,17 +55,19 @@ export default function DeliveryCreateNewButton({
           style={{ width: '100%' }}
           placeholder={t('ADMIN_DASHBOARD_CHOOSE_STORE_LABEL')}
           onChange={handleStoreChange}
-          value={selectedStore}>
-          {stores.map(store => (
-            <Option
-              key={store.id}
-              value={window.Routing.generate(routes.store_new, {
-                id: store.id,
-              })}>
-              {store.name}
-            </Option>
-          ))}
-        </Select>
+          value={selectedStore}
+          showSearch
+          filterOption={(input, option) =>
+            (option?.label ?? '').toLowerCase().startsWith(input.toLowerCase())
+          }
+          options={stores.map(store => ({
+            key: store.id,
+            value: window.Routing.generate(routes.store_new, {
+              id: store.id,
+            }),
+            label: store.name,
+          }))}
+        />
       </Modal>
     </>
   )
