@@ -1,0 +1,19 @@
+.rule-picker {
+  .table > tbody > tr > td {
+    border-top: none;
+  }
+  .form-control {
+    background-color: transparent;
+    border: 1px dashed darken(#FFEFCF, 50%);
+    box-shadow: none;
+  }
+  margin-bottom: 20px;
+  &-preview {
+    margin-top: 10px;
+    pre {
+      margin: 0;
+      font-size: 11px;
+      white-space: pre-wrap;
+    }
+  }
+}
