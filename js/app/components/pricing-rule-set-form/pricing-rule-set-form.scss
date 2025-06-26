@@ -7,6 +7,12 @@
 
     &__card {
       background-color: $bgcolor;
+      transition: all 0.2s ease;
+
+      &.dragging {
+        transform: rotate(2deg);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+      }
     }
 
     &__text {
@@ -28,23 +34,13 @@
       }
     }
 
-  //  &__main {
-  //    display: flex;
-  //    border-bottom: 1px solid darken($bgcolor, 25%);
-  //  }
-  //
-  //  &__handle {
-  //    text-align: center;
-  //    cursor: grab;
-  //    padding: 0 20px;
-  //  }
-  //  &__body {
-  //    flex: 1;
-  //    padding: 0 10px;
-  //  }
-  //  &__remove {
-  //    text-align: right;
-  //  }
+    &__handle {
+      cursor: grab;
+      display: flex;
+      align-items: center;
+      color: darken($bgcolor, 50%);
+    }
+
   //  &__price {
   //    padding: 10px 15px;
   //    .form-control {

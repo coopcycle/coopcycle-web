@@ -300,6 +300,7 @@
         "FORM_PRICING_RULE_SAVE_ERROR": "An error occurred while saving rule {{ name }}",
         "FORM_PRICING_RULE_EXPRESSION_REQUIRED": "Add at least one condition",
         "FORM_PRICING_RULE_PRICE_REQUIRED": "Add a price",
+        "FORM_PRICING_RULE_REORDER": "Drag to reorder",
         "RULE_PICKER_ADD_CONDITION": "Add condition",
         "RULE_PICKER_LINE_DISTANCE": "Distance (km)",
         "RULE_PICKER_LINE_WEIGHT_TARGET_DELIVERY": "Weight (kg) (total)",

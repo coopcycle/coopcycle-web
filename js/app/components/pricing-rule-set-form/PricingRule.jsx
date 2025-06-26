@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Card, Input, Button, Space, Typography, Row, Col, Alert } from 'antd'
-import {
-  DeleteOutlined,
-  ArrowUpOutlined,
-  ArrowDownOutlined,
-  DragOutlined,
-} from '@ant-design/icons'
+import { DeleteOutlined } from '@ant-design/icons'
 import { useTranslation } from 'react-i18next'
 import PricingRuleTarget from './components/PricingRuleTarget'
 import RulePicker from './components/RulePicker'
@@ -32,9 +27,9 @@ const PricingRule = ({
   index,
   onUpdate,
   onRemove,
-  onMoveUp,
-  onMoveDown,
   validationErrors = [],
+  dragHandleProps,
+  isDragging = false,
 }) => {
   const { t } = useTranslation()
   const [localRule, setLocalRule] = useState(rule)
@@ -105,7 +100,7 @@ const PricingRule = ({
   return (
     <Card
       size="small"
-      className="mb-3 pricing-rule-set__rule__card"
+      className={`mb-3 pricing-rule-set__rule__card ${isDragging ? 'dragging' : ''}`}
       title={
         <Space className="pricing-rule-set__rule__text">
           <Position position={index} />
@@ -113,20 +108,6 @@ const PricingRule = ({
       }
       extra={
         <Space>
-          {onMoveUp && (
-            <Button
-              size="small"
-              icon={<ArrowUpOutlined />}
-              onClick={onMoveUp}
-            />
-          )}
-          {onMoveDown && (
-            <Button
-              size="small"
-              icon={<ArrowDownOutlined />}
-              onClick={onMoveDown}
-            />
-          )}
           <Button
             size="small"
             danger
@@ -137,7 +118,12 @@ const PricingRule = ({
       }>
       <Row gutter={16} className="pricing-rule-set__rule__border_bottom">
         <Col>
-          <DragOutlined />
+          <div
+            {...dragHandleProps}
+            className="pricing-rule-set__rule__handle"
+            title={t('FORM_PRICING_RULE_REORDER')}>
+            <i className="fa fa-2x fa-arrows"></i>
+          </div>
         </Col>
         <Col flex="auto">
           <div className="mb-3">
