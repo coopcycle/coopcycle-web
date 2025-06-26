@@ -16,7 +16,7 @@ import {
   useCreatePricingRuleSetMutation,
   useUpdatePricingRuleSetMutation,
 } from '../../api/slice'
-import PricingRuleForm from './PricingRuleForm'
+import PricingRule from './PricingRule'
 import ShowApplications from '../Applications'
 import LegacyPricingRulesWarning from './components/LegacyPricingRulesWarning'
 import AddRulePerTask from './components/AddRulePerTask'
@@ -219,7 +219,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
           )}
 
           {rules.map((rule, index) => (
-            <PricingRuleForm
+            <PricingRule
               key={index}
               rule={rule}
               index={index}

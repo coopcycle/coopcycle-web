@@ -23,7 +23,7 @@ import Position from './components/Position'
 const { Text } = Typography
 const { Option } = Select
 
-const PricingRuleForm = ({
+const PricingRule = ({
   rule,
   index,
   onUpdate,
@@ -179,4 +179,4 @@ const PricingRuleForm = ({
   )
 }
 
-export default PricingRuleForm
+export default PricingRule
