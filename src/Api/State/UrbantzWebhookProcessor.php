@@ -217,7 +217,7 @@ class UrbantzWebhookProcessor implements ProcessorInterface
         $delivery = $this->deliveryRepository->findOneByHashId($task['extTrackId']);
 
         if (!$delivery) {
-            $this->logger->error(sprintf('Could not find delivery corresponding to hash "%s"', $extTrackId));
+            $this->logger->error(sprintf('Could not find delivery corresponding to hash "%s"', $task['extTrackId']));
             return;
         }
 
