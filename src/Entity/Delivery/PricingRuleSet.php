@@ -106,7 +106,35 @@ class PricingRuleSet
 
     public function setRules($rules)
     {
-        $this->rules = $rules;
+        // Clear existing rules (this will trigger cascade deletion for orphaned rules)
+        $this->rules->clear();
+
+        // Add new rules and set the bidirectional relationship
+        if ($rules instanceof \Traversable || is_array($rules)) {
+            foreach ($rules as $rule) {
+                $this->addRule($rule);
+            }
+        }
+
+        return $this;
+    }
+
+    public function addRule(PricingRule $rule)
+    {
+        if (!$this->rules->contains($rule)) {
+            $this->rules->add($rule);
+            $rule->setRuleSet($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRule(PricingRule $rule)
+    {
+        if ($this->rules->contains($rule)) {
+            $this->rules->removeElement($rule);
+            // No need to delete the rule itself - let Doctrine handle cascade deletion
+        }
 
         return $this;
     }
