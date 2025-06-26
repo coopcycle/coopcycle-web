@@ -134,11 +134,11 @@ const PricingRuleForm = ({
       <Row gutter={16}>
         <Col>
           <div style={{ marginBottom: 16 }}>
-            <Text strong>{t('form.pricing_rule.name.label')}</Text>
+            <Text strong>{t('FORM_PRICING_RULE_SET_PRICING_RULE_NAME_LABEL')}</Text>
             <Input
               value={localRule.productOption?.name || ''}
               onChange={e => handleNameChange(e.target.value)}
-              placeholder={t('ENTER_RULE_NAME')}
+              placeholder={t('FORM_PRICING_RULE_SET_PRICING_RULE_NAME_PLACEHOLDER')}
               style={{ marginTop: 4 }}
             />
           </div>

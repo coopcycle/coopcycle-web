@@ -16,6 +16,8 @@
         "DELIVERY_TIME_SLOTS": "Delivery time slots",
         "ADD_BUTTON": "Add",
         "SAVE_BUTTON": "Save",
+        "SAVE_ERROR": "An error occurred while saving",
+        "SAVE_SUCCESS": "Your changes have been saved",
         "FORM_REQUIRED": "Required",
         "DATEPICKER_TODAY": "[Today]",
         "DATEPICKER_TOMORROW": "[Tomorrow]",
@@ -725,10 +727,6 @@
         "PAYMENT_FORM_ERROR": "Sorry, we could not process your payment",
         "TRY_AGAIN": "Try again",
         "ADMIN_DASHBOARD_NO_TIMESLOTS_AVAILABLE": "There are no choices available for this time slot. Please contact an admin if it blocks you to create a delivery.",
-        "BASIC_INFORMATION": "Basic Information",
-        "FIELD_REQUIRED": "This field is required",
-        "ENTER_RULE_NAME": "Enter rule name",
-        "SAVE_ERROR": "An error occurred while saving",
         "FORM_PRICING_RULE_SET_NAME_LABEL": "Name",
         "FORM_PRICING_RULE_SET_RULES_LABEL": "Rules",
         "FORM_PRICING_RULE_SET_RULES_DOCS_PATH": "/en/admin/pricing_rule/",
@@ -737,6 +735,8 @@
         "FORM_PRICING_RULE_SET_STRATEGY_HELP": "The rules are evaluated from top to bottom, and 'Rules per point' are evaluated before 'Rules per order'. Depending on the method of calculation selected, either the first rule that matches will decide the price, or the price will be calculated by adding all the matching rules.",
         "FORM_PRICING_RULE_SET_STRATEGY_FIND_LABEL": "The first rule that matches",
         "FORM_PRICING_RULE_SET_STRATEGY_MAP_LABEL": "All the matching rules",
-        "FORM_PRICING_RULE_SET_NO_RULE_FOUND": "No pricing rule found. Pricing rules define how the delivery cost is calculated."
+        "FORM_PRICING_RULE_SET_NO_RULE_FOUND": "No pricing rule found. Pricing rules define how the delivery cost is calculated.",
+        "FORM_PRICING_RULE_SET_PRICING_RULE_NAME_LABEL": "Name (Displayed to a customer)",
+        "FORM_PRICING_RULE_SET_PRICING_RULE_NAME_PLACEHOLDER": "e.g. Urgent delivery"
     }
 }

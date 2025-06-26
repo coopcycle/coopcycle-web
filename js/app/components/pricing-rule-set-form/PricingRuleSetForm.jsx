@@ -83,7 +83,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
 
       if (isNew) {
         const result = await createPricingRuleSet(payload).unwrap()
-        message.success(t('global.changesSaved'))
+        message.success(t('SAVE_SUCCESS'))
         // Redirect to edit mode
         window.location.href = `/admin/deliveries/pricing/beta/${result.id}`
       } else {
@@ -91,7 +91,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
           id: ruleSetId,
           ...payload,
         }).unwrap()
-        message.success(t('global.changesSaved'))
+        message.success(t('SAVE_SUCCESS'))
       }
     } catch (error) {
       console.error('Failed to save pricing rule set:', error)
@@ -168,7 +168,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
           <Form.Item
             name="name"
             label={t('FORM_PRICING_RULE_SET_NAME_LABEL')}
-            rules={[{ required: true, message: t('FIELD_REQUIRED') }]}>
+            rules={[{ required: true, message: t('FORM_REQUIRED') }]}>
             <Input />
           </Form.Item>
 
