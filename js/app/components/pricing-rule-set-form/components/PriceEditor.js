@@ -43,7 +43,7 @@ export default function PriceEditor({ priceType, defaultValue, onChange }) {
       return (
         <InputNumber
           value={parseFloat(defaultValue.value) / 100 || 0}
-          onChange={value => onChange((value || 0) * 100)}
+          onChange={value => onChange(`${(value || 0) * 100}`)}
           style={{ width: '100%' }}
           step={0.01}
           min={0}
