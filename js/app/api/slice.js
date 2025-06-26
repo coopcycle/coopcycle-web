@@ -18,6 +18,33 @@ export const apiSlice = createApi({
         return await fetchAllRecordsUsingFetchWithBQ(baseQuery, 'api/tags', 100)
       },
     }),
+    getZones: builder.query({
+      queryFn: async (args, queryApi, extraOptions, baseQuery) => {
+        return await fetchAllRecordsUsingFetchWithBQ(
+          baseQuery,
+          'api/zones',
+          100,
+        )
+      },
+    }),
+    getTimeSlots: builder.query({
+      queryFn: async (args, queryApi, extraOptions, baseQuery) => {
+        return await fetchAllRecordsUsingFetchWithBQ(
+          baseQuery,
+          'api/time_slots',
+          100,
+        )
+      },
+    }),
+    getPackages: builder.query({
+      queryFn: async (args, queryApi, extraOptions, baseQuery) => {
+        return await fetchAllRecordsUsingFetchWithBQ(
+          baseQuery,
+          'api/packages',
+          100,
+        )
+      },
+    }),
 
     getOrderTiming: builder.query({
       query: nodeId => `${nodeId}/timing`,
@@ -34,16 +61,6 @@ export const apiSlice = createApi({
         method: 'PUT',
         body: patch,
       }),
-    }),
-
-    getTimeSlots: builder.query({
-      queryFn: async (args, queryApi, extraOptions, baseQuery) => {
-        return await fetchAllRecordsUsingFetchWithBQ(
-          baseQuery,
-          'api/time_slots',
-          100,
-        )
-      },
     }),
 
     patchAddress: builder.mutation({
@@ -222,10 +239,12 @@ export const apiSlice = createApi({
 export const {
   useGetTaxRatesQuery,
   useGetTagsQuery,
+  useGetZonesQuery,
+  useGetTimeSlotsQuery,
+  useGetPackagesQuery,
   useGetOrderTimingQuery,
   useGetOrderQuery,
   useUpdateOrderMutation,
-  useGetTimeSlotsQuery,
   useGetStoreQuery,
   useGetStoreAddressesQuery,
   useGetStoreTimeSlotsQuery,
