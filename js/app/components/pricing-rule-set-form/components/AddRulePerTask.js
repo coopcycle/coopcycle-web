@@ -1,7 +1,8 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
+import { PlusOutlined } from '@ant-design/icons'
 import HelpIcon from '../../../components/HelpIcon'
-import Button from '../../../components/core/Button'
+import { Button } from '../../core/AntdButton'
 
 export default function AddRulePerTask({ onAddRule }) {
   const { t } = useTranslation()
@@ -10,9 +11,9 @@ export default function AddRulePerTask({ onAddRule }) {
     <div>
       <Button
         success
-        icon="plus"
+        icon={<PlusOutlined />}
         onClick={() => onAddRule('TASK')}
-        testID="pricing_rule_set_add_rule_target_task">
+        data-testid="pricing-rule-set-add-rule-target-task">
         {t('PRICING_ADD_RULE_PER_TASK')}
       </Button>
       <HelpIcon
