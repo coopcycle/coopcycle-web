@@ -23,15 +23,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
     operations: [
         new Get(
             normalizationContext: ['groups' => ['pricing_rule_set:read']],
-            security: 'is_granted(\'ROLE_ADMIN\')'
         ),
         new Put(
-            denormalizationContext: ['groups' => ['pricing_rule_set:write']],
             normalizationContext: ['groups' => ['pricing_rule_set:read']],
-            security: 'is_granted(\'ROLE_ADMIN\')'
+            denormalizationContext: ['groups' => ['pricing_rule_set:write']],
         ),
         new Delete(
-            security: 'is_granted(\'ROLE_ADMIN\')',
             validationContext: ['groups' => ['deleteValidation']],
             processor: ValidationAwareRemoveProcessor::class,
         ),
@@ -39,18 +36,16 @@ use Symfony\Contracts\Translation\TranslatorInterface;
             uriTemplate: '/pricing_rule_sets/{id}/applications',
             controller: Applications::class,
             openapiContext: ['summary' => 'Get the objects to which this pricing rule set is applied'],
-            security: 'is_granted(\'ROLE_ADMIN\')'
         ),
         new Post(
-            denormalizationContext: ['groups' => ['pricing_rule_set:write']],
             normalizationContext: ['groups' => ['pricing_rule_set:read']],
-            security: 'is_granted(\'ROLE_ADMIN\')'
+            denormalizationContext: ['groups' => ['pricing_rule_set:write']],
         ),
         new GetCollection(
             normalizationContext: ['groups' => ['pricing_rule_set:read']],
-            security: 'is_granted(\'ROLE_ADMIN\')'
-        )
-    ]
+        ),
+    ],
+    security: "is_granted('ROLE_ADMIN')"
 )]
 #[AssertCanDelete(groups: ['deleteValidation'])]
 class PricingRuleSet
