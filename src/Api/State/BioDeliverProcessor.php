@@ -12,7 +12,8 @@ use AppBundle\Entity\Task;
  */
 class BioDeliverProcessor implements ProcessorInterface
 {
-    public function __construct(private readonly ItemProvider $provider)
+    public function __construct(private readonly ItemProvider $provider,
+        private readonly ProcessorInterface $persistProcessor)
     {}
 
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
@@ -28,7 +29,7 @@ class BioDeliverProcessor implements ProcessorInterface
             $task->setComments($data->comments);
         }
 
-        return $task;
+       return $this->persistProcessor->process($task, $operation, $uriVariables, $context);
     }
 }
 
