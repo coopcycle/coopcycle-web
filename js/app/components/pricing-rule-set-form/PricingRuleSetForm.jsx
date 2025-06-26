@@ -1,5 +1,16 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { Form, Input, Radio, Button, Card, Alert, Spin, message } from 'antd'
+import {
+  Form,
+  Input,
+  Radio,
+  Button,
+  Card,
+  Row,
+  Alert,
+  Spin,
+  message,
+  Space,
+} from 'antd'
 import { useTranslation } from 'react-i18next'
 import {
   useGetPricingRuleSetQuery,
@@ -11,6 +22,8 @@ import ShowApplications from '../Applications'
 import LegacyPricingRulesWarning from './components/LegacyPricingRulesWarning'
 import AddRulePerTask from './components/AddRulePerTask'
 import AddRulePerDelivery from './components/AddRulePerDelivery'
+
+import './pricing-rule-set-form.scss'
 
 const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
   const { t } = useTranslation()
@@ -196,10 +209,12 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
   return (
     <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px' }}>
       {!isNew && (
-        <ShowApplications
-          objectId={ruleSetId}
-          fetchUrl="_api_/pricing_rule_sets/{id}/applications_get"
-        />
+        <div className="mb-4">
+          <ShowApplications
+            objectId={ruleSetId}
+            fetchUrl="_api_/pricing_rule_sets/{id}/applications_get"
+          />
+        </div>
       )}
 
       <Form
@@ -210,75 +225,82 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
           strategy: 'find',
           options: [],
         }}>
-        <Card title={t('BASIC_INFORMATION')} style={{ marginBottom: 24 }}>
-          <Form.Item
-            name="name"
-            label={t('FORM_PRICING_RULE_SET_NAME_LABEL')}
-            rules={[{ required: true, message: t('FORM_REQUIRED') }]}>
-            <Input />
-          </Form.Item>
+        <Form.Item
+          name="name"
+          label={t('FORM_PRICING_RULE_SET_NAME_LABEL')}
+          rules={[{ required: true, message: t('FORM_REQUIRED') }]}>
+          <Input />
+        </Form.Item>
 
-          <Form.Item
-            name="strategy"
-            label={t('FORM_PRICING_RULE_SET_STRATEGY_LABEL')}
-            help={t('FORM_PRICING_RULE_SET_STRATEGY_HELP')}
-            rules={[{ required: true }]}>
-            <Radio.Group>
+        <Form.Item
+          name="strategy"
+          label={t('FORM_PRICING_RULE_SET_STRATEGY_LABEL')}
+          help={t('FORM_PRICING_RULE_SET_STRATEGY_HELP')}
+          rules={[{ required: true }]}>
+          <Radio.Group>
+            <Space direction="vertical">
               <Radio value="find">
                 {t('FORM_PRICING_RULE_SET_STRATEGY_FIND_LABEL')}
               </Radio>
               <Radio value="map">
                 {t('FORM_PRICING_RULE_SET_STRATEGY_MAP_LABEL')}
               </Radio>
-            </Radio.Group>
-          </Form.Item>
-        </Card>
+            </Space>
+          </Radio.Group>
+        </Form.Item>
+
+        <div className="py-2"></div>
 
         {hasLegacyRules ? (
-          <LegacyPricingRulesWarning
-            migrateToTarget={ruleTarget => {
-              setRules(
-                rules.map(rule => ({
-                  ...rule,
-                  target: ruleTarget,
-                })),
-              )
-            }}
-          />
+          <Form.Item className="m-0">
+            <LegacyPricingRulesWarning
+              migrateToTarget={ruleTarget => {
+                setRules(
+                  rules.map(rule => ({
+                    ...rule,
+                    target: ruleTarget,
+                  })),
+                )
+              }}
+            />
+          </Form.Item>
         ) : null}
 
-        <Card
-          title={t('FORM_PRICING_RULE_SET_RULES_LABEL')}
-          style={{ marginBottom: 24 }}
-          actions={[
-            <AddRulePerTask onAddRule={target => addRule(target)} />,
-            <AddRulePerDelivery onAddRule={target => addRule(target)} />,
-          ]}>
-          {rules.length === 0 && (
-            <Alert
-              message={t('FORM_PRICING_RULE_SET_NO_RULE_FOUND')}
-              type="warning"
-              style={{ marginBottom: 16 }}
-            />
-          )}
+        <Form.Item label={t('FORM_PRICING_RULE_SET_RULES_LABEL')}>
+          <>
+            {rules.length === 0 && (
+              <Alert
+                message={t('FORM_PRICING_RULE_SET_NO_RULE_FOUND')}
+                type="warning"
+                className="mb-2"
+              />
+            )}
 
-          {rules.map((rule, index) => (
-            <PricingRule
-              key={index}
-              rule={rule}
-              index={index}
-              onUpdate={updatedRule => updateRule(index, updatedRule)}
-              onRemove={() => removeRule(index)}
-              onMoveUp={index > 0 ? () => moveRule(index, index - 1) : null}
-              onMoveDown={
-                index < rules.length - 1
-                  ? () => moveRule(index, index + 1)
-                  : null
-              }
-              validationErrors={ruleValidationErrors[index] || []}
-            />
-          ))}
-        </Card>
+            {rules.map((rule, index) => (
+              <PricingRule
+                key={index}
+                rule={rule}
+                index={index}
+                onUpdate={updatedRule => updateRule(index, updatedRule)}
+                onRemove={() => removeRule(index)}
+                onMoveUp={index > 0 ? () => moveRule(index, index - 1) : null}
+                onMoveDown={
+                  index < rules.length - 1
+                    ? () => moveRule(index, index + 1)
+                    : null
+                }
+                validationErrors={ruleValidationErrors[index] || []}
+              />
+            ))}
+          </>
+        </Form.Item>
+
+        <Form.Item>
+          <Row>
+            <AddRulePerTask onAddRule={target => addRule(target)} />
+            <AddRulePerDelivery onAddRule={target => addRule(target)} />
+          </Row>
+        </Form.Item>
 
         <Form.Item>
           <Button

@@ -736,7 +736,7 @@
         "FORM_PRICING_RULE_SET_STRATEGY_FIND_LABEL": "The first rule that matches",
         "FORM_PRICING_RULE_SET_STRATEGY_MAP_LABEL": "All the matching rules",
         "FORM_PRICING_RULE_SET_NO_RULE_FOUND": "No pricing rule found. Pricing rules define how the delivery cost is calculated.",
-        "FORM_PRICING_RULE_SET_PRICING_RULE_NAME_LABEL": "Name (Displayed to a customer)",
+        "FORM_PRICING_RULE_SET_PRICING_RULE_NAME_LABEL": "Name (displayed to a client)",
         "FORM_PRICING_RULE_SET_PRICING_RULE_NAME_PLACEHOLDER": "e.g. Urgent delivery",
         "FORM_PRICING_RULE_SAVE_ERROR": "An error occurred while saving rule {{ name }}",
         "FORM_PRICING_RULE_EXPRESSION_REQUIRED": "Add at least one condition",

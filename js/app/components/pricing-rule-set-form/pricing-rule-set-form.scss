@@ -1,0 +1,63 @@
+.pricing-rule-set {
+
+  $bgcolor: #FFEFCF;
+
+  &__rule {
+    font-family: 'Roboto Mono', monospace;
+
+    &__card {
+      background-color: $bgcolor;
+    }
+
+    &__text {
+      color: darken($bgcolor, 50%);
+    }
+
+    &__border_bottom {
+      border-bottom: 1px solid darken($bgcolor, 25%);
+    }
+
+    &__rule_picker {
+      .table > tbody > tr > td {
+        border-top: none;
+      }
+      .form-control {
+        background-color: transparent;
+        border: 1px dashed darken($bgcolor, 50%);
+        box-shadow: none;
+      }
+    }
+
+  //  &__main {
+  //    display: flex;
+  //    border-bottom: 1px solid darken($bgcolor, 25%);
+  //  }
+  //
+  //  &__handle {
+  //    text-align: center;
+  //    cursor: grab;
+  //    padding: 0 20px;
+  //  }
+  //  &__body {
+  //    flex: 1;
+  //    padding: 0 10px;
+  //  }
+  //  &__remove {
+  //    text-align: right;
+  //  }
+  //  &__price {
+  //    padding: 10px 15px;
+  //    .form-control {
+  //      background-color: darken($bgcolor, 5%);
+  //      border: 2px dashed darken($bgcolor, 50%);
+  //      box-shadow: none;
+  //      color: darken($bgcolor, 50%);
+  //    }
+  //  }
+  //  .btn {
+  //    background-color: darken($bgcolor, 5%);
+  //    border-color: darken($bgcolor, 50%);
+  //    color: darken($bgcolor, 50%);
+  //  }
+  }
+}

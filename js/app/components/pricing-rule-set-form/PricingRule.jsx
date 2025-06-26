@@ -105,10 +105,9 @@ const PricingRule = ({
   return (
     <Card
       size="small"
-      style={{ marginBottom: 16 }}
+      className="mb-3 pricing-rule-set__rule__card"
       title={
-        <Space>
-          <DragOutlined />
+        <Space className="pricing-rule-set__rule__text">
           <Position position={index} />
         </Space>
       }
@@ -136,10 +135,13 @@ const PricingRule = ({
           />
         </Space>
       }>
-      <Row gutter={16}>
+      <Row gutter={16} className="pricing-rule-set__rule__border_bottom">
         <Col>
-          <div style={{ marginBottom: 16 }}>
-            <Text strong>
+          <DragOutlined />
+        </Col>
+        <Col flex="auto">
+          <div className="mb-3">
+            <Text className="pricing-rule-set__rule__text">
               {t('FORM_PRICING_RULE_SET_PRICING_RULE_NAME_LABEL')}
             </Text>
             <Input
@@ -148,12 +150,15 @@ const PricingRule = ({
               placeholder={t(
                 'FORM_PRICING_RULE_SET_PRICING_RULE_NAME_PLACEHOLDER',
               )}
-              style={{ marginTop: 4 }}
+              className="mt-1 mx-2"
             />
           </div>
 
-          <div style={{ marginBottom: 16 }}>
-            <PricingRuleTarget target={localRule.target} />
+          <div className="mb-3">
+            <PricingRuleTarget
+              className="pricing-rule-set__rule__text"
+              target={localRule.target}
+            />
 
             <RulePicker
               ruleTarget={localRule.target}
@@ -171,14 +176,14 @@ const PricingRule = ({
                 message={t('FORM_PRICING_RULE_EXPRESSION_REQUIRED')}
                 type="error"
                 size="small"
-                style={{ marginTop: 8 }}
+                className="mt-2"
                 showIcon
               />
             ) : null}
           </div>
         </Col>
       </Row>
-      <Row gutter={16}>
+      <Row gutter={16} className="mt-2">
         <Col>
           <PriceChoice
             priceType={priceType}
@@ -200,7 +205,7 @@ const PricingRule = ({
               message={t('FORM_PRICING_RULE_PRICE_REQUIRED')}
               type="error"
               size="small"
-              style={{ marginTop: 8 }}
+              className="mt-2"
               showIcon
             />
           ) : null}

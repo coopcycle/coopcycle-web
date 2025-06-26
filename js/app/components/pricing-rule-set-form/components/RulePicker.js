@@ -2,8 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { withTranslation } from 'react-i18next'
 
-import './RulePicker.scss'
-
 import RulePickerLine from './RulePickerLine'
 import { linesToString } from '../../../delivery/pricing/expression-builder'
 import { parseAST } from '../../../delivery/pricing/pricing-rule-parser'
@@ -59,7 +57,7 @@ class RulePicker extends React.Component {
 
   render() {
     return (
-      <div className="rule-picker">
+      <div className="pricing-rule-set__rule__rule_picker">
         <table className="table mb-2">
           <tbody>
             {this.state.lines.map((line, index) => (
