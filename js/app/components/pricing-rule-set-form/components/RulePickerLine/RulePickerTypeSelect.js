@@ -129,8 +129,7 @@ function RulePickerType({ ruleTarget, type }) {
   )
 }
 
-
-export function RulePickerTypeSelect({ruleTarget, type, onTypeSelect}) {
+export function RulePickerTypeSelect({ ruleTarget, type, onTypeSelect }) {
   const { t } = useTranslation()
 
   const types = useMemo(() => {

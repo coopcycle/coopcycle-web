@@ -1,8 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { getCurrencySymbol } from '../../../i18n'
 import { useTranslation } from 'react-i18next'
 import Select from 'react-select'
 import _ from 'lodash'
+import { useGetPackagesQuery } from '../../../api/slice'
+import PickerIsLoading from './RulePickerLine/PickerIsLoading'
+import PickerIsError from './RulePickerLine/PickerIsError'
 
 /**
  * Custom styles for the react-select component in order to:
@@ -15,11 +18,10 @@ import _ from 'lodash'
  */
 const reactSelectStyles = {
   container: provided => ({
-      ...provided,
-      display: 'inline-block',
-      width: 150
-    }
-  ),
+    ...provided,
+    display: 'inline-block',
+    width: 150,
+  }),
   control: provided => ({ ...provided, minHeight: undefined }),
   valueContainer: provided => ({ ...provided, padding: '0 5px' }),
   placeholder: provided => ({ ...provided, color: undefined }),
@@ -31,21 +33,52 @@ const reactSelectStyles = {
     color: undefined,
     padding: 0,
     ':hover': {
-      color: undefined
-    }
+      color: undefined,
+    },
   }),
-  option: provided => ({ ...provided, wordWrap: 'break-word' })
+  option: provided => ({ ...provided, wordWrap: 'break-word' }),
 }
 
-export default ({ packages, defaultValue, onChange }) => {
+export default ({ defaultValue, onChange }) => {
+  const { data: packages, isFetching } = useGetPackagesQuery()
+
+  const packageNames = useMemo(() => {
+    if (!packages) {
+      return undefined
+    }
+
+    return packages ? packages.map(item => item.name) : []
+  }, [packages])
 
   const { t } = useTranslation()
 
-  const [ unitPrice, setUnitPrice ] = useState(defaultValue.unitPrice || 0)
-  const [ packageName, setPackageName ] = useState(defaultValue.packageName || packages[0])
-  const [ offset, setOffset ] = useState(defaultValue.offset || 0)
-  const [ discountPrice, setDiscountPrice ] = useState(defaultValue.discountPrice || 0)
-  const [ withDiscount, setWithDiscount ] = useState(defaultValue.offset > 0)
+  const [unitPrice, setUnitPrice] = useState(defaultValue.unitPrice || 0)
+  const [packageName, setPackageName] = useState()
+  const [offset, setOffset] = useState(defaultValue.offset || 0)
+  const [discountPrice, setDiscountPrice] = useState(
+    defaultValue.discountPrice || 0,
+  )
+  const [withDiscount, setWithDiscount] = useState(defaultValue.offset > 0)
+
+  useEffect(() => {
+    if (!packageNames) {
+      return
+    }
+
+    if (packageNames.length === 0) {
+      return
+    }
+
+    setPackageName(defaultValue.packageName || packageNames[0])
+  }, [defaultValue.packageName, packageNames])
+
+  if (isFetching) {
+    return <PickerIsLoading />
+  }
+
+  if (!packages) {
+    return <PickerIsError />
+  }
 
   return (
     <div data-testid="price_rule_price_per_package_editor">
@@ -53,13 +86,13 @@ export default ({ packages, defaultValue, onChange }) => {
         <label className="mr-2">
           <input
             type="number"
-            defaultValue={ unitPrice / 100 }
+            defaultValue={unitPrice / 100}
             size="4"
             min="0"
             step=".001"
             className="form-control d-inline-block"
             style={{ width: '80px' }}
-            onChange={ e => {
+            onChange={e => {
               setUnitPrice(e.target.value * 100)
               onChange({
                 packageName,
@@ -67,14 +100,15 @@ export default ({ packages, defaultValue, onChange }) => {
                 offset,
                 discountPrice,
               })
-            }} />
-            <span className="ml-2">{ getCurrencySymbol() }</span>
+            }}
+          />
+          <span className="ml-2">{getCurrencySymbol()}</span>
         </label>
         <label className="mr-2">
-          <span className="mx-2">{ t('PRICE_RANGE_EDITOR.PER_PACKAGE') }</span>
+          <span className="mx-2">{t('PRICE_RANGE_EDITOR.PER_PACKAGE')}</span>
           <Select
-            value={ { value: packageName, label: packageName } }
-            onChange={ selectedOption => {
+            value={{ value: packageName, label: packageName }}
+            onChange={selectedOption => {
               setPackageName(selectedOption.value)
               onChange({
                 packageName: selectedOption.value,
@@ -83,24 +117,27 @@ export default ({ packages, defaultValue, onChange }) => {
                 discountPrice,
               })
             }}
-            options={ _.sortBy(packages).map(pkg => ({ label: pkg, value: pkg })) }
-            styles={ reactSelectStyles }
+            options={_.sortBy(packageNames).map(pkg => ({
+              label: pkg,
+              value: pkg,
+            }))}
+            styles={reactSelectStyles}
             isSearchable
           />
         </label>
       </div>
-      { withDiscount && (
+      {withDiscount && (
         <div>
           <label className="mr-2">
             <input
               type="number"
-              defaultValue={ discountPrice / 100 }
+              defaultValue={discountPrice / 100}
               size="4"
               min="0"
               step=".1"
               className="form-control d-inline-block"
               style={{ width: '80px' }}
-              onChange={ e => {
+              onChange={e => {
                 setDiscountPrice(e.target.value * 100)
                 onChange({
                   packageName,
@@ -108,31 +145,37 @@ export default ({ packages, defaultValue, onChange }) => {
                   offset,
                   discountPrice: e.target.value * 100,
                 })
-              }} />
-              <span className="ml-2">{ getCurrencySymbol() }</span>
+              }}
+            />
+            <span className="ml-2">{getCurrencySymbol()}</span>
           </label>
           <label className="mr-2">
-            <span className="mx-2">{ t('PRICE_RANGE_EDITOR.PER_PACKAGE_STARTING') }</span>
+            <span className="mx-2">
+              {t('PRICE_RANGE_EDITOR.PER_PACKAGE_STARTING')}
+            </span>
             <input
               type="number"
-              defaultValue={ offset }
+              defaultValue={offset}
               size="4"
               min="2"
               step="1"
               className="form-control d-inline-block"
               style={{ width: '80px' }}
-              onChange={ e => {
+              onChange={e => {
                 setOffset(parseInt(e.target.value, 10))
                 onChange({
                   packageName,
                   unitPrice: e.target.value * 100,
                   offset: parseInt(e.target.value, 10),
-                  discountPrice
+                  discountPrice,
                 })
-              }} />
+              }}
+            />
           </label>
-          <button type="button" className="btn btn-xs btn-default"
-            onClick={ () => {
+          <button
+            type="button"
+            className="btn btn-xs btn-default"
+            onClick={() => {
               setWithDiscount(false)
               setOffset(0)
               onChange({
@@ -143,13 +186,15 @@ export default ({ packages, defaultValue, onChange }) => {
               })
             }}>
             <i className="fa fa-times mr-1"></i>
-            <span>{ t('PRICE_RANGE_EDITOR.PER_PACKAGE_DEL_DISCOUNT') }</span>
+            <span>{t('PRICE_RANGE_EDITOR.PER_PACKAGE_DEL_DISCOUNT')}</span>
           </button>
         </div>
-      ) }
-      { !withDiscount && (
-        <button type="button" className="btn btn-xs btn-default"
-          onClick={ () => {
+      )}
+      {!withDiscount && (
+        <button
+          type="button"
+          className="btn btn-xs btn-default"
+          onClick={() => {
             setWithDiscount(true)
             setOffset(2)
             setDiscountPrice(100)
@@ -161,7 +206,7 @@ export default ({ packages, defaultValue, onChange }) => {
             })
           }}>
           <i className="fa fa-plus mr-1"></i>
-          <span>{ t('PRICE_RANGE_EDITOR.PER_PACKAGE_ADD_DISCOUNT') }</span>
+          <span>{t('PRICE_RANGE_EDITOR.PER_PACKAGE_ADD_DISCOUNT')}</span>
         </button>
       )}
     </div>

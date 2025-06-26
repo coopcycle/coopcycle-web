@@ -7,7 +7,10 @@ import numbro from 'numbro'
 import ZonePicker from './ZonePicker'
 import PackagePicker from './PackagePicker'
 import TimeSlotPicker from './TimeSlotPicker'
-import { numericTypes, isNum } from '../../expression-builder'
+import {
+  numericTypes,
+  isNum,
+} from '../../../../delivery/pricing/expression-builder'
 import { RulePickerTypeSelect } from './RulePickerTypeSelect'
 
 /*
@@ -29,29 +32,33 @@ import { RulePickerTypeSelect } from './RulePickerTypeSelect'
 */
 
 const typeToOperators = {
-  'distance': ['<', '>', 'in'],
-  'weight': ['<', '>', 'in'],
-  'vehicle': ['=='],
+  distance: ['<', '>', 'in'],
+  weight: ['<', '>', 'in'],
+  vehicle: ['=='],
   'pickup.address': ['in_zone', 'out_zone'],
   'dropoff.address': ['in_zone', 'out_zone'],
   'diff_days(pickup)': ['==', '<', '>', 'in'],
   'diff_hours(pickup)': ['==', '<', '>'],
   'dropoff.doorstep': ['=='],
-  'packages': ['containsAtLeastOne'],
+  packages: ['containsAtLeastOne'],
   'order.itemsTotal': ['==', '<', '>', 'in'],
   'packages.totalVolumeUnits()': ['<', '>', 'in'],
-  'time_range_length(pickup, \'hours\')': ['<', '>', 'in'],
-  'time_range_length(dropoff, \'hours\')': ['<', '>', 'in'],
+  "time_range_length(pickup, 'hours')": ['<', '>', 'in'],
+  "time_range_length(dropoff, 'hours')": ['<', '>', 'in'],
   'task.type': ['=='],
-  'time_slot': ['==', '!='],
+  time_slot: ['==', '!='],
 }
 
 const isK = type => type === 'distance' || type === 'weight'
-const isDecimals = type => isK(type) || ["time_range_length(pickup, 'hours')", "time_range_length(dropoff, 'hours')"].includes(type)
+const isDecimals = type =>
+  isK(type) ||
+  [
+    "time_range_length(pickup, 'hours')",
+    "time_range_length(dropoff, 'hours')",
+  ].includes(type)
 
 const formatValue = (value, type) => {
   if (!_.includes(numericTypes, type)) {
-
     return value
   }
 
@@ -62,26 +69,24 @@ const formatValue = (value, type) => {
   return numbro.unformat(value) * (isK(type) ? 1000 : 1)
 }
 
-const getStepForType = (type) => {
-
+const getStepForType = type => {
   // As it returns float, it will never work when comparing to floats
   // https://github.com/coopcycle/coopcycle-web/issues/5002
   if (type === 'packages.totalVolumeUnits()') {
-    return '1';
+    return '1'
   }
 
-  return '0.1';
+  return '0.1'
 }
 
 class RulePickerLine extends React.Component {
-
-  constructor (props) {
+  constructor(props) {
     super(props)
 
     this.state = {
-      type: props.type || '',         // the variable the rule is built upon
+      type: props.type || '', // the variable the rule is built upon
       operator: props.operator || '', // the operator/function used to build the rule
-      value: isScalar(props.value) ? `${props.value}` : (props.value || ''),       // the value(s) which complete the rule
+      value: isScalar(props.value) ? `${props.value}` : props.value || '', // the value(s) which complete the rule
     }
 
     this.onTypeSelect = this.onTypeSelect.bind(this)
@@ -93,40 +98,40 @@ class RulePickerLine extends React.Component {
     this.delete = this.delete.bind(this)
   }
 
-  componentDidUpdate (prevProps, prevState) {
+  componentDidUpdate(prevProps, prevState) {
     if (!_.isEqual(this.state, prevState)) {
       this.props.onUpdate(this.props.index, {
         left: this.state.type,
         operator: this.state.operator,
-        right: this.state.value
+        right: this.state.value,
       })
     }
   }
 
-  handleFirstBoundChange (ev) {
+  handleFirstBoundChange(ev) {
     const { type } = this.state
     let value = this.state.value.slice()
     value[0] = ev.target.value * (isK(type) ? 1000 : 1)
     this.setState({ value })
   }
 
-  handleSecondBoundChange (ev) {
+  handleSecondBoundChange(ev) {
     const { type } = this.state
     let value = this.state.value.slice()
     value[1] = ev.target.value * (isK(type) ? 1000 : 1)
     this.setState({ value })
   }
 
-  handleValueChange (ev) {
+  handleValueChange(ev) {
     const { type, value } = this.state
     if (!Array.isArray(value)) {
       this.setState({
-        value: formatValue(ev.target.value, type)
+        value: formatValue(ev.target.value, type),
       })
     }
   }
 
-  onTypeSelect (ev) {
+  onTypeSelect(ev) {
     ev.preventDefault()
 
     const type = ev.target.value
@@ -141,12 +146,11 @@ class RulePickerLine extends React.Component {
     this.setState({
       type,
       operator,
-      value: ''
+      value: '',
     })
   }
 
-  onOperatorSelect (ev) {
-
+  onOperatorSelect(ev) {
     ev.preventDefault()
 
     const operator = ev.target.value
@@ -164,133 +168,178 @@ class RulePickerLine extends React.Component {
     this.setState(state)
   }
 
-  delete (evt) {
+  delete(evt) {
     evt.preventDefault()
     this.props.onDelete(this.props.index)
   }
 
   renderNumberInput(k = false, decimals = false) {
-
     let props = {}
     if (decimals) {
       props = {
         ...props,
-        step: '.1'
+        step: '.1',
       }
     }
 
     return (
-      <input className="form-control input-sm"
-        value={ k ? (this.state.value / 1000) : this.state.value }
-        onChange={ this.handleValueChange }
-        type="number" min="0" required { ...props }></input>
+      <input
+        className="form-control input-sm"
+        value={k ? this.state.value / 1000 : this.state.value}
+        onChange={this.handleValueChange}
+        type="number"
+        min="0"
+        required
+        {...props}></input>
     )
   }
 
   renderBooleanInput() {
-
     return (
-      <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
+      <select
+        onChange={this.handleValueChange}
+        value={this.state.value}
+        className="form-control input-sm">
         <option value="false">No</option>
         <option value="true">Yes</option>
       </select>
     )
   }
 
-  renderBoundPicker () {
+  renderBoundPicker() {
     /*
      * Return the displayed input for bound selection
      */
     switch (this.state.operator) {
-    // zone
-    case 'in_zone':
-    case 'out_zone':
-      return (
-        <ZonePicker onChange={this.handleValueChange} value={this.state.value} />
-      )
-
-    case '==':
-    case '!=':
-
-      if (this.state.type === 'vehicle') {
+      // zone
+      case 'in_zone':
+      case 'out_zone':
         return (
-          <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
-            <option value="">-</option>
-            <option value="bike">Vélo</option>
-            <option value="cargo_bike">Vélo Cargo</option>
-          </select>
+          <ZonePicker
+            onChange={this.handleValueChange}
+            value={this.state.value}
+          />
         )
-      }
 
-      if (this.state.type === 'task.type') {
+      case '==':
+      case '!=':
+        if (this.state.type === 'vehicle') {
+          return (
+            <select
+              onChange={this.handleValueChange}
+              value={this.state.value}
+              className="form-control input-sm">
+              <option value="">-</option>
+              <option value="bike">Vélo</option>
+              <option value="cargo_bike">Vélo Cargo</option>
+            </select>
+          )
+        }
+
+        if (this.state.type === 'task.type') {
+          return (
+            <select
+              onChange={this.handleValueChange}
+              value={this.state.value}
+              className="form-control input-sm">
+              <option value="">-</option>
+              <option value="PICKUP">Pickup</option>
+              <option value="DROPOFF">Dropoff</option>
+            </select>
+          )
+        }
+
+        if (this.state.type === 'dropoff.doorstep') {
+          return this.renderBooleanInput()
+        }
+
+        if (this.state.type === 'time_slot') {
+          return (
+            <TimeSlotPicker
+              onChange={this.handleValueChange}
+              value={this.state.value}
+            />
+          )
+        }
+
+        return this.renderNumberInput(
+          isK(this.state.type),
+          isDecimals(this.state.type),
+        )
+      // weight, distance, diff_days(pickup)
+      case 'in':
         return (
-          <select onChange={this.handleValueChange} value={this.state.value} className="form-control input-sm">
-            <option value="">-</option>
-            <option value="PICKUP">Pickup</option>
-            <option value="DROPOFF">Dropoff</option>
-          </select>
-        )
-      }
-
-      if (this.state.type === 'dropoff.doorstep') {
-        return this.renderBooleanInput()
-      }
-
-      if (this.state.type === 'time_slot') {
-        return (
-          <TimeSlotPicker onChange={this.handleValueChange} value={this.state.value} />
-        )
-      }
-
-      return this.renderNumberInput(isK(this.state.type), isDecimals(this.state.type))
-    // weight, distance, diff_days(pickup)
-    case 'in':
-      return (
-        <div className="d-flex justify-content-between">
-          <div className="mr-2">
-            <input className="form-control input-sm" value={ (this.state.value[0] / (isK(this.state.type) ? 1000 : 1))  } onChange={this.handleFirstBoundChange} type="number" min="0" required step={ getStepForType(this.state.type) }></input>
+          <div className="d-flex justify-content-between">
+            <div className="mr-2">
+              <input
+                className="form-control input-sm"
+                value={this.state.value[0] / (isK(this.state.type) ? 1000 : 1)}
+                onChange={this.handleFirstBoundChange}
+                type="number"
+                min="0"
+                required
+                step={getStepForType(this.state.type)}></input>
+            </div>
+            <div>
+              <input
+                className="form-control input-sm"
+                value={this.state.value[1] / (isK(this.state.type) ? 1000 : 1)}
+                onChange={this.handleSecondBoundChange}
+                type="number"
+                min="0"
+                required
+                step={getStepForType(this.state.type)}></input>
+            </div>
           </div>
-          <div>
-            <input className="form-control input-sm" value={ (this.state.value[1] / (isK(this.state.type) ? 1000 : 1)) } onChange={this.handleSecondBoundChange} type="number" min="0" required step={ getStepForType(this.state.type) }></input>
-          </div>
-        </div>
-      )
-    case '<':
-    case '>':
-      return this.renderNumberInput(isK(this.state.type), isDecimals(this.state.type))
-    case 'containsAtLeastOne':
-      return (
-        <PackagePicker onChange={this.handleValueChange} value={this.state.value} />
-      )
+        )
+      case '<':
+      case '>':
+        return this.renderNumberInput(
+          isK(this.state.type),
+          isDecimals(this.state.type),
+        )
+      case 'containsAtLeastOne':
+        return (
+          <PackagePicker
+            onChange={this.handleValueChange}
+            value={this.state.value}
+          />
+        )
     }
   }
 
-  render () {
-
+  render() {
     return (
       <tr data-testid={this.props.testID}>
         <td>
-          <RulePickerTypeSelect ruleTarget={this.props.ruleTarget} type={this.state.type} onTypeSelect={this.onTypeSelect} />
+          <RulePickerTypeSelect
+            ruleTarget={this.props.ruleTarget}
+            type={this.state.type}
+            onTypeSelect={this.onTypeSelect}
+          />
         </td>
         <td width="20%">
-          {
-            this.state.type && (
-              <select value={this.state.operator} onChange={this.onOperatorSelect} className="form-control input-sm">
-                <option value="">-</option>
-                { typeToOperators[this.state.type].map(function(operator, index) {
-                  return (<option key={index} value={operator}>{operator}</option>)
-                })}
-              </select>
-            )
-          }
+          {this.state.type && (
+            <select
+              value={this.state.operator}
+              onChange={this.onOperatorSelect}
+              className="form-control input-sm">
+              <option value="">-</option>
+              {typeToOperators[this.state.type].map(function (operator, index) {
+                return (
+                  <option key={index} value={operator}>
+                    {operator}
+                  </option>
+                )
+              })}
+            </select>
+          )}
         </td>
-        <td width="25%">
-          {
-            this.state.operator && this.renderBoundPicker()
-          }
-        </td>
+        <td width="25%">{this.state.operator && this.renderBoundPicker()}</td>
         <td className="text-right" onClick={this.delete}>
-          <a href="#"><i className="fa fa-trash"></i></a>
+          <a href="#">
+            <i className="fa fa-trash"></i>
+          </a>
         </td>
       </tr>
     )

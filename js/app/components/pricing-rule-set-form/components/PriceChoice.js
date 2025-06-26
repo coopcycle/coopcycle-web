@@ -1,22 +1,22 @@
-import { useTranslation } from 'react-i18next'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
+import { Select } from 'antd'
 
-export function PriceChoice({ defaultValue, onChange }) {
+const { Option } = Select
+
+export function PriceChoice({ priceType, handlePriceTypeChange }) {
   const { t } = useTranslation()
 
   return (
-    <select
-      data-testid="pricing_rule_price_type_choice"
-      onChange={e => onChange(e.target.value)}
-      defaultValue={defaultValue}>
-      <option value="fixed">{t('PRICE_RANGE_EDITOR.TYPE_FIXED')}</option>
-      <option value="percentage">
+    <Select value={priceType} onChange={handlePriceTypeChange}>
+      <Option value="fixed">{t('PRICE_RANGE_EDITOR.TYPE_FIXED')}</Option>
+      <Option value="percentage">
         {t('PRICE_RANGE_EDITOR.TYPE_PERCENTAGE')}
-      </option>
-      <option value="range">{t('PRICE_RANGE_EDITOR.TYPE_RANGE')}</option>
-      <option value="per_package">
+      </Option>
+      <Option value="range">{t('PRICE_RANGE_EDITOR.TYPE_RANGE')}</Option>
+      <Option value="per_package">
         {t('PRICE_RANGE_EDITOR.TYPE_PER_PACKAGE')}
-      </option>
-    </select>
+      </Option>
+    </Select>
   )
 }

@@ -1,20 +1,38 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
-import { selectZones } from '../../redux/pricingSlice'
+import { Select } from 'antd'
+import { useGetZonesQuery } from '../../../../api/slice'
+import PickerIsLoading from './PickerIsLoading'
+import PickerIsError from './PickerIsError'
 
 export default function ZonePicker({ value, onChange }) {
-  const zones = useSelector(selectZones)
+  const { data: zones, isFetching } = useGetZonesQuery()
+
+  if (isFetching) {
+    return <PickerIsLoading />
+  }
+
+  if (!zones) {
+    return <PickerIsError />
+  }
 
   return (
-    <select onChange={onChange} value={value} className="form-control input-sm">
-      <option value="">-</option>
-      {zones.map((item, index) => {
-        return (
-          <option value={item} key={index}>
-            {item}
-          </option>
-        )
-      })}
-    </select>
+    <Select
+      onChange={value =>
+        // replicate on change signature of html input until we re-write PricePickerLine component
+        onChange({
+          target: {
+            value: value,
+          },
+        })
+      }
+      value={value}
+      options={[
+        { value: '', label: '-' },
+        ...zones.map(item => ({
+          value: item.name,
+          label: item.name,
+        })),
+      ]}
+    />
   )
 }

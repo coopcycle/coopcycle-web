@@ -1,20 +1,38 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
-import { selectPackages } from '../../redux/pricingSlice'
+import { Select } from 'antd'
+import { useGetPackagesQuery } from '../../../../api/slice'
+import PickerIsLoading from './PickerIsLoading'
+import PickerIsError from './PickerIsError'
 
 export default function PackagePicker({ value, onChange }) {
-  const packages = useSelector(selectPackages)
+  const { data: packages, isFetching } = useGetPackagesQuery()
+
+  if (isFetching) {
+    return <PickerIsLoading />
+  }
+
+  if (!packages) {
+    return <PickerIsError />
+  }
 
   return (
-    <select onChange={onChange} value={value} className="form-control input-sm">
-      <option value="">-</option>
-      {packages.map((item, index) => {
-        return (
-          <option value={item} key={index}>
-            {item}
-          </option>
-        )
-      })}
-    </select>
+    <Select
+      onChange={value =>
+        // replicate on change signature of html input until we re-write PricePickerLine component
+        onChange({
+          target: {
+            value: value,
+          },
+        })
+      }
+      value={value}
+      options={[
+        { value: '', label: '-' },
+        ...packages.map(item => ({
+          value: item.name,
+          label: item.name,
+        })),
+      ]}
+    />
   )
 }

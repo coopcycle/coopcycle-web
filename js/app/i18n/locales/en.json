@@ -724,6 +724,18 @@
         "SWITCH_BACK_TIMESLOTPICKER": "Back to timeslot picker",
         "PAYMENT_FORM_ERROR": "Sorry, we could not process your payment",
         "TRY_AGAIN": "Try again",
-        "ADMIN_DASHBOARD_NO_TIMESLOTS_AVAILABLE": "There are no choices available for this time slot. Please contact an admin if it blocks you to create a delivery."
-      }
+        "ADMIN_DASHBOARD_NO_TIMESLOTS_AVAILABLE": "There are no choices available for this time slot. Please contact an admin if it blocks you to create a delivery.",
+        "BASIC_INFORMATION": "Basic Information",
+        "FIELD_REQUIRED": "This field is required",
+        "ENTER_RULE_NAME": "Enter rule name",
+        "SAVE_ERROR": "An error occurred while saving",
+        "FORM_PRICING_RULE_SET_NAME_LABEL": "Name",
+        "FORM_PRICING_RULE_SET_RULES_LABEL": "Rules",
+        "FORM_PRICING_RULE_SET_RULES_DOCS_PATH": "/en/admin/pricing_rule/",
+        "FORM_PRICING_RULE_SET_STRATEGY_LABEL": "Method of calculation",
+        "FORM_PRICING_RULE_SET_STRATEGY_DOCS_PATH": "/en/admin/pricing_method_of_calculation",
+        "FORM_PRICING_RULE_SET_STRATEGY_HELP": "The rules are evaluated from top to bottom, and 'Rules per point' are evaluated before 'Rules per order'. Depending on the method of calculation selected, either the first rule that matches will decide the price, or the price will be calculated by adding all the matching rules.",
+        "FORM_PRICING_RULE_SET_STRATEGY_FIND_LABEL": "The first rule that matches",
+        "FORM_PRICING_RULE_SET_STRATEGY_MAP_LABEL": "All the matching rules",
+    }
 }
