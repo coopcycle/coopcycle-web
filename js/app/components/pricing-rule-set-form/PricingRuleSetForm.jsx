@@ -1,22 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import {
-  Form,
-  Input,
-  Radio,
-  Button,
-  Card,
-  Space,
-  Alert,
-  Spin,
-  message,
-} from 'antd'
+import { Form, Input, Radio, Button, Card, Alert, Spin, message } from 'antd'
 import { useTranslation } from 'react-i18next'
 import {
   useGetPricingRuleSetQuery,
   useCreatePricingRuleSetMutation,
   useUpdatePricingRuleSetMutation,
 } from '../../api/slice'
-import PricingRule from './PricingRule'
+import PricingRule, { VALIDATION_ERRORS } from './PricingRule'
 import ShowApplications from '../Applications'
 import LegacyPricingRulesWarning from './components/LegacyPricingRulesWarning'
 import AddRulePerTask from './components/AddRulePerTask'
@@ -26,6 +16,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
   const { t } = useTranslation()
   const [form] = Form.useForm()
   const [rules, setRules] = useState([])
+  const [ruleValidationErrors, setRuleValidationErrors] = useState({})
 
   // RTK Query hooks
   const {
@@ -71,8 +62,56 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
     }
   }, [ruleSet, form, isNew])
 
+  const validateRules = () => {
+    const errors = []
+    const newRuleValidationErrors = {}
+
+    rules.forEach((rule, index) => {
+      const ruleErrors = []
+
+      // Check if expression is empty
+      if (!rule.expression || rule.expression.trim() === '') {
+        ruleErrors.push(VALIDATION_ERRORS.EXPRESSION_REQUIRED)
+      }
+
+      // Check if price is empty
+      if (!rule.price || rule.price.trim() === '') {
+        ruleErrors.push(VALIDATION_ERRORS.PRICE_REQUIRED)
+      }
+
+      if (ruleErrors.length > 0) {
+        errors.push({
+          index,
+          errors: ruleErrors,
+        })
+        newRuleValidationErrors[index] = ruleErrors
+      }
+    })
+
+    // Update validation errors state
+    setRuleValidationErrors(newRuleValidationErrors)
+
+    return errors
+  }
+
   const handleSubmit = async values => {
     try {
+      // Validate rules before submission
+      const validationErrors = validateRules()
+
+      if (validationErrors.length > 0) {
+        // Show validation errors
+        validationErrors.forEach(({ index }) => {
+          message.error(
+            `${t('FORM_PRICING_RULE_SAVE_ERROR', { name: `#${index + 1}` })}`,
+          )
+        })
+        return
+      }
+
+      // Clear validation errors if validation passes
+      setRuleValidationErrors({})
+
       const payload = {
         ...values,
         rules: rules.map((rule, index) => ({
@@ -114,6 +153,13 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
     const newRules = [...rules]
     newRules[index] = updatedRule
     setRules(newRules)
+
+    // Clear validation errors for this rule when it's updated
+    if (ruleValidationErrors[index]) {
+      const newValidationErrors = { ...ruleValidationErrors }
+      delete newValidationErrors[index]
+      setRuleValidationErrors(newValidationErrors)
+    }
   }
 
   const removeRule = index => {
@@ -229,6 +275,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
                   ? () => moveRule(index, index + 1)
                   : null
               }
+              validationErrors={ruleValidationErrors[index] || []}
             />
           ))}
         </Card>

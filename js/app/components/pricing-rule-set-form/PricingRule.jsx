@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Card, Input, Select, Button, Space, Typography, Row, Col } from 'antd'
+import { Card, Input, Button, Space, Typography, Row, Col, Alert } from 'antd'
 import {
   DeleteOutlined,
   ArrowUpOutlined,
@@ -21,7 +21,11 @@ import {
 import Position from './components/Position'
 
 const { Text } = Typography
-const { Option } = Select
+
+export const VALIDATION_ERRORS = {
+  EXPRESSION_REQUIRED: 'EXPRESSION_REQUIRED',
+  PRICE_REQUIRED: 'PRICE_REQUIRED',
+}
 
 const PricingRule = ({
   rule,
@@ -30,6 +34,7 @@ const PricingRule = ({
   onRemove,
   onMoveUp,
   onMoveDown,
+  validationErrors = [],
 }) => {
   const { t } = useTranslation()
   const [localRule, setLocalRule] = useState(rule)
@@ -134,11 +139,15 @@ const PricingRule = ({
       <Row gutter={16}>
         <Col>
           <div style={{ marginBottom: 16 }}>
-            <Text strong>{t('FORM_PRICING_RULE_SET_PRICING_RULE_NAME_LABEL')}</Text>
+            <Text strong>
+              {t('FORM_PRICING_RULE_SET_PRICING_RULE_NAME_LABEL')}
+            </Text>
             <Input
               value={localRule.productOption?.name || ''}
               onChange={e => handleNameChange(e.target.value)}
-              placeholder={t('FORM_PRICING_RULE_SET_PRICING_RULE_NAME_PLACEHOLDER')}
+              placeholder={t(
+                'FORM_PRICING_RULE_SET_PRICING_RULE_NAME_PLACEHOLDER',
+              )}
               style={{ marginTop: 4 }}
             />
           </div>
@@ -154,6 +163,18 @@ const PricingRule = ({
                 handleFieldChange('expression', newExpression)
               }}
             />
+
+            {validationErrors.includes(
+              VALIDATION_ERRORS.EXPRESSION_REQUIRED,
+            ) ? (
+              <Alert
+                message={t('FORM_PRICING_RULE_EXPRESSION_REQUIRED')}
+                type="error"
+                size="small"
+                style={{ marginTop: 8 }}
+                showIcon
+              />
+            ) : null}
           </div>
         </Col>
       </Row>
@@ -173,6 +194,16 @@ const PricingRule = ({
               handleFieldChange('price', newPrice)
             }}
           />
+
+          {validationErrors.includes(VALIDATION_ERRORS.PRICE_REQUIRED) ? (
+            <Alert
+              message={t('FORM_PRICING_RULE_PRICE_REQUIRED')}
+              type="error"
+              size="small"
+              style={{ marginTop: 8 }}
+              showIcon
+            />
+          ) : null}
         </Col>
       </Row>
     </Card>
