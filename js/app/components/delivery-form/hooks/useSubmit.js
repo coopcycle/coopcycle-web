@@ -65,6 +65,7 @@ function convertDateInRecurrenceRulePayload(value) {
 }
 
 function convertValuesToRecurrenceRulePayload(values) {
+
   let data = {
     rule: values.rrule,
     template: {
@@ -92,7 +93,7 @@ function convertValuesToRecurrenceRulePayload(values) {
           packages: task.type === 'DROPOFF' ? task.packages : [],
           weight: task.type === 'DROPOFF' ? task.weight : [],
           comments: task.comments,
-          tags: task.tags.map(t => t.slug),
+          tags: task.tags,
         }
       }),
     },
