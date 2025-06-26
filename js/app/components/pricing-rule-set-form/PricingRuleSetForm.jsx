@@ -204,12 +204,10 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
         <Card
           title={t('FORM_PRICING_RULE_SET_RULES_LABEL')}
           style={{ marginBottom: 24 }}
-          extra={
-            <Space>
-              <AddRulePerTask onAddRule={target => addRule(target)} />
-              <AddRulePerDelivery onAddRule={target => addRule(target)} />
-            </Space>
-          }>
+          actions={[
+            <AddRulePerTask onAddRule={target => addRule(target)} />,
+            <AddRulePerDelivery onAddRule={target => addRule(target)} />,
+          ]}>
           {rules.length === 0 && (
             <Alert
               message={t('FORM_PRICING_RULE_SET_NO_RULE_FOUND')}

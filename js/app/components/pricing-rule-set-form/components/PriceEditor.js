@@ -3,6 +3,7 @@ import { InputNumber } from 'antd'
 import PercentageEditor from './PercentageEditor'
 import PriceRangeEditor from './PriceRangeEditor'
 import PricePerPackageEditor from './PricePerPackageEditor'
+import PriceFixedEditor from './PriceFixedEditor'
 
 export default function PriceEditor({ priceType, defaultValue, onChange }) {
   switch (priceType) {
@@ -39,16 +40,10 @@ export default function PriceEditor({ priceType, defaultValue, onChange }) {
       )
     case 'fixed':
     default:
-      //TODO: fix currency?
       return (
-        <InputNumber
-          value={parseFloat(defaultValue.value) / 100 || 0}
-          onChange={value => onChange(`${(value || 0) * 100}`)}
-          style={{ width: '100%' }}
-          step={0.01}
-          min={0}
-          precision={2}
-          addonAfter="€"
+        <PriceFixedEditor
+          defaultValue={defaultValue}
+          onChange={value => onChange(value)}
         />
       )
   }

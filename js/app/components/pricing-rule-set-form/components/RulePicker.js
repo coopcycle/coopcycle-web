@@ -104,7 +104,7 @@ RulePicker.defaultProps = {
 
 RulePicker.propTypes = {
   ruleTarget: PropTypes.string,
-  expressionAST: PropTypes.object.isRequired,
+  expressionAST: PropTypes.object,
   onExpressionChange: PropTypes.func.isRequired,
 }
 
