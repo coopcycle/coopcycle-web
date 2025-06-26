@@ -21,7 +21,7 @@ trait TaggableTrait
     }
 
     #[SerializedName('tags')]
-    #[Groups(['task', 'order', 'order_minimal', 'delivery'])]
+    #[Groups(['task', 'order', 'order_minimal', 'delivery', 'incident'])]
     public function getTags(): array
     {
         if (is_callable($this->tagsCallable)) {
@@ -33,7 +33,7 @@ trait TaggableTrait
     }
 
     #[SerializedName('tags')]
-    #[Groups(['task_create', 'task_edit'])]
+    #[Groups(['task_create', 'task_edit', 'incident'])]
     public function setTags(array|string|callable $tags): void
     {
         if (is_callable($tags)) {

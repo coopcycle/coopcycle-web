@@ -32,7 +32,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new GetCollection(controller: IncidentFastList::class),
         new Post(controller: CreateIncident::class)
     ],
-    normalizationContext: ['groups' => ['incident']]
+    normalizationContext: ['groups' => ['incident']],
+    denormalizationContext: ['groups' => ['incident']]
 )]
 class Incident implements TaggableInterface {
     use TaggableTrait;
