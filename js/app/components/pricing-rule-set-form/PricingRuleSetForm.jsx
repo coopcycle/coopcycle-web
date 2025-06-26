@@ -212,7 +212,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
           }>
           {rules.length === 0 && (
             <Alert
-              message={t('adminDashboard.pricing.noRuleFound')}
+              message={t('FORM_PRICING_RULE_SET_NO_RULE_FOUND')}
               type="warning"
               style={{ marginBottom: 16 }}
             />
@@ -242,7 +242,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
             size="large"
             block
             loading={isCreating || isUpdating}>
-            {t('basics.save')}
+            {t('SAVE_BUTTON')}
           </Button>
         </Form.Item>
       </Form>
