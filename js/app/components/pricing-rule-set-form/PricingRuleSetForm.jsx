@@ -271,16 +271,16 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
 
         <Form.Item
           name="strategy"
-          label={t('FORM_PRICING_RULE_SET_STRATEGY_LABEL')}
+          label={t('PRICING_PRICING_RULE_SET_STRATEGY_LABEL')}
           help={t('FORM_PRICING_RULE_SET_STRATEGY_HELP')}
           rules={[{ required: true }]}>
           <Radio.Group>
             <Space direction="vertical">
               <Radio value="find">
-                {t('FORM_PRICING_RULE_SET_STRATEGY_FIND_LABEL')}
+                {t('PRICING_PRICING_RULE_SET_STRATEGY_FIND_LABEL')}
               </Radio>
               <Radio value="map">
-                {t('FORM_PRICING_RULE_SET_STRATEGY_MAP_LABEL')}
+                {t('PRICING_PRICING_RULE_SET_STRATEGY_MAP_LABEL')}
               </Radio>
             </Space>
           </Radio.Group>
