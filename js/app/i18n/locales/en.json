@@ -736,6 +736,6 @@
         "FORM_PRICING_RULE_SET_STRATEGY_DOCS_PATH": "/en/admin/pricing_method_of_calculation",
         "FORM_PRICING_RULE_SET_STRATEGY_HELP": "The rules are evaluated from top to bottom, and 'Rules per point' are evaluated before 'Rules per order'. Depending on the method of calculation selected, either the first rule that matches will decide the price, or the price will be calculated by adding all the matching rules.",
         "FORM_PRICING_RULE_SET_STRATEGY_FIND_LABEL": "The first rule that matches",
-        "FORM_PRICING_RULE_SET_STRATEGY_MAP_LABEL": "All the matching rules",
+        "FORM_PRICING_RULE_SET_STRATEGY_MAP_LABEL": "All the matching rules"
     }
 }
