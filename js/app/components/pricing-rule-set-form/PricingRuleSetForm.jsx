@@ -4,12 +4,12 @@ import {
   Input,
   Radio,
   Button,
-  Card,
-  Row,
   Alert,
   Spin,
   message,
   Space,
+  Typography,
+  Divider,
 } from 'antd'
 import { useTranslation } from 'react-i18next'
 import {
@@ -17,13 +17,15 @@ import {
   useCreatePricingRuleSetMutation,
   useUpdatePricingRuleSetMutation,
 } from '../../api/slice'
-import PricingRule, { VALIDATION_ERRORS } from './PricingRule'
+import { VALIDATION_ERRORS } from './PricingRule'
 import ShowApplications from '../Applications'
 import LegacyPricingRulesWarning from './components/LegacyPricingRulesWarning'
-import AddRulePerTask from './components/AddRulePerTask'
-import AddRulePerDelivery from './components/AddRulePerDelivery'
+import PricingRuleSection from './components/PricingRuleSection'
 
 import './pricing-rule-set-form.scss'
+import DeprecatedTag from '../DeprecatedTag'
+
+const { Title } = Typography
 
 const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
   const { t } = useTranslation()
@@ -48,6 +50,19 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
 
   const hasLegacyRules = useMemo(() => {
     return rules.some(rule => rule.target === 'LEGACY_TARGET_DYNAMIC')
+  }, [rules])
+
+  // Separate rules by target type
+  const taskRules = useMemo(() => {
+    return rules.filter(rule => rule.target === 'TASK')
+  }, [rules])
+
+  const deliveryRules = useMemo(() => {
+    return rules.filter(rule => rule.target === 'DELIVERY')
+  }, [rules])
+
+  const legacyRules = useMemo(() => {
+    return rules.filter(rule => rule.target === 'LEGACY_TARGET_DYNAMIC')
   }, [rules])
 
   // Initialize form when data is loaded
@@ -187,6 +202,28 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
     setRules(newRules)
   }
 
+  // Helper function to get the global index of a rule within a specific target group
+  const getGlobalIndex = (localIndex, target) => {
+    if (target === 'TASK') {
+      return rules.findIndex(rule => rule === taskRules[localIndex])
+    } else if (target === 'DELIVERY') {
+      return rules.findIndex(rule => rule === deliveryRules[localIndex])
+    } else if (target === 'LEGACY_TARGET_DYNAMIC') {
+      return rules.findIndex(rule => rule === legacyRules[localIndex])
+    }
+    return -1
+  }
+
+  // Helper function to move rules within the same target group
+  const moveRuleWithinTarget = (localFromIndex, localToIndex, target) => {
+    const globalFromIndex = getGlobalIndex(localFromIndex, target)
+    const globalToIndex = getGlobalIndex(localToIndex, target)
+
+    if (globalFromIndex !== -1 && globalToIndex !== -1) {
+      moveRule(globalFromIndex, globalToIndex)
+    }
+  }
+
   if (isLoadingRuleSet && !isNew) {
     return (
       <div style={{ textAlign: 'center', padding: '50px' }}>
@@ -249,22 +286,9 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
           </Radio.Group>
         </Form.Item>
 
-        <div className="py-2"></div>
+        <div className="py-1"></div>
 
-        {hasLegacyRules ? (
-          <Form.Item className="m-0">
-            <LegacyPricingRulesWarning
-              migrateToTarget={ruleTarget => {
-                setRules(
-                  rules.map(rule => ({
-                    ...rule,
-                    target: ruleTarget,
-                  })),
-                )
-              }}
-            />
-          </Form.Item>
-        ) : null}
+        <Divider />
 
         <Form.Item label={t('FORM_PRICING_RULE_SET_RULES_LABEL')}>
           <>
@@ -276,30 +300,77 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
               />
             )}
 
-            {rules.map((rule, index) => (
-              <PricingRule
-                key={index}
-                rule={rule}
-                index={index}
-                onUpdate={updatedRule => updateRule(index, updatedRule)}
-                onRemove={() => removeRule(index)}
-                onMoveUp={index > 0 ? () => moveRule(index, index - 1) : null}
-                onMoveDown={
-                  index < rules.length - 1
-                    ? () => moveRule(index, index + 1)
-                    : null
-                }
-                validationErrors={ruleValidationErrors[index] || []}
-              />
-            ))}
-          </>
-        </Form.Item>
+            {/* Legacy Rules */}
+            {legacyRules.length > 0 ? (
+              <div className="mb-4">
+                <Title level={5}>{t('RULE_LEGACY_TARGET_DYNAMIC_TITLE')}</Title>
 
-        <Form.Item>
-          <Row>
-            <AddRulePerTask onAddRule={target => addRule(target)} />
-            <AddRulePerDelivery onAddRule={target => addRule(target)} />
-          </Row>
+                <Form.Item className="m-0">
+                  <LegacyPricingRulesWarning
+                    migrateToTarget={ruleTarget => {
+                      setRules(
+                        rules.map(rule => ({
+                          ...rule,
+                          target: ruleTarget,
+                        })),
+                      )
+                    }}
+                  />
+                </Form.Item>
+                <PricingRuleSection
+                  target="LEGACY_TARGET_DYNAMIC"
+                  rules={legacyRules}
+                  // TODO update labels
+                  title={null}
+                  emptyMessage={t('RULE_LEGACY_TARGET_DYNAMIC_HELP')}
+                  addRuleButtonLabel={t('PRICING_ADD_RULE_LEGACY')}
+                  addRuleButtonHelp={t('RULE_LEGACY_TARGET_DYNAMIC_HELP')}
+                  getGlobalIndex={getGlobalIndex}
+                  updateRule={updateRule}
+                  removeRule={removeRule}
+                  moveRuleWithinTarget={moveRuleWithinTarget}
+                  ruleValidationErrors={ruleValidationErrors}
+                  onAddRule={addRule}
+                />
+              </div>
+            ) : (
+              <>
+                {/* Per Point Rules Section */}
+                <PricingRuleSection
+                  target="TASK"
+                  rules={taskRules}
+                  title={t('RULE_TARGET_TASK_TITLE')}
+                  emptyMessage={t('PRICING_ADD_RULE_PER_TASK_HELP')}
+                  addRuleButtonLabel={t('PRICING_ADD_RULE_PER_TASK')}
+                  addRuleButtonHelp={t('PRICING_ADD_RULE_PER_TASK_HELP')}
+                  getGlobalIndex={getGlobalIndex}
+                  updateRule={updateRule}
+                  removeRule={removeRule}
+                  moveRuleWithinTarget={moveRuleWithinTarget}
+                  ruleValidationErrors={ruleValidationErrors}
+                  onAddRule={addRule}
+                />
+
+                <Divider />
+
+                {/* Per Order Rules Section */}
+                <PricingRuleSection
+                  target="DELIVERY"
+                  rules={deliveryRules}
+                  title={t('RULE_TARGET_DELIVERY_TITLE')}
+                  emptyMessage={t('PRICING_ADD_RULE_HELP')}
+                  addRuleButtonLabel={t('PRICING_ADD_RULE')}
+                  addRuleButtonHelp={t('PRICING_ADD_RULE_HELP')}
+                  getGlobalIndex={getGlobalIndex}
+                  updateRule={updateRule}
+                  removeRule={removeRule}
+                  moveRuleWithinTarget={moveRuleWithinTarget}
+                  ruleValidationErrors={ruleValidationErrors}
+                  onAddRule={addRule}
+                />
+              </>
+            )}
+          </>
         </Form.Item>
 
         <Form.Item>
