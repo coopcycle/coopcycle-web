@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import { Button, Modal, Select } from 'antd'
+import { Modal, Select } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { useTranslation } from 'react-i18next'
+import { Button } from './core/AntdButton'
 
 export default function DeliveryCreateNewButton({
   stores,
@@ -38,8 +39,7 @@ export default function DeliveryCreateNewButton({
         })
       ) : (
         <Button
-          className="btn-success-color"
-          type="primary"
+          success
           icon={<PlusOutlined />}
           onClick={showModal}>
           {t('CREATE_NEW_ORDER')}

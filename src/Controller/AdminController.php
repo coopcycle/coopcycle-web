@@ -82,6 +82,7 @@ use AppBundle\Form\TimeSlotType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\UsersExportType;
 use AppBundle\Form\ZoneCollectionType;
+use AppBundle\Pricing\RuleHumanizer;
 use AppBundle\Serializer\ApplicationsNormalizer;
 use AppBundle\Service\ActivityManager;
 use AppBundle\Service\DeliveryManager;
@@ -1192,6 +1193,45 @@ class AdminController extends AbstractController
         $duplicated = $ruleSet->duplicate($this->translator);
 
         return $this->renderPricingRuleSetForm($duplicated, $request);
+    }
+
+    #[Route(path: '/admin/deliveries/pricing/beta/new', name: 'admin_deliveries_pricing_ruleset_beta_new')]
+    public function newPricingRuleSetBetaAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        return $this->render('admin/pricing_rule_set_beta.html.twig', $this->auth([
+            'isNew' => true,
+            'ruleSetId' => null,
+        ]));
+    }
+
+    #[Route(path: '/admin/deliveries/pricing/beta/{id}', name: 'admin_deliveries_pricing_ruleset_beta')]
+    public function pricingRuleSetBetaAction($id, Request $request, RuleHumanizer $ruleHumanizer)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $ruleSet = $this->entityManager
+            ->getRepository(Delivery\PricingRuleSet::class)
+            ->find($id);
+
+        if (!$ruleSet) {
+            throw $this->createNotFoundException('Pricing rule set not found');
+        }
+
+        // Preset a name on all pricing rules that don't have a name
+        foreach ($ruleSet->getRules() as $rule) {
+            if (empty($rule->getName())) {
+                $this->pricingRuleSetManager->setPricingRuleName($rule, $ruleHumanizer->humanize($rule));
+            }
+        }
+        $this->entityManager->flush();
+
+        return $this->render('admin/pricing_rule_set_beta.html.twig', $this->auth([
+            'isNew' => false,
+            'ruleSetId' => $id,
+            'ruleSet' => $ruleSet,
+        ]));
     }
 
     private function renderFailureReasonSetForm(Delivery\FailureReasonSet $failureReasonSet, Request $request)

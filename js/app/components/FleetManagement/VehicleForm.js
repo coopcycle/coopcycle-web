@@ -33,7 +33,7 @@ export default ({initialValues, onSubmit, warehouses, closeModal}) => {
     const errors = {}
 
     if(!values.color || (values.isElectric && !values.electricRange)) {
-      errors.electricRange = t('ADMIN_FORM_REQUIRED')
+      errors.electricRange = t('FORM_REQUIRED')
     }
 
   }

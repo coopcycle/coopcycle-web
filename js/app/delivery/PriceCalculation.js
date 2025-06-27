@@ -9,15 +9,10 @@ function ProductOption({ productOption }) {
 
   return (
     <div>
-      <div>Rule #{rule.position + 1}</div>
-      <div>Target: {rule.target}</div>
-      <div>Condition: {rule.expression}</div>
-      <div>
-        <span>Price expression: {rule.price}</span>
-        <span className="pull-right">
+      <span>{rule.name}</span>
+      <span className="pull-right">
           {(productOption.price / 100).formatMoney()}
         </span>
-      </div>
     </div>
   )
 }
@@ -50,7 +45,7 @@ function Rule({ rule, matched }) {
         matched ? 'list-group-item-success' : 'list-group-item-danger'
       }>
       <div>
-        Rule #{rule.position + 1}: {rule.expression}
+        Rule #{rule.position + 1}: {rule.name ?? rule.expression}
       </div>
     </div>
   )
