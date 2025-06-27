@@ -4,21 +4,15 @@ namespace AppBundle\Api\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
-use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
-use AppBundle\Entity\Sylius\ProductOption;
-use Doctrine\ORM\EntityManagerInterface;
-use Ramsey\Uuid\Uuid;
-use Sylius\Component\Locale\Provider\LocaleProviderInterface;
-use Sylius\Component\Resource\Factory\FactoryInterface;
+use AppBundle\Service\PricingRuleSetManager;
 
 class PricingRuleSetProcessor implements ProcessorInterface
 {
     public function __construct(
         private readonly ProcessorInterface $decorated,
-        private readonly EntityManagerInterface $entityManager,
-        private readonly FactoryInterface $productOptionFactory,
-        private readonly LocaleProviderInterface $localeProvider,
+        private readonly PricingRuleSetManager $pricingRuleSetManager,
+
     ) {
     }
 
@@ -49,46 +43,8 @@ class PricingRuleSetProcessor implements ProcessorInterface
 
             if ($nameInput !== null && !empty(trim($nameInput))) {
                 $name = trim($nameInput);
-                $this->handleName($rule, $name);
+                $this->pricingRuleSetManager->setPricingRuleName($rule, $name);
             }
         }
-    }
-
-    private function handleName(PricingRule $pricingRule, string $name): void
-    {
-        $productOption = $pricingRule->getProductOption();
-
-        if ($productOption === null) {
-            // Create a new ProductOption
-            $productOption = $this->createProductOption($name);
-            $pricingRule->setProductOption($productOption);
-        } else {
-            // Update existing ProductOption name if different
-            if ($pricingRule->getName() !== $name) {
-                $productOption->setName($name);
-            }
-        }
-    }
-
-    private function createProductOption(string $name): ProductOption
-    {
-        /** @var ProductOption $productOption */
-        $productOption = $this->productOptionFactory->createNew();
-
-        // Set current locale before setting the name for translatable entities
-        $productOption->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
-
-        // Set basic properties
-        $productOption->setCode(Uuid::uuid4()->toString());
-        $productOption->setName($name);
-
-        // Set default strategy and additional flag
-        $productOption->setStrategy('free');
-        $productOption->setAdditional(false);
-
-        // Persist the new ProductOption
-        $this->entityManager->persist($productOption);
-
-        return $productOption;
     }
 }
