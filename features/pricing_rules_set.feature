@@ -361,4 +361,75 @@ Feature: Pricing rules set
         ]
       }
     """
-
+    
+  Scenario: Update pricing rule set should update the rules names
+    Given the fixtures files are loaded:
+      | pricing_rule_set_with_names.yml |
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "PUT" request to "/api/pricing_rule_sets/1" with body:
+      """
+      {
+        "name": "Updated Set with ProductOptions",
+        "strategy": "find",
+        "rules": [
+          {
+            "expression": "distance > 0",
+            "price": "500",
+            "position": 1,
+            "name": "Updated Existing Option Name"
+          },
+          {
+            "expression": "weight > 1000",
+            "price": "200",
+            "position": 2,
+            "name": "New Option for Second Rule"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    """
+      {
+        "@context": "/api/contexts/PricingRuleSet",
+        "@id": "/api/pricing_rule_sets/1",
+        "@type": "PricingRuleSet",
+        "id": 1,
+        "name": "Updated Set with ProductOptions",
+        "strategy": "find",
+        "options": [],
+        "rules": [
+          {
+            "@id": "@string@",
+            "@type": "PricingRule",
+            "id": "@integer@",
+            "target": "DELIVERY",
+            "expression": "distance > 0",
+            "price": "500",
+            "position": 1,
+            "name": "Updated Existing Option Name",
+            "expressionAst": "@*@",
+            "priceAst": "@*@"
+          },
+          {
+            "@id": "@string@",
+            "@type": "PricingRule",
+            "id": "@integer@",
+            "target": "DELIVERY",
+            "expression": "weight > 1000",
+            "price": "200",
+            "position": 2,
+            "name": "New Option for Second Rule",
+            "expressionAst": "@*@",
+            "priceAst": "@*@"
+          }
+        ]
+      }
+    """

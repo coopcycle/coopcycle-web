@@ -1,0 +1,43 @@
+AppBundle\Entity\Base\GeoCoordinates:
+  geo_1:
+    __construct: [ "48.878658", "2.341055" ]
+
+AppBundle\Entity\Address:
+  address_1:
+    addressLocality: 'Paris'
+    postalCode: '75009'
+    streetAddress: '17, rue Milton 75009 Paris 9ème'
+    geo: "@geo_1"
+
+AppBundle\Entity\Sylius\ProductOption:
+  product_option_1:
+    currentLocale: fr
+    code: 'existing-option-code'
+    name: 'Existing Option'
+    strategy: 'free'
+    additional: false
+
+AppBundle\Entity\Delivery\PricingRuleSet:
+  pricing_rule_set_1:
+    name: 'Test Set with ProductOptions'
+    rules: ['@pricing_rule_1', '@pricing_rule_2']
+
+AppBundle\Entity\Delivery\PricingRule:
+  pricing_rule_1:
+    expression: 'distance > 0'
+    price: '500'
+    position: 1
+    ruleSet: '@pricing_rule_set_1'
+    productOption: '@product_option_1'
+  pricing_rule_2:
+    expression: 'weight > 1000'
+    price: '200'
+    position: 2
+    ruleSet: '@pricing_rule_set_1'
+
+AppBundle\Entity\Store:
+  store_1:
+    name: 'Test Store with ProductOptions'
+    address: "@address_1"
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_1'

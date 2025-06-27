@@ -64,9 +64,7 @@ class PricingRuleSetProcessor implements ProcessorInterface
             $pricingRule->setProductOption($productOption);
         } else {
             // Update existing ProductOption name if different
-            if ($productOption->getName() !== $name) {
-                // Set current locale before setting the name for translatable entities
-                $productOption->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
+            if ($pricingRule->getName() !== $name) {
                 $productOption->setName($name);
             }
         }
