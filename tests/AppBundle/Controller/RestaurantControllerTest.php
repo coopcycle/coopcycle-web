@@ -87,7 +87,7 @@ class RestaurantControllerTest extends WebTestCase
             ->willReturn($this->localBusinessRepository->reveal());
 
         // Use the "real" serializer
-        $this->serializer = static::$kernel->getContainer()->get('serializer');
+        $this->serializer = self::getContainer()->get('serializer');
 
         $this->eventDispatcher
             ->dispatch(Argument::type('object'), Argument::type('string'))

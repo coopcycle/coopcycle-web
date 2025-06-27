@@ -30,7 +30,7 @@ class TaskPackageDtoNormalizer implements ContextAwareNormalizerInterface, Norma
         return $data;
     }
 
-    public function supportsNormalization($data, ?string $format = null, array $context = [])
+    public function supportsNormalization($data, ?string $format = null, array $context = []): bool
     {
         // Make sure we're not called twice
         if (isset($context[self::ALREADY_CALLED])) {

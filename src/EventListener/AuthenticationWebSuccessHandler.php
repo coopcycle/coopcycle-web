@@ -47,7 +47,7 @@ class AuthenticationWebSuccessHandler implements AuthenticationSuccessHandlerInt
         $this->options = $options;
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token)
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token): ?Response
     {
         // This is the URL (if any) the user visited that forced them to login
         $targetPath = $this->getTargetPath($request->getSession(), $this->providerKey);
