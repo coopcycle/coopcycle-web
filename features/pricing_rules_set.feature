@@ -361,7 +361,154 @@ Feature: Pricing rules set
         ]
       }
     """
-    
+
+  Scenario: Remove a rule from a pricing rule set
+    Given the fixtures files are loaded:
+      | pricing_rule_set_with_names.yml |
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "PUT" request to "/api/pricing_rule_sets/1" with body:
+      """
+      {
+        "name": "Updated Set with ProductOptions",
+        "strategy": "find",
+        "rules": [
+          {
+            "@id": "/api/pricing_rules/1",
+            "expression": "distance > 0",
+            "price": "500",
+            "position": 1,
+            "name": "Updated Existing Option Name"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    """
+      {
+        "@context": "/api/contexts/PricingRuleSet",
+        "@id": "/api/pricing_rule_sets/1",
+        "@type": "PricingRuleSet",
+        "id": 1,
+        "name": "Updated Set with ProductOptions",
+        "strategy": "find",
+        "options": [],
+        "rules": [
+          {
+            "@id": "/api/pricing_rules/1",
+            "@type": "PricingRule",
+            "id": 1,
+            "target": "DELIVERY",
+            "expression": "distance > 0",
+            "price": "500",
+            "position": 1,
+            "name": "Updated Existing Option Name",
+            "expressionAst": "@*@",
+            "priceAst": "@*@"
+          }
+        ]
+      }
+    """
+
+  Scenario: Add a rule to a pricing rule set
+    Given the fixtures files are loaded:
+      | pricing_rule_set_with_names.yml |
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "PUT" request to "/api/pricing_rule_sets/1" with body:
+      """
+      {
+        "name": "Updated Set with ProductOptions",
+        "strategy": "find",
+        "rules": [
+          {
+            "@id": "/api/pricing_rules/1",
+            "expression": "distance > 0",
+            "price": "500",
+            "position": 1,
+            "name": "Updated Existing Option Name"
+          },
+          {
+            "@id": "/api/pricing_rules/2",
+            "expression": "weight > 1000",
+            "price": "200",
+            "position": 2,
+            "name": "New Option for Second Rule"
+          },
+          {
+            "expression": "weight > 3000",
+            "price": "300",
+            "position": 3,
+            "name": "New Rule"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    """
+      {
+        "@context": "/api/contexts/PricingRuleSet",
+        "@id": "/api/pricing_rule_sets/1",
+        "@type": "PricingRuleSet",
+        "id": 1,
+        "name": "Updated Set with ProductOptions",
+        "strategy": "find",
+        "options": [],
+        "rules": [
+          {
+            "@id": "/api/pricing_rules/1",
+            "@type": "PricingRule",
+            "id": 1,
+            "target": "DELIVERY",
+            "expression": "distance > 0",
+            "price": "500",
+            "position": 1,
+            "name": "Updated Existing Option Name",
+            "expressionAst": "@*@",
+            "priceAst": "@*@"
+          },
+          {
+            "@id": "/api/pricing_rules/2",
+            "@type": "PricingRule",
+            "id": 2,
+            "target": "DELIVERY",
+            "expression": "weight > 1000",
+            "price": "200",
+            "position": 2,
+            "name": "New Option for Second Rule",
+            "expressionAst": "@*@",
+            "priceAst": "@*@"
+          },
+          {
+            "@id": "/api/pricing_rules/3",
+            "@type": "PricingRule",
+            "id": 3,
+            "target": "DELIVERY",
+            "expression": "weight > 3000",
+            "price": "300",
+            "position": 3,
+            "name": "New Rule",
+            "expressionAst": "@*@",
+            "priceAst": "@*@"
+          }
+        ]
+      }
+    """
+
   Scenario: Update pricing rule set should update the rules names
     Given the fixtures files are loaded:
       | pricing_rule_set_with_names.yml |
@@ -379,12 +526,14 @@ Feature: Pricing rules set
         "strategy": "find",
         "rules": [
           {
+            "@id": "/api/pricing_rules/1",
             "expression": "distance > 0",
             "price": "500",
             "position": 1,
             "name": "Updated Existing Option Name"
           },
           {
+            "@id": "/api/pricing_rules/2",
             "expression": "weight > 1000",
             "price": "200",
             "position": 2,
@@ -407,9 +556,9 @@ Feature: Pricing rules set
         "options": [],
         "rules": [
           {
-            "@id": "@string@",
+            "@id": "/api/pricing_rules/1",
             "@type": "PricingRule",
-            "id": "@integer@",
+            "id": 1,
             "target": "DELIVERY",
             "expression": "distance > 0",
             "price": "500",
@@ -419,9 +568,9 @@ Feature: Pricing rules set
             "priceAst": "@*@"
           },
           {
-            "@id": "@string@",
+            "@id": "/api/pricing_rules/2",
             "@type": "PricingRule",
-            "id": "@integer@",
+            "id": 2,
             "target": "DELIVERY",
             "expression": "weight > 1000",
             "price": "200",
