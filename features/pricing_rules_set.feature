@@ -33,7 +33,7 @@ Feature: Pricing rules set
     And the user "admin" sends a "DELETE" request to "/api/pricing_rule_sets/1"
     Then the response status code should be 204
 
-    Scenario: Delete pricing rule set fails if restaurant then succeed if restaurant is deleted
+  Scenario: Delete pricing rule set fails if restaurant then succeed if restaurant is deleted
         Given the fixtures files are loaded:
         | products.yml          |
         | restaurants.yml          |
@@ -101,3 +101,264 @@ Feature: Pricing rules set
           "hydra:totalItems": 2
       }
     """
+
+  Scenario: Create pricing rule set with rules without names
+    Given the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/pricing_rule_sets" with body:
+      """
+      {
+        "name": "No Names Pricing Set",
+        "strategy": "find",
+        "rules": [
+          {
+            "expression": "distance > 0",
+            "price": "500",
+            "position": 1
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+    """
+      {
+        "@context": "/api/contexts/PricingRuleSet",
+        "@id": "@string@",
+        "@type": "PricingRuleSet",
+        "id": "@integer@",
+        "name": "No Names Pricing Set",
+        "strategy": "find",
+        "options": [],
+        "rules": [
+          {
+            "@id": "@string@",
+            "@type": "PricingRule",
+            "id": "@integer@",
+            "target": "DELIVERY",
+            "expression": "distance > 0",
+            "price": "500",
+            "position": 1,
+            "name": null,
+            "expressionAst": "@*@",
+            "priceAst": "@*@"
+          }
+        ]
+      }
+    """
+
+  Scenario: Create pricing rule set with rules containing names
+    Given the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/pricing_rule_sets" with body:
+      """
+      {
+        "name": "Test Pricing Set",
+        "strategy": "find",
+        "rules": [
+          {
+            "expression": "distance > 0",
+            "price": "500",
+            "position": 1,
+            "name": "Base Delivery Fee"
+          },
+          {
+            "expression": "weight > 1000",
+            "price": "200",
+            "position": 2,
+            "name": "Heavy Package Surcharge"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+    """
+      {
+        "@context": "/api/contexts/PricingRuleSet",
+        "@id": "@string@",
+        "@type": "PricingRuleSet",
+        "id": "@integer@",
+        "name": "Test Pricing Set",
+        "strategy": "find",
+        "options": [],
+        "rules": [
+          {
+            "@id": "@string@",
+            "@type": "PricingRule",
+            "id": "@integer@",
+            "target": "DELIVERY",
+            "expression": "distance > 0",
+            "price": "500",
+            "position": 1,
+            "name": "Base Delivery Fee",
+            "expressionAst": "@*@",
+            "priceAst": "@*@"
+          },
+          {
+            "@id": "@string@",
+            "@type": "PricingRule",
+            "id": "@integer@",
+            "target": "DELIVERY",
+            "expression": "weight > 1000",
+            "price": "200",
+            "position": 2,
+            "name": "Heavy Package Surcharge",
+            "expressionAst": "@*@",
+            "priceAst": "@*@"
+          }
+        ]
+      }
+    """
+
+  Scenario: Create pricing rule set with mixed rules (some with names, some without)
+    Given the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/pricing_rule_sets" with body:
+      """
+      {
+        "name": "Mixed Pricing Set",
+        "strategy": "find",
+        "rules": [
+          {
+            "expression": "distance > 0",
+            "price": "500",
+            "position": 1,
+            "name": "Named Rule"
+          },
+          {
+            "expression": "weight > 1000",
+            "price": "200",
+            "position": 2
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+    """
+      {
+        "@context": "/api/contexts/PricingRuleSet",
+        "@id": "@string@",
+        "@type": "PricingRuleSet",
+        "id": "@integer@",
+        "name": "Mixed Pricing Set",
+        "strategy": "find",
+        "options": [],
+        "rules": [
+          {
+            "@id": "@string@",
+            "@type": "PricingRule",
+            "id": "@integer@",
+            "target": "DELIVERY",
+            "expression": "distance > 0",
+            "price": "500",
+            "position": 1,
+            "name": "Named Rule",
+            "expressionAst": "@*@",
+            "priceAst": "@*@"
+          },
+          {
+            "@id": "@string@",
+            "@type": "PricingRule",
+            "id": "@integer@",
+            "target": "DELIVERY",
+            "expression": "weight > 1000",
+            "price": "200",
+            "position": 2,
+            "name": null,
+            "expressionAst": "@*@",
+            "priceAst": "@*@"
+          }
+        ]
+      }
+    """
+
+  Scenario: Create pricing rule set with empty name should not create ProductOption
+    Given the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/pricing_rule_sets" with body:
+      """
+      {
+        "name": "Empty Name Test",
+        "strategy": "find",
+        "rules": [
+          {
+            "expression": "distance > 0",
+            "price": "500",
+            "position": 1,
+            "name": ""
+          },
+          {
+            "expression": "weight > 1000",
+            "price": "200",
+            "position": 2,
+            "name": "   "
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+    """
+      {
+        "@context": "/api/contexts/PricingRuleSet",
+        "@id": "@string@",
+        "@type": "PricingRuleSet",
+        "id": "@integer@",
+        "name": "Empty Name Test",
+        "strategy": "find",
+        "options": [],
+        "rules": [
+          {
+            "@id": "@string@",
+            "@type": "PricingRule",
+            "id": "@integer@",
+            "target": "DELIVERY",
+            "expression": "distance > 0",
+            "price": "500",
+            "position": 1,
+            "name": null,
+            "expressionAst": "@*@",
+            "priceAst": "@*@"
+          },
+          {
+            "@id": "@string@",
+            "@type": "PricingRule",
+            "id": "@integer@",
+            "target": "DELIVERY",
+            "expression": "weight > 1000",
+            "price": "200",
+            "position": 2,
+            "name": null,
+            "expressionAst": "@*@",
+            "priceAst": "@*@"
+          }
+        ]
+      }
+    """
+
