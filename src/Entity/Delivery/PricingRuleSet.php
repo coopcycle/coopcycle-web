@@ -12,6 +12,7 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Action\NotFoundAction;
 use AppBundle\Action\PricingRuleSet\Applications;
+use AppBundle\Api\State\PricingRuleSetProcessor;
 use AppBundle\Api\State\ValidationAwareRemoveProcessor;
 use AppBundle\Validator\Constraints\PricingRuleSetDelete as AssertCanDelete;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -27,6 +28,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
         new Put(
             normalizationContext: ['groups' => ['pricing_rule_set:read']],
             denormalizationContext: ['groups' => ['pricing_rule_set:write']],
+            processor: PricingRuleSetProcessor::class,
         ),
         new Delete(
             validationContext: ['groups' => ['deleteValidation']],
@@ -40,6 +42,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
         new Post(
             normalizationContext: ['groups' => ['pricing_rule_set:read']],
             denormalizationContext: ['groups' => ['pricing_rule_set:write']],
+            processor: PricingRuleSetProcessor::class,
         ),
         new GetCollection(
             normalizationContext: ['groups' => ['pricing_rule_set:read']],

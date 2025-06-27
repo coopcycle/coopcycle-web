@@ -15,6 +15,7 @@ use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Validator\Constraints\PricingRule as AssertPricingRule;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
@@ -69,6 +70,12 @@ class PricingRule
     protected $position;
 
     protected $ruleSet;
+
+    /**
+     * Temporary storage for name during processing
+     * @var string|null
+     */
+    protected $nameInput;
 
     /**
      * @var ?ProductOption
@@ -151,6 +158,23 @@ class PricingRule
     public function setProductOption(?ProductOption $productOption): self
     {
         $this->productOption = $productOption;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getNameInput(): ?string
+    {
+        return $this->nameInput;
+    }
+
+    #[Groups(['pricing_rule_set:write'])]
+    #[SerializedName("name")]
+    public function setNameInput(?string $nameInput): self
+    {
+        $this->nameInput = $nameInput;
 
         return $this;
     }

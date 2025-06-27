@@ -1080,6 +1080,11 @@ services:
   AppBundle\Api\State\EvaluatePricingRuleProcessor:
     tags: [ 'api_platform.state_processor' ]
 
+  AppBundle\Api\State\PricingRuleSetProcessor:
+    arguments:
+      $decorated: '@api_platform.doctrine.orm.state.persist_processor'
+    tags: [ 'api_platform.state_processor' ]
+
   AppBundle\Api\State\UrbantzWebhookProcessor:
     arguments:
       $country: "%country_iso%"
