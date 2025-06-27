@@ -25,13 +25,12 @@
 {% endblock %}
 
 {% block content %}
-  <div class="alert alert-info">
-    <i class="fa fa-info-circle"></i>
-    {{ 'This is the beta version of the pricing rule set form.' }}
-    <a href="{{ isNew ? path('admin_deliveries_pricing_ruleset_new') : path('admin_deliveries_pricing_ruleset', { id: ruleSetId }) }}" class="btn btn-sm btn-default pull-right">
-      {{ 'Switch to Classic Version' }}
-    </a>
-  </div>
+  {% include '_partials/legacy_new_switch_alert.html.twig' with {
+    message: 'This is the beta version of the pricing rule set form.',
+    button_text: 'Switch to Classic Version',
+    button_url: isNew ? path('admin_deliveries_pricing_ruleset_new') : path('admin_deliveries_pricing_ruleset', { id: ruleSetId }),
+    button_class: 'btn-default'
+  } %}
 
   <div
     id="pricing-rule-set-form-react"
