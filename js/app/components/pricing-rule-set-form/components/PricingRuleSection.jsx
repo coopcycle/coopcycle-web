@@ -37,7 +37,11 @@ const PricingRuleSection = ({
 
   return (
     <div className="mb-4">
-      {title ? <Title level={5}>{title}</Title> : null}
+      {title ? (
+        <Title level={5}>
+          {title} <HelpIcon className="ml-1" tooltipText={addRuleButtonHelp} />
+        </Title>
+      ) : null}
 
       {rules.length === 0 ? (
         <Alert message={emptyMessage} type="info" className="mb-3" showIcon />
@@ -104,7 +108,6 @@ const PricingRuleSection = ({
             data-testid={`pricing-rule-set-add-rule-target-${target.toLowerCase()}`}>
             {addRuleButtonLabel}
           </Button>
-          <HelpIcon className="ml-1" tooltipText={addRuleButtonHelp} />
         </div>
       </div>
     </div>

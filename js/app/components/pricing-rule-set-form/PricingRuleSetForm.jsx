@@ -23,7 +23,7 @@ import LegacyPricingRulesWarning from './components/LegacyPricingRulesWarning'
 import PricingRuleSection from './components/PricingRuleSection'
 
 import './pricing-rule-set-form.scss'
-import DeprecatedTag from '../DeprecatedTag'
+import HelpIcon from '../HelpIcon'
 
 const { Title } = Typography
 
@@ -271,8 +271,16 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
 
         <Form.Item
           name="strategy"
-          label={t('PRICING_PRICING_RULE_SET_STRATEGY_LABEL')}
-          help={t('FORM_PRICING_RULE_SET_STRATEGY_HELP')}
+          label={
+            <>
+              {t('PRICING_PRICING_RULE_SET_STRATEGY_LABEL')}
+              <HelpIcon
+                className="ml-1"
+                tooltipText={t('FORM_PRICING_RULE_SET_STRATEGY_HELP')}
+                docsPath="/en/admin/pricing_method_of_calculation"
+              />
+            </>
+          }
           rules={[{ required: true }]}>
           <Radio.Group>
             <Space direction="vertical">
@@ -286,13 +294,20 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
           </Radio.Group>
         </Form.Item>
 
-        <div className="py-1"></div>
-
         <Divider />
 
         <Form.Item
           className="pricing-rule-set"
-          label={t('FORM_PRICING_RULE_SET_RULES_LABEL')}>
+          label={
+            <>
+              {t('FORM_PRICING_RULE_SET_RULES_LABEL')}
+              <HelpIcon
+                className="ml-1"
+                tooltipText={t('PRICING_PRICING_RULE_HELP')}
+                docsPath="/en/admin/pricing_rule/"
+              />
+            </>
+          }>
           <>
             {rules.length === 0 && (
               <Alert
