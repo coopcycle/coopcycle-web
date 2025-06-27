@@ -102,9 +102,9 @@ const PricingRule = ({
       size="small"
       className={`mb-3 pricing-rule-set__rule__card ${isDragging ? 'dragging' : ''}`}
       title={
-        <Space className="pricing-rule-set__rule__text">
-          <Position position={index} />
-        </Space>
+        <Text strong className="pricing-rule-set__rule__text">
+          {localRule.productOption?.name || ''}
+        </Text>
       }
       extra={
         <Space>
@@ -122,7 +122,10 @@ const PricingRule = ({
             {...dragHandleProps}
             className="pricing-rule-set__rule__handle"
             title={t('FORM_PRICING_RULE_REORDER')}>
-            <i className="fa fa-2x fa-arrows"></i>
+            <div className="d-flex flex-column align-items-center">
+              <Position position={index} />
+              <i className="fa fa-2x fa-arrows"></i>
+            </div>
           </div>
         </Col>
         <Col flex="auto">
