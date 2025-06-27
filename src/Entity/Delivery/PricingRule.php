@@ -73,7 +73,6 @@ class PricingRule
     /**
      * @var ?ProductOption
      */
-    #[Groups(['pricing_rule_set:read', 'pricing_rule_set:write'])]
     protected $productOption;
 
     /**
@@ -156,6 +155,12 @@ class PricingRule
         return $this;
     }
 
+    #[Groups(['pricing_deliveries', 'pricing_rule_set:read'])]
+    public function getName(): ?string
+    {
+        return $this->productOption?->getName();
+    }
+
     public function matches(array $values, ExpressionLanguage $language = null)
     {
         if (null === $language) {
@@ -165,7 +170,7 @@ class PricingRule
         return $language->evaluate($this->getExpression(), $values);
     }
 
-    public function apply(array $values, ExpressionLanguage $language = null): ProductOption
+    public function apply(array $values, ExpressionLanguage $language = null): \AppBundle\Entity\Delivery\ProductOption
     {
         if (null === $language) {
             $language = new ExpressionLanguage();
@@ -175,13 +180,13 @@ class PricingRule
         $result = $language->evaluate($priceExpression, $values);
 
         if (str_contains($priceExpression, 'price_percentage')) {
-            return new ProductOption(
+            return new \AppBundle\Entity\Delivery\ProductOption(
                 $this,
                 0,
                 $result
             );
         } else {
-            return new ProductOption(
+            return new \AppBundle\Entity\Delivery\ProductOption(
                 $this,
                 $result,
             );
