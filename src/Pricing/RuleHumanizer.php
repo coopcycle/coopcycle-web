@@ -3,7 +3,7 @@
 namespace AppBundle\Pricing;
 
 use AppBundle\Entity\Delivery\PricingRule;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use AppBundle\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\Node\BinaryNode;
 use Symfony\Component\ExpressionLanguage\Node\Node;
 use Symfony\Component\ExpressionLanguage\Node\FunctionNode;
@@ -14,17 +14,21 @@ class RuleHumanizer
     {
     }
 
-    public function humanize(PricingRule $rule)
+    public function humanize(PricingRule $rule): string
     {
-        $parsedExpression = $this->expressionLanguage->parse($rule->getExpression(), [
-            'distance',
-            'weight',
-            'vehicle',
-            'pickup',
-            'dropoff',
-            'packages',
-            'order',
-        ]);
+        try {
+            $parsedExpression = $this->expressionLanguage->parse($rule->getExpression(), [
+                'distance',
+                'weight',
+                'vehicle',
+                'pickup',
+                'dropoff',
+                'packages',
+                'order',
+            ]);
+        } catch (\Exception $e) {
+            return $rule->getExpression();
+        }
 
         $accumulator = new \ArrayObject();
 
