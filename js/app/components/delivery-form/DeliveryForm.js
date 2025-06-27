@@ -75,6 +75,17 @@ function getFormattedValue(value) {
   return value
 }
 
+function canAddAnother(type, pickups, dropoffs) {
+  switch (type) {
+    case 'PICKUP':
+      return dropoffs.length === 1
+    case 'DROPOFF':
+      return pickups.length === 1
+  }
+
+  return true
+}
+
 const dropoffSchema = {
   type: 'DROPOFF',
   after: getNextRoundedTime().toISOString(),
@@ -425,7 +436,7 @@ export default function({
                             <p>{t('DELIVERY_FORM_MULTIPICKUP')}</p>
                             <Button
                               data-testid="add-pickup-button"
-                              disabled={false}
+                              disabled={!canAddAnother('PICKUP', pickups, dropoffs)}
                               onClick={() => {
                                 const newDeliverySchema = {
                                   ...pickupSchema,
@@ -485,7 +496,7 @@ export default function({
                             <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
                             <Button
                               data-testid="add-dropoff-button"
-                              disabled={false}
+                              disabled={!canAddAnother('DROPOFF', pickups, dropoffs)}
                               onClick={() => {
                                 const newDeliverySchema = {
                                   ...dropoffSchema,
