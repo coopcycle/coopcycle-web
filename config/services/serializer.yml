@@ -33,6 +33,7 @@ services:
   AppBundle\Serializer\TaskNormalizer:
     arguments:
       $normalizer: '@api_platform.jsonld.normalizer.item'
+      $objectNormalizer: "@serializer.normalizer.object"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   AppBundle\Serializer\TaskListNormalizer:

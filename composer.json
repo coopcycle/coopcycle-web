@@ -132,7 +132,7 @@
         "simshaun/recurr": "^5.0",
         "jaybizzle/crawler-detect": "^1.2",
         "nucleos/user-bundle": "^2.0",
-        "nucleos/profile-bundle": "2.3.x-dev",
+        "nucleos/profile-bundle": "^2.0",
         "twig/cache-extra": "^3.3",
         "geocoder-php/google-maps-provider": "^4.6",
         "azimolabs/apple-sign-in-php-sdk": "^3.0",

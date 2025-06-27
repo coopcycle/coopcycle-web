@@ -406,8 +406,6 @@ trait StoreTrait
             );
         }
 
-        $routes = $request->attributes->get('routes');
-
         return $this->render(
             'store/deliveries/form.html.twig',
             $this->auth([
@@ -416,10 +414,7 @@ trait StoreTrait
                 'order' => null,
                 'delivery' => $delivery,
                 'deliveryData' => $deliveryData,
-                'stores_route' => $routes['stores'],
-                'store_route' => $routes['store'],
-                'store_deliveries_route' => $routes['store_deliveries'],
-                'back_route' => $routes['back'],
+                'routes' => $request->attributes->get('routes'),
                 'show_left_menu' => true,
                 'isDispatcher' => $this->isGranted('ROLE_DISPATCHER'),
                 'debug_pricing' => $request->query->getBoolean('debug', false),

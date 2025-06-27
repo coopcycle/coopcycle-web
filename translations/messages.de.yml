@@ -474,6 +474,7 @@ stores.api_keys: API Schlüssel
 stores.pricing_rule_set: Preisermittlung
 stores.users: Benutzer*in
 stores.createNewDelivery: Neue Lieferung anlegen
+stores.createNewOrder: Neue Bestellung erstellen
 stores.settings: Einstellungen
 stores.recurrence_rules: Wiederholungsregeln
 stores.recurrence_rules.empty_message: Wenn eine wiederkehrende Bestellung erstellt wird, erscheinen die Wiederholungsregeln hier
@@ -519,6 +520,7 @@ receipt.line_item.quantity: Stückzahl
 adminDashboard.activity.title: Aktivitäten
 index.map.tip: Benutze die Karte unten, um die Restaurants zu finden
 stores.deliveries.task_unassigned: Nicht zugeteilt
+stores.orders: Bestellungen
 stores.manage: Verwalten
 stores.deliveries.bookmarks: Gespeicherte Bestellungen
 stores.deliveries.bookmarks.empty_message: Markieren Sie Bestellungen auf der Lieferseite,

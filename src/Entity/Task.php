@@ -475,14 +475,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $this->incidents = new ArrayCollection();
     }
 
-    /**
-    * Non-DB-mapped property to store packages and weight aggregates (see on $weight and $packages property for aggregates definitions)
-    * // FIXME : make annotation works with PHPStan
-    * ['weight' => int|null, 'packages' => ['name' => string, 'type' => string, 'quantity' => int]|null]
-    */
-    private $prefetchedPackagesAndWeight;
-
-
     public function getId()
     {
         return $this->id;
@@ -1175,26 +1167,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     public function addIncident(Incident $incident): void
     {
         $this->incidents[] = $incident;
-    }
-
-    /**
-     * Get the value of prefetchedPackagesAndWeight
-     */
-    public function getPrefetchedPackagesAndWeight()
-    {
-        return $this->prefetchedPackagesAndWeight;
-    }
-
-    /**
-     * Set the value of prefetchedPackagesAndWeight
-     *
-     * @return  self
-     */
-    public function setPrefetchedPackagesAndWeight($prefetchedPackagesAndWeight)
-    {
-        $this->prefetchedPackagesAndWeight = $prefetchedPackagesAndWeight;
-
-        return $this;
     }
 
     public static function fixTimeWindow(Task $task)

@@ -1195,6 +1195,12 @@ trait RestaurantTrait
 
         $url = $oAuth->getAuthorizationURL($settingsManager->get('mercadopago_app_id'), $redirectUri, $state);
 
+        // Temporary fix until this is merged
+        // https://github.com/mercadopago/sdk-php/pull/539
+        if (!str_starts_with($url, 'https://auth.mercadopago.com/authorization')) {
+            $url = str_replace('https://auth.mercadopago.com', 'https://auth.mercadopago.com/authorization', $url);
+        }
+
         return $this->redirect($url);
     }
 

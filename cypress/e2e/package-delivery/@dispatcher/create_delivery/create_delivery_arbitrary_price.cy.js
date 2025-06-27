@@ -1,8 +1,8 @@
-context('Delivery (role: admin)', () => {
+context('Delivery (role: dispatcher)', () => {
   beforeEach(() => {
     cy.loadFixtures('../cypress/fixtures/stores.yml')
     cy.setMockDateTime('2025-04-23 8:30:00')
-    cy.login('admin', '12345678')
+    cy.login('dispatcher', 'dispatcher')
   })
 
   afterEach(() => {
@@ -17,7 +17,7 @@ context('Delivery (role: admin)', () => {
       .click()
 
     cy.get('[data-testid=store_Acme__list_item]')
-      .contains('Créer une livraison')
+      .contains('Créer une nouvelle commande')
       .click()
 
     // Create Delivery page

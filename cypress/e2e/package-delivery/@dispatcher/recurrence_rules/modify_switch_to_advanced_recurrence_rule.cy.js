@@ -1,13 +1,13 @@
-context('Managing recurrence rules (role: admin)', () => {
+context('Managing recurrence rules (role: dispatcher)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      'ORM/user_admin.yml',
+      'ORM/user_dispatcher.yml',
       'ORM/tags.yml',
       'ORM/store_basic.yml',
     ])
 
     // Login
-    cy.login('admin', '12345678')
+    cy.login('dispatcher', 'dispatcher')
 
     // Create a delivery order and a recurrence rule
     cy.visit('/admin/stores')
@@ -17,7 +17,7 @@ context('Managing recurrence rules (role: admin)', () => {
       .click()
 
     cy.get('[data-testid=store_Acme__list_item]')
-      .contains('Créer une livraison')
+      .contains('Créer une nouvelle commande')
       .click()
 
     // Create delivery page
