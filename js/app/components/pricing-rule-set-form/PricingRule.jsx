@@ -62,13 +62,10 @@ const PricingRule = ({
   }
 
   const handleNameChange = value => {
-    // Update the productOption name
+    // Update the name
     const updatedRule = {
       ...localRule,
-      productOption: {
-        ...localRule.productOption,
-        name: value,
-      },
+      name: value,
     }
     setLocalRule(updatedRule)
     onUpdate(updatedRule)
@@ -103,7 +100,7 @@ const PricingRule = ({
       className={`mb-3 pricing-rule-set__rule__card ${isDragging ? 'dragging' : ''}`}
       title={
         <Text strong className="pricing-rule-set__rule__text">
-          {localRule.productOption?.name || ''}
+          {localRule.name || ''}
         </Text>
       }
       extra={
@@ -134,7 +131,7 @@ const PricingRule = ({
               {t('FORM_PRICING_RULE_SET_PRICING_RULE_NAME_LABEL')}
             </Text>
             <Input
-              value={localRule.productOption?.name || ''}
+              value={localRule.name || ''}
               onChange={e => handleNameChange(e.target.value)}
               placeholder={t(
                 'FORM_PRICING_RULE_SET_PRICING_RULE_NAME_PLACEHOLDER',

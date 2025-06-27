@@ -173,7 +173,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
       expression: '',
       price: '',
       position: orderedRules.length,
-      productOption: null,
+      name: null,
     }
 
     // Add the rule and let the ordering be handled by the orderedRules computed property
