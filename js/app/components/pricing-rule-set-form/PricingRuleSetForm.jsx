@@ -290,7 +290,9 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
 
         <Divider />
 
-        <Form.Item label={t('FORM_PRICING_RULE_SET_RULES_LABEL')}>
+        <Form.Item
+          className="pricing-rule-set"
+          label={t('FORM_PRICING_RULE_SET_RULES_LABEL')}>
           <>
             {rules.length === 0 && (
               <Alert

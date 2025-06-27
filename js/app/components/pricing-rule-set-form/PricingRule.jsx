@@ -169,7 +169,7 @@ const PricingRule = ({
           </div>
         </Col>
       </Row>
-      <Row gutter={16} className="mt-2">
+      <Row gutter={16} className="mt-2 pricing-rule-set__rule__price">
         <Col>
           <PriceChoice
             priceType={priceType}

@@ -1,6 +1,61 @@
 .pricing-rule-set {
+  $bgcolor: #ffefcf;
 
-  $bgcolor: #FFEFCF;
+  // Apply form-control styles to Ant Design components
+  // Using !important to override antd default styles
+  .ant-input {
+    background-color: transparent !important;
+    border: 1px dashed darken($bgcolor, 50%) !important;
+    box-shadow: none !important;
+
+    &:hover {
+      border-color: darken($bgcolor, 60%) !important;
+    }
+
+    &:focus {
+      border-color: darken($bgcolor, 70%) !important;
+      box-shadow: none !important;
+    }
+  }
+
+  .ant-select {
+    .ant-select-selector {
+      background-color: transparent !important;
+      border: 1px dashed darken($bgcolor, 50%) !important;
+      box-shadow: none !important;
+
+      &:hover {
+        border-color: darken($bgcolor, 60%) !important;
+      }
+    }
+
+    &.ant-select-focused .ant-select-selector {
+      border-color: darken($bgcolor, 70%) !important;
+      box-shadow: none !important;
+    }
+  }
+
+  .ant-input-number {
+    background-color: transparent !important;
+    border: 1px dashed darken($bgcolor, 50%) !important;
+    box-shadow: none !important;
+
+    &:hover {
+      border-color: darken($bgcolor, 60%) !important;
+    }
+
+    &.ant-input-number-focused {
+      border-color: darken($bgcolor, 70%) !important;
+      box-shadow: none !important;
+    }
+  }
+
+  // Keep existing form-control styles for legacy components
+  .form-control {
+    background-color: transparent;
+    border: 1px dashed darken($bgcolor, 50%);
+    box-shadow: none;
+  }
 
   &__rule {
     font-family: 'Roboto Mono', monospace;
@@ -41,19 +96,29 @@
       color: darken($bgcolor, 50%);
     }
 
-  //  &__price {
-  //    padding: 10px 15px;
-  //    .form-control {
-  //      background-color: darken($bgcolor, 5%);
-  //      border: 2px dashed darken($bgcolor, 50%);
-  //      box-shadow: none;
-  //      color: darken($bgcolor, 50%);
-  //    }
-  //  }
-  //  .btn {
-  //    background-color: darken($bgcolor, 5%);
-  //    border-color: darken($bgcolor, 50%);
-  //    color: darken($bgcolor, 50%);
-  //  }
+    &__price {
+      .form-control {
+        background-color: darken($bgcolor, 5%);
+        border: 2px dashed darken($bgcolor, 50%);
+        box-shadow: none;
+        color: darken($bgcolor, 50%);
+      }
+
+      .ant-input-number {
+        background-color: darken($bgcolor, 5%) !important;
+        border: 2px dashed darken($bgcolor, 50%) !important;
+        box-shadow: none !important;
+        color: darken($bgcolor, 50%) !important;
+
+        &:hover {
+          border-color: darken($bgcolor, 60%) !important;
+        }
+
+        &.ant-input-number-focused {
+          border-color: darken($bgcolor, 70%) !important;
+          box-shadow: none !important;
+        }
+      }
+    }
   }
 }

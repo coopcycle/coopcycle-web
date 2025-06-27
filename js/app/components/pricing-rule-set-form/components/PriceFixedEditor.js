@@ -15,7 +15,7 @@ export default ({ defaultValue, onChange }) => {
         onChange(`${(value || 0) * 100}`)
       }}
       style={{ width: '100%' }}
-      step={0.01}
+      step={0.5}
       min={0}
       precision={2}
       addonAfter="€"
