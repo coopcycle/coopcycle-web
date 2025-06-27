@@ -1683,3 +1683,5 @@ restaurant.stats.show_only_meal_vouchers: Show only orders paid with meal vouche
 restaurant.stats.show_all: Show all orders
 restaurant.copy_products.not_empty: The target restaurant already has products
 restaurant.copy_products.copying: Copying the products, please refresh this page in a few minutes
+form.store_type.multi_pickup_enabled.label: Enable multiple pickups
+form.store_type.multi_pickup_enabled.help: Allow users to add additional pickups when creating a delivery

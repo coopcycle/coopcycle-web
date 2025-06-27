@@ -307,13 +307,6 @@ class DeliveryProcessor implements ProcessorInterface
             $this->tagManager->update($task);
         }
 
-        // Ignore weight & packages for pickup tasks
-        // @see https://github.com/coopcycle/coopcycle-web/issues/3461
-        if ($task->isPickup()) {
-            $data->weight = null;
-            $data->packages = null;
-        }
-
         if ($data->weight) {
             $task->setWeight($data->weight);
         }
