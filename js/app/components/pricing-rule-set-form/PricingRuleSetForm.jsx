@@ -33,6 +33,24 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
   const [rules, setRules] = useState([])
   const [ruleValidationErrors, setRuleValidationErrors] = useState({})
 
+  // Rules by target type
+  const legacyRules = useMemo(() => {
+    return rules.filter(rule => rule.target === 'LEGACY_TARGET_DYNAMIC')
+  }, [rules])
+
+  const taskRules = useMemo(() => {
+    return rules.filter(rule => rule.target === 'TASK')
+  }, [rules])
+
+  const deliveryRules = useMemo(() => {
+    return rules.filter(rule => rule.target === 'DELIVERY')
+  }, [rules])
+
+  // Ordered rules list: legacy, task, delivery
+  const orderedRules = useMemo(() => {
+    return [...legacyRules, ...taskRules, ...deliveryRules]
+  }, [legacyRules, taskRules, deliveryRules])
+
   // RTK Query hooks
   const {
     data: ruleSet,
@@ -47,23 +65,6 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
 
   const [updatePricingRuleSet, { isLoading: isUpdating }] =
     useUpdatePricingRuleSetMutation()
-
-  const hasLegacyRules = useMemo(() => {
-    return rules.some(rule => rule.target === 'LEGACY_TARGET_DYNAMIC')
-  }, [rules])
-
-  // Separate rules by target type
-  const taskRules = useMemo(() => {
-    return rules.filter(rule => rule.target === 'TASK')
-  }, [rules])
-
-  const deliveryRules = useMemo(() => {
-    return rules.filter(rule => rule.target === 'DELIVERY')
-  }, [rules])
-
-  const legacyRules = useMemo(() => {
-    return rules.filter(rule => rule.target === 'LEGACY_TARGET_DYNAMIC')
-  }, [rules])
 
   // Initialize form when data is loaded
   useEffect(() => {
@@ -94,7 +95,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
     const errors = []
     const newRuleValidationErrors = {}
 
-    rules.forEach((rule, index) => {
+    orderedRules.forEach((rule, index) => {
       const ruleErrors = []
 
       // Check if expression is empty
@@ -142,7 +143,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
 
       const payload = {
         ...values,
-        rules: rules.map((rule, index) => ({
+        rules: orderedRules.map((rule, index) => ({
           ...rule,
           position: index,
         })),
@@ -171,16 +172,24 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
       target,
       expression: '',
       price: '',
-      position: rules.length,
+      position: orderedRules.length,
       productOption: null,
     }
+
+    // Add the rule and let the ordering be handled by the orderedRules computed property
     setRules([...rules, newRule])
   }
 
   const updateRule = (index, updatedRule) => {
-    const newRules = [...rules]
-    newRules[index] = updatedRule
-    setRules(newRules)
+    // Find the rule in the original rules array and update it
+    const ruleToUpdate = orderedRules[index]
+    const originalIndex = rules.findIndex(rule => rule === ruleToUpdate)
+
+    if (originalIndex !== -1) {
+      const newRules = [...rules]
+      newRules[originalIndex] = updatedRule
+      setRules(newRules)
+    }
 
     // Clear validation errors for this rule when it's updated
     if (ruleValidationErrors[index]) {
@@ -191,25 +200,29 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
   }
 
   const removeRule = index => {
-    const newRules = rules.filter((_, i) => i !== index)
+    // Find the rule in the original rules array and remove it
+    const ruleToRemove = orderedRules[index]
+    const newRules = rules.filter(rule => rule !== ruleToRemove)
     setRules(newRules)
   }
 
   const moveRule = (fromIndex, toIndex) => {
-    const newRules = [...rules]
-    const [movedRule] = newRules.splice(fromIndex, 1)
-    newRules.splice(toIndex, 0, movedRule)
-    setRules(newRules)
+    const newOrderedRules = [...orderedRules]
+    const [movedRule] = newOrderedRules.splice(fromIndex, 1)
+    newOrderedRules.splice(toIndex, 0, movedRule)
+
+    // Update the rules state to match the new order
+    setRules(newOrderedRules)
   }
 
   // Helper function to get the global index of a rule within a specific target group
   const getGlobalIndex = (localIndex, target) => {
-    if (target === 'TASK') {
-      return rules.findIndex(rule => rule === taskRules[localIndex])
+    if (target === 'LEGACY_TARGET_DYNAMIC') {
+      return orderedRules.findIndex(rule => rule === legacyRules[localIndex])
+    } else if (target === 'TASK') {
+      return orderedRules.findIndex(rule => rule === taskRules[localIndex])
     } else if (target === 'DELIVERY') {
-      return rules.findIndex(rule => rule === deliveryRules[localIndex])
-    } else if (target === 'LEGACY_TARGET_DYNAMIC') {
-      return rules.findIndex(rule => rule === legacyRules[localIndex])
+      return orderedRules.findIndex(rule => rule === deliveryRules[localIndex])
     }
     return -1
   }
@@ -309,7 +322,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
             </>
           }>
           <>
-            {rules.length === 0 && (
+            {orderedRules.length === 0 && (
               <Alert
                 message={t('FORM_PRICING_RULE_SET_NO_RULE_FOUND')}
                 type="warning"
@@ -317,11 +330,10 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
               />
             )}
 
-            {/* Legacy Rules */}
             {legacyRules.length > 0 ? (
+              // Legacy Rules Section
               <div className="mb-4">
                 <Title level={5}>{t('RULE_LEGACY_TARGET_DYNAMIC_TITLE')}</Title>
-
                 <Form.Item className="m-0">
                   <LegacyPricingRulesWarning
                     migrateToTarget={ruleTarget => {
@@ -337,7 +349,6 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
                 <PricingRuleSection
                   target="LEGACY_TARGET_DYNAMIC"
                   rules={legacyRules}
-                  // TODO update labels
                   title={null}
                   emptyMessage={t('RULE_LEGACY_TARGET_DYNAMIC_HELP')}
                   addRuleButtonLabel={t('PRICING_ADD_RULE_LEGACY')}
