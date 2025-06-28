@@ -9,8 +9,8 @@ describe('Delivery with recurrence rule (role: admin)', () => {
     cy.resetMockDateTime()
   })
 
-  describe('store without time slots', function () {
-    it('[legacy] create delivery order and a recurrence rule', function () {
+  describe('store without time slots', function() {
+    it('[legacy] create delivery order and a recurrence rule', function() {
       cy.visit('/admin/stores')
 
       cy.get('[data-testid=store_Acme_without_time_slots__list_item]')
@@ -28,14 +28,14 @@ describe('Delivery with recurrence rule (role: admin)', () => {
 
       // set pickup time range to XX:12 - XX:27
       cy.get(
-        '#delivery_tasks_0_doneBefore_widget > .ant-picker > .ant-picker-input-active > input',
+        '#delivery_tasks_0_doneBefore_widget > .ant-picker > input[date-range="start"]',
       ).click()
       cy.get(
-        '#delivery_tasks_0_doneBefore_widget > .ant-picker > .ant-picker-input-active > input',
+        '#delivery_tasks_0_doneBefore_widget > .ant-picker > input[date-range="start"]',
       ).type('{backspace}{backspace}12')
       cy.get('.ant-picker-ok:visible > .ant-btn').click()
       cy.get(
-        '#delivery_tasks_0_doneBefore_widget > .ant-picker > .ant-picker-input-active > input',
+        '#delivery_tasks_0_doneBefore_widget > .ant-picker > input[date-range="start"]',
       ).type('{backspace}{backspace}27')
       cy.get('.ant-picker-ok:visible > .ant-btn').click()
 
@@ -46,14 +46,14 @@ describe('Delivery with recurrence rule (role: admin)', () => {
 
       // set dropoff time range to XX:24 - XX:58
       cy.get(
-        '#delivery_tasks_1_doneBefore_widget > .ant-picker > .ant-picker-input-active > input',
+        '#delivery_tasks_1_doneBefore_widget > .ant-picker > input[date-range="start"]',
       ).click()
       cy.get(
-        '#delivery_tasks_1_doneBefore_widget > .ant-picker > .ant-picker-input-active > input',
+        '#delivery_tasks_1_doneBefore_widget > .ant-picker > input[date-range="start"]',
       ).type('{backspace}{backspace}24')
       cy.get('.ant-picker-ok:visible > .ant-btn').click()
       cy.get(
-        '#delivery_tasks_1_doneBefore_widget > .ant-picker > .ant-picker-input-active > input',
+        '#delivery_tasks_1_doneBefore_widget > .ant-picker > input[date-range="start"]',
       ).type('{backspace}{backspace}58')
       cy.get('.ant-picker-ok:visible > .ant-btn').click()
 
