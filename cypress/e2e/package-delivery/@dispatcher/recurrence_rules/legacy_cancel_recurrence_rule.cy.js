@@ -36,7 +36,7 @@ context('Managing recurrence rules (role: admin)', () => {
     cy.get('button[type="submit"]').click()
   })
 
-  it('cancel recurrence rule', function () {
+  it('cancel recurrence rule', function() {
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
     cy.get('a[href*="recurrence-rules"]').click()
@@ -49,7 +49,7 @@ context('Managing recurrence rules (role: admin)', () => {
 
     cy.get('#delivery_form__recurrence__container').click()
     cy.get('.ant-btn-danger > :nth-child(2)').click()
-    cy.get('.ant-popover-buttons > .ant-btn-primary > span').click()
+    cy.get('.ant-popconfirm-buttons > .ant-btn-primary > span').click()
 
     cy.get('#delivery-submit').click()
 

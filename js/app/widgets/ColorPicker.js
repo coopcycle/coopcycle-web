@@ -1,32 +1,39 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { createRoot } from 'react-dom/client'
-import SketchPicker from 'react-color/lib/Sketch'
+import { ColorPicker } from 'antd'
 
-const ColorPicker = ({ value, onChange }) => {
-
-  const [ color, setColor ] = useState(value)
-
-  return (
-    <SketchPicker
-      color={ color }
-      onChangeComplete={ color => {
-        setColor(color.hex)
-        onChange(color.hex)
-      } } />
-  )
-}
+const PRESETS = [
+  {
+    colors: [
+      '#D0021B',
+      '#F5A623',
+      '#F8E71C',
+      '#8B572A',
+      '#7ED321',
+      '#417505',
+      '#BD10E0',
+      '#9013FE',
+      '#4A90E2',
+      '#50E3C2',
+      '#B8E986',
+    ],
+  },
+]
 
 export default function(el) {
+  const div = document.createElement('div')
+  el.parentNode.insertBefore(div, el.nextSibling)
+  el.type = 'hidden'
+  const initialValue = el.value || '#ffffff'
 
-  const $div = $('<div>')
-
-  $div.insertAfter($(el))
-
-  // Convert input to hidden
-  $(el)
-    .detach()
-    .attr('type', 'hidden')
-    .insertBefore($div)
-
-  createRoot($div.get(0)).render(<ColorPicker value={ $(el).val() || '#fff' } onChange={ hex => $(el).val(hex) } />)
+  createRoot(div).render(
+    <ColorPicker
+      disabledAlpha
+      presets={PRESETS}
+      defaultValue={initialValue}
+      onChangeComplete={color => {
+        el.value = '#' + color.toHex()
+      }}
+    />,
+  )
 }

@@ -75,7 +75,10 @@ function ReportIncidentModalContent({ task }) {
         <FailureReasonSelector task={task} />
       </Form.Item>
 
-      <Form.Item label="Description" name="description">
+      <Form.Item
+        label="Description"
+        name="description"
+        style={{ marginBottom: 24 }}>
         <Input.TextArea placeholder="Description" autoSize={{ minRows: 2 }} />
       </Form.Item>
       <Form.Item className="pull-right">

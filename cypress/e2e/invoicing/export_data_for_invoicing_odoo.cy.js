@@ -6,7 +6,7 @@ context('Invoicing (role: admin)', () => {
     cy.login('admin', '12345678')
   })
 
-  it('export data for invoicing in odoo format', function () {
+  it('export data for invoicing in odoo format', function() {
     cy.visit('/admin/invoicing')
     cy.get('[data-testid="invoicing.toggleRangePicker"]').click()
 
@@ -16,10 +16,10 @@ context('Invoicing (role: admin)', () => {
       .subtract(1, 'months')
       .format('YYYY-MM-DD')
     const lastDayOfCurrentMonth = moment().endOf('month').format('YYYY-MM-DD')
-    cy.get('.ant-picker-input-active > input').click()
-    cy.get('.ant-picker-input-active > input').type(firstDayOfPreviousMonth)
-    cy.get(':nth-child(3) > input').click()
-    cy.get('.ant-picker-input-active > input').type(
+    cy.get('input[date-range="start"]').click()
+    cy.get('input[date-range="start"]').type(firstDayOfPreviousMonth)
+    cy.get('input[date-range="end"]').click()
+    cy.get('input[date-range="end"]').type(
       `${lastDayOfCurrentMonth}{enter}`,
     )
 
