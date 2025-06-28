@@ -1,43 +1,45 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 
+import Modal from 'react-modal'
 import store from './address-storage'
 import AddressAutosuggest from '../components/AddressAutosuggest'
 
 // We used to store a string in "search_address", but now, we want objects
 // This function will cleanup legacy behavior
 function resolveAddress(form) {
-
   const addressInput = form.querySelector('input[name="address"]')
 
   if (addressInput && addressInput.value) {
     return JSON.parse(decodeURIComponent(atob(addressInput.value)))
   }
-
 }
 
 window._paq = window._paq || []
 
-document.querySelectorAll('[data-search="address"]').forEach((container) => {
-
-  const el   = container.querySelector('[data-element]')
+document.querySelectorAll('[data-search="address"]').forEach(container => {
+  const el = container.querySelector('[data-element]')
   const form = container.querySelector('[data-form]')
 
   if (el) {
+    Modal.setAppElement(el)
 
-    const addresses =
-      container.dataset.addresses ? JSON.parse(container.dataset.addresses) : []
+    const addresses = container.dataset.addresses
+      ? JSON.parse(container.dataset.addresses)
+      : []
 
-    const restaurants =
-      container.dataset.restaurants ? JSON.parse(container.dataset.restaurants) : []
+    const restaurants = container.dataset.restaurants
+      ? JSON.parse(container.dataset.restaurants)
+      : []
 
     createRoot(el).render(
       <AddressAutosuggest
-        address={ resolveAddress(form) }
-        addresses={ addresses }
-        restaurants={ restaurants }
-        geohash={ store.get('search_geohash', '') }
-        onClear={ () => {
+        address={resolveAddress(form)}
+        addresses={addresses}
+        restaurants={restaurants}
+        geohash={store.get('search_geohash', '')}
+        mapPickerEnabled={true}
+        onClear={() => {
           // clear geohash and address query params but keep others (filters)
           const addressInput = form.querySelector('input[name="address"]')
           const geohashInput = form.querySelector('input[name="geohash"]')
@@ -45,7 +47,7 @@ document.querySelectorAll('[data-search="address"]').forEach((container) => {
           addressInput.parentNode.removeChild(addressInput)
           geohashInput.parentNode.removeChild(geohashInput)
 
-          const searchParams = new URLSearchParams(window.location.search);
+          const searchParams = new URLSearchParams(window.location.search)
           searchParams.delete('geohash')
           searchParams.delete('address')
 
@@ -59,22 +61,28 @@ document.querySelectorAll('[data-search="address"]').forEach((container) => {
 
           form.submit()
         }}
-        onAddressSelected={ (value, address) => {
-
+        onAddressSelected={(value, address) => {
+          console.log(JSON.stringify(address))
           const addressInput = form.querySelector('input[name="address"]')
           const geohashInput = form.querySelector('input[name="geohash"]')
 
           if (address.geohash !== geohashInput.value) {
-
             const trackingCategory = container.dataset.trackingCategory
             if (trackingCategory) {
-              window._paq.push(['trackEvent', trackingCategory, 'searchAddress', value])
+              window._paq.push([
+                'trackEvent',
+                trackingCategory,
+                'searchAddress',
+                value,
+              ])
             }
 
             geohashInput.value = address.geohash
-            addressInput.value = btoa(encodeURIComponent(JSON.stringify(address)))
+            addressInput.value = btoa(
+              encodeURIComponent(JSON.stringify(address)),
+            )
 
-            const searchParams = new URLSearchParams(window.location.search);
+            const searchParams = new URLSearchParams(window.location.search)
 
             // submit form including existing filters applied
             for (const [key, value] of searchParams.entries()) {
@@ -89,12 +97,10 @@ document.querySelectorAll('[data-search="address"]').forEach((container) => {
 
             form.submit()
           }
-
         }}
         required={ false }
         preciseOnly={ false }
         reportValidity={ false } />
     )
   }
-
 })
