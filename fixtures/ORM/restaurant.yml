@@ -1,0 +1,43 @@
+
+AppBundle\Entity\Base\GeoCoordinates:
+  restaurant_geo:
+    __construct: [ "48.864577", "2.333338" ]
+
+AppBundle\Entity\Address:
+  restaurant_address:
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '123, rue de la Paix 75001 Paris'
+    geo: "@restaurant_geo"
+
+AppBundle\Entity\Cuisine:
+  cuisine_italian:
+    name: 'italian'
+
+AppBundle\Entity\Contract:
+  restaurant_contract:
+    flatDeliveryPrice: 350
+    customerAmount: 350
+    feeRate: 0.00
+
+AppBundle\Entity\LocalBusiness:
+  restaurant:
+    name: 'Bistro'
+    address: "@restaurant_address"
+    openingHours: ['Mo-Sa 11:30-22:30']
+    enabled: true
+    contract: "@restaurant_contract"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    __calls:
+      - setMinimumAmount: ['delivery', 1500]
+      - setMinimumAmount: ['collection', 1000]
+      - addFulfillmentMethod: ['collection', true]
+      - addFulfillmentMethod: ['delivery', true]
+      - setOpeningHours:
+        - ['Mo-Sa 11:30-22:30']
+        - 'collection'
+    servesCuisine:
+      - '@cuisine_italian'
+    edenredEnabled: false
+    edenredSyncSent: false
+    edenredTRCardEnabled: false
