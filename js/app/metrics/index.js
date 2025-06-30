@@ -2,14 +2,13 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import cubejs from '@cubejs-client/core';
 import { QueryRenderer } from '@cubejs-client/react';
-import { Spin, ConfigProvider, DatePicker, Select } from 'antd';
+import { Spin, DatePicker, Select } from 'antd';
 import 'chart.js/auto'; // ideally we should only import the component that we need: https://react-chartjs-2.js.org/docs/migration-to-v4/#tree-shaking
 import { Bar } from 'react-chartjs-2';
 import moment from 'moment'
 
-import { antdLocale } from '../i18n'
-
 import './index.scss'
+import { AntdConfigProvider } from '../utils/antd'
 
 const COLORS_SERIES = ['#FF6492', '#141446', '#7A77FF'];
 const commonOptions = {
@@ -108,7 +107,7 @@ const CustomDatePicker = ({ defaultPickerType, defaultValue, routeName, restaura
   const [ pickerType, setPickerType ] = React.useState(defaultPickerType)
 
   return (
-    <ConfigProvider locale={ antdLocale }>
+    <AntdConfigProvider>
       <Select
         defaultValue={ pickerType }
         onChange={ (value) => setPickerType(value) }
@@ -125,7 +124,7 @@ const CustomDatePicker = ({ defaultPickerType, defaultValue, routeName, restaura
           })
         }}
         picker={ pickerType } />
-    </ConfigProvider>
+    </AntdConfigProvider>
   )
 }
 

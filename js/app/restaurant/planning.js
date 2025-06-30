@@ -1,11 +1,12 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
-import { ConfigProvider, Calendar, DatePicker } from 'antd'
+import { Calendar, DatePicker } from 'antd'
 import moment from 'moment'
 import _ from 'lodash'
 import axios from 'axios'
 
-import { antdLocale, localeDetector } from '../i18n'
+import { localeDetector } from '../i18n'
+import { AntdConfigProvider } from '../utils/antd'
 
 const baseURL = location.protocol + '//' + location.host
 
@@ -52,13 +53,13 @@ class ClosingRuleRangePicker extends React.Component {
 
   render() {
     return (
-      <ConfigProvider locale={antdLocale}>
+      <AntdConfigProvider>
         <RangePicker
           format="DD/MM/YYYY à HH:mm"
           showTime={{ format: 'HH:mm' }}
           onChange={onChange}
         />
-      </ConfigProvider>
+      </AntdConfigProvider>
     )
   }
 }
@@ -138,9 +139,9 @@ class ClosingRulesCalendar extends React.Component {
 
   render() {
     return (
-      <ConfigProvider locale={antdLocale}>
+      <AntdConfigProvider>
         <Calendar dateCellRender={this.dateCellRender.bind(this)} />
-      </ConfigProvider>
+      </AntdConfigProvider>
     )
   }
 }

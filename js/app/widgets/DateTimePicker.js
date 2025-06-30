@@ -1,8 +1,8 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import moment from 'moment'
-import { ConfigProvider, DatePicker, Form, TimePicker } from 'antd';
-import { antdLocale } from '../i18n'
+import { DatePicker, Form, TimePicker } from 'antd';
+import { AntdConfigProvider } from '../utils/antd'
 
 const today = moment().startOf('day')
 
@@ -143,7 +143,7 @@ export default function(el, options) {
   const props = { ...defaultProps, ...options }
 
   createRoot(el).render(
-    <ConfigProvider locale={antdLocale}>
+    <AntdConfigProvider>
       <DateTimePicker {...props} />
-    </ConfigProvider>)
+    </AntdConfigProvider>)
 }

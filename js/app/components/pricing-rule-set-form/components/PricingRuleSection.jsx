@@ -1,8 +1,7 @@
 import React from 'react'
-import { Alert, Typography } from 'antd'
+import { Button, Alert, Typography } from 'antd'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
 import PricingRule from '../PricingRule'
-import { Button } from '../../core/AntdButton'
 import { PlusOutlined } from '@ant-design/icons'
 import HelpIcon from '../../HelpIcon'
 
@@ -102,7 +101,8 @@ const PricingRuleSection = ({
       <div className="mb-3">
         <div>
           <Button
-            success
+            color="green"
+            variant="solid"
             icon={<PlusOutlined />}
             onClick={() => onAddRule(target)}
             data-testid={`pricing-rule-set-add-rule-target-${target.toLowerCase()}`}>
