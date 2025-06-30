@@ -172,7 +172,7 @@ export default ({ storeNodeId, index, timeSlotLabels }) => {
     <>
       <InputLabel />
 
-      {timeSlotLabels.length > 1 ?
+      {(timeSlotLabels && timeSlotLabels.length > 1) ?
         <Radio.Group
           className="timeslot__container mb-2"
           value={taskValues.timeSlotUrl}

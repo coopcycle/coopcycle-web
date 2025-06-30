@@ -17,7 +17,6 @@ import {
   selectFiltersSetting,
 } from "../redux/selectors";
 
-import "antd/lib/grid/style/index.css";
 import OrganizationsOrTagsSelect from "./OrganizationsOrTagsSelect";
 
 function isHidden(hiddenCouriers, username) {

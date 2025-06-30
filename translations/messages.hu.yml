@@ -849,3 +849,5 @@ order.cart.donation.disclaimer: 'Felajánljuk Neked, hogy a megrendelésedből s
   fogsz többet fizetni.'
 form.checkout_address.nonprofit.placeholder: 'Válaszd ki a kedvenc nonprofit szervezeted'
 form.delivery.arbitrary_price.label: 'Ár beállítása manuálisan'
+stores.createNewOrder: 'Új rendelés létrehozása'
+stores.orders: 'Rendelések'

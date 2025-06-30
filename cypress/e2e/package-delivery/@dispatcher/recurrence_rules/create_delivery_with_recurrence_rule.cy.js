@@ -1,16 +1,16 @@
 import moment from 'moment'
 
-describe('Delivery with recurrence rule (role: admin)', () => {
+describe('Delivery with recurrence rule (role: dispatcher)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      'ORM/user_admin.yml',
+      'ORM/user_dispatcher.yml',
       'ORM/tags.yml',
       'ORM/store_advanced.yml',
     ])
 
     cy.setMockDateTime('2025-04-23 8:30:00')
 
-    cy.login('admin', '12345678')
+    cy.login('dispatcher', 'dispatcher')
   })
 
   afterEach(() => {
@@ -25,7 +25,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       .click()
 
     cy.get('[data-testid=store_Acme__list_item]')
-      .contains('Créer une livraison')
+      .contains('Créer une nouvelle commande')
       .click()
 
     // Create delivery page
@@ -76,6 +76,7 @@ describe('Delivery with recurrence rule (role: admin)', () => {
 
     cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
+    // Choose Friday and Saturday
     cy.get('[data-testid="recurrence-add"]').click()
     cy.chooseDaysOfTheWeek([5, 6])
     cy.get('[data-testid=save]').click()
@@ -143,9 +144,10 @@ describe('Delivery with recurrence rule (role: admin)', () => {
     // Verify the first order is created
     cy.get('[data-task-id]').should('have.length', 2)
 
-    // Verify the recurring order is created on this Friday
+    // Verify the recurring order is created on the next Friday
     cy.visit(
       `/admin/dashboard/fullscreen/${moment()
+        .add(1, 'week')
         .day(5)
         .format('YYYY-MM-DD')}?nav=on`,
     )

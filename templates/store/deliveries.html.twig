@@ -9,7 +9,7 @@
 {% block breadcrumb %}
 <li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
 <li><a data-testid="store" href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
-<li>{% trans %}stores.deliveries{% endtrans %}</li>
+<li>{% trans %}stores.orders{% endtrans %}</li>
 {% endblock %}
 
 {% block subnav %}
@@ -89,11 +89,6 @@
 
 {% block styles %}
   {{ encore_entry_link_tags('delivery-list') }}
-  <style>
-    .dashboard-subnav {
-      background-color: #e41939 !important;
-    }
-  </style>
 {% endblock %}
 
 {% block scripts %}

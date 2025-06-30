@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e9a473f25c5187504c3790d60ec76f63",
+    "content-hash": "45924d5d8617f5a911c6eef4b37f704e",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -10927,21 +10927,21 @@
         },
         {
             "name": "nucleos/profile-bundle",
-            "version": "2.3.x-dev",
+            "version": "2.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nucleos/NucleosProfileBundle.git",
-                "reference": "c5dbe5026dcea29ab7d3284119ebcbe64fdcfc71"
+                "reference": "bee9d31a465bfde0c66ab9faf92f38c8c8004a85"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nucleos/NucleosProfileBundle/zipball/c5dbe5026dcea29ab7d3284119ebcbe64fdcfc71",
-                "reference": "c5dbe5026dcea29ab7d3284119ebcbe64fdcfc71",
+                "url": "https://api.github.com/repos/nucleos/NucleosProfileBundle/zipball/bee9d31a465bfde0c66ab9faf92f38c8c8004a85",
+                "reference": "bee9d31a465bfde0c66ab9faf92f38c8c8004a85",
                 "shasum": ""
             },
             "require": {
                 "doctrine/persistence": "^2.2.2 || ^3.0.0",
-                "nucleos/user-bundle": "^2.0",
+                "nucleos/user-bundle": "^2.3 || ^3.0",
                 "php": "^8.1",
                 "symfony/config": "^5.4 || ^6.2",
                 "symfony/dependency-injection": "^5.4 || ^6.2",
@@ -11004,7 +11004,7 @@
             ],
             "support": {
                 "issues": "https://github.com/nucleos/NucleosProfileBundle/issues",
-                "source": "https://github.com/nucleos/NucleosProfileBundle/tree/2.3.x"
+                "source": "https://github.com/nucleos/NucleosProfileBundle/tree/2.4.0"
             },
             "funding": [
                 {
@@ -11024,7 +11024,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2023-07-20T14:05:42+00:00"
+            "time": "2023-08-10T17:27:20+00:00"
         },
         {
             "name": "nucleos/user-bundle",
@@ -29451,7 +29451,6 @@
     "stability-flags": {
         "league/geotools": 0,
         "drupal/core-vendor-hardening": 20,
-        "nucleos/profile-bundle": 20,
         "shahonseven/php-color-hash": 20,
         "coopcycle/transporter": 20,
         "behatch/contexts": 20

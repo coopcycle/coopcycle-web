@@ -23,7 +23,7 @@ context('Delivery (role: dispatcher)', () => {
       .click()
 
     cy.get('[data-testid=store_Acme__list_item]')
-      .contains('Créer une livraison')
+      .contains('Créer une nouvelle commande')
       .click()
 
     // Create delivery page
@@ -42,16 +42,12 @@ context('Delivery (role: dispatcher)', () => {
     })
 
     cy.get('[data-testid="add-dropoff-button"]').click()
-    cy.get(`[data-testid="form-task-2"]`).within(() => {
-      cy.get('[data-testid="toggle-button"]').click()
-    })
+
     cy.betaChooseSavedAddressAtPosition(2, 3)
 
     // Not optimized point
     cy.get('[data-testid="add-dropoff-button"]').click()
-    cy.get(`[data-testid="form-task-3"]`).within(() => {
-      cy.get('[data-testid="toggle-button"]').click()
-    })
+
     cy.betaChooseSavedAddressAtPosition(3, 4)
 
     cy.get('[data-testid="tax-included"]').contains('4,99 €')

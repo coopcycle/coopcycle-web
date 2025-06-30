@@ -111,6 +111,16 @@ li > a.text-danger // very specific selector for bootstrap dropdown
   color: $red;
 }
 
+// Bootstrap-like styles for use in React components
+// !important is needed to override antd styles
+
+// from node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_buttons.scss
+.btn-success-color {
+  color: $btn-success-color !important;
+  background-color: $btn-success-bg !important;
+  border-color: $btn-success-border !important;
+}
+
 .no-select {
   -webkit-user-select: none; /* Safari */
   -ms-user-select: none; /* IE 10 and IE 11 */

@@ -31,7 +31,8 @@
     "whatwg-fetch": "^2.0.4"
   },
   "devDependencies": {
-    "@ant-design/icons": "^4.7.0",
+    "@ant-design/icons": "^5.6.1",
+    "@ant-design/moment-webpack-plugin": "^1.0.0",
     "@babel/core": "^7.27.1",
     "@babel/plugin-proposal-object-rest-spread": "^7.19.4",
     "@babel/preset-react": "^7.27.1",
@@ -66,7 +67,7 @@
     "@symfony/ux-turbo": "file:vendor/symfony/ux-turbo/assets",
     "@symfony/webpack-encore": "^4.7.0",
     "animate.css": "^4.1.1",
-    "antd": "^4.24.5",
+    "antd": "^5.0.0",
     "autoprefixer": "^10.4.21",
     "axios": "^0.25.0",
     "babel-jest": "^26.6.3",
@@ -146,7 +147,6 @@
     "react": "^18.3.1",
     "react-autosuggest": "^10.1.0",
     "react-chartjs-2": "^5.2.0",
-    "react-color": "^2.19.3",
     "react-contexify": "^6.0.0",
     "react-cropper": "^2.1.8",
     "react-dom": "^18.3.1",

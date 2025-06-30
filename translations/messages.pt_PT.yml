@@ -385,9 +385,11 @@ meta.title: Plataforma de logística para cooperativas
 stores.addresses: Endereços
 stores.deliveries.task_unassigned: Não atribuída
 stores.deliveries: Entregas
+stores.orders: Pedidos
 stores.api_keys: Chaves API
 stores.users: Usuários
 stores.createNewDelivery: Criar entrega
+stores.createNewOrder: Criar novo pedido
 stores.settings: Ajustes
 stores.manage: Gerenciar
 roles.ROLE_STORE.help: 'Proprietário da loja: gerenciar lojas atribuídas, entregas…'

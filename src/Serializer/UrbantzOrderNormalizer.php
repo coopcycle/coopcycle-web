@@ -26,10 +26,6 @@ class UrbantzOrderNormalizer implements NormalizerInterface, DenormalizerInterfa
 
         $object->tasks = $data;
 
-        if (isset($data['extTrackId'])) {
-            $object->extTrackId = $data['extTrackId'];
-        }
-
         return $object;
     }
 

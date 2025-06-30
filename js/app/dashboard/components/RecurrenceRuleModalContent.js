@@ -25,6 +25,7 @@ import RecurrenceRuleAsText from './RecurrenceRuleAsText'
 import { phoneNumberExample } from '../utils'
 import {DragDropContext, Draggable, Droppable} from "@hello-pangea/dnd";
 import ReactDOM from "react-dom";
+import DocumentationLink from '../../components/DocumentationLInk'
 
 const freqOptions = [
   { value: RRule.DAILY, label: 'Every day' },
@@ -459,6 +460,11 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, closeRecurrenceRuleM
           setFieldValue,
         }) => (
           <div>
+            <div className="alert alert-warning" role="alert">
+              <i className="fa fa-exclamation-triangle"></i>
+              <span className="ml-2">{ t('ADMIN_DASHBOARD_RECURRENCE_RULE_LEGACY_WARNING') }</span>
+              <DocumentationLink className="ml-2" docsPath="/en/package-delivery/local-commerce/recurrence-rules/" />
+            </div>
             <div className="p-4 border-bottom" >
                 <input className="form-control"
                       placeholder={ t('ADMIN_RECURRENCE_RULE_NAME_PLACEHOLDER') }

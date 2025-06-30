@@ -14,23 +14,33 @@ export async function fetchAllRecordsUsingFetchWithBQ(
       itemsPerPage,
       ...otherParams,
     })
-    const result = await fetchWithBQ(`${url}?${params.toString()}`)
-    return result.data
-  }
-  const firstRs = await fetch(1)
 
+    try {
+      const result = await fetchWithBQ(`${url}?${params.toString()}`)
+      return { data: result.data, error: null }
+    } catch (err) {
+      return { data: null, error: err }
+    }
+  }
+
+  const firstPageResult = await fetch(1)
+  if (firstPageResult.error) {
+    return { error: firstPageResult.error }
+  }
+
+  const firstPageData = firstPageResult.data
   if (
-    !Object.hasOwn(firstRs, 'hydra:totalItems') ||
-    firstRs['hydra:totalItems'] <= firstRs['hydra:member'].length
+    !Object.hasOwn(firstPageData, 'hydra:totalItems') ||
+    firstPageData['hydra:totalItems'] <= firstPageData['hydra:member'].length
   ) {
     // Total items were already returned in the 1st request!
     return {
-      data: firstRs['hydra:member'],
+      data: firstPageData['hydra:member'],
     }
   }
 
   // OK more pages are needed to be fetched to get all items..!
-  const totalItems = firstRs['hydra:totalItems']
+  const totalItems = firstPageData['hydra:totalItems']
   const maxPage =
     Math.trunc(totalItems / itemsPerPage) +
     (totalItems % itemsPerPage === 0 ? 0 : 1)
@@ -38,14 +48,20 @@ export async function fetchAllRecordsUsingFetchWithBQ(
   return Promise.all(
     [...Array(maxPage + 1).keys()].slice(2).map(page => fetch(page)),
   )
-    .then(results =>
-      results.reduce(
-        (acc, rs) => acc.concat(rs['hydra:member']),
-        firstRs['hydra:member'],
-      ),
-    )
     .then(results => {
-      return { data: results }
+      // Check if any page has an error
+      const errorResult = results.find(result => result.error)
+      if (errorResult) {
+        return { error: errorResult.error }
+      }
+
+      // Combine all data from successful results
+      const combinedData = results.reduce(
+        (acc, result) => acc.concat(result.data['hydra:member']),
+        firstPageData['hydra:member'],
+      )
+
+      return { data: combinedData }
     })
     .catch(error => {
       return { error }
