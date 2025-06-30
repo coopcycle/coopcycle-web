@@ -7,10 +7,12 @@ use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Store;
+use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductOption;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
+use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 
 
@@ -18,6 +20,7 @@ class PricingRuleSetManager
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
+        private readonly ProductRepositoryInterface $productRepository,
         private readonly FactoryInterface $productOptionFactory,
         private readonly LocaleProviderInterface $localeProvider,
     )
@@ -92,6 +95,9 @@ class PricingRuleSetManager
 
     private function createProductOption(string $name): ProductOption
     {
+        /** @var Product $product */
+        $product = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
+
         /** @var ProductOption $productOption */
         $productOption = $this->productOptionFactory->createNew();
 
@@ -108,6 +114,8 @@ class PricingRuleSetManager
 
         // Persist the new ProductOption
         $this->entityManager->persist($productOption);
+
+        $product->addOption($productOption);
 
         return $productOption;
     }
