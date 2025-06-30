@@ -17,7 +17,14 @@ export default function TimeSlotPicker({ value, onChange }) {
 
   return (
     <Select
-      onChange={onChange}
+      onChange={value =>
+        // replicate on change signature of html input until we re-write PricePickerLine component
+        onChange({
+          target: {
+            value: value,
+          },
+        })
+      }
       value={value}
       options={[
         { value: '', label: '-' },
