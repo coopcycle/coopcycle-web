@@ -1,10 +1,9 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import moment from 'moment'
-import { ConfigProvider, DatePicker } from 'antd';
+import { DatePicker } from 'antd';
 
-import { timePickerProps } from '../utils/antd'
-import { antdLocale } from '../i18n'
+import { AntdConfigProvider, timePickerProps } from '../utils/antd'
 
 class DateRangePicker extends React.Component {
 
@@ -75,7 +74,7 @@ export default function(el, options) {
   const props = { ...defaultProps, ...options }
 
   createRoot(el).render(
-    <ConfigProvider locale={antdLocale}>
+    <AntdConfigProvider>
       <DateRangePicker {...props} />
-    </ConfigProvider>)
+    </AntdConfigProvider>)
 }

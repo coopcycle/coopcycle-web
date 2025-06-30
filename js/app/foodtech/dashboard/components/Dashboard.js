@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import Modal from 'react-modal'
-import { DatePicker, Slider, Col, Row, Switch, ConfigProvider, Tooltip } from 'antd'
+import { DatePicker, Slider, Col, Row, Switch, Tooltip } from 'antd'
 import moment from 'moment'
 
 import Column from './Column'
@@ -24,7 +24,7 @@ import {
   selectStartedOrders,
   selectReadyOrders,
 } from '../redux/selectors'
-import { antdLocale } from '../../../i18n'
+import { AntdConfigProvider } from '../../../utils/antd'
 
 export default function Dashboard({ onDateChange }) {
   const restaurant = useSelector(state => state.restaurant)
@@ -139,7 +139,7 @@ export default function Dashboard({ onDateChange }) {
           )
         }
         <div>
-          <ConfigProvider locale={ antdLocale }>
+          <AntdConfigProvider>
             <DatePicker
               format={ 'll' }
               defaultValue={ moment(date) }
@@ -148,7 +148,7 @@ export default function Dashboard({ onDateChange }) {
                   onDateChange(date)
                 }
               } } />
-          </ConfigProvider>
+          </AntdConfigProvider>
         </div>
       </div>
       <div>

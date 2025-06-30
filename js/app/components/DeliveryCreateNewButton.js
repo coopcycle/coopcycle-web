@@ -38,8 +38,8 @@ export default function DeliveryCreateNewButton({
         })
       ) : (
         <Button
-          className="btn-success-color"
-          type="primary"
+          color="green"
+          variant="solid"
           icon={<PlusOutlined />}
           onClick={showModal}>
           {t('CREATE_NEW_ORDER')}

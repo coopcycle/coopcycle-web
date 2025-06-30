@@ -1,7 +1,6 @@
 import React, { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import Sortable from 'sortablejs'
-import { ConfigProvider } from 'antd'
 import { Provider } from 'react-redux'
 
 import './pricing-rules.scss'
@@ -13,7 +12,6 @@ import {
   PricePerPackage,
   PercentagePrice,
 } from './pricing-rule-parser'
-import { antdLocale } from '../../i18n'
 import PricingRuleTarget from './components/PricingRuleTarget'
 import AddRulePerDelivery from './components/AddRulePerDelivery'
 import RulePicker from './components/RulePicker'
@@ -27,6 +25,7 @@ import Position from './components/Position'
 import { accountSlice } from '../../entities/account/reduxSlice'
 import { createStoreFromPreloadedState } from './redux/store'
 import { pricingSlice } from './redux/pricingSlice'
+import { AntdConfigProvider } from '../../utils/antd'
 
 const ruleSet = $('#rule-set'),
   warning = $('form[name="pricing_rule_set"] .alert-warning')
@@ -53,9 +52,9 @@ const RenderRoot = ({children}) => {
   return (
     <StrictMode>
       <Provider store={store}>
-        <ConfigProvider locale={antdLocale}>
+        <AntdConfigProvider>
           {children}
-        </ConfigProvider>
+        </AntdConfigProvider>
       </Provider>
     </StrictMode>
   )

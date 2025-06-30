@@ -1,7 +1,6 @@
 import React, { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { ConfigProvider } from 'antd'
-import { antdLocale } from '../i18n'
+import { AntdConfigProvider } from './antd'
 
 // Drop-in replacement for legacy React 17 render
 export function render(component, el) {
@@ -12,7 +11,7 @@ export function render(component, el) {
 export function RootWithDefaults({ children }) {
   return (
     <StrictMode>
-      <ConfigProvider locale={antdLocale}>{children}</ConfigProvider>
+      <AntdConfigProvider>{children}</AntdConfigProvider>
     </StrictMode>
   )
 }

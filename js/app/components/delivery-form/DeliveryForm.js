@@ -528,7 +528,7 @@ export default function({
                     ) : null}
 
                     {mode === Mode.DELIVERY_CREATE || isDispatcher ? (
-                      <div className="order-informations__complete-order border-top py-3">
+                      <div className="border-top py-3">
                         <SuggestionModal />
                         <Button
                           type="primary"
