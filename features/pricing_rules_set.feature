@@ -2,6 +2,7 @@ Feature: Pricing rules set
 
   Scenario: Delete pricing rule set fails if store then succeed if store is deleted
     Given the fixtures files are loaded:
+      | sylius_products.yml |
       | stores.yml          |
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
@@ -35,8 +36,9 @@ Feature: Pricing rules set
 
   Scenario: Delete pricing rule set fails if restaurant then succeed if restaurant is deleted
         Given the fixtures files are loaded:
+        | sylius_products.yml   |
         | products.yml          |
-        | restaurants.yml          |
+        | restaurants.yml       |
         And the user "admin" is loaded:
         | email      | admin@coopcycle.org |
         | password   | 123456            |
@@ -69,7 +71,8 @@ Feature: Pricing rules set
 
   Scenario: Get the applications of a pricing rule set
     Given the fixtures files are loaded:
-    | pricing_rule_set.yml |
+      | sylius_products.yml  |
+      | pricing_rule_set.yml |
     And the user "admin" is loaded:
     | email      | admin@coopcycle.org |
     | password   | 123456            |
@@ -103,6 +106,8 @@ Feature: Pricing rules set
     """
 
   Scenario: Create pricing rule set with rules without names
+    Given the fixtures files are loaded:
+      | sylius_products.yml  |
     Given the user "admin" is loaded:
       | email      | admin@coopcycle.org |
       | password   | 123456            |
@@ -154,6 +159,8 @@ Feature: Pricing rules set
     """
 
   Scenario: Create pricing rule set with rules containing names
+    Given the fixtures files are loaded:
+      | sylius_products.yml  |
     Given the user "admin" is loaded:
       | email      | admin@coopcycle.org |
       | password   | 123456            |
@@ -224,6 +231,8 @@ Feature: Pricing rules set
     """
 
   Scenario: Create pricing rule set with mixed rules (some with names, some without)
+    Given the fixtures files are loaded:
+      | sylius_products.yml  |
     Given the user "admin" is loaded:
       | email      | admin@coopcycle.org |
       | password   | 123456            |
@@ -293,6 +302,8 @@ Feature: Pricing rules set
     """
 
   Scenario: Create pricing rule set with empty name should not create ProductOption
+    Given the fixtures files are loaded:
+      | sylius_products.yml  |
     Given the user "admin" is loaded:
       | email      | admin@coopcycle.org |
       | password   | 123456            |
@@ -364,6 +375,7 @@ Feature: Pricing rules set
 
   Scenario: Remove a rule from a pricing rule set
     Given the fixtures files are loaded:
+      | sylius_products.yml             |
       | pricing_rule_set_with_names.yml |
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
@@ -419,6 +431,7 @@ Feature: Pricing rules set
 
   Scenario: Add a rule to a pricing rule set
     Given the fixtures files are loaded:
+      | sylius_products.yml             |
       | pricing_rule_set_with_names.yml |
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
@@ -511,6 +524,7 @@ Feature: Pricing rules set
 
   Scenario: Update pricing rule set should update the rules names
     Given the fixtures files are loaded:
+      | sylius_products.yml             |
       | pricing_rule_set_with_names.yml |
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
