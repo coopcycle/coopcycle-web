@@ -301,6 +301,7 @@ class AdminController extends AbstractController
         EmailManager $emailManager
     )
     {
+        /** @var OrderInterface|null $order */
         $order = $this->orderRepository->find($id);
 
         if (!$order) {
@@ -396,12 +397,12 @@ class AdminController extends AbstractController
 
         $price = $order->getDeliveryPrice();
 
-        $deliveryData = $deliveryMapper->map(
+        $deliveryData = null !== $delivery ? $deliveryMapper->map(
             $delivery,
             $order,
             $price instanceof ArbitraryPrice ? $price : null,
             $orderManager->hasBookmark($order)
-        );
+        ) : null;
 
         $this->entityManager->getFilters()->enable('soft_deleteable');
         $stores = $this->entityManager->getRepository(Store::class)->findBy([], ['name' => 'ASC']);
