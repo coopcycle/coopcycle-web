@@ -102,7 +102,7 @@ export default function Dashboard({ onDateChange }) {
 
 
   return (
-    <div className="FoodtechDashboard">
+    (<div className="FoodtechDashboard">
       <div className="FoodtechDashboard__Navbar">
         { showSearch && (
           <div className="FoodtechDashboard__Navbar__Search">
@@ -170,8 +170,10 @@ export default function Dashboard({ onDateChange }) {
                     defaultValue={ preparationDelay }
                     marks={ sliderMarks }
                     step={ null }
-                    tipFormatter={ _tipFormatter }
-                    onChange={ delay => dispatch(setPreparationDelay(delay)) } />
+                    onChange={ delay => dispatch(setPreparationDelay(delay)) }
+                    tooltip={{
+                      formatter: _tipFormatter
+                    }} />
                 </Col>
               </Row>
             </div>
@@ -214,6 +216,6 @@ export default function Dashboard({ onDateChange }) {
         className="ReactModal__Content--foodtech">
         { order && <ModalContent order={ order } /> }
       </Modal>
-    </div>
-  )
+    </div>)
+  );
 }

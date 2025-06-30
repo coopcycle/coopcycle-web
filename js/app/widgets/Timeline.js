@@ -30,21 +30,24 @@ export default function(ul, options) {
     }
   })
 
+  // Convert events to new Timeline items format
+  const timelineItems = events.map(event => ({
+    key: event.timestamp + '-' + event.name,
+    color: event.color,
+    children: (
+      <>
+        <p>{event.createdAt} {event.name}</p>
+        {event.notes && <p>{event.notes}</p>}
+      </>
+    )
+  }))
+
   const el = document.createElement('div')
 
   ul.parentNode.insertBefore(el, ul)
-  ul.parentNode.removeChild(ul)
+  ul.parentNode.removeChild(el)
 
   createRoot(el).render(
-    <Timeline>
-      { events.map(event => (
-        <Timeline.Item key={ event.timestamp + '-' + event.name } color={ event.color }>
-          <p>{ event.createdAt } { event.name }</p>
-          { event.notes && (
-            <p>{ event.notes }</p>
-          ) }
-        </Timeline.Item>
-      )) }
-    </Timeline>
+    <Timeline items={timelineItems} />
   )
 }
