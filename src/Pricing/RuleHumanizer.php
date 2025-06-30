@@ -82,6 +82,9 @@ class RuleHumanizer
             if ($node->attributes['operator'] === '>') {
                 return sprintf('more than %s', $this->formatValue($value, $attributeName));
             }
+
+            //TODO: handle other operators
+            return sprintf('%s', $this->formatValue($value, $attributeName));
         }
     }
 
