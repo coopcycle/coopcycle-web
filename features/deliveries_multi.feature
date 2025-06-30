@@ -52,7 +52,7 @@ Feature: Multi-step deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "isMapPicked": false},
+            , "provider": null},
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -85,7 +85,7 @@ Feature: Multi-step deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "isMapPicked": false},
+            , "provider": null},
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -175,7 +175,7 @@ Feature: Multi-step deliveries
               "@type":"GeoCoordinates",
               "latitude":@number@,
               "longitude":@number@
-            , "isMapPicked": false},
+            , "provider": null},
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -217,7 +217,7 @@ Feature: Multi-step deliveries
               "@type":"GeoCoordinates",
               "latitude":@number@,
               "longitude":@number@
-            , "isMapPicked": false},
+            , "provider": null},
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -311,7 +311,7 @@ Feature: Multi-step deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "isMapPicked": false},
+            , "provider": null},
             "streetAddress":"24 Rue de la Paix, 75002 Paris",
             "telephone":null,
             "name":null,
@@ -353,7 +353,7 @@ Feature: Multi-step deliveries
               "@type":"GeoCoordinates",
               "latitude":48.856872,
               "longitude":2.354618
-            , "isMapPicked": false},
+            , "provider": null},
             "streetAddress":"48 Rue de Rivoli, 75004 Paris",
             "telephone":null,
             "name":null,
@@ -445,7 +445,7 @@ Feature: Multi-step deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "isMapPicked": false},
+            , "provider": null},
             "streetAddress":"24 Rue de la Paix, 75002 Paris",
             "telephone":null,
             "name":null,
@@ -487,7 +487,7 @@ Feature: Multi-step deliveries
               "@type":"GeoCoordinates",
               "latitude":48.856872,
               "longitude":2.354618
-            , "isMapPicked": false},
+            , "provider": null},
             "streetAddress":"48 Rue de Rivoli, 75004 Paris",
             "telephone":null,
             "name":null,

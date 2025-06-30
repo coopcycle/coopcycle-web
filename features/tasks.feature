@@ -634,7 +634,7 @@ Feature: Tasks
             "@type":"GeoCoordinates",
             "latitude":48.846656,
             "longitude":2.369052
-          , "isMapPicked": false},
+          , "provider": null},
           "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
           "telephone":null,
           "firstName":"John",
@@ -1100,7 +1100,7 @@ Feature: Tasks
           "geo": {
             "latitude": 48.870473,
             "longitude": 2.331933
-          , "isMapPicked": false}
+          , "provider": null}
         },
         "doneAfter": "2018-12-24T23:30:00+01:00",
         "doneBefore": "2018-12-24T23:59:59+01:00",
@@ -1127,7 +1127,7 @@ Feature: Tasks
             "@type":"GeoCoordinates",
             "latitude":48.870473,
             "longitude":2.331933
-          , "isMapPicked": false},
+          , "provider": null},
           "streetAddress":"101 Rue de la Paix, 75002 Paris",
           "telephone":"+33612345678",
           "name":null,
@@ -1181,7 +1181,7 @@ Feature: Tasks
           "geo": {
             "latitude": 48.870473,
             "longitude": 2.331933
-          , "isMapPicked": false}
+          , "provider": null}
         },
         "comments": "Hello, world",
         "after": "2018-12-24T23:30:00+01:00",
@@ -1209,7 +1209,7 @@ Feature: Tasks
             "@type":"GeoCoordinates",
             "latitude":48.870473,
             "longitude":2.331933
-          , "isMapPicked": false},
+          , "provider": null},
           "streetAddress":"101 Rue de la Paix, 75002 Paris",
           "telephone":null,
           "name":null,
@@ -1260,7 +1260,7 @@ Feature: Tasks
           "geo": {
             "latitude": 48.870473,
             "longitude": 2.331933
-          , "isMapPicked": false}
+          , "provider": null}
         },
         "doneAfter": "2018-12-24T23:30:00+01:00",
         "doneBefore": "2018-12-24T23:59:59+01:00"
@@ -1313,7 +1313,7 @@ Feature: Tasks
           "geo": {
             "latitude": 48.870473,
             "longitude": 2.331933
-          , "isMapPicked": false}
+          , "provider": null}
         },
         "doneAfter": "2018-12-24T23:30:00+01:00",
         "doneBefore": "2018-12-24T23:59:59+01:00"
@@ -2543,7 +2543,7 @@ Feature: Tasks
     And the user "bob" sends a "POST" request to "/api/tasks" with body:
       """
       {
-        "address": {, "isMapPicked": false},
+        "address": {, "provider": null},
         "doneAfter": "2020-09-01T13:53:29.536Z",
         "doneBefore": "2020-09-01T14:23:29.537Z"
       }
@@ -2712,7 +2712,7 @@ Feature: Tasks
             "name":"task:created",
             "data":[],
             "createdAt":"@string@.isDateTime()"
-          , "isMapPicked": false}],
+          , "provider": null}],
         "hydra:totalItems":1,
         "hydra:search":{
           "@*@":"@*@"
@@ -2897,7 +2897,7 @@ Feature: Tasks
       {
         "address": {
           "name": "Foo"
-        , "isMapPicked": false},
+        , "provider": null},
         "comments": "Lorem ipsum"
       }
       """
@@ -3247,7 +3247,7 @@ Feature: Tasks
             "code":"REFUSED",
             "description":"Refused",
             "metadata":[]
-          , "isMapPicked": false}],
+          , "provider": null}],
         "hydra:totalItems":2,
         "hydra:search":{
           "@type":"hydra:IriTemplate",
