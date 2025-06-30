@@ -2,7 +2,9 @@
 
 @mixin modal-content-border() {
   border-radius: 8px;
-  box-shadow: 4px 4px 4px 0 $dark-gray;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1),
+    0 6px 12px rgba(0, 0, 0, 0.08),
+    0 3px 6px rgba(0, 0, 0, 0.06);
 }
 
 /* Vertically centered modal */
@@ -83,6 +85,11 @@
 .ReactModal__Overlay--zIndex-1001 {
   // For example, could be used to put the modal *ABOVE* the Leaflet map (z-index: 1000)
   z-index: 1001;
+}
+
+.ReactModal__Overlay--zIndex-2001 {
+  // For example, could be used to put the modal *ABOVE* the addesss suggestions (z-index: 2000)
+  z-index: 2001;
 }
 
 .ReactModal__Content {
