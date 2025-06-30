@@ -17,6 +17,8 @@ export default function ZonePicker({ value, onChange }) {
 
   return (
     <Select
+      showSearch
+      optionFilterProp="label"
       onChange={value =>
         // replicate on change signature of html input until we re-write PricePickerLine component
         onChange({
