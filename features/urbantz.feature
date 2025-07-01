@@ -1224,7 +1224,8 @@ Feature: Urbantz
               "@type":"GeoCoordinates",
               "latitude":48.864577,
               "longitude":2.333338
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
             "telephone":null,
             "name":null,

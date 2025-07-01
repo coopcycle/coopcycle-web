@@ -119,7 +119,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -152,7 +153,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -242,7 +244,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -275,7 +278,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -368,7 +372,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -410,7 +415,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -508,7 +514,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -541,7 +548,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -612,7 +620,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -645,7 +654,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -720,7 +730,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -753,7 +764,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -828,7 +840,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -861,7 +874,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -936,7 +950,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -969,7 +984,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1047,7 +1063,8 @@ Feature: Deliveries
                 "@type":"GeoCoordinates",
                 "latitude":@double@,
                 "longitude":@double@
-              , "provider": null},
+              },
+              "provider": null,
               "streetAddress":@string@,
               "telephone":null,
               "name":null,
@@ -1080,7 +1097,8 @@ Feature: Deliveries
                 "@type":"GeoCoordinates",
                 "latitude":@double@,
                 "longitude":@double@
-              , "provider": null},
+              },
+              "provider": null,
               "streetAddress":@string@,
               "telephone":null,
               "name":null,
@@ -1158,7 +1176,8 @@ Feature: Deliveries
                 "@type":"GeoCoordinates",
                 "latitude":@double@,
                 "longitude":@double@
-              , "provider": null},
+              },
+              "provider": null,
               "streetAddress":@string@,
               "telephone":null,
               "name":null,
@@ -1191,7 +1210,8 @@ Feature: Deliveries
                 "@type":"GeoCoordinates",
                 "latitude":@double@,
                 "longitude":@double@
-              , "provider": null},
+              },
+              "provider": null,
               "streetAddress":@string@,
               "telephone":null,
               "name":null,
@@ -1353,7 +1373,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1386,7 +1407,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1462,7 +1484,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1495,7 +1518,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1571,7 +1595,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1604,7 +1629,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1671,7 +1697,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1704,7 +1731,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1774,7 +1802,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1807,7 +1836,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": "+33612345678",
             "name":null,
@@ -1881,7 +1911,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1914,7 +1945,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":48.857127,
               "longitude":2.354766
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": "+33612345678",
             "name":null,
@@ -1985,7 +2017,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -2018,7 +2051,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":48.857127,
               "longitude":2.354766
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": "+33612345678",
             "name":null,
@@ -2090,7 +2124,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -2123,7 +2158,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":48.857127,
               "longitude":2.354766
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": "+33612345678",
             "name":null,
@@ -2210,7 +2246,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":48.864577,
               "longitude":2.333338
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
             "telephone":null,
             "name":null,
@@ -2401,7 +2438,8 @@ Feature: Deliveries
                     "@type": "GeoCoordinates",
                     "latitude": @double@,
                     "longitude": @double@
-                , "provider": null},
+                  },
+                  "provider": null,
                 "streetAddress": "272, rue Saint Honoré 75001 Paris 1er",
                 "telephone": null,
                 "name": null,
@@ -2434,7 +2472,8 @@ Feature: Deliveries
                     "@type": "GeoCoordinates",
                     "latitude": @double@,
                     "longitude": @double@
-                , "provider": null},
+                  },
+                  "provider": null,
                 "streetAddress": @string@,
                 "telephone": null,
                 "name": null,
@@ -2515,7 +2554,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -2548,7 +2588,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -2644,7 +2685,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -2677,7 +2719,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -2734,7 +2777,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -2767,7 +2811,8 @@ Feature: Deliveries
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -3710,7 +3755,7 @@ Feature: Deliveries
         "hydra:totalItems": 0
       }
       """
-    
+
   Scenario: Create delivery with a saved order as an admin
     Given the fixtures files are loaded:
       | sylius_products.yml |

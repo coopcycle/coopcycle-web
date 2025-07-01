@@ -132,7 +132,8 @@ Feature: Orders
             "@type":"GeoCoordinates",
             "latitude":@double@,
             "longitude":@double@
-          , "provider": null},
+          },
+          "provider": null,
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
           "telephone": null,
@@ -153,7 +154,8 @@ Feature: Orders
           "@type":"GeoCoordinates",
           "latitude":48.855799,
           "longitude":2.359207
-        , "provider": null},
+        },
+        "provider": null,
         "streetAddress":"1, rue de Rivoli",
         "name":null,
         "telephone": null,
@@ -308,7 +310,8 @@ Feature: Orders
             "@type":"GeoCoordinates",
             "latitude":@double@,
             "longitude":@double@
-          , "provider": null},
+          },
+          "provider": null,
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
           "telephone": null,
@@ -329,7 +332,8 @@ Feature: Orders
           "@type":"GeoCoordinates",
           "latitude":48.855799,
           "longitude":2.359207
-        , "provider": null},
+        },
+        "provider": null,
         "streetAddress":"1, rue de Rivoli",
         "name":null,
         "telephone": null,
@@ -444,7 +448,8 @@ Feature: Orders
           "geo": {
             "latitude": 48.863814,
             "longitude": 2.3329
-          , "provider": null}
+          }
+          "provider": null,
         },
         "items": [{
           "product": "PIZZA",
@@ -591,8 +596,8 @@ Feature: Orders
           "geo": {
             "latitude": 48.863814,
             "longitude": 2.3329,
-            "provider": null
           },
+          "provider": null
           "contactName": null
         },
         "shippedAt": "2017-09-02 12:30:00",
@@ -630,7 +635,8 @@ Feature: Orders
             "@type":"GeoCoordinates",
             "latitude":@double@,
             "longitude":@double@
-          , "provider": null},
+          },
+          "provider": null,
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
           "telephone": null,
@@ -651,7 +657,8 @@ Feature: Orders
           "@type":"GeoCoordinates",
           "latitude": 48.863814,
           "longitude": 2.3329
-        , "provider": null},
+        },
+        "provider": null,
         "streetAddress":"190 Rue de Rivoli, Paris",
         "name":null,
         "telephone": null,
@@ -749,8 +756,8 @@ Feature: Orders
           "geo": {
             "latitude": 48.863814,
             "longitude": 2.3329,
-            "provider": null
           },
+          "provider": null
           "contactName": null
         },
         "items": [{
@@ -797,7 +804,8 @@ Feature: Orders
               "@type":"GeoCoordinates",
               "latitude":@double@,
               "longitude":@double@
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
             "name":null,
             "telephone": null,
@@ -817,7 +825,8 @@ Feature: Orders
             "@type":"GeoCoordinates",
             "latitude": 48.863814,
             "longitude": 2.3329
-          , "provider": null},
+          },
+          "provider": null,
           "streetAddress":"190 Rue de Rivoli, Paris",
           "name":null,
           "telephone": null,
@@ -942,7 +951,8 @@ Feature: Orders
           "@type":"GeoCoordinates",
           "latitude":48.855799,
           "longitude":2.359207
-        , "provider": null},
+        },
+        "provider": null,
         "streetAddress":"1, rue de Rivoli",
         "telephone":null,
         "name":null,
