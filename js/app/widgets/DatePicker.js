@@ -19,7 +19,7 @@ export default function(el, options) {
         defaultValue={ moment(options.defaultValue) }
         onChange={ options.onChange }
         /* This is needed to work with Bootstrap modal */
-        getCalendarContainer={ trigger => trigger.parentNode } />
+        getPopupContainer={ trigger => trigger.parentNode } />
     </AntdConfigProvider>)
 
 }
