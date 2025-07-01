@@ -1129,6 +1129,7 @@ Feature: Tasks
             "latitude":48.870473,
             "longitude":2.331933
           },
+          "provider": null,
           "streetAddress":"101 Rue de la Paix, 75002 Paris",
           "telephone":"+33612345678",
           "name":null,
@@ -1211,6 +1212,7 @@ Feature: Tasks
             "latitude":48.870473,
             "longitude":2.331933
           },
+          "provider": null,
           "streetAddress":"101 Rue de la Paix, 75002 Paris",
           "telephone":null,
           "name":null,
