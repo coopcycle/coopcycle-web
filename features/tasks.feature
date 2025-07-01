@@ -1102,7 +1102,6 @@ Feature: Tasks
             "latitude": 48.870473,
             "longitude": 2.331933
           }
-          "provider": null,
         },
         "doneAfter": "2018-12-24T23:30:00+01:00",
         "doneBefore": "2018-12-24T23:59:59+01:00",
@@ -1130,7 +1129,6 @@ Feature: Tasks
             "latitude":48.870473,
             "longitude":2.331933
           },
-          "provider": null,
           "streetAddress":"101 Rue de la Paix, 75002 Paris",
           "telephone":"+33612345678",
           "name":null,
@@ -1185,7 +1183,6 @@ Feature: Tasks
             "latitude": 48.870473,
             "longitude": 2.331933
           }
-          "provider": null,
         },
         "comments": "Hello, world",
         "after": "2018-12-24T23:30:00+01:00",
@@ -1214,7 +1211,6 @@ Feature: Tasks
             "latitude":48.870473,
             "longitude":2.331933
           },
-          "provider": null,
           "streetAddress":"101 Rue de la Paix, 75002 Paris",
           "telephone":null,
           "name":null,

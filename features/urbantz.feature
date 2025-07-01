@@ -1257,7 +1257,8 @@ Feature: Urbantz
               "@type":"GeoCoordinates",
               "latitude":47.211251823185,
               "longitude":-1.5506787323971
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress":"4 Rue Perrault, 44000 Nantes",
             "telephone":null,
             "name":null,

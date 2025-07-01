@@ -449,7 +449,6 @@ Feature: Orders
             "latitude": 48.863814,
             "longitude": 2.3329
           }
-          "provider": null,
         },
         "items": [{
           "product": "PIZZA",
@@ -597,7 +596,6 @@ Feature: Orders
             "latitude": 48.863814,
             "longitude": 2.3329,
           },
-          "provider": null
           "contactName": null
         },
         "shippedAt": "2017-09-02 12:30:00",
@@ -636,7 +634,6 @@ Feature: Orders
             "latitude":@double@,
             "longitude":@double@
           },
-          "provider": null,
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
           "telephone": null,
@@ -757,7 +754,6 @@ Feature: Orders
             "latitude": 48.863814,
             "longitude": 2.3329,
           },
-          "provider": null
           "contactName": null
         },
         "items": [{
@@ -805,7 +801,6 @@ Feature: Orders
               "latitude":@double@,
               "longitude":@double@
             },
-            "provider": null,
             "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
             "name":null,
             "telephone": null,

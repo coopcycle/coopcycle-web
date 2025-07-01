@@ -2886,6 +2886,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -3043,6 +3044,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider":null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -3368,6 +3370,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider":null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -3478,6 +3481,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider":null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -3683,6 +3687,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -3810,6 +3815,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
