@@ -90,7 +90,7 @@ class PricePreview {
          <StrictMode>
            <PriceCalculation
              calculation={data.calculation}
-             orderItems={data.items}
+             order={data.order}
              itemsTotal={data.amount} />
          </StrictMode>,
        )

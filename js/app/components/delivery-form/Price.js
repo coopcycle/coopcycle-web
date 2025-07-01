@@ -284,7 +284,7 @@ export default ({
             className="mt-2"
             isDebugPricing={isDebugPricing}
             calculation={calculateResponseData.calculation}
-            orderItems={calculateResponseData.items}
+            order={calculateResponseData.order}
             itemsTotal={calculateResponseData.amount}
           />
         )}

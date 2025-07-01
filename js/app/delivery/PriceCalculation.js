@@ -4,14 +4,12 @@ import { Collapse } from 'antd'
 
 const { Panel } = Collapse
 
-function ProductOption({ productOption }) {
-  const rule = productOption.matchedRule
-
+function ProductOptionValue({ productOptionValue }) {
   return (
     <div>
-      <span>{rule.name}</span>
+      <span>{productOptionValue.option.name}</span>
       <span className="pull-right">
-          {(productOption.price / 100).formatMoney()}
+          {(productOptionValue.price / 100).formatMoney()}
         </span>
     </div>
   )
@@ -25,8 +23,8 @@ function OrderItem({ orderItem, index }) {
       <div>
         <span className="font-weight-semi-bold">Item {index + 1}</span>
       </div>
-      {orderItem.productVariant.productOptions.map((productOption, index) => (
-        <ProductOption key={index} productOption={productOption} />
+      {orderItem.variant.optionValues.map((productOptionValue, index) => (
+        <ProductOptionValue key={index} productOptionValue={productOptionValue} />
       ))}
       <div className="font-weight-semi-bold">
         <span>{t('DELIVERY_FORM_PRICE_CALCULATION_ORDER_ITEM_TOTAL')}</span>
@@ -92,12 +90,12 @@ function MethodOfCalculation({ calculation }) {
   )
 }
 
-function Cart({ orderItems, itemsTotal }) {
+function Cart({ order, itemsTotal }) {
   const { t } = useTranslation()
 
   return (
     <>
-      {orderItems.map((orderItem, index) => (
+      {order.items.map((orderItem, index) => (
         <OrderItem key={index} orderItem={orderItem} index={index} />
       ))}
       <li className="list-group-item">
@@ -145,7 +143,7 @@ export function PriceCalculation({
   className,
   isDebugPricing,
   calculation,
-  orderItems,
+  order,
   itemsTotal,
 }) {
   const { t } = useTranslation()
@@ -163,10 +161,10 @@ export function PriceCalculation({
             </>
           )}
 
-          {Boolean(orderItems && itemsTotal) && (
+          {Boolean(order && itemsTotal) && (
             <div className="mt-4">
               <h4>{t('DELIVERY_FORM_PRICE_CALCULATION_CART')}</h4>
-              <Cart orderItems={orderItems} itemsTotal={itemsTotal} />
+              <Cart order={order} itemsTotal={itemsTotal} />
             </div>
           )}
         </>
