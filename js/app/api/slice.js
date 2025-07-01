@@ -180,6 +180,25 @@ export const apiSlice = createApi({
         }
       },
     }),
+
+    getCouriers: builder.query({
+      query: () => ({
+        url: 'api/users',
+        params: {
+          roles: 'ROLE_COURIER',
+        },
+      }),
+    }),
+
+    assignCourier: builder.mutation({
+      query: ({ date, username, items }) => ({
+        url: `api/task_lists/set_items/${date}/${username}`,
+        method: 'PUT',
+        body: {
+          items: items
+        }
+      }),
+    }),
   }),
 })
 
@@ -206,4 +225,6 @@ export const {
   useRecurrenceRulesGenerateOrdersMutation,
   useLazyGetInvoiceLineItemsGroupedByOrganizationQuery,
   useGetInvoiceLineItemsQuery,
+  useGetCouriersQuery,
+  useAssignCourierMutation,
 } = apiSlice

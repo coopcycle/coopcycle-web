@@ -13,12 +13,13 @@ import { getCountry } from '../../i18n'
 import { useTranslation } from 'react-i18next'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
-import "./DeliveryForm.scss"
+import './DeliveryForm.scss'
 
 import {
   useGetStoreAddressesQuery,
   useGetStoreQuery,
   useGetTagsQuery,
+  useGetCouriersQuery
 } from '../../api/slice'
 import { RecurrenceRules } from './RecurrenceRules'
 import useSubmit from './hooks/useSubmit'
@@ -29,9 +30,10 @@ import Map from '../DeliveryMap'
 import { Mode, modeIn } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
+import SelectCourier from './SelectCourier.js'
 
 /** used in case of phone validation */
-const phoneUtil = PhoneNumberUtil.getInstance();
+const phoneUtil = PhoneNumberUtil.getInstance()
 
 const getNextRoundedTime = () => {
   const now = moment()
@@ -49,7 +51,7 @@ const getNextRoundedTime = () => {
 }
 
 /** TODO : use this validation when we port the form for store owners for which the phone is required */
-const validatePhoneNumber = (telephone) => {
+const validatePhoneNumber = telephone => {
   if (telephone) {
     try {
       const phoneNumber = telephone.startsWith('+')
@@ -62,7 +64,7 @@ const validatePhoneNumber = (telephone) => {
   } else {
     return true
   }
-};
+}
 
 function getFormattedValue(value) {
   if (typeof value === 'string') {
@@ -92,7 +94,7 @@ const dropoffSchema = {
   packages: [],
   weight: 0,
   tags: [],
-};
+}
 
 const pickupSchema = {
   type: 'PICKUP',
@@ -106,7 +108,7 @@ const pickupSchema = {
     name: '',
     contactName: '',
     telephone: null,
-    formattedTelephone: null
+    formattedTelephone: null,
   },
   saveInStoreAddresses: false,
   updateInStoreAddresses: false,
@@ -121,7 +123,7 @@ export default function({
   deliveryNodeId,
   preLoadedDeliveryData,
   isDispatcher,
-  isDebugPricing
+  isDebugPricing,
 }) {
   const mode = useSelector(selectMode)
   const [isLoading, setIsLoading] = useState(true)
@@ -165,52 +167,65 @@ export default function({
     return null
   }, [preLoadedDeliveryData, mode])
 
-  const { handleSubmit, error, isSubmitted } = useSubmit(storeNodeId, deliveryNodeId, isDispatcher)
+  const { handleSubmit, error, isSubmitted } = useSubmit(
+    storeNodeId,
+    deliveryNodeId,
+    isDispatcher,
+  )
 
   const { t } = useTranslation()
 
   const handleTaskExpansion = (taskIndex, isExpanded) => {
     setExpandedTasks(prev => ({
       ...prev,
-      [taskIndex]: isExpanded
+      [taskIndex]: isExpanded,
     }))
   }
 
-  const validate = (values) => {
-    const errors = { tasks: [] };
+  const validate = values => {
+    const errors = { tasks: [] }
 
     for (let i = 0; i < values.tasks.length; i++) {
-
       const taskErrors = {}
 
       if (!isDispatcher) {
         if (!values.tasks[i].address.formattedTelephone) {
-          taskErrors.address = taskErrors.address || {};
-          taskErrors.address.formattedTelephone = t("FORM_REQUIRED")
+          taskErrors.address = taskErrors.address || {}
+          taskErrors.address.formattedTelephone = t('FORM_REQUIRED')
         }
 
         if (!values.tasks[i].address.contactName) {
-          taskErrors.address = taskErrors.address || {};
-          taskErrors.address.contactName = t("FORM_REQUIRED")
+          taskErrors.address = taskErrors.address || {}
+          taskErrors.address.contactName = t('FORM_REQUIRED')
         }
 
         if (!values.tasks[i].address.name) {
-          taskErrors.address = taskErrors.address || {};
-          taskErrors.address.name = t("FORM_REQUIRED")
+          taskErrors.address = taskErrors.address || {}
+          taskErrors.address.name = t('FORM_REQUIRED')
         }
       }
 
       if (!validatePhoneNumber(values.tasks[i].address.formattedTelephone)) {
-        taskErrors.address = taskErrors.address || {};
-        taskErrors.address.formattedTelephone = t("ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR")
+        taskErrors.address = taskErrors.address || {}
+        taskErrors.address.formattedTelephone = t(
+          'ADMIN_DASHBOARD_TASK_FORM_TELEPHONE_ERROR',
+        )
       }
 
-      if (values.tasks[i].type === 'DROPOFF' && storeDeliveryInfos.packagesRequired && !values.tasks[i].packages.some(item => item.quantity > 0)) {
-        taskErrors.packages = t("DELIVERY_FORM_ERROR_PACKAGES")
+      if (
+        values.tasks[i].type === 'DROPOFF' &&
+        storeDeliveryInfos.packagesRequired &&
+        !values.tasks[i].packages.some(item => item.quantity > 0)
+      ) {
+        taskErrors.packages = t('DELIVERY_FORM_ERROR_PACKAGES')
       }
 
-      if (values.tasks[i].type === "DROPOFF" && storeDeliveryInfos.weightRequired && !values.tasks[i].weight) {
-        taskErrors.weight = t("DELIVERY_FORM_ERROR_WEIGHT")
+      if (
+        values.tasks[i].type === 'DROPOFF' &&
+        storeDeliveryInfos.weightRequired &&
+        !values.tasks[i].weight
+      ) {
+        taskErrors.weight = t('DELIVERY_FORM_ERROR_WEIGHT')
       }
 
       if (Object.keys(taskErrors).length > 0) {
@@ -227,7 +242,9 @@ export default function({
       })
     }
 
-    return Object.keys(errors.tasks).length > 0 || errors.variantName ? errors : {};
+    return Object.keys(errors.tasks).length > 0 || errors.variantName
+      ? errors
+      : {}
   }
 
   const isDataReady = useMemo(() => {
@@ -240,12 +257,7 @@ export default function({
     }
 
     return true
-  }, [
-    storeData,
-    addresses,
-    tags,
-    isDispatcher
-  ])
+  }, [storeData, addresses, tags, isDispatcher])
 
   useEffect(() => {
     if (!isDataReady) return
@@ -289,7 +301,6 @@ export default function({
       }
 
       setTrackingLink(preLoadedDeliveryData.trackingUrl)
-
     } else {
       if (mode === Mode.DELIVERY_CREATE) {
         const tasks = [{ ...pickupSchema }, { ...dropoffSchema }]
@@ -311,247 +322,297 @@ export default function({
     setIsLoading(false)
   }, [isDataReady, preLoadedDeliveryData, mode])
 
-  return (
-    isLoading ?
-      <div className="delivery-spinner">
-        <Spinner />
-      </div>
-      :
-        <Formik
-          initialValues={initialValues}
-          onSubmit={handleSubmit}
-          validate={validate}
-          validateOnChange={false}
-          validateOnBlur={false}
-        >
-          {({ values, isSubmitting, setFieldValue }) => {
+  return isLoading ? (
+    <div className="delivery-spinner">
+      <Spinner />
+    </div>
+  ) : (
+    <Formik
+      initialValues={initialValues}
+      onSubmit={handleSubmit}
+      validate={validate}
+      validateOnChange={false}
+      validateOnBlur={false}>
+      {({ values, isSubmitting, setFieldValue }) => {
+        const previousValues = usePrevious(values)
 
-            const previousValues = usePrevious(values)
+        useEffect(() => {
+          // Skip if no or 1 task
+          if (!values.tasks || values.tasks.length <= 1) return
 
-            useEffect(() => {
+          const firstTask = values.tasks[0]
+          const prevFirstTask = previousValues?.tasks?.[0]
 
-              // Skip if no or 1 task
-              if (!values.tasks || values.tasks.length <= 1) return;
+          // Skip if no previous tasks
+          if (!prevFirstTask) return
 
-              const firstTask = values.tasks[0]
-              const prevFirstTask = previousValues?.tasks?.[0]
+          const newPickupAfter = firstTask.after
+          const hasAfterChanged = prevFirstTask.after !== newPickupAfter
+          const isOnSameDay = moment(newPickupAfter).isSame(
+            moment(prevFirstTask.before),
+            'day',
+          )
 
-              // Skip if no previous tasks
-              if (!prevFirstTask) return;
-
-              const newPickupAfter = firstTask.after
-              const hasAfterChanged = prevFirstTask.after !== newPickupAfter
-              const isOnSameDay = moment(newPickupAfter)
-                .isSame(moment(prevFirstTask.before), 'day')
-
-              // Case 1: "after" time changed and is on the same day as "before"
-              if (hasAfterChanged && isOnSameDay) {
-                values.tasks.slice(1).forEach((task, idx) => {
-                  const taskIndex = idx + 1;
-                  if (moment(newPickupAfter).isAfter(moment(task.after))) {
-                    setFieldValue(`tasks[${taskIndex}].after`, firstTask.after);
-                    setFieldValue(`tasks[${taskIndex}].before`, firstTask.before);
-                  }
-                });
-                return;
+          // Case 1: "after" time changed and is on the same day as "before"
+          if (hasAfterChanged && isOnSameDay) {
+            values.tasks.slice(1).forEach((task, idx) => {
+              const taskIndex = idx + 1
+              if (moment(newPickupAfter).isAfter(moment(task.after))) {
+                setFieldValue(`tasks[${taskIndex}].after`, firstTask.after)
+                setFieldValue(`tasks[${taskIndex}].before`, firstTask.before)
               }
+            })
+            return
+          }
 
-              // Case 2: Time slot changed
-              if (prevFirstTask.timeSlotUrl && firstTask.timeSlotUrl && prevFirstTask.timeSlotUrl !== firstTask.timeSlotUrl) {
-                values.tasks.slice(1).forEach((_, idx) => {
-                  const taskIndex = idx + 1;
-                  setFieldValue(`tasks[${taskIndex}].timeSlotUrl`, firstTask.timeSlotUrl);
-                });
-                return;
+          // Case 2: Time slot changed
+          if (
+            prevFirstTask.timeSlotUrl &&
+            firstTask.timeSlotUrl &&
+            prevFirstTask.timeSlotUrl !== firstTask.timeSlotUrl
+          ) {
+            values.tasks.slice(1).forEach((_, idx) => {
+              const taskIndex = idx + 1
+              setFieldValue(
+                `tasks[${taskIndex}].timeSlotUrl`,
+                firstTask.timeSlotUrl,
+              )
+            })
+            return
+          }
+
+          //Case 3: Time slot value changed
+          if (
+            prevFirstTask.timeSlot &&
+            firstTask.timeSlot &&
+            prevFirstTask.timeSlot !== firstTask.timeSlot
+          ) {
+            values.tasks.slice(1).forEach((task, idx) => {
+              const taskIndex = idx + 1
+              if (task.timeSlot) {
+                const pickupAfter = moment(firstTask.timeSlot.split('/')[0])
+                const dropAfter = moment(task.timeSlot.split('/')[0])
+
+                if (pickupAfter.isAfter(dropAfter)) {
+                  setFieldValue(
+                    `tasks[${taskIndex}].timeSlot`,
+                    firstTask.timeSlot,
+                  )
+                }
               }
+            })
+          }
+        }, [values, previousValues, setFieldValue])
 
-              //Case 3: Time slot value changed
-              if (prevFirstTask.timeSlot && firstTask.timeSlot && prevFirstTask.timeSlot !== firstTask.timeSlot) {
-                values.tasks.slice(1).forEach((task, idx) => {
-                  const taskIndex = idx + 1;
-                  if (task.timeSlot) {
-                    const pickupAfter = moment(firstTask.timeSlot.split('/')[0]);
-                    const dropAfter = moment(task.timeSlot.split('/')[0]);
-
-                    if (pickupAfter.isAfter(dropAfter)) {
-                      setFieldValue(`tasks[${taskIndex}].timeSlot`, firstTask.timeSlot);
-                    }
-                  }
-                });
-              }
-
-            }, [values, previousValues, setFieldValue]);
-
-            return (
-              <Form >
-                <div className='delivery-form' >
-
-                  <FieldArray name="tasks">
-                    {(arrayHelpers) => (
-                      <div className="new-order">
-
-                        <div className="new-order__pickups">
-                          {values.tasks
-                            .filter((task) => task.type === 'PICKUP')
-                            .map((task) => {
-                              const originalIndex = values.tasks.findIndex(t => t === task);
-                              return (
-                                <div className='new-order__pickups__item' key={originalIndex}>
-                                  <Task
-                                    key={originalIndex}
-                                    task={task}
-                                    index={originalIndex}
-                                    addresses={addresses}
-                                    storeNodeId={storeNodeId}
-                                    storeDeliveryInfos={storeDeliveryInfos}
-                                    isDispatcher={isDispatcher}
-                                    tags={tags}
-                                    isExpanded={expandedTasks[originalIndex]}
-                                    onToggleExpanded={(isExpanded) => handleTaskExpansion(originalIndex, isExpanded)}
-                                  />
-                                </div>
-                              );
-                            })}
-                        </div>
-
-
-                        <div className="new-order__dropoffs" style={{ display: 'flex', flexDirection: 'column' }}>
-                          {values.tasks
-                            .filter((task) => task.type === 'DROPOFF')
-                            .map((task) => {
-                              const originalIndex = values.tasks.findIndex(t => t === task);
-                              return (
-                                <div className='new-order__dropoffs__item' key={originalIndex}>
-                                  <Task
-                                    index={originalIndex}
-                                    addresses={addresses}
-                                    storeNodeId={storeNodeId}
-                                    storeDeliveryInfos={storeDeliveryInfos}
-                                    onRemove={arrayHelpers.remove}
-                                    showRemoveButton={originalIndex > 1}
-                                    isDispatcher={isDispatcher}
-                                    tags={tags}
-                                    isExpanded={expandedTasks[originalIndex]}
-                                    onToggleExpanded={(isExpanded) => handleTaskExpansion(originalIndex, isExpanded)}
-                                  />
-                                </div>
-                              );
-                            })}
-
-                          {storeDeliveryInfos.multiDropEnabled && (mode === Mode.DELIVERY_CREATE || isDispatcher) ? <div
-                            className="new-order__dropoffs__add p-4 border mb-4">
-                            <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
-                            <Button
-                              data-testid="add-dropoff-button"
-                              disabled={false}
-                              onClick={() => {
-                                const newDeliverySchema = {
-                                  ...dropoffSchema,
-                                  before: values.tasks.slice(-1)[0].before,
-                                  after: values.tasks.slice(-1)[0].after,
-                                  timeSlot: values.tasks.slice(-1)[0].timeSlot,
-                                  timeSlotUrl: values.tasks.slice(-1)[0].timeSlotUrl
+        return (
+          <Form>
+            <div className="delivery-form">
+              <FieldArray name="tasks">
+                {arrayHelpers => (
+                  <div className="new-order">
+                    <div className="new-order__pickups">
+                      {values.tasks
+                        .filter(task => task.type === 'PICKUP')
+                        .map(task => {
+                          const originalIndex = values.tasks.findIndex(
+                            t => t === task,
+                          )
+                          return (
+                            <div
+                              className="new-order__pickups__item"
+                              key={originalIndex}>
+                              <Task
+                                key={originalIndex}
+                                task={task}
+                                index={originalIndex}
+                                addresses={addresses}
+                                storeNodeId={storeNodeId}
+                                storeDeliveryInfos={storeDeliveryInfos}
+                                isDispatcher={isDispatcher}
+                                tags={tags}
+                                isExpanded={expandedTasks[originalIndex]}
+                                onToggleExpanded={isExpanded =>
+                                  handleTaskExpansion(originalIndex, isExpanded)
                                 }
-                                arrayHelpers.push(newDeliverySchema)
-
-                                // Auto-expand the newly added task and collapse all previous tasks
-                                const newTaskIndex = values.tasks.length // Index of the new task after it's added
-                                const totalTasks = values.tasks.length + 1
-
-                                const newExpandedState = {}
-                                for (let i = 0; i < totalTasks; i++) {
-                                  newExpandedState[i] = i === newTaskIndex
-                                }
-                                setExpandedTasks(newExpandedState)
-                              }}>
-                              {t('DELIVERY_FORM_ADD_DROPOFF')}
-                            </Button>
-                          </div> : null}
-                        </div>
-                      </div>
-                    )}
-                  </FieldArray>
-
-                  <div className="order-informations">
-                    {mode === Mode.DELIVERY_UPDATE && (
-                      <div className="order-informations__tracking alert alert-info">
-                        <a target="_blank" rel="noreferrer" href={trackingLink}>
-                          {t("DELIVERY_FORM_TRACKING_LINK")}
-                        </a>{'  '}
-                        <i className="fa fa-external-link"></i>
-                        <a href="#" className="pull-right"><i className="fa fa-clipboard" title={t("DELIVERY_FROM_TRACKING_LINK_COPY")} aria-hidden="true" onClick={() => navigator.clipboard.writeText(trackingLink)}></i></a>
-                        <div className='mt-2'><BarcodesModal deliveryId={deliveryId} /></div>
-                      </div>
-
-                    )}
-
-                    <div className="order-informations__map">
-                      <Map defaultAddress={storeDeliveryInfos.address} tasks={values.tasks} />
-                      <DeliveryResume tasks={values.tasks} />
+                              />
+                            </div>
+                          )
+                        })}
                     </div>
 
-                    {order || mode === Mode.RECURRENCE_RULE_UPDATE ? (
-                      <div className="order-informations__total-price border-top py-3">
-                        <Price
-                          storeNodeId={storeNodeId}
-                          order={order}
-                          isDispatcher={isDispatcher}
-                          isDebugPricing={isDebugPricing}
-                          setPriceLoading={setPriceLoading}
-                        />
-                      </div>
-                    ) : null}
+                    <div
+                      className="new-order__dropoffs"
+                      style={{ display: 'flex', flexDirection: 'column' }}>
+                      {values.tasks
+                        .filter(task => task.type === 'DROPOFF')
+                        .map(task => {
+                          const originalIndex = values.tasks.findIndex(
+                            t => t === task,
+                          )
+                          return (
+                            <div
+                              className="new-order__dropoffs__item"
+                              key={originalIndex}>
+                              <Task
+                                index={originalIndex}
+                                addresses={addresses}
+                                storeNodeId={storeNodeId}
+                                storeDeliveryInfos={storeDeliveryInfos}
+                                onRemove={arrayHelpers.remove}
+                                showRemoveButton={originalIndex > 1}
+                                isDispatcher={isDispatcher}
+                                tags={tags}
+                                isExpanded={expandedTasks[originalIndex]}
+                                onToggleExpanded={isExpanded =>
+                                  handleTaskExpansion(originalIndex, isExpanded)
+                                }
+                              />
+                            </div>
+                          )
+                        })}
 
-                    {modeIn(mode, [Mode.DELIVERY_CREATE, Mode.RECURRENCE_RULE_UPDATE]) && isDispatcher ? (
-                      <div className="border-top pt-2 pb-3" data-testid="recurrence-container">
-                        <RecurrenceRules />
-                      </div>
-                    ) : null}
+                      {storeDeliveryInfos.multiDropEnabled &&
+                        (mode === Mode.DELIVERY_CREATE || isDispatcher) ? (
+                        <div className="new-order__dropoffs__add p-4 border mb-4">
+                          <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
+                          <Button
+                            data-testid="add-dropoff-button"
+                            disabled={false}
+                            onClick={() => {
+                              const newDeliverySchema = {
+                                ...dropoffSchema,
+                                before: values.tasks.slice(-1)[0].before,
+                                after: values.tasks.slice(-1)[0].after,
+                                timeSlot: values.tasks.slice(-1)[0].timeSlot,
+                                timeSlotUrl:
+                                  values.tasks.slice(-1)[0].timeSlotUrl,
+                              }
+                              arrayHelpers.push(newDeliverySchema)
 
-                    { modeIn(mode, [Mode.DELIVERY_CREATE, Mode.DELIVERY_UPDATE]) && order && isDispatcher ? (
-                      <div
-                        className="border-top py-3"
-                        data-testid="saved_order__container">
-                        <Checkbox
-                          name="delivery.saved_order"
-                          checked={values.order.isSavedOrder}
-                          onChange={e => {
-                            e.stopPropagation()
-                            setFieldValue(
-                              'order.isSavedOrder',
-                              e.target.checked,
-                            )
-                          }}>
-                          {t('DELIVERY_FORM_SAVED_ORDER')}
-                        </Checkbox>
-                      </div>
-                    ) : null}
+                              // Auto-expand the newly added task and collapse all previous tasks
+                              const newTaskIndex = values.tasks.length // Index of the new task after it's added
+                              const totalTasks = values.tasks.length + 1
 
-                    {mode === Mode.DELIVERY_CREATE || isDispatcher ? (
-                      <div className="order-informations__complete-order border-top py-3">
-                        <SuggestionModal />
-                        <Button
-                          type="primary"
-                          style={{ height: '2.5em' }}
-                          htmlType="submit"
-                          disabled={isSubmitting || priceLoading || isSubmitted}>
-                          {t('DELIVERY_FORM_SUBMIT')}
-                        </Button>
-                      </div>
-                    ) : null}
-
-                    {error.isError ? (
-                      <div className="border-top py-3">
-                        <div className="alert alert-danger" role="alert">
-                          {error.errorMessage}
+                              const newExpandedState = {}
+                              for (let i = 0; i < totalTasks; i++) {
+                                newExpandedState[i] = i === newTaskIndex
+                              }
+                              setExpandedTasks(newExpandedState)
+                            }}>
+                            {t('DELIVERY_FORM_ADD_DROPOFF')}
+                          </Button>
                         </div>
-                      </div>
-                    ) : null}
+                      ) : null}
+                    </div>
                   </div>
+                )}
+              </FieldArray>
+
+              <div className="order-informations">
+                {mode === Mode.DELIVERY_UPDATE && (
+                  <div className="order-informations__tracking alert alert-info">
+                    <a target="_blank" rel="noreferrer" href={trackingLink}>
+                      {t('DELIVERY_FORM_TRACKING_LINK')}
+                    </a>
+                    {'  '}
+                    <i className="fa fa-external-link"></i>
+                    <a href="#" className="pull-right">
+                      <i
+                        className="fa fa-clipboard"
+                        title={t('DELIVERY_FROM_TRACKING_LINK_COPY')}
+                        aria-hidden="true"
+                        onClick={() =>
+                          navigator.clipboard.writeText(trackingLink)
+                        }></i>
+                    </a>
+                    <div className="mt-2">
+                      <BarcodesModal deliveryId={deliveryId} />
+                    </div>
+                  </div>
+                )}
+
+                <div className="order-informations__map">
+                  <Map
+                    defaultAddress={storeDeliveryInfos.address}
+                    tasks={values.tasks}
+                  />
+                  <DeliveryResume tasks={values.tasks} />
                 </div>
-              </Form>
-            )
-          }}
-        </Formik>
+
+                {order || mode === Mode.RECURRENCE_RULE_UPDATE ? (
+                  <div className="order-informations__total-price border-top py-3">
+                    <Price
+                      storeNodeId={storeNodeId}
+                      order={order}
+                      isDispatcher={isDispatcher}
+                      isDebugPricing={isDebugPricing}
+                      setPriceLoading={setPriceLoading}
+                    />
+                  </div>
+                ) : null}
+
+                {modeIn(mode, [
+                  Mode.DELIVERY_CREATE,
+                  Mode.RECURRENCE_RULE_UPDATE,
+                ]) && isDispatcher ? (
+                  <div
+                    className="border-top pt-2 pb-3"
+                    data-testid="recurrence-container">
+                    <RecurrenceRules />
+                  </div>
+                ) : null}
+
+                {modeIn(mode, [Mode.DELIVERY_CREATE]) && isDispatcher ? (
+                  <div
+                    className="border-top pt-2 pb-3"
+                    data-testid="courier-container">
+                    <SelectCourier queryFn={useGetCouriersQuery} onChange={courier => setFieldValue('selectedCourier', courier)} />
+                  </div>
+                ) : null}
+
+                {modeIn(mode, [Mode.DELIVERY_CREATE, Mode.DELIVERY_UPDATE]) &&
+                  order &&
+                  isDispatcher ? (
+                  <div
+                    className="border-top py-3"
+                    data-testid="saved_order__container">
+                    <Checkbox
+                      name="delivery.saved_order"
+                      checked={values.order.isSavedOrder}
+                      onChange={e => {
+                        e.stopPropagation()
+                        setFieldValue('order.isSavedOrder', e.target.checked)
+                      }}>
+                      {t('DELIVERY_FORM_SAVED_ORDER')}
+                    </Checkbox>
+                  </div>
+                ) : null}
+
+                {mode === Mode.DELIVERY_CREATE || isDispatcher ? (
+                  <div className="order-informations__complete-order border-top py-3">
+                    <SuggestionModal />
+                    <Button
+                      type="primary"
+                      style={{ height: '2.5em' }}
+                      htmlType="submit"
+                      disabled={isSubmitting || priceLoading || isSubmitted}>
+                      {t('DELIVERY_FORM_SUBMIT')}
+                    </Button>
+                  </div>
+                ) : null}
+
+                {error.isError ? (
+                  <div className="border-top py-3">
+                    <div className="alert alert-danger" role="alert">
+                      {error.errorMessage}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          </Form>
+        )
+      }}
+    </Formik>
   )
 }

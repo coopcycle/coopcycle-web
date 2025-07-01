@@ -7,6 +7,7 @@ import {
   usePutDeliveryMutation,
   usePutRecurrenceRuleMutation,
   useSuggestOptimizationsMutation,
+  useAssignCourierMutation,
 } from '../../../api/slice'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -132,10 +133,12 @@ export default function useSubmit(
 
   const [createAddress] = usePostStoreAddressMutation()
   const [modifyAddress] = usePatchAddressMutation()
+  const [assignCourier] = useAssignCourierMutation()
 
   const dispatch = useDispatch()
 
   const { logger } = useDatadog()
+
 
   const checkSuggestionsOnSubmit = useCallback(
     async values => {
@@ -167,7 +170,7 @@ export default function useSubmit(
       if (
         rejectedSuggestionsOrder &&
         JSON.stringify(data.suggestions[0].order) ===
-          JSON.stringify(rejectedSuggestionsOrder)
+        JSON.stringify(rejectedSuggestionsOrder)
       ) {
         return false
       }
@@ -251,10 +254,50 @@ export default function useSubmit(
 
       setIsSubmitted(true)
 
+      console.log({ values })
+      return;
+      // Then in your condition:
       if (modeIn(mode, [Mode.DELIVERY_CREATE, Mode.DELIVERY_UPDATE])) {
         const deliveryId = data.id
         const orderId = data.order?.id
+        console.log(values)
+        console.log(assignCourier)
 
+        if (assignCourier && values.selectedCourier) {
+          try {
+            // Create assignment data using functional methods
+            const assignments = Object.entries(
+              data.tasks
+                .map(task => ({
+                  date: moment(task.after).format('YYYY-MM-DD'),
+                  taskId: task['@id']
+                }))
+                .reduce((groups, { date, taskId }) => ({
+                  ...groups,
+                  [date]: [...(groups[date] || []), taskId]
+                }), {})
+            ).map(([date, taskIds]) => ({
+              date,
+              username: values.selectedCourier, // Fix: use values.selectedCourier
+              items: taskIds
+            }))
+
+            // Execute all assignments
+            const results = await Promise.all(
+              assignments.map(assignment =>
+                assignCourier(assignment).unwrap()
+              )
+            )
+
+            // Log results
+            assignments.forEach(({ date, items }, index) => {
+              console.log(`Assigned ${items.length} tasks to ${values.selectedCourier} for ${date}`)
+            })
+
+          } catch (error) {
+            console.error('Assignment failed:', error)
+          }
+        }
         if (isDispatcher) {
           if (orderId) {
             window.location = `/admin/orders/${orderId}`
