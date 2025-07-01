@@ -18,7 +18,7 @@
     width: 47%;
   }
 
-  &__dropoffs__add{
+  &__dropoffs__add, &__pickups__add {
     display: flex;
     justify-content: space-between;
     align-items: center;
