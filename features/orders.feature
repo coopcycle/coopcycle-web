@@ -594,7 +594,7 @@ Feature: Orders
           "addressLocality": "Paris",
           "geo": {
             "latitude": 48.863814,
-            "longitude": 2.3329,
+            "longitude": 2.3329
           },
           "contactName": null
         },
@@ -752,7 +752,7 @@ Feature: Orders
           "addressLocality": "Paris",
           "geo": {
             "latitude": 48.863814,
-            "longitude": 2.3329,
+            "longitude": 2.3329
           },
           "contactName": null
         },

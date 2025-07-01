@@ -3124,7 +3124,8 @@ Feature: Deliveries
                 "@type": "GeoCoordinates",
                 "latitude": 50.636137,
                 "longitude": 3.092335
-            , "provider": null},
+            },
+            "provider": null,
             "streetAddress": "48 Rue de Rivoli, 59800 Lille",
             "telephone": null,
             "name": null,
@@ -3576,6 +3577,7 @@ Feature: Deliveries
                       "latitude":@double@,
                       "longitude":@double@
                     },
+                    "provider": null,
                     "postalCode": @string@,
                     "streetAddress": @string@,
                     "telephone": null,
@@ -3606,6 +3608,7 @@ Feature: Deliveries
                       "latitude":@double@,
                       "longitude":@double@
                     },
+                    "provider": null,
                     "postalCode": @string@,
                     "streetAddress": @string@,
                     "telephone": null,
