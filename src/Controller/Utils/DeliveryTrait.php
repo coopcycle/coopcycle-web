@@ -8,10 +8,9 @@ use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Form\Order\ExistingOrderType;
+use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\OrderManager;
-use AppBundle\Sylius\Order\OrderFactory;
-use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -62,10 +61,10 @@ trait DeliveryTrait
     public function deliveryAction(
         $id,
         Request $request,
-        OrderFactory $orderFactory,
         EntityManagerInterface $entityManager,
         OrderManager $orderManager,
         PricingManager $pricingManager,
+        PriceCalculationVisitor $priceCalculationVisitor,
     ) {
         $delivery = $entityManager
             ->getRepository(Delivery::class)
@@ -100,7 +99,7 @@ trait DeliveryTrait
                         'pricingStrategy' => new UseArbitraryPrice($arbitraryPrice),
                     ]);
                 } else {
-                    $orderFactory->updateDeliveryPrice($order, $delivery, $arbitraryPrice);
+                    $priceCalculationVisitor->updateDeliveryPrice($order, $delivery, $arbitraryPrice);
                 }
             }
 

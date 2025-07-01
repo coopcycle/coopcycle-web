@@ -7,10 +7,8 @@ use AppBundle\Api\Dto\CalculationOutput;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Api\Resource\RetailPrice;
-use AppBundle\Entity\Delivery;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Security\TokenStoreExtractor;
-use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\SettingsManager;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Taxation\Calculator\CalculatorInterface;
@@ -70,14 +68,14 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
             throw new BadRequestHttpException($message);
         }
 
-        $priceCalculation = $this->pricingManager->getPriceCalculation($data, $pricingRuleSet);
+        $priceCalculationOutput = $this->pricingManager->getPriceCalculation($data, $pricingRuleSet);
 
-        if (null === $priceCalculation) {
+        if (null === $priceCalculationOutput) {
             $message = $this->translator->trans('delivery.price.error.priceCalculation', domain: 'validators');
             throw new BadRequestHttpException($message);
         }
 
-        $calculation = $priceCalculation->calculation;
+        $calculation = $priceCalculationOutput->calculation;
 
         $calculationItems = [];
         foreach ($calculation->resultsPerEntity as $item) {
@@ -102,7 +100,7 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
             $calculationItems
         );
 
-        $order = $priceCalculation->order;
+        $order = $priceCalculationOutput->order;
 
         if (null === $order) {
             $message = $this->translator->trans('delivery.price.error.priceCalculation', domain: 'validators');
@@ -135,7 +133,7 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
         $taxAmount = (int) $this->calculator->calculate($amount, $taxRate);
 
         return new RetailPrice(
-            $order->getItems(),
+            $order,
             $calculationOutput,
             $amount,
             $this->currencyContext->getCurrencyCode(),

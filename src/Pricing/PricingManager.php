@@ -100,7 +100,7 @@ class PricingManager
         return $output->getPrice();
     }
 
-    public function getPriceCalculation(Delivery $delivery, PricingRuleSet $ruleSet): ?Output
+    public function getPriceCalculation(Delivery $delivery, PricingRuleSet $ruleSet): ?PriceCalculationOutput
     {
         // Store might be null if it's an embedded form
         $store = $delivery->getStore();
@@ -169,7 +169,8 @@ class PricingManager
             $incident = new Incident();
         }
 
-        $order = $this->orderFactory->createForDeliveryAndPrice($delivery, $price);
+        $order = $this->orderFactory->createForDelivery($delivery);
+        $this->priceCalculationVisitor->addDeliveryOrderItem($order, $delivery, $price);
 
         if ($persist) {
             // We need to persist the order first,

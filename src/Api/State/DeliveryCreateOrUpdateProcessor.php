@@ -12,9 +12,9 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\UsePricingRules;
+use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\OrderManager;
-use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use Psr\Log\LoggerInterface;
 use Recurr\Exception\InvalidRRule;
@@ -28,9 +28,9 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         private readonly DeliveryProcessor $decorated,
         private readonly ProcessorInterface $persistProcessor,
         private readonly PricingManager $pricingManager,
-        private readonly OrderFactory $orderFactory,
         private readonly OrderManager $orderManager,
         private readonly DeliveryMapper $deliveryMapper,
+        private readonly PriceCalculationVisitor $priceCalculationVisitor,
         private readonly AuthorizationCheckerInterface $authorizationCheckerInterface,
         private readonly ValidatorInterface $validator,
         private readonly LoggerInterface $logger,
@@ -109,7 +109,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                         ]
                     );
                 } else {
-                    $this->orderFactory->updateDeliveryPrice($order, $delivery, $arbitraryPrice);
+                    $this->priceCalculationVisitor->updateDeliveryPrice($order, $delivery, $arbitraryPrice);
                 }
             }
         }
@@ -151,7 +151,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                 }
             }
         }
-        
+
         $isSavedOrder = false;
         if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $data instanceof DeliveryDto && !is_null($data->order?->isSavedOrder)) {
             $isSavedOrder = $data->order->isSavedOrder;

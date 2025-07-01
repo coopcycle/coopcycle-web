@@ -82,6 +82,7 @@ use AppBundle\Form\TimeSlotType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\UsersExportType;
 use AppBundle\Form\ZoneCollectionType;
+use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Pricing\RuleHumanizer;
 use AppBundle\Serializer\ApplicationsNormalizer;
 use AppBundle\Service\ActivityManager;
@@ -2389,7 +2390,8 @@ class AdminController extends AbstractController
         Request $request,
         EntityManagerInterface $objectManager,
         OrderFactory $orderFactory,
-        OrderNumberAssignerInterface $orderNumberAssigner
+        OrderNumberAssignerInterface $orderNumberAssigner,
+        PriceCalculationVisitor $priceCalculationVisitor
     )
     {
         $delivery = new Delivery();
@@ -2402,7 +2404,8 @@ class AdminController extends AbstractController
             $variantName = $form->get('variantName')->getData();
             $variantPrice = $form->get('variantPrice')->getData();
 
-            $order = $orderFactory->createForDeliveryAndPrice($delivery, new ArbitraryPrice($variantName, $variantPrice));
+            $order = $orderFactory->createForDelivery($delivery);
+            $priceCalculationVisitor->addDeliveryOrderItem($order, $delivery, new ArbitraryPrice($variantName, $variantPrice));
 
             $order->setState(OrderInterface::STATE_ACCEPTED);
 

@@ -42,6 +42,7 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         return $this->factory->createForProduct($product);
     }
 
+    //TODO: merge with the new implementation
     public function createForDelivery(Delivery $delivery, PriceInterface $price): ProductVariantInterface
     {
         $product = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
