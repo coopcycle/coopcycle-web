@@ -10,18 +10,18 @@ use AppBundle\Entity\Sylius\PriceInterface;
 use AppBundle\Entity\Task;
 use AppBundle\ExpressionLanguage\DeliveryExpressionLanguageVisitor;
 use AppBundle\ExpressionLanguage\TaskExpressionLanguageVisitor;
+use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
-use AppBundle\Sylius\Product\ProductInterface;
+use AppBundle\Sylius\Product\ProductOptionValueFactory;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
+use AppBundle\Sylius\Product\ProductVariantFactory;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
-use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
-use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
@@ -30,22 +30,20 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 class PriceCalculationVisitor
 {
 
-    private ProductInterface $product;
-
     public function __construct(
         private readonly ExpressionLanguage $expressionLanguage,
         private readonly LocaleProviderInterface $localeProvider,
         private readonly DeliveryExpressionLanguageVisitor $deliveryExpressionLanguageVisitor,
         private readonly TaskExpressionLanguageVisitor $taskExpressionLanguageVisitor,
-        ProductRepositoryInterface $productRepository,
-        private readonly ProductVariantFactoryInterface $productVariantFactory,
+        private readonly ProductOptionValueFactory $productOptionValueFactory,
+        private readonly ProductVariantFactory $productVariantFactory,
+        private readonly OrderFactory $orderFactory,
         private readonly FactoryInterface $orderItemFactory,
         private readonly OrderItemQuantityModifierInterface $orderItemQuantityModifier,
         private readonly OrderModifierInterface $orderModifier,
         private LoggerInterface $logger = new NullLogger()
     )
     {
-        $this->product = $productRepository->findOneByCode('CPCCL-ODDLVR');
     }
 
     public function visit(Delivery $delivery, PricingRuleSet $ruleSet): PriceCalculationOutput
@@ -200,9 +198,15 @@ class PriceCalculationVisitor
                         'target' => $rule->getTarget(),
                     ]);
 
-                    $productOptionValues[] = $rule->apply($expressionLanguageValues, $this->localeProvider, $this->expressionLanguage);
+                    $productOptionValues[] = $this->productOptionValueFactory->createForPricingRule(
+                        $rule,
+                        $expressionLanguageValues,
+                        $this->expressionLanguage
+                    );
 
-                    $productVariant = $this->createProductVariant($productOptionValues);
+                    $rule->apply($expressionLanguageValues, $this->localeProvider, $this->expressionLanguage);
+
+                    $productVariant = $this->productVariantFactory->createWithProductOptions($productOptionValues);
 
                     return new Result($ruleResults, $productVariant);
                 }
@@ -235,7 +239,11 @@ class PriceCalculationVisitor
                         'target' => $rule->getTarget(),
                     ]);
 
-                    $productOptionValues[] = $rule->apply($expressionLanguageValues, $this->localeProvider, $this->expressionLanguage);
+                    $productOptionValues[] = $this->productOptionValueFactory->createForPricingRule(
+                        $rule,
+                        $expressionLanguageValues,
+                        $this->expressionLanguage
+                    );
                 }
             }
         }
@@ -245,29 +253,12 @@ class PriceCalculationVisitor
         });
 
         if (count($matchedRules) > 0) {
-            $productVariant = $this->createProductVariant($productOptionValues);
+            $productVariant = $this->productVariantFactory->createWithProductOptions($productOptionValues);
 
             return new Result($ruleResults, $productVariant);
         } else {
             return new Result($ruleResults);
         }
-    }
-
-    /**
-     * @param ProductOptionValueInterface[] $productOptionValues
-     */
-    private function createProductVariant(array $productOptionValues): ProductVariantInterface
-    {
-        /**
-         * @var ProductVariantInterface $productVariant
-         */
-        $productVariant = $this->productVariantFactory->createForProduct($this->product);
-
-        foreach ($productOptionValues as $productOptionValue) {
-            $productVariant->addOptionValue($productOptionValue);
-        }
-
-        return $productVariant;
     }
 
     /**
@@ -304,8 +295,7 @@ class PriceCalculationVisitor
             $itemsTotal += $orderItem->getTotal();
         }
 
-        //TODO: use Order factory?
-        $order = new Order();
+        $order = $this->orderFactory->createNew();
         foreach ($items as $item) {
             $this->orderModifier->addToOrder($order, $item);
         }

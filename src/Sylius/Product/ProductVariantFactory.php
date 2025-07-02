@@ -8,8 +8,6 @@ use AppBundle\Entity\Sylius\PriceInterface;
 use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
 use AppBundle\Service\SettingsManager;
 use Ramsey\Uuid\Uuid;
-use Sylius\Component\Product\Model\ProductInterface;
-use Sylius\Component\Product\Model\ProductVariantInterface;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
@@ -17,13 +15,16 @@ use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 class ProductVariantFactory implements ProductVariantFactoryInterface
 {
 
+    private ProductInterface $product;
+
     public function __construct(
         private readonly ProductVariantFactoryInterface $factory,
-        private readonly ProductRepositoryInterface $productRepository,
+        ProductRepositoryInterface $productRepository,
         private readonly TaxCategoryRepositoryInterface $taxCategoryRepository,
         private readonly SettingsManager $settingsManager
     )
     {
+        $this->product = $productRepository->findOneByCode('CPCCL-ODDLVR');
     }
 
     /**
@@ -37,23 +38,39 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function createForProduct(ProductInterface $product): ProductVariantInterface
+    public function createForProduct(\Sylius\Component\Product\Model\ProductInterface $product): \Sylius\Component\Product\Model\ProductVariantInterface
     {
         return $this->factory->createForProduct($product);
+    }
+
+
+    /**
+     * @param ProductOptionValueInterface[] $productOptionValues
+     */
+    public function createWithProductOptions(array $productOptionValues): ProductVariantInterface
+    {
+        /**
+         * @var ProductVariantInterface $productVariant
+         */
+        $productVariant = $this->createForProduct($this->product);
+
+        foreach ($productOptionValues as $productOptionValue) {
+            $productVariant->addOptionValue($productOptionValue);
+        }
+
+        return $productVariant;
     }
 
     //TODO: merge with the new implementation
     public function createForDelivery(Delivery $delivery, PriceInterface $price): ProductVariantInterface
     {
-        $product = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
-
         $subjectToVat = $this->settingsManager->get('subject_to_vat');
 
         $taxCategory = $this->taxCategoryRepository->findOneBy([
             'code' => $subjectToVat ? 'SERVICE' : 'SERVICE_TAX_EXEMPT'
         ]);
 
-        $productVariant = $this->createForProduct($product);
+        $productVariant = $this->createForProduct($this->product);
 
         $nameParts = [];
 

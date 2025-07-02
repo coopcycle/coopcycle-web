@@ -9,10 +9,7 @@ use AppBundle\Api\State\EvaluatePricingRuleProcessor;
 use AppBundle\Api\Dto\DeliveryDto;
 use AppBundle\Api\Dto\YesNoOutput;
 use AppBundle\Entity\Sylius\ProductOption;
-use AppBundle\Entity\Sylius\ProductOptionValue;
-use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use AppBundle\Validator\Constraints\PricingRule as AssertPricingRule;
-use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
@@ -192,43 +189,5 @@ class PricingRule
         }
 
         return $language->evaluate($this->getExpression(), $values);
-    }
-
-    public function apply(array $values, LocaleProviderInterface $localeProvider, ExpressionLanguage $language = null): ProductOptionValueInterface
-    {
-        if (null === $language) {
-            $language = new ExpressionLanguage();
-        }
-
-        $priceExpression = $this->getPrice();
-        $result = $language->evaluate($priceExpression, $values);
-
-        //TODO: how would it work after a release but before cooperatives have added names (product options per rules)?
-
-        //TODO: use/move into a factory?
-        $productOptionValue = new ProductOptionValue();
-
-        // Set current locale before setting the name for translatable entities
-        $productOptionValue->setCurrentLocale($localeProvider->getDefaultLocaleCode());
-
-        $productOptionValue->setOption($this->productOption);
-
-        //TODO: for percentage process separately inside PriceCalculationVisitor
-//        if (str_contains($priceExpression, 'price_percentage')) {
-//            return new \AppBundle\Entity\Delivery\ProductOption(
-//                $this,
-//                0,
-//                $result
-//            );
-//        } else {
-//            return new \AppBundle\Entity\Delivery\ProductOption(
-//                $this,
-//                $result,
-//            );
-//        }
-
-        $productOptionValue->setPrice($result);
-
-        return $productOptionValue;
     }
 }
