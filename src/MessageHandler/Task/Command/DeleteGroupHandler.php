@@ -10,7 +10,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Messenger\Middleware\DispatchAfterCurrentBusMiddleware;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 
 #[AsMessageHandler(bus: 'command.bus')]
 class DeleteGroupHandler
@@ -31,7 +31,7 @@ class DeleteGroupHandler
                 // FIXME This duplicates the code to cancel a task
                 $event = new Event\TaskCancelled($task);
                 $this->eventBus->dispatch(
-                    (new Envelope($event))->with(new DispatchAfterCurrentBusMiddleware())
+                    (new Envelope($event))->with(new DispatchAfterCurrentBusStamp())
                 );
                 $task->setStatus(Task::STATUS_CANCELLED);
             }

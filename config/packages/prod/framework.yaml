@@ -18,7 +18,3 @@ framework:
 #        cache: serializer.mapping.cache.doctrine.apc
     session:
         cookie_secure: true
-
-parameters:
-    router.request_context.scheme: 'https'
-    nucleos_profile.registration.confirmation.enabled: true

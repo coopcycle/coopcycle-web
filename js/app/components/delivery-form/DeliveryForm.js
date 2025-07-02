@@ -75,6 +75,17 @@ function getFormattedValue(value) {
   return value
 }
 
+function canAddAnother(type, pickups, dropoffs) {
+  switch (type) {
+    case 'PICKUP':
+      return dropoffs.length === 1
+    case 'DROPOFF':
+      return pickups.length === 1
+  }
+
+  return true
+}
+
 const dropoffSchema = {
   type: 'DROPOFF',
   after: getNextRoundedTime().toISOString(),
@@ -382,6 +393,9 @@ export default function({
 
             }, [values, previousValues, setFieldValue]);
 
+            const pickups = values.tasks.filter((task) => task.type === 'PICKUP')
+            const dropoffs = values.tasks.filter((task) => task.type === 'DROPOFF')
+
             return (
               <Form >
                 <div className='delivery-form' >
@@ -391,10 +405,10 @@ export default function({
                       <div className="new-order">
 
                         <div className="new-order__pickups">
-                          {values.tasks
-                            .filter((task) => task.type === 'PICKUP')
+                          {pickups
                             .map((task) => {
                               const originalIndex = values.tasks.findIndex(t => t === task);
+                              const pickupIndex = pickups.findIndex(t => t === task);
                               return (
                                 <div className='new-order__pickups__item' key={originalIndex}>
                                   <Task
@@ -404,22 +418,59 @@ export default function({
                                     addresses={addresses}
                                     storeNodeId={storeNodeId}
                                     storeDeliveryInfos={storeDeliveryInfos}
+                                    onRemove={arrayHelpers.remove}
+                                    showRemoveButton={pickupIndex > 0}
                                     isDispatcher={isDispatcher}
                                     tags={tags}
                                     isExpanded={expandedTasks[originalIndex]}
                                     onToggleExpanded={(isExpanded) => handleTaskExpansion(originalIndex, isExpanded)}
+                                    // Show packages on pickups conditionally
+                                    showPackages={storeDeliveryInfos.multiPickupEnabled}
                                   />
                                 </div>
                               );
                             })}
+
+                            {storeDeliveryInfos.multiPickupEnabled && (mode === Mode.DELIVERY_CREATE || isDispatcher) ? <div
+                            className="new-order__pickups__add p-4 border mb-4">
+                            <p>{t('DELIVERY_FORM_MULTIPICKUP')}</p>
+                            <Button
+                              data-testid="add-pickup-button"
+                              disabled={!canAddAnother('PICKUP', pickups, dropoffs)}
+                              onClick={() => {
+                                const newDeliverySchema = {
+                                  ...pickupSchema,
+                                  before: values.tasks.slice(-1)[0].before,
+                                  after: values.tasks.slice(-1)[0].after,
+                                  timeSlot: values.tasks.slice(-1)[0].timeSlot,
+                                  timeSlotUrl: values.tasks.slice(-1)[0].timeSlotUrl
+                                }
+                                // Insert after the last pickup using pickups.length
+                                arrayHelpers.insert(pickups.length, newDeliverySchema)
+
+                                // Auto-expand the newly added task and collapse all previous tasks
+                                const newTaskIndex = pickups.length // Index of the new task after it's added
+                                const totalTasks = values.tasks.length + 1
+
+                                const newExpandedState = {}
+                                for (let i = 0; i < totalTasks; i++) {
+                                  newExpandedState[i] = i === newTaskIndex
+                                }
+                                setExpandedTasks(newExpandedState)
+
+                              }}>
+                              {t('DELIVERY_FORM_ADD_PICKUP')}
+                            </Button>
+                          </div> : null}
+
                         </div>
 
 
                         <div className="new-order__dropoffs" style={{ display: 'flex', flexDirection: 'column' }}>
-                          {values.tasks
-                            .filter((task) => task.type === 'DROPOFF')
+                          {dropoffs
                             .map((task) => {
                               const originalIndex = values.tasks.findIndex(t => t === task);
+                              const dropoffIndex = dropoffs.findIndex(t => t === task);
                               return (
                                 <div className='new-order__dropoffs__item' key={originalIndex}>
                                   <Task
@@ -428,11 +479,13 @@ export default function({
                                     storeNodeId={storeNodeId}
                                     storeDeliveryInfos={storeDeliveryInfos}
                                     onRemove={arrayHelpers.remove}
-                                    showRemoveButton={originalIndex > 1}
+                                    showRemoveButton={dropoffIndex > 0}
                                     isDispatcher={isDispatcher}
                                     tags={tags}
                                     isExpanded={expandedTasks[originalIndex]}
                                     onToggleExpanded={(isExpanded) => handleTaskExpansion(originalIndex, isExpanded)}
+                                    // Always show packages on dropoffs
+                                    showPackages={true}
                                   />
                                 </div>
                               );
@@ -443,7 +496,7 @@ export default function({
                             <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
                             <Button
                               data-testid="add-dropoff-button"
-                              disabled={false}
+                              disabled={!canAddAnother('DROPOFF', pickups, dropoffs)}
                               onClick={() => {
                                 const newDeliverySchema = {
                                   ...dropoffSchema,
