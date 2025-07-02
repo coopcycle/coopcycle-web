@@ -739,6 +739,9 @@
         "SWITCH_BACK_TIMESLOTPICKER": "Back to timeslot picker",
         "PAYMENT_FORM_ERROR": "Sorry, we could not process your payment",
         "TRY_AGAIN": "Try again",
-        "ADMIN_DASHBOARD_NO_TIMESLOTS_AVAILABLE": "There are no choices available for this time slot. Please contact an admin if it blocks you to create a delivery."
-    }
+        "ADMIN_DASHBOARD_NO_TIMESLOTS_AVAILABLE": "There are no choices available for this time slot. Please contact an admin if it blocks you to create a delivery.",
+        "DELIVERY_FORM_ADD_PICKUP": "Add a pickup",
+        "DELIVERY_FORM_REMOVE_PICKUP": "Remove this pickup",
+        "DELIVERY_FORM_MULTIPICKUP": "Multiple pickups are available"
+      }
 }
