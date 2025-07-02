@@ -22,6 +22,7 @@
         "DASHBOARD_UNASSIGNED": "Unassigned",
         "DASHBOARD_UNASSIGNED_TOURS": "Unassigned tours",
         "DASHBOARD_GENERATING_ORDERS": "Checking recurrence rules ...",
+        "DASHBOARD_GENERATE_ORDERS_ERROR": "An error occurred while creating recurring orders",
         "ENABLED": "Enabled",
         "DISABLED": "Disabled",
         "UNDO": "Undo",

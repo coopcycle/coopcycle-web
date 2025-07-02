@@ -361,8 +361,6 @@ class PricingManager
 
     public function createOrderFromRecurrenceRule(Task\RecurrenceRule $recurrenceRule, string $startDate, bool $persist = true, bool $throwException = false): ?OrderInterface
     {
-        $recurrenceRule->getStore();
-
         $delivery = $this->deliveryManager->createDeliveryFromRecurrenceRule($recurrenceRule, $startDate, $persist);
 
         if (null === $delivery) {
