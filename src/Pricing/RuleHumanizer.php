@@ -7,11 +7,14 @@ use AppBundle\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\Node\BinaryNode;
 use Symfony\Component\ExpressionLanguage\Node\Node;
 use Symfony\Component\ExpressionLanguage\Node\FunctionNode;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RuleHumanizer
 {
-    public function __construct(private ExpressionLanguage $expressionLanguage)
-    {
+    public function __construct(
+        private ExpressionLanguage $expressionLanguage,
+        private TranslatorInterface $translator
+    ) {
     }
 
     public function humanize(PricingRule $rule): string
@@ -57,9 +60,15 @@ class RuleHumanizer
     {
         $taskType = $node->nodes['arguments']->nodes[0]->nodes['node']->attributes['name'];
         $zoneName = $node->nodes['arguments']->nodes[1]->attributes['value'];
-        $direction = $node->attributes['name'] === 'in_zone' ? 'inside' : 'outside';
+        $direction = $node->attributes['name'] === 'in_zone'
+            ? $this->translator->trans('pricing.rule.humanizer.inside_zone')
+            : $this->translator->trans('pricing.rule.humanizer.outside_zone');
 
-        return sprintf('%s address %s zone "%s"', $taskType, $direction, $zoneName);
+        return $this->translator->trans('pricing.rule.humanizer.address_zone_format', [
+            '%task_type%' => $taskType,
+            '%direction%' => $direction,
+            '%zone_name%' => $zoneName
+        ]);
     }
 
     private function humanizeBinaryNode(BinaryNode $node): string
@@ -71,16 +80,23 @@ class RuleHumanizer
             $left = $node->nodes['right']->nodes['left']->attributes['value'];
             $right = $node->nodes['right']->nodes['right']->attributes['value'];
 
-            return sprintf('between %s and %s', $this->formatValue($left, $attributeName), $this->formatValue($right, $attributeName));
+            return $this->translator->trans('pricing.rule.humanizer.between', [
+                '%left%' => $this->formatValue($left, $attributeName),
+                '%right%' => $this->formatValue($right, $attributeName)
+            ]);
 
         } else {
 
             $value = $node->nodes['right']->attributes['value'];
             if ($node->attributes['operator'] === '<') {
-                return sprintf('less than %s', $this->formatValue($value, $attributeName));
+                return $this->translator->trans('pricing.rule.humanizer.less_than', [
+                    '%value%' => $this->formatValue($value, $attributeName)
+                ]);
             }
             if ($node->attributes['operator'] === '>') {
-                return sprintf('more than %s', $this->formatValue($value, $attributeName));
+                return $this->translator->trans('pricing.rule.humanizer.more_than', [
+                    '%value%' => $this->formatValue($value, $attributeName)
+                ]);
             }
 
             //TODO: handle other operators
@@ -92,9 +108,13 @@ class RuleHumanizer
     {
         switch ($unit) {
             case 'weight':
-                return sprintf('%s kg', number_format($value / 1000, 2));
+                return $this->translator->trans('pricing.rule.humanizer.kg_unit', [
+                    '%value%' => number_format($value / 1000, 2)
+                ]);
             case 'distance':
-                return sprintf('%s km', number_format($value / 1000, 2));
+                return $this->translator->trans('pricing.rule.humanizer.km_unit', [
+                    '%value%' => number_format($value / 1000, 2)
+                ]);
         }
 
         return $value;
