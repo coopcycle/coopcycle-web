@@ -2,7 +2,6 @@
 
 namespace Tests\AppBundle\Pricing;
 
-use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Pricing\RuleHumanizer;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -17,8 +16,9 @@ class RuleHumanizerTest extends KernelTestCase
 
         // @see https://symfony.com/blog/new-in-symfony-4-1-simpler-service-testing
         $this->expressionLanguage = self::$container->get('coopcycle.expression_language');
+        $this->translator = self::$container->get('translator');
 
-        $this->humanizer = new RuleHumanizer($this->expressionLanguage);
+        $this->humanizer = new RuleHumanizer($this->expressionLanguage, $this->translator);
     }
 
     public function testDistance()
@@ -26,10 +26,10 @@ class RuleHumanizerTest extends KernelTestCase
         $rule = new PricingRule();
 
         $rule->setExpression('distance > 5000');
-        $this->assertEquals('more than 5.00 km', $this->humanizer->humanize($rule));
+        $this->assertEquals('plus de 5.00 km', $this->humanizer->humanize($rule));
 
         $rule->setExpression('distance in 3000..5000');
-        $this->assertEquals('between 3.00 km and 5.00 km', $this->humanizer->humanize($rule));
+        $this->assertEquals('entre 3.00 km et 5.00 km', $this->humanizer->humanize($rule));
     }
 
     public function testWeight()
@@ -37,10 +37,10 @@ class RuleHumanizerTest extends KernelTestCase
         $rule = new PricingRule();
 
         $rule->setExpression('weight > 5000');
-        $this->assertEquals('more than 5.00 kg', $this->humanizer->humanize($rule));
+        $this->assertEquals('plus de 5.00 kg', $this->humanizer->humanize($rule));
 
         $rule->setExpression('weight in 3000..5000');
-        $this->assertEquals('between 3.00 kg and 5.00 kg', $this->humanizer->humanize($rule));
+        $this->assertEquals('entre 3.00 kg et 5.00 kg', $this->humanizer->humanize($rule));
     }
 
     public function testInZone()
@@ -48,7 +48,7 @@ class RuleHumanizerTest extends KernelTestCase
         $rule = new PricingRule();
         $rule->setExpression('in_zone(dropoff.address, "south")');
 
-        $this->assertEquals('dropoff address inside zone "south"', $this->humanizer->humanize($rule));
+        $this->assertEquals('adresse dropoff dans zone "south"', $this->humanizer->humanize($rule));
     }
 
     public function testInZoneOutZone()
@@ -56,7 +56,7 @@ class RuleHumanizerTest extends KernelTestCase
         $rule = new PricingRule();
         $rule->setExpression('in_zone(pickup.address, "south") and out_zone(dropoff.address, "north") and weight > 5000');
 
-        $this->assertEquals('pickup address inside zone "south", dropoff address outside zone "north", more than 5.00 kg', $this->humanizer->humanize($rule));
+        $this->assertEquals('adresse pickup dans zone "south", adresse dropoff hors zone "north", plus de 5.00 kg', $this->humanizer->humanize($rule));
     }
 
     public function testPricePerPackage()
@@ -75,5 +75,56 @@ class RuleHumanizerTest extends KernelTestCase
         $rule->setPrice('price_range(distance, 100, 1000, 2000)');
 
         // $this->assertEquals('contains one package', $this->humanizer->humanize($rule));
+    }
+
+    public function testTaskType()
+    {
+        $rule = new PricingRule();
+
+        $rule->setExpression('task.type == "PICKUP"');
+        $this->assertEquals('retrait au point', $this->humanizer->humanize($rule));
+
+        $rule->setExpression('task.type == "DROPOFF"');
+        $this->assertEquals('dépôt au point', $this->humanizer->humanize($rule));
+    }
+
+    public function testTimeRangeLength()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('time_range_length(dropoff, \'hours\', \'< 1.5\')');
+
+        $this->assertEquals('créneau horaire de dépôt moins de 1.5 heure', $this->humanizer->humanize($rule));
+    }
+
+    public function testDiffHours()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('diff_hours(pickup, \'< 12\')');
+
+        $this->assertEquals('délai de préavis pour retrait moins de 12 heures', $this->humanizer->humanize($rule));
+    }
+
+    public function testDiffDays()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('diff_days(pickup, \'> 2\')');
+
+        $this->assertEquals('délai de préavis pour retrait plus de 2 jours', $this->humanizer->humanize($rule));
+    }
+
+    public function testOrderItemsTotal()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('order.itemsTotal > 20');
+
+        $this->assertEquals('total du panier plus de 20', $this->humanizer->humanize($rule));
+    }
+
+    public function testPackagesTotalVolumeUnits()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('packages.totalVolumeUnits() < 5');
+
+        $this->assertEquals('volume du colis moins de 5', $this->humanizer->humanize($rule));
     }
 }
