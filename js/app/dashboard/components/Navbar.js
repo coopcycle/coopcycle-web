@@ -58,13 +58,15 @@ const DateNavigation = () => {
 
   const handleDateChange = date => {
     if (date) {
-      window.location.href = window.Routing.generate(
-        'admin_dashboard_fullscreen',
-        {
-          date: date.format('YYYY-MM-DD'),
-          nav: nav,
-        },
-      )
+      queueMicrotask(() => {
+        window.location.href = window.Routing.generate(
+          'admin_dashboard_fullscreen',
+          {
+            date: date.format('YYYY-MM-DD'),
+            nav: nav,
+          },
+        )
+      })
     }
   }
 
