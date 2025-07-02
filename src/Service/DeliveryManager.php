@@ -156,7 +156,7 @@ class DeliveryManager
             $task->setTags(array_map(function ($tag) {
                 // hotfix for a case when tags are improperly saved as objects instead of slugs
                 // https://github.com/coopcycle/coopcycle/issues/399
-                if (is_array($tag)) {
+                if (is_array($tag)) { // @phpstan-ignore-line
                     return $tag['slug'];
                 } else {
                     return $tag;
