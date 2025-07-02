@@ -1786,3 +1786,8 @@ pricing.rule.humanizer.less_than: menos de %value%
 pricing.rule.humanizer.more_than: más de %value%
 pricing.rule.humanizer.kg_unit: '%value% kg'
 pricing.rule.humanizer.km_unit: '%value% km'
+pricing.rule.humanizer.task_type_is: '%value% en el punto'
+pricing.rule.humanizer.time_range_length: 'ventana de tiempo de %task_type% %operator% %value%'
+pricing.rule.humanizer.diff: 'tiempo de aviso para %task_type% %operator% %value%'
+pricing.rule.humanizer.order_items_total: 'total del carrito %operator% %value%'
+pricing.rule.humanizer.packages_volume_units: 'volumen del paquete %operator% %value%'

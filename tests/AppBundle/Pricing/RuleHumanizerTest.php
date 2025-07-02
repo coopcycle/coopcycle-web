@@ -2,7 +2,6 @@
 
 namespace Tests\AppBundle\Pricing;
 
-use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Pricing\RuleHumanizer;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -76,5 +75,56 @@ class RuleHumanizerTest extends KernelTestCase
         $rule->setPrice('price_range(distance, 100, 1000, 2000)');
 
         // $this->assertEquals('contains one package', $this->humanizer->humanize($rule));
+    }
+
+    public function testTaskType()
+    {
+        $rule = new PricingRule();
+
+        $rule->setExpression('task.type == "PICKUP"');
+        $this->assertEquals('retrait au point', $this->humanizer->humanize($rule));
+
+        $rule->setExpression('task.type == "DROPOFF"');
+        $this->assertEquals('dépôt au point', $this->humanizer->humanize($rule));
+    }
+
+    public function testTimeRangeLength()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('time_range_length(dropoff, \'hours\', \'< 1.5\')');
+
+        $this->assertEquals('créneau horaire de dépôt moins de 1.5 heure', $this->humanizer->humanize($rule));
+    }
+
+    public function testDiffHours()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('diff_hours(pickup, \'< 12\')');
+
+        $this->assertEquals('délai de préavis pour retrait moins de 12 heures', $this->humanizer->humanize($rule));
+    }
+
+    public function testDiffDays()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('diff_days(pickup, \'> 2\')');
+
+        $this->assertEquals('délai de préavis pour retrait plus de 2 jours', $this->humanizer->humanize($rule));
+    }
+
+    public function testOrderItemsTotal()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('order.itemsTotal > 20');
+
+        $this->assertEquals('total du panier plus de 20', $this->humanizer->humanize($rule));
+    }
+
+    public function testPackagesTotalVolumeUnits()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('packages.totalVolumeUnits() < 5');
+
+        $this->assertEquals('volume du colis moins de 5', $this->humanizer->humanize($rule));
     }
 }
