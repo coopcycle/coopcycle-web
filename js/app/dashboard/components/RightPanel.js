@@ -33,7 +33,14 @@ const DashboardApp = ({ loadingAnim }) => {
   const splitDirection = useSelector(selectSplitDirection)
   const date = useSelector(selectSelectedDate)
 
-  const [generateOrders, { isUninitialized, isLoading: isGeneratingOrdersForRecurrenceRules }] = useRecurrenceRulesGenerateOrdersMutation()
+  const [
+    generateOrders,
+    {
+      isUninitialized,
+      isLoading: isGeneratingOrdersForRecurrenceRules,
+      isError: isGenerateOrdersForRecurrenceRulesError,
+    },
+  ] = useRecurrenceRulesGenerateOrdersMutation()
 
   const splitRef = useRef(),
     splitCollapseAction = () => {
@@ -47,9 +54,20 @@ const DashboardApp = ({ loadingAnim }) => {
     }
 
   const children = [
-    <UnassignedTasks key="split_unassigned" isGeneratingOrdersForRecurrenceRules={ isGeneratingOrdersForRecurrenceRules } />,
-    <UnassignedTours key="split_unassigned_tours" splitCollapseAction={ splitCollapseAction } />,
-    <TaskLists key="split_task_lists" couriersList={ couriersList } />
+    <UnassignedTasks
+      key="split_unassigned"
+      isGeneratingOrdersForRecurrenceRules={
+        isGeneratingOrdersForRecurrenceRules
+      }
+      isGenerateOrdersForRecurrenceRulesError={
+        isGenerateOrdersForRecurrenceRulesError
+      }
+    />,
+    <UnassignedTours
+      key="split_unassigned_tours"
+      splitCollapseAction={splitCollapseAction}
+    />,
+    <TaskLists key="split_task_lists" couriersList={couriersList} />,
   ]
 
   const sizes = toursEnabled ? [33.33, 33.33, 33.33] : [50, 0 , 50]
@@ -78,7 +96,7 @@ const DashboardApp = ({ loadingAnim }) => {
     }
 
     generateOrders(date)
-  }, [date]);
+  }, [date, generateOrders, isUninitialized]);
 
   const unselectAll = () => {
     dispatch(selectTasksByIds([]))
