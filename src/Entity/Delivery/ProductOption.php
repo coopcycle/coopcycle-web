@@ -11,6 +11,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class ProductOption
 {
+    private ?string $name = null;
+
     /**
      * Set after the order is 'processed' and the price for each ProductVariant/ProductOption is calculated
      */
@@ -22,6 +24,7 @@ class ProductOption
         private readonly int $priceMultiplier = 10000 // 1 => 0.01%; 10000 => 100%
     )
     {
+        $this->name = $matchedRule->getName();
     }
 
     #[Groups(['pricing_deliveries'])]
@@ -38,6 +41,17 @@ class ProductOption
     public function getPriceMultiplier(): int
     {
         return $this->priceMultiplier;
+    }
+
+    #[Groups(['pricing_deliveries'])]
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): void
+    {
+        $this->name = $name;
     }
 
     #[Groups(['pricing_deliveries'])]

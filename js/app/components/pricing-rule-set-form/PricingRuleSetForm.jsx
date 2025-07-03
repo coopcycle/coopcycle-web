@@ -12,6 +12,7 @@ import {
   Divider,
 } from 'antd'
 import { useTranslation } from 'react-i18next'
+import { v4 as uuidv4 } from 'uuid'
 import {
   useGetPricingRuleSetQuery,
   useCreatePricingRuleSetMutation,
@@ -26,6 +27,12 @@ import './pricing-rule-set-form.scss'
 import HelpIcon from '../HelpIcon'
 
 const { Title } = Typography
+
+// Utility function to generate temporary @id for new rules
+const generateTempId = () => `temp-${uuidv4()}`
+
+// Check if an @id is temporary (not from backend)
+const isTempId = id => typeof id === 'string' && id.startsWith('temp-')
 
 const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
   const { t } = useTranslation()
@@ -51,7 +58,6 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
     return [...legacyRules, ...taskRules, ...deliveryRules]
   }, [legacyRules, taskRules, deliveryRules])
 
-  // RTK Query hooks
   const {
     data: ruleSet,
     isLoading: isLoadingRuleSet,
@@ -75,9 +81,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
           strategy: ruleSet.strategy || 'find',
           options: Array.isArray(ruleSet.options) ? ruleSet.options : [],
         })
-        // Ensure rules is always an array
-        const rulesArray = Array.isArray(ruleSet.rules) ? ruleSet.rules : []
-        setRules(rulesArray)
+        setRules(ruleSet.rules)
       } catch (error) {
         console.error('Error initializing form:', error)
         // Set default values if there's an error
@@ -113,7 +117,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
           index,
           errors: ruleErrors,
         })
-        newRuleValidationErrors[index] = ruleErrors
+        newRuleValidationErrors[rule['@id']] = ruleErrors
       }
     })
 
@@ -143,10 +147,14 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
 
       const payload = {
         ...values,
-        rules: orderedRules.map((rule, index) => ({
-          ...rule,
-          position: index,
-        })),
+        rules: orderedRules.map((rule, index) => {
+          // Remove temporary @id for new rules before sending to backend
+          const cleanRule = { ...rule, position: index }
+          if (isTempId(cleanRule['@id'])) {
+            delete cleanRule['@id']
+          }
+          return cleanRule
+        }),
       }
 
       if (isNew) {
@@ -169,6 +177,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
 
   const addRule = (target = 'DELIVERY') => {
     const newRule = {
+      '@id': generateTempId(),
       target,
       expression: '',
       price: '',
@@ -180,29 +189,27 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
     setRules([...rules, newRule])
   }
 
-  const updateRule = (index, updatedRule) => {
-    // Find the rule in the original rules array and update it
-    const ruleToUpdate = orderedRules[index]
-    const originalIndex = rules.findIndex(rule => rule === ruleToUpdate)
+  const updateRule = (ruleId, updatedRule) => {
+    // Find the rule by @id and update it
+    const originalIndex = rules.findIndex(rule => rule['@id'] === ruleId)
 
     if (originalIndex !== -1) {
       const newRules = [...rules]
-      newRules[originalIndex] = updatedRule
+      newRules[originalIndex] = { ...updatedRule, '@id': ruleId }
       setRules(newRules)
     }
 
     // Clear validation errors for this rule when it's updated
-    if (ruleValidationErrors[index]) {
+    if (ruleValidationErrors[ruleId]) {
       const newValidationErrors = { ...ruleValidationErrors }
-      delete newValidationErrors[index]
+      delete newValidationErrors[ruleId]
       setRuleValidationErrors(newValidationErrors)
     }
   }
 
-  const removeRule = index => {
-    // Find the rule in the original rules array and remove it
-    const ruleToRemove = orderedRules[index]
-    const newRules = rules.filter(rule => rule !== ruleToRemove)
+  const removeRule = ruleId => {
+    // Find the rule by @id and remove it
+    const newRules = rules.filter(rule => rule['@id'] !== ruleId)
     setRules(newRules)
   }
 
@@ -215,22 +222,15 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
     setRules(newOrderedRules)
   }
 
-  // Helper function to get the global index of a rule within a specific target group
-  const getGlobalIndex = (localIndex, target) => {
-    if (target === 'LEGACY_TARGET_DYNAMIC') {
-      return orderedRules.findIndex(rule => rule === legacyRules[localIndex])
-    } else if (target === 'TASK') {
-      return orderedRules.findIndex(rule => rule === taskRules[localIndex])
-    } else if (target === 'DELIVERY') {
-      return orderedRules.findIndex(rule => rule === deliveryRules[localIndex])
-    }
-    return -1
+  // Helper function to get the global index of a rule by @id
+  const getGlobalIndexById = ruleId => {
+    return orderedRules.findIndex(rule => rule['@id'] === ruleId)
   }
 
-  // Helper function to move rules within the same target group
-  const moveRuleWithinTarget = (localFromIndex, localToIndex, target) => {
-    const globalFromIndex = getGlobalIndex(localFromIndex, target)
-    const globalToIndex = getGlobalIndex(localToIndex, target)
+  // Helper function to move rules within the same target group using @id
+  const moveRuleWithinTarget = (fromRuleId, toRuleId, target) => {
+    const globalFromIndex = getGlobalIndexById(fromRuleId)
+    const globalToIndex = getGlobalIndexById(toRuleId)
 
     if (globalFromIndex !== -1 && globalToIndex !== -1) {
       moveRule(globalFromIndex, globalToIndex)
@@ -332,7 +332,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
 
             {legacyRules.length > 0 ? (
               // Legacy Rules Section
-              <div className="mb-4">
+              <div>
                 <Title level={5}>{t('RULE_LEGACY_TARGET_DYNAMIC_TITLE')}</Title>
                 <Form.Item className="m-0">
                   <LegacyPricingRulesWarning
@@ -353,7 +353,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
                   emptyMessage={t('RULE_LEGACY_TARGET_DYNAMIC_HELP')}
                   addRuleButtonLabel={t('PRICING_ADD_RULE_LEGACY')}
                   addRuleButtonHelp={t('RULE_LEGACY_TARGET_DYNAMIC_HELP')}
-                  getGlobalIndex={getGlobalIndex}
+                  getGlobalIndexById={getGlobalIndexById}
                   updateRule={updateRule}
                   removeRule={removeRule}
                   moveRuleWithinTarget={moveRuleWithinTarget}
@@ -371,7 +371,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
                   emptyMessage={t('PRICING_ADD_RULE_PER_TASK_HELP')}
                   addRuleButtonLabel={t('PRICING_ADD_RULE_PER_TASK')}
                   addRuleButtonHelp={t('PRICING_ADD_RULE_PER_TASK_HELP')}
-                  getGlobalIndex={getGlobalIndex}
+                  getGlobalIndexById={getGlobalIndexById}
                   updateRule={updateRule}
                   removeRule={removeRule}
                   moveRuleWithinTarget={moveRuleWithinTarget}
@@ -389,7 +389,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
                   emptyMessage={t('PRICING_ADD_RULE_HELP')}
                   addRuleButtonLabel={t('PRICING_ADD_RULE')}
                   addRuleButtonHelp={t('PRICING_ADD_RULE_HELP')}
-                  getGlobalIndex={getGlobalIndex}
+                  getGlobalIndexById={getGlobalIndexById}
                   updateRule={updateRule}
                   removeRule={removeRule}
                   moveRuleWithinTarget={moveRuleWithinTarget}
@@ -400,6 +400,8 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
             )}
           </>
         </Form.Item>
+
+        <Divider className="mt-5" />
 
         <Form.Item>
           <Button

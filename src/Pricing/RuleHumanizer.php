@@ -97,16 +97,32 @@ class RuleHumanizer
 
         $taskType = $this->translateTaskTypeName($taskTypeName);
 
-        // Parse condition like "< 1.5"
-        preg_match('/([<>=]+)\s*(.+)/', $condition, $matches);
-        $operator = $this->translateOperator($matches[1] ?? '<');
-        $value = $matches[2] ?? $condition;
+        if (preg_match('/^in\s+(\d+(?:\.\d+)?)\.\.(\d+(?:\.\d+)?)$/', $condition, $matches)) {
+            // Handle range condition like "in 0..1"
 
-        return $this->translator->trans('pricing.rule.humanizer.time_range_length', [
-            '%task_type%' => $taskType,
-            '%operator%' => $operator,
-            '%value%' => $this->translator->trans('basics.hours', ['%count%' => $value]),
-        ]);
+            $value = $this->translator->trans('pricing.rule.humanizer.between', [
+                '%left%' => $this->translator->trans('basics.hours', ['%count%' => $matches[1]]),
+                '%right%' => $this->translator->trans('basics.hours', ['%count%' => $matches[2]]),
+            ]);
+
+            return $this->translator->trans('pricing.rule.humanizer.time_range_length', [
+                '%task_type%' => $taskType,
+                '%operator%' => $value,
+                '%value%' => '',
+            ]);
+
+        } else {
+            // Parse condition like "< 1.5"
+            preg_match('/([<>=]+)\s*(.+)/', $condition, $matches);
+            $operator = $this->translateOperator($matches[1] ?? '<');
+            $value = $matches[2] ?? $condition;
+
+            return $this->translator->trans('pricing.rule.humanizer.time_range_length', [
+                '%task_type%' => $taskType,
+                '%operator%' => $operator,
+                '%value%' => $this->translator->trans('basics.hours', ['%count%' => $value]),
+            ]);
+        }
     }
 
     private function humanizeDiffFunction(FunctionNode $node, string $unitTranslationKey): string
@@ -124,16 +140,32 @@ class RuleHumanizer
 
         $taskType = $this->translateTaskTypeName($taskTypeName);
 
-        // Parse condition like "< 12"
-        preg_match('/([<>=]+)\s*(.+)/', $condition, $matches);
-        $operator = $this->translateOperator($matches[1] ?? '<');
-        $value = $matches[2] ?? $condition;
+        if (preg_match('/^in\s+(\d+(?:\.\d+)?)\.\.(\d+(?:\.\d+)?)$/', $condition, $matches)) {
+            // Handle range condition like "in 0..1"
 
-        return $this->translator->trans('pricing.rule.humanizer.diff', [
-            '%task_type%' => $taskType,
-            '%operator%' => $operator,
-            '%value%' => $this->translator->trans($unitTranslationKey, ['%count%' => $value]),
-        ]);
+            $value = $this->translator->trans('pricing.rule.humanizer.between', [
+                '%left%' => $this->translator->trans($unitTranslationKey, ['%count%' => $matches[1]]),
+                '%right%' => $this->translator->trans($unitTranslationKey, ['%count%' => $matches[2]]),
+            ]);
+
+            return $this->translator->trans('pricing.rule.humanizer.diff', [
+                '%task_type%' => $taskType,
+                '%operator%' => $value,
+                '%value%' => '',
+            ]);
+
+        } else {
+            // Handle standard operators like "<", ">", etc.
+            preg_match('/([<>=]+)\s*(.+)/', $condition, $matches);
+            $operator = $this->translateOperator($matches[1] ?? '<');
+            $value = $matches[2] ?? $condition;
+
+            return $this->translator->trans('pricing.rule.humanizer.diff', [
+                '%task_type%' => $taskType,
+                '%operator%' => $operator,
+                '%value%' => $this->translator->trans($unitTranslationKey, ['%count%' => $value]),
+            ]);
+        }
     }
 
     private function humanizeBinaryNode(BinaryNode $node): string

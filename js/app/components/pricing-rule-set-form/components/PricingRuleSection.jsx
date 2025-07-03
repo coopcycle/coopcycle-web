@@ -14,7 +14,7 @@ const PricingRuleSection = ({
   emptyMessage,
   addRuleButtonLabel,
   addRuleButtonHelp,
-  getGlobalIndex,
+  getGlobalIndexById,
   updateRule,
   removeRule,
   moveRuleWithinTarget,
@@ -30,12 +30,15 @@ const PricingRuleSection = ({
     const destinationIndex = result.destination.index
 
     if (sourceIndex !== destinationIndex) {
-      moveRuleWithinTarget(sourceIndex, destinationIndex, target)
+      // Get the @id of the rules being moved
+      const fromRuleId = rules[sourceIndex]['@id']
+      const toRuleId = rules[destinationIndex]['@id']
+      moveRuleWithinTarget(fromRuleId, toRuleId, target)
     }
   }
 
   return (
-    <div className="mb-4">
+    <div>
       {title ? (
         <Title level={5}>
           {title} <HelpIcon className="ml-1" tooltipText={addRuleButtonHelp} />
@@ -59,11 +62,11 @@ const PricingRuleSection = ({
                   transition: 'background-color 0.2s ease',
                 }}>
                 {rules.map((rule, localIndex) => {
-                  const globalIndex = getGlobalIndex(localIndex, target)
+                  const ruleId = rule['@id']
                   return (
                     <Draggable
-                      key={`${target.toLowerCase()}-${globalIndex}`}
-                      draggableId={`${target.toLowerCase()}-${globalIndex}`}
+                      key={ruleId}
+                      draggableId={ruleId}
                       index={localIndex}>
                       {(provided, snapshot) => (
                         <div
@@ -75,13 +78,13 @@ const PricingRuleSection = ({
                           }}>
                           <PricingRule
                             rule={rule}
-                            index={globalIndex}
+                            index={getGlobalIndexById(ruleId)}
                             onUpdate={updatedRule =>
-                              updateRule(globalIndex, updatedRule)
+                              updateRule(ruleId, updatedRule)
                             }
-                            onRemove={() => removeRule(globalIndex)}
+                            onRemove={() => removeRule(ruleId)}
                             validationErrors={
-                              ruleValidationErrors[globalIndex] || []
+                              ruleValidationErrors[ruleId] || []
                             }
                             dragHandleProps={provided.dragHandleProps}
                             isDragging={snapshot.isDragging}
@@ -98,17 +101,13 @@ const PricingRuleSection = ({
         </DragDropContext>
       )}
 
-      <div className="mb-3">
-        <div>
-          <Button
-            color="green"
-            variant="solid"
-            icon={<PlusOutlined />}
-            onClick={() => onAddRule(target)}
-            data-testid={`pricing-rule-set-add-rule-target-${target.toLowerCase()}`}>
-            {addRuleButtonLabel}
-          </Button>
-        </div>
+      <div>
+        <Button
+          icon={<PlusOutlined />}
+          onClick={() => onAddRule(target)}
+          data-testid={`pricing-rule-set-add-rule-target-${target.toLowerCase()}`}>
+          {addRuleButtonLabel}
+        </Button>
       </div>
     </div>
   )

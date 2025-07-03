@@ -37,7 +37,6 @@ use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\BusinessRestaurantGroup;
-use AppBundle\Entity\Contract;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
@@ -47,8 +46,6 @@ use AppBundle\Entity\Sylius\TaxRate;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
-use AppBundle\Entity\Vehicle;
-use AppBundle\Entity\Warehouse;
 use AppBundle\Entity\Woopit\WoopitIntegration;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\AttachToOrganizationType;
@@ -69,10 +66,8 @@ use AppBundle\Form\MercadopagoLivemodeType;
 use AppBundle\Form\NewCustomOrderType;
 use AppBundle\Form\NonprofitType;
 use AppBundle\Form\OrderType;
-use AppBundle\Form\OrganizationType;
 use AppBundle\Form\PackageSetType;
 use AppBundle\Form\PricingRuleSetType;
-use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Form\BusinessRestaurantGroupType;
 use AppBundle\Form\SettingsType;
 use AppBundle\Form\StripeLivemodeType;
@@ -83,7 +78,6 @@ use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\UsersExportType;
 use AppBundle\Form\ZoneCollectionType;
 use AppBundle\Pricing\PriceCalculationVisitor;
-use AppBundle\Pricing\RuleHumanizer;
 use AppBundle\Serializer\ApplicationsNormalizer;
 use AppBundle\Service\ActivityManager;
 use AppBundle\Service\DeliveryManager;
@@ -113,7 +107,6 @@ use Nucleos\UserBundle\Util\Canonicalizer as CanonicalizerInterface;
 use Nucleos\ProfileBundle\Mailer\Mail\RegistrationMail;
 use Knp\Component\Pager\PaginatorInterface;
 use Psr\Log\LoggerInterface;
-use Ramsey\Uuid\Uuid;
 use Redis;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
@@ -1209,7 +1202,7 @@ class AdminController extends AbstractController
     }
 
     #[Route(path: '/admin/deliveries/pricing/beta/{id}', name: 'admin_deliveries_pricing_ruleset_beta')]
-    public function pricingRuleSetBetaAction($id, Request $request, RuleHumanizer $ruleHumanizer)
+    public function pricingRuleSetBetaAction($id, Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -1220,14 +1213,6 @@ class AdminController extends AbstractController
         if (!$ruleSet) {
             throw $this->createNotFoundException('Pricing rule set not found');
         }
-
-        // Preset a name on all pricing rules that don't have a name
-        foreach ($ruleSet->getRules() as $rule) {
-            if (empty($rule->getName())) {
-                $this->pricingRuleSetManager->setPricingRuleName($rule, $ruleHumanizer->humanize($rule));
-            }
-        }
-        $this->entityManager->flush();
 
         return $this->render('admin/pricing_rule_set_beta.html.twig', $this->auth([
             'isNew' => false,
