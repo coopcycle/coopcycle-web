@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Carbon\Carbon;
+use DateTimeInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr;
@@ -16,22 +17,30 @@ class DeliveryRepository extends EntityRepository
     private $sonicClient;
     private $sonicSecretPassword;
     private $sonicNamespace;
-
+    /**
+     * @return void
+     */
     public function setSecret(string $secret)
     {
         $this->secret = $secret;
     }
-
+    /**
+     * @return void
+     */
     public function setSonicClient(SonicClient $client)
     {
         $this->sonicClient = $client;
     }
-
+    /**
+     * @return void
+     */
     public function setSonicSecretPassword(string $password)
     {
         $this->sonicSecretPassword = $password;
     }
-
+    /**
+     * @return void
+     */
     public function setSonicNamespace(string $namespace)
     {
         $this->sonicNamespace = $namespace;
@@ -82,7 +91,9 @@ class DeliveryRepository extends EntityRepository
             ->setParameter('after', $today->copy()->sub(1, 'day')->hour(23)->minute(59)->second(59))
             ;
     }
-
+    /**
+     * @return null|object
+     */
     public function findOneByHashId(string $hashId)
     {
         if (0 === strpos($hashId, 'dlv_')) {
@@ -106,7 +117,9 @@ class DeliveryRepository extends EntityRepository
 
         return $this->find($id);
     }
-
+    /**
+     * @return void
+     */
     public function searchWithSonic(QueryBuilder $qb, string $q, string $locale, ?Store $store = null)
     {
         $search = new \Psonic\Search($this->sonicClient);
@@ -126,4 +139,24 @@ class DeliveryRepository extends EntityRepository
             ->andWhere('d.id IN (:ids)')
             ->setParameter('ids', $ids);
     }
+    /**
+     * @return array<Delivery>
+     */
+    public function findDeliveriesByStore(Store|int $store, \DateTimeInterface $dateA, \DateTimeInterface $dateB)
+    {
+        $qb = $this->createQueryBuilderWithTasks()
+            ->leftJoin('t.images', 'p');
+
+        return $qb->andWhere('d.store = :store')
+            ->andWhere('t.type = :dropoff')
+            ->andWhere('t.doneAfter >= :dateA')
+            ->andWhere('t.doneBefore <= :dateB')
+            ->setParameter('dropoff', Task::TYPE_DROPOFF)
+            ->setParameter('store', $store)
+            ->setParameter('dateA', $dateA)
+            ->setParameter('dateB', $dateB)
+            ->getQuery()
+            ->getResult();
+    }
+
 }

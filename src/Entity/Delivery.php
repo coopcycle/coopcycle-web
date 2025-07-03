@@ -15,11 +15,13 @@ use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Action\Delivery\BulkAsync as BulkAsyncDelivery;
+use AppBundle\Action\Delivery\PODExport as PODExportDelivery;
 use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryDto;
 use AppBundle\Api\Dto\OptimizationSuggestions;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
+use AppBundle\Api\Filter\DeliveryTaskDateFilter;
 use AppBundle\Api\State\DeliveryCreateOrUpdateProcessor;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
@@ -31,6 +33,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Validator\Constraints\CheckDelivery as AssertCheckDelivery;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use AppBundle\Vroom\Shipment as VroomShipment;
+use DeliveryPODExportInput;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -164,6 +167,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
             controller: BulkAsyncDelivery::class,
             security: 'is_granted(\'ROLE_OAUTH2_DELIVERIES\')',
             deserialize: false
+        ),
+        new Post(
+            uriTemplate: '/deliveries/pod_export',
+            controller: PODExportDelivery::class,
+            /* input: DeliveryPODExportInput::class, */
+            write: false,
+            deserialize: false
         )
     ],
     normalizationContext: ['groups' => ['delivery', 'address']],
@@ -175,6 +185,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[AssertCheckDelivery(groups: ['delivery_check'])]
 #[ApiFilter(filterClass: OrderFilter::class, properties: ['createdAt'])]
 #[ApiFilter(filterClass: DeliveryOrderFilter::class, properties: ['dropoff.before'])]
+#[ApiFilter(filterClass: DeliveryTaskDateFilter::class)]
 #[ApiResource(
     uriTemplate: '/stores/{id}/deliveries',
     types: ['http://schema.org/ParcelDelivery'],
