@@ -59,9 +59,10 @@ class PODExport extends Base
 
             return $this->createZipResponse($zipPath);
 
-        } catch (\DateException $e) {
+        } catch (\InvalidArgumentException $e) {
             throw new BadRequestHttpException('Invalid date format. Expected format: Y-m-d or Y-m-d H:i:s');
         } catch (\Exception $e) {
+
             $this->logger?->error('Failed to generate delivery ZIP', [
                 'error' => $e->getMessage(),
                 'store' => $params->get('store'),
