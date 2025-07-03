@@ -5,11 +5,9 @@ import { Collapse } from 'antd'
 const { Panel } = Collapse
 
 function ProductOption({ productOption }) {
-  const rule = productOption.matchedRule
-
   return (
     <div>
-      <span>{rule.name}</span>
+      <span>{productOption.name}</span>
       <span className="pull-right">
           {(productOption.price / 100).formatMoney()}
         </span>

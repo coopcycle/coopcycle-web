@@ -77,7 +77,6 @@ use AppBundle\Form\TimeSlotType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\UsersExportType;
 use AppBundle\Form\ZoneCollectionType;
-use AppBundle\Pricing\RuleHumanizer;
 use AppBundle\Serializer\ApplicationsNormalizer;
 use AppBundle\Service\ActivityManager;
 use AppBundle\Service\DeliveryManager;
@@ -1202,7 +1201,7 @@ class AdminController extends AbstractController
     }
 
     #[Route(path: '/admin/deliveries/pricing/beta/{id}', name: 'admin_deliveries_pricing_ruleset_beta')]
-    public function pricingRuleSetBetaAction($id, Request $request, RuleHumanizer $ruleHumanizer)
+    public function pricingRuleSetBetaAction($id, Request $request)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -1213,14 +1212,6 @@ class AdminController extends AbstractController
         if (!$ruleSet) {
             throw $this->createNotFoundException('Pricing rule set not found');
         }
-
-        // Preset a name on all pricing rules that don't have a name
-        foreach ($ruleSet->getRules() as $rule) {
-            if (empty($rule->getName())) {
-                $this->pricingRuleSetManager->setPricingRuleName($rule, $ruleHumanizer->humanize($rule));
-            }
-        }
-        $this->entityManager->flush();
 
         return $this->render('admin/pricing_rule_set_beta.html.twig', $this->auth([
             'isNew' => false,
