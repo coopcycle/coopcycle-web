@@ -100,7 +100,7 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
   // open select
   cy.get(selector).click()
 
-  cy.wait(300)
+  cy.wait(1000)
 
   const toMoment = textValue => {
     if (/^\d{1,2}:\d{2}$/.test(textValue)) {
