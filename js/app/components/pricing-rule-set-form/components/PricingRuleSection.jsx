@@ -98,17 +98,13 @@ const PricingRuleSection = ({
         </DragDropContext>
       )}
 
-      <div className="mb-3">
-        <div>
-          <Button
-            color="green"
-            variant="solid"
-            icon={<PlusOutlined />}
-            onClick={() => onAddRule(target)}
-            data-testid={`pricing-rule-set-add-rule-target-${target.toLowerCase()}`}>
-            {addRuleButtonLabel}
-          </Button>
-        </div>
+      <div>
+        <Button
+          icon={<PlusOutlined />}
+          onClick={() => onAddRule(target)}
+          data-testid={`pricing-rule-set-add-rule-target-${target.toLowerCase()}`}>
+          {addRuleButtonLabel}
+        </Button>
       </div>
     </div>
   )
