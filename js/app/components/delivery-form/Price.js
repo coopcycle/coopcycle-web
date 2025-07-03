@@ -256,13 +256,6 @@ export default ({
         </>
       ) : (
         <>
-          {!overridePrice && priceErrorMessage ? (
-            <div className="alert alert-danger" role="alert">
-              {isDispatcher
-                ? t('DELIVERY_FORM_ADMIN_PRICE_ERROR')
-                : t('DELIVERY_FORM_SHOP_PRICE_ERROR')}
-            </div>
-          ) : null}
           <li className="list-group-item d-flex flex-column">
             <div>
               <span className="font-weight-semi-bold">
@@ -289,6 +282,13 @@ export default ({
               ) : null}
             </div>
           </li>
+          {!overridePrice && priceErrorMessage ? (
+            <div className="alert alert-danger" role="alert">
+              {isDispatcher
+                ? t('DELIVERY_FORM_ADMIN_PRICE_ERROR')
+                : t('DELIVERY_FORM_SHOP_PRICE_ERROR')}
+            </div>
+          ) : null}
         </>
       )}
 
