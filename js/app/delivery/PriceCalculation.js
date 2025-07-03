@@ -4,38 +4,6 @@ import { Collapse } from 'antd'
 
 const { Panel } = Collapse
 
-function ProductOptionValue({ productOptionValue }) {
-  return (
-    <div>
-      <span>{productOptionValue.option.name}</span>
-      <span className="pull-right">
-          {(productOptionValue.price / 100).formatMoney()}
-        </span>
-    </div>
-  )
-}
-
-function OrderItem({ orderItem, index }) {
-  const { t } = useTranslation()
-
-  return (
-    <li className="list-group-item d-flex flex-column gap-2">
-      <div>
-        <span className="font-weight-semi-bold">Item {index + 1}</span>
-      </div>
-      {orderItem.variant.optionValues.map((productOptionValue, index) => (
-        <ProductOptionValue key={index} productOptionValue={productOptionValue} />
-      ))}
-      <div className="font-weight-semi-bold">
-        <span>{t('DELIVERY_FORM_PRICE_CALCULATION_ORDER_ITEM_TOTAL')}</span>
-        <span className="pull-right">
-          {(orderItem.total / 100).formatMoney()}
-        </span>
-      </div>
-    </li>
-  )
-}
-
 function Rule({ rule, matched }) {
   return (
     <div
@@ -90,22 +58,6 @@ function MethodOfCalculation({ calculation }) {
   )
 }
 
-function Cart({ order, itemsTotal }) {
-  const { t } = useTranslation()
-
-  return (
-    <>
-      {order.items.map((orderItem, index) => (
-        <OrderItem key={index} orderItem={orderItem} index={index} />
-      ))}
-      <li className="list-group-item">
-        <span>{t('DELIVERY_FORM_PRICE_CALCULATION_ORDER_TOTAL')}</span>
-        <span className="pull-right">{(itemsTotal / 100).formatMoney()}</span>
-      </li>
-    </>
-  )
-}
-
 /**
  * nodeId is in the form of "/api/pricing_rule_sets/1"
  * @param nodeId
@@ -139,13 +91,7 @@ function PriceRuleSet({ calculation }) {
   )
 }
 
-export function PriceCalculation({
-  className,
-  isDebugPricing,
-  calculation,
-  order,
-  itemsTotal,
-}) {
+export function PriceCalculation({ className, isDebugPricing, calculation }) {
   const { t } = useTranslation()
 
   return (
@@ -159,13 +105,6 @@ export function PriceCalculation({
               <h4>{t('DELIVERY_FORM_PRICE_CALCULATION_RULES')}</h4>
               <PriceRuleSet calculation={calculation} />
             </>
-          )}
-
-          {Boolean(order && itemsTotal) && (
-            <div className="mt-4">
-              <h4>{t('DELIVERY_FORM_PRICE_CALCULATION_CART')}</h4>
-              <Cart order={order} itemsTotal={itemsTotal} />
-            </div>
           )}
         </>
       </Panel>

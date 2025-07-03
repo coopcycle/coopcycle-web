@@ -3,7 +3,6 @@ import { Checkbox } from 'antd'
 import { useTranslation } from 'react-i18next'
 
 import { money } from '../../../../assets/react/controllers/Incident/utils'
-import Spinner from '../core/Spinner'
 import { PriceCalculation } from '../../delivery/PriceCalculation'
 
 import './ShowPrice.scss'
@@ -19,6 +18,7 @@ import { selectMode } from './redux/formSlice'
 export default ({
   storeNodeId,
   order,
+  setOrder,
   isDebugPricing,
   isDispatcher,
   setPriceLoading,
@@ -136,8 +136,9 @@ export default ({
 
     if (data) {
       setNewPrice(data)
+      setOrder(data.order)
     }
-  }, [calculatePriceData, calculatePriceError])
+  }, [calculatePriceData, calculatePriceError, setOrder])
 
   useEffect(() => {
     if (mode === Mode.DELIVERY_UPDATE) {
@@ -191,7 +192,7 @@ export default ({
 
   return (
     <div className="pl-2">
-      {(mode === Mode.DELIVERY_UPDATE) ? (
+      {mode === Mode.DELIVERY_UPDATE ? (
         <>
           <div className="font-weight-bold mb-1 total__price">
             {overridePrice
@@ -242,16 +243,15 @@ export default ({
           <div className="font-weight-bold mb-1 total__price">
             {t('DELIVERY_FORM_TOTAL_PRICE')}
           </div>
-          {priceErrorMessage && !overridePrice ? (
+          {!overridePrice && priceErrorMessage ? (
             <div className="alert alert-danger" role="alert">
               {isDispatcher
                 ? t('DELIVERY_FORM_ADMIN_PRICE_ERROR')
                 : t('DELIVERY_FORM_SHOP_PRICE_ERROR')}
             </div>
-          ) : !overridePrice ? (
-            calculatePriceIsLoading ? (
-              <Spinner />
-            ) : newPrice.amount ? (
+          ) : null}
+          {!overridePrice && !priceErrorMessage && !calculatePriceIsLoading ? (
+            newPrice.amount ? (
               <>
                 <span>
                   {money(newPrice.amount - newPrice.tax.amount)}{' '}
@@ -284,8 +284,6 @@ export default ({
             className="mt-2"
             isDebugPricing={isDebugPricing}
             calculation={calculateResponseData.calculation}
-            order={calculateResponseData.order}
-            itemsTotal={calculateResponseData.amount}
           />
         )}
 

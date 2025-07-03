@@ -22,7 +22,7 @@ import {
 } from '../../api/slice'
 import { RecurrenceRules } from './RecurrenceRules'
 import useSubmit from './hooks/useSubmit'
-import Price from './Price'
+import Order from './Order'
 import SuggestionModal from './SuggestionModal'
 import DeliveryResume from './DeliveryResume'
 import Map from '../DeliveryMap'
@@ -545,7 +545,7 @@ export default function({
 
                     {order || mode === Mode.RECURRENCE_RULE_UPDATE ? (
                       <div className="order-informations__total-price border-top py-3">
-                        <Price
+                        <Order
                           storeNodeId={storeNodeId}
                           order={order}
                           isDispatcher={isDispatcher}
