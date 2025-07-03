@@ -96,6 +96,14 @@ class RuleHumanizerTest extends KernelTestCase
         $this->assertEquals('créneau horaire de dépôt moins de 1.5 heure', $this->humanizer->humanize($rule));
     }
 
+    public function testTimeRangeLengthIn()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('time_range_length(dropoff, \'hours\', \'in 1..2\')');
+
+        $this->assertEquals('créneau horaire de dépôt entre 1 heure et 2 heures ', $this->humanizer->humanize($rule));
+    }
+
     public function testDiffHours()
     {
         $rule = new PricingRule();
@@ -112,6 +120,14 @@ class RuleHumanizerTest extends KernelTestCase
         $this->assertEquals('délai de préavis pour retrait plus de 2 jours', $this->humanizer->humanize($rule));
     }
 
+    public function testDiffDaysIn()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('diff_days(pickup, \'in 1..2\')');
+
+        $this->assertEquals('délai de préavis pour retrait entre 1 jour et 2 jours ', $this->humanizer->humanize($rule));
+    }
+    
     public function testOrderItemsTotal()
     {
         $rule = new PricingRule();
