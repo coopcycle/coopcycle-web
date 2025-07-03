@@ -35,7 +35,7 @@ const PricingRuleSection = ({
   }
 
   return (
-    <div className="mb-4">
+    <div>
       {title ? (
         <Title level={5}>
           {title} <HelpIcon className="ml-1" tooltipText={addRuleButtonHelp} />

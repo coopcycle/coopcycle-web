@@ -332,7 +332,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
 
             {legacyRules.length > 0 ? (
               // Legacy Rules Section
-              <div className="mb-4">
+              <div>
                 <Title level={5}>{t('RULE_LEGACY_TARGET_DYNAMIC_TITLE')}</Title>
                 <Form.Item className="m-0">
                   <LegacyPricingRulesWarning
@@ -400,6 +400,8 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
             )}
           </>
         </Form.Item>
+
+        <Divider className="mt-5" />
 
         <Form.Item>
           <Button
