@@ -336,6 +336,7 @@ class PriceCalculationVisitor
 
     private function createOrderItem(ProductVariantInterface $variant): OrderItemInterface
     {
+        /** @var OrderItemInterface $orderItem */
         $orderItem = $this->orderItemFactory->createNew();
         $orderItem->setVariant($variant);
         $orderItem->setUnitPrice($variant->getPrice());

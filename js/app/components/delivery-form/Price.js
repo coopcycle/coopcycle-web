@@ -15,6 +15,22 @@ import { Mode, modeIn } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
 
+const TotalPrice = ({ className, priceWithTaxes, priceWithoutTaxes }) => {
+  const { t } = useTranslation()
+
+  return (
+    <span className={className}>
+      <span>
+        {t('DELIVERY_FORM_TOTAL_EX_VAT')} {priceWithoutTaxes.formatMoney()}
+      </span>
+      <br />
+      <span className="font-weight-semi-bold" data-testid="tax-included">
+        {t('DELIVERY_FORM_TOTAL_VAT')} {priceWithTaxes.formatMoney()}
+      </span>
+    </span>
+  )
+}
+
 export default ({
   storeNodeId,
   order,
@@ -191,10 +207,10 @@ export default ({
   }, [newPrice, overridePrice, setFieldValue])
 
   return (
-    <div className="pl-2">
+    <div>
       {mode === Mode.DELIVERY_UPDATE ? (
         <>
-          <div className="font-weight-bold mb-1 total__price">
+          <div className="font-weight-semi-bold mb-1 total__price">
             {overridePrice
               ? t('DELIVERY_FORM_OLD_PRICE')
               : t('DELIVERY_FORM_TOTAL_PRICE')}
@@ -240,9 +256,6 @@ export default ({
         </>
       ) : (
         <>
-          <div className="font-weight-bold mb-1 total__price">
-            {t('DELIVERY_FORM_TOTAL_PRICE')}
-          </div>
           {!overridePrice && priceErrorMessage ? (
             <div className="alert alert-danger" role="alert">
               {isDispatcher
@@ -250,30 +263,32 @@ export default ({
                 : t('DELIVERY_FORM_SHOP_PRICE_ERROR')}
             </div>
           ) : null}
-          {!overridePrice && !priceErrorMessage && !calculatePriceIsLoading ? (
-            newPrice.amount ? (
-              <>
-                <span>
-                  {money(newPrice.amount - newPrice.tax.amount)}{' '}
-                  {t('DELIVERY_FORM_TOTAL_EX_VAT')}
-                </span>
-                <br />
-                <span data-testid="tax-included">
-                  {money(newPrice.amount)} {t('DELIVERY_FORM_TOTAL_VAT')}
-                </span>
-              </>
-            ) : (
-              <>
-                <span>
-                  {money(0)} {t('DELIVERY_FORM_TOTAL_EX_VAT')}
-                </span>
-                <br />
-                <span>
-                  {money(0)} {t('DELIVERY_FORM_TOTAL_VAT')}
-                </span>
-              </>
-            )
-          ) : null}
+          <li className="list-group-item d-flex flex-column">
+            <div>
+              <span className="font-weight-semi-bold">
+                {t('DELIVERY_FORM_TOTAL_PRICE')}
+              </span>
+              {!overridePrice &&
+              !priceErrorMessage &&
+              !calculatePriceIsLoading ? (
+                newPrice.amount ? (
+                  <TotalPrice
+                    className="pull-right"
+                    priceWithTaxes={newPrice.amount / 100}
+                    priceWithoutTaxes={
+                      (newPrice.amount - newPrice.tax.amount) / 100
+                    }
+                  />
+                ) : (
+                  <TotalPrice
+                    className="pull-right"
+                    priceWithTaxes={0}
+                    priceWithoutTaxes={0}
+                  />
+                )
+              ) : null}
+            </div>
+          </li>
         </>
       )}
 

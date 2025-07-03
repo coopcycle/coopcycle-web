@@ -19,12 +19,7 @@ export default ({
   return (
     <Spin spinning={isLoading}>
       <div>
-        {Boolean(order) && order.items ? (
-          <div className="mt-4">
-            <h4>{t('DELIVERY_FORM_PRICE_CALCULATION_CART')}</h4>
-            <Cart order={order} />
-          </div>
-        ) : null}
+        {Boolean(order) && order.items ? <Cart order={order} /> : null}
         <Price
           storeNodeId={storeNodeId}
           order={order}

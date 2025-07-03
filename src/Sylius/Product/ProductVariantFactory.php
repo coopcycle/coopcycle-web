@@ -49,10 +49,9 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
      */
     public function createWithProductOptions(array $productOptionValues): ProductVariantInterface
     {
-        /**
-         * @var ProductVariantInterface $productVariant
-         */
+        /** @var ProductVariantInterface $productVariant */
         $productVariant = $this->createForProduct($this->product);
+        $productVariant->setName($this->product->getName());
 
         foreach ($productOptionValues as $productOptionValue) {
             $productVariant->addOptionValue($productOptionValue);
