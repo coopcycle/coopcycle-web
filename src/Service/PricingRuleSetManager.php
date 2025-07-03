@@ -7,24 +7,17 @@ use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Store;
-use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductOption;
+use AppBundle\Sylius\Product\ProductOptionFactory;
 use Doctrine\ORM\EntityManagerInterface;
-use Ramsey\Uuid\Uuid;
-use Sylius\Component\Locale\Provider\LocaleProviderInterface;
-use Sylius\Component\Product\Repository\ProductRepositoryInterface;
-use Sylius\Component\Resource\Factory\FactoryInterface;
-
 
 class PricingRuleSetManager
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly ProductRepositoryInterface $productRepository,
-        private readonly FactoryInterface $productOptionFactory,
-        private readonly LocaleProviderInterface $localeProvider,
-    )
-    {}
+        private readonly ProductOptionFactory $productOptionFactory,
+    ) {
+    }
 
     /**
      * @return mixed[]
@@ -77,7 +70,7 @@ class PricingRuleSetManager
         return $this->entityManager->getRepository(DeliveryForm::class)->findBy(['pricingRuleSet' => $pricingRuleSet]);
     }
 
-    function setPricingRuleName(PricingRule $pricingRule, string $name): void
+    public function setPricingRuleName(PricingRule $pricingRule, string $name): void
     {
         $productOption = $pricingRule->getProductOption();
 
@@ -95,27 +88,10 @@ class PricingRuleSetManager
 
     private function createProductOption(string $name): ProductOption
     {
-        /** @var Product $product */
-        $product = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
-
-        /** @var ProductOption $productOption */
-        $productOption = $this->productOptionFactory->createNew();
-
-        // Set current locale before setting the name for translatable entities
-        $productOption->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
-
-        // Set basic properties
-        $productOption->setCode(Uuid::uuid4()->toString());
-        $productOption->setName($name);
-
-        // Set default strategy and additional flag
-        $productOption->setStrategy('free');
-        $productOption->setAdditional(false);
+        $productOption = $this->productOptionFactory->createForOnDemandDelivery($name);
 
         // Persist the new ProductOption
         $this->entityManager->persist($productOption);
-
-        $product->addOption($productOption);
 
         return $productOption;
     }
