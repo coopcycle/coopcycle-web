@@ -36,21 +36,7 @@ class ProductOptionValueFactory
         $productOptionValue->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
 
         $productOptionValue->setOption($rule->getProductOption());
-
-        //TODO: for percentage process separately inside PriceCalculationVisitor
-//        if (str_contains($priceExpression, 'price_percentage')) {
-//            return new \AppBundle\Entity\Delivery\ProductOption(
-//                $rule,
-//                0,
-//                $result
-//            );
-//        } else {
-//            return new \AppBundle\Entity\Delivery\ProductOption(
-//                $rule,
-//                $result,
-//            );
-//        }
-
+        $productOptionValue->setValue($priceExpression);
         $productOptionValue->setPrice($result);
 
         return $productOptionValue;

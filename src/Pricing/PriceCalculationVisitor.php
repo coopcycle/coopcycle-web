@@ -5,7 +5,6 @@ namespace AppBundle\Pricing;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
-use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\PriceInterface;
 use AppBundle\Entity\Task;
 use AppBundle\ExpressionLanguage\DeliveryExpressionLanguageVisitor;
@@ -19,7 +18,6 @@ use AppBundle\Sylius\Product\ProductVariantFactory;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
@@ -32,7 +30,6 @@ class PriceCalculationVisitor
 
     public function __construct(
         private readonly ExpressionLanguage $expressionLanguage,
-        private readonly LocaleProviderInterface $localeProvider,
         private readonly DeliveryExpressionLanguageVisitor $deliveryExpressionLanguageVisitor,
         private readonly TaskExpressionLanguageVisitor $taskExpressionLanguageVisitor,
         private readonly ProductOptionValueFactory $productOptionValueFactory,
@@ -204,7 +201,11 @@ class PriceCalculationVisitor
                         $this->expressionLanguage
                     );
 
-                    $rule->apply($expressionLanguageValues, $this->localeProvider, $this->expressionLanguage);
+                    $this->productOptionValueFactory->createForPricingRule(
+                        $rule,
+                        $expressionLanguageValues,
+                        $this->expressionLanguage
+                    );
 
                     $productVariant = $this->productVariantFactory->createWithProductOptions($productOptionValues);
 
@@ -313,17 +314,21 @@ class PriceCalculationVisitor
          * @var ProductOptionValueInterface $productOptionValue
          */
         foreach ($productVariant->getOptionValues() as $productOptionValue) {
-            //TODO
-            $priceAdditive = $productOptionValue->getPrice();
-//            $priceAdditive = $productOption->getPriceAdditive();
-//            $priceMultiplier = $productOption->getPriceMultiplier();
-//
-            $previousSubtotal = $subtotal;
-//
-            $subtotal += $priceAdditive;
-//            $subtotal = (int)ceil($subtotal * ($priceMultiplier / 100 / 100));
-//
-            $productOptionValue->setPrice($subtotal - $previousSubtotal);
+            if (str_contains($productOptionValue->getValue(), 'price_percentage')) {
+                // update the price of the option value, because with percentage-based rules,
+                // the price is calculated on the subtotal of the previous steps
+
+                $priceMultiplier = $productOptionValue->getPrice();
+
+                $previousSubtotal = $subtotal;
+
+                $subtotal = (int)ceil($subtotal * ($priceMultiplier / 100 / 100));
+
+                $productOptionValue->setPrice($subtotal - $previousSubtotal);
+
+            } else {
+               $subtotal += $productOptionValue->getPrice();
+            }
         }
 
         $productVariant->setPrice($subtotal - $previousItemsTotal);
