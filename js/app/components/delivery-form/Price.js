@@ -34,10 +34,11 @@ const TotalPrice = ({ className, priceWithTaxes, priceWithoutTaxes }) => {
 export default ({
   storeNodeId,
   order,
-  setOrder,
   isDebugPricing,
   isDispatcher,
   setPriceLoading,
+  setOrder,
+  setOverridePrice: setOverridePriceOnParent,
 }) => {
   const mode = useSelector(selectMode)
   const { values, setFieldValue } = useDeliveryFormFormikContext()
@@ -141,6 +142,15 @@ export default ({
 
     return ''
   }, [calculatePriceError])
+
+  const toggleOverridePrice = useCallback(
+    value => {
+      setOverridePrice(value)
+      setOverridePriceOnParent(value)
+      setNewPrice(0)
+    },
+    [setOverridePrice, setOverridePriceOnParent],
+  )
 
   useEffect(() => {
     const data = calculatePriceData
@@ -256,25 +266,26 @@ export default ({
         </>
       ) : (
         <>
-          <li className="list-group-item d-flex flex-column">
+          <li
+            className={`list-group-item d-flex flex-column ${overridePrice ? 'text-decoration-line-through' : ''}`}>
             <div>
               <span className="font-weight-semi-bold">
                 {t('DELIVERY_FORM_TOTAL_PRICE')}
               </span>
-              {!overridePrice &&
-              !priceErrorMessage &&
-              !calculatePriceIsLoading ? (
-                newPrice.amount ? (
+              {!priceErrorMessage ? (
+                calculatePriceData && calculatePriceData.amount ? (
                   <TotalPrice
-                    className="pull-right"
-                    priceWithTaxes={newPrice.amount / 100}
+                    className={`pull-right ${overridePrice ? 'text-decoration-line-through' : ''}`}
+                    priceWithTaxes={calculatePriceData.amount / 100}
                     priceWithoutTaxes={
-                      (newPrice.amount - newPrice.tax.amount) / 100
+                      (calculatePriceData.amount -
+                        calculatePriceData.tax.amount) /
+                      100
                     }
                   />
                 ) : (
                   <TotalPrice
-                    className="pull-right"
+                    className={`pull-right ${overridePrice ? 'text-decoration-line-through' : ''}`}
                     priceWithTaxes={0}
                     priceWithoutTaxes={0}
                   />
@@ -307,8 +318,7 @@ export default ({
           <div
             style={{ maxWidth: '100%', cursor: 'pointer' }}
             onClick={() => {
-              setOverridePrice(!overridePrice)
-              setNewPrice(0)
+              toggleOverridePrice(!overridePrice)
             }}>
             <div>
               <span>{t('DELIVERY_FORM_SET_MANUALLY_PRICE')}</span>
@@ -318,9 +328,9 @@ export default ({
                 checked={overridePrice}
                 onChange={e => {
                   e.stopPropagation()
-                  setOverridePrice(e.target.checked)
-                  setNewPrice(0)
-                }}></Checkbox>
+                  toggleOverridePrice(e.target.checked)
+                }}
+              />
             </div>
           </div>
           {overridePrice && (
