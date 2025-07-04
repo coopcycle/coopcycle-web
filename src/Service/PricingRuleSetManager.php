@@ -7,7 +7,6 @@ use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Store;
-use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Sylius\Product\ProductOptionFactory;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -76,7 +75,7 @@ class PricingRuleSetManager
 
         if ($productOption === null) {
             // Create a new ProductOption
-            $productOption = $this->createProductOption($name);
+            $productOption = $this->productOptionFactory->createForOnDemandDelivery($name);
             $pricingRule->setProductOption($productOption);
         } else {
             // Update existing ProductOption name if different
@@ -84,15 +83,5 @@ class PricingRuleSetManager
                 $productOption->setName($name);
             }
         }
-    }
-
-    private function createProductOption(string $name): ProductOption
-    {
-        $productOption = $this->productOptionFactory->createForOnDemandDelivery($name);
-
-        // Persist the new ProductOption
-        $this->entityManager->persist($productOption);
-
-        return $productOption;
     }
 }

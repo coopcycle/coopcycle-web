@@ -167,13 +167,9 @@ class PriceCalculationVisitor
 
     private function applyFindStrategy(PricingRuleSet $ruleSet, array $expressionLanguageValues, $predicate): Result
     {
-        /**
-         * @var RuleResult[] $ruleResults
-         */
+        /** @var RuleResult[] $ruleResults */
         $ruleResults = [];
-        /**
-         * @var ProductOptionValueInterface[] $productOptionValues
-         */
+        /** @var ProductOptionValueInterface[] $productOptionValues */
         $productOptionValues = [];
 
         foreach ($ruleSet->getRules() as $rule) {
@@ -194,12 +190,6 @@ class PriceCalculationVisitor
                         $this->expressionLanguage
                     );
 
-                    $this->productOptionValueFactory->createForPricingRule(
-                        $rule,
-                        $expressionLanguageValues,
-                        $this->expressionLanguage
-                    );
-
                     $productVariant = $this->productVariantFactory->createWithProductOptions($productOptionValues, $ruleSet);
 
                     return new Result($ruleResults, $productVariant);
@@ -212,13 +202,9 @@ class PriceCalculationVisitor
 
     private function applyMapStrategy(PricingRuleSet $ruleSet, array $expressionLanguageValues, $predicate): Result
     {
-        /**
-         * @var RuleResult[] $ruleResults
-         */
+        /** @var RuleResult[] $ruleResults */
         $ruleResults = [];
-        /**
-         * @var ProductOptionValueInterface[] $productOptionValues
-         */
+        /** @var ProductOptionValueInterface[] $productOptionValues */
         $productOptionValues = [];
 
         foreach ($ruleSet->getRules() as $rule) {
