@@ -12,6 +12,7 @@ use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Message\ImportDeliveries;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryManager;
+use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\LiveUpdates;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
@@ -33,6 +34,7 @@ class ImportDeliveriesHandler
         private ValidatorInterface $validator,
         private TranslatorInterface $translator,
         private PricingManager $pricingManager,
+        private DeliveryOrderManager $deliveryOrderManager,
         private LiveUpdates $liveUpdates,
         private DeliveryManager $deliveryManager,
         private LoggerInterface $logger,
@@ -95,7 +97,7 @@ class ImportDeliveriesHandler
             $this->entityManager->persist($delivery);
 
             try {
-                $this->pricingManager->createOrder($delivery, [
+                $this->deliveryOrderManager->createOrder($delivery, [
                     'throwException' => true
                 ]);
             } catch (NoRuleMatchedException $e) {

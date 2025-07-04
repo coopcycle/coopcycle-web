@@ -12,8 +12,8 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\UsePricingRules;
-use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Pricing\PricingManager;
+use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use Psr\Log\LoggerInterface;
@@ -28,9 +28,9 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         private readonly DeliveryProcessor $decorated,
         private readonly ProcessorInterface $persistProcessor,
         private readonly PricingManager $pricingManager,
+        private readonly DeliveryOrderManager $deliveryOrderManager,
         private readonly OrderManager $orderManager,
         private readonly DeliveryMapper $deliveryMapper,
-        private readonly PriceCalculationVisitor $priceCalculationVisitor,
         private readonly AuthorizationCheckerInterface $authorizationCheckerInterface,
         private readonly ValidatorInterface $validator,
         private readonly LoggerInterface $logger,
@@ -82,7 +82,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         if ($isCreateOrderMode) {
             // New delivery/order
 
-            $order = $this->pricingManager->createOrder(
+            $order = $this->deliveryOrderManager->createOrder(
                 $delivery,
                 [
                     'pricingStrategy' => $pricingStrategy,
@@ -102,7 +102,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                 if (is_null($order)) {
                     // Should not happen normally, but just in case
                     // there is still some delivery created without an order
-                    $order = $this->pricingManager->createOrder(
+                    $order = $this->deliveryOrderManager->createOrder(
                         $delivery,
                         [
                             'pricingStrategy' => new UseArbitraryPrice($arbitraryPrice),
