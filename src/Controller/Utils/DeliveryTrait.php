@@ -99,7 +99,7 @@ trait DeliveryTrait
                         'pricingStrategy' => new UseArbitraryPrice($arbitraryPrice),
                     ]);
                 } else {
-                    $priceCalculationVisitor->updateDeliveryPrice($order, $delivery, $arbitraryPrice);
+                    $pricingManager->updateDeliveryPrice($order, $delivery, $arbitraryPrice);
                 }
             }
 

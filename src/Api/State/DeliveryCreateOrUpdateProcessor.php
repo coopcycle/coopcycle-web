@@ -109,7 +109,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                         ]
                     );
                 } else {
-                    $this->priceCalculationVisitor->updateDeliveryPrice($order, $delivery, $arbitraryPrice);
+                    $this->pricingManager->updateDeliveryPrice($order, $delivery, $arbitraryPrice);
                 }
             }
         }

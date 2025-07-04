@@ -14,7 +14,6 @@ use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
 use AppBundle\Form\Checkout\CheckoutPayment;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Form\DeliveryEmbedType;
-use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -198,7 +197,7 @@ class EmbedController extends AbstractController
         OrderRepository $orderRepository,
         OrderManager $orderManager,
         OrderFactory $orderFactory,
-        PriceCalculationVisitor $priceCalculationVisitor,
+        PricingManager $pricingManager,
         EntityManagerInterface $objectManager,
         CanonicalizerInterface $canonicalizer,
         OrderProcessorInterface $orderProcessor)
@@ -329,7 +328,7 @@ class EmbedController extends AbstractController
 
             $customer = $this->findOrCreateCustomer($email, $telephone, $canonicalizer);
             $order    = $orderFactory->createForDelivery($delivery, $customer, false);
-            $priceCalculationVisitor->addDeliveryOrderItem($order, $delivery, new PricingRulesBasedPrice($price));
+            $pricingManager->addDeliveryOrderItem($order, $delivery, new PricingRulesBasedPrice($price));
 
             $checkoutPayment = new CheckoutPayment($order);
             $paymentForm = $this->createForm(CheckoutPaymentType::class, $checkoutPayment, [

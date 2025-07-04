@@ -5,7 +5,7 @@ namespace AppBundle\Action\Delivery;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryQuote;
 use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
-use AppBundle\Pricing\PriceCalculationVisitor;
+use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Sylius\Order\OrderFactory;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,7 +19,7 @@ class ConfirmQuote
         private readonly OrderFactory $orderFactory,
         private readonly EntityManagerInterface $entityManager,
         private readonly DeliveryManager $deliveryManager,
-        private readonly PriceCalculationVisitor $priceCalculationVisitor,
+        private readonly PricingManager $pricingManager,
     )
     {
     }
@@ -29,7 +29,7 @@ class ConfirmQuote
         $delivery = $this->serializer->deserialize($data->getPayload(), Delivery::class, 'jsonld');
 
         $order = $this->orderFactory->createForDelivery($delivery);
-        $this->priceCalculationVisitor->addDeliveryOrderItem($order, $delivery, new PricingRulesBasedPrice($data->getAmount()));
+        $this->pricingManager->addDeliveryOrderItem($order, $delivery, new PricingRulesBasedPrice($data->getAmount()));
 
         $store = $data->getStore();
         $store->addDelivery($delivery);

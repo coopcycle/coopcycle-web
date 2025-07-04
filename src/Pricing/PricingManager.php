@@ -25,10 +25,16 @@ use AppBundle\Service\OrderManager;
 use AppBundle\Service\TimeSlotManager;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Order\OrderItemInterface;
+use AppBundle\Sylius\Product\ProductVariantFactory;
+use AppBundle\Sylius\Product\ProductVariantInterface;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Recurr\Rule;
+use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
+use Sylius\Component\Order\Modifier\OrderModifierInterface;
+use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -54,6 +60,10 @@ class PricingManager
         private readonly DeliveryManager $deliveryManager,
         private readonly OrderManager $orderManager,
         private readonly OrderFactory $orderFactory,
+        private readonly FactoryInterface $orderItemFactory,
+        private readonly OrderItemQuantityModifierInterface $orderItemQuantityModifier,
+        private readonly OrderModifierInterface $orderModifier,
+        private readonly ProductVariantFactory $productVariantFactory,
         private readonly CreateIncident $createIncident,
         private readonly TimeSlotManager $timeSlotManager,
         private readonly PriceCalculationVisitor $priceCalculationVisitor,
@@ -170,7 +180,7 @@ class PricingManager
         }
 
         $order = $this->orderFactory->createForDelivery($delivery);
-        $this->priceCalculationVisitor->addDeliveryOrderItem($order, $delivery, $price);
+        $this->addDeliveryOrderItem($order, $delivery, $price);
 
         if ($persist) {
             // We need to persist the order first,
@@ -392,5 +402,76 @@ class PricingManager
         }
 
         return $order;
+    }
+
+    /**
+     * @param ProductVariantInterface[] $productVariants
+     */
+    public function processDeliveryOrder(OrderInterface $order, array $productVariants) {
+        $items = [];
+        $itemsTotal = 0;
+
+        foreach ($productVariants as $productVariant) {
+            $orderItem = $this->createOrderItem($productVariant);
+
+            //TODO: Later on: group the same product variants into one OrderItem
+            $this->orderItemQuantityModifier->modify($orderItem, 1);
+
+            $items[] = $orderItem;
+            $itemsTotal += $orderItem->getTotal();
+        }
+
+        foreach ($items as $item) {
+            $this->orderModifier->addToOrder($order, $item);
+        }
+        //TODO where total should be calculated?
+//        $order->setItemsTotal($itemsTotal);
+    }
+
+    private function createOrderItem(ProductVariantInterface $variant): OrderItemInterface
+    {
+        /** @var OrderItemInterface $orderItem */
+        $orderItem = $this->orderItemFactory->createNew();
+        $orderItem->setVariant($variant);
+        $orderItem->setUnitPrice($variant->getPrice());
+        //TODO: do we need this?
+//        $orderItem->setImmutable(true);
+
+        return $orderItem;
+    }
+
+    //TODO: merge with the new implementation
+    public function addDeliveryOrderItem(OrderInterface $order, Delivery $delivery, PriceInterface $price)
+    {
+        $variant = $this->productVariantFactory->createForDelivery($delivery, $price);
+
+        $orderItem = $this->orderItemFactory->createNew();
+        $orderItem->setVariant($variant);
+        $orderItem->setUnitPrice($variant->getPrice());
+        $orderItem->setImmutable(true);
+
+        $this->orderItemQuantityModifier->modify($orderItem, 1);
+
+        $this->orderModifier->addToOrder($order, $orderItem);
+    }
+
+    //TODO: merge with the new implementation
+    public function updateDeliveryPrice(OrderInterface $order, Delivery $delivery, PriceInterface $price)
+    {
+        if ($order->isFoodtech()) {
+            $this->logger->info('Price update is not supported for foodtech orders');
+            return;
+        }
+
+        $deliveryItem = $order->getDeliveryItem();
+
+        if (null === $deliveryItem) {
+            $this->logger->info('No delivery item found in order');
+        }
+
+        // remove the previous price
+        $this->orderModifier->removeFromOrder($order, $deliveryItem);
+
+        $this->addDeliveryOrderItem($order, $delivery, $price);
     }
 }

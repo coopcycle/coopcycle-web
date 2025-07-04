@@ -12,6 +12,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Sylius\Order\OrderFactory;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Taxation\Calculator\CalculatorInterface;
 use Sylius\Component\Taxation\Model\TaxableInterface;
@@ -32,6 +33,7 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
 	public function __construct(
         private readonly DeliveryProcessor $decorated,
         private readonly PricingManager $pricingManager,
+        private readonly OrderFactory $orderFactory,
         private readonly CurrencyContextInterface $currencyContext,
         private readonly SettingsManager $settingsManager,
         private readonly TokenStoreExtractor $storeExtractor,
@@ -106,9 +108,7 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
             $calculationItems
         );
 
-        $order = $priceCalculationOutput->order;
-
-        if (null === $order) {
+        if (null === $priceCalculationOutput->getPrice()) {
             $message = $this->translator->trans('delivery.price.error.priceCalculation', domain: 'validators');
 
             // Serialize manually to preserve backwards compatibility
@@ -125,6 +125,9 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
                 JsonResponse::HTTP_BAD_REQUEST
             );
         }
+
+        $order = $this->orderFactory->createForDelivery($delivery);
+        $this->pricingManager->processDeliveryOrder($order, $priceCalculationOutput->productVariants);
 
         $amount = $order->getItemsTotal();
         $subjectToVat = $this->settingsManager->get('subject_to_vat');
