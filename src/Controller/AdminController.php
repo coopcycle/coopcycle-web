@@ -2390,7 +2390,7 @@ class AdminController extends AbstractController
             $variantPrice = $form->get('variantPrice')->getData();
 
             $order = $orderFactory->createForDelivery($delivery);
-            $pricingManager->addDeliveryOrderItem($order, $delivery, new ArbitraryPrice($variantName, $variantPrice));
+            $pricingManager->processDeliveryOrder($order, [$pricingManager->getCustomProductVariant($delivery, new ArbitraryPrice($variantName, $variantPrice))]);
 
             $order->setState(OrderInterface::STATE_ACCEPTED);
 

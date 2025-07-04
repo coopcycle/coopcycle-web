@@ -328,7 +328,7 @@ class EmbedController extends AbstractController
 
             $customer = $this->findOrCreateCustomer($email, $telephone, $canonicalizer);
             $order    = $orderFactory->createForDelivery($delivery, $customer, false);
-            $pricingManager->addDeliveryOrderItem($order, $delivery, new PricingRulesBasedPrice($price));
+            $pricingManager->processDeliveryOrder($order, [$pricingManager->getCustomProductVariant($delivery, new PricingRulesBasedPrice($price))]);
 
             $checkoutPayment = new CheckoutPayment($order);
             $paymentForm = $this->createForm(CheckoutPaymentType::class, $checkoutPayment, [

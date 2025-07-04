@@ -12,7 +12,6 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\PriceInterface;
-use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\PricingStrategy;
 use AppBundle\Entity\Sylius\UsePricingRules;
@@ -72,29 +71,38 @@ class PricingManager
         $this->tokenStorage = $tokenStorage;
     }
 
-    private function getPriceWithPricingStrategy(Delivery $delivery, PricingStrategy $pricingStrategy): ?PriceInterface
+    /**
+     * @return ProductVariantInterface[]
+     */
+    private function getPriceWithPricingStrategy(Delivery $delivery, PricingStrategy $pricingStrategy): array
     {
         $store = $delivery->getStore();
 
         if (null === $store) {
             $this->logger->warning('Delivery has no store');
-            return null;
+            return [];
         }
 
         if ($pricingStrategy instanceof UsePricingRules) {
             $pricingRuleSet = $store->getPricingRuleSet();
-            $price = $this->getPrice($delivery, $pricingRuleSet);
 
-            if (null === $price) {
-                $this->logger->warning('Price could not be calculated');
-                return null;
+            // if no Pricing Rules are defined, the default rule is to set the price to 0
+            if (null === $pricingRuleSet) {
+                return [$this->getCustomProductVariant($delivery, new ArbitraryPrice($this->translator->trans('form.delivery.price.missing'), 0))];
             }
-            return new PricingRulesBasedPrice($price, $pricingRuleSet);
+
+            $output = $this->getPriceCalculation($delivery, $pricingRuleSet);
+
+            if (count($output->productVariants) === 0) {
+                $this->logger->warning('Price could not be calculated');
+                return [];
+            }
+            return $output->productVariants;
         } elseif ($pricingStrategy instanceof UseArbitraryPrice) {
-            return $pricingStrategy->getArbitraryPrice();
+            return [$this->getCustomProductVariant($delivery, $pricingStrategy->getArbitraryPrice())];
         } else {
             $this->logger->warning('Unsupported pricing config');
-            return null;
+            return [];
         }
     }
 
@@ -166,21 +174,21 @@ class PricingManager
             $pricingStrategy = new UsePricingRules();
         }
 
-        $price = $this->getPriceWithPricingStrategy($delivery, $pricingStrategy);
+        $productVariants = $this->getPriceWithPricingStrategy($delivery, $pricingStrategy);
         $incident = null;
 
-        if (null === $price) {
+        if (count($productVariants) === 0) {
             if ($throwException) {
                 throw new NoRuleMatchedException();
             }
 
             // otherwise; set price to 0 and create an incident
-            $price = new ArbitraryPrice($this->translator->trans('form.delivery.price.missing'), 0);
+            $productVariants = [$this->getCustomProductVariant($delivery, new ArbitraryPrice($this->translator->trans('form.delivery.price.missing'), 0))];
             $incident = new Incident();
         }
 
         $order = $this->orderFactory->createForDelivery($delivery);
-        $this->addDeliveryOrderItem($order, $delivery, $price);
+        $this->processDeliveryOrder($order, $productVariants);
 
         if ($persist) {
             // We need to persist the order first,
@@ -408,6 +416,9 @@ class PricingManager
      * @param ProductVariantInterface[] $productVariants
      */
     public function processDeliveryOrder(OrderInterface $order, array $productVariants) {
+
+        //TODO: remove previously added items
+
         $items = [];
         $itemsTotal = 0;
 
@@ -440,19 +451,8 @@ class PricingManager
         return $orderItem;
     }
 
-    //TODO: merge with the new implementation
-    public function addDeliveryOrderItem(OrderInterface $order, Delivery $delivery, PriceInterface $price)
-    {
-        $variant = $this->productVariantFactory->createForDelivery($delivery, $price);
-
-        $orderItem = $this->orderItemFactory->createNew();
-        $orderItem->setVariant($variant);
-        $orderItem->setUnitPrice($variant->getPrice());
-        $orderItem->setImmutable(true);
-
-        $this->orderItemQuantityModifier->modify($orderItem, 1);
-
-        $this->orderModifier->addToOrder($order, $orderItem);
+    public function getCustomProductVariant(Delivery $delivery, PriceInterface $price): ProductVariantInterface {
+        return $this->productVariantFactory->createForDelivery($delivery, $price);
     }
 
     //TODO: merge with the new implementation
@@ -472,6 +472,6 @@ class PricingManager
         // remove the previous price
         $this->orderModifier->removeFromOrder($order, $deliveryItem);
 
-        $this->addDeliveryOrderItem($order, $delivery, $price);
+        $this->processDeliveryOrder($order, [$this->getCustomProductVariant($delivery, $price)]);
     }
 }
