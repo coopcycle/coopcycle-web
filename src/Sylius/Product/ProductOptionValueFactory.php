@@ -50,9 +50,10 @@ class ProductOptionValueFactory
         // Set current locale before setting the name for translatable entities
         $productOptionValue->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
 
-        $productOptionValue->setOption($productOption);
         $productOptionValue->setValue($priceExpression);
         $productOptionValue->setPrice($result);
+
+        $productOption->addValue($productOptionValue);
 
         return $productOptionValue;
     }

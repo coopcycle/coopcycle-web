@@ -34,13 +34,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * "Delivery" here includes both delivery of foodtech orders (where price is added as an order adjustment)
  * and Package Delivery/'LastMile' orders (where price is added as an order item).
  *
- * FIXME: Should we move non-price-related methods into the OrderManager class?
+ * FIXME: Should we move non-price-related methods into the OrderManager or DeliveryOrderManager class?
  */
 class PricingManager
 {
 
     public function __construct(
-
         private readonly EntityManagerInterface $entityManager,
         private readonly NormalizerInterface $normalizer,
         private readonly TranslatorInterface $translator,

@@ -3,6 +3,7 @@
 namespace AppBundle\Sylius\Product;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\PriceInterface;
 use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
@@ -43,15 +44,14 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         return $this->factory->createForProduct($product);
     }
 
-
     /**
      * @param ProductOptionValueInterface[] $productOptionValues
      */
-    public function createWithProductOptions(array $productOptionValues): ProductVariantInterface
+    public function createWithProductOptions(array $productOptionValues, PricingRuleSet $ruleSet): ProductVariantInterface
     {
-        /** @var ProductVariantInterface $productVariant */
-        $productVariant = $this->createForProduct($this->product);
-        $productVariant->setName($this->product->getName());
+        $productVariant = $this->createForOnDemandDelivery();
+
+        $productVariant->setPricingRuleSet($ruleSet);
 
         foreach ($productOptionValues as $productOptionValue) {
             $productVariant->addOptionValue($productOptionValue);
@@ -63,13 +63,7 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
     //TODO: merge with the new implementation
     public function createForDelivery(Delivery $delivery, PriceInterface $price): ProductVariantInterface
     {
-        $subjectToVat = $this->settingsManager->get('subject_to_vat');
-
-        $taxCategory = $this->taxCategoryRepository->findOneBy([
-            'code' => $subjectToVat ? 'SERVICE' : 'SERVICE_TAX_EXEMPT'
-        ]);
-
-        $productVariant = $this->createForProduct($this->product);
+        $productVariant = $this->createForOnDemandDelivery();
 
         $nameParts = [];
 
@@ -89,8 +83,6 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
 
         $productVariant->setName($name);
 
-        $productVariant->setCode('CPCCL-ODDLVR-'.Uuid::uuid4()->toString());
-
         if ($price instanceof ArbitraryPrice) {
             if ($price->getVariantName()) {
                 $productVariant->setName($price->getVariantName());
@@ -99,9 +91,7 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
             $productVariant->setPricingRuleSet($price->getPricingRuleSet());
         }
 
-        $productVariant->setPosition(1);
         $productVariant->setPrice($price->getValue());
-        $productVariant->setTaxCategory($taxCategory);
 
         return $productVariant;
     }
@@ -114,5 +104,24 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
     private function gramsToKilos($grams)
     {
         return sprintf('%s kg', number_format($grams / 1000, 2));
+    }
+
+    public function createForOnDemandDelivery(): ProductVariantInterface
+    {
+        /** @var ProductVariantInterface $productVariant */
+        $productVariant = $this->createForProduct($this->product);
+        $productVariant->setCode('CPCCL-ODDLVR-'.Uuid::uuid4()->toString());
+
+        $productVariant->setName($this->product->getName());
+
+        $subjectToVat = $this->settingsManager->get('subject_to_vat');
+        $taxCategory = $this->taxCategoryRepository->findOneBy([
+            'code' => $subjectToVat ? 'SERVICE' : 'SERVICE_TAX_EXEMPT'
+        ]);
+        $productVariant->setTaxCategory($taxCategory);
+
+        $productVariant->setPosition(1);
+
+        return $productVariant;
     }
 }

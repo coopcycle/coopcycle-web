@@ -200,7 +200,7 @@ class PriceCalculationVisitor
                         $this->expressionLanguage
                     );
 
-                    $productVariant = $this->productVariantFactory->createWithProductOptions($productOptionValues);
+                    $productVariant = $this->productVariantFactory->createWithProductOptions($productOptionValues, $ruleSet);
 
                     return new Result($ruleResults, $productVariant);
                 }
@@ -247,7 +247,7 @@ class PriceCalculationVisitor
         });
 
         if (count($matchedRules) > 0) {
-            $productVariant = $this->productVariantFactory->createWithProductOptions($productOptionValues);
+            $productVariant = $this->productVariantFactory->createWithProductOptions($productOptionValues, $ruleSet);
 
             return new Result($ruleResults, $productVariant);
         } else {
