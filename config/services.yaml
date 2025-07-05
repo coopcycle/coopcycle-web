@@ -515,6 +515,10 @@ services:
         label: 'Is items total above'
         form_type: AppBundle\Form\Sylius\Promotion\Rule\IsItemsTotalAboveConfigurationType
 
+  AppBundle\Sylius\Product\ProductOptionValueFactory:
+    decorates: sylius.factory.product_option_value
+    public: false
+
   coopcycle.sylius.factory.product_variant:
     class: AppBundle\Sylius\Product\ProductVariantFactory
     decorates: sylius.factory.product_variant
@@ -1078,6 +1082,11 @@ services:
     tags: [ 'api_platform.state_processor' ]
 
   AppBundle\Api\State\EvaluatePricingRuleProcessor:
+    tags: [ 'api_platform.state_processor' ]
+
+  AppBundle\Api\State\PricingRuleSetProcessor:
+    arguments:
+      $decorated: '@api_platform.doctrine.orm.state.persist_processor'
     tags: [ 'api_platform.state_processor' ]
 
   AppBundle\Api\State\UrbantzWebhookProcessor:

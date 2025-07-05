@@ -7,6 +7,7 @@ use Sylius\Bundle\ProductBundle\Doctrine\ORM\ProductRepository as BaseProductRep
 
 class ProductRepository extends BaseProductRepository
 {
+
     public function findByOption(ProductOptionInterface $productOption)
     {
         $qb = $this->createQueryBuilder('p');
@@ -15,5 +16,10 @@ class ProductRepository extends BaseProductRepository
         $qb->setParameter('option', $productOption);
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findOnDemandDeliveryProduct(): Product
+    {
+        return $this->findOneByCode('CPCCL-ODDLVR');
     }
 }
