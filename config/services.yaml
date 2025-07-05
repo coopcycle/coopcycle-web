@@ -515,6 +515,10 @@ services:
         label: 'Is items total above'
         form_type: AppBundle\Form\Sylius\Promotion\Rule\IsItemsTotalAboveConfigurationType
 
+  AppBundle\Sylius\Product\ProductOptionValueFactory:
+    decorates: sylius.factory.product_option_value
+    public: false
+
   coopcycle.sylius.factory.product_variant:
     class: AppBundle\Sylius\Product\ProductVariantFactory
     decorates: sylius.factory.product_variant

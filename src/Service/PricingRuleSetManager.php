@@ -7,24 +7,27 @@ use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Store;
-use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductOption;
+use AppBundle\Entity\Sylius\ProductOptionValue;
+use AppBundle\Sylius\Product\ProductOptionValueFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
+use Sylius\Component\Product\Repository\ProductOptionRepositoryInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
-
 
 class PricingRuleSetManager
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly ProductRepositoryInterface $productRepository,
+        private readonly ProductOptionRepositoryInterface $productOptionRepository,
         private readonly FactoryInterface $productOptionFactory,
+        private readonly ProductOptionValueFactory $productOptionValueFactory,
         private readonly LocaleProviderInterface $localeProvider,
-    )
-    {}
+    ) {
+    }
 
     /**
      * @return mixed[]
@@ -77,46 +80,49 @@ class PricingRuleSetManager
         return $this->entityManager->getRepository(DeliveryForm::class)->findBy(['pricingRuleSet' => $pricingRuleSet]);
     }
 
-    function setPricingRuleName(PricingRule $pricingRule, string $name): void
+    public function setPricingRuleName(PricingRule $pricingRule, string $name): void
     {
-        $productOption = $pricingRule->getProductOption();
+        $productOptionValue = $pricingRule->getProductOptionValue();
 
-        if ($productOption === null) {
-            // Create a new ProductOption
-            $productOption = $this->createProductOption($name);
-            $pricingRule->setProductOption($productOption);
+        if ($productOptionValue === null) {
+            $productOption = $this->productOptionRepository->findPricingRuleProductOption(
+                $this->entityManager,
+                $this->productRepository,
+                $this->productOptionFactory,
+                $this->localeProvider
+            );
+
+            // Create a new ProductOptionValue for this pricing rule
+            $productOptionValue = $this->createProductOptionValue($productOption, $name);
+            $pricingRule->setProductOptionValue($productOptionValue);
         } else {
-            // Update existing ProductOption name if different
+            // Update existing ProductOptionValue name if different
             if ($pricingRule->getName() !== $name) {
-                $productOption->setName($name);
+                $productOptionValue->setValue($name);
             }
         }
     }
 
-    private function createProductOption(string $name): ProductOption
-    {
-        /** @var Product $product */
-        $product = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
+    /**
+     * Create a ProductOptionValue for a given ProductOption and name
+     */
+    private function createProductOptionValue(
+        ProductOption $productOption,
+        string $name
+    ): ProductOptionValue {
+        /** @var ProductOptionValue $productOptionValue */
+        $productOptionValue = $this->productOptionValueFactory->createNew();
 
-        /** @var ProductOption $productOption */
-        $productOption = $this->productOptionFactory->createNew();
+        // Set current locale before setting the value for translatable entities
+        $productOptionValue->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
 
-        // Set current locale before setting the name for translatable entities
-        $productOption->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
+        $productOptionValue->setCode(Uuid::uuid4()->toString());
+        $productOptionValue->setValue($name);
+        $productOptionValue->setOption($productOption);
 
-        // Set basic properties
-        $productOption->setCode(Uuid::uuid4()->toString());
-        $productOption->setName($name);
+        // Persist the new ProductOptionValue
+        $this->entityManager->persist($productOptionValue);
 
-        // Set default strategy and additional flag
-        $productOption->setStrategy('free');
-        $productOption->setAdditional(false);
-
-        // Persist the new ProductOption
-        $this->entityManager->persist($productOption);
-
-        $product->addOption($productOption);
-
-        return $productOption;
+        return $productOptionValue;
     }
 }
