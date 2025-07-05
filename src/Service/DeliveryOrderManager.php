@@ -8,6 +8,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\PricingStrategy;
+use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\UsePricingRules;
 use AppBundle\Entity\Task\RecurrenceRule;
@@ -19,6 +20,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -32,6 +34,7 @@ class DeliveryOrderManager
         private readonly EntityManagerInterface $entityManager,
         private readonly RequestStack $requestStack,
         private readonly TranslatorInterface $translator,
+        private readonly ProductRepositoryInterface $productRepository,
         private readonly DeliveryManager $deliveryManager,
         private readonly OrderManager $orderManager,
         private readonly OrderFactory $orderFactory,
@@ -91,6 +94,17 @@ class DeliveryOrderManager
         $this->pricingManager->processDeliveryOrder($order, $productVariants);
 
         if ($persist) {
+            /** @var Product $product */
+            $product = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
+            // Persist any new ProductOptions that were created
+            // (as Product entity is already managed we need to trigger it manually)
+            // all other entities should be persisted via cascade relations
+            foreach ($product->getOptions() as $productOption) {
+                if (!$this->entityManager->contains($productOption)) {
+                    $this->entityManager->persist($productOption);
+                }
+            }
+
             // We need to persist the order first,
             // because an auto increment is needed to generate a number
             $this->entityManager->persist($order);

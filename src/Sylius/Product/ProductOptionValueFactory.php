@@ -4,6 +4,7 @@ namespace AppBundle\Sylius\Product;
 
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Pricing\RuleHumanizer;
+use Ramsey\Uuid\Uuid;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -49,6 +50,8 @@ class ProductOptionValueFactory
 
         // Set current locale before setting the name for translatable entities
         $productOptionValue->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
+
+        $productOptionValue->setCode(Uuid::uuid4()->toString());
 
         $productOptionValue->setValue($priceExpression);
         $productOptionValue->setPrice($result);

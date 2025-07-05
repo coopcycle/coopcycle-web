@@ -28,11 +28,9 @@ class ProductOptionFactory
         // Set current locale before setting the name for translatable entities
         $productOption->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
 
-        // Set basic properties
         $productOption->setCode(Uuid::uuid4()->toString());
         $productOption->setName($name);
 
-        // Set default strategy and additional flag
         $productOption->setStrategy('free');
         $productOption->setAdditional(false);
 
