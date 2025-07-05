@@ -36,7 +36,7 @@ function OrderItem({ orderItem, overridePrice }) {
         />
       ))}
       <div className="font-weight-semi-bold">
-        <span>{orderItem.quantity}</span>
+        <span></span>
         <span
           className={`pull-right ${overridePrice ? 'text-decoration-line-through' : ''}`}>
           {(orderItem.total / 100).formatMoney()}
