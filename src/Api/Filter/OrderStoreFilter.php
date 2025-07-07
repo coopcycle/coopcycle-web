@@ -3,7 +3,7 @@
 namespace AppBundle\Api\Filter;
 
 use ApiPlatform\Api\IriConverterInterface;
-use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
 use AppBundle\Entity\Sylius\Order;
