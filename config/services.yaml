@@ -742,6 +742,11 @@ services:
   sylius.repository.order:
     alias: AppBundle\Entity\Sylius\OrderRepository
 
+  AppBundle\Entity\Sylius\ProductOptionRepository:
+
+  sylius.repository.product_option:
+    alias: AppBundle\Entity\Sylius\ProductOptionRepository
+
   AppBundle\Entity\TaskListRepository: ~
 
   AppBundle\Entity\TourRepository: ~

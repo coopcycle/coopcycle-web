@@ -14,16 +14,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Product\Repository\ProductOptionRepositoryInterface;
-use Sylius\Component\Product\Repository\ProductRepositoryInterface;
-use Sylius\Component\Resource\Factory\FactoryInterface;
 
 class PricingRuleSetManager
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly ProductRepositoryInterface $productRepository,
         private readonly ProductOptionRepositoryInterface $productOptionRepository,
-        private readonly FactoryInterface $productOptionFactory,
         private readonly ProductOptionValueFactory $productOptionValueFactory,
         private readonly LocaleProviderInterface $localeProvider,
     ) {
@@ -85,12 +81,7 @@ class PricingRuleSetManager
         $productOptionValue = $pricingRule->getProductOptionValue();
 
         if ($productOptionValue === null) {
-            $productOption = $this->productOptionRepository->findPricingRuleProductOption(
-                $this->entityManager,
-                $this->productRepository,
-                $this->productOptionFactory,
-                $this->localeProvider
-            );
+            $productOption = $this->productOptionRepository->findPricingRuleProductOption();
 
             // Create a new ProductOptionValue for this pricing rule
             $productOptionValue = $this->createProductOptionValue($productOption, $name);

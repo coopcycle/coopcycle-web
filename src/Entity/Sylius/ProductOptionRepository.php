@@ -11,16 +11,19 @@ use Sylius\Component\Resource\Factory\FactoryInterface;
 
 class ProductOptionRepository extends BaseRepository
 {
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ProductRepositoryInterface $productRepository,
+        private readonly FactoryInterface $productOptionFactory,
+        private readonly LocaleProviderInterface $localeProvider
+    ) {
+        parent::__construct($entityManager, $entityManager->getClassMetadata(ProductOption::class));
+    }
 
-    //TODO: figure out how to inject properly
-    public function findPricingRuleProductOption(
-        EntityManagerInterface $entityManager,
-        ProductRepositoryInterface $productRepository,
-        FactoryInterface $productOptionFactory,
-        LocaleProviderInterface $localeProvider
-    ): ProductOptionInterface {
+    public function findPricingRuleProductOption(): ProductOptionInterface
+    {
         /** @var Product $product */
-        $product = $productRepository->findOnDemandDeliveryProduct();
+        $product = $this->productRepository->findOnDemandDeliveryProduct();
 
         $existingOptions = $product->getOptions();
         if (!$existingOptions->isEmpty()) {
@@ -29,10 +32,10 @@ class ProductOptionRepository extends BaseRepository
         }
 
         /** @var ProductOption $productOption */
-        $productOption = $productOptionFactory->createNew();
+        $productOption = $this->productOptionFactory->createNew();
 
         // Set current locale before setting the name for translatable entities
-        $productOption->setCurrentLocale($localeProvider->getDefaultLocaleCode());
+        $productOption->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
 
         // Set basic properties
         $productOption->setCode('CPCCL-ODDLVR-PR');
@@ -46,8 +49,8 @@ class ProductOptionRepository extends BaseRepository
         $product->addOption($productOption);
 
         // Persist the new ProductOption
-        $entityManager->persist($productOption);
-        $entityManager->flush();
+        $this->entityManager->persist($productOption);
+        $this->entityManager->flush();
 
         return $productOption;
     }
