@@ -9,7 +9,7 @@ use ApiPlatform\Util\Inflector;
 
 final class UrbantzWebhookProvider implements ProviderInterface
 {
-    public function provide(Operation $operation, array $uriVariables = [], array $context = [])
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
         $id = Inflector::tableize($uriVariables['id']);
 

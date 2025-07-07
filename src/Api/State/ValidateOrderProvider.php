@@ -15,7 +15,7 @@ final class ValidateOrderProvider implements ProviderInterface
         )
     {}
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = [])
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
         $data = $this->provider->provide($operation, $uriVariables, $context);
 
