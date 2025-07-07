@@ -488,7 +488,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     /**
      * @When I send an authenticated :method request to :url
      */
-    public function iSendAnAuthenticatedRequestTo($method, $url, PyStringNode $body = null)
+    public function iSendAnAuthenticatedRequestTo($method, $url, ?PyStringNode $body = null)
     {
         $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->jwt);
         $this->restContext->iSendARequestTo($method, $url, $body);
@@ -710,7 +710,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     /**
      * FIXME Too complicated, too low level
      */
-    private function createRandomOrder(LocalBusiness $restaurant, UserInterface $user, \DateTime $shippedAt = null)
+    private function createRandomOrder(LocalBusiness $restaurant, UserInterface $user, ?\DateTime $shippedAt = null)
     {
         $order = $this->getContainer()->get('sylius.factory.order')
             ->createForRestaurant($restaurant);
