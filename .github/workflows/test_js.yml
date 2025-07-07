@@ -1,4 +1,4 @@
-name: Test JS
+name: Unit Tests (JS)
 on: push
 env:
   APP_ENV: test

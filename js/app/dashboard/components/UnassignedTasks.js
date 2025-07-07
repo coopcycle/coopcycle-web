@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import _ from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
-import { Draggable, Droppable } from "@hello-pangea/dnd"
-import { Popover } from 'antd'
+import { Draggable, Droppable } from '@hello-pangea/dnd'
+import { Alert, Flex, Popover } from 'antd'
 import { useTranslation } from 'react-i18next'
 
 import Task from './Task'
@@ -11,7 +11,9 @@ import RecurrenceRule from './RecurrenceRule'
 import UnassignedTasksPopoverContent from './UnassignedTasksPopoverContent'
 import {
   setTaskListGroupMode,
+  openNewTaskModal,
   setCurrentRecurrenceRule,
+  openNewRecurrenceRuleModal,
   deleteGroup,
   editGroup,
   showRecurrenceRules,
@@ -31,9 +33,9 @@ import {
 import { getDroppableListStyle } from '../utils'
 import classNames from 'classnames'
 import UnassignedTasksFilters from '../../components/UnassignedTasksFilters'
-import Alert from '../../components/core/Alert'
+import { LoadingOutlined } from '@ant-design/icons'
 
-const StandaloneTasks =  ({tasks, offset}) => {
+const StandaloneTasks = ({ tasks, offset }) => {
   // waiting for https://github.com/coopcycle/coopcycle-web/issues/4196 to resolve to bring this code back
   // handle manual sorting of tasks into the unassigned column
   // return _.map(unassignedTasksIdsOrder, (taskId, index) => {
@@ -43,13 +45,18 @@ const StandaloneTasks =  ({tasks, offset}) => {
   //   }
   // })
   return _.map(tasks, (task, index) => {
-      return <Task taskId={ task['@id'] } draggableIndex={ (offset + index) } key={ task['@id'] } />
+    return (
+      <Task
+        taskId={task['@id']}
+        draggableIndex={offset + index}
+        key={task['@id']}
+      />
+    )
   })
 }
 
-
 const Buttons = () => {
-  const [ visible, setVisible ] = useState(false)
+  const [visible, setVisible] = useState(false)
   const { t } = useTranslation()
   const dispatch = useDispatch()
 
@@ -58,24 +65,47 @@ const Buttons = () => {
 
   return (
     <React.Fragment>
+      <a
+        href="#"
+        className="mr-3"
+        onClick={e => {
+          e.preventDefault()
+          dispatch(openNewRecurrenceRuleModal())
+        }}>
+        <i className="fa fa-clock-o"></i>
+      </a>
+      <a
+        href="#"
+        className="mr-3"
+        onClick={e => {
+          e.preventDefault()
+          dispatch(openNewTaskModal())
+        }}>
+        <i className="fa fa-plus"></i>
+      </a>
       <Popover
         placement="leftTop"
-        arrowPointAtCenter
+        arrow={{ pointAtCenter: true }}
         trigger="click"
-        content={ <UnassignedTasksPopoverContent
-          defaultValue={ taskListGroupMode }
-          onChange={ mode => {
-            dispatch(setTaskListGroupMode(mode))
-            setVisible(false)
-          }}
-          isRecurrenceRulesVisible={isRecurrenceRulesVisible}
-          showRecurrenceRules={(checked) => dispatch(showRecurrenceRules(checked))}
-           />
+        content={
+          <UnassignedTasksPopoverContent
+            defaultValue={taskListGroupMode}
+            onChange={mode => {
+              dispatch(setTaskListGroupMode(mode))
+              setVisible(false)
+            }}
+            isRecurrenceRulesVisible={isRecurrenceRulesVisible}
+            showRecurrenceRules={checked =>
+              dispatch(showRecurrenceRules(checked))
+            }
+          />
         }
-        open={ visible }
-        onOpenChange={ value => setVisible(value)}
-      >
-        <a href="#" onClick={ e => e.preventDefault() } title={ t('ADMIN_DASHBOARD_DISPLAY') }>
+        open={visible}
+        onOpenChange={value => setVisible(value)}>
+        <a
+          href="#"
+          onClick={e => e.preventDefault()}
+          title={t('ADMIN_DASHBOARD_DISPLAY')}>
           <i className="fa fa-list"></i>
         </a>
       </Popover>
@@ -83,11 +113,11 @@ const Buttons = () => {
   )
 }
 
-export const UnassignedTasks = ({ isGeneratingOrdersForRecurrenceRules }) => {
+export const UnassignedTasks = ({ isGeneratingOrdersForRecurrenceRules, isGenerateOrdersForRecurrenceRulesError }) => {
   const dispatch = useDispatch()
   const { t } = useTranslation()
 
-  const groups =  useSelector(selectGroups)
+  const groups = useSelector(selectGroups)
   const standaloneTasks = useSelector(selectStandaloneTasks)
   const recurrenceRules = useSelector(selectRecurrenceRules)
   const isRecurrenceRulesVisible = useSelector(selectIsRecurrenceRulesVisible)
@@ -99,27 +129,36 @@ export const UnassignedTasks = ({ isGeneratingOrdersForRecurrenceRules }) => {
   // waiting for https://github.com/coopcycle/coopcycle-web/issues/4196 to resolve to bring this code back to life
   // handle manual sorting of tasks into the unassigned column
   useEffect(() => {
-    const tasksToAppend = _.filter(standaloneTasks, t => !unassignedTasksIdsOrder.includes(t['@id']))
+    const tasksToAppend = _.filter(
+      standaloneTasks,
+      t => !unassignedTasksIdsOrder.includes(t['@id']),
+    )
     const tasksToAppendIds = tasksToAppend.map(t => t['@id'])
 
     const standaloneTaskIds = standaloneTasks.map(t => t['@id'])
-    let taskToRemoveIds = _.filter(unassignedTasksIdsOrder, taskId => !standaloneTaskIds.includes(taskId))
+    let taskToRemoveIds = _.filter(
+      unassignedTasksIdsOrder,
+      taskId => !standaloneTaskIds.includes(taskId),
+    )
 
     if (tasksToAppendIds.length > 0 || taskToRemoveIds.length > 0) {
-      dispatch(appendToUnassignedTasks({tasksToAppendIds, taskToRemoveIds}))
+      dispatch(appendToUnassignedTasks({ tasksToAppendIds, taskToRemoveIds }))
     }
-
-  }, [standaloneTasks]);
+  }, [standaloneTasks])
 
   return (
     <div className="dashboard__panel">
       <div className="dashboard__panel__header">
         <div className="row">
           <div className="col-md-6 col-sm-12">
-            <h4><span>{ t('DASHBOARD_UNASSIGNED') }</span></h4>
+            <h4>
+              <span>{t('DASHBOARD_UNASSIGNED')}</span>
+            </h4>
           </div>
           <div className="col-md-6 col-sm-12">
-            <h4 className="pull-right"><Buttons /></h4>
+            <h4 className="pull-right">
+              <Buttons />
+            </h4>
           </div>
         </div>
         <div>
@@ -128,88 +167,104 @@ export const UnassignedTasks = ({ isGeneratingOrdersForRecurrenceRules }) => {
       </div>
       <div
         className="dashboard__panel__scroll"
-        style={{ opacity: unassignedTasksLoading ? 0.7 : 1, pointerEvents: unassignedTasksLoading ? 'none' : 'initial' }}
-      >
+        style={{
+          opacity: unassignedTasksLoading ? 0.7 : 1,
+          pointerEvents: unassignedTasksLoading ? 'none' : 'initial',
+        }}>
         {isGeneratingOrdersForRecurrenceRules ? (
-          <Alert loading noBottomMargin>{t('DASHBOARD_GENERATING_ORDERS')}</Alert>
+          <Alert
+            type="info"
+            message={
+              <Flex align="center" gap="small">
+                <LoadingOutlined spin /> {t('DASHBOARD_GENERATING_ORDERS')}
+              </Flex>
+            }
+          />
         ) : null}
-        { isRecurrenceRulesVisible && recurrenceRules.map((rrule, index) =>
-          <RecurrenceRule
-            key={ `rrule-${index}` }
-            rrule={ rrule }
-            onClick={ () => dispatch(setCurrentRecurrenceRule(rrule)) } />
-        ) }
-          {/*
+        {isGenerateOrdersForRecurrenceRulesError ? (
+          <Alert
+            type="error"
+            showIcon
+            message={t('DASHBOARD_GENERATE_ORDERS_ERROR')}
+          />
+        ) : null}
+        {isRecurrenceRulesVisible &&
+          recurrenceRules.map((rrule, index) => (
+            <RecurrenceRule
+              key={`rrule-${index}`}
+              rrule={rrule}
+              onClick={() => dispatch(setCurrentRecurrenceRule(rrule))}
+            />
+          ))}
+        {/*
             groups are in another droppable area to ease writing the code for sorting tasks with dragNdrop
             it is a little bit ugly to have two droppable areas one after another but we assume either the coop is foodtech either it is lasmile and they have tours enabled
             also for now we can only drag out of this zone so no need to have it if there is no group in it
           */}
-          { !toursEnabled && groups.length > 0 ?
-            <Droppable
-              droppableId="unassigned_groups"
-              isDropDisabled={true}
-            >
+        {!toursEnabled && groups.length > 0 ? (
+          <Droppable droppableId="unassigned_groups" isDropDisabled={true}>
             {(provided, snapshot) => (
-              <div ref={ provided.innerRef } { ...provided.droppableProps }>
+              <div ref={provided.innerRef} {...provided.droppableProps}>
                 <div
-                  className={ classNames({
-                    'taskList__tasks': true,
+                  className={classNames({
+                    taskList__tasks: true,
                     'list-group': true,
                     'm-0': true,
                   })}
-                  style={getDroppableListStyle(snapshot.isDraggingOver)}
-                >
+                  style={getDroppableListStyle(snapshot.isDraggingOver)}>
                   {_.map(groups, (group, index) => {
-                      return (
-                        <Draggable key={ `group-${group.id}` } draggableId={ `group:${group['@id']}` } index={ index }>
-                          {(provided) => (
-                            <div
-                              ref={ provided.innerRef }
-                              { ...provided.draggableProps }
-                              { ...provided.dragHandleProps }
-                            >
-                              <TaskGroup
-                                key={ group.id }
-                                group={ group }
-                                tasks={ group.tasks }
-                                onConfirmDelete={ () => dispatch(deleteGroup(group)) }
-                                onEdit={ (data) => dispatch(editGroup(data)) } />
-                            </div>
-                          )}
-                        </Draggable>
-                      )
-                    })}
-                    { provided.placeholder }
+                    return (
+                      <Draggable
+                        key={`group-${group.id}`}
+                        draggableId={`group:${group['@id']}`}
+                        index={index}>
+                        {provided => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}>
+                            <TaskGroup
+                              key={group.id}
+                              group={group}
+                              tasks={group.tasks}
+                              onConfirmDelete={() =>
+                                dispatch(deleteGroup(group))
+                              }
+                              onEdit={data => dispatch(editGroup(data))}
+                            />
+                          </div>
+                        )}
+                      </Draggable>
+                    )
+                  })}
+                  {provided.placeholder}
                 </div>
               </div>
             )}
-            </Droppable> : null
-          }
-          <Droppable
-            droppableId="unassigned"
-            isDropDisabled={isTourDragging}
-          >
-            {(provided, snapshot) => (
-              <div ref={ provided.innerRef } { ...provided.droppableProps }>
-                { <div
-                  className={ classNames({
-                    'taskList__tasks': true,
+          </Droppable>
+        ) : null}
+        <Droppable droppableId="unassigned" isDropDisabled={isTourDragging}>
+          {(provided, snapshot) => (
+            <div ref={provided.innerRef} {...provided.droppableProps}>
+              {
+                <div
+                  className={classNames({
+                    taskList__tasks: true,
                     'list-group': true,
                     'm-0': true,
-                  }) }
-                  style={getDroppableListStyle(snapshot.isDraggingOver)}
-                >
+                  })}
+                  style={getDroppableListStyle(snapshot.isDraggingOver)}>
                   <StandaloneTasks
-                    tasks={ standaloneTasks }
-                    unassignedTasksIdsOrder={ unassignedTasksIdsOrder }
-                    offset={ 0 }
+                    tasks={standaloneTasks}
+                    unassignedTasksIdsOrder={unassignedTasksIdsOrder}
+                    offset={0}
                   />
-                  { provided.placeholder }
-                </div> }
-              </div>
-            )}
-          </Droppable>
-
+                  {provided.placeholder}
+                </div>
+              }
+            </div>
+          )}
+        </Droppable>
       </div>
     </div>
   )

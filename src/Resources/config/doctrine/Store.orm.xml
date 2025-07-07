@@ -29,6 +29,7 @@
     <field name="weightRequired" type="boolean" column="weight_required"/>
     <field name="packagesRequired" type="boolean" column="packages_required"/>
     <field name="multiDropEnabled" type="boolean" column="multi_drop_enabled"/>
+    <field name="multiPickupEnabled" type="boolean" column="multi_pickup_enabled"/>
     <field name="transporter" type="string" column="transporter" nullable="true" unique="true" />
     <field name="billingMethod" type="string" column="billing_method" nullable="false">
       <options>

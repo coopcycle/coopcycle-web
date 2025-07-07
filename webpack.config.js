@@ -2,9 +2,10 @@ var Encore = require('@symfony/webpack-encore')
 var webpack = require('webpack')
 var path = require('path')
 var ESLintPlugin = require('eslint-webpack-plugin')
+const AntdMomentWebpackPlugin = require('@ant-design/moment-webpack-plugin');
 
 if (!Encore.isRuntimeEnvironmentConfigured()) {
-    Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
+  Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
 }
 
 Encore
@@ -171,6 +172,8 @@ Encore.configureDevServerOptions(options => {
     overlay: false
   }
 })
+
+Encore.addPlugin(new AntdMomentWebpackPlugin())
 
 let webpackConfig = Encore.getWebpackConfig()
 

@@ -1,6 +1,3 @@
-imports:
-    - { resource: ../dev/framework.yaml }
-
 framework:
     test: ~
     session:

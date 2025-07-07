@@ -57,16 +57,16 @@ class SearchInput extends React.Component {
     })
   }
 
-  render () {
+  render() {
     const resultsDisplay = _.map(this.state.results, (task, index) => {
       return {
         value: task['@id'],
-        label:(
+        label: (
           <Task
-            key={ index }
-            taskId={ task['@id'] }
-            toggleTask={ this.props.toggleTask }
-            selectTask={ this.props.selectTask }
+            key={index}
+            taskId={task['@id']}
+            toggleTask={this.props.toggleTask}
+            selectTask={this.props.selectTask}
             taskWithoutDrag
           />
         )
@@ -76,17 +76,21 @@ class SearchInput extends React.Component {
     return (
       <AutoComplete
         ref={this.searchRef}
-        style={{"minWidth":"300px"}}
-        value={ this.state.q }
-        onSearch={ value => {
+        style={{ "minWidth": "300px" }}
+        value={this.state.q}
+        onSearch={value => {
           this.setState({ q: value })
           this.search(value)
         }}
         options={resultsDisplay}
-        dropdownStyle={{ zIndex: 1 }}
-        popupClassName="dashboard__search-results"
+        styles={{
+          popup: { root: { zIndex: 1 } }
+        }}
+        classNames={{
+          popup: { root: 'dashboard__search-results' }
+        }}
       >
-        <Input.Search placeholder={ this.props.t('ADMIN_DASHBOARD_SEARCH_PLACEHOLDER') } />
+        <Input.Search placeholder={this.props.t('ADMIN_DASHBOARD_SEARCH_PLACEHOLDER')} />
       </AutoComplete>
     )
   }
