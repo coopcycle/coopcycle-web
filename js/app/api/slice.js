@@ -44,6 +44,9 @@ export const apiSlice = createApi({
         )
       },
     }),
+    getTimeSlotChoices: builder.query({
+      query: nodeId => `${nodeId}/choices`,
+    }),
 
     patchAddress: builder.mutation({
       query({ nodeId, ...patch }) {
@@ -191,6 +194,7 @@ export const {
   useGetOrderQuery,
   useUpdateOrderMutation,
   useGetTimeSlotsQuery,
+  useGetTimeSlotChoicesQuery,
   useGetStoreQuery,
   useGetStoreAddressesQuery,
   useGetStoreTimeSlotsQuery,
