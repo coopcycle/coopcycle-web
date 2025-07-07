@@ -29,5 +29,4 @@ api_platform:
         jsonld: ['application/ld+json', 'application/merge-patch+json']
         json: ['application/json']
     swagger:
-        versions: [3, 2]
-    metadata_backward_compatibility_layer: false
+        versions: [3]
