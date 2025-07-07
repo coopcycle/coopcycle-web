@@ -292,7 +292,7 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
      *
      * @param File|UploadedFile|null $image
      */
-    public function setImageFile(File $image = null)
+    public function setImageFile(?File $image = null)
     {
         $this->imageFile = $image;
 

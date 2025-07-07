@@ -15,12 +15,12 @@ class ContextInitializer
 
     public function __construct(
         private Client $client,
-        LoggerInterface $logger = null)
+        ?LoggerInterface $logger = null)
     {
         $this->logger = $logger ?? new NullLogger();
     }
 
-    public function initialize(OrderInterface $order, Context $context = null)
+    public function initialize(OrderInterface $order, ?Context $context = null)
     {
         if (null === $context) {
         	$context = new Context();

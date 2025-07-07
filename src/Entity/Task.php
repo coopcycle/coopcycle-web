@@ -676,7 +676,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @return Task
      */
-    public function setPrevious(Task $previous = null)
+    public function setPrevious(?Task $previous = null)
     {
         $this->previous = $previous;
 
@@ -695,7 +695,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @return Task
      */
-    public function setNext(Task $next = null)
+    public function setNext(?Task $next = null)
     {
         $this->next = $next;
 
@@ -737,7 +737,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
      * @param \DateTime|null $date
      * @return void
      */
-    public function assignTo(User $courier, \DateTime $date = null)
+    public function assignTo(User $courier, ?\DateTime $date = null)
     {
         if (null === $date) {
             @trigger_error('Not specifying a date when calling assignTo() is deprecated', E_USER_DEPRECATED);
@@ -786,7 +786,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @return Task
      */
-    public function setGroup(TaskGroup $group = null)
+    public function setGroup(?TaskGroup $group = null)
     {
         $this->group = $group;
 

@@ -60,7 +60,7 @@ class IncidentImage
      *
      * @param File|UploadedFile|null $image
      */
-    public function setFile(File $image = null)
+    public function setFile(?File $image = null)
     {
         $this->file = $image;
 

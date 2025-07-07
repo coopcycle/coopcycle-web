@@ -24,7 +24,7 @@ class RefreshTokenHandler
         string $clientId,
         string $clientSecret,
         EntityManagerInterface $entityManager,
-        LoggerInterface $logger = null)
+        ?LoggerInterface $logger = null)
     {
         $this->baseUrl = $baseUrl;
         $this->clientId = $clientId;

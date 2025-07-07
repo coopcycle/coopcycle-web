@@ -26,7 +26,7 @@ class Context
         private CartContextInterface $cartContext,
         private RequestStack $requestStack,
         private CacheInterface $appCache,
-        LoggerInterface $logger = null)
+        ?LoggerInterface $logger = null)
     {
         $this->logger = $logger ?? new NullLogger();
     }

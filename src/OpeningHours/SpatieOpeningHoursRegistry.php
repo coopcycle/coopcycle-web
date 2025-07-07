@@ -11,7 +11,7 @@ class SpatieOpeningHoursRegistry
 {
     private static $instances = [];
 
-    public static function get(array $openingHours, Collection $closingRules = null): OpeningHours
+    public static function get(array $openingHours, ?Collection $closingRules = null): OpeningHours
     {
         $closingRules = $closingRules ?? new ArrayCollection();
 

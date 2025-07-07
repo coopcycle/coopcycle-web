@@ -47,7 +47,7 @@ trait ShippingOptionsTrait
         $this->deliveryPerimeterExpression = $deliveryPerimeterExpression;
     }
 
-    public function canDeliverAddress(Address $address, $distance, ExpressionLanguage $language = null)
+    public function canDeliverAddress(Address $address, $distance, ?ExpressionLanguage $language = null)
     {
         if (null === $language) {
             $language = new ExpressionLanguage();

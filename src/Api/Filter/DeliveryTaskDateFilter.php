@@ -15,7 +15,7 @@ class DeliveryTaskDateFilter extends AbstractFilter
         QueryBuilder $queryBuilder,
         QueryNameGeneratorInterface $queryNameGenerator,
         string $resourceClass,
-        Operation $operation = null,
+        ?Operation $operation = null,
         array $context = []
     ): void {
         if (!in_array($property, ['pickup.before', 'pickup.after', 'dropoff.before', 'dropoff.after'])) {
