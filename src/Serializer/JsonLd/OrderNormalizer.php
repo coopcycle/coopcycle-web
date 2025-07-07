@@ -268,7 +268,7 @@ class OrderNormalizer implements NormalizerInterface, ContextAwareDenormalizerIn
         return $order;
     }
 
-    public function supportsDenormalization($data, $type, $format = null, array $context = [])
+    public function supportsDenormalization($data, $type, $format = null, array $context = []): bool
     {
         if (isset($context['input'])) {
             return false;

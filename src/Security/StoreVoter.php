@@ -28,7 +28,7 @@ class StoreVoter extends Voter
         private EntityManagerInterface $entityManager)
     {}
 
-    protected function supports($attribute, $subject)
+    protected function supports($attribute, $subject): bool
     {
         if (!in_array($attribute, self::$actions)) {
             return false;
@@ -47,7 +47,7 @@ class StoreVoter extends Voter
     /**
      * @param Store|Request $subject
      */
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
         if ($subject instanceof Request) {
             $subject = $this->entityManager->getRepository(Store::class)->find($subject->get('id'));

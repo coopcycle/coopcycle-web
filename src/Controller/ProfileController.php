@@ -34,11 +34,10 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\PreAuthenticationJWTUserToken;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\Authenticator\Token\JWTPostAuthenticationToken;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
 use Cocur\Slugify\SlugifyInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use phpcent\Client as CentrifugoClient;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -47,7 +46,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Exception\ExceptionInterface as RoutingException;
 use Symfony\Component\Routing\RouterInterface;
@@ -185,7 +184,7 @@ class ProfileController extends AbstractController
         OrderManager $orderManager,
         DeliveryManager $deliveryManager,
         DeliveryMapper $deliveryMapper,
-        JWTManagerInterface $jwtManager,
+        JWTTokenManagerInterface $jwtManager,
         JWSProviderInterface $jwsProvider,
         IriConverterInterface $iriConverter,
         NormalizerInterface $normalizer,
@@ -365,7 +364,7 @@ class ProfileController extends AbstractController
 
     #[Route(path: '/profile/jwt', methods: ['GET'], name: 'profile_jwt')]
     public function jwtAction(Request $request,
-        JWTManagerInterface $jwtManager,
+        JWTTokenManagerInterface $jwtManager,
         CentrifugoClient $centrifugoClient)
     {
         $user = $this->getUser();
@@ -375,7 +374,7 @@ class ProfileController extends AbstractController
             $jwt = $request->getSession()->get('_jwt');
 
             try {
-                $token = new PreAuthenticationJWTUserToken($jwt);
+                $token = new JWTPostAuthenticationToken($this->getUser(), 'web', [], $jwt);
                 $jwtManager->decode($token);
             } catch (JWTDecodeFailureException $e) {
                 if (JWTDecodeFailureException::EXPIRED_TOKEN === $e->getReason()) {

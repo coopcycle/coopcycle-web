@@ -165,7 +165,7 @@ class LiveUpdates
         if ($message instanceof HumanReadableEventInterface) {
 
             $usernames = array_map(function (UserInterface $user) {
-                return $user->getUsername();
+                return $user->getUserIdentifier();
             }, $users);
 
             $text = $message->forHumans($this->translator, $this->getUser());
@@ -183,7 +183,7 @@ class LiveUpdates
      */
     private function getEventsChannelName($user)
     {
-        $username = $user instanceof UserInterface ? $user->getUsername() : $user;
+        $username = $user instanceof UserInterface ? $user->getUserIdentifier() : $user;
 
         return sprintf('%s_events#%s', $this->namespace, $username);
     }

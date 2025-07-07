@@ -5,7 +5,7 @@ namespace AppBundle\Action;
 use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Entity\OptinConsent;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class MyOptinConsents
