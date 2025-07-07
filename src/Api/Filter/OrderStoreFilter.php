@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 
-final class OrderStoreFilter extends SearchFilter
+final class OrderStoreFilter extends AbstractFilter
 {
     private string $storeIdProperty = 'delivery.store.id';
     private string $storeIdAlias = 'store';
