@@ -28,7 +28,7 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
     public function __construct(
         array $openingHours,
         TimeRegistry $timeRegistry,
-        Collection $closingRules = null,
+        ?Collection $closingRules = null,
         int $rangeDuration = 10,
         bool $preOrderingAllowed = true)
     {

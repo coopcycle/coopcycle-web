@@ -35,7 +35,7 @@ class TimeSlotChoice
         return $this->timeRange;
     }
 
-    public function hasBegun(\DateTimeInterface $now = null, string $priorNotice = null)
+    public function hasBegun(?\DateTimeInterface $now = null, ?string $priorNotice = null)
     {
         if (null === $now) {
             $now = Carbon::now();
@@ -55,7 +55,7 @@ class TimeSlotChoice
         return $now >= $after;
     }
 
-    public function hasFinished(\DateTimeInterface $now = null, string $priorNotice = null)
+    public function hasFinished(?\DateTimeInterface $now = null, ?string $priorNotice = null)
     {
         if (null === $now) {
             $now = Carbon::now();

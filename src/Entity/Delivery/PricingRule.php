@@ -136,7 +136,7 @@ class PricingRule
         return $this;
     }
 
-    public function matches(array $values, ExpressionLanguage $language = null)
+    public function matches(array $values, ?ExpressionLanguage $language = null)
     {
         if (null === $language) {
             $language = new ExpressionLanguage();
@@ -145,7 +145,7 @@ class PricingRule
         return $language->evaluate($this->getExpression(), $values);
     }
 
-    public function apply(array $values, ExpressionLanguage $language = null): ProductOption
+    public function apply(array $values, ?ExpressionLanguage $language = null): ProductOption
     {
         if (null === $language) {
             $language = new ExpressionLanguage();

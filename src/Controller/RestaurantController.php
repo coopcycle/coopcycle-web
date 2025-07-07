@@ -380,7 +380,7 @@ class RestaurantController extends AbstractController
         LoopEatContext $loopeatContext,
         BusinessContext $businessContext,
         LocalBusinessRepository $repository,
-        Address $address = null)
+        ?Address $address = null)
     {
         $restaurant = $repository->find($id);
 

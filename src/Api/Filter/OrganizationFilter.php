@@ -20,16 +20,16 @@ final class OrganizationFilter extends AbstractFilter
     public function __construct(
         ManagerRegistry $managerRegistry,
         Security $security,
-        LoggerInterface $logger = null,
-        array $properties = null,
-        NameConverterInterface $nameConverter = null)
+        ?LoggerInterface $logger = null,
+        ?array $properties = null,
+        ?NameConverterInterface $nameConverter = null)
     {
         $this->security = $security;
 
         parent::__construct($managerRegistry, $logger, $properties, $nameConverter);
     }
 
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = [])
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = [])
     {
         // otherwise filter is applied to order and page as well
         if (!$this->isPropertyEnabled($property, $resourceClass)) {

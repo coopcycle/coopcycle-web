@@ -25,7 +25,7 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
     private $now;
     private $workingDaysProviderClass;
 
-    public function __construct(TimeSlot $timeSlot, string $country, Collection $closingRules = null, \DateTime $maxDate = null)
+    public function __construct(TimeSlot $timeSlot, string $country, ?Collection $closingRules = null, ?\DateTime $maxDate = null)
     {
         $this->timeSlot = $timeSlot;
         $this->closingRules = $closingRules ?? new ArrayCollection();

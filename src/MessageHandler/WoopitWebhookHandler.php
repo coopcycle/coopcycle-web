@@ -31,7 +31,7 @@ class WoopitWebhookHandler
         IriConverterInterface $iriConverter,
         EntityManagerInterface $entityManager,
         Hashids $hashids12,
-        LoggerInterface $logger = null)
+        ?LoggerInterface $logger = null)
     {
         $this->woopitClient = $woopitClient;
         $this->iriConverter = $iriConverter;

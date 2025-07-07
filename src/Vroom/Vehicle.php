@@ -22,7 +22,7 @@ class Vehicle
 
     private $end; // an address that this vehicle needs to end at
 
-    public function __construct(int $id, string $profile, Coordinates $start = null, Coordinates $end = null)
+    public function __construct(int $id, string $profile, ?Coordinates $start = null, ?Coordinates $end = null)
     {
         $this->id = $id;
         $this->profile = $profile;
