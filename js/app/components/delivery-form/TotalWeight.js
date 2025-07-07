@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { InputNumber, Select } from 'antd'
 const { Option } = Select
-import { useFormikContext } from 'formik'
 import { useTranslation } from 'react-i18next'
+import {
+  useDeliveryFormFormikContext
+} from './hooks/useDeliveryFormFormikContext'
 
-export default ({ index }) => {
-  const { setFieldValue, errors, values } = useFormikContext()
+export default ({ taskId }) => {
+  const { setFieldValue, errors, values, taskIndex: index } = useDeliveryFormFormikContext({
+    taskId: taskId,
+  })
 
   const [numberValue, setNumberValue] = useState(
     values.tasks[index].weight / 1000,

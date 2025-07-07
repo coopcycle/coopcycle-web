@@ -46,7 +46,7 @@ const InputLabel = () => {
   return (<div className="mb-2 font-weight-bold title-slot">{t('ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE')}</div>)
 }
 
-export default ({ storeNodeId, index, timeSlotLabels }) => {
+export default ({ storeNodeId, taskId, timeSlotLabels }) => {
 
   const { data: store } = useGetStoreQuery(storeNodeId)
   const { httpClient } = useHttpClient()
@@ -54,8 +54,8 @@ export default ({ storeNodeId, index, timeSlotLabels }) => {
   const { t } = useTranslation()
 
   const mode = useSelector(selectMode)
-  const { taskValues, setFieldValue } = useDeliveryFormFormikContext({
-    taskIndex: index,
+  const { taskValues, setFieldValue, taskIndex: index } = useDeliveryFormFormikContext({
+    taskId: taskId,
   })
 
   const storeTimeSlotIds = store?.timeSlots

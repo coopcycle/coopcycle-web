@@ -4,9 +4,9 @@ import moment from 'moment/moment'
 import { timePickerProps } from '../../utils/antd'
 import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
 
-const MultiDayPicker = ({ taskIndex }) => {
-  const { taskValues, setFieldValue, errors } = useDeliveryFormFormikContext({
-    taskIndex: taskIndex,
+const MultiDayPicker = ({ taskId }) => {
+  const { taskValues, setFieldValue, taskIndex } = useDeliveryFormFormikContext({
+    taskId: taskId,
   })
 
   const handleComplexPickerDateChange = newValues => {
