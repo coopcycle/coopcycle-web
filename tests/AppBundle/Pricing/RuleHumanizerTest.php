@@ -15,8 +15,8 @@ class RuleHumanizerTest extends KernelTestCase
         self::bootKernel();
 
         // @see https://symfony.com/blog/new-in-symfony-4-1-simpler-service-testing
-        $this->expressionLanguage = self::$container->get('coopcycle.expression_language');
-        $this->translator = self::$container->get('translator');
+        $this->expressionLanguage = self::getContainer()->get('coopcycle.expression_language');
+        $this->translator = self::getContainer()->get('translator');
 
         $this->humanizer = new RuleHumanizer($this->expressionLanguage, $this->translator);
     }
