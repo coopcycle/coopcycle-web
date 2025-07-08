@@ -38,8 +38,6 @@ class DeliveryMapper
 
         $deliveryData->tasks = array_map(function (Task $taskEntity) use ($tasks, $groups) {
 
-            dump($groups);
-
             $taskData = new TaskDto();
 
             $taskData->id = $taskEntity->getId();
