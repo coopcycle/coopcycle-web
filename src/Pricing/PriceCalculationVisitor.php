@@ -27,6 +27,7 @@ class PriceCalculationVisitor
         private readonly TaskExpressionLanguageVisitor $taskExpressionLanguageVisitor,
         private readonly ProductOptionValueFactory $productOptionValueFactory,
         private readonly ProductVariantFactory $productVariantFactory,
+        private readonly RuleHumanizer $ruleHumanizer,
         private LoggerInterface $logger = new NullLogger()
     )
     {
@@ -184,7 +185,7 @@ class PriceCalculationVisitor
                         'target' => $rule->getTarget(),
                     ]);
 
-                    $productOptionValues[] = $this->productOptionValueFactory->createForPricingRule(
+                    $productOptionValues[] = $this->createForPricingRule(
                         $rule,
                         $expressionLanguageValues,
                         $this->expressionLanguage
@@ -219,7 +220,7 @@ class PriceCalculationVisitor
                         'target' => $rule->getTarget(),
                     ]);
 
-                    $productOptionValues[] = $this->productOptionValueFactory->createForPricingRule(
+                    $productOptionValues[] = $this->createForPricingRule(
                         $rule,
                         $expressionLanguageValues,
                         $this->expressionLanguage
@@ -239,6 +240,42 @@ class PriceCalculationVisitor
         } else {
             return new Result($ruleResults);
         }
+    }
+
+    //TODO: FIX
+    private function createForPricingRule(
+        PricingRule $rule,
+        array $expressionLanguageValues,
+        ExpressionLanguage $language = null
+    ): ProductOptionValueInterface {
+        if (null === $language) {
+            $language = new ExpressionLanguage();
+        }
+
+        $priceExpression = $rule->getPrice();
+        $result = $language->evaluate($priceExpression, $expressionLanguageValues);
+
+        $productOptionValue = $rule->getProductOptionValue();
+
+        // Create a product option if none is defined
+        if (is_null($productOptionValue)) {
+            $productOptionValue = $this->productOptionValueFactory->createForPricingRule($this->ruleHumanizer->humanize($rule));
+        }
+
+        // Generate a default name if none is defined
+        if (is_null($productOptionValue->getName()) || '' === trim($productOptionValue->getName())) {
+            $name = $this->ruleHumanizer->humanize($rule);
+            $productOptionValue->setValue($name);
+        }
+
+//        $productOptionValue->setValue($priceExpression);
+//        $productOptionValue->setPrice($result);
+//
+//        $productOption->addValue($productOptionValue);
+
+        //TODO: return quantity based on price
+
+        return $productOptionValue;
     }
 
     /**

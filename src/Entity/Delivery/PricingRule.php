@@ -190,28 +190,4 @@ class PricingRule
 
         return $language->evaluate($this->getExpression(), $values);
     }
-
-    //TODO; FIX
-    public function apply(array $values, ?ExpressionLanguage $language = null): \AppBundle\Entity\Delivery\ProductOption
-    {
-        if (null === $language) {
-            $language = new ExpressionLanguage();
-        }
-
-        $priceExpression = $this->getPrice();
-        $result = $language->evaluate($priceExpression, $values);
-
-        if (str_contains($priceExpression, 'price_percentage')) {
-            return new \AppBundle\Entity\Delivery\ProductOption(
-                $this,
-                0,
-                $result
-            );
-        } else {
-            return new \AppBundle\Entity\Delivery\ProductOption(
-                $this,
-                $result,
-            );
-        }
-    }
 }

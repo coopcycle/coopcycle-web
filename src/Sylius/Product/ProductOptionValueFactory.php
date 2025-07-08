@@ -3,6 +3,9 @@
 namespace AppBundle\Sylius\Product;
 
 use AppBundle\Entity\Delivery\PricingRule;
+use AppBundle\Entity\Sylius\ProductOption;
+use AppBundle\Entity\Sylius\ProductOptionRepository;
+use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Pricing\RuleHumanizer;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
@@ -13,8 +16,9 @@ class ProductOptionValueFactory
 {
     public function __construct(
         private readonly FactoryInterface $decorated,
-        private readonly ProductOptionFactory $productOptionFactory,
-        private readonly RuleHumanizer $ruleHumanizer,
+//        private readonly ProductOptionFactory $productOptionFactory,
+//        private readonly RuleHumanizer $ruleHumanizer,
+        private readonly ProductOptionRepository $productOptionRepository,
         private readonly LocaleProviderInterface $localeProvider
     ) {
     }
@@ -24,46 +28,24 @@ class ProductOptionValueFactory
         return $this->decorated->createNew();
     }
 
-    //TODO: FIX
-    public function createForPricingRule(
-        PricingRule $rule,
-        array $expressionLanguageValues,
-        ExpressionLanguage $language = null
-    ): ProductOptionValueInterface {
-        if (null === $language) {
-            $language = new ExpressionLanguage();
-        }
+    public function createForPricingRule(string $name): ProductOptionValue {
+        $productOption = $this->productOptionRepository->findAdditivePricingRuleProductOption();
 
-        $priceExpression = $rule->getPrice();
-        $result = $language->evaluate($priceExpression, $expressionLanguageValues);
+        /** @var ProductOptionValue $productOptionValue */
+        $productOptionValue = $this->createNew();
 
-        $productOption = $rule->getProductOption();
-
-        // Create a product option if none is defined
-        if (is_null($productOption)) {
-            $productOption = $this->productOptionFactory->createForOnDemandDelivery("");
-        }
-
-        // Generate a default name if none is defined
-        if (is_null($productOption->getName()) || '' === trim($productOption->getName())) {
-            $name = $this->ruleHumanizer->humanize($rule);
-            $productOption->setName($name);
-        }
-
-        /** @var ProductOptionValueInterface $productOptionValue */
-        $productOptionValue = $this->decorated->createNew();
-
-        // Set current locale before setting the name for translatable entities
+        // Set current locale before setting the value for translatable entities
         $productOptionValue->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
 
         $productOptionValue->setCode(Uuid::uuid4()->toString());
+        $productOptionValue->setValue($name);
+        $productOptionValue->setOption($productOption);
 
-        $productOptionValue->setValue($priceExpression);
-        $productOptionValue->setPrice($result);
+        //TODO: set price
 
-        $productOption->addValue($productOptionValue);
+        //TODO: use a different option type for percentage
 
         return $productOptionValue;
     }
-}
+
 }
