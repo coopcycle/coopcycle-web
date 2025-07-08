@@ -2,6 +2,8 @@ api_platform:
     defaults:
         pagination_client_items_per_page: true
         pagination_maximum_items_per_page: 100
+        normalization_context:
+            skip_null_values: false
     version: 1.0.0
     title: CoopCycle
     show_webby: false
