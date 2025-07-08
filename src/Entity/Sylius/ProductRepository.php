@@ -20,6 +20,6 @@ class ProductRepository extends BaseProductRepository
 
     public function findOnDemandDeliveryProduct(): Product
     {
-        return $this->findOneByCode('CPCCL-ODDLVR');
+        return $this->findOneBy(['code' => 'CPCCL-ODDLVR']);
     }
 }
