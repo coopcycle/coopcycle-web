@@ -2,9 +2,13 @@
 
 namespace AppBundle\Api\Dto;
 
+use ApiPlatform\Metadata\ApiResource;
 use AppBundle\Entity\Store;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ApiResource(
+    types: ['http://schema.org/ParcelDelivery'],
+)]
 final class DeliveryDto
 {
 
