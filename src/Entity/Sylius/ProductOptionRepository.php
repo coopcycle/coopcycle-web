@@ -6,14 +6,13 @@ use AppBundle\Sylius\Product\ProductOptionInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Bundle\ProductBundle\Doctrine\ORM\ProductOptionRepository as BaseRepository;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
-use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 
 class ProductOptionRepository extends BaseRepository
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly ProductRepositoryInterface $productRepository,
+        private readonly ProductRepository $productRepository,
         private readonly FactoryInterface $productOptionFactory,
         private readonly LocaleProviderInterface $localeProvider
     ) {
@@ -28,7 +27,9 @@ class ProductOptionRepository extends BaseRepository
         $existingOptions = $product->getOptions();
         if (!$existingOptions->isEmpty()) {
             // Return the first option (there should only be one for pricing rules)
-            return $existingOptions->first();
+            /** @var ProductOptionInterface $firstOption */
+            $firstOption = $existingOptions->first();
+            return $firstOption;
         }
 
         /** @var ProductOption $productOption */

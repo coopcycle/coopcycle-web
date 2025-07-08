@@ -8,18 +8,18 @@ use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\ProductOption;
+use AppBundle\Entity\Sylius\ProductOptionRepository;
 use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Sylius\Product\ProductOptionValueFactory;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
-use Sylius\Component\Product\Repository\ProductOptionRepositoryInterface;
 
 class PricingRuleSetManager
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly ProductOptionRepositoryInterface $productOptionRepository,
+        private readonly ProductOptionRepository $productOptionRepository,
         private readonly ProductOptionValueFactory $productOptionValueFactory,
         private readonly LocaleProviderInterface $localeProvider,
     ) {
