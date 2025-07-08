@@ -24,7 +24,7 @@ class BusinessRestaurantGroupPriceWithTax
 
     private $priceWithTax;
 
-    public function __construct(BusinessRestaurantGroup $businessRestaurantGroup = null, $price = null, $taxCategory = null)
+    public function __construct(?BusinessRestaurantGroup $businessRestaurantGroup = null, $price = null, $taxCategory = null)
     {
         $this->businessRestaurantGroup = $businessRestaurantGroup;
         $this->price = $price;

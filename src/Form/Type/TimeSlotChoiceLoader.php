@@ -25,7 +25,7 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
     private $now;
     private $workingDaysProviderClass;
 
-    public function __construct(TimeSlot $timeSlot, string $country, Collection $closingRules = null, \DateTime $maxDate = null)
+    public function __construct(TimeSlot $timeSlot, string $country, ?Collection $closingRules = null, ?\DateTime $maxDate = null)
     {
         $this->timeSlot = $timeSlot;
         $this->closingRules = $closingRules ?? new ArrayCollection();
@@ -98,7 +98,7 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadChoiceList($value = null): ChoiceListInterface
+    public function loadChoiceList(?callable $value = null): ChoiceListInterface
     {
         if ($this->maxDate <= $this->now) {
             return new ArrayChoiceList([], $value);
@@ -162,7 +162,7 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadChoicesForValues(array $values, $value = null)
+    public function loadChoicesForValues(array $values, ?callable $value = null): array
     {
         // Optimize
         if (empty($values)) {
@@ -175,7 +175,7 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadValuesForChoices(array $choices, $value = null)
+    public function loadValuesForChoices(array $choices, ?callable $value = null): array
     {
         // Optimize
         if (empty($choices)) {

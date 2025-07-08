@@ -125,7 +125,7 @@ export default function() {
         />
         <Statistic
           title={t("REPORTED_BY")}
-          value={incident.createdBy.username}
+          value={incident.createdBy?.username}
         />
       </Row>
       <Row justify="space-between" className="mt-3">

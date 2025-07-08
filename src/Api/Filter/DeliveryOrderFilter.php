@@ -12,7 +12,7 @@ use Doctrine\ORM\Query\Expr\Join;
 
 class DeliveryOrderFilter extends AbstractFilter
 {
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = [])
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = [])
     {
         if (Delivery::class !== $resourceClass) {
             return;

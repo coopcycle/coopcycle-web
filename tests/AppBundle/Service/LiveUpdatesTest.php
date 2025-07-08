@@ -55,12 +55,20 @@ class LiveUpdatesTest extends TestCase
         );
     }
 
+    private function createUser()
+    {
+        $user = $this->prophesize(UserInterface::class);
+        $user->getUserIdentifier()->willReturn('john_doe');
+
+        return $user->reveal();
+    }
+
     public function testToRoles(): void
     {
         $message = 'Test message';
         $usersWithRoles = [
-            $this->prophesize(UserInterface::class)->reveal(),
-            $this->prophesize(UserInterface::class)->reveal()
+            $this->createUser(),
+            $this->createUser()
         ];
         $roles = ['ROLE_1', 'ROLE_2'];
 
@@ -69,7 +77,7 @@ class LiveUpdatesTest extends TestCase
             ->shouldBeCalledOnce();
 
         $channels = array_map(function (UserInterface $user) {
-            return sprintf('%s_events#%s', $this->namespace, $user->getUsername());
+            return sprintf('%s_events#%s', $this->namespace, $user->getUserIdentifier());
         }, $usersWithRoles);
 
         $event = [
@@ -92,8 +100,8 @@ class LiveUpdatesTest extends TestCase
     {
         $message = 'Test message';
         $adminUsers = [
-            $this->prophesize(UserInterface::class)->reveal(),
-            $this->prophesize(UserInterface::class)->reveal()
+            $this->createUser(),
+            $this->createUser()
         ];
 
         $this->userManagerMock->findUsersByRoles(['ROLE_ADMIN'])
@@ -101,7 +109,7 @@ class LiveUpdatesTest extends TestCase
             ->shouldBeCalledOnce();
 
         $channels = array_map(function (UserInterface $user) {
-            return sprintf('%s_events#%s', $this->namespace, $user->getUsername());
+            return sprintf('%s_events#%s', $this->namespace, $user->getUserIdentifier());
         }, $adminUsers);
 
         $event = [
@@ -123,10 +131,10 @@ class LiveUpdatesTest extends TestCase
     public function testToUserAndAdmins_userNotAdmin(): void
     {
         $message = 'Test message';
-        $user = $this->prophesize(UserInterface::class)->reveal();
+        $user = $this->createUser();
         $adminUsers = [
-            $this->prophesize(UserInterface::class)->reveal(),
-            $this->prophesize(UserInterface::class)->reveal()
+            $this->createUser(),
+            $this->createUser()
         ];
         $allUsers = array_merge([$user], $adminUsers);
 
@@ -135,7 +143,7 @@ class LiveUpdatesTest extends TestCase
             ->shouldBeCalledOnce();
 
         $channels = array_map(function (UserInterface $user) {
-            return sprintf('%s_events#%s', $this->namespace, $user->getUsername());
+            return sprintf('%s_events#%s', $this->namespace, $user->getUserIdentifier());
         }, $allUsers);
 
         $event = [
@@ -158,9 +166,9 @@ class LiveUpdatesTest extends TestCase
     {
         $message = 'Test message';
         $adminUsers = [
-            $this->prophesize(UserInterface::class)->reveal(),
-            $this->prophesize(UserInterface::class)->reveal(),
-            $this->prophesize(UserInterface::class)->reveal()
+            $this->createUser(),
+            $this->createUser(),
+            $this->createUser()
         ];
         $allUsers = $adminUsers;
 
@@ -169,7 +177,7 @@ class LiveUpdatesTest extends TestCase
             ->shouldBeCalledOnce();
 
         $channels = array_map(function (UserInterface $user) {
-            return sprintf('%s_events#%s', $this->namespace, $user->getUsername());
+            return sprintf('%s_events#%s', $this->namespace, $user->getUserIdentifier());
         }, $allUsers);
 
         $event = [
@@ -191,11 +199,11 @@ class LiveUpdatesTest extends TestCase
     public function testToUserAndRoles_userDontHaveRole(): void
     {
         $message = 'Test message';
-        $user = $this->prophesize(UserInterface::class)->reveal();
+        $user = $this->createUser();
         $usersWithRoles = [
-            $this->prophesize(UserInterface::class)->reveal(),
-            $this->prophesize(UserInterface::class)->reveal(),
-            $this->prophesize(UserInterface::class)->reveal()
+            $this->createUser(),
+            $this->createUser(),
+            $this->createUser()
         ];
         $allUsers = array_merge([$user], $usersWithRoles);
         $roles = ['ROLE_1', 'ROLE_2'];
@@ -205,7 +213,7 @@ class LiveUpdatesTest extends TestCase
             ->shouldBeCalledOnce();
 
         $channels = array_map(function (UserInterface $user) {
-            return sprintf('%s_events#%s', $this->namespace, $user->getUsername());
+            return sprintf('%s_events#%s', $this->namespace, $user->getUserIdentifier());
         }, $allUsers);
 
         $event = [
@@ -228,9 +236,9 @@ class LiveUpdatesTest extends TestCase
     {
         $message = 'Test message';
         $usersWithRoles = [
-            $this->prophesize(UserInterface::class)->reveal(),
-            $this->prophesize(UserInterface::class)->reveal(),
-            $this->prophesize(UserInterface::class)->reveal()
+            $this->createUser(),
+            $this->createUser(),
+            $this->createUser()
         ];
         $allUsers = $usersWithRoles;
         $roles = ['ROLE_1', 'ROLE_2'];
@@ -240,7 +248,7 @@ class LiveUpdatesTest extends TestCase
             ->shouldBeCalledOnce();
 
         $channels = array_map(function (UserInterface $user) {
-            return sprintf('%s_events#%s', $this->namespace, $user->getUsername());
+            return sprintf('%s_events#%s', $this->namespace, $user->getUserIdentifier());
         }, $allUsers);
 
         $event = [

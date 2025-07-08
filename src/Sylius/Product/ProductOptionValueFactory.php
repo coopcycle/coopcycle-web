@@ -11,7 +11,6 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ProductOptionValueFactory
 {
-
     public function __construct(
         private readonly FactoryInterface $decorated,
         private readonly ProductOptionFactory $productOptionFactory,
@@ -20,6 +19,12 @@ class ProductOptionValueFactory
     ) {
     }
 
+    public function createNew()
+    {
+        return $this->decorated->createNew();
+    }
+
+    //TODO: FIX
     public function createForPricingRule(
         PricingRule $rule,
         array $expressionLanguageValues,
@@ -60,4 +65,5 @@ class ProductOptionValueFactory
 
         return $productOptionValue;
     }
+}
 }

@@ -42,7 +42,7 @@ trait ImageTrait
      *
      * @param File|UploadedFile|null $image
      */
-    public function setImageFile(File $image = null)
+    public function setImageFile(?File $image = null)
     {
         $this->imageFile = $image;
 
@@ -99,7 +99,7 @@ trait ImageTrait
      *
      * @param File|UploadedFile|null $image
      */
-    public function setBannerImageFile(File $image = null)
+    public function setBannerImageFile(?File $image = null)
     {
         $this->bannerImageFile = $image;
 

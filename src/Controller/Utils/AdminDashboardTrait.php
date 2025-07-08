@@ -28,7 +28,7 @@ use Nucleos\UserBundle\Model\UserInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use phpcent\Client as CentrifugoClient;
 use Psr\Log\LoggerInterface;
 use Redis;
@@ -41,7 +41,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Vich\UploaderBundle\Storage\StorageInterface;
 
@@ -65,7 +65,7 @@ trait AdminDashboardTrait
     #[Route("/admin/dashboard", name: "admin_dashboard")]
     public function dashboardAction(Request $request,
         TaskManager $taskManager,
-        JWTManagerInterface $jwtManager,
+        JWTTokenManagerInterface $jwtManager,
         CentrifugoClient $centrifugoClient,
         Redis $tile38,
         IriConverterInterface $iriConverter,
@@ -79,7 +79,7 @@ trait AdminDashboardTrait
     #[Route("/admin/dashboard/fullscreen/{date}", name: "admin_dashboard_fullscreen", requirements: ["date" => "[0-9]{4}-[0-9]{2}-[0-9]{2}"])]
     public function dashboardFullscreenAction($date, Request $request,
         TaskManager $taskManager,
-        JWTManagerInterface $jwtManager,
+        JWTTokenManagerInterface $jwtManager,
         CentrifugoClient $centrifugoClient,
         Redis $tile38,
         IriConverterInterface $iriConverter,

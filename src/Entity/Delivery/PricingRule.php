@@ -8,7 +8,7 @@ use ApiPlatform\Metadata\ApiResource;
 use AppBundle\Api\State\EvaluatePricingRuleProcessor;
 use AppBundle\Api\Dto\DeliveryDto;
 use AppBundle\Api\Dto\YesNoOutput;
-use AppBundle\Entity\Sylius\ProductOption;
+use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Validator\Constraints\PricingRule as AssertPricingRule;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -75,9 +75,9 @@ class PricingRule
     protected $nameInput;
 
     /**
-     * @var ?ProductOption
+     * @var ?ProductOptionValue
      */
-    protected $productOption;
+    protected $productOptionValue;
 
     /**
      * Gets id.
@@ -147,14 +147,14 @@ class PricingRule
         return $this;
     }
 
-    public function getProductOption(): ?ProductOption
+    public function getProductOptionValue(): ?ProductOptionValue
     {
-        return $this->productOption;
+        return $this->productOptionValue;
     }
 
-    public function setProductOption(?ProductOption $productOption): self
+    public function setProductOptionValue(?ProductOptionValue $productOptionValue): self
     {
-        $this->productOption = $productOption;
+        $this->productOptionValue = $productOptionValue;
 
         return $this;
     }
@@ -179,15 +179,39 @@ class PricingRule
     #[Groups(['pricing_deliveries', 'pricing_rule_set:read'])]
     public function getName(): ?string
     {
-        return $this->productOption?->getName();
+        return $this->productOptionValue?->getValue();
     }
 
-    public function matches(array $values, ExpressionLanguage $language = null)
+    public function matches(array $values, ?ExpressionLanguage $language = null)
     {
         if (null === $language) {
             $language = new ExpressionLanguage();
         }
 
         return $language->evaluate($this->getExpression(), $values);
+    }
+
+    //TODO; FIX
+    public function apply(array $values, ?ExpressionLanguage $language = null): \AppBundle\Entity\Delivery\ProductOption
+    {
+        if (null === $language) {
+            $language = new ExpressionLanguage();
+        }
+
+        $priceExpression = $this->getPrice();
+        $result = $language->evaluate($priceExpression, $values);
+
+        if (str_contains($priceExpression, 'price_percentage')) {
+            return new \AppBundle\Entity\Delivery\ProductOption(
+                $this,
+                0,
+                $result
+            );
+        } else {
+            return new \AppBundle\Entity\Delivery\ProductOption(
+                $this,
+                $result,
+            );
+        }
     }
 }

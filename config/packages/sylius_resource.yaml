@@ -49,6 +49,7 @@ sylius_product:
         product_option:
             classes:
                 model: AppBundle\Entity\Sylius\ProductOption
+                repository: AppBundle\Entity\Sylius\ProductOptionRepository
         product_option_value:
             classes:
                 model: AppBundle\Entity\Sylius\ProductOptionValue

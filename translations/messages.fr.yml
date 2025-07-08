@@ -1631,7 +1631,7 @@ pricing.rule.humanizer.less_than: moins de %value%
 pricing.rule.humanizer.more_than: plus de %value%
 pricing.rule.humanizer.kg_unit: '%value% kg'
 pricing.rule.humanizer.km_unit: '%value% km'
-pricing.rule.humanizer.task_type_is: '%value% au point'
+pricing.rule.humanizer.task_type_is: 'taux de %value%'
 pricing.rule.humanizer.time_range_length: 'créneau horaire de %task_type% %operator% %value%'
 pricing.rule.humanizer.diff: 'délai de préavis pour %task_type% %operator% %value%'
 pricing.rule.humanizer.order_items_total: 'total du panier %operator% %value%'

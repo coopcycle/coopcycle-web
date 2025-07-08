@@ -28,12 +28,12 @@ class AddressValueResolver implements ArgumentValueResolverInterface
         $this->iriConverter = $iriConverter;
     }
 
-    public function supports(Request $request, ArgumentMetadata $argument)
+    public function supports(Request $request, ArgumentMetadata $argument): bool
     {
         return $request->attributes->get('_route') === 'restaurant' && Address::class === $argument->getType();
     }
 
-    public function resolve(Request $request, ArgumentMetadata $argument)
+    public function resolve(Request $request, ArgumentMetadata $argument): \Traversable|array
     {
         if (!$request->query->has('address')) {
             return yield null;
