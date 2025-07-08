@@ -12,10 +12,19 @@ AppBundle\Entity\Address:
 AppBundle\Entity\Sylius\ProductOption:
   product_option_1:
     currentLocale: fr
-    code: 'existing-option-code'
-    name: 'Existing Option'
+    code: 'CPCCL-ODDLVR-PR'
+    name: 'Pricing Rules'
     strategy: 'free'
     additional: false
+
+AppBundle\Entity\Sylius\ProductOptionValue:
+  product_option_value_1:
+    currentLocale: fr
+    code: 'CPCCL-ODDLVR-PR-1'
+    value: 'Existing Option'
+    price: 0
+    enabled: true
+    option: '@product_option_1'
 
 AppBundle\Entity\Delivery\PricingRuleSet:
   pricing_rule_set_1:
@@ -28,7 +37,7 @@ AppBundle\Entity\Delivery\PricingRule:
     price: '500'
     position: 1
     ruleSet: '@pricing_rule_set_1'
-    productOption: '@product_option_1'
+    productOptionValue: '@product_option_value_1'
   pricing_rule_2:
     expression: 'weight > 1000'
     price: '200'
