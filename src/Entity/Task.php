@@ -315,7 +315,8 @@ use Symfony\Component\Validator\Constraints as Assert;
             ],
             denormalizationContext: ['groups' => ['tasks_images']],
             security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
-            write: false
+            write: false,
+            deserialize: false
         )
     ],
     normalizationContext: ['groups' => ['task', 'delivery', 'address']]
