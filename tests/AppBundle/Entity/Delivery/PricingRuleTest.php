@@ -5,6 +5,7 @@ namespace AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Sylius\ProductOption;
+use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\ExpressionLanguage\DeliveryExpressionLanguageVisitor;
 use AppBundle\ExpressionLanguage\PricePercentageExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider;
@@ -174,10 +175,15 @@ class PricingRuleTest extends TestCase
     {
         $productOption = new ProductOption();
         $productOption->setCurrentLocale('en');
-        $productOption->setName('Express Delivery');
+        $productOption->setName('Pricing Rules');
+
+        $productOptionValue = new ProductOptionValue();
+        $productOptionValue->setCurrentLocale('en');
+        $productOptionValue->setValue('Express Delivery');
+        $productOptionValue->setOption($productOption);
 
         $rule = new PricingRule();
-        $rule->setProductOption($productOption);
+        $rule->setProductOptionValue($productOptionValue);
 
         $this->assertEquals('Express Delivery', $rule->getName());
     }
