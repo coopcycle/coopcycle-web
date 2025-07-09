@@ -260,6 +260,12 @@ class PriceCalculationVisitor
         // Create a product option if none is defined
         if (is_null($productOptionValue)) {
             $productOptionValue = $this->productOptionValueFactory->createForPricingRule($rule, $this->ruleHumanizer->humanize($rule));
+        } else {
+            //FIXME: for now, we need to make sure to create a new entity for each calculation
+            // as we set the calculated price on the entity itself
+            // when we properly implement quantities and product option types (percentage) we can
+            // make ProductOptionValues immutable and remove this
+            $productOptionValue = $this->productOptionValueFactory->createForPricingRule($rule, $rule->getName());
         }
 
         // Generate a default name if none is defined
@@ -284,7 +290,8 @@ class PriceCalculationVisitor
         $priceExpression = $rule->getPrice();
         $result = $language->evaluate($priceExpression, $expressionLanguageValues);
 
-        //TODO: check how this works with km and package-based rules; return quantity based on price?
+        //For now; km and package-based rules will contain total in $price
+        // return price per km or package and quantity separately?
         $productOptionValue->setPrice($result);
 
         return new ProductOptionValueWithQuantity($productOptionValue, 1);
