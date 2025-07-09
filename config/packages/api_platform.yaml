@@ -4,6 +4,8 @@ api_platform:
         pagination_maximum_items_per_page: 100
         normalization_context:
             skip_null_values: false
+        extra_properties:
+            standard_put: true
     version: 1.0.0
     title: CoopCycle
     show_webby: false
