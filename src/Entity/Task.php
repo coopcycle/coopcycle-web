@@ -12,7 +12,7 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Task\AddImagesToTasks;
 use AppBundle\Action\Task\Assign as TaskAssign;
-use AppBundle\Action\Task\BulkAssign as TaskBulkAssign;
+// use AppBundle\Action\Task\BulkAssign as TaskBulkAssign;
 use AppBundle\Action\Task\Cancel as TaskCancel;
 use AppBundle\Action\Task\Done as TaskDone;
 use AppBundle\Action\Task\Events as TaskEvents;
@@ -28,12 +28,14 @@ use AppBundle\Action\Task\RemoveFromGroup;
 use AppBundle\Action\Task\BulkMarkAsDone as TaskBulkMarkAsDone;
 use AppBundle\Action\Task\Context as TaskContext;
 use AppBundle\Action\Task\AppendToComment as TaskAppendToComment;
+use AppBundle\Api\Dto\AssignTasksDto;
 use AppBundle\Api\Dto\BioDeliverInput;
 use AppBundle\Api\Filter\AssignedFilter;
 use AppBundle\Api\Filter\TaskDateFilter;
 use AppBundle\Api\Filter\TaskOrderFilter;
 use AppBundle\Api\Filter\TaskFilter;
 use AppBundle\Api\Filter\OrganizationFilter;
+use AppBundle\Api\State\AssignTasksProcessor;
 use AppBundle\Api\State\BioDeliverProcessor;
 use AppBundle\Api\State\TasksProvider;
 use AppBundle\DataType\TsRange;
@@ -250,7 +252,8 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Put(
             uriTemplate: '/tasks/assign',
-            controller: TaskBulkAssign::class,
+            input: AssignTasksDto::class,
+            processor: AssignTasksProcessor::class,
             openapiContext: [
                 'summary' => 'Assigns multiple Tasks at once to a messenger',
                 'parameters' => [
@@ -269,7 +272,8 @@ use Symfony\Component\Validator\Constraints as Assert;
                 ]
             ],
             security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
-            write: false
+            denormalizationContext: ['groups' => ['tasks_assign']],
+            // write: false
         ),
         new Put(
             uriTemplate: '/tasks/done',
