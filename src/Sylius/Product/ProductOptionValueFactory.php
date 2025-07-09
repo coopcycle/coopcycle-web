@@ -3,21 +3,16 @@
 namespace AppBundle\Sylius\Product;
 
 use AppBundle\Entity\Delivery\PricingRule;
-use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Entity\Sylius\ProductOptionRepository;
 use AppBundle\Entity\Sylius\ProductOptionValue;
-use AppBundle\Pricing\RuleHumanizer;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ProductOptionValueFactory
 {
     public function __construct(
         private readonly FactoryInterface $decorated,
-//        private readonly ProductOptionFactory $productOptionFactory,
-//        private readonly RuleHumanizer $ruleHumanizer,
         private readonly ProductOptionRepository $productOptionRepository,
         private readonly LocaleProviderInterface $localeProvider
     ) {
@@ -28,8 +23,10 @@ class ProductOptionValueFactory
         return $this->decorated->createNew();
     }
 
-    public function createForPricingRule(string $name): ProductOptionValue {
-        $productOption = $this->productOptionRepository->findAdditivePricingRuleProductOption();
+    public function createForPricingRule(PricingRule $pricingRule, string $name): ProductOptionValue {
+        $priceExpression = $pricingRule->getPrice();
+
+        $productOption = $this->productOptionRepository->findPricingRuleProductOption();
 
         /** @var ProductOptionValue $productOptionValue */
         $productOptionValue = $this->createNew();
@@ -37,15 +34,18 @@ class ProductOptionValueFactory
         // Set current locale before setting the value for translatable entities
         $productOptionValue->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
 
-        $productOptionValue->setCode(Uuid::uuid4()->toString());
+        //FIXME: a workaround to distinguish between percentage-based and 'static' product option values
+        // until we have a dedicated ProductOption type for percentage-based rules
+        if (str_contains($priceExpression, 'price_percentage')) {
+            $productOptionValue->setCode('PERCENTAGE-' . Uuid::uuid4()->toString());
+        } else {
+            $productOptionValue->setCode(Uuid::uuid4()->toString());
+        }
+
         $productOptionValue->setValue($name);
+
         $productOptionValue->setOption($productOption);
-
-        //TODO: set price
-
-        //TODO: use a different option type for percentage
 
         return $productOptionValue;
     }
-
 }

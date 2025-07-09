@@ -5,6 +5,7 @@ namespace AppBundle\Pricing;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
+use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Entity\Task;
 use AppBundle\ExpressionLanguage\DeliveryExpressionLanguageVisitor;
 use AppBundle\ExpressionLanguage\TaskExpressionLanguageVisitor;
@@ -170,7 +171,7 @@ class PriceCalculationVisitor
     {
         /** @var RuleResult[] $ruleResults */
         $ruleResults = [];
-        /** @var ProductOptionValueInterface[] $productOptionValues */
+        /** @var ProductOptionValueWithQuantity[] $productOptionValues */
         $productOptionValues = [];
 
         foreach ($ruleSet->getRules() as $rule) {
@@ -185,11 +186,15 @@ class PriceCalculationVisitor
                         'target' => $rule->getTarget(),
                     ]);
 
-                    $productOptionValues[] = $this->createForPricingRule(
+                    $productOptionValue = $this->getProductOptionValue($rule);
+                    $ProductOptionValueWithQuantity = $this->processProductOptionValue(
+                        $productOptionValue,
                         $rule,
                         $expressionLanguageValues,
                         $this->expressionLanguage
                     );
+
+                    $productOptionValues[] = $ProductOptionValueWithQuantity;
 
                     $productVariant = $this->productVariantFactory->createWithProductOptions($productOptionValues, $ruleSet);
 
@@ -205,7 +210,7 @@ class PriceCalculationVisitor
     {
         /** @var RuleResult[] $ruleResults */
         $ruleResults = [];
-        /** @var ProductOptionValueInterface[] $productOptionValues */
+        /** @var ProductOptionValueWithQuantity[] $productOptionValues */
         $productOptionValues = [];
 
         foreach ($ruleSet->getRules() as $rule) {
@@ -220,11 +225,15 @@ class PriceCalculationVisitor
                         'target' => $rule->getTarget(),
                     ]);
 
-                    $productOptionValues[] = $this->createForPricingRule(
+                    $productOptionValue = $this->getProductOptionValue($rule);
+                    $ProductOptionValueWithQuantity = $this->processProductOptionValue(
+                        $productOptionValue,
                         $rule,
                         $expressionLanguageValues,
                         $this->expressionLanguage
                     );
+
+                    $productOptionValues[] = $ProductOptionValueWithQuantity;
                 }
             }
         }
@@ -242,24 +251,15 @@ class PriceCalculationVisitor
         }
     }
 
-    //TODO: FIX
-    private function createForPricingRule(
+    private function getProductOptionValue(
         PricingRule $rule,
-        array $expressionLanguageValues,
-        ExpressionLanguage $language = null
-    ): ProductOptionValueInterface {
-        if (null === $language) {
-            $language = new ExpressionLanguage();
-        }
-
-        $priceExpression = $rule->getPrice();
-        $result = $language->evaluate($priceExpression, $expressionLanguageValues);
+    ): ProductOptionValue {
 
         $productOptionValue = $rule->getProductOptionValue();
 
         // Create a product option if none is defined
         if (is_null($productOptionValue)) {
-            $productOptionValue = $this->productOptionValueFactory->createForPricingRule($this->ruleHumanizer->humanize($rule));
+            $productOptionValue = $this->productOptionValueFactory->createForPricingRule($rule, $this->ruleHumanizer->humanize($rule));
         }
 
         // Generate a default name if none is defined
@@ -268,14 +268,26 @@ class PriceCalculationVisitor
             $productOptionValue->setValue($name);
         }
 
-//        $productOptionValue->setValue($priceExpression);
-//        $productOptionValue->setPrice($result);
-//
-//        $productOption->addValue($productOptionValue);
-
-        //TODO: return quantity based on price
-
         return $productOptionValue;
+    }
+
+    private function processProductOptionValue(
+        ProductOptionValue $productOptionValue,
+        PricingRule $rule,
+        array $expressionLanguageValues,
+        ExpressionLanguage $language = null
+    ): ProductOptionValueWithQuantity {
+        if (null === $language) {
+            $language = new ExpressionLanguage();
+        }
+
+        $priceExpression = $rule->getPrice();
+        $result = $language->evaluate($priceExpression, $expressionLanguageValues);
+
+        //TODO: check how this works with km and package-based rules; return quantity based on price?
+        $productOptionValue->setPrice($result);
+
+        return new ProductOptionValueWithQuantity($productOptionValue, 1);
     }
 
     /**
@@ -307,7 +319,8 @@ class PriceCalculationVisitor
          * @var ProductOptionValueInterface $productOptionValue
          */
         foreach ($productVariant->getOptionValues() as $productOptionValue) {
-            if (str_contains($productOptionValue->getValue(), 'price_percentage')) {
+
+            if (str_starts_with($productOptionValue->getCode(), 'PERCENTAGE-')) {
                 // update the price of the option value, because with percentage-based rules,
                 // the price is calculated on the subtotal of the previous steps
 
@@ -320,7 +333,8 @@ class PriceCalculationVisitor
                 $productOptionValue->setPrice($subtotal - $previousSubtotal);
 
             } else {
-               $subtotal += $productOptionValue->getPrice();
+                $quantity = $productVariant->getQuantityForOptionValue($productOptionValue);
+                $subtotal += $productOptionValue->getPrice() * $quantity;
             }
         }
 

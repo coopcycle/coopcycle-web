@@ -7,6 +7,7 @@ use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\PriceInterface;
 use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
+use AppBundle\Pricing\ProductOptionValueWithQuantity;
 use AppBundle\Service\SettingsManager;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
@@ -45,7 +46,7 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
     }
 
     /**
-     * @param ProductOptionValueInterface[] $productOptionValues
+     * @param ProductOptionValueWithQuantity[] $productOptionValues
      */
     public function createWithProductOptions(array $productOptionValues, PricingRuleSet $ruleSet): ProductVariantInterface
     {
@@ -54,7 +55,7 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         $productVariant->setPricingRuleSet($ruleSet);
 
         foreach ($productOptionValues as $productOptionValue) {
-            $productVariant->addOptionValue($productOptionValue);
+            $productVariant->addOptionValueWithQuantity($productOptionValue->productOptionValue, $productOptionValue->quantity);
         }
 
         return $productVariant;

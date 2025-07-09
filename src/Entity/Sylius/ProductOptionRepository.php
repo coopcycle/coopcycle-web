@@ -7,13 +7,10 @@ use AppBundle\Sylius\Product\ProductOptionInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Bundle\ProductBundle\Doctrine\ORM\ProductOptionRepository as BaseRepository;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
-use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 
 class ProductOptionRepository extends BaseRepository
 {
-    const ADDITIVE_PRICING_RULE_OPTION_CODE = 'CPCCL-ODDLVR-DDTV-PR';
-
     private EntityManagerInterface $entityManager;
     private FactoryInterface $productOptionFactory;
     private LocaleProviderInterface $localeProvider;
@@ -43,11 +40,14 @@ class ProductOptionRepository extends BaseRepository
         $this->localeProvider = $localeProvider;
     }
 
-    public function findAdditivePricingRuleProductOption(): ProductOptionInterface
+    public function findPricingRuleProductOption(): ProductOptionInterface
     {
-        $productOption = $this->findOneBy(['code' => self::ADDITIVE_PRICING_RULE_OPTION_CODE]);
-        if (null !== $productOption) {
-            return $productOption;
+        $existingOptions = $this->onDemandDeliveryProduct->getOptions();
+        if (!$existingOptions->isEmpty()) {
+            // Return the first option (there should only be one for pricing rules)
+            /** @var ProductOptionInterface $firstOption */
+            $firstOption = $existingOptions->first();
+            return $firstOption;
         }
 
         /** @var ProductOption $productOption */
@@ -57,10 +57,10 @@ class ProductOptionRepository extends BaseRepository
         $productOption->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
 
         // Set basic properties
-        $productOption->setCode(self::ADDITIVE_PRICING_RULE_OPTION_CODE);
-        $productOption->setName('Additive pricing rule');
+        $productOption->setCode('CPCCL-ODDLVR-PR');
+        $productOption->setName('Pricing Rules');
 
-        // Set default strategy and additional flag
+        //FIXME: Set default strategy and additional flag
         $productOption->setStrategy('free');
         $productOption->setAdditional(false);
 

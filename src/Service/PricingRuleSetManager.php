@@ -75,7 +75,7 @@ class PricingRuleSetManager
 
         if ($productOptionValue === null) {
             // Create a new ProductOptionValue for this pricing rule
-            $productOptionValue = $this->productOptionValueFactory->createForPricingRule($name);
+            $productOptionValue = $this->productOptionValueFactory->createForPricingRule($pricingRule, $name);
             $pricingRule->setProductOptionValue($productOptionValue);
 
             $this->entityManager->persist($productOptionValue);
