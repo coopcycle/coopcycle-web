@@ -14,16 +14,33 @@ class ProductOptionRepository extends BaseRepository
 {
     const ADDITIVE_PRICING_RULE_OPTION_CODE = 'CPCCL-ODDLVR-DDTV-PR';
 
+    private EntityManagerInterface $entityManager;
+    private FactoryInterface $productOptionFactory;
+    private LocaleProviderInterface $localeProvider;
+
     private ProductInterface $onDemandDeliveryProduct;
 
-    public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        ProductRepositoryInterface $productRepository,
-        private readonly FactoryInterface $productOptionFactory,
-        private readonly LocaleProviderInterface $localeProvider,
-    ) {
-        parent::__construct($entityManager, $entityManager->getClassMetadata(ProductOption::class));
+    // As this class is created by Doctrine's ContainerRepositoryFactory we can't modify its constructor
+    // and have to inject dependencies through setters
+
+    public function setEntityManager(EntityManagerInterface $entityManager): void
+    {
+        $this->entityManager = $entityManager;
+    }
+
+    public function setProductRepository(ProductRepository $productRepository): void
+    {
         $this->onDemandDeliveryProduct = $productRepository->findOneBy(['code' => 'CPCCL-ODDLVR']);
+    }
+
+    public function setProductOptionFactory(FactoryInterface $productOptionFactory): void
+    {
+        $this->productOptionFactory = $productOptionFactory;
+    }
+
+    public function setLocaleProvider(LocaleProviderInterface $localeProvider): void
+    {
+        $this->localeProvider = $localeProvider;
     }
 
     public function findAdditivePricingRuleProductOption(): ProductOptionInterface

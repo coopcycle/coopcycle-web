@@ -82,10 +82,10 @@ class RuleHumanizerTest extends KernelTestCase
         $rule = new PricingRule();
 
         $rule->setExpression('task.type == "PICKUP"');
-        $this->assertEquals('retrait au point', $this->humanizer->humanize($rule));
+        $this->assertEquals('taux de retrait', $this->humanizer->humanize($rule));
 
         $rule->setExpression('task.type == "DROPOFF"');
-        $this->assertEquals('dépôt au point', $this->humanizer->humanize($rule));
+        $this->assertEquals('taux de dépôt', $this->humanizer->humanize($rule));
     }
 
     public function testTimeRangeLength()

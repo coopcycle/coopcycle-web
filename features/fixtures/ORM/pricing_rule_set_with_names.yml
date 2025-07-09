@@ -9,13 +9,14 @@ AppBundle\Entity\Address:
     streetAddress: '17, rue Milton 75009 Paris 9ème'
     geo: "@geo_1"
 
-AppBundle\Entity\Sylius\ProductOption:
-  product_option_1:
+AppBundle\Entity\Sylius\ProductOptionValue:
+  product_option_value_1:
     currentLocale: fr
-    code: 'existing-option-code'
-    name: 'Existing Option'
-    strategy: 'free'
-    additional: false
+    code: 'CPCCL-ODDLVR-PR-1'
+    value: 'Existing Option'
+    price: 0
+    enabled: true
+    option: '@product_option_pricing_rules'
 
 AppBundle\Entity\Delivery\PricingRuleSet:
   pricing_rule_set_1:
@@ -28,7 +29,7 @@ AppBundle\Entity\Delivery\PricingRule:
     price: '500'
     position: 1
     ruleSet: '@pricing_rule_set_1'
-    productOption: '@product_option_1'
+    productOptionValue: '@product_option_value_1'
   pricing_rule_2:
     expression: 'weight > 1000'
     price: '200'
