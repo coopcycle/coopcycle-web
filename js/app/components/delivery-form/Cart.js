@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 function ProductOptionValue({ productOptionValue, overridePrice }) {
   return (
     <div>
-      <span>{productOptionValue.option.name}</span>
+      <span>{productOptionValue.value}</span>
       <span
         className={`pull-right ${overridePrice ? 'text-decoration-line-through' : ''}`}>
         {(productOptionValue.price / 100).formatMoney()}
