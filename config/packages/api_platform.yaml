@@ -5,7 +5,7 @@ api_platform:
         normalization_context:
             skip_null_values: false
         extra_properties:
-            standard_put: true
+            standard_put: false
     version: 1.0.0
     title: CoopCycle
     show_webby: false
