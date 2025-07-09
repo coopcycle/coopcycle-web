@@ -84,19 +84,19 @@ use Symfony\Component\Validator\Constraints as Assert;
             uriTemplate: '/tasks/{id}/done',
             controller: TaskDone::class,
             openapiContext: [
-            'summary' => 'Marks a Task as done',
-            'parameters' => [
-                [
-                    'in' => 'body',
-                    'name' => 'N/A',
-                    'schema' => [
-                        'type' => 'object',
-                        'properties' => ['notes' => ['type' => 'string']]
-                    ],
-                    'style' => 'form'
+                'summary' => 'Marks a Task as done',
+                'parameters' => [
+                    [
+                        'in' => 'body',
+                        'name' => 'N/A',
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => ['notes' => ['type' => 'string']]
+                        ],
+                        'style' => 'form'
+                    ]
                 ]
-            ]
-        ],
+            ],
             denormalizationContext: ['groups' => ['task_operation']],
             security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))'
         ),
@@ -104,19 +104,19 @@ use Symfony\Component\Validator\Constraints as Assert;
             uriTemplate: '/tasks/{id}/failed',
             controller: TaskFailed::class,
             openapiContext: [
-            'summary' => 'Marks a Task as failed',
-            'parameters' => [
-                [
-                    'in' => 'body',
-                    'name' => 'N/A',
-                    'schema' => [
-                        'type' => 'object',
-                        'properties' => ['notes' => ['type' => 'string']]
-                    ],
-                    'style' => 'form'
+                'summary' => 'Marks a Task as failed',
+                'parameters' => [
+                    [
+                        'in' => 'body',
+                        'name' => 'N/A',
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => ['notes' => ['type' => 'string']]
+                        ],
+                        'style' => 'form'
+                    ]
                 ]
-            ]
-        ],
+            ],
             denormalizationContext: ['groups' => ['task_operation']],
             security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))'
         ),
@@ -124,19 +124,19 @@ use Symfony\Component\Validator\Constraints as Assert;
             uriTemplate: '/tasks/{id}/assign',
             controller: TaskAssign::class,
             openapiContext: [
-            'summary' => 'Assigns a Task to a messenger',
-            'parameters' => [
-                [
-                    'in' => 'body',
-                    'name' => 'N/A',
-                    'schema' => [
-                        'type' => 'object',
-                        'properties' => ['username' => ['type' => 'string']]
-                    ],
-                    'style' => 'form'
+                'summary' => 'Assigns a Task to a messenger',
+                'parameters' => [
+                    [
+                        'in' => 'body',
+                        'name' => 'N/A',
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => ['username' => ['type' => 'string']]
+                        ],
+                        'style' => 'form'
+                    ]
                 ]
-            ]
-        ],
+            ],
             denormalizationContext: ['groups' => ['task_operation']],
             security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_COURIER\')'
         ),
@@ -173,25 +173,25 @@ use Symfony\Component\Validator\Constraints as Assert;
             uriTemplate: '/tasks/{id}/reschedule',
             controller: TaskReschedule::class,
             openapiContext: [
-            'summary' => 'Reschedules a Task',
-            'parameters' => [
-                [
-                    'in' => 'body',
-                    'name' => 'N/A',
-                    'schema' => [
-                        'type' => 'object',
-                        'properties' => [
-                            'after' => [
-                                'type' => 'string',
-                                'format' => 'date-time'
-                            ],
-                            'before' => ['type' => 'string', 'format' => 'date-time']
-                        ]
-                    ],
-                    'style' => 'form'
+                'summary' => 'Reschedules a Task',
+                'parameters' => [
+                    [
+                        'in' => 'body',
+                        'name' => 'N/A',
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'after' => [
+                                    'type' => 'string',
+                                    'format' => 'date-time'
+                                ],
+                                'before' => ['type' => 'string', 'format' => 'date-time']
+                            ]
+                        ],
+                        'style' => 'form'
+                    ]
                 ]
-            ]
-        ],
+            ],
             denormalizationContext: ['groups' => ['task_operation']],
             security: 'is_granted(\'ROLE_DISPATCHER\')'
         ),
