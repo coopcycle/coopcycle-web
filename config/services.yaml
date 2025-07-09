@@ -743,6 +743,18 @@ services:
     alias: AppBundle\Entity\Sylius\OrderRepository
 
   AppBundle\Entity\Sylius\ProductOptionRepository:
+    factory: [ '@doctrine.orm.default_entity_manager', getRepository ]
+    arguments:
+      - AppBundle\Entity\Sylius\ProductOption
+    calls:
+      - method: setEntityManager
+        arguments: [ '@doctrine.orm.default_entity_manager' ]
+      - method: setProductRepository
+        arguments: [ '@sylius.repository.product' ]
+      - method: setProductOptionFactory
+        arguments: [ '@sylius.factory.product_option' ]
+      - method: setLocaleProvider
+        arguments: [ '@sylius.locale_provider' ]
 
   sylius.repository.product_option:
     alias: AppBundle\Entity\Sylius\ProductOptionRepository

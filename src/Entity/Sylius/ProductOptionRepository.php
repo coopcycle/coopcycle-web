@@ -10,13 +10,32 @@ use Sylius\Component\Resource\Factory\FactoryInterface;
 
 class ProductOptionRepository extends BaseRepository
 {
-    public function __construct(
-        private readonly EntityManagerInterface $entityManager,
-        private readonly ProductRepository $productRepository,
-        private readonly FactoryInterface $productOptionFactory,
-        private readonly LocaleProviderInterface $localeProvider
-    ) {
-        parent::__construct($entityManager, $entityManager->getClassMetadata(ProductOption::class));
+    private EntityManagerInterface $entityManager;
+    private ProductRepository $productRepository;
+    private FactoryInterface $productOptionFactory;
+    private LocaleProviderInterface $localeProvider;
+
+    // As this class is created by Doctrine's ContainerRepositoryFactory we can't modify its constructor
+    // and have to inject dependencies through setters
+    
+    public function setEntityManager(EntityManagerInterface $entityManager): void
+    {
+        $this->entityManager = $entityManager;
+    }
+
+    public function setProductRepository(ProductRepository $productRepository): void
+    {
+        $this->productRepository = $productRepository;
+    }
+
+    public function setProductOptionFactory(FactoryInterface $productOptionFactory): void
+    {
+        $this->productOptionFactory = $productOptionFactory;
+    }
+
+    public function setLocaleProvider(LocaleProviderInterface $localeProvider): void
+    {
+        $this->localeProvider = $localeProvider;
     }
 
     public function findPricingRuleProductOption(): ProductOptionInterface
