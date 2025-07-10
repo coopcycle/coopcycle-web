@@ -7,7 +7,6 @@ use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
-use AppBundle\Entity\Sylius\PricingStrategy;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\UsePricingRules;
@@ -17,7 +16,6 @@ use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Sylius\Product\ProductVariantInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
@@ -96,12 +94,14 @@ class DeliveryOrderManager
         if ($persist) {
             /** @var Product $product */
             $product = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
-            // Persist any new ProductOptions that were created
-            // (as Product entity is already managed we need to trigger it manually)
+            // Persist any new ProductOptionsValues that were created
+            // (as ProductOption entity is already managed we need to trigger it manually)
             // all other entities should be persisted via cascade relations
             foreach ($product->getOptions() as $productOption) {
-                if (!$this->entityManager->contains($productOption)) {
-                    $this->entityManager->persist($productOption);
+                foreach ($productOption->getValues() as $productOptionValue) {
+                    if (!$this->entityManager->contains($productOptionValue)) {
+                        $this->entityManager->persist($productOptionValue);
+                    }
                 }
             }
 

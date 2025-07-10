@@ -44,7 +44,7 @@ class ProductOptionValueFactory
 
         $productOptionValue->setValue($name);
 
-        $productOptionValue->setOption($productOption);
+        $productOption->addValue($productOptionValue);
 
         return $productOptionValue;
     }
