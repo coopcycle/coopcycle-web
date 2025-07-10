@@ -1708,7 +1708,7 @@ Feature: Tasks
         ],
         "hydra:totalItems":4,
         "hydra:view":{
-          "@id":"/api/tasks?date=2024-12-01&pagination=true&itemsPerPage=2&page=1",
+          "@id":"/api/tasks?date=2024-12-01&itemsPerPage=2&pagination=true&page=1",
           "@type":"hydra:PartialCollectionView",
           "hydra:first":"/api/tasks?date=2024-12-01&pagination=true&itemsPerPage=2&page=1",
           "hydra:last":"/api/tasks?date=2024-12-01&pagination=true&itemsPerPage=2&page=2",
@@ -1776,7 +1776,7 @@ Feature: Tasks
         ],
         "hydra:totalItems":1,
         "hydra:view":{
-          "@id":"/api/tasks?date=2018-12-01&assigned=no",
+          "@id":"/api/tasks?assigned=no&date=2018-12-01",
           "@type":"hydra:PartialCollectionView"
         },
         "hydra:search":{
