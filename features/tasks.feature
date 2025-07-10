@@ -3239,12 +3239,14 @@ Feature: Tasks
         "hydra:member":[
           {
             "@type":"FailureReason",
+            "@id": @string@,
             "code":"DAMAGED",
             "description":"Damaged",
             "metadata":[]
           },
           {
             "@type":"FailureReason",
+            "@id": @string@,
             "code":"REFUSED",
             "description":"Refused",
             "metadata":[]
