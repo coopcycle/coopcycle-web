@@ -1,0 +1,16 @@
+AppBundle\Entity\Sylius\ProductOption:
+  product_option_pricing_rules:
+    currentLocale: fr
+    code: 'CPCCL-ODDLVR-PR'
+    name: 'Pricing Rules'
+    strategy: 'free'
+    additional: false
+
+AppBundle\Entity\Sylius\Product:
+  on_demand_delivery:
+    code: CPCCL-ODDLVR
+    currentLocale: fr
+    name: Livraison à la demande
+    slug: livraison-a-la-demande
+    enabled: true
+    options: [ "@product_option_pricing_rules" ]
