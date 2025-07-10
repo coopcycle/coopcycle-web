@@ -335,7 +335,7 @@ class PricingManager
         /** @var OrderItemInterface $orderItem */
         $orderItem = $this->orderItemFactory->createNew();
         $orderItem->setVariant($variant);
-        $orderItem->setUnitPrice(0);
+        $orderItem->setUnitPrice($variant->getPrice());
         //TODO: do we need this?
 //        $orderItem->setImmutable(true);
 
