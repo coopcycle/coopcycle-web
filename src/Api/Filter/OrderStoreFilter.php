@@ -34,6 +34,15 @@ final class OrderStoreFilter extends AbstractFilter
 
             $valueParameter = $queryNameGenerator->generateParameterName($field);
 
+            if (is_array($value)) {
+
+                $queryBuilder
+                    ->andWhere($queryBuilder->expr()->in(sprintf('%s.%s', $alias, $field), sprintf(':%s', $valueParameter)))
+                    ->setParameter($valueParameter, $value);
+
+                return;
+            }
+
             $queryBuilder
                 ->andWhere(\sprintf('%s.%s = :%s', $alias, $field, $valueParameter))
                 ->setParameter($valueParameter, $value, (string) $this->getDoctrineFieldType($property, $resourceClass));
