@@ -190,4 +190,16 @@ class PricingRule
 
         return $language->evaluate($this->getExpression(), $values);
     }
+
+    public function apply(array $values, ?ExpressionLanguage $language = null): int
+    {
+        if (null === $language) {
+            $language = new ExpressionLanguage();
+        }
+
+        $priceExpression = $this->getPrice();
+        $result = $language->evaluate($priceExpression, $values);
+
+        return $result;
+    }
 }

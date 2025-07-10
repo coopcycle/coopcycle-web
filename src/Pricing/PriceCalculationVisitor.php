@@ -287,8 +287,7 @@ class PriceCalculationVisitor
             $language = new ExpressionLanguage();
         }
 
-        $priceExpression = $rule->getPrice();
-        $result = $language->evaluate($priceExpression, $expressionLanguageValues);
+        $result = $rule->apply($expressionLanguageValues, $language);
 
         //For now; km and package-based rules will contain total in $price
         // return price per km or package and quantity separately?
