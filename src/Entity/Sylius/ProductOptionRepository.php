@@ -56,13 +56,11 @@ class ProductOptionRepository extends BaseRepository
         // Set current locale before setting the name for translatable entities
         $productOption->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
 
-        // Set basic properties
         $productOption->setCode('CPCCL-ODDLVR-PR');
         $productOption->setName('Pricing Rules');
 
-        //FIXME: Set default strategy and additional flag
-        $productOption->setStrategy('free');
-        $productOption->setAdditional(false);
+        $productOption->setStrategy(ProductOptionInterface::STRATEGY_OPTION_VALUE);
+        $productOption->setAdditional(true);
 
         $this->onDemandDeliveryProduct->addOption($productOption);
 

@@ -345,6 +345,7 @@ class PriceCalculationVisitor
             }
         }
 
-        $productVariant->setPrice($subtotal - $previousItemsTotal);
+        // Final price is set via adjustments in OrderOptionsProcessor
+        $productVariant->setPrice(0);
     }
 }
