@@ -154,28 +154,23 @@ class PricingManager
     /**
      * @param ProductVariantInterface[] $productVariants
      */
-    public function processDeliveryOrder(OrderInterface $order, array $productVariants) {
+    public function processDeliveryOrder(OrderInterface $order, array $productVariants): void {
 
         //TODO: remove previously added items
 
         $items = [];
-        $itemsTotal = 0;
 
         foreach ($productVariants as $productVariant) {
             $orderItem = $this->createOrderItem($productVariant);
 
-            //TODO: Later on: group the same product variants into one OrderItem
             $this->orderItemQuantityModifier->modify($orderItem, 1);
 
             $items[] = $orderItem;
-            $itemsTotal += $orderItem->getTotal();
         }
 
         foreach ($items as $item) {
             $this->orderModifier->addToOrder($order, $item);
         }
-        //TODO where total should be calculated?
-//        $order->setItemsTotal($itemsTotal);
     }
 
     public function duplicateOrder($store, $orderId): OrderDuplicate | null
