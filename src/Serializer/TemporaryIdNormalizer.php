@@ -63,6 +63,10 @@ class TemporaryIdNormalizer implements NormalizerInterface
 
     public function supportsNormalization($data, ?string $format = null, array $context = []): bool
     {
-        return is_object($data) && method_exists($data, 'getId') && null === $data->getId();
+        $isSupportedObject = is_object($data) && method_exists($data, 'getId') && null === $data->getId();
+
+        $isEnabledForGroup = isset($context['groups']) && in_array('pricing_deliveries', $context['groups']);
+
+        return $isSupportedObject && $isEnabledForGroup;
     }
 }
