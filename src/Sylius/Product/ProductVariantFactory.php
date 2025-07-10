@@ -17,16 +17,13 @@ use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 class ProductVariantFactory implements ProductVariantFactoryInterface
 {
 
-    private ProductInterface $product;
-
     public function __construct(
         private readonly ProductVariantFactoryInterface $factory,
-        ProductRepositoryInterface $productRepository,
+        private readonly ProductRepositoryInterface $productRepository,
         private readonly TaxCategoryRepositoryInterface $taxCategoryRepository,
         private readonly SettingsManager $settingsManager
     )
     {
-        $this->product = $productRepository->findOneByCode('CPCCL-ODDLVR');
     }
 
     /**
@@ -108,11 +105,13 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
 
     private function createForOnDemandDelivery(): ProductVariantInterface
     {
+        $product = $this->productRepository->findOneBy(['code' => 'CPCCL-ODDLVR']);
+
         /** @var ProductVariantInterface $productVariant */
-        $productVariant = $this->createForProduct($this->product);
+        $productVariant = $this->createForProduct($product);
         $productVariant->setCode('CPCCL-ODDLVR-'.Uuid::uuid4()->toString());
 
-        $productVariant->setName($this->product->getName());
+        $productVariant->setName($product->getName());
 
         $subjectToVat = $this->settingsManager->get('subject_to_vat');
         $taxCategory = $this->taxCategoryRepository->findOneBy([

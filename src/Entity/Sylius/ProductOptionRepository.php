@@ -2,7 +2,6 @@
 
 namespace AppBundle\Entity\Sylius;
 
-use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Bundle\ProductBundle\Doctrine\ORM\ProductOptionRepository as BaseRepository;
@@ -12,10 +11,9 @@ use Sylius\Component\Resource\Factory\FactoryInterface;
 class ProductOptionRepository extends BaseRepository
 {
     private EntityManagerInterface $entityManager;
+    private ProductRepository $productRepository;
     private FactoryInterface $productOptionFactory;
     private LocaleProviderInterface $localeProvider;
-
-    private ProductInterface $onDemandDeliveryProduct;
 
     // As this class is created by Doctrine's ContainerRepositoryFactory we can't modify its constructor
     // and have to inject dependencies through setters
@@ -27,7 +25,7 @@ class ProductOptionRepository extends BaseRepository
 
     public function setProductRepository(ProductRepository $productRepository): void
     {
-        $this->onDemandDeliveryProduct = $productRepository->findOneBy(['code' => 'CPCCL-ODDLVR']);
+        $this->productRepository = $productRepository;
     }
 
     public function setProductOptionFactory(FactoryInterface $productOptionFactory): void
@@ -42,7 +40,9 @@ class ProductOptionRepository extends BaseRepository
 
     public function findPricingRuleProductOption(): ProductOptionInterface
     {
-        $existingOptions = $this->onDemandDeliveryProduct->getOptions();
+        $onDemandDeliveryProduct = $this->productRepository->findOneBy(['code' => 'CPCCL-ODDLVR']);
+
+        $existingOptions = $onDemandDeliveryProduct->getOptions();
         if (!$existingOptions->isEmpty()) {
             // Return the first option (there should only be one for pricing rules)
             /** @var ProductOptionInterface $firstOption */
@@ -62,7 +62,7 @@ class ProductOptionRepository extends BaseRepository
         $productOption->setStrategy(ProductOptionInterface::STRATEGY_OPTION_VALUE);
         $productOption->setAdditional(true);
 
-        $this->onDemandDeliveryProduct->addOption($productOption);
+        $onDemandDeliveryProduct->addOption($productOption);
 
         $this->entityManager->persist($productOption);
         $this->entityManager->flush();
