@@ -289,6 +289,10 @@ class PriceCalculationVisitor
 
         $result = $rule->apply($expressionLanguageValues, $language);
 
+        $this->logger->info(sprintf('processProductOptionValue; result %d (rule "%s")', $result, $rule->getExpression()), [
+            'target' => $rule->getTarget(),
+        ]);
+
         //For now; km and package-based rules will contain total in $price
         // return price per km or package and quantity separately?
         $productOptionValue->setPrice($result);
@@ -335,8 +339,14 @@ class PriceCalculationVisitor
                 $previousSubtotal = $subtotal;
 
                 $subtotal = (int)ceil($subtotal * ($priceMultiplier / 100 / 100));
+                $price = $subtotal - $previousSubtotal;
 
-                $productOptionValue->setPrice($subtotal - $previousSubtotal);
+                $this->logger->info(sprintf('processProductVariant; update percentage-based ProductOptionValue price to %d', $price), [
+                    'base' => $previousSubtotal,
+                    'percentage' => $priceMultiplier / 100 - 100,
+                ]);
+
+                $productOptionValue->setPrice($price);
 
             } else {
                 $quantity = $productVariant->getQuantityForOptionValue($productOptionValue);
