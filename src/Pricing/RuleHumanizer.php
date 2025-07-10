@@ -40,10 +40,11 @@ class RuleHumanizer
 
         $parts = $accumulator->getArrayCopy();
 
-        if (count($parts) === 0) {
+        if (0 === count($parts)) {
             return $this->fallbackName($rule);
         }
 
+        // @phpstan-ignore-next-line deadCode.unreachable (False positive: line is reachable when traverseNode populates accumulator)
         return implode(', ', $parts);
     }
 
@@ -52,7 +53,13 @@ class RuleHumanizer
         return $rule->getExpression();
     }
 
-    private function traverseNode(Node $node, $accumulator)
+    /**
+     * Recursively traverse expression nodes and accumulate human-readable parts.
+     *
+     * @param Node $node The expression node to traverse
+     * @param \ArrayObject $accumulator The accumulator that collects human-readable parts
+     */
+    private function traverseNode(Node $node, \ArrayObject $accumulator): void
     {
         if ($node instanceof BinaryNode && isset($node->attributes['operator']) && $node->attributes['operator'] === 'and') {
             // Handle 'and' operations by recursively processing left and right sides
