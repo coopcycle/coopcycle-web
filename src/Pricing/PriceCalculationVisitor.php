@@ -354,7 +354,7 @@ class PriceCalculationVisitor
             }
         }
 
-        // Final price is set via adjustments in OrderOptionsProcessor
-        $productVariant->setPrice(0);
+        //FIXME: adjustments in OrderOptionsProcessor lead to double price
+        $productVariant->setPrice($subtotal - $previousItemsTotal);
     }
 }
