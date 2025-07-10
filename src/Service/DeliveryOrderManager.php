@@ -17,7 +17,6 @@ use AppBundle\Pricing\PricingManager;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -38,7 +37,6 @@ class DeliveryOrderManager
         private readonly OrderFactory $orderFactory,
         private readonly PricingManager $pricingManager,
         private readonly CreateIncident $createIncident,
-        private readonly LoggerInterface $logger,
     ) {
         $this->tokenStorage = $tokenStorage;
     }

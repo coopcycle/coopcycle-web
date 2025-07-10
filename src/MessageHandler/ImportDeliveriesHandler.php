@@ -2,21 +2,16 @@
 
 namespace AppBundle\MessageHandler;
 
-use AppBundle\Entity\Organization;
-use AppBundle\Entity\Store;
 use AppBundle\Entity\Delivery\ImportQueue as DeliveryImportQueue;
-use AppBundle\Entity\Sylius\UsePricingRules;
 use AppBundle\Entity\Tour;
 use AppBundle\Entity\TourRepository;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Message\ImportDeliveries;
-use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\LiveUpdates;
 use AppBundle\Spreadsheet\DeliverySpreadsheetParser;
-use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
 use Psr\Log\LoggerInterface;
@@ -33,7 +28,6 @@ class ImportDeliveriesHandler
         private DeliverySpreadsheetParser $spreadsheetParser,
         private ValidatorInterface $validator,
         private TranslatorInterface $translator,
-        private PricingManager $pricingManager,
         private DeliveryOrderManager $deliveryOrderManager,
         private LiveUpdates $liveUpdates,
         private DeliveryManager $deliveryManager,
