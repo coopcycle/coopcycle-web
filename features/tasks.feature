@@ -1710,9 +1710,9 @@ Feature: Tasks
         "hydra:view":{
           "@id":"/api/tasks?date=2024-12-01&itemsPerPage=2&pagination=true&page=1",
           "@type":"hydra:PartialCollectionView",
-          "hydra:first":"/api/tasks?date=2024-12-01&pagination=true&itemsPerPage=2&page=1",
-          "hydra:last":"/api/tasks?date=2024-12-01&pagination=true&itemsPerPage=2&page=2",
-          "hydra:next":"/api/tasks?date=2024-12-01&pagination=true&itemsPerPage=2&page=2"
+          "hydra:first":"/api/tasks?date=2024-12-01&itemsPerPage=2&pagination=true&page=1",
+          "hydra:last":"/api/tasks?date=2024-12-01&itemsPerPage=2&pagination=true&page=2",
+          "hydra:next":"/api/tasks?date=2024-12-01&itemsPerPage=2&pagination=true&page=2"
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
