@@ -61,8 +61,7 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         return $productVariant;
     }
 
-    //TODO: merge with the new implementation
-    public function createForDelivery(Delivery $delivery, PriceInterface $price): ProductVariantInterface
+    public function createWithPrice(Delivery $delivery, PriceInterface $price): ProductVariantInterface
     {
         $productVariant = $this->createForOnDemandDelivery();
 
@@ -107,7 +106,7 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         return sprintf('%s kg', number_format($grams / 1000, 2));
     }
 
-    public function createForOnDemandDelivery(): ProductVariantInterface
+    private function createForOnDemandDelivery(): ProductVariantInterface
     {
         /** @var ProductVariantInterface $productVariant */
         $productVariant = $this->createForProduct($this->product);

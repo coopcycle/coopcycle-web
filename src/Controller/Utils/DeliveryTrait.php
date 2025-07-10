@@ -100,7 +100,7 @@ trait DeliveryTrait
                         'pricingStrategy' => new UseArbitraryPrice($arbitraryPrice),
                     ]);
                 } else {
-                    $pricingManager->updateDeliveryPrice($order, $delivery, $arbitraryPrice);
+                    $pricingManager->processDeliveryOrder($order, [$pricingManager->getCustomProductVariant($delivery, $arbitraryPrice)]);
                 }
             }
 

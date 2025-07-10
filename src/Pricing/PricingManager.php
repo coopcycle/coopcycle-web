@@ -155,8 +155,15 @@ class PricingManager
      * @param ProductVariantInterface[] $productVariants
      */
     public function processDeliveryOrder(OrderInterface $order, array $productVariants): void {
+        if ($order->isFoodtech()) {
+            $this->logger->info('processDeliveryOrder command should NOT be called on foodtech orders');
+            return;
+        }
 
-        //TODO: remove previously added items
+        //remove previously added items
+        foreach ($order->getItems() as $item) {
+            $this->orderModifier->removeFromOrder($order, $item);
+        }
 
         $items = [];
 
@@ -336,26 +343,6 @@ class PricingManager
     }
 
     public function getCustomProductVariant(Delivery $delivery, PriceInterface $price): ProductVariantInterface {
-        return $this->productVariantFactory->createForDelivery($delivery, $price);
-    }
-
-    //TODO: merge with the new implementation
-    public function updateDeliveryPrice(OrderInterface $order, Delivery $delivery, PriceInterface $price)
-    {
-        if ($order->isFoodtech()) {
-            $this->logger->info('Price update is not supported for foodtech orders');
-            return;
-        }
-
-        $deliveryItem = $order->getDeliveryItem();
-
-        if (null === $deliveryItem) {
-            $this->logger->info('No delivery item found in order');
-        }
-
-        // remove the previous price
-        $this->orderModifier->removeFromOrder($order, $deliveryItem);
-
-        $this->processDeliveryOrder($order, [$this->getCustomProductVariant($delivery, $price)]);
+        return $this->productVariantFactory->createWithPrice($delivery, $price);
     }
 }
