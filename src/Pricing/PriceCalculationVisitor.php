@@ -281,7 +281,7 @@ class PriceCalculationVisitor
         ProductOptionValue $productOptionValue,
         PricingRule $rule,
         array $expressionLanguageValues,
-        ExpressionLanguage $language = null
+        ?ExpressionLanguage $language = null
     ): ProductOptionValueWithQuantity {
         if (null === $language) {
             $language = new ExpressionLanguage();

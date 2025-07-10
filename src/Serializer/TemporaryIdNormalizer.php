@@ -21,7 +21,7 @@ class TemporaryIdNormalizer implements NormalizerInterface
     ) {
     }
 
-    public function normalize($object, string $format = null, array $context = []): mixed
+    public function normalize($object, ?string $format = null, array $context = []): mixed
     {
         // Skip if already processed to avoid circular references
         $objectId = spl_object_id($object);
@@ -61,7 +61,7 @@ class TemporaryIdNormalizer implements NormalizerInterface
         }
     }
 
-    public function supportsNormalization($data, string $format = null, array $context = []): bool
+    public function supportsNormalization($data, ?string $format = null, array $context = []): bool
     {
         return is_object($data) && method_exists($data, 'getId') && null === $data->getId();
     }
