@@ -105,6 +105,7 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
 
     private function createForOnDemandDelivery(): ProductVariantInterface
     {
+        /** @var ProductInterface $product */
         $product = $this->productRepository->findOneBy(['code' => 'CPCCL-ODDLVR']);
 
         /** @var ProductVariantInterface $productVariant */
