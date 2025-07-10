@@ -26,7 +26,7 @@ class PriceCalculationOutput
 
         return array_reduce(
             $this->productVariants,
-            fn($carry, $item) => $carry + $item->getPrice(),
+            fn(int $carry, ProductVariantInterface $item) => $carry + $item->getOptionValuesPrice(),
             0
         );
     }

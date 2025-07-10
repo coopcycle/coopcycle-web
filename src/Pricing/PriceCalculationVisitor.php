@@ -311,7 +311,7 @@ class PriceCalculationVisitor
         foreach ($taskProductVariants as $productVariant) {
             $this->processProductVariant($productVariant, 0);
 
-            $taskItemsTotal += $productVariant->getPrice();
+            $taskItemsTotal += $productVariant->getOptionValuesPrice();
         }
 
         if ($deliveryProductVariant) {
@@ -354,7 +354,9 @@ class PriceCalculationVisitor
             }
         }
 
-        //FIXME: adjustments in OrderOptionsProcessor lead to double price
-        $productVariant->setPrice($subtotal - $previousItemsTotal);
+        // On Demand Delivery product variant price is set as follows:
+        // 1. productVariant price (unit price) is set to 0
+        // 2. Product option values prices are added to the order via adjustments in OrderOptionsProcessor
+        $productVariant->setPrice(0);
     }
 }
