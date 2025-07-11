@@ -3,8 +3,8 @@ AppBundle\Entity\Sylius\ProductOption:
     currentLocale: fr
     code: 'CPCCL-ODDLVR-PR'
     name: 'Pricing Rules'
-    strategy: 'free'
-    additional: false
+    strategy: 'option_value'
+    additional: true
 
 AppBundle\Entity\Sylius\Product:
   on_demand_delivery:
