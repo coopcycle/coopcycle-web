@@ -32,12 +32,12 @@ phpunit-only:
 	@clear && docker compose exec php php vendor/bin/phpunit --group only
 
 behat:
-	@docker compose exec php php vendor/bin/behat
+	@docker compose exec -e APP_ENV=test php php vendor/bin/behat
 # Add as annotation at the top of any scenario/feature:
 # @only
 # Scenario: Some description..
 behat-only:
-	@clear && docker compose exec php php vendor/bin/behat -v --tags="@only"
+	@clear && docker compose exec -e APP_ENV=test php php vendor/bin/behat -v --tags="@only"
 
 cypress:
 	@npm run e2e
