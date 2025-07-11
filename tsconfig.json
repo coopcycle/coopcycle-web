@@ -1,0 +1,63 @@
+{
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+
+    /* Modules */
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+//      "@app/*": ["./js/app/*"],
+//      "@shared/*": ["./js/shared/*"]
+    },
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+
+    /* JavaScript Support */
+    "allowJs": true,
+
+    /* Emit */
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": true,
+    "outDir": "./web/build",
+    "removeComments": false,
+    "noEmit": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./web/build/.tsbuildinfo",
+
+    /* Interop Constraints */
+    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Type Checking */
+    "strict": false,
+    "noImplicitAny": false,
+    "noImplicitReturns": false,
+    "noImplicitThis": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "exactOptionalPropertyTypes": false,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitUseStrict": false,
+
+    /* Completeness */
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "noErrorTruncation": true
+  },
+  "include": ["js/**/*.{ts,tsx}", "assets/**/*.{ts,tsx}"],
+  "exclude": [
+    "node_modules",
+    "web/build",
+    "var",
+    "vendor",
+    "tests",
+    "cypress",
+    "**/*.{test,spec}.{ts,tsx}"
+  ]
+}

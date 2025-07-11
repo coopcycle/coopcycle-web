@@ -114,6 +114,9 @@ Encore
   // but, you probably want this, unless you're building a single-page app
   .enableSingleRuntimeChunk()
 
+  .enableTypeScriptLoader(function(tsConfig) {
+    tsConfig.transpileOnly = true
+  })
   .enableReactPreset()
 
   .enablePostCssLoader()
