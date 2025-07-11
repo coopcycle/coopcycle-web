@@ -42,9 +42,37 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-PR",
+                      "values": [
+                        @...@
+                      ],
+                      "name": @string@
+                    },
+                    "value": "plus de 0.00 km"
+                  }
+                ],
+                "name": @string@
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -91,9 +119,37 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-PR",
+                      "values": [
+                        @...@
+                      ],
+                      "name": @string@
+                    },
+                    "value": "plus de 0.00 km"
+                  }
+                ],
+                "name": @string@
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -140,9 +196,37 @@ Feature: Retail prices
           "amount":83,
           "included": false
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-PR",
+                      "values": [
+                        @...@
+                      ],
+                      "name": @string@
+                    },
+                    "value": "plus de 0.00 km"
+                  }
+                ],
+                "name": @string@
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -192,9 +276,37 @@ Feature: Retail prices
           "amount":217,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 1299,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-PR",
+                      "values": [
+                        @...@
+                      ],
+                      "name": @string@
+                    },
+                    "value": "packages.containsAtLeastOne(\"XL\")"
+                  }
+                ],
+                "name": @string@
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 1299
+            }
+          ],
+          "total": 1299
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -244,9 +356,37 @@ Feature: Retail prices
           "amount":217,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 1299,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-PR",
+                      "values": [
+                        @...@
+                      ],
+                      "name": @string@
+                    },
+                    "value": "packages.containsAtLeastOne(\"XL\")"
+                  }
+                ],
+                "name": @string@
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 1299
+            }
+          ],
+          "total": 1299
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -296,9 +436,37 @@ Feature: Retail prices
           "amount":217,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 1299,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-PR",
+                      "values": [
+                        @...@
+                      ],
+                      "name": @string@
+                    },
+                    "value": "packages.containsAtLeastOne(\"XL\")"
+                  }
+                ],
+                "name": @string@
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 1299
+            }
+          ],
+          "total": 1299
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -346,9 +514,37 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-PR",
+                      "values": [
+                        @...@
+                      ],
+                      "name": @string@
+                    },
+                    "value": "moins de 2.00 kg"
+                  }
+                ],
+                "name": @string@
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -405,9 +601,37 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-PR",
+                      "values": [
+                        @...@
+                      ],
+                      "name": @string@
+                    },
+                    "value": "plus de 0.00 km"
+                  }
+                ],
+                "name": @string@
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -464,9 +688,37 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-PR",
+                      "values": [
+                        @...@
+                      ],
+                      "name": @string@
+                    },
+                    "value": "plus de 0.00 km"
+                  }
+                ],
+                "name": @string@
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -516,9 +768,37 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-PR",
+                      "values": [
+                        @...@
+                      ],
+                      "name": @string@
+                    },
+                    "value": "plus de 0.00 km"
+                  }
+                ],
+                "name": @string@
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -568,9 +848,37 @@ Feature: Retail prices
           "amount":117,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 699,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-PR",
+                      "values": [
+                        @...@
+                      ],
+                      "name": @string@
+                    },
+                    "value": "time_slot == \"/api/time_slots/1\" and task.type == \"PICKUP\""
+                  }
+                ],
+                "name": @string@
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 699
+            }
+          ],
+          "total": 699
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -620,9 +928,37 @@ Feature: Retail prices
           "amount":33,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 200,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-PR",
+                      "values": [
+                        @...@
+                      ],
+                      "name": @string@
+                    },
+                    "value": "taux de dépôt"
+                  }
+                ],
+                "name": @string@
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 200
+            }
+          ],
+          "total": 200
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -753,9 +1089,37 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-PR",
+                      "values": [
+                        @...@
+                      ],
+                      "name": @string@
+                    },
+                    "value": "plus de 0.00 km"
+                  }
+                ],
+                "name": @string@
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -801,9 +1165,37 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-PR",
+                      "values": [
+                        @...@
+                      ],
+                      "name": @string@
+                    },
+                    "value": "plus de 0.00 km"
+                  }
+                ],
+                "name": @string@
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -857,9 +1249,37 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-PR",
+                      "values": [
+                        @...@
+                      ],
+                      "name": @string@
+                    },
+                    "value": "plus de 0.00 km"
+                  }
+                ],
+                "name": @string@
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -898,9 +1318,37 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-PR",
+                      "values": [
+                        @...@
+                      ],
+                      "name": @string@
+                    },
+                    "value": "plus de 0.00 km"
+                  }
+                ],
+                "name": @string@
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -970,9 +1418,37 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-PR",
+                      "values": [
+                        @...@
+                      ],
+                      "name": @string@
+                    },
+                    "value": "plus de 0.00 km"
+                  }
+                ],
+                "name": @string@
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -1021,9 +1497,37 @@ Feature: Retail prices
           "amount":@integer@,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 699,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-PR",
+                      "values": [
+                        @...@
+                      ],
+                      "name": @string@
+                    },
+                    "value": "volume du colis moins de 9"
+                  }
+                ],
+                "name": @string@
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 699
+            }
+          ],
+          "total": 699
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
