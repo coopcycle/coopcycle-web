@@ -43,7 +43,7 @@ final class DeliveryOrderProcessor implements ProcessorInterface
             return;
         }
 
-        $price = new ArbitraryPrice('Custom price', random_int(500, 20000));
+        $price = new ArbitraryPrice(null, random_int(500, 20000));
         $this->pricingManager->processDeliveryOrder(
             $order,
             [$this->pricingManager->getCustomProductVariant($delivery, $price)]
