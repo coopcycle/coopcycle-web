@@ -28,7 +28,7 @@ AppBundle\Entity\Delivery:
       - setDropoffRange:
           - <identity(new \DateTime('today 19:00:00'))>
           - <identity(new \DateTime('today 19:30:00'))>
-    store: '@store_*'
+    store: '@store_<numberBetween(2, 50)>'
 
 AppBundle\Entity\Sylius\Order:
   order_{1..1000}:

@@ -145,7 +145,7 @@ Feature: Invoicing
           },
           "@array_previous_repeat@"
         ],
-        "hydra:totalItems":259,
+        "hydra:totalItems":250,
         "hydra:view":{
           "@id":"/api/invoice_line_items?store=1\u0026page=1",
           "@type":"hydra:PartialCollectionView",
