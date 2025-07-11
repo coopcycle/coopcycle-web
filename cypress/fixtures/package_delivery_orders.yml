@@ -30,18 +30,14 @@ AppBundle\Entity\Delivery:
           - <identity(new \DateTime('today 19:30:00'))>
     store: '@store_*'
 
-AppBundle\Entity\Sylius\PricingRulesBasedPrice:
-  price_{1..1000}:
-    __construct:
-      - <numberBetween(500, 20000)>
-
 AppBundle\Entity\Sylius\Order:
   order_{1..1000}:
     __factory:
-      '@sylius.factory.order::createForDeliveryAndPrice':
+      '@sylius.factory.order::createForDelivery':
         - "@delivery_<current()>"
-        - "@price_<current()>"
     __calls:
-#      FIXME: that does not set an order number on each task (normally it's handled by OrderSubscriber)
+      # FIXME: this does not set an order number on each task (normally it's handled by OrderSubscriber)
+      # but doing so inside DeliveryOrderProcessor (via OrderManager.onDemand) is too slow
       - setNumber: [ "A<current()>" ]
       - setState: [ 'new' ]
+    # The rest of initialization is done by DeliveryOrderProcessor
