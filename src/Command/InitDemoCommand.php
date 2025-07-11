@@ -79,7 +79,9 @@ class InitDemoCommand extends Command
     private static $couriersToCreate = 50;
     private static $restaurantsToCreate = 50;
     private static $storesToCreate = 25;
-    private static $ordersToCreate = 25;
+    private static $foodTechOrdersToCreate = 25;
+    //TODO: implement
+    private static $packageDeliveryOrdersToCreate = 0;
 
     protected function configure()
     {
@@ -608,18 +610,23 @@ class InitDemoCommand extends Command
     {
         //$user = $this->doctrine->getRepository(Entity\User::class)->findOneBy(['username' => 'user_1']);
 
-        for ($i = 1; $i <= self::$ordersToCreate; $i++) {
+        for ($i = 1; $i <= self::$foodTechOrdersToCreate; $i++) {
             $restaurant = $this->createdRestaurants[array_rand($this->createdRestaurants)];
             $user = $this->createdUsers[array_rand($this->createdUsers)];
             // Fetching the user again because if not, it fails with error:
             // "A new entity was found through the relationship 'AppBundle\Entity\User#channel' that was not configured to cascade persist operations for entity: Web."
             $user = $this->doctrine->getRepository(Entity\User::class)->findOneBy(['username' => $user->getUsername()]);
 
-            $this->createOrder('00'.$i, $restaurant, $user);
+            $this->createFoodTechOrder('00'.$i, $restaurant, $user);
+        }
+
+        for ($i = 1; $i <= self::$packageDeliveryOrdersToCreate; $i++) {
+            $store = $this->createdStores[array_rand($this->createdStores)];
+            //TODO: implement
         }
     }
 
-    private function createOrder($id, $restaurant, $user)
+    private function createFoodTechOrder($id, $restaurant, $user)
     {
         $em = $this->doctrine->getManagerForClass(Entity\Sylius\Order::class);
         $order = new Entity\Sylius\Order();
