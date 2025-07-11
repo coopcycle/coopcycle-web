@@ -3,6 +3,8 @@ Feature: Retail prices
   Scenario: Get delivery price with JWT for admin user
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -50,6 +52,8 @@ Feature: Retail prices
   Scenario: Get delivery price with JWT for dispatcher user
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "dispatcher" is loaded:
@@ -97,6 +101,8 @@ Feature: Retail prices
   Scenario: Get delivery price with JWT (without tax)
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -144,6 +150,8 @@ Feature: Retail prices
   Scenario: Get delivery price with packages (JWT)
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -194,6 +202,8 @@ Feature: Retail prices
   Scenario: Get delivery price with packages in task (JWT)
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -244,6 +254,8 @@ Feature: Retail prices
   Scenario: Get delivery price with packages in task (quantity as string) (JWT)
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -294,6 +306,8 @@ Feature: Retail prices
   Scenario: Get delivery price with weight in task (JWT)
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -342,6 +356,8 @@ Feature: Retail prices
   Scenario: Get delivery price with latlLng (JWT)
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -399,6 +415,8 @@ Feature: Retail prices
   Scenario: Get delivery price with geo (JWT)
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -456,6 +474,8 @@ Feature: Retail prices
   Scenario: Get delivery price for an admin user with timeSlotUrl and timeSlot range in ISO 8601
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -506,6 +526,8 @@ Feature: Retail prices
   Scenario: Get delivery price for an admin user with an implicit timeSlot
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | store_w_time_slot_pricing.yml |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -556,6 +578,8 @@ Feature: Retail prices
   Scenario: Get delivery price for an admin user with a range not belonging to a timeSlot
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | store_w_time_slot_pricing.yml |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -606,6 +630,8 @@ Feature: Retail prices
   Scenario: Can't get delivery price with invalid timeSlotUrl for admin user
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -648,6 +674,8 @@ Feature: Retail prices
   Scenario: Can't get delivery price with invalid timeSlot range for admin user
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -690,6 +718,8 @@ Feature: Retail prices
   Scenario: Get delivery price with OAuth
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -733,6 +763,8 @@ Feature: Retail prices
   Scenario: Get delivery price with array of tasks
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the setting "latlng" has value "48.856613,2.352222"
@@ -780,6 +812,8 @@ Feature: Retail prices
     Given the current time is "2021-08-25 09:00:00"
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the setting "latlng" has value "48.856613,2.352222"
@@ -833,6 +867,8 @@ Feature: Retail prices
   Scenario: Get delivery price with OAuth (implicit pickup)
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -872,6 +908,8 @@ Feature: Retail prices
   Scenario: Can't calculate a price for another store
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "bob" is loaded:
@@ -896,6 +934,8 @@ Feature: Retail prices
   Scenario: Get delivery price with JWT with explicit store
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "bob" is loaded:
@@ -940,6 +980,8 @@ Feature: Retail prices
   Scenario: Get delivery price when there is two packages with the same name in different pricing rule set
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | store_w_package_pricing.yml |
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
@@ -989,6 +1031,8 @@ Feature: Retail prices
   Scenario: Can't calculate a price
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
