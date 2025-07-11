@@ -1925,6 +1925,7 @@ class Order extends BaseOrder implements OrderInterface
             return null;
         }
 
+        //FIXME: this will be broken with a new Order Items structure
         if ($deliveryItem = $this->getItems()->first()) {
             return $deliveryItem; // @phpstan-ignore return.type
         } else {
@@ -1939,6 +1940,7 @@ class Order extends BaseOrder implements OrderInterface
             return new PricingRulesBasedPrice(0);
         }
 
+        //FIXME: this will be broken with a new Order Items structure
         $deliveryItem = $this->getDeliveryItem();
 
         if (null === $deliveryItem) {

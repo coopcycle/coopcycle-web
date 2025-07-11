@@ -27,4 +27,9 @@ interface ProductVariantInterface extends BaseProductVariantInterface, TaxableIn
     public function getPricingRuleSet(): ?PricingRuleSet;
 
     public function setPricingRuleSet(?PricingRuleSet $pricingRuleSet): void;
+
+    /**
+     * Used for On Demand Delivery products
+     */
+    public function getOptionValuesPrice(): ?int;
 }

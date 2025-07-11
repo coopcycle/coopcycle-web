@@ -63,9 +63,9 @@ Sylius\Component\Order\Model\Order:
     customer:
       groups: ['order', 'cart', 'order_minimal']
     items:
-      groups: ['order', 'order_create', 'cart']
+      groups: ['order', 'order_create', 'cart', 'pricing_deliveries']
     total:
-      groups: ['order', 'cart', 'order_minimal']
+      groups: ['order', 'cart', 'pricing_deliveries', 'order_minimal']
     number:
       groups: ['order', 'order_minimal']
     itemsTotal:
@@ -110,13 +110,15 @@ Sylius\Component\Order\Model\OrderItem:
     id:
       groups: ['order', 'cart']
     quantity:
-      groups: ['order', 'cart', 'order_create']
+      groups: ['order', 'cart', 'pricing_deliveries', 'order_create']
     total:
-      groups: ['order', 'cart']
+      groups: ['order', 'cart', 'pricing_deliveries']
     unitPrice:
-      groups: ['order', 'cart']
+      groups: ['order', 'cart', 'pricing_deliveries']
     adjustments:
       groups: ['order', 'cart']
+    variant:
+      groups: ['pricing_deliveries']
 
 Sylius\Component\Order\Model\Adjustment:
   attributes:
@@ -153,14 +155,27 @@ Sylius\Component\Product\Model\Product:
     enabled:
       groups: ['product', 'product_update']
 
+Sylius\Component\Product\Model\ProductVariant:
+  attributes:
+    id:
+      groups: []
+    name:
+      groups: ['pricing_deliveries']
+    code:
+      groups: ['pricing_deliveries']
+    price:
+      groups: ['pricing_deliveries']
+    optionValues:
+      groups: ['pricing_deliveries']
+
 Sylius\Component\Product\Model\ProductOption:
   attributes:
     name:
-      groups: ['product_option']
+      groups: ['product_option', 'pricing_deliveries']
     code:
-      groups: ['product_option']
+      groups: ['product_option', 'pricing_deliveries']
     values:
-      groups: ['product_option']
+      groups: ['product_option', 'pricing_deliveries']
     strategy:
       groups: ['product_option']
     additional:
@@ -171,13 +186,15 @@ Sylius\Component\Product\Model\ProductOption:
 Sylius\Component\Product\Model\ProductOptionValue:
   attributes:
     value:
-      groups: ['product_option']
+      groups: ['product_option', 'pricing_deliveries']
     code:
-      groups: ['product_option']
+      groups: ['product_option', 'pricing_deliveries']
     price:
-      groups: ['product_option']
+      groups: ['product_option', 'pricing_deliveries']
     enabled:
       groups: ['product_option', 'product_option_value_update']
+    option:
+      groups: ['pricing_deliveries']
 
 AppBundle\DataType\NumRange:
   attributes:

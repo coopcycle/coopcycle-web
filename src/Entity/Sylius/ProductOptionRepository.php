@@ -17,7 +17,7 @@ class ProductOptionRepository extends BaseRepository
 
     // As this class is created by Doctrine's ContainerRepositoryFactory we can't modify its constructor
     // and have to inject dependencies through setters
-    
+
     public function setEntityManager(EntityManagerInterface $entityManager): void
     {
         $this->entityManager = $entityManager;
@@ -40,10 +40,9 @@ class ProductOptionRepository extends BaseRepository
 
     public function findPricingRuleProductOption(): ProductOptionInterface
     {
-        /** @var Product $product */
-        $product = $this->productRepository->findOnDemandDeliveryProduct();
+        $onDemandDeliveryProduct = $this->productRepository->findOneBy(['code' => 'CPCCL-ODDLVR']);
 
-        $existingOptions = $product->getOptions();
+        $existingOptions = $onDemandDeliveryProduct->getOptions();
         if (!$existingOptions->isEmpty()) {
             // Return the first option (there should only be one for pricing rules)
             /** @var ProductOptionInterface $firstOption */
@@ -57,18 +56,14 @@ class ProductOptionRepository extends BaseRepository
         // Set current locale before setting the name for translatable entities
         $productOption->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
 
-        // Set basic properties
         $productOption->setCode('CPCCL-ODDLVR-PR');
         $productOption->setName('Pricing Rules');
 
-        // Set default strategy and additional flag
-        $productOption->setStrategy('free');
-        $productOption->setAdditional(false);
+        $productOption->setStrategy(ProductOptionInterface::STRATEGY_OPTION_VALUE);
+        $productOption->setAdditional(true);
 
-        // Associate the ProductOption with the CPCCL-ODDLVR product
-        $product->addOption($productOption);
+        $onDemandDeliveryProduct->addOption($productOption);
 
-        // Persist the new ProductOption
         $this->entityManager->persist($productOption);
         $this->entityManager->flush();
 

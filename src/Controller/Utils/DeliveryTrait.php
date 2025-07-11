@@ -8,10 +8,10 @@ use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Form\Order\ExistingOrderType;
+use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Pricing\PricingManager;
+use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\OrderManager;
-use AppBundle\Sylius\Order\OrderFactory;
-use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -62,10 +62,10 @@ trait DeliveryTrait
     public function deliveryAction(
         $id,
         Request $request,
-        OrderFactory $orderFactory,
         EntityManagerInterface $entityManager,
         OrderManager $orderManager,
         PricingManager $pricingManager,
+        DeliveryOrderManager $deliveryOrderManager,
     ) {
         $delivery = $entityManager
             ->getRepository(Delivery::class)
@@ -96,11 +96,11 @@ trait DeliveryTrait
                 if (null === $order) {
                     // Should not happen normally, but just in case
                     // there is still some delivery created without an order
-                    $order = $pricingManager->createOrder($delivery, [
+                    $order = $deliveryOrderManager->createOrder($delivery, [
                         'pricingStrategy' => new UseArbitraryPrice($arbitraryPrice),
                     ]);
                 } else {
-                    $orderFactory->updateDeliveryPrice($order, $delivery, $arbitraryPrice);
+                    $pricingManager->processDeliveryOrder($order, [$pricingManager->getCustomProductVariant($delivery, $arbitraryPrice)]);
                 }
             }
 
