@@ -141,9 +141,9 @@
         </td>
       </tr>
     {% endif %}
-    <tr>
+    <tr data-testid="order-total-including-tax">
       <th>{% trans %}order.total_including_tax{% endtrans %}</th>
-      <td class="text-right text-nowrap">
+      <td data-testid="value" class="text-right text-nowrap">
         {{ order.total|price_format }}
       </td>
     </tr>

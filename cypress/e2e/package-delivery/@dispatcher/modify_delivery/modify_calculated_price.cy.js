@@ -41,8 +41,8 @@ context('Delivery (role: dispatcher)', () => {
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.get('[data-testid="order_item"]')
-      .find('[data-testid="total"]')
+    cy.get('[data-testid="order-total-including-tax"]')
+      .find('[data-testid="value"]')
       .contains('€4.99')
 
     cy.get('[data-testid="order-edit"]').click()
@@ -65,8 +65,8 @@ context('Delivery (role: dispatcher)', () => {
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.get('[data-testid="order_item"]')
-      .find('[data-testid="total"]')
+    cy.get('[data-testid="order-total-including-tax"]')
+      .find('[data-testid="value"]')
       .contains('€72.00')
 
     cy.get('[data-testid=delivery-itinerary]')
