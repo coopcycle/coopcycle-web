@@ -39,7 +39,7 @@ Encore
   .addEntry('delivery-embed-start-form', './js/app/delivery/embed-start.js')
   .addEntry('delivery-pricing-rules', './js/app/delivery/pricing/pricing-rules.js')
   .addEntry('delivery-tracking', './js/app/delivery/tracking.js')
-  .addEntry('recurrence-rule-form-react', './js/app/components/recurrence-rule-form/index.js')
+  .addEntry('recurrence-rule-form-react', './js/app/components/recurrence-rule-form/index.tsx')
   .addEntry('notifications', './js/app/notifications/index.js')
   .addEntry('foodtech-dashboard', './js/app/foodtech/dashboard/index.js')
   .addEntry('metrics', './js/app/metrics/index.js')
