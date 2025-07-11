@@ -3,11 +3,22 @@ import { Button, Modal, Select } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { useTranslation } from 'react-i18next'
 
+type Props = {
+  stores: {
+    id: string
+    name: string
+  }[]
+  routes: {
+    store_new: string
+  }
+  buttonComponent?: React.ReactNode
+}
+
 export default function DeliveryCreateNewButton({
   stores,
   routes,
   buttonComponent,
-}) {
+}: Props) {
   const { t } = useTranslation()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [selectedStore, setSelectedStore] = useState(null)
