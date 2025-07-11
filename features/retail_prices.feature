@@ -59,12 +59,12 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": @string@
+                      "name": "Pricing Rules"
                     },
                     "value": "plus de 0.00 km"
                   }
                 ],
-                "name": @string@
+                "name": "On demand delivery"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -136,12 +136,12 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": @string@
+                      "name": "Pricing Rules"
                     },
                     "value": "plus de 0.00 km"
                   }
                 ],
-                "name": @string@
+                "name": "On demand delivery"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -213,12 +213,12 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": @string@
+                      "name": "Pricing Rules"
                     },
                     "value": "plus de 0.00 km"
                   }
                 ],
-                "name": @string@
+                "name": "On demand delivery"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -293,12 +293,12 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": @string@
+                      "name": "Pricing Rules"
                     },
                     "value": "packages.containsAtLeastOne(\"XL\")"
                   }
                 ],
-                "name": @string@
+                "name": "On demand delivery"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -373,12 +373,12 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": @string@
+                      "name": "Pricing Rules"
                     },
                     "value": "packages.containsAtLeastOne(\"XL\")"
                   }
                 ],
-                "name": @string@
+                "name": "On demand delivery"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -453,12 +453,12 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": @string@
+                      "name": "Pricing Rules"
                     },
                     "value": "packages.containsAtLeastOne(\"XL\")"
                   }
                 ],
-                "name": @string@
+                "name": "On demand delivery"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -531,12 +531,12 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": @string@
+                      "name": "Pricing Rules"
                     },
                     "value": "moins de 2.00 kg"
                   }
                 ],
-                "name": @string@
+                "name": "On demand delivery"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -618,12 +618,12 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": @string@
+                      "name": "Pricing Rules"
                     },
                     "value": "plus de 0.00 km"
                   }
                 ],
-                "name": @string@
+                "name": "On demand delivery"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -705,12 +705,12 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": @string@
+                      "name": "Pricing Rules"
                     },
                     "value": "plus de 0.00 km"
                   }
                 ],
-                "name": @string@
+                "name": "On demand delivery"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -785,12 +785,12 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": @string@
+                      "name": "Pricing Rules"
                     },
                     "value": "plus de 0.00 km"
                   }
                 ],
-                "name": @string@
+                "name": "On demand delivery"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -856,7 +856,7 @@ Feature: Retail prices
                 "code": @string@,
                 "optionValues": [
                   {
-                    "price": 699,
+                    "price": 499,
                     "code": @string@,
                     "option": {
                       "@id": @string@,
@@ -865,16 +865,44 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": @string@
+                      "name": "Pricing Rules"
                     },
                     "value": "time_slot == \"/api/time_slots/1\" and task.type == \"PICKUP\""
                   }
                 ],
-                "name": @string@
+                "name": "On demand delivery"
               },
               "quantity": 1,
               "unitPrice": 0,
-              "total": 699
+              "total": 499
+            },
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "@id": @string@,
+                    "@type": "ProductOptionValue",
+                    "price": 200,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-PR",
+                      "values": [
+                        @...@
+                      ],
+                      "name": "Pricing Rules"
+                    },
+                    "value": "taux de dépôt"
+                  }
+                ],
+                "name": "On demand delivery"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 200
             }
           ],
           "total": 699
@@ -945,12 +973,12 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": @string@
+                      "name": "Pricing Rules"
                     },
                     "value": "taux de dépôt"
                   }
                 ],
-                "name": @string@
+                "name": "On demand delivery"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -1106,12 +1134,12 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": @string@
+                      "name": "Pricing Rules"
                     },
                     "value": "plus de 0.00 km"
                   }
                 ],
-                "name": @string@
+                "name": "On demand delivery"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -1182,12 +1210,12 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": @string@
+                      "name": "Pricing Rules"
                     },
                     "value": "plus de 0.00 km"
                   }
                 ],
-                "name": @string@
+                "name": "On demand delivery"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -1266,12 +1294,12 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": @string@
+                      "name": "Pricing Rules"
                     },
                     "value": "plus de 0.00 km"
                   }
                 ],
-                "name": @string@
+                "name": "On demand delivery"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -1335,12 +1363,12 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": @string@
+                      "name": "Pricing Rules"
                     },
                     "value": "plus de 0.00 km"
                   }
                 ],
-                "name": @string@
+                "name": "On demand delivery"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -1435,12 +1463,12 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": @string@
+                      "name": "Pricing Rules"
                     },
                     "value": "plus de 0.00 km"
                   }
                 ],
-                "name": @string@
+                "name": "On demand delivery"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -1514,12 +1542,12 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": @string@
+                      "name": "Pricing Rules"
                     },
                     "value": "volume du colis moins de 9"
                   }
                 ],
-                "name": @string@
+                "name": "On demand delivery"
               },
               "quantity": 1,
               "unitPrice": 0,
