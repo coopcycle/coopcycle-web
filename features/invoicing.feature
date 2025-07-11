@@ -207,7 +207,7 @@ Feature: Invoicing
     Given the user "admin" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
-    And the user "admin" sends a "GET" request to "/api/invoice_line_items?store[]=1&store[]=2"
+    And the user "admin" sends a "GET" request to "/api/invoice_line_items?store[]=1&store[]=35&itemsPerPage=100"
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
@@ -234,11 +234,11 @@ Feature: Invoicing
         ],
         "hydra:totalItems":@integer@,
         "hydra:view":{
-          "@id":"/api/invoice_line_items?store%5B%5D=1\u0026store%5B%5D=2\u0026page=1",
-          "@type":"hydra:PartialCollectionView",
-          "hydra:first":"/api/invoice_line_items?store%5B%5D=1\u0026store%5B%5D=2\u0026page=1",
-          "hydra:last":"/api/invoice_line_items?store%5B%5D=1\u0026store%5B%5D=2\u0026page=10",
-          "hydra:next":"/api/invoice_line_items?store%5B%5D=1\u0026store%5B%5D=2\u0026page=2"
+          "@id": "/api/invoice_line_items?store%5B%5D=1\u0026store%5B%5D=35\u0026itemsPerPage=100\u0026page=1",
+          "@type": "hydra:PartialCollectionView",
+          "hydra:first": "/api/invoice_line_items?store%5B%5D=1\u0026store%5B%5D=35\u0026itemsPerPage=100\u0026page=1",
+          "hydra:last": "/api/invoice_line_items?store%5B%5D=1\u0026store%5B%5D=35\u0026itemsPerPage=100\u0026page=3",
+          "hydra:next": "/api/invoice_line_items?store%5B%5D=1\u0026store%5B%5D=35\u0026itemsPerPage=100\u0026page=2"
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
