@@ -55,6 +55,10 @@ class InitDemoCommand extends Command
         'sylius_tax_rate',
     ];
 
+    private $createdUsers = [];
+    private $createdRestaurants = [];
+    private $createdStores = [];
+
     private static $users = [
         'admin' => [
             'password' => 'admin',
@@ -70,6 +74,12 @@ class InitDemoCommand extends Command
         48.857498,
         2.335402,
     ];
+
+    private static $usersToCreate = 50;
+    private static $couriersToCreate = 50;
+    private static $restaurantsToCreate = 50;
+    private static $storesToCreate = 25;
+    private static $ordersToCreate = 25;
 
     protected function configure()
     {
@@ -152,23 +162,30 @@ class InitDemoCommand extends Command
             }
 
             $output->writeln('Creating users…');
-            for ($i = 1; $i <= 50; $i++) {
+            for ($i = 1; $i <= self::$usersToCreate; $i++) {
                 $username = "user_{$i}";
                 $user = $this->createUser($username, ['password' => $username]);
                 $user->addAddress($this->faker->randomAddress);
             }
             $this->doctrine->getManagerForClass(Entity\User::class)->flush();
+            $this->createdUsers = $this->doctrine->getRepository(Entity\User::class)
+                ->createQueryBuilder('u')
+                ->where("u.username LIKE 'user_%'")
+                ->getQuery()
+                ->getResult();
 
             $output->writeln('Creating couriers…');
-            for ($i = 1; $i <= 50; $i++) {
+            for ($i = 1; $i <= self::$couriersToCreate; $i++) {
                 $this->createCourier("bot_{$i}");
             }
 
             $output->writeln('Creating restaurants…');
             $this->createRestaurants($output);
+            $this->createdRestaurants = $this->doctrine->getRepository(Entity\LocalBusiness::class)->findAll();
 
             $output->writeln('Creating stores…');
             $this->createStores();
+            $this->createdStores = $this->doctrine->getRepository(Entity\Store::class)->findAll();
 
             $output->writeln('Creating orders…');
             $this->createOrders();
@@ -537,7 +554,7 @@ class InitDemoCommand extends Command
 
         $em = $this->doctrine->getManagerForClass(Entity\LocalBusiness::class);
 
-        for ($i = 1; $i <= 50; $i++) {
+        for ($i = 1; $i <= self::$restaurantsToCreate; $i++) {
 
             $restaurant = $this->createRestaurant($this->faker->randomAddress, $foodTaxCategory);
 
@@ -567,12 +584,14 @@ class InitDemoCommand extends Command
 
     private function createStores()
     {
-        for ($i = 1; $i <= 25; $i++) {
+        $em = $this->doctrine->getManagerForClass(Entity\Store::class);
+
+        for ($i = 1; $i <= self::$storesToCreate; $i++) {
             $store = $this->createStore($this->faker->randomAddress);
             $pricingRuleSet = $this->createPricingRuleSet($store);
             $store->setPricingRuleSet($pricingRuleSet);
-            $this->doctrine->getManagerForClass(Entity\Store::class)->persist($store);
-            $this->doctrine->getManagerForClass(Entity\Store::class)->flush();
+            $em->persist($store);
+            $em->flush();
 
             $username = "store_{$i}";
             $user = $this->createUser($username, [
@@ -587,14 +606,20 @@ class InitDemoCommand extends Command
 
     private function createOrders()
     {
-        for ($i = 1; $i <= 25; $i++) {
-            $restaurant = $this->doctrine->getRepository(Entity\LocalBusiness::class)->findOneBy(['id' => $i]);
+        //$user = $this->doctrine->getRepository(Entity\User::class)->findOneBy(['username' => 'user_1']);
 
-            $this->createOrder('00'.$i, $restaurant);
+        for ($i = 1; $i <= self::$ordersToCreate; $i++) {
+            $restaurant = $this->createdRestaurants[array_rand($this->createdRestaurants)];
+            $user = $this->createdUsers[array_rand($this->createdUsers)];
+            // Fetching the user again because if not, it fails with error:
+            // "A new entity was found through the relationship 'AppBundle\Entity\User#channel' that was not configured to cascade persist operations for entity: Web."
+            $user = $this->doctrine->getRepository(Entity\User::class)->findOneBy(['username' => $user->getUsername()]);
+
+            $this->createOrder('00'.$i, $restaurant, $user);
         }
     }
 
-    private function createOrder($id, $restaurant)
+    private function createOrder($id, $restaurant, $user)
     {
         $em = $this->doctrine->getManagerForClass(Entity\Sylius\Order::class);
         $order = new Entity\Sylius\Order();
@@ -602,7 +627,6 @@ class InitDemoCommand extends Command
 
         $order->setRestaurant($restaurant);
 
-        $user = $this->doctrine->getRepository(Entity\User::class)->findOneBy(['username' => 'user_1']);
         $order->setCustomer($user->getCustomer());
         $order->setShippingAddress($user->getCustomer()->getAddresses()->first());
 
