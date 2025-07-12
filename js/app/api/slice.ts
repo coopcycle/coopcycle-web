@@ -1,6 +1,12 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { baseQueryWithReauth } from './baseQuery'
 import { fetchAllRecordsUsingFetchWithBQ } from './utils'
+import type {
+  GetInvoiceLineItemsGroupedByOrganizationArgs,
+  InvoiceLineItemsGroupedByOrganizationResponse,
+  GetInvoiceLineItemsArgs,
+  InvoiceLineItemsResponse,
+} from './types'
 
 // Define our single API slice object
 export const apiSlice = createApi({
@@ -156,7 +162,10 @@ export const apiSlice = createApi({
       }),
     }),
 
-    getInvoiceLineItemsGroupedByOrganization: builder.query({
+    getInvoiceLineItemsGroupedByOrganization: builder.query<
+      InvoiceLineItemsGroupedByOrganizationResponse,
+      GetInvoiceLineItemsGroupedByOrganizationArgs
+    >({
       query: args => {
         return {
           url: `api/invoice_line_items/grouped_by_organization?${args.params.join(
@@ -169,7 +178,10 @@ export const apiSlice = createApi({
         }
       },
     }),
-    getInvoiceLineItems: builder.query({
+    getInvoiceLineItems: builder.query<
+      InvoiceLineItemsResponse,
+      GetInvoiceLineItemsArgs
+    >({
       query: args => {
         return {
           url: `api/invoice_line_items?${args.params.join('&')}`,

@@ -1,8 +1,13 @@
 import React from 'react'
 import { DatePicker } from 'antd'
 import { useTranslation } from 'react-i18next'
+import { Moment } from 'moment'
 
-export default function RangePicker({ setDateRange }) {
+type Props = {
+  setDateRange: (range: Moment[]) => void
+}
+
+export default function RangePicker({ setDateRange }: Props) {
   const [isComplexPicker, setIsComplexPicker] = React.useState(false)
 
   const { t } = useTranslation()

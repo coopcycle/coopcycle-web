@@ -2,7 +2,17 @@ import React from 'react'
 import { RootWithDefaults } from '../../../../js/app/utils/react'
 import DeliveryCreateNewButton from '../../../../js/app/components/DeliveryCreateNewButton'
 
-export default function CreateNewButton({ stores, routes }) {
+type Props = {
+  stores: {
+    id: string
+    name: string
+  }[]
+  routes: {
+    store_new: string
+  }
+}
+
+export default function CreateNewButton({ stores, routes }: Props) {
   if (!stores || !routes) {
     return null
   }
