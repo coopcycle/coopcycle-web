@@ -50,14 +50,4 @@
     "skipDefaultLibCheck": true,
     "noErrorTruncation": true
   },
-  "include": ["js/**/*.{ts,tsx}", "assets/**/*.{ts,tsx}"],
-  "exclude": [
-    "node_modules",
-    "web/build",
-    "var",
-    "vendor",
-    "tests",
-    "cypress",
-    "**/*.{test,spec}.{ts,tsx}"
-  ]
 }
