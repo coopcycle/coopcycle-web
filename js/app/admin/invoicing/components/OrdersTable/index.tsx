@@ -8,13 +8,21 @@ import { useGetInvoiceLineItemsQuery } from '../../../../api/slice'
 import { prepareParams } from '../../redux/actions'
 import { usePrevious } from '../../../../dashboard/redux/utils'
 
+type Props = {
+  ordersStates: string[]
+  dateRange: moment.Moment[]
+  onlyNotInvoiced: boolean
+  storeId: string
+  reloadKey: number
+}
+
 export default function OrdersTable({
   ordersStates,
   dateRange,
   onlyNotInvoiced,
   storeId,
   reloadKey,
-}) {
+}: Props) {
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
 

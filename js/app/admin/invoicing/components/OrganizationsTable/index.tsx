@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Table } from 'antd'
 import { useTranslation } from 'react-i18next'
+import { Moment } from 'moment'
 
 import { money } from '../../../../utils/format'
 import { useLazyGetInvoiceLineItemsGroupedByOrganizationQuery } from '../../../../api/slice'
@@ -8,13 +9,30 @@ import { prepareParams } from '../../redux/actions'
 import { usePrevious } from '../../../../dashboard/redux/utils'
 import OrdersTable from '../OrdersTable'
 
+type OrganizationRow = {
+  rowKey: string
+  storeId: string
+  name: string
+  subTotal: string
+  tax: string
+  total: string
+}
+
+type Props = {
+  ordersStates: string[]
+  dateRange: Moment[]
+  onlyNotInvoiced: boolean
+  reloadKey: number
+  setSelectedStoreIds: (storeIds: string[]) => void
+}
+
 export default function OrganizationsTable({
   ordersStates,
   dateRange,
   onlyNotInvoiced,
   reloadKey,
   setSelectedStoreIds,
-}) {
+}: Props) {
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
 
@@ -40,9 +58,12 @@ export default function OrganizationsTable({
     })
   }, [ordersStates, dateRange, onlyNotInvoiced])
 
-  const { dataSource, total } = useMemo(() => {
+  const { dataSource, total } = useMemo((): {
+    dataSource: OrganizationRow[] | undefined
+    total: number
+  } => {
     if (!data) {
-      return { datasource: undefined, total: 0 }
+      return { dataSource: undefined, total: 0 }
     }
 
     return {
@@ -82,7 +103,7 @@ export default function OrganizationsTable({
   ]
 
   const reloadData = useCallback(
-    (page, pageSize) => {
+    (page: number, pageSize: number) => {
       if (!params) {
         return
       }
@@ -124,7 +145,7 @@ export default function OrganizationsTable({
         setPageSize(pagination.pageSize)
       }}
       expandable={{
-        expandedRowRender: record => {
+        expandedRowRender: (record: OrganizationRow) => {
           return (
             <OrdersTable
               ordersStates={ordersStates}
@@ -138,7 +159,7 @@ export default function OrganizationsTable({
       }}
       rowSelection={{
         type: 'checkbox',
-        onChange: (selectedRowKeys, selectedRows) => {
+        onChange: (_: React.Key[], selectedRows: OrganizationRow[]) => {
           setSelectedStoreIds(selectedRows.map(row => row.storeId))
         },
       }}
