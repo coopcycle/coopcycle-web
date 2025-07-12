@@ -17,6 +17,11 @@ import { Mode, modeIn } from '../mode'
 import { selectMode } from '../redux/formSlice'
 import { useDatadog } from '../../../hooks/useDatadog'
 
+// check if a task ID is temporary (not from backend)
+const isTemporaryId = (taskId) => {
+  return taskId && taskId.startsWith('temp-')
+}
+
 function serializeAddress(address) {
   if (Object.prototype.hasOwnProperty.call(address, '@id')) {
     return address['@id']
@@ -33,6 +38,12 @@ function convertValuesToDeliveryPayload(storeNodeId, values) {
     store: storeNodeId,
     tasks: structuredClone(values.tasks),
     order: structuredClone(values.order),
+  }
+
+  for (const task of data.tasks) {
+    if (isTemporaryId(task['@id'])) {
+      delete task['@id']
+    }
   }
 
   if (values.rrule) {

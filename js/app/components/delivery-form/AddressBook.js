@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react'
 import { Input, Select, Checkbox, Button } from 'antd'
 import Modal from 'react-modal'
 import { useTranslation } from 'react-i18next'
-import { useFormikContext, Field } from 'formik'
+import { Field } from 'formik'
 import { getCountry } from '../../i18n'
 import AddressAutosuggest from '../AddressAutosuggest'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import './AddressBook.scss'
+import {
+  useDeliveryFormFormikContext
+} from './hooks/useDeliveryFormFormikContext'
 
 function getFormattedValue(value) {
   if (typeof value === 'string') {
@@ -36,9 +39,11 @@ function getUnformattedValue(value) {
   return value ?? ''
 }
 
-export default function AddressBook({ index, addresses, storeDeliveryInfos, shallPrefillAddress }) {
+export default function AddressBook({ taskId, addresses, storeDeliveryInfos, shallPrefillAddress }) {
   const { t } = useTranslation()
-  const { values, setFieldValue, errors } = useFormikContext()
+  const { values, setFieldValue, errors, taskIndex: index } = useDeliveryFormFormikContext({
+    taskId: taskId,
+  })
   const updateInStoreAddresses = values.tasks[index].updateInStoreAddresses
 
   const [isModalOpen, setModalOpen] = useState(false)

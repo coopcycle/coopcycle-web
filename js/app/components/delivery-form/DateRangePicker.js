@@ -39,13 +39,13 @@ const Label = ({ taskType }) => {
   )
 }
 
-const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
+const DateTimeRangePicker = ({ format, taskId, isDispatcher }) => {
   const { t } = useTranslation()
 
   const mode = useSelector(selectMode)
 
-  const { taskValues, setFieldValue, errors } = useDeliveryFormFormikContext({
-    taskIndex: index,
+  const { taskValues, setFieldValue, errors, taskIndex: index } = useDeliveryFormFormikContext({
+    taskId: taskId,
   })
 
   useEffect(() => {
@@ -74,9 +74,9 @@ const DateTimeRangePicker = ({ format, index, isDispatcher }) => {
     <>
       <Label taskType={taskValues.type} />
       {isComplexPicker ? (
-        <MultiDayPicker taskIndex={index} />
+        <MultiDayPicker taskId={taskId} />
       ) : (
-        <SameDayPicker format={format} taskIndex={index} />
+        <SameDayPicker format={format} taskId={taskId} />
       )}
       {isDispatcher &&
         modeIn(mode, [Mode.DELIVERY_CREATE, Mode.DELIVERY_UPDATE]) && (

@@ -37,10 +37,10 @@ function generateTimeSlots(after = null) {
   })
 }
 
-const SameDayPicker = ({ format, taskIndex }) => {
+const SameDayPicker = ({ format, taskId }) => {
   const mode = useSelector(selectMode)
-  const { taskValues, setFieldValue, errors } = useDeliveryFormFormikContext({
-    taskIndex: taskIndex,
+  const { taskValues, setFieldValue, taskIndex } = useDeliveryFormFormikContext({
+    taskId: taskId,
   })
 
   const firstSelectOptions = generateTimeSlots()

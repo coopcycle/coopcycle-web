@@ -30,7 +30,12 @@ class TaskDtoNormalizer implements ContextAwareNormalizerInterface, NormalizerAw
             $data['@context'] = '/api/contexts/Task';
         }
         $data['@type'] = 'Task';
-        $data['@id'] = "/api/tasks/" . $object->id;
+
+        if (!is_null($object->id)) {
+            $data['@id'] = "/api/tasks/" . $object->id;
+        } else {
+            unset($data['@id']);
+        }
 
         // Make sure "comments" is a string
         if (is_null($data['comments'])) {

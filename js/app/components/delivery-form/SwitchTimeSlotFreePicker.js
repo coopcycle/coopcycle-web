@@ -8,7 +8,7 @@ import './SwitchTimeSlotFreePicker.scss'
 export default ({
   isDispatcher,
   storeNodeId,
-  index,
+  taskId,
   format,
   isTimeSlotSelect,
   setIsTimeSlotSelect,
@@ -23,7 +23,7 @@ export default ({
           <div className="timeslot-container__picker" style={{ width: '95%' }}>
             <TimeSlotPicker
               storeNodeId={storeNodeId}
-              index={index}
+              taskId={taskId}
               timeSlotLabels={timeSlotLabels}
             />
           </div>
@@ -36,7 +36,7 @@ export default ({
       ) : (
         <div className="daterange-picker-container">
           <div className="daterange-picker-container__picker">
-            <DateRangePicker format={format} index={index} isDispatcher={isDispatcher} />
+            <DateRangePicker format={format} taskId={taskId} isDispatcher={isDispatcher} />
           </div>
           <i
             className="daterange-picker-container__icon fa fa-calendar text-right"

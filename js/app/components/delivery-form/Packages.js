@@ -7,13 +7,14 @@ import {
   useDeliveryFormFormikContext
 } from './hooks/useDeliveryFormFormikContext'
 
-export default ({ index, packages }) => {
+export default ({ taskId, packages }) => {
   const {
     taskValues,
     taskErrors,
     setFieldValue,
-  } = useDeliveryFormFormikContext({
     taskIndex: index,
+  } = useDeliveryFormFormikContext({
+    taskId: taskId,
   })
 
   const [packagesPicked, setPackagesPicked] = useState(() => {
