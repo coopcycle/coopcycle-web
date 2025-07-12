@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { Table } from 'antd'
+import { Table, TableColumnsType } from 'antd'
 import { useTranslation } from 'react-i18next'
 import { Moment } from 'moment'
 
@@ -8,6 +8,7 @@ import { useLazyGetInvoiceLineItemsGroupedByOrganizationQuery } from '../../../.
 import { prepareParams } from '../../redux/actions'
 import { usePrevious } from '../../../../dashboard/redux/utils'
 import OrdersTable from '../OrdersTable'
+import type { InvoiceLineItemGroupedByOrganization } from '../../../../api/types'
 
 type OrganizationRow = {
   rowKey: string
@@ -67,19 +68,21 @@ export default function OrganizationsTable({
     }
 
     return {
-      dataSource: data['hydra:member'].map(item => ({
-        rowKey: item.storeId,
-        storeId: item.storeId,
-        name: `${item.organizationLegalName} (${item.ordersCount})`,
-        subTotal: money(item.subTotal),
-        tax: money(item.tax),
-        total: money(item.total),
-      })),
+      dataSource: data['hydra:member'].map(
+        (item: InvoiceLineItemGroupedByOrganization): OrganizationRow => ({
+          rowKey: item.storeId.toString(),
+          storeId: item.storeId.toString(),
+          name: `${item.organizationLegalName} (${item.ordersCount})`,
+          subTotal: money(item.subTotal),
+          tax: money(item.tax),
+          total: money(item.total),
+        }),
+      ),
       total: data['hydra:totalItems'],
     }
   }, [data])
 
-  const columns = [
+  const columns: TableColumnsType<OrganizationRow> = [
     {
       title: t('ADMIN_ORDERS_TO_INVOICE_ORGANIZATION_LABEL'),
       dataIndex: 'name',
