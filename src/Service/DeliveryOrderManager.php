@@ -8,6 +8,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\Product;
+use AppBundle\Entity\Sylius\ProductRepository;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\UsePricingRules;
 use AppBundle\Entity\Task\RecurrenceRule;
@@ -31,7 +32,7 @@ class DeliveryOrderManager
         private readonly EntityManagerInterface $entityManager,
         private readonly RequestStack $requestStack,
         private readonly TranslatorInterface $translator,
-        private readonly ProductRepositoryInterface $productRepository,
+        private readonly ProductRepository $productRepository,
         private readonly DeliveryManager $deliveryManager,
         private readonly OrderManager $orderManager,
         private readonly OrderFactory $orderFactory,
@@ -90,8 +91,7 @@ class DeliveryOrderManager
         $this->pricingManager->processDeliveryOrder($order, $productVariants);
 
         if ($persist) {
-            /** @var Product $product */
-            $product = $this->productRepository->findOneByCode('CPCCL-ODDLVR');
+            $product = $this->productRepository->findOnDemandDeliveryProduct();
             // Persist any new ProductOptionsValues that were created
             // (as ProductOption entity is already managed we need to trigger it manually)
             // all other entities should be persisted via cascade relations
