@@ -47,6 +47,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $productOptionValueFactory = self::getContainer()->get(ProductOptionValueFactory::class);
         $productVariantFactory = self::getContainer()->get(ProductVariantFactory::class);
         $ruleHumanizer = self::getContainer()->get(RuleHumanizer::class);
+        $translator = self::getContainer()->get('translator');
         $logger = self::getContainer()->get(LoggerInterface::class);
 
         return new PriceCalculationVisitor(
@@ -56,6 +57,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $productOptionValueFactory,
             $productVariantFactory,
             $ruleHumanizer,
+            $translator,
             $logger
         );
     }
