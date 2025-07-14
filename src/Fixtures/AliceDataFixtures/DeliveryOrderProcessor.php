@@ -4,6 +4,7 @@ namespace AppBundle\Fixtures\AliceDataFixtures;
 
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Entity\Sylius\UsePricingRules;
 use AppBundle\Pricing\PricingManager;
 use Fidry\AliceDataFixtures\ProcessorInterface;
 
@@ -43,10 +44,21 @@ final class DeliveryOrderProcessor implements ProcessorInterface
             return;
         }
 
-        $price = new ArbitraryPrice(null, random_int(500, 20000));
+        $productVariants = $this->pricingManager->getPriceWithPricingStrategy(
+            $delivery,
+            new UsePricingRules()
+        );
+
+        // when a store does not have pricing rules
+        // randomly: keep the price 0 or use an arbitrary price
+        if (1 === count($productVariants) && 0 === $productVariants[0]->getOptionValuesPrice() && random_int(0, 1) === 0) {
+            $price = new ArbitraryPrice(null, random_int(500, 20000));
+            $productVariants = [$this->pricingManager->getCustomProductVariant($delivery, $price)];
+        }
+
         $this->pricingManager->processDeliveryOrder(
             $order,
-            [$this->pricingManager->getCustomProductVariant($delivery, $price)]
+            $productVariants
         );
 
         // Changes are flushed inside FeatureContext
