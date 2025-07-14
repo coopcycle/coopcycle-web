@@ -6,8 +6,6 @@ import { Spin } from 'antd'
 export default ({
   storeNodeId,
   order: preLoadedOrder,
-  isDebugPricing,
-  isDispatcher,
   setPriceLoading,
 }) => {
   const [order, setOrder] = useState(preLoadedOrder)
@@ -24,8 +22,6 @@ export default ({
         <Price
           storeNodeId={storeNodeId}
           order={order}
-          isDebugPricing={isDebugPricing}
-          isDispatcher={isDispatcher}
           setPriceLoading={isLoading => {
             setIsLoading(isLoading)
             setPriceLoading(isLoading)

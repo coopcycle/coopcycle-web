@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useContext,
+} from 'react'
 import { Checkbox } from 'antd'
 import { useTranslation } from 'react-i18next'
 
@@ -14,6 +20,7 @@ import { useCalculatePriceMutation, useGetTaxRatesQuery } from '../../api/slice'
 import { Mode, modeIn } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
+import FlagsContext from './FlagsContext'
 
 const TotalPrice = ({ className, priceWithTaxes, priceWithoutTaxes }) => {
   const { t } = useTranslation()
@@ -34,12 +41,12 @@ const TotalPrice = ({ className, priceWithTaxes, priceWithoutTaxes }) => {
 export default ({
   storeNodeId,
   order,
-  isDebugPricing,
-  isDispatcher,
   setPriceLoading,
   setOrder,
   setOverridePrice: setOverridePriceOnParent,
 }) => {
+  const { isDispatcher, isDebugPricing } = useContext(FlagsContext)
+
   const mode = useSelector(selectMode)
   const { values, setFieldValue } = useDeliveryFormFormikContext()
 

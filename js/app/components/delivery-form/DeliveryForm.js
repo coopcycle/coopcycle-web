@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Checkbox } from 'antd'
 import { Formik, Form, FieldArray } from 'formik'
 import moment from 'moment'
@@ -29,6 +29,7 @@ import Map from '../DeliveryMap'
 import { Mode, modeIn } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
+import FlagsContext from './FlagsContext'
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -131,9 +132,9 @@ export default function({
   // nodeId: Delivery or RecurrenceRule node
   deliveryNodeId,
   preLoadedDeliveryData,
-  isDispatcher,
-  isDebugPricing
 }) {
+  const { isDispatcher } = useContext(FlagsContext)
+
   const mode = useSelector(selectMode)
   const [isLoading, setIsLoading] = useState(true)
   const [expandedTasks, setExpandedTasks] = useState({})
@@ -548,8 +549,6 @@ export default function({
                         <Order
                           storeNodeId={storeNodeId}
                           order={order}
-                          isDispatcher={isDispatcher}
-                          isDebugPricing={isDebugPricing}
                           setPriceLoading={setPriceLoading}
                         />
                       </div>
