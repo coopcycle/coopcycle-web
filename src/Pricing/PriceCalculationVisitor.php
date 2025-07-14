@@ -61,7 +61,7 @@ class PriceCalculationVisitor
 
         // Apply the rules to each task/point
         foreach ($tasks as $task) {
-            $resultPerTask = $this->visitTask($ruleSet, $delivery, $task);
+            $resultPerTask = $this->visitTask($task, $ruleSet, $delivery);
             $resultPerTask->setTask($task);
 
             $resultsPerEntity[] = $resultPerTask;
@@ -75,7 +75,7 @@ class PriceCalculationVisitor
         }
 
         // Apply the rules to the whole delivery/order
-        $resultPerDelivery = $this->visitDelivery($ruleSet, $delivery);
+        $resultPerDelivery = $this->visitDelivery($delivery, $ruleSet);
         $resultPerDelivery->setDelivery($delivery);
 
         $resultsPerEntity[] = $resultPerDelivery;
@@ -121,7 +121,7 @@ class PriceCalculationVisitor
         return $output;
     }
 
-    private function visitDelivery(PricingRuleSet $ruleSet, Delivery $delivery): Result
+    private function visitDelivery(Delivery $delivery, PricingRuleSet $ruleSet): Result
     {
         $deliveryAsExpressionLanguageValues = $this->deliveryExpressionLanguageVisitor->toExpressionLanguageValues($delivery);
 
@@ -146,7 +146,7 @@ class PriceCalculationVisitor
         return new Result([]);
     }
 
-    private function visitTask(PricingRuleSet $ruleSet, Delivery $delivery, Task $task): Result
+    private function visitTask(Task $task, PricingRuleSet $ruleSet, Delivery $delivery): Result
     {
         $taskAsExpressionLanguageValues = $this->taskExpressionLanguageVisitor->toExpressionLanguageValues($task);
 
