@@ -64,7 +64,7 @@ Feature: Retail prices
                     "value": "plus de 0.00 km"
                   }
                 ],
-                "name": "On demand delivery"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -141,7 +141,7 @@ Feature: Retail prices
                     "value": "plus de 0.00 km"
                   }
                 ],
-                "name": "On demand delivery"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -218,7 +218,7 @@ Feature: Retail prices
                     "value": "plus de 0.00 km"
                   }
                 ],
-                "name": "On demand delivery"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -298,7 +298,7 @@ Feature: Retail prices
                     "value": "packages.containsAtLeastOne(\"XL\")"
                   }
                 ],
-                "name": "On demand delivery"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -378,7 +378,7 @@ Feature: Retail prices
                     "value": "packages.containsAtLeastOne(\"XL\")"
                   }
                 ],
-                "name": "On demand delivery"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -458,7 +458,7 @@ Feature: Retail prices
                     "value": "packages.containsAtLeastOne(\"XL\")"
                   }
                 ],
-                "name": "On demand delivery"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -536,7 +536,7 @@ Feature: Retail prices
                     "value": "moins de 2.00 kg"
                   }
                 ],
-                "name": "On demand delivery"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -623,7 +623,7 @@ Feature: Retail prices
                     "value": "plus de 0.00 km"
                   }
                 ],
-                "name": "On demand delivery"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -710,7 +710,7 @@ Feature: Retail prices
                     "value": "plus de 0.00 km"
                   }
                 ],
-                "name": "On demand delivery"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -790,7 +790,7 @@ Feature: Retail prices
                     "value": "plus de 0.00 km"
                   }
                 ],
-                "name": "On demand delivery"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -870,7 +870,7 @@ Feature: Retail prices
                     "value": "time_slot == \"/api/time_slots/1\" and task.type == \"PICKUP\""
                   }
                 ],
-                "name": "On demand delivery"
+                "name": "Point de retrait 1"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -898,7 +898,7 @@ Feature: Retail prices
                     "value": "taux de dépôt"
                   }
                 ],
-                "name": "On demand delivery"
+                "name": "Point de dépôt 1"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -978,7 +978,7 @@ Feature: Retail prices
                     "value": "taux de dépôt"
                   }
                 ],
-                "name": "On demand delivery"
+                "name": "Point de dépôt 1"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -1139,7 +1139,7 @@ Feature: Retail prices
                     "value": "plus de 0.00 km"
                   }
                 ],
-                "name": "On demand delivery"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -1215,7 +1215,7 @@ Feature: Retail prices
                     "value": "plus de 0.00 km"
                   }
                 ],
-                "name": "On demand delivery"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -1299,7 +1299,7 @@ Feature: Retail prices
                     "value": "plus de 0.00 km"
                   }
                 ],
-                "name": "On demand delivery"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -1368,7 +1368,7 @@ Feature: Retail prices
                     "value": "plus de 0.00 km"
                   }
                 ],
-                "name": "On demand delivery"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -1468,7 +1468,7 @@ Feature: Retail prices
                     "value": "plus de 0.00 km"
                   }
                 ],
-                "name": "On demand delivery"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -1547,7 +1547,7 @@ Feature: Retail prices
                     "value": "volume du colis moins de 9"
                   }
                 ],
-                "name": "On demand delivery"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
