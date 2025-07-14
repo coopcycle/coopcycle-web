@@ -1,6 +1,8 @@
-import React, { useMemo } from 'react'
+import React, { useContext, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Collapse } from 'antd'
+import Cart from '../components/delivery-form/Cart'
+import FlagsContext from '../components/delivery-form/FlagsContext'
 
 const { Panel } = Collapse
 
@@ -91,7 +93,13 @@ function PriceRuleSet({ calculation }) {
   )
 }
 
-export function PriceCalculation({ className, isDebugPricing, calculation }) {
+export function PriceCalculation({
+  className,
+  isDebugPricing,
+  calculation,
+  order,
+}) {
+  const { isPriceBreakdownEnabled } = useContext(FlagsContext)
   const { t } = useTranslation()
 
   return (
@@ -105,6 +113,11 @@ export function PriceCalculation({ className, isDebugPricing, calculation }) {
               <h4>{t('DELIVERY_FORM_PRICE_CALCULATION_RULES')}</h4>
               <PriceRuleSet calculation={calculation} />
             </>
+          )}
+          {!isPriceBreakdownEnabled && Boolean(order) && order.items && (
+            <div className="mt-4">
+              <Cart order={order} overridePrice={false} />
+            </div>
           )}
         </>
       </Panel>
