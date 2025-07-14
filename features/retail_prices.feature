@@ -59,7 +59,7 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": "Pricing Rules"
+                      "name": "Fixed Price"
                     },
                     "value": "plus de 0.00 km"
                   }
@@ -136,7 +136,7 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": "Pricing Rules"
+                      "name": "Fixed Price"
                     },
                     "value": "plus de 0.00 km"
                   }
@@ -213,7 +213,7 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": "Pricing Rules"
+                      "name": "Fixed Price"
                     },
                     "value": "plus de 0.00 km"
                   }
@@ -293,7 +293,7 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": "Pricing Rules"
+                      "name": "Fixed Price"
                     },
                     "value": "packages.containsAtLeastOne(\"XL\")"
                   }
@@ -373,7 +373,7 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": "Pricing Rules"
+                      "name": "Fixed Price"
                     },
                     "value": "packages.containsAtLeastOne(\"XL\")"
                   }
@@ -453,7 +453,7 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": "Pricing Rules"
+                      "name": "Fixed Price"
                     },
                     "value": "packages.containsAtLeastOne(\"XL\")"
                   }
@@ -531,7 +531,7 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": "Pricing Rules"
+                      "name": "Fixed Price"
                     },
                     "value": "moins de 2.00 kg"
                   }
@@ -618,7 +618,7 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": "Pricing Rules"
+                      "name": "Fixed Price"
                     },
                     "value": "plus de 0.00 km"
                   }
@@ -705,7 +705,7 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": "Pricing Rules"
+                      "name": "Fixed Price"
                     },
                     "value": "plus de 0.00 km"
                   }
@@ -785,7 +785,7 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": "Pricing Rules"
+                      "name": "Fixed Price"
                     },
                     "value": "plus de 0.00 km"
                   }
@@ -865,7 +865,7 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": "Pricing Rules"
+                      "name": "Fixed Price"
                     },
                     "value": "time_slot == \"/api/time_slots/1\" and task.type == \"PICKUP\""
                   }
@@ -893,7 +893,7 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": "Pricing Rules"
+                      "name": "Fixed Price"
                     },
                     "value": "taux de dépôt"
                   }
@@ -973,7 +973,7 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": "Pricing Rules"
+                      "name": "Fixed Price"
                     },
                     "value": "taux de dépôt"
                   }
@@ -1134,7 +1134,7 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": "Pricing Rules"
+                      "name": "Fixed Price"
                     },
                     "value": "plus de 0.00 km"
                   }
@@ -1210,7 +1210,7 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": "Pricing Rules"
+                      "name": "Fixed Price"
                     },
                     "value": "plus de 0.00 km"
                   }
@@ -1294,7 +1294,7 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": "Pricing Rules"
+                      "name": "Fixed Price"
                     },
                     "value": "plus de 0.00 km"
                   }
@@ -1363,7 +1363,7 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": "Pricing Rules"
+                      "name": "Fixed Price"
                     },
                     "value": "plus de 0.00 km"
                   }
@@ -1463,7 +1463,7 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": "Pricing Rules"
+                      "name": "Fixed Price"
                     },
                     "value": "plus de 0.00 km"
                   }
@@ -1542,7 +1542,7 @@ Feature: Retail prices
                       "values": [
                         @...@
                       ],
-                      "name": "Pricing Rules"
+                      "name": "Fixed Price"
                     },
                     "value": "volume du colis moins de 9"
                   }
