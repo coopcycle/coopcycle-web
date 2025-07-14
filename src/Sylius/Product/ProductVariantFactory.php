@@ -45,11 +45,13 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
     /**
      * @param ProductOptionValueWithQuantity[] $productOptionValues
      */
-    public function createWithProductOptions(array $productOptionValues, PricingRuleSet $ruleSet): ProductVariantInterface
+    public function createWithProductOptions(string $name, array $productOptionValues, PricingRuleSet $ruleSet): ProductVariantInterface
     {
         $productVariant = $this->createForOnDemandDelivery();
 
         $productVariant->setPricingRuleSet($ruleSet);
+
+        $productVariant->setName($name);
 
         foreach ($productOptionValues as $productOptionValue) {
             $productVariant->addOptionValueWithQuantity($productOptionValue->productOptionValue, $productOptionValue->quantity);
@@ -111,8 +113,6 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
         /** @var ProductVariantInterface $productVariant */
         $productVariant = $this->createForProduct($product);
         $productVariant->setCode('CPCCL-ODDLVR-'.Uuid::uuid4()->toString());
-
-        $productVariant->setName($product->getName());
 
         $subjectToVat = $this->settingsManager->get('subject_to_vat');
         $taxCategory = $this->taxCategoryRepository->findOneBy([

@@ -16,6 +16,7 @@ use AppBundle\Sylius\Product\ProductVariantInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 // a simplified version of Sylius OrderProcessor structure
 // migrate to Sylius in https://github.com/coopcycle/coopcycle/issues/261
@@ -29,6 +30,7 @@ class PriceCalculationVisitor
         private readonly ProductOptionValueFactory $productOptionValueFactory,
         private readonly ProductVariantFactory $productVariantFactory,
         private readonly RuleHumanizer $ruleHumanizer,
+        private readonly TranslatorInterface $translator,
         private LoggerInterface $logger = new NullLogger()
     )
     {
@@ -124,7 +126,7 @@ class PriceCalculationVisitor
         $deliveryAsExpressionLanguageValues = $this->deliveryExpressionLanguageVisitor->toExpressionLanguageValues($delivery);
 
         if ($ruleSet->getStrategy() === 'find') {
-            return $this->applyFindStrategy($ruleSet, $deliveryAsExpressionLanguageValues, function (PricingRule $rule) {
+            return $this->applyFindStrategy($delivery, $deliveryAsExpressionLanguageValues, $delivery, $ruleSet, function (PricingRule $rule) {
                 // LEGACY_TARGET_DYNAMIC is used for backward compatibility
                 // for more info see PricingRule::LEGACY_TARGET_DYNAMIC
                 return $rule->getTarget() === PricingRule::TARGET_DELIVERY || $rule->getTarget() === PricingRule::LEGACY_TARGET_DYNAMIC;
@@ -134,7 +136,7 @@ class PriceCalculationVisitor
         if ($ruleSet->getStrategy() === 'map') {
             $tasks = $delivery->getTasks();
 
-            return $this->applyMapStrategy($ruleSet, $deliveryAsExpressionLanguageValues, function (PricingRule $rule) use ($tasks) {
+            return $this->applyMapStrategy($delivery, $deliveryAsExpressionLanguageValues, $delivery, $ruleSet, function (PricingRule $rule) use ($tasks) {
                 // LEGACY_TARGET_DYNAMIC is used for backward compatibility
                 // for more info see PricingRule::LEGACY_TARGET_DYNAMIC
                 return $rule->getTarget() === PricingRule::TARGET_DELIVERY || ($rule->getTarget() === PricingRule::LEGACY_TARGET_DYNAMIC && count($tasks) <= 2);
@@ -149,7 +151,7 @@ class PriceCalculationVisitor
         $taskAsExpressionLanguageValues = $this->taskExpressionLanguageVisitor->toExpressionLanguageValues($task);
 
         if ($ruleSet->getStrategy() === 'find') {
-            return $this->applyFindStrategy($ruleSet, $taskAsExpressionLanguageValues, function (PricingRule $rule) {
+            return $this->applyFindStrategy($task, $taskAsExpressionLanguageValues, $delivery, $ruleSet, function (PricingRule $rule) {
                 return $rule->getTarget() === PricingRule::TARGET_TASK;
             });
         }
@@ -157,7 +159,7 @@ class PriceCalculationVisitor
         if ($ruleSet->getStrategy() === 'map') {
             $tasks = $delivery->getTasks();
 
-            return $this->applyMapStrategy($ruleSet, $taskAsExpressionLanguageValues, function (PricingRule $rule) use ($tasks) {
+            return $this->applyMapStrategy($task, $taskAsExpressionLanguageValues, $delivery, $ruleSet, function (PricingRule $rule) use ($tasks) {
                 // LEGACY_TARGET_DYNAMIC is used for backward compatibility
                 // for more info see PricingRule::LEGACY_TARGET_DYNAMIC
                 return $rule->getTarget() === PricingRule::TARGET_TASK || ($rule->getTarget() === PricingRule::LEGACY_TARGET_DYNAMIC && count($tasks) > 2);
@@ -167,7 +169,7 @@ class PriceCalculationVisitor
         return new Result([]);
     }
 
-    private function applyFindStrategy(PricingRuleSet $ruleSet, array $expressionLanguageValues, $predicate): Result
+    private function applyFindStrategy(Delivery|Task $object, array $expressionLanguageValues, Delivery $delivery, PricingRuleSet $ruleSet, $shouldApplyRule): Result
     {
         /** @var RuleResult[] $ruleResults */
         $ruleResults = [];
@@ -175,7 +177,7 @@ class PriceCalculationVisitor
         $productOptionValues = [];
 
         foreach ($ruleSet->getRules() as $rule) {
-            if ($predicate($rule)) {
+            if ($shouldApplyRule($rule)) {
                 $matched = $rule->matches($expressionLanguageValues, $this->expressionLanguage);
 
                 $ruleResults[$rule->getPosition()] = new RuleResult($rule, $matched);
@@ -196,7 +198,7 @@ class PriceCalculationVisitor
 
                     $productOptionValues[] = $ProductOptionValueWithQuantity;
 
-                    $productVariant = $this->productVariantFactory->createWithProductOptions($productOptionValues, $ruleSet);
+                    $productVariant = $this->productVariantFactory->createWithProductOptions($this->generateVariantName($object, $delivery), $productOptionValues, $ruleSet);
 
                     return new Result($ruleResults, $productVariant);
                 }
@@ -206,7 +208,7 @@ class PriceCalculationVisitor
         return new Result($ruleResults);
     }
 
-    private function applyMapStrategy(PricingRuleSet $ruleSet, array $expressionLanguageValues, $predicate): Result
+    private function applyMapStrategy(Delivery|Task $object, array $expressionLanguageValues, Delivery $delivery, PricingRuleSet $ruleSet, $shouldApplyRule): Result
     {
         /** @var RuleResult[] $ruleResults */
         $ruleResults = [];
@@ -214,7 +216,7 @@ class PriceCalculationVisitor
         $productOptionValues = [];
 
         foreach ($ruleSet->getRules() as $rule) {
-            if ($predicate($rule)) {
+            if ($shouldApplyRule($rule)) {
                 $matched = $rule->matches($expressionLanguageValues, $this->expressionLanguage);
 
                 $ruleResults[$rule->getPosition()] = new RuleResult($rule, $matched);
@@ -243,7 +245,7 @@ class PriceCalculationVisitor
         });
 
         if (count($matchedRules) > 0) {
-            $productVariant = $this->productVariantFactory->createWithProductOptions($productOptionValues, $ruleSet);
+            $productVariant = $this->productVariantFactory->createWithProductOptions($this->generateVariantName($object, $delivery), $productOptionValues, $ruleSet);
 
             return new Result($ruleResults, $productVariant);
         } else {
@@ -357,5 +359,41 @@ class PriceCalculationVisitor
         // 1. productVariant price (unit price) is set to 0
         // 2. Product option values prices are added to the order via adjustments in OrderOptionsProcessor
         $productVariant->setPrice(0);
+    }
+
+    private function generateVariantName(Delivery|Task $object, Delivery $delivery): string
+    {
+        if ($object instanceof Delivery) {
+            return $this->translator->trans('pricing.variant.order_supplement');
+        }
+
+        $taskType = $object->getType();
+        $taskPosition = $this->getTaskPositionByType($delivery, $object);
+
+        if ($taskType === Task::TYPE_PICKUP) {
+            return $this->translator->trans('pricing.variant.pickup_point', ['%number%' => $taskPosition]);
+        } elseif ($taskType === Task::TYPE_DROPOFF) {
+            return $this->translator->trans('pricing.variant.dropoff_point', ['%number%' => $taskPosition]);
+        } else {
+            throw new \InvalidArgumentException(sprintf('Unknown task type: %s', $taskType));
+        }
+    }
+
+    private function getTaskPositionByType(Delivery $delivery, Task $task): int
+    {
+        $tasks = $delivery->getTasks();
+        $taskType = $task->getType();
+        $position = 1;
+
+        foreach ($tasks as $deliveryTask) {
+            if ($deliveryTask->getType() === $taskType) {
+                if ($deliveryTask === $task) {
+                    return $position;
+                }
+                $position++;
+            }
+        }
+
+        return $position;
     }
 }
