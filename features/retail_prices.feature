@@ -55,7 +55,7 @@ Feature: Retail prices
                     "option": {
                       "@id": @string@,
                       "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-PR",
+                      "code": "CPCCL-ODDLVR-FIXED",
                       "values": [
                         @...@
                       ],
@@ -132,7 +132,7 @@ Feature: Retail prices
                     "option": {
                       "@id": @string@,
                       "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-PR",
+                      "code": "CPCCL-ODDLVR-FIXED",
                       "values": [
                         @...@
                       ],
@@ -209,7 +209,7 @@ Feature: Retail prices
                     "option": {
                       "@id": @string@,
                       "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-PR",
+                      "code": "CPCCL-ODDLVR-FIXED",
                       "values": [
                         @...@
                       ],
@@ -289,7 +289,7 @@ Feature: Retail prices
                     "option": {
                       "@id": @string@,
                       "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-PR",
+                      "code": "CPCCL-ODDLVR-FIXED",
                       "values": [
                         @...@
                       ],
@@ -369,7 +369,7 @@ Feature: Retail prices
                     "option": {
                       "@id": @string@,
                       "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-PR",
+                      "code": "CPCCL-ODDLVR-FIXED",
                       "values": [
                         @...@
                       ],
@@ -449,7 +449,7 @@ Feature: Retail prices
                     "option": {
                       "@id": @string@,
                       "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-PR",
+                      "code": "CPCCL-ODDLVR-FIXED",
                       "values": [
                         @...@
                       ],
@@ -527,7 +527,7 @@ Feature: Retail prices
                     "option": {
                       "@id": @string@,
                       "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-PR",
+                      "code": "CPCCL-ODDLVR-FIXED",
                       "values": [
                         @...@
                       ],
@@ -614,7 +614,7 @@ Feature: Retail prices
                     "option": {
                       "@id": @string@,
                       "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-PR",
+                      "code": "CPCCL-ODDLVR-FIXED",
                       "values": [
                         @...@
                       ],
@@ -701,7 +701,7 @@ Feature: Retail prices
                     "option": {
                       "@id": @string@,
                       "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-PR",
+                      "code": "CPCCL-ODDLVR-FIXED",
                       "values": [
                         @...@
                       ],
@@ -781,7 +781,7 @@ Feature: Retail prices
                     "option": {
                       "@id": @string@,
                       "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-PR",
+                      "code": "CPCCL-ODDLVR-FIXED",
                       "values": [
                         @...@
                       ],
@@ -861,7 +861,7 @@ Feature: Retail prices
                     "option": {
                       "@id": @string@,
                       "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-PR",
+                      "code": "CPCCL-ODDLVR-FIXED",
                       "values": [
                         @...@
                       ],
@@ -889,7 +889,7 @@ Feature: Retail prices
                     "option": {
                       "@id": @string@,
                       "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-PR",
+                      "code": "CPCCL-ODDLVR-FIXED",
                       "values": [
                         @...@
                       ],
@@ -969,7 +969,7 @@ Feature: Retail prices
                     "option": {
                       "@id": @string@,
                       "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-PR",
+                      "code": "CPCCL-ODDLVR-FIXED",
                       "values": [
                         @...@
                       ],
@@ -1130,7 +1130,7 @@ Feature: Retail prices
                     "option": {
                       "@id": @string@,
                       "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-PR",
+                      "code": "CPCCL-ODDLVR-FIXED",
                       "values": [
                         @...@
                       ],
@@ -1206,7 +1206,7 @@ Feature: Retail prices
                     "option": {
                       "@id": @string@,
                       "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-PR",
+                      "code": "CPCCL-ODDLVR-FIXED",
                       "values": [
                         @...@
                       ],
@@ -1290,7 +1290,7 @@ Feature: Retail prices
                     "option": {
                       "@id": @string@,
                       "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-PR",
+                      "code": "CPCCL-ODDLVR-FIXED",
                       "values": [
                         @...@
                       ],
@@ -1359,7 +1359,7 @@ Feature: Retail prices
                     "option": {
                       "@id": @string@,
                       "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-PR",
+                      "code": "CPCCL-ODDLVR-FIXED",
                       "values": [
                         @...@
                       ],
@@ -1459,7 +1459,7 @@ Feature: Retail prices
                     "option": {
                       "@id": @string@,
                       "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-PR",
+                      "code": "CPCCL-ODDLVR-FIXED",
                       "values": [
                         @...@
                       ],
@@ -1538,7 +1538,7 @@ Feature: Retail prices
                     "option": {
                       "@id": @string@,
                       "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-PR",
+                      "code": "CPCCL-ODDLVR-FIXED",
                       "values": [
                         @...@
                       ],
