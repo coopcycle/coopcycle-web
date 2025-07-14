@@ -126,21 +126,21 @@ class PriceCalculationVisitor
         $deliveryAsExpressionLanguageValues = $this->deliveryExpressionLanguageVisitor->toExpressionLanguageValues($delivery);
 
         if ($ruleSet->getStrategy() === 'find') {
-            return $this->applyFindStrategy($delivery, $deliveryAsExpressionLanguageValues, $delivery, $ruleSet, function (PricingRule $rule) {
+            return $this->processRuleSet($delivery, $deliveryAsExpressionLanguageValues, $delivery, $ruleSet, function (PricingRule $rule) {
                 // LEGACY_TARGET_DYNAMIC is used for backward compatibility
                 // for more info see PricingRule::LEGACY_TARGET_DYNAMIC
                 return $rule->getTarget() === PricingRule::TARGET_DELIVERY || $rule->getTarget() === PricingRule::LEGACY_TARGET_DYNAMIC;
-            });
+            }, true);
         }
 
         if ($ruleSet->getStrategy() === 'map') {
             $tasks = $delivery->getTasks();
 
-            return $this->applyMapStrategy($delivery, $deliveryAsExpressionLanguageValues, $delivery, $ruleSet, function (PricingRule $rule) use ($tasks) {
+            return $this->processRuleSet($delivery, $deliveryAsExpressionLanguageValues, $delivery, $ruleSet, function (PricingRule $rule) use ($tasks) {
                 // LEGACY_TARGET_DYNAMIC is used for backward compatibility
                 // for more info see PricingRule::LEGACY_TARGET_DYNAMIC
                 return $rule->getTarget() === PricingRule::TARGET_DELIVERY || ($rule->getTarget() === PricingRule::LEGACY_TARGET_DYNAMIC && count($tasks) <= 2);
-            });
+            }, false);
         }
 
         return new Result([]);
@@ -151,26 +151,35 @@ class PriceCalculationVisitor
         $taskAsExpressionLanguageValues = $this->taskExpressionLanguageVisitor->toExpressionLanguageValues($task);
 
         if ($ruleSet->getStrategy() === 'find') {
-            return $this->applyFindStrategy($task, $taskAsExpressionLanguageValues, $delivery, $ruleSet, function (PricingRule $rule) {
+            return $this->processRuleSet($task, $taskAsExpressionLanguageValues, $delivery, $ruleSet, function (PricingRule $rule) {
                 return $rule->getTarget() === PricingRule::TARGET_TASK;
-            });
+            }, true);
         }
 
         if ($ruleSet->getStrategy() === 'map') {
             $tasks = $delivery->getTasks();
 
-            return $this->applyMapStrategy($task, $taskAsExpressionLanguageValues, $delivery, $ruleSet, function (PricingRule $rule) use ($tasks) {
+            return $this->processRuleSet($task, $taskAsExpressionLanguageValues, $delivery, $ruleSet, function (PricingRule $rule) use ($tasks) {
                 // LEGACY_TARGET_DYNAMIC is used for backward compatibility
                 // for more info see PricingRule::LEGACY_TARGET_DYNAMIC
                 return $rule->getTarget() === PricingRule::TARGET_TASK || ($rule->getTarget() === PricingRule::LEGACY_TARGET_DYNAMIC && count($tasks) > 2);
-            });
+            }, false);
         }
 
         return new Result([]);
     }
 
-    private function applyFindStrategy(Delivery|Task $object, array $expressionLanguageValues, Delivery $delivery, PricingRuleSet $ruleSet, $shouldApplyRule): Result
-    {
+    /**
+     * Process a rule set for a given object (Delivery or Task)
+     */
+    private function processRuleSet(
+        Delivery|Task $object,
+        array $expressionLanguageValues,
+        Delivery $delivery,
+        PricingRuleSet $ruleSet,
+        callable $shouldApplyRule,
+        bool $returnOnFirstMatch
+    ): Result {
         /** @var RuleResult[] $ruleResults */
         $ruleResults = [];
         /** @var ProductOptionValueWithQuantity[] $productOptionValues */
@@ -178,79 +187,62 @@ class PriceCalculationVisitor
 
         foreach ($ruleSet->getRules() as $rule) {
             if ($shouldApplyRule($rule)) {
-                $matched = $rule->matches($expressionLanguageValues, $this->expressionLanguage);
+                $ruleResult = $this->processRule($rule, $expressionLanguageValues, $ruleSet);
+                $ruleResults[$rule->getPosition()] = $ruleResult;
 
-                $ruleResults[$rule->getPosition()] = new RuleResult($rule, $matched);
-
-                if ($matched) {
-                    $this->logger->info(sprintf('Matched rule "%s"', $rule->getExpression()), [
-                        'strategy' => $ruleSet->getStrategy(),
-                        'target' => $rule->getTarget(),
-                    ]);
-
+                if ($ruleResult->matched) {
                     $productOptionValue = $this->getProductOptionValue($rule);
-                    $ProductOptionValueWithQuantity = $this->processProductOptionValue(
+                    $productOptionValueWithQuantity = $this->processProductOptionValue(
                         $productOptionValue,
                         $rule,
                         $expressionLanguageValues,
                         $this->expressionLanguage
                     );
 
-                    $productOptionValues[] = $ProductOptionValueWithQuantity;
+                    $productOptionValues[] = $productOptionValueWithQuantity;
 
-                    $productVariant = $this->productVariantFactory->createWithProductOptions($this->generateVariantName($object, $delivery), $productOptionValues, $ruleSet);
-
-                    return new Result($ruleResults, $productVariant);
+                    // For `find` strategy
+                    if ($returnOnFirstMatch) {
+                        $productVariant = $this->productVariantFactory->createWithProductOptions(
+                            $this->generateVariantName($object, $delivery),
+                            $productOptionValues,
+                            $ruleSet
+                        );
+                        return new Result($ruleResults, $productVariant);
+                    }
                 }
             }
         }
 
+        // For `map` strategy
+        if (!$returnOnFirstMatch && count($productOptionValues) > 0) {
+            $productVariant = $this->productVariantFactory->createWithProductOptions(
+                $this->generateVariantName($object, $delivery),
+                $productOptionValues,
+                $ruleSet
+            );
+            return new Result($ruleResults, $productVariant);
+        }
+
+        // When no matches found
         return new Result($ruleResults);
     }
 
-    private function applyMapStrategy(Delivery|Task $object, array $expressionLanguageValues, Delivery $delivery, PricingRuleSet $ruleSet, $shouldApplyRule): Result
+    /**
+     * Process a single rule for a given object (Delivery or Task)
+     */
+    private function processRule(PricingRule $rule, array $expressionLanguageValues, PricingRuleSet $ruleSet): RuleResult
     {
-        /** @var RuleResult[] $ruleResults */
-        $ruleResults = [];
-        /** @var ProductOptionValueWithQuantity[] $productOptionValues */
-        $productOptionValues = [];
+        $matched = $rule->matches($expressionLanguageValues, $this->expressionLanguage);
 
-        foreach ($ruleSet->getRules() as $rule) {
-            if ($shouldApplyRule($rule)) {
-                $matched = $rule->matches($expressionLanguageValues, $this->expressionLanguage);
-
-                $ruleResults[$rule->getPosition()] = new RuleResult($rule, $matched);
-
-                if ($matched) {
-                    $this->logger->info(sprintf('Matched rule "%s"', $rule->getExpression()), [
-                        'strategy' => $ruleSet->getStrategy(),
-                        'target' => $rule->getTarget(),
-                    ]);
-
-                    $productOptionValue = $this->getProductOptionValue($rule);
-                    $ProductOptionValueWithQuantity = $this->processProductOptionValue(
-                        $productOptionValue,
-                        $rule,
-                        $expressionLanguageValues,
-                        $this->expressionLanguage
-                    );
-
-                    $productOptionValues[] = $ProductOptionValueWithQuantity;
-                }
-            }
+        if ($matched) {
+            $this->logger->info(sprintf('Matched rule "%s"', $rule->getExpression()), [
+                'strategy' => $ruleSet->getStrategy(),
+                'target' => $rule->getTarget(),
+            ]);
         }
 
-        $matchedRules = array_filter($ruleResults, function ($item) {
-            return $item->matched === true;
-        });
-
-        if (count($matchedRules) > 0) {
-            $productVariant = $this->productVariantFactory->createWithProductOptions($this->generateVariantName($object, $delivery), $productOptionValues, $ruleSet);
-
-            return new Result($ruleResults, $productVariant);
-        } else {
-            return new Result($ruleResults);
-        }
+        return new RuleResult($rule, $matched);
     }
 
     private function getProductOptionValue(
