@@ -330,9 +330,8 @@ class PriceCalculationVisitor
          */
         foreach ($productVariant->getOptionValues() as $productOptionValue) {
 
-            if (str_starts_with($productOptionValue->getCode(), 'PERCENTAGE-')) {
-                // update the price of the option value, because with percentage-based rules,
-                // the price is calculated on the subtotal of the previous steps
+            if ('CPCCL-ODDLVR-PERCENTAGE' === $productOptionValue->getOptionCode()) {
+                // for percentage-based rules: the price is calculated on the subtotal of the previous steps
 
                 $priceMultiplier = $productOptionValue->getPrice();
 

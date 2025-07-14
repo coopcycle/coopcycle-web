@@ -25,8 +25,9 @@ class ProductOptionValueFactory
 
     public function createForPricingRule(PricingRule $pricingRule, string $name): ProductOptionValue {
         $priceExpression = $pricingRule->getPrice();
+        $pricingType = $this->determinePricingType($priceExpression);
 
-        $productOption = $this->productOptionRepository->findPricingRuleProductOption();
+        $productOption = $this->productOptionRepository->findPricingRuleProductOptionByType($pricingType);
 
         /** @var ProductOptionValue $productOptionValue */
         $productOptionValue = $this->createNew();
@@ -35,13 +36,7 @@ class ProductOptionValueFactory
         // Set current locale before setting the value for translatable entities
         $productOptionValue->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
 
-        //FIXME: a workaround to distinguish between percentage-based and 'static' product option values
-        // until we have a dedicated ProductOption type for percentage-based rules
-        if (str_contains($priceExpression, 'price_percentage')) {
-            $productOptionValue->setCode('PERCENTAGE-' . Uuid::uuid4()->toString());
-        } else {
-            $productOptionValue->setCode(Uuid::uuid4()->toString());
-        }
+        $productOptionValue->setCode(Uuid::uuid4()->toString());
 
         $productOptionValue->setValue($name);
 
@@ -49,4 +44,23 @@ class ProductOptionValueFactory
 
         return $productOptionValue;
     }
+
+    private function determinePricingType(string $priceExpression): string
+    {
+        if (str_contains($priceExpression, 'price_percentage(')) {
+            return ProductOptionRepository::PRICING_TYPE_PERCENTAGE;
+        }
+
+        if (str_contains($priceExpression, 'price_range(')) {
+            return ProductOptionRepository::PRICING_TYPE_RANGE;
+        }
+
+        if (str_contains($priceExpression, 'price_per_package(')) {
+            return ProductOptionRepository::PRICING_TYPE_PACKAGE;
+        }
+
+        // Default to fixed price for numeric values or other expressions
+        return ProductOptionRepository::PRICING_TYPE_FIXED_PRICE;
+    }
+
 }

@@ -10,6 +10,11 @@ use Sylius\Component\Resource\Factory\FactoryInterface;
 
 class ProductOptionRepository extends BaseRepository
 {
+    public const PRICING_TYPE_FIXED_PRICE = 'fixed_price';
+    public const PRICING_TYPE_PERCENTAGE = 'price_percentage';
+    public const PRICING_TYPE_RANGE = 'price_range';
+    public const PRICING_TYPE_PACKAGE = 'price_per_package';
+
     private EntityManagerInterface $entityManager;
     private ProductRepository $productRepository;
     private FactoryInterface $productOptionFactory;
@@ -38,16 +43,18 @@ class ProductOptionRepository extends BaseRepository
         $this->localeProvider = $localeProvider;
     }
 
-    public function findPricingRuleProductOption(): ProductOptionInterface
+    public function findPricingRuleProductOptionByType(string $type): ProductOptionInterface
     {
         $onDemandDeliveryProduct = $this->productRepository->findOneBy(['code' => 'CPCCL-ODDLVR']);
 
+        $typeConfig = $this->getPricingTypeConfig($type);
+
+        // Look for existing option with the specific code for this type
         $existingOptions = $onDemandDeliveryProduct->getOptions();
-        if (!$existingOptions->isEmpty()) {
-            // Return the first option (there should only be one for pricing rules)
-            /** @var ProductOptionInterface $firstOption */
-            $firstOption = $existingOptions->first();
-            return $firstOption;
+        foreach ($existingOptions as $option) {
+            if ($option->getCode() === $typeConfig['code']) {
+                return $option;
+            }
         }
 
         /** @var ProductOption $productOption */
@@ -56,8 +63,8 @@ class ProductOptionRepository extends BaseRepository
         // Set current locale before setting the name for translatable entities
         $productOption->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
 
-        $productOption->setCode('CPCCL-ODDLVR-PR');
-        $productOption->setName('Pricing Rules');
+        $productOption->setCode($typeConfig['code']);
+        $productOption->setName($typeConfig['name']);
 
         $productOption->setStrategy(ProductOptionInterface::STRATEGY_OPTION_VALUE);
         $productOption->setAdditional(true);
@@ -68,5 +75,33 @@ class ProductOptionRepository extends BaseRepository
         $this->entityManager->flush();
 
         return $productOption;
+    }
+
+    private function getPricingTypeConfig(string $type): array
+    {
+        $configs = [
+            self::PRICING_TYPE_FIXED_PRICE => [
+                'code' => 'CPCCL-ODDLVR-FIXED',
+                'name' => 'Fixed Price'
+            ],
+            self::PRICING_TYPE_PERCENTAGE => [
+                'code' => 'CPCCL-ODDLVR-PERCENTAGE',
+                'name' => 'Percentage Price'
+            ],
+            self::PRICING_TYPE_RANGE => [
+                'code' => 'CPCCL-ODDLVR-RANGE',
+                'name' => 'Range Price'
+            ],
+            self::PRICING_TYPE_PACKAGE => [
+                'code' => 'CPCCL-ODDLVR-PACKAGE',
+                'name' => 'Package Price'
+            ]
+        ];
+
+        if (!isset($configs[$type])) {
+            throw new \InvalidArgumentException(sprintf('Unknown pricing type: %s', $type));
+        }
+
+        return $configs[$type];
     }
 }
