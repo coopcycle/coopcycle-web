@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Button, Checkbox } from 'antd'
 import { Formik, Form, FieldArray } from 'formik'
 import moment from 'moment'
+import { v4 as uuidv4 } from 'uuid'
 
 import Spinner from '../../components/core/Spinner.js'
 import BarcodesModal from '../../../../assets/react/controllers/BarcodesModal.jsx'
@@ -29,6 +30,12 @@ import Map from '../DeliveryMap'
 import { Mode, modeIn } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
+
+const generateTempId = () => `temp-${uuidv4()}`
+
+const getTaskId = (task) => {
+  return task['@id']
+}
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -103,6 +110,7 @@ const dropoffSchema = {
   packages: [],
   weight: 0,
   tags: [],
+  '@id': null, // Will be set when creating new tasks
 };
 
 const pickupSchema = {
@@ -122,6 +130,7 @@ const pickupSchema = {
   saveInStoreAddresses: false,
   updateInStoreAddresses: false,
   tags: [],
+  '@id': null, // Will be set when creating new tasks
 }
 
 export default function({
@@ -268,6 +277,8 @@ export default function({
       initialValues.tasks = preLoadedDeliveryData.tasks.map(task => {
         return {
           ...task,
+          // Ensure each task has an @id (use existing or generate temporary)
+          '@id': task['@id'] || generateTempId(),
           address: {
             ...task.address,
             formattedTelephone: getFormattedValue(task.address.telephone),
@@ -303,7 +314,10 @@ export default function({
 
     } else {
       if (mode === Mode.DELIVERY_CREATE) {
-        const tasks = [{ ...pickupSchema }, { ...dropoffSchema }]
+        const tasks = [
+          { ...pickupSchema, '@id': generateTempId() },
+          { ...dropoffSchema, '@id': generateTempId() }
+        ]
 
         setInitialValues({
           tasks: tasks,
@@ -414,7 +428,7 @@ export default function({
                                   <Task
                                     key={originalIndex}
                                     task={task}
-                                    index={originalIndex}
+                                    taskId={getTaskId(task)}
                                     addresses={addresses}
                                     storeNodeId={storeNodeId}
                                     storeDeliveryInfos={storeDeliveryInfos}
@@ -438,8 +452,10 @@ export default function({
                               data-testid="add-pickup-button"
                               disabled={!canAddAnother('PICKUP', pickups, dropoffs)}
                               onClick={() => {
+                                const newTaskId = generateTempId()
                                 const newDeliverySchema = {
                                   ...pickupSchema,
+                                  '@id': newTaskId,
                                   before: values.tasks.slice(-1)[0].before,
                                   after: values.tasks.slice(-1)[0].after,
                                   timeSlot: values.tasks.slice(-1)[0].timeSlot,
@@ -474,7 +490,7 @@ export default function({
                               return (
                                 <div className='new-order__dropoffs__item' key={originalIndex}>
                                   <Task
-                                    index={originalIndex}
+                                    taskId={getTaskId(task)}
                                     addresses={addresses}
                                     storeNodeId={storeNodeId}
                                     storeDeliveryInfos={storeDeliveryInfos}
@@ -498,8 +514,10 @@ export default function({
                               data-testid="add-dropoff-button"
                               disabled={!canAddAnother('DROPOFF', pickups, dropoffs)}
                               onClick={() => {
+                                const newTaskId = generateTempId()
                                 const newDeliverySchema = {
                                   ...dropoffSchema,
+                                  '@id': newTaskId,
                                   before: values.tasks.slice(-1)[0].before,
                                   after: values.tasks.slice(-1)[0].after,
                                   timeSlot: values.tasks.slice(-1)[0].timeSlot,

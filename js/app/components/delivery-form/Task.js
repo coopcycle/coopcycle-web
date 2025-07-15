@@ -23,7 +23,7 @@ export default ({
   isDispatcher,
   storeNodeId,
   addresses,
-  index,
+  taskId,
   storeDeliveryInfos,
   onRemove,
   showRemoveButton,
@@ -39,15 +39,16 @@ export default ({
     values,
     taskValues,
     setFieldValue,
+    taskIndex,
   } = useDeliveryFormFormikContext({
-    taskIndex: index,
+    taskId: taskId,
   })
 
   const { data: timeSlotLabels } = useGetStoreTimeSlotsQuery(storeNodeId)
   const { data: packages } = useGetStorePackagesQuery(storeNodeId)
 
   return (
-    <div className="task border p-4 mb-4" data-testid={`form-task-${index}`}>
+    <div className="task border p-4 mb-4" data-testid={`form-task-${taskIndex}`}>
       <div
         className={`task__header task__header--${taskValues.type.toLowerCase()}`}
         onClick={() => {
@@ -78,7 +79,7 @@ export default ({
         {showRemoveButton && (
           <i
             className="fa fa-trash cursor-pointer"
-            onClick={() => onRemove(index)}
+            onClick={() => onRemove(taskIndex)}
             type="button"
           />
         )}
@@ -88,7 +89,7 @@ export default ({
         className={isExpanded ? 'task__body' : 'task__body task__body--hidden'}>
         <AddressBookNew
           addresses={addresses}
-          index={index}
+          taskId={taskId}
           storeDeliveryInfos={storeDeliveryInfos}
           shallPrefillAddress={Boolean(
             taskValues.type === 'PICKUP' &&
@@ -101,30 +102,30 @@ export default ({
           isDispatcher={isDispatcher}
           storeNodeId={storeNodeId}
           timeSlots={timeSlotLabels}
-          index={index}
+          taskId={taskId}
         />
 
         { showPackages ? (
           <div className="mt-4">
             {packages && packages.length ? (
               <Packages
-                index={index}
+                taskId={taskId}
                 packages={packages}
               />
             ) : null}
-            <TotalWeight index={index} />
+            <TotalWeight taskId={taskId} />
           </div>
         ) : null }
 
         <div className="mt-4 mb-4">
           <label
-            htmlFor={`tasks[${index}].comments`}
+            htmlFor={`tasks[${taskIndex}].comments`}
             className="block mb-2 font-weight-bold">
             {t('ADMIN_DASHBOARD_TASK_FORM_COMMENTS_LABEL')}
           </label>
           <Field
             as={Input.TextArea}
-            name={`tasks[${index}].comments`}
+            name={`tasks[${taskIndex}].comments`}
             placeholder={t('ADMIN_DASHBOARD_TASK_FORM_COMMENTS_PLACEHOLDER')}
             rows={4}
             style={{ resize: 'none' }}
@@ -137,10 +138,10 @@ export default ({
             <div data-testid="tags-select">
               <TagsSelect
                 tags={tags}
-                defaultValue={values.tasks[index].tags || []}
+                defaultValue={values.tasks[taskIndex].tags || []}
                 onChange={values => {
                   const tags = values.map(tag => tag.value)
-                  setFieldValue(`tasks[${index}].tags`, tags)
+                  setFieldValue(`tasks[${taskIndex}].tags`, tags)
                 }}
               />
             </div>
@@ -150,7 +151,7 @@ export default ({
       <div className={isExpanded ? 'task__footer' : 'task__footer--hidden'}>
         {showRemoveButton && (
           <Button
-            onClick={() => onRemove(index)}
+            onClick={() => onRemove(taskIndex)}
             type="button"
             className="mb-4">
             {t(`DELIVERY_FORM_REMOVE_${taskValues.type}`)}
