@@ -52,7 +52,7 @@ final class DeliveryOrderProcessor implements ProcessorInterface
         // when a store does not have pricing rules
         // randomly: keep the price 0 or use an arbitrary price
         if (1 === count($productVariants) && 0 === $productVariants[0]->getOptionValuesPrice() && random_int(0, 1) === 0) {
-            $price = new ArbitraryPrice(null, random_int(500, 20000));
+            $price = new ArbitraryPrice(random_int(0, 1) === 0 ? null : 'Arbitrary name', random_int(500, 20000));
             $productVariants = [$this->pricingManager->getCustomProductVariant($delivery, $price)];
         }
 
