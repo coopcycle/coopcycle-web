@@ -32,10 +32,6 @@ class ProductOptionValueFactory
         /** @var ProductOptionValue $productOptionValue */
         $productOptionValue = $this->createNew();
 
-        //TODO: is this needed?
-        // Set current locale before setting the value for translatable entities
-        $productOptionValue->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
-
         $productOptionValue->setCode(Uuid::uuid4()->toString());
 
         $productOptionValue->setValue($name);
