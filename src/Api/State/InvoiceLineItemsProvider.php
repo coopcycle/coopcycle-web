@@ -236,7 +236,7 @@ final class InvoiceLineItemsProvider implements ProviderInterface
     {
         $deliveryItem = $order->getItems()->first();
 
-        if (null === $deliveryItem) {
+        if (false === $deliveryItem) {
             return [];
         }
 
