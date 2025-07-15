@@ -6,7 +6,6 @@ use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Sylius\ProductOptionRepository;
 use AppBundle\Entity\Sylius\ProductOptionValue;
 use Ramsey\Uuid\Uuid;
-use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 
 class ProductOptionValueFactory
@@ -14,7 +13,6 @@ class ProductOptionValueFactory
     public function __construct(
         private readonly FactoryInterface $decorated,
         private readonly ProductOptionRepository $productOptionRepository,
-        private readonly LocaleProviderInterface $localeProvider
     ) {
     }
 
