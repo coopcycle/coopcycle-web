@@ -38,6 +38,7 @@ AppBundle\Entity\TimeSlot:
     openingHours:
       - 'Mo-Su 00:00-11:59'
       - 'Mo-Su 12:00-23:59'
+    workingDaysOnly: false
 
 AppBundle\Entity\Address:
   warehouse:

@@ -7,5 +7,5 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 interface HumanReadableEventInterface
 {
-    public function forHumans(TranslatorInterface $translator, UserInterface $user = null);
+    public function forHumans(TranslatorInterface $translator, ?UserInterface $user = null);
 }

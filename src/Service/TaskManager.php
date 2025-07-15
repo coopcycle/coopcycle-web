@@ -75,7 +75,7 @@ class TaskManager
         $this->commandBus->dispatch(new Reschedule($task, $rescheduledAfter, $rescheduledBefore));
     }
 
-    public function incident(Task $task, string $reason, ?string $notes = null, array $data = [], Incident $incident = null): void
+    public function incident(Task $task, string $reason, ?string $notes = null, array $data = [], ?Incident $incident = null): void
     {
         $this->commandBus->dispatch(new IncidentCommand($task, $reason, $notes, $data, $incident));
     }

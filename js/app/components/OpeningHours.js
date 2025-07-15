@@ -1,15 +1,14 @@
 import React from 'react'
 import moment from 'moment'
 import _ from 'lodash'
-import { ConfigProvider, Radio, TimePicker } from 'antd'
+import { Radio, TimePicker } from 'antd'
 import classNames from 'classnames'
 import PropTypes from 'prop-types'
 import { withTranslation } from 'react-i18next'
 
 import openingHourIntervalToReadable from '../restaurant/parseOpeningHours'
 import TimeRange from '../utils/TimeRange'
-import { timePickerProps } from '../utils/antd'
-import { antdLocale } from '../i18n'
+import { AntdConfigProvider, timePickerProps } from '../utils/antd'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 
 let minutes = []
@@ -244,7 +243,7 @@ class OpeningHours extends React.Component {
   render() {
     const { weekdays } = this.state
     return (
-      <ConfigProvider locale={antdLocale}>
+      <AntdConfigProvider>
         <div>
           <table className="table">
             <thead>
@@ -290,7 +289,7 @@ class OpeningHours extends React.Component {
             </button>
           </div>
         </div>
-      </ConfigProvider>
+      </AntdConfigProvider>
     )
   }
 }

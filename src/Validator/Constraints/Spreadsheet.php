@@ -14,7 +14,7 @@ class Spreadsheet extends Constraint
     public $alternativeColumnsMessage = 'spreadsheet.alternative_columns';
     public $csvEncodingMessage = 'spreadsheet.csv_encoding';
 
-    public function __construct(string $type = null, array $options = null, array $groups = null, $payload = null)
+    public function __construct(?string $type = null, ?array $options = null, ?array $groups = null, $payload = null)
     {
         parent::__construct($options ?? [], $groups, $payload);
 

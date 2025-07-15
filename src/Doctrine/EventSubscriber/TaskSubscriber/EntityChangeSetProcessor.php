@@ -19,7 +19,7 @@ class EntityChangeSetProcessor
 
     public function __construct(
         TaskListProvider $taskListProvider,
-        LoggerInterface $logger = null
+        ?LoggerInterface $logger = null
     )
     {
         $this->taskListProvider = $taskListProvider;

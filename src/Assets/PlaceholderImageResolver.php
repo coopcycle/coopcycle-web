@@ -19,7 +19,7 @@ class PlaceholderImageResolver
         $this->isPixabayConfigured = !empty($pixabayApiKey);
     }
 
-    public function resolve(string $filter, string $provider = 'placehold', object|array $obj = null, int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
+    public function resolve(string $filter, string $provider = 'placehold', object|array|null $obj = null, int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
         if (null !== $obj && is_callable([ $obj, 'getId' ]) && $this->isPixabayConfigured) {
 

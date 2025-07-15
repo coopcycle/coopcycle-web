@@ -22,7 +22,7 @@ class DeleteClosingRuleVoter extends Voter
     {
     }
 
-    protected function supports($attribute, $subject)
+    protected function supports($attribute, $subject): bool
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [self::DELETE])) {
@@ -37,7 +37,7 @@ class DeleteClosingRuleVoter extends Voter
         return true;
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
         if (!is_object($user = $token->getUser())) {
             // e.g. anonymous authentication

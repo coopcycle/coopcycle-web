@@ -43,7 +43,7 @@ use League\Flysystem\FilesystemException;
 use League\Flysystem\UnableToWriteFile;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Psr\Log\LoggerInterface;
 use Recurr\Exception\InvalidRRule;
 use Recurr\Rule;
@@ -66,7 +66,7 @@ trait StoreTrait
     use InjectAuthTrait;
 
     #[HideSoftDeleted]
-    public function storeListAction(Request $request, PaginatorInterface $paginator, JWTManagerInterface $jwtManager)
+    public function storeListAction(Request $request, PaginatorInterface $paginator, JWTTokenManagerInterface $jwtManager)
     {
         $qb = $this->entityManager
         ->getRepository(Store::class)

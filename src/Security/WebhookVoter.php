@@ -30,7 +30,7 @@ class WebhookVoter extends Voter
         $this->accessTokenManager = $accessTokenManager;
     }
 
-    protected function supports($attribute, $subject)
+    protected function supports($attribute, $subject): bool
     {
         if (!in_array($attribute, self::$actions)) {
             return false;
@@ -43,7 +43,7 @@ class WebhookVoter extends Voter
         return true;
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
         if (!$token instanceof OAuth2Token) {
             return false;

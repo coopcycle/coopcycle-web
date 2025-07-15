@@ -22,9 +22,9 @@ final class OrderStoreFilter extends SearchFilter
     public function __construct(
         ManagerRegistry $managerRegistry,
         IriConverterInterface $iriConverter,
-        PropertyAccessorInterface $propertyAccessor = null,
-        LoggerInterface $logger = null,
-        NameConverterInterface $nameConverter = null
+        ?PropertyAccessorInterface $propertyAccessor = null,
+        ?LoggerInterface $logger = null,
+        ?NameConverterInterface $nameConverter = null
     )
     {
         $properties = [
@@ -34,7 +34,7 @@ final class OrderStoreFilter extends SearchFilter
         parent::__construct($managerRegistry, $iriConverter, $propertyAccessor, $logger, $properties, $nameConverter);
     }
 
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, Operation $operation = null, array $context = []): void
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
     {
         if ($resourceClass !== Order::class) {
             return;

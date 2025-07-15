@@ -15,11 +15,13 @@ use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Action\Delivery\BulkAsync as BulkAsyncDelivery;
+use AppBundle\Action\Delivery\PODExport as PODExportDelivery;
 use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryDto;
 use AppBundle\Api\Dto\OptimizationSuggestions;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
+use AppBundle\Api\Filter\DeliveryTaskDateFilter;
 use AppBundle\Api\State\DeliveryCreateOrUpdateProcessor;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
@@ -31,6 +33,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Validator\Constraints\CheckDelivery as AssertCheckDelivery;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use AppBundle\Vroom\Shipment as VroomShipment;
+use DeliveryPODExportInput;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -164,6 +167,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
             controller: BulkAsyncDelivery::class,
             security: 'is_granted(\'ROLE_OAUTH2_DELIVERIES\')',
             deserialize: false
+        ),
+        new Post(
+            uriTemplate: '/deliveries/pod_export',
+            controller: PODExportDelivery::class,
+            /* input: DeliveryPODExportInput::class, */
+            write: false,
+            deserialize: false
         )
     ],
     normalizationContext: ['groups' => ['delivery', 'address']],
@@ -175,6 +185,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[AssertCheckDelivery(groups: ['delivery_check'])]
 #[ApiFilter(filterClass: OrderFilter::class, properties: ['createdAt'])]
 #[ApiFilter(filterClass: DeliveryOrderFilter::class, properties: ['dropoff.before'])]
+#[ApiFilter(filterClass: DeliveryTaskDateFilter::class)]
 #[ApiResource(
     uriTemplate: '/stores/{id}/deliveries',
     types: ['http://schema.org/ParcelDelivery'],
@@ -199,6 +210,11 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     private $order;
 
     private $vehicle = self::VEHICLE_BIKE;
+
+    public const TYPE_SIMPLE = 'simple';
+    public const TYPE_MULTI_DROPOFF = 'multi_dropoff';
+    public const TYPE_MULTI_PICKUP = 'multi_pickup';
+    public const TYPE_MULTI_MULTI = 'multi_multi';
 
     #[Groups(['delivery_create'])]
     private $store;
@@ -369,17 +385,29 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
         if (count($tasks) > 2) {
 
-            $pickup = array_shift($tasks);
+            $pickups  = array_values(array_filter($tasks, fn($t) => $t->isPickup()));
+            $dropoffs = array_values(array_filter($tasks, fn($t) => $t->isDropoff()));
 
-            // Make sure the first task is a pickup
-            $pickup->setType(Task::TYPE_PICKUP);
+            $type = self::getType($tasks);
 
-            $this->addTask($pickup);
-
-            foreach ($tasks as $dropoff) {
-                $dropoff->setPrevious($pickup);
-                $this->addTask($dropoff);
+            switch ($type) {
+                case self::TYPE_MULTI_DROPOFF:
+                case self::TYPE_SIMPLE:
+                    foreach ($tasks as $task) {
+                        if ($task->isDropoff()) {
+                            $task->setPrevious($pickups[0]);
+                        }
+                        $this->addTask($task);
+                    }
+                    break;
+                default:
+                    // For multiple pickups we don't set constraints
+                    foreach ($tasks as $task) {
+                        $this->addTask($task);
+                    }
+                    break;
             }
+
         } else {
 
             [$pickup, $dropoff] = $tasks;
@@ -607,5 +635,36 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         }, $this->getTasks()));
         usort($messages, fn($a, $b) => $a->getCreatedAt() >= $b->getCreatedAt());
         return $messages;
+    }
+
+    public static function getType(array $tasks): string
+    {
+        $pickups = array_filter($tasks, fn($t) => $t->isPickup());
+        $dropoffs = array_filter($tasks, fn($t) => $t->isDropoff());
+
+        $isSimple = count($pickups) === 1 && count($dropoffs) === 1;
+
+        if ($isSimple) {
+            return self::TYPE_SIMPLE;
+        }
+
+        $isMultiDropoffs = count($pickups) === 1 && count($dropoffs) > 1;
+        $isMultiPickups = count($pickups) > 1 && count($dropoffs) === 1;
+
+        $pickupsWithPackages = array_filter($pickups, fn($t) => count($t->getPackages()) > 0);
+        $dropoffsWithPackages = array_filter($dropoffs, fn($t) => count($t->getPackages()) > 0);
+
+        $isCleanMultiPickups = $isMultiPickups && count($dropoffsWithPackages) === 0;
+        $isCleanMultiDropoffs = $isMultiDropoffs && count($pickupsWithPackages) === 0;
+
+        if ($isCleanMultiPickups) {
+            return self::TYPE_MULTI_PICKUP;
+        }
+
+        if ($isCleanMultiDropoffs) {
+            return self::TYPE_MULTI_DROPOFF;
+        }
+
+        return self::TYPE_MULTI_MULTI;
     }
 }

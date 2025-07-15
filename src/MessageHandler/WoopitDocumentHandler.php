@@ -30,7 +30,7 @@ class WoopitDocumentHandler
         private Hashids $hashids12,
         private UploaderHelper $uploaderHelper,
         private FilterService $imagineFilter,
-        LoggerInterface $logger = null)
+        ?LoggerInterface $logger = null)
     {
         $this->logger = $logger ?? new NullLogger();
     }

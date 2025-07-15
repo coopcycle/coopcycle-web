@@ -300,7 +300,38 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
-        "tasks":@array@,
+        "tasks":[
+          {
+            "@type":"Task",
+            "@id":"/api/tasks/1",
+            "type":"PICKUP",
+            "packages":[],
+            "@*@":"@*@"
+          },
+          {
+            "@type":"Task",
+            "type":"PICKUP",
+            "@id":"/api/tasks/2",
+            "packages":[],
+            "@*@":"@*@"
+          },
+          {
+            "@type":"Task",
+            "type":"DROPOFF",
+            "@id":"/api/tasks/3",
+            "packages":[
+              {
+                "type":"XL",
+                "name":"XL",
+                "quantity":2,
+                "volume_per_package": 3,
+                "short_code": "AB",
+                "labels":@array@
+              }
+            ],
+            "@*@":"@*@"
+          }
+        ],
         "pickup":{
           "@id":"/api/tasks/1",
           "@type":"Task",
@@ -323,21 +354,12 @@ Feature: Multi-step deliveries
             "description": null
           },
           "comments":"2 × XL\n1.50 kg",
-          "weight":1500,
+          "weight":null,
           "after":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "doneAfter":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
-          "packages":[
-            {
-              "type":"XL",
-              "name":"XL",
-              "quantity":2,
-              "volume_per_package": 3,
-              "short_code": "AB",
-              "labels":@array@
-            }
-          ],
+          "packages":[],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
           "updatedAt":"@string@.isDateTime()",
@@ -459,21 +481,12 @@ Feature: Multi-step deliveries
             "description": null
           },
           "comments":"2 × XL\n1.50 kg",
-          "weight":1500,
+          "weight":null,
           "after":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "doneAfter":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
-          "packages":[
-            {
-              "type":"XL",
-              "name":"XL",
-              "quantity":2,
-              "volume_per_package": 3,
-              "short_code": "AB",
-              "labels":@array@
-            }
-          ],
+          "packages":[],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
           "updatedAt":"@string@.isDateTime()",
@@ -583,5 +596,136 @@ Feature: Multi-step deliveries
               ]
             }
           ]
+      }
+      """
+
+  Scenario: Create delivery with multiple pickups & 1 dropoff + packages in pickups with OAuth
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the setting "latlng" has value "48.856613,2.352222"
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "tasks": [
+          {
+            "type": "pickup",
+            "address": "24, Rue de la Paix Paris",
+            "before": "tomorrow 13:00",
+            "weight": 1500,
+            "packages": [
+              {"type": "XL", "quantity": 2}
+            ]
+          },
+          {
+            "type": "pickup",
+            "address": "22, Rue de la Paix Paris",
+            "before": "tomorrow 13:15",
+            "weight": 1500,
+            "packages": [
+              {"type": "XL", "quantity": 3}
+            ]
+          },
+          {
+            "type": "dropoff",
+            "address": "48, Rue de Rivoli Paris",
+            "before": "tomorrow 13:30"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@type":"http://schema.org/ParcelDelivery",
+        "@id":"/api/deliveries/1",
+        "id":@integer@,
+        "pickup":{"@*@":"@*@"},
+        "dropoff":{"@*@":"@*@"},
+        "tasks":[
+          {
+            "@type":"Task",
+            "@id":"/api/tasks/1",
+            "type":"PICKUP",
+            "packages":[
+              {
+                "type":"XL",
+                "name":"XL",
+                "quantity":2,
+                "volume_per_package": 3,
+                "short_code": "AB",
+                "labels":@array@
+              }
+            ],
+            "@*@":"@*@"
+          },
+          {
+            "@type":"Task",
+            "type":"PICKUP",
+            "@id":"/api/tasks/2",
+            "packages":[
+              {
+                "type":"XL",
+                "name":"XL",
+                "quantity":3,
+                "volume_per_package": 3,
+                "short_code": "AB",
+                "labels":@array@
+              }
+            ],
+            "@*@":"@*@"
+          },
+          {
+            "@type":"Task",
+            "type":"DROPOFF",
+            "@id":"/api/tasks/3",
+            "packages":[
+              {
+                "type":"XL",
+                "name":"XL",
+                "quantity":5,
+                "volume_per_package": 3,
+                "short_code": "AB",
+                "labels":@array@
+              }
+            ],
+            "@*@":"@*@"
+          }
+        ],
+        "trackingUrl":@string@,
+        "order":{"@*@":"@*@"}
+      }
+      """
+    Given I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "GET" request to "/api/tasks/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """git
+      {
+        "@id":"/api/tasks/1",
+        "type":"PICKUP",
+        "status":"TODO",
+        "packages":[
+          {
+            "name":"XL",
+            "type":"XL",
+            "quantity":2,
+            "volume_per_package":3,
+            "short_code":"AB",
+            "labels":"@array@.count(2)"
+          }
+        ],
+        "@*@":"@*@"
       }
       """

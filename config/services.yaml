@@ -224,6 +224,7 @@ services:
   Sylius\Component\Resource\Factory\FactoryInterface $orderItemFactory: '@sylius.factory.order_item'
   Sylius\Component\Resource\Repository\RepositoryInterface $customerRepository: '@sylius.repository.customer'
   Sylius\Component\Resource\Factory\FactoryInterface $customerFactory: '@sylius.factory.customer'
+  Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorageFactory: '@session.storage.factory.native'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
@@ -1636,6 +1637,11 @@ services:
       - '@AppBundle\LoopEat\Client'
       - '@monolog.logger.loopeat'
 
+
+  AppBundle\Session\NativeSessionStorageFactory:
+    decorates: session.storage.factory.native
+    arguments: ['@.inner']
+
   AppBundle\Transporter\Proximus\ProximusImporter:
     lazy: true
     arguments:
@@ -1643,3 +1649,10 @@ services:
 
   AppBundle\Transporter\Proximus\ProximusTransformer:
     lazy: true
+
+  hwi_oauth.user.provider.entity:
+    class: HWI\Bundle\OAuthBundle\Security\Core\User\EntityUserProvider
+    arguments:
+      $class: AppBundle\Entity\User
+      $properties:
+        'facebook': 'facebook'

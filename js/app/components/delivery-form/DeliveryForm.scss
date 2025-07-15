@@ -3,7 +3,7 @@
   flex-wrap: wrap;
   gap: 2em;
   padding: 2em;
-  
+
 }
 
 .new-order {
@@ -13,12 +13,12 @@
   width: 65%;
   flex-wrap: wrap;
   overflow: hidden;
-  
+
   &__pickups, &__dropoffs {
     width: 47%;
   }
 
-  &__dropoffs__add{
+  &__dropoffs__add, &__pickups__add {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -39,10 +39,6 @@
     background-color: #f3f2f2f8;
     border-color: #dbdada;
     color: #23527C;
-  }
-
-  &__complete-order button{
-    background-color: #337AB7;
   }
 }
 

@@ -4,10 +4,9 @@ import { Provider } from 'react-redux'
 import lottie from 'lottie-web'
 import { I18nextProvider } from 'react-i18next'
 import moment from 'moment'
-import { ConfigProvider } from 'antd'
 import Split from 'react-split'
 
-import i18n, { antdLocale } from '../i18n'
+import i18n from '../i18n'
 
 import { createStoreFromPreloadedState } from './redux/store'
 import RightPanel from './components/RightPanel'
@@ -24,6 +23,7 @@ import './dashboard.scss'
 import { organizationAdapter, taskAdapter, taskListAdapter, tourAdapter, trailerAdapter, vehicleAdapter, warehouseAdapter } from '../coopcycle-frontend-js/logistics/redux'
 import _ from 'lodash'
 import { createClient } from './utils/client'
+import { AntdConfigProvider } from '../utils/antd'
 
 const dashboardEl = document.getElementById('dashboard')
 const date = moment(dashboardEl.dataset.date)
@@ -38,7 +38,7 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
 
   await Promise.all([tasksRequest, tasksListsRequest, toursRequest]).then((values) => {
     const [taskRes, taskListRes, toursRes] = values
-    allTasks = taskRes // paginatedRequest returns data directly 
+    allTasks = taskRes // paginatedRequest returns data directly
     taskLists = taskListRes.data['hydra:member']
     tours = toursRes.data['hydra:member']
   })
@@ -144,7 +144,7 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
   root.render(
       <Provider store={ store }>
         <I18nextProvider i18n={ i18n }>
-          <ConfigProvider locale={antdLocale}>
+          <AntdConfigProvider>
             <div className="dashboard__toolbar-container">
               <Navbar />
             </div>
@@ -179,7 +179,7 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
               </Split>
             </div>
             <Modals />
-          </ConfigProvider>
+          </AntdConfigProvider>
         </I18nextProvider>
       </Provider>
   )
@@ -204,7 +204,7 @@ loadingAnim.addEventListener('DOMLoaded', function() {
   }
 
   const client = createClient(() => {}) // do-nothing dispatch function, as we have a fresh token from the initial load + no initialized store yet
-  
+
   const tasksRequest = client.paginatedRequest({
     method: 'GET',
     url: `${ window.Routing.generate('_api_/tasks.{_format}_get_collection') }?date=${date.format('YYYY-MM-DD')}&pagination=true&itemsPerPage=100`,

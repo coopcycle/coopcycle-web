@@ -22,7 +22,7 @@ class Package implements PackageWithQuantityInterface
     #[Groups(['package'])]
     protected $quantity = 0;
 
-    public function __construct(Task $task = null)
+    public function __construct(?Task $task = null)
     {
         $this->task = $task;
     }

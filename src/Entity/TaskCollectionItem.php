@@ -31,7 +31,7 @@ class TaskCollectionItem
         return $this->parent;
     }
 
-    public function setParent(TaskCollection $parent = null)
+    public function setParent(?TaskCollection $parent = null)
     {
         $this->parent = $parent;
 

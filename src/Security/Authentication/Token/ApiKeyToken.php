@@ -19,7 +19,6 @@ class ApiKeyToken extends AbstractToken
         parent::__construct($roles);
 
         $this->rawToken = $rawToken;
-        $this->setAuthenticated(true);
     }
 
     /**

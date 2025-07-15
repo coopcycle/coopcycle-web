@@ -24,7 +24,7 @@ class BaseAddress extends Place
         return $this->description;
     }
 
-    public function setDescription(string $description = null)
+    public function setDescription(?string $description = null)
     {
         $this->description = $description;
     }

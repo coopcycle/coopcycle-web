@@ -263,7 +263,7 @@ class DeliveryNormalizer implements NormalizerInterface, ContextAwareDenormalize
         return $delivery;
     }
 
-    public function supportsDenormalization($data, string $type, ?string $format = null, array $context = [])
+    public function supportsDenormalization($data, string $type, ?string $format = null, array $context = []): bool
     {
         $inputClass = ($context['input']['class'] ?? null);
         if ($inputClass === DeliveryDto::class ||

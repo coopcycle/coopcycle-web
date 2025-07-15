@@ -29,7 +29,7 @@ class UserVoter extends Voter
         private AuthorizationCheckerInterface $authorizationChecker
     )
     {}
-    protected function supports(string $attribute, $subject)
+    protected function supports(string $attribute, $subject): bool
     {
         if (!in_array($attribute, self::$actions)) {
             return false;
@@ -42,7 +42,7 @@ class UserVoter extends Voter
         return true;
     }
 
-    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
 
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {

@@ -406,12 +406,14 @@ Feature: Task recurrence rules
             "@id":"/api/tasks/1",
             "@type":"Task",
             "packages": [],
+            "weight": null,
             "barcode": @array@
           },
           {
             "@id":"/api/tasks/2",
             "@type":"Task",
             "packages": [],
+            "weight": null,
             "barcode": @array@
           }
         ],
@@ -458,12 +460,14 @@ Feature: Task recurrence rules
             "@id":"/api/tasks/2",
             "@type":"Task",
             "packages": [],
+            "weight": null,
             "barcode": @array@
             },
           {
             "@id":"/api/tasks/3",
             "@type":"Task",
             "packages": [],
+            "weight": null,
             "barcode": @array@
             }
         ],
