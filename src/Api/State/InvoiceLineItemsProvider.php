@@ -15,9 +15,11 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\ProductRepository;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Sylius\Product\ProductVariantFactory;
 use AppBundle\Sylius\Product\ProductVariantInterface;
+use AppBundle\Utils\PriceFormatter;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
@@ -35,6 +37,7 @@ final class InvoiceLineItemsProvider implements ProviderInterface
         private readonly RequestStack $requestStack,
         private readonly SettingsManager $settingsManager,
         private readonly TranslatorInterface $translator,
+        private readonly PriceFormatter $priceFormatter,
         private readonly string $locale,
         private readonly bool $packageDeliveryUiPriceBreakdownEnabled,
         private readonly iterable $collectionExtensions,
@@ -166,7 +169,27 @@ final class InvoiceLineItemsProvider implements ProviderInterface
             $descriptionParts[] = $onDemandDeliveryProduct->getName();
 
             if ($this->packageDeliveryUiPriceBreakdownEnabled) {
-                //TODO
+                /** @var OrderItemInterface $item */
+                foreach ($order->getItems() as $item) {
+                    $productVariant = $item->getVariant();
+
+                    $parts = [];
+                    foreach ($item->getAdjustments('menu_item_modifier') as $adjustment) {
+                        $parts[] = sprintf('%s: %s',
+                            $adjustment->getLabel(),
+                            $this->priceFormatter->formatWithSymbol($adjustment->getAmount())
+                        );
+                    }
+
+                    if (count($parts) > 0) {
+                        $descriptionParts[] = sprintf('%s: %s',
+                            $productVariant->getName(),
+                            implode(', ', $parts)
+                        );
+                    } else {
+                        $descriptionParts[] = $productVariant->getName();
+                    }
+                }
             } else {
                 $descriptionParts = array_merge($descriptionParts, $this->legacyDescription($order, $delivery));
             }
