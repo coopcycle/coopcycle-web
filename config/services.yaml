@@ -82,6 +82,7 @@ services:
       $locale: "%env(COOPCYCLE_LOCALE)%"
       $country: "%country_iso%"
       $environment: "%kernel.environment%"
+      $packageDeliveryUiPriceBreakdownEnabled: "%env(bool:PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED)%"
 
   # For some cache pools, want *STABLE* cache keys between deploys.
   # To achieve this, we *EXPLICITLY* set a namespace,

@@ -64,6 +64,22 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
     {
         $productVariant = $this->createForOnDemandDelivery();
 
+        $productVariant->setName($this->generateLegacyProductVariantName($delivery));
+
+        if ($price instanceof ArbitraryPrice) {
+            if ($price->getVariantName()) {
+                $productVariant->setName($price->getVariantName());
+            }
+        } else if ($price instanceof PricingRulesBasedPrice) {
+            $productVariant->setPricingRuleSet($price->getPricingRuleSet());
+        }
+
+        $productVariant->setPrice($price->getValue());
+
+        return $productVariant;
+    }
+
+    public function generateLegacyProductVariantName(Delivery $delivery): string {
         $nameParts = [];
 
         if ($delivery->hasPackages()) {
@@ -78,21 +94,7 @@ class ProductVariantFactory implements ProductVariantFactoryInterface
 
         $nameParts[] = $this->metersToKilometers($delivery->getDistance());
 
-        $name = implode(' - ', $nameParts);
-
-        $productVariant->setName($name);
-
-        if ($price instanceof ArbitraryPrice) {
-            if ($price->getVariantName()) {
-                $productVariant->setName($price->getVariantName());
-            }
-        } else if ($price instanceof PricingRulesBasedPrice) {
-            $productVariant->setPricingRuleSet($price->getPricingRuleSet());
-        }
-
-        $productVariant->setPrice($price->getValue());
-
-        return $productVariant;
+        return implode(' - ', $nameParts);
     }
 
     private function metersToKilometers($meters)
