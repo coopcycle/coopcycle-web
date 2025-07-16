@@ -852,16 +852,13 @@ class RestaurantController extends AbstractController
             'type',
         ];
 
-        sort($parameters);
-
-        $query = [];
-        foreach ($parameters as $parameter) {
-            $query[$parameter] = $request->query->get($parameter);
-        }
+        $query = array_filter($request->query->all(), fn ($key) => in_array($key, $parameters), ARRAY_FILTER_USE_KEY);
 
         if (isset($query['cuisine'])) {
             sort($query['cuisine']);
         }
+
+        ksort($query);
 
         $cacheKey = http_build_query($query);
 
