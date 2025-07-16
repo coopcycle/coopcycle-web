@@ -38,7 +38,7 @@ context('Delivery (role: dispatcher)', () => {
     cy.get(`[data-testid="form-task-0"]`).within(() => {
       cy.get(`[data-testid=tags-select]`).click()
     })
-    cy.get('#react-select-3-option-0').click()
+    cy.reactSelect(0)
 
     // Dropoff
     cy.betaChooseSavedAddressAtPosition(1, 2)
@@ -55,7 +55,7 @@ context('Delivery (role: dispatcher)', () => {
     cy.get(`[data-testid="form-task-1"]`).within(() => {
       cy.get(`[data-testid=tags-select]`).click()
     })
-    cy.get('#react-select-5-option-2').click()
+    cy.reactSelect(2)
 
     cy.get('button[type="submit"]').click()
 

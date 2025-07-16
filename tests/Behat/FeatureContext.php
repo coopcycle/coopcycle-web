@@ -235,6 +235,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $filename = $this->transformFixtureFilename($filename);
 
         $this->fixturesLoader->load([ $filename ], $_SERVER, [], PurgeMode::createNoPurgeMode());
+
+        // Flush changes made by custom processors
+        $this->entityManager->flush();
     }
 
     /**
@@ -247,6 +250,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }, $table->getRows());
 
         $this->fixturesLoader->load($filenames, $_SERVER, [], PurgeMode::createNoPurgeMode());
+
+        // Flush changes made by custom processors
+        $this->entityManager->flush();
     }
 
     /**
@@ -257,6 +263,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $filename = $this->transformFixtureFilename($filename);
 
         $this->fixturesLoader->load([ $filename ], $_SERVER);
+
+        // Flush changes made by custom processors
+        $this->entityManager->flush();
     }
 
     /**
@@ -269,6 +278,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }, $table->getRows());
 
         $this->fixturesLoader->load($filenames, $_SERVER);
+
+        // Flush changes made by custom processors
+        $this->entityManager->flush();
     }
 
     private function transformFixtureFilename($filename)

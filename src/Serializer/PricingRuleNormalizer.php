@@ -67,11 +67,4 @@ class PricingRuleNormalizer implements NormalizerInterface
     {
         return $data instanceof PricingRule;
     }
-
-    public function getSupportedTypes(?string $format): array
-    {
-        return [
-            PricingRule::class => true,
-        ];
-    }
 }

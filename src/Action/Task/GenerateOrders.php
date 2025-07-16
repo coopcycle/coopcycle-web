@@ -4,7 +4,7 @@ namespace AppBundle\Action\Task;
 
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task;
-use AppBundle\Pricing\PricingManager;
+use AppBundle\Service\DeliveryOrderManager;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Recurr\Transformer\ArrayTransformer;
@@ -16,7 +16,7 @@ class GenerateOrders
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly PricingManager $pricingManager,
+        private readonly DeliveryOrderManager $deliveryOrderManager,
     )
     {
     }
@@ -51,7 +51,7 @@ class GenerateOrders
         $orders = [];
 
         foreach ($subscriptions as $subscription) {
-            $order = $this->pricingManager->createOrderFromRecurrenceRule($subscription, $date);
+            $order = $this->deliveryOrderManager->createOrderFromRecurrenceRule($subscription, $date);
             if (null !== $order) {
                 $orders[] = $order;
             }

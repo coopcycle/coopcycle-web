@@ -42,8 +42,8 @@ describe('Delivery with recurrence rule (role: admin)', () => {
       // Order page
       cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-      cy.get('[data-testid="order_item"]')
-        .find('[data-testid="total"]')
+      cy.get('[data-testid="order-total-including-tax"]')
+        .find('[data-testid="value"]')
         .contains('€4.99')
 
       cy.get('[data-testid=delivery-itinerary]')

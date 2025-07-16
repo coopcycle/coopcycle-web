@@ -8,7 +8,7 @@ use AppBundle\Entity\Organization;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\RecurrenceRule;
-use AppBundle\Pricing\PricingManager;
+use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
@@ -26,16 +26,16 @@ class RecurrenceRuleBetweenTest extends TestCase
     {
         $this->denormalizer = $this->prophesize(DenormalizerInterface::class);
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
-        $this->pricingManager = $this->prophesize(PricingManager::class);
+        $this->deliveryOrderManager = $this->prophesize(DeliveryOrderManager::class);
 
-        $this->pricingManager
+        $this->deliveryOrderManager
             ->createOrder(Argument::type(Delivery::class))
             ->willReturn($this->prophesize(OrderInterface::class));
 
         $this->action = new RecurrenceRuleBetween(
             $this->denormalizer->reveal(),
             $this->entityManager->reveal(),
-            $this->pricingManager->reveal()
+            $this->deliveryOrderManager->reveal()
         );
     }
 
@@ -216,6 +216,6 @@ class RecurrenceRuleBetweenTest extends TestCase
         $this->assertContains($dropoffTask, $response);
         $this->assertSame($organization, $dropoffTask->getOrganization());
 
-        $this->pricingManager->createOrder(Argument::type(Delivery::class))->shouldHaveBeenCalled();
+        $this->deliveryOrderManager->createOrder(Argument::type(Delivery::class))->shouldHaveBeenCalled();
     }
 }

@@ -10,6 +10,11 @@ use Sylius\Component\Resource\Factory\FactoryInterface;
 
 class ProductOptionRepository extends BaseRepository
 {
+    public const PRICING_TYPE_FIXED_PRICE = 'fixed_price';
+    public const PRICING_TYPE_PERCENTAGE = 'price_percentage';
+    public const PRICING_TYPE_RANGE = 'price_range';
+    public const PRICING_TYPE_PACKAGE = 'price_per_package';
+
     private EntityManagerInterface $entityManager;
     private ProductRepository $productRepository;
     private FactoryInterface $productOptionFactory;
@@ -17,7 +22,7 @@ class ProductOptionRepository extends BaseRepository
 
     // As this class is created by Doctrine's ContainerRepositoryFactory we can't modify its constructor
     // and have to inject dependencies through setters
-    
+
     public function setEntityManager(EntityManagerInterface $entityManager): void
     {
         $this->entityManager = $entityManager;
@@ -38,17 +43,18 @@ class ProductOptionRepository extends BaseRepository
         $this->localeProvider = $localeProvider;
     }
 
-    public function findPricingRuleProductOption(): ProductOptionInterface
+    public function findPricingRuleProductOptionByType(string $type): ProductOptionInterface
     {
-        /** @var Product $product */
-        $product = $this->productRepository->findOnDemandDeliveryProduct();
+        $onDemandDeliveryProduct = $this->productRepository->findOneBy(['code' => 'CPCCL-ODDLVR']);
 
-        $existingOptions = $product->getOptions();
-        if (!$existingOptions->isEmpty()) {
-            // Return the first option (there should only be one for pricing rules)
-            /** @var ProductOptionInterface $firstOption */
-            $firstOption = $existingOptions->first();
-            return $firstOption;
+        $typeConfig = $this->getPricingTypeConfig($type);
+
+        // Look for existing option with the specific code for this type
+        $existingOptions = $onDemandDeliveryProduct->getOptions();
+        foreach ($existingOptions as $option) {
+            if ($option->getCode() === $typeConfig['code']) {
+                return $option;
+            }
         }
 
         /** @var ProductOption $productOption */
@@ -57,21 +63,45 @@ class ProductOptionRepository extends BaseRepository
         // Set current locale before setting the name for translatable entities
         $productOption->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
 
-        // Set basic properties
-        $productOption->setCode('CPCCL-ODDLVR-PR');
-        $productOption->setName('Pricing Rules');
+        $productOption->setCode($typeConfig['code']);
+        $productOption->setName($typeConfig['name']);
 
-        // Set default strategy and additional flag
-        $productOption->setStrategy('free');
-        $productOption->setAdditional(false);
+        $productOption->setStrategy(ProductOptionInterface::STRATEGY_OPTION_VALUE);
+        $productOption->setAdditional(true);
 
-        // Associate the ProductOption with the CPCCL-ODDLVR product
-        $product->addOption($productOption);
+        $onDemandDeliveryProduct->addOption($productOption);
 
-        // Persist the new ProductOption
         $this->entityManager->persist($productOption);
         $this->entityManager->flush();
 
         return $productOption;
+    }
+
+    private function getPricingTypeConfig(string $type): array
+    {
+        $configs = [
+            self::PRICING_TYPE_FIXED_PRICE => [
+                'code' => 'CPCCL-ODDLVR-FIXED',
+                'name' => 'Fixed Price'
+            ],
+            self::PRICING_TYPE_PERCENTAGE => [
+                'code' => 'CPCCL-ODDLVR-PERCENTAGE',
+                'name' => 'Percentage Price'
+            ],
+            self::PRICING_TYPE_RANGE => [
+                'code' => 'CPCCL-ODDLVR-RANGE',
+                'name' => 'Range Price'
+            ],
+            self::PRICING_TYPE_PACKAGE => [
+                'code' => 'CPCCL-ODDLVR-PACKAGE',
+                'name' => 'Package Price'
+            ]
+        ];
+
+        if (!isset($configs[$type])) {
+            throw new \InvalidArgumentException(sprintf('Unknown pricing type: %s', $type));
+        }
+
+        return $configs[$type];
     }
 }

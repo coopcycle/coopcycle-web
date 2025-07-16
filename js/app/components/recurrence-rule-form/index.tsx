@@ -8,6 +8,8 @@ import Modal from 'react-modal'
 import { createRoot } from 'react-dom/client'
 import { Mode } from '../delivery-form/mode'
 import { formSlice } from '../delivery-form/redux/formSlice'
+import { RootWithDefaults } from '../../utils/react'
+import FlagsContext from '../delivery-form/FlagsContext'
 
 const buildInitialState = () => {
   return {
@@ -36,23 +38,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const isDispatcher = container.dataset.isDispatcher === 'true'
     const isDebugPricing = container.dataset.isDebugPricing === 'true'
+    const isPriceBreakdownEnabled =
+      container.dataset.isPriceBreakdownEnabled === 'true'
 
     Modal.setAppElement('.content')
 
     const root = createRoot(container)
     root.render(
-      <Provider store={store}>
-        <DeliveryForm
-          storeNodeId={storeNodeId}
-          //FIXME; might lead to bugs
-          deliveryId={recurrenceRuleId}
-          //FIXME; might lead to bugs
-          deliveryNodeId={recurrenceRuleNodeId}
-          preLoadedDeliveryData={preLoadedDeliveryData}
-          isDispatcher={isDispatcher}
-          isDebugPricing={isDebugPricing}
-        />
-      </Provider>,
+      <RootWithDefaults>
+        <Provider store={store}>
+          <FlagsContext.Provider
+            value={{ isDispatcher, isDebugPricing, isPriceBreakdownEnabled }}>
+            <DeliveryForm
+              storeNodeId={storeNodeId}
+              //FIXME; might lead to bugs
+              deliveryId={recurrenceRuleId}
+              //FIXME; might lead to bugs
+              deliveryNodeId={recurrenceRuleNodeId}
+              preLoadedDeliveryData={preLoadedDeliveryData}
+            />
+          </FlagsContext.Provider>
+        </Provider>
+      </RootWithDefaults>,
     )
   }
 })

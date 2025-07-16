@@ -16,7 +16,7 @@ AppBundle\Entity\Sylius\ProductOptionValue:
     value: 'Existing Option'
     price: 0
     enabled: true
-    option: '@product_option_pricing_rules'
+    option: '@product_option_fixed_price_rules'
 
 AppBundle\Entity\Delivery\PricingRuleSet:
   pricing_rule_set_1:
