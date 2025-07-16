@@ -120,6 +120,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -153,6 +154,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -243,6 +245,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -276,6 +279,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -369,6 +373,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -411,6 +416,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -509,6 +515,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -542,6 +549,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -613,6 +621,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -646,6 +655,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -721,6 +731,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -754,6 +765,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -829,6 +841,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -862,6 +875,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -937,6 +951,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -970,6 +985,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1048,6 +1064,7 @@ Feature: Deliveries
                 "latitude":@double@,
                 "longitude":@double@
               },
+              "provider": null,
               "streetAddress":@string@,
               "telephone":null,
               "name":null,
@@ -1081,6 +1098,7 @@ Feature: Deliveries
                 "latitude":@double@,
                 "longitude":@double@
               },
+              "provider": null,
               "streetAddress":@string@,
               "telephone":null,
               "name":null,
@@ -1159,6 +1177,7 @@ Feature: Deliveries
                 "latitude":@double@,
                 "longitude":@double@
               },
+              "provider": null,
               "streetAddress":@string@,
               "telephone":null,
               "name":null,
@@ -1192,6 +1211,7 @@ Feature: Deliveries
                 "latitude":@double@,
                 "longitude":@double@
               },
+              "provider": null,
               "streetAddress":@string@,
               "telephone":null,
               "name":null,
@@ -1354,6 +1374,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1387,6 +1408,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1463,6 +1485,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1496,6 +1519,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1572,6 +1596,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1605,6 +1630,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1672,6 +1698,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1705,6 +1732,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1747,7 +1775,7 @@ Feature: Deliveries
             "streetAddress": "48, Rue de Rivoli Paris",
             "telephone": "0612345678",
             "contactName": "John Doe"
-          },
+          , "provider": null},
           "before": "2018-08-29 13:30:00"
         }
       }
@@ -1775,6 +1803,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1808,6 +1837,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": "+33612345678",
             "name":null,
@@ -1853,7 +1883,7 @@ Feature: Deliveries
             "latLng": [ 48.857127, 2.354766 ],
             "telephone": "0612345678",
             "contactName": "John Doe"
-          },
+          , "provider": null},
           "before": "2018-08-29 13:30:00"
         }
       }
@@ -1882,6 +1912,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1915,6 +1946,7 @@ Feature: Deliveries
               "latitude":48.857127,
               "longitude":2.354766
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": "+33612345678",
             "name":null,
@@ -1957,7 +1989,7 @@ Feature: Deliveries
             "streetAddress": "48, Rue de Rivoli Paris",
             "latLng": [48.857127, 2.354766],
             "telephone": "+33612345678"
-          },
+          , "provider": null},
           "timeSlot": "2018-08-29 10:00-11:00"
         }
       }
@@ -1986,6 +2018,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -2019,6 +2052,7 @@ Feature: Deliveries
               "latitude":48.857127,
               "longitude":2.354766
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": "+33612345678",
             "name":null,
@@ -2062,7 +2096,7 @@ Feature: Deliveries
             "streetAddress": "48, Rue de Rivoli Paris",
             "latLng": [48.857127, 2.354766],
             "telephone": "+33612345678"
-          },
+          , "provider": null},
           "timeSlot": "2020-04-02T10:00:00Z/2020-04-02T12:00:00Z"
         }
       }
@@ -2091,6 +2125,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -2124,6 +2159,7 @@ Feature: Deliveries
               "latitude":48.857127,
               "longitude":2.354766
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": "+33612345678",
             "name":null,
@@ -2211,6 +2247,7 @@ Feature: Deliveries
               "latitude":48.864577,
               "longitude":2.333338
             },
+            "provider": null,
             "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
             "telephone":null,
             "name":null,
@@ -2253,7 +2290,7 @@ Feature: Deliveries
             "streetAddress": "48, Rue de Rivoli Paris",
             "telephone": false,
             "contactName": "John Doe"
-          },
+          , "provider": null},
           "before": "2018-08-29 13:30:00"
         }
       }
@@ -2401,7 +2438,8 @@ Feature: Deliveries
                     "@type": "GeoCoordinates",
                     "latitude": @double@,
                     "longitude": @double@
-                },
+                  },
+                  "provider": null,
                 "streetAddress": "272, rue Saint Honoré 75001 Paris 1er",
                 "telephone": null,
                 "name": null,
@@ -2434,7 +2472,8 @@ Feature: Deliveries
                     "@type": "GeoCoordinates",
                     "latitude": @double@,
                     "longitude": @double@
-                },
+                  },
+                  "provider": null,
                 "streetAddress": @string@,
                 "telephone": null,
                 "name": null,
@@ -2516,6 +2555,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -2549,6 +2589,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -2645,6 +2686,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -2678,6 +2720,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -2735,6 +2778,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -2768,6 +2812,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -2841,6 +2886,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -2874,6 +2920,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -2998,6 +3045,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider":null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -3031,6 +3079,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider":null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -3076,6 +3125,7 @@ Feature: Deliveries
                 "latitude": 50.636137,
                 "longitude": 3.092335
             },
+            "provider": null,
             "streetAddress": "48 Rue de Rivoli, 59800 Lille",
             "telephone": null,
             "name": null,
@@ -3186,7 +3236,7 @@ Feature: Deliveries
               "@type": "GeoCoordinates",
               "latitude": 50.636137,
               "longitude": 3.092335
-          },
+          , "provider": null},
           "streetAddress": "48 Rue de Rivoli, 59800 Lille",
           "telephone": null,
           "name": null,
@@ -3323,6 +3373,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider":null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -3356,6 +3407,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider":null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -3433,6 +3485,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider":null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -3466,6 +3519,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider":null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -3523,6 +3577,7 @@ Feature: Deliveries
                       "latitude":@double@,
                       "longitude":@double@
                     },
+                    "provider": null,
                     "postalCode": @string@,
                     "streetAddress": @string@,
                     "telephone": null,
@@ -3553,6 +3608,7 @@ Feature: Deliveries
                       "latitude":@double@,
                       "longitude":@double@
                     },
+                    "provider": null,
                     "postalCode": @string@,
                     "streetAddress": @string@,
                     "telephone": null,
@@ -3638,6 +3694,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -3671,6 +3728,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -3710,7 +3768,7 @@ Feature: Deliveries
         "hydra:totalItems": 0
       }
       """
-    
+
   Scenario: Create delivery with a saved order as an admin
     Given the fixtures files are loaded:
       | sylius_products.yml |
@@ -3765,6 +3823,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -3798,6 +3857,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,

@@ -30,6 +30,7 @@ Feature: Manage shops
             "latitude":48.864577,
             "longitude":2.333338
           },
+          "provider": null,
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "telephone":null,
           "name":null,
