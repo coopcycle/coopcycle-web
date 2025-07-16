@@ -139,7 +139,7 @@ const PricingRule = ({
           </div>
         </Col>
         <Col flex="auto">
-          <div className="mb-3">
+          <Row className="mb-3">
             <Text className="pricing-rule-set__rule__text">
               {t('FORM_PRICING_RULE_SET_PRICING_RULE_NAME_LABEL')}
               <HelpIcon
@@ -153,9 +153,9 @@ const PricingRule = ({
               placeholder={t(
                 'FORM_PRICING_RULE_SET_PRICING_RULE_NAME_PLACEHOLDER',
               )}
-              className="mt-1 mx-2"
+              className="mt-1 ml-2"
             />
-          </div>
+          </Row>
 
           <div className="mb-3">
             <PricingRuleTarget
