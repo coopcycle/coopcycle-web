@@ -16,6 +16,7 @@ import {
 import Position from './Position'
 import { DraggableProvidedDragHandleProps } from '@hello-pangea/dnd'
 import { PricingRuleType } from '../types/PricingRuleType'
+import HelpIcon from '../../HelpIcon'
 
 const { Text } = Typography
 
@@ -141,6 +142,10 @@ const PricingRule = ({
           <div className="mb-3">
             <Text className="pricing-rule-set__rule__text">
               {t('FORM_PRICING_RULE_SET_PRICING_RULE_NAME_LABEL')}
+              <HelpIcon
+                className="ml-1"
+                tooltipText={t('FORM_PRICING_RULE_SET_PRICING_RULE_NAME_HELP')}
+              />
             </Text>
             <Input
               value={localRule.name || ''}
