@@ -1,12 +1,26 @@
 import { useMemo } from 'react'
 import { useFormikContext } from 'formik'
 
-export function useDeliveryFormFormikContext({ taskIndex } = {}) {
+// Utility function to find task index by ID
+const getTaskIndexById = (tasks, taskId) => {
+  if (!taskId || !tasks) return -1
+  return tasks.findIndex(task => task['@id'] === taskId)
+}
+
+export function useDeliveryFormFormikContext({ taskId } = {}) {
   const formik = useFormikContext()
   const { values, errors } = formik
 
+  // Determine the actual task index to use
+  const taskIndex = useMemo(() => {
+    if (taskId) {
+      return getTaskIndexById(values.tasks, taskId)
+    }
+    return -1
+  }, [values.tasks, taskId])
+
   const taskValues = useMemo(() => {
-    if (taskIndex !== undefined && taskIndex != null) {
+    if (taskIndex !== -1) {
       return values.tasks[taskIndex]
     } else {
       return null
@@ -14,7 +28,7 @@ export function useDeliveryFormFormikContext({ taskIndex } = {}) {
   }, [values.tasks, taskIndex])
 
   const taskErrors = useMemo(() => {
-    if (taskIndex !== undefined && taskIndex != null) {
+    if (taskIndex !== -1) {
       return errors.tasks?.[taskIndex]
     } else {
       return null
@@ -25,9 +39,9 @@ export function useDeliveryFormFormikContext({ taskIndex } = {}) {
     return values.rrule
   }, [values])
 
-  // Return both the original formik context and your helper functions
   return {
     ...formik,
+    taskIndex,
     taskValues,
     taskErrors,
     rruleValue,

@@ -27,15 +27,6 @@ export const apiSlice = createApi({
         )
       },
     }),
-    getTimeSlots: builder.query({
-      queryFn: async (args, queryApi, extraOptions, baseQuery) => {
-        return await fetchAllRecordsUsingFetchWithBQ(
-          baseQuery,
-          'api/time_slots',
-          100,
-        )
-      },
-    }),
     getPackages: builder.query({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
         return await fetchAllRecordsUsingFetchWithBQ(
@@ -61,6 +52,19 @@ export const apiSlice = createApi({
         method: 'PUT',
         body: patch,
       }),
+    }),
+
+    getTimeSlots: builder.query({
+      queryFn: async (args, queryApi, extraOptions, baseQuery) => {
+        return await fetchAllRecordsUsingFetchWithBQ(
+          baseQuery,
+          'api/time_slots',
+          100,
+        )
+      },
+    }),
+    getTimeSlotChoices: builder.query({
+      query: nodeId => `${nodeId}/choices`,
     }),
 
     patchAddress: builder.mutation({
@@ -240,11 +244,12 @@ export const {
   useGetTaxRatesQuery,
   useGetTagsQuery,
   useGetZonesQuery,
-  useGetTimeSlotsQuery,
   useGetPackagesQuery,
   useGetOrderTimingQuery,
   useGetOrderQuery,
   useUpdateOrderMutation,
+  useGetTimeSlotsQuery,
+  useGetTimeSlotChoicesQuery,
   useGetStoreQuery,
   useGetStoreAddressesQuery,
   useGetStoreTimeSlotsQuery,

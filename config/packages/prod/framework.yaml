@@ -18,3 +18,4 @@ framework:
 #        cache: serializer.mapping.cache.doctrine.apc
     session:
         cookie_secure: true
+    trusted_proxies: '%env(TRUSTED_PROXIES)%'
