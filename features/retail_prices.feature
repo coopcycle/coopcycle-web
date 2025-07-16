@@ -61,7 +61,7 @@ Feature: Retail prices
                       ],
                       "name": "Fixed Price"
                     },
-                    "value": "plus de 0.00 km"
+                    "value": "Plus de 0.00 km"
                   }
                 ],
                 "name": "Supplément de commande"
@@ -138,7 +138,7 @@ Feature: Retail prices
                       ],
                       "name": "Fixed Price"
                     },
-                    "value": "plus de 0.00 km"
+                    "value": "Plus de 0.00 km"
                   }
                 ],
                 "name": "Supplément de commande"
@@ -215,7 +215,7 @@ Feature: Retail prices
                       ],
                       "name": "Fixed Price"
                     },
-                    "value": "plus de 0.00 km"
+                    "value": "Plus de 0.00 km"
                   }
                 ],
                 "name": "Supplément de commande"
@@ -533,7 +533,7 @@ Feature: Retail prices
                       ],
                       "name": "Fixed Price"
                     },
-                    "value": "moins de 2.00 kg"
+                    "value": "Moins de 2.00 kg"
                   }
                 ],
                 "name": "Supplément de commande"
@@ -620,7 +620,7 @@ Feature: Retail prices
                       ],
                       "name": "Fixed Price"
                     },
-                    "value": "plus de 0.00 km"
+                    "value": "Plus de 0.00 km"
                   }
                 ],
                 "name": "Supplément de commande"
@@ -707,7 +707,7 @@ Feature: Retail prices
                       ],
                       "name": "Fixed Price"
                     },
-                    "value": "plus de 0.00 km"
+                    "value": "Plus de 0.00 km"
                   }
                 ],
                 "name": "Supplément de commande"
@@ -787,7 +787,7 @@ Feature: Retail prices
                       ],
                       "name": "Fixed Price"
                     },
-                    "value": "plus de 0.00 km"
+                    "value": "Plus de 0.00 km"
                   }
                 ],
                 "name": "Supplément de commande"
@@ -895,7 +895,7 @@ Feature: Retail prices
                       ],
                       "name": "Fixed Price"
                     },
-                    "value": "taux de dépôt"
+                    "value": "Taux de dépôt"
                   }
                 ],
                 "name": "Point de dépôt 1"
@@ -975,7 +975,7 @@ Feature: Retail prices
                       ],
                       "name": "Fixed Price"
                     },
-                    "value": "taux de dépôt"
+                    "value": "Taux de dépôt"
                   }
                 ],
                 "name": "Point de dépôt 1"
@@ -1136,7 +1136,7 @@ Feature: Retail prices
                       ],
                       "name": "Fixed Price"
                     },
-                    "value": "plus de 0.00 km"
+                    "value": "Plus de 0.00 km"
                   }
                 ],
                 "name": "Supplément de commande"
@@ -1212,7 +1212,7 @@ Feature: Retail prices
                       ],
                       "name": "Fixed Price"
                     },
-                    "value": "plus de 0.00 km"
+                    "value": "Plus de 0.00 km"
                   }
                 ],
                 "name": "Supplément de commande"
@@ -1296,7 +1296,7 @@ Feature: Retail prices
                       ],
                       "name": "Fixed Price"
                     },
-                    "value": "plus de 0.00 km"
+                    "value": "Plus de 0.00 km"
                   }
                 ],
                 "name": "Supplément de commande"
@@ -1365,7 +1365,7 @@ Feature: Retail prices
                       ],
                       "name": "Fixed Price"
                     },
-                    "value": "plus de 0.00 km"
+                    "value": "Plus de 0.00 km"
                   }
                 ],
                 "name": "Supplément de commande"
@@ -1465,7 +1465,7 @@ Feature: Retail prices
                       ],
                       "name": "Fixed Price"
                     },
-                    "value": "plus de 0.00 km"
+                    "value": "Plus de 0.00 km"
                   }
                 ],
                 "name": "Supplément de commande"
@@ -1544,7 +1544,7 @@ Feature: Retail prices
                       ],
                       "name": "Fixed Price"
                     },
-                    "value": "volume du colis moins de 9"
+                    "value": "Volume du colis moins de 9"
                   }
                 ],
                 "name": "Supplément de commande"
