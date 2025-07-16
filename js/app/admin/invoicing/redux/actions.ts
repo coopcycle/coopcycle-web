@@ -1,6 +1,16 @@
 import { baseQueryWithReauth } from '../../../api/baseQuery'
 
-export function prepareParams({ store, dateRange, state, onlyNotInvoiced }) {
+export function prepareParams({
+  store,
+  dateRange,
+  state,
+  onlyNotInvoiced,
+}: {
+  store?: string[]
+  dateRange: string[]
+  state?: string[]
+  onlyNotInvoiced: boolean
+}): string[] {
   let params = []
 
   if (store && store.length > 0) {
@@ -27,7 +37,7 @@ function downloadFile({ requestUrl, filename }) {
       {
         url: requestUrl,
         headers: {
-          'Accept': 'text/csv',
+          Accept: 'text/csv',
         },
         responseHandler: 'text',
       },
