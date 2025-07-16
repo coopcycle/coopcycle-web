@@ -9,14 +9,14 @@ import { Mode } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
 
-export const TaskDateTime = ({ isDispatcher, storeNodeId, timeSlots, index }) => {
+export const TaskDateTime = ({ isDispatcher, storeNodeId, timeSlots, taskId }) => {
   const format = 'LL'
 
   const { data: store } = useGetStoreQuery(storeNodeId)
 
   const mode = useSelector(selectMode)
-  const { setFieldValue } = useDeliveryFormFormikContext({
-    taskIndex: index,
+  const { setFieldValue, taskIndex } = useDeliveryFormFormikContext({
+    taskId: taskId,
   })
 
   const timeSlotIds = store?.timeSlots
@@ -24,17 +24,17 @@ export const TaskDateTime = ({ isDispatcher, storeNodeId, timeSlots, index }) =>
 
   useEffect(() => {
     if (mode === Mode.DELIVERY_UPDATE) {
-      setFieldValue(`tasks[${index}].timeSlot`, null)
+      setFieldValue(`tasks[${taskIndex}].timeSlot`, null)
     } else if (mode === Mode.DELIVERY_CREATE) {
       if (isTimeSlotSelect && timeSlotIds?.length > 0) {
-        setFieldValue(`tasks[${index}].after`, null)
-        setFieldValue(`tasks[${index}].before`, null)
+        setFieldValue(`tasks[${taskIndex}].after`, null)
+        setFieldValue(`tasks[${taskIndex}].before`, null)
       } else {
-        setFieldValue(`tasks[${index}].timeSlot`, null)
-        setFieldValue(`tasks[${index}].timeSlotUrl`, null)
+        setFieldValue(`tasks[${taskIndex}].timeSlot`, null)
+        setFieldValue(`tasks[${taskIndex}].timeSlotUrl`, null)
       }
     }
-  }, [isTimeSlotSelect, timeSlotIds, index, setFieldValue, mode])
+  }, [isTimeSlotSelect, timeSlotIds, taskIndex, setFieldValue, mode])
 
   if (!Array.isArray(timeSlotIds)) {
     // not loaded yet
@@ -45,7 +45,7 @@ export const TaskDateTime = ({ isDispatcher, storeNodeId, timeSlots, index }) =>
         <SwitchTimeSlotFreePicker
           isDispatcher={isDispatcher}
           storeNodeId={storeNodeId}
-          index={index}
+          taskId={taskId}
           format={format}
           isTimeSlotSelect={isTimeSlotSelect}
           setIsTimeSlotSelect={setIsTimeSlotSelect}
@@ -56,7 +56,7 @@ export const TaskDateTime = ({ isDispatcher, storeNodeId, timeSlots, index }) =>
       return (
         <TimeSlotPicker
           storeNodeId={storeNodeId}
-          index={index}
+          taskId={taskId}
           timeSlotLabels={timeSlots}
         />
       )
@@ -65,7 +65,7 @@ export const TaskDateTime = ({ isDispatcher, storeNodeId, timeSlots, index }) =>
     return (
       <DateRangePicker
         format={format}
-        index={index}
+        taskId={taskId}
         isDispatcher={isDispatcher}
       />
     )

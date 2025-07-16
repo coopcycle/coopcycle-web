@@ -6,6 +6,7 @@ use Psr\Log\LoggerInterface;
 use MercadoPago\Client\Payment\PaymentClient;
 use MercadoPago\Client\PaymentMethod\PaymentMethodClient;
 use MercadoPago\Client\Common\RequestOptions;
+use MercadoPago\Exceptions\MPApiException;
 use MercadoPago\MercadoPagoConfig;
 use MercadoPago\Resources\PaymentMethod\PaymentMethodListResult;
 use MercadoPago\Resources\Payment;
@@ -19,14 +20,14 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class MercadopagoManager
 {
     private $settingsManager;
-    private $logger;
+    private $checkoutLogger;
 
     public function __construct(
         SettingsManager $settingsManager,
-        LoggerInterface $logger)
+        LoggerInterface $checkoutLogger)
     {
         $this->settingsManager = $settingsManager;
-        $this->logger = $logger;
+        $this->checkoutLogger = $checkoutLogger;
     }
 
     public function configure()
@@ -90,7 +91,14 @@ class MercadopagoManager
             $payload['application_fee'] = ($applicationFee / 100);
         }
 
-        return $client->create($payload, $requestOptions);
+        try {
+            return $client->create($payload, $requestOptions);
+        } catch (MPApiException $e) {
+            $this->checkoutLogger->error(
+                sprintf('Mercadopago - API error %s while trying to authorize payment: %s', $e->getApiResponse()->getStatusCode(), $e->getApiResponse()->getContent())
+            );
+            throw $e;
+        }
     }
 
     /**
@@ -165,7 +173,7 @@ class MercadopagoManager
                 }
             }
         } catch(\Exception $e) {
-            $this->logger->error(
+            $this->checkoutLogger->error(
                 sprintf('Mercadopago - Error %s while trying to read payment method with id %s', $e->getMessage(), $payment->getMercadopagoPaymentMethod())
             );
             return null;
