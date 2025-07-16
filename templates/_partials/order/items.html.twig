@@ -20,12 +20,12 @@
         {% endfor %}
       {% endfor %}
     {% else %}
-      {% for item in order.items %}
+      {% for item in order.getItemsSorted() %}
         {% include '_partials/order/item.html.twig' with { item: item } %}
       {% endfor %}
     {% endif %}
   {% else %}
-    {% for item in order.items %}
+    {% for item in order.getItemsSorted() %}
       {% include '_partials/order/item.html.twig' with { item: item } %}
     {% endfor %}
   {% endif %}
