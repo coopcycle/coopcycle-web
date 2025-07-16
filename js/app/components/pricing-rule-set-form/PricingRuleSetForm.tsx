@@ -18,13 +18,14 @@ import {
   useCreatePricingRuleSetMutation,
   useUpdatePricingRuleSetMutation,
 } from '../../api/slice'
-import { VALIDATION_ERRORS } from './PricingRule'
+import { VALIDATION_ERRORS } from './components/PricingRule'
 import ShowApplications from '../Applications'
 import LegacyPricingRulesWarning from './components/LegacyPricingRulesWarning'
 import PricingRuleSection from './components/PricingRuleSection'
 
 import './pricing-rule-set-form.scss'
 import HelpIcon from '../HelpIcon'
+import { PricingRuleType } from './types/PricingRuleType'
 
 const { Title } = Typography
 
@@ -34,10 +35,15 @@ const generateTempId = () => `temp-${uuidv4()}`
 // Check if an @id is temporary (not from backend)
 const isTempId = id => typeof id === 'string' && id.startsWith('temp-')
 
-const PricingRuleSetForm = ({ ruleSetId, isNew = false }) => {
+type Props = {
+  ruleSetId: number | null
+  isNew?: boolean
+}
+
+const PricingRuleSetForm = ({ ruleSetId, isNew = false }: Props) => {
   const { t } = useTranslation()
   const [form] = Form.useForm()
-  const [rules, setRules] = useState([])
+  const [rules, setRules] = useState([] as PricingRuleType[])
   const [ruleValidationErrors, setRuleValidationErrors] = useState({})
 
   // Rules by target type

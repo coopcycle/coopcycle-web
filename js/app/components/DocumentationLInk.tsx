@@ -1,7 +1,12 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 
-export default function DocumentationLink({ docsPath, className }) {
+type Props = {
+  docsPath: string
+  className?: string
+}
+
+export default function DocumentationLink({ docsPath, className }: Props) {
   const { t } = useTranslation()
 
   return (

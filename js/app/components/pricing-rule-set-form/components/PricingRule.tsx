@@ -2,24 +2,36 @@ import React, { useState, useEffect } from 'react'
 import { Card, Input, Button, Space, Typography, Row, Col, Alert } from 'antd'
 import { DeleteOutlined } from '@ant-design/icons'
 import { useTranslation } from 'react-i18next'
-import PricingRuleTarget from './components/PricingRuleTarget'
-import RulePicker from './components/RulePicker'
-import { PriceChoice } from './components/PriceChoice'
-import PriceEditor from './components/PriceEditor'
+import PricingRuleTarget from './PricingRuleTarget'
+import RulePicker from './RulePicker'
+import { PriceChoice } from './PriceChoice'
+import PriceEditor from './PriceEditor'
 import {
   FixedPrice,
   parsePriceAST,
   PercentagePrice,
   PricePerPackage,
   PriceRange,
-} from '../../delivery/pricing/pricing-rule-parser'
-import Position from './components/Position'
+} from '../../../delivery/pricing/pricing-rule-parser'
+import Position from './Position'
+import { DraggableProvidedDragHandleProps } from '@hello-pangea/dnd'
+import { PricingRuleType } from '../types/PricingRuleType'
 
 const { Text } = Typography
 
 export const VALIDATION_ERRORS = {
   EXPRESSION_REQUIRED: 'EXPRESSION_REQUIRED',
   PRICE_REQUIRED: 'PRICE_REQUIRED',
+}
+
+type Props = {
+  rule: PricingRuleType
+  index: number
+  onUpdate: (rule: PricingRuleType) => void
+  onRemove: () => void
+  validationErrors?: string[]
+  dragHandleProps: DraggableProvidedDragHandleProps
+  isDragging?: boolean
 }
 
 const PricingRule = ({
@@ -30,7 +42,7 @@ const PricingRule = ({
   validationErrors = [],
   dragHandleProps,
   isDragging = false,
-}) => {
+}: Props) => {
   const { t } = useTranslation()
   const [localRule, setLocalRule] = useState(rule)
 
