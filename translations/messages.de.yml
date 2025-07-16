@@ -1085,11 +1085,3 @@ basics.order_now: Jetzt bestellen
 form.billing_method.label: Zahlungsmethode
 form.billing_method.unit: Pro Einheit
 order.export.heading.billing_method: Zahlungsmethode
-pricing.rule.humanizer.inside_zone: innerhalb
-pricing.rule.humanizer.outside_zone: außerhalb
-pricing.rule.humanizer.address_zone_format: '%task_type% Adresse %direction% Zone "%zone_name%"'
-pricing.rule.humanizer.between: zwischen %left% und %right%
-pricing.rule.humanizer.less_than: weniger als %value%
-pricing.rule.humanizer.more_than: mehr als %value%
-pricing.rule.humanizer.kg_unit: '%value% kg'
-pricing.rule.humanizer.km_unit: '%value% km'

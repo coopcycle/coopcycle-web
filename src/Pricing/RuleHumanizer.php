@@ -38,7 +38,7 @@ class RuleHumanizer
 
         $this->traverseNode($parsedExpression->getNodes(), $accumulator);
 
-        return implode(', ', $accumulator->getArrayCopy());
+        return ucfirst(implode(', ', $accumulator->getArrayCopy()));
     }
 
     private function traverseNode(Node $node, $accumulator)
