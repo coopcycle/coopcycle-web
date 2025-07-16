@@ -1682,3 +1682,7 @@ services:
       $class: AppBundle\Entity\User
       $properties:
         'facebook': 'facebook'
+
+  sentry.callback.before_send:
+    class: 'AppBundle\Service\Sentry'
+    factory: ['@AppBundle\Service\Sentry', "getBeforeSend"]

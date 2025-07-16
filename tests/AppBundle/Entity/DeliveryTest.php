@@ -346,14 +346,12 @@ class DeliveryTest extends TestCase
         }
     }
 
-    public function testWithTasks()
+    public function testWithTasksForMultiDrop()
     {
         $delivery = new Delivery();
 
         $pickup = new Task();
-        // Even if the first task is not a pickup,
-        // it will be considered as a pickup
-        // $pickup->setType(Task::TYPE_PICKUP);
+        $pickup->setType(Task::TYPE_PICKUP);
 
         $dropoff1 = new Task();
         $dropoff1->setType(Task::TYPE_DROPOFF);
@@ -363,7 +361,8 @@ class DeliveryTest extends TestCase
 
         $delivery = $delivery->withTasks(...[ $pickup, $dropoff1, $dropoff2 ]);
 
-        $this->assertNotNull($delivery->getPickup());
+        $this->assertSame($pickup, $dropoff1->getPrevious());
+        $this->assertSame($pickup, $dropoff2->getPrevious());
     }
 
     public function testGetTasksWithFilterExpression()
@@ -382,5 +381,25 @@ class DeliveryTest extends TestCase
 
         $this->assertCount(1, $cancelled);
         $this->assertContains($firstTask, $cancelled);
+    }
+
+    public function testWithTasksForMultiPickup()
+    {
+        $delivery = new Delivery();
+
+        $pu1 = new Task();
+        $pu1->setType(Task::TYPE_PICKUP);
+
+        $pu2 = new Task();
+        $pu2->setType(Task::TYPE_PICKUP);
+
+        $do1 = new Task();
+        $do1->setType(Task::TYPE_DROPOFF);
+
+        $delivery = $delivery->withTasks(...[ $pu1, $pu2, $do1 ]);
+
+        foreach ($delivery->getTasks() as $t) {
+            $this->assertNull($t->getPrevious());
+        }
     }
 }

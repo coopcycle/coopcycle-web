@@ -2,17 +2,13 @@
 
 namespace AppBundle\Api\Dto;
 
+use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Utils\Barcode\BarcodeUtils;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class TaskMapper
 {
-    private const TYPE_SIMPLE = 'simple';
-    private const TYPE_MULTI_DROPOFF = 'multi_dropoff';
-    private const TYPE_MULTI_PICKUP = 'multi_pickup';
-    private const TYPE_MULTI_MULTI = 'multi_multi';
-
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
     )
@@ -25,33 +21,22 @@ class TaskMapper
      */
     public function getPackages(Task $task, array $tasksInTheSameDelivery): array {
 
-        $pickups = array_filter($tasksInTheSameDelivery, fn($t) => $t->isPickup());
-        $dropoffs = array_filter($tasksInTheSameDelivery, fn($t) => $t->isDropoff());
         $otherTasks = array_filter($tasksInTheSameDelivery, fn($t) => $t !== $task);
 
-        $pickupsWithPackages = array_filter($pickups, fn($t) => count($t->getPackages()) > 0);
-        $dropoffsWithPackages = array_filter($dropoffs, fn($t) => count($t->getPackages()) > 0);
+        $type = Delivery::getType($tasksInTheSameDelivery);
 
-        $isSimple = count($pickups) === 1 && count($dropoffs) === 1;
-        $isMultiDropoffs = count($pickups) === 1 && count($dropoffs) > 1;
-        $isMultiPickups = count($pickups) > 1 && count($dropoffs) === 1;
-        $isMultiMulti = count($pickups) > 1 && count($dropoffs) > 1;
-
-        $isCleanMultiPickups = $isMultiPickups && count($dropoffsWithPackages) === 0;
-        $isCleanMultiDropoffs = $isMultiDropoffs && count($pickupsWithPackages) === 0;
-
-        if ($isCleanMultiDropoffs || $isSimple) {
-            if ($task->isPickup()) {
-                return $this->toSumOfPackages($otherTasks);
-            }
-            return $this->toPackages($task);
-        }
-
-        if ($isCleanMultiPickups) {
-            if ($task->isDropoff()) {
-                return $this->toSumOfPackages($otherTasks);
-            }
-            return $this->toPackages($task);
+        switch ($type) {
+            case Delivery::TYPE_MULTI_DROPOFF:
+            case Delivery::TYPE_SIMPLE:
+                if ($task->isPickup()) {
+                    return $this->toSumOfPackages($otherTasks);
+                }
+                break;
+            case Delivery::TYPE_MULTI_PICKUP:
+                if ($task->isDropoff()) {
+                    return $this->toSumOfPackages($otherTasks);
+                }
+                break;
         }
 
         return $this->toPackages($task);
@@ -132,16 +117,16 @@ class TaskMapper
     {
         $otherTasks = array_filter($tasksInTheSameDelivery, fn($t) => $t !== $task);
 
-        $type = $this->getTypeOfDelivery($tasksInTheSameDelivery);
+        $type = Delivery::getType($tasksInTheSameDelivery);
 
         switch ($type) {
-            case self::TYPE_MULTI_DROPOFF:
-            case self::TYPE_SIMPLE:
+            case Delivery::TYPE_MULTI_DROPOFF:
+            case Delivery::TYPE_SIMPLE:
                 if ($task->isPickup()) {
                     return $this->sumOfWeight($otherTasks);
                 }
                 break;
-            case self::TYPE_MULTI_PICKUP:
+            case Delivery::TYPE_MULTI_PICKUP:
                 if ($task->isDropoff()) {
                     return $this->sumOfWeight($otherTasks);
                 }
@@ -185,37 +170,6 @@ class TaskMapper
                 ),
             ],
         ];
-    }
-
-    private function getTypeOfDelivery(array $tasksInTheSameDelivery)
-    {
-        $pickups = array_filter($tasksInTheSameDelivery, fn($t) => $t->isPickup());
-        $dropoffs = array_filter($tasksInTheSameDelivery, fn($t) => $t->isDropoff());
-
-        $isSimple = count($pickups) === 1 && count($dropoffs) === 1;
-
-        if ($isSimple) {
-            return self::TYPE_SIMPLE;
-        }
-
-        $isMultiDropoffs = count($pickups) === 1 && count($dropoffs) > 1;
-        $isMultiPickups = count($pickups) > 1 && count($dropoffs) === 1;
-
-        $pickupsWithPackages = array_filter($pickups, fn($t) => count($t->getPackages()) > 0);
-        $dropoffsWithPackages = array_filter($dropoffs, fn($t) => count($t->getPackages()) > 0);
-
-        $isCleanMultiPickups = $isMultiPickups && count($dropoffsWithPackages) === 0;
-        $isCleanMultiDropoffs = $isMultiDropoffs && count($pickupsWithPackages) === 0;
-
-        if ($isCleanMultiPickups) {
-            return self::TYPE_MULTI_PICKUP;
-        }
-
-        if ($isCleanMultiDropoffs) {
-            return self::TYPE_MULTI_DROPOFF;
-        }
-
-        return self::TYPE_MULTI_MULTI;
     }
 
     private function sumOfWeight(array $tasks): null|int
