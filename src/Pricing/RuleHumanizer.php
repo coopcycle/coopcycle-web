@@ -45,7 +45,7 @@ class RuleHumanizer
         }
 
         // @phpstan-ignore-next-line deadCode.unreachable (False positive: line is reachable when traverseNode populates accumulator)
-        return implode(', ', $parts);
+        return ucfirst(implode(', ', $parts));
     }
 
     private function fallbackName(PricingRule $rule)
