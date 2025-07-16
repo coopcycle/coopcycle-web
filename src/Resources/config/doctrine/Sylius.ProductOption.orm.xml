@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
-  <entity name="AppBundle\Entity\Sylius\ProductOption" table="sylius_product_option">
+  <entity repository-class="AppBundle\Entity\Sylius\ProductOptionRepository" name="AppBundle\Entity\Sylius\ProductOption" table="sylius_product_option">
     <field name="strategy" type="string" column="strategy">
       <options>
         <option name="default">free</option>

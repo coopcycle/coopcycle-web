@@ -2,10 +2,21 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use League\Geotools\Coordinate\Coordinate;
 use League\Geotools\Polygon\Polygon;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[ApiResource(
+    operations: [
+        new Get(),
+        new GetCollection(),
+    ],
+    paginationClientEnabled: true,
+    security: "is_granted('ROLE_ADMIN')"
+)]
 class Zone
 {
     /**
