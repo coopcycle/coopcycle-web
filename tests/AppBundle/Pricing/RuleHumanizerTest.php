@@ -76,7 +76,7 @@ class RuleHumanizerTest extends KernelTestCase
         $rule->setExpression('distance > 5000');
         $rule->setPrice('price_range(distance, 100, 1000, 2000)');
 
-         $this->assertEquals('plus de 5.00 km', $this->humanizer->humanize($rule));
+         $this->assertEquals('Plus de 5.00 km', $this->humanizer->humanize($rule));
          //TODO
 //         $this->assertEquals('1€ per km above 2km', $this->humanizer->humanize($rule));
     }
