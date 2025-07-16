@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Table, Tag, Tooltip } from 'antd'
+import { Table, TableColumnsType, Tag, Tooltip } from 'antd'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment'
 
@@ -7,6 +7,30 @@ import { money } from '../../../../utils/format'
 import { useGetInvoiceLineItemsQuery } from '../../../../api/slice'
 import { prepareParams } from '../../redux/actions'
 import { usePrevious } from '../../../../dashboard/redux/utils'
+import type { InvoiceLineItem } from '../../../../api/types'
+
+type OrderRow = {
+  rowKey: string
+  orderId: string
+  fileExports: Array<{
+    requestId: string
+    createdAt: string
+  }>
+  number: string
+  date: string
+  description: string
+  subTotal: string
+  tax: string
+  total: string
+}
+
+type Props = {
+  ordersStates: string[]
+  dateRange: moment.Moment[]
+  onlyNotInvoiced: boolean
+  storeId: string
+  reloadKey: number
+}
 
 export default function OrdersTable({
   ordersStates,
@@ -14,7 +38,7 @@ export default function OrdersTable({
   onlyNotInvoiced,
   storeId,
   reloadKey,
-}) {
+}: Props) {
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
 
@@ -54,22 +78,24 @@ export default function OrdersTable({
     }
 
     return {
-      dataSource: data['hydra:member'].map(order => ({
-        rowKey: order['@id'],
-        orderId: order.orderId,
-        fileExports: order.exports,
-        number: order.orderNumber,
-        date: order.date ? moment(order.date).format('l') : '?',
-        description: order.description,
-        subTotal: money(order.subTotal),
-        tax: money(order.tax),
-        total: money(order.total),
-      })),
+      dataSource: data['hydra:member'].map(
+        (order: InvoiceLineItem): OrderRow => ({
+          rowKey: order['@id'],
+          orderId: order.orderId,
+          fileExports: order.exports,
+          number: order.orderNumber,
+          date: order.date ? moment(order.date).format('l') : '?',
+          description: order.description,
+          subTotal: money(order.subTotal),
+          tax: money(order.tax),
+          total: money(order.total),
+        }),
+      ),
       total: data['hydra:totalItems'],
     }
   }, [data])
 
-  const columns = [
+  const columns: TableColumnsType<OrderRow> = [
     {
       title: t('ADMIN_ORDERS_TO_INVOICE_ORDER_NUMBER_LABEL'),
       dataIndex: 'number',
@@ -79,7 +105,7 @@ export default function OrdersTable({
       title: t('ADMIN_ORDERS_TO_INVOICE_EXPORTS_LABEL'),
       dataIndex: 'exports',
       key: 'exports',
-      render: (_, { fileExports }) => {
+      render: (_, { fileExports }: OrderRow) => {
         if (fileExports.length === 0) {
           return <Tag>{t('ADMIN_ORDERS_TO_INVOICE_NOT_EXPORTED')}</Tag>
         } else {
@@ -131,7 +157,7 @@ export default function OrdersTable({
       key: 'action',
       dataIndex: 'orderId',
       align: 'right',
-      render: orderId => (
+      render: (orderId: string) => (
         <a
           href={window.Routing.generate('admin_order', { id: orderId })}
           target="_blank"
