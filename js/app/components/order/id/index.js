@@ -1,8 +1,11 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
+import ClipboardJS from 'clipboard'
 import { RootWithDefaults } from '../../../utils/react'
 import Map from '../../../components/DeliveryMap'
 import Itinerary from '../../../components/DeliveryItinerary'
+
+new ClipboardJS('#copy');
 
 const el = document.querySelector('#delivery-info')
 
