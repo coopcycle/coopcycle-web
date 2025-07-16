@@ -203,7 +203,7 @@ class RestaurantController extends AbstractController
 
         if ($request->query->has('cuisine')) {
             // filter by cuisine id (index) instead of name
-            $cuisineTypes = $request->query->get('cuisine');
+            $cuisineTypes = $request->query->all('cuisine');
             $cuisineIds = [];
             foreach ($cuisines as $cuisine) {
                 if (in_array($cuisine->getName(), $cuisineTypes)) {
