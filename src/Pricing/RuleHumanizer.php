@@ -42,6 +42,7 @@ class RuleHumanizer
 
         $parts = $accumulator->getArrayCopy();
 
+        // @phpstan-ignore-next-line Result of || is always true. (False positive: it is not when traverseNode populates accumulator)
         if (0 === count($parts) || in_array(self::FAILED_TO_PARSE, $parts)) {
             return $this->fallbackName($rule);
         }
