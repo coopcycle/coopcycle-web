@@ -26,10 +26,10 @@ class RuleHumanizerTest extends KernelTestCase
         $rule = new PricingRule();
 
         $rule->setExpression('distance > 5000');
-        $this->assertEquals('plus de 5.00 km', $this->humanizer->humanize($rule));
+        $this->assertEquals('Plus de 5.00 km', $this->humanizer->humanize($rule));
 
         $rule->setExpression('distance in 3000..5000');
-        $this->assertEquals('entre 3.00 km et 5.00 km', $this->humanizer->humanize($rule));
+        $this->assertEquals('Entre 3.00 km et 5.00 km', $this->humanizer->humanize($rule));
     }
 
     public function testWeight()
@@ -37,10 +37,10 @@ class RuleHumanizerTest extends KernelTestCase
         $rule = new PricingRule();
 
         $rule->setExpression('weight > 5000');
-        $this->assertEquals('plus de 5.00 kg', $this->humanizer->humanize($rule));
+        $this->assertEquals('Plus de 5.00 kg', $this->humanizer->humanize($rule));
 
         $rule->setExpression('weight in 3000..5000');
-        $this->assertEquals('entre 3.00 kg et 5.00 kg', $this->humanizer->humanize($rule));
+        $this->assertEquals('Entre 3.00 kg et 5.00 kg', $this->humanizer->humanize($rule));
     }
 
     public function testInZone()
@@ -48,7 +48,7 @@ class RuleHumanizerTest extends KernelTestCase
         $rule = new PricingRule();
         $rule->setExpression('in_zone(dropoff.address, "south")');
 
-        $this->assertEquals('adresse dropoff dans zone "south"', $this->humanizer->humanize($rule));
+        $this->assertEquals('Adresse dropoff dans zone "south"', $this->humanizer->humanize($rule));
     }
 
     public function testInZoneOutZone()
@@ -56,7 +56,7 @@ class RuleHumanizerTest extends KernelTestCase
         $rule = new PricingRule();
         $rule->setExpression('in_zone(pickup.address, "south") and out_zone(dropoff.address, "north") and weight > 5000');
 
-        $this->assertEquals('adresse pickup dans zone "south", adresse dropoff hors zone "north", plus de 5.00 kg', $this->humanizer->humanize($rule));
+        $this->assertEquals('Adresse pickup dans zone "south", adresse dropoff hors zone "north", plus de 5.00 kg', $this->humanizer->humanize($rule));
     }
 
     public function testPricePerPackage()
@@ -82,10 +82,10 @@ class RuleHumanizerTest extends KernelTestCase
         $rule = new PricingRule();
 
         $rule->setExpression('task.type == "PICKUP"');
-        $this->assertEquals('taux de retrait', $this->humanizer->humanize($rule));
+        $this->assertEquals('Taux de retrait', $this->humanizer->humanize($rule));
 
         $rule->setExpression('task.type == "DROPOFF"');
-        $this->assertEquals('taux de dépôt', $this->humanizer->humanize($rule));
+        $this->assertEquals('Taux de dépôt', $this->humanizer->humanize($rule));
     }
 
     public function testTimeRangeLength()
@@ -93,7 +93,7 @@ class RuleHumanizerTest extends KernelTestCase
         $rule = new PricingRule();
         $rule->setExpression('time_range_length(dropoff, \'hours\', \'< 1.5\')');
 
-        $this->assertEquals('créneau horaire de dépôt moins de 1.5 heure', $this->humanizer->humanize($rule));
+        $this->assertEquals('Créneau horaire de dépôt moins de 1.5 heure', $this->humanizer->humanize($rule));
     }
 
     public function testTimeRangeLengthIn()
@@ -101,7 +101,7 @@ class RuleHumanizerTest extends KernelTestCase
         $rule = new PricingRule();
         $rule->setExpression('time_range_length(dropoff, \'hours\', \'in 1..2\')');
 
-        $this->assertEquals('créneau horaire de dépôt entre 1 heure et 2 heures ', $this->humanizer->humanize($rule));
+        $this->assertEquals('Créneau horaire de dépôt entre 1 heure et 2 heures ', $this->humanizer->humanize($rule));
     }
 
     public function testDiffHours()
@@ -109,7 +109,7 @@ class RuleHumanizerTest extends KernelTestCase
         $rule = new PricingRule();
         $rule->setExpression('diff_hours(pickup, \'< 12\')');
 
-        $this->assertEquals('délai de préavis pour retrait moins de 12 heures', $this->humanizer->humanize($rule));
+        $this->assertEquals('Délai de préavis pour retrait moins de 12 heures', $this->humanizer->humanize($rule));
     }
 
     public function testDiffDays()
@@ -117,7 +117,7 @@ class RuleHumanizerTest extends KernelTestCase
         $rule = new PricingRule();
         $rule->setExpression('diff_days(pickup, \'> 2\')');
 
-        $this->assertEquals('délai de préavis pour retrait plus de 2 jours', $this->humanizer->humanize($rule));
+        $this->assertEquals('Délai de préavis pour retrait plus de 2 jours', $this->humanizer->humanize($rule));
     }
 
     public function testDiffDaysIn()
@@ -125,15 +125,15 @@ class RuleHumanizerTest extends KernelTestCase
         $rule = new PricingRule();
         $rule->setExpression('diff_days(pickup, \'in 1..2\')');
 
-        $this->assertEquals('délai de préavis pour retrait entre 1 jour et 2 jours ', $this->humanizer->humanize($rule));
+        $this->assertEquals('Délai de préavis pour retrait entre 1 jour et 2 jours ', $this->humanizer->humanize($rule));
     }
-    
+
     public function testOrderItemsTotal()
     {
         $rule = new PricingRule();
         $rule->setExpression('order.itemsTotal > 20');
 
-        $this->assertEquals('total du panier plus de 20', $this->humanizer->humanize($rule));
+        $this->assertEquals('Total du panier plus de 20', $this->humanizer->humanize($rule));
     }
 
     public function testPackagesTotalVolumeUnits()
@@ -141,6 +141,6 @@ class RuleHumanizerTest extends KernelTestCase
         $rule = new PricingRule();
         $rule->setExpression('packages.totalVolumeUnits() < 5');
 
-        $this->assertEquals('volume du colis moins de 5', $this->humanizer->humanize($rule));
+        $this->assertEquals('Volume du colis moins de 5', $this->humanizer->humanize($rule));
     }
 }
