@@ -9,6 +9,7 @@ export function PriceChoice({ priceType, handlePriceTypeChange }) {
 
   return (
     <Select
+      data-testid="rule-price-type"
       style={{ minWidth: 240 }}
       value={priceType}
       onChange={handlePriceTypeChange}>

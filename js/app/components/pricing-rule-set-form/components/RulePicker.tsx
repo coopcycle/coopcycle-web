@@ -1,13 +1,18 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import { withTranslation } from 'react-i18next'
 
 import RulePickerLine from './RulePickerLine'
 import { linesToString } from '../../../delivery/pricing/expression-builder'
 import { parseAST } from '../../../delivery/pricing/pricing-rule-parser'
 
-class RulePicker extends React.Component {
-  constructor(props) {
+type Props = {
+  ruleTarget: string
+  expressionAST: object | null
+  onExpressionChange: (expression: string) => void
+}
+
+class RulePicker extends React.Component<Props> {
+  constructor(props: Props) {
     super(props)
 
     this.state = {
@@ -60,7 +65,7 @@ class RulePicker extends React.Component {
       <div className="pricing-rule-set__rule__rule_picker">
         <table className="table mb-2">
           <tbody>
-            {this.state.lines.map((line, index) => (
+            {this.state.lines.map((line, index: number) => (
               <RulePickerLine
                 key={`${index}-${this.state.rev}`}
                 index={index}
@@ -79,7 +84,7 @@ class RulePicker extends React.Component {
           <button
             className="btn btn-xs btn-default"
             onClick={this.addLine}
-            data-testid="rule-picker-add-condition">
+            data-testid="rule-add-condition">
             <i className="fa fa-plus"></i> 
             {this.props.t('RULE_PICKER_ADD_CONDITION')}
           </button>
@@ -92,18 +97,6 @@ class RulePicker extends React.Component {
       </div>
     )
   }
-}
-
-RulePicker.defaultProps = {
-  ruleTarget: 'DELIVERY',
-  expressionAST: null,
-  onExpressionChange: () => {},
-}
-
-RulePicker.propTypes = {
-  ruleTarget: PropTypes.string,
-  expressionAST: PropTypes.object,
-  onExpressionChange: PropTypes.func.isRequired,
 }
 
 export default withTranslation()(RulePicker)

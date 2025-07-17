@@ -274,6 +274,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }: Props) => {
       )}
 
       <Form
+        data-testid="pricing-rule-set-form"
         form={form}
         layout="vertical"
         onFinish={handleSubmit}
