@@ -38,11 +38,11 @@ context(
       ).click()
 
       // Wait for the rule to be added and form to be visible
-      cy.get('[data-testid="pricing-rule-0"]', { timeout: 5000 }).should(
+      cy.get('[data-testid="pricing-rule-set-rule-0"]', { timeout: 5000 }).should(
         'be.visible',
       )
 
-      cy.get('[data-testid="pricing-rule-0"]').within(() => {
+      cy.get('[data-testid="pricing-rule-set-rule-0"]').within(() => {
         cy.get('[data-testid="rule-add-condition"]').click()
         cy.get('[data-testid="condition-type-select"]').select('distance')
         cy.get('[data-testid="condition-operator-select"]').select('>')
@@ -58,11 +58,11 @@ context(
         '[data-testid="pricing-rule-set-add-rule-target-delivery"]',
       ).click()
 
-      cy.get('[data-testid="pricing-rule-1"]', { timeout: 5000 }).should(
+      cy.get('[data-testid="pricing-rule-set-rule-1"]', { timeout: 5000 }).should(
         'be.visible',
       )
 
-      cy.get('[data-testid="pricing-rule-1"]').within(() => {
+      cy.get('[data-testid="pricing-rule-set-rule-1"]').within(() => {
         cy.get('[data-testid="rule-add-condition"]').click()
         cy.get('[data-testid="condition-type-select"]').select('distance')
         cy.get('[data-testid="condition-operator-select"]').select('>')

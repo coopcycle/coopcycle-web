@@ -109,7 +109,7 @@ const PricingRule = ({
 
   return (
     <Card
-      data-testid={`pricing-rule-${index}`}
+      data-testid={`pricing-rule-set-rule-${index}`}
       size="small"
       className={`mb-3 pricing-rule-set__rule__card ${isDragging ? 'dragging' : ''}`}
       title={

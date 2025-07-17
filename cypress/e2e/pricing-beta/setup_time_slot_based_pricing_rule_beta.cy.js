@@ -39,11 +39,11 @@ context(
       cy.get('[data-testid="pricing-rule-set-add-rule-target-task"]').click()
 
       // Wait for the rule to be added and form to be visible
-      cy.get('[data-testid="pricing-rule-0"]', { timeout: 5000 }).should(
+      cy.get('[data-testid="pricing-rule-set-rule-0"]', { timeout: 5000 }).should(
         'be.visible',
       )
 
-      cy.get('[data-testid="pricing-rule-0"]').within(() => {
+      cy.get('[data-testid="pricing-rule-set-rule-0"]').within(() => {
         cy.get('[data-testid="rule-add-condition"]').click()
         cy.get('[data-testid="condition-type-select"]').select('time_slot')
         cy.get('[data-testid="condition-operator-select"]').select('==')
@@ -60,11 +60,11 @@ context(
       // Second time slot rule
       cy.get('[data-testid="pricing-rule-set-add-rule-target-task"]').click()
 
-      cy.get('[data-testid="pricing-rule-1"]', { timeout: 5000 }).should(
+      cy.get('[data-testid="pricing-rule-set-rule-1"]', { timeout: 5000 }).should(
         'be.visible',
       )
 
-      cy.get('[data-testid="pricing-rule-1"]').within(() => {
+      cy.get('[data-testid="pricing-rule-set-rule-1"]').within(() => {
         cy.get('[data-testid="rule-add-condition"]').click()
         cy.get('[data-testid="condition-type-select"]').select('time_slot')
         cy.get('[data-testid="condition-operator-select"]').select('==')
