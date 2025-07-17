@@ -724,7 +724,7 @@ Cypress.Commands.add('validatePricingRule', rule => {
   )
   cy.get(`[data-testid="pricing-rule-set-rule-${rule.index}"]`).within(() => {
     if (rule.name) {
-      cy.get('input[placeholder*="name"]').should('have.value', rule.name)
+      cy.get('[data-testid="rule-name"]').should('have.value', rule.name)
     }
 
     if (rule.conditions && rule.conditions.length > 0) {

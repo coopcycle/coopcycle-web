@@ -150,6 +150,7 @@ const PricingRule = ({
               />
             </Text>
             <Input
+              data-testid="rule-name"
               value={localRule.name || ''}
               onChange={e => handleNameChange(e.target.value)}
               placeholder={t(

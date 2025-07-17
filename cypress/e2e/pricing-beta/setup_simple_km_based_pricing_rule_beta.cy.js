@@ -46,7 +46,7 @@ context(
         cy.get('[data-testid="rule-add-condition"]').click()
         cy.get('[data-testid="condition-type-select"]').select('distance')
         cy.get('[data-testid="condition-operator-select"]').select('>')
-        cy.get('[data-testid="condition-number-input"]').type('0')
+        cy.get('[data-testid="condition-number-input"]').type('{selectall}0')
 
         // Set price
         cy.get('[data-testid="rule-fixed-price-input"]').clear()
@@ -63,10 +63,12 @@ context(
       }).should('be.visible')
 
       cy.get('[data-testid="pricing-rule-set-rule-1"]').within(() => {
+        cy.get('[data-testid="rule-name"]').clear()
+        cy.get('[data-testid="rule-name"]').type('€3 per 2km')
         cy.get('[data-testid="rule-add-condition"]').click()
         cy.get('[data-testid="condition-type-select"]').select('distance')
         cy.get('[data-testid="condition-operator-select"]').select('>')
-        cy.get('[data-testid="condition-number-input"]').type('3')
+        cy.get('[data-testid="condition-number-input"]').type('{selectall}3')
 
         cy.get('[data-testid="rule-price-type"]').click()
         cy.root({ log: false })
@@ -111,6 +113,7 @@ context(
           },
           {
             index: 1,
+            name: '€3 per 2km',
             conditions: [
               {
                 type: 'distance',
