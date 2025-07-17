@@ -2,6 +2,8 @@ describe('Failed checkout; time range is not valid any more', () => {
   beforeEach(() => {
     cy.loadFixtures('../cypress/fixtures/checkout.yml')
 
+    cy.setMockDateTime('2025-01-10 21:30:00')
+
     cy.login('bob', '12345678')
 
     cy.visit('/fr/')
@@ -46,6 +48,10 @@ describe('Failed checkout; time range is not valid any more', () => {
     cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart3')
     cy.get('[data-testid="cart.time.submit"]:visible').click()
     cy.wait('@postRestaurantCart3')
+  })
+
+  afterEach(() => {
+    cy.resetMockDateTime()
   })
 
   context(
