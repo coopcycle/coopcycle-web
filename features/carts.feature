@@ -2332,7 +2332,7 @@ Feature: Carts
       """
       {
         "@context": {"@*@": "@*@"},
-        "@type": "http://schema.org/Order",
+        "@type": "ConfigurePaymentOutput",
         "@id": "@string@",
         "payments": [
           {
