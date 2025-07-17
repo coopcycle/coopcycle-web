@@ -7,6 +7,7 @@ use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Entity\Delivery;
 use AppBundle\Service\TaskManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class CancelProcessor implements ProcessorInterface
 {

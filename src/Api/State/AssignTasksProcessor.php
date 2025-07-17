@@ -31,6 +31,8 @@ class AssignTasksProcessor implements ProcessorInterface
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
+        $tasksResults = [];
+
         foreach ($data->tasks as $task) {
             $tasksResults[] = $this->assign($task, ['username' => $data->username], $this->requestStack->getCurrentRequest());
         }
