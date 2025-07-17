@@ -1,11 +1,12 @@
 import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
-function ProductOptionValue({ productOptionValue, overridePrice }) {
+function ProductOptionValue({ index, productOptionValue, overridePrice }) {
   return (
-    <div>
-      <span>{productOptionValue.value}</span>
+    <div data-testid={`product-option-value-${index}`}>
+      <span data-testid="name">{productOptionValue.value}</span>
       <span
+        data-testid="price"
         className={`pull-right ${overridePrice ? 'text-decoration-line-through' : ''}`}>
         {(productOptionValue.price / 100).formatMoney()}
       </span>
@@ -13,7 +14,7 @@ function ProductOptionValue({ productOptionValue, overridePrice }) {
   )
 }
 
-function OrderItem({ orderItem, overridePrice }) {
+function OrderItem({ index, orderItem, overridePrice }) {
   const productVariant = useMemo(() => {
     return orderItem.variant
   }, [orderItem])
@@ -22,15 +23,19 @@ function OrderItem({ orderItem, overridePrice }) {
 
   return (
     <li
+      data-testid={`order-item-${index}`}
       className={`list-group-item d-flex flex-column gap-2 ${
         overridePrice ? 'text-decoration-line-through' : ''
       }`}>
       <div>
-        <span className="font-weight-semi-bold">{productVariant.name}</span>
+        <span data-testid="name" className="font-weight-semi-bold">
+          {productVariant.name}
+        </span>
       </div>
       {productVariant.optionValues.map((productOptionValue, index) => (
         <ProductOptionValue
           key={index}
+          index={index}
           productOptionValue={productOptionValue}
           overridePrice={overridePrice}
         />
@@ -38,6 +43,7 @@ function OrderItem({ orderItem, overridePrice }) {
       <div className="font-weight-semi-bold">
         <span></span>
         <span
+          data-testid="total"
           className={`pull-right ${overridePrice ? 'text-decoration-line-through' : ''}`}>
           {(orderItem.total / 100).formatMoney()}
         </span>
@@ -54,6 +60,7 @@ export default function Cart({ order, overridePrice }) {
       {order.items.map((orderItem, index) => (
         <OrderItem
           key={index}
+          index={index}
           orderItem={orderItem}
           overridePrice={overridePrice}
         />

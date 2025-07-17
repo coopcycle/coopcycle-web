@@ -810,3 +810,56 @@ Cypress.Commands.add('validatePricingRuleSet', ruleSet => {
     cy.validatePricingRules(ruleSet.legacyRules)
   }
 })
+
+/**
+ * Verifies cart items in the Cart component
+ * @param {Array<Object>} expectedItems - Array of expected cart items
+ *
+ * Example usage:
+ * cy.verifyCart([
+ *   {
+ *     name: 'Supplément de commande',
+ *     total: '4,99 €',
+ *     options: [
+ *       {
+ *         name: 'Plus de 0.00 km',
+ *         price: '4,99 €',
+ *       },
+ *     ],
+ *   },
+ * ])
+ */
+Cypress.Commands.add('verifyCart', expectedItems => {
+  expectedItems.forEach((expectedItem, itemIndex) => {
+    cy.get(`[data-testid="order-item-${itemIndex}"]`)
+      .should('be.visible')
+      .within(() => {
+        // Verify item name
+        cy.get('[data-testid="name"]').should('contain.text', expectedItem.name)
+
+        // Verify item total
+        cy.get('[data-testid="total"]').should(
+          'contain.text',
+          expectedItem.total,
+        )
+
+        // Verify options if provided
+        if (expectedItem.options && expectedItem.options.length > 0) {
+          expectedItem.options.forEach((expectedOption, optionIndex) => {
+            cy.get(
+              `[data-testid="product-option-value-${optionIndex}"]`,
+            ).within(() => {
+              cy.get('[data-testid="name"]').should(
+                'contain.text',
+                expectedOption.name,
+              )
+              cy.get('[data-testid="price"]').should(
+                'contain.text',
+                expectedOption.price,
+              )
+            })
+          })
+        }
+      })
+  })
+})
