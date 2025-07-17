@@ -2337,6 +2337,7 @@ Feature: Carts
         "payments": [
           {
             "@context": {"@*@": "@*@"},
+            "@id":@string@,
             "@type": "@string@",
             "method": {
               "@context": {"@*@": "@*@"},
@@ -2347,6 +2348,7 @@ Feature: Carts
           },
           {
             "@context": {"@*@": "@*@"},
+            "@id":@string@,
             "@type": "@string@",
             "method": {
               "@context": {"@*@": "@*@"},
