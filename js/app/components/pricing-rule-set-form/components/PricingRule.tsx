@@ -120,6 +120,7 @@ const PricingRule = ({
       extra={
         <Space>
           <Button
+            data-testid="rule-remove"
             size="small"
             danger
             icon={<DeleteOutlined />}
