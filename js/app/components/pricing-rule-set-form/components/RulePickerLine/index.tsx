@@ -251,6 +251,7 @@ class RulePickerLine extends React.Component<Props> {
         if (this.state.type === 'task.type') {
           return (
             <select
+              data-testid="condition-task-type-select"
               onChange={this.handleValueChange}
               value={this.state.value}
               className="form-control input-sm">
