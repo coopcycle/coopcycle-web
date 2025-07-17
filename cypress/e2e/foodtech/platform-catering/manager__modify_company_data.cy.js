@@ -8,7 +8,7 @@ describe('Platform catering; manager; modify company data', () => {
 
     cy.visit('/profile/business-account')
 
-    cy.get('#company_name').clear('')
+    cy.get('#company_name').clear()
     cy.get('#company_name').type('NEW NAME')
     cy.get('button[name="company[save]"]').click()
 

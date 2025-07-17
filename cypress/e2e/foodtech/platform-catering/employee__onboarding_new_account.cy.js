@@ -11,13 +11,13 @@ describe('Platform catering; employee; onboarding', () => {
     cy.get('.alert-info').should('contain', 'manager01')
 
     // Personal info step
-    cy.get('#registration_form_username').clear('')
+    cy.get('#registration_form_username').clear()
     cy.get('#registration_form_username').type('employee01')
     cy.get('#registration_form_email').clear()
     cy.get('#registration_form_email').type('employee01@demo.coopcycle.or')
     cy.get('#registration_form_plainPassword_first').clear()
     cy.get('#registration_form_plainPassword_first').type('12345678')
-    cy.get('#registration_form_plainPassword_second').clear('')
+    cy.get('#registration_form_plainPassword_second').clear()
     cy.get('#registration_form_plainPassword_second').type('12345678')
     cy.get('#registration_form_legal').check()
 
