@@ -3197,12 +3197,14 @@ Feature: Deliveries
       "events": [
           {
               "@type": "OrderEvent",
+              "@id": @string@,
               "type": "order:created",
               "data": [],
               "createdAt": "@string@.isDateTime()"
           },
           {
               "@type": "OrderEvent",
+              "@id": @string@,
               "type": "order:state_changed",
               "data": {
                   "newState": "new",
