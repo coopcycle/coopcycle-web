@@ -46,6 +46,14 @@ Cypress.Commands.add('loadFixturesWithSetup', fixtures => {
   cy.loadFixtures(fixtures, true)
 })
 
+Cypress.Commands.add('setEnvVar', (key, value) => {
+  cy.terminal(`echo ${key}=${value} >> .env.test`)
+})
+
+Cypress.Commands.add('removeEnvVar', (key) => {
+  cy.terminal(`sed -i '/${key}=/{d}' .env.test`)
+})
+
 Cypress.Commands.add('urlmatch', (pattern, type='match', from='pathname') => {
   cy.location(from, { timeout: 10000 }).should(type, pattern)
 })
