@@ -58,7 +58,7 @@ const PricingRuleSection = ({
   }
 
   return (
-    <div>
+    <div data-testid={`pricing-rule-set-target-${target.toLowerCase()}`}>
       {title ? (
         <Title level={5}>
           {title} <HelpIcon className="ml-1" tooltipText={addRuleButtonHelp} />
