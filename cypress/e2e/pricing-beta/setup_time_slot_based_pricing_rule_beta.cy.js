@@ -53,8 +53,7 @@ context(
         )
 
         // Set price
-        cy.get('[data-testid="rule-fixed-price-input"]').clear()
-        cy.get('[data-testid="rule-fixed-price-input"]').type('7')
+        cy.get('[data-testid="rule-fixed-price-input"]').type('{selectall}7')
       })
 
       // Second time slot rule
@@ -74,8 +73,7 @@ context(
         )
 
         // Set price
-        cy.get('[data-testid="rule-fixed-price-input"]').clear()
-        cy.get('[data-testid="rule-fixed-price-input"]').type('15')
+        cy.get('[data-testid="rule-fixed-price-input"]').type('{selectall}15')
       })
 
       // Save

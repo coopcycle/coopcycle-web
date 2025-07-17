@@ -63,8 +63,7 @@ context(
           .type('{selectall}4')
 
         // Set price
-        cy.get('[data-testid="rule-fixed-price-input"]').clear()
-        cy.get('[data-testid="rule-fixed-price-input"]').type('7')
+        cy.get('[data-testid="rule-fixed-price-input"]').type('{selectall}7')
       })
 
       // Rule: packages = SMALL; diff_hours(pickup) < 4; price = 10
@@ -93,8 +92,7 @@ context(
           .type('{selectall}4')
 
         // Set price
-        cy.get('[data-testid="rule-fixed-price-input"]').clear()
-        cy.get('[data-testid="rule-fixed-price-input"]').type('10')
+        cy.get('[data-testid="rule-fixed-price-input"]').type('{selectall}10')
       })
 
       // Rule: packages = XL; diff_hours(pickup) > 4; price = 12
@@ -123,8 +121,7 @@ context(
           .type('{selectall}4')
 
         // Set price
-        cy.get('[data-testid="rule-fixed-price-input"]').clear()
-        cy.get('[data-testid="rule-fixed-price-input"]').type('12')
+        cy.get('[data-testid="rule-fixed-price-input"]').type('{selectall}12')
       })
 
       // Rule: packages = XL; diff_hours(pickup) < 4; price = 15
@@ -153,8 +150,7 @@ context(
           .type('{selectall}4')
 
         // Set price
-        cy.get('[data-testid="rule-fixed-price-input"]').clear()
-        cy.get('[data-testid="rule-fixed-price-input"]').type('15')
+        cy.get('[data-testid="rule-fixed-price-input"]').type('{selectall}15')
       })
 
       // Save

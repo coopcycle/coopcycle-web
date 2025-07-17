@@ -49,8 +49,7 @@ context(
         cy.get('[data-testid="condition-number-input"]').type('{selectall}0')
 
         // Set price
-        cy.get('[data-testid="rule-fixed-price-input"]').clear()
-        cy.get('[data-testid="rule-fixed-price-input"]').type('5')
+        cy.get('[data-testid="rule-fixed-price-input"]').type('{selectall}5')
       })
 
       // Add second delivery rule: distance > 3; price = 3 per 2km above 1km

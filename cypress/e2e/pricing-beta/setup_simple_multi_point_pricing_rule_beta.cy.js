@@ -47,8 +47,7 @@ context(
         cy.get('[data-testid="condition-task-type-select"]').select('DROPOFF')
 
         // Set price
-        cy.get('[data-testid="rule-fixed-price-input"]').clear()
-        cy.get('[data-testid="rule-fixed-price-input"]').type('7.20')
+        cy.get('[data-testid="rule-fixed-price-input"]').type('{selectall}7.20')
       })
 
       // Rule: 1.50 for each dropoff with a package of type XL (TASK rule)
@@ -72,8 +71,7 @@ context(
         cy.antdSelect('[data-testid="condition-package-select"]', 'XL')
 
         // Set price
-        cy.get('[data-testid="rule-fixed-price-input"]').clear()
-        cy.get('[data-testid="rule-fixed-price-input"]').type('1.50')
+        cy.get('[data-testid="rule-fixed-price-input"]').type('{selectall}1.50')
       })
 
       // Save
