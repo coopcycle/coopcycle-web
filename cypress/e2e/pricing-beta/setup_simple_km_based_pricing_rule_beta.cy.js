@@ -38,9 +38,9 @@ context(
       ).click()
 
       // Wait for the rule to be added and form to be visible
-      cy.get('[data-testid="pricing-rule-set-rule-0"]', { timeout: 5000 }).should(
-        'be.visible',
-      )
+      cy.get('[data-testid="pricing-rule-set-rule-0"]', {
+        timeout: 5000,
+      }).should('be.visible')
 
       cy.get('[data-testid="pricing-rule-set-rule-0"]').within(() => {
         cy.get('[data-testid="rule-add-condition"]').click()
@@ -58,9 +58,9 @@ context(
         '[data-testid="pricing-rule-set-add-rule-target-delivery"]',
       ).click()
 
-      cy.get('[data-testid="pricing-rule-set-rule-1"]', { timeout: 5000 }).should(
-        'be.visible',
-      )
+      cy.get('[data-testid="pricing-rule-set-rule-1"]', {
+        timeout: 5000,
+      }).should('be.visible')
 
       cy.get('[data-testid="pricing-rule-set-rule-1"]').within(() => {
         cy.get('[data-testid="rule-add-condition"]').click()
@@ -90,7 +90,45 @@ context(
       // Should redirect to edit page
       cy.urlmatch(/\/admin\/deliveries\/pricing\/beta\/[0-9]+$/)
 
-      //TODO: verify data
+      // Verify saved data
+      cy.validatePricingRuleSet({
+        name: 'Old school Beta',
+        strategy: 'map',
+        deliveryRules: [
+          {
+            index: 0,
+            conditions: [
+              {
+                type: 'distance',
+                operator: '>',
+                value: '0',
+              },
+            ],
+            price: {
+              type: 'fixed',
+              value: '5.00',
+            },
+          },
+          {
+            index: 1,
+            conditions: [
+              {
+                type: 'distance',
+                operator: '>',
+                value: '3',
+              },
+            ],
+            price: {
+              type: 'range',
+              range: {
+                price: '3',
+                step: '2',
+                threshold: '1',
+              },
+            },
+          },
+        ],
+      })
     })
   },
 )

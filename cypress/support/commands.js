@@ -582,3 +582,223 @@ Cypress.Commands.add('chooseDaysOfTheWeek', (daysOfTheWeek) => {
       }
     })
 })
+
+Cypress.Commands.add('shouldHaveValueIfVisible', (selector, value) => {
+  cy.root().then($root => {
+    if ($root.find(`${selector}:visible`).length > 0) {
+      cy.get(selector).should('have.value', value)
+    }
+  })
+})
+
+/**
+ * Validates a pricing rule condition
+ */
+// Example usage:
+// cy.validatePricingRuleCondition({
+//   type: 'packages',
+//   operator: 'containsAtLeastOne',
+//   packageName: 'XL',
+// })
+Cypress.Commands.add('validatePricingRuleCondition', condition => {
+  cy.get('[data-testid="condition-type-select"]').should(
+    'have.value',
+    condition.type,
+  )
+  cy.get('[data-testid="condition-operator-select"]').should(
+    'have.value',
+    condition.operator,
+  )
+
+  if (condition.type === 'packages' && condition.packageName) {
+    cy.get('[data-testid="condition-package-select"]').should(
+      'contain',
+      condition.packageName,
+    )
+  } else if (condition.type === 'time_slot' && condition.timeSlot) {
+    cy.get('[data-testid="condition-time-slot-select"]').should(
+      'contain',
+      condition.timeSlot,
+    )
+  } else if (condition.value !== undefined) {
+    cy.shouldHaveValueIfVisible(
+      '[data-testid="condition-number-input"]',
+      condition.value,
+    )
+    cy.shouldHaveValueIfVisible(
+      '[data-testid="condition-task-type-select"]',
+      condition.value,
+    )
+  }
+})
+
+/**
+ * Validates multiple pricing rule conditions
+ * @param {Array<Object>} conditions - Array of conditions to validate
+ */
+Cypress.Commands.add('validatePricingRuleConditions', conditions => {
+  conditions.forEach((condition, index) => {
+    cy.get(`[data-testid="condition-${index}"]`).within(() => {
+      cy.validatePricingRuleCondition(condition)
+    })
+  })
+})
+
+Cypress.Commands.add('validatePricingRulePrice', price => {
+  switch (price.type) {
+    case 'fixed':
+      cy.get('[data-testid="rule-fixed-price-input"]').should(
+        'have.value',
+        price.value,
+      )
+      break
+
+    case 'percentage':
+      cy.get('[data-testid="rule-price-type"]').should('contain', 'Pourcentage')
+      cy.get('[data-testid="rule-percentage-input"]').should(
+        'have.value',
+        price.percentage,
+      )
+      break
+
+    case 'range':
+      cy.get('[data-testid="rule-price-type"]').should(
+        'contain',
+        'Prix TTC par tranches',
+      )
+      cy.get('[data-testid="rule-price-range-price"]').should(
+        'have.value',
+        price.range.price,
+      )
+      cy.get('[data-testid="rule-price-range-step"]').should(
+        'have.value',
+        price.range.step,
+      )
+      cy.get('[data-testid="rule-price-range-threshold"]').should(
+        'have.value',
+        price.range.threshold,
+      )
+      break
+
+    case 'per_package':
+      cy.get('[data-testid="rule-price-type"]').should(
+        'contain',
+        'Prix par colis',
+      )
+      cy.get('[data-testid="rule-per-package-name"]').should(
+        'contain',
+        price.perPackage.packageName,
+      )
+      cy.get('[data-testid="rule-per-package-unit-price"]').should(
+        'have.value',
+        price.perPackage.unitPrice,
+      )
+      cy.get('[data-testid="rule-per-package-offset"]').should(
+        'have.value',
+        price.perPackage.offset,
+      )
+      cy.get('[data-testid="rule-per-package-discount-price"]').should(
+        'have.value',
+        price.perPackage.discountPrice,
+      )
+      break
+
+    default:
+      throw new Error(`Unsupported price type: ${price.type}`)
+  }
+})
+
+/**
+ * Validates individual pricing rule
+ */
+// Example usage:
+// cy.validatePricingRule({
+//   index: 0,
+//   conditions: [{ type: 'packages', operator: '==', packageName: 'SMALL' }],
+//   price: { type: 'range', range: { price: 3, step: 2, threshold: 1 } }
+// })
+//
+Cypress.Commands.add('validatePricingRule', rule => {
+  cy.get(`[data-testid="pricing-rule-set-rule-${rule.index}"]`).should(
+    'be.visible',
+  )
+  cy.get(`[data-testid="pricing-rule-set-rule-${rule.index}"]`).within(() => {
+    if (rule.name) {
+      cy.get('input[placeholder*="name"]').should('have.value', rule.name)
+    }
+
+    if (rule.conditions && rule.conditions.length > 0) {
+      cy.validatePricingRuleConditions(rule.conditions)
+    }
+
+    if (rule.price) {
+      cy.validatePricingRulePrice(rule.price)
+    }
+  })
+})
+
+/**
+ * Validates multiple pricing rules
+ * @param {Array<Object>} rules - Array of rules to validate
+ */
+Cypress.Commands.add('validatePricingRules', rules => {
+  rules.forEach(rule => {
+    cy.validatePricingRule(rule)
+  })
+})
+
+/**
+ * Validates the pricing rule set form data
+ */
+// Example usage:
+// cy.validatePricingRuleSet({
+//   name: 'My Rule Set',
+//   strategy: 'map',
+//   deliveryRules: [
+//     {
+//       index: 0,
+//       conditions: [{ type: 'distance', operator: '>', value: 0 }],
+//       price: { type: 'fixed', value: 5 }
+//     }
+//   ]
+// })
+Cypress.Commands.add('validatePricingRuleSet', ruleSet => {
+  // Validate form name
+  cy.get('input[id*="name"]').should('have.value', ruleSet.name)
+
+  // Validate strategy
+  cy.get(`input[value="${ruleSet.strategy}"]`).should('be.checked')
+
+  // Validate delivery rules
+  if (ruleSet.deliveryRules && ruleSet.deliveryRules.length > 0) {
+    cy.get('[data-testid="pricing-rule-set-target-delivery"]').within(() => {
+      cy.get('[data-testid^="pricing-rule-set-rule-"]').should(
+        'have.length',
+        ruleSet.deliveryRules.length,
+      )
+    })
+    cy.validatePricingRules(ruleSet.deliveryRules)
+  }
+
+  // Validate task rules
+  if (ruleSet.taskRules && ruleSet.taskRules.length > 0) {
+    cy.get('[data-testid="pricing-rule-set-target-task"]').within(() => {
+      cy.get('[data-testid^="pricing-rule-set-rule-"]').should(
+        'have.length',
+        ruleSet.taskRules.length,
+      )
+    })
+    cy.validatePricingRules(ruleSet.taskRules)
+  }
+
+  // Validate legacy rules
+  if (ruleSet.legacyRules && ruleSet.legacyRules.length > 0) {
+    cy.get('[data-testid="legacy-rules-section"]').within(() => {
+      cy.get('[data-testid^="pricing-rule-set-rule-"]').should(
+        'have.length',
+        ruleSet.legacyRules.length,
+      )
+    })
+    cy.validatePricingRules(ruleSet.legacyRules)
+  }
+})

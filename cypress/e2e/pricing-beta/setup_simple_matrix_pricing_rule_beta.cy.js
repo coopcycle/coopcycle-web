@@ -42,9 +42,9 @@ context(
       ).click()
 
       // Wait for the rule to be added and form to be visible
-      cy.get('[data-testid="pricing-rule-set-rule-0"]', { timeout: 5000 }).should(
-        'be.visible',
-      )
+      cy.get('[data-testid="pricing-rule-set-rule-0"]', {
+        timeout: 5000,
+      }).should('be.visible')
 
       cy.get('[data-testid="pricing-rule-set-rule-0"]').within(() => {
         // Add first condition: packages = SMALL
@@ -58,8 +58,9 @@ context(
           .last()
           .select('diff_hours(pickup)')
         cy.get('[data-testid="condition-operator-select"]').last().select('>')
-        cy.get('[data-testid="condition-number-input"]').last().clear()
-        cy.get('[data-testid="condition-number-input"]').last().type('4')
+        cy.get('[data-testid="condition-number-input"]')
+          .last()
+          .type('{selectall}4')
 
         // Set price
         cy.get('[data-testid="rule-fixed-price-input"]').clear()
@@ -71,9 +72,9 @@ context(
         '[data-testid="pricing-rule-set-add-rule-target-delivery"]',
       ).click()
 
-      cy.get('[data-testid="pricing-rule-set-rule-1"]', { timeout: 5000 }).should(
-        'be.visible',
-      )
+      cy.get('[data-testid="pricing-rule-set-rule-1"]', {
+        timeout: 5000,
+      }).should('be.visible')
 
       cy.get('[data-testid="pricing-rule-set-rule-1"]').within(() => {
         // Add first condition: packages = SMALL
@@ -87,8 +88,9 @@ context(
           .last()
           .select('diff_hours(pickup)')
         cy.get('[data-testid="condition-operator-select"]').last().select('<')
-        cy.get('[data-testid="condition-number-input"]').last().clear()
-        cy.get('[data-testid="condition-number-input"]').last().type('4')
+        cy.get('[data-testid="condition-number-input"]')
+          .last()
+          .type('{selectall}4')
 
         // Set price
         cy.get('[data-testid="rule-fixed-price-input"]').clear()
@@ -100,9 +102,9 @@ context(
         '[data-testid="pricing-rule-set-add-rule-target-delivery"]',
       ).click()
 
-      cy.get('[data-testid="pricing-rule-set-rule-2"]', { timeout: 5000 }).should(
-        'be.visible',
-      )
+      cy.get('[data-testid="pricing-rule-set-rule-2"]', {
+        timeout: 5000,
+      }).should('be.visible')
 
       cy.get('[data-testid="pricing-rule-set-rule-2"]').within(() => {
         // Add first condition: packages = XL
@@ -116,8 +118,9 @@ context(
           .last()
           .select('diff_hours(pickup)')
         cy.get('[data-testid="condition-operator-select"]').last().select('>')
-        cy.get('[data-testid="condition-number-input"]').last().clear()
-        cy.get('[data-testid="condition-number-input"]').last().type('4')
+        cy.get('[data-testid="condition-number-input"]')
+          .last()
+          .type('{selectall}4')
 
         // Set price
         cy.get('[data-testid="rule-fixed-price-input"]').clear()
@@ -129,9 +132,9 @@ context(
         '[data-testid="pricing-rule-set-add-rule-target-delivery"]',
       ).click()
 
-      cy.get('[data-testid="pricing-rule-set-rule-3"]', { timeout: 5000 }).should(
-        'be.visible',
-      )
+      cy.get('[data-testid="pricing-rule-set-rule-3"]', {
+        timeout: 5000,
+      }).should('be.visible')
 
       cy.get('[data-testid="pricing-rule-set-rule-3"]').within(() => {
         // Add first condition: packages = XL
@@ -145,8 +148,9 @@ context(
           .last()
           .select('diff_hours(pickup)')
         cy.get('[data-testid="condition-operator-select"]').last().select('<')
-        cy.get('[data-testid="condition-number-input"]').last().clear()
-        cy.get('[data-testid="condition-number-input"]').last().type('4')
+        cy.get('[data-testid="condition-number-input"]')
+          .last()
+          .type('{selectall}4')
 
         // Set price
         cy.get('[data-testid="rule-fixed-price-input"]').clear()
@@ -161,7 +165,61 @@ context(
       // Should redirect to edit page
       cy.urlmatch(/\/admin\/deliveries\/pricing\/beta\/[0-9]+$/)
 
-      //TODO: verify data
+      // Verify saved data
+      cy.validatePricingRuleSet({
+        name: 'Matrix Beta',
+        strategy: 'map',
+        deliveryRules: [
+          {
+            index: 0,
+            conditions: [
+              {
+                type: 'packages',
+                operator: 'containsAtLeastOne',
+                packageName: 'SMALL',
+              },
+              { type: 'diff_hours(pickup)', operator: '>', value: '4' },
+            ],
+            price: { type: 'fixed', value: '7.00' },
+          },
+          {
+            index: 1,
+            conditions: [
+              {
+                type: 'packages',
+                operator: 'containsAtLeastOne',
+                packageName: 'SMALL',
+              },
+              { type: 'diff_hours(pickup)', operator: '<', value: '4' },
+            ],
+            price: { type: 'fixed', value: '10.00' },
+          },
+          {
+            index: 2,
+            conditions: [
+              {
+                type: 'packages',
+                operator: 'containsAtLeastOne',
+                packageName: 'XL',
+              },
+              { type: 'diff_hours(pickup)', operator: '>', value: '4' },
+            ],
+            price: { type: 'fixed', value: '12.00' },
+          },
+          {
+            index: 3,
+            conditions: [
+              {
+                type: 'packages',
+                operator: 'containsAtLeastOne',
+                packageName: 'XL',
+              },
+              { type: 'diff_hours(pickup)', operator: '<', value: '4' },
+            ],
+            price: { type: 'fixed', value: '15.00' },
+          },
+        ],
+      })
     })
   },
 )

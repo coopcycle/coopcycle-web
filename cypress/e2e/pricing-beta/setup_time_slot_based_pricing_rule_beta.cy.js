@@ -39,9 +39,9 @@ context(
       cy.get('[data-testid="pricing-rule-set-add-rule-target-task"]').click()
 
       // Wait for the rule to be added and form to be visible
-      cy.get('[data-testid="pricing-rule-set-rule-0"]', { timeout: 5000 }).should(
-        'be.visible',
-      )
+      cy.get('[data-testid="pricing-rule-set-rule-0"]', {
+        timeout: 5000,
+      }).should('be.visible')
 
       cy.get('[data-testid="pricing-rule-set-rule-0"]').within(() => {
         cy.get('[data-testid="rule-add-condition"]').click()
@@ -60,9 +60,9 @@ context(
       // Second time slot rule
       cy.get('[data-testid="pricing-rule-set-add-rule-target-task"]').click()
 
-      cy.get('[data-testid="pricing-rule-set-rule-1"]', { timeout: 5000 }).should(
-        'be.visible',
-      )
+      cy.get('[data-testid="pricing-rule-set-rule-1"]', {
+        timeout: 5000,
+      }).should('be.visible')
 
       cy.get('[data-testid="pricing-rule-set-rule-1"]').within(() => {
         cy.get('[data-testid="rule-add-condition"]').click()
@@ -86,7 +86,35 @@ context(
       // Should redirect to edit page
       cy.urlmatch(/\/admin\/deliveries\/pricing\/beta\/[0-9]+$/)
 
-      //TODO: verify data
+      // Verify saved data
+      cy.validatePricingRuleSet({
+        name: 'Using time slots Beta',
+        strategy: 'map',
+        taskRules: [
+          {
+            index: 0,
+            conditions: [
+              {
+                type: 'time_slot',
+                operator: '==',
+                timeSlot: 'Acme time slot 2',
+              },
+            ],
+            price: { type: 'fixed', value: '7.00' },
+          },
+          {
+            index: 1,
+            conditions: [
+              {
+                type: 'time_slot',
+                operator: '==',
+                timeSlot: 'Acme time slot 15',
+              },
+            ],
+            price: { type: 'fixed', value: '15.00' },
+          },
+        ],
+      })
     })
   },
 )

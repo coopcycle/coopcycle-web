@@ -55,6 +55,17 @@ context(
           2,
         )
       })
+
+      cy.validatePricingRule({
+        index: 0,
+        conditions: [{ type: 'task.type', operator: '==', value: 'DROPOFF' }],
+        price: { type: 'fixed', value: '5.00' },
+      })
+      cy.validatePricingRule({
+        index: 1,
+        conditions: [{ type: 'task.type', operator: '==', value: 'DROPOFF' }],
+        price: { type: 'fixed', value: '15.00' },
+      })
     })
   },
 )

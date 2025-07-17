@@ -36,9 +36,9 @@ context(
       cy.get('[data-testid="pricing-rule-set-add-rule-target-task"]').click()
 
       // Wait for the rule to be added and form to be visible
-      cy.get('[data-testid="pricing-rule-set-rule-0"]', { timeout: 5000 }).should(
-        'be.visible',
-      )
+      cy.get('[data-testid="pricing-rule-set-rule-0"]', {
+        timeout: 5000,
+      }).should('be.visible')
 
       cy.get('[data-testid="pricing-rule-set-rule-0"]').within(() => {
         // Add condition for task type
@@ -54,9 +54,9 @@ context(
       // Rule: 1.50 for each dropoff with a package of type XL (TASK rule)
       cy.get('[data-testid="pricing-rule-set-add-rule-target-task"]').click()
 
-      cy.get('[data-testid="pricing-rule-set-rule-1"]', { timeout: 5000 }).should(
-        'be.visible',
-      )
+      cy.get('[data-testid="pricing-rule-set-rule-1"]', {
+        timeout: 5000,
+      }).should('be.visible')
 
       cy.get('[data-testid="pricing-rule-set-rule-1"]').within(() => {
         // Add first condition: task type = DROPOFF
@@ -84,7 +84,40 @@ context(
       // Should redirect to edit page
       cy.urlmatch(/\/admin\/deliveries\/pricing\/beta\/[0-9]+$/)
 
-      //TODO: verify data
+      // Verify saved data
+      cy.validatePricingRuleSet({
+        name: 'Multi-point pricing Beta',
+        strategy: 'map',
+        taskRules: [
+          {
+            index: 0,
+            conditions: [
+              {
+                type: 'task.type',
+                operator: '==',
+                value: 'DROPOFF',
+              },
+            ],
+            price: { type: 'fixed', value: '7.20' },
+          },
+          {
+            index: 1,
+            conditions: [
+              {
+                type: 'task.type',
+                operator: '==',
+                value: 'DROPOFF',
+              },
+              {
+                type: 'packages',
+                operator: 'containsAtLeastOne',
+                packageName: 'XL',
+              },
+            ],
+            price: { type: 'fixed', value: '1.50' },
+          },
+        ],
+      })
     })
   },
 )
