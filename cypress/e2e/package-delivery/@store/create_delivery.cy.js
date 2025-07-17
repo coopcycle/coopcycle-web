@@ -1,6 +1,6 @@
 context('Delivery (role: store)', () => {
   beforeEach(() => {
-    cy.loadFixtures('../cypress/fixtures/stores.yml')
+    cy.loadFixturesWithSetup(['ORM/store_basic.yml'])
   })
 
   it('create delivery', () => {
@@ -58,7 +58,6 @@ context('Delivery (role: store)', () => {
     cy.get('[data-testid=delivery-itinerary]')
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
       .should('exist')
-    cy.get('[data-testid=tax-included-previous]')
-      .contains(/4.99/)
+    cy.get('[data-testid=tax-included-previous]').contains(/4.99/)
   })
 })
