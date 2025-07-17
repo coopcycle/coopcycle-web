@@ -18,6 +18,8 @@ export default function PackagePicker({ value, onChange }) {
   return (
     <Select
       data-testid="condition-package-select"
+      showSearch
+      optionFilterProp="label"
       onChange={value =>
         // replicate on change signature of html input until we re-write PricePickerLine component
         onChange({
