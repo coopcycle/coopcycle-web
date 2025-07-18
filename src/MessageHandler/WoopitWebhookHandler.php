@@ -94,7 +94,7 @@ class WoopitWebhookHandler
                 sprintf('Sending status update to Woopit for delivery with id %s', $deliveryId)
             );
 
-            $response = $this->woopitClient->request('PUT', "deliveries/${deliveryId}/status", [
+            $response = $this->woopitClient->request('PUT', "deliveries/{$deliveryId}/status", [
                 'json' => array_merge(
                     [
                         'date' => Carbon::now(),

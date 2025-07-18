@@ -13,8 +13,9 @@ use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Action\NotFoundAction;
 use AppBundle\Action\Woopit\QuoteRequest as QuoteRequestController;
 use AppBundle\Action\Woopit\DeliveryRequest as DeliveryRequestController;
-use AppBundle\Action\Woopit\DeliveryCancel as DeliveryCancelController;
-use AppBundle\Action\Woopit\DeliveryUpdate as DeliveryUpdateController;
+use AppBundle\Api\State\Woopit\CancelProcessor;
+use AppBundle\Api\State\Woopit\DeliveryProvider;
+use AppBundle\Api\State\Woopit\UpdateProcessor;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
@@ -28,22 +29,22 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
         ),
         new Delete(
             uriTemplate: '/woopit/deliveries/{deliveryId}',
-            controller: DeliveryCancelController::class,
+            uriVariables: ['deliveryId'],
+            provider: DeliveryProvider::class,
+            processor: CancelProcessor::class,
             openapiContext: ['summary' => 'Cancel a delivery.'],
             security: 'is_granted(\'ROLE_API_KEY\')',
-            read: false,
-            write: false
         ),
         new Patch(
             uriTemplate: '/woopit/deliveries/{deliveryId}',
+            uriVariables: ['deliveryId'],
+            provider: DeliveryProvider::class,
+            processor: UpdateProcessor::class,
             status: 204,
-            controller: DeliveryUpdateController::class,
             openapiContext: ['summary' => 'Receives requests to update a delivery.'],
             normalizationContext: ['groups' => ['woopit_delivery_output']],
             denormalizationContext: ['groups' => ['woopit_delivery_input']],
             security: 'is_granted(\'ROLE_API_KEY\')',
-            read: false,
-            write: false
         ),
         new Post(
             uriTemplate: '/woopit/quotes',

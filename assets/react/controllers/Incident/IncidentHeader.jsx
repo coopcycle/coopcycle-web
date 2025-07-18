@@ -15,7 +15,7 @@ import store from "./incidentStore";
 async function _handleStatusSubmit(id, body) {
   const httpClient = new window._auth.httpClient();
   return await httpClient.patch(
-    window.Routing.generate("_api_/incidents/{id}.{_format}_patch", { id }),
+    window.Routing.generate("_api_/incidents/{id}{._format}_patch", { id }),
     body,
   );
 }

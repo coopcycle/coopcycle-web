@@ -23,7 +23,7 @@ final class InvoiceLineItemsGroupedByOrganizationProvider implements ProviderInt
     {
     }
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = [])
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
         $resourceClass = $operation->getClass();
         $qb = $this->entityManager->getRepository(Order::class)->createOptimizedQueryBuilder('o');

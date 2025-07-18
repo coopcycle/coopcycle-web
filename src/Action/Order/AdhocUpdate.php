@@ -8,11 +8,10 @@ use Symfony\Component\HttpFoundation\Request;
 class AdhocUpdate extends Adhoc
 {
     public $objectManager;
+
     public function __invoke($data, Request $request)
     {
         $order = $this->objectManager->getRepository(Order::class)->find($request->attributes->get('id'));
-
-        unset($data->customer);
 
         return $this->parseOrderData($data, $order);
     }
