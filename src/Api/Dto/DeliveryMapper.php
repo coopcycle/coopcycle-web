@@ -39,7 +39,7 @@ class DeliveryMapper
 
         $tasks = $deliveryEntity->getTasks();
 
-        $deliveryData->tasks = array_map(function (Task $taskEntity) use ($tasks, $groups, $context) {
+        $deliveryData->tasks = array_map(function (Task $taskEntity) use ($tasks, $context) {
 
             $taskData = new TaskDto();
 
