@@ -5,7 +5,7 @@ context('Delivery (role: dispatcher)', () => {
       'ORM/tags.yml',
       'ORM/store_advanced.yml',
     ])
-    cy.setEnvVar('PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED', '0')
+    cy.setEnvVar('PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED', '1')
 
     cy.setMockDateTime('2025-04-23 8:30:00')
 
@@ -73,12 +73,41 @@ context('Delivery (role: dispatcher)', () => {
     })
     cy.reactSelect(2)
 
+    cy.verifyCart([
+      {
+        name: 'Supplément de commande',
+        total: '4,99 €',
+        options: [
+          {
+            name: 'Plus de 0.00 km',
+            price: '4,99 €',
+          },
+        ],
+      },
+    ])
+
     cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
     cy.get('button[type="submit"]').click()
 
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
+
+    cy.verifyCart([
+      {
+        name: 'Supplément de commande',
+        //TODO: fix different formats between DeliveryForm and an Order page
+        // total: '4,99 €',
+        total: '€4.99',
+        adjustments: [
+          {
+            name: 'Plus de 0.00 km',
+            // price: '4,99 €',
+            price: '€4.99',
+          },
+        ],
+      },
+    ])
 
     cy.get('[data-testid="order-total-including-tax"]')
       .find('[data-testid="value"]')

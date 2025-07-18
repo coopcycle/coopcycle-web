@@ -863,3 +863,58 @@ Cypress.Commands.add('verifyCart', expectedItems => {
       })
   })
 })
+
+/**
+ * Verifies order items in the Order
+ * @param {Array<Object>} expectedItems - Array of expected order items
+ *
+ * Example usage:
+ * cy.verifyOrder([
+ *   {
+ *     name: 'Supplément de commande',
+ *     total: '4,99 €',
+ *     adjustments: [
+ *       {
+ *         name: 'Plus de 0.00 km',
+ *         price: '4,99 €',
+ *       },
+ *     ],
+ *   },
+ * ])
+ */
+Cypress.Commands.add('verifyOrder', expectedItems => {
+  expectedItems.forEach((expectedItem, itemIndex) => {
+    cy.get(`[data-testid="order-item-${itemIndex}"]`)
+      .should('be.visible')
+      .within(() => {
+        // Verify item name
+        cy.get('[data-testid="name"]').should('contain.text', expectedItem.name)
+
+        // Verify item total
+        cy.get('[data-testid="total"]').should(
+          'contain.text',
+          expectedItem.total,
+        )
+
+        // Verify adjustments if provided
+        if (expectedItem.adjustments && expectedItem.adjustments.length > 0) {
+          expectedItem.adjustments.forEach(
+            (expectedAdjustment, adjustmentIndex) => {
+              cy.get(`[data-testid="adjustment-${adjustmentIndex}"]`).within(
+                () => {
+                  cy.get('[data-testid="name"]').should(
+                    'contain.text',
+                    expectedAdjustment.name,
+                  )
+                  cy.get('[data-testid="price"]').should(
+                    'contain.text',
+                    expectedAdjustment.price,
+                  )
+                },
+              )
+            },
+          )
+        }
+      })
+  })
+})
