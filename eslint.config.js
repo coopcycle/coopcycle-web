@@ -39,10 +39,16 @@ module.exports = [
       'react-compiler/react-compiler': 'warn',
       'cypress/unsafe-to-chain-command': 'warn',
       'cypress/no-unnecessary-waiting': 'warn',
-    }
+    },
   },
   // TypeScript configuration
-  ...typescriptEslint.configs['flat/recommended'],
+  ...[
+    // eslint.configs['flat/recommended'],
+    ...typescriptEslint.configs['flat/recommended'],
+  ].map(conf => ({
+    ...conf,
+    files: ['**/*.ts', '**/*.tsx'],
+  })),
   {
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
@@ -61,7 +67,10 @@ module.exports = [
     },
     rules: {
       // TypeScript-specific rules
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_' },
+      ],
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/ban-ts-comment': 'warn',
 
