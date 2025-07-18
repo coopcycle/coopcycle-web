@@ -42,6 +42,7 @@ module.exports = [
     }
   },
   // TypeScript configuration
+  ...typescriptEslint.configs['flat/recommended'],
   {
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
@@ -59,28 +60,28 @@ module.exports = [
       '@typescript-eslint': typescriptEslint,
     },
     rules: {
-      // TypeScript-specific rules that mirror compiler behavior
+      // TypeScript-specific rules
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-inferrable-types': 'warn',
       '@typescript-eslint/ban-ts-comment': 'warn',
 
-      // Type-aware rules that catch TypeScript compiler-like issues
       '@typescript-eslint/no-unsafe-assignment': 'warn',
       '@typescript-eslint/no-unsafe-call': 'warn',
       '@typescript-eslint/no-unsafe-member-access': 'warn',
       '@typescript-eslint/no-unsafe-return': 'warn',
+      '@typescript-eslint/no-unsafe-argument': 'warn',
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/await-thenable': 'warn',
       '@typescript-eslint/no-misused-promises': 'warn',
       '@typescript-eslint/require-await': 'warn',
-      '@typescript-eslint/no-unnecessary-type-assertion': 'warn',
       '@typescript-eslint/prefer-optional-chain': 'warn',
       '@typescript-eslint/no-non-null-assertion': 'warn',
+      '@typescript-eslint/no-base-to-string': 'warn',
+      '@typescript-eslint/restrict-plus-operands': 'warn',
+      '@typescript-eslint/restrict-template-expressions': 'warn',
 
       // Disable conflicting ESLint rules for TypeScript files
       'no-unused-vars': 'off',
-      'no-undef': 'off', // TypeScript handles this
       'require-await': 'off', // Use @typescript-eslint version
     },
   },

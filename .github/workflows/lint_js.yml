@@ -15,3 +15,6 @@ jobs:
         run: npm ci
       - name: Run ESLint
         run: node_modules/.bin/eslint --quiet js/app/ assets/react
+      - name: Run TypeScript Compiler
+        run: node_modules/.bin/tsc --noEmit --pretty
+        continue-on-error: true
