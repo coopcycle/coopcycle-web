@@ -21,4 +21,4 @@ jobs:
         continue-on-error: true
       - name: TypeScript Warning
         if: steps.tsc.outcome == 'failure'
-        run: echo "::warning::TypeScript compilation failed with errors"
+        run: echo "::warning::TypeScript compilation proceeded with errors"
