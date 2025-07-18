@@ -14,4 +14,4 @@ jobs:
       - name: Install JS dependencies
         run: npm ci
       - name: Run ESLint
-        run: node_modules/.bin/eslint --quiet js/app/
+        run: node_modules/.bin/eslint --quiet js/app/ assets/react
