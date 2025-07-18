@@ -4,6 +4,8 @@ const pluginCypress = require('eslint-plugin-cypress/flat');
 const reactHooks = require('eslint-plugin-react-hooks');
 const jest = require('eslint-plugin-jest');
 const storybook = require('eslint-plugin-storybook');
+const typescriptEslint = require('@typescript-eslint/eslint-plugin');
+const typescriptParser = require('@typescript-eslint/parser');
 
 module.exports = [
   {
@@ -38,5 +40,48 @@ module.exports = [
       'cypress/unsafe-to-chain-command': 'warn',
       'cypress/no-unnecessary-waiting': 'warn',
     }
+  },
+  // TypeScript configuration
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
+        project: './tsconfig.json',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': typescriptEslint,
+    },
+    rules: {
+      // TypeScript-specific rules that mirror compiler behavior
+      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-inferrable-types': 'warn',
+      '@typescript-eslint/ban-ts-comment': 'warn',
+
+      // Type-aware rules that catch TypeScript compiler-like issues
+      '@typescript-eslint/no-unsafe-assignment': 'warn',
+      '@typescript-eslint/no-unsafe-call': 'warn',
+      '@typescript-eslint/no-unsafe-member-access': 'warn',
+      '@typescript-eslint/no-unsafe-return': 'warn',
+      '@typescript-eslint/no-floating-promises': 'warn',
+      '@typescript-eslint/await-thenable': 'warn',
+      '@typescript-eslint/no-misused-promises': 'warn',
+      '@typescript-eslint/require-await': 'warn',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'warn',
+      '@typescript-eslint/prefer-optional-chain': 'warn',
+      '@typescript-eslint/no-non-null-assertion': 'warn',
+
+      // Disable conflicting ESLint rules for TypeScript files
+      'no-unused-vars': 'off',
+      'no-undef': 'off', // TypeScript handles this
+      'require-await': 'off', // Use @typescript-eslint version
+    },
   },
 ]
