@@ -147,4 +147,12 @@ class RuleHumanizerTest extends KernelTestCase
 
         $this->assertEquals('Volume du colis moins de 5', $this->humanizer->humanize($rule));
     }
+
+    public function testAnd()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('packages.containsAtLeastOne("📦 - A eurobox/fruitbox of documents") and task.type == "DROPOFF"');
+
+        $this->assertEquals('packages.containsAtLeastOne("📦 - A eurobox/fruitbox of documents") and task.type == "DROPOFF"', $this->humanizer->humanize($rule));
+    }
 }

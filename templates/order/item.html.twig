@@ -125,15 +125,6 @@
 {% endblock %}
 
 {% block scripts %}
-{{ encore_entry_script_tags('admin-order') }}
+{{ encore_entry_script_tags('order-item') }}
 {{ encore_entry_script_tags('delivery-map') }}
-<script>
-new ClipboardJS('#copy');
-$('[data-change-state] button[type="submit"]').on('click', function(e) {
-  var message = $(e.target).data('message');
-  if (!window.confirm(message || '{{ 'basics.are_you_sure'|trans }}')) {
-    e.preventDefault();
-  }
-});
-</script>
 {% endblock %}

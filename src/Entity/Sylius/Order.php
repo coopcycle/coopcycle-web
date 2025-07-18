@@ -556,6 +556,18 @@ class Order extends BaseOrder implements OrderInterface
         $this->customer = $customer;
     }
 
+    public function getItemsSorted(): Collection
+    {
+        // Make sure items are always in the same order
+        // We order them by id asc
+
+        $itemsArray = $this->items->toArray();
+        usort($itemsArray, function (OrderItemInterface $a, OrderItemInterface $b) {
+            return $a->getId() <=> $b->getId();
+        });
+        return new ArrayCollection($itemsArray);
+    }
+
     public function getTaxTotal(): int
     {
         $taxTotal = 0;

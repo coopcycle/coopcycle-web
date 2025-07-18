@@ -129,7 +129,13 @@ function RulePickerType({ ruleTarget, type }) {
   )
 }
 
-export function RulePickerTypeSelect({ ruleTarget, type, onTypeSelect }) {
+type Props = {
+  ruleTarget: string
+  type: string
+  onTypeSelect: (event: React.ChangeEvent<HTMLSelectElement>) => void
+}
+
+export function RulePickerTypeSelect({ ruleTarget, type, onTypeSelect } : Props) {
   const { t } = useTranslation()
 
   const types = useMemo(() => {
@@ -155,6 +161,7 @@ export function RulePickerTypeSelect({ ruleTarget, type, onTypeSelect }) {
 
   return (
     <select
+      data-testid="condition-type-select"
       value={type}
       onChange={onTypeSelect}
       className="form-control input-sm">

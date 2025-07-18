@@ -8,7 +8,11 @@ export function PriceChoice({ priceType, handlePriceTypeChange }) {
   const { t } = useTranslation()
 
   return (
-    <Select value={priceType} onChange={handlePriceTypeChange}>
+    <Select
+      data-testid="rule-price-type"
+      style={{ minWidth: 240 }}
+      value={priceType}
+      onChange={handlePriceTypeChange}>
       <Option value="fixed">{t('PRICE_RANGE_EDITOR.TYPE_FIXED')}</Option>
       <Option value="percentage">
         {t('PRICE_RANGE_EDITOR.TYPE_PERCENTAGE')}

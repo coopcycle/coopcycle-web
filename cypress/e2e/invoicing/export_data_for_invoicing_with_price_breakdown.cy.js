@@ -3,7 +3,7 @@ import moment from 'moment'
 context('Invoicing (role: admin)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup('../cypress/fixtures/package_delivery_orders.yml')
-    cy.setEnvVar('PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED', '0')
+    cy.setEnvVar('PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED', '1')
     cy.login('admin', '12345678')
   })
 
@@ -92,10 +92,10 @@ context('Invoicing (role: admin)', () => {
         'Organization,Description,"Total products (excl. VAT)",Taxes,"Total products (incl. VAT)"',
       )
       for (let i = 1; i <= 250; i++) {
-        // Acme,"Livraison à la demande - 0.00 km - Retrait: Warehouse - Dépôt: Office - 13/06/2025 (Commande #A1)",124.82,24.96,149.78
+        // Acme,"Livraison à la demande - Supplément de commande: 1 × Plus de 0.00 km: €4.99 - 17/07/2025 (Commande #A1)",4.16,0.83,4.99
         expect(lines[i]).to.match(
           new RegExp(
-            `^Acme,"Livraison à la demande - [0-9]+(\\.[0-9]+)? km - Retrait: Warehouse - Dépôt: Office - \\d{2}/\\d{2}/\\d{4} \\(Commande #A${i}\\)",[0-9]+(\\.[0-9]+)?,[0-9]+(\\.[0-9]+)?,[0-9]+(\\.[0-9]+)?$`,
+            `^Acme,"Livraison à la demande - Supplément de commande: 1 × Plus de 0.00 km: €4.99 - \\d{2}/\\d{2}/\\d{4} \\(Commande #A${i}\\)",[0-9]+(\\.[0-9]+)?,[0-9]+(\\.[0-9]+)?,[0-9]+(\\.[0-9]+)?$`,
           ),
         )
       }

@@ -5,7 +5,13 @@ import PriceRangeEditor from './PriceRangeEditor'
 import PricePerPackageEditor from './PricePerPackageEditor'
 import PriceFixedEditor from './PriceFixedEditor'
 
-export default function PriceEditor({ priceType, defaultValue, onChange }) {
+type Props = {
+  priceType: string
+  defaultValue: any
+  onChange: (value: any) => void
+}
+
+export default function PriceEditor({ priceType, defaultValue, onChange } : Props) {
   switch (priceType) {
     case 'percentage':
       return (

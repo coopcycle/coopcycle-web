@@ -79,8 +79,19 @@ const getStepForType = type => {
   return '0.1'
 }
 
-class RulePickerLine extends React.Component {
-  constructor(props) {
+type Props = {
+  index: number
+  ruleTarget: string
+  type: string
+  operator: string
+  value: string | string[]
+  onUpdate: (index: number, line: { left: string; operator: string; right: string | string[] }) => void
+  onDelete: (index: number) => void
+  testID?: string
+}
+
+class RulePickerLine extends React.Component<Props> {
+  constructor(props: Props) {
     super(props)
 
     this.state = {
@@ -184,6 +195,7 @@ class RulePickerLine extends React.Component {
 
     return (
       <input
+        data-testid="condition-number-input"
         className="form-control input-sm"
         value={k ? this.state.value / 1000 : this.state.value}
         onChange={this.handleValueChange}
@@ -239,6 +251,7 @@ class RulePickerLine extends React.Component {
         if (this.state.type === 'task.type') {
           return (
             <select
+              data-testid="condition-task-type-select"
               onChange={this.handleValueChange}
               value={this.state.value}
               className="form-control input-sm">
@@ -321,6 +334,7 @@ class RulePickerLine extends React.Component {
         <td width="20%">
           {this.state.type && (
             <select
+              data-testid="condition-operator-select"
               value={this.state.operator}
               onChange={this.onOperatorSelect}
               className="form-control input-sm">
