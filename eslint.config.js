@@ -73,6 +73,7 @@ module.exports = [
     files: ['**/*.ts', '**/*.tsx'],
     rules: {
       // TypeScript-specific rules
+      '@typescript-eslint/no-floating-promises': 'off',
       //TODO: Gradually enable more TypeScript-specific rules
       '@typescript-eslint/no-explicit-any': 'error',
       // '@typescript-eslint/await-thenable': 'error',
