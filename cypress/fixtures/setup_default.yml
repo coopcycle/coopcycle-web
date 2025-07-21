@@ -18,4 +18,4 @@ include:
   - settings_default.yml
   - settings_payments.yml
   - payment_methods.yml
-  - sylius_on_demand_delivery_product.yml
+  - ../../fixtures/ORM/sylius_on_demand_delivery_product.yml

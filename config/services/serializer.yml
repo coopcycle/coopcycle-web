@@ -10,6 +10,12 @@ services:
     arguments:
       $region: '%country_iso%'
 
+  AppBundle\Serializer\TemporaryIdNormalizer:
+    arguments:
+      - '@serializer.normalizer.object'
+    tags:
+      - { name: serializer.normalizer, priority: 130 }
+
   AppBundle\Serializer\DeliveryNormalizer:
     arguments:
       $normalizer: '@api_platform.jsonld.normalizer.item'

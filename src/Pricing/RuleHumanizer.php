@@ -31,17 +31,35 @@ class RuleHumanizer
                 'order',
             ]);
         } catch (\Exception $e) {
-            return $rule->getExpression();
+            return $this->fallbackName($rule);
         }
 
         $accumulator = new \ArrayObject();
 
         $this->traverseNode($parsedExpression->getNodes(), $accumulator);
 
-        return ucfirst(implode(', ', $accumulator->getArrayCopy()));
+        $parts = $accumulator->getArrayCopy();
+
+        if (0 === count($parts)) {
+            return $this->fallbackName($rule);
+        }
+
+        // @phpstan-ignore-next-line deadCode.unreachable (False positive: line is reachable when traverseNode populates accumulator)
+        return ucfirst(implode(', ', $parts));
     }
 
-    private function traverseNode(Node $node, $accumulator)
+    private function fallbackName(PricingRule $rule)
+    {
+        return $rule->getExpression();
+    }
+
+    /**
+     * Recursively traverse expression nodes and accumulate human-readable parts.
+     *
+     * @param Node $node The expression node to traverse
+     * @param \ArrayObject $accumulator The accumulator that collects human-readable parts
+     */
+    private function traverseNode(Node $node, \ArrayObject $accumulator): void
     {
         if ($node instanceof BinaryNode && isset($node->attributes['operator']) && $node->attributes['operator'] === 'and') {
             // Handle 'and' operations by recursively processing left and right sides
@@ -75,7 +93,7 @@ class RuleHumanizer
         return $this->translator->trans('pricing.rule.humanizer.address_zone_format', [
             '%task_type%' => $taskType,
             '%direction%' => $direction,
-            '%zone_name%' => $zoneName
+            '%zone_name%' => $zoneName,
         ]);
     }
 
@@ -220,7 +238,7 @@ class RuleHumanizer
 
             return $this->translator->trans('pricing.rule.humanizer.between', [
                 '%left%' => $this->formatValue($left, $attributeName),
-                '%right%' => $this->formatValue($right, $attributeName)
+                '%right%' => $this->formatValue($right, $attributeName),
             ]);
 
         } else {
@@ -233,11 +251,11 @@ class RuleHumanizer
                 return $this->humanizeOrderItemsTotal($node->attributes['operator'], $value);
             } elseif ($node->attributes['operator'] === '<') {
                 return $this->translator->trans('pricing.rule.humanizer.less_than', [
-                    '%value%' => $this->formatValue($value, $attributeName)
+                    '%value%' => $this->formatValue($value, $attributeName),
                 ]);
             } elseif ($node->attributes['operator'] === '>') {
                 return $this->translator->trans('pricing.rule.humanizer.more_than', [
-                    '%value%' => $this->formatValue($value, $attributeName)
+                    '%value%' => $this->formatValue($value, $attributeName),
                 ]);
             }
 
@@ -251,11 +269,11 @@ class RuleHumanizer
         switch ($unit) {
             case 'weight':
                 return $this->translator->trans('pricing.rule.humanizer.kg_unit', [
-                    '%value%' => number_format($value / 1000, 2)
+                    '%value%' => number_format($value / 1000, 2),
                 ]);
             case 'distance':
                 return $this->translator->trans('pricing.rule.humanizer.km_unit', [
-                    '%value%' => number_format($value / 1000, 2)
+                    '%value%' => number_format($value / 1000, 2),
                 ]);
         }
 
@@ -265,7 +283,7 @@ class RuleHumanizer
     private function humanizeTaskType(string $taskType): string
     {
         return $this->translator->trans('pricing.rule.humanizer.task_type_is', [
-            '%value%' => $this->translateTaskTypeName($taskType)
+            '%value%' => $this->translateTaskTypeName($taskType),
         ]);
     }
 
@@ -275,7 +293,7 @@ class RuleHumanizer
 
         return $this->translator->trans('pricing.rule.humanizer.packages_volume_units', [
             '%operator%' => $translatedOperator,
-            '%value%' => $value
+            '%value%' => $value,
         ]);
     }
 
@@ -285,7 +303,7 @@ class RuleHumanizer
 
         return $this->translator->trans('pricing.rule.humanizer.order_items_total', [
             '%operator%' => $translatedOperator,
-            '%value%' => $value
+            '%value%' => $value,
         ]);
     }
 

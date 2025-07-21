@@ -194,6 +194,10 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
     })
 })
 
+Cypress.Commands.add('reactSelect', (index) => {
+  cy.get(`[id*="react-select-"][id*="-option-${index}"]`).click()
+})
+
 Cypress.Commands.add('clickRestaurant', (name, pathnameRegexp) => {
   cy.contains(name).click()
   cy.urlmatch(pathnameRegexp)

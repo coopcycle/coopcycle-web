@@ -205,4 +205,13 @@ class ProductVariant extends BaseProductVariant implements ProductVariantInterfa
     {
         return new ProductVariantTranslation();
     }
+
+    public function getOptionValuesPrice(): ?int
+    {
+        $price = 0;
+        foreach ($this->getOptionValues() as $optionValue) {
+            $price += $optionValue->getPrice() * $this->getQuantityForOptionValue($optionValue);
+        }
+        return $price;
+    }
 }

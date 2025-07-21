@@ -1918,20 +1918,6 @@ class Order extends BaseOrder implements OrderInterface
         return !is_null($this->getDelivery()?->getStore());
     }
 
-    public function getDeliveryItem(): ?OrderItemInterface
-    {
-        if ($this->isFoodtech()) {
-            //FIXME: delivery is modeled as an item only in non-foodtech orders
-            return null;
-        }
-
-        if ($deliveryItem = $this->getItems()->first()) {
-            return $deliveryItem; // @phpstan-ignore return.type
-        } else {
-            return null;
-        }
-    }
-
     public function getDeliveryPrice(): PriceInterface
     {
         if ($this->isFoodtech()) {
@@ -1939,22 +1925,28 @@ class Order extends BaseOrder implements OrderInterface
             return new PricingRulesBasedPrice(0);
         }
 
-        $deliveryItem = $this->getDeliveryItem();
+        /** @var OrderItemInterface|false $deliveryItem */
+        $deliveryItem = $this->getItems()->first();
 
-        if (null === $deliveryItem) {
+        if (false === $deliveryItem) {
             throw new \LogicException('Order has no delivery price');
         }
 
         $productVariant = $deliveryItem->getVariant();
 
         if ($pricingRulesSet = $productVariant->getPricingRuleSet()) {
-            return new PricingRulesBasedPrice($deliveryItem->getUnitPrice(), $pricingRulesSet);
+            // An order might contain multiple order items, that's why we need to return order total
+            // we also assume here that all order items will have the same pricingRulesSet
+            return new PricingRulesBasedPrice($this->getTotal(), $pricingRulesSet);
         } else {
             // Some productVariants created before $pricingRulesSet was introduced
             // may have a price calculated based on a pricing rule set, but pricingRulesSet is null
 
+            // Normally there will be only one order item when using an arbitrary price
+            // but we return order total just in case
+
             // custom price
-            return new ArbitraryPrice($productVariant->getName(), $deliveryItem->getUnitPrice());
+            return new ArbitraryPrice($productVariant->getName(), $this->getTotal());
         }
     }
 

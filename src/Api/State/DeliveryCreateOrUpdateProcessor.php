@@ -13,8 +13,8 @@ use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\UsePricingRules;
 use AppBundle\Pricing\PricingManager;
+use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\OrderManager;
-use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use Psr\Log\LoggerInterface;
 use Recurr\Exception\InvalidRRule;
@@ -28,7 +28,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         private readonly DeliveryProcessor $decorated,
         private readonly ProcessorInterface $persistProcessor,
         private readonly PricingManager $pricingManager,
-        private readonly OrderFactory $orderFactory,
+        private readonly DeliveryOrderManager $deliveryOrderManager,
         private readonly OrderManager $orderManager,
         private readonly DeliveryMapper $deliveryMapper,
         private readonly AuthorizationCheckerInterface $authorizationCheckerInterface,
@@ -82,7 +82,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         if ($isCreateOrderMode) {
             // New delivery/order
 
-            $order = $this->pricingManager->createOrder(
+            $order = $this->deliveryOrderManager->createOrder(
                 $delivery,
                 [
                     'pricingStrategy' => $pricingStrategy,
@@ -102,14 +102,14 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                 if (is_null($order)) {
                     // Should not happen normally, but just in case
                     // there is still some delivery created without an order
-                    $order = $this->pricingManager->createOrder(
+                    $order = $this->deliveryOrderManager->createOrder(
                         $delivery,
                         [
                             'pricingStrategy' => new UseArbitraryPrice($arbitraryPrice),
                         ]
                     );
                 } else {
-                    $this->orderFactory->updateDeliveryPrice($order, $delivery, $arbitraryPrice);
+                    $this->pricingManager->processDeliveryOrder($order, [$this->pricingManager->getCustomProductVariant($delivery, $arbitraryPrice)]);
                 }
             }
         }
@@ -151,7 +151,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                 }
             }
         }
-        
+
         $isSavedOrder = false;
         if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $data instanceof DeliveryDto && !is_null($data->order?->isSavedOrder)) {
             $isSavedOrder = $data->order->isSavedOrder;

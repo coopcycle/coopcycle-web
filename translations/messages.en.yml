@@ -1685,6 +1685,9 @@ restaurant.copy_products.not_empty: The target restaurant already has products
 restaurant.copy_products.copying: Copying the products, please refresh this page in a few minutes
 form.store_type.multi_pickup_enabled.label: Enable multiple pickups
 form.store_type.multi_pickup_enabled.help: Allow users to add additional pickups when creating a delivery
+pricing.variant.pickup_point: Pickup point %number%
+pricing.variant.dropoff_point: Dropoff point %number%
+pricing.variant.order_supplement: Order supplement
 pricing.rule.humanizer.inside_zone: inside
 pricing.rule.humanizer.outside_zone: outside
 pricing.rule.humanizer.address_zone_format: '%task_type% address %direction% zone "%zone_name%"'

@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect } from 'react'
+import React, { createContext, useEffect, useLayoutEffect } from 'react'
 import { Provider, useDispatch } from 'react-redux'
 import { accountSlice } from '../../entities/account/reduxSlice'
 import DeliveryForm from './DeliveryForm.js'
@@ -7,6 +7,7 @@ import Modal from 'react-modal'
 import { RootWithDefaults } from '../../utils/react'
 import { Mode } from './mode'
 import { setMode } from './redux/formSlice'
+import FlagsContext from './FlagsContext'
 
 const buildInitialState = () => {
   return {
@@ -23,6 +24,7 @@ const Form = ({
   delivery,
   isDispatcher,
   isDebugPricing,
+  isPriceBreakdownEnabled,
 }) => {
   const dispatch = useDispatch()
 
@@ -35,14 +37,15 @@ const Form = ({
   }, [dispatch, deliveryNodeId])
 
   return (
-    <DeliveryForm
-      storeNodeId={storeNodeId}
-      deliveryId={deliveryId}
-      deliveryNodeId={deliveryNodeId}
-      preLoadedDeliveryData={delivery ? JSON.parse(delivery) : null}
-      isDispatcher={isDispatcher}
-      isDebugPricing={isDebugPricing}
-    />
+    <FlagsContext.Provider
+      value={{ isDispatcher, isDebugPricing, isPriceBreakdownEnabled }}>
+      <DeliveryForm
+        storeNodeId={storeNodeId}
+        deliveryId={deliveryId}
+        deliveryNodeId={deliveryNodeId}
+        preLoadedDeliveryData={delivery ? JSON.parse(delivery) : null}
+      />
+    </FlagsContext.Provider>
   )
 }
 

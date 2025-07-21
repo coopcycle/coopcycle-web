@@ -7,21 +7,14 @@ use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Store;
-use AppBundle\Entity\Sylius\ProductOption;
-use AppBundle\Entity\Sylius\ProductOptionRepository;
-use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Sylius\Product\ProductOptionValueFactory;
 use Doctrine\ORM\EntityManagerInterface;
-use Ramsey\Uuid\Uuid;
-use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 
 class PricingRuleSetManager
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly ProductOptionRepository $productOptionRepository,
         private readonly ProductOptionValueFactory $productOptionValueFactory,
-        private readonly LocaleProviderInterface $localeProvider,
     ) {
     }
 
@@ -81,39 +74,16 @@ class PricingRuleSetManager
         $productOptionValue = $pricingRule->getProductOptionValue();
 
         if ($productOptionValue === null) {
-            $productOption = $this->productOptionRepository->findPricingRuleProductOption();
-
             // Create a new ProductOptionValue for this pricing rule
-            $productOptionValue = $this->createProductOptionValue($productOption, $name);
+            $productOptionValue = $this->productOptionValueFactory->createForPricingRule($pricingRule, $name);
             $pricingRule->setProductOptionValue($productOptionValue);
+
+            $this->entityManager->persist($productOptionValue);
         } else {
             // Update existing ProductOptionValue name if different
             if ($pricingRule->getName() !== $name) {
                 $productOptionValue->setValue($name);
             }
         }
-    }
-
-    /**
-     * Create a ProductOptionValue for a given ProductOption and name
-     */
-    private function createProductOptionValue(
-        ProductOption $productOption,
-        string $name
-    ): ProductOptionValue {
-        /** @var ProductOptionValue $productOptionValue */
-        $productOptionValue = $this->productOptionValueFactory->createNew();
-
-        // Set current locale before setting the value for translatable entities
-        $productOptionValue->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
-
-        $productOptionValue->setCode(Uuid::uuid4()->toString());
-        $productOptionValue->setValue($name);
-        $productOptionValue->setOption($productOption);
-
-        // Persist the new ProductOptionValue
-        $this->entityManager->persist($productOptionValue);
-
-        return $productOptionValue;
     }
 }
