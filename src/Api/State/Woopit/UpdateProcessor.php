@@ -1,28 +1,34 @@
 <?php
 
-namespace AppBundle\Action\Woopit;
+namespace AppBundle\Api\State\Woopit;
 
-use AppBundle\Entity\Woopit\QuoteRequest as WoopitQuoteRequest;
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ProcessorInterface;
+use AppBundle\Action\Woopit\UpdateDeliveryTrait;
+use AppBundle\Entity\Delivery;
 use AppBundle\Service\Geocoder;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use libphonenumber\PhoneNumberUtil;
 
-class DeliveryUpdate
+class UpdateProcessor implements ProcessorInterface
 {
     /**
      * @var \AppBundle\Service\Geocoder
      */
     public $geocoder;
+
     /**
      * @var \Hashids\Hashids
      */
     public $hashids12;
     public $entityManager;
+
     /**
      * @var \libphonenumber\PhoneNumberUtil
      */
     public $phoneNumberUtil;
+
     use UpdateDeliveryTrait;
 
     public function __construct(
@@ -37,13 +43,14 @@ class DeliveryUpdate
         $this->phoneNumberUtil = $phoneNumberUtil;
     }
 
-    public function __invoke(WoopitQuoteRequest $data, $deliveryId)
+    /**
+     * @param Delivery $data
+     */
+    public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
-        $delivery = $this->updateDelivery($data, $deliveryId);
+        $delivery = $this->updateDelivery($data, $uriVariables['deliveryId']);
 
         $this->entityManager->persist($delivery);
         $this->entityManager->flush();
-
-        return $data;
     }
 }

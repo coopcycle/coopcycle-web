@@ -68,39 +68,39 @@ fos_js_routing:
         - _api_/incidents/{id}/comments_post
         - _api_/incidents/{id}/action_put
         - _api_/tasks/{id}/failure_reasons_get
-        - _api_/incident_images.{_format}_post
-        - _api_/incidents/{id}.{_format}_patch
-        - _api_/incidents.{_format}_get_collection
+        - _api_/incident_images{._format}_post
+        - _api_/incidents/{id}{._format}_patch
+        - _api_/incidents{._format}_get_collection
         - _api_/tasks/{id}/context_get
-        - _api_/tasks.{_format}_get_collection
-        - _api_/tours.{_format}_get_collection
+        - _api_/tasks{._format}_get_collection
+        - _api_/tours{._format}_get_collection
         - _api_/task_lists/v2_get_collection
         - _api_/task_lists/set_items/{date}/{username}_put
-        - _api_/stores.{_format}_get_collection
-        - _api_/stores/{id}.{_format}_delete
-        - _api_/stores/{id}.{_format}_patch
-        - _api_/restaurants/{id}.{_format}_delete
-        - _api_/delivery_forms/{id}.{_format}_delete
-        - _api_/pricing_rule_sets/{id}.{_format}_delete
+        - _api_/stores{._format}_get_collection
+        - _api_/stores/{id}{._format}_delete
+        - _api_/stores/{id}{._format}_patch
+        - _api_/restaurants/{id}{._format}_delete
+        - _api_/delivery_forms/{id}{._format}_delete
+        - _api_/pricing_rule_sets/{id}{._format}_delete
         - _api_/pricing_rule_sets/{id}/applications_get
-        - _api_/package_sets/{id}.{_format}_delete
+        - _api_/package_sets/{id}{._format}_delete
         - _api_/package_sets/{id}/applications_get
-        - _api_/time_slots/{id}.{_format}_delete
-        - _api_/organizations.{_format}_get_collection
-        - _api_/time_slots.{_format}_get_collection
-        - _api_/warehouses.{_format}_post
-        - _api_/warehouses.{_format}_get_collection
-        - _api_/warehouses/{id}.{_format}_delete
-        - _api_/trailers.{_format}_post
-        - _api_/trailers.{_format}_get_collection
-        - _api_/trailers/{id}.{_format}_delete
-        - _api_/vehicles.{_format}_post
-        - _api_/vehicles.{_format}_get_collection
-        - _api_/vehicles/{id}.{_format}_delete
+        - _api_/time_slots/{id}{._format}_delete
+        - _api_/organizations{._format}_get_collection
+        - _api_/time_slots{._format}_get_collection
+        - _api_/warehouses{._format}_post
+        - _api_/warehouses{._format}_get_collection
+        - _api_/warehouses/{id}{._format}_delete
+        - _api_/trailers{._format}_post
+        - _api_/trailers{._format}_get_collection
+        - _api_/trailers/{id}{._format}_delete
+        - _api_/vehicles{._format}_post
+        - _api_/vehicles{._format}_get_collection
+        - _api_/vehicles/{id}{._format}_delete
         - admin_warehouses
-        - _api_/task_lists/{id}.{_format}_patch
-        - _api_/vehicles/{id}.{_format}_patch
-        - _api_/trailers/{id}.{_format}_patch
+        - _api_/task_lists/{id}{._format}_patch
+        - _api_/vehicles/{id}{._format}_patch
+        - _api_/trailers/{id}{._format}_patch
         - _api_/trailers/{id}/vehicles_put
         - task_label_pdf
         - _api_/stores/{id}/deliveries_get_collection

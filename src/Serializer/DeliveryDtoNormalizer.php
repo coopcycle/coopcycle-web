@@ -20,6 +20,11 @@ class DeliveryDtoNormalizer implements ContextAwareNormalizerInterface, Normaliz
     {
         $context[self::ALREADY_CALLED] = true;
 
+        if (null === $object->id) {
+            $context['iri'] = false;
+            $context['force_iri_generation'] = false;
+        }
+
         $data = $this->normalizer->normalize($object, $format, $context);
         if (!is_array($data)) {
             return $data;
