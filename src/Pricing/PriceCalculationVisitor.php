@@ -360,14 +360,21 @@ class PriceCalculationVisitor
         }
 
         $taskType = $object->getType();
-        $taskPosition = $this->getTaskPositionByType($delivery, $object);
 
         if ($taskType === Task::TYPE_PICKUP) {
-            return $this->translator->trans('pricing.variant.pickup_point', ['%number%' => $taskPosition]);
+            $translationKey = 'pricing.variant.pickup_point';
         } elseif ($taskType === Task::TYPE_DROPOFF) {
-            return $this->translator->trans('pricing.variant.dropoff_point', ['%number%' => $taskPosition]);
+            $translationKey = 'pricing.variant.dropoff_point';
         } else {
             throw new \InvalidArgumentException(sprintf('Unknown task type: %s', $taskType));
+        }
+
+        $clientName = $object->getAddress()->getName();
+        if ($clientName) {
+            return sprintf('%s: %s', $this->translator->trans($translationKey), $clientName);
+        } else {
+            $taskPosition = $this->getTaskPositionByType($delivery, $object);
+            return sprintf('%s #%d', $this->translator->trans($translationKey), $taskPosition);
         }
     }
 

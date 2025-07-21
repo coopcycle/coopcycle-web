@@ -1778,8 +1778,8 @@ form.settings.on_demand_delivery_product_name.label: "Nombre del producto"
 form.settings.on_demand_delivery_product_name.help: "El nombre que aparecerá en el resumen del pedido y en la factura"
 form.settings.accounting_account.label: "Código contable"
 form.settings.accounting_account.help: "El código contable predeterminado para registrar los pedidos de entrega a demanda en el sistema contable."
-pricing.variant.pickup_point: Punto de recogida %number%
-pricing.variant.dropoff_point: Punto de entrega %number%
+pricing.variant.pickup_point: Punto de recogida
+pricing.variant.dropoff_point: Punto de entrega
 pricing.variant.order_supplement: Suplemento de pedido
 pricing.rule.humanizer.inside_zone: dentro
 pricing.rule.humanizer.outside_zone: fuera
