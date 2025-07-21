@@ -87,6 +87,7 @@ export default ({ defaultValue, onChange }) => {
     <div data-testid="price_rule_price_range_editor">
       <label className="mr-2">
         <input
+          data-testid="rule-price-range-price"
           type="number"
           size="4"
           defaultValue={price / 100}
@@ -103,6 +104,7 @@ export default ({ defaultValue, onChange }) => {
       <label>
         <span className="mx-2">{t('PRICE_RANGE_EDITOR.FOR_EVERY')}</span>
         <input
+          data-testid="rule-price-range-step"
           type="number"
           size="4"
           min="0.1"
@@ -116,6 +118,7 @@ export default ({ defaultValue, onChange }) => {
           }}
         />
         <select
+          data-testid="rule-price-range-unit"
           className="form-control d-inline-block align-top ml-2"
           style={{ width: '70px' }}
           defaultValue={attributeToUnit(attribute)}
@@ -143,6 +146,7 @@ export default ({ defaultValue, onChange }) => {
       <label>
         <span className="mx-2">{t('PRICE_RANGE_EDITOR.ABOVE')}</span>
         <input
+          data-testid="rule-price-range-threshold"
           type="number"
           size="4"
           min="0"

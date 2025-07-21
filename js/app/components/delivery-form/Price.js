@@ -22,11 +22,12 @@ import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
 import FlagsContext from './FlagsContext'
 
-const TotalPrice = ({ className, priceWithTaxes, priceWithoutTaxes }) => {
+const TotalPrice = ({ overridePrice, priceWithTaxes, priceWithoutTaxes }) => {
   const { t } = useTranslation()
 
   return (
-    <span className={className}>
+    <span
+      className={`pull-right d-flex flex-column align-items-end ${overridePrice ? 'text-decoration-line-through' : ''}`}>
       <span>
         {t('DELIVERY_FORM_TOTAL_EX_VAT')} {priceWithoutTaxes.formatMoney()}
       </span>
@@ -282,19 +283,19 @@ export default ({
               {!priceErrorMessage ? (
                 calculatePriceData && calculatePriceData.amount ? (
                   <TotalPrice
-                    className={`pull-right ${overridePrice ? 'text-decoration-line-through' : ''}`}
                     priceWithTaxes={calculatePriceData.amount / 100}
                     priceWithoutTaxes={
                       (calculatePriceData.amount -
                         calculatePriceData.tax.amount) /
                       100
                     }
+                    overridePrice={overridePrice}
                   />
                 ) : (
                   <TotalPrice
-                    className={`pull-right ${overridePrice ? 'text-decoration-line-through' : ''}`}
                     priceWithTaxes={0}
                     priceWithoutTaxes={0}
+                    overridePrice={overridePrice}
                   />
                 )
               ) : null}

@@ -7,7 +7,7 @@ describe('Platform catering; manager; onboarding; failed', () => {
     cy.visit('/invitation/define-password/INVITATION_MANAGER')
 
     // Personal info step
-    cy.get('#guest-checkout-password').clear('')
+    cy.get('#guest-checkout-password').clear()
     cy.get('#guest-checkout-password').type('12345678')
     cy.get('button[type="submit"]').click()
 

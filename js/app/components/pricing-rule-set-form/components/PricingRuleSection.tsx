@@ -1,11 +1,31 @@
 import React from 'react'
 import { Button, Alert, Typography } from 'antd'
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
-import PricingRule from '../PricingRule'
+import PricingRule from './PricingRule'
 import { PlusOutlined } from '@ant-design/icons'
 import HelpIcon from '../../HelpIcon'
+import { PricingRuleType } from '../types/PricingRuleType'
 
 const { Title } = Typography
+
+type Props = {
+  target: string
+  rules: PricingRuleType[]
+  title: string | null
+  emptyMessage: string
+  addRuleButtonLabel: string
+  addRuleButtonHelp: string
+  getGlobalIndexById: (ruleId: string) => number
+  updateRule: (ruleId: string, updatedRule: PricingRuleType) => void
+  removeRule: (ruleId: string) => void
+  moveRuleWithinTarget: (
+    fromRuleId: string,
+    toRuleId: string,
+    target: string,
+  ) => void
+  ruleValidationErrors: { [ruleId: string]: string[] }
+  onAddRule: (target: string) => void
+}
 
 const PricingRuleSection = ({
   target,
@@ -20,7 +40,7 @@ const PricingRuleSection = ({
   moveRuleWithinTarget,
   ruleValidationErrors,
   onAddRule,
-}) => {
+}: Props) => {
   const handleDragEnd = result => {
     if (!result.destination) {
       return
@@ -38,7 +58,7 @@ const PricingRuleSection = ({
   }
 
   return (
-    <div>
+    <div data-testid={`pricing-rule-set-target-${target.toLowerCase()}`}>
       {title ? (
         <Title level={5}>
           {title} <HelpIcon className="ml-1" tooltipText={addRuleButtonHelp} />

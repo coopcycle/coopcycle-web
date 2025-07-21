@@ -1,11 +1,19 @@
-import React from 'react'
-import { InputNumber } from 'antd'
 import PercentageEditor from './PercentageEditor'
 import PriceRangeEditor from './PriceRangeEditor'
 import PricePerPackageEditor from './PricePerPackageEditor'
-import PriceFixedEditor from './PriceFixedEditor'
+import PriceFixedEditor, { FixedPriceValue } from './PriceFixedEditor'
 
-export default function PriceEditor({ priceType, defaultValue, onChange }) {
+type Props = {
+  priceType: string
+  defaultValue: FixedPriceValue //TODO: add other types
+  onChange: (value: string) => void
+}
+
+export default function PriceEditor({
+  priceType,
+  defaultValue,
+  onChange,
+}: Props) {
   switch (priceType) {
     case 'percentage':
       return (

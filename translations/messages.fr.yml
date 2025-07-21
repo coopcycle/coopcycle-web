@@ -1623,8 +1623,8 @@ form.settings.accounting_account.label: "Code comptable"
 form.settings.accounting_account.help: "Le code comptable par défaut pour enregistrer les commandes de livraison à la demande dans le système comptable."
 restaurant.stats.show_only_meal_vouchers: Afficher uniquement les commandes payées en titres-restaurant
 restaurant.stats.show_all: Afficher toutes les commandes
-pricing.variant.pickup_point: Point de retrait %number%
-pricing.variant.dropoff_point: Point de dépôt %number%
+pricing.variant.pickup_point: Point de retrait
+pricing.variant.dropoff_point: Point de dépôt
 pricing.variant.order_supplement: Supplément de commande
 pricing.rule.humanizer.inside_zone: dans
 pricing.rule.humanizer.outside_zone: hors

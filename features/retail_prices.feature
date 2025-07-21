@@ -870,7 +870,7 @@ Feature: Retail prices
                     "value": "time_slot == \"/api/time_slots/1\" and task.type == \"PICKUP\""
                   }
                 ],
-                "name": "Point de retrait 1"
+                "name": "Point de retrait #1"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -898,7 +898,7 @@ Feature: Retail prices
                     "value": "Taux de dépôt"
                   }
                 ],
-                "name": "Point de dépôt 1"
+                "name": "Point de dépôt #1"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -978,7 +978,7 @@ Feature: Retail prices
                     "value": "Taux de dépôt"
                   }
                 ],
-                "name": "Point de dépôt 1"
+                "name": "Point de dépôt #1"
               },
               "quantity": 1,
               "unitPrice": 0,

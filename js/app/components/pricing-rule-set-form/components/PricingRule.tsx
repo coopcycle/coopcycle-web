@@ -2,24 +2,37 @@ import React, { useState, useEffect } from 'react'
 import { Card, Input, Button, Space, Typography, Row, Col, Alert } from 'antd'
 import { DeleteOutlined } from '@ant-design/icons'
 import { useTranslation } from 'react-i18next'
-import PricingRuleTarget from './components/PricingRuleTarget'
-import RulePicker from './components/RulePicker'
-import { PriceChoice } from './components/PriceChoice'
-import PriceEditor from './components/PriceEditor'
+import PricingRuleTarget from './PricingRuleTarget'
+import RulePicker from './RulePicker'
+import { PriceChoice } from './PriceChoice'
+import PriceEditor from './PriceEditor'
 import {
   FixedPrice,
   parsePriceAST,
   PercentagePrice,
   PricePerPackage,
   PriceRange,
-} from '../../delivery/pricing/pricing-rule-parser'
-import Position from './components/Position'
+} from '../../../delivery/pricing/pricing-rule-parser'
+import Position from './Position'
+import { DraggableProvidedDragHandleProps } from '@hello-pangea/dnd'
+import { PricingRuleType } from '../types/PricingRuleType'
+import HelpIcon from '../../HelpIcon'
 
 const { Text } = Typography
 
 export const VALIDATION_ERRORS = {
   EXPRESSION_REQUIRED: 'EXPRESSION_REQUIRED',
   PRICE_REQUIRED: 'PRICE_REQUIRED',
+}
+
+type Props = {
+  rule: PricingRuleType
+  index: number
+  onUpdate: (rule: PricingRuleType) => void
+  onRemove: () => void
+  validationErrors?: string[]
+  dragHandleProps: DraggableProvidedDragHandleProps
+  isDragging?: boolean
 }
 
 const PricingRule = ({
@@ -30,7 +43,7 @@ const PricingRule = ({
   validationErrors = [],
   dragHandleProps,
   isDragging = false,
-}) => {
+}: Props) => {
   const { t } = useTranslation()
   const [localRule, setLocalRule] = useState(rule)
 
@@ -96,6 +109,7 @@ const PricingRule = ({
 
   return (
     <Card
+      data-testid={`pricing-rule-set-rule-${index}`}
       size="small"
       className={`mb-3 pricing-rule-set__rule__card ${isDragging ? 'dragging' : ''}`}
       title={
@@ -106,6 +120,7 @@ const PricingRule = ({
       extra={
         <Space>
           <Button
+            data-testid="rule-remove"
             size="small"
             danger
             icon={<DeleteOutlined />}
@@ -126,19 +141,24 @@ const PricingRule = ({
           </div>
         </Col>
         <Col flex="auto">
-          <div className="mb-3">
+          <Row className="mb-3">
             <Text className="pricing-rule-set__rule__text">
               {t('FORM_PRICING_RULE_SET_PRICING_RULE_NAME_LABEL')}
+              <HelpIcon
+                className="ml-1"
+                tooltipText={t('FORM_PRICING_RULE_SET_PRICING_RULE_NAME_HELP')}
+              />
             </Text>
             <Input
+              data-testid="rule-name"
               value={localRule.name || ''}
               onChange={e => handleNameChange(e.target.value)}
               placeholder={t(
                 'FORM_PRICING_RULE_SET_PRICING_RULE_NAME_PLACEHOLDER',
               )}
-              className="mt-1 mx-2"
+              className="mt-1 ml-2"
             />
-          </div>
+          </Row>
 
           <div className="mb-3">
             <PricingRuleTarget

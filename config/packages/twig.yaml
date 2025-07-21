@@ -40,7 +40,7 @@ twig:
         edenred_enabled: '%env(bool:EDENRED_ENABLED)%'
         cubejs_api_url: '%env(CUBEJS_API_URL)%'
         ui_tasks_metrics_enabled: '%env(bool:UI_TASKS_METRICS_ENABLED)%'
-        ui_package_delivery_price_breakdown_enabled: '%env(bool:PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED)%'
+        ui_package_delivery_price_breakdown_enabled: '%package_delivery_ui_price_breakdown_enabled%'
         dabba_context: '@AppBundle\Dabba\Context'
         group_orders_enabled: '%group_orders_enabled%'
         business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
