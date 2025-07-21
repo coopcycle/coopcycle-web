@@ -44,13 +44,13 @@ export const apiSlice = createApi({
     }),
 
     getOrderTiming: builder.query({
-      query: nodeId => `${nodeId}/timing`,
+      query: (nodeId: string) => `${nodeId}/timing`,
     }),
     getOrderValidate: builder.query({
-      query: nodeId => `${nodeId}/validate`,
+      query: (nodeId: string) => `${nodeId}/validate`,
     }),
     getOrder: builder.query({
-      query: nodeId => nodeId,
+      query: (nodeId: string) => nodeId,
     }),
     updateOrder: builder.mutation({
       query: ({ nodeId, ...patch }) => ({
@@ -70,7 +70,7 @@ export const apiSlice = createApi({
       },
     }),
     getTimeSlotChoices: builder.query({
-      query: nodeId => `${nodeId}/choices`,
+      query: (nodeId: string) => `${nodeId}/choices`,
     }),
 
     patchAddress: builder.mutation({
@@ -84,7 +84,7 @@ export const apiSlice = createApi({
     }),
 
     getStore: builder.query({
-      query: nodeId => nodeId,
+      query: (nodeId: string) => nodeId,
     }),
     getStoreAddresses: builder.query({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
