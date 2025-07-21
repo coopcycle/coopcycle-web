@@ -27,7 +27,7 @@ context('Pricing rules: validation (role: admin) - Beta Version', () => {
     // Should show validation errors for missing expression and price
     cy.get('.ant-alert-message', { timeout: 5000 })
       .should('be.visible')
-      .and('contain', 'Add at least one condition')
-      .and('contain', 'Add a price')
+      .and('contain', 'Ajoutez au moins une condition')
+      .and('contain', 'Ajoutez un prix')
   })
 })
