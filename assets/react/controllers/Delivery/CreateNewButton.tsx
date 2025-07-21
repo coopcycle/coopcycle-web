@@ -1,4 +1,3 @@
-import React from 'react'
 import { RootWithDefaults } from '../../../../js/app/utils/react'
 import DeliveryCreateNewButton from '../../../../js/app/components/DeliveryCreateNewButton'
 

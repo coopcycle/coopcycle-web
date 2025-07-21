@@ -14,4 +14,11 @@ jobs:
       - name: Install JS dependencies
         run: npm ci
       - name: Run ESLint
-        run: node_modules/.bin/eslint --quiet js/app/
+        run: node_modules/.bin/eslint --quiet js/app/ assets/react
+      - name: Run TypeScript Compiler
+        id: tsc
+        run: node_modules/.bin/tsc --noEmit --pretty
+        continue-on-error: true
+      - name: TypeScript Warning
+        if: steps.tsc.outcome == 'failure'
+        run: echo "::warning::TypeScript compilation proceeded with errors"

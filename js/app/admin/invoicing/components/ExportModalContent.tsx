@@ -1,24 +1,31 @@
-import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Radio, Space } from 'antd'
+import { Radio, RadioChangeEvent, Space } from 'antd'
 
 import Button from '../../../components/core/Button'
 import { downloadStandardFile, downloadOdooFile } from '../redux/actions'
+import { useAppDispatch } from '../redux/store'
+import moment from 'moment'
 
 const DESTINATIONS = {
   standard: 'standard',
   odoo: 'odoo',
 }
 
-export default ({ dateRange, params, setModalOpen }) => {
+type Props = {
+  dateRange: moment.Moment[]
+  params: string[]
+  setModalOpen: (open: boolean) => void
+}
+
+export default ({ dateRange, params, setModalOpen }: Props) => {
   const [destination, setDestination] = useState(DESTINATIONS.standard)
 
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
 
   const { t } = useTranslation()
 
-  const onChange = e => {
+  const onChange = (e: RadioChangeEvent) => {
     setDestination(e.target.value)
   }
 
