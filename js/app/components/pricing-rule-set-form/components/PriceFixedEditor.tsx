@@ -1,15 +1,17 @@
-import React from 'react'
+import { useState } from 'react'
 import { InputNumber } from 'antd'
 
-type Props = {
-  defaultValue: { value: string }
-  onChange: (value: any) => void
+export type FixedPriceValue = {
+  value: string
 }
 
-export default ({ defaultValue, onChange } : Props) => {
-  const [value, setValue] = React.useState(
-    parseFloat(defaultValue.value) / 100 || 0,
-  )
+type Props = {
+  defaultValue: FixedPriceValue
+  onChange: (value: string) => void
+}
+
+export default ({ defaultValue, onChange }: Props) => {
+  const [value, setValue] = useState(parseFloat(defaultValue.value) / 100 || 0)
 
   //TODO: fix currency?
   return (
@@ -17,6 +19,10 @@ export default ({ defaultValue, onChange } : Props) => {
       data-testid="rule-fixed-price-input"
       value={value}
       onChange={value => {
+        if (!value) {
+          return
+        }
+
         setValue(value)
         onChange(`${(value || 0) * 100}`)
       }}

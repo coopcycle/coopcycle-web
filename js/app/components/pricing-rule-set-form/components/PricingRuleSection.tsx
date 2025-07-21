@@ -23,7 +23,7 @@ type Props = {
     toRuleId: string,
     target: string,
   ) => void
-  ruleValidationErrors: any
+  ruleValidationErrors: { [ruleId: string]: string[] }
   onAddRule: (target: string) => void
 }
 

@@ -44,7 +44,11 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }: Props) => {
   const { t } = useTranslation()
   const [form] = Form.useForm()
   const [rules, setRules] = useState([] as PricingRuleType[])
-  const [ruleValidationErrors, setRuleValidationErrors] = useState({})
+  const [ruleValidationErrors, setRuleValidationErrors] = useState(
+    {} as {
+      [ruleId: string]: string[]
+    },
+  )
 
   // Rules by target type
   const legacyRules = useMemo(() => {
@@ -103,7 +107,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }: Props) => {
 
   const validateRules = () => {
     const errors = []
-    const newRuleValidationErrors = {}
+    const newRuleValidationErrors = {} as { [ruleId: string]: string[] }
 
     orderedRules.forEach((rule, index) => {
       const ruleErrors = []
