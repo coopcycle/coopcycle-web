@@ -6,15 +6,19 @@ import {
   useDeliveryFormFormikContext
 } from './hooks/useDeliveryFormFormikContext'
 
-export default ({ taskId }) => {
+type Props = {
+  taskId: string
+}
+
+const TotalWeight = ({ taskId }: Props) => {
   const { setFieldValue, errors, values, taskIndex: index } = useDeliveryFormFormikContext({
     taskId: taskId,
   })
 
-  const [numberValue, setNumberValue] = useState(
+  const [numberValue, setNumberValue] = useState<number>(
     values.tasks[index].weight / 1000,
   )
-  const [weightUnit, setWeightUnit] = useState('kg')
+  const [weightUnit, setWeightUnit] = useState<'kg' | 'lbs'>('kg')
 
   const { t } = useTranslation()
 
@@ -42,14 +46,14 @@ export default ({ taskId }) => {
           min={0}
           placeholder={t('DELIVERY_FORM_WEIGHT')}
           value={numberValue}
-          onChange={value => {
-            setNumberValue(value)
+          onChange={(value: number | null) => {
+            setNumberValue(value || 0)
           }}
         />
         <Select
           style={{ width: '15%' }}
           value={weightUnit}
-          onChange={value => setWeightUnit(value)}>
+          onChange={(value: 'kg' | 'lbs') => setWeightUnit(value)}>
           <Option value="kg">Kg</Option>
           <Option value="lbs">Lbs</Option>
         </Select>
@@ -61,3 +65,5 @@ export default ({ taskId }) => {
     </div>
   )
 }
+
+export default TotalWeight

@@ -2,9 +2,14 @@ import React, { useEffect, useState } from 'react'
 
 import { useTranslation } from 'react-i18next'
 import Itinerary from '../DeliveryItinerary'
+import { Task } from './types'
 
-export default ({ tasks }) => {
-  const [createdTasks, setCreatedTasks] = useState(null)
+type Props = {
+  tasks: Task[]
+}
+
+const DeliveryResume = ({ tasks }: Props) => {
+  const [createdTasks, setCreatedTasks] = useState<Task[] | null>(null)
 
   const { t } = useTranslation()
 
@@ -19,3 +24,5 @@ export default ({ tasks }) => {
     </div>
   )
 }
+
+export default DeliveryResume

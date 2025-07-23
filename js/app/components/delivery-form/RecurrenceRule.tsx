@@ -1,11 +1,16 @@
 import React from 'react'
-import { rrulestr } from 'rrule'
+import { rrulestr, RRule } from 'rrule'
 import moment from 'moment'
 
 import RecurrenceRuleAsText from './RecurrenceRuleAsText'
 
-export default ({ rrule, onClick }) => {
-  const ruleObj = rrulestr(rrule, {
+type Props = {
+  rrule: string
+  onClick: () => void
+}
+
+const RecurrenceRule = ({ rrule, onClick }: Props) => {
+  const ruleObj: RRule = rrulestr(rrule, {
     dtstart: moment.utc().toDate(),
   })
 
@@ -23,3 +28,5 @@ export default ({ rrule, onClick }) => {
     </span>
   )
 }
+
+export default RecurrenceRule

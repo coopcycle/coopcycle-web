@@ -13,21 +13,22 @@ import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikConte
 
 import './SuggestionModal.scss'
 import Itinerary from '../DeliveryItinerary'
+import { Task } from './types'
 
 const SuggestionsModal = () => {
   const { values, setFieldValue, setSubmitting, submitForm } =
     useDeliveryFormFormikContext()
 
-  const tasks = useMemo(() => {
+  const tasks = useMemo((): Task[] => {
     return values.tasks || []
   }, [values.tasks])
 
   const suggestedGain = useSelector(selectSuggestedGain)
   const suggestedOrder = useSelector(selectSuggestedOrder)
 
-  const suggestedTasks = useMemo(() => {
-    const suggestedTasks = []
-    suggestedOrder.forEach((oldIndex, newIndex) => {
+  const suggestedTasks = useMemo((): Task[] => {
+    const suggestedTasks: Task[] = []
+    suggestedOrder.forEach((oldIndex: number, newIndex: number) => {
       suggestedTasks.splice(newIndex, 0, tasks[oldIndex])
     })
 

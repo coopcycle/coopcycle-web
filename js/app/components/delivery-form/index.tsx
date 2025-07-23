@@ -17,6 +17,16 @@ const buildInitialState = () => {
 
 const store = createStoreFromPreloadedState(buildInitialState())
 
+type Props = {
+  storeNodeId: string
+  deliveryId?: string
+  deliveryNodeId?: string
+  delivery?: string
+  isDispatcher: boolean
+  isDebugPricing: boolean
+  isPriceBreakdownEnabled: boolean
+}
+
 const Form = ({
   storeNodeId,
   deliveryId,
@@ -25,7 +35,7 @@ const Form = ({
   isDispatcher,
   isDebugPricing,
   isPriceBreakdownEnabled,
-}) => {
+}: Props) => {
   const dispatch = useDispatch()
 
   useLayoutEffect(() => {
@@ -49,7 +59,7 @@ const Form = ({
   )
 }
 
-export default function (props) {
+export default function (props: Props) {
   useEffect(() => {
     Modal.setAppElement('.content')
   }, [])

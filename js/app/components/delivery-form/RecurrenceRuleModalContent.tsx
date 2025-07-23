@@ -15,17 +15,27 @@ import { closeRecurrenceModal } from './redux/recurrenceSlice'
 import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
 import HelpIcon from '../HelpIcon'
 
+type FreqOption = {
+  value: number
+  label: string
+}
+
+type ByDayOption = {
+  label: string
+  value: number
+}
+
 const { Panel } = Collapse
 
-const freqOptions = [
+const freqOptions: FreqOption[] = [
   { value: RRule.DAILY, label: 'Every day' },
   { value: RRule.WEEKLY, label: 'Every week' },
 ]
 
-const locale = $('html').attr('lang')
+const locale = $('html').attr('lang') || 'en'
 const weekdays = TimeRange.weekdaysShort(locale)
 
-const byDayOptions = weekdays.map(weekday => ({
+const byDayOptions: ByDayOption[] = weekdays.map(weekday => ({
   label: weekday.name,
   value: RRule[weekday.key.toUpperCase()].weekday,
 }))
@@ -90,11 +100,11 @@ const validateForm = values => {
 const defaultRecurrenceRule =
   'FREQ=WEEKLY;BYDAY=' + moment().locale('en').format('dd').toUpperCase()
 
-export default function ModalContent() {
+const ModalContent = () => {
   const { rruleValue: recurrenceRule, setFieldValue: setSharedFieldValue } =
     useDeliveryFormFormikContext()
 
-  const [isOverrideRule, setIsOverrideRule] = useState(() => {
+  const [isOverrideRule, setIsOverrideRule] = useState<boolean>(() => {
     if (!recurrenceRule) {
       return false
     }
@@ -223,3 +233,5 @@ export default function ModalContent() {
     </div>
   )
 }
+
+export default ModalContent

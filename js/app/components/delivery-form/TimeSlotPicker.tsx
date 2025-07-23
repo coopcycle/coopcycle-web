@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { DatePicker, Select, Radio } from 'antd'
-import moment from 'moment'
+import moment, { Moment } from 'moment'
 import { useTranslation } from 'react-i18next'
 
 import './TimeSlotPicker.scss'
@@ -12,6 +12,7 @@ import { useGetStoreQuery, useGetTimeSlotChoicesQuery } from '../../api/slice'
 import { Mode } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
+import { TimeSlot } from './types'
 
 const extractDateAndRangeFromTimeSlot = (timeSlotChoice) => {
   let [first, second] = timeSlotChoice.split('/')
@@ -43,7 +44,13 @@ const InputLabel = () => {
   return (<div className="mb-2 font-weight-bold title-slot">{t('ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE')}</div>)
 }
 
-export default ({ storeNodeId, taskId, timeSlotLabels }) => {
+type Props = {
+  storeNodeId: string
+  taskId: string
+  timeSlotLabels: TimeSlot[]
+}
+
+const TimeSlotPicker = ({ storeNodeId, taskId, timeSlotLabels }: Props) => {
 
   const { data: store } = useGetStoreQuery(storeNodeId)
 
@@ -61,9 +68,9 @@ export default ({ storeNodeId, taskId, timeSlotLabels }) => {
   const storeTimeSlotIds = store?.timeSlots
   const storeDefaultTimeSlotId = store?.timeSlot
 
-  const [formattedTimeslots, setFormattedTimeslots] = useState({})
+  const [formattedTimeslots, setFormattedTimeslots] = useState<Record<string, any>>({})
 
-  const setTimeSlotUrl = useCallback((timeSlotUrl) => {
+  const setTimeSlotUrl = useCallback((timeSlotUrl: string) => {
     setFieldValue(`tasks[${index}].timeSlotUrl`, timeSlotUrl)
   }, [index, setFieldValue])
 
@@ -215,3 +222,5 @@ export default ({ storeNodeId, taskId, timeSlotLabels }) => {
     </>
   )
 }
+
+export default TimeSlotPicker

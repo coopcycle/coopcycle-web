@@ -1,6 +1,7 @@
 import { createContext } from 'react'
+import { FlagsContextType } from './types'
 
-const FlagsContext = createContext({
+const FlagsContext = createContext<FlagsContextType>({
   isDispatcher: false,
   isDebugPricing: false,
   isPriceBreakdownEnabled: false,

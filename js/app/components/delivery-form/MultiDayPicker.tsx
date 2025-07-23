@@ -1,17 +1,23 @@
 import React from 'react'
 import { DatePicker } from 'antd'
-import moment from 'moment/moment'
+import moment, { Moment } from 'moment/moment'
 import { timePickerProps } from '../../utils/antd'
 import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
 
-const MultiDayPicker = ({ taskId }) => {
+type Props = {
+  taskId: string
+}
+
+const MultiDayPicker = ({ taskId }: Props) => {
   const { taskValues, setFieldValue, taskIndex } = useDeliveryFormFormikContext({
     taskId: taskId,
   })
 
-  const handleComplexPickerDateChange = newValues => {
-    setFieldValue(`tasks[${taskIndex}].after`, newValues[0].toISOString(true))
-    setFieldValue(`tasks[${taskIndex}].before`, newValues[1].toISOString(true))
+  const handleComplexPickerDateChange = (newValues: [Moment, Moment] | null) => {
+    if (newValues) {
+      setFieldValue(`tasks[${taskIndex}].after`, newValues[0].toISOString(true))
+      setFieldValue(`tasks[${taskIndex}].before`, newValues[1].toISOString(true))
+    }
   }
 
   return (

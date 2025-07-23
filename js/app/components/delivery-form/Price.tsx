@@ -21,8 +21,15 @@ import { Mode, modeIn } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
 import FlagsContext from './FlagsContext'
+import { Order } from './types'
 
-const TotalPrice = ({ overridePrice, priceWithTaxes, priceWithoutTaxes }) => {
+type TotalPriceProps = {
+  overridePrice: boolean
+  priceWithTaxes: number
+  priceWithoutTaxes: number
+}
+
+const TotalPrice = ({ overridePrice, priceWithTaxes, priceWithoutTaxes }: TotalPriceProps) => {
   const { t } = useTranslation()
 
   return (
@@ -39,7 +46,15 @@ const TotalPrice = ({ overridePrice, priceWithTaxes, priceWithoutTaxes }) => {
   )
 }
 
-export default ({
+type Props = {
+  storeNodeId: string
+  order: Order | null
+  setPriceLoading: (loading: boolean) => void
+  setOrder: (order: Order | null) => void
+  setOverridePrice: (override: boolean) => void
+}
+
+const Price = ({
   storeNodeId,
   order,
   setPriceLoading,
@@ -51,7 +66,7 @@ export default ({
   const mode = useSelector(selectMode)
   const { values, setFieldValue } = useDeliveryFormFormikContext()
 
-  const [overridePrice, setOverridePrice] = useState(() => {
+  const [overridePrice, setOverridePrice] = useState<boolean>(() => {
     if (modeIn(mode, [Mode.DELIVERY_CREATE, Mode.RECURRENCE_RULE_UPDATE])) {
       // when cloning an order that has an arbitrary price
       if (
@@ -350,3 +365,5 @@ export default ({
     </div>
   )
 }
+
+export default Price

@@ -17,9 +17,23 @@ import {
 import { Mode } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
+import { Address, Tag, StoreDeliveryInfos } from './types'
 
+type Props = {
+  isDispatcher: boolean
+  storeNodeId: string
+  addresses: Address[]
+  taskId: string
+  storeDeliveryInfos: StoreDeliveryInfos
+  onRemove: () => void
+  showRemoveButton: boolean
+  tags: Tag[]
+  isExpanded: boolean
+  onToggleExpanded: (expanded: boolean) => void
+  showPackages: boolean
+}
 
-export default ({
+const Task = ({
   isDispatcher,
   storeNodeId,
   addresses,
@@ -31,7 +45,7 @@ export default ({
   isExpanded,
   onToggleExpanded,
   showPackages,
-}) => {
+}: Props) => {
   const { t } = useTranslation()
 
   const mode = useSelector(selectMode)
@@ -161,3 +175,5 @@ export default ({
     </div>
   )
 }
+
+export default Task

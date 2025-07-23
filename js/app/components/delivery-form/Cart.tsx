@@ -1,7 +1,14 @@
 import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { ProductOptionValue, ProductVariant, OrderItem as OrderItemType, Order } from './types'
 
-function ProductOptionValue({ index, productOptionValue, overridePrice }) {
+type ProductOptionValueProps = {
+  index: number
+  productOptionValue: ProductOptionValue
+  overridePrice: boolean
+}
+
+function ProductOptionValueComponent({ index, productOptionValue, overridePrice }: ProductOptionValueProps) {
   return (
     <div data-testid={`product-option-value-${index}`}>
       <span data-testid="name">{productOptionValue.value}</span>
@@ -14,8 +21,14 @@ function ProductOptionValue({ index, productOptionValue, overridePrice }) {
   )
 }
 
-function OrderItem({ index, orderItem, overridePrice }) {
-  const productVariant = useMemo(() => {
+type OrderItemProps = {
+  index: number
+  orderItem: OrderItemType
+  overridePrice: boolean
+}
+
+function OrderItem({ index, orderItem, overridePrice }: OrderItemProps) {
+  const productVariant = useMemo((): ProductVariant => {
     return orderItem.variant
   }, [orderItem])
 
@@ -33,7 +46,7 @@ function OrderItem({ index, orderItem, overridePrice }) {
         </span>
       </div>
       {productVariant.optionValues.map((productOptionValue, index) => (
-        <ProductOptionValue
+        <ProductOptionValueComponent
           key={index}
           index={index}
           productOptionValue={productOptionValue}
@@ -52,7 +65,12 @@ function OrderItem({ index, orderItem, overridePrice }) {
   )
 }
 
-export default function Cart({ order, overridePrice }) {
+type Props = {
+  order: Order
+  overridePrice: boolean
+}
+
+const Cart = ({ order, overridePrice }: Props) => {
   const { t } = useTranslation()
 
   return (
@@ -68,3 +86,5 @@ export default function Cart({ order, overridePrice }) {
     </>
   )
 }
+
+export default Cart

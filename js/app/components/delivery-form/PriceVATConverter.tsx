@@ -3,21 +3,33 @@ import { InputNumber } from 'antd'
 import { useTranslation } from 'react-i18next'
 import './PriceVATConverter.scss'
 
-const getCurrencySymbol = () => {
+const getCurrencySymbol = (): string => {
   const { currencySymbol } = document.body.dataset
-  return currencySymbol
+  return currencySymbol || '€'
 }
 
-const addVat = (vatExcludedPrice, taxRate) => {
+const addVat = (vatExcludedPrice: number, taxRate: number): number => {
   return Math.round((vatExcludedPrice * 100) * (taxRate + 1)) / 100
 }
 
-const removeVat = (vatIncludedPrice, taxRate) => {
+const removeVat = (vatIncludedPrice: number, taxRate: number): number => {
   return Math.round((vatIncludedPrice * 100) / (taxRate + 1)) / 100
 }
 
-export default ({ taxRate, setPrice, VAT, exVAT }) => {
-  const [values, setValues] = useState(() => {
+type Props = {
+  taxRate: number
+  setPrice: (price: number) => void
+  VAT?: number
+  exVAT?: number
+}
+
+type PriceValues = {
+  VAT: number | null
+  exVAT: number | null
+}
+
+const PriceVATConverter = ({ taxRate, setPrice, VAT, exVAT }: Props) => {
+  const [values, setValues] = useState<PriceValues>(() => {
     if (VAT === undefined && exVAT === undefined) {
       return { VAT: null, exVAT: null }
     } else if (VAT !== undefined && exVAT !== undefined) {
@@ -27,6 +39,7 @@ export default ({ taxRate, setPrice, VAT, exVAT }) => {
     } else if (exVAT !== undefined) {
       return { VAT: addVat(exVAT, taxRate), exVAT: exVAT }
     }
+    return { VAT: null, exVAT: null }
   })
 
   const { t } = useTranslation()
@@ -70,16 +83,20 @@ export default ({ taxRate, setPrice, VAT, exVAT }) => {
           prefix={getCurrencySymbol()}
           value={values.VAT}
           placeholder={0}
-          onChange={value => {
-            const newValues = {
-              exVAT: removeVat(value, taxRate),
-              VAT: value,
+          onChange={(value: number | null) => {
+            if (value !== null) {
+              const newValues = {
+                exVAT: removeVat(value, taxRate),
+                VAT: value,
+              }
+              setValues(newValues)
+              setPrice(newValues.VAT)
             }
-            setValues(newValues)
-            setPrice(newValues)
           }}
         />
       </div>
     </div>
   )
 }
+
+export default PriceVATConverter

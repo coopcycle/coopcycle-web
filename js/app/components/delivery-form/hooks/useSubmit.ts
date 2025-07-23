@@ -16,24 +16,25 @@ import {
 import { Mode, modeIn } from '../mode'
 import { selectMode } from '../redux/formSlice'
 import { useDatadog } from '../../../hooks/useDatadog'
+import { Address, DeliveryFormValues } from '../types'
 
 // check if a task ID is temporary (not from backend)
-const isTemporaryId = (taskId) => {
-  return taskId && taskId.startsWith('temp-')
+const isTemporaryId = (taskId: string | null): boolean => {
+  return taskId !== null && taskId.startsWith('temp-')
 }
 
-function serializeAddress(address) {
+function serializeAddress(address: Address): string | { streetAddress: string; latLng: [number, number] } {
   if (Object.prototype.hasOwnProperty.call(address, '@id')) {
-    return address['@id']
+    return address['@id'] as string
   }
 
   return {
     streetAddress: address.streetAddress,
-    latLng: [address.geo.latitude, address.geo.longitude],
+    latLng: [address.geo!.latitude, address.geo!.longitude],
   }
 }
 
-function convertValuesToDeliveryPayload(storeNodeId, values) {
+function convertValuesToDeliveryPayload(storeNodeId: string, values: DeliveryFormValues): any {
   let data = {
     store: storeNodeId,
     tasks: structuredClone(values.tasks),
@@ -122,15 +123,21 @@ function convertValuesToRecurrenceRulePayload(values) {
   return data
 }
 
+interface UseSubmitReturn {
+  handleSubmit: (values: DeliveryFormValues) => Promise<void>
+  error: { isError: boolean; errorMessage: string }
+  isSubmitted: boolean
+}
+
 export default function useSubmit(
-  storeNodeId,
+  storeNodeId: string,
   // nodeId: Delivery or RecurrenceRule node
-  deliveryNodeId,
-  isDispatcher,
-) {
+  deliveryNodeId?: string,
+  isDispatcher?: boolean,
+): UseSubmitReturn {
   const mode = useSelector(selectMode)
-  const [error, setError] = useState({ isError: false, errorMessage: ' ' })
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [error, setError] = useState<{ isError: boolean; errorMessage: string }>({ isError: false, errorMessage: ' ' })
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false)
 
   const rejectedSuggestionsOrder = useSelector(selectRejectedSuggestedOrder)
 
