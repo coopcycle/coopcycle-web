@@ -8,8 +8,8 @@ import {
   Spin,
   message,
   Space,
-  Typography,
   Divider,
+  Collapse,
 } from 'antd'
 import { useTranslation } from 'react-i18next'
 import { v4 as uuidv4 } from 'uuid'
@@ -26,8 +26,6 @@ import PricingRuleSection from './components/PricingRuleSection'
 import './pricing-rule-set-form.scss'
 import HelpIcon from '../HelpIcon'
 import { isManualSupplement, PricingRuleType } from './types/PricingRuleType'
-
-const { Title } = Typography
 
 // Utility function to generate temporary @id for new rules
 const generateTempId = (): string => `temp-${uuidv4()}`
@@ -384,74 +382,97 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }: Props) => {
             )}
 
             {legacyRules.length > 0 ? (
-              // Legacy Rules Section
-              <div>
-                <Title level={5}>{t('RULE_LEGACY_TARGET_DYNAMIC_TITLE')}</Title>
-                <Form.Item className="m-0">
-                  <LegacyPricingRulesWarning
-                    migrateToTarget={ruleTarget => {
-                      setRules(
-                        rules.map(rule => ({
-                          ...rule,
-                          target: ruleTarget,
-                        })),
-                      )
-                    }}
-                  />
-                </Form.Item>
-                <PricingRuleSection
-                  target="LEGACY_TARGET_DYNAMIC"
-                  rules={legacyRules}
-                  title={null}
-                  emptyMessage={t('RULE_LEGACY_TARGET_DYNAMIC_HELP')}
-                  addRuleButtonLabel={t('PRICING_ADD_RULE_LEGACY')}
-                  addRuleButtonHelp={t('RULE_LEGACY_TARGET_DYNAMIC_HELP')}
-                  getGlobalIndexById={getGlobalIndexById}
-                  updateRule={updateRule}
-                  removeRule={removeRule}
-                  moveRuleWithinTarget={moveRuleWithinTarget}
-                  ruleValidationErrors={ruleValidationErrors}
-                  onAddRule={addRule}
-                />
-              </div>
+              <Collapse
+                defaultActiveKey={['legacy']}
+                items={[
+                  {
+                    key: 'legacy',
+                    label: t('RULE_LEGACY_TARGET_DYNAMIC_TITLE'),
+                    children: (
+                      <div>
+                        <Form.Item className="m-0">
+                          <LegacyPricingRulesWarning
+                            migrateToTarget={ruleTarget => {
+                              setRules(
+                                rules.map(rule => ({
+                                  ...rule,
+                                  target: ruleTarget,
+                                })),
+                              )
+                            }}
+                          />
+                        </Form.Item>
+                        <PricingRuleSection
+                          target="LEGACY_TARGET_DYNAMIC"
+                          rules={legacyRules}
+                          helpMessage={t('RULE_LEGACY_TARGET_DYNAMIC_HELP')}
+                          addRuleButtonLabel={t('PRICING_ADD_RULE_LEGACY')}
+                          getGlobalIndexById={getGlobalIndexById}
+                          updateRule={updateRule}
+                          removeRule={removeRule}
+                          moveRuleWithinTarget={moveRuleWithinTarget}
+                          ruleValidationErrors={ruleValidationErrors}
+                          onAddRule={addRule}
+                        />
+                      </div>
+                    ),
+                  },
+                ]}
+              />
             ) : (
-              <>
-                {/* Per Point Rules Section */}
-                <PricingRuleSection
-                  target="TASK"
-                  rules={taskRules}
-                  title={t('RULE_TARGET_TASK_TITLE')}
-                  emptyMessage={t('PRICING_ADD_RULE_PER_TASK_HELP')}
-                  addRuleButtonLabel={t('PRICING_ADD_RULE_PER_TASK')}
-                  addRuleButtonHelp={t('PRICING_ADD_RULE_PER_TASK_HELP')}
-                  getGlobalIndexById={getGlobalIndexById}
-                  updateRule={updateRule}
-                  removeRule={removeRule}
-                  moveRuleWithinTarget={moveRuleWithinTarget}
-                  ruleValidationErrors={ruleValidationErrors}
-                  onAddRule={addRule}
-                  manualSupplementRules={taskManualSupplementRules}
+              <Space
+                direction="vertical"
+                size="large"
+                style={{ display: 'flex' }}>
+                <Collapse
+                  defaultActiveKey={['task']}
+                  items={[
+                    {
+                      key: 'task',
+                      label: t('RULE_TARGET_TASK_TITLE'),
+                      children: (
+                        <PricingRuleSection
+                          target="TASK"
+                          rules={taskRules}
+                          helpMessage={t('RULE_TARGET_TASK_HELP')}
+                          addRuleButtonLabel={t('PRICING_ADD_RULE_PER_TASK')}
+                          getGlobalIndexById={getGlobalIndexById}
+                          updateRule={updateRule}
+                          removeRule={removeRule}
+                          moveRuleWithinTarget={moveRuleWithinTarget}
+                          ruleValidationErrors={ruleValidationErrors}
+                          onAddRule={addRule}
+                          manualSupplementRules={taskManualSupplementRules}
+                        />
+                      ),
+                    },
+                  ]}
                 />
-
-                <Divider />
-
-                {/* Per Order Rules Section */}
-                <PricingRuleSection
-                  target="DELIVERY"
-                  rules={deliveryRules}
-                  title={t('RULE_TARGET_DELIVERY_TITLE')}
-                  emptyMessage={t('PRICING_ADD_RULE_HELP')}
-                  addRuleButtonLabel={t('PRICING_ADD_RULE')}
-                  addRuleButtonHelp={t('PRICING_ADD_RULE_HELP')}
-                  getGlobalIndexById={getGlobalIndexById}
-                  updateRule={updateRule}
-                  removeRule={removeRule}
-                  moveRuleWithinTarget={moveRuleWithinTarget}
-                  ruleValidationErrors={ruleValidationErrors}
-                  onAddRule={addRule}
-                  manualSupplementRules={deliveryManualSupplementRules}
+                <Collapse
+                  defaultActiveKey={['delivery']}
+                  items={[
+                    {
+                      key: 'delivery',
+                      label: t('RULE_TARGET_DELIVERY_TITLE'),
+                      children: (
+                        <PricingRuleSection
+                          target="DELIVERY"
+                          rules={deliveryRules}
+                          helpMessage={t('RULE_TARGET_DELIVERY_HELP')}
+                          addRuleButtonLabel={t('PRICING_ADD_RULE')}
+                          getGlobalIndexById={getGlobalIndexById}
+                          updateRule={updateRule}
+                          removeRule={removeRule}
+                          moveRuleWithinTarget={moveRuleWithinTarget}
+                          ruleValidationErrors={ruleValidationErrors}
+                          onAddRule={addRule}
+                          manualSupplementRules={deliveryManualSupplementRules}
+                        />
+                      ),
+                    },
+                  ]}
                 />
-              </>
+              </Space>
             )}
           </>
         </Form.Item>

@@ -1,7 +1,5 @@
-import React from 'react'
 import { Button, Alert, Typography } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import HelpIcon from '../../HelpIcon'
 import { PricingRuleType } from '../types/PricingRuleType'
 import { useTranslation } from 'react-i18next'
 import DraggableRulesList from './DraggableRulesList'
@@ -11,10 +9,8 @@ const { Title } = Typography
 type Props = {
   target: string
   rules: PricingRuleType[]
-  title: string | null
-  emptyMessage: string
+  helpMessage: string
   addRuleButtonLabel: string
-  addRuleButtonHelp: string
   getGlobalIndexById: (ruleId: string) => number
   updateRule: (ruleId: string, updatedRule: PricingRuleType) => void
   removeRule: (ruleId: string) => void
@@ -31,10 +27,8 @@ type Props = {
 const PricingRuleSection = ({
   target,
   rules,
-  title,
-  emptyMessage,
+  helpMessage,
   addRuleButtonLabel,
-  addRuleButtonHelp,
   getGlobalIndexById,
   updateRule,
   removeRule,
@@ -51,27 +45,19 @@ const PricingRuleSection = ({
 
   return (
     <div data-testid={`pricing-rule-set-target-${target.toLowerCase()}`}>
-      {title ? (
-        <Title level={5}>
-          {title} <HelpIcon className="ml-1" tooltipText={addRuleButtonHelp} />
-        </Title>
-      ) : null}
+      <Alert message={helpMessage} type="info" className="mb-3" showIcon />
 
-      {rules.length === 0 ? (
-        <Alert message={emptyMessage} type="info" className="mb-3" showIcon />
-      ) : (
-        <DraggableRulesList
-          rules={rules}
-          droppableId={`pricing-rules-${target.toLowerCase()}`}
-          droppableType="pricing-rule"
-          onDragEnd={handleDragEnd}
-          getGlobalIndexById={getGlobalIndexById}
-          updateRule={updateRule}
-          removeRule={removeRule}
-          ruleValidationErrors={ruleValidationErrors}
-          isManualSupplement={false}
-        />
-      )}
+      <DraggableRulesList
+        rules={rules}
+        droppableId={`pricing-rules-${target.toLowerCase()}`}
+        droppableType="pricing-rule"
+        onDragEnd={handleDragEnd}
+        getGlobalIndexById={getGlobalIndexById}
+        updateRule={updateRule}
+        removeRule={removeRule}
+        ruleValidationErrors={ruleValidationErrors}
+        isManualSupplement={false}
+      />
 
       <div>
         <Button
@@ -90,28 +76,23 @@ const PricingRuleSection = ({
               {t('PRICING_RULE_SET_MANUAL_SUPPLEMENTS')}
             </Title>
           </div>
-
-          {manualSupplementRules.length === 0 ? (
-            <Alert
-              message={t('PRICING_RULE_SET_MANUAL_SUPPLEMENTS_EMPTY')}
-              type="info"
-              className="mb-3"
-              showIcon
-            />
-          ) : (
-            <DraggableRulesList
-              rules={manualSupplementRules}
-              droppableId={`manual-supplements-${target.toLowerCase()}`}
-              droppableType="manual-supplement"
-              onDragEnd={handleDragEnd}
-              getGlobalIndexById={getGlobalIndexById}
-              updateRule={updateRule}
-              removeRule={removeRule}
-              ruleValidationErrors={ruleValidationErrors}
-              isManualSupplement={true}
-            />
-          )}
-
+          <Alert
+            message={t('PRICING_RULE_SET_MANUAL_SUPPLEMENTS_HELP')}
+            type="info"
+            className="mb-3"
+            showIcon
+          />
+          <DraggableRulesList
+            rules={manualSupplementRules}
+            droppableId={`manual-supplements-${target.toLowerCase()}`}
+            droppableType="manual-supplement"
+            onDragEnd={handleDragEnd}
+            getGlobalIndexById={getGlobalIndexById}
+            updateRule={updateRule}
+            removeRule={removeRule}
+            ruleValidationErrors={ruleValidationErrors}
+            isManualSupplement={true}
+          />
           <div>
             <Button
               icon={<PlusOutlined />}
