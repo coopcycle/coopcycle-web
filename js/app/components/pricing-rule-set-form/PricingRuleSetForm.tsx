@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import {
   Form,
   Input,
@@ -30,10 +30,10 @@ import { isManualSupplement, PricingRuleType } from './types/PricingRuleType'
 const { Title } = Typography
 
 // Utility function to generate temporary @id for new rules
-const generateTempId = () => `temp-${uuidv4()}`
+const generateTempId = (): string => `temp-${uuidv4()}`
 
 // Check if an @id is temporary (not from backend)
-const isTempId = id => typeof id === 'string' && id.startsWith('temp-')
+const isTempId = (id: string): boolean => id.startsWith('temp-')
 
 type Props = {
   ruleSetId: number | null
@@ -133,8 +133,8 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }: Props) => {
     }
   }, [ruleSet, form, isNew])
 
-  const validateRules = () => {
-    const errors = []
+  const validateRules = (): { index: number; errors: string[] }[] => {
+    const errors: { index: number; errors: string[] }[] = []
     const newRuleValidationErrors = {} as { [ruleId: string]: string[] }
 
     orderedRules.forEach((rule, index) => {
@@ -168,7 +168,11 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }: Props) => {
     return errors
   }
 
-  const handleSubmit = async values => {
+  const handleSubmit = async (values: {
+    name: string
+    strategy: string
+    options: string[]
+  }): Promise<void> => {
     try {
       // Validate rules before submission
       const validationErrors = validateRules()
@@ -216,7 +220,10 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }: Props) => {
     }
   }
 
-  const addRule = (target = 'DELIVERY', isManualSupplement = false) => {
+  const addRule = (
+    target: string = 'DELIVERY',
+    isManualSupplement: boolean = false,
+  ): void => {
     const newRule = {
       '@id': generateTempId(),
       target,
@@ -230,7 +237,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }: Props) => {
     setRules([...rules, newRule])
   }
 
-  const updateRule = (ruleId, updatedRule) => {
+  const updateRule = (ruleId: string, updatedRule: PricingRuleType): void => {
     // Find the rule by @id and update it
     const originalIndex = rules.findIndex(rule => rule['@id'] === ruleId)
 
@@ -248,13 +255,13 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }: Props) => {
     }
   }
 
-  const removeRule = ruleId => {
+  const removeRule = (ruleId: string): void => {
     // Find the rule by @id and remove it
     const newRules = rules.filter(rule => rule['@id'] !== ruleId)
     setRules(newRules)
   }
 
-  const moveRule = (fromIndex, toIndex) => {
+  const moveRule = (fromIndex: number, toIndex: number): void => {
     const newOrderedRules = [...orderedRules]
     const [movedRule] = newOrderedRules.splice(fromIndex, 1)
     newOrderedRules.splice(toIndex, 0, movedRule)
@@ -264,12 +271,16 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }: Props) => {
   }
 
   // Helper function to get the global index of a rule by @id
-  const getGlobalIndexById = ruleId => {
+  const getGlobalIndexById = (ruleId: string): number => {
     return orderedRules.findIndex(rule => rule['@id'] === ruleId)
   }
 
   // Helper function to move rules within the same target group using @id
-  const moveRuleWithinTarget = (fromRuleId, toRuleId, target) => {
+  const moveRuleWithinTarget = (
+    fromRuleId: string,
+    toRuleId: string,
+    target: string,
+  ): void => {
     const globalFromIndex = getGlobalIndexById(fromRuleId)
     const globalToIndex = getGlobalIndexById(toRuleId)
 

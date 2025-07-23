@@ -1,10 +1,16 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { Select } from 'antd'
+import { PriceType } from '../types/PricingRuleType'
 
 const { Option } = Select
 
-export function PriceChoice({ priceType, handlePriceTypeChange }) {
+type Props = {
+  priceType: PriceType
+  handlePriceTypeChange: (type: PriceType) => void
+}
+
+export function PriceChoice({ priceType, handlePriceTypeChange }: Props) {
   const { t } = useTranslation()
 
   return (

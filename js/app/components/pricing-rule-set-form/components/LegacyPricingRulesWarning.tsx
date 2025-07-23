@@ -2,8 +2,13 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button, Card } from 'antd'
 import Alert from '../../../components/core/Alert'
+import { RuleTarget } from '../types/PricingRuleType'
 
-export default function LegacyPricingRulesWarning({ migrateToTarget }) {
+type Props = {
+  migrateToTarget: (target: RuleTarget) => void
+}
+
+export default function LegacyPricingRulesWarning({ migrateToTarget }: Props) {
   const { t } = useTranslation()
 
   return (

@@ -45,7 +45,7 @@ const PricingRuleSection = ({
 }: Props) => {
   const { t } = useTranslation()
 
-  const handleDragEnd = (fromRuleId, toRuleId) => {
+  const handleDragEnd = (fromRuleId: string, toRuleId: string): void => {
     moveRuleWithinTarget(fromRuleId, toRuleId, target)
   }
 

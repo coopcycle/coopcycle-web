@@ -49,15 +49,15 @@ const typeToOperators = {
   time_slot: ['==', '!='],
 }
 
-const isK = type => type === 'distance' || type === 'weight'
-const isDecimals = type =>
+const isK = (type: string): boolean => type === 'distance' || type === 'weight'
+const isDecimals = (type: string): boolean =>
   isK(type) ||
   [
     "time_range_length(pickup, 'hours')",
     "time_range_length(dropoff, 'hours')",
   ].includes(type)
 
-const formatValue = (value, type) => {
+const formatValue = (value: string, type: string): number | string => {
   if (!_.includes(numericTypes, type)) {
     return value
   }
@@ -69,7 +69,7 @@ const formatValue = (value, type) => {
   return numbro.unformat(value) * (isK(type) ? 1000 : 1)
 }
 
-const getStepForType = type => {
+const getStepForType = (type: string): string => {
   // As it returns float, it will never work when comparing to floats
   // https://github.com/coopcycle/coopcycle-web/issues/5002
   if (type === 'packages.totalVolumeUnits()') {
@@ -85,12 +85,22 @@ type Props = {
   type: string
   operator: string
   value: string | string[]
-  onUpdate: (index: number, line: { left: string; operator: string; right: string | string[] }) => void
+  onUpdate: (
+    index: number,
+    line: { left: string; operator: string; right: string | string[] },
+  ) => void
   onDelete: (index: number) => void
   testID?: string
+  t: (key: string) => string
 }
 
-class RulePickerLine extends React.Component<Props> {
+type State = {
+  type: string
+  operator: string
+  value: string | string[]
+}
+
+class RulePickerLine extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
 
@@ -119,21 +129,23 @@ class RulePickerLine extends React.Component<Props> {
     }
   }
 
-  handleFirstBoundChange(ev) {
+  handleFirstBoundChange(ev: React.ChangeEvent<HTMLInputElement>): void {
     const { type } = this.state
-    let value = this.state.value.slice()
-    value[0] = ev.target.value * (isK(type) ? 1000 : 1)
+    let value = this.state.value as string[]
+    value[0] = (parseFloat(ev.target.value) * (isK(type) ? 1000 : 1)).toString()
     this.setState({ value })
   }
 
-  handleSecondBoundChange(ev) {
+  handleSecondBoundChange(ev: React.ChangeEvent<HTMLInputElement>): void {
     const { type } = this.state
-    let value = this.state.value.slice()
-    value[1] = ev.target.value * (isK(type) ? 1000 : 1)
+    let value = this.state.value as string[]
+    value[1] = (parseFloat(ev.target.value) * (isK(type) ? 1000 : 1)).toString()
     this.setState({ value })
   }
 
-  handleValueChange(ev) {
+  handleValueChange(
+    ev: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ): void {
     const { type, value } = this.state
     if (!Array.isArray(value)) {
       this.setState({
@@ -142,7 +154,7 @@ class RulePickerLine extends React.Component<Props> {
     }
   }
 
-  onTypeSelect(ev) {
+  onTypeSelect(ev: React.ChangeEvent<HTMLSelectElement>): void {
     ev.preventDefault()
 
     const type = ev.target.value
@@ -161,12 +173,12 @@ class RulePickerLine extends React.Component<Props> {
     })
   }
 
-  onOperatorSelect(ev) {
+  onOperatorSelect(ev: React.ChangeEvent<HTMLSelectElement>): void {
     ev.preventDefault()
 
     const operator = ev.target.value
 
-    let state = { operator }
+    let state: Partial<State> = { operator }
 
     if ('in' === operator) {
       state.value = ['0', isK(this.state.type) ? '1000' : '1']
@@ -179,13 +191,13 @@ class RulePickerLine extends React.Component<Props> {
     this.setState(state)
   }
 
-  delete(evt) {
+  delete(evt: React.MouseEvent<HTMLAnchorElement>): void {
     evt.preventDefault()
     this.props.onDelete(this.props.index)
   }
 
-  renderNumberInput(k = false, decimals = false) {
-    let props = {}
+  renderNumberInput(k: boolean = false, decimals: boolean = false) {
+    let props: { step?: string } = {}
     if (decimals) {
       props = {
         ...props,
@@ -193,11 +205,12 @@ class RulePickerLine extends React.Component<Props> {
       }
     }
 
+    const value = this.state.value as string
     return (
       <input
         data-testid="condition-number-input"
         className="form-control input-sm"
-        value={k ? this.state.value / 1000 : this.state.value}
+        value={k ? parseFloat(value) / 1000 : value}
         onChange={this.handleValueChange}
         type="number"
         min="0"
@@ -242,8 +255,12 @@ class RulePickerLine extends React.Component<Props> {
               value={this.state.value}
               className="form-control input-sm">
               <option value="">-</option>
-              <option value="bike">{this.props.t('PRICING_RULE_PICKER_VEHICLE_BIKE')}</option>
-              <option value="cargo_bike">{this.props.t('PRICING_RULE_PICKER_VEHICLE_CARGO_BIKE')}</option>
+              <option value="bike">
+                {this.props.t('PRICING_RULE_PICKER_VEHICLE_BIKE')}
+              </option>
+              <option value="cargo_bike">
+                {this.props.t('PRICING_RULE_PICKER_VEHICLE_CARGO_BIKE')}
+              </option>
             </select>
           )
         }
@@ -257,7 +274,9 @@ class RulePickerLine extends React.Component<Props> {
               className="form-control input-sm">
               <option value="">-</option>
               <option value="PICKUP">{this.props.t('DELIVERY_PICKUP')}</option>
-              <option value="DROPOFF">{this.props.t('DELIVERY_DROPOFF')}</option>
+              <option value="DROPOFF">
+                {this.props.t('DELIVERY_DROPOFF')}
+              </option>
             </select>
           )
         }

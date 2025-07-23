@@ -18,7 +18,7 @@ export default ({ defaultValue, onChange }: Props) => {
     <InputNumber
       data-testid="rule-fixed-price-input"
       value={value}
-      onChange={value => {
+      onChange={(value: number | null) => {
         if (!value) {
           return
         }

@@ -1,5 +1,10 @@
 import React from 'react'
-import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from '@hello-pangea/dnd'
 import PricingRule from './PricingRule'
 import { PricingRuleType } from '../types/PricingRuleType'
 
@@ -26,7 +31,7 @@ const DraggableRulesList = ({
   ruleValidationErrors,
   isManualSupplement = false,
 }: Props) => {
-  const handleDragEnd = result => {
+  const handleDragEnd = (result: DropResult): void => {
     if (!result.destination) {
       return
     }

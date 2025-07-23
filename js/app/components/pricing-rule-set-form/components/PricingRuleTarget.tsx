@@ -1,8 +1,14 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import DeprecatedTag from '../../../components/DeprecatedTag'
+import { RuleTarget } from '../types/PricingRuleType'
 
-export default function PricingRuleTarget({ className = '', target }) {
+type Props = {
+  className?: string
+  target: RuleTarget
+}
+
+export default function PricingRuleTarget({ className = '', target }: Props) {
   const { t } = useTranslation()
 
   const labels = {

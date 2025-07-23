@@ -2,7 +2,13 @@ import React, { useState, useRef, useEffect } from 'react'
 import { getCurrencySymbol } from '../../../i18n'
 import { useTranslation } from 'react-i18next'
 
-const UnitLabel = ({ unit }) => {
+type Unit = 'km' | 'kg' | 'vu'
+
+type UnitLabelProps = {
+  unit: Unit
+}
+
+const UnitLabel = ({ unit }: UnitLabelProps) => {
   const { t } = useTranslation()
 
   if (unit === 'vu') {
@@ -12,7 +18,7 @@ const UnitLabel = ({ unit }) => {
   return <span>{unit}</span>
 }
 
-const unitToAttribute = unit => {
+const unitToAttribute = (unit: Unit): string => {
   switch (unit) {
     case 'km':
       return 'distance'
@@ -23,7 +29,7 @@ const unitToAttribute = unit => {
   }
 }
 
-const attributeToUnit = attribute => {
+const attributeToUnit = (attribute: string): Unit => {
   switch (attribute) {
     case 'distance':
       return 'km'
@@ -31,10 +37,12 @@ const attributeToUnit = attribute => {
       return 'kg'
     case 'packages.totalVolumeUnits()':
       return 'vu'
+    default:
+      return 'km'
   }
 }
 
-const multiplyIfNeeded = (value, unit) => {
+const multiplyIfNeeded = (value: number, unit: Unit): number => {
   switch (unit) {
     case 'km':
     case 'kg':
@@ -44,7 +52,7 @@ const multiplyIfNeeded = (value, unit) => {
   return value
 }
 
-const divideIfNeeded = (value, unit) => {
+const divideIfNeeded = (value: number, unit: Unit): number => {
   switch (unit) {
     case 'km':
     case 'kg':
@@ -54,7 +62,19 @@ const divideIfNeeded = (value, unit) => {
   return value
 }
 
-export default ({ defaultValue, onChange }) => {
+export type PriceRangeValue = {
+  attribute: string
+  price: number
+  step: number
+  threshold: number
+}
+
+type Props = {
+  defaultValue: PriceRangeValue
+  onChange: (value: PriceRangeValue) => void
+}
+
+export default ({ defaultValue, onChange }: Props) => {
   const { t } = useTranslation()
 
   const defaultAttribute = defaultValue.attribute || 'distance'
@@ -95,8 +115,8 @@ export default ({ defaultValue, onChange }) => {
           step=".001"
           className="form-control d-inline-block no-number-input-arrow"
           style={{ width: '80px' }}
-          onChange={e => {
-            setPrice(e.target.value * 100)
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setPrice(parseFloat(e.target.value) * 100)
           }}
         />
         <span className="ml-2">{getCurrencySymbol()}</span>
@@ -113,8 +133,8 @@ export default ({ defaultValue, onChange }) => {
           ref={stepEl}
           className="form-control d-inline-block"
           style={{ width: '80px' }}
-          onChange={e => {
-            setStep(multiplyIfNeeded(e.target.value, unit))
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setStep(multiplyIfNeeded(parseFloat(e.target.value), unit))
           }}
         />
         <select
@@ -122,10 +142,10 @@ export default ({ defaultValue, onChange }) => {
           className="form-control d-inline-block align-top ml-2"
           style={{ width: '70px' }}
           defaultValue={attributeToUnit(attribute)}
-          onChange={e => {
-            setAttribute(unitToAttribute(e.target.value))
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+            setAttribute(unitToAttribute(e.target.value as Unit))
 
-            const newUnit = e.target.value
+            const newUnit = e.target.value as Unit
             const prevUnit = unit
 
             if (newUnit === 'vu' && prevUnit !== 'vu') {
@@ -136,7 +156,7 @@ export default ({ defaultValue, onChange }) => {
               setThreshold(threshold * 1000)
             }
 
-            setUnit(e.target.value)
+            setUnit(e.target.value as Unit)
           }}>
           <option value="km">{t('PRICING_RULE_PICKER_UNIT_KM')}</option>
           <option value="kg">{t('PRICING_RULE_PICKER_UNIT_KG')}</option>
@@ -155,8 +175,8 @@ export default ({ defaultValue, onChange }) => {
           ref={thresholdEl}
           className="form-control d-inline-block"
           style={{ width: '80px' }}
-          onChange={e => {
-            setThreshold(multiplyIfNeeded(e.target.value, unit))
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setThreshold(multiplyIfNeeded(parseFloat(e.target.value), unit))
           }}
         />
         <span className="ml-2">

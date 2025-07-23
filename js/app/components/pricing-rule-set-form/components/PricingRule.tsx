@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, Input, Button, Space, Typography, Row, Col, Alert } from 'antd'
 import { DeleteOutlined } from '@ant-design/icons'
 import { useTranslation } from 'react-i18next'
@@ -15,7 +15,7 @@ import {
 } from '../../../delivery/pricing/pricing-rule-parser'
 import Position from './Position'
 import { DraggableProvidedDragHandleProps } from '@hello-pangea/dnd'
-import { PricingRuleType } from '../types/PricingRuleType'
+import { PriceType, PricingRuleType } from '../types/PricingRuleType'
 import HelpIcon from '../../HelpIcon'
 
 const { Text } = Typography
@@ -55,7 +55,7 @@ const PricingRule = ({
       : new FixedPrice(0)
   })
   const [priceType, setPriceType] = useState(() => {
-    let priceType = 'fixed'
+    let priceType = 'fixed' as PriceType
     if (priceObj instanceof PercentagePrice) {
       priceType = 'percentage'
     } else if (priceObj instanceof PriceRange) {
@@ -70,13 +70,13 @@ const PricingRule = ({
     setLocalRule(rule)
   }, [rule])
 
-  const handleFieldChange = (field, value) => {
+  const handleFieldChange = (field: string, value: string): void => {
     const updatedRule = { ...localRule, [field]: value }
     setLocalRule(updatedRule)
     onUpdate(updatedRule)
   }
 
-  const handleNameChange = value => {
+  const handleNameChange = (value: string): void => {
     // Update the name
     const updatedRule = {
       ...localRule,
@@ -86,7 +86,7 @@ const PricingRule = ({
     onUpdate(updatedRule)
   }
 
-  const handlePriceTypeChange = type => {
+  const handlePriceTypeChange = (type: string): void => {
     setPriceType(type)
     let newPrice = ''
 
