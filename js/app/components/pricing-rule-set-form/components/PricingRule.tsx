@@ -86,7 +86,7 @@ const PricingRule = ({
     onUpdate(updatedRule)
   }
 
-  const handlePriceTypeChange = (type: string): void => {
+  const handlePriceTypeChange = (type: PriceType): void => {
     setPriceType(type)
     let newPrice = ''
 
@@ -184,7 +184,6 @@ const PricingRule = ({
                 <Alert
                   message={t('FORM_PRICING_RULE_EXPRESSION_REQUIRED')}
                   type="error"
-                  size="small"
                   className="mt-2"
                   showIcon
                 />
@@ -196,6 +195,7 @@ const PricingRule = ({
       <Row gutter={16} className="mt-2 pricing-rule-set__rule__price">
         <Col>
           <PriceChoice
+            isManualSupplement={isManualSupplement}
             priceType={priceType}
             handlePriceTypeChange={handlePriceTypeChange}
           />
@@ -214,7 +214,6 @@ const PricingRule = ({
             <Alert
               message={t('FORM_PRICING_RULE_PRICE_REQUIRED')}
               type="error"
-              size="small"
               className="mt-2"
               showIcon
             />
