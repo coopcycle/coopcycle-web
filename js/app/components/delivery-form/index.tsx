@@ -1,7 +1,7 @@
 import React, { createContext, useEffect, useLayoutEffect } from 'react'
 import { Provider, useDispatch } from 'react-redux'
 import { accountSlice } from '../../entities/account/reduxSlice'
-import DeliveryForm from './DeliveryForm.js'
+import DeliveryForm from './DeliveryForm'
 import { createStoreFromPreloadedState } from './redux/store'
 import Modal from 'react-modal'
 import { RootWithDefaults } from '../../utils/react'
