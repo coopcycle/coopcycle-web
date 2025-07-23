@@ -32,6 +32,7 @@ type Props = {
   onRemove: () => void
   validationErrors?: string[]
   dragHandleProps: DraggableProvidedDragHandleProps
+  isManualSupplement: boolean
   isDragging?: boolean
 }
 
@@ -42,6 +43,7 @@ const PricingRule = ({
   onRemove,
   validationErrors = [],
   dragHandleProps,
+  isManualSupplement,
   isDragging = false,
 }: Props) => {
   const { t } = useTranslation()
@@ -160,33 +162,35 @@ const PricingRule = ({
             />
           </Row>
 
-          <div className="mb-3">
-            <PricingRuleTarget
-              className="pricing-rule-set__rule__text"
-              target={localRule.target}
-            />
-
-            <RulePicker
-              ruleTarget={localRule.target}
-              expressionAST={localRule.expressionAst}
-              onExpressionChange={newExpression => {
-                if (localRule.expression === newExpression) return
-                handleFieldChange('expression', newExpression)
-              }}
-            />
-
-            {validationErrors.includes(
-              VALIDATION_ERRORS.EXPRESSION_REQUIRED,
-            ) ? (
-              <Alert
-                message={t('FORM_PRICING_RULE_EXPRESSION_REQUIRED')}
-                type="error"
-                size="small"
-                className="mt-2"
-                showIcon
+          {!isManualSupplement ? (
+            <div className="mb-3">
+              <PricingRuleTarget
+                className="pricing-rule-set__rule__text"
+                target={localRule.target}
               />
-            ) : null}
-          </div>
+
+              <RulePicker
+                ruleTarget={localRule.target}
+                expressionAST={localRule.expressionAst}
+                onExpressionChange={newExpression => {
+                  if (localRule.expression === newExpression) return
+                  handleFieldChange('expression', newExpression)
+                }}
+              />
+
+              {validationErrors.includes(
+                VALIDATION_ERRORS.EXPRESSION_REQUIRED,
+              ) ? (
+                <Alert
+                  message={t('FORM_PRICING_RULE_EXPRESSION_REQUIRED')}
+                  type="error"
+                  size="small"
+                  className="mt-2"
+                  showIcon
+                />
+              ) : null}
+            </div>
+          ) : null}
         </Col>
       </Row>
       <Row gutter={16} className="mt-2 pricing-rule-set__rule__price">

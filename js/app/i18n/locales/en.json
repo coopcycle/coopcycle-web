@@ -751,6 +751,11 @@
         "DELIVERY_PROOFS_FILE_TYPE_VALUE": "ZIP archive",
         "DELIVERY_FORM_ADD_PICKUP": "Add a pickup",
         "DELIVERY_FORM_REMOVE_PICKUP": "Remove this pickup",
-        "DELIVERY_FORM_MULTIPICKUP": "Multiple pickups are available"
+        "DELIVERY_FORM_MULTIPICKUP": "Multiple pickups are available",
+        "PRICING_RULE_SET_FORM_ERROR": "Error",
+        "PRICING_RULE_SET_FORM_FAILED_TO_LOAD": "Failed to load pricing rule set",
+        "PRICING_RULE_SET_MANUAL_SUPPLEMENTS": "Manual Supplements",
+        "PRICING_RULE_SET_MANUAL_SUPPLEMENTS_EMPTY": "No manual supplements configured. Manual supplements are fixed charges that can be applied to deliveries.",
+        "PRICING_RULE_SET_ADD_MANUAL_SUPPLEMENT": "Add Manual Supplement"
       }
 }

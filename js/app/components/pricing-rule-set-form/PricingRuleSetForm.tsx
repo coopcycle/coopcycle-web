@@ -25,7 +25,7 @@ import PricingRuleSection from './components/PricingRuleSection'
 
 import './pricing-rule-set-form.scss'
 import HelpIcon from '../HelpIcon'
-import { PricingRuleType } from './types/PricingRuleType'
+import { isManualSupplement, PricingRuleType } from './types/PricingRuleType'
 
 const { Title } = Typography
 
@@ -56,17 +56,45 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }: Props) => {
   }, [rules])
 
   const taskRules = useMemo(() => {
-    return rules.filter(rule => rule.target === 'TASK')
+    return rules.filter(
+      rule => rule.target === 'TASK' && !isManualSupplement(rule),
+    )
   }, [rules])
 
   const deliveryRules = useMemo(() => {
-    return rules.filter(rule => rule.target === 'DELIVERY')
+    return rules.filter(
+      rule => rule.target === 'DELIVERY' && !isManualSupplement(rule),
+    )
   }, [rules])
 
-  // Ordered rules list: legacy, task, delivery
+  const taskManualSupplementRules = useMemo(() => {
+    return rules.filter(
+      rule => rule.target === 'TASK' && isManualSupplement(rule),
+    )
+  }, [rules])
+
+  const deliveryManualSupplementRules = useMemo(() => {
+    return rules.filter(
+      rule => rule.target === 'DELIVERY' && isManualSupplement(rule),
+    )
+  }, [rules])
+
+  // Ordered rules list
   const orderedRules = useMemo(() => {
-    return [...legacyRules, ...taskRules, ...deliveryRules]
-  }, [legacyRules, taskRules, deliveryRules])
+    return [
+      ...legacyRules,
+      ...taskRules,
+      ...taskManualSupplementRules,
+      ...deliveryRules,
+      ...deliveryManualSupplementRules,
+    ]
+  }, [
+    legacyRules,
+    taskRules,
+    deliveryRules,
+    taskManualSupplementRules,
+    deliveryManualSupplementRules,
+  ])
 
   const {
     data: ruleSet,
@@ -112,8 +140,11 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }: Props) => {
     orderedRules.forEach((rule, index) => {
       const ruleErrors = []
 
-      // Check if expression is empty
-      if (!rule.expression || rule.expression.trim() === '') {
+      // Check if expression is empty (skip for manual supplements)
+      if (
+        !isManualSupplement(rule) &&
+        (!rule.expression || rule.expression.trim() === '')
+      ) {
         ruleErrors.push(VALIDATION_ERRORS.EXPRESSION_REQUIRED)
       }
 
@@ -185,11 +216,11 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }: Props) => {
     }
   }
 
-  const addRule = (target = 'DELIVERY') => {
+  const addRule = (target = 'DELIVERY', isManualSupplement = false) => {
     const newRule = {
       '@id': generateTempId(),
       target,
-      expression: '',
+      expression: isManualSupplement ? 'true' : '', // Manual supplements don't need conditions
       price: '',
       position: orderedRules.length,
       name: null,
@@ -258,8 +289,8 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }: Props) => {
   if (ruleSetError) {
     return (
       <Alert
-        message="Error"
-        description="Failed to load pricing rule set"
+        message={t('PRICING_RULE_SET_FORM_ERROR')}
+        description={t('PRICING_RULE_SET_FORM_FAILED_TO_LOAD')}
         type="error"
         showIcon
       />
@@ -388,6 +419,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }: Props) => {
                   moveRuleWithinTarget={moveRuleWithinTarget}
                   ruleValidationErrors={ruleValidationErrors}
                   onAddRule={addRule}
+                  manualSupplementRules={taskManualSupplementRules}
                 />
 
                 <Divider />
@@ -406,6 +438,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }: Props) => {
                   moveRuleWithinTarget={moveRuleWithinTarget}
                   ruleValidationErrors={ruleValidationErrors}
                   onAddRule={addRule}
+                  manualSupplementRules={deliveryManualSupplementRules}
                 />
               </>
             )}

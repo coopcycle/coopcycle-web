@@ -8,3 +8,7 @@ export type PricingRuleType = {
   position: number
   name: string | null
 }
+
+export function isManualSupplement(rule: PricingRuleType) {
+  return rule.expression === 'true'
+}
