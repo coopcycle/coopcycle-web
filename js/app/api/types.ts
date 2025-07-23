@@ -23,9 +23,6 @@ export interface InvoiceLineItemGroupedByOrganization {
   total: number
 }
 
-export interface InvoiceLineItemsGroupedByOrganizationResponse
-  extends HydraCollection<InvoiceLineItemGroupedByOrganization> {}
-
 export interface GetInvoiceLineItemsGroupedByOrganizationArgs {
   params: string[]
   page: number
@@ -48,9 +45,6 @@ export interface InvoiceLineItem {
     createdAt: string
   }>
 }
-
-export interface InvoiceLineItemsResponse
-  extends HydraCollection<InvoiceLineItem> {}
 
 export interface GetInvoiceLineItemsArgs {
   params: string[]
