@@ -212,8 +212,8 @@ class RulePickerLine extends React.Component<Props> {
         onChange={this.handleValueChange}
         value={this.state.value}
         className="form-control input-sm">
-        <option value="false">No</option>
-        <option value="true">Yes</option>
+        <option value="false">{this.props.t('NO')}</option>
+        <option value="true">{this.props.t('YES')}</option>
       </select>
     )
   }
@@ -242,8 +242,8 @@ class RulePickerLine extends React.Component<Props> {
               value={this.state.value}
               className="form-control input-sm">
               <option value="">-</option>
-              <option value="bike">Vélo</option>
-              <option value="cargo_bike">Vélo Cargo</option>
+              <option value="bike">{this.props.t('PRICING_RULE_PICKER_VEHICLE_BIKE')}</option>
+              <option value="cargo_bike">{this.props.t('PRICING_RULE_PICKER_VEHICLE_CARGO_BIKE')}</option>
             </select>
           )
         }
@@ -256,8 +256,8 @@ class RulePickerLine extends React.Component<Props> {
               value={this.state.value}
               className="form-control input-sm">
               <option value="">-</option>
-              <option value="PICKUP">Pickup</option>
-              <option value="DROPOFF">Dropoff</option>
+              <option value="PICKUP">{this.props.t('DELIVERY_PICKUP')}</option>
+              <option value="DROPOFF">{this.props.t('DELIVERY_DROPOFF')}</option>
             </select>
           )
         }

@@ -30,6 +30,8 @@
         "UNDO": "Undo",
         "CLEAR": "Clear",
         "ONLY": "Only",
+        "NO": "No",
+        "YES": "Yes",
         "new": "New orders",
         "accepted": "Accepted",
         "refused": "Refused",
@@ -756,6 +758,10 @@
         "PRICING_RULE_SET_FORM_FAILED_TO_LOAD": "Failed to load pricing rule set",
         "PRICING_RULE_SET_MANUAL_SUPPLEMENTS": "Manual Supplements",
         "PRICING_RULE_SET_MANUAL_SUPPLEMENTS_EMPTY": "No manual supplements configured. Manual supplements are fixed charges that can be applied to deliveries.",
-        "PRICING_RULE_SET_ADD_MANUAL_SUPPLEMENT": "Add Manual Supplement"
+        "PRICING_RULE_SET_ADD_MANUAL_SUPPLEMENT": "Add Manual Supplement",
+        "PRICING_RULE_PICKER_VEHICLE_BIKE": "Bike",
+        "PRICING_RULE_PICKER_VEHICLE_CARGO_BIKE": "Cargo Bike",
+        "PRICING_RULE_PICKER_UNIT_KM": "km",
+        "PRICING_RULE_PICKER_UNIT_KG": "kg"
       }
 }

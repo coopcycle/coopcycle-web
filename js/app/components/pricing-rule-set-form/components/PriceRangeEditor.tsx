@@ -138,8 +138,8 @@ export default ({ defaultValue, onChange }) => {
 
             setUnit(e.target.value)
           }}>
-          <option value="km">km</option>
-          <option value="kg">kg</option>
+          <option value="km">{t('PRICING_RULE_PICKER_UNIT_KM')}</option>
+          <option value="kg">{t('PRICING_RULE_PICKER_UNIT_KG')}</option>
           <option value="vu">{t('RULE_PICKER_LINE_VOLUME_UNITS')}</option>
         </select>
       </label>
