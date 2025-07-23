@@ -138,6 +138,11 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }: Props) => {
     orderedRules.forEach((rule, index) => {
       const ruleErrors = []
 
+      // For manual supplements check if name is not empty
+      if (isManualSupplement(rule) && (!rule.name || rule.name.trim() === '')) {
+        ruleErrors.push(VALIDATION_ERRORS.NAME_REQUIRED)
+      }
+
       // Check if expression is empty (skip for manual supplements)
       if (
         !isManualSupplement(rule) &&

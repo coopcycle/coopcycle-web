@@ -21,6 +21,7 @@ import HelpIcon from '../../HelpIcon'
 const { Text } = Typography
 
 export const VALIDATION_ERRORS = {
+  NAME_REQUIRED: 'NAME_REQUIRED',
   EXPRESSION_REQUIRED: 'EXPRESSION_REQUIRED',
   PRICE_REQUIRED: 'PRICE_REQUIRED',
 }
@@ -161,7 +162,14 @@ const PricingRule = ({
               className="mt-1 ml-2"
             />
           </Row>
-
+          {validationErrors.includes(VALIDATION_ERRORS.NAME_REQUIRED) ? (
+            <Alert
+              message={t('FORM_PRICING_RULE_MANUAL_SUPPLEMENT_NAME_REQUIRED')}
+              type="error"
+              className="my-2"
+              showIcon
+            />
+          ) : null}
           {!isManualSupplement ? (
             <div className="mb-3">
               <PricingRuleTarget

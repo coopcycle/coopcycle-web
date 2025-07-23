@@ -301,6 +301,7 @@
         "FORM_PRICING_RULE_SET_PRICING_RULE_NAME_PLACEHOLDER": "e.g. Urgent delivery",
         "FORM_PRICING_RULE_SET_PRICING_RULE_NAME_HELP": "If you keep the name empty, the name will be generated automatically",
         "FORM_PRICING_RULE_SAVE_ERROR": "An error occurred while saving rule {{ name }}",
+        "FORM_PRICING_RULE_MANUAL_SUPPLEMENT_NAME_REQUIRED": "You must provide a name for the manual supplement",
         "FORM_PRICING_RULE_EXPRESSION_REQUIRED": "Add at least one condition",
         "FORM_PRICING_RULE_PRICE_REQUIRED": "Add a price",
         "FORM_PRICING_RULE_REORDER": "Drag to reorder",
