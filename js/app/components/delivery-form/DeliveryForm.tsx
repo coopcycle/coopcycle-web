@@ -149,7 +149,7 @@ const DeliveryForm = ({
   // nodeId: Delivery or RecurrenceRule node
   deliveryNodeId,
   preLoadedDeliveryData,
-}) => {
+}: Props) => {
   const { isDispatcher } = useContext(FlagsContext)
 
   const mode = useSelector(selectMode)
