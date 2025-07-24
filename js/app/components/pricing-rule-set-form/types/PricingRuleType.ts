@@ -25,5 +25,5 @@ export type PriceObject =
   | PricePerPackageValue
 
 export function isManualSupplement(rule: PricingRuleType): boolean {
-  return rule.expression === 'true'
+  return rule.expression === 'false'
 }
