@@ -6,6 +6,8 @@ import PriceVATConverter from './PriceVATConverter'
 import Spinner from '../../../core/Spinner'
 import { DeliveryFormValues, PriceValues } from '../../types'
 
+import './ShowPrice.scss'
+
 type Props = {
   setPrice: (price: PriceValues) => void
   taxRate: number
