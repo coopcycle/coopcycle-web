@@ -1,23 +1,25 @@
 // API Types for RTK Query endpoints
 
+export type NodeId = string
+
+// Base JSON-LD entity interface
+export interface JsonLdEntity {
+  '@id': NodeId
+  '@type': string
+}
+
 // Common Hydra JSON-LD response structure
 export interface HydraCollection<T> {
   'hydra:member': T[]
   'hydra:totalItems': number
   'hydra:view'?: {
-    '@id': string
+    '@id': NodeId
     '@type': string
     'hydra:first'?: string
     'hydra:last'?: string
     'hydra:previous'?: string
     'hydra:next'?: string
   }
-}
-
-// Base JSON-LD entity interface
-export interface JsonLdEntity {
-  '@id': string
-  '@type': string
 }
 
 export interface GeoCoordinates {
@@ -104,12 +106,12 @@ export interface Store extends JsonLdEntity {
   enabled: boolean
   address: Address
   prefillPickupAddress: boolean
-  timeSlot?: TimeSlot
+  timeSlot?: NodeId
   weightRequired: boolean
   packagesRequired: boolean
   multiDropEnabled: boolean
   multiPickupEnabled: boolean
-  timeSlots: TimeSlot[]
+  timeSlots: NodeId[]
 }
 
 export interface ProductOptionValue extends JsonLdEntity {

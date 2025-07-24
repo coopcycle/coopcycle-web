@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useLayoutEffect } from 'react'
+import React, { useEffect, useLayoutEffect } from 'react'
 import { Provider, useDispatch } from 'react-redux'
 import { accountSlice } from '../../entities/account/reduxSlice'
 import DeliveryForm from './DeliveryForm'
@@ -8,6 +8,7 @@ import { RootWithDefaults } from '../../utils/react'
 import { Mode } from './mode'
 import { setMode } from './redux/formSlice'
 import FlagsContext from './FlagsContext'
+import { NodeId } from '../../api/types'
 
 const buildInitialState = () => {
   return {
@@ -18,9 +19,9 @@ const buildInitialState = () => {
 const store = createStoreFromPreloadedState(buildInitialState())
 
 type Props = {
-  storeNodeId: string
-  deliveryId?: string
-  deliveryNodeId?: string
+  storeNodeId: NodeId
+  deliveryId?: number
+  deliveryNodeId?: NodeId
   delivery?: string
   isDispatcher: boolean
   isDebugPricing: boolean
