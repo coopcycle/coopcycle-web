@@ -36,6 +36,7 @@ import {
   CreatePricingRuleSetRequest,
   UpdatePricingRuleSetRequest,
   TimeSlotChoices,
+  NodeId,
 } from './types'
 
 // Define our single API slice object
@@ -117,8 +118,8 @@ export const apiSlice = createApi({
       },
     }),
 
-    getStore: builder.query<Store, string>({
-      query: (nodeId: string) => nodeId,
+    getStore: builder.query<Store, NodeId>({
+      query: (nodeId: NodeId) => nodeId,
     }),
     getStoreAddresses: builder.query<Address[], string>({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
@@ -262,8 +263,8 @@ export const apiSlice = createApi({
       query: () => 'api/pricing_rule_sets',
       providesTags: ['PricingRuleSet'],
     }),
-    getPricingRuleSet: builder.query<PricingRuleSet, number>({
-      query: id => `api/pricing_rule_sets/${id}`,
+    getPricingRuleSet: builder.query<PricingRuleSet, NodeId>({
+      query: (nodeId: NodeId) => nodeId,
       providesTags: (result, error, id) => [{ type: 'PricingRuleSet', id }],
     }),
     createPricingRuleSet: builder.mutation<

@@ -26,6 +26,7 @@ import PricingRuleSection from './components/PricingRuleSection'
 import './pricing-rule-set-form.scss'
 import HelpIcon from '../HelpIcon'
 import { isManualSupplement, PricingRuleType } from './types/PricingRuleType'
+import { NodeId } from '../../api/types'
 
 // Utility function to generate temporary @id for new rules
 const generateTempId = (): string => `temp-${uuidv4()}`
@@ -35,10 +36,15 @@ const isTempId = (id: string): boolean => id.startsWith('temp-')
 
 type Props = {
   ruleSetId: number | null
+  ruleSetNodeId: NodeId | null
   isNew?: boolean
 }
 
-const PricingRuleSetForm = ({ ruleSetId, isNew = false }: Props) => {
+const PricingRuleSetForm = ({
+  ruleSetId,
+  ruleSetNodeId,
+  isNew = false,
+}: Props) => {
   const { t } = useTranslation()
   const [form] = Form.useForm()
   const [rules, setRules] = useState([] as PricingRuleType[])
@@ -98,7 +104,7 @@ const PricingRuleSetForm = ({ ruleSetId, isNew = false }: Props) => {
     data: ruleSet,
     isLoading: isLoadingRuleSet,
     error: ruleSetError,
-  } = useGetPricingRuleSetQuery(ruleSetId, {
+  } = useGetPricingRuleSetQuery(ruleSetNodeId, {
     skip: isNew,
   })
 
