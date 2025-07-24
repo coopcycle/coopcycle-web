@@ -3,8 +3,8 @@ import { Field, useFormikContext } from 'formik'
 import { useTranslation } from 'react-i18next'
 import { Input } from 'antd'
 import PriceVATConverter from './PriceVATConverter'
-import Spinner from '../core/Spinner'
-import { DeliveryFormValues, PriceValues } from './types'
+import Spinner from '../../../core/Spinner'
+import { DeliveryFormValues, PriceValues } from '../../types'
 
 type Props = {
   setPrice: (price: PriceValues) => void

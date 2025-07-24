@@ -5,7 +5,7 @@ import {
   OrderItem as OrderItemType,
   ProductOptionValue,
   ProductVariant,
-} from '../../api/types'
+} from '../../../../api/types'
 
 type ProductOptionValueProps = {
   index: number

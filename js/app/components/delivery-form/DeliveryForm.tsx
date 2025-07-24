@@ -23,7 +23,7 @@ import {
 } from '../../api/slice'
 import { RecurrenceRules } from './RecurrenceRules'
 import useSubmit from './hooks/useSubmit'
-import Order from './Order'
+import Order from './components/order/Order'
 import SuggestionModal from './SuggestionModal'
 import DeliveryResume from './DeliveryResume'
 import Map from '../DeliveryMap'

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { InputNumber } from 'antd'
 import { useTranslation } from 'react-i18next'
 import './PriceVATConverter.scss'
-import { PriceValues } from './types'
+import { PriceValues } from '../../types'
 
 const getCurrencySymbol = (): string => {
   const { currencySymbol } = document.body.dataset
