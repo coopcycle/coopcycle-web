@@ -15,7 +15,9 @@ use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
-use Sylius\Component\Order\Model\OrderInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Sylius\Component\Order\Model\AdjustmentInterface as BaseAdjustmentInterface;
 use Sylius\Component\Order\Model\OrderItem as BaseOrderItem;
 use Sylius\Component\Order\Model\OrderItemInterface as BaseOrderItemInterface;
 
@@ -90,6 +92,19 @@ class OrderItem extends BaseOrderItem implements OrderItemInterface
     public function setVariant(?ProductVariantInterface $variant): void
     {
         $this->variant = $variant;
+    }
+
+    public function getAdjustmentsSorted(?string $type = null): Collection
+    {
+        // Make sure adjustments are always in the same order
+        // We order them by id asc
+
+        $adjustments = $this->getAdjustments($type);
+        $adjustmentsArray = $adjustments->toArray();
+        usort($adjustmentsArray, function (BaseAdjustmentInterface $a, BaseAdjustmentInterface $b) {
+            return $a->getId() <=> $b->getId();
+        });
+        return new ArrayCollection($adjustmentsArray);
     }
 
     /**

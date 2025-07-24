@@ -10,7 +10,7 @@ monolog:
       path: "%env(APP_LOG_DIR)%/%kernel.environment%.log"
       level: debug
       max_files: 3
-      channels: [ "!event" ]
+      channels: [ "!event", "!deprecation" ]
     redis:
       type: rotating_file
       path: "%env(APP_LOG_DIR)%/redis.%kernel.environment%.log"
