@@ -113,6 +113,7 @@ monolog:
         upload_info:
             type: filter
             channels: [
+              "!deprecation"
               "!php",
               "!cache",
               "!security",
