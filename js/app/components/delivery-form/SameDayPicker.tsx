@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import moment from 'moment/moment'
+import moment, { Moment } from 'moment/moment'
 import { DatePicker, Select } from 'antd'
 import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
 import { useSelector } from 'react-redux'
@@ -8,11 +8,16 @@ import { Mode } from './mode'
 
 const { Option } = Select
 
-function generateTimeSlots(after = null) {
-  const items = []
+interface TimeSlotOption {
+  time: Moment
+  disabled: boolean
+}
+
+function generateTimeSlots(after: Moment | null = null): TimeSlotOption[] {
+  const items: TimeSlotOption[] = []
   const minutes = [0, 10, 20, 30, 40, 50]
 
-  new Array(24).fill().forEach((_, taskIndex) => {
+  new Array(24).fill(null).forEach((_, taskIndex) => {
     minutes.forEach(minute => {
       items.push({
         time: moment({ hour: taskIndex, minute: minute }),
@@ -37,14 +42,19 @@ function generateTimeSlots(after = null) {
   })
 }
 
-const SameDayPicker = ({ format, taskId }) => {
+type Props = {
+  format: string
+  taskId: string
+}
+
+const SameDayPicker = ({ format, taskId }: Props) => {
   const mode = useSelector(selectMode)
   const { taskValues, setFieldValue, taskIndex } = useDeliveryFormFormikContext({
     taskId: taskId,
   })
 
   const firstSelectOptions = generateTimeSlots()
-  const [secondSelectOptions, setSecondSelectOptions] = useState([])
+  const [secondSelectOptions, setSecondSelectOptions] = useState<TimeSlotOption[]>([])
 
   useEffect(() => {
     if (taskValues.after) {

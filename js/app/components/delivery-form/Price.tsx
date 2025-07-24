@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useContext,
 } from 'react'
-import { Checkbox } from 'antd'
+import { Checkbox, CheckboxChangeEvent } from 'antd'
 import { useTranslation } from 'react-i18next'
 
 import { money } from '../../../../assets/react/controllers/Incident/utils'
@@ -21,8 +21,20 @@ import { Mode, modeIn } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
 import FlagsContext from './FlagsContext'
+import { CalculationOutput, Order } from '../../api/types'
+import { PriceValues } from './types'
 
-const TotalPrice = ({ overridePrice, priceWithTaxes, priceWithoutTaxes }) => {
+type TotalPriceProps = {
+  overridePrice: boolean
+  priceWithTaxes: number
+  priceWithoutTaxes: number
+}
+
+const TotalPrice = ({
+  overridePrice,
+  priceWithTaxes,
+  priceWithoutTaxes,
+}: TotalPriceProps) => {
   const { t } = useTranslation()
 
   return (
@@ -39,19 +51,27 @@ const TotalPrice = ({ overridePrice, priceWithTaxes, priceWithoutTaxes }) => {
   )
 }
 
-export default ({
+type Props = {
+  storeNodeId: string
+  order: Order | null
+  setPriceLoading: (loading: boolean) => void
+  setOrder: (order: Order | null) => void
+  setOverridePrice: (override: boolean) => void
+}
+
+const Price = ({
   storeNodeId,
   order,
   setPriceLoading,
   setOrder,
   setOverridePrice: setOverridePriceOnParent,
-}) => {
+}: Props) => {
   const { isDispatcher, isDebugPricing } = useContext(FlagsContext)
 
   const mode = useSelector(selectMode)
   const { values, setFieldValue } = useDeliveryFormFormikContext()
 
-  const [overridePrice, setOverridePrice] = useState(() => {
+  const [overridePrice, setOverridePrice] = useState<boolean>(() => {
     if (modeIn(mode, [Mode.DELIVERY_CREATE, Mode.RECURRENCE_RULE_UPDATE])) {
       // when cloning an order that has an arbitrary price
       if (
@@ -74,7 +94,7 @@ export default ({
     }
   }, [order, mode])
 
-  const [newPrice, setNewPrice] = useState(0)
+  const [newPrice, setNewPrice] = useState(0 as 0 | CalculationOutput | PriceValues)
 
   const { t } = useTranslation()
 
@@ -152,7 +172,7 @@ export default ({
   }, [calculatePriceError])
 
   const toggleOverridePrice = useCallback(
-    value => {
+    (value: boolean) => {
       setOverridePrice(value)
       setOverridePriceOnParent(value)
       setNewPrice(0)
@@ -335,7 +355,7 @@ export default ({
                 className="ml-4 mb-1"
                 name="delivery.override_price"
                 checked={overridePrice}
-                onChange={e => {
+                onChange={(e: CheckboxChangeEvent) => {
                   e.stopPropagation()
                   toggleOverridePrice(e.target.checked)
                 }}
@@ -350,3 +370,5 @@ export default ({
     </div>
   )
 }
+
+export default Price

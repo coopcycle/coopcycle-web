@@ -11,8 +11,10 @@ import './AddressBook.scss'
 import {
   useDeliveryFormFormikContext
 } from './hooks/useDeliveryFormFormikContext'
+import type { Address } from './types'
+import { Store } from '../../api/types'
 
-function getFormattedValue(value) {
+function getFormattedValue(value: string | null): string {
   if (typeof value === 'string') {
     const phoneNumber = parsePhoneNumberFromString(
       value,
@@ -20,10 +22,10 @@ function getFormattedValue(value) {
     )
     return phoneNumber ? phoneNumber.formatNational() : value
   }
-  return value
+  return value || ''
 }
 
-function getUnformattedValue(value) {
+function getUnformattedValue(value: string | null): string {
   if (typeof value === 'string') {
     const phoneNumber = parsePhoneNumberFromString(
       value,
@@ -39,17 +41,24 @@ function getUnformattedValue(value) {
   return value ?? ''
 }
 
-export default function AddressBook({ taskId, addresses, storeDeliveryInfos, shallPrefillAddress }) {
+type Props = {
+  taskId: string
+  addresses: Address[]
+  storeDeliveryInfos: Partial<Store>
+  shallPrefillAddress: boolean
+}
+
+const AddressBook = ({ taskId, addresses, storeDeliveryInfos, shallPrefillAddress }: Props) => {
   const { t } = useTranslation()
   const { values, setFieldValue, errors, taskIndex: index } = useDeliveryFormFormikContext({
     taskId: taskId,
   })
   const updateInStoreAddresses = values.tasks[index].updateInStoreAddresses
 
-  const [isModalOpen, setModalOpen] = useState(false)
+  const [isModalOpen, setModalOpen] = useState<boolean>(false)
   const [alreadyAskedForModification, setAlreadyAskedForModification] =
-    useState(false)
-  const [selectValue, setSelectValue] = useState(values.tasks[index].address.name)
+    useState<boolean>(false)
+  const [selectValue, setSelectValue] = useState<string>(values.tasks[index].address.name)
 
   /* To handle the case where the user picked a remembered address in select but change contactName, name or telephone value */
   const handleModifyAddress = () => {
@@ -309,3 +318,5 @@ export default function AddressBook({ taskId, addresses, storeDeliveryInfos, sha
     </div>
   )
 }
+
+export default AddressBook

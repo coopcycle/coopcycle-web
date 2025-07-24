@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Checkbox } from 'antd'
 import { Formik, Form, FieldArray } from 'formik'
-import moment from 'moment'
+import moment, { Moment } from 'moment'
 import { v4 as uuidv4 } from 'uuid'
 
 import Spinner from '../../components/core/Spinner.js'
 import BarcodesModal from '../../../../assets/react/controllers/BarcodesModal.jsx'
-import Task from '../../components/delivery-form/Task.js'
+import Task from '../../components/delivery-form/Task'
 import { usePrevious } from '../../dashboard/redux/utils'
 
 import { PhoneNumberUtil } from 'google-libphonenumber'
@@ -31,17 +31,19 @@ import { Mode, modeIn } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
 import FlagsContext from './FlagsContext'
+import type { Task as TaskType, DeliveryFormValues, FormErrors } from './types'
+import { PutDeliveryRequest, Store } from '../../api/types'
 
-const generateTempId = () => `temp-${uuidv4()}`
+const generateTempId = (): string => `temp-${uuidv4()}`
 
-const getTaskId = (task) => {
+const getTaskId = (task: TaskType): string | null => {
   return task['@id']
 }
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
 
-const getNextRoundedTime = () => {
+const getNextRoundedTime = (): Moment => {
   const now = moment()
   now.add(60, 'minutes')
   const roundedMinutes = Math.ceil(now.minutes() / 5) * 5
@@ -57,7 +59,7 @@ const getNextRoundedTime = () => {
 }
 
 /** TODO : use this validation when we port the form for store owners for which the phone is required */
-const validatePhoneNumber = (telephone) => {
+const validatePhoneNumber = (telephone: string | null): boolean => {
   if (telephone) {
     try {
       const phoneNumber = telephone.startsWith('+')
@@ -72,7 +74,7 @@ const validatePhoneNumber = (telephone) => {
   }
 };
 
-function getFormattedValue(value) {
+function getFormattedValue(value: string | null): string {
   if (typeof value === 'string') {
     const phoneNumber = parsePhoneNumberFromString(
       value,
@@ -80,10 +82,10 @@ function getFormattedValue(value) {
     )
     return phoneNumber ? phoneNumber.formatNational() : value
   }
-  return value
+  return value || ''
 }
 
-function canAddAnother(type, pickups, dropoffs) {
+function canAddAnother(type: 'PICKUP' | 'DROPOFF', pickups: TaskType[], dropoffs: TaskType[]): boolean {
   switch (type) {
     case 'PICKUP':
       return dropoffs.length === 1
@@ -134,32 +136,39 @@ const pickupSchema = {
   '@id': null, // Will be set when creating new tasks
 }
 
-export default function({
+type Props = {
+  storeNodeId: string
+  deliveryId?: string
+  deliveryNodeId?: string
+  preLoadedDeliveryData?: PutDeliveryRequest | null
+}
+
+const DeliveryForm = ({
   storeNodeId,
   // prefer using deliveryNodeId
   deliveryId,
   // nodeId: Delivery or RecurrenceRule node
   deliveryNodeId,
   preLoadedDeliveryData,
-}) {
+}: Props) => {
   const { isDispatcher } = useContext(FlagsContext)
 
   const mode = useSelector(selectMode)
-  const [isLoading, setIsLoading] = useState(true)
-  const [expandedTasks, setExpandedTasks] = useState({})
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [expandedTasks, setExpandedTasks] = useState<Record<number, boolean>>({})
 
   const { data: storeData } = useGetStoreQuery(storeNodeId)
-  const storeDeliveryInfos = useMemo(() => storeData ?? {}, [storeData])
+  const storeDeliveryInfos = useMemo(() => storeData ?? {} as Partial<Store>, [storeData])
 
   const { data: tags } = useGetTagsQuery(undefined, {
     skip: !isDispatcher,
   })
   const { data: addresses } = useGetStoreAddressesQuery(storeNodeId)
 
-  const [trackingLink, setTrackingLink] = useState('#')
-  const [initialValues, setInitialValues] = useState({ tasks: [] })
+  const [trackingLink, setTrackingLink] = useState<string>('#')
+  const [initialValues, setInitialValues] = useState<DeliveryFormValues>({ tasks: [] })
 
-  const [priceLoading, setPriceLoading] = useState(false)
+  const [priceLoading, setPriceLoading] = useState<boolean>(false)
 
   const order = useMemo(() => {
     if (mode === Mode.DELIVERY_CREATE) {
@@ -190,15 +199,15 @@ export default function({
 
   const { t } = useTranslation()
 
-  const handleTaskExpansion = (taskIndex, isExpanded) => {
+  const handleTaskExpansion = (taskIndex: number, isExpanded: boolean) => {
     setExpandedTasks(prev => ({
       ...prev,
       [taskIndex]: isExpanded
     }))
   }
 
-  const validate = (values) => {
-    const errors = { tasks: [] };
+  const validate = (values: DeliveryFormValues): FormErrors => {
+    const errors: FormErrors = { tasks: [] };
 
     for (let i = 0; i < values.tasks.length; i++) {
 
@@ -273,7 +282,7 @@ export default function({
 
     const initialExpandedState = {}
     if (preLoadedDeliveryData) {
-      const initialValues = structuredClone(preLoadedDeliveryData)
+      const initialValues = structuredClone(preLoadedDeliveryData) as DeliveryFormValues
 
       initialValues.tasks = preLoadedDeliveryData.tasks.map(task => {
         return {
@@ -352,8 +361,12 @@ export default function({
         >
           {({ values, isSubmitting, setFieldValue }) => {
 
+            //FIXME: we probably need to move all this into a function component
+            // eslint-disable-next-line react-hooks/rules-of-hooks
             const previousValues = usePrevious(values)
 
+            //FIXME: we probably need to move all this into a function component
+            // eslint-disable-next-line react-hooks/rules-of-hooks
             useEffect(() => {
 
               // Skip if no or 1 task
@@ -625,3 +638,5 @@ export default function({
         </Formik>
   )
 }
+
+export default DeliveryForm

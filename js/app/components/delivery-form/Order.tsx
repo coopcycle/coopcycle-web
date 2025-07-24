@@ -3,13 +3,24 @@ import Price from './Price'
 import Cart from './Cart'
 import { Spin } from 'antd'
 import FlagsContext from './FlagsContext'
+import type { Order as OrderType } from '../../api/types'
 
-export default ({ storeNodeId, order: preLoadedOrder, setPriceLoading }) => {
+type Props = {
+  storeNodeId: string
+  order: OrderType | null
+  setPriceLoading: (loading: boolean) => void
+}
+
+const Order = ({
+  storeNodeId,
+  order: preLoadedOrder,
+  setPriceLoading,
+}: Props) => {
   const { isPriceBreakdownEnabled } = useContext(FlagsContext)
-  const [order, setOrder] = useState(preLoadedOrder)
-  const [isLoading, setIsLoading] = useState(false)
+  const [order, setOrder] = useState<OrderType | null>(preLoadedOrder)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
-  const [overridePrice, setOverridePrice] = useState(false)
+  const [overridePrice, setOverridePrice] = useState<boolean>(false)
 
   return (
     <Spin spinning={isLoading}>
@@ -31,3 +42,5 @@ export default ({ storeNodeId, order: preLoadedOrder, setPriceLoading }) => {
     </Spin>
   )
 }
+
+export default Order

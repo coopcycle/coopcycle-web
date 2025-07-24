@@ -31,7 +31,6 @@ Encore
   .addEntry('dashboard', './js/app/dashboard/index.js')
   .addEntry('datadog', './js/app/datadog.js')
   .addEntry('delivery-form', './js/app/delivery/form.js')
-  .addEntry('delivery-form-react', './js/app/components/delivery-form/index.js')
   .addEntry('delivery-homepage', './js/app/delivery/homepage.js')
   .addEntry('delivery-list', './js/app/delivery/list.js')
   .addEntry('delivery-map', './js/app/delivery/map.js')

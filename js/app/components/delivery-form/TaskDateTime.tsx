@@ -8,8 +8,16 @@ import { useGetStoreQuery } from '../../api/slice'
 import { Mode } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
+import type { TimeSlot } from './types'
 
-export const TaskDateTime = ({ isDispatcher, storeNodeId, timeSlots, taskId }) => {
+type Props = {
+  isDispatcher: boolean
+  storeNodeId: string
+  timeSlots: TimeSlot[]
+  taskId: string
+}
+
+export const TaskDateTime = ({ isDispatcher, storeNodeId, timeSlots, taskId }: Props) => {
   const format = 'LL'
 
   const { data: store } = useGetStoreQuery(storeNodeId)
@@ -20,7 +28,7 @@ export const TaskDateTime = ({ isDispatcher, storeNodeId, timeSlots, taskId }) =
   })
 
   const timeSlotIds = store?.timeSlots
-  const [isTimeSlotSelect, setIsTimeSlotSelect] = useState(true)
+  const [isTimeSlotSelect, setIsTimeSlotSelect] = useState<boolean>(true)
 
   useEffect(() => {
     if (mode === Mode.DELIVERY_UPDATE) {

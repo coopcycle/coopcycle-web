@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { DatePicker, Select, Radio } from 'antd'
-import moment from 'moment'
+import moment, { Moment } from 'moment'
 import { useTranslation } from 'react-i18next'
 
 import './TimeSlotPicker.scss'
 import Spinner from '../core/Spinner'
-import {
-  useDeliveryFormFormikContext
-} from './hooks/useDeliveryFormFormikContext'
+import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
 import { useGetStoreQuery, useGetTimeSlotChoicesQuery } from '../../api/slice'
 import { Mode } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
+import type { TimeSlot } from './types'
+import { TimeSlotChoice } from '../../api/types'
 
-const extractDateAndRangeFromTimeSlot = (timeSlotChoice) => {
+const extractDateAndRangeFromTimeSlot = (timeSlotChoice: string) => {
   let [first, second] = timeSlotChoice.split('/')
   first = moment(first)
   second = moment(second)
@@ -22,8 +22,10 @@ const extractDateAndRangeFromTimeSlot = (timeSlotChoice) => {
   return { date, hour }
 }
 
-const formatSlots = (timeSlotChoices) => {
-  const formattedSlots = {}
+const formatSlots = (
+  timeSlotChoices: TimeSlotChoice[],
+): Record<string, string[]> => {
+  const formattedSlots = {} as Record<string, string[]>
   timeSlotChoices.forEach(choice => {
     const { date, hour } = extractDateAndRangeFromTimeSlot(choice.value)
     const formattedDate = date.format('YYYY-MM-DD')
@@ -40,45 +42,75 @@ const formatSlots = (timeSlotChoices) => {
 const InputLabel = () => {
   const { t } = useTranslation()
 
-  return (<div className="mb-2 font-weight-bold title-slot">{t('ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE')}</div>)
+  return (
+    <div className="mb-2 font-weight-bold title-slot">
+      {t('ADMIN_DASHBOARD_FILTERS_TAB_TIMERANGE')}
+    </div>
+  )
 }
 
-export default ({ storeNodeId, taskId, timeSlotLabels }) => {
+type Props = {
+  storeNodeId: string
+  taskId: string
+  timeSlotLabels: TimeSlot[]
+}
 
+const TimeSlotPicker = ({ storeNodeId, taskId, timeSlotLabels }: Props) => {
   const { data: store } = useGetStoreQuery(storeNodeId)
 
   const { t } = useTranslation()
 
   const mode = useSelector(selectMode)
-  const { taskValues, taskIndex: index, setFieldValue } = useDeliveryFormFormikContext({
+  const {
+    taskValues,
+    taskIndex: index,
+    setFieldValue,
+  } = useDeliveryFormFormikContext({
     taskId: taskId,
   })
 
-  const { data: timeSlotChoicesResponse, isFetching: isLoadingChoices } = useGetTimeSlotChoicesQuery(taskValues.timeSlotUrl, {
-    skip: !taskValues.timeSlotUrl
-  })
+  const { data: timeSlotChoicesResponse, isFetching: isLoadingChoices } =
+    useGetTimeSlotChoicesQuery(taskValues.timeSlotUrl, {
+      skip: !taskValues.timeSlotUrl,
+    })
 
   const storeTimeSlotIds = store?.timeSlots
   const storeDefaultTimeSlotId = store?.timeSlot
 
-  const [formattedTimeslots, setFormattedTimeslots] = useState({})
+  const [formattedTimeslots, setFormattedTimeslots] = useState<
+    Record<string, string[]>
+  >({})
 
-  const setTimeSlotUrl = useCallback((timeSlotUrl) => {
-    setFieldValue(`tasks[${index}].timeSlotUrl`, timeSlotUrl)
-  }, [index, setFieldValue])
+  const setTimeSlotUrl = useCallback(
+    (timeSlotUrl: string) => {
+      setFieldValue(`tasks[${index}].timeSlotUrl`, timeSlotUrl)
+    },
+    [index, setFieldValue],
+  )
 
-  const setTimeSlot = useCallback((timeSlot) => {
-    setFieldValue(`tasks[${index}].timeSlot`, timeSlot)
-  }, [index, setFieldValue])
+  const setTimeSlot = useCallback(
+    timeSlot => {
+      setFieldValue(`tasks[${index}].timeSlot`, timeSlot)
+    },
+    [index, setFieldValue],
+  )
 
-
-  const setTimeSlotFromDateAndRange = useCallback((date, hourRange) => {
-    const [first, second] = hourRange.split('-')
-    const startTime = date.clone().hours(first.split(':')[0]).minutes(first.split(':')[1])
-    const endTime = date.clone().hours(second.split(':')[0]).minutes(second.split(':')[1])
-    const timeSlot = `${startTime.utc().format('YYYY-MM-DDTHH:mm:00')}Z/${endTime.utc().format('YYYY-MM-DDTHH:mm:00')}Z`
-    setTimeSlot(timeSlot)
-  }, [setTimeSlot])
+  const setTimeSlotFromDateAndRange = useCallback(
+    (date, hourRange) => {
+      const [first, second] = hourRange.split('-')
+      const startTime = date
+        .clone()
+        .hours(first.split(':')[0])
+        .minutes(first.split(':')[1])
+      const endTime = date
+        .clone()
+        .hours(second.split(':')[0])
+        .minutes(second.split(':')[1])
+      const timeSlot = `${startTime.utc().format('YYYY-MM-DDTHH:mm:00')}Z/${endTime.utc().format('YYYY-MM-DDTHH:mm:00')}Z`
+      setTimeSlot(timeSlot)
+    },
+    [setTimeSlot],
+  )
 
   // Preselect a time slot if no time slot is selected
   useEffect(() => {
@@ -95,8 +127,13 @@ export default ({ storeNodeId, taskId, timeSlotLabels }) => {
     }
 
     setTimeSlotUrl(storeDefaultTimeSlotId ?? storeTimeSlotIds[0])
-
-  }, [storeTimeSlotIds, storeDefaultTimeSlotId, taskValues.timeSlotUrl, setTimeSlotUrl, mode])
+  }, [
+    storeTimeSlotIds,
+    storeDefaultTimeSlotId,
+    taskValues.timeSlotUrl,
+    setTimeSlotUrl,
+    mode,
+  ])
 
   // Load time slot choices when timeSlotUrl changes
   useEffect(() => {
@@ -109,7 +146,6 @@ export default ({ storeNodeId, taskId, timeSlotLabels }) => {
 
       setTimeSlotUrl(null)
       setTimeSlot(null)
-
     } else {
       // Preselect the first available time slot choice
 
@@ -118,9 +154,17 @@ export default ({ storeNodeId, taskId, timeSlotLabels }) => {
 
       const availableDates = Object.keys(formattedSlots)
       const firstDate = moment(availableDates[0])
-      setTimeSlotFromDateAndRange(firstDate, formattedSlots[availableDates[0]][0])
+      setTimeSlotFromDateAndRange(
+        firstDate,
+        formattedSlots[availableDates[0]][0],
+      )
     }
-  }, [timeSlotChoicesResponse, setTimeSlotFromDateAndRange, setTimeSlotUrl, setTimeSlot])
+  }, [
+    timeSlotChoicesResponse,
+    setTimeSlotFromDateAndRange,
+    setTimeSlotUrl,
+    setTimeSlot,
+  ])
 
   const handleTimeSlotLabelChange = e => {
     setTimeSlotUrl(e.target.value)
@@ -142,10 +186,13 @@ export default ({ storeNodeId, taskId, timeSlotLabels }) => {
       <>
         <InputLabel />
         <Spinner />
-      </>)
+      </>
+    )
   }
 
-  const availableDates = Object.keys(formattedTimeslots || {}).map(date => moment(date))
+  const availableDates = Object.keys(formattedTimeslots || {}).map(date =>
+    moment(date),
+  )
 
   function isDateDisabled(current) {
     return !availableDates.some(date => date.isSame(current, 'day'))
@@ -154,17 +201,17 @@ export default ({ storeNodeId, taskId, timeSlotLabels }) => {
   const selectedDate = extractDateAndRangeFromTimeSlot(taskValues.timeSlot).date
   const selectedHour = extractDateAndRangeFromTimeSlot(taskValues.timeSlot).hour
 
-  const hourOptions = formattedTimeslots[selectedDate.format('YYYY-MM-DD')] || []
+  const hourOptions =
+    formattedTimeslots[selectedDate.format('YYYY-MM-DD')] || []
 
   return (
     <>
       <InputLabel />
 
-      {(timeSlotLabels && timeSlotLabels.length > 1) ?
+      {timeSlotLabels && timeSlotLabels.length > 1 ? (
         <Radio.Group
           className="timeslot__container mb-2"
-          value={taskValues.timeSlotUrl}
-        >
+          value={taskValues.timeSlotUrl}>
           {timeSlotLabels.map(label => (
             <Radio.Button
               key={label.name}
@@ -176,10 +223,9 @@ export default ({ storeNodeId, taskId, timeSlotLabels }) => {
             </Radio.Button>
           ))}
         </Radio.Group>
-        : null
-      }
+      ) : null}
 
-      { hourOptions.length > 0 ?
+      {hourOptions.length > 0 ? (
         <div style={{ display: 'flex', marginTop: '0.5em' }}>
           <DatePicker
             data-testid="date-picker"
@@ -199,19 +245,19 @@ export default ({ storeNodeId, taskId, timeSlotLabels }) => {
             onChange={option => {
               handleHourChange(option)
             }}
-            value={selectedHour}
-          >
-            {
-              hourOptions.map(option => (
-                <Select.Option key={option} value={option}>
-                  {option}
-                </Select.Option>
-              ))
-            }
+            value={selectedHour}>
+            {hourOptions.map(option => (
+              <Select.Option key={option} value={option}>
+                {option}
+              </Select.Option>
+            ))}
           </Select>
         </div>
-        : <p>{t('ADMIN_DASHBOARD_NO_TIMESLOTS_AVAILABLE')}</p>
-      }
+      ) : (
+        <p>{t('ADMIN_DASHBOARD_NO_TIMESLOTS_AVAILABLE')}</p>
+      )}
     </>
   )
 }
+
+export default TimeSlotPicker

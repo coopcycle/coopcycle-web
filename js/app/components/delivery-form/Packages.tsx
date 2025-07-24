@@ -6,8 +6,15 @@ import './Packages.scss'
 import {
   useDeliveryFormFormikContext
 } from './hooks/useDeliveryFormFormikContext'
+import { Package } from '../../api/types'
+import { InputPackage } from './types'
 
-export default ({ taskId, packages }) => {
+type Props = {
+  taskId: string
+  packages: Package[]
+}
+
+const Packages = ({ taskId, packages }: Props) => {
   const {
     taskValues,
     taskErrors,
@@ -17,11 +24,11 @@ export default ({ taskId, packages }) => {
     taskId: taskId,
   })
 
-  const [packagesPicked, setPackagesPicked] = useState(() => {
-    let picked = []
+  const [packagesPicked, setPackagesPicked] = useState<InputPackage[]>(() => {
+    let picked: InputPackage[] = []
 
     for (const p of packages) {
-      const newPackages = {
+      const newPackages: InputPackage = {
         type: p.name,
         quantity: 0,
       }
@@ -52,10 +59,10 @@ export default ({ taskId, packages }) => {
     setFieldValue(`tasks[${index}].packages`, packagesPicked)
   }, [packagesPicked, setFieldValue, index])
 
-  const handlePlusButton = item => {
+  const handlePlusButton = (item: Package) => {
     const pack = packagesPicked.find(p => p.type === item.name)
     const index = packagesPicked.findIndex(p => p === pack)
-    if (index !== -1) {
+    if (index !== -1 && pack) {
       const newPackagesPicked = [...packagesPicked]
       const newQuantity = pack.quantity + 1
       newPackagesPicked[index] = {
@@ -66,11 +73,11 @@ export default ({ taskId, packages }) => {
     }
   }
 
-  const handleMinusButton = item => {
+  const handleMinusButton = (item: Package) => {
     const pack = packagesPicked.find(p => p.type === item.name)
     const index = packagesPicked.findIndex(p => p === pack)
 
-    if (index !== -1) {
+    if (index !== -1 && pack) {
       const newPackagesPicked = [...packagesPicked]
       const newQuantity = pack.quantity > 0 ? pack.quantity - 1 : 0
       newPackagesPicked[index] = {
@@ -83,9 +90,9 @@ export default ({ taskId, packages }) => {
   }
 
   /**Used to make the input a controlated field */
-  const getPackagesItems = item => {
+  const getPackagesItems = (item: Package): number => {
     const sameTypePackage = packagesPicked.find(p => p.type === item.name)
-    return sameTypePackage.quantity
+    return sameTypePackage ? sameTypePackage.quantity : 0
   }
 
   return (
@@ -138,3 +145,5 @@ export default ({ taskId, packages }) => {
     </>
   )
 }
+
+export default Packages

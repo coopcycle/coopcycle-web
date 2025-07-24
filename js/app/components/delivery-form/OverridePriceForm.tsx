@@ -4,9 +4,15 @@ import { useTranslation } from 'react-i18next'
 import { Input } from 'antd'
 import PriceVATConverter from './PriceVATConverter'
 import Spinner from '../core/Spinner'
+import { DeliveryFormValues, PriceValues } from './types'
 
-export default ({ setPrice, taxRate }) => {
-  const { values, errors, setFieldValue } = useFormikContext()
+type Props = {
+  setPrice: (price: PriceValues) => void
+  taxRate: number
+}
+
+const OverridePriceForm = ({ setPrice, taxRate }: Props) => {
+  const { values, errors, setFieldValue } = useFormikContext<DeliveryFormValues>()
 
   const { t } = useTranslation()
 
@@ -56,3 +62,5 @@ export default ({ setPrice, taxRate }) => {
     </div>
   )
 }
+
+export default OverridePriceForm

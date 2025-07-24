@@ -2,10 +2,21 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import TimeSlotPicker from './TimeSlotPicker'
 import DateRangePicker from './DateRangePicker'
+import { TimeSlot } from './types'
 
 import './SwitchTimeSlotFreePicker.scss'
 
-export default ({
+type Props = {
+  isDispatcher: boolean
+  storeNodeId: string
+  taskId: string
+  format: string
+  isTimeSlotSelect: boolean
+  setIsTimeSlotSelect: (value: boolean) => void
+  timeSlotLabels: TimeSlot[]
+}
+
+const SwitchTimeSlotFreePicker = ({
   isDispatcher,
   storeNodeId,
   taskId,
@@ -48,3 +59,5 @@ export default ({
     </>
   )
 }
+
+export default SwitchTimeSlotFreePicker

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import moment from 'moment'
+import moment, { Moment } from 'moment'
 
 import './DateRangePicker.scss'
 import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
 import { Mode, modeIn } from './mode'
 
-function getNextRoundedTime() {
+function getNextRoundedTime(): Moment {
   const now = moment()
   now.add(60, 'minutes')
   const roundedMinutes = Math.ceil(now.minutes() / 10) * 10
@@ -25,7 +25,11 @@ function getNextRoundedTime() {
   return now
 }
 
-const Label = ({ taskType }) => {
+type LabelProps = {
+  taskType: 'PICKUP' | 'DROPOFF'
+}
+
+const Label = ({ taskType }: LabelProps) => {
   const { t } = useTranslation()
 
   return taskType === 'DROPOFF' ? (
@@ -39,7 +43,13 @@ const Label = ({ taskType }) => {
   )
 }
 
-const DateTimeRangePicker = ({ format, taskId, isDispatcher }) => {
+type Props = {
+  format: string
+  taskId: string
+  isDispatcher: boolean
+}
+
+const DateTimeRangePicker = ({ format, taskId, isDispatcher }: Props) => {
   const { t } = useTranslation()
 
   const mode = useSelector(selectMode)
