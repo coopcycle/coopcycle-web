@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { InputNumber } from 'antd'
 import { useTranslation } from 'react-i18next'
 import './PriceVATConverter.scss'
+import { PriceValues } from './types'
 
 const getCurrencySymbol = (): string => {
   const { currencySymbol } = document.body.dataset
@@ -18,14 +19,9 @@ const removeVat = (vatIncludedPrice: number, taxRate: number): number => {
 
 type Props = {
   taxRate: number
-  setPrice: (price: number) => void
+  setPrice: (price: PriceValues) => void
   VAT?: number
   exVAT?: number
-}
-
-type PriceValues = {
-  VAT: number | null
-  exVAT: number | null
 }
 
 const PriceVATConverter = ({ taxRate, setPrice, VAT, exVAT }: Props) => {

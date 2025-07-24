@@ -503,6 +503,7 @@ export interface PostDeliveryRequest {
 export interface PutDeliveryRequest {
   nodeId: string
   tasks?: TaskPayload[]
+  order?: OrderPayload
 }
 
 export interface PutRecurrenceRuleRequest {

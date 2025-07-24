@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useContext,
 } from 'react'
-import { Checkbox } from 'antd'
+import { Checkbox, CheckboxChangeEvent } from 'antd'
 import { useTranslation } from 'react-i18next'
 
 import { money } from '../../../../assets/react/controllers/Incident/utils'
@@ -21,7 +21,8 @@ import { Mode, modeIn } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
 import FlagsContext from './FlagsContext'
-import { Order } from '../../api/types'
+import { CalculationOutput, Order } from '../../api/types'
+import { PriceValues } from './types'
 
 type TotalPriceProps = {
   overridePrice: boolean
@@ -29,7 +30,11 @@ type TotalPriceProps = {
   priceWithoutTaxes: number
 }
 
-const TotalPrice = ({ overridePrice, priceWithTaxes, priceWithoutTaxes }: TotalPriceProps) => {
+const TotalPrice = ({
+  overridePrice,
+  priceWithTaxes,
+  priceWithoutTaxes,
+}: TotalPriceProps) => {
   const { t } = useTranslation()
 
   return (
@@ -89,7 +94,7 @@ const Price = ({
     }
   }, [order, mode])
 
-  const [newPrice, setNewPrice] = useState(0)
+  const [newPrice, setNewPrice] = useState(0 as 0 | CalculationOutput | PriceValues)
 
   const { t } = useTranslation()
 
@@ -167,7 +172,7 @@ const Price = ({
   }, [calculatePriceError])
 
   const toggleOverridePrice = useCallback(
-    value => {
+    (value: boolean) => {
       setOverridePrice(value)
       setOverridePriceOnParent(value)
       setNewPrice(0)
@@ -350,7 +355,7 @@ const Price = ({
                 className="ml-4 mb-1"
                 name="delivery.override_price"
                 checked={overridePrice}
-                onChange={e => {
+                onChange={(e: CheckboxChangeEvent) => {
                   e.stopPropagation()
                   toggleOverridePrice(e.target.checked)
                 }}

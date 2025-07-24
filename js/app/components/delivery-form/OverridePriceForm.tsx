@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next'
 import { Input } from 'antd'
 import PriceVATConverter from './PriceVATConverter'
 import Spinner from '../core/Spinner'
-import { DeliveryFormValues } from './types'
+import { DeliveryFormValues, PriceValues } from './types'
 
 type Props = {
-  setPrice: (price: number) => void
+  setPrice: (price: PriceValues) => void
   taxRate: number
 }
 

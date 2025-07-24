@@ -205,7 +205,7 @@ export default function useSubmit(
   )
 
   const handleSubmit = useCallback(
-    async values => {
+    async (values: DeliveryFormValues) => {
       const hasSuggestions = await checkSuggestionsOnSubmit(values)
       if (hasSuggestions) {
         // the form will be submitted again after the user accepts or rejects the suggestions (see SuggestionModal)

@@ -45,16 +45,8 @@ export interface Task {
   doorstep?: boolean
 }
 
-export interface Delivery {
-  '@id': string
-  tasks: Task[]
-  order?
-  distance?: number
-  duration?: number
-  polyline?: string
-}
-
 export interface OrderFormValues {
+  isSavedOrder?: boolean
 }
 
 export interface DeliveryFormValues {
@@ -88,8 +80,7 @@ export interface FlagsContextType {
   isPriceBreakdownEnabled: boolean
 }
 
-export interface RecurrenceRule {
-  '@id': string
-  rule: string
-  template: Delivery
+export type PriceValues = {
+  VAT: number | null
+  exVAT: number | null
 }

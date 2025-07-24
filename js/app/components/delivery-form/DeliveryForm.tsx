@@ -31,8 +31,8 @@ import { Mode, modeIn } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
 import FlagsContext from './FlagsContext'
-import type { Task as TaskType, Delivery, DeliveryFormValues, FormErrors } from './types'
-import { Store } from '../../api/types'
+import type { Task as TaskType, DeliveryFormValues, FormErrors } from './types'
+import { PutDeliveryRequest, Store } from '../../api/types'
 
 const generateTempId = (): string => `temp-${uuidv4()}`
 
@@ -140,7 +140,7 @@ type Props = {
   storeNodeId: string
   deliveryId?: string
   deliveryNodeId?: string
-  preLoadedDeliveryData?: Delivery | null
+  preLoadedDeliveryData?: PutDeliveryRequest | null
 }
 
 const DeliveryForm = ({
@@ -282,7 +282,7 @@ const DeliveryForm = ({
 
     const initialExpandedState = {}
     if (preLoadedDeliveryData) {
-      const initialValues = structuredClone(preLoadedDeliveryData)
+      const initialValues = structuredClone(preLoadedDeliveryData) as DeliveryFormValues
 
       initialValues.tasks = preLoadedDeliveryData.tasks.map(task => {
         return {
