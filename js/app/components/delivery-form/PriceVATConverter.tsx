@@ -90,7 +90,7 @@ const PriceVATConverter = ({ taxRate, setPrice, VAT, exVAT }: Props) => {
                 VAT: value,
               }
               setValues(newValues)
-              setPrice(newValues.VAT)
+              setPrice(newValues)
             }
           }}
         />
