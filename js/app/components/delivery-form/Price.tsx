@@ -21,7 +21,7 @@ import { Mode, modeIn } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
 import FlagsContext from './FlagsContext'
-import { Order } from './types'
+import { Order } from '../../api/types'
 
 type TotalPriceProps = {
   overridePrice: boolean
@@ -60,7 +60,7 @@ const Price = ({
   setPriceLoading,
   setOrder,
   setOverridePrice: setOverridePriceOnParent,
-}) => {
+}: Props) => {
   const { isDispatcher, isDebugPricing } = useContext(FlagsContext)
 
   const mode = useSelector(selectMode)

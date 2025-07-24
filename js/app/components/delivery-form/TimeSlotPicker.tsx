@@ -12,7 +12,7 @@ import { useGetStoreQuery, useGetTimeSlotChoicesQuery } from '../../api/slice'
 import { Mode } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
-import { TimeSlot } from './types'
+import type { TimeSlot } from './types'
 
 const extractDateAndRangeFromTimeSlot = (timeSlotChoice) => {
   let [first, second] = timeSlotChoice.split('/')

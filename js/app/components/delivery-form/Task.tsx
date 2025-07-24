@@ -17,14 +17,15 @@ import {
 import { Mode } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
-import { Address, Tag, StoreDeliveryInfos } from './types'
+import { Address } from './types'
+import type { Store, Tag } from '../../api/types'
 
 type Props = {
   isDispatcher: boolean
   storeNodeId: string
   addresses: Address[]
   taskId: string
-  storeDeliveryInfos: StoreDeliveryInfos
+  storeDeliveryInfos: Partial<Store>
   onRemove: () => void
   showRemoveButton: boolean
   tags: Tag[]

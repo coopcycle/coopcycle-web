@@ -6,7 +6,8 @@ import './Packages.scss'
 import {
   useDeliveryFormFormikContext
 } from './hooks/useDeliveryFormFormikContext'
-import { Package } from './types'
+import { Package } from '../../api/types'
+import { InputPackage } from './types'
 
 type Props = {
   taskId: string
@@ -23,11 +24,11 @@ const Packages = ({ taskId, packages }: Props) => {
     taskId: taskId,
   })
 
-  const [packagesPicked, setPackagesPicked] = useState<Package[]>(() => {
-    let picked: Package[] = []
+  const [packagesPicked, setPackagesPicked] = useState<InputPackage[]>(() => {
+    let picked: InputPackage[] = []
 
     for (const p of packages) {
-      const newPackages: Package = {
+      const newPackages: InputPackage = {
         type: p.name,
         quantity: 0,
       }

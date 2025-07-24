@@ -31,7 +31,8 @@ import { Mode, modeIn } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
 import FlagsContext from './FlagsContext'
-import { Task as TaskType, Delivery, DeliveryFormValues, FormErrors } from './types'
+import type { Task as TaskType, Delivery, DeliveryFormValues, FormErrors } from './types'
+import { Store } from '../../api/types'
 
 const generateTempId = (): string => `temp-${uuidv4()}`
 
@@ -157,7 +158,7 @@ const DeliveryForm = ({
   const [expandedTasks, setExpandedTasks] = useState<Record<number, boolean>>({})
 
   const { data: storeData } = useGetStoreQuery(storeNodeId)
-  const storeDeliveryInfos = useMemo(() => storeData ?? {}, [storeData])
+  const storeDeliveryInfos = useMemo(() => storeData ?? {} as Partial<Store>, [storeData])
 
   const { data: tags } = useGetTagsQuery(undefined, {
     skip: !isDispatcher,

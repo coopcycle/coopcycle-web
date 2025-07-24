@@ -1,6 +1,11 @@
 import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ProductOptionValue, ProductVariant, OrderItem as OrderItemType, Order } from './types'
+import {
+  Order,
+  OrderItem as OrderItemType,
+  ProductOptionValue,
+  ProductVariant,
+} from '../../api/types'
 
 type ProductOptionValueProps = {
   index: number
@@ -8,7 +13,11 @@ type ProductOptionValueProps = {
   overridePrice: boolean
 }
 
-function ProductOptionValueComponent({ index, productOptionValue, overridePrice }: ProductOptionValueProps) {
+function ProductOptionValueComponent({
+  index,
+  productOptionValue,
+  overridePrice,
+}: ProductOptionValueProps) {
   return (
     <div data-testid={`product-option-value-${index}`}>
       <span data-testid="name">{productOptionValue.value}</span>

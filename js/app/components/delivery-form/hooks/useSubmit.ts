@@ -16,7 +16,7 @@ import {
 import { Mode, modeIn } from '../mode'
 import { selectMode } from '../redux/formSlice'
 import { useDatadog } from '../../../hooks/useDatadog'
-import { Address, DeliveryFormValues } from '../types'
+import type { Address, DeliveryFormValues } from '../types'
 
 // check if a task ID is temporary (not from backend)
 const isTemporaryId = (taskId: string | null): boolean => {

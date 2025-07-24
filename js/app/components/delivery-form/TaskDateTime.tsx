@@ -8,7 +8,7 @@ import { useGetStoreQuery } from '../../api/slice'
 import { Mode } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
-import { TimeSlot } from './types'
+import type { TimeSlot } from './types'
 
 type Props = {
   isDispatcher: boolean

@@ -11,7 +11,8 @@ import './AddressBook.scss'
 import {
   useDeliveryFormFormikContext
 } from './hooks/useDeliveryFormFormikContext'
-import { Address, StoreDeliveryInfos } from './types'
+import type { Address } from './types'
+import { Store } from '../../api/types'
 
 function getFormattedValue(value: string | null): string {
   if (typeof value === 'string') {
@@ -43,7 +44,7 @@ function getUnformattedValue(value: string | null): string {
 type Props = {
   taskId: string
   addresses: Address[]
-  storeDeliveryInfos: StoreDeliveryInfos
+  storeDeliveryInfos: Partial<Store>
   shallPrefillAddress: boolean
 }
 

@@ -3,7 +3,7 @@ import Price from './Price'
 import Cart from './Cart'
 import { Spin } from 'antd'
 import FlagsContext from './FlagsContext'
-import { Order as OrderType } from './types'
+import type { Order as OrderType } from '../../api/types'
 
 type Props = {
   storeNodeId: string
@@ -11,7 +11,11 @@ type Props = {
   setPriceLoading: (loading: boolean) => void
 }
 
-const Order = ({ storeNodeId, order: preLoadedOrder, setPriceLoading }: Props) => {
+const Order = ({
+  storeNodeId,
+  order: preLoadedOrder,
+  setPriceLoading,
+}: Props) => {
   const { isPriceBreakdownEnabled } = useContext(FlagsContext)
   const [order, setOrder] = useState<OrderType | null>(preLoadedOrder)
   const [isLoading, setIsLoading] = useState<boolean>(false)

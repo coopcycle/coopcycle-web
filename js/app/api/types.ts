@@ -399,6 +399,7 @@ export interface CalculationOutput {
   ruleSet: PricingRuleSet
   strategy: string
   items: CalculationItem[]
+  order: Order
 }
 
 export interface UpdateOrderRequest {
