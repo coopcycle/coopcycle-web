@@ -86,7 +86,7 @@ export interface TimeSlot extends JsonLdEntity {
   workingDaysOnly: boolean
   priorNotice?: string
   openingHours?: string[]
-  choices?: any[] // deprecated field
+  choices?: TimeSlotChoice[] // deprecated field
 }
 
 export interface TimeSlotChoice {
@@ -108,6 +108,27 @@ export interface Store extends JsonLdEntity {
   multiDropEnabled: boolean
   multiPickupEnabled: boolean
   timeSlots: TimeSlot[]
+}
+
+export interface ProductOptionValue extends JsonLdEntity {
+  value: string
+  price: number
+}
+
+export interface ProductVariant extends JsonLdEntity {
+  id: number
+  name: string
+  code: string
+  price: number
+  optionValues: ProductOptionValue[]
+}
+
+export interface LocalBusiness extends JsonLdEntity {
+  id: number
+  name: string
+  enabled: boolean
+  description?: string
+  address?: Address
 }
 
 export interface InvoiceLineItemGroupedByOrganization {
@@ -162,13 +183,27 @@ export interface OrderItem {
   total: number
   unitPrice: number
   adjustments: Adjustment[]
-  variant?: any
+  variant?: ProductVariant
 }
 
 export interface Adjustment {
   label: string
   amount: number
   type: string
+}
+
+export interface OrderEvent {
+  name: string
+  createdAt: string
+  // data?: Record<string, any>
+}
+
+export interface OrderTimeline {
+  preparationExpectedAt?: string
+  pickupExpectedAt?: string
+  dropoffExpectedAt?: string
+  preparationTime?: string
+  shippingTime?: string
 }
 
 export interface Order extends JsonLdEntity {
@@ -179,8 +214,8 @@ export interface Order extends JsonLdEntity {
   itemsTotal: number
   taxTotal: number
   customer: Customer
-  vendor?: any
-  restaurant?: any
+  vendor?: LocalBusiness
+  restaurant?: LocalBusiness
   shippingAddress: Address
   shippingTimeRange: TsRange
   items: OrderItem[]
@@ -191,8 +226,8 @@ export interface Order extends JsonLdEntity {
   paymentMethod?: string
   hasReceipt?: boolean
   shippedAt?: string
-  events?: any[]
-  timeline?: any[]
+  events?: OrderEvent[]
+  timeline?: OrderTimeline
   preparationExpectedAt?: string
   pickupExpectedAt?: string
   reusablePackagingEnabled?: boolean
@@ -226,9 +261,27 @@ export interface User {
   familyName?: string
 }
 
-export interface FailureReason {
-  code: string
-  description: string
+export interface IncidentEvent {
+  id: number
+  type: string
+  message?: string
+  // metadata?: Record<string, any>
+  createdBy?: User
+  createdAt: string
+}
+
+export interface Incident {
+  id: number
+  title?: string
+  status: string
+  priority: number
+  failureReasonCode?: string
+  description?: string
+  events: IncidentEvent[]
+  createdBy?: User
+  // metadata: Record<string, any>
+  createdAt: string
+  updatedAt?: string
 }
 
 export interface Task extends JsonLdEntity {
@@ -243,10 +296,10 @@ export interface Task extends JsonLdEntity {
   assignedTo?: User
   doorstep: boolean
   ref?: string
-  recurrenceRule?: any
-  metadata: Record<string, any>
+  recurrenceRule?: RecurrenceRule
+  // metadata: Record<string, any>
   weight?: number
-  incidents?: any[]
+  incidents?: Incident[]
   emittedCo2: number
   traveledDistanceMeter: number
   packages?: TaskPackage[]
@@ -265,10 +318,35 @@ export interface Delivery extends JsonLdEntity {
   packages?: TaskPackage[]
 }
 
+// Delivery Template for RecurrenceRule
+export interface DeliveryTemplate {
+  '@type': string
+  'hydra:member'?: TaskTemplate[]
+  // For single task templates
+  after?: string
+  before?: string
+  address?: Partial<Address>
+  type?: 'PICKUP' | 'DROPOFF'
+  comments?: string
+  packages?: TaskPackage[]
+  weight?: number
+}
+
+export interface TaskTemplate {
+  '@type': string
+  after: string
+  before: string
+  address: Partial<Address>
+  type: 'PICKUP' | 'DROPOFF'
+  comments?: string
+  packages?: TaskPackage[]
+  weight?: number
+}
+
 export interface RecurrenceRule extends JsonLdEntity {
   id: number
   rule: string
-  template: any
+  template: DeliveryTemplate
   store?: Store
   generateOrders?: boolean
 }
@@ -285,23 +363,36 @@ export interface PricingRuleSet extends JsonLdEntity {
   id: number
   name: string
   strategy: string
-  options: Record<string, any>
+  // options: Record<string, any>
   rules: PricingRule[]
 }
 
+export interface OptimizationGain {
+  distance?: number
+  duration?: number
+  co2?: number
+  cost?: number
+}
+
 export interface OptimizationSuggestion {
-  gain: Record<string, any>
-  order: any[]
+  gain: OptimizationGain
+  order: Task[]
 }
 
 export interface OptimizationSuggestions {
   suggestions: OptimizationSuggestion[]
 }
 
+export interface CalculationItemDetail {
+  rule: PricingRule
+  price: number
+  matched: boolean
+}
+
 export interface CalculationItem {
   ruleSet: PricingRuleSet
   strategy: string
-  items: any[]
+  items: CalculationItemDetail[]
 }
 
 export interface CalculationOutput {
@@ -310,48 +401,80 @@ export interface CalculationOutput {
   items: CalculationItem[]
 }
 
-// API Request/Response types for mutations
 export interface UpdateOrderRequest {
   nodeId: string
-  [key: string]: any
+  state?: string
+  notes?: string
+  shippingTimeRange?: TsRange
+  fulfillmentMethod?: string
+  paymentMethod?: string
+  reusablePackagingEnabled?: boolean
+  reusablePackagingPledgeReturn?: number
+  reusablePackagingQuantity?: number
 }
 
 export interface PatchAddressRequest {
   nodeId: string
-  [key: string]: any
+  streetAddress?: string
+  addressLocality?: string
+  addressCountry?: string
+  addressRegion?: string
+  postalCode?: string
+  name?: string
+  description?: string
+  contactName?: string
+  telephone?: string
+  company?: string
 }
 
 export interface PostStoreAddressRequest {
   storeNodeId: string
-  [key: string]: any
+  streetAddress: string
+  addressLocality: string
+  addressCountry: string
+  addressRegion?: string
+  postalCode: string
+  name?: string
+  description?: string
+  contactName?: string
+  telephone?: string
+  company?: string
 }
 
 export interface CalculatePriceRequest {
-  [key: string]: any
+  delivery: Partial<Delivery>
+  pricing_rule_set?: string
 }
 
 export interface SuggestOptimizationsRequest {
-  [key: string]: any
+  tasks: Task[]
+  vehicle?: string
 }
 
 export interface PostDeliveryRequest {
-  [key: string]: any
+  tasks: Partial<Task>[]
+  store?: string
+  packages?: TaskPackage[]
 }
 
 export interface PutDeliveryRequest {
   nodeId: string
-  [key: string]: any
+  tasks?: Partial<Task>[]
+  packages?: TaskPackage[]
 }
 
 export interface PutRecurrenceRuleRequest {
   nodeId: string
-  [key: string]: any
+  rule?: string
+  template?: DeliveryTemplate
+  store?: string
+  generateOrders?: boolean
 }
 
 export interface CreatePricingRuleSetRequest {
   name: string
   strategy?: string
-  options?: Record<string, any>
+  // options?: Record<string, any>
   rules?: PricingRule[]
 }
 
@@ -359,7 +482,7 @@ export interface UpdatePricingRuleSetRequest {
   id: number
   name?: string
   strategy?: string
-  options?: Record<string, any>
+  // options?: Record<string, any>
   rules?: PricingRule[]
 }
 
@@ -368,11 +491,31 @@ export type RecurrenceRulesGenerateOrdersRequest = {
   format: (format: string) => string // Moment.js date object with format method
 }
 
-// Order timing and validation response types
 export interface OrderTiming {
-  [key: string]: any // The exact structure depends on the timing calculation
+  preparation?: {
+    expectedAt: string
+    time: string
+  }
+  pickup?: {
+    expectedAt: string
+    time: string
+  }
+  dropoff?: {
+    expectedAt: string
+    time: string
+  }
+  shipping?: {
+    time: string
+  }
 }
 
 export interface OrderValidation {
-  [key: string]: any // The exact structure depends on the validation result
+  valid: boolean
+  errors?: string[]
+  warnings?: string[]
+}
+
+export interface RecurrenceRulesGenerateOrdersResponse {
+  generated: number
+  orders: Order[]
 }

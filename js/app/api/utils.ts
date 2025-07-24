@@ -1,17 +1,36 @@
+import { HydraCollection } from './types'
+import { BaseQueryFn } from '@reduxjs/toolkit/query'
+
+// RTK Query result types - returns array of items, not HydraCollection
+interface QueryFnSuccessResult<T> {
+  data: T[]
+  error?: never
+}
+
+interface QueryFnErrorResult {
+  data?: never
+  error
+}
+
+// Union type for RTK Query queryFn result
+type QueryFnResult<T> = QueryFnSuccessResult<T> | QueryFnErrorResult
+
 /**
  * similar function exists in the mobile app codebase
  */
-export async function fetchAllRecordsUsingFetchWithBQ(
-  fetchWithBQ,
-  url,
-  itemsPerPage,
-  otherParams = null,
-) {
-  const fetch = async page => {
+export async function fetchAllRecordsUsingFetchWithBQ<T>(
+  fetchWithBQ: (arg: Parameters<BaseQueryFn>[0]) => ReturnType<BaseQueryFn>,
+  url: string,
+  itemsPerPage: number,
+  otherParams: Record<string, string> | null = null,
+): Promise<QueryFnResult<T>> {
+  const fetch = async (
+    page: number,
+  ): Promise<{ data: HydraCollection<T> | null; error }> => {
     const params = new URLSearchParams({
-      pagination: true,
-      page,
-      itemsPerPage,
+      pagination: 'true',
+      page: page.toString(),
+      itemsPerPage: itemsPerPage.toString(),
       ...otherParams,
     })
 
@@ -30,12 +49,13 @@ export async function fetchAllRecordsUsingFetchWithBQ(
 
   const firstPageData = firstPageResult.data
   if (
+    !firstPageData ||
     !Object.hasOwn(firstPageData, 'hydra:totalItems') ||
     firstPageData['hydra:totalItems'] <= firstPageData['hydra:member'].length
   ) {
     // Total items were already returned in the 1st request!
     return {
-      data: firstPageData['hydra:member'],
+      data: firstPageData?.['hydra:member'] || [],
     }
   }
 
@@ -57,7 +77,7 @@ export async function fetchAllRecordsUsingFetchWithBQ(
 
       // Combine all data from successful results
       const combinedData = results.reduce(
-        (acc, result) => acc.concat(result.data['hydra:member']),
+        (acc, result) => acc.concat(result.data?.['hydra:member'] || []),
         firstPageData['hydra:member'],
       )
 

@@ -32,6 +32,7 @@ import {
   PutDeliveryRequest,
   PutRecurrenceRuleRequest,
   RecurrenceRulesGenerateOrdersRequest,
+  RecurrenceRulesGenerateOrdersResponse,
   CreatePricingRuleSetRequest,
   UpdatePricingRuleSetRequest,
 } from './types'
@@ -47,23 +48,27 @@ export const apiSlice = createApi({
     getTaxRates: builder.query<HydraCollection<TaxRate>, void>({
       query: () => `api/tax_rates`,
     }),
-    getTags: builder.query<HydraCollection<Tag>, void>({
+    getTags: builder.query<Tag[], void>({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
-        return await fetchAllRecordsUsingFetchWithBQ(baseQuery, 'api/tags', 100)
+        return await fetchAllRecordsUsingFetchWithBQ<Tag>(
+          baseQuery,
+          'api/tags',
+          100,
+        )
       },
     }),
-    getZones: builder.query<HydraCollection<Zone>, void>({
+    getZones: builder.query<Zone[], void>({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
-        return await fetchAllRecordsUsingFetchWithBQ(
+        return await fetchAllRecordsUsingFetchWithBQ<Zone>(
           baseQuery,
           'api/zones',
           100,
         )
       },
     }),
-    getPackages: builder.query<HydraCollection<Package>, void>({
+    getPackages: builder.query<Package[], void>({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
-        return await fetchAllRecordsUsingFetchWithBQ(
+        return await fetchAllRecordsUsingFetchWithBQ<Package>(
           baseQuery,
           'api/packages',
           100,
@@ -88,9 +93,9 @@ export const apiSlice = createApi({
       }),
     }),
 
-    getTimeSlots: builder.query<HydraCollection<TimeSlot>, void>({
+    getTimeSlots: builder.query<TimeSlot[], void>({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
-        return await fetchAllRecordsUsingFetchWithBQ(
+        return await fetchAllRecordsUsingFetchWithBQ<TimeSlot>(
           baseQuery,
           'api/time_slots',
           100,
@@ -114,27 +119,27 @@ export const apiSlice = createApi({
     getStore: builder.query<Store, string>({
       query: (nodeId: string) => nodeId,
     }),
-    getStoreAddresses: builder.query<HydraCollection<Address>, string>({
+    getStoreAddresses: builder.query<Address[], string>({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
-        return await fetchAllRecordsUsingFetchWithBQ(
+        return await fetchAllRecordsUsingFetchWithBQ<Address>(
           baseQuery,
           `${args}/addresses`,
           100,
         )
       },
     }),
-    getStoreTimeSlots: builder.query<HydraCollection<TimeSlot>, string>({
+    getStoreTimeSlots: builder.query<TimeSlot[], string>({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
-        return await fetchAllRecordsUsingFetchWithBQ(
+        return await fetchAllRecordsUsingFetchWithBQ<TimeSlot>(
           baseQuery,
           `${args}/time_slots`,
           100,
         )
       },
     }),
-    getStorePackages: builder.query<HydraCollection<Package>, string>({
+    getStorePackages: builder.query<Package[], string>({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
-        return await fetchAllRecordsUsingFetchWithBQ(
+        return await fetchAllRecordsUsingFetchWithBQ<Package>(
           baseQuery,
           `${args}/packages`,
           100,
@@ -210,7 +215,7 @@ export const apiSlice = createApi({
       }),
     }),
     recurrenceRulesGenerateOrders: builder.mutation<
-      any,
+      RecurrenceRulesGenerateOrdersResponse,
       RecurrenceRulesGenerateOrdersRequest
     >({
       query: date => ({
