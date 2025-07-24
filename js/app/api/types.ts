@@ -105,13 +105,14 @@ export interface Store extends JsonLdEntity {
   name: string
   enabled: boolean
   address: Address
-  prefillPickupAddress: boolean
   timeSlot?: NodeId
+  timeSlots: NodeId[]
+  pricingRuleSet?: NodeId
+  prefillPickupAddress: boolean
   weightRequired: boolean
   packagesRequired: boolean
   multiDropEnabled: boolean
   multiPickupEnabled: boolean
-  timeSlots: NodeId[]
 }
 
 export interface ProductOptionValue extends JsonLdEntity {
