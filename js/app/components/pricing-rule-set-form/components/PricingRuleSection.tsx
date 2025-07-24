@@ -1,8 +1,8 @@
 import { Button, Alert, Typography } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import { PricingRuleType } from '../types/PricingRuleType'
 import { useTranslation } from 'react-i18next'
 import DraggableRulesList from './DraggableRulesList'
+import { PricingRule as PricingRuleType } from '../../../api/types'
 
 const { Title } = Typography
 

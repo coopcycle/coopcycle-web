@@ -1,7 +1,7 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import DeprecatedTag from '../../../components/DeprecatedTag'
-import { RuleTarget } from '../types/PricingRuleType'
+import { PricingRuleTarget as RuleTarget } from '../../../api/types'
 
 type Props = {
   className?: string

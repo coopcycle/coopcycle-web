@@ -6,7 +6,7 @@ import {
   DropResult,
 } from '@hello-pangea/dnd'
 import PricingRule from './PricingRule'
-import { PricingRuleType } from '../types/PricingRuleType'
+import { PricingRule as PricingRuleType } from '../../../api/types'
 
 type Props = {
   rules: PricingRuleType[]

@@ -15,7 +15,8 @@ import {
 } from '../../../delivery/pricing/pricing-rule-parser'
 import Position from './Position'
 import { DraggableProvidedDragHandleProps } from '@hello-pangea/dnd'
-import { PriceType, PricingRuleType } from '../types/PricingRuleType'
+import { PriceType } from '../types/PricingRuleType'
+import { PricingRule as PricingRuleType } from '../../../api/types'
 import HelpIcon from '../../HelpIcon'
 
 const { Text } = Typography

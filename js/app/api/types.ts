@@ -353,12 +353,17 @@ export interface RecurrenceRule extends JsonLdEntity {
   generateOrders?: boolean
 }
 
-export interface PricingRule {
+export type PricingRuleTarget = 'DELIVERY' | 'TASK' | 'LEGACY_TARGET_DYNAMIC'
+
+export interface PricingRule extends JsonLdEntity {
   id: number
-  expression: string
-  price: number
+  target: PricingRuleTarget
   position: number
-  ruleSet?: PricingRuleSet
+  name?: string
+  expression: string
+  expressionAst: object
+  price: string
+  priceAst: object
 }
 
 export interface PricingRuleSet extends JsonLdEntity {
