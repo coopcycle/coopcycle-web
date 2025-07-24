@@ -17,13 +17,16 @@ import { Mode, modeIn } from '../mode'
 import { selectMode } from '../redux/formSlice'
 import { useDatadog } from '../../../hooks/useDatadog'
 import type { Address, DeliveryFormValues } from '../types'
+import { PostDeliveryRequest } from '../../../api/types'
 
 // check if a task ID is temporary (not from backend)
 const isTemporaryId = (taskId: string | null): boolean => {
   return taskId !== null && taskId.startsWith('temp-')
 }
 
-function serializeAddress(address: Address): string | { streetAddress: string; latLng: [number, number] } {
+function serializeAddress(
+  address: Address,
+): string | { streetAddress: string; latLng: [number, number] } {
   if (Object.prototype.hasOwnProperty.call(address, '@id')) {
     return address['@id'] as string
   }
@@ -34,12 +37,15 @@ function serializeAddress(address: Address): string | { streetAddress: string; l
   }
 }
 
-function convertValuesToDeliveryPayload(storeNodeId: string, values: DeliveryFormValues): any {
+function convertValuesToDeliveryPayload(
+  storeNodeId: string,
+  values: DeliveryFormValues,
+): PostDeliveryRequest {
   let data = {
     store: storeNodeId,
     tasks: structuredClone(values.tasks),
     order: structuredClone(values.order),
-  }
+  } as PostDeliveryRequest
 
   for (const task of data.tasks) {
     if (isTemporaryId(task['@id'])) {
@@ -77,7 +83,6 @@ function convertDateInRecurrenceRulePayload(value) {
 }
 
 function convertValuesToRecurrenceRulePayload(values) {
-
   let data = {
     rule: values.rrule,
     template: {
@@ -136,7 +141,10 @@ export default function useSubmit(
   isDispatcher?: boolean,
 ): UseSubmitReturn {
   const mode = useSelector(selectMode)
-  const [error, setError] = useState<{ isError: boolean; errorMessage: string }>({ isError: false, errorMessage: ' ' })
+  const [error, setError] = useState<{
+    isError: boolean
+    errorMessage: string
+  }>({ isError: false, errorMessage: ' ' })
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false)
 
   const rejectedSuggestionsOrder = useSelector(selectRejectedSuggestedOrder)

@@ -35,6 +35,7 @@ import {
   RecurrenceRulesGenerateOrdersResponse,
   CreatePricingRuleSetRequest,
   UpdatePricingRuleSetRequest,
+  TimeSlotChoices,
 } from './types'
 
 // Define our single API slice object
@@ -102,7 +103,7 @@ export const apiSlice = createApi({
         )
       },
     }),
-    getTimeSlotChoices: builder.query<HydraCollection<TimeSlotChoice>, string>({
+    getTimeSlotChoices: builder.query<TimeSlotChoices, string>({
       query: (nodeId: string) => `${nodeId}/choices`,
     }),
 

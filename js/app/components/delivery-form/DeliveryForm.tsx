@@ -361,8 +361,12 @@ const DeliveryForm = ({
         >
           {({ values, isSubmitting, setFieldValue }) => {
 
+            //FIXME: we probably need to move all this into a function component
+            // eslint-disable-next-line react-hooks/rules-of-hooks
             const previousValues = usePrevious(values)
 
+            //FIXME: we probably need to move all this into a function component
+            // eslint-disable-next-line react-hooks/rules-of-hooks
             useEffect(() => {
 
               // Skip if no or 1 task

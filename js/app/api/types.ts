@@ -86,14 +86,16 @@ export interface TimeSlot extends JsonLdEntity {
   workingDaysOnly: boolean
   priorNotice?: string
   openingHours?: string[]
-  choices?: TimeSlotChoice[] // deprecated field
 }
 
 export interface TimeSlotChoice {
-  '@id': string
-  '@type': string
-  startTime: string
-  endTime: string
+  // "2025-07-24T07:00:00Z/2025-07-25T06:59:00Z"
+  value: string
+  label: string
+}
+
+export interface TimeSlotChoices {
+  choices: TimeSlotChoice[]
 }
 
 export interface Store extends JsonLdEntity {
@@ -314,8 +316,6 @@ export interface Delivery extends JsonLdEntity {
   updatedAt?: string
   store?: Store
   order?: Order
-  vehicle?: string
-  packages?: TaskPackage[]
 }
 
 // Delivery Template for RecurrenceRule
@@ -452,16 +452,57 @@ export interface SuggestOptimizationsRequest {
   vehicle?: string
 }
 
+export interface OrderPayload {
+  arbitraryPrice: {
+    variantName: string
+    variantPrice: number
+  }
+}
+
+export interface AddressPayload {
+  '@id'?: string
+  streetAddress: string
+  name: string
+  contactName: string
+  telephone: string | null
+  formattedTelephone?: string | null // Form-specific field for display
+  geo?: {
+    latitude: number
+    longitude: number
+  }
+  description?: string
+}
+
+export interface TaskPayload {
+  '@id'?: string
+  id: number
+  createdAt: string
+  updatedAt?: string
+  type: 'PICKUP' | 'DROPOFF'
+  after: string
+  before: string
+  timeSlot: TimeSlot | null
+  timeSlotUrl: string | null
+  comments: string
+  address: AddressPayload
+  updateInStoreAddresses?: boolean
+  saveInStoreAddresses?: boolean
+  packages: Package[]
+  weight: number
+  tags: Tag[]
+  doorstep?: boolean
+}
+
 export interface PostDeliveryRequest {
-  tasks: Partial<Task>[]
   store?: string
-  packages?: TaskPackage[]
+  tasks: TaskPayload[]
+  order?: OrderPayload
+  rrule?: string
 }
 
 export interface PutDeliveryRequest {
   nodeId: string
-  tasks?: Partial<Task>[]
-  packages?: TaskPackage[]
+  tasks?: TaskPayload[]
 }
 
 export interface PutRecurrenceRuleRequest {

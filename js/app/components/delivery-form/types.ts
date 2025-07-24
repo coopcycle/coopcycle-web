@@ -54,10 +54,15 @@ export interface Delivery {
   polyline?: string
 }
 
+export interface OrderFormValues {
+}
+
 export interface DeliveryFormValues {
   tasks: Task[]
   rrule?: string
-  order?
+  order?: OrderFormValues
+  variantIncVATPrice?: number
+  variantName?: string
 }
 
 export interface TaskErrors {
