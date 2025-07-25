@@ -779,6 +779,34 @@ embed.delivery.contact_heading: Contact
 embed.delivery.specify_billing_address: Spécifier une adresse de facturation
 embed.delivery.billing_address: Adresse de facturation
 notifications.empty: Aucune notification
+notifications.tap_to_open: Appuyez pour ouvrir
+notifications.delivery_created: Une livraison avec enlèvement %date% a été créée
+notifications.tasks_changed: Les tâches du %date% ont changé !
+notifications.tasks_changed_today: Vos tâches pour aujourd'hui ont été mises à jour
+notifications.restaurant.new_order: Nouvelle commande à confirmer
+notifications.restaurant.accepted_order: "Nouvelle commande"
+notifications.messenger_approaching: Bonjour %customer% ! Votre livreur·se %messenger%
+  est tout·e proche. Tenez-vous prêt·e !
+form.settings.notifications.title: Notifications
+form.settings.notifications.order.created: Commande créée
+form.settings.notifications.order.updated: Commande mise à jour
+form.settings.notifications.order.accepted: Commande acceptée
+form.settings.notifications.order.refused: Commande refusée
+form.settings.notifications.order.delayed: Commande retardée
+form.settings.notifications.order.cancelled: Commande annulée
+form.settings.notifications.order.picked: Commande récupérée
+form.settings.notifications.order.dropped: Commande déposée
+form.settings.notifications.order.fulfilled: Commande terminée
+form.settings.notifications.task.created: Tâche créée
+form.settings.notifications.task.assigned: Tâche assignée
+form.settings.notifications.task.unassigned: Tâche désassignée
+form.settings.notifications.task.started: Tâche commencée
+form.settings.notifications.task.done: Tâche terminée
+form.settings.notifications.task.failed: Tâche échouée
+form.settings.notifications.task.cancelled: Tâche annulée
+form.settings.notifications.task.rescheduled: Tâche reprogrammée
+form.settings.notifications.help: En désactivant les notifications pour les événements ci-dessous,
+  les administrateurs ne recevront pas d'e-mails, ni de notifications dans la barre de menu.
 adminDashboard.statistics: Statistiques
 adminDashboard.activity.title: Activité
 activity.task.created: "@%owner% a créé la tâche #task/%aggregate_id%\n"
@@ -950,7 +978,6 @@ receipt.footer_item.total_incl_tax: Total TTC
 receipt.total: Total TTC
 receipt.billing_details: Commande payée par %payment_method% le %date%
 receipt.emitter_details: Commande au restaurant <strong>%restaurant_name%</strong>
-notifications.restaurant.new_order: Nouvelle commande à confirmer
 profile.loopeat.connect: Connecter mon compte %name%
 profile.loopeat.connected: Compte %name% connecté
 profile.loopeat.disconnect: Déconnecter mon compte %name%
@@ -967,8 +994,6 @@ basics.weeks: '%count% semaine|%count% semaines'
 basics.none: Aucun
 basics.yes: Oui
 basics.no: Non
-notifications.messenger_approaching: Bonjour %customer% ! Votre livreur·se %messenger%
-  est tout·e proche. Tenez-vous prêt·e !
 order.export.heading.restaurant_name: Restaurant
 order.export.heading.order_number: Numéro de commande
 order.export.heading.completed_at: Livrée le
@@ -991,7 +1016,6 @@ form.order_export.messenger.label: Inclure une colonne avec le coursier ayant li
   la commande
 basics.show: Afficher
 basics.hide: Masquer
-notifications.tasks_changed: Les tâches du %date% ont changé !
 restaurant_promotion.offer_delivery: Offrir les frais de livraison
 restaurant_promotion.offer_delivery.help: Cela vous permet d'offrir les frais de livraison
   <strong>sur votre propre part</strong>. Votre marge sera réduite du montant des
@@ -1178,9 +1202,6 @@ form.fulfillment_method.pre_ordering_allowed.help: Si vous décochez cette case,
   client·es ne pourront commander que pour le jour même.
 form.fulfillment_method.options.range_duration.label: Durée des créneaux
 ordering_delay.admin_reminder: Vous avez configuré un délai de pickup global pour les commandes foodtech
-notifications.delivery_created: Une livraison avec enlèvement %date% a été créée
-notifications.tasks_changed_today: Vos tâches pour aujourd'hui ont été mises à jour
-notifications.tap_to_open: Appuyez pour ouvrir
 profile.edenred.connected: Compte Edenred connecté
 profile.edenred.connect: Connecter mon compte Edenred
 edenred.oauth_connect.success: Votre compte Edenred est connecté !
@@ -1376,25 +1397,6 @@ form.store_type.failure_reason_set.help: Sélectionnez une liste de <a href="%fa
 profile.delete_my_account: "Supprimer mon compte"
 profile.type_username_to_confirm: "Saisissez votre nom d'utilisateur pour confirmer la suppression du compte"
 form.pricing_rule_set.options.label: Options
-form.settings.notifications.title: Notifications
-form.settings.notifications.order.created: Commande créée
-form.settings.notifications.order.accepted: Commande acceptée
-form.settings.notifications.order.refused: Commande refusée
-form.settings.notifications.order.delayed: Commande retardée
-form.settings.notifications.order.cancelled: Commande annulée
-form.settings.notifications.order.picked: Commande récupérée
-form.settings.notifications.order.dropped: Commande déposée
-form.settings.notifications.order.fulfilled: Commande terminée
-form.settings.notifications.order.updated: Commande mise à jour
-form.settings.notifications.task.created: Tâche créée
-form.settings.notifications.task.assigned: Tâche assignée
-form.settings.notifications.task.unassigned: Tâche désassignée
-form.settings.notifications.task.started: Tâche commencée
-form.settings.notifications.task.done: Tâche terminée
-form.settings.notifications.task.failed: Tâche échouée
-form.settings.notifications.task.cancelled: Tâche annulée
-form.settings.notifications.task.rescheduled: Tâche reprogrammée
-form.settings.notifications.help: En désactivant les notifications pour les événements ci-dessous, les administrateurs ne recevront pas d'e-mails, ni de notifications dans la barre de menu.
 tags.featured: À la une
 tags.exclusive: Exclusivités
 tags.shops.new: Nouveautés
@@ -1501,7 +1503,6 @@ basics.delete_selected: "Supprimer la sélection"
 delivery.table.heading.owner: "Propriétaire"
 delivery.import.success_message: "Votre fichier a été traité avec succès, %count% livraisons ont été créées"
 form.delivery_import.file.label: "Fichier"
-notifications.restaurant.accepted_order: "Nouvelle commande"
 food_establishment.CAFE_OR_COFFEE_SHOP: "Café ou salon de thé"
 food_establishment.DISTILLERY: "Distillerie"
 food_establishment.FAST_FOOD_RESTAURANT: "Restaurant de restauration rapide"
