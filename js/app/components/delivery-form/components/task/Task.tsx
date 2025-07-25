@@ -7,18 +7,18 @@ import { useTranslation } from 'react-i18next'
 import TotalWeight from './TotalWeight'
 
 import './Task.scss'
-import TagsSelect from '../TagsSelect'
+import TagsSelect from '../../../TagsSelect'
 import { TaskDateTime } from './TaskDateTime'
-import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
+import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext'
 import {
   useGetStorePackagesQuery,
   useGetStoreTimeSlotsQuery,
-} from '../../api/slice'
-import { Mode } from './mode'
+} from '../../../../api/slice'
+import { Mode } from '../../mode'
 import { useSelector } from 'react-redux'
-import { selectMode } from './redux/formSlice'
-import { Address } from './types'
-import type { Store, Tag } from '../../api/types'
+import { selectMode } from '../../redux/formSlice'
+import { Address } from '../../types'
+import type { Store, Tag } from '../../../../api/types'
 
 type Props = {
   isDispatcher: boolean

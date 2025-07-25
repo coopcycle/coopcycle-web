@@ -5,9 +5,9 @@ import { useTranslation } from 'react-i18next'
 import './Packages.scss'
 import {
   useDeliveryFormFormikContext
-} from './hooks/useDeliveryFormFormikContext'
-import { Package } from '../../api/types'
-import { InputPackage } from './types'
+} from '../../hooks/useDeliveryFormFormikContext'
+import { Package } from '../../../../api/types'
+import { InputPackage } from '../../types'
 
 type Props = {
   taskId: string

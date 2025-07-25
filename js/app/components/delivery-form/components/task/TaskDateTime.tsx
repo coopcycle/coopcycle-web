@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import Spinner from '../core/Spinner'
+import Spinner from '../../../core/Spinner'
 import SwitchTimeSlotFreePicker from './SwitchTimeSlotFreePicker'
 import TimeSlotPicker from './TimeSlotPicker'
 import DateRangePicker from './DateRangePicker'
-import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
-import { useGetStoreQuery } from '../../api/slice'
-import { Mode } from './mode'
+import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext'
+import { useGetStoreQuery } from '../../../../api/slice'
+import { Mode } from '../../mode'
 import { useSelector } from 'react-redux'
-import { selectMode } from './redux/formSlice'
-import type { TimeSlot } from './types'
+import { selectMode } from '../../redux/formSlice'
+import type { TimeSlot } from '../../types'
 
 type Props = {
   isDispatcher: boolean

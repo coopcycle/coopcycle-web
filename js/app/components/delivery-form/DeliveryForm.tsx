@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import Spinner from '../../components/core/Spinner.js'
 import BarcodesModal from '../../../../assets/react/controllers/BarcodesModal.jsx'
-import Task from '../../components/delivery-form/Task'
+import Task from './components/task/Task'
 import { usePrevious } from '../../dashboard/redux/utils'
 
 import { PhoneNumberUtil } from 'google-libphonenumber'

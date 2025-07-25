@@ -2,7 +2,7 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import TimeSlotPicker from './TimeSlotPicker'
 import DateRangePicker from './DateRangePicker'
-import { TimeSlot } from './types'
+import { TimeSlot } from '../../types'
 
 import './SwitchTimeSlotFreePicker.scss'
 
