@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import Spinner from '../../components/core/Spinner.js'
 import BarcodesModal from '../../../../assets/react/controllers/BarcodesModal.jsx'
-import Task from '../../components/delivery-form/Task'
+import Task from './components/task/Task'
 import { usePrevious } from '../../dashboard/redux/utils'
 
 import { PhoneNumberUtil } from 'google-libphonenumber'
@@ -21,9 +21,9 @@ import {
   useGetStoreQuery,
   useGetTagsQuery,
 } from '../../api/slice'
-import { RecurrenceRules } from './RecurrenceRules'
+import { RecurrenceRules } from './components/recurrence/RecurrenceRules'
 import useSubmit from './hooks/useSubmit'
-import Order from './Order'
+import Order from './components/order/Order'
 import SuggestionModal from './SuggestionModal'
 import DeliveryResume from './DeliveryResume'
 import Map from '../DeliveryMap'

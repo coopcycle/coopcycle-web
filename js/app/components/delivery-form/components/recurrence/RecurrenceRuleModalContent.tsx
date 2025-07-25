@@ -9,11 +9,11 @@ import { Formik } from 'formik'
 import { useTranslation } from 'react-i18next'
 import classNames from 'classnames'
 
-import TimeRange from '../../utils/TimeRange'
+import TimeRange from '../../../../utils/TimeRange'
 import RecurrenceRuleAsText from './RecurrenceRuleAsText'
-import { closeRecurrenceModal } from './redux/recurrenceSlice'
-import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
-import HelpIcon from '../HelpIcon'
+import { closeRecurrenceModal } from '../../redux/recurrenceSlice'
+import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext'
+import HelpIcon from '../../../HelpIcon'
 
 type FreqOption = {
   value: number

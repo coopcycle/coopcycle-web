@@ -2,7 +2,7 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { RRule } from 'rrule'
 
-import { localeDetector } from '../../i18n'
+import { localeDetector } from '../../../../i18n'
 import moment from 'moment'
 
 const tokenForLocale = (locale: string, t: (key: string) => string) => {

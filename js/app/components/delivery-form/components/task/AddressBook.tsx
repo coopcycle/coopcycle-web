@@ -3,16 +3,16 @@ import { Input, Select, Checkbox, Button } from 'antd'
 import Modal from 'react-modal'
 import { useTranslation } from 'react-i18next'
 import { Field } from 'formik'
-import { getCountry } from '../../i18n'
-import AddressAutosuggest from '../AddressAutosuggest'
+import { getCountry } from '../../../../i18n'
+import AddressAutosuggest from '../../../AddressAutosuggest'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import './AddressBook.scss'
 import {
   useDeliveryFormFormikContext
-} from './hooks/useDeliveryFormFormikContext'
-import type { Address } from './types'
-import { Store } from '../../api/types'
+} from '../../hooks/useDeliveryFormFormikContext'
+import type { Address } from '../../types'
+import { Store } from '../../../../api/types'
 
 function getFormattedValue(value: string | null): string {
   if (typeof value === 'string') {
