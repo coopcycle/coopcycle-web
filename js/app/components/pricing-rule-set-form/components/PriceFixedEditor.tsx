@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { InputNumber } from 'antd'
+import { getPriceValue } from '../utils'
 
 export type FixedPriceValue = {
   value: string
@@ -11,7 +12,7 @@ type Props = {
 }
 
 export default ({ defaultValue, onChange }: Props) => {
-  const [value, setValue] = useState(parseFloat(defaultValue.value) / 100 || 0)
+  const [value, setValue] = useState(getPriceValue(defaultValue))
 
   //TODO: fix currency?
   return (

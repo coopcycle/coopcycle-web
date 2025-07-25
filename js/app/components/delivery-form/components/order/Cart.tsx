@@ -80,8 +80,6 @@ type Props = {
 }
 
 const Cart = ({ order, overridePrice }: Props) => {
-  const { t } = useTranslation()
-
   return (
     <>
       {order.items.map((orderItem, index) => (
