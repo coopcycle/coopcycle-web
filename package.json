@@ -11,7 +11,8 @@
     "sdk:build": "webpack --config webpack.sdk.config.js --mode production",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "dev": "encore dev"
+    "lint": "eslint js/app/ assets/react",
+    "type-check": "tsc --noEmit --pretty"
   },
   "repository": {
     "type": "git",
