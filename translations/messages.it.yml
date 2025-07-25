@@ -223,6 +223,14 @@ form.credit_note.name.label: Nome
 promotion_coupon.used.label: Numero di usi
 index.view_all_shops: Vedi tutti i negozi
 notifications.empty: Nessuna notifica
+notifications.tap_to_open: Toccare per aprire
+notifications.delivery_created: Una consegna con ritiro per il %date% è stata creata
+notifications.tasks_changed: L'incarico del %date% è cambiata!
+notifications.tasks_changed_today: Gli incarichi per oggi sono stati aggiornati
+notifications.restaurant.new_order: Nuovo ordine da accettare
+notifications.restaurant.accepted_order: Nuovo ordine
+notifications.messenger_approaching: Ciao %customer%! Il nostro corriere %messenger%
+  è vicino a te. Preparati!
 basics.copy: Copia
 orders.payment_link.send_by_email: Invia il link di pagamento per email
 task.form.modal.moreOptions: Più opzioni
@@ -461,8 +469,6 @@ form.local_business.iso_code.fr.vat_number: Numero di partita IVA
 receipt.title: 'Ricevuta del tuo ordine #%number%'
 receipt.billing_details: Ordine pagato tramite %payment_method% il %date%
 form.delivery_import.file.label: File
-notifications.messenger_approaching: Ciao %customer%! Il nostro corriere %messenger%
-  è vicino a te. Preparati!
 form.task.dropoff.doorstep.label: Consegna alla porta
 form.task_event.notes.help: Puoi modificare il commento
 form.task_complete.done.label: Completa
@@ -772,7 +778,6 @@ receipt.footer_item.total_excl_tax: Totale (esclusa IVA)
 receipt.footer_item.total_incl_tax: Totale (inclusa IVA)
 form.delivery_import.store.label: Negozio
 basics.view_example: Vedi esempio
-notifications.restaurant.new_order: Nuovo ordine da accettare
 profile.loopeat.connect: Connetti il mio account LoopEat
 profile.loopeat.connected: Account LoopEat connesso
 basics.yes: Sì
@@ -817,7 +822,6 @@ store.PAWN_SHOP: Banco dei pegni
 store.PET_STORE: Negozio di animali
 store.SHOE_STORE: Negozio di scarpe
 store.SPORTING_GOODS_STORE: Negozio di articoli sportivi
-notifications.tasks_changed: L'incarico del %date% è cambiata!
 restaurant_promotion.offer_delivery: Offri tariffe di consegna
 form.offer_delivery.coupon_code.error.exists: Questo codice è già esistente
 form.offer_delivery.coupon_code.help: È vostra responsabilità comunicare questo codice
@@ -1203,9 +1207,6 @@ form.payment.method.name.label: Metodo di pagamento
 edenred.oauth_connect.success: Conto Edenred connesso correttamente!
 profile.edenred.connect: Connetti il mio conto Edenred
 profile.edenred.connected: Conto Edenred connesso
-notifications.tap_to_open: Toccare per aprire
-notifications.tasks_changed_today: Gli incarichi per oggi sono stati aggiornati
-notifications.delivery_created: Una consegna con ritiro per il %date% è stata creata
 ordering_delay.admin_reminder: Hai configurato un ritardo di pickup globale per gli ordini foodtech
 form.fulfillment_method.options.range_duration.label: Durata dell'intervallo
 form.fulfillment_method.pre_ordering_allowed.help: Deselezionando la casella, i clienti

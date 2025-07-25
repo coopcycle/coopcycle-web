@@ -681,6 +681,14 @@ index.view_all_restaurants: 'Ikusi jatetxe guztiak'
 index.our_shops: 'Gure dendak'
 index.view_all_shops: 'Ikusi denda guztiak'
 notifications.empty: 'Jakinarazpenik ez'
+notifications.tap_to_open: Sakatu irekitzeko
+notifications.delivery_created: '%date% datan batzeko banaketa bat sortu da'
+notifications.tasks_changed: '%date% egundaren zereginak aldatu dira!'
+notifications.tasks_changed_today: Zure eguneko zereginak eguneratu dira
+notifications.restaurant.new_order: 'Onartzeke eskaera berria'
+notifications.restaurant.accepted_order: Eskaera berria
+notifications.messenger_approaching: Hey %customer%! Gure %messenger% mezularia ia
+  zurekin dago. Presta zaitez!
 adminDashboard.statistics: 'Estatistikak'
 adminDashboard.activity.title: 'Jarduera'
 activity.task.created: "@%owner% #task/%aggregate_id% zeregina sortu du\n"
@@ -785,7 +793,6 @@ receipt.billing_details: 'Eskaera kreditu-txartelarekin ordaindu zen %date%-(e)a
 form.delivery_import.file.label: 'Fitxategia'
 form.delivery_import.store.label: 'Denda'
 basics.view_example: 'Ikusi adibidea'
-notifications.restaurant.new_order: 'Onartzeke eskaera berria'
 profile.loopeat.connect: 'Konektatu nire LoopEat kontua'
 profile.loopeat.connected: 'LoopEat kontua konektatuta'
 profile.loopeat.disconnect: 'Deskonektatu LoopEat'
@@ -887,7 +894,6 @@ restaurant.list.active_catalog: Katalogo aktiboa
 restaurant.list.catalogs: Katalogoa
 adminDashboard.shops.title: Dendak
 restaurant_promotion.items_total: Produktuen totalean oinarrituta
-notifications.tasks_changed: '%date% egundaren zereginak aldatu dira!'
 form.local_business_type.label: Negozio mota
 store.TOY_STORE: Jostailu denda
 store.CLOTHING_STORE: Erropa-denda
@@ -1033,8 +1039,6 @@ adminDashboard.hubs.title: Komertzio-gunea
 store.form.section.settings: Ezarpenak
 stores.address_book: Helbide liburua
 profile.edenred.connected: Edenred kontua konektatuta
-notifications.tap_to_open: Sakatu irekitzeko
-notifications.tasks_changed_today: Zure eguneko zereginak eguneratu dira
 form.customize.order_confirm.label: Mezu hau eskareraren berrespen orrian agertuko
   da
 form.customize.order_confirm_enabled.label: Erakutsi eskaera berrespen mezu pertsonalizatu
@@ -1053,8 +1057,6 @@ store.AUTO_PARTS_STORE: Elikagai-denda
 store.DEPARTMENT_STORE: Merkataritza-gunea
 store.CONVENIENCE_STORE: Janari-denda
 form.order_export.messenger.label: Gehitu zutabe bat eskaera burutu duen mezulariarekin
-notifications.messenger_approaching: Hey %customer%! Gure %messenger% mezularia ia
-  zurekin dago. Presta zaitez!
 task.receipt.attached_images: Erantsitako irudiak
 admin.settings.missing_mandatory_settings: "Beharrezko ezarpenak falta dira.\nJoan\
   \ <a href=\"%settings_url%\">ezarpen orrira</a> konfiguratzeko.\n"
@@ -1071,7 +1073,6 @@ restaurant.embed.disclaimer: Eskaera zure webgunean erantsi dezakezu zuzenean. J
 form.fulfillment_method.pre_ordering_allowed.help: Kaxa hau desmarkatzen baduzu, bezeroak
   egun bereko eskaerak soilik egin ahalko dituzte.
 ordering_delay.admin_reminder: Foodtech picku^ bilketa-atzerapen globala konfiguratu duzu
-notifications.delivery_created: '%date% datan batzeko banaketa bat sortu da'
 store.PAWN_SHOP: Bahitetxea
 order.adjustment_type.reusable_packaging.loopeat.help: Kuota honek garbitze, jatetxearen
   itzulera eta berreabili daitezkeen telazko poltsen erosketa babesten du
