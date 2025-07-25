@@ -1,7 +1,7 @@
 import React from 'react'
 import { Provider } from 'react-redux'
 import { accountSlice } from '../../entities/account/reduxSlice'
-import DeliveryForm from '../delivery-form/DeliveryForm.js'
+import DeliveryForm from '../delivery-form/DeliveryForm'
 //FIXME: temporary re-use of the delivery-form store, to be replaced with a dedicated store
 import { createStoreFromPreloadedState } from '../delivery-form/redux/store'
 import Modal from 'react-modal'
