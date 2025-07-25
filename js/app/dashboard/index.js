@@ -6,7 +6,7 @@ import { I18nextProvider } from 'react-i18next'
 import moment from 'moment'
 import Split from 'react-split'
 
-import i18n, { antdLocale } from '../i18n'
+import i18n from '../i18n'
 
 import { createStoreFromPreloadedState } from './redux/store'
 import RightPanel from './components/RightPanel'
@@ -38,7 +38,7 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
 
   await Promise.all([tasksRequest, tasksListsRequest, toursRequest]).then((values) => {
     const [taskRes, taskListRes, toursRes] = values
-    allTasks = taskRes // paginatedRequest returns data directly 
+    allTasks = taskRes // paginatedRequest returns data directly
     taskLists = taskListRes.data['hydra:member']
     tours = toursRes.data['hydra:member']
   })
@@ -204,7 +204,7 @@ loadingAnim.addEventListener('DOMLoaded', function() {
   }
 
   const client = createClient(() => {}) // do-nothing dispatch function, as we have a fresh token from the initial load + no initialized store yet
-  
+
   const tasksRequest = client.paginatedRequest({
     method: 'GET',
     url: `${ window.Routing.generate('_api_/tasks.{_format}_get_collection') }?date=${date.format('YYYY-MM-DD')}&pagination=true&itemsPerPage=100`,

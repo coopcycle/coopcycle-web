@@ -21,7 +21,7 @@ class CreateIncident
     )
     { }
 
-    public function findDescriptionByCode(string $code = null): ?string
+    public function findDescriptionByCode(?string $code = null): ?string
     {
         if (null === $code) {
             return self::DEFAULT_TITLE;

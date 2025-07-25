@@ -19,7 +19,7 @@ context('Delivery (role: admin)', () => {
       .click()
 
     cy.get('[data-testid=store_Acme__list_item]')
-      .contains('Créer une livraison')
+      .contains('Créer une nouvelle commande')
       .click()
 
     // New delivery order page

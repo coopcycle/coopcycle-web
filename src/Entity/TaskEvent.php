@@ -31,7 +31,7 @@ class TaskEvent
         $name,
         array $data = [],
         array $metadata = [],
-        \DateTime $createdAt = null)
+        ?\DateTime $createdAt = null)
     {
         if (null === $createdAt) {
             $createdAt = new \DateTime();

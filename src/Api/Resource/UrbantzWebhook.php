@@ -50,10 +50,7 @@ final class UrbantzWebhook
     #[Groups(['urbantz_output'])]
     public $deliveries = [];
 
-    #[Groups(['urbantz_input'])]
-    public $extTrackId;
-
-    public function __construct(string $id = null)
+    public function __construct(?string $id = null)
     {
         $this->id = $id;
     }

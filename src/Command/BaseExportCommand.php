@@ -28,13 +28,13 @@ abstract class BaseExportCommand extends Command {
                 'date-start', null,
                 InputOption::VALUE_REQUIRED,
                 'Start date',
-                (new \DateTime())->modify('-1 day')->setTime(0, 0, 1)
+                (new \DateTime())->modify('-1 day')->setTime(0, 0, 1)->format('Y-m-d')
             )
             ->addOption(
                 'date-end', null,
                 InputOption::VALUE_REQUIRED,
                 'End date',
-                (new \DateTime())->modify('-1 day')->setTime(23, 59, 59)
+                (new \DateTime())->modify('-1 day')->setTime(23, 59, 59)->format('Y-m-d')
             )
             ->addOption(
                 'target', 't',

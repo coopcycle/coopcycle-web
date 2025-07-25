@@ -68,7 +68,7 @@ class AddressBookType extends AbstractType
                 'class' => Address::class,
                 'choices' => $options['with_addresses'],
                 'choice_label' => 'streetAddress',
-                'choice_value' => function (Address $address = null) {
+                'choice_value' => function (?Address $address = null) {
                     return $address && null !== $address->getId() ? $this->iriConverter->getIriFromResource($address) : '';
                 },
                 'choice_attr' => function(Address $choice, $key, $value) {

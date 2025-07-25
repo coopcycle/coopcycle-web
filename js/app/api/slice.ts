@@ -1,6 +1,12 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { baseQueryWithReauth } from './baseQuery'
 import { fetchAllRecordsUsingFetchWithBQ } from './utils'
+import type {
+  GetInvoiceLineItemsGroupedByOrganizationArgs,
+  InvoiceLineItemsGroupedByOrganizationResponse,
+  GetInvoiceLineItemsArgs,
+  InvoiceLineItemsResponse,
+} from './types'
 
 // Define our single API slice object
 export const apiSlice = createApi({
@@ -19,13 +25,13 @@ export const apiSlice = createApi({
     }),
 
     getOrderTiming: builder.query({
-      query: nodeId => `${nodeId}/timing`,
+      query: (nodeId: string) => `${nodeId}/timing`,
     }),
     getOrderValidate: builder.query({
-      query: nodeId => `${nodeId}/validate`,
+      query: (nodeId: string) => `${nodeId}/validate`,
     }),
     getOrder: builder.query({
-      query: nodeId => nodeId,
+      query: (nodeId: string) => nodeId,
     }),
     updateOrder: builder.mutation({
       query: ({ nodeId, ...patch }) => ({
@@ -44,6 +50,9 @@ export const apiSlice = createApi({
         )
       },
     }),
+    getTimeSlotChoices: builder.query({
+      query: (nodeId: string) => `${nodeId}/choices`,
+    }),
 
     patchAddress: builder.mutation({
       query({ nodeId, ...patch }) {
@@ -56,7 +65,7 @@ export const apiSlice = createApi({
     }),
 
     getStore: builder.query({
-      query: nodeId => nodeId,
+      query: (nodeId: string) => nodeId,
     }),
     getStoreAddresses: builder.query({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
@@ -156,7 +165,10 @@ export const apiSlice = createApi({
       }),
     }),
 
-    getInvoiceLineItemsGroupedByOrganization: builder.query({
+    getInvoiceLineItemsGroupedByOrganization: builder.query<
+      InvoiceLineItemsGroupedByOrganizationResponse,
+      GetInvoiceLineItemsGroupedByOrganizationArgs
+    >({
       query: args => {
         return {
           url: `api/invoice_line_items/grouped_by_organization?${args.params.join(
@@ -169,7 +181,10 @@ export const apiSlice = createApi({
         }
       },
     }),
-    getInvoiceLineItems: builder.query({
+    getInvoiceLineItems: builder.query<
+      InvoiceLineItemsResponse,
+      GetInvoiceLineItemsArgs
+    >({
       query: args => {
         return {
           url: `api/invoice_line_items?${args.params.join('&')}`,
@@ -191,6 +206,7 @@ export const {
   useGetOrderQuery,
   useUpdateOrderMutation,
   useGetTimeSlotsQuery,
+  useGetTimeSlotChoicesQuery,
   useGetStoreQuery,
   useGetStoreAddressesQuery,
   useGetStoreTimeSlotsQuery,

@@ -1,7 +1,6 @@
 import React, { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { ConfigProvider } from 'antd'
-import { antdLocale } from '../i18n'
+import { AntdConfigProvider } from './antd'
 import { ErrorBoundary } from 'react-error-boundary'
 import { useTranslation } from 'react-i18next'
 
@@ -18,7 +17,7 @@ export function RootWithDefaults({ children }) {
   return (
     <StrictMode>
       <ErrorBoundary fallback={<FallbackComponent />}>
-        <ConfigProvider locale={antdLocale}>{children}</ConfigProvider>
+        <AntdConfigProvider>{children}</AntdConfigProvider>
       </ErrorBoundary>
     </StrictMode>
   )

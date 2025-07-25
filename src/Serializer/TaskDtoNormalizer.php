@@ -30,7 +30,12 @@ class TaskDtoNormalizer implements ContextAwareNormalizerInterface, NormalizerAw
             $data['@context'] = '/api/contexts/Task';
         }
         $data['@type'] = 'Task';
-        $data['@id'] = "/api/tasks/" . $object->id;
+
+        if (!is_null($object->id)) {
+            $data['@id'] = "/api/tasks/" . $object->id;
+        } else {
+            unset($data['@id']);
+        }
 
         // Make sure "comments" is a string
         if (is_null($data['comments'])) {
@@ -40,7 +45,7 @@ class TaskDtoNormalizer implements ContextAwareNormalizerInterface, NormalizerAw
         return $data;
     }
 
-    public function supportsNormalization($data, ?string $format = null, array $context = [])
+    public function supportsNormalization($data, ?string $format = null, array $context = []): bool
     {
         // Make sure we're not called twice
         if (isset($context[self::ALREADY_CALLED])) {

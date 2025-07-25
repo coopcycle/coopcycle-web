@@ -88,7 +88,7 @@ function PreviewPods({ pods }) {
   );
 }
 
-export default function ({ ediMessages }) {
+export default function({ ediMessages }) {
   let messages = JSON.parse(ediMessages);
   const scontrs = messages.filter((edi) => edi.messageType === "SCONTR");
   const reports = messages.filter((edi) => edi.messageType === "REPORT");
@@ -99,41 +99,47 @@ export default function ({ ediMessages }) {
   messages = [...scontr, ...reports];
 
   const { t } = useTranslation();
-  return (
-    <Timeline className="m-3">
-      {messages.map((ediMessage) => {
-        const { message, dot, color, subMessage } = ediPresenter(ediMessage);
-        return (
-          <Timeline.Item key={ediMessage.id} dot={dot} color={color}>
-            <p>
-              {t(message)}
-              <span className="text-muted d-block font-weight-light">
-                {moment(ediMessage.createdAt).format("l LT")}
+
+  const timelineItems = messages.map((ediMessage) => {
+    const { message, dot, color, subMessage } = ediPresenter(ediMessage);
+    return {
+      key: ediMessage.id,
+      dot: dot,
+      color: color,
+      children: (
+        <>
+          <p>
+            {t(message)}
+            <span className="text-muted d-block font-weight-light">
+              {moment(ediMessage.createdAt).format("l LT")}
+            </span>
+            {subMessage ? (
+              <span className="font-weight-light d-block">
+                {t(subMessage)}
               </span>
-              {subMessage ? (
-                <span className="font-weight-light d-block">
-                  {t(subMessage)}
-                </span>
-              ) : null}
-            </p>
-            {ediMessage.ediMessage ? (
-              <a
-                className="mr-3"
-                target="_blank"
-                rel="noreferrer"
-                href={window.Routing.generate("admin_transporter_message", {
-                  edi: ediMessage.ediMessage,
-                })}
-              >
-                {t("TRANSPORTER_SHOW_EDI")}
-              </a>
             ) : null}
-            {ediMessage.pods.length > 0 && (
-              <PreviewPods pods={ediMessage.pods} />
-            )}
-          </Timeline.Item>
-        );
-      })}
-    </Timeline>
+          </p>
+          {ediMessage.ediMessage ? (
+            <a
+              className="mr-3"
+              target="_blank"
+              rel="noreferrer"
+              href={window.Routing.generate("admin_transporter_message", {
+                edi: ediMessage.ediMessage,
+              })}
+            >
+              {t("TRANSPORTER_SHOW_EDI")}
+            </a>
+          ) : null}
+          {ediMessage.pods.length > 0 && (
+            <PreviewPods pods={ediMessage.pods} />
+          )}
+        </>
+      )
+    };
+  });
+
+  return (
+    <Timeline className="m-3" items={timelineItems} />
   );
 }

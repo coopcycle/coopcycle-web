@@ -14,7 +14,7 @@ interface Vendor extends ShippingOptionsInterface
 
     public function getOpeningHours($method = 'delivery');
 
-    public function hasClosingRuleFor(\DateTime $date = null, \DateTime $now = null): bool;
+    public function hasClosingRuleFor(?\DateTime $date = null, ?\DateTime $now = null): bool;
 
     public function isFulfillmentMethodEnabled($method);
 
@@ -33,7 +33,7 @@ interface Vendor extends ShippingOptionsInterface
 
     public function getName();
 
-    public function canDeliverAddress(Address $address, $distance, ExpressionLanguage $language = null);
+    public function canDeliverAddress(Address $address, $distance, ?ExpressionLanguage $language = null);
 
     public function getDeliveryPerimeterExpression();
 

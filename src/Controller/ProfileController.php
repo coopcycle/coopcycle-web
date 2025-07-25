@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use ApiPlatform\Api\IriConverterInterface;
+use AppBundle\Api\Dto\DeliveryMapper;
 use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\LoopeatTrait;
 use AppBundle\Controller\Utils\OrderTrait;
@@ -10,6 +11,7 @@ use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Edenred\Authentication as EdenredAuthentication;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
@@ -32,11 +34,10 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\PreAuthenticationJWTUserToken;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\Authenticator\Token\JWTPostAuthenticationToken;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
 use Cocur\Slugify\SlugifyInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use phpcent\Client as CentrifugoClient;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -45,7 +46,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Exception\ExceptionInterface as RoutingException;
 use Symfony\Component\Routing\RouterInterface;
@@ -182,7 +183,8 @@ class ProfileController extends AbstractController
     public function orderAction($id, Request $request,
         OrderManager $orderManager,
         DeliveryManager $deliveryManager,
-        JWTManagerInterface $jwtManager,
+        DeliveryMapper $deliveryMapper,
+        JWTTokenManagerInterface $jwtManager,
         JWSProviderInterface $jwsProvider,
         IriConverterInterface $iriConverter,
         NormalizerInterface $normalizer,
@@ -229,10 +231,18 @@ class ProfileController extends AbstractController
             $delivery = $deliveryManager->createFromOrder($order);
         }
 
+        $deliveryData = $deliveryMapper->map(
+            $delivery,
+            $order,
+            null,
+            false
+        );
+
         return $this->render('order/item.html.twig', [
             'layout' => 'profile.html.twig',
             'order' => $order,
             'delivery' => $delivery,
+            'deliveryData' => $deliveryData,
             'form' => $form->createView(),
             'show_buttons' => false,
         ]);
@@ -354,7 +364,7 @@ class ProfileController extends AbstractController
 
     #[Route(path: '/profile/jwt', methods: ['GET'], name: 'profile_jwt')]
     public function jwtAction(Request $request,
-        JWTManagerInterface $jwtManager,
+        JWTTokenManagerInterface $jwtManager,
         CentrifugoClient $centrifugoClient)
     {
         $user = $this->getUser();
@@ -364,7 +374,7 @@ class ProfileController extends AbstractController
             $jwt = $request->getSession()->get('_jwt');
 
             try {
-                $token = new PreAuthenticationJWTUserToken($jwt);
+                $token = new JWTPostAuthenticationToken($this->getUser(), 'web', [], $jwt);
                 $jwtManager->decode($token);
             } catch (JWTDecodeFailureException $e) {
                 if (JWTDecodeFailureException::EXPIRED_TOKEN === $e->getReason()) {

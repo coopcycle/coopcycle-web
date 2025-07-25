@@ -11,7 +11,8 @@
     "sdk:build": "webpack --config webpack.sdk.config.js --mode production",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "dev": "encore dev"
+    "lint": "eslint js/app/ assets/react",
+    "type-check": "tsc --noEmit --pretty"
   },
   "repository": {
     "type": "git",
@@ -31,7 +32,8 @@
     "whatwg-fetch": "^2.0.4"
   },
   "devDependencies": {
-    "@ant-design/icons": "^4.7.0",
+    "@ant-design/icons": "^5.6.1",
+    "@ant-design/moment-webpack-plugin": "^1.0.0",
     "@babel/core": "^7.27.1",
     "@babel/plugin-proposal-object-rest-spread": "^7.19.4",
     "@babel/preset-react": "^7.27.1",
@@ -65,8 +67,10 @@
     "@symfony/ux-react": "file:vendor/symfony/ux-react/assets",
     "@symfony/ux-turbo": "file:vendor/symfony/ux-turbo/assets",
     "@symfony/webpack-encore": "^4.7.0",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1",
     "animate.css": "^4.1.1",
-    "antd": "^4.24.5",
+    "antd": "^5.0.0",
     "autoprefixer": "^10.4.21",
     "axios": "^0.25.0",
     "babel-jest": "^26.6.3",
@@ -145,7 +149,6 @@
     "react": "^18.3.1",
     "react-autosuggest": "^10.1.0",
     "react-chartjs-2": "^5.2.0",
-    "react-color": "^2.19.3",
     "react-contexify": "^6.0.0",
     "react-cropper": "^2.1.8",
     "react-dom": "^18.3.1",
@@ -178,6 +181,9 @@
     "styled-components": "^5.3.6",
     "swiper": "^11.2.7",
     "to-string-loader": "^1.2.0",
+    "ts-loader": "^9.5.2",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.37.0",
     "url-loader": "^4.1.1",
     "use-deep-compare": "^1.1.0",
     "webpack": "^5.99.9",

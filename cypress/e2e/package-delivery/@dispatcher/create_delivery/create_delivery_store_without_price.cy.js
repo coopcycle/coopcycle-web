@@ -17,7 +17,7 @@ context('Delivery (role: dispatcher)', () => {
       .click()
 
     cy.get('[data-testid=store_Acme_without_pricing__list_item]')
-      .contains('Créer une livraison')
+      .contains('Créer une nouvelle commande')
       .click()
 
     // Create delivery page

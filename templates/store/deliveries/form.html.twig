@@ -28,18 +28,16 @@
 {% block breadcrumb %}
 
   {% if is_new %}
-    <li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
-    <li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
-    <li><a href="{{ path(store_deliveries_route, { id: store.id }) }}">{% trans %}stores.deliveries{% endtrans %}</a></li>
+    <li><a href="{{ path(routes.stores) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+    <li><a href="{{ path(routes.store, { id: store.id }) }}">{{ store.name }}</a></li>
+    <li><a href="{{ path(routes.store_deliveries, { id: store.id }) }}">{% trans %}stores.orders{% endtrans %}</a></li>
     <li>{% trans %}orders.new{% endtrans %}</li>
   {% else %}
     {% if is_granted('ROLE_DISPATCHER') %}
-      {% set store = delivery.store %}
-
       {% if store is not null %}
-        <li><a href="{{ path('admin_stores') }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
-        <li><a href="{{ path('admin_store', { id: store.id }) }}">{{ store.name }}</a></li>
-        <li><a href="{{ path('admin_store_deliveries', { id: store.id }) }}">{% trans %}stores.deliveries{% endtrans %}</a></li>
+        <li><a href="{{ path(routes.stores) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+        <li><a href="{{ path(routes.store, { id: store.id }) }}">{{ store.name }}</a></li>
+        <li><a href="{{ path(routes.store_deliveries, { id: store.id }) }}">{% trans %}stores.orders{% endtrans %}</a></li>
         {% if order is not null %}
           <li><a href="{{ path('admin_order', { id: order.id }) }}" data-testid="order_id">{{ order.number }}</a></li>
         {% else %}
@@ -65,11 +63,16 @@
 {% endblock %}
 
 {% block dashboard_subnav %}
-  <div>
-    <a href="{{ path(back_route) }}">
-      <i class="fa fa-arrow-left mr-2"></i>{{ 'stores.deliveries'|trans }}
+  <div class="d-flex justify-content-between align-items-center">
+    <a href="{{ path(routes.back) }}">
+      <i class="fa fa-arrow-left mr-2"></i>{{ 'stores.orders'|trans }}
     </a>
-    <h3 class="text-center">{{ title }}</h3>
+    <h3 class="my-0 flex-grow-1 text-center">{{ title }}</h3>
+    {% if not is_new %}
+      <div>
+        {% include '_partials/delivery/create_new_button.html.twig' %}
+      </div>
+    {% endif %}
   </div>
 {% endblock %}
 

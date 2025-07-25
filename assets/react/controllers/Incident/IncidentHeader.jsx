@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import moment from "moment";
 import {
-  PageHeader,
   Row,
   Statistic,
   Dropdown,
   Select,
   notification,
 } from "antd";
+import PageHeader from '../../../../js/app/components/PageHeader'
 import { useTranslation } from "react-i18next";
 
 import store from "./incidentStore";
@@ -54,7 +54,7 @@ function _statusBtn(status) {
   }
 }
 
-export default function () {
+export default function() {
   const { loaded, incident } = store.getState();
   const [priority, setPriority] = useState(incident.priority);
   const [status, setStatus] = useState(incident.status);
@@ -125,7 +125,7 @@ export default function () {
         />
         <Statistic
           title={t("REPORTED_BY")}
-          value={incident.createdBy.username}
+          value={incident.createdBy?.username}
         />
       </Row>
       <Row justify="space-between" className="mt-3">
@@ -136,7 +136,7 @@ export default function () {
           onChange={(tags) => setTags(tags)}
           options={tags.map((t) => ({ label: t, value: t }))}
           style={{ marginLeft: "2px", width: "300px" }}
-          bordered={false}
+          variant="borderless"
         />
         <div>
           <div className="pb-1">{t("INCIDENT_REPORTED_AT")} :</div>

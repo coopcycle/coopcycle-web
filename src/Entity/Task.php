@@ -475,14 +475,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $this->incidents = new ArrayCollection();
     }
 
-    /**
-    * Non-DB-mapped property to store packages and weight aggregates (see on $weight and $packages property for aggregates definitions)
-    * // FIXME : make annotation works with PHPStan
-    * ['weight' => int|null, 'packages' => ['name' => string, 'type' => string, 'quantity' => int]|null]
-    */
-    private $prefetchedPackagesAndWeight;
-
-
     public function getId()
     {
         return $this->id;
@@ -684,7 +676,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @return Task
      */
-    public function setPrevious(Task $previous = null)
+    public function setPrevious(?Task $previous = null)
     {
         $this->previous = $previous;
 
@@ -703,7 +695,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @return Task
      */
-    public function setNext(Task $next = null)
+    public function setNext(?Task $next = null)
     {
         $this->next = $next;
 
@@ -745,7 +737,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
      * @param \DateTime|null $date
      * @return void
      */
-    public function assignTo(User $courier, \DateTime $date = null)
+    public function assignTo(User $courier, ?\DateTime $date = null)
     {
         if (null === $date) {
             @trigger_error('Not specifying a date when calling assignTo() is deprecated', E_USER_DEPRECATED);
@@ -794,7 +786,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @return Task
      */
-    public function setGroup(TaskGroup $group = null)
+    public function setGroup(?TaskGroup $group = null)
     {
         $this->group = $group;
 
@@ -1175,26 +1167,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     public function addIncident(Incident $incident): void
     {
         $this->incidents[] = $incident;
-    }
-
-    /**
-     * Get the value of prefetchedPackagesAndWeight
-     */
-    public function getPrefetchedPackagesAndWeight()
-    {
-        return $this->prefetchedPackagesAndWeight;
-    }
-
-    /**
-     * Set the value of prefetchedPackagesAndWeight
-     *
-     * @return  self
-     */
-    public function setPrefetchedPackagesAndWeight($prefetchedPackagesAndWeight)
-    {
-        $this->prefetchedPackagesAndWeight = $prefetchedPackagesAndWeight;
-
-        return $this;
     }
 
     public static function fixTimeWindow(Task $task)

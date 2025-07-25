@@ -10,7 +10,7 @@ context('Delivery (role: store)', () => {
 
     cy.urlmatch(/\/dashboard$/)
 
-    cy.get('a').contains('Créer une livraison').click()
+    cy.get('a').contains('Créer une nouvelle commande').click()
 
     // Pickup
 

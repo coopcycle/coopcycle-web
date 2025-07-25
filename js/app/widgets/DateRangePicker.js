@@ -1,13 +1,9 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import moment from 'moment'
-import { ConfigProvider, DatePicker } from 'antd';
+import { DatePicker } from 'antd';
 
-import { timePickerProps } from '../utils/antd'
-
-import 'antd/es/input/style/index.css'
-
-import { antdLocale } from '../i18n'
+import { AntdConfigProvider, timePickerProps } from '../utils/antd'
 
 class DateRangePicker extends React.Component {
 
@@ -46,10 +42,12 @@ class DateRangePicker extends React.Component {
 
     let props = {}
     if (this.props.showTime) {
-      props = {showTime: {
-      ...timePickerProps,
+      props = {
+        showTime: {
+          ...timePickerProps,
           hideDisabledOptions: true,
-      }}
+        }
+      }
     }
 
     return (
@@ -59,7 +57,7 @@ class DateRangePicker extends React.Component {
         defaultValue={this.state.value}
         onChange={(value) => this.onChange(value)}
         {...props}
-    />
+      />
     )
   }
 }
@@ -69,14 +67,14 @@ export default function(el, options) {
   const defaultProps = {
     getDatePickerContainer: null,
     getTimePickerContainer: null,
-    onChange: () => {},
+    onChange: () => { },
     format: 'LLL',
   }
 
   const props = { ...defaultProps, ...options }
 
   createRoot(el).render(
-    <ConfigProvider locale={ antdLocale }>
-      <DateRangePicker { ...props } />
-    </ConfigProvider>)
+    <AntdConfigProvider>
+      <DateRangePicker {...props} />
+    </AntdConfigProvider>)
 }

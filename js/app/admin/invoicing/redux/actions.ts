@@ -1,6 +1,18 @@
 import { baseQueryWithReauth } from '../../../api/baseQuery'
+import { RootState } from './store'
+import { ThunkAction, UnknownAction } from '@reduxjs/toolkit'
 
-export function prepareParams({ store, dateRange, state, onlyNotInvoiced }) {
+export function prepareParams({
+  store,
+  dateRange,
+  state,
+  onlyNotInvoiced,
+}: {
+  store?: string[]
+  dateRange: string[]
+  state?: string[]
+  onlyNotInvoiced: boolean
+}): string[] {
   let params = []
 
   if (store && store.length > 0) {
@@ -21,13 +33,19 @@ export function prepareParams({ store, dateRange, state, onlyNotInvoiced }) {
   return params
 }
 
-function downloadFile({ requestUrl, filename }) {
+function downloadFile({
+  requestUrl,
+  filename,
+}: {
+  requestUrl: string
+  filename: string
+}): ThunkAction<Promise<void>, RootState, unknown, UnknownAction> {
   return async (dispatch, getState) => {
     const result = await baseQueryWithReauth(
       {
         url: requestUrl,
         headers: {
-          'Accept': 'text/csv',
+          Accept: 'text/csv',
         },
         responseHandler: 'text',
       },
@@ -55,14 +73,26 @@ function downloadFile({ requestUrl, filename }) {
   }
 }
 
-export function downloadStandardFile({ params, filename }) {
+export function downloadStandardFile({
+  params,
+  filename,
+}: {
+  params: string[]
+  filename: string
+}): ThunkAction<Promise<void>, RootState, unknown, UnknownAction> {
   return downloadFile({
     requestUrl: `api/invoice_line_items/export?${params.join('&')}`,
     filename,
   })
 }
 
-export function downloadOdooFile({ params, filename }) {
+export function downloadOdooFile({
+  params,
+  filename,
+}: {
+  params: string[]
+  filename: string
+}): ThunkAction<Promise<void>, RootState, unknown, UnknownAction> {
   return downloadFile({
     requestUrl: `api/invoice_line_items/export/odoo?${params.join('&')}`,
     filename,

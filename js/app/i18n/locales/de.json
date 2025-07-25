@@ -23,6 +23,7 @@
         "fulfilled": "Zugestellt",
         "cancelled": "Storniert",
         "ready": "Fertig",
+        "DEPRECATED": "Veraltet",
         "UNDO": "Rückgängig machen",
         "ADMIN_DASHBOARD_OPTIMIZATION_UNASSIGNED_TASKS": "{{ count }} Element(e) wurden nicht zugewiesen, weil sie nicht den Anforderungen entsprachen.",
         "ADMIN_DASHBOARD_OPTIMIZATION_DONE": "Die Zuordnungen wurden optimiert. Die vorherige Entfernung betrug {{ previousDistance }}, die vorherige Dauer {{ previousDuration }}.",
@@ -136,6 +137,7 @@
         "PAYMENT_FORM_CARDHOLDER_NAME": "Name des Karteninhabers",
         "PAYMENT_FORM_TITLE": "Deine Zahlungsinformationen",
         "RULE_PICKER_LINE_OPTGROUP_DELIVERY": "Lieferung",
+        "RULE_PICKER_LINE_OPTGROUP_DEPRECATED": "Veraltet",
         "TIME_RANGE_FROM": "ab {{start}}",
         "ORDERS_RATE_LIMIT": {
             "ORDER_UNIT": "Bestellung(en)",
@@ -225,6 +227,9 @@
         "ADMIN_DASHBOARD_VIEW_MODE_BY_GROUP": "Zeige als Gruppen",
         "ADMIN_DASHBOARD_SETTINGS_CLUSTERS_ENABLED": "Aktiviere Karten-Cluster",
         "ADMIN_DASHBOARD_SHOW_RECURRENCE_RULES": "Zeige Wiederholungsregel",
+        "ADMIN_DASHBOARD_CREATE_TASK": "Eigenständige Aufgabe erstellen (veraltet)",
+        "ADMIN_DASHBOARD_CREATE_RECURRENCE_RULE": "Wiederholungsregel erstellen (veraltet)",
+        "ADMIN_DASHBOARD_RECURRENCE_RULE_LEGACY_WARNING": "Dies ist eine veraltete Methode zur Erstellung von Wiederholungsregeln. Bitte richten Sie die Wiederholung stattdessen über ein Lieferformular ein.",
         "ADMIN_DASHBOARD_INVALID_TASKS_SELECTION": "Diese Aufgabenauswahl ist zu komplex um Aktionen auszuführen. Bitte wähle nur Aufgaben aus \"nicht zugeordnet\", demselben Fahrer oder derselben Tour.",
         "ADMIN_DASHBOARD_ASSIGN_DELIVERIES_ORDERS": "Weise Lieferung/Auftrag zu",
         "RULE_PICKER_LINE_WEIGHT": "Gewicht (kg)",
@@ -430,6 +435,16 @@
         "CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS": "Zurück zur Restaurantliste",
         "ADMIN_DASHBOARD_CREATE_TOUR": "Erstelle Tour",
         "SCHEDULE_ORDER": "Auftrag planen",
-        "ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI": "Verschiebe {{count}} Aufgaben zum nächsten Tag"
+        "ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI": "Verschiebe {{count}} Aufgaben zum nächsten Tag",
+        "DELIVERY_PROOFS_LINK_TEXT": "Liefernachweise",
+        "DELIVERY_PROOFS_MODAL_TITLE": "Liefernachweise Herunterladen",
+        "DELIVERY_PROOFS_DOWNLOAD_BUTTON": "Herunterladen",
+        "DELIVERY_PROOFS_CHOOSE_WEEK": "Woche auswählen",
+        "DELIVERY_PROOFS_TOTAL_DELIVERIES": "Lieferungen Gesamt",
+        "DELIVERY_PROOFS_DELIVERIES_COUNT": "{{count}} Lieferungen",
+        "DELIVERY_PROOFS_CONTENTS": "Inhalt",
+        "DELIVERY_PROOFS_CONTENTS_VALUE": "Fotos & Berichte",
+        "DELIVERY_PROOFS_FILE_TYPE": "Dateityp",
+        "DELIVERY_PROOFS_FILE_TYPE_VALUE": "ZIP-Archiv"
     }
 }

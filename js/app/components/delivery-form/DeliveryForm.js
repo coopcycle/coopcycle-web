@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Button, Checkbox } from 'antd'
 import { Formik, Form, FieldArray } from 'formik'
 import moment from 'moment'
+import { v4 as uuidv4 } from 'uuid'
 
 import Spinner from '../../components/core/Spinner.js'
 import BarcodesModal from '../../../../assets/react/controllers/BarcodesModal.jsx'
@@ -29,6 +30,12 @@ import Map from '../DeliveryMap'
 import { Mode, modeIn } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
+
+const generateTempId = () => `temp-${uuidv4()}`
+
+const getTaskId = (task) => {
+  return task['@id']
+}
 
 /** used in case of phone validation */
 const phoneUtil = PhoneNumberUtil.getInstance();
@@ -75,6 +82,17 @@ function getFormattedValue(value) {
   return value
 }
 
+function canAddAnother(type, pickups, dropoffs) {
+  switch (type) {
+    case 'PICKUP':
+      return dropoffs.length === 1
+    case 'DROPOFF':
+      return pickups.length === 1
+  }
+
+  return true
+}
+
 const dropoffSchema = {
   type: 'DROPOFF',
   after: getNextRoundedTime().toISOString(),
@@ -92,6 +110,7 @@ const dropoffSchema = {
   packages: [],
   weight: 0,
   tags: [],
+  '@id': null, // Will be set when creating new tasks
 };
 
 const pickupSchema = {
@@ -111,6 +130,7 @@ const pickupSchema = {
   saveInStoreAddresses: false,
   updateInStoreAddresses: false,
   tags: [],
+  '@id': null, // Will be set when creating new tasks
 }
 
 export default function({
@@ -125,6 +145,7 @@ export default function({
 }) {
   const mode = useSelector(selectMode)
   const [isLoading, setIsLoading] = useState(true)
+  const [expandedTasks, setExpandedTasks] = useState({})
 
   const { data: storeData } = useGetStoreQuery(storeNodeId)
   const storeDeliveryInfos = useMemo(() => storeData ?? {}, [storeData])
@@ -164,9 +185,16 @@ export default function({
     return null
   }, [preLoadedDeliveryData, mode])
 
-  const { handleSubmit, error } = useSubmit(storeNodeId, deliveryNodeId, isDispatcher)
+  const { handleSubmit, error, isSubmitted } = useSubmit(storeNodeId, deliveryNodeId, isDispatcher)
 
   const { t } = useTranslation()
+
+  const handleTaskExpansion = (taskIndex, isExpanded) => {
+    setExpandedTasks(prev => ({
+      ...prev,
+      [taskIndex]: isExpanded
+    }))
+  }
 
   const validate = (values) => {
     const errors = { tasks: [] };
@@ -210,6 +238,15 @@ export default function({
       }
     }
 
+    // expand all tasks with errors
+    if (Object.keys(errors.tasks).length > 0) {
+      Object.values(expandedTasks).forEach((isExpanded, index) => {
+        if (!isExpanded && Object.keys(errors.tasks).includes(`${index}`)) {
+          handleTaskExpansion(index, true)
+        }
+      })
+    }
+
     return Object.keys(errors.tasks).length > 0 || errors.variantName ? errors : {};
   }
 
@@ -233,12 +270,15 @@ export default function({
   useEffect(() => {
     if (!isDataReady) return
 
+    const initialExpandedState = {}
     if (preLoadedDeliveryData) {
       const initialValues = structuredClone(preLoadedDeliveryData)
 
       initialValues.tasks = preLoadedDeliveryData.tasks.map(task => {
         return {
           ...task,
+          // Ensure each task has an @id (use existing or generate temporary)
+          '@id': task['@id'] || generateTempId(),
           address: {
             ...task.address,
             formattedTelephone: getFormattedValue(task.address.telephone),
@@ -258,15 +298,40 @@ export default function({
 
       setInitialValues(initialValues)
 
+      // For simple deliveries, expand all tasks by default
+      if (initialValues.tasks.length <= 2) {
+        initialValues.tasks.forEach((_, index) => {
+          initialExpandedState[index] = true
+        })
+        // For complex deliveries, collapse all tasks by default
+      } else {
+        initialValues.tasks.forEach((_, index) => {
+          initialExpandedState[index] = false
+        })
+      }
+
       setTrackingLink(preLoadedDeliveryData.trackingUrl)
+
     } else {
       if (mode === Mode.DELIVERY_CREATE) {
+        const tasks = [
+          { ...pickupSchema, '@id': generateTempId() },
+          { ...dropoffSchema, '@id': generateTempId() }
+        ]
+
         setInitialValues({
-          tasks: [{ ...pickupSchema }, { ...dropoffSchema }],
+          tasks: tasks,
           order: {},
+        })
+
+        // For new deliveries - expand all tasks by default
+        tasks.forEach((task, index) => {
+          initialExpandedState[index] = true
         })
       }
     }
+
+    setExpandedTasks(initialExpandedState)
 
     setIsLoading(false)
   }, [isDataReady, preLoadedDeliveryData, mode])
@@ -342,6 +407,9 @@ export default function({
 
             }, [values, previousValues, setFieldValue]);
 
+            const pickups = values.tasks.filter((task) => task.type === 'PICKUP')
+            const dropoffs = values.tasks.filter((task) => task.type === 'DROPOFF')
+
             return (
               <Form >
                 <div className='delivery-form' >
@@ -351,44 +419,89 @@ export default function({
                       <div className="new-order">
 
                         <div className="new-order__pickups">
-                          {values.tasks
-                            .filter((task) => task.type === 'PICKUP')
+                          {pickups
                             .map((task) => {
                               const originalIndex = values.tasks.findIndex(t => t === task);
+                              const pickupIndex = pickups.findIndex(t => t === task);
                               return (
                                 <div className='new-order__pickups__item' key={originalIndex}>
                                   <Task
                                     key={originalIndex}
                                     task={task}
-                                    index={originalIndex}
-                                    addresses={addresses}
-                                    storeNodeId={storeNodeId}
-                                    storeDeliveryInfos={storeDeliveryInfos}
-                                    isDispatcher={isDispatcher}
-                                    tags={tags}
-                                  />
-                                </div>
-                              );
-                            })}
-                        </div>
-
-
-                        <div className="new-order__dropoffs" style={{ display: 'flex', flexDirection: 'column' }}>
-                          {values.tasks
-                            .filter((task) => task.type === 'DROPOFF')
-                            .map((task) => {
-                              const originalIndex = values.tasks.findIndex(t => t === task);
-                              return (
-                                <div className='new-order__dropoffs__item' key={originalIndex}>
-                                  <Task
-                                    index={originalIndex}
+                                    taskId={getTaskId(task)}
                                     addresses={addresses}
                                     storeNodeId={storeNodeId}
                                     storeDeliveryInfos={storeDeliveryInfos}
                                     onRemove={arrayHelpers.remove}
-                                    showRemoveButton={originalIndex > 1}
+                                    showRemoveButton={pickupIndex > 0}
                                     isDispatcher={isDispatcher}
                                     tags={tags}
+                                    isExpanded={expandedTasks[originalIndex]}
+                                    onToggleExpanded={(isExpanded) => handleTaskExpansion(originalIndex, isExpanded)}
+                                    // Show packages on pickups conditionally
+                                    showPackages={storeDeliveryInfos.multiPickupEnabled}
+                                  />
+                                </div>
+                              );
+                            })}
+
+                            {storeDeliveryInfos.multiPickupEnabled && (mode === Mode.DELIVERY_CREATE || isDispatcher) ? <div
+                            className="new-order__pickups__add p-4 border mb-4">
+                            <p>{t('DELIVERY_FORM_MULTIPICKUP')}</p>
+                            <Button
+                              data-testid="add-pickup-button"
+                              disabled={!canAddAnother('PICKUP', pickups, dropoffs)}
+                              onClick={() => {
+                                const newTaskId = generateTempId()
+                                const newDeliverySchema = {
+                                  ...pickupSchema,
+                                  '@id': newTaskId,
+                                  before: values.tasks.slice(-1)[0].before,
+                                  after: values.tasks.slice(-1)[0].after,
+                                  timeSlot: values.tasks.slice(-1)[0].timeSlot,
+                                  timeSlotUrl: values.tasks.slice(-1)[0].timeSlotUrl
+                                }
+                                // Insert after the last pickup using pickups.length
+                                arrayHelpers.insert(pickups.length, newDeliverySchema)
+
+                                // Auto-expand the newly added task and collapse all previous tasks
+                                const newTaskIndex = pickups.length // Index of the new task after it's added
+                                const totalTasks = values.tasks.length + 1
+
+                                const newExpandedState = {}
+                                for (let i = 0; i < totalTasks; i++) {
+                                  newExpandedState[i] = i === newTaskIndex
+                                }
+                                setExpandedTasks(newExpandedState)
+
+                              }}>
+                              {t('DELIVERY_FORM_ADD_PICKUP')}
+                            </Button>
+                          </div> : null}
+
+                        </div>
+
+
+                        <div className="new-order__dropoffs" style={{ display: 'flex', flexDirection: 'column' }}>
+                          {dropoffs
+                            .map((task) => {
+                              const originalIndex = values.tasks.findIndex(t => t === task);
+                              const dropoffIndex = dropoffs.findIndex(t => t === task);
+                              return (
+                                <div className='new-order__dropoffs__item' key={originalIndex}>
+                                  <Task
+                                    taskId={getTaskId(task)}
+                                    addresses={addresses}
+                                    storeNodeId={storeNodeId}
+                                    storeDeliveryInfos={storeDeliveryInfos}
+                                    onRemove={arrayHelpers.remove}
+                                    showRemoveButton={dropoffIndex > 0}
+                                    isDispatcher={isDispatcher}
+                                    tags={tags}
+                                    isExpanded={expandedTasks[originalIndex]}
+                                    onToggleExpanded={(isExpanded) => handleTaskExpansion(originalIndex, isExpanded)}
+                                    // Always show packages on dropoffs
+                                    showPackages={true}
                                   />
                                 </div>
                               );
@@ -399,16 +512,28 @@ export default function({
                             <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
                             <Button
                               data-testid="add-dropoff-button"
-                              disabled={false}
+                              disabled={!canAddAnother('DROPOFF', pickups, dropoffs)}
                               onClick={() => {
+                                const newTaskId = generateTempId()
                                 const newDeliverySchema = {
                                   ...dropoffSchema,
+                                  '@id': newTaskId,
                                   before: values.tasks.slice(-1)[0].before,
                                   after: values.tasks.slice(-1)[0].after,
                                   timeSlot: values.tasks.slice(-1)[0].timeSlot,
                                   timeSlotUrl: values.tasks.slice(-1)[0].timeSlotUrl
                                 }
                                 arrayHelpers.push(newDeliverySchema)
+
+                                // Auto-expand the newly added task and collapse all previous tasks
+                                const newTaskIndex = values.tasks.length // Index of the new task after it's added
+                                const totalTasks = values.tasks.length + 1
+
+                                const newExpandedState = {}
+                                for (let i = 0; i < totalTasks; i++) {
+                                  newExpandedState[i] = i === newTaskIndex
+                                }
+                                setExpandedTasks(newExpandedState)
                               }}>
                               {t('DELIVERY_FORM_ADD_DROPOFF')}
                             </Button>
@@ -474,13 +599,13 @@ export default function({
                     ) : null}
 
                     {mode === Mode.DELIVERY_CREATE || isDispatcher ? (
-                      <div className="order-informations__complete-order border-top py-3">
+                      <div className="border-top py-3">
                         <SuggestionModal />
                         <Button
                           type="primary"
                           style={{ height: '2.5em' }}
                           htmlType="submit"
-                          disabled={isSubmitting || priceLoading}>
+                          disabled={isSubmitting || priceLoading || isSubmitted}>
                           {t('DELIVERY_FORM_SUBMIT')}
                         </Button>
                       </div>

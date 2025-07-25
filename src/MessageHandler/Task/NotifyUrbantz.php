@@ -29,7 +29,7 @@ class NotifyUrbantz
         HttpClientInterface $urbantzClient,
         private EntityManagerInterface $entityManager,
         string $secret,
-        LoggerInterface $logger = null)
+        ?LoggerInterface $logger = null)
     {
         $this->urbantzClient = $urbantzClient;
         $this->entityManager = $entityManager;

@@ -54,7 +54,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -203,7 +203,7 @@ class RestaurantController extends AbstractController
 
         if ($request->query->has('cuisine')) {
             // filter by cuisine id (index) instead of name
-            $cuisineTypes = $request->query->get('cuisine');
+            $cuisineTypes = $request->query->all('cuisine');
             $cuisineIds = [];
             foreach ($cuisines as $cuisine) {
                 if (in_array($cuisine->getName(), $cuisineTypes)) {
@@ -380,7 +380,7 @@ class RestaurantController extends AbstractController
         LoopEatContext $loopeatContext,
         BusinessContext $businessContext,
         LocalBusinessRepository $repository,
-        Address $address = null)
+        ?Address $address = null)
     {
         $restaurant = $repository->find($id);
 
@@ -619,7 +619,7 @@ class RestaurantController extends AbstractController
             if (!$request->request->has('options') && !$product->hasNonAdditionalOptions()) {
                 $productVariant = $this->productVariantResolver->getVariant($product);
             } else {
-                $optionValues = $optionsPayloadConverter->convert($product, $request->request->get('options'));
+                $optionValues = $optionsPayloadConverter->convert($product, $request->request->all('options'));
                 $productVariant = $this->productVariantResolver->getVariantForOptionValues($product, $optionValues);
             }
         }
@@ -852,16 +852,13 @@ class RestaurantController extends AbstractController
             'type',
         ];
 
-        sort($parameters);
-
-        $query = [];
-        foreach ($parameters as $parameter) {
-            $query[$parameter] = $request->query->get($parameter);
-        }
+        $query = array_filter($request->query->all(), fn ($key) => in_array($key, $parameters), ARRAY_FILTER_USE_KEY);
 
         if (isset($query['cuisine'])) {
             sort($query['cuisine']);
         }
+
+        ksort($query);
 
         $cacheKey = http_build_query($query);
 

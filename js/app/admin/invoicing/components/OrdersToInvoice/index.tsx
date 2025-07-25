@@ -1,19 +1,20 @@
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import Modal from 'react-modal'
 import { useTranslation } from 'react-i18next'
+import { Checkbox } from 'antd'
+import { Moment } from 'moment'
 
 import Button from '../../../../components/core/Button'
 import { prepareParams } from '../../redux/actions'
 import ExportModalContent from '../ExportModalContent'
 import OrganizationsTable from '../OrganizationsTable'
 import RangePicker from './RangePicker'
-import { Checkbox } from 'antd'
 
 const ordersStates = ['new', 'accepted', 'fulfilled']
 
 export default () => {
-  const [selectedStoreIds, setSelectedStoreIds] = useState([])
-  const [dateRange, setDateRange] = useState(null)
+  const [selectedStoreIds, setSelectedStoreIds] = useState([] as string[])
+  const [dateRange, setDateRange] = useState(null as Moment[]|null)
   const [onlyNotInvoiced, setOnlyNotInvoiced] = useState(false)
 
   const [reloadKey, setReloadKey] = useState(0)

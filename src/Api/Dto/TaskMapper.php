@@ -2,6 +2,7 @@
 
 namespace AppBundle\Api\Dto;
 
+use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Utils\Barcode\BarcodeUtils;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -19,44 +20,67 @@ class TaskMapper
      * @return TaskPackageDto[]
      */
     public function getPackages(Task $task, array $tasksInTheSameDelivery): array {
-        if ($task->isPickup()) {
-            /**
-             * @var TaskPackageDto[] $packageDtos
-             */
-            $packageDtos = [];
 
-            // for a pickup in a delivery, the packages are the "sum" of the dropoffs packages
-            foreach ($tasksInTheSameDelivery as $t) {
-                if ($t->isPickup()) {
-                    continue;
+        $otherTasks = array_filter($tasksInTheSameDelivery, fn($t) => $t !== $task);
+
+        $type = Delivery::getType($tasksInTheSameDelivery);
+
+        switch ($type) {
+            case Delivery::TYPE_MULTI_DROPOFF:
+            case Delivery::TYPE_SIMPLE:
+                if ($task->isPickup()) {
+                    return $this->toSumOfPackages($otherTasks);
                 }
+                break;
+            case Delivery::TYPE_MULTI_PICKUP:
+                if ($task->isDropoff()) {
+                    return $this->toSumOfPackages($otherTasks);
+                }
+                break;
+        }
 
-                foreach ($t->getPackages() as $taskPackage) {
-                    $packageId = $taskPackage->getPackage()->getId();
-                    if (!isset($packageDtos[$packageId])) {
-                        $packageDtos[$packageId] = $this->toPackageDto($taskPackage);
-                    } else {
-                        $existingPackageDto = $packageDtos[$packageId];
+        return $this->toPackages($task);
+    }
 
-                        $thisTaskPackageDto = $this->toPackageDto($taskPackage);
+    /**
+     * @param Task[] $tasks
+     * @return TaskPackageDto[]
+     */
+    private function toSumOfPackages(array $tasks): array
+    {
+        /**
+         * @var TaskPackageDto[] $packageDtos
+         */
+        $packageDtos = [];
 
-                        $existingPackageDto->quantity = $existingPackageDto->quantity + $thisTaskPackageDto->quantity;
-                        $existingPackageDto->labels = array_merge(
-                            $existingPackageDto->labels,
-                            $thisTaskPackageDto->labels
-                        );
-                    }
+        foreach ($tasks as $t) {
+            foreach ($t->getPackages() as $taskPackage) {
+                $packageId = $taskPackage->getPackage()->getId();
+                if (!isset($packageDtos[$packageId])) {
+                    $packageDtos[$packageId] = $this->toPackageDto($taskPackage);
+                } else {
+                    $existingPackageDto = $packageDtos[$packageId];
+
+                    $thisTaskPackageDto = $this->toPackageDto($taskPackage);
+
+                    $existingPackageDto->quantity = $existingPackageDto->quantity + $thisTaskPackageDto->quantity;
+                    $existingPackageDto->labels = array_merge(
+                        $existingPackageDto->labels,
+                        $thisTaskPackageDto->labels
+                    );
                 }
             }
-
-            return array_values($packageDtos);
-
-        } else {
-            return array_map(function (Task\Package $taskPackage) {
-                return $this->toPackageDto($taskPackage);
-
-            }, $task->getPackages()->toArray());
         }
+
+        return array_values($packageDtos);
+    }
+
+    private function toPackages(Task $task): array
+    {
+        return array_map(function (Task\Package $taskPackage) {
+            return $this->toPackageDto($taskPackage);
+
+        }, $task->getPackages()->toArray());
     }
 
     private function toPackageDto(Task\Package $taskPackage): TaskPackageDto
@@ -89,25 +113,27 @@ class TaskMapper
     /**
      * @param Task[] $tasksInTheSameDelivery
      */
-    public function getWeight(Task $task, array $tasksInTheSameDelivery): int|null {
-        $weight = null;
+    public function getWeight(Task $task, array $tasksInTheSameDelivery): int|null
+    {
+        $otherTasks = array_filter($tasksInTheSameDelivery, fn($t) => $t !== $task);
 
-        if ($task->isPickup()) {
-            // for a pickup in a delivery, the serialized weight is the sum of the dropoff weight
-            foreach ($tasksInTheSameDelivery as $t) {
-                if ($t->isPickup()) {
-                    continue;
-                }
+        $type = Delivery::getType($tasksInTheSameDelivery);
 
-                if (!is_null($t->getWeight())) {
-                    $weight += $t->getWeight();
+        switch ($type) {
+            case Delivery::TYPE_MULTI_DROPOFF:
+            case Delivery::TYPE_SIMPLE:
+                if ($task->isPickup()) {
+                    return $this->sumOfWeight($otherTasks);
                 }
-            }
-        } else {
-            $weight = $task->getWeight();
+                break;
+            case Delivery::TYPE_MULTI_PICKUP:
+                if ($task->isDropoff()) {
+                    return $this->sumOfWeight($otherTasks);
+                }
+                break;
         }
 
-        return $weight;
+        return $task->getWeight();
     }
 
     /**
@@ -144,5 +170,18 @@ class TaskMapper
                 ),
             ],
         ];
+    }
+
+    private function sumOfWeight(array $tasks): null|int
+    {
+        return array_reduce($tasks, function ($carry, $item) {
+
+            if (!is_null($item->getWeight())) {
+                $carry += $item->getWeight();
+            }
+
+            return $carry;
+
+        }, null);
     }
 }

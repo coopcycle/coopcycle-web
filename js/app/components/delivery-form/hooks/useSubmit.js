@@ -17,6 +17,11 @@ import { Mode, modeIn } from '../mode'
 import { selectMode } from '../redux/formSlice'
 import { useDatadog } from '../../../hooks/useDatadog'
 
+// check if a task ID is temporary (not from backend)
+const isTemporaryId = (taskId) => {
+  return taskId && taskId.startsWith('temp-')
+}
+
 function serializeAddress(address) {
   if (Object.prototype.hasOwnProperty.call(address, '@id')) {
     return address['@id']
@@ -33,6 +38,12 @@ function convertValuesToDeliveryPayload(storeNodeId, values) {
     store: storeNodeId,
     tasks: structuredClone(values.tasks),
     order: structuredClone(values.order),
+  }
+
+  for (const task of data.tasks) {
+    if (isTemporaryId(task['@id'])) {
+      delete task['@id']
+    }
   }
 
   if (values.rrule) {
@@ -65,6 +76,7 @@ function convertDateInRecurrenceRulePayload(value) {
 }
 
 function convertValuesToRecurrenceRulePayload(values) {
+
   let data = {
     rule: values.rrule,
     template: {
@@ -118,6 +130,7 @@ export default function useSubmit(
 ) {
   const mode = useSelector(selectMode)
   const [error, setError] = useState({ isError: false, errorMessage: ' ' })
+  const [isSubmitted, setIsSubmitted] = useState(false)
 
   const rejectedSuggestionsOrder = useSelector(selectRejectedSuggestedOrder)
 
@@ -247,6 +260,8 @@ export default function useSubmit(
         }
       }
 
+      setIsSubmitted(true)
+
       if (modeIn(mode, [Mode.DELIVERY_CREATE, Mode.DELIVERY_UPDATE])) {
         const deliveryId = data.id
         const orderId = data.order?.id
@@ -281,5 +296,5 @@ export default function useSubmit(
     ],
   )
 
-  return { handleSubmit, error }
+  return { handleSubmit, isSubmitted, error }
 }

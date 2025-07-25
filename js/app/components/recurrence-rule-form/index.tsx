@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Provider } from 'react-redux'
 import { accountSlice } from '../../entities/account/reduxSlice'
 import DeliveryForm from '../delivery-form/DeliveryForm.js'

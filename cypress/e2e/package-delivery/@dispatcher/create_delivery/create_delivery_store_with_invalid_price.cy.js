@@ -17,7 +17,7 @@ context('Delivery (role: dispatcher)', () => {
       .click()
 
     cy.get('[data-testid=store_Acme_with_invalid_pricing__list_item]')
-      .contains('Créer une livraison')
+      .contains('Créer une nouvelle commande')
       .click()
 
     cy.wait(500)

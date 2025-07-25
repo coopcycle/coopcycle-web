@@ -37,7 +37,7 @@ class Item
         return $this->parent;
     }
 
-    public function setParent(TaskList $parent = null)
+    public function setParent(?TaskList $parent = null)
     {
         $this->parent = $parent;
 

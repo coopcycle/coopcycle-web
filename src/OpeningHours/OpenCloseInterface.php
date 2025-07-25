@@ -12,17 +12,17 @@ interface OpenCloseInterface
      */
     public function getOpeningHours($method = 'delivery');
 
-    public function isOpen(\DateTime $now = null): bool;
+    public function isOpen(?\DateTime $now = null): bool;
 
     /**
      * @return \DateTime|null
      */
-    public function getNextOpeningDate(\DateTime $now = null);
+    public function getNextOpeningDate(?\DateTime $now = null);
 
     /**
      * @return \DateTime|null
      */
-    public function getNextClosingDate(\DateTime $now = null);
+    public function getNextClosingDate(?\DateTime $now = null);
 
     /**
      * @return Collection
@@ -33,13 +33,13 @@ interface OpenCloseInterface
      * @param \DateTime|null $date
      * @param \DateTime|null $now
      */
-    public function hasClosingRuleFor(\DateTime $date = null, \DateTime $now = null): bool;
+    public function hasClosingRuleFor(?\DateTime $date = null, ?\DateTime $now = null): bool;
 
     /**
      * @param \DateTime|null $date
      * @param \DateTime|null $now
      */
-    public function matchClosingRuleFor(\DateTime $date = null, \DateTime $now = null): ?ClosingRule;
+    public function matchClosingRuleFor(?\DateTime $date = null, ?\DateTime $now = null): ?ClosingRule;
 
     public function setShippingOptionsDays(int $shippingOptionsDays);
 }

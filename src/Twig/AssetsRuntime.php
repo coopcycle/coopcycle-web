@@ -80,7 +80,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
         });
     }
 
-    public function placeholderImage(?string $url, string $filter, string $provider = 'placehold', object|array $obj = null)
+    public function placeholderImage(?string $url, string $filter, string $provider = 'placehold', object|array|null $obj = null)
     {
         if (!empty($url)) {
 

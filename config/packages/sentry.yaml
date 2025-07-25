@@ -1,3 +1,4 @@
+# https://docs.sentry.io/platforms/php/guides/symfony/configuration/symfony-options/
 when@prod:
     sentry:
         dsn: '%sentry_public_dsn%'
@@ -13,6 +14,7 @@ when@prod:
                     - 'Symfony\Component\Security\Core\Exception\AccessDeniedException'
                     - 'Symfony\Component\HttpKernel\Exception\NotFoundHttpException'
                     - 'ApiPlatform\Symfony\Validator\Exception\ValidationException'
+            before_send: "sentry.callback.before_send"
 
 #        If you are using Monolog, you also need this additional configuration to log the errors correctly:
 #        https://docs.sentry.io/platforms/php/guides/symfony/#monolog-integration

@@ -9,7 +9,7 @@ class PackageWithQuantity implements PackageWithQuantityInterface
     private $package;
     private $quantity = 0;
 
-    public function __construct(Package $package = null, $quantity = 0)
+    public function __construct(?Package $package = null, $quantity = 0)
     {
         $this->package = $package;
         $this->quantity = $quantity;

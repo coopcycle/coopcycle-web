@@ -1,7 +1,7 @@
 CoopCycle
 =========
 
-![Build Status](https://github.com/coopcycle/coopcycle-web/actions/workflows/test.yml/badge.svg)
+![Build Status](https://github.com/coopcycle/coopcycle-web/actions/workflows/test_behat.yml/badge.svg) ![Build Status](https://github.com/coopcycle/coopcycle-web/actions/workflows/test_e2e.yml/badge.svg)
 
 CoopCycle is a **self-hosted** platform to order meals in your neighborhood and get them delivered by bike couriers. The only difference with proprietary platforms as Deliveroo or UberEats is that this software is [reserved to co-ops](#license).
 

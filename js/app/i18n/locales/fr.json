@@ -430,6 +430,9 @@
         "ORDER_DELAYED_NOTIFICATION": "La commande {{orderNumber}} a été retardée. Nouveau créneau de livraison : {{shippingTimeRange}}",
         "ADMIN_DASHBOARD_RECURRENCE_RULE_MODAL_TITLE": "Règle récurrente",
         "ADMIN_DASHBOARD_SHOW_RECURRENCE_RULES": "Montrer les règles récurrentes",
+        "ADMIN_DASHBOARD_CREATE_TASK": "Créer une tâche autonome (obsolète)",
+        "ADMIN_DASHBOARD_CREATE_RECURRENCE_RULE": "Créer une règle de récurrence (obsolète)",
+        "ADMIN_DASHBOARD_RECURRENCE_RULE_LEGACY_WARNING": "Il s'agit d'une méthode obsolète de création de règles de récurrence, veuillez configurer la récurrence via un formulaire de livraison à la place.",
         "ADMIN_RECURRENCE_RULE_NAME_PLACEHOLDER": "Nom de la règle",
         "RULE_PICKER_LINE_TASK_TYPE": "Type de tâche",
         "RECURRENCE_RULE_ADD": "Ajouter une règle de récurrence",
@@ -713,6 +716,16 @@
         "ADMIN_DASHBOARD_NO_TIMESLOTS_AVAILABLE": "Aucun choix n'est disponible pour ce créneau horaire. Veuillez contacter un administrateur si vous ne pouvez pas créer de livraison.",
         "DEPRECATED": "Obsolète",
         "LOADING": "Chargement...",
-        "VIEW_DOCUMENTATION": "Voir la documentation"
+        "VIEW_DOCUMENTATION": "Voir la documentation",
+        "DELIVERY_PROOFS_LINK_TEXT": "Preuves de Livraison",
+        "DELIVERY_PROOFS_MODAL_TITLE": "Télécharger les Preuves de Livraison",
+        "DELIVERY_PROOFS_DOWNLOAD_BUTTON": "Télécharger",
+        "DELIVERY_PROOFS_CHOOSE_WEEK": "Choisir une semaine",
+        "DELIVERY_PROOFS_TOTAL_DELIVERIES": "Total des Livraisons",
+        "DELIVERY_PROOFS_DELIVERIES_COUNT": "{{count}} livraisons",
+        "DELIVERY_PROOFS_CONTENTS": "Contenu",
+        "DELIVERY_PROOFS_CONTENTS_VALUE": "Photos et Rapports",
+        "DELIVERY_PROOFS_FILE_TYPE": "Type de Fichier",
+        "DELIVERY_PROOFS_FILE_TYPE_VALUE": "Archive ZIP"
     }
 }

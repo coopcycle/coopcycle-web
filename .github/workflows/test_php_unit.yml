@@ -1,4 +1,4 @@
-name: Test PHP unit
+name: Unit Tests (PHP)
 on: push
 env:
   APP_ENV: test

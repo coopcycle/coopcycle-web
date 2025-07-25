@@ -565,351 +565,353 @@ Feature: Urbantz
     And I add "Accept" header equal to "application/ld+json"
     And the store with name "Acme" sends a "POST" request to "/api/urbantz/webhook/task_unassociated" with body:
       """
-      {
-        "_id": "507f191e810c19729de860ea",
-        "initialSequence": 0,
-        "trackingId": "abcdef-123456-4abc-acbacbfcabcfbcbfbacbfab",
-        "extTrackId": "dlv_pQB5NV1LzOyXJPEP30xgjaGkYo3WlZvA",
-        "type": "delivery",
-        "taskId": "my-task-id",
-        "taskReference": "task-ref-001-d",
-        "progress": "ANNOUNCED",
-        "status": "ARRIVED",
-        "client": "507f191e810c19729de860ea",
-        "hub": "507f191e810c19729de860ea",
-        "hubName": "My Warehouse",
-        "associatedName": "Lumikko Oyj",
-        "associated": "5c3c63c23c32c30cb3cc1234c",
-        "dependency": "507f191e810c19729de860ea",
-        "hasDependency": "507f191e810c19729de860ea",
-        "round": "R01",
-        "archived": true,
-        "actualTime": {
-          "arrive": {
-            "when": "2019-03-24T12:34:56.123Z",
+      [
+        {
+          "_id": "507f191e810c19729de860ea",
+          "initialSequence": 0,
+          "trackingId": "abcdef-123456-4abc-acbacbfcabcfbcbfbacbfab",
+          "extTrackId": "dlv_pQB5NV1LzOyXJPEP30xgjaGkYo3WlZvA",
+          "type": "delivery",
+          "taskId": "my-task-id",
+          "taskReference": "task-ref-001-d",
+          "progress": "ANNOUNCED",
+          "status": "ARRIVED",
+          "client": "507f191e810c19729de860ea",
+          "hub": "507f191e810c19729de860ea",
+          "hubName": "My Warehouse",
+          "associatedName": "Lumikko Oyj",
+          "associated": "5c3c63c23c32c30cb3cc1234c",
+          "dependency": "507f191e810c19729de860ea",
+          "hasDependency": "507f191e810c19729de860ea",
+          "round": "R01",
+          "archived": true,
+          "actualTime": {
+            "arrive": {
+              "when": "2019-03-24T12:34:56.123Z",
+              "location": {
+                "type": "Point",
+                "geometry": [
+                  0
+                ]
+              },
+              "forced": false,
+              "isCorrectAddress": false
+            }
+          },
+          "order": "string",
+          "paymentType": "CCOD",
+          "platform": "5c98f80a6b3dc61664c05cbf",
+          "platformName": "Cortedal SYS, Oy",
+          "endpoint": "5c3c645e3b37f30b3fc0240f",
+          "errorLocation": {
+            "addressLines": [
+              "string"
+            ],
+            "geocodeScore": 98,
             "location": {
               "type": "Point",
               "geometry": [
                 0
               ]
-            },
-            "forced": false,
-            "isCorrectAddress": false
-          }
-        },
-        "order": "string",
-        "paymentType": "CCOD",
-        "platform": "5c98f80a6b3dc61664c05cbf",
-        "platformName": "Cortedal SYS, Oy",
-        "endpoint": "5c3c645e3b37f30b3fc0240f",
-        "errorLocation": {
-          "addressLines": [
-            "string"
+            }
+          },
+          "customerCalls": [
+            {
+              "when": "2019-03-13T12:34:56.012Z",
+              "by": "string"
+            }
           ],
-          "geocodeScore": 98,
+          "issues": [
+            {
+              "type": "GEOCODING",
+              "code": 0,
+              "line": 0,
+              "error": "string"
+            }
+          ],
+          "notifications": [
+            {
+              "notificationId": "string",
+              "sentDate": "2019-12-23T12:34:56.123Z",
+              "by": {
+                "firstName": "John",
+                "lastName": "Doe",
+                "email": "john.doe@example.3w",
+                "phoneNumber": "32123123123",
+                "picture": "/some/folder/image/c1235b6a253cd12d3",
+                "reference": {
+                  "name": "self",
+                  "value": "john.doe@example.3w"
+                },
+                "_id": "507f191e810c19729de860ea",
+                "externalId": "string"
+              }
+            }
+          ],
+          "notificationSettings": {
+            "sms": false,
+            "email": false
+          },
+          "replanned": false,
+          "sourceHash": "string",
+          "updated": "2019-03-24T12:34:56.123Z",
+          "when": "2019-03-24T12:34:56.123Z",
+          "targetFlux": "56fe250f1eb3571100bb081c_MORNING_57454b1556950a11005189fa_2017-11-15",
+          "skills": [
+            "speaks_french"
+          ],
+          "roundName": "R03",
+          "roundColor": "#FFCC0D",
+          "products": [
+            {
+              "productId": "001234",
+              "name": "CHEESE",
+              "description": "Goat cheese pack, 400gr",
+              "type": "food",
+              "barcode": "11231212121",
+              "quantity": 3,
+              "unitPrice": 13.95,
+              "isSubstitution": false,
+              "quantityRejected": 0,
+              "rejectedReason": {
+                "_id": "507f191e810c19729de860ea",
+                "name": "damaged"
+              }
+            }
+          ],
+          "hasRejectedProducts": false,
+          "activity": "string",
+          "positionInRound": "first",
+          "sequence": 1,
+          "id": "5c98f80a6b3dc61664c05cbb",
+          "flux": "5c3c63c23c32c30cb3cc1234c",
+          "collectedAmount": 10.2,
+          "closureDate": "2019-03-25T15:50:50.123Z",
+          "by": "5c3c63c23c32c30cb3cc1234c",
+          "attempts": 0,
+          "arriveTime": "2019-03-25T15:50:50.123Z",
+          "announcement": "507f191e810c19729de860ea",
+          "shift": "string",
+          "serviceTime": 5,
+          "realServiceTime": {
+            "serviceTime": 120,
+            "tasksDeliveredInSameStop": 1,
+            "confidence": "HIGH",
+            "version": 2
+          },
+          "imagePath": "https://api.urbantz.com/pictures/platforms/5c3f511c3b31d35f3fc023fc/",
+          "maxTransitTime": 0,
+          "timeWindowMargin": 0,
+          "stopSequence": 2,
+          "date": "2019-03-13T12:34:56.012Z",
+          "labels": [
+            "frozen"
+          ],
+          "instructions": "Once inside of the building, follow the corridor on the right and take the elevator",
+          "metadata": {
+            "property1": 23,
+            "property2": "Hello World"
+          },
+          "dimensions": {
+            "weight": 200,
+            "volume": 0.2
+          },
+          "timeWindow": {
+            "start": "2019-03-13T12:34:56.012Z",
+            "stop": "2019-03-13T12:34:56.012Z"
+          },
+          "timeWindow2": {
+            "start": "2019-03-13T12:34:56.012Z",
+            "stop": "2019-03-13T12:34:56.012Z"
+          },
+          "contact": {
+            "account": "ACC123456789",
+            "name": "Acme Inc.",
+            "person": "Luke Skywalker",
+            "phone": "+32 477 99 99 99",
+            "email": "something@not-a-real-email.org",
+            "extraPhones": [
+              "+32 477 99 99 99"
+            ],
+            "extraEmails": [
+              "something@not-a-real-email.org"
+            ],
+            "language": "fr",
+            "buildingInfo": {
+              "floor": 5,
+              "hasElevator": true,
+              "digicode1": "1234A",
+              "digicode2": "4321A",
+              "hasInterphone": true,
+              "interphoneCode": "4524#"
+            }
+          },
           "location": {
-            "type": "Point",
-            "geometry": [
-              0
-            ]
-          }
-        },
-        "customerCalls": [
-          {
-            "when": "2019-03-13T12:34:56.012Z",
-            "by": "string"
-          }
-        ],
-        "issues": [
-          {
-            "type": "GEOCODING",
-            "code": 0,
-            "line": 0,
-            "error": "string"
-          }
-        ],
-        "notifications": [
-          {
-            "notificationId": "string",
-            "sentDate": "2019-12-23T12:34:56.123Z",
-            "by": {
-              "firstName": "John",
-              "lastName": "Doe",
-              "email": "john.doe@example.3w",
-              "phoneNumber": "32123123123",
-              "picture": "/some/folder/image/c1235b6a253cd12d3",
-              "reference": {
-                "name": "self",
-                "value": "john.doe@example.3w"
+            "building": "Bâtiment A",
+            "number": "251b",
+            "street": "Avenue Louise",
+            "city": "Brussels",
+            "zip": "1050",
+            "country": "Belgium",
+            "countryCode": "BEL",
+            "address": "251 avenue louise, 1050 Brussels, Belgium",
+            "geocodeScore": 98,
+            "origin": "ADDRESS_BOOK",
+            "location": {
+              "geometry": [
+                0
+              ],
+              "type": "Point"
+            }
+          },
+          "source": {
+            "building": "Bâtiment A",
+            "number": "251b",
+            "street": "Avenue Louise",
+            "city": "Brussels",
+            "zip": "1050",
+            "addressLines": [
+              "251 Avenue Louise",
+              "1050 Brussels",
+              "Belgium"
+            ],
+            "location": {
+              "geometry": [
+                0
+              ],
+              "type": "Point"
+            },
+            "country": "Belgium"
+          },
+          "hasBeenPaid": false,
+          "price": 0,
+          "driver": "5c98f80a6b3dc61664c05cbb",
+          "requires": {
+            "pickup": {
+              "dispatcher": {
+                "scan": false
               },
+              "driver": {
+                "contactless": false,
+                "signature": false,
+                "signatureAndComment": false,
+                "scan": false,
+                "comment": false,
+                "photo": false
+              },
+              "stop": {
+                "onSite": false
+              },
+              "failure": {
+                "photo": false
+              }
+            },
+            "delivery": {
+              "dispatcher": {
+                "scan": false
+              },
+              "driver": {
+                "contactless": false,
+                "prepCheckList": false,
+                "prepScan": false,
+                "signature": false,
+                "signatureAndComment": false,
+                "signatureAndItemConcerns": false,
+                "scan": false,
+                "comment": false,
+                "photo": false
+              },
+              "stop": {
+                "onSite": false
+              },
+              "failure": {
+                "photo": false
+              }
+            },
+            "other": {
+              "driver": {
+                "timer": false
+              }
+            }
+          },
+          "execution": {
+            "successComment": "string",
+            "successPicture": "string",
+            "failedReason": {
+              "reasonId": "507f191e810c19729de860ea",
+              "reason": "string",
+              "custom": "string",
+              "picture": "string"
+            },
+            "timer": {
+              "timestamps": [
+                {
+                  "type": "start",
+                  "time": "2019-12-23T12:34:56.123Z"
+                }
+              ]
+            },
+            "signature": {
+              "data": "string",
+              "name": "string"
+            },
+            "position": {
+              "accuracy": 16.88804280209332,
+              "altitude": 93.19367065219194,
+              "heading": 90,
+              "latitude": 50.824853,
+              "longitude": 4.365968,
+              "speed": 42.5,
+              "timestamp": 1553529404789
+            },
+            "contactless": {
+              "forced": true,
+              "reason": "string"
+            }
+          },
+          "log": [
+            {
               "_id": "507f191e810c19729de860ea",
-              "externalId": "string"
+              "when": "2019-03-13T12:34:56.012Z",
+              "to": "ANNOUNCED",
+              "by": "string"
             }
-          }
-        ],
-        "notificationSettings": {
-          "sms": false,
-          "email": false
-        },
-        "replanned": false,
-        "sourceHash": "string",
-        "updated": "2019-03-24T12:34:56.123Z",
-        "when": "2019-03-24T12:34:56.123Z",
-        "targetFlux": "56fe250f1eb3571100bb081c_MORNING_57454b1556950a11005189fa_2017-11-15",
-        "skills": [
-          "speaks_french"
-        ],
-        "roundName": "R03",
-        "roundColor": "#FFCC0D",
-        "products": [
-          {
-            "productId": "001234",
-            "name": "CHEESE",
-            "description": "Goat cheese pack, 400gr",
-            "type": "food",
-            "barcode": "11231212121",
-            "quantity": 3,
-            "unitPrice": 13.95,
-            "isSubstitution": false,
-            "quantityRejected": 0,
-            "rejectedReason": {
-              "_id": "507f191e810c19729de860ea",
-              "name": "damaged"
-            }
-          }
-        ],
-        "hasRejectedProducts": false,
-        "activity": "string",
-        "positionInRound": "first",
-        "sequence": 1,
-        "id": "5c98f80a6b3dc61664c05cbb",
-        "flux": "5c3c63c23c32c30cb3cc1234c",
-        "collectedAmount": 10.2,
-        "closureDate": "2019-03-25T15:50:50.123Z",
-        "by": "5c3c63c23c32c30cb3cc1234c",
-        "attempts": 0,
-        "arriveTime": "2019-03-25T15:50:50.123Z",
-        "announcement": "507f191e810c19729de860ea",
-        "shift": "string",
-        "serviceTime": 5,
-        "realServiceTime": {
-          "serviceTime": 120,
-          "tasksDeliveredInSameStop": 1,
-          "confidence": "HIGH",
-          "version": 2
-        },
-        "imagePath": "https://api.urbantz.com/pictures/platforms/5c3f511c3b31d35f3fc023fc/",
-        "maxTransitTime": 0,
-        "timeWindowMargin": 0,
-        "stopSequence": 2,
-        "date": "2019-03-13T12:34:56.012Z",
-        "labels": [
-          "frozen"
-        ],
-        "instructions": "Once inside of the building, follow the corridor on the right and take the elevator",
-        "metadata": {
-          "property1": 23,
-          "property2": "Hello World"
-        },
-        "dimensions": {
-          "weight": 200,
-          "volume": 0.2
-        },
-        "timeWindow": {
-          "start": "2019-03-13T12:34:56.012Z",
-          "stop": "2019-03-13T12:34:56.012Z"
-        },
-        "timeWindow2": {
-          "start": "2019-03-13T12:34:56.012Z",
-          "stop": "2019-03-13T12:34:56.012Z"
-        },
-        "contact": {
-          "account": "ACC123456789",
-          "name": "Acme Inc.",
-          "person": "Luke Skywalker",
-          "phone": "+32 477 99 99 99",
-          "email": "something@not-a-real-email.org",
-          "extraPhones": [
-            "+32 477 99 99 99"
           ],
-          "extraEmails": [
-            "something@not-a-real-email.org"
+          "categories": [
+            "B2B"
           ],
-          "language": "fr",
-          "buildingInfo": {
-            "floor": 5,
-            "hasElevator": true,
-            "digicode1": "1234A",
-            "digicode2": "4321A",
-            "hasInterphone": true,
-            "interphoneCode": "4524#"
-          }
-        },
-        "location": {
-          "building": "Bâtiment A",
-          "number": "251b",
-          "street": "Avenue Louise",
-          "city": "Brussels",
-          "zip": "1050",
-          "country": "Belgium",
-          "countryCode": "BEL",
-          "address": "251 avenue louise, 1050 Brussels, Belgium",
-          "geocodeScore": 98,
-          "origin": "ADDRESS_BOOK",
-          "location": {
-            "geometry": [
-              0
-            ],
-            "type": "Point"
-          }
-        },
-        "source": {
-          "building": "Bâtiment A",
-          "number": "251b",
-          "street": "Avenue Louise",
-          "city": "Brussels",
-          "zip": "1050",
-          "addressLines": [
-            "251 Avenue Louise",
-            "1050 Brussels",
-            "Belgium"
-          ],
-          "location": {
-            "geometry": [
-              0
-            ],
-            "type": "Point"
+          "contactless": {
+            "pin": 7270
           },
-          "country": "Belgium"
-        },
-        "hasBeenPaid": false,
-        "price": 0,
-        "driver": "5c98f80a6b3dc61664c05cbb",
-        "requires": {
-          "pickup": {
-            "dispatcher": {
-              "scan": false
-            },
-            "driver": {
-              "contactless": false,
-              "signature": false,
-              "signatureAndComment": false,
-              "scan": false,
-              "comment": false,
-              "photo": false
-            },
-            "stop": {
-              "onSite": false
-            },
-            "failure": {
-              "photo": false
-            }
-          },
-          "delivery": {
-            "dispatcher": {
-              "scan": false
-            },
-            "driver": {
-              "contactless": false,
-              "prepCheckList": false,
-              "prepScan": false,
-              "signature": false,
-              "signatureAndComment": false,
-              "signatureAndItemConcerns": false,
-              "scan": false,
-              "comment": false,
-              "photo": false
-            },
-            "stop": {
-              "onSite": false
-            },
-            "failure": {
-              "photo": false
-            }
-          },
-          "other": {
-            "driver": {
-              "timer": false
-            }
-          }
-        },
-        "execution": {
-          "successComment": "string",
-          "successPicture": "string",
-          "failedReason": {
-            "reasonId": "507f191e810c19729de860ea",
-            "reason": "string",
-            "custom": "string",
-            "picture": "string"
-          },
-          "timer": {
-            "timestamps": [
+          "assets": {
+            "deliver": [
               {
-                "type": "start",
-                "time": "2019-12-23T12:34:56.123Z"
+                "assetId": "string",
+                "name": "string",
+                "price": 0,
+                "amount": 0
+              }
+            ],
+            "return": [
+              {
+                "assetId": "string",
+                "name": "string",
+                "price": 0,
+                "amount": 0
               }
             ]
           },
-          "signature": {
-            "data": "string",
-            "name": "string"
-          },
-          "position": {
-            "accuracy": 16.88804280209332,
-            "altitude": 93.19367065219194,
-            "heading": 90,
-            "latitude": 50.824853,
-            "longitude": 4.365968,
-            "speed": 42.5,
-            "timestamp": 1553529404789
-          },
-          "contactless": {
-            "forced": true,
-            "reason": "string"
-          }
-        },
-        "log": [
-          {
-            "_id": "507f191e810c19729de860ea",
-            "when": "2019-03-13T12:34:56.012Z",
-            "to": "ANNOUNCED",
-            "by": "string"
-          }
-        ],
-        "categories": [
-          "B2B"
-        ],
-        "contactless": {
-          "pin": 7270
-        },
-        "assets": {
-          "deliver": [
+          "attachments": [
             {
-              "assetId": "string",
-              "name": "string",
-              "price": 0,
-              "amount": 0
+              "_id": "5f9af33b4f8cc32e047d83b2",
+              "name": "Delivery Note",
+              "url": "/attachments/tasks/5c3c63c23c32c30cb3cc1234c/af6227d6-f915-4924-8873-98da8131df3a.pdf"
             }
           ],
-          "return": [
-            {
-              "assetId": "string",
-              "name": "string",
-              "price": 0,
-              "amount": 0
-            }
-          ]
-        },
-        "attachments": [
-          {
-            "_id": "5f9af33b4f8cc32e047d83b2",
-            "name": "Delivery Note",
-            "url": "/attachments/tasks/5c3c63c23c32c30cb3cc1234c/af6227d6-f915-4924-8873-98da8131df3a.pdf"
-          }
-        ],
-        "brandingTemplate": "string",
-        "timestamp": "2019-04-01T08:31:05.121Z"
-      }
+          "brandingTemplate": "string",
+          "timestamp": "2019-04-01T08:31:05.121Z"
+        }
+      ]
       """
     Then the response status code should be 200
 
