@@ -63,13 +63,32 @@ class DeliveryCreatedHandler
             return;
         }
 
+        $tasks = $delivery->getTasks();
         $date = Carbon::instance($delivery->getPickup()->getAfter())
             ->locale($this->locale)
             ->calendar();
 
-        $message = $this->translator->trans('notifications.delivery_created', ['%date%' => strtolower($date)]);
+        if (($order = $delivery->getOrder())) {
+            if ($order->isFoodtech()) {
 
-        $users = $this->userManager->findUsersByRole('ROLE_ADMIN');
+            } else {
+                switch ($delivery->getType($tasks)) {
+                    case Delivery::TYPE_SIMPLE:
+                        break;
+                    case Delivery::TYPE_MULTI_PICKUP:
+                        break;
+                    case Delivery::TYPE_MULTI_DROPOFF:
+                        break;
+                    case Delivery::TYPE_MULTI_MULTI:
+                        break;
+                }
+            }
+        }
+
+        $message = $this->translator->trans('notifications.delivery_created', ['%date%' => strtolower($date)]);
+        //$message = "This is a test!\nWith a line break! This could be larger hmmm will see..?\nAnd with another line break?!";
+
+        $users = $this->userManager->findUsersByRoles(['ROLE_ADMIN', 'ROLE_DISPATCHER']);
         $usernames = array_map(fn(UserInterface $user) => $user->getUsername(), $users);
 
         $this->messageBus->dispatch(
