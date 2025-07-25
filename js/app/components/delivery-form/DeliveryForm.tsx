@@ -21,7 +21,7 @@ import {
   useGetStoreQuery,
   useGetTagsQuery,
 } from '../../api/slice'
-import { RecurrenceRules } from './RecurrenceRules'
+import { RecurrenceRules } from './components/recurrence/RecurrenceRules'
 import useSubmit from './hooks/useSubmit'
 import Order from './components/order/Order'
 import SuggestionModal from './SuggestionModal'

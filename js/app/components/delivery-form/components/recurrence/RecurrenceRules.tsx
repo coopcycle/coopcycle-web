@@ -8,9 +8,9 @@ import {
   closeRecurrenceModal,
   openRecurrenceModal,
   selectIsRecurrenceModalOpen,
-} from './redux/recurrenceSlice'
+} from '../../redux/recurrenceSlice'
 import { useTranslation } from 'react-i18next'
-import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
+import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext'
 
 import './RecurrenceRules.scss'
 
