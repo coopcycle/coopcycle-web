@@ -19,7 +19,7 @@ const OverridePriceForm = ({ setPrice, taxRate }: Props) => {
   const { t } = useTranslation()
 
   return (
-    <div className="override__form p-2 mb-1">
+    <div className="override__form p-2 mt-2">
       <div className="override__form__variant-name">
         <label
           className="override__form__variant-name___label font-weight-bold"

@@ -732,6 +732,7 @@
         "DELIVERY_FORM_OLD_PRICE": "Old price",
         "DELIVERY_FORM_TRACKING_LINK": "Tracking link",
         "DELIVERY_FROM_TRACKING_LINK_COPY": "Copy tracking link",
+        "DELIVERY_FORM_SUPPLEMENTS": "Supplements",
         "DELIVERY_FORM_SET_MANUALLY_PRICE": "Set the price manually",
         "DELIVERY_FORM_PRODUCT_NAME": "Product name",
         "DELIVERY_FORM_NAME_INSTRUCTION": "The name that will appear in the order summary and invoice",
