@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Collapse } from 'antd'
-import Cart from '../components/delivery-form/Cart'
+import Cart from '../components/delivery-form/components/order/Cart'
 import FlagsContext from '../components/delivery-form/FlagsContext'
 
 function Rule({ rule, matched }) {

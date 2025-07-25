@@ -41,13 +41,21 @@ let webpackConfig = Encore.getWebpackConfig()
 // }
 
 // Babel configuration
-webpackConfig.module.rules[0].use[0].options.plugins = [
-  // https://babeljs.io/docs/en/babel-plugin-transform-modules-commonjs
-  // loose ES6 modules allow us to dynamically mock imports during tests
-  // from
-  // https://github.com/cypress-io/cypress/tree/master/npm/react/cypress/component/advanced/mocking-imports
-  // https://github.com/cypress-io/cypress/discussions/16741#discussioncomment-7212638
-  ['@babel/plugin-transform-modules-commonjs', { loose: true }],
-]
+for (const rule of webpackConfig.module.rules) {
+  if (rule.test && (rule.test.toString().includes('js') || rule.test.toString().includes('ts')) ) {
+    // https://babeljs.io/docs/en/babel-plugin-transform-modules-commonjs
+    // loose ES6 modules allow us to dynamically mock imports during tests
+    // from
+    // https://github.com/cypress-io/cypress/tree/master/npm/react/cypress/component/advanced/mocking-imports
+    // https://github.com/cypress-io/cypress/discussions/16741#discussioncomment-7212638
+    if (rule.use) {
+      if (!rule.use[0].options.plugins) {
+        rule.use[0].options.plugins = []
+      }
+
+      rule.use[0].options.plugins.push(['@babel/plugin-transform-modules-commonjs', { loose: true }])
+    }
+  }
+}
 
 module.exports = webpackConfig
