@@ -47,49 +47,57 @@ const DatadogLogger: Logger = {
   /**
    * Send a log with debug level.
    */
-  debug(message: string, context?: object): void {
+  debug(message: string, messageContext?: object, error?: Error): void {
     if (!datadogEnabled) {
-      console.debug('DatadogLogger (dry run): ' + message, context)
+      console.debug(
+        'DatadogLogger (dry run): ' + message,
+        messageContext,
+        error,
+      )
       return
     }
 
-    datadogLogs.logger.debug(message, context)
+    datadogLogs.logger.debug(message, messageContext, error)
   },
 
   /**
    * Send a log with info level.
    */
-  info(message: string, context?: object): void {
+  info(message: string, messageContext?: object, error?: Error): void {
     if (!datadogEnabled) {
-      console.info('DatadogLogger (dry run): ' + message, context)
+      console.info('DatadogLogger (dry run): ' + message, messageContext, error)
       return
     }
 
-    datadogLogs.logger.info(message, context)
+    datadogLogs.logger.info(message, messageContext, error)
   },
 
   /**
    * Send a log with warn level.
    */
-  warn(message: string, context?: object): void {
+  warn(message: string, messageContext?: object, error?: Error): void {
     if (!datadogEnabled) {
-      console.warn('DatadogLogger (dry run): ' + message, context)
+      console.warn('DatadogLogger (dry run): ' + message, messageContext, error)
       return
     }
 
-    datadogLogs.logger.warn(message, context)
+    datadogLogs.logger.warn(message, messageContext, error)
   },
 
   /**
    * Send a log with error level.
    */
-  error(message: string, context?: object): void {
+  error(message: string, messageContext?: object, error?: Error): void {
     if (!datadogEnabled) {
-      console.error('DatadogLogger (dry run): ' + message, context)
+      console.error(
+        'DatadogLogger (dry run): ' + message,
+        messageContext,
+        error,
+      )
       return
     }
 
-    datadogLogs.logger.error(message, context)
+    datadogLogs.logger.error(message, messageContext, error)
   },
 }
 
