@@ -6,10 +6,16 @@ import * as Sentry from '@sentry/browser'
 import { AntdConfigProvider } from './antd'
 
 const logError = (error: Error, info: ErrorInfo) => {
-  Sentry.withScope(scope => {
-    scope.setExtra('errorInfo', info)
-    Sentry.captureException(error)
-  })
+  if (Sentry.isInitialized()) {
+    Sentry.withScope(scope => {
+      scope.setExtra('errorInfo', info)
+      Sentry.captureException(error)
+    })
+  }
+
+  if (window.DatadogLogger) {
+    window.DatadogLogger.error(error.message, info, error)
+  }
 }
 
 function FallbackComponent() {
