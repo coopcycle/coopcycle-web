@@ -21,8 +21,8 @@ const logError = (error: Error, info: ErrorInfo) => {
 function FallbackComponent() {
   const { t } = useTranslation()
   return (
-    <div className="d-flex flex-column align-items-center">
-      {t('ERROR_BOUNDARY_FALLBACK_MESSAGE')}
+    <div className="d-flex flex-column align-items-center justify-content-center">
+      ❌ {t('ERROR_BOUNDARY_FALLBACK_MESSAGE')}
     </div>
   )
 }
