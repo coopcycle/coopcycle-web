@@ -130,7 +130,7 @@ class PriceCalculationVisitor
                 // LEGACY_TARGET_DYNAMIC is used for backward compatibility
                 // for more info see PricingRule::LEGACY_TARGET_DYNAMIC
                 return $rule->getTarget() === PricingRule::TARGET_DELIVERY || $rule->getTarget() === PricingRule::LEGACY_TARGET_DYNAMIC;
-            }, true, $manualSupplements->orderSupplements);
+            }, true, $manualSupplements?->orderSupplements ?? []);
         }
 
         if ($ruleSet->getStrategy() === 'map') {
@@ -140,7 +140,7 @@ class PriceCalculationVisitor
                 // LEGACY_TARGET_DYNAMIC is used for backward compatibility
                 // for more info see PricingRule::LEGACY_TARGET_DYNAMIC
                 return $rule->getTarget() === PricingRule::TARGET_DELIVERY || ($rule->getTarget() === PricingRule::LEGACY_TARGET_DYNAMIC && count($tasks) <= 2);
-            }, false, $manualSupplements->orderSupplements);
+            }, false, $manualSupplements?->orderSupplements ?? []);
         }
 
         return new Result([]);
