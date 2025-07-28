@@ -65,7 +65,7 @@ class PricingManager
         return $output->getPrice();
     }
 
-    public function getPriceCalculation(Delivery $delivery, PricingRuleSet $ruleSet): ?PriceCalculationOutput
+    public function getPriceCalculation(Delivery $delivery, PricingRuleSet $ruleSet, ManualSupplements|null $manualSupplements = null): ?PriceCalculationOutput
     {
         // Store might be null if it's an embedded form
         $store = $delivery->getStore();
@@ -94,7 +94,7 @@ class PricingManager
             }
         }
 
-        return $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        return $this->priceCalculationVisitor->visit($delivery, $ruleSet, $manualSupplements);
     }
 
     /**

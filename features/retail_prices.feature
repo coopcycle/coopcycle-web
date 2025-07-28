@@ -1684,7 +1684,7 @@ Feature: Retail prices
         "order": {
           "manualSupplements": [
             {
-              "uri": "/api/pricing_rules/999999",
+              "@id": "/api/pricing_rules/999999",
               "quantity": 1
             }
           ]
@@ -1739,7 +1739,7 @@ Feature: Retail prices
         "order": {
           "manualSupplements": [
             {
-              "uri": "/api/pricing_rules/2",
+              "@id": "/api/pricing_rules/2",
               "quantity": 1
             }
           ]
@@ -1754,10 +1754,10 @@ Feature: Retail prices
         "@context":"/api/contexts/RetailPrice",
         "@id":@string@,
         "@type":"RetailPrice",
-        "amount":499,
+        "amount":699,
         "currency":"EUR",
         "tax":{
-          "amount":83,
+          "amount":117,
           "included": true
         },
         "order": {
@@ -1780,16 +1780,32 @@ Feature: Retail prices
                       "name": "Fixed Price"
                     },
                     "value": "Plus de 0.00 km"
+                  },
+                  {
+                    "@id": @string@,
+                    "@type": "ProductOptionValue",
+                    "price": 200,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-FIXED",
+                      "values": [
+                        @...@
+                      ],
+                      "name": "Fixed Price"
+                    },
+                    "value": "Express Delivery"
                   }
                 ],
                 "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
-              "total": 499
+              "total": 699
             }
           ],
-          "total": 499
+          "total": 699
         },
         "calculation": {"@*@":"@*@"}
       }

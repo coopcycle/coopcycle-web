@@ -20,7 +20,6 @@ use Sylius\Component\Taxation\Model\TaxCategoryInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -32,6 +31,7 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
 
 	public function __construct(
         private readonly DeliveryProcessor $decorated,
+        private readonly ManualSupplementsProcessor $manualSupplementsProcessor,
         private readonly PricingManager $pricingManager,
         private readonly OrderFactory $orderFactory,
         private readonly CurrencyContextInterface $currencyContext,
@@ -76,7 +76,10 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
             throw new BadRequestHttpException($message);
         }
 
-        $priceCalculationOutput = $this->pricingManager->getPriceCalculation($delivery, $pricingRuleSet);
+        // Extract manual supplements from the DTO
+        $manualSupplements = $this->manualSupplementsProcessor->process($data, $operation, $uriVariables, $context);
+
+        $priceCalculationOutput = $this->pricingManager->getPriceCalculation($delivery, $pricingRuleSet, $manualSupplements);
 
         if (null === $priceCalculationOutput) {
             $message = $this->translator->trans('delivery.price.error.priceCalculation', domain: 'validators');

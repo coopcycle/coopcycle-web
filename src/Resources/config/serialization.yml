@@ -175,7 +175,7 @@ Sylius\Component\Product\Model\ProductOption:
     code:
       groups: ['product_option', 'pricing_deliveries']
     values:
-      groups: ['product_option', 'pricing_deliveries']
+      groups: ['product_option']
     strategy:
       groups: ['product_option']
     additional:

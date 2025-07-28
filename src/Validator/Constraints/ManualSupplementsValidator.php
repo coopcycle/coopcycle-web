@@ -52,28 +52,24 @@ class ManualSupplementsValidator extends ConstraintValidator
             return;
         }
 
-        $validPricingRuleIris = [];
-        foreach ($pricingRuleSet->getRules() as $rule) {
-            if ($rule instanceof PricingRule) {
-                $validPricingRuleIris[] = $this->iriConverter->getIriFromResource($rule);
-            }
-        }
+
 
         foreach ($value->manualSupplements as $index => $supplement) {
-            if (null === $supplement->uri) {
+            if (null === $supplement->pricingRule) {
                 $this->context
                     ->buildViolation($constraint->invalidSupplementMessage)
-                    ->atPath("manualSupplements[{$index}].uri")
+                    ->atPath("manualSupplements[{$index}].pricingRule")
                     ->addViolation();
                 continue;
             }
 
-            // Check if the supplement URI (IRI) belongs to the store's pricing rule set
-            if (!in_array($supplement->uri, $validPricingRuleIris, true)) {
+            // Check if the supplement PricingRule belongs to the store's pricing rule set
+            if (!$pricingRuleSet->getRules()->contains($supplement->pricingRule)) {
+                $supplementIri = $this->iriConverter->getIriFromResource($supplement->pricingRule);
                 $this->context
                     ->buildViolation($constraint->supplementNotInStoreRuleSetMessage)
-                    ->setParameter('%supplement_uri%', $supplement->uri)
-                    ->atPath("manualSupplements[{$index}].uri")
+                    ->setParameter('%supplement_uri%', $supplementIri)
+                    ->atPath("manualSupplements[{$index}].pricingRule")
                     ->addViolation();
             }
         }
