@@ -26,7 +26,7 @@ import PricingRuleSection from './components/PricingRuleSection'
 import './pricing-rule-set-form.scss'
 import HelpIcon from '../HelpIcon'
 import { isManualSupplement } from './types/PricingRuleType'
-import { NodeId, PricingRule as PricingRuleType } from '../../api/types'
+import { Uri, PricingRule as PricingRuleType } from '../../api/types'
 
 // Utility function to generate temporary @id for new rules
 const generateTempId = (): string => `temp-${uuidv4()}`
@@ -36,7 +36,7 @@ const isTempId = (id: string): boolean => id.startsWith('temp-')
 
 type Props = {
   ruleSetId: number | null
-  ruleSetNodeId: NodeId | null
+  ruleSetNodeId: Uri | null
   isNew?: boolean
 }
 

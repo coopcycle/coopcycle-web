@@ -1,10 +1,10 @@
 // API Types for RTK Query endpoints
 
-export type NodeId = string
+export type Uri = string
 
 // Base JSON-LD entity interface
 export interface JsonLdEntity {
-  '@id': NodeId
+  '@id': Uri
   '@type': string
 }
 
@@ -13,7 +13,7 @@ export interface HydraCollection<T> {
   'hydra:member': T[]
   'hydra:totalItems': number
   'hydra:view'?: {
-    '@id': NodeId
+    '@id': Uri
     '@type': string
     'hydra:first'?: string
     'hydra:last'?: string
@@ -105,9 +105,9 @@ export type Store = JsonLdEntity & {
   name: string
   enabled: boolean
   address: Address
-  timeSlot?: NodeId
-  timeSlots: NodeId[]
-  pricingRuleSet?: NodeId
+  timeSlot?: Uri
+  timeSlots: Uri[]
+  pricingRuleSet?: Uri
   prefillPickupAddress: boolean
   weightRequired: boolean
   packagesRequired: boolean
