@@ -10,8 +10,7 @@ import { useGetStoreQuery, useGetTimeSlotChoicesQuery } from '../../../../api/sl
 import { Mode } from '../../mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from '../../redux/formSlice'
-import type { TimeSlot } from '../../types'
-import { TimeSlotChoice } from '../../../../api/types'
+import { StoreTimeSlot, TimeSlotChoice } from '../../../../api/types'
 
 const extractDateAndRangeFromTimeSlot = (timeSlotChoice: string) => {
   let [first, second] = timeSlotChoice.split('/')
@@ -52,7 +51,7 @@ const InputLabel = () => {
 type Props = {
   storeNodeId: string
   taskId: string
-  timeSlotLabels: TimeSlot[]
+  timeSlotLabels: StoreTimeSlot[]
 }
 
 const TimeSlotPicker = ({ storeNodeId, taskId, timeSlotLabels }: Props) => {

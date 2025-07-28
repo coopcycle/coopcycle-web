@@ -6,8 +6,7 @@ import './Packages.scss'
 import {
   useDeliveryFormFormikContext
 } from '../../hooks/useDeliveryFormFormikContext'
-import { Package } from '../../../../api/types'
-import { InputPackage } from '../../types'
+import { InputPackage, Package } from '../../../../api/types'
 
 type Props = {
   taskId: string

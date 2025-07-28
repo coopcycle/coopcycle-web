@@ -20,7 +20,7 @@ import { PriceCalculation } from '../../../../delivery/PriceCalculation'
 import OverridePriceForm from './OverridePriceForm'
 import { selectMode } from '../../redux/formSlice'
 import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext'
-import { PriceValues } from '../../types'
+import { DeliveryFormValues, PriceValues } from '../../types'
 import {
   useCalculatePriceMutation,
   useGetTaxRatesQuery,
@@ -135,7 +135,7 @@ const Order = ({
   )
 
   const convertValuesToPayload = useCallback(
-    values => {
+    (values: DeliveryFormValues) => {
       const infos = {
         store: storeNodeId,
         tasks: structuredClone(values.tasks),

@@ -31,8 +31,8 @@ import { Mode, modeIn } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
 import FlagsContext from './FlagsContext'
-import type { Task as TaskType, DeliveryFormValues, FormErrors } from './types'
-import { NodeId, PutDeliveryRequest, Store } from '../../api/types'
+import type { DeliveryFormValues, FormErrors } from './types'
+import { NodeId, PutDeliveryRequest, Store, Task as TaskType } from '../../api/types'
 
 const generateTempId = (): string => `temp-${uuidv4()}`
 

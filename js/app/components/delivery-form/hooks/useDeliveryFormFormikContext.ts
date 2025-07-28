@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useFormikContext, FormikContextType } from 'formik'
-import type { DeliveryFormValues, FormErrors, Task, TaskErrors } from '../types'
+import type { DeliveryFormValues, FormErrors, TaskErrors } from '../types'
+import { TaskPayload as Task } from '../../../api/types'
 
 // Utility function to find task index by ID
 const getTaskIndexById = (tasks: Task[], taskId: string | null): number => {

@@ -88,6 +88,12 @@ export type TimeSlot = JsonLdEntity & {
   workingDaysOnly: boolean
   priorNotice?: string
   openingHours?: string[]
+  choices?: TimeSlotChoice[]
+}
+
+export type StoreTimeSlot = JsonLdEntity & {
+  id: number
+  name: string
 }
 
 export type TimeSlotChoice = {
@@ -444,10 +450,7 @@ export type PostStoreAddressRequest = {
   company?: string
 }
 
-export type CalculatePriceRequest = {
-  delivery: Partial<Delivery>
-  pricing_rule_set?: string
-}
+export type CalculatePriceRequest = PostDeliveryRequest
 
 export type SuggestOptimizationsRequest = {
   tasks: Task[]
@@ -475,24 +478,30 @@ export type AddressPayload = {
   description?: string
 }
 
+export type InputPackage = {
+  '@id'?: string
+  name: string
+  type: string
+  quantity: number
+}
+
 export type TaskPayload = {
   '@id'?: string
-  id: number
-  createdAt: string
+  id?: number
+  createdAt?: string
   updatedAt?: string
   type: 'PICKUP' | 'DROPOFF'
   after: string
   before: string
-  timeSlot: TimeSlot | null
+  timeSlot: StoreTimeSlot | null
   timeSlotUrl: string | null
   comments: string
   address: AddressPayload
   updateInStoreAddresses?: boolean
   saveInStoreAddresses?: boolean
-  packages: Package[]
+  packages: InputPackage[]
   weight: number
   tags: Tag[]
-  doorstep?: boolean
 }
 
 export type PostDeliveryRequest = {

@@ -11,8 +11,7 @@ import './AddressBook.scss'
 import {
   useDeliveryFormFormikContext
 } from '../../hooks/useDeliveryFormFormikContext'
-import type { Address } from '../../types'
-import { Store } from '../../../../api/types'
+import { Address, Store } from '../../../../api/types'
 
 function getFormattedValue(value: string | null): string {
   if (typeof value === 'string') {

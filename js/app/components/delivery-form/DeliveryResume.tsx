@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react'
 
 import { useTranslation } from 'react-i18next'
 import Itinerary from '../DeliveryItinerary'
-import { Task } from './types'
+import { TaskPayload } from '../../api/types'
 
 type Props = {
-  tasks: Task[]
+  tasks: TaskPayload[]
 }
 
 const DeliveryResume = ({ tasks }: Props) => {
-  const [createdTasks, setCreatedTasks] = useState<Task[] | null>(null)
+  const [createdTasks, setCreatedTasks] = useState<TaskPayload[] | null>(null)
 
   const { t } = useTranslation()
 

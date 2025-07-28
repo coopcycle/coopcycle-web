@@ -8,12 +8,12 @@ import { useGetStoreQuery } from '../../../../api/slice'
 import { Mode } from '../../mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from '../../redux/formSlice'
-import type { TimeSlot } from '../../types'
+import { StoreTimeSlot } from '../../../../api/types'
 
 type Props = {
   isDispatcher: boolean
   storeNodeId: string
-  timeSlots: TimeSlot[]
+  timeSlots: StoreTimeSlot[]
   taskId: string
 }
 

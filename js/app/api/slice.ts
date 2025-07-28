@@ -11,7 +11,7 @@ import {
   Tag,
   Zone,
   Package,
-  TimeSlot,
+  StoreTimeSlot,
   TimeSlotChoice,
   Order,
   OrderTiming,
@@ -36,6 +36,7 @@ import {
   CreatePricingRuleSetRequest,
   UpdatePricingRuleSetRequest,
   TimeSlotChoices,
+  TimeSlot,
 } from './types'
 
 // Define our single API slice object
@@ -129,9 +130,9 @@ export const apiSlice = createApi({
         )
       },
     }),
-    getStoreTimeSlots: builder.query<TimeSlot[], string>({
+    getStoreTimeSlots: builder.query<StoreTimeSlot[], string>({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
-        return await fetchAllRecordsUsingFetchWithBQ<TimeSlot>(
+        return await fetchAllRecordsUsingFetchWithBQ<StoreTimeSlot>(
           baseQuery,
           `${args}/time_slots`,
           100,
