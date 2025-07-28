@@ -133,6 +133,7 @@ const Order = ({
       const infos = {
         store: storeNodeId,
         tasks: structuredClone(values.tasks),
+        order: structuredClone(values.order),
       }
       return infos
     },

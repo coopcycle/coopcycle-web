@@ -1600,3 +1600,197 @@ Feature: Retail prices
         "calculation": {"@*@":"@*@"}
       }
       """
+
+  Scenario: Manual supplement validation - supplement without uri
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | stores_with_manual_supplements.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00"
+        },
+        "order": {
+          "manualSupplements": [
+            {
+              "quantity": 1
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ConstraintViolationList",
+        "@type":"ConstraintViolationList",
+        "hydra:title":"An error occurred",
+        "hydra:description":"order.manualSupplements[0].uri: Invalid manual supplement",
+        "violations":[
+          {
+            "propertyPath":"order.manualSupplements[0].uri",
+            "message":"Invalid manual supplement",
+            "code":null
+          }
+        ]
+      }
+      """
+
+  Scenario: Manual supplement validation - supplement with invalid uri
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | stores_with_manual_supplements.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00"
+        },
+        "order": {
+          "manualSupplements": [
+            {
+              "uri": "/api/pricing_rules/999999",
+              "quantity": 1
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ConstraintViolationList",
+        "@type":"ConstraintViolationList",
+        "hydra:title":"An error occurred",
+        "hydra:description":@string@,
+        "violations":[
+          {
+            "propertyPath":"order.manualSupplements[0].uri",
+            "message":@string@,
+            "code":null
+          }
+        ]
+      }
+      """
+    
+  Scenario: Manual supplement validation - supplement with valid uri
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | stores_with_manual_supplements.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00"
+        },
+        "order": {
+          "manualSupplements": [
+            {
+              "uri": "/api/pricing_rules/2",
+              "quantity": 1
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RetailPrice",
+        "@id":@string@,
+        "@type":"RetailPrice",
+        "amount":499,
+        "currency":"EUR",
+        "tax":{
+          "amount":83,
+          "included": true
+        },
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-FIXED",
+                      "values": [
+                        @...@
+                      ],
+                      "name": "Fixed Price"
+                    },
+                    "value": "Plus de 0.00 km"
+                  }
+                ],
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
+        "calculation": {"@*@":"@*@"}
+      }
+      """

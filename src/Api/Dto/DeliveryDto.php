@@ -4,6 +4,7 @@ namespace AppBundle\Api\Dto;
 
 use AppBundle\Entity\Store;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 final class DeliveryDto
 {
@@ -52,6 +53,7 @@ final class DeliveryDto
     #[Groups(['delivery'])]
     public string|null $trackingUrl = null;
 
-    #[Groups(['delivery', 'delivery_create'])]
+    #[Groups(['delivery', 'delivery_create', 'pricing_deliveries'])]
+    #[Assert\Valid]
     public DeliveryOrderDto|null $order = null;
 }

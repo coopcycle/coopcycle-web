@@ -2,8 +2,10 @@
 
 namespace AppBundle\Api\Dto;
 
+use AppBundle\Validator\Constraints\ManualSupplements as AssertManualSupplements;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+#[AssertManualSupplements]
 class DeliveryOrderDto
 {
     #[Groups(['delivery'])]
@@ -20,4 +22,10 @@ class DeliveryOrderDto
 
     #[Groups(['delivery', 'delivery_create'])]
     public bool|null $isSavedOrder = null;
+
+    /**
+     * @var ManualSupplementDto[]|null
+     */
+    #[Groups(['delivery', 'delivery_create', 'pricing_deliveries'])]
+    public array|null $manualSupplements = null;
 }
