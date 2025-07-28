@@ -24,7 +24,7 @@ const SwitchTimeSlotFreePicker = ({
   isTimeSlotSelect,
   setIsTimeSlotSelect,
   timeSlotLabels
-}) => {
+} : Props) => {
   const { t } = useTranslation()
 
   return (
