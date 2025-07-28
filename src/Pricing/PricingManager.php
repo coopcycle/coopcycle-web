@@ -102,7 +102,8 @@ class PricingManager
      */
     public function getPriceWithPricingStrategy(
         Delivery $delivery,
-        PricingStrategy $pricingStrategy
+        PricingStrategy $pricingStrategy,
+        ManualSupplements|null $manualSupplements = null
     ): array {
         $store = $delivery->getStore();
 
@@ -128,7 +129,7 @@ class PricingManager
                 ];
             }
 
-            $output = $this->getPriceCalculation($delivery, $pricingRuleSet);
+            $output = $this->getPriceCalculation($delivery, $pricingRuleSet, $manualSupplements);
 
             if (count($output->productVariants) === 0) {
                 $this->logger->warning('Price could not be calculated');
