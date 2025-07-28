@@ -44,7 +44,7 @@ export const apiSlice = createApi({
   baseQuery: baseQueryWithReauth,
   tagTypes: ['PricingRuleSet'],
   // The "endpoints" represent operations and requests for this server
-  // nodeId is passed in JSON-LD '@id' key, https://www.w3.org/TR/2014/REC-json-ld-20140116/#node-identifiers
+  // uri is passed in JSON-LD '@id' key, https://www.w3.org/TR/2014/REC-json-ld-20140116/#node-identifiers
   endpoints: builder => ({
     getTaxRates: builder.query<HydraCollection<TaxRate>, void>({
       query: () => `api/tax_rates`,
@@ -78,13 +78,13 @@ export const apiSlice = createApi({
     }),
 
     getOrderTiming: builder.query<OrderTiming, string>({
-      query: (nodeId: string) => `${nodeId}/timing`,
+      query: (uri: string) => `${uri}/timing`,
     }),
     getOrderValidate: builder.query<OrderValidation, string>({
-      query: (nodeId: string) => `${nodeId}/validate`,
+      query: (uri: string) => `${uri}/validate`,
     }),
     getOrder: builder.query<Order, string>({
-      query: (nodeId: string) => nodeId,
+      query: (uri: string) => uri,
     }),
     updateOrder: builder.mutation<Order, UpdateOrderRequest>({
       query: ({ nodeId, ...patch }) => ({
@@ -104,7 +104,7 @@ export const apiSlice = createApi({
       },
     }),
     getTimeSlotChoices: builder.query<TimeSlotChoices, string>({
-      query: (nodeId: string) => `${nodeId}/choices`,
+      query: (uri: string) => `${uri}/choices`,
     }),
 
     patchAddress: builder.mutation<Address, PatchAddressRequest>({
@@ -118,7 +118,7 @@ export const apiSlice = createApi({
     }),
 
     getStore: builder.query<Store, string>({
-      query: (nodeId: string) => nodeId,
+      query: (uri: string) => uri,
     }),
     getStoreAddresses: builder.query<Address[], string>({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
@@ -210,8 +210,8 @@ export const apiSlice = createApi({
       },
     }),
     deleteRecurrenceRule: builder.mutation<void, string>({
-      query: nodeId => ({
-        url: nodeId,
+      query: uri => ({
+        url: uri,
         method: 'DELETE',
       }),
     }),
