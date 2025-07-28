@@ -17,8 +17,7 @@ import {
 import { Mode } from '../../mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from '../../redux/formSlice'
-import { Address } from '../../types'
-import type { Store, Tag } from '../../../../api/types'
+import type { Address, Store, Tag } from '../../../../api/types'
 
 type Props = {
   isDispatcher: boolean

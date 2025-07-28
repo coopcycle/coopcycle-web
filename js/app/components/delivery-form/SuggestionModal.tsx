@@ -13,7 +13,7 @@ import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikConte
 
 import './SuggestionModal.scss'
 import Itinerary from '../DeliveryItinerary'
-import type { Task } from './types'
+import { TaskPayload as Task } from '../../api/types'
 
 const SuggestionsModal = () => {
   const { values, setFieldValue, setSubmitting, submitForm } =

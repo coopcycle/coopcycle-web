@@ -88,6 +88,12 @@ export type TimeSlot = JsonLdEntity & {
   workingDaysOnly: boolean
   priorNotice?: string
   openingHours?: string[]
+  choices?: TimeSlotChoice[]
+}
+
+export type StoreTimeSlot = JsonLdEntity & {
+  id: number
+  name: string
 }
 
 export type TimeSlotChoice = {
@@ -422,38 +428,15 @@ export type UpdateOrderRequest = {
   reusablePackagingQuantity?: number
 }
 
-export type PatchAddressRequest = {
-  nodeId: string
-  streetAddress?: string
-  addressLocality?: string
-  addressCountry?: string
-  addressRegion?: string
-  postalCode?: string
-  name?: string
-  description?: string
-  contactName?: string
-  telephone?: string
-  company?: string
+export type PatchAddressRequest = AddressPayload & {
+  '@id': Uri
 }
 
-export type PostStoreAddressRequest = {
-  storeNodeId: string
-  streetAddress: string
-  addressLocality: string
-  addressCountry: string
-  addressRegion?: string
-  postalCode: string
-  name?: string
-  description?: string
-  contactName?: string
-  telephone?: string
-  company?: string
+export type PostStoreAddressRequest = AddressPayload & {
+  storeUri: Uri
 }
 
-export type CalculatePriceRequest = {
-  delivery: Partial<Delivery>
-  pricing_rule_set?: string
-}
+export type CalculatePriceRequest = PostDeliveryRequest
 
 export type SuggestOptimizationsRequest = {
   tasks: Task[]
@@ -481,44 +464,50 @@ export type AddressPayload = {
   description?: string
 }
 
+export type InputPackage = {
+  '@id'?: string
+  name: string
+  type: string
+  quantity: number
+}
+
 export type TaskPayload = {
   '@id'?: string
-  id: number
-  createdAt: string
+  id?: number
+  createdAt?: string
   updatedAt?: string
   type: 'PICKUP' | 'DROPOFF'
   after: string
   before: string
-  timeSlot: TimeSlot | null
+  timeSlot: StoreTimeSlot | null
   timeSlotUrl: string | null
   comments: string
   address: AddressPayload
   updateInStoreAddresses?: boolean
   saveInStoreAddresses?: boolean
-  packages: Package[]
+  packages: InputPackage[]
   weight: number
   tags: Tag[]
-  doorstep?: boolean
 }
 
 export type PostDeliveryRequest = {
-  store?: string
+  store?: Uri
   tasks: TaskPayload[]
   order?: OrderPayload
   rrule?: string
 }
 
 export type PutDeliveryRequest = {
-  nodeId: string
+  '@id': Uri
   tasks?: TaskPayload[]
   order?: OrderPayload
 }
 
 export type PutRecurrenceRuleRequest = {
-  nodeId: string
+  '@id': Uri
   rule?: string
   template?: DeliveryTemplate
-  store?: string
+  store?: Uri
   generateOrders?: boolean
 }
 

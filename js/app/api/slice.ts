@@ -11,7 +11,7 @@ import {
   Tag,
   Zone,
   Package,
-  TimeSlot,
+  StoreTimeSlot,
   TimeSlotChoice,
   Order,
   OrderTiming,
@@ -36,6 +36,7 @@ import {
   CreatePricingRuleSetRequest,
   UpdatePricingRuleSetRequest,
   TimeSlotChoices,
+  TimeSlot,
   Uri,
 } from './types'
 
@@ -109,9 +110,9 @@ export const apiSlice = createApi({
     }),
 
     patchAddress: builder.mutation<Address, PatchAddressRequest>({
-      query({ nodeId, ...patch }) {
+      query({ '@id': uri, ...patch }) {
         return {
-          url: nodeId,
+          url: uri,
           method: 'PATCH',
           body: patch,
         }
@@ -130,9 +131,9 @@ export const apiSlice = createApi({
         )
       },
     }),
-    getStoreTimeSlots: builder.query<TimeSlot[], string>({
+    getStoreTimeSlots: builder.query<StoreTimeSlot[], string>({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
-        return await fetchAllRecordsUsingFetchWithBQ<TimeSlot>(
+        return await fetchAllRecordsUsingFetchWithBQ<StoreTimeSlot>(
           baseQuery,
           `${args}/time_slots`,
           100,
@@ -149,9 +150,9 @@ export const apiSlice = createApi({
       },
     }),
     postStoreAddress: builder.mutation<Address, PostStoreAddressRequest>({
-      query({ storeNodeId, ...body }) {
+      query({ storeUri, ...body }) {
         return {
-          url: `${storeNodeId}/addresses`,
+          url: `${storeUri}/addresses`,
           method: 'POST',
           body,
         }
@@ -189,9 +190,9 @@ export const apiSlice = createApi({
       },
     }),
     putDelivery: builder.mutation<Delivery, PutDeliveryRequest>({
-      query({ nodeId, ...body }) {
+      query({ '@id': uri, ...body }) {
         return {
-          url: nodeId,
+          url: uri,
           method: 'PUT',
           body,
         }
@@ -202,9 +203,9 @@ export const apiSlice = createApi({
       RecurrenceRule,
       PutRecurrenceRuleRequest
     >({
-      query({ nodeId, ...body }) {
+      query({ '@id': uri, ...body }) {
         return {
-          url: nodeId,
+          url: uri,
           method: 'PUT',
           body,
         }

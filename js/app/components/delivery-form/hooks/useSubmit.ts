@@ -16,8 +16,8 @@ import {
 import { Mode, modeIn } from '../mode'
 import { selectMode } from '../redux/formSlice'
 import { useDatadog } from '../../../hooks/useDatadog'
-import type { Address, DeliveryFormValues } from '../types'
-import { PostDeliveryRequest } from '../../../api/types'
+import type { DeliveryFormValues } from '../types'
+import { AddressPayload, PostDeliveryRequest } from '../../../api/types'
 
 // check if a task ID is temporary (not from backend)
 const isTemporaryId = (taskId: string | null): boolean => {
@@ -25,7 +25,7 @@ const isTemporaryId = (taskId: string | null): boolean => {
 }
 
 function serializeAddress(
-  address: Address,
+  address: AddressPayload,
 ): string | { streetAddress: string; latLng: [number, number] } {
   if (Object.prototype.hasOwnProperty.call(address, '@id')) {
     return address['@id'] as string
@@ -164,7 +164,7 @@ export default function useSubmit(
   const { logger } = useDatadog()
 
   const checkSuggestionsOnSubmit = useCallback(
-    async values => {
+    async (values: DeliveryFormValues) => {
       // no point in checking suggestions for only one pickup and one dropoff task
       if (values.tasks.length < 3) {
         return false
@@ -219,13 +219,13 @@ export default function useSubmit(
         )
       } else if (mode === Mode.DELIVERY_UPDATE) {
         result = await modifyDelivery({
-          nodeId: deliveryNodeId,
+          '@id': deliveryNodeId,
           ...convertValuesToDeliveryPayload(storeNodeId, values),
         })
       } else if (mode === Mode.RECURRENCE_RULE_UPDATE) {
         if (values.rrule) {
           result = await modifyRecurrenceRule({
-            nodeId: deliveryNodeId,
+            '@id': deliveryNodeId,
             ...convertValuesToRecurrenceRulePayload(values),
           })
         } else {
@@ -249,7 +249,7 @@ export default function useSubmit(
       for (const task of values.tasks) {
         if (task.saveInStoreAddresses) {
           const { error } = await createAddress({
-            storeNodeId: storeNodeId,
+            storeUri: storeNodeId,
             ...task.address,
           })
           if (error) {
@@ -262,7 +262,7 @@ export default function useSubmit(
         }
         if (task.updateInStoreAddresses) {
           const { error } = await modifyAddress({
-            nodeId: task.address['@id'],
+            '@id': task.address['@id'],
             ...task.address,
           })
           if (error) {
