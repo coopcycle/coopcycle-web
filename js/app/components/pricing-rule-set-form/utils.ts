@@ -4,7 +4,7 @@ import {
   Price,
 } from '../../delivery/pricing/pricing-rule-parser'
 
-export function getPriceValue(price: Price) {
+export function getPriceValue(price: Price): number {
   if (price instanceof FixedPrice) {
     return parseFloat(price.value) / 100 || 0
   } else if (price instanceof PercentagePrice) {

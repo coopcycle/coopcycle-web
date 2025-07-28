@@ -6,6 +6,10 @@ declare global {
       generate: (route: string, params?: Record<string, any>) => string;
     };
   }
+
+  interface Number {
+    formatMoney(): string;
+  }
 }
 
 export {};

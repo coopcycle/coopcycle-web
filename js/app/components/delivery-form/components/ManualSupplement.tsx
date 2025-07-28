@@ -16,7 +16,7 @@ export function formatPrice(price: Price): string {
     const value = getPriceValue(price)
     if (value > 0) {
       return `+${value}%`
-    } else if (value < 0) {
+    } else {
       return `${value}%`
     }
   } else {
