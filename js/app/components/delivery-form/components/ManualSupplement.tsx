@@ -8,6 +8,8 @@ import {
   Price,
 } from '../../../delivery/pricing/pricing-rule-parser'
 import { getPriceValue } from '../../pricing-rule-set-form/utils'
+import { useDeliveryFormFormikContext } from '../hooks/useDeliveryFormFormikContext'
+import { ManualSupplementValues } from '../types'
 
 export function formatPrice(price: Price): string {
   if (price instanceof FixedPrice) {
@@ -35,18 +37,47 @@ export default function ManualSupplement({ rule }: Props) {
   //TODO; display price (similarly to foodtech) (fixed; percentage)
   //TODO; add support for range type
 
+  const { values, setFieldValue } = useDeliveryFormFormikContext()
+
   const price = useMemo(() => {
     return rule.priceAst ? parsePriceAST(rule.priceAst, rule.price) : null
   }, [rule.priceAst, rule.price])
 
+  // Check if this supplement is currently selected
+  const isChecked = useMemo(() => {
+    return values.order.manualSupplements.some(
+      supplement => supplement['@id'] === rule['@id'],
+    )
+  }, [values.order.manualSupplements, rule])
+
+  const updateSupplements = (newSupplements: ManualSupplementValues[]) => {
+    setFieldValue('order.manualSupplements', newSupplements)
+  }
+
   const onChange = (e: CheckboxChangeEvent) => {
-    //TODO
-    console.log('checked = ', e.target.checked)
+    const currentSupplements = values.order.manualSupplements
+
+    if (e.target.checked) {
+      // Add supplement with quantity 1
+      const newSupplement: ManualSupplementValues = {
+        '@id': rule['@id'],
+        quantity: 1,
+      }
+      updateSupplements([...currentSupplements, newSupplement])
+    } else {
+      // Remove supplement
+      const updatedSupplements = currentSupplements.filter(
+        supplement => supplement['@id'] !== rule['@id'],
+      )
+      updateSupplements(updatedSupplements)
+    }
   }
 
   return (
     <div>
-      <Checkbox onChange={onChange}>{rule.name}</Checkbox>
+      <Checkbox checked={isChecked} onChange={onChange}>
+        {rule.name}
+      </Checkbox>
       {price ? <span className="pull-right">{formatPrice(price)}</span> : null}
     </div>
   )

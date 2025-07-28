@@ -1,4 +1,4 @@
-import type { TimeSlotChoice, Tag, Package } from '../../api/types'
+import type { TimeSlotChoice, Tag, Package, Uri, TaskPayload } from '../../api/types'
 
 export type Address = {
   '@id'?: string
@@ -45,14 +45,20 @@ export type Task = {
   doorstep?: boolean
 }
 
+export type ManualSupplementValues = {
+  '@id': Uri
+  quantity: number
+}
+
 export type OrderFormValues = {
   isSavedOrder?: boolean
+  manualSupplements: ManualSupplementValues[]
 }
 
 export type DeliveryFormValues = {
   tasks: Task[]
   rrule?: string
-  order?: OrderFormValues
+  order: OrderFormValues
   variantIncVATPrice?: number
   variantName?: string
 }
