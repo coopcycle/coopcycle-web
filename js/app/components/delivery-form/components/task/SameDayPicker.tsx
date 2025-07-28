@@ -8,7 +8,7 @@ import { Mode } from '../../mode'
 
 const { Option } = Select
 
-interface TimeSlotOption {
+type TimeSlotOption = {
   time: Moment
   disabled: boolean
 }

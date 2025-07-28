@@ -8,11 +8,11 @@ const getTaskIndexById = (tasks: Task[], taskId: string | null): number => {
   return tasks.findIndex(task => task['@id'] === taskId)
 }
 
-interface UseDeliveryFormFormikContextParams {
+type UseDeliveryFormFormikContextParams = {
   taskId?: string | null
 }
 
-interface UseDeliveryFormFormikContextReturn extends FormikContextType<DeliveryFormValues> {
+type UseDeliveryFormFormikContextReturn = FormikContextType<DeliveryFormValues> & {
   taskIndex: number
   taskValues: Task | null
   taskErrors: TaskErrors | null
