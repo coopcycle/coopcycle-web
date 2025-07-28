@@ -32,7 +32,7 @@ import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
 import FlagsContext from './FlagsContext'
 import type { DeliveryFormValues, FormErrors } from './types'
-import { NodeId, PutDeliveryRequest, Store, Task as TaskType } from '../../api/types'
+import { Uri, PutDeliveryRequest, Store, Task as TaskType } from '../../api/types'
 
 const generateTempId = (): string => `temp-${uuidv4()}`
 
@@ -137,9 +137,9 @@ const pickupSchema = {
 }
 
 type Props = {
-  storeNodeId: NodeId
+  storeNodeId: Uri
   deliveryId?: number
-  deliveryNodeId?: NodeId
+  deliveryNodeId?: Uri
   preLoadedDeliveryData?: PutDeliveryRequest | null
 }
 

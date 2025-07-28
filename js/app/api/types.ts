@@ -1,10 +1,10 @@
 // API Types for RTK Query endpoints
 
-export type NodeId = string
+export type Uri = string
 
 // Base JSON-LD entity interface
 export interface JsonLdEntity {
-  '@id': NodeId
+  '@id': Uri
   '@type': string
 }
 
@@ -13,7 +13,7 @@ export interface HydraCollection<T> {
   'hydra:member': T[]
   'hydra:totalItems': number
   'hydra:view'?: {
-    '@id': NodeId
+    '@id': Uri
     '@type': string
     'hydra:first'?: string
     'hydra:last'?: string
@@ -112,12 +112,12 @@ export type Store = JsonLdEntity & {
   enabled: boolean
   address: Address
   prefillPickupAddress: boolean
-  timeSlot?: NodeId
+  timeSlot?: Uri
   weightRequired: boolean
   packagesRequired: boolean
   multiDropEnabled: boolean
   multiPickupEnabled: boolean
-  timeSlots: NodeId[]
+  timeSlots: Uri[]
 }
 
 export type ProductOptionValue = JsonLdEntity & {
@@ -422,32 +422,12 @@ export type UpdateOrderRequest = {
   reusablePackagingQuantity?: number
 }
 
-export type PatchAddressRequest = {
-  nodeId: string
-  streetAddress?: string
-  addressLocality?: string
-  addressCountry?: string
-  addressRegion?: string
-  postalCode?: string
-  name?: string
-  description?: string
-  contactName?: string
-  telephone?: string
-  company?: string
+export type PatchAddressRequest = AddressPayload & {
+  '@id': Uri
 }
 
-export type PostStoreAddressRequest = {
-  storeNodeId: string
-  streetAddress: string
-  addressLocality: string
-  addressCountry: string
-  addressRegion?: string
-  postalCode: string
-  name?: string
-  description?: string
-  contactName?: string
-  telephone?: string
-  company?: string
+export type PostStoreAddressRequest = AddressPayload & {
+  storeUri: Uri
 }
 
 export type CalculatePriceRequest = PostDeliveryRequest
@@ -505,23 +485,23 @@ export type TaskPayload = {
 }
 
 export type PostDeliveryRequest = {
-  store?: string
+  store?: Uri
   tasks: TaskPayload[]
   order?: OrderPayload
   rrule?: string
 }
 
 export type PutDeliveryRequest = {
-  nodeId: string
+  '@id': Uri
   tasks?: TaskPayload[]
   order?: OrderPayload
 }
 
 export type PutRecurrenceRuleRequest = {
-  nodeId: string
+  '@id': Uri
   rule?: string
   template?: DeliveryTemplate
-  store?: string
+  store?: Uri
   generateOrders?: boolean
 }
 

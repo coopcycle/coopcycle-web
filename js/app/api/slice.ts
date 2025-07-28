@@ -109,9 +109,9 @@ export const apiSlice = createApi({
     }),
 
     patchAddress: builder.mutation<Address, PatchAddressRequest>({
-      query({ nodeId, ...patch }) {
+      query({ '@id': uri, ...patch }) {
         return {
-          url: nodeId,
+          url: uri,
           method: 'PATCH',
           body: patch,
         }
@@ -149,9 +149,9 @@ export const apiSlice = createApi({
       },
     }),
     postStoreAddress: builder.mutation<Address, PostStoreAddressRequest>({
-      query({ storeNodeId, ...body }) {
+      query({ storeUri, ...body }) {
         return {
-          url: `${storeNodeId}/addresses`,
+          url: `${storeUri}/addresses`,
           method: 'POST',
           body,
         }
@@ -189,9 +189,9 @@ export const apiSlice = createApi({
       },
     }),
     putDelivery: builder.mutation<Delivery, PutDeliveryRequest>({
-      query({ nodeId, ...body }) {
+      query({ '@id': uri, ...body }) {
         return {
-          url: nodeId,
+          url: uri,
           method: 'PUT',
           body,
         }
@@ -202,9 +202,9 @@ export const apiSlice = createApi({
       RecurrenceRule,
       PutRecurrenceRuleRequest
     >({
-      query({ nodeId, ...body }) {
+      query({ '@id': uri, ...body }) {
         return {
-          url: nodeId,
+          url: uri,
           method: 'PUT',
           body,
         }

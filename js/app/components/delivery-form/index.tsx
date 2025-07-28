@@ -8,7 +8,7 @@ import { RootWithDefaults } from '../../utils/react'
 import { Mode } from './mode'
 import { setMode } from './redux/formSlice'
 import FlagsContext from './FlagsContext'
-import { NodeId } from '../../api/types'
+import { Uri } from '../../api/types'
 
 const buildInitialState = () => {
   return {
@@ -19,9 +19,9 @@ const buildInitialState = () => {
 const store = createStoreFromPreloadedState(buildInitialState())
 
 type Props = {
-  storeNodeId: NodeId
+  storeNodeId: Uri
   deliveryId?: number
-  deliveryNodeId?: NodeId
+  deliveryNodeId?: Uri
   delivery?: string
   isDispatcher: boolean
   isDebugPricing: boolean

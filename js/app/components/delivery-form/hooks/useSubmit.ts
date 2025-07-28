@@ -219,13 +219,13 @@ export default function useSubmit(
         )
       } else if (mode === Mode.DELIVERY_UPDATE) {
         result = await modifyDelivery({
-          nodeId: deliveryNodeId,
+          '@id': deliveryNodeId,
           ...convertValuesToDeliveryPayload(storeNodeId, values),
         })
       } else if (mode === Mode.RECURRENCE_RULE_UPDATE) {
         if (values.rrule) {
           result = await modifyRecurrenceRule({
-            nodeId: deliveryNodeId,
+            '@id': deliveryNodeId,
             ...convertValuesToRecurrenceRulePayload(values),
           })
         } else {
@@ -249,7 +249,7 @@ export default function useSubmit(
       for (const task of values.tasks) {
         if (task.saveInStoreAddresses) {
           const { error } = await createAddress({
-            storeNodeId: storeNodeId,
+            storeUri: storeNodeId,
             ...task.address,
           })
           if (error) {
@@ -262,7 +262,7 @@ export default function useSubmit(
         }
         if (task.updateInStoreAddresses) {
           const { error } = await modifyAddress({
-            nodeId: task.address['@id'],
+            '@id': task.address['@id'],
             ...task.address,
           })
           if (error) {
