@@ -1644,10 +1644,10 @@ Feature: Retail prices
         "@context":"/api/contexts/ConstraintViolationList",
         "@type":"ConstraintViolationList",
         "hydra:title":"An error occurred",
-        "hydra:description":"order.manualSupplements[0].uri: Invalid manual supplement",
+        "hydra:description":"order.manualSupplements[0][@id]: Invalid manual supplement",
         "violations":[
           {
-            "propertyPath":"order.manualSupplements[0].uri",
+            "propertyPath":"order.manualSupplements[0][@id]",
             "message":"Invalid manual supplement",
             "code":null
           }
@@ -1655,7 +1655,7 @@ Feature: Retail prices
       }
       """
 
-  Scenario: Manual supplement validation - supplement with invalid uri
+  Scenario: Manual supplement validation - supplement not belonging to store's pricing rule set
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -1684,7 +1684,7 @@ Feature: Retail prices
         "order": {
           "manualSupplements": [
             {
-              "@id": "/api/pricing_rules/999999",
+              "@id": "/api/pricing_rules/4",
               "quantity": 1
             }
           ]
@@ -1702,7 +1702,7 @@ Feature: Retail prices
         "hydra:description":@string@,
         "violations":[
           {
-            "propertyPath":"order.manualSupplements[0].uri",
+            "propertyPath":"order.manualSupplements[0][@id]",
             "message":@string@,
             "code":null
           }

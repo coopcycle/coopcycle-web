@@ -13,6 +13,9 @@ AppBundle\Entity\Delivery\PricingRuleSet:
   pricing_rule_set_with_supplements:
     name: 'With Manual Supplements'
     rules: ['@pricing_rule_base', '@manual_supplement_1', '@manual_supplement_2']
+  pricing_rule_set_2:
+    name: 'Pricing Rule Set 2'
+    rules: ['@manual_supplement_3']
 
 AppBundle\Entity\Delivery\PricingRule:
   pricing_rule_base:
@@ -32,6 +35,13 @@ AppBundle\Entity\Delivery\PricingRule:
     position: 3
     ruleSet: '@pricing_rule_set_with_supplements'
     productOptionValue: '@manual_supplement_option_value_2'
+  #  manual supplement not belonging to a pricing rule for this store
+  manual_supplement_3:
+    expression: 'false'
+    price: 300
+    position: 1
+    ruleSet: '@pricing_rule_set_2'
+    productOptionValue: '@manual_supplement_option_value_1'
 
 AppBundle\Entity\Sylius\ProductOptionValue:
   manual_supplement_option_value_1:

@@ -58,7 +58,7 @@ class ManualSupplementsValidator extends ConstraintValidator
             if (null === $supplement->pricingRule) {
                 $this->context
                     ->buildViolation($constraint->invalidSupplementMessage)
-                    ->atPath("manualSupplements[{$index}].pricingRule")
+                    ->atPath("manualSupplements[{$index}][@id]")
                     ->addViolation();
                 continue;
             }
@@ -69,7 +69,7 @@ class ManualSupplementsValidator extends ConstraintValidator
                 $this->context
                     ->buildViolation($constraint->supplementNotInStoreRuleSetMessage)
                     ->setParameter('%supplement_uri%', $supplementIri)
-                    ->atPath("manualSupplements[{$index}].pricingRule")
+                    ->atPath("manualSupplements[{$index}][@id]")
                     ->addViolation();
             }
         }
