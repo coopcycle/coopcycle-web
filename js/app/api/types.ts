@@ -22,17 +22,17 @@ export interface HydraCollection<T> {
   }
 }
 
-export interface GeoCoordinates {
+export type GeoCoordinates = {
   latitude: number
   longitude: number
 }
 
-export interface TsRange {
+export type TsRange = {
   lower: string
   upper: string
 }
 
-export interface TaxRate {
+export type TaxRate = {
   id: string
   code: string
   amount: number
@@ -41,32 +41,32 @@ export interface TaxRate {
   alternatives: TaxRate[]
 }
 
-export interface Tag extends JsonLdEntity {
+export type Tag = JsonLdEntity & {
   id: number
   name: string
   slug: string
   color: string
 }
 
-export interface Zone extends JsonLdEntity {
+export type Zone = JsonLdEntity & {
   id: number
   name: string
   polygon: string // GeoJSON string
 }
 
-export interface Package extends JsonLdEntity {
+export type Package = JsonLdEntity & {
   id: number
   name: string
   volumeUnits: number
   packageSet?: PackageSet
 }
 
-export interface PackageSet {
+export type PackageSet = {
   id: number
   name: string
 }
 
-export interface Address extends JsonLdEntity {
+export type Address = JsonLdEntity & {
   id: number
   streetAddress: string
   addressLocality: string
@@ -81,7 +81,7 @@ export interface Address extends JsonLdEntity {
   company?: string
 }
 
-export interface TimeSlot extends JsonLdEntity {
+export type TimeSlot = JsonLdEntity & {
   id: number
   name: string
   interval: string
@@ -90,17 +90,17 @@ export interface TimeSlot extends JsonLdEntity {
   openingHours?: string[]
 }
 
-export interface TimeSlotChoice {
+export type TimeSlotChoice = {
   // "2025-07-24T07:00:00Z/2025-07-25T06:59:00Z"
   value: string
   label: string
 }
 
-export interface TimeSlotChoices {
+export type TimeSlotChoices = {
   choices: TimeSlotChoice[]
 }
 
-export interface Store extends JsonLdEntity {
+export type Store = JsonLdEntity & {
   id: number
   name: string
   enabled: boolean
@@ -114,12 +114,12 @@ export interface Store extends JsonLdEntity {
   timeSlots: NodeId[]
 }
 
-export interface ProductOptionValue extends JsonLdEntity {
+export type ProductOptionValue = JsonLdEntity & {
   value: string
   price: number
 }
 
-export interface ProductVariant extends JsonLdEntity {
+export type ProductVariant = JsonLdEntity & {
   id: number
   name: string
   code: string
@@ -127,7 +127,7 @@ export interface ProductVariant extends JsonLdEntity {
   optionValues: ProductOptionValue[]
 }
 
-export interface LocalBusiness extends JsonLdEntity {
+export type LocalBusiness = JsonLdEntity & {
   id: number
   name: string
   enabled: boolean
@@ -135,7 +135,7 @@ export interface LocalBusiness extends JsonLdEntity {
   address?: Address
 }
 
-export interface InvoiceLineItemGroupedByOrganization {
+export type InvoiceLineItemGroupedByOrganization = {
   storeId: number
   organizationLegalName: string
   ordersCount: number
@@ -144,13 +144,13 @@ export interface InvoiceLineItemGroupedByOrganization {
   total: number
 }
 
-export interface GetInvoiceLineItemsGroupedByOrganizationArgs {
+export type GetInvoiceLineItemsGroupedByOrganizationArgs = {
   params: string[]
   page: number
   pageSize: number
 }
 
-export interface InvoiceLineItem {
+export type InvoiceLineItem = {
   '@id': string
   '@type': string
   storeId: number
@@ -167,13 +167,13 @@ export interface InvoiceLineItem {
   }>
 }
 
-export interface GetInvoiceLineItemsArgs {
+export type GetInvoiceLineItemsArgs = {
   params: string[]
   page: number
   pageSize: number
 }
 
-export interface Customer {
+export type Customer = {
   username: string
   email: string
   fullName: string
@@ -181,7 +181,7 @@ export interface Customer {
   phoneNumber?: string
 }
 
-export interface OrderItem {
+export type OrderItem = {
   id: number
   quantity: number
   total: number
@@ -190,19 +190,19 @@ export interface OrderItem {
   variant?: ProductVariant
 }
 
-export interface Adjustment {
+export type Adjustment = {
   label: string
   amount: number
   type: string
 }
 
-export interface OrderEvent {
+export type OrderEvent = {
   name: string
   createdAt: string
   // data?: Record<string, any>
 }
 
-export interface OrderTimeline {
+export type OrderTimeline = {
   preparationExpectedAt?: string
   pickupExpectedAt?: string
   dropoffExpectedAt?: string
@@ -210,7 +210,7 @@ export interface OrderTimeline {
   shippingTime?: string
 }
 
-export interface Order extends JsonLdEntity {
+export type Order = JsonLdEntity & {
   id: number
   number: string
   state: string
@@ -242,7 +242,7 @@ export interface Order extends JsonLdEntity {
   hasEdenredCredentials?: boolean
 }
 
-export interface TaskPackage {
+export type TaskPackage = {
   short_code: string
   name: string
   type: string
@@ -251,12 +251,12 @@ export interface TaskPackage {
   labels: string[]
 }
 
-export interface TaskGroup {
+export type TaskGroup = {
   id: number
   name: string
 }
 
-export interface User {
+export type User = {
   username: string
   email: string
   telephone?: string
@@ -265,7 +265,7 @@ export interface User {
   familyName?: string
 }
 
-export interface IncidentEvent {
+export type IncidentEvent = {
   id: number
   type: string
   message?: string
@@ -274,7 +274,7 @@ export interface IncidentEvent {
   createdAt: string
 }
 
-export interface Incident {
+export type Incident = {
   id: number
   title?: string
   status: string
@@ -288,7 +288,7 @@ export interface Incident {
   updatedAt?: string
 }
 
-export interface Task extends JsonLdEntity {
+export type Task = JsonLdEntity & {
   id: number
   type: 'PICKUP' | 'DROPOFF'
   status: string
@@ -309,7 +309,7 @@ export interface Task extends JsonLdEntity {
   packages?: TaskPackage[]
 }
 
-export interface Delivery extends JsonLdEntity {
+export type Delivery = JsonLdEntity & {
   id: number
   pickup?: Task
   dropoff?: Task
@@ -321,7 +321,7 @@ export interface Delivery extends JsonLdEntity {
 }
 
 // Delivery Template for RecurrenceRule
-export interface DeliveryTemplate {
+export type DeliveryTemplate = {
   '@type': string
   'hydra:member'?: TaskTemplate[]
   // For single task templates
@@ -334,7 +334,7 @@ export interface DeliveryTemplate {
   weight?: number
 }
 
-export interface TaskTemplate {
+export type TaskTemplate = {
   '@type': string
   after: string
   before: string
@@ -345,7 +345,7 @@ export interface TaskTemplate {
   weight?: number
 }
 
-export interface RecurrenceRule extends JsonLdEntity {
+export type RecurrenceRule = JsonLdEntity & {
   id: number
   rule: string
   template: DeliveryTemplate
@@ -353,7 +353,7 @@ export interface RecurrenceRule extends JsonLdEntity {
   generateOrders?: boolean
 }
 
-export interface PricingRule {
+export type PricingRule = {
   id: number
   expression: string
   price: number
@@ -361,7 +361,7 @@ export interface PricingRule {
   ruleSet?: PricingRuleSet
 }
 
-export interface PricingRuleSet extends JsonLdEntity {
+export type PricingRuleSet = JsonLdEntity & {
   id: number
   name: string
   strategy: string
@@ -369,42 +369,42 @@ export interface PricingRuleSet extends JsonLdEntity {
   rules: PricingRule[]
 }
 
-export interface OptimizationGain {
+export type OptimizationGain = {
   distance?: number
   duration?: number
   co2?: number
   cost?: number
 }
 
-export interface OptimizationSuggestion {
+export type OptimizationSuggestion = {
   gain: OptimizationGain
   order: Task[]
 }
 
-export interface OptimizationSuggestions {
+export type OptimizationSuggestions = {
   suggestions: OptimizationSuggestion[]
 }
 
-export interface CalculationItemDetail {
+export type CalculationItemDetail = {
   rule: PricingRule
   price: number
   matched: boolean
 }
 
-export interface CalculationItem {
+export type CalculationItem = {
   ruleSet: PricingRuleSet
   strategy: string
   items: CalculationItemDetail[]
 }
 
-export interface CalculationOutput {
+export type CalculationOutput = {
   ruleSet: PricingRuleSet
   strategy: string
   items: CalculationItem[]
   order: Order
 }
 
-export interface UpdateOrderRequest {
+export type UpdateOrderRequest = {
   nodeId: string
   state?: string
   notes?: string
@@ -416,7 +416,7 @@ export interface UpdateOrderRequest {
   reusablePackagingQuantity?: number
 }
 
-export interface PatchAddressRequest {
+export type PatchAddressRequest = {
   nodeId: string
   streetAddress?: string
   addressLocality?: string
@@ -430,7 +430,7 @@ export interface PatchAddressRequest {
   company?: string
 }
 
-export interface PostStoreAddressRequest {
+export type PostStoreAddressRequest = {
   storeNodeId: string
   streetAddress: string
   addressLocality: string
@@ -444,24 +444,24 @@ export interface PostStoreAddressRequest {
   company?: string
 }
 
-export interface CalculatePriceRequest {
+export type CalculatePriceRequest = {
   delivery: Partial<Delivery>
   pricing_rule_set?: string
 }
 
-export interface SuggestOptimizationsRequest {
+export type SuggestOptimizationsRequest = {
   tasks: Task[]
   vehicle?: string
 }
 
-export interface OrderPayload {
+export type OrderPayload = {
   arbitraryPrice: {
     variantName: string
     variantPrice: number
   }
 }
 
-export interface AddressPayload {
+export type AddressPayload = {
   '@id'?: string
   streetAddress: string
   name: string
@@ -475,7 +475,7 @@ export interface AddressPayload {
   description?: string
 }
 
-export interface TaskPayload {
+export type TaskPayload = {
   '@id'?: string
   id: number
   createdAt: string
@@ -495,20 +495,20 @@ export interface TaskPayload {
   doorstep?: boolean
 }
 
-export interface PostDeliveryRequest {
+export type PostDeliveryRequest = {
   store?: string
   tasks: TaskPayload[]
   order?: OrderPayload
   rrule?: string
 }
 
-export interface PutDeliveryRequest {
+export type PutDeliveryRequest = {
   nodeId: string
   tasks?: TaskPayload[]
   order?: OrderPayload
 }
 
-export interface PutRecurrenceRuleRequest {
+export type PutRecurrenceRuleRequest = {
   nodeId: string
   rule?: string
   template?: DeliveryTemplate
@@ -516,14 +516,14 @@ export interface PutRecurrenceRuleRequest {
   generateOrders?: boolean
 }
 
-export interface CreatePricingRuleSetRequest {
+export type CreatePricingRuleSetRequest = {
   name: string
   strategy?: string
   // options?: Record<string, any>
   rules?: PricingRule[]
 }
 
-export interface UpdatePricingRuleSetRequest {
+export type UpdatePricingRuleSetRequest = {
   id: number
   name?: string
   strategy?: string
@@ -536,7 +536,7 @@ export type RecurrenceRulesGenerateOrdersRequest = {
   format: (format: string) => string // Moment.js date object with format method
 }
 
-export interface OrderTiming {
+export type OrderTiming = {
   preparation?: {
     expectedAt: string
     time: string
@@ -554,13 +554,13 @@ export interface OrderTiming {
   }
 }
 
-export interface OrderValidation {
+export type OrderValidation = {
   valid: boolean
   errors?: string[]
   warnings?: string[]
 }
 
-export interface RecurrenceRulesGenerateOrdersResponse {
+export type RecurrenceRulesGenerateOrdersResponse = {
   generated: number
   orders: Order[]
 }

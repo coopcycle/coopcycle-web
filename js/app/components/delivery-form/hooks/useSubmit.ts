@@ -128,7 +128,7 @@ function convertValuesToRecurrenceRulePayload(values) {
   return data
 }
 
-interface UseSubmitReturn {
+type UseSubmitReturn = {
   handleSubmit: (values: DeliveryFormValues) => Promise<void>
   error: { isError: boolean; errorMessage: string }
   isSubmitted: boolean

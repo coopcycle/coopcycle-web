@@ -1,6 +1,6 @@
 import type { TimeSlotChoice, Tag, Package } from '../../api/types'
 
-export interface Address {
+export type Address = {
   '@id'?: string
   streetAddress: string
   name: string
@@ -14,21 +14,21 @@ export interface Address {
   description?: string
 }
 
-export interface InputPackage {
+export type InputPackage = {
   '@id'?: string
   name: string
   type: string
   quantity: number
 }
 
-export interface TimeSlot {
+export type TimeSlot = {
   '@id': string
   name: string
   interval: string
   choices?: TimeSlotChoice[]
 }
 
-export interface Task {
+export type Task = {
   '@id': string | null
   type: 'PICKUP' | 'DROPOFF'
   after: string
@@ -45,11 +45,11 @@ export interface Task {
   doorstep?: boolean
 }
 
-export interface OrderFormValues {
+export type OrderFormValues = {
   isSavedOrder?: boolean
 }
 
-export interface DeliveryFormValues {
+export type DeliveryFormValues = {
   tasks: Task[]
   rrule?: string
   order?: OrderFormValues
@@ -57,7 +57,7 @@ export interface DeliveryFormValues {
   variantName?: string
 }
 
-export interface TaskErrors {
+export type TaskErrors = {
   address?: {
     streetAddress?: string
     name?: string
@@ -70,11 +70,11 @@ export interface TaskErrors {
   before?: string
 }
 
-export interface FormErrors {
+export type FormErrors = {
   tasks: TaskErrors[]
 }
 
-export interface FlagsContextType {
+export type FlagsContextType = {
   isDispatcher: boolean
   isDebugPricing: boolean
   isPriceBreakdownEnabled: boolean
