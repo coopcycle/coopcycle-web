@@ -1,30 +1,30 @@
 import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
+  Adjustment as AdjustmentType,
   Order,
   OrderItem as OrderItemType,
-  ProductOptionValue,
   ProductVariant,
 } from '../../../../api/types'
 
 type ProductOptionValueProps = {
   index: number
-  productOptionValue: ProductOptionValue
+  adjustment: AdjustmentType
   overridePrice: boolean
 }
 
-function ProductOptionValueComponent({
+function Adjustment({
   index,
-  productOptionValue,
+  adjustment,
   overridePrice,
 }: ProductOptionValueProps) {
   return (
     <div data-testid={`product-option-value-${index}`}>
-      <span data-testid="name">{productOptionValue.value}</span>
+      <span data-testid="name">{adjustment.label}</span>
       <span
         data-testid="price"
         className={`pull-right ${overridePrice ? 'text-decoration-line-through' : ''}`}>
-        {(productOptionValue.price / 100).formatMoney()}
+        {(adjustment.amount / 100).formatMoney()}
       </span>
     </div>
   )
@@ -41,8 +41,6 @@ function OrderItem({ index, orderItem, overridePrice }: OrderItemProps) {
     return orderItem.variant
   }, [orderItem])
 
-  const { t } = useTranslation()
-
   return (
     <li
       data-testid={`order-item-${index}`}
@@ -54,14 +52,16 @@ function OrderItem({ index, orderItem, overridePrice }: OrderItemProps) {
           {productVariant.name}
         </span>
       </div>
-      {productVariant.optionValues.map((productOptionValue, index) => (
-        <ProductOptionValueComponent
-          key={index}
-          index={index}
-          productOptionValue={productOptionValue}
-          overridePrice={overridePrice}
-        />
-      ))}
+      {Object.values(orderItem.adjustments)
+        .filter(adjustment => adjustment.type === 'menu_item_modifier')
+        .map((adjustment, index) => (
+          <Adjustment
+            key={index}
+            index={index}
+            adjustment={adjustment}
+            overridePrice={overridePrice}
+          />
+        ))}
       <div className="font-weight-semi-bold">
         <span></span>
         <span
@@ -82,14 +82,15 @@ type Props = {
 const Cart = ({ order, overridePrice }: Props) => {
   return (
     <>
-      {order.items.map((orderItem, index) => (
-        <OrderItem
-          key={index}
-          index={index}
-          orderItem={orderItem}
-          overridePrice={overridePrice}
-        />
-      ))}
+      {Boolean(order.items) &&
+        order.items.map((orderItem, index) => (
+          <OrderItem
+            key={index}
+            index={index}
+            orderItem={orderItem}
+            overridePrice={overridePrice}
+          />
+        ))}
     </>
   )
 }

@@ -121,17 +121,11 @@ export type Store = JsonLdEntity & {
   multiPickupEnabled: boolean
 }
 
-export type ProductOptionValue = JsonLdEntity & {
-  value: string
-  price: number
-}
-
 export type ProductVariant = JsonLdEntity & {
   id: number
   name: string
   code: string
   price: number
-  optionValues: ProductOptionValue[]
 }
 
 export type LocalBusiness = JsonLdEntity & {
@@ -193,7 +187,7 @@ export type OrderItem = {
   quantity: number
   total: number
   unitPrice: number
-  adjustments: Adjustment[]
+  adjustments: Record<string, Adjustment>
   variant?: ProductVariant
 }
 

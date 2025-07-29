@@ -116,7 +116,7 @@ Sylius\Component\Order\Model\OrderItem:
     unitPrice:
       groups: ['order', 'cart', 'pricing_deliveries']
     adjustments:
-      groups: ['order', 'cart']
+      groups: ['order', 'cart', 'pricing_deliveries']
     variant:
       groups: ['pricing_deliveries']
 
@@ -127,11 +127,11 @@ Sylius\Component\Order\Model\Adjustment:
     # id:
     #   groups: ['order', 'cart']
     label:
-      groups: ['order', 'cart']
+      groups: ['order', 'cart', 'pricing_deliveries']
     amount:
-      groups: ['order', 'cart']
+      groups: ['order', 'cart', 'pricing_deliveries']
     type:
-      groups: ['order', 'cart']
+      groups: ['order', 'cart', 'pricing_deliveries']
 
 AppBundle\Entity\Sylius\OrderTimeline:
   attributes:
@@ -163,17 +163,13 @@ Sylius\Component\Product\Model\ProductVariant:
       groups: ['pricing_deliveries']
     code:
       groups: ['pricing_deliveries']
-    price:
-      groups: ['pricing_deliveries']
-    optionValues:
-      groups: ['pricing_deliveries']
 
 Sylius\Component\Product\Model\ProductOption:
   attributes:
     name:
-      groups: ['product_option', 'pricing_deliveries']
+      groups: ['product_option']
     code:
-      groups: ['product_option', 'pricing_deliveries']
+      groups: ['product_option']
     values:
       groups: ['product_option']
     strategy:
@@ -186,15 +182,13 @@ Sylius\Component\Product\Model\ProductOption:
 Sylius\Component\Product\Model\ProductOptionValue:
   attributes:
     value:
-      groups: ['product_option', 'pricing_deliveries']
+      groups: ['product_option']
     code:
-      groups: ['product_option', 'pricing_deliveries']
+      groups: ['product_option']
     price:
-      groups: ['product_option', 'pricing_deliveries']
+      groups: ['product_option']
     enabled:
       groups: ['product_option', 'product_option_value_update']
-    option:
-      groups: ['pricing_deliveries']
 
 AppBundle\DataType\NumRange:
   attributes:

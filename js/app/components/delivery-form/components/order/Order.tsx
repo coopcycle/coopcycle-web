@@ -245,7 +245,7 @@ const Order = ({
   return (
     <Spin spinning={calculatePriceIsLoading}>
       <div>
-        {isPriceBreakdownEnabled && Boolean(order) && order.items ? (
+        {isPriceBreakdownEnabled && order !== null ? (
           <Cart order={order} overridePrice={overridePrice} />
         ) : null}
         <div>
