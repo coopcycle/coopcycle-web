@@ -33,6 +33,7 @@ import { selectMode } from './redux/formSlice'
 import FlagsContext from './FlagsContext'
 import type { DeliveryFormValues } from './types'
 import { Uri, PutDeliveryRequest, Store, Task as TaskType, TaskPayload } from '../../api/types'
+import { useDatadog } from '../../hooks/useDatadog'
 
 const generateTempId = (): string => `temp-${uuidv4()}`
 
@@ -199,6 +200,8 @@ const DeliveryForm = ({
 
   const { t } = useTranslation()
 
+  const { logger } = useDatadog()
+
   const handleTaskExpansion = (taskIndex: number, isExpanded: boolean) => {
     setExpandedTasks(prev => ({
       ...prev,
@@ -257,7 +260,13 @@ const DeliveryForm = ({
       })
     }
 
-    return Object.keys(errors.tasks).length > 0 || errors.variantName ? errors : {};
+    const result = Object.keys(errors.tasks).length > 0 || errors.variantName ? errors : {};
+
+    if (Object.keys(result).length > 0) {
+      logger.warn('Delivery form validation error', result)
+    }
+
+    return result
   }
 
   const isDataReady = useMemo(() => {
