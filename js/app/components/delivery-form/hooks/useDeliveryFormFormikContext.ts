@@ -1,10 +1,10 @@
 import { useMemo } from 'react'
-import { useFormikContext, FormikContextType } from 'formik'
-import type { DeliveryFormValues, FormErrors, TaskErrors } from '../types'
-import { TaskPayload as Task } from '../../../api/types'
+import { useFormikContext, FormikContextType, FormikErrors } from 'formik'
+import type { DeliveryFormValues } from '../types'
+import { TaskPayload } from '../../../api/types'
 
 // Utility function to find task index by ID
-const getTaskIndexById = (tasks: Task[], taskId: string | null): number => {
+const getTaskIndexById = (tasks: TaskPayload[], taskId: string | null): number => {
   if (!taskId || !tasks) return -1
   return tasks.findIndex(task => task['@id'] === taskId)
 }
@@ -15,8 +15,8 @@ type UseDeliveryFormFormikContextParams = {
 
 type UseDeliveryFormFormikContextReturn = FormikContextType<DeliveryFormValues> & {
   taskIndex: number
-  taskValues: Task | null
-  taskErrors: TaskErrors | null
+  taskValues: TaskPayload | null
+  taskErrors: FormikErrors<TaskPayload> | null
   rruleValue: string | undefined
 }
 
@@ -40,9 +40,9 @@ export function useDeliveryFormFormikContext({ taskId }: UseDeliveryFormFormikCo
     }
   }, [values.tasks, taskIndex])
 
-  const taskErrors = useMemo((): TaskErrors | null => {
+  const taskErrors = useMemo((): FormikErrors<TaskPayload> | null => {
     if (taskIndex !== -1) {
-      return (errors as FormErrors).tasks?.[taskIndex] || null
+      return errors.tasks?.[taskIndex] || null
     } else {
       return null
     }

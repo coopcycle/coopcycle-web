@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Checkbox } from 'antd'
-import { Formik, Form, FieldArray } from 'formik'
+import { Formik, Form, FieldArray, FormikErrors } from 'formik'
 import moment, { Moment } from 'moment'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -31,8 +31,8 @@ import { Mode, modeIn } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
 import FlagsContext from './FlagsContext'
-import type { DeliveryFormValues, FormErrors } from './types'
-import { Uri, PutDeliveryRequest, Store, Task as TaskType } from '../../api/types'
+import type { DeliveryFormValues } from './types'
+import { Uri, PutDeliveryRequest, Store, Task as TaskType, TaskPayload } from '../../api/types'
 
 const generateTempId = (): string => `temp-${uuidv4()}`
 
@@ -206,12 +206,12 @@ const DeliveryForm = ({
     }))
   }
 
-  const validate = (values: DeliveryFormValues): FormErrors => {
-    const errors: FormErrors = { tasks: [] };
+  const validate = (values: DeliveryFormValues): FormikErrors<DeliveryFormValues> => {
+    const errors: FormikErrors<DeliveryFormValues> = { tasks: [] };
 
     for (let i = 0; i < values.tasks.length; i++) {
 
-      const taskErrors = {}
+      const taskErrors: FormikErrors<TaskPayload> = {}
 
       if (!isDispatcher) {
         if (!values.tasks[i].address.formattedTelephone) {
