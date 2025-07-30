@@ -29,7 +29,7 @@ Encore
   .addEntry('common', './js/app/common.js')
   .addEntry('customize-form', './js/app/customize/form.js')
   .addEntry('dashboard', './js/app/dashboard/index.js')
-  .addEntry('datadog', './js/app/datadog.js')
+  .addEntry('datadog', './js/app/datadog.ts')
   .addEntry('delivery-form', './js/app/delivery/form.js')
   .addEntry('delivery-homepage', './js/app/delivery/homepage.js')
   .addEntry('delivery-list', './js/app/delivery/list.js')
@@ -72,7 +72,7 @@ Encore
   .addEntry('restaurant-dashboard', './js/app/dashboard/@restaurant/dashboard.js')
   .addEntry('search-address', './js/app/search/address.js')
   .addEntry('search-user', './js/app/search/user.js')
-  .addEntry('sentry', './js/app/sentry.js')
+  .addEntry('sentry', './js/app/sentry.ts')
   .addEntry('store-form', './js/app/admin/store/form.js')
   .addEntry('stores-list', './js/app/admin/store/list.js')
   .addEntry('task-list', './js/app/delivery/task-list.js')
@@ -87,6 +87,7 @@ Encore
   .addEntry('zone-preview', './js/app/zone/preview.js')
   .addEntry('failure-form', './js/app/failure/form.js')
   .addEntry('incident-form', './js/app/incident/form.js')
+  .addEntry('crash-test-page', './js/app/test/index.tsx')
 
   // @see https://symfony.com/doc/current/frontend/encore/custom-loaders-plugins.html#adding-custom-plugins
   // @see https://github.com/moment/moment/issues/2373

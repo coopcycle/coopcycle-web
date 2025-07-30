@@ -1,32 +1,32 @@
-.timeslot-container{
+.timeslot-container {
   display: flex;
   align-items: flex-end;
 
-  &__picker{
-    width: 95%
+  &__picker {
+    width: 95%;
   }
 
-  &__icon{
+  &__icon {
     cursor: pointer;
-    color: #337AB7;
+    color: #337ab7;
     width: 5%;
-    line-height: 35px,
+    line-height: 35px;
   }
 }
 
-.daterange-picker-container{
+.daterange-picker-container {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
 
-    &__picker{
-    width: 95%
+  &__picker {
+    width: 95%;
   }
 
-  &__icon{
+  &__icon {
     cursor: pointer;
-    color: #337AB7;
+    color: #337ab7;
     width: 5%;
-    line-height: 32px;;
+    line-height: 32px;
   }
 }

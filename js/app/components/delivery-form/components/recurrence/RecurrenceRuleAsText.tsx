@@ -18,14 +18,16 @@ const tokenForLocale = (locale: string, t: (key: string) => string) => {
   }
 }
 
-export const toTextArgs = (t: (key: string) => string): [Function, { dayNames: string[]; monthNames: string[] }] => {
+export const toTextArgs = (
+  t: (key: string) => string,
+): [Function, { dayNames: string[]; monthNames: string[] }] => {
   const locale = localeDetector()
 
   return [
     tokenForLocale(locale, t),
     {
       dayNames: moment.localeData(locale).weekdays(),
-      monthNames: moment.localeData(locale).months()
+      monthNames: moment.localeData(locale).months(),
     },
   ]
 }

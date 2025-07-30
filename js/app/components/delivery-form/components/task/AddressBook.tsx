@@ -8,9 +8,7 @@ import AddressAutosuggest from '../../../AddressAutosuggest'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import './AddressBook.scss'
-import {
-  useDeliveryFormFormikContext
-} from '../../hooks/useDeliveryFormFormikContext'
+import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext'
 import { Address, Store } from '../../../../api/types'
 
 function getFormattedValue(value: string | null): string {
@@ -47,9 +45,19 @@ type Props = {
   shallPrefillAddress: boolean
 }
 
-const AddressBook = ({ taskId, addresses, storeDeliveryInfos, shallPrefillAddress }: Props) => {
+const AddressBook = ({
+  taskId,
+  addresses,
+  storeDeliveryInfos,
+  shallPrefillAddress,
+}: Props) => {
   const { t } = useTranslation()
-  const { values, setFieldValue, errors, taskIndex: index } = useDeliveryFormFormikContext({
+  const {
+    values,
+    setFieldValue,
+    errors,
+    taskIndex: index,
+  } = useDeliveryFormFormikContext({
     taskId: taskId,
   })
   const updateInStoreAddresses = values.tasks[index].updateInStoreAddresses
@@ -57,7 +65,9 @@ const AddressBook = ({ taskId, addresses, storeDeliveryInfos, shallPrefillAddres
   const [isModalOpen, setModalOpen] = useState<boolean>(false)
   const [alreadyAskedForModification, setAlreadyAskedForModification] =
     useState<boolean>(false)
-  const [selectValue, setSelectValue] = useState<string>(values.tasks[index].address.name)
+  const [selectValue, setSelectValue] = useState<string>(
+    values.tasks[index].address.name,
+  )
 
   /* To handle the case where the user picked a remembered address in select but change contactName, name or telephone value */
   const handleModifyAddress = () => {
@@ -73,7 +83,6 @@ const AddressBook = ({ taskId, addresses, storeDeliveryInfos, shallPrefillAddres
   /** This one is used by the select. Only if the user picked a remembered address. */
 
   const handleAddressSelected = selectedId => {
-
     const selectedAddress = addresses.find(
       address => address['@id'] === selectedId,
     )
@@ -144,7 +153,9 @@ const AddressBook = ({ taskId, addresses, storeDeliveryInfos, shallPrefillAddres
             }
             options={addresses.map(address => ({
               value: address['@id'],
-              label: address.name ? `${address.name} - ${address.streetAddress}` : `${address.streetAddress}`,
+              label: address.name
+                ? `${address.name} - ${address.streetAddress}`
+                : `${address.streetAddress}`,
               key: address['@id'],
               id: address['@id'],
             }))}
@@ -166,7 +177,9 @@ const AddressBook = ({ taskId, addresses, storeDeliveryInfos, shallPrefillAddres
                       e.target.value,
                     )
                   }}
-                  placeholder={t('ADMIN_DASHBOARD_TASK_FORM_ADDRESS_NAME_LABEL')}
+                  placeholder={t(
+                    'ADMIN_DASHBOARD_TASK_FORM_ADDRESS_NAME_LABEL',
+                  )}
                 />
                 {errors.tasks?.[index]?.address?.name && (
                   <div className="text-danger">

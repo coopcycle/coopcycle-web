@@ -2,16 +2,19 @@ import React, { useEffect, useState } from 'react'
 import { InputNumber, Select } from 'antd'
 const { Option } = Select
 import { useTranslation } from 'react-i18next'
-import {
-  useDeliveryFormFormikContext
-} from '../../hooks/useDeliveryFormFormikContext'
+import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext'
 
 type Props = {
   taskId: string
 }
 
 const TotalWeight = ({ taskId }: Props) => {
-  const { setFieldValue, errors, values, taskIndex: index } = useDeliveryFormFormikContext({
+  const {
+    setFieldValue,
+    errors,
+    values,
+    taskIndex: index,
+  } = useDeliveryFormFormikContext({
     taskId: taskId,
   })
 

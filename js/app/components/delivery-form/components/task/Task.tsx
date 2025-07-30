@@ -49,20 +49,18 @@ const Task = ({
   const { t } = useTranslation()
 
   const mode = useSelector(selectMode)
-  const {
-    values,
-    taskValues,
-    setFieldValue,
-    taskIndex,
-  } = useDeliveryFormFormikContext({
-    taskId: taskId,
-  })
+  const { values, taskValues, setFieldValue, taskIndex } =
+    useDeliveryFormFormikContext({
+      taskId: taskId,
+    })
 
   const { data: timeSlotLabels } = useGetStoreTimeSlotsQuery(storeNodeId)
   const { data: packages } = useGetStorePackagesQuery(storeNodeId)
 
   return (
-    <div className="task border p-4 mb-4" data-testid={`form-task-${taskIndex}`}>
+    <div
+      className="task border p-4 mb-4"
+      data-testid={`form-task-${taskIndex}`}>
       <div
         className={`task__header task__header--${taskValues.type.toLowerCase()}`}
         onClick={() => {
@@ -86,7 +84,9 @@ const Task = ({
           <i
             className={isExpanded ? 'fa fa-chevron-up' : 'fa fa-chevron-down'}
             title={
-              isExpanded ? t('DELIVERY_FORM_SHOW_LESS') : t('DELIVERY_FORM_SHOW_MORE')
+              isExpanded
+                ? t('DELIVERY_FORM_SHOW_LESS')
+                : t('DELIVERY_FORM_SHOW_MORE')
             }></i>
         </button>
 
@@ -107,7 +107,7 @@ const Task = ({
           storeDeliveryInfos={storeDeliveryInfos}
           shallPrefillAddress={Boolean(
             taskValues.type === 'PICKUP' &&
-              (mode === Mode.DELIVERY_CREATE) &&
+              mode === Mode.DELIVERY_CREATE &&
               storeDeliveryInfos.prefillPickupAddress,
           )}
         />
@@ -119,17 +119,14 @@ const Task = ({
           taskId={taskId}
         />
 
-        { showPackages ? (
+        {showPackages ? (
           <div className="mt-4">
             {packages && packages.length ? (
-              <Packages
-                taskId={taskId}
-                packages={packages}
-              />
+              <Packages taskId={taskId} packages={packages} />
             ) : null}
             <TotalWeight taskId={taskId} />
           </div>
-        ) : null }
+        ) : null}
 
         <div className="mt-4 mb-4">
           <label

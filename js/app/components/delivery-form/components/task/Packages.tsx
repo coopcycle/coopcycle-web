@@ -3,9 +3,7 @@ import { Button, Input } from 'antd'
 import { useTranslation } from 'react-i18next'
 
 import './Packages.scss'
-import {
-  useDeliveryFormFormikContext
-} from '../../hooks/useDeliveryFormFormikContext'
+import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext'
 import { InputPackage, Package } from '../../../../api/types'
 
 type Props = {
@@ -98,7 +96,10 @@ const Packages = ({ taskId, packages }: Props) => {
     <>
       <div className="mb-2 font-weight-bold">{t('DELIVERY_FORM_PACKAGES')}</div>
       {packages.map(item => (
-        <div key={item['@id']} className="packages-item mb-2" data-testid={item['@id']}>
+        <div
+          key={item['@id']}
+          className="packages-item mb-2"
+          data-testid={item['@id']}>
           <div className="packages-item__quantity ">
             <Button
               className="packages-item__quantity__button"

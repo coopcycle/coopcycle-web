@@ -49,12 +49,16 @@ type Props = {
 
 const SameDayPicker = ({ format, taskId }: Props) => {
   const mode = useSelector(selectMode)
-  const { taskValues, setFieldValue, taskIndex } = useDeliveryFormFormikContext({
-    taskId: taskId,
-  })
+  const { taskValues, setFieldValue, taskIndex } = useDeliveryFormFormikContext(
+    {
+      taskId: taskId,
+    },
+  )
 
   const firstSelectOptions = generateTimeSlots()
-  const [secondSelectOptions, setSecondSelectOptions] = useState<TimeSlotOption[]>([])
+  const [secondSelectOptions, setSecondSelectOptions] = useState<
+    TimeSlotOption[]
+  >([])
 
   useEffect(() => {
     if (taskValues.after) {

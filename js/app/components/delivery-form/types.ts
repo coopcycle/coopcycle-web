@@ -18,23 +18,6 @@ export type DeliveryFormValues = {
   variantName?: string
 }
 
-export type TaskErrors = {
-  address?: {
-    streetAddress?: string
-    name?: string
-    contactName?: string
-    formattedTelephone?: string
-  }
-  packages?: string
-  weight?: string
-  after?: string
-  before?: string
-}
-
-export type FormErrors = {
-  tasks: TaskErrors[]
-}
-
 export type FlagsContextType = {
   isDispatcher: boolean
   isDebugPricing: boolean

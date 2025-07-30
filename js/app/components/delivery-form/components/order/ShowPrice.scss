@@ -1,7 +1,7 @@
 .override__form {
   display: flex;
   flex-direction: column;
-  gap: 1em; 
+  gap: 1em;
   width: 100%;
   background-color: #f3f2f2f8;
 
@@ -9,22 +9,20 @@
   &__variant-price {
     display: flex;
     flex-direction: row;
-    align-items: baseline; 
+    align-items: baseline;
     width: 100%;
 
     &___label {
-      width: 30%; 
-      padding-right: 1em; 
+      width: 30%;
+      padding-right: 1em;
     }
 
     &___input {
-      width: 70%; 
-      
+      width: 70%;
     }
   }
 }
 
-.total__price{
+.total__price {
   font-size: 1.2em;
 }
-

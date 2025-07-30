@@ -14,7 +14,8 @@ type Props = {
 }
 
 const OverridePriceForm = ({ setPrice, taxRate }: Props) => {
-  const { values, errors, setFieldValue } = useFormikContext<DeliveryFormValues>()
+  const { values, errors, setFieldValue } =
+    useFormikContext<DeliveryFormValues>()
 
   const { t } = useTranslation()
 
