@@ -1,11 +1,42 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { baseQueryWithReauth } from './baseQuery'
 import { fetchAllRecordsUsingFetchWithBQ } from './utils'
-import type {
+import {
   GetInvoiceLineItemsGroupedByOrganizationArgs,
-  InvoiceLineItemsGroupedByOrganizationResponse,
   GetInvoiceLineItemsArgs,
-  InvoiceLineItemsResponse,
+  HydraCollection,
+  InvoiceLineItemGroupedByOrganization,
+  InvoiceLineItem,
+  TaxRate,
+  Tag,
+  Zone,
+  Package,
+  StoreTimeSlot,
+  TimeSlotChoice,
+  Order,
+  OrderTiming,
+  OrderValidation,
+  Store,
+  Address,
+  PricingRuleSet,
+  Delivery,
+  RecurrenceRule,
+  UpdateOrderRequest,
+  PatchAddressRequest,
+  PostStoreAddressRequest,
+  CalculatePriceRequest,
+  CalculationOutput,
+  SuggestOptimizationsRequest,
+  OptimizationSuggestions,
+  PostDeliveryRequest,
+  PutDeliveryRequest,
+  PutRecurrenceRuleRequest,
+  RecurrenceRulesGenerateOrdersRequest,
+  RecurrenceRulesGenerateOrdersResponse,
+  CreatePricingRuleSetRequest,
+  UpdatePricingRuleSetRequest,
+  TimeSlotChoices,
+  TimeSlot,
 } from './types'
 
 // Define our single API slice object
@@ -14,28 +45,32 @@ export const apiSlice = createApi({
   baseQuery: baseQueryWithReauth,
   tagTypes: ['PricingRuleSet'],
   // The "endpoints" represent operations and requests for this server
-  // nodeId is passed in JSON-LD '@id' key, https://www.w3.org/TR/2014/REC-json-ld-20140116/#node-identifiers
+  // uri is passed in JSON-LD '@id' key, https://www.w3.org/TR/2014/REC-json-ld-20140116/#node-identifiers
   endpoints: builder => ({
-    getTaxRates: builder.query({
+    getTaxRates: builder.query<HydraCollection<TaxRate>, void>({
       query: () => `api/tax_rates`,
     }),
-    getTags: builder.query({
+    getTags: builder.query<Tag[], void>({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
-        return await fetchAllRecordsUsingFetchWithBQ(baseQuery, 'api/tags', 100)
+        return await fetchAllRecordsUsingFetchWithBQ<Tag>(
+          baseQuery,
+          'api/tags',
+          100,
+        )
       },
     }),
-    getZones: builder.query({
+    getZones: builder.query<Zone[], void>({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
-        return await fetchAllRecordsUsingFetchWithBQ(
+        return await fetchAllRecordsUsingFetchWithBQ<Zone>(
           baseQuery,
           'api/zones',
           100,
         )
       },
     }),
-    getPackages: builder.query({
+    getPackages: builder.query<Package[], void>({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
-        return await fetchAllRecordsUsingFetchWithBQ(
+        return await fetchAllRecordsUsingFetchWithBQ<Package>(
           baseQuery,
           'api/packages',
           100,
@@ -43,16 +78,16 @@ export const apiSlice = createApi({
       },
     }),
 
-    getOrderTiming: builder.query({
-      query: (nodeId: string) => `${nodeId}/timing`,
+    getOrderTiming: builder.query<OrderTiming, string>({
+      query: (uri: string) => `${uri}/timing`,
     }),
-    getOrderValidate: builder.query({
-      query: (nodeId: string) => `${nodeId}/validate`,
+    getOrderValidate: builder.query<OrderValidation, string>({
+      query: (uri: string) => `${uri}/validate`,
     }),
-    getOrder: builder.query({
-      query: (nodeId: string) => nodeId,
+    getOrder: builder.query<Order, string>({
+      query: (uri: string) => uri,
     }),
-    updateOrder: builder.mutation({
+    updateOrder: builder.mutation<Order, UpdateOrderRequest>({
       query: ({ nodeId, ...patch }) => ({
         url: nodeId,
         method: 'PUT',
@@ -60,70 +95,70 @@ export const apiSlice = createApi({
       }),
     }),
 
-    getTimeSlots: builder.query({
+    getTimeSlots: builder.query<TimeSlot[], void>({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
-        return await fetchAllRecordsUsingFetchWithBQ(
+        return await fetchAllRecordsUsingFetchWithBQ<TimeSlot>(
           baseQuery,
           'api/time_slots',
           100,
         )
       },
     }),
-    getTimeSlotChoices: builder.query({
-      query: (nodeId: string) => `${nodeId}/choices`,
+    getTimeSlotChoices: builder.query<TimeSlotChoices, string>({
+      query: (uri: string) => `${uri}/choices`,
     }),
 
-    patchAddress: builder.mutation({
-      query({ nodeId, ...patch }) {
+    patchAddress: builder.mutation<Address, PatchAddressRequest>({
+      query({ '@id': uri, ...patch }) {
         return {
-          url: nodeId,
+          url: uri,
           method: 'PATCH',
           body: patch,
         }
       },
     }),
 
-    getStore: builder.query({
-      query: (nodeId: string) => nodeId,
+    getStore: builder.query<Store, string>({
+      query: (uri: string) => uri,
     }),
-    getStoreAddresses: builder.query({
+    getStoreAddresses: builder.query<Address[], string>({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
-        return await fetchAllRecordsUsingFetchWithBQ(
+        return await fetchAllRecordsUsingFetchWithBQ<Address>(
           baseQuery,
           `${args}/addresses`,
           100,
         )
       },
     }),
-    getStoreTimeSlots: builder.query({
+    getStoreTimeSlots: builder.query<StoreTimeSlot[], string>({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
-        return await fetchAllRecordsUsingFetchWithBQ(
+        return await fetchAllRecordsUsingFetchWithBQ<StoreTimeSlot>(
           baseQuery,
           `${args}/time_slots`,
           100,
         )
       },
     }),
-    getStorePackages: builder.query({
+    getStorePackages: builder.query<Package[], string>({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
-        return await fetchAllRecordsUsingFetchWithBQ(
+        return await fetchAllRecordsUsingFetchWithBQ<Package>(
           baseQuery,
           `${args}/packages`,
           100,
         )
       },
     }),
-    postStoreAddress: builder.mutation({
-      query({ storeNodeId, ...body }) {
+    postStoreAddress: builder.mutation<Address, PostStoreAddressRequest>({
+      query({ storeUri, ...body }) {
         return {
-          url: `${storeNodeId}/addresses`,
+          url: `${storeUri}/addresses`,
           method: 'POST',
           body,
         }
       },
     }),
 
-    calculatePrice: builder.mutation({
+    calculatePrice: builder.mutation<CalculationOutput, CalculatePriceRequest>({
       query(body) {
         return {
           url: `/api/retail_prices/calculate`,
@@ -132,7 +167,10 @@ export const apiSlice = createApi({
         }
       },
     }),
-    suggestOptimizations: builder.mutation({
+    suggestOptimizations: builder.mutation<
+      OptimizationSuggestions,
+      SuggestOptimizationsRequest
+    >({
       query(body) {
         return {
           url: `/api/deliveries/suggest_optimizations`,
@@ -141,7 +179,7 @@ export const apiSlice = createApi({
         }
       },
     }),
-    postDelivery: builder.mutation({
+    postDelivery: builder.mutation<Delivery, PostDeliveryRequest>({
       query(body) {
         return {
           url: `/api/deliveries`,
@@ -150,32 +188,38 @@ export const apiSlice = createApi({
         }
       },
     }),
-    putDelivery: builder.mutation({
-      query({ nodeId, ...body }) {
+    putDelivery: builder.mutation<Delivery, PutDeliveryRequest>({
+      query({ '@id': uri, ...body }) {
         return {
-          url: nodeId,
+          url: uri,
           method: 'PUT',
           body,
         }
       },
     }),
 
-    putRecurrenceRule: builder.mutation({
-      query({ nodeId, ...body }) {
+    putRecurrenceRule: builder.mutation<
+      RecurrenceRule,
+      PutRecurrenceRuleRequest
+    >({
+      query({ '@id': uri, ...body }) {
         return {
-          url: nodeId,
+          url: uri,
           method: 'PUT',
           body,
         }
       },
     }),
-    deleteRecurrenceRule: builder.mutation({
-      query: nodeId => ({
-        url: nodeId,
+    deleteRecurrenceRule: builder.mutation<void, string>({
+      query: uri => ({
+        url: uri,
         method: 'DELETE',
       }),
     }),
-    recurrenceRulesGenerateOrders: builder.mutation({
+    recurrenceRulesGenerateOrders: builder.mutation<
+      RecurrenceRulesGenerateOrdersResponse,
+      RecurrenceRulesGenerateOrdersRequest
+    >({
       query: date => ({
         url: 'api/recurrence_rules/generate_orders',
         params: {
@@ -185,7 +229,7 @@ export const apiSlice = createApi({
     }),
 
     getInvoiceLineItemsGroupedByOrganization: builder.query<
-      InvoiceLineItemsGroupedByOrganizationResponse,
+      HydraCollection<InvoiceLineItemGroupedByOrganization>,
       GetInvoiceLineItemsGroupedByOrganizationArgs
     >({
       query: args => {
@@ -201,7 +245,7 @@ export const apiSlice = createApi({
       },
     }),
     getInvoiceLineItems: builder.query<
-      InvoiceLineItemsResponse,
+      HydraCollection<InvoiceLineItem>,
       GetInvoiceLineItemsArgs
     >({
       query: args => {
@@ -215,15 +259,18 @@ export const apiSlice = createApi({
       },
     }),
 
-    getPricingRuleSets: builder.query({
+    getPricingRuleSets: builder.query<HydraCollection<PricingRuleSet>, void>({
       query: () => 'api/pricing_rule_sets',
       providesTags: ['PricingRuleSet'],
     }),
-    getPricingRuleSet: builder.query({
+    getPricingRuleSet: builder.query<PricingRuleSet, number>({
       query: id => `api/pricing_rule_sets/${id}`,
       providesTags: (result, error, id) => [{ type: 'PricingRuleSet', id }],
     }),
-    createPricingRuleSet: builder.mutation({
+    createPricingRuleSet: builder.mutation<
+      PricingRuleSet,
+      CreatePricingRuleSetRequest
+    >({
       query: newPricingRuleSet => ({
         url: 'api/pricing_rule_sets',
         method: 'POST',
@@ -231,7 +278,10 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['PricingRuleSet'],
     }),
-    updatePricingRuleSet: builder.mutation({
+    updatePricingRuleSet: builder.mutation<
+      PricingRuleSet,
+      UpdatePricingRuleSetRequest
+    >({
       query: ({ id, ...patch }) => ({
         url: `api/pricing_rule_sets/${id}`,
         method: 'PUT',
@@ -241,7 +291,7 @@ export const apiSlice = createApi({
         { type: 'PricingRuleSet', id },
       ],
     }),
-    deletePricingRuleSet: builder.mutation({
+    deletePricingRuleSet: builder.mutation<void, number>({
       query: id => ({
         url: `api/pricing_rule_sets/${id}`,
         method: 'DELETE',
