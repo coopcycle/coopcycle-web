@@ -1118,7 +1118,12 @@ Feature: Carts
             "total":2700,
             "name":"Pizza",
             "variantName": "@string@",
-            "adjustments":{"@*@":"@*@"}
+            "adjustments":{"@*@":"@*@"},
+            "vendor": {
+              "@id":@string@,
+              "name":@string@
+            },
+            "player": null
           }
         ],
         "itemsTotal":2700,
@@ -1683,7 +1688,8 @@ Feature: Carts
           "adjustments":{"@*@":"@*@"},
           "fulfillmentMethod":"delivery",
           "invitation": "@string@||@null@",
-          "hasEdenredCredentials":@boolean@
+          "hasEdenredCredentials":@boolean@,
+          "paymentGateway":@string@
         }
       }
       """
@@ -1774,7 +1780,8 @@ Feature: Carts
           "adjustments":{"@*@":"@*@"},
           "fulfillmentMethod":"delivery",
           "invitation": "@string@||@null@",
-          "hasEdenredCredentials":@boolean@
+          "hasEdenredCredentials":@boolean@,
+          "paymentGateway":@string@
         }
       }
       """
@@ -1865,7 +1872,8 @@ Feature: Carts
           "adjustments":{"@*@":"@*@"},
           "fulfillmentMethod":"delivery",
           "invitation": "@string@||@null@",
-          "hasEdenredCredentials":@boolean@
+          "hasEdenredCredentials":@boolean@,
+          "paymentGateway":@string@
         }
       }
       """
@@ -2190,7 +2198,10 @@ Feature: Carts
           "itemsTotal":0,
           "total":0,
           "adjustments":{"@*@":"@*@"},
-          "fulfillmentMethod":"delivery"
+          "fulfillmentMethod":"delivery",
+          "invitation": "@string@||@null@",
+          "paymentGateway":@string@,
+          "hasEdenredCredentials":@boolean@
         }
       }
       """
@@ -2243,7 +2254,10 @@ Feature: Carts
           "itemsTotal":0,
           "total":0,
           "adjustments":{"@*@":"@*@"},
-          "fulfillmentMethod":"delivery"
+          "fulfillmentMethod":"delivery",
+          "invitation": "@string@||@null@",
+          "paymentGateway":@string@,
+          "hasEdenredCredentials":@boolean@
         }
       }
       """
@@ -2296,7 +2310,10 @@ Feature: Carts
           "itemsTotal":0,
           "total":0,
           "adjustments":{"@*@":"@*@"},
-          "fulfillmentMethod":"delivery"
+          "fulfillmentMethod":"delivery",
+          "invitation": "@string@||@null@",
+          "paymentGateway":@string@,
+          "hasEdenredCredentials":@boolean@
         }
       }
       """

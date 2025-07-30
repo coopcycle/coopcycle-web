@@ -592,13 +592,28 @@ Feature: Manage restaurants
         "depositRefundEnabled": false,
         "depositRefundOptin": true,
         "address":{"@*@":"@*@"},
-        "state":"rush",
-        "telephone":null,
+        "state":"normal",
+        "telephone":"+33612345678",
         "openingHoursSpecification":@array@,
         "specialOpeningHoursSpecification":@array@,
         "hasMenu":"/api/restaurants/menus/2",
         "image":@string@,
-        "loopeatEnabled":false
+        "loopeatEnabled":false,
+        "edenredMerchantId": null,
+        "edenredTRCardEnabled": false,
+        "edenredSyncSent": false,
+        "edenredEnabled": false,
+        "hub":null,
+        "facets": {
+          "@*@": "@*@"
+        },
+        "tags":@array@,
+        "badges":@array@,
+        "autoAcceptOrdersEnabled": @boolean@,
+        "fulfillmentMethods":@array@,
+        "bannerImage":@string@,
+        "isOpen":@boolean@,
+        "nextOpeningDate":@string@
       }
       """
 
@@ -692,7 +707,8 @@ Feature: Manage restaurants
         "autoAcceptOrdersEnabled": @boolean@,
         "fulfillmentMethods":@array@,
         "bannerImage":@string@,
-        "isOpen":@boolean@
+        "isOpen":@boolean@,
+        "nextOpeningDate":@string@
       }
       """
 
