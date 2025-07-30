@@ -1,7 +1,7 @@
 context('Delivery (role: store)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup(['ORM/store_basic.yml'])
-    cy.setEnvVar('PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED', '0')
+    cy.setEnvVar('PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED', '1')
   })
   afterEach(() => {
     cy.removeEnvVar('PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED')
@@ -44,13 +44,26 @@ context('Delivery (role: store)', () => {
 
     cy.betaEnterCommentAtPosition(1, 'Dropoff comments')
 
-    cy.get('[data-testid="tax-included"]').contains('4,99 €')
-
     cy.wait('@apiRoutingRoute')
 
     cy.get('[data-testid="delivery-distance"]')
       .invoke('text')
       .should('contains', 'Distance : 1.50 kms')
+
+    cy.verifyCart([
+      {
+        name: 'Supplément de commande',
+        total: '4,99 €',
+        options: [
+          {
+            name: 'Plus de 0.00 km',
+            price: '4,99 €',
+          },
+        ],
+      },
+    ])
+
+    cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
     cy.get('button[type="submit"]').click()
 

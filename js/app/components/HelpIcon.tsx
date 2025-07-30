@@ -18,7 +18,13 @@ function Content({ tooltipText, docsPath }) {
   )
 }
 
-export default function HelpIcon({ className, tooltipText, docsPath }) {
+type Props = {
+  className?: string
+  tooltipText: string
+  docsPath?: string
+}
+
+export default function HelpIcon({ className, tooltipText, docsPath }: Props) {
   return (
     <Popover
       content={<Content tooltipText={tooltipText} docsPath={docsPath} />}

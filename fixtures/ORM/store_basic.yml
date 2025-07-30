@@ -50,3 +50,16 @@ AppBundle\Entity\Store:
     __calls:
       - addAddress: [ "@warehouse" ]
       - addAddress: [ "@client_1" ]
+
+AppBundle\Entity\User:
+  store1Owner:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - 'store_1'
+        - 'store_1'
+        - 'store1@coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_USER', 'ROLE_STORE' ]
+    stores: [ '@store_1' ]
+    

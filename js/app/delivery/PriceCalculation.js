@@ -4,8 +4,6 @@ import { Collapse } from 'antd'
 import Cart from '../components/delivery-form/Cart'
 import FlagsContext from '../components/delivery-form/FlagsContext'
 
-const { Panel } = Collapse
-
 function Rule({ rule, matched }) {
   return (
     <div
@@ -102,11 +100,11 @@ export function PriceCalculation({
   const { isPriceBreakdownEnabled } = useContext(FlagsContext)
   const { t } = useTranslation()
 
-  return (
-    <Collapse
-      className={className}
-      defaultActiveKey={isDebugPricing ? ['1'] : []}>
-      <Panel header={t('DELIVERY_FORM_HOW_IS_PRICE_CALCULATED')} key="1">
+  const items = [
+    {
+      key: '1',
+      label: t('DELIVERY_FORM_HOW_IS_PRICE_CALCULATED'),
+      children: (
         <>
           {Boolean(calculation) && (
             <>
@@ -120,7 +118,15 @@ export function PriceCalculation({
             </div>
           )}
         </>
-      </Panel>
-    </Collapse>
+      ),
+    },
+  ]
+
+  return (
+    <Collapse
+      className={className}
+      defaultActiveKey={isDebugPricing ? ['1'] : []}
+      items={items}
+    />
   )
 }

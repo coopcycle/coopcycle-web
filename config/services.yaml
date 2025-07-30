@@ -71,6 +71,8 @@ parameters:
   business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
   transporters_config: '%env(json:TRANSPORTERS_CONFIG)%'
   billing_enabled: '%env(bool:BILLING_ENABLED)%'
+  package_delivery_ui_price_breakdown_enabled_default: true
+  package_delivery_ui_price_breakdown_enabled: '%env(default:package_delivery_ui_price_breakdown_enabled_default:bool:PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED)%'
 
 services:
 
@@ -82,7 +84,7 @@ services:
       $locale: "%env(COOPCYCLE_LOCALE)%"
       $country: "%country_iso%"
       $environment: "%kernel.environment%"
-      $packageDeliveryUiPriceBreakdownEnabled: "%env(bool:PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED)%"
+      $packageDeliveryUiPriceBreakdownEnabled: "%package_delivery_ui_price_breakdown_enabled%"
 
   # For some cache pools, want *STABLE* cache keys between deploys.
   # To achieve this, we *EXPLICITLY* set a namespace,

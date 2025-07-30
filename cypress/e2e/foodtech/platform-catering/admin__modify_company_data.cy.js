@@ -13,7 +13,7 @@ describe('Platform catering; admin; modify company data', () => {
     cy.urlmatch(/\/admin\/restaurants\/business-account\/*/)
 
     cy.intercept('/admin/restaurants/business-account/*').as('submit')
-    cy.get('#company_name').clear('')
+    cy.get('#company_name').clear()
     cy.get('#company_name').type('NEW NAME')
     cy.get('form[name="company"] button[type="submit"]').click()
     cy.wait('@submit', { timeout: 10000 })

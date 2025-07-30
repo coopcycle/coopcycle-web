@@ -11,7 +11,7 @@ describe('Dispatch; admin; invite dispatcher', () => {
     // user invite page
     cy.urlmatch(/\/admin\/users\/invite$/)
 
-    cy.get('#invite_user_email').clear('')
+    cy.get('#invite_user_email').clear()
     cy.get('#invite_user_email').type('dispatch01@demo.coopcycle.org')
     cy.get('#invite_user_roles_2').check()
 

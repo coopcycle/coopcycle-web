@@ -17,6 +17,7 @@ export default function TimeSlotPicker({ value, onChange }) {
 
   return (
     <Select
+      data-testid="condition-time-slot-select"
       showSearch
       optionFilterProp="label"
       onChange={value =>

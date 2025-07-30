@@ -11,6 +11,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RuleHumanizer
 {
+    const FAILED_TO_PARSE = 'Failed to parse';
+
     public function __construct(
         private ExpressionLanguage $expressionLanguage,
         private TranslatorInterface $translator
@@ -40,7 +42,8 @@ class RuleHumanizer
 
         $parts = $accumulator->getArrayCopy();
 
-        if (0 === count($parts)) {
+        // @phpstan-ignore-next-line Result of || is always true. (False positive: it is not when traverseNode populates accumulator)
+        if (0 === count($parts) || in_array(self::FAILED_TO_PARSE, $parts)) {
             return $this->fallbackName($rule);
         }
 
@@ -75,10 +78,14 @@ class RuleHumanizer
                 $accumulator[] = $this->humanizeDiffFunction($node, 'basics.hours');
             } elseif ($node->attributes['name'] === 'diff_days') {
                 $accumulator[] = $this->humanizeDiffFunction($node, 'basics.days');
+            } else {
+                $accumulator[] = self::FAILED_TO_PARSE;
             }
         } elseif ($node instanceof BinaryNode) {
             // Handle all other binary operations (comparisons, etc.)
             $accumulator[] = $this->humanizeBinaryNode($node);
+        } else {
+            $accumulator[] = self::FAILED_TO_PARSE;
         }
     }
 
