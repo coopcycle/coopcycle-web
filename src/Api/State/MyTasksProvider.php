@@ -1,32 +1,29 @@
 <?php
 
-namespace AppBundle\Action;
+namespace AppBundle\Api\State;
 
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ProviderInterface;
+use AppBundle\Entity\TaskList;
 use AppBundle\Entity\TaskListRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
-use AppBundle\Action\Utils\TokenStorageTrait;
-use AppBundle\Entity\TaskList;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-final class MyTasks
+final class MyTasksProvider implements ProviderInterface
 {
-    use TokenStorageTrait;
-
     public function __construct(
-        TokenStorageInterface $tokenStorage,
+        private readonly Security $security,
         private readonly EntityManagerInterface $entityManager,
-        private readonly TaskListRepository $taskListRepository
-    )
-    {
-        $this->tokenStorage = $tokenStorage;
-    }
+        private readonly TaskListRepository $taskListRepository)
+    {}
 
-    public function __invoke(Request $request)
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
-        $user = $this->getUser();
-        $date = new \DateTime($request->get('date'));
+        $user = $this->security->getUser();
+        $date = $uriVariables['date'];
 
         $taskListDto = $this->taskListRepository->findMyTaskListAsDto($user, $date);
 

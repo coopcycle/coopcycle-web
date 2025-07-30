@@ -577,6 +577,7 @@ Feature: Multi-step deliveries
           "suggestions": [
             {
               "@type": "OptimizationSuggestion",
+              "@id": @string@,
               "gain": {
                 "type": "distance",
                 "amount": @integer@

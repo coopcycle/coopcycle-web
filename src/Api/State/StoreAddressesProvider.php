@@ -21,7 +21,7 @@ final class StoreAddressesProvider implements ProviderInterface
         private EntityManagerInterface $entityManager)
     {}
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = [])
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
         $request = $this->requestStack->getCurrentRequest();
 

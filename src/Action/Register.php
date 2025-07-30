@@ -2,7 +2,9 @@
 
 namespace AppBundle\Action;
 
-use ApiPlatform\Symfony\Validator\Exception\ValidationException;
+use ApiPlatform\Problem\Serializer\ConstraintViolationListNormalizer;
+use ApiPlatform\Validator\ValidatorInterface;
+use ApiPlatform\Validator\Exception\ValidationException;
 use AppBundle\Entity\User;
 use Nucleos\ProfileBundle\Form\Type\RegistrationFormType;
 use Nucleos\ProfileBundle\Mailer\RegistrationMailer;
@@ -18,9 +20,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Validator\ConstraintViolationInterface;
-use Symfony\Component\Validator\ConstraintViolationList;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class Register
 {
@@ -41,6 +41,7 @@ class Register
         TokenGeneratorInterface $tokenGenerator,
         RegistrationMailer $mailer,
         ValidatorInterface $validator,
+        private ConstraintViolationListNormalizer $constraintViolationListNormalizer,
         bool $confirmationEnabled)
     {
         $this->userManager = $userManager;
@@ -85,10 +86,10 @@ class Register
 
         $user = $form->getData();
 
-        $violations = $this->validator->validate($user, null, ['Registration', 'Default']);
-
-        if (count($violations) > 0) {
-            throw new ValidationException($violations);
+        try {
+            $this->validator->validate($user, ['groups' => ['Registration', 'Default']]);
+        } catch (ValidationException $e) {
+            return new JsonResponse($this->constraintViolationListNormalizer->normalize($e->getConstraintViolationList()), 400);
         }
 
         $user->setEnabled($this->confirmationEnabled ? false : true);
