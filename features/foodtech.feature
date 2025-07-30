@@ -146,6 +146,7 @@ Feature: Food Tech
         "shippingAddress":{"@*@":"@*@"},
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn":0,
+        "reusablePackagingQuantity": @integer@,
         "shippingTimeRange":[
           "2018-08-27T12:25:00+02:00",
           "2018-08-27T12:35:00+02:00"
@@ -160,12 +161,20 @@ Feature: Food Tech
         "state":"refused",
         "createdAt":"@string@.isDateTime()",
         "taxTotal":222,
-        "restaurant":@...@,
+        "restaurant":{"@*@":"@*@"},
         "shippedAt":"2018-08-27T12:30:00+02:00",
-        "preparationExpectedAt":"2018-08-27T12:25:00+02:00",
-        "pickupExpectedAt":"2018-08-27T12:35:00+02:00",
+        "preparationExpectedAt":"2018-08-27T12:05:00+02:00",
+        "pickupExpectedAt":"2018-08-27T12:15:00+02:00",
         "adjustments":{"@*@": "@*@"},
-        "events":@array@
+        "events":@array@,
+        "preparationTime":"@string@||@null@",
+        "shippingTime":"@string@||@null@",
+        "paymentMethod": "CARD",
+        "hasReceipt":@boolean@,
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@,
+        "assignedTo": "@string@||@null@"
       }
       """
 

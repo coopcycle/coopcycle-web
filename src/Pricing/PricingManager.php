@@ -2,35 +2,30 @@
 
 namespace AppBundle\Pricing;
 
-use AppBundle\Action\Incident\CreateIncident;
-use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRuleSet;
-use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\PriceInterface;
-use AppBundle\Entity\Sylius\PricingRulesBasedPrice;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\PricingStrategy;
 use AppBundle\Entity\Sylius\UsePricingRules;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\RecurrenceRule;
-use AppBundle\Entity\User;
-use AppBundle\Exception\Pricing\NoRuleMatchedException;
-use AppBundle\Service\DeliveryManager;
-use AppBundle\Service\OrderManager;
 use AppBundle\Service\TimeSlotManager;
-use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Order\OrderItemInterface;
+use AppBundle\Sylius\Product\ProductVariantFactory;
+use AppBundle\Sylius\Product\ProductVariantInterface;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Recurr\Rule;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
+use Sylius\Component\Order\Modifier\OrderModifierInterface;
+use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -39,53 +34,23 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * "Delivery" here includes both delivery of foodtech orders (where price is added as an order adjustment)
  * and Package Delivery/'LastMile' orders (where price is added as an order item).
  *
- * FIXME: Should we move non-price-related methods into the OrderManager class?
+ * FIXME: Should we move non-price-related methods into the OrderManager or DeliveryOrderManager class?
  */
 class PricingManager
 {
-    use TokenStorageTrait;
 
     public function __construct(
-        TokenStorageInterface $tokenStorage,
         private readonly EntityManagerInterface $entityManager,
         private readonly NormalizerInterface $normalizer,
-        private readonly RequestStack $requestStack,
         private readonly TranslatorInterface $translator,
-        private readonly DeliveryManager $deliveryManager,
-        private readonly OrderManager $orderManager,
-        private readonly OrderFactory $orderFactory,
-        private readonly CreateIncident $createIncident,
+        private readonly FactoryInterface $orderItemFactory,
+        private readonly OrderItemQuantityModifierInterface $orderItemQuantityModifier,
+        private readonly OrderModifierInterface $orderModifier,
+        private readonly ProductVariantFactory $productVariantFactory,
         private readonly TimeSlotManager $timeSlotManager,
         private readonly PriceCalculationVisitor $priceCalculationVisitor,
         private readonly LoggerInterface $logger
     ) {
-        $this->tokenStorage = $tokenStorage;
-    }
-
-    private function getPriceWithPricingStrategy(Delivery $delivery, PricingStrategy $pricingStrategy): ?PriceInterface
-    {
-        $store = $delivery->getStore();
-
-        if (null === $store) {
-            $this->logger->warning('Delivery has no store');
-            return null;
-        }
-
-        if ($pricingStrategy instanceof UsePricingRules) {
-            $pricingRuleSet = $store->getPricingRuleSet();
-            $price = $this->getPrice($delivery, $pricingRuleSet);
-
-            if (null === $price) {
-                $this->logger->warning('Price could not be calculated');
-                return null;
-            }
-            return new PricingRulesBasedPrice($price, $pricingRuleSet);
-        } elseif ($pricingStrategy instanceof UseArbitraryPrice) {
-            return $pricingStrategy->getArbitraryPrice();
-        } else {
-            $this->logger->warning('Unsupported pricing config');
-            return null;
-        }
     }
 
     public function getPrice(Delivery $delivery, ?PricingRuleSet $ruleSet): ?int
@@ -100,7 +65,7 @@ class PricingManager
         return $output->getPrice();
     }
 
-    public function getPriceCalculation(Delivery $delivery, PricingRuleSet $ruleSet): ?Output
+    public function getPriceCalculation(Delivery $delivery, PricingRuleSet $ruleSet): ?PriceCalculationOutput
     {
         // Store might be null if it's an embedded form
         $store = $delivery->getStore();
@@ -133,80 +98,86 @@ class PricingManager
     }
 
     /**
-     * @throws NoRuleMatchedException
+     * @return ProductVariantInterface[]
      */
-    public function createOrder(Delivery $delivery, array $optionalArgs = []): OrderInterface
-    {
-        // Defining a default value in the method signature fails in the phpunit tests
-        // even though it seems that it was fixed: https://github.com/sebastianbergmann/phpunit/commit/658d8decbec90c4165c0b911cf6cfeb5f6601cae
-        $defaults = [
-            'pricingStrategy' => new UsePricingRules(),
-            'persist' => true,
-            // If set to true, an exception will be thrown when a price cannot be calculated
-            // If set to false, a price of 0 will be set and an incident will be created
-            'throwException' => false,
-        ];
-        $optionalArgs += $defaults;
+    public function getPriceWithPricingStrategy(
+        Delivery $delivery,
+        PricingStrategy $pricingStrategy
+    ): array {
+        $store = $delivery->getStore();
 
-        $pricingStrategy = $optionalArgs['pricingStrategy'];
-        $persist = $optionalArgs['persist'];
-        $throwException = $optionalArgs['throwException'];
+        if (null === $store) {
+            $this->logger->warning('Delivery has no store');
 
-        if (null === $pricingStrategy) {
-            $pricingStrategy = new UsePricingRules();
+            return [];
         }
 
-        $price = $this->getPriceWithPricingStrategy($delivery, $pricingStrategy);
-        $incident = null;
+        if ($pricingStrategy instanceof UsePricingRules) {
+            $pricingRuleSet = $store->getPricingRuleSet();
 
-        if (null === $price) {
-            if ($throwException) {
-                throw new NoRuleMatchedException();
+            // if no Pricing Rules are defined, the default rule is to set the price to 0
+            if (null === $pricingRuleSet) {
+                return [
+                    $this->getCustomProductVariant(
+                        $delivery,
+                        new ArbitraryPrice(
+                            $this->translator->trans('form.delivery.price.missing'),
+                            0
+                        )
+                    ),
+                ];
             }
 
-            // otherwise; set price to 0 and create an incident
-            $price = new ArbitraryPrice($this->translator->trans('form.delivery.price.missing'), 0);
-            $incident = new Incident();
-        }
+            $output = $this->getPriceCalculation($delivery, $pricingRuleSet);
 
-        $order = $this->orderFactory->createForDeliveryAndPrice($delivery, $price);
+            if (count($output->productVariants) === 0) {
+                $this->logger->warning('Price could not be calculated');
 
-        if ($persist) {
-            // We need to persist the order first,
-            // because an auto increment is needed to generate a number
-            $this->entityManager->persist($order);
-            $this->entityManager->flush();
-
-            $this->orderManager->onDemand($order);
-
-            $this->entityManager->flush();
-
-            $user = $this->getUser();
-
-            $isUserWithAccount = $user instanceof User && null !== $user->getId();
-            // If it's not a user with an account, it could be an ApiApp
-            // ApiKey: see BearerTokenAuthenticator
-            // OAuth client: League\Bundle\OAuth2ServerBundle\Security\User\NullUser
-
-            if (null !== $incident) {
-                $title = $this->translator->trans('form.delivery.price.missing.incident', [
-                    '%number%' => $order->getNumber(),
-                ]);
-
-                //FIXME: allow to set $createdBy API clients (ApiApp) and integrations; see Incident::createdBy
-                if (!$isUserWithAccount) {
-                    $title = $title . ' (API client)';
-                }
-
-                $incident->setTitle($title);
-                $incident->setFailureReasonCode('PRICE_REVIEW_NEEDED');
-                $incident->setTask($delivery->getPickup());
-
-                $this->createIncident->__invoke($incident, $isUserWithAccount ? $user : null, $this->requestStack->getCurrentRequest());
+                return [];
             }
+
+            return $output->productVariants;
+        } elseif ($pricingStrategy instanceof UseArbitraryPrice) {
+            return [
+                $this->getCustomProductVariant(
+                    $delivery,
+                    $pricingStrategy->getArbitraryPrice()
+                ),
+            ];
+        } else {
+            $this->logger->warning('Unsupported pricing config');
+
+            return [];
+        }
+    }
+
+    /**
+     * @param ProductVariantInterface[] $productVariants
+     */
+    public function processDeliveryOrder(OrderInterface $order, array $productVariants): void {
+        if ($order->isFoodtech()) {
+            $this->logger->info('processDeliveryOrder command should NOT be called on foodtech orders');
+            return;
         }
 
-        return $order;
+        //remove previously added items
+        foreach ($order->getItems() as $item) {
+            $this->orderModifier->removeFromOrder($order, $item);
+        }
+
+        $items = [];
+
+        foreach ($productVariants as $productVariant) {
+            $orderItem = $this->createOrderItem($productVariant);
+
+            $this->orderItemQuantityModifier->modify($orderItem, 1);
+
+            $items[] = $orderItem;
+        }
+
+        foreach ($items as $item) {
+            $this->orderModifier->addToOrder($order, $item);
+        }
     }
 
     public function duplicateOrder($store, $orderId): OrderDuplicate | null
@@ -359,37 +330,19 @@ class PricingManager
         $recurrenceRule->setTemplate($template);
     }
 
-    public function createOrderFromRecurrenceRule(Task\RecurrenceRule $recurrenceRule, string $startDate, bool $persist = true, bool $throwException = false): ?OrderInterface
+    private function createOrderItem(ProductVariantInterface $variant): OrderItemInterface
     {
-        $delivery = $this->deliveryManager->createDeliveryFromRecurrenceRule($recurrenceRule, $startDate, $persist);
+        /** @var OrderItemInterface $orderItem */
+        $orderItem = $this->orderItemFactory->createNew();
+        $orderItem->setVariant($variant);
+        $orderItem->setUnitPrice($variant->getPrice());
+        // In the current implementation, we remove and re-add the order item when modifying the order
+        $orderItem->setImmutable(true);
 
-        if (null === $delivery) {
-            return null;
-        }
+        return $orderItem;
+    }
 
-        $pricingStrategy = null;
-        if ($arbitraryPriceTemplate = $recurrenceRule->getArbitraryPriceTemplate()) {
-            $pricingStrategy = new UseArbitraryPrice(new ArbitraryPrice($arbitraryPriceTemplate['variantName'], $arbitraryPriceTemplate['variantPrice']));
-        } else {
-            $pricingStrategy = new UsePricingRules();
-        }
-
-        $order = $this->createOrder($delivery, [
-            'pricingStrategy' => $pricingStrategy,
-            'persist' => $persist,
-            // Display an error when viewing the list of recurrence rules so an admin knows which rules need to be fixed
-            // When auto-generating orders, create an incident instead
-            'throwException' => $throwException,
-        ]);
-
-        if (null !== $order) {
-            $order->setSubscription($recurrenceRule);
-        }
-
-        if ($persist) {
-            $this->entityManager->flush();
-        }
-
-        return $order;
+    public function getCustomProductVariant(Delivery $delivery, PriceInterface $price): ProductVariantInterface {
+        return $this->productVariantFactory->createWithPrice($delivery, $price);
     }
 }

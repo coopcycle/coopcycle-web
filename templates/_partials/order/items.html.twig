@@ -16,17 +16,17 @@
           <th colspan="2">{{ vendor.name }}</th>
         </tr>
         {% for item in itemsGroups[vendor] %}
-          {% include '_partials/order/item.html.twig' with { item: item } %}
+          {% include '_partials/order/item.html.twig' with { item: item, index: loop.index0 } %}
         {% endfor %}
       {% endfor %}
     {% else %}
-      {% for item in order.items %}
-        {% include '_partials/order/item.html.twig' with { item: item } %}
+      {% for item in order.getItemsSorted() %}
+        {% include '_partials/order/item.html.twig' with { item: item, index: loop.index0 } %}
       {% endfor %}
     {% endif %}
   {% else %}
-    {% for item in order.items %}
-      {% include '_partials/order/item.html.twig' with { item: item } %}
+    {% for item in order.getItemsSorted() %}
+      {% include '_partials/order/item.html.twig' with { item: item, index: loop.index0 } %}
     {% endfor %}
   {% endif %}
   </tbody>
@@ -141,9 +141,9 @@
         </td>
       </tr>
     {% endif %}
-    <tr>
+    <tr data-testid="order-total-including-tax">
       <th>{% trans %}order.total_including_tax{% endtrans %}</th>
-      <td class="text-right text-nowrap">
+      <td data-testid="value" class="text-right text-nowrap">
         {{ order.total|price_format }}
       </td>
     </tr>

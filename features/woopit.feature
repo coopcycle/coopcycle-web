@@ -3,6 +3,7 @@ Feature: Woopit
   Scenario: Receive & confirm quote
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | sylius_products.yml |
       | stores.yml          |
       | woopit_integrations.yml          |
     And the setting "subject_to_vat" has value "1"
@@ -313,6 +314,7 @@ Feature: Woopit
   Scenario: Receive & cancel quote
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | sylius_products.yml |
       | stores.yml          |
       | woopit_integrations.yml          |
     And the setting "subject_to_vat" has value "1"
@@ -432,6 +434,7 @@ Feature: Woopit
   Scenario: Receive, confirm quote & cancel delivery
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | sylius_products.yml |
       | stores.yml          |
       | woopit_integrations.yml          |
     And the setting "subject_to_vat" has value "1"
@@ -651,6 +654,7 @@ Feature: Woopit
   Scenario: Receive, confirm quote & update delivery
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | sylius_products.yml |
       | stores.yml          |
       | woopit_integrations.yml          |
     And the setting "subject_to_vat" has value "1"
@@ -995,6 +999,7 @@ Feature: Woopit
   Scenario: Receive & refuse quote due to non existing store
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | sylius_products.yml |
       | stores.yml          |
       | woopit_integrations.yml          |
     And the setting "subject_to_vat" has value "1"
@@ -1079,6 +1084,7 @@ Feature: Woopit
   Scenario: Receive & refuse quote due to delivery area not covered
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | sylius_products.yml |
       | stores.yml          |
       | woopit_integrations.yml          |
     Given the geojson file "woopit_zone" for a zone is loaded
@@ -1165,6 +1171,7 @@ Feature: Woopit
   Scenario: Receive & reject quote due to weight
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | sylius_products.yml |
       | stores.yml          |
       | woopit_integrations.yml          |
     And the setting "subject_to_vat" has value "1"
@@ -1279,6 +1286,7 @@ Feature: Woopit
   Scenario: Receive & reject quote due to width
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | sylius_products.yml |
       | stores.yml          |
       | woopit_integrations.yml          |
     And the setting "subject_to_vat" has value "1"
@@ -1394,6 +1402,7 @@ Feature: Woopit
   Scenario: Receive & reject quote due to height
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | sylius_products.yml |
       | stores.yml          |
       | woopit_integrations.yml          |
     And the setting "subject_to_vat" has value "1"
@@ -1509,6 +1518,7 @@ Feature: Woopit
   Scenario: Receive & reject quote due to length
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | sylius_products.yml |
       | stores.yml          |
       | woopit_integrations.yml          |
     And the setting "subject_to_vat" has value "1"
@@ -1624,6 +1634,7 @@ Feature: Woopit
   Scenario: Receive & reject quote due to not allowed frozen products
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | sylius_products.yml |
       | stores.yml          |
       | woopit_integrations.yml          |
     And the setting "subject_to_vat" has value "1"

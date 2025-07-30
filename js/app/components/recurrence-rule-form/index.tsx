@@ -1,7 +1,7 @@
 import React from 'react'
 import { Provider } from 'react-redux'
 import { accountSlice } from '../../entities/account/reduxSlice'
-import DeliveryForm from '../delivery-form/DeliveryForm.js'
+import DeliveryForm from '../delivery-form/DeliveryForm'
 //FIXME: temporary re-use of the delivery-form store, to be replaced with a dedicated store
 import { createStoreFromPreloadedState } from '../delivery-form/redux/store'
 import Modal from 'react-modal'
@@ -9,6 +9,7 @@ import { createRoot } from 'react-dom/client'
 import { Mode } from '../delivery-form/mode'
 import { formSlice } from '../delivery-form/redux/formSlice'
 import { RootWithDefaults } from '../../utils/react'
+import FlagsContext from '../delivery-form/FlagsContext'
 
 const buildInitialState = () => {
   return {
@@ -37,6 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const isDispatcher = container.dataset.isDispatcher === 'true'
     const isDebugPricing = container.dataset.isDebugPricing === 'true'
+    const isPriceBreakdownEnabled =
+      container.dataset.isPriceBreakdownEnabled === 'true'
 
     Modal.setAppElement('.content')
 
@@ -44,16 +47,17 @@ document.addEventListener('DOMContentLoaded', () => {
     root.render(
       <RootWithDefaults>
         <Provider store={store}>
-          <DeliveryForm
-            storeNodeId={storeNodeId}
-            //FIXME; might lead to bugs
-            deliveryId={recurrenceRuleId}
-            //FIXME; might lead to bugs
-            deliveryNodeId={recurrenceRuleNodeId}
-            preLoadedDeliveryData={preLoadedDeliveryData}
-            isDispatcher={isDispatcher}
-            isDebugPricing={isDebugPricing}
-          />
+          <FlagsContext.Provider
+            value={{ isDispatcher, isDebugPricing, isPriceBreakdownEnabled }}>
+            <DeliveryForm
+              storeNodeId={storeNodeId}
+              //FIXME; might lead to bugs
+              deliveryId={recurrenceRuleId}
+              //FIXME; might lead to bugs
+              deliveryNodeId={recurrenceRuleNodeId}
+              preLoadedDeliveryData={preLoadedDeliveryData}
+            />
+          </FlagsContext.Provider>
         </Provider>
       </RootWithDefaults>,
     )

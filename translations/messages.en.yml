@@ -1685,3 +1685,19 @@ restaurant.copy_products.not_empty: The target restaurant already has products
 restaurant.copy_products.copying: Copying the products, please refresh this page in a few minutes
 form.store_type.multi_pickup_enabled.label: Enable multiple pickups
 form.store_type.multi_pickup_enabled.help: Allow users to add additional pickups when creating a delivery
+pricing.variant.pickup_point: Pickup point
+pricing.variant.dropoff_point: Dropoff point
+pricing.variant.order_supplement: Order supplement
+pricing.rule.humanizer.inside_zone: inside
+pricing.rule.humanizer.outside_zone: outside
+pricing.rule.humanizer.address_zone_format: '%task_type% address %direction% zone "%zone_name%"'
+pricing.rule.humanizer.between: between %left% and %right%
+pricing.rule.humanizer.less_than: less than %value%
+pricing.rule.humanizer.more_than: more than %value%
+pricing.rule.humanizer.kg_unit: '%value% kg'
+pricing.rule.humanizer.km_unit: '%value% km'
+pricing.rule.humanizer.task_type_is: '%value% rate'
+pricing.rule.humanizer.time_range_length: '%task_type% time window %operator% %value%'
+pricing.rule.humanizer.diff: '%task_type% prior notice %operator% %value%'
+pricing.rule.humanizer.order_items_total: cart total %operator% %value%
+pricing.rule.humanizer.packages_volume_units: package volume %operator% %value%

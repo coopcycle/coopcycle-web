@@ -37,7 +37,6 @@ use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\BusinessRestaurantGroup;
-use AppBundle\Entity\Contract;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
@@ -47,8 +46,6 @@ use AppBundle\Entity\Sylius\TaxRate;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
-use AppBundle\Entity\Vehicle;
-use AppBundle\Entity\Warehouse;
 use AppBundle\Entity\Woopit\WoopitIntegration;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\AttachToOrganizationType;
@@ -69,10 +66,8 @@ use AppBundle\Form\MercadopagoLivemodeType;
 use AppBundle\Form\NewCustomOrderType;
 use AppBundle\Form\NonprofitType;
 use AppBundle\Form\OrderType;
-use AppBundle\Form\OrganizationType;
 use AppBundle\Form\PackageSetType;
 use AppBundle\Form\PricingRuleSetType;
-use AppBundle\Form\RestaurantAdminType;
 use AppBundle\Form\BusinessRestaurantGroupType;
 use AppBundle\Form\SettingsType;
 use AppBundle\Form\StripeLivemodeType;
@@ -82,6 +77,7 @@ use AppBundle\Form\TimeSlotType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\UsersExportType;
 use AppBundle\Form\ZoneCollectionType;
+use AppBundle\Pricing\PricingManager;
 use AppBundle\Serializer\ApplicationsNormalizer;
 use AppBundle\Service\ActivityManager;
 use AppBundle\Service\DeliveryManager;
@@ -111,7 +107,6 @@ use Nucleos\UserBundle\Util\Canonicalizer as CanonicalizerInterface;
 use Nucleos\ProfileBundle\Mailer\Mail\RegistrationMail;
 use Knp\Component\Pager\PaginatorInterface;
 use Psr\Log\LoggerInterface;
-use Ramsey\Uuid\Uuid;
 use Redis;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
@@ -1193,6 +1188,37 @@ class AdminController extends AbstractController
         $duplicated = $ruleSet->duplicate($this->translator);
 
         return $this->renderPricingRuleSetForm($duplicated, $request);
+    }
+
+    #[Route(path: '/admin/deliveries/pricing/beta/new', name: 'admin_deliveries_pricing_ruleset_beta_new')]
+    public function newPricingRuleSetBetaAction(Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        return $this->render('admin/pricing_rule_set_beta.html.twig', $this->auth([
+            'isNew' => true,
+            'ruleSetId' => null,
+        ]));
+    }
+
+    #[Route(path: '/admin/deliveries/pricing/beta/{id}', name: 'admin_deliveries_pricing_ruleset_beta')]
+    public function pricingRuleSetBetaAction($id, Request $request)
+    {
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        $ruleSet = $this->entityManager
+            ->getRepository(Delivery\PricingRuleSet::class)
+            ->find($id);
+
+        if (!$ruleSet) {
+            throw $this->createNotFoundException('Pricing rule set not found');
+        }
+
+        return $this->render('admin/pricing_rule_set_beta.html.twig', $this->auth([
+            'isNew' => false,
+            'ruleSetId' => $id,
+            'ruleSet' => $ruleSet,
+        ]));
     }
 
     private function renderFailureReasonSetForm(Delivery\FailureReasonSet $failureReasonSet, Request $request)
@@ -2349,7 +2375,8 @@ class AdminController extends AbstractController
         Request $request,
         EntityManagerInterface $objectManager,
         OrderFactory $orderFactory,
-        OrderNumberAssignerInterface $orderNumberAssigner
+        OrderNumberAssignerInterface $orderNumberAssigner,
+        PricingManager $pricingManager,
     )
     {
         $delivery = new Delivery();
@@ -2362,7 +2389,8 @@ class AdminController extends AbstractController
             $variantName = $form->get('variantName')->getData();
             $variantPrice = $form->get('variantPrice')->getData();
 
-            $order = $orderFactory->createForDeliveryAndPrice($delivery, new ArbitraryPrice($variantName, $variantPrice));
+            $order = $orderFactory->createForDelivery($delivery);
+            $pricingManager->processDeliveryOrder($order, [$pricingManager->getCustomProductVariant($delivery, new ArbitraryPrice($variantName, $variantPrice))]);
 
             $order->setState(OrderInterface::STATE_ACCEPTED);
 

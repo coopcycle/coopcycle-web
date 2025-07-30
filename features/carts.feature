@@ -951,7 +951,7 @@ Feature: Carts
         "items":@array@,
         "itemsTotal":1800,
         "total":2150,
-        "adjustments":@...@,
+        "adjustments":{"@*@":"@*@"},
         "potentialAction":[
           {
             "@context":"http://schema.org",
@@ -960,7 +960,10 @@ Feature: Carts
             "description":@string@
           }
         ],
-        "fulfillmentMethod": "delivery"
+        "fulfillmentMethod": "delivery",
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -1031,13 +1034,21 @@ Feature: Carts
             "total":2700,
             "name":"Pizza",
             "variantName": "@string@",
-            "adjustments":@...@
+            "adjustments":{"@*@":"@*@"},
+            "vendor": {
+              "@id":@string@,
+              "name":@string@
+            },
+            "player": {"@*@":"@*@"}
           }
         ],
         "itemsTotal":2700,
         "total":3050,
-        "adjustments":@...@,
-        "fulfillmentMethod":"delivery"
+        "adjustments":{"@*@":"@*@"},
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -1107,13 +1118,21 @@ Feature: Carts
             "total":2700,
             "name":"Pizza",
             "variantName": "@string@",
-            "adjustments":@...@
+            "adjustments":{"@*@":"@*@"},
+            "vendor": {
+              "@id":@string@,
+              "name":@string@
+            },
+            "player": null
           }
         ],
         "itemsTotal":2700,
         "total":3050,
-        "adjustments":@...@,
-        "fulfillmentMethod":"delivery"
+        "adjustments":{"@*@":"@*@"},
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -1172,8 +1191,11 @@ Feature: Carts
         "items":[],
         "itemsTotal":0,
         "total":350,
-        "adjustments":@...@,
-        "fulfillmentMethod":"delivery"
+        "adjustments":{"@*@":"@*@"},
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -1231,8 +1253,11 @@ Feature: Carts
         "items":[],
         "itemsTotal":0,
         "total":350,
-        "adjustments":@...@,
-        "fulfillmentMethod":"delivery"
+        "adjustments":{"@*@":"@*@"},
+        "fulfillmentMethod":"delivery",
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@
       }
       """
 
@@ -1660,10 +1685,11 @@ Feature: Carts
           "items":[],
           "itemsTotal":0,
           "total":0,
-          "adjustments":@...@,
+          "adjustments":{"@*@":"@*@"},
           "fulfillmentMethod":"delivery",
           "invitation": "@string@||@null@",
-          "hasEdenredCredentials":@boolean@
+          "hasEdenredCredentials":@boolean@,
+          "paymentGateway":@string@
         }
       }
       """
@@ -1751,10 +1777,11 @@ Feature: Carts
           "items":[],
           "itemsTotal":0,
           "total":0,
-          "adjustments":@...@,
+          "adjustments":{"@*@":"@*@"},
           "fulfillmentMethod":"delivery",
           "invitation": "@string@||@null@",
-          "hasEdenredCredentials":@boolean@
+          "hasEdenredCredentials":@boolean@,
+          "paymentGateway":@string@
         }
       }
       """
@@ -1842,10 +1869,11 @@ Feature: Carts
           "items":[],
           "itemsTotal":0,
           "total":0,
-          "adjustments":@...@,
+          "adjustments":{"@*@":"@*@"},
           "fulfillmentMethod":"delivery",
           "invitation": "@string@||@null@",
-          "hasEdenredCredentials":@boolean@
+          "hasEdenredCredentials":@boolean@,
+          "paymentGateway":@string@
         }
       }
       """
@@ -2169,8 +2197,11 @@ Feature: Carts
           "items":[],
           "itemsTotal":0,
           "total":0,
-          "adjustments":@...@,
-          "fulfillmentMethod":"delivery"
+          "adjustments":{"@*@":"@*@"},
+          "fulfillmentMethod":"delivery",
+          "invitation": "@string@||@null@",
+          "paymentGateway":@string@,
+          "hasEdenredCredentials":@boolean@
         }
       }
       """
@@ -2222,8 +2253,11 @@ Feature: Carts
           "items":[],
           "itemsTotal":0,
           "total":0,
-          "adjustments":@...@,
-          "fulfillmentMethod":"delivery"
+          "adjustments":{"@*@":"@*@"},
+          "fulfillmentMethod":"delivery",
+          "invitation": "@string@||@null@",
+          "paymentGateway":@string@,
+          "hasEdenredCredentials":@boolean@
         }
       }
       """
@@ -2275,8 +2309,11 @@ Feature: Carts
           "items":[],
           "itemsTotal":0,
           "total":0,
-          "adjustments":@...@,
-          "fulfillmentMethod":"delivery"
+          "adjustments":{"@*@":"@*@"},
+          "fulfillmentMethod":"delivery",
+          "invitation": "@string@||@null@",
+          "paymentGateway":@string@,
+          "hasEdenredCredentials":@boolean@
         }
       }
       """

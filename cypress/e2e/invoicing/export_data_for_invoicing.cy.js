@@ -3,10 +3,15 @@ import moment from 'moment'
 context('Invoicing (role: admin)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup('../cypress/fixtures/package_delivery_orders.yml')
+    cy.setEnvVar('PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED', '0')
     cy.login('admin', '12345678')
   })
 
-  it('show data for invoicing using custom date picker', function() {
+  afterEach(() => {
+    cy.removeEnvVar('PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED')
+  })
+
+  it('show data for invoicing using custom date picker', function () {
     cy.visit('/admin/invoicing')
     cy.get('[data-testid="invoicing.toggleRangePicker"]').click()
 
@@ -19,9 +24,7 @@ context('Invoicing (role: admin)', () => {
     cy.get('input[date-range="start"]').click()
     cy.get('input[date-range="start"]').type(firstDayOfPreviousMonth)
     cy.get('input[date-range="end"]').click()
-    cy.get('input[date-range="end"]').type(
-      `${lastDayOfCurrentMonth}{enter}`,
-    )
+    cy.get('input[date-range="end"]').type(`${lastDayOfCurrentMonth}{enter}`)
 
     cy.get('[data-testid="invoicing.refresh"]').click()
 
@@ -92,7 +95,7 @@ context('Invoicing (role: admin)', () => {
         // Acme,"Livraison à la demande - 0.00 km - Retrait: Warehouse - Dépôt: Office - 13/06/2025 (Commande #A1)",124.82,24.96,149.78
         expect(lines[i]).to.match(
           new RegExp(
-            `^Acme,"Livraison à la demande - 0.00 km - Retrait: Warehouse - Dépôt: Office - \\d{2}/\\d{2}/\\d{4} \\(Commande #A${i}\\)",[0-9]+(\\.[0-9]+)?,[0-9]+(\\.[0-9]+)?,[0-9]+(\\.[0-9]+)?$`,
+            `^Acme,"Livraison à la demande - [0-9]+(\\.[0-9]+)? km - Retrait: Warehouse - Dépôt: Office - \\d{2}/\\d{2}/\\d{4} \\(Commande #A${i}\\)",[0-9]+(\\.[0-9]+)?,[0-9]+(\\.[0-9]+)?,[0-9]+(\\.[0-9]+)?$`,
           ),
         )
       }

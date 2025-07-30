@@ -3,6 +3,8 @@ Feature: Retail prices
   Scenario: Get delivery price with JWT for admin user
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -40,9 +42,37 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-FIXED",
+                      "values": [
+                        @...@
+                      ],
+                      "name": "Fixed Price"
+                    },
+                    "value": "Plus de 0.00 km"
+                  }
+                ],
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -50,6 +80,8 @@ Feature: Retail prices
   Scenario: Get delivery price with JWT for dispatcher user
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "dispatcher" is loaded:
@@ -87,9 +119,37 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-FIXED",
+                      "values": [
+                        @...@
+                      ],
+                      "name": "Fixed Price"
+                    },
+                    "value": "Plus de 0.00 km"
+                  }
+                ],
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -97,6 +157,8 @@ Feature: Retail prices
   Scenario: Get delivery price with JWT (without tax)
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -134,9 +196,37 @@ Feature: Retail prices
           "amount":83,
           "included": false
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-FIXED",
+                      "values": [
+                        @...@
+                      ],
+                      "name": "Fixed Price"
+                    },
+                    "value": "Plus de 0.00 km"
+                  }
+                ],
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -144,6 +234,8 @@ Feature: Retail prices
   Scenario: Get delivery price with packages (JWT)
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -184,9 +276,37 @@ Feature: Retail prices
           "amount":217,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 1299,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-FIXED",
+                      "values": [
+                        @...@
+                      ],
+                      "name": "Fixed Price"
+                    },
+                    "value": "packages.containsAtLeastOne(\"XL\")"
+                  }
+                ],
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 1299
+            }
+          ],
+          "total": 1299
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -194,6 +314,8 @@ Feature: Retail prices
   Scenario: Get delivery price with packages in task (JWT)
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -234,9 +356,37 @@ Feature: Retail prices
           "amount":217,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 1299,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-FIXED",
+                      "values": [
+                        @...@
+                      ],
+                      "name": "Fixed Price"
+                    },
+                    "value": "packages.containsAtLeastOne(\"XL\")"
+                  }
+                ],
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 1299
+            }
+          ],
+          "total": 1299
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -244,6 +394,8 @@ Feature: Retail prices
   Scenario: Get delivery price with packages in task (quantity as string) (JWT)
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -284,9 +436,37 @@ Feature: Retail prices
           "amount":217,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 1299,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-FIXED",
+                      "values": [
+                        @...@
+                      ],
+                      "name": "Fixed Price"
+                    },
+                    "value": "packages.containsAtLeastOne(\"XL\")"
+                  }
+                ],
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 1299
+            }
+          ],
+          "total": 1299
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -294,6 +474,8 @@ Feature: Retail prices
   Scenario: Get delivery price with weight in task (JWT)
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -332,9 +514,37 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-FIXED",
+                      "values": [
+                        @...@
+                      ],
+                      "name": "Fixed Price"
+                    },
+                    "value": "Moins de 2.00 kg"
+                  }
+                ],
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -342,6 +552,8 @@ Feature: Retail prices
   Scenario: Get delivery price with latlLng (JWT)
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -389,9 +601,37 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-FIXED",
+                      "values": [
+                        @...@
+                      ],
+                      "name": "Fixed Price"
+                    },
+                    "value": "Plus de 0.00 km"
+                  }
+                ],
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -399,6 +639,8 @@ Feature: Retail prices
   Scenario: Get delivery price with geo (JWT)
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -446,9 +688,37 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-FIXED",
+                      "values": [
+                        @...@
+                      ],
+                      "name": "Fixed Price"
+                    },
+                    "value": "Plus de 0.00 km"
+                  }
+                ],
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -456,6 +726,8 @@ Feature: Retail prices
   Scenario: Get delivery price for an admin user with timeSlotUrl and timeSlot range in ISO 8601
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -496,9 +768,37 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-FIXED",
+                      "values": [
+                        @...@
+                      ],
+                      "name": "Fixed Price"
+                    },
+                    "value": "Plus de 0.00 km"
+                  }
+                ],
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -506,6 +806,8 @@ Feature: Retail prices
   Scenario: Get delivery price for an admin user with an implicit timeSlot
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | store_w_time_slot_pricing.yml |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -546,9 +848,65 @@ Feature: Retail prices
           "amount":117,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-FIXED",
+                      "values": [
+                        @...@
+                      ],
+                      "name": "Fixed Price"
+                    },
+                    "value": "time_slot == \"/api/time_slots/1\" and task.type == \"PICKUP\""
+                  }
+                ],
+                "name": "Point de retrait #1"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            },
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "@id": @string@,
+                    "@type": "ProductOptionValue",
+                    "price": 200,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-FIXED",
+                      "values": [
+                        @...@
+                      ],
+                      "name": "Fixed Price"
+                    },
+                    "value": "Taux de dépôt"
+                  }
+                ],
+                "name": "Point de dépôt #1"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 200
+            }
+          ],
+          "total": 699
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -556,6 +914,8 @@ Feature: Retail prices
   Scenario: Get delivery price for an admin user with a range not belonging to a timeSlot
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | store_w_time_slot_pricing.yml |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -596,9 +956,37 @@ Feature: Retail prices
           "amount":33,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 200,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-FIXED",
+                      "values": [
+                        @...@
+                      ],
+                      "name": "Fixed Price"
+                    },
+                    "value": "Taux de dépôt"
+                  }
+                ],
+                "name": "Point de dépôt #1"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 200
+            }
+          ],
+          "total": 200
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -606,6 +994,8 @@ Feature: Retail prices
   Scenario: Can't get delivery price with invalid timeSlotUrl for admin user
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -648,6 +1038,8 @@ Feature: Retail prices
   Scenario: Can't get delivery price with invalid timeSlot range for admin user
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -690,6 +1082,8 @@ Feature: Retail prices
   Scenario: Get delivery price with OAuth
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -723,9 +1117,37 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-FIXED",
+                      "values": [
+                        @...@
+                      ],
+                      "name": "Fixed Price"
+                    },
+                    "value": "Plus de 0.00 km"
+                  }
+                ],
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -733,6 +1155,8 @@ Feature: Retail prices
   Scenario: Get delivery price with array of tasks
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the setting "latlng" has value "48.856613,2.352222"
@@ -769,9 +1193,37 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-FIXED",
+                      "values": [
+                        @...@
+                      ],
+                      "name": "Fixed Price"
+                    },
+                    "value": "Plus de 0.00 km"
+                  }
+                ],
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -780,6 +1232,8 @@ Feature: Retail prices
     Given the current time is "2021-08-25 09:00:00"
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the setting "latlng" has value "48.856613,2.352222"
@@ -823,9 +1277,37 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-FIXED",
+                      "values": [
+                        @...@
+                      ],
+                      "name": "Fixed Price"
+                    },
+                    "value": "Plus de 0.00 km"
+                  }
+                ],
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -833,6 +1315,8 @@ Feature: Retail prices
   Scenario: Get delivery price with OAuth (implicit pickup)
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -862,9 +1346,37 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-FIXED",
+                      "values": [
+                        @...@
+                      ],
+                      "name": "Fixed Price"
+                    },
+                    "value": "Plus de 0.00 km"
+                  }
+                ],
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -872,6 +1384,8 @@ Feature: Retail prices
   Scenario: Can't calculate a price for another store
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "bob" is loaded:
@@ -896,6 +1410,8 @@ Feature: Retail prices
   Scenario: Get delivery price with JWT with explicit store
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "bob" is loaded:
@@ -930,9 +1446,37 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 499,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-FIXED",
+                      "values": [
+                        @...@
+                      ],
+                      "name": "Fixed Price"
+                    },
+                    "value": "Plus de 0.00 km"
+                  }
+                ],
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499
+            }
+          ],
+          "total": 499
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -940,6 +1484,8 @@ Feature: Retail prices
   Scenario: Get delivery price when there is two packages with the same name in different pricing rule set
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | store_w_package_pricing.yml |
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
@@ -979,9 +1525,37 @@ Feature: Retail prices
           "amount":@integer@,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "price": 0,
+                "code": @string@,
+                "optionValues": [
+                  {
+                    "price": 699,
+                    "code": @string@,
+                    "option": {
+                      "@id": @string@,
+                      "@type": "ProductOption",
+                      "code": "CPCCL-ODDLVR-FIXED",
+                      "values": [
+                        @...@
+                      ],
+                      "name": "Fixed Price"
+                    },
+                    "value": "Volume du colis moins de 9"
+                  }
+                ],
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 699
+            }
+          ],
+          "total": 699
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -989,6 +1563,8 @@ Feature: Retail prices
   Scenario: Can't calculate a price
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:

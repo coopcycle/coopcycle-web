@@ -61,6 +61,8 @@ interface OrderInterface extends
      */
     public const CANCEL_REASON_NO_SHOW = 'NO_SHOW';
 
+    public function getItemsSorted(): Collection;
+
     public function getTaxTotal(): int;
 
     public function getItemsTaxTotal(): int;
@@ -182,8 +184,6 @@ interface OrderInterface extends
     public function getLastPaymentByMethod(string|array $method, ?string $state = null): ?PaymentInterface;
 
     public function isFoodtech(): bool;
-
-    public function getDeliveryItem(): ?OrderItemInterface;
 
     public function getDeliveryPrice(): PriceInterface;
 

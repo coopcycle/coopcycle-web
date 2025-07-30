@@ -111,6 +111,10 @@ li > a.text-danger // very specific selector for bootstrap dropdown
   color: $red;
 }
 
+.text-decoration-line-through {
+  text-decoration: line-through !important;
+}
+
 .no-select {
   -webkit-user-select: none; /* Safari */
   -ms-user-select: none; /* IE 10 and IE 11 */

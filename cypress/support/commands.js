@@ -46,6 +46,14 @@ Cypress.Commands.add('loadFixturesWithSetup', fixtures => {
   cy.loadFixtures(fixtures, true)
 })
 
+Cypress.Commands.add('setEnvVar', (key, value) => {
+  cy.terminal(`echo ${key}=${value} >> .env.test`)
+})
+
+Cypress.Commands.add('removeEnvVar', (key) => {
+  cy.terminal(`sed -i '/${key}=/{d}' .env.test`)
+})
+
 Cypress.Commands.add('urlmatch', (pattern, type='match', from='pathname') => {
   cy.location(from, { timeout: 10000 }).should(type, pattern)
 })
@@ -122,76 +130,77 @@ Cypress.Commands.add('antdSelect', (selector, text) => {
       const maxAttempts = 10
 
       function tryFindOption() {
-        cy
-          .get('.rc-virtual-list-holder-inner .ant-select-item-option', {
-            log: false,
-          })
-          .then($options => {
-            if (!$options || $options.length === 0) {
-              cy.log(
-                `No options found for selector "${selector}" with text "${text}"`,
-              )
-              throw new Error(
-                `No options found for selector "${selector}" with text "${text}"`,
-              )
-            }
-
+        cy.get('.rc-virtual-list-holder-inner .ant-select-item-option', {
+          log: false,
+        }).then($options => {
+          if (!$options || $options.length === 0) {
             cy.log(
-              `Searching for option with text "${text}"; elements: "${$options
-                .toArray()
-                .map(el => el.textContent)
-                .join(', ')}"`,
+              `No options found for selector "${selector}" with text "${text}"`,
             )
-            const option = $options.filter((index, el) =>
-              el.textContent.includes(text),
+            throw new Error(
+              `No options found for selector "${selector}" with text "${text}"`,
             )
+          }
 
-            if (option.length) {
-              cy.wrap(option).click()
-              return
-            }
+          cy.log(
+            `Searching for option with text "${text}"; elements: "${$options
+              .toArray()
+              .map(el => el.textContent)
+              .join(', ')}"`,
+          )
+          const option = $options.filter((index, el) =>
+            el.textContent.includes(text),
+          )
 
-            // Fail early to debug test failures on CI
-            const textMoment = toMoment(text)
-            const firstOptionMoment = toMoment(
-              $options.toArray()[0].textContent,
+          if (option.length) {
+            cy.wrap(option).click()
+            return
+          }
+
+          // Fail early to debug test failures on CI
+          const textMoment = toMoment(text)
+          const firstOptionText = $options.toArray()[0].textContent
+          const firstOptionMoment = toMoment(firstOptionText)
+          if (
+            textMoment &&
+            firstOptionMoment &&
+            textMoment.isBefore(firstOptionMoment)
+          ) {
+            cy.log(
+              `The text "${text}" is before the first option "${firstOptionText}", skipping further attempts.`,
             )
-            if (
-              textMoment &&
-              firstOptionMoment &&
-              textMoment.isBefore(firstOptionMoment)
-            ) {
-              cy.log(
-                `The text "${text}" is before the first option, skipping further attempts.`,
-              )
-              throw new Error(
-                `The text "${text}" is before the first option, skipping further attempts.`,
-              )
-            }
+            throw new Error(
+              `The text "${text}" is before the first option "${firstOptionText}", skipping further attempts.`,
+            )
+          }
 
-            if (attempts >= maxAttempts) {
-              cy.log(
-                `Could not find option with text "${text}" after ${maxAttempts} scroll attempts`,
-              )
-              throw new Error(
-                `Could not find option with text "${text}" after ${maxAttempts} scroll attempts`,
-              )
-            }
+          if (attempts >= maxAttempts) {
+            cy.log(
+              `Could not find option with text "${text}" after ${maxAttempts} scroll attempts`,
+            )
+            throw new Error(
+              `Could not find option with text "${text}" after ${maxAttempts} scroll attempts`,
+            )
+          }
 
-            attempts++
+          attempts++
 
-            cy.get('.rc-virtual-list-holder').trigger('wheel', {
-              deltaX: 0,
-              deltaY: 32 * 6, // 1 row = ~32px
-              deltaMode: 0,
-            })
-            cy.wait(500)
-            tryFindOption()
+          cy.get('.rc-virtual-list-holder').trigger('wheel', {
+            deltaX: 0,
+            deltaY: 32 * 6, // 1 row = ~32px
+            deltaMode: 0,
           })
+          cy.wait(500)
+          tryFindOption()
+        })
       }
 
       tryFindOption()
     })
+})
+
+Cypress.Commands.add('reactSelect', (index) => {
+  cy.get(`[id*="react-select-"][id*="-option-${index}"]`).click()
 })
 
 Cypress.Commands.add('clickRestaurant', (name, pathnameRegexp) => {
@@ -577,4 +586,332 @@ Cypress.Commands.add('chooseDaysOfTheWeek', (daysOfTheWeek) => {
         }
       }
     })
+})
+
+Cypress.Commands.add('shouldHaveValueIfVisible', (selector, value) => {
+  cy.root().then($root => {
+    if ($root.find(`${selector}:visible`).length > 0) {
+      cy.get(selector).should('have.value', value)
+    }
+  })
+})
+
+/**
+ * Validates a pricing rule condition
+ */
+// Example usage:
+// cy.validatePricingRuleCondition({
+//   type: 'packages',
+//   operator: 'containsAtLeastOne',
+//   packageName: 'XL',
+// })
+Cypress.Commands.add('validatePricingRuleCondition', condition => {
+  cy.get('[data-testid="condition-type-select"]').should(
+    'have.value',
+    condition.type,
+  )
+  cy.get('[data-testid="condition-operator-select"]').should(
+    'have.value',
+    condition.operator,
+  )
+
+  if (condition.type === 'packages' && condition.packageName) {
+    cy.get('[data-testid="condition-package-select"]').should(
+      'contain',
+      condition.packageName,
+    )
+  } else if (condition.type === 'time_slot' && condition.timeSlot) {
+    cy.get('[data-testid="condition-time-slot-select"]').should(
+      'contain',
+      condition.timeSlot,
+    )
+  } else if (condition.value !== undefined) {
+    cy.shouldHaveValueIfVisible(
+      '[data-testid="condition-number-input"]',
+      condition.value,
+    )
+    cy.shouldHaveValueIfVisible(
+      '[data-testid="condition-task-type-select"]',
+      condition.value,
+    )
+  }
+})
+
+/**
+ * Validates multiple pricing rule conditions
+ * @param {Array<Object>} conditions - Array of conditions to validate
+ */
+Cypress.Commands.add('validatePricingRuleConditions', conditions => {
+  conditions.forEach((condition, index) => {
+    cy.get(`[data-testid="condition-${index}"]`).within(() => {
+      cy.validatePricingRuleCondition(condition)
+    })
+  })
+})
+
+Cypress.Commands.add('validatePricingRulePrice', price => {
+  switch (price.type) {
+    case 'fixed':
+      cy.get('[data-testid="rule-fixed-price-input"]').should(
+        'have.value',
+        price.value,
+      )
+      break
+
+    case 'percentage':
+      cy.get('[data-testid="rule-price-type"]').should('contain', 'Pourcentage')
+      cy.get('[data-testid="rule-percentage-input"]').should(
+        'have.value',
+        price.percentage,
+      )
+      break
+
+    case 'range':
+      cy.get('[data-testid="rule-price-type"]').should(
+        'contain',
+        'Prix TTC par tranches',
+      )
+      cy.get('[data-testid="rule-price-range-price"]').should(
+        'have.value',
+        price.range.price,
+      )
+      cy.get('[data-testid="rule-price-range-step"]').should(
+        'have.value',
+        price.range.step,
+      )
+      cy.get('[data-testid="rule-price-range-threshold"]').should(
+        'have.value',
+        price.range.threshold,
+      )
+      break
+
+    case 'per_package':
+      cy.get('[data-testid="rule-price-type"]').should(
+        'contain',
+        'Prix par colis',
+      )
+      cy.get('[data-testid="rule-per-package-name"]').should(
+        'contain',
+        price.perPackage.packageName,
+      )
+      cy.get('[data-testid="rule-per-package-unit-price"]').should(
+        'have.value',
+        price.perPackage.unitPrice,
+      )
+      cy.get('[data-testid="rule-per-package-offset"]').should(
+        'have.value',
+        price.perPackage.offset,
+      )
+      cy.get('[data-testid="rule-per-package-discount-price"]').should(
+        'have.value',
+        price.perPackage.discountPrice,
+      )
+      break
+
+    default:
+      throw new Error(`Unsupported price type: ${price.type}`)
+  }
+})
+
+/**
+ * Validates individual pricing rule
+ */
+// Example usage:
+// cy.validatePricingRule({
+//   index: 0,
+//   conditions: [{ type: 'packages', operator: '==', packageName: 'SMALL' }],
+//   price: { type: 'range', range: { price: 3, step: 2, threshold: 1 } }
+// })
+//
+Cypress.Commands.add('validatePricingRule', rule => {
+  cy.get(`[data-testid="pricing-rule-set-rule-${rule.index}"]`).should(
+    'be.visible',
+  )
+  cy.get(`[data-testid="pricing-rule-set-rule-${rule.index}"]`).within(() => {
+    if (rule.name) {
+      cy.get('[data-testid="rule-name"]').should('have.value', rule.name)
+    }
+
+    if (rule.conditions && rule.conditions.length > 0) {
+      cy.validatePricingRuleConditions(rule.conditions)
+    }
+
+    if (rule.price) {
+      cy.validatePricingRulePrice(rule.price)
+    }
+  })
+})
+
+/**
+ * Validates multiple pricing rules
+ * @param {Array<Object>} rules - Array of rules to validate
+ */
+Cypress.Commands.add('validatePricingRules', rules => {
+  rules.forEach(rule => {
+    cy.validatePricingRule(rule)
+  })
+})
+
+/**
+ * Validates the pricing rule set form data
+ */
+// Example usage:
+// cy.validatePricingRuleSet({
+//   name: 'My Rule Set',
+//   strategy: 'map',
+//   deliveryRules: [
+//     {
+//       index: 0,
+//       conditions: [{ type: 'distance', operator: '>', value: 0 }],
+//       price: { type: 'fixed', value: 5 }
+//     }
+//   ]
+// })
+Cypress.Commands.add('validatePricingRuleSet', ruleSet => {
+  // Validate form name
+  cy.get('input[id*="name"]').should('have.value', ruleSet.name)
+
+  // Validate strategy
+  cy.get(`input[value="${ruleSet.strategy}"]`).should('be.checked')
+
+  // Validate delivery rules
+  if (ruleSet.deliveryRules && ruleSet.deliveryRules.length > 0) {
+    cy.get('[data-testid="pricing-rule-set-target-delivery"]').within(() => {
+      cy.get('[data-testid^="pricing-rule-set-rule-"]').should(
+        'have.length',
+        ruleSet.deliveryRules.length,
+      )
+    })
+    cy.validatePricingRules(ruleSet.deliveryRules)
+  }
+
+  // Validate task rules
+  if (ruleSet.taskRules && ruleSet.taskRules.length > 0) {
+    cy.get('[data-testid="pricing-rule-set-target-task"]').within(() => {
+      cy.get('[data-testid^="pricing-rule-set-rule-"]').should(
+        'have.length',
+        ruleSet.taskRules.length,
+      )
+    })
+    cy.validatePricingRules(ruleSet.taskRules)
+  }
+
+  // Validate legacy rules
+  if (ruleSet.legacyRules && ruleSet.legacyRules.length > 0) {
+    cy.get('[data-testid="legacy-rules-section"]').within(() => {
+      cy.get('[data-testid^="pricing-rule-set-rule-"]').should(
+        'have.length',
+        ruleSet.legacyRules.length,
+      )
+    })
+    cy.validatePricingRules(ruleSet.legacyRules)
+  }
+})
+
+/**
+ * Verifies cart items in the Cart component
+ * @param {Array<Object>} expectedItems - Array of expected cart items
+ *
+ * Example usage:
+ * cy.verifyCart([
+ *   {
+ *     name: 'Supplément de commande',
+ *     total: '4,99 €',
+ *     options: [
+ *       {
+ *         name: 'Plus de 0.00 km',
+ *         price: '4,99 €',
+ *       },
+ *     ],
+ *   },
+ * ])
+ */
+Cypress.Commands.add('verifyCart', expectedItems => {
+  expectedItems.forEach((expectedItem, itemIndex) => {
+    cy.get(`[data-testid="order-item-${itemIndex}"]`)
+      .should('be.visible')
+      .within(() => {
+        // Verify item name
+        cy.get('[data-testid="name"]').should('contain.text', expectedItem.name)
+
+        // Verify item total
+        cy.get('[data-testid="total"]').should(
+          'contain.text',
+          expectedItem.total,
+        )
+
+        // Verify options if provided
+        if (expectedItem.options && expectedItem.options.length > 0) {
+          expectedItem.options.forEach((expectedOption, optionIndex) => {
+            cy.get(
+              `[data-testid="product-option-value-${optionIndex}"]`,
+            ).within(() => {
+              cy.get('[data-testid="name"]').should(
+                'contain.text',
+                expectedOption.name,
+              )
+              cy.get('[data-testid="price"]').should(
+                'contain.text',
+                expectedOption.price,
+              )
+            })
+          })
+        }
+      })
+  })
+})
+
+/**
+ * Verifies order items in the Order
+ * @param {Array<Object>} expectedItems - Array of expected order items
+ *
+ * Example usage:
+ * cy.verifyOrder([
+ *   {
+ *     name: 'Supplément de commande',
+ *     total: '4,99 €',
+ *     adjustments: [
+ *       {
+ *         name: 'Plus de 0.00 km',
+ *         price: '4,99 €',
+ *       },
+ *     ],
+ *   },
+ * ])
+ */
+Cypress.Commands.add('verifyOrder', expectedItems => {
+  expectedItems.forEach((expectedItem, itemIndex) => {
+    cy.get(`[data-testid="order-item-${itemIndex}"]`)
+      .should('be.visible')
+      .within(() => {
+        // Verify item name
+        cy.get('[data-testid="name"]').should('contain.text', expectedItem.name)
+
+        // Verify item total
+        cy.get('[data-testid="total"]').should(
+          'contain.text',
+          expectedItem.total,
+        )
+
+        // Verify adjustments if provided
+        if (expectedItem.adjustments && expectedItem.adjustments.length > 0) {
+          expectedItem.adjustments.forEach(
+            (expectedAdjustment, adjustmentIndex) => {
+              cy.get(`[data-testid="adjustment-${adjustmentIndex}"]`).within(
+                () => {
+                  cy.get('[data-testid="name"]').should(
+                    'contain.text',
+                    expectedAdjustment.name,
+                  )
+                  cy.get('[data-testid="price"]').should(
+                    'contain.text',
+                    expectedAdjustment.price,
+                  )
+                },
+              )
+            },
+          )
+        }
+      })
+  })
 })

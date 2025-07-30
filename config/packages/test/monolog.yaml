@@ -1,4 +1,7 @@
 monolog:
+  # main handler includes all channels (except 'event') (useful on CI)
+  # other handlers are used to filter specific channels (useful when debugging locally)
+  #
   # channels to use with autowire are configured in config.yml
   # https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels
   handlers:
@@ -7,7 +10,88 @@ monolog:
       path: "%env(APP_LOG_DIR)%/%kernel.environment%.log"
       level: debug
       max_files: 3
-      channels: ["!event"]
-    console:
-      type:   console
-      channels: ["!event", "!doctrine"]
+      channels: [ "!event", "!deprecation" ]
+    redis:
+      type: rotating_file
+      path: "%env(APP_LOG_DIR)%/redis.%kernel.environment%.log"
+      level: debug
+      max_files: 3
+      channels: [ snc_redis ]
+    database:
+      type: rotating_file
+      path: "%env(APP_LOG_DIR)%/doctrine.%kernel.environment%.log"
+      level: debug
+      max_files: 3
+      channels: [ doctrine ]
+    api:
+      type: rotating_file
+      path: "%env(APP_LOG_DIR)%/api.%kernel.environment%.log"
+      level: info
+      max_files: 3
+      channels: [api]
+    fee_calculation:
+      type: rotating_file
+      path: "%env(APP_LOG_DIR)%/fee_calculation.%kernel.environment%.log"
+      level: info
+      max_files: 3
+      channels: [fee_calculation]
+    timing:
+      type: rotating_file
+      path: "%env(APP_LOG_DIR)%/timing.%kernel.environment%.log"
+      level: debug
+      max_files: 3
+      channels: [timing]
+    checkout:
+      type: rotating_file
+      path: "%env(APP_LOG_DIR)%/checkout.%kernel.environment%.log"
+      level: debug
+      max_files: 3
+      channels: [ checkout, coopcycle.order_processing ]
+    geofencing:
+      type: rotating_file
+      path: "%env(APP_LOG_DIR)%/geofencing.%kernel.environment%.log"
+      level: info
+      max_files: 3
+      channels: [geofencing]
+    push_notification:
+      type: rotating_file
+      path: "%env(APP_LOG_DIR)%/push_notification.%kernel.environment%.log"
+      level: debug
+      max_files: 3
+      channels: [ push_notification ]
+    real_time_message:
+      type: rotating_file
+      path: "%env(APP_LOG_DIR)%/real_time_message.%kernel.environment%.log"
+      level: debug
+      max_files: 3
+      channels: [ real_time_message ]
+    stripe:
+      type: rotating_file
+      path: "%env(APP_LOG_DIR)%/stripe.%kernel.environment%.log"
+      level: info
+      max_files: 3
+      channels: [stripe]
+    loopeat:
+      type: rotating_file
+      path: "%env(APP_LOG_DIR)%/loopeat.%kernel.environment%.log"
+      level: info
+      max_files: 3
+      channels: [loopeat]
+    urbantz:
+      type: rotating_file
+      path: "%env(APP_LOG_DIR)%/urbantz.%kernel.environment%.log"
+      level: info
+      max_files: 3
+      channels: [urbantz]
+    dabba:
+      type: rotating_file
+      path: "%env(APP_LOG_DIR)%/dabba.%kernel.environment%.log"
+      level: info
+      max_files: 3
+      channels: [dabba]
+    edenred:
+      type: rotating_file
+      path: "%env(APP_LOG_DIR)%/edenred.%kernel.environment%.log"
+      level: info
+      max_files: 3
+      channels: [edenred]

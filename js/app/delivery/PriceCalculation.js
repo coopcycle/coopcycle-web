@@ -1,47 +1,8 @@
-import React, { useMemo } from 'react'
+import React, { useContext, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Collapse } from 'antd'
-
-const { Panel } = Collapse
-
-function ProductOption({ productOption }) {
-  const rule = productOption.matchedRule
-
-  return (
-    <div>
-      <div>Rule #{rule.position + 1}</div>
-      <div>Target: {rule.target}</div>
-      <div>Condition: {rule.expression}</div>
-      <div>
-        <span>Price expression: {rule.price}</span>
-        <span className="pull-right">
-          {(productOption.price / 100).formatMoney()}
-        </span>
-      </div>
-    </div>
-  )
-}
-
-function OrderItem({ orderItem, index }) {
-  const { t } = useTranslation()
-
-  return (
-    <li className="list-group-item d-flex flex-column gap-2">
-      <div>
-        <span className="font-weight-semi-bold">Item {index + 1}</span>
-      </div>
-      {orderItem.productVariant.productOptions.map((productOption, index) => (
-        <ProductOption key={index} productOption={productOption} />
-      ))}
-      <div className="font-weight-semi-bold">
-        <span>{t('DELIVERY_FORM_PRICE_CALCULATION_ORDER_ITEM_TOTAL')}</span>
-        <span className="pull-right">
-          {(orderItem.total / 100).formatMoney()}
-        </span>
-      </div>
-    </li>
-  )
-}
+import Cart from '../components/delivery-form/components/order/Cart'
+import FlagsContext from '../components/delivery-form/FlagsContext'
 
 function Rule({ rule, matched }) {
   return (
@@ -50,7 +11,7 @@ function Rule({ rule, matched }) {
         matched ? 'list-group-item-success' : 'list-group-item-danger'
       }>
       <div>
-        Rule #{rule.position + 1}: {rule.expression}
+        Rule #{rule.position + 1}: {rule.name ?? rule.expression}
       </div>
     </div>
   )
@@ -97,22 +58,6 @@ function MethodOfCalculation({ calculation }) {
   )
 }
 
-function Cart({ orderItems, itemsTotal }) {
-  const { t } = useTranslation()
-
-  return (
-    <>
-      {orderItems.map((orderItem, index) => (
-        <OrderItem key={index} orderItem={orderItem} index={index} />
-      ))}
-      <li className="list-group-item">
-        <span>{t('DELIVERY_FORM_PRICE_CALCULATION_ORDER_TOTAL')}</span>
-        <span className="pull-right">{(itemsTotal / 100).formatMoney()}</span>
-      </li>
-    </>
-  )
-}
-
 /**
  * nodeId is in the form of "/api/pricing_rule_sets/1"
  * @param nodeId
@@ -150,16 +95,16 @@ export function PriceCalculation({
   className,
   isDebugPricing,
   calculation,
-  orderItems,
-  itemsTotal,
+  order,
 }) {
+  const { isPriceBreakdownEnabled } = useContext(FlagsContext)
   const { t } = useTranslation()
 
-  return (
-    <Collapse
-      className={className}
-      defaultActiveKey={isDebugPricing ? ['1'] : []}>
-      <Panel header={t('DELIVERY_FORM_HOW_IS_PRICE_CALCULATED')} key="1">
+  const items = [
+    {
+      key: '1',
+      label: t('DELIVERY_FORM_HOW_IS_PRICE_CALCULATED'),
+      children: (
         <>
           {Boolean(calculation) && (
             <>
@@ -167,15 +112,21 @@ export function PriceCalculation({
               <PriceRuleSet calculation={calculation} />
             </>
           )}
-
-          {Boolean(orderItems && itemsTotal) && (
+          {!isPriceBreakdownEnabled && Boolean(order) && order.items && (
             <div className="mt-4">
-              <h4>{t('DELIVERY_FORM_PRICE_CALCULATION_CART')}</h4>
-              <Cart orderItems={orderItems} itemsTotal={itemsTotal} />
+              <Cart order={order} overridePrice={false} />
             </div>
           )}
         </>
-      </Panel>
-    </Collapse>
+      ),
+    },
+  ]
+
+  return (
+    <Collapse
+      className={className}
+      defaultActiveKey={isDebugPricing ? ['1'] : []}
+      items={items}
+    />
   )
 }

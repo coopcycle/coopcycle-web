@@ -6,12 +6,13 @@ use AppBundle\Api\Dto\CalculationItem;
 use AppBundle\Api\Dto\CalculationOutput;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
+use AppBundle\Api\Dto\DeliveryDto;
 use AppBundle\Api\Resource\RetailPrice;
 use AppBundle\Entity\Delivery;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Security\TokenStoreExtractor;
-use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Sylius\Order\OrderFactory;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Taxation\Calculator\CalculatorInterface;
 use Sylius\Component\Taxation\Model\TaxableInterface;
@@ -32,6 +33,7 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
 	public function __construct(
         private readonly DeliveryProcessor $decorated,
         private readonly PricingManager $pricingManager,
+        private readonly OrderFactory $orderFactory,
         private readonly CurrencyContextInterface $currencyContext,
         private readonly SettingsManager $settingsManager,
         private readonly TokenStoreExtractor $storeExtractor,
@@ -54,11 +56,15 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
         return $this->taxCategory;
     }
 
+    /**
+     * @param DeliveryDto $data
+     */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
-        $data = $this->decorated->process($data, $operation, $uriVariables, $context);
+        /** @var Delivery $delivery */
+        $delivery = $this->decorated->process($data, $operation, $uriVariables, $context);
 
-        $store = $data->getStore();
+        $store = $delivery->getStore();
         if (null === $store) {
             $store = $this->storeExtractor->extractStore();
         }
@@ -70,14 +76,14 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
             throw new BadRequestHttpException($message);
         }
 
-        $priceCalculation = $this->pricingManager->getPriceCalculation($data, $pricingRuleSet);
+        $priceCalculationOutput = $this->pricingManager->getPriceCalculation($delivery, $pricingRuleSet);
 
-        if (null === $priceCalculation) {
+        if (null === $priceCalculationOutput) {
             $message = $this->translator->trans('delivery.price.error.priceCalculation', domain: 'validators');
             throw new BadRequestHttpException($message);
         }
 
-        $calculation = $priceCalculation->calculation;
+        $calculation = $priceCalculationOutput->calculation;
 
         $calculationItems = [];
         foreach ($calculation->resultsPerEntity as $item) {
@@ -102,9 +108,7 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
             $calculationItems
         );
 
-        $order = $priceCalculation->order;
-
-        if (null === $order) {
+        if (null === $priceCalculationOutput->getPrice()) {
             $message = $this->translator->trans('delivery.price.error.priceCalculation', domain: 'validators');
 
             // Serialize manually to preserve backwards compatibility
@@ -122,6 +126,9 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
             );
         }
 
+        $order = $this->orderFactory->createForDelivery($delivery);
+        $this->pricingManager->processDeliveryOrder($order, $priceCalculationOutput->productVariants);
+
         $amount = $order->getItemsTotal();
         $subjectToVat = $this->settingsManager->get('subject_to_vat');
 
@@ -135,7 +142,7 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
         $taxAmount = (int) $this->calculator->calculate($amount, $taxRate);
 
         return new RetailPrice(
-            $order->getItems(),
+            $order,
             $calculationOutput,
             $amount,
             $this->currencyContext->getCurrencyCode(),
