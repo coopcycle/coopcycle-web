@@ -65,16 +65,20 @@ class RuleHumanizerTest extends KernelTestCase
         $rule->setExpression('packages.containsAtLeastOne("Bouquet L")');
         $rule->setPrice('price_per_package(packages, "Bouquet L", 100, 0, 100)');
 
-        // $this->assertEquals('contains one package', $this->humanizer->humanize($rule));
+         $this->assertEquals('packages.containsAtLeastOne("Bouquet L")', $this->humanizer->humanize($rule));
+         //TODO
+//        $this->assertEquals('1€ per Bouquet L', $this->humanizer->humanize($rule));
     }
 
     public function testPriceRange()
     {
         $rule = new PricingRule();
-        $rule->setExpression('distance > 0');
+        $rule->setExpression('distance > 5000');
         $rule->setPrice('price_range(distance, 100, 1000, 2000)');
 
-        // $this->assertEquals('contains one package', $this->humanizer->humanize($rule));
+         $this->assertEquals('Plus de 5.00 km', $this->humanizer->humanize($rule));
+         //TODO
+//         $this->assertEquals('1€ per km above 2km', $this->humanizer->humanize($rule));
     }
 
     public function testTaskType()

@@ -5,9 +5,6 @@ namespace AppBundle\Entity\Delivery;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
-// use AppBundle\Action\PricingRule\Evaluate as EvaluateController;
 use AppBundle\Api\State\EvaluatePricingRuleProcessor;
 use AppBundle\Api\Dto\DeliveryDto;
 use AppBundle\Api\Dto\YesNoOutput;
@@ -194,7 +191,7 @@ class PricingRule
         return $language->evaluate($this->getExpression(), $values);
     }
 
-    public function apply(array $values, ?ExpressionLanguage $language = null): \AppBundle\Entity\Delivery\ProductOption
+    public function apply(array $values, ?ExpressionLanguage $language = null): int
     {
         if (null === $language) {
             $language = new ExpressionLanguage();
@@ -203,17 +200,6 @@ class PricingRule
         $priceExpression = $this->getPrice();
         $result = $language->evaluate($priceExpression, $values);
 
-        if (str_contains($priceExpression, 'price_percentage')) {
-            return new \AppBundle\Entity\Delivery\ProductOption(
-                $this,
-                0,
-                $result
-            );
-        } else {
-            return new \AppBundle\Entity\Delivery\ProductOption(
-                $this,
-                $result,
-            );
-        }
+        return $result;
     }
 }

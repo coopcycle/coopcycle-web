@@ -75,8 +75,7 @@ class CoursiersBordelaisTest extends TestCase
 
         foreach ($this->pricingRules as $pricingRule) {
             if ($pricingRule->matches($deliveryExpressionLanguageVisitor->toExpressionLanguageValues($delivery), $expressionLanguage)) {
-                $productOption = $pricingRule->apply($deliveryExpressionLanguageVisitor->toExpressionLanguageValues($delivery), $expressionLanguage);
-                $this->assertEquals($expectedPrice, $productOption->getPriceAdditive());
+                $this->assertEquals($expectedPrice, $pricingRule->apply($deliveryExpressionLanguageVisitor->toExpressionLanguageValues($delivery), $expressionLanguage));
             }
         }
     }

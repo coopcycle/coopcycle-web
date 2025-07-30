@@ -2,7 +2,6 @@
 
 namespace Tests\AppBundle\Pricing;
 
-use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
@@ -18,10 +17,18 @@ use AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\PriceRangeExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\TaskExpressionLanguageVisitor;
 use AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider;
+use AppBundle\Fixtures\DatabasePurger;
 use AppBundle\Pricing\PriceCalculationVisitor;
+use AppBundle\Pricing\RuleHumanizer;
+use AppBundle\Sylius\Product\ProductOptionValueFactory;
+use AppBundle\Sylius\Product\ProductVariantFactory;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Fidry\AliceDataFixtures\LoaderInterface;
+use Fidry\AliceDataFixtures\Persistence\PurgeMode;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Prophecy\Argument;
@@ -35,12 +42,23 @@ class PriceCalculationVisitorTest extends KernelTestCase
 
     private function createWithExpressionLanguage($expressionLanguage): PriceCalculationVisitor
     {
+        $deliveryExpressionLanguageVisitor = self::getContainer()->get(DeliveryExpressionLanguageVisitor::class);
+        $taskExpressionLanguageVisitor = self::getContainer()->get(TaskExpressionLanguageVisitor::class);
+        $productOptionValueFactory = self::getContainer()->get(ProductOptionValueFactory::class);
+        $productVariantFactory = self::getContainer()->get(ProductVariantFactory::class);
+        $ruleHumanizer = self::getContainer()->get(RuleHumanizer::class);
+        $translator = self::getContainer()->get('translator');
+        $logger = self::getContainer()->get(LoggerInterface::class);
+
         return new PriceCalculationVisitor(
             $expressionLanguage,
-            new DeliveryExpressionLanguageVisitor(),
-            new TaskExpressionLanguageVisitor(
-                self::getContainer()->get(IriConverterInterface::class)
-            )
+            $deliveryExpressionLanguageVisitor,
+            $taskExpressionLanguageVisitor,
+            $productOptionValueFactory,
+            $productVariantFactory,
+            $ruleHumanizer,
+            $translator,
+            $logger
         );
     }
 
@@ -49,6 +67,22 @@ class PriceCalculationVisitorTest extends KernelTestCase
         parent::setUp();
 
         self::bootKernel();
+
+        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
+
+        $dbPurger = self::getContainer()->get(DatabasePurger::class);
+
+        $dbPurger->purge();
+        $dbPurger->resetSequences();
+
+        /** @var LoaderInterface $fixturesLoader */
+        $fixturesLoader = self::getContainer()->get('fidry_alice_data_fixtures.loader.doctrine');
+
+        $fixturesLoader->load([
+            __DIR__.'/../../../fixtures/ORM/settings_mandatory.yml',
+            __DIR__.'/../../../fixtures/ORM/sylius_channels.yml',
+            __DIR__.'/../../../fixtures/ORM/sylius_on_demand_delivery_product.yml',
+        ], $_SERVER, [], PurgeMode::createNoPurgeMode());
 
         $expressionLanguage = static::$kernel->getContainer()->get('coopcycle.expression_language');
         $expressionLanguage->registerProvider(
@@ -70,6 +104,10 @@ class PriceCalculationVisitorTest extends KernelTestCase
     public function tearDown(): void
     {
         Carbon::setTestNow();
+
+        /** @see https://joeymasip.medium.com/symfony-phpunit-testing-database-data-322383ed0603 */
+        $this->entityManager->close();
+        $this->entityManager = null;
     }
 
     public function testGetPrice()

@@ -197,6 +197,7 @@ class EmbedController extends AbstractController
         OrderRepository $orderRepository,
         OrderManager $orderManager,
         OrderFactory $orderFactory,
+        PricingManager $pricingManager,
         EntityManagerInterface $objectManager,
         CanonicalizerInterface $canonicalizer,
         OrderProcessorInterface $orderProcessor)
@@ -326,7 +327,8 @@ class EmbedController extends AbstractController
             $telephone = $form->get('telephone')->getData();
 
             $customer = $this->findOrCreateCustomer($email, $telephone, $canonicalizer);
-            $order    = $orderFactory->createForDeliveryAndPrice($delivery, new PricingRulesBasedPrice($price), $customer, false);
+            $order    = $orderFactory->createForDelivery($delivery, $customer, false);
+            $pricingManager->processDeliveryOrder($order, [$pricingManager->getCustomProductVariant($delivery, new PricingRulesBasedPrice($price))]);
 
             $checkoutPayment = new CheckoutPayment($order);
             $paymentForm = $this->createForm(CheckoutPaymentType::class, $checkoutPayment, [

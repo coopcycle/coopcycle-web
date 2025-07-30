@@ -82,6 +82,7 @@ services:
       $locale: "%env(COOPCYCLE_LOCALE)%"
       $country: "%country_iso%"
       $environment: "%kernel.environment%"
+      $packageDeliveryUiPriceBreakdownEnabled: "%env(bool:PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED)%"
 
   # For some cache pools, want *STABLE* cache keys between deploys.
   # To achieve this, we *EXPLICITLY* set a namespace,
@@ -520,26 +521,18 @@ services:
     decorates: sylius.factory.product_option_value
     public: false
 
+  AppBundle\Sylius\Product\ProductVariantFactory:
+    decorates: sylius.factory.product_variant
+    public: false
+
   coopcycle.sylius.factory.product_variant:
     class: AppBundle\Sylius\Product\ProductVariantFactory
-    decorates: sylius.factory.product_variant
-    arguments:
-      - "@coopcycle.sylius.factory.product_variant.inner"
-      - "@sylius.repository.product"
-      - "@sylius.repository.tax_category"
-      - "@coopcycle.settings_manager"
-      - "@translator"
-    public: false
 
   AppBundle\Sylius\Order\OrderFactory:
     decorates: sylius.factory.order
     arguments:
       $factory: '@AppBundle\Sylius\Order\OrderFactory.inner'
       $channelContext: "@sylius.context.channel"
-      $orderItemFactory: "@sylius.factory.order_item"
-      $productVariantFactory: "@sylius.factory.product_variant"
-      $orderItemQuantityModifier: "@sylius.order_item_quantity_modifier"
-      $orderModifier: "@sylius.order_modifier"
     public: false
 
   coopcycle.sylius.product_variant_resolver.lazy:

@@ -5,8 +5,7 @@ namespace Tests\AppBundle\Api\EventSubscriber;
 use AppBundle\Api\EventSubscriber\UrbantzSubscriber;
 use AppBundle\Api\Resource\UrbantzWebhook;
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Store;
-use AppBundle\Pricing\PricingManager;
+use AppBundle\Service\DeliveryOrderManager;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
@@ -29,12 +28,12 @@ class UrbantzSubscriberTest extends TestCase
         $this->httpClient = new MockHttpClient($this->mockResponse, $this->urbantzBaseUri);
 
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
-        $this->pricingManager = $this->prophesize(PricingManager::class);
+        $this->deliveryOrderManager = $this->prophesize(DeliveryOrderManager::class);
 
         $this->subscriber = new UrbantzSubscriber(
             $this->httpClient,
             $this->entityManager->reveal(),
-            $this->pricingManager->reveal(),
+            $this->deliveryOrderManager->reveal(),
             new NullLogger(),
             'secret'
         );
@@ -60,7 +59,7 @@ class UrbantzSubscriberTest extends TestCase
             $controllerResult
         );
 
-        $this->pricingManager->createOrder($delivery)->shouldBeCalled();
+        $this->deliveryOrderManager->createOrder($delivery)->shouldBeCalled();
 
         $this->subscriber->createOrder($event);
     }

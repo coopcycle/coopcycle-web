@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { Button, Checkbox } from 'antd'
 import { Formik, Form, FieldArray } from 'formik'
 import moment from 'moment'
@@ -23,13 +23,14 @@ import {
 } from '../../api/slice'
 import { RecurrenceRules } from './RecurrenceRules'
 import useSubmit from './hooks/useSubmit'
-import Price from './Price'
+import Order from './Order'
 import SuggestionModal from './SuggestionModal'
 import DeliveryResume from './DeliveryResume'
 import Map from '../DeliveryMap'
 import { Mode, modeIn } from './mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from './redux/formSlice'
+import FlagsContext from './FlagsContext'
 
 const generateTempId = () => `temp-${uuidv4()}`
 
@@ -140,9 +141,9 @@ export default function({
   // nodeId: Delivery or RecurrenceRule node
   deliveryNodeId,
   preLoadedDeliveryData,
-  isDispatcher,
-  isDebugPricing
 }) {
+  const { isDispatcher } = useContext(FlagsContext)
+
   const mode = useSelector(selectMode)
   const [isLoading, setIsLoading] = useState(true)
   const [expandedTasks, setExpandedTasks] = useState({})
@@ -563,11 +564,9 @@ export default function({
 
                     {order || mode === Mode.RECURRENCE_RULE_UPDATE ? (
                       <div className="order-informations__total-price border-top py-3">
-                        <Price
+                        <Order
                           storeNodeId={storeNodeId}
                           order={order}
-                          isDispatcher={isDispatcher}
-                          isDebugPricing={isDebugPricing}
                           setPriceLoading={setPriceLoading}
                         />
                       </div>

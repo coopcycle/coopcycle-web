@@ -45,7 +45,7 @@ context('Delivery (role: dispatcher)', () => {
     cy.get(`[data-testid="form-task-0"]`).within(() => {
       cy.get(`[data-testid=tags-select]`).click()
     })
-    cy.get('#react-select-3-option-0').click()
+    cy.reactSelect(0)
 
     // Dropoff
 
@@ -69,7 +69,7 @@ context('Delivery (role: dispatcher)', () => {
     cy.get(`[data-testid="form-task-1"]`).within(() => {
       cy.get(`[data-testid=tags-select]`).click()
     })
-    cy.get('#react-select-5-option-2').click()
+    cy.reactSelect(2)
 
     cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
@@ -78,8 +78,8 @@ context('Delivery (role: dispatcher)', () => {
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.get('[data-testid="order_item"]')
-      .find('[data-testid="total"]')
+    cy.get('[data-testid="order-total-including-tax"]')
+      .find('[data-testid="value"]')
       .contains('€4.99')
 
     cy.get('[data-testid=delivery-itinerary]')

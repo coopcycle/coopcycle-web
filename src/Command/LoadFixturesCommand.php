@@ -3,6 +3,7 @@
 namespace AppBundle\Command;
 
 use AppBundle\Fixtures\DatabasePurger;
+use Doctrine\ORM\EntityManagerInterface;
 use Fidry\AliceDataFixtures\LoaderInterface;
 use Fidry\AliceDataFixtures\Persistence\PurgeMode;
 use Symfony\Component\Console\Command\Command;
@@ -19,6 +20,7 @@ class LoadFixturesCommand extends Command
     public function __construct(
         private readonly DatabasePurger $databasePurger,
         private readonly LoaderInterface $fixturesLoader,
+        private readonly EntityManagerInterface $entityManager,
         private readonly string $projectDir,
         private readonly string $environment
     )
@@ -89,6 +91,9 @@ class LoadFixturesCommand extends Command
         $filePaths = array_map(fn($file) => $this->projectDir . '/' . $file, $files);
 
         $this->fixturesLoader->load($filePaths, $_SERVER, [], PurgeMode::createNoPurgeMode());
+
+        // Flush changes made by custom processors
+        $this->entityManager->flush();
 
         return 0;
     }

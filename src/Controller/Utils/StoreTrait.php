@@ -30,6 +30,7 @@ use AppBundle\Message\ImportDeliveries;
 use AppBundle\Pricing\OrderDuplicate;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryManager;
+use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\InvitationManager;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -285,6 +286,7 @@ trait StoreTrait
         $id,
         Request $request,
         PricingManager $pricingManager,
+        DeliveryOrderManager $deliveryOrderManager,
         OrderManager $orderManager,
         EntityManagerInterface $entityManager,
         TranslatorInterface $translator,
@@ -335,7 +337,7 @@ trait StoreTrait
 
             $order = null;
             try {
-                $order = $pricingManager->createOrder($delivery, [
+                $order = $deliveryOrderManager->createOrder($delivery, [
                     'pricingStrategy' => $priceForOrder,
                     // Force an admin to fix the pricing rules
                     // maybe it would be a better UX to create an incident instead
@@ -804,7 +806,7 @@ trait StoreTrait
     public function storeRecurrenceRulesAction($id, Request $request,
         EntityManagerInterface $entityManager,
         DeliveryManager $deliveryManager,
-        PricingManager $pricingManager,
+        DeliveryOrderManager $deliveryOrderManager,
         PaginatorInterface $paginator
     )
     {
@@ -842,7 +844,7 @@ trait StoreTrait
             $templateOrder = null;
             $isInvalidPricing = false;
             try {
-                $templateOrder = $pricingManager->createOrderFromRecurrenceRule($rule, $startDate, false, true);
+                $templateOrder = $deliveryOrderManager->createOrderFromRecurrenceRule($rule, $startDate, false, true);
             } catch (NoRuleMatchedException $e) {
                 $isInvalidPricing = true;
             }

@@ -10,9 +10,9 @@ use AppBundle\Api\Dto\DeliveryDto;
 use AppBundle\Api\Resource\RetailPrice;
 use AppBundle\Entity\Delivery;
 use AppBundle\Pricing\PricingManager;
-use AppBundle\Pricing\RuleHumanizer;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Sylius\Order\OrderFactory;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Taxation\Calculator\CalculatorInterface;
 use Sylius\Component\Taxation\Model\TaxableInterface;
@@ -33,13 +33,13 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
 	public function __construct(
         private readonly DeliveryProcessor $decorated,
         private readonly PricingManager $pricingManager,
+        private readonly OrderFactory $orderFactory,
         private readonly CurrencyContextInterface $currencyContext,
         private readonly SettingsManager $settingsManager,
         private readonly TokenStoreExtractor $storeExtractor,
         private readonly TaxCategoryRepositoryInterface $taxCategoryRepository,
         private readonly TaxRateResolverInterface $taxRateResolver,
         private readonly CalculatorInterface $calculator,
-        private readonly RuleHumanizer $ruleHumanizer,
         private readonly NormalizerInterface $normalizer,
         private readonly RequestStack $requestStack,
         private readonly TranslatorInterface $translator,
@@ -76,14 +76,14 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
             throw new BadRequestHttpException($message);
         }
 
-        $priceCalculation = $this->pricingManager->getPriceCalculation($delivery, $pricingRuleSet);
+        $priceCalculationOutput = $this->pricingManager->getPriceCalculation($delivery, $pricingRuleSet);
 
-        if (null === $priceCalculation) {
+        if (null === $priceCalculationOutput) {
             $message = $this->translator->trans('delivery.price.error.priceCalculation', domain: 'validators');
             throw new BadRequestHttpException($message);
         }
 
-        $calculation = $priceCalculation->calculation;
+        $calculation = $priceCalculationOutput->calculation;
 
         $calculationItems = [];
         foreach ($calculation->resultsPerEntity as $item) {
@@ -108,9 +108,7 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
             $calculationItems
         );
 
-        $order = $priceCalculation->order;
-
-        if (null === $order) {
+        if (null === $priceCalculationOutput->getPrice()) {
             $message = $this->translator->trans('delivery.price.error.priceCalculation', domain: 'validators');
 
             // Serialize manually to preserve backwards compatibility
@@ -128,16 +126,8 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
             );
         }
 
-        //set a default name for product options without a name
-        foreach ($order->getItems() as $item) {
-            $productVariant = $item->getProductVariant();
-
-            foreach ($productVariant->getProductOptions() as $optionValue) {
-                if (null === $optionValue->getName()) {
-                    $optionValue->setName($this->ruleHumanizer->humanize($optionValue->getMatchedRule()));
-                }
-            }
-        }
+        $order = $this->orderFactory->createForDelivery($delivery);
+        $this->pricingManager->processDeliveryOrder($order, $priceCalculationOutput->productVariants);
 
         $amount = $order->getItemsTotal();
         $subjectToVat = $this->settingsManager->get('subject_to_vat');
@@ -152,7 +142,7 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
         $taxAmount = (int) $this->calculator->calculate($amount, $taxRate);
 
         return new RetailPrice(
-            $order->getItems(),
+            $order,
             $calculationOutput,
             $amount,
             $this->currencyContext->getCurrencyCode(),

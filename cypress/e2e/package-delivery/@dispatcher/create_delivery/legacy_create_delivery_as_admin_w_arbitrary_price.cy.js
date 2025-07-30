@@ -70,6 +70,9 @@ context('Delivery (role: admin) with arbitrary price', () => {
     cy.get('[data-testid="order_item"]')
       .find('[data-testid="total"]')
       .contains('€72.00')
+    cy.get('[data-testid="order-total-including-tax"]')
+      .find('[data-testid="value"]')
+      .contains('€72.00')
 
     cy.get('[data-testid=delivery-itinerary]')
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
