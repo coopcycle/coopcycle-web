@@ -1623,3 +1623,16 @@ form.settings.accounting_account.label: "Code comptable"
 form.settings.accounting_account.help: "Le code comptable par défaut pour enregistrer les commandes de livraison à la demande dans le système comptable."
 restaurant.stats.show_only_meal_vouchers: Afficher uniquement les commandes payées en titres-restaurant
 restaurant.stats.show_all: Afficher toutes les commandes
+pricing.rule.humanizer.inside_zone: dans
+pricing.rule.humanizer.outside_zone: hors
+pricing.rule.humanizer.address_zone_format: 'adresse %task_type% %direction% zone "%zone_name%"'
+pricing.rule.humanizer.between: entre %left% et %right%
+pricing.rule.humanizer.less_than: moins de %value%
+pricing.rule.humanizer.more_than: plus de %value%
+pricing.rule.humanizer.kg_unit: '%value% kg'
+pricing.rule.humanizer.km_unit: '%value% km'
+pricing.rule.humanizer.task_type_is: 'taux de %value%'
+pricing.rule.humanizer.time_range_length: 'créneau horaire de %task_type% %operator% %value%'
+pricing.rule.humanizer.diff: 'délai de préavis pour %task_type% %operator% %value%'
+pricing.rule.humanizer.order_items_total: 'total du panier %operator% %value%'
+pricing.rule.humanizer.packages_volume_units: 'volume du colis %operator% %value%'

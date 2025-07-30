@@ -12,6 +12,7 @@ import type {
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithReauth,
+  tagTypes: ['PricingRuleSet'],
   // The "endpoints" represent operations and requests for this server
   // nodeId is passed in JSON-LD '@id' key, https://www.w3.org/TR/2014/REC-json-ld-20140116/#node-identifiers
   endpoints: builder => ({
@@ -21,6 +22,24 @@ export const apiSlice = createApi({
     getTags: builder.query({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
         return await fetchAllRecordsUsingFetchWithBQ(baseQuery, 'api/tags', 100)
+      },
+    }),
+    getZones: builder.query({
+      queryFn: async (args, queryApi, extraOptions, baseQuery) => {
+        return await fetchAllRecordsUsingFetchWithBQ(
+          baseQuery,
+          'api/zones',
+          100,
+        )
+      },
+    }),
+    getPackages: builder.query({
+      queryFn: async (args, queryApi, extraOptions, baseQuery) => {
+        return await fetchAllRecordsUsingFetchWithBQ(
+          baseQuery,
+          'api/packages',
+          100,
+        )
       },
     }),
 
@@ -195,6 +214,40 @@ export const apiSlice = createApi({
         }
       },
     }),
+
+    getPricingRuleSets: builder.query({
+      query: () => 'api/pricing_rule_sets',
+      providesTags: ['PricingRuleSet'],
+    }),
+    getPricingRuleSet: builder.query({
+      query: id => `api/pricing_rule_sets/${id}`,
+      providesTags: (result, error, id) => [{ type: 'PricingRuleSet', id }],
+    }),
+    createPricingRuleSet: builder.mutation({
+      query: newPricingRuleSet => ({
+        url: 'api/pricing_rule_sets',
+        method: 'POST',
+        body: newPricingRuleSet,
+      }),
+      invalidatesTags: ['PricingRuleSet'],
+    }),
+    updatePricingRuleSet: builder.mutation({
+      query: ({ id, ...patch }) => ({
+        url: `api/pricing_rule_sets/${id}`,
+        method: 'PUT',
+        body: patch,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'PricingRuleSet', id },
+      ],
+    }),
+    deletePricingRuleSet: builder.mutation({
+      query: id => ({
+        url: `api/pricing_rule_sets/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['PricingRuleSet'],
+    }),
   }),
 })
 
@@ -202,6 +255,8 @@ export const apiSlice = createApi({
 export const {
   useGetTaxRatesQuery,
   useGetTagsQuery,
+  useGetZonesQuery,
+  useGetPackagesQuery,
   useGetOrderTimingQuery,
   useGetOrderQuery,
   useUpdateOrderMutation,
@@ -222,4 +277,9 @@ export const {
   useRecurrenceRulesGenerateOrdersMutation,
   useLazyGetInvoiceLineItemsGroupedByOrganizationQuery,
   useGetInvoiceLineItemsQuery,
+  useGetPricingRuleSetsQuery,
+  useGetPricingRuleSetQuery,
+  useCreatePricingRuleSetMutation,
+  useUpdatePricingRuleSetMutation,
+  useDeletePricingRuleSetMutation,
 } = apiSlice

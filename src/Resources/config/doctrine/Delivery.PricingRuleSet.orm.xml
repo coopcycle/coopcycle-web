@@ -7,7 +7,7 @@
     <field name="name" type="string" column="name" nullable="false"/>
     <field name="strategy" type="string" column="strategy" nullable="false"/>
     <field name="options" type="json" column="options" nullable="false"/>
-    <one-to-many field="rules" target-entity="AppBundle\Entity\Delivery\PricingRule" mapped-by="ruleSet">
+    <one-to-many field="rules" target-entity="AppBundle\Entity\Delivery\PricingRule" mapped-by="ruleSet" orphan-removal="true">
       <cascade>
         <cascade-all/>
       </cascade>
