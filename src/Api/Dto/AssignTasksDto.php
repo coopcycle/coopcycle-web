@@ -14,6 +14,6 @@ class AssignTasksDto
      * @var Task[]
      */
     #[Groups(['tasks_assign'])]
-    public $tasks = [];
+    public array $tasks = [];
 }
 

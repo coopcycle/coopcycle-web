@@ -11,5 +11,5 @@ final class CompatibleVehiclesInput
      * @var Vehicle[]
      */
     #[Groups(['trailer_update'])]
-    public $compatibleVehicles = [];
+    public array $compatibleVehicles = [];
 }

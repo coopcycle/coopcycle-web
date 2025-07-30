@@ -30,9 +30,6 @@ use Symfony\Component\Validator\Constraints as Assert;
             input: CompatibleVehiclesInput::class,
             processor: CompatibleVehiclesProcessor::class,
             security: 'is_granted(\'ROLE_ADMIN\')',
-            // read: false,
-            // write: false,
-            // validate: false
         ),
         new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\')'),
         new Post(security: 'is_granted(\'ROLE_ADMIN\')')

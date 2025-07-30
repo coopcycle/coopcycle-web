@@ -12,7 +12,6 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Task\AddImagesToTasks;
 use AppBundle\Action\Task\Assign as TaskAssign;
-// use AppBundle\Action\Task\BulkAssign as TaskBulkAssign;
 use AppBundle\Action\Task\Cancel as TaskCancel;
 use AppBundle\Action\Task\Done as TaskDone;
 use AppBundle\Action\Task\Events as TaskEvents;
@@ -273,7 +272,6 @@ use Symfony\Component\Validator\Constraints as Assert;
             ],
             security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
             denormalizationContext: ['groups' => ['tasks_assign']],
-            // write: false
         ),
         new Put(
             uriTemplate: '/tasks/done',
