@@ -57,12 +57,12 @@ AppBundle\Entity\Task:
     doneAfter: <identity(new \DateTime('today 15:30:00'))>
     doneBefore: <identity(new \DateTime('today 16:00:00'))>
   task_10:
-    address: "@address_1"
+    address: "@address_3"
     doneAfter: <identity(new \DateTime('today 14:30:00'))>
     doneBefore: <identity(new \DateTime('today 15:00:00'))>
     type: PICKUP
   task_11:
-    address: "@address_2"
+    address: "@address_4"
     doneAfter: <identity(new \DateTime('today 15:30:00'))>
     doneBefore: <identity(new \DateTime('today 16:00:00'))>
 
