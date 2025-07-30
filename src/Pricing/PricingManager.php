@@ -25,6 +25,7 @@ use Psr\Log\LoggerInterface;
 use Recurr\Rule;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -47,6 +48,7 @@ class PricingManager
         private readonly OrderItemQuantityModifierInterface $orderItemQuantityModifier,
         private readonly OrderModifierInterface $orderModifier,
         private readonly ProductVariantFactory $productVariantFactory,
+        private readonly OrderProcessorInterface $orderProcessor,
         private readonly TimeSlotManager $timeSlotManager,
         private readonly PriceCalculationVisitor $priceCalculationVisitor,
         private readonly LoggerInterface $logger
@@ -179,6 +181,9 @@ class PricingManager
         foreach ($items as $item) {
             $this->orderModifier->addToOrder($order, $item);
         }
+
+        // Ensure all order processing is complete before proceeding
+        $this->orderProcessor->process($order);
     }
 
     public function duplicateOrder($store, $orderId): OrderDuplicate | null
