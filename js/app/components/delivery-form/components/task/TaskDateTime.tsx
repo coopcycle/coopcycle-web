@@ -17,7 +17,12 @@ type Props = {
   taskId: string
 }
 
-export const TaskDateTime = ({ isDispatcher, storeNodeId, timeSlots, taskId }: Props) => {
+export const TaskDateTime = ({
+  isDispatcher,
+  storeNodeId,
+  timeSlots,
+  taskId,
+}: Props) => {
   const format = 'LL'
 
   const { data: store } = useGetStoreQuery(storeNodeId)

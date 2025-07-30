@@ -23,8 +23,8 @@ const SwitchTimeSlotFreePicker = ({
   format,
   isTimeSlotSelect,
   setIsTimeSlotSelect,
-  timeSlotLabels
-} : Props) => {
+  timeSlotLabels,
+}: Props) => {
   const { t } = useTranslation()
 
   return (
@@ -47,7 +47,11 @@ const SwitchTimeSlotFreePicker = ({
       ) : (
         <div className="daterange-picker-container">
           <div className="daterange-picker-container__picker">
-            <DateRangePicker format={format} taskId={taskId} isDispatcher={isDispatcher} />
+            <DateRangePicker
+              format={format}
+              taskId={taskId}
+              isDispatcher={isDispatcher}
+            />
           </div>
           <i
             className="daterange-picker-container__icon fa fa-calendar text-right"

@@ -6,7 +6,10 @@ import { useTranslation } from 'react-i18next'
 import './TimeSlotPicker.scss'
 import Spinner from '../../../core/Spinner'
 import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext'
-import { useGetStoreQuery, useGetTimeSlotChoicesQuery } from '../../../../api/slice'
+import {
+  useGetStoreQuery,
+  useGetTimeSlotChoicesQuery,
+} from '../../../../api/slice'
 import { Mode } from '../../mode'
 import { useSelector } from 'react-redux'
 import { selectMode } from '../../redux/formSlice'

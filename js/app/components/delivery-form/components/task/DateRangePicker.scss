@@ -2,8 +2,8 @@
   display: flex;
   justify-content: space-between;
 
-  &__datepicker{
-    flex-grow:2;
+  &__datepicker {
+    flex-grow: 2;
   }
 
   &__select-left {
@@ -11,6 +11,6 @@
   }
 
   &__select-right {
-    flex-grow:1;
+    flex-grow: 1;
   }
 }

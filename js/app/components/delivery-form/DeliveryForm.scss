@@ -3,7 +3,6 @@
   flex-wrap: wrap;
   gap: 2em;
   padding: 2em;
-
 }
 
 .new-order {
@@ -14,11 +13,13 @@
   flex-wrap: wrap;
   overflow: hidden;
 
-  &__pickups, &__dropoffs {
+  &__pickups,
+  &__dropoffs {
     width: 47%;
   }
 
-  &__dropoffs__add, &__pickups__add {
+  &__dropoffs__add,
+  &__pickups__add {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -32,39 +33,38 @@
 .order-informations {
   align-self: start;
   position: sticky;
-  top:0;
+  top: 0;
   width: 30%;
 
-  &__tracking{
+  &__tracking {
     background-color: #f3f2f2f8;
     border-color: #dbdada;
-    color: #23527C;
+    color: #23527c;
   }
 }
 
-
 @media (max-width: 1250px) {
-
-  .delivery-form{
-    flex-wrap:nowrap
+  .delivery-form {
+    flex-wrap: nowrap;
   }
 
   .order-informations {
-    min-width: 40%
+    min-width: 40%;
   }
 
-  .new-order{
+  .new-order {
     flex-direction: column;
     justify-content: start;
 
-    &__pickups, &__dropoffs {
+    &__pickups,
+    &__dropoffs {
       width: 100%;
     }
   }
 }
 
-@media (max-width: 720px){
-  .delivery-form{
+@media (max-width: 720px) {
+  .delivery-form {
     flex-direction: column;
     align-items: center;
     gap: 2em;
@@ -75,7 +75,7 @@
     width: 100%;
   }
 
-  .order-informations{
+  .order-informations {
     width: 100%;
     text-align: center;
     display: flex;
@@ -83,7 +83,7 @@
     align-items: center;
 
     &__map {
-      width: 100%
+      width: 100%;
     }
 
     &__tracking {
@@ -100,7 +100,7 @@
   justify-content: center;
   align-items: center;
 
-  .loader{
+  .loader {
     width: 15rem;
     height: 15rem;
     border-width: 1rem;

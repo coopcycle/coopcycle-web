@@ -10,7 +10,7 @@ const getCurrencySymbol = (): string => {
 }
 
 const addVat = (vatExcludedPrice: number, taxRate: number): number => {
-  return Math.round((vatExcludedPrice * 100) * (taxRate + 1)) / 100
+  return Math.round(vatExcludedPrice * 100 * (taxRate + 1)) / 100
 }
 
 const removeVat = (vatIncludedPrice: number, taxRate: number): number => {

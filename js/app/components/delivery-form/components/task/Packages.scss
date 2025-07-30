@@ -1,10 +1,10 @@
 .packages-item {
   display: flex;
   justify-content: space-between;
-  align-items:center;
+  align-items: center;
 
   &__quantity {
-    display: flex;   
+    display: flex;
     max-width: 35%;
 
     &__button {
@@ -13,7 +13,7 @@
     }
 
     &__input {
-      min-width: 40%
+      min-width: 40%;
     }
   }
 
@@ -23,9 +23,8 @@
 }
 
 @media (max-width: 576px) {
-  .packages-item{
+  .packages-item {
     &__quantity {
-
       min-width: 50%;
 
       &__button {
@@ -33,7 +32,7 @@
       }
     }
     &__name {
-        min-width: 50%;
-      }
+      min-width: 50%;
+    }
   }
 }

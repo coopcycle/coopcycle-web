@@ -54,7 +54,12 @@ const DateTimeRangePicker = ({ format, taskId, isDispatcher }: Props) => {
 
   const mode = useSelector(selectMode)
 
-  const { taskValues, setFieldValue, errors, taskIndex: index } = useDeliveryFormFormikContext({
+  const {
+    taskValues,
+    setFieldValue,
+    errors,
+    taskIndex: index,
+  } = useDeliveryFormFormikContext({
     taskId: taskId,
   })
 

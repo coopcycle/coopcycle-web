@@ -9,14 +9,21 @@ type Props = {
 }
 
 const MultiDayPicker = ({ taskId }: Props) => {
-  const { taskValues, setFieldValue, taskIndex } = useDeliveryFormFormikContext({
-    taskId: taskId,
-  })
+  const { taskValues, setFieldValue, taskIndex } = useDeliveryFormFormikContext(
+    {
+      taskId: taskId,
+    },
+  )
 
-  const handleComplexPickerDateChange = (newValues: [Moment, Moment] | null) => {
+  const handleComplexPickerDateChange = (
+    newValues: [Moment, Moment] | null,
+  ) => {
     if (newValues) {
       setFieldValue(`tasks[${taskIndex}].after`, newValues[0].toISOString(true))
-      setFieldValue(`tasks[${taskIndex}].before`, newValues[1].toISOString(true))
+      setFieldValue(
+        `tasks[${taskIndex}].before`,
+        newValues[1].toISOString(true),
+      )
     }
   }
 
