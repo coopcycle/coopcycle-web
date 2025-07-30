@@ -8,17 +8,13 @@
     /* Modules */
     "module": "ESNext",
     "moduleResolution": "node",
-    "baseUrl": ".",
     "paths": {
-//      "@app/*": ["./js/app/*"],
-//      "@shared/*": ["./js/shared/*"]
+      //      "@app/*": ["./js/app/*"],
+      //      "@shared/*": ["./js/shared/*"]
     },
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-
-    /* JavaScript Support */
-    "allowJs": true,
 
     /* Emit */
     "declaration": false,
@@ -30,24 +26,20 @@
     "incremental": true,
     "tsBuildInfoFile": "./web/build/.tsbuildinfo",
 
+    /* JavaScript Support */
+    "allowJs": true,
+
     /* Interop Constraints */
     "isolatedModules": true,
     "forceConsistentCasingInFileNames": true,
 
-    /* Type Checking */
-    "strict": false,
-    "noImplicitAny": false,
-    "noImplicitReturns": false,
-    "noImplicitThis": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "exactOptionalPropertyTypes": false,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitUseStrict": false,
-
     /* Completeness */
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
-    "noErrorTruncation": true
+    "noErrorTruncation": true,
+
+    /* Type Checking */
+    "strict": true
   },
+  "include": ["js/**/*", "assets/**/*"]
 }

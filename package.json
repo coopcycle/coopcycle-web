@@ -11,7 +11,8 @@
     "sdk:build": "webpack --config webpack.sdk.config.js --mode production",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "dev": "encore dev"
+    "lint": "eslint js/app/ assets/react",
+    "type-check": "tsc --noEmit --pretty"
   },
   "repository": {
     "type": "git",
@@ -180,6 +181,8 @@
     "swiper": "^11.2.7",
     "to-string-loader": "^1.2.0",
     "ts-loader": "^9.5.2",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.37.0",
     "url-loader": "^4.1.1",
     "use-deep-compare": "^1.1.0",
     "webpack": "^5.99.9",

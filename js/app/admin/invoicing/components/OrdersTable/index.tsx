@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Table, TableColumnsType, Tag, Tooltip } from 'antd'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment'
@@ -26,7 +26,7 @@ type OrderRow = {
 
 type Props = {
   ordersStates: string[]
-  dateRange: moment.Moment[]
+  dateRange: moment.Moment[] | null
   onlyNotInvoiced: boolean
   storeId: string
   reloadKey: number
@@ -190,6 +190,13 @@ export default function OrdersTable({
           showSizeChanger: true,
         }}
         onChange={pagination => {
+          if (!pagination.current) {
+            return
+          }
+          if (!pagination.pageSize) {
+            return
+          }
+
           setCurrentPage(pagination.current)
           setPageSize(pagination.pageSize)
         }}

@@ -21,7 +21,7 @@ type OrganizationRow = {
 
 type Props = {
   ordersStates: string[]
-  dateRange: Moment[]
+  dateRange: Moment[] | null
   onlyNotInvoiced: boolean
   reloadKey: number
   setSelectedStoreIds: (storeIds: string[]) => void
@@ -142,6 +142,13 @@ export default function OrganizationsTable({
         showSizeChanger: true,
       }}
       onChange={pagination => {
+        if (!pagination.current) {
+          return
+        }
+        if (!pagination.pageSize) {
+          return
+        }
+
         reloadData(pagination.current, pagination.pageSize)
 
         setCurrentPage(pagination.current)
