@@ -13,9 +13,7 @@ const logError = (error: Error, info: ErrorInfo) => {
     })
   }
 
-  if (window.DatadogLogger) {
-    window.DatadogLogger.error(error.message, info, error)
-  }
+  // no need to pass error to DatadogLogger, as it already logs the errors from the browser
 }
 
 function FallbackComponent() {
