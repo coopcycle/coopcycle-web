@@ -114,8 +114,8 @@ Feature: Manage restaurants
         }
       ],
       "hydra:totalItems":1,
-      "hydra:view":@...@,
-      "hydra:search":@...@
+      "hydra:view":{"@*@":"@*@"},
+      "hydra:search":{"@*@":"@*@"}
     }
     """
 
@@ -591,7 +591,7 @@ Feature: Manage restaurants
         "enabled":true,
         "depositRefundEnabled": false,
         "depositRefundOptin": true,
-        "address":@...@,
+        "address":{"@*@":"@*@"},
         "state":"rush",
         "telephone":null,
         "openingHoursSpecification":@array@,
@@ -672,13 +672,27 @@ Feature: Manage restaurants
         "enabled":true,
         "depositRefundEnabled": false,
         "depositRefundOptin": true,
-        "address":@...@,
+        "address":{"@*@":"@*@"},
         "state":"rush",
-        "telephone":null,
+        "telephone":"+33612345678",
         "openingHoursSpecification":@array@,
         "specialOpeningHoursSpecification":@array@,
         "image":@string@,
-        "loopeatEnabled":false
+        "loopeatEnabled":false,
+        "edenredMerchantId": null,
+        "edenredTRCardEnabled": false,
+        "edenredSyncSent": false,
+        "edenredEnabled": false,
+        "hub":null,
+        "facets": {
+          "@*@": "@*@"
+        },
+        "tags":@array@,
+        "badges":@array@,
+        "autoAcceptOrdersEnabled": @boolean@,
+        "fulfillmentMethods":@array@,
+        "bannerImage":@string@,
+        "isOpen":@boolean@
       }
       """
 
