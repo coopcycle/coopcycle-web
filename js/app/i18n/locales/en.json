@@ -646,6 +646,7 @@
         "PLEASE_SELECT_A_VALID_DATE": "Please select a valid date",
         "PLEASE_SELECT_A_DATE_IN_THE_FUTURE": "Please select a date in the future",
         "SOMETHING_WENT_WRONG": "Something went wrong",
+        "ERROR_BOUNDARY_FALLBACK_MESSAGE": "Something went wrong. Please reload the page",
         "THERE_IS_ALREADY_COUNT_REPORTS_FOR_THIS_INCIDENT": "There is already {{ count }} report(s) for this incident",
         "FAILURE_REASON": "Failure reason",
         "PLEASE_SELECT_A_REASON": "Please select a reason",

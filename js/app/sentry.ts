@@ -1,8 +1,7 @@
-import * as Sentry from "@sentry/browser";
+import * as Sentry from '@sentry/browser'
 
-const el = document.getElementById('sentry');
+const el = document.getElementById('sentry')
 if (el) {
-
   // https://docs.sentry.io/platforms/javascript/
   Sentry.init({
     dsn: el.dataset.dsn,
@@ -22,11 +21,11 @@ if (el) {
     tracesSampleRate: 0.7,
 
     // Set `tracePropagationTargets` to control for which URLs trace propagation should be enabled
-    tracePropagationTargets: [ window.location.host ],
+    tracePropagationTargets: [window.location.host],
 
     // Capture Replay for 10% of all sessions,
     // plus for 100% of sessions with an error
     replaysSessionSampleRate: 0.1,
     replaysOnErrorSampleRate: 1.0,
-  });
+  })
 }
