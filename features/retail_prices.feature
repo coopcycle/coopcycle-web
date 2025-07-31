@@ -47,26 +47,31 @@ Feature: Retail prices
             {
               "variant": {
                 "code": @string@,
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
               "total": 499,
-              "adjustments": [
-                {
-                  "label": "1 × Plus de 0.00 km",
-                  "amount": 499,
-                  "type": "menu_item_modifier"
-                },
-                {
-                  "type": "tax",
-                  "label": "TVA 20%",
-                  "amount": 83
-                }
-              ]
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -119,26 +124,31 @@ Feature: Retail prices
             {
               "variant": {
                 "code": @string@,
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
               "total": 499,
-              "adjustments": [
-                {
-                  "label": "1 × Plus de 0.00 km",
-                  "amount": 499,
-                  "type": "menu_item_modifier"
-                },
-                {
-                  "type": "tax",
-                  "label": "TVA 20%",
-                  "amount": 83
-                }
-              ]
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -191,26 +201,31 @@ Feature: Retail prices
             {
               "variant": {
                 "code": @string@,
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
               "total": 499,
-              "adjustments": [
-                {
-                  "label": "1 × Plus de 0.00 km",
-                  "amount": 499,
-                  "type": "menu_item_modifier"
-                },
-                {
-                  "type": "tax",
-                  "label": "TVA 20%",
-                  "amount": 83
-                }
-              ]
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -266,26 +281,31 @@ Feature: Retail prices
             {
               "variant": {
                 "code": @string@,
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
               "total": 1299,
-              "adjustments": [
-                {
-                  "label": "1 × packages.containsAtLeastOne(\"XL\")",
-                  "amount": 1299,
-                  "type": "menu_item_modifier"
-                },
-                {
-                  "type": "tax",
-                  "label": "TVA 20%",
-                  "amount": 217
-                }
-              ]
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × packages.containsAtLeastOne(\"XL\")",
+                    "amount": 1299
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 217
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 1299
+          "total": 1299,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -341,26 +361,31 @@ Feature: Retail prices
             {
               "variant": {
                 "code": @string@,
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
               "total": 1299,
-              "adjustments": [
-                {
-                  "label": "1 × packages.containsAtLeastOne(\"XL\")",
-                  "amount": 1299,
-                  "type": "menu_item_modifier"
-                },
-                {
-                  "type": "tax",
-                  "label": "TVA 20%",
-                  "amount": 217
-                }
-              ]
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × packages.containsAtLeastOne(\"XL\")",
+                    "amount": 1299
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 217
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 1299
+          "total": 1299,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -416,26 +441,31 @@ Feature: Retail prices
             {
               "variant": {
                 "code": @string@,
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
               "total": 1299,
-              "adjustments": [
-                {
-                  "label": "1 × packages.containsAtLeastOne(\"XL\")",
-                  "amount": 1299,
-                  "type": "menu_item_modifier"
-                },
-                {
-                  "type": "tax",
-                  "label": "TVA 20%",
-                  "amount": 217
-                }
-              ]
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × packages.containsAtLeastOne(\"XL\")",
+                    "amount": 1299
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 217
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 1299
+          "total": 1299,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -489,26 +519,31 @@ Feature: Retail prices
             {
               "variant": {
                 "code": @string@,
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
               "total": 499,
-              "adjustments": [
-                {
-                  "label": "1 × Moins de 2.00 kg",
-                  "amount": 499,
-                  "type": "menu_item_modifier"
-                },
-                {
-                  "type": "tax",
-                  "label": "TVA 20%",
-                  "amount": 83
-                }
-              ]
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Moins de 2.00 kg",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -571,26 +606,31 @@ Feature: Retail prices
             {
               "variant": {
                 "code": @string@,
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
               "total": 499,
-              "adjustments": [
-                {
-                  "label": "1 × Plus de 0.00 km",
-                  "amount": 499,
-                  "type": "menu_item_modifier"
-                },
-                {
-                  "type": "tax",
-                  "label": "TVA 20%",
-                  "amount": 83
-                }
-              ]
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -653,26 +693,31 @@ Feature: Retail prices
             {
               "variant": {
                 "code": @string@,
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
               "total": 499,
-              "adjustments": [
-                {
-                  "label": "1 × Plus de 0.00 km",
-                  "amount": 499,
-                  "type": "menu_item_modifier"
-                },
-                {
-                  "type": "tax",
-                  "label": "TVA 20%",
-                  "amount": 83
-                }
-              ]
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -728,26 +773,31 @@ Feature: Retail prices
             {
               "variant": {
                 "code": @string@,
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
               "total": 499,
-              "adjustments": [
-                {
-                  "label": "1 × Plus de 0.00 km",
-                  "amount": 499,
-                  "type": "menu_item_modifier"
-                },
-                {
-                  "type": "tax",
-                  "label": "TVA 20%",
-                  "amount": 83
-                }
-              ]
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -803,47 +853,56 @@ Feature: Retail prices
             {
               "variant": {
                 "code": @string@,
-                "name": "Point de retrait #1"
+                "name": "Point de retrait #1",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
               "total": 499,
               "adjustments": {
-                "2": {
-                  "type": "menu_item_modifier",
-                  "label": "1 × time_slot == \"/api/time_slots/1\" and task.type == \"PICKUP\"",
-                  "amount": 499
-                },
-                "3": {
-                  "type": "tax",
-                  "label": "TVA 20%",
-                  "amount": 83
-                }
-              }
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × time_slot == \"/api/time_slots/1\" and task.type == \"PICKUP\"",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             },
             {
               "variant": {
                 "code": @string@,
-                "name": "Point de dépôt #1"
+                "name": "Point de dépôt #1",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
               "total": 200,
-              "adjustments": [
-                {
-                  "label": "1 × Taux de dépôt",
-                  "amount": 200,
-                  "type": "menu_item_modifier"
-                },
-                {
-                  "type": "tax",
-                  "label": "TVA 20%",
-                  "amount": 33
-                }
-              ]
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Taux de dépôt",
+                    "amount": 200
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 33
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 699
+          "total": 699,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -899,26 +958,31 @@ Feature: Retail prices
             {
               "variant": {
                 "code": @string@,
-                "name": "Point de dépôt #1"
+                "name": "Point de dépôt #1",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
               "total": 200,
-              "adjustments": [
-                {
-                  "label": "1 × Taux de dépôt",
-                  "amount": 200,
-                  "type": "menu_item_modifier"
-                },
-                {
-                  "type": "tax",
-                  "label": "TVA 20%",
-                  "amount": 33
-                }
-              ]
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Taux de dépôt",
+                    "amount": 200
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 33
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 200
+          "total": 200,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -1055,26 +1119,31 @@ Feature: Retail prices
             {
               "variant": {
                 "code": @string@,
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
               "total": 499,
-              "adjustments": [
-                {
-                  "label": "1 × Plus de 0.00 km",
-                  "amount": 499,
-                  "type": "menu_item_modifier"
-                },
-                {
-                  "type": "tax",
-                  "label": "TVA 20%",
-                  "amount": 83
-                }
-              ]
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -1126,26 +1195,31 @@ Feature: Retail prices
             {
               "variant": {
                 "code": @string@,
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
               "total": 499,
-              "adjustments": [
-                {
-                  "label": "1 × Plus de 0.00 km",
-                  "amount": 499,
-                  "type": "menu_item_modifier"
-                },
-                {
-                  "type": "tax",
-                  "label": "TVA 20%",
-                  "amount": 83
-                }
-              ]
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -1205,26 +1279,31 @@ Feature: Retail prices
             {
               "variant": {
                 "code": @string@,
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
               "total": 499,
-              "adjustments": [
-                {
-                  "label": "1 × Plus de 0.00 km",
-                  "amount": 499,
-                  "type": "menu_item_modifier"
-                },
-                {
-                  "type": "tax",
-                  "label": "TVA 20%",
-                  "amount": 83
-                }
-              ]
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -1269,26 +1348,31 @@ Feature: Retail prices
             {
               "variant": {
                 "code": @string@,
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
               "total": 499,
-              "adjustments": [
-                {
-                  "label": "1 × Plus de 0.00 km",
-                  "amount": 499,
-                  "type": "menu_item_modifier"
-                },
-                {
-                  "type": "tax",
-                  "label": "TVA 20%",
-                  "amount": 83
-                }
-              ]
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -1364,26 +1448,31 @@ Feature: Retail prices
             {
               "variant": {
                 "code": @string@,
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
               "total": 499,
-              "adjustments": [
-                {
-                  "label": "1 × Plus de 0.00 km",
-                  "amount": 499,
-                  "type": "menu_item_modifier"
-                },
-                {
-                  "type": "tax",
-                  "label": "TVA 20%",
-                  "amount": 83
-                }
-              ]
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -1438,26 +1527,31 @@ Feature: Retail prices
             {
               "variant": {
                 "code": @string@,
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
               "total": 699,
-              "adjustments": [
-                {
-                  "label": "1 × Volume du colis moins de 9",
-                  "amount": 699,
-                  "type": "menu_item_modifier"
-                },
-                {
-                  "type": "tax",
-                  "label": "TVA 0%",
-                  "amount": 0
-                }
-              ]
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Volume du colis moins de 9",
+                    "amount": 699
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 0%",
+                    "amount": 0
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 699
+          "total": 699,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -1668,31 +1762,35 @@ Feature: Retail prices
             {
               "variant": {
                 "code": @string@,
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
               "total": 699,
-              "adjustments": [
-                {
-                  "label": "1 × Plus de 0.00 km",
-                  "amount": 499,
-                  "type": "menu_item_modifier"
-                },
-                {
-                  "label": "1 × Express Delivery",
-                  "amount": 200,
-                  "type": "menu_item_modifier"
-                },
-                {
-                  "type": "tax",
-                  "label": "TVA 20%",
-                  "amount": 117
-                }
-              ]
+              "adjustments": {
+                "menu_item_modifier": [
+                   {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  },
+                  {
+                    "label": "1 × Express Delivery",
+                    "amount": 200
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 117
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 699
+          "total": 699,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }

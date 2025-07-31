@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
 import {
   Adjustment as AdjustmentType,
   Order,
@@ -52,16 +51,14 @@ function OrderItem({ index, orderItem, overridePrice }: OrderItemProps) {
           {productVariant.name}
         </span>
       </div>
-      {Object.values(orderItem.adjustments)
-        .filter(adjustment => adjustment.type === 'menu_item_modifier')
-        .map((adjustment, index) => (
-          <Adjustment
-            key={index}
-            index={index}
-            adjustment={adjustment}
-            overridePrice={overridePrice}
-          />
-        ))}
+      {orderItem.adjustments['menu_item_modifier'].map((adjustment, index) => (
+        <Adjustment
+          key={index}
+          index={index}
+          adjustment={adjustment}
+          overridePrice={overridePrice}
+        />
+      ))}
       <div className="font-weight-semi-bold">
         <span></span>
         <span

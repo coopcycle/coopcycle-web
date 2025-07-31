@@ -187,7 +187,7 @@ export type OrderItem = {
   quantity: number
   total: number
   unitPrice: number
-  adjustments: Record<string, Adjustment>
+  adjustments: Record<string, Adjustment[]>
   variant?: ProductVariant
 }
 
