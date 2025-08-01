@@ -4054,6 +4054,7 @@ Feature: Deliveries
           "id":@integer@,
           "total": @integer@,
           "taxTotal": @integer@,
+          "manualSupplements": null,
           "arbitraryPrice":null,
           "isSavedOrder":true
         }
