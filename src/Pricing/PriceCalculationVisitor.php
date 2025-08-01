@@ -171,7 +171,7 @@ class PriceCalculationVisitor
 
     /**
      * Process a rule set for a given object (Delivery or Task)
-     * @param ManualSupplement[]|null $manualOrderSupplements
+     * @param ManualSupplement[] $manualOrderSupplements
      */
     private function processRuleSet(
         Delivery|Task $object,
@@ -294,13 +294,7 @@ class PriceCalculationVisitor
         PricingRule $rule,
         array $expressionLanguageValues,
     ): ProductOptionValueWithQuantity {
-        $language = $this->expressionLanguage;
-
-        if (null === $language) {
-            $language = new ExpressionLanguage();
-        }
-
-        $result = $rule->apply($expressionLanguageValues, $language);
+        $result = $rule->apply($expressionLanguageValues, $this->expressionLanguage);
 
         $this->logger->info(sprintf('processProductOptionValue; result %d (rule "%s")', $result, $rule->getExpression()), [
             'target' => $rule->getTarget(),
