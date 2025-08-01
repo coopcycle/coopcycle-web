@@ -39,7 +39,19 @@ const reactSelectStyles = {
   option: provided => ({ ...provided, wordWrap: 'break-word' }),
 }
 
-export default ({ defaultValue, onChange }) => {
+export type PricePerPackageValue = {
+  packageName: string
+  unitPrice: number
+  offset: number
+  discountPrice: number
+}
+
+type Props = {
+  defaultValue: PricePerPackageValue
+  onChange: (value: PricePerPackageValue) => void
+}
+
+export default ({ defaultValue, onChange }: Props) => {
   const { data: packages, isFetching } = useGetPackagesQuery()
 
   const packageNames = useMemo(() => {
@@ -92,11 +104,11 @@ export default ({ defaultValue, onChange }) => {
             step=".001"
             className="form-control d-inline-block"
             style={{ width: '80px' }}
-            onChange={e => {
-              setUnitPrice(e.target.value * 100)
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setUnitPrice(parseFloat(e.target.value) * 100)
               onChange({
                 packageName,
-                unitPrice: e.target.value * 100,
+                unitPrice: parseFloat(e.target.value) * 100,
                 offset,
                 discountPrice,
               })
@@ -108,14 +120,18 @@ export default ({ defaultValue, onChange }) => {
           <span className="mx-2">{t('PRICE_RANGE_EDITOR.PER_PACKAGE')}</span>
           <Select
             value={{ value: packageName, label: packageName }}
-            onChange={selectedOption => {
-              setPackageName(selectedOption.value)
-              onChange({
-                packageName: selectedOption.value,
-                unitPrice,
-                offset,
-                discountPrice,
-              })
+            onChange={(
+              selectedOption: { value: string; label: string } | null,
+            ) => {
+              if (selectedOption) {
+                setPackageName(selectedOption.value)
+                onChange({
+                  packageName: selectedOption.value,
+                  unitPrice,
+                  offset,
+                  discountPrice,
+                })
+              }
             }}
             options={_.sortBy(packageNames).map(pkg => ({
               label: pkg,
@@ -137,13 +153,13 @@ export default ({ defaultValue, onChange }) => {
               step=".1"
               className="form-control d-inline-block"
               style={{ width: '80px' }}
-              onChange={e => {
-                setDiscountPrice(e.target.value * 100)
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setDiscountPrice(parseFloat(e.target.value) * 100)
                 onChange({
                   packageName,
                   unitPrice,
                   offset,
-                  discountPrice: e.target.value * 100,
+                  discountPrice: parseFloat(e.target.value) * 100,
                 })
               }}
             />
@@ -161,11 +177,11 @@ export default ({ defaultValue, onChange }) => {
               step="1"
               className="form-control d-inline-block"
               style={{ width: '80px' }}
-              onChange={e => {
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setOffset(parseInt(e.target.value, 10))
                 onChange({
                   packageName,
-                  unitPrice: e.target.value * 100,
+                  unitPrice: parseFloat(e.target.value) * 100,
                   offset: parseInt(e.target.value, 10),
                   discountPrice,
                 })

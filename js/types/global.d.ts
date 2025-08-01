@@ -9,4 +9,8 @@ declare global {
     }
     DatadogLogger: Logger
   }
+
+  interface Number {
+    formatMoney(): string;
+  }
 }

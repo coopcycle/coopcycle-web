@@ -9,9 +9,15 @@ type Props = {
   ruleTarget: string
   expressionAST: object | null
   onExpressionChange: (expression: string) => void
+  t: (key: string) => string
 }
 
-class RulePicker extends React.Component<Props> {
+type State = {
+  lines: Array<{ left: string; operator: string; right: string | string[] }>
+  rev: number
+}
+
+class RulePicker extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
 
@@ -27,13 +33,13 @@ class RulePicker extends React.Component<Props> {
     this.deleteLine = this.deleteLine.bind(this)
   }
 
-  addLine(evt) {
+  addLine(evt: React.MouseEvent<HTMLButtonElement>): void {
     evt.preventDefault()
     let lines = this.state.lines.slice()
     lines.push({
-      type: '',
+      left: '',
       operator: '',
-      value: '',
+      right: '',
     })
     this.setState({
       lines,
@@ -41,7 +47,7 @@ class RulePicker extends React.Component<Props> {
     })
   }
 
-  deleteLine(index) {
+  deleteLine(index: number): void {
     let lines = this.state.lines.slice()
     lines.splice(index, 1)
     this.setState({
@@ -50,7 +56,10 @@ class RulePicker extends React.Component<Props> {
     })
   }
 
-  updateLine(index, line) {
+  updateLine(
+    index: number,
+    line: { left: string; operator: string; right: string | string[] },
+  ): void {
     let lines = this.state.lines.slice()
     lines.splice(index, 1, line)
     this.setState({ lines })

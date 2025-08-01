@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, Input, Button, Space, Typography, Row, Col, Alert } from 'antd'
 import { DeleteOutlined } from '@ant-design/icons'
 import { useTranslation } from 'react-i18next'
@@ -15,12 +15,14 @@ import {
 } from '../../../delivery/pricing/pricing-rule-parser'
 import Position from './Position'
 import { DraggableProvidedDragHandleProps } from '@hello-pangea/dnd'
-import { PricingRuleType } from '../types/PricingRuleType'
+import { PriceType } from '../types/PricingRuleType'
+import { PricingRule as PricingRuleType } from '../../../api/types'
 import HelpIcon from '../../HelpIcon'
 
 const { Text } = Typography
 
 export const VALIDATION_ERRORS = {
+  NAME_REQUIRED: 'NAME_REQUIRED',
   EXPRESSION_REQUIRED: 'EXPRESSION_REQUIRED',
   PRICE_REQUIRED: 'PRICE_REQUIRED',
 }
@@ -32,6 +34,7 @@ type Props = {
   onRemove: () => void
   validationErrors?: string[]
   dragHandleProps: DraggableProvidedDragHandleProps
+  isManualSupplement: boolean
   isDragging?: boolean
 }
 
@@ -42,6 +45,7 @@ const PricingRule = ({
   onRemove,
   validationErrors = [],
   dragHandleProps,
+  isManualSupplement,
   isDragging = false,
 }: Props) => {
   const { t } = useTranslation()
@@ -53,7 +57,7 @@ const PricingRule = ({
       : new FixedPrice(0)
   })
   const [priceType, setPriceType] = useState(() => {
-    let priceType = 'fixed'
+    let priceType = 'fixed' as PriceType
     if (priceObj instanceof PercentagePrice) {
       priceType = 'percentage'
     } else if (priceObj instanceof PriceRange) {
@@ -68,13 +72,13 @@ const PricingRule = ({
     setLocalRule(rule)
   }, [rule])
 
-  const handleFieldChange = (field, value) => {
+  const handleFieldChange = (field: string, value: string): void => {
     const updatedRule = { ...localRule, [field]: value }
     setLocalRule(updatedRule)
     onUpdate(updatedRule)
   }
 
-  const handleNameChange = value => {
+  const handleNameChange = (value: string): void => {
     // Update the name
     const updatedRule = {
       ...localRule,
@@ -84,7 +88,7 @@ const PricingRule = ({
     onUpdate(updatedRule)
   }
 
-  const handlePriceTypeChange = type => {
+  const handlePriceTypeChange = (type: PriceType): void => {
     setPriceType(type)
     let newPrice = ''
 
@@ -159,39 +163,48 @@ const PricingRule = ({
               className="mt-1 ml-2"
             />
           </Row>
-
-          <div className="mb-3">
-            <PricingRuleTarget
-              className="pricing-rule-set__rule__text"
-              target={localRule.target}
+          {validationErrors.includes(VALIDATION_ERRORS.NAME_REQUIRED) ? (
+            <Alert
+              message={t('FORM_PRICING_RULE_MANUAL_SUPPLEMENT_NAME_REQUIRED')}
+              type="error"
+              className="my-2"
+              showIcon
             />
-
-            <RulePicker
-              ruleTarget={localRule.target}
-              expressionAST={localRule.expressionAst}
-              onExpressionChange={newExpression => {
-                if (localRule.expression === newExpression) return
-                handleFieldChange('expression', newExpression)
-              }}
-            />
-
-            {validationErrors.includes(
-              VALIDATION_ERRORS.EXPRESSION_REQUIRED,
-            ) ? (
-              <Alert
-                message={t('FORM_PRICING_RULE_EXPRESSION_REQUIRED')}
-                type="error"
-                size="small"
-                className="mt-2"
-                showIcon
+          ) : null}
+          {!isManualSupplement ? (
+            <div className="mb-3">
+              <PricingRuleTarget
+                className="pricing-rule-set__rule__text"
+                target={localRule.target}
               />
-            ) : null}
-          </div>
+
+              <RulePicker
+                ruleTarget={localRule.target}
+                expressionAST={localRule.expressionAst}
+                onExpressionChange={newExpression => {
+                  if (localRule.expression === newExpression) return
+                  handleFieldChange('expression', newExpression)
+                }}
+              />
+
+              {validationErrors.includes(
+                VALIDATION_ERRORS.EXPRESSION_REQUIRED,
+              ) ? (
+                <Alert
+                  message={t('FORM_PRICING_RULE_EXPRESSION_REQUIRED')}
+                  type="error"
+                  className="mt-2"
+                  showIcon
+                />
+              ) : null}
+            </div>
+          ) : null}
         </Col>
       </Row>
       <Row gutter={16} className="mt-2 pricing-rule-set__rule__price">
         <Col>
           <PriceChoice
+            isManualSupplement={isManualSupplement}
             priceType={priceType}
             handlePriceTypeChange={handlePriceTypeChange}
           />
@@ -210,7 +223,6 @@ const PricingRule = ({
             <Alert
               message={t('FORM_PRICING_RULE_PRICE_REQUIRED')}
               type="error"
-              size="small"
               className="mt-2"
               showIcon
             />

@@ -1,19 +1,10 @@
 import { HydraCollection } from './types'
-import { BaseQueryFn } from '@reduxjs/toolkit/query'
-
-// RTK Query result types - returns array of items, not HydraCollection
-interface QueryFnSuccessResult<T> {
-  data: T[]
-  error?: never
-}
-
-interface QueryFnErrorResult {
-  data?: never
-  error
-}
-
-// Union type for RTK Query queryFn result
-type QueryFnResult<T> = QueryFnSuccessResult<T> | QueryFnErrorResult
+import {
+  BaseQueryFn,
+  FetchBaseQueryError,
+  FetchBaseQueryMeta,
+  QueryReturnValue,
+} from '@reduxjs/toolkit/query'
 
 /**
  * similar function exists in the mobile app codebase
@@ -23,10 +14,18 @@ export async function fetchAllRecordsUsingFetchWithBQ<T>(
   url: string,
   itemsPerPage: number,
   otherParams: Record<string, string> | null = null,
-): Promise<QueryFnResult<T>> {
+): Promise<
+  QueryReturnValue<T[], FetchBaseQueryError, FetchBaseQueryMeta | undefined>
+> {
   const fetch = async (
     page: number,
-  ): Promise<{ data: HydraCollection<T> | null; error }> => {
+  ): Promise<
+    QueryReturnValue<
+      HydraCollection<T>,
+      FetchBaseQueryError,
+      FetchBaseQueryMeta | undefined
+    >
+  > => {
     const params = new URLSearchParams({
       pagination: 'true',
       page: page.toString(),
@@ -36,9 +35,21 @@ export async function fetchAllRecordsUsingFetchWithBQ<T>(
 
     try {
       const result = await fetchWithBQ(`${url}?${params.toString()}`)
-      return { data: result.data, error: null }
+      if (result.error) {
+        // @ts-expect-error: TS2322: Type {} is not assignable to type FetchBaseQueryError | undefined
+        return { error: result.error }
+      }
+
+      // @ts-expect-error: TS2322: Type unknown is not assignable to type HydraCollection<T> | undefined
+      return { data: result.data }
     } catch (err) {
-      return { data: null, error: err }
+      return {
+        error: {
+          status: 'CUSTOM_ERROR',
+          data: err,
+          error: 'fetch failed',
+        },
+      }
     }
   }
 
@@ -50,7 +61,7 @@ export async function fetchAllRecordsUsingFetchWithBQ<T>(
   const firstPageData = firstPageResult.data
   if (
     !firstPageData ||
-    !Object.hasOwn(firstPageData, 'hydra:totalItems') ||
+    !firstPageData['hydra:totalItems'] ||
     firstPageData['hydra:totalItems'] <= firstPageData['hydra:member'].length
   ) {
     // Total items were already returned in the 1st request!
@@ -71,7 +82,7 @@ export async function fetchAllRecordsUsingFetchWithBQ<T>(
     .then(results => {
       // Check if any page has an error
       const errorResult = results.find(result => result.error)
-      if (errorResult) {
+      if (errorResult && errorResult.error) {
         return { error: errorResult.error }
       }
 
@@ -83,7 +94,13 @@ export async function fetchAllRecordsUsingFetchWithBQ<T>(
 
       return { data: combinedData }
     })
-    .catch(error => {
-      return { error }
+    .catch((error: unknown) => {
+      return {
+        error: {
+          status: 'CUSTOM_ERROR',
+          data: error,
+          error: 'promise.all failed',
+        },
+      }
     })
 }
