@@ -313,7 +313,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     public function getPickup()
     {
         foreach ($this->getTasks() as $task) {
-            if ($task->getType() === Task::TYPE_PICKUP) {
+            if ($task->isPickup()) {
                 return $task;
             }
         }
@@ -329,13 +329,13 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     {
         if (count($this->getTasks()) > 2) {
             foreach (array_reverse($this->getTasks()) as $task) {
-                if ($task->getType() === Task::TYPE_DROPOFF) {
+                if ($task->isDropoff()) {
                     return $task;
                 }
             }
         } else {
             foreach ($this->getTasks() as $task) {
-                if ($task->getType() === Task::TYPE_DROPOFF) {
+                if ($task->isDropoff()) {
                     return $task;
                 }
             }

@@ -4,6 +4,8 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\User;
 use AppBundle\Entity\RemotePushToken;
+use AppBundle\Message\PushNotification;
+use AppBundle\Message\PushNotificationV2;
 use Doctrine\ORM\EntityManagerInterface;
 use Kreait\Firebase\Contract\Messaging;
 use Kreait\Firebase\Messaging\CloudMessage;
@@ -44,7 +46,7 @@ class RemotePushNotificationManager
     /**
      * @see https://firebase.google.com/docs/cloud-messaging/http-server-ref
      */
-    private function fcm($notification, array $tokens, $data)
+    private function fcm(string|null $title, string|null $body, array $tokens, array $data)
     {
         if (count($tokens) === 0) {
             return;
@@ -56,10 +58,10 @@ class RemotePushNotificationManager
             'priority' => 'high'
         ];
 
-        if (null !== $notification) {
+        if (null !== $title) {
             $payload['notification'] = [
-                'title' => $notification,
-                'body' => $this->translator->trans('notifications.tap_to_open'),
+                'title' => $title,
+                'body' => $body,
             ];
             $payload['android']['notification'] = [
                 'sound' => 'default',
@@ -138,14 +140,15 @@ class RemotePushNotificationManager
         }
     }
 
-    private function apns($text, array $tokens, $data = [])
+    private function apns(string $title, string $body, array $tokens, array $data)
     {
         if (count($tokens) === 0) {
             return;
         }
 
-        $alert = Pushok\Payload\Alert::create()->setTitle($text);
-        // $alert = $alert->setBody('Lorem ipsum');
+        $alert = Pushok\Payload\Alert::create()
+                    ->setTitle($title)
+                    ->setBody($body);
 
         $payload = Pushok\Payload::create()->setAlert($alert);
         $payload->setSound('default');
@@ -195,11 +198,25 @@ class RemotePushNotificationManager
     }
 
     /**
-     * @param string $textMessage
-     * @param mixed $recipients
+     * @param string|PushNotification|PushNotificationV2 $textOrPushNotification
+     * @param RemotePushToken[]|User[] $recipients Not needed/used for `PushNotificationV2`
+     * @param array $data
      */
-    public function send($textMessage, $recipients, $data = [])
+    public function send(string|PushNotification|PushNotificationV2 $textOrPushNotification, $recipients = [], $data = [])
     {
+        $title = $textOrPushNotification;
+        $body = $this->translator->trans('notifications.tap_to_open');
+
+        if ($textOrPushNotification instanceof PushNotificationV2) {
+            $title = $textOrPushNotification->getTitle();
+            $body = $textOrPushNotification->getBody();
+            $recipients = $textOrPushNotification->getUsers();
+            $data = $textOrPushNotification->getData();
+        } else if ($textOrPushNotification instanceof PushNotification) {
+            $title = $textOrPushNotification->getContent();
+            $data = $textOrPushNotification->getData();
+        }
+
         if (!is_array($recipients)) {
             $recipients = [ $recipients ];
         }
@@ -253,9 +270,9 @@ class RemotePushNotificationManager
         // for the versions after this change - implementation should expect to receive
         // both "notification+data" and "data-only" messages and handle them correctly
 
-        $this->fcm($textMessage, $fcmTokens, $data); // send "notification+data" message
-        $this->fcm(null, $fcmTokens, $data); // send "data-only" message
+        $this->fcm($title, $body, $fcmTokens, $data); // send "notification+data" message
+        $this->fcm(null, null, $fcmTokens, $data); // send "data-only" message
 
-        $this->apns($textMessage, $apnsTokens, $data);
+        $this->apns($title, $body, $apnsTokens, $data);
     }
 }
