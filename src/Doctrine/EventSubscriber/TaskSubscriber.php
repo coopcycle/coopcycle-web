@@ -5,6 +5,7 @@ namespace AppBundle\Doctrine\EventSubscriber;
 use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\EntityChangeSetProcessor;
 use AppBundle\Domain\EventStore;
 use AppBundle\Domain\Task\Event\TaskCreated;
+use AppBundle\Domain\Task\Event\TaskUpdated;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
@@ -38,8 +39,7 @@ class TaskSubscriber implements EventSubscriber
         LoggerInterface $logger,
         private Geocoder $geocoder,
         private OrderManager $orderManager
-    )
-    {
+    ) {
         $this->eventBus = $eventBus;
         $this->eventStore = $eventStore;
         $this->processor = $processor;
@@ -151,7 +151,7 @@ class TaskSubscriber implements EventSubscriber
      *
      * @param UnitOfWork $uow
      */
-    private function handleAddressesChangesForTasks(/* UnitOfWork */ $uow, array $tasksToUpdate, \SplObjectStorage $createdAddresses)
+    private function handleAddressesChangesForTasks(/* UnitOfWork */$uow, array $tasksToUpdate, \SplObjectStorage $createdAddresses)
     {
         $isAddress = function ($entity) {
             return $entity instanceof Address;
@@ -182,11 +182,8 @@ class TaskSubscriber implements EventSubscriber
                             ];
                         }
                     }
-
                 }
-
             }
-
         }
     }
 
@@ -200,11 +197,14 @@ class TaskSubscriber implements EventSubscriber
 
             $changeset = $uow->getEntityChangeSet($taskToUpdate);
 
+            $this->eventBus->dispatch(new TaskUpdated($taskToUpdate));
+
+
             if (!isset($changeset['status'])) {
                 continue;
             }
 
-            [ $oldValue, $newValue ] = $changeset['status'];
+            [$oldValue, $newValue] = $changeset['status'];
 
             if ($newValue === Task::STATUS_CANCELLED) {
 
