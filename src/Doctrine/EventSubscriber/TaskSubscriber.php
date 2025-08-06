@@ -197,15 +197,19 @@ class TaskSubscriber implements EventSubscriber
 
             $changeset = $uow->getEntityChangeSet($taskToUpdate);
 
+            if(isset($changeset['tags'])) {
+                $this->eventBus->dispatch(new TaskUpdated($taskToUpdate));
+            }
+
             if (!isset($changeset['status'])) {
                 continue;
             }
 
-            if(!isset($changeset['tags'])) {
-                continue;
-            } else {
-                $this->eventBus->dispatch(new TaskUpdated($taskToUpdate));
-            }
+            // if(!isset($changeset['tags'])) {
+            //     continue;
+            // } else {
+            //     $this->eventBus->dispatch(new TaskUpdated($taskToUpdate));
+            // }
 
             [$oldValue, $newValue] = $changeset['status'];
 
