@@ -205,12 +205,6 @@ class TaskSubscriber implements EventSubscriber
                 continue;
             }
 
-            // if(!isset($changeset['tags'])) {
-            //     continue;
-            // } else {
-            //     $this->eventBus->dispatch(new TaskUpdated($taskToUpdate));
-            // }
-
             [$oldValue, $newValue] = $changeset['status'];
 
             if ($newValue === Task::STATUS_CANCELLED) {
