@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect'
+import { createSelector } from '@reduxjs/toolkit'
 import _ from 'lodash'
 
 import { totalTaxExcluded } from '../../utils/tax'
