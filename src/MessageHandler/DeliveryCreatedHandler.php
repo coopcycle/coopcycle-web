@@ -90,13 +90,11 @@ class DeliveryCreatedHandler
 
         if ($order && $order->isFoodtech()) {
             $title .= " -> " . $order->getShippingAddress()->getStreetAddress();
-            // TODO: Translate PU and DO
             $body = $PU. ": " . $puafdt . " | " . $DO . ": " . $doafdt;
         } else {
             $title .= " -> ";
             switch (Delivery::getType($tasks)) {
                 case Delivery::TYPE_SIMPLE:
-                    // TODO: Translate..!
                     $body = $PU. ": " . $puafdt . "-" . $pubfdt . " | " . $DO . ": " . $doafdt . "-" . $dobfdt;
                     if (!$ownerIsPickupAddr) { // Pickup address is not the owner address
                         [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($pickup);
@@ -104,7 +102,6 @@ class DeliveryCreatedHandler
                     }
                     [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($dropoff);
                     $title .= $ttitle;
-                    // TODO: Translate..!
                     $body .= $tbody ? "\n" . $DO . ": " . $tbody : '';
                     break;
                 case Delivery::TYPE_MULTI_PICKUP:
@@ -115,9 +112,11 @@ class DeliveryCreatedHandler
                     $puafdt = $firstPickup->getAfter()->format('H:i');
                     $pubfdt = $lastPickup->getBefore()->format('H:i');
                     $body = $PUs. ": " . $puafdt . "-" . $pubfdt . " | " . $DO . ": " . $doafdt . "-" . $dobfdt;
-                    foreach ($pickups as $idx => $pickup) {
+                    foreach ($pickups as $pickup) {
                         [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($pickup);
-                        $body .= "\n" . $PU . " " . ($idx+1) . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
+                        $afdt = $pickup->getAfter()->format('H:i');
+                        $bfdt = $pickup->getBefore()->format('H:i');
+                        $body .= "\n" . $PU . " " . $afdt . "-" . $bfdt . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
                     }
                     [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($dropoff);
                     $title .= $ttitle;
@@ -135,9 +134,11 @@ class DeliveryCreatedHandler
                         [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($pickup);
                         $body .= "\n" . $PU . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
                     }
-                    foreach ($dropoffs as $idx => $dropoff) {
+                    foreach ($dropoffs as $dropoff) {
                         [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($dropoff);
-                        $body .= "\n" . $DO . " " . ($idx+1) . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
+                        $afdt = $dropoff->getAfter()->format('H:i');
+                        $bfdt = $dropoff->getBefore()->format('H:i');
+                        $body .= "\n" . $DO . " " . $afdt . "-" . $bfdt . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
                     }
                     break;
                 case Delivery::TYPE_MULTI_MULTI:
@@ -153,13 +154,17 @@ class DeliveryCreatedHandler
                     $doafdt = $firstDropoff->getBefore()->format('H:i');
                     $dobfdt = $lastDropoff->getBefore()->format('H:i');
                     $body = $PUs. ": " . $puafdt . "-" . $pubfdt . " | " . $DOs . ": " . $doafdt . "-" . $dobfdt;
-                    foreach ($pickups as $idx => $pickup) {
+                    foreach ($pickups as $pickup) {
                         [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($pickup);
-                        $body .= "\n" . $PU . " " . ($idx+1) . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
+                        $afdt = $pickup->getAfter()->format('H:i');
+                        $bfdt = $pickup->getBefore()->format('H:i');
+                        $body .= "\n" . $PU . " " . $afdt . "-" . $bfdt . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
                     }
-                    foreach ($dropoffs as $idx => $dropoff) {
+                    foreach ($dropoffs as $dropoff) {
                         [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($dropoff);
-                        $body .= "\n" . $DO . " " . ($idx+1) . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
+                        $afdt = $dropoff->getAfter()->format('H:i');
+                        $bfdt = $dropoff->getBefore()->format('H:i');
+                        $body .= "\n" . $DO . " " . $afdt . "-" . $bfdt . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
                     }
                     break;
             }
