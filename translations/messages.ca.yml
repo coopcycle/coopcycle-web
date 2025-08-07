@@ -208,7 +208,7 @@ order.summary.heading: Comanda %number%
 order.total_including_tax: Total (amb IVA)
 order.items_total: Total de productes
 order.total_tax: IVA
-order.total_tax_by_rate: Total %name%
+order.total_tax_by_rate: IVA %name%
 order.preparation_expected_at: Preparació començant al %date%
 order.preparation_expected_for: Preparació esperada al %date%
 order.shipping_date.title: La vostra data d’enviament
