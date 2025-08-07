@@ -80,68 +80,70 @@ class DeliveryCreatedHandler
         $ownerIsPickupAddr = $delivery->getOwner()->getAddress()->getStreetAddress() === $pickup->getAddress()->getStreetAddress();
         $title = $delivery->getOwner()->getName();
         $body = $this->translator->trans('notifications.tap_to_open');
+        // Translate the ones below if needed/wanted
+        $PU = "PU";
+        $PUs = "PUs";
+        $DO = "DO";
+        $DOs = "DOs";
+        $pickups_str = "pickups";
+        $dropoffs_str = "dropoffs";
 
         if ($order && $order->isFoodtech()) {
             $title .= " -> " . $order->getShippingAddress()->getStreetAddress();
             // TODO: Translate PU and DO
-            $body = "PU: " . $puafdt . " | DO: " . $doafdt;
+            $body = $PU. ": " . $puafdt . " | " . $DO . ": " . $doafdt;
         } else {
             $title .= " -> ";
             switch (Delivery::getType($tasks)) {
                 case Delivery::TYPE_SIMPLE:
                     // TODO: Translate..!
-                    $body = "PU: " . $puafdt . "-" . $pubfdt . " | DO: " . $doafdt . "-" . $dobfdt;
+                    $body = $PU. ": " . $puafdt . "-" . $pubfdt . " | " . $DO . ": " . $doafdt . "-" . $dobfdt;
                     if (!$ownerIsPickupAddr) { // Pickup address is not the owner address
                         [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($pickup);
-                        $body .= "\nPU: " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
+                        $body .= "\n" . $PU . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
                     }
                     [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($dropoff);
                     $title .= $ttitle;
                     // TODO: Translate..!
-                    $body .= $tbody ? "\nDO: " . $tbody : '';
+                    $body .= $tbody ? "\n" . $DO . ": " . $tbody : '';
                     break;
                 case Delivery::TYPE_MULTI_PICKUP:
                     $pickups = array_values(array_filter($tasks, fn($t) => $t->isPickup()));
-                    $title = count($pickups) . " pickups -> ";
+                    $title = count($pickups) . " " . $pickups_str . " -> ";
                     $firstPickup = $pickups[0];
                     $lastPickup = $pickups[ count($pickups) - 1 ];
                     $puafdt = $firstPickup->getAfter()->format('H:i');
                     $pubfdt = $lastPickup->getBefore()->format('H:i');
-                    // TODO: Translate..!
-                    $body = "PUs: " . $puafdt . "-" . $pubfdt . " | DO: " . $doafdt . "-" . $dobfdt;
+                    $body = $PUs. ": " . $puafdt . "-" . $pubfdt . " | " . $DO . ": " . $doafdt . "-" . $dobfdt;
                     foreach ($pickups as $idx => $pickup) {
                         [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($pickup);
-                        // TODO: Translate..!
-                        $body .= "\nPU " . ($idx+1) . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
+                        $body .= "\n" . $PU . " " . ($idx+1) . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
                     }
                     [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($dropoff);
                     $title .= $ttitle;
-                    // TODO: Translate..!
-                    $body .= $tbody ? "\nDO: " . $tbody : '';
+                    $body .= $tbody ? "\n" . $DO . ": " . $tbody : '';
                     break;
                 case Delivery::TYPE_MULTI_DROPOFF:
                     $dropoffs = array_values(array_filter($tasks, fn($t) => $t->isDropoff()));
-                    $title .= count($dropoffs) . " dropoffs";
+                    $title .= count($dropoffs) . " " . $dropoffs_str;
                     $firstDropoff = $dropoffs[0];
                     $lastDropoff = $dropoffs[ count($dropoffs) - 1 ];
                     $doafdt = $firstDropoff->getBefore()->format('H:i');
                     $dobfdt = $lastDropoff->getBefore()->format('H:i');
-                    // TODO: Translate..!
-                    $body = "PU: " . $puafdt . "-" . $pubfdt . " | DOs: " . $doafdt . "-" . $dobfdt;
+                    $body = $PU. ": " . $puafdt . "-" . $pubfdt . " | " . $DOs . ": " . $doafdt . "-" . $dobfdt;
                     if (!$ownerIsPickupAddr) { // Pickup address is not the owner address
                         [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($pickup);
-                        $body .= "\nPU: " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
+                        $body .= "\n" . $PU . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
                     }
                     foreach ($dropoffs as $idx => $dropoff) {
                         [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($dropoff);
-                        // TODO: Translate..!
-                        $body .= "\nDO " . ($idx+1) . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
+                        $body .= "\n" . $DO . " " . ($idx+1) . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
                     }
                     break;
                 case Delivery::TYPE_MULTI_MULTI:
                     $pickups = array_values(array_filter($tasks, fn($t) => $t->isPickup()));
                     $dropoffs = array_values(array_filter($tasks, fn($t) => $t->isDropoff()));
-                    $title = count($pickups) . " pickups -> " . count($dropoffs) . " dropoffs";
+                    $title = count($pickups) . " " . $pickups_str . " -> " . count($dropoffs) . " " . $dropoffs_str;
                     $firstPickup = $pickups[0];
                     $lastPickup = $pickups[ count($pickups) - 1 ];
                     $firstDropoff = $dropoffs[0];
@@ -150,17 +152,14 @@ class DeliveryCreatedHandler
                     $pubfdt = $lastPickup->getBefore()->format('H:i');
                     $doafdt = $firstDropoff->getBefore()->format('H:i');
                     $dobfdt = $lastDropoff->getBefore()->format('H:i');
-                    // TODO: Translate..!
-                    $body = "PUs: " . $puafdt . "-" . $pubfdt . " | DOs: " . $doafdt . "-" . $dobfdt;
+                    $body = $PUs. ": " . $puafdt . "-" . $pubfdt . " | " . $DOs . ": " . $doafdt . "-" . $dobfdt;
                     foreach ($pickups as $idx => $pickup) {
                         [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($pickup);
-                        // TODO: Translate..!
-                        $body .= "\nPU " . ($idx+1) . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
+                        $body .= "\n" . $PU . " " . ($idx+1) . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
                     }
                     foreach ($dropoffs as $idx => $dropoff) {
                         [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($dropoff);
-                        // TODO: Translate..!
-                        $body .= "\nDO " . ($idx+1) . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
+                        $body .= "\n" . $DO . " " . ($idx+1) . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
                     }
                     break;
             }
