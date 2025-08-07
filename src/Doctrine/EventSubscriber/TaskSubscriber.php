@@ -31,6 +31,7 @@ class TaskSubscriber implements EventSubscriber
     private $tasksToUpdate = [];
     private $postFlushEvents = [];
     private $createdAddresses;
+    private $statusChanges = []; 
 
     public function __construct(
         MessageBusInterface $eventBus,
@@ -64,6 +65,7 @@ class TaskSubscriber implements EventSubscriber
         $this->postFlushEvents = [];
         $this->processor->eraseMessages();
         $this->createdAddresses = new \SplObjectStorage();
+        $this->statusChanges = [];
 
         $em = $args->getEntityManager();
         $uow = $em->getUnitOfWork();
@@ -98,6 +100,22 @@ class TaskSubscriber implements EventSubscriber
 
         foreach ($tasks as $task) {
             $this->processor->process($task, $uow->getEntityChangeSet($task));
+        }
+
+        foreach ($this->tasksToUpdate as $task) {
+            $changeset = $uow->getEntityChangeSet($task);
+
+            $domainEvent = new TaskUpdated($task);
+            $taskEvent = $this->eventStore->createEvent($domainEvent);
+            $task->addEvent($taskEvent);
+            $this->postFlushEvents[] = $domainEvent;
+            if (isset($changeset['status'])) {
+                $this->statusChanges[spl_object_id($task)] = $changeset['status'];
+            }
+        }
+
+        if (count($this->tasksToUpdate) > 0) {
+            $uow->computeChangeSets();
         }
 
         foreach ($this->processor->recordedMessages as $recordedMessage) {
@@ -141,8 +159,10 @@ class TaskSubscriber implements EventSubscriber
         }
 
         $this->createdTasks = [];
+        $this->tasksToUpdate = [];
         $this->postFlushEvents = [];
         $this->processor->eraseMessages();
+        $this->statusChanges = [];
     }
 
     /**
@@ -190,22 +210,16 @@ class TaskSubscriber implements EventSubscriber
     /**
      * @param Task[] $tasksToUpdate
      */
-    private function handleStateChangesForTasks(EntitymanagerInterface $em, array $tasksToUpdate): void
+    private function handleStateChangesForTasks(EntityManagerInterface $em, array $tasksToUpdate): void
     {
-        $uow = $em->getUnitOfWork();
         foreach ($tasksToUpdate as $taskToUpdate) {
 
-            $changeset = $uow->getEntityChangeSet($taskToUpdate);
-
-            if(isset($changeset['tags'])) {
-                $this->eventBus->dispatch(new TaskUpdated($taskToUpdate));
-            }
-
-            if (!isset($changeset['status'])) {
+            $taskId = spl_object_id($taskToUpdate);
+            if (!isset($this->statusChanges[$taskId])) {
                 continue;
             }
 
-            [$oldValue, $newValue] = $changeset['status'];
+            [$oldValue, $newValue] = $this->statusChanges[$taskId];
 
             if ($newValue === Task::STATUS_CANCELLED) {
 
