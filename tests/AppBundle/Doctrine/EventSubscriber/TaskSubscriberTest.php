@@ -364,7 +364,7 @@ class TaskSubscriberTest extends TestCase
             new PostFlushEventArgs($this->entityManager->reveal())
         );
 
-        $this->assertCount(0, $task->getEvents());
+        $this->assertCount(1, $task->getEvents());
         $this->eventBus
             ->dispatch(Argument::type(TaskCreated::class))
             ->shouldNotHaveBeenCalled();
@@ -448,8 +448,8 @@ class TaskSubscriberTest extends TestCase
             new PostFlushEventArgs($this->entityManager->reveal())
         );
 
-        $this->assertCount(0, $task1->getEvents());
-        $this->assertCount(0, $task2->getEvents());
+        $this->assertCount(1, $task1->getEvents());
+        $this->assertCount(1, $task2->getEvents());
 
         $this->eventBus
             ->dispatch(Argument::type(TaskCreated::class))
@@ -504,7 +504,7 @@ class TaskSubscriberTest extends TestCase
             new PostFlushEventArgs($this->entityManager->reveal())
         );
 
-        $this->assertCount(0, $task->getEvents());
+        $this->assertCount(1, $task->getEvents());
         $this->eventBus
             ->dispatch(Argument::type(TaskCreated::class))
             ->shouldNotHaveBeenCalled();

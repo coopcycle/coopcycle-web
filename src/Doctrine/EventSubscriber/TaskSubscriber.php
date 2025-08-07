@@ -114,10 +114,6 @@ class TaskSubscriber implements EventSubscriber
             }
         }
 
-        if (count($this->tasksToUpdate) > 0) {
-            $uow->computeChangeSets();
-        }
-
         foreach ($this->processor->recordedMessages as $recordedMessage) {
             // If the task is not persisted yet (i.e entity insertions),
             // we handle the event in postFlush
