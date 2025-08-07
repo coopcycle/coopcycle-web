@@ -349,7 +349,7 @@ class TaskSubscriberTest extends TestCase
             ]);
         $unitOfWork
             ->computeChangeSets()
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledTimes(2);
 
         $this->entityManager->getUnitOfWork()->willReturn($unitOfWork->reveal());
 
@@ -433,7 +433,7 @@ class TaskSubscriberTest extends TestCase
             ]);
         $unitOfWork
             ->computeChangeSets()
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledTimes(2);
 
         $this->entityManager->getUnitOfWork()->willReturn($unitOfWork->reveal());
 
@@ -489,7 +489,7 @@ class TaskSubscriberTest extends TestCase
             ]);
         $unitOfWork
             ->computeChangeSets()
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledTimes(2);
 
         $this->entityManager->getUnitOfWork()->willReturn($unitOfWork->reveal());
 
@@ -544,7 +544,7 @@ class TaskSubscriberTest extends TestCase
             ]);
         $unitOfWork
             ->computeChangeSets()
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledTimes(2);
 
         $this->entityManager
             ->getUnitOfWork()
@@ -637,7 +637,7 @@ class TaskSubscriberTest extends TestCase
             ]);
         $unitOfWork
             ->computeChangeSets()
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledTimes(2);
 
         $this->entityManager
             ->getUnitOfWork()
@@ -744,7 +744,7 @@ class TaskSubscriberTest extends TestCase
             ]);
         $unitOfWork
             ->computeChangeSets()
-            ->shouldBeCalledTimes(1);
+            ->shouldBeCalledTimes(2);
 
         $this->entityManager
             ->getUnitOfWork()
