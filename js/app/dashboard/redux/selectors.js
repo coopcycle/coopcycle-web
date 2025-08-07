@@ -1,8 +1,8 @@
-import { createSelector } from 'reselect'
 import Fuse from 'fuse.js'
 import Holidays from 'date-holidays'
 import { rrulestr } from 'rrule'
 import {
+  createSelector,
   createEntityAdapter,
 } from '@reduxjs/toolkit'
 
