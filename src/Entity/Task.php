@@ -665,7 +665,10 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         if ($event->getName() === 'task:failed' && $this->containsEventWithName('task:failed')) {
             return;
         }
-
+        if ($event->getName() === 'task:updated' && $this->containsEventWithName('task:updated')) {
+            return;
+        }
+        
         $this->events->add($event);
     }
 
