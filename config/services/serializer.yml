@@ -11,8 +11,6 @@ services:
       $region: '%country_iso%'
 
   AppBundle\Serializer\TemporaryIdNormalizer:
-    arguments:
-      - '@serializer.normalizer.object'
     tags:
       - { name: serializer.normalizer, priority: 130 }
 

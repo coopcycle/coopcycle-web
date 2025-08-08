@@ -5,21 +5,19 @@ namespace AppBundle\Serializer;
 use Ramsey\Uuid\Uuid;
 use ReflectionClass;
 use ReflectionException;
+use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 /**
  * This normalizer is used to generate a temporary id for objects
  * that don't have one yet, but require one for serialization (API Platform; JSON-LD)
  */
-class TemporaryIdNormalizer implements NormalizerInterface
+class TemporaryIdNormalizer implements NormalizerInterface, NormalizerAwareInterface
 {
-    private array $processedObjects = [];
+    use NormalizerAwareTrait;
 
-    public function __construct(
-        private ObjectNormalizer $normalizer,
-    ) {
-    }
+    private array $processedObjects = [];
 
     public function normalize($object, ?string $format = null, array $context = []): mixed
     {

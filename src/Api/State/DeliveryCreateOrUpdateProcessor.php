@@ -12,6 +12,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\UsePricingRules;
+use AppBundle\Pricing\ManualSupplements;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\OrderManager;
@@ -26,6 +27,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
 {
     public function __construct(
         private readonly DeliveryProcessor $decorated,
+        private readonly ManualSupplementsProcessor $manualSupplementsProcessor,
         private readonly ProcessorInterface $persistProcessor,
         private readonly PricingManager $pricingManager,
         private readonly DeliveryOrderManager $deliveryOrderManager,
@@ -51,6 +53,13 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         $errors = $this->validator->validate($delivery);
         if (count($errors) > 0) {
             throw new ValidationException($errors);
+        }
+
+        // Extract manual supplements from the DTO
+        /** @var ManualSupplements|null $manualSupplements */
+        $manualSupplements = null;
+        if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $data instanceof DeliveryDto) {
+            $manualSupplements = $this->manualSupplementsProcessor->process($data, $operation, $uriVariables, $context);
         }
 
         /** @var ArbitraryPrice|null $arbitraryPrice */
@@ -86,6 +95,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                 $delivery,
                 [
                     'pricingStrategy' => $pricingStrategy,
+                    'manualSupplements' => $manualSupplements,
                 ]
             );
 

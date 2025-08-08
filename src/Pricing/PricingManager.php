@@ -25,6 +25,7 @@ use Psr\Log\LoggerInterface;
 use Recurr\Rule;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -47,6 +48,7 @@ class PricingManager
         private readonly OrderItemQuantityModifierInterface $orderItemQuantityModifier,
         private readonly OrderModifierInterface $orderModifier,
         private readonly ProductVariantFactory $productVariantFactory,
+        private readonly OrderProcessorInterface $orderProcessor,
         private readonly TimeSlotManager $timeSlotManager,
         private readonly PriceCalculationVisitor $priceCalculationVisitor,
         private readonly LoggerInterface $logger
@@ -65,7 +67,7 @@ class PricingManager
         return $output->getPrice();
     }
 
-    public function getPriceCalculation(Delivery $delivery, PricingRuleSet $ruleSet): ?PriceCalculationOutput
+    public function getPriceCalculation(Delivery $delivery, PricingRuleSet $ruleSet, ManualSupplements|null $manualSupplements = null): ?PriceCalculationOutput
     {
         // Store might be null if it's an embedded form
         $store = $delivery->getStore();
@@ -94,7 +96,7 @@ class PricingManager
             }
         }
 
-        return $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        return $this->priceCalculationVisitor->visit($delivery, $ruleSet, $manualSupplements);
     }
 
     /**
@@ -102,7 +104,8 @@ class PricingManager
      */
     public function getPriceWithPricingStrategy(
         Delivery $delivery,
-        PricingStrategy $pricingStrategy
+        PricingStrategy $pricingStrategy,
+        ManualSupplements|null $manualSupplements = null
     ): array {
         $store = $delivery->getStore();
 
@@ -128,7 +131,7 @@ class PricingManager
                 ];
             }
 
-            $output = $this->getPriceCalculation($delivery, $pricingRuleSet);
+            $output = $this->getPriceCalculation($delivery, $pricingRuleSet, $manualSupplements);
 
             if (count($output->productVariants) === 0) {
                 $this->logger->warning('Price could not be calculated');
@@ -178,6 +181,9 @@ class PricingManager
         foreach ($items as $item) {
             $this->orderModifier->addToOrder($order, $item);
         }
+
+        // Ensure all order processing is complete before proceeding
+        $this->orderProcessor->process($order);
     }
 
     public function duplicateOrder($store, $orderId): OrderDuplicate | null

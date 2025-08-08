@@ -4,7 +4,12 @@ import { useGetPackagesQuery } from '../../../../api/slice'
 import PickerIsLoading from './PickerIsLoading'
 import PickerIsError from './PickerIsError'
 
-export default function PackagePicker({ value, onChange }) {
+type Props = {
+  value: string
+  onChange: (event: { target: { value: string } }) => void
+}
+
+export default function PackagePicker({ value, onChange }: Props) {
   const { data: packages, isFetching } = useGetPackagesQuery()
 
   if (isFetching) {
