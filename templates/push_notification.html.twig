@@ -1,0 +1,8 @@
+{% set pickup = delivery.pickup %}
+{% set dropoff = delivery.dropoff %}
+
+{% block body %}
+{{ delivery.owner.name }}
+{{ pickup.after.format('H:i') }}
+{{ dropoff.after.format('H:i') }}
+{% endblock %}

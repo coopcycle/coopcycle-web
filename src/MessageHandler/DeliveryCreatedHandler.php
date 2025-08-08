@@ -63,6 +63,11 @@ class DeliveryCreatedHandler
             return;
         }
 
+        $contents = $this->twig->render('push_notification.html.twig', [
+            'delivery' => $delivery
+        ]);
+        var_dump($contents); // TODO Debugging line, remove..!
+
         $tasks = $delivery->getTasks();
         $order = $delivery->getOrder();
         $pickup = $delivery->getPickup();
