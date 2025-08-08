@@ -78,7 +78,8 @@ const Order = ({
     0 as 0 | CalculationOutput | PriceValues,
   )
 
-  const { data: taxRatesData, error: taxRatesError } = useGetTaxRatesQuery()
+  const { data: taxRatesData, isLoading: taxRatesIsLoading,
+    error: taxRatesError } = useGetTaxRatesQuery()
 
   const taxRate = useMemo(() => {
     if (taxRatesError) {
@@ -96,8 +97,8 @@ const Order = ({
     return null
   }, [taxRatesData, taxRatesError])
 
-  const { data: storeData } = useGetStoreQuery(storeNodeId)
-  const { data: pricingRuleSet } = useGetPricingRuleSetQuery(
+  const { data: storeData, isLoading: storeIsLoading } = useGetStoreQuery(storeNodeId)
+  const { data: pricingRuleSet, isLoading: pricingRuleSetIsLoading } = useGetPricingRuleSetQuery(
     storeData?.pricingRuleSet,
     {
       skip: !storeData?.pricingRuleSet,
@@ -140,10 +141,24 @@ const Order = ({
     [storeNodeId],
   )
 
+  const isLoading = useMemo(() => {
+    return (
+      taxRatesIsLoading ||
+      storeIsLoading ||
+      pricingRuleSetIsLoading ||
+      calculatePriceIsLoading
+    )
+  }, [
+    taxRatesIsLoading,
+    storeIsLoading,
+    pricingRuleSetIsLoading,
+    calculatePriceIsLoading,
+  ])
+
   // Pass loading state to parent component
   useEffect(() => {
-    setPriceLoading(calculatePriceIsLoading)
-  }, [calculatePriceIsLoading, setPriceLoading])
+    setPriceLoading(isLoading)
+  }, [isLoading, setPriceLoading])
 
   const calculateResponseData = useMemo(() => {
     const data = calculatePriceData
@@ -243,7 +258,7 @@ const Order = ({
   }, [newPrice, overridePrice, setFieldValue])
 
   return (
-    <Spin spinning={calculatePriceIsLoading}>
+    <Spin spinning={isLoading}>
       <div>
         {isPriceBreakdownEnabled && order !== null ? (
           <Cart order={order} overridePrice={overridePrice} />
