@@ -907,7 +907,7 @@ order.payment.waiting_success: La tua banca ha confermato il pagamento
 order.payment.waiting_failure: La tua banca ha rifiutato il pagamento
 profile.task.dueDate: Data di scadenza
 order.total_tax: IVA
-order.total_tax_by_rate: Totale %name%
+order.total_tax_by_rate: IVA %name%
 profile.task.noTasks: Nessun incarico programmato
 profile.managedRestaurants: Ristoranti gestiti dall'utente
 order.summary.heading: Ordine %number%

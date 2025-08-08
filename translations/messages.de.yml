@@ -275,7 +275,7 @@ demo.disclaimer: <i class="fa fa-bullhorn"></i>  Willkommen auf der Demo der <a 
   href="https://coopcycle.org">CoopCycle</a> Platform
 base.footer.suggest: Restaurant vorschlagen
 profile.myRestaurants.noRestaurants: Du hast noch keine Restaurants
-order.total_tax_by_rate: Summe %name%
+order.total_tax_by_rate: Steuern %name%
 order.delivery_time: Lieferung %time%
 form.task.comments.placeholder: Nenne alle wichtigen Details für die Ausführung des
   Auftrags

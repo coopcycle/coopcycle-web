@@ -272,7 +272,7 @@ order.total_excluding_tax: Celkem (bez DPH)
 order.total_including_tax: Celkem (vč. DPH)
 order.items_total: Celkem produktů
 order.total_tax: DPH
-order.total_tax_by_rate: Celkem %name%
+order.total_tax_by_rate: DPH %name%
 order.preparation_expected_at: Příprava začíná v %date%
 order.preparation_expected_for: Očekává se příprava v %date%
 order.shipping_date.title: Vaše datum dodání
