@@ -204,7 +204,7 @@ order.payer.email: Email
 order.payer.title: Informações do cliente
 order.shipping_date.title: Seu horário de envio
 order.preparation_expected_at: Preparação esperada em% date%
-order.total_tax_by_rate: Total %nome%
+order.total_tax_by_rate: IVA %nome%
 order.total_tax: IVA
 order.items_total: Total de produtos
 order.total_including_tax: Total (com IVA)
