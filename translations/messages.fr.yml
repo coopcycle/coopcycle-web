@@ -277,7 +277,7 @@ order.total_excluding_tax: Total HT
 order.total_including_tax: Total TTC
 order.items_total: Total produits
 order.total_tax: TVA
-order.total_tax_by_rate: Total %name%
+order.total_tax_by_rate: TVA %name%
 order.preparation_expected_at: Préparation à démarrer pour %date%
 order.preparation_expected_for: Préparation attendue pour %date%
 order.net_total_including_tax: Total TTC (net)

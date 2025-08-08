@@ -219,7 +219,7 @@ order.summary.heading: Pedido %number%
 order.total_including_tax: Total (IVA incl.)
 order.items_total: Total productos
 order.total_tax: IVA
-order.total_tax_by_rate: Total %name%
+order.total_tax_by_rate: IVA %name%
 order.preparation_expected_at: Preparación a partir de las %date%
 order.shipping_date.title: Tu horario de entrega
 order.payer.title: Detalles del comprador
