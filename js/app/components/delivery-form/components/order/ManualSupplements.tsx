@@ -13,8 +13,6 @@ type Props = {
 export default function ManualSupplements({ rules }: Props) {
   const { t } = useTranslation()
 
-  //TODO; display loading indicator
-
   return (
     <div>
       <Text strong>{t('DELIVERY_FORM_SUPPLEMENTS')}</Text>
