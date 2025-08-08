@@ -110,7 +110,7 @@ class DeliveryCreatedHandler
                     $firstPickup = $pickups[0];
                     $lastPickup = $pickups[ count($pickups) - 1 ];
                     $puafdt = $firstPickup->getAfter()->format('H:i');
-                    $pubfdt = $lastPickup->getBefore()->format('H:i');
+                    $pubfdt = $lastPickup->getAfter()->format('H:i'); // Use last's "after" as "before" for multiple PUs
                     $body = $PUs. ": " . $puafdt . "-" . $pubfdt . " | " . $DO . ": " . $doafdt . "-" . $dobfdt;
                     foreach ($pickups as $pickup) {
                         [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($pickup);
@@ -127,8 +127,8 @@ class DeliveryCreatedHandler
                     $title .= count($dropoffs) . " " . $dropoffs_str;
                     $firstDropoff = $dropoffs[0];
                     $lastDropoff = $dropoffs[ count($dropoffs) - 1 ];
-                    $doafdt = $firstDropoff->getBefore()->format('H:i');
-                    $dobfdt = $lastDropoff->getBefore()->format('H:i');
+                    $doafdt = $firstDropoff->getAfter()->format('H:i');
+                    $dobfdt = $lastDropoff->getAfter()->format('H:i'); // Use last's "after" as "before" for multiple DOs
                     $body = $PU. ": " . $puafdt . "-" . $pubfdt . " | " . $DOs . ": " . $doafdt . "-" . $dobfdt;
                     if (!$ownerIsPickupAddr) { // Pickup address is not the owner address
                         [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($pickup);
@@ -150,9 +150,9 @@ class DeliveryCreatedHandler
                     $firstDropoff = $dropoffs[0];
                     $lastDropoff = $dropoffs[ count($dropoffs) - 1 ];
                     $puafdt = $firstPickup->getAfter()->format('H:i');
-                    $pubfdt = $lastPickup->getBefore()->format('H:i');
-                    $doafdt = $firstDropoff->getBefore()->format('H:i');
-                    $dobfdt = $lastDropoff->getBefore()->format('H:i');
+                    $pubfdt = $lastPickup->getAfter()->format('H:i'); // Use last's "after" as "before" for multiple PUs
+                    $doafdt = $firstDropoff->getAfter()->format('H:i');
+                    $dobfdt = $lastDropoff->getAfter()->format('H:i'); // Use last's "after" as "before" for multiple DOs
                     $body = $PUs. ": " . $puafdt . "-" . $pubfdt . " | " . $DOs . ": " . $doafdt . "-" . $dobfdt;
                     foreach ($pickups as $pickup) {
                         [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($pickup);
