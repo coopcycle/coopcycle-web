@@ -236,7 +236,7 @@ const PricingRuleSetForm = ({
     const newRule = {
       '@id': generateTempId(),
       target,
-      expression: isManualSupplement ? 'false' : '', // Manual supplements don't need conditions
+      expression: isManualSupplement ? 'false' : '', // Manual supplements don't have conditions
       price: '',
       position: orderedRules.length,
       name: null,

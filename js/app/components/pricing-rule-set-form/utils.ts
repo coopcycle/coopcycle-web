@@ -11,7 +11,7 @@ export function getPriceValue(price: Price): number {
     // 10000 = 100.00%
     return (price.percentage || 10000) / 100 - 100
   } else {
-    //TODO
+    //TODO in https://github.com/coopcycle/coopcycle/issues/447
     //  price instanceof PriceRange:
     //   return price.price / 100
     //  price instanceof PricePerPackage:

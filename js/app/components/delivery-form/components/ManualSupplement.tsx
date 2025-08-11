@@ -22,7 +22,7 @@ export function formatPrice(price: Price): string {
       return `${value}%`
     }
   } else {
-    //TODO
+    //TODO in https://github.com/coopcycle/coopcycle/issues/447
     // price instanceof PriceRange:
     //   return price.price / 100
     return ''
@@ -34,8 +34,7 @@ type Props = {
 }
 
 export default function ManualSupplement({ rule }: Props) {
-  //TODO; display price (similarly to foodtech) (fixed; percentage)
-  //TODO; add support for range type
+  //TODO; add support for range type in https://github.com/coopcycle/coopcycle/issues/447
 
   const { values, setFieldValue } = useDeliveryFormFormikContext()
 
@@ -43,7 +42,6 @@ export default function ManualSupplement({ rule }: Props) {
     return rule.priceAst ? parsePriceAST(rule.priceAst, rule.price) : null
   }, [rule.priceAst, rule.price])
 
-  // Check if this supplement is currently selected
   const isChecked = useMemo(() => {
     return values.order.manualSupplements.some(
       supplement => supplement['@id'] === rule['@id'],

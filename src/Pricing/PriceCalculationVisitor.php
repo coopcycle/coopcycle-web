@@ -214,7 +214,7 @@ class PriceCalculationVisitor
         if ($object instanceof Delivery && count($manualOrderSupplements) > 0) {
             foreach ($manualOrderSupplements as $supplement) {
                 $rule = $supplement->pricingRule;
-                //TODO; handle with range-based supplements
+                //TODO; handle with range-based supplements in https://github.com/coopcycle/coopcycle/issues/447
 //                $quantity = $supplement->quantity;
 
                 $ruleResult = new RuleResult($rule, true);
