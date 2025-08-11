@@ -685,7 +685,7 @@ const DeliveryForm = ({
                   Mode.RECURRENCE_RULE_UPDATE,
                 ]) && isDispatcher ? (
                   <div
-                    className="border-top pt-2 pb-3"
+                    className="border-top py-3"
                     data-testid="recurrence-container">
                     <RecurrenceRules />
                   </div>
