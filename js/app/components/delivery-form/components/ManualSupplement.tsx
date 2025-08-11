@@ -74,7 +74,7 @@ export default function ManualSupplement({ rule }: Props) {
   }
 
   return (
-    <div>
+    <div className='py-1'>
       <Checkbox checked={isChecked} onChange={onChange}>
         {rule.name}
       </Checkbox>
