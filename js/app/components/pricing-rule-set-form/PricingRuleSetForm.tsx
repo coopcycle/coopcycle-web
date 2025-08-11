@@ -453,7 +453,9 @@ const PricingRuleSetForm = ({
                           moveRuleWithinTarget={moveRuleWithinTarget}
                           ruleValidationErrors={ruleValidationErrors}
                           onAddRule={addRule}
-                          manualSupplementRules={taskManualSupplementRules}
+                          // Task manual supplements are not supported yet
+                          // manualSupplementRules={taskManualSupplementRules}
+                          manualSupplementRules={undefined}
                         />
                       ),
                     },
