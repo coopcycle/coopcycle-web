@@ -26,7 +26,7 @@ if (container) {
       <Provider store={store}>
         <PricingRuleSetForm
           ruleSetId={ruleSetId ? parseInt(ruleSetId) : null}
-          ruleSetNodeId={
+          ruleSetUri={
             ruleSetId ? `api/pricing_rule_sets/${ruleSetId}` : null
           }
           isNew={isNew}

@@ -36,13 +36,13 @@ const isTempId = (id: string): boolean => id.startsWith('temp-')
 
 type Props = {
   ruleSetId: number | null
-  ruleSetNodeId: Uri | null
+  ruleSetUri: Uri | null
   isNew?: boolean
 }
 
 const PricingRuleSetForm = ({
   ruleSetId,
-  ruleSetNodeId,
+  ruleSetUri,
   isNew = false,
 }: Props) => {
   const { t } = useTranslation()
@@ -104,7 +104,7 @@ const PricingRuleSetForm = ({
     data: ruleSet,
     isLoading: isLoadingRuleSet,
     error: ruleSetError,
-  } = useGetPricingRuleSetQuery(ruleSetNodeId, {
+  } = useGetPricingRuleSetQuery(ruleSetUri, {
     skip: isNew,
   })
 
