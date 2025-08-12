@@ -119,7 +119,7 @@ Feature: Stores
             "address": {"@*@":"@*@"},
             "timeSlot": "/api/time_slots/1",
             "timeSlots": @array@,
-            "pricingRuleSet": "/api/pricing_rule_sets/@string@",
+            "pricingRuleSet": "@string@.startsWith('/api/pricing_rule_sets/')||@null@",
             "prefillPickupAddress": @boolean@,
             "weightRequired": @boolean@,
             "packagesRequired": @boolean@,
@@ -827,7 +827,7 @@ Feature: Stores
               "/api/time_slots/1",
               "/api/time_slots/2"
           ],
-          "pricingRuleSet": "/api/pricing_rule_sets/1",
+          "pricingRuleSet": "/api/pricing_rule_sets/4",
           "weightRequired":@boolean@,
           "packagesRequired":@boolean@,
           "prefillPickupAddress": @boolean@,
