@@ -97,7 +97,7 @@ const PricingRuleSection = ({
             <Button
               icon={<PlusOutlined />}
               onClick={() => onAddRule(target, true)}
-              data-testid={`pricing-rule-set-add-rule-target-${target.toLowerCase()}`}>
+              data-testid={`pricing-rule-set-add-supplement-target-${target.toLowerCase()}`}>
               {t('PRICING_RULE_SET_ADD_MANUAL_SUPPLEMENT')}
             </Button>
           </div>
