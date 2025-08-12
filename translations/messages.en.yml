@@ -1537,6 +1537,7 @@ form.settings.notifications.order.dropped: Order dropped
 form.settings.notifications.order.fulfilled: Order fulfilled
 form.settings.notifications.order.updated: Order updated
 form.settings.notifications.task.created: Task created
+form.settings.notifications.task.updated: Task updated
 form.settings.notifications.task.assigned: Task assigned
 form.settings.notifications.task.unassigned: Task unassigned
 form.settings.notifications.task.started: Task started

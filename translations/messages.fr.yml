@@ -1387,6 +1387,7 @@ form.settings.notifications.order.dropped: Commande déposée
 form.settings.notifications.order.fulfilled: Commande terminée
 form.settings.notifications.order.updated: Commande mise à jour
 form.settings.notifications.task.created: Tâche créée
+form.settings.notifications.task.updated: Tâche mise à jour
 form.settings.notifications.task.assigned: Tâche assignée
 form.settings.notifications.task.unassigned: Tâche désassignée
 form.settings.notifications.task.started: Tâche commencée

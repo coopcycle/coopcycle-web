@@ -1453,6 +1453,7 @@ form.settings.notifications.order.dropped: Pedido entregado
 form.settings.notifications.order.fulfilled: Pedido finalizado
 form.settings.notifications.order.updated: Pedido actualizado
 form.settings.notifications.task.created: Tarea creada
+form.settings.notifications.task.updated: Tarea actualizada
 form.settings.notifications.task.assigned: Tarea asignada
 form.settings.notifications.task.unassigned: Tarea desasignada
 form.settings.notifications.task.started: Tarea comenzada
