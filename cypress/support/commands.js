@@ -776,7 +776,7 @@ Cypress.Commands.add('validatePricingRuleSet', ruleSet => {
 
   // Validate delivery rules
   if (ruleSet.deliveryRules && ruleSet.deliveryRules.length > 0) {
-    cy.get('[data-testid="pricing-rule-set-target-delivery"]').within(() => {
+    cy.get('[data-rfd-droppable-id="pricing-rules-delivery"]').within(() => {
       cy.get('[data-testid^="pricing-rule-set-rule-"]').should(
         'have.length',
         ruleSet.deliveryRules.length,
@@ -785,9 +785,19 @@ Cypress.Commands.add('validatePricingRuleSet', ruleSet => {
     cy.validatePricingRules(ruleSet.deliveryRules)
   }
 
+  // Validate delivery manual supplement rules
+  if (ruleSet.deliveryManualSupplementRules && ruleSet.deliveryManualSupplementRules.length > 0) {
+    cy.get('[data-rfd-droppable-id="manual-supplements-delivery"]').within(() => {
+      cy.get('[data-testid^="pricing-rule-set-rule-"]').should(
+        'have.length',
+        ruleSet.deliveryManualSupplementRules.length,
+      )
+    })
+  }
+
   // Validate task rules
   if (ruleSet.taskRules && ruleSet.taskRules.length > 0) {
-    cy.get('[data-testid="pricing-rule-set-target-task"]').within(() => {
+    cy.get('[data-rfd-droppable-id="pricing-rules-task"]').within(() => {
       cy.get('[data-testid^="pricing-rule-set-rule-"]').should(
         'have.length',
         ruleSet.taskRules.length,
