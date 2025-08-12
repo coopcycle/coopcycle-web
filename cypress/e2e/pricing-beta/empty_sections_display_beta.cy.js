@@ -24,14 +24,14 @@ context(
       cy.get('[data-testid="pricing-rule-set-target-task"]').within(() => {
         cy.get('.ant-alert-info').should(
           'contain',
-          'Ajouter une règle à appliquer pour chaque point (tâche de RETRAIT et/ou de DÉPÔT), recommandée pour les livraisons complexes à points multiples',
+          'Add rules to be applied per each point (PICKUP and/or DROPOFF task)',
         )
       })
 
       cy.get('[data-testid="pricing-rule-set-target-delivery"]').within(() => {
         cy.get('.ant-alert-info').should(
           'contain',
-          'Ajouter une règle à appliquer une fois par commande, recommandée pour les livraisons simples (un retrait, un dépôt) et les commandes Food Tech',
+          'Add rules to be applied once per order',
         )
       })
     })
