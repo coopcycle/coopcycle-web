@@ -73,7 +73,7 @@ export default function ManualSupplement({ rule }: Props) {
 
   return (
     <div className='py-1'>
-      <Checkbox checked={isChecked} onChange={onChange}>
+      <Checkbox data-testid={`manual-supplement-${rule.name}`} checked={isChecked} onChange={onChange}>
         {rule.name}
       </Checkbox>
       {price ? <span className="pull-right">{formatPrice(price)}</span> : null}
