@@ -738,6 +738,21 @@
         "DELIVERY_PROOFS_CONTENTS": "Contenido",
         "DELIVERY_PROOFS_CONTENTS_VALUE": "Fotos e Informes",
         "DELIVERY_PROOFS_FILE_TYPE": "Tipo de Archivo",
-        "DELIVERY_PROOFS_FILE_TYPE_VALUE": "Archivo ZIP"
+        "DELIVERY_PROOFS_FILE_TYPE_VALUE": "Archivo ZIP",
+        "NO": "No",
+        "YES": "Sí",
+        "RULE_TARGET_DELIVERY_HELP": "Agregar reglas que se aplicarán una vez por pedido",
+        "RULE_TARGET_TASK_HELP": "Agregar reglas que se aplicarán por cada punto (tarea de RECOGIDA y/o ENTREGA)",
+        "FORM_PRICING_RULE_MANUAL_SUPPLEMENT_NAME_REQUIRED": "Debe proporcionar un nombre para el suplemento manual",
+        "DELIVERY_FORM_SUPPLEMENTS": "Suplementos",
+        "PRICING_RULE_SET_FORM_ERROR": "Error",
+        "PRICING_RULE_SET_FORM_FAILED_TO_LOAD": "Error al cargar el conjunto de reglas de precios",
+        "PRICING_RULE_SET_MANUAL_SUPPLEMENTS": "Suplementos manuales",
+        "PRICING_RULE_SET_MANUAL_SUPPLEMENTS_HELP": "Configurar suplementos manuales que se pueden agregar manualmente a cada pedido",
+        "PRICING_RULE_SET_ADD_MANUAL_SUPPLEMENT": "Agregar suplemento manual",
+        "PRICING_RULE_PICKER_VEHICLE_BIKE": "Bicicleta",
+        "PRICING_RULE_PICKER_VEHICLE_CARGO_BIKE": "Bicicleta de carga",
+        "PRICING_RULE_PICKER_UNIT_KM": "km",
+        "PRICING_RULE_PICKER_UNIT_KG": "kg"
     }
 }

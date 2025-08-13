@@ -26,7 +26,11 @@ delivery.tasks.unexpectedCount: La entrega debe consistir en dos tareas.
 delivery.tasks.pickupAfterDropoff: La date de dépôt doit être postérieure à la date de retrait.
 
 delivery.check.notValid: Votre demande n'est pas réalisable
+delivery.check.noStore: Vous devez fournir un magasin
 delivery.check.outOfBounds: Votre demande est en dehors de la zone acceptée ou trop éloignée
+
+manual_supplements.invalid_supplement: Supplément manuel invalide
+manual_supplements.supplement_not_in_store_rule_set: Le supplément manuel %supplement_uri% n'appartient pas au jeu de règles de tarification du magasin
 
 time_range.empty: Vous n'avez sélectionné aucune valeur
 time_range.no_weekday: Vous n'avez pas sélectionné de jour de la semaine

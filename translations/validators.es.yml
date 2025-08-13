@@ -28,6 +28,11 @@ delivery.tasks.pickupAfterDropoff: La fecha de presentación debe ser posterior 
   fecha de retiro.
 
 delivery.check.notValid: Su solicitud no es factible
+delivery.check.noStore: Debe proporcionar una tienda
+delivery.check.outOfBounds: Su solicitud está fuera de la zona aceptada o demasiado lejos
+
+manual_supplements.invalid_supplement: Suplemento manual inválido
+manual_supplements.supplement_not_in_store_rule_set: El suplemento manual %supplement_uri% no pertenece al conjunto de reglas de precios de la tienda
 
 time_range.empty: No seleccionó ningún valor
 time_range.no_weekday: No seleccionó un día de la semana
