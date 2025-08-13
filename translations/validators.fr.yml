@@ -69,7 +69,6 @@ spreadsheet.csv_encoding: Les fichiers CSV doivent être encodés en UTF-8
 
 siret.head_office: Vous devez fournir le numéro SIRET de l'établissement, et non du siège social.
 
-delivery.check.noStore: Vous devez fournir un magasin
 order.state.notModifiable: La commande ne peut plus être modifiée
 order.collection.not_available: La méthode de réalisation "collection" n'est pas disponible
 task_group.ref.duplicate: La référence "%ref%" apparaît plusieurs fois

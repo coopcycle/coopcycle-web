@@ -52,7 +52,6 @@ spreadsheet.csv_encoding: Los archivos CSV deben estar codificados en UTF-8
 
 order.fulfillment_methods.empty: Este establecimiento no esta disponible en estos
   momentos
-delivery.check.noStore: Hace falta proporcionar una tienda
 product_option.valuesRange.notAllowed: No se puede definir un rango para una opción
   obligatorio
 product.reusablePackagingUnit.mustBeGreaterThanZero: Se debe de especificar una cantidad
@@ -71,8 +70,6 @@ order.shippingTimeRange.notAvailable: No esta disponible en estos momentos
 pricing_rule.expression.syntax_error: Error de sintax en la expresión "%expression%"
 order.adjustments.unexpectedCount: Número inesperado de "%type%" ajustes
 siret.head_office: Debe facilitar un número SIRET de establecimiento, no de sede social.
-delivery.check.outOfBounds: Su solicitud está fuera de la zona aceptada o demasiado
-  lejos
 dabba.insufficient_wallet: Tu cartera Dabba ha desaparecido %amount%
 googlemaps.api_key.invalid: El Google Maps API Key no es válido. %error%
 loopeat.insufficient_stock: Cantidad insuficiente de envases reutilizables parar «

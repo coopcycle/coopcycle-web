@@ -24,14 +24,14 @@ context(
       cy.get('[data-testid="pricing-rule-set-target-task"]').within(() => {
         cy.get('.ant-alert-info').should(
           'contain',
-          'Add rules to be applied per each point (PICKUP and/or DROPOFF task)',
+          'Ajouter des règles à appliquer pour chaque point (tâche de RETRAIT et/ou de DÉPÔT)',
         )
       })
 
       cy.get('[data-testid="pricing-rule-set-target-delivery"]').within(() => {
         cy.get('.ant-alert-info').should(
           'contain',
-          'Add rules to be applied once per order',
+          'Ajouter des règles à appliquer une fois par commande',
         )
       })
     })
