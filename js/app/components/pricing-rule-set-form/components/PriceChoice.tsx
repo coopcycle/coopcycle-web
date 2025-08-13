@@ -1,21 +1,21 @@
-import { useTranslation } from 'react-i18next'
-import { Select } from 'antd'
-import { PriceType } from '../types/PricingRuleType'
+import { useTranslation } from 'react-i18next';
+import { Select } from 'antd';
+import { PriceType } from '../types/PricingRuleType';
 
-const { Option } = Select
+const { Option } = Select;
 
 type Props = {
-  isManualSupplement: boolean
-  priceType: PriceType
-  handlePriceTypeChange: (type: PriceType) => void
-}
+  isManualSupplement: boolean;
+  priceType: PriceType;
+  handlePriceTypeChange: (type: PriceType) => void;
+};
 
 export function PriceChoice({
   isManualSupplement,
   priceType,
   handlePriceTypeChange,
 }: Props) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <Select
@@ -43,5 +43,5 @@ export function PriceChoice({
         </>
       )}
     </Select>
-  )
+  );
 }

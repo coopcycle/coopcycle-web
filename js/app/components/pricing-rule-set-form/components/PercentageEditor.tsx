@@ -1,40 +1,42 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-import HelpIcon from '../../../components/HelpIcon'
+import React, { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import HelpIcon from '../../../components/HelpIcon';
 
 const convertToUi = (value: number): number => {
-  return value / 100 - 100
-}
+  return value / 100 - 100;
+};
 
 const convertFromUi = (value: string): number => {
-  return Math.round((parseFloat(value) + 100) * 100)
-}
+  return Math.round((parseFloat(value) + 100) * 100);
+};
 
 export type PercentagePriceValue = {
-  percentage: number
-}
+  percentage: number;
+};
 
 type Props = {
-  defaultValue: PercentagePriceValue
-  onChange: (value: { percentage: number }) => void
-}
+  defaultValue: PercentagePriceValue;
+  onChange: (value: { percentage: number }) => void;
+};
 
 export default ({ defaultValue, onChange }: Props) => {
-  const [percentage, setPercentage] = useState(defaultValue.percentage || 10000) // 10000 = 100.00%
+  const [percentage, setPercentage] = useState(
+    defaultValue.percentage || 10000,
+  ); // 10000 = 100.00%
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
-  const initialLoad = useRef(true)
+  const initialLoad = useRef(true);
 
   useEffect(() => {
     if (!initialLoad.current) {
       onChange({
         percentage,
-      })
+      });
     } else {
-      initialLoad.current = false
+      initialLoad.current = false;
     }
-  }, [percentage, onChange])
+  }, [percentage, onChange]);
 
   return (
     <div data-testid="price_rule_percentage_editor">
@@ -47,7 +49,7 @@ export default ({ defaultValue, onChange }: Props) => {
           className="form-control d-inline-block no-number-input-arrow"
           style={{ width: '80px' }}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setPercentage(convertFromUi(e.target.value))
+            setPercentage(convertFromUi(e.target.value));
           }}
         />
         <span className="ml-2">%</span>
@@ -57,5 +59,5 @@ export default ({ defaultValue, onChange }: Props) => {
         />
       </label>
     </div>
-  )
-}
+  );
+};

@@ -1,18 +1,18 @@
-import { useState } from 'react'
-import { InputNumber } from 'antd'
-import { getPriceValue } from '../utils'
+import { useState } from 'react';
+import { InputNumber } from 'antd';
+import { getPriceValue } from '../utils';
 
 export type FixedPriceValue = {
-  value: string
-}
+  value: string;
+};
 
 type Props = {
-  defaultValue: FixedPriceValue
-  onChange: (value: string) => void
-}
+  defaultValue: FixedPriceValue;
+  onChange: (value: string) => void;
+};
 
 export default ({ defaultValue, onChange }: Props) => {
-  const [value, setValue] = useState(getPriceValue(defaultValue))
+  const [value, setValue] = useState(getPriceValue(defaultValue));
 
   //TODO: fix currency?
   return (
@@ -21,11 +21,11 @@ export default ({ defaultValue, onChange }: Props) => {
       value={value}
       onChange={(value: number | null) => {
         if (!value) {
-          return
+          return;
         }
 
-        setValue(value)
-        onChange(`${(value || 0) * 100}`)
+        setValue(value);
+        onChange(`${(value || 0) * 100}`);
       }}
       style={{ width: '100%' }}
       step={0.5}
@@ -33,5 +33,5 @@ export default ({ defaultValue, onChange }: Props) => {
       precision={2}
       addonAfter="€"
     />
-  )
-}
+  );
+};

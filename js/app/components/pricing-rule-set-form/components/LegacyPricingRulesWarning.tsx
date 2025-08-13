@@ -1,15 +1,15 @@
-import React from 'react'
-import { useTranslation } from 'react-i18next'
-import { Button, Card } from 'antd'
-import Alert from '../../../components/core/Alert'
-import { PricingRuleTarget } from '../../../api/types'
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Button, Card } from 'antd';
+import Alert from '../../../components/core/Alert';
+import { PricingRuleTarget } from '../../../api/types';
 
 type Props = {
-  migrateToTarget: (target: PricingRuleTarget) => void
-}
+  migrateToTarget: (target: PricingRuleTarget) => void;
+};
 
 export default function LegacyPricingRulesWarning({ migrateToTarget }: Props) {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <Alert info icon="info">
@@ -35,5 +35,5 @@ export default function LegacyPricingRulesWarning({ migrateToTarget }: Props) {
         </div>
       </div>
     </Alert>
-  )
+  );
 }

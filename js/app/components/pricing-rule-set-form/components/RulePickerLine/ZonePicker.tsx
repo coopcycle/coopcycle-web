@@ -1,23 +1,23 @@
-import React from 'react'
-import { Select } from 'antd'
-import { useGetZonesQuery } from '../../../../api/slice'
-import PickerIsLoading from './PickerIsLoading'
-import PickerIsError from './PickerIsError'
+import React from 'react';
+import { Select } from 'antd';
+import { useGetZonesQuery } from '../../../../api/slice';
+import PickerIsLoading from './PickerIsLoading';
+import PickerIsError from './PickerIsError';
 
 type Props = {
-  value: string
-  onChange: (event: { target: { value: string } }) => void
-}
+  value: string;
+  onChange: (event: { target: { value: string } }) => void;
+};
 
 export default function ZonePicker({ value, onChange }: Props) {
-  const { data: zones, isFetching } = useGetZonesQuery()
+  const { data: zones, isFetching } = useGetZonesQuery();
 
   if (isFetching) {
-    return <PickerIsLoading />
+    return <PickerIsLoading />;
   }
 
   if (!zones) {
-    return <PickerIsError />
+    return <PickerIsError />;
   }
 
   return (
@@ -41,5 +41,5 @@ export default function ZonePicker({ value, onChange }: Props) {
         })),
       ]}
     />
-  )
+  );
 }

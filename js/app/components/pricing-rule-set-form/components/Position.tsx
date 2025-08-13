@@ -1,9 +1,9 @@
-import React from 'react'
+import React from 'react';
 
 type Props = {
-  position: number
-}
+  position: number;
+};
 
 export default function Position({ position }: Props) {
-  return <div>#{position + 1}</div>
+  return <div>#{position + 1}</div>;
 }

@@ -1,64 +1,64 @@
-import React, { useCallback, useMemo } from 'react'
-import Modal from 'react-modal'
-import { useDispatch, useSelector } from 'react-redux'
-import { Trans, useTranslation } from 'react-i18next'
+import React, { useCallback, useMemo } from 'react';
+import Modal from 'react-modal';
+import { useDispatch, useSelector } from 'react-redux';
+import { Trans, useTranslation } from 'react-i18next';
 import {
   rejectSuggestions,
   acceptSuggestions,
   selectSuggestedGain,
   selectSuggestedOrder,
   selectShowSuggestions,
-} from './redux/suggestionsSlice'
-import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext'
+} from './redux/suggestionsSlice';
+import { useDeliveryFormFormikContext } from './hooks/useDeliveryFormFormikContext';
 
-import './SuggestionModal.scss'
-import Itinerary from '../DeliveryItinerary'
-import { TaskPayload as Task } from '../../api/types'
+import './SuggestionModal.scss';
+import Itinerary from '../DeliveryItinerary';
+import { TaskPayload as Task } from '../../api/types';
 
 const SuggestionsModal = () => {
   const { values, setFieldValue, setSubmitting, submitForm } =
-    useDeliveryFormFormikContext()
+    useDeliveryFormFormikContext();
 
   const tasks = useMemo((): Task[] => {
-    return values.tasks || []
-  }, [values.tasks])
+    return values.tasks || [];
+  }, [values.tasks]);
 
-  const suggestedGain = useSelector(selectSuggestedGain)
-  const suggestedOrder = useSelector(selectSuggestedOrder)
+  const suggestedGain = useSelector(selectSuggestedGain);
+  const suggestedOrder = useSelector(selectSuggestedOrder);
 
   const suggestedTasks = useMemo((): Task[] => {
-    const suggestedTasks: Task[] = []
+    const suggestedTasks: Task[] = [];
     suggestedOrder.forEach((oldIndex: number, newIndex: number) => {
-      suggestedTasks.splice(newIndex, 0, tasks[oldIndex])
-    })
+      suggestedTasks.splice(newIndex, 0, tasks[oldIndex]);
+    });
 
-    return suggestedTasks
-  }, [suggestedOrder, tasks])
+    return suggestedTasks;
+  }, [suggestedOrder, tasks]);
 
-  const showSuggestions = useSelector(selectShowSuggestions)
+  const showSuggestions = useSelector(selectShowSuggestions);
 
   const isOpen = useMemo(() => {
-    return suggestedTasks.length > 0 && showSuggestions
-  }, [suggestedTasks, showSuggestions])
+    return suggestedTasks.length > 0 && showSuggestions;
+  }, [suggestedTasks, showSuggestions]);
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const accept = useCallback(() => {
-    dispatch(acceptSuggestions(suggestedOrder))
+    dispatch(acceptSuggestions(suggestedOrder));
 
-    setSubmitting(false)
+    setSubmitting(false);
 
-    const reOrderedTasks = []
+    const reOrderedTasks = [];
 
     suggestedOrder.forEach(oldIndex => {
-      reOrderedTasks.push(tasks[oldIndex])
-    })
+      reOrderedTasks.push(tasks[oldIndex]);
+    });
 
-    setFieldValue('tasks', reOrderedTasks)
+    setFieldValue('tasks', reOrderedTasks);
 
-    submitForm()
+    submitForm();
   }, [
     dispatch,
     setFieldValue,
@@ -66,14 +66,14 @@ const SuggestionsModal = () => {
     tasks,
     setSubmitting,
     submitForm,
-  ])
+  ]);
 
   const reject = useCallback(() => {
-    dispatch(rejectSuggestions(suggestedOrder))
+    dispatch(rejectSuggestions(suggestedOrder));
 
-    setSubmitting(false)
-    submitForm()
-  }, [dispatch, suggestedOrder, setSubmitting, submitForm])
+    setSubmitting(false);
+    submitForm();
+  }, [dispatch, suggestedOrder, setSubmitting, submitForm]);
 
   return (
     <Modal
@@ -131,7 +131,7 @@ const SuggestionsModal = () => {
         </div>
       </div>
     </Modal>
-  )
-}
+  );
+};
 
-export default SuggestionsModal
+export default SuggestionsModal;

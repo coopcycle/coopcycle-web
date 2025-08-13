@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react';
 import {
   Form,
   Input,
@@ -10,78 +10,78 @@ import {
   Space,
   Divider,
   Collapse,
-} from 'antd'
-import { useTranslation } from 'react-i18next'
-import { v4 as uuidv4 } from 'uuid'
+} from 'antd';
+import { useTranslation } from 'react-i18next';
+import { v4 as uuidv4 } from 'uuid';
 import {
   useGetPricingRuleSetQuery,
   useCreatePricingRuleSetMutation,
   useUpdatePricingRuleSetMutation,
-} from '../../api/slice'
-import { VALIDATION_ERRORS } from './components/PricingRule'
-import ShowApplications from '../Applications'
-import LegacyPricingRulesWarning from './components/LegacyPricingRulesWarning'
-import PricingRuleSection from './components/PricingRuleSection'
+} from '../../api/slice';
+import { VALIDATION_ERRORS } from './components/PricingRule';
+import ShowApplications from '../Applications';
+import LegacyPricingRulesWarning from './components/LegacyPricingRulesWarning';
+import PricingRuleSection from './components/PricingRuleSection';
 
-import './pricing-rule-set-form.scss'
-import HelpIcon from '../HelpIcon'
-import { isManualSupplement } from './types/PricingRuleType'
-import { Uri, PricingRule as PricingRuleType } from '../../api/types'
+import './pricing-rule-set-form.scss';
+import HelpIcon from '../HelpIcon';
+import { isManualSupplement } from './types/PricingRuleType';
+import { Uri, PricingRule as PricingRuleType } from '../../api/types';
 
 // Utility function to generate temporary @id for new rules
-const generateTempId = (): string => `temp-${uuidv4()}`
+const generateTempId = (): string => `temp-${uuidv4()}`;
 
 // Check if an @id is temporary (not from backend)
-const isTempId = (id: string): boolean => id.startsWith('temp-')
+const isTempId = (id: string): boolean => id.startsWith('temp-');
 
 type Props = {
-  ruleSetId: number | null
-  ruleSetUri: Uri | null
-  isNew?: boolean
-}
+  ruleSetId: number | null;
+  ruleSetUri: Uri | null;
+  isNew?: boolean;
+};
 
 const PricingRuleSetForm = ({
   ruleSetId,
   ruleSetUri,
   isNew = false,
 }: Props) => {
-  const { t } = useTranslation()
-  const [form] = Form.useForm()
-  const [rules, setRules] = useState([] as PricingRuleType[])
+  const { t } = useTranslation();
+  const [form] = Form.useForm();
+  const [rules, setRules] = useState([] as PricingRuleType[]);
   const [ruleValidationErrors, setRuleValidationErrors] = useState(
     {} as {
-      [ruleId: string]: string[]
+      [ruleId: string]: string[];
     },
-  )
+  );
 
   // Rules by target type
   const legacyRules = useMemo(() => {
-    return rules.filter(rule => rule.target === 'LEGACY_TARGET_DYNAMIC')
-  }, [rules])
+    return rules.filter(rule => rule.target === 'LEGACY_TARGET_DYNAMIC');
+  }, [rules]);
 
   const taskRules = useMemo(() => {
     return rules.filter(
       rule => rule.target === 'TASK' && !isManualSupplement(rule),
-    )
-  }, [rules])
+    );
+  }, [rules]);
 
   const deliveryRules = useMemo(() => {
     return rules.filter(
       rule => rule.target === 'DELIVERY' && !isManualSupplement(rule),
-    )
-  }, [rules])
+    );
+  }, [rules]);
 
   const taskManualSupplementRules = useMemo(() => {
     return rules.filter(
       rule => rule.target === 'TASK' && isManualSupplement(rule),
-    )
-  }, [rules])
+    );
+  }, [rules]);
 
   const deliveryManualSupplementRules = useMemo(() => {
     return rules.filter(
       rule => rule.target === 'DELIVERY' && isManualSupplement(rule),
-    )
-  }, [rules])
+    );
+  }, [rules]);
 
   // Ordered rules list
   const orderedRules = useMemo(() => {
@@ -91,14 +91,14 @@ const PricingRuleSetForm = ({
       ...taskManualSupplementRules,
       ...deliveryRules,
       ...deliveryManualSupplementRules,
-    ]
+    ];
   }, [
     legacyRules,
     taskRules,
     deliveryRules,
     taskManualSupplementRules,
     deliveryManualSupplementRules,
-  ])
+  ]);
 
   const {
     data: ruleSet,
@@ -106,13 +106,13 @@ const PricingRuleSetForm = ({
     error: ruleSetError,
   } = useGetPricingRuleSetQuery(ruleSetUri, {
     skip: isNew,
-  })
+  });
 
   const [createPricingRuleSet, { isLoading: isCreating }] =
-    useCreatePricingRuleSetMutation()
+    useCreatePricingRuleSetMutation();
 
   const [updatePricingRuleSet, { isLoading: isUpdating }] =
-    useUpdatePricingRuleSetMutation()
+    useUpdatePricingRuleSetMutation();
 
   // Initialize form when data is loaded
   useEffect(() => {
@@ -122,31 +122,31 @@ const PricingRuleSetForm = ({
           name: ruleSet.name || '',
           strategy: ruleSet.strategy || 'find',
           options: Array.isArray(ruleSet.options) ? ruleSet.options : [],
-        })
-        setRules(ruleSet.rules)
+        });
+        setRules(ruleSet.rules);
       } catch (error) {
-        console.error('Error initializing form:', error)
+        console.error('Error initializing form:', error);
         // Set default values if there's an error
         form.setFieldsValue({
           name: '',
           strategy: 'find',
           options: [],
-        })
-        setRules([])
+        });
+        setRules([]);
       }
     }
-  }, [ruleSet, form, isNew])
+  }, [ruleSet, form, isNew]);
 
   const validateRules = (): { index: number; errors: string[] }[] => {
-    const errors: { index: number; errors: string[] }[] = []
-    const newRuleValidationErrors = {} as { [ruleId: string]: string[] }
+    const errors: { index: number; errors: string[] }[] = [];
+    const newRuleValidationErrors = {} as { [ruleId: string]: string[] };
 
     orderedRules.forEach((rule, index) => {
-      const ruleErrors = []
+      const ruleErrors = [];
 
       // For manual supplements check if name is not empty
       if (isManualSupplement(rule) && (!rule.name || rule.name.trim() === '')) {
-        ruleErrors.push(VALIDATION_ERRORS.NAME_REQUIRED)
+        ruleErrors.push(VALIDATION_ERRORS.NAME_REQUIRED);
       }
 
       // Check if expression is empty (skip for manual supplements)
@@ -154,80 +154,80 @@ const PricingRuleSetForm = ({
         !isManualSupplement(rule) &&
         (!rule.expression || rule.expression.trim() === '')
       ) {
-        ruleErrors.push(VALIDATION_ERRORS.EXPRESSION_REQUIRED)
+        ruleErrors.push(VALIDATION_ERRORS.EXPRESSION_REQUIRED);
       }
 
       // Check if price is empty
       if (!rule.price || rule.price.trim() === '') {
-        ruleErrors.push(VALIDATION_ERRORS.PRICE_REQUIRED)
+        ruleErrors.push(VALIDATION_ERRORS.PRICE_REQUIRED);
       }
 
       if (ruleErrors.length > 0) {
         errors.push({
           index,
           errors: ruleErrors,
-        })
-        newRuleValidationErrors[rule['@id']] = ruleErrors
+        });
+        newRuleValidationErrors[rule['@id']] = ruleErrors;
       }
-    })
+    });
 
     // Update validation errors state
-    setRuleValidationErrors(newRuleValidationErrors)
+    setRuleValidationErrors(newRuleValidationErrors);
 
-    return errors
-  }
+    return errors;
+  };
 
   const handleSubmit = async (values: {
-    name: string
-    strategy: string
-    options: string[]
+    name: string;
+    strategy: string;
+    options: string[];
   }): Promise<void> => {
     try {
       // Validate rules before submission
-      const validationErrors = validateRules()
+      const validationErrors = validateRules();
 
       if (validationErrors.length > 0) {
         // Show validation errors
         validationErrors.forEach(({ index }) => {
           message.error(
             `${t('FORM_PRICING_RULE_SAVE_ERROR', { name: `#${index + 1}` })}`,
-          )
-        })
-        return
+          );
+        });
+        return;
       }
 
       // Clear validation errors if validation passes
-      setRuleValidationErrors({})
+      setRuleValidationErrors({});
 
       const payload = {
         ...values,
         rules: orderedRules.map((rule, index) => {
           // Remove temporary @id for new rules before sending to backend
-          const cleanRule = { ...rule, position: index }
+          const cleanRule = { ...rule, position: index };
           if (isTempId(cleanRule['@id'])) {
-            delete cleanRule['@id']
+            delete cleanRule['@id'];
           }
-          return cleanRule
+          return cleanRule;
         }),
-      }
+      };
 
       if (isNew) {
-        const result = await createPricingRuleSet(payload).unwrap()
-        message.success(t('SAVE_SUCCESS'))
+        const result = await createPricingRuleSet(payload).unwrap();
+        message.success(t('SAVE_SUCCESS'));
         // Redirect to edit mode
-        window.location.href = `/admin/deliveries/pricing/beta/${result.id}`
+        window.location.href = `/admin/deliveries/pricing/beta/${result.id}`;
       } else {
         await updatePricingRuleSet({
           id: ruleSetId,
           ...payload,
-        }).unwrap()
-        message.success(t('SAVE_SUCCESS'))
+        }).unwrap();
+        message.success(t('SAVE_SUCCESS'));
       }
     } catch (error) {
-      console.error('Failed to save pricing rule set:', error)
-      message.error(t('SAVE_ERROR'))
+      console.error('Failed to save pricing rule set:', error);
+      message.error(t('SAVE_ERROR'));
     }
-  }
+  };
 
   const addRule = (
     target: string = 'DELIVERY',
@@ -240,49 +240,49 @@ const PricingRuleSetForm = ({
       price: '',
       position: orderedRules.length,
       name: null,
-    }
+    };
 
     // Add the rule and let the ordering be handled by the orderedRules computed property
-    setRules([...rules, newRule])
-  }
+    setRules([...rules, newRule]);
+  };
 
   const updateRule = (ruleId: string, updatedRule: PricingRuleType): void => {
     // Find the rule by @id and update it
-    const originalIndex = rules.findIndex(rule => rule['@id'] === ruleId)
+    const originalIndex = rules.findIndex(rule => rule['@id'] === ruleId);
 
     if (originalIndex !== -1) {
-      const newRules = [...rules]
-      newRules[originalIndex] = { ...updatedRule, '@id': ruleId }
-      setRules(newRules)
+      const newRules = [...rules];
+      newRules[originalIndex] = { ...updatedRule, '@id': ruleId };
+      setRules(newRules);
     }
 
     // Clear validation errors for this rule when it's updated
     if (ruleValidationErrors[ruleId]) {
-      const newValidationErrors = { ...ruleValidationErrors }
-      delete newValidationErrors[ruleId]
-      setRuleValidationErrors(newValidationErrors)
+      const newValidationErrors = { ...ruleValidationErrors };
+      delete newValidationErrors[ruleId];
+      setRuleValidationErrors(newValidationErrors);
     }
-  }
+  };
 
   const removeRule = (ruleId: string): void => {
     // Find the rule by @id and remove it
-    const newRules = rules.filter(rule => rule['@id'] !== ruleId)
-    setRules(newRules)
-  }
+    const newRules = rules.filter(rule => rule['@id'] !== ruleId);
+    setRules(newRules);
+  };
 
   const moveRule = (fromIndex: number, toIndex: number): void => {
-    const newOrderedRules = [...orderedRules]
-    const [movedRule] = newOrderedRules.splice(fromIndex, 1)
-    newOrderedRules.splice(toIndex, 0, movedRule)
+    const newOrderedRules = [...orderedRules];
+    const [movedRule] = newOrderedRules.splice(fromIndex, 1);
+    newOrderedRules.splice(toIndex, 0, movedRule);
 
     // Update the rules state to match the new order
-    setRules(newOrderedRules)
-  }
+    setRules(newOrderedRules);
+  };
 
   // Helper function to get the global index of a rule by @id
   const getGlobalIndexById = (ruleId: string): number => {
-    return orderedRules.findIndex(rule => rule['@id'] === ruleId)
-  }
+    return orderedRules.findIndex(rule => rule['@id'] === ruleId);
+  };
 
   // Helper function to move rules within the same target group using @id
   const moveRuleWithinTarget = (
@@ -290,20 +290,20 @@ const PricingRuleSetForm = ({
     toRuleId: string,
     target: string,
   ): void => {
-    const globalFromIndex = getGlobalIndexById(fromRuleId)
-    const globalToIndex = getGlobalIndexById(toRuleId)
+    const globalFromIndex = getGlobalIndexById(fromRuleId);
+    const globalToIndex = getGlobalIndexById(toRuleId);
 
     if (globalFromIndex !== -1 && globalToIndex !== -1) {
-      moveRule(globalFromIndex, globalToIndex)
+      moveRule(globalFromIndex, globalToIndex);
     }
-  }
+  };
 
   if (isLoadingRuleSet && !isNew) {
     return (
       <div style={{ textAlign: 'center', padding: '50px' }}>
         <Spin size="large" />
       </div>
-    )
+    );
   }
 
   if (ruleSetError) {
@@ -314,7 +314,7 @@ const PricingRuleSetForm = ({
         type="error"
         showIcon
       />
-    )
+    );
   }
 
   return (
@@ -409,7 +409,7 @@ const PricingRuleSetForm = ({
                                   ...rule,
                                   target: ruleTarget,
                                 })),
-                              )
+                              );
                             }}
                           />
                         </Form.Item>
@@ -504,7 +504,7 @@ const PricingRuleSetForm = ({
         </Form.Item>
       </Form>
     </div>
-  )
-}
+  );
+};
 
-export default PricingRuleSetForm
+export default PricingRuleSetForm;

@@ -1,17 +1,17 @@
-import React from 'react'
-import _ from 'lodash'
-import isScalar from 'locutus/php/var/is_scalar'
-import { withTranslation } from 'react-i18next'
-import numbro from 'numbro'
+import React from 'react';
+import _ from 'lodash';
+import isScalar from 'locutus/php/var/is_scalar';
+import { withTranslation } from 'react-i18next';
+import numbro from 'numbro';
 
-import ZonePicker from './ZonePicker'
-import PackagePicker from './PackagePicker'
-import TimeSlotPicker from './TimeSlotPicker'
+import ZonePicker from './ZonePicker';
+import PackagePicker from './PackagePicker';
+import TimeSlotPicker from './TimeSlotPicker';
 import {
   numericTypes,
   isNum,
-} from '../../../../delivery/pricing/expression-builder'
-import { RulePickerTypeSelect } from './RulePickerTypeSelect'
+} from '../../../../delivery/pricing/expression-builder';
+import { RulePickerTypeSelect } from './RulePickerTypeSelect';
 
 /*
 
@@ -47,76 +47,76 @@ const typeToOperators = {
   "time_range_length(dropoff, 'hours')": ['<', '>', 'in'],
   'task.type': ['=='],
   time_slot: ['==', '!='],
-}
+};
 
-const isK = (type: string): boolean => type === 'distance' || type === 'weight'
+const isK = (type: string): boolean => type === 'distance' || type === 'weight';
 const isDecimals = (type: string): boolean =>
   isK(type) ||
   [
     "time_range_length(pickup, 'hours')",
     "time_range_length(dropoff, 'hours')",
-  ].includes(type)
+  ].includes(type);
 
 const formatValue = (value: string, type: string): number | string => {
   if (!_.includes(numericTypes, type)) {
-    return value
+    return value;
   }
 
   if (value === '') {
-    return 0
+    return 0;
   }
 
-  return numbro.unformat(value) * (isK(type) ? 1000 : 1)
-}
+  return numbro.unformat(value) * (isK(type) ? 1000 : 1);
+};
 
 const getStepForType = (type: string): string => {
   // As it returns float, it will never work when comparing to floats
   // https://github.com/coopcycle/coopcycle-web/issues/5002
   if (type === 'packages.totalVolumeUnits()') {
-    return '1'
+    return '1';
   }
 
-  return '0.1'
-}
+  return '0.1';
+};
 
 type Props = {
-  index: number
-  ruleTarget: string
-  type: string
-  operator: string
-  value: string | string[]
+  index: number;
+  ruleTarget: string;
+  type: string;
+  operator: string;
+  value: string | string[];
   onUpdate: (
     index: number,
     line: { left: string; operator: string; right: string | string[] },
-  ) => void
-  onDelete: (index: number) => void
-  testID?: string
-  t: (key: string) => string
-}
+  ) => void;
+  onDelete: (index: number) => void;
+  testID?: string;
+  t: (key: string) => string;
+};
 
 type State = {
-  type: string
-  operator: string
-  value: string | string[]
-}
+  type: string;
+  operator: string;
+  value: string | string[];
+};
 
 class RulePickerLine extends React.Component<Props, State> {
   constructor(props: Props) {
-    super(props)
+    super(props);
 
     this.state = {
       type: props.type || '', // the variable the rule is built upon
       operator: props.operator || '', // the operator/function used to build the rule
       value: isScalar(props.value) ? `${props.value}` : props.value || '', // the value(s) which complete the rule
-    }
+    };
 
-    this.onTypeSelect = this.onTypeSelect.bind(this)
-    this.onOperatorSelect = this.onOperatorSelect.bind(this)
-    this.renderBoundPicker = this.renderBoundPicker.bind(this)
-    this.handleFirstBoundChange = this.handleFirstBoundChange.bind(this)
-    this.handleSecondBoundChange = this.handleSecondBoundChange.bind(this)
-    this.handleValueChange = this.handleValueChange.bind(this)
-    this.delete = this.delete.bind(this)
+    this.onTypeSelect = this.onTypeSelect.bind(this);
+    this.onOperatorSelect = this.onOperatorSelect.bind(this);
+    this.renderBoundPicker = this.renderBoundPicker.bind(this);
+    this.handleFirstBoundChange = this.handleFirstBoundChange.bind(this);
+    this.handleSecondBoundChange = this.handleSecondBoundChange.bind(this);
+    this.handleValueChange = this.handleValueChange.bind(this);
+    this.delete = this.delete.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -125,87 +125,91 @@ class RulePickerLine extends React.Component<Props, State> {
         left: this.state.type,
         operator: this.state.operator,
         right: this.state.value,
-      })
+      });
     }
   }
 
   handleFirstBoundChange(ev: React.ChangeEvent<HTMLInputElement>): void {
-    const { type } = this.state
-    let value = this.state.value as string[]
-    value[0] = (parseFloat(ev.target.value) * (isK(type) ? 1000 : 1)).toString()
-    this.setState({ value })
+    const { type } = this.state;
+    let value = this.state.value as string[];
+    value[0] = (
+      parseFloat(ev.target.value) * (isK(type) ? 1000 : 1)
+    ).toString();
+    this.setState({ value });
   }
 
   handleSecondBoundChange(ev: React.ChangeEvent<HTMLInputElement>): void {
-    const { type } = this.state
-    let value = this.state.value as string[]
-    value[1] = (parseFloat(ev.target.value) * (isK(type) ? 1000 : 1)).toString()
-    this.setState({ value })
+    const { type } = this.state;
+    let value = this.state.value as string[];
+    value[1] = (
+      parseFloat(ev.target.value) * (isK(type) ? 1000 : 1)
+    ).toString();
+    this.setState({ value });
   }
 
   handleValueChange(
     ev: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ): void {
-    const { type, value } = this.state
+    const { type, value } = this.state;
     if (!Array.isArray(value)) {
       this.setState({
         value: formatValue(ev.target.value, type),
-      })
+      });
     }
   }
 
   onTypeSelect(ev: React.ChangeEvent<HTMLSelectElement>): void {
-    ev.preventDefault()
+    ev.preventDefault();
 
-    const type = ev.target.value
+    const type = ev.target.value;
 
-    const operators = typeToOperators[type]
+    const operators = typeToOperators[type];
 
     if (!operators) {
-      return
+      return;
     }
 
-    const operator = operators.length === 1 ? operators[0] : ''
+    const operator = operators.length === 1 ? operators[0] : '';
     this.setState({
       type,
       operator,
       value: '',
-    })
+    });
   }
 
   onOperatorSelect(ev: React.ChangeEvent<HTMLSelectElement>): void {
-    ev.preventDefault()
+    ev.preventDefault();
 
-    const operator = ev.target.value
+    const operator = ev.target.value;
 
-    let state: Partial<State> = { operator }
+    let state: Partial<State> = { operator };
 
     if ('in' === operator) {
-      state.value = ['0', isK(this.state.type) ? '1000' : '1']
+      state.value = ['0', isK(this.state.type) ? '1000' : '1'];
     }
 
     if (_.includes(['==', '!=', '<', '>'], operator)) {
-      state.value = isNum(this.state.type) ? '0' : ''
+      state.value = isNum(this.state.type) ? '0' : '';
     }
 
-    this.setState(state)
+    this.setState(state);
   }
 
   delete(evt: React.MouseEvent<HTMLAnchorElement>): void {
-    evt.preventDefault()
-    this.props.onDelete(this.props.index)
+    evt.preventDefault();
+    this.props.onDelete(this.props.index);
   }
 
   renderNumberInput(k: boolean = false, decimals: boolean = false) {
-    let props: { step?: string } = {}
+    let props: { step?: string } = {};
     if (decimals) {
       props = {
         ...props,
         step: '.1',
-      }
+      };
     }
 
-    const value = this.state.value as string
+    const value = this.state.value as string;
     return (
       <input
         data-testid="condition-number-input"
@@ -216,7 +220,7 @@ class RulePickerLine extends React.Component<Props, State> {
         min="0"
         required
         {...props}></input>
-    )
+    );
   }
 
   renderBooleanInput() {
@@ -228,7 +232,7 @@ class RulePickerLine extends React.Component<Props, State> {
         <option value="false">{this.props.t('NO')}</option>
         <option value="true">{this.props.t('YES')}</option>
       </select>
-    )
+    );
   }
 
   renderBoundPicker() {
@@ -244,7 +248,7 @@ class RulePickerLine extends React.Component<Props, State> {
             onChange={this.handleValueChange}
             value={this.state.value}
           />
-        )
+        );
 
       case '==':
       case '!=':
@@ -262,7 +266,7 @@ class RulePickerLine extends React.Component<Props, State> {
                 {this.props.t('PRICING_RULE_PICKER_VEHICLE_CARGO_BIKE')}
               </option>
             </select>
-          )
+          );
         }
 
         if (this.state.type === 'task.type') {
@@ -278,11 +282,11 @@ class RulePickerLine extends React.Component<Props, State> {
                 {this.props.t('DELIVERY_DROPOFF')}
               </option>
             </select>
-          )
+          );
         }
 
         if (this.state.type === 'dropoff.doorstep') {
-          return this.renderBooleanInput()
+          return this.renderBooleanInput();
         }
 
         if (this.state.type === 'time_slot') {
@@ -291,13 +295,13 @@ class RulePickerLine extends React.Component<Props, State> {
               onChange={this.handleValueChange}
               value={this.state.value}
             />
-          )
+          );
         }
 
         return this.renderNumberInput(
           isK(this.state.type),
           isDecimals(this.state.type),
-        )
+        );
       // weight, distance, diff_days(pickup)
       case 'in':
         return (
@@ -323,20 +327,20 @@ class RulePickerLine extends React.Component<Props, State> {
                 step={getStepForType(this.state.type)}></input>
             </div>
           </div>
-        )
+        );
       case '<':
       case '>':
         return this.renderNumberInput(
           isK(this.state.type),
           isDecimals(this.state.type),
-        )
+        );
       case 'containsAtLeastOne':
         return (
           <PackagePicker
             onChange={this.handleValueChange}
             value={this.state.value}
           />
-        )
+        );
     }
   }
 
@@ -363,7 +367,7 @@ class RulePickerLine extends React.Component<Props, State> {
                   <option key={index} value={operator}>
                     {operator}
                   </option>
-                )
+                );
               })}
             </select>
           )}
@@ -375,8 +379,8 @@ class RulePickerLine extends React.Component<Props, State> {
           </a>
         </td>
       </tr>
-    )
+    );
   }
 }
 
-export default withTranslation()(RulePickerLine)
+export default withTranslation()(RulePickerLine);

@@ -1,28 +1,28 @@
-import { Button, Alert, Typography } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
-import { useTranslation } from 'react-i18next'
-import DraggableRulesList from './DraggableRulesList'
-import { PricingRule as PricingRuleType } from '../../../api/types'
+import { Button, Alert, Typography } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
+import DraggableRulesList from './DraggableRulesList';
+import { PricingRule as PricingRuleType } from '../../../api/types';
 
-const { Title } = Typography
+const { Title } = Typography;
 
 type Props = {
-  target: string
-  rules: PricingRuleType[]
-  helpMessage: string
-  addRuleButtonLabel: string
-  getGlobalIndexById: (ruleId: string) => number
-  updateRule: (ruleId: string, updatedRule: PricingRuleType) => void
-  removeRule: (ruleId: string) => void
+  target: string;
+  rules: PricingRuleType[];
+  helpMessage: string;
+  addRuleButtonLabel: string;
+  getGlobalIndexById: (ruleId: string) => number;
+  updateRule: (ruleId: string, updatedRule: PricingRuleType) => void;
+  removeRule: (ruleId: string) => void;
   moveRuleWithinTarget: (
     fromRuleId: string,
     toRuleId: string,
     target: string,
-  ) => void
-  ruleValidationErrors: { [ruleId: string]: string[] }
-  onAddRule: (target: string, isManualSupplement?: boolean) => void
-  manualSupplementRules?: PricingRuleType[]
-}
+  ) => void;
+  ruleValidationErrors: { [ruleId: string]: string[] };
+  onAddRule: (target: string, isManualSupplement?: boolean) => void;
+  manualSupplementRules?: PricingRuleType[];
+};
 
 const PricingRuleSection = ({
   target,
@@ -37,11 +37,11 @@ const PricingRuleSection = ({
   onAddRule,
   manualSupplementRules = undefined,
 }: Props) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const handleDragEnd = (fromRuleId: string, toRuleId: string): void => {
-    moveRuleWithinTarget(fromRuleId, toRuleId, target)
-  }
+    moveRuleWithinTarget(fromRuleId, toRuleId, target);
+  };
 
   return (
     <div data-testid={`pricing-rule-set-target-${target.toLowerCase()}`}>
@@ -104,7 +104,7 @@ const PricingRuleSection = ({
         </>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default PricingRuleSection
+export default PricingRuleSection;
