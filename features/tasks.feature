@@ -329,7 +329,7 @@ Feature: Tasks
         "@id":"/api/tasks/2/events",
         "@type":"hydra:Collection",
         "hydra:member":@array@,
-        "hydra:totalItems":2,
+        "hydra:totalItems":3,
         "hydra:search":{
           "@type":"hydra:IriTemplate",
           "hydra:template":"/api/tasks/2/events{?date,assigned,organization}",
@@ -814,7 +814,7 @@ Feature: Tasks
             "createdAt":"@string@.isDateTime()"
           }
         ],
-        "hydra:totalItems":4,
+        "hydra:totalItems":5,
         "hydra:search":{
           "@*@":"@*@"
         }
