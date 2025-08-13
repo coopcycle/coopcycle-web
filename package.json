@@ -12,7 +12,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "lint": "eslint js/app/ assets/react",
-    "type-check": "tsc --noEmit --pretty"
+    "type-check": "tsc --noEmit --pretty",
+    "prettify": "prettier js/app/ assets/react --write"
   },
   "repository": {
     "type": "git",
