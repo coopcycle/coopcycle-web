@@ -50,9 +50,10 @@ class PublishLiveUpdateTest extends TestCase
         foreach ($taskEvents as $eventClass) {
             $event = $this->prophesize($eventClass);
 
-            $this->liveUpdates->toAdmins(
-                $event->reveal()
-            )->shouldBeCalledOnce();
+            $this->liveUpdates->toRoles(
+            ['ROLE_ADMIN', 'ROLE_DISPATCHER'],
+            $event->reveal()
+        )->shouldBeCalledOnce();
 
             ($this->publishLiveUpdate)($event->reveal());
 
@@ -64,11 +65,42 @@ class PublishLiveUpdateTest extends TestCase
         }
     }
 
+    public function testTaskUpdatedWithCourier()
+    {
+        $user = $this->prophesize(User::class);
+        $event = $this->prophesize(TaskUpdated::class);
+        
+        $event->getCourier()->willReturn($user->reveal());
+        
+        $this->liveUpdates->toUserAndRoles(
+            $user->reveal(),
+            ['ROLE_ADMIN', 'ROLE_DISPATCHER'],
+            $event->reveal()
+        )->shouldBeCalledOnce();
+
+        ($this->publishLiveUpdate)($event->reveal());
+    }
+
+    public function testTaskUpdatedWithoutCourier()
+    {
+        $event = $this->prophesize(TaskUpdated::class);
+        
+        $event->getCourier()->willReturn(null);
+        
+        $this->liveUpdates->toRoles(
+            ['ROLE_ADMIN', 'ROLE_DISPATCHER'],
+            $event->reveal()
+        )->shouldBeCalledOnce();
+
+        ($this->publishLiveUpdate)($event->reveal());
+    }
+
     public function testDefaultCase()
     {
         $event = $this->prophesize(Event::class);
 
-        $this->liveUpdates->toAdmins(
+        $this->liveUpdates->toRoles(
+            ['ROLE_ADMIN', 'ROLE_DISPATCHER'],
             $event->reveal()
         )->shouldBeCalledOnce();
 
