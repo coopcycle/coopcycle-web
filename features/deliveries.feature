@@ -1563,11 +1563,11 @@ Feature: Deliveries
         "@context":"/api/contexts/ConstraintViolationList",
         "@type":"ConstraintViolationList",
         "hydra:title":"An error occurred",
-        "hydra:description":"order.manualSupplements[0][@id]: Invalid manual supplement",
+        "hydra:description":"order.manualSupplements[0][@id]: Supplément manuel invalide",
         "violations":[
           {
             "propertyPath":"order.manualSupplements[0][@id]",
-            "message":"Invalid manual supplement",
+            "message":"Supplément manuel invalide",
             "code":null
           }
         ]
