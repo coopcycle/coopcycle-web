@@ -289,7 +289,8 @@ const Order = ({
               />
             )}
 
-          {isDispatcher && !overridePrice && mode !== Mode.DELIVERY_UPDATE ? (
+          {isDispatcher && !overridePrice && mode !== Mode.DELIVERY_UPDATE &&
+            orderManualSupplements.length > 0 ? (
             <div>
               <Divider size="middle" />
               <ManualSupplements rules={orderManualSupplements} />
