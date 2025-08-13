@@ -63,12 +63,32 @@ class DeliveryCreatedHandler
             return;
         }
 
-        $contents = $this->twig->render('push_notification.html.twig', [
-            'delivery' => $delivery
-        ]);
+        $tasks = $delivery->getTasks();
+
+        $template = $this->twig->load('push_notification.html.twig');
+        $tpldata = [
+            'delivery' => $delivery,
+            'type' => Delivery::getType($tasks),
+            'types' => [
+                'simple' => Delivery::TYPE_SIMPLE,
+                'multi_pickup' => Delivery::TYPE_MULTI_PICKUP,
+                'multi_dropoff' => Delivery::TYPE_MULTI_DROPOFF,
+                'multi_multi' => Delivery::TYPE_MULTI_MULTI
+            ],
+            'tasks' => $tasks,
+            // Set the default title and body
+            'title' => $delivery->getOwner()->getName(),
+            'body' => $this->translator->trans('notifications.tap_to_open')
+        ];
+        $contents = [
+            'title' => $template->renderBlock('title', $tpldata),
+            'body' => $template->renderBlock('body', $tpldata)
+        ];
+        // $contents = $this->twig->render('push_notification.html.twig', [
+        //     'delivery' => $delivery
+        // ]);
         var_dump($contents); // TODO Debugging line, remove..!
 
-        $tasks = $delivery->getTasks();
         $order = $delivery->getOrder();
         $pickup = $delivery->getPickup();
         $dropoff = $delivery->getDropoff();
