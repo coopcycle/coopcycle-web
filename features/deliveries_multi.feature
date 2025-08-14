@@ -193,7 +193,7 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":4,
               "volume_per_package": 3,
-              "short_code": "AB",
+              "short_code": "XL",
               "labels":@array@
             }
           ],
@@ -235,7 +235,7 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2,
               "volume_per_package": 3,
-              "short_code": "AB",
+              "short_code": "XL",
               "labels":@array@
             }
           ],
@@ -321,7 +321,7 @@ Feature: Multi-step deliveries
                 "name":"XL",
                 "quantity":2,
                 "volume_per_package": 3,
-                "short_code": "AB",
+                "short_code": "XL",
                 "labels":@array@
               }
             ],
@@ -393,7 +393,7 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2,
               "volume_per_package": 3,
-              "short_code": "AB",
+              "short_code": "XL",
               "labels":@array@
             }
           ],
@@ -518,7 +518,7 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2,
               "volume_per_package": 3,
-              "short_code": "AB",
+              "short_code": "XL",
               "labels":@array@
             }
           ],
@@ -654,7 +654,7 @@ Feature: Multi-step deliveries
                 "name":"XL",
                 "quantity":2,
                 "volume_per_package": 3,
-                "short_code": "AB",
+                "short_code": "XL",
                 "labels":@array@
               }
             ],
@@ -670,7 +670,7 @@ Feature: Multi-step deliveries
                 "name":"XL",
                 "quantity":3,
                 "volume_per_package": 3,
-                "short_code": "AB",
+                "short_code": "XL",
                 "labels":@array@
               }
             ],
@@ -686,7 +686,7 @@ Feature: Multi-step deliveries
                 "name":"XL",
                 "quantity":5,
                 "volume_per_package": 3,
-                "short_code": "AB",
+                "short_code": "XL",
                 "labels":@array@
               }
             ],
@@ -714,7 +714,7 @@ Feature: Multi-step deliveries
             "type":"XL",
             "quantity":2,
             "volume_per_package":3,
-            "short_code":"AB",
+            "short_code":"XL",
             "labels":"@array@.count(2)"
           }
         ],
