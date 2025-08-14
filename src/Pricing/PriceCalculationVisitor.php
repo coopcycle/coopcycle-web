@@ -36,7 +36,7 @@ class PriceCalculationVisitor
     {
     }
 
-    public function visit(Delivery $delivery, PricingRuleSet $ruleSet): PriceCalculationOutput
+    public function visit(Delivery $delivery, PricingRuleSet $ruleSet, ManualSupplements|null $manualSupplements = null): PriceCalculationOutput
     {
         /**
          * @var PricingRule[] $matchedRules
@@ -75,7 +75,7 @@ class PriceCalculationVisitor
         }
 
         // Apply the rules to the whole delivery/order
-        $resultPerDelivery = $this->visitDelivery($delivery, $ruleSet);
+        $resultPerDelivery = $this->visitDelivery($delivery, $ruleSet, $manualSupplements);
         $resultPerDelivery->setDelivery($delivery);
 
         $resultsPerEntity[] = $resultPerDelivery;
@@ -121,7 +121,7 @@ class PriceCalculationVisitor
         return $output;
     }
 
-    private function visitDelivery(Delivery $delivery, PricingRuleSet $ruleSet): Result
+    private function visitDelivery(Delivery $delivery, PricingRuleSet $ruleSet, ManualSupplements|null $manualSupplements = null): Result
     {
         $deliveryAsExpressionLanguageValues = $this->deliveryExpressionLanguageVisitor->toExpressionLanguageValues($delivery);
 
@@ -130,7 +130,7 @@ class PriceCalculationVisitor
                 // LEGACY_TARGET_DYNAMIC is used for backward compatibility
                 // for more info see PricingRule::LEGACY_TARGET_DYNAMIC
                 return $rule->getTarget() === PricingRule::TARGET_DELIVERY || $rule->getTarget() === PricingRule::LEGACY_TARGET_DYNAMIC;
-            }, true);
+            }, true, $manualSupplements?->orderSupplements ?? []);
         }
 
         if ($ruleSet->getStrategy() === 'map') {
@@ -140,7 +140,7 @@ class PriceCalculationVisitor
                 // LEGACY_TARGET_DYNAMIC is used for backward compatibility
                 // for more info see PricingRule::LEGACY_TARGET_DYNAMIC
                 return $rule->getTarget() === PricingRule::TARGET_DELIVERY || ($rule->getTarget() === PricingRule::LEGACY_TARGET_DYNAMIC && count($tasks) <= 2);
-            }, false);
+            }, false, $manualSupplements?->orderSupplements ?? []);
         }
 
         return new Result([]);
@@ -153,7 +153,7 @@ class PriceCalculationVisitor
         if ($ruleSet->getStrategy() === 'find') {
             return $this->processRuleSet($task, $taskAsExpressionLanguageValues, $delivery, $ruleSet, function (PricingRule $rule) {
                 return $rule->getTarget() === PricingRule::TARGET_TASK;
-            }, true);
+            }, true, []);
         }
 
         if ($ruleSet->getStrategy() === 'map') {
@@ -163,7 +163,7 @@ class PriceCalculationVisitor
                 // LEGACY_TARGET_DYNAMIC is used for backward compatibility
                 // for more info see PricingRule::LEGACY_TARGET_DYNAMIC
                 return $rule->getTarget() === PricingRule::TARGET_TASK || ($rule->getTarget() === PricingRule::LEGACY_TARGET_DYNAMIC && count($tasks) > 2);
-            }, false);
+            }, false, []);
         }
 
         return new Result([]);
@@ -171,6 +171,7 @@ class PriceCalculationVisitor
 
     /**
      * Process a rule set for a given object (Delivery or Task)
+     * @param ManualSupplement[] $manualOrderSupplements
      */
     private function processRuleSet(
         Delivery|Task $object,
@@ -178,7 +179,8 @@ class PriceCalculationVisitor
         Delivery $delivery,
         PricingRuleSet $ruleSet,
         callable $shouldApplyRule,
-        bool $returnOnFirstMatch
+        bool $returnOnFirstMatch,
+        array $manualOrderSupplements = []
     ): Result {
         /** @var RuleResult[] $ruleResults */
         $ruleResults = [];
@@ -196,26 +198,42 @@ class PriceCalculationVisitor
                         $productOptionValue,
                         $rule,
                         $expressionLanguageValues,
-                        $this->expressionLanguage
                     );
 
                     $productOptionValues[] = $productOptionValueWithQuantity;
 
                     // For `find` strategy
                     if ($returnOnFirstMatch) {
-                        $productVariant = $this->productVariantFactory->createWithProductOptions(
-                            $this->generateVariantName($object, $delivery),
-                            $productOptionValues,
-                            $ruleSet
-                        );
-                        return new Result($ruleResults, $productVariant);
+                        break;
                     }
                 }
             }
         }
 
-        // For `map` strategy
-        if (!$returnOnFirstMatch && count($productOptionValues) > 0) {
+        // Add manual supplements (phase 1: only for order objects)
+        if ($object instanceof Delivery && count($manualOrderSupplements) > 0) {
+            foreach ($manualOrderSupplements as $supplement) {
+                $rule = $supplement->pricingRule;
+                //TODO; handle with range-based supplements in https://github.com/coopcycle/coopcycle/issues/447
+//                $quantity = $supplement->quantity;
+
+                $ruleResult = new RuleResult($rule, true);
+                $ruleResults[$rule->getPosition()] = $ruleResult;
+
+                $this->logger->info(sprintf('Matched manual rule "%s"', $rule->getName()), [
+                    'target' => $rule->getTarget(),
+                ]);
+
+                $productOptionValue = $this->getProductOptionValue($rule);
+                $productOptionValues[] = $this->processProductOptionValue(
+                    $productOptionValue,
+                    $rule,
+                    []
+                );
+            }
+        }
+
+        if (count($productOptionValues) > 0) {
             $productVariant = $this->productVariantFactory->createWithProductOptions(
                 $this->generateVariantName($object, $delivery),
                 $productOptionValues,
@@ -275,13 +293,8 @@ class PriceCalculationVisitor
         ProductOptionValue $productOptionValue,
         PricingRule $rule,
         array $expressionLanguageValues,
-        ?ExpressionLanguage $language = null
     ): ProductOptionValueWithQuantity {
-        if (null === $language) {
-            $language = new ExpressionLanguage();
-        }
-
-        $result = $rule->apply($expressionLanguageValues, $language);
+        $result = $rule->apply($expressionLanguageValues, $this->expressionLanguage);
 
         $this->logger->info(sprintf('processProductOptionValue; result %d (rule "%s")', $result, $rule->getExpression()), [
             'target' => $rule->getTarget(),

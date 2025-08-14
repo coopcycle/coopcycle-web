@@ -46,32 +46,32 @@ Feature: Retail prices
           "items": [
             {
               "variant": {
-                "price": 0,
                 "code": @string@,
-                "optionValues": [
-                  {
-                    "price": 499,
-                    "code": @string@,
-                    "option": {
-                      "@id": @string@,
-                      "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-FIXED",
-                      "values": [
-                        @...@
-                      ],
-                      "name": "Fixed Price"
-                    },
-                    "value": "Plus de 0.00 km"
-                  }
-                ],
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
-              "total": 499
+              "total": 499,
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -123,32 +123,32 @@ Feature: Retail prices
           "items": [
             {
               "variant": {
-                "price": 0,
                 "code": @string@,
-                "optionValues": [
-                  {
-                    "price": 499,
-                    "code": @string@,
-                    "option": {
-                      "@id": @string@,
-                      "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-FIXED",
-                      "values": [
-                        @...@
-                      ],
-                      "name": "Fixed Price"
-                    },
-                    "value": "Plus de 0.00 km"
-                  }
-                ],
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
-              "total": 499
+              "total": 499,
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -200,32 +200,32 @@ Feature: Retail prices
           "items": [
             {
               "variant": {
-                "price": 0,
                 "code": @string@,
-                "optionValues": [
-                  {
-                    "price": 499,
-                    "code": @string@,
-                    "option": {
-                      "@id": @string@,
-                      "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-FIXED",
-                      "values": [
-                        @...@
-                      ],
-                      "name": "Fixed Price"
-                    },
-                    "value": "Plus de 0.00 km"
-                  }
-                ],
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
-              "total": 499
+              "total": 499,
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -280,32 +280,32 @@ Feature: Retail prices
           "items": [
             {
               "variant": {
-                "price": 0,
                 "code": @string@,
-                "optionValues": [
-                  {
-                    "price": 1299,
-                    "code": @string@,
-                    "option": {
-                      "@id": @string@,
-                      "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-FIXED",
-                      "values": [
-                        @...@
-                      ],
-                      "name": "Fixed Price"
-                    },
-                    "value": "packages.containsAtLeastOne(\"XL\")"
-                  }
-                ],
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
-              "total": 1299
+              "total": 1299,
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × packages.containsAtLeastOne(\"XL\")",
+                    "amount": 1299
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 217
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 1299
+          "total": 1299,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -360,32 +360,32 @@ Feature: Retail prices
           "items": [
             {
               "variant": {
-                "price": 0,
                 "code": @string@,
-                "optionValues": [
-                  {
-                    "price": 1299,
-                    "code": @string@,
-                    "option": {
-                      "@id": @string@,
-                      "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-FIXED",
-                      "values": [
-                        @...@
-                      ],
-                      "name": "Fixed Price"
-                    },
-                    "value": "packages.containsAtLeastOne(\"XL\")"
-                  }
-                ],
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
-              "total": 1299
+              "total": 1299,
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × packages.containsAtLeastOne(\"XL\")",
+                    "amount": 1299
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 217
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 1299
+          "total": 1299,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -440,32 +440,32 @@ Feature: Retail prices
           "items": [
             {
               "variant": {
-                "price": 0,
                 "code": @string@,
-                "optionValues": [
-                  {
-                    "price": 1299,
-                    "code": @string@,
-                    "option": {
-                      "@id": @string@,
-                      "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-FIXED",
-                      "values": [
-                        @...@
-                      ],
-                      "name": "Fixed Price"
-                    },
-                    "value": "packages.containsAtLeastOne(\"XL\")"
-                  }
-                ],
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
-              "total": 1299
+              "total": 1299,
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × packages.containsAtLeastOne(\"XL\")",
+                    "amount": 1299
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 217
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 1299
+          "total": 1299,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -518,32 +518,32 @@ Feature: Retail prices
           "items": [
             {
               "variant": {
-                "price": 0,
                 "code": @string@,
-                "optionValues": [
-                  {
-                    "price": 499,
-                    "code": @string@,
-                    "option": {
-                      "@id": @string@,
-                      "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-FIXED",
-                      "values": [
-                        @...@
-                      ],
-                      "name": "Fixed Price"
-                    },
-                    "value": "Moins de 2.00 kg"
-                  }
-                ],
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
-              "total": 499
+              "total": 499,
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Moins de 2.00 kg",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -605,32 +605,32 @@ Feature: Retail prices
           "items": [
             {
               "variant": {
-                "price": 0,
                 "code": @string@,
-                "optionValues": [
-                  {
-                    "price": 499,
-                    "code": @string@,
-                    "option": {
-                      "@id": @string@,
-                      "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-FIXED",
-                      "values": [
-                        @...@
-                      ],
-                      "name": "Fixed Price"
-                    },
-                    "value": "Plus de 0.00 km"
-                  }
-                ],
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
-              "total": 499
+              "total": 499,
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -692,32 +692,32 @@ Feature: Retail prices
           "items": [
             {
               "variant": {
-                "price": 0,
                 "code": @string@,
-                "optionValues": [
-                  {
-                    "price": 499,
-                    "code": @string@,
-                    "option": {
-                      "@id": @string@,
-                      "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-FIXED",
-                      "values": [
-                        @...@
-                      ],
-                      "name": "Fixed Price"
-                    },
-                    "value": "Plus de 0.00 km"
-                  }
-                ],
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
-              "total": 499
+              "total": 499,
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -772,32 +772,32 @@ Feature: Retail prices
           "items": [
             {
               "variant": {
-                "price": 0,
                 "code": @string@,
-                "optionValues": [
-                  {
-                    "price": 499,
-                    "code": @string@,
-                    "option": {
-                      "@id": @string@,
-                      "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-FIXED",
-                      "values": [
-                        @...@
-                      ],
-                      "name": "Fixed Price"
-                    },
-                    "value": "Plus de 0.00 km"
-                  }
-                ],
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
-              "total": 499
+              "total": 499,
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -852,60 +852,57 @@ Feature: Retail prices
           "items": [
             {
               "variant": {
-                "price": 0,
                 "code": @string@,
-                "optionValues": [
-                  {
-                    "price": 499,
-                    "code": @string@,
-                    "option": {
-                      "@id": @string@,
-                      "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-FIXED",
-                      "values": [
-                        @...@
-                      ],
-                      "name": "Fixed Price"
-                    },
-                    "value": "time_slot == \"/api/time_slots/1\" and task.type == \"PICKUP\""
-                  }
-                ],
-                "name": "Point de retrait #1"
+                "name": "Point de retrait #1",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
-              "total": 499
+              "total": 499,
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × time_slot == \"/api/time_slots/1\" and task.type == \"PICKUP\"",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             },
             {
               "variant": {
-                "price": 0,
                 "code": @string@,
-                "optionValues": [
-                  {
-                    "@id": @string@,
-                    "@type": "ProductOptionValue",
-                    "price": 200,
-                    "code": @string@,
-                    "option": {
-                      "@id": @string@,
-                      "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-FIXED",
-                      "values": [
-                        @...@
-                      ],
-                      "name": "Fixed Price"
-                    },
-                    "value": "Taux de dépôt"
-                  }
-                ],
-                "name": "Point de dépôt #1"
+                "name": "Point de dépôt #1",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
-              "total": 200
+              "total": 200,
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Taux de dépôt",
+                    "amount": 200
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 33
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 699
+          "total": 699,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -960,32 +957,32 @@ Feature: Retail prices
           "items": [
             {
               "variant": {
-                "price": 0,
                 "code": @string@,
-                "optionValues": [
-                  {
-                    "price": 200,
-                    "code": @string@,
-                    "option": {
-                      "@id": @string@,
-                      "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-FIXED",
-                      "values": [
-                        @...@
-                      ],
-                      "name": "Fixed Price"
-                    },
-                    "value": "Taux de dépôt"
-                  }
-                ],
-                "name": "Point de dépôt #1"
+                "name": "Point de dépôt #1",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
-              "total": 200
+              "total": 200,
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Taux de dépôt",
+                    "amount": 200
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 33
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 200
+          "total": 200,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -1121,32 +1118,32 @@ Feature: Retail prices
           "items": [
             {
               "variant": {
-                "price": 0,
                 "code": @string@,
-                "optionValues": [
-                  {
-                    "price": 499,
-                    "code": @string@,
-                    "option": {
-                      "@id": @string@,
-                      "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-FIXED",
-                      "values": [
-                        @...@
-                      ],
-                      "name": "Fixed Price"
-                    },
-                    "value": "Plus de 0.00 km"
-                  }
-                ],
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
-              "total": 499
+              "total": 499,
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -1197,32 +1194,32 @@ Feature: Retail prices
           "items": [
             {
               "variant": {
-                "price": 0,
                 "code": @string@,
-                "optionValues": [
-                  {
-                    "price": 499,
-                    "code": @string@,
-                    "option": {
-                      "@id": @string@,
-                      "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-FIXED",
-                      "values": [
-                        @...@
-                      ],
-                      "name": "Fixed Price"
-                    },
-                    "value": "Plus de 0.00 km"
-                  }
-                ],
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
-              "total": 499
+              "total": 499,
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -1281,32 +1278,32 @@ Feature: Retail prices
           "items": [
             {
               "variant": {
-                "price": 0,
                 "code": @string@,
-                "optionValues": [
-                  {
-                    "price": 499,
-                    "code": @string@,
-                    "option": {
-                      "@id": @string@,
-                      "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-FIXED",
-                      "values": [
-                        @...@
-                      ],
-                      "name": "Fixed Price"
-                    },
-                    "value": "Plus de 0.00 km"
-                  }
-                ],
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
-              "total": 499
+              "total": 499,
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -1350,32 +1347,32 @@ Feature: Retail prices
           "items": [
             {
               "variant": {
-                "price": 0,
                 "code": @string@,
-                "optionValues": [
-                  {
-                    "price": 499,
-                    "code": @string@,
-                    "option": {
-                      "@id": @string@,
-                      "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-FIXED",
-                      "values": [
-                        @...@
-                      ],
-                      "name": "Fixed Price"
-                    },
-                    "value": "Plus de 0.00 km"
-                  }
-                ],
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
-              "total": 499
+              "total": 499,
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -1450,32 +1447,32 @@ Feature: Retail prices
           "items": [
             {
               "variant": {
-                "price": 0,
                 "code": @string@,
-                "optionValues": [
-                  {
-                    "price": 499,
-                    "code": @string@,
-                    "option": {
-                      "@id": @string@,
-                      "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-FIXED",
-                      "values": [
-                        @...@
-                      ],
-                      "name": "Fixed Price"
-                    },
-                    "value": "Plus de 0.00 km"
-                  }
-                ],
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
-              "total": 499
+              "total": 499,
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 499
+          "total": 499,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -1529,32 +1526,32 @@ Feature: Retail prices
           "items": [
             {
               "variant": {
-                "price": 0,
                 "code": @string@,
-                "optionValues": [
-                  {
-                    "price": 699,
-                    "code": @string@,
-                    "option": {
-                      "@id": @string@,
-                      "@type": "ProductOption",
-                      "code": "CPCCL-ODDLVR-FIXED",
-                      "values": [
-                        @...@
-                      ],
-                      "name": "Fixed Price"
-                    },
-                    "value": "Volume du colis moins de 9"
-                  }
-                ],
-                "name": "Supplément de commande"
+                "name": "Supplément de commande",
+                "@*@":"@*@"
               },
               "quantity": 1,
               "unitPrice": 0,
-              "total": 699
+              "total": 699,
+              "adjustments": {
+                "menu_item_modifier": [
+                  {
+                    "label": "1 × Volume du colis moins de 9",
+                    "amount": 699
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 0%",
+                    "amount": 0
+                  }
+                ]
+              },
+              "@*@":"@*@"
             }
           ],
-          "total": 699
+          "total": 699,
+          "@*@":"@*@"
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -1597,6 +1594,204 @@ Feature: Retail prices
         "@type":"hydra:Error",
         "hydra:title":"An error occurred",
         "hydra:description":"Le prix de la course n'a pas pu être calculé.",
+        "calculation": {"@*@":"@*@"}
+      }
+      """
+
+  Scenario: Manual supplement validation - supplement without uri
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | stores_with_manual_supplements.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00"
+        },
+        "order": {
+          "manualSupplements": [
+            {
+              "quantity": 1
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ConstraintViolationList",
+        "@type":"ConstraintViolationList",
+        "hydra:title":"An error occurred",
+        "hydra:description":"order.manualSupplements[0][@id]: Supplément manuel invalide",
+        "violations":[
+          {
+            "propertyPath":"order.manualSupplements[0][@id]",
+            "message":"Supplément manuel invalide",
+            "code":null
+          }
+        ]
+      }
+      """
+
+  Scenario: Manual supplement validation - supplement not belonging to store's pricing rule set
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | stores_with_manual_supplements.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00"
+        },
+        "order": {
+          "manualSupplements": [
+            {
+              "@id": "/api/pricing_rules/4",
+              "quantity": 1
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ConstraintViolationList",
+        "@type":"ConstraintViolationList",
+        "hydra:title":"An error occurred",
+        "hydra:description":@string@,
+        "violations":[
+          {
+            "propertyPath":"order.manualSupplements[0][@id]",
+            "message":@string@,
+            "code":null
+          }
+        ]
+      }
+      """
+    
+  Scenario: Manual supplement validation - supplement with valid uri
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | stores_with_manual_supplements.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00"
+        },
+        "order": {
+          "manualSupplements": [
+            {
+              "@id": "/api/pricing_rules/2",
+              "quantity": 1
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RetailPrice",
+        "@id":@string@,
+        "@type":"RetailPrice",
+        "amount":699,
+        "currency":"EUR",
+        "tax":{
+          "amount":117,
+          "included": true
+        },
+        "order": {
+          "items": [
+            {
+              "variant": {
+                "code": @string@,
+                "name": "Supplément de commande",
+                "@*@":"@*@"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 699,
+              "adjustments": {
+                "menu_item_modifier": [
+                   {
+                    "label": "1 × Plus de 0.00 km",
+                    "amount": 499
+                  },
+                  {
+                    "label": "1 × Express Delivery",
+                    "amount": 200
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 117
+                  }
+                ]
+              },
+              "@*@":"@*@"
+            }
+          ],
+          "total": 699,
+          "@*@":"@*@"
+        },
         "calculation": {"@*@":"@*@"}
       }
       """

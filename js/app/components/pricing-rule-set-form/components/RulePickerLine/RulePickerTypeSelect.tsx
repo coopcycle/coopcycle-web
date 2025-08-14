@@ -53,7 +53,12 @@ const LEGACY_TARGET_DYNAMIC_TYPES = [
   { name: 'task.type' },
 ]
 
-function RulePickerType({ ruleTarget, type }) {
+type RulePickerTypeProps = {
+  ruleTarget: string
+  type: { name: string; deprecated?: boolean }
+}
+
+function RulePickerType({ ruleTarget, type }: RulePickerTypeProps) {
   const { t } = useTranslation()
 
   const label = useMemo(() => {
@@ -135,7 +140,11 @@ type Props = {
   onTypeSelect: (event: React.ChangeEvent<HTMLSelectElement>) => void
 }
 
-export function RulePickerTypeSelect({ ruleTarget, type, onTypeSelect } : Props) {
+export function RulePickerTypeSelect({
+  ruleTarget,
+  type,
+  onTypeSelect,
+}: Props) {
   const { t } = useTranslation()
 
   const types = useMemo(() => {

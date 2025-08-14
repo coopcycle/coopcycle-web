@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import { Checkbox, CheckboxChangeEvent, Spin } from 'antd'
+import { Checkbox, CheckboxChangeEvent, Divider, Spin } from 'antd'
 import { useSelector } from 'react-redux'
 import _ from 'lodash'
 import { useTranslation } from 'react-i18next'
@@ -23,39 +23,12 @@ import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikC
 import { DeliveryFormValues, PriceValues } from '../../types'
 import {
   useCalculatePriceMutation,
+  useGetPricingRuleSetQuery,
+  useGetStoreQuery,
   useGetTaxRatesQuery,
 } from '../../../../api/slice'
-
-const OverridePriceToggle = ({
-  overridePrice,
-  toggleOverridePrice,
-}: {
-  overridePrice: boolean
-  toggleOverridePrice: (value: boolean) => void
-}) => {
-  const { t } = useTranslation()
-
-  return (
-    <div
-      style={{ maxWidth: '100%', cursor: 'pointer' }}
-      onClick={() => {
-        toggleOverridePrice(!overridePrice)
-      }}>
-      <div>
-        <span>{t('DELIVERY_FORM_SET_MANUALLY_PRICE')}</span>
-        <Checkbox
-          className="ml-4 mb-1"
-          name="delivery.override_price"
-          checked={overridePrice}
-          onChange={(e: CheckboxChangeEvent) => {
-            e.stopPropagation()
-            toggleOverridePrice(e.target.checked)
-          }}
-        />
-      </div>
-    </div>
-  )
-}
+import { isManualSupplement } from '../../../pricing-rule-set-form/types/PricingRuleType'
+import ManualSupplements from './ManualSupplements'
 
 type Props = {
   storeNodeId: string
@@ -70,6 +43,9 @@ const Order = ({
 }: Props) => {
   const { isDispatcher, isDebugPricing, isPriceBreakdownEnabled } =
     useContext(FlagsContext)
+
+  const { t } = useTranslation()
+
   const [order, setOrder] = useState<OrderType | null>(preLoadedOrder)
 
   const mode = useSelector(selectMode)
@@ -102,7 +78,8 @@ const Order = ({
     0 as 0 | CalculationOutput | PriceValues,
   )
 
-  const { data: taxRatesData, error: taxRatesError } = useGetTaxRatesQuery()
+  const { data: taxRatesData, isLoading: taxRatesIsLoading,
+    error: taxRatesError } = useGetTaxRatesQuery()
 
   const taxRate = useMemo(() => {
     if (taxRatesError) {
@@ -119,6 +96,24 @@ const Order = ({
 
     return null
   }, [taxRatesData, taxRatesError])
+
+  const { data: storeData, isLoading: storeIsLoading } = useGetStoreQuery(storeNodeId)
+  const { data: pricingRuleSet, isLoading: pricingRuleSetIsLoading } = useGetPricingRuleSetQuery(
+    storeData?.pricingRuleSet,
+    {
+      skip: !storeData?.pricingRuleSet,
+    },
+  )
+
+  const orderManualSupplements = useMemo(() => {
+    if (!pricingRuleSet) {
+      return []
+    }
+
+    return pricingRuleSet.rules.filter(
+      rule => rule.target === 'DELIVERY' && isManualSupplement(rule),
+    )
+  }, [pricingRuleSet])
 
   const [
     calculatePrice,
@@ -139,16 +134,31 @@ const Order = ({
       const infos = {
         store: storeNodeId,
         tasks: structuredClone(values.tasks),
+        order: structuredClone(values.order),
       }
       return infos
     },
     [storeNodeId],
   )
 
+  const isLoading = useMemo(() => {
+    return (
+      taxRatesIsLoading ||
+      storeIsLoading ||
+      pricingRuleSetIsLoading ||
+      calculatePriceIsLoading
+    )
+  }, [
+    taxRatesIsLoading,
+    storeIsLoading,
+    pricingRuleSetIsLoading,
+    calculatePriceIsLoading,
+  ])
+
   // Pass loading state to parent component
   useEffect(() => {
-    setPriceLoading(calculatePriceIsLoading)
-  }, [calculatePriceIsLoading, setPriceLoading])
+    setPriceLoading(isLoading)
+  }, [isLoading, setPriceLoading])
 
   const calculateResponseData = useMemo(() => {
     const data = calculatePriceData
@@ -248,9 +258,9 @@ const Order = ({
   }, [newPrice, overridePrice, setFieldValue])
 
   return (
-    <Spin spinning={calculatePriceIsLoading}>
+    <Spin spinning={isLoading}>
       <div>
-        {isPriceBreakdownEnabled && Boolean(order) && order.items ? (
+        {isPriceBreakdownEnabled && order !== null ? (
           <Cart order={order} overridePrice={overridePrice} />
         ) : null}
         <div>
@@ -279,12 +289,28 @@ const Order = ({
               />
             )}
 
+          {isDispatcher && !overridePrice && mode !== Mode.DELIVERY_UPDATE &&
+            orderManualSupplements.length > 0 ? (
+            <div>
+              <Divider size="middle" />
+              <ManualSupplements rules={orderManualSupplements} />
+            </div>
+          ) : null}
+
           {isDispatcher && (
-            <div className="mt-2">
-              <OverridePriceToggle
-                overridePrice={overridePrice}
-                toggleOverridePrice={toggleOverridePrice}
-              />
+            <div>
+              <Divider size="middle" />
+              <div>
+                <Checkbox
+                  name="delivery.override_price"
+                  checked={overridePrice}
+                  onChange={(e: CheckboxChangeEvent) => {
+                    e.stopPropagation()
+                    toggleOverridePrice(e.target.checked)
+                  }}>
+                  {t('DELIVERY_FORM_SET_MANUALLY_PRICE')}
+                </Checkbox>
+              </div>
               {overridePrice && (
                 <OverridePriceForm setPrice={setNewPrice} taxRate={taxRate} />
               )}

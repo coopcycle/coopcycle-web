@@ -4,7 +4,12 @@ import { useGetZonesQuery } from '../../../../api/slice'
 import PickerIsLoading from './PickerIsLoading'
 import PickerIsError from './PickerIsError'
 
-export default function ZonePicker({ value, onChange }) {
+type Props = {
+  value: string
+  onChange: (event: { target: { value: string } }) => void
+}
+
+export default function ZonePicker({ value, onChange }: Props) {
   const { data: zones, isFetching } = useGetZonesQuery()
 
   if (isFetching) {

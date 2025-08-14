@@ -104,3 +104,7 @@ services:
   AppBundle\Validator\Constraints\SiretValidator:
     tags:
       - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\ManualSupplementsValidator:
+    tags:
+      - { name: validator.constraint_validator }

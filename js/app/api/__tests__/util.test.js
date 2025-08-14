@@ -85,7 +85,13 @@ describe('fetchAllRecordsUsingFetchWithBQ', () => {
       '/api/stores',
       10,
     )
-    expect(rs).toEqual({ error })
+    expect(rs).toEqual({
+      error: {
+        status: 'CUSTOM_ERROR',
+        data: error,
+        error: 'fetch failed',
+      },
+    })
     expect(fetchWithBQ).toHaveBeenCalledTimes(1)
   })
 
@@ -109,7 +115,13 @@ describe('fetchAllRecordsUsingFetchWithBQ', () => {
       '/api/stores',
       2,
     )
-    expect(rs).toEqual({ error })
+    expect(rs).toEqual({
+      error: {
+        status: 'CUSTOM_ERROR',
+        data: error,
+        error: 'fetch failed',
+      },
+    })
     expect(fetchWithBQ).toHaveBeenCalledTimes(2)
   })
 })

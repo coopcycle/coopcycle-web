@@ -1520,6 +1520,236 @@ Feature: Deliveries
       }
       """
 
+  Scenario: Manual supplement validation - supplement without uri
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | stores_with_manual_supplements.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "doneBefore": "tomorrow 15:00"
+        },
+        "order": {
+          "manualSupplements": [
+            {
+              "quantity": 1
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ConstraintViolationList",
+        "@type":"ConstraintViolationList",
+        "hydra:title":"An error occurred",
+        "hydra:description":"order.manualSupplements[0][@id]: Supplément manuel invalide",
+        "violations":[
+          {
+            "propertyPath":"order.manualSupplements[0][@id]",
+            "message":"Supplément manuel invalide",
+            "code":null
+          }
+        ]
+      }
+      """
+    
+  Scenario: Manual supplement validation - supplement not belonging to store's pricing rule set
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | stores_with_manual_supplements.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "doneBefore": "tomorrow 15:00"
+        },
+        "order": {
+          "manualSupplements": [
+            {
+              "@id": "/api/pricing_rules/4",
+              "quantity": 1
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ConstraintViolationList",
+        "@type":"ConstraintViolationList",
+        "hydra:title":"An error occurred",
+        "hydra:description":@string@,
+        "violations":[
+          {
+            "propertyPath":"order.manualSupplements[0][@id]",
+            "message":@string@,
+            "code":null
+          }
+        ]
+      }
+      """
+
+  Scenario: Manual supplement validation - supplement with valid uri
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | stores_with_manual_supplements.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "doneBefore": "tomorrow 15:00"
+        },
+        "order": {
+          "manualSupplements": [
+            {
+              "@id": "/api/pricing_rules/2",
+              "quantity": 1
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"@string@.startsWith('/api/deliveries')",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":@integer@,
+        "tasks":@array@,
+        "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "type":"PICKUP",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone": null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "comments": "",
+          "weight": null,
+          "packages": [],
+          "barcode":{"@*@":"@*@"},
+          "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
+          "tags": [],
+          "metadata": {"@*@": "@*@"}
+        },
+        "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "type":"DROPOFF",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "streetAddress":@string@,
+            "telephone": null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "comments": "",
+          "weight":null,
+          "packages": [],
+          "barcode":{"@*@":"@*@"},
+          "createdAt":"@string@.isDateTime()",
+          "updatedAt":"@string@.isDateTime()",
+          "tags": [],
+          "metadata": {"@*@": "@*@"}
+        },
+        "trackingUrl": @string@,
+        "order": {
+          "total": 699,
+          "taxTotal": 117,
+          "@*@": "@*@"
+        }
+      }
+      """
+
   Scenario: Create delivery with pickup & dropoff as a store owner in a store with invalid pricing
     Given the fixtures files are loaded:
       | sylius_products.yml |
@@ -3824,6 +4054,7 @@ Feature: Deliveries
           "id":@integer@,
           "total": @integer@,
           "taxTotal": @integer@,
+          "manualSupplements": null,
           "arbitraryPrice":null,
           "isSavedOrder":true
         }

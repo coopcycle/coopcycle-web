@@ -111,18 +111,14 @@ export type Store = JsonLdEntity & {
   name: string
   enabled: boolean
   address: Address
-  prefillPickupAddress: boolean
   timeSlot?: Uri
+  timeSlots: Uri[]
+  pricingRuleSet?: Uri
+  prefillPickupAddress: boolean
   weightRequired: boolean
   packagesRequired: boolean
   multiDropEnabled: boolean
   multiPickupEnabled: boolean
-  timeSlots: Uri[]
-}
-
-export type ProductOptionValue = JsonLdEntity & {
-  value: string
-  price: number
 }
 
 export type ProductVariant = JsonLdEntity & {
@@ -130,7 +126,6 @@ export type ProductVariant = JsonLdEntity & {
   name: string
   code: string
   price: number
-  optionValues: ProductOptionValue[]
 }
 
 export type LocalBusiness = JsonLdEntity & {
@@ -192,7 +187,7 @@ export type OrderItem = {
   quantity: number
   total: number
   unitPrice: number
-  adjustments: Adjustment[]
+  adjustments: Record<string, Adjustment[]>
   variant?: ProductVariant
 }
 
@@ -359,12 +354,17 @@ export type RecurrenceRule = JsonLdEntity & {
   generateOrders?: boolean
 }
 
-export type PricingRule = {
+export type PricingRuleTarget = 'DELIVERY' | 'TASK' | 'LEGACY_TARGET_DYNAMIC'
+
+export type PricingRule = JsonLdEntity & {
   id: number
-  expression: string
-  price: number
+  target: PricingRuleTarget
   position: number
-  ruleSet?: PricingRuleSet
+  name?: string
+  expression: string
+  expressionAst: object
+  price: string
+  priceAst: object
 }
 
 export type PricingRuleSet = JsonLdEntity & {

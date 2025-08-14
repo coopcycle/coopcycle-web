@@ -335,6 +335,15 @@ const DeliveryForm = ({
         }
       })
 
+      if (!initialValues.order) {
+        initialValues.order = {}
+      }
+
+      // Ensure order.manualSupplements is initialized
+      if (!initialValues.order.manualSupplements) {
+        initialValues.order.manualSupplements = []
+      }
+
       if (preLoadedDeliveryData.order?.arbitraryPrice) {
         // remove a previously copied value (different formats between API and the frontend)
         delete initialValues.order.arbitraryPrice
@@ -369,7 +378,9 @@ const DeliveryForm = ({
 
         setInitialValues({
           tasks: tasks,
-          order: {},
+          order: {
+            manualSupplements: [],
+          },
         })
 
         // For new deliveries - expand all tasks by default
@@ -674,7 +685,7 @@ const DeliveryForm = ({
                   Mode.RECURRENCE_RULE_UPDATE,
                 ]) && isDispatcher ? (
                   <div
-                    className="border-top pt-2 pb-3"
+                    className="border-top py-3"
                     data-testid="recurrence-container">
                     <RecurrenceRules />
                   </div>

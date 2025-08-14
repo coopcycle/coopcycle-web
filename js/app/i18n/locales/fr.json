@@ -740,6 +740,21 @@
         "DELIVERY_PROOFS_CONTENTS": "Contenu",
         "DELIVERY_PROOFS_CONTENTS_VALUE": "Photos et Rapports",
         "DELIVERY_PROOFS_FILE_TYPE": "Type de Fichier",
-        "DELIVERY_PROOFS_FILE_TYPE_VALUE": "Archive ZIP"
+        "DELIVERY_PROOFS_FILE_TYPE_VALUE": "Archive ZIP",
+        "NO": "Non",
+        "YES": "Oui",
+        "RULE_TARGET_DELIVERY_HELP": "Ajouter des règles à appliquer une fois par commande",
+        "RULE_TARGET_TASK_HELP": "Ajouter des règles à appliquer pour chaque point (tâche de RETRAIT et/ou de DÉPÔT)",
+        "FORM_PRICING_RULE_MANUAL_SUPPLEMENT_NAME_REQUIRED": "Vous devez fournir un nom pour le supplément manuel",
+        "DELIVERY_FORM_SUPPLEMENTS": "Suppléments",
+        "PRICING_RULE_SET_FORM_ERROR": "Erreur",
+        "PRICING_RULE_SET_FORM_FAILED_TO_LOAD": "Échec du chargement de l'ensemble de règles de tarification",
+        "PRICING_RULE_SET_MANUAL_SUPPLEMENTS": "Suppléments manuels",
+        "PRICING_RULE_SET_MANUAL_SUPPLEMENTS_HELP": "Configurer les suppléments manuels qui peuvent être ajoutés manuellement à chaque commande",
+        "PRICING_RULE_SET_ADD_MANUAL_SUPPLEMENT": "Ajouter un supplément manuel",
+        "PRICING_RULE_PICKER_VEHICLE_BIKE": "Vélo",
+        "PRICING_RULE_PICKER_VEHICLE_CARGO_BIKE": "Vélo cargo",
+        "PRICING_RULE_PICKER_UNIT_KM": "km",
+        "PRICING_RULE_PICKER_UNIT_KG": "kg"
     }
 }

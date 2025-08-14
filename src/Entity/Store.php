@@ -131,6 +131,7 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private $updatedAt;
 
+    #[Groups(['store'])]
     private $pricingRuleSet;
 
     private $deliveries;

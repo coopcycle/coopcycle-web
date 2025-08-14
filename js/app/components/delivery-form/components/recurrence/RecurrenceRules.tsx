@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next'
 import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext'
 
 import './RecurrenceRules.scss'
+import BlockLabel from '../BlockLabel';
 
 function Content() {
   const { rruleValue: recurrenceRule } = useDeliveryFormFormikContext()
@@ -33,18 +34,20 @@ function Content() {
 
   if (!recurrenceRule) {
     return (
-      <a
-        data-testid="recurrence-add"
-        href="#"
-        className="mr-3"
-        onClick={e => {
-          e.preventDefault()
-          dispatch(openRecurrenceModal())
-        }}>
-        <i className="fa fa-clock-o"></i>
-        &nbsp;
-        {t('RECURRENCE_RULE_ADD')}
-      </a>
+      <div>
+        <a
+          data-testid="recurrence-add"
+          href="#"
+          className="mr-3"
+          onClick={e => {
+            e.preventDefault()
+            dispatch(openRecurrenceModal())
+          }}>
+          <i className="fa fa-clock-o"></i>
+          &nbsp;
+          {t('RECURRENCE_RULE_ADD')}
+        </a>
+      </div>
     )
   }
 
@@ -66,7 +69,7 @@ export function RecurrenceRules() {
   return (
     <div>
       <div>
-        <h4>{t('DELIVERY_FORM_RECURRENCE_RULE')}</h4>
+        <BlockLabel label={t('DELIVERY_FORM_RECURRENCE_RULE')} />
         <Content />
       </div>
       <Modal

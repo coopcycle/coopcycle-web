@@ -83,6 +83,20 @@ context(
         cy.get('[data-testid="rule-price-range-threshold"]').type('1')
       })
 
+      // Add manual supplement: "Return documents" with fixed price 5 eur
+      cy.get(
+        '[data-testid="pricing-rule-set-add-supplement-target-delivery"]',
+      ).click()
+
+      cy.get('[data-testid="pricing-rule-set-rule-2"]', {
+        timeout: 5000,
+      }).should('be.visible')
+
+      cy.get('[data-testid="pricing-rule-set-rule-2"]').within(() => {
+        cy.get('[data-testid="rule-name"]').type('Return documents')
+        cy.get('[data-testid="rule-fixed-price-input"]').type('{selectall}5')
+      })
+
       // Save
       cy.intercept('POST', '/api/pricing_rule_sets').as('postPricingRuleSet')
       cy.get('button[type="submit"]').click()
@@ -127,6 +141,16 @@ context(
                 step: '2',
                 threshold: '1',
               },
+            },
+          },
+        ],
+        deliveryManualSupplements: [
+          {
+            index: 2,
+            name: 'Return documents',
+            price: {
+              type: 'fixed',
+              value: '5.00',
             },
           },
         ],

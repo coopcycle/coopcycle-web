@@ -70,6 +70,11 @@ context('Delivery (role: dispatcher); store with time slot pricing', () => {
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
+    // Wait for React components to load
+    cy.get('[data-testid="delivery-itinerary"]', {
+      timeout: 10000,
+    }).should('be.visible')
+
     cy.get('[data-testid="order-total-including-tax"]')
       .find('[data-testid="value"]')
       .contains('€6.99')

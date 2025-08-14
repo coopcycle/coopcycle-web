@@ -1,11 +1,12 @@
 import PercentageEditor from './PercentageEditor'
 import PriceRangeEditor from './PriceRangeEditor'
 import PricePerPackageEditor from './PricePerPackageEditor'
-import PriceFixedEditor, { FixedPriceValue } from './PriceFixedEditor'
+import PriceFixedEditor from './PriceFixedEditor'
+import { PriceType, PriceObject } from '../types/PricingRuleType'
 
 type Props = {
-  priceType: string
-  defaultValue: FixedPriceValue //TODO: add other types
+  priceType: PriceType
+  defaultValue: PriceObject
   onChange: (value: string) => void
 }
 

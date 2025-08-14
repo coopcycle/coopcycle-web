@@ -1,4 +1,3 @@
-import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 
@@ -27,6 +26,9 @@ if (container) {
       <Provider store={store}>
         <PricingRuleSetForm
           ruleSetId={ruleSetId ? parseInt(ruleSetId) : null}
+          ruleSetUri={
+            ruleSetId ? `api/pricing_rule_sets/${ruleSetId}` : null
+          }
           isNew={isNew}
         />
       </Provider>

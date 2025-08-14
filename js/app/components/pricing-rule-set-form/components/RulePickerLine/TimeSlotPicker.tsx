@@ -4,7 +4,12 @@ import { useGetTimeSlotsQuery } from '../../../../api/slice'
 import PickerIsLoading from './PickerIsLoading'
 import PickerIsError from './PickerIsError'
 
-export default function TimeSlotPicker({ value, onChange }) {
+type Props = {
+  value: string
+  onChange: (event: { target: { value: string } }) => void
+}
+
+export default function TimeSlotPicker({ value, onChange }: Props) {
   const { data: timeSlots, isFetching } = useGetTimeSlotsQuery()
 
   if (isFetching) {

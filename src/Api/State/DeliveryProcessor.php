@@ -55,7 +55,7 @@ class DeliveryProcessor implements ProcessorInterface
     /**
      * @param DeliveryDto|DeliveryFromTasksInput $data
      */
-    public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
+    public function process($data, Operation $operation, array $uriVariables = [], array $context = []): Delivery
     {
         $store = $data->store ?? $this->storeExtractor->extractStore();
 
