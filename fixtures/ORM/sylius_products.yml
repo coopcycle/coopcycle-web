@@ -28,8 +28,8 @@ AppBundle\Entity\Sylius\Product:
   on_demand_delivery:
     code: CPCCL-ODDLVR
     currentLocale: fr
-    name: On demand delivery
-    slug: on-demand-delivery
+    name: Livraison à la demande
+    slug: livraison-a-la-demande
     enabled: true
     options: [
       "@product_option_fixed_price_rules",
