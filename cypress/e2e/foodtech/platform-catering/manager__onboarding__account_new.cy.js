@@ -1,6 +1,6 @@
 describe('Platform catering; manager; onboarding with a new user account', () => {
   beforeEach(() => {
-    cy.loadFixtures('ORM/business_account_manager_invitation_new_user.yml')
+    cy.loadFixtures('business_account_manager_invitation_new_user.yml')
   })
 
   it('should activate a business account', () => {

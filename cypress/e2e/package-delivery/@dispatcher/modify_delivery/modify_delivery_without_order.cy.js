@@ -1,10 +1,10 @@
 context('Delivery (role: dispatcher)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      'ORM/user_dispatcher.yml',
-      'ORM/tags.yml',
-      'ORM/store_basic.yml',
-      'ORM/delivery_without_an_order.yml',
+      'user_dispatcher.yml',
+      'tags.yml',
+      'store_basic.yml',
+      'delivery_without_an_order.yml',
     ])
     cy.login('dispatcher', 'dispatcher')
   })

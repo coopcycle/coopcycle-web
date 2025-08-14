@@ -1,6 +1,6 @@
 describe('Failed checkout; time range is not valid any more', () => {
   beforeEach(() => {
-    cy.loadFixtures('ORM/checkout.yml')
+    cy.loadFixtures('checkout.yml')
 
     cy.setMockDateTime('2025-01-10 21:30:00')
 

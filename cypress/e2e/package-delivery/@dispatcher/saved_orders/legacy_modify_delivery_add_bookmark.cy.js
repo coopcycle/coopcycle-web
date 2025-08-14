@@ -1,6 +1,6 @@
 context('Bookmarks (Saved orders) (role: admin)', () => {
   beforeEach(() => {
-    cy.loadFixtures('ORM/stores_legacy.yml')
+    cy.loadFixtures('stores_legacy.yml')
 
     // Login
     cy.login('admin', '12345678')

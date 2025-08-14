@@ -38,7 +38,7 @@ Cypress.Commands.add('symfonyConsole', command => {
 })
 
 Cypress.Commands.add('loadFixtures', (fixtures, setup=false) => {
-  const fixturesString = (Array.isArray(fixtures) ? fixtures : [fixtures]).map(f => `-f fixtures/${f}`).join(' ')
+  const fixturesString = (Array.isArray(fixtures) ? fixtures : [fixtures]).map(f => `-f fixtures/ORM/${f}`).join(' ')
   cy.symfonyConsole(`coopcycle:fixtures:load${setup ? ' -s fixtures/ORM/setup_default.yml' : ''} ${fixturesString}`)
 })
 

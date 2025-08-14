@@ -1,6 +1,6 @@
 context('Managing recurrence rules (role: dispatcher)', () => {
   beforeEach(() => {
-    cy.loadFixtures('ORM/stores_legacy.yml')
+    cy.loadFixtures('stores_legacy.yml')
 
     // Login
     cy.login('dispatcher', 'dispatcher')

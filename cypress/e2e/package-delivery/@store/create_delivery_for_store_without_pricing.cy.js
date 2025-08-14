@@ -1,6 +1,6 @@
 context('store without pricing (role: store)', () => {
   beforeEach(() => {
-    cy.loadFixtures('ORM/stores_legacy.yml')
+    cy.loadFixtures('stores_legacy.yml')
   })
 
   it('create delivery for store without pricing', () => {

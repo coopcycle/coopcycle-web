@@ -1,9 +1,9 @@
 context('Managing recurrence rules (role: dispatcher)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      'ORM/user_dispatcher.yml',
-      'ORM/tags.yml',
-      'ORM/store_basic.yml',
+      'user_dispatcher.yml',
+      'tags.yml',
+      'store_basic.yml',
     ])
 
     // Login

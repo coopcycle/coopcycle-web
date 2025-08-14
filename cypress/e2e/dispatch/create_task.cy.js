@@ -1,6 +1,6 @@
 context('Dispatch', () => {
   beforeEach(() => {
-    cy.loadFixtures('ORM/dispatch_dashboard.yml', true)
+    cy.loadFixtures('dispatch_dashboard.yml', true)
 
     cy.intercept('POST', '/api/tasks').as('postTask')
     cy.intercept('POST', '/admin/task-lists/**/jane').as('postTaskList')

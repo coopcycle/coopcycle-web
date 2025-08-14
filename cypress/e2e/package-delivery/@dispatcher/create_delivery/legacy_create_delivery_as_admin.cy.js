@@ -1,8 +1,8 @@
 context('Delivery (role: admin)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      'ORM/user_admin.yml',
-      'ORM/store_w_distance_pricing.yml',
+      'user_admin.yml',
+      'store_w_distance_pricing.yml',
     ])
 
     cy.setMockDateTime('2025-04-23 8:30:00')

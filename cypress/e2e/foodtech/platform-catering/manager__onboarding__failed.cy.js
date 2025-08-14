@@ -1,6 +1,6 @@
 describe('Platform catering; manager; onboarding; failed', () => {
   beforeEach(() => {
-    cy.loadFixtures('ORM/business_account_manager_invitation_existing_user.yml')
+    cy.loadFixtures('business_account_manager_invitation_existing_user.yml')
   })
 
   it('should fail due to the missing info', () => {

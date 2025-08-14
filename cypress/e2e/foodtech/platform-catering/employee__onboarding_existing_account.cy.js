@@ -1,7 +1,7 @@
 describe('Platform catering; employee; onboarding', () => {
   beforeEach(() => {
     cy.loadFixtures(
-      'ORM/business_account_employee_invitation_existing_user.yml',
+      'business_account_employee_invitation_existing_user.yml',
     )
   })
 

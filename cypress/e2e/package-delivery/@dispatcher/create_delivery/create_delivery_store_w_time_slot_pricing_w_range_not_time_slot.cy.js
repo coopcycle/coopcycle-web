@@ -1,8 +1,8 @@
 context('Delivery (role: dispatcher); store with time slot pricing', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      'ORM/user_dispatcher.yml',
-      'ORM/store_w_time_slot_pricing.yml',
+      'user_dispatcher.yml',
+      'store_w_time_slot_pricing.yml',
     ])
 
     cy.setMockDateTime('2025-04-23 8:30:00')

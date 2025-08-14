@@ -3,8 +3,8 @@ context(
   () => {
     beforeEach(() => {
       cy.loadFixturesWithSetup([
-        'ORM/user_dispatcher.yml',
-        'ORM/store_basic.yml',
+        'user_dispatcher.yml',
+        'store_basic.yml',
       ])
 
       cy.setMockDateTime('2025-04-23 8:30:00')

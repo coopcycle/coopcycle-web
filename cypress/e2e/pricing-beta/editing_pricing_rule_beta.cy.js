@@ -3,9 +3,9 @@ context(
   () => {
     beforeEach(() => {
       cy.loadFixturesWithSetup([
-        'ORM/user_admin.yml',
-        'ORM/tags.yml',
-        'ORM/store_multi_dropoff.yml',
+        'user_admin.yml',
+        'tags.yml',
+        'store_multi_dropoff.yml',
       ])
       cy.login('admin', '12345678')
     })
