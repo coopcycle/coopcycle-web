@@ -1,6 +1,6 @@
 describe('Checkout (happy path); with guest checkout disabled', () => {
   beforeEach(() => {
-    cy.loadFixtures('../cypress/fixtures/checkout.yml')
+    cy.loadFixtures('ORM/checkout.yml')
 
     cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart')
     cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')

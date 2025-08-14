@@ -1,6 +1,6 @@
 context('Checkout', () => {
   beforeEach(() => {
-    cy.loadFixtures('../cypress/fixtures/checkout.yml')
+    cy.loadFixtures('ORM/checkout.yml')
   })
 
   it('order something at restaurant with deposit-refund enabled (as guest)', () => {

@@ -1,6 +1,6 @@
 describe('Platform catering; admin; invite manager', () => {
   beforeEach(() => {
-    cy.loadFixtures('../cypress/fixtures/foodtech.yml')
+    cy.loadFixtures('ORM/foodtech.yml')
   })
 
   it("should send an invitation to a business account's manager", () => {

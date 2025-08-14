@@ -1,6 +1,6 @@
 describe('Checkout (happy path); with guest checkout enabled', () => {
   beforeEach(() => {
-    cy.loadFixtures('../cypress/fixtures/checkout.yml')
+    cy.loadFixtures('ORM/checkout.yml')
 
     cy.symfonyConsole('craue:setting:create --section="general" --name="guest_checkout_enabled" --value="1" --force')
 

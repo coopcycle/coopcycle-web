@@ -6,7 +6,7 @@ describe(
       describe(` (${ customerType })`, () => {
 
         beforeEach(() => {
-          cy.loadFixtures('../cypress/fixtures/checkout.yml')
+          cy.loadFixtures('ORM/checkout.yml')
 
           cy.setMockDateTime('2025-01-10 21:30:00')
 

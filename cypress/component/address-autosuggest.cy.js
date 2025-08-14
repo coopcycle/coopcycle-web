@@ -10,7 +10,7 @@ describe('Address Autosuggest', () => {
   beforeEach(function () {
 
     cy
-      .readFile('cypress/fixtures/components/address-autosuggest.yml')
+      .readFile('fixtures/ORM/address-autosuggest.yml')
       .then((str) => {
         try {
           this.expectations = yaml.load(str, 'utf8')

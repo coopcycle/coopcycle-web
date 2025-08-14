@@ -11,7 +11,7 @@ AppBundle\Entity\Package:
     averageVolumeUnits: 1.0
     packageSet: '@package_set_1'
     description: ''
-    short_code: 'AB'
+    short_code: 'SM'
     color: '#a91de0'
   package_xl:
     name: 'XL'
@@ -19,7 +19,7 @@ AppBundle\Entity\Package:
     averageVolumeUnits: 3.0
     packageSet: '@package_set_1'
     description: ''
-    short_code: 'AB'
+    short_code: 'XL'
     color: '#a91de0'
   package_small2:
     name: 'SMALL'

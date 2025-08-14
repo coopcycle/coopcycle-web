@@ -1,6 +1,6 @@
 describe('Delivery with recurrence rule (role: admin)', () => {
   beforeEach(() => {
-    cy.loadFixtures('../cypress/fixtures/stores.yml')
+    cy.loadFixtures('ORM/stores_legacy.yml')
     cy.login('admin', '12345678')
   })
 

@@ -1,6 +1,6 @@
 describe('Checkout (happy path); (business context)', () => {
   beforeEach(() => {
-    cy.loadFixtures('../cypress/fixtures/checkout_platform_catering.yml')
+    cy.loadFixtures('ORM/checkout_platform_catering.yml')
 
     cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart')
     cy.intercept('POST', '/fr/restaurant/*/cart/product/*').as('postProduct')

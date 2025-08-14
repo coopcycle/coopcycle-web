@@ -1,7 +1,7 @@
 context('Delivery (role: dispatcher)', () => {
   beforeEach(() => {
     cy.loadFixtures([
-      '../cypress/fixtures/setup_default.yml',
+      'ORM/setup_default.yml',
       'ORM/user_dispatcher.yml',
       'ORM/tags.yml',
       'ORM/store_with_manual_supplements.yml',
