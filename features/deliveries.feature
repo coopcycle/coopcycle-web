@@ -387,7 +387,7 @@ Feature: Deliveries
               "name": "XL",
               "quantity": 2,
               "volume_per_package": 3,
-              "short_code": "AB",
+              "short_code": "XL",
               "labels": @array@
             }
           ],
@@ -429,7 +429,7 @@ Feature: Deliveries
               "name": "XL",
               "quantity": 2,
               "volume_per_package": 3,
-              "short_code": "AB",
+              "short_code": "XL",
               "labels": @array@
             }
           ],
@@ -1525,7 +1525,7 @@ Feature: Deliveries
       | sylius_taxation.yml |
       | payment_methods.yml |
       | sylius_products.yml |
-      | stores_with_manual_supplements.yml |
+      | store_with_manual_supplements.yml |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
@@ -1579,7 +1579,7 @@ Feature: Deliveries
       | sylius_taxation.yml |
       | payment_methods.yml |
       | sylius_products.yml |
-      | stores_with_manual_supplements.yml |
+      | store_with_manual_supplements.yml |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
@@ -1634,7 +1634,7 @@ Feature: Deliveries
       | sylius_taxation.yml |
       | payment_methods.yml |
       | sylius_products.yml |
-      | stores_with_manual_supplements.yml |
+      | store_with_manual_supplements.yml |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
@@ -3348,7 +3348,7 @@ Feature: Deliveries
                         }
                     ]
                 },
-                "name": "On demand delivery",
+                "name": "Livraison à la demande",
                 "variantName": "my custom variant",
                 "vendor": null,
                 "player": {
@@ -3459,7 +3459,7 @@ Feature: Deliveries
                       }
                   ]
               },
-              "name": "On demand delivery",
+              "name": "Livraison à la demande",
               "variantName": "my new product name",
               "vendor": null,
               "player": {

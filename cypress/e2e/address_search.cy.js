@@ -1,6 +1,6 @@
 context('Address search', () => {
   beforeEach(() => {
-    cy.loadFixtures('../cypress/fixtures/checkout.yml')
+    cy.loadFixtures('checkout.yml')
   })
 
   it('search address with useless address details', () => {

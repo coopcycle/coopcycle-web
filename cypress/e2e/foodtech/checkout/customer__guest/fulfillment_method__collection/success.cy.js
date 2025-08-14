@@ -1,6 +1,6 @@
 describe('Checkout; non business context; quest; fulfilment method: collection: happy path', () => {
   beforeEach(() => {
-    cy.loadFixtures('../cypress/fixtures/checkout.yml')
+    cy.loadFixtures('checkout.yml')
     cy.symfonyConsole('craue:setting:create --section="general" --name="guest_checkout_enabled" --value="1" --force')
 
     cy.intercept('POST', '/fr/restaurant/*/cart').as('postRestaurantCart')

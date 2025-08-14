@@ -2,7 +2,7 @@ context(
   'Setup simple km-based pricing rule using React interface (role: admin) - Beta Version',
   () => {
     beforeEach(() => {
-      cy.loadFixturesWithSetup('ORM/user_admin.yml')
+      cy.loadFixturesWithSetup('user_admin.yml')
       cy.login('admin', '12345678')
     })
 

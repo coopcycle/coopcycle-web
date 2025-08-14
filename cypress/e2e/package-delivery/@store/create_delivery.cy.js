@@ -1,6 +1,6 @@
 context('Delivery (role: store)', () => {
   beforeEach(() => {
-    cy.loadFixturesWithSetup(['ORM/store_basic.yml'])
+    cy.loadFixturesWithSetup(['store_basic.yml'])
     cy.setEnvVar('PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED', '0')
   })
   afterEach(() => {

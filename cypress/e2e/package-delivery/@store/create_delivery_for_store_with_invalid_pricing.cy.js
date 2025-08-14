@@ -1,6 +1,6 @@
 context('store with invalid pricing (role: store)', () => {
   beforeEach(() => {
-    cy.loadFixtures('../cypress/fixtures/stores.yml')
+    cy.loadFixtures('stores_legacy.yml')
   })
 
   it('create delivery for store with invalid pricing', () => {

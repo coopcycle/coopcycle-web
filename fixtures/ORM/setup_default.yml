@@ -11,11 +11,11 @@
 # and taxes to be present in the database
 
 include:
-  - ../../fixtures/ORM/settings_mandatory.yml
-  - ../../fixtures/ORM/sylius_channels.yml
+  - settings_mandatory.yml
+  - sylius_channels.yml
   - sylius_currency.yml
   - sylius_taxation.yml
   - settings_default.yml
   - settings_payments.yml
   - payment_methods.yml
-  - ../../fixtures/ORM/sylius_on_demand_delivery_product.yml
+  - sylius_products.yml

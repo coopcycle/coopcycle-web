@@ -86,7 +86,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
         // LOAD AND PERSIST FIXTURES
         $entities = $this->fixturesLoader->load([
             __DIR__.'/../../../fixtures/ORM/settings_mandatory.yml',
-            __DIR__.'/../../../features/fixtures/ORM/stores.yml'
+            __DIR__.'/../../../fixtures/ORM/stores.yml'
         ]);
 
         array_walk($entities, function($entity) {

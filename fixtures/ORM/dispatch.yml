@@ -6,6 +6,20 @@ include:
   - restaurants.yml
   - packages.yml
 
+AppBundle\Entity\PackageSet:
+  package_set_2:
+    name: 'Standard'
+
+AppBundle\Entity\Package:
+  package_small2:
+    name: 'SMALL'
+    maxVolumeUnits: 1.0
+    averageVolumeUnits: 1.0
+    packageSet: '@package_set_2'
+    description: ''
+    short_code: 'AB'
+    color: '#a91de0'
+
 AppBundle\Entity\Task:
   task_1:
     address: "@address_1"

@@ -1,7 +1,0 @@
-AppBundle\Entity\Tag:
-  tag_important:
-    name: Important
-    color: '#FF0000'
-  tag_fragile:
-    name: Fragile
-    color: '#CCCCCC'
