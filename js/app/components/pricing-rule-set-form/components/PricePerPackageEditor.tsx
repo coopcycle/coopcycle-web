@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import { getCurrencySymbol } from '../../../i18n'
-import { useTranslation } from 'react-i18next'
-import Select from 'react-select'
-import _ from 'lodash'
-import { useGetPackagesQuery } from '../../../api/slice'
-import PickerIsLoading from './RulePickerLine/PickerIsLoading'
-import PickerIsError from './RulePickerLine/PickerIsError'
+import React, { useEffect, useMemo, useState } from 'react';
+import { getCurrencySymbol } from '../../../i18n';
+import { useTranslation } from 'react-i18next';
+import Select from 'react-select';
+import _ from 'lodash';
+import { useGetPackagesQuery } from '../../../api/slice';
+import PickerIsLoading from './RulePickerLine/PickerIsLoading';
+import PickerIsError from './RulePickerLine/PickerIsError';
 
 /**
  * Custom styles for the react-select component in order to:
@@ -37,59 +37,59 @@ const reactSelectStyles = {
     },
   }),
   option: provided => ({ ...provided, wordWrap: 'break-word' }),
-}
+};
 
 export type PricePerPackageValue = {
-  packageName: string
-  unitPrice: number
-  offset: number
-  discountPrice: number
-}
+  packageName: string;
+  unitPrice: number;
+  offset: number;
+  discountPrice: number;
+};
 
 type Props = {
-  defaultValue: PricePerPackageValue
-  onChange: (value: PricePerPackageValue) => void
-}
+  defaultValue: PricePerPackageValue;
+  onChange: (value: PricePerPackageValue) => void;
+};
 
 export default ({ defaultValue, onChange }: Props) => {
-  const { data: packages, isFetching } = useGetPackagesQuery()
+  const { data: packages, isFetching } = useGetPackagesQuery();
 
   const packageNames = useMemo(() => {
     if (!packages) {
-      return undefined
+      return undefined;
     }
 
-    return packages ? packages.map(item => item.name) : []
-  }, [packages])
+    return packages ? packages.map(item => item.name) : [];
+  }, [packages]);
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
-  const [unitPrice, setUnitPrice] = useState(defaultValue.unitPrice || 0)
-  const [packageName, setPackageName] = useState()
-  const [offset, setOffset] = useState(defaultValue.offset || 0)
+  const [unitPrice, setUnitPrice] = useState(defaultValue.unitPrice || 0);
+  const [packageName, setPackageName] = useState();
+  const [offset, setOffset] = useState(defaultValue.offset || 0);
   const [discountPrice, setDiscountPrice] = useState(
     defaultValue.discountPrice || 0,
-  )
-  const [withDiscount, setWithDiscount] = useState(defaultValue.offset > 0)
+  );
+  const [withDiscount, setWithDiscount] = useState(defaultValue.offset > 0);
 
   useEffect(() => {
     if (!packageNames) {
-      return
+      return;
     }
 
     if (packageNames.length === 0) {
-      return
+      return;
     }
 
-    setPackageName(defaultValue.packageName || packageNames[0])
-  }, [defaultValue.packageName, packageNames])
+    setPackageName(defaultValue.packageName || packageNames[0]);
+  }, [defaultValue.packageName, packageNames]);
 
   if (isFetching) {
-    return <PickerIsLoading />
+    return <PickerIsLoading />;
   }
 
   if (!packages) {
-    return <PickerIsError />
+    return <PickerIsError />;
   }
 
   return (
@@ -105,13 +105,13 @@ export default ({ defaultValue, onChange }: Props) => {
             className="form-control d-inline-block"
             style={{ width: '80px' }}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setUnitPrice(parseFloat(e.target.value) * 100)
+              setUnitPrice(parseFloat(e.target.value) * 100);
               onChange({
                 packageName,
                 unitPrice: parseFloat(e.target.value) * 100,
                 offset,
                 discountPrice,
-              })
+              });
             }}
           />
           <span className="ml-2">{getCurrencySymbol()}</span>
@@ -124,13 +124,13 @@ export default ({ defaultValue, onChange }: Props) => {
               selectedOption: { value: string; label: string } | null,
             ) => {
               if (selectedOption) {
-                setPackageName(selectedOption.value)
+                setPackageName(selectedOption.value);
                 onChange({
                   packageName: selectedOption.value,
                   unitPrice,
                   offset,
                   discountPrice,
-                })
+                });
               }
             }}
             options={_.sortBy(packageNames).map(pkg => ({
@@ -154,13 +154,13 @@ export default ({ defaultValue, onChange }: Props) => {
               className="form-control d-inline-block"
               style={{ width: '80px' }}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setDiscountPrice(parseFloat(e.target.value) * 100)
+                setDiscountPrice(parseFloat(e.target.value) * 100);
                 onChange({
                   packageName,
                   unitPrice,
                   offset,
                   discountPrice: parseFloat(e.target.value) * 100,
-                })
+                });
               }}
             />
             <span className="ml-2">{getCurrencySymbol()}</span>
@@ -178,13 +178,13 @@ export default ({ defaultValue, onChange }: Props) => {
               className="form-control d-inline-block"
               style={{ width: '80px' }}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setOffset(parseInt(e.target.value, 10))
+                setOffset(parseInt(e.target.value, 10));
                 onChange({
                   packageName,
                   unitPrice: parseFloat(e.target.value) * 100,
                   offset: parseInt(e.target.value, 10),
                   discountPrice,
-                })
+                });
               }}
             />
           </label>
@@ -192,14 +192,14 @@ export default ({ defaultValue, onChange }: Props) => {
             type="button"
             className="btn btn-xs btn-default"
             onClick={() => {
-              setWithDiscount(false)
-              setOffset(0)
+              setWithDiscount(false);
+              setOffset(0);
               onChange({
                 packageName,
                 unitPrice,
                 offset: 0,
                 discountPrice,
-              })
+              });
             }}>
             <i className="fa fa-times mr-1"></i>
             <span>{t('PRICE_RANGE_EDITOR.PER_PACKAGE_DEL_DISCOUNT')}</span>
@@ -211,20 +211,20 @@ export default ({ defaultValue, onChange }: Props) => {
           type="button"
           className="btn btn-xs btn-default"
           onClick={() => {
-            setWithDiscount(true)
-            setOffset(2)
-            setDiscountPrice(100)
+            setWithDiscount(true);
+            setOffset(2);
+            setDiscountPrice(100);
             onChange({
               packageName,
               unitPrice,
               offset: 2,
               discountPrice: 100,
-            })
+            });
           }}>
           <i className="fa fa-plus mr-1"></i>
           <span>{t('PRICE_RANGE_EDITOR.PER_PACKAGE_ADD_DISCOUNT')}</span>
         </button>
       )}
     </div>
-  )
-}
+  );
+};

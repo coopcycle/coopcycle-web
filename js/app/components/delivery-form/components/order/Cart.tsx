@@ -1,16 +1,16 @@
-import React, { useMemo } from 'react'
+import React, { useMemo } from 'react';
 import {
   Adjustment as AdjustmentType,
   Order,
   OrderItem as OrderItemType,
   ProductVariant,
-} from '../../../../api/types'
+} from '../../../../api/types';
 
 type ProductOptionValueProps = {
-  index: number
-  adjustment: AdjustmentType
-  overridePrice: boolean
-}
+  index: number;
+  adjustment: AdjustmentType;
+  overridePrice: boolean;
+};
 
 function Adjustment({
   index,
@@ -26,19 +26,19 @@ function Adjustment({
         {(adjustment.amount / 100).formatMoney()}
       </span>
     </div>
-  )
+  );
 }
 
 type OrderItemProps = {
-  index: number
-  orderItem: OrderItemType
-  overridePrice: boolean
-}
+  index: number;
+  orderItem: OrderItemType;
+  overridePrice: boolean;
+};
 
 function OrderItem({ index, orderItem, overridePrice }: OrderItemProps) {
   const productVariant = useMemo((): ProductVariant => {
-    return orderItem.variant
-  }, [orderItem])
+    return orderItem.variant;
+  }, [orderItem]);
 
   return (
     <li
@@ -68,13 +68,13 @@ function OrderItem({ index, orderItem, overridePrice }: OrderItemProps) {
         </span>
       </div>
     </li>
-  )
+  );
 }
 
 type Props = {
-  order: Order
-  overridePrice: boolean
-}
+  order: Order;
+  overridePrice: boolean;
+};
 
 const Cart = ({ order, overridePrice }: Props) => {
   return (
@@ -89,7 +89,7 @@ const Cart = ({ order, overridePrice }: Props) => {
           />
         ))}
     </>
-  )
-}
+  );
+};
 
-export default Cart
+export default Cart;

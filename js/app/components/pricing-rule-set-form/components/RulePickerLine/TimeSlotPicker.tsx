@@ -1,23 +1,23 @@
-import React from 'react'
-import { Select } from 'antd'
-import { useGetTimeSlotsQuery } from '../../../../api/slice'
-import PickerIsLoading from './PickerIsLoading'
-import PickerIsError from './PickerIsError'
+import React from 'react';
+import { Select } from 'antd';
+import { useGetTimeSlotsQuery } from '../../../../api/slice';
+import PickerIsLoading from './PickerIsLoading';
+import PickerIsError from './PickerIsError';
 
 type Props = {
-  value: string
-  onChange: (event: { target: { value: string } }) => void
-}
+  value: string;
+  onChange: (event: { target: { value: string } }) => void;
+};
 
 export default function TimeSlotPicker({ value, onChange }: Props) {
-  const { data: timeSlots, isFetching } = useGetTimeSlotsQuery()
+  const { data: timeSlots, isFetching } = useGetTimeSlotsQuery();
 
   if (isFetching) {
-    return <PickerIsLoading />
+    return <PickerIsLoading />;
   }
 
   if (!timeSlots) {
-    return <PickerIsError />
+    return <PickerIsError />;
   }
 
   return (
@@ -42,5 +42,5 @@ export default function TimeSlotPicker({ value, onChange }: Props) {
         })),
       ]}
     />
-  )
+  );
 }

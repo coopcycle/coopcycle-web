@@ -1,52 +1,52 @@
-import React, { useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { RRule, rrulestr } from 'rrule'
-import _ from 'lodash'
-import Select from 'react-select'
-import { Button, Checkbox, Collapse, Input } from 'antd'
-import moment from 'moment'
-import { Formik } from 'formik'
-import { useTranslation } from 'react-i18next'
-import classNames from 'classnames'
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { RRule, rrulestr } from 'rrule';
+import _ from 'lodash';
+import Select from 'react-select';
+import { Button, Checkbox, Collapse, Input } from 'antd';
+import moment from 'moment';
+import { Formik } from 'formik';
+import { useTranslation } from 'react-i18next';
+import classNames from 'classnames';
 
-import TimeRange from '../../../../utils/TimeRange'
-import RecurrenceRuleAsText from './RecurrenceRuleAsText'
-import { closeRecurrenceModal } from '../../redux/recurrenceSlice'
-import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext'
-import HelpIcon from '../../../HelpIcon'
+import TimeRange from '../../../../utils/TimeRange';
+import RecurrenceRuleAsText from './RecurrenceRuleAsText';
+import { closeRecurrenceModal } from '../../redux/recurrenceSlice';
+import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext';
+import HelpIcon from '../../../HelpIcon';
 
 type FreqOption = {
-  value: number
-  label: string
-}
+  value: number;
+  label: string;
+};
 
 type ByDayOption = {
-  label: string
-  value: number
-}
+  label: string;
+  value: number;
+};
 
-const { Panel } = Collapse
+const { Panel } = Collapse;
 
 const freqOptions: FreqOption[] = [
   { value: RRule.DAILY, label: 'Every day' },
   { value: RRule.WEEKLY, label: 'Every week' },
-]
+];
 
-const locale = $('html').attr('lang') || 'en'
-const weekdays = TimeRange.weekdaysShort(locale)
+const locale = $('html').attr('lang') || 'en';
+const weekdays = TimeRange.weekdaysShort(locale);
 
 const byDayOptions: ByDayOption[] = weekdays.map(weekday => ({
   label: weekday.name,
   value: RRule[weekday.key.toUpperCase()].weekday,
-}))
+}));
 
 const RecurrenceEditor = ({ recurrence, onChange }) => {
-  const ruleObj = rrulestr(recurrence)
+  const ruleObj = rrulestr(recurrence);
 
   const defaultValue = _.find(
     freqOptions,
     option => option.value === ruleObj.options.freq,
-  )
+  );
 
   return (
     <div>
@@ -73,58 +73,58 @@ const RecurrenceEditor = ({ recurrence, onChange }) => {
         </small>
       </div>
     </div>
-  )
-}
+  );
+};
 
 const getByDayValue = recurrenceRule => {
-  const match = recurrenceRule.match(/BYDAY=([^;]+)/)
-  return match ? match[1] : null
-}
+  const match = recurrenceRule.match(/BYDAY=([^;]+)/);
+  return match ? match[1] : null;
+};
 
 const validateForm = values => {
-  let errors = {}
+  let errors = {};
 
   if (!values.rule) {
-    errors.rule = 'Required'
+    errors.rule = 'Required';
   }
 
   try {
-    rrulestr(values.rule)
+    rrulestr(values.rule);
   } catch (e) {
-    errors.rule = 'Invalid recurrence rule'
+    errors.rule = 'Invalid recurrence rule';
   }
 
-  return errors
-}
+  return errors;
+};
 
 const defaultRecurrenceRule =
-  'FREQ=WEEKLY;BYDAY=' + moment().locale('en').format('dd').toUpperCase()
+  'FREQ=WEEKLY;BYDAY=' + moment().locale('en').format('dd').toUpperCase();
 
 const ModalContent = () => {
   const { rruleValue: recurrenceRule, setFieldValue: setSharedFieldValue } =
-    useDeliveryFormFormikContext()
+    useDeliveryFormFormikContext();
 
   const [isOverrideRule, setIsOverrideRule] = useState<boolean>(() => {
     if (!recurrenceRule) {
-      return false
+      return false;
     }
 
     // Check if it's a standard FREQ=WEEKLY;BYDAY= rule
-    const ruleParts = recurrenceRule.split(';')
+    const ruleParts = recurrenceRule.split(';');
     if (
       ruleParts.length === 2 &&
       ruleParts.includes('FREQ=WEEKLY') &&
       ruleParts.some(part => part.startsWith('BYDAY='))
     ) {
-      return false
+      return false;
     }
 
-    return true
-  })
+    return true;
+  });
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   return (
     <div data-testid="recurrence__modal__content">
@@ -144,15 +144,15 @@ const ModalContent = () => {
         initialValues={{ rule: recurrenceRule ?? defaultRecurrenceRule }}
         validate={validateForm}
         onSubmit={values => {
-          let rrule
+          let rrule;
           if (isOverrideRule) {
-            rrule = values.rule.trim()
+            rrule = values.rule.trim();
           } else {
             // If no days are selected, consider it as no recurrence
-            rrule = getByDayValue(values.rule) ? values.rule : null
+            rrule = getByDayValue(values.rule) ? values.rule : null;
           }
-          setSharedFieldValue('rrule', rrule)
-          dispatch(closeRecurrenceModal())
+          setSharedFieldValue('rrule', rrule);
+          dispatch(closeRecurrenceModal());
         }}
         validateOnBlur={true}
         validateOnChange={false}>
@@ -163,8 +163,8 @@ const ModalContent = () => {
                 <RecurrenceEditor
                   recurrence={values.rule}
                   onChange={newOpts => {
-                    const cleanOpts = _.pick(newOpts, ['freq', 'byweekday'])
-                    setFieldValue('rule', RRule.optionsToString(cleanOpts))
+                    const cleanOpts = _.pick(newOpts, ['freq', 'byweekday']);
+                    setFieldValue('rule', RRule.optionsToString(cleanOpts));
                   }}
                 />
                 {errors.rule && (
@@ -182,14 +182,14 @@ const ModalContent = () => {
                     data-testid="recurrence-override-rule-checkbox"
                     checked={isOverrideRule}
                     onChange={e => {
-                      const isChecked = e.target.checked
+                      const isChecked = e.target.checked;
 
                       // Reset rule to default to prevent errors from invalid manual input
                       if (!isChecked) {
-                        setFieldValue('rule', defaultRecurrenceRule)
+                        setFieldValue('rule', defaultRecurrenceRule);
                       }
 
-                      setIsOverrideRule(isChecked)
+                      setIsOverrideRule(isChecked);
                     }}>
                     {t('RECURRENCE_OVERRIDE_RULE')}
                   </Checkbox>
@@ -205,7 +205,7 @@ const ModalContent = () => {
                   type="text"
                   value={values.rule}
                   onChange={e => {
-                    setFieldValue('rule', e.target.value)
+                    setFieldValue('rule', e.target.value);
                   }}
                 />
                 {errors.rule && (
@@ -231,7 +231,7 @@ const ModalContent = () => {
         )}
       </Formik>
     </div>
-  )
-}
+  );
+};
 
-export default ModalContent
+export default ModalContent;

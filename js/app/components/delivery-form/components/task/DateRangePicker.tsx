@@ -1,36 +1,36 @@
-import React, { useState, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-import moment, { Moment } from 'moment'
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import moment, { Moment } from 'moment';
 
-import './DateRangePicker.scss'
-import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext'
-import SameDayPicker from './SameDayPicker'
-import MultiDayPicker from './MultiDayPicker'
-import { useSelector } from 'react-redux'
-import { selectMode } from '../../redux/formSlice'
-import { Mode, modeIn } from '../../mode'
+import './DateRangePicker.scss';
+import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext';
+import SameDayPicker from './SameDayPicker';
+import MultiDayPicker from './MultiDayPicker';
+import { useSelector } from 'react-redux';
+import { selectMode } from '../../redux/formSlice';
+import { Mode, modeIn } from '../../mode';
 
 function getNextRoundedTime(): Moment {
-  const now = moment()
-  now.add(60, 'minutes')
-  const roundedMinutes = Math.ceil(now.minutes() / 10) * 10
+  const now = moment();
+  now.add(60, 'minutes');
+  const roundedMinutes = Math.ceil(now.minutes() / 10) * 10;
   if (roundedMinutes >= 60) {
-    now.add(1, 'hour')
-    now.minutes(roundedMinutes - 60)
+    now.add(1, 'hour');
+    now.minutes(roundedMinutes - 60);
   } else {
-    now.minutes(roundedMinutes)
+    now.minutes(roundedMinutes);
   }
-  now.seconds(0)
+  now.seconds(0);
 
-  return now
+  return now;
 }
 
 type LabelProps = {
-  taskType: 'PICKUP' | 'DROPOFF'
-}
+  taskType: 'PICKUP' | 'DROPOFF';
+};
 
 const Label = ({ taskType }: LabelProps) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return taskType === 'DROPOFF' ? (
     <div className="mb-2 font-weight-bold">
@@ -40,19 +40,19 @@ const Label = ({ taskType }: LabelProps) => {
     <div className="mb-2 font-weight-bold">
       {t('DELIVERY_FORM_PICKUP_HOUR')}
     </div>
-  )
-}
+  );
+};
 
 type Props = {
-  format: string
-  taskId: string
-  isDispatcher: boolean
-}
+  format: string;
+  taskId: string;
+  isDispatcher: boolean;
+};
 
 const DateTimeRangePicker = ({ format, taskId, isDispatcher }: Props) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
-  const mode = useSelector(selectMode)
+  const mode = useSelector(selectMode);
 
   const {
     taskValues,
@@ -61,29 +61,29 @@ const DateTimeRangePicker = ({ format, taskId, isDispatcher }: Props) => {
     taskIndex: index,
   } = useDeliveryFormFormikContext({
     taskId: taskId,
-  })
+  });
 
   useEffect(() => {
     if (!taskValues.after && !taskValues.before) {
-      const after = getNextRoundedTime()
-      const before = after.clone().add(10, 'minutes')
-      setFieldValue(`tasks[${index}].after`, after.toISOString(true))
-      setFieldValue(`tasks[${index}].before`, before.toISOString(true))
+      const after = getNextRoundedTime();
+      const before = after.clone().add(10, 'minutes');
+      setFieldValue(`tasks[${index}].after`, after.toISOString(true));
+      setFieldValue(`tasks[${index}].before`, before.toISOString(true));
     }
-  }, [taskValues.after, taskValues.before, index, setFieldValue])
+  }, [taskValues.after, taskValues.before, index, setFieldValue]);
 
   const [isComplexPicker, setIsComplexPicker] = useState(
     moment(taskValues.after).isBefore(taskValues.before, 'day'),
-  )
+  );
 
   // When we switch back to simple picker, we need to set back after and before at the same day
   const handleSwitchComplexAndSimplePicker = () => {
     if (isComplexPicker === true) {
-      const before = moment(taskValues.after).clone().add(1, 'hours')
-      setFieldValue(`tasks[${index}].before`, before.toISOString(true))
+      const before = moment(taskValues.after).clone().add(1, 'hours');
+      setFieldValue(`tasks[${index}].before`, before.toISOString(true));
     }
-    setIsComplexPicker(!isComplexPicker)
-  }
+    setIsComplexPicker(!isComplexPicker);
+  };
 
   return (
     <>
@@ -106,7 +106,7 @@ const DateTimeRangePicker = ({ format, taskId, isDispatcher }: Props) => {
         <div className="text-danger">{errors.tasks[index].before}</div>
       )}
     </>
-  )
-}
+  );
+};
 
-export default DateTimeRangePicker
+export default DateTimeRangePicker;

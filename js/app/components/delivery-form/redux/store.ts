@@ -1,9 +1,9 @@
-import { configureStore } from '@reduxjs/toolkit'
-import { accountSlice } from '../../../entities/account/reduxSlice'
-import { apiSlice } from '../../../api/slice'
-import { recurrenceSlice } from './recurrenceSlice'
-import { suggestionsSlice } from './suggestionsSlice'
-import { formSlice } from './formSlice'
+import { configureStore } from '@reduxjs/toolkit';
+import { accountSlice } from '../../../entities/account/reduxSlice';
+import { apiSlice } from '../../../api/slice';
+import { recurrenceSlice } from './recurrenceSlice';
+import { suggestionsSlice } from './suggestionsSlice';
+import { formSlice } from './formSlice';
 
 export function createStoreFromPreloadedState(preloadedState) {
   return configureStore({
@@ -17,5 +17,5 @@ export function createStoreFromPreloadedState(preloadedState) {
     preloadedState,
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware().concat(apiSlice.middleware),
-  })
+  });
 }

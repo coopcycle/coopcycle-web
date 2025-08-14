@@ -1,24 +1,24 @@
-import React from 'react'
+import React from 'react';
 import {
   DragDropContext,
   Droppable,
   Draggable,
   DropResult,
-} from '@hello-pangea/dnd'
-import PricingRule from './PricingRule'
-import { PricingRule as PricingRuleType } from '../../../api/types'
+} from '@hello-pangea/dnd';
+import PricingRule from './PricingRule';
+import { PricingRule as PricingRuleType } from '../../../api/types';
 
 type Props = {
-  rules: PricingRuleType[]
-  droppableId: string
-  droppableType: string
-  onDragEnd: (fromRuleId: string, toRuleId: string) => void
-  getGlobalIndexById: (ruleId: string) => number
-  updateRule: (ruleId: string, updatedRule: PricingRuleType) => void
-  removeRule: (ruleId: string) => void
-  ruleValidationErrors: { [ruleId: string]: string[] }
-  isManualSupplement?: boolean
-}
+  rules: PricingRuleType[];
+  droppableId: string;
+  droppableType: string;
+  onDragEnd: (fromRuleId: string, toRuleId: string) => void;
+  getGlobalIndexById: (ruleId: string) => number;
+  updateRule: (ruleId: string, updatedRule: PricingRuleType) => void;
+  removeRule: (ruleId: string) => void;
+  ruleValidationErrors: { [ruleId: string]: string[] };
+  isManualSupplement?: boolean;
+};
 
 const DraggableRulesList = ({
   rules,
@@ -33,19 +33,19 @@ const DraggableRulesList = ({
 }: Props) => {
   const handleDragEnd = (result: DropResult): void => {
     if (!result.destination) {
-      return
+      return;
     }
 
-    const sourceIndex = result.source.index
-    const destinationIndex = result.destination.index
+    const sourceIndex = result.source.index;
+    const destinationIndex = result.destination.index;
 
     if (sourceIndex !== destinationIndex) {
       // Get the @id of the rules being moved
-      const fromRuleId = rules[sourceIndex]['@id']
-      const toRuleId = rules[destinationIndex]['@id']
-      onDragEnd(fromRuleId, toRuleId)
+      const fromRuleId = rules[sourceIndex]['@id'];
+      const toRuleId = rules[destinationIndex]['@id'];
+      onDragEnd(fromRuleId, toRuleId);
     }
-  }
+  };
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
@@ -62,7 +62,7 @@ const DraggableRulesList = ({
               transition: 'background-color 0.2s ease',
             }}>
             {rules.map((rule, localIndex) => {
-              const ruleId = rule['@id']
+              const ruleId = rule['@id'];
               return (
                 <Draggable key={ruleId} draggableId={ruleId} index={localIndex}>
                   {(provided, snapshot) => (
@@ -88,14 +88,14 @@ const DraggableRulesList = ({
                     </div>
                   )}
                 </Draggable>
-              )
+              );
             })}
             {provided.placeholder}
           </div>
         )}
       </Droppable>
     </DragDropContext>
-  )
-}
+  );
+};
 
-export default DraggableRulesList
+export default DraggableRulesList;

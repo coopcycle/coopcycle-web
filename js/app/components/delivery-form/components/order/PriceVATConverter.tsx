@@ -1,44 +1,44 @@
-import React, { useState } from 'react'
-import { InputNumber } from 'antd'
-import { useTranslation } from 'react-i18next'
-import './PriceVATConverter.scss'
-import { PriceValues } from '../../types'
+import React, { useState } from 'react';
+import { InputNumber } from 'antd';
+import { useTranslation } from 'react-i18next';
+import './PriceVATConverter.scss';
+import { PriceValues } from '../../types';
 
 const getCurrencySymbol = (): string => {
-  const { currencySymbol } = document.body.dataset
-  return currencySymbol || '€'
-}
+  const { currencySymbol } = document.body.dataset;
+  return currencySymbol || '€';
+};
 
 const addVat = (vatExcludedPrice: number, taxRate: number): number => {
-  return Math.round(vatExcludedPrice * 100 * (taxRate + 1)) / 100
-}
+  return Math.round(vatExcludedPrice * 100 * (taxRate + 1)) / 100;
+};
 
 const removeVat = (vatIncludedPrice: number, taxRate: number): number => {
-  return Math.round((vatIncludedPrice * 100) / (taxRate + 1)) / 100
-}
+  return Math.round((vatIncludedPrice * 100) / (taxRate + 1)) / 100;
+};
 
 type Props = {
-  taxRate: number
-  setPrice: (price: PriceValues) => void
-  VAT?: number
-  exVAT?: number
-}
+  taxRate: number;
+  setPrice: (price: PriceValues) => void;
+  VAT?: number;
+  exVAT?: number;
+};
 
 const PriceVATConverter = ({ taxRate, setPrice, VAT, exVAT }: Props) => {
   const [values, setValues] = useState<PriceValues>(() => {
     if (VAT === undefined && exVAT === undefined) {
-      return { VAT: null, exVAT: null }
+      return { VAT: null, exVAT: null };
     } else if (VAT !== undefined && exVAT !== undefined) {
-      return { VAT: VAT, exVAT: exVAT }
+      return { VAT: VAT, exVAT: exVAT };
     } else if (VAT !== undefined) {
-      return { VAT: VAT, exVAT: removeVat(VAT, taxRate) }
+      return { VAT: VAT, exVAT: removeVat(VAT, taxRate) };
     } else if (exVAT !== undefined) {
-      return { VAT: addVat(exVAT, taxRate), exVAT: exVAT }
+      return { VAT: addVat(exVAT, taxRate), exVAT: exVAT };
     }
-    return { VAT: null, exVAT: null }
-  })
+    return { VAT: null, exVAT: null };
+  });
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <div className="row">
@@ -59,9 +59,9 @@ const PriceVATConverter = ({ taxRate, setPrice, VAT, exVAT }: Props) => {
             const newValues = {
               exVAT: value,
               VAT: addVat(value, taxRate),
-            }
-            setValues(newValues)
-            setPrice(newValues)
+            };
+            setValues(newValues);
+            setPrice(newValues);
           }}
         />
       </div>
@@ -84,15 +84,15 @@ const PriceVATConverter = ({ taxRate, setPrice, VAT, exVAT }: Props) => {
               const newValues = {
                 exVAT: removeVat(value, taxRate),
                 VAT: value,
-              }
-              setValues(newValues)
-              setPrice(newValues)
+              };
+              setValues(newValues);
+              setPrice(newValues);
             }
           }}
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default PriceVATConverter
+export default PriceVATConverter;

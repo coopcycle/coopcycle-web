@@ -1,6 +1,6 @@
-import { createApi } from '@reduxjs/toolkit/query/react'
-import { baseQueryWithReauth } from './baseQuery'
-import { fetchAllRecordsUsingFetchWithBQ } from './utils'
+import { createApi } from '@reduxjs/toolkit/query/react';
+import { baseQueryWithReauth } from './baseQuery';
+import { fetchAllRecordsUsingFetchWithBQ } from './utils';
 import {
   GetInvoiceLineItemsGroupedByOrganizationArgs,
   GetInvoiceLineItemsArgs,
@@ -38,7 +38,7 @@ import {
   TimeSlotChoices,
   TimeSlot,
   Uri,
-} from './types'
+} from './types';
 
 // Define our single API slice object
 export const apiSlice = createApi({
@@ -57,7 +57,7 @@ export const apiSlice = createApi({
           baseQuery,
           'api/tags',
           100,
-        )
+        );
       },
     }),
     getZones: builder.query<Zone[], void>({
@@ -66,7 +66,7 @@ export const apiSlice = createApi({
           baseQuery,
           'api/zones',
           100,
-        )
+        );
       },
     }),
     getPackages: builder.query<Package[], void>({
@@ -75,7 +75,7 @@ export const apiSlice = createApi({
           baseQuery,
           'api/packages',
           100,
-        )
+        );
       },
     }),
 
@@ -102,7 +102,7 @@ export const apiSlice = createApi({
           baseQuery,
           'api/time_slots',
           100,
-        )
+        );
       },
     }),
     getTimeSlotChoices: builder.query<TimeSlotChoices, string>({
@@ -115,7 +115,7 @@ export const apiSlice = createApi({
           url: uri,
           method: 'PATCH',
           body: patch,
-        }
+        };
       },
     }),
 
@@ -128,7 +128,7 @@ export const apiSlice = createApi({
           baseQuery,
           `${args}/addresses`,
           100,
-        )
+        );
       },
     }),
     getStoreTimeSlots: builder.query<StoreTimeSlot[], string>({
@@ -137,7 +137,7 @@ export const apiSlice = createApi({
           baseQuery,
           `${args}/time_slots`,
           100,
-        )
+        );
       },
     }),
     getStorePackages: builder.query<Package[], string>({
@@ -146,7 +146,7 @@ export const apiSlice = createApi({
           baseQuery,
           `${args}/packages`,
           100,
-        )
+        );
       },
     }),
     postStoreAddress: builder.mutation<Address, PostStoreAddressRequest>({
@@ -155,7 +155,7 @@ export const apiSlice = createApi({
           url: `${storeUri}/addresses`,
           method: 'POST',
           body,
-        }
+        };
       },
     }),
 
@@ -165,7 +165,7 @@ export const apiSlice = createApi({
           url: `/api/retail_prices/calculate`,
           method: 'POST',
           body,
-        }
+        };
       },
     }),
     suggestOptimizations: builder.mutation<
@@ -177,7 +177,7 @@ export const apiSlice = createApi({
           url: `/api/deliveries/suggest_optimizations`,
           method: 'POST',
           body,
-        }
+        };
       },
     }),
     postDelivery: builder.mutation<Delivery, PostDeliveryRequest>({
@@ -186,7 +186,7 @@ export const apiSlice = createApi({
           url: `/api/deliveries`,
           method: 'POST',
           body,
-        }
+        };
       },
     }),
     putDelivery: builder.mutation<Delivery, PutDeliveryRequest>({
@@ -195,7 +195,7 @@ export const apiSlice = createApi({
           url: uri,
           method: 'PUT',
           body,
-        }
+        };
       },
     }),
 
@@ -208,7 +208,7 @@ export const apiSlice = createApi({
           url: uri,
           method: 'PUT',
           body,
-        }
+        };
       },
     }),
     deleteRecurrenceRule: builder.mutation<void, string>({
@@ -242,7 +242,7 @@ export const apiSlice = createApi({
             page: args.page,
             itemsPerPage: args.pageSize,
           },
-        }
+        };
       },
     }),
     getInvoiceLineItems: builder.query<
@@ -256,7 +256,7 @@ export const apiSlice = createApi({
             page: args.page,
             itemsPerPage: args.pageSize,
           },
-        }
+        };
       },
     }),
 
@@ -300,7 +300,7 @@ export const apiSlice = createApi({
       invalidatesTags: ['PricingRuleSet'],
     }),
   }),
-})
+});
 
 // Export the auto-generated hook for the query endpoints
 export const {
@@ -333,4 +333,4 @@ export const {
   useCreatePricingRuleSetMutation,
   useUpdatePricingRuleSetMutation,
   useDeletePricingRuleSetMutation,
-} = apiSlice
+} = apiSlice;
