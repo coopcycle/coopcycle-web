@@ -1,6 +1,6 @@
 describe('Delivery with recurrence rule (role: dispatcher)', () => {
   beforeEach(() => {
-    cy.loadFixtures('../cypress/fixtures/stores.yml')
+    cy.loadFixtures('stores_legacy.yml')
     cy.login('dispatcher', 'dispatcher')
   })
 

@@ -1,18 +1,18 @@
-import React, { useContext } from 'react'
-import { useTranslation } from 'react-i18next'
-import { CalculationOutput } from '../../../../api/types'
-import FlagsContext from '../../FlagsContext'
+import React, { useContext } from 'react';
+import { useTranslation } from 'react-i18next';
+import { CalculationOutput } from '../../../../api/types';
+import FlagsContext from '../../FlagsContext';
 
 const TotalPrice = ({
   overridePrice,
   priceWithTaxes,
   priceWithoutTaxes,
 }: {
-  overridePrice: boolean
-  priceWithTaxes: number
-  priceWithoutTaxes: number
+  overridePrice: boolean;
+  priceWithTaxes: number;
+  priceWithoutTaxes: number;
 }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <span
@@ -25,20 +25,20 @@ const TotalPrice = ({
         {t('DELIVERY_FORM_TOTAL_VAT')} {priceWithTaxes.formatMoney()}
       </span>
     </span>
-  )
-}
+  );
+};
 
 const CheckoutTotalPrice = ({
   overridePrice,
   priceErrorMessage,
   calculatePriceData,
 }: {
-  overridePrice: boolean
-  priceErrorMessage: string
-  calculatePriceData: CalculationOutput | null
+  overridePrice: boolean;
+  priceErrorMessage: string;
+  calculatePriceData: CalculationOutput | null;
 }) => {
-  const { t } = useTranslation()
-  const { isDispatcher } = useContext(FlagsContext)
+  const { t } = useTranslation();
+  const { isDispatcher } = useContext(FlagsContext);
 
   return (
     <>
@@ -76,7 +76,7 @@ const CheckoutTotalPrice = ({
         </div>
       ) : null}
     </>
-  )
-}
+  );
+};
 
-export default CheckoutTotalPrice
+export default CheckoutTotalPrice;

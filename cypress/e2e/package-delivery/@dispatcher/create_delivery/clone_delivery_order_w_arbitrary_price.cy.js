@@ -1,9 +1,9 @@
 context('Delivery (role: dispatcher)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      'ORM/user_dispatcher.yml',
-      'ORM/tags.yml',
-      '../features/fixtures/ORM/store_default.yml',
+      'user_dispatcher.yml',
+      'tags.yml',
+      'store_default.yml',
     ])
 
     cy.setMockDateTime('2025-04-23 8:30:00')

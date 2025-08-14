@@ -1,6 +1,6 @@
 context('Delivery via form (payment options: Stripe only)', () => {
   beforeEach(() => {
-    cy.loadFixtures('../cypress/fixtures/stores.yml')
+    cy.loadFixtures('stores_legacy.yml')
   })
 
   it('should create a delivery', () => {

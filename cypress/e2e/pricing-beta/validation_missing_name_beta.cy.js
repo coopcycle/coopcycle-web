@@ -1,6 +1,6 @@
 context('Pricing rules: validation (role: admin) - Beta Version', () => {
   beforeEach(() => {
-    cy.loadFixturesWithSetup('ORM/user_admin.yml')
+    cy.loadFixturesWithSetup('user_admin.yml')
     cy.login('admin', '12345678')
   })
 

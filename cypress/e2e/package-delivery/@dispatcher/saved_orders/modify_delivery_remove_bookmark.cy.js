@@ -1,6 +1,6 @@
 context('Bookmarks (Saved orders) (role: dispatcher)', () => {
   beforeEach(() => {
-    cy.loadFixturesWithSetup(['ORM/user_dispatcher.yml', 'ORM/store_basic.yml'])
+    cy.loadFixturesWithSetup(['user_dispatcher.yml', 'store_basic.yml'])
 
     // Login
     cy.login('dispatcher', 'dispatcher')

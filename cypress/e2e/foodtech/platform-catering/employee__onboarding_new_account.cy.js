@@ -1,7 +1,7 @@
 describe('Platform catering; employee; onboarding', () => {
   beforeEach(() => {
     cy.loadFixtures(
-      '../cypress/fixtures/business_account_employee_invitation_new_user.yml',
+      'business_account_employee_invitation_new_user.yml',
     )
   })
 

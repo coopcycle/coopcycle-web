@@ -1,6 +1,6 @@
-import { configureStore } from '@reduxjs/toolkit'
-import { accountSlice } from '../../../entities/account/reduxSlice'
-import { apiSlice } from '../../../api/slice'
+import { configureStore } from '@reduxjs/toolkit';
+import { accountSlice } from '../../../entities/account/reduxSlice';
+import { apiSlice } from '../../../api/slice';
 
 export function createStoreFromPreloadedState(preloadedState) {
   return configureStore({
@@ -11,5 +11,5 @@ export function createStoreFromPreloadedState(preloadedState) {
     preloadedState,
     middleware: getDefaultMiddleware =>
       getDefaultMiddleware().concat(apiSlice.middleware),
-  })
+  });
 }

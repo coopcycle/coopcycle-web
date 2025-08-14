@@ -1477,7 +1477,7 @@ Feature: Tasks
               "type": "SMALL",
               "quantity": 4,
               "volume_per_package": 1,
-              "short_code": "AB",
+              "short_code": "SM",
               "labels": @array@
             }],
             "emittedCo2": "@integer@",
@@ -1589,7 +1589,7 @@ Feature: Tasks
               "type": "SMALL",
               "quantity": 4,
               "volume_per_package": 1,
-              "short_code": "AB",
+              "short_code": "SM",
               "labels": @array@
             }],
             "emittedCo2": "@integer@",
@@ -1664,7 +1664,7 @@ Feature: Tasks
               "type": "SMALL",
               "quantity": 4,
               "volume_per_package": 1,
-              "short_code": "AB",
+              "short_code": "SM",
               "labels": @array@
             }],
             "emittedCo2": "@integer@",
@@ -2874,7 +2874,7 @@ Feature: Tasks
               "name":"SMALL",
               "quantity":4,
               "volume_per_package": 1,
-              "short_code": "AB",
+              "short_code": "SM",
               "labels":@array@
             }
          ],

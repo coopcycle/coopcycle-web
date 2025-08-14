@@ -1,18 +1,18 @@
-import React from 'react'
-import { PriceValues } from '../../types'
-import { useTranslation } from 'react-i18next'
-import { money } from '../../../../../../assets/react/controllers/Incident/utils'
+import React from 'react';
+import { PriceValues } from '../../types';
+import { useTranslation } from 'react-i18next';
+import { money } from '../../../../../../assets/react/controllers/Incident/utils';
 
 const OrderTotalPrice = ({
   overridePrice,
   currentPrice,
   newPrice,
 }: {
-  overridePrice: boolean
-  currentPrice: PriceValues
-  newPrice: PriceValues
+  overridePrice: boolean;
+  currentPrice: PriceValues;
+  newPrice: PriceValues;
 }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <>
@@ -59,7 +59,7 @@ const OrderTotalPrice = ({
         </div>
       )}
     </>
-  )
-}
+  );
+};
 
-export default OrderTotalPrice
+export default OrderTotalPrice;

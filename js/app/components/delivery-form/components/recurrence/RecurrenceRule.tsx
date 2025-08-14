@@ -1,18 +1,18 @@
-import React from 'react'
-import { rrulestr, RRule } from 'rrule'
-import moment from 'moment'
+import React from 'react';
+import { rrulestr, RRule } from 'rrule';
+import moment from 'moment';
 
-import RecurrenceRuleAsText from './RecurrenceRuleAsText'
+import RecurrenceRuleAsText from './RecurrenceRuleAsText';
 
 type Props = {
-  rrule: string
-  onClick: () => void
-}
+  rrule: string;
+  onClick: () => void;
+};
 
 const RecurrenceRule = ({ rrule, onClick }: Props) => {
   const ruleObj: RRule = rrulestr(rrule, {
     dtstart: moment.utc().toDate(),
-  })
+  });
 
   return (
     <span
@@ -26,7 +26,7 @@ const RecurrenceRule = ({ rrule, onClick }: Props) => {
         </span>
       </span>
     </span>
-  )
-}
+  );
+};
 
-export default RecurrenceRule
+export default RecurrenceRule;

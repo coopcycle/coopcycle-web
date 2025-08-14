@@ -285,12 +285,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
     private function transformFixtureFilename($filename)
     {
-        $dir = __DIR__.'/../../features/fixtures/ORM/';
-
-        if (str_starts_with($filename, 'cypress://')) {
-            $filename = substr($filename, strlen('cypress://'));
-            $dir = __DIR__.'/../../cypress/fixtures/';
-        }
+        $dir = __DIR__.'/../../fixtures/ORM/';
 
         return $dir . $filename;
     }
@@ -1264,7 +1259,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theZoneFileIsLoaded($filename)
     {
-        $filePath = __DIR__.'/../../features/fixtures/'.$filename.'.geojson';
+        $filePath = __DIR__.'/../../fixtures/'.$filename.'.geojson';
 
         $contents = file_get_contents($filePath);
 

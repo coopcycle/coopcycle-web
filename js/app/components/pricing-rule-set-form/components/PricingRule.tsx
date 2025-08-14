@@ -1,39 +1,42 @@
-import React, { useState, useEffect } from 'react'
-import { Card, Input, Button, Space, Typography, Row, Col, Alert } from 'antd'
-import { DeleteOutlined } from '@ant-design/icons'
-import { useTranslation } from 'react-i18next'
-import PricingRuleTarget from './PricingRuleTarget'
-import RulePicker from './RulePicker'
-import { PriceChoice } from './PriceChoice'
-import PriceEditor from './PriceEditor'
+import { useState, useEffect } from 'react';
+import { Card, Input, Button, Space, Typography, Row, Col, Alert } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
+import PricingRuleTarget from './PricingRuleTarget';
+import RulePicker from './RulePicker';
+import { PriceChoice } from './PriceChoice';
+import PriceEditor from './PriceEditor';
 import {
   FixedPrice,
   parsePriceAST,
   PercentagePrice,
   PricePerPackage,
   PriceRange,
-} from '../../../delivery/pricing/pricing-rule-parser'
-import Position from './Position'
-import { DraggableProvidedDragHandleProps } from '@hello-pangea/dnd'
-import { PricingRuleType } from '../types/PricingRuleType'
-import HelpIcon from '../../HelpIcon'
+} from '../../../delivery/pricing/pricing-rule-parser';
+import Position from './Position';
+import { DraggableProvidedDragHandleProps } from '@hello-pangea/dnd';
+import { PriceType } from '../types/PricingRuleType';
+import { PricingRule as PricingRuleType } from '../../../api/types';
+import HelpIcon from '../../HelpIcon';
 
-const { Text } = Typography
+const { Text } = Typography;
 
 export const VALIDATION_ERRORS = {
+  NAME_REQUIRED: 'NAME_REQUIRED',
   EXPRESSION_REQUIRED: 'EXPRESSION_REQUIRED',
   PRICE_REQUIRED: 'PRICE_REQUIRED',
-}
+};
 
 type Props = {
-  rule: PricingRuleType
-  index: number
-  onUpdate: (rule: PricingRuleType) => void
-  onRemove: () => void
-  validationErrors?: string[]
-  dragHandleProps: DraggableProvidedDragHandleProps
-  isDragging?: boolean
-}
+  rule: PricingRuleType;
+  index: number;
+  onUpdate: (rule: PricingRuleType) => void;
+  onRemove: () => void;
+  validationErrors?: string[];
+  dragHandleProps: DraggableProvidedDragHandleProps;
+  isManualSupplement: boolean;
+  isDragging?: boolean;
+};
 
 const PricingRule = ({
   rule,
@@ -42,70 +45,71 @@ const PricingRule = ({
   onRemove,
   validationErrors = [],
   dragHandleProps,
+  isManualSupplement,
   isDragging = false,
 }: Props) => {
-  const { t } = useTranslation()
-  const [localRule, setLocalRule] = useState(rule)
+  const { t } = useTranslation();
+  const [localRule, setLocalRule] = useState(rule);
 
   const [priceObj, setPriceObj] = useState(() => {
     return rule.priceAst
       ? parsePriceAST(rule.priceAst, rule.price)
-      : new FixedPrice(0)
-  })
+      : new FixedPrice(0);
+  });
   const [priceType, setPriceType] = useState(() => {
-    let priceType = 'fixed'
+    let priceType = 'fixed' as PriceType;
     if (priceObj instanceof PercentagePrice) {
-      priceType = 'percentage'
+      priceType = 'percentage';
     } else if (priceObj instanceof PriceRange) {
-      priceType = 'range'
+      priceType = 'range';
     } else if (priceObj instanceof PricePerPackage) {
-      priceType = 'per_package'
+      priceType = 'per_package';
     }
-    return priceType
-  })
+    return priceType;
+  });
 
   useEffect(() => {
-    setLocalRule(rule)
-  }, [rule])
+    setLocalRule(rule);
+  }, [rule]);
 
-  const handleFieldChange = (field, value) => {
-    const updatedRule = { ...localRule, [field]: value }
-    setLocalRule(updatedRule)
-    onUpdate(updatedRule)
-  }
+  const handleFieldChange = (field: string, value: string): void => {
+    const updatedRule = { ...localRule, [field]: value };
+    setLocalRule(updatedRule);
+    onUpdate(updatedRule);
+  };
 
-  const handleNameChange = value => {
+  const handleNameChange = (value: string): void => {
     // Update the name
     const updatedRule = {
       ...localRule,
       name: value,
-    }
-    setLocalRule(updatedRule)
-    onUpdate(updatedRule)
-  }
+    };
+    setLocalRule(updatedRule);
+    onUpdate(updatedRule);
+  };
 
-  const handlePriceTypeChange = type => {
-    setPriceType(type)
-    let newPrice = ''
+  const handlePriceTypeChange = (type: PriceType): void => {
+    setPriceType(type);
+    let newPrice = '';
 
     switch (type) {
       case 'percentage':
-        newPrice = 'price_percentage(0)'
-        break
+        newPrice = 'price_percentage(0)';
+        break;
       case 'range':
-        newPrice = 'price_range(distance, 0, 0, 0)'
-        break
+        newPrice = 'price_range(distance, 0, 0, 0)';
+        break;
       case 'per_package':
-        newPrice = 'price_per_package(packages, "", 0, 0, 0)'
-        break
+        newPrice = 'price_per_package(packages, "", 0, 0, 0)';
+        break;
       case 'fixed':
       default:
-        newPrice = '0'
-        break
+        newPrice = '0';
+        break;
     }
 
-    handleFieldChange('price', newPrice)
-  }
+    handleFieldChange('price', newPrice);
+  };
 
   return (
     <Card
@@ -159,39 +163,48 @@ const PricingRule = ({
               className="mt-1 ml-2"
             />
           </Row>
-
-          <div className="mb-3">
-            <PricingRuleTarget
-              className="pricing-rule-set__rule__text"
-              target={localRule.target}
+          {validationErrors.includes(VALIDATION_ERRORS.NAME_REQUIRED) ? (
+            <Alert
+              message={t('FORM_PRICING_RULE_MANUAL_SUPPLEMENT_NAME_REQUIRED')}
+              type="error"
+              className="my-2"
+              showIcon
             />
-
-            <RulePicker
-              ruleTarget={localRule.target}
-              expressionAST={localRule.expressionAst}
-              onExpressionChange={newExpression => {
-                if (localRule.expression === newExpression) return
-                handleFieldChange('expression', newExpression)
-              }}
-            />
-
-            {validationErrors.includes(
-              VALIDATION_ERRORS.EXPRESSION_REQUIRED,
-            ) ? (
-              <Alert
-                message={t('FORM_PRICING_RULE_EXPRESSION_REQUIRED')}
-                type="error"
-                size="small"
-                className="mt-2"
-                showIcon
+          ) : null}
+          {!isManualSupplement ? (
+            <div className="mb-3">
+              <PricingRuleTarget
+                className="pricing-rule-set__rule__text"
+                target={localRule.target}
               />
-            ) : null}
-          </div>
+
+              <RulePicker
+                ruleTarget={localRule.target}
+                expressionAST={localRule.expressionAst}
+                onExpressionChange={newExpression => {
+                  if (localRule.expression === newExpression) return;
+                  handleFieldChange('expression', newExpression);
+                }}
+              />
+
+              {validationErrors.includes(
+                VALIDATION_ERRORS.EXPRESSION_REQUIRED,
+              ) ? (
+                <Alert
+                  message={t('FORM_PRICING_RULE_EXPRESSION_REQUIRED')}
+                  type="error"
+                  className="mt-2"
+                  showIcon
+                />
+              ) : null}
+            </div>
+          ) : null}
         </Col>
       </Row>
       <Row gutter={16} className="mt-2 pricing-rule-set__rule__price">
         <Col>
           <PriceChoice
+            isManualSupplement={isManualSupplement}
             priceType={priceType}
             handlePriceTypeChange={handlePriceTypeChange}
           />
@@ -201,8 +214,8 @@ const PricingRule = ({
             priceType={priceType}
             defaultValue={priceObj}
             onChange={newPrice => {
-              if (localRule.price === newPrice) return
-              handleFieldChange('price', newPrice)
+              if (localRule.price === newPrice) return;
+              handleFieldChange('price', newPrice);
             }}
           />
 
@@ -210,7 +223,6 @@ const PricingRule = ({
             <Alert
               message={t('FORM_PRICING_RULE_PRICE_REQUIRED')}
               type="error"
-              size="small"
               className="mt-2"
               showIcon
             />
@@ -218,7 +230,7 @@ const PricingRule = ({
         </Col>
       </Row>
     </Card>
-  )
-}
+  );
+};
 
-export default PricingRule
+export default PricingRule;

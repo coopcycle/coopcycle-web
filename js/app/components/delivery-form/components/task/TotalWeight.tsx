@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
-import { InputNumber, Select } from 'antd'
-const { Option } = Select
-import { useTranslation } from 'react-i18next'
-import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext'
+import React, { useEffect, useState } from 'react';
+import { InputNumber, Select } from 'antd';
+const { Option } = Select;
+import { useTranslation } from 'react-i18next';
+import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext';
 
 type Props = {
-  taskId: string
-}
+  taskId: string;
+};
 
 const TotalWeight = ({ taskId }: Props) => {
   const {
@@ -16,26 +16,26 @@ const TotalWeight = ({ taskId }: Props) => {
     taskIndex: index,
   } = useDeliveryFormFormikContext({
     taskId: taskId,
-  })
+  });
 
   const [numberValue, setNumberValue] = useState<number>(
     values.tasks[index].weight / 1000,
-  )
-  const [weightUnit, setWeightUnit] = useState<'kg' | 'lbs'>('kg')
+  );
+  const [weightUnit, setWeightUnit] = useState<'kg' | 'lbs'>('kg');
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (numberValue !== null) {
-      let calculatedWeight = 0
+      let calculatedWeight = 0;
       if (weightUnit === 'kg') {
-        calculatedWeight = numberValue * 1000
+        calculatedWeight = numberValue * 1000;
       } else if (weightUnit === 'lbs') {
-        calculatedWeight = Math.round(numberValue * 453.592)
+        calculatedWeight = Math.round(numberValue * 453.592);
       }
-      setFieldValue(`tasks[${index}].weight`, calculatedWeight)
+      setFieldValue(`tasks[${index}].weight`, calculatedWeight);
     }
-  }, [numberValue, weightUnit, index])
+  }, [numberValue, weightUnit, index]);
 
   return (
     <div className="mt-4 mb-4">
@@ -50,7 +50,7 @@ const TotalWeight = ({ taskId }: Props) => {
           placeholder={t('DELIVERY_FORM_WEIGHT')}
           value={numberValue}
           onChange={(value: number | null) => {
-            setNumberValue(value || 0)
+            setNumberValue(value || 0);
           }}
         />
         <Select
@@ -66,7 +66,7 @@ const TotalWeight = ({ taskId }: Props) => {
         <div className="text-danger">{errors.tasks[index].weight}</div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default TotalWeight
+export default TotalWeight;

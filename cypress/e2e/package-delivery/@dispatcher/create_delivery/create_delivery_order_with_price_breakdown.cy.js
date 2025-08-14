@@ -1,9 +1,9 @@
 context('Delivery (role: dispatcher)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      'ORM/user_dispatcher.yml',
-      'ORM/tags.yml',
-      'ORM/store_advanced.yml',
+      'user_dispatcher.yml',
+      'tags.yml',
+      'store_advanced.yml',
     ])
     cy.setEnvVar('PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED', '1')
 

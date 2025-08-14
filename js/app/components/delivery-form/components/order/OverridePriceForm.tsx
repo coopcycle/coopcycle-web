@@ -1,26 +1,26 @@
-import React from 'react'
-import { Field, useFormikContext } from 'formik'
-import { useTranslation } from 'react-i18next'
-import { Input } from 'antd'
-import PriceVATConverter from './PriceVATConverter'
-import Spinner from '../../../core/Spinner'
-import { DeliveryFormValues, PriceValues } from '../../types'
+import React from 'react';
+import { Field, useFormikContext } from 'formik';
+import { useTranslation } from 'react-i18next';
+import { Input } from 'antd';
+import PriceVATConverter from './PriceVATConverter';
+import Spinner from '../../../core/Spinner';
+import { DeliveryFormValues, PriceValues } from '../../types';
 
-import './ShowPrice.scss'
+import './ShowPrice.scss';
 
 type Props = {
-  setPrice: (price: PriceValues) => void
-  taxRate: number
-}
+  setPrice: (price: PriceValues) => void;
+  taxRate: number;
+};
 
 const OverridePriceForm = ({ setPrice, taxRate }: Props) => {
   const { values, errors, setFieldValue } =
-    useFormikContext<DeliveryFormValues>()
+    useFormikContext<DeliveryFormValues>();
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
-    <div className="override__form p-2 mb-1">
+    <div className="override__form p-2 mt-2">
       <div className="override__form__variant-name">
         <label
           className="override__form__variant-name___label font-weight-bold"
@@ -34,7 +34,7 @@ const OverridePriceForm = ({ setPrice, taxRate }: Props) => {
                 id="variantName"
                 {...field}
                 onChange={e => {
-                  setFieldValue('variantName', e.target.value)
+                  setFieldValue('variantName', e.target.value);
                 }}
               />
             )}
@@ -63,7 +63,7 @@ const OverridePriceForm = ({ setPrice, taxRate }: Props) => {
         <Spinner />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default OverridePriceForm
+export default OverridePriceForm;

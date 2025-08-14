@@ -1,24 +1,25 @@
-import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import Modal from 'react-modal'
-import RecurrenceRuleModalContent from './RecurrenceRuleModalContent'
-import RecurrenceRule from './RecurrenceRule'
+import Modal from 'react-modal';
+import RecurrenceRuleModalContent from './RecurrenceRuleModalContent';
+import RecurrenceRule from './RecurrenceRule';
 import {
   closeRecurrenceModal,
   openRecurrenceModal,
   selectIsRecurrenceModalOpen,
-} from '../../redux/recurrenceSlice'
-import { useTranslation } from 'react-i18next'
-import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext'
+} from '../../redux/recurrenceSlice';
+import { useTranslation } from 'react-i18next';
+import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext';
 
-import './RecurrenceRules.scss'
+import './RecurrenceRules.scss';
+import BlockLabel from '../BlockLabel';
 
 function Content() {
-  const { rruleValue: recurrenceRule } = useDeliveryFormFormikContext()
+  const { rruleValue: recurrenceRule } = useDeliveryFormFormikContext();
 
-  const { t } = useTranslation()
-  const dispatch = useDispatch()
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
 
   // FIXME: Uncomment this when this component is used on the recurrence rule page
   // if (isCancelled) {
@@ -33,19 +34,21 @@ function Content() {
 
   if (!recurrenceRule) {
     return (
-      <a
-        data-testid="recurrence-add"
-        href="#"
-        className="mr-3"
-        onClick={e => {
-          e.preventDefault()
-          dispatch(openRecurrenceModal())
-        }}>
-        <i className="fa fa-clock-o"></i>
-        &nbsp;
-        {t('RECURRENCE_RULE_ADD')}
-      </a>
-    )
+      <div>
+        <a
+          data-testid="recurrence-add"
+          href="#"
+          className="mr-3"
+          onClick={e => {
+            e.preventDefault();
+            dispatch(openRecurrenceModal());
+          }}>
+          <i className="fa fa-clock-o"></i>
+          &nbsp;
+          {t('RECURRENCE_RULE_ADD')}
+        </a>
+      </div>
+    );
   }
 
   return (
@@ -53,20 +56,20 @@ function Content() {
       rrule={recurrenceRule}
       onClick={() => dispatch(openRecurrenceModal())}
     />
-  )
+  );
 }
 
 export function RecurrenceRules() {
-  const recurrenceModalIsOpen = useSelector(selectIsRecurrenceModalOpen)
+  const recurrenceModalIsOpen = useSelector(selectIsRecurrenceModalOpen);
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <div>
       <div>
-        <h4>{t('DELIVERY_FORM_RECURRENCE_RULE')}</h4>
+        <BlockLabel label={t('DELIVERY_FORM_RECURRENCE_RULE')} />
         <Content />
       </div>
       <Modal
@@ -78,5 +81,5 @@ export function RecurrenceRules() {
         <RecurrenceRuleModalContent />
       </Modal>
     </div>
-  )
+  );
 }

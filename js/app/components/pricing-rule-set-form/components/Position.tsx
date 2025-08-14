@@ -1,5 +1,9 @@
-import React from 'react'
+import React from 'react';
 
-export default function Position({ position }) {
-  return <div>#{position + 1}</div>
+type Props = {
+  position: number;
+};
+
+export default function Position({ position }: Props) {
+  return <div>#{position + 1}</div>;
 }

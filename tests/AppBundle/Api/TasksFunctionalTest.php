@@ -53,7 +53,7 @@ class TasksFunctionalTest extends ApiTestCase
         ], $_SERVER);
 
         $fixturesLoader->load([
-            __DIR__.'/../../../features/fixtures/ORM/dispatch_with_packages.yml',
+            __DIR__.'/../../../fixtures/ORM/dispatch_with_packages.yml',
         ], $_SERVER, [], PurgeMode::createNoPurgeMode());
 
         $userManipulator->addRole('sarah', 'ROLE_ADMIN');

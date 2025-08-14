@@ -103,7 +103,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $fixturesLoader->load([
             __DIR__.'/../../../fixtures/ORM/settings_mandatory.yml',
             __DIR__.'/../../../fixtures/ORM/sylius_channels.yml',
-            __DIR__.'/../../../fixtures/ORM/sylius_on_demand_delivery_product.yml',
+            __DIR__.'/../../../fixtures/ORM/sylius_products.yml',
         ], $_SERVER, [], PurgeMode::createNoPurgeMode());
 
         $expressionLanguage = static::$kernel->getContainer()->get('coopcycle.expression_language');

@@ -1,18 +1,23 @@
-import React from 'react'
-import { Select } from 'antd'
-import { useGetPackagesQuery } from '../../../../api/slice'
-import PickerIsLoading from './PickerIsLoading'
-import PickerIsError from './PickerIsError'
+import React from 'react';
+import { Select } from 'antd';
+import { useGetPackagesQuery } from '../../../../api/slice';
+import PickerIsLoading from './PickerIsLoading';
+import PickerIsError from './PickerIsError';
 
-export default function PackagePicker({ value, onChange }) {
-  const { data: packages, isFetching } = useGetPackagesQuery()
+type Props = {
+  value: string;
+  onChange: (event: { target: { value: string } }) => void;
+};
+
+export default function PackagePicker({ value, onChange }: Props) {
+  const { data: packages, isFetching } = useGetPackagesQuery();
 
   if (isFetching) {
-    return <PickerIsLoading />
+    return <PickerIsLoading />;
   }
 
   if (!packages) {
-    return <PickerIsError />
+    return <PickerIsError />;
   }
 
   return (
@@ -37,5 +42,5 @@ export default function PackagePicker({ value, onChange }) {
         })),
       ]}
     />
-  )
+  );
 }

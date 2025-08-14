@@ -1,63 +1,72 @@
-import React from 'react'
-import { withTranslation } from 'react-i18next'
+import React from 'react';
+import { withTranslation } from 'react-i18next';
 
-import RulePickerLine from './RulePickerLine'
-import { linesToString } from '../../../delivery/pricing/expression-builder'
-import { parseAST } from '../../../delivery/pricing/pricing-rule-parser'
+import RulePickerLine from './RulePickerLine';
+import { linesToString } from '../../../delivery/pricing/expression-builder';
+import { parseAST } from '../../../delivery/pricing/pricing-rule-parser';
 
 type Props = {
-  ruleTarget: string
-  expressionAST: object | null
-  onExpressionChange: (expression: string) => void
-}
+  ruleTarget: string;
+  expressionAST: object | null;
+  onExpressionChange: (expression: string) => void;
+  t: (key: string) => string;
+};
 
-class RulePicker extends React.Component<Props> {
+type State = {
+  lines: Array<{ left: string; operator: string; right: string | string[] }>;
+  rev: number;
+};
+
+class RulePicker extends React.Component<Props, State> {
   constructor(props: Props) {
-    super(props)
+    super(props);
 
     this.state = {
       lines: this.props.expressionAST ? parseAST(this.props.expressionAST) : [],
       // This is used as a "revision counter",
       // to create an accurate React key prop
       rev: 0,
-    }
+    };
 
-    this.addLine = this.addLine.bind(this)
-    this.updateLine = this.updateLine.bind(this)
-    this.deleteLine = this.deleteLine.bind(this)
+    this.addLine = this.addLine.bind(this);
+    this.updateLine = this.updateLine.bind(this);
+    this.deleteLine = this.deleteLine.bind(this);
   }
 
-  addLine(evt) {
-    evt.preventDefault()
-    let lines = this.state.lines.slice()
+  addLine(evt: React.MouseEvent<HTMLButtonElement>): void {
+    evt.preventDefault();
+    let lines = this.state.lines.slice();
     lines.push({
-      type: '',
+      left: '',
       operator: '',
-      value: '',
-    })
+      right: '',
+    });
     this.setState({
       lines,
       rev: this.state.rev + 1,
-    })
+    });
   }
 
-  deleteLine(index) {
-    let lines = this.state.lines.slice()
-    lines.splice(index, 1)
+  deleteLine(index: number): void {
+    let lines = this.state.lines.slice();
+    lines.splice(index, 1);
     this.setState({
       lines,
       rev: this.state.rev - 1,
-    })
+    });
   }
 
-  updateLine(index, line) {
-    let lines = this.state.lines.slice()
-    lines.splice(index, 1, line)
-    this.setState({ lines })
+  updateLine(
+    index: number,
+    line: { left: string; operator: string; right: string | string[] },
+  ): void {
+    let lines = this.state.lines.slice();
+    lines.splice(index, 1, line);
+    this.setState({ lines });
   }
 
   componentDidUpdate() {
-    this.props.onExpressionChange(linesToString(this.state.lines))
+    this.props.onExpressionChange(linesToString(this.state.lines));
   }
 
   render() {
@@ -95,8 +104,8 @@ class RulePicker extends React.Component<Props> {
         </div>
         */}
       </div>
-    )
+    );
   }
 }
 
-export default withTranslation()(RulePicker)
+export default withTranslation()(RulePicker);

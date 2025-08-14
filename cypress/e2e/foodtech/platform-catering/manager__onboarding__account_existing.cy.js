@@ -1,6 +1,6 @@
 describe('Platform catering; manager; onboarding with an existing user account', () => {
   beforeEach(() => {
-    cy.loadFixtures('../cypress/fixtures/business_account_manager_invitation_existing_user.yml')
+    cy.loadFixtures('business_account_manager_invitation_existing_user.yml')
   })
 
   it('should activate a business account', () => {

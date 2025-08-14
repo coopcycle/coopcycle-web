@@ -1,74 +1,94 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { getCurrencySymbol } from '../../../i18n'
-import { useTranslation } from 'react-i18next'
+import React, { useState, useRef, useEffect } from 'react';
+import { getCurrencySymbol } from '../../../i18n';
+import { useTranslation } from 'react-i18next';
 
-const UnitLabel = ({ unit }) => {
-  const { t } = useTranslation()
+type Unit = 'km' | 'kg' | 'vu';
+
+type UnitLabelProps = {
+  unit: Unit;
+};
+
+const UnitLabel = ({ unit }: UnitLabelProps) => {
+  const { t } = useTranslation();
 
   if (unit === 'vu') {
-    return <span>{t('RULE_PICKER_LINE_VOLUME_UNITS')}</span>
+    return <span>{t('RULE_PICKER_LINE_VOLUME_UNITS')}</span>;
   }
 
-  return <span>{unit}</span>
-}
+  return <span>{unit}</span>;
+};
 
-const unitToAttribute = unit => {
+const unitToAttribute = (unit: Unit): string => {
   switch (unit) {
     case 'km':
-      return 'distance'
+      return 'distance';
     case 'kg':
-      return 'weight'
+      return 'weight';
     case 'vu':
-      return 'packages.totalVolumeUnits()'
+      return 'packages.totalVolumeUnits()';
   }
-}
+};
 
-const attributeToUnit = attribute => {
+const attributeToUnit = (attribute: string): Unit => {
   switch (attribute) {
     case 'distance':
-      return 'km'
+      return 'km';
     case 'weight':
-      return 'kg'
+      return 'kg';
     case 'packages.totalVolumeUnits()':
-      return 'vu'
+      return 'vu';
+    default:
+      return 'km';
   }
-}
+};
 
-const multiplyIfNeeded = (value, unit) => {
+const multiplyIfNeeded = (value: number, unit: Unit): number => {
   switch (unit) {
     case 'km':
     case 'kg':
-      return value * 1000
+      return value * 1000;
   }
 
-  return value
-}
+  return value;
+};
 
-const divideIfNeeded = (value, unit) => {
+const divideIfNeeded = (value: number, unit: Unit): number => {
   switch (unit) {
     case 'km':
     case 'kg':
-      return value / 1000
+      return value / 1000;
   }
 
-  return value
-}
+  return value;
+};
 
-export default ({ defaultValue, onChange }) => {
-  const { t } = useTranslation()
+export type PriceRangeValue = {
+  attribute: string;
+  price: number;
+  step: number;
+  threshold: number;
+};
 
-  const defaultAttribute = defaultValue.attribute || 'distance'
+type Props = {
+  defaultValue: PriceRangeValue;
+  onChange: (value: PriceRangeValue) => void;
+};
 
-  const [unit, setUnit] = useState(attributeToUnit(defaultAttribute))
+export default ({ defaultValue, onChange }: Props) => {
+  const { t } = useTranslation();
 
-  const [attribute, setAttribute] = useState(defaultAttribute)
-  const [price, setPrice] = useState(defaultValue.price || 0)
-  const [step, setStep] = useState(defaultValue.step || 1000)
-  const [threshold, setThreshold] = useState(defaultValue.threshold || 0)
+  const defaultAttribute = defaultValue.attribute || 'distance';
 
-  const stepEl = useRef(null)
-  const thresholdEl = useRef(null)
-  const initialLoad = useRef(true)
+  const [unit, setUnit] = useState(attributeToUnit(defaultAttribute));
+
+  const [attribute, setAttribute] = useState(defaultAttribute);
+  const [price, setPrice] = useState(defaultValue.price || 0);
+  const [step, setStep] = useState(defaultValue.step || 1000);
+  const [threshold, setThreshold] = useState(defaultValue.threshold || 0);
+
+  const stepEl = useRef(null);
+  const thresholdEl = useRef(null);
+  const initialLoad = useRef(true);
 
   useEffect(() => {
     if (!initialLoad.current) {
@@ -77,11 +97,11 @@ export default ({ defaultValue, onChange }) => {
         price: price,
         step,
         threshold,
-      })
+      });
     } else {
-      initialLoad.current = false
+      initialLoad.current = false;
     }
-  }, [price, threshold, attribute, step])
+  }, [price, threshold, attribute, step]);
 
   return (
     <div data-testid="price_rule_price_range_editor">
@@ -95,8 +115,8 @@ export default ({ defaultValue, onChange }) => {
           step=".001"
           className="form-control d-inline-block no-number-input-arrow"
           style={{ width: '80px' }}
-          onChange={e => {
-            setPrice(e.target.value * 100)
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setPrice(parseFloat(e.target.value) * 100);
           }}
         />
         <span className="ml-2">{getCurrencySymbol()}</span>
@@ -113,8 +133,8 @@ export default ({ defaultValue, onChange }) => {
           ref={stepEl}
           className="form-control d-inline-block"
           style={{ width: '80px' }}
-          onChange={e => {
-            setStep(multiplyIfNeeded(e.target.value, unit))
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setStep(multiplyIfNeeded(parseFloat(e.target.value), unit));
           }}
         />
         <select
@@ -122,24 +142,24 @@ export default ({ defaultValue, onChange }) => {
           className="form-control d-inline-block align-top ml-2"
           style={{ width: '70px' }}
           defaultValue={attributeToUnit(attribute)}
-          onChange={e => {
-            setAttribute(unitToAttribute(e.target.value))
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+            setAttribute(unitToAttribute(e.target.value as Unit));
 
-            const newUnit = e.target.value
-            const prevUnit = unit
+            const newUnit = e.target.value as Unit;
+            const prevUnit = unit;
 
             if (newUnit === 'vu' && prevUnit !== 'vu') {
-              setStep(step / 1000)
-              setThreshold(threshold / 1000)
+              setStep(step / 1000);
+              setThreshold(threshold / 1000);
             } else if (newUnit !== 'vu' && prevUnit === 'vu') {
-              setStep(step * 1000)
-              setThreshold(threshold * 1000)
+              setStep(step * 1000);
+              setThreshold(threshold * 1000);
             }
 
-            setUnit(e.target.value)
+            setUnit(e.target.value as Unit);
           }}>
-          <option value="km">km</option>
-          <option value="kg">kg</option>
+          <option value="km">{t('PRICING_RULE_PICKER_UNIT_KM')}</option>
+          <option value="kg">{t('PRICING_RULE_PICKER_UNIT_KG')}</option>
           <option value="vu">{t('RULE_PICKER_LINE_VOLUME_UNITS')}</option>
         </select>
       </label>
@@ -155,8 +175,8 @@ export default ({ defaultValue, onChange }) => {
           ref={thresholdEl}
           className="form-control d-inline-block"
           style={{ width: '80px' }}
-          onChange={e => {
-            setThreshold(multiplyIfNeeded(e.target.value, unit))
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setThreshold(multiplyIfNeeded(parseFloat(e.target.value), unit));
           }}
         />
         <span className="ml-2">
@@ -164,5 +184,5 @@ export default ({ defaultValue, onChange }) => {
         </span>
       </label>
     </div>
-  )
-}
+  );
+};

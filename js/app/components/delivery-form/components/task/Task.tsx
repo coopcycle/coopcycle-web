@@ -1,37 +1,37 @@
-import React from 'react'
-import { Field } from 'formik'
-import AddressBookNew from './AddressBook'
-import { Input, Button } from 'antd'
-import Packages from './Packages'
-import { useTranslation } from 'react-i18next'
-import TotalWeight from './TotalWeight'
+import React from 'react';
+import { Field } from 'formik';
+import AddressBookNew from './AddressBook';
+import { Input, Button } from 'antd';
+import Packages from './Packages';
+import { useTranslation } from 'react-i18next';
+import TotalWeight from './TotalWeight';
 
-import './Task.scss'
-import TagsSelect from '../../../TagsSelect'
-import { TaskDateTime } from './TaskDateTime'
-import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext'
+import './Task.scss';
+import TagsSelect from '../../../TagsSelect';
+import { TaskDateTime } from './TaskDateTime';
+import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext';
 import {
   useGetStorePackagesQuery,
   useGetStoreTimeSlotsQuery,
-} from '../../../../api/slice'
-import { Mode } from '../../mode'
-import { useSelector } from 'react-redux'
-import { selectMode } from '../../redux/formSlice'
-import type { Address, Store, Tag } from '../../../../api/types'
+} from '../../../../api/slice';
+import { Mode } from '../../mode';
+import { useSelector } from 'react-redux';
+import { selectMode } from '../../redux/formSlice';
+import type { Address, Store, Tag } from '../../../../api/types';
 
 type Props = {
-  isDispatcher: boolean
-  storeNodeId: string
-  addresses: Address[]
-  taskId: string
-  storeDeliveryInfos: Partial<Store>
-  onRemove: () => void
-  showRemoveButton: boolean
-  tags: Tag[]
-  isExpanded: boolean
-  onToggleExpanded: (expanded: boolean) => void
-  showPackages: boolean
-}
+  isDispatcher: boolean;
+  storeNodeId: string;
+  addresses: Address[];
+  taskId: string;
+  storeDeliveryInfos: Partial<Store>;
+  onRemove: () => void;
+  showRemoveButton: boolean;
+  tags: Tag[];
+  isExpanded: boolean;
+  onToggleExpanded: (expanded: boolean) => void;
+  showPackages: boolean;
+};
 
 const Task = ({
   isDispatcher,
@@ -46,16 +46,16 @@ const Task = ({
   onToggleExpanded,
   showPackages,
 }: Props) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
-  const mode = useSelector(selectMode)
+  const mode = useSelector(selectMode);
   const { values, taskValues, setFieldValue, taskIndex } =
     useDeliveryFormFormikContext({
       taskId: taskId,
-    })
+    });
 
-  const { data: timeSlotLabels } = useGetStoreTimeSlotsQuery(storeNodeId)
-  const { data: packages } = useGetStorePackagesQuery(storeNodeId)
+  const { data: timeSlotLabels } = useGetStoreTimeSlotsQuery(storeNodeId);
+  const { data: packages } = useGetStorePackagesQuery(storeNodeId);
 
   return (
     <div
@@ -64,7 +64,7 @@ const Task = ({
       <div
         className={`task__header task__header--${taskValues.type.toLowerCase()}`}
         onClick={() => {
-          onToggleExpanded(!isExpanded)
+          onToggleExpanded(!isExpanded);
         }}>
         {taskValues.type === 'PICKUP' ? (
           <i className="fa fa-arrow-up"></i>
@@ -151,8 +151,8 @@ const Task = ({
                 tags={tags}
                 defaultValue={values.tasks[taskIndex].tags || []}
                 onChange={values => {
-                  const tags = values.map(tag => tag.value)
-                  setFieldValue(`tasks[${taskIndex}].tags`, tags)
+                  const tags = values.map(tag => tag.value);
+                  setFieldValue(`tasks[${taskIndex}].tags`, tags);
                 }}
               />
             </div>
@@ -170,7 +170,7 @@ const Task = ({
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Task
+export default Task;

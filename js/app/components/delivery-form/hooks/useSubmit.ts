@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react';
 import {
   useDeleteRecurrenceRuleMutation,
   usePatchAddressMutation,
@@ -7,34 +7,34 @@ import {
   usePutDeliveryMutation,
   usePutRecurrenceRuleMutation,
   useSuggestOptimizationsMutation,
-} from '../../../api/slice'
-import { useDispatch, useSelector } from 'react-redux'
+} from '../../../api/slice';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   selectRejectedSuggestedOrder,
   showSuggestions,
-} from '../redux/suggestionsSlice'
-import { Mode, modeIn } from '../mode'
-import { selectMode } from '../redux/formSlice'
-import { useDatadog } from '../../../hooks/useDatadog'
-import type { DeliveryFormValues } from '../types'
-import { AddressPayload, PostDeliveryRequest } from '../../../api/types'
+} from '../redux/suggestionsSlice';
+import { Mode, modeIn } from '../mode';
+import { selectMode } from '../redux/formSlice';
+import { useDatadog } from '../../../hooks/useDatadog';
+import type { DeliveryFormValues } from '../types';
+import { AddressPayload, PostDeliveryRequest } from '../../../api/types';
 
 // check if a task ID is temporary (not from backend)
 const isTemporaryId = (taskId: string | null): boolean => {
-  return taskId !== null && taskId.startsWith('temp-')
-}
+  return taskId !== null && taskId.startsWith('temp-');
+};
 
 function serializeAddress(
   address: AddressPayload,
 ): string | { streetAddress: string; latLng: [number, number] } {
   if (Object.prototype.hasOwnProperty.call(address, '@id')) {
-    return address['@id'] as string
+    return address['@id'] as string;
   }
 
   return {
     streetAddress: address.streetAddress,
     latLng: [address.geo!.latitude, address.geo!.longitude],
-  }
+  };
 }
 
 function convertValuesToDeliveryPayload(
@@ -45,11 +45,11 @@ function convertValuesToDeliveryPayload(
     store: storeNodeId,
     tasks: structuredClone(values.tasks),
     order: structuredClone(values.order),
-  } as PostDeliveryRequest
+  } as PostDeliveryRequest;
 
   for (const task of data.tasks) {
     if (isTemporaryId(task['@id'])) {
-      delete task['@id']
+      delete task['@id'];
     }
   }
 
@@ -57,29 +57,29 @@ function convertValuesToDeliveryPayload(
     data = {
       ...data,
       rrule: values.rrule,
-    }
+    };
   }
 
   if (values.variantIncVATPrice) {
     data.order.arbitraryPrice = {
       variantName: values.variantName ?? '',
       variantPrice: values.variantIncVATPrice,
-    }
+    };
   }
 
-  return data
+  return data;
 }
 
 function convertDateInRecurrenceRulePayload(value) {
   // Keep only the time part (HH:mm) of the date in the template
   // task[field] - ISO date string
 
-  const date = new Date(value)
+  const date = new Date(value);
   return date.toLocaleTimeString('en-US', {
     hour12: false,
     hour: '2-digit',
     minute: '2-digit',
-  })
+  });
 }
 
 function convertValuesToRecurrenceRulePayload(values) {
@@ -93,11 +93,11 @@ function convertValuesToRecurrenceRulePayload(values) {
           name: task.address.name,
           telephone: task.address.telephone,
           contactName: task.address.contactName,
-        }
+        };
 
         // Preserve the '@id' if it exists
         if ('@id' in task.address) {
-          address['@id'] = task.address['@id']
+          address['@id'] = task.address['@id'];
         }
 
         return {
@@ -111,28 +111,28 @@ function convertValuesToRecurrenceRulePayload(values) {
           weight: task.type === 'DROPOFF' ? task.weight : [],
           comments: task.comments,
           tags: task.tags,
-        }
+        };
       }),
     },
-  }
+  };
 
   if (values.variantIncVATPrice) {
     data.arbitraryPriceTemplate = {
       variantName: values.variantName ?? '',
       variantPrice: values.variantIncVATPrice,
-    }
+    };
   } else {
-    data.arbitraryPriceTemplate = null
+    data.arbitraryPriceTemplate = null;
   }
 
-  return data
+  return data;
 }
 
 type UseSubmitReturn = {
-  handleSubmit: (values: DeliveryFormValues) => Promise<void>
-  error: { isError: boolean; errorMessage: string }
-  isSubmitted: boolean
-}
+  handleSubmit: (values: DeliveryFormValues) => Promise<void>;
+  error: { isError: boolean; errorMessage: string };
+  isSubmitted: boolean;
+};
 
 export default function useSubmit(
   storeNodeId: string,
@@ -140,34 +140,34 @@ export default function useSubmit(
   deliveryNodeId?: string,
   isDispatcher?: boolean,
 ): UseSubmitReturn {
-  const mode = useSelector(selectMode)
+  const mode = useSelector(selectMode);
   const [error, setError] = useState<{
-    isError: boolean
-    errorMessage: string
-  }>({ isError: false, errorMessage: ' ' })
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(false)
+    isError: boolean;
+    errorMessage: string;
+  }>({ isError: false, errorMessage: ' ' });
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
 
-  const rejectedSuggestionsOrder = useSelector(selectRejectedSuggestedOrder)
+  const rejectedSuggestionsOrder = useSelector(selectRejectedSuggestedOrder);
 
-  const [suggestOptimizations] = useSuggestOptimizationsMutation()
+  const [suggestOptimizations] = useSuggestOptimizationsMutation();
 
-  const [createDelivery] = usePostDeliveryMutation()
-  const [modifyDelivery] = usePutDeliveryMutation()
-  const [modifyRecurrenceRule] = usePutRecurrenceRuleMutation()
-  const [deleteRecurrenceRule] = useDeleteRecurrenceRuleMutation()
+  const [createDelivery] = usePostDeliveryMutation();
+  const [modifyDelivery] = usePutDeliveryMutation();
+  const [modifyRecurrenceRule] = usePutRecurrenceRuleMutation();
+  const [deleteRecurrenceRule] = useDeleteRecurrenceRuleMutation();
 
-  const [createAddress] = usePostStoreAddressMutation()
-  const [modifyAddress] = usePatchAddressMutation()
+  const [createAddress] = usePostStoreAddressMutation();
+  const [modifyAddress] = usePatchAddressMutation();
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  const { logger } = useDatadog()
+  const { logger } = useDatadog();
 
   const checkSuggestionsOnSubmit = useCallback(
     async (values: DeliveryFormValues) => {
       // no point in checking suggestions for only one pickup and one dropoff task
       if (values.tasks.length < 3) {
-        return false
+        return false;
       }
 
       const body = {
@@ -175,18 +175,18 @@ export default function useSubmit(
           ...t,
           address: serializeAddress(t.address),
         })),
-      }
+      };
 
-      const result = await suggestOptimizations(body)
+      const result = await suggestOptimizations(body);
 
-      const { data, error } = result
+      const { data, error } = result;
 
       if (error) {
-        return false
+        return false;
       }
 
       if (data.suggestions.length === 0) {
-        return false
+        return false;
       }
 
       //The same suggestion was rejected previously
@@ -195,54 +195,54 @@ export default function useSubmit(
         JSON.stringify(data.suggestions[0].order) ===
           JSON.stringify(rejectedSuggestionsOrder)
       ) {
-        return false
+        return false;
       }
 
-      dispatch(showSuggestions(data.suggestions))
-      return true
+      dispatch(showSuggestions(data.suggestions));
+      return true;
     },
     [dispatch, rejectedSuggestionsOrder, suggestOptimizations],
-  )
+  );
 
   const handleSubmit = useCallback(
     async (values: DeliveryFormValues) => {
-      const hasSuggestions = await checkSuggestionsOnSubmit(values)
+      const hasSuggestions = await checkSuggestionsOnSubmit(values);
       if (hasSuggestions) {
         // the form will be submitted again after the user accepts or rejects the suggestions (see SuggestionModal)
-        return
+        return;
       }
 
-      let result
+      let result;
       if (mode === Mode.DELIVERY_CREATE) {
         result = await createDelivery(
           convertValuesToDeliveryPayload(storeNodeId, values),
-        )
+        );
       } else if (mode === Mode.DELIVERY_UPDATE) {
         result = await modifyDelivery({
           '@id': deliveryNodeId,
           ...convertValuesToDeliveryPayload(storeNodeId, values),
-        })
+        });
       } else if (mode === Mode.RECURRENCE_RULE_UPDATE) {
         if (values.rrule) {
           result = await modifyRecurrenceRule({
             '@id': deliveryNodeId,
             ...convertValuesToRecurrenceRulePayload(values),
-          })
+          });
         } else {
-          result = await deleteRecurrenceRule(deliveryNodeId)
+          result = await deleteRecurrenceRule(deliveryNodeId);
         }
       } else {
-        logger.error('Unknown mode:', mode)
+        logger.error('Unknown mode:', mode);
       }
 
-      const { data, error } = result
+      const { data, error } = result;
 
       if (error) {
         setError({
           isError: true,
           errorMessage: error.data['hydra:description'],
-        })
-        return
+        });
+        return;
       }
 
       // Order creation is successful, now we can proceed with secondary items
@@ -251,48 +251,48 @@ export default function useSubmit(
           const { error } = await createAddress({
             storeUri: storeNodeId,
             ...task.address,
-          })
+          });
           if (error) {
             setError({
               isError: true,
               errorMessage: error.data['hydra:description'],
-            })
-            return
+            });
+            return;
           }
         }
         if (task.updateInStoreAddresses) {
           const { error } = await modifyAddress({
             '@id': task.address['@id'],
             ...task.address,
-          })
+          });
           if (error) {
             setError({
               isError: true,
               errorMessage: error.data['hydra:description'],
-            })
-            return
+            });
+            return;
           }
         }
       }
 
-      setIsSubmitted(true)
+      setIsSubmitted(true);
 
       if (modeIn(mode, [Mode.DELIVERY_CREATE, Mode.DELIVERY_UPDATE])) {
-        const deliveryId = data.id
-        const orderId = data.order?.id
+        const deliveryId = data.id;
+        const orderId = data.order?.id;
 
         if (isDispatcher) {
           if (orderId) {
-            window.location = `/admin/orders/${orderId}`
+            window.location = `/admin/orders/${orderId}`;
           } else {
-            window.location = `/admin/deliveries/${deliveryId}`
+            window.location = `/admin/deliveries/${deliveryId}`;
           }
         } else {
-          window.location = `/dashboard/deliveries/${deliveryId}`
+          window.location = `/dashboard/deliveries/${deliveryId}`;
         }
       } else if (mode === Mode.RECURRENCE_RULE_UPDATE) {
-        const storeId = storeNodeId.split('/').pop()
-        window.location = `/admin/stores/${storeId}/recurrence-rules`
+        const storeId = storeNodeId.split('/').pop();
+        window.location = `/admin/stores/${storeId}/recurrence-rules`;
       }
     },
     [
@@ -309,7 +309,7 @@ export default function useSubmit(
       checkSuggestionsOnSubmit,
       logger,
     ],
-  )
+  );
 
-  return { handleSubmit, isSubmitted, error }
+  return { handleSubmit, isSubmitted, error };
 }
