@@ -208,7 +208,7 @@ class RouteOptimizerTest extends KernelTestCase
     {
 
         $this->fixturesLoader->load([
-            __DIR__.'/../../../features/fixtures/ORM/optimizer/set1.yml'
+            __DIR__.'/../../../fixtures/ORM/optimizer/set1.yml'
         ]);
 
         $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal(), $this->logger, $this->iriConverter);
@@ -227,7 +227,7 @@ class RouteOptimizerTest extends KernelTestCase
         // this fixture load a tour in the centre of paris with 3 tasks and 3 tasks in the outskirts of Paris
         // we want to make sure the tour tasks are kept together
         $this->fixturesLoader->load([
-            __DIR__.'/../../../features/fixtures/ORM/optimizer/set3.yml'
+            __DIR__.'/../../../fixtures/ORM/optimizer/set3.yml'
         ]);
 
         $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal(), $this->logger, $this->iriConverter);
@@ -245,7 +245,7 @@ class RouteOptimizerTest extends KernelTestCase
         // this fixture load a tour in the centre of paris with 3 tasks and 3 tasks in the outskirts of Paris
         // we want to make sure the tour tasks are kept together
         $this->fixturesLoader->load([
-            __DIR__.'/../../../features/fixtures/ORM/optimizer/set2.yml'
+            __DIR__.'/../../../fixtures/ORM/optimizer/set2.yml'
         ]);
 
         $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal(), $this->logger, $this->iriConverter);
@@ -265,7 +265,7 @@ class RouteOptimizerTest extends KernelTestCase
 
         // this fixture load some tasks which are not doable in the given time window
         $this->fixturesLoader->load([
-            __DIR__.'/../../../features/fixtures/ORM/optimizer/set4.yml'
+            __DIR__.'/../../../fixtures/ORM/optimizer/set4.yml'
         ]);
 
         $optimizer = new RouteOptimizer($this->client, $this->settingsManager->reveal(), $this->logger, $this->iriConverter);
