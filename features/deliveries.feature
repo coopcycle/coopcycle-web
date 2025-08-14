@@ -3348,7 +3348,7 @@ Feature: Deliveries
                         }
                     ]
                 },
-                "name": "On demand delivery",
+                "name": "Livraison à la demande",
                 "variantName": "my custom variant",
                 "vendor": null,
                 "player": {
@@ -3459,7 +3459,7 @@ Feature: Deliveries
                       }
                   ]
               },
-              "name": "On demand delivery",
+              "name": "Livraison à la demande",
               "variantName": "my new product name",
               "vendor": null,
               "player": {
