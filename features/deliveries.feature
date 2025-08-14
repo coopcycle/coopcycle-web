@@ -1525,7 +1525,7 @@ Feature: Deliveries
       | sylius_taxation.yml |
       | payment_methods.yml |
       | sylius_products.yml |
-      | stores_with_manual_supplements.yml |
+      | store_with_manual_supplements.yml |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
@@ -1579,7 +1579,7 @@ Feature: Deliveries
       | sylius_taxation.yml |
       | payment_methods.yml |
       | sylius_products.yml |
-      | stores_with_manual_supplements.yml |
+      | store_with_manual_supplements.yml |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
@@ -1634,7 +1634,7 @@ Feature: Deliveries
       | sylius_taxation.yml |
       | payment_methods.yml |
       | sylius_products.yml |
-      | stores_with_manual_supplements.yml |
+      | store_with_manual_supplements.yml |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
