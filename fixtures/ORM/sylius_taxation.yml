@@ -1,27 +1,27 @@
 AppBundle\Entity\Sylius\TaxRate:
   tva_10:
-    name: tax_rate.intermediary
-    code: FR_BASE_INTERMEDIARY_INTERMEDIARY
+    name: "TVA 10%"
+    code: tva_10
     amount: 0.1
     includedInPrice: true
     calculator: default
   tva_20:
-    name: tax_rate.standard
-    code: FR_BASE_STANDARD_STANDARD
+    name: "TVA 20%"
+    code: tva_20
     amount: 0.2
     includedInPrice: true
     calculator: default
     country: fr
   tva_standard:
-    name: tax_rate.standard
-    code: FR_SERVICE_STANDARD
+    name: "TVA 20%"
+    code: tax_rate.standard
     amount: 0.2
     includedInPrice: true
     calculator: default
     country: fr
   tva_zero:
-    name: tax_rate.zero
-    code: FR_SERVICE_TAX_EXEMPT_ZERO
+    name: "TVA 0%"
+    code: tax_rate.zero
     amount: 0.0
     includedInPrice: true
     calculator: default
