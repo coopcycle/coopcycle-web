@@ -57,11 +57,12 @@ class DeliveryCreatedHandler
     {
         // TODO Log activity?
 
-        $delivery = $this->entityManager->getRepository(Delivery::class)->find($message->getDeliveryId());
-
-        if (!$delivery) {
-            return;
-        }
+        $delivery = $message->getDelivery();
+        // Are the lines below necessary?
+        // $delivery = $this->entityManager->getRepository(Delivery::class)->find($message->getDelivery()->getId());
+        // if (!$delivery) {
+        //     return;
+        // }
 
         $order = $delivery->getOrder();
         $pickup = $delivery->getPickup();
@@ -70,7 +71,7 @@ class DeliveryCreatedHandler
             ->locale($this->locale)
             ->calendar();
 
-        [$title, $body] = $message->parseTitleAndBodyForPushNotification($delivery, $this->translator);
+        [$title, $body] = $message->parseTitleAndBodyForPushNotification($this->translator);
 
         $users = $this->userManager->findUsersByRoles(['ROLE_ADMIN', 'ROLE_DISPATCHER']);
 

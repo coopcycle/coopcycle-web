@@ -21,6 +21,7 @@ class PushNotificationHandler
     {
         $users = [];
         // For `PushNotificationV2` we don't need to resolve users from usernames
+        // The array $users is not used since they are already inside $message
         if ($message instanceof PushNotification) {
             $users = array_reduce($message->getUsers(), function ($carry, $item) {
                 if ($user = $this->userManager->findUserByUsername($item)) {
