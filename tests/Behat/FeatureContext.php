@@ -287,11 +287,6 @@ class FeatureContext implements Context, SnippetAcceptingContext
     {
         $dir = __DIR__.'/../../fixtures/ORM/';
 
-        if (str_starts_with($filename, 'cypress://')) {
-            $filename = substr($filename, strlen('cypress://'));
-            $dir = __DIR__.'/../../cypress/fixtures/';
-        }
-
         return $dir . $filename;
     }
 
