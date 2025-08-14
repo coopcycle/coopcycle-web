@@ -1,8 +1,6 @@
 AppBundle\Entity\PackageSet:
   package_set_1:
     name: 'Standard'
-  package_set_2:
-    name: 'Standard'
 
 AppBundle\Entity\Package:
   package_small:
@@ -20,12 +18,4 @@ AppBundle\Entity\Package:
     packageSet: '@package_set_1'
     description: ''
     short_code: 'XL'
-    color: '#a91de0'
-  package_small2:
-    name: 'SMALL'
-    maxVolumeUnits: 1.0
-    averageVolumeUnits: 1.0
-    packageSet: '@package_set_2'
-    description: ''
-    short_code: 'AB'
     color: '#a91de0'
