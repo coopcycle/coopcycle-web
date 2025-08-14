@@ -46,7 +46,7 @@ class SendRemotePushNotificationTest extends KernelTestCase
         $admin->setUsername('admin');
 
         $this->userManager = $this->prophesize(UserManager::class);
-        $this->userManager->findUsersByRole('ROLE_ADMIN')
+        $this->userManager->findUsersByRoles(['ROLE_ADMIN', 'ROLE_DISPATCHER'])
             ->willReturn([ $admin ]);
 
         $this->translator = $this->prophesize(TranslatorInterface::class);

@@ -462,7 +462,6 @@ receipt.total: Gesamt (Inkl. MwSt.)
 receipt.line_item.tax_total: USt.
 receipt.line_item.total: Gesamt
 adminDashboard.statistics: Statistiken
-notifications.empty: Keine Benachrichtigung
 index.view_all_restaurants: Alle Restaurants
 index.our_restaurants: Unsere Restaurants
 index.banner: Dein Lieblingsessen zu dir nach Hause
@@ -514,7 +513,6 @@ form.task.recipient.label: Kontakt
 form.task.telephone.label: Telefon
 form.task.address.label: Adresse
 localBusiness.form.enabled: Aktiviert
-notifications.restaurant.new_order: Neue Bestellung zu bestätigen
 receipt.billing_details: Bestellung am %date% mit %payment_method% bezahlt
 receipt.line_item.quantity: Stückzahl
 adminDashboard.activity.title: Aktivitäten
@@ -818,10 +816,7 @@ form.billing_method.percentage: Prozentsatz der Auftragssumme
 basics.send_invitation: Einladung senden
 task.receipt.message: Wir haben Ihr Paket an <strong>%address%</strong> am <strong>%date%</strong>
   zugestellt
-notifications.messenger_approaching: Hallo %customer%! Unser:e Fahrer:in %messenger%
-  ist bald bei dir.
 order.export.heading.net_revenue: Nettoumsatz
-notifications.tasks_changed: Aufgaben für %date% geändert!
 sms.with_tracking: "Hallo,\nunser:e Fahrer:in ist auf dem Weg zu %address%.\nVerfolgen\
   \ unter %link%\n"
 info.deposit_refund: Jeder Eintrag und der Liste unten repräsentiert einen Verpackungstyp
@@ -866,17 +861,11 @@ activity.task.created: "@%owner% erstellte Aufgabe #task/%aggregate_id%\n"
 adminDashboard.incidents.title: Vorfälle
 adminDashboard.incidents.createNew: Erstelle einen neuen Vorfall
 activity.task.assigned: "@%owner% wies Aufgabe #task/%aggregate_id% zu\n"
-form.settings.notifications.order.updated: Auftrag aktualisiert
 activity.task.failed: "@%owner% konnte Aufgabe #task/%aggregate_id% nicht erledigen\n"
-form.settings.notifications.task.failed: Aufgabe fehlgeschlagen
 activity.order.dropped: "@%owner% hat den Auftrag #order/%aggregate_id% geliefert\n"
-form.settings.notifications.task.cancelled: Aufgabe storniert
 activity.order.fulfilled: "Auftrag #order/#%aggregate_id% abgeschlossen\n"
 basics.continue: Weiter
 order.export.heading.restaurant_name: Restaurant
-form.settings.notifications.help: Wenn Sie die Benachrichtigungen für die unten aufgeführten
-  Ereignisse deaktivieren, erhalten die Administratoren weder E-Mails noch Benachrichtigungen
-  in der oberen Leiste.
 registration.company.billing.address: Rechnungsadresse
 basics.send_invitation.confirm: Deine Einladung wurde verschickt. Du kannst nun die
   Einstellungen für den neuen Nutzer setzen.
@@ -1015,9 +1004,36 @@ basics.enabled: aktiviert
 form.fulfillment_method.pre_ordering_allowed.label: Erlaube Vorbestellungen
 form.fulfillment_method.pre_ordering_allowed.help: Wenn deaktiviert können Kunden
   nur am selben Tag Bestellungen aufgeben.
-notifications.delivery_created: Eine Lieferung mit Abholung am %date% wurde erstellt
-notifications.tasks_changed_today: Deine heutigen Aufgaben wurden aktualisiert
+notifications.empty: Keine Benachrichtigung
 notifications.tap_to_open: Tippe zum Öffnen
+notifications.delivery_created: Eine Lieferung mit Abholung am %date% wurde erstellt
+notifications.tasks_changed: Aufgaben für %date% geändert!
+notifications.tasks_changed_today: Deine heutigen Aufgaben wurden aktualisiert
+notifications.restaurant.new_order: Neue Bestellung zu bestätigen
+notifications.restaurant.accepted_order: Neue Bestellung
+notifications.messenger_approaching: Hallo %customer%! Unser:e Fahrer:in %messenger%
+  ist bald bei dir.
+form.settings.notifications.title: Benachrichtigungen
+form.settings.notifications.order.created: Auftrag erstellt
+form.settings.notifications.order.updated: Auftrag aktualisiert
+form.settings.notifications.order.accepted: Auftrag angenommen
+form.settings.notifications.order.refused: Auftrag abgewiesen
+form.settings.notifications.order.delayed: Auftrag verzögert
+form.settings.notifications.order.cancelled: Auftrag storniert
+form.settings.notifications.order.picked: Auftrag abgeholt
+form.settings.notifications.order.dropped: Auftrag gelöscht
+form.settings.notifications.order.fulfilled: Auftrag erfüllt
+form.settings.notifications.task.created: Aufgabe erstellt
+form.settings.notifications.task.assigned: Aufgabe zugewiesen
+form.settings.notifications.task.unassigned: Aufgabe nicht zugewiesen
+form.settings.notifications.task.started: Aufgabe begonnen
+form.settings.notifications.task.done: Aufgabe abgeschlossen
+form.settings.notifications.task.failed: Aufgabe fehlgeschlagen
+form.settings.notifications.task.cancelled: Aufgabe storniert
+form.settings.notifications.task.rescheduled: Aufgabe verschoben
+form.settings.notifications.help: Wenn Sie die Benachrichtigungen für die unten aufgeführten
+  Ereignisse deaktivieren, erhalten die Administratoren weder E-Mails noch Benachrichtigungen
+  in der oberen Leiste.
 stores.address_book: Adressbuch
 store.form.section.settings: Einstellungen
 adminDashboard.hubs.createNew: Erstelle einen neuen Hub
@@ -1049,20 +1065,6 @@ form.integration.maxHeight.label: Maximal erlaubte Höhe (cm)
 form.integration.maxWidth.label: Maximal erlaubte Breite (cm)
 adminDashboard.incidents.help: Vorfälle verwalten.
 form.pricing_rule_set.options.label: Optionen
-form.settings.notifications.title: Benachrichtigungen
-form.settings.notifications.order.fulfilled: Auftrag erfüllt
-form.settings.notifications.order.created: Auftrag erstellt
-form.settings.notifications.order.accepted: Auftrag angenommen
-form.settings.notifications.order.refused: Auftrag abgewiesen
-form.settings.notifications.order.delayed: Auftrag verzögert
-form.settings.notifications.order.cancelled: Auftrag storniert
-form.settings.notifications.order.picked: Auftrag abgeholt
-form.settings.notifications.task.created: Aufgabe erstellt
-form.settings.notifications.task.assigned: Aufgabe zugewiesen
-form.settings.notifications.task.unassigned: Aufgabe nicht zugewiesen
-form.settings.notifications.task.started: Aufgabe begonnen
-form.settings.notifications.task.done: Aufgabe abgeschlossen
-form.settings.notifications.task.rescheduled: Aufgabe verschoben
 registration.info.title: Was ist CoopCycle?
 registration.alert.text: Sie wurden von %invitedBy% eingeladen einen Account für %brandName%
   zu erstellen.

@@ -3,9 +3,10 @@
 namespace AppBundle\MessageHandler;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Task;
 use AppBundle\Message\DeliveryCreated;
 use AppBundle\Message\Email;
-use AppBundle\Message\PushNotification;
+use AppBundle\Message\PushNotificationV2;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use Carbon\Carbon;
@@ -14,7 +15,6 @@ use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use NotFloran\MjmlBundle\Renderer\RendererInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment as TwigEnvironment;
 
@@ -63,17 +63,26 @@ class DeliveryCreatedHandler
             return;
         }
 
-        $date = Carbon::instance($delivery->getPickup()->getAfter())
+        $order = $delivery->getOrder();
+        $pickup = $delivery->getPickup();
+        $date = $pickup->getAfter()->format('Y-m-d H:i');
+        $dateLocal = Carbon::instance($pickup->getAfter())
             ->locale($this->locale)
             ->calendar();
 
-        $message = $this->translator->trans('notifications.delivery_created', ['%date%' => strtolower($date)]);
+        [$title, $body] = $message->parseTitleAndBodyForPushNotification($delivery, $this->translator);
 
-        $users = $this->userManager->findUsersByRole('ROLE_ADMIN');
-        $usernames = array_map(fn(UserInterface $user) => $user->getUsername(), $users);
+        $users = $this->userManager->findUsersByRoles(['ROLE_ADMIN', 'ROLE_DISPATCHER']);
+
+        $data = [
+            'delivery_id' => $delivery->getId(),
+            'order_id' => $order ? $order->getId() : null,
+            'date' => $date,
+            'date_local' => $dateLocal
+        ];
 
         $this->messageBus->dispatch(
-            new PushNotification($message, $usernames)
+            new PushNotificationV2($title, $body, $users, $data)
         );
 
         $adminEmail = $this->settingsManager->get('administrator_email');
@@ -82,6 +91,7 @@ class DeliveryCreatedHandler
             return;
         }
 
+        $message = $this->translator->trans('notifications.delivery_created', ['%date%' => strtolower($dateLocal)]);
         $body = $this->mjml->render($this->twig->render('emails/delivery/created.mjml.twig', [
             'body'     => $message,
             'delivery' => $delivery
