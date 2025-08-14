@@ -80,8 +80,8 @@
     </div>
   </div>
   <div class="flex-1 ml-md-4">
-    {% if deliveryData is not empty %}
-      <div id="delivery-info" data-delivery="{{ deliveryData|serialize('jsonld', {groups: ['delivery', 'address']}) }}">
+    {% if formData is not empty %}
+      <div id="delivery-info" data-delivery="{{ formData|serialize('jsonld', {groups: ['delivery', 'address']}) }}">
         {# rendered by React #}
       </div>
     {% endif %}

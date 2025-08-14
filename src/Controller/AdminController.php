@@ -391,7 +391,7 @@ class AdminController extends AbstractController
 
         $price = $order->getDeliveryPrice();
 
-        $deliveryData = null !== $delivery ? $deliveryMapper->map(
+        $formData = null !== $delivery ? $deliveryMapper->map(
             $delivery,
             $order,
             $price instanceof ArbitraryPrice ? $price : null,
@@ -406,7 +406,7 @@ class AdminController extends AbstractController
             'layout' => 'admin.html.twig',
             'order' => $order,
             'delivery' => $delivery,
-            'deliveryData' => $deliveryData,
+            'formData' => $formData,
             'form' => $form->createView(),
             'email_form' => $emailForm->createView(),
             'stores' => $stores,

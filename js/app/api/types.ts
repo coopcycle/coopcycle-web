@@ -319,6 +319,7 @@ export type Delivery = JsonLdEntity & {
   updatedAt?: string;
   store?: Store;
   order?: Order;
+  trackingUrl?: string;
 };
 
 // Delivery Template for RecurrenceRule
@@ -437,11 +438,18 @@ export type SuggestOptimizationsRequest = {
   vehicle?: string;
 };
 
+export type ManualSupplementValues = {
+  '@id': Uri;
+  quantity: number;
+};
+
 export type OrderPayload = {
-  arbitraryPrice: {
+  manualSupplements: ManualSupplementValues[];
+  arbitraryPrice?: {
     variantName: string;
     variantPrice: number;
   };
+  isSavedOrder: boolean;
 };
 
 export type AddressPayload = {

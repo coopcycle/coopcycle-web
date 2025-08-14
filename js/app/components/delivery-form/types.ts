@@ -1,13 +1,8 @@
-import type { Uri, TaskPayload } from '../../api/types';
-
-export type ManualSupplementValues = {
-  '@id': Uri;
-  quantity: number;
-};
+import { TaskPayload, ManualSupplementValues } from '../../api/types';
 
 export type OrderFormValues = {
-  isSavedOrder?: boolean;
   manualSupplements: ManualSupplementValues[];
+  isSavedOrder?: boolean;
 };
 
 export type DeliveryFormValues = {

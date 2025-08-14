@@ -50,9 +50,6 @@ final class DeliveryDto
     #[Groups(['delivery_create'])]
     public string|null $rrule = null;
 
-    #[Groups(['delivery'])]
-    public string|null $trackingUrl = null;
-
     #[Groups(['delivery', 'delivery_create', 'pricing_deliveries'])]
     #[Assert\Valid]
     public DeliveryOrderDto|null $order = null;

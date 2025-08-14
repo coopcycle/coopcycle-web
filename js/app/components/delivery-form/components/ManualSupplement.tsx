@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { PricingRule } from '../../../api/types';
+import { ManualSupplementValues, PricingRule } from '../../../api/types';
 import { Checkbox, CheckboxChangeEvent } from 'antd';
 import {
   FixedPrice,
@@ -9,7 +9,6 @@ import {
 } from '../../../delivery/pricing/pricing-rule-parser';
 import { getPriceValue } from '../../pricing-rule-set-form/utils';
 import { useDeliveryFormFormikContext } from '../hooks/useDeliveryFormFormikContext';
-import { ManualSupplementValues } from '../types';
 
 export function formatPrice(price: Price): string {
   if (price instanceof FixedPrice) {

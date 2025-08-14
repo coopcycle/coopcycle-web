@@ -88,9 +88,6 @@ class DeliveryMapper
             if (!is_null($order->getId())) {
                 $deliveryOrderData->id = $order->getId();
             }
-
-            $deliveryOrderData->total = $order->getTotal();
-            $deliveryOrderData->taxTotal = $order->getTaxTotal();
         }
 
         $deliveryOrderData->arbitraryPrice = $arbitraryPrice ? new ArbitraryPriceDto(
@@ -102,10 +99,6 @@ class DeliveryMapper
 
         if ($deliveryEntity->getId()) {
             $deliveryData->id = $deliveryEntity->getId();
-
-            $deliveryData->trackingUrl = $this->urlGenerator->generate('public_delivery', [
-                'hashid' => $this->hashids8->encode($deliveryEntity->getId()),
-            ], UrlGeneratorInterface::ABSOLUTE_URL);
         }
 
         return $deliveryData;

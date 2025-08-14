@@ -51,14 +51,15 @@ function OrderItem({ index, orderItem, overridePrice }: OrderItemProps) {
           {productVariant.name}
         </span>
       </div>
-      {orderItem.adjustments['menu_item_modifier'].map((adjustment, index) => (
-        <Adjustment
-          key={index}
-          index={index}
-          adjustment={adjustment}
-          overridePrice={overridePrice}
-        />
-      ))}
+      {orderItem.adjustments['menu_item_modifier'] &&
+        orderItem.adjustments['menu_item_modifier'].map((adjustment, index) => (
+          <Adjustment
+            key={index}
+            index={index}
+            adjustment={adjustment}
+            overridePrice={overridePrice}
+          />
+        ))}
       <div className="font-weight-semi-bold">
         <span></span>
         <span

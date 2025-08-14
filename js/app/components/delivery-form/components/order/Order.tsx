@@ -32,7 +32,7 @@ import ManualSupplements from './ManualSupplements';
 
 type Props = {
   storeNodeId: string;
-  order: OrderType | null;
+  order?: OrderType;
   setPriceLoading: (loading: boolean) => void;
 };
 
@@ -46,7 +46,7 @@ const Order = ({
 
   const { t } = useTranslation();
 
-  const [order, setOrder] = useState<OrderType | null>(preLoadedOrder);
+  const [order, setOrder] = useState(preLoadedOrder);
 
   const mode = useSelector(selectMode);
   const { values, setFieldValue } = useDeliveryFormFormikContext();
@@ -262,7 +262,7 @@ const Order = ({
   return (
     <Spin spinning={isLoading}>
       <div>
-        {isPriceBreakdownEnabled && order !== null ? (
+        {isPriceBreakdownEnabled && order ? (
           <Cart order={order} overridePrice={overridePrice} />
         ) : null}
         <div>
