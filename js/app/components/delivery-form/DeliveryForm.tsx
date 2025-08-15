@@ -31,13 +31,15 @@ import { Mode, modeIn } from './mode';
 import { useSelector } from 'react-redux';
 import { selectMode } from './redux/formSlice';
 import FlagsContext from './FlagsContext';
-import type { DeliveryFormValues } from './types';
+import { DeliveryFormValues } from './types';
 import {
   Uri,
   PutDeliveryRequest,
   Store,
   Task as TaskType,
   TaskPayload,
+  Delivery,
+  Order as OrderType,
 } from '../../api/types';
 import { useDatadog } from '../../hooks/useDatadog';
 
@@ -151,7 +153,9 @@ type Props = {
   storeNodeId: Uri;
   deliveryId?: number;
   deliveryNodeId?: Uri;
-  preLoadedDeliveryData?: PutDeliveryRequest | null;
+  delivery?: Delivery;
+  order?: OrderType;
+  preLoadedFormData?: PutDeliveryRequest;
 };
 
 const DeliveryForm = ({
@@ -160,7 +164,9 @@ const DeliveryForm = ({
   deliveryId,
   // nodeId: Delivery or RecurrenceRule node
   deliveryNodeId,
-  preLoadedDeliveryData,
+  delivery,
+  order,
+  preLoadedFormData,
 }: Props) => {
   const { isDispatcher } = useContext(FlagsContext);
 
@@ -187,31 +193,6 @@ const DeliveryForm = ({
   });
 
   const [priceLoading, setPriceLoading] = useState<boolean>(false);
-
-  const order = useMemo(() => {
-    if (mode === Mode.DELIVERY_CREATE) {
-      if (preLoadedDeliveryData && preLoadedDeliveryData.order) {
-        return preLoadedDeliveryData.order;
-      }
-
-      return {
-        total: 0,
-        taxTotal: 0,
-        isSavedOrder: false,
-      };
-    }
-
-    if (mode === Mode.DELIVERY_UPDATE) {
-      if (preLoadedDeliveryData.order?.id) {
-        return preLoadedDeliveryData.order;
-      } else {
-        // A case where the delivery is not linked to an order
-        return null;
-      }
-    }
-
-    return null;
-  }, [preLoadedDeliveryData, mode]);
 
   const { handleSubmit, error, isSubmitted } = useSubmit(
     storeNodeId,
@@ -318,12 +299,12 @@ const DeliveryForm = ({
     if (!isDataReady) return;
 
     const initialExpandedState = {};
-    if (preLoadedDeliveryData) {
+    if (preLoadedFormData) {
       const initialValues = structuredClone(
-        preLoadedDeliveryData,
+        preLoadedFormData,
       ) as DeliveryFormValues;
 
-      initialValues.tasks = preLoadedDeliveryData.tasks.map(task => {
+      initialValues.tasks = preLoadedFormData.tasks.map(task => {
         return {
           ...task,
           // Ensure each task has an @id (use existing or generate temporary)
@@ -344,14 +325,14 @@ const DeliveryForm = ({
         initialValues.order.manualSupplements = [];
       }
 
-      if (preLoadedDeliveryData.order?.arbitraryPrice) {
+      if (preLoadedFormData.order?.arbitraryPrice) {
         // remove a previously copied value (different formats between API and the frontend)
         delete initialValues.order.arbitraryPrice;
 
         initialValues.variantName =
-          preLoadedDeliveryData.order.arbitraryPrice.variantName;
+          preLoadedFormData.order.arbitraryPrice.variantName;
         initialValues.variantIncVATPrice =
-          preLoadedDeliveryData.order.arbitraryPrice.variantPrice;
+          preLoadedFormData.order.arbitraryPrice.variantPrice;
       }
 
       setInitialValues(initialValues);
@@ -368,7 +349,9 @@ const DeliveryForm = ({
         });
       }
 
-      setTrackingLink(preLoadedDeliveryData.trackingUrl);
+      if (delivery?.trackingUrl) {
+        setTrackingLink(delivery.trackingUrl);
+      }
     } else {
       if (mode === Mode.DELIVERY_CREATE) {
         const tasks = [
@@ -393,7 +376,7 @@ const DeliveryForm = ({
     setExpandedTasks(initialExpandedState);
 
     setIsLoading(false);
-  }, [isDataReady, preLoadedDeliveryData, mode]);
+  }, [isDataReady, preLoadedFormData, mode]);
 
   return isLoading ? (
     <div className="delivery-spinner">
@@ -672,7 +655,8 @@ const DeliveryForm = ({
                   <DeliveryResume tasks={values.tasks} />
                 </div>
 
-                {order || mode === Mode.RECURRENCE_RULE_UPDATE ? (
+                {mode !== Mode.DELIVERY_UPDATE ||
+                (mode === Mode.DELIVERY_UPDATE && order) ? (
                   <div className="order-informations__total-price border-top py-3">
                     <Order
                       storeNodeId={storeNodeId}
@@ -694,7 +678,6 @@ const DeliveryForm = ({
                 ) : null}
 
                 {modeIn(mode, [Mode.DELIVERY_CREATE, Mode.DELIVERY_UPDATE]) &&
-                order &&
                 isDispatcher ? (
                   <div
                     className="border-top py-3"

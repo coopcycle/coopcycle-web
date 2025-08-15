@@ -93,19 +93,14 @@
   {% block alerts %}
   {% endblock %}
 
-  {% if not is_new %}
-    {% set tracking_link = url('public_delivery', { hashid: delivery|hashid }) %}
-  {% else %}
-    {% set tracking_link = null %}
-  {% endif %}
-
   <div {{ react_component('Delivery/DeliveryForm', {
         isNew: is_new,
         storeNodeId: store|get_iri_from_item,
         deliveryId: delivery.id,
         deliveryNodeId: is_new ? null : delivery|get_iri_from_item,
-        delivery: deliveryData ? deliveryData|serialize('jsonld', {groups: ['delivery', 'address', 'barcode']}) : null,
-        trackingLink: tracking_link,
+        delivery: is_new ? null : delivery|serialize('jsonld', {groups: ['delivery', 'address', 'barcode']}),
+        order: order ? order|serialize('jsonld', {groups: ['order', 'pricing_deliveries']}) : null,
+        formData: formData ? formData|serialize('jsonld', {groups: ['delivery', 'address', 'barcode']}) : null,
         isDispatcher: isDispatcher,
         isDebugPricing: debug_pricing,
         isPriceBreakdownEnabled: ui_package_delivery_price_breakdown_enabled,

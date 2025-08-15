@@ -4,6 +4,11 @@ import { useTranslation } from 'react-i18next';
 import './PriceVATConverter.scss';
 import { PriceValues } from '../../types';
 
+type MissingPriceValues = {
+  VAT: number | null;
+  exVAT: number | null;
+};
+
 const getCurrencySymbol = (): string => {
   const { currencySymbol } = document.body.dataset;
   return currencySymbol || '€';
@@ -25,7 +30,7 @@ type Props = {
 };
 
 const PriceVATConverter = ({ taxRate, setPrice, VAT, exVAT }: Props) => {
-  const [values, setValues] = useState<PriceValues>(() => {
+  const [values, setValues] = useState<PriceValues | MissingPriceValues>(() => {
     if (VAT === undefined && exVAT === undefined) {
       return { VAT: null, exVAT: null };
     } else if (VAT !== undefined && exVAT !== undefined) {
@@ -54,8 +59,12 @@ const PriceVATConverter = ({ taxRate, setPrice, VAT, exVAT }: Props) => {
           controls={false}
           prefix={getCurrencySymbol()}
           value={values.exVAT}
-          placeholder={0}
+          placeholder={'0'}
           onChange={value => {
+            if (value === null) {
+              return;
+            }
+
             const newValues = {
               exVAT: value,
               VAT: addVat(value, taxRate),
@@ -78,16 +87,18 @@ const PriceVATConverter = ({ taxRate, setPrice, VAT, exVAT }: Props) => {
           controls={false}
           prefix={getCurrencySymbol()}
           value={values.VAT}
-          placeholder={0}
+          placeholder={'0'}
           onChange={(value: number | null) => {
-            if (value !== null) {
-              const newValues = {
-                exVAT: removeVat(value, taxRate),
-                VAT: value,
-              };
-              setValues(newValues);
-              setPrice(newValues);
+            if (value === null) {
+              return;
             }
+
+            const newValues = {
+              exVAT: removeVat(value, taxRate),
+              VAT: value,
+            };
+            setValues(newValues);
+            setPrice(newValues);
           }}
         />
       </div>

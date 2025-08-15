@@ -31,10 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const recurrenceRuleId = container.dataset.recurrenceRuleId;
     const recurrenceRuleNodeId = container.dataset.recurrenceRuleNodeId;
 
-    const preLoadedDeliveryData = container.dataset.delivery
-      ? JSON.parse(container.dataset.delivery)
+    const preLoadedFormData = container.dataset.formData
+      ? JSON.parse(container.dataset.formData)
       : null;
-    preLoadedDeliveryData.rrule = container.dataset.recurrenceRule;
+    preLoadedFormData.rrule = container.dataset.recurrenceRule;
 
     const isDispatcher = container.dataset.isDispatcher === 'true';
     const isDebugPricing = container.dataset.isDebugPricing === 'true';
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
               deliveryId={recurrenceRuleId}
               //FIXME; might lead to bugs
               deliveryNodeId={recurrenceRuleNodeId}
-              preLoadedDeliveryData={preLoadedDeliveryData}
+              preLoadedFormData={preLoadedFormData}
             />
           </FlagsContext.Provider>
         </Provider>

@@ -7,8 +7,6 @@ use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Task;
 use AppBundle\Service\TagManager;
 use AppBundle\Sylius\Order\OrderInterface;
-use Hashids\Hashids;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
@@ -18,8 +16,6 @@ class DeliveryMapper
     public function __construct(
         private readonly TaskMapper $taskMapper,
         private readonly TagManager $tagManager,
-        private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly Hashids $hashids8,
         private readonly NormalizerInterface $normalizer,
         private readonly ObjectNormalizer $symfonyNormalizer
     ) {
@@ -88,9 +84,6 @@ class DeliveryMapper
             if (!is_null($order->getId())) {
                 $deliveryOrderData->id = $order->getId();
             }
-
-            $deliveryOrderData->total = $order->getTotal();
-            $deliveryOrderData->taxTotal = $order->getTaxTotal();
         }
 
         $deliveryOrderData->arbitraryPrice = $arbitraryPrice ? new ArbitraryPriceDto(
@@ -102,10 +95,6 @@ class DeliveryMapper
 
         if ($deliveryEntity->getId()) {
             $deliveryData->id = $deliveryEntity->getId();
-
-            $deliveryData->trackingUrl = $this->urlGenerator->generate('public_delivery', [
-                'hashid' => $this->hashids8->encode($deliveryEntity->getId()),
-            ], UrlGeneratorInterface::ABSOLUTE_URL);
         }
 
         return $deliveryData;

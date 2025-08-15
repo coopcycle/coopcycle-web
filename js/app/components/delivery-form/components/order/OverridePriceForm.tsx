@@ -10,7 +10,7 @@ import './ShowPrice.scss';
 
 type Props = {
   setPrice: (price: PriceValues) => void;
-  taxRate: number;
+  taxRate;
 };
 
 const OverridePriceForm = ({ setPrice, taxRate }: Props) => {

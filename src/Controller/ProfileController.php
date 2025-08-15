@@ -231,7 +231,7 @@ class ProfileController extends AbstractController
             $delivery = $deliveryManager->createFromOrder($order);
         }
 
-        $deliveryData = $deliveryMapper->map(
+        $formData = $deliveryMapper->map(
             $delivery,
             $order,
             null,
@@ -242,7 +242,7 @@ class ProfileController extends AbstractController
             'layout' => 'profile.html.twig',
             'order' => $order,
             'delivery' => $delivery,
-            'deliveryData' => $deliveryData,
+            'formData' => $formData,
             'form' => $form->createView(),
             'show_buttons' => false,
         ]);

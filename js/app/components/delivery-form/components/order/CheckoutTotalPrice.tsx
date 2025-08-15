@@ -2,72 +2,41 @@ import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CalculationOutput } from '../../../../api/types';
 import FlagsContext from '../../FlagsContext';
+import { TotalPrice } from './TotalPrice';
 
-const TotalPrice = ({
-  overridePrice,
-  priceWithTaxes,
-  priceWithoutTaxes,
-}: {
+type Props = {
   overridePrice: boolean;
-  priceWithTaxes: number;
-  priceWithoutTaxes: number;
-}) => {
-  const { t } = useTranslation();
-
-  return (
-    <span
-      className={`pull-right d-flex flex-column align-items-end ${overridePrice ? 'text-decoration-line-through' : ''}`}>
-      <span>
-        {t('DELIVERY_FORM_TOTAL_EX_VAT')} {priceWithoutTaxes.formatMoney()}
-      </span>
-      <br />
-      <span className="font-weight-semi-bold" data-testid="tax-included">
-        {t('DELIVERY_FORM_TOTAL_VAT')} {priceWithTaxes.formatMoney()}
-      </span>
-    </span>
-  );
+  priceErrorMessage: string;
+  calculatePriceData?: CalculationOutput;
 };
 
 const CheckoutTotalPrice = ({
   overridePrice,
   priceErrorMessage,
   calculatePriceData,
-}: {
-  overridePrice: boolean;
-  priceErrorMessage: string;
-  calculatePriceData: CalculationOutput | null;
-}) => {
+}: Props) => {
   const { t } = useTranslation();
   const { isDispatcher } = useContext(FlagsContext);
 
   return (
     <>
-      <li
-        className={`list-group-item d-flex flex-column ${overridePrice ? 'text-decoration-line-through' : ''}`}>
-        <div>
-          <span className="font-weight-semi-bold">
-            {t('DELIVERY_FORM_TOTAL_PRICE')}
-          </span>
-          {!priceErrorMessage ? (
-            calculatePriceData && calculatePriceData.amount ? (
-              <TotalPrice
-                priceWithTaxes={calculatePriceData.amount / 100}
-                priceWithoutTaxes={
-                  (calculatePriceData.amount - calculatePriceData.tax.amount) /
-                  100
-                }
-                overridePrice={overridePrice}
-              />
-            ) : (
-              <TotalPrice
-                priceWithTaxes={0}
-                priceWithoutTaxes={0}
-                overridePrice={overridePrice}
-              />
-            )
-          ) : null}
-        </div>
-      </li>
+      {!priceErrorMessage ? (
+        calculatePriceData && calculatePriceData.amount ? (
+          <TotalPrice
+            priceWithTaxes={calculatePriceData.amount}
+            priceWithoutTaxes={
+              calculatePriceData.amount - calculatePriceData.tax.amount
+            }
+            overridePrice={overridePrice}
+          />
+        ) : (
+          <TotalPrice
+            priceWithTaxes={0}
+            priceWithoutTaxes={0}
+            overridePrice={overridePrice}
+          />
+        )
+      ) : null}
       {!overridePrice && priceErrorMessage ? (
         <div className="alert alert-danger" role="alert">
           {isDispatcher

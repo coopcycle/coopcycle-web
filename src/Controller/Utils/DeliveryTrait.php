@@ -39,7 +39,7 @@ trait DeliveryTrait
         $order = $delivery->getOrder();
         $price = $order?->getDeliveryPrice();
 
-        $deliveryData = $deliveryMapper->map(
+        $formData = $deliveryMapper->map(
             $delivery,
             $order,
             $price instanceof ArbitraryPrice ? $price : null,
@@ -51,7 +51,7 @@ trait DeliveryTrait
             'store' => $delivery->getStore(),
             'order' => $order,
             'delivery' => $delivery,
-            'deliveryData' => $deliveryData,
+            'formData' => $formData,
             'routes' => $request->attributes->get('routes'),
             'show_left_menu' => true,
             'isDispatcher' => $this->isGranted('ROLE_DISPATCHER'),
