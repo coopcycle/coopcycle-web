@@ -405,6 +405,11 @@ export type CalculationItem = {
 };
 
 export type CalculationOutput = {
+  amount: number;
+  tax: {
+    amount: number;
+    included: boolean;
+  };
   ruleSet: PricingRuleSet;
   strategy: string;
   items: CalculationItem[];

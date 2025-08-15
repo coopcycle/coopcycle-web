@@ -20,6 +20,6 @@ export type FlagsContextType = {
 };
 
 export type PriceValues = {
-  VAT: number | null;
-  exVAT: number | null;
+  VAT: number;
+  exVAT: number;
 };

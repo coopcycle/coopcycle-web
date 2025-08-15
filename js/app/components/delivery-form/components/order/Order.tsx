@@ -14,7 +14,6 @@ import Cart from './Cart';
 import FlagsContext from '../../FlagsContext';
 import { CalculationOutput, Order as OrderType } from '../../../../api/types';
 import { Mode, modeIn } from '../../mode';
-import OrderTotalPrice from './OrderTotalPrice';
 import CheckoutTotalPrice from './CheckoutTotalPrice';
 import { PriceCalculation } from '../../../../delivery/PriceCalculation';
 import OverridePriceForm from './OverridePriceForm';
@@ -29,6 +28,7 @@ import {
 } from '../../../../api/slice';
 import { isManualSupplement } from '../../../pricing-rule-set-form/types/PricingRuleType';
 import ManualSupplements from './ManualSupplements';
+import { TotalPrice } from './TotalPrice';
 
 type Props = {
   storeNodeId: string;
@@ -266,11 +266,11 @@ const Order = ({
           <Cart order={order} overridePrice={overridePrice} />
         ) : null}
         <div>
-          {mode === Mode.DELIVERY_UPDATE ? (
-            <OrderTotalPrice
+          {mode === Mode.DELIVERY_UPDATE && currentPrice ? (
+            <TotalPrice
               overridePrice={overridePrice}
-              currentPrice={currentPrice}
-              newPrice={newPrice}
+              priceWithTaxes={currentPrice.VAT}
+              priceWithoutTaxes={currentPrice.exVAT}
             />
           ) : (
             <CheckoutTotalPrice
