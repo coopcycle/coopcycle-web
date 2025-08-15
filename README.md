@@ -108,10 +108,16 @@ Minimum configuration:
 docker compose up
 ```
 
-With additional tools:
+With Storybook:
 
 ```sh
-docker compose --profile devFrontend --profile devOdoo up
+docker compose --profile devFrontend up
+```
+
+With Odoo:
+
+```sh
+docker compose --profile devOdoo up
 ```
 
 At this step, the platform should be up & running, but the database is still empty.
