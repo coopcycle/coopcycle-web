@@ -7,8 +7,6 @@ use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Task;
 use AppBundle\Service\TagManager;
 use AppBundle\Sylius\Order\OrderInterface;
-use Hashids\Hashids;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
@@ -18,8 +16,6 @@ class DeliveryMapper
     public function __construct(
         private readonly TaskMapper $taskMapper,
         private readonly TagManager $tagManager,
-        private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly Hashids $hashids8,
         private readonly NormalizerInterface $normalizer,
         private readonly ObjectNormalizer $symfonyNormalizer
     ) {
