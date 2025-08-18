@@ -9,21 +9,20 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DeliveryCreated
 {
-    private $delivery;
+    private $deliveryId;
 
     public function __construct(Delivery $delivery)
     {
-        $this->delivery = $delivery;
+        $this->deliveryId = $delivery->getId();
     }
 
-    public function getDelivery(): Delivery
+    public function getDeliveryId(): string
     {
-        return $this->delivery;
+        return $this->deliveryId;
     }
 
-    public function parseTitleAndBodyForPushNotification(TranslatorInterface $translator): array
+    public function parseTitleAndBodyForPushNotification(Delivery $delivery, TranslatorInterface $translator): array
     {
-        $delivery = $this->delivery;
         $tasks = $delivery->getTasks();
         $order = $delivery->getOrder();
         $pickup = $delivery->getPickup();
