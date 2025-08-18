@@ -211,6 +211,10 @@ export type OrderTimeline = {
   shippingTime?: string;
 };
 
+type PackageDeliveryOrderMinimal = JsonLdEntity & {
+  number: string;
+};
+
 export type Order = JsonLdEntity & {
   id: number;
   number: string;
@@ -315,10 +319,7 @@ export type Delivery = JsonLdEntity & {
   pickup?: Task;
   dropoff?: Task;
   tasks: Task[];
-  createdAt: string;
-  updatedAt?: string;
-  store?: Store;
-  order?: Order;
+  order?: PackageDeliveryOrderMinimal;
   trackingUrl?: string;
 };
 

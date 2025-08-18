@@ -42,7 +42,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
     /**
      * @param DeliveryDto|DeliveryFromTasksInput $data
      */
-    public function process($data, Operation $operation, array $uriVariables = [], array $context = []): DeliveryDto
+    public function process($data, Operation $operation, array $uriVariables = [], array $context = []): Delivery
     {
         /** @var Delivery $delivery */
         $delivery = $this->decorated->process($data, $operation, $uriVariables, $context);
@@ -170,11 +170,6 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
 
         $this->persistProcessor->process($delivery, $operation, $uriVariables, $context);
 
-        return $this->deliveryMapper->map(
-            $delivery,
-            $order,
-            $arbitraryPrice,
-            $isSavedOrder,
-        );
+        return $delivery;
     }
 }

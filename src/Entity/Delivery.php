@@ -48,7 +48,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             denormalizationContext: ['groups' => ['delivery_create']],
             security: 'is_granted(\'edit\', object)',
             input: DeliveryDto::class,
-            output: DeliveryDto::class,
+            output: Delivery::class,
             processor: DeliveryCreateOrUpdateProcessor::class
         ),
         new Put(
@@ -92,7 +92,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             denormalizationContext: ['groups' => ['delivery_create']],
             securityPostDenormalize: 'is_granted(\'create\', object)',
             input: DeliveryDto::class,
-            output: DeliveryDto::class,
+            output: Delivery::class,
             processor: DeliveryCreateOrUpdateProcessor::class
         ),
         new Post(
@@ -126,7 +126,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             denormalizationContext: ['groups' => ['delivery_create_from_tasks']],
             security: 'is_granted(\'ROLE_ADMIN\')',
             input: DeliveryFromTasksInput::class,
-            output: DeliveryDto::class,
+            output: Delivery::class,
             processor: DeliveryCreateOrUpdateProcessor::class
         ),
         new Post(
@@ -176,7 +176,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             deserialize: false
         )
     ],
-    normalizationContext: ['groups' => ['delivery', 'address']],
+    normalizationContext: ['groups' => ['delivery', 'address', 'package_delivery_order_minimal']],
     denormalizationContext: ['groups' => ['order_create']],
     order: ['createdAt' => 'DESC'],
     paginationItemsPerPage: 15
@@ -193,7 +193,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     uriVariables: [
         'id' => new Link(fromClass: Store::class, toProperty: 'store')
     ],
-    normalizationContext: ['groups' => ['delivery', 'address']],
+    normalizationContext: ['groups' => ['delivery', 'address', 'package_delivery_order_minimal']],
     security: "is_granted('edit', request)"
 )]
 class Delivery extends TaskCollection implements TaskCollectionInterface, PackagesAwareInterface
@@ -207,6 +207,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     #[Groups(['delivery'])]
     protected $id;
 
+    #[Groups(['package_delivery_order_minimal'])]
     private $order;
 
     private $vehicle = self::VEHICLE_BIKE;
