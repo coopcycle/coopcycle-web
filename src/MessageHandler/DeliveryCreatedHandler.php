@@ -2,15 +2,13 @@
 
 namespace AppBundle\MessageHandler;
 
-use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Task;
 use AppBundle\Message\DeliveryCreated;
 use AppBundle\Message\Email;
 use AppBundle\Message\PushNotificationV2;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use Carbon\Carbon;
-use Doctrine\ORM\EntityManagerInterface;
+//use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use NotFloran\MjmlBundle\Renderer\RendererInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -21,7 +19,7 @@ use Twig\Environment as TwigEnvironment;
 #[AsMessageHandler]
 class DeliveryCreatedHandler
 {
-    private $entityManager;
+    //private $entityManager;
     private $userManager;
     private $emailManager;
     private $mjml;
@@ -32,7 +30,7 @@ class DeliveryCreatedHandler
     private $locale;
 
     public function __construct(
-        EntityManagerInterface $entityManager,
+        //EntityManagerInterface $entityManager,
         UserManagerInterface $userManager,
         EmailManager $emailManager,
         RendererInterface $mjml,
@@ -42,7 +40,7 @@ class DeliveryCreatedHandler
         SettingsManager $settingsManager,
         string $locale)
     {
-        $this->entityManager = $entityManager;
+        //$this->entityManager = $entityManager;
         $this->userManager = $userManager;
         $this->emailManager = $emailManager;
         $this->mjml = $mjml;
