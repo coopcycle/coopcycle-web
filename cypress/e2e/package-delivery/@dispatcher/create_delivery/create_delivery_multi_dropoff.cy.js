@@ -90,6 +90,6 @@ context('Delivery (role: dispatcher)', () => {
       address: /72,? Rue Saint-Maur,? 75011,? Paris,? France/,
     })
 
-    cy.get('[data-testid="tax-included-previous"]').contains('4,99 €')
+    cy.get('[data-testid="tax-included"]').contains('4,99 €')
   })
 })

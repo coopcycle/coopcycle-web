@@ -131,6 +131,6 @@ context('Delivery (role: dispatcher)', () => {
       tags: ['Perishable'],
     })
 
-    cy.get('[data-testid="tax-included-previous"]').contains('4,99 €')
+    cy.get('[data-testid="tax-included"]').contains('4,99 €')
   })
 })

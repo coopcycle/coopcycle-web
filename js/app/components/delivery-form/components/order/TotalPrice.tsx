@@ -28,7 +28,11 @@ export const TotalPrice = ({
             {(priceWithoutTaxes / 100).formatMoney()}
           </span>
           <br />
-          <span className="font-weight-semi-bold" data-testid="tax-included">
+          <span
+            className="font-weight-semi-bold"
+            data-testid={
+              overridePrice ? 'tax-included-previous' : 'tax-included'
+            }>
             {t('DELIVERY_FORM_TOTAL_VAT')}{' '}
             {(priceWithTaxes / 100).formatMoney()}
           </span>

@@ -50,7 +50,7 @@ context('store without pricing (role: store)', () => {
     cy.get('[data-testid=delivery-itinerary]')
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
       .should('exist')
-    cy.get('[data-testid=tax-included-previous]')
+    cy.get('[data-testid=tax-included]')
       .contains(/0.00/)
   })
 })

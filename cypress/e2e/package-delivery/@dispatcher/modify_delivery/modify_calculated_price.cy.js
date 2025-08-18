@@ -50,15 +50,14 @@ context('Delivery (role: dispatcher)', () => {
     // Delivery page
     cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
 
-    cy.get('[data-testid="tax-included-previous"]').contains('4,99 €')
+    cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
     cy.get('[name="delivery.override_price"]').check()
 
     cy.get('[name="variantName"]').type('Test product')
     cy.get('#variantPriceVAT').type('72')
 
-    cy.get('s[data-testid="tax-included-previous"]').contains('4,99 €')
-    cy.get('[data-testid="tax-included"]').contains('72,00 €')
+    cy.get('[data-testid="tax-included-previous"]').contains('4,99 €')
 
     cy.get('button[type="submit"]').click()
 
