@@ -293,7 +293,7 @@ const Order = ({
 
           {isDispatcher &&
           !overridePrice &&
-          mode !== Mode.DELIVERY_UPDATE &&
+          mode === Mode.DELIVERY_CREATE &&
           orderManualSupplements.length > 0 ? (
             <div>
               <Divider size="middle" />
