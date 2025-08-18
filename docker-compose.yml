@@ -251,8 +251,6 @@ services:
     volumes:
       - ./cube:/cube/conf/schema
       - ./cube.js:/cube/conf/cube.js
-    logging:
-      driver: none
     attach: false
 
   typesense:
@@ -264,8 +262,6 @@ services:
       - TYPESENSE_DATA_DIR=/data
     volumes:
       - typesense_data:/data
-    logging:
-      driver: none
     attach: false
 
   storybook-react:
