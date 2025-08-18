@@ -5,7 +5,6 @@ namespace AppBundle\Api\State;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use ApiPlatform\Symfony\Validator\Exception\ValidationException;
-use AppBundle\Api\Dto\DeliveryMapper;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Entity\Delivery;
@@ -32,7 +31,6 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         private readonly PricingManager $pricingManager,
         private readonly DeliveryOrderManager $deliveryOrderManager,
         private readonly OrderManager $orderManager,
-        private readonly DeliveryMapper $deliveryMapper,
         private readonly AuthorizationCheckerInterface $authorizationCheckerInterface,
         private readonly ValidatorInterface $validator,
         private readonly LoggerInterface $logger,
