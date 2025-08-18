@@ -410,7 +410,7 @@ trait RestaurantTrait
             'orders_normalized' => $this->normalizer->normalize($orders, 'jsonld', [
                 'resource_class' => Order::class,
                 'operation' => new GetCollection(),
-                'groups' => ['order_minimal']
+                'groups' => ['foodtech_order_minimal']
             ]),
             'initial_order' => $request->query->get('order'),
             'routes' => $routes,

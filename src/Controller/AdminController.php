@@ -433,7 +433,7 @@ class AdminController extends AbstractController
         $ordersNormalized = $normalizer->normalize($orders, 'jsonld', [
             'resource_class' => Order::class,
             'operation' => new GetCollection(),
-            'groups' => ['order_minimal']
+            'groups' => ['foodtech_order_minimal']
         ]);
 
         $preparationDelay = $redis->get('foodtech:dispatch_delay_for_pickup');
