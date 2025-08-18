@@ -2230,7 +2230,7 @@ Feature: Tasks
         },
         "tasks":@array@,
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": null
       }
       """
 
@@ -2295,7 +2295,8 @@ Feature: Tasks
           "barcode":{"@*@":"@*@"}
         },
         "tasks":@array@,
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": null
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -2354,7 +2355,8 @@ Feature: Tasks
           "barcode":{"@*@":"@*@"}
         },
         "tasks":@array@,
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": null
       }
       """
 
