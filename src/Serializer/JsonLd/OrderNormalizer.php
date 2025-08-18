@@ -176,10 +176,12 @@ class OrderNormalizer implements NormalizerInterface, ContextAwareDenormalizerIn
             $data['takeaway'] = $object->isTakeaway();
         }
 
-        $data['invitation'] = null;
+        if (in_array('cart', $context['groups']) || in_array('order', $context['groups'])) {
+            $data['invitation'] = null;
 
-        if (null !== ($invitation = $object->getInvitation())) {
-            $data['invitation'] = $invitation->getSlug();
+            if (null !== ($invitation = $object->getInvitation())) {
+                $data['invitation'] = $invitation->getSlug();
+            }
         }
 
         $data['paymentGateway'] = $this->paymentGatewayResolver->resolveForOrder($object);
