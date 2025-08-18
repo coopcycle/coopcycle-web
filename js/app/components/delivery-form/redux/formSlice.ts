@@ -1,15 +1,16 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { Mode } from '../mode';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Mode, ModeType } from '../mode';
+import { RootState } from './store';
 
 const initialState = {
-  mode: Mode.DELIVERY_CREATE,
+  mode: Mode.DELIVERY_CREATE as ModeType,
 };
 
 const slice = createSlice({
   name: 'form',
   initialState,
   reducers: {
-    setMode: (state, action) => {
+    setMode: (state, action: PayloadAction<ModeType>) => {
       state.mode = action.payload;
     },
   },
@@ -20,4 +21,4 @@ export const { setMode } = slice.actions;
 
 export const formSlice = slice;
 
-export const selectMode = state => state.form.mode;
+export const selectMode = (state: RootState) => state.form.mode;
