@@ -135,7 +135,6 @@ Feature: Deliveries
           "packages": [],
           "barcode":{"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -168,12 +167,18 @@ Feature: Deliveries
           "packages": [],
           "barcode":{"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -191,7 +196,15 @@ Feature: Deliveries
         "pickup":{"@*@":"@*@"},
         "dropoff":{"@*@":"@*@"},
         "tasks":@array@,
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -258,7 +271,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -291,12 +303,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -314,7 +332,15 @@ Feature: Deliveries
         "pickup":{"@*@":"@*@"},
         "dropoff":{"@*@":"@*@"},
         "tasks":@array@,
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -393,7 +419,6 @@ Feature: Deliveries
           ],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -435,12 +460,18 @@ Feature: Deliveries
           ],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -458,7 +489,15 @@ Feature: Deliveries
         "pickup":{"@*@":"@*@"},
         "dropoff":{"@*@":"@*@"},
         "tasks":@array@,
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -524,7 +563,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -557,12 +595,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -628,7 +672,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -661,12 +704,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -736,7 +785,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -769,12 +817,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -844,7 +898,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -877,12 +930,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -952,7 +1011,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -985,12 +1043,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -1063,7 +1127,6 @@ Feature: Deliveries
             "packages": [],
             "barcode": {"@*@":"@*@"},
             "createdAt":"@string@.isDateTime()",
-            "updatedAt":"@string@.isDateTime()",
             "tags": [],
             "metadata": {"@*@": "@*@"}
           },
@@ -1096,12 +1159,18 @@ Feature: Deliveries
             "packages": [],
             "barcode": {"@*@":"@*@"},
             "createdAt":"@string@.isDateTime()",
-            "updatedAt":"@string@.isDateTime()",
             "tags": [],
             "metadata": {"@*@": "@*@"}
           },
           "trackingUrl": @string@,
-          "order": {"@*@": "@*@"}
+          "order": {
+            "@id":"@string@.startsWith('/api/orders')",
+            "@type":"http://schema.org/Order",
+            "number": @string@,
+            "total": @integer@,
+            "taxTotal": @integer@,
+            "paymentGateway": @string@
+          }
         }
       """
 
@@ -1174,7 +1243,6 @@ Feature: Deliveries
             "packages": [],
             "barcode": {"@*@":"@*@"},
             "createdAt":"@string@.isDateTime()",
-            "updatedAt":"@string@.isDateTime()",
             "tags": [],
             "metadata": {"@*@": "@*@"}
           },
@@ -1207,12 +1275,18 @@ Feature: Deliveries
             "packages": [],
             "barcode": {"@*@":"@*@"},
             "createdAt":"@string@.isDateTime()",
-            "updatedAt":"@string@.isDateTime()",
             "tags": [],
             "metadata": {"@*@": "@*@"}
           },
           "trackingUrl": @string@,
-          "order": {"@*@": "@*@"}
+          "order": {
+            "@id":"@string@.startsWith('/api/orders')",
+            "@type":"http://schema.org/Order",
+            "number": @string@,
+            "total": @integer@,
+            "taxTotal": @integer@,
+            "paymentGateway": @string@
+          }
         }
       """
 
@@ -1369,7 +1443,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -1402,12 +1475,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -1478,7 +1557,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -1511,12 +1589,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -1704,7 +1788,6 @@ Feature: Deliveries
           "packages": [],
           "barcode":{"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -1737,15 +1820,17 @@ Feature: Deliveries
           "packages": [],
           "barcode":{"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
         "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
           "total": 699,
           "taxTotal": 117,
-          "@*@": "@*@"
+          "paymentGateway": @string@
         }
       }
       """
@@ -1817,7 +1902,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -1850,12 +1934,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -1917,7 +2007,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -1950,12 +2039,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -2020,7 +2115,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -2053,13 +2147,19 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "tasks":@array@,
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -2127,7 +2227,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -2160,12 +2259,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -2231,7 +2336,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -2264,12 +2368,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -2336,7 +2446,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -2369,12 +2478,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -2423,7 +2538,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -2456,12 +2570,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -2639,7 +2759,6 @@ Feature: Deliveries
             },
             "comments": "",
             "createdAt": "@string@.isDateTime()",
-            "updatedAt":"@string@.isDateTime()",
             "weight": null,
             "after": "@string@.isDateTime()",
             "before": "@string@.isDateTime()",
@@ -2672,7 +2791,6 @@ Feature: Deliveries
             },
             "comments": "",
             "createdAt": "@string@.isDateTime()",
-            "updatedAt":"@string@.isDateTime()",
             "weight": null,
             "after": "@string@.isDateTime()",
             "before": "@string@.isDateTime()",
@@ -2684,7 +2802,14 @@ Feature: Deliveries
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
     }
   """
 
@@ -2761,7 +2886,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -2794,12 +2918,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -2890,7 +3020,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -2923,12 +3052,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [{"name": "COLD", "slug": "cold", "color": "#FF0000"}],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -2980,7 +3115,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -3013,12 +3147,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [{"name": "COLD", "slug": "cold", "color": "#FF0000"}, {"name": "MON TAG", "slug": "mon-tag", "color": "#FF00B4"}],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -3086,7 +3226,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -3119,12 +3258,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [{"name": "COLD", "slug": "cold", "color": "#FF0000"}, {"name": "MON TAG", "slug": "mon-tag", "color": "#FF00B4"}],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -3243,7 +3388,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -3276,12 +3420,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
     Then the database should contain an order with a total price 1200
@@ -3568,7 +3718,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -3601,12 +3750,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
     Then the database should contain an order with a total price 499
@@ -3678,7 +3833,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -3711,12 +3865,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -3883,7 +4043,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -3916,12 +4075,18 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
     Given the user "bob" is authenticated
@@ -4010,7 +4175,6 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -4043,20 +4207,17 @@ Feature: Deliveries
           "packages": [],
           "barcode": {"@*@":"@*@"},
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
         "order": {
           "@id":"@string@.startsWith('/api/orders')",
-          "@type":"Order",
-          "id":@integer@,
+          "@type":"http://schema.org/Order",
+          "number": @string@,
           "total": @integer@,
           "taxTotal": @integer@,
-          "manualSupplements": null,
-          "arbitraryPrice":null,
-          "isSavedOrder":true
+          "paymentGateway": @string@
         }
       }
       """

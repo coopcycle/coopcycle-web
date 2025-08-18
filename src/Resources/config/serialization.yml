@@ -65,13 +65,13 @@ Sylius\Component\Order\Model\Order:
     items:
       groups: ['order', 'order_create', 'cart', 'pricing_deliveries']
     total:
-      groups: ['order', 'cart', 'pricing_deliveries', 'foodtech_order_minimal']
+      groups: ['order', 'cart', 'pricing_deliveries', 'foodtech_order_minimal', 'package_delivery_order_minimal']
     number:
       groups: ['order', 'foodtech_order_minimal', 'package_delivery_order_minimal']
     itemsTotal:
       groups: ['order', 'cart']
     taxTotal:
-      groups: ['order']
+      groups: ['order', 'package_delivery_order_minimal']
     state:
       groups: ['order', 'foodtech_order_minimal']
     events:
