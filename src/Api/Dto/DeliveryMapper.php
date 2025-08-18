@@ -26,8 +26,8 @@ class DeliveryMapper
         ?OrderInterface $order,
         ?ArbitraryPrice $arbitraryPrice,
         bool $isSavedOrder
-    ): DeliveryDto {
-        $deliveryData = new DeliveryDto();
+    ): DeliveryInputDto {
+        $deliveryData = new DeliveryInputDto();
 
         $tasks = $deliveryEntity->getTasks();
 

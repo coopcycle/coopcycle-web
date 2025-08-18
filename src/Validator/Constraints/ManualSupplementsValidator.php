@@ -3,7 +3,7 @@
 namespace AppBundle\Validator\Constraints;
 
 use ApiPlatform\Api\IriConverterInterface;
-use AppBundle\Api\Dto\DeliveryDto;
+use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\DeliveryOrderDto;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Store;
@@ -34,7 +34,7 @@ class ManualSupplementsValidator extends ConstraintValidator
         $rootObject = $this->context->getRoot();
         $store = null;
 
-        if ($rootObject instanceof DeliveryDto && null !== $rootObject->store) {
+        if ($rootObject instanceof DeliveryInputDto && null !== $rootObject->store) {
             $store = $rootObject->store;
         }
 

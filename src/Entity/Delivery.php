@@ -18,7 +18,7 @@ use AppBundle\Action\Delivery\BulkAsync as BulkAsyncDelivery;
 use AppBundle\Action\Delivery\PODExport as PODExportDelivery;
 use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
-use AppBundle\Api\Dto\DeliveryDto;
+use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\OptimizationSuggestions;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
 use AppBundle\Api\Filter\DeliveryTaskDateFilter;
@@ -47,7 +47,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Put(
             denormalizationContext: ['groups' => ['delivery_create']],
             security: 'is_granted(\'edit\', object)',
-            input: DeliveryDto::class,
+            input: DeliveryInputDto::class,
             output: Delivery::class,
             processor: DeliveryCreateOrUpdateProcessor::class
         ),
@@ -91,7 +91,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             ],
             denormalizationContext: ['groups' => ['delivery_create']],
             securityPostDenormalize: 'is_granted(\'create\', object)',
-            input: DeliveryDto::class,
+            input: DeliveryInputDto::class,
             output: Delivery::class,
             processor: DeliveryCreateOrUpdateProcessor::class
         ),

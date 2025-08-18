@@ -6,7 +6,7 @@ use AppBundle\Api\Dto\CalculationItem;
 use AppBundle\Api\Dto\CalculationOutput;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
-use AppBundle\Api\Dto\DeliveryDto;
+use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Resource\RetailPrice;
 use AppBundle\Entity\Delivery;
 use AppBundle\Pricing\PricingManager;
@@ -57,7 +57,7 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
     }
 
     /**
-     * @param DeliveryDto $data
+     * @param DeliveryInputDto $data
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {

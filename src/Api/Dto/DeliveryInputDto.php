@@ -6,7 +6,7 @@ use AppBundle\Entity\Store;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class DeliveryDto
+final class DeliveryInputDto
 {
 
     #[Groups(['delivery'])]

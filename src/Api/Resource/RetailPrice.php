@@ -8,7 +8,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Action\NotFoundAction;
 use AppBundle\Api\Dto\CalculationOutput;
-use AppBundle\Api\Dto\DeliveryDto;
+use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\State\CalculateRetailPriceProcessor;
 use AppBundle\Sylius\Order\OrderInterface;
 use Ramsey\Uuid\Uuid;
@@ -28,7 +28,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
             openapiContext: ['summary' => 'Calculates price of a Delivery'],
             denormalizationContext: ['groups' => ['pricing_deliveries']],
             security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_STORE\') or is_granted(\'ROLE_OAUTH2_DELIVERIES\')',
-            input: DeliveryDto::class,
+            input: DeliveryInputDto::class,
             processor: CalculateRetailPriceProcessor::class
         )
     ],

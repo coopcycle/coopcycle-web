@@ -10,7 +10,7 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Action\NotFoundAction;
 use AppBundle\Action\Delivery\ConfirmQuote as ConfirmDeliveryQuoteController;
-use AppBundle\Api\Dto\DeliveryDto;
+use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\State\DeliveryQuoteProcessor;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -32,7 +32,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
             normalizationContext: ['groups' => ['delivery_quote']],
             denormalizationContext: ['groups' => ['delivery_create', 'pricing_deliveries']],
             security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_STORE\') or is_granted(\'ROLE_OAUTH2_DELIVERIES\')',
-            input: DeliveryDto::class,
+            input: DeliveryInputDto::class,
             processor: DeliveryQuoteProcessor::class
         )
     ]
