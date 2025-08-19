@@ -108,7 +108,6 @@ class DeliveryCreatedHandler
     public function parseTitleAndBodyForPushNotification(Delivery $delivery): array
     {
         $tasks = $delivery->getTasks();
-        $order = $delivery->getOrder();
         $pickup = $delivery->getPickup();
         $dropoff = $delivery->getDropoff();
 
@@ -118,7 +117,7 @@ class DeliveryCreatedHandler
         $dropoffBefore = $dropoff->getBefore()->format('H:i');
 
         $ownerIsPickupAddr = $delivery->getOwner()->getAddress()->getStreetAddress() === $pickup->getAddress()->getStreetAddress();
-        $title = $delivery->getOwner()->getName();
+        $title = $delivery->getOwner()->getName() . " -> ";
         $body = $this->translator->trans('notifications.tap_to_open');
         // Translate the ones below if needed/wanted
         $PU = "PU";
@@ -128,86 +127,80 @@ class DeliveryCreatedHandler
         $pickupsStr = "pickups";
         $dropoffsStr = "dropoffs";
 
-        if ($order && $order->isFoodtech()) {
-            $title .= " -> " . $order->getShippingAddress()->getStreetAddress();
-            $body = $PU. ": " . $pickupAfter . " | " . $DO . ": " . $dropoffAfter;
-        } else {
-            $title .= " -> ";
-            switch (Delivery::getType($tasks)) {
-                case Delivery::TYPE_SIMPLE:
-                    $body = $PU. ": " . $pickupAfter . "-" . $pickupBefore . " | " . $DO . ": " . $dropoffAfter . "-" . $dropoffBefore;
-                    if (!$ownerIsPickupAddr) { // Pickup address is not the owner address
-                        [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($pickup);
-                        $body .= "\n" . $PU . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
-                    }
+        switch (Delivery::getType($tasks)) {
+            case Delivery::TYPE_SIMPLE:
+                $body = $PU. ": " . $pickupAfter . "-" . $pickupBefore . " | " . $DO . ": " . $dropoffAfter . "-" . $dropoffBefore;
+                if (!$ownerIsPickupAddr) { // Pickup address is not the owner address
+                    [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($pickup);
+                    $body .= "\n" . $PU . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
+                }
+                [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($dropoff);
+                $title .= $ttitle;
+                $body .= $tbody ? "\n" . $DO . ": " . $tbody : '';
+                break;
+            case Delivery::TYPE_MULTI_PICKUP:
+                $pickups = array_values(array_filter($tasks, fn($t) => $t->isPickup()));
+                $title = count($pickups) . " " . $pickupsStr . " -> ";
+                $firstPickup = $pickups[0];
+                $lastPickup = $pickups[ count($pickups) - 1 ];
+                $pickupAfter = $firstPickup->getAfter()->format('H:i');
+                $pickupBefore = $lastPickup->getAfter()->format('H:i'); // Use last's "after" as "before" for multiple PUs
+                $body = $PUs. ": " . $pickupAfter . "-" . $pickupBefore . " | " . $DO . ": " . $dropoffAfter . "-" . $dropoffBefore;
+                foreach ($pickups as $pickup) {
+                    [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($pickup);
+                    $after = $pickup->getAfter()->format('H:i');
+                    $before = $pickup->getBefore()->format('H:i');
+                    $body .= "\n" . $PU . " " . $after . "-" . $before . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
+                }
+                [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($dropoff);
+                $title .= $ttitle;
+                $body .= $tbody ? "\n" . $DO . ": " . $tbody : '';
+                break;
+            case Delivery::TYPE_MULTI_DROPOFF:
+                $dropoffs = array_values(array_filter($tasks, fn($t) => $t->isDropoff()));
+                $title .= count($dropoffs) . " " . $dropoffsStr;
+                $firstDropoff = $dropoffs[0];
+                $lastDropoff = $dropoffs[ count($dropoffs) - 1 ];
+                $dropoffAfter = $firstDropoff->getAfter()->format('H:i');
+                $dropoffBefore = $lastDropoff->getAfter()->format('H:i'); // Use last's "after" as "before" for multiple DOs
+                $body = $PU. ": " . $pickupAfter . "-" . $pickupBefore . " | " . $DOs . ": " . $dropoffAfter . "-" . $dropoffBefore;
+                if (!$ownerIsPickupAddr) { // Pickup address is not the owner address
+                    [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($pickup);
+                    $body .= "\n" . $PU . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
+                }
+                foreach ($dropoffs as $dropoff) {
                     [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($dropoff);
-                    $title .= $ttitle;
-                    $body .= $tbody ? "\n" . $DO . ": " . $tbody : '';
-                    break;
-                case Delivery::TYPE_MULTI_PICKUP:
-                    $pickups = array_values(array_filter($tasks, fn($t) => $t->isPickup()));
-                    $title = count($pickups) . " " . $pickupsStr . " -> ";
-                    $firstPickup = $pickups[0];
-                    $lastPickup = $pickups[ count($pickups) - 1 ];
-                    $pickupAfter = $firstPickup->getAfter()->format('H:i');
-                    $pickupBefore = $lastPickup->getAfter()->format('H:i'); // Use last's "after" as "before" for multiple PUs
-                    $body = $PUs. ": " . $pickupAfter . "-" . $pickupBefore . " | " . $DO . ": " . $dropoffAfter . "-" . $dropoffBefore;
-                    foreach ($pickups as $pickup) {
-                        [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($pickup);
-                        $after = $pickup->getAfter()->format('H:i');
-                        $before = $pickup->getBefore()->format('H:i');
-                        $body .= "\n" . $PU . " " . $after . "-" . $before . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
-                    }
+                    $after = $dropoff->getAfter()->format('H:i');
+                    $before = $dropoff->getBefore()->format('H:i');
+                    $body .= "\n" . $DO . " " . $after . "-" . $before . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
+                }
+                break;
+            case Delivery::TYPE_MULTI_MULTI:
+                $pickups = array_values(array_filter($tasks, fn($t) => $t->isPickup()));
+                $dropoffs = array_values(array_filter($tasks, fn($t) => $t->isDropoff()));
+                $title = count($pickups) . " " . $pickupsStr . " -> " . count($dropoffs) . " " . $dropoffsStr;
+                $firstPickup = $pickups[0];
+                $lastPickup = $pickups[ count($pickups) - 1 ];
+                $firstDropoff = $dropoffs[0];
+                $lastDropoff = $dropoffs[ count($dropoffs) - 1 ];
+                $pickupAfter = $firstPickup->getAfter()->format('H:i');
+                $pickupBefore = $lastPickup->getAfter()->format('H:i'); // Use last's "after" as "before" for multiple PUs
+                $dropoffAfter = $firstDropoff->getAfter()->format('H:i');
+                $dropoffBefore = $lastDropoff->getAfter()->format('H:i'); // Use last's "after" as "before" for multiple DOs
+                $body = $PUs. ": " . $pickupAfter . "-" . $pickupBefore . " | " . $DOs . ": " . $dropoffAfter . "-" . $dropoffBefore;
+                foreach ($pickups as $pickup) {
+                    [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($pickup);
+                    $after = $pickup->getAfter()->format('H:i');
+                    $before = $pickup->getBefore()->format('H:i');
+                    $body .= "\n" . $PU . " " . $after . "-" . $before . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
+                }
+                foreach ($dropoffs as $dropoff) {
                     [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($dropoff);
-                    $title .= $ttitle;
-                    $body .= $tbody ? "\n" . $DO . ": " . $tbody : '';
-                    break;
-                case Delivery::TYPE_MULTI_DROPOFF:
-                    $dropoffs = array_values(array_filter($tasks, fn($t) => $t->isDropoff()));
-                    $title .= count($dropoffs) . " " . $dropoffsStr;
-                    $firstDropoff = $dropoffs[0];
-                    $lastDropoff = $dropoffs[ count($dropoffs) - 1 ];
-                    $dropoffAfter = $firstDropoff->getAfter()->format('H:i');
-                    $dropoffBefore = $lastDropoff->getAfter()->format('H:i'); // Use last's "after" as "before" for multiple DOs
-                    $body = $PU. ": " . $pickupAfter . "-" . $pickupBefore . " | " . $DOs . ": " . $dropoffAfter . "-" . $dropoffBefore;
-                    if (!$ownerIsPickupAddr) { // Pickup address is not the owner address
-                        [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($pickup);
-                        $body .= "\n" . $PU . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
-                    }
-                    foreach ($dropoffs as $dropoff) {
-                        [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($dropoff);
-                        $after = $dropoff->getAfter()->format('H:i');
-                        $before = $dropoff->getBefore()->format('H:i');
-                        $body .= "\n" . $DO . " " . $after . "-" . $before . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
-                    }
-                    break;
-                case Delivery::TYPE_MULTI_MULTI:
-                    $pickups = array_values(array_filter($tasks, fn($t) => $t->isPickup()));
-                    $dropoffs = array_values(array_filter($tasks, fn($t) => $t->isDropoff()));
-                    $title = count($pickups) . " " . $pickupsStr . " -> " . count($dropoffs) . " " . $dropoffsStr;
-                    $firstPickup = $pickups[0];
-                    $lastPickup = $pickups[ count($pickups) - 1 ];
-                    $firstDropoff = $dropoffs[0];
-                    $lastDropoff = $dropoffs[ count($dropoffs) - 1 ];
-                    $pickupAfter = $firstPickup->getAfter()->format('H:i');
-                    $pickupBefore = $lastPickup->getAfter()->format('H:i'); // Use last's "after" as "before" for multiple PUs
-                    $dropoffAfter = $firstDropoff->getAfter()->format('H:i');
-                    $dropoffBefore = $lastDropoff->getAfter()->format('H:i'); // Use last's "after" as "before" for multiple DOs
-                    $body = $PUs. ": " . $pickupAfter . "-" . $pickupBefore . " | " . $DOs . ": " . $dropoffAfter . "-" . $dropoffBefore;
-                    foreach ($pickups as $pickup) {
-                        [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($pickup);
-                        $after = $pickup->getAfter()->format('H:i');
-                        $before = $pickup->getBefore()->format('H:i');
-                        $body .= "\n" . $PU . " " . $after . "-" . $before . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
-                    }
-                    foreach ($dropoffs as $dropoff) {
-                        [$ttitle, $tbody] = $this->getTaskAddressTitleAndBody($dropoff);
-                        $after = $dropoff->getAfter()->format('H:i');
-                        $before = $dropoff->getBefore()->format('H:i');
-                        $body .= "\n" . $DO . " " . $after . "-" . $before . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
-                    }
-                    break;
-            }
+                    $after = $dropoff->getAfter()->format('H:i');
+                    $before = $dropoff->getBefore()->format('H:i');
+                    $body .= "\n" . $DO . " " . $after . "-" . $before . ": " . $ttitle . ($tbody ? " (" . $tbody . ")" : '');
+                }
+                break;
         }
 
         return [$title, $body];
