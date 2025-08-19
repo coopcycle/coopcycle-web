@@ -1,13 +1,13 @@
 import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CalculationOutput } from '../../../../api/types';
+import { RetailPrice } from '../../../../api/types';
 import FlagsContext from '../../FlagsContext';
 import { TotalPrice } from './TotalPrice';
 
 type Props = {
   overridePrice: boolean;
   priceErrorMessage: string;
-  calculatePriceData?: CalculationOutput;
+  calculatePriceData?: RetailPrice;
 };
 
 const CheckoutTotalPrice = ({

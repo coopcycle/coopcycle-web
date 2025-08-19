@@ -395,26 +395,28 @@ export type OptimizationSuggestions = {
 
 export type CalculationItemDetail = {
   rule: PricingRule;
-  price: number;
   matched: boolean;
 };
 
 export type CalculationItem = {
-  ruleSet: PricingRuleSet;
-  strategy: string;
-  items: CalculationItemDetail[];
+  target: PricingRuleTarget;
+  rules: CalculationItemDetail[];
 };
 
 export type CalculationOutput = {
+  ruleSet: Uri;
+  strategy: string;
+  items: CalculationItem[];
+};
+
+export type RetailPrice = {
   amount: number;
   tax: {
     amount: number;
     included: boolean;
   };
-  ruleSet: PricingRuleSet;
-  strategy: string;
-  items: CalculationItem[];
   order: Order;
+  calculation: CalculationOutput;
 };
 
 export type UpdateOrderRequest = {
@@ -455,7 +457,7 @@ export type OrderPayload = {
     variantName: string;
     variantPrice: number;
   };
-  isSavedOrder: boolean;
+  isSavedOrder?: boolean;
 };
 
 export type AddressPayload = {
