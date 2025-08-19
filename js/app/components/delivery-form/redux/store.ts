@@ -14,9 +14,11 @@ const rootReducer = combineReducers({
   [suggestionsSlice.name]: suggestionsSlice.reducer,
 });
 
-export type RootState = ReturnType<typeof rootReducer>
+export type RootState = ReturnType<typeof rootReducer>;
 
-export function createStoreFromPreloadedState(preloadedState: Partial<RootState>) {
+export function createStoreFromPreloadedState(
+  preloadedState: Partial<RootState>,
+) {
   return configureStore({
     reducer: rootReducer,
     preloadedState,
