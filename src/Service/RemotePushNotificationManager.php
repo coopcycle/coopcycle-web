@@ -5,7 +5,6 @@ namespace AppBundle\Service;
 use AppBundle\Entity\User;
 use AppBundle\Entity\RemotePushToken;
 use AppBundle\Message\PushNotification;
-use AppBundle\Message\PushNotificationV2;
 use Doctrine\ORM\EntityManagerInterface;
 use Kreait\Firebase\Contract\Messaging;
 use Kreait\Firebase\Messaging\CloudMessage;
@@ -198,22 +197,19 @@ class RemotePushNotificationManager
     }
 
     /**
-     * @param string|PushNotification|PushNotificationV2 $textOrPushNotification
-     * @param RemotePushToken[]|User[] $recipients Not needed/used for `PushNotificationV2`
-     * @param array $data
+     * @param string|PushNotification $textOrPushNotification
+     * @param RemotePushToken[]|User[] $recipients Not needed/used if a `PushNotification` instance is passed
+     * @param array $data Not needed/used if a `PushNotification` instance is passed
      */
-    public function send(string|PushNotification|PushNotificationV2 $textOrPushNotification, $recipients = [], $data = [])
+    public function send(string|PushNotification $textOrPushNotification, $recipients = [], $data = [])
     {
         $title = $textOrPushNotification;
         $body = $this->translator->trans('notifications.tap_to_open');
 
-        if ($textOrPushNotification instanceof PushNotificationV2) {
+        if ($textOrPushNotification instanceof PushNotification) {
             $title = $textOrPushNotification->getTitle();
-            $body = $textOrPushNotification->getBody();
+            $body = $textOrPushNotification->getBody() ?: $body;
             $recipients = $textOrPushNotification->getUsers();
-            $data = $textOrPushNotification->getData();
-        } else if ($textOrPushNotification instanceof PushNotification) {
-            $title = $textOrPushNotification->getContent();
             $data = $textOrPushNotification->getData();
         }
 

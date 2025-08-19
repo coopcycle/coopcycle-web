@@ -5,7 +5,7 @@ namespace AppBundle\MessageHandler;
 use AppBundle\Entity\Urbantz\Delivery;
 use AppBundle\Message\DeliveryCreated;
 use AppBundle\Message\Email;
-use AppBundle\Message\PushNotificationV2;
+use AppBundle\Message\PushNotification;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use Carbon\Carbon;
@@ -73,6 +73,7 @@ class DeliveryCreatedHandler
         $users = $this->userManager->findUsersByRoles(['ROLE_ADMIN', 'ROLE_DISPATCHER']);
 
         $data = [
+            'event' => 'delivery:created',
             'delivery_id' => $delivery->getId(),
             'order_id' => $order ? $order->getId() : null,
             'date' => $date,
@@ -80,7 +81,7 @@ class DeliveryCreatedHandler
         ];
 
         $this->messageBus->dispatch(
-            new PushNotificationV2($title, $body, $users, $data)
+            new PushNotification($title, $body, $users, $data)
         );
 
         $adminEmail = $this->settingsManager->get('administrator_email');

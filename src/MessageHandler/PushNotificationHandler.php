@@ -3,35 +3,19 @@
 namespace AppBundle\MessageHandler;
 
 use AppBundle\Message\PushNotification;
-use AppBundle\Message\PushNotificationV2;
 use AppBundle\Service\RemotePushNotificationManager;
-use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 class PushNotificationHandler
 {
     public function __construct(
-        private readonly RemotePushNotificationManager $remotePushNotificationManager,
-        private readonly UserManagerInterface $userManager)
+        private readonly RemotePushNotificationManager $remotePushNotificationManager)
     {
     }
 
-    public function __invoke(PushNotification|PushNotificationV2 $message)
+    public function __invoke(PushNotification $message)
     {
-        $users = [];
-        // For `PushNotificationV2` we don't need to resolve users from usernames
-        // The array $users is not used since they are already inside $message
-        if ($message instanceof PushNotification) {
-            $users = array_reduce($message->getUsers(), function ($carry, $item) {
-                if ($user = $this->userManager->findUserByUsername($item)) {
-                    $carry[] = $user;
-                }
-
-                return $carry;
-            }, []);
-        }
-
-        $this->remotePushNotificationManager->send($message, $users);
+        $this->remotePushNotificationManager->send($message);
     }
 }

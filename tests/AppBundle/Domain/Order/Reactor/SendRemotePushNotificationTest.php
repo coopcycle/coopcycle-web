@@ -42,12 +42,12 @@ class SendRemotePushNotificationTest extends KernelTestCase
                 return new Envelope($args[0]);
             });
 
-        $admin = new User();
-        $admin->setUsername('admin');
+        $this->admin = new User();
+        $this->admin->setUsername('admin');
 
         $this->userManager = $this->prophesize(UserManager::class);
         $this->userManager->findUsersByRoles(['ROLE_ADMIN', 'ROLE_DISPATCHER'])
-            ->willReturn([ $admin ]);
+            ->willReturn([ $this->admin ]);
 
         $this->translator = $this->prophesize(TranslatorInterface::class);
 
@@ -71,6 +71,8 @@ class SendRemotePushNotificationTest extends KernelTestCase
     {
         $owner = new User();
         $owner->setUsername('bob');
+        $this->userManager->findUserByUsername('bob')
+            ->willReturn($owner);
 
         $order = new Order();
 
@@ -92,7 +94,8 @@ class SendRemotePushNotificationTest extends KernelTestCase
             ->messageBus
             ->dispatch(new PushNotification(
                 'New order!',
-                [ 'admin' ],
+                '',
+                [ $this->admin ],
             ))
             ->shouldHaveBeenCalledTimes(1);
 
@@ -100,7 +103,8 @@ class SendRemotePushNotificationTest extends KernelTestCase
             ->messageBus
             ->dispatch(new PushNotification(
                 'New order!',
-                [ 'bob' ],
+                '',
+                [ $owner ],
                 [
                     'event' => [
                         'name' => 'order:created',
