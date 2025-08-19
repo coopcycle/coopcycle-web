@@ -24,7 +24,7 @@ type Props = {
 
 const Order = ({
   storeNodeId,
-  order: preLoadedOrder,
+  order: existingOrder,
   setPriceLoading,
 }: Props) => {
   const { isDispatcher, isDebugPricing, isPriceBreakdownEnabled } =
@@ -33,7 +33,7 @@ const Order = ({
   const mode = useSelector(selectMode);
   const { values } = useDeliveryFormFormikContext();
 
-  const [order, setOrder] = useState(preLoadedOrder);
+  const [newOrder, setNewOrder] = useState(undefined as OrderType | undefined);
 
   const [overridePrice, setOverridePrice] = useState<boolean>(() => {
     if (modeIn(mode, [Mode.DELIVERY_CREATE, Mode.RECURRENCE_RULE_UPDATE])) {
@@ -52,11 +52,14 @@ const Order = ({
   });
 
   // aka "old price"
-  const currentPrice = useMemo(() => {
-    if (mode === Mode.DELIVERY_UPDATE && order) {
-      return { exVAT: +order.total - +order.taxTotal, VAT: +order.total };
+  const existingPrice = useMemo(() => {
+    if (mode === Mode.DELIVERY_UPDATE && existingOrder) {
+      return {
+        exVAT: +existingOrder.total - +existingOrder.taxTotal,
+        VAT: +existingOrder.total,
+      };
     }
-  }, [order, mode]);
+  }, [existingOrder, mode]);
 
   const {
     data: orderManualSupplements,
@@ -71,7 +74,7 @@ const Order = ({
     isLoading: calculatePriceIsLoading,
   } = useCalculatedPrice({
     storeUri: storeNodeId,
-    skip: mode === Mode.DELIVERY_UPDATE || overridePrice,
+    skip: overridePrice,
   });
 
   const isLoading = useMemo(() => {
@@ -85,26 +88,57 @@ const Order = ({
 
   useEffect(() => {
     if (calculatePriceError) {
-      setOrder(undefined);
+      setNewOrder(undefined);
     }
 
     if (calculatePriceData) {
-      setOrder(calculatePriceData.order);
+      const order = calculatePriceData.order;
+
+      if (mode === Mode.DELIVERY_UPDATE) {
+        //TODO; handle switch between current and proposed price
+        // uncomment when a switcher is implemented
+        return;
+
+        //compare existing and new order
+        // if same display existing order
+        // if (
+        //   existingOrder &&
+        //   existingOrder.total === order.total &&
+        //   existingOrder.items.length === order.items.length
+        // ) {
+        //   return;
+        // }
+      }
+
+      setNewOrder(order);
     }
-  }, [calculatePriceData, calculatePriceError, setOrder]);
+  }, [
+    mode,
+    existingOrder,
+    calculatePriceData,
+    calculatePriceError,
+    setNewOrder,
+  ]);
 
   return (
     <Spin spinning={isLoading}>
       <div>
-        {isPriceBreakdownEnabled && order ? (
-          <Cart order={order} overridePrice={overridePrice} />
+        {isPriceBreakdownEnabled ? (
+          <>
+            {existingOrder ? (
+              <Cart order={existingOrder} overridePrice={overridePrice} />
+            ) : null}
+            {newOrder ? (
+              <Cart order={newOrder} overridePrice={overridePrice} />
+            ) : null}
+          </>
         ) : null}
         <div>
-          {mode === Mode.DELIVERY_UPDATE && currentPrice ? (
+          {existingPrice ? (
             <TotalPrice
               overridePrice={overridePrice}
-              priceWithTaxes={currentPrice.VAT}
-              priceWithoutTaxes={currentPrice.exVAT}
+              priceWithTaxes={existingPrice.VAT}
+              priceWithoutTaxes={existingPrice.exVAT}
             />
           ) : (
             <CheckoutTotalPrice
