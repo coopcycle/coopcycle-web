@@ -82,12 +82,6 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
             );
         }
 
-        $pricingStrategy = new UsePricingRules();
-
-        if (!is_null($arbitraryPrice)) {
-            $pricingStrategy = new UseArbitraryPrice($arbitraryPrice);
-        }
-
         $isCreateOrderMode = is_null($delivery->getId());
 
         if ($isCreateOrderMode) {
@@ -101,6 +95,12 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         $order = null;
         if ($isCreateOrderMode) {
             // New delivery/order
+
+            $pricingStrategy = new UsePricingRules();
+
+            if (!is_null($arbitraryPrice)) {
+                $pricingStrategy = new UseArbitraryPrice($arbitraryPrice);
+            }
 
             $order = $this->deliveryOrderManager->createOrder(
                 $delivery,
@@ -118,7 +118,19 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
 
             $order = $delivery->getOrder();
 
-            if (!is_null($order)) {
+            if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER')) {
+                if (is_null($order)) {
+                    // Should not happen normally, but just in case
+                    // if there is still some delivery created without an order
+                    $order = $this->deliveryOrderManager->createOrder(
+                        $delivery,
+                        [
+                            'pricingStrategy' => new UsePricingRules(),
+                            'manualSupplements' => $manualSupplements,
+                        ]
+                    );
+                }
+
                 if (!is_null($arbitraryPrice)) {
                     $this->pricingManager->processDeliveryOrder(
                         $order,
@@ -133,16 +145,6 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                     );
                     $this->pricingManager->processDeliveryOrder($order, $productVariants);
                 }
-            } else {
-                // Should not happen normally, but just in case
-                // if there is still some delivery created without an order
-                $order = $this->deliveryOrderManager->createOrder(
-                    $delivery,
-                    [
-                        'pricingStrategy' => $pricingStrategy,
-                        'manualSupplements' => $manualSupplements,
-                    ]
-                );
             }
         }
 
