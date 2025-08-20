@@ -72,6 +72,16 @@ module.exports = [
   {
     files: ['**/*.ts', '**/*.tsx'],
     rules: {
+      'sort-imports': [
+        'warn',
+        {
+          ignoreCase: false,
+          ignoreDeclarationSort: true,
+          ignoreMemberSort: false,
+          allowSeparatedGroups: true,
+        },
+      ],
+
       // TypeScript-specific rules
       '@typescript-eslint/no-floating-promises': 'off',
       //TODO: Gradually enable more TypeScript-specific rules
