@@ -245,6 +245,7 @@ class TaskSubscriber implements EventSubscriber
 
                 // do not cancel order if order is "refused"
                 if ($cancelOrder && $order->getState() !== OrderInterface::STATE_CANCELLED && $order->getState() !== OrderInterface::STATE_REFUSED) {
+                    $this->eventBus->dispatch(new TaskUpdated($taskToUpdate));
                     $this->orderManager->cancel($order, 'All tasks were cancelled');
                     $em->flush();
                 }
