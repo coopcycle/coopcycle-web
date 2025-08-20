@@ -33,6 +33,7 @@ export const OrderEditing = ({
           {newOrder ? (
             <>
               <Radio.Group
+                className="w-100"
                 value={selectedPriceOption}
                 onChange={e => setSelectedPriceOption(e.target.value)}>
                 <Collapse
