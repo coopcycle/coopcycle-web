@@ -1,0 +1,72 @@
+AppBundle\Entity\Base\GeoCoordinates:
+  geo_1:
+    __construct: [ "48.864577", "2.333338" ]
+  geo_warehouse:
+    __construct: [ "48.8758311", "2.3675732" ]
+  geo_client_1:
+    __construct: [ "48.8638614", "2.3762269" ]
+
+AppBundle\Entity\Address:
+  address_1:
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
+    geo: "@geo_1"
+  warehouse:
+    name: 'Warehouse'
+    contactName: 'John Doe'
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33112121212'))>
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '23, Avenue Claude Vellefaux, 75010 Paris, France'
+    geo: "@geo_warehouse"
+  client_1:
+    name: 'Office'
+    contactName: 'Jane smith'
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33112121414'))>
+    addressLocality: 'Paris'
+    postalCode: '75009'
+    streetAddress: '72, Rue Saint-Maur, 75011 Paris, France'
+    geo: "@geo_client_1"
+
+AppBundle\Entity\Delivery\PricingRuleSet:
+  pricing_rule_set_1:
+    name: Default
+    rules: [ '@pricing_rule_1', '@pricing_rule_2' ]
+
+AppBundle\Entity\Delivery\PricingRule:
+  pricing_rule_1:
+    expression: 'task.type == "PICKUP"'
+    price: 499
+    target: 'TASK'
+    position: 0
+    ruleSet: '@pricing_rule_set_1'
+  pricing_rule_2:
+    expression: 'task.type == "DROPOFF"'
+    price: 200
+    target: 'TASK'
+    position: 1
+    ruleSet: '@pricing_rule_set_1'
+
+AppBundle\Entity\Store:
+  store_1:
+    name: 'Acme'
+    address: "@address_1"
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_1'
+    __calls:
+      - addAddress: [ "@warehouse" ]
+      - addAddress: [ "@client_1" ]
+
+AppBundle\Entity\User:
+  store1Owner:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - 'store_1'
+        - 'store_1'
+        - 'store1@coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_USER', 'ROLE_STORE' ]
+    stores: [ '@store_1' ]
+

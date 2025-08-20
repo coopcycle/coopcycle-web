@@ -99,8 +99,6 @@ class DeliveryProcessor implements ProcessorInterface
                     $delivery->withTasks(...$tasks);
                 }
 
-
-
             } else {
                 $this->transformIntoDeliveryTask($data->pickup, $delivery->getPickup(), Task::TYPE_PICKUP, $store);
                 $this->transformIntoDeliveryTask($data->dropoff, $delivery->getDropoff(), Task::TYPE_DROPOFF, $store);
