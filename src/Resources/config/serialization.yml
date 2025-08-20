@@ -71,7 +71,7 @@ Sylius\Component\Order\Model\Order:
     itemsTotal:
       groups: ['order', 'cart']
     taxTotal:
-      groups: ['order', 'package_delivery_order_minimal']
+      groups: ['order', 'pricing_deliveries', 'package_delivery_order_minimal']
     state:
       groups: ['order', 'foodtech_order_minimal']
     events:
