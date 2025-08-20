@@ -463,6 +463,7 @@ export type OrderPayload = {
     variantName: string;
     variantPrice: number;
   };
+  recalculatePrice?: boolean;
   isSavedOrder?: boolean;
 };
 

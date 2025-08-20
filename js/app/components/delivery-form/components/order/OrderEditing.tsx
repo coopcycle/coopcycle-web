@@ -1,10 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Collapse, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import FlagsContext from '../../FlagsContext';
 import Cart from './Cart';
 import { Order as OrderType } from '../../../../api/types';
 import { TotalPrice } from './TotalPrice';
+import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext';
 
 type Props = {
   overridePrice: boolean;
@@ -27,10 +28,15 @@ export const OrderEditing = ({
   const { isPriceBreakdownEnabled } = useContext(FlagsContext);
 
   const { t } = useTranslation();
+  const { setFieldValue } = useDeliveryFormFormikContext();
 
   const [selectedPriceOption, setSelectedPriceOption] = useState<
     'original' | 'new'
   >('original');
+
+  useEffect(() => {
+    setFieldValue('order.recalculatePrice', selectedPriceOption === 'new');
+  }, [selectedPriceOption, setFieldValue]);
 
   return (
     <div>
