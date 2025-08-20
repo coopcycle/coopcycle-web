@@ -1,21 +1,19 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { Divider, Spin, Radio, Collapse } from 'antd';
+import { Divider, Spin } from 'antd';
 import { useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
 
-import Cart from './Cart';
 import FlagsContext from '../../FlagsContext';
 import { Order as OrderType } from '../../../../api/types';
 import { Mode, modeIn } from '../../mode';
-import CheckoutTotalPrice from './CheckoutTotalPrice';
 import { PriceCalculation } from '../../../../delivery/PriceCalculation';
 import { selectMode } from '../../redux/formSlice';
 import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext';
 import ManualSupplements from './ManualSupplements';
-import { TotalPrice } from './TotalPrice';
 import { useCalculatedPrice } from '../../hooks/useCalculatedPrice';
 import { useOrderManualSupplements } from '../../hooks/useOrderManualSupplements';
 import { OverridePrice } from './OverridePrice';
+import { OrderOnCheckout } from './OrderOnCheckout';
+import { OrderEditing } from './OrderEditing';
 
 type Props = {
   storeNodeId: string;
@@ -28,17 +26,12 @@ const Order = ({
   order: existingOrder,
   setPriceLoading,
 }: Props) => {
-  const { isDispatcher, isDebugPricing, isPriceBreakdownEnabled } =
-    useContext(FlagsContext);
-  const { t } = useTranslation();
+  const { isDispatcher, isDebugPricing } = useContext(FlagsContext);
 
   const mode = useSelector(selectMode);
   const { values } = useDeliveryFormFormikContext();
 
   const [newOrder, setNewOrder] = useState(undefined as OrderType | undefined);
-  const [selectedPriceOption, setSelectedPriceOption] = useState<
-    'original' | 'new'
-  >('original');
 
   const [overridePrice, setOverridePrice] = useState<boolean>(() => {
     if (modeIn(mode, [Mode.DELIVERY_CREATE, Mode.RECURRENCE_RULE_UPDATE])) {
@@ -55,16 +48,6 @@ const Order = ({
       return false;
     }
   });
-
-  // aka "old price"
-  const existingPrice = useMemo(() => {
-    if (mode === Mode.DELIVERY_UPDATE && existingOrder) {
-      return {
-        exVAT: +existingOrder.total - +existingOrder.taxTotal,
-        VAT: +existingOrder.total,
-      };
-    }
-  }, [existingOrder, mode]);
 
   const {
     data: orderManualSupplements,
@@ -117,84 +100,23 @@ const Order = ({
   return (
     <Spin spinning={isLoading}>
       <div>
-        {isPriceBreakdownEnabled && (existingOrder || newOrder) ? (
-          <div className="mb-4">
-            {/* Show both orders when they exist (update mode) */}
-            {existingOrder && newOrder && mode === Mode.DELIVERY_UPDATE ? (
-              <>
-                <Radio.Group
-                  value={selectedPriceOption}
-                  onChange={e => setSelectedPriceOption(e.target.value)}
-                  className="mb-3">
-                  <Collapse
-                    activeKey={['original']}
-                    items={[
-                      {
-                        key: 'original',
-                        label: (
-                          <Radio value="original">{t('DELIVERY_FORM_KEEP_ORIGINAL_PRICE')}</Radio>
-                        ),
-                        children: (
-                          <Cart
-                            order={existingOrder}
-                            overridePrice={selectedPriceOption !== 'original'}
-                          />
-                        ),
-                        showArrow: false,
-                      },
-                    ]}
-                  />
-
-                  <Collapse
-                    activeKey={['new']}
-                    items={[
-                      {
-                        key: 'new',
-                        label: <Radio value="new">{t('DELIVERY_FORM_APPLY_NEW_PRICE')}</Radio>,
-                        children: (
-                          <Cart
-                            order={newOrder}
-                            overridePrice={overridePrice}
-                          />
-                        ),
-                        showArrow: false,
-                      },
-                    ]}
-                  />
-                </Radio.Group>
-              </>
-            ) : (
-              <>
-                {/* Show single order when only one exists */}
-                {existingOrder && !newOrder ? (
-                  <Cart order={existingOrder} overridePrice={overridePrice} />
-                ) : null}
-                {newOrder && !existingOrder ? (
-                  <Cart order={newOrder} overridePrice={overridePrice} />
-                ) : null}
-              </>
-            )}
-          </div>
+        {modeIn(mode, [Mode.DELIVERY_CREATE, Mode.RECURRENCE_RULE_UPDATE]) ? (
+          <OrderOnCheckout
+            overridePrice={overridePrice}
+            newOrder={newOrder}
+            calculatePriceData={calculatePriceData}
+            calculatePriceError={calculatePriceError}
+          />
         ) : null}
-        <div>
-          {existingPrice ? (
-            <TotalPrice
-              overridePrice={overridePrice}
-              priceWithTaxes={existingPrice.VAT}
-              priceWithoutTaxes={existingPrice.exVAT}
-            />
-          ) : (
-            <CheckoutTotalPrice
-              overridePrice={overridePrice}
-              priceErrorMessage={
-                calculatePriceError
-                  ? calculatePriceError['hydra:description']
-                  : ''
-              }
-              calculatePriceData={calculatePriceData}
-            />
-          )}
+        {existingOrder && mode === Mode.DELIVERY_UPDATE ? (
+          <OrderEditing
+            overridePrice={overridePrice}
+            existingOrder={existingOrder}
+            newOrder={newOrder}
+          />
+        ) : null}
 
+        <div>
           {!overridePrice &&
             (isDispatcher || isDebugPricing) &&
             calculatePriceData && (

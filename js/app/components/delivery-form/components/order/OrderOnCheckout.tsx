@@ -1,26 +1,36 @@
 import React, { useContext } from 'react';
-import { useTranslation } from 'react-i18next';
-import { RetailPrice } from '../../../../api/types';
 import FlagsContext from '../../FlagsContext';
+import Cart from './Cart';
+import {
+  HydraError,
+  Order as OrderType,
+  RetailPrice,
+} from '../../../../api/types';
 import { TotalPrice } from './TotalPrice';
+import { useTranslation } from 'react-i18next';
 
 type Props = {
   overridePrice: boolean;
-  priceErrorMessage: string;
+  newOrder?: OrderType;
   calculatePriceData?: RetailPrice;
+  calculatePriceError?: Error | HydraError;
 };
 
-const CheckoutTotalPrice = ({
+export const OrderOnCheckout = ({
   overridePrice,
-  priceErrorMessage,
+  newOrder,
   calculatePriceData,
+  calculatePriceError,
 }: Props) => {
+  const { isDispatcher, isPriceBreakdownEnabled } = useContext(FlagsContext);
   const { t } = useTranslation();
-  const { isDispatcher } = useContext(FlagsContext);
 
   return (
-    <>
-      {!priceErrorMessage ? (
+    <div>
+      {isPriceBreakdownEnabled && newOrder ? (
+        <Cart order={newOrder} overridePrice={overridePrice} />
+      ) : null}
+      {!calculatePriceError ? (
         calculatePriceData && calculatePriceData.amount ? (
           <TotalPrice
             priceWithTaxes={calculatePriceData.amount}
@@ -37,15 +47,13 @@ const CheckoutTotalPrice = ({
           />
         )
       ) : null}
-      {!overridePrice && priceErrorMessage ? (
+      {!overridePrice && calculatePriceError ? (
         <div className="alert alert-danger" role="alert">
           {isDispatcher
             ? t('DELIVERY_FORM_ADMIN_PRICE_ERROR')
             : t('DELIVERY_FORM_SHOP_PRICE_ERROR')}
         </div>
       ) : null}
-    </>
+    </div>
   );
 };
-
-export default CheckoutTotalPrice;

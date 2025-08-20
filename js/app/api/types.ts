@@ -22,6 +22,12 @@ export interface HydraCollection<T> {
   };
 }
 
+export interface HydraError {
+  '@type': string;
+  'hydra:title': string;
+  'hydra:description': string;
+}
+
 export type GeoCoordinates = {
   latitude: number;
   longitude: number;

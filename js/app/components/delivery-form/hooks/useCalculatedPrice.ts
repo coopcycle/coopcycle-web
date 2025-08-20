@@ -3,7 +3,7 @@ import { useCalculatePriceMutation } from '../../../api/slice';
 import _ from 'lodash';
 import { DeliveryFormValues } from '../types';
 import { useDeliveryFormFormikContext } from './useDeliveryFormFormikContext';
-import { Uri } from '../../../api/types';
+import { HydraError, Uri } from '../../../api/types';
 
 type Params = {
   storeUri: Uri;
@@ -15,6 +15,30 @@ export const useCalculatedPrice = ({ storeUri, skip = false }: Params) => {
 
   const [calculatePrice, { data, error, isLoading }] =
     useCalculatePriceMutation();
+
+  const errorData = useMemo(() => {
+    if (!error) {
+      return undefined;
+    }
+
+    // FetchBaseQueryError with serialized HydraError
+    if ('data' in error && typeof error.status === 'number') {
+      return error.data as HydraError;
+    }
+
+    // FetchBaseQueryError
+    if ('status' in error) {
+      return {
+        name: error.status,
+        message: error.error,
+      } as Error;
+    }
+
+    return {
+      name: error.name,
+      message: error.message,
+    } as Error;
+  }, [error]);
 
   const calculatePriceDebounced = useMemo(
     () => _.debounce(calculatePrice, 800),
@@ -64,7 +88,7 @@ export const useCalculatedPrice = ({ storeUri, skip = false }: Params) => {
 
   return {
     data,
-    error: error?.data,
+    error: errorData,
     isLoading,
   };
 };
