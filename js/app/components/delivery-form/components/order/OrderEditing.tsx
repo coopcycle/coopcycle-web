@@ -1,16 +1,23 @@
 import React, { useContext, useState } from 'react';
+import { Collapse, Radio } from 'antd';
+import { useTranslation } from 'react-i18next';
 import FlagsContext from '../../FlagsContext';
 import Cart from './Cart';
 import { Order as OrderType } from '../../../../api/types';
-import { Collapse, Radio } from 'antd';
 import { TotalPrice } from './TotalPrice';
-import { useTranslation } from 'react-i18next';
 
 type Props = {
   overridePrice: boolean;
   existingOrder: OrderType;
   newOrder?: OrderType;
 };
+
+function hasOrderChanged(existingOrder: OrderType, newOrder: OrderType) {
+  return (
+    existingOrder.total !== newOrder.total ||
+    existingOrder.items.length !== newOrder.items.length
+  );
+}
 
 export const OrderEditing = ({
   overridePrice,
@@ -30,7 +37,7 @@ export const OrderEditing = ({
       {isPriceBreakdownEnabled ? (
         <div>
           {/* Show a choice between both an existing and a new order */}
-          {newOrder ? (
+          {newOrder && hasOrderChanged(existingOrder, newOrder) ? (
             <>
               <Radio.Group
                 className="w-100"
