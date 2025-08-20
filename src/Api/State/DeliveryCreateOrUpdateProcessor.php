@@ -82,6 +82,12 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
             );
         }
 
+        $pricingStrategy = new UsePricingRules();
+
+        if (!is_null($arbitraryPrice)) {
+            $pricingStrategy = new UseArbitraryPrice($arbitraryPrice);
+        }
+
         $isCreateOrderMode = is_null($delivery->getId());
 
         if ($isCreateOrderMode) {
@@ -95,12 +101,6 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         $order = null;
         if ($isCreateOrderMode) {
             // New delivery/order
-
-            $pricingStrategy = new UsePricingRules();
-
-            if (!is_null($arbitraryPrice)) {
-                $pricingStrategy = new UseArbitraryPrice($arbitraryPrice);
-            }
 
             $order = $this->deliveryOrderManager->createOrder(
                 $delivery,
@@ -125,7 +125,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                     $order = $this->deliveryOrderManager->createOrder(
                         $delivery,
                         [
-                            'pricingStrategy' => new UsePricingRules(),
+                            'pricingStrategy' => $pricingStrategy,
                             'manualSupplements' => $manualSupplements,
                         ]
                     );
@@ -136,9 +136,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                         $order,
                         [$this->pricingManager->getCustomProductVariant($delivery, $arbitraryPrice)]
                     );
-                } elseif ($this->authorizationCheckerInterface->isGranted(
-                        'ROLE_DISPATCHER'
-                    ) && $data instanceof DeliveryInputDto && $data->order?->recalculatePrice) {
+                } elseif ($data instanceof DeliveryInputDto && $data->order?->recalculatePrice) {
                     $productVariants = $this->pricingManager->getPriceWithPricingStrategy(
                         $delivery,
                         new UsePricingRules()
