@@ -741,6 +741,8 @@
         "DELIVERY_FORM_SAVED_ORDER": "Add to Saved orders",
         "SHOW_BARCODES": "View barcodes",
         "DELIVERY_FORM_EXVAT_PRICE" : "Price excluding VAT",
+        "DELIVERY_FORM_KEEP_ORIGINAL_PRICE": "Keep original price",
+        "DELIVERY_FORM_APPLY_NEW_PRICE": "Apply new price",
         "SWITCH_TIMESLOTPICKER": "Select a custom time slot",
         "SWITCH_BACK_TIMESLOTPICKER": "Back to timeslot picker",
         "PAYMENT_FORM_ERROR": "Sorry, we could not process your payment",

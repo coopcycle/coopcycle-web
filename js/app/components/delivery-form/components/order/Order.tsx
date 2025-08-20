@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { Divider, Spin } from 'antd';
+import { Divider, Spin, Radio, Collapse } from 'antd';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 import Cart from './Cart';
 import FlagsContext from '../../FlagsContext';
@@ -29,11 +30,15 @@ const Order = ({
 }: Props) => {
   const { isDispatcher, isDebugPricing, isPriceBreakdownEnabled } =
     useContext(FlagsContext);
+  const { t } = useTranslation();
 
   const mode = useSelector(selectMode);
   const { values } = useDeliveryFormFormikContext();
 
   const [newOrder, setNewOrder] = useState(undefined as OrderType | undefined);
+  const [selectedPriceOption, setSelectedPriceOption] = useState<
+    'original' | 'new'
+  >('original');
 
   const [overridePrice, setOverridePrice] = useState<boolean>(() => {
     if (modeIn(mode, [Mode.DELIVERY_CREATE, Mode.RECURRENCE_RULE_UPDATE])) {
@@ -95,19 +100,8 @@ const Order = ({
       const order = calculatePriceData.order;
 
       if (mode === Mode.DELIVERY_UPDATE) {
-        //TODO; handle switch between current and proposed price
-        // uncomment when a switcher is implemented
-        return;
-
-        //compare existing and new order
-        // if same display existing order
-        // if (
-        //   existingOrder &&
-        //   existingOrder.total === order.total &&
-        //   existingOrder.items.length === order.items.length
-        // ) {
-        //   return;
-        // }
+        // Allow setting newOrder in update mode for price comparison
+        // The radio button will control which order is displayed
       }
 
       setNewOrder(order);
@@ -123,15 +117,64 @@ const Order = ({
   return (
     <Spin spinning={isLoading}>
       <div>
-        {isPriceBreakdownEnabled ? (
-          <>
-            {existingOrder ? (
-              <Cart order={existingOrder} overridePrice={overridePrice} />
-            ) : null}
-            {newOrder ? (
-              <Cart order={newOrder} overridePrice={overridePrice} />
-            ) : null}
-          </>
+        {isPriceBreakdownEnabled && (existingOrder || newOrder) ? (
+          <div className="mb-4">
+            {/* Show both orders when they exist (update mode) */}
+            {existingOrder && newOrder && mode === Mode.DELIVERY_UPDATE ? (
+              <>
+                <Radio.Group
+                  value={selectedPriceOption}
+                  onChange={e => setSelectedPriceOption(e.target.value)}
+                  className="mb-3">
+                  <Collapse
+                    activeKey={['original']}
+                    items={[
+                      {
+                        key: 'original',
+                        label: (
+                          <Radio value="original">{t('DELIVERY_FORM_KEEP_ORIGINAL_PRICE')}</Radio>
+                        ),
+                        children: (
+                          <Cart
+                            order={existingOrder}
+                            overridePrice={selectedPriceOption !== 'original'}
+                          />
+                        ),
+                        showArrow: false,
+                      },
+                    ]}
+                  />
+
+                  <Collapse
+                    activeKey={['new']}
+                    items={[
+                      {
+                        key: 'new',
+                        label: <Radio value="new">{t('DELIVERY_FORM_APPLY_NEW_PRICE')}</Radio>,
+                        children: (
+                          <Cart
+                            order={newOrder}
+                            overridePrice={overridePrice}
+                          />
+                        ),
+                        showArrow: false,
+                      },
+                    ]}
+                  />
+                </Radio.Group>
+              </>
+            ) : (
+              <>
+                {/* Show single order when only one exists */}
+                {existingOrder && !newOrder ? (
+                  <Cart order={existingOrder} overridePrice={overridePrice} />
+                ) : null}
+                {newOrder && !existingOrder ? (
+                  <Cart order={newOrder} overridePrice={overridePrice} />
+                ) : null}
+              </>
+            )}
+          </div>
         ) : null}
         <div>
           {existingPrice ? (
