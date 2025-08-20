@@ -33,18 +33,12 @@ export const OrderOnCheckout = ({
       {!calculatePriceError ? (
         calculatePriceData && calculatePriceData.amount ? (
           <TotalPrice
-            priceWithTaxes={calculatePriceData.amount}
-            priceWithoutTaxes={
-              calculatePriceData.amount - calculatePriceData.tax.amount
-            }
+            total={calculatePriceData.amount}
+            taxTotal={calculatePriceData.tax.amount}
             overridePrice={overridePrice}
           />
         ) : (
-          <TotalPrice
-            priceWithTaxes={0}
-            priceWithoutTaxes={0}
-            overridePrice={overridePrice}
-          />
+          <TotalPrice total={0} taxTotal={0} overridePrice={overridePrice} />
         )
       ) : null}
       {!overridePrice && calculatePriceError ? (

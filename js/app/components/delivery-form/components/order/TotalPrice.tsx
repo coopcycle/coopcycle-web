@@ -3,15 +3,11 @@ import { useTranslation } from 'react-i18next';
 
 type Props = {
   overridePrice: boolean;
-  priceWithTaxes: number; // in cents
-  priceWithoutTaxes: number; // in cents
+  total: number; // in cents with tax
+  taxTotal: number; // in cents
 };
 
-export const TotalPrice = ({
-  overridePrice,
-  priceWithTaxes,
-  priceWithoutTaxes,
-}: Props) => {
+export const TotalPrice = ({ overridePrice, total, taxTotal }: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -25,7 +21,7 @@ export const TotalPrice = ({
           className={`pull-right d-flex flex-column align-items-end ${overridePrice ? 'text-decoration-line-through' : ''}`}>
           <span>
             {t('DELIVERY_FORM_TOTAL_EX_VAT')}{' '}
-            {(priceWithoutTaxes / 100).formatMoney()}
+            {((total - taxTotal) / 100).formatMoney()}
           </span>
           <br />
           <span
@@ -33,8 +29,7 @@ export const TotalPrice = ({
             data-testid={
               overridePrice ? 'tax-included-previous' : 'tax-included'
             }>
-            {t('DELIVERY_FORM_TOTAL_VAT')}{' '}
-            {(priceWithTaxes / 100).formatMoney()}
+            {t('DELIVERY_FORM_TOTAL_VAT')} {(total / 100).formatMoney()}
           </span>
         </span>
       </div>
