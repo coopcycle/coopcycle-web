@@ -139,7 +139,8 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                 } elseif ($data instanceof DeliveryInputDto && $data->order?->recalculatePrice) {
                     $productVariants = $this->pricingManager->getPriceWithPricingStrategy(
                         $delivery,
-                        new UsePricingRules()
+                        new UsePricingRules(),
+                        $manualSupplements
                     );
                     $this->pricingManager->processDeliveryOrder($order, $productVariants);
                 }
