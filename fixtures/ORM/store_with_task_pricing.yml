@@ -54,6 +54,7 @@ AppBundle\Entity\Store:
     address: "@address_1"
     enabled: true
     pricingRuleSet: '@pricing_rule_set_1'
+    multiDropEnabled: true
     __calls:
       - addAddress: [ "@warehouse" ]
       - addAddress: [ "@client_1" ]

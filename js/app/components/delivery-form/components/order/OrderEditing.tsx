@@ -55,7 +55,9 @@ export const OrderEditing = ({
                     {
                       key: 'original',
                       label: (
-                        <Radio value="original">
+                        <Radio
+                          value="original"
+                          data-testid="keep-original-price">
                           {t('DELIVERY_FORM_KEEP_ORIGINAL_PRICE')}
                         </Radio>
                       ),
@@ -77,7 +79,7 @@ export const OrderEditing = ({
                     {
                       key: 'new',
                       label: (
-                        <Radio value="new">
+                        <Radio value="new" data-testid="apply-new-price">
                           {t('DELIVERY_FORM_APPLY_NEW_PRICE')}
                         </Radio>
                       ),
