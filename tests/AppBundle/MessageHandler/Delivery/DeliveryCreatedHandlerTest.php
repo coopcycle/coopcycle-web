@@ -68,10 +68,7 @@ class DeliveryCreatedHandlerTest extends TestCase
         );
     }
 
-    /**
-     * @group only
-     */
-    public function testSendDeliveryTypeSimple()
+    public function testSendDeliveryTYPE_SIMPLE()
     {
         $pickup = new Task();
         $pickup->setType(Task::TYPE_PICKUP);
@@ -87,14 +84,11 @@ class DeliveryCreatedHandlerTest extends TestCase
         $dropoffAddress->setStreetAddress("222 Nice Dropoff St, Someplace, Argentina");
         $dropoff->setAddress($dropoffAddress);
 
-        $pickupAfter = new \DateTime('2025-01-02 01:02:03');
-        $pickupBefore = new \DateTime('2025-01-02 02:03:04');
-        $pickup->setAfter($pickupAfter);
-        $pickup->setBefore($pickupBefore);
-        $dropoffAfter = new \DateTime('2025-01-02 03:04:05');
-        $dropoffBefore = new \DateTime('2025-01-02 04:05:06');
-        $dropoff->setAfter($dropoffAfter);
-        $dropoff->setBefore($dropoffBefore);
+
+        $pickup->setAfter(new \DateTime('2025-01-02 01:02:03'));
+        $pickup->setBefore(new \DateTime('2025-01-02 02:03:04'));
+        $dropoff->setAfter(new \DateTime('2025-01-02 03:04:05'));
+        $dropoff->setBefore(new \DateTime('2025-01-02 04:05:06'));
 
         $delivery = $this->prophesize(Delivery::class);
         $delivery->getId()->willReturn(1);
@@ -112,6 +106,67 @@ class DeliveryCreatedHandlerTest extends TestCase
         $data = [
             'event' => 'delivery:created',
             'delivery_id' => 1,
+            'order_id' => null,
+            'date' => '2025-01-02 01:02',
+            'date_local' => '01/02/2025'
+        ];
+
+        $this->genPushNotification($title, $body, $data);
+
+        $message = $this->genDeliveryCreatedMessage($delivery);
+        call_user_func_array($this->handler, [ $message ]);
+    }
+
+    /**
+     * @group only
+     */
+    public function testSendDeliveryTYPE_MULTI_PICKUP()
+    {
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup2 = new Task();
+        $pickup2->setType(Task::TYPE_PICKUP);
+        $dropoff = new Task();
+        $dropoff->setType(Task::TYPE_DROPOFF);
+        $pickup->setNext($pickup2);
+        $pickup2->setNext($dropoff);
+        $dropoff->setPrevious($pickup2);
+
+        $pickupAddress = new Address();
+        $pickupAddress->setStreetAddress("111 Nice Pickup St, Somewhere, Argentina");
+        $pickup->setAddress($pickupAddress);
+        $pickup2Address = new Address();
+        $pickup2Address->setStreetAddress("222 Nice Pickup St, Somewhere, Argentina");
+        $pickup2->setAddress($pickup2Address);
+        $dropoffAddress = new Address();
+        $dropoffAddress->setStreetAddress("333 Nice Dropoff St, Someplace, Argentina");
+        $dropoff->setAddress($dropoffAddress);
+
+        $pickup->setAfter(new \DateTime('2025-01-02 01:02:03'));
+        $pickup->setBefore(new \DateTime('2025-01-02 02:03:04'));
+        $pickup2->setAfter(new \DateTime('2025-01-02 03:04:05'));
+        $pickup2->setBefore(new \DateTime('2025-01-02 04:05:06'));
+        $dropoff->setAfter(new \DateTime('2025-01-02 05:06:07'));
+        $dropoff->setBefore(new \DateTime('2025-01-02 06:07:08'));
+
+        $delivery = $this->prophesize(Delivery::class);
+        $delivery->getId()->willReturn(2);
+        $delivery->getOrder()->willReturn(null);
+        $delivery->getTasks()->willReturn([$pickup, $pickup2, $dropoff]);
+        $delivery->getPickup()->willReturn($pickup);
+        $delivery->getDropoff()->willReturn($dropoff);
+
+        $this->genStoreOwner($delivery);
+        //$user = $this->genCustomerUser($pickupAddress);
+
+        $title = '2 pickups -> ' . $dropoffAddress->getStreetAddress();
+        $body = "PUs: 01:02-03:04 | DO: 05:06-06:07
+PU 01:02-02:03: 111 Nice Pickup St, Somewhere, Argentina
+PU 03:04-04:05: 222 Nice Pickup St, Somewhere, Argentina";
+        //$users = $this->mockUsers([new User(), new User()]);
+        $data = [
+            'event' => 'delivery:created',
+            'delivery_id' => 2,
             'order_id' => null,
             'date' => '2025-01-02 01:02',
             'date_local' => '01/02/2025'
