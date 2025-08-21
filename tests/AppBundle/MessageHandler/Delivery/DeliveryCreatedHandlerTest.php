@@ -6,8 +6,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
-use AppBundle\Entity\User;
-use AppBundle\Entity\Sylius\Customer;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Message\DeliveryCreated;
 use AppBundle\Message\PushNotification;
 use AppBundle\MessageHandler\DeliveryCreatedHandler;
@@ -68,7 +67,7 @@ class DeliveryCreatedHandlerTest extends TestCase
         );
     }
 
-    public function testSendDeliveryTYPE_SIMPLE()
+    public function testSendDelivery__TYPE_SIMPLE__SamePickupAddr()
     {
         $pickup = new Task();
         $pickup->setType(Task::TYPE_PICKUP);
@@ -84,6 +83,60 @@ class DeliveryCreatedHandlerTest extends TestCase
         $dropoffAddress->setStreetAddress("222 Nice Dropoff St, Someplace, Argentina");
         $dropoff->setAddress($dropoffAddress);
 
+        $pickup->setAfter(new \DateTime('2025-01-02 01:02:03'));
+        $pickup->setBefore(new \DateTime('2025-01-02 02:03:04'));
+        $dropoff->setAfter(new \DateTime('2025-01-02 03:04:05'));
+        $dropoff->setBefore(new \DateTime('2025-01-02 04:05:06'));
+
+        $delivery = $this->prophesize(Delivery::class);
+        $delivery->getId()->willReturn(1);
+        $delivery->getTasks()->willReturn([$pickup, $dropoff]);
+        $delivery->getPickup()->willReturn($pickup);
+        $delivery->getDropoff()->willReturn($dropoff);
+
+        $order = $this->prophesize(Order::class);
+        $order->getId()->willReturn(11);
+        $order->getDelivery()->willReturn($delivery);
+        $delivery->getOrder()->willReturn($order);
+
+        /////////////////////////
+        // Test with a pickup address being the owner/store address
+        /////////////////////////
+        $owner = $this->genStoreOwner($delivery);
+
+        $title = $owner->getName().' -> ' . $dropoffAddress->getStreetAddress();
+        $body = "PU: 01:02-02:03 | DO: 03:04-04:05";
+        $data = [
+            'event' => 'delivery:created',
+            'delivery_id' => 1,
+            'order_id' => 11,
+            'date' => '2025-01-02 01:02',
+            'date_local' => '01/02/2025'
+        ];
+
+        $this->genPushNotification($title, $body, $data);
+
+        $message = $this->genDeliveryCreatedMessage($delivery);
+        call_user_func_array($this->handler, [ $message ]);
+    }
+
+    public function testSendDelivery__TYPE_SIMPLE__DifferentPickupAddr()
+    {
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+        $dropoff = new Task();
+        $dropoff->setType(Task::TYPE_DROPOFF);
+        $pickup->setNext($dropoff);
+        $dropoff->setPrevious($pickup);
+
+        $pickupAddress = new Address();
+        $pickupAddress->setStreetAddress("111 Nice Pickup St, Somewhere, Argentina");
+        $pickup->setAddress($pickupAddress);
+        $dropoffAddress = new Address();
+        $dropoffAddress->setStreetAddress("222 Nice Dropoff St, Someplace, Argentina");
+        // Give a name for dropoff address
+        $dropoffAddress->setName("Test Address Name");
+        $dropoff->setAddress($dropoffAddress);
 
         $pickup->setAfter(new \DateTime('2025-01-02 01:02:03'));
         $pickup->setBefore(new \DateTime('2025-01-02 02:03:04'));
@@ -97,12 +150,17 @@ class DeliveryCreatedHandlerTest extends TestCase
         $delivery->getPickup()->willReturn($pickup);
         $delivery->getDropoff()->willReturn($dropoff);
 
-        $owner = $this->genStoreOwner($delivery);
-        //$user = $this->genCustomerUser($pickupAddress);
+        /////////////////////////
+        // Test with a different pickup address than the owner/store address
+        /////////////////////////
+        $notTheDeliveryPickupAddress = (new Address())
+            ->setStreetAddress("123 Nice Pickup St, Somewhere, Argentina");
+        $owner = $this->genStoreOwner($delivery, $notTheDeliveryPickupAddress);
 
-        $title = $owner->getName().' -> ' . $dropoffAddress->getStreetAddress();
-        $body = "PU: 01:02-02:03 | DO: 03:04-04:05";
-        //$users = $this->mockUsers([new User(), new User()]);
+        $title = $owner->getName().' -> ' . $dropoffAddress->getName();
+        $body = "PU: 01:02-02:03 | DO: 03:04-04:05
+PU: " . $pickupAddress->getStreetAddress() . "
+DO: 222 Nice Dropoff St, Someplace, Argentina";
         $data = [
             'event' => 'delivery:created',
             'delivery_id' => 1,
@@ -117,10 +175,7 @@ class DeliveryCreatedHandlerTest extends TestCase
         call_user_func_array($this->handler, [ $message ]);
     }
 
-    /**
-     * @group only
-     */
-    public function testSendDeliveryTYPE_MULTI_PICKUP()
+    public function testSendDelivery__TYPE_MULTI_PICKUP()
     {
         $pickup = new Task();
         $pickup->setType(Task::TYPE_PICKUP);
@@ -151,22 +206,152 @@ class DeliveryCreatedHandlerTest extends TestCase
 
         $delivery = $this->prophesize(Delivery::class);
         $delivery->getId()->willReturn(2);
-        $delivery->getOrder()->willReturn(null);
         $delivery->getTasks()->willReturn([$pickup, $pickup2, $dropoff]);
         $delivery->getPickup()->willReturn($pickup);
         $delivery->getDropoff()->willReturn($dropoff);
 
+        $order = $this->prophesize(Order::class);
+        $order->getId()->willReturn(11);
+        $order->getDelivery()->willReturn($delivery);
+        $delivery->getOrder()->willReturn($order);
+
         $this->genStoreOwner($delivery);
-        //$user = $this->genCustomerUser($pickupAddress);
 
         $title = '2 pickups -> ' . $dropoffAddress->getStreetAddress();
         $body = "PUs: 01:02-03:04 | DO: 05:06-06:07
 PU 01:02-02:03: 111 Nice Pickup St, Somewhere, Argentina
 PU 03:04-04:05: 222 Nice Pickup St, Somewhere, Argentina";
-        //$users = $this->mockUsers([new User(), new User()]);
         $data = [
             'event' => 'delivery:created',
             'delivery_id' => 2,
+            'order_id' => 11,
+            'date' => '2025-01-02 01:02',
+            'date_local' => '01/02/2025'
+        ];
+
+        $this->genPushNotification($title, $body, $data);
+
+        $message = $this->genDeliveryCreatedMessage($delivery);
+        call_user_func_array($this->handler, [ $message ]);
+    }
+
+    public function testSendDelivery__TYPE_MULTI_DROPOFF__SamePickupAddr()
+    {
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+        $dropoff = new Task();
+        $dropoff->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = new Task();
+        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $pickup->setNext($dropoff);
+        $dropoff->setPrevious($pickup);
+        $dropoff->setNext($dropoff2);
+        $dropoff2->setPrevious($dropoff);
+
+        $pickupAddress = new Address();
+        $pickupAddress->setStreetAddress("111 Nice Pickup St, Somewhere, Argentina");
+        $pickup->setAddress($pickupAddress);
+        $dropoffAddress = new Address();
+        $dropoffAddress->setStreetAddress("222 Nice Dropoff St, Someplace, Argentina");
+        $dropoff->setAddress($dropoffAddress);
+        $dropoff2Address = new Address();
+        $dropoff2Address->setStreetAddress("333 Nice Dropoff St, Someplace, Argentina");
+        $dropoff2->setAddress($dropoff2Address);
+
+        $pickup->setAfter(new \DateTime('2025-01-02 01:02:03'));
+        $pickup->setBefore(new \DateTime('2025-01-02 02:03:04'));
+        $dropoff->setAfter(new \DateTime('2025-01-02 03:04:05'));
+        $dropoff->setBefore(new \DateTime('2025-01-02 04:05:06'));
+        $dropoff2->setAfter(new \DateTime('2025-01-02 05:06:07'));
+        $dropoff2->setBefore(new \DateTime('2025-01-02 06:07:08'));
+
+        $delivery = $this->prophesize(Delivery::class);
+        $delivery->getId()->willReturn(3);
+        $delivery->getOrder()->willReturn(null);
+        $delivery->getTasks()->willReturn([$pickup, $dropoff, $dropoff2]);
+        $delivery->getPickup()->willReturn($pickup);
+        $delivery->getDropoff()->willReturn($dropoff2);
+
+        $order = $this->prophesize(Order::class);
+        $order->getId()->willReturn(11);
+        $order->getDelivery()->willReturn($delivery);
+        $delivery->getOrder()->willReturn($order);
+
+        /////////////////////////
+        // Test with a pickup address being the owner/store address
+        /////////////////////////
+        $owner = $this->genStoreOwner($delivery);
+
+        $title = $owner->getName().' -> 2 dropoffs';
+        $body = "PU: 01:02-02:03 | DOs: 03:04-05:06
+DO 03:04-04:05: 222 Nice Dropoff St, Someplace, Argentina
+DO 05:06-06:07: 333 Nice Dropoff St, Someplace, Argentina";
+        $data = [
+            'event' => 'delivery:created',
+            'delivery_id' => 3,
+            'order_id' => 11,
+            'date' => '2025-01-02 01:02',
+            'date_local' => '01/02/2025'
+        ];
+
+        $this->genPushNotification($title, $body, $data);
+
+        $message = $this->genDeliveryCreatedMessage($delivery);
+        call_user_func_array($this->handler, [ $message ]);
+    }
+
+    public function testSendDelivery__TYPE_MULTI_DROPOFF__DifferentPickupAddr()
+    {
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+        $dropoff = new Task();
+        $dropoff->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = new Task();
+        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $pickup->setNext($dropoff);
+        $dropoff->setPrevious($pickup);
+        $dropoff->setNext($dropoff2);
+        $dropoff2->setPrevious($dropoff);
+
+        $pickupAddress = new Address();
+        $pickupAddress->setStreetAddress("111 Nice Pickup St, Somewhere, Argentina");
+        $pickup->setAddress($pickupAddress);
+        $dropoffAddress = new Address();
+        $dropoffAddress->setStreetAddress("222 Nice Dropoff St, Someplace, Argentina");
+        $dropoff->setAddress($dropoffAddress);
+        $dropoff2Address = new Address();
+        $dropoff2Address->setStreetAddress("333 Nice Dropoff St, Someplace, Argentina");
+        $dropoff2->setAddress($dropoff2Address);
+
+        $pickup->setAfter(new \DateTime('2025-01-02 01:02:03'));
+        $pickup->setBefore(new \DateTime('2025-01-02 02:03:04'));
+        $dropoff->setAfter(new \DateTime('2025-01-02 03:04:05'));
+        $dropoff->setBefore(new \DateTime('2025-01-02 04:05:06'));
+        $dropoff2->setAfter(new \DateTime('2025-01-02 05:06:07'));
+        $dropoff2->setBefore(new \DateTime('2025-01-02 06:07:08'));
+
+        $delivery = $this->prophesize(Delivery::class);
+        $delivery->getId()->willReturn(3);
+        $delivery->getOrder()->willReturn(null);
+        $delivery->getTasks()->willReturn([$pickup, $dropoff, $dropoff2]);
+        $delivery->getPickup()->willReturn($pickup);
+        $delivery->getDropoff()->willReturn($dropoff2);
+
+        /////////////////////////
+        // Test with a different pickup address than the owner/store address
+        /////////////////////////
+        $notTheDeliveryPickupAddress = (new Address())
+            ->setStreetAddress("123 Nice Pickup St, Somewhere, Argentina");
+        $owner = $this->genStoreOwner($delivery, $notTheDeliveryPickupAddress);
+
+        $title = $owner->getName().' -> 2 dropoffs';
+        $body = "PU: 01:02-02:03 | DOs: 03:04-05:06
+PU: 111 Nice Pickup St, Somewhere, Argentina
+DO 03:04-04:05: 222 Nice Dropoff St, Someplace, Argentina
+DO 05:06-06:07: 333 Nice Dropoff St, Someplace, Argentina";
+        $data = [
+            'event' => 'delivery:created',
+            'delivery_id' => 3,
             'order_id' => null,
             'date' => '2025-01-02 01:02',
             'date_local' => '01/02/2025'
@@ -178,13 +363,77 @@ PU 03:04-04:05: 222 Nice Pickup St, Somewhere, Argentina";
         call_user_func_array($this->handler, [ $message ]);
     }
 
-    // private function mockUsers($users): array
-    // {
-    //     $this->userManager->findUsersByRoles(['ROLE_ADMIN', 'ROLE_DISPATCHER'])
-    //         ->willReturn($users);
+    public function testSendDelivery__TYPE_MULTI_MULTI()
+    {
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup2 = new Task();
+        $pickup2->setType(Task::TYPE_PICKUP);
+        $dropoff = new Task();
+        $dropoff->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = new Task();
+        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $pickup->setNext($pickup2);
+        $pickup2->setPrevious($pickup);
+        $pickup2->setNext($dropoff);
+        $dropoff->setPrevious($pickup2);
+        $dropoff->setNext($dropoff2);
+        $dropoff2->setPrevious($dropoff);
 
-    //     return $users;
-    // }
+        $pickupAddress = new Address();
+        $pickupAddress->setStreetAddress("111 Nice Pickup St, Somewhere, Argentina");
+        $pickup->setAddress($pickupAddress);
+        $pickup2Address = new Address();
+        $pickup2Address->setStreetAddress("222 Nice Pickup St, Somewhere, Argentina");
+        $pickup2->setAddress($pickup2Address);
+        $dropoffAddress = new Address();
+        $dropoffAddress->setStreetAddress("333 Nice Dropoff St, Someplace, Argentina");
+        $dropoff->setAddress($dropoffAddress);
+        $dropoff2Address = new Address();
+        $dropoff2Address->setStreetAddress("444 Nice Dropoff St, Someplace, Argentina");
+        $dropoff2->setAddress($dropoff2Address);
+
+        $pickup->setAfter(new \DateTime('2025-01-02 01:02:03'));
+        $pickup->setBefore(new \DateTime('2025-01-02 02:03:04'));
+        $pickup2->setAfter(new \DateTime('2025-01-02 03:04:05'));
+        $pickup2->setBefore(new \DateTime('2025-01-02 04:05:06'));
+        $dropoff->setAfter(new \DateTime('2025-01-02 05:06:07'));
+        $dropoff->setBefore(new \DateTime('2025-01-02 06:07:08'));
+        $dropoff2->setAfter(new \DateTime('2025-01-02 07:08:09'));
+        $dropoff2->setBefore(new \DateTime('2025-01-02 08:09:10'));
+
+        $delivery = $this->prophesize(Delivery::class);
+        $delivery->getId()->willReturn(4);
+        $delivery->getTasks()->willReturn([$pickup, $pickup2, $dropoff, $dropoff2]);
+        $delivery->getPickup()->willReturn($pickup);
+        $delivery->getDropoff()->willReturn($dropoff2);
+
+        $order = $this->prophesize(Order::class);
+        $order->getId()->willReturn(11);
+        $order->getDelivery()->willReturn($delivery);
+        $delivery->getOrder()->willReturn($order);
+
+        $this->genStoreOwner($delivery);
+
+        $title = '2 pickups -> 2 dropoffs';
+        $body = "PUs: 01:02-03:04 | DOs: 05:06-07:08
+PU 01:02-02:03: 111 Nice Pickup St, Somewhere, Argentina
+PU 03:04-04:05: 222 Nice Pickup St, Somewhere, Argentina
+DO 05:06-06:07: 333 Nice Dropoff St, Someplace, Argentina
+DO 07:08-08:09: 444 Nice Dropoff St, Someplace, Argentina";
+        $data = [
+            'event' => 'delivery:created',
+            'delivery_id' => 4,
+            'order_id' => 11,
+            'date' => '2025-01-02 01:02',
+            'date_local' => '01/02/2025'
+        ];
+
+        $this->genPushNotification($title, $body, $data);
+
+        $message = $this->genDeliveryCreatedMessage($delivery);
+        call_user_func_array($this->handler, [ $message ]);
+    }
 
     private function genPushNotification($title, $body, $data): PushNotification
     {
@@ -192,7 +441,7 @@ PU 03:04-04:05: 222 Nice Pickup St, Somewhere, Argentina";
 
         $this->messageBus
             ->dispatch(Argument::that(function(PushNotification $pn) use ($pushNotification) {
-                $this->assertEquals($pn, $pushNotification);
+                $this->assertEquals($pushNotification, $pn);
                 return true;
             }))
             ->willReturn(new Envelope($pushNotification))
@@ -219,15 +468,4 @@ PU 03:04-04:05: 222 Nice Pickup St, Somewhere, Argentina";
         $delivery->getOwner()->willReturn($owner);
         return $owner;
     }
-
-    // private function genCustomerUser($address): User
-    // {
-    //     $user = new User();
-    //     $user->setCustomer(new Customer());
-    //     $user->setUsername('bob');
-    //     $user->addAddress($address);
-    //     $this->userManager->findUserByUsername('bob')
-    //         ->willReturn($user);
-    //     return $user;
-    // }
 }
