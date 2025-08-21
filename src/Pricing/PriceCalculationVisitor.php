@@ -272,12 +272,6 @@ class PriceCalculationVisitor
         // Create a product option if none is defined
         if (is_null($productOptionValue)) {
             $productOptionValue = $this->productOptionValueFactory->createForPricingRule($rule, $this->ruleHumanizer->humanize($rule));
-        } else {
-            //FIXME: for now, we need to make sure to create a new entity for each calculation
-            // as we set the calculated price on the entity itself
-            // when we properly implement quantities and product option types (percentage) we can
-            // make ProductOptionValues immutable and remove this
-            $productOptionValue = $this->productOptionValueFactory->createForPricingRule($rule, $rule->getName());
         }
 
         // Generate a default name if none is defined
@@ -300,11 +294,11 @@ class PriceCalculationVisitor
             'target' => $rule->getTarget(),
         ]);
 
-        //For now; km and package-based rules will contain total in $price
-        // return price per km or package and quantity separately?
-        $productOptionValue->setPrice($result);
+        //FIXME: update when we properly model unit price and quantity in https://github.com/coopcycle/coopcycle/issues/441
+        // currently we set price to 1 cent and quantity to the actual price, so that the total is price * quantity
+        $productOptionValue->setPrice(1);
 
-        return new ProductOptionValueWithQuantity($productOptionValue, 1);
+        return new ProductOptionValueWithQuantity($productOptionValue, $result);
     }
 
     /**
@@ -340,7 +334,7 @@ class PriceCalculationVisitor
             if ('CPCCL-ODDLVR-PERCENTAGE' === $productOptionValue->getOptionCode()) {
                 // for percentage-based rules: the price is calculated on the subtotal of the previous steps
 
-                $priceMultiplier = $productOptionValue->getPrice();
+                $priceMultiplier = $productVariant->getQuantityForOptionValue($productOptionValue);
 
                 $previousSubtotal = $subtotal;
 
@@ -352,7 +346,7 @@ class PriceCalculationVisitor
                     'percentage' => $priceMultiplier / 100 - 100,
                 ]);
 
-                $productOptionValue->setPrice($price);
+                $productVariant->addOptionValueWithQuantity($productOptionValue, $price);
 
             } else {
                 $quantity = $productVariant->getQuantityForOptionValue($productOptionValue);
