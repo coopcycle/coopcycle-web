@@ -296,7 +296,20 @@ class PriceCalculationVisitor
 
         //FIXME: update when we properly model unit price and quantity in https://github.com/coopcycle/coopcycle/issues/441
         // currently we set price to 1 cent and quantity to the actual price, so that the total is price * quantity
-        $productOptionValue->setPrice(1);
+        $basePrice = 1;
+
+        // If the price is negative, we set the base price to -1 as the quantity can't be negative
+        if ($result < 0) {
+            $basePrice = -1;
+            $result = abs($result);
+        }
+
+        // If the percentage is below 100% (10000 = 100.00%), we set the base price to -1 as it's a discount
+        if ('CPCCL-ODDLVR-PERCENTAGE' === $productOptionValue->getOptionCode() && $result < 10000) {
+            $basePrice = -1;
+        }
+
+        $productOptionValue->setPrice($basePrice);
 
         return new ProductOptionValueWithQuantity($productOptionValue, $result);
     }
@@ -346,7 +359,8 @@ class PriceCalculationVisitor
                     'percentage' => $priceMultiplier / 100 - 100,
                 ]);
 
-                $productVariant->addOptionValueWithQuantity($productOptionValue, $price);
+                // Negative price (discount) is taken care of by setting a base price of -1 in processProductOptionValue
+                $productVariant->addOptionValueWithQuantity($productOptionValue, abs($price));
 
             } else {
                 $quantity = $productVariant->getQuantityForOptionValue($productOptionValue);
