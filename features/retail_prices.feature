@@ -1848,7 +1848,7 @@ Feature: Retail prices
         "order": {
           "manualSupplements": [
             {
-              "@id": "/api/pricing_rules/4",
+              "pricingRule": "/api/pricing_rules/4",
               "quantity": 1
             }
           ]
@@ -1903,7 +1903,7 @@ Feature: Retail prices
         "order": {
           "manualSupplements": [
             {
-              "@id": "/api/pricing_rules/2",
+              "pricingRule": "/api/pricing_rules/2",
               "quantity": 1
             }
           ]
