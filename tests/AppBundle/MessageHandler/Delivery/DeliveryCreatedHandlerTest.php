@@ -87,12 +87,12 @@ class DeliveryCreatedHandlerTest extends TestCase
         $dropoffAddress->setStreetAddress("222 Nice Dropoff St, Someplace, Argentina");
         $dropoff->setAddress($dropoffAddress);
 
-        $pickupAfter = new \DateTime('2025-01-01 01:02:03');
-        $pickupBefore = new \DateTime('2025-01-01 02:03:04');
+        $pickupAfter = new \DateTime('2025-01-02 01:02:03');
+        $pickupBefore = new \DateTime('2025-01-02 02:03:04');
         $pickup->setAfter($pickupAfter);
         $pickup->setBefore($pickupBefore);
-        $dropoffAfter = new \DateTime('2025-01-01 03:04:05');
-        $dropoffBefore = new \DateTime('2025-01-01 04:05:06');
+        $dropoffAfter = new \DateTime('2025-01-02 03:04:05');
+        $dropoffBefore = new \DateTime('2025-01-02 04:05:06');
         $dropoff->setAfter($dropoffAfter);
         $dropoff->setBefore($dropoffBefore);
 
@@ -103,29 +103,37 @@ class DeliveryCreatedHandlerTest extends TestCase
         $delivery->getPickup()->willReturn($pickup);
         $delivery->getDropoff()->willReturn($dropoff);
 
-        $owner = new Store();
-        $owner->setName("Test Store")->setAddress($pickupAddress);
-        $delivery->getOwner()->willReturn($owner);
+        $owner = $this->genStoreOwner($delivery);
+        //$user = $this->genCustomerUser($pickupAddress);
 
-        $user = new User();
-        $user->setCustomer(new Customer());
-        $user->setUsername('bob');
-        $user->addAddress($pickupAddress);
-        $this->userManager->findUserByUsername('bob')
-            ->willReturn($user);
-
-        $title = 'Test Store -> 222 Nice Dropoff St, Someplace, Argentina';
+        $title = $owner->getName().' -> ' . $dropoffAddress->getStreetAddress();
         $body = "PU: 01:02-02:03 | DO: 03:04-04:05";
-        $users = $this->mockUsers([new User(), new User()]);
+        //$users = $this->mockUsers([new User(), new User()]);
         $data = [
             'event' => 'delivery:created',
             'delivery_id' => 1,
             'order_id' => null,
-            'date' => '2025-01-01 01:02',
-            'date_local' => '01/01/2025'
+            'date' => '2025-01-02 01:02',
+            'date_local' => '01/02/2025'
         ];
 
-        $pushNotification = new PushNotification($title, $body, $users, $data);
+        $this->genPushNotification($title, $body, $data);
+
+        $message = $this->genDeliveryCreatedMessage($delivery);
+        call_user_func_array($this->handler, [ $message ]);
+    }
+
+    // private function mockUsers($users): array
+    // {
+    //     $this->userManager->findUsersByRoles(['ROLE_ADMIN', 'ROLE_DISPATCHER'])
+    //         ->willReturn($users);
+
+    //     return $users;
+    // }
+
+    private function genPushNotification($title, $body, $data): PushNotification
+    {
+        $pushNotification = new PushNotification($title, $body, [], $data);
 
         $this->messageBus
             ->dispatch(Argument::that(function(PushNotification $pn) use ($pushNotification) {
@@ -135,16 +143,7 @@ class DeliveryCreatedHandlerTest extends TestCase
             ->willReturn(new Envelope($pushNotification))
             ->shouldBeCalledOnce();
 
-        $message = $this->genDeliveryCreatedMessage($delivery);
-        call_user_func_array($this->handler, [ $message ]);
-    }
-
-    private function mockUsers($users): array
-    {
-        $this->userManager->findUsersByRoles(['ROLE_ADMIN', 'ROLE_DISPATCHER'])
-            ->willReturn($users);
-
-        return $users;
+        return $pushNotification;
     }
 
     private function genDeliveryCreatedMessage($delivery): DeliveryCreated
@@ -156,4 +155,24 @@ class DeliveryCreatedHandlerTest extends TestCase
 
         return $message;
     }
+
+    private function genStoreOwner($delivery, $address = null): Store
+    {
+        $owner = new Store();
+        $owner->setName("Test Store");
+        $owner->setAddress($address ?: $delivery->reveal()->getPickup()->getAddress());
+        $delivery->getOwner()->willReturn($owner);
+        return $owner;
+    }
+
+    // private function genCustomerUser($address): User
+    // {
+    //     $user = new User();
+    //     $user->setCustomer(new Customer());
+    //     $user->setUsername('bob');
+    //     $user->addAddress($address);
+    //     $this->userManager->findUserByUsername('bob')
+    //         ->willReturn($user);
+    //     return $user;
+    // }
 }
