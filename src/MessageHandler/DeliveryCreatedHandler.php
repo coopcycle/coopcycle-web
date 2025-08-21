@@ -104,8 +104,7 @@ class DeliveryCreatedHandler
         );
     }
 
-    // It's public just to be testeable
-    public function parseTitleAndBodyForPushNotification(Delivery $delivery): array
+    private function parseTitleAndBodyForPushNotification(Delivery $delivery): array
     {
         $tasks = $delivery->getTasks();
         $pickup = $delivery->getPickup();
