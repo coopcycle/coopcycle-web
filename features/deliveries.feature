@@ -1687,7 +1687,7 @@ Feature: Deliveries
         "order": {
           "manualSupplements": [
             {
-              "pricingRule": "/api/pricing_rules/4",
+              "pricingRule": "/api/pricing_rules/5",
               "quantity": 1
             }
           ]
@@ -1705,7 +1705,7 @@ Feature: Deliveries
         "hydra:description":@string@,
         "violations":[
           {
-            "propertyPath":"order.manualSupplements[0][@id]",
+            "propertyPath":"order.manualSupplements[0][pricingRule]",
             "message":@string@,
             "code":null
           }
