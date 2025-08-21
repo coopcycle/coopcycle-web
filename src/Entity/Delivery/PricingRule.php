@@ -202,4 +202,9 @@ class PricingRule
 
         return $result;
     }
+
+    public function isManualSupplement()
+    {
+        return $this->getExpression() === 'false';
+    }
 }

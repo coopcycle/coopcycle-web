@@ -131,7 +131,7 @@ class DeliveryMapper
                 // Find the PricingRule linked to this ProductOptionValue
                 $pricingRule = $this->findPricingRuleByProductOptionValue($productOptionValue);
 
-                if (null !== $pricingRule && $this->isManualSupplement($pricingRule)) {
+                if (null !== $pricingRule && $pricingRule->isManualSupplement()) {
                     // Create ManualSupplementDto
                     $manualSupplementDto = new ManualSupplementDto();
                     $manualSupplementDto->pricingRule = $pricingRule;
@@ -152,14 +152,5 @@ class DeliveryMapper
         $repository = $this->entityManager->getRepository(PricingRule::class);
 
         return $repository->findOneBy(['productOptionValue' => $productOptionValue]);
-    }
-
-    /**
-     * Check if a PricingRule is a manual supplement
-     * Manual supplements have expression === 'false'
-     */
-    private function isManualSupplement(PricingRule $pricingRule): bool
-    {
-        return $pricingRule->getExpression() === 'false';
     }
 }

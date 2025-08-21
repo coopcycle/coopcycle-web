@@ -1742,7 +1742,7 @@ Feature: Deliveries
         "order": {
           "manualSupplements": [
             {
-              "pricingRule": "/api/pricing_rules/2",
+              "pricingRule": "/api/pricing_rules/3",
               "quantity": 1
             }
           ]

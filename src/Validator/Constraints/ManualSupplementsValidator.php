@@ -71,6 +71,14 @@ class ManualSupplementsValidator extends ConstraintValidator
                     ->atPath("manualSupplements[{$index}][pricingRule]")
                     ->addViolation();
             }
+
+            // Check if the supplement PricingRule is a manual supplement
+            if (!$supplement->pricingRule->isManualSupplement()) {
+                $this->context
+                    ->buildViolation($constraint->invalidSupplementMessage)
+                    ->atPath("manualSupplements[{$index}][pricingRule]")
+                    ->addViolation();
+            }
         }
     }
 }
