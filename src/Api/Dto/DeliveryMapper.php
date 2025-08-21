@@ -3,10 +3,14 @@
 namespace AppBundle\Api\Dto;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
+use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Entity\Task;
 use AppBundle\Service\TagManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Order\OrderItemInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
@@ -17,7 +21,8 @@ class DeliveryMapper
         private readonly TaskMapper $taskMapper,
         private readonly TagManager $tagManager,
         private readonly NormalizerInterface $normalizer,
-        private readonly ObjectNormalizer $symfonyNormalizer
+        private readonly ObjectNormalizer $symfonyNormalizer,
+        private readonly EntityManagerInterface $entityManager
     ) {
     }
 
@@ -84,6 +89,10 @@ class DeliveryMapper
             if (!is_null($order->getId())) {
                 $deliveryOrderData->id = $order->getId();
             }
+
+            $deliveryOrderData->manualSupplements = $this->extractManualSupplementsFromOrder(
+                $order
+            );
         }
 
         $deliveryOrderData->arbitraryPrice = $arbitraryPrice ? new ArbitraryPriceDto(
@@ -98,5 +107,59 @@ class DeliveryMapper
         }
 
         return $deliveryData;
+    }
+
+    /**
+     * @param OrderInterface $order
+     * @return ManualSupplementDto[]
+     */
+    private function extractManualSupplementsFromOrder(OrderInterface $order): array
+    {
+        $manualSupplements = [];
+
+        foreach ($order->getItems() as $orderItem) {
+            /** @var OrderItemInterface $orderItem */
+            $variant = $orderItem->getVariant();
+
+            if (null === $variant) {
+                continue;
+            }
+
+            foreach ($variant->getOptionValues() as $productOptionValue) {
+                /** @var ProductOptionValue $productOptionValue */
+
+                // Find the PricingRule linked to this ProductOptionValue
+                $pricingRule = $this->findPricingRuleByProductOptionValue($productOptionValue);
+
+                if (null !== $pricingRule && $this->isManualSupplement($pricingRule)) {
+                    // Create ManualSupplementDto
+                    $manualSupplementDto = new ManualSupplementDto();
+                    $manualSupplementDto->pricingRule = $pricingRule;
+                    //FIXME: update when we properly model unit price and quantity in https://github.com/coopcycle/coopcycle/issues/441
+//                    $manualSupplementDto->quantity = $variant->getQuantityForOptionValue($productOptionValue);
+                    $manualSupplementDto->quantity = 1;
+
+                    $manualSupplements[] = $manualSupplementDto;
+                }
+            }
+        }
+
+        return $manualSupplements;
+    }
+
+    private function findPricingRuleByProductOptionValue(ProductOptionValue $productOptionValue
+    ): ?PricingRule {
+        $repository = $this->entityManager->getRepository(PricingRule::class);
+
+        return $repository->findOneBy(['productOptionValue' => $productOptionValue]);
+    }
+
+    /**
+     * Check if a PricingRule is a manual supplement
+     * Manual supplements have expression === 'false'
+     */
+    private function isManualSupplement(PricingRule $pricingRule): bool
+    {
+        return $pricingRule->getExpression() === 'false';
     }
 }

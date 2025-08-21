@@ -453,7 +453,7 @@ export type SuggestOptimizationsRequest = {
 };
 
 export type ManualSupplementValues = {
-  '@id': Uri;
+  pricingRule: Uri;
   quantity: number;
 };
 

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Collapse, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import FlagsContext from '../../FlagsContext';

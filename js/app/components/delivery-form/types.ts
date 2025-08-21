@@ -1,4 +1,4 @@
-import { TaskPayload, ManualSupplementValues } from '../../api/types';
+import { ManualSupplementValues, TaskPayload } from '../../api/types';
 
 export type OrderFormValues = {
   manualSupplements: ManualSupplementValues[];
