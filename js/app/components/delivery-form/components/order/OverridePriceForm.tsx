@@ -7,10 +7,11 @@ import Spinner from '../../../core/Spinner';
 import { DeliveryFormValues, PriceValues } from '../../types';
 
 import './ShowPrice.scss';
+import { TaxRate } from '../../../../api/types';
 
 type Props = {
   setPrice: (price: PriceValues) => void;
-  taxRate;
+  taxRate?: TaxRate;
 };
 
 const OverridePriceForm = ({ setPrice, taxRate }: Props) => {

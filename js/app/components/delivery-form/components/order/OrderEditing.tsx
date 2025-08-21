@@ -98,7 +98,7 @@ export const OrderEditing = ({
         </div>
       ) : null}
       <div className="mt-2">
-        {/* Show both an old and a new price when a new price is selected */}
+        {/* Show both an old and a new total price when a new price is selected */}
         {newOrder && selectedPriceOption === 'new' ? (
           <>
             <TotalPrice

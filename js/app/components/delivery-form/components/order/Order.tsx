@@ -80,14 +80,7 @@ const Order = ({
     }
 
     if (calculatePriceData) {
-      const order = calculatePriceData.order;
-
-      if (mode === Mode.DELIVERY_UPDATE) {
-        // Allow setting newOrder in update mode for price comparison
-        // The radio button will control which order is displayed
-      }
-
-      setNewOrder(order);
+      setNewOrder(calculatePriceData.order);
     }
   }, [
     mode,
