@@ -114,7 +114,7 @@ class DeliveryCreatedHandlerTest extends TestCase
             'date_local' => '01/02/2025'
         ];
 
-        $this->genPushNotification($title, $body, $data);
+        $this->genPushNotificationAssertEqual($title, $body, $data);
 
         $message = $this->genDeliveryCreatedMessage($delivery);
         call_user_func_array($this->handler, [ $message ]);
@@ -169,7 +169,7 @@ DO: 222 Nice Dropoff St, Someplace, Argentina";
             'date_local' => '01/02/2025'
         ];
 
-        $this->genPushNotification($title, $body, $data);
+        $this->genPushNotificationAssertEqual($title, $body, $data);
 
         $message = $this->genDeliveryCreatedMessage($delivery);
         call_user_func_array($this->handler, [ $message ]);
@@ -229,7 +229,7 @@ PU 03:04-04:05: 222 Nice Pickup St, Somewhere, Argentina";
             'date_local' => '01/02/2025'
         ];
 
-        $this->genPushNotification($title, $body, $data);
+        $this->genPushNotificationAssertEqual($title, $body, $data);
 
         $message = $this->genDeliveryCreatedMessage($delivery);
         call_user_func_array($this->handler, [ $message ]);
@@ -294,7 +294,7 @@ DO 05:06-06:07: 333 Nice Dropoff St, Someplace, Argentina";
             'date_local' => '01/02/2025'
         ];
 
-        $this->genPushNotification($title, $body, $data);
+        $this->genPushNotificationAssertEqual($title, $body, $data);
 
         $message = $this->genDeliveryCreatedMessage($delivery);
         call_user_func_array($this->handler, [ $message ]);
@@ -357,7 +357,7 @@ DO 05:06-06:07: 333 Nice Dropoff St, Someplace, Argentina";
             'date_local' => '01/02/2025'
         ];
 
-        $this->genPushNotification($title, $body, $data);
+        $this->genPushNotificationAssertEqual($title, $body, $data);
 
         $message = $this->genDeliveryCreatedMessage($delivery);
         call_user_func_array($this->handler, [ $message ]);
@@ -429,13 +429,13 @@ DO 07:08-08:09: 444 Nice Dropoff St, Someplace, Argentina";
             'date_local' => '01/02/2025'
         ];
 
-        $this->genPushNotification($title, $body, $data);
+        $this->genPushNotificationAssertEqual($title, $body, $data);
 
         $message = $this->genDeliveryCreatedMessage($delivery);
         call_user_func_array($this->handler, [ $message ]);
     }
 
-    private function genPushNotification($title, $body, $data): PushNotification
+    private function genPushNotificationAssertEqual($title, $body, $data): PushNotification
     {
         $pushNotification = new PushNotification($title, $body, [], $data);
 
