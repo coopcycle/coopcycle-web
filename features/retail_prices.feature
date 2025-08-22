@@ -43,12 +43,20 @@ Feature: Retail prices
           "included": true
         },
         "order": {
+          "@id": @string@,
+          "@type":"http://schema.org/Order",
           "items": [
             {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
               "variant": {
+                "@type": "ProductVariant",
                 "code": @string@,
-                "name": "Supplément de commande",
-                "@*@":"@*@"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -66,12 +74,13 @@ Feature: Retail prices
                     "amount": 83
                   }
                 ]
-              },
-              "@*@":"@*@"
+              }
             }
           ],
           "total": 499,
-          "@*@":"@*@"
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -120,12 +129,20 @@ Feature: Retail prices
           "included": true
         },
         "order": {
+          "@id": @string@,
+          "@type":"http://schema.org/Order",
           "items": [
             {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
               "variant": {
+                "@type": "ProductVariant",
                 "code": @string@,
-                "name": "Supplément de commande",
-                "@*@":"@*@"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -143,12 +160,13 @@ Feature: Retail prices
                     "amount": 83
                   }
                 ]
-              },
-              "@*@":"@*@"
+              }
             }
           ],
           "total": 499,
-          "@*@":"@*@"
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -197,12 +215,20 @@ Feature: Retail prices
           "included": false
         },
         "order": {
+          "@id": @string@,
+          "@type":"http://schema.org/Order",
           "items": [
             {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
               "variant": {
+                "@type": "ProductVariant",
                 "code": @string@,
-                "name": "Supplément de commande",
-                "@*@":"@*@"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -220,12 +246,13 @@ Feature: Retail prices
                     "amount": 83
                   }
                 ]
-              },
-              "@*@":"@*@"
+              }
             }
           ],
           "total": 499,
-          "@*@":"@*@"
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -277,12 +304,20 @@ Feature: Retail prices
           "included": true
         },
         "order": {
+          "@id": @string@,
+          "@type":"http://schema.org/Order",
           "items": [
             {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
               "variant": {
+                "@type": "ProductVariant",
                 "code": @string@,
-                "name": "Supplément de commande",
-                "@*@":"@*@"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -300,12 +335,13 @@ Feature: Retail prices
                     "amount": 217
                   }
                 ]
-              },
-              "@*@":"@*@"
+              }
             }
           ],
           "total": 1299,
-          "@*@":"@*@"
+          "taxTotal": 217,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -357,12 +393,20 @@ Feature: Retail prices
           "included": true
         },
         "order": {
+          "@id": @string@,
+          "@type":"http://schema.org/Order",
           "items": [
             {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
               "variant": {
+                "@type": "ProductVariant",
                 "code": @string@,
-                "name": "Supplément de commande",
-                "@*@":"@*@"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -380,12 +424,13 @@ Feature: Retail prices
                     "amount": 217
                   }
                 ]
-              },
-              "@*@":"@*@"
+              }
             }
           ],
           "total": 1299,
-          "@*@":"@*@"
+          "taxTotal": 217,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -437,12 +482,20 @@ Feature: Retail prices
           "included": true
         },
         "order": {
+          "@id": @string@,
+          "@type":"http://schema.org/Order",
           "items": [
             {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
               "variant": {
+                "@type": "ProductVariant",
                 "code": @string@,
-                "name": "Supplément de commande",
-                "@*@":"@*@"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -460,12 +513,13 @@ Feature: Retail prices
                     "amount": 217
                   }
                 ]
-              },
-              "@*@":"@*@"
+              }
             }
           ],
           "total": 1299,
-          "@*@":"@*@"
+          "taxTotal": 217,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -515,12 +569,20 @@ Feature: Retail prices
           "included": true
         },
         "order": {
+          "@id": @string@,
+          "@type":"http://schema.org/Order",
           "items": [
             {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
               "variant": {
+                "@type": "ProductVariant",
                 "code": @string@,
-                "name": "Supplément de commande",
-                "@*@":"@*@"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -538,12 +600,13 @@ Feature: Retail prices
                     "amount": 83
                   }
                 ]
-              },
-              "@*@":"@*@"
+              }
             }
           ],
           "total": 499,
-          "@*@":"@*@"
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -602,12 +665,20 @@ Feature: Retail prices
           "included": true
         },
         "order": {
+          "@id": @string@,
+          "@type":"http://schema.org/Order",
           "items": [
             {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
               "variant": {
+                "@type": "ProductVariant",
                 "code": @string@,
-                "name": "Supplément de commande",
-                "@*@":"@*@"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -625,12 +696,13 @@ Feature: Retail prices
                     "amount": 83
                   }
                 ]
-              },
-              "@*@":"@*@"
+              }
             }
           ],
           "total": 499,
-          "@*@":"@*@"
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -689,12 +761,20 @@ Feature: Retail prices
           "included": true
         },
         "order": {
+          "@id": @string@,
+          "@type":"http://schema.org/Order",
           "items": [
             {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
               "variant": {
+                "@type": "ProductVariant",
                 "code": @string@,
-                "name": "Supplément de commande",
-                "@*@":"@*@"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -712,12 +792,13 @@ Feature: Retail prices
                     "amount": 83
                   }
                 ]
-              },
-              "@*@":"@*@"
+              }
             }
           ],
           "total": 499,
-          "@*@":"@*@"
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -769,12 +850,20 @@ Feature: Retail prices
           "included": true
         },
         "order": {
+          "@id": @string@,
+          "@type":"http://schema.org/Order",
           "items": [
             {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
               "variant": {
+                "@type": "ProductVariant",
                 "code": @string@,
-                "name": "Supplément de commande",
-                "@*@":"@*@"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -792,12 +881,13 @@ Feature: Retail prices
                     "amount": 83
                   }
                 ]
-              },
-              "@*@":"@*@"
+              }
             }
           ],
           "total": 499,
-          "@*@":"@*@"
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -849,12 +939,20 @@ Feature: Retail prices
           "included": true
         },
         "order": {
+          "@id": @string@,
+          "@type":"http://schema.org/Order",
           "items": [
             {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Point de retrait #1",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
               "variant": {
+                "@type": "ProductVariant",
                 "code": @string@,
-                "name": "Point de retrait #1",
-                "@*@":"@*@"
+                "name": "Point de retrait #1"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -872,14 +970,19 @@ Feature: Retail prices
                     "amount": 83
                   }
                 ]
-              },
-              "@*@":"@*@"
+              }
             },
             {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Point de dépôt #1",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
               "variant": {
+                "@type": "ProductVariant",
                 "code": @string@,
-                "name": "Point de dépôt #1",
-                "@*@":"@*@"
+                "name": "Point de dépôt #1"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -897,12 +1000,13 @@ Feature: Retail prices
                     "amount": 33
                   }
                 ]
-              },
-              "@*@":"@*@"
+              }
             }
           ],
           "total": 699,
-          "@*@":"@*@"
+          "taxTotal": 116,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -954,12 +1058,20 @@ Feature: Retail prices
           "included": true
         },
         "order": {
+          "@id": @string@,
+          "@type":"http://schema.org/Order",
           "items": [
             {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Point de dépôt #1",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
               "variant": {
+                "@type": "ProductVariant",
                 "code": @string@,
-                "name": "Point de dépôt #1",
-                "@*@":"@*@"
+                "name": "Point de dépôt #1"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -977,12 +1089,13 @@ Feature: Retail prices
                     "amount": 33
                   }
                 ]
-              },
-              "@*@":"@*@"
+              }
             }
           ],
           "total": 200,
-          "@*@":"@*@"
+          "taxTotal": 33,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -1115,12 +1228,20 @@ Feature: Retail prices
           "included": true
         },
         "order": {
+          "@id": @string@,
+          "@type":"http://schema.org/Order",
           "items": [
             {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": null,
               "variant": {
+                "@type": "ProductVariant",
                 "code": @string@,
-                "name": "Supplément de commande",
-                "@*@":"@*@"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -1138,12 +1259,13 @@ Feature: Retail prices
                     "amount": 83
                   }
                 ]
-              },
-              "@*@":"@*@"
+              }
             }
           ],
           "total": 499,
-          "@*@":"@*@"
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -1191,12 +1313,20 @@ Feature: Retail prices
           "included": true
         },
         "order": {
+          "@id": @string@,
+          "@type":"http://schema.org/Order",
           "items": [
             {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": null,
               "variant": {
+                "@type": "ProductVariant",
                 "code": @string@,
-                "name": "Supplément de commande",
-                "@*@":"@*@"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -1214,12 +1344,13 @@ Feature: Retail prices
                     "amount": 83
                   }
                 ]
-              },
-              "@*@":"@*@"
+              }
             }
           ],
           "total": 499,
-          "@*@":"@*@"
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -1275,12 +1406,20 @@ Feature: Retail prices
           "included": true
         },
         "order": {
+          "@id": @string@,
+          "@type":"http://schema.org/Order",
           "items": [
             {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": null,
               "variant": {
+                "@type": "ProductVariant",
                 "code": @string@,
-                "name": "Supplément de commande",
-                "@*@":"@*@"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -1298,12 +1437,13 @@ Feature: Retail prices
                     "amount": 83
                   }
                 ]
-              },
-              "@*@":"@*@"
+              }
             }
           ],
           "total": 499,
-          "@*@":"@*@"
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -1344,12 +1484,20 @@ Feature: Retail prices
           "included": true
         },
         "order": {
+          "@id": @string@,
+          "@type":"http://schema.org/Order",
           "items": [
             {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": null,
               "variant": {
+                "@type": "ProductVariant",
                 "code": @string@,
-                "name": "Supplément de commande",
-                "@*@":"@*@"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -1367,12 +1515,13 @@ Feature: Retail prices
                     "amount": 83
                   }
                 ]
-              },
-              "@*@":"@*@"
+              }
             }
           ],
           "total": 499,
-          "@*@":"@*@"
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -1444,12 +1593,20 @@ Feature: Retail prices
           "included": true
         },
         "order": {
+          "@id": @string@,
+          "@type":"http://schema.org/Order",
           "items": [
             {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
               "variant": {
+                "@type": "ProductVariant",
                 "code": @string@,
-                "name": "Supplément de commande",
-                "@*@":"@*@"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -1467,12 +1624,13 @@ Feature: Retail prices
                     "amount": 83
                   }
                 ]
-              },
-              "@*@":"@*@"
+              }
             }
           ],
           "total": 499,
-          "@*@":"@*@"
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -1523,12 +1681,20 @@ Feature: Retail prices
           "included": true
         },
         "order": {
+          "@id": @string@,
+          "@type":"http://schema.org/Order",
           "items": [
             {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
               "variant": {
+                "@type": "ProductVariant",
                 "code": @string@,
-                "name": "Supplément de commande",
-                "@*@":"@*@"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -1546,12 +1712,13 @@ Feature: Retail prices
                     "amount": 0
                   }
                 ]
-              },
-              "@*@":"@*@"
+              }
             }
           ],
           "total": 699,
-          "@*@":"@*@"
+          "taxTotal": 0,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
         },
         "calculation": {"@*@":"@*@"}
       }
@@ -1641,10 +1808,10 @@ Feature: Retail prices
         "@context":"/api/contexts/ConstraintViolationList",
         "@type":"ConstraintViolationList",
         "hydra:title":"An error occurred",
-        "hydra:description":"order.manualSupplements[0][@id]: Supplément manuel invalide",
+        "hydra:description":"order.manualSupplements[0][pricingRule]: Supplément manuel invalide",
         "violations":[
           {
-            "propertyPath":"order.manualSupplements[0][@id]",
+            "propertyPath":"order.manualSupplements[0][pricingRule]",
             "message":"Supplément manuel invalide",
             "code":null
           }
@@ -1681,7 +1848,7 @@ Feature: Retail prices
         "order": {
           "manualSupplements": [
             {
-              "@id": "/api/pricing_rules/4",
+              "pricingRule": "/api/pricing_rules/5",
               "quantity": 1
             }
           ]
@@ -1699,7 +1866,7 @@ Feature: Retail prices
         "hydra:description":@string@,
         "violations":[
           {
-            "propertyPath":"order.manualSupplements[0][@id]",
+            "propertyPath":"order.manualSupplements[0][pricingRule]",
             "message":@string@,
             "code":null
           }
@@ -1736,7 +1903,7 @@ Feature: Retail prices
         "order": {
           "manualSupplements": [
             {
-              "@id": "/api/pricing_rules/2",
+              "pricingRule": "/api/pricing_rules/3",
               "quantity": 1
             }
           ]
@@ -1758,12 +1925,20 @@ Feature: Retail prices
           "included": true
         },
         "order": {
+          "@id": @string@,
+          "@type":"http://schema.org/Order",
           "items": [
             {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
               "variant": {
+                "@type": "ProductVariant",
                 "code": @string@,
-                "name": "Supplément de commande",
-                "@*@":"@*@"
+                "name": "Supplément de commande"
               },
               "quantity": 1,
               "unitPrice": 0,
@@ -1785,12 +1960,13 @@ Feature: Retail prices
                     "amount": 117
                   }
                 ]
-              },
-              "@*@":"@*@"
+              }
             }
           ],
           "total": 699,
-          "@*@":"@*@"
+          "taxTotal": 117,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
         },
         "calculation": {"@*@":"@*@"}
       }

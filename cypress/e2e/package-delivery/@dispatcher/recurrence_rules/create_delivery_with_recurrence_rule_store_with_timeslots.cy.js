@@ -42,6 +42,10 @@ describe('Delivery with recurrence rule (role: dispatcher)', () => {
         .find('[data-testid="value"]')
         .contains('€4.99')
 
+      // Wait for React components to load
+      cy.get('[data-testid="delivery-itinerary"]', {
+        timeout: 10000,
+      }).should('be.visible')
       cy.get('[data-testid=delivery-itinerary]')
         .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
         .should('exist')

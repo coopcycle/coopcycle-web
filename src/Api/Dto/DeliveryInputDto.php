@@ -6,7 +6,10 @@ use AppBundle\Entity\Store;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
-final class DeliveryDto
+/**
+ * 'delivery' group is used when serialising a pre-filled formData in twig templates
+ */
+final class DeliveryInputDto
 {
 
     #[Groups(['delivery'])]
@@ -49,9 +52,6 @@ final class DeliveryDto
     // used only in a POST request
     #[Groups(['delivery_create'])]
     public string|null $rrule = null;
-
-    #[Groups(['delivery'])]
-    public string|null $trackingUrl = null;
 
     #[Groups(['delivery', 'delivery_create', 'pricing_deliveries'])]
     #[Assert\Valid]

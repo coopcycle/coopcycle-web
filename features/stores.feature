@@ -411,7 +411,8 @@ Feature: Stores
               "barcode":{"@*@":"@*@"}
             },
             "tasks":@array@,
-            "trackingUrl": @string@
+            "trackingUrl": @string@,
+            "order": null
           },
           {
             "@id":"/api/deliveries/1",
@@ -457,7 +458,8 @@ Feature: Stores
               "barcode":{"@*@":"@*@"}
             },
             "tasks":@array@,
-            "trackingUrl": @string@
+            "trackingUrl": @string@,
+            "order": null
           }
         ],
         "hydra:totalItems":2,
@@ -530,7 +532,8 @@ Feature: Stores
               "barcode":{"@*@":"@*@"}
             },
             "tasks":@array@,
-            "trackingUrl": @string@
+            "trackingUrl": @string@,
+            "order": null
           },
           {
             "@id":"/api/deliveries/2",
@@ -575,7 +578,8 @@ Feature: Stores
               "barcode":{"@*@":"@*@"}
             },
             "tasks":@array@,
-            "trackingUrl": @string@
+            "trackingUrl": @string@,
+            "order": null
           }
         ],
         "hydra:totalItems":2,
@@ -644,7 +648,8 @@ Feature: Stores
               "barcode":{"@*@":"@*@"}
             },
             "tasks":@array@,
-            "trackingUrl": @string@
+            "trackingUrl": @string@,
+            "order": null
           },
           {
             "@id":"/api/deliveries/1",
@@ -689,7 +694,8 @@ Feature: Stores
               "barcode":{"@*@":"@*@"}
             },
             "tasks":@array@,
-            "trackingUrl": @string@
+            "trackingUrl": @string@,
+            "order": null
           }
         ],
         "hydra:totalItems":2,

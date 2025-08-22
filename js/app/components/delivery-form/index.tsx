@@ -23,6 +23,8 @@ type Props = {
   deliveryId?: number;
   deliveryNodeId?: Uri;
   delivery?: string;
+  order?: string;
+  formData?: string;
   isDispatcher: boolean;
   isDebugPricing: boolean;
   isPriceBreakdownEnabled: boolean;
@@ -33,6 +35,8 @@ const Form = ({
   deliveryId,
   deliveryNodeId,
   delivery,
+  order,
+  formData,
   isDispatcher,
   isDebugPricing,
   isPriceBreakdownEnabled,
@@ -54,7 +58,9 @@ const Form = ({
         storeNodeId={storeNodeId}
         deliveryId={deliveryId}
         deliveryNodeId={deliveryNodeId}
-        preLoadedDeliveryData={delivery ? JSON.parse(delivery) : null}
+        delivery={delivery ? JSON.parse(delivery) : null}
+        order={order ? JSON.parse(order) : null}
+        preLoadedFormData={formData ? JSON.parse(formData) : null}
       />
     </FlagsContext.Provider>
   );

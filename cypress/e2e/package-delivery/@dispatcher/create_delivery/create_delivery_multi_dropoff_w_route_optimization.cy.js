@@ -100,6 +100,6 @@ context('Delivery (role: dispatcher)', () => {
       address: /26,? Av. Mathurin Moreau,? 75019,? Paris,? France/,
     })
 
-    cy.get('[data-testid="tax-included-previous"]').contains('4,99 €')
+    cy.get('[data-testid="tax-included"]').contains('4,99 €')
   })
 })

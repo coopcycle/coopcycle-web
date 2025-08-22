@@ -391,7 +391,7 @@ class AdminController extends AbstractController
 
         $price = $order->getDeliveryPrice();
 
-        $deliveryData = null !== $delivery ? $deliveryMapper->map(
+        $formData = null !== $delivery ? $deliveryMapper->map(
             $delivery,
             $order,
             $price instanceof ArbitraryPrice ? $price : null,
@@ -406,7 +406,7 @@ class AdminController extends AbstractController
             'layout' => 'admin.html.twig',
             'order' => $order,
             'delivery' => $delivery,
-            'deliveryData' => $deliveryData,
+            'formData' => $formData,
             'form' => $form->createView(),
             'email_form' => $emailForm->createView(),
             'stores' => $stores,
@@ -433,7 +433,7 @@ class AdminController extends AbstractController
         $ordersNormalized = $normalizer->normalize($orders, 'jsonld', [
             'resource_class' => Order::class,
             'operation' => new GetCollection(),
-            'groups' => ['order_minimal']
+            'groups' => ['foodtech_order_minimal']
         ]);
 
         $preparationDelay = $redis->get('foodtech:dispatch_delay_for_pickup');

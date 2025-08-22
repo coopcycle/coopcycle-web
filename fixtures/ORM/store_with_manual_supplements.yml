@@ -12,7 +12,8 @@ AppBundle\Entity\Address:
 AppBundle\Entity\Delivery\PricingRuleSet:
   pricing_rule_set_with_supplements:
     name: 'With Manual Supplements'
-    rules: ['@pricing_rule_base', '@manual_supplement_1', '@manual_supplement_2']
+    strategy: 'map'
+    rules: ['@pricing_rule_base', '@pricing_rule_weight', '@manual_supplement_1', '@manual_supplement_2']
   pricing_rule_set_2:
     name: 'Pricing Rule Set 2'
     rules: ['@manual_supplement_3']
@@ -23,16 +24,21 @@ AppBundle\Entity\Delivery\PricingRule:
     price: 499
     position: 1
     ruleSet: '@pricing_rule_set_with_supplements'
+  pricing_rule_weight:
+    expression: 'weight > 25000'
+    price: 200
+    position: 2
+    ruleSet: '@pricing_rule_set_with_supplements'
   manual_supplement_1:
     expression: 'false'
     price: 200
-    position: 2
+    position: 3
     ruleSet: '@pricing_rule_set_with_supplements'
     productOptionValue: '@manual_supplement_option_value_1'
   manual_supplement_2:
     expression: 'false'
     price: 300
-    position: 3
+    position: 4
     ruleSet: '@pricing_rule_set_with_supplements'
     productOptionValue: '@manual_supplement_option_value_2'
   #  manual supplement not belonging to a pricing rule for this store

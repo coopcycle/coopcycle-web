@@ -22,6 +22,12 @@ export interface HydraCollection<T> {
   };
 }
 
+export interface HydraError {
+  '@type': string;
+  'hydra:title': string;
+  'hydra:description': string;
+}
+
 export type GeoCoordinates = {
   latitude: number;
   longitude: number;
@@ -211,6 +217,10 @@ export type OrderTimeline = {
   shippingTime?: string;
 };
 
+type PackageDeliveryOrderMinimal = JsonLdEntity & {
+  number: string;
+};
+
 export type Order = JsonLdEntity & {
   id: number;
   number: string;
@@ -315,10 +325,8 @@ export type Delivery = JsonLdEntity & {
   pickup?: Task;
   dropoff?: Task;
   tasks: Task[];
-  createdAt: string;
-  updatedAt?: string;
-  store?: Store;
-  order?: Order;
+  order?: PackageDeliveryOrderMinimal;
+  trackingUrl?: string;
 };
 
 // Delivery Template for RecurrenceRule
@@ -393,21 +401,28 @@ export type OptimizationSuggestions = {
 
 export type CalculationItemDetail = {
   rule: PricingRule;
-  price: number;
   matched: boolean;
 };
 
 export type CalculationItem = {
-  ruleSet: PricingRuleSet;
-  strategy: string;
-  items: CalculationItemDetail[];
+  target: PricingRuleTarget;
+  rules: CalculationItemDetail[];
 };
 
 export type CalculationOutput = {
-  ruleSet: PricingRuleSet;
+  ruleSet: Uri;
   strategy: string;
   items: CalculationItem[];
+};
+
+export type RetailPrice = {
+  amount: number;
+  tax: {
+    amount: number;
+    included: boolean;
+  };
   order: Order;
+  calculation: CalculationOutput;
 };
 
 export type UpdateOrderRequest = {
@@ -437,11 +452,19 @@ export type SuggestOptimizationsRequest = {
   vehicle?: string;
 };
 
+export type ManualSupplementValues = {
+  pricingRule: Uri;
+  quantity: number;
+};
+
 export type OrderPayload = {
-  arbitraryPrice: {
+  manualSupplements: ManualSupplementValues[];
+  arbitraryPrice?: {
     variantName: string;
     variantPrice: number;
   };
+  recalculatePrice?: boolean;
+  isSavedOrder?: boolean;
 };
 
 export type AddressPayload = {

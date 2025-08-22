@@ -1,13 +1,9 @@
-import type { Uri, TaskPayload } from '../../api/types';
-
-export type ManualSupplementValues = {
-  '@id': Uri;
-  quantity: number;
-};
+import { ManualSupplementValues, TaskPayload } from '../../api/types';
 
 export type OrderFormValues = {
-  isSavedOrder?: boolean;
   manualSupplements: ManualSupplementValues[];
+  recalculatePrice?: boolean;
+  isSavedOrder?: boolean;
 };
 
 export type DeliveryFormValues = {
@@ -25,6 +21,6 @@ export type FlagsContextType = {
 };
 
 export type PriceValues = {
-  VAT: number | null;
-  exVAT: number | null;
+  VAT: number;
+  exVAT: number;
 };

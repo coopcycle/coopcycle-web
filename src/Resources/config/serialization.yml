@@ -18,11 +18,11 @@ AppBundle\Entity\User:
 AppBundle\Entity\Sylius\Customer:
   attributes:
     username:
-      groups: ['customer', 'order', 'order_minimal']
+      groups: ['customer', 'order', 'foodtech_order_minimal']
     email:
-      groups: ['customer', 'order', 'order_minimal']
+      groups: ['customer', 'order', 'foodtech_order_minimal']
     fullName:
-      groups: ['customer', 'order', 'order_minimal']
+      groups: ['customer', 'order', 'foodtech_order_minimal']
     telephone:
       groups: ['customer', 'order', 'customer_update']
     phoneNumber:
@@ -53,31 +53,31 @@ Sylius\Component\Order\Model\Order:
     restaurant:
       groups: ['order', 'order_create', 'cart', 'order_update']
     vendor:
-      groups: ['order', 'order_minimal']
+      groups: ['order', 'foodtech_order_minimal']
     shippingAddress:
-      groups: ['order', 'order_create', 'cart', 'order_update', 'order_minimal']
+      groups: ['order', 'order_create', 'cart', 'order_update', 'foodtech_order_minimal']
     shippedAt:
       groups: ['order', 'order_create', 'cart', 'order_update']
     shippingTimeRange:
-      groups: ['order', 'order_create', 'cart', 'order_update', 'order_minimal']
+      groups: ['order', 'order_create', 'cart', 'order_update', 'foodtech_order_minimal']
     customer:
-      groups: ['order', 'cart', 'order_minimal']
+      groups: ['order', 'cart', 'foodtech_order_minimal']
     items:
       groups: ['order', 'order_create', 'cart', 'pricing_deliveries']
     total:
-      groups: ['order', 'cart', 'pricing_deliveries', 'order_minimal']
+      groups: ['order', 'cart', 'pricing_deliveries', 'foodtech_order_minimal', 'package_delivery_order_minimal']
     number:
-      groups: ['order', 'order_minimal']
+      groups: ['order', 'foodtech_order_minimal', 'package_delivery_order_minimal']
     itemsTotal:
       groups: ['order', 'cart']
     taxTotal:
-      groups: ['order']
+      groups: ['order', 'pricing_deliveries', 'package_delivery_order_minimal']
     state:
-      groups: ['order', 'order_minimal']
+      groups: ['order', 'foodtech_order_minimal']
     events:
       groups: ['order']
     notes:
-      groups: ['order', 'cart', 'order_update', 'order_minimal']
+      groups: ['order', 'cart', 'order_update', 'foodtech_order_minimal']
     createdAt:
       groups: ['order']
     timeline:
@@ -93,15 +93,15 @@ Sylius\Component\Order\Model\Order:
     reusablePackagingQuantity:
       groups: ['order', 'cart', 'order_update']
     takeaway:
-      groups: ['order', 'order_minimal']
+      groups: ['order', 'foodtech_order_minimal']
     fulfillmentMethod:
-      groups: ['cart', 'order_update', 'order_minimal']
+      groups: ['cart', 'order_update', 'foodtech_order_minimal']
     preparationTime:
       groups: ['order']
     shippingTime:
       groups: ['order']
     paymentMethod:
-      groups: ['order', 'order_update', 'order_minimal']
+      groups: ['order', 'order_update', 'foodtech_order_minimal']
     hasEdenredCredentials:
       groups: ['cart', 'order', 'order_update']
 
@@ -211,7 +211,7 @@ AppBundle\Entity\LocalBusiness\FulfillmentMethod:
 AppBundle\Entity\Hub:
   attributes:
     name:
-      groups: ['order', 'order_minimal']
+      groups: ['order', 'foodtech_order_minimal']
     address:
       groups: ['order']
 

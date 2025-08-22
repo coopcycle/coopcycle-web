@@ -4,7 +4,7 @@ namespace AppBundle\Api\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
-use AppBundle\Api\Dto\DeliveryDto;
+use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Pricing\ManualSupplement;
 use AppBundle\Pricing\ManualSupplements;
 
@@ -16,7 +16,7 @@ class ManualSupplementsProcessor implements ProcessorInterface
     }
 
     /**
-     * @param DeliveryDto $data
+     * @param DeliveryInputDto $data
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = []): ManualSupplements
     {

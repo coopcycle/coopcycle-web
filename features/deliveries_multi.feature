@@ -68,7 +68,6 @@ Feature: Multi-step deliveries
           "packages": [],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -101,12 +100,18 @@ Feature: Multi-step deliveries
           "packages": [],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -199,7 +204,6 @@ Feature: Multi-step deliveries
           ],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -241,12 +245,18 @@ Feature: Multi-step deliveries
           ],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -357,7 +367,6 @@ Feature: Multi-step deliveries
           "packages":[],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -399,12 +408,18 @@ Feature: Multi-step deliveries
           ],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -482,7 +497,6 @@ Feature: Multi-step deliveries
           "packages":[],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -524,12 +538,18 @@ Feature: Multi-step deliveries
           ],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -694,7 +714,14 @@ Feature: Multi-step deliveries
           }
         ],
         "trackingUrl":@string@,
-        "order":{"@*@":"@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
     Given I add "Content-Type" header equal to "application/ld+json"

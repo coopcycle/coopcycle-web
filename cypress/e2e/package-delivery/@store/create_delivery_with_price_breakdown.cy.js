@@ -69,12 +69,17 @@ context('Delivery (role: store)', () => {
 
     // Delivery page (view mode)
     cy.urlmatch(/\/dashboard\/deliveries\/[0-9]+$/)
+
+    // Wait for React components to load
+    cy.get('[data-testid="delivery-itinerary"]', {
+      timeout: 10000,
+    }).should('be.visible')
     cy.get('[data-testid=delivery-itinerary]')
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
       .should('exist')
     cy.get('[data-testid=delivery-itinerary]')
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
       .should('exist')
-    cy.get('[data-testid=tax-included-previous]').contains(/4.99/)
+    cy.get('[data-testid=tax-included]').contains(/4.99/)
   })
 })

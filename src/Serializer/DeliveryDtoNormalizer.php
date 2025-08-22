@@ -2,7 +2,7 @@
 
 namespace AppBundle\Serializer;
 
-use AppBundle\Api\Dto\DeliveryDto;
+use AppBundle\Api\Dto\DeliveryInputDto;
 use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerAwareTrait;
@@ -14,7 +14,7 @@ class DeliveryDtoNormalizer implements ContextAwareNormalizerInterface, Normaliz
     private const ALREADY_CALLED = 'DeliveryDtoNormalizer_ALREADY_CALLED';
 
     /**
-     * @param DeliveryDto $object
+     * @param DeliveryInputDto $object
      */
     public function normalize($object, $format = null, array $context = array())
     {
@@ -41,6 +41,6 @@ class DeliveryDtoNormalizer implements ContextAwareNormalizerInterface, Normaliz
             return false;
         }
 
-        return $data instanceof DeliveryDto;
+        return $data instanceof DeliveryInputDto;
     }
 }

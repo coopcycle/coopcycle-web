@@ -17,7 +17,11 @@ import { Mode, modeIn } from '../mode';
 import { selectMode } from '../redux/formSlice';
 import { useDatadog } from '../../../hooks/useDatadog';
 import type { DeliveryFormValues } from '../types';
-import { AddressPayload, PostDeliveryRequest } from '../../../api/types';
+import {
+  AddressPayload,
+  Delivery,
+  PostDeliveryRequest,
+} from '../../../api/types';
 
 // check if a task ID is temporary (not from backend)
 const isTemporaryId = (taskId: string | null): boolean => {
@@ -278,8 +282,10 @@ export default function useSubmit(
       setIsSubmitted(true);
 
       if (modeIn(mode, [Mode.DELIVERY_CREATE, Mode.DELIVERY_UPDATE])) {
-        const deliveryId = data.id;
-        const orderId = data.order?.id;
+        const delivery = data as Delivery;
+        const deliveryId = delivery.id;
+        const orderUri = delivery.order?.['@id'];
+        const orderId = orderUri?.split('/').pop();
 
         if (isDispatcher) {
           if (orderId) {

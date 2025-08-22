@@ -2,7 +2,6 @@
 
 namespace Tests\AppBundle\Sylius\OrderProcessing;
 
-use AppBundle\Entity\Contract;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderItem;
@@ -16,7 +15,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
-use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 class OrderOptionsProcessorTest extends KernelTestCase
@@ -95,9 +93,17 @@ class OrderOptionsProcessorTest extends KernelTestCase
         return $orderItem;
     }
 
+    private function createRestaurant()
+    {
+        $restaurant = $this->prophesize(Restaurant::class);
+
+        return $restaurant->reveal();
+    }
+
     public function testOrderItemWithoutOptions()
     {
         $order = new Order();
+        $order->addRestaurant($this->createRestaurant());
 
         $productVariant = $this->createProductVariant();
         $order->addItem($this->createOrderItem(100, $productVariant));
@@ -112,6 +118,7 @@ class OrderOptionsProcessorTest extends KernelTestCase
     public function testOrderItemWithOptionStrategyFree()
     {
         $order = new Order();
+        $order->addRestaurant($this->createRestaurant());
 
         $productOption = $this->createProductOption(ProductOptionInterface::STRATEGY_FREE);
         $productOptionValue = $this->createProductOptionValue($productOption, 'Foo');
@@ -133,6 +140,7 @@ class OrderOptionsProcessorTest extends KernelTestCase
     public function testOrderItemWithOptionStrategyOptionValue()
     {
         $order = new Order();
+        $order->addRestaurant($this->createRestaurant());
 
         $productOption = $this->createProductOption(ProductOptionInterface::STRATEGY_OPTION_VALUE);
 
@@ -203,6 +211,8 @@ class OrderOptionsProcessorTest extends KernelTestCase
             ->willReturn('code');
 
         $order = new Order();
+        $order->addRestaurant($this->createRestaurant());
+
         $order->addItem($this->createOrderItem(700, $variant->reveal()));
 
         $this->orderOptionsProcessor->process($order);

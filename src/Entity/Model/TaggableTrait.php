@@ -21,7 +21,7 @@ trait TaggableTrait
     }
 
     #[SerializedName('tags')]
-    #[Groups(['task', 'order', 'order_minimal', 'delivery'])]
+    #[Groups(['task', 'order', 'foodtech_order_minimal', 'delivery'])]
     public function getTags(): array
     {
         if (is_callable($this->tagsCallable)) {

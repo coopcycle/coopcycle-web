@@ -92,6 +92,7 @@ const Task = ({
 
         {showRemoveButton && (
           <i
+            data-testid="task-remove"
             className="fa fa-trash cursor-pointer"
             onClick={() => onRemove(taskIndex)}
             type="button"

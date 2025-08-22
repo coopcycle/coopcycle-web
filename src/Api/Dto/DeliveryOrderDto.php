@@ -20,11 +20,8 @@ class DeliveryOrderDto
     #[Groups(['delivery', 'delivery_create'])]
     public ArbitraryPriceDto|null $arbitraryPrice = null;
 
-    #[Groups(['delivery'])]
-    public int $total = 0;
-
-    #[Groups(['delivery'])]
-    public int $taxTotal = 0;
+    #[Groups(['delivery_create'])]
+    public bool|null $recalculatePrice = null;
 
     #[Groups(['delivery', 'delivery_create'])]
     public bool|null $isSavedOrder = null;

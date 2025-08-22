@@ -25,7 +25,7 @@ import {
   PatchAddressRequest,
   PostStoreAddressRequest,
   CalculatePriceRequest,
-  CalculationOutput,
+  RetailPrice,
   SuggestOptimizationsRequest,
   OptimizationSuggestions,
   PostDeliveryRequest,
@@ -159,7 +159,7 @@ export const apiSlice = createApi({
       },
     }),
 
-    calculatePrice: builder.mutation<CalculationOutput, CalculatePriceRequest>({
+    calculatePrice: builder.mutation<RetailPrice, CalculatePriceRequest>({
       query(body) {
         return {
           url: `/api/retail_prices/calculate`,

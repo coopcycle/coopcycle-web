@@ -6,7 +6,7 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use AppBundle\Api\State\EvaluatePricingRuleProcessor;
-use AppBundle\Api\Dto\DeliveryDto;
+use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\YesNoOutput;
 use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Validator\Constraints\PricingRule as AssertPricingRule;
@@ -24,7 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             openapiContext: ['summary' => 'Evaluates a PricingRule'],
             denormalizationContext: ['groups' => ['delivery_create', 'pricing_deliveries']],
             security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_STORE\')',
-            input: DeliveryDto::class,
+            input: DeliveryInputDto::class,
             output: YesNoOutput::class,
             processor: EvaluatePricingRuleProcessor::class
         )
@@ -201,5 +201,10 @@ class PricingRule
         $result = $language->evaluate($priceExpression, $values);
 
         return $result;
+    }
+
+    public function isManualSupplement()
+    {
+        return $this->getExpression() === 'false';
     }
 }

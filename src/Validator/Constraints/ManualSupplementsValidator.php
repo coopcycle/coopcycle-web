@@ -3,9 +3,8 @@
 namespace AppBundle\Validator\Constraints;
 
 use ApiPlatform\Api\IriConverterInterface;
-use AppBundle\Api\Dto\DeliveryDto;
+use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\DeliveryOrderDto;
-use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Store;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -34,7 +33,7 @@ class ManualSupplementsValidator extends ConstraintValidator
         $rootObject = $this->context->getRoot();
         $store = null;
 
-        if ($rootObject instanceof DeliveryDto && null !== $rootObject->store) {
+        if ($rootObject instanceof DeliveryInputDto && null !== $rootObject->store) {
             $store = $rootObject->store;
         }
 
@@ -58,7 +57,7 @@ class ManualSupplementsValidator extends ConstraintValidator
             if (null === $supplement->pricingRule) {
                 $this->context
                     ->buildViolation($constraint->invalidSupplementMessage)
-                    ->atPath("manualSupplements[{$index}][@id]")
+                    ->atPath("manualSupplements[{$index}][pricingRule]")
                     ->addViolation();
                 continue;
             }
@@ -69,7 +68,15 @@ class ManualSupplementsValidator extends ConstraintValidator
                 $this->context
                     ->buildViolation($constraint->supplementNotInStoreRuleSetMessage)
                     ->setParameter('%supplement_uri%', $supplementIri)
-                    ->atPath("manualSupplements[{$index}][@id]")
+                    ->atPath("manualSupplements[{$index}][pricingRule]")
+                    ->addViolation();
+            }
+
+            // Check if the supplement PricingRule is a manual supplement
+            if (!$supplement->pricingRule->isManualSupplement()) {
+                $this->context
+                    ->buildViolation($constraint->invalidSupplementMessage)
+                    ->atPath("manualSupplements[{$index}][pricingRule]")
                     ->addViolation();
             }
         }

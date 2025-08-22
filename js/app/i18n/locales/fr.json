@@ -755,6 +755,8 @@
         "PRICING_RULE_PICKER_VEHICLE_BIKE": "Vélo",
         "PRICING_RULE_PICKER_VEHICLE_CARGO_BIKE": "Vélo cargo",
         "PRICING_RULE_PICKER_UNIT_KM": "km",
-        "PRICING_RULE_PICKER_UNIT_KG": "kg"
+        "PRICING_RULE_PICKER_UNIT_KG": "kg",
+        "DELIVERY_FORM_KEEP_ORIGINAL_PRICE": "Conserver le prix d'origine",
+        "DELIVERY_FORM_APPLY_NEW_PRICE": "Appliquer le nouveau prix"
     }
 }

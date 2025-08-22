@@ -9,7 +9,7 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\State\ProcessorInterface;
 use ApiPlatform\Exception\InvalidArgumentException;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
-use AppBundle\Api\Dto\DeliveryDto;
+use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\TaskDto;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
@@ -53,7 +53,7 @@ class DeliveryProcessor implements ProcessorInterface
     }
 
     /**
-     * @param DeliveryDto|DeliveryFromTasksInput $data
+     * @param DeliveryInputDto|DeliveryFromTasksInput $data
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = []): Delivery
     {
@@ -68,7 +68,7 @@ class DeliveryProcessor implements ProcessorInterface
 
         $isPutOperation = $operation instanceof Put;
 
-        if ($data instanceof DeliveryDto) {
+        if ($data instanceof DeliveryInputDto) {
             $id = $uriVariables['id'] ?? null;
             if ($id && $isPutOperation) {
                 $delivery = $this->entityManager->getRepository(Delivery::class)->find($id);
@@ -99,8 +99,6 @@ class DeliveryProcessor implements ProcessorInterface
                     $delivery->withTasks(...$tasks);
                 }
 
-
-
             } else {
                 $this->transformIntoDeliveryTask($data->pickup, $delivery->getPickup(), Task::TYPE_PICKUP, $store);
                 $this->transformIntoDeliveryTask($data->dropoff, $delivery->getDropoff(), Task::TYPE_DROPOFF, $store);
@@ -116,7 +114,7 @@ class DeliveryProcessor implements ProcessorInterface
 
         $this->deliveryManager->setDefaults($delivery);
 
-        if ($data instanceof DeliveryDto) {
+        if ($data instanceof DeliveryInputDto) {
             if ($data->packages) {
                 $packageRepository = $this->entityManager->getRepository(Package::class);
 

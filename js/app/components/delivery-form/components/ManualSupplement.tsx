@@ -1,15 +1,14 @@
 import { useMemo } from 'react';
-import { PricingRule } from '../../../api/types';
+import { ManualSupplementValues, PricingRule } from '../../../api/types';
 import { Checkbox, CheckboxChangeEvent } from 'antd';
 import {
   FixedPrice,
-  parsePriceAST,
   PercentagePrice,
   Price,
+  parsePriceAST,
 } from '../../../delivery/pricing/pricing-rule-parser';
 import { getPriceValue } from '../../pricing-rule-set-form/utils';
 import { useDeliveryFormFormikContext } from '../hooks/useDeliveryFormFormikContext';
-import { ManualSupplementValues } from '../types';
 
 export function formatPrice(price: Price): string {
   if (price instanceof FixedPrice) {
@@ -44,7 +43,7 @@ export default function ManualSupplement({ rule }: Props) {
 
   const isChecked = useMemo(() => {
     return values.order.manualSupplements.some(
-      supplement => supplement['@id'] === rule['@id'],
+      supplement => supplement.pricingRule === rule['@id'],
     );
   }, [values.order.manualSupplements, rule]);
 
@@ -58,14 +57,14 @@ export default function ManualSupplement({ rule }: Props) {
     if (e.target.checked) {
       // Add supplement with quantity 1
       const newSupplement: ManualSupplementValues = {
-        '@id': rule['@id'],
+        pricingRule: rule['@id'],
         quantity: 1,
       };
       updateSupplements([...currentSupplements, newSupplement]);
     } else {
       // Remove supplement
       const updatedSupplements = currentSupplements.filter(
-        supplement => supplement['@id'] !== rule['@id'],
+        supplement => supplement.pricingRule !== rule['@id'],
       );
       updateSupplements(updatedSupplements);
     }
