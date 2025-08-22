@@ -129,6 +129,7 @@ class DeliveryMapper
                 /** @var ProductOptionValue $productOptionValue */
 
                 // Find the PricingRule linked to this ProductOptionValue
+                //FIXME: use a repository method or replace with a bidirectional relation
                 $pricingRule = $this->findPricingRuleByProductOptionValue($productOptionValue);
 
                 if (null !== $pricingRule && $pricingRule->isManualSupplement()) {
