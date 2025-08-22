@@ -81,10 +81,8 @@ class SendRemotePushNotification
         );
 
         // Send to owners
-        $owners = $order->getNotificationRecipients()->toArray();
-
+        $owners = $order->getNotificationRecipients();
         if (count($owners) > 0) {
-
             $data = [
                 'event' => [
                     'name' => 'order:created',
@@ -94,16 +92,8 @@ class SendRemotePushNotification
                 ],
             ];
 
-            $users = array_reduce(array_unique($owners), function ($carry, $owner) {
-                if ($user = $this->userManager->findUserByUsername($owner->getUsername())) {
-                    $carry[] = $user;
-                }
-
-                return $carry;
-            }, []);
-
             $this->messageBus->dispatch(
-                new PushNotification($message, "", $users, $data)
+                new PushNotification($message, "", $owners, $data)
             );
         }
     }
