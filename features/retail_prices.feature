@@ -1808,10 +1808,10 @@ Feature: Retail prices
         "@context":"/api/contexts/ConstraintViolationList",
         "@type":"ConstraintViolationList",
         "hydra:title":"An error occurred",
-        "hydra:description":"order.manualSupplements[0][@id]: Supplément manuel invalide",
+        "hydra:description":"order.manualSupplements[0][pricingRule]: Supplément manuel invalide",
         "violations":[
           {
-            "propertyPath":"order.manualSupplements[0][@id]",
+            "propertyPath":"order.manualSupplements[0][pricingRule]",
             "message":"Supplément manuel invalide",
             "code":null
           }
