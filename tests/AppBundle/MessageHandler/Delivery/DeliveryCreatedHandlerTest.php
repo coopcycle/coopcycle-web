@@ -102,9 +102,9 @@ class DeliveryCreatedHandlerTest extends TestCase
         /////////////////////////
         // Test with a pickup address being the owner/store address
         /////////////////////////
-        $owner = $this->genStoreOwner($delivery);
+        $this->genStoreOwner($delivery);
 
-        $title = $owner->getName().' -> ' . $dropoffAddress->getStreetAddress();
+        $title = 'Test Store -> 222 Nice Dropoff St, Someplace, Argentina';
         $body = "PU: 01:02-02:03 | DO: 03:04-04:05";
         $data = [
             'event' => 'delivery:created',
@@ -155,9 +155,9 @@ class DeliveryCreatedHandlerTest extends TestCase
         /////////////////////////
         $notTheDeliveryPickupAddress = (new Address())
             ->setStreetAddress("123 Nice Pickup St, Somewhere, Argentina");
-        $owner = $this->genStoreOwner($delivery, $notTheDeliveryPickupAddress);
+        $this->genStoreOwner($delivery, $notTheDeliveryPickupAddress);
 
-        $title = $owner->getName().' -> ' . $dropoffAddress->getName();
+        $title = 'Test Store -> Test Address Name';
         $body = "PU: 01:02-02:03 | DO: 03:04-04:05
 PU: " . $pickupAddress->getStreetAddress() . "
 DO: 222 Nice Dropoff St, Someplace, Argentina";
@@ -217,7 +217,7 @@ DO: 222 Nice Dropoff St, Someplace, Argentina";
 
         $this->genStoreOwner($delivery);
 
-        $title = '2 pickups -> ' . $dropoffAddress->getStreetAddress();
+        $title = '2 pickups -> 333 Nice Dropoff St, Someplace, Argentina';
         $body = "PUs: 01:02-03:04 | DO: 05:06-06:07
 PU 01:02-02:03: 111 Nice Pickup St, Somewhere, Argentina
 PU 03:04-04:05: 222 Nice Pickup St, Somewhere, Argentina";
@@ -280,9 +280,9 @@ PU 03:04-04:05: 222 Nice Pickup St, Somewhere, Argentina";
         /////////////////////////
         // Test with a pickup address being the owner/store address
         /////////////////////////
-        $owner = $this->genStoreOwner($delivery);
+        $this->genStoreOwner($delivery);
 
-        $title = $owner->getName().' -> 2 dropoffs';
+        $title = 'Test Store -> 2 dropoffs';
         $body = "PU: 01:02-02:03 | DOs: 03:04-05:06
 DO 03:04-04:05: 222 Nice Dropoff St, Someplace, Argentina
 DO 05:06-06:07: 333 Nice Dropoff St, Someplace, Argentina";
@@ -342,9 +342,9 @@ DO 05:06-06:07: 333 Nice Dropoff St, Someplace, Argentina";
         /////////////////////////
         $notTheDeliveryPickupAddress = (new Address())
             ->setStreetAddress("123 Nice Pickup St, Somewhere, Argentina");
-        $owner = $this->genStoreOwner($delivery, $notTheDeliveryPickupAddress);
+        $this->genStoreOwner($delivery, $notTheDeliveryPickupAddress);
 
-        $title = $owner->getName().' -> 2 dropoffs';
+        $title = 'Test Store -> 2 dropoffs';
         $body = "PU: 01:02-02:03 | DOs: 03:04-05:06
 PU: 111 Nice Pickup St, Somewhere, Argentina
 DO 03:04-04:05: 222 Nice Dropoff St, Someplace, Argentina
