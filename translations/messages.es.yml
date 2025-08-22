@@ -574,6 +574,36 @@ index.banner: Platos deliciosos del restaurante a tu casa.
 index.our_restaurants: Nuestros restaurantes
 index.view_all_restaurants: Ver todos los comercios y restaurantes
 notifications.empty: Ninguna notificación
+notifications.tap_to_open: Toque para abrir
+notifications.delivery_created: Una entrega para recoger el %date% ha sido creado
+notifications.tasks_changed: Tarea para %date% cambiada!
+notifications.tasks_changed_today: Sus tareas de hoy se han actualizado
+notifications.restaurant.new_order: Nuevo pedido por confirmar
+notifications.restaurant.accepted_order: Nuevo pedido
+notifications.messenger_approaching: Hey %customer%! Nuestro mensajero %messenger%
+  está casi contigo. Prepárate!
+form.settings.notifications.title: Notificaciones
+form.settings.notifications.order.created: Pedido creado
+form.settings.notifications.order.updated: Pedido actualizado
+form.settings.notifications.order.accepted: Pedido aceptado
+form.settings.notifications.order.refused: Pedido rechazado
+form.settings.notifications.order.delayed: Pedido atrasado
+form.settings.notifications.order.cancelled: Pedido cancelado
+form.settings.notifications.order.picked: Pedido recojido
+form.settings.notifications.order.dropped: Pedido entregado
+form.settings.notifications.order.fulfilled: Pedido finalizado
+form.settings.notifications.task.created: Tarea creada
+form.settings.notifications.task.updated: Tarea actualizada
+form.settings.notifications.task.assigned: Tarea asignada
+form.settings.notifications.task.unassigned: Tarea desasignada
+form.settings.notifications.task.started: Tarea comenzada
+form.settings.notifications.task.done: Tarea finalizada
+form.settings.notifications.task.failed: Tarea fallida
+form.settings.notifications.task.cancelled: Tarea cancelada
+form.settings.notifications.task.rescheduled: Tarea reprogramada
+form.settings.notifications.help: Al desactivar las notificaciones para los eventos
+  que se indican a continuación, los administradores no recibirán correos electrónicos
+  ni notificaciones en la barra superior.
 adminDashboard.statistics: Estadísticas
 adminDashboard.activity.title: Actividad
 activity.task.created: "@%owner% ha creado la tarea #task/%aggregate_id%\n"
@@ -830,7 +860,6 @@ receipt.footer_item.total_incl_tax: Total (IVA incl.)
 receipt.total: Total (IVA incl.)
 receipt.billing_details: Pedido pagado con %payment_method% el %date%
 receipt.emitter_details: Pedido en el restaurante <strong>%restaurant_name%</strong>
-notifications.restaurant.new_order: Nuevo pedido por confirmar
 form.checkout_address.quote.label: Solicitar presupuesto
 form.reusable_packaging.name.label: Nombre
 order.export.heading.restaurant_name: Restaurante
@@ -1020,8 +1049,6 @@ basics.weeks: '%count% week|%count% semanas'
 basics.none: Ninguna
 basics.yes: Si
 basics.no: No
-notifications.messenger_approaching: Hey %customer%! Nuestro mensajero %messenger%
-  está casi contigo. Prepárate!
 order.export.heading.order_number: Número de pedido
 order.export.heading.fulfillment_method: Cumplimiento
 order.export.heading.completed_at: Completado en
@@ -1055,7 +1082,6 @@ store.PHARMACY: Farmacia
 form.local_business_type.food_establishment: Establecimiento de comida
 form.local_business_type.store: Tienda
 form.local_business_type.label: Tipo de negocio
-notifications.tasks_changed: Tarea para %date% cambiada!
 restaurant_promotion.offer_delivery: Ofrecer tarifas de entrega
 form.offer_delivery.coupon_code.error.exists: Este código ya existe
 users.store_owners: Dueños de tiendas
@@ -1224,8 +1250,6 @@ restaurant.form.section.embed: Incorporar
 loopeat.oauth_redirect.warning: Serás redirigido al sitio web de LoopEat para iniciar
   sesión o crear tu cuenta
 order.export.heading.promotions: Descuentos
-notifications.tap_to_open: Toque para abrir
-notifications.tasks_changed_today: Sus tareas de hoy se han actualizado
 form.fulfillment_method.pre_ordering_allowed.help: Si desmarca esta casilla, los clientes
   solo podrán realizar pedidos el mismo día.
 form.customize.order_confirm.label: Este mensaje aparecerá en la página de confirmación
@@ -1297,7 +1321,6 @@ form.payment.method.name.label: Método de pago
 edenred.oauth_connect.success: ¡Cuenta Edenred conectada exitosamente!
 profile.edenred.connect: Conectar mi cuenta Edenred
 profile.edenred.connected: Cuenta Edenred conectada
-notifications.delivery_created: Una entrega para recoger el %date% ha sido creado
 ordering_delay.admin_reminder: Ha configurado un retraso de pickup global para pedidos
   de foodtech
 form.fulfillment_method.options.range_duration.label: Margen de tolerancia
@@ -1442,25 +1465,6 @@ form.store_type.failure_reason_set.label: "Motivos de Fallo"
 profile.delete_my_account: "Eliminar mi cuenta"
 profile.type_username_to_confirm: "Escribe tu nombre de usuario para confirmar la\
   \ eliminación de la cuenta"
-form.settings.notifications.title: Notificaciones
-form.settings.notifications.order.created: Pedido creado
-form.settings.notifications.order.accepted: Pedido aceptado
-form.settings.notifications.order.refused: Pedido rechazado
-form.settings.notifications.order.delayed: Pedido atrasado
-form.settings.notifications.order.cancelled: Pedido cancelado
-form.settings.notifications.order.picked: Pedido recojido
-form.settings.notifications.order.dropped: Pedido entregado
-form.settings.notifications.order.fulfilled: Pedido finalizado
-form.settings.notifications.order.updated: Pedido actualizado
-form.settings.notifications.task.created: Tarea creada
-form.settings.notifications.task.updated: Tarea actualizada
-form.settings.notifications.task.assigned: Tarea asignada
-form.settings.notifications.task.unassigned: Tarea desasignada
-form.settings.notifications.task.started: Tarea comenzada
-form.settings.notifications.task.done: Tarea finalizada
-form.settings.notifications.task.failed: Tarea fallida
-form.settings.notifications.task.cancelled: Tarea cancelada
-form.settings.notifications.task.rescheduled: Tarea reprogramada
 tags.featured: Destacados
 tags.exclusive: Exclusivos
 tags.shops.new: Tiendas nuevas
@@ -1647,9 +1651,6 @@ form.store_type.failure_reason_set.help: Seleccione una lista de<a href="%failur
   incidencias </a> para ser usado en %entity%
 adminDashboard.incidents.title: Incidencias
 adminDashboard.incidents.help: Gestionar incidencias
-form.settings.notifications.help: Al desactivar las notificaciones para los eventos
-  que se indican a continuación, los administradores no recibirán correos electrónicos
-  ni notificaciones en la barra superior.
 error.404: Página no encontrada.
 error.502: El servidor está al límite de su capacidad. Por favor, inténtelo de nuevo
   más tarde.
@@ -1712,7 +1713,6 @@ activity.order.cancelled: "El pedido #order/#%aggregate_id% está cancelado\n"
 authentication.unsubscribe: Puede darse de baja fácilmente en cualquier momento a
   través de los enlaces para darse de baja que encontrará en cada uno de nuestros
   correos electrónicos
-notifications.restaurant.accepted_order: Nuevo pedido
 users.dispatchers: Dispatchers
 dabba.oauth_connect.success: ¡Cuenta Dabba conectada con éxito!
 loopeat.how_it_works.step_1.title: Me apunto

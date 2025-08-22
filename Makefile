@@ -19,6 +19,7 @@ osrm:
 	@docker compose run --rm osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
 	@docker compose run --rm osrm osrm-partition /data/data.osrm
 	@docker compose run --rm osrm osrm-customize /data/data.osrm
+	@docker compose restart osrm
 
 phpunit:
 	@docker compose exec php php bin/console doctrine:schema:update --env=test --force --no-interaction --quiet

@@ -13,7 +13,7 @@ class DeliveryCreated
         $this->deliveryId = $delivery->getId();
     }
 
-    public function getDeliveryId()
+    public function getDeliveryId(): int
     {
         return $this->deliveryId;
     }

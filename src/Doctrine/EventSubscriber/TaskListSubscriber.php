@@ -49,7 +49,7 @@ class TaskListSubscriber implements EventSubscriber
         $coordinates = [];
         $tasks = [];
         $vehicle = $taskList->getVehicle();
-        
+
         if (!is_null($vehicle)) {
             $coordinates[] = $taskList->getVehicle()->getWarehouse()->getAddress()->getGeo();
         }
@@ -139,7 +139,7 @@ class TaskListSubscriber implements EventSubscriber
                 continue;
             }
 
-            [ $oldValue, $newValue ] = $entityChangeSet['vehicle']; // recalculate distances and co2 when starting vehicle/warehouse has changed 
+            [ $oldValue, $newValue ] = $entityChangeSet['vehicle']; // recalculate distances and co2 when starting vehicle/warehouse has changed
 
             if ($oldValue !== $newValue) {
                 $this->addTaskList($taskList);
@@ -201,8 +201,6 @@ class TaskListSubscriber implements EventSubscriber
                 continue;
             }
 
-            $usernames = array_map(fn(UserInterface $user) => $user->getUsername(), $users);
-
             $data = [
                 'event' => [
                     'name' => 'tasks:changed',
@@ -221,11 +219,11 @@ class TaskListSubscriber implements EventSubscriber
             }
 
             if (RemotePushNotificationManager::isEnabled()) {
-
+                $usernames = array_map(fn(UserInterface $user) => $user->getUsername(), $users);
                 $this->logger->debug(sprintf('Sending push notification to %s', implode(', ', $usernames)));
 
                 $this->messageBus->dispatch(
-                    new PushNotification($message, $usernames, $data)
+                    new PushNotification($message, "", $users, $data)
                 );
             }
         }
