@@ -51,11 +51,8 @@ class PublishLiveUpdate
         }
 
         $owners = $order->getNotificationRecipients();
-
-        if (count($owners) === 0) {
-            return;
+        if (count($owners) > 0) {
+            $this->liveUpdates->toUsers($owners, $event);
         }
-
-        $this->liveUpdates->toUsers($owners->toArray(), $event);
     }
 }

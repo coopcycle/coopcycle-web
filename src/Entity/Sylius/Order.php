@@ -1444,7 +1444,7 @@ class Order extends BaseOrder implements OrderInterface
         return null;
     }
 
-    public function getNotificationRecipients(): Collection
+    public function getNotificationRecipients(): array
     {
         $recipients = new ArrayCollection();
 
@@ -1454,7 +1454,7 @@ class Order extends BaseOrder implements OrderInterface
             }
         }
 
-        return $recipients;
+        return array_unique($recipients->toArray());
     }
 
     public function supportsEdenred(): bool
