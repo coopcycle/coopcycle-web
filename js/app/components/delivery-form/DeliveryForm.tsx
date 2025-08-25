@@ -40,6 +40,7 @@ import {
   TaskPayload,
   Delivery,
   Order as OrderType,
+  ManualSupplementValues,
 } from '../../api/types';
 import { useDatadog } from '../../hooks/useDatadog';
 
@@ -192,6 +193,11 @@ const DeliveryForm = ({
     tasks: [],
   });
 
+  // Store initial manual supplements for editing comparison
+  const [initialManualSupplements, setInitialManualSupplements] = useState<
+    ManualSupplementValues[]
+  >([]);
+
   const [priceLoading, setPriceLoading] = useState<boolean>(false);
 
   const { handleSubmit, error, isSubmitted } = useSubmit(
@@ -324,6 +330,9 @@ const DeliveryForm = ({
       if (!initialValues.order.manualSupplements) {
         initialValues.order.manualSupplements = [];
       }
+
+      // Store initial manual supplements for editing comparison
+      setInitialManualSupplements([...initialValues.order.manualSupplements]);
 
       if (preLoadedFormData.order?.arbitraryPrice) {
         // remove a previously copied value (different formats between API and the frontend)
@@ -662,6 +671,7 @@ const DeliveryForm = ({
                       storeNodeId={storeNodeId}
                       order={order}
                       setPriceLoading={setPriceLoading}
+                      initialManualSupplements={initialManualSupplements}
                     />
                   </div>
                 ) : null}

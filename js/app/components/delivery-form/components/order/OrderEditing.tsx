@@ -1,34 +1,104 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Collapse, Radio } from 'antd';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { Collapse, Divider, Radio } from 'antd';
 import { useTranslation } from 'react-i18next';
 import FlagsContext from '../../FlagsContext';
 import Cart from './Cart';
-import { Order as OrderType } from '../../../../api/types';
+import {
+  ManualSupplementValues,
+  OrderItem as OrderItemType,
+  Order as OrderType,
+  PricingRule,
+  RetailPrice,
+} from '../../../../api/types';
 import { TotalPrice } from './TotalPrice';
 import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext';
+import { PriceCalculation } from '../../../../delivery/PriceCalculation';
+import ManualSupplements from './ManualSupplements';
 
 type Props = {
+  orderManualSupplements?: PricingRule[];
   overridePrice: boolean;
   existingOrder: OrderType;
-  newOrder?: OrderType;
+  existingSupplements?: ManualSupplementValues[];
+  updatedOrder?: OrderType;
+  calculatePriceData?: RetailPrice;
 };
 
-function hasOrderChanged(existingOrder: OrderType, newOrder: OrderType) {
+function getCalculatedOrderItems(orderItems: OrderItemType[]) {
+  const items = orderItems.map(item => {
+    return {
+      ...item,
+      adjustments: {
+        ...item.adjustments,
+        order_item_package_delivery_manual_supplement: [],
+      },
+    };
+  });
+
+  return items.filter(item => {
+    return (
+      item.adjustments['order_item_package_delivery_calculated']?.length > 0
+    );
+  });
+}
+
+function getManualSupplementsOrderItems(orderItems: OrderItemType[]) {
+  const items = orderItems.map(item => {
+    return {
+      ...item,
+      adjustments: {
+        ...item.adjustments,
+        order_item_package_delivery_calculated: [],
+      },
+    };
+  });
+
+  return items.filter(item => {
+    return (
+      item.adjustments['order_item_package_delivery_manual_supplement']
+        ?.length > 0
+    );
+  });
+}
+
+function getCalculatedAmount(orderItems: OrderItemType[]) {
+  return orderItems.reduce(
+    (total, item) =>
+      total +
+      item.adjustments['order_item_package_delivery_calculated'].reduce(
+        (total, adjustment) => total + adjustment.amount,
+        0,
+      ),
+    0,
+  );
+}
+
+function hasCalculatedOrderItemsChanged(
+  existingOrder: OrderType,
+  newOrder: OrderType,
+) {
+  const existingItems = getCalculatedOrderItems(existingOrder.items);
+  const newItems = getCalculatedOrderItems(newOrder.items);
+
   return (
-    existingOrder.total !== newOrder.total ||
-    existingOrder.items.length !== newOrder.items.length
+    getCalculatedAmount(existingItems) !== getCalculatedAmount(newItems) ||
+    existingItems.length !== newItems.length
   );
 }
 
 export const OrderEditing = ({
+  orderManualSupplements = [],
   overridePrice,
   existingOrder,
-  newOrder,
+  existingSupplements = [],
+  updatedOrder,
+  calculatePriceData,
 }: Props) => {
-  const { isPriceBreakdownEnabled } = useContext(FlagsContext);
+  const { isPriceBreakdownEnabled, isDispatcher, isDebugPricing } =
+    useContext(FlagsContext);
 
   const { t } = useTranslation();
-  const { setFieldValue } = useDeliveryFormFormikContext();
+  const { values, setFieldValue } = useDeliveryFormFormikContext();
 
   const [selectedPriceOption, setSelectedPriceOption] = useState<
     'original' | 'new'
@@ -38,12 +108,46 @@ export const OrderEditing = ({
     setFieldValue('order.recalculatePrice', selectedPriceOption === 'new');
   }, [selectedPriceOption, setFieldValue]);
 
+  const orderManualSupplementsWithSelection = useMemo(() => {
+    return orderManualSupplements.map(rule => ({
+      ...rule,
+      quantity:
+        values.order.manualSupplements.find(
+          supplement => supplement.pricingRule === rule['@id'],
+        )?.quantity || 0,
+    }));
+  }, [orderManualSupplements, values.order.manualSupplements]);
+
+  const hasSupplementsChanged = useMemo(() => {
+    const currentSupplements = values.order.manualSupplements;
+
+    if (existingSupplements.length !== currentSupplements.length) {
+      return true;
+    }
+
+    return (
+      existingSupplements.some(existing => {
+        const current = currentSupplements.find(
+          current => current.pricingRule === existing.pricingRule,
+        );
+        return !current || current.quantity !== existing.quantity;
+      }) ||
+      currentSupplements.some(current => {
+        const existing = existingSupplements.find(
+          existing => existing.pricingRule === current.pricingRule,
+        );
+        return !existing;
+      })
+    );
+  }, [existingSupplements, values.order.manualSupplements]);
+
   return (
     <div>
       {isPriceBreakdownEnabled ? (
         <div>
           {/* Show a choice between both an existing and a new order */}
-          {newOrder && hasOrderChanged(existingOrder, newOrder) ? (
+          {updatedOrder &&
+          hasCalculatedOrderItemsChanged(existingOrder, updatedOrder) ? (
             <>
               <Radio.Group
                 className="w-100"
@@ -63,7 +167,9 @@ export const OrderEditing = ({
                       ),
                       children: (
                         <Cart
-                          orderItems={existingOrder.items}
+                          orderItems={getCalculatedOrderItems(
+                            existingOrder.items,
+                          )}
                           overridePrice={selectedPriceOption !== 'original'}
                         />
                       ),
@@ -84,7 +190,12 @@ export const OrderEditing = ({
                         </Radio>
                       ),
                       children: (
-                        <Cart orderItems={newOrder.items} overridePrice={overridePrice} />
+                        <Cart
+                          orderItems={getCalculatedOrderItems(
+                            updatedOrder.items,
+                          )}
+                          overridePrice={overridePrice}
+                        />
                       ),
                       showArrow: false,
                     },
@@ -93,13 +204,38 @@ export const OrderEditing = ({
               </Radio.Group>
             </>
           ) : (
-            <Cart orderItems={existingOrder.items} overridePrice={overridePrice} />
+            <Cart
+              orderItems={getCalculatedOrderItems(existingOrder.items)}
+              overridePrice={overridePrice}
+            />
           )}
         </div>
       ) : null}
+
       <div className="mt-2">
-        {/* Show both an old and a new total price when a new price is selected */}
-        {newOrder && selectedPriceOption === 'new' ? (
+        {/* Show both an old and a new manual supplements when they changed */}
+        {updatedOrder && hasSupplementsChanged ? (
+          <>
+            <Cart
+              orderItems={getManualSupplementsOrderItems(existingOrder.items)}
+              overridePrice={true}
+            />
+            <Cart
+              orderItems={getManualSupplementsOrderItems(updatedOrder.items)}
+              overridePrice={overridePrice}
+            />
+          </>
+        ) : (
+          <Cart
+            orderItems={getManualSupplementsOrderItems(existingOrder.items)}
+            overridePrice={overridePrice}
+          />
+        )}
+      </div>
+      <div className="mt-2">
+        {/* Show both an old and a new total price when there is a price change */}
+        {updatedOrder &&
+        (selectedPriceOption === 'new' || hasSupplementsChanged) ? (
           <>
             <TotalPrice
               overridePrice={true}
@@ -108,8 +244,8 @@ export const OrderEditing = ({
             />
             <TotalPrice
               overridePrice={overridePrice}
-              total={newOrder.total}
-              taxTotal={newOrder.taxTotal}
+              total={updatedOrder.total}
+              taxTotal={updatedOrder.taxTotal}
             />
           </>
         ) : (
@@ -120,6 +256,24 @@ export const OrderEditing = ({
           />
         )}
       </div>
+
+      {!overridePrice &&
+        (isDispatcher || isDebugPricing) &&
+        calculatePriceData && (
+          <PriceCalculation
+            className="mt-2"
+            isDebugPricing={isDebugPricing}
+            calculation={calculatePriceData.calculation}
+            order={calculatePriceData.order}
+          />
+        )}
+
+      {isDispatcher && orderManualSupplements.length > 0 && (
+        <div>
+          <Divider size="middle" />
+          <ManualSupplements rules={orderManualSupplementsWithSelection} />
+        </div>
+      )}
     </div>
   );
 };

@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import {
   Adjustment as AdjustmentType,
-  Order,
   OrderItem as OrderItemType,
   ProductVariant,
 } from '../../../../api/types';
