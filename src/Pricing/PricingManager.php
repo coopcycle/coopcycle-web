@@ -67,7 +67,7 @@ class PricingManager
         return $output->getPrice();
     }
 
-    public function getPriceCalculation(Delivery $delivery, PricingRuleSet $ruleSet, ManualSupplements|null $manualSupplements = null): ?PriceCalculationOutput
+    public function getPriceCalculation(Delivery $delivery, PricingRuleSet $ruleSet, UsePricingRules $pricingStrategy = new UsePricingRules()): ?PriceCalculationOutput
     {
         // Store might be null if it's an embedded form
         $store = $delivery->getStore();
@@ -96,16 +96,15 @@ class PricingManager
             }
         }
 
-        return $this->priceCalculationVisitor->visit($delivery, $ruleSet, $manualSupplements);
+        return $this->priceCalculationVisitor->visit($delivery, $ruleSet, $pricingStrategy);
     }
 
     /**
      * @return ProductVariantInterface[]
      */
-    public function getPriceWithPricingStrategy(
+    public function getProductVariantsWithPricingStrategy(
         Delivery $delivery,
-        PricingStrategy $pricingStrategy,
-        ManualSupplements|null $manualSupplements = null
+        PricingStrategy $pricingStrategy
     ): array {
         $store = $delivery->getStore();
 
@@ -131,7 +130,7 @@ class PricingManager
                 ];
             }
 
-            $output = $this->getPriceCalculation($delivery, $pricingRuleSet, $manualSupplements);
+            $output = $this->getPriceCalculation($delivery, $pricingRuleSet, $pricingStrategy);
 
             if (count($output->productVariants) === 0) {
                 $this->logger->warning('Price could not be calculated');

@@ -44,7 +44,7 @@ final class DeliveryOrderProcessor implements ProcessorInterface
             return;
         }
 
-        $productVariants = $this->pricingManager->getPriceWithPricingStrategy(
+        $productVariants = $this->pricingManager->getProductVariantsWithPricingStrategy(
             $delivery,
             new UsePricingRules()
         );

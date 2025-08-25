@@ -49,7 +49,6 @@ class DeliveryOrderManager
         // even though it seems that it was fixed: https://github.com/sebastianbergmann/phpunit/commit/658d8decbec90c4165c0b911cf6cfeb5f6601cae
         $defaults = [
             'pricingStrategy' => new UsePricingRules(),
-            'manualSupplements' => null,
             'persist' => true,
             // If set to true, an exception will be thrown when a price cannot be calculated
             // If set to false, a price of 0 will be set and an incident will be created
@@ -65,10 +64,9 @@ class DeliveryOrderManager
             $pricingStrategy = new UsePricingRules();
         }
 
-        $productVariants = $this->pricingManager->getPriceWithPricingStrategy(
+        $productVariants = $this->pricingManager->getProductVariantsWithPricingStrategy(
             $delivery,
-            $pricingStrategy,
-            $optionalArgs['manualSupplements']
+            $pricingStrategy
         );
         $incident = null;
 
