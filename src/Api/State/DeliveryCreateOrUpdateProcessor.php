@@ -197,6 +197,14 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
 
         $this->persistProcessor->process($delivery, $operation, $uriVariables, $context);
 
-        return $delivery;
+        $groups = $context['request']->get('_api_operation')->getNormalizationContext()['groups'] ?? [];
+
+        return $this->deliveryMapper->map(
+            $delivery,
+            $order,
+            $arbitraryPrice,
+            $isSavedOrder,
+            $groups
+        );
     }
 }

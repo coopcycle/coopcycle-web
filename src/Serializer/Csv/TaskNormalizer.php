@@ -38,7 +38,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             $data = [ $data ];
         }
 
-        return array_map(function ($item) use ($context) {
+        $tasks = array_map(function ($item) use ($context) {
 
             // This is needed, because CsvDecoder will transform empty rows to empty strings,
             // causing the error "The string supplied did not seem to be a phone number."
@@ -52,6 +52,15 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 
             return $this->normalizer->denormalize($item, Task::class, 'jsonld', $context);
         }, $data);
+
+        $group = new TaskGroup();
+        $group->setName(sprintf('Import %s', date('d/m H:i')));
+
+        foreach ($tasks as $task) {
+            $group->addTask($task);
+        }
+
+        return $group;
     }
 
     public function supportsDenormalization($data, $type, $format = null)

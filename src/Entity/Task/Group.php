@@ -44,7 +44,6 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Post(
             uriTemplate: '/tasks/import',
             inputFormats: ['csv' => ['text/csv']],
-            controller: TaskBulk::class,
             denormalizationContext: ['groups' => ['task', 'task_create']],
             security: 'is_granted(\'ROLE_OAUTH2_TASKS\') or is_granted(\'ROLE_ADMIN\')'
         ),

@@ -47,7 +47,7 @@
         </td>
         {% if is_granted('ROLE_ADMIN') %}
           <td>
-            <div {{ react_component('DeleteIcon', { objectId: ruleSet.id, objectName: ruleSet.name, deleteUrl: '_api_/pricing_rule_sets/{id}.{_format}_delete', errorMessage: 'ADMIN_PLEASE_UNLINK_PRICING_RULE_SET_BEFORE_DELETION'}) }}>
+            <div {{ react_component('DeleteIcon', { objectId: ruleSet.id, objectName: ruleSet.name, deleteUrl: '_api_/pricing_rule_sets/{id}{._format}_delete', errorMessage: 'ADMIN_PLEASE_UNLINK_PRICING_RULE_SET_BEFORE_DELETION'}) }}>
             </div>
           </td>
         {% endif %}

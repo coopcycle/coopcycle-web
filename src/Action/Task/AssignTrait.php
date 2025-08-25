@@ -12,7 +12,7 @@ trait AssignTrait
 {
     protected function assign(Task $task, $payload, ?Request $request = null)
     {
-        $user = $this->getUser();
+        $user = $this->security->getUser();
         if (isset($payload['username'])) {
 
             $user = $this->userManager->findUserByUsername($payload['username']);
@@ -27,7 +27,7 @@ trait AssignTrait
 
         if (
             $task->isAssigned() &&
-            !($this->authorization->isGranted('ROLE_DISPATCHER') || $this->isTokenActionValid($task, $request))
+            !($this->authorizationChecker->isGranted('ROLE_DISPATCHER') || $this->isTokenActionValid($task, $request))
         ) {
 
             throw new BadRequestHttpException(sprintf('Task #%d is already assigned to "%s"',
@@ -53,6 +53,7 @@ trait AssignTrait
         if (is_null($request)) {
             return false;
         }
+
         return $request->headers->get('X-Token-Action') ===
             hash('xxh3', BarcodeUtils::getToken(sprintf("/api/tasks/%d", $task->getId())));
     }

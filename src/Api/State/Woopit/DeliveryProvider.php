@@ -1,25 +1,25 @@
 <?php
 
-namespace AppBundle\Action\Woopit;
+namespace AppBundle\Api\State\Woopit;
 
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ProviderInterface;
 use AppBundle\Entity\Delivery;
-use AppBundle\Service\TaskManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class DeliveryCancel
+final class DeliveryProvider implements ProviderInterface
 {
     public function __construct(
         private Hashids $hashids12,
-        private TaskManager $taskManager,
         private EntityManagerInterface $entityManager)
     {}
 
-    public function __invoke($deliveryId)
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
-        $decoded = $this->hashids12->decode($deliveryId);
+        $decoded = $this->hashids12->decode($uriVariables['deliveryId']);
 
         if (count($decoded) !== 1) {
             throw new NotFoundHttpException('Delivery id not found');
@@ -33,16 +33,6 @@ class DeliveryCancel
             throw new NotFoundHttpException('Delivery not found');
         }
 
-        foreach ($delivery->getTasks() as $task) {
-            if ($task->isAssigned()) {
-                throw new AccessDeniedHttpException('Tasks have already been assigned');
-            }
-        }
-
-        foreach ($delivery->getTasks() as $task) {
-            $this->taskManager->cancel($task);
-        }
-
-        $this->entityManager->flush();
+        return $delivery;
     }
 }

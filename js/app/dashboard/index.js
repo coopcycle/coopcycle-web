@@ -207,7 +207,7 @@ loadingAnim.addEventListener('DOMLoaded', function() {
 
   const tasksRequest = client.paginatedRequest({
     method: 'GET',
-    url: `${ window.Routing.generate('_api_/tasks.{_format}_get_collection') }?date=${date.format('YYYY-MM-DD')}&pagination=true&itemsPerPage=100`,
+    url: `${ window.Routing.generate('_api_/tasks{._format}_get_collection') }?date=${date.format('YYYY-MM-DD')}&pagination=true&itemsPerPage=100`,
     headers: headers
   })
 
@@ -219,7 +219,7 @@ loadingAnim.addEventListener('DOMLoaded', function() {
 
   const toursRequest = client.request({
     method: 'GET',
-    url: `${ window.Routing.generate('_api_/tours.{_format}_get_collection') }?date=${date.format('YYYY-MM-DD')}`,
+    url: `${ window.Routing.generate('_api_/tours{._format}_get_collection') }?date=${date.format('YYYY-MM-DD')}`,
     headers: headers
   })
 

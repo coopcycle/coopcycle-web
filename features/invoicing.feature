@@ -306,6 +306,7 @@ Feature: Invoicing
         "hydra:member":[
           {
             "@type":"InvoiceLineItemGroupedByOrganization",
+            "@id": @string@,
             "storeId":@integer@,
             "organizationLegalName":@string@,
             "ordersCount":@integer@,

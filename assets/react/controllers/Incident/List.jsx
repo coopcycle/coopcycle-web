@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 async function _fetchIncidents() {
   const httpClient = new window._auth.httpClient();
   return await httpClient.get(
-    window.Routing.generate("_api_/incidents.{_format}_get_collection"),
+    window.Routing.generate("_api_/incidents{._format}_get_collection"),
   );
 }
 

@@ -16,7 +16,7 @@ final class StripePaymentMethodsProvider implements ProviderInterface
         private StripeManager $stripeManager)
     {}
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = [])
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
         $output = new StripePaymentMethodsOutput();
 
