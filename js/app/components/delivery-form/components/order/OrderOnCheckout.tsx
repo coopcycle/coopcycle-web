@@ -28,7 +28,7 @@ export const OrderOnCheckout = ({
   return (
     <div>
       {isPriceBreakdownEnabled && newOrder ? (
-        <Cart order={newOrder} overridePrice={overridePrice} />
+        <Cart orderItems={newOrder.items} overridePrice={overridePrice} />
       ) : null}
       {!calculatePriceError ? (
         calculatePriceData && calculatePriceData.amount ? (

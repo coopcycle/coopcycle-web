@@ -63,7 +63,7 @@ export const OrderEditing = ({
                       ),
                       children: (
                         <Cart
-                          order={existingOrder}
+                          orderItems={existingOrder.items}
                           overridePrice={selectedPriceOption !== 'original'}
                         />
                       ),
@@ -84,7 +84,7 @@ export const OrderEditing = ({
                         </Radio>
                       ),
                       children: (
-                        <Cart order={newOrder} overridePrice={overridePrice} />
+                        <Cart orderItems={newOrder.items} overridePrice={overridePrice} />
                       ),
                       showArrow: false,
                     },
@@ -93,7 +93,7 @@ export const OrderEditing = ({
               </Radio.Group>
             </>
           ) : (
-            <Cart order={existingOrder} overridePrice={overridePrice} />
+            <Cart orderItems={existingOrder.items} overridePrice={overridePrice} />
           )}
         </div>
       ) : null}

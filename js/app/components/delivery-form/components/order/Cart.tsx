@@ -40,6 +40,16 @@ function OrderItem({ index, orderItem, overridePrice }: OrderItemProps) {
     return orderItem.variant;
   }, [orderItem]);
 
+  const adjustments = useMemo(() => {
+    const calculatedAdjustments =
+      orderItem.adjustments['order_item_package_delivery_calculated'] || [];
+    const manualSupplementAdjustments =
+      orderItem.adjustments['order_item_package_delivery_manual_supplement'] ||
+      [];
+
+    return calculatedAdjustments.concat(manualSupplementAdjustments);
+  }, [orderItem]);
+
   return (
     <li
       data-testid={`order-item-${index}`}
@@ -51,15 +61,14 @@ function OrderItem({ index, orderItem, overridePrice }: OrderItemProps) {
           {productVariant.name}
         </span>
       </div>
-      {orderItem.adjustments['menu_item_modifier'] &&
-        orderItem.adjustments['menu_item_modifier'].map((adjustment, index) => (
-          <Adjustment
-            key={index}
-            index={index}
-            adjustment={adjustment}
-            overridePrice={overridePrice}
-          />
-        ))}
+      {adjustments.map((adjustment, index) => (
+        <Adjustment
+          key={index}
+          index={index}
+          adjustment={adjustment}
+          overridePrice={overridePrice}
+        />
+      ))}
       <div className="font-weight-semi-bold">
         <span></span>
         <span
@@ -73,15 +82,15 @@ function OrderItem({ index, orderItem, overridePrice }: OrderItemProps) {
 }
 
 type Props = {
-  order: Order;
+  orderItems: OrderItemType[];
   overridePrice: boolean;
 };
 
-const Cart = ({ order, overridePrice }: Props) => {
+const Cart = ({ orderItems, overridePrice }: Props) => {
   return (
     <>
-      {Boolean(order.items) &&
-        order.items.map((orderItem, index) => (
+      {Boolean(orderItems) &&
+        orderItems.map((orderItem, index) => (
           <OrderItem
             key={index}
             index={index}
