@@ -146,7 +146,8 @@ export const OrderEditing = ({
       {isPriceBreakdownEnabled ? (
         <div>
           {/* Show a choice between both an existing and a new order */}
-          {updatedOrder &&
+          {!overridePrice &&
+          updatedOrder &&
           hasCalculatedOrderItemsChanged(existingOrder, updatedOrder) ? (
             <>
               <Radio.Group
@@ -214,7 +215,7 @@ export const OrderEditing = ({
 
       <div className="mt-2">
         {/* Show both an old and a new manual supplements when they changed */}
-        {updatedOrder && hasSupplementsChanged ? (
+        {!overridePrice && updatedOrder && hasSupplementsChanged ? (
           <>
             <Cart
               orderItems={getManualSupplementsOrderItems(existingOrder.items)}
@@ -234,7 +235,8 @@ export const OrderEditing = ({
       </div>
       <div className="mt-2">
         {/* Show both an old and a new total price when there is a price change */}
-        {updatedOrder &&
+        {!overridePrice &&
+        updatedOrder &&
         (selectedPriceOption === 'new' || hasSupplementsChanged) ? (
           <>
             <TotalPrice
@@ -268,7 +270,7 @@ export const OrderEditing = ({
           />
         )}
 
-      {isDispatcher && orderManualSupplements.length > 0 && (
+      {isDispatcher && !overridePrice && orderManualSupplements.length > 0 && (
         <div>
           <Divider size="middle" />
           <ManualSupplements rules={orderManualSupplementsWithSelection} />
