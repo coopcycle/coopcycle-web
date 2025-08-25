@@ -23,7 +23,7 @@ type Props = {
 
 const Order = ({
   storeNodeId,
-  order: existingOrder,
+  order: _existingOrder,
   setPriceLoading,
 }: Props) => {
   const { isDispatcher, isDebugPricing } = useContext(FlagsContext);
@@ -32,6 +32,17 @@ const Order = ({
   const { values } = useDeliveryFormFormikContext();
 
   const [newOrder, setNewOrder] = useState(undefined as OrderType | undefined);
+
+  const existingOrder = useMemo(() => {
+    if (!_existingOrder) {
+      return undefined;
+    }
+
+    // Make sure items are always in the same order
+    _existingOrder?.items.sort((a, b) => a.id - b.id);
+
+    return _existingOrder;
+  }, [_existingOrder]);
 
   const [overridePrice, setOverridePrice] = useState<boolean>(() => {
     if (modeIn(mode, [Mode.DELIVERY_CREATE, Mode.RECURRENCE_RULE_UPDATE])) {
