@@ -6,13 +6,11 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Action\NotFoundAction;
-use AppBundle\Action\Delivery\CalculateRetailPrice as CalculateController;
 use AppBundle\Api\Dto\CalculationOutput;
-use AppBundle\Api\Dto\DeliveryDto;
-use AppBundle\Entity\Delivery\OrderItem;
+use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\State\CalculateRetailPriceProcessor;
+use AppBundle\Sylius\Order\OrderInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
@@ -30,7 +28,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
             openapiContext: ['summary' => 'Calculates price of a Delivery'],
             denormalizationContext: ['groups' => ['pricing_deliveries']],
             security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_STORE\') or is_granted(\'ROLE_OAUTH2_DELIVERIES\')',
-            input: DeliveryDto::class,
+            input: DeliveryInputDto::class,
             processor: CalculateRetailPriceProcessor::class
         )
     ],
@@ -52,12 +50,9 @@ final class RetailPrice
 
     private bool $taxIncluded;
 
-    /**
-     * @param OrderItem[] $items
-     */
     public function __construct(
         #[Groups(['pricing_deliveries'])]
-        public readonly array $items,
+        public readonly OrderInterface $order,
         #[Groups(['pricing_deliveries'])]
         public readonly CalculationOutput $calculation,
         int $taxIncludedAmount,

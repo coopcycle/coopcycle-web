@@ -108,10 +108,16 @@ Minimum configuration:
 docker compose up
 ```
 
-With additional tools:
+With Storybook:
 
 ```sh
-docker compose --profile devFrontend --profile devOdoo up
+docker compose --profile devFrontend up
+```
+
+With Odoo:
+
+```sh
+docker compose --profile devOdoo up
 ```
 
 At this step, the platform should be up & running, but the database is still empty.
@@ -142,12 +148,6 @@ docker compose run php bin/console doctrine:schema:create --env=test
 make phpunit
 ```
 
-or
-
-```sh
-sh ./bin/phpunit
-```
-
 #### One package/test:
 
 For example, to run only the tests in the `AppBundle\Sylius\OrderProcessing` folder:
@@ -166,12 +166,6 @@ See more command line options [here](https://docs.phpunit.de/en/9.6/textui.html#
 make behat
 ```
 
-or
-
-```sh
-sh ./bin/behat
-```
-
 #### One package/test:
 
 For example, to run only the tests in the `features/authentication.feature` file:
@@ -180,10 +174,16 @@ For example, to run only the tests in the `features/authentication.feature` file
 sh ./bin/behat features/authentication.feature
 ```
 
-To run only the tests with the `@activeScenario` tag:
+To run only the tests with the `@only` tag:
 
 ```sh
-sh ./bin/behat --tags=activeScenario
+make behat-only
+```
+
+To only show errors in logs:
+
+```sh
+sh ./bin/behat features/authentication.feature --no-snippets --format progress
 ```
 
 See more command line options [here](https://behat.org/en/latest/user_guide/command_line_tool.html).

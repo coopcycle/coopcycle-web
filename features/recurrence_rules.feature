@@ -500,7 +500,6 @@ Feature: Task recurrence rules
           {
             "@id": "/api/orders/1",
             "@type": "http://schema.org/Order",
-            "invitation": null,
             "paymentGateway": "stripe"
           }
         ],
@@ -538,7 +537,6 @@ Feature: Task recurrence rules
           {
             "@id": "/api/orders/1",
             "@type": "http://schema.org/Order",
-            "invitation": null,
             "paymentGateway": "stripe"
           }
         ],
@@ -601,7 +599,6 @@ Feature: Task recurrence rules
           {
             "@id": "/api/orders/1",
             "@type": "http://schema.org/Order",
-            "invitation": null,
             "paymentGateway": "stripe"
           }
         ],
@@ -647,7 +644,6 @@ Feature: Task recurrence rules
           {
             "@id": "/api/orders/2",
             "@type": "http://schema.org/Order",
-            "invitation": null,
             "paymentGateway": "stripe"
           }
         ],

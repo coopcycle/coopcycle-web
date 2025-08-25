@@ -329,7 +329,7 @@ Feature: Tasks
         "@id":"/api/tasks/2/events",
         "@type":"hydra:Collection",
         "hydra:member":@array@,
-        "hydra:totalItems":2,
+        "hydra:totalItems":3,
         "hydra:search":{
           "@type":"hydra:IriTemplate",
           "hydra:template":"/api/tasks/2/events{?date,assigned,organization}",
@@ -814,7 +814,7 @@ Feature: Tasks
             "createdAt":"@string@.isDateTime()"
           }
         ],
-        "hydra:totalItems":4,
+        "hydra:totalItems":5,
         "hydra:search":{
           "@*@":"@*@"
         }
@@ -1477,7 +1477,7 @@ Feature: Tasks
               "type": "SMALL",
               "quantity": 4,
               "volume_per_package": 1,
-              "short_code": "AB",
+              "short_code": "SM",
               "labels": @array@
             }],
             "emittedCo2": "@integer@",
@@ -1589,7 +1589,7 @@ Feature: Tasks
               "type": "SMALL",
               "quantity": 4,
               "volume_per_package": 1,
-              "short_code": "AB",
+              "short_code": "SM",
               "labels": @array@
             }],
             "emittedCo2": "@integer@",
@@ -1664,7 +1664,7 @@ Feature: Tasks
               "type": "SMALL",
               "quantity": 4,
               "volume_per_package": 1,
-              "short_code": "AB",
+              "short_code": "SM",
               "labels": @array@
             }],
             "emittedCo2": "@integer@",
@@ -2201,7 +2201,6 @@ Feature: Tasks
           "after":"2019-11-12T18:00:00+01:00",
           "before":"2019-11-12T18:30:00+01:00",
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"},
           "weight":null,
@@ -2221,7 +2220,6 @@ Feature: Tasks
           "after":"2019-11-12T19:00:00+01:00",
           "before":"2019-11-12T19:30:00+01:00",
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"},
           "weight":null,
@@ -2230,7 +2228,7 @@ Feature: Tasks
         },
         "tasks":@array@,
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": null
       }
       """
 
@@ -2295,7 +2293,8 @@ Feature: Tasks
           "barcode":{"@*@":"@*@"}
         },
         "tasks":@array@,
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": null
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -2354,7 +2353,8 @@ Feature: Tasks
           "barcode":{"@*@":"@*@"}
         },
         "tasks":@array@,
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": null
       }
       """
 
@@ -2874,7 +2874,7 @@ Feature: Tasks
               "name":"SMALL",
               "quantity":4,
               "volume_per_package": 1,
-              "short_code": "AB",
+              "short_code": "SM",
               "labels":@array@
             }
          ],

@@ -1275,7 +1275,15 @@ Feature: Urbantz
           "metadata": {"@*@": "@*@"}
         },
         "tasks":@array@,
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 

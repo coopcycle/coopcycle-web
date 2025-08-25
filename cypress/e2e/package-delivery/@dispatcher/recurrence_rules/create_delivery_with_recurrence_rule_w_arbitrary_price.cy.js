@@ -1,9 +1,9 @@
 describe('Delivery with recurrence rule (role: dispatcher)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      'ORM/user_dispatcher.yml',
-      'ORM/tags.yml',
-      'ORM/store_basic.yml',
+      'user_dispatcher.yml',
+      'tags.yml',
+      'store_basic.yml',
     ])
     cy.login('dispatcher', 'dispatcher')
   })
@@ -43,10 +43,14 @@ describe('Delivery with recurrence rule (role: dispatcher)', () => {
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.get('[data-testid="order_item"]')
-      .find('[data-testid="total"]')
+    cy.get('[data-testid="order-total-including-tax"]')
+      .find('[data-testid="value"]')
       .contains('€72.00')
 
+    // Wait for React components to load
+    cy.get('[data-testid="delivery-itinerary"]', {
+      timeout: 10000,
+    }).should('be.visible')
     cy.get('[data-testid=delivery-itinerary]')
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
       .should('exist')

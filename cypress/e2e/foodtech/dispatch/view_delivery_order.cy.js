@@ -1,8 +1,8 @@
 describe('Foodtech (role: dispatcher)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      'ORM/user_dispatcher.yml',
-      'ORM/foodtech_order_delivery.yml',
+      'user_dispatcher.yml',
+      'foodtech_order_delivery.yml',
     ])
   })
 

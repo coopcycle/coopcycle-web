@@ -1,6 +1,6 @@
 context('Setup simple matrix pricing (role: admin)', () => {
   beforeEach(() => {
-    cy.loadFixturesWithSetup(['ORM/user_admin.yml', 'ORM/packages.yml'])
+    cy.loadFixturesWithSetup(['user_admin.yml', 'packages.yml'])
     cy.login('admin', '12345678')
   })
 

@@ -68,7 +68,6 @@ Feature: Multi-step deliveries
           "packages": [],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -101,12 +100,18 @@ Feature: Multi-step deliveries
           "packages": [],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -193,13 +198,12 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":4,
               "volume_per_package": 3,
-              "short_code": "AB",
+              "short_code": "XL",
               "labels":@array@
             }
           ],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -235,18 +239,24 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2,
               "volume_per_package": 3,
-              "short_code": "AB",
+              "short_code": "XL",
               "labels":@array@
             }
           ],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -321,7 +331,7 @@ Feature: Multi-step deliveries
                 "name":"XL",
                 "quantity":2,
                 "volume_per_package": 3,
-                "short_code": "AB",
+                "short_code": "XL",
                 "labels":@array@
               }
             ],
@@ -357,7 +367,6 @@ Feature: Multi-step deliveries
           "packages":[],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -393,18 +402,24 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2,
               "volume_per_package": 3,
-              "short_code": "AB",
+              "short_code": "XL",
               "labels":@array@
             }
           ],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -482,7 +497,6 @@ Feature: Multi-step deliveries
           "packages":[],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -518,18 +532,24 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2,
               "volume_per_package": 3,
-              "short_code": "AB",
+              "short_code": "XL",
               "labels":@array@
             }
           ],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -655,7 +675,7 @@ Feature: Multi-step deliveries
                 "name":"XL",
                 "quantity":2,
                 "volume_per_package": 3,
-                "short_code": "AB",
+                "short_code": "XL",
                 "labels":@array@
               }
             ],
@@ -671,7 +691,7 @@ Feature: Multi-step deliveries
                 "name":"XL",
                 "quantity":3,
                 "volume_per_package": 3,
-                "short_code": "AB",
+                "short_code": "XL",
                 "labels":@array@
               }
             ],
@@ -687,7 +707,7 @@ Feature: Multi-step deliveries
                 "name":"XL",
                 "quantity":5,
                 "volume_per_package": 3,
-                "short_code": "AB",
+                "short_code": "XL",
                 "labels":@array@
               }
             ],
@@ -695,7 +715,14 @@ Feature: Multi-step deliveries
           }
         ],
         "trackingUrl":@string@,
-        "order":{"@*@":"@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
     Given I add "Content-Type" header equal to "application/ld+json"
@@ -715,7 +742,7 @@ Feature: Multi-step deliveries
             "type":"XL",
             "quantity":2,
             "volume_per_package":3,
-            "short_code":"AB",
+            "short_code":"XL",
             "labels":"@array@.count(2)"
           }
         ],

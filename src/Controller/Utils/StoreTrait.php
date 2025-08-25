@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller\Utils;
 
-use AppBundle\Api\Dto\DeliveryDto;
+use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\DeliveryMapper;
 use AppBundle\Entity\Address;
 use AppBundle\Annotation\HideSoftDeleted;
@@ -30,6 +30,7 @@ use AppBundle\Message\ImportDeliveries;
 use AppBundle\Pricing\OrderDuplicate;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryManager;
+use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\InvitationManager;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -285,6 +286,7 @@ trait StoreTrait
         $id,
         Request $request,
         PricingManager $pricingManager,
+        DeliveryOrderManager $deliveryOrderManager,
         OrderManager $orderManager,
         EntityManagerInterface $entityManager,
         TranslatorInterface $translator,
@@ -335,7 +337,7 @@ trait StoreTrait
 
             $order = null;
             try {
-                $order = $pricingManager->createOrder($delivery, [
+                $order = $deliveryOrderManager->createOrder($delivery, [
                     'pricingStrategy' => $priceForOrder,
                     // Force an admin to fix the pricing rules
                     // maybe it would be a better UX to create an incident instead
@@ -393,12 +395,12 @@ trait StoreTrait
 
         $delivery = $store->createDelivery();
 
-        /** @var DeliveryDto|null $deliveryData */
-        $deliveryData = null;
+        /** @var DeliveryInputDto|null $formData */
+        $formData = null;
 
         // pre-fill fields with the data from a previous order
         if ($this->isGranted('ROLE_DISPATCHER') && $data = $this->duplicateOrder($request, $store, $pricingManager)) {
-            $deliveryData = $deliveryMapper->map(
+            $formData = $deliveryMapper->map(
                 $data->delivery,
                 null,
                 $data->previousArbitraryPrice,
@@ -413,7 +415,7 @@ trait StoreTrait
                 'store' => $store,
                 'order' => null,
                 'delivery' => $delivery,
-                'deliveryData' => $deliveryData,
+                'formData' => $formData,
                 'routes' => $request->attributes->get('routes'),
                 'show_left_menu' => true,
                 'isDispatcher' => $this->isGranted('ROLE_DISPATCHER'),
@@ -468,7 +470,7 @@ trait StoreTrait
             $arbitraryPrice = new ArbitraryPrice($arbitraryPriceTemplate['variantName'], $arbitraryPriceTemplate['variantPrice']);
         }
 
-        $deliveryData = $deliveryMapper->map(
+        $formData = $deliveryMapper->map(
             $tempDelivery,
             null,
             $arbitraryPrice,
@@ -481,7 +483,7 @@ trait StoreTrait
             'recurrenceRule' => $recurrenceRule,
             'order' => null,
             'delivery' => $tempDelivery,
-            'deliveryData' => $deliveryData,
+            'formData' => $formData,
             'isDispatcher' => $this->isGranted('ROLE_DISPATCHER'),
             'debug_pricing' => $request->query->getBoolean('debug', false),
         ]));
@@ -804,7 +806,7 @@ trait StoreTrait
     public function storeRecurrenceRulesAction($id, Request $request,
         EntityManagerInterface $entityManager,
         DeliveryManager $deliveryManager,
-        PricingManager $pricingManager,
+        DeliveryOrderManager $deliveryOrderManager,
         PaginatorInterface $paginator
     )
     {
@@ -842,7 +844,7 @@ trait StoreTrait
             $templateOrder = null;
             $isInvalidPricing = false;
             try {
-                $templateOrder = $pricingManager->createOrderFromRecurrenceRule($rule, $startDate, false, true);
+                $templateOrder = $deliveryOrderManager->createOrderFromRecurrenceRule($rule, $startDate, false, true);
             } catch (NoRuleMatchedException $e) {
                 $isInvalidPricing = true;
             }

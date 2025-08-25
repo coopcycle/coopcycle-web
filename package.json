@@ -12,7 +12,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "lint": "eslint js/app/ assets/react",
-    "type-check": "tsc --noEmit --pretty"
+    "type-check": "tsc --noEmit --pretty",
+    "prettify": "prettier js/app/ assets/react --write"
   },
   "repository": {
     "type": "git",
@@ -153,6 +154,7 @@
     "react-cropper": "^2.1.8",
     "react-dom": "^18.3.1",
     "react-dropzone": "^11.5.3",
+    "react-error-boundary": "^6.0.0",
     "react-i18next": "^11.18.6",
     "react-markdown": "^8.0.3",
     "react-modal": "^3.16.3",
@@ -168,7 +170,6 @@
     "redux-actions": "^2.6.5",
     "redux-async-queue": "^1.0.0",
     "redux-mock-store": "^1.5.4",
-    "reselect": "^4.1.7",
     "rrule": "^2.7.1",
     "sass": "^1.89.0",
     "sass-loader": "^14.0.0",

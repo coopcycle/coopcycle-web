@@ -65,24 +65,6 @@ const Buttons = () => {
 
   return (
     <React.Fragment>
-      <a
-        href="#"
-        className="mr-3"
-        onClick={e => {
-          e.preventDefault()
-          dispatch(openNewRecurrenceRuleModal())
-        }}>
-        <i className="fa fa-clock-o"></i>
-      </a>
-      <a
-        href="#"
-        className="mr-3"
-        onClick={e => {
-          e.preventDefault()
-          dispatch(openNewTaskModal())
-        }}>
-        <i className="fa fa-plus"></i>
-      </a>
       <Popover
         placement="leftTop"
         arrow={{ pointAtCenter: true }}

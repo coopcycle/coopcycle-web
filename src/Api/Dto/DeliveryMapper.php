@@ -3,12 +3,14 @@
 namespace AppBundle\Api\Dto;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
+use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Entity\Task;
 use AppBundle\Service\TagManager;
 use AppBundle\Sylius\Order\OrderInterface;
-use Hashids\Hashids;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use AppBundle\Sylius\Order\OrderItemInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
@@ -18,10 +20,9 @@ class DeliveryMapper
     public function __construct(
         private readonly TaskMapper $taskMapper,
         private readonly TagManager $tagManager,
-        private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly Hashids $hashids8,
         private readonly NormalizerInterface $normalizer,
-        private readonly ObjectNormalizer $symfonyNormalizer
+        private readonly ObjectNormalizer $symfonyNormalizer,
+        private readonly EntityManagerInterface $entityManager
     ) {
     }
 
@@ -31,11 +32,11 @@ class DeliveryMapper
         ?ArbitraryPrice $arbitraryPrice,
         bool $isSavedOrder,
         array $groups = []
-    ): DeliveryDto {
+    ): DeliveryInputDto {
 
         $context = !empty($groups) ? ['groups' => $groups] : [];
 
-        $deliveryData = new DeliveryDto();
+        $deliveryData = new DeliveryInputDto();
 
         $tasks = $deliveryEntity->getTasks();
 
@@ -94,8 +95,9 @@ class DeliveryMapper
                 $deliveryOrderData->id = $order->getId();
             }
 
-            $deliveryOrderData->total = $order->getTotal();
-            $deliveryOrderData->taxTotal = $order->getTaxTotal();
+            $deliveryOrderData->manualSupplements = $this->extractManualSupplementsFromOrder(
+                $order
+            );
         }
 
         $deliveryOrderData->arbitraryPrice = $arbitraryPrice ? new ArbitraryPriceDto(
@@ -107,12 +109,54 @@ class DeliveryMapper
 
         if ($deliveryEntity->getId()) {
             $deliveryData->id = $deliveryEntity->getId();
-
-            $deliveryData->trackingUrl = $this->urlGenerator->generate('public_delivery', [
-                'hashid' => $this->hashids8->encode($deliveryEntity->getId()),
-            ], UrlGeneratorInterface::ABSOLUTE_URL);
         }
 
         return $deliveryData;
+    }
+
+    /**
+     * @param OrderInterface $order
+     * @return ManualSupplementDto[]
+     */
+    private function extractManualSupplementsFromOrder(OrderInterface $order): array
+    {
+        $manualSupplements = [];
+
+        foreach ($order->getItems() as $orderItem) {
+            /** @var OrderItemInterface $orderItem */
+            $variant = $orderItem->getVariant();
+
+            if (null === $variant) {
+                continue;
+            }
+
+            foreach ($variant->getOptionValues() as $productOptionValue) {
+                /** @var ProductOptionValue $productOptionValue */
+
+                // Find the PricingRule linked to this ProductOptionValue
+                //FIXME: use a repository method or replace with a bidirectional relation
+                $pricingRule = $this->findPricingRuleByProductOptionValue($productOptionValue);
+
+                if (null !== $pricingRule && $pricingRule->isManualSupplement()) {
+                    // Create ManualSupplementDto
+                    $manualSupplementDto = new ManualSupplementDto();
+                    $manualSupplementDto->pricingRule = $pricingRule;
+                    //FIXME: update when we properly model unit price and quantity in https://github.com/coopcycle/coopcycle/issues/441
+//                    $manualSupplementDto->quantity = $variant->getQuantityForOptionValue($productOptionValue);
+                    $manualSupplementDto->quantity = 1;
+
+                    $manualSupplements[] = $manualSupplementDto;
+                }
+            }
+        }
+
+        return $manualSupplements;
+    }
+
+    private function findPricingRuleByProductOptionValue(ProductOptionValue $productOptionValue
+    ): ?PricingRule {
+        $repository = $this->entityManager->getRepository(PricingRule::class);
+
+        return $repository->findOneBy(['productOptionValue' => $productOptionValue]);
     }
 }

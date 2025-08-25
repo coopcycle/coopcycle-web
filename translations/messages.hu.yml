@@ -177,7 +177,7 @@ order.total_excluding_tax: 'Összesen (az ár az ÁFÁ-t nem tartalmazza)'
 order.total_including_tax: 'Összesen (Az ár az ÁFÁ-t tartalmazza)'
 order.items_total: 'Termékek összesen'
 order.total_tax: 'ÁFA'
-order.total_tax_by_rate: 'Összesen %name%'
+order.total_tax_by_rate: 'ÁFA %name%'
 order.shipping_date.title: 'A kiszállítási dátumod'
 order.payer.title: 'Vásárlói információk'
 order.payer.identificationType: 'ID típus'
@@ -544,7 +544,15 @@ delivery.import.success_message: 'A fájlodat sikeresen feldolgoztuk, %count% sz
 form.delivery_import.file.label: 'Fájl'
 form.delivery_import.store.label: 'Üzlet'
 basics.view_example: 'Példa megtekintése'
+notifications.empty: Nincsenek értesítések
+notifications.tap_to_open: 'Koppintson a megnyitáshoz'
+notifications.delivery_created: 'Egy %date% átvehető szállítást hoztunk létre'
+notifications.tasks_changed: 'A %date% napi feladatok megváltoztak!'
+notifications.tasks_changed_today: 'A mai napra vonatkozó feladataid frissültek'
 notifications.restaurant.new_order: 'Új megrendelés elfogadása'
+notifications.restaurant.accepted_order: Új megrendelés
+notifications.messenger_approaching: 'Hé %customer%! A futár %messenger% már majdnem
+  itt van. Készülj!'
 profile.loopeat.connect: 'LoopEat fiókom csatlakoztatása'
 profile.loopeat.connected: 'LoopEat fiók csatlakoztatva'
 profile.loopeat.disconnect: 'LoopEat lekapcsolása'
@@ -561,8 +569,6 @@ basics.weeks: '%count% hét|%count% hetek'
 basics.none: 'Nincs'
 basics.yes: 'Igen'
 basics.no: 'Nem'
-notifications.messenger_approaching: 'Hé %customer%! A futár %messenger% már majdnem
-  itt van. Készülj!'
 order.export.heading.restaurant_name: 'Étterem'
 order.export.heading.order_number: 'Rendelésszám'
 order.export.heading.completed_at: 'Befejezve'
@@ -627,7 +633,6 @@ form.local_business_type.label: 'Vállalkozás típusa'
 form.local_business_type.help: 'A típusok a <a href="https://schema.org/">schema.org</a>
   szókincsét használják <a href="https://schema.org/FoodEstablishment">élelmiszer-üzletek</a>
   és <a href="https://schema.org/Store">boltok</a> esetén'
-notifications.tasks_changed: 'A %date% napi feladatok megváltoztak!'
 restaurant_promotion.offer_delivery: 'Kínálj házhoz szállítási díjakat'
 restaurant_promotion.offer_delivery.help: 'Ez lehetővé teszi számodra, hogy a házhoz
   szállítási díjakat <strong>saját pénzből</strong> ajánld fel. A haszonkulcsod csökkenni
@@ -746,9 +751,6 @@ form.fulfillment_method.pre_ordering_allowed.help: 'Ha nem jelölöd be ezt a n�
   az ügyfelek csak aznapi megrendeléseket adhatnak le.'
 form.fulfillment_method.options.range_duration.label: 'Tartomány időtartama'
 ordering_delay.admin_reminder: 'Globális átvételi késleltetést állított be az foodtech rendelésekhez'
-notifications.delivery_created: 'Egy %date% átvehető szállítást hoztunk létre'
-notifications.tasks_changed_today: 'A mai napra vonatkozó feladataid frissültek'
-notifications.tap_to_open: 'Koppintson a megnyitáshoz'
 profile.edenred.connected: 'Edenred számla csatlakoztatva'
 profile.edenred.connect: 'Edenred fiókom csatlakoztatása'
 edenred.oauth_connect.success: 'Edenred fiók sikeresen csatlakozott!'

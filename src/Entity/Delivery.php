@@ -18,7 +18,7 @@ use AppBundle\Action\Delivery\BulkAsync as BulkAsyncDelivery;
 use AppBundle\Action\Delivery\PODExport as PODExportDelivery;
 use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
-use AppBundle\Api\Dto\DeliveryDto;
+use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\OptimizationSuggestions;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
 use AppBundle\Api\Filter\DeliveryTaskDateFilter;
@@ -47,8 +47,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Put(
             denormalizationContext: ['groups' => ['delivery_create']],
             security: 'is_granted(\'edit\', object)',
-            input: DeliveryDto::class,
-            output: DeliveryDto::class,
+            input: DeliveryInputDto::class,
+            output: Delivery::class,
             processor: DeliveryCreateOrUpdateProcessor::class
         ),
         new Put(
@@ -91,8 +91,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
             ],
             denormalizationContext: ['groups' => ['delivery_create']],
             securityPostDenormalize: 'is_granted(\'create\', object)',
-            input: DeliveryDto::class,
-            output: DeliveryDto::class,
+            input: DeliveryInputDto::class,
+            output: Delivery::class,
             processor: DeliveryCreateOrUpdateProcessor::class
         ),
         new Post(
@@ -126,7 +126,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             denormalizationContext: ['groups' => ['delivery_create_from_tasks']],
             security: 'is_granted(\'ROLE_ADMIN\')',
             input: DeliveryFromTasksInput::class,
-            output: DeliveryDto::class,
+            output: Delivery::class,
             processor: DeliveryCreateOrUpdateProcessor::class
         ),
         new Post(
@@ -176,7 +176,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             deserialize: false
         )
     ],
-    normalizationContext: ['groups' => ['delivery', 'address']],
+    normalizationContext: ['groups' => ['delivery', 'address', 'package_delivery_order_minimal']],
     denormalizationContext: ['groups' => ['order_create']],
     order: ['createdAt' => 'DESC'],
     paginationItemsPerPage: 15
@@ -193,7 +193,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     uriVariables: [
         'id' => new Link(fromClass: Store::class, toProperty: 'store')
     ],
-    normalizationContext: ['groups' => ['delivery', 'address']],
+    normalizationContext: ['groups' => ['delivery', 'address', 'package_delivery_order_minimal']],
     security: "is_granted('edit', request)"
 )]
 class Delivery extends TaskCollection implements TaskCollectionInterface, PackagesAwareInterface
@@ -207,6 +207,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     #[Groups(['delivery'])]
     protected $id;
 
+    #[Groups(['package_delivery_order_minimal'])]
     private $order;
 
     private $vehicle = self::VEHICLE_BIKE;
@@ -313,7 +314,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     public function getPickup()
     {
         foreach ($this->getTasks() as $task) {
-            if ($task->getType() === Task::TYPE_PICKUP) {
+            if ($task->isPickup()) {
                 return $task;
             }
         }
@@ -329,13 +330,13 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     {
         if (count($this->getTasks()) > 2) {
             foreach (array_reverse($this->getTasks()) as $task) {
-                if ($task->getType() === Task::TYPE_DROPOFF) {
+                if ($task->isDropoff()) {
                     return $task;
                 }
             }
         } else {
             foreach ($this->getTasks() as $task) {
-                if ($task->getType() === Task::TYPE_DROPOFF) {
+                if ($task->isDropoff()) {
                     return $task;
                 }
             }

@@ -71,6 +71,8 @@ parameters:
   business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
   transporters_config: '%env(json:TRANSPORTERS_CONFIG)%'
   billing_enabled: '%env(bool:BILLING_ENABLED)%'
+  package_delivery_ui_price_breakdown_enabled_default: true
+  package_delivery_ui_price_breakdown_enabled: '%env(default:package_delivery_ui_price_breakdown_enabled_default:bool:PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED)%'
 
 services:
 
@@ -82,6 +84,7 @@ services:
       $locale: "%env(COOPCYCLE_LOCALE)%"
       $country: "%country_iso%"
       $environment: "%kernel.environment%"
+      $packageDeliveryUiPriceBreakdownEnabled: "%package_delivery_ui_price_breakdown_enabled%"
 
   # For some cache pools, want *STABLE* cache keys between deploys.
   # To achieve this, we *EXPLICITLY* set a namespace,
@@ -516,26 +519,22 @@ services:
         label: 'Is items total above'
         form_type: AppBundle\Form\Sylius\Promotion\Rule\IsItemsTotalAboveConfigurationType
 
+  AppBundle\Sylius\Product\ProductOptionValueFactory:
+    decorates: sylius.factory.product_option_value
+    public: false
+
+  AppBundle\Sylius\Product\ProductVariantFactory:
+    decorates: sylius.factory.product_variant
+    public: false
+
   coopcycle.sylius.factory.product_variant:
     class: AppBundle\Sylius\Product\ProductVariantFactory
-    decorates: sylius.factory.product_variant
-    arguments:
-      - "@coopcycle.sylius.factory.product_variant.inner"
-      - "@sylius.repository.product"
-      - "@sylius.repository.tax_category"
-      - "@coopcycle.settings_manager"
-      - "@translator"
-    public: false
 
   AppBundle\Sylius\Order\OrderFactory:
     decorates: sylius.factory.order
     arguments:
       $factory: '@AppBundle\Sylius\Order\OrderFactory.inner'
       $channelContext: "@sylius.context.channel"
-      $orderItemFactory: "@sylius.factory.order_item"
-      $productVariantFactory: "@sylius.factory.product_variant"
-      $orderItemQuantityModifier: "@sylius.order_item_quantity_modifier"
-      $orderModifier: "@sylius.order_modifier"
     public: false
 
   coopcycle.sylius.product_variant_resolver.lazy:
@@ -737,6 +736,23 @@ services:
 
   sylius.repository.order:
     alias: AppBundle\Entity\Sylius\OrderRepository
+
+  AppBundle\Entity\Sylius\ProductOptionRepository:
+    factory: [ '@doctrine.orm.default_entity_manager', getRepository ]
+    arguments:
+      - AppBundle\Entity\Sylius\ProductOption
+    calls:
+      - method: setEntityManager
+        arguments: [ '@doctrine.orm.default_entity_manager' ]
+      - method: setProductRepository
+        arguments: [ '@sylius.repository.product' ]
+      - method: setProductOptionFactory
+        arguments: [ '@sylius.factory.product_option' ]
+      - method: setLocaleProvider
+        arguments: [ '@sylius.locale_provider' ]
+
+  sylius.repository.product_option:
+    alias: AppBundle\Entity\Sylius\ProductOptionRepository
 
   AppBundle\Entity\TaskListRepository: ~
 
@@ -1080,6 +1096,11 @@ services:
     tags: [ 'api_platform.state_processor' ]
 
   AppBundle\Api\State\EvaluatePricingRuleProcessor:
+    tags: [ 'api_platform.state_processor' ]
+
+  AppBundle\Api\State\PricingRuleSetProcessor:
+    arguments:
+      $decorated: '@api_platform.doctrine.orm.state.persist_processor'
     tags: [ 'api_platform.state_processor' ]
 
   AppBundle\Api\State\UrbantzWebhookProcessor:

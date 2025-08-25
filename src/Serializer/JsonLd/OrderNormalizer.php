@@ -11,14 +11,12 @@ use AppBundle\LoopEat\Client as LoopeatClient;
 use AppBundle\LoopEat\Context as LoopeatContext;
 use AppBundle\LoopEat\ContextInitializer as LoopeatContextInitializer;
 use AppBundle\Payment\GatewayResolver;
-use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\OptionsPayloadConverter;
 use AppBundle\Utils\PriceFormatter;
 use Sylius\Component\Channel\Context\ChannelContextInterface;
 use Sylius\Bundle\PromotionBundle\Doctrine\ORM\PromotionCouponRepository;
-use Sylius\Component\Order\Model\AdjustmentInterface as BaseAdjustmentInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
@@ -57,6 +55,8 @@ class OrderNormalizer implements NormalizerInterface, ContextAwareDenormalizerIn
     public function normalize($object, $format = null, array $context = array())
     {
         // TODO Document why we use ObjectNormalizer for unsaved orders (?)
+        // Answer: probably because API Platform normiliser does not work with order without an ID,
+        // now we can work around it by applying TemporaryIdNormalizer for 'cart' group as well
         if (null === $object->getId() && !in_array('cart', $context['groups'])) {
             $data = $this->objectNormalizer->normalize($object, $format, $context);
         } else {
@@ -176,10 +176,12 @@ class OrderNormalizer implements NormalizerInterface, ContextAwareDenormalizerIn
             $data['takeaway'] = $object->isTakeaway();
         }
 
-        $data['invitation'] = null;
+        if (in_array('cart', $context['groups']) || in_array('order', $context['groups'])) {
+            $data['invitation'] = null;
 
-        if (null !== ($invitation = $object->getInvitation())) {
-            $data['invitation'] = $invitation->getSlug();
+            if (null !== ($invitation = $object->getInvitation())) {
+                $data['invitation'] = $invitation->getSlug();
+            }
         }
 
         $data['paymentGateway'] = $this->paymentGatewayResolver->resolveForOrder($object);

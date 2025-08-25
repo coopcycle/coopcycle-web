@@ -302,7 +302,7 @@ order.total_excluding_tax: Łącznie (bez VAT)
 order.total_including_tax: Łącznie (z VAT)
 order.items_total: Wszystkie produkty
 order.total_tax: VAT
-order.total_tax_by_rate: Łącznie %name%
+order.total_tax_by_rate: VAT %name%
 order.preparation_expected_at: Przygotowanie oczekiwane na %date%
 order.preparation_expected_for: Przygotowanie oczekiwane na %date%
 order.shipping_date.title: Twoja data wysyłki

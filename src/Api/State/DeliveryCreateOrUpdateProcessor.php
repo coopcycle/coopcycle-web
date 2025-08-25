@@ -5,16 +5,16 @@ namespace AppBundle\Api\State;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use ApiPlatform\Symfony\Validator\Exception\ValidationException;
-use AppBundle\Api\Dto\DeliveryMapper;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
-use AppBundle\Api\Dto\DeliveryDto;
+use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\UsePricingRules;
+use AppBundle\Pricing\ManualSupplements;
 use AppBundle\Pricing\PricingManager;
+use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\OrderManager;
-use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use Psr\Log\LoggerInterface;
 use Recurr\Exception\InvalidRRule;
@@ -26,22 +26,26 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
 {
     public function __construct(
         private readonly DeliveryProcessor $decorated,
+        private readonly ManualSupplementsProcessor $manualSupplementsProcessor,
         private readonly ProcessorInterface $persistProcessor,
         private readonly PricingManager $pricingManager,
-        private readonly OrderFactory $orderFactory,
+        private readonly DeliveryOrderManager $deliveryOrderManager,
         private readonly OrderManager $orderManager,
-        private readonly DeliveryMapper $deliveryMapper,
         private readonly AuthorizationCheckerInterface $authorizationCheckerInterface,
         private readonly ValidatorInterface $validator,
         private readonly LoggerInterface $logger,
-    )
-    {}
+    ) {
+    }
 
     /**
-     * @param DeliveryDto|DeliveryFromTasksInput $data
+     * @param DeliveryInputDto|DeliveryFromTasksInput $data
      */
-    public function process($data, Operation $operation, array $uriVariables = [], array $context = []): DeliveryDto
-    {
+    public function process(
+        $data,
+        Operation $operation,
+        array $uriVariables = [],
+        array $context = []
+    ): Delivery {
         /** @var Delivery $delivery */
         $delivery = $this->decorated->process($data, $operation, $uriVariables, $context);
 
@@ -53,9 +57,25 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
             throw new ValidationException($errors);
         }
 
+        // Extract manual supplements from the DTO
+        /** @var ManualSupplements|null $manualSupplements */
+        $manualSupplements = null;
+        if ($this->authorizationCheckerInterface->isGranted(
+                'ROLE_DISPATCHER'
+            ) && $data instanceof DeliveryInputDto) {
+            $manualSupplements = $this->manualSupplementsProcessor->process(
+                $data,
+                $operation,
+                $uriVariables,
+                $context
+            );
+        }
+
         /** @var ArbitraryPrice|null $arbitraryPrice */
         $arbitraryPrice = null;
-        if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $data instanceof DeliveryDto && $data->order?->arbitraryPrice) {
+        if ($this->authorizationCheckerInterface->isGranted(
+                'ROLE_DISPATCHER'
+            ) && $data instanceof DeliveryInputDto && $data->order?->arbitraryPrice) {
             $arbitraryPrice = new ArbitraryPrice(
                 $data->order->arbitraryPrice->variantName,
                 $data->order->arbitraryPrice->variantPrice
@@ -82,41 +102,56 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         if ($isCreateOrderMode) {
             // New delivery/order
 
-            $order = $this->pricingManager->createOrder(
+            $order = $this->deliveryOrderManager->createOrder(
                 $delivery,
                 [
                     'pricingStrategy' => $pricingStrategy,
+                    'manualSupplements' => $manualSupplements,
                 ]
             );
 
             if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER')) {
                 $order->setState(OrderInterface::STATE_ACCEPTED);
             }
-
         } else {
             // Existing delivery/order
 
             $order = $delivery->getOrder();
 
-            if (!is_null($arbitraryPrice)) {
+            if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER')) {
                 if (is_null($order)) {
                     // Should not happen normally, but just in case
-                    // there is still some delivery created without an order
-                    $order = $this->pricingManager->createOrder(
+                    // if there is still some delivery created without an order
+                    $order = $this->deliveryOrderManager->createOrder(
                         $delivery,
                         [
-                            'pricingStrategy' => new UseArbitraryPrice($arbitraryPrice),
+                            'pricingStrategy' => $pricingStrategy,
+                            'manualSupplements' => $manualSupplements,
                         ]
                     );
-                } else {
-                    $this->orderFactory->updateDeliveryPrice($order, $delivery, $arbitraryPrice);
+                }
+
+                if (!is_null($arbitraryPrice)) {
+                    $this->pricingManager->processDeliveryOrder(
+                        $order,
+                        [$this->pricingManager->getCustomProductVariant($delivery, $arbitraryPrice)]
+                    );
+                } elseif ($data instanceof DeliveryInputDto && $data->order?->recalculatePrice) {
+                    $productVariants = $this->pricingManager->getPriceWithPricingStrategy(
+                        $delivery,
+                        new UsePricingRules(),
+                        $manualSupplements
+                    );
+                    $this->pricingManager->processDeliveryOrder($order, $productVariants);
                 }
             }
         }
 
         /** @var string $rrule */
         $rrule = null;
-        if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $data instanceof DeliveryDto && $isCreateOrderMode) {
+        if ($this->authorizationCheckerInterface->isGranted(
+                'ROLE_DISPATCHER'
+            ) && $data instanceof DeliveryInputDto && $isCreateOrderMode) {
             $rrule = $data->rrule;
         }
 
@@ -151,9 +186,11 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                 }
             }
         }
-        
+
         $isSavedOrder = false;
-        if ($this->authorizationCheckerInterface->isGranted('ROLE_DISPATCHER') && $data instanceof DeliveryDto && !is_null($data->order?->isSavedOrder)) {
+        if ($this->authorizationCheckerInterface->isGranted(
+                'ROLE_DISPATCHER'
+            ) && $data instanceof DeliveryInputDto && !is_null($data->order?->isSavedOrder)) {
             $isSavedOrder = $data->order->isSavedOrder;
             $this->orderManager->setBookmark($order, $isSavedOrder);
         }

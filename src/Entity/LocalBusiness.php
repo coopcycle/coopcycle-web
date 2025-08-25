@@ -166,7 +166,7 @@ class LocalBusiness extends BaseLocalBusiness implements
      */
     #[ApiProperty(iris: ['http://schema.org/name'])]
     #[Assert\Type(type: 'string')]
-    #[Groups(['restaurant', 'order', 'restaurant_seo', 'restaurant_simple', 'order', 'order_minimal'])]
+    #[Groups(['restaurant', 'order', 'restaurant_seo', 'restaurant_simple', 'order', 'foodtech_order_minimal'])]
     protected $name;
 
     #[Groups(['restaurant'])]
@@ -205,7 +205,7 @@ class LocalBusiness extends BaseLocalBusiness implements
     /**
      * @var Address
      */
-    #[Groups(['restaurant', 'order', 'restaurant_seo', 'restaurant_simple', 'order', 'order_minimal'])]
+    #[Groups(['restaurant', 'order', 'restaurant_seo', 'restaurant_simple', 'order', 'foodtech_order_minimal'])]
     protected $address;
 
     /**

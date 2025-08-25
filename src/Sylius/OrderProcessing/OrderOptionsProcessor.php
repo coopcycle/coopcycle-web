@@ -55,12 +55,23 @@ final class OrderOptionsProcessor implements OrderProcessorInterface
                             break;
                     }
 
-                    $adjustment = $this->adjustmentFactory->createWithData(
-                        AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT,
-                        sprintf('%d × %s', $quantity, $optionValue->getValue()),
-                        $amount,
-                        $neutral = false
-                    );
+                    if ($order->isFoodtech()) {
+                        $adjustment = $this->adjustmentFactory->createWithData(
+                            AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT,
+                            sprintf('%d × %s', $quantity, $optionValue->getValue()),
+                            $amount,
+                            $neutral = false
+                        );
+                    } else {
+                        $adjustment = $this->adjustmentFactory->createWithData(
+                            AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT,
+                            //FIXME: in https://github.com/coopcycle/coopcycle/issues/441
+                            //sprintf('%d × %s', $quantity, $optionValue->getValue()),
+                            sprintf('%d × %s', 1, $optionValue->getValue()),
+                            $amount,
+                            $neutral = false
+                        );
+                    }
 
                     $orderItem->addAdjustment($adjustment);
 

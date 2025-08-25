@@ -1,9 +1,9 @@
 context('Delivery (role: dispatcher)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      'ORM/user_dispatcher.yml',
-      'ORM/tags.yml',
-      '../features/fixtures/ORM/store_default.yml',
+      'user_dispatcher.yml',
+      'tags.yml',
+      'store_default.yml',
     ])
 
     cy.setMockDateTime('2025-04-23 8:30:00')
@@ -38,7 +38,7 @@ context('Delivery (role: dispatcher)', () => {
     cy.get(`[data-testid="form-task-0"]`).within(() => {
       cy.get(`[data-testid=tags-select]`).click()
     })
-    cy.get('#react-select-3-option-0').click()
+    cy.reactSelect(0)
 
     // Dropoff
     cy.betaChooseSavedAddressAtPosition(1, 2)
@@ -53,7 +53,7 @@ context('Delivery (role: dispatcher)', () => {
     cy.get(`[data-testid="form-task-1"]`).within(() => {
       cy.get(`[data-testid=tags-select]`).click()
     })
-    cy.get('#react-select-5-option-2').click()
+    cy.reactSelect(2)
 
     cy.betaEnterCommentAtPosition(1, 'Dropoff comments')
 
@@ -157,6 +157,6 @@ context('Delivery (role: dispatcher)', () => {
       tags: ['Perishable'],
     })
 
-    cy.get('[data-testid="tax-included-previous"]').contains('72,00 €')
+    cy.get('[data-testid="tax-included"]').contains('72,00 €')
   })
 })

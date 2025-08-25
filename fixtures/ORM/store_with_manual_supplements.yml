@@ -1,0 +1,69 @@
+AppBundle\Entity\Base\GeoCoordinates:
+  geo_1:
+    __construct: ['48.864577', '2.333338']
+
+AppBundle\Entity\Address:
+  address_1:
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
+    geo: '@geo_1'
+
+AppBundle\Entity\Delivery\PricingRuleSet:
+  pricing_rule_set_with_supplements:
+    name: 'With Manual Supplements'
+    strategy: 'map'
+    rules: ['@pricing_rule_base', '@pricing_rule_weight', '@manual_supplement_1', '@manual_supplement_2']
+  pricing_rule_set_2:
+    name: 'Pricing Rule Set 2'
+    rules: ['@manual_supplement_3']
+
+AppBundle\Entity\Delivery\PricingRule:
+  pricing_rule_base:
+    expression: 'distance > 0'
+    price: 499
+    position: 1
+    ruleSet: '@pricing_rule_set_with_supplements'
+  pricing_rule_weight:
+    expression: 'weight > 25000'
+    price: 200
+    position: 2
+    ruleSet: '@pricing_rule_set_with_supplements'
+  manual_supplement_1:
+    expression: 'false'
+    price: 200
+    position: 3
+    ruleSet: '@pricing_rule_set_with_supplements'
+    productOptionValue: '@manual_supplement_option_value_1'
+  manual_supplement_2:
+    expression: 'false'
+    price: 300
+    position: 4
+    ruleSet: '@pricing_rule_set_with_supplements'
+    productOptionValue: '@manual_supplement_option_value_2'
+  #  manual supplement not belonging to a pricing rule for this store
+  manual_supplement_3:
+    expression: 'false'
+    price: 300
+    position: 1
+    ruleSet: '@pricing_rule_set_2'
+    productOptionValue: '@manual_supplement_option_value_1'
+
+AppBundle\Entity\Sylius\ProductOptionValue:
+  manual_supplement_option_value_1:
+    currentLocale: 'fr'
+    value: 'Express Delivery'
+    code: 'EXPRESS_DELIVERY'
+    option: '@product_option_fixed_price_rules'
+  manual_supplement_option_value_2:
+    currentLocale: 'fr'
+    value: 'Fragile Handling'
+    code: 'FRAGILE_HANDLING'
+    option: '@product_option_fixed_price_rules'
+
+AppBundle\Entity\Store:
+  store_1:
+    name: 'Store with Manual Supplements'
+    address: '@address_1'
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_with_supplements'

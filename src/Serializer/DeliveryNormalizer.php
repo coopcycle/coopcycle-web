@@ -6,7 +6,7 @@ use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
 use ApiPlatform\Metadata\GetCollection;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
-use AppBundle\Api\Dto\DeliveryDto;
+use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
@@ -266,7 +266,7 @@ class DeliveryNormalizer implements NormalizerInterface, ContextAwareDenormalize
     public function supportsDenormalization($data, string $type, ?string $format = null, array $context = []): bool
     {
         $inputClass = ($context['input']['class'] ?? null);
-        if ($inputClass === DeliveryDto::class ||
+        if ($inputClass === DeliveryInputDto::class ||
             $inputClass === DeliveryFromTasksInput::class) {
             return false;
         }

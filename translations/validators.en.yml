@@ -30,6 +30,9 @@ delivery.check.notValid: Your request is not feasible
 delivery.check.noStore: You must provide a store
 delivery.check.outOfBounds: Your request is out of the accepted zone or too far
 
+manual_supplements.invalid_supplement: Invalid manual supplement
+manual_supplements.supplement_not_in_store_rule_set: Manual supplement %supplement_uri% does not belong to the store's pricing rule set
+
 time_range.empty: You have not selected any value
 time_range.no_weekday: You did not select a day of the week
 

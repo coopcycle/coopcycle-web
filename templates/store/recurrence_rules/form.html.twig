@@ -48,9 +48,10 @@
       data-recurrence-rule-id="{{ recurrenceRule.id }}"
       data-recurrence-rule-node-id="{{ recurrenceRule|get_iri_from_item }}"
       data-recurrence-rule="{{ recurrenceRule.rule.getString() }}"
-      data-delivery="{{ deliveryData ? deliveryData|serialize('jsonld', {groups: ['delivery', 'address', 'barcode']}) : '' }}"
+      data-form-data="{{ formData ? formData|serialize('jsonld', {groups: ['delivery', 'address', 'barcode']}) : '' }}"
       data-is-dispatcher="{{ isDispatcher ? 'true' : 'false' }}"
       data-is-debug-pricing="{{ debug_pricing ? 'true' : 'false' }}"
+      data-is-price-breakdown-enabled="{{ ui_package_delivery_price_breakdown_enabled ? 'true' : 'false' }}"
     >
       {# Managed with React #}
     </div>

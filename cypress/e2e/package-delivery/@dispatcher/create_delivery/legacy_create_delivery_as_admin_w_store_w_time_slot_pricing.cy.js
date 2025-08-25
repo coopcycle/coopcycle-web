@@ -1,8 +1,8 @@
 context('Delivery (role: admin)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      'ORM/user_admin.yml',
-      '../features/fixtures/ORM/store_w_time_slot_pricing.yml',
+      'user_admin.yml',
+      'store_w_time_slot_pricing.yml',
     ])
 
     cy.setMockDateTime('2025-04-23 8:30:00')
@@ -63,8 +63,8 @@ context('Delivery (role: admin)', () => {
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.get('[data-testid="order_item"]')
-      .find('[data-testid="total"]')
+    cy.get('[data-testid="order-total-including-tax"]')
+      .find('[data-testid="value"]')
       .contains('€6.99')
 
     cy.get('[data-testid=delivery-itinerary]')

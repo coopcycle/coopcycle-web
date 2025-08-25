@@ -78,6 +78,7 @@ Feature: Stores
             "address":{"@*@":"@*@"},
             "timeSlot":"/api/time_slots/1",
             "timeSlots":@array@,
+            "pricingRuleSet": "/api/pricing_rule_sets/1",
             "prefillPickupAddress": @boolean@,
             "weightRequired":@boolean@,
             "packagesRequired":@boolean@,
@@ -118,6 +119,7 @@ Feature: Stores
             "address": {"@*@":"@*@"},
             "timeSlot": "/api/time_slots/1",
             "timeSlots": @array@,
+            "pricingRuleSet": "@string@.startsWith('/api/pricing_rule_sets/')||@null@",
             "prefillPickupAddress": @boolean@,
             "weightRequired": @boolean@,
             "packagesRequired": @boolean@,
@@ -169,6 +171,7 @@ Feature: Stores
         },
         "timeSlot":"/api/time_slots/1",
         "timeSlots":@array@,
+        "pricingRuleSet": "/api/pricing_rule_sets/1",
         "weightRequired":@boolean@,
         "packagesRequired":@boolean@,
         "prefillPickupAddress": @boolean@,
@@ -212,6 +215,7 @@ Feature: Stores
         },
         "timeSlot":"/api/time_slots/1",
         "timeSlots":@array@,
+        "pricingRuleSet": "/api/pricing_rule_sets/1",
         "weightRequired":@boolean@,
         "packagesRequired":@boolean@,
         "prefillPickupAddress": @boolean@,
@@ -407,7 +411,8 @@ Feature: Stores
               "barcode":{"@*@":"@*@"}
             },
             "tasks":@array@,
-            "trackingUrl": @string@
+            "trackingUrl": @string@,
+            "order": null
           },
           {
             "@id":"/api/deliveries/1",
@@ -453,7 +458,8 @@ Feature: Stores
               "barcode":{"@*@":"@*@"}
             },
             "tasks":@array@,
-            "trackingUrl": @string@
+            "trackingUrl": @string@,
+            "order": null
           }
         ],
         "hydra:totalItems":2,
@@ -526,7 +532,8 @@ Feature: Stores
               "barcode":{"@*@":"@*@"}
             },
             "tasks":@array@,
-            "trackingUrl": @string@
+            "trackingUrl": @string@,
+            "order": null
           },
           {
             "@id":"/api/deliveries/2",
@@ -571,7 +578,8 @@ Feature: Stores
               "barcode":{"@*@":"@*@"}
             },
             "tasks":@array@,
-            "trackingUrl": @string@
+            "trackingUrl": @string@,
+            "order": null
           }
         ],
         "hydra:totalItems":2,
@@ -640,7 +648,8 @@ Feature: Stores
               "barcode":{"@*@":"@*@"}
             },
             "tasks":@array@,
-            "trackingUrl": @string@
+            "trackingUrl": @string@,
+            "order": null
           },
           {
             "@id":"/api/deliveries/1",
@@ -685,7 +694,8 @@ Feature: Stores
               "barcode":{"@*@":"@*@"}
             },
             "tasks":@array@,
-            "trackingUrl": @string@
+            "trackingUrl": @string@,
+            "order": null
           }
         ],
         "hydra:totalItems":2,
@@ -823,6 +833,7 @@ Feature: Stores
               "/api/time_slots/1",
               "/api/time_slots/2"
           ],
+          "pricingRuleSet": "/api/pricing_rule_sets/4",
           "weightRequired":@boolean@,
           "packagesRequired":@boolean@,
           "prefillPickupAddress": @boolean@,
@@ -860,6 +871,7 @@ Feature: Stores
               "/api/time_slots/1",
               "/api/time_slots/3"
           ],
+          "pricingRuleSet": "/api/pricing_rule_sets/4",
           "weightRequired":@boolean@,
           "packagesRequired":@boolean@,
           "prefillPickupAddress": @boolean@,

@@ -1,8 +1,8 @@
 context('Delivery (role: dispatcher)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      'ORM/user_dispatcher.yml',
-      '../features/fixtures/ORM/store_default.yml',
+      'user_dispatcher.yml',
+      'store_default.yml',
     ])
     cy.setMockDateTime('2025-04-23 8:30:00')
     cy.login('dispatcher', 'dispatcher')
@@ -41,8 +41,8 @@ context('Delivery (role: dispatcher)', () => {
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.get('[data-testid="order_item"]')
-      .find('[data-testid="total"]')
+    cy.get('[data-testid="order-total-including-tax"]')
+      .find('[data-testid="value"]')
       .contains('€4.99')
 
     cy.get('[data-testid="order-edit"]').click()
@@ -50,25 +50,28 @@ context('Delivery (role: dispatcher)', () => {
     // Delivery page
     cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
 
-    cy.get('[data-testid="tax-included-previous"]').contains('4,99 €')
+    cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
     cy.get('[name="delivery.override_price"]').check()
 
     cy.get('[name="variantName"]').type('Test product')
     cy.get('#variantPriceVAT').type('72')
 
-    cy.get('s[data-testid="tax-included-previous"]').contains('4,99 €')
-    cy.get('[data-testid="tax-included"]').contains('72,00 €')
+    cy.get('[data-testid="tax-included-previous"]').contains('4,99 €')
 
     cy.get('button[type="submit"]').click()
 
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.get('[data-testid="order_item"]')
-      .find('[data-testid="total"]')
+    cy.get('[data-testid="order-total-including-tax"]')
+      .find('[data-testid="value"]')
       .contains('€72.00')
 
+    // Wait for React components to load
+    cy.get('[data-testid="delivery-itinerary"]', {
+      timeout: 10000,
+    }).should('be.visible')
     cy.get('[data-testid=delivery-itinerary]')
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
       .should('exist')

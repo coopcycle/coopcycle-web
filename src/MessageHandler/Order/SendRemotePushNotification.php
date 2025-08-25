@@ -73,20 +73,16 @@ class SendRemotePushNotification
             return;
         }
 
-        // Send to admins
-        $admins = array_map(function ($user) {
-            return $user->getUsername();
-        }, $this->userManager->findUsersByRole('ROLE_ADMIN'));
+        // Send to admins and dispatchers
+        $users = $this->userManager->findUsersByRoles(['ROLE_ADMIN', 'ROLE_DISPATCHER']);
 
         $this->messageBus->dispatch(
-            new PushNotification($message, $admins)
+            new PushNotification($message, "", $users)
         );
 
         // Send to owners
-        $owners = $order->getNotificationRecipients()->toArray();
-
+        $owners = $order->getNotificationRecipients();
         if (count($owners) > 0) {
-
             $data = [
                 'event' => [
                     'name' => 'order:created',
@@ -96,13 +92,8 @@ class SendRemotePushNotification
                 ],
             ];
 
-            $users = array_map(function ($user) {
-                return $user->getUsername();
-            }, $owners);
-            $users = array_unique($owners);
-
             $this->messageBus->dispatch(
-                new PushNotification($message, $users, $data)
+                new PushNotification($message, "", $owners, $data)
             );
         }
     }

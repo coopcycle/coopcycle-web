@@ -6,7 +6,7 @@ use ApiPlatform\Symfony\EventListener\EventPriorities;
 use AppBundle\Api\Resource\UrbantzWebhook;
 use AppBundle\Entity\Urbantz\Delivery as UrbantzDelivery;
 use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
-use AppBundle\Pricing\PricingManager;
+use AppBundle\Service\DeliveryOrderManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use Psr\Log\LoggerInterface;
@@ -24,7 +24,7 @@ final class UrbantzSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly HttpClientInterface $urbantzClient,
         private readonly EntityManagerInterface $entityManager,
-        private readonly PricingManager $pricingManager,
+        private readonly DeliveryOrderManager $deliveryOrderManager,
         private readonly LoggerInterface $logger,
         private readonly string $secret)
     {
@@ -111,7 +111,7 @@ final class UrbantzSubscriber implements EventSubscriberInterface
         }
 
         foreach ($webhook->deliveries as $delivery) {
-            $this->pricingManager->createOrder($delivery);
+            $this->deliveryOrderManager->createOrder($delivery);
         }
     }
 }

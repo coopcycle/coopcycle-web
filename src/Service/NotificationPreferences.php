@@ -21,6 +21,7 @@ class NotificationPreferences
 	        OrderEvents\OrderDropped::messageName(),
 	        OrderEvents\OrderFulfilled::messageName(),
 	        TaskEvents\TaskCreated::messageName(),
+			TaskEvents\TaskUpdated::messageName(),
 	        TaskEvents\TaskAssigned::messageName(),
 	        TaskEvents\TaskUnassigned::messageName(),
 	        TaskEvents\TaskStarted::messageName(),

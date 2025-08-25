@@ -6,22 +6,32 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Action\NotFoundAction;
 use AppBundle\Action\PricingRuleSet\Applications;
+use AppBundle\Api\State\PricingRuleSetProcessor;
 use AppBundle\Api\State\ValidationAwareRemoveProcessor;
 use AppBundle\Validator\Constraints\PricingRuleSetDelete as AssertCanDelete;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[ApiResource(
     operations: [
-        new Get(controller: NotFoundAction::class),
+        new Get(
+            normalizationContext: ['groups' => ['pricing_rule_set:read']],
+            security: "is_granted('ROLE_DISPATCHER')"
+        ),
+        new Put(
+            normalizationContext: ['groups' => ['pricing_rule_set:read']],
+            denormalizationContext: ['groups' => ['pricing_rule_set:write']],
+            processor: PricingRuleSetProcessor::class,
+        ),
         new Delete(
-            security: 'is_granted(\'ROLE_ADMIN\')',
             validationContext: ['groups' => ['deleteValidation']],
             processor: ValidationAwareRemoveProcessor::class,
         ),
@@ -29,11 +39,17 @@ use Symfony\Contracts\Translation\TranslatorInterface;
             uriTemplate: '/pricing_rule_sets/{id}/applications',
             controller: Applications::class,
             openapiContext: ['summary' => 'Get the objects to which this pricing rule set is applied'],
-            security: 'is_granted(\'ROLE_ADMIN\')'
         ),
-        new Post(),
-        new GetCollection()
-    ]
+        new Post(
+            normalizationContext: ['groups' => ['pricing_rule_set:read']],
+            denormalizationContext: ['groups' => ['pricing_rule_set:write']],
+            processor: PricingRuleSetProcessor::class,
+        ),
+        new GetCollection(
+            normalizationContext: ['groups' => ['pricing_rule_set:read']],
+        ),
+    ],
+    security: "is_granted('ROLE_ADMIN')"
 )]
 #[AssertCanDelete(groups: ['deleteValidation'])]
 class PricingRuleSet
@@ -41,15 +57,20 @@ class PricingRuleSet
     /**
      * @var int
      */
+    #[Groups(['pricing_rule_set:read'])]
     protected $id;
 
     #[Assert\Valid]
+    #[Groups(['pricing_rule_set:read', 'pricing_rule_set:write'])]
     protected $rules;
 
+    #[Groups(['pricing_rule_set:read', 'pricing_rule_set:write'])]
     protected $name;
 
+    #[Groups(['pricing_rule_set:read', 'pricing_rule_set:write'])]
     protected $strategy = 'find';
 
+    #[Groups(['pricing_rule_set:read', 'pricing_rule_set:write'])]
     protected array $options = [];
 
     public function __construct()
@@ -89,7 +110,35 @@ class PricingRuleSet
 
     public function setRules($rules)
     {
-        $this->rules = $rules;
+        // Clear existing rules (this will trigger cascade deletion for orphaned rules)
+        $this->rules->clear();
+
+        // Add new rules and set the bidirectional relationship
+        if ($rules instanceof \Traversable || is_array($rules)) {
+            foreach ($rules as $rule) {
+                $this->addRule($rule);
+            }
+        }
+
+        return $this;
+    }
+
+    public function addRule(PricingRule $rule)
+    {
+        if (!$this->rules->contains($rule)) {
+            $this->rules->add($rule);
+            $rule->setRuleSet($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRule(PricingRule $rule)
+    {
+        if ($this->rules->contains($rule)) {
+            $this->rules->removeElement($rule);
+            // No need to delete the rule itself - let Doctrine handle cascade deletion
+        }
 
         return $this;
     }

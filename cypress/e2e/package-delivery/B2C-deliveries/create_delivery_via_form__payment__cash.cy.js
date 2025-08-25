@@ -1,6 +1,6 @@
 context('Delivery via form (payment options: Stripe or Cash)', () => {
   beforeEach(() => {
-    cy.loadFixtures('../cypress/fixtures/stores.yml')
+    cy.loadFixtures('stores_legacy.yml')
     cy.terminal('echo CASH_ON_DELIVERY_ENABLED=1 >> .env.test')
   })
   afterEach(() => {

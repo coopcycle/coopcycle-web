@@ -1,6 +1,6 @@
 describe('Platform catering; admin; invite manager', () => {
   beforeEach(() => {
-    cy.loadFixtures('../cypress/fixtures/foodtech.yml')
+    cy.loadFixtures('foodtech.yml')
   })
 
   it("should send an invitation to a business account's manager", () => {
@@ -9,7 +9,7 @@ describe('Platform catering; admin; invite manager', () => {
     cy.visit('/admin/restaurants/business-accounts')
 
     cy.get('[href="/admin/restaurants/business-account/new"]').click()
-    cy.get('#company_name').clear('')
+    cy.get('#company_name').clear()
     cy.get('#company_name').type('Business01')
     cy.get('#company_managerEmail').clear()
     cy.get('#company_managerEmail').type('manager01@demo.coopcycle.org')
