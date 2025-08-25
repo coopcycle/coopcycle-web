@@ -77,7 +77,13 @@ class ProductOptionValue extends BaseProductOptionValue implements ProductOption
 
     public function getPricingRule(): PricingRule | null
     {
-        return $this->pricingRules->first();
+        $pricingRule = $this->pricingRules->first();
+        
+        if ($pricingRule instanceof PricingRule) {
+            return $pricingRule;
+        } else {
+            return null;
+        }
     }
 
     public function setPricingRule(PricingRule $pricingRule): self
