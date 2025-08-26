@@ -6,8 +6,6 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Sylius\ProductOptionValue;
-use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
-use AppBundle\Entity\Sylius\UsePricingRules;
 use AppBundle\Entity\Task;
 use AppBundle\ExpressionLanguage\DeliveryExpressionLanguageVisitor;
 use AppBundle\ExpressionLanguage\TaskExpressionLanguageVisitor;
@@ -32,16 +30,14 @@ class PriceCalculationVisitor
         private readonly ProductOptionValueFactory $productOptionValueFactory,
         private readonly ProductVariantFactory $productVariantFactory,
         private readonly RuleHumanizer $ruleHumanizer,
-        private readonly TranslatorInterface $translator,
+        private readonly ProductVariantNameGenerator $productVariantNameGenerator,
         private LoggerInterface $logger = new NullLogger()
     )
     {
     }
 
-    public function visit(Delivery $delivery, PricingRuleSet $ruleSet, UsePricingRules $pricingStrategy = new CalculateUsingPricingRules()): PriceCalculationOutput
+    public function visit(Delivery $delivery, PricingRuleSet $ruleSet, ManualSupplements|null $manualSupplements = null): PriceCalculationOutput
     {
-        $manualSupplements = $pricingStrategy->manualSupplements;
-
         /**
          * @var PricingRule[] $matchedRules
          */
@@ -239,7 +235,7 @@ class PriceCalculationVisitor
 
         if (count($productOptionValues) > 0) {
             $productVariant = $this->productVariantFactory->createWithProductOptions(
-                $this->generateVariantName($object, $delivery),
+                $this->productVariantNameGenerator->generateVariantName($object, $delivery),
                 $productOptionValues,
                 $ruleSet
             );
@@ -376,48 +372,5 @@ class PriceCalculationVisitor
         // 1. productVariant price (unit price) is set to 0
         // 2. Product option values prices are added to the order via adjustments in OrderOptionsProcessor
         $productVariant->setPrice(0);
-    }
-
-    private function generateVariantName(Delivery|Task $object, Delivery $delivery): string
-    {
-        if ($object instanceof Delivery) {
-            return $this->translator->trans('pricing.variant.order_supplement');
-        }
-
-        $taskType = $object->getType();
-
-        if ($taskType === Task::TYPE_PICKUP) {
-            $translationKey = 'pricing.variant.pickup_point';
-        } elseif ($taskType === Task::TYPE_DROPOFF) {
-            $translationKey = 'pricing.variant.dropoff_point';
-        } else {
-            throw new \InvalidArgumentException(sprintf('Unknown task type: %s', $taskType));
-        }
-
-        $clientName = $object->getAddress()->getName();
-        if ($clientName) {
-            return sprintf('%s: %s', $this->translator->trans($translationKey), $clientName);
-        } else {
-            $taskPosition = $this->getTaskPositionByType($delivery, $object);
-            return sprintf('%s #%d', $this->translator->trans($translationKey), $taskPosition);
-        }
-    }
-
-    private function getTaskPositionByType(Delivery $delivery, Task $task): int
-    {
-        $tasks = $delivery->getTasks();
-        $taskType = $task->getType();
-        $position = 1;
-
-        foreach ($tasks as $deliveryTask) {
-            if ($deliveryTask->getType() === $taskType) {
-                if ($deliveryTask === $task) {
-                    return $position;
-                }
-                $position++;
-            }
-        }
-
-        return $position;
     }
 }

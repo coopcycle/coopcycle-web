@@ -9,6 +9,7 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\PriceInterface;
+use AppBundle\Entity\Sylius\UpdateManualSupplements;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\PricingStrategy;
 use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
@@ -52,6 +53,7 @@ class PricingManager
         private readonly OrderProcessorInterface $orderProcessor,
         private readonly TimeSlotManager $timeSlotManager,
         private readonly PriceCalculationVisitor $priceCalculationVisitor,
+        private readonly PriceUpdateVisitor $priceUpdateVisitor,
         private readonly LoggerInterface $logger
     ) {
     }
@@ -97,7 +99,16 @@ class PricingManager
             }
         }
 
-        return $this->priceCalculationVisitor->visit($delivery, $ruleSet, $pricingStrategy);
+        if ($pricingStrategy instanceof CalculateUsingPricingRules) {
+            return $this->priceCalculationVisitor->visit($delivery, $ruleSet, $pricingStrategy->manualSupplements);
+        } elseif ($pricingStrategy instanceof UpdateManualSupplements) {
+            return $this->priceUpdateVisitor->visit($delivery, $ruleSet, $pricingStrategy);
+        } else {
+            $this->logger->warning('Unsupported pricing config', [
+                'pricingStrategy' => $pricingStrategy,
+            ]);
+            return null;
+        }
     }
 
     /**

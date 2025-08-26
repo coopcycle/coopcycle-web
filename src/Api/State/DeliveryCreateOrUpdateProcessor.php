@@ -9,6 +9,7 @@ use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
+use AppBundle\Entity\Sylius\UpdateManualSupplements;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
 use AppBundle\Pricing\ManualSupplements;
@@ -82,12 +83,12 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
             );
         }
 
-        $pricingStrategy = new CalculateUsingPricingRules();
+        $onCreatePricingStrategy = new CalculateUsingPricingRules();
 
         if (!is_null($arbitraryPrice)) {
-            $pricingStrategy = new UseArbitraryPrice($arbitraryPrice);
+            $onCreatePricingStrategy = new UseArbitraryPrice($arbitraryPrice);
         } elseif (!is_null($manualSupplements)) {
-            $pricingStrategy = new CalculateUsingPricingRules($manualSupplements);
+            $onCreatePricingStrategy = new CalculateUsingPricingRules($manualSupplements);
         }
 
         $isCreateOrderMode = is_null($delivery->getId());
@@ -107,7 +108,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
             $order = $this->deliveryOrderManager->createOrder(
                 $delivery,
                 [
-                    'pricingStrategy' => $pricingStrategy
+                    'pricingStrategy' => $onCreatePricingStrategy
                 ]
             );
 
@@ -126,7 +127,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                     $order = $this->deliveryOrderManager->createOrder(
                         $delivery,
                         [
-                            'pricingStrategy' => $pricingStrategy
+                            'pricingStrategy' => $onCreatePricingStrategy
                         ]
                     );
                 }
@@ -134,7 +135,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                 if (!is_null($arbitraryPrice)) {
                     $productVariants = $this->pricingManager->getProductVariantsWithPricingStrategy(
                         $delivery,
-                        $pricingStrategy
+                        new UseArbitraryPrice($arbitraryPrice)
                     );
                     $this->pricingManager->processDeliveryOrder(
                         $order,
@@ -143,8 +144,20 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                 } elseif ($data instanceof DeliveryInputDto && $data->order?->recalculatePrice) {
                     $productVariants = $this->pricingManager->getProductVariantsWithPricingStrategy(
                         $delivery,
-                        $pricingStrategy
+                        new CalculateUsingPricingRules($manualSupplements)
                     );
+                    $this->pricingManager->processDeliveryOrder($order, $productVariants);
+                } else {
+                    $existingProductVariants = [];
+                    foreach ($order->getItems() as $item) {
+                        $existingProductVariants[] = $item->getVariant();
+                    }
+
+                    $productVariants = $this->pricingManager->getProductVariantsWithPricingStrategy(
+                        $delivery,
+                        new UpdateManualSupplements($manualSupplements, $existingProductVariants),
+                    );
+
                     $this->pricingManager->processDeliveryOrder($order, $productVariants);
                 }
             }
@@ -177,7 +190,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                     $store,
                     $delivery,
                     $recurrRule,
-                    $pricingStrategy
+                    $onCreatePricingStrategy
                 );
 
                 if (!is_null($recurrenceRule)) {
