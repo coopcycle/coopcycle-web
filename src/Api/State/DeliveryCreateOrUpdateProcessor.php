@@ -10,7 +10,7 @@ use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
-use AppBundle\Entity\Sylius\UsePricingRules;
+use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
 use AppBundle\Pricing\ManualSupplements;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryOrderManager;
@@ -82,12 +82,12 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
             );
         }
 
-        $pricingStrategy = new UsePricingRules();
+        $pricingStrategy = new CalculateUsingPricingRules();
 
         if (!is_null($arbitraryPrice)) {
             $pricingStrategy = new UseArbitraryPrice($arbitraryPrice);
         } elseif (!is_null($manualSupplements)) {
-            $pricingStrategy = new UsePricingRules($manualSupplements);
+            $pricingStrategy = new CalculateUsingPricingRules($manualSupplements);
         }
 
         $isCreateOrderMode = is_null($delivery->getId());

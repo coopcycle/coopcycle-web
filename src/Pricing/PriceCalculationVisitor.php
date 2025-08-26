@@ -6,6 +6,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Sylius\ProductOptionValue;
+use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
 use AppBundle\Entity\Sylius\UsePricingRules;
 use AppBundle\Entity\Task;
 use AppBundle\ExpressionLanguage\DeliveryExpressionLanguageVisitor;
@@ -37,7 +38,7 @@ class PriceCalculationVisitor
     {
     }
 
-    public function visit(Delivery $delivery, PricingRuleSet $ruleSet, UsePricingRules $pricingStrategy = new UsePricingRules()): PriceCalculationOutput
+    public function visit(Delivery $delivery, PricingRuleSet $ruleSet, UsePricingRules $pricingStrategy = new CalculateUsingPricingRules()): PriceCalculationOutput
     {
         $manualSupplements = $pricingStrategy->manualSupplements;
 

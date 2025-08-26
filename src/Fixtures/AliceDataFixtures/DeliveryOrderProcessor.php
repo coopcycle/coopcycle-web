@@ -4,7 +4,7 @@ namespace AppBundle\Fixtures\AliceDataFixtures;
 
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\Order;
-use AppBundle\Entity\Sylius\UsePricingRules;
+use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
 use AppBundle\Pricing\PricingManager;
 use Fidry\AliceDataFixtures\ProcessorInterface;
 
@@ -46,7 +46,7 @@ final class DeliveryOrderProcessor implements ProcessorInterface
 
         $productVariants = $this->pricingManager->getProductVariantsWithPricingStrategy(
             $delivery,
-            new UsePricingRules()
+            new CalculateUsingPricingRules()
         );
 
         // when a store does not have pricing rules
