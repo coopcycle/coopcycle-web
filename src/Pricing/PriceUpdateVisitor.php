@@ -7,8 +7,6 @@ use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Sylius\UpdateManualSupplements;
 use AppBundle\Sylius\Product\ProductVariantFactory;
 use AppBundle\Sylius\Product\ProductVariantInterface;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 
 class PriceUpdateVisitor
 {
@@ -16,8 +14,7 @@ class PriceUpdateVisitor
         private readonly ProductOptionValueHelper $productOptionValueHelper,
         private readonly ProductVariantFactory $productVariantFactory,
         private readonly ProductVariantNameGenerator $productVariantNameGenerator,
-        private readonly OnDemandDeliveryProductProcessor $onDemandDeliveryProductProcessor,
-        private LoggerInterface $logger = new NullLogger()
+        private readonly OnDemandDeliveryProductProcessor $onDemandDeliveryProductProcessor
     ) {
     }
 

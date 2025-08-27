@@ -14,7 +14,7 @@ class OnDemandDeliveryProductProcessor
 {
     public function __construct(
         private readonly ExpressionLanguage $expressionLanguage,
-        private LoggerInterface $logger = new NullLogger()
+        private readonly LoggerInterface $feeCalculationLogger = new NullLogger()
     ) {
     }
 
@@ -25,7 +25,7 @@ class OnDemandDeliveryProductProcessor
     ): ProductOptionValueWithQuantity {
         $result = $rule->apply($expressionLanguageValues, $this->expressionLanguage);
 
-        $this->logger->info(
+        $this->feeCalculationLogger->info(
             sprintf(
                 'processProductOptionValue; result %d (rule "%s")',
                 $result,
@@ -102,7 +102,7 @@ class OnDemandDeliveryProductProcessor
                 $subtotal = (int)ceil($subtotal * ($priceMultiplier / 100 / 100));
                 $price = $subtotal - $previousSubtotal;
 
-                $this->logger->info(
+                $this->feeCalculationLogger->info(
                     sprintf(
                         'processProductVariant; update percentage-based ProductOptionValue price to %d',
                         $price

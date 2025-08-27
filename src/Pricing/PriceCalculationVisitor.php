@@ -27,7 +27,7 @@ class PriceCalculationVisitor
         private readonly ProductVariantFactory $productVariantFactory,
         private readonly ProductVariantNameGenerator $productVariantNameGenerator,
         private readonly OnDemandDeliveryProductProcessor $onDemandDeliveryProductProcessor,
-        private LoggerInterface $logger = new NullLogger()
+        private readonly LoggerInterface $feeCalculationLogger = new NullLogger()
     )
     {
     }
@@ -105,11 +105,11 @@ class PriceCalculationVisitor
         $output = new PriceCalculationOutput($calculation, $matchedRules, $productVariants);
 
         if (count($productVariants) === 0) {
-            $this->logger->info(sprintf('No rule matched'), [
+            $this->feeCalculationLogger->info(sprintf('No rule matched'), [
                 'strategy' => $ruleSet->getStrategy(),
             ]);
         } else {
-            $this->logger->info(sprintf('Calculated price: %d', $output->getPrice()), [
+            $this->feeCalculationLogger->info(sprintf('Calculated price: %d', $output->getPrice()), [
                 'strategy' => $ruleSet->getStrategy(),
             ]);
         }
@@ -216,7 +216,7 @@ class PriceCalculationVisitor
                 $ruleResult = new RuleResult($rule, true);
                 $ruleResults[$rule->getPosition()] = $ruleResult;
 
-                $this->logger->info(sprintf('Matched manual rule "%s"', $rule->getName()), [
+                $this->feeCalculationLogger->info(sprintf('Matched manual rule "%s"', $rule->getName()), [
                     'target' => $rule->getTarget(),
                 ]);
 
@@ -250,7 +250,7 @@ class PriceCalculationVisitor
         $matched = $rule->matches($expressionLanguageValues, $this->expressionLanguage);
 
         if ($matched) {
-            $this->logger->info(sprintf('Matched rule "%s"', $rule->getExpression()), [
+            $this->feeCalculationLogger->info(sprintf('Matched rule "%s"', $rule->getExpression()), [
                 'strategy' => $ruleSet->getStrategy(),
                 'target' => $rule->getTarget(),
             ]);
