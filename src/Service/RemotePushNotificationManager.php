@@ -4,7 +4,6 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\User;
 use AppBundle\Entity\RemotePushToken;
-use AppBundle\Message\PushNotification;
 use Doctrine\ORM\EntityManagerInterface;
 use Kreait\Firebase\Contract\Messaging;
 use Kreait\Firebase\Messaging\CloudMessage;
@@ -197,19 +196,18 @@ class RemotePushNotificationManager
     }
 
     /**
-     * @param string|PushNotification $textOrPushNotification
-     * @param RemotePushToken[]|User[] $recipients Not needed/used if a `PushNotification` instance is passed
-     * @param array $data Not needed/used if a `PushNotification` instance is passed
+     * @param string|RemotePushNotification $textOrPushNotification
+     * @param RemotePushToken|User|RemotePushToken[]|User[] $recipients
+     * @param array $data Not needed/used if a `RemotePushNotification` instance is passed
      */
-    public function send(string|PushNotification $textOrPushNotification, $recipients = [], $data = [])
+    public function send(string|RemotePushNotification $textOrPushNotification, $recipients = [], $data = [])
     {
         $title = $textOrPushNotification;
         $body = $this->translator->trans('notifications.tap_to_open');
 
-        if ($textOrPushNotification instanceof PushNotification) {
+        if ($textOrPushNotification instanceof RemotePushNotification) {
             $title = $textOrPushNotification->getTitle();
             $body = $textOrPushNotification->getBody() ?: $body;
-            // $recipients = $textOrPushNotification->getUsers();
             $data = $textOrPushNotification->getData();
         }
 
@@ -219,11 +217,6 @@ class RemotePushNotificationManager
 
         $tokens = [];
         foreach ($recipients as $recipient) {
-            if (!$recipient instanceof RemotePushToken && !$recipient instanceof User) {
-                throw new \InvalidArgumentException(sprintf('$recipients must be an instance of %s or %s',
-                    RemotePushToken::class, User::class));
-            }
-
             if ($recipient instanceof RemotePushToken) {
                 $tokens[] = $recipient;
             }
@@ -238,10 +231,8 @@ class RemotePushNotificationManager
             implode(', ', array_map(function ($recipient) {
                 if ($recipient instanceof RemotePushToken) {
                     return 'token: '.$this->loggingUtils->redact($recipient->getToken());
-                } else if ($recipient instanceof User) {
-                    return 'user: '.$recipient->getId();
                 } else {
-                    return 'unknown recipient';
+                    return 'user: '.$recipient->getId();
                 }
             }, $recipients)),
             implode(', ', array_map(function (RemotePushToken $token) {
