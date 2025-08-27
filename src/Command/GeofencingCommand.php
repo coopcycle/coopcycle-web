@@ -213,7 +213,6 @@ class GeofencingCommand extends Command
             );
 
         } catch (RedisException $e) {
-            var_dump($e->getMessage());
             $this->logMessage($e->getMessage());
         }
 

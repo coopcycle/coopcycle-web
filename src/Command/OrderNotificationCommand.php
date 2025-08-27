@@ -5,7 +5,6 @@ namespace AppBundle\Command;
 use AppBundle\Domain\Order\Event\OrderCreated;
 use AppBundle\MessageHandler\Order\PublishLiveUpdate;
 use AppBundle\MessageHandler\Order\SendRemotePushNotification;
-use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,10 +19,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class OrderNotificationCommand extends Command
 {
     public $orderRepository;
-    /**
-     * @var \AppBundle\Service\RemotePushNotificationManager
-     */
-    public $remotePushNotificationManager;
     public $websocket;
     public $push;
     /**
@@ -32,12 +27,10 @@ class OrderNotificationCommand extends Command
     public $io;
     public function __construct(
         RepositoryInterface $orderRepository,
-        RemotePushNotificationManager $remotePushNotificationManager,
         PublishLiveUpdate $websocket,
         SendRemotePushNotification $push)
     {
         $this->orderRepository = $orderRepository;
-        $this->remotePushNotificationManager = $remotePushNotificationManager;
 
         $this->websocket = $websocket;
         $this->push = $push;
