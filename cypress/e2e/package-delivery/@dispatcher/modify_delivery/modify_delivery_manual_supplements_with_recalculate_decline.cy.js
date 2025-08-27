@@ -19,7 +19,7 @@ describe('Edit Manual Supplements in Delivery', () => {
     cy.removeEnvVar('PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED');
   });
 
-  it('should display existing supplements and allow editing them', function () {
+  it('should add manual supplement and use original price', function () {
     cy.visit('/admin/stores');
 
     cy.get('[data-testid=store_Store_with_Manual_Supplements__list_item]')
@@ -70,17 +70,12 @@ describe('Edit Manual Supplements in Delivery', () => {
       'be.checked',
     );
 
-    cy.get('[data-testid="apply-new-price"]').check();
-
-    cy.get('[data-testid="apply-new-price"]').should('be.checked');
-    cy.get('[data-testid="keep-original-price"]').should('not.be.checked');
-
-    cy.get('[data-testid="tax-included"]').contains('6,99 €');
+    cy.get('[data-testid="tax-included"]').contains('4,99 €');
 
     // Add a supplement (2,00 €)
     cy.get('[data-testid="manual-supplement-Express Delivery"]').check();
 
-    cy.get('[data-testid="tax-included"]').contains('8,99 €');
+    cy.get('[data-testid="tax-included"]').contains('6,99 €');
 
     // Submit the changes
     cy.get('button[type="submit"]').click();
@@ -91,6 +86,6 @@ describe('Edit Manual Supplements in Delivery', () => {
     // Verify the updated total includes both supplements
     cy.get('[data-testid="order-total-including-tax"]')
       .find('[data-testid="value"]')
-      .contains('€8.99');
+      .contains('€6.99');
   });
 });
