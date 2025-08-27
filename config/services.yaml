@@ -587,13 +587,8 @@ services:
         - '@AppBundle\ExpressionLanguage\PricePercentageExpressionLanguageProvider'
         - '@AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider'
 
-  AppBundle\Pricing\PriceCalculationVisitor:
-    arguments:
-      $expressionLanguage: "@coopcycle.expression_language"
-
-  AppBundle\Pricing\OnDemandDeliveryProductProcessor:
-    arguments:
-      $expressionLanguage: "@coopcycle.expression_language"
+  # Make our custom ExpressionLanguage the default
+  Symfony\Component\ExpressionLanguage\ExpressionLanguage: '@AppBundle\ExpressionLanguage\ExpressionLanguage'
 
   AppBundle\EventListener\RegistrationListener:
     tags:
