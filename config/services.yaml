@@ -593,6 +593,16 @@ services:
     tags:
       - { name: monolog.logger, channel: fee_calculation }
 
+  AppBundle\Pricing\PriceUpdateVisitor:
+    tags:
+      - { name: monolog.logger, channel: fee_calculation }
+
+  AppBundle\Pricing\OnDemandDeliveryProductProcessor:
+    arguments:
+      $expressionLanguage: "@coopcycle.expression_language"
+    tags:
+      - { name: monolog.logger, channel: fee_calculation }
+
   AppBundle\EventListener\RegistrationListener:
     tags:
       - { name: kernel.event_subscriber }

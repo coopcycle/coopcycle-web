@@ -16,7 +16,8 @@ class PriceUpdateVisitor
         private readonly ProductOptionValueHelper $productOptionValueHelper,
         private readonly ProductVariantFactory $productVariantFactory,
         private readonly ProductVariantNameGenerator $productVariantNameGenerator,
-        private readonly OnDemandDeliveryProductProcessor $onDemandDeliveryProductProcessor
+        private readonly OnDemandDeliveryProductProcessor $onDemandDeliveryProductProcessor,
+        private LoggerInterface $logger = new NullLogger()
     ) {
     }
 
@@ -25,18 +26,9 @@ class PriceUpdateVisitor
         PricingRuleSet $ruleSet,
         UpdateManualSupplements $pricingStrategy
     ): PriceCalculationOutput {
-        //TODO:
-        //split into taskProductVariants and deliveryProductVariant
+        //Split into taskProductVariants and deliveryProductVariant
         // TaskProductVariants keep the same (manual supplements not supported)
-        // DeliveryProductVariant clone an existing or create a new one (if there are manual supplements)
-
-        // Possible situations (after recalculation):
-        // 1. same number of product variants
-        // 1.1. update manual supplements
-        // 2. new product variants are added
-        // 2.1. to keep only if it contain manual supplements
-        // 3. product variants are removed
-        // 3.1. copy previous variants if they contain anything except manual supplements
+        // DeliveryProductVariant update an existing or create a new product variant
 
         /**
          * @var ProductVariantInterface[] $taskProductVariants
@@ -56,8 +48,6 @@ class PriceUpdateVisitor
          * @var ProductVariantInterface|null $deliveryProductVariant
          */
         $deliveryProductVariant = array_shift($deliveryProductVariants);
-
-        //TODO:
 
         // Apply the rules to the whole delivery/order
         $deliveryProductVariant = $this->visitDelivery(
@@ -86,21 +76,30 @@ class PriceUpdateVisitor
     private function visitDelivery(
         Delivery $delivery,
         PricingRuleSet $ruleSet,
-        ProductVariantInterface|null $deliveryProductVariant,
+        ProductVariantInterface|null $previousDeliveryProductVariant,
         array $manualOrderSupplements = []
     ): ProductVariantInterface|null {
         /** @var ProductOptionValueWithQuantity[] $productOptionValues */
         $productOptionValues = [];
 
-        // TODO: exclude previously added manual supplements
-        if ($deliveryProductVariant) {
-            foreach ($deliveryProductVariant->getOptionValues() as $productOptionValue) {
+        // Possible scenarios:
+        // 1. $previousDeliveryProductVariant exists => clone without manual supplements & re-add manual supplements
+        // 2. $previousDeliveryProductVariant does not exist => create
+
+        if ($previousDeliveryProductVariant) {
+            // clone productOptionValues except previously added manual supplements
+            foreach ($previousDeliveryProductVariant->getOptionValues() as $productOptionValue) {
+                if ($productOptionValue->getPricingRule()?->isManualSupplement()) {
+                    continue;
+                }
+
                 $productOptionValues[] = new ProductOptionValueWithQuantity(
                     $productOptionValue,
-                    $deliveryProductVariant->getQuantityForOptionValue($productOptionValue)
+                    $previousDeliveryProductVariant->getQuantityForOptionValue($productOptionValue)
                 );
             }
         }
+
 
         // Add manual supplements (phase 1: only for order objects)
         if (count($manualOrderSupplements) > 0) {
