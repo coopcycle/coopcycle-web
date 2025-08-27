@@ -2,7 +2,7 @@
 
 namespace AppBundle\Command;
 
-use AppBundle\Message\PushNotification;
+use AppBundle\Service\RemotePushNotification;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -87,9 +87,9 @@ class RemotePushNotificationsCommand extends Command
             }
         }
 
-        $notification = new PushNotification($title, $body, $users, $data);
+        $notification = new RemotePushNotification($title, $body, $data);
 
-        $this->remotePushNotificationManager->send($notification);
+        $this->remotePushNotificationManager->send($notification, $users);
 
         return 0;
     }
