@@ -209,7 +209,7 @@ class RemotePushNotificationManager
         if ($textOrPushNotification instanceof PushNotification) {
             $title = $textOrPushNotification->getTitle();
             $body = $textOrPushNotification->getBody() ?: $body;
-            $recipients = $textOrPushNotification->getUsers();
+            // $recipients = $textOrPushNotification->getUsers();
             $data = $textOrPushNotification->getData();
         }
 

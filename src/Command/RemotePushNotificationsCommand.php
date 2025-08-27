@@ -2,6 +2,7 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Message\PushNotification;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Sylius\OrderProcessing\OrderTaxesProcessor;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -48,6 +49,13 @@ class RemotePushNotificationsCommand extends Command
                 'Hello from CoopCycle'
             )
             ->addOption(
+                'body',
+                'b',
+                InputOption::VALUE_REQUIRED,
+                'Notification body',
+                'Lorem ipsum dolor sid amet'
+            )
+            ->addOption(
                 'data',
                 'd',
                 InputOption::VALUE_REQUIRED,
@@ -68,6 +76,7 @@ class RemotePushNotificationsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $title = $input->getOption('title');
+        $body = $input->getOption('body');
         $data = json_decode($input->getOption('data'), true);
 
         $users = [];
@@ -78,7 +87,9 @@ class RemotePushNotificationsCommand extends Command
             }
         }
 
-        $this->remotePushNotificationManager->send($title, $users, $data);
+        $notification = new PushNotification($title, $body, $users, $data);
+
+        $this->remotePushNotificationManager->send($notification);
 
         return 0;
     }
