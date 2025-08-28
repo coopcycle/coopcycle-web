@@ -85,8 +85,8 @@ class DeliveryRequest
         $this->entityManager->persist($woopitDelivery);
         $this->entityManager->flush();
 
-        $data->deliveryObject = $delivery;
-        $data->state = WoopitQuoteRequest::STATE_CONFIRMED;
+        $quoteRequest->deliveryObject = $delivery;
+        $quoteRequest->state = WoopitQuoteRequest::STATE_CONFIRMED;
 
         $dropoff = $delivery->getDropoff();
 
@@ -94,7 +94,7 @@ class DeliveryRequest
 
             $parcelId = sprintf('pkg_%s', $this->hashids12->encode($package->getId()));
 
-            $data->parcels[] = [
+            $quoteRequest->parcels[] = [
                 'id' => $parcelId,
             ];
 
@@ -103,7 +103,7 @@ class DeliveryRequest
 
                 $barcodeToken = BarcodeUtils::getToken($barcode);
 
-                $data->labels[] = [
+                $quoteRequest->labels[] = [
                     'id' => sprintf('lbl_%s', $this->hashids12->encode($dropoff->getId(), $package->getId(), $i)),
                     'type' => 'url',
                     'mode' => 'pdf',
@@ -113,6 +113,6 @@ class DeliveryRequest
             }
         }
 
-        return $data;
+        return $quoteRequest;
     }
 }

@@ -44,7 +44,7 @@ Feature: Retail prices
         },
         "order": {
           "@id": @string@,
-          "@type":"http://schema.org/Order",
+          "@type":"Order",
           "items": [
             {
               "@id": @string@,
@@ -54,6 +54,7 @@ Feature: Retail prices
               "vendor": null,
               "player": {"@*@":"@*@"},
               "variant": {
+                "@id": @string@,
                 "@type": "ProductVariant",
                 "code": @string@,
                 "name": "Supplément de commande"
@@ -130,7 +131,7 @@ Feature: Retail prices
         },
         "order": {
           "@id": @string@,
-          "@type":"http://schema.org/Order",
+          "@type":"Order",
           "items": [
             {
               "@id": @string@,
@@ -140,6 +141,7 @@ Feature: Retail prices
               "vendor": null,
               "player": {"@*@":"@*@"},
               "variant": {
+                "@id": @string@,
                 "@type": "ProductVariant",
                 "code": @string@,
                 "name": "Supplément de commande"
@@ -216,7 +218,7 @@ Feature: Retail prices
         },
         "order": {
           "@id": @string@,
-          "@type":"http://schema.org/Order",
+          "@type":"Order",
           "items": [
             {
               "@id": @string@,
@@ -226,6 +228,7 @@ Feature: Retail prices
               "vendor": null,
               "player": {"@*@":"@*@"},
               "variant": {
+                "@id": @string@,
                 "@type": "ProductVariant",
                 "code": @string@,
                 "name": "Supplément de commande"
@@ -305,7 +308,7 @@ Feature: Retail prices
         },
         "order": {
           "@id": @string@,
-          "@type":"http://schema.org/Order",
+          "@type":"Order",
           "items": [
             {
               "@id": @string@,
@@ -315,6 +318,7 @@ Feature: Retail prices
               "vendor": null,
               "player": {"@*@":"@*@"},
               "variant": {
+                "@id": @string@,
                 "@type": "ProductVariant",
                 "code": @string@,
                 "name": "Supplément de commande"
@@ -394,7 +398,7 @@ Feature: Retail prices
         },
         "order": {
           "@id": @string@,
-          "@type":"http://schema.org/Order",
+          "@type":"Order",
           "items": [
             {
               "@id": @string@,
@@ -404,6 +408,7 @@ Feature: Retail prices
               "vendor": null,
               "player": {"@*@":"@*@"},
               "variant": {
+                "@id": @string@,
                 "@type": "ProductVariant",
                 "code": @string@,
                 "name": "Supplément de commande"
@@ -483,7 +488,7 @@ Feature: Retail prices
         },
         "order": {
           "@id": @string@,
-          "@type":"http://schema.org/Order",
+          "@type":"Order",
           "items": [
             {
               "@id": @string@,
@@ -493,6 +498,7 @@ Feature: Retail prices
               "vendor": null,
               "player": {"@*@":"@*@"},
               "variant": {
+                "@id": @string@,
                 "@type": "ProductVariant",
                 "code": @string@,
                 "name": "Supplément de commande"
@@ -570,7 +576,7 @@ Feature: Retail prices
         },
         "order": {
           "@id": @string@,
-          "@type":"http://schema.org/Order",
+          "@type":"Order",
           "items": [
             {
               "@id": @string@,
@@ -580,6 +586,7 @@ Feature: Retail prices
               "vendor": null,
               "player": {"@*@":"@*@"},
               "variant": {
+                "@id": @string@,
                 "@type": "ProductVariant",
                 "code": @string@,
                 "name": "Supplément de commande"
@@ -666,7 +673,7 @@ Feature: Retail prices
         },
         "order": {
           "@id": @string@,
-          "@type":"http://schema.org/Order",
+          "@type":"Order",
           "items": [
             {
               "@id": @string@,
@@ -676,6 +683,7 @@ Feature: Retail prices
               "vendor": null,
               "player": {"@*@":"@*@"},
               "variant": {
+                "@id": @string@,
                 "@type": "ProductVariant",
                 "code": @string@,
                 "name": "Supplément de commande"
@@ -762,7 +770,7 @@ Feature: Retail prices
         },
         "order": {
           "@id": @string@,
-          "@type":"http://schema.org/Order",
+          "@type":"Order",
           "items": [
             {
               "@id": @string@,
@@ -772,6 +780,7 @@ Feature: Retail prices
               "vendor": null,
               "player": {"@*@":"@*@"},
               "variant": {
+                "@id": @string@,
                 "@type": "ProductVariant",
                 "code": @string@,
                 "name": "Supplément de commande"
@@ -851,7 +860,7 @@ Feature: Retail prices
         },
         "order": {
           "@id": @string@,
-          "@type":"http://schema.org/Order",
+          "@type":"Order",
           "items": [
             {
               "@id": @string@,
@@ -861,6 +870,7 @@ Feature: Retail prices
               "vendor": null,
               "player": {"@*@":"@*@"},
               "variant": {
+                "@id": @string@,
                 "@type": "ProductVariant",
                 "code": @string@,
                 "name": "Supplément de commande"
@@ -940,7 +950,7 @@ Feature: Retail prices
         },
         "order": {
           "@id": @string@,
-          "@type":"http://schema.org/Order",
+          "@type":"Order",
           "items": [
             {
               "@id": @string@,
@@ -950,6 +960,7 @@ Feature: Retail prices
               "vendor": null,
               "player": {"@*@":"@*@"},
               "variant": {
+                "@id": @string@,
                 "@type": "ProductVariant",
                 "code": @string@,
                 "name": "Point de retrait #1"
@@ -980,6 +991,7 @@ Feature: Retail prices
               "vendor": null,
               "player": {"@*@":"@*@"},
               "variant": {
+                "@id": @string@,
                 "@type": "ProductVariant",
                 "code": @string@,
                 "name": "Point de dépôt #1"
@@ -1059,7 +1071,7 @@ Feature: Retail prices
         },
         "order": {
           "@id": @string@,
-          "@type":"http://schema.org/Order",
+          "@type":"Order",
           "items": [
             {
               "@id": @string@,
@@ -1069,6 +1081,7 @@ Feature: Retail prices
               "vendor": null,
               "player": {"@*@":"@*@"},
               "variant": {
+                "@id": @string@,
                 "@type": "ProductVariant",
                 "code": @string@,
                 "name": "Point de dépôt #1"
@@ -1229,7 +1242,7 @@ Feature: Retail prices
         },
         "order": {
           "@id": @string@,
-          "@type":"http://schema.org/Order",
+          "@type":"Order",
           "items": [
             {
               "@id": @string@,
@@ -1239,6 +1252,7 @@ Feature: Retail prices
               "vendor": null,
               "player": null,
               "variant": {
+                "@id": @string@,
                 "@type": "ProductVariant",
                 "code": @string@,
                 "name": "Supplément de commande"
@@ -1314,7 +1328,7 @@ Feature: Retail prices
         },
         "order": {
           "@id": @string@,
-          "@type":"http://schema.org/Order",
+          "@type":"Order",
           "items": [
             {
               "@id": @string@,
@@ -1324,6 +1338,7 @@ Feature: Retail prices
               "vendor": null,
               "player": null,
               "variant": {
+                "@id": @string@,
                 "@type": "ProductVariant",
                 "code": @string@,
                 "name": "Supplément de commande"
@@ -1407,7 +1422,7 @@ Feature: Retail prices
         },
         "order": {
           "@id": @string@,
-          "@type":"http://schema.org/Order",
+          "@type":"Order",
           "items": [
             {
               "@id": @string@,
@@ -1417,6 +1432,7 @@ Feature: Retail prices
               "vendor": null,
               "player": null,
               "variant": {
+                "@id": @string@,
                 "@type": "ProductVariant",
                 "code": @string@,
                 "name": "Supplément de commande"
@@ -1485,7 +1501,7 @@ Feature: Retail prices
         },
         "order": {
           "@id": @string@,
-          "@type":"http://schema.org/Order",
+          "@type":"Order",
           "items": [
             {
               "@id": @string@,
@@ -1495,6 +1511,7 @@ Feature: Retail prices
               "vendor": null,
               "player": null,
               "variant": {
+                "@id": @string@,
                 "@type": "ProductVariant",
                 "code": @string@,
                 "name": "Supplément de commande"
@@ -1594,7 +1611,7 @@ Feature: Retail prices
         },
         "order": {
           "@id": @string@,
-          "@type":"http://schema.org/Order",
+          "@type":"Order",
           "items": [
             {
               "@id": @string@,
@@ -1604,6 +1621,7 @@ Feature: Retail prices
               "vendor": null,
               "player": {"@*@":"@*@"},
               "variant": {
+                "@id": @string@,
                 "@type": "ProductVariant",
                 "code": @string@,
                 "name": "Supplément de commande"
@@ -1682,7 +1700,7 @@ Feature: Retail prices
         },
         "order": {
           "@id": @string@,
-          "@type":"http://schema.org/Order",
+          "@type":"Order",
           "items": [
             {
               "@id": @string@,
@@ -1692,6 +1710,7 @@ Feature: Retail prices
               "vendor": null,
               "player": {"@*@":"@*@"},
               "variant": {
+                "@id": @string@,
                 "@type": "ProductVariant",
                 "code": @string@,
                 "name": "Supplément de commande"
@@ -1926,7 +1945,7 @@ Feature: Retail prices
         },
         "order": {
           "@id": @string@,
-          "@type":"http://schema.org/Order",
+          "@type":"Order",
           "items": [
             {
               "@id": @string@,
@@ -1936,6 +1955,7 @@ Feature: Retail prices
               "vendor": null,
               "player": {"@*@":"@*@"},
               "variant": {
+                "@id": @string@,
                 "@type": "ProductVariant",
                 "code": @string@,
                 "name": "Supplément de commande"

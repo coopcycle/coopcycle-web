@@ -67,7 +67,7 @@
       </td>
       {% if is_granted('ROLE_ADMIN') %}
         <td>
-          <div {{ react_component('DeleteIcon', { objectId: form.id, objectName: form|hashid(12), deleteUrl: '_api_/delivery_forms/{id}.{_format}_delete'}) }}></div>
+          <div {{ react_component('DeleteIcon', { objectId: form.id, objectName: form|hashid(12), deleteUrl: '_api_/delivery_forms/{id}{._format}_delete'}) }}></div>
         </td>
       {% endif %}
       </td>

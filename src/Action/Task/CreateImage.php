@@ -8,6 +8,7 @@ use AppBundle\Entity\TaskImage;
 use AppBundle\Form\TaskImageType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use ApiPlatform\Validator\ValidatorInterface;
 
 /**
  * @see https://api-platform.com/docs/core/file-upload/
@@ -16,7 +17,8 @@ class CreateImage
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        protected IriConverterInterface $iriConverter)
+        protected IriConverterInterface $iriConverter,
+        private ValidatorInterface $validator)
     {}
 
     public function __invoke(Request $request)
@@ -33,6 +35,8 @@ class CreateImage
         }
 
         $taskImage->setFile($uploadedFile);
+
+        $this->validator->validate($taskImage, ['groups' => ['task_image_create']]);
 
         if (isset($tasks)) {
             $this->cloneAndAttach($tasks, $taskImage);

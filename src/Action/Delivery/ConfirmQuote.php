@@ -26,7 +26,7 @@ class ConfirmQuote
 
     public function __invoke(DeliveryQuote $data)
     {
-        $delivery = $this->serializer->deserialize($data->getPayload(), Delivery::class, 'jsonld');
+        $delivery = $this->serializer->deserialize($data->getPayload(), Delivery::class, 'jsonld', ['groups' => ['delivery_create', 'pricing_deliveries']]);
 
         $order = $this->orderFactory->createForDelivery($delivery);
         $this->pricingManager->processDeliveryOrder($order, [$this->pricingManager->getCustomProductVariant($delivery, new PricingRulesBasedPrice($data->getAmount()))]);

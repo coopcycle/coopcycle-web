@@ -79,7 +79,7 @@ class WoopitDocumentHandler
                 sprintf('[WOOPIT] Sending new document to Woopit for delivery with id %s', $deliveryId)
             );
 
-            $response = $this->woopitClient->request('POST', "deliveries/${deliveryId}/documents", [
+            $response = $this->woopitClient->request('POST', "deliveries/{$deliveryId}/documents", [
                 'headers' => $formData->getPreparedHeaders()->toArray(),
                 'body' => $formData->bodyToIterable(),
             ]);

@@ -309,7 +309,7 @@ export function setTaskListVehicle(username, vehicleId) {
 
     const tasksList = selectTaskListByUsername(getState(), {username: username})
 
-    const url = window.Routing.generate('_api_/task_lists/{id}.{_format}_patch', {
+    const url = window.Routing.generate('_api_/task_lists/{id}{._format}_patch', {
       id: tasksList.id,
     })
 
@@ -352,7 +352,7 @@ export function setTaskListTrailer(username, trailerId) {
 
     const tasksList = selectTaskListByUsername(getState(), {username: username})
 
-    const url = window.Routing.generate('_api_/task_lists/{id}.{_format}_patch', {
+    const url = window.Routing.generate('_api_/task_lists/{id}{._format}_patch', {
       id: tasksList.id,
     })
 
@@ -1679,7 +1679,7 @@ export function loadOrganizations() {
 
     const data = await client.paginatedRequest({
       method: 'GET',
-      url: window.Routing.generate('_api_/organizations.{_format}_get_collection'),
+      url: window.Routing.generate('_api_/organizations{._format}_get_collection'),
       headers: {
         'Authorization': `Bearer ${jwt}`,
         'Accept': 'application/ld+json',
@@ -1698,7 +1698,7 @@ export function loadVehicles() {
 
     const data = await client.paginatedRequest({
       method: 'GET',
-      url: window.Routing.generate('_api_/vehicles.{_format}_get_collection'),
+      url: window.Routing.generate('_api_/vehicles{._format}_get_collection'),
       headers: {
         'Authorization': `Bearer ${jwt}`,
         'Accept': 'application/ld+json',
@@ -1718,7 +1718,7 @@ export function loadTrailers() {
 
     const data = await client.paginatedRequest({
       method: 'GET',
-      url: window.Routing.generate('_api_/trailers.{_format}_get_collection'),
+      url: window.Routing.generate('_api_/trailers{._format}_get_collection'),
       headers: {
         'Authorization': `Bearer ${jwt}`,
         'Accept': 'application/ld+json',
@@ -1738,7 +1738,7 @@ export function loadWarehouses() {
 
     const data = await client.paginatedRequest({
       method: 'GET',
-      url: window.Routing.generate('_api_/warehouses.{_format}_get_collection'),
+      url: window.Routing.generate('_api_/warehouses{._format}_get_collection'),
       headers: {
         'Authorization': `Bearer ${jwt}`,
         'Accept': 'application/ld+json',

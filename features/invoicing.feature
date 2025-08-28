@@ -234,11 +234,11 @@ Feature: Invoicing
         ],
         "hydra:totalItems":@integer@,
         "hydra:view":{
-          "@id": "/api/invoice_line_items?store%5B%5D=1\u0026store%5B%5D=35\u0026itemsPerPage=100\u0026page=1",
+          "@id": "/api/invoice_line_items?itemsPerPage=100&store%5B%5D=1&store%5B%5D=35&page=1",
           "@type": "hydra:PartialCollectionView",
-          "hydra:first": "/api/invoice_line_items?store%5B%5D=1\u0026store%5B%5D=35\u0026itemsPerPage=100\u0026page=1",
-          "hydra:last": "/api/invoice_line_items?store%5B%5D=1\u0026store%5B%5D=35\u0026itemsPerPage=100\u0026page=3",
-          "hydra:next": "/api/invoice_line_items?store%5B%5D=1\u0026store%5B%5D=35\u0026itemsPerPage=100\u0026page=2"
+          "hydra:first": "/api/invoice_line_items?itemsPerPage=100&store%5B%5D=1&store%5B%5D=35&page=1",
+          "hydra:last": "/api/invoice_line_items?itemsPerPage=100&store%5B%5D=1&store%5B%5D=35&page=3",
+          "hydra:next": "/api/invoice_line_items?itemsPerPage=100&store%5B%5D=1&store%5B%5D=35&page=2"
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
@@ -306,6 +306,7 @@ Feature: Invoicing
         "hydra:member":[
           {
             "@type":"InvoiceLineItemGroupedByOrganization",
+            "@id": @string@,
             "storeId":@integer@,
             "organizationLegalName":@string@,
             "ordersCount":@integer@,

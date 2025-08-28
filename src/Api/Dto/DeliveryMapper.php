@@ -27,13 +27,18 @@ class DeliveryMapper
         Delivery $deliveryEntity,
         ?OrderInterface $order,
         ?ArbitraryPrice $arbitraryPrice,
-        bool $isSavedOrder
+        bool $isSavedOrder,
+        array $groups = []
     ): DeliveryInputDto {
+
+        $context = !empty($groups) ? ['groups' => $groups] : [];
+
         $deliveryData = new DeliveryInputDto();
 
         $tasks = $deliveryEntity->getTasks();
 
-        $deliveryData->tasks = array_map(function (Task $taskEntity) use ($tasks) {
+        $deliveryData->tasks = array_map(function (Task $taskEntity) use ($tasks, $context) {
+
             $taskData = new TaskDto();
 
             $taskData->id = $taskEntity->getId();
@@ -45,7 +50,7 @@ class DeliveryMapper
 
             $address = $taskEntity->getAddress();
             if ($address->getId() !== null) {
-                $taskData->address = $this->normalizer->normalize($address, 'jsonld');
+                $taskData->address = $this->normalizer->normalize($address, 'jsonld', $context);
                 // Workaround to properly normalize embedded relation
                 // Should become unnecessary when we normalise address using built-in normalizer
                 // See a comment at TaskDto Address property
@@ -55,7 +60,7 @@ class DeliveryMapper
             } else {
                 // a case when address doesn't have an ID (for example, in Recurrence rules)
                 // (we can't use API platform normalizer here, as it fails with: Unable to generate an IRI for the item)
-                $taskData->address = $this->symfonyNormalizer->normalize($address, 'json');
+                $taskData->address = $this->symfonyNormalizer->normalize($address, 'json', $context);
             }
 
             $taskData->after = $taskEntity->getAfter();
