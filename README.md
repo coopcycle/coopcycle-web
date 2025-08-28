@@ -153,7 +153,7 @@ make phpunit
 For example, to run only the tests in the `AppBundle\Sylius\OrderProcessing` folder:
 
 ```sh
-sh ./bin/phpunit /var/www/html/tests/AppBundle/Sylius/OrderProcessing
+make phpunit ARGS="/var/www/html/tests/AppBundle/Sylius/OrderProcessing"
 ```
 
 See more command line options [here](https://docs.phpunit.de/en/9.6/textui.html#command-line-options).

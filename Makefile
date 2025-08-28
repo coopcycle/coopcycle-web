@@ -23,14 +23,14 @@ osrm:
 
 phpunit:
 	@docker compose exec php php bin/console doctrine:schema:update --env=test --force --no-interaction --quiet
-	@docker compose exec php php vendor/bin/phpunit
+	@docker compose exec php php vendor/bin/phpunit ${ARGS}
 # Add as annotation at the top of any testcase:
 # /**
 # * @group only
 # */
 # public function testSomething()..
 phpunit-only:
-	@clear && docker compose exec php php vendor/bin/phpunit --group only
+	@clear && make phpunit ARGS="--group only"
 
 behat:
 	@docker compose exec -e APP_ENV=test php php vendor/bin/behat ${ARGS}
