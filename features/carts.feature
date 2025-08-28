@@ -2369,26 +2369,30 @@ Feature: Carts
       """
       {
         "@context": {"@*@": "@*@"},
-        "@type": "http://schema.org/Order",
+        "@type": "ConfigurePaymentOutput",
         "@id": "@string@",
         "payments": [
           {
             "@context": {"@*@": "@*@"},
+            "@id":@string@,
             "@type": "@string@",
             "method": {
               "@context": {"@*@": "@*@"},
+              "@id":@string@,
               "@type": "@string@",
-              "code": "CARD"
+              "code": "@string@.matchRegex('/(CARD|EDENRED)/')"
             },
             "amount": @integer@
           },
           {
             "@context": {"@*@": "@*@"},
+            "@id":@string@,
             "@type": "@string@",
             "method": {
               "@context": {"@*@": "@*@"},
+              "@id":@string@,
               "@type": "@string@",
-              "code": "EDENRED"
+              "code": "@string@.matchRegex('/(CARD|EDENRED)/')"
             },
             "amount": @integer@
           }

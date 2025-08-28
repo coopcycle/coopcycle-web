@@ -16,7 +16,7 @@ final class TaxRateProvider implements ProviderInterface
         private EntityManagerInterface $entityManager)
     {}
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = [])
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
         $taxRates = $this->taxesHelper->getBaseRates();
         foreach ($taxRates as $taxRate) {

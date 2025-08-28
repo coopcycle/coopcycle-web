@@ -5,34 +5,22 @@ namespace AppBundle\Action\Task;
 use AppBundle\Service\TaskManager;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Security;
 
-class Assign extends Base
+class Assign
 {
     use AssignTrait;
 
     public function __construct(
-        TokenStorageInterface $tokenStorage,
-        TaskManager $taskManager,
+        protected Security $security,
         protected UserManagerInterface $userManager,
-        protected AuthorizationCheckerInterface $authorization
+        protected AuthorizationCheckerInterface $authorizationChecker
     )
-    {
-        parent::__construct($tokenStorage, $taskManager);
-    }
+    {}
 
     public function __invoke($data, Request $request)
     {
-        $task = $data;
-
-        $payload = [];
-
-        $content = $request->getContent();
-        if (!empty($content)) {
-            $payload = json_decode($content, true);
-        }
-
-        return $this->assign($task, $payload, $request);
+        return $this->assign($data, $request->toArray(), $request);
     }
 }

@@ -12,13 +12,13 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
-use AppBundle\Action\Trailer\SetVehicles;
+use AppBundle\Api\Dto\CompatibleVehiclesInput;
+use AppBundle\Api\State\CompatibleVehiclesProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Symfony\Component\Validator\Constraints as Assert;
-
 
 #[ApiResource(
     operations: [
@@ -27,16 +27,15 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Patch(security: 'is_granted(\'ROLE_ADMIN\')'),
         new Put(
             uriTemplate: '/trailers/{id}/vehicles',
-            controller: SetVehicles::class,
+            input: CompatibleVehiclesInput::class,
+            processor: CompatibleVehiclesProcessor::class,
             security: 'is_granted(\'ROLE_ADMIN\')',
-            read: false,
-            write: false
         ),
         new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\')'),
         new Post(security: 'is_granted(\'ROLE_ADMIN\')')
     ],
     normalizationContext: ['groups' => ['trailer']],
-    denormalizationContext: ['groups' => ['trailer_create']],
+    denormalizationContext: ['groups' => ['trailer_create', 'trailer_update']],
     order: ['name' => 'ASC']
 )]
 class Trailer implements SoftDeleteableInterface

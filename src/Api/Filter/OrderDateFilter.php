@@ -11,7 +11,7 @@ use Sylius\Component\Order\Model\OrderInterface;
 
 final class OrderDateFilter extends AbstractFilter
 {
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = [])
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
     {
         // Do not use isPropertyMapped(), because this is a "virtual" property
         if (!$this->isPropertyEnabled($property, $resourceClass)) {

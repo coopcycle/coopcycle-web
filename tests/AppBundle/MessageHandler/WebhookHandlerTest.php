@@ -235,6 +235,9 @@ class WebhookHandlerTest extends TestCase
         $this->apiAppRepository->findBy(['store' => $store])
             ->willReturn([]);
 
+        $this->iriConverter->getResourceFromIri('/api/deliveries/1')
+            ->willReturn($delivery);
+
         call_user_func_array($this->handler, [
             new WebhookMessage('/api/deliveries/1', 'delivery.picked')
         ]);

@@ -928,6 +928,7 @@ services:
     arguments:
       $confirmationEnabled: '%nucleos_profile.registration.confirmation.enabled%'
       $mailer: '@nucleos_profile.mailer'
+      $constraintViolationListNormalizer: '@api_platform.problem.normalizer.constraint_violation_list'
 
   AppBundle\Action\ResettingSendEmail:
     public: true
