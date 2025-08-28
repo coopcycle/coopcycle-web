@@ -70,8 +70,14 @@ class PricingManager
         return $output->getPrice();
     }
 
-    public function getPriceCalculation(Delivery $delivery, PricingRuleSet $ruleSet, UsePricingRules $pricingStrategy = new CalculateUsingPricingRules()): ?PriceCalculationOutput
+    public function getPriceCalculation(Delivery $delivery, PricingRuleSet $ruleSet, ?UsePricingRules $pricingStrategy = null): ?PriceCalculationOutput
     {
+        // Defining a default value in the method signature fails in the phpunit tests
+        // even though it seems that it was fixed: https://github.com/sebastianbergmann/phpunit/commit/658d8decbec90c4165c0b911cf6cfeb5f6601cae
+        if ($pricingStrategy === null) {
+            $pricingStrategy = new CalculateUsingPricingRules();
+        }
+
         // Store might be null if it's an embedded form
         $store = $delivery->getStore();
         foreach ($delivery->getTasks() as $task) {
