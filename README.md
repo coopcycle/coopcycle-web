@@ -171,7 +171,7 @@ make behat
 For example, to run only the tests in the `features/authentication.feature` file:
 
 ```sh
-sh ./bin/behat features/authentication.feature
+make behat ARGS="features/authentication.feature"
 ```
 
 To run only the tests with the `@only` tag:
