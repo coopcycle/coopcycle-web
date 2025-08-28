@@ -22,10 +22,9 @@ jobs:
         uses: ./.github/actions/run-coopcycle-web
         timeout-minutes: 5
       - name: Run Behat
-        run: docker compose exec -T php vendor/bin/behat -f progress
+        run: docker compose exec -T php vendor/bin/behat -f progress -v --tags=@only
       - name: Show Symfony warnings on failure
         if: failure()
         uses: ./.github/actions/show-symfony-warnings
       - name: Upload Symfony logs on failure
-        if: failure()
         uses: ./.github/actions/upload-symfony-logs
