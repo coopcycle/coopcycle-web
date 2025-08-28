@@ -2647,6 +2647,7 @@ Feature: Deliveries
       }
       """
 
+    @only
   Scenario: Check delivery returns HTTP 400 (with JWT) when dropoff is outside check zone
     Given the fixtures files are loaded:
       | stores.yml          |

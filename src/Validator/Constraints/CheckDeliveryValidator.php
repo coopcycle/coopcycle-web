@@ -7,6 +7,7 @@ use AppBundle\ExpressionLanguage\DeliveryExpressionLanguageVisitor;
 use AppBundle\ExpressionLanguage\ExpressionLanguage;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\RoutingInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -17,6 +18,7 @@ class CheckDeliveryValidator extends ConstraintValidator
         private readonly ExpressionLanguage $expressionLanguage,
         private readonly DeliveryExpressionLanguageVisitor $deliveryExpressionLanguageVisitor,
         private readonly RoutingInterface $routing,
+        private readonly LoggerInterface $checkoutLogger
     )
     {
     }
@@ -60,6 +62,9 @@ class CheckDeliveryValidator extends ConstraintValidator
         if (null === $checkExpression) {
             return;
         }
+
+        $this->checkoutLogger->info(sprintf('CheckDeliveryValidator | checkExpression: %s', $checkExpression));
+        $this->checkoutLogger->info(sprintf('CheckDeliveryValidator | distance: %d', $object->getDistance()));
 
         if (!$this->expressionLanguage->evaluate($checkExpression, $this->deliveryExpressionLanguageVisitor->toExpressionLanguageValues($object))) {
             $this->context->buildViolation($constraint->outOfBoundsMessage)

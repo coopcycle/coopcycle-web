@@ -13,6 +13,7 @@ use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\OrderTimelineCalculator;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 /**
@@ -28,6 +29,7 @@ class DeliveryManager
         private readonly OrderTimelineCalculator $orderTimelineCalculator,
         private readonly TokenStoreExtractor $storeExtractor,
         private readonly EntityManagerInterface $entityManager,
+        private readonly LoggerInterface $checkoutLogger,
     )
     {}
 
@@ -123,6 +125,9 @@ class DeliveryManager
         $coords = array_map(fn ($task) => $task->getAddress()->getGeo(), $delivery->getTasks());
         $distance = $this->routing->getDistance(...$coords);
 
+        $this->checkoutLogger->info(sprintf('DeliveryManager::setDefaults | coords: %s', implode(';', array_map(fn ($coord) => sprintf('%f, %f', $coord->getLatitude(), $coord->getLongitude()), $coords))));
+
+        $this->checkoutLogger->info(sprintf('DeliveryManager::setDefaults | setDistance: %d', $distance));
         $delivery->setDistance(ceil($distance));
     }
 

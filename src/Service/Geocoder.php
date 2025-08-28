@@ -45,7 +45,7 @@ class Geocoder
         private readonly int $rateLimitPerSecond,
         private readonly RateLimiterStore $geocodeEarthRateLimiterStore,
         private readonly bool $autoconfigure = true,
-        private readonly LoggerInterface $logger = new NullLogger()
+        private readonly LoggerInterface $checkoutLogger = new NullLogger()
     )
     {
     }
@@ -58,16 +58,18 @@ class Geocoder
             if ($this->autoconfigure) {
                 // For France only, use https://adresse.data.gouv.fr/
                 if ('fr' === $this->country) {
+                    $this->checkoutLogger->info('Geocoder: Using Addok provider');
                     // TODO Create own provider to get results with a high score
                     $providers[] = $this->createAddokProvider();
                 }
             }
 
             $geocodingProvider = $this->settingsManager->get('geocoding_provider');
+            $this->checkoutLogger->info(sprintf('Geocoder: Using %s provider', $geocodingProvider));
             $geocodingProvider = $geocodingProvider ?? 'opencage';
 
             if ('mock' === $geocodingProvider) {
-                $providers[] = new MockGeocoderProvider($this->logger);
+                $providers[] = new MockGeocoderProvider($this->checkoutLogger);
                 // Add OpenCage provider only if api key is configured
             } else if ('opencage' === $geocodingProvider && !empty($this->openCageApiKey)) {
                 $providers[] = $this->createOpenCageProvider();
@@ -78,7 +80,7 @@ class Geocoder
             }
 
             $provider = new ChainProvider($providers);
-            $provider->setLogger($this->logger);
+            $provider->setLogger($this->checkoutLogger);
             $this->geocoder = new StatefulGeocoder($provider, $this->locale);
         }
 
@@ -161,6 +163,8 @@ class Geocoder
 
     public function geocode($value, $address = null): ?Address
     {
+        $this->checkoutLogger->info(sprintf('Geocoder: Geocoding "%s"', $value));
+
         $query = GeocodeQuery::create($value);
 
         $latlng = $this->settingsManager->get('latlng');
@@ -186,7 +190,7 @@ class Geocoder
                 $query
             );
         } catch(\Exception $e) {
-            $this->logger->error(sprintf('Geocoder: %s', $e->getMessage()));
+            $this->checkoutLogger->error(sprintf('Geocoder: %s', $e->getMessage()));
         }
 
         if (count($results) > 0) {
@@ -205,7 +209,7 @@ class Geocoder
             return $address;
         }
 
-        $this->logger->warning(sprintf('Geocoder: No results for "%s"', $query));
+        $this->checkoutLogger->warning(sprintf('Geocoder: No results for "%s"', $query));
         return null;
     }
 
