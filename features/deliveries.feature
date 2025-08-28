@@ -2623,7 +2623,7 @@ Feature: Deliveries
       """
       {
         "dropoff": {
-          "address": "48, Rue de Rivoli",
+          "address": "251 avenue louise, 1050 Brussels",
           "doneBefore": "tomorrow 13:30"
         }
       }
