@@ -103,7 +103,25 @@ class MockGeocoderProvider implements GeocoderInterface
             );
 
             return new AddressCollection([$address]);
-        }  {
+        } else if (str_contains($value, '251 avenue louise')) {
+            $address = new Address(
+                $this->getName(),
+                new AdminLevelCollection([
+                    new AdminLevel(1, 'Brussels', 'BRU')
+                ]),
+                new Coordinates(50.8247391, 4.3659593),
+                new Bounds(50.8247391, 4.3659593, 50.8247391, 4.3659593),
+                '251',
+                'Av. Louise',
+                '1050',
+                'Brussels',
+                null,
+                new Country('Belgium', 'BE'),
+                null // Timezone, if applicable
+            );
+
+            return new AddressCollection([$address]);
+        } else {
             $this->logger->warning('MockGeocoderProvider:geocode No mock found for the given value: ' . $value);
             return new AddressCollection([]);
         }
