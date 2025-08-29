@@ -282,7 +282,7 @@ Feature: Multi-step deliveries
           },
           {
             "type": "pickup",
-            "address": "22, Rue de la Paix Paris",
+            "address": "101, Rue de la Paix Paris",
             "before": "tomorrow 13:15"
           },
           {
@@ -353,7 +353,7 @@ Feature: Multi-step deliveries
               "latitude":@double@,
               "longitude":@double@
             },
-            "streetAddress":"24 Rue de la Paix, 75002 Paris",
+            "streetAddress":"Rue de la Paix 24, 75002 Paris",
             "telephone":null,
             "name":null,
             "description": null
@@ -382,10 +382,10 @@ Feature: Multi-step deliveries
             "contactName":null,
             "geo":{
               "@type":"GeoCoordinates",
-              "latitude":48.856872,
-              "longitude":2.354618
+              "latitude":48.8566,
+              "longitude":2.3522
             },
-            "streetAddress":"48 Rue de Rivoli, 75004 Paris",
+            "streetAddress":"Rue de Rivoli 48, 75004 Paris",
             "telephone":null,
             "name":null,
             "description": null
@@ -444,7 +444,7 @@ Feature: Multi-step deliveries
           },
           {
             "type": "pickup",
-            "address": "22, Rue de la Paix Paris"
+            "address": "101, Rue de la Paix Paris"
           },
           {
             "type": "dropoff",
@@ -483,7 +483,7 @@ Feature: Multi-step deliveries
               "latitude":@double@,
               "longitude":@double@
             },
-            "streetAddress":"24 Rue de la Paix, 75002 Paris",
+            "streetAddress":"Rue de la Paix 24, 75002 Paris",
             "telephone":null,
             "name":null,
             "description": null
@@ -512,10 +512,10 @@ Feature: Multi-step deliveries
             "contactName":null,
             "geo":{
               "@type":"GeoCoordinates",
-              "latitude":48.856872,
-              "longitude":2.354618
+              "latitude":48.8566,
+              "longitude":2.3522
             },
-            "streetAddress":"48 Rue de Rivoli, 75004 Paris",
+            "streetAddress":"Rue de Rivoli 48, 75004 Paris",
             "telephone":null,
             "name":null,
             "description": null
@@ -567,7 +567,7 @@ Feature: Multi-step deliveries
         "tasks": [
           {
             "type": "pickup",
-            "address": "24 Rue de Rivoli, 75004 Paris",
+            "address": "44 Rue de Rivoli, 75004 Paris",
             "after": "tomorrow 13:00",
             "before": "tomorrow 13:15"
           },
@@ -579,7 +579,7 @@ Feature: Multi-step deliveries
           },
           {
             "type": "dropoff",
-            "address": "45 Rue de Rivoli, 75001 Paris",
+            "address": "48 Rue de Rivoli, 75004 Paris",
             "after": "tomorrow 13:15",
             "before": "tomorrow 13:30"
           }
@@ -638,7 +638,7 @@ Feature: Multi-step deliveries
           },
           {
             "type": "pickup",
-            "address": "22, Rue de la Paix Paris",
+            "address": "101, Rue de la Paix Paris",
             "before": "tomorrow 13:15",
             "weight": 1500,
             "packages": [

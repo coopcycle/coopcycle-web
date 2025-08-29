@@ -125,7 +125,7 @@ Feature: Delivery quotes
           },
           {
             "type": "pickup",
-            "address": "28, Rue de la Paix Paris"
+            "address": "101, Rue de la Paix Paris"
           },
           {
             "type": "dropoff",

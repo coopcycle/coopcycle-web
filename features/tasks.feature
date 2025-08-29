@@ -2369,10 +2369,10 @@ Feature: Tasks
     And the OAuth client "Acme" sends a "POST" request to "/api/tasks/import" with body:
       """
       type,address.streetAddress,address.telephone,address.name,after,before,tags
-      pickup,"1, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,"important"
-      dropoff,"54, rue du Faubourg Saint Denis Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,"important fragile"
-      dropoff,"68, rue du Faubourg Saint Denis Paris",,Baz,2018-02-15 10:00,2018-02-15 11:00,"fragile"
-      dropoff,"42, rue de Rivoli Paris",,Bat,2018-02-15 11:30,2018-02-15 12:00,
+      pickup,"44, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,"important"
+      dropoff,"24, Rue de la Paix Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,"important fragile"
+      dropoff,"101, Rue de la Paix Paris",,Baz,2018-02-15 10:00,2018-02-15 11:00,"fragile"
+      dropoff,"52, rue de Rivoli Paris",,Bat,2018-02-15 11:30,2018-02-15 12:00,
       """
     Then the response status code should be 201
     And the JSON should match:
@@ -2408,7 +2408,7 @@ Feature: Tasks
     And the OAuth client "Acme" sends a "POST" request to "/api/tasks/import" with body:
       """
       type,address.streetAddress,address.telephone,address.name,after,before,tags
-      pickup,"1, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,"important"
+      pickup,"44, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,"important"
       """
     Then the response status code should be 201
     And the JSON should match:
@@ -2436,8 +2436,8 @@ Feature: Tasks
     And the OAuth client "Acme" sends a "POST" request to "/api/tasks/import" with body:
       """
       type,address.streetAddress,address.telephone,address.name,after,before,ref
-      pickup,"1, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,123456
-      dropoff,"54, rue du Faubourg Saint Denis Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,123456
+      pickup,"44, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,123456
+      dropoff,"24, Rue de la Paix Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,123456
       """
     Then the response status code should be 400
     And the response should be in JSON
@@ -2469,8 +2469,8 @@ Feature: Tasks
     And the OAuth client "Acme" sends a "POST" request to "/api/tasks/import" with body:
       """
       type,address.streetAddress,address.telephone,address.name,after,before,ref
-      pickup,"1, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,654321
-      dropoff,"54, rue du Faubourg Saint Denis Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,123456
+      pickup,"44, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,654321
+      dropoff,"24, Rue de la Paix Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,123456
       """
     Then the response status code should be 400
     And the response should be in JSON
@@ -2496,8 +2496,8 @@ Feature: Tasks
       | stores.yml          |
     Given the store with name "Acme" has imported tasks:
       | type    | address.streetAddress                 | after            | before           |
-      | pickup  | 1, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
-      | dropoff | 54, rue du Faubourg Saint Denis Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | pickup  | 44, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | dropoff | 24, Rue de la Paix Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
     Given the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
@@ -2524,8 +2524,8 @@ Feature: Tasks
       | stores.yml          |
     Given the store with name "Acme" has imported tasks:
       | type    | address.streetAddress                 | after            | before           |
-      | pickup  | 1, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
-      | dropoff | 54, rue du Faubourg Saint Denis Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | pickup  | 44, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | dropoff | 24, Rue de la Paix Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
     Given the store with name "Acme2" has an OAuth client named "Acme2"
     And the OAuth client with name "Acme2" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
@@ -2691,8 +2691,8 @@ Feature: Tasks
       | stores.yml          |
     Given the store with name "Acme" has imported tasks:
       | type    | address.streetAddress                 | after            | before           |
-      | pickup  | 1, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
-      | dropoff | 54, rue du Faubourg Saint Denis Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | pickup  | 44, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | dropoff | 24, Rue de la Paix Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
     Given the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
@@ -2732,10 +2732,10 @@ Feature: Tasks
     And the OAuth client "Acme" sends a "POST" request to "/api/tasks/import_async" with body:
       """
       type,address.streetAddress,address.telephone,address.name,after,before,tags
-      pickup,"1, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,"important"
-      dropoff,"54, rue du Faubourg Saint Denis Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,"important fragile"
-      dropoff,"68, rue du Faubourg Saint Denis Paris",,Baz,2018-02-15 10:00,2018-02-15 11:00,"fragile"
-      dropoff,"42, rue de Rivoli Paris",,Bat,2018-02-15 11:30,2018-02-15 12:00,
+      pickup,"44, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,"important"
+      dropoff,"24, Rue de la Paix Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,"important fragile"
+      dropoff,"101, Rue de la Paix Paris",,Baz,2018-02-15 10:00,2018-02-15 11:00,"fragile"
+      dropoff,"52, rue de Rivoli Paris",,Bat,2018-02-15 11:30,2018-02-15 12:00,
       """
     Then the response status code should be 201
     And the JSON should match:
@@ -2887,8 +2887,8 @@ Feature: Tasks
       | stores.yml          |
     Given the store with name "Acme" has imported tasks:
       | type    | address.streetAddress                 | after            | before           |
-      | pickup  | 1, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
-      | dropoff | 54, rue du Faubourg Saint Denis Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | pickup  | 44, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | dropoff | 24, Rue de la Paix Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
     Given the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
     When I add "Content-Type" header equal to "application/ld+json"

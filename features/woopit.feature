@@ -911,11 +911,11 @@ Feature: Woopit
         },
         "delivery": {
           "address": {
-            "addressLine1": "20, Rue Malher",
+            "addressLine1": "64, Rue Alexandre Dumas",
             "addressLine2": "Entrée D",
             "elevator": true,
             "floor": 2,
-            "postalCode": "75004",
+            "postalCode": "75011",
             "city": "Paris",
             "country": "FR",
             "doorCode": 23
@@ -1134,11 +1134,11 @@ Feature: Woopit
         },
         "delivery": {
           "location": {
-            "addressLine1": "153 Bd de Magenta",
+            "addressLine1": "64 Rue Alexandre Dumas",
             "addressLine2": "Appt 9",
             "elevator": true,
             "floor": 2,
-            "postalCode": "75010",
+            "postalCode": "75011",
             "city": "Paris",
             "country": "FR",
             "doorCode": "5678",
