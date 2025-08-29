@@ -168,22 +168,22 @@ make behat
 
 #### One package/test:
 
-For example, to run only the tests in the `features/authentication.feature` file:
-
-```sh
-make behat ARGS="features/authentication.feature"
-```
-
 To run only the tests with the `@only` tag:
 
 ```sh
 make behat-only
 ```
 
+To run only the tests in the `features/authentication.feature` file:
+
+```sh
+make behat ARGS="features/authentication.feature"
+```
+
 To only show errors in logs:
 
 ```sh
-sh ./bin/behat features/authentication.feature --no-snippets --format progress
+make behat ARGS="features/authentication.feature --no-snippets --format progress"
 ```
 
 See more command line options [here](https://behat.org/en/latest/user_guide/command_line_tool.html).
