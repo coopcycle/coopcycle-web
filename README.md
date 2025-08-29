@@ -197,7 +197,7 @@ make jest
 or to run only one test file:
 
 ```sh
-sh ./bin/jest path/to/test/file.test.js
+make jest ARGS="js/app/api/__tests__/util.test.js"
 ```
 
 ### Launch the Cypress tests
