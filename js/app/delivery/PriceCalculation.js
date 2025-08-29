@@ -114,7 +114,7 @@ export function PriceCalculation({
           )}
           {!isPriceBreakdownEnabled && Boolean(order) && order.items && (
             <div className="mt-4">
-              <Cart order={order} overridePrice={false} />
+              <Cart orderItems={order.items} overridePrice={false} />
             </div>
           )}
         </>

@@ -14,6 +14,7 @@ use AppBundle\Entity\Sylius\ExportCommand;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\ProductRepository;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Sylius\Product\ProductInterface;
@@ -174,7 +175,12 @@ final class InvoiceLineItemsProvider implements ProviderInterface
                     $productVariant = $item->getVariant();
 
                     $parts = [];
-                    foreach ($item->getAdjustments('menu_item_modifier') as $adjustment) {
+                    $adjustments = array_merge(
+                        $item->getAdjustmentsSorted(AdjustmentInterface::ORDER_ITEM_PACKAGE_DELIVERY_CALCULATED_ADJUSTMENT)->toArray(),
+                        $item->getAdjustmentsSorted(AdjustmentInterface::ORDER_ITEM_PACKAGE_DELIVERY_MANUAL_SUPPLEMENT_ADJUSTMENT)->toArray()
+                    );
+                    
+                    foreach ($adjustments as $adjustment) {
                         $parts[] = sprintf('%s: %s',
                             $adjustment->getLabel(),
                             $this->priceFormatter->formatWithSymbol($adjustment->getAmount())
