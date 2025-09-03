@@ -176,6 +176,8 @@ final class InvoiceLineItemsProvider implements ProviderInterface
 
                     $parts = [];
                     $adjustments = array_merge(
+                        // MENU_ITEM_MODIFIER_ADJUSTMENT is not used for package delivery orders since ~v3.42; next line should not be needed in some time
+                        $item->getAdjustmentsSorted(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT)->toArray(),
                         $item->getAdjustmentsSorted(AdjustmentInterface::ORDER_ITEM_PACKAGE_DELIVERY_CALCULATED_ADJUSTMENT)->toArray(),
                         $item->getAdjustmentsSorted(AdjustmentInterface::ORDER_ITEM_PACKAGE_DELIVERY_MANUAL_SUPPLEMENT_ADJUSTMENT)->toArray()
                     );
