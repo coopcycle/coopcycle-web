@@ -239,6 +239,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         $this->addTask($dropoff);
 
         $this->packages = new ArrayCollection();
+        $this->edifactMessages = new ArrayCollection();
     }
 
     public function addTask(Task $task, $position = null)

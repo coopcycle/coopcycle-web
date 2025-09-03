@@ -58,7 +58,7 @@ cypress-install:
 	@npm install
 
 jest:
-	@docker compose exec -e APP_ENV=test -e NODE_ENV=test webpack npm run jest
+	@docker compose exec -e APP_ENV=test -e NODE_ENV=test webpack npm run jest ${ARGS}
 
 # Just an alias
 migrations: migrations-migrate

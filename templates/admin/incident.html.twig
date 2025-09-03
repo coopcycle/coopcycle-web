@@ -18,7 +18,7 @@
 })|serialize -%}
 <div {{ react_component('Incident/IncidentLoad', {
   incident: incident|serialize('json', {groups: ['incident', 'task', 'address'] }),
-  order: order|serialize,
+  order: order|serialize('json', {groups: ['order'] }),
   images: images,
   transporterEnabled: transporterEnabled
 }) }} ></div>

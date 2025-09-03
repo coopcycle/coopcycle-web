@@ -255,6 +255,11 @@ class ProductType extends AbstractType
             $form = $event->getForm();
             $product = $event->getData();
 
+            // Bail early
+            if (!$form->isValid()) {
+                return;
+            }
+
             if ($form->has('options')) {
                 $opts = $form->get('options')->getData();
                 foreach ($opts as $opt) {
@@ -294,11 +299,11 @@ class ProductType extends AbstractType
                 $product->addVariant($variant);
 
             } else {
-                foreach ($product->getVariants() as $variant) {
-                    $variant->setName($product->getName());
-                    $variant->setPrice($price);
-                    $variant->setTaxCategory($taxCategory);
-                }
+
+                // The variants name, price & tax category
+                // are updated at once in controller
+                // (performance issues when lots of variants)
+
             }
 
             if ($form->has('businessRestaurantGroupPrices')) {

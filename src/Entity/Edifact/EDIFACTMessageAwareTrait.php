@@ -10,7 +10,7 @@ trait EDIFACTMessageAwareTrait
 
     protected $edifactMessages;
 
-    public function getEdifactMessages(): Collection
+    public function getEdifactMessages(): ?Collection
     {
         return $this->edifactMessages;
     }
