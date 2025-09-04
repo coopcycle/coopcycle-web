@@ -108,7 +108,7 @@ export const OrderEditing = ({
     setFieldValue('order.recalculatePrice', selectedPriceOption === 'new');
   }, [selectedPriceOption, setFieldValue]);
 
-  const orderManualSupplementsWithSelection = useMemo(() => {
+  const orderManualSupplementsWithQuantity = useMemo(() => {
     return orderManualSupplements.map(rule => ({
       ...rule,
       quantity:
@@ -273,7 +273,7 @@ export const OrderEditing = ({
       {isDispatcher && !overridePrice && orderManualSupplements.length > 0 && (
         <div>
           <Divider size="middle" />
-          <ManualSupplements rules={orderManualSupplementsWithSelection} />
+          <ManualSupplements rules={orderManualSupplementsWithQuantity} />
         </div>
       )}
     </div>

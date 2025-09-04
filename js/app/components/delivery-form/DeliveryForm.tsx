@@ -331,7 +331,6 @@ const DeliveryForm = ({
         initialValues.order.manualSupplements = [];
       }
 
-      // Store initial manual supplements for editing comparison
       setInitialManualSupplements([...initialValues.order.manualSupplements]);
 
       if (preLoadedFormData.order?.arbitraryPrice) {
