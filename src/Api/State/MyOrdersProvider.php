@@ -33,7 +33,9 @@ final class MyOrdersProvider implements ProviderInterface
             ->innerJoin(Customer::class, 'c', Join::WITH, 'o.customer = c.id')
             ->innerJoin(User::class, 'u', Join::WITH, 'u.customer = c.id')
             ->where('u.id = :user')
+            ->andWhere('o.state != :state_cart')
             ->setParameter('user', $this->security->getUser())
+            ->setParameter('state_cart', Order::STATE_CART)
             ;
 
         $queryNameGenerator = new QueryNameGenerator();
