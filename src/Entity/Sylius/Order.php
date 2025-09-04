@@ -14,7 +14,6 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Cart\DeleteItem as DeleteCartItem;
 use AppBundle\Action\Cart\UpdateItem as UpdateCartItem;
-use AppBundle\Action\MyOrders;
 use AppBundle\Action\Order\Accept as OrderAccept;
 use AppBundle\Action\Order\AddPlayer;
 use AppBundle\Action\Order\Assign as OrderAssign;
@@ -56,6 +55,7 @@ use AppBundle\Api\State\InvoiceLineItemsGroupedByOrganizationProvider;
 use AppBundle\Api\State\InvoiceLineItemsProvider;
 use AppBundle\Api\State\LoopeatFormatsProcessor;
 use AppBundle\Api\State\LoopeatReturnsProcessor;
+use AppBundle\Api\State\MyOrdersProvider;
 use AppBundle\Api\State\ValidateOrderProvider;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
@@ -394,7 +394,7 @@ use Webmozart\Assert\Assert as WMAssert;
             denormalizationContext: ['groups' => ['order_create', 'address_create']],
             write: false
         ),
-        new GetCollection(uriTemplate: '/me/orders', controller: MyOrders::class),
+        new GetCollection(uriTemplate: '/me/orders', provider: MyOrdersProvider::class),
         new GetCollection(
             // FIXME Maybe it shouldn't be a path param
             // It should be like /invoice_line_items?grouped_by_organization=1
