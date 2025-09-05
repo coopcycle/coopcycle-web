@@ -2,6 +2,11 @@ monolog:
     # channels to use with autowire are configured in config.yml
     # https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels
     handlers:
+        # drop all deprecation messages on production: https://github.com/symfony/symfony/issues/52672#issuecomment-1824610421
+        deprecation_backhole:
+          type: 'null'
+          channels: [ deprecation ]
+          priority: 1000
         main:
             type: fingers_crossed
             action_level: error
@@ -113,7 +118,6 @@ monolog:
         upload_info:
             type: filter
             channels: [
-              "!deprecation",
               "!php",
               "!cache",
               "!security",
