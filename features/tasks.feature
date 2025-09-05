@@ -2188,6 +2188,9 @@ Feature: Tasks
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "pickup":{
           "@id":@string@,
           "@type":"Task",
@@ -2231,7 +2234,7 @@ Feature: Tasks
         "order": null
       }
       """
-
+@only
   Scenario: Can complete pickup & dropoff
     Given the fixtures files are loaded:
       | deliveries.yml      |
@@ -2254,6 +2257,9 @@ Feature: Tasks
         "@id":"/api/deliveries/1/pick",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "pickup":{
           "@id":@string@,
           "@type":"Task",
@@ -2314,6 +2320,9 @@ Feature: Tasks
         "@id":"/api/deliveries/1/drop",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "pickup":{
           "@id":@string@,
           "@type":"Task",

@@ -940,6 +940,9 @@ Feature: Manage restaurants
             "@id":"/api/deliveries/1",
             "@type":"http://schema.org/ParcelDelivery",
             "id":@integer@,
+            "distance":@integer@,
+            "duration":@integer@,
+            "polyline":@string@,
             "pickup":{
               "@id":@string@,
               "@type":"Task",

@@ -1,5 +1,4 @@
 Feature: Stripe Payment Methods
-
 Scenario: Get user saved stripe payment methods
   Given the setting "stripe_test_secret_key" has value "sk_test_123"
   And the setting "stripe_test_publishable_key" has value "pk_1234567890"

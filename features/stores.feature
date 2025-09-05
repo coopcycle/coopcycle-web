@@ -371,6 +371,9 @@ Feature: Stores
             "@id":"/api/deliveries/2",
             "@type":"http://schema.org/ParcelDelivery",
             "id":2,
+            "distance":@integer@,
+            "duration":@integer@,
+            "polyline":@string@,
             "tasks":@array@,
             "pickup":{
               "@id":"@string@.startsWith('/api/tasks')",
@@ -418,6 +421,9 @@ Feature: Stores
             "@id":"/api/deliveries/1",
             "@type":"http://schema.org/ParcelDelivery",
             "id":1,
+            "distance":@integer@,
+            "duration":@integer@,
+            "polyline":@string@,
             "pickup":{
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
@@ -493,6 +499,9 @@ Feature: Stores
             "@id":"/api/deliveries/1",
             "@type":"http://schema.org/ParcelDelivery",
             "id":1,
+            "distance":@integer@,
+            "duration":@integer@,
+            "polyline":@string@,
             "pickup":{
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
@@ -539,6 +548,9 @@ Feature: Stores
             "@id":"/api/deliveries/2",
             "@type":"http://schema.org/ParcelDelivery",
             "id":2,
+            "distance":@integer@,
+            "duration":@integer@,
+            "polyline":@string@,
             "pickup":{
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
@@ -609,6 +621,9 @@ Feature: Stores
             "@id":"/api/deliveries/2",
             "@type":"http://schema.org/ParcelDelivery",
             "id":2,
+            "distance":@integer@,
+            "duration":@integer@,
+            "polyline":@string@,
             "pickup":{
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
@@ -655,6 +670,9 @@ Feature: Stores
             "@id":"/api/deliveries/1",
             "@type":"http://schema.org/ParcelDelivery",
             "id":1,
+            "distance":@integer@,
+            "duration":@integer@,
+            "polyline":@string@,
             "pickup":{
               "@id":"@string@.startsWith('/api/tasks')",
               "@type":"Task",
