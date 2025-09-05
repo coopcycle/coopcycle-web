@@ -38,6 +38,9 @@ Feature: Multi-step deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -165,6 +168,9 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":@string@,
@@ -306,6 +312,9 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":[
           {
             "@type":"Task",
@@ -467,6 +476,9 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"/api/tasks/1",
@@ -662,6 +674,9 @@ Feature: Multi-step deliveries
         "@type":"http://schema.org/ParcelDelivery",
         "@id":"/api/deliveries/1",
         "id":@integer@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "pickup":{"@*@":"@*@"},
         "dropoff":{"@*@":"@*@"},
         "tasks":[
