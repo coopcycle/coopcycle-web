@@ -3,14 +3,12 @@
 namespace AppBundle\Api\Dto;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Entity\Task;
 use AppBundle\Service\TagManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
@@ -22,7 +20,6 @@ class DeliveryMapper
         private readonly TagManager $tagManager,
         private readonly NormalizerInterface $normalizer,
         private readonly ObjectNormalizer $symfonyNormalizer,
-        private readonly EntityManagerInterface $entityManager
     ) {
     }
 
@@ -134,8 +131,7 @@ class DeliveryMapper
                 /** @var ProductOptionValue $productOptionValue */
 
                 // Find the PricingRule linked to this ProductOptionValue
-                //FIXME: use a repository method or replace with a bidirectional relation
-                $pricingRule = $this->findPricingRuleByProductOptionValue($productOptionValue);
+                $pricingRule = $productOptionValue->getPricingRule();
 
                 if (null !== $pricingRule && $pricingRule->isManualSupplement()) {
                     // Create ManualSupplementDto
@@ -151,12 +147,5 @@ class DeliveryMapper
         }
 
         return $manualSupplements;
-    }
-
-    private function findPricingRuleByProductOptionValue(ProductOptionValue $productOptionValue
-    ): ?PricingRule {
-        $repository = $this->entityManager->getRepository(PricingRule::class);
-
-        return $repository->findOneBy(['productOptionValue' => $productOptionValue]);
     }
 }

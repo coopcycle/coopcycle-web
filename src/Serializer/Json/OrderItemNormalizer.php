@@ -33,6 +33,8 @@ class OrderItemNormalizer implements NormalizerInterface, DenormalizerInterface
 
         $adjustmentTypes = [
             AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT,
+            AdjustmentInterface::ORDER_ITEM_PACKAGE_DELIVERY_CALCULATED_ADJUSTMENT,
+            AdjustmentInterface::ORDER_ITEM_PACKAGE_DELIVERY_MANUAL_SUPPLEMENT_ADJUSTMENT,
             AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
             AdjustmentInterface::TAX_ADJUSTMENT,
         ];

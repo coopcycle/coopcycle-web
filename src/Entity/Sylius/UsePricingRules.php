@@ -2,6 +2,12 @@
 
 namespace AppBundle\Entity\Sylius;
 
-final class UsePricingRules implements PricingStrategy
+use AppBundle\Pricing\ManualSupplements;
+
+class UsePricingRules implements PricingStrategy
 {
+    public function __construct(
+        public readonly ManualSupplements $manualSupplements = new ManualSupplements([])
+    ) {
+    }
 }

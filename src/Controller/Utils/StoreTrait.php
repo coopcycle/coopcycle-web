@@ -15,7 +15,7 @@ use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Sylius\PricingStrategy;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
-use AppBundle\Entity\Sylius\UsePricingRules;
+use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
@@ -332,7 +332,7 @@ trait StoreTrait
             if ($this->isGranted('ROLE_ADMIN') && $arbitraryPrice = $this->getArbitraryPrice($form)) {
                 $priceForOrder = new UseArbitraryPrice($arbitraryPrice);
             } else {
-                $priceForOrder = new UsePricingRules();
+                $priceForOrder = new CalculateUsingPricingRules();
             }
 
             $order = null;
@@ -541,7 +541,7 @@ trait StoreTrait
             $recurrRule = $this->getRecurrRule($form, $logger);
 
             if (null !== $recurrRule) {
-                $pricingManager->updateRecurrenceRule($recurrenceRule, $tempDelivery, $recurrRule, $arbitraryPrice ? new UseArbitraryPrice($arbitraryPrice) : new UsePricingRules);
+                $pricingManager->updateRecurrenceRule($recurrenceRule, $tempDelivery, $recurrRule, $arbitraryPrice ? new UseArbitraryPrice($arbitraryPrice) : new CalculateUsingPricingRules());
                 $this->handleRememberAddress($store, $form);
                 $entityManager->flush();
             } else {
@@ -596,7 +596,7 @@ trait StoreTrait
         FormInterface $form,
         Delivery $delivery,
         OrderInterface $order,
-        PricingStrategy $pricingStrategy = new UsePricingRules): void
+        PricingStrategy $pricingStrategy = new CalculateUsingPricingRules()): void
     {
         if (!$this->isGranted('ROLE_ADMIN')) {
             return;

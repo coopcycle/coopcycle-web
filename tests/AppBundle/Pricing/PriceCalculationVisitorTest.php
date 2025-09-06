@@ -18,7 +18,10 @@ use AppBundle\ExpressionLanguage\PriceRangeExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\TaskExpressionLanguageVisitor;
 use AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider;
 use AppBundle\Fixtures\DatabasePurger;
+use AppBundle\Pricing\OnDemandDeliveryProductProcessor;
 use AppBundle\Pricing\PriceCalculationVisitor;
+use AppBundle\Pricing\ProductOptionValueHelper;
+use AppBundle\Pricing\ProductVariantNameGenerator;
 use AppBundle\Pricing\RuleHumanizer;
 use AppBundle\Sylius\Product\ProductOptionValueFactory;
 use AppBundle\Sylius\Product\ProductVariantFactory;
@@ -54,10 +57,10 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $expressionLanguage,
             $deliveryExpressionLanguageVisitor,
             $taskExpressionLanguageVisitor,
-            $productOptionValueFactory,
+            new ProductOptionValueHelper($productOptionValueFactory, $ruleHumanizer),
             $productVariantFactory,
-            $ruleHumanizer,
-            $translator,
+            new ProductVariantNameGenerator($translator),
+            new OnDemandDeliveryProductProcessor($expressionLanguage),
             $logger
         );
     }
