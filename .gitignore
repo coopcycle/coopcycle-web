@@ -24,7 +24,6 @@
 /cypress/coverage
 /cypress/screenshots
 /cypress/videos
-/cypress/e2e/node_modules
 
 # Symfony bundles
 /web/bundles/
