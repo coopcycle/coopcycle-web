@@ -26,6 +26,7 @@ services:
     depends_on:
       php:
         condition: service_healthy
+        restart: true
     ports:
       - '8080:8080'
     volumes:
