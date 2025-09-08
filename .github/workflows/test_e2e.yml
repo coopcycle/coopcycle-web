@@ -26,12 +26,22 @@ jobs:
         timeout-minutes: 10
       - name: Setup CoopCycle
         run: docker compose exec -T php bin/console coopcycle:setup --env=test
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/Cypress
+            cypress/node_modules
+          key: my-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      # Install a cypress dependency directly to avoid installing everything from package.json
+      # To make things easier to debug, make sure that the version is the same as the one in package.json
+      - run: npm i cypress@14.4.1
       - name: Run Cypress
         uses: cypress-io/github-action@v6
         with:
-          install: false
+          working-directory: cypress
+          config-file: ../cypress.config.js
           spec: |
-            cypress/e2e/**/*.cy.js
+            e2e/**/*.cy.js
         # after the test run completes store videos and any screenshots
       - name: Upload images for failed tests
         uses: actions/upload-artifact@v4
