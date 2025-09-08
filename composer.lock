@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0c1d6b1e49d5e728a342a5ca35ecb5d8",
+    "content-hash": "86e42701d4b95547aeddca5abac32f80",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -24129,16 +24129,16 @@
         },
         {
             "name": "symfony/ux-react",
-            "version": "v2.10.0",
+            "version": "v2.30.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/ux-react.git",
-                "reference": "dc9a25c855a119029af39c62e7b564f83cb96ba5"
+                "reference": "29ed56b43bc5f3176f390f5193b3363627ac960c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ux-react/zipball/dc9a25c855a119029af39c62e7b564f83cb96ba5",
-                "reference": "dc9a25c855a119029af39c62e7b564f83cb96ba5",
+                "url": "https://api.github.com/repos/symfony/ux-react/zipball/29ed56b43bc5f3176f390f5193b3363627ac960c",
+                "reference": "29ed56b43bc5f3176f390f5193b3363627ac960c",
                 "shasum": ""
             },
             "require": {
@@ -24146,12 +24146,12 @@
                 "symfony/stimulus-bundle": "^2.9.1"
             },
             "require-dev": {
-                "symfony/asset-mapper": "6.3.x-dev",
-                "symfony/finder": "^5.4|^6.0",
-                "symfony/framework-bundle": "^5.4|^6.0",
-                "symfony/phpunit-bridge": "^5.4|^6.0",
-                "symfony/twig-bundle": "^5.4|^6.0",
-                "symfony/var-dumper": "^5.4|^6.0"
+                "symfony/asset-mapper": "^6.3|^7.0|^8.0",
+                "symfony/finder": "^5.4|^6.0|^7.0|^8.0",
+                "symfony/framework-bundle": "^5.4|^6.0|^7.0|^8.0",
+                "symfony/phpunit-bridge": "^5.4|^6.0|^7.0|^8.0",
+                "symfony/twig-bundle": "^5.4|^6.0|^7.0|^8.0",
+                "symfony/var-dumper": "^5.4|^6.0|^7.0|^8.0"
             },
             "type": "symfony-bundle",
             "extra": {
@@ -24185,7 +24185,7 @@
                 "symfony-ux"
             ],
             "support": {
-                "source": "https://github.com/symfony/ux-react/tree/v2.10.0"
+                "source": "https://github.com/symfony/ux-react/tree/v2.30.0"
             },
             "funding": [
                 {
@@ -24197,11 +24197,15 @@
                     "type": "github"
                 },
                 {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
                     "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-06-28T20:17:17+00:00"
+            "time": "2025-08-27T15:25:48+00:00"
         },
         {
             "name": "symfony/ux-turbo",
