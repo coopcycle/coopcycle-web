@@ -588,11 +588,8 @@ services:
         - '@AppBundle\ExpressionLanguage\PricePercentageExpressionLanguageProvider'
         - '@AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider'
 
-  AppBundle\Pricing\PriceCalculationVisitor:
-    arguments:
-      $expressionLanguage: "@coopcycle.expression_language"
-    tags:
-      - { name: monolog.logger, channel: fee_calculation }
+  # Make our custom ExpressionLanguage the default
+  Symfony\Component\ExpressionLanguage\ExpressionLanguage: '@AppBundle\ExpressionLanguage\ExpressionLanguage'
 
   AppBundle\EventListener\RegistrationListener:
     tags:

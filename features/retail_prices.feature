@@ -63,7 +63,7 @@ Feature: Retail prices
               "unitPrice": 0,
               "total": 499,
               "adjustments": {
-                "menu_item_modifier": [
+                "order_item_package_delivery_calculated": [
                   {
                     "label": "1 × Plus de 0.00 km",
                     "amount": 499
@@ -150,7 +150,7 @@ Feature: Retail prices
               "unitPrice": 0,
               "total": 499,
               "adjustments": {
-                "menu_item_modifier": [
+                "order_item_package_delivery_calculated": [
                   {
                     "label": "1 × Plus de 0.00 km",
                     "amount": 499
@@ -237,7 +237,7 @@ Feature: Retail prices
               "unitPrice": 0,
               "total": 499,
               "adjustments": {
-                "menu_item_modifier": [
+                "order_item_package_delivery_calculated": [
                   {
                     "label": "1 × Plus de 0.00 km",
                     "amount": 499
@@ -327,7 +327,7 @@ Feature: Retail prices
               "unitPrice": 0,
               "total": 1299,
               "adjustments": {
-                "menu_item_modifier": [
+                "order_item_package_delivery_calculated": [
                   {
                     "label": "1 × packages.containsAtLeastOne(\"XL\")",
                     "amount": 1299
@@ -417,7 +417,7 @@ Feature: Retail prices
               "unitPrice": 0,
               "total": 1299,
               "adjustments": {
-                "menu_item_modifier": [
+                "order_item_package_delivery_calculated": [
                   {
                     "label": "1 × packages.containsAtLeastOne(\"XL\")",
                     "amount": 1299
@@ -507,7 +507,7 @@ Feature: Retail prices
               "unitPrice": 0,
               "total": 1299,
               "adjustments": {
-                "menu_item_modifier": [
+                "order_item_package_delivery_calculated": [
                   {
                     "label": "1 × packages.containsAtLeastOne(\"XL\")",
                     "amount": 1299
@@ -595,7 +595,7 @@ Feature: Retail prices
               "unitPrice": 0,
               "total": 499,
               "adjustments": {
-                "menu_item_modifier": [
+                "order_item_package_delivery_calculated": [
                   {
                     "label": "1 × Moins de 2.00 kg",
                     "amount": 499
@@ -692,7 +692,7 @@ Feature: Retail prices
               "unitPrice": 0,
               "total": 499,
               "adjustments": {
-                "menu_item_modifier": [
+                "order_item_package_delivery_calculated": [
                   {
                     "label": "1 × Plus de 0.00 km",
                     "amount": 499
@@ -789,7 +789,7 @@ Feature: Retail prices
               "unitPrice": 0,
               "total": 499,
               "adjustments": {
-                "menu_item_modifier": [
+                "order_item_package_delivery_calculated": [
                   {
                     "label": "1 × Plus de 0.00 km",
                     "amount": 499
@@ -879,7 +879,7 @@ Feature: Retail prices
               "unitPrice": 0,
               "total": 499,
               "adjustments": {
-                "menu_item_modifier": [
+                "order_item_package_delivery_calculated": [
                   {
                     "label": "1 × Plus de 0.00 km",
                     "amount": 499
@@ -969,7 +969,7 @@ Feature: Retail prices
               "unitPrice": 0,
               "total": 499,
               "adjustments": {
-                "menu_item_modifier": [
+                "order_item_package_delivery_calculated": [
                   {
                     "label": "1 × time_slot == \"/api/time_slots/1\" and task.type == \"PICKUP\"",
                     "amount": 499
@@ -1000,7 +1000,7 @@ Feature: Retail prices
               "unitPrice": 0,
               "total": 200,
               "adjustments": {
-                "menu_item_modifier": [
+                "order_item_package_delivery_calculated": [
                   {
                     "label": "1 × Taux de dépôt",
                     "amount": 200
@@ -1090,7 +1090,7 @@ Feature: Retail prices
               "unitPrice": 0,
               "total": 200,
               "adjustments": {
-                "menu_item_modifier": [
+                "order_item_package_delivery_calculated": [
                   {
                     "label": "1 × Taux de dépôt",
                     "amount": 200
@@ -1261,7 +1261,7 @@ Feature: Retail prices
               "unitPrice": 0,
               "total": 499,
               "adjustments": {
-                "menu_item_modifier": [
+                "order_item_package_delivery_calculated": [
                   {
                     "label": "1 × Plus de 0.00 km",
                     "amount": 499
@@ -1347,7 +1347,7 @@ Feature: Retail prices
               "unitPrice": 0,
               "total": 499,
               "adjustments": {
-                "menu_item_modifier": [
+                "order_item_package_delivery_calculated": [
                   {
                     "label": "1 × Plus de 0.00 km",
                     "amount": 499
@@ -1441,7 +1441,7 @@ Feature: Retail prices
               "unitPrice": 0,
               "total": 499,
               "adjustments": {
-                "menu_item_modifier": [
+                "order_item_package_delivery_calculated": [
                   {
                     "label": "1 × Plus de 0.00 km",
                     "amount": 499
@@ -1520,7 +1520,7 @@ Feature: Retail prices
               "unitPrice": 0,
               "total": 499,
               "adjustments": {
-                "menu_item_modifier": [
+                "order_item_package_delivery_calculated": [
                   {
                     "label": "1 × Plus de 0.00 km",
                     "amount": 499
@@ -1630,7 +1630,7 @@ Feature: Retail prices
               "unitPrice": 0,
               "total": 499,
               "adjustments": {
-                "menu_item_modifier": [
+                "order_item_package_delivery_calculated": [
                   {
                     "label": "1 × Plus de 0.00 km",
                     "amount": 499
@@ -1719,7 +1719,7 @@ Feature: Retail prices
               "unitPrice": 0,
               "total": 699,
               "adjustments": {
-                "menu_item_modifier": [
+                "order_item_package_delivery_calculated": [
                   {
                     "label": "1 × Volume du colis moins de 9",
                     "amount": 699
@@ -1964,11 +1964,13 @@ Feature: Retail prices
               "unitPrice": 0,
               "total": 699,
               "adjustments": {
-                "menu_item_modifier": [
+                "order_item_package_delivery_calculated": [
                    {
                     "label": "1 × Plus de 0.00 km",
                     "amount": 499
-                  },
+                  }
+                ],
+                "order_item_package_delivery_manual_supplement": [
                   {
                     "label": "1 × Express Delivery",
                     "amount": 200

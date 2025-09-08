@@ -9,8 +9,10 @@ use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\PriceInterface;
+use AppBundle\Entity\Sylius\UpdateManualSupplements;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\PricingStrategy;
+use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
 use AppBundle\Entity\Sylius\UsePricingRules;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\RecurrenceRule;
@@ -51,6 +53,7 @@ class PricingManager
         private readonly OrderProcessorInterface $orderProcessor,
         private readonly TimeSlotManager $timeSlotManager,
         private readonly PriceCalculationVisitor $priceCalculationVisitor,
+        private readonly PriceUpdateVisitor $priceUpdateVisitor,
         private readonly LoggerInterface $logger
     ) {
     }
@@ -67,8 +70,14 @@ class PricingManager
         return $output->getPrice();
     }
 
-    public function getPriceCalculation(Delivery $delivery, PricingRuleSet $ruleSet, ManualSupplements|null $manualSupplements = null): ?PriceCalculationOutput
+    public function getPriceCalculation(Delivery $delivery, PricingRuleSet $ruleSet, ?UsePricingRules $pricingStrategy = null): ?PriceCalculationOutput
     {
+        // Defining a default value in the method signature fails in the phpunit tests
+        // even though it seems that it was fixed: https://github.com/sebastianbergmann/phpunit/commit/658d8decbec90c4165c0b911cf6cfeb5f6601cae
+        if ($pricingStrategy === null) {
+            $pricingStrategy = new CalculateUsingPricingRules();
+        }
+
         // Store might be null if it's an embedded form
         $store = $delivery->getStore();
         foreach ($delivery->getTasks() as $task) {
@@ -96,16 +105,24 @@ class PricingManager
             }
         }
 
-        return $this->priceCalculationVisitor->visit($delivery, $ruleSet, $manualSupplements);
+        if ($pricingStrategy instanceof CalculateUsingPricingRules) {
+            return $this->priceCalculationVisitor->visit($delivery, $ruleSet, $pricingStrategy->manualSupplements);
+        } elseif ($pricingStrategy instanceof UpdateManualSupplements) {
+            return $this->priceUpdateVisitor->visit($delivery, $ruleSet, $pricingStrategy);
+        } else {
+            $this->logger->warning('Unsupported pricing config', [
+                'pricingStrategy' => $pricingStrategy,
+            ]);
+            return null;
+        }
     }
 
     /**
      * @return ProductVariantInterface[]
      */
-    public function getPriceWithPricingStrategy(
+    public function getProductVariantsWithPricingStrategy(
         Delivery $delivery,
-        PricingStrategy $pricingStrategy,
-        ManualSupplements|null $manualSupplements = null
+        PricingStrategy $pricingStrategy
     ): array {
         $store = $delivery->getStore();
 
@@ -131,7 +148,7 @@ class PricingManager
                 ];
             }
 
-            $output = $this->getPriceCalculation($delivery, $pricingRuleSet, $manualSupplements);
+            $output = $this->getPriceCalculation($delivery, $pricingRuleSet, $pricingStrategy);
 
             if (count($output->productVariants) === 0) {
                 $this->logger->warning('Price could not be calculated');

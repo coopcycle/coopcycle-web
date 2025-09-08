@@ -1,4 +1,4 @@
-{% set options_adjustments = item.getAdjustmentsSorted('menu_item_modifier') %}
+{% set options_adjustments = item.getAdjustmentsSorted('menu_item_modifier')|merge(item.getAdjustmentsSorted('order_item_package_delivery_calculated'))|merge(item.getAdjustmentsSorted('order_item_package_delivery_manual_supplement')) %}
 {% set packaging_adjustments = item.getAdjustments('reusable_packaging') %}
 <tr data-testid="order-item-{{ index }}">
   <td>

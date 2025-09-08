@@ -3,5 +3,10 @@
   <entity name="AppBundle\Entity\Sylius\ProductOptionValue" table="sylius_product_option_value">
     <field name="price" type="integer" column="price"/>
     <field name="enabled" column="enabled" type="boolean"/>
+    <one-to-many field="pricingRules" target-entity="AppBundle\Entity\Delivery\PricingRule" mapped-by="productOptionValue">
+      <cascade>
+        <cascade-persist/>
+      </cascade>
+    </one-to-many>
   </entity>
 </doctrine-mapping>
