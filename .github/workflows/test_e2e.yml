@@ -26,20 +26,15 @@ jobs:
         timeout-minutes: 10
       - name: Setup CoopCycle
         run: docker compose exec -T php bin/console coopcycle:setup --env=test
-      - uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/Cypress
-            cypress/node_modules
-          key: my-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-      # Install a cypress dependency directly to avoid installing everything from package.json
+        # Install a cypress dependency directly to avoid installing everything from package.json
+        # To make things easier to debug, make sure that the version is the same as the one in the root package.json
       - name: Install Cypress
         # Installing in the cypress directory to avoid conflicts with the root node_modules
-        # To make things easier to debug, make sure that the version is the same as the one in package.json
-        run: cd cypress && npm i cypress@14.4.1
+        run: cd cypress && npm ci
       - name: Run Cypress
         uses: cypress-io/github-action@v6
         with:
+          install: false
           working-directory: cypress
           config-file: ../cypress.config.js
           spec: |
