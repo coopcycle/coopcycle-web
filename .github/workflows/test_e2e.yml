@@ -34,7 +34,6 @@ jobs:
           key: my-cache-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
       # Install a cypress dependency directly to avoid installing everything from package.json
       # To make things easier to debug, make sure that the version is the same as the one in package.json
-      # https://github.com/cypress-io/github-action?tab=readme-ov-file#install-cypress-only
       - run: npm i cypress@14.4.1
       - name: Run Cypress
         uses: cypress-io/github-action@v6
