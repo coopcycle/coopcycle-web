@@ -35,9 +35,8 @@ jobs:
       # Install a cypress dependency directly to avoid installing everything from package.json
       - name: Install Cypress
         # Installing in the cypress directory to avoid conflicts with the root node_modules
-        working-directory: cypress
         # To make things easier to debug, make sure that the version is the same as the one in package.json
-        run: npm i cypress@14.4.1
+        run: cd cypress && npm i cypress@14.4.1
       - name: Run Cypress
         uses: cypress-io/github-action@v6
         with:
