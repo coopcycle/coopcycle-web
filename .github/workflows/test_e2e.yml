@@ -29,9 +29,9 @@ jobs:
       - name: Run Cypress
         uses: cypress-io/github-action@v6
         with:
-          install: false
+          working-directory: cypress/e2e
           spec: |
-            cypress/e2e/**/*.cy.js
+            **/*.cy.js
         # after the test run completes store videos and any screenshots
       - name: Upload images for failed tests
         uses: actions/upload-artifact@v4
