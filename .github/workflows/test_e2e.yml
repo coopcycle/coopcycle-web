@@ -36,6 +36,9 @@ jobs:
         with:
           install: false
           working-directory: cypress
+          # use /cypress as both working-directory and a project directory
+          # (normally, project directory is working-directory/cypress)
+          project: .
           config-file: ./cypress-e2e-ci.config.js
           spec: |
             e2e/**/*.cy.js
