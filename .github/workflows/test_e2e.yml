@@ -26,23 +26,15 @@ jobs:
         timeout-minutes: 10
       - name: Setup CoopCycle
         run: docker compose exec -T php bin/console coopcycle:setup --env=test
-        # Install cypress dependencies from it's own cypress/package.json
-        # to avoid installing all dependencies from the root package.json
-        # (otherwise there are issues with access rights for node_modules/ directory and
-        #  with installing @symfony/ux-.. dependencies from file:vendor directory)
-        # To make things easier to debug, make sure that the cypress version is the same
-        # as the one in the root package.json
-      - name: Install Cypress
-        run: cd cypress && npm ci
       - name: Run Cypress
         uses: cypress-io/github-action@v6
         with:
-          install: false
-          working-directory: cypress
-          # use /cypress as both working-directory and a project directory
-          # (normally, project directory is working-directory/cypress)
-          project: .
-          config-file: ./cypress-e2e-ci.config.js
+          # Maybe we could run a build step before starting tests
+          # https://symfony.com/doc/current/frontend/encore/installation.html
+          # https://github.com/cypress-io/github-action?tab=readme-ov-file#build-app
+          # build: npm run dev
+          spec: |
+            cypress/e2e/**/*.cy.js
         # after the test run completes store videos and any screenshots
       - name: Upload images for failed tests
         uses: actions/upload-artifact@v4
