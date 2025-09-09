@@ -22,6 +22,7 @@ module.exports = defineConfig({
 
   e2e: {
     supportFile: 'support/e2e.{js,jsx,ts,tsx}',
+    specPattern: 'e2e/**/*.cy.{js,jsx,ts,tsx}',
     viewportWidth: 1920,
     viewportHeight: 1080,
     baseUrl: 'http://localhost:9080',
