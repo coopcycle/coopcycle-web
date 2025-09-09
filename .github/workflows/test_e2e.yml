@@ -26,10 +26,13 @@ jobs:
         timeout-minutes: 10
       - name: Setup CoopCycle
         run: docker compose exec -T php bin/console coopcycle:setup --env=test
-        # Install a cypress dependency directly to avoid installing everything from package.json
-        # To make things easier to debug, make sure that the version is the same as the one in the root package.json
+        # Install cypress dependencies from it's own cypress/package.json
+        # to avoid installing all dependencies from the root package.json
+        # (otherwise there are issues with access rights for node_modules/ directory and
+        #  with installing @symfony/ux-.. dependencies from file:vendor directory)
+        # To make things easier to debug, make sure that the cypress version is the same
+        # as the one in the root package.json
       - name: Install Cypress
-        # Installing in the cypress directory to avoid conflicts with the root node_modules
         run: cd cypress && npm ci
       - name: Run Cypress
         uses: cypress-io/github-action@v6
