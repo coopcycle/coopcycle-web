@@ -2,6 +2,11 @@ monolog:
     # channels to use with autowire are configured in config.yml
     # https://symfony.com/doc/current/logging/channels_handlers.html#how-to-autowire-logger-channels
     handlers:
+        # drop all deprecation messages on production: https://github.com/symfony/symfony/issues/52672#issuecomment-1824610421
+        deprecation_backhole:
+          type: 'null'
+          channels: [ deprecation ]
+          priority: 1000
         main:
             type: fingers_crossed
             action_level: error
@@ -12,7 +17,7 @@ monolog:
         default_file:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/%kernel.environment%.log"
-            level: debug
+            level: info
             formatter: monolog.formatter.json
             max_files: 7
         api:
@@ -25,7 +30,7 @@ monolog:
         messenger:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/messenger.%kernel.environment%.log"
-            level: debug
+            level: info
             formatter: monolog.formatter.json
             max_files: 7
             channels: [messenger]
@@ -45,7 +50,7 @@ monolog:
         checkout:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/checkout.%kernel.environment%.log"
-            level: debug
+            level: info
             formatter: monolog.formatter.json
             max_files: 7
             channels: [ checkout, coopcycle.order_processing ]
@@ -59,14 +64,14 @@ monolog:
         push_notification:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/push_notification.%kernel.environment%.log"
-            level: debug
+            level: info
             formatter: monolog.formatter.json
             max_files: 7
             channels: [ push_notification ]
         real_time_message:
             type: rotating_file
             path: "%env(APP_LOG_DIR)%/real_time_message.%kernel.environment%.log"
-            level: debug
+            level: info
             formatter: monolog.formatter.json
             max_files: 7
             channels: [ real_time_message ]
@@ -113,7 +118,6 @@ monolog:
         upload_info:
             type: filter
             channels: [
-              "!deprecation",
               "!php",
               "!cache",
               "!security",

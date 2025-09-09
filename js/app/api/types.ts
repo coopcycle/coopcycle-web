@@ -188,12 +188,23 @@ export type Customer = {
   phoneNumber?: string;
 };
 
+export const MENU_ITEM_MODIFIER_ADJUSTMENT = 'menu_item_modifier';
+export const ORDER_ITEM_PACKAGE_DELIVERY_CALCULATED_ADJUSTMENT =
+  'order_item_package_delivery_calculated';
+export const ORDER_ITEM_PACKAGE_DELIVERY_MANUAL_SUPPLEMENT_ADJUSTMENT =
+  'order_item_package_delivery_manual_supplement';
+
+export type AdjustmentType =
+  | typeof MENU_ITEM_MODIFIER_ADJUSTMENT
+  | typeof ORDER_ITEM_PACKAGE_DELIVERY_CALCULATED_ADJUSTMENT
+  | typeof ORDER_ITEM_PACKAGE_DELIVERY_MANUAL_SUPPLEMENT_ADJUSTMENT;
+
 export type OrderItem = {
   id: number;
   quantity: number;
   total: number;
   unitPrice: number;
-  adjustments: Record<string, Adjustment[]>;
+  adjustments: Record<AdjustmentType, Adjustment[]>;
   variant?: ProductVariant;
 };
 

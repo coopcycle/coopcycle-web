@@ -9,7 +9,7 @@ use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\ProductRepository;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
-use AppBundle\Entity\Sylius\UsePricingRules;
+use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
 use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Entity\User;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
@@ -48,8 +48,7 @@ class DeliveryOrderManager
         // Defining a default value in the method signature fails in the phpunit tests
         // even though it seems that it was fixed: https://github.com/sebastianbergmann/phpunit/commit/658d8decbec90c4165c0b911cf6cfeb5f6601cae
         $defaults = [
-            'pricingStrategy' => new UsePricingRules(),
-            'manualSupplements' => null,
+            'pricingStrategy' => new CalculateUsingPricingRules(),
             'persist' => true,
             // If set to true, an exception will be thrown when a price cannot be calculated
             // If set to false, a price of 0 will be set and an incident will be created
@@ -62,13 +61,12 @@ class DeliveryOrderManager
         $throwException = $optionalArgs['throwException'];
 
         if (null === $pricingStrategy) {
-            $pricingStrategy = new UsePricingRules();
+            $pricingStrategy = new CalculateUsingPricingRules();
         }
 
-        $productVariants = $this->pricingManager->getPriceWithPricingStrategy(
+        $productVariants = $this->pricingManager->getProductVariantsWithPricingStrategy(
             $delivery,
-            $pricingStrategy,
-            $optionalArgs['manualSupplements']
+            $pricingStrategy
         );
         $incident = null;
 
@@ -169,7 +167,7 @@ class DeliveryOrderManager
                 )
             );
         } else {
-            $pricingStrategy = new UsePricingRules();
+            $pricingStrategy = new CalculateUsingPricingRules();
         }
 
         $order = $this->createOrder($delivery, [

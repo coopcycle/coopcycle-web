@@ -9,6 +9,7 @@ use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Resource\RetailPrice;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\SettingsManager;
@@ -79,7 +80,7 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
         // Extract manual supplements from the DTO
         $manualSupplements = $this->manualSupplementsProcessor->process($data, $operation, $uriVariables, $context);
 
-        $priceCalculationOutput = $this->pricingManager->getPriceCalculation($delivery, $pricingRuleSet, $manualSupplements);
+        $priceCalculationOutput = $this->pricingManager->getPriceCalculation($delivery, $pricingRuleSet, new CalculateUsingPricingRules($manualSupplements));
 
         if (null === $priceCalculationOutput) {
             $message = $this->translator->trans('delivery.price.error.priceCalculation', domain: 'validators');

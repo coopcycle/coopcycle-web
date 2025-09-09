@@ -23,6 +23,10 @@ services:
       dockerfile: './docker/webpack/Dockerfile'
       context: '.'
     image: coopcycle/webpack
+    depends_on:
+      php:
+        condition: service_healthy
+        restart: true
     ports:
       - '8080:8080'
     volumes:
