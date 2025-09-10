@@ -33,6 +33,9 @@ jobs:
           # https://symfony.com/doc/current/frontend/encore/installation.html
           # https://github.com/cypress-io/github-action?tab=readme-ov-file#build-app
           # build: npm run dev
+          # Install only Cypress binary; everything else is already installed by the webpack docker image
+          # https://docs.cypress.io/app/continuous-integration/overview#Missing-binary
+          install-command: npx cypress install
           spec: |
             cypress/e2e/**/*.cy.js
         # after the test run completes store videos and any screenshots
