@@ -75,11 +75,11 @@ class InitDemoCommand extends Command
         2.335402,
     ];
 
-    private static $usersToCreate = 50;
-    private static $couriersToCreate = 50;
-    private static $restaurantsToCreate = 50;
-    private static $storesToCreate = 25;
-    private static $foodTechOrdersToCreate = 25;
+    private static $usersToCreate = 10;
+    private static $couriersToCreate = 10;
+    private static $restaurantsToCreate = 10;
+    private static $storesToCreate = 10;
+    private static $foodTechOrdersToCreate = 5;
     //TODO: implement
     private static $packageDeliveryOrdersToCreate = 0;
 
