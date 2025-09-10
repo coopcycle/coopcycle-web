@@ -72,7 +72,6 @@ Feature: Deliveries
         ]
       }
       """
-
   Scenario: Create delivery with implicit pickup address with OAuth
     Given the fixtures files are loaded:
       | sylius_products.yml |
@@ -105,6 +104,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -193,6 +195,9 @@ Feature: Deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "pickup":{"@*@":"@*@"},
         "dropoff":{"@*@":"@*@"},
         "tasks":@array@,
@@ -242,6 +247,9 @@ Feature: Deliveries
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
         "tasks":@array@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
@@ -329,6 +337,9 @@ Feature: Deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "pickup":{"@*@":"@*@"},
         "dropoff":{"@*@":"@*@"},
         "tasks":@array@,
@@ -380,6 +391,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -486,6 +500,9 @@ Feature: Deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "pickup":{"@*@":"@*@"},
         "dropoff":{"@*@":"@*@"},
         "tasks":@array@,
@@ -533,6 +550,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -642,6 +662,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -755,6 +778,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -868,6 +894,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+                "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -981,6 +1010,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+                "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1097,6 +1129,9 @@ Feature: Deliveries
           "@id":"@string@.startsWith('/api/deliveries')",
           "@type":"http://schema.org/ParcelDelivery",
           "id":@integer@,
+                  "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
           "tasks":@array@,
           "pickup":{
             "@id":"@string@.startsWith('/api/tasks')",
@@ -1213,6 +1248,9 @@ Feature: Deliveries
           "@id":"@string@.startsWith('/api/deliveries')",
           "@type":"http://schema.org/ParcelDelivery",
           "id":@integer@,
+          "distance":@integer@,
+          "duration":@integer@,
+          "polyline":@string@,
           "tasks":@array@,
           "pickup":{
             "@id":"@string@.startsWith('/api/tasks')",
@@ -1413,6 +1451,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1527,6 +1568,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1657,7 +1701,7 @@ Feature: Deliveries
         ]
       }
       """
-    
+
   Scenario: Manual supplement validation - supplement not belonging to store's pricing rule set
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
@@ -1758,6 +1802,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+                "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1872,6 +1919,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+                "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -1977,6 +2027,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+                "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -2086,6 +2139,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+                "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
           "@type":"Task",
@@ -2197,6 +2253,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+                "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -2306,6 +2365,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+                "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -2416,6 +2478,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+                "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -2521,6 +2586,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+                "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -2736,6 +2804,9 @@ Feature: Deliveries
         "@id": "/api/deliveries/1",
         "@type": "http://schema.org/ParcelDelivery",
         "id": @integer@,
+                "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup": {
             "@id": "@string@.startsWith('/api/tasks')",
@@ -2856,6 +2927,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+                "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -2990,6 +3064,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -3085,6 +3162,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+                "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -3196,6 +3276,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+                "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -3358,6 +3441,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+                "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -3692,6 +3778,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+                "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -3807,6 +3896,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+                "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -4017,6 +4109,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+                "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -4109,7 +4204,7 @@ Feature: Deliveries
         "hydra:totalItems": 0
       }
       """
-    
+
   Scenario: Create delivery with a saved order as an admin
     Given the fixtures files are loaded:
       | sylius_products.yml |
@@ -4149,6 +4244,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+                "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -4272,6 +4370,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+                "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks": [
           {"@*@": "@*@"},
           {"@*@": "@*@"},
@@ -4315,6 +4416,9 @@ Feature: Deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks": [
           {"@*@": "@*@"},
           {"@*@": "@*@"}
@@ -4332,7 +4436,7 @@ Feature: Deliveries
         }
       }
       """
-    
+
   Scenario: Modify delivery with recalculatePrice should recalculate price
     Given the fixtures files are loaded:
       | sylius_products.yml |
@@ -4379,6 +4483,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+                "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks": [
           {"@*@": "@*@"},
           {"@*@": "@*@"},
@@ -4425,6 +4532,9 @@ Feature: Deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks": [
           {"@*@": "@*@"},
           {"@*@": "@*@"}
@@ -4655,6 +4765,9 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks": [
           {"@*@": "@*@"},
           {"@*@": "@*@"}
@@ -4707,6 +4820,9 @@ Feature: Deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks": [
           {"@*@": "@*@"},
           {"@*@": "@*@"}
