@@ -7,8 +7,6 @@ runs:
     shell: bash
     run: |
       cp .env.dist .env
-#      FIXME: That might be not necessary
-#      sed -i -e 's/APP_ENV=dev/APP_ENV=test/g' .env
   - name: Pull Docker images
     shell: bash
     run: docker compose pull --ignore-pull-failures
@@ -19,13 +17,6 @@ runs:
       docker compose run -T --rm osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
       docker compose run -T --rm osrm osrm-partition /data/data.osrm
       docker compose run -T --rm osrm osrm-customize /data/data.osrm
-    # Cypress GitHub Action uses npm ci, and it causes a "permission denied" error,
-    # because it tries to remove the node_modules/ folder, which is mounted with root:root
-    # We create the node_modules/ folder *BEFORE* starting the containers,
-    # so that it can be removed without problems.
-  - name: Create node_modules directory
-    shell: bash
-    run: mkdir node_modules
   - name: Start Docker containers
     shell: bash
     # specify -f docker-compose.yml explicitly, because we don't want to load docker-compose.override.yml
