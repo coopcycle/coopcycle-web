@@ -35,7 +35,7 @@ jobs:
           # build: npm run dev
           # Install only Cypress binary; everything else is already installed by the webpack docker image
           # https://docs.cypress.io/app/continuous-integration/overview#Missing-binary
-          install: npx cypress install
+          install-command: npx cypress install
           spec: |
             cypress/e2e/**/*.cy.js
         # after the test run completes store videos and any screenshots
