@@ -29,7 +29,7 @@ runs:
   - name: Start Docker containers
     shell: bash
     # specify -f docker-compose.yml explicitly, because we don't want to load docker-compose.override.yml
-    run: docker compose up -f docker-compose.yml -d
+    run: docker compose -f docker-compose.yml up -d
   - name: Wait for PHP-FPM
     shell: bash
     run: until docker inspect --format='{{ .State.Health.Status }}' $(docker compose ps -q php) | grep -wq healthy; do sleep 5; done
