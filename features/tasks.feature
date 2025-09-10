@@ -190,7 +190,7 @@ Feature: Tasks
           }
       }
       """
-      
+
   Scenario: Retrieve assigned tasks
     Given the fixtures files are loaded:
       | tasks.yml           |
@@ -2234,7 +2234,7 @@ Feature: Tasks
         "order": null
       }
       """
-@only
+
   Scenario: Can complete pickup & dropoff
     Given the fixtures files are loaded:
       | deliveries.yml      |

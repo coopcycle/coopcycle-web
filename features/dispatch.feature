@@ -621,7 +621,7 @@ Feature: Dispatch
         "@*@":"@*@"
       }
       """
-      @only
+
   Scenario: Create delivery from tasks
     Given the fixtures files are loaded:
       | sylius_products.yml |
