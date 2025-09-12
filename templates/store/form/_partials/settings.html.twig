@@ -41,7 +41,7 @@
 {% if form.vars.data.id is not null %}
   <hr>
   <div {{ react_component('Store/TimeSlot', {
-    store: form.vars.data|serialize,
+    store: form.vars.data|serialize('json', { groups: ['store'] }),
   }) }}>
   </div>
 {% endif %}
