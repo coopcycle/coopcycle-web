@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Input } from 'antd';
+import { Button, InputNumber } from 'antd';
 
 type Props = {
   value: number;
@@ -7,14 +7,14 @@ type Props = {
   min?: number;
   max?: number;
   step?: number;
-}
+};
 
 export default function RangeInput({
   value,
   onChange,
   min = 0,
   max = 999,
-  step = 1
+  step = 1,
 }: Props) {
   const handleDecrease = () => {
     const newValue = Math.max(min, value - step);
@@ -26,8 +26,8 @@ export default function RangeInput({
     onChange(newValue);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = Number(e.target.value);
+  const handleInputChange = (value: number | null) => {
+    const newValue = Number(value);
     if (!isNaN(newValue) && newValue >= min && newValue <= max) {
       onChange(newValue);
     }
@@ -35,32 +35,36 @@ export default function RangeInput({
 
   return (
     <div className="range-input d-flex align-items-center">
-      <Button
-        size="small"
-        onClick={handleDecrease}
-        disabled={value <= min}
-        data-testid="range-input-decrease"
-      >
-        -
-      </Button>
-      <Input
-        type="number"
+      <InputNumber
+        style={{ width: '160px' }}
+        data-testid="range-input-field"
+        addonBefore={
+          <Button
+            type="text"
+            size="small"
+            onClick={handleDecrease}
+            disabled={value <= min}
+            data-testid="range-input-decrease">
+            -
+          </Button>
+        }
+        addonAfter={
+          <Button
+            type="text"
+            size="small"
+            onClick={handleIncrease}
+            disabled={value >= max}
+            data-testid="range-input-increase">
+            +
+          </Button>
+        }
         value={value}
         onChange={handleInputChange}
         min={min}
         max={max}
         step={step}
-        style={{ width: '80px', margin: '0 8px' }}
-        data-testid="range-input-field"
+        defaultValue={100}
       />
-      <Button
-        size="small"
-        onClick={handleIncrease}
-        disabled={value >= max}
-        data-testid="range-input-increase"
-      >
-        +
-      </Button>
     </div>
   );
 }

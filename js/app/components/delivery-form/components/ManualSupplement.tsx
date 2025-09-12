@@ -4,8 +4,8 @@ import { Checkbox, CheckboxChangeEvent } from 'antd';
 import {
   FixedPrice,
   PercentagePrice,
-  PriceRange,
   Price,
+  PriceRange,
   parsePriceAST,
 } from '../../../delivery/pricing/pricing-rule-parser';
 import { getPriceValue } from '../../pricing-rule-set-form/utils';
@@ -30,7 +30,6 @@ export function formatPrice(price: Price): string {
     } else {
       return `${getPriceValue(price).formatMoney()} for every ${price.step} above ${price.threshold}`;
     }
-
   } else {
     return '';
   }
@@ -47,7 +46,8 @@ export default function ManualSupplement({ rule }: Props) {
     return rule.priceAst ? parsePriceAST(rule.priceAst, rule.price) : null;
   }, [rule.priceAst, rule.price]);
 
-  const isRangeBased = price instanceof PriceRange && price.attribute === 'quantity';
+  const isRangeBased =
+    price instanceof PriceRange && price.attribute === 'quantity';
 
   const currentSupplement = useMemo(() => {
     return values.order.manualSupplements.find(
@@ -62,7 +62,7 @@ export default function ManualSupplement({ rule }: Props) {
   const updateSupplementQuantity = (quantity: number) => {
     const currentSupplements = values.order.manualSupplements;
     const existingIndex = currentSupplements.findIndex(
-      supplement => supplement.pricingRule === rule['@id']
+      supplement => supplement.pricingRule === rule['@id'],
     );
 
     if (quantity === 0) {
@@ -76,7 +76,7 @@ export default function ManualSupplement({ rule }: Props) {
       // Add or update supplement
       const supplement: ManualSupplementValues = {
         pricingRule: rule['@id'],
-        quantity: quantity
+        quantity: quantity,
       };
 
       if (existingIndex >= 0) {
@@ -112,19 +112,17 @@ export default function ManualSupplement({ rule }: Props) {
     const currentValue = currentSupplement?.quantity || 0;
 
     return (
-      <div className="py-1" data-testid={`manual-supplement-range-${rule.name}`}>
-        <div className="d-flex justify-content-between align-items-center">
-          <span>{rule.name}</span>
-          <span className="ml-2" data-testid="range-supplement-price">
-            {formatPrice(price)}
-          </span>
-        </div>
+      <div
+        className="py-1 d-flex align-items-center"
+        data-testid={`manual-supplement-range-${rule.name}`}>
         <RangeInput
           value={currentValue}
           onChange={updateSupplementQuantity}
           min={price.threshold}
           step={price.step}
         />
+        <span className="flex-1 px-2">{rule.name}</span>
+        <span data-testid="range-supplement-price">{formatPrice(price)}</span>
       </div>
     );
   }
