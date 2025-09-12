@@ -31,6 +31,7 @@ class ExpressionLanguageRuntime implements RuntimeExtensionInterface
                 'order',
                 'task',
                 'time_slot',
+                'quantity' // manual supplement
             ]);
 
         } catch (SyntaxError $e) {

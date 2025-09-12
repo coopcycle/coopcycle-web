@@ -98,6 +98,30 @@ class PriceRangeExpressionLanguageProviderTest extends TestCase
         $this->assertEquals($expectedValue, $value);
     }
 
+    public function returnValueProviderForQuantity()
+    {
+        return [
+            [  1, 500 ],
+            [  2, 1000 ],
+            [  3, 1500 ],
+            [  4, 2000 ],
+            [ null,  0 ]
+        ];
+    }
+
+    /**
+     * @dataProvider returnValueProviderForQuantity
+     */
+    public function testReturnValueWithQuantity($quantity, $expectedValue)
+    {
+        $value = $this->language->evaluate('price_range(quantity, 500, 1, 0)', [
+            'quantity' => $quantity,
+        ]);
+
+        $this->assertThat($value, $this->isType('int'));
+        $this->assertEquals($expectedValue, $value);
+    }
+
     public function testValueBelowThreshold()
     {
         $value = $this->language->evaluate('price_range(distance, 24, 100, 2000)', [

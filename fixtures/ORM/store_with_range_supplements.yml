@@ -1,0 +1,77 @@
+AppBundle\Entity\Base\GeoCoordinates:
+  geo_1:
+    __construct: [ "48.864577", "2.333338" ]
+  geo_warehouse:
+    __construct: [ "48.8758311", "2.3675732" ]
+  geo_client_1:
+    __construct: [ "48.8638614", "2.3762269" ]
+
+AppBundle\Entity\Address:
+  address_1:
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
+    geo: "@geo_1"
+  warehouse:
+    name: 'Warehouse'
+    contactName: 'John Doe'
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33112121212'))>
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '23, Avenue Claude Vellefaux, 75010 Paris, France'
+    geo: "@geo_warehouse"
+  client_1:
+    name: 'Office'
+    contactName: 'Jane smith'
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33112121414'))>
+    addressLocality: 'Paris'
+    postalCode: '75009'
+    streetAddress: '72, Rue Saint-Maur, 75011 Paris, France'
+    geo: "@geo_client_1"
+
+AppBundle\Entity\Delivery\PricingRuleSet:
+  pricing_rule_set_with_range_supplements:
+    name: 'With Range Supplements'
+    strategy: 'map'
+    rules: ['@pricing_rule_base', '@range_supplement_waiting_time', '@range_supplement_priority_handling']
+
+AppBundle\Entity\Delivery\PricingRule:
+  pricing_rule_base:
+    expression: 'distance > 0'
+    price: 499
+    position: 1
+    ruleSet: '@pricing_rule_set_with_range_supplements'
+  range_supplement_waiting_time:
+    expression: 'false'
+    price: 'price_range(quantity, 500, 5, 0)'
+    position: 2
+    ruleSet: '@pricing_rule_set_with_range_supplements'
+    productOptionValue: '@range_supplement_option_value_waiting_time'
+  range_supplement_priority_handling:
+    expression: 'false'
+    price: 'price_range(quantity, 200, 1, 2)'
+    position: 3
+    ruleSet: '@pricing_rule_set_with_range_supplements'
+    productOptionValue: '@range_supplement_option_value_priority_handling'
+
+AppBundle\Entity\Sylius\ProductOptionValue:
+  range_supplement_option_value_waiting_time:
+    currentLocale: 'fr'
+    value: 'Waiting time supplement'
+    code: 'WAITING_TIME_SUPPLEMENT'
+    option: '@product_option_range_price_rules'
+  range_supplement_option_value_priority_handling:
+    currentLocale: 'fr'
+    value: 'Priority handling'
+    code: 'PRIORITY_HANDLING'
+    option: '@product_option_range_price_rules'
+
+AppBundle\Entity\Store:
+  store_with_range_supplements:
+    name: 'Store with Range Supplements'
+    address: '@address_1'
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_with_range_supplements'
+    __calls:
+      - addAddress: [ "@warehouse" ]
+      - addAddress: [ "@client_1" ]
