@@ -72,6 +72,7 @@ Feature: Deliveries
         ]
       }
       """
+
   Scenario: Create delivery with implicit pickup address with OAuth
     Given the fixtures files are loaded:
       | sylius_products.yml |
@@ -4324,7 +4325,7 @@ Feature: Deliveries
       }
       """
 
-  Scenario: Modify delivery without recalculatePrice should maintain previously calculated price
+  Scenario: Update delivery without recalculatePrice should maintain previously calculated price
     Given the fixtures files are loaded:
       | sylius_products.yml |
       | sylius_taxation.yml |
@@ -4437,7 +4438,7 @@ Feature: Deliveries
       }
       """
 
-  Scenario: Modify delivery with recalculatePrice should recalculate price
+  Scenario: Update delivery with recalculatePrice should recalculate price
     Given the fixtures files are loaded:
       | sylius_products.yml |
       | sylius_taxation.yml |
@@ -4724,7 +4725,7 @@ Feature: Deliveries
     And the response should be in JSON
     And the JSON node "order.total" should be equal to 499
 
-  Scenario: Modify delivery with recalculatePrice and manual supplements should recalculate price
+  Scenario: Update delivery with recalculatePrice and Add manual supplements should recalculate price
     Given the fixtures files are loaded:
       | sylius_products.yml |
       | sylius_taxation.yml |
@@ -4840,3 +4841,156 @@ Feature: Deliveries
         }
       }
       """
+
+  Scenario: Create delivery with Range-based manual supplement - waiting time supplement
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | store_with_range_supplements.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/deliveries" with body:
+    # 499 + 1500 (waiting time: 500 per 5 minutes) = 1999
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "doneBefore": "tomorrow 15:00"
+        },
+        "order": {
+          "manualSupplements": [
+            {
+              "pricingRule": "/api/pricing_rules/2",
+              "quantity": 15
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON node "order.total" should be equal to 1999
+
+  Scenario: Update delivery with Add range-based manual supplement
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | store_with_range_supplements.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    # First create a delivery without supplements: 499
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "doneBefore": "tomorrow 15:00"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON node "order.total" should be equal to 499
+    # Now add a waiting time supplement: 499 + 1500 (waiting time: 500 per 5 minutes) = 1999
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "PUT" request to "/api/deliveries/1" with body:
+      """
+      {
+        "order": {
+          "manualSupplements": [
+            {
+              "pricingRule": "/api/pricing_rules/2",
+              "quantity": 15
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON node "order.total" should be equal to 1999
+
+  Scenario: Update delivery with Modify range-based manual supplement quantity
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | store_with_range_supplements.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    # First create a delivery with range supplement: 499 + 1000 (waiting time: 500 per 5 minutes) = 1499
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "doneBefore": "tomorrow 15:00"
+        },
+        "order": {
+          "manualSupplements": [
+            {
+              "pricingRule": "/api/pricing_rules/2",
+              "quantity": 10
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON node "order.total" should be equal to 1499
+    # Now update the quantity: 499 + 1500 (waiting time: 500 per 5 minutes) = 1999
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "PUT" request to "/api/deliveries/1" with body:
+      """
+      {
+        "order": {
+          "manualSupplements": [
+            {
+              "pricingRule": "/api/pricing_rules/2",
+              "quantity": 15
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON node "order.total" should be equal to 1999
