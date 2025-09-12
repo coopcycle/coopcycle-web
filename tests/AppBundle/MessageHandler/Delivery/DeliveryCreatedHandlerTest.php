@@ -12,6 +12,7 @@ use AppBundle\Message\PushNotification;
 use AppBundle\MessageHandler\DeliveryCreatedHandler;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
+use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
 use AppBundle\Security\UserManager;
@@ -31,6 +32,9 @@ class DeliveryCreatedHandlerTest extends TestCase
 
     public function setUp(): void
     {
+        $mockedToday = Carbon::create(2025, 1, 2, 0);
+        Carbon::setTestNow($mockedToday);
+
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
         $this->userManager = $this->prophesize(UserManager::class);
         $this->emailManager = $this->prophesize(EmailManager::class);
@@ -111,7 +115,7 @@ class DeliveryCreatedHandlerTest extends TestCase
             'delivery_id' => 1,
             'order_id' => 11,
             'date' => '2025-01-02 01:02',
-            'date_local' => '01/02/2025'
+            'date_local' => 'Today at 1:02 AM'
         ];
 
         $this->genPushNotificationAssertEqual($title, $body, $data);
@@ -166,7 +170,7 @@ DO: 222 Nice Dropoff St, Someplace, Argentina";
             'delivery_id' => 1,
             'order_id' => null,
             'date' => '2025-01-02 01:02',
-            'date_local' => '01/02/2025'
+            'date_local' => 'Today at 1:02 AM'
         ];
 
         $this->genPushNotificationAssertEqual($title, $body, $data);
@@ -226,7 +230,7 @@ PU 03:04-04:05: 222 Nice Pickup St, Somewhere, Argentina";
             'delivery_id' => 2,
             'order_id' => 11,
             'date' => '2025-01-02 01:02',
-            'date_local' => '01/02/2025'
+            'date_local' => 'Today at 1:02 AM'
         ];
 
         $this->genPushNotificationAssertEqual($title, $body, $data);
@@ -291,7 +295,7 @@ DO 05:06-06:07: 333 Nice Dropoff St, Someplace, Argentina";
             'delivery_id' => 3,
             'order_id' => 11,
             'date' => '2025-01-02 01:02',
-            'date_local' => '01/02/2025'
+            'date_local' => 'Today at 1:02 AM'
         ];
 
         $this->genPushNotificationAssertEqual($title, $body, $data);
@@ -354,7 +358,7 @@ DO 05:06-06:07: 333 Nice Dropoff St, Someplace, Argentina";
             'delivery_id' => 3,
             'order_id' => null,
             'date' => '2025-01-02 01:02',
-            'date_local' => '01/02/2025'
+            'date_local' => 'Today at 1:02 AM'
         ];
 
         $this->genPushNotificationAssertEqual($title, $body, $data);
@@ -426,7 +430,57 @@ DO 07:08-08:09: 444 Nice Dropoff St, Someplace, Argentina";
             'delivery_id' => 4,
             'order_id' => 11,
             'date' => '2025-01-02 01:02',
-            'date_local' => '01/02/2025'
+            'date_local' => 'Today at 1:02 AM'
+        ];
+
+        $this->genPushNotificationAssertEqual($title, $body, $data);
+
+        $message = $this->genDeliveryCreatedMessage($delivery);
+        call_user_func_array($this->handler, [ $message ]);
+    }
+
+    public function testSendDelivery__DifferentDateThanToday()
+    {
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+        $dropoff = new Task();
+        $dropoff->setType(Task::TYPE_DROPOFF);
+        $pickup->setNext($dropoff);
+        $dropoff->setPrevious($pickup);
+
+        $pickupAddress = new Address();
+        $pickupAddress->setStreetAddress("111 Nice Pickup St, Somewhere, Argentina");
+        $pickup->setAddress($pickupAddress);
+        $dropoffAddress = new Address();
+        $dropoffAddress->setStreetAddress("222 Nice Dropoff St, Someplace, Argentina");
+        $dropoff->setAddress($dropoffAddress);
+
+        $pickup->setAfter(new \DateTime('2025-01-03 01:02:03'));
+        $pickup->setBefore(new \DateTime('2025-01-03 02:03:04'));
+        $dropoff->setAfter(new \DateTime('2025-01-03 03:04:05'));
+        $dropoff->setBefore(new \DateTime('2025-01-03 04:05:06'));
+
+        $delivery = $this->prophesize(Delivery::class);
+        $delivery->getId()->willReturn(1);
+        $delivery->getTasks()->willReturn([$pickup, $dropoff]);
+        $delivery->getPickup()->willReturn($pickup);
+        $delivery->getDropoff()->willReturn($dropoff);
+
+        $order = $this->prophesize(Order::class);
+        $order->getId()->willReturn(11);
+        $order->getDelivery()->willReturn($delivery);
+        $delivery->getOrder()->willReturn($order);
+
+        $this->genStoreOwner($delivery);
+
+        $title = '(03 Jan) Test Store -> 222 Nice Dropoff St, Someplace, Argentina';
+        $body = "PU: 01:02-02:03 | DO: 03:04-04:05";
+        $data = [
+            'event' => 'delivery:created',
+            'delivery_id' => 1,
+            'order_id' => 11,
+            'date' => '2025-01-03 01:02',
+            'date_local' => 'Tomorrow at 1:02 AM'
         ];
 
         $this->genPushNotificationAssertEqual($title, $body, $data);
