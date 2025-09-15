@@ -39,9 +39,10 @@ export default ({ defaultValue, onChange }: Props) => {
   }, [percentage, onChange]);
 
   return (
-    <div data-testid="price_rule_percentage_editor">
+    <div>
       <label className="mr-2">
         <input
+          data-testid="rule-percentage-input"
           type="number"
           size="4"
           defaultValue={convertToUi(percentage)}

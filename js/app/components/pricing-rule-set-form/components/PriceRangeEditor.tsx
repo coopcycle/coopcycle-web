@@ -2,7 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { getCurrencySymbol } from '../../../i18n';
 import { useTranslation } from 'react-i18next';
 
-type Unit = 'km' | 'kg' | 'vu';
+type Attribute =
+  | 'distance'
+  | 'weight'
+  | 'packages.totalVolumeUnits()'
+  | 'quantity';
+
+type Unit = 'km' | 'kg' | 'vu' | 'item';
 
 type UnitLabelProps = {
   unit: Unit;
@@ -18,7 +24,7 @@ const UnitLabel = ({ unit }: UnitLabelProps) => {
   return <span>{unit}</span>;
 };
 
-const unitToAttribute = (unit: Unit): string => {
+const unitToAttribute = (unit: Unit): Attribute => {
   switch (unit) {
     case 'km':
       return 'distance';
@@ -26,6 +32,8 @@ const unitToAttribute = (unit: Unit): string => {
       return 'weight';
     case 'vu':
       return 'packages.totalVolumeUnits()';
+    case 'item':
+      return 'quantity';
   }
 };
 
@@ -37,12 +45,14 @@ const attributeToUnit = (attribute: string): Unit => {
       return 'kg';
     case 'packages.totalVolumeUnits()':
       return 'vu';
+    case 'quantity':
+      return 'item';
     default:
       return 'km';
   }
 };
 
-const multiplyIfNeeded = (value: number, unit: Unit): number => {
+const parseValueFromUi = (value: number, unit: Unit): number => {
   switch (unit) {
     case 'km':
     case 'kg':
@@ -52,7 +62,17 @@ const multiplyIfNeeded = (value: number, unit: Unit): number => {
   return value;
 };
 
-const divideIfNeeded = (value: number, unit: Unit): number => {
+const defaultStepValue = (unit: Unit): number => {
+  switch (unit) {
+    case 'km':
+    case 'kg':
+      return 100; // 100m/100g
+  }
+
+  return 1;
+};
+
+const formatValueForUi = (value: number, unit: Unit): number => {
   switch (unit) {
     case 'km':
     case 'kg':
@@ -63,31 +83,33 @@ const divideIfNeeded = (value: number, unit: Unit): number => {
 };
 
 export type PriceRangeValue = {
-  attribute: string;
+  attribute: Attribute;
   price: number;
   step: number;
   threshold: number;
 };
 
 type Props = {
+  isManualSupplement: boolean;
   defaultValue: PriceRangeValue;
   onChange: (value: PriceRangeValue) => void;
 };
 
-export default ({ defaultValue, onChange }: Props) => {
+export default ({ isManualSupplement, defaultValue, onChange }: Props) => {
   const { t } = useTranslation();
 
-  const defaultAttribute = defaultValue.attribute || 'distance';
+  const defaultAttribute =
+    defaultValue.attribute || (isManualSupplement ? 'quantity' : 'distance');
 
   const [unit, setUnit] = useState(attributeToUnit(defaultAttribute));
 
   const [attribute, setAttribute] = useState(defaultAttribute);
   const [price, setPrice] = useState(defaultValue.price || 0);
-  const [step, setStep] = useState(defaultValue.step || 1000);
+  const [step, setStep] = useState(
+    defaultValue.step || (isManualSupplement ? 1 : 1000),
+  );
   const [threshold, setThreshold] = useState(defaultValue.threshold || 0);
 
-  const stepEl = useRef(null);
-  const thresholdEl = useRef(null);
   const initialLoad = useRef(true);
 
   useEffect(() => {
@@ -127,41 +149,42 @@ export default ({ defaultValue, onChange }: Props) => {
           data-testid="rule-price-range-step"
           type="number"
           size={4}
-          min="0.1"
-          step=".1"
-          defaultValue={divideIfNeeded(step, unit)}
-          ref={stepEl}
+          min={formatValueForUi(defaultStepValue(unit), unit)}
+          step={formatValueForUi(defaultStepValue(unit), unit)}
+          defaultValue={formatValueForUi(step, unit)}
           className="form-control d-inline-block"
           style={{ width: '80px' }}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setStep(multiplyIfNeeded(parseFloat(e.target.value), unit));
+            setStep(parseValueFromUi(parseFloat(e.target.value), unit));
           }}
         />
-        <select
-          data-testid="rule-price-range-unit"
-          className="form-control d-inline-block align-top ml-2"
-          style={{ width: '70px' }}
-          defaultValue={attributeToUnit(attribute)}
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-            setAttribute(unitToAttribute(e.target.value as Unit));
+        {!isManualSupplement ? (
+          <select
+            data-testid="rule-price-range-unit"
+            className="form-control d-inline-block align-top ml-2"
+            style={{ width: '70px' }}
+            defaultValue={attributeToUnit(attribute)}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+              setAttribute(unitToAttribute(e.target.value as Unit));
 
-            const newUnit = e.target.value as Unit;
-            const prevUnit = unit;
+              const newUnit = e.target.value as Unit;
+              const prevUnit = unit;
 
-            if (newUnit === 'vu' && prevUnit !== 'vu') {
-              setStep(step / 1000);
-              setThreshold(threshold / 1000);
-            } else if (newUnit !== 'vu' && prevUnit === 'vu') {
-              setStep(step * 1000);
-              setThreshold(threshold * 1000);
-            }
+              if (newUnit === 'vu' && prevUnit !== 'vu') {
+                setStep(step / 1000);
+                setThreshold(threshold / 1000);
+              } else if (newUnit !== 'vu' && prevUnit === 'vu') {
+                setStep(step * 1000);
+                setThreshold(threshold * 1000);
+              }
 
-            setUnit(e.target.value as Unit);
-          }}>
-          <option value="km">{t('PRICING_RULE_PICKER_UNIT_KM')}</option>
-          <option value="kg">{t('PRICING_RULE_PICKER_UNIT_KG')}</option>
-          <option value="vu">{t('RULE_PICKER_LINE_VOLUME_UNITS')}</option>
-        </select>
+              setUnit(e.target.value as Unit);
+            }}>
+            <option value="km">{t('PRICING_RULE_PICKER_UNIT_KM')}</option>
+            <option value="kg">{t('PRICING_RULE_PICKER_UNIT_KG')}</option>
+            <option value="vu">{t('RULE_PICKER_LINE_VOLUME_UNITS')}</option>
+          </select>
+        ) : null}
       </label>
       <label>
         <span className="mx-2">{t('PRICE_RANGE_EDITOR.ABOVE')}</span>
@@ -170,18 +193,19 @@ export default ({ defaultValue, onChange }: Props) => {
           type="number"
           size={4}
           min="0"
-          step=".1"
-          defaultValue={divideIfNeeded(threshold, unit)}
-          ref={thresholdEl}
+          step={formatValueForUi(defaultStepValue(unit), unit)}
+          defaultValue={formatValueForUi(threshold, unit)}
           className="form-control d-inline-block"
           style={{ width: '80px' }}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setThreshold(multiplyIfNeeded(parseFloat(e.target.value), unit));
+            setThreshold(parseValueFromUi(parseFloat(e.target.value), unit));
           }}
         />
-        <span className="ml-2">
-          <UnitLabel unit={unit} />
-        </span>
+        {!isManualSupplement ? (
+          <span className="ml-2">
+            <UnitLabel unit={unit} />
+          </span>
+        ) : null}
       </label>
     </div>
   );

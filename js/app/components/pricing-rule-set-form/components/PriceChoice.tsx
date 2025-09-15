@@ -29,6 +29,7 @@ export function PriceChoice({
           <Option value="percentage">
             {t('PRICE_RANGE_EDITOR.TYPE_PERCENTAGE')}
           </Option>
+          <Option value="range">{t('PRICE_RANGE_EDITOR.TYPE_RANGE')}</Option>
         </>
       ) : (
         <>

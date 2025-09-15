@@ -5,12 +5,14 @@ import PriceFixedEditor from './PriceFixedEditor';
 import { PriceObject, PriceType } from '../types/PricingRuleType';
 
 type Props = {
+  isManualSupplement: boolean;
   priceType: PriceType;
   defaultValue: PriceObject;
   onChange: (value: string) => void;
 };
 
 export default function PriceEditor({
+  isManualSupplement,
   priceType,
   defaultValue,
   onChange,
@@ -28,6 +30,7 @@ export default function PriceEditor({
     case 'range':
       return (
         <PriceRangeEditor
+          isManualSupplement={isManualSupplement}
           defaultValue={defaultValue}
           onChange={({ attribute, price, step, threshold }) => {
             onChange(
