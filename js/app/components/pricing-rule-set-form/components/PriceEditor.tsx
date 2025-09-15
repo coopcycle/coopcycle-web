@@ -2,7 +2,7 @@ import PercentageEditor from './PercentageEditor';
 import PriceRangeEditor from './PriceRangeEditor';
 import PricePerPackageEditor from './PricePerPackageEditor';
 import PriceFixedEditor from './PriceFixedEditor';
-import { PriceType, PriceObject } from '../types/PricingRuleType';
+import { PriceObject, PriceType } from '../types/PricingRuleType';
 
 type Props = {
   priceType: PriceType;

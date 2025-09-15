@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { getCurrencySymbol } from '../../../i18n';
 import { useTranslation } from 'react-i18next';
 
@@ -101,7 +101,7 @@ export default ({ defaultValue, onChange }: Props) => {
     } else {
       initialLoad.current = false;
     }
-  }, [price, threshold, attribute, step]);
+  }, [price, threshold, attribute, step, onChange]);
 
   return (
     <div data-testid="price_rule_price_range_editor">
@@ -109,7 +109,7 @@ export default ({ defaultValue, onChange }: Props) => {
         <input
           data-testid="rule-price-range-price"
           type="number"
-          size="4"
+          size={4}
           defaultValue={price / 100}
           min="0"
           step=".001"
@@ -126,7 +126,7 @@ export default ({ defaultValue, onChange }: Props) => {
         <input
           data-testid="rule-price-range-step"
           type="number"
-          size="4"
+          size={4}
           min="0.1"
           step=".1"
           defaultValue={divideIfNeeded(step, unit)}
@@ -168,7 +168,7 @@ export default ({ defaultValue, onChange }: Props) => {
         <input
           data-testid="rule-price-range-threshold"
           type="number"
-          size="4"
+          size={4}
           min="0"
           step=".1"
           defaultValue={divideIfNeeded(threshold, unit)}
