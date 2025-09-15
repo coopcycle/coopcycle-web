@@ -202,6 +202,10 @@ class DeliveryCreatedHandler
                 break;
         }
 
+        if (($day = $this->getDayForTitle($pickup->getAfter()))) {
+            $title = "(".$day.") " . $title;
+        }
+
         return [$title, $body];
     }
 
@@ -212,5 +216,17 @@ class DeliveryCreatedHandler
         $body = $taskaddr->getName() ? $taskaddr->getStreetAddress() : '';
 
         return [$title, $body];
+    }
+
+    private function getDayForTitle(\DateTime $dt): string
+    {
+        $datetime = Carbon::instance($dt);
+        $now = Carbon::now();
+
+        if ($datetime->format('Y-m-d') !== $now->format('Y-m-d')) {
+            return $datetime->locale($this->locale)->format('d M');
+        }
+
+        return "";
     }
 }

@@ -2,7 +2,7 @@
 # unless specific customization is needed.
 #
 # There are two ways to load the 'default setup' fixtures:
-# 1. using --setup (-s) option: bin/console coopcycle:fixtures:load -s cypress/fixtures/setup_default.yml
+# 1. using --setup (-s) option: bin/console coopcycle:fixtures:load -s fixtures/ORM/setup_default.yml
 # that will load and PERSIST all the fixtures from setup_default.yml
 # 2. using the `include` directive in the fixtures files
 # that will only load the fixtures from setup_default.yml, but they will NOT be persisted yet

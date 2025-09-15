@@ -78,7 +78,7 @@ enable-xdebug:
 	@docker compose restart php nginx
 
 start:
-	@clear && docker compose up --remove-orphans
+	@clear && docker compose stop && docker compose up --remove-orphans
 
 # Once everything is restarted, you need to run in another terminal: `make setup`
 # And after setup is done, you need to stop/restart the containers again with: `make start`
@@ -104,11 +104,11 @@ lint:
 test: phpunit jest behat cypress
 
 testdata-dispatch:
-	@docker compose exec php bin/console coopcycle:fixtures:load -s cypress/fixtures/setup_default.yml -f cypress/fixtures/dispatch.yml --env test
+	@docker compose exec php bin/console coopcycle:fixtures:load -s fixtures/ORM/setup_default.yml -f fixtures/ORM/dispatch.yml --env test
 testdata-foodtech:
-	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/foodtech.yml --env test
+	@docker compose exec php bin/console coopcycle:fixtures:load -f fixtures/ORM/foodtech.yml --env test
 testdata-high-volume-instance:
-	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/high_volume_instance.yml --env test
+	@docker compose exec php bin/console coopcycle:fixtures:load -f fixtures/ORM/high_volume_instance.yml --env test
 
 demodata:
 	@docker compose exec php bin/demo --env=dev
