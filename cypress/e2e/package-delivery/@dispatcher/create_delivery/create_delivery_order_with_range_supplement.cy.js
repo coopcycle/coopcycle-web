@@ -55,8 +55,7 @@ context('Delivery (role: dispatcher)', () => {
     cy.get(
       '[data-testid="manual-supplement-range-Waiting time supplement"]',
     ).within(() => {
-      cy.get('[data-testid="range-input-field"]').clear();
-      cy.get('[data-testid="range-input-field"]').type('5');
+      cy.get('[data-testid="range-input-field"]').type('{selectall}5');
     });
 
     // Verify price
@@ -66,8 +65,7 @@ context('Delivery (role: dispatcher)', () => {
     cy.get(
       '[data-testid="manual-supplement-range-Waiting time supplement"]',
     ).within(() => {
-      cy.get('[data-testid="range-input-field"]').clear();
-      cy.get('[data-testid="range-input-field"]').type('15');
+      cy.get('[data-testid="range-input-field"]').type('{selectall}15');
     });
 
     // Verify total price includes supplement
