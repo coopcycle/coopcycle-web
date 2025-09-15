@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import FlagsContext from '../../FlagsContext';
 import Cart from './Cart';
 import {
+  CalculationOutput,
   HydraError,
   Order as OrderType,
   PricingRule,
@@ -19,6 +20,7 @@ type Props = {
   newOrder?: OrderType;
   calculatePriceData?: RetailPrice;
   calculatePriceError?: Error | HydraError;
+  priceCalculation?: { calculation: CalculationOutput; order?: OrderType };
 };
 
 export const OrderOnCheckout = ({
@@ -27,6 +29,7 @@ export const OrderOnCheckout = ({
   newOrder,
   calculatePriceData,
   calculatePriceError,
+  priceCalculation,
 }: Props) => {
   const { isDispatcher, isPriceBreakdownEnabled, isDebugPricing } =
     useContext(FlagsContext);
@@ -57,12 +60,12 @@ export const OrderOnCheckout = ({
       ) : null}
       {!overridePrice &&
         (isDispatcher || isDebugPricing) &&
-        calculatePriceData && (
+        priceCalculation && (
           <PriceCalculation
             className="mt-2"
             isDebugPricing={isDebugPricing}
-            calculation={calculatePriceData.calculation}
-            order={calculatePriceData.order}
+            calculation={priceCalculation.calculation}
+            order={priceCalculation.order}
           />
         )}
 
