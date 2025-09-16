@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6bbb53beb73649ae57083e9a9efeae4b",
+    "content-hash": "d0a44a9075b8c8a1b282d3c2b22d0346",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -1157,16 +1157,16 @@
         },
         {
             "name": "centrifugal/phpcent",
-            "version": "4.0.0",
+            "version": "5.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/centrifugal/phpcent.git",
-                "reference": "146734a4c540c278501a8ec72f6447b14c99cd82"
+                "reference": "d3c1760be9d84f5f6584546c5b6b90c22b65a733"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/centrifugal/phpcent/zipball/146734a4c540c278501a8ec72f6447b14c99cd82",
-                "reference": "146734a4c540c278501a8ec72f6447b14c99cd82",
+                "url": "https://api.github.com/repos/centrifugal/phpcent/zipball/d3c1760be9d84f5f6584546c5b6b90c22b65a733",
+                "reference": "d3c1760be9d84f5f6584546c5b6b90c22b65a733",
                 "shasum": ""
             },
             "require": {
@@ -1197,9 +1197,15 @@
             ],
             "support": {
                 "issues": "https://github.com/centrifugal/phpcent/issues",
-                "source": "https://github.com/centrifugal/phpcent/tree/v4.0.0"
+                "source": "https://github.com/centrifugal/phpcent/tree/v5.1.0"
             },
-            "time": "2021-09-06T13:13:39+00:00"
+            "funding": [
+                {
+                    "url": "https://github.com/centrifugal",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-03-24T08:27:27+00:00"
         },
         {
             "name": "clue/stream-filter",
