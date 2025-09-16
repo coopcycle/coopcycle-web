@@ -78,7 +78,7 @@ enable-xdebug:
 	@docker compose restart php nginx
 
 start:
-	@clear && docker compose stop && docker compose up --remove-orphans
+	@clear && docker compose up --remove-orphans && docker compose stop
 
 # Once everything is restarted, you need to run in another terminal: `make setup`
 # And after setup is done, you need to stop/restart the containers again with: `make start`
