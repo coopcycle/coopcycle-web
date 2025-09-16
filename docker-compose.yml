@@ -210,7 +210,7 @@ services:
       - ./sonic.cfg:/etc/sonic.cfg
 
   centrifugo:
-    image: centrifugo/centrifugo:v3
+    image: centrifugo/centrifugo:v4
     ports:
       - "8100:8000"
     depends_on:
@@ -227,6 +227,9 @@ services:
       - CENTRIFUGO_RECOVER=true
       - CENTRIFUGO_HISTORY_SIZE=10
       - CENTRIFUGO_HISTORY_TTL=300s
+      - CENTRIFUGO_USE_CLIENT_PROTOCOL_V1_BY_DEFAULT=true
+      - CENTRIFUGO_SKIP_USER_CHECK_IN_SUBSCRIPTION_TOKEN=true
+      - CENTRIFUGO_ALLOW_USER_LIMITED_CHANNELS=true
 
   # https://cube.dev/docs/getting-started-docker
   cube:
