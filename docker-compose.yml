@@ -224,6 +224,9 @@ services:
       - CENTRIFUGO_ADMIN_PASSWORD=centrifugo
       - CENTRIFUGO_ADMIN_SECRET=centrifugo
       - CENTRIFUGO_ALLOWED_ORIGINS=*
+      - CENTRIFUGO_RECOVER=true
+      - CENTRIFUGO_HISTORY_SIZE=10
+      - CENTRIFUGO_HISTORY_TTL=300s
 
   # https://cube.dev/docs/getting-started-docker
   cube:
