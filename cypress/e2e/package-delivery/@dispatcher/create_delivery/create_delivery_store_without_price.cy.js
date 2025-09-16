@@ -51,6 +51,13 @@ context('Delivery (role: dispatcher)', () => {
 
     cy.betaEnterCommentAtPosition(1, 'Dropoff comments')
 
+    cy.get('.alert-danger', { timeout: 10000 }).should(
+      'contain',
+      "Le prix n'a pas pu être calculé. Vous pouvez créer la livraison, n'oubliez pas de corriger la règle de prix liée à ce magasin.",
+    )
+
+    cy.get('[data-testid="price-calculation-debug-tool"]').should('not.exist')
+
     cy.get('button[type="submit"]').click()
 
     // Order page

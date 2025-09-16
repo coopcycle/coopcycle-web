@@ -4,11 +4,11 @@ import { useTranslation } from 'react-i18next';
 import FlagsContext from '../../FlagsContext';
 import Cart from './Cart';
 import {
+  CalculationOutput,
   ManualSupplementValues,
   OrderItem as OrderItemType,
   Order as OrderType,
   PricingRule,
-  RetailPrice,
 } from '../../../../api/types';
 import { TotalPrice } from './TotalPrice';
 import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext';
@@ -21,7 +21,7 @@ type Props = {
   existingOrder: OrderType;
   existingSupplements?: ManualSupplementValues[];
   updatedOrder?: OrderType;
-  calculatePriceData?: RetailPrice;
+  priceCalculation?: { calculation: CalculationOutput; order?: OrderType };
 };
 
 function getCalculatedOrderItems(orderItems: OrderItemType[]) {
@@ -92,7 +92,7 @@ export const OrderEditing = ({
   existingOrder,
   existingSupplements = [],
   updatedOrder,
-  calculatePriceData,
+  priceCalculation,
 }: Props) => {
   const { isPriceBreakdownEnabled, isDispatcher, isDebugPricing } =
     useContext(FlagsContext);
@@ -261,12 +261,12 @@ export const OrderEditing = ({
 
       {!overridePrice &&
         (isDispatcher || isDebugPricing) &&
-        calculatePriceData && (
+        priceCalculation && (
           <PriceCalculation
             className="mt-2"
             isDebugPricing={isDebugPricing}
-            calculation={calculatePriceData.calculation}
-            order={calculatePriceData.order}
+            calculation={priceCalculation.calculation}
+            order={priceCalculation.order}
           />
         )}
 

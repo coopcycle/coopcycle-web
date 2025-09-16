@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 
 import FlagsContext from '../../FlagsContext';
 import {
+  CalculationOutput,
   ManualSupplementValues,
   Order as OrderType,
 } from '../../../../api/types';
@@ -79,6 +80,24 @@ const Order = ({
     skip: overridePrice,
   });
 
+  const priceCalculation = useMemo(() => {
+    if (calculatePriceData) {
+      return {
+        calculation: calculatePriceData.calculation,
+        order: calculatePriceData.order,
+      };
+    }
+
+    if (calculatePriceError && 'calculation' in calculatePriceError) {
+      return {
+        calculation: calculatePriceError.calculation as CalculationOutput,
+        order: undefined,
+      };
+    }
+
+    return undefined;
+  }, [calculatePriceData, calculatePriceError]);
+
   const isLoading = useMemo(() => {
     return orderManualSupplementsIsLoading || calculatePriceIsLoading;
   }, [orderManualSupplementsIsLoading, calculatePriceIsLoading]);
@@ -114,6 +133,7 @@ const Order = ({
             newOrder={newOrder}
             calculatePriceData={calculatePriceData}
             calculatePriceError={calculatePriceError}
+            priceCalculation={priceCalculation}
           />
         ) : null}
         {existingOrder && mode === Mode.DELIVERY_UPDATE ? (
@@ -123,7 +143,7 @@ const Order = ({
             existingOrder={existingOrder}
             existingSupplements={existingSupplements}
             updatedOrder={newOrder}
-            calculatePriceData={calculatePriceData}
+            priceCalculation={priceCalculation}
           />
         ) : null}
 
