@@ -634,6 +634,7 @@ Feature: Orders
             "latitude":@double@,
             "longitude":@double@
           },
+          "provider": null,
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "name":null,
           "telephone": null,
@@ -801,6 +802,7 @@ Feature: Orders
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
             "name":null,
             "telephone": null,
