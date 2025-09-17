@@ -163,7 +163,7 @@ class DeliveryCreatedHandlerTest extends TestCase
 
         $title = 'Test Store -> Test Address Name';
         $body = "PU: 01:02-02:03 | DO: 03:04-04:05
-PU: " . $pickupAddress->getStreetAddress() . "
+PU: 111 Nice Pickup St, Somewhere, Argentina
 DO: 222 Nice Dropoff St, Someplace, Argentina";
         $data = [
             'event' => 'delivery:created',

@@ -193,9 +193,9 @@ class TaskListSubscriber implements EventSubscriber
             $users = $usersByDate[$date];
             $users = array_unique($users);
 
-            // We do not send push notifications to users with role ROLE_ADMIN,
+            // We do not send push notifications to users with role ROLE_ADMIN or ROLE_DISPATCHER,
             // they have WebSockets to get live updates
-            $users = array_filter($users, fn(UserInterface $user) => !$user->hasRole('ROLE_ADMIN'));
+            $users = array_filter($users, fn(UserInterface $user) => !($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_DISPATCHER')));
 
             if (count($users) === 0) {
                 continue;
