@@ -9,6 +9,7 @@ use AppBundle\Api\State\EvaluatePricingRuleProcessor;
 use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\YesNoOutput;
 use AppBundle\Entity\Sylius\ProductOptionValue;
+use AppBundle\ExpressionLanguage\PriceEvaluation;
 use AppBundle\Validator\Constraints\PricingRule as AssertPricingRule;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -198,9 +199,23 @@ class PricingRule
         }
 
         $priceExpression = $this->getPrice();
+
+        /** @var int|PriceEvaluation|PriceEvaluation[] $result */
         $result = $language->evaluate($priceExpression, $values);
 
-        return $result;
+        $total = 0;
+
+        if (is_array($result)) {
+            foreach ($result as $item) {
+                $total += $item->unitPrice * $item->quantity;
+            }
+        } else if ($result instanceof PriceEvaluation) {
+            $total = $result->unitPrice * $result->quantity;
+        } else {
+            $total = $result;
+        }
+
+        return $total;
     }
 
     public function isManualSupplement()
