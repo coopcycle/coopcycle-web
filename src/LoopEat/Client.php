@@ -317,35 +317,28 @@ class Client
 
         $formats = [ ...$deliver, ...$pickup ];
 
-        try {
+        $restaurant = $order->getRestaurant();
 
-            $restaurant = $order->getRestaurant();
+        $currentRestaurant = $this->currentRestaurant($restaurant);
 
-            $currentRestaurant = $this->currentRestaurant($restaurant);
+        Assert::isInstanceOf($order, OAuthCredentialsInterface::class);
 
-            Assert::isInstanceOf($order, OAuthCredentialsInterface::class);
+        $response = $this->client->request('POST', sprintf('/api/v1/partners/restaurants/%s/orders', $currentRestaurant['id']), [
+            'headers' => [
+                'Authorization' => sprintf('Bearer %s', $order->getLoopeatAccessToken())
+            ],
+            'oauth_credentials' => $order,
+            'json' => [
+                'order' => [
+                    'external_id' => $order->getId(),
+                    'formats' => $formats,
+                ]
+            ],
+        ]);
 
-            $response = $this->client->request('POST', sprintf('/api/v1/partners/restaurants/%s/orders', $currentRestaurant['id']), [
-                'headers' => [
-                    'Authorization' => sprintf('Bearer %s', $order->getLoopeatAccessToken())
-                ],
-                'oauth_credentials' => $order,
-                'json' => [
-                    'order' => [
-                        'external_id' => $order->getId(),
-                        'formats' => $formats,
-                    ]
-                ],
-            ]);
+        $res = json_decode((string) $response->getBody(), true);
 
-            $res = json_decode((string) $response->getBody(), true);
-
-            return $res['data'];
-
-        } catch (RequestException $e) {
-            $this->logger->error($e->getMessage());
-            return false;
-        }
+        return $res['data'];
     }
 
     public function validateOrder(OrderInterface $order)

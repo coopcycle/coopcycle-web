@@ -188,4 +188,6 @@ interface OrderInterface extends
     public function getDeliveryPrice(): PriceInterface;
 
     public function getExports(): Collection;
+
+    public function setReusablePackagingEnabled($reusablePackagingEnabled);
 }

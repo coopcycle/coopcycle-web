@@ -19,4 +19,6 @@ interface LoopeatAwareInterface
     public function supportsLoopeat(): bool;
 
     public function getLoopeatDeliver();
+
+    public function setLoopeatReturns(array $returns = []);
 }
