@@ -4,6 +4,7 @@ namespace AppBundle\Pricing;
 
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Sylius\ProductOptionValue;
+use AppBundle\ExpressionLanguage\PriceEvaluation;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use Psr\Log\LoggerInterface;
@@ -25,10 +26,21 @@ class OnDemandDeliveryProductProcessor
     ): ProductOptionValueWithQuantity {
         $result = $rule->apply($expressionLanguageValues, $this->expressionLanguage);
 
+        $total = 0;
+        if (is_array($result)) {
+            foreach ($result as $item) {
+                $total += $item->unitPrice * $item->quantity;
+            }
+        } elseif ($result instanceof PriceEvaluation) {
+            $total = $result->unitPrice * $result->quantity;
+        } else {
+            $total = $result;
+        }
+
         $this->feeCalculationLogger->info(
             sprintf(
                 'processProductOptionValue; result %d (rule "%s")',
-                $result,
+                $total,
                 $rule->getExpression()
             ),
             [
@@ -41,19 +53,19 @@ class OnDemandDeliveryProductProcessor
         $basePrice = 1;
 
         // If the price is negative, we set the base price to -1 as the quantity can't be negative
-        if ($result < 0) {
+        if ($total < 0) {
             $basePrice = -1;
-            $result = abs($result);
+            $total = abs($total);
         }
 
         // If the percentage is below 100% (10000 = 100.00%), we set the base price to -1 as it's a discount
-        if ('CPCCL-ODDLVR-PERCENTAGE' === $productOptionValue->getOptionCode() && $result < 10000) {
+        if ('CPCCL-ODDLVR-PERCENTAGE' === $productOptionValue->getOptionCode() && $total < 10000) {
             $basePrice = -1;
         }
 
         $productOptionValue->setPrice($basePrice);
 
-        return new ProductOptionValueWithQuantity($productOptionValue, $result);
+        return new ProductOptionValueWithQuantity($productOptionValue, $total);
     }
 
     /**

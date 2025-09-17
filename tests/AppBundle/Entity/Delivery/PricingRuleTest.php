@@ -7,6 +7,7 @@ use AppBundle\Entity\Package;
 use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\ExpressionLanguage\DeliveryExpressionLanguageVisitor;
+use AppBundle\ExpressionLanguage\PriceEvaluation;
 use AppBundle\ExpressionLanguage\PricePercentageExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\PriceRangeExpressionLanguageProvider;
@@ -21,6 +22,25 @@ class PricingRuleTest extends TestCase
     {
         $deliveryExpressionLanguageVisitor = new DeliveryExpressionLanguageVisitor();
         return $deliveryExpressionLanguageVisitor->toExpressionLanguageValues($delivery);
+    }
+
+    private function apply(PricingRule $rule, array $values, ?ExpressionLanguage $language = null): int
+    {
+        $result = $rule->apply($values, $language);
+
+        $total = 0;
+
+        if (is_array($result)) {
+            foreach ($result as $item) {
+                $total += $item->unitPrice * $item->quantity;
+            }
+        } elseif ($result instanceof PriceEvaluation) {
+            $total = $result->unitPrice * $result->quantity;
+        } else {
+            $total = $result;
+        }
+
+        return $total;
     }
 
     public function testMatches()
@@ -80,7 +100,7 @@ class PricingRuleTest extends TestCase
         $this->assertTrue($rule->matches($this->toExpressionLanguageValues($delivery)));
 
         // 15€ + 3€ per km = 15 + 2,5 * 3
-        $this->assertEquals(2250, $rule->apply($this->toExpressionLanguageValues($delivery)));
+        $this->assertEquals(2250, $this->apply($rule, $this->toExpressionLanguageValues($delivery)));
     }
 
     public function testEvaluatePackageBasedExpression()
@@ -97,7 +117,7 @@ class PricingRuleTest extends TestCase
         $delivery->addPackageWithQuantity($mediumPackage, 1);
 
         // 7€ + 2,5€ per package
-        $this->assertEquals(950, $rule->apply($this->toExpressionLanguageValues($delivery)));
+        $this->assertEquals(950, $this->apply($rule, $this->toExpressionLanguageValues($delivery)));
     }
 
     public function testEvaluateFixedPriceExpression()
@@ -112,7 +132,7 @@ class PricingRuleTest extends TestCase
         $this->assertTrue($rule->matches($this->toExpressionLanguageValues($delivery)));
 
         // 15€
-        $this->assertEquals(1500, $rule->apply($this->toExpressionLanguageValues($delivery)));
+        $this->assertEquals(1500, $this->apply($rule, $this->toExpressionLanguageValues($delivery)));
     }
 
     public function testEvaluatePricePercentageExpression()
@@ -130,7 +150,7 @@ class PricingRuleTest extends TestCase
         $language->registerProvider(new PricePercentageExpressionLanguageProvider());
 
         // +15%
-        $this->assertEquals(11500, $rule->apply($this->toExpressionLanguageValues($delivery), $language));
+        $this->assertEquals(11500, $this->apply($rule, $this->toExpressionLanguageValues($delivery), $language));
     }
 
     public function testEvaluatePriceRangeExpression()
@@ -149,7 +169,7 @@ class PricingRuleTest extends TestCase
 
 
         // 1€ per km = 3
-        $this->assertEquals(300, $rule->apply($this->toExpressionLanguageValues($delivery), $language));
+        $this->assertEquals(300, $this->apply($rule, $this->toExpressionLanguageValues($delivery), $language));
     }
 
     public function testEvaluatePricePerPackageExpression()
@@ -168,7 +188,7 @@ class PricingRuleTest extends TestCase
         $language->registerProvider(new PricePerPackageExpressionLanguageProvider());
 
         // 2,5€ per package
-        $this->assertEquals(250, $rule->apply($this->toExpressionLanguageValues($delivery), $language));
+        $this->assertEquals(250, $this->apply($rule, $this->toExpressionLanguageValues($delivery), $language));
     }
 
     public function testGetNameReturnsProductOptionName()

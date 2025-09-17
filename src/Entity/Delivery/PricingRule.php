@@ -192,7 +192,10 @@ class PricingRule
         return $language->evaluate($this->getExpression(), $values);
     }
 
-    public function apply(array $values, ?ExpressionLanguage $language = null): int
+    /**
+     * @return int|PriceEvaluation|PriceEvaluation[]
+     */
+    public function apply(array $values, ?ExpressionLanguage $language = null): int|PriceEvaluation|array
     {
         if (null === $language) {
             $language = new ExpressionLanguage();
@@ -200,22 +203,7 @@ class PricingRule
 
         $priceExpression = $this->getPrice();
 
-        /** @var int|PriceEvaluation|PriceEvaluation[] $result */
-        $result = $language->evaluate($priceExpression, $values);
-
-        $total = 0;
-
-        if (is_array($result)) {
-            foreach ($result as $item) {
-                $total += $item->unitPrice * $item->quantity;
-            }
-        } else if ($result instanceof PriceEvaluation) {
-            $total = $result->unitPrice * $result->quantity;
-        } else {
-            $total = $result;
-        }
-
-        return $total;
+        return $language->evaluate($priceExpression, $values);
     }
 
     public function isManualSupplement()
