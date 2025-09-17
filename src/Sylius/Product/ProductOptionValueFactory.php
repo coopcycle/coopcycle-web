@@ -21,7 +21,7 @@ class ProductOptionValueFactory
         return $this->decorated->createNew();
     }
 
-    public function createForPricingRule(PricingRule $pricingRule, string $name): ProductOptionValue {
+    public function createForPricingRule(PricingRule $pricingRule, ?string $name): ProductOptionValue {
         $priceExpression = $pricingRule->getPrice();
         $pricingType = $this->determinePricingType($priceExpression);
 

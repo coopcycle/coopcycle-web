@@ -161,6 +161,7 @@ class PricingRule
      */
     public function getProductOptionValues(): Collection
     {
+        // excludes disabled product option values
         return $this->productOptionValues;
     }
 
