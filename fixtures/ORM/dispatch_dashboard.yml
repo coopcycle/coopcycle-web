@@ -1,0 +1,245 @@
+include:
+  # Needs `setup_default.yml` to be loaded first with -s option
+  - stores_excl_setup.yml
+  - user_dispatcher.yml
+
+AppBundle\Entity\User:
+  courier_{1..5}:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - '<username()>'
+        - '12345678'
+        - '<email()>'
+        - true
+        - false
+    roles: [ 'ROLE_COURIER' ]
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+
+AppBundle\Entity\Task:
+  task_1:
+    address: "@address_1"
+    doneAfter: <identity(new \DateTime('today 10:30:00'))>
+    doneBefore: <identity(new \DateTime('today 11:00:00'))>
+    type: PICKUP
+  task_2:
+    address: "@address_2"
+    doneAfter: <identity(new \DateTime('today 11:30:00'))>
+    doneBefore: <identity(new \DateTime('today 12:00:00'))>
+  task_3:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('today 13:30:00'))>
+    doneBefore: <identity(new \DateTime('today 14:00:00'))>
+  task_4:
+    address: "@address_1"
+    doneAfter: <identity(new \DateTime('today 14:30:00'))>
+    doneBefore: <identity(new \DateTime('today 15:00:00'))>
+    type: PICKUP
+  task_5:
+    address: "@address_2"
+    doneAfter: <identity(new \DateTime('today 15:30:00'))>
+    doneBefore: <identity(new \DateTime('today 16:00:00'))>
+  task_6:
+    address: "@address_1"
+    doneAfter: <identity(new \DateTime('today 14:30:00'))>
+    doneBefore: <identity(new \DateTime('today 15:00:00'))>
+    type: PICKUP
+  task_7:
+    address: "@address_2"
+    doneAfter: <identity(new \DateTime('today 15:30:00'))>
+    doneBefore: <identity(new \DateTime('today 16:00:00'))>
+  task_8:
+    address: "@address_1"
+    doneAfter: <identity(new \DateTime('today 14:30:00'))>
+    doneBefore: <identity(new \DateTime('today 15:00:00'))>
+    type: PICKUP
+  task_9:
+    address: "@address_2"
+    doneAfter: <identity(new \DateTime('today 15:30:00'))>
+    doneBefore: <identity(new \DateTime('today 16:00:00'))>
+  task_10:
+    address: "@address_3"
+    doneAfter: <identity(new \DateTime('today 14:30:00'))>
+    doneBefore: <identity(new \DateTime('today 15:00:00'))>
+    type: PICKUP
+  task_11:
+    address: "@address_4"
+    doneAfter: <identity(new \DateTime('today 15:30:00'))>
+    doneBefore: <identity(new \DateTime('today 16:00:00'))>
+
+AppBundle\Entity\Delivery:
+  delivery_1:
+    __factory:
+      createWithTasks:
+        - '@task_1'
+        - '@task_2'
+        - '@task_3'
+    __calls:
+      - setOrder:
+          - '@order_1'
+      - setPickupRange:
+          - <identity(new \DateTime('today 10:30:00'))>
+          - <identity(new \DateTime('today 11:00:00'))>
+      - setDropoffRange:
+          - <identity(new \DateTime('today 12:00:00'))>
+          - <identity(new \DateTime('today 14:00:00'))>
+    store: "@store_1"
+  delivery_2:
+    __factory:
+      createWithTasks:
+        - '@task_4'
+        - '@task_5'
+    __calls:
+      - setOrder:
+          - '@order_2'
+      - setPickupRange:
+          - <identity(new \DateTime('today 14:00:00'))>
+          - <identity(new \DateTime('today 15:00:00'))>
+      - setDropoffRange:
+          - <identity(new \DateTime('today 15:00:00'))>
+          - <identity(new \DateTime('today 16:00:00'))>
+    store: "@store_1"
+  delivery_3:
+    __factory:
+      createWithTasks:
+        - '@task_6'
+        - '@task_7'
+    __calls:
+      - setOrder:
+          - '@order_3'
+      - setPickupRange:
+          - <identity(new \DateTime('today 14:00:00'))>
+          - <identity(new \DateTime('today 15:00:00'))>
+      - setDropoffRange:
+          - <identity(new \DateTime('today 15:00:00'))>
+          - <identity(new \DateTime('today 16:00:00'))>
+    store: "@store_1"
+  delivery_4:
+    __factory:
+      createWithTasks:
+        - '@task_8'
+        - '@task_9'
+    __calls:
+      - setOrder:
+          - '@order_4'
+      - setPickupRange:
+          - <identity(new \DateTime('today 14:00:00'))>
+          - <identity(new \DateTime('today 15:00:00'))>
+      - setDropoffRange:
+          - <identity(new \DateTime('today 15:00:00'))>
+          - <identity(new \DateTime('today 16:00:00'))>
+    store: "@store_1"
+  delivery_5:
+    __factory:
+      createWithTasks:
+        - '@task_10'
+        - '@task_11'
+    __calls:
+      - setOrder:
+          - '@order_5'
+      - setPickupRange:
+          - <identity(new \DateTime('today 14:00:00'))>
+          - <identity(new \DateTime('today 15:00:00'))>
+      - setDropoffRange:
+          - <identity(new \DateTime('today 15:00:00'))>
+          - <identity(new \DateTime('today 16:00:00'))>
+    store: "@store_1"
+
+AppBundle\Entity\Sylius\Order:
+  order_{1..5}:
+    __factory:
+      '@sylius.factory.order::createForRestaurant':
+        - "@resto_1"
+    __calls:
+      #      FIXME: that does not set an order number on each task (normally it's handled by OrderSubscriber)
+      - setNumber: [ "ORDER <current()>" ]
+      - setState: [ 'new' ]
+      - setShippingTimeRange: [ '@range_1' ]
+
+AppBundle\DataType\TsRange:
+  range_1:
+    __factory:
+      create:
+        - <identity(new \DateTime('today 10:00:00'))>
+        - <identity(new \DateTime('today 20:00:00'))>
+
+### All the following fixtures are duplicated from other files,
+### but since the fixtures are A REAL MESS/PAIN... I have no choice.
+### If I load `setup_default.yml` with `-s` I can't access references like `@tva_conso_immediate`
+### If I don't load that way, then I don't have channels, taxation, etc...
+
+AppBundle\Entity\LocalBusiness:
+  resto_1:
+    name: Resto 1
+    address: "@address_1"
+    openingHours: [ 'Mo-Su 09:30-23:59' ]
+    enabled: true
+    contract: "@contract_1"
+    edenred_enabled: false
+    edenred_trcard_enabled: false
+    edenred_sync_sent: false
+    __calls:
+      - setMinimumAmount: [ 'delivery', 1500 ]
+      - addProduct: [ "@pizza" ]
+
+AppBundle\Entity\Contract:
+  contract_1:
+    flatDeliveryPrice: 350
+    feeRate: 0.00
+
+AppBundle\Entity\Sylius\Product:
+  pizza:
+    code: PIZZA
+    currentLocale: fr
+    name: Pizza
+    slug: pizza
+    enabled: true
+    options: [ "@pizza_topping" ]
+    variants: [ "@pizza_pepperoni", "@pizza_extra_cheese" ]
+
+AppBundle\Entity\Sylius\ProductVariant:
+  pizza_pepperoni:
+    taxCategory: "@tva_cons_imm"
+    currentLocale: fr
+    name: Pizza Pepperoni
+    code: PIZZA_PEPPERONI
+    price: 900
+    optionValues: [ "@pizza_topping_pepperoni" ]
+  pizza_extra_cheese:
+    taxCategory: "@tva_cons_imm"
+    currentLocale: fr
+    name: Pizza Extra Cheese
+    code: PIZZA_EXTRA_CHEESE
+    price: 900
+    optionValues: [ "@pizza_topping_extra_cheese" ]
+
+AppBundle\Entity\Sylius\ProductOptionValue:
+  pizza_topping_pepperoni:
+    code: PIZZA_TOPPING_PEPPERONI
+    currentLocale: fr
+    value: Pepperoni
+  pizza_topping_extra_cheese:
+    code: PIZZA_TOPPING_EXTRA_CHEESE
+    currentLocale: fr
+    value: Extra cheese
+
+AppBundle\Entity\Sylius\ProductOption:
+  pizza_topping:
+    code: PIZZA_TOPPING
+    strategy: free
+    currentLocale: fr
+    name: Pizza topping
+    values: [ "@pizza_topping_pepperoni", "@pizza_topping_extra_cheese" ]
+
+AppBundle\Entity\Sylius\TaxCategory:
+  tva_cons_imm:
+    code: tva_cons_imm
+    name: "TVA consommation immédiate"
+    rates: [ "@tvai_10" ]
+
+AppBundle\Entity\Sylius\TaxRate:
+  tvai_10:
+    name: tax_rate.intermediary
+    code: FR_BASE_INTERMEDIARY
+    amount: 0.1
+    includedInPrice: true
+    calculator: default

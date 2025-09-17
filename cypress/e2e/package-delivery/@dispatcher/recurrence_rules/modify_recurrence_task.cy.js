@@ -1,9 +1,9 @@
 describe('Delivery with recurrence rule (role: dispatcher)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      'ORM/user_dispatcher.yml',
-      'ORM/tags.yml',
-      'ORM/store_advanced.yml',
+      'user_dispatcher.yml',
+      'tags.yml',
+      'store_advanced.yml',
     ])
 
     cy.setMockDateTime('2025-04-23 8:30:00')
@@ -41,7 +41,7 @@ describe('Delivery with recurrence rule (role: dispatcher)', () => {
       cy.get(`[data-testid="form-task-0"]`).within(() => {
         cy.get(`[data-testid=tags-select]`).click()
       })
-      cy.get('#react-select-3-option-0').click()
+      cy.reactSelect(0)
 
       // Dropoff
 
@@ -66,7 +66,7 @@ describe('Delivery with recurrence rule (role: dispatcher)', () => {
       cy.get(`[data-testid="form-task-1"]`).within(() => {
         cy.get(`[data-testid=tags-select]`).click()
       })
-      cy.get('#react-select-5-option-2').click()
+      cy.reactSelect(2)
 
       cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
@@ -110,7 +110,7 @@ describe('Delivery with recurrence rule (role: dispatcher)', () => {
         cy.get('[aria-label="Remove Important"]').click()
         cy.get(`[data-testid=tags-select]`).click()
       })
-      cy.get('#react-select-2-option-1').click()
+      cy.reactSelect(1)
 
       cy.betaEnterAddressAtPosition(
         1,
@@ -144,7 +144,7 @@ describe('Delivery with recurrence rule (role: dispatcher)', () => {
         cy.get('[aria-label="Remove Perishable"]').click()
         cy.get(`[data-testid=tags-select]`).click()
       })
-      cy.get('#react-select-3-option-0').click()
+      cy.reactSelect(0)
     }
     modifyTaskRelatedData()
 

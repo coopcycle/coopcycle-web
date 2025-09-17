@@ -1,3 +1,0 @@
-#!/usr/bin/env sh
-
-docker compose exec -e SYMFONY_ENV=test -e NODE_ENV=test webpack npm run jest "$@"

@@ -1,6 +1,6 @@
 context('Delivery (role: admin)', () => {
   beforeEach(() => {
-    cy.loadFixtures('../cypress/fixtures/stores.yml')
+    cy.loadFixtures('stores_legacy.yml')
     cy.setMockDateTime('2025-04-23 8:30:00')
     cy.login('admin', '12345678')
   })
@@ -41,8 +41,8 @@ context('Delivery (role: admin)', () => {
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.get('[data-testid="order_item"]')
-      .find('[data-testid="total"]')
+    cy.get('[data-testid="order-total-including-tax"]')
+      .find('[data-testid="value"]')
       .contains('€4.99')
 
     cy.get('[data-testid="order-edit"]').click()
@@ -62,8 +62,8 @@ context('Delivery (role: admin)', () => {
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.get('[data-testid="order_item"]')
-      .find('[data-testid="total"]')
+    cy.get('[data-testid="order-total-including-tax"]')
+      .find('[data-testid="value"]')
       .contains('€72.00')
   })
 })

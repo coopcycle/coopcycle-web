@@ -4,11 +4,11 @@ namespace AppBundle\Api\Dto;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
+use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Entity\Task;
 use AppBundle\Service\TagManager;
 use AppBundle\Sylius\Order\OrderInterface;
-use Hashids\Hashids;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use AppBundle\Sylius\Order\OrderItemInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
@@ -18,10 +18,8 @@ class DeliveryMapper
     public function __construct(
         private readonly TaskMapper $taskMapper,
         private readonly TagManager $tagManager,
-        private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly Hashids $hashids8,
         private readonly NormalizerInterface $normalizer,
-        private readonly ObjectNormalizer $symfonyNormalizer
+        private readonly ObjectNormalizer $symfonyNormalizer,
     ) {
     }
 
@@ -29,13 +27,18 @@ class DeliveryMapper
         Delivery $deliveryEntity,
         ?OrderInterface $order,
         ?ArbitraryPrice $arbitraryPrice,
-        bool $isSavedOrder
-    ): DeliveryDto {
-        $deliveryData = new DeliveryDto();
+        bool $isSavedOrder,
+        array $groups = []
+    ): DeliveryInputDto {
+
+        $context = !empty($groups) ? ['groups' => $groups] : [];
+
+        $deliveryData = new DeliveryInputDto();
 
         $tasks = $deliveryEntity->getTasks();
 
-        $deliveryData->tasks = array_map(function (Task $taskEntity) use ($tasks) {
+        $deliveryData->tasks = array_map(function (Task $taskEntity) use ($tasks, $context) {
+
             $taskData = new TaskDto();
 
             $taskData->id = $taskEntity->getId();
@@ -47,7 +50,7 @@ class DeliveryMapper
 
             $address = $taskEntity->getAddress();
             if ($address->getId() !== null) {
-                $taskData->address = $this->normalizer->normalize($address, 'jsonld');
+                $taskData->address = $this->normalizer->normalize($address, 'jsonld', $context);
                 // Workaround to properly normalize embedded relation
                 // Should become unnecessary when we normalise address using built-in normalizer
                 // See a comment at TaskDto Address property
@@ -57,7 +60,7 @@ class DeliveryMapper
             } else {
                 // a case when address doesn't have an ID (for example, in Recurrence rules)
                 // (we can't use API platform normalizer here, as it fails with: Unable to generate an IRI for the item)
-                $taskData->address = $this->symfonyNormalizer->normalize($address, 'json');
+                $taskData->address = $this->symfonyNormalizer->normalize($address, 'json', $context);
             }
 
             $taskData->after = $taskEntity->getAfter();
@@ -89,8 +92,9 @@ class DeliveryMapper
                 $deliveryOrderData->id = $order->getId();
             }
 
-            $deliveryOrderData->total = $order->getTotal();
-            $deliveryOrderData->taxTotal = $order->getTaxTotal();
+            $deliveryOrderData->manualSupplements = $this->extractManualSupplementsFromOrder(
+                $order
+            );
         }
 
         $deliveryOrderData->arbitraryPrice = $arbitraryPrice ? new ArbitraryPriceDto(
@@ -102,12 +106,46 @@ class DeliveryMapper
 
         if ($deliveryEntity->getId()) {
             $deliveryData->id = $deliveryEntity->getId();
-
-            $deliveryData->trackingUrl = $this->urlGenerator->generate('public_delivery', [
-                'hashid' => $this->hashids8->encode($deliveryEntity->getId()),
-            ], UrlGeneratorInterface::ABSOLUTE_URL);
         }
 
         return $deliveryData;
+    }
+
+    /**
+     * @param OrderInterface $order
+     * @return ManualSupplementDto[]
+     */
+    private function extractManualSupplementsFromOrder(OrderInterface $order): array
+    {
+        $manualSupplements = [];
+
+        foreach ($order->getItems() as $orderItem) {
+            /** @var OrderItemInterface $orderItem */
+            $variant = $orderItem->getVariant();
+
+            if (null === $variant) {
+                continue;
+            }
+
+            foreach ($variant->getOptionValues() as $productOptionValue) {
+                /** @var ProductOptionValue $productOptionValue */
+
+                // Find the PricingRule linked to this ProductOptionValue
+                $pricingRule = $productOptionValue->getPricingRule();
+
+                if (null !== $pricingRule && $pricingRule->isManualSupplement()) {
+                    // Create ManualSupplementDto
+                    $manualSupplementDto = new ManualSupplementDto();
+                    $manualSupplementDto->pricingRule = $pricingRule;
+                    //FIXME: update when we properly model unit price and quantity in https://github.com/coopcycle/coopcycle/issues/441
+//                    $manualSupplementDto->quantity = $variant->getQuantityForOptionValue($productOptionValue);
+                    $manualSupplementDto->quantity = 1;
+
+                    $manualSupplements[] = $manualSupplementDto;
+                }
+            }
+        }
+
+        return $manualSupplements;
     }
 }

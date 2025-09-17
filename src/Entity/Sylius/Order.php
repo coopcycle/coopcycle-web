@@ -14,7 +14,6 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Cart\DeleteItem as DeleteCartItem;
 use AppBundle\Action\Cart\UpdateItem as UpdateCartItem;
-use AppBundle\Action\MyOrders;
 use AppBundle\Action\Order\Accept as OrderAccept;
 use AppBundle\Action\Order\AddPlayer;
 use AppBundle\Action\Order\Assign as OrderAssign;
@@ -56,6 +55,7 @@ use AppBundle\Api\State\InvoiceLineItemsGroupedByOrganizationProvider;
 use AppBundle\Api\State\InvoiceLineItemsProvider;
 use AppBundle\Api\State\LoopeatFormatsProcessor;
 use AppBundle\Api\State\LoopeatReturnsProcessor;
+use AppBundle\Api\State\MyOrdersProvider;
 use AppBundle\Api\State\ValidateOrderProvider;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
@@ -394,7 +394,7 @@ use Webmozart\Assert\Assert as WMAssert;
             denormalizationContext: ['groups' => ['order_create', 'address_create']],
             write: false
         ),
-        new GetCollection(uriTemplate: '/me/orders', controller: MyOrders::class),
+        new GetCollection(uriTemplate: '/me/orders', provider: MyOrdersProvider::class),
         new GetCollection(
             // FIXME Maybe it shouldn't be a path param
             // It should be like /invoice_line_items?grouped_by_organization=1
@@ -554,6 +554,18 @@ class Order extends BaseOrder implements OrderInterface
     public function setCustomer(?CustomerInterface $customer): void
     {
         $this->customer = $customer;
+    }
+
+    public function getItemsSorted(): Collection
+    {
+        // Make sure items are always in the same order
+        // We order them by id asc
+
+        $itemsArray = $this->items->toArray();
+        usort($itemsArray, function (OrderItemInterface $a, OrderItemInterface $b) {
+            return $a->getId() <=> $b->getId();
+        });
+        return new ArrayCollection($itemsArray);
     }
 
     public function getTaxTotal(): int
@@ -1242,7 +1254,7 @@ class Order extends BaseOrder implements OrderInterface
     }
 
     #[SerializedName('assignedTo')]
-    #[Groups(['order', 'order_minimal'])]
+    #[Groups(['order', 'foodtech_order_minimal'])]
     public function getAssignedTo()
     {
         if (null !== $this->getDelivery()) {
@@ -1432,7 +1444,7 @@ class Order extends BaseOrder implements OrderInterface
         return null;
     }
 
-    public function getNotificationRecipients(): Collection
+    public function getNotificationRecipients(): array
     {
         $recipients = new ArrayCollection();
 
@@ -1442,7 +1454,7 @@ class Order extends BaseOrder implements OrderInterface
             }
         }
 
-        return $recipients;
+        return array_unique($recipients->toArray());
     }
 
     public function supportsEdenred(): bool
@@ -1918,20 +1930,6 @@ class Order extends BaseOrder implements OrderInterface
         return !is_null($this->getDelivery()?->getStore());
     }
 
-    public function getDeliveryItem(): ?OrderItemInterface
-    {
-        if ($this->isFoodtech()) {
-            //FIXME: delivery is modeled as an item only in non-foodtech orders
-            return null;
-        }
-
-        if ($deliveryItem = $this->getItems()->first()) {
-            return $deliveryItem; // @phpstan-ignore return.type
-        } else {
-            return null;
-        }
-    }
-
     public function getDeliveryPrice(): PriceInterface
     {
         if ($this->isFoodtech()) {
@@ -1939,22 +1937,28 @@ class Order extends BaseOrder implements OrderInterface
             return new PricingRulesBasedPrice(0);
         }
 
-        $deliveryItem = $this->getDeliveryItem();
+        /** @var OrderItemInterface|false $deliveryItem */
+        $deliveryItem = $this->getItems()->first();
 
-        if (null === $deliveryItem) {
+        if (false === $deliveryItem) {
             throw new \LogicException('Order has no delivery price');
         }
 
         $productVariant = $deliveryItem->getVariant();
 
         if ($pricingRulesSet = $productVariant->getPricingRuleSet()) {
-            return new PricingRulesBasedPrice($deliveryItem->getUnitPrice(), $pricingRulesSet);
+            // An order might contain multiple order items, that's why we need to return order total
+            // we also assume here that all order items will have the same pricingRulesSet
+            return new PricingRulesBasedPrice($this->getTotal(), $pricingRulesSet);
         } else {
             // Some productVariants created before $pricingRulesSet was introduced
             // may have a price calculated based on a pricing rule set, but pricingRulesSet is null
 
+            // Normally there will be only one order item when using an arbitrary price
+            // but we return order total just in case
+
             // custom price
-            return new ArbitraryPrice($productVariant->getName(), $deliveryItem->getUnitPrice());
+            return new ArbitraryPrice($productVariant->getName(), $this->getTotal());
         }
     }
 

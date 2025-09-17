@@ -3,16 +3,20 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Contract;
+use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Store;
+use AppBundle\Sylius\Product\ProductOptionValueFactory;
 use Doctrine\ORM\EntityManagerInterface;
-
 
 class PricingRuleSetManager
 {
-    public function __construct(private EntityManagerInterface $entityManager)
-    {}
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ProductOptionValueFactory $productOptionValueFactory,
+    ) {
+    }
 
     /**
      * @return mixed[]
@@ -63,5 +67,20 @@ class PricingRuleSetManager
      */
     public function getDeliveryForms(PricingRuleSet $pricingRuleSet) {
         return $this->entityManager->getRepository(DeliveryForm::class)->findBy(['pricingRuleSet' => $pricingRuleSet]);
+    }
+
+    public function setPricingRuleName(PricingRule $pricingRule, string $name): void
+    {
+        $productOptionValue = $pricingRule->getProductOptionValue();
+
+        if (null !== $productOptionValue && $name === $productOptionValue->getValue()) {
+            return;
+        }
+
+        // Do not modify existing ProductOptionValue, create a new one for each change
+        $productOptionValue = $this->productOptionValueFactory->createForPricingRule($pricingRule, $name);
+        $pricingRule->setProductOptionValue($productOptionValue);
+
+        $this->entityManager->persist($productOptionValue);
     }
 }

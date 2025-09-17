@@ -5,15 +5,14 @@ namespace AppBundle\Entity\Delivery;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
-// use AppBundle\Action\PricingRule\Evaluate as EvaluateController;
 use AppBundle\Api\State\EvaluatePricingRuleProcessor;
-use AppBundle\Api\Dto\DeliveryDto;
+use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\YesNoOutput;
+use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Validator\Constraints\PricingRule as AssertPricingRule;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
@@ -25,7 +24,7 @@ use Symfony\Component\Validator\Constraints as Assert;
             openapiContext: ['summary' => 'Evaluates a PricingRule'],
             denormalizationContext: ['groups' => ['delivery_create', 'pricing_deliveries']],
             security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_STORE\')',
-            input: DeliveryDto::class,
+            input: DeliveryInputDto::class,
             output: YesNoOutput::class,
             processor: EvaluatePricingRuleProcessor::class
         )
@@ -37,6 +36,7 @@ class PricingRule
     /**
      * @var int
      */
+    #[Groups(['pricing_rule_set:read'])]
     protected $id;
 
     const TARGET_DELIVERY = 'DELIVERY';
@@ -50,23 +50,34 @@ class PricingRule
      */
     const LEGACY_TARGET_DYNAMIC = 'LEGACY_TARGET_DYNAMIC';
 
-    #[Groups(['pricing_deliveries'])]
+    #[Groups(['pricing_deliveries', 'pricing_rule_set:read', 'pricing_rule_set:write'])]
     #[Assert\Choice(choices: ["DELIVERY", "TASK", "LEGACY_TARGET_DYNAMIC"])]
     protected string $target = self::TARGET_DELIVERY;
 
-    #[Groups(['original_rules', 'pricing_deliveries'])]
+    #[Groups(['original_rules', 'pricing_deliveries', 'pricing_rule_set:read', 'pricing_rule_set:write'])]
     #[Assert\Type(type: 'string')]
     #[Assert\NotBlank]
     protected $expression;
 
-    #[Groups(['original_rules', 'pricing_deliveries'])]
+    #[Groups(['original_rules', 'pricing_deliveries', 'pricing_rule_set:read', 'pricing_rule_set:write'])]
     #[Assert\Type(type: 'string')]
     protected $price;
 
-    #[Groups(['original_rules', 'pricing_deliveries'])]
+    #[Groups(['original_rules', 'pricing_deliveries', 'pricing_rule_set:read', 'pricing_rule_set:write'])]
     protected $position;
 
     protected $ruleSet;
+
+    /**
+     * Temporary storage for name during processing
+     * @var string|null
+     */
+    protected $nameInput;
+
+    /**
+     * @var ?ProductOptionValue
+     */
+    protected $productOptionValue;
 
     /**
      * Gets id.
@@ -136,6 +147,41 @@ class PricingRule
         return $this;
     }
 
+    public function getProductOptionValue(): ?ProductOptionValue
+    {
+        return $this->productOptionValue;
+    }
+
+    public function setProductOptionValue(?ProductOptionValue $productOptionValue): self
+    {
+        $this->productOptionValue = $productOptionValue;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getNameInput(): ?string
+    {
+        return $this->nameInput;
+    }
+
+    #[Groups(['pricing_rule_set:write'])]
+    #[SerializedName("name")]
+    public function setNameInput(?string $nameInput): self
+    {
+        $this->nameInput = $nameInput;
+
+        return $this;
+    }
+
+    #[Groups(['pricing_deliveries', 'pricing_rule_set:read'])]
+    public function getName(): ?string
+    {
+        return $this->productOptionValue?->getValue();
+    }
+
     public function matches(array $values, ?ExpressionLanguage $language = null)
     {
         if (null === $language) {
@@ -145,7 +191,7 @@ class PricingRule
         return $language->evaluate($this->getExpression(), $values);
     }
 
-    public function apply(array $values, ?ExpressionLanguage $language = null): ProductOption
+    public function apply(array $values, ?ExpressionLanguage $language = null): int
     {
         if (null === $language) {
             $language = new ExpressionLanguage();
@@ -154,17 +200,11 @@ class PricingRule
         $priceExpression = $this->getPrice();
         $result = $language->evaluate($priceExpression, $values);
 
-        if (str_contains($priceExpression, 'price_percentage')) {
-            return new ProductOption(
-                $this,
-                0,
-                $result
-            );
-        } else {
-            return new ProductOption(
-                $this,
-                $result,
-            );
-        }
+        return $result;
+    }
+
+    public function isManualSupplement()
+    {
+        return $this->getExpression() === 'false';
     }
 }

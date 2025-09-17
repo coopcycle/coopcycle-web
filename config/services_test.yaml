@@ -26,6 +26,10 @@ services:
         tags:
             - { name: fidry_alice_data_fixtures.processor }
 
+    AppBundle\Fixtures\AliceDataFixtures\DeliveryOrderProcessor:
+        tags:
+            - { name: fidry_alice_data_fixtures.processor }
+
     urbantz_client_mock:
         class: Symfony\Component\HttpClient\MockHttpClient
         arguments:

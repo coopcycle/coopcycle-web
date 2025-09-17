@@ -1,6 +1,6 @@
 context('Setup simple km-based pricing (role: admin)', () => {
   beforeEach(() => {
-    cy.loadFixturesWithSetup('ORM/user_admin.yml')
+    cy.loadFixturesWithSetup('user_admin.yml')
     cy.login('admin', '12345678')
   })
 

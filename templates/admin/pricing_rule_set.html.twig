@@ -22,6 +22,14 @@
 
 {% block content %}
   {% set pricing_rule_set = form.vars.value %}
+
+  {% include '_partials/legacy_new_switch_alert.html.twig' with {
+    message: 'This is the classic version of the pricing rule set form.',
+    button_text: 'Try New Beta Version',
+    button_url: pricing_rule_set.id ? path('admin_deliveries_pricing_ruleset_beta', { id: pricing_rule_set.id }) : path('admin_deliveries_pricing_ruleset_beta_new'),
+    button_class: 'btn-primary'
+  } %}
+
   {{ form_start(form) }}
 
     {{ form_errors(form) }}

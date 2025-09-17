@@ -9,10 +9,18 @@ use ApiPlatform\State\Pagination\TraversablePaginator;
 use ApiPlatform\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGenerator;
 use AppBundle\Api\Dto\InvoiceLineItem;
+use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\ExportCommand;
 use AppBundle\Entity\Sylius\Order;
-use AppBundle\Entity\Task;
+use AppBundle\Entity\Sylius\ProductRepository;
 use AppBundle\Service\SettingsManager;
+use AppBundle\Sylius\Order\AdjustmentInterface;
+use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Order\OrderItemInterface;
+use AppBundle\Sylius\Product\ProductInterface;
+use AppBundle\Sylius\Product\ProductVariantFactory;
+use AppBundle\Sylius\Product\ProductVariantInterface;
+use AppBundle\Utils\PriceFormatter;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
@@ -23,18 +31,22 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 final class InvoiceLineItemsProvider implements ProviderInterface
 {
     public function __construct(
+        private readonly ProductRepository $productRepository,
+        private readonly ProductVariantFactory $productVariantFactory,
         private readonly EntityManagerInterface $entityManager,
         private readonly Security $security,
         private readonly RequestStack $requestStack,
         private readonly SettingsManager $settingsManager,
         private readonly TranslatorInterface $translator,
+        private readonly PriceFormatter $priceFormatter,
         private readonly string $locale,
+        private readonly bool $packageDeliveryUiPriceBreakdownEnabled,
         private readonly iterable $collectionExtensions,
     )
     {
     }
 
-    public function provide(Operation $operation, array $uriVariables = [], array $context = [])
+    public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
         $resourceClass = $operation->getClass();
 
@@ -98,7 +110,9 @@ final class InvoiceLineItemsProvider implements ProviderInterface
         // Optimization: to avoid extra queries preload one-to-many relations that will be used later
         $this->preloadEntities($orders);
 
-        $invoiceLineItems = array_map(fn ($o) => $this->convertToInvoiceLineItem($o), $orders);
+        $onDemandDeliveryProduct = $this->productRepository->findOnDemandDeliveryProduct();
+
+        $invoiceLineItems = array_map(fn ($o) => $this->convertToInvoiceLineItem($o, $onDemandDeliveryProduct), $orders);
 
         if ($data instanceof PaginatorInterface) {
             return new TraversablePaginator(
@@ -128,7 +142,7 @@ final class InvoiceLineItemsProvider implements ProviderInterface
         $preloader->preload($taskCollectionItems, 'task');
     }
 
-    private function convertToInvoiceLineItem(Order $order): InvoiceLineItem
+    private function convertToInvoiceLineItem(Order $order, ProductInterface $onDemandDeliveryProduct): InvoiceLineItem
     {
         $delivery = $order->getDelivery();
         $store = $delivery?->getStore();
@@ -143,37 +157,49 @@ final class InvoiceLineItemsProvider implements ProviderInterface
 
         $invoiceDate = new \DateTime();
 
-        $deliveryItem = $order->getDeliveryItem();
-
         $product = '';
 
         $description = '';
 
         $orderDate = $order->getShippingTimeRange()?->getUpper() ?? $order->getCreatedAt();
 
-        if ($delivery && $deliveryItem) {
-            $productVariant = $deliveryItem->getVariant();
-            $product = $productVariant->getProduct();
+        $descriptionParts = [];
 
-            $descriptionParts = [];
+        if ($delivery && $store) {
+            $product = $onDemandDeliveryProduct->getName();
+            $descriptionParts[] = $onDemandDeliveryProduct->getName();
 
-            $descriptionParts[] = $product->getName();
-            $descriptionParts[] = $productVariant->getName();
+            if ($this->packageDeliveryUiPriceBreakdownEnabled) {
+                /** @var OrderItemInterface $item */
+                foreach ($order->getItems() as $item) {
+                    $productVariant = $item->getVariant();
 
-            $pickupLabel = $this->translator->trans(sprintf('task.type.%s', Task::TYPE_PICKUP));
-            $dropoffLabel = $this->translator->trans(sprintf('task.type.%s', Task::TYPE_DROPOFF));
+                    $parts = [];
+                    $adjustments = array_merge(
+                        // MENU_ITEM_MODIFIER_ADJUSTMENT is not used for package delivery orders since ~v3.42; next line should not be needed in some time
+                        $item->getAdjustmentsSorted(AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT)->toArray(),
+                        $item->getAdjustmentsSorted(AdjustmentInterface::ORDER_ITEM_PACKAGE_DELIVERY_CALCULATED_ADJUSTMENT)->toArray(),
+                        $item->getAdjustmentsSorted(AdjustmentInterface::ORDER_ITEM_PACKAGE_DELIVERY_MANUAL_SUPPLEMENT_ADJUSTMENT)->toArray()
+                    );
+                    
+                    foreach ($adjustments as $adjustment) {
+                        $parts[] = sprintf('%s: %s',
+                            $adjustment->getLabel(),
+                            $this->priceFormatter->formatWithSymbol($adjustment->getAmount())
+                        );
+                    }
 
-            if (str_contains($productVariant->getName(), $pickupLabel) || str_contains($productVariant->getName(), $dropoffLabel)) {
-                // Added to avoid duplicate task information for orders created during beta testing in January 2025
-                // Could be removed after a few months
-            } else {
-                foreach ($delivery->getTasks() as $task) {
-                    $clientName = $task->getAddress()->getName();
-
-                    $descriptionParts[] = sprintf('%s: %s',
-                        $this->translator->trans(sprintf('task.type.%s', $task->getType())),
-                        $clientName ?: $task->getAddress()->getStreetAddress());
+                    if (count($parts) > 0) {
+                        $descriptionParts[] = sprintf('%s: %s',
+                            $productVariant->getName(),
+                            implode(', ', $parts)
+                        );
+                    } else {
+                        $descriptionParts[] = $productVariant->getName();
+                    }
                 }
+            } else {
+                $descriptionParts = array_merge($descriptionParts, $this->legacyDescription($order, $delivery));
             }
 
             $descriptionParts[] = Carbon::instance($orderDate)->locale($this->locale)->isoFormat('L');
@@ -209,5 +235,55 @@ final class InvoiceLineItemsProvider implements ProviderInterface
             $order->getTotal(),
             $exports
         );
+    }
+
+    /**
+     * @return string[]
+     */
+    private function legacyDescription(OrderInterface $order, Delivery $delivery): array
+    {
+        $deliveryItem = $order->getItems()->first();
+
+        if (false === $deliveryItem) {
+            return [];
+        }
+
+        $descriptionParts = [];
+
+        if (1 === count($order->getItems())) {
+            // either legacy format (order created before price breakdown is introduced)
+            // or arbitrary price
+            // or price breakdown format
+
+            $productVariant = $deliveryItem->getVariant();
+
+            if ($this->isPriceBreakdownProductVariant($productVariant)) {
+                $descriptionParts[] = $this->productVariantFactory->generateLegacyProductVariantName($delivery);
+            } else {
+                // legacy format
+                // or arbitrary price
+                $descriptionParts[] = $productVariant->getName();
+            }
+        } else {
+            // price breakdown format
+            $descriptionParts[] = $this->productVariantFactory->generateLegacyProductVariantName($delivery);
+        }
+
+        foreach ($delivery->getTasks() as $task) {
+            $clientName = $task->getAddress()->getName();
+
+            $descriptionParts[] = sprintf('%s: %s',
+                $this->translator->trans(sprintf('task.type.%s', $task->getType())),
+                $clientName ?: $task->getAddress()->getStreetAddress());
+        }
+
+        return $descriptionParts;
+    }
+
+    private function isPriceBreakdownProductVariant(ProductVariantInterface $productVariant): bool
+    {
+        return str_contains($productVariant->getName(), $this->translator->trans('pricing.variant.order_supplement'))
+            || str_contains($productVariant->getName(), $this->translator->trans('pricing.variant.pickup_point'))
+            || str_contains($productVariant->getName(), $this->translator->trans('pricing.variant.dropoff_point'));
     }
 }

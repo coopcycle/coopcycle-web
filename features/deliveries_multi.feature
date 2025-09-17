@@ -38,6 +38,9 @@ Feature: Multi-step deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -53,7 +56,6 @@ Feature: Multi-step deliveries
               "latitude":@double@,
               "longitude":@double@
             },
-            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -69,7 +71,6 @@ Feature: Multi-step deliveries
           "packages": [],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -87,7 +88,6 @@ Feature: Multi-step deliveries
               "latitude":@double@,
               "longitude":@double@
             },
-            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -103,12 +103,18 @@ Feature: Multi-step deliveries
           "packages": [],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -162,6 +168,9 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":@string@,
@@ -178,7 +187,6 @@ Feature: Multi-step deliveries
               "latitude":@number@,
               "longitude":@number@
             },
-            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -196,13 +204,12 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":4,
               "volume_per_package": 3,
-              "short_code": "AB",
+              "short_code": "XL",
               "labels":@array@
             }
           ],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -221,7 +228,6 @@ Feature: Multi-step deliveries
               "latitude":@number@,
               "longitude":@number@
             },
-            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -239,18 +245,24 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2,
               "volume_per_package": 3,
-              "short_code": "AB",
+              "short_code": "XL",
               "labels":@array@
             }
           ],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -276,7 +288,7 @@ Feature: Multi-step deliveries
           },
           {
             "type": "pickup",
-            "address": "22, Rue de la Paix Paris",
+            "address": "101, Rue de la Paix Paris",
             "before": "tomorrow 13:15"
           },
           {
@@ -300,6 +312,9 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":[
           {
             "@type":"Task",
@@ -325,7 +340,7 @@ Feature: Multi-step deliveries
                 "name":"XL",
                 "quantity":2,
                 "volume_per_package": 3,
-                "short_code": "AB",
+                "short_code": "XL",
                 "labels":@array@
               }
             ],
@@ -347,8 +362,7 @@ Feature: Multi-step deliveries
               "latitude":@double@,
               "longitude":@double@
             },
-            "provider": null,
-            "streetAddress":"24 Rue de la Paix, 75002 Paris",
+            "streetAddress":"Rue de la Paix 24, 75002 Paris",
             "telephone":null,
             "name":null,
             "description": null
@@ -362,7 +376,6 @@ Feature: Multi-step deliveries
           "packages":[],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -378,11 +391,10 @@ Feature: Multi-step deliveries
             "contactName":null,
             "geo":{
               "@type":"GeoCoordinates",
-              "latitude":48.856872,
-              "longitude":2.354618
+              "latitude":48.8566,
+              "longitude":2.3522
             },
-            "provider": null,
-            "streetAddress":"48 Rue de Rivoli, 75004 Paris",
+            "streetAddress":"Rue de Rivoli 48, 75004 Paris",
             "telephone":null,
             "name":null,
             "description": null
@@ -399,18 +411,24 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2,
               "volume_per_package": 3,
-              "short_code": "AB",
+              "short_code": "XL",
               "labels":@array@
             }
           ],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -435,7 +453,7 @@ Feature: Multi-step deliveries
           },
           {
             "type": "pickup",
-            "address": "22, Rue de la Paix Paris"
+            "address": "101, Rue de la Paix Paris"
           },
           {
             "type": "dropoff",
@@ -458,6 +476,9 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"/api/tasks/1",
@@ -474,8 +495,7 @@ Feature: Multi-step deliveries
               "latitude":@double@,
               "longitude":@double@
             },
-            "provider": null,
-            "streetAddress":"24 Rue de la Paix, 75002 Paris",
+            "streetAddress":"Rue de la Paix 24, 75002 Paris",
             "telephone":null,
             "name":null,
             "description": null
@@ -489,7 +509,6 @@ Feature: Multi-step deliveries
           "packages":[],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
@@ -505,11 +524,10 @@ Feature: Multi-step deliveries
             "contactName":null,
             "geo":{
               "@type":"GeoCoordinates",
-              "latitude":48.856872,
-              "longitude":2.354618
+              "latitude":48.8566,
+              "longitude":2.3522
             },
-            "provider": null,
-            "streetAddress":"48 Rue de Rivoli, 75004 Paris",
+            "streetAddress":"Rue de Rivoli 48, 75004 Paris",
             "telephone":null,
             "name":null,
             "description": null
@@ -526,18 +544,24 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2,
               "volume_per_package": 3,
-              "short_code": "AB",
+              "short_code": "XL",
               "labels":@array@
             }
           ],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
@@ -555,7 +579,7 @@ Feature: Multi-step deliveries
         "tasks": [
           {
             "type": "pickup",
-            "address": "24 Rue de Rivoli, 75004 Paris",
+            "address": "44 Rue de Rivoli, 75004 Paris",
             "after": "tomorrow 13:00",
             "before": "tomorrow 13:15"
           },
@@ -567,7 +591,7 @@ Feature: Multi-step deliveries
           },
           {
             "type": "dropoff",
-            "address": "45 Rue de Rivoli, 75001 Paris",
+            "address": "48 Rue de Rivoli, 75004 Paris",
             "after": "tomorrow 13:15",
             "before": "tomorrow 13:30"
           }
@@ -585,6 +609,7 @@ Feature: Multi-step deliveries
           "suggestions": [
             {
               "@type": "OptimizationSuggestion",
+              "@id": @string@,
               "gain": {
                 "type": "distance",
                 "amount": @integer@
@@ -625,7 +650,7 @@ Feature: Multi-step deliveries
           },
           {
             "type": "pickup",
-            "address": "22, Rue de la Paix Paris",
+            "address": "101, Rue de la Paix Paris",
             "before": "tomorrow 13:15",
             "weight": 1500,
             "packages": [
@@ -649,6 +674,9 @@ Feature: Multi-step deliveries
         "@type":"http://schema.org/ParcelDelivery",
         "@id":"/api/deliveries/1",
         "id":@integer@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "pickup":{"@*@":"@*@"},
         "dropoff":{"@*@":"@*@"},
         "tasks":[
@@ -662,7 +690,7 @@ Feature: Multi-step deliveries
                 "name":"XL",
                 "quantity":2,
                 "volume_per_package": 3,
-                "short_code": "AB",
+                "short_code": "XL",
                 "labels":@array@
               }
             ],
@@ -678,7 +706,7 @@ Feature: Multi-step deliveries
                 "name":"XL",
                 "quantity":3,
                 "volume_per_package": 3,
-                "short_code": "AB",
+                "short_code": "XL",
                 "labels":@array@
               }
             ],
@@ -694,7 +722,7 @@ Feature: Multi-step deliveries
                 "name":"XL",
                 "quantity":5,
                 "volume_per_package": 3,
-                "short_code": "AB",
+                "short_code": "XL",
                 "labels":@array@
               }
             ],
@@ -702,7 +730,14 @@ Feature: Multi-step deliveries
           }
         ],
         "trackingUrl":@string@,
-        "order":{"@*@":"@*@"}
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
     Given I add "Content-Type" header equal to "application/ld+json"
@@ -722,7 +757,7 @@ Feature: Multi-step deliveries
             "type":"XL",
             "quantity":2,
             "volume_per_package":3,
-            "short_code":"AB",
+            "short_code":"XL",
             "labels":"@array@.count(2)"
           }
         ],

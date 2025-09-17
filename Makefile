@@ -19,25 +19,27 @@ osrm:
 	@docker compose run --rm osrm osrm-extract -p /opt/bicycle.lua /data/data.osm.pbf
 	@docker compose run --rm osrm osrm-partition /data/data.osrm
 	@docker compose run --rm osrm osrm-customize /data/data.osrm
+	@docker compose restart osrm
 
 phpunit:
 	@docker compose exec php php bin/console doctrine:schema:update --env=test --force --no-interaction --quiet
-	@docker compose exec php php vendor/bin/phpunit
+	@docker compose exec php php vendor/bin/phpunit ${ARGS}
 # Add as annotation at the top of any testcase:
 # /**
 # * @group only
 # */
 # public function testSomething()..
 phpunit-only:
-	@clear && docker compose exec php php vendor/bin/phpunit --group only
+	@clear && make phpunit ARGS="--group only"
 
 behat:
-	@docker compose exec -e APP_ENV=test php php vendor/bin/behat
+	@docker compose exec -e APP_ENV=test php php vendor/bin/behat ${ARGS}
+
 # Add as annotation at the top of any scenario/feature:
 # @only
 # Scenario: Some description..
 behat-only:
-	@clear && docker compose exec -e APP_ENV=test php php vendor/bin/behat -v --tags="@only"
+	@clear && make behat ARGS="-v --tags=@only"
 
 cypress:
 	@npm run e2e
@@ -56,7 +58,7 @@ cypress-install:
 	@npm install
 
 jest:
-	@docker compose exec -e APP_ENV=test -e NODE_ENV=test webpack npm run jest
+	@docker compose exec -e APP_ENV=test -e NODE_ENV=test webpack npm run jest ${ARGS}
 
 # Just an alias
 migrations: migrations-migrate
@@ -76,7 +78,7 @@ enable-xdebug:
 	@docker compose restart php nginx
 
 start:
-	@clear && docker compose up --remove-orphans
+	@clear && docker compose stop && docker compose up --remove-orphans
 
 # Once everything is restarted, you need to run in another terminal: `make setup`
 # And after setup is done, you need to stop/restart the containers again with: `make start`
@@ -102,11 +104,11 @@ lint:
 test: phpunit jest behat cypress
 
 testdata-dispatch:
-	@docker compose exec php bin/console coopcycle:fixtures:load -s cypress/fixtures/setup_default.yml -f cypress/fixtures/dispatch.yml --env test
+	@docker compose exec php bin/console coopcycle:fixtures:load -s fixtures/ORM/setup_default.yml -f fixtures/ORM/dispatch.yml --env test
 testdata-foodtech:
-	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/foodtech.yml --env test
+	@docker compose exec php bin/console coopcycle:fixtures:load -f fixtures/ORM/foodtech.yml --env test
 testdata-high-volume-instance:
-	@docker compose exec php bin/console coopcycle:fixtures:load -f cypress/fixtures/high_volume_instance.yml --env test
+	@docker compose exec php bin/console coopcycle:fixtures:load -f fixtures/ORM/high_volume_instance.yml --env test
 
 demodata:
 	@docker compose exec php bin/demo --env=dev

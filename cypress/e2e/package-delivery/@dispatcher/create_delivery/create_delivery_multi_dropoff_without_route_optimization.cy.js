@@ -1,9 +1,9 @@
 context('Delivery (role: dispatcher)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      'ORM/user_dispatcher.yml',
-      'ORM/tags.yml',
-      'ORM/store_multi_dropoff.yml',
+      'user_dispatcher.yml',
+      'tags.yml',
+      'store_multi_dropoff.yml',
     ])
 
     cy.setMockDateTime('2025-04-23 8:30:00')
@@ -63,8 +63,8 @@ context('Delivery (role: dispatcher)', () => {
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.get('[data-testid="order_item"]')
-      .find('[data-testid="total"]')
+    cy.get('[data-testid="order-total-including-tax"]')
+      .find('[data-testid="value"]')
       .contains('€4.99')
 
     cy.get('[data-testid="order-edit"]').click()
@@ -100,6 +100,6 @@ context('Delivery (role: dispatcher)', () => {
       address: /26,? Av. Mathurin Moreau,? 75019,? Paris,? France/,
     })
 
-    cy.get('[data-testid="tax-included-previous"]').contains('4,99 €')
+    cy.get('[data-testid="tax-included"]').contains('4,99 €')
   })
 })

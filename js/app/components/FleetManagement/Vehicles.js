@@ -55,9 +55,9 @@ export default () => {
   const fetchAll = () => {
     setIsLoading(true)
     Promise.all([
-      httpClient.get(window.Routing.generate("_api_/warehouses.{_format}_get_collection")),
-      httpClient.get(window.Routing.generate("_api_/trailers.{_format}_get_collection")),
-      httpClient.get(window.Routing.generate("_api_/vehicles.{_format}_get_collection")),
+      httpClient.get(window.Routing.generate("_api_/warehouses{._format}_get_collection")),
+      httpClient.get(window.Routing.generate("_api_/trailers{._format}_get_collection")),
+      httpClient.get(window.Routing.generate("_api_/vehicles{._format}_get_collection")),
     ]).then(values => {
       const [warehouseRes, trailerRes, vehicleRes] = values
       setWarehouses(warehouseRes.response["hydra:member"])
@@ -127,7 +127,7 @@ export default () => {
     {
       key: "action",
       align: "right",
-      render: (record) => <DeleteIcon deleteUrl={"_api_/vehicles/{id}.{_format}_delete"}  objectId={record.id} objectName={record.name} afterDeleteFetch={fetchAll} />,
+      render: (record) => <DeleteIcon deleteUrl={"_api_/vehicles/{id}{._format}_delete"}  objectId={record.id} objectName={record.name} afterDeleteFetch={fetchAll} />,
     },
   ]
 
@@ -178,7 +178,7 @@ export default () => {
     {
       key: "action",
       align: "right",
-      render: (record) => <DeleteIcon deleteUrl={"_api_/trailers/{id}.{_format}_delete"}  objectId={record.id} objectName={record.name} afterDeleteFetch={fetchAll} />,
+      render: (record) => <DeleteIcon deleteUrl={"_api_/trailers/{id}{._format}_delete"}  objectId={record.id} objectName={record.name} afterDeleteFetch={fetchAll} />,
     },
   ]
 
@@ -186,10 +186,10 @@ export default () => {
     let url, request
 
     if (values['@id']) {
-      url = window.Routing.generate("_api_/vehicles/{id}.{_format}_patch", {id: values.id})
+      url = window.Routing.generate("_api_/vehicles/{id}{._format}_patch", {id: values.id})
       request = await httpClient.patch(url, values)
     } else {
-      url = window.Routing.generate("_api_/vehicles.{_format}_post")
+      url = window.Routing.generate("_api_/vehicles{._format}_post")
       request = await httpClient.post(url, values)
     }
 
@@ -209,10 +209,10 @@ export default () => {
     let url, request
 
     if (values['@id']) {
-      url = window.Routing.generate("_api_/trailers/{id}.{_format}_patch", {id: values.id})
+      url = window.Routing.generate("_api_/trailers/{id}{._format}_patch", {id: values.id})
       request = await httpClient.patch(url, values)
     } else {
-      url = window.Routing.generate("_api_/trailers.{_format}_post")
+      url = window.Routing.generate("_api_/trailers{._format}_post")
       request = await httpClient.post(url, values)
     }
 

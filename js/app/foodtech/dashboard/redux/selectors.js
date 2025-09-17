@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect'
+import { createSelector } from '@reduxjs/toolkit'
 import Moment from 'moment'
 import { extendMoment } from 'moment-range'
 import _ from 'lodash'

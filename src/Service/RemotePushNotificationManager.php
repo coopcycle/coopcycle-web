@@ -44,7 +44,7 @@ class RemotePushNotificationManager
     /**
      * @see https://firebase.google.com/docs/cloud-messaging/http-server-ref
      */
-    private function fcm($notification, array $tokens, $data)
+    private function fcm(string|null $title, string|null $body, array $tokens, array $data)
     {
         if (count($tokens) === 0) {
             return;
@@ -56,10 +56,10 @@ class RemotePushNotificationManager
             'priority' => 'high'
         ];
 
-        if (null !== $notification) {
+        if (null !== $title) {
             $payload['notification'] = [
-                'title' => $notification,
-                'body' => $this->translator->trans('notifications.tap_to_open'),
+                'title' => $title,
+                'body' => $body,
             ];
             $payload['android']['notification'] = [
                 'sound' => 'default',
@@ -138,14 +138,15 @@ class RemotePushNotificationManager
         }
     }
 
-    private function apns($text, array $tokens, $data = [])
+    private function apns(string $title, string $body, array $tokens, array $data)
     {
         if (count($tokens) === 0) {
             return;
         }
 
-        $alert = Pushok\Payload\Alert::create()->setTitle($text);
-        // $alert = $alert->setBody('Lorem ipsum');
+        $alert = Pushok\Payload\Alert::create()
+                    ->setTitle($title)
+                    ->setBody($body);
 
         $payload = Pushok\Payload::create()->setAlert($alert);
         $payload->setSound('default');
@@ -195,22 +196,27 @@ class RemotePushNotificationManager
     }
 
     /**
-     * @param string $textMessage
-     * @param mixed $recipients
+     * @param string|RemotePushNotification $textOrPushNotification
+     * @param RemotePushToken|User|RemotePushToken[]|User[] $recipients
+     * @param array $data Not needed/used if a `RemotePushNotification` instance is passed
      */
-    public function send($textMessage, $recipients, $data = [])
+    public function send(string|RemotePushNotification $textOrPushNotification, $recipients = [], $data = [])
     {
+        $title = $textOrPushNotification;
+        $body = $this->translator->trans('notifications.tap_to_open');
+
+        if ($textOrPushNotification instanceof RemotePushNotification) {
+            $title = $textOrPushNotification->getTitle();
+            $body = $textOrPushNotification->getBody() ?: $body;
+            $data = $textOrPushNotification->getData();
+        }
+
         if (!is_array($recipients)) {
             $recipients = [ $recipients ];
         }
 
         $tokens = [];
         foreach ($recipients as $recipient) {
-            if (!$recipient instanceof RemotePushToken && !$recipient instanceof User) {
-                throw new \InvalidArgumentException(sprintf('$recipients must be an instance of %s or %s',
-                    RemotePushToken::class, User::class));
-            }
-
             if ($recipient instanceof RemotePushToken) {
                 $tokens[] = $recipient;
             }
@@ -225,10 +231,8 @@ class RemotePushNotificationManager
             implode(', ', array_map(function ($recipient) {
                 if ($recipient instanceof RemotePushToken) {
                     return 'token: '.$this->loggingUtils->redact($recipient->getToken());
-                } else if ($recipient instanceof User) {
-                    return 'user: '.$recipient->getId();
                 } else {
-                    return 'unknown recipient';
+                    return 'user: '.$recipient->getId();
                 }
             }, $recipients)),
             implode(', ', array_map(function (RemotePushToken $token) {
@@ -253,9 +257,9 @@ class RemotePushNotificationManager
         // for the versions after this change - implementation should expect to receive
         // both "notification+data" and "data-only" messages and handle them correctly
 
-        $this->fcm($textMessage, $fcmTokens, $data); // send "notification+data" message
-        $this->fcm(null, $fcmTokens, $data); // send "data-only" message
+        $this->fcm($title, $body, $fcmTokens, $data); // send "notification+data" message
+        $this->fcm(null, null, $fcmTokens, $data); // send "data-only" message
 
-        $this->apns($textMessage, $apnsTokens, $data);
+        $this->apns($title, $body, $apnsTokens, $data);
     }
 }

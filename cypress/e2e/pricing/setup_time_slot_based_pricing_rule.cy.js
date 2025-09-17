@@ -1,8 +1,8 @@
 context('Setup pricing based on time slots (role: admin)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      'ORM/user_admin.yml',
-      'ORM/time_slots_pagination.yml',
+      'user_admin.yml',
+      'time_slots_pagination.yml',
     ])
     cy.login('admin', '12345678')
   })

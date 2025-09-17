@@ -272,7 +272,7 @@ order.total_excluding_tax: Celkem (bez DPH)
 order.total_including_tax: Celkem (vč. DPH)
 order.items_total: Celkem produktů
 order.total_tax: DPH
-order.total_tax_by_rate: Celkem %name%
+order.total_tax_by_rate: DPH %name%
 order.preparation_expected_at: Příprava začíná v %date%
 order.preparation_expected_for: Očekává se příprava v %date%
 order.shipping_date.title: Vaše datum dodání
@@ -497,7 +497,6 @@ restaurant_promotion.offer_delivery.help: To vám umožní nabízet dodací popl
   z vlastních peněz </strong>. Vaše marže bude snížena o výši dodacích poplatků. Tím
   se <strong> nesníží </strong> poplatky vnímané platformou.
 restaurant_promotion.offer_delivery: Poplatky za doručení nabídky
-notifications.tasks_changed: Úkoly pro %date% byly změněny!
 form.local_business_type.help: Typy používají slovní zásobu <a href="https://schema.org/">
   schema.org </a> pro <a href="https://schema.org/FoodEstinstalment"> potravinářská
   zařízení </a > a <a href="https://schema.org/Store"> obchody </a>
@@ -560,8 +559,6 @@ order.export.heading.total_products_excl_tax: Celková cena produktů (bez DPH)
 order.export.heading.completed_at: Dokončeno v
 order.export.heading.order_number: Číslo objednávky
 order.export.heading.restaurant_name: Restaurace
-notifications.messenger_approaching: Dobrý den %customer% Náš kurýr %messenger% je
-  téměř u vás. Připravte se!
 basics.no: Ne
 basics.yes: Ano
 basics.none: Nic
@@ -577,7 +574,6 @@ task.receipt.greeting: Vážený zákazníku,
 basics.free: zdarma
 profile.loopeat.connected: '%name% účet připojen'
 profile.loopeat.connect: Připojit můj účet %name%
-notifications.restaurant.new_order: Nová objednávka k přijetí
 basics.view_example: Ukázat příklad
 form.delivery_import.store.label: Obchod
 form.delivery_import.file.label: Soubor
@@ -721,7 +717,6 @@ activity.task.assigned: "@%owner% přiřadil úkol číslo #task/%aggregate_id%\
 activity.task.created: "@%owner% vytvořil úkol číslo #task/%aggregate_id%\n"
 adminDashboard.activity.title: Aktivita
 adminDashboard.statistics: Statistika
-notifications.empty: Žádná oznámení
 index.our_shops: Naše obchody
 index.view_all_restaurants: Zobrazit všechny restaurace
 index.our_restaurants: Naše restaurace
@@ -1109,9 +1104,35 @@ order.list.summary.hub.text: Objednávka na %name%
 edenred.oauth_connect.success: Účet Edenred byl úspěšně připojen!
 profile.edenred.connect: Připojit můj účet Edenred
 profile.edenred.connected: Účet Edenred připojen
+notifications.empty: Žádná oznámení
 notifications.tap_to_open: Klepnutím otevřete
-notifications.tasks_changed_today: Vaše dnešní úkoly byly aktualizovány
 notifications.delivery_created: Byla vytvořena dodávka k vyzvednutí %date%
+notifications.tasks_changed: Úkoly pro %date% byly změněny!
+notifications.tasks_changed_today: Vaše dnešní úkoly byly aktualizovány
+notifications.restaurant.new_order: Nová objednávka k přijetí
+notifications.restaurant.accepted_order: Nová objednávka
+notifications.messenger_approaching: Dobrý den %customer% Náš kurýr %messenger% je
+  téměř u vás. Připravte se!
+form.settings.notifications.title: Oznámení
+form.settings.notifications.order.created: Objednávka vytvořena
+form.settings.notifications.order.updated: Objednávka aktualizována
+form.settings.notifications.order.accepted: Objednávka přijata
+form.settings.notifications.order.refused: Objednávka odmítnuta
+form.settings.notifications.order.delayed: Objednávka zpožděna
+form.settings.notifications.order.cancelled: Objednávka zrušena
+form.settings.notifications.order.picked: Objednávka vyzvednuta
+form.settings.notifications.order.dropped: Objednávka doručena
+form.settings.notifications.order.fulfilled: Objednávka vyřízena
+form.settings.notifications.task.created: Úkol vytvořen
+form.settings.notifications.task.assigned: Úkol přiřazen
+form.settings.notifications.task.unassigned: Úkol nepřiřazen
+form.settings.notifications.task.started: Úkol zahájen
+form.settings.notifications.task.done: Úkol splněn
+form.settings.notifications.task.failed: Úkol nesplněn
+form.settings.notifications.task.cancelled: Úkol zrušen
+form.settings.notifications.task.rescheduled: Úkol přeložen na jindy
+form.settings.notifications.help: Při vypnutí upozornění na níže uvedené události
+  nebudou správci dostávat e-maily ani upozornění na horním panelu.
 ordering_delay.admin_reminder: Nastavili jste globální zpoždění vyzvednutí Foodtech
 form.fulfillment_method.options.range_duration.label: Rozsah dosahu
 form.fulfillment_method.pre_ordering_allowed.help: Pokud zrušíte zaškrtnutí tohoto
@@ -1369,9 +1390,7 @@ form.checkout_address.reusable_packaging.loopeat.returns.label: Vrátíte <stron
   celkem <strong>%amount%</strong>
 form.store_type.failure_reason_set.help: Vyberte ze seznamu <a href="%failure_reason_set%">příčin
   neúspěchů</a>, které mají být použity v této %entity%.
-form.settings.notifications.order.updated: Objednávka aktualizována
 form.delivery.bookmark.label: Přidat do uložených objednávek
-form.settings.notifications.task.unassigned: Úkol nepřiřazen
 form.store_type.time_slots.set_as_default: Nastavit jako výchozí časový slot
 payment_method:
   cash_on_delivery: V hotovosti při dodání
@@ -1406,7 +1425,6 @@ business_account.employee.associated: Váš účet byl úspěšně přidružen k
   %name%
 business_account.loggedin_employee.association.text: Jste přihlášeni pomocí e-mailu
   <strong>%user_email%</strong>. Chcete svůj účet přidružit ke společnosti <strong>%business_account_name%</strong>?
-notifications.restaurant.accepted_order: Nová objednávka
 adminDashboard.failureSet.title: Příčiny neúspěchu
 adminDashboard.failureSet.help: Nastavte příčiny, pro které mohou být vaše dodávky
   neúspěšné.
@@ -1415,9 +1433,6 @@ adminDashboard.failureSet.createNew: Vytvoření nové příčiny
 adminDashboard.failureSet.settings: Nastavení
 adminDashboard.failureSet.cant_delete_failure_reason_used: Tato příčina nemůže být
   vymazána, protože se používá v obchodech.
-form.settings.notifications.title: Oznámení
-form.settings.notifications.order.created: Objednávka vytvořena
-form.settings.notifications.order.picked: Objednávka vyzvednuta
 form.pricing_rule_set.options.label: Možnosti
 tags.featured: Doporučené
 tags.exclusive: Exkluzivní
@@ -1429,8 +1444,6 @@ delivery.state:
   delivered: Doručeno
   failed: Selhalo
   cancelled: Zrušeno
-form.settings.notifications.help: Při vypnutí upozornění na níže uvedené události
-  nebudou správci dostávat e-maily ani upozornění na horním panelu.
 registration.form.title: Vaše informace
 registration.step.personal: Osobní údaje
 registration.step.company: Informace o firmě
@@ -1626,19 +1639,6 @@ adminDashboard.incidents.help: Správa incidentů.
 adminDashboard.incidents.createNew: Vytvořit nový incident
 profile.delete_my_account: Smazat můj účet
 profile.type_username_to_confirm: 'Upozornění na zastarání: Příkaz {name!r} je zastaralý'
-form.settings.notifications.order.accepted: Objednávka přijata
-form.settings.notifications.order.refused: Objednávka odmítnuta
-form.settings.notifications.order.delayed: Objednávka zpožděna
-form.settings.notifications.order.cancelled: Objednávka zrušena
-form.settings.notifications.order.dropped: Objednávka doručena
-form.settings.notifications.order.fulfilled: Objednávka vyřízena
-form.settings.notifications.task.created: Úkol vytvořen
-form.settings.notifications.task.assigned: Úkol přiřazen
-form.settings.notifications.task.started: Úkol zahájen
-form.settings.notifications.task.done: Úkol splněn
-form.settings.notifications.task.failed: Úkol nesplněn
-form.settings.notifications.task.cancelled: Úkol zrušen
-form.settings.notifications.task.rescheduled: Úkol přeložen na jindy
 order.export.heading.payment_method: Způsob platby
 registration.navigation.title: Vytvoření osobního účtu
 registration.info.title: Co je CoopCycle?

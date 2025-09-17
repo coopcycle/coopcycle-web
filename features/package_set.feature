@@ -3,6 +3,7 @@ Feature: Package set
   Scenario: Get the applications of a package set
     Given the fixtures files are loaded:
     | packages.yml |
+    | packages_usage.yml |
     And the user "admin" is loaded:
     | email      | admin@coopcycle.org |
     | password   | 123456            |
@@ -37,7 +38,8 @@ Feature: Package set
 
   Scenario: Delete a package set fails
     Given the fixtures files are loaded:
-    | dispatch.yml |
+    | packages.yml |
+    | packages_usage.yml |
     And the user "admin" is loaded:
     | email      | admin@coopcycle.org |
     | password   | 123456            |

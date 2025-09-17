@@ -196,7 +196,7 @@ class GeofencingCommand extends Command
                     ]);
 
                     $this->messageBus->dispatch(
-                        new PushNotification($notificationTitle, [ $customer->getUsername() ])
+                        new PushNotification($notificationTitle, "", [ $customer->getUser() ])
                     );
 
                     // TODO Send notification/SMS
@@ -213,7 +213,6 @@ class GeofencingCommand extends Command
             );
 
         } catch (RedisException $e) {
-            var_dump($e->getMessage());
             $this->logMessage($e->getMessage());
         }
 

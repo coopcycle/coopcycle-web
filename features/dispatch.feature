@@ -649,6 +649,9 @@ Feature: Dispatch
          "@id":@string@,
          "@type":"http://schema.org/ParcelDelivery",
          "id":@integer@,
+         "distance":@integer@,
+         "duration":@integer@,
+         "polyline":@string@,
          "pickup":{
             "@id":"/api/tasks/4",
             "@type":"Task",
@@ -695,6 +698,9 @@ Feature: Dispatch
          "@id":@string@,
          "@type":"http://schema.org/ParcelDelivery",
          "id":@integer@,
+         "distance":@integer@,
+         "duration":@integer@,
+         "polyline":@string@,
          "tasks":@array@,
          "pickup":{
             "@id":"/api/tasks/4",

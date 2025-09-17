@@ -1210,6 +1210,9 @@ Feature: Urbantz
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "pickup":{
           "@id":@string@,
           "@type":"Task",
@@ -1277,7 +1280,15 @@ Feature: Urbantz
           "metadata": {"@*@": "@*@"}
         },
         "tasks":@array@,
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 

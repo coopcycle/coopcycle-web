@@ -23,7 +23,7 @@ import './dashboard.scss'
 import { organizationAdapter, taskAdapter, taskListAdapter, tourAdapter, trailerAdapter, vehicleAdapter, warehouseAdapter } from '../coopcycle-frontend-js/logistics/redux'
 import _ from 'lodash'
 import { createClient } from './utils/client'
-import { AntdConfigProvider } from '../utils/antd'
+import { RootWithDefaults } from '../utils/react'
 
 const dashboardEl = document.getElementById('dashboard')
 const date = moment(dashboardEl.dataset.date)
@@ -142,9 +142,9 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
   const root = createRoot(document.getElementById('dashboard'))
 
   root.render(
+    <RootWithDefaults>
       <Provider store={ store }>
         <I18nextProvider i18n={ i18n }>
-          <AntdConfigProvider>
             <div className="dashboard__toolbar-container">
               <Navbar />
             </div>
@@ -179,9 +179,9 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
               </Split>
             </div>
             <Modals />
-          </AntdConfigProvider>
         </I18nextProvider>
       </Provider>
+    </RootWithDefaults>
   )
 
   // hide export modal after button click
@@ -207,7 +207,7 @@ loadingAnim.addEventListener('DOMLoaded', function() {
 
   const tasksRequest = client.paginatedRequest({
     method: 'GET',
-    url: `${ window.Routing.generate('_api_/tasks.{_format}_get_collection') }?date=${date.format('YYYY-MM-DD')}&pagination=true&itemsPerPage=100`,
+    url: `${ window.Routing.generate('_api_/tasks{._format}_get_collection') }?date=${date.format('YYYY-MM-DD')}&pagination=true&itemsPerPage=100`,
     headers: headers
   })
 
@@ -219,7 +219,7 @@ loadingAnim.addEventListener('DOMLoaded', function() {
 
   const toursRequest = client.request({
     method: 'GET',
-    url: `${ window.Routing.generate('_api_/tours.{_format}_get_collection') }?date=${date.format('YYYY-MM-DD')}`,
+    url: `${ window.Routing.generate('_api_/tours{._format}_get_collection') }?date=${date.format('YYYY-MM-DD')}`,
     headers: headers
   })
 

@@ -20,6 +20,8 @@ use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductImage;
 use AppBundle\Entity\Sylius\ProductTaxon;
+use AppBundle\Entity\Sylius\ProductVariant;
+use AppBundle\Entity\Sylius\ProductVariantTranslation;
 use AppBundle\Entity\Sylius\TaxCategory;
 use AppBundle\Entity\Sylius\TaxonRepository;
 use AppBundle\Form\ApiAppType;
@@ -410,7 +412,7 @@ trait RestaurantTrait
             'orders_normalized' => $this->normalizer->normalize($orders, 'jsonld', [
                 'resource_class' => Order::class,
                 'operation' => new GetCollection(),
-                'groups' => ['order_minimal']
+                'groups' => ['foodtech_order_minimal']
             ]),
             'initial_order' => $request->query->get('order'),
             'routes' => $routes,
@@ -830,7 +832,8 @@ trait RestaurantTrait
         ObjectRepository $productRepository,
         EntityManagerInterface $entityManager,
         EventDispatcherInterface $dispatcher,
-        LoopeatClient $loopeatClient)
+        LoopeatClient $loopeatClient,
+        bool $taxIncl)
     {
         $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
@@ -862,6 +865,46 @@ trait RestaurantTrait
             }
 
             $entityManager->flush();
+
+            $priceFormName = $taxIncl ? 'taxIncluded' : 'taxExcluded';
+            $price = $form->get('priceWithTax')->get($priceFormName)->getData();
+            $taxCategory = $form->get('priceWithTax')->get('taxCategory')->getData();
+
+            // Update name (translations)
+
+            $dql = $entityManager
+                ->createQueryBuilder()
+                ->from(ProductVariant::class, 'v')
+                ->select('v.id')
+                ->where('v.product = :product')
+                ->getDQL()
+            ;
+
+            $qb = $entityManager->createQueryBuilder();
+            $qb
+                ->update(ProductVariantTranslation::class, 't')
+                ->set('t.name', ':name')
+                ->where($qb->expr()->in('t.translatable', $dql))
+                ->setParameter('name', $product->getName())
+                ->setParameter('product', $product);
+
+            $qb->getQuery()->execute();
+
+            // Update price & tax category
+
+            $qb = $entityManager
+                ->createQueryBuilder()
+                ->update(ProductVariant::class, 'v')
+                ->set('v.price', ':price')
+                ->set('v.taxCategory', ':taxCategory')
+                ->where('v.product = :product')
+                ->setParameters([
+                    'price' => $price,
+                    'taxCategory' => $taxCategory,
+                    'product' => $product
+                ]);
+
+            $qb->getQuery()->execute();
 
             $dispatcher->dispatch(new GenericEvent($restaurant), 'catalog.updated');
 

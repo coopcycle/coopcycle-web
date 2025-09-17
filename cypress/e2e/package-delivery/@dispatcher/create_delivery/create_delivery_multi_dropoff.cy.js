@@ -1,9 +1,9 @@
 context('Delivery (role: dispatcher)', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      'ORM/user_dispatcher.yml',
-      'ORM/tags.yml',
-      'ORM/store_multi_dropoff.yml',
+      'user_dispatcher.yml',
+      'tags.yml',
+      'store_multi_dropoff.yml',
     ])
 
     cy.setMockDateTime('2025-04-23 8:30:00')
@@ -48,10 +48,14 @@ context('Delivery (role: dispatcher)', () => {
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.get('[data-testid="order_item"]')
-      .find('[data-testid="total"]')
+    cy.get('[data-testid="order-total-including-tax"]')
+      .find('[data-testid="value"]')
       .contains('€4.99')
 
+    // Wait for React components to load
+    cy.get('[data-testid="delivery-itinerary"]', {
+      timeout: 10000,
+    }).should('be.visible')
     cy.get('[data-testid=delivery-itinerary]')
       .contains(/272,? rue Saint Honoré,? 75001,? Paris/)
       .should('exist')
@@ -90,6 +94,6 @@ context('Delivery (role: dispatcher)', () => {
       address: /72,? Rue Saint-Maur,? 75011,? Paris,? France/,
     })
 
-    cy.get('[data-testid="tax-included-previous"]').contains('4,99 €')
+    cy.get('[data-testid="tax-included"]').contains('4,99 €')
   })
 })

@@ -108,10 +108,16 @@ Minimum configuration:
 docker compose up
 ```
 
-With additional tools:
+With Storybook:
 
 ```sh
-docker compose --profile devFrontend --profile devOdoo up
+docker compose --profile devFrontend up
+```
+
+With Odoo:
+
+```sh
+docker compose --profile devOdoo up
 ```
 
 At this step, the platform should be up & running, but the database is still empty.
@@ -142,18 +148,12 @@ docker compose run php bin/console doctrine:schema:create --env=test
 make phpunit
 ```
 
-or
-
-```sh
-sh ./bin/phpunit
-```
-
 #### One package/test:
 
 For example, to run only the tests in the `AppBundle\Sylius\OrderProcessing` folder:
 
 ```sh
-sh ./bin/phpunit /var/www/html/tests/AppBundle/Sylius/OrderProcessing
+make phpunit ARGS="/var/www/html/tests/AppBundle/Sylius/OrderProcessing"
 ```
 
 See more command line options [here](https://docs.phpunit.de/en/9.6/textui.html#command-line-options).
@@ -166,24 +166,24 @@ See more command line options [here](https://docs.phpunit.de/en/9.6/textui.html#
 make behat
 ```
 
-or
-
-```sh
-sh ./bin/behat
-```
-
 #### One package/test:
 
-For example, to run only the tests in the `features/authentication.feature` file:
+To run only the tests with the `@only` tag:
 
 ```sh
-sh ./bin/behat features/authentication.feature
+make behat-only
 ```
 
-To run only the tests with the `@activeScenario` tag:
+To run only the tests in the `features/authentication.feature` file:
 
 ```sh
-sh ./bin/behat --tags=activeScenario
+make behat ARGS="features/authentication.feature"
+```
+
+To only show errors in logs:
+
+```sh
+make behat ARGS="features/authentication.feature --no-snippets --format progress"
 ```
 
 See more command line options [here](https://behat.org/en/latest/user_guide/command_line_tool.html).
@@ -197,7 +197,7 @@ make jest
 or to run only one test file:
 
 ```sh
-sh ./bin/jest path/to/test/file.test.js
+make jest ARGS="js/app/api/__tests__/util.test.js"
 ```
 
 ### Launch the Cypress tests
@@ -293,3 +293,4 @@ The code is licensed under the [Coopyleft License](https://wiki.coopcycle.org/en
 
 - You are matching with the social and common company’s criteria as define by their national law, or by the European Commission in its [October 25th, 2011 communication](http://www.europarl.europa.eu/meetdocs/2009_2014/documents/com/com_com(2011)0681_/com_com(2011)0681_en.pdf), or by default by the Article 1 of the French law [n°2014-856 of July 31st, 2014](https://www.legifrance.gouv.fr/affichTexte.do?cidTexte=JORFTEXT000029313296&categorieLien=id) “relative à l’économie sociale et solidaire”
 - You are using a cooperative model in which workers are employees
+

@@ -10,7 +10,6 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
-use AppBundle\Action\MyTasks as MyTasksController;
 use AppBundle\Action\TaskList\Create as CreateTaskListController;
 use AppBundle\Action\TaskList\Optimize as OptimizeController;
 use AppBundle\Action\TaskList\SetItems as SetTaskListItemsController;
@@ -18,6 +17,7 @@ use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\Api\Dto\MyTaskListDto;
 use AppBundle\Api\Filter\DateFilter;
 use AppBundle\Api\State\TaskListProvider;
+use AppBundle\Api\State\MyTasksProvider;
 use AppBundle\Entity\Task\CollectionTrait as TaskCollectionTrait;
 use AppBundle\Entity\TaskList\Item;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -47,7 +47,8 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Get(
             uriTemplate: '/me/tasks/{date}',
-            controller: MyTasksController::class,
+            uriVariables: ['date'],
+            provider: MyTasksProvider::class,
             openapiContext: [
                 'summary' => 'Retrieves the collection of Task resources assigned to the authenticated token.',
                 'parameters' => [
@@ -63,7 +64,6 @@ use Symfony\Component\Validator\Constraints as Assert;
             normalizationContext: ['groups' => ['task_list', 'task', 'delivery', 'address']],
             security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
             output: MyTaskListDto::class,
-            read: false,
             write: false
         ),
         new Get(

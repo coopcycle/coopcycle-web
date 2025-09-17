@@ -38,11 +38,11 @@
         {{ packages|join(', ') }}
       </td>
       <td>
-        <div {{ react_component('ShowApplications', { objectId: package_set.id, data: relatedEntitiesByPackageSetId[package_set.id], fetchUrl: "_api_/package_sets/{id}.{_format}_delete" }) }}></div>
+        <div {{ react_component('ShowApplications', { objectId: package_set.id, data: relatedEntitiesByPackageSetId[package_set.id], fetchUrl: "_api_/package_sets/{id}{._format}_delete" }) }}></div>
       </td>
       {% if is_granted('ROLE_ADMIN') %}
         <td>
-          <div {{ react_component('DeleteIcon', { objectId: package_set.id, objectName: package_set.name, deleteUrl: 'api_package_sets_delete_item', errorMessage: 'ADMIN_PLEASE_UNLINK_PACKAGE_SET_BEFORE_DELETION'}) }}></div>
+          <div {{ react_component('DeleteIcon', { objectId: package_set.id, objectName: package_set.name, deleteUrl: '_api_/package_sets/{id}.{_format}_delete', errorMessage: 'ADMIN_PLEASE_UNLINK_PACKAGE_SET_BEFORE_DELETION'}) }}></div>
         </td>
       {% endif %}
     </tr>

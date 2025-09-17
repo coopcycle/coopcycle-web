@@ -2,6 +2,10 @@ api_platform:
     defaults:
         pagination_client_items_per_page: true
         pagination_maximum_items_per_page: 100
+        normalization_context:
+            skip_null_values: false
+        extra_properties:
+            standard_put: false
     version: 1.0.0
     title: CoopCycle
     show_webby: false
@@ -29,5 +33,4 @@ api_platform:
         jsonld: ['application/ld+json', 'application/merge-patch+json']
         json: ['application/json']
     swagger:
-        versions: [3, 2]
-    metadata_backward_compatibility_layer: false
+        versions: [3]

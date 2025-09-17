@@ -62,7 +62,7 @@ class CalculateTaskDistanceHandlerTest extends KernelTestCase
     public function testCO2CalculationOnSetVehicle() {
 
         $this->fixturesLoader->load([
-            __DIR__.'/../../../features/fixtures/ORM/task_list.yml'
+            __DIR__.'/../../../fixtures/ORM/task_list.yml'
         ]);
 
         $taskList = $this->entityManager->getRepository(TaskList::class)->findAll()[0];
@@ -104,7 +104,7 @@ class CalculateTaskDistanceHandlerTest extends KernelTestCase
     public function testCO2CalculationWithoutVehicle() {
 
         $this->fixturesLoader->load([
-            __DIR__.'/../../../features/fixtures/ORM/task_list.yml'
+            __DIR__.'/../../../fixtures/ORM/task_list.yml'
         ]);
 
         $taskList = $this->entityManager->getRepository(TaskList::class)->findAll()[0];

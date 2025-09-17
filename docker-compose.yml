@@ -23,13 +23,16 @@ services:
       dockerfile: './docker/webpack/Dockerfile'
       context: '.'
     image: coopcycle/webpack
+    depends_on:
+      php:
+        condition: service_healthy
+        restart: true
     ports:
       - '8080:8080'
     volumes:
       # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
       - '.:/srv/coopcycle'
       - 'webpack_php_cache:/srv/coopcycle/var/cache'
-      - 'node_modules_webpack:/srv/coopcycle/node_modules/'
 
   osrm:
     build: './docker/osrm'
@@ -251,8 +254,6 @@ services:
     volumes:
       - ./cube:/cube/conf/schema
       - ./cube.js:/cube/conf/cube.js
-    logging:
-      driver: none
     attach: false
 
   typesense:
@@ -264,40 +265,7 @@ services:
       - TYPESENSE_DATA_DIR=/data
     volumes:
       - typesense_data:/data
-    logging:
-      driver: none
     attach: false
-
-  storybook-react:
-    build:
-      dockerfile: './docker/storybook-react/Dockerfile'
-      context: '.'
-    ports:
-      - '6007:6007'
-    depends_on:
-      - webpack
-    volumes:
-      # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
-      - '.:/srv/coopcycle'
-      - 'node_modules_webpack:/srv/coopcycle/node_modules/'
-    profiles:
-      - devFrontend
-
-  storybook:
-    build:
-      dockerfile: './docker/storybook/Dockerfile'
-      context: '.'
-    ports:
-      - '6006:6006'
-    depends_on:
-      - webpack
-      - storybook-react
-    volumes:
-      # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
-      - '.:/srv/coopcycle'
-      - 'node_modules_webpack:/srv/coopcycle/node_modules/'
-    profiles:
-      - devFrontend
 
   odoo-web:
     image: odoo:17.0
@@ -328,7 +296,6 @@ services:
       - devOdoo
 
 volumes:
-  node_modules_webpack:
   pg_data:
   php_cache:
   php_profiles:

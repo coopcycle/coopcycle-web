@@ -1,6 +1,6 @@
 context('Delivery (role: dispatcher)', () => {
   beforeEach(() => {
-    cy.loadFixtures('../cypress/fixtures/stores.yml')
+    cy.loadFixtures('stores_legacy.yml')
     cy.setMockDateTime('2025-04-23 8:30:00')
     cy.login('dispatcher', 'dispatcher')
   })
@@ -60,15 +60,27 @@ context('Delivery (role: dispatcher)', () => {
       "Le prix n'a pas pu être calculé. Vous pouvez créer la livraison, n'oubliez pas de corriger la règle de prix liée à ce magasin.",
     )
 
+    cy.get('[data-testid="price-calculation-debug-tool"]').should('be.visible')
+    cy.get('[data-testid="price-calculation-debug-tool"]').click()
+    cy.get('[data-testid="price-calculation-debug-tool"]').within(() => {
+      cy.get('[data-testid="price-calculation-debug-tool-rule"]').contains(
+        'Rule #2: distance > 100000',
+      )
+    })
+
     cy.get('button[type="submit"]').click()
 
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.get('[data-testid="order_item"]')
-      .find('[data-testid="total"]')
+    cy.get('[data-testid="order-total-including-tax"]')
+      .find('[data-testid="value"]')
       .contains('€0.00')
 
+    // Wait for React components to load
+    cy.get('[data-testid="delivery-itinerary"]', {
+      timeout: 10000,
+    }).should('be.visible')
     cy.get('[data-testid=delivery-itinerary]')
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
       .should('exist')

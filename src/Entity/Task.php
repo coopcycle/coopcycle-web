@@ -12,7 +12,6 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Task\AddImagesToTasks;
 use AppBundle\Action\Task\Assign as TaskAssign;
-use AppBundle\Action\Task\BulkAssign as TaskBulkAssign;
 use AppBundle\Action\Task\Cancel as TaskCancel;
 use AppBundle\Action\Task\Done as TaskDone;
 use AppBundle\Action\Task\Events as TaskEvents;
@@ -28,12 +27,14 @@ use AppBundle\Action\Task\RemoveFromGroup;
 use AppBundle\Action\Task\BulkMarkAsDone as TaskBulkMarkAsDone;
 use AppBundle\Action\Task\Context as TaskContext;
 use AppBundle\Action\Task\AppendToComment as TaskAppendToComment;
+use AppBundle\Api\Dto\AssignTasksDto;
 use AppBundle\Api\Dto\BioDeliverInput;
 use AppBundle\Api\Filter\AssignedFilter;
 use AppBundle\Api\Filter\TaskDateFilter;
 use AppBundle\Api\Filter\TaskOrderFilter;
 use AppBundle\Api\Filter\TaskFilter;
 use AppBundle\Api\Filter\OrganizationFilter;
+use AppBundle\Api\State\AssignTasksProcessor;
 use AppBundle\Api\State\BioDeliverProcessor;
 use AppBundle\Api\State\TasksProvider;
 use AppBundle\DataType\TsRange;
@@ -84,19 +85,19 @@ use Symfony\Component\Validator\Constraints as Assert;
             uriTemplate: '/tasks/{id}/done',
             controller: TaskDone::class,
             openapiContext: [
-            'summary' => 'Marks a Task as done',
-            'parameters' => [
-                [
-                    'in' => 'body',
-                    'name' => 'N/A',
-                    'schema' => [
-                        'type' => 'object',
-                        'properties' => ['notes' => ['type' => 'string']]
-                    ],
-                    'style' => 'form'
+                'summary' => 'Marks a Task as done',
+                'parameters' => [
+                    [
+                        'in' => 'body',
+                        'name' => 'N/A',
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => ['notes' => ['type' => 'string']]
+                        ],
+                        'style' => 'form'
+                    ]
                 ]
-            ]
-        ],
+            ],
             denormalizationContext: ['groups' => ['task_operation']],
             security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))'
         ),
@@ -104,19 +105,19 @@ use Symfony\Component\Validator\Constraints as Assert;
             uriTemplate: '/tasks/{id}/failed',
             controller: TaskFailed::class,
             openapiContext: [
-            'summary' => 'Marks a Task as failed',
-            'parameters' => [
-                [
-                    'in' => 'body',
-                    'name' => 'N/A',
-                    'schema' => [
-                        'type' => 'object',
-                        'properties' => ['notes' => ['type' => 'string']]
-                    ],
-                    'style' => 'form'
+                'summary' => 'Marks a Task as failed',
+                'parameters' => [
+                    [
+                        'in' => 'body',
+                        'name' => 'N/A',
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => ['notes' => ['type' => 'string']]
+                        ],
+                        'style' => 'form'
+                    ]
                 ]
-            ]
-        ],
+            ],
             denormalizationContext: ['groups' => ['task_operation']],
             security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))'
         ),
@@ -124,19 +125,19 @@ use Symfony\Component\Validator\Constraints as Assert;
             uriTemplate: '/tasks/{id}/assign',
             controller: TaskAssign::class,
             openapiContext: [
-            'summary' => 'Assigns a Task to a messenger',
-            'parameters' => [
-                [
-                    'in' => 'body',
-                    'name' => 'N/A',
-                    'schema' => [
-                        'type' => 'object',
-                        'properties' => ['username' => ['type' => 'string']]
-                    ],
-                    'style' => 'form'
+                'summary' => 'Assigns a Task to a messenger',
+                'parameters' => [
+                    [
+                        'in' => 'body',
+                        'name' => 'N/A',
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => ['username' => ['type' => 'string']]
+                        ],
+                        'style' => 'form'
+                    ]
                 ]
-            ]
-        ],
+            ],
             denormalizationContext: ['groups' => ['task_operation']],
             security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_COURIER\')'
         ),
@@ -173,25 +174,25 @@ use Symfony\Component\Validator\Constraints as Assert;
             uriTemplate: '/tasks/{id}/reschedule',
             controller: TaskReschedule::class,
             openapiContext: [
-            'summary' => 'Reschedules a Task',
-            'parameters' => [
-                [
-                    'in' => 'body',
-                    'name' => 'N/A',
-                    'schema' => [
-                        'type' => 'object',
-                        'properties' => [
-                            'after' => [
-                                'type' => 'string',
-                                'format' => 'date-time'
-                            ],
-                            'before' => ['type' => 'string', 'format' => 'date-time']
-                        ]
-                    ],
-                    'style' => 'form'
+                'summary' => 'Reschedules a Task',
+                'parameters' => [
+                    [
+                        'in' => 'body',
+                        'name' => 'N/A',
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'after' => [
+                                    'type' => 'string',
+                                    'format' => 'date-time'
+                                ],
+                                'before' => ['type' => 'string', 'format' => 'date-time']
+                            ]
+                        ],
+                        'style' => 'form'
+                    ]
                 ]
-            ]
-        ],
+            ],
             denormalizationContext: ['groups' => ['task_operation']],
             security: 'is_granted(\'ROLE_DISPATCHER\')'
         ),
@@ -250,7 +251,8 @@ use Symfony\Component\Validator\Constraints as Assert;
         ),
         new Put(
             uriTemplate: '/tasks/assign',
-            controller: TaskBulkAssign::class,
+            input: AssignTasksDto::class,
+            processor: AssignTasksProcessor::class,
             openapiContext: [
                 'summary' => 'Assigns multiple Tasks at once to a messenger',
                 'parameters' => [
@@ -269,7 +271,7 @@ use Symfony\Component\Validator\Constraints as Assert;
                 ]
             ],
             security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
-            write: false
+            denormalizationContext: ['groups' => ['tasks_assign']],
         ),
         new Put(
             uriTemplate: '/tasks/done',
@@ -315,7 +317,8 @@ use Symfony\Component\Validator\Constraints as Assert;
             ],
             denormalizationContext: ['groups' => ['tasks_images']],
             security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
-            write: false
+            write: false,
+            deserialize: false
         )
     ],
     normalizationContext: ['groups' => ['task', 'delivery', 'address']]
@@ -665,7 +668,10 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         if ($event->getName() === 'task:failed' && $this->containsEventWithName('task:failed')) {
             return;
         }
-
+        if ($event->getName() === 'task:updated' && $this->containsEventWithName('task:updated')) {
+            return;
+        }
+        
         $this->events->add($event);
     }
 

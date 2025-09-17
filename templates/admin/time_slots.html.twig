@@ -52,7 +52,7 @@
       </td>
       {% if is_granted('ROLE_ADMIN') %}
         <td>
-          <div {{ react_component('DeleteIcon', { objectId: time_slot.id, objectName: time_slot.name, deleteUrl: '_api_/time_slots/{id}.{_format}_delete', errorMessage: 'ADMIN_PLEASE_UNLINK_TIME_SLOT_BEFORE_DELETION'}) }}>
+          <div {{ react_component('DeleteIcon', { objectId: time_slot.id, objectName: time_slot.name, deleteUrl: '_api_/time_slots/{id}{._format}_delete', errorMessage: 'ADMIN_PLEASE_UNLINK_TIME_SLOT_BEFORE_DELETION'}) }}>
           </div>
         </td>
       {% endif %}

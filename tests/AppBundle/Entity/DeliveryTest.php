@@ -179,6 +179,7 @@ class DeliveryTest extends TestCase
         $this->assertEquals(0, $language->evaluate('order.itemsTotal', $values));
 
         $order = $this->prophesize(Order::class);
+        $order->isFoodtech()->willReturn(true);
         $order->getItemsTotal()->willReturn(3000);
 
         $delivery->setOrder($order->reveal());

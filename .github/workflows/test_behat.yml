@@ -20,12 +20,15 @@ jobs:
       - uses: actions/checkout@v2
       - name: Run CoopCycle Web
         uses: ./.github/actions/run-coopcycle-web
-        timeout-minutes: 5
+        timeout-minutes: 10
       - name: Run Behat
-        run: docker compose exec -T php vendor/bin/behat -f progress
+        run: make behat ARGS="-f progress"
       - name: Show Symfony warnings on failure
         if: failure()
         uses: ./.github/actions/show-symfony-warnings
       - name: Upload Symfony logs on failure
         if: failure()
         uses: ./.github/actions/upload-symfony-logs
+      - name: Show Webpack logs on failure
+        if: failure()
+        run: docker compose logs webpack

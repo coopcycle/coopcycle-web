@@ -1488,8 +1488,11 @@ Feature: Orders
           "items":[],
           "itemsTotal":0,
           "total":0,
-          "adjustments":@...@,
-          "fulfillmentMethod":"delivery"
+          "adjustments":{"@*@":"@*@"},
+          "fulfillmentMethod":"delivery",
+          "invitation":null,
+          "paymentGateway":@string@,
+          "hasEdenredCredentials":@boolean@
         }
       }
       """
@@ -1557,8 +1560,11 @@ Feature: Orders
           "items":[],
           "itemsTotal":0,
           "total":0,
-          "adjustments":@...@,
-          "fulfillmentMethod":"delivery"
+          "adjustments":{"@*@":"@*@"},
+          "fulfillmentMethod":"delivery",
+          "invitation":null,
+          "paymentGateway":@string@,
+          "hasEdenredCredentials":@boolean@
         }
       }
       """

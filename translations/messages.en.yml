@@ -327,7 +327,7 @@ order.total_including_tax: Total (incl. VAT)
 order.items_total: Total products
 order.items_total_excluding_tax: Total products (excl. VAT)
 order.total_tax: VAT
-order.total_tax_by_rate: Total %name%
+order.total_tax_by_rate: VAT %name%
 order.preparation_expected_at: Preparation starting at %date%
 order.preparation_expected_for: Preparation expected for %date%
 order.shipping_date.title: Your shipping date
@@ -900,7 +900,6 @@ index.our_restaurants: Our restaurants
 index.view_all_restaurants: View all restaurants
 index.our_shops: Our shops
 index.view_all_shops: View all shops
-notifications.empty: No notifications
 adminDashboard.statistics: Statistics
 adminDashboard.activity.title: Activity
 activity.task.created: "@%owner% created task #task/%aggregate_id%\n"
@@ -1070,8 +1069,6 @@ delivery.import.success_message: Your file was successfully processed, %count% d
 form.delivery_import.file.label: File
 form.delivery_import.store.label: Store
 basics.view_example: View example
-notifications.restaurant.new_order: New order to accept
-notifications.restaurant.accepted_order: New order
 profile.loopeat.connect: Connect my %name% account
 profile.loopeat.connected: '%name% account connected'
 profile.loopeat.disconnect: Disconnect %name%
@@ -1088,8 +1085,6 @@ basics.weeks: '%count% week|%count% weeks'
 basics.none: None
 basics.yes: Yes
 basics.no: No
-notifications.messenger_approaching: Hey %customer%! Our messenger %messenger% is
-  nearly with you. Get ready!
 order.export.heading.restaurant_name: Restaurant
 order.export.heading.order_number: Order number
 order.export.heading.fulfillment_method: Fulfillment
@@ -1158,7 +1153,6 @@ form.local_business_type.label: Type of business
 form.local_business_type.help: The types are using the <a href="https://schema.org/">schema.org</a>
   vocabulary for <a href="https://schema.org/FoodEstablishment">food establishments</a>
   and <a href="https://schema.org/Store">stores</a>
-notifications.tasks_changed: Tasks for %date% changed!
 restaurant_promotion.offer_delivery: Offer delivery fees
 restaurant_promotion.offer_delivery.help: This allows you to offer the delivery fees
   <strong>on your own money</strong>. Your margin will be diminished by the amount
@@ -1288,9 +1282,35 @@ form.fulfillment_method.pre_ordering_allowed.help: If you uncheck this box, cust
 form.fulfillment_method.options.range_duration.label: Range duration
 ordering_delay.admin_reminder: You have configured a global pickup delay for foodtech orders
 foodtech.dashboard.title: Dashboard
-notifications.delivery_created: A delivery to be picked up %date% has been created
-notifications.tasks_changed_today: Your tasks for today have been updated
+notifications.empty: No notifications
 notifications.tap_to_open: Tap to open
+notifications.delivery_created: A delivery to be picked up %date% has been created
+notifications.tasks_changed: Tasks for %date% changed!
+notifications.tasks_changed_today: Your tasks for today have been updated
+notifications.restaurant.new_order: New order to accept
+notifications.restaurant.accepted_order: New order
+notifications.messenger_approaching: Hey %customer%! Our messenger %messenger% is
+  nearly with you. Get ready!
+form.settings.notifications.title: Notifications
+form.settings.notifications.order.created: Order created
+form.settings.notifications.order.updated: Order updated
+form.settings.notifications.order.accepted: Order accepted
+form.settings.notifications.order.refused: Order refused
+form.settings.notifications.order.delayed: Order deyaled
+form.settings.notifications.order.cancelled: Order cancelled
+form.settings.notifications.order.picked: Order picked
+form.settings.notifications.order.dropped: Order dropped
+form.settings.notifications.order.fulfilled: Order fulfilled
+form.settings.notifications.task.created: Task created
+form.settings.notifications.task.updated: Task updated
+form.settings.notifications.task.assigned: Task assigned
+form.settings.notifications.task.unassigned: Task unassigned
+form.settings.notifications.task.started: Task started
+form.settings.notifications.task.done: Task done
+form.settings.notifications.task.failed: Task failed
+form.settings.notifications.task.cancelled: Task cancelled
+form.settings.notifications.task.rescheduled: Task rescheduled
+form.settings.notifications.help: When disabling notifications for events below, administrators won't receive emails, nor top bar notifications.
 profile.edenred.connected: Edenred account connected
 profile.edenred.connect: Connect my Edenred account
 edenred.oauth_connect.success: Edenred account connected successfully!
@@ -1526,25 +1546,6 @@ adminDashboard.invoicing.help: "Prepare invoices"
 adminDashboard.invoicing.line_item.order_number: "Order #%number%"
 profile.delete_my_account: "Delete my account"
 profile.type_username_to_confirm: "Type your username to confirm the account deletion"
-form.settings.notifications.title: Notifications
-form.settings.notifications.order.created: Order created
-form.settings.notifications.order.accepted: Order accepted
-form.settings.notifications.order.refused: Order refused
-form.settings.notifications.order.delayed: Order deyaled
-form.settings.notifications.order.cancelled: Order cancelled
-form.settings.notifications.order.picked: Order picked
-form.settings.notifications.order.dropped: Order dropped
-form.settings.notifications.order.fulfilled: Order fulfilled
-form.settings.notifications.order.updated: Order updated
-form.settings.notifications.task.created: Task created
-form.settings.notifications.task.assigned: Task assigned
-form.settings.notifications.task.unassigned: Task unassigned
-form.settings.notifications.task.started: Task started
-form.settings.notifications.task.done: Task done
-form.settings.notifications.task.failed: Task failed
-form.settings.notifications.task.cancelled: Task cancelled
-form.settings.notifications.task.rescheduled: Task rescheduled
-form.settings.notifications.help: When disabling notifications for events below, administrators won't receive emails, nor top bar notifications.
 tags.featured: Featured
 tags.exclusive: Exclusives
 tags.shops.new: New shops
@@ -1685,3 +1686,19 @@ restaurant.copy_products.not_empty: The target restaurant already has products
 restaurant.copy_products.copying: Copying the products, please refresh this page in a few minutes
 form.store_type.multi_pickup_enabled.label: Enable multiple pickups
 form.store_type.multi_pickup_enabled.help: Allow users to add additional pickups when creating a delivery
+pricing.variant.pickup_point: Pickup point
+pricing.variant.dropoff_point: Dropoff point
+pricing.variant.order_supplement: Order supplement
+pricing.rule.humanizer.inside_zone: inside
+pricing.rule.humanizer.outside_zone: outside
+pricing.rule.humanizer.address_zone_format: '%task_type% address %direction% zone "%zone_name%"'
+pricing.rule.humanizer.between: between %left% and %right%
+pricing.rule.humanizer.less_than: less than %value%
+pricing.rule.humanizer.more_than: more than %value%
+pricing.rule.humanizer.kg_unit: '%value% kg'
+pricing.rule.humanizer.km_unit: '%value% km'
+pricing.rule.humanizer.task_type_is: '%value% rate'
+pricing.rule.humanizer.time_range_length: '%task_type% time window %operator% %value%'
+pricing.rule.humanizer.diff: '%task_type% prior notice %operator% %value%'
+pricing.rule.humanizer.order_items_total: cart total %operator% %value%
+pricing.rule.humanizer.packages_volume_units: package volume %operator% %value%

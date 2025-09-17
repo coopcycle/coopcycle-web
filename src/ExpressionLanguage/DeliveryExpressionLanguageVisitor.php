@@ -23,7 +23,7 @@ class DeliveryExpressionLanguageVisitor
     private function createOrderObject(?Order $order): stdClass
     {
         $object = new stdClass();
-        if ($order) {
+        if ($order && $order->isFoodtech()) {
             $object->itemsTotal = $order->getItemsTotal();
         } else {
             $object->itemsTotal = 0;

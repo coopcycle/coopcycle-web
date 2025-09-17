@@ -57,7 +57,7 @@ class Address extends BaseAddress
     private $company;
     #[Groups(['task', 'warehouse', 'delivery', 'delivery_create', 'task_create', 'task_edit', 'address'])]
     private $contactName;
-    private $complete;
+    private $complete = false;
 
     private ?string $provider = null;
 

@@ -2,7 +2,6 @@
 
 namespace Tests\AppBundle\Pricing;
 
-use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
@@ -18,10 +17,21 @@ use AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\PriceRangeExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\TaskExpressionLanguageVisitor;
 use AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider;
+use AppBundle\Fixtures\DatabasePurger;
+use AppBundle\Pricing\OnDemandDeliveryProductProcessor;
 use AppBundle\Pricing\PriceCalculationVisitor;
+use AppBundle\Pricing\ProductOptionValueHelper;
+use AppBundle\Pricing\ProductVariantNameGenerator;
+use AppBundle\Pricing\RuleHumanizer;
+use AppBundle\Sylius\Product\ProductOptionValueFactory;
+use AppBundle\Sylius\Product\ProductVariantFactory;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Fidry\AliceDataFixtures\LoaderInterface;
+use Fidry\AliceDataFixtures\Persistence\PurgeMode;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Prophecy\Argument;
@@ -35,13 +45,46 @@ class PriceCalculationVisitorTest extends KernelTestCase
 
     private function createWithExpressionLanguage($expressionLanguage): PriceCalculationVisitor
     {
+        $deliveryExpressionLanguageVisitor = self::getContainer()->get(DeliveryExpressionLanguageVisitor::class);
+        $taskExpressionLanguageVisitor = self::getContainer()->get(TaskExpressionLanguageVisitor::class);
+        $productOptionValueFactory = self::getContainer()->get(ProductOptionValueFactory::class);
+        $productVariantFactory = self::getContainer()->get(ProductVariantFactory::class);
+        $ruleHumanizer = self::getContainer()->get(RuleHumanizer::class);
+        $translator = self::getContainer()->get('translator');
+        $logger = self::getContainer()->get(LoggerInterface::class);
+
         return new PriceCalculationVisitor(
             $expressionLanguage,
-            new DeliveryExpressionLanguageVisitor(),
-            new TaskExpressionLanguageVisitor(
-                self::getContainer()->get(IriConverterInterface::class)
-            )
+            $deliveryExpressionLanguageVisitor,
+            $taskExpressionLanguageVisitor,
+            new ProductOptionValueHelper($productOptionValueFactory, $ruleHumanizer),
+            $productVariantFactory,
+            new ProductVariantNameGenerator($translator),
+            new OnDemandDeliveryProductProcessor($expressionLanguage),
+            $logger
         );
+    }
+
+    private function createPickupTask(): Task
+    {
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+
+        $address = new Address();
+        $pickup->setAddress($address);
+
+        return $pickup;
+    }
+
+    private function createDropoffTask(): Task
+    {
+        $dropoff = new Task();
+        $dropoff->setType(Task::TYPE_DROPOFF);
+
+        $address = new Address();
+        $dropoff->setAddress($address);
+
+        return $dropoff;
     }
 
     protected function setUp(): void
@@ -49,6 +92,22 @@ class PriceCalculationVisitorTest extends KernelTestCase
         parent::setUp();
 
         self::bootKernel();
+
+        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
+
+        $dbPurger = self::getContainer()->get(DatabasePurger::class);
+
+        $dbPurger->purge();
+        $dbPurger->resetSequences();
+
+        /** @var LoaderInterface $fixturesLoader */
+        $fixturesLoader = self::getContainer()->get('fidry_alice_data_fixtures.loader.doctrine');
+
+        $fixturesLoader->load([
+            __DIR__.'/../../../fixtures/ORM/settings_mandatory.yml',
+            __DIR__.'/../../../fixtures/ORM/sylius_channels.yml',
+            __DIR__.'/../../../fixtures/ORM/sylius_products.yml',
+        ], $_SERVER, [], PurgeMode::createNoPurgeMode());
 
         $expressionLanguage = static::$kernel->getContainer()->get('coopcycle.expression_language');
         $expressionLanguage->registerProvider(
@@ -70,6 +129,10 @@ class PriceCalculationVisitorTest extends KernelTestCase
     public function tearDown(): void
     {
         Carbon::setTestNow();
+
+        /** @see https://joeymasip.medium.com/symfony-phpunit-testing-database-data-322383ed0603 */
+        $this->entityManager->close();
+        $this->entityManager = null;
     }
 
     public function testGetPrice()
@@ -205,17 +268,14 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
         $dropoff1->setWeight(6000);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setBefore(new \DateTime('2024-06-17 13:30:00'));
         $dropoff2->setWeight(5500);
 
@@ -251,17 +311,14 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
         $dropoff1->setWeight(6000);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setBefore(new \DateTime('2024-06-17 13:30:00'));
         $dropoff2->setWeight(5500);
 
@@ -297,17 +354,14 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
         $dropoff1->setWeight(6000);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setBefore(new \DateTime('2024-06-17 13:30:00'));
         $dropoff2->setWeight(5500);
 
@@ -393,16 +447,13 @@ class PriceCalculationVisitorTest extends KernelTestCase
 
         $priceCalculationVisitor = $this->createWithExpressionLanguage($expressionLanguage);
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setAddress($pickupAddress);
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setAddress($dropoff1Address);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setAddress($dropoff2Address);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
@@ -487,16 +538,13 @@ class PriceCalculationVisitorTest extends KernelTestCase
 
         $priceCalculationVisitor = $this->createWithExpressionLanguage($expressionLanguage);
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setAddress($pickupAddress);
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setAddress($dropoff1Address);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setAddress($dropoff2Address);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
@@ -532,15 +580,12 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setWeight(6000);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setWeight(5500);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
@@ -576,15 +621,12 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setWeight(6000);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setWeight(5500);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
@@ -622,16 +664,13 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
@@ -669,16 +708,13 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
@@ -704,16 +740,13 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setBefore(new \DateTime('2024-06-25 13:30:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setWeight(6000);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setWeight(5500);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
@@ -739,16 +772,13 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
@@ -784,14 +814,11 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
@@ -826,14 +853,11 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
@@ -857,15 +881,12 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $rule1,
         ]));
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setWeight(6000);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setWeight(5500);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
@@ -890,15 +911,12 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $rule1,
         ]));
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setWeight(6000);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setWeight(5500);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
@@ -929,13 +947,11 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setAfter(new \DateTime('2024-06-17 13:00:00'));
         $pickup->setBefore(new \DateTime('2024-06-17 13:59:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1]);
 
@@ -964,13 +980,11 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $rule2,
         ]));
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setAfter(new \DateTime('2024-06-17 13:00:00'));
         $pickup->setBefore(new \DateTime('2024-06-17 15:30:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1]);
 
@@ -996,15 +1010,12 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $package = new Package();
         $package->setName('XXL');
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->addPackageWithQuantity($package, 1);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->addPackageWithQuantity($package, 2);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
@@ -1031,15 +1042,12 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $package = new Package();
         $package->setName('XXL');
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->addPackageWithQuantity($package, 1);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->addPackageWithQuantity($package, 2);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
@@ -1067,15 +1075,12 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $package->setName('XXL');
         $package->setMaxVolumeUnits(10);
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->addPackageWithQuantity($package, 1);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->addPackageWithQuantity($package, 2);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
@@ -1103,15 +1108,12 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $package->setName('XXL');
         $package->setMaxVolumeUnits(10);
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->addPackageWithQuantity($package, 1);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->addPackageWithQuantity($package, 2);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
@@ -1150,15 +1152,12 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $package = new Package();
         $package->setName('XXL');
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->addPackageWithQuantity($package, 1);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->addPackageWithQuantity($package, 2);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
@@ -1197,15 +1196,12 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $package = new Package();
         $package->setName('XXL');
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->addPackageWithQuantity($package, 1);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->addPackageWithQuantity($package, 2);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
@@ -1253,15 +1249,12 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $rule1,
         ]));
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setWeight(6000);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setWeight(5500);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
@@ -1290,15 +1283,12 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $package->setName('XXL');
         $package->setMaxVolumeUnits(10);
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->addPackageWithQuantity($package, 1);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->addPackageWithQuantity($package, 2);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
@@ -1333,12 +1323,10 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $rule2,
         ]));
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1]);
@@ -1373,12 +1361,10 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $rule2,
         ]));
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1]);
@@ -1421,15 +1407,12 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $rule3,
         ]));
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setWeight(6000);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setWeight(12500);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
@@ -1475,16 +1458,13 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $rule3,
         ]));
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
@@ -1514,13 +1494,11 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $timeSlot = $this->prophesize(TimeSlot::class);
         $timeSlot->getId()->willReturn(1);
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
         $pickup->setTimeSlot($timeSlot->reveal());
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1]);
@@ -1550,16 +1528,14 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $timeSlot1 = $this->prophesize(TimeSlot::class);
         $timeSlot1->getId()->willReturn(1);
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
         $pickup->setTimeSlot($timeSlot1->reveal());
 
         $timeSlot2 = $this->prophesize(TimeSlot::class);
         $timeSlot2->getId()->willReturn(2);
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
         $dropoff1->setTimeSlot($timeSlot2->reveal());
 

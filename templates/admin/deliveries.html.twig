@@ -133,7 +133,7 @@
           <tr class="{{ import_queue.status == 'failed' ? 'danger' : '' }}"
             data-delivery-import
             data-delivery-import-filename="{{ import_queue.filename }}"
-            data-delivery-import-queue="{{ path('_api_/delivery_import_queues/{id}.{_format}_get', { id: import_queue.id }) }}"
+            data-delivery-import-queue="{{ path('_api_/delivery_import_queues/{id}{._format}_get', { id: import_queue.id }) }}"
             data-delivery-import-csv="{{ path('_api_/delivery_import_queues/{id}/csv_get', { id: import_queue.id }) }}"
             data-delivery-import-redownload="{{ path('_api_/delivery_import_queues/{id}/redownload_get', { id: import_queue.id }) }}">
             <td width="5%"><i class="fa fa-{{ import_status_icon[import_queue.status] }}" data-delivery-import-status></i></td>

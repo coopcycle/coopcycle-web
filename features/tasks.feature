@@ -329,7 +329,7 @@ Feature: Tasks
         "@id":"/api/tasks/2/events",
         "@type":"hydra:Collection",
         "hydra:member":@array@,
-        "hydra:totalItems":2,
+        "hydra:totalItems":3,
         "hydra:search":{
           "@type":"hydra:IriTemplate",
           "hydra:template":"/api/tasks/2/events{?date,assigned,organization}",
@@ -815,7 +815,7 @@ Feature: Tasks
             "createdAt":"@string@.isDateTime()"
           }
         ],
-        "hydra:totalItems":4,
+        "hydra:totalItems":5,
         "hydra:search":{
           "@*@":"@*@"
         }
@@ -1482,7 +1482,7 @@ Feature: Tasks
               "type": "SMALL",
               "quantity": 4,
               "volume_per_package": 1,
-              "short_code": "AB",
+              "short_code": "SM",
               "labels": @array@
             }],
             "emittedCo2": "@integer@",
@@ -1594,7 +1594,7 @@ Feature: Tasks
               "type": "SMALL",
               "quantity": 4,
               "volume_per_package": 1,
-              "short_code": "AB",
+              "short_code": "SM",
               "labels": @array@
             }],
             "emittedCo2": "@integer@",
@@ -1669,7 +1669,7 @@ Feature: Tasks
               "type": "SMALL",
               "quantity": 4,
               "volume_per_package": 1,
-              "short_code": "AB",
+              "short_code": "SM",
               "labels": @array@
             }],
             "emittedCo2": "@integer@",
@@ -1713,11 +1713,11 @@ Feature: Tasks
         ],
         "hydra:totalItems":4,
         "hydra:view":{
-          "@id":"/api/tasks?date=2024-12-01&pagination=true&itemsPerPage=2&page=1",
+          "@id":"/api/tasks?date=2024-12-01&itemsPerPage=2&pagination=true&page=1",
           "@type":"hydra:PartialCollectionView",
-          "hydra:first":"/api/tasks?date=2024-12-01&pagination=true&itemsPerPage=2&page=1",
-          "hydra:last":"/api/tasks?date=2024-12-01&pagination=true&itemsPerPage=2&page=2",
-          "hydra:next":"/api/tasks?date=2024-12-01&pagination=true&itemsPerPage=2&page=2"
+          "hydra:first":"/api/tasks?date=2024-12-01&itemsPerPage=2&pagination=true&page=1",
+          "hydra:last":"/api/tasks?date=2024-12-01&itemsPerPage=2&pagination=true&page=2",
+          "hydra:next":"/api/tasks?date=2024-12-01&itemsPerPage=2&pagination=true&page=2"
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
@@ -1781,7 +1781,7 @@ Feature: Tasks
         ],
         "hydra:totalItems":1,
         "hydra:view":{
-          "@id":"/api/tasks?date=2018-12-01&assigned=no",
+          "@id":"/api/tasks?assigned=no&date=2018-12-01",
           "@type":"hydra:PartialCollectionView"
         },
         "hydra:search":{
@@ -2193,6 +2193,9 @@ Feature: Tasks
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "pickup":{
           "@id":@string@,
           "@type":"Task",
@@ -2206,7 +2209,6 @@ Feature: Tasks
           "after":"2019-11-12T18:00:00+01:00",
           "before":"2019-11-12T18:30:00+01:00",
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"},
           "weight":null,
@@ -2226,7 +2228,6 @@ Feature: Tasks
           "after":"2019-11-12T19:00:00+01:00",
           "before":"2019-11-12T19:30:00+01:00",
           "createdAt":"@string@.isDateTime()",
-          "updatedAt":"@string@.isDateTime()",
           "tags": [],
           "metadata": {"@*@": "@*@"},
           "weight":null,
@@ -2235,7 +2236,7 @@ Feature: Tasks
         },
         "tasks":@array@,
         "trackingUrl": @string@,
-        "order": {"@*@": "@*@"}
+        "order": null
       }
       """
 
@@ -2261,6 +2262,9 @@ Feature: Tasks
         "@id":"/api/deliveries/1/pick",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "pickup":{
           "@id":@string@,
           "@type":"Task",
@@ -2300,7 +2304,8 @@ Feature: Tasks
           "barcode":{"@*@":"@*@"}
         },
         "tasks":@array@,
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": null
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -2320,6 +2325,9 @@ Feature: Tasks
         "@id":"/api/deliveries/1/drop",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "pickup":{
           "@id":@string@,
           "@type":"Task",
@@ -2359,7 +2367,8 @@ Feature: Tasks
           "barcode":{"@*@":"@*@"}
         },
         "tasks":@array@,
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": null
       }
       """
 
@@ -2374,10 +2383,10 @@ Feature: Tasks
     And the OAuth client "Acme" sends a "POST" request to "/api/tasks/import" with body:
       """
       type,address.streetAddress,address.telephone,address.name,after,before,tags
-      pickup,"1, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,"important"
-      dropoff,"54, rue du Faubourg Saint Denis Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,"important fragile"
-      dropoff,"68, rue du Faubourg Saint Denis Paris",,Baz,2018-02-15 10:00,2018-02-15 11:00,"fragile"
-      dropoff,"42, rue de Rivoli Paris",,Bat,2018-02-15 11:30,2018-02-15 12:00,
+      pickup,"44, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,"important"
+      dropoff,"24, Rue de la Paix Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,"important fragile"
+      dropoff,"101, Rue de la Paix Paris",,Baz,2018-02-15 10:00,2018-02-15 11:00,"fragile"
+      dropoff,"52, rue de Rivoli Paris",,Bat,2018-02-15 11:30,2018-02-15 12:00,
       """
     Then the response status code should be 201
     And the JSON should match:
@@ -2413,7 +2422,7 @@ Feature: Tasks
     And the OAuth client "Acme" sends a "POST" request to "/api/tasks/import" with body:
       """
       type,address.streetAddress,address.telephone,address.name,after,before,tags
-      pickup,"1, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,"important"
+      pickup,"44, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,"important"
       """
     Then the response status code should be 201
     And the JSON should match:
@@ -2441,8 +2450,8 @@ Feature: Tasks
     And the OAuth client "Acme" sends a "POST" request to "/api/tasks/import" with body:
       """
       type,address.streetAddress,address.telephone,address.name,after,before,ref
-      pickup,"1, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,123456
-      dropoff,"54, rue du Faubourg Saint Denis Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,123456
+      pickup,"44, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,123456
+      dropoff,"24, Rue de la Paix Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,123456
       """
     Then the response status code should be 400
     And the response should be in JSON
@@ -2474,8 +2483,8 @@ Feature: Tasks
     And the OAuth client "Acme" sends a "POST" request to "/api/tasks/import" with body:
       """
       type,address.streetAddress,address.telephone,address.name,after,before,ref
-      pickup,"1, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,654321
-      dropoff,"54, rue du Faubourg Saint Denis Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,123456
+      pickup,"44, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,654321
+      dropoff,"24, Rue de la Paix Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,123456
       """
     Then the response status code should be 400
     And the response should be in JSON
@@ -2501,8 +2510,8 @@ Feature: Tasks
       | stores.yml          |
     Given the store with name "Acme" has imported tasks:
       | type    | address.streetAddress                 | after            | before           |
-      | pickup  | 1, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
-      | dropoff | 54, rue du Faubourg Saint Denis Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | pickup  | 44, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | dropoff | 24, Rue de la Paix Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
     Given the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
@@ -2529,8 +2538,8 @@ Feature: Tasks
       | stores.yml          |
     Given the store with name "Acme" has imported tasks:
       | type    | address.streetAddress                 | after            | before           |
-      | pickup  | 1, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
-      | dropoff | 54, rue du Faubourg Saint Denis Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | pickup  | 44, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | dropoff | 24, Rue de la Paix Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
     Given the store with name "Acme2" has an OAuth client named "Acme2"
     And the OAuth client with name "Acme2" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
@@ -2696,8 +2705,8 @@ Feature: Tasks
       | stores.yml          |
     Given the store with name "Acme" has imported tasks:
       | type    | address.streetAddress                 | after            | before           |
-      | pickup  | 1, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
-      | dropoff | 54, rue du Faubourg Saint Denis Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | pickup  | 44, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | dropoff | 24, Rue de la Paix Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
     Given the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
@@ -2736,10 +2745,10 @@ Feature: Tasks
     And the OAuth client "Acme" sends a "POST" request to "/api/tasks/import_async" with body:
       """
       type,address.streetAddress,address.telephone,address.name,after,before,tags
-      pickup,"1, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,"important"
-      dropoff,"54, rue du Faubourg Saint Denis Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,"important fragile"
-      dropoff,"68, rue du Faubourg Saint Denis Paris",,Baz,2018-02-15 10:00,2018-02-15 11:00,"fragile"
-      dropoff,"42, rue de Rivoli Paris",,Bat,2018-02-15 11:30,2018-02-15 12:00,
+      pickup,"44, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,"important"
+      dropoff,"24, Rue de la Paix Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,"important fragile"
+      dropoff,"101, Rue de la Paix Paris",,Baz,2018-02-15 10:00,2018-02-15 11:00,"fragile"
+      dropoff,"52, rue de Rivoli Paris",,Bat,2018-02-15 11:30,2018-02-15 12:00,
       """
     Then the response status code should be 201
     And the JSON should match:
@@ -2878,7 +2887,7 @@ Feature: Tasks
               "name":"SMALL",
               "quantity":4,
               "volume_per_package": 1,
-              "short_code": "AB",
+              "short_code": "SM",
               "labels":@array@
             }
          ],
@@ -2891,8 +2900,8 @@ Feature: Tasks
       | stores.yml          |
     Given the store with name "Acme" has imported tasks:
       | type    | address.streetAddress                 | after            | before           |
-      | pickup  | 1, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
-      | dropoff | 54, rue du Faubourg Saint Denis Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | pickup  | 44, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | dropoff | 24, Rue de la Paix Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
     Given the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
@@ -3243,12 +3252,14 @@ Feature: Tasks
         "hydra:member":[
           {
             "@type":"FailureReason",
+            "@id": @string@,
             "code":"DAMAGED",
             "description":"Damaged",
             "metadata":[]
           },
           {
             "@type":"FailureReason",
+            "@id": @string@,
             "code":"REFUSED",
             "description":"Refused",
             "metadata":[]

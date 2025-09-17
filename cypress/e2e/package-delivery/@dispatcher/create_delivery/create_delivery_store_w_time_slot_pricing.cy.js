@@ -1,8 +1,8 @@
 context('Delivery (role: dispatcher); store with time slot pricing', () => {
   beforeEach(() => {
     cy.loadFixturesWithSetup([
-      'ORM/user_dispatcher.yml',
-      '../features/fixtures/ORM/store_w_time_slot_pricing.yml',
+      'user_dispatcher.yml',
+      'store_w_time_slot_pricing.yml',
     ])
 
     cy.setMockDateTime('2025-04-23 8:30:00')
@@ -62,10 +62,14 @@ context('Delivery (role: dispatcher); store with time slot pricing', () => {
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.get('[data-testid="order_item"]')
-      .find('[data-testid="total"]')
+    cy.get('[data-testid="order-total-including-tax"]')
+      .find('[data-testid="value"]')
       .contains('€6.99')
 
+    // Wait for React components to load
+    cy.get('[data-testid="delivery-itinerary"]', {
+      timeout: 10000,
+    }).should('be.visible')
     cy.get('[data-testid=delivery-itinerary]')
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
       .should('exist')

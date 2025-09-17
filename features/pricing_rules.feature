@@ -2,6 +2,7 @@ Feature: Pricing rules
 
   Scenario: Evaluate pricing rule (JWT)
     Given the fixtures files are loaded:
+      | sylius_products.yml |
       | stores.yml          |
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
@@ -39,7 +40,7 @@ Feature: Pricing rules
           "hydra":@string@,
           "result":"YesNoOutput/result"
         },
-        "@type":"PricingRule",
+        "@type":"YesNoOutput",
         "@id":@string@,
         "result":true
       }
@@ -48,6 +49,7 @@ Feature: Pricing rules
   Scenario: Evaluate pricing rule (JWT)
     Given the current time is "2020-06-09 12:00:00"
     Given the fixtures files are loaded:
+      | sylius_products.yml |
       | stores.yml          |
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
@@ -85,7 +87,7 @@ Feature: Pricing rules
           "hydra":@string@,
           "result":"YesNoOutput/result"
         },
-        "@type":"PricingRule",
+        "@type":"YesNoOutput",
         "@id":@string@,
         "result":false
       }
@@ -94,6 +96,7 @@ Feature: Pricing rules
   Scenario: Evaluate pricing rule (JWT)
     Given the current time is "2020-06-09 12:00:00"
     Given the fixtures files are loaded:
+      | sylius_products.yml |
       | stores.yml          |
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
@@ -134,7 +137,7 @@ Feature: Pricing rules
           "hydra":@string@,
           "result":"YesNoOutput/result"
         },
-        "@type":"PricingRule",
+        "@type":"YesNoOutput",
         "@id":@string@,
         "result":true
       }
@@ -143,6 +146,7 @@ Feature: Pricing rules
   Scenario: Evaluate pricing rule with packages in task (JWT)
     Given the current time is "2020-06-09 12:00:00"
     Given the fixtures files are loaded:
+      | sylius_products.yml |
       | stores.yml          |
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
@@ -183,7 +187,7 @@ Feature: Pricing rules
           "hydra":@string@,
           "result":"YesNoOutput/result"
         },
-        "@type":"PricingRule",
+        "@type":"YesNoOutput",
         "@id":@string@,
         "result":true
       }
@@ -192,6 +196,7 @@ Feature: Pricing rules
   Scenario: Evaluate pricing rule with weight in task (JWT)
     Given the current time is "2020-06-09 12:00:00"
     Given the fixtures files are loaded:
+      | sylius_products.yml |
       | stores.yml          |
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
@@ -230,7 +235,7 @@ Feature: Pricing rules
           "hydra":@string@,
           "result":"YesNoOutput/result"
         },
-        "@type":"PricingRule",
+        "@type":"YesNoOutput",
         "@id":@string@,
         "result":true
       }
@@ -239,6 +244,7 @@ Feature: Pricing rules
   Scenario: Pricing rule with weight in multiple dropoff tasks(JWT)
     Given the current time is "2020-06-09 12:00:00"
     Given the fixtures files are loaded:
+      | sylius_products.yml |
       | stores.yml          |
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
@@ -296,7 +302,7 @@ Feature: Pricing rules
           "hydra":@string@,
           "result":"YesNoOutput/result"
         },
-        "@type":"PricingRule",
+        "@type":"YesNoOutput",
         "@id":@string@,
         "result":false
       }
@@ -305,6 +311,7 @@ Feature: Pricing rules
   Scenario: Evaluate pricing rule with weight in multiple dropoff tasks (JWT)
     Given the current time is "2020-06-09 12:00:00"
     Given the fixtures files are loaded:
+      | sylius_products.yml |
       | stores.yml          |
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
@@ -356,7 +363,7 @@ Feature: Pricing rules
           "hydra":@string@,
           "result":"YesNoOutput/result"
         },
-        "@type":"PricingRule",
+        "@type":"YesNoOutput",
         "@id":@string@,
         "result":true
       }

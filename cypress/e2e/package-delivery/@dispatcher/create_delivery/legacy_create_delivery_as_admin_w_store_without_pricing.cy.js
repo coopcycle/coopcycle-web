@@ -1,6 +1,6 @@
 context('Delivery (role: admin) for a store without pricing', () => {
   beforeEach(() => {
-    cy.loadFixtures('../cypress/fixtures/stores.yml')
+    cy.loadFixtures('stores_legacy.yml')
 
     cy.setMockDateTime('2025-04-23 8:30:00')
 
@@ -58,8 +58,8 @@ context('Delivery (role: admin) for a store without pricing', () => {
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/)
 
-    cy.get('[data-testid="order_item"]')
-      .find('[data-testid="total"]')
+    cy.get('[data-testid="order-total-including-tax"]')
+      .find('[data-testid="value"]')
       .contains('€0.00')
 
     cy.get('[data-testid=delivery-itinerary]')
