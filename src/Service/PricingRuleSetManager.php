@@ -71,15 +71,16 @@ class PricingRuleSetManager
 
     public function setPricingRuleName(PricingRule $pricingRule, string $name): void
     {
-        $productOptionValue = $pricingRule->getProductOptionValue();
+        //TODO: handle multiple product option values
+        $productOptionValue = $pricingRule->getProductOptionValues()->first();
 
-        if (null !== $productOptionValue && $name === $productOptionValue->getValue()) {
+        if (false !== $productOptionValue && $name === $productOptionValue->getValue()) {
             return;
         }
 
         // Do not modify existing ProductOptionValue, create a new one for each change
         $productOptionValue = $this->productOptionValueFactory->createForPricingRule($pricingRule, $name);
-        $pricingRule->setProductOptionValue($productOptionValue);
+        $pricingRule->addProductOptionValue($productOptionValue);
 
         $this->entityManager->persist($productOptionValue);
     }

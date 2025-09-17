@@ -203,7 +203,7 @@ class PricingRuleTest extends TestCase
         $productOptionValue->setOption($productOption);
 
         $rule = new PricingRule();
-        $rule->setProductOptionValue($productOptionValue);
+        $rule->addProductOptionValue($productOptionValue);
 
         $this->assertEquals('Express Delivery', $rule->getName());
     }

@@ -17,10 +17,11 @@ class ProductOptionValueHelper
     public function getProductOptionValue(
         PricingRule $rule,
     ): ProductOptionValue {
-        $productOptionValue = $rule->getProductOptionValue();
+        //TODO: handle multiple product option values
+        $productOptionValue = $rule->getProductOptionValues()->first();
 
         // Create a product option if none is defined
-        if (is_null($productOptionValue)) {
+        if (false === $productOptionValue) {
             $productOptionValue = $this->productOptionValueFactory->createForPricingRule(
                 $rule,
                 $this->ruleHumanizer->humanize($rule)

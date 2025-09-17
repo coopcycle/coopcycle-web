@@ -11,6 +11,8 @@ use AppBundle\Api\Dto\YesNoOutput;
 use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\ExpressionLanguage\PriceEvaluation;
 use AppBundle\Validator\Constraints\PricingRule as AssertPricingRule;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
@@ -76,9 +78,15 @@ class PricingRule
     protected $nameInput;
 
     /**
-     * @var ?ProductOptionValue
+     * Each PricingRule can have zero, one, or many ProductOptionValues.
+     * @var Collection<int, ProductOptionValue>
      */
-    protected $productOptionValue;
+    protected $productOptionValues;
+
+    public function __construct()
+    {
+        $this->productOptionValues = new ArrayCollection();
+    }
 
     /**
      * Gets id.
@@ -148,14 +156,32 @@ class PricingRule
         return $this;
     }
 
-    public function getProductOptionValue(): ?ProductOptionValue
+    /**
+     * @return Collection<int, ProductOptionValue>
+     */
+    public function getProductOptionValues(): Collection
     {
-        return $this->productOptionValue;
+        return $this->productOptionValues;
     }
 
-    public function setProductOptionValue(?ProductOptionValue $productOptionValue): self
+    public function addProductOptionValue(ProductOptionValue $productOptionValue): self
     {
-        $this->productOptionValue = $productOptionValue;
+        if (!$this->productOptionValues->contains($productOptionValue)) {
+            $this->productOptionValues->add($productOptionValue);
+            $productOptionValue->setPricingRule($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductOptionValue(ProductOptionValue $productOptionValue): self
+    {
+        if ($this->productOptionValues->removeElement($productOptionValue)) {
+            // set the owning side to null (unless already changed)
+            if ($productOptionValue->getPricingRule() === $this) {
+                $productOptionValue->setPricingRule(null);
+            }
+        }
 
         return $this;
     }
@@ -180,7 +206,9 @@ class PricingRule
     #[Groups(['pricing_deliveries', 'pricing_rule_set:read'])]
     public function getName(): ?string
     {
-        return $this->productOptionValue?->getValue();
+        // Return the value of the first ProductOptionValue if any exists
+        $productOptionValue = $this->productOptionValues->first();
+        return $productOptionValue instanceof ProductOptionValue ? $productOptionValue->getValue() : null;
     }
 
     public function matches(array $values, ?ExpressionLanguage $language = null)

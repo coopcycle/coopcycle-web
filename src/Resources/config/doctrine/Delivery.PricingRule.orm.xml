@@ -16,13 +16,10 @@
         <join-column name="rule_set_id" referenced-column-name="id" nullable="false"/>
       </join-columns>
     </many-to-one>
-    <many-to-one field="productOptionValue" target-entity="AppBundle\Entity\Sylius\ProductOptionValue" inversed-by="pricingRules">
+    <one-to-many field="productOptionValues" target-entity="AppBundle\Entity\Sylius\ProductOptionValue" mapped-by="pricingRule">
       <cascade>
         <cascade-persist/>
       </cascade>
-      <join-columns>
-        <join-column name="product_option_value_id" referenced-column-name="id" nullable="true"/>
-      </join-columns>
-    </many-to-one>
+    </one-to-many>
   </entity>
 </doctrine-mapping>
