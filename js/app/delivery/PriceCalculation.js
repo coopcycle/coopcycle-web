@@ -7,6 +7,7 @@ import FlagsContext from '../components/delivery-form/FlagsContext'
 function Rule({ rule, matched }) {
   return (
     <div
+      data-testid="price-calculation-debug-tool-rule"
       className={
         matched ? 'list-group-item-success' : 'list-group-item-danger'
       }>
@@ -124,6 +125,7 @@ export function PriceCalculation({
 
   return (
     <Collapse
+      data-testid="price-calculation-debug-tool"
       className={className}
       defaultActiveKey={isDebugPricing ? ['1'] : []}
       items={items}

@@ -60,6 +60,14 @@ context('Delivery (role: dispatcher)', () => {
       "Le prix n'a pas pu être calculé. Vous pouvez créer la livraison, n'oubliez pas de corriger la règle de prix liée à ce magasin.",
     )
 
+    cy.get('[data-testid="price-calculation-debug-tool"]').should('be.visible')
+    cy.get('[data-testid="price-calculation-debug-tool"]').click()
+    cy.get('[data-testid="price-calculation-debug-tool"]').within(() => {
+      cy.get('[data-testid="price-calculation-debug-tool-rule"]').contains(
+        'Rule #2: distance > 100000',
+      )
+    })
+
     cy.get('button[type="submit"]').click()
 
     // Order page
