@@ -51,4 +51,40 @@ class CreateLoopeatOrderTest extends TestCase
         $order->setLoopeatOrderId(Argument::type('string'))->shouldNotHaveBeenCalled();
     }
 
+    public function testDoesNothing()
+    {
+        $order = $this->prophesize(OrderInterface::class);
+
+        $order
+            ->isLoopeat()
+            ->willReturn(false);
+
+        $this->loopeatClient
+            ->createOrder($order)
+            ->willReturn(['id' => 123456])
+            ->shouldNotBeCalled();
+
+        call_user_func_array($this->createLoopeatOrder, [ new OrderCreated($order->reveal()) ]);
+    }
+
+    public function testCreatesOrder()
+    {
+        $order = $this->prophesize(OrderInterface::class);
+
+        $order
+            ->isLoopeat()
+            ->willReturn(true);
+
+        $this->loopeatClient
+            ->createOrder($order)
+            ->willReturn(['id' => 123456])
+            ->shouldBeCalled();
+
+        call_user_func_array($this->createLoopeatOrder, [ new OrderCreated($order->reveal()) ]);
+
+        $order
+            ->setLoopeatOrderId(123456)
+            ->shouldHaveBeenCalled();
+    }
+
 }
