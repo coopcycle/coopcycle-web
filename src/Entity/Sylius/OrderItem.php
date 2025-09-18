@@ -5,11 +5,13 @@ namespace AppBundle\Entity\Sylius;
 use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\Api\State\CartItemProcessor;
+use AppBundle\Api\State\UpdateCartItemProcessor;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -24,7 +26,15 @@ use Sylius\Component\Order\Model\OrderItemInterface as BaseOrderItemInterface;
 #[ApiResource(
     uriTemplate: '/orders/{order}/items/{id}',
     operations: [
-        new Get()
+        new Get(),
+        new Put(
+            processor: UpdateCartItemProcessor::class,
+            input: CartItemInput::class,
+            normalizationContext: ['groups' => ['cart']],
+            denormalizationContext: ['groups' => ['cart']],
+            security: 'is_granted(\'edit\', object.getOrder())',
+            validationContext: ['groups' => ['cart']]
+        ),
     ],
     uriVariables: [
         'order' => new Link(fromClass: Order::class, toProperty: 'order'),
