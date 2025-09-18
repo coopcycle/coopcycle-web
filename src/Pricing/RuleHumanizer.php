@@ -21,18 +21,9 @@ class RuleHumanizer
 
     public function humanize(PricingRule $rule): string
     {
-        try {
-            $parsedExpression = $this->expressionLanguage->parse($rule->getExpression(), [
-                'distance',
-                'weight',
-                'vehicle',
-                'pickup',
-                'dropoff',
-                'packages',
-                'task',
-                'order',
-            ]);
-        } catch (\Exception $e) {
+        $parsedExpression = $this->expressionLanguage->parseRuleExpression($rule->getExpression());
+
+        if (null === $parsedExpression) {
             return $this->fallbackName($rule);
         }
 

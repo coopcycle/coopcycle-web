@@ -786,13 +786,14 @@ Cypress.Commands.add('validatePricingRuleSet', ruleSet => {
   }
 
   // Validate delivery manual supplement rules
-  if (ruleSet.deliveryManualSupplementRules && ruleSet.deliveryManualSupplementRules.length > 0) {
+  if (ruleSet.deliveryManualSupplements && ruleSet.deliveryManualSupplements.length > 0) {
     cy.get('[data-rfd-droppable-id="manual-supplements-delivery"]').within(() => {
       cy.get('[data-testid^="pricing-rule-set-rule-"]').should(
         'have.length',
-        ruleSet.deliveryManualSupplementRules.length,
+        ruleSet.deliveryManualSupplements.length,
       )
     })
+    cy.validatePricingRules(ruleSet.deliveryManualSupplements)
   }
 
   // Validate task rules

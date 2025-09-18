@@ -5,10 +5,12 @@ import {
   FixedPrice,
   PercentagePrice,
   Price,
+  PriceRange,
   parsePriceAST,
 } from '../../../delivery/pricing/pricing-rule-parser';
 import { getPriceValue } from '../../pricing-rule-set-form/utils';
 import { useDeliveryFormFormikContext } from '../hooks/useDeliveryFormFormikContext';
+import RangeInput from './RangeInput';
 
 export function formatPrice(price: Price): string {
   if (price instanceof FixedPrice) {
@@ -20,10 +22,15 @@ export function formatPrice(price: Price): string {
     } else {
       return `${value}%`;
     }
+  } else if (price instanceof PriceRange && price.attribute === 'quantity') {
+    //TODO: localise
+
+    if (price.threshold === 0) {
+      return `${getPriceValue(price).formatMoney()} for every ${price.step}`;
+    } else {
+      return `${getPriceValue(price).formatMoney()} for every ${price.step} above ${price.threshold}`;
+    }
   } else {
-    //TODO in https://github.com/coopcycle/coopcycle/issues/447
-    // price instanceof PriceRange:
-    //   return price.price / 100
     return '';
   }
 }
@@ -33,22 +40,53 @@ type Props = {
 };
 
 export default function ManualSupplement({ rule }: Props) {
-  //TODO; add support for range type in https://github.com/coopcycle/coopcycle/issues/447
-
   const { values, setFieldValue } = useDeliveryFormFormikContext();
 
   const price = useMemo(() => {
     return rule.priceAst ? parsePriceAST(rule.priceAst, rule.price) : null;
   }, [rule.priceAst, rule.price]);
 
-  const isChecked = useMemo(() => {
-    return values.order.manualSupplements.some(
+  const isRangeBased =
+    price instanceof PriceRange && price.attribute === 'quantity';
+
+  const currentSupplement = useMemo(() => {
+    return values.order.manualSupplements.find(
       supplement => supplement.pricingRule === rule['@id'],
     );
   }, [values.order.manualSupplements, rule]);
 
   const updateSupplements = (newSupplements: ManualSupplementValues[]) => {
     setFieldValue('order.manualSupplements', newSupplements);
+  };
+
+  const updateSupplementQuantity = (quantity: number) => {
+    const currentSupplements = values.order.manualSupplements;
+    const existingIndex = currentSupplements.findIndex(
+      supplement => supplement.pricingRule === rule['@id'],
+    );
+
+    if (quantity === 0) {
+      // Remove supplement if quantity is 0
+      if (existingIndex >= 0) {
+        const updatedSupplements = [...currentSupplements];
+        updatedSupplements.splice(existingIndex, 1);
+        updateSupplements(updatedSupplements);
+      }
+    } else {
+      // Add or update supplement
+      const supplement: ManualSupplementValues = {
+        pricingRule: rule['@id'],
+        quantity: quantity,
+      };
+
+      if (existingIndex >= 0) {
+        const updatedSupplements = [...currentSupplements];
+        updatedSupplements[existingIndex] = supplement;
+        updateSupplements(updatedSupplements);
+      } else {
+        updateSupplements([...currentSupplements, supplement]);
+      }
+    }
   };
 
   const onChange = (e: CheckboxChangeEvent) => {
@@ -70,11 +108,31 @@ export default function ManualSupplement({ rule }: Props) {
     }
   };
 
+  if (isRangeBased) {
+    const currentValue = currentSupplement?.quantity || 0;
+
+    return (
+      <div
+        className="py-1 d-flex align-items-center"
+        data-testid={`manual-supplement-range-${rule.name}`}>
+        <RangeInput
+          value={currentValue}
+          onChange={updateSupplementQuantity}
+          min={price.threshold}
+          step={price.step}
+        />
+        <span className="flex-1 px-2">{rule.name}</span>
+        <span data-testid="range-supplement-price">{formatPrice(price)}</span>
+      </div>
+    );
+  }
+
+  // Checkbox logic for fixed price and percentage
   return (
     <div className="py-1">
       <Checkbox
         data-testid={`manual-supplement-${rule.name}`}
-        checked={isChecked}
+        checked={!!currentSupplement}
         onChange={onChange}>
         {rule.name}
       </Checkbox>

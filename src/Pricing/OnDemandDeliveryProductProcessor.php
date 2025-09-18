@@ -3,7 +3,14 @@
 namespace AppBundle\Pricing;
 
 use AppBundle\Entity\Delivery\PricingRule;
+use AppBundle\Entity\Sylius\ProductOptionRepository;
 use AppBundle\Entity\Sylius\ProductOptionValue;
+use AppBundle\ExpressionLanguage\PriceEvaluation;
+use AppBundle\Pricing\PriceExpressions\FixedPriceExpression;
+use AppBundle\Pricing\PriceExpressions\PricePercentageExpression;
+use AppBundle\Pricing\PriceExpressions\PricePerPackageExpression;
+use AppBundle\Pricing\PriceExpressions\PriceRangeExpression;
+use AppBundle\Sylius\Product\ProductOptionValueFactory;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use Psr\Log\LoggerInterface;
@@ -13,47 +20,255 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 class OnDemandDeliveryProductProcessor
 {
     public function __construct(
+        private readonly ProductOptionValueFactory $productOptionValueFactory,
+        private readonly RuleHumanizer $ruleHumanizer,
         private readonly ExpressionLanguage $expressionLanguage,
+        private readonly PriceExpressionParser $priceExpressionParser,
         private readonly LoggerInterface $feeCalculationLogger = new NullLogger()
     ) {
     }
 
-    public function processProductOptionValue(
-        ProductOptionValue $productOptionValue,
+    /**
+     * @return ProductOptionValueWithQuantity[]
+     */
+    public function processPricingRule(
         PricingRule $rule,
         array $expressionLanguageValues,
-    ): ProductOptionValueWithQuantity {
+    ): array {
+        $productOptionValuesWithQuantity = [];
+
+        $productOptionValues = $this->getProductOptionValues($rule);
+
+        $priceExpression = $this->priceExpressionParser->parsePrice($rule->getPrice());
         $result = $rule->apply($expressionLanguageValues, $this->expressionLanguage);
 
-        $this->feeCalculationLogger->info(
-            sprintf(
-                'processProductOptionValue; result %d (rule "%s")',
-                $result,
-                $rule->getExpression()
-            ),
-            [
-                'target' => $rule->getTarget(),
-            ]
-        );
-
-        //FIXME: update when we properly model unit price and quantity in https://github.com/coopcycle/coopcycle/issues/441
-        // currently we set price to 1 cent and quantity to the actual price, so that the total is price * quantity
-        $basePrice = 1;
-
-        // If the price is negative, we set the base price to -1 as the quantity can't be negative
-        if ($result < 0) {
-            $basePrice = -1;
-            $result = abs($result);
+        if (is_array($result) && count($result) !== count($productOptionValues)) {
+            $this->feeCalculationLogger->warning('processProductOptionValue; evaluation result (array) does not match the number of product option values', [
+                'rule' => $rule->getPrice(),
+                'result' => $result,
+                'productOptionValues' => count($productOptionValues),
+            ]);
+            return [];
+        } elseif (!is_array($result) && count($productOptionValues) !== 1) {
+            $this->feeCalculationLogger->warning('processProductOptionValue; evaluation result (PriceEvaluation|int) does not match the number of product option values', [
+                'rule' => $rule->getPrice(),
+                'result' => $result,
+                'productOptionValues' => count($productOptionValues),
+            ]);
+            return [];
         }
 
-        // If the percentage is below 100% (10000 = 100.00%), we set the base price to -1 as it's a discount
-        if ('CPCCL-ODDLVR-PERCENTAGE' === $productOptionValue->getOptionCode() && $result < 10000) {
-            $basePrice = -1;
+        switch (get_class($priceExpression)) {
+            case FixedPriceExpression::class:
+                if (is_array($result)) {
+                    $this->feeCalculationLogger->warning('processProductOptionValue; unsupported result type', [
+                        'rule' => $rule->getPrice(),
+                        'result' => $result,
+                    ]);
+                } elseif ($result instanceof PriceEvaluation) {
+                    $this->feeCalculationLogger->warning('processProductOptionValue; unsupported result type', [
+                        'rule' => $rule->getPrice(),
+                        'result' => $result,
+                    ]);
+                } else {
+                    $productOptionValue = $productOptionValues[0];
+
+                    // handle legacy product option values that might still hold an out-of-date unit price (format)
+                    // all newly created product option values should have the same price as return by the rule evaluation
+                    if ($productOptionValue->getPrice() !== $result) {
+                        $this->feeCalculationLogger->warning('processProductOptionValue; unit price does not match; updating', [
+                            'rule' => $rule->getPrice(),
+                            'expected' => $result,
+                            'actual' => $productOptionValue->getPrice(),
+                        ]);
+                        $productOptionValue->setPrice($result);
+                    }
+
+                    $productOptionValuesWithQuantity[] = new ProductOptionValueWithQuantity($productOptionValue, 1);
+                }
+
+                break;
+            case PricePercentageExpression::class:
+                if (is_array($result)) {
+                    $this->feeCalculationLogger->warning('processProductOptionValue; unsupported result type', [
+                        'rule' => $rule->getPrice(),
+                        'result' => $result,
+                    ]);
+                } elseif ($result instanceof PriceEvaluation) {
+                    $this->feeCalculationLogger->warning('processProductOptionValue; unsupported result type', [
+                        'rule' => $rule->getPrice(),
+                        'result' => $result,
+                    ]);
+                } else {
+                    $productOptionValue = $productOptionValues[0];
+
+                    // handle legacy product option values that might still hold an out-of-date unit price (format)
+                    // all newly created product option values should have the correct price already set
+                    if (abs($productOptionValue->getPrice()) !== 1) {
+                        $this->feeCalculationLogger->warning('processProductOptionValue; unit price does not match; updating', [
+                            'rule' => $rule->getPrice(),
+                            'actual' => $productOptionValue->getPrice(),
+                        ]);
+                        $productOptionValue->setPrice($result < 10000 ? -1 : 1);
+                    }
+
+                    // temporarily set quantity to percentage (will be updated later in calculation)
+                    $productOptionValuesWithQuantity[] = new ProductOptionValueWithQuantity($productOptionValue, $result);
+
+                }
+
+                break;
+            case PriceRangeExpression::class:
+                if (is_array($result)) {
+                    $this->feeCalculationLogger->warning('processProductOptionValue; unsupported result type', [
+                        'rule' => $rule->getPrice(),
+                        'result' => $result,
+                    ]);
+                } elseif ($result instanceof PriceEvaluation) {
+                    $productOptionValue = $productOptionValues[0];
+
+                    // handle legacy product option values that might still hold an out-of-date unit price (format)
+                    // all newly created product option values should have the same price as return by the rule evaluation
+                    if ($productOptionValue->getPrice() !== $result->unitPrice) {
+                        $this->feeCalculationLogger->warning('processProductOptionValue; unit price does not match; updating', [
+                            'rule' => $rule->getPrice(),
+                            'expected' => $result->unitPrice,
+                            'actual' => $productOptionValue->getPrice(),
+                        ]);
+                        $productOptionValue->setPrice($result->unitPrice);
+                    }
+
+                    $productOptionValuesWithQuantity[] = new ProductOptionValueWithQuantity($productOptionValue, $result->quantity);
+
+                } else {
+                    if (0 !== $result) {
+                        $this->feeCalculationLogger->warning('processProductOptionValue; unsupported result type', [
+                            'rule' => $rule->getPrice(),
+                            'result' => $result,
+                        ]);
+                    }
+                    // 0 in the result means that the rule does not apply
+                }
+
+                break;
+            case PricePerPackageExpression::class:
+                if (is_array($result)) {
+                    $productOptionValuesToMatch = array_merge($productOptionValues);
+                    $notFoundResults = [];
+
+                    // For each evaluation result, find a matching product option value (by unit price)
+                    foreach ($result as $item) {
+                        $isMatched = false;
+                        foreach ($productOptionValuesToMatch as $productOptionValue) {
+                            if ($productOptionValue->getPrice() === $item->unitPrice) {
+                                $isMatched = true;
+                                $productOptionValuesWithQuantity[] = new ProductOptionValueWithQuantity($productOptionValue, $item->quantity);
+                                $productOptionValuesToMatch = array_filter($productOptionValuesToMatch, function ($value) use ($productOptionValue) {
+                                    return $value !== $productOptionValue;
+                                });
+                                break;
+                            }
+                        }
+
+                        if (!$isMatched) {
+                            $notFoundResults[] = $item;
+                        }
+                    }
+
+                    // For not matched results, take the first product option value and update its price
+                    foreach ($notFoundResults as $item) {
+                        $productOptionValue = $productOptionValues[0];
+                        $this->feeCalculationLogger->warning('processProductOptionValue; unit price does not match; updating', [
+                            'rule' => $rule->getPrice(),
+                            'expected' => $item->unitPrice,
+                            'actual' => $productOptionValue->getPrice(),
+                        ]);
+                        $productOptionValue->setPrice($item->unitPrice);
+
+                        $productOptionValuesWithQuantity[] = new ProductOptionValueWithQuantity($productOptionValue, $item->quantity);
+                        $productOptionValuesToMatch = array_filter($productOptionValuesToMatch, function ($value) use ($productOptionValue) {
+                            return $value !== $productOptionValue;
+                        });
+                    }
+                    
+                } elseif ($result instanceof PriceEvaluation) {
+                    $productOptionValue = $productOptionValues[0];
+
+                    // handle legacy product option values that might still hold an out-of-date unit price (format)
+                    // all newly created product option values should have the same price as return by the rule evaluation
+                    if ($productOptionValue->getPrice() !== $result->unitPrice) {
+                        $this->feeCalculationLogger->warning('processProductOptionValue; unit price does not match; updating', [
+                            'rule' => $rule->getPrice(),
+                            'expected' => $result->unitPrice,
+                            'actual' => $productOptionValue->getPrice(),
+                        ]);
+                        $productOptionValue->setPrice($result->unitPrice);
+                    }
+
+                    $productOptionValuesWithQuantity[] = new ProductOptionValueWithQuantity($productOptionValue, $result->quantity);
+
+                } else {
+                    if (0 !== $result) {
+                        $this->feeCalculationLogger->warning('processProductOptionValue; unsupported result type', [
+                            'rule' => $rule->getPrice(),
+                            'result' => $result,
+                        ]);
+                    }
+                    // 0 in the result means that the rule does not apply
+                }
+
+                break;
+            default:
+                $this->feeCalculationLogger->warning('processProductOptionValue; unsupported result type', [
+                    'rule' => $rule->getPrice(),
+                    'result' => $result,
+                ]);
+                break;
         }
 
-        $productOptionValue->setPrice($basePrice);
+        foreach ($productOptionValuesWithQuantity as $productOptionValueWithQuantity) {
+            $this->feeCalculationLogger->info(
+                sprintf(
+                    'processProductOptionValue; quantity %d (rule "%s")',
+                    $productOptionValueWithQuantity->quantity,
+                    $rule->getExpression()
+                ),
+                [
+                    'target' => $rule->getTarget(),
+                ]
+            );
+        }
 
-        return new ProductOptionValueWithQuantity($productOptionValue, $result);
+        return $productOptionValuesWithQuantity;
+    }
+
+    /**
+     * @return ProductOptionValue[]
+     */
+    private function getProductOptionValues(
+        PricingRule $rule,
+    ): array {
+        $productOptionValues = $rule->getProductOptionValues()->toArray();
+
+        // Create a product option if none is defined
+        if (0 === count($productOptionValues)) {
+            $productOptionValues = $this->productOptionValueFactory->createForPricingRule(
+                $rule,
+                $this->ruleHumanizer->humanize($rule)
+            );
+        }
+
+        foreach ($productOptionValues as $productOptionValue) {
+            // Generate a default name if none is defined
+            if (is_null($productOptionValue->getValue()) || '' === trim(
+                    $productOptionValue->getValue()
+                )) {
+                $name = $this->ruleHumanizer->humanize($rule);
+                $productOptionValue->setValue($name);
+            }
+        }
+
+        return $productOptionValues;
     }
 
     /**
@@ -92,7 +307,7 @@ class OnDemandDeliveryProductProcessor
          * @var ProductOptionValueInterface $productOptionValue
          */
         foreach ($productVariant->getOptionValues() as $productOptionValue) {
-            if ('CPCCL-ODDLVR-PERCENTAGE' === $productOptionValue->getOptionCode()) {
+            if (ProductOptionRepository::PRODUCT_OPTION_CODE_PRICE_PERCENTAGE === $productOptionValue->getOptionCode()) {
                 // for percentage-based rules: the price is calculated on the subtotal of the previous steps
 
                 $priceMultiplier = $productVariant->getQuantityForOptionValue($productOptionValue);
