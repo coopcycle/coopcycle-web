@@ -1,0 +1,31 @@
+include:
+  - address_store.yml
+  - address_warehouse.yml
+  - address_client_1.yml
+  - packages.yml
+
+AppBundle\Entity\Delivery\PricingRuleSet:
+  pricing_rule_set:
+    name: 'Pricing Rule Set'
+    strategy: 'map'
+    rules: ['@pricing_rule']
+
+AppBundle\Entity\Delivery\PricingRule:
+  pricing_rule:
+    expression: 'packages.containsAtLeastOne("SMALL")'
+    price: 'price_per_package(packages, "SMALL", 500, 0, 0)'
+    position: 1
+    ruleSet: '@pricing_rule_set'
+
+AppBundle\Entity\Store:
+  store_1:
+    name: 'Acme'
+    address: '@address_store'
+    enabled: true
+    multiDropEnabled: true
+    packageSet: '@package_set_1'
+    pricingRuleSet: '@pricing_rule_set'
+    __calls:
+      - addAddress: [ "@address_store" ]
+      - addAddress: [ "@address_warehouse" ]
+      - addAddress: [ "@address_client_1" ]
