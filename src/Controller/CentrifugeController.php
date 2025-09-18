@@ -56,7 +56,7 @@ class CentrifugeController extends AbstractController
             if ($channel === $trackingChannel && $this->isGranted('ROLE_ADMIN')) {
                 $response['channels'][] = [
                     'channel' => $channel,
-                    'token' => $centrifugoClient->generatePrivateChannelToken($data['client'], $channel, (time() + 3600)),
+                    'token' => $centrifugoClient->generateSubscriptionToken($data['client'], $channel, (time() + 3600)),
                 ];
             }
         }
