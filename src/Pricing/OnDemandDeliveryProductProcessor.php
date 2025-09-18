@@ -153,10 +153,44 @@ class OnDemandDeliveryProductProcessor
                 break;
             case PricePerPackageExpression::class:
                 if (is_array($result)) {
-                    //todo handle discount
-//                    foreach ($result as $item) {
-//                        $total += $item->unitPrice * $item->quantity;
-//                    }
+                    $productOptionValuesToMatch = array_merge($productOptionValues);
+                    $notFoundResults = [];
+
+                    // For each evaluation result, find a matching product option value (by unit price)
+                    foreach ($result as $item) {
+                        $isMatched = false;
+                        foreach ($productOptionValuesToMatch as $productOptionValue) {
+                            if ($productOptionValue->getPrice() === $item->unitPrice) {
+                                $isMatched = true;
+                                $productOptionValuesWithQuantity[] = new ProductOptionValueWithQuantity($productOptionValue, $item->quantity);
+                                $productOptionValuesToMatch = array_filter($productOptionValuesToMatch, function ($value) use ($productOptionValue) {
+                                    return $value !== $productOptionValue;
+                                });
+                                break;
+                            }
+                        }
+
+                        if (!$isMatched) {
+                            $notFoundResults[] = $item;
+                        }
+                    }
+
+                    // For not matched results, take the first product option value and update its price
+                    foreach ($notFoundResults as $item) {
+                        $productOptionValue = $productOptionValues[0];
+                        $this->feeCalculationLogger->warning('processProductOptionValue; unit price does not match; updating', [
+                            'rule' => $rule->getPrice(),
+                            'expected' => $item->unitPrice,
+                            'actual' => $productOptionValue->getPrice(),
+                        ]);
+                        $productOptionValue->setPrice($item->unitPrice);
+
+                        $productOptionValuesWithQuantity[] = new ProductOptionValueWithQuantity($productOptionValue, $item->quantity);
+                        $productOptionValuesToMatch = array_filter($productOptionValuesToMatch, function ($value) use ($productOptionValue) {
+                            return $value !== $productOptionValue;
+                        });
+                    }
+                    
                 } elseif ($result instanceof PriceEvaluation) {
                     $productOptionValue = $productOptionValues[0];
 
