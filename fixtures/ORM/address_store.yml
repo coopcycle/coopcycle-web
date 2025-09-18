@@ -1,0 +1,13 @@
+AppBundle\Entity\Base\GeoCoordinates:
+  geo_store:
+    __construct: [ "48.864577", "2.333338" ]
+
+AppBundle\Entity\Address:
+  address_store:
+    name: 'Acme'
+    contactName: 'Acme'
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33112121210'))>
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
+    geo: "@geo_store"
