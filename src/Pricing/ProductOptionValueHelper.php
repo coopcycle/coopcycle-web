@@ -29,8 +29,8 @@ class ProductOptionValueHelper
         }
 
         // Generate a default name if none is defined
-        if (is_null($productOptionValue->getName()) || '' === trim(
-                $productOptionValue->getName()
+        if (is_null($productOptionValue->getValue()) || '' === trim(
+                $productOptionValue->getValue()
             )) {
             $name = $this->ruleHumanizer->humanize($rule);
             $productOptionValue->setValue($name);
