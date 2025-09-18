@@ -5,37 +5,34 @@ namespace AppBundle\Twig;
 use AppBundle\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\ExpressionLanguage\Node\Node;
 use Symfony\Component\ExpressionLanguage\ParsedExpression;
-use Symfony\Component\ExpressionLanguage\SyntaxError;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class ExpressionLanguageRuntime implements RuntimeExtensionInterface
 {
-    private $expressionLanguage;
-
-    public function __construct(ExpressionLanguage $expressionLanguage)
-    {
-        $this->expressionLanguage = $expressionLanguage;
+    public function __construct(
+        private readonly ExpressionLanguage $expressionLanguage,
+    ) {
     }
 
-    public function parseExpression($expression): ParsedExpression
+    public function parseRuleExpression($expression): ParsedExpression
     {
-        try {
+        $expressionAst = $this->expressionLanguage->parseRuleExpression($expression);
 
-            return $this->expressionLanguage->parse($expression, [
-                'distance',
-                'weight',
-                'vehicle',
-                'pickup',
-                'dropoff',
-                'packages',
-                'order',
-                'task',
-                'time_slot',
-                'quantity' // manual supplement
-            ]);
-
-        } catch (SyntaxError $e) {
+        if (null === $expressionAst) {
             return new ParsedExpression('', new Node());
         }
+
+        return $expressionAst;
+    }
+
+    public function parsePrice($expression): ParsedExpression
+    {
+        $expressionAst = $this->expressionLanguage->parsePrice($expression);
+
+        if (null === $expressionAst) {
+            return new ParsedExpression('', new Node());
+        }
+
+        return $expressionAst;
     }
 }
