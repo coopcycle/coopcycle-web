@@ -11,7 +11,6 @@ use AppBundle\Sylius\Product\ProductVariantInterface;
 class PriceUpdateVisitor
 {
     public function __construct(
-        private readonly ProductOptionValueHelper $productOptionValueHelper,
         private readonly ProductVariantFactory $productVariantFactory,
         private readonly ProductVariantNameGenerator $productVariantNameGenerator,
         private readonly OnDemandDeliveryProductProcessor $onDemandDeliveryProductProcessor
@@ -104,9 +103,7 @@ class PriceUpdateVisitor
                 $rule = $supplement->pricingRule;
                 $quantity = $supplement->quantity;
 
-                $productOptionValue = $this->productOptionValueHelper->getProductOptionValue($rule);
-                $productOptionValues[] = $this->onDemandDeliveryProductProcessor->processProductOptionValue(
-                    $productOptionValue,
+                $productOptionValues[] = $this->onDemandDeliveryProductProcessor->processPricingRule(
                     $rule,
                     [
                         'quantity' => $quantity,

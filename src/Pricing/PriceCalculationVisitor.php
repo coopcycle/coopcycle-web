@@ -23,7 +23,6 @@ class PriceCalculationVisitor
         private readonly ExpressionLanguage $expressionLanguage,
         private readonly DeliveryExpressionLanguageVisitor $deliveryExpressionLanguageVisitor,
         private readonly TaskExpressionLanguageVisitor $taskExpressionLanguageVisitor,
-        private readonly ProductOptionValueHelper $productOptionValueHelper,
         private readonly ProductVariantFactory $productVariantFactory,
         private readonly ProductVariantNameGenerator $productVariantNameGenerator,
         private readonly OnDemandDeliveryProductProcessor $onDemandDeliveryProductProcessor,
@@ -189,9 +188,7 @@ class PriceCalculationVisitor
                 $ruleResults[$rule->getPosition()] = $ruleResult;
 
                 if ($ruleResult->matched) {
-                    $productOptionValue = $this->productOptionValueHelper->getProductOptionValue($rule);
-                    $productOptionValueWithQuantity = $this->onDemandDeliveryProductProcessor->processProductOptionValue(
-                        $productOptionValue,
+                    $productOptionValueWithQuantity = $this->onDemandDeliveryProductProcessor->processPricingRule(
                         $rule,
                         $expressionLanguageValues,
                     );
@@ -219,9 +216,7 @@ class PriceCalculationVisitor
                     'target' => $rule->getTarget(),
                 ]);
 
-                $productOptionValue = $this->productOptionValueHelper->getProductOptionValue($rule);
-                $productOptionValues[] = $this->onDemandDeliveryProductProcessor->processProductOptionValue(
-                    $productOptionValue,
+                $productOptionValues[] = $this->onDemandDeliveryProductProcessor->processPricingRule(
                     $rule,
                     [
                         'quantity' => $quantity,

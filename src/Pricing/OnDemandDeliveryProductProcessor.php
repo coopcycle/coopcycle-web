@@ -10,6 +10,7 @@ use AppBundle\Pricing\PriceExpressions\FixedPriceExpression;
 use AppBundle\Pricing\PriceExpressions\PercentagePriceExpression;
 use AppBundle\Pricing\PriceExpressions\PerPackagePriceExpression;
 use AppBundle\Pricing\PriceExpressions\PerRangePriceExpression;
+use AppBundle\Sylius\Product\ProductOptionValueFactory;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use Psr\Log\LoggerInterface;
@@ -19,17 +20,20 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 class OnDemandDeliveryProductProcessor
 {
     public function __construct(
+        private readonly ProductOptionValueFactory $productOptionValueFactory,
+        private readonly RuleHumanizer $ruleHumanizer,
         private readonly ExpressionLanguage $expressionLanguage,
         private readonly PriceExpressionParser $priceExpressionParser,
         private readonly LoggerInterface $feeCalculationLogger = new NullLogger()
     ) {
     }
 
-    public function processProductOptionValue(
-        ProductOptionValue $productOptionValue,
+    public function processPricingRule(
         PricingRule $rule,
         array $expressionLanguageValues,
     ): ProductOptionValueWithQuantity {
+        $productOptionValue = $this->getProductOptionValue($rule);
+
         $priceExpression = $this->priceExpressionParser->parsePrice($rule->getPrice());
         $result = $rule->apply($expressionLanguageValues, $this->expressionLanguage);
 
@@ -169,6 +173,31 @@ class OnDemandDeliveryProductProcessor
 
         //TODO: add only if quantity > 0 ?
         return new ProductOptionValueWithQuantity($productOptionValue, $quantity);
+    }
+
+    private function getProductOptionValue(
+        PricingRule $rule,
+    ): ProductOptionValue {
+        //TODO: handle multiple product option values
+        $productOptionValue = $rule->getProductOptionValues()->first();
+
+        // Create a product option if none is defined
+        if (false === $productOptionValue) {
+            $productOptionValue = $this->productOptionValueFactory->createForPricingRule(
+                $rule,
+                $this->ruleHumanizer->humanize($rule)
+            );
+        }
+
+        // Generate a default name if none is defined
+        if (is_null($productOptionValue->getValue()) || '' === trim(
+                $productOptionValue->getValue()
+            )) {
+            $name = $this->ruleHumanizer->humanize($rule);
+            $productOptionValue->setValue($name);
+        }
+
+        return $productOptionValue;
     }
 
     /**

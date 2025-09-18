@@ -11,6 +11,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
 use AppBundle\Entity\Zone;
 use AppBundle\ExpressionLanguage\DeliveryExpressionLanguageVisitor;
+use AppBundle\ExpressionLanguage\ExpressionLanguage;
 use AppBundle\ExpressionLanguage\PickupExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\PricePercentageExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider;
@@ -20,7 +21,7 @@ use AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider;
 use AppBundle\Fixtures\DatabasePurger;
 use AppBundle\Pricing\OnDemandDeliveryProductProcessor;
 use AppBundle\Pricing\PriceCalculationVisitor;
-use AppBundle\Pricing\ProductOptionValueHelper;
+use AppBundle\Pricing\PriceExpressionParser;
 use AppBundle\Pricing\ProductVariantNameGenerator;
 use AppBundle\Pricing\RuleHumanizer;
 use AppBundle\Sylius\Product\ProductOptionValueFactory;
@@ -33,7 +34,6 @@ use Fidry\AliceDataFixtures\LoaderInterface;
 use Fidry\AliceDataFixtures\Persistence\PurgeMode;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 
@@ -57,10 +57,9 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $expressionLanguage,
             $deliveryExpressionLanguageVisitor,
             $taskExpressionLanguageVisitor,
-            new ProductOptionValueHelper($productOptionValueFactory, $ruleHumanizer),
             $productVariantFactory,
             new ProductVariantNameGenerator($translator),
-            new OnDemandDeliveryProductProcessor($expressionLanguage),
+            new OnDemandDeliveryProductProcessor($productOptionValueFactory, $ruleHumanizer, $expressionLanguage, new PriceExpressionParser($expressionLanguage)),
             $logger
         );
     }
