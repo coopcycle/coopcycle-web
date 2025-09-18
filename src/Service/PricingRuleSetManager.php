@@ -71,16 +71,17 @@ class PricingRuleSetManager
 
     public function updateProductOptionValues(PricingRule $pricingRule, ?string $name): void
     {
-        $productOptionValues = $pricingRule->getProductOptionValues();
+        $oldProductOptionValues = $pricingRule->getProductOptionValues();
 
         // Do not modify existing ProductOptionValues, create a new one for each change
-        foreach ($productOptionValues as $productOptionValue) {
+        foreach ($oldProductOptionValues as $productOptionValue) {
             $productOptionValue->disable();
         }
 
-        $productOptionValue = $this->productOptionValueFactory->createForPricingRule($pricingRule, $name);
-        $pricingRule->addProductOptionValue($productOptionValue);
-
-        $this->entityManager->persist($productOptionValue);
+        $newProductOptionValues = $this->productOptionValueFactory->createForPricingRule($pricingRule, $name);
+        foreach ($newProductOptionValues as $productOptionValue) {
+            $pricingRule->addProductOptionValue($productOptionValue);
+            $this->entityManager->persist($productOptionValue);
+        }
     }
 }

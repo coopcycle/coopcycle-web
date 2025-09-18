@@ -25,25 +25,52 @@ class ProductOptionValueFactory
 
     public function createNew()
     {
-        return $this->decorated->createNew();
+        $productOptionValue = $this->decorated->createNew();
+        $productOptionValue->setCode(Uuid::uuid4()->toString());
+        return $productOptionValue;
     }
 
-    public function createForPricingRule(PricingRule $pricingRule, ?string $name): ProductOptionValue {
+    /**
+     * @return ProductOptionValue[]
+     */
+    public function createForPricingRule(PricingRule $pricingRule, ?string $name): array {
+        $result = [];
+
         $priceExpression = $this->priceExpressionParser->parsePrice($pricingRule->getPrice());
 
         $pricingType = $this->determinePricingType($priceExpression);
         $productOption = $this->productOptionRepository->findPricingRuleProductOptionByCode($pricingType);
 
-        /** @var ProductOptionValue $productOptionValue */
-        $productOptionValue = $this->createNew();
+        if ($priceExpression instanceof PerPackagePriceExpression && $priceExpression->hasDiscount()) {
+            /** @var ProductOptionValue $baseProductOptionValue */
+            $baseProductOptionValue = $this->createNew();
 
-        $productOptionValue->setCode(Uuid::uuid4()->toString());
-        $productOptionValue->setValue($name ?? '');
-        $productOptionValue->setPrice($this->getUnitPrice($priceExpression));
+            $baseProductOptionValue->setValue($name ?? '');
+            $baseProductOptionValue->setPrice($priceExpression->unitPrice);
 
-        $productOption->addValue($productOptionValue);
+            $productOption->addValue($baseProductOptionValue);
+            $result[] = $baseProductOptionValue;
 
-        return $productOptionValue;
+            /** @var ProductOptionValue $extraProductOptionValue */
+            $extraProductOptionValue = $this->createNew();
+
+            $extraProductOptionValue->setValue($name ?? '');
+            $extraProductOptionValue->setPrice($priceExpression->discountPrice);
+
+            $productOption->addValue($extraProductOptionValue);
+            $result[] = $extraProductOptionValue;
+        } else {
+            /** @var ProductOptionValue $productOptionValue */
+            $productOptionValue = $this->createNew();
+
+            $productOptionValue->setValue($name ?? '');
+            $productOptionValue->setPrice($this->getUnitPrice($priceExpression));
+
+            $productOption->addValue($productOptionValue);
+            $result[] = $productOptionValue;
+        }
+
+        return $result;
     }
 
     private function determinePricingType(PriceExpression $priceExpression): string

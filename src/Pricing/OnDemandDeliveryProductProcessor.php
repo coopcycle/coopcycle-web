@@ -28,16 +28,35 @@ class OnDemandDeliveryProductProcessor
     ) {
     }
 
+    /**
+     * @return ProductOptionValueWithQuantity[]
+     */
     public function processPricingRule(
         PricingRule $rule,
         array $expressionLanguageValues,
-    ): ProductOptionValueWithQuantity {
-        $productOptionValue = $this->getProductOptionValue($rule);
+    ): array {
+        $productOptionValuesWithQuantity = [];
+
+        $productOptionValues = $this->getProductOptionValues($rule);
 
         $priceExpression = $this->priceExpressionParser->parsePrice($rule->getPrice());
         $result = $rule->apply($expressionLanguageValues, $this->expressionLanguage);
 
-        $quantity = 0;
+        if (is_array($result) && count($result) !== count($productOptionValues)) {
+            $this->feeCalculationLogger->warning('processProductOptionValue; evaluation result (array) does not match the number of product option values', [
+                'rule' => $rule->getPrice(),
+                'result' => $result,
+                'productOptionValues' => count($productOptionValues),
+            ]);
+            return [];
+        } elseif (!is_array($result) && count($productOptionValues) !== 1) {
+            $this->feeCalculationLogger->warning('processProductOptionValue; evaluation result (PriceEvaluation|int) does not match the number of product option values', [
+                'rule' => $rule->getPrice(),
+                'result' => $result,
+                'productOptionValues' => count($productOptionValues),
+            ]);
+            return [];
+        }
 
         switch (get_class($priceExpression)) {
             case FixedPriceExpression::class:
@@ -52,6 +71,8 @@ class OnDemandDeliveryProductProcessor
                         'result' => $result,
                     ]);
                 } else {
+                    $productOptionValue = $productOptionValues[0];
+
                     // handle legacy product option values that might still hold an out-of-date unit price (format)
                     // all newly created product option values should have the same price as return by the rule evaluation
                     if ($productOptionValue->getPrice() !== $result) {
@@ -62,7 +83,8 @@ class OnDemandDeliveryProductProcessor
                         ]);
                         $productOptionValue->setPrice($result);
                     }
-                    $quantity = 1;
+
+                    $productOptionValuesWithQuantity[] = new ProductOptionValueWithQuantity($productOptionValue, 1);
                 }
 
                 break;
@@ -78,6 +100,8 @@ class OnDemandDeliveryProductProcessor
                         'result' => $result,
                     ]);
                 } else {
+                    $productOptionValue = $productOptionValues[0];
+
                     // handle legacy product option values that might still hold an out-of-date unit price (format)
                     // all newly created product option values should have the correct price already set
                     if (abs($productOptionValue->getPrice()) !== 1) {
@@ -88,7 +112,9 @@ class OnDemandDeliveryProductProcessor
                         $productOptionValue->setPrice($result < 10000 ? -1 : 1);
                     }
 
-                    $quantity = $result; // temporarily set quantity to percentage (will be updated later in calculation)
+                    // temporarily set quantity to percentage (will be updated later in calculation)
+                    $productOptionValuesWithQuantity[] = new ProductOptionValueWithQuantity($productOptionValue, $result);
+
                 }
 
                 break;
@@ -99,6 +125,8 @@ class OnDemandDeliveryProductProcessor
                         'result' => $result,
                     ]);
                 } elseif ($result instanceof PriceEvaluation) {
+                    $productOptionValue = $productOptionValues[0];
+
                     // handle legacy product option values that might still hold an out-of-date unit price (format)
                     // all newly created product option values should have the same price as return by the rule evaluation
                     if ($productOptionValue->getPrice() !== $result->unitPrice) {
@@ -110,7 +138,8 @@ class OnDemandDeliveryProductProcessor
                         $productOptionValue->setPrice($result->unitPrice);
                     }
 
-                    $quantity = $result->quantity;
+                    $productOptionValuesWithQuantity[] = new ProductOptionValueWithQuantity($productOptionValue, $result->quantity);
+
                 } else {
                     if (0 !== $result) {
                         $this->feeCalculationLogger->warning('processProductOptionValue; unsupported result type', [
@@ -129,6 +158,8 @@ class OnDemandDeliveryProductProcessor
 //                        $total += $item->unitPrice * $item->quantity;
 //                    }
                 } elseif ($result instanceof PriceEvaluation) {
+                    $productOptionValue = $productOptionValues[0];
+
                     // handle legacy product option values that might still hold an out-of-date unit price (format)
                     // all newly created product option values should have the same price as return by the rule evaluation
                     if ($productOptionValue->getPrice() !== $result->unitPrice) {
@@ -140,7 +171,8 @@ class OnDemandDeliveryProductProcessor
                         $productOptionValue->setPrice($result->unitPrice);
                     }
 
-                    $quantity = $result->quantity;
+                    $productOptionValuesWithQuantity[] = new ProductOptionValueWithQuantity($productOptionValue, $result->quantity);
+
                 } else {
                     if (0 !== $result) {
                         $this->feeCalculationLogger->warning('processProductOptionValue; unsupported result type', [
@@ -160,44 +192,49 @@ class OnDemandDeliveryProductProcessor
                 break;
         }
 
-        $this->feeCalculationLogger->info(
-            sprintf(
-                'processProductOptionValue; quantity %d (rule "%s")',
-                $quantity,
-                $rule->getExpression()
-            ),
-            [
-                'target' => $rule->getTarget(),
-            ]
-        );
+        foreach ($productOptionValuesWithQuantity as $productOptionValueWithQuantity) {
+            $this->feeCalculationLogger->info(
+                sprintf(
+                    'processProductOptionValue; quantity %d (rule "%s")',
+                    $productOptionValueWithQuantity->quantity,
+                    $rule->getExpression()
+                ),
+                [
+                    'target' => $rule->getTarget(),
+                ]
+            );
+        }
 
-        //TODO: add only if quantity > 0 ?
-        return new ProductOptionValueWithQuantity($productOptionValue, $quantity);
+        return $productOptionValuesWithQuantity;
     }
 
-    private function getProductOptionValue(
+    /**
+     * @return ProductOptionValue[]
+     */
+    private function getProductOptionValues(
         PricingRule $rule,
-    ): ProductOptionValue {
-        //TODO: handle multiple product option values
-        $productOptionValue = $rule->getProductOptionValues()->first();
+    ): array {
+        $productOptionValues = $rule->getProductOptionValues()->toArray();
 
         // Create a product option if none is defined
-        if (false === $productOptionValue) {
-            $productOptionValue = $this->productOptionValueFactory->createForPricingRule(
+        if (0 === count($productOptionValues)) {
+            $productOptionValues = $this->productOptionValueFactory->createForPricingRule(
                 $rule,
                 $this->ruleHumanizer->humanize($rule)
             );
         }
 
-        // Generate a default name if none is defined
-        if (is_null($productOptionValue->getValue()) || '' === trim(
-                $productOptionValue->getValue()
-            )) {
-            $name = $this->ruleHumanizer->humanize($rule);
-            $productOptionValue->setValue($name);
+        foreach ($productOptionValues as $productOptionValue) {
+            // Generate a default name if none is defined
+            if (is_null($productOptionValue->getValue()) || '' === trim(
+                    $productOptionValue->getValue()
+                )) {
+                $name = $this->ruleHumanizer->humanize($rule);
+                $productOptionValue->setValue($name);
+            }
         }
 
-        return $productOptionValue;
+        return $productOptionValues;
     }
 
     /**

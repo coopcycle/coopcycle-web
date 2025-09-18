@@ -64,7 +64,7 @@ class PriceCalculationVisitor
             $matchedRules = array_filter($resultPerTask->ruleResults, function ($item) {
                 return $item->matched === true;
             });
-            if (count($matchedRules) > 0) {
+            if (count($matchedRules) > 0 && $resultPerTask->productVariant) {
                 $taskProductVariants[] = $resultPerTask->productVariant;
             }
         }
@@ -193,7 +193,7 @@ class PriceCalculationVisitor
                         $expressionLanguageValues,
                     );
 
-                    $productOptionValues[] = $productOptionValueWithQuantity;
+                    $productOptionValues = array_merge($productOptionValues, $productOptionValueWithQuantity);
 
                     // For `find` strategy
                     if ($returnOnFirstMatch) {
@@ -216,12 +216,13 @@ class PriceCalculationVisitor
                     'target' => $rule->getTarget(),
                 ]);
 
-                $productOptionValues[] = $this->onDemandDeliveryProductProcessor->processPricingRule(
+                $productOptionValueWithQuantity = $this->onDemandDeliveryProductProcessor->processPricingRule(
                     $rule,
                     [
                         'quantity' => $quantity,
                     ]
                 );
+                $productOptionValues = array_merge($productOptionValues, $productOptionValueWithQuantity);
             }
         }
 

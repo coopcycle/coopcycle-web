@@ -103,12 +103,13 @@ class PriceUpdateVisitor
                 $rule = $supplement->pricingRule;
                 $quantity = $supplement->quantity;
 
-                $productOptionValues[] = $this->onDemandDeliveryProductProcessor->processPricingRule(
+                $productOptionValueWithQuantity = $this->onDemandDeliveryProductProcessor->processPricingRule(
                     $rule,
                     [
                         'quantity' => $quantity,
                     ],
                 );
+                $productOptionValues = array_merge($productOptionValues, $productOptionValueWithQuantity);
             }
         }
 
