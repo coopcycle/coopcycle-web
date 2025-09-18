@@ -2,6 +2,7 @@
 
 namespace AppBundle\Sylius\OrderProcessing;
 
+use AppBundle\Entity\Sylius\ProductOptionRepository;
 use AppBundle\Service\LoggingUtils;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -71,7 +72,10 @@ final class OrderOptionsProcessor implements OrderProcessorInterface
                             $pricingRule?->isManualSupplement() ?
                                 AdjustmentInterface::ORDER_ITEM_PACKAGE_DELIVERY_MANUAL_SUPPLEMENT_ADJUSTMENT :
                                 AdjustmentInterface::ORDER_ITEM_PACKAGE_DELIVERY_CALCULATED_ADJUSTMENT,
-                            sprintf('%d × %s', $quantity, $optionValue->getValue()),
+                            // For percentage-based pricing, we set unit price to 1 cent and quantity to the actual price, so that the total is price * quantity
+                            ProductOptionRepository::PRODUCT_OPTION_CODE_PRICING_TYPE_PERCENTAGE === $option->getCode() ?
+                                sprintf('%d × %s', 1, $optionValue->getValue()) :
+                                sprintf('%d × %s', $quantity, $optionValue->getValue()),
                             $amount,
                             $neutral = false
                         );
