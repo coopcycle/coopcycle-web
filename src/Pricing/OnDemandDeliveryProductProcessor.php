@@ -3,6 +3,7 @@
 namespace AppBundle\Pricing;
 
 use AppBundle\Entity\Delivery\PricingRule;
+use AppBundle\Entity\Sylius\ProductOptionRepository;
 use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\ExpressionLanguage\PriceEvaluation;
 use AppBundle\Pricing\PriceExpressions\FixedPriceExpression;
@@ -206,7 +207,7 @@ class OnDemandDeliveryProductProcessor
          * @var ProductOptionValueInterface $productOptionValue
          */
         foreach ($productVariant->getOptionValues() as $productOptionValue) {
-            if ('CPCCL-ODDLVR-PERCENTAGE' === $productOptionValue->getOptionCode()) {
+            if (ProductOptionRepository::PRODUCT_OPTION_CODE_PRICING_TYPE_PERCENTAGE === $productOptionValue->getOptionCode()) {
                 // for percentage-based rules: the price is calculated on the subtotal of the previous steps
 
                 $priceMultiplier = $productVariant->getQuantityForOptionValue($productOptionValue);

@@ -10,10 +10,10 @@ use Sylius\Component\Resource\Factory\FactoryInterface;
 
 class ProductOptionRepository extends BaseRepository
 {
-    public const PRICING_TYPE_FIXED_PRICE = 'fixed_price';
-    public const PRICING_TYPE_PERCENTAGE = 'price_percentage';
-    public const PRICING_TYPE_RANGE = 'price_range';
-    public const PRICING_TYPE_PACKAGE = 'price_per_package';
+    public const PRODUCT_OPTION_CODE_PRICING_TYPE_FIXED_PRICE = 'CPCCL-ODDLVR-FIXED';
+    public const PRODUCT_OPTION_CODE_PRICING_TYPE_PERCENTAGE = 'CPCCL-ODDLVR-PERCENTAGE';
+    public const PRODUCT_OPTION_CODE_PRICING_TYPE_RANGE = 'CPCCL-ODDLVR-RANGE';
+    public const PRODUCT_OPTION_CODE_PRICING_TYPE_PACKAGE = 'CPCCL-ODDLVR-PACKAGE';
 
     private EntityManagerInterface $entityManager;
     private ProductRepository $productRepository;
@@ -43,11 +43,11 @@ class ProductOptionRepository extends BaseRepository
         $this->localeProvider = $localeProvider;
     }
 
-    public function findPricingRuleProductOptionByType(string $type): ProductOptionInterface
+    public function findPricingRuleProductOptionByCode(string $code): ProductOptionInterface
     {
         $onDemandDeliveryProduct = $this->productRepository->findOneBy(['code' => 'CPCCL-ODDLVR']);
 
-        $typeConfig = $this->getPricingTypeConfig($type);
+        $typeConfig = $this->getPricingTypeConfig($code);
 
         // Look for existing option with the specific code for this type
         $existingOptions = $onDemandDeliveryProduct->getOptions();
@@ -77,31 +77,31 @@ class ProductOptionRepository extends BaseRepository
         return $productOption;
     }
 
-    private function getPricingTypeConfig(string $type): array
+    private function getPricingTypeConfig(string $productOptionCode): array
     {
         $configs = [
-            self::PRICING_TYPE_FIXED_PRICE => [
-                'code' => 'CPCCL-ODDLVR-FIXED',
+            self::PRODUCT_OPTION_CODE_PRICING_TYPE_FIXED_PRICE => [
+                'code' => self::PRODUCT_OPTION_CODE_PRICING_TYPE_FIXED_PRICE,
                 'name' => 'Fixed Price'
             ],
-            self::PRICING_TYPE_PERCENTAGE => [
-                'code' => 'CPCCL-ODDLVR-PERCENTAGE',
+            self::PRODUCT_OPTION_CODE_PRICING_TYPE_PERCENTAGE => [
+                'code' => self::PRODUCT_OPTION_CODE_PRICING_TYPE_PERCENTAGE,
                 'name' => 'Percentage Price'
             ],
-            self::PRICING_TYPE_RANGE => [
-                'code' => 'CPCCL-ODDLVR-RANGE',
+            self::PRODUCT_OPTION_CODE_PRICING_TYPE_RANGE => [
+                'code' => self::PRODUCT_OPTION_CODE_PRICING_TYPE_RANGE,
                 'name' => 'Range Price'
             ],
-            self::PRICING_TYPE_PACKAGE => [
-                'code' => 'CPCCL-ODDLVR-PACKAGE',
+            self::PRODUCT_OPTION_CODE_PRICING_TYPE_PACKAGE => [
+                'code' => self::PRODUCT_OPTION_CODE_PRICING_TYPE_PACKAGE,
                 'name' => 'Package Price'
             ]
         ];
 
-        if (!isset($configs[$type])) {
-            throw new \InvalidArgumentException(sprintf('Unknown pricing type: %s', $type));
+        if (!isset($configs[$productOptionCode])) {
+            throw new \InvalidArgumentException(sprintf('Unknown pricing type: %s', $productOptionCode));
         }
 
-        return $configs[$type];
+        return $configs[$productOptionCode];
     }
 }

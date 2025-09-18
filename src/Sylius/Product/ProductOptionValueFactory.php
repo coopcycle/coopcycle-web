@@ -32,7 +32,7 @@ class ProductOptionValueFactory
         $priceExpression = $this->priceExpressionParser->parsePrice($pricingRule->getPrice());
 
         $pricingType = $this->determinePricingType($priceExpression);
-        $productOption = $this->productOptionRepository->findPricingRuleProductOptionByType($pricingType);
+        $productOption = $this->productOptionRepository->findPricingRuleProductOptionByCode($pricingType);
 
         /** @var ProductOptionValue $productOptionValue */
         $productOptionValue = $this->createNew();
@@ -50,15 +50,15 @@ class ProductOptionValueFactory
     {
         switch (get_class($priceExpression)) {
             case PercentagePriceExpression::class:
-                return ProductOptionRepository::PRICING_TYPE_PERCENTAGE;
+                return ProductOptionRepository::PRODUCT_OPTION_CODE_PRICING_TYPE_PERCENTAGE;
             case PerRangePriceExpression::class:
-                return ProductOptionRepository::PRICING_TYPE_RANGE;
+                return ProductOptionRepository::PRODUCT_OPTION_CODE_PRICING_TYPE_RANGE;
             case PerPackagePriceExpression::class:
-                return ProductOptionRepository::PRICING_TYPE_PACKAGE;
+                return ProductOptionRepository::PRODUCT_OPTION_CODE_PRICING_TYPE_PACKAGE;
         }
 
         // Default to fixed price for numeric values or other expressions
-        return ProductOptionRepository::PRICING_TYPE_FIXED_PRICE;
+        return ProductOptionRepository::PRODUCT_OPTION_CODE_PRICING_TYPE_FIXED_PRICE;
     }
 
     private function getUnitPrice(PriceExpression $priceExpression): int
