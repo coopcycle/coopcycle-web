@@ -7,9 +7,9 @@ use AppBundle\Entity\Sylius\ProductOptionRepository;
 use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\ExpressionLanguage\PriceEvaluation;
 use AppBundle\Pricing\PriceExpressions\FixedPriceExpression;
-use AppBundle\Pricing\PriceExpressions\PercentagePriceExpression;
-use AppBundle\Pricing\PriceExpressions\PerPackagePriceExpression;
-use AppBundle\Pricing\PriceExpressions\PerRangePriceExpression;
+use AppBundle\Pricing\PriceExpressions\PricePercentageExpression;
+use AppBundle\Pricing\PriceExpressions\PricePerPackageExpression;
+use AppBundle\Pricing\PriceExpressions\PriceRangeExpression;
 use AppBundle\Sylius\Product\ProductOptionValueFactory;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
@@ -88,7 +88,7 @@ class OnDemandDeliveryProductProcessor
                 }
 
                 break;
-            case PercentagePriceExpression::class:
+            case PricePercentageExpression::class:
                 if (is_array($result)) {
                     $this->feeCalculationLogger->warning('processProductOptionValue; unsupported result type', [
                         'rule' => $rule->getPrice(),
@@ -118,7 +118,7 @@ class OnDemandDeliveryProductProcessor
                 }
 
                 break;
-            case PerRangePriceExpression::class:
+            case PriceRangeExpression::class:
                 if (is_array($result)) {
                     $this->feeCalculationLogger->warning('processProductOptionValue; unsupported result type', [
                         'rule' => $rule->getPrice(),
@@ -151,7 +151,7 @@ class OnDemandDeliveryProductProcessor
                 }
 
                 break;
-            case PerPackagePriceExpression::class:
+            case PricePerPackageExpression::class:
                 if (is_array($result)) {
                     //todo handle discount
 //                    foreach ($result as $item) {
@@ -273,7 +273,7 @@ class OnDemandDeliveryProductProcessor
          * @var ProductOptionValueInterface $productOptionValue
          */
         foreach ($productVariant->getOptionValues() as $productOptionValue) {
-            if (ProductOptionRepository::PRODUCT_OPTION_CODE_PRICING_TYPE_PERCENTAGE === $productOptionValue->getOptionCode()) {
+            if (ProductOptionRepository::PRODUCT_OPTION_CODE_PRICE_PERCENTAGE === $productOptionValue->getOptionCode()) {
                 // for percentage-based rules: the price is calculated on the subtotal of the previous steps
 
                 $priceMultiplier = $productVariant->getQuantityForOptionValue($productOptionValue);

@@ -10,10 +10,10 @@ use Sylius\Component\Resource\Factory\FactoryInterface;
 
 class ProductOptionRepository extends BaseRepository
 {
-    public const PRODUCT_OPTION_CODE_PRICING_TYPE_FIXED_PRICE = 'CPCCL-ODDLVR-FIXED';
-    public const PRODUCT_OPTION_CODE_PRICING_TYPE_PERCENTAGE = 'CPCCL-ODDLVR-PERCENTAGE';
-    public const PRODUCT_OPTION_CODE_PRICING_TYPE_RANGE = 'CPCCL-ODDLVR-RANGE';
-    public const PRODUCT_OPTION_CODE_PRICING_TYPE_PACKAGE = 'CPCCL-ODDLVR-PACKAGE';
+    public const PRODUCT_OPTION_CODE_FIXED_PRICE = 'CPCCL-ODDLVR-FIXED';
+    public const PRODUCT_OPTION_CODE_PRICE_PERCENTAGE = 'CPCCL-ODDLVR-PERCENTAGE';
+    public const PRODUCT_OPTION_CODE_PRICE_RANGE = 'CPCCL-ODDLVR-RANGE';
+    public const PRODUCT_OPTION_CODE_PRICE_PER_PACKAGE = 'CPCCL-ODDLVR-PACKAGE';
 
     private EntityManagerInterface $entityManager;
     private ProductRepository $productRepository;
@@ -80,20 +80,20 @@ class ProductOptionRepository extends BaseRepository
     private function getPricingTypeConfig(string $productOptionCode): array
     {
         $configs = [
-            self::PRODUCT_OPTION_CODE_PRICING_TYPE_FIXED_PRICE => [
-                'code' => self::PRODUCT_OPTION_CODE_PRICING_TYPE_FIXED_PRICE,
+            self::PRODUCT_OPTION_CODE_FIXED_PRICE => [
+                'code' => self::PRODUCT_OPTION_CODE_FIXED_PRICE,
                 'name' => 'Fixed Price'
             ],
-            self::PRODUCT_OPTION_CODE_PRICING_TYPE_PERCENTAGE => [
-                'code' => self::PRODUCT_OPTION_CODE_PRICING_TYPE_PERCENTAGE,
+            self::PRODUCT_OPTION_CODE_PRICE_PERCENTAGE => [
+                'code' => self::PRODUCT_OPTION_CODE_PRICE_PERCENTAGE,
                 'name' => 'Percentage Price'
             ],
-            self::PRODUCT_OPTION_CODE_PRICING_TYPE_RANGE => [
-                'code' => self::PRODUCT_OPTION_CODE_PRICING_TYPE_RANGE,
+            self::PRODUCT_OPTION_CODE_PRICE_RANGE => [
+                'code' => self::PRODUCT_OPTION_CODE_PRICE_RANGE,
                 'name' => 'Range Price'
             ],
-            self::PRODUCT_OPTION_CODE_PRICING_TYPE_PACKAGE => [
-                'code' => self::PRODUCT_OPTION_CODE_PRICING_TYPE_PACKAGE,
+            self::PRODUCT_OPTION_CODE_PRICE_PER_PACKAGE => [
+                'code' => self::PRODUCT_OPTION_CODE_PRICE_PER_PACKAGE,
                 'name' => 'Package Price'
             ]
         ];

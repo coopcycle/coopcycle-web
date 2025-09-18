@@ -2,7 +2,7 @@
 
 namespace AppBundle\Pricing\PriceExpressions;
 
-class PerRangePriceExpression extends PriceExpression
+class PriceRangeExpression extends PriceExpression
 {
     public function __construct(
         public readonly string $attribute,

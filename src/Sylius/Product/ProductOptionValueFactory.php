@@ -7,9 +7,9 @@ use AppBundle\Entity\Sylius\ProductOptionRepository;
 use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Pricing\PriceExpressionParser;
 use AppBundle\Pricing\PriceExpressions\FixedPriceExpression;
-use AppBundle\Pricing\PriceExpressions\PercentagePriceExpression;
-use AppBundle\Pricing\PriceExpressions\PerPackagePriceExpression;
-use AppBundle\Pricing\PriceExpressions\PerRangePriceExpression;
+use AppBundle\Pricing\PriceExpressions\PricePercentageExpression;
+use AppBundle\Pricing\PriceExpressions\PricePerPackageExpression;
+use AppBundle\Pricing\PriceExpressions\PriceRangeExpression;
 use AppBundle\Pricing\PriceExpressions\PriceExpression;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Resource\Factory\FactoryInterface;
@@ -41,7 +41,7 @@ class ProductOptionValueFactory
         $pricingType = $this->determinePricingType($priceExpression);
         $productOption = $this->productOptionRepository->findPricingRuleProductOptionByCode($pricingType);
 
-        if ($priceExpression instanceof PerPackagePriceExpression && $priceExpression->hasDiscount()) {
+        if ($priceExpression instanceof PricePerPackageExpression && $priceExpression->hasDiscount()) {
             /** @var ProductOptionValue $baseProductOptionValue */
             $baseProductOptionValue = $this->createNew();
 
@@ -76,16 +76,16 @@ class ProductOptionValueFactory
     private function determinePricingType(PriceExpression $priceExpression): string
     {
         switch (get_class($priceExpression)) {
-            case PercentagePriceExpression::class:
-                return ProductOptionRepository::PRODUCT_OPTION_CODE_PRICING_TYPE_PERCENTAGE;
-            case PerRangePriceExpression::class:
-                return ProductOptionRepository::PRODUCT_OPTION_CODE_PRICING_TYPE_RANGE;
-            case PerPackagePriceExpression::class:
-                return ProductOptionRepository::PRODUCT_OPTION_CODE_PRICING_TYPE_PACKAGE;
+            case PricePercentageExpression::class:
+                return ProductOptionRepository::PRODUCT_OPTION_CODE_PRICE_PERCENTAGE;
+            case PriceRangeExpression::class:
+                return ProductOptionRepository::PRODUCT_OPTION_CODE_PRICE_RANGE;
+            case PricePerPackageExpression::class:
+                return ProductOptionRepository::PRODUCT_OPTION_CODE_PRICE_PER_PACKAGE;
         }
 
         // Default to fixed price for numeric values or other expressions
-        return ProductOptionRepository::PRODUCT_OPTION_CODE_PRICING_TYPE_FIXED_PRICE;
+        return ProductOptionRepository::PRODUCT_OPTION_CODE_FIXED_PRICE;
     }
 
     private function getUnitPrice(PriceExpression $priceExpression): int
@@ -93,13 +93,13 @@ class ProductOptionValueFactory
         switch (get_class($priceExpression)) {
             case FixedPriceExpression::class:
                 return $priceExpression->value;
-            case PercentagePriceExpression::class:
+            case PricePercentageExpression::class:
                 // For percentage-based pricing, we set unit price to 1 cent and quantity to the actual price, so that the total is price * quantity
                 // If the percentage is below 100% (10000 = 100.00%), we set the base price to -1 as it's a discount
                 return $priceExpression->percentage < 10000 ? -1 : 1;
-            case PerRangePriceExpression::class:
+            case PriceRangeExpression::class:
                 return $priceExpression->price;
-            case PerPackagePriceExpression::class:
+            case PricePerPackageExpression::class:
                 return $priceExpression->unitPrice;
         }
 

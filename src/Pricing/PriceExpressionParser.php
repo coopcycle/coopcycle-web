@@ -4,10 +4,10 @@ namespace AppBundle\Pricing;
 
 use AppBundle\ExpressionLanguage\ExpressionLanguage;
 use AppBundle\Pricing\PriceExpressions\FixedPriceExpression;
-use AppBundle\Pricing\PriceExpressions\PercentagePriceExpression;
+use AppBundle\Pricing\PriceExpressions\PricePercentageExpression;
 use AppBundle\Pricing\PriceExpressions\PriceExpression;
-use AppBundle\Pricing\PriceExpressions\PerPackagePriceExpression;
-use AppBundle\Pricing\PriceExpressions\PerRangePriceExpression;
+use AppBundle\Pricing\PriceExpressions\PricePerPackageExpression;
+use AppBundle\Pricing\PriceExpressions\PriceRangeExpression;
 use AppBundle\Pricing\PriceExpressions\UnparsablePriceExpression;
 use Symfony\Component\ExpressionLanguage\Node\ConstantNode;
 use Symfony\Component\ExpressionLanguage\Node\FunctionNode;
@@ -69,7 +69,7 @@ class PriceExpressionParser
     /**
      * Parse price_range function call
      */
-    private function parsePriceRangeFunction(FunctionNode $node): PerRangePriceExpression
+    private function parsePriceRangeFunction(FunctionNode $node): PriceRangeExpression
     {
         $args = $node->nodes['arguments']->nodes;
 
@@ -81,24 +81,24 @@ class PriceExpressionParser
         $step = (int) $args[2]->attributes['value'];
         $threshold = (int) $args[3]->attributes['value'];
 
-        return new PerRangePriceExpression($attribute, $price, $step, $threshold);
+        return new PriceRangeExpression($attribute, $price, $step, $threshold);
     }
 
     /**
      * Parse price_percentage function call
      */
-    private function parsePricePercentageFunction(FunctionNode $node): PercentagePriceExpression
+    private function parsePricePercentageFunction(FunctionNode $node): PricePercentageExpression
     {
         $args = $node->nodes['arguments']->nodes;
         $percentage = (int) $args[0]->attributes['value'];
 
-        return new PercentagePriceExpression($percentage);
+        return new PricePercentageExpression($percentage);
     }
 
     /**
      * Parse price_per_package function call
      */
-    private function parsePricePerPackageFunction(FunctionNode $node): PerPackagePriceExpression
+    private function parsePricePerPackageFunction(FunctionNode $node): PricePerPackageExpression
     {
         $args = $node->nodes['arguments']->nodes;
 
@@ -107,7 +107,7 @@ class PriceExpressionParser
         $offset = (int) $args[3]->attributes['value'];
         $discountPrice = (int) $args[4]->attributes['value'];
 
-        return new PerPackagePriceExpression($packageName, $unitPrice, $offset, $discountPrice);
+        return new PricePerPackageExpression($packageName, $unitPrice, $offset, $discountPrice);
     }
 
     /**

@@ -3,9 +3,9 @@
 namespace Tests\AppBundle\Pricing;
 
 use AppBundle\Pricing\PriceExpressions\FixedPriceExpression;
-use AppBundle\Pricing\PriceExpressions\PercentagePriceExpression;
-use AppBundle\Pricing\PriceExpressions\PerPackagePriceExpression;
-use AppBundle\Pricing\PriceExpressions\PerRangePriceExpression;
+use AppBundle\Pricing\PriceExpressions\PricePercentageExpression;
+use AppBundle\Pricing\PriceExpressions\PricePerPackageExpression;
+use AppBundle\Pricing\PriceExpressions\PriceRangeExpression;
 use AppBundle\Pricing\PriceExpressions\UnparsablePriceExpression;
 use AppBundle\Pricing\PriceExpressionParser;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -36,7 +36,7 @@ class PriceExpressionParserTest extends KernelTestCase
     {
         $result = $this->parser->parsePrice('price_percentage(8500)');
 
-        $this->assertInstanceOf(PercentagePriceExpression::class, $result);
+        $this->assertInstanceOf(PricePercentageExpression::class, $result);
         $this->assertEquals(8500, $result->percentage);
     }
 
@@ -44,7 +44,7 @@ class PriceExpressionParserTest extends KernelTestCase
     {
         $result = $this->parser->parsePrice('price_range(distance, 450, 2000, 2500)');
 
-        $this->assertInstanceOf(PerRangePriceExpression::class, $result);
+        $this->assertInstanceOf(PriceRangeExpression::class, $result);
         $this->assertEquals('distance', $result->attribute);
         $this->assertEquals(450, $result->price);
         $this->assertEquals(2000, $result->step);
@@ -55,7 +55,7 @@ class PriceExpressionParserTest extends KernelTestCase
     {
         $result = $this->parser->parsePrice('price_range(packages.totalVolumeUnits(), 100, 1, 0)');
 
-        $this->assertInstanceOf(PerRangePriceExpression::class, $result);
+        $this->assertInstanceOf(PriceRangeExpression::class, $result);
         $this->assertEquals('packages.totalVolumeUnits()', $result->attribute);
         $this->assertEquals(100, $result->price);
         $this->assertEquals(1, $result->step);
@@ -66,7 +66,7 @@ class PriceExpressionParserTest extends KernelTestCase
     {
         $result = $this->parser->parsePrice('price_per_package(packages, "XXL", 1240, 3, 210)');
 
-        $this->assertInstanceOf(PerPackagePriceExpression::class, $result);
+        $this->assertInstanceOf(PricePerPackageExpression::class, $result);
         $this->assertEquals('XXL', $result->packageName);
         $this->assertEquals(1240, $result->unitPrice);
         $this->assertEquals(3, $result->offset);
