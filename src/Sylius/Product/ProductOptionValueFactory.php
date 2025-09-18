@@ -32,7 +32,7 @@ class ProductOptionValueFactory
 
         $productOptionValue->setCode(Uuid::uuid4()->toString());
 
-        $productOptionValue->setValue($name);
+        $productOptionValue->setValue($name ?? '');
 
         $productOption->addValue($productOptionValue);
 
