@@ -72,6 +72,7 @@ Feature: Manage restaurants
               "latitude":48.846656,
               "longitude":2.369052
             },
+            "provider": null,
             "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
             "telephone":null,
             "name":null,
@@ -158,6 +159,7 @@ Feature: Manage restaurants
           "latitude":@double@,
           "longitude":@double@
         },
+        "provider": null,
         "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
         "name":null,
         "telephone": null,
@@ -240,6 +242,7 @@ Feature: Manage restaurants
           "latitude":@double@,
           "longitude":@double@
         },
+        "provider": null,
         "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
         "name":null,
         "telephone": null,
@@ -523,8 +526,7 @@ Feature: Manage restaurants
           "name":"Menu",
           "identifier":@string@,
           "hasMenuSection":@array@
-        }
-      ],
+        }],
       "hydra:totalItems":2
     }
     """
@@ -612,8 +614,7 @@ Feature: Manage restaurants
         "autoAcceptOrdersEnabled": @boolean@,
         "fulfillmentMethods":@array@,
         "bannerImage":@string@,
-        "isOpen":@boolean@,
-        "nextOpeningDate":@string@
+        "isOpen":@boolean@
       }
       """
 
@@ -707,8 +708,7 @@ Feature: Manage restaurants
         "autoAcceptOrdersEnabled": @boolean@,
         "fulfillmentMethods":@array@,
         "bannerImage":@string@,
-        "isOpen":@boolean@,
-        "nextOpeningDate":@string@
+        "isOpen":@boolean@
       }
       """
 
@@ -766,8 +766,7 @@ Feature: Manage restaurants
             "suitableForDiet":@array@,
             "allergens":@array@,
             "images":@array@
-          }
-        ],
+          }],
         "hydra:totalItems":2
       }
       """
@@ -824,8 +823,7 @@ Feature: Manage restaurants
                 "code":@string@,
                 "value":@string@,
                 "enabled":@boolean@
-              }
-            ],
+              }],
             "name":"Pizza topping"
           },
           {
@@ -891,8 +889,7 @@ Feature: Manage restaurants
             "suitableForDiet":@array@,
             "allergens":@array@,
             "images":@array@
-          }
-        ],
+          }],
         "hydra:totalItems":1
       }
       """
@@ -959,6 +956,7 @@ Feature: Manage restaurants
                   "latitude":48.864577,
                   "longitude":2.333338
                 },
+                "provider": null,
                 "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
                 "telephone":null,
                 "name":null
@@ -991,6 +989,7 @@ Feature: Manage restaurants
                   "latitude":48.864577,
                   "longitude":2.333338
                 },
+                "provider": null,
                 "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
                 "telephone":null,
                 "name":null

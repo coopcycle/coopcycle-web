@@ -44,6 +44,12 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 )]
 class Address extends BaseAddress
 {
+
+    const PROVIDER_MAPPICKER = 'MAP_PICKER';
+    const PROVIDERS = [
+        self::PROVIDER_MAPPICKER
+    ];
+
     /**
      * @var int
      */
@@ -52,6 +58,9 @@ class Address extends BaseAddress
     #[Groups(['task', 'warehouse', 'delivery', 'delivery_create', 'task_create', 'task_edit', 'address'])]
     private $contactName;
     private $complete = false;
+
+    private ?string $provider = null;
+
     /**
      * Gets id.
      *
@@ -144,6 +153,18 @@ class Address extends BaseAddress
     {
         return $this->complete;
     }
+
+    #[Groups(['address', 'address_create', 'task', 'task_create', 'task_edit', 'order_update', 'restaurant_delivery'])]
+    public function getProvider(): ?string
+    {
+        return $this->provider;
+    }
+
+    public function setProvider(?string $provider): void
+    {
+        $this->provider = $provider;
+    }
+
     public function clone()
     {
         $address = new Address();
@@ -160,6 +181,7 @@ class Address extends BaseAddress
         $address->setTelephone($this->telephone);
         $address->setName($this->getName());
         $address->setPostalCode($this->postalCode);
+        $address->setProvider($this->provider);
 
         return $address;
     }
