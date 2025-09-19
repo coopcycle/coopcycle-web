@@ -3593,6 +3593,7 @@ Feature: Deliveries
                 "latitude": 48.8566,
                 "longitude": 2.3522
             },
+            "provider": null,
             "streetAddress": "Rue de Rivoli 48, 75004 Paris",
             "telephone": null,
             "name": null,
@@ -4064,6 +4065,7 @@ Feature: Deliveries
                       "latitude":@double@,
                       "longitude":@double@
                     },
+                    "provider": null,
                     "postalCode": @string@,
                     "streetAddress": @string@,
                     "telephone": null,
@@ -4094,6 +4096,7 @@ Feature: Deliveries
                       "latitude":@double@,
                       "longitude":@double@
                     },
+                    "provider": null,
                     "postalCode": @string@,
                     "streetAddress": @string@,
                     "telephone": null,
