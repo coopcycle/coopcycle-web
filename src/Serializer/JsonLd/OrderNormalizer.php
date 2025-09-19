@@ -278,4 +278,11 @@ class OrderNormalizer implements NormalizerInterface, ContextAwareDenormalizerIn
 
         return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === Order::class;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            Order::class => false, // supports*() call result is NOT cached
+        ];
+    }
 }
