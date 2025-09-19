@@ -35,4 +35,11 @@ class RRuleNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         return $type === Rule::class && \is_string($data);
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            Rule::class => true, // supports*() call result is cached
+        ];
+    }
 }

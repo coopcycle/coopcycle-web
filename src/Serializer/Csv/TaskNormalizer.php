@@ -67,4 +67,11 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         return TaskGroup::class === $type && 'csv' === $format;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return $format === 'csv' ? [
+            TaskGroup::class => true, // supports*() call result is cached
+        ] : [];
+    }
 }

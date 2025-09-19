@@ -67,4 +67,11 @@ class TemporaryIdNormalizer implements NormalizerInterface, NormalizerAwareInter
 
         return $isSupportedObject && $isEnabledForGroup;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            'object' => false, // Supports any object with getId() method; supports*() call result is not cached
+        ];
+    }
 }

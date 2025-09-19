@@ -35,4 +35,11 @@ class TrailerNormalizer implements NormalizerInterface
     {
         return $this->normalizer->supportsNormalization($data, $format) && $data instanceof Trailer;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            Trailer::class => true, // supports*() call result is cached
+        ];
+    }
 }

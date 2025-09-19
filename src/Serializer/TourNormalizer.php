@@ -38,4 +38,11 @@ class TourNormalizer implements NormalizerInterface
     {
         return $this->normalizer->supportsNormalization($data, $format) && $data instanceof Tour;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            Tour::class => true, // supports*() call result is cached
+        ];
+    }
 }

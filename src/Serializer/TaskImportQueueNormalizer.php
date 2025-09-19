@@ -52,4 +52,11 @@ class TaskImportQueueNormalizer implements ContextAwareNormalizerInterface, Norm
 
         return $data instanceof ImportQueue;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            ImportQueue::class => false, // supports*() call result is NOT cached
+        ];
+    }
 }

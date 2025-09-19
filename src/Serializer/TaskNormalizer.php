@@ -249,4 +249,11 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
 
         return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === Task::class;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            Task::class => false, // supports*() call result is NOT cached
+        ];
+    }
 }

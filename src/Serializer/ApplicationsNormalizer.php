@@ -60,4 +60,11 @@ class ApplicationsNormalizer implements NormalizerInterface
     {
         return $this->normalizer->supportsNormalization($object, $format) && $object instanceof ResourceApplication;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            ResourceApplication::class => true, // supports*() call result is cached
+        ];
+    }
 }

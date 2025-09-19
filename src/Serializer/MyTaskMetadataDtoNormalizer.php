@@ -57,4 +57,11 @@ class MyTaskMetadataDtoNormalizer implements ContextAwareNormalizerInterface, No
 
         return $data instanceof MyTaskMetadataDto;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            MyTaskMetadataDto::class => false, // supports*() call result is NOT cached
+        ];
+    }
 }

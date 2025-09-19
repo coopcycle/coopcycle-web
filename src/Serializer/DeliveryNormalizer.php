@@ -273,4 +273,11 @@ class DeliveryNormalizer implements NormalizerInterface, ContextAwareDenormalize
 
         return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === Delivery::class;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            Delivery::class => false, // supports*() call result is NOT cached
+        ];
+    }
 }

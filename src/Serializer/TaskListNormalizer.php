@@ -104,4 +104,11 @@ class TaskListNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === TaskList::class;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            TaskList::class => true, // supports*() call result is cached
+        ];
+    }
 }

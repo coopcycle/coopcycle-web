@@ -91,4 +91,11 @@ class OrderItemNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         return false;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            OrderItemInterface::class => true, // supports*() call result is cached
+        ];
+    }
 }

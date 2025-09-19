@@ -159,4 +159,11 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
     {
         return false;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            Taxon::class => true, // supports*() call result is cached
+        ];
+    }
 }

@@ -114,4 +114,11 @@ class ProductNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         return false;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            ProductInterface::class => true, // supports*() call result is cached
+        ];
+    }
 }

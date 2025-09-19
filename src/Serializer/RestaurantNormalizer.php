@@ -212,4 +212,11 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === LocalBusiness::class;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            LocalBusiness::class => true, // supports*() call result is cached
+        ];
+    }
 }

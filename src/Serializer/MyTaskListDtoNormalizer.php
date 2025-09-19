@@ -53,4 +53,11 @@ class MyTaskListDtoNormalizer implements ContextAwareNormalizerInterface, Normal
 
         return $data instanceof MyTaskListDto;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            MyTaskListDto::class => false, // supports*() call result is NOT cached
+        ];
+    }
 }

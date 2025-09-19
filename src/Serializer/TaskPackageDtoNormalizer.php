@@ -39,4 +39,11 @@ class TaskPackageDtoNormalizer implements ContextAwareNormalizerInterface, Norma
 
         return $data instanceof TaskPackageDto;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            TaskPackageDto::class => false, // supports*() call result is NOT cached
+        ];
+    }
 }
