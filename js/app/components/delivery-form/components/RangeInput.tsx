@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, InputNumber } from 'antd';
 
 type Props = {
-  value: number;
+  defaultValue: number;
   onChange: (value: number) => void;
   min?: number;
   max?: number;
@@ -10,26 +10,34 @@ type Props = {
 };
 
 export default function RangeInput({
-  value,
+  defaultValue,
   onChange,
   min = 0,
   max = 999,
   step = 1,
 }: Props) {
+  const [value, setValue] = useState(defaultValue);
+
+  const _onChange = (value: number) => {
+    setValue(value);
+    onChange(value);
+  };
+
   const handleDecrease = () => {
     const newValue = Math.max(min, value - step);
-    onChange(newValue);
+    _onChange(newValue);
   };
 
   const handleIncrease = () => {
     const newValue = Math.min(max, value + step);
-    onChange(newValue);
+    console.log('handleIncrease', newValue);
+    _onChange(newValue);
   };
 
   const handleInputChange = (value: number | null) => {
     const newValue = Number(value);
     if (!isNaN(newValue) && newValue >= min && newValue <= max) {
-      onChange(newValue);
+      _onChange(newValue);
     }
   };
 
@@ -63,7 +71,7 @@ export default function RangeInput({
         min={min}
         max={max}
         step={step}
-        defaultValue={100}
+        defaultValue={defaultValue}
       />
     </div>
   );

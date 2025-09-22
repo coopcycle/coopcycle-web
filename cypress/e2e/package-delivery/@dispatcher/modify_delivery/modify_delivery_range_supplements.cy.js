@@ -69,9 +69,8 @@ context('Delivery (role: dispatcher)', () => {
       '[data-testid="manual-supplement-range-Waiting time supplement"]',
     ).within(() => {
       cy.get('[data-testid="range-input-field"]')
-        //FIXME: SHOULD BE 10 (input); not quantity!
-        // .should('have.value', '10')
-        .should('have.value', '1');
+        // quantity * step = 10
+        .should('have.value', '10');
       cy.get('[data-testid="range-supplement-price"]').should(
         'contain',
         '5,00 € for every 5',

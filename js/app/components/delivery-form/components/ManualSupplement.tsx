@@ -109,14 +109,14 @@ export default function ManualSupplement({ rule }: Props) {
   };
 
   if (isRangeBased) {
-    const currentValue = currentSupplement?.quantity || 0;
-
     return (
       <div
         className="py-1 d-flex align-items-center"
         data-testid={`manual-supplement-range-${rule.name}`}>
         <RangeInput
-          value={currentValue}
+          defaultValue={
+            currentSupplement ? currentSupplement.quantity * price.step : 0
+          }
           onChange={updateSupplementQuantity}
           min={price.threshold}
           step={price.step}
