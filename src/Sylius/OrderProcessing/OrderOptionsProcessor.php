@@ -72,10 +72,7 @@ final class OrderOptionsProcessor implements OrderProcessorInterface
                             $pricingRule?->isManualSupplement() ?
                                 AdjustmentInterface::ORDER_ITEM_PACKAGE_DELIVERY_MANUAL_SUPPLEMENT_ADJUSTMENT :
                                 AdjustmentInterface::ORDER_ITEM_PACKAGE_DELIVERY_CALCULATED_ADJUSTMENT,
-                            // For percentage-based pricing, we set unit price to 1 cent and quantity to the actual price, so that the total is price * quantity
-                            ProductOptionRepository::PRODUCT_OPTION_CODE_PRICE_PERCENTAGE === $option->getCode() ?
-                                sprintf('%d × %s', 1, $optionValue->getValue()) :
-                                sprintf('%d × %s', $quantity, $optionValue->getValue()),
+                            sprintf('%d × %s', $variant->formatQuantityForOptionValue($optionValue), $optionValue->getValue()),
                             $amount,
                             $neutral = false
                         );

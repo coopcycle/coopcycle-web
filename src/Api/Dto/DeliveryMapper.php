@@ -141,9 +141,7 @@ class DeliveryMapper
                     // Create ManualSupplementDto
                     $manualSupplementDto = new ManualSupplementDto();
                     $manualSupplementDto->pricingRule = $pricingRule;
-                    //FIXME: update when we properly model unit price and quantity in https://github.com/coopcycle/coopcycle/issues/441
-//                    $manualSupplementDto->quantity = $variant->getQuantityForOptionValue($productOptionValue);
-                    $manualSupplementDto->quantity = 1;
+                    $manualSupplementDto->quantity = $variant->formatQuantityForOptionValue($productOptionValue);
 
                     $manualSupplements[] = $manualSupplementDto;
                 }
