@@ -13,7 +13,7 @@ class PricePerPackageExpressionLanguageProvider implements ExpressionFunctionPro
             // FIXME Need to test compilation
         };
 
-        $evaluator = function ($arguments, $packages, $packageName, $basePrice, $offset, $discountPrice): int|PriceEvaluation|array {
+        $evaluator = function ($arguments, $packages, $packageName, $basePrice, $offset, $discountPrice): PriceEvaluation|array {
 
             $quantity = $packages->quantity($packageName);
 
