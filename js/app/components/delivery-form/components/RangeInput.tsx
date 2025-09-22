@@ -30,7 +30,6 @@ export default function RangeInput({
 
   const handleIncrease = () => {
     const newValue = Math.min(max, value + step);
-    console.log('handleIncrease', newValue);
     _onChange(newValue);
   };
 
