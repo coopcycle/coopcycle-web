@@ -76,6 +76,16 @@ context('Delivery (role: dispatcher)', () => {
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/);
 
+    cy.get('[data-testid="order-item-0"]').within(() => {
+      cy.get('[data-testid="adjustment-1"]').within(() => {
+        cy.get('[data-testid="name"]').should(
+          'contain',
+          '3 × Waiting time supplement',
+        );
+        cy.get('[data-testid="price"]').should('contain', '€15.00');
+      });
+    });
+
     cy.get('[data-testid="order-total-including-tax"]')
       .find('[data-testid="value"]')
       .contains('€19.99');
