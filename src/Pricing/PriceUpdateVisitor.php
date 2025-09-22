@@ -7,6 +7,7 @@ use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Sylius\UpdateManualSupplements;
 use AppBundle\Sylius\Product\ProductVariantFactory;
 use AppBundle\Sylius\Product\ProductVariantInterface;
+use Doctrine\ORM\EntityNotFoundException;
 
 class PriceUpdateVisitor
 {
@@ -85,7 +86,18 @@ class PriceUpdateVisitor
         if ($previousDeliveryProductVariant) {
             // clone productOptionValues except previously added manual supplements
             foreach ($previousDeliveryProductVariant->getOptionValues() as $productOptionValue) {
-                if ($productOptionValue->getPricingRule()?->isManualSupplement()) {
+                try {
+                    // Find the PricingRule linked to this ProductOptionValue
+                    $pricingRule = $productOptionValue->getPricingRule();
+                } catch (EntityNotFoundException $e) {
+                    // This happens when a pricing rule has been modified or deleted
+                    // and the linked product option value has been disabled
+                    // but is still attached to a product variant
+                    // Don't return this value to a user, so they can keep an existing supplement, but can't edit it
+                    continue;
+                }
+
+                if ($pricingRule?->isManualSupplement()) {
                     continue;
                 }
 

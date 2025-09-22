@@ -9,6 +9,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Service\TagManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
+use Doctrine\ORM\EntityNotFoundException;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
@@ -134,8 +135,16 @@ class DeliveryMapper
             foreach ($variant->getOptionValues() as $productOptionValue) {
                 /** @var ProductOptionValue $productOptionValue */
 
-                // Find the PricingRule linked to this ProductOptionValue
-                $pricingRule = $productOptionValue->getPricingRule();
+                try {
+                    // Find the PricingRule linked to this ProductOptionValue
+                    $pricingRule = $productOptionValue->getPricingRule();
+                } catch (EntityNotFoundException $e) {
+                    // This happens when a pricing rule has been modified or deleted
+                    // and the linked product option value has been disabled
+                    // but is still attached to a product variant
+                    // Don't return this value to a user, so they can keep an existing supplement, but can't edit it
+                    continue;
+                }
 
                 if (null !== $pricingRule && $pricingRule->isManualSupplement()) {
                     // Create ManualSupplementDto

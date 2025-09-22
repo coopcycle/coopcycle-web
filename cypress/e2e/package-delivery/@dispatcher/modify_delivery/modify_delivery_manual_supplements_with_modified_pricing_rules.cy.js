@@ -2,7 +2,7 @@ context('Delivery (role: dispatcher)', () => {
   beforeEach(() => {
     cy.loadFixtures([
       'setup_default.yml',
-      'user_dispatcher.yml',
+      'user_admin.yml',
       'tags.yml',
       'store_with_range_supplements.yml',
     ]);
@@ -10,7 +10,7 @@ context('Delivery (role: dispatcher)', () => {
 
     cy.setMockDateTime('2025-04-23 8:30:00');
 
-    cy.login('dispatcher', 'dispatcher');
+    cy.login('admin', '12345678');
 
     // Create a delivery with range supplements first
     cy.visit('/admin/stores');
@@ -41,6 +41,20 @@ context('Delivery (role: dispatcher)', () => {
     cy.get('[data-testid="order-total-including-tax"]')
       .find('[data-testid="value"]')
       .contains('€14.99');
+
+    cy.visit('/admin/deliveries/pricing/beta/1');
+
+    // Wait for React components to load
+    cy.get('[data-testid="pricing-rule-set-form"]', {
+      timeout: 10000,
+    }).should('be.visible');
+
+    cy.get('[data-testid="pricing-rule-set-rule-1"]').within(() => {
+      // Modify price
+      cy.get('[data-testid="rule-price-range-price"]').type('{selectall}8');
+    });
+
+    cy.get('button[type="submit"]').click();
   });
 
   afterEach(() => {
@@ -48,7 +62,9 @@ context('Delivery (role: dispatcher)', () => {
     cy.removeEnvVar('PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED');
   });
 
-  it('modify delivery range supplement values', function () {
+  it('modify order', function () {
+    cy.visit('/admin/orders/1');
+
     cy.intercept('POST', '/api/retail_prices/calculate').as(
       'calculateRetailPrice',
     );
@@ -73,11 +89,11 @@ context('Delivery (role: dispatcher)', () => {
       '[data-testid="manual-supplement-range-Waiting time supplement"]',
     ).within(() => {
       cy.get('[data-testid="range-input-field"]')
-        // quantity * step = 10
-        .should('have.value', '10');
+        // as a pricing rule has been modified, reset the value to 0, so that a user has to added it again
+        .should('have.value', '0');
       cy.get('[data-testid="range-supplement-price"]').should(
         'contain',
-        '5,00 € for every 5',
+        '8,00 € for every 5',
       );
     });
 
@@ -89,7 +105,7 @@ context('Delivery (role: dispatcher)', () => {
     });
 
     // Verify total price updates
-    cy.get('[data-testid="tax-included"]').contains('24,99 €');
+    cy.get('[data-testid="tax-included"]').contains('36,99 €');
 
     // Save changes
     cy.get('button[type="submit"]').click();
@@ -103,12 +119,12 @@ context('Delivery (role: dispatcher)', () => {
           'contain',
           '4 × Waiting time supplement',
         );
-        cy.get('[data-testid="price"]').should('contain', '€20.00');
+        cy.get('[data-testid="price"]').should('contain', '€32.00');
       });
     });
 
     cy.get('[data-testid="order-total-including-tax"]')
       .find('[data-testid="value"]')
-      .contains('€24.99');
+      .contains('€36.99');
   });
 });
