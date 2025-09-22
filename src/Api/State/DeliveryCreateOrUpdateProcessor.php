@@ -147,7 +147,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                         new CalculateUsingPricingRules($manualSupplements)
                     );
                     $this->pricingManager->processDeliveryOrder($order, $productVariants);
-                } else {
+                } elseif (!is_null($manualSupplements) && count($manualSupplements->orderSupplements) > 0) {
                     $existingProductVariants = [];
                     foreach ($order->getItems() as $item) {
                         $existingProductVariants[] = $item->getVariant();
@@ -159,6 +159,8 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                     );
 
                     $this->pricingManager->processDeliveryOrder($order, $productVariants);
+                } else {
+                    $this->logger->info('Keeping existing price', ['order' => $order->getId()]);
                 }
             }
         }
