@@ -5,13 +5,8 @@ namespace AppBundle\Entity\Sylius;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Sylius\Component\Resource\Model\ToggleableInterface;
 use Sylius\Component\Resource\Model\ToggleableTrait;
 use Sylius\Component\Product\Model\ProductOptionValue as BaseProductOptionValue;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -69,10 +64,8 @@ class ProductOptionValue extends BaseProductOptionValue implements ProductOption
         return $this->pricingRule;
     }
 
-    public function setPricingRule(?PricingRule $pricingRule): self
+    public function setPricingRule(?PricingRule $pricingRule): void
     {
         $this->pricingRule = $pricingRule;
-
-        return $this;
     }
 }
