@@ -25,7 +25,7 @@ final class Version20250917000001 extends AbstractMigration
         $this->addSql('ALTER TABLE sylius_product_option_value ADD pricing_rule_id INT DEFAULT NULL');
 
         // Add foreign key constraint
-        $this->addSql('ALTER TABLE sylius_product_option_value ADD CONSTRAINT FK_2A41B5E5A5E3B32D FOREIGN KEY (pricing_rule_id) REFERENCES pricing_rule (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
+        $this->addSql('ALTER TABLE sylius_product_option_value ADD CONSTRAINT FK_2A41B5E5A5E3B32D FOREIGN KEY (pricing_rule_id) REFERENCES pricing_rule (id) ON DELETE SET NULL NOT DEFERRABLE INITIALLY IMMEDIATE');
 
         // Create index for the new foreign key
         $this->addSql('CREATE INDEX IDX_2A41B5E5A5E3B32D ON sylius_product_option_value (pricing_rule_id)');
