@@ -48,7 +48,6 @@ class ProductOptionValueFactory
             $baseProductOptionValue->setValue($name ?? '');
             $baseProductOptionValue->setPrice($priceExpression->unitPrice);
 
-            $productOption->addValue($baseProductOptionValue);
             $result[] = $baseProductOptionValue;
 
             /** @var ProductOptionValue $extraProductOptionValue */
@@ -57,7 +56,6 @@ class ProductOptionValueFactory
             $extraProductOptionValue->setValue($name ?? '');
             $extraProductOptionValue->setPrice($priceExpression->discountPrice);
 
-            $productOption->addValue($extraProductOptionValue);
             $result[] = $extraProductOptionValue;
         } else {
             /** @var ProductOptionValue $productOptionValue */
@@ -66,8 +64,12 @@ class ProductOptionValueFactory
             $productOptionValue->setValue($name ?? '');
             $productOptionValue->setPrice($this->getUnitPrice($priceExpression));
 
-            $productOption->addValue($productOptionValue);
             $result[] = $productOptionValue;
+        }
+
+        foreach ($result as $productOptionValue) {
+            $productOption->addValue($productOptionValue);
+            $pricingRule->addProductOptionValue($productOptionValue);
         }
 
         return $result;

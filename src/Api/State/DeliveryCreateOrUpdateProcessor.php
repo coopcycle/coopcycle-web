@@ -12,11 +12,14 @@ use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\UpdateManualSupplements;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
+use AppBundle\Pricing\ManualSupplement;
 use AppBundle\Pricing\ManualSupplements;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Product\ProductOptionValueInterface;
+use Doctrine\ORM\EntityNotFoundException;
 use Psr\Log\LoggerInterface;
 use Recurr\Exception\InvalidRRule;
 use Recurr\Rule;
@@ -108,7 +111,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
             $order = $this->deliveryOrderManager->createOrder(
                 $delivery,
                 [
-                    'pricingStrategy' => $onCreatePricingStrategy
+                    'pricingStrategy' => $onCreatePricingStrategy,
                 ]
             );
 
@@ -127,7 +130,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                     $order = $this->deliveryOrderManager->createOrder(
                         $delivery,
                         [
-                            'pricingStrategy' => $onCreatePricingStrategy
+                            'pricingStrategy' => $onCreatePricingStrategy,
                         ]
                     );
                 }
@@ -147,7 +150,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                         new CalculateUsingPricingRules($manualSupplements)
                     );
                     $this->pricingManager->processDeliveryOrder($order, $productVariants);
-                } elseif (!is_null($manualSupplements) && count($manualSupplements->orderSupplements) > 0) {
+                } elseif (!is_null($manualSupplements) && count($manualSupplements->orderSupplements) > 0 && $this->hasManualSupplementsChanged($manualSupplements, $order)) {
                     $existingProductVariants = [];
                     foreach ($order->getItems() as $item) {
                         $existingProductVariants[] = $item->getVariant();
@@ -216,5 +219,71 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         $this->persistProcessor->process($delivery, $operation, $uriVariables, $context);
 
         return $delivery;
+    }
+
+    private function hasManualSupplementsChanged(ManualSupplements $manualSupplements, OrderInterface $existingOrder): bool
+    {
+        $existingManualSupplements = [];
+
+        foreach ($existingOrder->getItems() as $item) {
+            $variant = $item->getVariant();
+
+            /** @var ProductOptionValueInterface $optionValue */
+            foreach ($variant->getOptionValues() as $optionValue) {
+                try {
+                    // Find the PricingRule linked to this ProductOptionValue
+                    $pricingRule = $optionValue->getPricingRule();
+                } catch (EntityNotFoundException $e) {
+                    // This happens when a pricing rule has been modified
+                    // and the linked product option value has been disabled
+                    // but is still attached to a product variant
+                    $pricingRule = null;
+                }
+
+                if (!is_null($pricingRule) && $pricingRule->isManualSupplement()) {
+                    $existingManualSupplements[] = new ManualSupplement($pricingRule, $variant->formatQuantityForOptionValue($optionValue));
+                }
+            }
+        }
+
+        $added = 0;
+        $removed = 0;
+        $changed = 0;
+
+        foreach ($manualSupplements->orderSupplements as $supplement) {
+            $foundSupplement = null;
+            foreach ($existingManualSupplements as $existingSupplement) {
+                if ($existingSupplement->pricingRule === $supplement->pricingRule) {
+                    $foundSupplement = $existingSupplement;
+                    break;
+                }
+            }
+
+            if (is_null($foundSupplement)) {
+                $added++;
+            } elseif ($foundSupplement->quantity !== $supplement->quantity) {
+                $changed++;
+            }
+        }
+
+        foreach ($existingManualSupplements as $existingSupplement) {
+            $foundSupplement = null;
+            foreach ($manualSupplements->orderSupplements as $supplement) {
+                if ($existingSupplement->pricingRule === $supplement->pricingRule) {
+                    $foundSupplement = $supplement;
+                    break;
+                }
+            }
+
+            if (is_null($foundSupplement)) {
+                $removed++;
+            }
+        }
+
+        if ($added > 0 || $removed > 0 || $changed > 0) {
+            return true;
+        }
+
+        return false;
     }
 }

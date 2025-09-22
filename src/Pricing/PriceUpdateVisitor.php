@@ -93,11 +93,10 @@ class PriceUpdateVisitor
                     // This happens when a pricing rule has been modified
                     // and the linked product option value has been disabled
                     // but is still attached to a product variant
-                    // Don't return this value to a user, so they can keep an existing supplement, but can't edit it
-                    continue;
+                    $pricingRule = null;
                 }
 
-                if ($pricingRule?->isManualSupplement()) {
+                if (is_null($pricingRule) || $pricingRule->isManualSupplement()) {
                     continue;
                 }
 
