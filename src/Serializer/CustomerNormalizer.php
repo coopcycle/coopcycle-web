@@ -40,4 +40,11 @@ class CustomerNormalizer implements NormalizerInterface
     {
         return $this->normalizer->supportsNormalization($data, $format) && $data instanceof CustomerInterface;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            CustomerInterface::class => true, // supports*() call result is cached
+        ];
+    }
 }

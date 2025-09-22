@@ -108,7 +108,7 @@ testdata-dispatch:
 testdata-foodtech:
 	@docker compose exec php bin/console coopcycle:fixtures:load -f fixtures/ORM/foodtech.yml --env test
 testdata-high-volume-instance:
-	@docker compose exec php bin/console coopcycle:fixtures:load -f fixtures/ORM/high_volume_instance.yml --env test
+	@docker compose exec php bin/console coopcycle:fixtures:load -s fixtures/ORM/setup_default.yml -f fixtures/ORM/high_volume_instance.yml --env test
 
 demodata:
 	@docker compose exec php bin/demo --env=dev

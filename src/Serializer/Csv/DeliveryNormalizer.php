@@ -63,4 +63,11 @@ class DeliveryNormalizer implements NormalizerInterface
     {
         return 'csv' === $format && $data instanceof Delivery;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return $format === 'csv' ? [
+            Delivery::class => true, // supports*() call result is cached
+        ] : [];
+    }
 }

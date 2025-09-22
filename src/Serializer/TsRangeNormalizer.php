@@ -80,4 +80,11 @@ class TsRangeNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === TsRange::class;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            TsRange::class => true, // supports*() call result is cached
+        ];
+    }
 }
