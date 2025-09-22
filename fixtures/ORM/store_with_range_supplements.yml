@@ -46,13 +46,11 @@ AppBundle\Entity\Delivery\PricingRule:
     price: 'price_range(quantity, 500, 5, 0)'
     position: 2
     ruleSet: '@pricing_rule_set_with_range_supplements'
-    productOptionValue: '@range_supplement_option_value_waiting_time'
   range_supplement_priority_handling:
     expression: 'false'
     price: 'price_range(quantity, 200, 1, 2)'
     position: 3
     ruleSet: '@pricing_rule_set_with_range_supplements'
-    productOptionValue: '@range_supplement_option_value_priority_handling'
 
 AppBundle\Entity\Sylius\ProductOptionValue:
   range_supplement_option_value_waiting_time:
@@ -60,11 +58,13 @@ AppBundle\Entity\Sylius\ProductOptionValue:
     value: 'Waiting time supplement'
     code: 'WAITING_TIME_SUPPLEMENT'
     option: '@product_option_range_price_rules'
+    pricingRule: '@range_supplement_waiting_time'
   range_supplement_option_value_priority_handling:
     currentLocale: 'fr'
     value: 'Priority handling'
     code: 'PRIORITY_HANDLING'
     option: '@product_option_range_price_rules'
+    pricingRule: '@range_supplement_priority_handling'
 
 AppBundle\Entity\Store:
   store_with_range_supplements:
