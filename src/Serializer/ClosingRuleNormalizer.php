@@ -43,4 +43,11 @@ class ClosingRuleNormalizer implements NormalizerInterface, DenormalizerInterfac
     {
         return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === ClosingRule::class;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            ClosingRule::class => true, // supports*() call result is cached
+        ];
+    }
 }
