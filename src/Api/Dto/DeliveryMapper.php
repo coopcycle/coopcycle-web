@@ -139,7 +139,7 @@ class DeliveryMapper
                     // Find the PricingRule linked to this ProductOptionValue
                     $pricingRule = $productOptionValue->getPricingRule();
                 } catch (EntityNotFoundException $e) {
-                    // This happens when a pricing rule has been modified or deleted
+                    // This happens when a pricing rule has been modified
                     // and the linked product option value has been disabled
                     // but is still attached to a product variant
                     // Don't return this value to a user, so they can keep an existing supplement, but can't edit it
