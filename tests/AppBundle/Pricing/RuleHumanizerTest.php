@@ -155,4 +155,12 @@ class RuleHumanizerTest extends KernelTestCase
 
         $this->assertEquals('packages.containsAtLeastOne("📦 - A eurobox/fruitbox of documents") and task.type == "DROPOFF"', $this->humanizer->humanize($rule));
     }
+
+    public function testTimeSlotWithTaskType()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('time_slot == "/api/time_slots/1" and task.type == "PICKUP"');
+
+        $this->assertEquals('/api/time_slots/1, taux de retrait', $this->humanizer->humanize($rule));
+    }
 }

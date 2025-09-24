@@ -971,7 +971,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × time_slot == \"/api/time_slots/1\" and task.type == \"PICKUP\"",
+                    "label": "1 × /api/time_slots/1, taux de retrait",
                     "amount": 499
                   }
                 ],
