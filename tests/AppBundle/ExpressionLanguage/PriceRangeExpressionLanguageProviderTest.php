@@ -5,6 +5,7 @@ namespace Tests\AppBundle\ExpressionLanguage;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Package;
 use AppBundle\ExpressionLanguage\PackagesResolver;
+use AppBundle\ExpressionLanguage\PriceEvaluation;
 use AppBundle\ExpressionLanguage\PriceRangeExpressionLanguageProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -24,11 +25,11 @@ class PriceRangeExpressionLanguageProviderTest extends TestCase
     {
         return [
             [  1500,    0 ],
-            [  3000,  450 ],
-            [  4000,  450 ],
-            [  5500,  900 ],
-            [  6500,  900 ],
-            [ 12000, 2250 ],
+            [  3000,  new PriceEvaluation(450, 1) ],
+            [  4000,  new PriceEvaluation(450, 1) ],
+            [  5500,  new PriceEvaluation(450, 2) ],
+            [  6500,  new PriceEvaluation(450, 2) ],
+            [ 12000,  new PriceEvaluation(450, 5) ],
             [  null,    0 ],
         ];
     }
@@ -42,15 +43,14 @@ class PriceRangeExpressionLanguageProviderTest extends TestCase
             'distance' => $distance,
         ]);
 
-        $this->assertThat($value, $this->isType('int'));
         $this->assertEquals($expectedValue, $value);
     }
 
     public function returnValueProviderForTotalVolumeUnits()
     {
         return [
-            [  2.0, 1, 200 ],
-            [  3.0, 2, 600 ],
+            [  2.0, 1, new PriceEvaluation(100, 2) ],
+            [  3.0, 2, new PriceEvaluation(100, 6) ],
         ];
     }
 
@@ -70,7 +70,6 @@ class PriceRangeExpressionLanguageProviderTest extends TestCase
             'packages' => new PackagesResolver($delivery),
         ]);
 
-        $this->assertThat($value, $this->isType('int'));
         $this->assertEquals($expectedValue, $value);
     }
 
@@ -78,9 +77,9 @@ class PriceRangeExpressionLanguageProviderTest extends TestCase
     {
         return [
             [  35000,      0 ],
-            [  45000,    360 ],
-            [  80000,    360 ],
-            [  81000,    720 ],
+            [  45000,    new PriceEvaluation(360, 1) ],
+            [  80000,    new PriceEvaluation(360, 1) ],
+            [  81000,    new PriceEvaluation(360, 2) ],
             [   null,      0 ]
         ];
     }
@@ -94,17 +93,16 @@ class PriceRangeExpressionLanguageProviderTest extends TestCase
             'weight' => $weight,
         ]);
 
-        $this->assertThat($value, $this->isType('int'));
         $this->assertEquals($expectedValue, $value);
     }
 
     public function returnValueProviderForQuantity()
     {
         return [
-            [  1, 500 ],
-            [  2, 1000 ],
-            [  3, 1500 ],
-            [  4, 2000 ],
+            [  1, new PriceEvaluation(500, 1) ],
+            [  2, new PriceEvaluation(500, 2) ],
+            [  3, new PriceEvaluation(500, 3) ],
+            [  4, new PriceEvaluation(500, 4) ],
             [ null,  0 ]
         ];
     }
@@ -118,7 +116,6 @@ class PriceRangeExpressionLanguageProviderTest extends TestCase
             'quantity' => $quantity,
         ]);
 
-        $this->assertThat($value, $this->isType('int'));
         $this->assertEquals($expectedValue, $value);
     }
 
