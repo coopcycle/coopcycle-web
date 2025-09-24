@@ -74,6 +74,10 @@ class AddressValueResolver implements ArgumentValueResolverInterface
                 $address->setGeo(new GeoCoordinates($latitude, $longitude));
             }
 
+            if (isset($data['provider']) && in_array($data['provider'], Address::PROVIDERS)) {
+                $address->setProvider($data['provider']);
+            }
+
             return yield $address;
         }
 

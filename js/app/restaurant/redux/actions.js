@@ -1,10 +1,10 @@
-import {createAction as createFsAction} from 'redux-actions'
+import { createAction as createFsAction } from 'redux-actions'
 import _ from 'lodash'
 import axios from 'axios'
 import qs from 'qs'
 
-import i18n, {getCountry} from '../../i18n'
-import {geocode} from '../../components/AddressAutosuggest'
+import i18n, { getCountry } from '../../i18n'
+import { geocode } from '../../components/AddressAutosuggest'
 import { createAction } from '@reduxjs/toolkit'
 import { setOrderAccessToken } from '../../entities/guest/reduxSlice'
 import { setOrderNodeId } from '../../entities/order/reduxSlice'
@@ -175,7 +175,7 @@ function handleAjaxError(e, dispatch) {
   dispatch(fetchFailure(e.toString()))
 }
 
-function playerHeader({player: {token}}, headers = {}) {
+function playerHeader({ player: { token } }, headers = {}) {
   if (token !== null) {
     headers = {
       ...headers,
@@ -197,7 +197,7 @@ export function addItem(itemURL, quantity = 1) {
     return httpClient.request({
       method: "post",
       url: itemURL,
-      data: {quantity},
+      data: { quantity },
       headers: playerHeader(getState()),
     }).then(res => {
       window._paq.push(['trackEvent', 'Checkout', 'addItem'])
@@ -220,7 +220,7 @@ export function queueAddItem(itemURL, quantity = 1) {
       httpClient.request({
         method: "post",
         url: itemURL,
-        data: {quantity},
+        data: { quantity },
         headers: playerHeader(getState()),
       }).then(res => {
         window._paq.push(['trackEvent', 'Checkout', 'addItem'])
@@ -280,7 +280,7 @@ export function updateItemQuantity(itemID, quantity) {
     httpClient.request({
       method: "post",
       url,
-      data: {quantity},
+      data: { quantity },
       headers: playerHeader(getState()),
     }).then(res => {
       handleAjaxResponse(res.data, dispatch)
@@ -357,7 +357,7 @@ export function sync() {
 
   return (dispatch, getState) => {
 
-    const { cart, player: {player} } = getState()
+    const { cart, player: { player } } = getState()
 
     if (cart.takeaway) {
       $('#menu').LoadingOverlay('hide')
@@ -368,7 +368,7 @@ export function sync() {
       dispatch(fetchRequest())
       postForm()
         .then(res => handleAjaxResponse(res, dispatch, false))
-        .catch(e  => handleAjaxError(e, dispatch))
+        .catch(e => handleAjaxError(e, dispatch))
     } else {
       dispatch(geocodeAndSync())
     }
@@ -389,7 +389,7 @@ export function changeDate() {
 
     postFormWithTime()
       .then(res => handleAjaxResponse(res, dispatch, false))
-      .catch(e  => handleAjaxError(e, dispatch))
+      .catch(e => handleAjaxError(e, dispatch))
   }
 }
 
@@ -419,7 +419,7 @@ export function changeAddress(address) {
       restaurant
     } = getState()
 
-    if (address.isPrecise) {
+    if (address.isPrecise || address.provider === 'MAP_PICKER') {
 
       // Change field value immediately
       dispatch(setStreetAddress(address.streetAddress))
@@ -430,7 +430,7 @@ export function changeAddress(address) {
 
         isNewAddressFormElement.value = '0'
 
-         // This must be done *BEFORE* posting the form
+        // This must be done *BEFORE* posting the form
         dispatch(disableTakeaway(false))
 
         const url =
@@ -438,7 +438,7 @@ export function changeAddress(address) {
 
         $.post(url, { address: address['@id'] })
           .then(res => handleAjaxResponse(res, dispatch, false))
-          .fail(e   => handleAjaxError(e, dispatch))
+          .fail(e => handleAjaxError(e, dispatch))
 
       } else {
 
@@ -450,7 +450,7 @@ export function changeAddress(address) {
 
         postForm()
           .then(res => handleAjaxResponse(res, dispatch, false))
-          .catch(e  => handleAjaxError(e, dispatch))
+          .catch(e => handleAjaxError(e, dispatch))
       }
 
     } else {
@@ -478,7 +478,7 @@ export function clearDate() {
 
     $.post(url)
       .then(res => handleAjaxResponse(res, dispatch, false))
-      .fail(e   => handleAjaxError(e, dispatch))
+      .fail(e => handleAjaxError(e, dispatch))
 
   }
 }
@@ -503,7 +503,7 @@ export function enableTakeaway(post = true) {
         dispatch(fetchRequest())
         postForm()
           .then(res => handleAjaxResponse(res, dispatch))
-          .catch(e  => handleAjaxError(e, dispatch))
+          .catch(e => handleAjaxError(e, dispatch))
       }
     }
   }
@@ -526,7 +526,7 @@ export function disableTakeaway(post = true) {
         dispatch(fetchRequest())
         postForm()
           .then(res => handleAjaxResponse(res, dispatch))
-          .catch(e  => handleAjaxError(e, dispatch))
+          .catch(e => handleAjaxError(e, dispatch))
       }
     }
   }
@@ -565,10 +565,10 @@ export function retryLastAddItemRequest() {
   }
 }
 
-export function setPlayer({email, name} = {}) {
+export function setPlayer({ email, name } = {}) {
   return async (dispatch, getState) => {
 
-    const {isAuth, user} = window._auth
+    const { isAuth, user } = window._auth
 
     if (!isAuth && !email && !name) {
       return dispatch(openSetPlayerEmailModal())
@@ -579,15 +579,15 @@ export function setPlayer({email, name} = {}) {
       name = user.username
     }
 
-    const { cart: {id, invitation: slug} } = getState()
-    const url = window.Routing.generate('_api_/orders/{id}/players_post', getRoutingParams({id}))
+    const { cart: { id, invitation: slug } } = getState()
+    const url = window.Routing.generate('_api_/orders/{id}/players_post', getRoutingParams({ id }))
 
     // Set player
     if (email && slug && name) {
       httpClient.request({
         method: "post",
         url,
-        data: {email, slug, name},
+        data: { email, slug, name },
         headers: {
           'Accept': 'application/ld+json',
           'Content-Type': 'application/ld+json'
@@ -605,9 +605,10 @@ export function createInvitation() {
   return (dispatch, getState) => {
     dispatch(invitePeopleRequest())
 
-    const { cart: {id} } = getState()
-    const {jwt, user} = window._auth
-    const url = window.Routing.generate('_api_/orders/{id}/create_invitation_post', getRoutingParams({id}))
+    const { cart: { id } } = getState()
+    const { jwt, user } = window._auth
+    const url = window.Routing.generate('_api_/orders/{id}/create_invitation_post', getRoutingParams({ id }))
+
     httpClient.request({
       method: 'post',
       url,
@@ -620,7 +621,7 @@ export function createInvitation() {
     })
       .then(res => {
         dispatch(invitePeopleSuccess(res.data.invitation))
-        dispatch(setPlayer({email: user.email, name: user.username}))
+        dispatch(setPlayer({ email: user.email, name: user.username }))
       })
       .catch(e => dispatch(invitePeopleFailure(e)))
   }
@@ -649,7 +650,7 @@ export function toggleReusablePackaging(checked = true) {
       dispatch(fetchRequest())
       postForm()
         .then(res => handleAjaxResponse(res, dispatch))
-        .catch(e  => handleAjaxError(e, dispatch))
+        .catch(e => handleAjaxError(e, dispatch))
 
     }
   }
