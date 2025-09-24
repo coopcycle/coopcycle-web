@@ -8,7 +8,7 @@
         <cascade-persist/>
       </cascade>
       <join-columns>
-        <join-column name="pricing_rule_id" referenced-column-name="id" nullable="true"/>
+        <join-column name="pricing_rule_id" referenced-column-name="id" nullable="true" on-delete="SET NULL"/>
       </join-columns>
     </many-to-one>
   </entity>
