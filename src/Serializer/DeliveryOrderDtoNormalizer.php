@@ -44,4 +44,11 @@ class DeliveryOrderDtoNormalizer implements ContextAwareNormalizerInterface, Nor
 
         return $data instanceof DeliveryOrderDto;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            DeliveryOrderDto::class => false, // supports*() call result is NOT cached
+        ];
+    }
 }

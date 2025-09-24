@@ -30,4 +30,11 @@ class GeoCoordinatesNormalizer implements NormalizerInterface
     {
         return $this->normalizer->supportsNormalization($data, $format) && $data instanceof GeoCoordinates;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            GeoCoordinates::class => true, // supports*() call result is cached
+        ];
+    }
 }

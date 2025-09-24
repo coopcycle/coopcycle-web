@@ -13,7 +13,6 @@ use ApiPlatform\Doctrine\Orm\Filter\ExistsFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Cart\DeleteItem as DeleteCartItem;
-use AppBundle\Action\Cart\UpdateItem as UpdateCartItem;
 use AppBundle\Action\Order\Accept as OrderAccept;
 use AppBundle\Action\Order\AddPlayer;
 use AppBundle\Action\Order\Assign as OrderAssign;
@@ -230,14 +229,6 @@ use Webmozart\Assert\Assert as WMAssert;
             uriTemplate: '/orders/{id}',
             normalizationContext: ['groups' => ['cart']],
             denormalizationContext: ['groups' => ['order_update']],
-            security: 'is_granted(\'edit\', object)',
-            validationContext: ['groups' => ['cart']]
-        ),
-        new Put(
-            uriTemplate: '/orders/{id}/items/{itemId}',
-            controller: UpdateCartItem::class,
-            normalizationContext: ['groups' => ['cart']],
-            denormalizationContext: ['groups' => ['cart']],
             security: 'is_granted(\'edit\', object)',
             validationContext: ['groups' => ['cart']]
         ),

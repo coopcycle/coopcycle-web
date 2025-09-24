@@ -35,9 +35,7 @@ class DeliveryMapper
 
         $deliveryData = new DeliveryInputDto();
 
-        $tasks = $deliveryEntity->getTasks();
-
-        $deliveryData->tasks = array_map(function (Task $taskEntity) use ($tasks, $context) {
+        $deliveryData->tasks = array_map(function (Task $taskEntity) use ($context) {
 
             $taskData = new TaskDto();
 
@@ -70,8 +68,14 @@ class DeliveryMapper
 
             $taskData->comments = $taskEntity->getComments();
             $taskData->tags = $this->tagManager->expand($taskEntity->getTags());
-            $taskData->weight = $this->taskMapper->getWeight($taskEntity, $tasks);
-            $taskData->packages = $this->taskMapper->getPackages($taskEntity, $tasks);
+            //as this mapper is currently only used to prefill the form-data,
+            // we want to return the original data without the sum of all the weights
+            // otherwise the weight will be multiplied by each edit
+            $taskData->weight = $this->taskMapper->getWeight($taskEntity, []);
+            //as this mapper is currently only used to prefill the form-data,
+            // we want to return the original data without the sum of all the packages
+            // otherwise the packages will be multiplied by each edit
+            $taskData->packages = $this->taskMapper->getPackages($taskEntity, []);
             $taskData->metadata = $taskEntity->getMetadata();
 
             if (!is_null($taskEntity->getId())) {

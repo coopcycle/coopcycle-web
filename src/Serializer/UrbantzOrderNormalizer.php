@@ -33,4 +33,11 @@ class UrbantzOrderNormalizer implements NormalizerInterface, DenormalizerInterfa
     {
         return $type === UrbantzWebhook::class;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            UrbantzWebhook::class => true, // supports*() call result is cached
+        ];
+    }
 }

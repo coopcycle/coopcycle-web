@@ -73,7 +73,12 @@ class MarkAsDoneHandler
         if (!empty($contactName)) {
             $task->getAddress()->setContactName($contactName);
         }
-        
-        $this->eventBus->dispatch(new CalculateTaskDistance($task->getId()));
+
+        // Avoid race condition
+        // This message may emit a "task:updated" event *BEFORE* the task status has changed
+        // TODO Move this to a handler listening to TaskDone event?
+        $this->eventBus->dispatch(
+            (new Envelope(new CalculateTaskDistance($task->getId())))->with(new DispatchAfterCurrentBusStamp())
+        );
     }
 }
