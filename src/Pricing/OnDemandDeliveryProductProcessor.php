@@ -109,7 +109,7 @@ class OnDemandDeliveryProductProcessor
                             'rule' => $rule->getPrice(),
                             'actual' => $productOptionValue->getPrice(),
                         ]);
-                        $productOptionValue->setPrice($result < 10000 ? -1 : 1);
+                        $productOptionValue->setPrice($result < PricePercentageExpression::PERCENTAGE_NEUTRAL ? -1 : 1);
                     }
 
                     // temporarily set quantity to percentage (will be updated later in calculation)

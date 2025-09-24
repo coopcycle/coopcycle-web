@@ -98,7 +98,7 @@ class ProductOptionValueFactory
             case PricePercentageExpression::class:
                 // For percentage-based pricing, we set unit price to 1 cent and quantity to the actual price, so that the total is price * quantity
                 // If the percentage is below 100% (10000 = 100.00%), we set the base price to -1 as it's a discount
-                return $priceExpression->percentage < 10000 ? -1 : 1;
+                return $priceExpression->percentage < PricePercentageExpression::PERCENTAGE_NEUTRAL ? -1 : 1;
             case PriceRangeExpression::class:
                 return $priceExpression->price;
             case PricePerPackageExpression::class:
