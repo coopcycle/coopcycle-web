@@ -24,7 +24,11 @@ class PricePerPackageExpressionLanguageProvider implements ExpressionFunctionPro
             }
 
             $rest = $quantity - ($offset - 1);
-            $rest = $rest < 0 ? 0 : $rest;
+
+            // No packages above the threshold
+            if ($rest <= 0) {
+                return new PriceEvaluation($basePrice, $quantity);
+            }
 
             $quantityWithBasePrice = min($quantity, ($offset - 1));
 
