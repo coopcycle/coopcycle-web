@@ -4,6 +4,12 @@ namespace AppBundle\Pricing;
 
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\ExpressionLanguage\ExpressionLanguage;
+use AppBundle\Pricing\PriceExpressions\FixedPriceExpression;
+use AppBundle\Pricing\PriceExpressions\PriceExpression;
+use AppBundle\Pricing\PriceExpressions\PricePercentageExpression;
+use AppBundle\Pricing\PriceExpressions\PricePerPackageExpression;
+use AppBundle\Pricing\PriceExpressions\PriceRangeExpression;
+use AppBundle\Utils\PriceFormatter;
 use Symfony\Component\ExpressionLanguage\Node\BinaryNode;
 use Symfony\Component\ExpressionLanguage\Node\Node;
 use Symfony\Component\ExpressionLanguage\Node\FunctionNode;
@@ -14,8 +20,10 @@ class RuleHumanizer
     const FAILED_TO_PARSE = 'Failed to parse';
 
     public function __construct(
-        private ExpressionLanguage $expressionLanguage,
-        private TranslatorInterface $translator
+        private readonly ExpressionLanguage $expressionLanguage,
+        private readonly PriceExpressionParser $priceExpressionParser,
+        private readonly TranslatorInterface $translator,
+        private readonly PriceFormatter $priceFormatter,
     ) {
     }
 
@@ -23,8 +31,11 @@ class RuleHumanizer
     {
         $parsedExpression = $this->expressionLanguage->parseRuleExpression($rule->getExpression());
 
+        $parsedPrice = $this->priceExpressionParser->parsePrice($rule->getPrice());
+        $pricePart = $this->humanizePriceExpression($parsedPrice, $rule->getPrice());
+
         if (null === $parsedExpression) {
-            return $this->fallbackName($rule);
+            return $this->withPrice($this->fallbackName($rule), $pricePart);
         }
 
         $accumulator = new \ArrayObject();
@@ -35,16 +46,21 @@ class RuleHumanizer
 
         // @phpstan-ignore-next-line Result of || is always true. (False positive: it is not when traverseNode populates accumulator)
         if (0 === count($parts) || in_array(self::FAILED_TO_PARSE, $parts)) {
-            return $this->fallbackName($rule);
+            return $this->withPrice($this->fallbackName($rule), $pricePart);
         }
 
         // @phpstan-ignore-next-line deadCode.unreachable (False positive: line is reachable when traverseNode populates accumulator)
-        return ucfirst(implode(', ', $parts));
+        return $this->withPrice(ucfirst(implode(', ', $parts)), $pricePart);
     }
 
     private function fallbackName(PricingRule $rule)
     {
         return $rule->getExpression();
+    }
+
+    private function withPrice(string $name, string $pricePart): string
+    {
+        return $name.' - '.$pricePart;
     }
 
     /**
@@ -262,9 +278,9 @@ class RuleHumanizer
         }
     }
 
-    private function formatValue($value, $unit)
+    private function formatValue($value, $attribute)
     {
-        switch ($unit) {
+        switch ($attribute) {
             case 'weight':
                 return $this->translator->trans('pricing.rule.humanizer.kg_unit', [
                     '%value%' => number_format($value / 1000, 2),
@@ -272,6 +288,10 @@ class RuleHumanizer
             case 'distance':
                 return $this->translator->trans('pricing.rule.humanizer.km_unit', [
                     '%value%' => number_format($value / 1000, 2),
+                ]);
+            case 'packages.totalVolumeUnits()':
+                return $this->translator->trans('pricing.rule.humanizer.volume_unit', [
+                    '%value%' => number_format($value, 0),
                 ]);
         }
 
@@ -332,6 +352,69 @@ class RuleHumanizer
                 return strtolower($this->translator->trans('task.type.DROPOFF'));
             default:
                 return $taskTypeName;
+        }
+    }
+
+    private function humanizePriceExpression(PriceExpression $priceExpression, string $rawPriceExpression): string
+    {
+        if ($priceExpression instanceof FixedPriceExpression) {
+            return $this->humanizeFixedPriceExpression($priceExpression);
+        } elseif ($priceExpression instanceof PriceRangeExpression) {
+            return $this->humanizePriceRangeExpression($priceExpression, $rawPriceExpression);
+        } elseif ($priceExpression instanceof PricePerPackageExpression) {
+            return $this->humanizePricePerPackageExpression($priceExpression, $rawPriceExpression);
+        } elseif ($priceExpression instanceof PricePercentageExpression) {
+            return $this->humanizePricePercentageExpression($priceExpression);
+        } else {
+            return $rawPriceExpression;
+        }
+    }
+
+    private function humanizeFixedPriceExpression(FixedPriceExpression $priceExpression): string
+    {
+        return $this->priceFormatter->formatWithSymbol($priceExpression->value);
+    }
+
+    private function humanizePriceRangeExpression(PriceRangeExpression $priceExpression, string $rawPriceExpression): string
+    {
+        if (in_array($priceExpression->attribute, ['distance', 'weight', 'packages.totalVolumeUnits()'])) {
+            if ($priceExpression->threshold === 0) {
+                return $this->translator->trans('pricing.rule.humanizer.price_range', [
+                    '%unit_price%' => $this->priceFormatter->formatWithSymbol($priceExpression->price),
+                    '%step%' => $this->formatValue($priceExpression->step, $priceExpression->attribute),
+                ]);
+            } else {
+                return $this->translator->trans('pricing.rule.humanizer.price_range_with_threshold', [
+                    '%unit_price%' => $this->priceFormatter->formatWithSymbol($priceExpression->price),
+                    '%step%' => $this->formatValue($priceExpression->step, $priceExpression->attribute),
+                    '%threshold%' => $this->formatValue($priceExpression->threshold, $priceExpression->attribute),
+                ]);
+            }
+        } else {
+            return $rawPriceExpression;
+        }
+    }
+
+    private function humanizePricePerPackageExpression(PricePerPackageExpression $priceExpression, string $rawPriceExpression): string
+    {
+        if ($priceExpression->hasDiscount()) {
+            return $rawPriceExpression;
+        }
+
+        return $this->translator->trans('pricing.rule.humanizer.price_per_package', [
+            '%package_name%' => $priceExpression->packageName,
+            '%unit_price%' => $this->priceFormatter->formatWithSymbol($priceExpression->unitPrice),
+        ]);
+    }
+
+    private function humanizePricePercentageExpression(PricePercentageExpression $priceExpression): string
+    {
+        $percentage = intval(($priceExpression->percentage - PricePercentageExpression::PERCENTAGE_NEUTRAL) / 100);
+
+        if ($percentage > 0) {
+            return sprintf('+%s%%', $percentage);
+        } else {
+            return sprintf('%s%%', $percentage);
         }
     }
 }

@@ -1795,3 +1795,6 @@ pricing.rule.humanizer.time_range_length: 'ventana de tiempo de %task_type% %ope
 pricing.rule.humanizer.diff: 'tiempo de aviso para %task_type% %operator% %value%'
 pricing.rule.humanizer.order_items_total: 'total del carrito %operator% %value%'
 pricing.rule.humanizer.packages_volume_units: 'volumen del paquete %operator% %value%'
+pricing.rule.humanizer.price_range: '%unit_price% por %step%'
+pricing.rule.humanizer.price_range_with_threshold: 'por encima de %threshold% - %unit_price% por %step%'
+pricing.rule.humanizer.price_per_package: '%unit_price% por %package_name%'

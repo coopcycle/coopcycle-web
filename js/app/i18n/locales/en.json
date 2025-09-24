@@ -773,6 +773,8 @@
         "CART_SHIPPING_ADDRESS_MAP_PICKED": "Address selected via the map",
         "ADDRESS_AUTOSUGGEST_MAP_PICKER_LABEL": "Cannot find your address?",
         "SELECT_YOUR_LOCATION": "Select your location",
-        "CONFIRM_LOCATION": "Confirm location"
+        "CONFIRM_LOCATION": "Confirm location",
+        "PRICING_RULE_HUMANIZER_PRICE_RANGE": "{{unit_price}} per {{step}}",
+        "PRICING_RULE_HUMANIZER_PRICE_RANGE_WITH_THRESHOLD": "above {{threshold}} - {{unit_price}} per {{step}}"
       }
 }

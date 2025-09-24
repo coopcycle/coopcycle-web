@@ -2,7 +2,6 @@
 
 namespace AppBundle\Utils;
 
-use Sylius\Bundle\CurrencyBundle\Templating\Helper\CurrencyHelperInterface;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Twig\Extra\Intl\IntlExtension;
 

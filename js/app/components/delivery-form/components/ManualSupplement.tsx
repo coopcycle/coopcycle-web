@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ManualSupplementValues, PricingRule } from '../../../api/types';
 import { Checkbox, CheckboxChangeEvent } from 'antd';
 import {
@@ -12,7 +13,7 @@ import { getPriceValue } from '../../pricing-rule-set-form/utils';
 import { useDeliveryFormFormikContext } from '../hooks/useDeliveryFormFormikContext';
 import RangeInput from './RangeInput';
 
-export function formatPrice(price: Price): string {
+export function formatPrice(price: Price, t: (key: string, options) => string): string {
   if (price instanceof FixedPrice) {
     return getPriceValue(price).formatMoney();
   } else if (price instanceof PercentagePrice) {
@@ -23,12 +24,17 @@ export function formatPrice(price: Price): string {
       return `${value}%`;
     }
   } else if (price instanceof PriceRange && price.attribute === 'quantity') {
-    //TODO: localise
-
     if (price.threshold === 0) {
-      return `${getPriceValue(price).formatMoney()} for every ${price.step}`;
+      return t('PRICING_RULE_HUMANIZER_PRICE_RANGE', {
+        unit_price: getPriceValue(price).formatMoney(),
+        step: price.step,
+      });
     } else {
-      return `${getPriceValue(price).formatMoney()} for every ${price.step} above ${price.threshold}`;
+      return t('PRICING_RULE_HUMANIZER_PRICE_RANGE_WITH_THRESHOLD', {
+        threshold: price.threshold,
+        unit_price: getPriceValue(price).formatMoney(),
+        step: price.step,
+      });
     }
   } else {
     return '';
@@ -40,6 +46,7 @@ type Props = {
 };
 
 export default function ManualSupplement({ rule }: Props) {
+  const { t } = useTranslation();
   const { values, setFieldValue } = useDeliveryFormFormikContext();
 
   const price = useMemo(() => {
@@ -122,7 +129,7 @@ export default function ManualSupplement({ rule }: Props) {
           step={price.step}
         />
         <span className="flex-1 px-2">{rule.name}</span>
-        <span data-testid="range-supplement-price">{formatPrice(price)}</span>
+        <span data-testid="range-supplement-price">{formatPrice(price, t)}</span>
       </div>
     );
   }
@@ -136,7 +143,7 @@ export default function ManualSupplement({ rule }: Props) {
         onChange={onChange}>
         {rule.name}
       </Checkbox>
-      {price ? <span className="pull-right">{formatPrice(price)}</span> : null}
+      {price ? <span className="pull-right">{formatPrice(price, t)}</span> : null}
     </div>
   );
 }
