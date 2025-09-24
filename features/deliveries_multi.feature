@@ -56,6 +56,7 @@ Feature: Multi-step deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -88,6 +89,7 @@ Feature: Multi-step deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -187,6 +189,7 @@ Feature: Multi-step deliveries
               "latitude":@number@,
               "longitude":@number@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -228,6 +231,7 @@ Feature: Multi-step deliveries
               "latitude":@number@,
               "longitude":@number@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -362,6 +366,7 @@ Feature: Multi-step deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":"Rue de la Paix 24, 75002 Paris",
             "telephone":null,
             "name":null,
@@ -394,6 +399,7 @@ Feature: Multi-step deliveries
               "latitude":48.8566,
               "longitude":2.3522
             },
+            "provider": null,
             "streetAddress":"Rue de Rivoli 48, 75004 Paris",
             "telephone":null,
             "name":null,
@@ -495,6 +501,7 @@ Feature: Multi-step deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":"Rue de la Paix 24, 75002 Paris",
             "telephone":null,
             "name":null,
@@ -527,6 +534,7 @@ Feature: Multi-step deliveries
               "latitude":48.8566,
               "longitude":2.3522
             },
+            "provider": null,
             "streetAddress":"Rue de Rivoli 48, 75004 Paris",
             "telephone":null,
             "name":null,

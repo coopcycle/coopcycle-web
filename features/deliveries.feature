@@ -123,6 +123,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -155,6 +156,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -265,6 +267,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -297,6 +300,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -410,6 +414,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -451,6 +456,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -569,6 +575,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -601,6 +608,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -681,6 +689,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -713,6 +722,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -797,6 +807,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -829,6 +840,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -913,6 +925,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -945,6 +958,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1029,6 +1043,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1061,6 +1076,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1130,9 +1146,9 @@ Feature: Deliveries
           "@id":"@string@.startsWith('/api/deliveries')",
           "@type":"http://schema.org/ParcelDelivery",
           "id":@integer@,
-                  "distance":@integer@,
-        "duration":@integer@,
-        "polyline":@string@,
+          "distance":@integer@,
+          "duration":@integer@,
+          "polyline":@string@,
           "tasks":@array@,
           "pickup":{
             "@id":"@string@.startsWith('/api/tasks')",
@@ -1148,6 +1164,7 @@ Feature: Deliveries
                 "latitude":@double@,
                 "longitude":@double@
               },
+              "provider": null,
               "streetAddress":@string@,
               "telephone":null,
               "name":null,
@@ -1180,6 +1197,7 @@ Feature: Deliveries
                 "latitude":@double@,
                 "longitude":@double@
               },
+              "provider": null,
               "streetAddress":@string@,
               "telephone":null,
               "name":null,
@@ -1267,6 +1285,7 @@ Feature: Deliveries
                 "latitude":@double@,
                 "longitude":@double@
               },
+              "provider": null,
               "streetAddress":@string@,
               "telephone":null,
               "name":null,
@@ -1299,6 +1318,7 @@ Feature: Deliveries
                 "latitude":@double@,
                 "longitude":@double@
               },
+              "provider": null,
               "streetAddress":@string@,
               "telephone":null,
               "name":null,
@@ -1470,6 +1490,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1502,6 +1523,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1587,6 +1609,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1619,6 +1642,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1821,6 +1845,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -1853,6 +1878,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -1920,7 +1946,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-                "distance":@integer@,
+        "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
         "tasks":@array@,
@@ -1938,6 +1964,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -1970,6 +1997,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -2028,7 +2056,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-                "distance":@integer@,
+        "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
         "tasks":@array@,
@@ -2046,6 +2074,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -2078,6 +2107,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -2140,7 +2170,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-                "distance":@integer@,
+        "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
         "pickup":{
@@ -2157,6 +2187,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -2189,6 +2220,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": "+33612345678",
             "name":null,
@@ -2254,7 +2286,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-                "distance":@integer@,
+        "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
         "tasks":@array@,
@@ -2272,6 +2304,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -2304,6 +2337,7 @@ Feature: Deliveries
               "latitude":48.857127,
               "longitude":2.354766
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": "+33612345678",
             "name":null,
@@ -2366,7 +2400,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-                "distance":@integer@,
+        "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
         "tasks":@array@,
@@ -2384,6 +2418,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -2416,6 +2451,7 @@ Feature: Deliveries
               "latitude":48.857127,
               "longitude":2.354766
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": "+33612345678",
             "name":null,
@@ -2479,7 +2515,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-                "distance":@integer@,
+        "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
         "tasks":@array@,
@@ -2497,6 +2533,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -2529,6 +2566,7 @@ Feature: Deliveries
               "latitude":48.857127,
               "longitude":2.354766
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": "+33612345678",
             "name":null,
@@ -2587,7 +2625,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-                "distance":@integer@,
+        "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
         "tasks":@array@,
@@ -2624,6 +2662,7 @@ Feature: Deliveries
               "latitude":48.864577,
               "longitude":2.333338
             },
+            "provider": null,
             "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
             "telephone":null,
             "name":null,
@@ -2805,7 +2844,7 @@ Feature: Deliveries
         "@id": "/api/deliveries/1",
         "@type": "http://schema.org/ParcelDelivery",
         "id": @integer@,
-                "distance":@integer@,
+        "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
         "tasks":@array@,
@@ -2824,6 +2863,7 @@ Feature: Deliveries
                     "latitude": @double@,
                     "longitude": @double@
                 },
+                "provider": null,
                 "streetAddress": "272, rue Saint Honoré 75001 Paris 1er",
                 "telephone": null,
                 "name": null,
@@ -2856,6 +2896,7 @@ Feature: Deliveries
                     "latitude": @double@,
                     "longitude": @double@
                 },
+                "provider": null,
                 "streetAddress": @string@,
                 "telephone": null,
                 "name": null,
@@ -2928,7 +2969,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-                "distance":@integer@,
+        "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
         "tasks":@array@,
@@ -2946,6 +2987,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -2978,6 +3020,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -3083,6 +3126,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -3115,6 +3159,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -3163,7 +3208,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-                "distance":@integer@,
+        "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
         "tasks":@array@,
@@ -3181,6 +3226,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -3213,6 +3259,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -3277,7 +3324,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-                "distance":@integer@,
+        "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
         "tasks":@array@,
@@ -3295,6 +3342,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -3327,6 +3375,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone": null,
             "name":null,
@@ -3442,7 +3491,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-                "distance":@integer@,
+        "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
         "tasks":@array@,
@@ -3460,6 +3509,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -3492,6 +3542,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -3543,6 +3594,7 @@ Feature: Deliveries
                 "latitude": 48.8566,
                 "longitude": 2.3522
             },
+            "provider": null,
             "streetAddress": "Rue de Rivoli 48, 75004 Paris",
             "telephone": null,
             "name": null,
@@ -3656,6 +3708,7 @@ Feature: Deliveries
                 "latitude": 48.8566,
                 "longitude": 2.3522
             },
+          "provider": null,
           "streetAddress": "Rue de Rivoli 48, 75004 Paris",
           "telephone": null,
           "name": null,
@@ -3779,7 +3832,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-                "distance":@integer@,
+        "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
         "tasks":@array@,
@@ -3797,6 +3850,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -3829,6 +3883,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -3897,7 +3952,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-                "distance":@integer@,
+        "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
         "tasks":@array@,
@@ -3915,6 +3970,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -3947,6 +4003,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -4010,6 +4067,7 @@ Feature: Deliveries
                       "latitude":@double@,
                       "longitude":@double@
                     },
+                    "provider": null,
                     "postalCode": @string@,
                     "streetAddress": @string@,
                     "telephone": null,
@@ -4040,6 +4098,7 @@ Feature: Deliveries
                       "latitude":@double@,
                       "longitude":@double@
                     },
+                    "provider": null,
                     "postalCode": @string@,
                     "streetAddress": @string@,
                     "telephone": null,
@@ -4110,7 +4169,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-                "distance":@integer@,
+        "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
         "tasks":@array@,
@@ -4128,6 +4187,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -4160,6 +4220,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -4245,7 +4306,7 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-                "distance":@integer@,
+        "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
         "tasks":@array@,
@@ -4263,6 +4324,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -4295,6 +4357,7 @@ Feature: Deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,

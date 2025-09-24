@@ -138,6 +138,21 @@ class SearchController extends AbstractController
         return new JsonResponse([], 400);
     }
 
+    #[Route(path: '/search/reverse', name: 'search_reverse')]
+    public function reverseAction(Request $request, Geocoder $geocoder)
+    {
+        if ($address = $geocoder->reverse($request->query->get('lat'), $request->query->get('lng'))) {
+
+            return new JsonResponse([
+                'address' => $address->getStreetAddress(),
+                'locality' => $address->getAddressLocality(),
+                'postalCode' => $address->getPostalCode(),
+            ]);
+        }
+
+        return new JsonResponse([], 400);
+    }
+
     #[Route(path: '/search/pixabay', name: 'search_pixabay')]
     public function pixabayAction(Request $request, PixabayClient $pixabay)
     {

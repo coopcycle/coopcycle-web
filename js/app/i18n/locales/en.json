@@ -769,6 +769,10 @@
         "PRICING_RULE_PICKER_VEHICLE_BIKE": "Bike",
         "PRICING_RULE_PICKER_VEHICLE_CARGO_BIKE": "Cargo Bike",
         "PRICING_RULE_PICKER_UNIT_KM": "km",
-        "PRICING_RULE_PICKER_UNIT_KG": "kg"
+        "PRICING_RULE_PICKER_UNIT_KG": "kg",
+        "CART_SHIPPING_ADDRESS_MAP_PICKED": "Address selected via the map",
+        "ADDRESS_AUTOSUGGEST_MAP_PICKER_LABEL": "Cannot find your address?",
+        "SELECT_YOUR_LOCATION": "Select your location",
+        "CONFIRM_LOCATION": "Confirm location"
       }
 }
