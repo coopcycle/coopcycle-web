@@ -614,7 +614,8 @@ Feature: Manage restaurants
         "autoAcceptOrdersEnabled": @boolean@,
         "fulfillmentMethods":@array@,
         "bannerImage":@string@,
-        "isOpen":@boolean@
+        "isOpen":@boolean@,
+        "nextOpeningDate":@string@
       }
       """
 
@@ -708,7 +709,8 @@ Feature: Manage restaurants
         "autoAcceptOrdersEnabled": @boolean@,
         "fulfillmentMethods":@array@,
         "bannerImage":@string@,
-        "isOpen":@boolean@
+        "isOpen":@boolean@,
+        "nextOpeningDate":@string@
       }
       """
 
