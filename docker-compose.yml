@@ -210,7 +210,7 @@ services:
       - ./sonic.cfg:/etc/sonic.cfg
 
   centrifugo:
-    image: centrifugo/centrifugo:v2
+    image: centrifugo/centrifugo:v4
     ports:
       - "8100:8000"
     depends_on:
@@ -218,12 +218,18 @@ services:
     environment:
       - CENTRIFUGO_TOKEN_HMAC_SECRET_KEY
       - CENTRIFUGO_API_KEY
-      - CENTRIFUGO_V3_USE_OFFSET=true
       - CENTRIFUGO_ENGINE=redis
-      - CENTRIFUGO_REDIS_URL=redis://redis:6379
+      - CENTRIFUGO_REDIS_ADDRESS=redis://redis:6379
       - CENTRIFUGO_ADMIN=true
       - CENTRIFUGO_ADMIN_PASSWORD=centrifugo
       - CENTRIFUGO_ADMIN_SECRET=centrifugo
+      - CENTRIFUGO_ALLOWED_ORIGINS=*
+      - CENTRIFUGO_RECOVER=true
+      - CENTRIFUGO_HISTORY_SIZE=10
+      - CENTRIFUGO_HISTORY_TTL=300s
+      - CENTRIFUGO_USE_CLIENT_PROTOCOL_V1_BY_DEFAULT=true
+      - CENTRIFUGO_SKIP_USER_CHECK_IN_SUBSCRIPTION_TOKEN=true
+      - CENTRIFUGO_ALLOW_USER_LIMITED_CHANNELS=true
 
   # https://cube.dev/docs/getting-started-docker
   cube:
