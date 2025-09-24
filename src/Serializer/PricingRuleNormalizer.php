@@ -5,6 +5,7 @@ namespace AppBundle\Serializer;
 use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\ExpressionLanguage\ExpressionLanguage;
+use AppBundle\Pricing\RuleHumanizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
@@ -14,6 +15,7 @@ class PricingRuleNormalizer implements NormalizerInterface
         private readonly ItemNormalizer $itemNormalizer,
         private readonly ObjectNormalizer $symfonyNormalizer,
         private readonly ExpressionLanguage $expressionLanguage,
+        private readonly RuleHumanizer $ruleHumanizer,
     ) {}
 
     /**
@@ -27,6 +29,14 @@ class PricingRuleNormalizer implements NormalizerInterface
             return $data;
         }
 
+        // Generate a default name if none is defined
+        if (isset($context['groups']) && in_array('pricing_deliveries', $context['groups'])) {
+            // Generate a default name if none is defined
+            if (!isset($data['name']) || is_null($data['name']) || '' === trim($data['name'])) {
+                $data['name'] = $this->ruleHumanizer->humanize($object);
+            }
+        }
+        
         // Add expressionAst field when pricing_rule_set:read group is present
         if (isset($context['groups']) && in_array('pricing_rule_set:read', $context['groups'])) {
             $data['expressionAst'] = null;
