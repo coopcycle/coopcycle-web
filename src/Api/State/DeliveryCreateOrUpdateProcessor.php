@@ -150,7 +150,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                         new CalculateUsingPricingRules($manualSupplements)
                     );
                     $this->pricingManager->processDeliveryOrder($order, $productVariants);
-                } elseif (!is_null($manualSupplements) && count($manualSupplements->orderSupplements) > 0 && $this->hasManualSupplementsChanged($manualSupplements, $order)) {
+                } elseif (!is_null($manualSupplements) && $this->hasManualSupplementsChanged($manualSupplements, $order)) {
                     $existingProductVariants = [];
                     foreach ($order->getItems() as $item) {
                         $existingProductVariants[] = $item->getVariant();
