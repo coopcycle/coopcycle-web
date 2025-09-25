@@ -93,7 +93,7 @@ context('Delivery (role: dispatcher)', () => {
         .should('have.value', '0');
       cy.get('[data-testid="range-supplement-price"]').should(
         'contain',
-        '8,00 € for every 5',
+        '8,00 € par 5',
       );
     });
 
