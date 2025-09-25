@@ -32,7 +32,7 @@ class PricingRuleNormalizer implements NormalizerInterface
         // Generate a default name if none is defined
         if (isset($context['groups']) && in_array('pricing_deliveries', $context['groups'])) {
             // Generate a default name if none is defined
-            if (!isset($data['name']) || is_null($data['name']) || '' === trim($data['name'])) {
+            if (is_null($data['name']) || '' === trim($data['name'])) {
                 $data['name'] = $this->ruleHumanizer->humanize($object);
             }
         }
