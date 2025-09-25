@@ -356,7 +356,7 @@
         "FORM_PRICING_RULE_SET_RULES_LABEL": "Règles",
         "FORM_PRICING_RULE_SET_NO_RULE_FOUND": "Aucune règle de tarification trouvée. Les règles de tarification définissent comment le coût de livraison est calculé.",
         "FORM_PRICING_RULE_SET_PRICING_RULE_NAME_LABEL": "Nom (affiché au client)",
-        "FORM_PRICING_RULE_SET_PRICING_RULE_NAME_PLACEHOLDER": "ex. Livraison urgente",
+        "FORM_PRICING_RULE_SET_PRICING_RULE_NAME_PLACEHOLDER": "ex. Livraison urgente - €5",
         "FORM_PRICING_RULE_SET_PRICING_RULE_NAME_HELP": "Si vous laissez le nom vide, le nom sera généré automatiquement",
         "FORM_PRICING_RULE_SAVE_ERROR": "Une erreur s'est produite lors de la sauvegarde de la règle {{ name }}",
         "FORM_PRICING_RULE_EXPRESSION_REQUIRED": "Ajoutez au moins une condition",

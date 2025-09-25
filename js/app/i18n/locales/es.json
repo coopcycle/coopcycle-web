@@ -352,7 +352,7 @@
         "FORM_PRICING_RULE_SET_RULES_LABEL": "Reglas",
         "FORM_PRICING_RULE_SET_NO_RULE_FOUND": "No se encontró ninguna regla de precios. Las reglas de precios definen cómo se calcula el costo de entrega.",
         "FORM_PRICING_RULE_SET_PRICING_RULE_NAME_LABEL": "Nombre (mostrado al cliente)",
-        "FORM_PRICING_RULE_SET_PRICING_RULE_NAME_PLACEHOLDER": "ej. Entrega urgente",
+        "FORM_PRICING_RULE_SET_PRICING_RULE_NAME_PLACEHOLDER": "ej. Entrega urgente - €5",
         "FORM_PRICING_RULE_SET_PRICING_RULE_NAME_HELP": "Si deja el nombre vacío, el nombre se generará automáticamente",
         "FORM_PRICING_RULE_SAVE_ERROR": "Ocurrió un error al guardar la regla {{ name }}",
         "FORM_PRICING_RULE_EXPRESSION_REQUIRED": "Agregue al menos una condición",
