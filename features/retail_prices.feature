@@ -65,7 +65,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × Plus de 0.00 km",
+                    "label": "1 × Plus de 0.00 km - €4.99",
                     "amount": 499
                   }
                 ],
@@ -152,7 +152,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × Plus de 0.00 km",
+                    "label": "1 × Plus de 0.00 km - €4.99",
                     "amount": 499
                   }
                 ],
@@ -239,7 +239,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × Plus de 0.00 km",
+                    "label": "1 × Plus de 0.00 km - €4.99",
                     "amount": 499
                   }
                 ],
@@ -329,7 +329,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × packages.containsAtLeastOne(\"XL\")",
+                    "label": "1 × packages.containsAtLeastOne(\"XL\") - €12.99",
                     "amount": 1299
                   }
                 ],
@@ -419,7 +419,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × packages.containsAtLeastOne(\"XL\")",
+                    "label": "1 × packages.containsAtLeastOne(\"XL\") - €12.99",
                     "amount": 1299
                   }
                 ],
@@ -509,7 +509,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × packages.containsAtLeastOne(\"XL\")",
+                    "label": "1 × packages.containsAtLeastOne(\"XL\") - €12.99",
                     "amount": 1299
                   }
                 ],
@@ -597,7 +597,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × Moins de 2.00 kg",
+                    "label": "1 × Moins de 2.00 kg - €4.99",
                     "amount": 499
                   }
                 ],
@@ -694,7 +694,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × Plus de 0.00 km",
+                    "label": "1 × Plus de 0.00 km - €4.99",
                     "amount": 499
                   }
                 ],
@@ -791,7 +791,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × Plus de 0.00 km",
+                    "label": "1 × Plus de 0.00 km - €4.99",
                     "amount": 499
                   }
                 ],
@@ -881,7 +881,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × Plus de 0.00 km",
+                    "label": "1 × Plus de 0.00 km - €4.99",
                     "amount": 499
                   }
                 ],
@@ -971,7 +971,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × /api/time_slots/1, taux de retrait",
+                    "label": "1 × /api/time_slots/1, taux de retrait - €4.99",
                     "amount": 499
                   }
                 ],
@@ -1002,7 +1002,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × Taux de dépôt",
+                    "label": "1 × Taux de dépôt - €2.00",
                     "amount": 200
                   }
                 ],
@@ -1092,7 +1092,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × Taux de dépôt",
+                    "label": "1 × Taux de dépôt - €2.00",
                     "amount": 200
                   }
                 ],
@@ -1263,7 +1263,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × Plus de 0.00 km",
+                    "label": "1 × Plus de 0.00 km - €4.99",
                     "amount": 499
                   }
                 ],
@@ -1349,7 +1349,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × Plus de 0.00 km",
+                    "label": "1 × Plus de 0.00 km - €4.99",
                     "amount": 499
                   }
                 ],
@@ -1443,7 +1443,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × Plus de 0.00 km",
+                    "label": "1 × Plus de 0.00 km - €4.99",
                     "amount": 499
                   }
                 ],
@@ -1522,7 +1522,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × Plus de 0.00 km",
+                    "label": "1 × Plus de 0.00 km - €4.99",
                     "amount": 499
                   }
                 ],
@@ -1632,7 +1632,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × Plus de 0.00 km",
+                    "label": "1 × Plus de 0.00 km - €4.99",
                     "amount": 499
                   }
                 ],
@@ -1721,7 +1721,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × Volume du colis moins de 9",
+                    "label": "1 × Volume du colis moins de 9 - €6.99",
                     "amount": 699
                   }
                 ],
@@ -1966,7 +1966,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                    {
-                    "label": "1 × Plus de 0.00 km",
+                    "label": "1 × Plus de 0.00 km - €4.99",
                     "amount": 499
                   }
                 ],
