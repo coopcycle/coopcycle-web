@@ -91,7 +91,7 @@ export default function ManualSupplement({ rule }: Props) {
             currentSupplement ? currentSupplement.quantity * price.step : 0
           }
           onChange={updateSupplementQuantity}
-          min={price.threshold}
+          min={0}
           step={price.step}
         />
         <span className="flex-1 px-2">{rule.name}</span>
