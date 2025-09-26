@@ -755,8 +755,6 @@
         "PRICING_RULE_PICKER_UNIT_KM": "km",
         "PRICING_RULE_PICKER_UNIT_KG": "kg",
         "DELIVERY_FORM_KEEP_ORIGINAL_PRICE": "Mantener precio original",
-        "DELIVERY_FORM_APPLY_NEW_PRICE": "Aplicar nuevo precio",
-        "PRICING_RULE_HUMANIZER_PRICE_RANGE": "{{unit_price}} por {{step}}",
-        "PRICING_RULE_HUMANIZER_PRICE_RANGE_WITH_THRESHOLD": "por encima de {{threshold}} - {{unit_price}} por {{step}}"
+        "DELIVERY_FORM_APPLY_NEW_PRICE": "Aplicar nuevo precio"
     }
 }

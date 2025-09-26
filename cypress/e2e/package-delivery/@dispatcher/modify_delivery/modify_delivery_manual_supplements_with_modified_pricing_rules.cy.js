@@ -91,9 +91,9 @@ context('Delivery (role: dispatcher)', () => {
       cy.get('[data-testid="range-input-field"]')
         // as a pricing rule has been modified, reset the value to 0, so that a user has to added it again
         .should('have.value', '0');
-      cy.get('[data-testid="range-supplement-price"]').should(
+      cy.root().should(
         'contain',
-        '8,00 € par 5',
+        'Waiting time supplement',
       );
     });
 

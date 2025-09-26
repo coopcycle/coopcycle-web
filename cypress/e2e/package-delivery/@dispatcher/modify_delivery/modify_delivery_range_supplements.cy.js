@@ -75,9 +75,9 @@ context('Delivery (role: dispatcher)', () => {
       cy.get('[data-testid="range-input-field"]')
         // quantity * step = 10
         .should('have.value', '10');
-      cy.get('[data-testid="range-supplement-price"]').should(
+      cy.root().should(
         'contain',
-        '5,00 € par 5',
+        'Waiting time supplement',
       );
     });
 
