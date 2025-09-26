@@ -1993,3 +1993,105 @@ Feature: Retail prices
         "calculation": {"@*@":"@*@"}
       }
       """
+
+  Scenario: Manual supplement - range-based (waiting time)
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | store_with_range_supplements.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00"
+        },
+        "order": {
+          "manualSupplements": [
+            {
+              "pricingRule": "/api/pricing_rules/2",
+              "quantity": 15
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    # 499 + 1500 (waiting time: 500 per 5 minutes) = 1999
+      """
+      {
+        "@context":"/api/contexts/RetailPrice",
+        "@id":@string@,
+        "@type":"RetailPrice",
+        "amount":1999,
+        "currency":"EUR",
+        "tax":{
+          "amount":333,
+          "included": true
+        },
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 1999,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                   {
+                    "label": "1 × Plus de 0.00 km - €4.99",
+                    "amount": 499
+                  }
+                ],
+                "order_item_package_delivery_manual_supplement": [
+                  {
+                    "label": "3 × Waiting time supplement",
+                    "amount": 1500
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 333
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 1999,
+          "taxTotal": 333,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
+        "calculation": {"@*@":"@*@"}
+      }
+      """
