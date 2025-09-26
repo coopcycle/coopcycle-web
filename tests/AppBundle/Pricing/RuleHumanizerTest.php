@@ -85,7 +85,7 @@ class RuleHumanizerTest extends KernelTestCase
         $rule->setExpression('packages.containsAtLeastOne("Bouquet L")');
         $rule->setPrice('price_per_package(packages, "Bouquet L", 100, 0, 0)');
 
-         $this->assertEquals('packages.containsAtLeastOne("Bouquet L") - €1.00 par Bouquet L', $this->humanizer->humanize($rule));
+         $this->assertEquals('Colis Bouquet L - €1.00 par Bouquet L', $this->humanizer->humanize($rule));
     }
 
     public function testPricePerPackageWithDiscount()
@@ -94,7 +94,7 @@ class RuleHumanizerTest extends KernelTestCase
         $rule->setExpression('packages.containsAtLeastOne("Bouquet L")');
         $rule->setPrice('price_per_package(packages, "Bouquet L", 100, 1, 50)');
 
-        $this->assertEquals('packages.containsAtLeastOne("Bouquet L") - price_per_package(packages, "Bouquet L", 100, 1, 50)', $this->humanizer->humanize($rule));
+        $this->assertEquals('Colis Bouquet L - price_per_package(packages, "Bouquet L", 100, 1, 50)', $this->humanizer->humanize($rule));
     }
 
     public function testPriceRangePerDistance()
@@ -206,7 +206,7 @@ class RuleHumanizerTest extends KernelTestCase
         $rule->setExpression('packages.containsAtLeastOne("📦 - A eurobox/fruitbox of documents") and task.type == "DROPOFF"');
         $rule->setPrice('100');
 
-        $this->assertEquals('packages.containsAtLeastOne("📦 - A eurobox/fruitbox of documents") and task.type == "DROPOFF" - €1.00', $this->humanizer->humanize($rule));
+        $this->assertEquals('Colis 📦 - A eurobox/fruitbox of documents, taux de dépôt - €1.00', $this->humanizer->humanize($rule));
     }
 
     public function testTimeSlotWithTaskType()

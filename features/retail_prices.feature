@@ -329,7 +329,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × packages.containsAtLeastOne(\"XL\") - €12.99",
+                    "label": "1 × Colis XL - €12.99",
                     "amount": 1299
                   }
                 ],
@@ -419,7 +419,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × packages.containsAtLeastOne(\"XL\") - €12.99",
+                    "label": "1 × Colis XL - €12.99",
                     "amount": 1299
                   }
                 ],
@@ -509,7 +509,7 @@ Feature: Retail prices
               "adjustments": {
                 "order_item_package_delivery_calculated": [
                   {
-                    "label": "1 × packages.containsAtLeastOne(\"XL\") - €12.99",
+                    "label": "1 × Colis XL - €12.99",
                     "amount": 1299
                   }
                 ],

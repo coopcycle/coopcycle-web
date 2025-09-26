@@ -1703,6 +1703,7 @@ pricing.rule.humanizer.time_range_length: '%task_type% time window %operator% %v
 pricing.rule.humanizer.diff: '%task_type% prior notice %operator% %value%'
 pricing.rule.humanizer.order_items_total: cart total %operator% %value%
 pricing.rule.humanizer.packages_volume_units: package volume %operator% %value%
+pricing.rule.humanizer.packages_contains_at_least_one: packages %package_name%
 pricing.rule.humanizer.price_range: '%unit_price% per %step%'
 pricing.rule.humanizer.price_range_with_threshold: 'above %threshold% - %unit_price% per %step%'
 pricing.rule.humanizer.price_per_package: '%unit_price% per %package_name%'

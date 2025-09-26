@@ -11,6 +11,7 @@ use AppBundle\Pricing\PriceExpressions\PricePerPackageExpression;
 use AppBundle\Pricing\PriceExpressions\PriceRangeExpression;
 use AppBundle\Utils\PriceFormatter;
 use Symfony\Component\ExpressionLanguage\Node\BinaryNode;
+use Symfony\Component\ExpressionLanguage\Node\GetAttrNode;
 use Symfony\Component\ExpressionLanguage\Node\Node;
 use Symfony\Component\ExpressionLanguage\Node\FunctionNode;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -85,6 +86,19 @@ class RuleHumanizer
                 $accumulator[] = $this->humanizeDiffFunction($node, 'basics.hours');
             } elseif ($node->attributes['name'] === 'diff_days') {
                 $accumulator[] = $this->humanizeDiffFunction($node, 'basics.days');
+            } else {
+                $accumulator[] = self::FAILED_TO_PARSE;
+            }
+        } elseif ($node instanceof GetAttrNode) {
+            // Handle object property access like packages.containsAtLeastOne
+            $objectName = $node->nodes['node']->attributes['name'];
+            $propertyName = $node->nodes['attribute']->attributes['value'];
+
+            if ($objectName === 'packages' && $propertyName === 'containsAtLeastOne') {
+                $argument = $node->nodes['arguments']->nodes[1]->attributes['value'];
+                $accumulator[] = $this->translator->trans('pricing.rule.humanizer.packages_contains_at_least_one', [
+                    '%package_name%' => $argument,
+                ]);
             } else {
                 $accumulator[] = self::FAILED_TO_PARSE;
             }
