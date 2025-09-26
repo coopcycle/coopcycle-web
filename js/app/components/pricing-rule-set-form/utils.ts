@@ -12,7 +12,7 @@ export function getPriceValue(price: Price): number {
     // 10000 = 100.00%
     return (price.percentage || 10000) / 100 - 100;
   } else if (price instanceof PriceRange) {
-      return price.price / 100
+    return price.price / 100;
   } else {
     //  price instanceof PricePerPackage:
     //   return price.unitPrice / 100

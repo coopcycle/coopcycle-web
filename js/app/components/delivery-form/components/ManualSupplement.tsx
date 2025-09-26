@@ -13,7 +13,10 @@ import { getPriceValue } from '../../pricing-rule-set-form/utils';
 import { useDeliveryFormFormikContext } from '../hooks/useDeliveryFormFormikContext';
 import RangeInput from './RangeInput';
 
-export function formatPrice(price: Price, t: (key: string, options) => string): string {
+export function formatPrice(
+  price: Price,
+  t: (key: string, options) => string,
+): string {
   if (price instanceof FixedPrice) {
     return getPriceValue(price).formatMoney();
   } else if (price instanceof PercentagePrice) {
@@ -129,7 +132,9 @@ export default function ManualSupplement({ rule }: Props) {
           step={price.step}
         />
         <span className="flex-1 px-2">{rule.name}</span>
-        <span data-testid="range-supplement-price">{formatPrice(price, t)}</span>
+        <span data-testid="range-supplement-price">
+          {formatPrice(price, t)}
+        </span>
       </div>
     );
   }
@@ -143,7 +148,9 @@ export default function ManualSupplement({ rule }: Props) {
         onChange={onChange}>
         {rule.name}
       </Checkbox>
-      {price ? <span className="pull-right">{formatPrice(price, t)}</span> : null}
+      {price ? (
+        <span className="pull-right">{formatPrice(price, t)}</span>
+      ) : null}
     </div>
   );
 }
