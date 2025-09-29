@@ -1363,4 +1363,16 @@ class FeatureContext implements Context, SnippetAcceptingContext
             Assert::fail(sprintf('No order found with total price %s', $price));
         }
     }
+
+    /**
+     * @Then the database entity :className should have a property :fieldName with value :value
+     */
+    public function theDatabaseEntityShouldHaveAPropertyWithValue($className, $fieldName, $value)
+    {
+        $object = $this->doctrine->getRepository($className)->findOneBy([$fieldName => $value]);
+
+        if (null === $object) {
+            Assert::fail(sprintf('No %s found with %s = %s', $className, $fieldName, $value));
+        }
+    }
 }

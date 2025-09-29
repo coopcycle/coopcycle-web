@@ -675,6 +675,7 @@ Feature: Manage restaurants
         "state": "rush"
       }
       """
+    Then the database entity "AppBundle\Entity\LocalBusiness" should have a property "state" with value "rush"
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
