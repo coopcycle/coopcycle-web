@@ -100,6 +100,7 @@ class DeliveryCreatedHandlerTest extends TestCase
 
         $order = $this->prophesize(Order::class);
         $order->getId()->willReturn(11);
+        $order->getNumber()->willReturn("G");
         $order->getDelivery()->willReturn($delivery);
         $delivery->getOrder()->willReturn($order);
 
@@ -111,11 +112,13 @@ class DeliveryCreatedHandlerTest extends TestCase
         $title = 'Test Store -> 222 Nice Dropoff St, Someplace, Argentina';
         $body = "PU: 01:02-02:03 | DO: 03:04-04:05";
         $data = [
-            'event' => 'delivery:created',
+            'event' => ['name' => 'delivery:created'],
             'delivery_id' => 1,
             'order_id' => 11,
-            'date' => '2025-01-02 01:02',
-            'date_local' => 'Today at 1:02 AM'
+            'order_number' => "G",
+            'date_local' => 'Today at 1:02 AM',
+            'date' => '2025-01-02',
+            'time' => '01:02'
         ];
 
         $this->genPushNotificationAssertEqual($title, $body, $data);
@@ -166,11 +169,13 @@ class DeliveryCreatedHandlerTest extends TestCase
 PU: 111 Nice Pickup St, Somewhere, Argentina
 DO: 222 Nice Dropoff St, Someplace, Argentina";
         $data = [
-            'event' => 'delivery:created',
+            'event' => ['name' => 'delivery:created'],
             'delivery_id' => 1,
             'order_id' => null,
-            'date' => '2025-01-02 01:02',
-            'date_local' => 'Today at 1:02 AM'
+            'order_number' => null,
+            'date_local' => 'Today at 1:02 AM',
+            'date' => '2025-01-02',
+            'time' => '01:02'
         ];
 
         $this->genPushNotificationAssertEqual($title, $body, $data);
@@ -216,6 +221,7 @@ DO: 222 Nice Dropoff St, Someplace, Argentina";
 
         $order = $this->prophesize(Order::class);
         $order->getId()->willReturn(11);
+        $order->getNumber()->willReturn("G");
         $order->getDelivery()->willReturn($delivery);
         $delivery->getOrder()->willReturn($order);
 
@@ -226,11 +232,13 @@ DO: 222 Nice Dropoff St, Someplace, Argentina";
 PU 01:02-02:03: 111 Nice Pickup St, Somewhere, Argentina
 PU 03:04-04:05: 222 Nice Pickup St, Somewhere, Argentina";
         $data = [
-            'event' => 'delivery:created',
+            'event' => ['name' => 'delivery:created'],
             'delivery_id' => 2,
             'order_id' => 11,
-            'date' => '2025-01-02 01:02',
-            'date_local' => 'Today at 1:02 AM'
+            'order_number' => "G",
+            'date_local' => 'Today at 1:02 AM',
+            'date' => '2025-01-02',
+            'time' => '01:02'
         ];
 
         $this->genPushNotificationAssertEqual($title, $body, $data);
@@ -278,6 +286,7 @@ PU 03:04-04:05: 222 Nice Pickup St, Somewhere, Argentina";
 
         $order = $this->prophesize(Order::class);
         $order->getId()->willReturn(11);
+        $order->getNumber()->willReturn("G");
         $order->getDelivery()->willReturn($delivery);
         $delivery->getOrder()->willReturn($order);
 
@@ -291,11 +300,13 @@ PU 03:04-04:05: 222 Nice Pickup St, Somewhere, Argentina";
 DO 03:04-04:05: 222 Nice Dropoff St, Someplace, Argentina
 DO 05:06-06:07: 333 Nice Dropoff St, Someplace, Argentina";
         $data = [
-            'event' => 'delivery:created',
+            'event' => ['name' => 'delivery:created'],
             'delivery_id' => 3,
             'order_id' => 11,
-            'date' => '2025-01-02 01:02',
-            'date_local' => 'Today at 1:02 AM'
+            'order_number' => "G",
+            'date_local' => 'Today at 1:02 AM',
+            'date' => '2025-01-02',
+            'time' => '01:02'
         ];
 
         $this->genPushNotificationAssertEqual($title, $body, $data);
@@ -354,11 +365,13 @@ PU: 111 Nice Pickup St, Somewhere, Argentina
 DO 03:04-04:05: 222 Nice Dropoff St, Someplace, Argentina
 DO 05:06-06:07: 333 Nice Dropoff St, Someplace, Argentina";
         $data = [
-            'event' => 'delivery:created',
+            'event' => ['name' => 'delivery:created'],
             'delivery_id' => 3,
             'order_id' => null,
-            'date' => '2025-01-02 01:02',
-            'date_local' => 'Today at 1:02 AM'
+            'order_number' => null,
+            'date_local' => 'Today at 1:02 AM',
+            'date' => '2025-01-02',
+            'time' => '01:02'
         ];
 
         $this->genPushNotificationAssertEqual($title, $body, $data);
@@ -414,6 +427,7 @@ DO 05:06-06:07: 333 Nice Dropoff St, Someplace, Argentina";
 
         $order = $this->prophesize(Order::class);
         $order->getId()->willReturn(11);
+        $order->getNumber()->willReturn("G");
         $order->getDelivery()->willReturn($delivery);
         $delivery->getOrder()->willReturn($order);
 
@@ -426,11 +440,13 @@ PU 03:04-04:05: 222 Nice Pickup St, Somewhere, Argentina
 DO 05:06-06:07: 333 Nice Dropoff St, Someplace, Argentina
 DO 07:08-08:09: 444 Nice Dropoff St, Someplace, Argentina";
         $data = [
-            'event' => 'delivery:created',
+            'event' => ['name' => 'delivery:created'],
             'delivery_id' => 4,
             'order_id' => 11,
-            'date' => '2025-01-02 01:02',
-            'date_local' => 'Today at 1:02 AM'
+            'order_number' => "G",
+            'date_local' => 'Today at 1:02 AM',
+            'date' => '2025-01-02',
+            'time' => '01:02'
         ];
 
         $this->genPushNotificationAssertEqual($title, $body, $data);
@@ -468,6 +484,7 @@ DO 07:08-08:09: 444 Nice Dropoff St, Someplace, Argentina";
 
         $order = $this->prophesize(Order::class);
         $order->getId()->willReturn(11);
+        $order->getNumber()->willReturn("G");
         $order->getDelivery()->willReturn($delivery);
         $delivery->getOrder()->willReturn($order);
 
@@ -476,11 +493,13 @@ DO 07:08-08:09: 444 Nice Dropoff St, Someplace, Argentina";
         $title = '(03 Jan) Test Store -> 222 Nice Dropoff St, Someplace, Argentina';
         $body = "PU: 01:02-02:03 | DO: 03:04-04:05";
         $data = [
-            'event' => 'delivery:created',
+            'event' => ['name' => 'delivery:created'],
             'delivery_id' => 1,
             'order_id' => 11,
-            'date' => '2025-01-03 01:02',
-            'date_local' => 'Tomorrow at 1:02 AM'
+            'order_number' => "G",
+            'date_local' => 'Tomorrow at 1:02 AM',
+            'date' => '2025-01-03',
+            'time' => '01:02'
         ];
 
         $this->genPushNotificationAssertEqual($title, $body, $data);
