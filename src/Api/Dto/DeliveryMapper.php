@@ -9,6 +9,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Service\TagManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
@@ -20,6 +21,7 @@ class DeliveryMapper
         private readonly TagManager $tagManager,
         private readonly NormalizerInterface $normalizer,
         private readonly ObjectNormalizer $symfonyNormalizer,
+        private readonly EntityManagerInterface $entityManager
     ) {
     }
 
@@ -121,6 +123,13 @@ class DeliveryMapper
      */
     private function extractManualSupplementsFromOrder(OrderInterface $order): array
     {
+        $filterCollection = $this->entityManager->getFilters();
+        $wasFilterEnabled = false;
+        if ($filterCollection->isEnabled('disabled_filter')) {
+            $filterCollection->disable('disabled_filter');
+            $wasFilterEnabled = true;
+        }
+
         $manualSupplements = [];
 
         foreach ($order->getItems() as $orderItem) {
@@ -132,6 +141,11 @@ class DeliveryMapper
             }
 
             foreach ($variant->getOptionValues() as $productOptionValue) {
+
+                if (!$productOptionValue->isEnabled()) {
+                    continue;
+                }
+
                 /** @var ProductOptionValue $productOptionValue */
 
                 // Find the PricingRule linked to this ProductOptionValue
@@ -148,6 +162,10 @@ class DeliveryMapper
                     $manualSupplements[] = $manualSupplementDto;
                 }
             }
+        }
+
+        if ($wasFilterEnabled) {
+            $filterCollection->enable('disabled_filter');
         }
 
         return $manualSupplements;
