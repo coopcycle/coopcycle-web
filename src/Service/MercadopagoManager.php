@@ -95,7 +95,7 @@ class MercadopagoManager
             return $client->create($payload, $requestOptions);
         } catch (MPApiException $e) {
             $this->checkoutLogger->error(
-                sprintf('Mercadopago - API error %s while trying to authorize payment: %s', $e->getApiResponse()->getStatusCode(), $e->getApiResponse()->getContent())
+                sprintf('Mercadopago - API error %s while trying to authorize payment: %s', $e->getApiResponse()->getStatusCode(), json_encode($e->getApiResponse()->getContent()))
             );
             throw $e;
         }
