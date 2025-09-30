@@ -755,6 +755,10 @@
         "PRICING_RULE_PICKER_UNIT_KM": "km",
         "PRICING_RULE_PICKER_UNIT_KG": "kg",
         "DELIVERY_FORM_KEEP_ORIGINAL_PRICE": "Mantener precio original",
-        "DELIVERY_FORM_APPLY_NEW_PRICE": "Aplicar nuevo precio"
+        "DELIVERY_FORM_APPLY_NEW_PRICE": "Aplicar nuevo precio",
+        "CART_SHIPPING_ADDRESS_MAP_PICKED": "Dirección seleccionada en el mapa",
+        "ADDRESS_AUTOSUGGEST_MAP_PICKER_LABEL": "¿No encuentra su dirección?",
+        "SELECT_YOUR_LOCATION": "Selecciona tu ubicación",
+        "CONFIRM_LOCATION": "Confirmar ubicación"
     }
 }
