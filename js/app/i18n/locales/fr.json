@@ -483,6 +483,7 @@
         "STATUS": "Statut",
         "CUSTOMER": "Client",
         "REPORTED_BY": "Rapporté par",
+        "REPORTED_AT": "Rapporté le",
         "ACTION": "Action",
         "VIEW_INCIDENT": "Voir l'incident",
         "REPORT": "Signaler",

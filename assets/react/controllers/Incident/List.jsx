@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Table, Tag, Avatar, Row, Col, Badge } from "antd";
+import { Table, Tag, Avatar, Row, Col, Badge, Tooltip } from "antd";
 import IncidentItem from "./IncidentItem";
 import _ from "lodash";
 import { useTranslation } from "react-i18next";
+import { moment } from "../../../../js/shared";
 
 async function _fetchIncidents() {
   const httpClient = new window._auth.httpClient();
@@ -183,6 +184,16 @@ export default function() {
           {username}
         </>
       ),
+    },
+    {
+      title: t('REPORTED_AT'),
+      dataIndex: "createdAt",
+      key: "createdAt",
+      sorter: (a, b) => moment(a.createdAt) - moment(b.createdAt),
+      render: (createdAt) => {
+        const date = moment(createdAt);
+        return (<Tooltip title={date.fromNow()}>{date.format("LLL")}</Tooltip>)
+      }
     },
     {
       title: t("ACTION"),

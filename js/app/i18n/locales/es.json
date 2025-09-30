@@ -581,6 +581,7 @@
         "TITLE": "Título",
         "CUSTOMER": "Cliente",
         "REPORTED_BY": "Reportado por",
+        "REPORTED_AT": "Reportado en",
         "ACTION": "Acción",
         "VIEW_INCIDENT": "Ver incidencia",
         "REPORT": "Reportar",

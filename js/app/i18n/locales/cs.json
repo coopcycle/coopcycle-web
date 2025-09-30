@@ -510,6 +510,7 @@
         "RESTAURANT": "Restaurace",
         "CUSTOMER": "Zákazník",
         "REPORTED_BY": "Nahlásil",
+        "REPORTED_AT": "Nahláseno",
         "ACTION": "Akce",
         "VIEW_INCIDENT": "Zobrazit incident",
         "REPORT": "Hlášení",
