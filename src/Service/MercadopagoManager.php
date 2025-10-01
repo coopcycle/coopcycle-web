@@ -76,16 +76,14 @@ class MercadopagoManager
             'description' => sprintf('Order %s', $order->getNumber()),
             'installments' => (int) ($payment->getMercadopagoInstallments() ?? 1),
             'payment_method_id' => $payment->getMercadopagoPaymentMethod(),
-            'capture' => null !== $mpPaymentMethod && $mpPaymentMethod->deferred_capture === 'supported',
             'issuer_id' => $payment->getMercadopagoIssuer(),
             'payer' => [
                 'email' => $payment->getMercadopagoPayerEmail(),
-                // 'identification' => [
-                //     'type' => $_POST['<IDENTIFICATION_TYPE'],
-                //     'number' => $_POST['<NUMBER>']
-                // ]
-            ]
+            ],
         ];
+
+        // Fist, we try with authorize/capture if possible
+        $payload['capture'] = null !== $mpPaymentMethod && $mpPaymentMethod->deferred_capture === 'supported';
 
         if ($applicationFee > 0) {
             $payload['application_fee'] = ($applicationFee / 100);
@@ -94,9 +92,33 @@ class MercadopagoManager
         try {
             return $client->create($payload, $requestOptions);
         } catch (MPApiException $e) {
+
             $this->checkoutLogger->error(
                 sprintf('Mercadopago - API error %s while trying to authorize payment: %s', $e->getApiResponse()->getStatusCode(), json_encode($e->getApiResponse()->getContent()))
             );
+
+            if (400 === $e->getApiResponse()->getStatusCode()) {
+
+                $responseContent = $e->getApiResponse()->getContent();
+                $errorCode = $responseContent['cause'][0]['code'];
+
+                // https://www.mercadopago.com/developers/en/reference/payments/_payments/post
+                // 2077 - Deferred capture not supported.
+                // If this error occurs, note that deferred capture is not supported
+                // and adjust your request accordingly.
+                if (2077 === $errorCode) {
+                    $payload['capture'] = true;
+
+                    $result = $client->create($payload, $requestOptions);
+
+                    // In this case, the payment is already captured
+                    $payment->setState(PaymentInterface::STATE_COMPLETED);
+
+                    return $result;
+                }
+
+            }
+
             throw $e;
         }
     }
