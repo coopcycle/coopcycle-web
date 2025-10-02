@@ -64,7 +64,7 @@ class DeliveryCreatedHandler
 
         $order = $delivery->getOrder();
         $pickup = $delivery->getPickup();
-        $date = $pickup->getAfter()->format('Y-m-d H:i');
+        $date = $pickup->getAfter();
         $dateLocal = Carbon::instance($pickup->getAfter())
             ->locale($this->locale)
             ->calendar();
@@ -74,11 +74,15 @@ class DeliveryCreatedHandler
         $users = $this->userManager->findUsersByRoles(['ROLE_ADMIN', 'ROLE_DISPATCHER']);
 
         $data = [
-            'event' => 'delivery:created',
+            'event' => [
+                'name' => 'delivery:created'
+            ],
             'delivery_id' => $delivery->getId(),
             'order_id' => $order ? $order->getId() : null,
-            'date' => $date,
-            'date_local' => $dateLocal
+            'order_number' => $order ? $order->getNumber() : null,
+            'date_local' => $dateLocal,
+            'date' => $date->format('Y-m-d'),
+            'time' => $date->format('H:i')
         ];
 
         $this->messageBus->dispatch(

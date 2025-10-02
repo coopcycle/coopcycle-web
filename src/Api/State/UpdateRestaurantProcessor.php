@@ -9,7 +9,10 @@ use AppBundle\Entity\LocalBusiness;
 
 class UpdateRestaurantProcessor implements ProcessorInterface
 {
-    public function __construct(private readonly ItemProvider $provider)
+    public function __construct(
+        private readonly ItemProvider $provider,
+        private readonly ProcessorInterface $persistProcessor,
+    )
     {
     }
 
@@ -26,6 +29,6 @@ class UpdateRestaurantProcessor implements ProcessorInterface
             $restaurant->setState($data->state);
         }
 
-        return $restaurant;
+        return $this->persistProcessor->process($restaurant, $operation, $uriVariables, $context);
     }
 }

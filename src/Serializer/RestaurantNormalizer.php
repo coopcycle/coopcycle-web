@@ -98,11 +98,8 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         }
         unset($data['activeMenuTaxon']);
 
-        $isOpen = $object->isOpen();
-        $data['isOpen'] = $isOpen;
-        if (!$isOpen) {
-            $data['nextOpeningDate'] = $object->getNextOpeningDate();
-        }
+        $data['isOpen'] = $object->isOpen();
+        $data['nextOpeningDate'] = $object->getNextOpeningDate();
 
         if (isset($data['facets'])) {
             $cuisines =

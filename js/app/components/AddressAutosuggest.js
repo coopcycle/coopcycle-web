@@ -340,11 +340,10 @@ const SuggestionsContainer = ({
         className="address-autosuggest__suggestions-container__footer"
         style={{ justifyContent: mapPickerEnabled ? 'space-between' : 'flex-end' }}>
         {mapPickerEnabled && (
-          <span className="text-info">
+          <span className="text-info d-flex align-items-center">
             <i
-              className="fa fa-question-circle"
-              aria-hidden="true"
-              style={{ marginRight: '5px' }}></i>
+              className="fa fa-question-circle mr-2"
+              aria-hidden="true"></i>
             <button
               type="button"
               className="btn btn-link p-0"
