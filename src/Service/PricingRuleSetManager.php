@@ -69,18 +69,19 @@ class PricingRuleSetManager
         return $this->entityManager->getRepository(DeliveryForm::class)->findBy(['pricingRuleSet' => $pricingRuleSet]);
     }
 
-    public function setPricingRuleName(PricingRule $pricingRule, string $name): void
+    public function updateProductOptionValues(PricingRule $pricingRule, ?string $name): void
     {
-        $productOptionValue = $pricingRule->getProductOptionValue();
+        $oldProductOptionValues = $pricingRule->getProductOptionValues();
 
-        if (null !== $productOptionValue && $name === $productOptionValue->getValue()) {
-            return;
+        // Do not modify existing ProductOptionValues, create a new one for each change
+        foreach ($oldProductOptionValues as $productOptionValue) {
+            $productOptionValue->disable();
         }
 
-        // Do not modify existing ProductOptionValue, create a new one for each change
-        $productOptionValue = $this->productOptionValueFactory->createForPricingRule($pricingRule, $name);
-        $pricingRule->setProductOptionValue($productOptionValue);
-
-        $this->entityManager->persist($productOptionValue);
+        $newProductOptionValues = $this->productOptionValueFactory->createForPricingRule($pricingRule, $name);
+        foreach ($newProductOptionValues as $productOptionValue) {
+            $pricingRule->addProductOptionValue($productOptionValue);
+            $this->entityManager->persist($productOptionValue);
+        }
     }
 }

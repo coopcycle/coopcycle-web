@@ -5,13 +5,8 @@ namespace AppBundle\Entity\Sylius;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Sylius\Component\Resource\Model\ToggleableInterface;
 use Sylius\Component\Resource\Model\ToggleableTrait;
 use Sylius\Component\Product\Model\ProductOptionValue as BaseProductOptionValue;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -38,17 +33,14 @@ class ProductOptionValue extends BaseProductOptionValue implements ProductOption
     protected $price = 0;
 
     /**
-     * We model a many-to-many relationship between ProductOptionValue and PricingRule
-     * for backwards compatibility. In most cases, there will be only one PricingRule at most
-     * linked to a ProductOptionValue.
-     * @var Collection<int, PricingRule>
+     * Each ProductOptionValue can be linked to zero or one PricingRule.
+     * @var PricingRule|null
      */
-    protected $pricingRules;
+    protected $pricingRule;
 
     public function __construct()
     {
         parent::__construct();
-        $this->pricingRules = new ArrayCollection();
     }
 
     /**
@@ -67,44 +59,13 @@ class ProductOptionValue extends BaseProductOptionValue implements ProductOption
         $this->price = $price;
     }
 
-    /**
-     * @return Collection<int, PricingRule>
-     */
-    public function getPricingRules(): Collection
+    public function getPricingRule(): ?PricingRule
     {
-        return $this->pricingRules;
+        return $this->pricingRule;
     }
 
-    public function getPricingRule(): PricingRule | null
+    public function setPricingRule(?PricingRule $pricingRule): void
     {
-        $pricingRule = $this->pricingRules->first();
-        
-        if ($pricingRule instanceof PricingRule) {
-            return $pricingRule;
-        } else {
-            return null;
-        }
-    }
-
-    public function setPricingRule(PricingRule $pricingRule): self
-    {
-        if (!$this->pricingRules->contains($pricingRule)) {
-            $this->pricingRules->add($pricingRule);
-            $pricingRule->setProductOptionValue($this);
-        }
-
-        return $this;
-    }
-
-    public function removePricingRule(PricingRule $pricingRule): self
-    {
-        if ($this->pricingRules->removeElement($pricingRule)) {
-            // set the owning side to null (unless already changed)
-            if ($pricingRule->getProductOptionValue() === $this) {
-                $pricingRule->setProductOptionValue(null);
-            }
-        }
-
-        return $this;
+        $this->pricingRule = $pricingRule;
     }
 }

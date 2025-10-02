@@ -4,7 +4,8 @@ namespace AppBundle\Serializer;
 
 use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Delivery\PricingRule;
-use AppBundle\Twig\ExpressionLanguageRuntime;
+use AppBundle\ExpressionLanguage\ExpressionLanguage;
+use AppBundle\Pricing\RuleHumanizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
@@ -13,7 +14,8 @@ class PricingRuleNormalizer implements NormalizerInterface
     public function __construct(
         private readonly ItemNormalizer $itemNormalizer,
         private readonly ObjectNormalizer $symfonyNormalizer,
-        private readonly ExpressionLanguageRuntime $expressionLanguageRuntime,
+        private readonly ExpressionLanguage $expressionLanguage,
+        private readonly RuleHumanizer $ruleHumanizer,
     ) {}
 
     /**
@@ -27,35 +29,41 @@ class PricingRuleNormalizer implements NormalizerInterface
             return $data;
         }
 
+        // Generate a default name if none is defined
+        if (isset($context['groups']) && in_array('pricing_deliveries', $context['groups'])) {
+            // Generate a default name if none is defined
+            if (is_null($data['name']) || '' === trim($data['name'])) {
+                $data['name'] = $this->ruleHumanizer->humanize($object);
+            }
+        }
+        
         // Add expressionAst field when pricing_rule_set:read group is present
         if (isset($context['groups']) && in_array('pricing_rule_set:read', $context['groups'])) {
             $data['expressionAst'] = null;
 
             if (!empty($object->getExpression())) {
-                try {
-                    $parsedExpression = $this->expressionLanguageRuntime->parseExpression($object->getExpression());
+                $parsedExpression = $this->expressionLanguage->parseRuleExpression($object->getExpression());
 
-                    // Use Symfony's ObjectNormalizer to convert ParsedExpression into a plain json object (not jsonld)
-                    $data['expressionAst'] = $this->symfonyNormalizer->normalize($parsedExpression, 'json');
-
-                } catch (\Exception $e) {
+                if (null === $parsedExpression) {
                     // If parsing fails, keep expressionAst as null
                     $data['expressionAst'] = null;
+                } else {
+                    // Use Symfony's ObjectNormalizer to convert ParsedExpression into a plain json object (not jsonld)
+                    $data['expressionAst'] = $this->symfonyNormalizer->normalize($parsedExpression, 'json');
                 }
             }
 
             $data['priceAst'] = null;
 
             if (!empty($object->getPrice())) {
-                try {
-                    $parsedPrice = $this->expressionLanguageRuntime->parseExpression($object->getPrice());
+                $parsedPrice = $this->expressionLanguage->parsePrice($object->getPrice());
 
-                    // Use Symfony's ObjectNormalizer to convert ParsedExpression into a plain json object (not jsonld)
-                    $data['priceAst'] = $this->symfonyNormalizer->normalize($parsedPrice, 'json');
-
-                } catch (\Exception $e) {
+                if (null === $parsedPrice) {
                     // If parsing fails, keep priceAst as null
                     $data['priceAst'] = null;
+                } else {
+                    // Use Symfony's ObjectNormalizer to convert ParsedExpression into a plain json object (not jsonld)
+                    $data['priceAst'] = $this->symfonyNormalizer->normalize($parsedPrice, 'json');
                 }
             }
         }

@@ -21,6 +21,9 @@ class PricingRuleValidator extends ConstraintValidator
     {
     }
 
+    /**
+     * @param PricingRule $object
+     */
     public function validate($object, Constraint $constraint)
     {
         if (!$object instanceof PricingRule) {
@@ -62,6 +65,11 @@ class PricingRuleValidator extends ConstraintValidator
                 ->setParameter('%expression%', $object->getExpression() ?? '')
                 ->atPath('expression')
                 ->addViolation();
+        }
+
+        if ($object->isManualSupplement()) {
+            // Some manual supplements may use the quantity variable in their price expression
+            $values['quantity'] = 1;
         }
 
         try {

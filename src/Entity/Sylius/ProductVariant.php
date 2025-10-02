@@ -153,6 +153,21 @@ class ProductVariant extends BaseProductVariant implements ProductVariantInterfa
         return 0;
     }
 
+    public function formatQuantityForOptionValue(ProductOptionValueInterface $optionValue): int
+    {
+        foreach ($this->optionValues as $variantOptionValue) {
+            if ($variantOptionValue->getOptionValue() === $optionValue) {
+                // For percentage-based pricing, we set unit price to 1 cent and quantity to the actual price, so that the total is price * quantity
+                // but in the UI we want to display simply 1
+                return ProductOptionRepository::PRODUCT_OPTION_CODE_PRICE_PERCENTAGE === $optionValue->getOption()->getCode() ?
+                    1 :
+                    $variantOptionValue->getQuantity();
+            }
+        }
+
+        return 0;
+    }
+
     public function hasOptionValueWithQuantity(ProductOptionValueInterface $optionValue, int $quantity = 1): bool
     {
         if ($this->hasOptionValue($optionValue)) {

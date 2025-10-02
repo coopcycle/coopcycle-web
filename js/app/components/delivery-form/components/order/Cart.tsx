@@ -49,6 +49,12 @@ function OrderItem({ index, orderItem, overridePrice }: OrderItemProps) {
     return calculatedAdjustments.concat(manualSupplementAdjustments);
   }, [orderItem]);
 
+  const total = useMemo(() => {
+    return adjustments.reduce((total, adjustment) => {
+      return total + adjustment.amount;
+    }, 0);
+  }, [adjustments]);
+
   return (
     <li
       data-testid={`order-item-${index}`}
@@ -73,7 +79,7 @@ function OrderItem({ index, orderItem, overridePrice }: OrderItemProps) {
         <span
           data-testid="total"
           className={`pull-right ${overridePrice ? 'text-decoration-line-through' : ''}`}>
-          {(orderItem.total / 100).formatMoney()}
+          {(total / 100).formatMoney()}
         </span>
       </div>
     </li>

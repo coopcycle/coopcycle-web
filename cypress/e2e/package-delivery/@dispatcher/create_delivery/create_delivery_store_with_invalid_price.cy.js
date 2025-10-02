@@ -64,7 +64,7 @@ context('Delivery (role: dispatcher)', () => {
     cy.get('[data-testid="price-calculation-debug-tool"]').click()
     cy.get('[data-testid="price-calculation-debug-tool"]').within(() => {
       cy.get('[data-testid="price-calculation-debug-tool-rule"]').contains(
-        'Rule #2: distance > 100000',
+        'Rule #2: Plus de 100.00 km - €4.99',
       )
     })
 

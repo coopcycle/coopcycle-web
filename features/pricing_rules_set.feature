@@ -150,7 +150,7 @@ Feature: Pricing rules set
             "expression": "distance > 0",
             "price": "500",
             "position": 1,
-            "name": null,
+            "name": "",
             "expressionAst": "@*@",
             "priceAst": "@*@"
           }
@@ -293,7 +293,7 @@ Feature: Pricing rules set
             "expression": "weight > 1000",
             "price": "200",
             "position": 2,
-            "name": null,
+            "name": "",
             "expressionAst": "@*@",
             "priceAst": "@*@"
           }
@@ -353,7 +353,7 @@ Feature: Pricing rules set
             "expression": "distance > 0",
             "price": "500",
             "position": 1,
-            "name": null,
+            "name": "",
             "expressionAst": "@*@",
             "priceAst": "@*@"
           },
@@ -365,7 +365,7 @@ Feature: Pricing rules set
             "expression": "weight > 1000",
             "price": "200",
             "position": 2,
-            "name": null,
+            "name": "",
             "expressionAst": "@*@",
             "priceAst": "@*@"
           }

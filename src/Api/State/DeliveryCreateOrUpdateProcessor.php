@@ -12,11 +12,14 @@ use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\UpdateManualSupplements;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
+use AppBundle\Pricing\ManualSupplement;
 use AppBundle\Pricing\ManualSupplements;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Product\ProductOptionValueInterface;
+use Doctrine\ORM\EntityNotFoundException;
 use Psr\Log\LoggerInterface;
 use Recurr\Exception\InvalidRRule;
 use Recurr\Rule;
@@ -108,7 +111,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
             $order = $this->deliveryOrderManager->createOrder(
                 $delivery,
                 [
-                    'pricingStrategy' => $onCreatePricingStrategy
+                    'pricingStrategy' => $onCreatePricingStrategy,
                 ]
             );
 
@@ -127,7 +130,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                     $order = $this->deliveryOrderManager->createOrder(
                         $delivery,
                         [
-                            'pricingStrategy' => $onCreatePricingStrategy
+                            'pricingStrategy' => $onCreatePricingStrategy,
                         ]
                     );
                 }
@@ -147,7 +150,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                         new CalculateUsingPricingRules($manualSupplements)
                     );
                     $this->pricingManager->processDeliveryOrder($order, $productVariants);
-                } else {
+                } elseif (!is_null($manualSupplements) && $this->hasManualSupplementsChanged($manualSupplements, $order)) {
                     $existingProductVariants = [];
                     foreach ($order->getItems() as $item) {
                         $existingProductVariants[] = $item->getVariant();
@@ -159,6 +162,8 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                     );
 
                     $this->pricingManager->processDeliveryOrder($order, $productVariants);
+                } else {
+                    $this->logger->info('Keeping existing price', ['order' => $order->getId()]);
                 }
             }
         }
@@ -214,5 +219,78 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         $this->persistProcessor->process($delivery, $operation, $uriVariables, $context);
 
         return $delivery;
+    }
+
+    private function hasManualSupplementsChanged(ManualSupplements $manualSupplements, OrderInterface $existingOrder): bool
+    {
+        $existingManualSupplements = $this->extractExistingManualSupplements($existingOrder);
+
+        // Convert both arrays to maps indexed by pricing rule ID
+        $existingMap = $this->buildSupplementMap($existingManualSupplements);
+        $newMap = $this->buildSupplementMap($manualSupplements->orderSupplements);
+
+        if (count($existingMap) !== count($newMap)) {
+            return true;
+        }
+
+        foreach ($newMap as $ruleId => $quantity) {
+            if (!isset($existingMap[$ruleId]) || $existingMap[$ruleId] !== $quantity) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return ManualSupplement[]
+     */
+    private function extractExistingManualSupplements(OrderInterface $existingOrder): array
+    {
+        $existingManualSupplements = [];
+
+        foreach ($existingOrder->getItems() as $item) {
+            $variant = $item->getVariant();
+
+            /** @var ProductOptionValueInterface $optionValue */
+            foreach ($variant->getOptionValues() as $optionValue) {
+                try {
+                    // Find the PricingRule linked to this ProductOptionValue
+                    $pricingRule = $optionValue->getPricingRule();
+                } catch (EntityNotFoundException $e) {
+                    // This happens when a pricing rule has been modified
+                    // and the linked product option value has been disabled
+                    // but is still attached to a product variant
+                    $pricingRule = null;
+                }
+
+                if (!is_null($pricingRule) && $pricingRule->isManualSupplement()) {
+                    $existingManualSupplements[] = new ManualSupplement(
+                        $pricingRule,
+                        $variant->formatQuantityForOptionValue($optionValue)
+                    );
+                }
+            }
+        }
+
+        return $existingManualSupplements;
+    }
+
+    /**
+     * Build a map of pricing rule ID => quantity for efficient comparison
+     *
+     * @param ManualSupplement[] $supplements
+     * @return array<int, int> Map of pricing rule ID to quantity
+     */
+    private function buildSupplementMap(array $supplements): array
+    {
+        $map = [];
+
+        foreach ($supplements as $supplement) {
+            $ruleId = $supplement->pricingRule->getId();
+            $map[$ruleId] = $supplement->quantity;
+        }
+
+        return $map;
     }
 }
