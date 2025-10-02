@@ -811,6 +811,7 @@ Feature: Orders
           },
           "telephone":"+33612345678",
           "isOpen":true,
+          "nextOpeningDate":"@string@.isDateTime()",
           "loopeatEnabled":false,
           "tags":@array@,
           "badges":@array@

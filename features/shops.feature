@@ -69,6 +69,7 @@ Feature: Manage shops
           "deliveryMethod":["http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"]
         },
         "isOpen":true,
+        "nextOpeningDate":"@string@.isDateTime()",
         "hub":null,
         "loopeatEnabled":false,
         "tags":@array@,
