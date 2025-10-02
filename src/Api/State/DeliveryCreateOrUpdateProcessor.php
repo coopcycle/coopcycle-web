@@ -223,6 +223,30 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
 
     private function hasManualSupplementsChanged(ManualSupplements $manualSupplements, OrderInterface $existingOrder): bool
     {
+        $existingManualSupplements = $this->extractExistingManualSupplements($existingOrder);
+
+        // Convert both arrays to maps indexed by pricing rule ID
+        $existingMap = $this->buildSupplementMap($existingManualSupplements);
+        $newMap = $this->buildSupplementMap($manualSupplements->orderSupplements);
+
+        if (count($existingMap) !== count($newMap)) {
+            return true;
+        }
+
+        foreach ($newMap as $ruleId => $quantity) {
+            if (!isset($existingMap[$ruleId]) || $existingMap[$ruleId] !== $quantity) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @return ManualSupplement[]
+     */
+    private function extractExistingManualSupplements(OrderInterface $existingOrder): array
+    {
         $existingManualSupplements = [];
 
         foreach ($existingOrder->getItems() as $item) {
@@ -241,49 +265,32 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                 }
 
                 if (!is_null($pricingRule) && $pricingRule->isManualSupplement()) {
-                    $existingManualSupplements[] = new ManualSupplement($pricingRule, $variant->formatQuantityForOptionValue($optionValue));
+                    $existingManualSupplements[] = new ManualSupplement(
+                        $pricingRule,
+                        $variant->formatQuantityForOptionValue($optionValue)
+                    );
                 }
             }
         }
 
-        $added = 0;
-        $removed = 0;
-        $changed = 0;
+        return $existingManualSupplements;
+    }
 
-        foreach ($manualSupplements->orderSupplements as $supplement) {
-            $foundSupplement = null;
-            foreach ($existingManualSupplements as $existingSupplement) {
-                if ($existingSupplement->pricingRule === $supplement->pricingRule) {
-                    $foundSupplement = $existingSupplement;
-                    break;
-                }
-            }
+    /**
+     * Build a map of pricing rule ID => quantity for efficient comparison
+     *
+     * @param ManualSupplement[] $supplements
+     * @return array<int, int> Map of pricing rule ID to quantity
+     */
+    private function buildSupplementMap(array $supplements): array
+    {
+        $map = [];
 
-            if (is_null($foundSupplement)) {
-                $added++;
-            } elseif ($foundSupplement->quantity !== $supplement->quantity) {
-                $changed++;
-            }
+        foreach ($supplements as $supplement) {
+            $ruleId = $supplement->pricingRule->getId();
+            $map[$ruleId] = $supplement->quantity;
         }
 
-        foreach ($existingManualSupplements as $existingSupplement) {
-            $foundSupplement = null;
-            foreach ($manualSupplements->orderSupplements as $supplement) {
-                if ($existingSupplement->pricingRule === $supplement->pricingRule) {
-                    $foundSupplement = $supplement;
-                    break;
-                }
-            }
-
-            if (is_null($foundSupplement)) {
-                $removed++;
-            }
-        }
-
-        if ($added > 0 || $removed > 0 || $changed > 0) {
-            return true;
-        }
-
-        return false;
+        return $map;
     }
 }
