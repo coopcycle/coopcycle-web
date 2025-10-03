@@ -64,14 +64,12 @@ export type Package = JsonLdEntity & {
   id: number;
   name: string;
   volumeUnits: number;
-  packageSet?: Uri | null;
+  packageSet?: PackageSet;
 };
 
-export type PackageSet = JsonLdEntity & {
+export type PackageSet = {
+  id: number;
   name: string;
-  packages: Uri[];
-  createdAt: string;
-  updatedAt: string;
 };
 
 export type Address = JsonLdEntity & {
