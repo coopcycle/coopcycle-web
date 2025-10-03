@@ -1,43 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { getCurrencySymbol } from '../../../i18n';
 import { useTranslation } from 'react-i18next';
-import Select from 'react-select';
-import _ from 'lodash';
 import { useGetPackagesQuery } from '../../../api/slice';
 import PickerIsLoading from './RulePickerLine/PickerIsLoading';
 import PickerIsError from './RulePickerLine/PickerIsError';
-
-/**
- * Custom styles for the react-select component in order to:
- * - set container display so that it will flow horizontally with its siblings
- * - set a fixed width for the control to avoid it collapsing on itself,
- *     and make sure long labels wrap correctly within the fixed width
- * - inherit the font color from the containing CSS context
- * - remove vertical padding and hide the separator to better match the styling
- *     of other native <select> elements on the page
- */
-const reactSelectStyles = {
-  container: provided => ({
-    ...provided,
-    display: 'inline-block',
-    width: 150,
-  }),
-  control: provided => ({ ...provided, minHeight: undefined }),
-  valueContainer: provided => ({ ...provided, padding: '0 5px' }),
-  placeholder: provided => ({ ...provided, color: undefined }),
-  input: provided => ({ ...provided, color: undefined }),
-  singleValue: provided => ({ ...provided, color: undefined }),
-  indicatorSeparator: () => ({ display: 'none' }),
-  dropdownIndicator: provided => ({
-    ...provided,
-    color: undefined,
-    padding: 0,
-    ':hover': {
-      color: undefined,
-    },
-  }),
-  option: provided => ({ ...provided, wordWrap: 'break-word' }),
-};
+import PackageNamePicker from './RulePickerLine/PackageNamePicker';
 
 export type PricePerPackageValue = {
   packageName: string;
@@ -65,7 +32,7 @@ export default ({ defaultValue, onChange }: Props) => {
   const { t } = useTranslation();
 
   const [unitPrice, setUnitPrice] = useState(defaultValue.unitPrice || 0);
-  const [packageName, setPackageName] = useState();
+  const [packageName, setPackageName] = useState(undefined as string | undefined);
   const [offset, setOffset] = useState(defaultValue.offset || 0);
   const [discountPrice, setDiscountPrice] = useState(
     defaultValue.discountPrice || 0,
@@ -94,7 +61,7 @@ export default ({ defaultValue, onChange }: Props) => {
 
   return (
     <div data-testid="price_rule_price_per_package_editor">
-      <div>
+      <div className="d-flex align-items-center">
         <label className="mr-2">
           <input
             type="number"
@@ -118,29 +85,23 @@ export default ({ defaultValue, onChange }: Props) => {
         </label>
         <label className="mr-2">
           <span className="mx-2">{t('PRICE_RANGE_EDITOR.PER_PACKAGE')}</span>
-          <Select
-            value={{ value: packageName, label: packageName }}
-            onChange={(
-              selectedOption: { value: string; label: string } | null,
-            ) => {
-              if (selectedOption) {
-                setPackageName(selectedOption.value);
+        </label>
+        <div className="flex-1">
+          <PackageNamePicker
+            onChange={(e: { target: { value: string } }) => {
+              if (e.target.value) {
+                setPackageName(e.target.value);
                 onChange({
-                  packageName: selectedOption.value,
+                  packageName: e.target.value,
                   unitPrice,
                   offset,
                   discountPrice,
                 });
               }
             }}
-            options={_.sortBy(packageNames).map(pkg => ({
-              label: pkg,
-              value: pkg,
-            }))}
-            styles={reactSelectStyles}
-            isSearchable
+            value={packageName}
           />
-        </label>
+        </div>
       </div>
       {withDiscount && (
         <div>

@@ -5,7 +5,7 @@ import { withTranslation } from 'react-i18next';
 import numbro from 'numbro';
 
 import ZonePicker from './ZonePicker';
-import PackagePicker from './PackagePicker';
+import PackageNamePicker from './PackageNamePicker';
 import TimeSlotPicker from './TimeSlotPicker';
 import {
   numericTypes,
@@ -336,7 +336,7 @@ class RulePickerLine extends React.Component<Props, State> {
         );
       case 'containsAtLeastOne':
         return (
-          <PackagePicker
+          <PackageNamePicker
             onChange={this.handleValueChange}
             value={this.state.value}
           />
