@@ -11,6 +11,7 @@ import {
   Tag,
   Zone,
   Package,
+  PackageSet,
   StoreTimeSlot,
   TimeSlotChoice,
   Order,
@@ -74,6 +75,15 @@ export const apiSlice = createApi({
         return await fetchAllRecordsUsingFetchWithBQ<Package>(
           baseQuery,
           'api/packages',
+          100,
+        );
+      },
+    }),
+    getPackageSets: builder.query<PackageSet[], void>({
+      queryFn: async (args, queryApi, extraOptions, baseQuery) => {
+        return await fetchAllRecordsUsingFetchWithBQ<PackageSet>(
+          baseQuery,
+          'api/package_sets',
           100,
         );
       },
@@ -308,6 +318,7 @@ export const {
   useGetTagsQuery,
   useGetZonesQuery,
   useGetPackagesQuery,
+  useGetPackageSetsQuery,
   useGetOrderTimingQuery,
   useGetOrderQuery,
   useUpdateOrderMutation,
