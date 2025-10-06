@@ -23,7 +23,6 @@ class PriceCalculationVisitor
         private readonly ExpressionLanguage $expressionLanguage,
         private readonly DeliveryExpressionLanguageVisitor $deliveryExpressionLanguageVisitor,
         private readonly TaskExpressionLanguageVisitor $taskExpressionLanguageVisitor,
-        private readonly ProductOptionValueHelper $productOptionValueHelper,
         private readonly ProductVariantFactory $productVariantFactory,
         private readonly ProductVariantNameGenerator $productVariantNameGenerator,
         private readonly OnDemandDeliveryProductProcessor $onDemandDeliveryProductProcessor,
@@ -65,7 +64,7 @@ class PriceCalculationVisitor
             $matchedRules = array_filter($resultPerTask->ruleResults, function ($item) {
                 return $item->matched === true;
             });
-            if (count($matchedRules) > 0) {
+            if (count($matchedRules) > 0 && $resultPerTask->productVariant) {
                 $taskProductVariants[] = $resultPerTask->productVariant;
             }
         }
@@ -189,14 +188,12 @@ class PriceCalculationVisitor
                 $ruleResults[$rule->getPosition()] = $ruleResult;
 
                 if ($ruleResult->matched) {
-                    $productOptionValue = $this->productOptionValueHelper->getProductOptionValue($rule);
-                    $productOptionValueWithQuantity = $this->onDemandDeliveryProductProcessor->processProductOptionValue(
-                        $productOptionValue,
+                    $productOptionValueWithQuantity = $this->onDemandDeliveryProductProcessor->processPricingRule(
                         $rule,
                         $expressionLanguageValues,
                     );
 
-                    $productOptionValues[] = $productOptionValueWithQuantity;
+                    $productOptionValues = array_merge($productOptionValues, $productOptionValueWithQuantity);
 
                     // For `find` strategy
                     if ($returnOnFirstMatch) {
@@ -210,8 +207,7 @@ class PriceCalculationVisitor
         if ($object instanceof Delivery && count($manualOrderSupplements) > 0) {
             foreach ($manualOrderSupplements as $supplement) {
                 $rule = $supplement->pricingRule;
-                //TODO; handle with range-based supplements in https://github.com/coopcycle/coopcycle/issues/447
-//                $quantity = $supplement->quantity;
+                $quantity = $supplement->quantity;
 
                 $ruleResult = new RuleResult($rule, true);
                 $ruleResults[$rule->getPosition()] = $ruleResult;
@@ -220,12 +216,13 @@ class PriceCalculationVisitor
                     'target' => $rule->getTarget(),
                 ]);
 
-                $productOptionValue = $this->productOptionValueHelper->getProductOptionValue($rule);
-                $productOptionValues[] = $this->onDemandDeliveryProductProcessor->processProductOptionValue(
-                    $productOptionValue,
+                $productOptionValueWithQuantity = $this->onDemandDeliveryProductProcessor->processPricingRule(
                     $rule,
-                    []
+                    [
+                        'quantity' => $quantity,
+                    ]
                 );
+                $productOptionValues = array_merge($productOptionValues, $productOptionValueWithQuantity);
             }
         }
 

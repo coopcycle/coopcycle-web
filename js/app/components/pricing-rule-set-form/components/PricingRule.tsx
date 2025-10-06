@@ -211,6 +211,7 @@ const PricingRule = ({
         </Col>
         <Col flex="auto">
           <PriceEditor
+            isManualSupplement={isManualSupplement}
             priceType={priceType}
             defaultValue={priceObj}
             onChange={newPrice => {

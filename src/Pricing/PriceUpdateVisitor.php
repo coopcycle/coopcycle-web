@@ -7,11 +7,11 @@ use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Sylius\UpdateManualSupplements;
 use AppBundle\Sylius\Product\ProductVariantFactory;
 use AppBundle\Sylius\Product\ProductVariantInterface;
+use Doctrine\ORM\EntityNotFoundException;
 
 class PriceUpdateVisitor
 {
     public function __construct(
-        private readonly ProductOptionValueHelper $productOptionValueHelper,
         private readonly ProductVariantFactory $productVariantFactory,
         private readonly ProductVariantNameGenerator $productVariantNameGenerator,
         private readonly OnDemandDeliveryProductProcessor $onDemandDeliveryProductProcessor
@@ -86,7 +86,17 @@ class PriceUpdateVisitor
         if ($previousDeliveryProductVariant) {
             // clone productOptionValues except previously added manual supplements
             foreach ($previousDeliveryProductVariant->getOptionValues() as $productOptionValue) {
-                if ($productOptionValue->getPricingRule()?->isManualSupplement()) {
+                try {
+                    // Find the PricingRule linked to this ProductOptionValue
+                    $pricingRule = $productOptionValue->getPricingRule();
+                } catch (EntityNotFoundException $e) {
+                    // This happens when a pricing rule has been modified
+                    // and the linked product option value has been disabled
+                    // but is still attached to a product variant
+                    $pricingRule = null;
+                }
+
+                if (is_null($pricingRule) || $pricingRule->isManualSupplement()) {
                     continue;
                 }
 
@@ -102,15 +112,15 @@ class PriceUpdateVisitor
         if (count($manualOrderSupplements) > 0) {
             foreach ($manualOrderSupplements as $supplement) {
                 $rule = $supplement->pricingRule;
-                //TODO; handle with range-based supplements in https://github.com/coopcycle/coopcycle/issues/447
-//                $quantity = $supplement->quantity;
+                $quantity = $supplement->quantity;
 
-                $productOptionValue = $this->productOptionValueHelper->getProductOptionValue($rule);
-                $productOptionValues[] = $this->onDemandDeliveryProductProcessor->processProductOptionValue(
-                    $productOptionValue,
+                $productOptionValueWithQuantity = $this->onDemandDeliveryProductProcessor->processPricingRule(
                     $rule,
-                    []
+                    [
+                        'quantity' => $quantity,
+                    ],
                 );
+                $productOptionValues = array_merge($productOptionValues, $productOptionValueWithQuantity);
             }
         }
 

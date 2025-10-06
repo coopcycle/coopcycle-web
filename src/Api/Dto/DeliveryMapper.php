@@ -9,7 +9,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Service\TagManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityNotFoundException;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
@@ -21,7 +21,6 @@ class DeliveryMapper
         private readonly TagManager $tagManager,
         private readonly NormalizerInterface $normalizer,
         private readonly ObjectNormalizer $symfonyNormalizer,
-        private readonly EntityManagerInterface $entityManager
     ) {
     }
 
@@ -123,13 +122,6 @@ class DeliveryMapper
      */
     private function extractManualSupplementsFromOrder(OrderInterface $order): array
     {
-        $filterCollection = $this->entityManager->getFilters();
-        $wasFilterEnabled = false;
-        if ($filterCollection->isEnabled('disabled_filter')) {
-            $filterCollection->disable('disabled_filter');
-            $wasFilterEnabled = true;
-        }
-
         $manualSupplements = [];
 
         foreach ($order->getItems() as $orderItem) {
@@ -141,31 +133,28 @@ class DeliveryMapper
             }
 
             foreach ($variant->getOptionValues() as $productOptionValue) {
-
-                if (!$productOptionValue->isEnabled()) {
-                    continue;
-                }
-
                 /** @var ProductOptionValue $productOptionValue */
 
-                // Find the PricingRule linked to this ProductOptionValue
-                $pricingRule = $productOptionValue->getPricingRule();
+                try {
+                    // Find the PricingRule linked to this ProductOptionValue
+                    $pricingRule = $productOptionValue->getPricingRule();
+                } catch (EntityNotFoundException $e) {
+                    // This happens when a pricing rule has been modified
+                    // and the linked product option value has been disabled
+                    // but is still attached to a product variant
+                    // Don't return this value to a user, so they can keep an existing supplement, but can't edit it
+                    continue;
+                }
 
                 if (null !== $pricingRule && $pricingRule->isManualSupplement()) {
                     // Create ManualSupplementDto
                     $manualSupplementDto = new ManualSupplementDto();
                     $manualSupplementDto->pricingRule = $pricingRule;
-                    //FIXME: update when we properly model unit price and quantity in https://github.com/coopcycle/coopcycle/issues/441
-//                    $manualSupplementDto->quantity = $variant->getQuantityForOptionValue($productOptionValue);
-                    $manualSupplementDto->quantity = 1;
+                    $manualSupplementDto->quantity = $variant->formatQuantityForOptionValue($productOptionValue);
 
                     $manualSupplements[] = $manualSupplementDto;
                 }
             }
-        }
-
-        if ($wasFilterEnabled) {
-            $filterCollection->enable('disabled_filter');
         }
 
         return $manualSupplements;

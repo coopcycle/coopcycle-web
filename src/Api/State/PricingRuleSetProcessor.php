@@ -6,13 +6,14 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Service\PricingRuleSetManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 class PricingRuleSetProcessor implements ProcessorInterface
 {
     public function __construct(
         private readonly ProcessorInterface $decorated,
+        private readonly EntityManagerInterface $entityManager,
         private readonly PricingRuleSetManager $pricingRuleSetManager,
-
     ) {
     }
 
@@ -24,7 +25,7 @@ class PricingRuleSetProcessor implements ProcessorInterface
     ) {
         // Handle ProductOption creation/update for each rule before processing
         if ($data instanceof PricingRuleSet) {
-            $this->processRulesNames($data);
+            $this->processRulesChanges($data);
         }
 
         // Process the PricingRuleSet using the default processor
@@ -33,18 +34,31 @@ class PricingRuleSetProcessor implements ProcessorInterface
         return $result;
     }
 
-    private function processRulesNames(PricingRuleSet $pricingRuleSet): void
+    private function processRulesChanges(PricingRuleSet $pricingRuleSet): void
     {
         $rules = $pricingRuleSet->getRules();
 
-        // Process each rule to handle ProductOption names
         foreach ($rules as $rule) {
             $nameInput = $rule->getNameInput();
-
             if ($nameInput !== null && !empty(trim($nameInput))) {
                 $name = trim($nameInput);
-                $this->pricingRuleSetManager->setPricingRuleName($rule, $name);
+            } else {
+                $name = null;
             }
+
+            if ($rule->getId()) {
+                $uow = $this->entityManager->getUnitOfWork();
+                $uow->computeChangeSets();
+                $changeSet = $uow->getEntityChangeSet($rule);
+            }
+
+            // Skip rules for which neither name nor price has changed
+            // $name === $rule->getName() compare name provided in request with current name in database
+            if ($name === $rule->getName() && (isset($changeSet) && !isset($changeSet['price']))) {
+                continue;
+            }
+
+            $this->pricingRuleSetManager->updateProductOptionValues($rule, $name);
         }
     }
 }

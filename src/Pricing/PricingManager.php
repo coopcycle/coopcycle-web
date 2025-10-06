@@ -54,7 +54,7 @@ class PricingManager
         private readonly TimeSlotManager $timeSlotManager,
         private readonly PriceCalculationVisitor $priceCalculationVisitor,
         private readonly PriceUpdateVisitor $priceUpdateVisitor,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $feeCalculationLogger
     ) {
     }
 
@@ -94,7 +94,7 @@ class PricingManager
 
                 } else {
 
-                    $this->logger->warning('No time slot choice found: ', [
+                    $this->feeCalculationLogger->warning('No time slot choice found: ', [
                         'store' => $store->getId(),
                         'range' => $range,
                     ]);
@@ -110,7 +110,7 @@ class PricingManager
         } elseif ($pricingStrategy instanceof UpdateManualSupplements) {
             return $this->priceUpdateVisitor->visit($delivery, $ruleSet, $pricingStrategy);
         } else {
-            $this->logger->warning('Unsupported pricing config', [
+            $this->feeCalculationLogger->warning('Unsupported pricing config', [
                 'pricingStrategy' => $pricingStrategy,
             ]);
             return null;
@@ -127,7 +127,7 @@ class PricingManager
         $store = $delivery->getStore();
 
         if (null === $store) {
-            $this->logger->warning('Delivery has no store');
+            $this->feeCalculationLogger->warning('Delivery has no store');
 
             return [];
         }
@@ -151,7 +151,7 @@ class PricingManager
             $output = $this->getPriceCalculation($delivery, $pricingRuleSet, $pricingStrategy);
 
             if (count($output->productVariants) === 0) {
-                $this->logger->warning('Price could not be calculated');
+                $this->feeCalculationLogger->warning('Price could not be calculated');
 
                 return [];
             }
@@ -165,7 +165,7 @@ class PricingManager
                 ),
             ];
         } else {
-            $this->logger->warning('Unsupported pricing config');
+            $this->feeCalculationLogger->warning('Unsupported pricing config');
 
             return [];
         }
@@ -176,7 +176,7 @@ class PricingManager
      */
     public function processDeliveryOrder(OrderInterface $order, array $productVariants): void {
         if ($order->isFoodtech()) {
-            $this->logger->info('processDeliveryOrder command should NOT be called on foodtech orders');
+            $this->feeCalculationLogger->info('processDeliveryOrder command should NOT be called on foodtech orders');
             return;
         }
 

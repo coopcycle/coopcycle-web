@@ -3,6 +3,7 @@
 namespace AppBundle\ExpressionLanguage;
 
 use AppBundle\Entity\Address;
+use AppBundle\Pricing\PriceExpressions\PricePercentageExpression;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
 
@@ -19,7 +20,7 @@ class PricePercentageExpressionLanguageProvider implements ExpressionFunctionPro
 
             if (!$value) {
 
-                return 10000; // 100.00%
+                return PricePercentageExpression::PERCENTAGE_NEUTRAL; // no change
             }
 
             return $value;

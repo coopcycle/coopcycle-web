@@ -298,7 +298,7 @@
         "FORM_PRICING_RULE_SET_RULES_LABEL": "Rules",
         "FORM_PRICING_RULE_SET_NO_RULE_FOUND": "No pricing rule found. Pricing rules define how the delivery cost is calculated.",
         "FORM_PRICING_RULE_SET_PRICING_RULE_NAME_LABEL": "Name (displayed to a client)",
-        "FORM_PRICING_RULE_SET_PRICING_RULE_NAME_PLACEHOLDER": "e.g. Urgent delivery",
+        "FORM_PRICING_RULE_SET_PRICING_RULE_NAME_PLACEHOLDER": "e.g. Urgent delivery - €5",
         "FORM_PRICING_RULE_SET_PRICING_RULE_NAME_HELP": "If you keep the name empty, the name will be generated automatically",
         "FORM_PRICING_RULE_SAVE_ERROR": "An error occurred while saving rule {{ name }}",
         "FORM_PRICING_RULE_MANUAL_SUPPLEMENT_NAME_REQUIRED": "You must provide a name for the manual supplement",

@@ -2,6 +2,7 @@
 
 namespace AppBundle\Sylius\OrderProcessing;
 
+use AppBundle\Entity\Sylius\ProductOptionRepository;
 use AppBundle\Service\LoggingUtils;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -71,9 +72,7 @@ final class OrderOptionsProcessor implements OrderProcessorInterface
                             $pricingRule?->isManualSupplement() ?
                                 AdjustmentInterface::ORDER_ITEM_PACKAGE_DELIVERY_MANUAL_SUPPLEMENT_ADJUSTMENT :
                                 AdjustmentInterface::ORDER_ITEM_PACKAGE_DELIVERY_CALCULATED_ADJUSTMENT,
-                            //FIXME: in https://github.com/coopcycle/coopcycle/issues/441
-                            //sprintf('%d × %s', $quantity, $optionValue->getValue()),
-                            sprintf('%d × %s', 1, $optionValue->getValue()),
+                            sprintf('%d × %s', $variant->formatQuantityForOptionValue($optionValue), $optionValue->getValue()),
                             $amount,
                             $neutral = false
                         );

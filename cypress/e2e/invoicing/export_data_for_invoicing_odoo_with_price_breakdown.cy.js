@@ -60,10 +60,10 @@ context('Invoicing (role: admin)', () => {
         '"External ID","Invoice Date",Partner,"Invoice lines / Account","Invoice lines / Product","Invoice lines / Label","Invoice lines / Unit Price","Invoice lines / Quantity"',
       )
       for (let i = 1; i <= 250; i++) {
-        // b776d339-22dd-44f9-acb4-edb0fdac9b20-6b86b27,2025-07-17,Acme,411100,"Livraison à la demande","Livraison à la demande - Supplément de commande: 1 × Plus de 0.00 km: €4.99 - 17/07/2025 (Commande #A1)",4.16,1
+        // 9548454e-c3ef-4438-b0e2-d0d7299544af-6b86b27,2025-09-25,Acme,411100,"Livraison à la demande","Livraison à la demande - Supplément de commande: 1 × Plus de 0.00 km - €4.99: €4.99 - 25/09/2025 (Commande #A1)",4.16,1
         expect(lines[i]).to.match(
           new RegExp(
-            `^[a-f0-9-]+,\\d{4}-\\d{2}-\\d{2},Acme,\\d+,"Livraison à la demande","Livraison à la demande - Supplément de commande: 1 × Plus de 0.00 km: €4.99 - \\d{2}/\\d{2}/\\d{4} \\(Commande #A${i}\\)",[0-9]+(\\.[0-9]+)?,1$`,
+            `^[a-f0-9-]+,\\d{4}-\\d{2}-\\d{2},Acme,\\d+,"Livraison à la demande","Livraison à la demande - Supplément de commande: 1 × Plus de 0.00 km - €4.99: €4.99 - \\d{2}/\\d{2}/\\d{4} \\(Commande #A${i}\\)",[0-9]+(\\.[0-9]+)?,1$`,
           ),
         )
       }

@@ -69,12 +69,7 @@ context(
         cy.get('[data-testid="condition-operator-select"]').select('>')
         cy.get('[data-testid="condition-number-input"]').type('{selectall}3')
 
-        cy.get('[data-testid="rule-price-type"]').click()
-        cy.root({ log: false })
-          .closest('body')
-          .within(() => {
-            cy.get('[title="Prix TTC par tranches"]').click()
-          })
+        cy.antdSelect('[data-testid="rule-price-type"]', 'Prix TTC par tranches')
         cy.get('[data-testid="rule-price-range-price"]').clear()
         cy.get('[data-testid="rule-price-range-price"]').type('3')
         cy.get('[data-testid="rule-price-range-step"]').clear()
@@ -87,7 +82,6 @@ context(
       cy.get(
         '[data-testid="pricing-rule-set-add-supplement-target-delivery"]',
       ).click()
-
       cy.get('[data-testid="pricing-rule-set-rule-2"]', {
         timeout: 5000,
       }).should('be.visible')
@@ -95,6 +89,32 @@ context(
       cy.get('[data-testid="pricing-rule-set-rule-2"]').within(() => {
         cy.get('[data-testid="rule-name"]').type('Return documents')
         cy.get('[data-testid="rule-fixed-price-input"]').type('{selectall}5')
+      })
+
+      // Add manual supplement: "Signature required" with 10% surcharge
+      cy.get(
+        '[data-testid="pricing-rule-set-add-supplement-target-delivery"]',
+      ).click()
+      cy.get('[data-testid="pricing-rule-set-rule-3"]', {
+        timeout: 5000,
+      }).should('be.visible')
+      cy.get('[data-testid="pricing-rule-set-rule-3"]').within(() => {
+        cy.get('[data-testid="rule-name"]').type('Signature required')
+        cy.antdSelect('[data-testid="rule-price-type"]', 'Pourcentage')
+        cy.get('[data-testid="rule-percentage-input"]').type('{selectall}10')
+      })
+
+      // Add manual supplement: "Waiting time" with price 10 cents per minute
+      cy.get(
+        '[data-testid="pricing-rule-set-add-supplement-target-delivery"]',
+      ).click()
+      cy.get('[data-testid="pricing-rule-set-rule-4"]', {
+        timeout: 5000,
+      }).should('be.visible')
+      cy.get('[data-testid="pricing-rule-set-rule-4"]').within(() => {
+        cy.get('[data-testid="rule-name"]').type('Waiting time')
+        cy.antdSelect('[data-testid="rule-price-type"]', 'Prix TTC par tranches')
+        cy.get('[data-testid="rule-price-range-price"]').type('{selectall}0.1')
       })
 
       // Save
@@ -151,6 +171,26 @@ context(
             price: {
               type: 'fixed',
               value: '5.00',
+            },
+          },
+          {
+            index: 3,
+            name: 'Signature required',
+            price: {
+              type: 'percentage',
+              percentage: '10',
+            },
+          },
+          {
+            index: 4,
+            name: 'Waiting time',
+            price: {
+              type: 'range',
+              range: {
+                price: '0.1',
+                step: '1',
+                threshold: '0',
+              },
             },
           },
         ],

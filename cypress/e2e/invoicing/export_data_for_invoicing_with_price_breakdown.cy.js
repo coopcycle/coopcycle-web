@@ -92,10 +92,10 @@ context('Invoicing (role: admin)', () => {
         'Organization,Description,"Total products (excl. VAT)",Taxes,"Total products (incl. VAT)"',
       )
       for (let i = 1; i <= 250; i++) {
-        // Acme,"Livraison à la demande - Supplément de commande: 1 × Plus de 0.00 km: €4.99 - 17/07/2025 (Commande #A1)",4.16,0.83,4.99
+        // Acme,"Livraison à la demande - Supplément de commande: 1 × Plus de 0.00 km - €4.99: €4.99 - 25/09/2025 (Commande #A1)",4.16,0.83,4.99
         expect(lines[i]).to.match(
           new RegExp(
-            `^Acme,"Livraison à la demande - Supplément de commande: 1 × Plus de 0.00 km: €4.99 - \\d{2}/\\d{2}/\\d{4} \\(Commande #A${i}\\)",[0-9]+(\\.[0-9]+)?,[0-9]+(\\.[0-9]+)?,[0-9]+(\\.[0-9]+)?$`,
+            `^Acme,"Livraison à la demande - Supplément de commande: 1 × Plus de 0.00 km - €4.99: €4.99 - \\d{2}/\\d{2}/\\d{4} \\(Commande #A${i}\\)",[0-9]+(\\.[0-9]+)?,[0-9]+(\\.[0-9]+)?,[0-9]+(\\.[0-9]+)?$`,
           ),
         )
       }
