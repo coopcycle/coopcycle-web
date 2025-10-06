@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Select } from 'antd';
 import { useGetPackagesQuery } from '../../../../api/slice';
 import PickerIsLoading from './PickerIsLoading';
@@ -9,8 +9,29 @@ type Props = {
   onChange: (event: { target: { value: string } }) => void;
 };
 
-export default function PackagePicker({ value, onChange }: Props) {
+export default function PackageNamePicker({ value, onChange }: Props) {
   const { data: packages, isFetching } = useGetPackagesQuery();
+
+  const packageNames = useMemo(() => {
+    if (!packages) {
+      return [];
+    }
+
+    const allPackageNames: string[] = [];
+
+    packages.forEach(pkg => {
+      // ignore packages from deleted package sets
+      if (!pkg.packageSet) {
+        return;
+      }
+
+      allPackageNames.push(pkg.name);
+    });
+
+    const uniquePackageNames = Array.from(new Set(allPackageNames)).sort();
+
+    return uniquePackageNames;
+  }, [packages]);
 
   if (isFetching) {
     return <PickerIsLoading />;
@@ -33,14 +54,12 @@ export default function PackagePicker({ value, onChange }: Props) {
           },
         })
       }
+      placeholder={'-'}
       value={value}
-      options={[
-        { value: '', label: '-' },
-        ...packages.map(item => ({
-          value: item.name,
-          label: item.name,
-        })),
-      ]}
+      options={packageNames.map(item => ({
+        value: item,
+        label: item,
+      }))}
     />
   );
 }
