@@ -95,6 +95,7 @@ class ImportDeliveriesHandler
                     'throwException' => true
                 ]);
             } catch (NoRuleMatchedException $e) {
+                //FIXME: Shouldn't we create an incident instead ?
                 $errorMessage = $this->translator->trans('delivery.price.error.priceCalculation', [], 'validators');
                 $result->addErrorToRow($rowNumber, $errorMessage);
             }
