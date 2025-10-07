@@ -60,11 +60,12 @@ class DeliveryRepository extends EntityRepository
 
         return (clone $qb)
             ->andWhere('t.type = :pickup')
-            ->andWhere('t.doneAfter >= :after')
-            ->andWhere('t.doneBefore <= :before')
+            ->andWhere('t.doneBefore >= :after')
+            ->andWhere('t.doneAfter <= :before')
             ->setParameter('pickup', Task::TYPE_PICKUP)
-            ->setParameter('after', $today->copy()->hour(0)->minute(0)->second(0))
-            ->setParameter('before', $today->copy()->hour(23)->minute(59)->second(59));
+            ->setParameter('after', $today->copy()->startOfDay())
+            ->setParameter('before', $today->copy()->endOfDay())
+            ;
     }
 
     public function upcoming(QueryBuilder $qb): QueryBuilder
@@ -73,9 +74,9 @@ class DeliveryRepository extends EntityRepository
 
         return (clone $qb)
             ->andWhere('t.type = :pickup')
-            ->andWhere('t.doneAfter >= :after')
+            ->andWhere('t.doneAfter > :endOfToday')
             ->setParameter('pickup', Task::TYPE_PICKUP)
-            ->setParameter('after', $today->copy()->add(1, 'day')->hour(0)->minute(0)->second(0))
+            ->setParameter('endOfToday', $today->copy()->endOfDay())
             ->orderBy('t.doneBefore', 'asc')
             ;
     }
@@ -86,9 +87,9 @@ class DeliveryRepository extends EntityRepository
 
         return (clone $qb)
             ->andWhere('t.type = :pickup')
-            ->andWhere('t.doneBefore < :after')
+            ->andWhere('t.doneBefore < :startOfToday')
             ->setParameter('pickup', Task::TYPE_PICKUP)
-            ->setParameter('after', $today->copy()->sub(1, 'day')->hour(23)->minute(59)->second(59))
+            ->setParameter('startOfToday', $today->copy()->startOfDay())
             ;
     }
     /**
