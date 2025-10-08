@@ -69,6 +69,7 @@ trait SelectPaymentMethodTrait
 
         $stripe = [];
         $paygreen = [];
+        $pawapay = [];
 
         if ($cardPayment) {
             $hashId = $hashids8->encode($cardPayment->getId());
