@@ -231,6 +231,7 @@ services:
   Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorageFactory: '@session.storage.factory.native'
   Sylius\Component\Promotion\Checker\Eligibility\PromotionEligibilityCheckerInterface $promotionExpirationChecker: '@promotion.expiration_checker'
   Sylius\Component\Promotion\Checker\Eligibility\PromotionCouponEligibilityCheckerInterface $promotionCouponExpirationChecker: '@promotion_coupon.expiration_checker'
+  Symfony\Contracts\HttpClient\HttpClientInterface $pawapayClient: '@pawapay.client'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
@@ -1714,3 +1715,11 @@ services:
       - [ "@sylius.promotion_archival_eligibility_checker",
           "@sylius.promotion_end_eligibility_checker",
           "@sylius.promotion_usage_limit_eligibility_checker" ]
+
+  AppBundle\Payment\PawapayClientFactory: ~
+
+  pawapay.client:
+    class: Symfony\Contracts\HttpClient\HttpClientInterface
+    factory: '@AppBundle\Payment\PawapayClientFactory'
+    arguments: ['%env(PAWAPAY_API_URL)%']
+    lazy: true
