@@ -110,6 +110,11 @@
     {% include 'admin/_partials/paygreen.html.twig' %}
   {% endif %}
 
+  {% if form.pawapay is defined %}
+    <hr>
+    {% include 'admin/_partials/pawapay.html.twig' %}
+  {% endif %}
+
   <hr>
 
   {{ form_row(form.accounting_account) }}
