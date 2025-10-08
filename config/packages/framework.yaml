@@ -71,7 +71,3 @@ framework:
                 base_uri: "https://api.insee.fr/api-sirene/3.11/"
                 headers:
                     X-INSEE-Api-Key-Integration: '%env(INSEE_PORTAIL_API_KEY)%'
-            pawapay.client:
-                base_uri: "%env(PAWAPAY_API_URL)%"
-                headers:
-                    Authorization: 'Bearer %env(PAWAPAY_API_TOKEN)%'

@@ -229,6 +229,7 @@ services:
   Sylius\Component\Resource\Repository\RepositoryInterface $customerRepository: '@sylius.repository.customer'
   Sylius\Component\Resource\Factory\FactoryInterface $customerFactory: '@sylius.factory.customer'
   Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorageFactory: '@session.storage.factory.native'
+  Symfony\Contracts\HttpClient\HttpClientInterface $pawapayClient: '@pawapay.client'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
@@ -1696,3 +1697,11 @@ services:
   AppBundle\Api\LegacyEntrypointAction:
     decorates: api_platform.action.entrypoint
     arguments: ['@.inner']
+
+  AppBundle\Payment\PawapayClientFactory: ~
+
+  pawapay.client:
+    class: Symfony\Contracts\HttpClient\HttpClientInterface
+    factory: '@AppBundle\Payment\PawapayClientFactory'
+    arguments: ['%env(PAWAPAY_API_URL)%']
+    lazy: true
