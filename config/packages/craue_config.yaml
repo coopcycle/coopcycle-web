@@ -1,0 +1,2 @@
+craue_config:
+  entity_name: AppBundle\Entity\Setting
