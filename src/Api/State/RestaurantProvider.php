@@ -9,13 +9,16 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Utils\SortableRestaurantIterator;
 use AppBundle\Utils\RestaurantFilter;
+use Doctrine\ORM\EntityManagerInterface;
+use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
 
 final class RestaurantProvider implements ProviderInterface
 {
     public function __construct(
         private CollectionProvider $provider,
         private RestaurantFilter $restaurantFilter,
-        private TimingRegistry $timingRegistry)
+        private TimingRegistry $timingRegistry,
+        private EntityManagerInterface $entityManager)
     {}
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
@@ -31,6 +34,12 @@ final class RestaurantProvider implements ProviderInterface
 
         $iterator = new SortableRestaurantIterator($collection, $this->timingRegistry);
 
-        return iterator_to_array($iterator);
+        $restaurants = iterator_to_array($iterator);
+
+        // Preload cuisines to optimize serialization
+        $preloader = new EntityPreloader($this->entityManager);
+        $preloader->preload($restaurants, 'servesCuisine');
+
+        return $restaurants;
     }
 }
