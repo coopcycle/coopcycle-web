@@ -27,14 +27,10 @@
   </div>
 </div>
 
-{% for promotion in promotions %}
-<h3>{{ promotion.name }}</h3>
-
-{% if promotion.isCouponBased() %}
 <table class="table">
   <thead>
     {# <th>#</th> #}
-    {# <th>{{ 'basics.name'|trans }}</th> #}
+    <th>{{ 'basics.name'|trans }}</th>
     <th>{{ 'sylius.ui.code'|trans }}</th>
     <th>{{ 'sylius.form.promotion_coupon.usage_limit'|trans }}</th>
     <th>{{ 'sylius.form.promotion_coupon.per_customer_usage_limit'|trans }}</th>
@@ -42,57 +38,64 @@
     <th class="text-right">{% trans %}promotion_coupon.used.label{% endtrans %}</th>
   </thead>
   <tbody>
-    {% for coupon in promotion.coupons %}
-    <tr>
-      {#
-      <td>
-        <a href="{{ path(promotion_route, { restaurantId: restaurant.id, promotionId: promotion.id }) }}">#{{ promotion.id }}</a>
-      </td>
-      #}
-      {# <td>{{ promotion.name }}</td> #}
-      <td>
-        {{ coupon.code }}
-      </td>
-      <td>
-        {{ coupon.usageLimit }}
-      </td>
-      <td>
-        {{ coupon.perCustomerUsageLimit }}
-      </td>
-      <td>
-        {% if coupon.expiresAt is not empty %}
-          {{ coupon.expiresAt|format_datetime('short', 'short') }}
-        {% endif %}
-      </td>
-      <td class="text-right">
-        {{ coupon.used }}
-      </td>
-    </tr>
-    {% endfor %}
+  {% for promotion in promotions %}
+    {% if promotion.isCouponBased() %}
+      {% for coupon in promotion.coupons %}
+      <tr>
+        <td>{{ promotion.name }}</td>
+        <td>
+          {{ coupon.code }}
+        </td>
+        <td>
+          {{ coupon.usageLimit }}
+        </td>
+        <td>
+          {{ coupon.perCustomerUsageLimit }}
+        </td>
+        <td>
+          {% if coupon.expiresAt is not empty %}
+            {{ coupon.expiresAt|format_datetime('medium', 'short') }}
+          {% endif %}
+        </td>
+        <td class="text-right">
+          {{ coupon.used }}
+        </td>
+      </tr>
+      {% endfor %}
+    {% else %}
+      <tr>
+        <td>
+          <span>{{ promotion.name }}</span>
+          <ul class="list-unstyled">
+          {% for promotion_rule in promotion.rules %}
+            <li>
+              <small>{{ promotion_rule|promotion_rule_for_humans }}</small>
+            </li>
+          {% endfor %}
+          </ul>
+          <ul class="list-unstyled">
+          {% for promotion_action in promotion.actions %}
+            <li>
+              <small>{{ promotion_action|promotion_action_for_humans }}</small>
+            </li>
+          {% endfor %}
+          </ul>
+        </td>
+        <td></td>
+        <td>
+          {{ promotion.usageLimit }}
+        </td>
+        <td></td>
+        <td>
+          {% if promotion.endsAt is not empty %}
+            {{ promotion.endsAt|format_datetime('medium', 'short') }}
+          {% endif %}
+        </td>
+        <td class="text-right"></td>
+      </tr>
+    {% endif %}
+  {% endfor %}
   </tbody>
 </table>
-{% else %}
-
-  <h4>{% trans %}sylius.form.promotion.rules{% endtrans %}</h4>
-  <ul class="list-unstyled">
-  {% for promotion_rule in promotion.rules %}
-    <li>
-      <small>{{ promotion_rule|promotion_rule_for_humans }}</small>
-    </li>
-  {% endfor %}
-  </ul>
-
-  <h4>{% trans %}sylius.form.promotion.actions{% endtrans %}</h4>
-  <ul class="list-unstyled">
-  {% for promotion_action in promotion.actions %}
-    <li>
-      <small>{{ promotion_action|promotion_action_for_humans }}</small>
-    </li>
-  {% endfor %}
-  </ul>
-
-{% endif %}
-
-{% endfor %}
 
 {% endblock %}
