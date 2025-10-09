@@ -40,7 +40,7 @@ Encore
   .addEntry('delivery-tracking', './js/app/delivery/tracking.js')
   .addEntry('delivery-form-react', './js/app/components/delivery-form/entrypoint.tsx')
   .addEntry('recurrence-rule-form-react', './js/app/components/recurrence-rule-form/index.tsx')
-  .addEntry('invoicing', './js/app/admin/invoicing/index.tsx')
+  .addEntry('invoicing', './js/app/admin/invoicing/entrypoint.tsx')
   .addEntry('notifications', './js/app/notifications/index.js')
   .addEntry('foodtech-dashboard', './js/app/foodtech/dashboard/index.js')
   .addEntry('metrics', './js/app/metrics/index.js')
