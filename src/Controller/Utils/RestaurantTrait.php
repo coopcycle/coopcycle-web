@@ -1506,16 +1506,50 @@ trait RestaurantTrait
 
     public function restaurantPromotionsAction($id, Request $request)
     {
+
+        $promotionEligibilityChecker = new \Sylius\Component\Promotion\Checker\Eligibility\CompositePromotionEligibilityChecker([
+            new \Sylius\Component\Promotion\Checker\Eligibility\PromotionArchivalEligibilityChecker(),
+            new \Sylius\Component\Promotion\Checker\Eligibility\PromotionDurationEligibilityChecker(),
+            new \Sylius\Component\Promotion\Checker\Eligibility\PromotionUsageLimitEligibilityChecker(),
+        ]);
+
+        $promotionCouponEligibilityChecker = new \Sylius\Component\Promotion\Checker\Eligibility\CompositePromotionCouponEligibilityChecker([
+            new \Sylius\Component\Promotion\Checker\Eligibility\PromotionCouponDurationEligibilityChecker(),
+            new \Sylius\Component\Promotion\Checker\Eligibility\PromotionCouponUsageLimitEligibilityChecker(),
+        ]);
+
         $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
         $this->accessControl($restaurant);
 
+        $ongoing = [];
+        $past = [];
+
+        foreach ($restaurant->getPromotions() as $promotion) {
+            if ($promotion->isCouponBased()) {
+                foreach ($promotion->getCoupons() as $coupon) {
+                    if (!$promotionCouponEligibilityChecker->isEligible(new Order(), $coupon)) {
+                        $past[] = $coupon;
+                    } else {
+                        $ongoing[] = $coupon;
+                    }
+                }
+            } else {
+                if (!$promotionEligibilityChecker->isEligible(new Order(), $promotion)) {
+                    $past[] = $promotion;
+                } else {
+                    $ongoing[] = $promotion;
+                }
+            }
+        }
+
         return $this->render('restaurant/promotions.html.twig', $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
-            'promotions' => $restaurant->getPromotions(),
+            'past_promotions' => $past,
+            'ongoing_promotions' => $ongoing,
         ]));
     }
 
