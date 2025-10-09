@@ -296,6 +296,9 @@ class SettingsManager
 
         } catch (\RuntimeException $e) {
 
+            // TODO
+            // Check that exception message matches "Setting "$name" couldn't be found."
+
             $className = $this->configEntityName;
 
             $entityManager = $this->doctrine

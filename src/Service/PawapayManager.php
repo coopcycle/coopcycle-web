@@ -23,15 +23,18 @@ class PawapayManager
 
     public function createPaymentPage(PaymentInterface $payment, array $context = [])
     {
-        // https://api.sandbox.pawapay.io/v2/predict-provider
-        // $response = $pawapayClient->request('POST', 'v2/predict-provider', [
-        //     'json' => [
-        //         'phoneNumber' => '+233241234567'
-        //     ]
-        // ]);
-
         $order = $payment->getOrder();
         $customer = $order->getCustomer();
+
+        // https://api.sandbox.pawapay.io/v2/predict-provider
+        $response = $this->pawapayClient->request('POST', 'v2/predict-provider', [
+            'json' => [
+                'phoneNumber' => $customer->getPhoneNumber()
+            ]
+        ]);
+
+        $data = $response->toArray();
+        $phoneNumber = $data['phoneNumber'];
 
         $depositId = Uuid::uuid4()->toString();
 
@@ -42,17 +45,18 @@ class PawapayManager
 
         $payload = [
             'depositId' => $depositId,
-            'returnUrl' => 'https://demo.coopcycle.org/pawaypay/return', // $this->urlGenerator->generate('pawapay_return_url', referenceType: UrlGeneratorInterface::ABSOLUTE_URL), // ,
+            // Even in sandbox mode, Pawapay does not allow http://localhost
+            // When developing, replace this with https://demo.coopcycle.org for example
+            'returnUrl' => $this->urlGenerator->generate('pawapay_return_url', referenceType: UrlGeneratorInterface::ABSOLUTE_URL),
             'amountDetails' => [
                 "amount" => strval($numberFormatter->format($order->getTotal() / 100)), // Make sure it is a string
                 "currency" => strtoupper($this->currencyContext->getCurrencyCode())
             ],
             'country' => $this->countryCode,
-            'phoneNumber' => '233241234567' // $customer->getPhoneNumber(),
+            // Example phone number 233241234567
+            'phoneNumber' => $phoneNumber,
             // 'reason' => 'Lorem ipsum',
         ];
-
-        // dd($payload);
 
         $response = $this->pawapayClient->request('POST', 'v2/paymentpage', [
             'json' => $payload
