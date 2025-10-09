@@ -331,6 +331,15 @@ dashboard_restaurant_new_promotion:
             restaurant_promotions: dashboard_restaurant_promotions
     methods: [ GET, POST ]
 
+dashboard_restaurant_archive_promotion:
+    path: /dashboard/restaurants/{restaurantId}/promotions/archive
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::archiveRestaurantPromotionAction
+        layout: 'dashboard.html.twig'
+        routes:
+            restaurant_promotions: dashboard_restaurant_promotions
+    methods: [ POST ]
+
 dashboard_restaurant_promotion:
     path: /dashboard/restaurants/{restaurantId}/promotions/{promotionId}
     defaults:

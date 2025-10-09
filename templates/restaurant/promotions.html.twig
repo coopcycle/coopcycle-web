@@ -36,6 +36,7 @@
     <th>{{ 'sylius.form.promotion_coupon.per_customer_usage_limit'|trans }}</th>
     <th>{{ 'sylius.form.promotion_coupon.expires_at'|trans }}</th>
     <th class="text-right">{% trans %}promotion_coupon.used.label{% endtrans %}</th>
+    <th></th>
   </thead>
   <tbody>
   {% for promotion in promotions %}
@@ -59,6 +60,15 @@
         </td>
         <td class="text-right">
           {{ coupon.used }}
+        </td>
+        <td class="text-right">
+          <form method="post" action="{{ path(promotion_archive_route, {restaurantId: restaurant.id}) }}">
+            <input type="hidden" name="type" value="coupon" />
+            <input type="hidden" name="id" value={{ coupon.id }} />
+            <button class="btn btn-default" title="Archive" type="submit" onclick="return window.confirm('{{ 'basics.are_you_sure'|trans|escape('js') }}')">
+              <i class="fa fa-archive"></i>
+            </button>
+          </form>
         </td>
       </tr>
       {% endfor %}
@@ -92,6 +102,15 @@
           {% endif %}
         </td>
         <td class="text-right"></td>
+        <td class="text-right">
+          <form method="post" action="{{ path(promotion_archive_route, {restaurantId: restaurant.id}) }}">
+            <input type="hidden" name="type" value="promotion" />
+            <input type="hidden" name="id" value={{ promotion.id }} />
+            <button class="btn btn-default" title="Archive" type="submit" onclick="return window.confirm('{{ 'basics.are_you_sure'|trans|escape('js') }}')">
+              <i class="fa fa-archive"></i>
+            </button>
+          </form>
+        </td>
       </tr>
     {% endif %}
   {% endfor %}

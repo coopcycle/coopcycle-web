@@ -1981,4 +1981,53 @@ trait RestaurantTrait
             'payment_methods' => $paymentMethods,
         ]));
     }
+
+    public function archiveRestaurantPromotionAction($restaurantId, Request $request)
+    {
+        $restaurant = $this->entityManager
+            ->getRepository(LocalBusiness::class)
+            ->find($restaurantId);
+
+        if ($request->isMethod('POST')) {
+
+            $type = $request->request->get('type');
+            $id = $request->request->getInt('id');
+
+            if ($type === 'coupon') {
+
+                $coupon = null;
+                foreach ($restaurant->getPromotions() as $promotion) {
+                    if ($promotion->isCouponBased()) {
+                        foreach ($promotion->getCoupons() as $c) {
+                            if ($id === $c->getId()) {
+                                $coupon = $c;
+                                break 2;
+                            }
+                        }
+                    }
+                }
+
+                if ($coupon) {
+                    $coupon->setExpiresAt(new \DateTime('now'));
+                    $this->entityManager->flush();
+                }
+
+            } elseif ($type === 'promotion') {
+
+                foreach ($restaurant->getPromotions() as $promotion) {
+                    if (!$promotion->isCouponBased() && $id === $promotion->getId()) {
+                        $promotion->setArchivedAt(new \DateTime('now'));
+                        $this->entityManager->flush();
+                        break;
+                    }
+                }
+
+            }
+
+        }
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->redirectToRoute($routes['restaurant_promotions'], ['id' => $restaurantId]);
+    }
 }
