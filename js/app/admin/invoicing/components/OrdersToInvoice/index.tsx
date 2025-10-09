@@ -1,35 +1,35 @@
-import { useMemo, useState } from 'react'
-import Modal from 'react-modal'
-import { useTranslation } from 'react-i18next'
-import { Checkbox } from 'antd'
-import { Moment } from 'moment'
+import { useMemo, useState } from 'react';
+import Modal from 'react-modal';
+import { useTranslation } from 'react-i18next';
+import { Checkbox } from 'antd';
+import { Moment } from 'moment';
 
-import Button from '../../../../components/core/Button'
-import { prepareParams } from '../../redux/actions'
-import ExportModalContent from '../ExportModalContent'
-import OrganizationsTable from '../OrganizationsTable'
-import RangePicker from './RangePicker'
+import Button from '../../../../components/core/Button';
+import { prepareParams } from '../../redux/actions';
+import ExportModalContent from '../ExportModalContent';
+import OrganizationsTable from '../OrganizationsTable';
+import RangePicker from './RangePicker';
 
-const ordersStates = ['new', 'accepted', 'fulfilled']
+const ordersStates = ['new', 'accepted', 'fulfilled'];
 
 export default () => {
-  const [selectedStoreIds, setSelectedStoreIds] = useState([] as string[])
-  const [dateRange, setDateRange] = useState(null as Moment[]|null)
-  const [onlyNotInvoiced, setOnlyNotInvoiced] = useState(false)
+  const [selectedStoreIds, setSelectedStoreIds] = useState([] as string[]);
+  const [dateRange, setDateRange] = useState(null as Moment[] | null);
+  const [onlyNotInvoiced, setOnlyNotInvoiced] = useState(false);
 
-  const [reloadKey, setReloadKey] = useState(0)
+  const [reloadKey, setReloadKey] = useState(0);
 
-  const [isModalOpen, setModalOpen] = useState(false)
+  const [isModalOpen, setModalOpen] = useState(false);
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const params = useMemo(() => {
     if (selectedStoreIds.length === 0) {
-      return null
+      return null;
     }
 
     if (!dateRange) {
-      return null
+      return null;
     }
 
     return prepareParams({
@@ -40,8 +40,8 @@ export default () => {
       ],
       state: ordersStates,
       onlyNotInvoiced: onlyNotInvoiced,
-    })
-  }, [selectedStoreIds, dateRange, onlyNotInvoiced])
+    });
+  }, [selectedStoreIds, dateRange, onlyNotInvoiced]);
 
   return (
     // marginTop: 48px: h5 marginTop (10px) + 38px
@@ -65,7 +65,7 @@ export default () => {
             testID="invoicing.refresh"
             primary
             onClick={() => {
-              setReloadKey(reloadKey + 1)
+              setReloadKey(reloadKey + 1);
             }}>
             {t('ADMIN_ORDERS_TO_INVOICE_REFRESH')}
           </Button>
@@ -84,10 +84,10 @@ export default () => {
           primary
           onClick={() => {
             if (!params) {
-              return
+              return;
             }
 
-            setModalOpen(true)
+            setModalOpen(true);
           }}>
           {t('ADMIN_ORDERS_TO_INVOICE_DOWNLOAD')}
         </Button>
@@ -106,5 +106,5 @@ export default () => {
         />
       </Modal>
     </div>
-  )
-}
+  );
+};
