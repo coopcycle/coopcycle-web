@@ -1709,3 +1709,4 @@ pricing.rule.humanizer.price_range_with_threshold: 'above %threshold% - %unit_pr
 pricing.rule.humanizer.price_per_package: '%unit_price% per %package_name%'
 form.settings.pawapay_api_key.label: Pawapay API key
 form.settings.pawapay.title: Pawapay configuration
+pawapay.payment_not_completed: The payment could not be processed

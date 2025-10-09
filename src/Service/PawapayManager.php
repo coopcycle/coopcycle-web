@@ -46,7 +46,7 @@ class PawapayManager
         $payload = [
             'depositId' => $depositId,
             // Even in sandbox mode, Pawapay does not allow http://localhost
-            // When developing, replace this with https://demo.coopcycle.org for example
+            // When developing, replace this with https://demo.coopcycle.org/pawapay/return for example
             'returnUrl' => $this->urlGenerator->generate('pawapay_return_url', referenceType: UrlGeneratorInterface::ABSOLUTE_URL),
             'amountDetails' => [
                 "amount" => strval($numberFormatter->format($order->getTotal() / 100)), // Make sure it is a string
