@@ -8,8 +8,10 @@ use AppBundle\Service\OrderManager;
 use AppBundle\Service\PawapayManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sylius\Component\Order\Context\CartContextInterface;
+use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PawapayController extends AbstractController
 {
@@ -20,6 +22,7 @@ class PawapayController extends AbstractController
         CartContextInterface $cartContext,
         EntityManagerInterface $entityManager,
         OrderManager $orderManager,
+        TranslatorInterface $translator,
         Request $request)
     {
         $order = $cartContext->getCart();
@@ -28,20 +31,34 @@ class PawapayController extends AbstractController
             return $this->redirectToRoute('order_payment');
         }
 
-        // TODO Double-check it is the same deposit / payment
+        if (!$request->query->has('depositId')) {
+            return $this->redirectToRoute('order_payment');
+        }
 
-        $deposit = $pawapayManager->getDeposit($request->query->get('depositId'));
+        $depositId = $request->query->get('depositId');
+
+        $payment = $order->getPayments()->filter(fn ($p) => $p->getPawapayDepositId() === $depositId);
+
+        if (!$payment) {
+            return $this->redirectToRoute('order_payment');
+        }
+
+        $deposit = $pawapayManager->getDeposit($depositId);
 
         if ($deposit['status'] !== 'COMPLETED') {
 
-            // TODO Add flash message with error
+            $this->addFlash(
+                'error',
+                $translator->trans('pawapay.payment_not_completed')
+            );
 
             return $this->redirectToRoute('order_payment');
         }
 
         $orderManager->checkout($order);
 
-        // TODO Change payment state to completed
+        // With pawaPay, the payment is already captured
+        $payment->setState(PaymentInterface::STATE_COMPLETED);
 
         $entityManager->flush();
 
