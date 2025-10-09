@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { Spin } from "antd";
-import TaskStatusBadge from "../../../../dashboard/components/TaskStatusBadge";
-import { money } from "./utils";
+import React, { useEffect, useState } from 'react';
+import { Spin } from 'antd';
+import TaskStatusBadge from '../../../../dashboard/components/TaskStatusBadge';
+import { money } from './utils';
 
 async function _fetchTaskContect(id) {
   const httpClient = new window._auth.httpClient();
   return await httpClient.get(
-    window.Routing.generate("_api_/tasks/{id}/context_get", { id }),
+    window.Routing.generate('_api_/tasks/{id}/context_get', { id }),
   );
 }
 
@@ -63,7 +63,9 @@ export default function ({ task }) {
         <span className="font-weight-bold mr-2">Task #{task.id}</span>
         <TaskStatusBadge task={task} />
       </p>
-      <div data-testid="task-type" className="text-capitalize">Type: {task.type.toLowerCase()}</div>
+      <div data-testid="task-type" className="text-capitalize">
+        Type: {task.type.toLowerCase()}
+      </div>
       <ContextDetails context={context} />
     </div>
   );

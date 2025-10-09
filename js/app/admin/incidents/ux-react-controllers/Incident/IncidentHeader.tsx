@@ -1,60 +1,54 @@
-import React, { useState } from "react";
-import moment from "moment";
-import {
-  Row,
-  Statistic,
-  Dropdown,
-  Select,
-  notification,
-} from "antd";
-import PageHeader from '../../../../components/PageHeader'
-import { useTranslation } from "react-i18next";
+import React, { useState } from 'react';
+import moment from 'moment';
+import { Row, Statistic, Dropdown, Select, notification } from 'antd';
+import PageHeader from '../../../../components/PageHeader';
+import { useTranslation } from 'react-i18next';
 
-import store from "./incidentStore";
+import store from './incidentStore';
 
 async function _handleStatusSubmit(id, body) {
   const httpClient = new window._auth.httpClient();
   return await httpClient.patch(
-    window.Routing.generate("_api_/incidents/{id}{._format}_patch", { id }),
+    window.Routing.generate('_api_/incidents/{id}{._format}_patch', { id }),
     body,
   );
 }
 async function syncData(id, body) {
   const { error } = await _handleStatusSubmit(id, body);
   if (error) {
-    notification.error({ message: "Something went wrong" });
+    notification.error({ message: 'Something went wrong' });
   }
 }
 
 function _prioryToLabel(key) {
   switch (key) {
     case 1:
-      return "HIGH";
+      return 'HIGH';
     case 2:
-      return "MEDIUM";
+      return 'MEDIUM';
     case 3:
-      return "LOW";
+      return 'LOW';
   }
 }
 
 function _statusBtn(status) {
   switch (status) {
-    case "OPEN":
+    case 'OPEN':
       return {
-        next: "CLOSED",
-        label: "CLOSE_THIS_INCIDENT",
+        next: 'CLOSED',
+        label: 'CLOSE_THIS_INCIDENT',
         icon: <i className="fa fa-dot-circle-o mr-2" />,
       };
-    case "CLOSED":
+    case 'CLOSED':
       return {
-        next: "OPEN",
-        label: "REOPEN_THIS_INCIDENT",
+        next: 'OPEN',
+        label: 'REOPEN_THIS_INCIDENT',
         icon: <i className="fa fa-check-circle-o mr-2" />,
       };
   }
 }
 
-export default function() {
+export default function () {
   const { loaded, incident } = store.getState();
   const [priority, setPriority] = useState(incident.priority);
   const [status, setStatus] = useState(incident.status);
@@ -86,62 +80,60 @@ export default function() {
             },
             items: [
               {
-                label: t("SET_TO_PRIORITY", {
-                  priority: t("LOW").toLowerCase(),
+                label: t('SET_TO_PRIORITY', {
+                  priority: t('LOW').toLowerCase(),
                 }),
                 key: 3,
               },
               {
-                label: t("SET_TO_PRIORITY", {
-                  priority: t("MEDIUM").toLowerCase(),
+                label: t('SET_TO_PRIORITY', {
+                  priority: t('MEDIUM').toLowerCase(),
                 }),
                 key: 2,
               },
               {
-                label: t("SET_TO_PRIORITY", {
-                  priority: t("HIGH").toLowerCase(),
+                label: t('SET_TO_PRIORITY', {
+                  priority: t('HIGH').toLowerCase(),
                 }),
                 key: 1,
               },
             ],
           }}
-          type="primary"
-        >
+          type="primary">
           {icon}
           {t(label)}
         </Dropdown.Button>,
-      ]}
-    >
+      ]}>
       <Row className="mb-3">
         <Statistic
-          title={t("STATUS")}
-          style={{ textTransform: "capitalize", marginLeft: "12px" }}
+          title={t('STATUS')}
+          style={{ textTransform: 'capitalize', marginLeft: '12px' }}
           value={t(status)}
         />
         <Statistic
-          title={t("PRIORITY")}
+          title={t('PRIORITY')}
           value={t(_prioryToLabel(priority))}
-          style={{ margin: "0 22px" }}
+          style={{ margin: '0 22px' }}
         />
         <Statistic
-          title={t("REPORTED_BY")}
+          title={t('REPORTED_BY')}
           value={incident.createdBy?.username}
         />
       </Row>
       <Row justify="space-between" className="mt-3">
         <Select
           mode="tags"
-          placeholder={t("PLUS_ADD_TAGS")}
+          placeholder={t('PLUS_ADD_TAGS')}
           onBlur={() => syncData(incident.id, { tags })}
-          onChange={(tags) => setTags(tags)}
-          options={tags.map((t) => ({ label: t, value: t }))}
-          style={{ marginLeft: "2px", width: "300px" }}
+          onChange={tags => setTags(tags)}
+          options={tags.map(t => ({ label: t, value: t }))}
+          style={{ marginLeft: '2px', width: '300px' }}
           variant="borderless"
         />
         <div>
-          <div className="pb-1">{t("INCIDENT_REPORTED_AT")} :</div>
+          <div className="pb-1">{t('INCIDENT_REPORTED_AT')} :</div>
           <i className="fa fa-calendar pr-1" />
-          {moment(incident.createdAt).format("LLL")}
+          {moment(incident.createdAt).format('LLL')}
         </div>
       </Row>
     </PageHeader>

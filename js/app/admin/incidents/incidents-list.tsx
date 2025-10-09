@@ -1,1 +1,1 @@
-import './form.scss'
+import './form.scss';

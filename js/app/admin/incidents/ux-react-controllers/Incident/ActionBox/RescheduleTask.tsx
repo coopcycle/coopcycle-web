@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import moment from "moment";
-import { Button, DatePicker } from "antd";
-import { useTranslation } from "react-i18next";
+import React, { useState } from 'react';
+import moment from 'moment';
+import { Button, DatePicker } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 async function _handleResheduleSubmit(id, after, before) {
   const httpClient = new window._auth.httpClient();
   return await httpClient.put(
-    window.Routing.generate("_api_/incidents/{id}/action_put", { id }),
-    { action: "rescheduled", after, before },
+    window.Routing.generate('_api_/incidents/{id}/action_put', { id }),
+    { action: 'rescheduled', after, before },
   );
 }
 
@@ -20,13 +20,13 @@ export default function ({ incident, task }) {
   const doneAfter = moment(task.after);
   const doneBefore = moment(task.before);
   const ranges = {
-    "Next day": [
-      doneAfter.clone().add(1, "days"),
-      doneBefore.clone().add(1, "days"),
+    'Next day': [
+      doneAfter.clone().add(1, 'days'),
+      doneBefore.clone().add(1, 'days'),
     ],
-    "Next week": [
-      doneAfter.clone().add(7, "days"),
-      doneBefore.clone().add(7, "days"),
+    'Next week': [
+      doneAfter.clone().add(7, 'days'),
+      doneBefore.clone().add(7, 'days'),
     ],
   };
 
@@ -34,13 +34,13 @@ export default function ({ incident, task }) {
     <div>
       <DatePicker.RangePicker
         size="large"
-        style={{ width: "100%" }}
+        style={{ width: '100%' }}
         format="DD/MM/YYYY HH:mm"
-        status={error ? "error" : null}
+        status={error ? 'error' : null}
         ranges={ranges}
         defaultValue={[doneAfter, doneBefore]}
-        showTime={{ format: "HH:mm", minuteStep: 15 }}
-        onChange={(dates) => setValue(dates)}
+        showTime={{ format: 'HH:mm', minuteStep: 15 }}
+        onChange={dates => setValue(dates)}
       />
       <p className="mt-3">
         <Button
@@ -60,15 +60,14 @@ export default function ({ incident, task }) {
               setError(true);
               setSubmitting(false);
             }
-          }}
-        >
-          {t("ADMIN_DASHBOARD_RESCHEDULE")}
+          }}>
+          {t('ADMIN_DASHBOARD_RESCHEDULE')}
         </Button>
       </p>
       <p>
         <Button type="danger" ghost disabled={value === null || submitting}>
-          {t("ADMIN_DASHBOARD_AND_CLOSE_THE_INCIDENT", {
-            action: t("ADMIN_DASHBOARD_RESCHEDULE"),
+          {t('ADMIN_DASHBOARD_AND_CLOSE_THE_INCIDENT', {
+            action: t('ADMIN_DASHBOARD_RESCHEDULE'),
           })}
         </Button>
       </p>
