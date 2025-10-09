@@ -3,7 +3,7 @@ import { Table, Tag, Avatar, Row, Col, Badge, Tooltip } from "antd";
 import IncidentItem from "./IncidentItem";
 import _ from "lodash";
 import { useTranslation } from "react-i18next";
-import { moment } from "../../../../js/shared";
+import { moment } from "../../../../../shared";
 
 async function _fetchIncidents() {
   const httpClient = new window._auth.httpClient();

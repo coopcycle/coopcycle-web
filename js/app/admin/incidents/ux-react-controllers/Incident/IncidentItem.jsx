@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Spin } from "antd";
-import TaskStatusBadge from "../../../../js/app/dashboard/components/TaskStatusBadge";
+import TaskStatusBadge from "../../../../dashboard/components/TaskStatusBadge";
 import { money } from "./utils";
 
 async function _fetchTaskContect(id) {

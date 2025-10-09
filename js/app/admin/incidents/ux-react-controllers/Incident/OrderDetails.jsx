@@ -3,7 +3,7 @@ import moment from "moment";
 import { Button } from "antd";
 import "./OrderDetails.scss";
 import { money, weight } from "./utils";
-import TaskStatusBadge from "../../../../js/app/dashboard/components/TaskStatusBadge";
+import TaskStatusBadge from "../../../../dashboard/components/TaskStatusBadge";
 
 import store from "./incidentStore";
 import { useTranslation } from "react-i18next";

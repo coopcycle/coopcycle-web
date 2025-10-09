@@ -7,7 +7,7 @@ import {
   Select,
   notification,
 } from "antd";
-import PageHeader from '../../../../js/app/components/PageHeader'
+import PageHeader from '../../../../components/PageHeader'
 import { useTranslation } from "react-i18next";
 
 import store from "./incidentStore";
