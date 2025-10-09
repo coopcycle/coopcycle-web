@@ -13,5 +13,11 @@
 {% endblock %}
 
 {% block content %}
-  <div id="invoicing" {{ react_component('admin/invoicing/page') }}></div>
+  <div id="react-root">
+    {# Managed with React #}
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('invoicing') }}
 {% endblock %}
