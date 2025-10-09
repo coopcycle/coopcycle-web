@@ -11,6 +11,8 @@ import FlagsContext from './FlagsContext';
 import DeliveryForm from './DeliveryForm';
 import Modal from 'react-modal';
 
+import '../../bootstrap-reset.scss'
+
 const buildInitialState = () => {
   return {
     [accountSlice.name]: accountSlice.getInitialState(),

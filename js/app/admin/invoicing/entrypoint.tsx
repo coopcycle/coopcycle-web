@@ -4,6 +4,8 @@ import Modal from 'react-modal';
 import Page from './page';
 import { RootWithDefaults } from '../../utils/react';
 
+import '../../bootstrap-reset.scss'
+
 // Mount the component to the DOM when the document is loaded
 document.addEventListener('DOMContentLoaded', () => {
   const container = document.getElementById('react-root');

@@ -11,6 +11,8 @@ import { formSlice } from '../delivery-form/redux/formSlice';
 import { RootWithDefaults } from '../../utils/react';
 import FlagsContext from '../delivery-form/FlagsContext';
 
+import '../../bootstrap-reset.scss'
+
 const buildInitialState = () => {
   return {
     [accountSlice.name]: accountSlice.getInitialState(),
