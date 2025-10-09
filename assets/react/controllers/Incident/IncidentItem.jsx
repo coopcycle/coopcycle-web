@@ -63,7 +63,7 @@ export default function ({ task }) {
         <span className="font-weight-bold mr-2">Task #{task.id}</span>
         <TaskStatusBadge task={task} />
       </p>
-      <div className="text-capitalize">Type: {task.type.toLowerCase()}</div>
+      <div data-testid="task-type" className="text-capitalize">Type: {task.type.toLowerCase()}</div>
       <ContextDetails context={context} />
     </div>
   );
