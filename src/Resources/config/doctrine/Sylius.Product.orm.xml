@@ -18,6 +18,9 @@
         <cascade-remove/>
         <cascade-persist/>
       </cascade>
+      <order-by>
+        <order-by-field name="position" direction="ASC"/>
+      </order-by>
     </one-to-many>
     <one-to-many field="attributes" target-entity="Sylius\Component\Product\Model\ProductAttributeValue" mapped-by="subject" orphan-removal="true" fetch="EAGER">
       <cascade>
