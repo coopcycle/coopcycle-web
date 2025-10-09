@@ -7,6 +7,7 @@ use AppBundle\Sylius\Payment\MercadopagoTrait;
 use AppBundle\Sylius\Payment\PaygreenTrait;
 use AppBundle\Sylius\Payment\RefundTrait;
 use AppBundle\Sylius\Payment\StripeTrait;
+use AppBundle\Sylius\Payment\PawapayTrait;
 use Doctrine\Common\Collections\ArrayCollection;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Model\OrderAwareInterface;
@@ -19,6 +20,7 @@ class Payment extends BasePayment implements OrderAwareInterface
     use PaygreenTrait;
     use RefundTrait;
     use EdenredTrait;
+    use PawapayTrait;
 
     protected $order;
     protected $refunds;
