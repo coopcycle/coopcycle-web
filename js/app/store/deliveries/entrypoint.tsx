@@ -2,16 +2,16 @@ import React, { useLayoutEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RootWithDefaults } from '../../utils/react';
 import { accountSlice } from '../../entities/account/reduxSlice';
-import { createStoreFromPreloadedState } from './redux/store';
+import { createStoreFromPreloadedState } from '../../components/delivery-form/redux/store';
 import { Uri } from '../../api/types';
 import { Provider, useDispatch } from 'react-redux';
-import { setMode } from './redux/formSlice';
-import { Mode } from './mode';
-import FlagsContext from './FlagsContext';
-import DeliveryForm from './DeliveryForm';
+import { setMode } from '../../components/delivery-form/redux/formSlice';
+import { Mode } from '../../components/delivery-form/mode';
+import FlagsContext from '../../components/delivery-form/FlagsContext';
+import DeliveryForm from '../../components/delivery-form/DeliveryForm';
 import Modal from 'react-modal';
 
-import '../../bootstrap-reset.scss'
+import '../../bootstrap-reset.scss';
 
 const buildInitialState = () => {
   return {

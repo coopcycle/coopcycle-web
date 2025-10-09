@@ -1,17 +1,17 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { accountSlice } from '../../entities/account/reduxSlice';
-import DeliveryForm from '../delivery-form/DeliveryForm';
+import DeliveryForm from '../../components/delivery-form/DeliveryForm';
 //FIXME: temporary re-use of the delivery-form store, to be replaced with a dedicated store
-import { createStoreFromPreloadedState } from '../delivery-form/redux/store';
+import { createStoreFromPreloadedState } from '../../components/delivery-form/redux/store';
 import Modal from 'react-modal';
 import { createRoot } from 'react-dom/client';
-import { Mode } from '../delivery-form/mode';
-import { formSlice } from '../delivery-form/redux/formSlice';
+import { Mode } from '../../components/delivery-form/mode';
+import { formSlice } from '../../components/delivery-form/redux/formSlice';
 import { RootWithDefaults } from '../../utils/react';
-import FlagsContext from '../delivery-form/FlagsContext';
+import FlagsContext from '../../components/delivery-form/FlagsContext';
 
-import '../../bootstrap-reset.scss'
+import '../../bootstrap-reset.scss';
 
 const buildInitialState = () => {
   return {
