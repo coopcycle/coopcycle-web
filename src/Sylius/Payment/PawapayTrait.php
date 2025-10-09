@@ -17,4 +17,9 @@ trait PawapayTrait
             'pawapay_payment_page_url' => $url
         ]);
     }
+
+    public function getPawapayDepositId()
+    {
+        return $this->details['pawapay_deposit_id'] ?? null;
+    }
 }
