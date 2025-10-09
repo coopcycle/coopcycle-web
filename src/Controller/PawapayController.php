@@ -23,6 +23,13 @@ class PawapayController extends AbstractController
         Request $request)
     {
         $order = $cartContext->getCart();
+
+        if ($request->query->has('cancel') && $request->query->getBoolean('cancel')) {
+            return $this->redirectToRoute('order_payment');
+        }
+
+        // TODO Double-check it is the same deposit / payment
+
         $deposit = $pawapayManager->getDeposit($request->query->get('depositId'));
 
         if ($deposit['status'] !== 'COMPLETED') {
@@ -33,6 +40,8 @@ class PawapayController extends AbstractController
         }
 
         $orderManager->checkout($order);
+
+        // TODO Change payment state to completed
 
         $entityManager->flush();
 
