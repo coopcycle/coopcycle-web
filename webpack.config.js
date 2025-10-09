@@ -36,7 +36,7 @@ Encore
   .addEntry('delivery-map', './js/app/delivery/map.js')
   .addEntry('delivery-embed-start-form', './js/app/delivery/embed-start.js')
   .addEntry('delivery-pricing-rules', './js/app/delivery/pricing/pricing-rules.js')
-  .addEntry('pricing-rule-set-form-react', './js/app/components/pricing-rule-set-form/index.tsx')
+  .addEntry('pricing-rule-set-form-react', './js/app/admin/pricing/entrypoint.tsx')
   .addEntry('delivery-tracking', './js/app/delivery/tracking.js')
   .addEntry('delivery-form-react', './js/app/store/deliveries/entrypoint.tsx')
   .addEntry('recurrence-rule-form-react', './js/app/store/recurrence_rules/entrypoint.tsx')
