@@ -8,6 +8,7 @@ use AppBundle\Sylius\Promotion\Checker\Rule\IsRestaurantRuleChecker;
 use Ramsey\Uuid\Uuid;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
 use Sylius\Component\Promotion\Model\Promotion;
+use Sylius\Component\Promotion\Model\PromotionInterface;
 use Sylius\Component\Promotion\Model\PromotionCoupon;
 use Sylius\Component\Promotion\Model\PromotionAction;
 use Sylius\Component\Promotion\Repository\PromotionCouponRepositoryInterface;
@@ -93,10 +94,10 @@ class OfferDeliveryType extends AbstractType
         });
     }
 
-    private function getOrCreatePromotion(PromotionCoupon $coupon, LocalBusiness $restaurant): Promotion
+    private function getOrCreatePromotion(PromotionCoupon $coupon, LocalBusiness $restaurant): PromotionInterface
     {
         if (null !== $coupon->getPromotion()) {
-            return $promotion;
+            return $coupon->getPromotion();
         }
 
         foreach ($restaurant->getPromotions() as $p) {
