@@ -52,7 +52,10 @@
       </tr>
     {% else %}
       <tr>
-        <td></td>
+        <td><a href="{{ path(promotion_route, {
+          restaurantId: restaurant.id,
+          promotionId: promotion.id }) }}">#{{ promotion.id }}</a>
+        </td>
         <td>
           <span>{{ promotion.name }}</span>
           <ul class="list-unstyled">

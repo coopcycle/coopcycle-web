@@ -67,6 +67,7 @@ use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentMethodInterface;
 use Sylius\Component\Product\Model\ProductTranslation;
 use Sylius\Component\Product\Repository\ProductOptionRepositoryInterface;
+use Sylius\Component\Promotion\Model\Promotion;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Promotion\Checker\Eligibility\PromotionEligibilityCheckerInterface;
 use Sylius\Component\Promotion\Checker\Eligibility\PromotionCouponEligibilityCheckerInterface;
@@ -1621,11 +1622,45 @@ trait RestaurantTrait
         return $this->redirectToRoute($routes['promotions'], ['id' => $id]);
     }
 
-    public function restaurantPromotionAction($restaurantId, $promotionId, Request $request)
+    public function restaurantPromotionAction($restaurantId, $promotionId, TranslatorInterface $translator, Request $request)
     {
-        // TODO Implement
+        $restaurant = $this->entityManager
+            ->getRepository(LocalBusiness::class)
+            ->find($restaurantId);
 
-        throw $this->createNotFoundException();
+        $promotion = $this->entityManager
+            ->getRepository(Promotion::class)
+            ->find($promotionId);
+
+        if (!$restaurant->hasPromotion($promotion)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $form = $this->createForm(ItemsTotalBasedPromotionType::class, $promotion, [
+            'local_business' => $restaurant
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->entityManager->flush();
+
+            $this->addFlash(
+                'notice',
+                $translator->trans('global.changesSaved')
+            );
+
+            $routes = $this->getRestaurantRoutes();
+
+            return $this->redirectToRoute($routes['promotions'], ['id' => $restaurantId]);
+        }
+
+        return $this->render('restaurant/promotion.html.twig', $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'form' => $form->createView(),
+            'promotion_type' => 'items_total',
+        ]));
     }
 
     public function restaurantPromotionCouponAction($restaurantId, $promotionId, $couponId, TranslatorInterface $translator, Request $request)
