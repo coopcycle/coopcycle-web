@@ -229,6 +229,8 @@ services:
   Sylius\Component\Resource\Repository\RepositoryInterface $customerRepository: '@sylius.repository.customer'
   Sylius\Component\Resource\Factory\FactoryInterface $customerFactory: '@sylius.factory.customer'
   Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorageFactory: '@session.storage.factory.native'
+  Sylius\Component\Promotion\Checker\Eligibility\PromotionEligibilityCheckerInterface $promotionExpirationChecker: '@promotion.expiration_checker'
+  Sylius\Component\Promotion\Checker\Eligibility\PromotionCouponEligibilityCheckerInterface $promotionCouponExpirationChecker: '@promotion_coupon.expiration_checker'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
@@ -1688,3 +1690,13 @@ services:
   AppBundle\Api\LegacyEntrypointAction:
     decorates: api_platform.action.entrypoint
     arguments: ['@.inner']
+
+  promotion_coupon.expiration_checker:
+    class: Sylius\Component\Promotion\Checker\Eligibility\CompositePromotionCouponEligibilityChecker
+    arguments:
+      - [ "@sylius.promotion_coupon_duration_eligibility_checker", "@sylius.checker.promotion_coupon.duration_eligibility" ]
+
+  promotion.expiration_checker:
+    class: Sylius\Component\Promotion\Checker\Eligibility\CompositePromotionEligibilityChecker
+    arguments:
+      - [ "@sylius.promotion_archival_eligibility_checker", "@sylius.promotion_duration_eligibility_checker", "@sylius.promotion_usage_limit_eligibility_checker" ]

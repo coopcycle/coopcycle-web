@@ -67,6 +67,8 @@ use Sylius\Component\Payment\Model\PaymentMethodInterface;
 use Sylius\Component\Product\Model\ProductTranslation;
 use Sylius\Component\Product\Repository\ProductOptionRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
+use Sylius\Component\Promotion\Checker\Eligibility\PromotionEligibilityCheckerInterface;
+use Sylius\Component\Promotion\Checker\Eligibility\PromotionCouponEligibilityCheckerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Form\ChoiceList\Loader\CallbackChoiceLoader;
@@ -1504,20 +1506,11 @@ trait RestaurantTrait
         ]));
     }
 
-    public function restaurantPromotionsAction($id, Request $request)
+    public function restaurantPromotionsAction($id,
+        PromotionEligibilityCheckerInterface $promotionExpirationChecker,
+        PromotionCouponEligibilityCheckerInterface $promotionCouponExpirationChecker,
+        Request $request)
     {
-
-        $promotionEligibilityChecker = new \Sylius\Component\Promotion\Checker\Eligibility\CompositePromotionEligibilityChecker([
-            new \Sylius\Component\Promotion\Checker\Eligibility\PromotionArchivalEligibilityChecker(),
-            new \Sylius\Component\Promotion\Checker\Eligibility\PromotionDurationEligibilityChecker(),
-            new \Sylius\Component\Promotion\Checker\Eligibility\PromotionUsageLimitEligibilityChecker(),
-        ]);
-
-        $promotionCouponEligibilityChecker = new \Sylius\Component\Promotion\Checker\Eligibility\CompositePromotionCouponEligibilityChecker([
-            new \Sylius\Component\Promotion\Checker\Eligibility\PromotionCouponDurationEligibilityChecker(),
-            new \Sylius\Component\Promotion\Checker\Eligibility\PromotionCouponUsageLimitEligibilityChecker(),
-        ]);
-
         $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
@@ -1530,14 +1523,14 @@ trait RestaurantTrait
         foreach ($restaurant->getPromotions() as $promotion) {
             if ($promotion->isCouponBased()) {
                 foreach ($promotion->getCoupons() as $coupon) {
-                    if (!$promotionCouponEligibilityChecker->isEligible(new Order(), $coupon)) {
+                    if (!$promotionCouponExpirationChecker->isEligible(new Order(), $coupon)) {
                         $past[] = $coupon;
                     } else {
                         $ongoing[] = $coupon;
                     }
                 }
             } else {
-                if (!$promotionEligibilityChecker->isEligible(new Order(), $promotion)) {
+                if (!$promotionExpirationChecker->isEligible(new Order(), $promotion)) {
                     $past[] = $promotion;
                 } else {
                     $ongoing[] = $promotion;
