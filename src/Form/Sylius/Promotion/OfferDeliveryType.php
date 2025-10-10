@@ -110,6 +110,8 @@ class OfferDeliveryType extends AbstractType
             }
         }
 
+        $promotion = new Promotion();
+
         // FIXME Unrelated translation key
         $promotion->setName($this->translator->trans('promotions.heading.free_delivery'));
         $promotion->setCouponBased(true);
