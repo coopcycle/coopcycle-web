@@ -3,6 +3,7 @@
 namespace AppBundle\Doctrine\Filter;
 
 use AppBundle\Entity\Sylius\ProductOptionValue;
+use AppBundle\Entity\Sylius\ProductOptions;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query\Filter\SQLFilter;
 use Doctrine\DBAL\Types\Type;
@@ -16,7 +17,8 @@ use Doctrine\DBAL\Types\Type;
 final class DisabledFilter extends SQLFilter
 {
     private $classes = [
-        ProductOptionValue::class
+        ProductOptionValue::class,
+        ProductOptions::class,
     ];
 
     public function addFilterConstraint(ClassMetadata $metadata, $targetTableAlias)
