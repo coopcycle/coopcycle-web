@@ -22,6 +22,7 @@ use AppBundle\Entity\Sylius\ProductImage;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Sylius\ProductVariant;
 use AppBundle\Entity\Sylius\ProductVariantTranslation;
+use AppBundle\Entity\Sylius\PromotionCoupon;
 use AppBundle\Entity\Sylius\TaxCategory;
 use AppBundle\Entity\Sylius\TaxonRepository;
 use AppBundle\Form\ApiAppType;
@@ -1570,16 +1571,11 @@ trait RestaurantTrait
                     $form->handleRequest($request);
                     if ($form->isSubmitted() && $form->isValid()) {
 
-                        $promotion = $form->getData();
+                        $coupon = $form->get('coupon')->getData();
 
-                        $restaurant->addPromotion($promotion);
+                        $restaurant->addPromotion($coupon->getPromotion());
 
                         $this->entityManager->flush();
-
-                        // $this->addFlash(
-                        //     'notice',
-                        //     $translator->trans('global.changesSaved')
-                        // );
 
                         return $this->redirectToRoute($routes['promotions'], ['id' => $id]);
                     }
@@ -1630,6 +1626,48 @@ trait RestaurantTrait
         // TODO Implement
 
         throw $this->createNotFoundException();
+    }
+
+    public function restaurantPromotionCouponAction($restaurantId, $promotionId, $couponId, TranslatorInterface $translator, Request $request)
+    {
+        $restaurant = $this->entityManager
+            ->getRepository(LocalBusiness::class)
+            ->find($restaurantId);
+
+        $coupon = $this->entityManager
+            ->getRepository(PromotionCoupon::class)
+            ->find($couponId);
+
+        $promotion = $coupon->getPromotion();
+
+        if (!$restaurant->hasPromotion($promotion)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $form = $this->createForm(OfferDeliveryType::class, $coupon, [
+            'local_business' => $restaurant
+        ]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->entityManager->flush();
+
+            $this->addFlash(
+                'notice',
+                $translator->trans('global.changesSaved')
+            );
+
+            $routes = $this->getRestaurantRoutes();
+
+            return $this->redirectToRoute($routes['promotions'], ['id' => $restaurantId]);
+        }
+
+        return $this->render('restaurant/promotion.html.twig', $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'form' => $form->createView(),
+            'promotion_type' => 'offer_delivery',
+        ]));
     }
 
     public function deleteProductImageAction($restaurantId, $productId, $imageName,

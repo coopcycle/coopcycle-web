@@ -416,6 +416,15 @@ admin_restaurant_promotion:
             restaurant_promotions: admin_restaurant_promotions
     methods: [ GET, POST ]
 
+admin_restaurant_promotion_coupon:
+    path: /admin/restaurants/{restaurantId}/promotions/{promotionId}/coupons/{couponId}
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantPromotionCouponAction
+        layout: 'admin.html.twig'
+        routes:
+            restaurant_promotions: admin_restaurant_promotions
+    methods: [ GET, POST ]
+
 admin_restaurant_archive_promotion:
     path: /admin/restaurants/{restaurantId}/promotions/archive
     defaults:

@@ -1,5 +1,6 @@
 <table class="table">
   <thead>
+    <th></th>
     <th>{{ 'basics.name'|trans }}</th>
     <th>{{ 'sylius.ui.code'|trans }}</th>
     <th>{{ 'sylius.form.promotion_coupon.usage_limit'|trans }}</th>
@@ -15,6 +16,10 @@
   {% for promotion in promotions %}
     {% if promotion is instanceof('Sylius\\Component\\Promotion\\Model\\PromotionCoupon') %}
       <tr>
+        <td><a href="{{ path(promotion_coupon_route, {
+          restaurantId: restaurant.id,
+          promotionId: promotion.promotion.id,
+          couponId: promotion.id}) }}">#{{ promotion.id }}</a></td>
         <td>{{ promotion.promotion.name }}</td>
         <td>
           {{ promotion.code }}
@@ -47,6 +52,7 @@
       </tr>
     {% else %}
       <tr>
+        <td></td>
         <td>
           <span>{{ promotion.name }}</span>
           <ul class="list-unstyled">

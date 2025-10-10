@@ -177,6 +177,7 @@ class AdminController extends AbstractController
             'promotions' => 'admin_restaurant_promotions',
             'promotion_new' => 'admin_restaurant_new_promotion',
             'promotion' => 'admin_restaurant_promotion',
+            'promotion_coupon' => 'admin_restaurant_promotion_coupon',
             'promotion_archive' => 'admin_restaurant_archive_promotion',
             'product_option_preview' => 'admin_restaurant_product_option_preview',
             'reusable_packaging_new' => 'admin_restaurant_new_reusable_packaging',

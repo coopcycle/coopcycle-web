@@ -349,6 +349,15 @@ dashboard_restaurant_promotion:
             restaurant_promotions: dashboard_restaurant_promotions
     methods: [ GET, POST ]
 
+dashboard_restaurant_promotion_coupon:
+    path: /dashboard/restaurants/{restaurantId}/promotions/{promotionId}/coupons/{couponId}
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantPromotionCouponAction
+        layout: 'dashboard.html.twig'
+        routes:
+            restaurant_promotions: dashboard_restaurant_promotions
+    methods: [ GET, POST ]
+
 dashboard_stores:
     path: /dashboard/stores
     defaults:
