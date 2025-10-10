@@ -1647,3 +1647,5 @@ pricing.rule.humanizer.price_range_with_threshold: 'au-dessus de %threshold% - %
 pricing.rule.humanizer.price_per_package: '%unit_price% par %package_name%'
 adminDashboard.promotions.ongoing: Promotions actives
 adminDashboard.promotions.past: Promotions passées
+order.download_receipt: Télécharger le reçu
+order.generate_receipt: Générer le reçu

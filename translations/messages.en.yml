@@ -1709,3 +1709,5 @@ pricing.rule.humanizer.price_range_with_threshold: 'above %threshold% - %unit_pr
 pricing.rule.humanizer.price_per_package: '%unit_price% per %package_name%'
 adminDashboard.promotions.ongoing: Ongoing promotions
 adminDashboard.promotions.past: Past promotions
+order.download_receipt: Download receipt
+order.generate_receipt: Generate receipt
