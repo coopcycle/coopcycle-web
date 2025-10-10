@@ -1,31 +1,31 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { Table, TableColumnsType } from 'antd'
-import { useTranslation } from 'react-i18next'
-import { Moment } from 'moment'
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { Table, TableColumnsType } from 'antd';
+import { useTranslation } from 'react-i18next';
+import { Moment } from 'moment';
 
-import { money } from '../../../../utils/format'
-import { useLazyGetInvoiceLineItemsGroupedByOrganizationQuery } from '../../../../api/slice'
-import { prepareParams } from '../../redux/actions'
-import { usePrevious } from '../../../../dashboard/redux/utils'
-import OrdersTable from '../OrdersTable'
-import type { InvoiceLineItemGroupedByOrganization } from '../../../../api/types'
+import { money } from '../../../../utils/format';
+import { useLazyGetInvoiceLineItemsGroupedByOrganizationQuery } from '../../../../api/slice';
+import { prepareParams } from '../../redux/actions';
+import { usePrevious } from '../../../../dashboard/redux/utils';
+import OrdersTable from '../OrdersTable';
+import type { InvoiceLineItemGroupedByOrganization } from '../../../../api/types';
 
 type OrganizationRow = {
-  rowKey: string
-  storeId: string
-  name: string
-  subTotal: string
-  tax: string
-  total: string
-}
+  rowKey: string;
+  storeId: string;
+  name: string;
+  subTotal: string;
+  tax: string;
+  total: string;
+};
 
 type Props = {
-  ordersStates: string[]
-  dateRange: Moment[] | null
-  onlyNotInvoiced: boolean
-  reloadKey: number
-  setSelectedStoreIds: (storeIds: string[]) => void
-}
+  ordersStates: string[];
+  dateRange: Moment[] | null;
+  onlyNotInvoiced: boolean;
+  reloadKey: number;
+  setSelectedStoreIds: (storeIds: string[]) => void;
+};
 
 export default function OrganizationsTable({
   ordersStates,
@@ -34,19 +34,19 @@ export default function OrganizationsTable({
   reloadKey,
   setSelectedStoreIds,
 }: Props) {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const [trigger, { isFetching, data }] =
-    useLazyGetInvoiceLineItemsGroupedByOrganizationQuery()
+    useLazyGetInvoiceLineItemsGroupedByOrganizationQuery();
 
-  const previousReloadKey = usePrevious(reloadKey)
+  const previousReloadKey = usePrevious(reloadKey);
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const params = useMemo(() => {
     if (!dateRange) {
-      return null
+      return null;
     }
 
     return prepareParams({
@@ -56,15 +56,15 @@ export default function OrganizationsTable({
       ],
       state: ordersStates,
       onlyNotInvoiced: onlyNotInvoiced,
-    })
-  }, [ordersStates, dateRange, onlyNotInvoiced])
+    });
+  }, [ordersStates, dateRange, onlyNotInvoiced]);
 
   const { dataSource, total } = useMemo((): {
-    dataSource: OrganizationRow[] | undefined
-    total: number
+    dataSource: OrganizationRow[] | undefined;
+    total: number;
   } => {
     if (!data) {
-      return { dataSource: undefined, total: 0 }
+      return { dataSource: undefined, total: 0 };
     }
 
     return {
@@ -79,8 +79,8 @@ export default function OrganizationsTable({
         }),
       ),
       total: data['hydra:totalItems'],
-    }
-  }, [data])
+    };
+  }, [data]);
 
   const columns: TableColumnsType<OrganizationRow> = [
     {
@@ -103,30 +103,30 @@ export default function OrganizationsTable({
       dataIndex: 'total',
       key: 'total',
     },
-  ]
+  ];
 
   const reloadData = useCallback(
     (page: number, pageSize: number) => {
       if (!params) {
-        return
+        return;
       }
 
       trigger({
         params,
         page: page,
         pageSize: pageSize,
-      })
+      });
     },
     [params, trigger],
-  )
+  );
 
   useEffect(() => {
     if (reloadKey === previousReloadKey) {
-      return
+      return;
     }
 
-    reloadData(currentPage, pageSize)
-  }, [reloadKey, previousReloadKey, currentPage, pageSize, reloadData])
+    reloadData(currentPage, pageSize);
+  }, [reloadKey, previousReloadKey, currentPage, pageSize, reloadData]);
 
   return (
     <Table
@@ -143,16 +143,16 @@ export default function OrganizationsTable({
       }}
       onChange={pagination => {
         if (!pagination.current) {
-          return
+          return;
         }
         if (!pagination.pageSize) {
-          return
+          return;
         }
 
-        reloadData(pagination.current, pagination.pageSize)
+        reloadData(pagination.current, pagination.pageSize);
 
-        setCurrentPage(pagination.current)
-        setPageSize(pagination.pageSize)
+        setCurrentPage(pagination.current);
+        setPageSize(pagination.pageSize);
       }}
       expandable={{
         expandedRowRender: (record: OrganizationRow) => {
@@ -164,15 +164,15 @@ export default function OrganizationsTable({
               storeId={record.storeId}
               reloadKey={reloadKey}
             />
-          )
+          );
         },
       }}
       rowSelection={{
         type: 'checkbox',
         onChange: (_: React.Key[], selectedRows: OrganizationRow[]) => {
-          setSelectedStoreIds(selectedRows.map(row => row.storeId))
+          setSelectedStoreIds(selectedRows.map(row => row.storeId));
         },
       }}
     />
-  )
+  );
 }

@@ -4,7 +4,7 @@ import store, {
   setOrder,
   setImages,
   setTransporterEnabled,
-} from "./incidentStore";
+} from './incidentStore';
 
 export default function ({ incident, order, images, transporterEnabled }) {
   incident = JSON.parse(incident);

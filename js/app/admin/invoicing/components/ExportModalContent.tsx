@@ -1,40 +1,40 @@
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { Radio, RadioChangeEvent, Space } from 'antd'
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Radio, RadioChangeEvent, Space } from 'antd';
 
-import Button from '../../../components/core/Button'
-import { downloadStandardFile, downloadOdooFile } from '../redux/actions'
-import { useAppDispatch } from '../redux/store'
-import moment from 'moment'
+import Button from '../../../components/core/Button';
+import { downloadStandardFile, downloadOdooFile } from '../redux/actions';
+import { useAppDispatch } from '../redux/store';
+import moment from 'moment';
 
 const DESTINATIONS = {
   standard: 'standard',
   odoo: 'odoo',
-}
+};
 
 type Props = {
-  dateRange: moment.Moment[]
-  params: string[]
-  setModalOpen: (open: boolean) => void
-}
+  dateRange: moment.Moment[];
+  params: string[];
+  setModalOpen: (open: boolean) => void;
+};
 
 export default ({ dateRange, params, setModalOpen }: Props) => {
-  const [destination, setDestination] = useState(DESTINATIONS.standard)
+  const [destination, setDestination] = useState(DESTINATIONS.standard);
 
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const onChange = (e: RadioChangeEvent) => {
-    setDestination(e.target.value)
-  }
+    setDestination(e.target.value);
+  };
 
   const download = () => {
     const filename = [
       t('ADMIN_ORDERS_TO_INVOICE_FILE_NAME_PREFIX'),
       dateRange[0].format('YYYY-MM-DD'),
       dateRange[1].format('YYYY-MM-DD'),
-    ].join('_')
+    ].join('_');
 
     switch (destination) {
       case DESTINATIONS.standard:
@@ -43,20 +43,20 @@ export default ({ dateRange, params, setModalOpen }: Props) => {
             params,
             filename,
           }),
-        )
-        break
+        );
+        break;
       case DESTINATIONS.odoo:
         dispatch(
           downloadOdooFile({
             params,
             filename,
           }),
-        )
-        break
+        );
+        break;
       default:
-        break
+        break;
     }
-  }
+  };
 
   return (
     <>
@@ -88,11 +88,11 @@ export default ({ dateRange, params, setModalOpen }: Props) => {
           block
           icon="download"
           onClick={() => {
-            download()
+            download();
           }}>
           {t('ADMIN_ORDERS_TO_INVOICE_DOWNLOAD')}
         </Button>
       </footer>
     </>
-  )
-}
+  );
+};

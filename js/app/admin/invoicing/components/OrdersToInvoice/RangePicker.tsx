@@ -1,20 +1,20 @@
-import React from 'react'
-import { DatePicker } from 'antd'
-import { useTranslation } from 'react-i18next'
-import { Moment } from 'moment'
+import React from 'react';
+import { DatePicker } from 'antd';
+import { useTranslation } from 'react-i18next';
+import { Moment } from 'moment';
 
 type Props = {
-  setDateRange: (range: Moment[]) => void
-}
+  setDateRange: (range: Moment[]) => void;
+};
 
 export default function RangePicker({ setDateRange }: Props) {
-  const [isComplexPicker, setIsComplexPicker] = React.useState(false)
+  const [isComplexPicker, setIsComplexPicker] = React.useState(false);
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const title = isComplexPicker
     ? t('ADMIN_ORDERS_TO_INVOICE_FILTER_RANGE_SIMPLE')
-    : t('ADMIN_ORDERS_TO_INVOICE_FILTER_RANGE_COMPLEX')
+    : t('ADMIN_ORDERS_TO_INVOICE_FILTER_RANGE_COMPLEX');
 
   return (
     <div className="d-flex flex-column">
@@ -22,7 +22,7 @@ export default function RangePicker({ setDateRange }: Props) {
       {isComplexPicker ? (
         <DatePicker.RangePicker
           onChange={dates => {
-            setDateRange(dates)
+            setDateRange(dates);
           }}
         />
       ) : (
@@ -32,8 +32,8 @@ export default function RangePicker({ setDateRange }: Props) {
             const range = [
               date.clone().local().startOf('month'),
               date.clone().local().endOf('month'),
-            ]
-            setDateRange(range)
+            ];
+            setDateRange(range);
           }}
         />
       )}
@@ -45,5 +45,5 @@ export default function RangePicker({ setDateRange }: Props) {
         {title}
       </a>
     </div>
-  )
+  );
 }

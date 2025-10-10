@@ -1,36 +1,36 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Table, TableColumnsType, Tag, Tooltip } from 'antd'
-import { useTranslation } from 'react-i18next'
-import moment from 'moment'
+import { useEffect, useMemo, useState } from 'react';
+import { Table, TableColumnsType, Tag, Tooltip } from 'antd';
+import { useTranslation } from 'react-i18next';
+import moment from 'moment';
 
-import { money } from '../../../../utils/format'
-import { useGetInvoiceLineItemsQuery } from '../../../../api/slice'
-import { prepareParams } from '../../redux/actions'
-import { usePrevious } from '../../../../dashboard/redux/utils'
-import type { InvoiceLineItem } from '../../../../api/types'
+import { money } from '../../../../utils/format';
+import { useGetInvoiceLineItemsQuery } from '../../../../api/slice';
+import { prepareParams } from '../../redux/actions';
+import { usePrevious } from '../../../../dashboard/redux/utils';
+import type { InvoiceLineItem } from '../../../../api/types';
 
 type OrderRow = {
-  rowKey: string
-  orderId: string
+  rowKey: string;
+  orderId: string;
   fileExports: Array<{
-    requestId: string
-    createdAt: string
-  }>
-  number: string
-  date: string
-  description: string
-  subTotal: string
-  tax: string
-  total: string
-}
+    requestId: string;
+    createdAt: string;
+  }>;
+  number: string;
+  date: string;
+  description: string;
+  subTotal: string;
+  tax: string;
+  total: string;
+};
 
 type Props = {
-  ordersStates: string[]
-  dateRange: moment.Moment[] | null
-  onlyNotInvoiced: boolean
-  storeId: string
-  reloadKey: number
-}
+  ordersStates: string[];
+  dateRange: moment.Moment[] | null;
+  onlyNotInvoiced: boolean;
+  storeId: string;
+  reloadKey: number;
+};
 
 export default function OrdersTable({
   ordersStates,
@@ -39,18 +39,18 @@ export default function OrdersTable({
   storeId,
   reloadKey,
 }: Props) {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [pageSize, setPageSize] = useState(10)
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
-  const previousReloadKey = usePrevious(reloadKey)
+  const previousReloadKey = usePrevious(reloadKey);
 
   const params = useMemo(() => {
     if (!storeId) {
-      return null
+      return null;
     }
 
     if (!dateRange) {
-      return null
+      return null;
     }
 
     return prepareParams({
@@ -61,20 +61,20 @@ export default function OrdersTable({
       ],
       state: ordersStates,
       onlyNotInvoiced: onlyNotInvoiced,
-    })
-  }, [ordersStates, dateRange, onlyNotInvoiced, storeId])
+    });
+  }, [ordersStates, dateRange, onlyNotInvoiced, storeId]);
 
   const { isFetching, data, refetch } = useGetInvoiceLineItemsQuery({
     params,
     page: currentPage,
     pageSize: pageSize,
-  })
+  });
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const { dataSource, total } = useMemo(() => {
     if (!data) {
-      return { datasource: undefined, total: 0 }
+      return { datasource: undefined, total: 0 };
     }
 
     return {
@@ -92,8 +92,8 @@ export default function OrdersTable({
         }),
       ),
       total: data['hydra:totalItems'],
-    }
-  }, [data])
+    };
+  }, [data]);
 
   const columns: TableColumnsType<OrderRow> = [
     {
@@ -107,7 +107,7 @@ export default function OrdersTable({
       key: 'exports',
       render: (_, { fileExports }: OrderRow) => {
         if (fileExports.length === 0) {
-          return <Tag>{t('ADMIN_ORDERS_TO_INVOICE_NOT_EXPORTED')}</Tag>
+          return <Tag>{t('ADMIN_ORDERS_TO_INVOICE_NOT_EXPORTED')}</Tag>;
         } else {
           return (
             <>
@@ -121,10 +121,10 @@ export default function OrdersTable({
                       {fileExport.requestId.substring(0, 7)}
                     </Tag>
                   </Tooltip>
-                )
+                );
               })}
             </>
-          )
+          );
         }
       },
     },
@@ -166,15 +166,15 @@ export default function OrdersTable({
         </a>
       ),
     },
-  ]
+  ];
 
   useEffect(() => {
     if (reloadKey === previousReloadKey) {
-      return
+      return;
     }
 
-    refetch()
-  }, [reloadKey, previousReloadKey, refetch])
+    refetch();
+  }, [reloadKey, previousReloadKey, refetch]);
 
   return (
     <div data-testid={`invoicing.orders.${storeId}`}>
@@ -191,16 +191,16 @@ export default function OrdersTable({
         }}
         onChange={pagination => {
           if (!pagination.current) {
-            return
+            return;
           }
           if (!pagination.pageSize) {
-            return
+            return;
           }
 
-          setCurrentPage(pagination.current)
-          setPageSize(pagination.pageSize)
+          setCurrentPage(pagination.current);
+          setPageSize(pagination.pageSize);
         }}
       />
     </div>
-  )
+  );
 }

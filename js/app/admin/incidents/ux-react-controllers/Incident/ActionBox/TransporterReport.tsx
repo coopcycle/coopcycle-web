@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from "react";
-import classNames from "classnames";
+import React, { useState, useEffect, useMemo } from 'react';
+import classNames from 'classnames';
 import {
   Alert,
   Select,
@@ -13,16 +13,16 @@ import {
   Empty,
   Skeleton,
   notification,
-} from "antd";
-import "../Style.scss";
-import _ from "lodash";
-import moment from "moment";
-import { useTranslation } from "react-i18next";
+} from 'antd';
+import '../Style.scss';
+import _ from 'lodash';
+import moment from 'moment';
+import { useTranslation } from 'react-i18next';
 
 async function _fetchFailureReason(id) {
   const httpClient = new window._auth.httpClient();
   return await httpClient.get(
-    window.Routing.generate("_api_/tasks/{id}/failure_reasons_get", { id }),
+    window.Routing.generate('_api_/tasks/{id}/failure_reasons_get', { id }),
     { transporter: true },
   );
 }
@@ -37,10 +37,10 @@ async function _handleFormSubmit(
   if (failureReason.date) {
     appointment = failureReason.date.toISOString();
   }
-  const pods = _.map(images, "full");
+  const pods = _.map(images, 'full');
 
   const payload = {
-    action: "transporter_reported",
+    action: 'transporter_reported',
     failure_reason,
     appointment,
     pods,
@@ -48,13 +48,12 @@ async function _handleFormSubmit(
   };
 
   return await httpClient.put(
-    window.Routing.generate("_api_/incidents/{id}/action_put", { id }),
+    window.Routing.generate('_api_/incidents/{id}/action_put', { id }),
     payload,
   );
 }
 
 function ImagesSelector({ images, onChange }) {
-
   const [selectedImages, setSelectedImages] = useState([]);
   const [indeterminate, setIndeterminate] = useState(false);
   const [checkAll, setCheckAll] = useState(false);
@@ -65,7 +64,7 @@ function ImagesSelector({ images, onChange }) {
     return <Empty description="No images" />;
   }
 
-  const handleOnChange = (checkedList) => {
+  const handleOnChange = checkedList => {
     setCheckAll(checkedList.length === images.length);
     setIndeterminate(
       !!checkedList.length && checkedList.length < images.length,
@@ -74,7 +73,7 @@ function ImagesSelector({ images, onChange }) {
     onChange(checkedList);
   };
 
-  const onCheckAllChange = (e) => {
+  const onCheckAllChange = e => {
     handleOnChange(e.target.checked ? images : []);
     setCheckAll(e.target.checked);
     setIndeterminate(false);
@@ -88,15 +87,14 @@ function ImagesSelector({ images, onChange }) {
             className="my-3 mx-1"
             indeterminate={indeterminate}
             onChange={onCheckAllChange}
-            checked={checkAll}
-          >
-            {t("CHECK_ALL")}
+            checked={checkAll}>
+            {t('CHECK_ALL')}
           </Checkbox>
         )}
       </div>
       <Checkbox.Group onChange={handleOnChange} value={selectedImages}>
         <Row gutter={[12, 12]} align="middle">
-          {images.map((image) => {
+          {images.map(image => {
             const selected = selectedImages.includes(image);
             return (
               <Col key={image.id} align="middle">
@@ -105,13 +103,13 @@ function ImagesSelector({ images, onChange }) {
                   height="128px"
                   src={image.thumbnail}
                   preview={{ src: image.full }}
-                  className={classNames("p-2, border", {
-                    "border-primary": selected,
-                    "border-default": !selected,
+                  className={classNames('p-2, border', {
+                    'border-primary': selected,
+                    'border-default': !selected,
                   })}
                 />
                 <div className="mt-1">
-                  <Checkbox value={image}>{t("SELECT")}</Checkbox>
+                  <Checkbox value={image}>{t('SELECT')}</Checkbox>
                 </div>
               </Col>
             );
@@ -134,10 +132,10 @@ function FailureReasonSelector({ task, onChange }) {
     async function _fetch() {
       const { response, error } = await _fetchFailureReason(task.id);
       if (!error) {
-        const value = response["hydra:member"].map((v) => ({
+        const value = response['hydra:member'].map(v => ({
           value: v.code,
           label: v.description,
-          option: v.option ?? "default",
+          option: v.option ?? 'default',
           only: v.only ?? null,
         }));
         setFailureReasons(value);
@@ -147,11 +145,11 @@ function FailureReasonSelector({ task, onChange }) {
   }, []);
 
   const options = useMemo(
-    () => _.groupBy(failureReasons, (v) => v.option),
+    () => _.groupBy(failureReasons, v => v.option),
     [failureReasons],
   );
   const subOptions = useMemo(
-    () => _.filter(options.reason, (v) => v.only.includes(selectedState)),
+    () => _.filter(options.reason, v => v.only.includes(selectedState)),
     [options, selectedState],
   );
 
@@ -159,7 +157,7 @@ function FailureReasonSelector({ task, onChange }) {
     if (!selectedReason || !selectedState) {
       return onChange(null);
     }
-    if (selectedReason === "PVI" && !selectedDate) {
+    if (selectedReason === 'PVI' && !selectedDate) {
       return onChange(null);
     }
     return onChange({
@@ -174,9 +172,9 @@ function FailureReasonSelector({ task, onChange }) {
       <Row gutter={[16, 16]}>
         <Col span={12}>
           <Select
-            placeholder={t("SELECT_STATE")}
+            placeholder={t('SELECT_STATE')}
             value={selectedState}
-            onChange={(v) => {
+            onChange={v => {
               setSelectedReason(null);
               setSelectedState(v);
             }}
@@ -185,21 +183,21 @@ function FailureReasonSelector({ task, onChange }) {
         </Col>
         <Col span={12}>
           <Select
-            placeholder={t("SELECT_REASON")}
+            placeholder={t('SELECT_REASON')}
             value={selectedReason}
             onChange={setSelectedReason}
             options={subOptions}
           />
         </Col>
-        {selectedReason === "PVI" && (
+        {selectedReason === 'PVI' && (
           <Col span={12} offset={12}>
             <DatePicker
-              style={{ width: "100%" }}
-              placeholder={t("PICK_NEW_APPOINTMENT")}
+              style={{ width: '100%' }}
+              placeholder={t('PICK_NEW_APPOINTMENT')}
               format="LLL"
-              showTime={{ format: "HH:mm", minuteStep: 15 }}
+              showTime={{ format: 'HH:mm', minuteStep: 15 }}
               onChange={setSelectedDate}
-              disabledDate={(date) => date.isBefore(moment(), "hour")}
+              disabledDate={date => date.isBefore(moment(), 'hour')}
             />
           </Col>
         )}
@@ -214,7 +212,7 @@ export default function ({ incident, task, images, form }) {
   const incidents = useMemo(
     () =>
       _(incident?.events)
-        .filter((event) => event.type === "transporter_report")
+        .filter(event => event.type === 'transporter_report')
         .size(),
     [incident],
   );
@@ -224,13 +222,13 @@ export default function ({ incident, task, images, form }) {
       return Promise.resolve();
     }
     if (!value.code.reason || !value.code.state) {
-      return Promise.reject(t("PLEASE_SELECT_A_REASON_AND_STATE"));
+      return Promise.reject(t('PLEASE_SELECT_A_REASON_AND_STATE'));
     }
-    if (value.code.reason === "PVI" && !moment(value.date).isValid()) {
-      return Promise.reject(t("PLEASE_SELECT_A_VALID_DATE"));
+    if (value.code.reason === 'PVI' && !moment(value.date).isValid()) {
+      return Promise.reject(t('PLEASE_SELECT_A_VALID_DATE'));
     }
-    if (value.code.reason === "PVI" && value.date.isBefore(moment())) {
-      return Promise.reject(t("PLEASE_SELECT_A_DATE_IN_THE_FUTURE"));
+    if (value.code.reason === 'PVI' && value.date.isBefore(moment())) {
+      return Promise.reject(t('PLEASE_SELECT_A_DATE_IN_THE_FUTURE'));
     }
     return Promise.resolve();
   };
@@ -240,56 +238,53 @@ export default function ({ incident, task, images, form }) {
       layout="vertical"
       form={form}
       name="transporter-report"
-      onFinish={async (values) => {
+      onFinish={async values => {
         const { error } = await _handleFormSubmit(values, incident);
         if (!error) {
           return location.reload();
         }
         notification.error({
-          message: t("SOMETHING_WENT_WRONG"),
+          message: t('SOMETHING_WENT_WRONG'),
         });
       }}
-      autoComplete="off"
-    >
+      autoComplete="off">
       {incidents > 0 && (
         <Alert
           className="mb-3"
           showIcon
-          message={t("THERE_IS_ALREADY_COUNT_REPORTS_FOR_THIS_INCIDENT", {
+          message={t('THERE_IS_ALREADY_COUNT_REPORTS_FOR_THIS_INCIDENT', {
             count: incidents,
           })}
           type="info"
         />
       )}
       <Form.Item
-        label={t("SELECT_REASON")}
+        label={t('SELECT_REASON')}
         name="failureReason"
         required={true}
         rules={[
           { validator: reasonValidator },
-          { required: true, message: t("PLEASE_SELECT_A_REASON") },
-        ]}
-      >
+          { required: true, message: t('PLEASE_SELECT_A_REASON') },
+        ]}>
         <FailureReasonSelector task={task} />
       </Form.Item>
       <Form.Item
-        label={t("FAILURE_DATE")}
+        label={t('FAILURE_DATE')}
         name="failureDate"
-        extra={t("SELECT_THE_DATE_AND_TIME_OF_THE_INCIDENT")}
+        extra={t('SELECT_THE_DATE_AND_TIME_OF_THE_INCIDENT')}
         rules={[
-          { required: true, message: t("PLEASE_SELECT_A_DATE") },
-          { type: "date", message: t("PLEASE_SELECT_A_VALID_DATE") },
-        ]}
-      >
+          { required: true, message: t('PLEASE_SELECT_A_DATE') },
+          { type: 'date', message: t('PLEASE_SELECT_A_VALID_DATE') },
+        ]}>
         <DatePicker
-          style={{ width: "100%" }}
+          style={{ width: '100%' }}
           format="LLL"
-          showTime={{ format: "HH:mm", minuteStep: 15 }}
-          disabledDate={(date) => date.isAfter(moment(), "minute")}
+          showTime={{ format: 'HH:mm', minuteStep: 15 }}
+          disabledDate={date => date.isAfter(moment(), 'minute')}
         />
       </Form.Item>
       <Divider orientation="left" plain>
-        {t("IMAGES_TO_INCLUDE_IN_THE_REPORT")}
+        {t('IMAGES_TO_INCLUDE_IN_THE_REPORT')}
       </Divider>
       <Form.Item name="images">
         <ImagesSelector images={images} />

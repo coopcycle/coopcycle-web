@@ -1,13 +1,13 @@
-import React, { useState } from "react";
-import { Button, InputNumber } from "antd";
-import { useTranslation } from "react-i18next";
-import { money } from "../utils";
+import React, { useState } from 'react';
+import { Button, InputNumber } from 'antd';
+import { useTranslation } from 'react-i18next';
+import { money } from '../utils';
 
 async function _handleApplyPriceDiff(id, diff) {
   const httpClient = new window._auth.httpClient();
   return await httpClient.put(
-    window.Routing.generate("_api_/incidents/{id}/action_put", { id }),
-    { action: "applied_price_diff", diff },
+    window.Routing.generate('_api_/incidents/{id}/action_put', { id }),
+    { action: 'applied_price_diff', diff },
   );
 }
 
@@ -23,16 +23,20 @@ export default function ({ incident, order }) {
     <div>
       <InputNumber
         addonAfter={currencySymbol}
-        status={error ? "error" : null}
+        status={error ? 'error' : null}
         size="large"
-        style={{ width: "100%" }}
+        style={{ width: '100%' }}
         value={value}
         onChange={setValue}
       />
       {value && (
-        <p className="text-center my-2" style={{ fontSize: "1.2em" }}>
-          <p>{t("CURRENT_PRICE")}: {money(order.total)}</p>
-          <p>{t("NEW_PRICE")}: {money(order.total + value * 100)}</p>
+        <p className="text-center my-2" style={{ fontSize: '1.2em' }}>
+          <p>
+            {t('CURRENT_PRICE')}: {money(order.total)}
+          </p>
+          <p>
+            {t('NEW_PRICE')}: {money(order.total + value * 100)}
+          </p>
         </p>
       )}
       <p className="mt-3">
@@ -50,16 +54,17 @@ export default function ({ incident, order }) {
               setError(true);
               setSubmitting(false);
             }
-          }}
-        >
-          {t("APPLY")}
+          }}>
+          {t('APPLY')}
         </Button>
       </p>
-      {false &&<p>
-        <Button type="danger" ghost disabled={!value || submitting}>
-          Apply {t("ADMIN_DASHBOARD_AND_CLOSE_THE_INCIDENT")}
-        </Button>
-      </p>}
+      {false && (
+        <p>
+          <Button type="danger" ghost disabled={!value || submitting}>
+            Apply {t('ADMIN_DASHBOARD_AND_CLOSE_THE_INCIDENT')}
+          </Button>
+        </p>
+      )}
     </div>
   );
 }

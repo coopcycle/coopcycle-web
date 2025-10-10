@@ -1,0 +1,5 @@
+// Helper set of rules to reset bootstrap styles that mess with other (antd) styles
+
+label {
+  font-weight: inherit !important;
+}
