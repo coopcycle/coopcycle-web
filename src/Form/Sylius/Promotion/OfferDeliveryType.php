@@ -133,6 +133,8 @@ class OfferDeliveryType extends AbstractType
         ]);
 
         $promotion->addAction($promotionAction);
+
+        return $promotion;
     }
 
     public function configureOptions(OptionsResolver $resolver)
