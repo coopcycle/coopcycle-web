@@ -91,6 +91,8 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Handler\UploadHandler;
@@ -123,7 +125,8 @@ trait RestaurantTrait
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
         TranslatorInterface $translator,
-        LoopeatClient $loopeatClient)
+        LoopeatClient $loopeatClient,
+        CacheInterface $appCache)
     {
         $form = $this->createForm(RestaurantType::class, $restaurant, [
             'loopeat_enabled' => $this->getParameter('loopeat_enabled'),
@@ -253,8 +256,6 @@ trait RestaurantTrait
             $activationErrors = ValidationUtils::serializeValidationErrors($violations);
         }
 
-
-
         $loopeatAuthorizeUrl = '';
         if ($this->getParameter('loopeat_enabled') && $restaurant->isLoopeatEnabled()) {
 
@@ -282,7 +283,17 @@ trait RestaurantTrait
             $loopeatAuthorizeUrl = $loopeatClient->getRestaurantOAuthAuthorizeUrl($params);
         }
 
-        $cuisines = $this->entityManager->getRepository(Cuisine::class)->findAll();
+        $cuisines = $appCache->get('translated_cuisines', function (ItemInterface $item) use ($translator) {
+
+            // We could cache this forever, but from time to time we add cuisines
+            $item->expiresAfter(60 * 60 * 24);
+
+            return array_map(fn($c) => [
+                'id' => $c->getId(),
+                'name' => $translator->trans($c->getName(), domain: 'cuisines'),
+            ], $this->entityManager->getRepository(Cuisine::class)->findAll());
+
+        });
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'restaurant' => $restaurant,
@@ -300,7 +311,8 @@ trait RestaurantTrait
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
         TranslatorInterface $translator,
-        LoopeatClient $loopeatClient)
+        LoopeatClient $loopeatClient,
+        CacheInterface $appCache)
     {
         $repository = $this->entityManager->getRepository(LocalBusiness::class);
 
@@ -316,7 +328,7 @@ trait RestaurantTrait
             return new JsonResponse($restaurantNormalized);
         }
 
-        return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator, $loopeatClient);
+        return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator, $loopeatClient, $appCache);
     }
 
     public function newRestaurantAction(Request $request,
@@ -324,13 +336,14 @@ trait RestaurantTrait
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
         TranslatorInterface $translator,
-        LoopeatClient $loopeatClient)
+        LoopeatClient $loopeatClient,
+        CacheInterface $appCache)
     {
         // TODO Check roles
         $restaurant = new LocalBusiness();
         $restaurant->setContract(new Contract());
 
-        return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator, $loopeatClient);
+        return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator, $loopeatClient, $appCache);
     }
 
     public function restaurantNewAdhocOrderAction($restaurantId, Request $request,
