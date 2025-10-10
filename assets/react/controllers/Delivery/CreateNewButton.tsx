@@ -11,14 +11,14 @@ type Props = {
   }
 }
 
-export default function CreateNewButton({ stores, routes }: Props) {
+export default function CreateNewButton({ stores, routes, isNavbar }: Props) {
   if (!stores || !routes) {
     return null
   }
 
   return (
     <RootWithDefaults>
-      <DeliveryCreateNewButton stores={stores} routes={routes} />
+      <DeliveryCreateNewButton stores={stores} routes={routes} isNavbar={isNavbar} />
     </RootWithDefaults>
   )
 }
