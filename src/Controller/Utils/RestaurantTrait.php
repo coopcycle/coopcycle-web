@@ -852,6 +852,11 @@ trait RestaurantTrait
         LoopeatClient $loopeatClient,
         bool $taxIncl)
     {
+        $filterCollection = $entityManager->getFilters();
+        if ($filterCollection->isEnabled('disabled_filter')) {
+            $filterCollection->disable('disabled_filter');
+        }
+
         $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
@@ -941,6 +946,11 @@ trait RestaurantTrait
         EntityManagerInterface $entityManager,
         LoopeatClient $loopeatClient)
     {
+        $filterCollection = $entityManager->getFilters();
+        if ($filterCollection->isEnabled('disabled_filter')) {
+            $filterCollection->disable('disabled_filter');
+        }
+
         $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);

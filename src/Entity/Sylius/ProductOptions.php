@@ -28,6 +28,11 @@ class ProductOptions
     protected $position;
 
     /**
+     * @var bool
+     */
+    protected $enabled = true;
+
+    /**
      * @return int
      */
     public function getId()
@@ -89,5 +94,15 @@ class ProductOptions
         $this->position = $position;
 
         return $this;
+    }
+
+    public function setEnabled(bool $enabled)
+    {
+        $this->enabled = $enabled;
+    }
+
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
     }
 }

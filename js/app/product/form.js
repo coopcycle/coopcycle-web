@@ -90,11 +90,10 @@ new Sortable(document.querySelector('#product_options'), {
   group: 'products',
   animation: 250,
   onUpdate: function(e) {
-    let i = 0
-    Array.prototype.slice.call(e.to.children).forEach((el) => {
+    Array.prototype.slice.call(e.to.children).forEach((el, index) => {
       const enabled = el.querySelector('input[type="checkbox"]')
       const pos = el.querySelector('[data-name="position"]')
-      pos.value = enabled.checked ? i++ : -1
+      pos.value = index
     })
   },
 })

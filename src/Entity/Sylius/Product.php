@@ -181,6 +181,7 @@ class Product extends BaseProduct implements ProductInterface, Comparable, SoftD
             }
         }
     }
+
     /**
      * {@inheritdoc}
      */
@@ -188,18 +189,18 @@ class Product extends BaseProduct implements ProductInterface, Comparable, SoftD
     {
         return $this->getOptions()->contains($option);
     }
+
     public function getPositionForOption(ProductOptionInterface $option): int
     {
-        if ($this->hasOption($option)) {
-            foreach ($this->options as $productOptions) {
-                if ($productOptions->getOption() === $option) {
-                    return $productOptions->getPosition();
-                }
+        foreach ($this->options as $productOptions) {
+            if ($productOptions->getOption() === $option) {
+                return $productOptions->getPosition();
             }
         }
 
         return -1;
     }
+
     public function addOptionAt(ProductOptionInterface $option, int $position): void
     {
         if (!$this->hasOption($option)) {
@@ -218,6 +219,19 @@ class Product extends BaseProduct implements ProductInterface, Comparable, SoftD
             }
         }
     }
+
+    public function setOptionEnabled(ProductOptionInterface $option, bool $enabled = true): void
+    {
+        if ($this->hasOption($option)) {
+            foreach ($this->options as $productOptions) {
+                if ($productOptions->getOption() === $option) {
+                    $productOptions->setEnabled($enabled);
+                    break;
+                }
+            }
+        }
+    }
+
     public function getProductOptions()
     {
         return $this->options;
@@ -255,5 +269,18 @@ class Product extends BaseProduct implements ProductInterface, Comparable, SoftD
     public function setAlcohol(bool $alcohol)
     {
         $this->alcohol = $alcohol;
+    }
+
+    public function isOptionEnabled(ProductOptionInterface $option): bool
+    {
+        if ($this->hasOption($option)) {
+            foreach ($this->options as $productOptions) {
+                if ($productOptions->getOption() === $option) {
+                    return $productOptions->isEnabled();
+                }
+            }
+        }
+
+        return false;
     }
 }

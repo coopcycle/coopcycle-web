@@ -10,6 +10,7 @@
     <field name="position" type="integer" column="position">
       <gedmo:sortable-position/>
     </field>
+    <field name="enabled" column="enabled" type="boolean" />
     <many-to-one field="product" target-entity="AppBundle\Entity\Sylius\Product" inversed-by="options">
       <join-columns>
         <join-column name="product_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
