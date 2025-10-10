@@ -1691,12 +1691,18 @@ services:
     decorates: api_platform.action.entrypoint
     arguments: ['@.inner']
 
+  sylius.promotion_end_eligibility_checker:
+    class: AppBundle\Sylius\Promotion\Checker\Eligibility\PromotionEndEligibilityChecker
+
   promotion_coupon.expiration_checker:
     class: Sylius\Component\Promotion\Checker\Eligibility\CompositePromotionCouponEligibilityChecker
     arguments:
-      - [ "@sylius.promotion_coupon_duration_eligibility_checker", "@sylius.checker.promotion_coupon.duration_eligibility" ]
+      - [ "@sylius.promotion_coupon_duration_eligibility_checker",
+          "@sylius.checker.promotion_coupon.duration_eligibility" ]
 
   promotion.expiration_checker:
     class: Sylius\Component\Promotion\Checker\Eligibility\CompositePromotionEligibilityChecker
     arguments:
-      - [ "@sylius.promotion_archival_eligibility_checker", "@sylius.promotion_duration_eligibility_checker", "@sylius.promotion_usage_limit_eligibility_checker" ]
+      - [ "@sylius.promotion_archival_eligibility_checker",
+          "@sylius.promotion_end_eligibility_checker",
+          "@sylius.promotion_usage_limit_eligibility_checker" ]
