@@ -7,6 +7,7 @@ import axios from 'axios'
 import stripe from './stripe'
 import mercadopago from './mercadopago'
 import paygreen from './paygreen'
+import pawapay from './pawapay'
 import { Disclaimer } from './cashOnDelivery'
 
 import { disableBtn, enableBtn } from '../../widgets/button'
@@ -78,6 +79,9 @@ export default function(formSelector, options) {
         break
       case 'paygreen':
         Object.assign(CreditCard.prototype, paygreen)
+        break
+      case 'pawapay':
+        Object.assign(CreditCard.prototype, pawapay)
         break
       case 'stripe':
       default:

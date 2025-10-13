@@ -90,10 +90,21 @@ trait SelectPaymentMethodTrait
             }
         }
 
+        // For Pawapay
+        foreach ($order->getPayments() as $payment) {
+            $details = $payment->getDetails();
+            foreach ($details as $key => $value) {
+                if (str_starts_with($key, 'pawapay')) {
+                    $pawapay[$key] = $value;
+                }
+            }
+        }
+
         return new JsonResponse([
             'payments' => $normalizer->normalize($payments, 'json', ['groups' => ['payment']]),
             'stripe' => $stripe,
             'paygreen' => $paygreen,
+            'pawapay' => $pawapay,
         ]);
     }
 }

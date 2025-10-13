@@ -31,6 +31,10 @@ class GatewayResolver
             return 'mercadopago';
         }
 
+        if ('gh' === $country) {
+            return 'pawapay';
+        }
+
         return 'stripe';
     }
 
