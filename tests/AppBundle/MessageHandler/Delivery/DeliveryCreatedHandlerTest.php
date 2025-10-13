@@ -73,24 +73,42 @@ class DeliveryCreatedHandlerTest extends TestCase
 
     public function testSendDelivery__TYPE_SIMPLE__SamePickupAddr()
     {
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
-        $dropoff = new Task();
-        $dropoff->setType(Task::TYPE_DROPOFF);
-        $pickup->setNext($dropoff);
-        $dropoff->setPrevious($pickup);
+        //$pickup = new Task();
+        $pickup = $this->prophesize(Task::class);
+        $pickup->isPickup()->willReturn(true);
+        $pickup->isDropoff()->willReturn(false);
+        $pickup->getId()->willReturn(1);
+        //$pickup->setType(Task::TYPE_PICKUP);
+        $pickup->getType()->willReturn(Task::TYPE_PICKUP);
+        //$dropoff = new Task();
+        $dropoff = $this->prophesize(Task::class);
+        $dropoff->isDropoff()->willReturn(true);
+        $dropoff->isPickup()->willReturn(false);
+        $dropoff->getId()->willReturn(2);
+        //$dropoff->setType(Task::TYPE_DROPOFF);
+        $dropoff->getType()->willReturn(Task::TYPE_DROPOFF);
+        //$pickup->setNext($dropoff);
+        $pickup->getNext()->willReturn($dropoff);
+        //$dropoff->setPrevious($pickup);
+        $dropoff->getPrevious()->willReturn($pickup);
 
         $pickupAddress = new Address();
         $pickupAddress->setStreetAddress("111 Nice Pickup St, Somewhere, Argentina");
-        $pickup->setAddress($pickupAddress);
+        //$pickup->setAddress($pickupAddress);
+        $pickup->getAddress()->willReturn($pickupAddress);
         $dropoffAddress = new Address();
         $dropoffAddress->setStreetAddress("222 Nice Dropoff St, Someplace, Argentina");
-        $dropoff->setAddress($dropoffAddress);
+        //$dropoff->setAddress($dropoffAddress);
+        $dropoff->getAddress()->willReturn($dropoffAddress);
 
-        $pickup->setAfter(new \DateTime('2025-01-02 01:02:03'));
-        $pickup->setBefore(new \DateTime('2025-01-02 02:03:04'));
-        $dropoff->setAfter(new \DateTime('2025-01-02 03:04:05'));
-        $dropoff->setBefore(new \DateTime('2025-01-02 04:05:06'));
+        //$pickup->setAfter(new \DateTime('2025-01-02 01:02:03'));
+        $pickup->getAfter()->willReturn(new \DateTime('2025-01-02 01:02:03'));
+        //$pickup->setBefore(new \DateTime('2025-01-02 02:03:04'));
+        $pickup->getBefore()->willReturn(new \DateTime('2025-01-02 02:03:04'));
+        //$dropoff->setAfter(new \DateTime('2025-01-02 03:04:05'));
+        $dropoff->getAfter()->willReturn(new \DateTime('2025-01-02 03:04:05'));
+        //$dropoff->setBefore(new \DateTime('2025-01-02 04:05:06'));
+        $dropoff->getBefore()->willReturn(new \DateTime('2025-01-02 04:05:06'));
 
         $delivery = $this->prophesize(Delivery::class);
         $delivery->getId()->willReturn(1);
@@ -113,6 +131,7 @@ class DeliveryCreatedHandlerTest extends TestCase
         $body = "PU: 01:02-02:03 | DO: 03:04-04:05";
         $data = [
             'event' => ['name' => 'delivery:created'],
+            'task_ids' => [1, 2],
             'delivery_id' => 1,
             'order_id' => 11,
             'order_number' => "G",
@@ -170,6 +189,9 @@ PU: 111 Nice Pickup St, Somewhere, Argentina
 DO: 222 Nice Dropoff St, Someplace, Argentina";
         $data = [
             'event' => ['name' => 'delivery:created'],
+            // I don't want to do all the 'prophesize' stuff for tasks here..
+            // this was already tested in a previous test
+            'task_ids' => [null, null],
             'delivery_id' => 1,
             'order_id' => null,
             'order_number' => null,
@@ -233,6 +255,9 @@ PU 01:02-02:03: 111 Nice Pickup St, Somewhere, Argentina
 PU 03:04-04:05: 222 Nice Pickup St, Somewhere, Argentina";
         $data = [
             'event' => ['name' => 'delivery:created'],
+            // I don't want to do all the 'prophesize' stuff for tasks here..
+            // this was already tested in a previous test
+            'task_ids' => [null, null, null],
             'delivery_id' => 2,
             'order_id' => 11,
             'order_number' => "G",
@@ -301,6 +326,9 @@ DO 03:04-04:05: 222 Nice Dropoff St, Someplace, Argentina
 DO 05:06-06:07: 333 Nice Dropoff St, Someplace, Argentina";
         $data = [
             'event' => ['name' => 'delivery:created'],
+            // I don't want to do all the 'prophesize' stuff for tasks here..
+            // this was already tested in a previous test
+            'task_ids' => [null, null, null],
             'delivery_id' => 3,
             'order_id' => 11,
             'order_number' => "G",
@@ -366,6 +394,9 @@ DO 03:04-04:05: 222 Nice Dropoff St, Someplace, Argentina
 DO 05:06-06:07: 333 Nice Dropoff St, Someplace, Argentina";
         $data = [
             'event' => ['name' => 'delivery:created'],
+            // I don't want to do all the 'prophesize' stuff for tasks here..
+            // this was already tested in a previous test
+            'task_ids' => [null, null, null],
             'delivery_id' => 3,
             'order_id' => null,
             'order_number' => null,
@@ -441,6 +472,9 @@ DO 05:06-06:07: 333 Nice Dropoff St, Someplace, Argentina
 DO 07:08-08:09: 444 Nice Dropoff St, Someplace, Argentina";
         $data = [
             'event' => ['name' => 'delivery:created'],
+            // I don't want to do all the 'prophesize' stuff for tasks here..
+            // this was already tested in a previous test
+            'task_ids' => [null, null, null, null],
             'delivery_id' => 4,
             'order_id' => 11,
             'order_number' => "G",
@@ -494,6 +528,9 @@ DO 07:08-08:09: 444 Nice Dropoff St, Someplace, Argentina";
         $body = "PU: 01:02-02:03 | DO: 03:04-04:05";
         $data = [
             'event' => ['name' => 'delivery:created'],
+            // I don't want to do all the 'prophesize' stuff for tasks here..
+            // this was already tested in a previous test
+            'task_ids' => [null, null],
             'delivery_id' => 1,
             'order_id' => 11,
             'order_number' => "G",
