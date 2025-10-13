@@ -55,6 +55,10 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[Vich\Uploadable]
 #[ApiResource(
     shortName: 'Restaurant',
+    cacheHeaders: [
+        'max_age' => 60,
+        'public' => true
+    ],
     operations: [
         new Get(
             normalizationContext: [
