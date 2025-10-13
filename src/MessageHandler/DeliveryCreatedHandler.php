@@ -77,6 +77,7 @@ class DeliveryCreatedHandler
             'event' => [
                 'name' => 'delivery:created'
             ],
+            'task_ids' => array_map(fn(Task $t) => $t->getId(), $delivery->getTasks()),
             'delivery_id' => $delivery->getId(),
             'order_id' => $order ? $order->getId() : null,
             'order_number' => $order ? $order->getNumber() : null,
