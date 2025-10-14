@@ -263,11 +263,8 @@ class ProductType extends AbstractType
             if ($form->has('options')) {
                 $opts = $form->get('options')->getData();
                 foreach ($opts as $opt) {
-                    if ($opt['enabled']) {
-                        $product->addOptionAt($opt['option'], $opt['position']);
-                    } else {
-                        $product->removeOption($opt['option']);
-                    }
+                    $product->addOptionAt($opt['option'], $opt['position']);
+                    $product->setOptionEnabled($opt['option'], $opt['enabled']);
                 }
             }
 
