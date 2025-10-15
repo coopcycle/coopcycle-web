@@ -1,6 +1,6 @@
-import React from "react";
-import { Provider } from "react-redux";
-import { createSlice, configureStore } from "@reduxjs/toolkit";
+import React from 'react';
+import { Provider } from 'react-redux';
+import { createSlice, configureStore } from '@reduxjs/toolkit';
 
 const initialState = {
   loaded: false,
@@ -11,7 +11,7 @@ const initialState = {
 };
 
 const incidentSlice = createSlice({
-  name: "incident",
+  name: 'incident',
   initialState,
   reducers: {
     setLoaded(state, action) {
@@ -51,7 +51,7 @@ export const {
 export default store;
 
 export const connectWithRedux =
-  (Component) =>
+  Component =>
   ({ ...props }) => (
     <Provider store={store}>
       <Component {...props} />

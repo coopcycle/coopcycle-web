@@ -1,22 +1,22 @@
-import React from "react";
-import { Image, Upload, notification } from "antd";
-import "./Style.scss";
+import React from 'react';
+import { Image, Upload, notification } from 'antd';
+import './Style.scss';
 
-import store from "./incidentStore";
+import store from './incidentStore';
 
 async function _handleUpload(id, file) {
   if (file.size > 5 * 1024 * 1024) {
-    return { message: "Image is too big" };
+    return { message: 'Image is too big' };
   }
   const httpClient = new window._auth.httpClient();
   const formData = new FormData();
-  formData.append("file", file);
+  formData.append('file', file);
   return await httpClient.post(
-    window.Routing.generate("_api_/incident_images{._format}_post"),
+    window.Routing.generate('_api_/incident_images{._format}_post'),
     formData,
     {
-      "Content-Type": "multipart/form-data",
-      "X-Attach-To": `/api/incidents/${id}`,
+      'Content-Type': 'multipart/form-data',
+      'X-Attach-To': `/api/incidents/${id}`,
     },
   );
 }
@@ -26,7 +26,7 @@ export default function () {
   return (
     <>
       <Image.PreviewGroup>
-        {images.map((image) => (
+        {images.map(image => (
           <span key={image.id} className="thumbnail">
             <Image
               width="128px"
@@ -47,11 +47,10 @@ export default function () {
             if (message) {
               return notification.error({ message });
             }
-            return notification.error({ message: "Something went wrong" });
+            return notification.error({ message: 'Something went wrong' });
           }
         }}
-        className="thumbnail"
-      >
+        className="thumbnail">
         <div className="incident-image-uploader">
           <div>
             <i className="fa fa-upload mr-2"></i>Upload

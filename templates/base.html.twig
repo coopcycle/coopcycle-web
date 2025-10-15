@@ -50,6 +50,8 @@
     https://github.com/symfony/webpack-encore-bundle/pull/102
     but it requires, at least, getting rid from the scripts inside twig templates #}
     {{ encore_entry_script_tags('app') }}
+    {% block ux_react_controllers %}
+    {% endblock %}
   </head>
   <body
     data-country="{{ country_iso }}"

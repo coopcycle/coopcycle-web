@@ -1,10 +1,12 @@
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 
-import PricingRuleSetForm from './PricingRuleSetForm';
+import PricingRuleSetForm from '../../components/pricing-rule-set-form/PricingRuleSetForm';
 import { accountSlice } from '../../entities/account/reduxSlice';
-import { createStoreFromPreloadedState } from './redux/store';
+import { createStoreFromPreloadedState } from '../../components/pricing-rule-set-form/redux/store';
 import { RootWithDefaults } from '../../utils/react';
+
+import '../../bootstrap-reset.scss';
 
 const container = document.getElementById('pricing-rule-set-form-react');
 
