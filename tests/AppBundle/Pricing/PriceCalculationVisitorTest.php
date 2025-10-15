@@ -24,6 +24,7 @@ use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Pricing\PriceExpressionParser;
 use AppBundle\Pricing\ProductVariantNameGenerator;
 use AppBundle\Pricing\RuleHumanizer;
+use AppBundle\Service\PricingRuleSetManager;
 use AppBundle\Sylius\Product\ProductOptionValueFactory;
 use AppBundle\Sylius\Product\ProductVariantFactory;
 use Carbon\Carbon;
@@ -50,6 +51,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $productOptionValueFactory = self::getContainer()->get(ProductOptionValueFactory::class);
         $productVariantFactory = self::getContainer()->get(ProductVariantFactory::class);
         $ruleHumanizer = self::getContainer()->get(RuleHumanizer::class);
+        $pricingRuleSetManager = self::getContainer()->get(PricingRuleSetManager::class);
         $translator = self::getContainer()->get('translator');
         $logger = self::getContainer()->get(LoggerInterface::class);
 
@@ -59,7 +61,14 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $taskExpressionLanguageVisitor,
             $productVariantFactory,
             new ProductVariantNameGenerator($translator),
-            new OnDemandDeliveryProductProcessor($productOptionValueFactory, $ruleHumanizer, $expressionLanguage, new PriceExpressionParser($expressionLanguage)),
+            new OnDemandDeliveryProductProcessor(
+                $productOptionValueFactory,
+                $ruleHumanizer,
+                $expressionLanguage,
+                new PriceExpressionParser($expressionLanguage),
+                $pricingRuleSetManager,
+                $logger
+            ),
             $logger
         );
     }
