@@ -22,6 +22,7 @@ use AppBundle\Entity\Sylius\ProductImage;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Sylius\ProductVariant;
 use AppBundle\Entity\Sylius\ProductVariantTranslation;
+use AppBundle\Entity\Sylius\PromotionCoupon;
 use AppBundle\Entity\Sylius\TaxCategory;
 use AppBundle\Entity\Sylius\TaxonRepository;
 use AppBundle\Form\ApiAppType;
@@ -66,7 +67,10 @@ use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentMethodInterface;
 use Sylius\Component\Product\Model\ProductTranslation;
 use Sylius\Component\Product\Repository\ProductOptionRepositoryInterface;
+use Sylius\Component\Promotion\Model\Promotion;
 use Sylius\Component\Resource\Factory\FactoryInterface;
+use Sylius\Component\Promotion\Checker\Eligibility\PromotionEligibilityCheckerInterface;
+use Sylius\Component\Promotion\Checker\Eligibility\PromotionCouponEligibilityCheckerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Component\Form\ChoiceList\Loader\CallbackChoiceLoader;
@@ -87,6 +91,8 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Handler\UploadHandler;
@@ -119,7 +125,8 @@ trait RestaurantTrait
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
         TranslatorInterface $translator,
-        LoopeatClient $loopeatClient)
+        LoopeatClient $loopeatClient,
+        CacheInterface $appCache)
     {
         $form = $this->createForm(RestaurantType::class, $restaurant, [
             'loopeat_enabled' => $this->getParameter('loopeat_enabled'),
@@ -249,8 +256,6 @@ trait RestaurantTrait
             $activationErrors = ValidationUtils::serializeValidationErrors($violations);
         }
 
-
-
         $loopeatAuthorizeUrl = '';
         if ($this->getParameter('loopeat_enabled') && $restaurant->isLoopeatEnabled()) {
 
@@ -278,7 +283,17 @@ trait RestaurantTrait
             $loopeatAuthorizeUrl = $loopeatClient->getRestaurantOAuthAuthorizeUrl($params);
         }
 
-        $cuisines = $this->entityManager->getRepository(Cuisine::class)->findAll();
+        $cuisines = $appCache->get('translated_cuisines', function (ItemInterface $item) use ($translator) {
+
+            // We could cache this forever, but from time to time we add cuisines
+            $item->expiresAfter(60 * 60 * 24);
+
+            return array_map(fn($c) => [
+                'id' => $c->getId(),
+                'name' => $translator->trans($c->getName(), domain: 'cuisines'),
+            ], $this->entityManager->getRepository(Cuisine::class)->findAll());
+
+        });
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'restaurant' => $restaurant,
@@ -296,7 +311,8 @@ trait RestaurantTrait
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
         TranslatorInterface $translator,
-        LoopeatClient $loopeatClient)
+        LoopeatClient $loopeatClient,
+        CacheInterface $appCache)
     {
         $repository = $this->entityManager->getRepository(LocalBusiness::class);
 
@@ -312,7 +328,7 @@ trait RestaurantTrait
             return new JsonResponse($restaurantNormalized);
         }
 
-        return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator, $loopeatClient);
+        return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator, $loopeatClient, $appCache);
     }
 
     public function newRestaurantAction(Request $request,
@@ -320,13 +336,14 @@ trait RestaurantTrait
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
         TranslatorInterface $translator,
-        LoopeatClient $loopeatClient)
+        LoopeatClient $loopeatClient,
+        CacheInterface $appCache)
     {
         // TODO Check roles
         $restaurant = new LocalBusiness();
         $restaurant->setContract(new Contract());
 
-        return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator, $loopeatClient);
+        return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator, $loopeatClient, $appCache);
     }
 
     public function restaurantNewAdhocOrderAction($restaurantId, Request $request,
@@ -835,6 +852,11 @@ trait RestaurantTrait
         LoopeatClient $loopeatClient,
         bool $taxIncl)
     {
+        $filterCollection = $entityManager->getFilters();
+        if ($filterCollection->isEnabled('disabled_filter')) {
+            $filterCollection->disable('disabled_filter');
+        }
+
         $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
@@ -924,6 +946,11 @@ trait RestaurantTrait
         EntityManagerInterface $entityManager,
         LoopeatClient $loopeatClient)
     {
+        $filterCollection = $entityManager->getFilters();
+        if ($filterCollection->isEnabled('disabled_filter')) {
+            $filterCollection->disable('disabled_filter');
+        }
+
         $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
@@ -1504,7 +1531,10 @@ trait RestaurantTrait
         ]));
     }
 
-    public function restaurantPromotionsAction($id, Request $request)
+    public function restaurantPromotionsAction($id,
+        PromotionEligibilityCheckerInterface $promotionExpirationChecker,
+        PromotionCouponEligibilityCheckerInterface $promotionCouponExpirationChecker,
+        Request $request)
     {
         $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
@@ -1512,10 +1542,32 @@ trait RestaurantTrait
 
         $this->accessControl($restaurant);
 
+        $ongoing = [];
+        $past = [];
+
+        foreach ($restaurant->getPromotions() as $promotion) {
+            if ($promotion->isCouponBased()) {
+                foreach ($promotion->getCoupons() as $coupon) {
+                    if (!$promotionCouponExpirationChecker->isEligible(new Order(), $coupon)) {
+                        $past[] = $coupon;
+                    } else {
+                        $ongoing[] = $coupon;
+                    }
+                }
+            } else {
+                if (!$promotionExpirationChecker->isEligible(new Order(), $promotion)) {
+                    $past[] = $promotion;
+                } else {
+                    $ongoing[] = $promotion;
+                }
+            }
+        }
+
         return $this->render('restaurant/promotions.html.twig', $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
-            'promotions' => $restaurant->getPromotions(),
+            'past_promotions' => $past,
+            'ongoing_promotions' => $ongoing,
         ]));
     }
 
@@ -1543,16 +1595,11 @@ trait RestaurantTrait
                     $form->handleRequest($request);
                     if ($form->isSubmitted() && $form->isValid()) {
 
-                        $promotion = $form->getData();
+                        $coupon = $form->get('coupon')->getData();
 
-                        $restaurant->addPromotion($promotion);
+                        $restaurant->addPromotion($coupon->getPromotion());
 
                         $this->entityManager->flush();
-
-                        // $this->addFlash(
-                        //     'notice',
-                        //     $translator->trans('global.changesSaved')
-                        // );
 
                         return $this->redirectToRoute($routes['promotions'], ['id' => $id]);
                     }
@@ -1598,11 +1645,87 @@ trait RestaurantTrait
         return $this->redirectToRoute($routes['promotions'], ['id' => $id]);
     }
 
-    public function restaurantPromotionAction($restaurantId, $promotionId, Request $request)
+    public function restaurantPromotionAction($restaurantId, $promotionId, TranslatorInterface $translator, Request $request)
     {
-        // TODO Implement
+        $restaurant = $this->entityManager
+            ->getRepository(LocalBusiness::class)
+            ->find($restaurantId);
 
-        throw $this->createNotFoundException();
+        $promotion = $this->entityManager
+            ->getRepository(Promotion::class)
+            ->find($promotionId);
+
+        if (!$restaurant->hasPromotion($promotion)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $form = $this->createForm(ItemsTotalBasedPromotionType::class, $promotion, [
+            'local_business' => $restaurant
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->entityManager->flush();
+
+            $this->addFlash(
+                'notice',
+                $translator->trans('global.changesSaved')
+            );
+
+            $routes = $this->getRestaurantRoutes();
+
+            return $this->redirectToRoute($routes['promotions'], ['id' => $restaurantId]);
+        }
+
+        return $this->render('restaurant/promotion.html.twig', $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'form' => $form->createView(),
+            'promotion_type' => 'items_total',
+        ]));
+    }
+
+    public function restaurantPromotionCouponAction($restaurantId, $promotionId, $couponId, TranslatorInterface $translator, Request $request)
+    {
+        $restaurant = $this->entityManager
+            ->getRepository(LocalBusiness::class)
+            ->find($restaurantId);
+
+        $coupon = $this->entityManager
+            ->getRepository(PromotionCoupon::class)
+            ->find($couponId);
+
+        $promotion = $coupon->getPromotion();
+
+        if (!$restaurant->hasPromotion($promotion)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $form = $this->createForm(OfferDeliveryType::class, $coupon, [
+            'local_business' => $restaurant
+        ]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->entityManager->flush();
+
+            $this->addFlash(
+                'notice',
+                $translator->trans('global.changesSaved')
+            );
+
+            $routes = $this->getRestaurantRoutes();
+
+            return $this->redirectToRoute($routes['promotions'], ['id' => $restaurantId]);
+        }
+
+        return $this->render('restaurant/promotion.html.twig', $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'form' => $form->createView(),
+            'promotion_type' => 'offer_delivery',
+        ]));
     }
 
     public function deleteProductImageAction($restaurantId, $productId, $imageName,
@@ -1980,5 +2103,54 @@ trait RestaurantTrait
             'orders' => $hash,
             'payment_methods' => $paymentMethods,
         ]));
+    }
+
+    public function archiveRestaurantPromotionAction($restaurantId, Request $request)
+    {
+        $restaurant = $this->entityManager
+            ->getRepository(LocalBusiness::class)
+            ->find($restaurantId);
+
+        if ($request->isMethod('POST')) {
+
+            $type = $request->request->get('type');
+            $id = $request->request->getInt('id');
+
+            if ($type === 'coupon') {
+
+                $coupon = null;
+                foreach ($restaurant->getPromotions() as $promotion) {
+                    if ($promotion->isCouponBased()) {
+                        foreach ($promotion->getCoupons() as $c) {
+                            if ($id === $c->getId()) {
+                                $coupon = $c;
+                                break 2;
+                            }
+                        }
+                    }
+                }
+
+                if ($coupon) {
+                    $coupon->setExpiresAt(new \DateTime('now'));
+                    $this->entityManager->flush();
+                }
+
+            } elseif ($type === 'promotion') {
+
+                foreach ($restaurant->getPromotions() as $promotion) {
+                    if (!$promotion->isCouponBased() && $id === $promotion->getId()) {
+                        $promotion->setArchivedAt(new \DateTime('now'));
+                        $this->entityManager->flush();
+                        break;
+                    }
+                }
+
+            }
+
+        }
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->redirectToRoute($routes['restaurant_promotions'], ['id' => $restaurantId]);
     }
 }

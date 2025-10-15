@@ -37,7 +37,7 @@ $(function() {
         }
       },
       images: JSON.parse(formData.dataset.productImages),
-      size: [ 256, 256 ]
+      size: [256, 256]
     })
   }
 })
@@ -82,19 +82,25 @@ if (addReusablePackaging) {
   addReusablePackaging.addEventListener("click", addFormToCollection)
 }
 
-$(document).on('click', '[data-reusable-packaging-delete]', function (e) {
+$(document).on('click', '[data-reusable-packaging-delete]', function(e) {
   $(e.currentTarget).closest('li').remove()
+})
+
+document.querySelectorAll('#product_options > div').forEach(el => {
+  const icon = document.createElement('i')
+  icon.className = 'fa fa-bars handle'
+  el.appendChild(icon)
 })
 
 new Sortable(document.querySelector('#product_options'), {
   group: 'products',
+  handle: '.handle',
   animation: 250,
   onUpdate: function(e) {
-    let i = 0
-    Array.prototype.slice.call(e.to.children).forEach((el) => {
-      const enabled = el.querySelector('input[type="checkbox"]')
+    Array.prototype.slice.call(e.to.children).forEach((el, index) => {
+      // const enabled = el.querySelector('input[type="checkbox"]')
       const pos = el.querySelector('[data-name="position"]')
-      pos.value = enabled.checked ? i++ : -1
+      pos.value = index
     })
   },
 })
@@ -119,7 +125,7 @@ const attachPricesAndTaxEventListeners = (el) => {
     const amount = getRateAmount(e.target)
 
     const masterEl = taxIncl ? taxIncludedEl : taxExcludedEl
-    const otherEl  = taxIncl ? taxExcludedEl : taxIncludedEl
+    const otherEl = taxIncl ? taxExcludedEl : taxIncludedEl
 
     const value = numbro.unformat(masterEl.value)
 

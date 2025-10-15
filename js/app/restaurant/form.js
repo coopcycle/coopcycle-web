@@ -252,9 +252,14 @@ $(function() {
     const cuisines = JSON.parse(cuisinesEl.dataset.values)
     const cuisinesTargetEl = document.querySelector(cuisinesEl.dataset.target)
 
+    // Translate selected cuisines
+    const selectedCuisines = JSON.parse(cuisinesTargetEl.value || '[]').map(s => {
+      return _.find(cuisines, c => c.id === s.id)
+    })
+
     createRoot(cuisinesEl).render(
       <Select
-        defaultValue={ _.map(JSON.parse(cuisinesTargetEl.value || '[]'), cuisineAsOption) }
+        defaultValue={ _.map(selectedCuisines, cuisineAsOption) }
         isMulti
         options={ _.map(cuisines, cuisineAsOption) }
         onChange={ cuisines => {

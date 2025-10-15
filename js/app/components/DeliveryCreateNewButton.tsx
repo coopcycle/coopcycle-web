@@ -17,6 +17,7 @@ type Props = {
 export default function DeliveryCreateNewButton({
   stores,
   routes,
+  isNavbar,
   buttonComponent,
 }: Props) {
   const { t } = useTranslation()
@@ -51,6 +52,7 @@ export default function DeliveryCreateNewButton({
         <Button
           color="green"
           variant="solid"
+          className={isNavbar ? 'navbar-btn' : ''}
           icon={<PlusOutlined />}
           onClick={showModal}>
           {t('CREATE_NEW_ORDER')}

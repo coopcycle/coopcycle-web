@@ -713,6 +713,11 @@ class LocalBusiness extends BaseLocalBusiness implements
         return $this->promotions;
     }
 
+    public function hasPromotion($promotion)
+    {
+        return $this->promotions->contains($promotion);
+    }
+
     public function isFeatured(): bool
     {
         return $this->featured;

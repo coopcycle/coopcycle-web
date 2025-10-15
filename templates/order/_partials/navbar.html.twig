@@ -38,6 +38,22 @@
             </a>
           </li>
         {% endif %}
+        {% if is_granted('ROLE_DISPATCHER') %}
+        <li>
+          {% if order.hasReceipt() %}
+            <a target="_blank" href="{{ path('admin_order_receipt', { orderNumber: order.number }) }}">
+              <i class="fa fa-file-pdf-o mr-2" aria-hidden="true"></i><span>{{ 'order.download_receipt'|trans }}</span>
+            </a>
+          {% elseif order.hasVendor() and order.state == 'fulfilled' %}
+            <a href="#"
+              data-toggle="modal"
+              data-target="#order-receipt-modal"
+              data-action="{{ path('admin_order_receipt_generate', { orderNumber: order.number }) }}">
+              <i class="fa fa-file-pdf-o mr-2" aria-hidden="true"></i><span>{{ 'order.generate_receipt'|trans }}</span>
+            </a>
+          {% endif %}
+        {% endif %}
+        </li>
         {% if is_granted('ROLE_DISPATCHER') and order.delivery is not empty %}
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
@@ -53,6 +69,7 @@
             </ul>
           </li>
         {% endif %}
+        {% include '_partials/delivery/create_new_button.html.twig' with { navbar: true } %}
       </div>
     </div>
   </div>

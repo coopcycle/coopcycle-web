@@ -40,9 +40,6 @@
     <div class="flex-grow-1">
       {% include 'order/_partials/navbar.html.twig' %}
     </div>
-    <div class="ml-2">
-      {% include '_partials/delivery/create_new_button.html.twig' %}
-    </div>
   </div>
 {% endif %}
 
@@ -122,9 +119,14 @@
   </div>
 {% endif %}
 
+{% include "_partials/order/receipt_modal.html.twig" %}
+
 {% endblock %}
 
 {% block scripts %}
 {{ encore_entry_script_tags('order-item') }}
 {{ encore_entry_script_tags('delivery-map') }}
+<script>
+{% include "_partials/order/receipt_modal.js.twig" %}
+</script>
 {% endblock %}

@@ -1645,3 +1645,7 @@ pricing.rule.humanizer.packages_contains_at_least_one: 'colis %package_name%'
 pricing.rule.humanizer.price_range: '%unit_price% par %step%'
 pricing.rule.humanizer.price_range_with_threshold: 'au-dessus de %threshold% - %unit_price% par %step%'
 pricing.rule.humanizer.price_per_package: '%unit_price% par %package_name%'
+adminDashboard.promotions.ongoing: Promotions actives
+adminDashboard.promotions.past: Promotions passées
+order.download_receipt: Télécharger le reçu
+order.generate_receipt: Générer le reçu

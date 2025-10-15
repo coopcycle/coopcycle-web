@@ -3,7 +3,7 @@ context('Delivery (role: dispatcher)', () => {
     cy.loadFixturesWithSetup([
       'user_dispatcher.yml',
       'tags.yml',
-      'store_with_price_per_packages_in_order.yml',
+      'store_with_price_per_packages.yml',
     ])
     cy.setEnvVar('PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED', '1');
 

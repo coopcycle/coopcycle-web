@@ -37,7 +37,6 @@ class ItemsTotalBasedPromotionType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'mapped' => false,
                 'label' => 'form.credit_note.name.label',
                 'help' => 'form.credit_note.name.help'
             ])
@@ -67,16 +66,44 @@ class ItemsTotalBasedPromotionType extends AbstractType
             ])
             ;
 
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+
+            $form = $event->getForm();
+            $data = $event->getData();
+
+            if (null !== $data->getId()) {
+
+                foreach ($data->getRules() as $rule) {
+                    if ($rule->getType() === IsItemsTotalAboveRuleChecker::TYPE) {
+                        $config = $rule->getConfiguration();
+                        $form->get('itemsTotal')->setData($config['amount']);
+                        break;
+                    }
+                }
+
+                foreach ($data->getActions() as $action) {
+                    if ($action->getType() === FixedDiscountPromotionActionCommand::TYPE) {
+                        $config = $action->getConfiguration();
+                        $form->get('fixedDiscountAmount')->setData($config['amount']);
+                        break;
+                    }
+                }
+
+            }
+
+        });
+
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($options) {
 
             $form = $event->getForm();
             $promotion = $event->getData();
 
+            $itemsTotal = $form->get('itemsTotal')->getData();
+            $fixedDiscountAmount = $form->get('fixedDiscountAmount')->getData();
+
             if (null === $promotion->getId()) {
 
                 $name = $form->get('name')->getData();
-                $itemsTotal = $form->get('itemsTotal')->getData();
-                $fixedDiscountAmount = $form->get('fixedDiscountAmount')->getData();
 
                 $promotion->setName($name);
                 $promotion->setCouponBased(false);
@@ -106,6 +133,28 @@ class ItemsTotalBasedPromotionType extends AbstractType
                 ]);
 
                 $promotion->addAction($promotionAction);
+
+            } else {
+
+                foreach ($promotion->getRules() as $rule) {
+                    if ($rule->getType() === IsItemsTotalAboveRuleChecker::TYPE) {
+                        $rule->setConfiguration([
+                            'amount' => $itemsTotal
+                        ]);
+                        break;
+                    }
+                }
+
+                foreach ($promotion->getActions() as $action) {
+                    if ($action->getType() === FixedDiscountPromotionActionCommand::TYPE) {
+                        $action->setConfiguration([
+                            'amount' => $fixedDiscountAmount,
+                            'decrase_platform_fee' => false,
+                        ]);
+                        break;
+                    }
+                }
+
             }
         });
     }
