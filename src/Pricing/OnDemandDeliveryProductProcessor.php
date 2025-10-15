@@ -52,24 +52,17 @@ class OnDemandDeliveryProductProcessor
         $priceExpression = $this->priceExpressionParser->parsePrice($rule->getPrice());
         $result = $rule->apply($expressionLanguageValues, $this->expressionLanguage);
 
-        if (is_array($result) && count($result) !== count($productOptionValues)) {
-            $this->feeCalculationLogger->warning('processProductOptionValue; evaluation result (array) does not match the number of product option values', [
-                'rule' => $rule->getPrice(),
-                'result' => $result,
-                'productOptionValues' => count($productOptionValues),
-            ]);
-            return [];
-        } elseif (!is_array($result) && count($productOptionValues) !== 1) {
-            $this->feeCalculationLogger->warning('processProductOptionValue; evaluation result (PriceEvaluation|int) does not match the number of product option values', [
-                'rule' => $rule->getPrice(),
-                'result' => $result,
-                'productOptionValues' => count($productOptionValues),
-            ]);
-            return [];
-        }
-
         switch (get_class($priceExpression)) {
             case FixedPriceExpression::class:
+                if (count($productOptionValues) !== 1) {
+                    $this->feeCalculationLogger->warning('processProductOptionValue; incompatible number of product option values', [
+                        'rule' => $rule->getPrice(),
+                        'result' => $result,
+                        'productOptionValues' => count($productOptionValues),
+                    ]);
+                    return [];
+                }
+
                 if (is_array($result) || $result instanceof PriceEvaluation) {
                     $this->feeCalculationLogger->warning('processProductOptionValue; unsupported result type', [
                         'rule' => $rule->getPrice(),
@@ -80,6 +73,15 @@ class OnDemandDeliveryProductProcessor
                 $productOptionValuesWithQuantity = $this->processFixedPriceExpression($rule, $result, $productOptionValues[0]);
                 break;
             case PricePercentageExpression::class:
+                if (count($productOptionValues) !== 1) {
+                    $this->feeCalculationLogger->warning('processProductOptionValue; incompatible number of product option values', [
+                        'rule' => $rule->getPrice(),
+                        'result' => $result,
+                        'productOptionValues' => count($productOptionValues),
+                    ]);
+                    return [];
+                }
+
                 if (is_array($result) || $result instanceof PriceEvaluation) {
                     $this->feeCalculationLogger->warning('processProductOptionValue; unsupported result type', [
                         'rule' => $rule->getPrice(),
@@ -90,6 +92,15 @@ class OnDemandDeliveryProductProcessor
                 $productOptionValuesWithQuantity = $this->processPricePercentageExpression($rule, $result, $productOptionValues[0]);
                 break;
             case PriceRangeExpression::class:
+                if (count($productOptionValues) !== 1) {
+                    $this->feeCalculationLogger->warning('processProductOptionValue; incompatible number of product option values', [
+                        'rule' => $rule->getPrice(),
+                        'result' => $result,
+                        'productOptionValues' => count($productOptionValues),
+                    ]);
+                    return [];
+                }
+
                 if (is_array($result)) {
                     $this->feeCalculationLogger->warning('processProductOptionValue; unsupported result type', [
                         'rule' => $rule->getPrice(),
@@ -113,6 +124,23 @@ class OnDemandDeliveryProductProcessor
                 $productOptionValuesWithQuantity = $this->processPriceRangeExpression($rule, $result, $productOptionValues[0]);
                 break;
             case PricePerPackageExpression::class:
+                //the number of product option values must be greater or equal to the number of evaluation results
+                if (is_array($result) && count($productOptionValues) < count($result)) {
+                    $this->feeCalculationLogger->warning('processProductOptionValue; evaluation result (array) does not match the number of product option values', [
+                        'rule' => $rule->getPrice(),
+                        'result' => $result,
+                        'productOptionValues' => count($productOptionValues),
+                    ]);
+                    return [];
+                } elseif (!is_array($result) && count($productOptionValues) < 1) {
+                    $this->feeCalculationLogger->warning('processProductOptionValue; evaluation result (PriceEvaluation) does not match the number of product option values', [
+                        'rule' => $rule->getPrice(),
+                        'result' => $result,
+                        'productOptionValues' => count($productOptionValues),
+                    ]);
+                    return [];
+                }
+
                 if (!is_array($result) && !($result instanceof PriceEvaluation)) {
                     if (0 !== $result) {
                         $this->feeCalculationLogger->warning('processProductOptionValue; unsupported result type', [
