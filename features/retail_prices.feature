@@ -2139,7 +2139,7 @@ Feature: Retail prices
         "amount":500,
         "currency":"EUR",
         "tax":{
-          "amount":100,
+          "amount":83,
           "included": true
         },
         "order": {
@@ -2172,14 +2172,14 @@ Feature: Retail prices
                 "tax": [
                   {
                     "label": "TVA 20%",
-                    "amount": 100
+                    "amount": 83
                   }
                 ]
               }
             }
           ],
           "total": 500,
-          "taxTotal": 100,
+          "taxTotal": 83,
           "shippingAddress": {"@*@":"@*@"},
           "paymentGateway": @string@
         },
