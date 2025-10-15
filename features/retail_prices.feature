@@ -2095,3 +2095,175 @@ Feature: Retail prices
         "calculation": {"@*@":"@*@"}
       }
       """
+    
+  # https://github.com/coopcycle/coopcycle/issues/543
+  Scenario: Bug in 'Price per package' rules - recalculate price with different package quantity
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | store_with_price_per_packages.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00",
+          "packages": [
+            {"type": "XL", "quantity": 1}
+          ]
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RetailPrice",
+        "@id":@string@,
+        "@type":"RetailPrice",
+        "amount":500,
+        "currency":"EUR",
+        "tax":{
+          "amount":100,
+          "included": true
+        },
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 500,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × Colis XL - price_per_package(packages, \"XL\", 500, 2, 1000)",
+                    "amount": 500
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 100
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 500,
+          "taxTotal": 100,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
+        "calculation": {"@*@":"@*@"}
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00",
+          "packages": [
+            {"type": "XL", "quantity": 2}
+          ]
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RetailPrice",
+        "@id":@string@,
+        "@type":"RetailPrice",
+        "amount":1500,
+        "currency":"EUR",
+        "tax":{
+          "amount":250,
+          "included": true
+        },
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 1500,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × Colis XL - price_per_package(packages, \"XL\", 500, 2, 1000)",
+                    "amount": 500
+                  },
+                  {
+                    "label": "1 × Colis XL - price_per_package(packages, \"XL\", 500, 2, 1000)",
+                    "amount": 1000
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 250
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 1500,
+          "taxTotal": 250,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
+        "calculation": {"@*@":"@*@"}
+      }
+      """

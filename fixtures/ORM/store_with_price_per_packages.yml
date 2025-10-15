@@ -8,13 +8,18 @@ AppBundle\Entity\Delivery\PricingRuleSet:
   pricing_rule_set:
     name: 'Pricing Rule Set'
     strategy: 'map'
-    rules: ['@pricing_rule']
+    rules: ['@pricing_rule_1', '@pricing_rule_2']
 
 AppBundle\Entity\Delivery\PricingRule:
-  pricing_rule:
+  pricing_rule_1:
     expression: 'packages.containsAtLeastOne("SMALL")'
     price: 'price_per_package(packages, "SMALL", 500, 0, 0)'
     position: 1
+    ruleSet: '@pricing_rule_set'
+  pricing_rule_2:
+    expression: 'packages.containsAtLeastOne("XL")'
+    price: 'price_per_package(packages, "XL", 500, 2, 1000)'
+    position: 2
     ruleSet: '@pricing_rule_set'
 
 AppBundle\Entity\Store:
