@@ -15,6 +15,7 @@ use AppBundle\Pricing\PriceExpressions\PricePerPackageExpression;
 use AppBundle\Pricing\PriceExpressions\PriceRangeExpression;
 use AppBundle\Pricing\ProductOptionValueWithQuantity;
 use AppBundle\Pricing\RuleHumanizer;
+use AppBundle\Service\PricingRuleSetManager;
 use AppBundle\Sylius\Product\ProductOptionValueFactory;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
@@ -38,6 +39,7 @@ class OnDemandDeliveryProductProcessorTest extends TestCase
         $this->ruleHumanizer = $this->createMock(RuleHumanizer::class);
         $this->expressionLanguage = $this->createMock(ExpressionLanguage::class);
         $this->priceExpressionParser = $this->createMock(PriceExpressionParser::class);
+        $pricingRuleSetManager = $this->createMock(PricingRuleSetManager::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->processor = new OnDemandDeliveryProductProcessor(
@@ -45,6 +47,7 @@ class OnDemandDeliveryProductProcessorTest extends TestCase
             $this->ruleHumanizer,
             $this->expressionLanguage,
             $this->priceExpressionParser,
+            $pricingRuleSetManager,
             $this->logger
         );
     }

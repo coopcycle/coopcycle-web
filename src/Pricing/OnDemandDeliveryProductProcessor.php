@@ -10,6 +10,7 @@ use AppBundle\Pricing\PriceExpressions\FixedPriceExpression;
 use AppBundle\Pricing\PriceExpressions\PricePercentageExpression;
 use AppBundle\Pricing\PriceExpressions\PricePerPackageExpression;
 use AppBundle\Pricing\PriceExpressions\PriceRangeExpression;
+use AppBundle\Service\PricingRuleSetManager;
 use AppBundle\Sylius\Product\ProductOptionValueFactory;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
@@ -24,6 +25,7 @@ class OnDemandDeliveryProductProcessor
         private readonly RuleHumanizer $ruleHumanizer,
         private readonly ExpressionLanguage $expressionLanguage,
         private readonly PriceExpressionParser $priceExpressionParser,
+        private readonly PricingRuleSetManager $pricingRuleSetManager,
         private readonly LoggerInterface $feeCalculationLogger = new NullLogger()
     ) {
     }
@@ -126,12 +128,29 @@ class OnDemandDeliveryProductProcessor
             case PricePerPackageExpression::class:
                 //the number of product option values must be greater or equal to the number of evaluation results
                 if (is_array($result) && count($productOptionValues) < count($result)) {
-                    $this->feeCalculationLogger->warning('processProductOptionValue; evaluation result (array) does not match the number of product option values', [
+                    $this->feeCalculationLogger->warning('processProductOptionValue; evaluation result (array) does not match the number of product option values; trying to fix', [
                         'rule' => $rule->getPrice(),
                         'result' => $result,
                         'productOptionValues' => count($productOptionValues),
                     ]);
-                    return [];
+
+                    // This could happen with pricing rules created/updated before
+                    // product option values for quantity-based price expressions were introduced
+                    // in https://github.com/coopcycle/coopcycle-web/pull/5084
+                    // Recreating the product option values should fix the issue
+                    
+                    $productOptionValues = $this->recreateProductOptionValues($rule);
+                    if (count($productOptionValues) < count($result)) {
+                        $this->feeCalculationLogger->warning('processProductOptionValue; evaluation result (array) does not match the number of product option values; could not fix', [
+                            'rule' => $rule->getPrice(),
+                            'result' => $result,
+                            'productOptionValues' => count($productOptionValues),
+                        ]);
+                        return [];
+                    }
+
+                    // if the issue is fixed, we can proceed normally
+
                 } elseif (!is_array($result) && count($productOptionValues) < 1) {
                     $this->feeCalculationLogger->warning('processProductOptionValue; evaluation result (PriceEvaluation) does not match the number of product option values', [
                         'rule' => $rule->getPrice(),
@@ -207,6 +226,15 @@ class OnDemandDeliveryProductProcessor
         }
 
         return $productOptionValues;
+    }
+
+    /**
+     * @return ProductOptionValue[]
+     */
+    private function recreateProductOptionValues(PricingRule $rule): array
+    {
+        $this->pricingRuleSetManager->updateProductOptionValues($rule, $this->ruleHumanizer->humanize($rule));
+        return $rule->getProductOptionValues()->toArray();
     }
 
     /**
