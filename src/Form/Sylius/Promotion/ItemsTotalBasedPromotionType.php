@@ -71,7 +71,7 @@ class ItemsTotalBasedPromotionType extends AbstractType
             $form = $event->getForm();
             $data = $event->getData();
 
-            if (null !== $data->getId()) {
+            if (null !== $data) {
 
                 foreach ($data->getRules() as $rule) {
                     if ($rule->getType() === IsItemsTotalAboveRuleChecker::TYPE) {
