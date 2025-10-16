@@ -6,12 +6,16 @@
 
 {% set createdBy = incident.getCreatedBy() %}
 
+{% block prepare_title %}
+  {{ add_title_prefix('adminDashboard.incidents.incident.title'|trans({ '%id%': incident.id })) }}
+{% endblock %}
+
 {% block breadcrumb %}
 <li>
   <a href="{{ path('admin_incidents') }}">{% trans %}adminDashboard.incidents.title{% endtrans %}</a>
 </li>
 <li>
-  Incident #{{incident.id}}
+  {{ 'adminDashboard.incidents.incident.title'|trans({ '%id%': incident.id }) }}
 </li>
 {% endblock %}
 
