@@ -6,7 +6,14 @@ import TransporterReport from './ActionBox/TransporterReport';
 
 import { useTranslation } from 'react-i18next';
 
-import store from './incidentStore';
+import store from './redux/incidentStore';
+import {
+  selectImages,
+  selectIncident,
+  selectLoaded,
+  selectOrder,
+  selectTransporterEnabled,
+} from './redux/incidentSlice';
 
 async function _handleCancelButton(id) {
   const httpClient = new window._auth.httpClient();
@@ -23,8 +30,13 @@ const styles = {
 };
 
 export default function ({ isLastmile }) {
-  const { loaded, incident, order, images, transporterEnabled } =
-    store.getState();
+  //FIXME: replace with useAppSelector after migrating away from ux-react-controllers
+  const state = store.getState();
+  const loaded = selectLoaded(state);
+  const incident = selectIncident(state);
+  const order = selectOrder(state);
+  const images = selectImages(state);
+  const transporterEnabled = selectTransporterEnabled(state);
 
   const { t } = useTranslation();
 

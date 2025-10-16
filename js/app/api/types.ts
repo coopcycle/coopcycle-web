@@ -296,7 +296,7 @@ export type IncidentEvent = {
   createdAt: string;
 };
 
-export type Incident = {
+export type Incident = JsonLdEntity & {
   id: number;
   title?: string;
   status: string;
@@ -305,7 +305,7 @@ export type Incident = {
   description?: string;
   events: IncidentEvent[];
   createdBy?: User;
-  // metadata: Record<string, any>
+  metadata: unknown[];
   createdAt: string;
   updatedAt?: string;
 };
