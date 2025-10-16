@@ -296,7 +296,7 @@ export type IncidentEvent = {
   createdAt: string;
 };
 
-export type Incident = {
+export type Incident = JsonLdEntity & {
   id: number;
   title?: string;
   status: string;

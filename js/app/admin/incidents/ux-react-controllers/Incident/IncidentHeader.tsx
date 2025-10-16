@@ -4,7 +4,7 @@ import { Row, Statistic, Dropdown, Select, notification } from 'antd';
 import PageHeader from '../../../../components/PageHeader';
 import { useTranslation } from 'react-i18next';
 
-import store from './incidentStore';
+import store, { selectIncident, selectLoaded } from './incidentStore';
 
 async function _handleStatusSubmit(id, body) {
   const httpClient = new window._auth.httpClient();
@@ -49,7 +49,10 @@ function _statusBtn(status) {
 }
 
 export default function () {
-  const { loaded, incident } = store.getState();
+  //FIXME: replace with useAppSelector after migrating away from ux-react-controllers
+  const state = store.getState();
+  const loaded = selectLoaded(state);
+  const incident = selectIncident(state);
   const [priority, setPriority] = useState(incident.priority);
   const [status, setStatus] = useState(incident.status);
   const [tags, setTags] = useState(incident.tags);

@@ -1,8 +1,8 @@
 import store, {
-  setLoaded,
-  setIncident,
-  setOrder,
   setImages,
+  setIncident,
+  setLoaded,
+  setOrder,
   setTransporterEnabled,
 } from './incidentStore';
 

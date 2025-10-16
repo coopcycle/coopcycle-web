@@ -5,7 +5,11 @@ import './OrderDetails.scss';
 import { money, weight } from './utils';
 import TaskStatusBadge from '../../../../dashboard/components/TaskStatusBadge';
 
-import store from './incidentStore';
+import store, {
+  selectIncident,
+  selectLoaded,
+  selectOrder,
+} from './incidentStore';
 import { useTranslation } from 'react-i18next';
 
 function formatTime(task) {
@@ -134,7 +138,13 @@ function CustomerDetails({ customer }) {
 export default function ({ delivery }) {
   delivery = JSON.parse(delivery);
   const { t } = useTranslation();
-  const { loaded, order, incident } = store.getState();
+
+  //FIXME: replace with useAppSelector after migrating away from ux-react-controllers
+  const state = store.getState();
+  const loaded = selectLoaded(state);
+  const incident = selectIncident(state);
+  const order = selectOrder(state);
+
   const { task } = incident;
 
   if (!loaded) {

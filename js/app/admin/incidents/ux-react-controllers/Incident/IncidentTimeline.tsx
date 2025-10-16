@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import './IncidentTimeline.scss';
 import { money } from './utils';
 
-import { connectWithRedux } from './incidentStore';
+import { selectIncident } from './incidentStore';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
@@ -115,8 +115,9 @@ function Item({ event }) {
   );
 }
 
-export default connectWithRedux(function () {
-  const events = useSelector(state => state.incident.events);
+export default function () {
+  const incident = useSelector(selectIncident);
+  const events = incident.events;
 
   return (
     <div className="tl-incident-event">
@@ -125,4 +126,4 @@ export default connectWithRedux(function () {
       ))}
     </div>
   );
-});
+}

@@ -40,21 +40,7 @@
 </div>
 
 <div class="container incident-body">
-  <div class="col-md-9">
-    <div class="row">
-      <p style="font-weight: bold">Description</p>
-      <p class="mx-2">{{ incident.description }}</p>
-    </div>
-    <hr>
-    <div class="row">
-      <p>Attachments <span class="caret"></span></p>
-      <div {{react_component('Incident/IncidentImages')}}></div>
-    </div>
-    <hr>
-    <div>
-      <div {{ react_component('Incident/IncidentTimeline') }}></div>
-      <div {{ react_component('Incident/CommentBox') }}></div>
-    </div>
+  <div class="col-md-9" {{ react_component('Incident/IncidentBody') }}>
   </div>
 
   <div class="col-md-3">
