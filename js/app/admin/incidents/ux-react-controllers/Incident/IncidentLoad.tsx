@@ -1,10 +1,11 @@
-import store, {
+import store from './redux/incidentStore';
+import {
   setImages,
   setIncident,
   setLoaded,
   setOrder,
   setTransporterEnabled,
-} from './incidentStore';
+} from './redux/incidentSlice';
 
 export default function ({ incident, order, images, transporterEnabled }) {
   incident = JSON.parse(incident);

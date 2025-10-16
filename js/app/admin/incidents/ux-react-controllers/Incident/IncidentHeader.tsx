@@ -4,7 +4,8 @@ import { Row, Statistic, Dropdown, Select, notification } from 'antd';
 import PageHeader from '../../../../components/PageHeader';
 import { useTranslation } from 'react-i18next';
 
-import store, { selectIncident, selectLoaded } from './incidentStore';
+import store from './redux/incidentStore';
+import { selectIncident, selectLoaded } from './redux/incidentSlice';
 
 async function _handleStatusSubmit(id, body) {
   const httpClient = new window._auth.httpClient();

@@ -5,11 +5,12 @@ import './OrderDetails.scss';
 import { money, weight } from './utils';
 import TaskStatusBadge from '../../../../dashboard/components/TaskStatusBadge';
 
-import store, {
+import store from './redux/incidentStore';
+import {
   selectIncident,
   selectLoaded,
   selectOrder,
-} from './incidentStore';
+} from './redux/incidentSlice';
 import { useTranslation } from 'react-i18next';
 
 function formatTime(task) {

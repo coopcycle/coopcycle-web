@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import './IncidentTimeline.scss';
 import { money } from './utils';
 
-import { selectIncident } from './incidentStore';
+import { selectIncident } from './redux/incidentSlice';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 

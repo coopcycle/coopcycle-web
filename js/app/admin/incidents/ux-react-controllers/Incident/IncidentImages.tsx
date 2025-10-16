@@ -2,7 +2,8 @@ import React from 'react';
 import { Image, Upload, notification } from 'antd';
 import './Style.scss';
 
-import store, { selectImages, selectIncident } from './incidentStore';
+import store from './redux/incidentStore';
+import { selectImages, selectIncident } from './redux/incidentSlice';
 
 async function _handleUpload(id, file) {
   if (file.size > 5 * 1024 * 1024) {

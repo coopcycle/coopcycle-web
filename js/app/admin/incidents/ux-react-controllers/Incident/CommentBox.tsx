@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Button, Input } from 'antd';
 
-import store, { selectIncident, setEvents } from './incidentStore';
+import store from './redux/incidentStore';
+import { selectIncident, setEvents } from './redux/incidentSlice';
 import { useTranslation } from 'react-i18next';
 
 async function _handleCommentSubmit(id, comment) {
