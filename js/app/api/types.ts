@@ -305,7 +305,7 @@ export type Incident = JsonLdEntity & {
   description?: string;
   events: IncidentEvent[];
   createdBy?: User;
-  // metadata: Record<string, any>
+  metadata: unknown[];
   createdAt: string;
   updatedAt?: string;
 };
