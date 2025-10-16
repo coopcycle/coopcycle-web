@@ -26,8 +26,8 @@
   'full': absolute_url(path('incident_image_public', {path: i.imageName}))
 })|serialize -%}
 <div {{ react_component('Incident/IncidentLoad', {
-  incident: incident|serialize('json', {groups: ['incident', 'task', 'address'] }),
-  order: order|serialize('json', {groups: ['order'] }),
+  incident: incident|serialize('jsonld', {groups: ['incident', 'task', 'address'] }),
+  order: order|serialize('jsonld', {groups: ['order', 'pricing_deliveries'] }),
   images: images,
   transporterEnabled: transporterEnabled
 }) }} ></div>
@@ -46,7 +46,7 @@
   <div class="col-md-3">
     <div {{ react_component('Incident/ActionBox', { isLastmile: isLastmile }) }}></div>
     <hr>
-    <div {{ react_component('Incident/OrderDetails', { delivery: delivery|serialize('json', {groups: ['delivery'] }) }) }}></div>
+    <div {{ react_component('Incident/OrderDetails', { delivery: delivery|serialize('jsonld', {groups: ['delivery'] }) }) }}></div>
     <hr>
     <div {{react_component('Incident/TaskTimeline', {events: incident.getTask().getEvents()|serialize}) }}></div>
   </div>
