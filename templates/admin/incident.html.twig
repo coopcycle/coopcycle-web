@@ -28,6 +28,7 @@
 <div {{ react_component('Incident/IncidentLoad', {
   incident: incident|serialize('jsonld', {groups: ['incident', 'task', 'address'] }),
   order: order|serialize('jsonld', {groups: ['order', 'pricing_deliveries'] }),
+  storeUri: store ? store|get_iri_from_item : null,
   images: images,
   transporterEnabled: transporterEnabled
 }) }} ></div>
