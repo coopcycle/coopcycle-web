@@ -63,6 +63,7 @@ use AppBundle\Form\WoopitIntegrationType;
 use AppBundle\Form\InviteUserType;
 use AppBundle\Form\MaintenanceType;
 use AppBundle\Form\MercadopagoLivemodeType;
+use AppBundle\Form\Model\Promotion as PromotionDto;
 use AppBundle\Form\NewCustomOrderType;
 use AppBundle\Form\NonprofitType;
 use AppBundle\Form\OrderType;
@@ -88,6 +89,7 @@ use AppBundle\Service\PricingRuleSetManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TagManager;
 use AppBundle\Service\TimeSlotManager;
+use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Utils\Settings;
@@ -1948,7 +1950,17 @@ class AdminController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
-        $form = $this->createForm(CreditNoteType::class);
+        $promotion = new PromotionDto();
+
+        if ($request->query->has('order')) {
+            $order = $this->entityManager->getRepository(Order::class)->find($request->query->has('order'));
+            /** @var CustomerInterface */
+            $customer = $order->getCustomer();
+            $promotion->username = $customer->getUsername();
+            $promotion->restaurant = $order->getRestaurant();
+        }
+
+        $form = $this->createForm(CreditNoteType::class, $promotion);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
