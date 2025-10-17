@@ -4,6 +4,7 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Refund;
 use AppBundle\Payment\GatewayInterface;
+use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
@@ -13,9 +14,10 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class PawapayManager
 {
     public function __construct(
-        private HttpClientInterface $pawapayClient,
-        private CurrencyContextInterface $currencyContext,
-        private UrlGeneratorInterface $urlGenerator,
+        private readonly HttpClientInterface $pawapayClient,
+        private readonly CurrencyContextInterface $currencyContext,
+        private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly LoggerInterface $logger,
         private string $locale,
         private string $countryCode
     )
@@ -55,8 +57,12 @@ class PawapayManager
             'country' => $this->countryCode,
             // Example phone number 233241234567
             'phoneNumber' => $phoneNumber,
-            // 'reason' => 'Lorem ipsum',
+            'reason' => sprintf('Order %s', $order->getNumber())
         ];
+
+        $this->logger->info(
+            sprintf('Order #%d | PawapayManager::createPaymentPage | %s', $order->getId(), json_encode($payload))
+        );
 
         $response = $this->pawapayClient->request('POST', 'v2/paymentpage', [
             'json' => $payload

@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Controller\Utils\OrderConfirmTrait;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\PawapayManager;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
@@ -17,6 +18,11 @@ class PawapayController extends AbstractController
 {
     use OrderConfirmTrait;
 
+    public function __construct(
+        private readonly LoggerInterface $logger
+    )
+    { }
+
     #[Route(path: '/pawapay/return', name: 'pawapay_return_url')]
     public function returnUrlAction(PawapayManager $pawapayManager,
         CartContextInterface $cartContext,
@@ -25,13 +31,18 @@ class PawapayController extends AbstractController
         TranslatorInterface $translator,
         Request $request)
     {
+        $this->logger->info('Pawapay return URL');
         $order = $cartContext->getCart();
 
         if ($request->query->has('cancel') && $request->query->getBoolean('cancel')) {
+            $this->flashPaymentNotCompleted();
+            $this->logger->warning(sprintf('Pawapay payment canceled for order "%s"', $order->getNumber()));
             return $this->redirectToRoute('order_payment');
         }
 
         if (!$request->query->has('depositId')) {
+            $this->flashPaymentNotCompleted();
+            $this->logger->error(sprintf('Pawapay payment failed for order "%s", no depositId', $order->getNumber()));
             return $this->redirectToRoute('order_payment');
         }
 
@@ -40,6 +51,14 @@ class PawapayController extends AbstractController
         $payment = $order->getPayments()->filter(fn ($p) => $p->getPawapayDepositId() === $depositId);
 
         if (!$payment) {
+            $this->flashPaymentNotCompleted();
+            $this->logger->error(
+                sprintf(
+                    'Pawapay payment failed for order "%s", no matching payment for depositId "%s"',
+                    $order->getNumber(),
+                    $depositId
+                )
+            );
             return $this->redirectToRoute('order_payment');
         }
 
@@ -47,9 +66,14 @@ class PawapayController extends AbstractController
 
         if ($deposit['status'] !== 'COMPLETED') {
 
-            $this->addFlash(
-                'error',
-                $translator->trans('pawapay.payment_not_completed')
+           $this->flashPaymentNotCompleted();
+
+            $this->logger->error(
+                sprintf(
+                    'Pawapay payment failed for order "%s", depositId "%s" not completed',
+                    $order->getNumber(),
+                    $depositId
+                )
             );
 
             return $this->redirectToRoute('order_payment');
@@ -63,5 +87,13 @@ class PawapayController extends AbstractController
         $entityManager->flush();
 
         return $this->redirectToOrderConfirm($order);
+    }
+
+    private function flashPaymentNotCompleted(): void
+    {
+        $this->addFlash(
+            'error',
+            $this->translator->trans('pawapay.payment_not_completed')
+        );
     }
 }
