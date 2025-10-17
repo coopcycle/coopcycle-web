@@ -6,6 +6,7 @@ use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\LoggingUtils;
 use AppBundle\Service\PaygreenManager;
+use AppBundle\Service\PawapayManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Payment\Context as PaymentContext;
@@ -31,6 +32,7 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
         private EdenredClient $edenredClient,
         private StripeManager $stripeManager,
         private PaygreenManager $paygreenManager,
+        private PawapayManager $pawapayManager,
         private GatewayResolver $gatewayResolver,
         private LoggerInterface $checkoutLogger,
         private LoggingUtils $loggingUtils)
@@ -145,6 +147,9 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
                         break;
                     case 'paygreen':
                         $this->paygreenManager->createPaymentOrder($cardPayment);
+                        break;
+                    case 'pawapay':
+                        $this->pawapayManager->createPaymentPage($cardPayment);
                         break;
                 }
                 $paymentsToKeep->add($cardPayment);

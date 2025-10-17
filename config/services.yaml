@@ -231,6 +231,7 @@ services:
   Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorageFactory: '@session.storage.factory.native'
   Sylius\Component\Promotion\Checker\Eligibility\PromotionEligibilityCheckerInterface $promotionExpirationChecker: '@promotion.expiration_checker'
   Sylius\Component\Promotion\Checker\Eligibility\PromotionCouponEligibilityCheckerInterface $promotionCouponExpirationChecker: '@promotion_coupon.expiration_checker'
+  Symfony\Contracts\HttpClient\HttpClientInterface $pawapayClient: '@pawapay.client'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
@@ -1145,6 +1146,10 @@ services:
 
   AppBundle\Service\MercadopagoManager: ~
 
+  AppBundle\Service\PawapayManager:
+    arguments:
+      $countryCode: '%env(PAWAPAY_COUNTRY_CODE)%'
+
   AppBundle\Sylius\Order\ReceiptGenerator:
     arguments:
       $filesystem: '@receipts_filesystem'
@@ -1269,6 +1274,7 @@ services:
   AppBundle\Payment\Gateway\Edenred: ~
   AppBundle\Payment\Gateway\MercadoPago: ~
   AppBundle\Payment\Gateway\Paygreen: ~
+  AppBundle\Payment\Gateway\Pawapay: ~
 
   AppBundle\Payment\Gateway:
     arguments:
@@ -1277,6 +1283,7 @@ services:
         edenred: '@AppBundle\Payment\Gateway\Edenred'
         mercadopago: '@AppBundle\Payment\Gateway\MercadoPago'
         paygreen: '@AppBundle\Payment\Gateway\Paygreen'
+        pawapay: '@AppBundle\Payment\Gateway\Pawapay'
 
   AppBundle\Security\BusinessVoter:
     tags: [ 'security.voter' ]
@@ -1706,3 +1713,11 @@ services:
       - [ "@sylius.promotion_archival_eligibility_checker",
           "@sylius.promotion_end_eligibility_checker",
           "@sylius.promotion_usage_limit_eligibility_checker" ]
+
+  AppBundle\Payment\PawapayClientFactory: ~
+
+  pawapay.client:
+    class: Symfony\Contracts\HttpClient\HttpClientInterface
+    factory: '@AppBundle\Payment\PawapayClientFactory'
+    arguments: ['%env(PAWAPAY_API_URL)%']
+    lazy: true

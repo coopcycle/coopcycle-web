@@ -5,6 +5,7 @@ namespace AppBundle\Form;
 use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Form\PaymentGateway\MercadopagoType;
+use AppBundle\Form\PaymentGateway\PawapayType;
 use AppBundle\Form\PaymentGateway\PaygreenType;
 use AppBundle\Form\PaymentGateway\StripeType;
 use AppBundle\Form\Type\AutocompleteAdapterType;
@@ -174,6 +175,10 @@ class SettingsType extends AbstractType
 
         if ($this->gatewayResolver->supports('paygreen')) {
             $builder->add('paygreen', PaygreenType::class, ['mapped' => false]);
+        }
+
+        if ($this->gatewayResolver->supports('pawapay')) {
+            $builder->add('pawapay', PawapayType::class, ['mapped' => false]);
         }
 
         $builder->add('notifications', NotificationsType::class, [
