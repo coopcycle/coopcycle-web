@@ -280,7 +280,7 @@ class OnDemandDeliveryProductProcessor
 
                 $previousSubtotal = $subtotal;
 
-                $subtotal = (int)ceil($subtotal * ($priceMultiplier / 100 / 100));
+                $subtotal = (int)round($subtotal * ($priceMultiplier / 100 / 100));
                 $price = $subtotal - $previousSubtotal;
 
                 $this->feeCalculationLogger->info(
