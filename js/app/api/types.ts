@@ -211,7 +211,6 @@ export type OrderItem = {
 export type Adjustment = {
   label: string;
   amount: number;
-  type: string;
 };
 
 export type OrderEvent = {
@@ -308,6 +307,11 @@ export type Incident = JsonLdEntity & {
   metadata: unknown[];
   createdAt: string;
   updatedAt?: string;
+};
+
+export type IncidentMetadataSuggestion = {
+  tasks: TaskPayload[];
+  order: OrderPayload;
 };
 
 export type Task = JsonLdEntity & {
