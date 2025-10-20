@@ -118,18 +118,20 @@ Feature: Incidents
         "task": "/api/tasks/2",
         "metadata": [
           {
-            "tasks": [
-              {
-                "id": 1
-              },
-              {
-                "id": 2,
-                "packages": [
-                  {"type": "XL", "quantity": 2}
-                ],
-                "weight": 30000
-              }
-            ]
+            "suggestion": {
+              "tasks": [
+                {
+                  "id": 1
+                },
+                {
+                  "id": 2,
+                  "packages": [
+                    {"type": "XL", "quantity": 2}
+                  ],
+                  "weight": 30000
+                }
+              ]
+            }
           }
         ]
       }
@@ -157,18 +159,20 @@ Feature: Incidents
         "tags":[],
         "metadata": [
           {
-            "tasks": [
-              {
-                "id": 1
-              },
-              {
-                "id": 2,
-                "packages": [
-                  {"type": "XL", "quantity": 2}
-                ],
-                "weight": 30000
-              }
-            ]
+            "suggestion": {
+              "tasks": [
+                {
+                  "id": 1
+                },
+                {
+                  "id": 2,
+                  "packages": [
+                    {"type": "XL", "quantity": 2}
+                  ],
+                  "weight": 30000
+                }
+              ]
+            }
           }
         ]
       }
@@ -198,13 +202,27 @@ Feature: Incidents
         "task": "/api/tasks/2",
         "metadata": [
           {
-            "order": {
-              "manualSupplements": [
+            "suggestion": {
+              "tasks": [
                 {
-                  "pricingRule": "/api/pricing_rules/2",
-                  "quantity": 10
+                  "id": 1
+                },
+                {
+                  "id": 2,
+                  "packages": [
+                    {"type": "XL", "quantity": 2}
+                  ],
+                  "weight": 30000
                 }
-              ]
+              ],
+              "order": {
+                "manualSupplements": [
+                  {
+                    "pricingRule": "/api/pricing_rules/2",
+                    "quantity": 10
+                  }
+                ]
+              }
             }
           }
         ]
@@ -233,13 +251,27 @@ Feature: Incidents
         "tags":[],
         "metadata": [
           {
-            "order": {
-              "manualSupplements": [
+            "suggestion": {
+              "tasks": [
                 {
-                  "pricingRule": "/api/pricing_rules/2",
-                  "quantity": 10
+                  "id": 1
+                },
+                {
+                  "id": 2,
+                  "packages": [
+                    {"type": "XL", "quantity": 2}
+                  ],
+                  "weight": 30000
                 }
-              ]
+              ],
+              "order": {
+                "manualSupplements": [
+                  {
+                    "pricingRule": "/api/pricing_rules/2",
+                    "quantity": 10
+                  }
+                ]
+              }
             }
           }
         ]
