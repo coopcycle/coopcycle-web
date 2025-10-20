@@ -2,7 +2,7 @@
 
 namespace AppBundle\Validator\Constraints;
 
-use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Post;
 use ApiPlatform\Symfony\Validator\Exception\ValidationException;
 use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\State\DeliveryProcessor;
@@ -52,9 +52,7 @@ class IncidentMetadataValidator extends ConstraintValidator
                 );
 
                 /** @var Delivery $delivery */
-                $delivery = $this->deliveryProcessor->process($data, new Put(), [
-                    'id' => $data->id
-                ]);
+                $delivery = $this->deliveryProcessor->process($data, new Post());
 
                 $errors = $this->validator->validate($delivery);
                 if (count($errors) > 0) {

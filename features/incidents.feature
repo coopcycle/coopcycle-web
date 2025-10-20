@@ -121,10 +121,16 @@ Feature: Incidents
             "suggestion": {
               "tasks": [
                 {
-                  "id": 1
+                  "id": 1,
+                  "address": "/api/addresses/1",
+                  "after": "2025-10-20 12:00",
+                  "before": "2025-10-20 14:00"
                 },
                 {
                   "id": 2,
+                  "address": "/api/addresses/2",
+                  "after": "2025-10-20 12:00",
+                  "before": "2025-10-20 14:00",
                   "packages": [
                     {"type": "XL", "quantity": 2}
                   ],
@@ -162,10 +168,16 @@ Feature: Incidents
             "suggestion": {
               "tasks": [
                 {
-                  "id": 1
+                  "id": 1,
+                  "address": "/api/addresses/1",
+                  "after": "2025-10-20 12:00",
+                  "before": "2025-10-20 14:00"
                 },
                 {
                   "id": 2,
+                  "address": "/api/addresses/2",
+                  "after": "2025-10-20 12:00",
+                  "before": "2025-10-20 14:00",
                   "packages": [
                     {"type": "XL", "quantity": 2}
                   ],
@@ -203,13 +215,18 @@ Feature: Incidents
         "metadata": [
           {
             "suggestion": {
-              "id": 1,
               "tasks": [
                 {
-                  "id": 1
+                  "id": 1,
+                  "address": "/api/addresses/1",
+                  "after": "2025-10-20 12:00",
+                  "before": "2025-10-20 14:00"
                 },
                 {
                   "id": 2,
+                  "address": "/api/addresses/2",
+                  "after": "2025-10-20 12:00",
+                  "before": "2025-10-20 14:00",
                   "packages": [
                     {"type": "XL", "quantity": 2}
                   ],
@@ -253,13 +270,18 @@ Feature: Incidents
         "metadata": [
           {
             "suggestion": {
-              "id": 1,
               "tasks": [
                 {
-                  "id": 1
+                  "id": 1,
+                  "address": "/api/addresses/1",
+                  "after": "2025-10-20 12:00",
+                  "before": "2025-10-20 14:00"
                 },
                 {
                   "id": 2,
+                  "address": "/api/addresses/2",
+                  "after": "2025-10-20 12:00",
+                  "before": "2025-10-20 14:00",
                   "packages": [
                     {"type": "XL", "quantity": 2}
                   ],
