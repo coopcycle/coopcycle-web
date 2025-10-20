@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { Alert, Card, Col, Flex, Row, Spin } from 'antd';
+import { Alert, Button, Col, Flex, Row, Spin } from 'antd';
 import Cart from '../../../../components/delivery-form/components/order/Cart';
 import { useCalculatePriceMutation } from '../../../../api/slice';
 import { selectStoreUri } from './redux/incidentSlice';
@@ -11,7 +11,6 @@ import {
   Order,
   OrderItem,
 } from '../../../../api/types';
-import { TotalPrice } from '../../../../components/delivery-form/components/order/TotalPrice';
 
 function areAdjustmentsEqual(
   adj1: Record<AdjustmentType, Adjustment[]>,
@@ -124,30 +123,24 @@ export const OrderDetailsSuggestion = ({
     <Flex vertical gap="middle">
       <Row gutter={16}>
         <Col span={12}>
-          <Card title="TODO: Affected order items">
-            <Cart orderItems={diff[0]} overridePrice={false} />
-          </Card>
+          <h4>TODO: Affected order items:</h4>
+          <Cart orderItems={diff[0]} overridePrice={false} />
         </Col>
         <Col span={12}>
-          <Card title="TODO: Suggested modifications">
-            <Cart orderItems={diff[1]} overridePrice={false} />
-          </Card>
+          <h4>TODO: Suggested modifications:</h4>
+          <Cart orderItems={diff[1]} overridePrice={false} />
         </Col>
       </Row>
       <Row gutter={16}>
         <Col span={12}>
-          <TotalPrice
-            overridePrice={false}
-            total={existingOrder.total}
-            taxTotal={existingOrder.taxTotal}
-          />
+          <Button danger block>
+            TODO: Refuse suggestions
+          </Button>
         </Col>
         <Col span={12}>
-          <TotalPrice
-            overridePrice={false}
-            total={suggestedOrder.total}
-            taxTotal={suggestedOrder.taxTotal}
-          />
+          <Button type="primary" block>
+            TODO: Apply suggestions
+          </Button>
         </Col>
       </Row>
     </Flex>
