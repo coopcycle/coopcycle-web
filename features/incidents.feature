@@ -203,6 +203,7 @@ Feature: Incidents
         "metadata": [
           {
             "suggestion": {
+              "id": 1,
               "tasks": [
                 {
                   "id": 1
@@ -252,6 +253,7 @@ Feature: Incidents
         "metadata": [
           {
             "suggestion": {
+              "id": 1,
               "tasks": [
                 {
                   "id": 1
@@ -273,6 +275,63 @@ Feature: Incidents
                 ]
               }
             }
+          }
+        ]
+      }
+      """
+    
+  Scenario: Report incident: with invalid suggestion in metadata
+    Given the fixtures files are loaded:
+      | tasks.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | store_with_range_supplements.yml |
+      | package_delivery_order.yml |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "Waiting time",
+        "failureReasonCode": "INCORRECT_ITEM",
+        "task": "/api/tasks/2",
+        "metadata": [
+          {
+            "suggestion": {
+              "order": {
+                "manualSupplements": [
+                  {
+                    "pricingRule": "/api/pricing_rules/2",
+                    "quantity": 10
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/ConstraintViolationList",
+        "@type": "ConstraintViolationList",
+        "hydra:title": "An error occurred",
+        "hydra:description": "metadata[0][suggestion]: The suggestion field in metadata is not a valid delivery",
+        "violations": [
+          {
+            "propertyPath": "metadata[0][suggestion]",
+            "message": "The suggestion field in metadata is not a valid delivery",
+            "code": null
           }
         ]
       }
