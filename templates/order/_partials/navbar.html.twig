@@ -54,18 +54,23 @@
           {% endif %}
         {% endif %}
         </li>
-        {% if is_granted('ROLE_DISPATCHER') and order.delivery is not empty %}
+        {% set show_more = order.delivery is not empty or (order.hasVendor() and order.state == 'fulfilled') %}
+        {% if is_granted('ROLE_DISPATCHER') and show_more %}
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                aria-haspopup="true" aria-expanded="false">{{ 'basics.more'|trans }} <span
                 class="caret"></span></a>
             <ul class="dropdown-menu">
-
+              {% if order.delivery is not empty %}
               <li id="report-incident" {{ react_component('admin/orders/[id]/ReportIncidentModal', {
                 items: order.delivery.items|serialize('jsonld', {groups: ['task', 'task_collection', 'address']})
               }) }}>
+              {% endif %}
+              {% if order.hasVendor() and order.state == 'fulfilled' %}
+              <li>
+                <a href="{{ path('admin_new_promotion_coupon_from_template', { template: 'credit_note', order: order.id }) }}">Créer un avoir commercial</a>
               </li>
-
+              {% endif %}
             </ul>
           </li>
         {% endif %}
