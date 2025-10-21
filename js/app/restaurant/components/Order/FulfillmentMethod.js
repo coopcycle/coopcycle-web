@@ -41,10 +41,10 @@ export default function FulfillmentMethod({
             <span data-testid="cart.shippingAddress">
               {shippingAddress?.streetAddress}
             </span>
-            {shippingAddress?.provider === 'MAP_PICKER' && (
+            {shippingAddress?.provider !== null && (
               <span className="text-info small" style={{ display: 'block', marginTop: '3px' }}>
                 <i className="fa fa-map-marker" aria-hidden="true" style={{ marginRight: '5px' }}></i>
-                {t('CART_SHIPPING_ADDRESS_MAP_PICKED')}
+                {t(`CART_SHIPPING_ADDRESS_${shippingAddress?.provider}`)}
               </span>
             )}
           </React.Fragment>
