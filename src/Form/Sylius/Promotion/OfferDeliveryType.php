@@ -3,11 +3,11 @@
 namespace AppBundle\Form\Sylius\Promotion;
 
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Sylius\Promotion;
 use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsRestaurantRuleChecker;
 use Ramsey\Uuid\Uuid;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
-use Sylius\Component\Promotion\Model\Promotion;
 use Sylius\Component\Promotion\Model\PromotionInterface;
 use Sylius\Component\Promotion\Model\PromotionCoupon;
 use Sylius\Component\Promotion\Model\PromotionAction;
