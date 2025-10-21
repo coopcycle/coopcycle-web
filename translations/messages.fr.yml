@@ -1651,5 +1651,5 @@ order.download_receipt: Télécharger le reçu
 order.generate_receipt: Générer le reçu
 promotions.feature: Afficher
 promotions.featured: Affiché
-promotions.on_sale: EN PROMOTION !
-promotions.human_readable.discount_items_total_above: "%discount_amount% de réduction à partir de %amount% dʼachats"
+promotions.human_readable.discount_items_total_above: "%name% : %discount_amount% de réduction à partir de %amount% dʼachats"
+promotions.human_readable.coupon: "%name% avec le code %code%"

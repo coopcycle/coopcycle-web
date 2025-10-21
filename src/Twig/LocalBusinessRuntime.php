@@ -23,6 +23,8 @@ use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
+use Sylius\Component\Promotion\Model\PromotionInterface;
+use Sylius\Component\Promotion\Model\PromotionCouponInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -238,8 +240,18 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         return $restaurant->getOpeningHours($fulfillment);
     }
 
-    public function humanizePromotion($promotion): string
+    public function humanizePromotion(PromotionInterface|PromotionCouponInterface $promotion): string
     {
+        if ($promotion instanceof PromotionCouponInterface) {
+
+            $parentPromotion = $promotion->getPromotion();
+
+            return $this->translator->trans('promotions.human_readable.coupon', [
+                '%name%' => $parentPromotion->getName(),
+                '%code%' => $promotion->getCode(),
+            ]);
+        }
+
         $discountAmount = 0;
         $amount = 0;
 
@@ -258,6 +270,7 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         }
 
         return $this->translator->trans('promotions.human_readable.discount_items_total_above', [
+            '%name%' => $promotion->getName(),
             '%discount_amount%' => $this->priceFormatter->formatWithSymbol($discountAmount),
             '%amount%' => $this->priceFormatter->formatWithSymbol($amount),
         ]);

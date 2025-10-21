@@ -41,6 +41,21 @@
         <td class="text-right">
           {{ promotion.used }}
         </td>
+        {% if show_feature %}
+        <td>
+          <form method="post" action="{{ path(promotion_feature_route, {restaurantId: restaurant.id }) }}">
+            <input type="hidden" name="type" value="coupon" />
+            <input type="hidden" name="id" value={{ promotion.id }} />
+            <button class="btn btn-sm {% if promotion.featured %}btn-success{% endif %}">
+              {% if promotion.featured %}
+                <i class="fa fa-check mr-1"></i><span>{{ 'promotions.featured'|trans }}</span>
+              {% else %}
+                <i class="fa fa-arrow-right mr-1"></i><span>{{ 'promotions.feature'|trans }}</span>
+              {% endif %}
+            </button>
+          </form>
+        </td>
+        {% endif %}
         {% if show_archive %}
         <td class="text-right">
           <form method="post" action="{{ path(promotion_archive_route, {restaurantId: restaurant.id}) }}">
@@ -89,7 +104,9 @@
         <td class="text-right"></td>
         {% if show_feature %}
         <td>
-          <form method="post" action="{{ path(promotion_feature_route, {restaurantId: restaurant.id, promotionId: promotion.id }) }}">
+          <form method="post" action="{{ path(promotion_feature_route, {restaurantId: restaurant.id }) }}">
+            <input type="hidden" name="type" value="promotion" />
+            <input type="hidden" name="id" value={{ promotion.id }} />
             <button class="btn btn-sm {% if promotion.featured %}btn-success{% endif %}">
               {% if promotion.featured %}
                 <i class="fa fa-check mr-1"></i><span>{{ 'promotions.featured'|trans }}</span>

@@ -35,7 +35,7 @@
   {% if restaurant.hasFeaturedPromotion() %}
     <nav class="restaurant-banner">
       <div class="alert alert-warning text-center">
-        <i class="fa fa-xl fa-gift mr-2"></i><span class="mr-2">{{ 'promotions.on_sale'|trans }}</span><span>{{ restaurant.getFeaturedPromotion()|humanize_promotion }}</span>
+        <i class="fa fa-xl fa-gift mr-2"></i><span>{{ restaurant.getFeaturedPromotion()|humanize_promotion }}</span>
       </div>
     </nav>
   {% endif %}

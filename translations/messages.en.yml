@@ -1713,5 +1713,5 @@ order.download_receipt: Download receipt
 order.generate_receipt: Generate receipt
 promotions.feature: Display
 promotions.featured: Displayed
-promotions.on_sale: ON SALE!
-promotions.human_readable.discount_items_total_above: "%discount_amount% discount above %amount%"
+promotions.human_readable.coupon: "%name% with coupon %code%"
+promotions.human_readable.discount_items_total_above: "%name%: %discount_amount% discount above %amount%"

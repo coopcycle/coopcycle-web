@@ -2159,25 +2159,52 @@ trait RestaurantTrait
         return $this->redirectToRoute($routes['restaurant_promotions'], ['id' => $restaurantId]);
     }
 
-    public function featureRestaurantPromotionAction($restaurantId, $promotionId, Request $request)
+    public function featureRestaurantPromotionAction($restaurantId, Request $request)
     {
         $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
-        $featuredPromotion = $this->entityManager
-            ->getRepository(Promotion::class)
-            ->find($promotionId);
-
         // TODO Access control
 
         if ($request->isMethod('POST')) {
 
+            $type = $request->request->get('type');
+            $id = $request->request->getInt('id');
+
             foreach ($restaurant->getPromotions() as $promotion) {
                 $promotion->setFeatured(false);
+                if ($promotion->isCouponBased()) {
+                    foreach ($promotion->getCoupons() as $coupon) {
+                        $coupon->setFeatured(false);
+                    }
+                }
             }
 
-            $featuredPromotion->setFeatured(true);
+            if ($type === 'coupon') {
+
+                foreach ($restaurant->getPromotions() as $promotion) {
+                    if ($promotion->isCouponBased()) {
+                        foreach ($promotion->getCoupons() as $coupon) {
+                            if ($id === $coupon->getId()) {
+                                $coupon->setFeatured(true);
+                                break 2;
+                            }
+                        }
+                    }
+                }
+
+            } elseif ($type === 'promotion') {
+
+                foreach ($restaurant->getPromotions() as $promotion) {
+                    if (!$promotion->isCouponBased() && $id === $promotion->getId()) {
+                        $promotion->setFeatured(true);
+                        $this->entityManager->flush();
+                        break;
+                    }
+                }
+
+            }
 
             $this->entityManager->flush();
         }
