@@ -46,6 +46,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
+use Sylius\Component\Promotion\Model\PromotionInterface;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
@@ -1173,5 +1174,27 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function getPaymentGateway(): string
     {
         return $this->paymentGateway;
+    }
+
+    public function hasFeaturedPromotion(): bool
+    {
+        foreach ($this->getPromotions() as $promotion) {
+            if ($promotion->isFeatured()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function getFeaturedPromotion(): ?PromotionInterface
+    {
+        foreach ($this->getPromotions() as $promotion) {
+            if ($promotion->isFeatured()) {
+                return $promotion;
+            }
+        }
+
+        return null;
     }
 }
