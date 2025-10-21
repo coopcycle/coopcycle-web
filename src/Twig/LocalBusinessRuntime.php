@@ -240,9 +240,12 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
 
     public function humanizePromotion($promotion): string
     {
+        $discountAmount = 0;
+        $amount = 0;
+
         foreach ($promotion->getActions() as $action) {
             if ($action->getType() === FixedDiscountPromotionActionCommand::TYPE) {
-                $discount_amount = $action->getConfiguration()['amount'];
+                $discountAmount = $action->getConfiguration()['amount'];
                 break;
             }
         }
@@ -255,7 +258,7 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         }
 
         return $this->translator->trans('promotions.human_readable.discount_items_total_above', [
-            '%discount_amount%' => $this->priceFormatter->formatWithSymbol($discount_amount),
+            '%discount_amount%' => $this->priceFormatter->formatWithSymbol($discountAmount),
             '%amount%' => $this->priceFormatter->formatWithSymbol($amount),
         ]);
     }
