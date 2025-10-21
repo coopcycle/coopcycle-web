@@ -13,6 +13,11 @@ use AppBundle\Enum\Store;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
+use AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand;
+use AppBundle\Sylius\Promotion\Checker\Rule\IsRestaurantRuleChecker;
+use AppBundle\Sylius\Promotion\Checker\Rule\IsItemsTotalAboveRuleChecker;
+use AppBundle\Utils\PriceFormatter;
 use AppBundle\Utils\RestaurantDecorator;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
@@ -36,7 +41,8 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         private TimingRegistry $timingRegistry,
         private RestaurantDecorator $restaurantDecorator,
         private BusinessContext $businessContext,
-        private SettingsManager $settingsManager)
+        private SettingsManager $settingsManager,
+        private PriceFormatter $priceFormatter)
     {}
 
     /**
@@ -230,5 +236,27 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         }
 
         return $restaurant->getOpeningHours($fulfillment);
+    }
+
+    public function humanizePromotion($promotion): string
+    {
+        foreach ($promotion->getActions() as $action) {
+            if ($action->getType() === FixedDiscountPromotionActionCommand::TYPE) {
+                $discount_amount = $action->getConfiguration()['amount'];
+                break;
+            }
+        }
+
+        foreach ($promotion->getRules() as $rule) {
+            if ($rule->getType() === IsItemsTotalAboveRuleChecker::TYPE) {
+                $amount = $rule->getConfiguration()['amount'];
+                break;
+            }
+        }
+
+        return $this->translator->trans('promotions.human_readable.discount_items_total_above', [
+            '%discount_amount%' => $this->priceFormatter->formatWithSymbol($discount_amount),
+            '%amount%' => $this->priceFormatter->formatWithSymbol($amount),
+        ]);
     }
 }
