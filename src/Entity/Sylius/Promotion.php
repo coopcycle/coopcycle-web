@@ -5,7 +5,7 @@ namespace AppBundle\Entity\Sylius;
 use Sylius\Component\Promotion\Model\Promotion as BasePromotion;
 use Sylius\Component\Promotion\Model\PromotionInterface;
 
-class Promotion extends BasePromotion // implements PromotionInterface
+class Promotion extends BasePromotion implements PromotionInterface
 {
     /** @var bool */
     protected $featured = false;

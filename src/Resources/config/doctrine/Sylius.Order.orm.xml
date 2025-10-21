@@ -89,7 +89,7 @@
         <join-column name="promotion_coupon_id" referenced-column-name="id"/>
       </join-columns>
     </many-to-one>
-    <many-to-many field="promotions" target-entity="AppBundle\Entity\Sylius\Promotion">
+    <many-to-many field="promotions" target-entity="Sylius\Component\Promotion\Model\PromotionInterface">
       <cascade>
         <cascade-persist/>
       </cascade>
