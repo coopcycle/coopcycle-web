@@ -22,6 +22,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@erikmichelson/open-location-code-ts": "^1.20250411.0",
     "@geoman-io/leaflet-geoman-free": "^2.18.3",
     "@hello-pangea/dnd": "^16.6.0",
     "dotenv": "^8.6.0",
@@ -140,7 +141,6 @@
     "ngeohash": "^0.6.3",
     "numbro": "^2.3.6",
     "object-hash": "^2.2.0",
-    "open-location-code": "^1.0.3",
     "papaparse": "^5.5.3",
     "payment-icons": "^1.2.1",
     "postcss-loader": "^8.0.0",
