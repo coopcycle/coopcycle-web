@@ -7,6 +7,9 @@
     <th>{{ 'sylius.form.promotion_coupon.per_customer_usage_limit'|trans }}</th>
     <th>{{ 'sylius.form.promotion_coupon.expires_at'|trans }}</th>
     <th class="text-right">{% trans %}promotion_coupon.used.label{% endtrans %}</th>
+    {% if show_feature %}
+    <th></th>
+    {% endif %}
     {% if show_archive %}
     <th></th>
     {% endif %}
@@ -84,6 +87,19 @@
           {% endif %}
         </td>
         <td class="text-right"></td>
+        {% if show_feature %}
+        <td>
+          <form method="post" action="{{ path(promotion_feature_route, {restaurantId: restaurant.id, promotionId: promotion.id }) }}">
+            <button class="btn btn-sm {% if promotion.featured %}btn-success{% endif %}">
+              {% if promotion.featured %}
+                <i class="fa fa-check mr-1"></i><span>{{ 'promotions.featured'|trans }}</span>
+              {% else %}
+                <i class="fa fa-arrow-right mr-1"></i><span>{{ 'promotions.feature'|trans }}</span>
+              {% endif %}
+            </button>
+          </form>
+        </td>
+        {% endif %}
         {% if show_archive %}
         <td class="text-right">
           <form method="post" action="{{ path(promotion_archive_route, {restaurantId: restaurant.id}) }}">

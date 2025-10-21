@@ -22,6 +22,7 @@ use AppBundle\Entity\Sylius\ProductImage;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Sylius\ProductVariant;
 use AppBundle\Entity\Sylius\ProductVariantTranslation;
+use AppBundle\Entity\Sylius\Promotion;
 use AppBundle\Entity\Sylius\PromotionCoupon;
 use AppBundle\Entity\Sylius\TaxCategory;
 use AppBundle\Entity\Sylius\TaxonRepository;
@@ -67,7 +68,6 @@ use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentMethodInterface;
 use Sylius\Component\Product\Model\ProductTranslation;
 use Sylius\Component\Product\Repository\ProductOptionRepositoryInterface;
-use Sylius\Component\Promotion\Model\Promotion;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Promotion\Checker\Eligibility\PromotionEligibilityCheckerInterface;
 use Sylius\Component\Promotion\Checker\Eligibility\PromotionCouponEligibilityCheckerInterface;
@@ -1548,6 +1548,7 @@ trait RestaurantTrait
         foreach ($restaurant->getPromotions() as $promotion) {
             if ($promotion->isCouponBased()) {
                 foreach ($promotion->getCoupons() as $coupon) {
+
                     if (!$promotionCouponExpirationChecker->isEligible(new Order(), $coupon)) {
                         $past[] = $coupon;
                     } else {
@@ -1562,6 +1563,10 @@ trait RestaurantTrait
                 }
             }
         }
+
+        // dump($ongoing);
+        // dump($past);
+        // exit;
 
         return $this->render('restaurant/promotions.html.twig', $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
@@ -2147,6 +2152,34 @@ trait RestaurantTrait
 
             }
 
+        }
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->redirectToRoute($routes['restaurant_promotions'], ['id' => $restaurantId]);
+    }
+
+    public function featureRestaurantPromotionAction($restaurantId, $promotionId, Request $request)
+    {
+        $restaurant = $this->entityManager
+            ->getRepository(LocalBusiness::class)
+            ->find($restaurantId);
+
+        $featuredPromotion = $this->entityManager
+            ->getRepository(Promotion::class)
+            ->find($promotionId);
+
+        // TODO Access control
+
+        if ($request->isMethod('POST')) {
+
+            foreach ($restaurant->getPromotions() as $promotion) {
+                $promotion->setFeatured(false);
+            }
+
+            $featuredPromotion->setFeatured(true);
+
+            $this->entityManager->flush();
         }
 
         $routes = $request->attributes->get('routes');

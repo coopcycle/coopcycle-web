@@ -416,6 +416,15 @@ admin_restaurant_archive_promotion:
             restaurant_promotions: admin_restaurant_promotions
     methods: [ POST ]
 
+admin_restaurant_feature_promotion:
+    path: /admin/restaurants/{restaurantId}/promotions/{promotionId}/feature
+    defaults:
+        _controller: AppBundle\Controller\AdminController::featureRestaurantPromotionAction
+        layout: 'admin.html.twig'
+        routes:
+            restaurant_promotions: admin_restaurant_promotions
+    methods: [ POST ]
+
 admin_restaurant_promotion:
     path: /admin/restaurants/{restaurantId}/promotions/{promotionId}
     defaults:

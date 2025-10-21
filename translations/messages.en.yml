@@ -1711,3 +1711,7 @@ adminDashboard.promotions.ongoing: Ongoing promotions
 adminDashboard.promotions.past: Past promotions
 order.download_receipt: Download receipt
 order.generate_receipt: Generate receipt
+promotions.feature: Display
+promotions.featured: Displayed
+promotions.on_sale: ON SALE!
+promotions.human_readable.discount_items_total_above: "%discount_amount% discount above %amount%"
