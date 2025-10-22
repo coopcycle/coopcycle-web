@@ -22,7 +22,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@erikmichelson/open-location-code-ts": "^1.20250411.0",
     "@geoman-io/leaflet-geoman-free": "^2.18.3",
     "@hello-pangea/dnd": "^16.6.0",
     "dotenv": "^8.6.0",
