@@ -35,23 +35,23 @@ class PawapayController extends AbstractController
         $order = $cartContext->getCart();
 
         if ($request->query->has('cancel') && $request->query->getBoolean('cancel')) {
-            $this->flashPaymentNotCompleted();
+            $this->flashPaymentNotCompleted($translator);
             $this->logger->warning(sprintf('Pawapay payment canceled for order "%s"', $order->getNumber()));
             return $this->redirectToRoute('order_payment');
         }
 
         if (!$request->query->has('depositId')) {
-            $this->flashPaymentNotCompleted();
+            $this->flashPaymentNotCompleted($translator);
             $this->logger->error(sprintf('Pawapay payment failed for order "%s", no depositId', $order->getNumber()));
             return $this->redirectToRoute('order_payment');
         }
 
         $depositId = $request->query->get('depositId');
 
-        $payment = $order->getPayments()->filter(fn ($p) => $p->getPawapayDepositId() === $depositId);
+        $payment = $order->getPayments()->filter(fn ($p) => $p->getPawapayDepositId() === $depositId)->first();
 
         if (!$payment) {
-            $this->flashPaymentNotCompleted();
+            $this->flashPaymentNotCompleted($translator);
             $this->logger->error(
                 sprintf(
                     'Pawapay payment failed for order "%s", no matching payment for depositId "%s"',
@@ -66,7 +66,7 @@ class PawapayController extends AbstractController
 
         if ($deposit['status'] !== 'COMPLETED') {
 
-           $this->flashPaymentNotCompleted();
+           $this->flashPaymentNotCompleted($translator);
 
             $this->logger->error(
                 sprintf(
@@ -89,11 +89,11 @@ class PawapayController extends AbstractController
         return $this->redirectToOrderConfirm($order);
     }
 
-    private function flashPaymentNotCompleted(): void
+    private function flashPaymentNotCompleted(TranslatorInterface $translator): void
     {
         $this->addFlash(
             'error',
-            $this->translator->trans('pawapay.payment_not_completed')
+            $translator->trans('pawapay.payment_not_completed')
         );
     }
 }
