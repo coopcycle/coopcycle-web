@@ -3,11 +3,11 @@
 namespace AppBundle\Api\State;
 
 use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Metadata\Exception\InvalidArgumentException;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\State\ProcessorInterface;
-use ApiPlatform\Exception\InvalidArgumentException;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\TaskDto;
@@ -311,12 +311,20 @@ class DeliveryProcessor implements ProcessorInterface
 
         if ($data->packages) {
 
+            foreach ($task->getPackages() as $p) {
+                $task->removePackage($p->getPackage());
+            }
+
             $packageRepository = $this->entityManager->getRepository(Package::class);
 
             foreach ($data->packages as $p) {
                 $package = $packageRepository->findOneByNameAndStore($p->type, $store);
                 if ($package) {
                     $task->setQuantityForPackage($package, $p->quantity);
+                } else {
+                    $this->logger->warning('Package not found', [
+                        'package' => $p->type
+                    ]);
                 }
             }
         }
