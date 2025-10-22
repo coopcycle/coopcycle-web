@@ -310,6 +310,7 @@ export type Incident = JsonLdEntity & {
 };
 
 export type IncidentMetadataSuggestion = {
+  id: number; // Delivery id
   tasks: TaskPayload[];
   order: OrderPayload;
 };

@@ -6,7 +6,6 @@ use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Metadata\Exception\InvalidArgumentException;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Operation;
-use ApiPlatform\Metadata\Put;
 use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInputDto;
@@ -66,15 +65,15 @@ class DeliveryProcessor implements ProcessorInterface
             }
         }
 
-        $isPutOperation = $operation instanceof Put;
+        $editingDeliveryId = $uriVariables['id'] ?? null;
+        $isEditOperation = !is_null($editingDeliveryId);
 
         if ($data instanceof DeliveryInputDto) {
-            $id = $uriVariables['id'] ?? null;
-            if ($id && $isPutOperation) {
-                $delivery = $this->entityManager->getRepository(Delivery::class)->find($id);
+            if ($isEditOperation) {
+                $delivery = $this->entityManager->getRepository(Delivery::class)->find($editingDeliveryId);
                 if (null === $delivery) {
                     $this->logger->warning('Delivery not found', [
-                        'id' => $id,
+                        'id' => $editingDeliveryId,
                     ]);
                     throw new InvalidArgumentException('delivery.id');
                 }
@@ -83,7 +82,7 @@ class DeliveryProcessor implements ProcessorInterface
             }
 
             if (is_array($data->tasks) && count($data->tasks) > 0) {
-                if ($isPutOperation) {
+                if ($isEditOperation) {
                     $tasks = array_map(fn(TaskDto $taskInput) => $this->transformIntoExistingTask($taskInput, $delivery->getTasks(), $store), $data->tasks);
 
                     //remove tasks that are not in the request

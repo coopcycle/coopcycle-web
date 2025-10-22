@@ -106,14 +106,18 @@ export const OrderDetailsSuggestion = ({
   }, [existingOrder.items, suggestedOrder?.items]);
 
   useEffect(() => {
-    // currently we expect all task data and supplements to be in the suggestion,
-    // even when they are unchanged
-    const suggestedTasks = suggestion?.tasks;
-    const suggestedOrderData = suggestion?.order;
-
     if (!storeUri) {
       return;
     }
+
+    if (!suggestion) {
+      return;
+    }
+
+    // currently we expect all task data and supplements to be in the suggestion,
+    // even when they are unchanged
+    const suggestedTasks = suggestion.tasks;
+    const suggestedOrderData = suggestion.order;
 
     if (!suggestedTasks) {
       return;
@@ -121,6 +125,7 @@ export const OrderDetailsSuggestion = ({
 
     calculatePrice({
       store: storeUri,
+      id: suggestion.id,
       tasks: suggestedTasks,
       order: suggestedOrderData,
     });
