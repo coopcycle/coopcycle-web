@@ -9,6 +9,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { accountSlice } from '../../../../../entities/account/reduxSlice';
 import { apiSlice } from '../../../../../api/slice';
 import { incidentSlice } from './incidentSlice';
+import { RootWithDefaults } from '../../../../../utils/react';
 
 const buildInitialState = () => {
   return {
@@ -44,7 +45,9 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 export const connectWithRedux =
   Component =>
   ({ ...props }) => (
-    <Provider store={store}>
-      <Component {...props} />
-    </Provider>
+    <RootWithDefaults>
+      <Provider store={store}>
+        <Component {...props} />
+      </Provider>
+    </RootWithDefaults>
   );

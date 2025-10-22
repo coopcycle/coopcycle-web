@@ -38,6 +38,7 @@ import {
   TimeSlotChoices,
   TimeSlot,
   Uri,
+  Incident,
 } from './types';
 
 // Define our single API slice object
@@ -299,6 +300,16 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['PricingRuleSet'],
     }),
+    incidentAction: builder.mutation<
+      Incident,
+      { incidentId: number; action: string }
+    >({
+      query: ({ incidentId, action }) => ({
+        url: `api/incidents/${incidentId}/action`,
+        method: 'PUT',
+        body: { action },
+      }),
+    }),
   }),
 });
 
@@ -333,4 +344,5 @@ export const {
   useCreatePricingRuleSetMutation,
   useUpdatePricingRuleSetMutation,
   useDeletePricingRuleSetMutation,
+  useIncidentActionMutation,
 } = apiSlice;

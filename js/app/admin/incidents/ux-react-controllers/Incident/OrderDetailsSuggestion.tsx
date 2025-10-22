@@ -1,9 +1,12 @@
 import React, { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { Alert, Button, Col, Flex, Row, Spin } from 'antd';
+import { Alert, App, Button, Col, Flex, Row, Spin } from 'antd';
 import Cart from '../../../../components/delivery-form/components/order/Cart';
-import { useCalculatePriceMutation } from '../../../../api/slice';
-import { selectStoreUri } from './redux/incidentSlice';
+import {
+  useCalculatePriceMutation,
+  useIncidentActionMutation,
+} from '../../../../api/slice';
+import { selectIncident, selectStoreUri } from './redux/incidentSlice';
 import {
   Adjustment,
   AdjustmentType,
@@ -67,9 +70,21 @@ export const OrderDetailsSuggestion = ({
   suggestion,
 }: Props) => {
   const storeUri = useSelector(selectStoreUri);
+  const incident = useSelector(selectIncident);
+
+  const { notification } = App.useApp();
 
   const [calculatePrice, { data: calculatePriceData, error, isLoading }] =
     useCalculatePriceMutation();
+
+  const [
+    incidentAction,
+    {
+      isLoading: isActionLoading,
+      isSuccess: isActionSuccess,
+      isError: isActionError,
+    },
+  ] = useIncidentActionMutation();
 
   const suggestedOrder = useMemo(() => {
     if (!calculatePriceData?.order) {
@@ -111,6 +126,37 @@ export const OrderDetailsSuggestion = ({
     });
   }, [storeUri, suggestion, calculatePrice]);
 
+  useEffect(() => {
+    if (isActionSuccess) {
+      notification.success({
+        message: 'Action completed successfully',
+      });
+    }
+    if (isActionError) {
+      notification.error({
+        message: 'Failed to perform action',
+      });
+    }
+  }, [isActionSuccess, isActionError]);
+
+  const handleAcceptSuggestion = async () => {
+    if (!incident?.id) return;
+
+    await incidentAction({
+      incidentId: incident.id,
+      action: 'accepted_suggestion',
+    });
+  };
+
+  const handleRejectSuggestion = async () => {
+    if (!incident?.id) return;
+
+    await incidentAction({
+      incidentId: incident.id,
+      action: 'rejected_suggestion',
+    });
+  };
+
   if (isLoading) {
     return <Spin />;
   }
@@ -118,6 +164,8 @@ export const OrderDetailsSuggestion = ({
   if (error || !suggestedOrder || !diff) {
     return <Alert message="TODO: Error Text" type="error" />;
   }
+
+  const isButtonDisabled = isActionLoading;
 
   return (
     <Flex vertical gap="middle">
@@ -133,12 +181,22 @@ export const OrderDetailsSuggestion = ({
       </Row>
       <Row gutter={16}>
         <Col span={12}>
-          <Button danger block>
+          <Button
+            danger
+            block
+            onClick={handleRejectSuggestion}
+            disabled={isButtonDisabled}
+            loading={isActionLoading}>
             TODO: Refuse suggestions
           </Button>
         </Col>
         <Col span={12}>
-          <Button type="primary" block>
+          <Button
+            type="primary"
+            block
+            onClick={handleAcceptSuggestion}
+            disabled={isButtonDisabled}
+            loading={isActionLoading}>
             TODO: Apply suggestions
           </Button>
         </Col>

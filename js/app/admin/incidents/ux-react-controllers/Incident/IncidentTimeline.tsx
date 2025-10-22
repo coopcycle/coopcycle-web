@@ -37,6 +37,10 @@ function _eventTypeToText(event) {
       return 'APPLIED_A_DIFFERENCE_ON_THE_PRICE';
     case 'transporter_reported':
       return 'SENT_A_REPORT_TO_THE_TRANSPORTER';
+    case 'accepted_suggestion':
+      return 'ACCEPTED_SUGGESTION';
+    case 'rejected_suggestion':
+      return 'REJECTED_SUGGESTION';
   }
 }
 

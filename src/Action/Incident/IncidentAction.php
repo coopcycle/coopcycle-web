@@ -41,7 +41,9 @@ class IncidentAction extends Base
             IncidentEvent::TYPE_RESCHEDULE,
             IncidentEvent::TYPE_APPLY_PRICE_DIFF,
             IncidentEvent::TYPE_CANCEL_TASK,
-            IncidentEvent::TYPE_TRANSPORTER_REPORT
+            IncidentEvent::TYPE_TRANSPORTER_REPORT,
+            IncidentEvent::TYPE_ACCEPT_SUGGESTION,
+            IncidentEvent::TYPE_REJECT_SUGGESTION
         ];
 
         if (empty($action)) {
@@ -68,6 +70,12 @@ class IncidentAction extends Base
                 break;
             case IncidentEvent::TYPE_TRANSPORTER_REPORT:
                 $this->createTransporterReport($data, $event, $params);
+                break;
+            case IncidentEvent::TYPE_ACCEPT_SUGGESTION:
+                $this->acceptSuggestion($data, $event);
+                break;
+            case IncidentEvent::TYPE_REJECT_SUGGESTION:
+                $this->rejectSuggestion($data, $event);
                 break;
         }
 
@@ -209,5 +217,15 @@ class IncidentAction extends Base
 
         $event->setType(IncidentEvent::TYPE_TRANSPORTER_REPORT);
 
+    }
+
+    private function acceptSuggestion(Incident &$data, IncidentEvent &$event): void
+    {
+        $event->setType(IncidentEvent::TYPE_ACCEPT_SUGGESTION);
+    }
+
+    private function rejectSuggestion(Incident &$data, IncidentEvent &$event): void
+    {
+        $event->setType(IncidentEvent::TYPE_REJECT_SUGGESTION);
     }
 }
