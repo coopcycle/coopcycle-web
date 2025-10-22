@@ -28,6 +28,11 @@ class PawapayManager
         $order = $payment->getOrder();
         $customer = $order->getCustomer();
 
+        // When ordering as guest
+        if (null === $customer) {
+            return;
+        }
+
         // https://api.sandbox.pawapay.io/v2/predict-provider
         $response = $this->pawapayClient->request('POST', 'v2/predict-provider', [
             'json' => [
