@@ -2,7 +2,11 @@
 
 namespace AppBundle\Action\Incident;
 
+use ApiPlatform\Metadata\Put;
 use AppBundle\Action\Base;
+use AppBundle\Api\Dto\DeliveryInputDto;
+use AppBundle\Api\Dto\DeliveryOrderDto;
+use AppBundle\Api\State\DeliveryCreateOrUpdateProcessor;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Incident\IncidentEvent;
@@ -16,6 +20,7 @@ use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class IncidentAction extends Base
@@ -27,6 +32,8 @@ class IncidentAction extends Base
         private readonly AdjustmentFactoryInterface $adjustmentFactory,
         private readonly OrderProcessorInterface $orderProcessor,
         private readonly TranslatorInterface $translator,
+        private readonly SerializerInterface $serializer,
+        private readonly DeliveryCreateOrUpdateProcessor $deliveryProcessor,
     )
     {
     }
@@ -221,6 +228,28 @@ class IncidentAction extends Base
 
     private function acceptSuggestion(Incident &$data, IncidentEvent &$event): void
     {
+        $metadata = $data->getMetadata();
+
+        $suggestionMetadata = array_filter($metadata, function ($item) {
+            return isset($item['suggestion']);
+        });
+
+        /** @var DeliveryInputDto $deliveryData */
+        $deliveryData = $this->serializer->denormalize(
+            $suggestionMetadata[0]['suggestion'],
+            DeliveryInputDto::class,
+            'json'
+        );
+
+        if (null === $deliveryData->order) {
+            $deliveryData->order = new DeliveryOrderDto();
+        }
+
+        // Force price recalculation
+        $deliveryData->order->recalculatePrice = true;
+
+        $this->deliveryProcessor->process($deliveryData, new Put(), ['id' => $deliveryData->id]);
+
         $event->setType(IncidentEvent::TYPE_ACCEPT_SUGGESTION);
     }
 
