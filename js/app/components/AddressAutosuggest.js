@@ -444,14 +444,14 @@ class AddressAutosuggest extends Component {
       }
 
       // Check if the input is a plus code - takes priority over all adapters
-      const trimmedValue = value.trim().toUpperCase()
-      if (openLocationCode.isValid(trimmedValue)) {
+      const plusCodeMatch = value.match(/\b[23456789CFGHJMPQRVWX]{2,8}\+[23456789CFGHJMPQRVWX]{2,4}\b/i)
+      if (plusCodeMatch) {
         this.setState({
           suggestions: [{
             title: 'Plus code',
             suggestions: [{
               type: 'plus_code',
-              value: trimmedValue,
+              value: plusCodeMatch[0].toUpperCase(),
               index: 0,
             }],
           }],
