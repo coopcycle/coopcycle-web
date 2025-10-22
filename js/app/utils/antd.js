@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { App, ConfigProvider } from 'antd'
+import { ConfigProvider } from 'antd'
 import { antdLocale } from '../i18n'
 import React from 'react'
 
@@ -33,9 +33,7 @@ export const AntdConfigProvider = ({ children }) => {
         },
       }}
       locale={antdLocale}>
-      <App>
-        {children}
-      </App>
+      {children}
     </ConfigProvider>
   )
 }
