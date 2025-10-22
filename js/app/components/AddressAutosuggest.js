@@ -10,7 +10,7 @@ import { withTranslation, useTranslation } from 'react-i18next'
 import _ from 'lodash'
 import axios from 'axios'
 import classNames from 'classnames'
-import { decode, isValid, recoverNearest } from '@erikmichelson/open-location-code-ts'
+import { OpenLocationCode } from 'open-location-code'
 
 import '../i18n'
 import { getCountry, localeDetector } from '../i18n'
@@ -112,8 +112,10 @@ const adapters = {
     geocode: geocodeGOOG,
     configure: configureGOOG,
     onSuggestionSelected: onSuggestionSelectedGOOG,
-  },
+  }
 }
+
+const openLocationCode = new OpenLocationCode()
 
 // Lazy compute coordinates
 // Needed to avoid func exec before DOM is ready
@@ -443,10 +445,10 @@ class AddressAutosuggest extends Component {
 
       // Check if the input is a plus code - takes priority over all adapters
       const trimmedValue = value.trim().toUpperCase()
-      if (isValid(trimmedValue)) {
+      if (openLocationCode.isValid(trimmedValue)) {
         this.setState({
           suggestions: [{
-            title: this.props.t('PLUS_CODE'),
+            title: 'Plus code',
             suggestions: [{
               type: 'plus_code',
               value: trimmedValue,
@@ -467,8 +469,6 @@ class AddressAutosuggest extends Component {
 
     // Localized methods
     this.getInitialState = localize('getInitialState', adapter, this)
-    this.onSuggestionSelected = localize('onSuggestionSelected', adapter, this)
-    const originalOnSuggestionSelected = this.onSuggestionSelected.bind(this)
     this.transformSuggestion = localize('transformSuggestion', adapter, this)
     this.placeholder = localize('placeholder', adapter, this)
     this.poweredBy = localize('poweredBy', adapter, this)
@@ -485,9 +485,13 @@ class AddressAutosuggest extends Component {
     this.handleKeyDown = this.handleKeyDown.bind(this)
 
     this.state = this.getInitialState()
+
+
+    this.onSuggestionSelected = localize('onSuggestionSelected', adapter, this)
+    const originalOnSuggestionSelected = this.onSuggestionSelected.bind(this)
     this.onSuggestionSelected = (event, { suggestion }) => {
       if (suggestion.type === 'plus_code') {
-        if (!isValid(suggestion.value)) {
+        if (!openLocationCode.isValid(suggestion.value)) {
           // Handle invalid plus code
           if (this.props.reportValidity) {
             this.autosuggest.input.setCustomValidity(
@@ -503,8 +507,8 @@ class AddressAutosuggest extends Component {
         // Decode the plus code to get coordinates
         const [cc_lat, cc_long] = coordinates.value
         const { latitudeCenter: latitude, longitudeCenter: longitude } =
-          decode(
-            recoverNearest(
+          openLocationCode.decode(
+            openLocationCode.recoverNearest(
               suggestion.value, cc_lat, cc_long
             )
           )
