@@ -119,6 +119,7 @@ Feature: Incidents
         "metadata": [
           {
             "suggestion": {
+              "id": 1,
               "tasks": [
                 {
                   "id": 1,
@@ -166,6 +167,7 @@ Feature: Incidents
         "metadata": [
           {
             "suggestion": {
+              "id": 1,
               "tasks": [
                 {
                   "id": 1,
@@ -215,6 +217,7 @@ Feature: Incidents
         "metadata": [
           {
             "suggestion": {
+              "id": 1,
               "tasks": [
                 {
                   "id": 1,
@@ -270,6 +273,7 @@ Feature: Incidents
         "metadata": [
           {
             "suggestion": {
+              "id": 1,
               "tasks": [
                 {
                   "id": 1,

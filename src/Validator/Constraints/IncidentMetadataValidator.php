@@ -51,20 +51,11 @@ class IncidentMetadataValidator extends ConstraintValidator
                     'json'
                 );
 
-                //Verify that the data is valid for both POST and PUT operations
-                //POST format is used when re-calculating the price
-                //PUT format is used when updating an existing delivery
+                $delivery = $this->deliveryProcessor->process($data, new Put(), [
+                    'id' => $data->id
+                ]);
 
-                $postDelivery = $this->deliveryProcessor->process($data, new Post());
-
-                $errors = $this->validator->validate($postDelivery);
-                if (count($errors) > 0) {
-                    throw new ValidationException($errors);
-                }
-
-                $putDelivery = $this->deliveryProcessor->process($data, new Put());
-
-                $errors = $this->validator->validate($putDelivery);
+                $errors = $this->validator->validate($delivery);
                 if (count($errors) > 0) {
                     throw new ValidationException($errors);
                 }
