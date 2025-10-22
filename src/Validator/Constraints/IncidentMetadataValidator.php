@@ -3,10 +3,10 @@
 namespace AppBundle\Validator\Constraints;
 
 use ApiPlatform\Metadata\Post;
-use ApiPlatform\Symfony\Validator\Exception\ValidationException;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Validator\Exception\ValidationException;
 use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\State\DeliveryProcessor;
-use AppBundle\Entity\Delivery;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Constraint;
@@ -51,10 +51,20 @@ class IncidentMetadataValidator extends ConstraintValidator
                     'json'
                 );
 
-                /** @var Delivery $delivery */
-                $delivery = $this->deliveryProcessor->process($data, new Post());
+                //Verify that the data is valid for both POST and PUT operations
+                //POST format is used when re-calculating the price
+                //PUT format is used when updating an existing delivery
 
-                $errors = $this->validator->validate($delivery);
+                $postDelivery = $this->deliveryProcessor->process($data, new Post());
+
+                $errors = $this->validator->validate($postDelivery);
+                if (count($errors) > 0) {
+                    throw new ValidationException($errors);
+                }
+
+                $putDelivery = $this->deliveryProcessor->process($data, new Put());
+
+                $errors = $this->validator->validate($putDelivery);
                 if (count($errors) > 0) {
                     throw new ValidationException($errors);
                 }
