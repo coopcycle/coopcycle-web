@@ -227,6 +227,8 @@
         "RULE_PICKER_LINE_PICKUP_DIFF_HOURS": "Différence (heures)",
         "RULE_PICKER_LINE_PICKUP_DIFF_DAYS": "Différence (jours)",
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_DESC": "Afficher par dépôt décroissant",
+        "ADMIN_DASHBOARD_VIEW_MODE_PICKUP_ASC": "Afficher par retrait croissant",
+        "ADMIN_DASHBOARD_VIEW_MODE_PICKUP_DESC": "Afficher par retrait décroissant",
         "ADMIN_DASHBOARD_VIEW_MODE_BY_GROUP": "Afficher par groupes",
         "ADMIN_DASHBOARD_VIEW_MODE_CLASSIC": "Tout afficher",
         "ADMIN_DASHBOARD_UNASSIGN_TASKS_MULTI": "Dé-assigner {{count}} tâche(s)",

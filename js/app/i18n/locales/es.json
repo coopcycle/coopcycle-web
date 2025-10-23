@@ -275,6 +275,8 @@
         "PLEASE_SELECT_ADDRESS": "Selecciona una dirección en el menú desplegable",
         "RESTAURANTS_AND_STORES": "Restaurantes y tiendas locales",
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_DESC": "Mostrar por hora descendiente de entrega.",
+        "ADMIN_DASHBOARD_VIEW_MODE_PICKUP_DESC": "Mostrar por hora descendiente de recogida.",
+        "ADMIN_DASHBOARD_VIEW_MODE_PICKUP_ASC": "Mostrar por hora ascendiente de recogida.",
         "DOWNLOAD_EXAMPLE_SPREADSHEET": "Descargar una hoja de cálculo de ejemplo",
         "DROPZONE_REMOVE_FILE": "Eliminar el archivo",
         "ALLERGEN": {
