@@ -105,8 +105,6 @@
         "ADMIN_DASHBOARD_VIEW_MODE_CLASSIC": "Összes emgjelenítése",
         "ADMIN_DASHBOARD_VIEW_MODE_BY_GROUP": "Megjelenítés csoportokban",
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_DESC": "Megjelenítés leadásonként",
-        "ADMIN_DASHBOARD_VIEW_MODE_PICKUP_ASC": "Megjelenítés kiszállításokonként",
-        "ADMIN_DASHBOARD_VIEW_MODE_PICKUP_DESC": "Megjelenítés kiszállításokonként",
         "ADMIN_DASHBOARD_IMPORT_FILE_FORMATS": "Támogatott formátumok: csv, ods, xlsx",
         "ADMIN_DASHBOARD_PACKAGES": "Csomagok",
         "ADMIN_DASHBOARD_WEIGHT": "Súly",
