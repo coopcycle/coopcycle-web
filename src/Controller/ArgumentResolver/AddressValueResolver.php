@@ -49,7 +49,6 @@ class AddressValueResolver implements ArgumentValueResolverInterface
 
         $data = urldecode(base64_decode($value));
         $data = json_decode($data, true);
-        dump($data);
 
         $address = null;
 
