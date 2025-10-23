@@ -1,4 +1,4 @@
-Sylius\Component\Promotion\Model\Promotion:
+AppBundle\Entity\Sylius\Promotion:
   free_delivery_promotion:
     name: Free delivery
     code: FREE_DELIVERY

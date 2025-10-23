@@ -65,6 +65,10 @@ class RestaurantDecorator
             $badges[] = 'new';
         }
 
+        if ($restaurant->hasFeaturedPromotion()) {
+            $badges[] = 'promotion';
+        }
+
         return $badges;
     }
 }
