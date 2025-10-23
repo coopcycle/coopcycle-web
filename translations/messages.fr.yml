@@ -1653,3 +1653,5 @@ promotions.feature: Afficher
 promotions.featured: Affiché
 promotions.human_readable.discount_items_total_above: "%name% : %discount_amount% de réduction à partir de %amount% dʼachats"
 promotions.human_readable.coupon: "%name% avec le code %code%"
+form.offer_delivery.decrease_platform_fee.label: Diminuer les frais de plateforme
+form.offer_delivery.decrease_platform_fee.help: Les frais de plateforme seront diminués pour appliquer cette promotion
