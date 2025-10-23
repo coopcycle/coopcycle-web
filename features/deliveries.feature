@@ -525,6 +525,297 @@ Feature: Deliveries
       }
       """
 
+  Scenario: Create delivery with weight and packages then update packages
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | store_with_packages.yml |
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "pickup": {
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli",
+          "doneBefore": "tomorrow 13:30",
+          "comments": "Beware of the dog\nShe bites",
+          "weight": 6000,
+          "packages": [
+            {"type": "MEDIUM", "quantity": 1},
+            {"type": "XL", "quantity": 2}
+          ]
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"@string@.startsWith('/api/deliveries')",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":@integer@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
+        "tasks":@array@,
+        "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "type":"PICKUP",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "provider": null,
+            "streetAddress":@string@,
+            "telephone": @string@,
+            "name":@string@,
+            "contactName": @string@,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "comments": "1 × MEDIUM\n2 × XL\n6.00 kg",
+          "weight": 6000,
+          "packages": [
+            {
+              "type": "MEDIUM",
+              "name": "MEDIUM",
+              "quantity": 1,
+              "volume_per_package": 2,
+              "short_code": "MD",
+              "labels": @array@
+            },
+            {
+              "type": "XL",
+              "name": "XL",
+              "quantity": 2,
+              "volume_per_package": 3,
+              "short_code": "XL",
+              "labels": @array@
+            }
+          ],
+          "barcode": {"@*@":"@*@"},
+          "createdAt":"@string@.isDateTime()",
+          "tags": [],
+          "metadata": {"@*@": "@*@"}
+        },
+        "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "type":"DROPOFF",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "provider": null,
+            "streetAddress":@string@,
+            "telephone": null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "comments": "Beware of the dog\nShe bites",
+          "weight": 6000,
+          "packages": [
+            {
+              "type": "MEDIUM",
+              "name": "MEDIUM",
+              "quantity": 1,
+              "volume_per_package": 2,
+              "short_code": "MD",
+              "labels": @array@
+            },
+            {
+              "type": "XL",
+              "name": "XL",
+              "quantity": 2,
+              "volume_per_package": 3,
+              "short_code": "XL",
+              "labels": @array@
+            }
+          ],
+          "barcode": {"@*@":"@*@"},
+          "createdAt":"@string@.isDateTime()",
+          "tags": [],
+          "metadata": {"@*@": "@*@"}
+        },
+        "trackingUrl": @string@,
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "PUT" request to "/api/deliveries/1" with body:
+      """
+        {
+          "dropoff":{
+            "packages": [
+              {"type": "SMALL", "quantity": 1},
+              {"type": "MEDIUM", "quantity": 2}
+            ]
+          }
+        }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    #FIXME: pickup comment should be updated
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"@string@.startsWith('/api/deliveries')",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":@integer@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
+        "tasks":@array@,
+        "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "type":"PICKUP",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "provider": null,
+            "streetAddress":@string@,
+            "telephone": @string@,
+            "name":@string@,
+            "contactName": @string@,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "comments": "1 × MEDIUM\n2 × XL\n6.00 kg",
+          "weight": 6000,
+          "packages": [
+            {
+              "type": "MEDIUM",
+              "name": "MEDIUM",
+              "quantity": 2,
+              "volume_per_package": 2,
+              "short_code": "MD",
+              "labels": @array@
+            },
+            {
+              "type": "SMALL",
+              "name": "SMALL",
+              "quantity": 1,
+              "volume_per_package": 1,
+              "short_code": "SM",
+              "labels": @array@
+            }
+          ],
+          "barcode": {"@*@":"@*@"},
+          "createdAt":"@string@.isDateTime()",
+          "tags": [],
+          "metadata": {"@*@": "@*@"}
+        },
+        "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "id":@integer@,
+          "status":"TODO",
+          "type":"DROPOFF",
+          "address":{
+            "@id":"@string@.startsWith('/api/addresses')",
+            "@type":"http://schema.org/Place",
+            "geo":{
+              "@type":"GeoCoordinates",
+              "latitude":@double@,
+              "longitude":@double@
+            },
+            "provider": null,
+            "streetAddress":@string@,
+            "telephone": null,
+            "name":null,
+            "contactName": null,
+            "description": null
+          },
+          "doneAfter":"@string@.isDateTime()",
+          "after":"@string@.isDateTime()",
+          "doneBefore":"@string@.isDateTime()",
+          "before":"@string@.isDateTime()",
+          "comments": "Beware of the dog\nShe bites",
+          "weight": 6000,
+          "packages": [
+            {
+              "type": "MEDIUM",
+              "name": "MEDIUM",
+              "quantity": 2,
+              "volume_per_package": 2,
+              "short_code": "MD",
+              "labels": @array@
+            },
+            {
+              "type": "SMALL",
+              "name": "SMALL",
+              "quantity": 1,
+              "volume_per_package": 1,
+              "short_code": "SM",
+              "labels": @array@
+            }
+          ],
+          "barcode": {"@*@":"@*@"},
+          "createdAt":"@string@.isDateTime()",
+          "tags": [],
+          "metadata": {"@*@": "@*@"}
+        },
+        "trackingUrl": @string@,
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
+      }
+      """
+
   Scenario: Create delivery with implicit pickup address with OAuth (with before & after)
     Given the fixtures files are loaded:
       | sylius_products.yml |

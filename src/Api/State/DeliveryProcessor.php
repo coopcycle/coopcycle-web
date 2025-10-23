@@ -310,21 +310,32 @@ class DeliveryProcessor implements ProcessorInterface
 
         if ($data->packages) {
 
-            foreach ($task->getPackages() as $p) {
-                $task->removePackage($p->getPackage());
-            }
-
             $packageRepository = $this->entityManager->getRepository(Package::class);
+
+            /** @var Package[] $notPresentPackages */
+            $notPresentPackages = [];
+            foreach ($task->getPackages() as $taskPackage) {
+                $notPresentPackages[$taskPackage->getPackage()->getId()] = $taskPackage->getPackage();
+            }
 
             foreach ($data->packages as $p) {
                 $package = $packageRepository->findOneByNameAndStore($p->type, $store);
                 if ($package) {
+                    // Remove package from notPresentPackages if it's already present
+                    if (isset($notPresentPackages[$package->getId()])) {
+                        unset($notPresentPackages[$package->getId()]);
+                    }
                     $task->setQuantityForPackage($package, $p->quantity);
                 } else {
                     $this->logger->warning('Package not found', [
                         'package' => $p->type
                     ]);
                 }
+            }
+
+            // Remove packages that are not in the request
+            foreach ($notPresentPackages as $package) {
+                $task->removePackage($package);
             }
         }
 
