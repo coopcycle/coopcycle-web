@@ -13,11 +13,18 @@ use AppBundle\Enum\Store;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
+use AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand;
+use AppBundle\Sylius\Promotion\Checker\Rule\IsRestaurantRuleChecker;
+use AppBundle\Sylius\Promotion\Checker\Rule\IsItemsTotalAboveRuleChecker;
+use AppBundle\Utils\PriceFormatter;
 use AppBundle\Utils\RestaurantDecorator;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
+use Sylius\Component\Promotion\Model\PromotionInterface;
+use Sylius\Component\Promotion\Model\PromotionCouponInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -36,7 +43,8 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         private TimingRegistry $timingRegistry,
         private RestaurantDecorator $restaurantDecorator,
         private BusinessContext $businessContext,
-        private SettingsManager $settingsManager)
+        private SettingsManager $settingsManager,
+        private PriceFormatter $priceFormatter)
     {}
 
     /**
@@ -230,5 +238,41 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         }
 
         return $restaurant->getOpeningHours($fulfillment);
+    }
+
+    public function humanizePromotion(PromotionInterface|PromotionCouponInterface $promotion): string
+    {
+        if ($promotion instanceof PromotionCouponInterface) {
+
+            $parentPromotion = $promotion->getPromotion();
+
+            return $this->translator->trans('promotions.human_readable.coupon', [
+                '%name%' => $parentPromotion->getName(),
+                '%code%' => $promotion->getCode(),
+            ]);
+        }
+
+        $discountAmount = 0;
+        $amount = 0;
+
+        foreach ($promotion->getActions() as $action) {
+            if ($action->getType() === FixedDiscountPromotionActionCommand::TYPE) {
+                $discountAmount = $action->getConfiguration()['amount'];
+                break;
+            }
+        }
+
+        foreach ($promotion->getRules() as $rule) {
+            if ($rule->getType() === IsItemsTotalAboveRuleChecker::TYPE) {
+                $amount = $rule->getConfiguration()['amount'];
+                break;
+            }
+        }
+
+        return $this->translator->trans('promotions.human_readable.discount_items_total_above', [
+            '%name%' => $promotion->getName(),
+            '%discount_amount%' => $this->priceFormatter->formatWithSymbol($discountAmount),
+            '%amount%' => $this->priceFormatter->formatWithSymbol($amount),
+        ]);
     }
 }

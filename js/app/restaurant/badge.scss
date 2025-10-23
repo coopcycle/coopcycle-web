@@ -111,6 +111,10 @@
     }
   }
 
+  &.promotion {
+    ---color: #D45113;
+  }
+
   background-color: var(---color);
 
   > div {

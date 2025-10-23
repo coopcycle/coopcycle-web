@@ -787,6 +787,7 @@ task.receipt.reference: 'Referència: <strong>%ref%</strong>'
 basics.hours: '%count% hour|%count% hores'
 basics.days: '%count% day|%count% dies'
 basics.weeks: '%count% week|%count% setmanes'
+basics.months: '%count% month|%count% mesos'
 basics.none: Cap
 basics.yes: Si
 basics.no: No

@@ -165,6 +165,8 @@
         "ADMIN_DASHBOARD_VIEW_MODE_CLASSIC": "Display all",
         "ADMIN_DASHBOARD_VIEW_MODE_BY_GROUP": "Display by groups",
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_DESC": "Display by dropoff desc.",
+        "ADMIN_DASHBOARD_VIEW_MODE_PICKUP_ASC": "Display by pickup asc.",
+        "ADMIN_DASHBOARD_VIEW_MODE_PICKUP_DESC": "Display by pickup desc.",
         "ADMIN_DASHBOARD_IMPORT_FILE_FORMATS": "Supported file formats: csv, ods, xlsx",
         "ADMIN_DASHBOARD_SETTINGS_YES": "Yes",
         "ADMIN_DASHBOARD_SETTINGS_NO": "No",

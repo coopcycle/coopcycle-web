@@ -968,6 +968,7 @@ task.receipt.reference: 'Referenz: <strong>%ref%</strong>'
 basics.hours: '%count% Stunde|%count% Stunden'
 basics.days: '%count% Tag|%count% Tage'
 basics.weeks: '%count% Woche|%count% Wochen'
+basics.months: '%count% Monat|%count% Monate'
 basics.yes: Ja
 basics.no: Nein
 order.export.heading.fulfillment_method: Auftragsabwicklung

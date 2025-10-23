@@ -333,6 +333,7 @@ task.receipt.reference: 'Riferimento: <strong>%ref%</strong>'
 basics.hours: '%count% ora|%count% ore'
 basics.days: '%count% giorno|%count% giorni'
 basics.weeks: '%count% settimana|%count% settimane'
+basics.months: '%count% mese|%count% mesi'
 basics.none: Nessuno
 form.api_app.name.label: Nome dell'app
 form.api_app.store.label: Negozio

@@ -1082,6 +1082,7 @@ task.receipt.reference: 'Reference: <strong>%ref%</strong>'
 basics.hours: '%count% hour|%count% hours'
 basics.days: '%count% day|%count% days'
 basics.weeks: '%count% week|%count% weeks'
+basics.months: '%count% month|%count% months'
 basics.none: None
 basics.yes: Yes
 basics.no: No
@@ -1712,3 +1713,9 @@ adminDashboard.promotions.ongoing: Ongoing promotions
 adminDashboard.promotions.past: Past promotions
 order.download_receipt: Download receipt
 order.generate_receipt: Generate receipt
+promotions.feature: Display
+promotions.featured: Displayed
+promotions.human_readable.coupon: "%name% with coupon %code%"
+promotions.human_readable.discount_items_total_above: "%name%: %discount_amount% discount above %amount%"
+form.offer_delivery.decrease_platform_fee.label: Decrease platform fees
+form.offer_delivery.decrease_platform_fee.help: If checked, platform fees will be decreased to apply the promotion

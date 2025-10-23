@@ -65,6 +65,7 @@ class DashboardController extends AbstractController
             'promotion_new' => 'dashboard_restaurant_new_promotion',
             'promotion' => 'dashboard_restaurant_promotion',
             'promotion_archive' => 'dashboard_restaurant_archive_promotion',
+            'promotion_feature' => 'dashboard_restaurant_feature_promotion',
             'promotion_coupon' => 'dashboard_restaurant_promotion_coupon',
             'product_option_preview' => 'dashboard_restaurant_product_option_preview',
             'reusable_packaging_new' => 'dashboard_restaurant_new_reusable_packaging',
