@@ -1082,6 +1082,7 @@ task.receipt.reference: 'Reference: <strong>%ref%</strong>'
 basics.hours: '%count% hour|%count% hours'
 basics.days: '%count% day|%count% days'
 basics.weeks: '%count% week|%count% weeks'
+basics.months: '%count% month|%count% months'
 basics.none: None
 basics.yes: Yes
 basics.no: No

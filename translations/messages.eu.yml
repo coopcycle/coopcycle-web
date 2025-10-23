@@ -906,6 +906,7 @@ restricted_diets.GLUTEN_FREE_DIET: Glutenik gabe
 promotion_coupon.used.label: Erabilera kopurua
 order.export.heading.refund_total: Itzulketak
 basics.weeks: aste %count%|%count% aste
+basics.months: hiru %count%|%count% hiru
 basics.days: egun %count%|%count% egun
 basics.hours: ordu %count%|%count% ordu
 task.receipt.reference: 'Erreferentzia: <strong>%ref%</strong>'

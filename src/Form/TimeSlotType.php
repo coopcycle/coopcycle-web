@@ -45,6 +45,8 @@ class TimeSlotType extends AbstractType
                     $this->translator->trans('basics.days', ['%count%' => 6]) => '6 days',
                     $this->translator->trans('basics.weeks',['%count%' => 1]) => '1 week',
                     $this->translator->trans('basics.weeks',['%count%' => 2]) => '2 weeks',
+                    $this->translator->trans('basics.months',['%count%' => 1]) => '1 months',
+                    $this->translator->trans('basics.months',['%count%' => 2]) => '2 months',
                 ],
             ])
             ->add('workingDaysOnly', CheckboxType::class, [
