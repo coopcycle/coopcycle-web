@@ -334,7 +334,7 @@ function geocodeAndSync() {
       return
     }
 
-    if (cart.shippingAddress?.provider) {
+    if (cart.shippingAddress?.provider !== null) {
       dispatch(changeAddress({
         ...cart.shippingAddress,
         isPrecise: true,
