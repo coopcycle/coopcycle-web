@@ -75,21 +75,19 @@ class OfferDeliveryType extends AbstractType
             $form = $event->getForm();
             $data = $event->getData();
 
-            if (null === $data) {
-                return;
-            }
-
             if ($this->authorizationChecker->isGranted('ROLE_DISPATCHER')) {
 
-                $promotion = $data->getPromotion();
+                $promotion = $data?->getPromotion();
 
                 $isChecked = false;
 
-                foreach ($promotion->getActions() as $action) {
-                    if ($action->getType() === DeliveryPercentageDiscountPromotionActionCommand::TYPE) {
-                        $configuration = $action->getConfiguration();
-                        $isChecked = $configuration['decrase_platform_fee'];
-                        break;
+                if (null !== $promotion) {
+                    foreach ($promotion->getActions() as $action) {
+                        if ($action->getType() === DeliveryPercentageDiscountPromotionActionCommand::TYPE) {
+                            $configuration = $action->getConfiguration();
+                            $isChecked = $configuration['decrase_platform_fee'];
+                            break;
+                        }
                     }
                 }
 
