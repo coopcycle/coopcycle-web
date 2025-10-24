@@ -173,9 +173,18 @@ const TimeSlotPicker = ({ storeNodeId, taskId, timeSlotLabels }: Props) => {
     setTimeSlot(null); // Will be set after the choices are loaded
   };
 
-  const handleDateChange = newDate => {
+  const handleDateChange = (newDate: Moment) => {
     const { hour } = extractDateAndRangeFromTimeSlot(taskValues.timeSlot);
-    setTimeSlotFromDateAndRange(newDate, hour);
+
+    let selectedHour = hour;
+
+    const availableHours = formattedTimeslots[newDate.format('YYYY-MM-DD')];
+    if (!availableHours.includes(hour)) {
+      //reset to the first available option
+      selectedHour = formattedTimeslots[newDate.format('YYYY-MM-DD')][0];
+    }
+
+    setTimeSlotFromDateAndRange(newDate, selectedHour);
   };
 
   const handleHourChange = hourRange => {
