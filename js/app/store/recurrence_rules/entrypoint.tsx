@@ -8,7 +8,7 @@ import Modal from 'react-modal';
 import { createRoot } from 'react-dom/client';
 import { Mode } from '../../components/delivery-form/mode';
 import { formSlice } from '../../components/delivery-form/redux/formSlice';
-import { RootWithDefaults } from '../../utils/react';
+import { AppRootWithDefaults } from '../../utils/react';
 import FlagsContext from '../../components/delivery-form/FlagsContext';
 
 import '../../bootstrap-reset.scss';
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const root = createRoot(container);
     root.render(
-      <RootWithDefaults>
+      <AppRootWithDefaults>
         <Provider store={store}>
           <FlagsContext.Provider
             value={{ isDispatcher, isDebugPricing, isPriceBreakdownEnabled }}>
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
             />
           </FlagsContext.Provider>
         </Provider>
-      </RootWithDefaults>,
+      </AppRootWithDefaults>,
     );
   }
 });

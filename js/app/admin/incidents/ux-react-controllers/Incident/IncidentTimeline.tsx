@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import './IncidentTimeline.scss';
 import { money } from './utils';
 
-import { connectWithRedux } from './incidentStore';
+import { selectIncident } from './redux/incidentSlice';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
@@ -37,6 +37,10 @@ function _eventTypeToText(event) {
       return 'APPLIED_A_DIFFERENCE_ON_THE_PRICE';
     case 'transporter_reported':
       return 'SENT_A_REPORT_TO_THE_TRANSPORTER';
+    case 'accepted_suggestion':
+      return 'ACCEPTED_SUGGESTION';
+    case 'rejected_suggestion':
+      return 'REJECTED_SUGGESTION';
   }
 }
 
@@ -115,8 +119,9 @@ function Item({ event }) {
   );
 }
 
-export default connectWithRedux(function () {
-  const events = useSelector(state => state.incident.events);
+export default function () {
+  const incident = useSelector(selectIncident);
+  const events = incident.events;
 
   return (
     <div className="tl-incident-event">
@@ -125,4 +130,4 @@ export default connectWithRedux(function () {
       ))}
     </div>
   );
-});
+}

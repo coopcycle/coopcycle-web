@@ -4,6 +4,7 @@ import { ErrorBoundary } from 'react-error-boundary'
 import { useTranslation } from 'react-i18next'
 import * as Sentry from '@sentry/browser'
 import { AntdConfigProvider } from './antd'
+import { App } from 'antd';
 
 const logError = (error: Error, info: ErrorInfo) => {
   if (Sentry.isInitialized()) {
@@ -25,6 +26,21 @@ function FallbackComponent() {
   )
 }
 
+/**
+ * Use this root for pages rendered primarily by React
+ */
+export function AppRootWithDefaults({ children }: { children: ReactNode }) {
+  return (
+    <RootWithDefaults>
+      <App>{children}</App>
+    </RootWithDefaults>
+  );
+}
+
+/**
+ * Use this root for small react components on a page primarily rendered by Twig,
+ * on the pages primarily rendered by React, use AppRootWithDefaults instead
+ */
 export function RootWithDefaults({ children }: { children: ReactNode }) {
   return (
     <StrictMode>

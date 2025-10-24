@@ -63,7 +63,7 @@ class CalculateRetailPriceProcessor implements TaxableInterface, ProcessorInterf
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
         /** @var Delivery $delivery */
-        $delivery = $this->decorated->process($data, $operation, $uriVariables, $context);
+        $delivery = $this->decorated->process($data, $operation, ($data->id) ? array_merge($uriVariables, ['id' => $data->id]) : $uriVariables, $context);
 
         $store = $delivery->getStore();
         if (null === $store) {

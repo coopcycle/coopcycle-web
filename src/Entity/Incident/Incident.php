@@ -19,6 +19,7 @@ use AppBundle\Action\Incident\CreateComment;
 use AppBundle\Action\Incident\IncidentAction;
 use AppBundle\Action\Incident\IncidentFastList;
 use AppBundle\Action\Incident\CreateIncident;
+use AppBundle\Validator\Constraints as AppAssert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -79,6 +80,7 @@ class Incident implements TaggableInterface {
     protected ?UserInterface $createdBy = null;
 
     #[Groups(['incident'])]
+    #[AppAssert\IncidentMetadata]
     protected array $metadata = [];
 
     #[Groups(['incident'])]

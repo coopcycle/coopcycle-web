@@ -2,7 +2,8 @@ import React from 'react';
 import { Image, Upload, notification } from 'antd';
 import './Style.scss';
 
-import store from './incidentStore';
+import store from './redux/incidentStore';
+import { selectImages, selectIncident } from './redux/incidentSlice';
 
 async function _handleUpload(id, file) {
   if (file.size > 5 * 1024 * 1024) {
@@ -22,7 +23,11 @@ async function _handleUpload(id, file) {
 }
 
 export default function () {
-  const { incident, images } = store.getState();
+  //FIXME: replace with useAppSelector after migrating away from ux-react-controllers
+  const state = store.getState();
+  const incident = selectIncident(state);
+  const images = selectImages(state);
+
   return (
     <>
       <Image.PreviewGroup>

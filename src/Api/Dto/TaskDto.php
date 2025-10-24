@@ -11,7 +11,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 final class TaskDto
 {
     // null in POST input data
-    #[Groups(['delivery', 'delivery_create'])]
+    #[Groups(['delivery', 'pricing_deliveries', 'delivery_create'])]
     public int|null $id = null;
 
     #[Groups(['delivery'])]

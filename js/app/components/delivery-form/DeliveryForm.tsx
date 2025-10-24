@@ -669,6 +669,9 @@ const DeliveryForm = ({
                     <Order
                       storeNodeId={storeNodeId}
                       order={order}
+                      deliveryId={
+                        mode === Mode.DELIVERY_UPDATE ? deliveryId : undefined
+                      }
                       setPriceLoading={setPriceLoading}
                       initialManualSupplements={initialManualSupplements}
                     />

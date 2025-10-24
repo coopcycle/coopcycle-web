@@ -94,3 +94,271 @@ Feature: Incidents
         ]
       }
       """
+
+  Scenario: Report incident: suggest order details modification
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | store_basic.yml |
+      | package_delivery_order.yml |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "Wrong order details",
+        "failureReasonCode": "INCORRECT_ITEM",
+        "task": "/api/tasks/2",
+        "metadata": [
+          {
+            "suggestion": {
+              "id": 1,
+              "tasks": [
+                {
+                  "id": 1,
+                  "address": "/api/addresses/1",
+                  "after": "2025-10-20 12:00",
+                  "before": "2025-10-20 14:00"
+                },
+                {
+                  "id": 2,
+                  "address": "/api/addresses/2",
+                  "after": "2025-10-20 12:00",
+                  "before": "2025-10-20 14:00",
+                  "packages": [
+                    {"type": "XL", "quantity": 2}
+                  ],
+                  "weight": 30000
+                }
+              ]
+            }
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Incident",
+        "@id":"@string@",
+        "@type":"Incident",
+        "id":@integer@,
+        "title":"Article incorrect",
+        "status":"OPEN",
+        "priority":@integer@,
+        "task":"/api/tasks/2",
+        "failureReasonCode":"INCORRECT_ITEM",
+        "description":"Wrong order details",
+        "images":[],
+        "events":[],
+        "createdBy":"/api/users/2",
+        "createdAt":"@string@.isDateTime()",
+        "updatedAt":"@string@.isDateTime()",
+        "tags":[],
+        "metadata": [
+          {
+            "suggestion": {
+              "id": 1,
+              "tasks": [
+                {
+                  "id": 1,
+                  "address": "/api/addresses/1",
+                  "after": "2025-10-20 12:00",
+                  "before": "2025-10-20 14:00"
+                },
+                {
+                  "id": 2,
+                  "address": "/api/addresses/2",
+                  "after": "2025-10-20 12:00",
+                  "before": "2025-10-20 14:00",
+                  "packages": [
+                    {"type": "XL", "quantity": 2}
+                  ],
+                  "weight": 30000
+                }
+              ]
+            }
+          }
+        ]
+      }
+      """
+
+  Scenario: Report incident: suggest order supplements
+    Given the fixtures files are loaded:
+      | tasks.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | store_with_range_supplements.yml |
+      | package_delivery_order.yml |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "Waiting time",
+        "failureReasonCode": "INCORRECT_ITEM",
+        "task": "/api/tasks/2",
+        "metadata": [
+          {
+            "suggestion": {
+              "id": 1,
+              "tasks": [
+                {
+                  "id": 1,
+                  "address": "/api/addresses/1",
+                  "after": "2025-10-20 12:00",
+                  "before": "2025-10-20 14:00"
+                },
+                {
+                  "id": 2,
+                  "address": "/api/addresses/2",
+                  "after": "2025-10-20 12:00",
+                  "before": "2025-10-20 14:00",
+                  "packages": [
+                    {"type": "XL", "quantity": 2}
+                  ],
+                  "weight": 30000
+                }
+              ],
+              "order": {
+                "manualSupplements": [
+                  {
+                    "pricingRule": "/api/pricing_rules/2",
+                    "quantity": 10
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Incident",
+        "@id":"@string@",
+        "@type":"Incident",
+        "id":@integer@,
+        "title":"Article incorrect",
+        "status":"OPEN",
+        "priority":@integer@,
+        "task":"/api/tasks/2",
+        "failureReasonCode":"INCORRECT_ITEM",
+        "description":"Waiting time",
+        "images":[],
+        "events":[],
+        "createdBy":"/api/users/2",
+        "createdAt":"@string@.isDateTime()",
+        "updatedAt":"@string@.isDateTime()",
+        "tags":[],
+        "metadata": [
+          {
+            "suggestion": {
+              "id": 1,
+              "tasks": [
+                {
+                  "id": 1,
+                  "address": "/api/addresses/1",
+                  "after": "2025-10-20 12:00",
+                  "before": "2025-10-20 14:00"
+                },
+                {
+                  "id": 2,
+                  "address": "/api/addresses/2",
+                  "after": "2025-10-20 12:00",
+                  "before": "2025-10-20 14:00",
+                  "packages": [
+                    {"type": "XL", "quantity": 2}
+                  ],
+                  "weight": 30000
+                }
+              ],
+              "order": {
+                "manualSupplements": [
+                  {
+                    "pricingRule": "/api/pricing_rules/2",
+                    "quantity": 10
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+      """
+    
+  Scenario: Report incident: with invalid suggestion in metadata
+    Given the fixtures files are loaded:
+      | tasks.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | store_with_range_supplements.yml |
+      | package_delivery_order.yml |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "Waiting time",
+        "failureReasonCode": "INCORRECT_ITEM",
+        "task": "/api/tasks/2",
+        "metadata": [
+          {
+            "suggestion": {
+              "order": {
+                "manualSupplements": [
+                  {
+                    "pricingRule": "/api/pricing_rules/2",
+                    "quantity": 10
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/ConstraintViolationList",
+        "@type": "ConstraintViolationList",
+        "hydra:title": "An error occurred",
+        "hydra:description": "metadata[0][suggestion]: The suggestion field in metadata is not a valid delivery",
+        "violations": [
+          {
+            "propertyPath": "metadata[0][suggestion]",
+            "message": "The suggestion field in metadata is not a valid delivery",
+            "code": null
+          }
+        ]
+      }
+      """
