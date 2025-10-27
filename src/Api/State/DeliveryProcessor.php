@@ -6,7 +6,6 @@ use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Metadata\Exception\InvalidArgumentException;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Operation;
-use ApiPlatform\Metadata\Put;
 use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInputDto;
@@ -66,7 +65,7 @@ class DeliveryProcessor implements ProcessorInterface
             }
         }
 
-        $isEditOperation = $operation instanceof Put && $data instanceof DeliveryInputDto && null !== $uriVariables['id'];
+        $isEditOperation = $data instanceof DeliveryInputDto && isset($uriVariables['id']);
 
         if ($data instanceof DeliveryInputDto) {
             if ($isEditOperation) {
