@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import './IncidentTimeline.scss';
 import { money } from './utils';
 
-import { selectIncident } from './redux/incidentSlice';
+import { selectEvents } from './redux/incidentSlice';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
@@ -120,8 +120,7 @@ function Item({ event }) {
 }
 
 export default function () {
-  const incident = useSelector(selectIncident);
-  const events = incident.events;
+  const events = useSelector(selectEvents);
 
   return (
     <div className="tl-incident-event">

@@ -56,3 +56,5 @@ export const selectStoreUri = (state: RootState) => state.incident.storeUri;
 export const selectImages = (state: RootState) => state.incident.images;
 export const selectTransporterEnabled = (state: RootState) =>
   state.incident.transporterEnabled;
+export const selectEvents = (state: RootState) =>
+  state.incident.incident.events;

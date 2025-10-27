@@ -1,12 +1,17 @@
 import React, { useEffect, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Alert, App, Button, Col, Flex, Row, Spin } from 'antd';
 import Cart from '../../../../components/delivery-form/components/order/Cart';
 import {
   useCalculatePriceMutation,
   useIncidentActionMutation,
 } from '../../../../api/slice';
-import { selectIncident, selectStoreUri } from './redux/incidentSlice';
+import {
+  selectEvents,
+  selectIncident,
+  selectStoreUri,
+  setEvents,
+} from './redux/incidentSlice';
 import {
   Adjustment,
   AdjustmentType,
@@ -65,12 +70,11 @@ type Props = {
   suggestion: IncidentMetadataSuggestion;
 };
 
-export const OrderDetailsSuggestion = ({
-  existingOrder,
-  suggestion,
-}: Props) => {
+export const ResolveSuggestion = ({ existingOrder, suggestion }: Props) => {
   const storeUri = useSelector(selectStoreUri);
   const incident = useSelector(selectIncident);
+
+  const dispatch = useDispatch();
 
   const { notification } = App.useApp();
 
@@ -83,6 +87,7 @@ export const OrderDetailsSuggestion = ({
       isLoading: isActionLoading,
       isSuccess: isActionSuccess,
       isError: isActionError,
+      data: actionData,
     },
   ] = useIncidentActionMutation();
 
@@ -133,6 +138,8 @@ export const OrderDetailsSuggestion = ({
 
   useEffect(() => {
     if (isActionSuccess) {
+      dispatch(setEvents(actionData.events));
+
       notification.success({
         message: 'Action completed successfully',
       });
@@ -142,7 +149,7 @@ export const OrderDetailsSuggestion = ({
         message: 'Failed to perform action',
       });
     }
-  }, [isActionSuccess, isActionError]);
+  }, [isActionSuccess, isActionError, notification]);
 
   const handleAcceptSuggestion = async () => {
     if (!incident?.id) return;
@@ -208,4 +215,28 @@ export const OrderDetailsSuggestion = ({
       </Row>
     </Flex>
   );
+};
+
+export const OrderDetailsSuggestion = ({
+  existingOrder,
+  suggestion,
+}: Props) => {
+  const events = useSelector(selectEvents);
+
+  if (
+    events.some(
+      event =>
+        event.type === 'accepted_suggestion' ||
+        event.type === 'rejected_suggestion',
+    )
+  ) {
+    return <div>TODO: incident already handled</div>;
+  } else {
+    return (
+      <ResolveSuggestion
+        existingOrder={existingOrder}
+        suggestion={suggestion}
+      />
+    );
+  }
 };
