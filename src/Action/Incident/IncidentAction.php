@@ -20,7 +20,7 @@ use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class IncidentAction extends Base
@@ -32,7 +32,7 @@ class IncidentAction extends Base
         private readonly AdjustmentFactoryInterface $adjustmentFactory,
         private readonly OrderProcessorInterface $orderProcessor,
         private readonly TranslatorInterface $translator,
-        private readonly SerializerInterface $serializer,
+        private readonly DenormalizerInterface $denormalizer,
         private readonly DeliveryCreateOrUpdateProcessor $deliveryProcessor,
     )
     {
@@ -235,7 +235,7 @@ class IncidentAction extends Base
         });
 
         /** @var DeliveryInputDto $deliveryData */
-        $deliveryData = $this->serializer->denormalize(
+        $deliveryData = $this->denormalizer->denormalize(
             $suggestionMetadata[0]['suggestion'],
             DeliveryInputDto::class,
             'json'

@@ -5,7 +5,7 @@ namespace AppBundle\Validator\Constraints;
 use ApiPlatform\Validator\Exception\ValidationException;
 use AppBundle\Api\Dto\DeliveryInputDto;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class IncidentMetadataValidator extends ConstraintValidator
 {
     public function __construct(
-        private readonly SerializerInterface $serializer,
+        private readonly DenormalizerInterface $denormalizer,
         private readonly ValidatorInterface $validator,
         private readonly LoggerInterface $logger
     ) {
@@ -41,7 +41,7 @@ class IncidentMetadataValidator extends ConstraintValidator
             // Check if the suggestion is a valid delivery
             try {
                 /** @var DeliveryInputDto $data */
-                $data = $this->serializer->denormalize(
+                $data = $this->denormalizer->denormalize(
                     $item['suggestion'],
                     DeliveryInputDto::class,
                     'json'
