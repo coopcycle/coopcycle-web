@@ -1564,10 +1564,6 @@ trait RestaurantTrait
             }
         }
 
-        // dump($ongoing);
-        // dump($past);
-        // exit;
-
         return $this->render('restaurant/promotions.html.twig', $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
