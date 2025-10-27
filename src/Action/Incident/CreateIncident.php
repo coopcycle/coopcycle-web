@@ -8,6 +8,7 @@ use AppBundle\Entity\Incident\Incident;
 use AppBundle\Service\TaskManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class CreateIncident
@@ -54,9 +55,12 @@ class CreateIncident
             $data->setTitle($this->findDescriptionByCode($data->getFailureReasonCode()));
         }
 
+        $this->preFillMissingDataInSuggestion($data);
+
         if (null !== $user) {
             $data->setCreatedBy($user);
         }
+
         $this->em->persist($data);
         $this->em->flush();
 
@@ -73,4 +77,63 @@ class CreateIncident
         return $data;
     }
 
+    private function preFillMissingDataInSuggestion(Incident $incident): void
+    {
+        $metadata = $incident->getMetadata();
+
+        if (empty($metadata)) {
+            return;
+        }
+
+        // Check if any metadata item contains a suggestion
+        foreach ($metadata as $index => $item) {
+            if (!is_array($item) || !isset($item['suggestion'])) {
+                continue;
+            }
+
+            $suggestion = $item['suggestion'];
+
+            $delivery = $incident->getTask()->getDelivery();
+            if (null === $delivery) {
+                throw new BadRequestHttpException('The task must be associated with a delivery to create an incident with a suggestion');
+            }
+
+            // Add the delivery ID to the suggestion
+            $suggestion['id'] = $delivery->getId();
+
+            // Prefill missing tasks from the original delivery;
+            // this flow does not allow removing tasks
+
+            if (!isset($suggestion['tasks']) || !is_array($suggestion['tasks'])) {
+                $suggestion['tasks'] = [];
+            }
+
+            // Get all task IDs that are already in the suggestion
+            $existingTaskIds = array_map(function ($task) {
+                return $task['id'] ?? null;
+            }, $suggestion['tasks']);
+            $existingTaskIds = array_filter($existingTaskIds);
+
+            $originalTasks = $delivery->getTasks();
+
+            // Add missing tasks from the original delivery
+            foreach ($originalTasks as $originalTask) {
+                $taskId = $originalTask->getId();
+
+                if (in_array($taskId, $existingTaskIds)) {
+                    continue;
+                }
+
+                $taskData = [
+                    'id' => $taskId,
+                ];
+
+                $suggestion['tasks'][] = $taskData;
+            }
+
+            $metadata[$index]['suggestion'] = $suggestion;
+        }
+
+        $incident->setMetadata($metadata);
+    }
 }

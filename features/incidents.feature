@@ -362,3 +362,90 @@ Feature: Incidents
         ]
       }
       """
+
+  Scenario: Report incident: pre-fill missing tasks in suggestion
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml        |
+      | payment_methods.yml        |
+      | sylius_products.yml        |
+      | store_basic.yml            |
+      | package_delivery_order.yml |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "Wrong dropoff details",
+        "failureReasonCode": "INCORRECT_ITEM",
+        "task": "/api/tasks/2",
+        "metadata": [
+          {
+            "suggestion": {
+              "tasks": [
+                {
+                  "id": 2,
+                  "address": "/api/addresses/2",
+                  "after": "2025-10-20 15:00",
+                  "before": "2025-10-20 17:00",
+                  "packages": [
+                    {"type": "XL", "quantity": 5}
+                  ],
+                  "weight": 50000
+                }
+              ]
+            }
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Incident",
+        "@id":"@string@",
+        "@type":"Incident",
+        "id":@integer@,
+        "title":"Article incorrect",
+        "status":"OPEN",
+        "priority":@integer@,
+        "task":"/api/tasks/2",
+        "failureReasonCode":"INCORRECT_ITEM",
+        "description":"Wrong dropoff details",
+        "images":[],
+        "events":[],
+        "createdBy":"/api/users/2",
+        "createdAt":"@string@.isDateTime()",
+        "updatedAt":"@string@.isDateTime()",
+        "tags":[],
+        "metadata": [
+          {
+            "suggestion": {
+              "id": 1,
+              "tasks": [
+                {
+                  "id": 2,
+                  "address": "/api/addresses/2",
+                  "after": "2025-10-20 15:00",
+                  "before": "2025-10-20 17:00",
+                  "packages": [
+                    {"type": "XL", "quantity": 5}
+                  ],
+                  "weight": 50000
+                },
+                {
+                  "id": 1
+                }
+              ]
+            }
+          }
+        ]
+      }
+      """
