@@ -119,19 +119,12 @@ Feature: Incidents
         "metadata": [
           {
             "suggestion": {
-              "id": 1,
               "tasks": [
                 {
-                  "id": 1,
-                  "address": "/api/addresses/1",
-                  "after": "2025-10-20 12:00",
-                  "before": "2025-10-20 14:00"
+                  "id": 2
                 },
                 {
-                  "id": 2,
-                  "address": "/api/addresses/2",
-                  "after": "2025-10-20 12:00",
-                  "before": "2025-10-20 14:00",
+                  "id": 1,
                   "packages": [
                     {"type": "XL", "quantity": 2}
                   ],
@@ -170,16 +163,10 @@ Feature: Incidents
               "id": 1,
               "tasks": [
                 {
-                  "id": 1,
-                  "address": "/api/addresses/1",
-                  "after": "2025-10-20 12:00",
-                  "before": "2025-10-20 14:00"
+                  "id": 2
                 },
                 {
-                  "id": 2,
-                  "address": "/api/addresses/2",
-                  "after": "2025-10-20 12:00",
-                  "before": "2025-10-20 14:00",
+                  "id": 1,
                   "packages": [
                     {"type": "XL", "quantity": 2}
                   ],
@@ -217,25 +204,6 @@ Feature: Incidents
         "metadata": [
           {
             "suggestion": {
-              "id": 1,
-              "tasks": [
-                {
-                  "id": 1,
-                  "address": "/api/addresses/1",
-                  "after": "2025-10-20 12:00",
-                  "before": "2025-10-20 14:00"
-                },
-                {
-                  "id": 2,
-                  "address": "/api/addresses/2",
-                  "after": "2025-10-20 12:00",
-                  "before": "2025-10-20 14:00",
-                  "packages": [
-                    {"type": "XL", "quantity": 2}
-                  ],
-                  "weight": 30000
-                }
-              ],
               "order": {
                 "manualSupplements": [
                   {
@@ -276,20 +244,10 @@ Feature: Incidents
               "id": 1,
               "tasks": [
                 {
-                  "id": 1,
-                  "address": "/api/addresses/1",
-                  "after": "2025-10-20 12:00",
-                  "before": "2025-10-20 14:00"
+                  "id": 2
                 },
                 {
-                  "id": 2,
-                  "address": "/api/addresses/2",
-                  "after": "2025-10-20 12:00",
-                  "before": "2025-10-20 14:00",
-                  "packages": [
-                    {"type": "XL", "quantity": 2}
-                  ],
-                  "weight": 30000
+                  "id": 1
                 }
               ],
               "order": {
@@ -382,9 +340,6 @@ Feature: Incidents
               "tasks": [
                 {
                   "id": 2,
-                  "address": "/api/addresses/2",
-                  "after": "2025-10-20 15:00",
-                  "before": "2025-10-20 17:00",
                   "packages": [
                     {"type": "XL", "quantity": 5}
                   ],
@@ -424,9 +379,6 @@ Feature: Incidents
               "tasks": [
                 {
                   "id": 2,
-                  "address": "/api/addresses/2",
-                  "after": "2025-10-20 15:00",
-                  "before": "2025-10-20 17:00",
                   "packages": [
                     {"type": "XL", "quantity": 5}
                   ],
