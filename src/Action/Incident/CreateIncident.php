@@ -2,6 +2,7 @@
 
 namespace AppBundle\Action\Incident;
 
+use ApiPlatform\Validator\Exception\ValidationException;
 use AppBundle\Entity\Delivery\FailureReason;
 use AppBundle\Entity\Delivery\FailureReasonRegistry;
 use AppBundle\Entity\Incident\Incident;
@@ -10,6 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CreateIncident
 {
@@ -18,7 +20,8 @@ class CreateIncident
     public function __construct(
         private EntityManagerInterface $em,
         private TaskManager $taskManager,
-        private FailureReasonRegistry $failureReasonRegistry
+        private FailureReasonRegistry $failureReasonRegistry,
+        private readonly ValidatorInterface $validator,
     )
     { }
 
@@ -49,6 +52,14 @@ class CreateIncident
 
     public function __invoke(Incident $data, ?UserInterface $user, Request $request): Incident
     {
+        // The default API platform validator is called on the object returned by the Controller/Action
+        // but we need to validate the delivery before we can create the order
+        // @see ApiPlatform\Symfony\EventListener\ValidateListener
+        $errors = $this->validator->validate($data);
+        if (count($errors) > 0) {
+            throw new ValidationException($errors);
+        }
+
         $title = trim($data->getTitle() ?? '');
 
         if (empty($title)) {

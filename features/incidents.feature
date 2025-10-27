@@ -331,14 +331,6 @@ Feature: Incidents
         "metadata": [
           {
             "suggestion": {
-              "order": {
-                "manualSupplements": [
-                  {
-                    "pricingRule": "/api/pricing_rules/2",
-                    "quantity": 10
-                  }
-                ]
-              }
             }
           }
         ]
@@ -352,11 +344,11 @@ Feature: Incidents
         "@context": "/api/contexts/ConstraintViolationList",
         "@type": "ConstraintViolationList",
         "hydra:title": "An error occurred",
-        "hydra:description": "metadata[0][suggestion]: The suggestion field in metadata is not a valid delivery",
+        "hydra:description": "metadata[0][suggestion]: The suggestion field in metadata is not valid",
         "violations": [
           {
             "propertyPath": "metadata[0][suggestion]",
-            "message": "The suggestion field in metadata is not a valid delivery",
+            "message": "The suggestion field in metadata is not valid",
             "code": null
           }
         ]

@@ -84,4 +84,4 @@ restaurant.paygreenShopId.notSet: Configure the Paygreen Shop ID
 
 delivery.price.error.noPricingRuleSet: No pricing configured
 
-incident.metadata.suggestion.invalid: The suggestion field in metadata is not a valid delivery
+incident.metadata.suggestion.invalid: The suggestion field in metadata is not valid

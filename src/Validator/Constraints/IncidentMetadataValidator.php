@@ -52,8 +52,12 @@ class IncidentMetadataValidator extends ConstraintValidator
                     throw new ValidationException($errors);
                 }
 
+                if ((null === $data->tasks || count($data->tasks) === 0) && (null === $data->order)) {
+                    throw new ValidationException('The suggestion field in metadata must contain at least one task or an order');
+                }
+
             } catch (\Throwable $e) {
-                $this->logger->warning('The suggestion field in metadata is not a valid delivery: '. $e->getMessage());
+                $this->logger->warning('The suggestion field in metadata is not valid: '. $e->getMessage());
                 $this->context
                     ->buildViolation($constraint->invalidSuggestionMessage)
                     ->atPath("[{$index}][suggestion]")
