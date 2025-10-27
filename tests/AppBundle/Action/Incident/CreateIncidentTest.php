@@ -5,7 +5,6 @@ namespace Tests\AppBundle\Action\Incident;
 use AppBundle\Action\Incident\CreateIncident;
 use AppBundle\Entity\Delivery\FailureReasonRegistry;
 use AppBundle\Entity\Incident\Incident;
-use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task;
 use AppBundle\Service\TaskManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,8 +12,9 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CreateIncidentTest extends TestCase
 {
@@ -25,8 +25,11 @@ class CreateIncidentTest extends TestCase
         $em = $this->prophesize(EntityManagerInterface::class);
         $taskManager = $this->prophesize(TaskManager::class);
         $failureReasonRegistry = $this->prophesize(FailureReasonRegistry::class);
+        $validator = $this->prophesize(ValidatorInterface::class);
 
         $failureReasonRegistry->getFailureReasons()->willReturn([]);
+
+        $validator->validate(Argument::type(Incident::class))->willReturn(new ConstraintViolationList());
 
         $task = new Task();
 
@@ -40,7 +43,7 @@ class CreateIncidentTest extends TestCase
 
         $taskManager->incident($task, '', 'N/A', Argument::type('array'), $incident)->shouldBeCalled();
 
-        $action = new CreateIncident($em->reveal(), $taskManager->reveal(), $failureReasonRegistry->reveal());
+        $action = new CreateIncident($em->reveal(), $taskManager->reveal(), $failureReasonRegistry->reveal(), $validator->reveal());
 
         $response = call_user_func_array($action, [$incident, $user, $request]);
 

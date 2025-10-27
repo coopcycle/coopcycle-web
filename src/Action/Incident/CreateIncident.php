@@ -18,9 +18,9 @@ class CreateIncident
     private const DEFAULT_TITLE = 'N/A';
 
     public function __construct(
-        private EntityManagerInterface $em,
-        private TaskManager $taskManager,
-        private FailureReasonRegistry $failureReasonRegistry,
+        private readonly EntityManagerInterface $em,
+        private readonly TaskManager $taskManager,
+        private readonly FailureReasonRegistry $failureReasonRegistry,
         private readonly ValidatorInterface $validator,
     )
     { }
