@@ -2,11 +2,8 @@
 
 namespace AppBundle\Validator\Constraints;
 
-use ApiPlatform\Metadata\Post;
-use ApiPlatform\Metadata\Put;
 use ApiPlatform\Validator\Exception\ValidationException;
 use AppBundle\Api\Dto\DeliveryInputDto;
-use AppBundle\Api\State\DeliveryProcessor;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Constraint;
@@ -17,7 +14,6 @@ class IncidentMetadataValidator extends ConstraintValidator
 {
     public function __construct(
         private readonly SerializerInterface $serializer,
-        private readonly DeliveryProcessor $deliveryProcessor,
         private readonly ValidatorInterface $validator,
         private readonly LoggerInterface $logger
     ) {
@@ -51,11 +47,7 @@ class IncidentMetadataValidator extends ConstraintValidator
                     'json'
                 );
 
-                $delivery = $this->deliveryProcessor->process($data, new Put(), [
-                    'id' => $data->id
-                ]);
-
-                $errors = $this->validator->validate($delivery);
+                $errors = $this->validator->validate($data);
                 if (count($errors) > 0) {
                     throw new ValidationException($errors);
                 }
