@@ -396,11 +396,11 @@ Feature: Incidents
 
   Scenario: Accept suggestion
     Given the fixtures files are loaded:
-      | sylius_taxation.yml        |
-      | payment_methods.yml        |
-      | sylius_products.yml        |
-      | store_basic.yml            |
-      | package_delivery_order.yml |
+      | sylius_taxation.yml             |
+      | payment_methods.yml             |
+      | sylius_products.yml             |
+      | store_with_manual_supplements.yml |
+      | package_delivery_order.yml      |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
       | password  | 123456            |
@@ -481,6 +481,7 @@ Feature: Incidents
         ]
       }
       """
+    And the database should contain an order with a total price 499
     Given the user "dispatcher" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
@@ -542,13 +543,14 @@ Feature: Incidents
         ]
       }
       """
+    And the database should contain an order with a total price 699
     
   Scenario: Reject suggestion
     Given the fixtures files are loaded:
       | sylius_taxation.yml        |
       | payment_methods.yml        |
       | sylius_products.yml        |
-      | store_basic.yml            |
+      | store_with_manual_supplements.yml |
       | package_delivery_order.yml |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -630,6 +632,7 @@ Feature: Incidents
         ]
       }
       """
+    And the database should contain an order with a total price 499
     Given the user "dispatcher" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
@@ -691,3 +694,4 @@ Feature: Incidents
         ]
       }
       """
+    And the database should contain an order with a total price 499
