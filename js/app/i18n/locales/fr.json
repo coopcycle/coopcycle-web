@@ -790,8 +790,6 @@
         "INCIDENTS_OLD_PRICE": "Ancien prix",
         "INCIDENTS_NEW_PRICE": "Nouveau prix",
         "INCIDENTS_SUGGESTED_MODIFICATIONS": "Modifications suggérées",
-        "INCIDENTS_ORDER_ITEMS_BEFORE": "Avant",
-        "INCIDENTS_ORDER_ITEMS_AFTER": "Après",
         "INCIDENTS_REFUSE_SUGGESTIONS": "Refuser les suggestions",
         "INCIDENTS_APPLY_SUGGESTIONS": "Appliquer les suggestions"
     }

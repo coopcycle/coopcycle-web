@@ -213,13 +213,13 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
     <Flex vertical gap="middle">
       <Row>
         <Col span={24}>
-          <h4>
+          <h3>
             {t('INCIDENTS_SUGGESTED_PRICE_CHANGE', {
               diff:
                 (suggestionPriceDiff > 0 ? '+' : '') +
                 money(suggestionPriceDiff),
             })}
-          </h4>
+          </h3>
         </Col>
       </Row>
       <Row gutter={16}>
@@ -233,7 +233,7 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
       <Row gutter={16}>
         <Col span={12}>
           <TotalPrice
-            overridePrice={false}
+            overridePrice={true}
             total={existingOrder.total}
             taxTotal={existingOrder.taxTotal}
           />
@@ -253,11 +253,9 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
       </Row>
       <Row gutter={16}>
         <Col span={12}>
-          <h4>{t('INCIDENTS_ORDER_ITEMS_BEFORE')}</h4>
-          <Cart orderItems={diff[0]} overridePrice={false} />
+          <Cart orderItems={diff[0]} overridePrice={true} />
         </Col>
         <Col span={12}>
-          <h4>{t('INCIDENTS_ORDER_ITEMS_AFTER')}</h4>
           <Cart orderItems={diff[1]} overridePrice={false} />
         </Col>
       </Row>
