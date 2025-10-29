@@ -6,26 +6,54 @@ import { useSelector } from 'react-redux';
 import IncidentImages from './IncidentImages';
 import IncidentTimeline from './IncidentTimeline';
 import CommentBox from './CommentBox';
-import { OrderDetailsSuggestion } from './OrderDetailsSuggestion';
-import { IncidentMetadataSuggestion } from '../../../../api/types';
+import { Incident, IncidentEvent } from '../../../../api/types';
 
 export default connectWithRedux(function () {
-  const incident = useSelector(selectIncident);
+  const incident = useSelector(selectIncident) as Incident;
+
   const existingOrder = useSelector(selectOrder);
 
-  const suggestion = useMemo(() => {
-    if (!incident?.metadata) {
-      return null;
+  const events = useMemo(() => {
+    if (!incident.metadata) {
+      return incident.events;
+    }
+
+    if (!existingOrder) {
+      return incident.events;
     }
 
     const suggestionObj = incident.metadata.find(el => Boolean(el.suggestion));
 
     if (!suggestionObj) {
-      return null;
+      return incident.events;
     }
 
-    return suggestionObj.suggestion as IncidentMetadataSuggestion;
-  }, [incident?.metadata]);
+    const isHandled = incident.events.some(
+      event =>
+        event.type === 'accepted_suggestion' ||
+        event.type === 'rejected_suggestion',
+    );
+
+    // handled suggestion will be rendered in the timeline
+    if (isHandled) {
+      return incident.events;
+    }
+
+    const suggestionEvent: IncidentEvent = {
+      id: 0,
+      type: 'local_type_suggestion',
+      message: '',
+      metadata: [
+        {
+          suggestion: suggestionObj.suggestion,
+        },
+      ],
+      createdBy: incident.createdBy,
+      createdAt: incident.createdAt,
+    };
+
+    return [suggestionEvent, ...incident.events];
+  }, [incident, existingOrder]);
 
   return (
     <div>
@@ -33,12 +61,6 @@ export default connectWithRedux(function () {
         <p style={{ fontWeight: 'bold' }}>Description</p>
         <p className="mx-2">{incident?.description}</p>
       </div>
-      {existingOrder && suggestion ? (
-        <OrderDetailsSuggestion
-          existingOrder={existingOrder}
-          suggestion={suggestion}
-        />
-      ) : null}
       <hr />
       <div className="row">
         <p>
@@ -48,7 +70,7 @@ export default connectWithRedux(function () {
       </div>
       <hr />
       <div>
-        <IncidentTimeline />
+        <IncidentTimeline events={events} />
         <CommentBox />
       </div>
     </div>

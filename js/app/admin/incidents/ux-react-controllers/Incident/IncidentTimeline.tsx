@@ -1,33 +1,17 @@
 import React from 'react';
 import moment from 'moment';
 import classNames from 'classnames';
-import './IncidentTimeline.scss';
 import { money } from './utils';
 
-import { selectEvents } from './redux/incidentSlice';
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { IncidentEvent } from '../../../../api/types';
+import { OrderDetailsSuggestion } from './OrderDetailsSuggestion';
 
-function Comment({ event }) {
-  const { username } = event.createdBy;
-  return (
-    <div className="media-body">
-      <div className="panel panel-default">
-        <div className="panel-heading">
-          <span className="font-weight-bold pr-1">{username}</span>
-          <span className="text-muted font-weight-light">
-            {moment(event.createdAt).fromNow()}
-          </span>
-        </div>
-        <div className="panel-body" style={{ whiteSpace: 'pre-line' }}>
-          {event.message}
-        </div>
-      </div>
-    </div>
-  );
-}
+type Props = {
+  events: IncidentEvent[];
+};
 
-function _eventTypeToText(event) {
+function _eventTypeToText(event: IncidentEvent) {
   switch (event.type) {
     case 'rescheduled':
       return 'RESCHEDULED_THE_TASK';
@@ -68,14 +52,45 @@ function _metadataToText({ type, metadata }) {
   }
 }
 
-function Event({ event }) {
+function MediaPost({
+  event,
+  children,
+}: {
+  event: IncidentEvent;
+  children: React.ReactNode;
+}) {
+  const { username } = event.createdBy;
+  return (
+    <div className="media-body">
+      <div className="panel panel-default">
+        <div className="panel-heading">
+          <span className="font-weight-bold pr-1">{username}</span>
+          <span className="text-muted font-weight-light">
+            {moment(event.createdAt).fromNow()}
+          </span>
+        </div>
+        <div className="panel-body" style={{ whiteSpace: 'pre-line' }}>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Event({ event }: { event: IncidentEvent }) {
   const { username } = event.createdBy;
   const { t } = useTranslation();
 
   const metadata = _metadataToText(event);
 
   return (
-    <div className="media-body">
+    <div
+      className="media-body"
+      style={{
+        paddingBottom: '20px',
+        paddingLeft: '10px',
+        lineHeight: '32px',
+      }}>
       <span className="font-weight-bold">{username}</span>
       <span className="font-weight-light px-1">
         {t(_eventTypeToText(event))}
@@ -90,17 +105,25 @@ function Event({ event }) {
   );
 }
 
-function _body(event) {
+function Body({ event }: { event: IncidentEvent }) {
   switch (event.type) {
     case 'commented':
-      return <Comment event={event} />;
+      return <MediaPost event={event}>{event.message}</MediaPost>;
+    case 'local_type_suggestion': {
+      return (
+        <MediaPost event={event}>
+          <OrderDetailsSuggestion event={event} />
+        </MediaPost>
+      );
+    }
     default:
       return <Event event={event} />;
   }
 }
 
-function Item({ event }) {
+function Item({ event }: { event: IncidentEvent }) {
   const { username } = event.createdBy;
+
   const eventType = event.type !== 'commented';
   return (
     <div className={classNames('media', { event: eventType })}>
@@ -114,16 +137,14 @@ function Item({ event }) {
           />
         </a>
       </div>
-      {_body(event)}
+      <Body event={event} />
     </div>
   );
 }
 
-export default function () {
-  const events = useSelector(selectEvents);
-
+export default function ({ events }: Props) {
   return (
-    <div className="tl-incident-event">
+    <div>
       {events.map(event => (
         <Item key={event.id} event={event} />
       ))}

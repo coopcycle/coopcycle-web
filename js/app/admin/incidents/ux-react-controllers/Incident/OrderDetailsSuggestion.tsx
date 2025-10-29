@@ -7,14 +7,15 @@ import {
   useIncidentActionMutation,
 } from '../../../../api/slice';
 import {
-  selectEvents,
   selectIncident,
+  selectOrder,
   selectStoreUri,
   setEvents,
 } from './redux/incidentSlice';
 import {
   Adjustment,
   AdjustmentType,
+  IncidentEvent,
   IncidentMetadataSuggestion,
   Order,
   OrderItem,
@@ -66,13 +67,19 @@ function removeDuplicateItems(
 }
 
 type Props = {
-  existingOrder: Order;
-  suggestion: IncidentMetadataSuggestion;
+  event: IncidentEvent;
 };
 
-export const ResolveSuggestion = ({ existingOrder, suggestion }: Props) => {
+export const OrderDetailsSuggestion = ({ event }: Props) => {
   const storeUri = useSelector(selectStoreUri);
+  const existingOrder = useSelector(selectOrder) as Order;
   const incident = useSelector(selectIncident);
+
+  const suggestion = useMemo(() => {
+    const suggestionObj = event.metadata.find(el => Boolean(el.suggestion));
+
+    return suggestionObj.suggestion as IncidentMetadataSuggestion;
+  }, [event.metadata]);
 
   const dispatch = useDispatch();
 
@@ -149,7 +156,13 @@ export const ResolveSuggestion = ({ existingOrder, suggestion }: Props) => {
         message: 'Failed to perform action',
       });
     }
-  }, [isActionSuccess, isActionError, notification]);
+  }, [
+    isActionSuccess,
+    isActionError,
+    actionData?.events,
+    dispatch,
+    notification,
+  ]);
 
   const handleAcceptSuggestion = async () => {
     if (!incident?.id) return;
@@ -215,28 +228,4 @@ export const ResolveSuggestion = ({ existingOrder, suggestion }: Props) => {
       </Row>
     </Flex>
   );
-};
-
-export const OrderDetailsSuggestion = ({
-  existingOrder,
-  suggestion,
-}: Props) => {
-  const events = useSelector(selectEvents);
-
-  if (
-    events.some(
-      event =>
-        event.type === 'accepted_suggestion' ||
-        event.type === 'rejected_suggestion',
-    )
-  ) {
-    return <div>TODO: incident already handled</div>;
-  } else {
-    return (
-      <ResolveSuggestion
-        existingOrder={existingOrder}
-        suggestion={suggestion}
-      />
-    );
-  }
 };
