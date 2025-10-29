@@ -499,6 +499,8 @@
         "CANCELLED_THE_TASK": "a annulé la tâche",
         "APPLIED_A_DIFFERENCE_ON_THE_PRICE": "a appliqué une différence sur le prix",
         "SENT_A_REPORT_TO_THE_TRANSPORTER": "a envoyé un rapport au transporteur",
+        "ACCEPTED_SUGGESTION": "a accepté la suggestion",
+        "REJECTED_SUGGESTION": "a rejeté la suggestion",
         "ADD_A_COMMENT": "Ajouter un commentaire",
         "COMMENT": "Commenter",
         "ORDER": "Commande",

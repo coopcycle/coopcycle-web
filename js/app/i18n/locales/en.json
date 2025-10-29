@@ -620,6 +620,8 @@
         "CANCELLED_THE_TASK": "cancelled the task",
         "APPLIED_A_DIFFERENCE_ON_THE_PRICE": "applied a difference on the price",
         "SENT_A_REPORT_TO_THE_TRANSPORTER": "sent a report to the transporter",
+        "ACCEPTED_SUGGESTION": "accepted the suggestion",
+        "REJECTED_SUGGESTION": "rejected the suggestion",
         "ADD_A_COMMENT": "Add a comment",
         "COMMENT": "Comment",
         "ORDER": "Order",

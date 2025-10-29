@@ -597,6 +597,8 @@
         "CANCELLED_THE_TASK": "Tarea cancelada",
         "APPLIED_A_DIFFERENCE_ON_THE_PRICE": "aplicado una diferencia en el precio",
         "SENT_A_REPORT_TO_THE_TRANSPORTER": "Se envió un informe al mensajero",
+        "ACCEPTED_SUGGESTION": "aceptó la sugerencia",
+        "REJECTED_SUGGESTION": "rechazó la sugerencia",
         "ADD_A_COMMENT": "Añadir comentario",
         "EDIT": "Editar",
         "ORDER": "Realizar el pedido",
