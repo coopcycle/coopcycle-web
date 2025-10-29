@@ -169,7 +169,7 @@ export default function ({ delivery }) {
       <p>{task.address.name}</p>
       <p>{task.address.streetAddress}</p>
       <p>{task.address.telephone}</p>
-      {task.weight && <p>{weight(task.weight)}</p>}
+      {task.weight ? <p>{weight(task.weight)}</p> : null}
       <div className="mt-3">{<TaskStatusBadge task={task} />}</div>
       <hr />
       {order?.customer && <CustomerDetails customer={order.customer} />}
