@@ -6,7 +6,7 @@ import { money } from './utils';
 import { useTranslation } from 'react-i18next';
 import { IncidentEvent } from '../../../../api/types';
 import { OrderDetailsSuggestion } from './OrderDetailsSuggestion';
-import { useGetUserQuery } from '../../../../api/slice';
+import { useUsername } from './useUsername';
 
 type Props = {
   events: IncidentEvent[];
@@ -53,24 +53,6 @@ function _metadataToText({ type, metadata }) {
   }
 }
 
-function Username({
-  event,
-  className,
-}: {
-  event: IncidentEvent;
-  className?: string;
-}) {
-  const { data: user, isLoading } = useGetUserQuery(event.createdBy || '', {
-    skip: !event.createdBy,
-  });
-
-  if (!event.createdBy || isLoading || !user) {
-    return null;
-  }
-
-  return <span className={className}>{user.username}</span>;
-}
-
 function MediaPost({
   event,
   children,
@@ -78,11 +60,13 @@ function MediaPost({
   event: IncidentEvent;
   children: React.ReactNode;
 }) {
+  const username = useUsername(event.createdBy);
+
   return (
     <div className="media-body">
       <div className="panel panel-default">
         <div className="panel-heading">
-          <Username className="font-weight-bold pr-1" event={event} />
+          <span className="font-weight-bold pr-1">{username}</span>
           <span className="text-muted font-weight-light">
             {moment(event.createdAt).fromNow()}
           </span>
@@ -96,6 +80,8 @@ function MediaPost({
 }
 
 function Event({ event }: { event: IncidentEvent }) {
+  const username = useUsername(event.createdBy);
+
   const { t } = useTranslation();
 
   const metadata = _metadataToText(event);
@@ -108,7 +94,7 @@ function Event({ event }: { event: IncidentEvent }) {
         paddingLeft: '10px',
         lineHeight: '32px',
       }}>
-      <Username className="font-weight-bold" event={event} />
+      <span className="font-weight-bold">{username}</span>
       <span className="font-weight-light px-1">
         {t(_eventTypeToText(event))}
       </span>
@@ -139,19 +125,14 @@ function Body({ event }: { event: IncidentEvent }) {
 }
 
 function Avatar({ event }: { event: IncidentEvent }) {
-  const { data: user, isLoading } = useGetUserQuery(event.createdBy || '', {
-    skip: !event.createdBy,
-  });
-
-  const username =
-    !event.createdBy || isLoading || !user ? 'unknown' : user.username;
+  const username = useUsername(event.createdBy);
 
   return (
     <img
       className="media-object"
       width="32"
       src={window.Routing.generate('user_avatar', {
-        username: username,
+        username: username ?? 'unknown',
       })}
       alt={username}
     />

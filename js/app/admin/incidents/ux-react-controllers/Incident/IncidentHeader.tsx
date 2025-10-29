@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import moment from 'moment';
-import { Row, Statistic, Dropdown, Select, notification } from 'antd';
-import PageHeader from '../../../../components/PageHeader';
+import { Dropdown, Row, Select, Statistic, notification } from 'antd';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-
-import store from './redux/incidentStore';
+import PageHeader from '../../../../components/PageHeader';
+import { connectWithRedux } from './redux/incidentStore';
 import { selectIncident, selectLoaded } from './redux/incidentSlice';
+import { IncidentEvent, Uri } from '../../../../api/types';
+import { useGetUserQuery } from '../../../../api/slice';
+import { useUsername } from './useUsername';
 
 async function _handleStatusSubmit(id, body) {
   const httpClient = new window._auth.httpClient();
@@ -49,14 +52,14 @@ function _statusBtn(status) {
   }
 }
 
-export default function () {
-  //FIXME: replace with useAppSelector after migrating away from ux-react-controllers
-  const state = store.getState();
-  const loaded = selectLoaded(state);
-  const incident = selectIncident(state);
+export default connectWithRedux(function () {
+  const loaded = useSelector(selectLoaded);
+  const incident = useSelector(selectIncident);
   const [priority, setPriority] = useState(incident.priority);
   const [status, setStatus] = useState(incident.status);
   const [tags, setTags] = useState(incident.tags);
+
+  const username = useUsername(incident.createdBy);
 
   const { t } = useTranslation();
 
@@ -119,10 +122,7 @@ export default function () {
           value={t(_prioryToLabel(priority))}
           style={{ margin: '0 22px' }}
         />
-        <Statistic
-          title={t('REPORTED_BY')}
-          value={incident.createdBy?.username}
-        />
+        <Statistic title={t('REPORTED_BY')} value={username ?? '?'} />
       </Row>
       <Row justify="space-between" className="mt-3">
         <Select
@@ -142,4 +142,4 @@ export default function () {
       </Row>
     </PageHeader>
   );
-}
+});
