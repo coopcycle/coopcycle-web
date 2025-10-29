@@ -6,8 +6,6 @@ import { useTranslation } from 'react-i18next';
 import PageHeader from '../../../../components/PageHeader';
 import { connectWithRedux } from './redux/incidentStore';
 import { selectIncident, selectLoaded } from './redux/incidentSlice';
-import { IncidentEvent, Uri } from '../../../../api/types';
-import { useGetUserQuery } from '../../../../api/slice';
 import { useUsername } from './useUsername';
 
 async function _handleStatusSubmit(id, body) {
