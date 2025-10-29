@@ -79,10 +79,10 @@ class IncidentAction extends Base
                 $this->createTransporterReport($data, $event, $params);
                 break;
             case IncidentEvent::TYPE_ACCEPT_SUGGESTION:
-                $this->acceptSuggestion($data, $event);
+                $this->acceptSuggestion($data, $event, $params);
                 break;
             case IncidentEvent::TYPE_REJECT_SUGGESTION:
-                $this->rejectSuggestion($data, $event);
+                $this->rejectSuggestion($data, $event, $params);
                 break;
         }
 
@@ -226,8 +226,10 @@ class IncidentAction extends Base
 
     }
 
-    private function acceptSuggestion(Incident &$data, IncidentEvent &$event): void
+    private function acceptSuggestion(Incident &$data, IncidentEvent &$event, InputBag $params): void
     {
+        $priceDiff = $params->get("diff", null);
+
         $metadata = $data->getMetadata();
 
         $suggestionMetadata = array_filter($metadata, function ($item) {
@@ -251,10 +253,15 @@ class IncidentAction extends Base
         $this->deliveryProcessor->process($deliveryData, new Put(), ['id' => $deliveryData->id]);
 
         $event->setType(IncidentEvent::TYPE_ACCEPT_SUGGESTION);
+        $event->setMetadata(["diff" => $priceDiff]);
     }
 
-    private function rejectSuggestion(Incident &$data, IncidentEvent &$event): void
+    private function rejectSuggestion(Incident &$data, IncidentEvent &$event, InputBag $params): void
     {
+        $priceDiff = $params->get("diff", null);
+
         $event->setType(IncidentEvent::TYPE_REJECT_SUGGESTION);
+        //Save price diff even if suggestion is rejected
+        $event->setMetadata(["diff" => $priceDiff]);
     }
 }

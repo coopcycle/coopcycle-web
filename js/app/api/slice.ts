@@ -303,12 +303,12 @@ export const apiSlice = createApi({
     }),
     incidentAction: builder.mutation<
       Incident,
-      { incidentId: number; action: string }
+      { incidentId: number; action: string, diff?: number }
     >({
-      query: ({ incidentId, action }) => ({
+      query: ({ incidentId, ...body }) => ({
         url: `api/incidents/${incidentId}/action`,
         method: 'PUT',
-        body: { action },
+        body: body,
       }),
     }),
     getUser: builder.query<User, Uri>({

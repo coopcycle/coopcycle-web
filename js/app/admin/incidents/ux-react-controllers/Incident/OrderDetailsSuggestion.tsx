@@ -118,6 +118,36 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
     ];
   }, [existingOrder.items, suggestedOrder?.items]);
 
+  const suggestionPriceDiff = useMemo(() => {
+    if (!suggestedOrder?.total) {
+      return undefined;
+    }
+
+    return (suggestedOrder.total - existingOrder.total) / 100;
+  }, [suggestedOrder?.total, existingOrder.total]);
+
+  const isButtonDisabled = isActionLoading;
+
+  const handleAcceptSuggestion = async () => {
+    if (!incident?.id) return;
+
+    await incidentAction({
+      incidentId: incident.id,
+      action: 'accepted_suggestion',
+      diff: suggestionPriceDiff,
+    });
+  };
+
+  const handleRejectSuggestion = async () => {
+    if (!incident?.id) return;
+
+    await incidentAction({
+      incidentId: incident.id,
+      action: 'rejected_suggestion',
+      diff: suggestionPriceDiff,
+    });
+  };
+
   useEffect(() => {
     if (!storeUri) {
       return;
@@ -165,36 +195,13 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
     notification,
   ]);
 
-  const handleAcceptSuggestion = async () => {
-    if (!incident?.id) return;
-
-    await incidentAction({
-      incidentId: incident.id,
-      action: 'accepted_suggestion',
-    });
-  };
-
-  const handleRejectSuggestion = async () => {
-    if (!incident?.id) return;
-
-    await incidentAction({
-      incidentId: incident.id,
-      action: 'rejected_suggestion',
-    });
-  };
-
   if (isLoading) {
     return <Spin />;
   }
 
-  if (error || !suggestedOrder || !diff) {
+  if (error || !suggestedOrder || !diff || suggestionPriceDiff === undefined) {
     return <Alert message="TODO: Error Text" type="error" />;
   }
-
-  const isButtonDisabled = isActionLoading;
-
-  const suggestionPriceDiff =
-    (suggestedOrder.total - existingOrder.total) / 100;
 
   return (
     <Flex vertical gap="middle">
