@@ -10,7 +10,6 @@ import {
   selectIncident,
   selectOrder,
   selectStoreUri,
-  setEvents,
 } from './redux/incidentSlice';
 import {
   Adjustment,
@@ -177,7 +176,8 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
 
   useEffect(() => {
     if (isActionSuccess) {
-      dispatch(setEvents(actionData.events));
+      //FIXME: update redux state instead of reloading the entire page
+      window.location.reload();
 
       notification.success({
         message: 'Action completed successfully',
