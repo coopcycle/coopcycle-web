@@ -214,9 +214,11 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
       <Row>
         <Col span={24}>
           <h4>
-            {t('INCIDENTS_SUGGESTED_PRICE_CHANGE')}{' '}
-            {suggestionPriceDiff > 0 ? '+' : ''}
-            {money(suggestionPriceDiff)}
+            {t('INCIDENTS_SUGGESTED_PRICE_CHANGE', {
+              diff:
+                (suggestionPriceDiff > 0 ? '+' : '') +
+                money(suggestionPriceDiff),
+            })}
           </h4>
         </Col>
       </Row>

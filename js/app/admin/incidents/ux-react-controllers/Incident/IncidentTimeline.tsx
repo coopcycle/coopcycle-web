@@ -3,7 +3,7 @@ import moment from 'moment';
 import classNames from 'classnames';
 import { money } from './utils';
 
-import { useTranslation } from 'react-i18next';
+import { TFunction, useTranslation } from 'react-i18next';
 import { IncidentEvent } from '../../../../api/types';
 import { OrderDetailsSuggestion } from './OrderDetailsSuggestion';
 import { useUsername } from './useUsername';
@@ -29,24 +29,21 @@ function _eventTypeToText(event: IncidentEvent) {
   }
 }
 
-function _metadataToText(
-  { type, metadata }: IncidentEvent,
-  t: (key: string) => string,
-) {
+function _metadataToText({ type, metadata }: IncidentEvent, t: TFunction) {
   switch (type) {
     case 'rescheduled':
       return (
         <>
           <div>
             <span style={{ width: '55px', display: 'inline-block' }}>
-              {t('INCIDENTS_FROM')}:
+              {t('INCIDENTS_RESCHEDULE_FROM')}:
             </span>
             {moment(metadata.from.after).format('l LT')} to{' '}
             {moment(metadata.from.before).format('l LT')}
           </div>
           <div>
             <span style={{ width: '55px', display: 'inline-block' }}>
-              {t('INCIDENTS_TO')}:
+              {t('INCIDENTS_RESCHEDULE_TO')}:
             </span>
             {moment(metadata.to.after).format('l LT')} to{' '}
             {moment(metadata.to.before).format('l LT')}
@@ -60,21 +57,17 @@ function _metadataToText(
         return '';
       }
 
-      return (
-        t('INCIDENTS_ACCEPTED_PRICE_CHANGE') +
-        (metadata.diff > 0 ? '+' : '') +
-        money(metadata.diff)
-      );
+      return t('INCIDENTS_ACCEPTED_PRICE_CHANGE', {
+        diff: (metadata.diff > 0 ? '+' : '') + money(metadata.diff),
+      });
     case 'rejected_suggestion':
       if (!metadata || metadata.diff === undefined) {
         return '';
       }
 
-      return (
-        t('INCIDENTS_REJECTED_PRICE_CHANGE') +
-        (metadata.diff > 0 ? '+' : '') +
-        money(metadata.diff)
-      );
+      return t('INCIDENTS_REJECTED_PRICE_CHANGE', {
+        diff: (metadata.diff > 0 ? '+' : '') + money(metadata.diff),
+      });
   }
 }
 

@@ -70,7 +70,7 @@ export default function ({ task }) {
         <TaskStatusBadge task={task} />
       </p>
       <div data-testid="task-type" className="text-capitalize">
-        {t('INCIDENTS_TYPE')}: {task.type.toLowerCase()}
+        {t('INCIDENTS_TASK_TYPE')}: {task.type.toLowerCase()}
       </div>
       <ContextDetails context={context} />
     </div>
