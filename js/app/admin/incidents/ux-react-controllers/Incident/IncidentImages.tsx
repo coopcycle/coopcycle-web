@@ -1,13 +1,14 @@
 import React from 'react';
 import { Image, Upload, notification } from 'antd';
 import './Style.scss';
+import { useTranslation } from 'react-i18next';
 
 import store from './redux/incidentStore';
 import { selectImages, selectIncident } from './redux/incidentSlice';
 
-async function _handleUpload(id, file) {
+async function _handleUpload(id, file, t) {
   if (file.size > 5 * 1024 * 1024) {
-    return { message: 'Image is too big' };
+    return { message: t('INCIDENTS_IMAGE_TOO_BIG') };
   }
   const httpClient = new window._auth.httpClient();
   const formData = new FormData();
@@ -27,6 +28,7 @@ export default function () {
   const state = store.getState();
   const incident = selectIncident(state);
   const images = selectImages(state);
+  const { t } = useTranslation();
 
   return (
     <>
@@ -45,20 +47,21 @@ export default function () {
         name="image"
         accept="image/*"
         customRequest={async ({ file }) => {
-          const { error, message } = await _handleUpload(incident.id, file);
+          const { error, message } = await _handleUpload(incident.id, file, t);
           if (!error) {
             location.reload();
           } else {
             if (message) {
               return notification.error({ message });
             }
-            return notification.error({ message: 'Something went wrong' });
+            return notification.error({ message: t('SOMETHING_WENT_WRONG') });
           }
         }}
         className="thumbnail">
         <div className="incident-image-uploader">
           <div>
-            <i className="fa fa-upload mr-2"></i>Upload
+            <i className="fa fa-upload mr-2"></i>
+            {t('INCIDENTS_UPLOAD')}
           </div>
         </div>
       </Upload>

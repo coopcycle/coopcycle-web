@@ -7,9 +7,11 @@ import IncidentImages from './IncidentImages';
 import IncidentTimeline from './IncidentTimeline';
 import CommentBox from './CommentBox';
 import { Incident, IncidentEvent } from '../../../../api/types';
+import { useTranslation } from 'react-i18next';
 
 export default connectWithRedux(function () {
   const incident = useSelector(selectIncident) as Incident;
+  const { t } = useTranslation();
 
   const existingOrder = useSelector(selectOrder);
 
@@ -58,13 +60,13 @@ export default connectWithRedux(function () {
   return (
     <div>
       <div className="row">
-        <p style={{ fontWeight: 'bold' }}>Description</p>
+        <p style={{ fontWeight: 'bold' }}>{t('INCIDENTS_DESCRIPTION')}</p>
         <p className="mx-2">{incident?.description}</p>
       </div>
       <hr />
       <div className="row">
         <p>
-          Attachments <span className="caret"></span>
+          {t('INCIDENTS_ATTACHMENTS')} <span className="caret"></span>
         </p>
         <IncidentImages />
       </div>

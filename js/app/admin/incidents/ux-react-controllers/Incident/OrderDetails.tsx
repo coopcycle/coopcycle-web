@@ -164,7 +164,7 @@ export default function ({ delivery }) {
         <span style={{ textTransform: 'capitalize' }}>
           {task.type.toLowerCase()}
         </span>{' '}
-        details
+        {t('INCIDENTS_DETAILS')}
       </h5>
       <p>{task.address.name}</p>
       <p>{task.address.streetAddress}</p>

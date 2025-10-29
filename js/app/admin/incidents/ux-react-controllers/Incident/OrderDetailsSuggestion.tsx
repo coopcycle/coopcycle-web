@@ -21,6 +21,7 @@ import {
 } from '../../../../api/types';
 import { TotalPrice } from '../../../../components/delivery-form/components/order/TotalPrice';
 import { money } from './utils';
+import { useTranslation } from 'react-i18next';
 
 function areAdjustmentsEqual(
   adj1: Record<AdjustmentType, Adjustment[]>,
@@ -75,6 +76,7 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
   const storeUri = useSelector(selectStoreUri);
   const existingOrder = useSelector(selectOrder) as Order;
   const incident = useSelector(selectIncident);
+  const { t } = useTranslation();
 
   const suggestion = useMemo(() => {
     const suggestionObj = event.metadata.find(el => Boolean(el.suggestion));
@@ -180,12 +182,12 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
       window.location.reload();
 
       notification.success({
-        message: 'Action completed successfully',
+        message: t('INCIDENTS_ACTION_COMPLETED_SUCCESSFULLY'),
       });
     }
     if (isActionError) {
       notification.error({
-        message: 'Failed to perform action',
+        message: t('INCIDENTS_ACTION_FAILED'),
       });
     }
   }, [
@@ -194,6 +196,7 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
     actionData?.events,
     dispatch,
     notification,
+    t,
   ]);
 
   if (isLoading) {
@@ -201,7 +204,9 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
   }
 
   if (error || !suggestedOrder || !diff || suggestionPriceDiff === undefined) {
-    return <Alert message="TODO: Error Text" type="error" />;
+    return (
+      <Alert message={t('INCIDENTS_ERROR_LOADING_SUGGESTION')} type="error" />
+    );
   }
 
   return (
@@ -209,17 +214,18 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
       <Row>
         <Col span={24}>
           <h4>
-            TODO: Suggested price change: {suggestionPriceDiff > 0 ? '+' : ''}
+            {t('INCIDENTS_SUGGESTED_PRICE_CHANGE')}{' '}
+            {suggestionPriceDiff > 0 ? '+' : ''}
             {money(suggestionPriceDiff)}
           </h4>
         </Col>
       </Row>
       <Row gutter={16}>
         <Col span={12}>
-          <h4>TODO: Old price:</h4>
+          <h4>{t('INCIDENTS_OLD_PRICE')}</h4>
         </Col>
         <Col span={12}>
-          <h4>TODO: New price:</h4>
+          <h4>{t('INCIDENTS_NEW_PRICE')}</h4>
         </Col>
       </Row>
       <Row gutter={16}>
@@ -240,16 +246,16 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
       </Row>
       <Row>
         <Col span={24}>
-          <h4>TODO: Suggested modifications:</h4>
+          <h4>{t('INCIDENTS_SUGGESTED_MODIFICATIONS')}</h4>
         </Col>
       </Row>
       <Row gutter={16}>
         <Col span={12}>
-          <h4>TODO: Before:</h4>
+          <h4>{t('INCIDENTS_ORDER_ITEMS_BEFORE')}</h4>
           <Cart orderItems={diff[0]} overridePrice={false} />
         </Col>
         <Col span={12}>
-          <h4>TODO: After:</h4>
+          <h4>{t('INCIDENTS_ORDER_ITEMS_AFTER')}</h4>
           <Cart orderItems={diff[1]} overridePrice={false} />
         </Col>
       </Row>
@@ -261,7 +267,7 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
             onClick={handleRejectSuggestion}
             disabled={isButtonDisabled}
             loading={isActionLoading}>
-            TODO: Refuse suggestions
+            {t('INCIDENTS_REFUSE_SUGGESTIONS')}
           </Button>
         </Col>
         <Col span={12}>
@@ -271,7 +277,7 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
             onClick={handleAcceptSuggestion}
             disabled={isButtonDisabled}
             loading={isActionLoading}>
-            TODO: Apply suggestions
+            {t('INCIDENTS_APPLY_SUGGESTIONS')}
           </Button>
         </Col>
       </Row>

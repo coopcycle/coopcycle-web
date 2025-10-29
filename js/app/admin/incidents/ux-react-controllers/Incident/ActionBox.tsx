@@ -121,7 +121,7 @@ export default function ({ isLastmile }) {
       </Button>
       <Drawer
         placement={placement}
-        title="Take actions"
+        title={t('INCIDENTS_TAKE_ACTIONS')}
         onClose={() => setOpen(false)}
         open={open}>
         {buttons}

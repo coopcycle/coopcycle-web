@@ -15,10 +15,10 @@ async function _handleStatusSubmit(id, body) {
     body,
   );
 }
-async function syncData(id, body) {
+async function syncData(id, body, t) {
   const { error } = await _handleStatusSubmit(id, body);
   if (error) {
-    notification.error({ message: 'Something went wrong' });
+    notification.error({ message: t('SOMETHING_WENT_WRONG') });
   }
 }
 
@@ -75,13 +75,13 @@ export default connectWithRedux(function () {
           key="close"
           onClick={() => {
             setStatus(next);
-            syncData(incident.id, { status: next });
+            syncData(incident.id, { status: next }, t);
           }}
           menu={{
             onClick: ({ key }) => {
               key = parseInt(key);
               setPriority(key);
-              syncData(incident.id, { priority: key });
+              syncData(incident.id, { priority: key }, t);
             },
             items: [
               {
@@ -126,7 +126,7 @@ export default connectWithRedux(function () {
         <Select
           mode="tags"
           placeholder={t('PLUS_ADD_TAGS')}
-          onBlur={() => syncData(incident.id, { tags })}
+          onBlur={() => syncData(incident.id, { tags }, t)}
           onChange={tags => setTags(tags)}
           options={tags.map(t => ({ label: t, value: t }))}
           style={{ marginLeft: '2px', width: '300px' }}

@@ -29,20 +29,25 @@ function _eventTypeToText(event: IncidentEvent) {
   }
 }
 
-function _metadataToText({ type, metadata }: IncidentEvent) {
+function _metadataToText(
+  { type, metadata }: IncidentEvent,
+  t: (key: string) => string,
+) {
   switch (type) {
     case 'rescheduled':
       return (
         <>
           <div>
             <span style={{ width: '55px', display: 'inline-block' }}>
-              From:
+              {t('INCIDENTS_FROM')}:
             </span>
             {moment(metadata.from.after).format('l LT')} to{' '}
             {moment(metadata.from.before).format('l LT')}
           </div>
           <div>
-            <span style={{ width: '55px', display: 'inline-block' }}>To:</span>
+            <span style={{ width: '55px', display: 'inline-block' }}>
+              {t('INCIDENTS_TO')}:
+            </span>
             {moment(metadata.to.after).format('l LT')} to{' '}
             {moment(metadata.to.before).format('l LT')}
           </div>
@@ -56,7 +61,7 @@ function _metadataToText({ type, metadata }: IncidentEvent) {
       }
 
       return (
-        'Accepted price change: ' +
+        t('INCIDENTS_ACCEPTED_PRICE_CHANGE') +
         (metadata.diff > 0 ? '+' : '') +
         money(metadata.diff)
       );
@@ -66,7 +71,7 @@ function _metadataToText({ type, metadata }: IncidentEvent) {
       }
 
       return (
-        'TODO: Rejected price change: ' +
+        t('INCIDENTS_REJECTED_PRICE_CHANGE') +
         (metadata.diff > 0 ? '+' : '') +
         money(metadata.diff)
       );
@@ -104,7 +109,7 @@ function Event({ event }: { event: IncidentEvent }) {
 
   const { t } = useTranslation();
 
-  const metadata = _metadataToText(event);
+  const metadata = _metadataToText(event, t);
 
   return (
     <div
