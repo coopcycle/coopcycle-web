@@ -514,6 +514,9 @@ Feature: Incidents
             "id":@integer@,
             "type":"accepted_suggestion",
             "message":null,
+            "metadata":{
+              "diff": null
+            },
             "createdBy":"/api/users/3",
             "createdAt":"@string@.isDateTime()"
           }
@@ -665,6 +668,9 @@ Feature: Incidents
             "id":@integer@,
             "type":"rejected_suggestion",
             "message":null,
+            "metadata":{
+              "diff": null
+            },
             "createdBy":"/api/users/3",
             "createdAt":"@string@.isDateTime()"
           }
