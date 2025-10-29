@@ -39,6 +39,7 @@ import {
   TimeSlot,
   Uri,
   Incident,
+  User,
 } from './types';
 
 // Define our single API slice object
@@ -310,6 +311,9 @@ export const apiSlice = createApi({
         body: { action },
       }),
     }),
+    getUser: builder.query<User, Uri>({
+      query: (uri: Uri) => uri,
+    }),
   }),
 });
 
@@ -345,4 +349,5 @@ export const {
   useUpdatePricingRuleSetMutation,
   useDeletePricingRuleSetMutation,
   useIncidentActionMutation,
+  useGetUserQuery,
 } = apiSlice;

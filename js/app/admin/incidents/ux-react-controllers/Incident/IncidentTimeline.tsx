@@ -6,6 +6,7 @@ import { money } from './utils';
 import { useTranslation } from 'react-i18next';
 import { IncidentEvent } from '../../../../api/types';
 import { OrderDetailsSuggestion } from './OrderDetailsSuggestion';
+import { useGetUserQuery } from '../../../../api/slice';
 
 type Props = {
   events: IncidentEvent[];
@@ -52,6 +53,24 @@ function _metadataToText({ type, metadata }) {
   }
 }
 
+function Username({
+  event,
+  className,
+}: {
+  event: IncidentEvent;
+  className?: string;
+}) {
+  const { data: user, isLoading } = useGetUserQuery(event.createdBy || '', {
+    skip: !event.createdBy,
+  });
+
+  if (!event.createdBy || isLoading || !user) {
+    return null;
+  }
+
+  return <span className={className}>{user.username}</span>;
+}
+
 function MediaPost({
   event,
   children,
@@ -59,12 +78,11 @@ function MediaPost({
   event: IncidentEvent;
   children: React.ReactNode;
 }) {
-  const { username } = event.createdBy;
   return (
     <div className="media-body">
       <div className="panel panel-default">
         <div className="panel-heading">
-          <span className="font-weight-bold pr-1">{username}</span>
+          <Username className="font-weight-bold pr-1" event={event} />
           <span className="text-muted font-weight-light">
             {moment(event.createdAt).fromNow()}
           </span>
@@ -78,7 +96,6 @@ function MediaPost({
 }
 
 function Event({ event }: { event: IncidentEvent }) {
-  const { username } = event.createdBy;
   const { t } = useTranslation();
 
   const metadata = _metadataToText(event);
@@ -91,7 +108,7 @@ function Event({ event }: { event: IncidentEvent }) {
         paddingLeft: '10px',
         lineHeight: '32px',
       }}>
-      <span className="font-weight-bold">{username}</span>
+      <Username className="font-weight-bold" event={event} />
       <span className="font-weight-light px-1">
         {t(_eventTypeToText(event))}
       </span>
@@ -121,21 +138,32 @@ function Body({ event }: { event: IncidentEvent }) {
   }
 }
 
-function Item({ event }: { event: IncidentEvent }) {
-  const { username } = event.createdBy;
+function Avatar({ event }: { event: IncidentEvent }) {
+  const { data: user, isLoading } = useGetUserQuery(event.createdBy || '', {
+    skip: !event.createdBy,
+  });
 
+  const username =
+    !event.createdBy || isLoading || !user ? 'unknown' : user.username;
+
+  return (
+    <img
+      className="media-object"
+      width="32"
+      src={window.Routing.generate('user_avatar', {
+        username: username,
+      })}
+      alt={username}
+    />
+  );
+}
+
+function Item({ event }: { event: IncidentEvent }) {
   const eventType = event.type !== 'commented';
   return (
     <div className={classNames('media', { event: eventType })}>
       <div className="media-left media-top">
-        <a href="#">
-          <img
-            className="media-object"
-            width="32"
-            src={window.Routing.generate('user_avatar', { username })}
-            alt={username}
-          />
-        </a>
+        <Avatar event={event} />
       </div>
       <Body event={event} />
     </div>
