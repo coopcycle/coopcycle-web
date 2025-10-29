@@ -20,6 +20,7 @@ import {
   Order,
   OrderItem,
 } from '../../../../api/types';
+import { TotalPrice } from '../../../../components/delivery-form/components/order/TotalPrice';
 
 function areAdjustmentsEqual(
   adj1: Record<AdjustmentType, Adjustment[]>,
@@ -192,15 +193,55 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
 
   const isButtonDisabled = isActionLoading;
 
+  const suggestionPriceDiff =
+    (suggestedOrder.total - existingOrder.total) / 100;
+
   return (
     <Flex vertical gap="middle">
+      <Row>
+        <Col span={24}>
+          <h4>
+            TODO: Suggested price change: {suggestionPriceDiff > 0 ? '+' : ''}
+            {suggestionPriceDiff.formatMoney()}
+          </h4>
+        </Col>
+      </Row>
       <Row gutter={16}>
         <Col span={12}>
-          <h4>TODO: Affected order items:</h4>
+          <h4>TODO: Old price:</h4>
+        </Col>
+        <Col span={12}>
+          <h4>TODO: New price:</h4>
+        </Col>
+      </Row>
+      <Row gutter={16}>
+        <Col span={12}>
+          <TotalPrice
+            overridePrice={false}
+            total={existingOrder.total}
+            taxTotal={existingOrder.taxTotal}
+          />
+        </Col>
+        <Col span={12}>
+          <TotalPrice
+            overridePrice={false}
+            total={suggestedOrder.total}
+            taxTotal={suggestedOrder.taxTotal}
+          />
+        </Col>
+      </Row>
+      <Row>
+        <Col span={24}>
+          <h4>TODO: Suggested modifications:</h4>
+        </Col>
+      </Row>
+      <Row gutter={16}>
+        <Col span={12}>
+          <h4>TODO: Before:</h4>
           <Cart orderItems={diff[0]} overridePrice={false} />
         </Col>
         <Col span={12}>
-          <h4>TODO: Suggested modifications:</h4>
+          <h4>TODO: After:</h4>
           <Cart orderItems={diff[1]} overridePrice={false} />
         </Col>
       </Row>
