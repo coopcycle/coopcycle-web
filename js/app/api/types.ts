@@ -290,8 +290,8 @@ export type IncidentEvent = {
   id: number;
   type: string;
   message?: string;
-  // metadata?: Record<string, any>
-  createdBy?: User;
+  metadata: unknown[];
+  createdBy?: Uri;
   createdAt: string;
 };
 
@@ -303,7 +303,7 @@ export type Incident = JsonLdEntity & {
   failureReasonCode?: string;
   description?: string;
   events: IncidentEvent[];
-  createdBy?: User;
+  createdBy?: Uri;
   metadata: unknown[];
   createdAt: string;
   updatedAt?: string;
