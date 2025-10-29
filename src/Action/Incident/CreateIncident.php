@@ -127,6 +127,12 @@ class CreateIncident
 
             $originalTasks = $delivery->getTasks();
 
+            // Build a position map to maintain original task order
+            $taskPositionMap = [];
+            foreach ($originalTasks as $position => $originalTask) {
+                $taskPositionMap[$originalTask->getId()] = $position;
+            }
+
             // Add missing tasks from the original delivery
             foreach ($originalTasks as $originalTask) {
                 $taskId = $originalTask->getId();
@@ -141,6 +147,13 @@ class CreateIncident
 
                 $suggestion['tasks'][] = $taskData;
             }
+
+            // Sort tasks to maintain the same order as in the original delivery
+            usort($suggestion['tasks'], function ($a, $b) use ($taskPositionMap) {
+                $posA = $taskPositionMap[$a['id']] ?? PHP_INT_MAX;
+                $posB = $taskPositionMap[$b['id']] ?? PHP_INT_MAX;
+                return $posA <=> $posB;
+            });
 
             $metadata[$index]['suggestion'] = $suggestion;
         }

@@ -179,6 +179,90 @@ Feature: Incidents
       }
       """
 
+  Scenario: Report incident: suggest order details modification with tasks in reversed order (incorrect request, but should be handled and tasks reordered)
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | store_basic.yml |
+      | package_delivery_order.yml |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "Wrong order details",
+        "failureReasonCode": "INCORRECT_ITEM",
+        "task": "/api/tasks/2",
+        "metadata": [
+          {
+            "suggestion": {
+              "tasks": [
+                {
+                  "id": 1,
+                  "packages": [
+                    {"type": "XL", "quantity": 2}
+                  ],
+                  "weight": 30000
+                },
+                {
+                  "id": 2
+                }
+              ]
+            }
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Incident",
+        "@id":"@string@",
+        "@type":"Incident",
+        "id":@integer@,
+        "title":"Article incorrect",
+        "status":"OPEN",
+        "priority":@integer@,
+        "task":"/api/tasks/2",
+        "failureReasonCode":"INCORRECT_ITEM",
+        "description":"Wrong order details",
+        "images":[],
+        "events":[],
+        "createdBy":"/api/users/2",
+        "createdAt":"@string@.isDateTime()",
+        "updatedAt":"@string@.isDateTime()",
+        "tags":[],
+        "metadata": [
+          {
+            "suggestion": {
+              "id": 1,
+              "tasks": [
+                {
+                  "id": 2
+                },
+                {
+                  "id": 1,
+                  "packages": [
+                    {"type": "XL", "quantity": 2}
+                  ],
+                  "weight": 30000
+                }
+              ]
+            }
+          }
+        ]
+      }
+      """
+
   Scenario: Report incident: suggest order supplements
     Given the fixtures files are loaded:
       | tasks.yml |
