@@ -21,6 +21,7 @@ import {
   OrderItem,
 } from '../../../../api/types';
 import { TotalPrice } from '../../../../components/delivery-form/components/order/TotalPrice';
+import { money } from './utils';
 
 function areAdjustmentsEqual(
   adj1: Record<AdjustmentType, Adjustment[]>,
@@ -123,7 +124,7 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
       return undefined;
     }
 
-    return (suggestedOrder.total - existingOrder.total) / 100;
+    return suggestedOrder.total - existingOrder.total;
   }, [suggestedOrder?.total, existingOrder.total]);
 
   const isButtonDisabled = isActionLoading;
@@ -209,7 +210,7 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
         <Col span={24}>
           <h4>
             TODO: Suggested price change: {suggestionPriceDiff > 0 ? '+' : ''}
-            {suggestionPriceDiff.formatMoney()}
+            {money(suggestionPriceDiff)}
           </h4>
         </Col>
       </Row>

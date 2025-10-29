@@ -29,7 +29,7 @@ function _eventTypeToText(event: IncidentEvent) {
   }
 }
 
-function _metadataToText({ type, metadata }) {
+function _metadataToText({ type, metadata }: IncidentEvent) {
   switch (type) {
     case 'rescheduled':
       return (
@@ -50,6 +50,26 @@ function _metadataToText({ type, metadata }) {
       );
     case 'applied_price_diff':
       return money(metadata.diff);
+    case 'accepted_suggestion':
+      if (!metadata || metadata.diff === undefined) {
+        return '';
+      }
+
+      return (
+        'Accepted price change: ' +
+        (metadata.diff > 0 ? '+' : '') +
+        money(metadata.diff)
+      );
+    case 'rejected_suggestion':
+      if (!metadata || metadata.diff === undefined) {
+        return '';
+      }
+
+      return (
+        'TODO: Rejected price change: ' +
+        (metadata.diff > 0 ? '+' : '') +
+        money(metadata.diff)
+      );
   }
 }
 
