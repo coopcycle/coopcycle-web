@@ -53,7 +53,7 @@ class CreateIncident
     public function __invoke(Incident $data, ?UserInterface $user, Request $request): Incident
     {
         // The default API platform validator is called on the object returned by the Controller/Action
-        // but we need to validate the delivery before we can create the order
+        // but we need to validate the delivery before we can create an incident
         // @see ApiPlatform\Symfony\EventListener\ValidateListener
         $errors = $this->validator->validate($data);
         if (count($errors) > 0) {
