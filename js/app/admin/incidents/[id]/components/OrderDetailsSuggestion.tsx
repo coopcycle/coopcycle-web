@@ -210,10 +210,10 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
   }
 
   return (
-    <Flex vertical gap="middle">
+    <Flex vertical gap="middle" data-testid="suggestion-content">
       <Row>
         <Col span={24}>
-          <h3>
+          <h3 data-testid="suggestion-price-change">
             {t('INCIDENTS_SUGGESTED_PRICE_CHANGE', {
               diff:
                 (suggestionPriceDiff > 0 ? '+' : '') +
@@ -231,14 +231,14 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
         </Col>
       </Row>
       <Row gutter={16}>
-        <Col span={12}>
+        <Col span={12} data-testid="suggestion-old-price-value">
           <TotalPrice
             overridePrice={true}
             total={existingOrder.total}
             taxTotal={existingOrder.taxTotal}
           />
         </Col>
-        <Col span={12}>
+        <Col span={12} data-testid="suggestion-new-price-value">
           <TotalPrice
             overridePrice={false}
             total={suggestedOrder.total}
@@ -252,16 +252,17 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
         </Col>
       </Row>
       <Row gutter={16}>
-        <Col span={12}>
+        <Col span={12} data-testid="suggestion-old-items">
           <Cart orderItems={diff[0]} overridePrice={true} />
         </Col>
-        <Col span={12}>
+        <Col span={12} data-testid="suggestion-new-items">
           <Cart orderItems={diff[1]} overridePrice={false} />
         </Col>
       </Row>
       <Row gutter={16}>
         <Col span={12}>
           <Button
+            data-testid="suggestion-reject-button"
             danger
             block
             onClick={handleRejectSuggestion}
@@ -272,6 +273,7 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
         </Col>
         <Col span={12}>
           <Button
+            data-testid="suggestion-accept-button"
             type="primary"
             block
             onClick={handleAcceptSuggestion}

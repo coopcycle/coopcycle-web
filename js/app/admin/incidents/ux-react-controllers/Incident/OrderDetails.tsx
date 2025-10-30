@@ -101,7 +101,7 @@ function OrderDetails({ order }) {
       {Adjustment(order.adjustments, 'incident')}
       <p>
         {t('TOTAL')}
-        <span>{money(order.total)}</span>
+        <span data-testid="order-total">{money(order.total)}</span>
       </p>
       <hr />
     </>

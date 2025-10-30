@@ -111,15 +111,24 @@ function Event({ event }: { event: IncidentEvent }) {
         paddingBottom: '20px',
         paddingLeft: '10px',
         lineHeight: '32px',
-      }}>
-      <span className="font-weight-bold">{username}</span>
-      <span className="font-weight-light px-1">
+      }}
+      data-testid={`timeline-event-${event.type}`}>
+      <span className="font-weight-bold" data-testid="timeline-event-username">
+        {username}
+      </span>
+      <span
+        className="font-weight-light px-1"
+        data-testid="timeline-event-action">
         {t(_eventTypeToText(event))}
       </span>
-      <span className="text-muted font-weight-light">
+      <span
+        className="text-muted font-weight-light"
+        data-testid="timeline-event-time">
         {moment(event.createdAt).fromNow()}
       </span>
-      <div className="text-monospace font-weight-light text-muted pl-1">
+      <div
+        className="text-monospace font-weight-light text-muted pl-1"
+        data-testid="timeline-event-metadata">
         {metadata}
       </div>
     </div>
