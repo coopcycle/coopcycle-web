@@ -111,16 +111,22 @@ export default connectWithRedux(function () {
       ]}>
       <Row className="mb-3">
         <Statistic
+          data-testid="incident-status"
           title={t('STATUS')}
           style={{ textTransform: 'capitalize', marginLeft: '12px' }}
           value={t(status)}
         />
         <Statistic
+          data-testid="incident-priority"
           title={t('PRIORITY')}
           value={t(_prioryToLabel(priority))}
           style={{ margin: '0 22px' }}
         />
-        <Statistic title={t('REPORTED_BY')} value={username ?? '?'} />
+        <Statistic
+          data-testid="incident-reported-by"
+          title={t('REPORTED_BY')}
+          value={username ?? '?'}
+        />
       </Row>
       <Row justify="space-between" className="mt-3">
         <Select
@@ -132,7 +138,7 @@ export default connectWithRedux(function () {
           style={{ marginLeft: '2px', width: '300px' }}
           variant="borderless"
         />
-        <div>
+        <div data-testid="incident-reported-at">
           <div className="pb-1">{t('INCIDENT_REPORTED_AT')} :</div>
           <i className="fa fa-calendar pr-1" />
           {moment(incident.createdAt).format('LLL')}

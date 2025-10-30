@@ -153,9 +153,9 @@ export default function ({ delivery }) {
   }
 
   return (
-    <div className="order-details-card">
+    <div className="order-details-card" data-testid="order-details-card">
       <Heading task={task} delivery={delivery} order={order} />
-      <p className="text-muted">
+      <p className="text-muted" data-testid="task-date">
         {t('DATE')}: {formatTime(task)}
       </p>
       <hr />
@@ -166,10 +166,12 @@ export default function ({ delivery }) {
         </span>{' '}
         {t('INCIDENTS_TASK_DETAILS')}
       </h5>
-      <p>{task.address.name}</p>
-      <p>{task.address.streetAddress}</p>
-      <p>{task.address.telephone}</p>
-      {task.weight ? <p>{weight(task.weight)}</p> : null}
+      <p data-testid="task-address-name">{task.address.name}</p>
+      <p data-testid="task-address-street">{task.address.streetAddress}</p>
+      <p data-testid="task-address-telephone">{task.address.telephone}</p>
+      {task.weight ? (
+        <p data-testid="task-weight">{weight(task.weight)}</p>
+      ) : null}
       <div className="mt-3">{<TaskStatusBadge task={task} />}</div>
       <hr />
       {order?.customer && <CustomerDetails customer={order.customer} />}

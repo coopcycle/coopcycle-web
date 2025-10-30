@@ -114,6 +114,7 @@ export default function ({ isLastmile }) {
   return (
     <>
       <Button
+        data-testid="take-actions-button"
         style={styles.btn}
         onClick={() => setOpen(true)}
         disabled={buttons.length === 0}>

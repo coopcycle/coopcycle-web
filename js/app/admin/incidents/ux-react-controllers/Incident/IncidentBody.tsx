@@ -61,17 +61,19 @@ export default connectWithRedux(function () {
     <div>
       <div className="row">
         <p style={{ fontWeight: 'bold' }}>{t('INCIDENTS_DESCRIPTION')}</p>
-        <p className="mx-2">{incident?.description}</p>
+        <p className="mx-2" data-testid="incident-description">
+          {incident?.description}
+        </p>
       </div>
       <hr />
-      <div className="row">
+      <div className="row" data-testid="incident-attachments">
         <p>
           {t('INCIDENTS_ATTACHMENTS')} <span className="caret"></span>
         </p>
         <IncidentImages />
       </div>
       <hr />
-      <div>
+      <div data-testid="incident-timeline">
         <IncidentTimeline events={events} />
         <CommentBox />
       </div>
