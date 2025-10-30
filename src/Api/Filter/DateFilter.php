@@ -2,44 +2,38 @@
 
 namespace AppBundle\Api\Filter;
 
-use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
+use ApiPlatform\Doctrine\Orm\Filter\FilterInterface;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ParameterNotFound;
 use Doctrine\ORM\QueryBuilder;
 
-final class DateFilter extends AbstractFilter
+final class DateFilter implements FilterInterface
 {
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
+    public function apply(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
     {
-        // otherwise filter is applied to order and page as well
-        if (
-            !$this->isPropertyEnabled($property, $resourceClass) ||
-            !$this->isPropertyMapped($property, $resourceClass)
-        ) {
+        $parameter = $context['parameter'] ?? null;
+        $value = $parameter?->getValue();
+
+        // The parameter may not be present
+        if ($value instanceof ParameterNotFound || null === $value) {
             return;
         }
 
+        // Get the property from the parameter
+        $property = $parameter->getProperty() ?? $parameter->getKey() ?? 'date';
+
+        $alias = $queryBuilder->getRootAliases()[0];
         $parameterName = $queryNameGenerator->generateParameterName($property);
+
         $queryBuilder
-            ->andWhere(sprintf('DATE(o.%s) = :%s', $property, $parameterName))
+            ->andWhere(sprintf('DATE(%s.%s) = :%s', $alias, $property, $parameterName))
             ->setParameter($parameterName, $value);
     }
 
     public function getDescription(string $resourceClass): array
     {
-        if (!$this->properties) {
-            return [];
-        }
-
-        $description = [];
-        foreach ($this->properties as $property => $strategy) {
-            $description[$property] = [
-                'property' => $property,
-                'type' => 'string',
-                'required' => false,
-            ];
-        }
-
-        return $description;
+        // For BC, this function is not useful anymore when documentation occurs on the Parameter
+        return [];
     }
 }

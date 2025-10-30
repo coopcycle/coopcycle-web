@@ -2,22 +2,26 @@
 
 namespace AppBundle\Api\Filter;
 
-use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
+use ApiPlatform\Doctrine\Orm\Filter\FilterInterface;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ParameterNotFound;
 use Doctrine\ORM\QueryBuilder;
 
-class DeliveryTaskDateFilter extends AbstractFilter
+class DeliveryTaskDateFilter implements FilterInterface
 {
-    protected function filterProperty(
-        string $property,
-        $value,
-        QueryBuilder $queryBuilder,
-        QueryNameGeneratorInterface $queryNameGenerator,
-        string $resourceClass,
-        ?Operation $operation = null,
-        array $context = []
-    ): void {
+    public function apply(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
+    {
+        $parameter = $context['parameter'] ?? null;
+        $value = $parameter?->getValue();
+
+        // The parameter may not be present
+        if ($value instanceof ParameterNotFound || null === $value) {
+            return;
+        }
+
+        $property = $parameter->getKey();
+
         if (!in_array($property, ['pickup.before', 'pickup.after', 'dropoff.before', 'dropoff.after'])) {
             return;
         }
