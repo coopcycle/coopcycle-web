@@ -61,11 +61,9 @@ class Trailer implements SoftDeleteableInterface
     #[Assert\Type('integer')]
     protected $maxWeight;
 
-    /**
-     * @Assert\CssColor
-     */
     #[Groups(['trailer', 'trailer_create'])]
     #[Assert\NotBlank]
+    #[Assert\CssColor]
     protected $color;
 
     #[Groups(['trailer', 'trailer_create'])]

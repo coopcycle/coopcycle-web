@@ -2,8 +2,10 @@
 
 namespace AppBundle\Enum;
 
+use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiResource;
 use MyCLabs\Enum\Enum;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A diet restricted to certain foods or preparations for cultural, religious, health or lifestyle reasons.
@@ -75,10 +77,9 @@ class RestrictedDiet extends Enum
 
     /**
      * @var string The name of the item
-     *
-     * @Assert\Type(type="string")
-     * @ApiProperty(iri="http://schema.org/name")
      */
+    #[Assert\Type(type: 'string')]
+    #[ApiProperty(iris: ['http://schema.org/name'])]
     protected $name;
 
     /**

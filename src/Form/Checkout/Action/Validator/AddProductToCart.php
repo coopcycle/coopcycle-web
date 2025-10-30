@@ -4,9 +4,7 @@ namespace AppBundle\Form\Checkout\Action\Validator;
 
 use Symfony\Component\Validator\Constraint;
 
-/**
- * @Annotation
- */
+#[\Attribute]
 class AddProductToCart extends Constraint
 {
     public $productDisabled = 'Product %code% is not enabled';
