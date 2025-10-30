@@ -9,7 +9,6 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Task\RecurrenceRuleBetween as BetweenController;
 use AppBundle\Action\Task\GenerateOrders;
 use AppBundle\Entity\Store;

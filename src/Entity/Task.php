@@ -9,7 +9,7 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\QueryParameter;
 use AppBundle\Action\Task\AddImagesToTasks;
 use AppBundle\Action\Task\Assign as TaskAssign;
 use AppBundle\Action\Task\Cancel as TaskCancel;
@@ -242,7 +242,27 @@ use Symfony\Component\Validator\Constraints as Assert;
             paginationEnabled: false,
             paginationClientEnabled: true,
             security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_COURIER\')',
-            provider: TasksProvider::class
+            provider: TasksProvider::class,
+            parameters: [
+                'order' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\TaskOrderFilter'
+                ),
+                'date' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\TaskDateFilter'
+                ),
+                'assigned' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\AssignedFilter'
+                ),
+                'organization' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\OrganizationFilter'
+                ),
+                'type' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\TaskFilter'
+                ),
+                'status' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\TaskFilter'
+                )
+            ]
         ),
         new Post(
             denormalizationContext: ['groups' => ['task_create']],
@@ -323,11 +343,6 @@ use Symfony\Component\Validator\Constraints as Assert;
     ],
     normalizationContext: ['groups' => ['task', 'delivery', 'address']]
 )]
-#[ApiFilter(filterClass: TaskOrderFilter::class)]
-#[ApiFilter(filterClass: TaskDateFilter::class, properties: ['date'])]
-#[ApiFilter(filterClass: TaskFilter::class)]
-#[ApiFilter(filterClass: AssignedFilter::class, properties: ['assigned'])]
-#[ApiFilter(filterClass: OrganizationFilter::class, properties: ['organization'])]
 #[UniqueEntity(fields: ['organization', 'ref'], errorPath: 'ref')]
 #[AssertTask]
 class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwareInterface, TimeSlotAwareInterface

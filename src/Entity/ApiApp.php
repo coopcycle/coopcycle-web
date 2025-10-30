@@ -5,7 +5,6 @@ namespace AppBundle\Entity;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Store;
 use Gedmo\Timestampable\Traits\Timestampable;

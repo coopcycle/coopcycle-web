@@ -7,7 +7,7 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\QueryParameter;
 use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberUtil;
@@ -38,7 +38,12 @@ use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterfac
         new GetCollection(
             paginationEnabled: false,
             paginationClientEnabled: false,
-            security: 'is_granted(\'ROLE_DISPATCHER\')'
+            security: 'is_granted(\'ROLE_DISPATCHER\')',
+            parameters: [
+                'roles' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\UserRoleFilter'
+                )
+            ]
         ),
         new Get(
             uriTemplate: '/me/stripe-payment-methods',
@@ -50,7 +55,6 @@ use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterfac
     normalizationContext: ['groups' => ['user', 'order']]
 )]
 #[UniqueEntity('facebookId')]
-#[ApiFilter(filterClass: UserRoleFilter::class, properties: ['roles'])]
 class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, LegacyPasswordAuthenticatedUserInterface, Serializable
 {
     use Timestampable;

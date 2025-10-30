@@ -10,7 +10,7 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\QueryParameter;
 use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
@@ -183,13 +183,30 @@ use Symfony\Component\Serializer\Annotation\Groups;
 )]
 #[AssertDelivery]
 #[AssertCheckDelivery(groups: ['delivery_check'])]
-#[ApiFilter(filterClass: OrderFilter::class, properties: ['createdAt'])]
-#[ApiFilter(filterClass: DeliveryOrderFilter::class, properties: ['dropoff.before'])]
-#[ApiFilter(filterClass: DeliveryTaskDateFilter::class)]
 #[ApiResource(
     uriTemplate: '/stores/{id}/deliveries',
     types: ['http://schema.org/ParcelDelivery'],
-    operations: [new GetCollection()],
+    operations: [
+        new GetCollection(
+            parameters: [
+                'createdAt' => new QueryParameter(
+                    filter: 'api_platform.doctrine.orm.order_filter'
+                ),
+                'dropoff.before' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\DeliveryOrderFilter'
+                ),
+                'pickup.before' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\DeliveryTaskDateFilter'
+                ),
+                'pickup.after' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\DeliveryTaskDateFilter'
+                ),
+                'dropoff.after' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\DeliveryTaskDateFilter'
+                )
+            ]
+        )
+    ],
     uriVariables: [
         'id' => new Link(fromClass: Store::class, toProperty: 'store')
     ],
