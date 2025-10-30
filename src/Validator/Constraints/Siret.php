@@ -9,7 +9,7 @@ class Siret extends Constraint
 {
     public $headOfficeNumber = 'siret.head_office';
 
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return get_class($this).'Validator';
     }

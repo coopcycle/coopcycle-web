@@ -11,12 +11,12 @@ class DabbaOrder extends Constraint
     public $insufficientWallet = 'dabba.insufficient_wallet';
     public $requestFailed = 'dabba.request_failed';
 
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return get_class($this).'Validator';
     }
 
-    public function getTargets()
+    public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;
     }

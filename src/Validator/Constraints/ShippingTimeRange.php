@@ -15,12 +15,12 @@ class ShippingTimeRange extends Constraint
     public $shippedAtNotAvailableMessage = 'order.shippedAt.notAvailable';
     public $shippingTimeRangeNotAvailableMessage = 'order.shippingTimeRange.notAvailable';
 
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return get_class($this).'Validator';
     }
 
-    public function getTargets()
+    public function getTargets(): string|array
     {
         return self::PROPERTY_CONSTRAINT;
     }
