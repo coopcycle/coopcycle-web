@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Divider, Drawer, Popconfirm, Modal, Form } from 'antd';
+import { Button, Divider, Drawer, Form, Modal, Popconfirm } from 'antd';
 import RescheduleTask from './ActionBox/RescheduleTask';
 import ApplyPriceDiffTask from './ActionBox/ApplyPriceDiffTask';
 import TransporterReport from './ActionBox/TransporterReport';
@@ -115,7 +115,7 @@ export default function ({ isLastmile }) {
     <>
       <Button
         data-testid="take-actions-button"
-        style={styles.btn}
+        type="primary"
         onClick={() => setOpen(true)}
         disabled={buttons.length === 0}>
         {t('TAKE_ACTIONS')}

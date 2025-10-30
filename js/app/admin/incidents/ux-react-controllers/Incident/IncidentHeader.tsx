@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import moment from 'moment';
-import { Dropdown, Row, Select, Statistic, notification } from 'antd';
+import { Dropdown, Flex, Row, Select, Statistic, notification } from 'antd';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import PageHeader from '../../../../components/PageHeader';
 import { connectWithRedux } from '../../[id]/redux/incidentStore';
 import { selectIncident, selectLoaded } from '../../[id]/redux/incidentSlice';
 import { useUsername } from '../../[id]/hooks/useUsername';
+import ActionBox from './ActionBox';
 
 async function _handleStatusSubmit(id, body) {
   const httpClient = new window._auth.httpClient();
@@ -50,7 +51,7 @@ function _statusBtn(status) {
   }
 }
 
-export default connectWithRedux(function () {
+export default connectWithRedux(function ({ isLastmile }) {
   const loaded = useSelector(selectLoaded);
   const incident = useSelector(selectIncident);
   const [priority, setPriority] = useState(incident.priority);
@@ -71,43 +72,45 @@ export default connectWithRedux(function () {
     <PageHeader
       title={incident.title}
       extra={[
-        <Dropdown.Button
-          key="close"
-          onClick={() => {
-            setStatus(next);
-            syncData(incident.id, { status: next }, t);
-          }}
-          menu={{
-            onClick: ({ key }) => {
-              key = parseInt(key);
-              setPriority(key);
-              syncData(incident.id, { priority: key }, t);
-            },
-            items: [
-              {
-                label: t('SET_TO_PRIORITY', {
-                  priority: t('LOW').toLowerCase(),
-                }),
-                key: 3,
+        <Flex key="actions" gap="middle">
+          <ActionBox isLastmile={isLastmile} />
+          <Dropdown.Button
+            key="close"
+            onClick={() => {
+              setStatus(next);
+              syncData(incident.id, { status: next }, t);
+            }}
+            menu={{
+              onClick: ({ key }) => {
+                key = parseInt(key);
+                setPriority(key);
+                syncData(incident.id, { priority: key }, t);
               },
-              {
-                label: t('SET_TO_PRIORITY', {
-                  priority: t('MEDIUM').toLowerCase(),
-                }),
-                key: 2,
-              },
-              {
-                label: t('SET_TO_PRIORITY', {
-                  priority: t('HIGH').toLowerCase(),
-                }),
-                key: 1,
-              },
-            ],
-          }}
-          type="primary">
-          {icon}
-          {t(label)}
-        </Dropdown.Button>,
+              items: [
+                {
+                  label: t('SET_TO_PRIORITY', {
+                    priority: t('LOW').toLowerCase(),
+                  }),
+                  key: 3,
+                },
+                {
+                  label: t('SET_TO_PRIORITY', {
+                    priority: t('MEDIUM').toLowerCase(),
+                  }),
+                  key: 2,
+                },
+                {
+                  label: t('SET_TO_PRIORITY', {
+                    priority: t('HIGH').toLowerCase(),
+                  }),
+                  key: 1,
+                },
+              ],
+            }}>
+            {icon}
+            {t(label)}
+          </Dropdown.Button>
+        </Flex>,
       ]}>
       <Row className="mb-3">
         <Statistic

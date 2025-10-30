@@ -35,7 +35,7 @@
 <div class="incident-header">
   <div class="container">
     <div class="row">
-      <div {{ react_component('Incident/IncidentHeader') }} ></div>
+      <div {{ react_component('Incident/IncidentHeader', { isLastmile: isLastmile }) }} ></div>
     </div>
   </div>
 </div>
@@ -45,8 +45,6 @@
   </div>
 
   <div class="col-md-3">
-    <div {{ react_component('Incident/ActionBox', { isLastmile: isLastmile }) }}></div>
-    <hr>
     <div {{ react_component('Incident/OrderDetails', { delivery: delivery|serialize('jsonld', {groups: ['delivery'] }) }) }}></div>
     <hr>
     <div {{react_component('Incident/TaskTimeline', {events: incident.getTask().getEvents()|serialize}) }}></div>
