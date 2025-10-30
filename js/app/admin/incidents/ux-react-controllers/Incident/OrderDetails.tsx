@@ -2,15 +2,15 @@ import React from 'react';
 import moment from 'moment';
 import { Button } from 'antd';
 import './OrderDetails.scss';
-import { money, weight } from './utils';
+import { money, weight } from '../../utils';
 import TaskStatusBadge from '../../../../dashboard/components/TaskStatusBadge';
 
-import store from './redux/incidentStore';
+import store from '../../[id]/redux/incidentStore';
 import {
   selectIncident,
   selectLoaded,
   selectOrder,
-} from './redux/incidentSlice';
+} from '../../[id]/redux/incidentSlice';
 import { useTranslation } from 'react-i18next';
 
 function formatTime(task) {

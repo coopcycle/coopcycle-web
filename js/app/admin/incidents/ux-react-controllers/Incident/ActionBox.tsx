@@ -6,14 +6,14 @@ import TransporterReport from './ActionBox/TransporterReport';
 
 import { useTranslation } from 'react-i18next';
 
-import store from './redux/incidentStore';
+import store from '../../[id]/redux/incidentStore';
 import {
   selectImages,
   selectIncident,
   selectLoaded,
   selectOrder,
   selectTransporterEnabled,
-} from './redux/incidentSlice';
+} from '../../[id]/redux/incidentSlice';
 
 async function _handleCancelButton(id) {
   const httpClient = new window._auth.httpClient();

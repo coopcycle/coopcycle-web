@@ -10,7 +10,7 @@ import {
   selectIncident,
   selectOrder,
   selectStoreUri,
-} from './redux/incidentSlice';
+} from '../redux/incidentSlice';
 import {
   Adjustment,
   AdjustmentType,
@@ -20,7 +20,7 @@ import {
   OrderItem,
 } from '../../../../api/types';
 import { TotalPrice } from '../../../../components/delivery-form/components/order/TotalPrice';
-import { money } from './utils';
+import { money } from '../../utils';
 import { useTranslation } from 'react-i18next';
 
 function areAdjustmentsEqual(

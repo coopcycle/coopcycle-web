@@ -1,12 +1,12 @@
 import React from 'react';
 import moment from 'moment';
 import classNames from 'classnames';
-import { money } from './utils';
+import { money } from '../../utils';
 
 import { TFunction, useTranslation } from 'react-i18next';
 import { IncidentEvent } from '../../../../api/types';
 import { OrderDetailsSuggestion } from './OrderDetailsSuggestion';
-import { useUsername } from './useUsername';
+import { useUsername } from '../hooks/useUsername';
 
 type Props = {
   events: IncidentEvent[];

@@ -4,9 +4,9 @@ import { Dropdown, Row, Select, Statistic, notification } from 'antd';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import PageHeader from '../../../../components/PageHeader';
-import { connectWithRedux } from './redux/incidentStore';
-import { selectIncident, selectLoaded } from './redux/incidentSlice';
-import { useUsername } from './useUsername';
+import { connectWithRedux } from '../../[id]/redux/incidentStore';
+import { selectIncident, selectLoaded } from '../../[id]/redux/incidentSlice';
+import { useUsername } from '../../[id]/hooks/useUsername';
 
 async function _handleStatusSubmit(id, body) {
   const httpClient = new window._auth.httpClient();

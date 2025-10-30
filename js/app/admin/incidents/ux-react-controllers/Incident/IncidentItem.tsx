@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Spin } from 'antd';
 import TaskStatusBadge from '../../../../dashboard/components/TaskStatusBadge';
-import { money } from './utils';
+import { money } from '../../utils';
 import { useTranslation } from 'react-i18next';
 
 async function _fetchTaskContect(id) {

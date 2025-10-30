@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
 
-import { connectWithRedux } from './redux/incidentStore';
-import { selectIncident, selectOrder } from './redux/incidentSlice';
+import { connectWithRedux } from '../../[id]/redux/incidentStore';
+import { selectIncident, selectOrder } from '../../[id]/redux/incidentSlice';
 import { useSelector } from 'react-redux';
-import IncidentImages from './IncidentImages';
-import IncidentTimeline from './IncidentTimeline';
-import CommentBox from './CommentBox';
+import IncidentImages from '../../[id]/components/IncidentImages';
+import IncidentTimeline from '../../[id]/components/IncidentTimeline';
+import CommentBox from '../../[id]/components/CommentBox';
 import { Incident, IncidentEvent } from '../../../../api/types';
 import { useTranslation } from 'react-i18next';
 

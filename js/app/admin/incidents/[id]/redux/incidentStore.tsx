@@ -6,10 +6,10 @@ import {
   useSelector,
 } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import { accountSlice } from '../../../../../entities/account/reduxSlice';
-import { apiSlice } from '../../../../../api/slice';
+import { accountSlice } from '../../../../entities/account/reduxSlice';
+import { apiSlice } from '../../../../api/slice';
 import { incidentSlice } from './incidentSlice';
-import { AppRootWithDefaults } from '../../../../../utils/react';
+import { AppRootWithDefaults } from '../../../../utils/react';
 
 const buildInitialState = () => {
   return {

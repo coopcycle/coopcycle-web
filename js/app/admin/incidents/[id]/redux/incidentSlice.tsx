@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { Incident, Order, Uri } from '../../../../../api/types';
+import { Incident, Order, Uri } from '../../../../api/types';
 import { RootState } from './incidentStore';
 
 const initialState = {

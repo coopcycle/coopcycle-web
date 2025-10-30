@@ -1,4 +1,4 @@
-import store from './redux/incidentStore';
+import store from '../../[id]/redux/incidentStore';
 import {
   setImages,
   setIncident,
@@ -6,7 +6,7 @@ import {
   setOrder,
   setStoreUri,
   setTransporterEnabled,
-} from './redux/incidentSlice';
+} from '../../[id]/redux/incidentSlice';
 
 export default function ({
   incident,
