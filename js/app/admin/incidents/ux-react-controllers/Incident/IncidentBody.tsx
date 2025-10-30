@@ -43,7 +43,7 @@ export default connectWithRedux(function () {
 
     const suggestionEvent: IncidentEvent = {
       id: 0,
-      type: 'local_type_suggestion',
+      type: 'local_event__suggestion',
       message: '',
       metadata: [
         {

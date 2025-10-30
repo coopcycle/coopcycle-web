@@ -130,7 +130,7 @@ function Body({ event }: { event: IncidentEvent }) {
   switch (event.type) {
     case 'commented':
       return <MediaPost event={event}>{event.message}</MediaPost>;
-    case 'local_type_suggestion': {
+    case 'local_event__suggestion': {
       return (
         <MediaPost event={event}>
           <OrderDetailsSuggestion event={event} />
