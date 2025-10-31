@@ -201,12 +201,7 @@ services:
   AppBundle\Form\Type\LocalBusinessTypeChoiceType:
     tags: [ form.type ]
 
-  AppBundle\Form\Sylius\Promotion\OfferDeliveryType:
-    arguments:
-      $promotionRuleFactory: '@sylius.factory.promotion_rule'
-    tags: [ form.type ]
-
-  AppBundle\Form\Sylius\Promotion\ItemsTotalBasedPromotionType:
+  AppBundle\Form\Sylius\Promotion\RestaurantPromotionType:
     arguments:
       $promotionRuleFactory: '@sylius.factory.promotion_rule'
     tags: [ form.type ]
@@ -314,4 +309,10 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\PricingRuleSetType:
+    tags: [ form.type ]
+
+  AppBundle\Form\Sylius\Promotion\CurrencyAwareFixedDiscountConfigurationType:
+    tags: [ form.type ]
+
+  AppBundle\Form\Sylius\Promotion\Rule\IsItemsTotalAboveConfigurationType:
     tags: [ form.type ]

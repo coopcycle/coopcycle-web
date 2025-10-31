@@ -61,6 +61,7 @@ Encore
   .addEntry('package-set-form', './js/app/admin/package-set.js')
   .addEntry('product-list', './js/app/product/list.js')
   .addEntry('product-option-form', './js/app/forms/product-option.js')
+  .addEntry('promotion-form', './js/app/forms/promotion.js')
   .addEntry('register', './js/app/register/index.js')
   .addEntry('restaurant-edenred', './js/app/restaurant/edenred.js')
   .addEntry('restaurant-form', './js/app/restaurant/form.js')

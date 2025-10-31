@@ -1,0 +1,62 @@
+{% extends "bootstrap_3_layout.html.twig" %}
+
+{# https://github.com/Sylius/Sylius/blob/d23d6483e2ac4a9de66c43cbf72303e4c23e4694/src/Sylius/Bundle/UiBundle/templates/form/theme.html.twig #}
+{# https://github.com/Sylius/Sylius/blob/d23d6483e2ac4a9de66c43cbf72303e4c23e4694/src/Sylius/Bundle/AdminBundle/templates/promotion/form_theme.html.twig #}
+
+{% block collection_widget -%}
+    {% import _self as self %}
+    {% apply spaceless %}
+        <div data-form-type="collection" {{ block('widget_container_attributes') }}
+            {% if prototype is defined and allow_add %}
+                data-prototype='{{ self.collection_item(prototype, allow_delete, button_delete_label, prototype.vars.name)|e }}'
+                data-prototype-name='{{ prototype.vars.name }}'
+            {%- endif -%}
+        >
+            {# {{ error(form.vars.errors) }} #}
+
+            {% if prototypes|default is iterable %}
+                {% for key, subPrototype in prototypes %}
+                    <input type="hidden" data-form-prototype="{{ key }}"
+                           value="{{ self.collection_item(subPrototype, allow_delete, button_delete_label, subPrototype.vars.name)|e }}"
+                           data-subprototype-name="{{ subPrototype.vars.name }}"
+                    />
+                {% endfor %}
+            {% endif %}
+
+            <div data-form-collection="list" class="mb-4">
+                {% for child in form %}
+                    {{ self.collection_item(child, allow_delete, button_delete_label, loop.index0) }}
+                {% endfor %}
+            </div>
+
+            {% if prototype is defined and allow_add %}
+            <div class="text-right">
+                <a href="#" class="btn btn-default" data-form-collection="add">
+                    <i class="plus square outline icon"></i>
+                    {{ button_add_label|trans }}
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    {% endapply %}
+{%- endblock collection_widget %}
+
+{% macro collection_item(form, allow_delete, button_delete_label, index) %}
+    {% apply spaceless %}
+        <div data-form-collection="item" data-form-collection-index="{{ index }}"
+            class="d-flex align-items-center justify-content-between pt-4 pb-2 border-bottom">
+            <div class="d-flex">
+                <div class="mr-3">{{ form_row(form['type']) }}</div>
+                {% if form['configuration'] is defined %}
+                    {{ form_row(form['configuration']) }}
+                {% endif %}
+            </div>
+            {% if allow_delete %}
+                <a href="#" data-form-collection="delete">
+                    <i class="fa fa-trash mr-2"></i>
+                    {{ button_delete_label|trans }}
+                </a>
+            {% endif %}
+        </div>
+    {% endapply %}
+{% endmacro %}
