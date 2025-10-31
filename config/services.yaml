@@ -483,7 +483,8 @@ services:
       - name: sylius.promotion_action
         type: order_fixed_discount
         label: 'Fixed discount'
-        form_type: Sylius\Bundle\PromotionBundle\Form\Type\Action\FixedDiscountConfigurationType
+        # form_type: Sylius\Bundle\PromotionBundle\Form\Type\Action\FixedDiscountConfigurationType
+        form_type: AppBundle\Form\Sylius\Promotion\CurrencyAwareFixedDiscountConfigurationType
 
   sylius.promotion_action.percentage_discount:
     class: AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand

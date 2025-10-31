@@ -210,6 +210,11 @@ services:
       $promotionRuleFactory: '@sylius.factory.promotion_rule'
     tags: [ form.type ]
 
+  AppBundle\Form\Sylius\Promotion\RestaurantPromotionType:
+    arguments:
+      $promotionRuleFactory: '@sylius.factory.promotion_rule'
+    tags: [ form.type ]
+
   AppBundle\Form\Checkout\CheckoutPaymentType:
     arguments:
       $cashEnabled: '%env(bool:CASH_ON_DELIVERY_ENABLED)%'

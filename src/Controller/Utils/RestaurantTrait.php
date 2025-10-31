@@ -40,6 +40,7 @@ use AppBundle\Form\RestaurantType;
 use AppBundle\Form\ReusablePackagingChoiceLoader;
 use AppBundle\Form\Sylius\Promotion\ItemsTotalBasedPromotionType;
 use AppBundle\Form\Sylius\Promotion\OfferDeliveryType;
+use AppBundle\Form\Sylius\Promotion\RestaurantPromotionType;
 use AppBundle\Form\Type\ProductTaxCategoryChoiceType;
 use AppBundle\LoopEat\Client as LoopeatClient;
 use AppBundle\Message\CopyProducts;
@@ -62,6 +63,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use MercadoPago;
 use Ramsey\Uuid\Uuid;
+use Sylius\Bundle\PromotionBundle\Form\Type\PromotionType;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
@@ -1582,6 +1584,16 @@ trait RestaurantTrait
 
         $routes = $this->getRestaurantRoutes();
 
+        $form = $this->createForm(RestaurantPromotionType::class, null, [
+            'local_business' => $restaurant,
+            // 'currency' => 'EUR',
+            // 'entry_options' => [
+
+            //     'currency' => 'EUR',
+            // ]
+        ]);
+
+        /*
         if ($request->query->has('type')) {
 
             $type = $request->query->get('type');
@@ -1644,6 +1656,14 @@ trait RestaurantTrait
         }
 
         return $this->redirectToRoute($routes['promotions'], ['id' => $id]);
+        */
+
+        return $this->render('restaurant/promotion.html.twig', $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'form' => $form->createView(),
+            // 'promotion_type' => $type,
+        ]));
     }
 
     public function restaurantPromotionAction($restaurantId, $promotionId, TranslatorInterface $translator, Request $request)

@@ -1,6 +1,7 @@
 {% extends 'restaurant/layout.html.twig' %}
 
-{% form_theme form 'bootstrap_3_layout.html.twig' %}
+{# {% form_theme form 'bootstrap_3_layout.html.twig' %} #}
+{% form_theme form 'form/promotion.html.twig' %}
 
 {% block breadcrumb %}
   <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.shops.title{% endtrans %}</a></li>
@@ -9,7 +10,7 @@
 
 {% block content %}
 <div class="alert alert-info">
-  {{ ('restaurant_promotion.' ~ promotion_type ~ '.help')|trans|raw }}
+  {# {{ ('restaurant_promotion.' ~ promotion_type ~ '.help')|trans|raw }} #}
 </div>
 {{ form_start(form) }}
   {{ form_widget(form) }}
@@ -17,4 +18,11 @@
     {{ 'basics.save'|trans }}
   </button>
 {{ form_end(form) }}
+
+<button type="button" id="rule-add">ADD RULE</button>
+
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('promotion-form') }}
 {% endblock %}
