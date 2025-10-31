@@ -14,6 +14,7 @@ use AppBundle\Service\PricingRuleSetManager;
 use AppBundle\Sylius\Product\ProductOptionValueFactory;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -26,6 +27,7 @@ class OnDemandDeliveryProductProcessor
         private readonly ExpressionLanguage $expressionLanguage,
         private readonly PriceExpressionParser $priceExpressionParser,
         private readonly PricingRuleSetManager $pricingRuleSetManager,
+        private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $feeCalculationLogger = new NullLogger()
     ) {
     }
@@ -247,6 +249,13 @@ class OnDemandDeliveryProductProcessor
     ): array {
         $taskItemsTotal = 0;
 
+        $filterCollection = $this->entityManager->getFilters();
+        $wasFilterEnabled = false;
+        if ($filterCollection->isEnabled('disabled_filter')) {
+            $filterCollection->disable('disabled_filter');
+            $wasFilterEnabled = true;
+        }
+
         foreach ($taskProductVariants as $productVariant) {
             $this->processProductVariant($productVariant, 0);
 
@@ -255,6 +264,10 @@ class OnDemandDeliveryProductProcessor
 
         if ($deliveryProductVariant) {
             $this->processProductVariant($deliveryProductVariant, $taskItemsTotal);
+        }
+
+        if ($wasFilterEnabled) {
+            $filterCollection->enable('disabled_filter');
         }
 
         return array_merge(
@@ -273,6 +286,11 @@ class OnDemandDeliveryProductProcessor
          * @var ProductOptionValueInterface $productOptionValue
          */
         foreach ($productVariant->getOptionValues() as $productOptionValue) {
+
+            if (!$productOptionValue->isEnabled()) {
+                continue;
+            }
+
             if (ProductOptionRepository::PRODUCT_OPTION_CODE_PRICE_PERCENTAGE === $productOptionValue->getOptionCode()) {
                 // for percentage-based rules: the price is calculated on the subtotal of the previous steps
 
