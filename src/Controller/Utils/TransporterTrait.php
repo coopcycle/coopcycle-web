@@ -4,12 +4,11 @@ namespace AppBundle\Controller\Utils;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 trait TransporterTrait
 {
-    /**
-    * @Route("/admin/tasks/transporters/messages/{edi}", name="admin_transporter_message", methods={"GET"})
-    */
+    #[Route("/admin/tasks/transporters/messages/{edi}", name: "admin_transporter_message", methods: ["GET"])]
     public function incidentImagePublicAction($edi, Request $request): Response
     {
         try {

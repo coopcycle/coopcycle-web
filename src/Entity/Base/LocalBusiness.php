@@ -20,9 +20,9 @@ abstract class LocalBusiness
 
     /**
      * @var string The telephone number.
-     * @AssertPhoneNumber
      */
     #[Groups(['order', 'restaurant'])]
+    #[AssertPhoneNumber]
     protected $telephone;
 
     /**

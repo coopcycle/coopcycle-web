@@ -57,11 +57,9 @@ class Vehicle implements SoftDeleteableInterface
     #[Assert\Type('integer')]
     protected $maxWeight;
 
-    /**
-     * @Assert\CssColor
-     */
     #[Groups(['vehicle', 'vehicle_create'])]
     #[Assert\NotBlank]
+    #[Assert\CssColor]
     protected $color;
 
     #[Groups(['vehicle', 'vehicle_create'])]

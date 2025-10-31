@@ -4,9 +4,7 @@ namespace AppBundle\Form\Checkout\Action;
 
 use AppBundle\Form\Checkout\Action\Validator\AddProductToCart as AssertAddProductToCart;
 
-/**
- * @AssertAddProductToCart
- */
+#[AssertAddProductToCart]
 class AddProductToCartAction
 {
     public $product;
