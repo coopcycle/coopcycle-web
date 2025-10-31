@@ -585,6 +585,7 @@ class OnDemandDeliveryProductProcessorTest extends TestCase
         $deliveryVariant = $this->createMock(ProductVariantInterface::class);
         $regularOptionValue = $this->createMock(ProductOptionValueInterface::class);
         $percentageOptionValue = $this->createMock(ProductOptionValueInterface::class);
+        $percentageOptionValue->method('isEnabled')->willReturn(true);
 
         // Task variant with regular option
         $taskVariant->method('getOptionValues')->willReturn(new ArrayCollection([$regularOptionValue]));
