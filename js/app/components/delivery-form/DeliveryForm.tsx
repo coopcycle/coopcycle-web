@@ -222,6 +222,15 @@ const DeliveryForm = ({
   ): FormikErrors<DeliveryFormValues> => {
     const errors: FormikErrors<DeliveryFormValues> = { tasks: [] };
 
+    let { packagesTotalWeight, packagesCount } = values.tasks.reduce(
+      (acc, task) => {
+        acc.packagesTotalWeight += task.weight || 0;
+        acc.packagesCount += task.packages.reduce((acc, items) => acc + items.quantity, 0);
+        return acc;
+      },
+      { packagesTotalWeight: 0, packagesCount: 0 },
+    );
+
     for (let i = 0; i < values.tasks.length; i++) {
       const taskErrors: FormikErrors<TaskPayload> = {};
 
@@ -249,19 +258,11 @@ const DeliveryForm = ({
         );
       }
 
-      if (
-        values.tasks[i].type === 'DROPOFF' &&
-        storeDeliveryInfos.packagesRequired &&
-        !values.tasks[i].packages.some(item => item.quantity > 0)
-      ) {
+      if (storeDeliveryInfos.packagesRequired && packagesCount === 0) {
         taskErrors.packages = t('DELIVERY_FORM_ERROR_PACKAGES');
       }
 
-      if (
-        values.tasks[i].type === 'DROPOFF' &&
-        storeDeliveryInfos.weightRequired &&
-        !values.tasks[i].weight
-      ) {
+      if (storeDeliveryInfos.weightRequired && packagesTotalWeight === 0) {
         taskErrors.weight = t('DELIVERY_FORM_ERROR_WEIGHT');
       }
 
@@ -269,6 +270,8 @@ const DeliveryForm = ({
         errors.tasks[i] = taskErrors;
       }
     }
+
+
 
     // expand all tasks with errors
     if (Object.keys(errors.tasks).length > 0) {
@@ -516,7 +519,7 @@ const DeliveryForm = ({
                       })}
 
                       {storeDeliveryInfos.multiPickupEnabled &&
-                      (mode === Mode.DELIVERY_CREATE || isDispatcher) ? (
+                        (mode === Mode.DELIVERY_CREATE || isDispatcher) ? (
                         <div className="new-order__pickups__add p-4 border mb-4">
                           <p>{t('DELIVERY_FORM_MULTIPICKUP')}</p>
                           <Button
@@ -592,7 +595,7 @@ const DeliveryForm = ({
                       })}
 
                       {storeDeliveryInfos.multiDropEnabled &&
-                      (mode === Mode.DELIVERY_CREATE || isDispatcher) ? (
+                        (mode === Mode.DELIVERY_CREATE || isDispatcher) ? (
                         <div className="new-order__dropoffs__add p-4 border mb-4">
                           <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
                           <Button
@@ -664,7 +667,7 @@ const DeliveryForm = ({
                 </div>
 
                 {mode !== Mode.DELIVERY_UPDATE ||
-                (mode === Mode.DELIVERY_UPDATE && order) ? (
+                  (mode === Mode.DELIVERY_UPDATE && order) ? (
                   <div className="order-informations__total-price border-top py-3">
                     <Order
                       storeNodeId={storeNodeId}
@@ -687,7 +690,7 @@ const DeliveryForm = ({
                 ) : null}
 
                 {modeIn(mode, [Mode.DELIVERY_CREATE, Mode.DELIVERY_UPDATE]) &&
-                isDispatcher ? (
+                  isDispatcher ? (
                   <div
                     className="border-top py-3"
                     data-testid="saved_order__container">
