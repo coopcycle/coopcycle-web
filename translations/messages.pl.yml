@@ -729,6 +729,7 @@ basics.no: Nie
 basics.yes: Tak
 basics.none: Brak
 basics.weeks: '%count% tydzień|%count% tygodnie'
+basics.months: '%count% miesiac|%count% miesiace'
 basics.days: '%count% dzień|%count% dni'
 basics.hours: '%count% godzina|%count% godziny'
 task.receipt.reference: 'Odniesienie: <strong>%ref%</strong>'

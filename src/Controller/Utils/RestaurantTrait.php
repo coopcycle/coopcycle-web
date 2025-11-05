@@ -22,6 +22,7 @@ use AppBundle\Entity\Sylius\ProductImage;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Sylius\ProductVariant;
 use AppBundle\Entity\Sylius\ProductVariantTranslation;
+use AppBundle\Entity\Sylius\Promotion;
 use AppBundle\Entity\Sylius\PromotionCoupon;
 use AppBundle\Entity\Sylius\TaxCategory;
 use AppBundle\Entity\Sylius\TaxonRepository;
@@ -67,7 +68,6 @@ use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentMethodInterface;
 use Sylius\Component\Product\Model\ProductTranslation;
 use Sylius\Component\Product\Repository\ProductOptionRepositoryInterface;
-use Sylius\Component\Promotion\Model\Promotion;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Promotion\Checker\Eligibility\PromotionEligibilityCheckerInterface;
 use Sylius\Component\Promotion\Checker\Eligibility\PromotionCouponEligibilityCheckerInterface;
@@ -852,6 +852,11 @@ trait RestaurantTrait
         LoopeatClient $loopeatClient,
         bool $taxIncl)
     {
+        $filterCollection = $entityManager->getFilters();
+        if ($filterCollection->isEnabled('disabled_filter')) {
+            $filterCollection->disable('disabled_filter');
+        }
+
         $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
@@ -941,6 +946,11 @@ trait RestaurantTrait
         EntityManagerInterface $entityManager,
         LoopeatClient $loopeatClient)
     {
+        $filterCollection = $entityManager->getFilters();
+        if ($filterCollection->isEnabled('disabled_filter')) {
+            $filterCollection->disable('disabled_filter');
+        }
+
         $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
@@ -1538,6 +1548,7 @@ trait RestaurantTrait
         foreach ($restaurant->getPromotions() as $promotion) {
             if ($promotion->isCouponBased()) {
                 foreach ($promotion->getCoupons() as $coupon) {
+
                     if (!$promotionCouponExpirationChecker->isEligible(new Order(), $coupon)) {
                         $past[] = $coupon;
                     } else {
@@ -2137,6 +2148,61 @@ trait RestaurantTrait
 
             }
 
+        }
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->redirectToRoute($routes['restaurant_promotions'], ['id' => $restaurantId]);
+    }
+
+    public function featureRestaurantPromotionAction($restaurantId, Request $request)
+    {
+        $restaurant = $this->entityManager
+            ->getRepository(LocalBusiness::class)
+            ->find($restaurantId);
+
+        // TODO Access control
+
+        if ($request->isMethod('POST')) {
+
+            $type = $request->request->get('type');
+            $id = $request->request->getInt('id');
+
+            foreach ($restaurant->getPromotions() as $promotion) {
+                $promotion->setFeatured(false);
+                if ($promotion->isCouponBased()) {
+                    foreach ($promotion->getCoupons() as $coupon) {
+                        $coupon->setFeatured(false);
+                    }
+                }
+            }
+
+            if ($type === 'coupon') {
+
+                foreach ($restaurant->getPromotions() as $promotion) {
+                    if ($promotion->isCouponBased()) {
+                        foreach ($promotion->getCoupons() as $coupon) {
+                            if ($id === $coupon->getId()) {
+                                $coupon->setFeatured(true);
+                                break 2;
+                            }
+                        }
+                    }
+                }
+
+            } elseif ($type === 'promotion') {
+
+                foreach ($restaurant->getPromotions() as $promotion) {
+                    if (!$promotion->isCouponBased() && $id === $promotion->getId()) {
+                        $promotion->setFeatured(true);
+                        $this->entityManager->flush();
+                        break;
+                    }
+                }
+
+            }
+
+            $this->entityManager->flush();
         }
 
         $routes = $request->attributes->get('routes');

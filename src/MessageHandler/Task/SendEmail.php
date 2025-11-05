@@ -42,7 +42,7 @@ class SendEmail
         }
 
         // Send email to store owners
-        $owners = $store->getOwners()->toArray();
+        $owners = $store->getOwners()->filter(fn($owner) => $owner->isEnabled())->toArray();
         if (count($owners) > 0) {
 
             $ownerMails = [];

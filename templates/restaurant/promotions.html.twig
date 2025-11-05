@@ -35,10 +35,10 @@
 <!-- Tab panes -->
 <div class="tab-content">
   <div role="tabpanel" class="tab-pane active" id="ongoing">
-    {% include 'restaurant/_partials/promotions.html.twig' with { promotions: ongoing_promotions, show_archive: true } %}
+    {% include 'restaurant/_partials/promotions.html.twig' with { promotions: ongoing_promotions, show_archive: true, show_feature: true } %}
   </div>
   <div role="tabpanel" class="tab-pane" id="past">
-    {% include 'restaurant/_partials/promotions.html.twig' with { promotions: past_promotions, show_archive: false } %}
+    {% include 'restaurant/_partials/promotions.html.twig' with { promotions: past_promotions, show_archive: false, show_feature: false } %}
   </div>
 </div>
 

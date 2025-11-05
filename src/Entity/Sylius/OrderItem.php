@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\Sylius;
 
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
@@ -11,6 +12,7 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\Api\State\CartItemProcessor;
+use AppBundle\Api\State\DeleteCartItemProcessor;
 use AppBundle\Api\State\UpdateCartItemProcessor;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Sylius\Customer\CustomerInterface;
@@ -26,7 +28,15 @@ use Sylius\Component\Order\Model\OrderItemInterface as BaseOrderItemInterface;
 #[ApiResource(
     uriTemplate: '/orders/{order}/items/{id}',
     operations: [
-        new Get(),
+        new Get(
+            security: 'is_granted(\'edit\', object.getOrder())',
+        ),
+        new Delete(
+            processor: DeleteCartItemProcessor::class,
+            normalizationContext: ['groups' => ['cart']],
+            security: 'is_granted(\'edit\', object.getOrder())',
+            status: 200,
+        ),
         new Put(
             processor: UpdateCartItemProcessor::class,
             input: CartItemInput::class,

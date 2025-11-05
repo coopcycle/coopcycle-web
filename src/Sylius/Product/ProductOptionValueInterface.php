@@ -4,8 +4,9 @@ namespace AppBundle\Sylius\Product;
 
 use AppBundle\Entity\Delivery\PricingRule;
 use Sylius\Component\Product\Model\ProductOptionValueInterface as BaseProductOptionValueInterface;
+use Sylius\Resource\Model\ToggleableInterface;
 
-interface ProductOptionValueInterface extends BaseProductOptionValueInterface
+interface ProductOptionValueInterface extends BaseProductOptionValueInterface, ToggleableInterface
 {
     public function getPrice(): int;
 

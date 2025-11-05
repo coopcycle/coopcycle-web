@@ -15,10 +15,13 @@ use AppBundle\Pricing\PriceExpressions\PricePerPackageExpression;
 use AppBundle\Pricing\PriceExpressions\PriceRangeExpression;
 use AppBundle\Pricing\ProductOptionValueWithQuantity;
 use AppBundle\Pricing\RuleHumanizer;
+use AppBundle\Service\PricingRuleSetManager;
 use AppBundle\Sylius\Product\ProductOptionValueFactory;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\FilterCollection;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -38,6 +41,13 @@ class OnDemandDeliveryProductProcessorTest extends TestCase
         $this->ruleHumanizer = $this->createMock(RuleHumanizer::class);
         $this->expressionLanguage = $this->createMock(ExpressionLanguage::class);
         $this->priceExpressionParser = $this->createMock(PriceExpressionParser::class);
+        $pricingRuleSetManager = $this->createMock(PricingRuleSetManager::class);
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $filterCollection = $this->createMock(FilterCollection::class);
+
+        $entityManager->method('getFilters')->willReturn($filterCollection);
+
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->processor = new OnDemandDeliveryProductProcessor(
@@ -45,6 +55,8 @@ class OnDemandDeliveryProductProcessorTest extends TestCase
             $this->ruleHumanizer,
             $this->expressionLanguage,
             $this->priceExpressionParser,
+            $pricingRuleSetManager,
+            $entityManager,
             $this->logger
         );
     }
@@ -398,6 +410,32 @@ class OnDemandDeliveryProductProcessorTest extends TestCase
         $this->assertSame(1, $result[0]->quantity);
     }
 
+    public function testProcessPricingRulePricePerPackageWithDiscountWithPriceEvaluationResult(): void
+    {
+        $rule = $this->createMock(PricingRule::class);
+        $productOptionValue1 = $this->createMock(ProductOptionValue::class);
+        $productOptionValue2 = $this->createMock(ProductOptionValue::class);
+
+        $rule->method('getProductOptionValues')->willReturn(new ArrayCollection([$productOptionValue1, $productOptionValue2]));
+
+        $rule->method('getPrice')->willReturn('price_per_package(small, 100, 2, 200)');
+        $this->priceExpressionParser->method('parsePrice')->willReturn(new PricePerPackageExpression('small', 100, 2, 200));
+
+        $productOptionValue1->method('getPrice')->willReturn(100);
+        $productOptionValue1->expects($this->never())->method('setPrice');
+        $productOptionValue2->method('getPrice')->willReturn(200);
+        $productOptionValue2->expects($this->never())->method('setPrice');
+
+        $rule->method('apply')->willReturn(new PriceEvaluation(100, 1));
+
+        $result = $this->processor->processPricingRule($rule, []);
+
+        $this->assertCount(1, $result);
+        $this->assertInstanceOf(ProductOptionValueWithQuantity::class, $result[0]);
+        $this->assertSame($productOptionValue1, $result[0]->productOptionValue);
+        $this->assertSame(1, $result[0]->quantity);
+    }
+
     public function testProcessPricingRulePricePerPackageWithPriceEvaluationResult(): void
     {
         $rule = $this->createMock(PricingRule::class);
@@ -547,6 +585,7 @@ class OnDemandDeliveryProductProcessorTest extends TestCase
         $deliveryVariant = $this->createMock(ProductVariantInterface::class);
         $regularOptionValue = $this->createMock(ProductOptionValueInterface::class);
         $percentageOptionValue = $this->createMock(ProductOptionValueInterface::class);
+        $percentageOptionValue->method('isEnabled')->willReturn(true);
 
         // Task variant with regular option
         $taskVariant->method('getOptionValues')->willReturn(new ArrayCollection([$regularOptionValue]));

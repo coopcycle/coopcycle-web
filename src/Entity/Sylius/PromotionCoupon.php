@@ -10,6 +10,9 @@ class PromotionCoupon extends BasePromotionCoupon implements PromotionCouponInte
     /** @var int|null */
     protected $perCustomerUsageLimit;
 
+    /** @var bool */
+    protected $featured = false;
+
     /**
      * {@inheritdoc}
      */
@@ -24,5 +27,21 @@ class PromotionCoupon extends BasePromotionCoupon implements PromotionCouponInte
     public function setPerCustomerUsageLimit(?int $perCustomerUsageLimit): void
     {
         $this->perCustomerUsageLimit = $perCustomerUsageLimit;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setFeatured($featured = true): void
+    {
+        $this->featured = $featured;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isFeatured(): bool
+    {
+        return $this->featured;
     }
 }

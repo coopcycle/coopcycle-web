@@ -80,9 +80,11 @@ class SendEmailTest extends TestCase
 
         $bob->getEmail()->willReturn('bob@example.com');
         $bob->getFullName()->willReturn('Bob');
+        $bob->isEnabled()->willReturn(true);
 
         $jane->getEmail()->willReturn('jane@example.com');
         $jane->getFullName()->willReturn('Jane');
+        $jane->isEnabled()->willReturn(true);
 
         $restaurant = $this->prophesize(LocalBusiness::class);
 
@@ -158,9 +160,11 @@ class SendEmailTest extends TestCase
 
         $bob->getEmail()->willReturn('bob@example.com');
         $bob->getFullName()->willReturn('Bob');
+        $bob->isEnabled()->willReturn(true);
 
         $jane->getEmail()->willReturn('jane@example.com');
         $jane->getFullName()->willReturn('Jane');
+        $jane->isEnabled()->willReturn(true);
 
         $restaurant1 = $this->prophesize(LocalBusiness::class);
         $restaurant2 = $this->prophesize(LocalBusiness::class);
@@ -319,9 +323,11 @@ class SendEmailTest extends TestCase
 
         $bob->getEmail()->willReturn('bob@example.com');
         $bob->getFullName()->willReturn('Bob');
+        $bob->isEnabled()->willReturn(true);
 
         $jane->getEmail()->willReturn('jane@example.com');
         $jane->getFullName()->willReturn('Jane');
+        $jane->isEnabled()->willReturn(true);
 
         $restaurant = $this->prophesize(LocalBusiness::class);
 

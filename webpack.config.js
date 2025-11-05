@@ -36,9 +36,11 @@ Encore
   .addEntry('delivery-map', './js/app/delivery/map.js')
   .addEntry('delivery-embed-start-form', './js/app/delivery/embed-start.js')
   .addEntry('delivery-pricing-rules', './js/app/delivery/pricing/pricing-rules.js')
-  .addEntry('pricing-rule-set-form-react', './js/app/components/pricing-rule-set-form/index.tsx')
+  .addEntry('pricing-rule-set-form-react', './js/app/admin/pricing/entrypoint.tsx')
   .addEntry('delivery-tracking', './js/app/delivery/tracking.js')
-  .addEntry('recurrence-rule-form-react', './js/app/components/recurrence-rule-form/index.tsx')
+  .addEntry('delivery-form-react', './js/app/store/deliveries/entrypoint.tsx')
+  .addEntry('recurrence-rule-form-react', './js/app/store/recurrence_rules/entrypoint.tsx')
+  .addEntry('invoicing', './js/app/admin/invoicing/entrypoint.tsx')
   .addEntry('notifications', './js/app/notifications/index.js')
   .addEntry('foodtech-dashboard', './js/app/foodtech/dashboard/index.js')
   .addEntry('metrics', './js/app/metrics/index.js')
@@ -86,7 +88,9 @@ Encore
   .addEntry('widgets-admin', './js/app/widgets/admin.js')
   .addEntry('zone-preview', './js/app/zone/preview.js')
   .addEntry('failure-form', './js/app/failure/form.js')
-  .addEntry('incident-form', './js/app/incident/form.js')
+  .addEntry('incidents-ux-react-controllers', './js/app/admin/incidents/ux-react-controllers/index.js')
+  .addEntry('incidents-list', './js/app/admin/incidents/incidents-list.tsx')
+  .addEntry('incident-details', './js/app/admin/incidents/[id]/incident-details.tsx')
 
   // @see https://symfony.com/doc/current/frontend/encore/custom-loaders-plugins.html#adding-custom-plugins
   // @see https://github.com/moment/moment/issues/2373

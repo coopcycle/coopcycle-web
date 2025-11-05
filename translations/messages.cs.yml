@@ -563,6 +563,7 @@ basics.no: Ne
 basics.yes: Ano
 basics.none: Nic
 basics.weeks: '%count% týden|%count% týdnů'
+basics.months: '%count% měsice|%count% měsic'
 basics.days: '%count% den|%count% dnů'
 basics.hours: '%count% hodina|%count% hodin'
 task.receipt.reference: 'Reference: <strong>%ref%</strong>'

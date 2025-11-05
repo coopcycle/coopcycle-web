@@ -78,10 +78,6 @@ class PricingRuleSetManager
             $productOptionValue->disable();
         }
 
-        $newProductOptionValues = $this->productOptionValueFactory->createForPricingRule($pricingRule, $name);
-        foreach ($newProductOptionValues as $productOptionValue) {
-            $pricingRule->addProductOptionValue($productOptionValue);
-            $this->entityManager->persist($productOptionValue);
-        }
+        $this->productOptionValueFactory->createForPricingRule($pricingRule, $name);
     }
 }

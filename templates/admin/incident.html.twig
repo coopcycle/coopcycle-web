@@ -1,4 +1,9 @@
 {% extends "admin.html.twig" %}
+
+{% block ux_react_controllers %}
+  {{ encore_entry_script_tags('incidents-ux-react-controllers') }}
+{% endblock %}
+
 {% set createdBy = incident.getCreatedBy() %}
 
 {% block breadcrumb %}
@@ -61,9 +66,10 @@
 {% endblock %}
 
 {% block styles %}
-{{ encore_entry_link_tags('incident-form') }}
+  {{ encore_entry_link_tags('incidents-ux-react-controllers') }}
+  {{ encore_entry_link_tags('incident-details') }}
 {% endblock %}
 
 {% block scripts %}
-{{ encore_entry_script_tags('incident-form') }}
+  {{ encore_entry_script_tags('incident-details') }}
 {% endblock %}

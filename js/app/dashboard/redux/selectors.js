@@ -98,7 +98,7 @@ export const selectGroups = createSelector(
       const keys = Array.from(groupsMap.keys())
       const group = find(keys, group => group.id === task.group.id)
       if (!group) {
-        groupsMap.set(task.group, [ task ])
+        groupsMap.set(task.group, [task])
       } else {
         groupsMap.get(group).push(task)
       }
@@ -128,6 +128,7 @@ const sortUnassignedTasks = (taskA, taskB) => {
   return 1
 }
 
+
 export const selectStandaloneTasks = createSelector(
   selectUnassignedTasks,
   state => state.taskListGroupMode,
@@ -140,39 +141,66 @@ export const selectStandaloneTasks = createSelector(
       standaloneTasks = filter(unassignedTasks, task => !belongsToGroup(task))
     }
 
-    // Order by dropoff desc, with pickup before
+    // === DROPOFF SORTING ===
     if (taskListGroupMode === 'GROUP_MODE_DROPOFF_DESC' || taskListGroupMode === 'GROUP_MODE_DROPOFF_ASC') {
 
       const dropoffTasks = filter(standaloneTasks, t => t.type === 'DROPOFF')
 
       dropoffTasks.sort((a, b) => {
-        return sortUnassignedTasks(a, b) > 0 ?
-          (taskListGroupMode === 'GROUP_MODE_DROPOFF_DESC' ? -1 : 1)
-          :
-          (taskListGroupMode === 'GROUP_MODE_DROPOFF_DESC' ? 1 : -1)
+        return sortUnassignedTasks(a, b) > 0
+          ? (taskListGroupMode === 'GROUP_MODE_DROPOFF_DESC' ? -1 : 1)
+          : (taskListGroupMode === 'GROUP_MODE_DROPOFF_DESC' ? 1 : -1)
       })
 
       const grouped = reduce(dropoffTasks, (acc, task) => {
         if (task.previous) {
           const prev = find(standaloneTasks, t => t['@id'] === task.previous)
-
-          if (prev && !acc.find(t => t['@id'] === prev['@id'])) { // avoid inserting the pickup several time for multi-dropoff
+          if (prev && !acc.find(t => t['@id'] === prev['@id'])) {
             acc.push(prev)
           }
         }
         acc.push(task)
-
         return acc
       }, [])
 
       standaloneTasks = grouped
-    } else {
+    }
+
+    // === PICKUP SORTING ===
+    else if (taskListGroupMode === 'GROUP_MODE_PICKUP_DESC' || taskListGroupMode === 'GROUP_MODE_PICKUP_ASC') {
+
+      const pickupTasks = filter(standaloneTasks, t => t.type === 'PICKUP')
+
+      pickupTasks.sort((a, b) => {
+        return sortUnassignedTasks(a, b) > 0
+          ? (taskListGroupMode === 'GROUP_MODE_PICKUP_DESC' ? -1 : 1)
+          : (taskListGroupMode === 'GROUP_MODE_PICKUP_DESC' ? 1 : -1)
+      })
+
+      const grouped = reduce(pickupTasks, (acc, task) => {
+        // find the dropoff(s) associated with this pickup
+        const drops = filter(standaloneTasks, t => t.previous === task['@id'])
+        acc.push(task)
+        drops.forEach(drop => {
+          if (!acc.find(t => t['@id'] === drop['@id'])) {
+            acc.push(drop)
+          }
+        })
+        return acc
+      }, [])
+
+      standaloneTasks = grouped
+    }
+
+    // === DEFAULT SORT ===
+    else {
       standaloneTasks.sort(sortUnassignedTasks)
     }
 
     return filter(standaloneTasks, t => !taskIdToTourIdMap.has(t['@id']))
   }
 )
+
 
 export const selectVisibleTaskIds = createSelector(
   selectAllTasks,
@@ -269,7 +297,7 @@ const fuseOptions = {
   threshold: 0.4,
   minMatchCharLength: 3,
   ignoreLocation: true,
-  keys: ['id', 'metadata.order_number', 'tags.name', 'tags.slug', 'address.contactName', 'address.name','address.streetAddress','comments', 'orgName']
+  keys: ['id', 'metadata.order_number', 'tags.name', 'tags.slug', 'address.contactName', 'address.name', 'address.streetAddress', 'comments', 'orgName']
 }
 
 export const selectFuseSearch = createSelector(
@@ -317,7 +345,7 @@ export const selectRecurrenceRules = createSelector(
   (date, rrules) => {
 
     const startOfDayUTC = moment.utc(`${moment(date).format('YYYY-MM-DD')} 00:00:00`).toDate()
-    const endOfDayUTC   = moment.utc(`${moment(date).format('YYYY-MM-DD')} 23:59:59`).toDate()
+    const endOfDayUTC = moment.utc(`${moment(date).format('YYYY-MM-DD')} 23:59:59`).toDate()
 
     return filter(rrules, rrule => {
 
@@ -392,17 +420,17 @@ export const selectLinkedTasksIds = createSelector(
 
 export const selectTagsSelectOptions = createSelector(
   selectAllTags,
-  (allTags) => allTags.map((tag) => {return {...tag, isTag: true, label: tag.name, value: tag.slug}})
+  (allTags) => allTags.map((tag) => { return { ...tag, isTag: true, label: tag.name, value: tag.slug } })
 )
 
-const tourColorPalette = ["#556b2f","#8b4513","#8b0000","#808000","#483d8b","#008000","#3cb371","#bc8f8f","#b8860b","#4682b4","#d2691e","#9acd32","#20b2aa","#00008b","#32cd32","#8b008b","#d2b48c","#9932cc","#ff0000","#ff8c00","#ffd700","#6a5acd","#c71585","#0000cd","#00ff00","#00fa9a","#dc143c","#00ffff","#f4a460","#0000ff","#a020f0","#adff2f","#ff6347","#da70d6","#ff00ff","#db7093","#f0e68c","#fa8072","#ffff54","#6495ed","#dda0dd","#90ee90","#87cefa","#ff69b4"]
+const tourColorPalette = ["#556b2f", "#8b4513", "#8b0000", "#808000", "#483d8b", "#008000", "#3cb371", "#bc8f8f", "#b8860b", "#4682b4", "#d2691e", "#9acd32", "#20b2aa", "#00008b", "#32cd32", "#8b008b", "#d2b48c", "#9932cc", "#ff0000", "#ff8c00", "#ffd700", "#6a5acd", "#c71585", "#0000cd", "#00ff00", "#00fa9a", "#dc143c", "#00ffff", "#f4a460", "#0000ff", "#a020f0", "#adff2f", "#ff6347", "#da70d6", "#ff00ff", "#db7093", "#f0e68c", "#fa8072", "#ffff54", "#6495ed", "#dda0dd", "#90ee90", "#87cefa", "#ff69b4"]
 
 export const selectTourIdToColorMap = createSelector(
   selectAllTours,
   (allTours) => {
     let toColorMap = new Map()
     allTours.forEach((tour, index) => {
-        toColorMap.set(tour["@id"], tourColorPalette[index % tourColorPalette.length])
+      toColorMap.set(tour["@id"], tourColorPalette[index % tourColorPalette.length])
+    })
+    return toColorMap
   })
-  return toColorMap
-})

@@ -12,7 +12,6 @@ use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Doctrine\Orm\Filter\ExistsFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
-use AppBundle\Action\Cart\DeleteItem as DeleteCartItem;
 use AppBundle\Action\Order\Accept as OrderAccept;
 use AppBundle\Action\Order\AddPlayer;
 use AppBundle\Action\Order\Assign as OrderAssign;
@@ -231,18 +230,6 @@ use Webmozart\Assert\Assert as WMAssert;
             denormalizationContext: ['groups' => ['order_update']],
             security: 'is_granted(\'edit\', object)',
             validationContext: ['groups' => ['cart']]
-        ),
-        new Delete(
-            uriTemplate: '/orders/{id}/items/{itemId}',
-            status: 200,
-            controller: DeleteCartItem::class,
-            openapiContext: ['summary' => 'Deletes items from a Order resource.'],
-            normalizationContext: ['groups' => ['cart']],
-            // Disable WriteListener to avoid having empty 204 response
-            security: 'is_granted(\'edit\', object)',
-            validationContext: ['groups' => ['cart']],
-            validate: false,
-            write: false
         ),
         new Get(
             uriTemplate: '/orders/{id}/centrifugo',

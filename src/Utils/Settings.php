@@ -15,9 +15,7 @@ class Settings
     #[Assert\Email(groups: ['Default', 'mandatory'])]
     public $administrator_email;
 
-    /**
-     * @AssertPhoneNumber
-     */
+    #[AssertPhoneNumber]
     public $phone_number;
 
     #[Assert\Regex('/^pk_test_[A-Za-z0-9]+/')]

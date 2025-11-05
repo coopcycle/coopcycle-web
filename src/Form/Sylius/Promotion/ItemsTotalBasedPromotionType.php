@@ -3,6 +3,7 @@
 namespace AppBundle\Form\Sylius\Promotion;
 
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Sylius\Promotion;
 use AppBundle\Form\Type\MoneyType;
 use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand;
@@ -10,7 +11,6 @@ use AppBundle\Sylius\Promotion\Checker\Rule\IsRestaurantRuleChecker;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsItemsTotalAboveRuleChecker;
 use Ramsey\Uuid\Uuid;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
-use Sylius\Component\Promotion\Model\Promotion;
 use Sylius\Component\Promotion\Model\PromotionAction;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Component\Form\AbstractType;
@@ -71,7 +71,7 @@ class ItemsTotalBasedPromotionType extends AbstractType
             $form = $event->getForm();
             $data = $event->getData();
 
-            if (null !== $data->getId()) {
+            if (null !== $data) {
 
                 foreach ($data->getRules() as $rule) {
                     if ($rule->getType() === IsItemsTotalAboveRuleChecker::TYPE) {
