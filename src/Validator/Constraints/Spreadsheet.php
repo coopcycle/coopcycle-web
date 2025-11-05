@@ -21,7 +21,7 @@ class Spreadsheet extends Constraint
         $this->type = $type;
     }
 
-    public function validatedBy()
+    public function validatedBy(): string
     {
         $class = new \ReflectionClass($this);
 

@@ -1,4 +1,4 @@
-Craue\ConfigBundle\Entity\Setting:
+AppBundle\Entity\Setting:
   setting_latlng:
     section: general
     name: latlng

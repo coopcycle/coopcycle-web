@@ -20,6 +20,8 @@ use AppBundle\Sylius\Product\ProductOptionValueFactory;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\FilterCollection;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -40,6 +42,12 @@ class OnDemandDeliveryProductProcessorTest extends TestCase
         $this->expressionLanguage = $this->createMock(ExpressionLanguage::class);
         $this->priceExpressionParser = $this->createMock(PriceExpressionParser::class);
         $pricingRuleSetManager = $this->createMock(PricingRuleSetManager::class);
+
+        $entityManager = $this->createMock(EntityManagerInterface::class);
+        $filterCollection = $this->createMock(FilterCollection::class);
+
+        $entityManager->method('getFilters')->willReturn($filterCollection);
+
         $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->processor = new OnDemandDeliveryProductProcessor(
@@ -48,6 +56,7 @@ class OnDemandDeliveryProductProcessorTest extends TestCase
             $this->expressionLanguage,
             $this->priceExpressionParser,
             $pricingRuleSetManager,
+            $entityManager,
             $this->logger
         );
     }
@@ -576,6 +585,7 @@ class OnDemandDeliveryProductProcessorTest extends TestCase
         $deliveryVariant = $this->createMock(ProductVariantInterface::class);
         $regularOptionValue = $this->createMock(ProductOptionValueInterface::class);
         $percentageOptionValue = $this->createMock(ProductOptionValueInterface::class);
+        $percentageOptionValue->method('isEnabled')->willReturn(true);
 
         // Task variant with regular option
         $taskVariant->method('getOptionValues')->willReturn(new ArrayCollection([$regularOptionValue]));

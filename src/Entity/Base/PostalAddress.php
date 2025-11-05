@@ -73,11 +73,10 @@ abstract class PostalAddress
 
     /**
      * @var PhoneNumber|null
-     *
-     * @AssertPhoneNumber(groups={"Default", "cart"})
      */
     #[Groups(['address', 'address_create', 'task_create', 'task_edit', 'delivery_create', 'pricing_deliveries', 'order_update', 'cart'])]
     #[ApiProperty(types: ['https://schema.org/telephone'])]
+    #[AssertPhoneNumber(groups: ['Default', 'cart'])]
     protected $telephone;
 
     /**

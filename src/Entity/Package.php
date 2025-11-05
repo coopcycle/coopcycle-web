@@ -43,10 +43,8 @@ class Package implements TaggableInterface
 
     protected $description;
 
-    /**
-     * @Assert\CssColor
-     */
     #[Assert\NotBlank]
+    #[Assert\CssColor]
     protected $color;
 
     #[Assert\NotBlank]
