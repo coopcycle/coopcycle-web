@@ -16,6 +16,7 @@ AppBundle\Entity\Task:
 
 AppBundle\Entity\Delivery:
   delivery_1:
+    store: "@store_1"
     __factory:
       createWithTasks:
         - '@task_1'

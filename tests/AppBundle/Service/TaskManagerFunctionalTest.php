@@ -60,6 +60,9 @@ class TaskManagerFunctionalTest extends KernelTestCase
     {
         // SETUP
         $entities = $this->fixturesLoader->load([
+            __DIR__.'/../../../fixtures/ORM/setup_default.yml',
+            __DIR__.'/../../../fixtures/ORM/user_dispatcher.yml',
+            __DIR__.'/../../../fixtures/ORM/store_with_task_pricing.yml',
             __DIR__.'/../../../fixtures/ORM/task_manager_2.yml',
         ], $_SERVER, [], PurgeMode::createDeleteMode());
 
