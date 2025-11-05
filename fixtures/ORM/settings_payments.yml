@@ -1,4 +1,4 @@
-Craue\ConfigBundle\Entity\Setting:
+AppBundle\Entity\Setting:
   setting_stripe_test_publishable_key:
     section: general
     name: stripe_test_publishable_key

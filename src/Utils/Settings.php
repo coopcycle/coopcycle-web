@@ -98,4 +98,6 @@ class Settings
 
     #[Assert\Regex('/^sh_[A-Za-z0-9]+/')]
     public $paygreen_shop_id;
+
+    public $pawapay_api_key;
 }

@@ -1,4 +1,4 @@
-Craue\ConfigBundle\Entity\Setting:
+AppBundle\Entity\Setting:
   setting_default_tax_category:
     section: general
     name: default_tax_category

@@ -44,6 +44,7 @@ class SettingsManager
         'google_api_key_custom',
         'paygreen_public_key',
         'paygreen_secret_key',
+        'pawapay_api_key',
     ];
 
     private static $boolean = [
@@ -234,13 +235,14 @@ class SettingsManager
         $supportsStripe = $this->canEnableStripeTestmode() || $this->canEnableStripeLivemode();
         $supportsMercadopago = $this->canEnableMercadopagoTestmode() || $this->canEnableMercadopagoLivemode();
         $supportsPaygreen = $this->configKeysAreNotEmpty('paygreen_public_key', 'paygreen_secret_key', 'paygreen_shop_id');
+        $supportsPawapay = $this->configKeysAreNotEmpty('pawapay_api_key');
 
         if ($this->forceStripe) {
 
             return $supportsStripe;
         }
 
-        return $supportsStripe || $supportsMercadopago || $supportsPaygreen;
+        return $supportsStripe || $supportsMercadopago || $supportsPaygreen || $supportsPawapay;
     }
 
     public function canSendSms()
@@ -293,6 +295,9 @@ class SettingsManager
             $this->craueConfig->set($name, $value);
 
         } catch (\RuntimeException $e) {
+
+            // TODO
+            // Check that exception message matches "Setting "$name" couldn't be found."
 
             $className = $this->configEntityName;
 
