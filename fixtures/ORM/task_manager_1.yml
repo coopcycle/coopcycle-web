@@ -1,0 +1,30 @@
+include:
+  - address_client_1.yml
+
+AppBundle\Entity\Task:
+  task_1:
+    type: 'PICKUP'
+    status: 'TODO'
+    doneAfter: <identity(new \DateTime('today'))>
+    doneBefore: <identity(new \DateTime('today'))>
+    address: "@address_client_1"
+  task_2:
+    status: 'CANCELLED'
+    doneAfter: <identity(new \DateTime('today'))>
+    doneBefore: <identity(new \DateTime('today'))>
+    address: "@address_client_1"
+
+AppBundle\Entity\Delivery:
+  delivery_1:
+    __factory:
+      createWithTasks:
+        - '@task_1'
+        - '@task_2'
+
+AppBundle\Entity\Sylius\Order:
+  order_1:
+    __factory:
+      '@sylius.factory.order::createForDelivery':
+        - "@delivery_1"
+    __calls:
+      - setState: [ 'new' ]

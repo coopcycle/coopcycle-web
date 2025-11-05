@@ -2,13 +2,11 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Entity\Address;
-use AppBundle\Entity\Base\GeoCoordinates;
-use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task;
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
+use Fidry\AliceDataFixtures\LoaderInterface;
+use Fidry\AliceDataFixtures\Persistence\PurgeMode;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -16,6 +14,7 @@ class TaskManagerFunctionalTest extends KernelTestCase
 {
     protected ?EntityManagerInterface $entityManager;
     protected TaskManager $taskManager;
+    protected LoaderInterface $fixturesLoader;
 
     protected function setUp(): void
     {
@@ -23,9 +22,7 @@ class TaskManagerFunctionalTest extends KernelTestCase
         self::bootKernel();
         $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
         $this->taskManager = self::getContainer()->get(TaskManager::class);
-
-        $purger = new ORMPurger($this->entityManager);
-        $purger->purge();
+        $this->fixturesLoader = self::getContainer()->get('fidry_alice_data_fixtures.loader.doctrine');
     }
 
     protected function tearDown(): void
@@ -39,34 +36,15 @@ class TaskManagerFunctionalTest extends KernelTestCase
     function testOnWithLastCancelledTask()
     {
         // SETUP
-        $address = new Address();
-        $address->setStreetAddress("64 rue de la paix, France");
-        $address->setGeo(new GeoCoordinates(1.0, 1.0));
-        $this->entityManager->persist($address);
+        $entities = $this->fixturesLoader->load([
+            __DIR__.'/../../../fixtures/ORM/task_manager_1.yml',
+        ], $_SERVER, [], PurgeMode::createDeleteMode());
 
-        $task = new Task();
-        $task->setType(Task::TYPE_PICKUP);
-        $task->setStatus(Task::STATUS_TODO);
-        $task->setBefore(new \DateTime());
-        $task->setAddress($address);
-        $this->entityManager->persist($task);
+        /** @var Task $task */
+        $task = $entities['task_1'];
 
-        $task2 = new Task();
-        $task->setType(Task::TYPE_DROPOFF);
-        $task2->setStatus(Task::STATUS_CANCELLED);
-        $task2->setBefore(new \DateTime());
-        $task2->setAddress($address);
-        $this->entityManager->persist($task2);
-
-        $delivery = new Delivery();
-        $delivery->withTasks($task, $task2);
-        $this->entityManager->persist($delivery);
-
-        $order = new Order();
-        $order->setState(OrderInterface::STATE_NEW);
-        $order->setDelivery($delivery);
-        $this->entityManager->persist($order);
-        $this->entityManager->flush();
+        /** @var Order $order */
+        $order = $entities['order_1'];
 
         $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
 
@@ -81,34 +59,14 @@ class TaskManagerFunctionalTest extends KernelTestCase
     function testOnWithFirstCancelledTask()
     {
         // SETUP
-        $address = new Address();
-        $address->setStreetAddress("64 rue de la paix, France");
-        $address->setGeo(new GeoCoordinates(1.0, 1.0));
-        $this->entityManager->persist($address);
+        $entities = $this->fixturesLoader->load([
+            __DIR__.'/../../../fixtures/ORM/task_manager_2.yml',
+        ], $_SERVER, [], PurgeMode::createDeleteMode());
 
-        $task = new Task();
-        $task->setType(Task::TYPE_PICKUP);
-        $task->setStatus(Task::STATUS_TODO);
-        $task->setBefore(new \DateTime());
-        $task->setAddress($address);
-        $this->entityManager->persist($task);
-
-        $task2 = new Task();
-        $task->setType(Task::TYPE_DROPOFF);
-        $task2->setStatus(Task::STATUS_TODO);
-        $task2->setBefore(new \DateTime());
-        $task2->setAddress($address);
-        $this->entityManager->persist($task2);
-
-        $delivery = new Delivery();
-        $delivery->withTasks($task, $task2);
-        $this->entityManager->persist($delivery);
-
-        $order = new Order();
-        $order->setState(OrderInterface::STATE_NEW);
-        $order->setDelivery($delivery);
-        $this->entityManager->persist($order);
-        $this->entityManager->flush();
+        /** @var Task $task */
+        $task = $entities['task_1'];
+        /** @var Order $order */
+        $order = $entities['order_1'];
 
         $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
 
@@ -123,26 +81,14 @@ class TaskManagerFunctionalTest extends KernelTestCase
     function testOnWithOnlyOneCancelledTask()
     {
         // SETUP
-        $address = new Address();
-        $address->setStreetAddress("64 rue de la paix, France");
-        $address->setGeo(new GeoCoordinates(1.0, 1.0));
-        $this->entityManager->persist($address);
+        $entities = $this->fixturesLoader->load([
+            __DIR__.'/../../../fixtures/ORM/task_manager_3.yml',
+        ], $_SERVER, [], PurgeMode::createDeleteMode());
 
-        $task = new Task();
-        $task->setStatus(Task::STATUS_TODO);
-        $task->setBefore(new \DateTime());
-        $task->setAddress($address);
-        $this->entityManager->persist($task);
-
-        $delivery = new Delivery();
-        $delivery->setTasks([$task]);
-        $this->entityManager->persist($delivery);
-
-        $order = new Order();
-        $order->setState(OrderInterface::STATE_NEW);
-        $order->setDelivery($delivery);
-        $this->entityManager->persist($order);
-        $this->entityManager->flush();
+        /** @var Task $task */
+        $task = $entities['task_1'];
+        /** @var Order $order */
+        $order = $entities['order_1'];
 
         $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
 
