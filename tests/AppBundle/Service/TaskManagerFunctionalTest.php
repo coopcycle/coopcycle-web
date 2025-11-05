@@ -1,20 +1,18 @@
 <?php
 
-namespace Tests\AppBundle\Doctrine\EventSubscriber;
+namespace AppBundle\Service;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task;
-use AppBundle\Service\TaskManager;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
-use Fidry\AliceDataFixtures\LoaderInterface;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
-class TaskSubscriberFunctionalTest extends KernelTestCase
+class TaskManagerFunctionalTest extends KernelTestCase
 {
     protected ?EntityManagerInterface $entityManager;
     protected TaskManager $taskManager;
