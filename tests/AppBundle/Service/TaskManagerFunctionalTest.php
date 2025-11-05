@@ -37,7 +37,7 @@ class TaskManagerFunctionalTest extends KernelTestCase
     {
         // SETUP
         $entities = $this->fixturesLoader->load([
-            __DIR__.'/../../../fixtures/ORM/task_manager_1.yml',
+            __DIR__.'/../../../fixtures/ORM/task_manager_one_non_cancelled.yml',
         ], $_SERVER, [], PurgeMode::createDeleteMode());
 
         /** @var Task $task */
@@ -63,7 +63,7 @@ class TaskManagerFunctionalTest extends KernelTestCase
             __DIR__.'/../../../fixtures/ORM/setup_default.yml',
             __DIR__.'/../../../fixtures/ORM/user_dispatcher.yml',
             __DIR__.'/../../../fixtures/ORM/store_with_task_pricing.yml',
-            __DIR__.'/../../../fixtures/ORM/task_manager_2.yml',
+            __DIR__.'/../../../fixtures/ORM/task_manager_two_non_cancelled.yml',
         ], $_SERVER, [], PurgeMode::createDeleteMode());
 
         /** @var Task $task */
@@ -87,7 +87,7 @@ class TaskManagerFunctionalTest extends KernelTestCase
     {
         // SETUP
         $entities = $this->fixturesLoader->load([
-            __DIR__.'/../../../fixtures/ORM/task_manager_3.yml',
+            __DIR__.'/../../../fixtures/ORM/task_manager_single_task.yml',
         ], $_SERVER, [], PurgeMode::createDeleteMode());
 
         /** @var Task $task */
