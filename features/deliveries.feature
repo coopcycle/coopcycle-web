@@ -434,7 +434,8 @@ Feature: Deliveries
               "quantity": 2,
               "volume_per_package": 3,
               "short_code": "XL",
-              "labels": @array@
+              "labels": @array@,
+              "tasks": @array@
             }
           ],
           "barcode": {"@*@":"@*@"},
@@ -476,7 +477,8 @@ Feature: Deliveries
               "quantity": 2,
               "volume_per_package": 3,
               "short_code": "XL",
-              "labels": @array@
+              "labels": @array@,
+              "tasks": @array@
             }
           ],
           "barcode": {"@*@":"@*@"},

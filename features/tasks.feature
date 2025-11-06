@@ -1388,7 +1388,8 @@ Feature: Tasks
               "quantity": 4,
               "volume_per_package": 1,
               "short_code": "SM",
-              "labels": @array@
+              "labels": @array@,
+              "tasks": @array@
             }],
             "emittedCo2": "@integer@",
             "traveledDistanceMeter": "@integer@",
@@ -1575,7 +1576,8 @@ Feature: Tasks
               "quantity": 4,
               "volume_per_package": 1,
               "short_code": "SM",
-              "labels": @array@
+              "labels": @array@,
+              "tasks": @array@
             }],
             "emittedCo2": "@integer@",
             "traveledDistanceMeter": "@integer@",
@@ -2793,7 +2795,8 @@ Feature: Tasks
               "quantity":4,
               "volume_per_package": 1,
               "short_code": "SM",
-              "labels":@array@
+              "labels":@array@,
+              "tasks":@array@
             }
          ],
          "@*@": "@*@"
