@@ -2,6 +2,7 @@
 
 namespace AppBundle\MessageHandler\Task\Command;
 
+use AppBundle\Domain\Order\Event\OrderPriceUpdated;
 use AppBundle\Domain\Task\Event;
 use AppBundle\Domain\Task\Event\TaskUpdated;
 use AppBundle\Entity\Delivery;
@@ -123,5 +124,10 @@ class CancelHandler
             'oldTotal' => $oldTotal,
             'newTotal' => $order->getTotal(),
         ]);
+
+        $event = new OrderPriceUpdated($order, $order->getTotal(), $oldTotal);
+        $this->eventBus->dispatch(
+            (new Envelope($event))->with(new DispatchAfterCurrentBusStamp())
+        );
     }
 }
