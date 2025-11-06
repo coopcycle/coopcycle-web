@@ -373,7 +373,7 @@
         "RULE_LEGACY_TARGET_DYNAMIC_MIGRATE_TARGET_TASK": "Passer à : Appliquer les règles pour chaque point (tâche de RETRAIT et/ou de DÉPÔT)",
         "RULE_LEGACY_TARGET_DYNAMIC_MIGRATE_TARGET_TASK_HELP": "(choisissez cette option si vous utilisez ce schéma de tarification pour les livraisons complexes à points multiples)",
         "RULE_PICKER_LINE_OPTGROUP_DEPRECATED": "Obsolète",
-        "RULE_PICKER_LINE_ORDER_ITEMS_TOTAL": "Total des articles de commande Food Tech",
+        "RULE_PICKER_LINE_ORDER_ITEMS_TOTAL": "Total des articles de commande Food Tech (en centimes)",
         "RULE_PICKER_LINE_PACKAGES_TARGET_DELIVERY": "Colis (total)",
         "RULE_PICKER_LINE_PACKAGES_TARGET_TASK": "Colis",
         "RULE_PICKER_LINE_TIME_SLOT": "Créneau horaire",

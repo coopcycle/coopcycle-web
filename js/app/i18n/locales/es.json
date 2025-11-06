@@ -369,7 +369,7 @@
         "RULE_LEGACY_TARGET_DYNAMIC_MIGRATE_TARGET_TASK": "Cambiar a: Aplicar reglas por cada punto (tarea de RECOGIDA y/o ENTREGA)",
         "RULE_LEGACY_TARGET_DYNAMIC_MIGRATE_TARGET_TASK_HELP": "(elija esta opción si utiliza este esquema de precios para entregas complejas multipunto)",
         "RULE_PICKER_LINE_OPTGROUP_DEPRECATED": "Obsoleto",
-        "RULE_PICKER_LINE_ORDER_ITEMS_TOTAL": "Total de artículos de pedido Food Tech",
+        "RULE_PICKER_LINE_ORDER_ITEMS_TOTAL": "Total de artículos de pedido Food Tech (centavos)",
         "RULE_PICKER_LINE_PACKAGES_TARGET_DELIVERY": "Paquetes (total)",
         "RULE_PICKER_LINE_PACKAGES_TARGET_TASK": "Paquetes",
         "RULE_PICKER_LINE_TIME_SLOT": "Franja horaria",

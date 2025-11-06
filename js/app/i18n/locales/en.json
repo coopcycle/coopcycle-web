@@ -321,7 +321,7 @@
         "RULE_PICKER_LINE_PACKAGES": "Packages",
         "RULE_PICKER_LINE_PACKAGES_TARGET_DELIVERY": "Packages (total)",
         "RULE_PICKER_LINE_PACKAGES_TARGET_TASK": "Packages",
-        "RULE_PICKER_LINE_ORDER_ITEMS_TOTAL": "Food Tech Order Items total",
+        "RULE_PICKER_LINE_ORDER_ITEMS_TOTAL": "Food Tech Order Items total (cents)",
         "RULE_PICKER_LINE_TIME_SLOT": "Time slot",
         "RULE_PICKER_LINE_OPTGROUP_DELIVERY": "Delivery",
         "RULE_PICKER_LINE_OPTGROUP_DEPRECATED": "Legacy",
