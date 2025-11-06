@@ -2,6 +2,7 @@
 
 namespace AppBundle\Api\Dto;
 
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Utils\Barcode\BarcodeUtils;
@@ -11,6 +12,7 @@ class TaskMapper
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly IriConverterInterface $iriConverter,
     )
     {
     }
@@ -68,6 +70,11 @@ class TaskMapper
                         $existingPackageDto->labels,
                         $thisTaskPackageDto->labels
                     );
+
+                    $existingPackageDto->tasks = array_merge(
+                        $existingPackageDto->tasks,
+                        $thisTaskPackageDto->tasks
+                    );
                 }
             }
         }
@@ -105,6 +112,12 @@ class TaskMapper
             );
         } else {
             $packageData->labels = [];
+        }
+
+        if (!is_null($task->getId())) {
+            $packageData->tasks = [$this->iriConverter->getIriFromResource(Task::class, context: ['uri_variables' => ['id' => $task->getId()]])];
+        } else {
+            $packageData->tasks = [];
         }
 
         return $packageData;
