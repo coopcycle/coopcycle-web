@@ -2,6 +2,7 @@
 
 namespace Tests\AppBundle\Api\Dto;
 
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Api\Dto\TaskMapper;
 use AppBundle\Api\Dto\TaskPackageDto;
 use AppBundle\Entity\Package;
@@ -17,9 +18,12 @@ class TaskMapperTest extends TestCase
     public function setUp(): void
     {
         $this->urlGenerator = $this->prophesize(UrlGeneratorInterface::class);
+        $this->iriConverter = $this->prophesize(IriConverterInterface::class);
 
         $this->taskMapper = new TaskMapper(
-            $this->urlGenerator->reveal());
+            $this->urlGenerator->reveal(),
+            $this->iriConverter->reveal(),
+        );
     }
 
     private function createTask($type)
