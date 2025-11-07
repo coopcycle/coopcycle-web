@@ -89,5 +89,57 @@ describe('Incident management (role: dispatcher)', () => {
       'contain.text',
       "Commande #1: Le prix de livraison n'a pas pu être calculé. Veuillez l'entrer manuellement et vérifier la tarification.",
     );
+
+    // Verify incident header information
+    cy.get('[data-testid="incident-status"]', { timeout: 10000 })
+      .should('be.visible')
+      .should('contain.text', 'Ouvert');
+
+    cy.get('[data-testid="incident-priority"]')
+      .should('be.visible')
+      .should('contain.text', 'Moyen');
+
+    cy.get('[data-testid="incident-reported-by"]')
+      .should('be.visible')
+      .should('contain.text', 'dispatcher');
+
+    cy.get('[data-testid="incident-reported-at"]').should('be.visible');
+
+    // Verify incident body - description
+    // empty description is considered as not visible
+    // cy.get('[data-testid="incident-description"]').should('be.visible');
+
+    // Verify incident body - attachments section
+    cy.get('[data-testid="incident-attachments"]').should('be.visible');
+
+    // Verify incident body - timeline
+    cy.get('[data-testid="incident-timeline"]').should('be.visible');
+
+    // Verify action box
+    cy.get('[data-testid="take-actions-button"]').should('be.visible');
+
+    // Verify order details card in sidebar
+    cy.get('[data-testid="order-details-card"]').should('be.visible');
+
+    // Verify task details
+    cy.get('[data-testid="task-date"]').should('be.visible');
+
+    cy.get('[data-testid="task-address-name"]')
+      .should('be.visible')
+      .should('contain.text', 'Warehouse');
+
+    cy.get('[data-testid="task-address-street"]')
+      .should('be.visible')
+      .should(
+        'contain.text',
+        '23, Avenue Claude Vellefaux, 75010 Paris, France',
+      );
+
+    cy.get('[data-testid="task-address-telephone"]')
+      .should('be.visible')
+      .should('contain.text', '+33112121212');
+
+    // Verify task timeline in sidebar
+    cy.get('[data-testid="task-timeline"]').should('be.visible');
   });
 });

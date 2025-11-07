@@ -2,7 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import Modal from 'react-modal';
 import Page from './page';
-import { RootWithDefaults } from '../../utils/react';
+import { AppRootWithDefaults } from '../../utils/react';
 
 import '../../bootstrap-reset.scss'
 
@@ -14,9 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const root = createRoot(container);
     root.render(
-      <RootWithDefaults>
+      <AppRootWithDefaults>
         <Page />
-      </RootWithDefaults>,
+      </AppRootWithDefaults>,
     );
   }
 });

@@ -53,6 +53,7 @@ trait IncidentTrait {
             'incident' => $incident,
             'delivery' => $delivery,
             'order' => $order,
+            'store' => $delivery?->getStore(),
             'transporterEnabled' => $transporterEnabled,
             'isLastmile' => $isLastmile,
         ]));

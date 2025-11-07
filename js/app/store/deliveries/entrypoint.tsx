@@ -1,6 +1,6 @@
 import React, { useLayoutEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { RootWithDefaults } from '../../utils/react';
+import { AppRootWithDefaults } from '../../utils/react';
 import { accountSlice } from '../../entities/account/reduxSlice';
 import { createStoreFromPreloadedState } from '../../components/delivery-form/redux/store';
 import { Uri } from '../../api/types';
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const root = createRoot(container);
   root.render(
-    <RootWithDefaults>
+    <AppRootWithDefaults>
       <Provider store={store}>
         <Form
           storeNodeId={storeNodeId}
@@ -107,6 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
           isPriceBreakdownEnabled={isPriceBreakdownEnabled}
         />
       </Provider>
-    </RootWithDefaults>,
+    </AppRootWithDefaults>,
   );
 });

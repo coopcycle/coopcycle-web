@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
-import { Button, Divider, Drawer, Popconfirm, Modal, Form } from 'antd';
+import { Button, Divider, Drawer, Form, Modal, Popconfirm } from 'antd';
 import RescheduleTask from './ActionBox/RescheduleTask';
 import ApplyPriceDiffTask from './ActionBox/ApplyPriceDiffTask';
 import TransporterReport from './ActionBox/TransporterReport';
 
 import { useTranslation } from 'react-i18next';
 
-import store from './incidentStore';
+import store from '../../[id]/redux/incidentStore';
+import {
+  selectImages,
+  selectIncident,
+  selectLoaded,
+  selectOrder,
+  selectTransporterEnabled,
+} from '../../[id]/redux/incidentSlice';
 
 async function _handleCancelButton(id) {
   const httpClient = new window._auth.httpClient();
@@ -23,8 +30,13 @@ const styles = {
 };
 
 export default function ({ isLastmile }) {
-  const { loaded, incident, order, images, transporterEnabled } =
-    store.getState();
+  //FIXME: replace with useAppSelector after migrating away from ux-react-controllers
+  const state = store.getState();
+  const loaded = selectLoaded(state);
+  const incident = selectIncident(state);
+  const order = selectOrder(state);
+  const images = selectImages(state);
+  const transporterEnabled = selectTransporterEnabled(state);
 
   const { t } = useTranslation();
 
@@ -102,14 +114,15 @@ export default function ({ isLastmile }) {
   return (
     <>
       <Button
-        style={styles.btn}
+        data-testid="take-actions-button"
+        type="primary"
         onClick={() => setOpen(true)}
         disabled={buttons.length === 0}>
         {t('TAKE_ACTIONS')}
       </Button>
       <Drawer
         placement={placement}
-        title="Take actions"
+        title={t('INCIDENTS_TAKE_ACTIONS')}
         onClose={() => setOpen(false)}
         open={open}>
         {buttons}
