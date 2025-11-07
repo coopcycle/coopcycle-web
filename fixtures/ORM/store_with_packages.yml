@@ -15,13 +15,45 @@ AppBundle\Entity\Delivery\PricingRule:
     position: 1
     ruleSet: '@pricing_rule_set_1'
 
+AppBundle\Entity\PackageSet:
+  package_set_1:
+    name: 'Standard'
+
+AppBundle\Entity\Package:
+  package_small:
+    name: 'SMALL'
+    maxVolumeUnits: 1.0
+    averageVolumeUnits: 1.0
+    packageSet: '@package_set_1'
+    description: ''
+    short_code: 'SM'
+    color: '#a91de0'
+  package_medium:
+    name: 'MEDIUM'
+    maxVolumeUnits: 2.0
+    averageVolumeUnits: 2.0
+    packageSet: '@package_set_1'
+    description: ''
+    short_code: 'MD'
+    color: '#a91de0'
+  package_xl:
+    name: 'XL'
+    maxVolumeUnits: 3.0
+    averageVolumeUnits: 3.0
+    packageSet: '@package_set_1'
+    description: ''
+    short_code: 'XL'
+    color: '#a91de0'
+
 AppBundle\Entity\Store:
   store_1:
     name: 'Acme'
     address: "@address_store"
     enabled: true
     pricingRuleSet: '@pricing_rule_set_1'
+    packageSet: '@package_set_1'
     __calls:
+      - addAddress: [ "@address_store" ]
       - addAddress: [ "@address_warehouse" ]
       - addAddress: [ "@address_client_1" ]
 
@@ -36,4 +68,4 @@ AppBundle\Entity\User:
         - false
     roles: [ 'ROLE_USER', 'ROLE_STORE' ]
     stores: [ '@store_1' ]
-    
+

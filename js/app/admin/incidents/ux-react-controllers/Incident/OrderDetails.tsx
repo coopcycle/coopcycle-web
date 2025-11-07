@@ -2,10 +2,15 @@ import React from 'react';
 import moment from 'moment';
 import { Button } from 'antd';
 import './OrderDetails.scss';
-import { money, weight } from './utils';
+import { money, weight } from '../../utils';
 import TaskStatusBadge from '../../../../dashboard/components/TaskStatusBadge';
 
-import store from './incidentStore';
+import store from '../../[id]/redux/incidentStore';
+import {
+  selectIncident,
+  selectLoaded,
+  selectOrder,
+} from '../../[id]/redux/incidentSlice';
 import { useTranslation } from 'react-i18next';
 
 function formatTime(task) {
@@ -96,7 +101,7 @@ function OrderDetails({ order }) {
       {Adjustment(order.adjustments, 'incident')}
       <p>
         {t('TOTAL')}
-        <span>{money(order.total)}</span>
+        <span data-testid="order-total">{money(order.total)}</span>
       </p>
       <hr />
     </>
@@ -134,7 +139,13 @@ function CustomerDetails({ customer }) {
 export default function ({ delivery }) {
   delivery = JSON.parse(delivery);
   const { t } = useTranslation();
-  const { loaded, order, incident } = store.getState();
+
+  //FIXME: replace with useAppSelector after migrating away from ux-react-controllers
+  const state = store.getState();
+  const loaded = selectLoaded(state);
+  const incident = selectIncident(state);
+  const order = selectOrder(state);
+
   const { task } = incident;
 
   if (!loaded) {
@@ -142,9 +153,9 @@ export default function ({ delivery }) {
   }
 
   return (
-    <div className="order-details-card">
+    <div className="order-details-card" data-testid="order-details-card">
       <Heading task={task} delivery={delivery} order={order} />
-      <p className="text-muted">
+      <p className="text-muted" data-testid="task-date">
         {t('DATE')}: {formatTime(task)}
       </p>
       <hr />
@@ -153,12 +164,14 @@ export default function ({ delivery }) {
         <span style={{ textTransform: 'capitalize' }}>
           {task.type.toLowerCase()}
         </span>{' '}
-        details
+        {t('INCIDENTS_TASK_DETAILS')}
       </h5>
-      <p>{task.address.name}</p>
-      <p>{task.address.streetAddress}</p>
-      <p>{task.address.telephone}</p>
-      {task.weight && <p>{weight(task.weight)}</p>}
+      <p data-testid="task-address-name">{task.address.name}</p>
+      <p data-testid="task-address-street">{task.address.streetAddress}</p>
+      <p data-testid="task-address-telephone">{task.address.telephone}</p>
+      {task.weight ? (
+        <p data-testid="task-weight">{weight(task.weight)}</p>
+      ) : null}
       <div className="mt-3">{<TaskStatusBadge task={task} />}</div>
       <hr />
       {order?.customer && <CustomerDetails customer={order.customer} />}

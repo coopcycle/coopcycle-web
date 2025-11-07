@@ -87,7 +87,8 @@ class TaskMapper
         return array_map(function (Task\Package $taskPackage) {
             return $this->toPackageDto($taskPackage);
 
-        }, $task->getPackages()->toArray());
+            // reset index when converting to array
+        }, array_values($task->getPackages()->toArray()));
     }
 
     private function toPackageDto(Task\Package $taskPackage): TaskPackageDto

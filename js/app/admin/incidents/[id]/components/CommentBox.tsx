@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Button, Input } from 'antd';
 
-import store, { setEvents } from './incidentStore';
+import store from '../redux/incidentStore';
+import { selectIncident, setEvents } from '../redux/incidentSlice';
 import { useTranslation } from 'react-i18next';
 
 async function _handleCommentSubmit(id, comment) {
@@ -13,7 +14,9 @@ async function _handleCommentSubmit(id, comment) {
 }
 
 export default function () {
-  const { incident } = store.getState();
+  //FIXME: replace with useAppSelector after migrating away from ux-react-controllers
+  const state = store.getState();
+  const incident = selectIncident(state);
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(false);

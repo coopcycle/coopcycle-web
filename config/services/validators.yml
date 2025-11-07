@@ -108,3 +108,7 @@ services:
   AppBundle\Validator\Constraints\ManualSupplementsValidator:
     tags:
       - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\IncidentMetadataValidator:
+    tags:
+      - { name: validator.constraint_validator }

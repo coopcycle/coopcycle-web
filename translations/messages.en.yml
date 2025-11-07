@@ -1541,6 +1541,7 @@ adminDashboard.incidents.title: Incidents
 adminDashboard.incidents.help: "Manage incidents."
 adminDashboard.incidents.docs_path: /en/admin/Incidents/
 adminDashboard.incidents.createNew: Create a new incident
+adminDashboard.incidents.incident.title: 'Incident #%id%'
 adminDashboard.invoicing.title: Invoicing [PREVIEW]
 adminDashboard.invoicing.docs_path: /en/web/admin/deliveries/invoicing/
 adminDashboard.invoicing.help: "Prepare invoices"

@@ -201,7 +201,7 @@ export default function () {
       key: 'action',
       render: id => (
         <a href={window.Routing.generate('admin_incident', { id })}>
-          {t('EDIT')}
+          {t('VIEW')}
         </a>
       ),
     },

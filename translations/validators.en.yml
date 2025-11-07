@@ -83,3 +83,5 @@ form.package_set.duplicatePackageNames: Package names must be unique in a packag
 restaurant.paygreenShopId.notSet: Configure the Paygreen Shop ID
 
 delivery.price.error.noPricingRuleSet: No pricing configured
+
+incident.metadata.suggestion.invalid: The suggestion field in metadata is not valid

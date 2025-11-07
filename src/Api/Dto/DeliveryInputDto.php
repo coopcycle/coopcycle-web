@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 final class DeliveryInputDto
 {
 
-    #[Groups(['delivery'])]
+    #[Groups(['delivery', 'pricing_deliveries'])]
     public int|null $id = null;
 
     #[Groups(['pricing_deliveries', 'delivery_create'])]

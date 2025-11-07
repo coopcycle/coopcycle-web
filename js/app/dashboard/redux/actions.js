@@ -740,7 +740,7 @@ export function cancelTask(task) {
 
 export function cancelTasks(tasks) {
 
-  return function(dispatch, getState) {
+  return async function(dispatch, getState) {
 
     const { jwt } = getState()
 
@@ -748,26 +748,28 @@ export function cancelTasks(tasks) {
 
     const httpClient = createClient(dispatch)
 
-    const requests = tasks.map(task => {
+    const responses = []
 
-      return httpClient.request({
-        method: 'put',
-        url: `${task['@id']}/cancel`,
-        data: {},
-        headers: {
-          'Authorization': `Bearer ${jwt}`,
-          'Accept': 'application/ld+json',
-          'Content-Type': 'application/ld+json'
-        }
-      })
-    })
+    try {
+      for (const task of tasks) {
+        const response = await httpClient.request({
+          method: 'put',
+          url: `${task['@id']}/cancel`,
+          data: {},
+          headers: {
+            'Authorization': `Bearer ${jwt}`,
+            'Accept': 'application/ld+json',
+            'Content-Type': 'application/ld+json'
+          }
+        })
+        responses.push(response)
+      }
 
-    Promise.all(requests)
-      .then(values => {
-        dispatch(createTaskSuccess())
-        values.forEach(response => dispatch(updateTask(response.data)))
-      })
-      .catch(error => dispatch(cancelTaskFailure(error)))
+      dispatch(createTaskSuccess())
+      responses.forEach(response => dispatch(updateTask(response.data)))
+    } catch (error) {
+      dispatch(cancelTaskFailure(error))
+    }
   }
 }
 

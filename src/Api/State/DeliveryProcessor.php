@@ -3,11 +3,10 @@
 namespace AppBundle\Api\State;
 
 use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Metadata\Exception\InvalidArgumentException;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Operation;
-use ApiPlatform\Metadata\Put;
 use ApiPlatform\State\ProcessorInterface;
-use ApiPlatform\Exception\InvalidArgumentException;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\TaskDto;
@@ -66,15 +65,15 @@ class DeliveryProcessor implements ProcessorInterface
             }
         }
 
-        $isPutOperation = $operation instanceof Put;
+        $isEditOperation = $data instanceof DeliveryInputDto && isset($uriVariables['id']);
 
         if ($data instanceof DeliveryInputDto) {
-            $id = $uriVariables['id'] ?? null;
-            if ($id && $isPutOperation) {
-                $delivery = $this->entityManager->getRepository(Delivery::class)->find($id);
+            if ($isEditOperation) {
+                $deliveryId = $uriVariables['id'];
+                $delivery = $this->entityManager->getRepository(Delivery::class)->find($deliveryId);
                 if (null === $delivery) {
                     $this->logger->warning('Delivery not found', [
-                        'id' => $id,
+                        'id' => $deliveryId,
                     ]);
                     throw new InvalidArgumentException('delivery.id');
                 }
@@ -83,7 +82,7 @@ class DeliveryProcessor implements ProcessorInterface
             }
 
             if (is_array($data->tasks) && count($data->tasks) > 0) {
-                if ($isPutOperation) {
+                if ($isEditOperation) {
                     $tasks = array_map(fn(TaskDto $taskInput) => $this->transformIntoExistingTask($taskInput, $delivery->getTasks(), $store), $data->tasks);
 
                     //remove tasks that are not in the request
@@ -313,11 +312,30 @@ class DeliveryProcessor implements ProcessorInterface
 
             $packageRepository = $this->entityManager->getRepository(Package::class);
 
+            /** @var Package[] $notPresentPackages */
+            $notPresentPackages = [];
+            foreach ($task->getPackages() as $taskPackage) {
+                $notPresentPackages[$taskPackage->getPackage()->getId()] = $taskPackage->getPackage();
+            }
+
             foreach ($data->packages as $p) {
                 $package = $packageRepository->findOneByNameAndStore($p->type, $store);
                 if ($package) {
+                    // Remove package from notPresentPackages if it's already present
+                    if (isset($notPresentPackages[$package->getId()])) {
+                        unset($notPresentPackages[$package->getId()]);
+                    }
                     $task->setQuantityForPackage($package, $p->quantity);
+                } else {
+                    $this->logger->warning('Package not found', [
+                        'package' => $p->type
+                    ]);
                 }
+            }
+
+            // Remove packages that are not in the request
+            foreach ($notPresentPackages as $package) {
+                $task->removePackage($package);
             }
         }
 
