@@ -6,9 +6,9 @@ import { useTranslation } from 'react-i18next';
 import store from '../redux/incidentStore';
 import { selectImages, selectIncident } from '../redux/incidentSlice';
 
-async function _handleUpload(id, file, t) {
+async function _handleUpload(id, file) {
   if (file.size > 5 * 1024 * 1024) {
-    return { message: t('INCIDENTS_IMAGE_TOO_BIG') };
+    return { error: true, message: 'INCIDENTS_IMAGE_TOO_BIG' };
   }
   const httpClient = new window._auth.httpClient();
   const formData = new FormData();
@@ -23,7 +23,7 @@ async function _handleUpload(id, file, t) {
   );
 }
 
-export default function () {
+export default function() {
   //FIXME: replace with useAppSelector after migrating away from ux-react-controllers
   const state = store.getState();
   const incident = selectIncident(state);
@@ -46,15 +46,14 @@ export default function () {
       <Upload
         name="image"
         accept="image/*"
-        customRequest={async ({ file }) => {
-          const { error, message } = await _handleUpload(incident.id, file, t);
+        customRequest={async ({ file, onSuccess, onError }) => {
+          const { error, message } = await _handleUpload(incident.id, file);
           if (!error) {
+            onSuccess?.('ok');
             location.reload();
           } else {
-            if (message) {
-              return notification.error({ message });
-            }
-            return notification.error({ message: t('SOMETHING_WENT_WRONG') });
+            onError?.(new Error(t(message || 'SOMETHING_WENT_WRONG')));
+            return notification.error({ message: t(message || 'SOMETHING_WENT_WRONG') });
           }
         }}
         className="thumbnail">
