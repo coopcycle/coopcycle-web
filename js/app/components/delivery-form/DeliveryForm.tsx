@@ -222,13 +222,18 @@ const DeliveryForm = ({
   ): FormikErrors<DeliveryFormValues> => {
     const errors: FormikErrors<DeliveryFormValues> = { tasks: [] };
 
-    let { packagesTotalWeight, packagesCount } = values.tasks.reduce(
+    let { packagesTotalWeight, packagesCount } = (values.tasks || []).reduce(
       (acc, task) => {
-        acc.packagesTotalWeight += task.weight || 0;
-        acc.packagesCount += task.packages.reduce((acc, items) => acc + items.quantity, 0);
+        acc.packagesTotalWeight += task?.weight || 0;
+        if (Array.isArray(task?.packages)) {
+          acc.packagesCount += task.packages.reduce(
+            (sum, item) => sum + (item?.quantity || 0),
+            0
+          );
+        }
         return acc;
       },
-      { packagesTotalWeight: 0, packagesCount: 0 },
+      { packagesTotalWeight: 0, packagesCount: 0 }
     );
 
     for (let i = 0; i < values.tasks.length; i++) {
