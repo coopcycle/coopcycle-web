@@ -14,7 +14,7 @@ module.exports = defineConfig({
     coverage: false,
   },
 
-  defaultCommandTimeout: 20000,
+  defaultCommandTimeout: 10000,
 
   retries: {
     // Configure retry attempts for `cypress run`
