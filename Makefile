@@ -104,7 +104,7 @@ lint:
 test: phpunit jest behat cypress
 
 testdata-dispatch:
-	@docker compose exec php bin/console coopcycle:fixtures:load -s fixtures/ORM/setup_default.yml -f fixtures/ORM/dispatch.yml --env test
+	@docker compose exec php bin/console coopcycle:fixtures:load -s fixtures/ORM/setup_default.yml -f fixtures/ORM/dispatch_regular_volume_instance.yml --env test
 testdata-foodtech:
 	@docker compose exec php bin/console coopcycle:fixtures:load -f fixtures/ORM/foodtech.yml --env test
 testdata-high-volume-instance:
