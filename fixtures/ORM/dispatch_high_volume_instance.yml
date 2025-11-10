@@ -28,6 +28,7 @@ AppBundle\Entity\Delivery:
       - setDropoffRange:
           - <identity(new \DateTime('today 19:00:00'))>
           - <identity(new \DateTime('today 19:30:00'))>
+      - assignTo: [ '@courier_<numberBetween(1, 20)>', <identity(new \DateTime('today'))> ]
     store: "@store_1"
 
   delivery_{251..500}:
