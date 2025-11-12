@@ -2,9 +2,8 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import ClipboardJS from 'clipboard';
 import { RootWithDefaults } from '../../../utils/react';
-import Map from '../../../components/DeliveryMap';
-import Itinerary from '../../../components/DeliveryItinerary';
 import i18n from '../../../i18n';
+import { Content } from './Content';
 
 new ClipboardJS('#copy');
 
@@ -26,21 +25,7 @@ if (el) {
   const root = createRoot(el);
   root.render(
     <RootWithDefaults>
-      {delivery ? (
-        <div>
-          <Map
-            defaultAddress={delivery.tasks[0].address}
-            tasks={delivery.tasks}
-          />
-          <div className="py-3" />
-          <Itinerary
-            tasks={delivery.tasks}
-            withTimeRange
-            withDescription
-            withPackages
-          />
-        </div>
-      ) : null}
+      <Content order={order} delivery={delivery} />
     </RootWithDefaults>,
   );
 }
