@@ -261,6 +261,8 @@
         "ADMIN_DASHBOARD_OPTIMIZATION_DONE": "The assignements were optimized. Previous distance was {{ previousDistance }}, previous duration {{ previousDuration }}.",
         "USER_EDIT_ENABLED_LABEL": "Enabled",
         "USER_EDIT_DISABLED_LABEL": "Disabled",
+        "ADMIN_DASHBOARD_ORDER_SHOW_HISTORY": "Show history",
+        "ADMIN_DASHBOARD_ORDER_HISTORY": "Order history",
         "ORDER_TIMELINE_CREATED_TITLE": "{{date}} Order created",
         "ORDER_TIMELINE_ACCEPTED_TITLE": "{{date}} Order confirmed",
         "ORDER_TIMELINE_REFUSED_TITLE": "{{date}} Order refused",
