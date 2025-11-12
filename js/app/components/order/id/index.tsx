@@ -16,27 +16,31 @@ $('[data-change-state] button[type="submit"]').on('click', function (e) {
   }
 });
 
-const el = document.querySelector('#delivery-info');
+const el = document.querySelector('#react-root');
 
 if (el) {
-  const delivery = JSON.parse(el.dataset.delivery);
+  const order = JSON.parse(el.dataset.order);
+  // delivery can be empty for foodtech takeaway orders
+  const delivery = el.dataset.delivery ? JSON.parse(el.dataset.delivery) : null;
 
   const root = createRoot(el);
   root.render(
     <RootWithDefaults>
-      <div>
-        <Map
-          defaultAddress={delivery.tasks[0].address}
-          tasks={delivery.tasks}
-        />
-        <div className="py-3" />
-        <Itinerary
-          tasks={delivery.tasks}
-          withTimeRange
-          withDescription
-          withPackages
-        />
-      </div>
+      {delivery ? (
+        <div>
+          <Map
+            defaultAddress={delivery.tasks[0].address}
+            tasks={delivery.tasks}
+          />
+          <div className="py-3" />
+          <Itinerary
+            tasks={delivery.tasks}
+            withTimeRange
+            withDescription
+            withPackages
+          />
+        </div>
+      ) : null}
     </RootWithDefaults>,
   );
 }

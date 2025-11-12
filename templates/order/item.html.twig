@@ -77,11 +77,11 @@
     </div>
   </div>
   <div class="flex-1 ml-md-4">
-    {% if formData is not empty %}
-      <div id="delivery-info" data-delivery="{{ formData|serialize('jsonld', {groups: ['delivery', 'address']}) }}">
-        {# rendered by React #}
-      </div>
-    {% endif %}
+    <div id="react-root"
+         data-order="{{ order|serialize('jsonld', {groups: ['order', 'pricing_deliveries']}) }}"
+         data-delivery="{{ formData is not empty ? formData|serialize('jsonld', {groups: ['delivery', 'address']}) : '' }}">
+      {# rendered by React #}
+    </div>
   </div>
 </div>
 
