@@ -41,7 +41,7 @@
           const { error } = await httpClient.delete(this.href);
 
           if (!error) {
-            location.reload();
+            this.closest('tr').remove();
           }
         }
       });
