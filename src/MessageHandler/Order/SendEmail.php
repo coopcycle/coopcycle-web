@@ -123,7 +123,7 @@ class SendEmail
 
     private function sendEmailToOwners(OrderInterface $order, LocalBusiness $restaurant)
     {
-        $owners = $restaurant->getOwners()->toArray();
+        $owners = $restaurant->getOwners()->filter(fn($owner) => $owner->isEnabled())->toArray();
 
         if (count($owners) === 0) {
             return;

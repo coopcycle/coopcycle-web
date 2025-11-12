@@ -30,7 +30,7 @@ use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterfac
 #[ApiResource(
     shortName: 'User',
     operations: [
-        new Get(security: 'is_granted(\'ROLE_ADMIN\') or user == object'),
+        new Get(security: 'is_granted(\'ROLE_DISPATCHER\') or user == object'),
         new Put(
             denormalizationContext: ['groups' => ['user_update']],
             security: 'is_granted(\'ROLE_ADMIN\') or user == object'

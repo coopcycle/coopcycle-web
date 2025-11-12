@@ -51,5 +51,5 @@ export default function TaskTimeline({ isLoadingEvents, events }) {
     ),
   }))
 
-  return <Timeline items={timelineItems} />
+  return <Timeline data-testid="task-timeline" items={timelineItems} />
 }

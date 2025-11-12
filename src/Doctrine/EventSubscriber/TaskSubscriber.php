@@ -11,7 +11,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderInterface;
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
@@ -20,7 +20,9 @@ use Doctrine\ORM\UnitOfWork;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class TaskSubscriber implements EventSubscriber
+#[AsDoctrineListener(event: Events::onFlush, priority: 32, connection: 'default')]
+#[AsDoctrineListener(event: Events::postFlush, priority: 32, connection: 'default')]
+class TaskSubscriber
 {
     private $eventBus;
     private $eventStore;
@@ -47,14 +49,6 @@ class TaskSubscriber implements EventSubscriber
         $this->logger = $logger;
 
         $this->createdAddresses = new \SplObjectStorage();
-    }
-
-    public function getSubscribedEvents()
-    {
-        return array(
-            Events::onFlush,
-            Events::postFlush,
-        );
     }
 
     public function onFlush(OnFlushEventArgs $args)

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Spin } from 'antd';
 import TaskStatusBadge from '../../../../dashboard/components/TaskStatusBadge';
-import { money } from './utils';
+import { money } from '../../utils';
+import { useTranslation } from 'react-i18next';
 
 async function _fetchTaskContect(id) {
   const httpClient = new window._auth.httpClient();
@@ -11,15 +12,17 @@ async function _fetchTaskContect(id) {
 }
 
 function ContextDetails({ delivery, order }) {
+  const { t } = useTranslation();
+
   if (order) {
     const orderID = order?.number
-      ? `Order N°${order.number}`
-      : `Order #${order.id}`;
+      ? t('INCIDENTS_ORDER_NUMBER', { number: order.number })
+      : t('INCIDENTS_ORDER_ID', { id: order.id });
 
     return (
       <>
         <hr className="my-2" />
-        <p className="font-weight-bold">Order details</p>
+        <p className="font-weight-bold">{t('ORDER_DETAILS')}</p>
         <div>{orderID}</div>
         {order?.restaurant && <div>{order?.restaurant.name}</div>}
         <div>{money(order.itemsTotal)}</div>
@@ -32,7 +35,7 @@ function ContextDetails({ delivery, order }) {
     return (
       <>
         <hr className="my-2" />
-        <p className="font-weight-bold">Delivery details</p>
+        <p className="font-weight-bold">{t('INCIDENTS_DELIVERY_DETAILS')}</p>
       </>
     );
   }
@@ -42,6 +45,7 @@ function ContextDetails({ delivery, order }) {
 
 export default function ({ task }) {
   const [context, setContext] = useState(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     async function _fetch() {
@@ -60,11 +64,13 @@ export default function ({ task }) {
   return (
     <div className="p-2">
       <p>
-        <span className="font-weight-bold mr-2">Task #{task.id}</span>
+        <span className="font-weight-bold mr-2">
+          {t('INCIDENTS_TASK_ID', { id: task.id })}
+        </span>
         <TaskStatusBadge task={task} />
       </p>
       <div data-testid="task-type" className="text-capitalize">
-        Type: {task.type.toLowerCase()}
+        {t('INCIDENTS_TASK_TYPE')}: {task.type.toLowerCase()}
       </div>
       <ContextDetails context={context} />
     </div>

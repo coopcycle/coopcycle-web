@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import PricingRuleSetForm from '../../components/pricing-rule-set-form/PricingRuleSetForm';
 import { accountSlice } from '../../entities/account/reduxSlice';
 import { createStoreFromPreloadedState } from '../../components/pricing-rule-set-form/redux/store';
-import { RootWithDefaults } from '../../utils/react';
+import { AppRootWithDefaults } from '../../utils/react';
 
 import '../../bootstrap-reset.scss';
 
@@ -24,7 +24,7 @@ if (container) {
   const root = createRoot(container);
 
   root.render(
-    <RootWithDefaults>
+    <AppRootWithDefaults>
       <Provider store={store}>
         <PricingRuleSetForm
           ruleSetId={ruleSetId ? parseInt(ruleSetId) : null}
@@ -32,6 +32,6 @@ if (container) {
           isNew={isNew}
         />
       </Provider>
-    </RootWithDefaults>,
+    </AppRootWithDefaults>,
   );
 }

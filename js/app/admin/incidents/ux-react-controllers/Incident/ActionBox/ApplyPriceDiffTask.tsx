@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, InputNumber } from 'antd';
 import { useTranslation } from 'react-i18next';
-import { money } from '../utils';
+import { money } from '../../../utils';
 
 async function _handleApplyPriceDiff(id, diff) {
   const httpClient = new window._auth.httpClient();

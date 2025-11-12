@@ -6,12 +6,16 @@
 
 {% set createdBy = incident.getCreatedBy() %}
 
+{% block prepare_title %}
+  {{ add_title_prefix('adminDashboard.incidents.incident.title'|trans({ '%id%': incident.id })) }}
+{% endblock %}
+
 {% block breadcrumb %}
 <li>
   <a href="{{ path('admin_incidents') }}">{% trans %}adminDashboard.incidents.title{% endtrans %}</a>
 </li>
 <li>
-  Incident #{{incident.id}}
+  {{ 'adminDashboard.incidents.incident.title'|trans({ '%id%': incident.id }) }}
 </li>
 {% endblock %}
 
@@ -22,41 +26,26 @@
   'full': absolute_url(path('incident_image_public', {path: i.imageName}))
 })|serialize -%}
 <div {{ react_component('Incident/IncidentLoad', {
-  incident: incident|serialize('json', {groups: ['incident', 'task', 'address'] }),
-  order: order|serialize('json', {groups: ['order'] }),
+  incident: incident|serialize('jsonld', {groups: ['incident', 'task', 'address'] }),
+  order: order|serialize('jsonld', {groups: ['order', 'pricing_deliveries'] }),
+  storeUri: store ? store|get_iri_from_item : null,
   images: images,
   transporterEnabled: transporterEnabled
 }) }} ></div>
 <div class="incident-header">
   <div class="container">
     <div class="row">
-      <div {{ react_component('Incident/IncidentHeader') }} ></div>
+      <div {{ react_component('Incident/IncidentHeader', { isLastmile: isLastmile }) }} ></div>
     </div>
   </div>
 </div>
 
 <div class="container incident-body">
-  <div class="col-md-9">
-    <div class="row">
-      <p style="font-weight: bold">Description</p>
-      <p class="mx-2">{{ incident.description }}</p>
-    </div>
-    <hr>
-    <div class="row">
-      <p>Attachments <span class="caret"></span></p>
-      <div {{react_component('Incident/IncidentImages')}}></div>
-    </div>
-    <hr>
-    <div>
-      <div {{ react_component('Incident/IncidentTimeline') }}></div>
-      <div {{ react_component('Incident/CommentBox') }}></div>
-    </div>
+  <div class="col-md-9" {{ react_component('Incident/IncidentBody') }}>
   </div>
 
   <div class="col-md-3">
-    <div {{ react_component('Incident/ActionBox', { isLastmile: isLastmile }) }}></div>
-    <hr>
-    <div {{ react_component('Incident/OrderDetails', { delivery: delivery|serialize('json', {groups: ['delivery'] }) }) }}></div>
+    <div {{ react_component('Incident/OrderDetails', { delivery: delivery|serialize('jsonld', {groups: ['delivery'] }) }) }}></div>
     <hr>
     <div {{react_component('Incident/TaskTimeline', {events: incident.getTask().getEvents()|serialize}) }}></div>
   </div>

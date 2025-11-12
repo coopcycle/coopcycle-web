@@ -7,10 +7,15 @@ import { HydraError, Uri } from '../../../api/types';
 
 type Params = {
   storeUri: Uri;
+  deliveryId?: number;
   skip?: boolean;
 };
 
-export const useCalculatedPrice = ({ storeUri, skip = false }: Params) => {
+export const useCalculatedPrice = ({
+  storeUri,
+  deliveryId,
+  skip = false,
+}: Params) => {
   const { values } = useDeliveryFormFormikContext();
 
   const [calculatePrice, { data, error, isLoading }] =
@@ -49,6 +54,7 @@ export const useCalculatedPrice = ({ storeUri, skip = false }: Params) => {
     (values: DeliveryFormValues) => {
       const infos = {
         store: storeUri,
+        id: deliveryId,
         tasks: structuredClone(values.tasks),
         order: structuredClone(values.order),
       };

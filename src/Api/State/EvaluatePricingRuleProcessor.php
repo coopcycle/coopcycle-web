@@ -23,7 +23,7 @@ final class EvaluatePricingRuleProcessor implements ProcessorInterface
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
-        $delivery = $this->decorated->process($data, $operation, $uriVariables, $context);
+        $delivery = $this->decorated->process($data, $operation, array_diff_key($uriVariables, ['id' => null]), $context);
         /** @var PricingRule */
         $pricingRule = $this->provider->provide($operation, $uriVariables, $context);
 

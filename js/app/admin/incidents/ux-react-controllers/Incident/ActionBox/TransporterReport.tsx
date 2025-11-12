@@ -61,7 +61,7 @@ function ImagesSelector({ images, onChange }) {
   const { t } = useTranslation();
 
   if (images.length === 0) {
-    return <Empty description="No images" />;
+    return <Empty description={t('INCIDENTS_NO_IMAGES')} />;
   }
 
   const handleOnChange = checkedList => {

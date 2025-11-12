@@ -1,0 +1,32 @@
+AppBundle\Entity\User:
+  courier_bob:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - 'bob'
+        - '123456'
+        - 'bob@coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_USER', 'ROLE_COURIER' ]
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+
+AppBundle\Entity\Incident\Incident:
+  incident_1:
+    title: 'Article incorrect'
+    status: 'OPEN'
+    priority: 2
+    failureReasonCode: 'INCORRECT_ITEM'
+    description: 'Wrong order details'
+    task: '@task_2'
+    createdBy: '@courier_bob'
+    metadata:
+      - suggestion:
+          id: 1
+          tasks:
+            - id: 2
+            - id: 1
+              packages:
+                - type: 'XL'
+                  quantity: 2
+              weight: 30000
+

@@ -53,6 +53,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
         $ruleHumanizer = self::getContainer()->get(RuleHumanizer::class);
         $pricingRuleSetManager = self::getContainer()->get(PricingRuleSetManager::class);
         $translator = self::getContainer()->get('translator');
+        $entityManager = self::getContainer()->get(EntityManagerInterface::class);
         $logger = self::getContainer()->get(LoggerInterface::class);
 
         return new PriceCalculationVisitor(
@@ -67,6 +68,7 @@ class PriceCalculationVisitorTest extends KernelTestCase
                 $expressionLanguage,
                 new PriceExpressionParser($expressionLanguage),
                 $pricingRuleSetManager,
+                $entityManager,
                 $logger
             ),
             $logger

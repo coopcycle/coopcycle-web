@@ -19,6 +19,7 @@ import { OrderEditing } from './OrderEditing';
 
 type Props = {
   storeNodeId: string;
+  deliveryId?: number;
   order?: OrderType;
   initialManualSupplements?: ManualSupplementValues[];
   setPriceLoading: (loading: boolean) => void;
@@ -26,6 +27,7 @@ type Props = {
 
 const Order = ({
   storeNodeId,
+  deliveryId,
   order: _existingOrder,
   initialManualSupplements: existingSupplements = [],
   setPriceLoading,
@@ -77,6 +79,7 @@ const Order = ({
     isLoading: calculatePriceIsLoading,
   } = useCalculatedPrice({
     storeUri: storeNodeId,
+    deliveryId,
     skip: overridePrice,
   });
 

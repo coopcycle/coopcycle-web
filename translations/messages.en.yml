@@ -1541,6 +1541,7 @@ adminDashboard.incidents.title: Incidents
 adminDashboard.incidents.help: "Manage incidents."
 adminDashboard.incidents.docs_path: /en/admin/Incidents/
 adminDashboard.incidents.createNew: Create a new incident
+adminDashboard.incidents.incident.title: 'Incident #%id%'
 adminDashboard.invoicing.title: Invoicing [PREVIEW]
 adminDashboard.invoicing.docs_path: /en/web/admin/deliveries/invoicing/
 adminDashboard.invoicing.help: "Prepare invoices"
@@ -1712,6 +1713,9 @@ adminDashboard.promotions.ongoing: Ongoing promotions
 adminDashboard.promotions.past: Past promotions
 order.download_receipt: Download receipt
 order.generate_receipt: Generate receipt
+form.settings.pawapay_api_key.label: Pawapay API key
+form.settings.pawapay.title: Pawapay configuration
+pawapay.payment_not_completed: The payment could not be processed
 promotions.feature: Display
 promotions.featured: Displayed
 promotions.human_readable.coupon: "%name% with coupon %code%"
