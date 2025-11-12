@@ -125,6 +125,10 @@
 
 {% endblock %}
 
+{% block styles %}
+  {{ encore_entry_link_tags('order-item') }}
+{% endblock %}
+
 {% block scripts %}
 {{ encore_entry_script_tags('order-item') }}
 <script>
