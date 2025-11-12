@@ -56,7 +56,7 @@ Encore
   .addEntry('order-details', './js/app/order/details/index.js')
   // Dispatcher: Order page (path: '/admin/orders/{id}')
   // Profile > Orders (only Package Delivery (non FoodTech) orders) (path: '/profile/orders/{id}')
-  .addEntry('order-item', './js/app/components/order/id/index.js')
+  .addEntry('order-item', './js/app/components/order/id/index.tsx')
   .addEntry('product-form', './js/app/product/form.js')
   .addEntry('package-set-form', './js/app/admin/package-set.js')
   .addEntry('product-list', './js/app/product/list.js')
