@@ -4,6 +4,9 @@ import ClipboardJS from 'clipboard';
 import { RootWithDefaults } from '../../../utils/react';
 import i18n from '../../../i18n';
 import { Content } from './Content';
+import { accountSlice } from '../../../entities/account/reduxSlice';
+import { createStoreFromPreloadedState } from './redux/store';
+import { Provider } from 'react-redux';
 
 new ClipboardJS('#copy');
 
@@ -15,6 +18,14 @@ $('[data-change-state] button[type="submit"]').on('click', function (e) {
   }
 });
 
+const buildInitialState = () => {
+  return {
+    [accountSlice.name]: accountSlice.getInitialState(),
+  };
+};
+
+const store = createStoreFromPreloadedState(buildInitialState());
+
 const el = document.querySelector('#react-root');
 
 if (el) {
@@ -25,7 +36,9 @@ if (el) {
   const root = createRoot(el);
   root.render(
     <RootWithDefaults>
-      <Content order={order} delivery={delivery} />
+      <Provider store={store}>
+        <Content order={order} delivery={delivery} />
+      </Provider>
     </RootWithDefaults>,
   );
 }
