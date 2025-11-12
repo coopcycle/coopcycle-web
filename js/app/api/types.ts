@@ -214,7 +214,7 @@ export type Adjustment = {
 };
 
 export type OrderEvent = {
-  name: string;
+  type: string;
   createdAt: string;
   // data?: Record<string, any>
 };
