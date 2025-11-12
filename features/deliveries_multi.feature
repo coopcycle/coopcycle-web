@@ -208,7 +208,8 @@ Feature: Multi-step deliveries
               "quantity":4,
               "volume_per_package": 3,
               "short_code": "XL",
-              "labels":@array@
+              "labels":@array@,
+              "tasks":@array@
             }
           ],
           "barcode": @array@,
@@ -250,7 +251,8 @@ Feature: Multi-step deliveries
               "quantity":2,
               "volume_per_package": 3,
               "short_code": "XL",
-              "labels":@array@
+              "labels":@array@,
+              "tasks":@array@
             }
           ],
           "barcode": @array@,
@@ -345,7 +347,8 @@ Feature: Multi-step deliveries
                 "quantity":2,
                 "volume_per_package": 3,
                 "short_code": "XL",
-                "labels":@array@
+                "labels":@array@,
+                "tasks":@array@
               }
             ],
             "@*@":"@*@"
@@ -418,7 +421,8 @@ Feature: Multi-step deliveries
               "quantity":2,
               "volume_per_package": 3,
               "short_code": "XL",
-              "labels":@array@
+              "labels":@array@,
+              "tasks":@array@
             }
           ],
           "barcode": @array@,
@@ -553,7 +557,8 @@ Feature: Multi-step deliveries
               "quantity":2,
               "volume_per_package": 3,
               "short_code": "XL",
-              "labels":@array@
+              "labels":@array@,
+              "tasks":@array@
             }
           ],
           "barcode": @array@,
@@ -699,7 +704,10 @@ Feature: Multi-step deliveries
                 "quantity":2,
                 "volume_per_package": 3,
                 "short_code": "XL",
-                "labels":@array@
+                "labels":@array@,
+                "tasks":[
+                  "/api/tasks/1"
+                ]
               }
             ],
             "@*@":"@*@"
@@ -715,7 +723,10 @@ Feature: Multi-step deliveries
                 "quantity":3,
                 "volume_per_package": 3,
                 "short_code": "XL",
-                "labels":@array@
+                "labels":@array@,
+                "tasks":[
+                  "/api/tasks/2"
+                ]
               }
             ],
             "@*@":"@*@"
@@ -731,7 +742,11 @@ Feature: Multi-step deliveries
                 "quantity":5,
                 "volume_per_package": 3,
                 "short_code": "XL",
-                "labels":@array@
+                "labels":@array@,
+                "tasks":[
+                  "/api/tasks/1",
+                  "/api/tasks/2"
+                ]
               }
             ],
             "@*@":"@*@"
@@ -766,7 +781,10 @@ Feature: Multi-step deliveries
             "quantity":2,
             "volume_per_package":3,
             "short_code":"XL",
-            "labels":"@array@.count(2)"
+            "labels":"@array@.count(2)",
+            "tasks":[
+              "/api/tasks/1"
+            ]
           }
         ],
         "@*@":"@*@"
