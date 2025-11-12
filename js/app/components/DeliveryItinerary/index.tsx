@@ -1,8 +1,8 @@
-import React from 'react'
-import { Timeline } from 'antd'
-import { useTranslation } from 'react-i18next'
-import { taskTypeColor, taskTypeListIcon } from '../../styles'
-import { asText } from '../ShippingTimeRange'
+import React from 'react';
+import { Timeline } from 'antd';
+import { useTranslation } from 'react-i18next';
+import { taskTypeColor, taskTypeListIcon } from '../../styles';
+import { asText } from '../ShippingTimeRange';
 
 const Dot = ({ type }) => {
   return (
@@ -10,8 +10,8 @@ const Dot = ({ type }) => {
       className={`fa ${taskTypeListIcon(type)}`}
       style={{ color: taskTypeColor(type) }}
     />
-  )
-}
+  );
+};
 
 export default ({
   tasks,
@@ -19,7 +19,7 @@ export default ({
   withDescription = false,
   withPackages = false,
 }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const timelineItems = tasks.map((task, index) => ({
     key: `task-${index}`,
@@ -63,7 +63,7 @@ export default ({
         ) : null}
       </>
     ),
-  }))
+  }));
 
-  return <Timeline data-testid="delivery-itinerary" items={timelineItems} />
-}
+  return <Timeline data-testid="delivery-itinerary" items={timelineItems} />;
+};
