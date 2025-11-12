@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\GetCollection;
@@ -11,6 +12,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\CreateAddress;
+use AppBundle\Action\DeleteAddress;
 use AppBundle\Api\State\StoreAddressesProvider;
 use AppBundle\Entity\Base\BaseAddress;
 use AppBundle\Entity\Base\GeoCoordinates;
@@ -26,6 +28,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
     operations: [
         new Get(security: 'is_granted(\'ROLE_ADMIN\')'),
         new Patch(security: 'is_granted(\'edit\', object)'),
+        new Delete(security: 'is_granted(\'edit\', object)', controller: DeleteAddress::class),
         new GetCollection(security: 'is_granted(\'ROLE_ADMIN\')'),
         new Post(uriTemplate: '/me/addresses', controller: CreateAddress::class)
     ],

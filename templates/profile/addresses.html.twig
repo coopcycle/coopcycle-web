@@ -15,6 +15,9 @@
         <tr>
           <td>{{ address.streetAddress }}</td>
           <td class="text-right">{{ address.name }}</td>
+          <td class="text-right">
+            <a href="{{ path('_api_/addresses/{id}{._format}_delete', {'id': address.id}) }}" class="delete-address btn btn-danger"><i class="fa fa-trash"></i></a>
+          </td>
         </tr>
         {% endfor %}
       </tbody>
@@ -26,4 +29,23 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+  const httpClient = new window._auth.httpClient()
+
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.delete-address').forEach(link => {
+      link.addEventListener('click', async function(event) {
+        event.preventDefault();
+
+        if (confirm("{{ 'basics.are_you_sure'|trans }}")) {
+          const { error } = await httpClient.delete(this.href);
+
+          if (!error) {
+            location.reload();
+          }
+        }
+      });
+    });
+  });
+</script>
 {% endblock %}
