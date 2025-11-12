@@ -1158,7 +1158,7 @@ services:
 
   AppBundle\Service\PawapayManager:
     arguments:
-      $countryCode: '%env(PAWAPAY_COUNTRY_CODE)%'
+      $countryCode: '%env(default::PAWAPAY_COUNTRY_CODE)%'
 
   AppBundle\Sylius\Order\ReceiptGenerator:
     arguments:

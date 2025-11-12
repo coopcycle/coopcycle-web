@@ -4,7 +4,7 @@ include:
   - user_dispatcher.yml
 
 AppBundle\Entity\User:
-  courier_{1..50}:
+  courier_{1..25}:
     __factory:
       '@Nucleos\UserBundle\Util\UserManipulator::create':
         - '<username()>'
@@ -16,7 +16,7 @@ AppBundle\Entity\User:
     telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
 
 AppBundle\Entity\Delivery:
-  delivery_{1..250}:
+  delivery_{1..75}:
     __factory:
       createWithAddress:
         - "@warehouse"
@@ -28,9 +28,10 @@ AppBundle\Entity\Delivery:
       - setDropoffRange:
           - <identity(new \DateTime('today 19:00:00'))>
           - <identity(new \DateTime('today 19:30:00'))>
+      - assignTo: [ '@courier_<numberBetween(1, 10)>', <identity(new \DateTime('today'))> ]
     store: "@store_1"
 
-  delivery_{251..500}:
+  delivery_{76..100}:
     __factory:
       createWithAddress:
         - "@warehouse"
@@ -45,18 +46,16 @@ AppBundle\Entity\Delivery:
     store: '@store_*'
 
 AppBundle\Entity\Sylius\PricingRulesBasedPrice:
-  price_{1..500}:
+  price_{1..100}:
     __construct:
       - <numberBetween(500, 20000)>
 
 AppBundle\Entity\Sylius\Order:
-  order_{1..500}:
+  order_{1..100}:
     __factory:
       '@sylius.factory.order::createForDelivery':
         - "@delivery_<current()>"
     __calls:
-      # FIXME: this does not set an order number on each task (normally it's handled by OrderSubscriber)
-      # but doing so inside DeliveryOrderProcessor (via OrderManager.onDemand) is too slow
       - setNumber: [ "A<current()>" ]
       - setState: [ 'new' ]
     # The rest of initialization is done by DeliveryOrderProcessor

@@ -434,7 +434,8 @@ Feature: Deliveries
               "quantity": 2,
               "volume_per_package": 3,
               "short_code": "XL",
-              "labels": @array@
+              "labels": @array@,
+              "tasks": @array@
             }
           ],
           "barcode": {"@*@":"@*@"},
@@ -476,7 +477,8 @@ Feature: Deliveries
               "quantity": 2,
               "volume_per_package": 3,
               "short_code": "XL",
-              "labels": @array@
+              "labels": @array@,
+              "tasks": @array@
             }
           ],
           "barcode": {"@*@":"@*@"},
@@ -600,7 +602,8 @@ Feature: Deliveries
               "quantity": 1,
               "volume_per_package": 2,
               "short_code": "MD",
-              "labels": @array@
+              "labels": @array@,
+              "tasks": @array@
             },
             {
               "type": "XL",
@@ -608,7 +611,8 @@ Feature: Deliveries
               "quantity": 2,
               "volume_per_package": 3,
               "short_code": "XL",
-              "labels": @array@
+              "labels": @array@,
+              "tasks": @array@
             }
           ],
           "barcode": {"@*@":"@*@"},
@@ -650,7 +654,8 @@ Feature: Deliveries
               "quantity": 1,
               "volume_per_package": 2,
               "short_code": "MD",
-              "labels": @array@
+              "labels": @array@,
+              "tasks": @array@
             },
             {
               "type": "XL",
@@ -658,7 +663,8 @@ Feature: Deliveries
               "quantity": 2,
               "volume_per_package": 3,
               "short_code": "XL",
-              "labels": @array@
+              "labels": @array@,
+              "tasks": @array@
             }
           ],
           "barcode": {"@*@":"@*@"},
@@ -738,7 +744,8 @@ Feature: Deliveries
               "quantity": 2,
               "volume_per_package": 2,
               "short_code": "MD",
-              "labels": @array@
+              "labels": @array@,
+              "tasks": @array@
             },
             {
               "type": "SMALL",
@@ -746,7 +753,8 @@ Feature: Deliveries
               "quantity": 1,
               "volume_per_package": 1,
               "short_code": "SM",
-              "labels": @array@
+              "labels": @array@,
+              "tasks": @array@
             }
           ],
           "barcode": {"@*@":"@*@"},
@@ -788,7 +796,8 @@ Feature: Deliveries
               "quantity": 2,
               "volume_per_package": 2,
               "short_code": "MD",
-              "labels": @array@
+              "labels": @array@,
+              "tasks": @array@
             },
             {
               "type": "SMALL",
@@ -796,7 +805,8 @@ Feature: Deliveries
               "quantity": 1,
               "volume_per_package": 1,
               "short_code": "SM",
-              "labels": @array@
+              "labels": @array@,
+              "tasks": @array@
             }
           ],
           "barcode": {"@*@":"@*@"},

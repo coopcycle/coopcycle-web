@@ -19,12 +19,17 @@ class PawapayManager
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly LoggerInterface $logger,
         private string $locale,
-        private string $countryCode
+        private ?string $countryCode = null
     )
     {}
 
     public function createPaymentPage(PaymentInterface $payment, array $context = [])
     {
+        if (null === $this->countryCode) {
+            $this->logger->info('Order #%d | PawapayManager::createPaymentPage | Pawapay country code is not set', $payment->getOrder()->getId());
+            return;
+        }
+
         $order = $payment->getOrder();
         $customer = $order->getCustomer();
 

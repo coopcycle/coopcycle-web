@@ -22,8 +22,6 @@ AppBundle\Entity\Sylius\Order:
       '@sylius.factory.order::createForDelivery':
         - "@delivery_1"
     __calls:
-      # FIXME: this does not set an order number on each task (normally it's handled by OrderSubscriber)
-      # but doing so inside DeliveryOrderProcessor (via OrderManager.onDemand) is too slow
       - setNumber: [ "A1" ]
       - setState: [ 'new' ]
     # The rest of initialization is done by DeliveryOrderProcessor
