@@ -514,8 +514,15 @@ export function openNewTaskModal() {
   return { type: OPEN_NEW_TASK_MODAL }
 }
 
-export function closeNewTaskModal() {
+function _closeNewTaskModal() {
   return { type: CLOSE_NEW_TASK_MODAL }
+}
+
+export function closeNewTaskModal() {
+  return (dispatch) => {
+    dispatch(_closeNewTaskModal())
+    dispatch(setCurrentTask(null))
+  }
 }
 
 function _setCurrentTask(task) {
