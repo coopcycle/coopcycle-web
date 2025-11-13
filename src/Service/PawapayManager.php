@@ -26,7 +26,7 @@ class PawapayManager
     public function createPaymentPage(PaymentInterface $payment, array $context = [])
     {
         if (null === $this->countryCode) {
-            $this->logger->info('Order #%d | PawapayManager::createPaymentPage | Pawapay country code is not set', $payment->getOrder()->getId());
+            $this->logger->info(sprintf('Order #%d | PawapayManager::createPaymentPage | Pawapay country code is not set', $payment->getOrder()->getId()));
             return;
         }
 
