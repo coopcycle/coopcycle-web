@@ -4,6 +4,7 @@ namespace AppBundle\Service;
 
 use AppBundle\Entity\Refund;
 use AppBundle\Payment\GatewayInterface;
+use AppBundle\Service\SettingsManager;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
@@ -17,6 +18,7 @@ class PawapayManager
         private readonly HttpClientInterface $pawapayClient,
         private readonly CurrencyContextInterface $currencyContext,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly SettingsManager $settingsManager,
         private readonly LoggerInterface $logger,
         private string $locale,
         private ?string $countryCode = null
@@ -67,7 +69,17 @@ class PawapayManager
             'country' => $this->countryCode,
             // Example phone number 233241234567
             'phoneNumber' => $phoneNumber,
-            'reason' => sprintf('Order %s', $order->getNumber())
+            'reason' => sprintf('Order %s', $order->getNumber()),
+            'metadata' => [
+                [
+                    'fieldName' => 'submerchantLegalName',
+                    'fieldValue' => $this->settingsManager->get('company_legal_name')
+                ],
+                [
+                    'fieldName' => 'submerchantSegment',
+                    'fieldValue' => 'ECOMMERCE'
+                ],
+            ],
         ];
 
         $this->logger->info(
