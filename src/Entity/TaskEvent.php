@@ -5,7 +5,6 @@ namespace AppBundle\Entity;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(operations: [new Get(security: 'is_granted(\'view\', object.getTask())')])]

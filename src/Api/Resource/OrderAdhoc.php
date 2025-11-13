@@ -8,7 +8,6 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Order\Adhoc as AdhocOrderController;
 use AppBundle\Action\Order\AdhocUpdate as UpdateAdhocOrderController;
 use AppBundle\Action\Order\SearchAdhoc as SearchAdhocOrdersController;

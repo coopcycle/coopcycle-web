@@ -4,25 +4,31 @@ namespace AppBundle\Api\Filter;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
-use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
+use ApiPlatform\Doctrine\Orm\Filter\FilterInterface;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ParameterNotFound;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr\Join;
 
-class DeliveryOrderFilter extends AbstractFilter
+class DeliveryOrderFilter implements FilterInterface
 {
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
+    public function apply(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
     {
         if (Delivery::class !== $resourceClass) {
             return;
         }
 
-        if (!in_array('dropoff.before', array_keys($context['filters'][$property]))) {
+        $parameter = $context['parameter'] ?? null;
+        $value = $parameter?->getValue();
+
+        // The parameter may not be present
+        if ($value instanceof ParameterNotFound || null === $value) {
             return;
         }
 
-        $direction = $context['filters'][$property]['dropoff.before'];
+        // Value should be the direction (asc/desc)
+        $direction = $value;
 
         $rootAlias = $queryBuilder->getRootAliases()[0];
 
@@ -97,19 +103,7 @@ class DeliveryOrderFilter extends AbstractFilter
 
     public function getDescription(string $resourceClass): array
     {
-        if (!$this->properties) {
-            return [];
-        }
-
-        $description = [];
-        foreach ($this->properties as $property => $strategy) {
-            $description[$property] = [
-                'property' => $property,
-                'type' => 'string',
-                'required' => false,
-            ];
-        }
-
-        return $description;
+        // For BC, this function is not useful anymore when documentation occurs on the Parameter
+        return [];
     }
 }

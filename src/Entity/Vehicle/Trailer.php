@@ -10,7 +10,7 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
+
 #[ApiResource(shortName: 'VehicleTrailer')]
 class Trailer
 {
