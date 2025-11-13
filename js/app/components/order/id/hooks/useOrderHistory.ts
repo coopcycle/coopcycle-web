@@ -11,14 +11,13 @@ import {
   TaskPayload,
 } from '../../../../api/types';
 import { apiSlice } from '../../../../api/slice';
-import { formatTaskNumber } from '../../../../utils/taskUtils';
 
 export type HistoryEvent = {
-  source: string;
   type: string;
   createdAt: string;
-  sourceEntity: 'ORDER' | 'TASK' | 'INCIDENT';
   originalEvent: OrderEvent | TaskEvent | IncidentEvent;
+  sourceEntity: Order | TaskPayload | Incident;
+  sourceEntityType: 'ORDER' | 'TASK' | 'INCIDENT';
 };
 
 type Params = {
@@ -37,14 +36,17 @@ export function useOrderHistory({ order, tasks = [] }: Params) {
       return [];
     }
 
-    return order.events.map((event: OrderEvent) => ({
-      source: t('ORDER_WITH_NUMBER', { number: order.number }),
-      type: event.type,
-      createdAt: event.createdAt,
-      sourceEntity: 'ORDER',
-      originalEvent: event,
-    }));
-  }, [order.events, order.number, t]);
+    return order.events.map(
+      (event: OrderEvent) =>
+        ({
+          type: event.type,
+          createdAt: event.createdAt,
+          originalEvent: event,
+          sourceEntityType: 'ORDER',
+          sourceEntity: order,
+        }) as HistoryEvent,
+    );
+  }, [order]);
 
   const [taskEvents, setTaskEvents] = useState<HistoryEvent[]>([]);
   const [incidentEvents, setIncidentEvents] = useState<HistoryEvent[]>([]);
@@ -85,21 +87,22 @@ export function useOrderHistory({ order, tasks = [] }: Params) {
           if ('data' in taskEventsResult && taskEventsResult.data) {
             const taskEvents = taskEventsResult.data as TaskEvent[];
             events.push(
-              ...taskEvents.map(event => ({
-                source: t('TASK_WITH_NUMBER', {
-                  number: formatTaskNumber(task),
-                }),
-                type: event.name,
-                createdAt: event.createdAt,
-                sourceEntity: 'TASK',
-                originalEvent: event,
-              })),
+              ...taskEvents.map(
+                event =>
+                  ({
+                    type: event.name,
+                    createdAt: event.createdAt,
+                    originalEvent: event,
+                    sourceEntityType: 'TASK',
+                    sourceEntity: task,
+                  }) as HistoryEvent,
+              ),
             );
           }
 
           // Unsubscribe from the events query
           if ('unsubscribe' in taskEventsPromise) {
-            (taskEventsPromise as any).unsubscribe();
+            taskEventsPromise.unsubscribe();
           }
 
           // Fetch task incidents
@@ -112,20 +115,23 @@ export function useOrderHistory({ order, tasks = [] }: Params) {
             const taskIncidents = incidentsResult.data as Incident[];
             incidentEvents.push(
               ...taskIncidents.flatMap(incident =>
-                incident.events.map(event => ({
-                  source: t('INCIDENT_WITH_ID', { id: incident.id }),
-                  type: event.type,
-                  createdAt: event.createdAt,
-                  sourceEntity: 'INCIDENT',
-                  originalEvent: event,
-                })),
+                incident.events.map(
+                  event =>
+                    ({
+                      type: event.type,
+                      createdAt: event.createdAt,
+                      originalEvent: event,
+                      sourceEntityType: 'INCIDENT',
+                      sourceEntity: incident,
+                    }) as HistoryEvent,
+                ),
               ),
             );
           }
 
           // Unsubscribe from the incidents query
           if ('unsubscribe' in incidentsPromise) {
-            (incidentsPromise as any).unsubscribe();
+            incidentsPromise.unsubscribe();
           }
         }
 
