@@ -50,6 +50,8 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
     lastSeen: moment(pos.timestamp, 'X'),
   }))
 
+  const initialTask = dashboardEl.dataset.initialTask ? JSON.parse(dashboardEl.dataset.initialTask) : null
+
   let preloadedState = {
     logistics : {
       date,
@@ -89,6 +91,7 @@ async function start(tasksRequest, tasksListsRequest, toursRequest) {
       nav: dashboardEl.dataset.nav,
       pickupClusterAddresses: JSON.parse(dashboardEl.dataset.pickupClusterAddresses),
       exportEnabled: dashboardEl.dataset.exportEnabled,
+      initialTask: initialTask,
     },
     tracking: {
       positions,

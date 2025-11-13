@@ -8,7 +8,13 @@ import {
   createTaskListSuccess,
   createTaskListFailure
 } from '../../coopcycle-frontend-js/logistics/redux'
-import { selectExpandedTaskListPanelsIds, selectNextWorkingDay, selectSelectedTasks, selectTaskLists } from './selectors'
+import {
+  selectExpandedTaskListPanelsIds,
+  selectNav,
+  selectNextWorkingDay,
+  selectSelectedTasks,
+  selectTaskLists,
+} from './selectors';
 import { createAction } from '@reduxjs/toolkit'
 import { selectTaskById, selectTaskListByUsername } from '../../../shared/src/logistics/redux/selectors'
 import { createClient } from '../utils/client'
@@ -512,8 +518,38 @@ export function closeNewTaskModal() {
   return { type: CLOSE_NEW_TASK_MODAL }
 }
 
-export function setCurrentTask(task) {
+function _setCurrentTask(task) {
   return { type: SET_CURRENT_TASK, task }
+}
+
+export function setCurrentTask(task) {
+  return (dispatch, getState) => {
+    const state = getState()
+    const date = selectSelectedDate(state)
+    const nav = selectNav(state)
+
+    let routeParams = {
+      date: date.format('YYYY-MM-DD')
+    }
+
+    // Add nav parameter if it's off
+    if (nav === 'off') {
+      routeParams.nav = 'off'
+    }
+
+    // Add task parameter if a task is selected
+    if (task) {
+      routeParams.task = task['@id']
+    }
+
+    dispatch(_setCurrentTask(task))
+
+    window.history.replaceState(
+      {},
+      document.title,
+      window.Routing.generate('admin_dashboard_fullscreen', routeParams)
+    )
+  }
 }
 
 export function createTaskRequest() {
