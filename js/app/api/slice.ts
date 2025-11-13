@@ -40,6 +40,7 @@ import {
   Uri,
   Incident,
   User,
+  TaskEvent,
 } from './types';
 
 // Define our single API slice object
@@ -314,6 +315,11 @@ export const apiSlice = createApi({
     getUser: builder.query<User, Uri>({
       query: (uri: Uri) => uri,
     }),
+    getTaskEvents: builder.query<TaskEvent[], string>({
+      query: (taskUri: string) => `${taskUri}/events`,
+      transformResponse: (response: HydraCollection<TaskEvent>) =>
+        response['hydra:member'],
+    }),
   }),
 });
 
@@ -350,4 +356,5 @@ export const {
   useDeletePricingRuleSetMutation,
   useIncidentActionMutation,
   useGetUserQuery,
+  useGetTaskEventsQuery,
 } = apiSlice;

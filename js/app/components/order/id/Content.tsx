@@ -52,7 +52,7 @@ export function Content({ order, delivery }: Props) {
         onCancel={handleHistoryModalClose}
         footer={null}
         width={800}>
-        <OrderHistory events={order.events} />
+        <OrderHistory order={order} tasks={delivery?.tasks} />
       </Modal>
     </>
   );

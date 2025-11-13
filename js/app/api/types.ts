@@ -219,6 +219,12 @@ export type OrderEvent = {
   // data?: Record<string, any>
 };
 
+export type TaskEvent = {
+  name: string;
+  createdAt: string;
+  // data?: Record<string, any>
+};
+
 export type OrderTimeline = {
   preparationExpectedAt?: string;
   pickupExpectedAt?: string;
