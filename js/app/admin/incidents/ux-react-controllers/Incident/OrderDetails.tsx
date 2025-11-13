@@ -39,14 +39,13 @@ function Heading({ task, delivery, order }) {
     </h4>
   );
 
-  if (order?.number) {
-    const link = window.Routing.generate('admin_order', { id: order.id });
-    return header(`${t('ORDER')} N° ${order.number}`, _externalLink(link));
-  }
+  if (order) {
+    const orderWithNumber = t('ORDER_WITH_NUMBER', {
+      number: order?.number ?? `#${order.id}`,
+    });
 
-  if (order?.id) {
     const link = window.Routing.generate('admin_order', { id: order.id });
-    return header(`${t('ORDER')} #${order.id}`, _externalLink(link));
+    return header(orderWithNumber, _externalLink(link));
   }
 
   if (delivery?.id) {
