@@ -11,6 +11,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { HistoryEvent, useOrderHistory } from './hooks/useOrderHistory';
 import { IncidentEventView } from '../../../admin/incidents/[id]/components/IncidentEventView';
+import { TotalPrice } from '../../delivery-form/components/order/TotalPrice';
 
 const itemColor = (event: HistoryEvent) => {
   switch (event.type) {
@@ -28,7 +29,32 @@ const itemColor = (event: HistoryEvent) => {
 };
 
 const OrderEventDetails = ({ event }: { event: OrderEvent }) => {
-  return null;
+  if (!event.data) {
+    return null;
+  }
+
+  return (
+    <>
+      {typeof event.data.newState === 'string' ? (
+        <p>{event.data.newState}</p>
+      ) : null}
+      {typeof event.data.new_total === 'number' &&
+      typeof event.data.old_total === 'number' ? (
+        <div>
+          <TotalPrice
+            overridePrice={true}
+            total={event.data.old_total}
+            taxTotal={event.data.old_tax_total}
+          />
+          <TotalPrice
+            overridePrice={false}
+            total={event.data.new_total}
+            taxTotal={event.data.new_tax_total}
+          />
+        </div>
+      ) : null}
+    </>
+  );
 };
 
 const TaskEventDetails = ({ event }: { event: TaskEvent }) => {
