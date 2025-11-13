@@ -18,7 +18,6 @@ import { timePickerProps } from '../../utils/antd'
 
 import {
   cancelTask,
-  closeNewTaskModal,
   completeTask,
   createTask,
   duplicateTask,
@@ -90,7 +89,7 @@ class TaskModalContent extends React.Component {
 
   onCloseClick(e) {
     e.preventDefault()
-    this.props.closeNewTaskModal()
+    this.props.onCloseClick()
   }
 
   onCancelClick(task) {
@@ -812,7 +811,6 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    closeNewTaskModal: () => dispatch(closeNewTaskModal()),
     createTask: task => dispatch(createTask(task)),
     startTask: task => dispatch(startTask(task)),
     completeTask: (task, notes, success) =>

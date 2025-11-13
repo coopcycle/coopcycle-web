@@ -5,7 +5,6 @@ import Modal from 'react-modal'
 import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 
 import {
-  setCurrentTask,
   closeNewTaskModal,
   closeFiltersModal,
   openSettings,
@@ -49,11 +48,11 @@ class Modals extends React.Component {
           style={customStyle}
           isOpen={ this.props.taskModalIsOpen }
           onRequestClose={ () => {
-            this.props.setCurrentTask(null)
+            this.props.closeNewTaskModal()
           }}
           className="ReactModal__Content--task-form"
           shouldCloseOnOverlayClick={ true }>
-          <TaskModalContent />
+          <TaskModalContent onCloseClick={ this.props.closeNewTaskModal } />
         </Modal>
         <Modal
           appElement={ document.getElementById('dashboard') }
@@ -202,7 +201,6 @@ function mapStateToProps(state) {
 function mapDispatchToProps (dispatch) {
 
   return {
-    setCurrentTask: (task) => dispatch(setCurrentTask(task)),
     closeNewTaskModal: () => dispatch(closeNewTaskModal()),
     closeFiltersModal: () => dispatch(closeFiltersModal()),
     openSettings: () => dispatch(openSettings()),
