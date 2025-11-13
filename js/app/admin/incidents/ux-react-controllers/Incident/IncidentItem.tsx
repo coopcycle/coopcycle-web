@@ -15,9 +15,9 @@ function ContextDetails({ delivery, order }) {
   const { t } = useTranslation();
 
   if (order) {
-    const orderID = order?.number
-      ? t('INCIDENTS_ORDER_NUMBER', { number: order.number })
-      : t('INCIDENTS_ORDER_ID', { id: order.id });
+    const orderID = t('ORDER_WITH_NUMBER', {
+      number: order?.number ?? `#${order.id}`,
+    });
 
     return (
       <>
