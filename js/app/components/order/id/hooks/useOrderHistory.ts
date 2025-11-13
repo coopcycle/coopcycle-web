@@ -4,6 +4,7 @@ import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import {
   Incident,
+  IncidentEvent,
   Order,
   OrderEvent,
   TaskEvent,
@@ -12,11 +13,12 @@ import {
 import { apiSlice } from '../../../../api/slice';
 import { formatTaskNumber } from '../../../../utils/taskUtils';
 
-type HistoryEvent = {
+export type HistoryEvent = {
   source: string;
   type: string;
   createdAt: string;
-  data?: Record<string, unknown>;
+  sourceEntity: 'ORDER' | 'TASK' | 'INCIDENT';
+  originalEvent: OrderEvent | TaskEvent | IncidentEvent;
 };
 
 type Params = {
@@ -39,7 +41,8 @@ export function useOrderHistory({ order, tasks = [] }: Params) {
       source: t('ORDER_WITH_NUMBER', { number: order.number }),
       type: event.type,
       createdAt: event.createdAt,
-      data: event.data,
+      sourceEntity: 'ORDER',
+      originalEvent: event,
     }));
   }, [order.events, order.number, t]);
 
@@ -88,7 +91,8 @@ export function useOrderHistory({ order, tasks = [] }: Params) {
                 }),
                 type: event.name,
                 createdAt: event.createdAt,
-                data: event.data,
+                sourceEntity: 'TASK',
+                originalEvent: event,
               })),
             );
           }
@@ -112,7 +116,8 @@ export function useOrderHistory({ order, tasks = [] }: Params) {
                   source: t('INCIDENT_WITH_ID', { id: incident.id }),
                   type: event.type,
                   createdAt: event.createdAt,
-                  data: event.metadata,
+                  sourceEntity: 'INCIDENT',
+                  originalEvent: event,
                 })),
               ),
             );

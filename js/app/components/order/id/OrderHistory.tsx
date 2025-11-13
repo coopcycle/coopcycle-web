@@ -1,16 +1,16 @@
 import React, { useMemo } from 'react';
 import { Spin, Timeline } from 'antd';
 import moment from 'moment';
-import { Order, TaskPayload } from '../../../api/types';
+import {
+  IncidentEvent,
+  Order,
+  OrderEvent,
+  TaskEvent,
+  TaskPayload,
+} from '../../../api/types';
 import { useTranslation } from 'react-i18next';
-import { useOrderHistory } from './hooks/useOrderHistory';
-
-type HistoryEvent = {
-  source: string;
-  type: string;
-  createdAt: string;
-  data?: Record<string, unknown>;
-};
+import { HistoryEvent, useOrderHistory } from './hooks/useOrderHistory';
+import { IncidentEventView } from '../../../admin/incidents/[id]/components/IncidentEventView';
 
 const itemColor = (event: HistoryEvent) => {
   switch (event.type) {
@@ -27,14 +27,60 @@ const itemColor = (event: HistoryEvent) => {
   }
 };
 
+const OrderEventDetails = ({ event }: { event: OrderEvent }) => {
+  return null;
+};
+
+const TaskEventDetails = ({ event }: { event: TaskEvent }) => {
+  const { t } = useTranslation();
+
+  if (!event.data) {
+    return null;
+  }
+
+  return (
+    <>
+      {event.data.incident_id ? (
+        <a
+          href={window.Routing.generate('admin_incident', {
+            id: event.data.incident_id,
+          })}
+          target="_blank"
+          rel="noopener noreferrer">
+          {t('INCIDENT_WITH_ID', { id: event.data.incident_id })}
+        </a>
+      ) : null}
+      {event.data.notes && typeof event.data.notes === 'string' ? (
+        <p>
+          <i className="fa fa-comment" aria-hidden="true"></i>{' '}
+          {event.data.notes}
+        </p>
+      ) : null}
+    </>
+  );
+};
+
+const EventDetails = ({ event }: { event: HistoryEvent }) => {
+  const originalEvent = event.originalEvent;
+
+  switch (event.sourceEntity) {
+    case 'ORDER':
+      return <OrderEventDetails event={originalEvent as OrderEvent} />;
+    case 'TASK':
+      return <TaskEventDetails event={originalEvent as TaskEvent} />;
+    case 'INCIDENT':
+      return <IncidentEventView event={originalEvent as IncidentEvent} />;
+    default:
+      return null;
+  }
+};
+
 type Props = {
   order: Order;
   tasks?: TaskPayload[];
 };
 
 export function OrderHistory({ order, tasks = [] }: Props) {
-  const { t } = useTranslation();
-
   const { allEvents, isLoading } = useOrderHistory({ order, tasks });
 
   const timelineItems = useMemo(() => {
@@ -46,26 +92,11 @@ export function OrderHistory({ order, tasks = [] }: Props) {
           <p>
             {moment(event.createdAt).format('lll')} {event.source} {event.type}
           </p>
-          {event.data?.incident_id ? (
-            <a
-              href={window.Routing.generate('admin_incident', {
-                id: event.data.incident_id,
-              })}
-              target="_blank"
-              rel="noopener noreferrer">
-              {t('INCIDENT_WITH_ID', { id: event.data.incident_id })}
-            </a>
-          ) : null}
-          {event.data?.notes ? (
-            <p>
-              <i className="fa fa-comment" aria-hidden="true"></i>{' '}
-              {event.data.notes}
-            </p>
-          ) : null}
+          <EventDetails event={event} />
         </>
       ),
     }));
-  }, [allEvents, t]);
+  }, [allEvents]);
 
   if (isLoading) {
     return <Spin />;
