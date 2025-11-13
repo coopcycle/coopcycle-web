@@ -36,7 +36,8 @@ import {
   openNewRecurrenceRuleModal,
   setCurrentTask,
   openTaskTaskList,
-} from '../redux/actions'
+  selectTask,
+} from '../redux/actions';
 import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 import DeliveryCreateNewButton from '../../components/DeliveryCreateNewButton'
 import { selectInitialTask, selectNav, selectStores } from '../redux/selectors';
@@ -364,8 +365,11 @@ const NavbarAntd = () => {
   useEffect(() => {
     if (initialTask) {
       setTimeout(() => {
-        dispatch(setCurrentTask(initialTask))
+        // highlight task in the list
+        dispatch(selectTask(initialTask))
         dispatch(openTaskTaskList(initialTask))
+        // open task modal
+        dispatch(setCurrentTask(initialTask))
       }, 500)
     }
   }, []) // no deps to run once
