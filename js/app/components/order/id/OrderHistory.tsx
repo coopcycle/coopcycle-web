@@ -12,6 +12,8 @@ import { useTranslation } from 'react-i18next';
 import { HistoryEvent, useOrderHistory } from './hooks/useOrderHistory';
 import { IncidentEventView } from '../../../admin/incidents/[id]/components/IncidentEventView';
 import { TotalPrice } from '../../delivery-form/components/order/TotalPrice';
+import { Link } from '../../core/Link';
+import { formatTaskNumber } from '../../../utils/taskUtils';
 
 const itemColor = (event: HistoryEvent) => {
   switch (event.type) {
@@ -28,6 +30,20 @@ const itemColor = (event: HistoryEvent) => {
   }
 };
 
+const IncidentLink = ({ incidentId }: { incidentId: number }) => {
+  const { t } = useTranslation();
+
+  return (
+    <Link
+      href={window.Routing.generate('admin_incident', {
+        id: incidentId,
+      })}
+      openInNewTab>
+      {t('INCIDENT_WITH_ID', { id: incidentId })}
+    </Link>
+  );
+};
+
 const OrderEventDetails = ({ event }: { event: OrderEvent }) => {
   if (!event.data) {
     return null;
@@ -39,7 +55,9 @@ const OrderEventDetails = ({ event }: { event: OrderEvent }) => {
         <p>{event.data.newState}</p>
       ) : null}
       {typeof event.data.new_total === 'number' &&
-      typeof event.data.old_total === 'number' ? (
+      typeof event.data.new_tax_total === 'number' &&
+      typeof event.data.old_total === 'number' &&
+      typeof event.data.old_tax_total === 'number' ? (
         <div>
           <TotalPrice
             overridePrice={true}
@@ -58,25 +76,16 @@ const OrderEventDetails = ({ event }: { event: OrderEvent }) => {
 };
 
 const TaskEventDetails = ({ event }: { event: TaskEvent }) => {
-  const { t } = useTranslation();
-
   if (!event.data) {
     return null;
   }
 
   return (
     <>
-      {event.data.incident_id ? (
-        <a
-          href={window.Routing.generate('admin_incident', {
-            id: event.data.incident_id,
-          })}
-          target="_blank"
-          rel="noopener noreferrer">
-          {t('INCIDENT_WITH_ID', { id: event.data.incident_id })}
-        </a>
+      {typeof event.data.incident_id === 'number' ? (
+        <IncidentLink incidentId={event.data.incident_id} />
       ) : null}
-      {event.data.notes && typeof event.data.notes === 'string' ? (
+      {typeof event.data.notes === 'string' ? (
         <p>
           <i className="fa fa-comment" aria-hidden="true"></i>{' '}
           {event.data.notes}
@@ -89,7 +98,7 @@ const TaskEventDetails = ({ event }: { event: TaskEvent }) => {
 const EventDetails = ({ event }: { event: HistoryEvent }) => {
   const originalEvent = event.originalEvent;
 
-  switch (event.sourceEntity) {
+  switch (event.sourceEntityType) {
     case 'ORDER':
       return <OrderEventDetails event={originalEvent as OrderEvent} />;
     case 'TASK':
@@ -106,6 +115,29 @@ type Props = {
   tasks?: TaskPayload[];
 };
 
+const SourceLink = ({
+  sourceEntity,
+  sourceEntityType,
+}: {
+  sourceEntity: HistoryEvent['sourceEntity'];
+  sourceEntityType: HistoryEvent['sourceEntityType'];
+}) => {
+  const { t } = useTranslation();
+
+  switch (sourceEntityType) {
+    case 'ORDER':
+      return t('ORDER_WITH_NUMBER', { number: sourceEntity.number });
+    case 'TASK':
+      return t('TASK_WITH_NUMBER', {
+        number: formatTaskNumber(sourceEntity),
+      });
+    case 'INCIDENT':
+      return <IncidentLink incidentId={sourceEntity.id} />;
+    default:
+      return null;
+  }
+};
+
 export function OrderHistory({ order, tasks = [] }: Props) {
   const { allEvents, isLoading } = useOrderHistory({ order, tasks });
 
@@ -116,7 +148,12 @@ export function OrderHistory({ order, tasks = [] }: Props) {
       children: (
         <>
           <p>
-            {moment(event.createdAt).format('lll')} {event.source} {event.type}
+            {moment(event.createdAt).format('lll')}{' '}
+            <SourceLink
+              sourceEntity={event.sourceEntity}
+              sourceEntityType={event.sourceEntityType}
+            />{' '}
+            {event.type}
           </p>
           <EventDetails event={event} />
         </>
