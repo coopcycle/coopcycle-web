@@ -69,7 +69,7 @@ class CheckoutAddressType extends AbstractType
             // Disable shippingAddress.streetAddress
             $this->disableChildForm($form, 'streetAddress');
 
-            if ($data->getProvider() === Address::PROVIDER_PLUS_CODE) {
+            if ($data instanceof Address && $data->getProvider() === Address::PROVIDER_PLUS_CODE) {
                 $this->setAddressDescriptionRequired($form, 'description');
             }
         });
