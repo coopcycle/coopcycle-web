@@ -2,7 +2,13 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Spin, Timeline } from 'antd';
 import moment from 'moment';
 import { useDispatch } from 'react-redux';
-import { Order, OrderEvent, TaskEvent, TaskPayload } from '../../../api/types';
+import {
+  Incident,
+  Order,
+  OrderEvent,
+  TaskEvent,
+  TaskPayload,
+} from '../../../api/types';
 import { apiSlice } from '../../../api/slice';
 import { formatTaskNumber } from '../../../utils/taskUtils';
 import { useTranslation } from 'react-i18next';
@@ -53,16 +59,21 @@ export function OrderHistory({ order, tasks = [] }: Props) {
     }));
   }, [order.events, order.number, t]);
   const [taskEvents, setTaskEvents] = useState<HistoryEvent[]>([]);
+  const [incidentEvents, setIncidentEvents] = useState<HistoryEvent[]>([]);
 
   const allEvents = useMemo(() => {
-    const mergedEvents: HistoryEvent[] = [...orderEvents, ...taskEvents];
+    const mergedEvents: HistoryEvent[] = [
+      ...orderEvents,
+      ...taskEvents,
+      ...incidentEvents,
+    ];
 
     mergedEvents.sort((a, b) => {
       return moment(a.createdAt).isBefore(moment(b.createdAt)) ? -1 : 1;
     });
 
     return mergedEvents;
-  }, [orderEvents, taskEvents]);
+  }, [orderEvents, taskEvents, incidentEvents]);
 
   const timelineItems = useMemo(() => {
     return allEvents.map((event, index) => ({
@@ -80,7 +91,7 @@ export function OrderHistory({ order, tasks = [] }: Props) {
               })}
               target="_blank"
               rel="noopener noreferrer">
-              Incident #{event.data.incident_id}
+              {t('INCIDENT_WITH_ID', { id: event.data.incident_id })}
             </a>
           ) : null}
           {event.data?.notes ? (
@@ -92,27 +103,29 @@ export function OrderHistory({ order, tasks = [] }: Props) {
         </>
       ),
     }));
-  }, [allEvents]);
+  }, [allEvents, t]);
 
   useEffect(() => {
     if (tasks.length === 0) {
       return;
     }
 
-    const fetchTaskEvents = async () => {
+    const fetchTaskEventsAndIncidents = async () => {
       setIsLoading(true);
 
       const events: HistoryEvent[] = [];
+      const incidentEvents: HistoryEvent[] = [];
 
       try {
         for (const task of tasks) {
-          const promise = dispatch(
+          // Fetch task events
+          const taskEventsPromise = dispatch(
             apiSlice.endpoints.getTaskEvents.initiate(task['@id']),
           );
-          const result = await promise;
+          const taskEventsResult = await taskEventsPromise;
 
-          if ('data' in result && result.data) {
-            const taskEvents = result.data as TaskEvent[];
+          if ('data' in taskEventsResult && taskEventsResult.data) {
+            const taskEvents = taskEventsResult.data as TaskEvent[];
             events.push(
               ...taskEvents.map(event => ({
                 source: t('TASK_WITH_NUMBER', {
@@ -125,22 +138,49 @@ export function OrderHistory({ order, tasks = [] }: Props) {
             );
           }
 
-          // Unsubscribe from the queries
-          if ('unsubscribe' in promise) {
-            (promise as any).unsubscribe();
+          // Unsubscribe from the events query
+          if ('unsubscribe' in taskEventsPromise) {
+            (taskEventsPromise as any).unsubscribe();
+          }
+
+          // Fetch task incidents
+          const incidentsPromise = dispatch(
+            apiSlice.endpoints.getTaskIncidents.initiate(task['@id']),
+          );
+          const incidentsResult = await incidentsPromise;
+
+          if ('data' in incidentsResult && incidentsResult.data) {
+            const taskIncidents = incidentsResult.data as Incident[];
+            incidentEvents.push(
+              ...taskIncidents.flatMap(incident =>
+                incident.events.map(event => ({
+                  source: t('INCIDENT_WITH_ID', { id: incident.id }),
+                  type: event.type,
+                  createdAt: event.createdAt,
+                  data: event.metadata,
+                })),
+              ),
+            );
+          }
+
+          // Unsubscribe from the incidents query
+          if ('unsubscribe' in incidentsPromise) {
+            (incidentsPromise as any).unsubscribe();
           }
         }
 
         setTaskEvents(events);
+        setIncidentEvents(incidentEvents);
       } catch (error) {
-        console.error('Failed to fetch task events:', error);
+        console.error('Failed to fetch task events and incidents:', error);
         setTaskEvents([]);
+        setIncidentEvents([]);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchTaskEvents();
+    fetchTaskEventsAndIncidents();
   }, [tasks, dispatch, t]);
 
   if (isLoading) {
