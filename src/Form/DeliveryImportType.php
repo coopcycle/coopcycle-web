@@ -35,6 +35,7 @@ class DeliveryImportType extends AbstractType
                 'class' => Store::class,
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('store')
+                        ->where('store.deletedAt IS NULL')
                         ->orderBy('store.name', 'ASC');
                 },
                 'choice_label' => 'name',
