@@ -11,6 +11,7 @@ type HistoryEvent = {
   source: string;
   type: string;
   createdAt: string;
+  data?: Record<string, unknown>;
 };
 
 const itemColor = (event: HistoryEvent) => {
@@ -48,6 +49,7 @@ export function OrderHistory({ order, tasks = [] }: Props) {
       source: t('ORDER_WITH_NUMBER', { number: order.number }),
       type: event.type,
       createdAt: event.createdAt,
+      data: event.data,
     }));
   }, [order.events, order.number, t]);
   const [taskEvents, setTaskEvents] = useState<HistoryEvent[]>([]);
@@ -71,22 +73,22 @@ export function OrderHistory({ order, tasks = [] }: Props) {
           <p>
             {moment(event.createdAt).format('lll')} {event.source} {event.type}
           </p>
-          {/*{event.data.incident_id && (*/}
-          {/*  <a*/}
-          {/*    href={window.Routing.generate('admin_incident', {*/}
-          {/*      id: event.data.incident_id,*/}
-          {/*    })}*/}
-          {/*    target="_blank"*/}
-          {/*    rel="noopener noreferrer">*/}
-          {/*    Incident #{event.data.incident_id}*/}
-          {/*  </a>*/}
-          {/*)}*/}
-          {/*{event.data.notes && (*/}
-          {/*  <p>*/}
-          {/*    <i className="fa fa-comment" aria-hidden="true"></i>{' '}*/}
-          {/*    {event.data.notes}*/}
-          {/*  </p>*/}
-          {/*)}*/}
+          {event.data?.incident_id ? (
+            <a
+              href={window.Routing.generate('admin_incident', {
+                id: event.data.incident_id,
+              })}
+              target="_blank"
+              rel="noopener noreferrer">
+              Incident #{event.data.incident_id}
+            </a>
+          ) : null}
+          {event.data?.notes ? (
+            <p>
+              <i className="fa fa-comment" aria-hidden="true"></i>{' '}
+              {event.data.notes}
+            </p>
+          ) : null}
         </>
       ),
     }));
@@ -118,6 +120,7 @@ export function OrderHistory({ order, tasks = [] }: Props) {
                 }),
                 type: event.name,
                 createdAt: event.createdAt,
+                data: event.data,
               })),
             );
           }
