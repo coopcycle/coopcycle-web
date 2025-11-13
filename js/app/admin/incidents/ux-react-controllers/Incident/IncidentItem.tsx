@@ -11,8 +11,10 @@ async function _fetchTaskContect(id) {
   );
 }
 
-function ContextDetails({ delivery, order }) {
+function ContextDetails({ context }) {
   const { t } = useTranslation();
+
+  const { delivery, order } = context;
 
   if (order) {
     const orderID = order?.number
