@@ -320,6 +320,11 @@ export const apiSlice = createApi({
       transformResponse: (response: HydraCollection<TaskEvent>) =>
         response['hydra:member'],
     }),
+    getTaskIncidents: builder.query<Incident[], string>({
+      query: (taskUri: string) => `${taskUri}/incidents`,
+      transformResponse: (response: HydraCollection<Incident>) =>
+        response['hydra:member'],
+    }),
   }),
 });
 
@@ -357,4 +362,5 @@ export const {
   useIncidentActionMutation,
   useGetUserQuery,
   useGetTaskEventsQuery,
+  useGetTaskIncidentsQuery,
 } = apiSlice;
