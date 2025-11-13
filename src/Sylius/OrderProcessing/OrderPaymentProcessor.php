@@ -148,6 +148,9 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
                     case 'paygreen':
                         $this->paygreenManager->createPaymentOrder($cardPayment);
                         break;
+                    // FIXME
+                    // Actually for pawaPay it should not be "CARD"
+                    // but something else like "MOBILE_PAYMENT"
                     case 'pawapay':
                         $this->pawapayManager->createPaymentPage($cardPayment);
                         break;

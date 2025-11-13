@@ -194,6 +194,13 @@ class RestaurantType extends LocalBusinessType
                         ]);
                     }
 
+                    if ($this->gatewayResolver->supports('pawapay')) {
+                        $form->add('pawapayEnabled', CheckboxType::class, [
+                            'label' => 'restaurant.form.pawapay_enabled.label',
+                            'required' => false,
+                        ]);
+                    }
+
                     if (!$restaurant->isDeleted()) {
                         $form->add('delete', SubmitType::class, [
                             'label' => 'basics.delete',

@@ -46,6 +46,10 @@
     {{ form_row(form.usePaygreen) }}
   {% endif %}
 
+  {% if form.pawapayEnabled is defined %}
+    {{ form_row(form.pawapayEnabled) }}
+  {% endif %}
+
 {% endif %}
 
 {% if form.allowStripeConnect is defined and not form.allowStripeConnect.rendered %}

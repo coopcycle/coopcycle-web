@@ -298,6 +298,8 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected string $paymentGateway = 'stripe';
 
+    protected bool $pawapayEnabled = true;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -1211,5 +1213,15 @@ class LocalBusiness extends BaseLocalBusiness implements
         }
 
         return null;
+    }
+
+    public function isPawapayEnabled(): bool
+    {
+        return $this->pawapayEnabled;
+    }
+
+    public function setPawapayEnabled($enabled = true)
+    {
+        $this->pawapayEnabled = $enabled;
     }
 }
