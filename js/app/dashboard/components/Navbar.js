@@ -34,18 +34,21 @@ import {
   openExportModal,
   openNewTaskModal,
   openNewRecurrenceRuleModal,
+  setCurrentTask,
+  openTaskTaskList,
 } from '../redux/actions'
 import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 import DeliveryCreateNewButton from '../../components/DeliveryCreateNewButton'
-import { selectStores } from '../redux/selectors'
+import { selectInitialTask, selectNav, selectStores } from '../redux/selectors';
 import SearchInput from './SearchInput'
+import { selectTaskById } from '../../../shared/src/logistics/redux/selectors'
 
 const { Header } = Layout
 const { useBreakpoint } = Grid
 
 const DateNavigation = () => {
   const selectedDate = useSelector(selectSelectedDate)
-  const nav = useSelector(state => state.config.nav)
+  const nav = useSelector(selectNav)
 
   const prevUrl = window.Routing.generate('admin_dashboard_fullscreen', {
     date: moment(selectedDate).subtract(1, 'days').format('YYYY-MM-DD'),
@@ -339,6 +342,8 @@ const NavbarAntd = () => {
   const [isOverflowMenuVisible, setIsOverflowMenuVisible] = useState(false)
 
   const imports = useSelector(state => state.imports)
+  const initialTaskUri = useSelector(selectInitialTask)
+  const initialTask = useSelector(state => selectTaskById(state, initialTaskUri))
 
   // Effect for handling imports popover (equivalent to componentDidUpdate)
   useEffect(() => {
@@ -354,6 +359,16 @@ const NavbarAntd = () => {
       }
     })
   }, [imports])
+
+  // Effect for handling initial task selection from URL
+  useEffect(() => {
+    if (initialTask) {
+      setTimeout(() => {
+        dispatch(setCurrentTask(initialTask))
+        dispatch(openTaskTaskList(initialTask))
+      }, 500)
+    }
+  }, []) // no deps to run once
 
   if (screens.xl) {
     return (
