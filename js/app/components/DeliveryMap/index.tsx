@@ -1,13 +1,13 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import L from 'leaflet'
-import 'leaflet-arrowheads'
-require('beautifymarker')
-import { MapContainer, Marker, TileLayer, useMap } from 'react-leaflet'
-import { taskTypeColor, taskTypeMapIcon } from '../../styles'
-import MapHelper from '../../MapHelper'
-import { useTranslation } from 'react-i18next'
+import React, { useEffect, useMemo, useState } from 'react';
+import L from 'leaflet';
+import 'leaflet-arrowheads';
+require('beautifymarker');
+import { MapContainer, Marker, TileLayer, useMap } from 'react-leaflet';
+import { taskTypeColor, taskTypeMapIcon } from '../../styles';
+import MapHelper from '../../MapHelper';
+import { useTranslation } from 'react-i18next';
 
-import './Map.scss'
+import './Map.scss';
 
 const createMarkerIcon = (icon, iconShape, color) => {
   return L.BeautifyIcon.icon({
@@ -16,53 +16,55 @@ const createMarkerIcon = (icon, iconShape, color) => {
     borderColor: color,
     textColor: color,
     backgroundColor: 'transparent',
-  })
-}
+  });
+};
 
 const CustomMarker = ({ position, icon, iconShape, color }) => {
-  const markerIcon = createMarkerIcon(icon, iconShape, color)
+  const markerIcon = createMarkerIcon(icon, iconShape, color);
 
-  return <Marker position={position} icon={markerIcon} />
-}
+  return <Marker position={position} icon={markerIcon} />;
+};
 
 const ArrowheadPolyline = ({ positions, options }) => {
-  const map = useMap()
+  const map = useMap();
 
   useEffect(() => {
-    if (!map) return
+    if (!map) return;
 
-    const polyline = L.polyline(positions, options).addTo(map)
-    polyline.arrowheads()
+    const polyline = L.polyline(positions, options).addTo(map);
+    polyline.arrowheads();
 
     return () => {
-      map.removeLayer(polyline)
-    }
-  }, [positions, options, map])
+      map.removeLayer(polyline);
+    };
+  }, [positions, options, map]);
 
-  return null
-}
+  return null;
+};
 
 const FitBoundsToMarkers = ({ positions, maxZoom = 17 }) => {
-  const map = useMap()
+  const map = useMap();
 
   useEffect(() => {
     if (Array.isArray(positions) && positions.length > 0) {
-      const bounds = L.latLngBounds(positions.map(pos => pos.latLng))
+      const bounds = L.latLngBounds(positions.map(pos => pos.latLng));
       if (bounds.isValid()) {
-        map.fitBounds(bounds, { padding: [50, 50], maxZoom })
+        map.fitBounds(bounds, { padding: [50, 50], maxZoom });
       }
     } else if (
       positions &&
       typeof positions.latitude === 'number' &&
       typeof positions.longitude === 'number'
     ) {
-      const bounds = L.latLngBounds([[positions.latitude, positions.longitude]])
+      const bounds = L.latLngBounds([
+        [positions.latitude, positions.longitude],
+      ]);
       if (bounds.isValid()) {
-        map.fitBounds(bounds, { padding: [50, 50], maxZoom })
+        map.fitBounds(bounds, { padding: [50, 50], maxZoom });
       }
     }
-  }, [map, positions, maxZoom])
-}
+  }, [map, positions, maxZoom]);
+};
 
 export default ({ defaultAddress, tasks }) => {
   const defaultGeo = useMemo(() => {
@@ -70,16 +72,16 @@ export default ({ defaultAddress, tasks }) => {
       return {
         latitude: defaultAddress.geo.latitude,
         longitude: defaultAddress.geo.longitude,
-      }
+      };
     }
-    return null
-  }, [defaultAddress])
+    return null;
+  }, [defaultAddress]);
 
-  const [deliveryGeo, setDeliveryGeo] = useState([])
-  const [deliveryRoute, setDeliveryRoute] = useState('')
-  const [distance, setDistance] = useState({ kms: 0 })
+  const [deliveryGeo, setDeliveryGeo] = useState([]);
+  const [deliveryRoute, setDeliveryRoute] = useState('');
+  const [distance, setDistance] = useState({ kms: 0 });
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   useEffect(() => {
     const allLatLng = tasks
@@ -87,28 +89,28 @@ export default ({ defaultAddress, tasks }) => {
         latLng: [task.address.geo?.latitude, task.address.geo?.longitude],
         type: task.type,
       }))
-      .filter(item => item.latLng[0] && item.latLng[1])
+      .filter(item => item.latLng[0] && item.latLng[1]);
 
     // update deliveryGeo ONLY if it has changed
     if (JSON.stringify(allLatLng) !== JSON.stringify(deliveryGeo)) {
-      setDeliveryGeo(allLatLng)
+      setDeliveryGeo(allLatLng);
     }
-  }, [tasks, deliveryGeo, setDeliveryGeo])
+  }, [tasks, deliveryGeo, setDeliveryGeo]);
 
   useEffect(() => {
-    const latLngArray = deliveryGeo.map(item => item.latLng)
+    const latLngArray = deliveryGeo.map(item => item.latLng);
 
     if (latLngArray.length > 1) {
       MapHelper.route(latLngArray).then(route => {
-        const distance = parseInt(route.distance, 10)
-        const kms = (distance / 1000).toFixed(2)
-        const decodeRoute = MapHelper.decodePolyline(route.geometry)
-        const coordinates = decodeRoute.map(coord => [coord.lat, coord.lng])
-        setDeliveryRoute(coordinates)
-        setDistance({ kms })
-      })
+        const distance = parseInt(route.distance, 10);
+        const kms = (distance / 1000).toFixed(2);
+        const decodeRoute = MapHelper.decodePolyline(route.geometry);
+        const coordinates = decodeRoute.map(coord => [coord.lat, coord.lng]);
+        setDeliveryRoute(coordinates);
+        setDistance({ kms });
+      });
     }
-  }, [deliveryGeo])
+  }, [deliveryGeo]);
 
   return (
     <div className="embed-responsive embed-responsive-4by3">
@@ -151,5 +153,5 @@ export default ({ defaultAddress, tasks }) => {
         </span>
       </div>
     </div>
-  )
-}
+  );
+};
