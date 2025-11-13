@@ -109,6 +109,7 @@ class CancelHandler
         }
 
         $oldTotal = $order->getTotal();
+        $oldTaxTotal = $order->getTaxTotal();
 
         $existingManualSupplements = $order->getManualSupplements();
 
@@ -125,7 +126,12 @@ class CancelHandler
             'newTotal' => $order->getTotal(),
         ]);
 
-        $event = new OrderPriceUpdated($order, $order->getTotal(), $oldTotal);
+        $event = new OrderPriceUpdated($order,
+            $order->getTotal(),
+            $order->getTaxTotal(),
+            $oldTotal,
+            $oldTaxTotal
+        );
         $this->eventBus->dispatch(
             (new Envelope($event))->with(new DispatchAfterCurrentBusStamp())
         );

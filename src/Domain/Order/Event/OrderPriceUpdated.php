@@ -11,29 +11,23 @@ class OrderPriceUpdated extends Event implements DomainEvent, HasIconInterface
 {
 
     public function __construct(
-        OrderInterface  $order,
-        private int     $new_price,
-        private int     $old_price,
+        OrderInterface $order,
+        private readonly int $newTotal,
+        private readonly int $newTaxTotal,
+        private readonly int $oldTotal,
+        private readonly int $oldTaxTotal
     )
     {
         parent::__construct($order);
     }
 
-    public function getNewPrice(): int
-    {
-        return $this->new_price;
-    }
-
-    public function getOldPrice(): int
-    {
-        return $this->old_price;
-    }
-
     public function toPayload()
     {
         return [
-            'price'     => $this->getNewPrice(),
-            'old_price' => $this->getOldPrice()
+            'new_total' => $this->newTotal,
+            'new_tax_total' => $this->newTaxTotal,
+            'old_total' => $this->oldTotal,
+            'old_tax_total' => $this->oldTaxTotal,
         ];
     }
 
