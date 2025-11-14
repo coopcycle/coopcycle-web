@@ -16,6 +16,7 @@ const Dot = ({ type }) => {
 
 type Props = {
   tasks: TaskPayload[];
+  withTaskLinks?: boolean;
   withTimeRange?: boolean;
   withDescription?: boolean;
   withPackages?: boolean;
@@ -23,6 +24,7 @@ type Props = {
 
 export default ({
   tasks,
+  withTaskLinks = false,
   withTimeRange = false,
   withDescription = false,
   withPackages = false,
@@ -33,7 +35,7 @@ export default ({
     children: (
       <>
         <div>
-          <TaskLabel task={task} />
+          <TaskLabel task={task} withLink={withTaskLinks} />
           {withTimeRange ? (
             <span className="pull-right">
               <i className="fa fa-clock-o" />
