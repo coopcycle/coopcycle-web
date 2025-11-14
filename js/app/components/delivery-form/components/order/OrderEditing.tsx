@@ -14,6 +14,7 @@ import { TotalPrice } from './TotalPrice';
 import { useDeliveryFormFormikContext } from '../../hooks/useDeliveryFormFormikContext';
 import { PriceCalculation } from '../../../../delivery/PriceCalculation';
 import ManualSupplements from './ManualSupplements';
+import { UserContext } from '../../../../UserContext';
 
 type Props = {
   orderManualSupplements?: PricingRule[];
@@ -94,8 +95,8 @@ export const OrderEditing = ({
   updatedOrder,
   priceCalculation,
 }: Props) => {
-  const { isPriceBreakdownEnabled, isDispatcher, isDebugPricing } =
-    useContext(FlagsContext);
+  const { isDispatcher } = useContext(UserContext);
+  const { isPriceBreakdownEnabled, isDebugPricing } = useContext(FlagsContext);
 
   const { t } = useTranslation();
   const { values, setFieldValue } = useDeliveryFormFormikContext();
