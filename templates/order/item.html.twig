@@ -78,7 +78,9 @@
   </div>
   <div class="flex-1 ml-md-4">
     {% if formData is not empty %}
-      <div id="delivery-info" data-delivery="{{ formData|serialize('jsonld', {groups: ['delivery', 'address']}) }}">
+      <div id="delivery-info"
+           data-delivery="{{ formData|serialize('jsonld', {groups: ['delivery', 'address']}) }}"
+           data-is-dispatcher="{{ is_granted('ROLE_DISPATCHER') ? 'true' : 'false' }}">
         {# rendered by React #}
       </div>
     {% endif %}
