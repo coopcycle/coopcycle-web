@@ -13,7 +13,7 @@ import { HistoryEvent, useOrderHistory } from './hooks/useOrderHistory';
 import { IncidentEventView } from '../../../admin/incidents/[id]/components/IncidentEventView';
 import { TotalPrice } from '../../delivery-form/components/order/TotalPrice';
 import { Link } from '../../core/Link';
-import { formatTaskNumber } from '../../../utils/taskUtils';
+import { TaskLabel } from '../../TaskLabel';
 
 const itemColor = (event: HistoryEvent) => {
   switch (event.type) {
@@ -122,15 +122,11 @@ const SourceLink = ({
   sourceEntity: HistoryEvent['sourceEntity'];
   sourceEntityType: HistoryEvent['sourceEntityType'];
 }) => {
-  const { t } = useTranslation();
-
   switch (sourceEntityType) {
     case 'ORDER':
       return null;
     case 'TASK':
-      return t('TASK_WITH_NUMBER', {
-        number: formatTaskNumber(sourceEntity),
-      });
+      return <TaskLabel task={sourceEntity} />;
     case 'INCIDENT':
       return <IncidentLink incidentId={sourceEntity.id} />;
     default:
