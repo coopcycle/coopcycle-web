@@ -128,9 +128,18 @@ const SourceLink = ({
     case 'ORDER':
       return t('ORDER_WITH_NUMBER', { number: sourceEntity.number });
     case 'TASK':
-      return t('TASK_WITH_NUMBER', {
-        number: formatTaskNumber(sourceEntity),
-      });
+      return (
+        <Link
+          href={window.Routing.generate('admin_dashboard_fullscreen', {
+            date: moment(sourceEntity.before).format('YYYY-MM-DD'),
+            task: sourceEntity['@id'],
+          })}
+          openInNewTab>
+          {t('TASK_WITH_NUMBER', {
+            number: formatTaskNumber(sourceEntity),
+          })}
+        </Link>
+      );
     case 'INCIDENT':
       return <IncidentLink incidentId={sourceEntity.id} />;
     default:
