@@ -126,7 +126,7 @@ const SourceLink = ({
 
   switch (sourceEntityType) {
     case 'ORDER':
-      return t('ORDER_WITH_NUMBER', { number: sourceEntity.number });
+      return null;
     case 'TASK':
       return (
         <Link
