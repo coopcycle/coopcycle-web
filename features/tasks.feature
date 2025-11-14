@@ -1981,6 +1981,98 @@ Feature: Tasks
       }
       """
 
+  Scenario: Retrieve courier assigned tasks with correct metadata
+    Given the fixtures files are loaded:
+      | dispatch.yml        |
+    And the user "sarah" has role "ROLE_COURIER"
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "GET" request to "/api/me/tasks/2025-05-28"
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/TaskList",
+        "@id": "@string@.startsWith('/api/task_lists/')",
+        "id": "@integer@",
+        "@type": "TaskList",
+        "items": [
+          {
+            "@id": "/api/tasks/@string@",
+            "@context": "/api/contexts/Task",
+            "@type": "Task",
+            "id": "@integer@.greaterThan(0)",
+            "type": "PICKUP",
+            "status": "TODO",
+            "address": {"@*@":"@*@"},
+            "after": "2025-05-28T10:30:00@string@",
+            "before": "2025-05-28T11:00:00@string@",
+            "doneAfter": "2025-05-28T10:30:00@string@",
+            "doneBefore": "2025-05-28T11:00:00@string@",
+            "comments": "",
+            "updatedAt": "@string@.isDateTime()",
+            "previous": null,
+            "tags": [],
+            "doorstep": false,
+            "metadata": {
+              "delivery_position": 1,
+              "order_id": 1,
+              "order_number": "ORDER1",
+              "order_total": "@integer@",
+              "zero_waste": false,
+              "has_loopeat_returns": false
+            },
+            "weight": null,
+            "hasIncidents": false,
+            "orgName": "Nodaiwa",
+            "next": "/api/tasks/@string@",
+            "packages": [],
+            "createdAt": "@string@.isDateTime()"
+          },
+          {
+            "@id": "/api/tasks/@string@",
+            "@context": "/api/contexts/Task",
+            "@type": "Task",
+            "id": "@integer@.greaterThan(0)",
+            "type": "DROPOFF",
+            "status": "TODO",
+            "address": {"@*@":"@*@"},
+            "after": "2025-05-28T11:30:00@string@",
+            "before": "2025-05-28T12:00:00@string@",
+            "doneAfter": "2025-05-28T11:30:00@string@",
+            "doneBefore": "2025-05-28T12:00:00@string@",
+            "comments": "",
+            "updatedAt": "@string@.isDateTime()",
+            "previous": "/api/tasks/@string@",
+            "tags": [],
+            "doorstep": false,
+            "metadata": {
+              "delivery_position": 2,
+              "order_id": 1,
+              "order_number": "ORDER1",
+              "order_total": "@integer@",
+              "zero_waste": false,
+              "has_loopeat_returns": false
+            },
+            "weight": null,
+            "hasIncidents": false,
+            "orgName": "Nodaiwa",
+            "next": null,
+            "packages": [],
+            "createdAt": "@string@.isDateTime()"
+          }
+        ],
+        "distance": "@integer@",
+        "duration": "@integer@",
+        "polyline": "@string@",
+        "date": "2025-05-28",
+        "username": "sarah",
+        "createdAt": "@string@.isDateTime()",
+        "updatedAt": "@string@.isDateTime()"
+      }
+      """
+
   Scenario: Duplicate task
     Given the fixtures files are loaded:
       | dispatch.yml        |
