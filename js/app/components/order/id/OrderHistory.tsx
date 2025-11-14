@@ -82,6 +82,10 @@ const TaskEventDetails = ({ event }: { event: TaskEvent }) => {
 
   return (
     <>
+      {event.name === 'task:assigned' &&
+      typeof event.data.username === 'string' ? (
+        <p>{event.data.username}</p>
+      ) : null}
       {typeof event.data.incident_id === 'number' ? (
         <IncidentLink incidentId={event.data.incident_id} />
       ) : null}
