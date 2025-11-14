@@ -51,6 +51,7 @@ export function Content({ order, delivery }: Props) {
         open={isHistoryModalOpen}
         onCancel={handleHistoryModalClose}
         footer={null}
+        zIndex={1002} // Needed to show above the 'Distance' element that is shown on top of Leaflet map
         width={800}>
         <OrderHistory order={order} tasks={delivery?.tasks} />
       </Modal>
