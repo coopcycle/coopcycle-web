@@ -2,7 +2,7 @@ import React from 'react';
 import { Timeline } from 'antd';
 import { taskTypeColor, taskTypeListIcon } from '../../styles';
 import { asText } from '../ShippingTimeRange';
-import { TaskPayload } from '../../api/types';
+import { Task, TaskPayload } from '../../api/types';
 import { TaskLabel } from '../TaskLabel';
 
 const Dot = ({ type }) => {
@@ -15,7 +15,7 @@ const Dot = ({ type }) => {
 };
 
 type Props = {
-  tasks: TaskPayload[];
+  tasks: TaskPayload[]|Task[];
   withTaskLinks?: boolean;
   withTimeRange?: boolean;
   withDescription?: boolean;
