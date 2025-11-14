@@ -145,17 +145,16 @@ export function OrderHistory({ order, tasks = [] }: Props) {
     return allEvents.map((event, index) => ({
       key: event.createdAt + '-' + event.type + '-' + index,
       color: itemColor(event),
+      label: moment(event.createdAt).format('lll'),
       children: (
         <>
-          <p>
-            {moment(event.createdAt).format('lll')} {event.type}
-          </p>
           <p>
             <SourceLink
               sourceEntity={event.sourceEntity}
               sourceEntityType={event.sourceEntityType}
             />
           </p>
+          <p>{event.type}</p>
           <EventDetails event={event} />
         </>
       ),
@@ -166,5 +165,5 @@ export function OrderHistory({ order, tasks = [] }: Props) {
     return <Spin />;
   }
 
-  return <Timeline items={timelineItems} />;
+  return <Timeline mode={'left'} items={timelineItems} />;
 }
