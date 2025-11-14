@@ -38,10 +38,8 @@ class CreateTasks
         $orderAsText = $this->orderTextEncoder->encode($order, 'txt');
 
         $delivery->getPickup()->setComments($orderAsText);
-        $delivery->getPickup()->setMetadata('order_number', $order->getNumber());
         $delivery->getPickup()->setMetadata('payment_method', $order->getPaymentMethod());
         $delivery->getDropoff()->setComments($orderAsText);
-        $delivery->getDropoff()->setMetadata('order_number', $order->getNumber());
         $delivery->getDropoff()->setMetadata('payment_method', $order->getPaymentMethod());
 
         if (!empty($order->getNotes())) {
