@@ -66,7 +66,7 @@ class TemporaryIdNormalizer implements NormalizerInterface, NormalizerAwareInter
         $isEnabledForGroup = isset($context['groups']) && is_array($context['groups'])
             && (
                 in_array('pricing_deliveries', $context['groups'])
-                || in_array('set-temporary-id-when-needed', $context['groups'])
+                || in_array('set-temporary-id-when-missing', $context['groups'])
             );
 
         return $isSupportedObject && $isEnabledForGroup;

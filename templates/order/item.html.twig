@@ -79,7 +79,7 @@
   <div class="flex-1 ml-md-4">
     {% if delivery is not empty %}
       <div id="delivery-info"
-           data-delivery="{{ delivery|serialize('jsonld', {groups: ['delivery', 'address', 'set-temporary-id-when-needed']}) }}"
+           data-delivery="{{ delivery|serialize('jsonld', {groups: ['delivery', 'address', 'set-temporary-id-when-missing']}) }}"
            data-is-dispatcher="{{ is_granted('ROLE_DISPATCHER') ? 'true' : 'false' }}">
         {# rendered by React #}
       </div>
