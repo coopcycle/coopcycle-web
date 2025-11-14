@@ -329,17 +329,19 @@ export type Task = JsonLdEntity & {
   comments?: string;
   createdAt: string;
   updatedAt?: string;
+  after: string;
+  before: string;
   group?: TaskGroup;
   assignedTo?: User;
   doorstep: boolean;
   ref?: string;
   recurrenceRule?: RecurrenceRule;
-  // metadata: Record<string, any>
   weight?: number;
   incidents?: Incident[];
   emittedCo2: number;
   traveledDistanceMeter: number;
   packages?: TaskPackage[];
+  metadata: Record<string, unknown>;
 };
 
 export type Delivery = JsonLdEntity & {
@@ -527,6 +529,7 @@ export type TaskPayload = {
   packages: InputPackage[];
   weight: number;
   tags: Tag[];
+  metadata: Record<string, unknown>;
 };
 
 export type PostDeliveryRequest = {
