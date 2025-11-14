@@ -30,7 +30,6 @@ import Map from '../DeliveryMap';
 import { Mode, modeIn } from './mode';
 import { useSelector } from 'react-redux';
 import { selectMode } from './redux/formSlice';
-import FlagsContext from './FlagsContext';
 import { DeliveryFormValues } from './types';
 import {
   Uri,
@@ -43,6 +42,7 @@ import {
   ManualSupplementValues,
 } from '../../api/types';
 import { useDatadog } from '../../hooks/useDatadog';
+import { UserContext } from '../../UserContext';
 
 const generateTempId = (): string => `temp-${uuidv4()}`;
 
@@ -169,7 +169,7 @@ const DeliveryForm = ({
   order,
   preLoadedFormData,
 }: Props) => {
-  const { isDispatcher } = useContext(FlagsContext);
+  const { isDispatcher } = useContext(UserContext);
 
   const mode = useSelector(selectMode);
   const [isLoading, setIsLoading] = useState<boolean>(true);

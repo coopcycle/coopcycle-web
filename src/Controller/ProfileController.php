@@ -3,7 +3,6 @@
 namespace AppBundle\Controller;
 
 use ApiPlatform\Api\IriConverterInterface;
-use AppBundle\Api\Dto\DeliveryMapper;
 use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\LoopeatTrait;
 use AppBundle\Controller\Utils\OrderTrait;
@@ -183,7 +182,6 @@ class ProfileController extends AbstractController
     public function orderAction($id, Request $request,
         OrderManager $orderManager,
         DeliveryManager $deliveryManager,
-        DeliveryMapper $deliveryMapper,
         JWTTokenManagerInterface $jwtManager,
         JWSProviderInterface $jwsProvider,
         IriConverterInterface $iriConverter,
@@ -231,18 +229,10 @@ class ProfileController extends AbstractController
             $delivery = $deliveryManager->createFromOrder($order);
         }
 
-        $formData = $deliveryMapper->map(
-            $delivery,
-            $order,
-            null,
-            false
-        );
-
         return $this->render('order/item.html.twig', [
             'layout' => 'profile.html.twig',
             'order' => $order,
             'delivery' => $delivery,
-            'formData' => $formData,
             'form' => $form->createView(),
             'show_buttons' => false,
         ]);

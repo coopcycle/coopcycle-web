@@ -7,7 +7,6 @@ use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
 use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Metadata\GetCollection;
 use AppBundle\Annotation\HideSoftDeleted;
-use AppBundle\Api\Dto\DeliveryMapper;
 use AppBundle\Api\Dto\ResourceApplication;
 use AppBundle\Controller\Utils\AccessControlTrait;
 use AppBundle\Controller\Utils\AdminDashboardTrait;
@@ -296,7 +295,6 @@ class AdminController extends AbstractController
         Request $request,
         OrderManager $orderManager,
         DeliveryManager $deliveryManager,
-        DeliveryMapper $deliveryMapper,
         EmailManager $emailManager
     )
     {
@@ -394,15 +392,6 @@ class AdminController extends AbstractController
             $delivery = $deliveryManager->createFromOrder($order);
         }
 
-        $price = $order->getDeliveryPrice();
-
-        $formData = null !== $delivery ? $deliveryMapper->map(
-            $delivery,
-            $order,
-            $price instanceof ArbitraryPrice ? $price : null,
-            $orderManager->hasBookmark($order)
-        ) : null;
-
         $this->entityManager->getFilters()->enable('soft_deleteable');
         $stores = $this->entityManager->getRepository(Store::class)->findBy([], ['name' => 'ASC']);
         $this->entityManager->getFilters()->disable('soft_deleteable');
@@ -411,7 +400,6 @@ class AdminController extends AbstractController
             'layout' => 'admin.html.twig',
             'order' => $order,
             'delivery' => $delivery,
-            'formData' => $formData,
             'form' => $form->createView(),
             'email_form' => $emailForm->createView(),
             'stores' => $stores,

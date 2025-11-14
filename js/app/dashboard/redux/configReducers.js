@@ -8,6 +8,7 @@ const initialState = {
   exampleSpreadsheetUrl: '#',
   couriersList: [],
   nav: '',
+  initialTask: null,
   pickupClusterAddresses: [],
   exportEnabled: 'off',
 }

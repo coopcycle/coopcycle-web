@@ -52,6 +52,10 @@ export const selectTaskListGroupMode = state => state.taskListGroupMode
 export const selectSplitDirection = state => state.rightPanelSplitDirection
 export const selectPolylineEnabledByUsername = username => state => state.polylineEnabled[username]
 export const selectTourPolylinesEnabledById = tourId => state => state.tourPolylinesEnabled[tourId]
+
+export const selectNav = state => state.config.nav
+export const selectInitialTask = state => state.config.initialTask
+
 export const selectAllTags = state => state.config.tags
 
 export const selectStores = state => state.config.stores

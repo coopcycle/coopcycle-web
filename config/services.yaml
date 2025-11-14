@@ -858,11 +858,6 @@ services:
       #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
       - { name: doctrine.event_subscriber }
 
-  AppBundle\Doctrine\EventSubscriber\OrderSubscriber:
-    tags:
-      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
-      - { name: doctrine.event_subscriber }
-
   AppBundle\Doctrine\EventSubscriber\SearchDeliveriesSubscriber:
     tags:
       - { name: monolog.logger, channel: coopcycle.search }

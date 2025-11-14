@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { PriceCalculation } from '../../../../delivery/PriceCalculation';
 import { Divider } from 'antd';
 import ManualSupplements from './ManualSupplements';
+import { UserContext } from '../../../../UserContext';
 
 type Props = {
   orderManualSupplements?: PricingRule[];
@@ -31,8 +32,8 @@ export const OrderOnCheckout = ({
   calculatePriceError,
   priceCalculation,
 }: Props) => {
-  const { isDispatcher, isPriceBreakdownEnabled, isDebugPricing } =
-    useContext(FlagsContext);
+  const { isDispatcher } = useContext(UserContext);
+  const { isPriceBreakdownEnabled, isDebugPricing } = useContext(FlagsContext);
   const { t } = useTranslation();
 
   return (

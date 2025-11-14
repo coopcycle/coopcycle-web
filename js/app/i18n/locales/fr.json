@@ -772,8 +772,6 @@
         "INCIDENTS_ATTACHMENTS": "Pièces jointes",
         "INCIDENTS_UPLOAD": "Télécharger",
         "INCIDENTS_IMAGE_TOO_BIG": "L'image est trop volumineuse",
-        "INCIDENTS_ORDER_NUMBER": "Commande N°{{number}}",
-        "INCIDENTS_ORDER_ID": "Commande #{{id}}",
         "INCIDENTS_DELIVERY_DETAILS": "Détails de la livraison",
         "INCIDENTS_TASK_ID": "Tâche #{{id}}",
         "INCIDENTS_TASK_TYPE": "Type",

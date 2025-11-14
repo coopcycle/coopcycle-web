@@ -111,6 +111,8 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
 
             if (null !== ($delivery = $object->getDelivery())) {
                 if (null !== ($order = $delivery->getOrder())) {
+                    $data['metadata']['order_id'] = $order->getId();
+                    $data['metadata']['order_number'] = $order->getNumber();
                     $data['metadata']['order_total'] = $order->getTotal();
                 }
             }

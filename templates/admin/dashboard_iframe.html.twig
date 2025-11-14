@@ -32,6 +32,7 @@
     data-stores="{{ stores|json_encode|e('html_attr') }}"
     data-pickup-cluster-addresses="{{ pickup_cluster_addresses|json_encode|e('html_attr') }}"
     data-export-enabled="{{ export_enabled }}"
+    data-initial-task="{{ initial_task|json_encode|e('html_attr') }}"
 >
   </div>
   <div class="dashboard__loader">

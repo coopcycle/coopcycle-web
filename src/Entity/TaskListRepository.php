@@ -208,6 +208,7 @@ class TaskListRepository extends ServiceEntityRepository
                 $row['organizationName'],
                 new MyTaskMetadataDto(
                     $task->getMetadata()['delivery_position'] ?? null, //FIXME extract from the query
+                    $row['orderId'] ?? null,
                     $row['orderNumber'] ?? null,
                     $this->getPaymentMethod($paymentMethodsByOrderId, $orderId),
                     $row['orderTotal'] ?? null,

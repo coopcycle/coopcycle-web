@@ -1,8 +1,9 @@
 import React from 'react';
 import { Timeline } from 'antd';
-import { useTranslation } from 'react-i18next';
 import { taskTypeColor, taskTypeListIcon } from '../../styles';
 import { asText } from '../ShippingTimeRange';
+import { Task, TaskPayload } from '../../api/types';
+import { TaskLabel } from '../TaskLabel';
 
 const Dot = ({ type }) => {
   return (
@@ -13,28 +14,28 @@ const Dot = ({ type }) => {
   );
 };
 
+type Props = {
+  tasks: TaskPayload[]|Task[];
+  withTaskLinks?: boolean;
+  withTimeRange?: boolean;
+  withDescription?: boolean;
+  withPackages?: boolean;
+};
+
 export default ({
   tasks,
+  withTaskLinks = false,
   withTimeRange = false,
   withDescription = false,
   withPackages = false,
-}) => {
-  const { t } = useTranslation();
-
+}: Props) => {
   const timelineItems = tasks.map((task, index) => ({
     key: `task-${index}`,
     dot: <Dot type={task.type} />,
     children: (
       <>
         <div>
-          {task.type === 'PICKUP'
-            ? t('DELIVERY_PICKUP')
-            : t('DELIVERY_DROPOFF')}
-          {task.address?.name ? (
-            <span>
-              : <span className="font-weight-bold">{task.address?.name}</span>
-            </span>
-          ) : null}
+          <TaskLabel task={task} withLink={withTaskLinks} />
           {withTimeRange ? (
             <span className="pull-right">
               <i className="fa fa-clock-o" />

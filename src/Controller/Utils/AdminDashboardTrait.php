@@ -181,6 +181,7 @@ trait AdminDashboardTrait
             'stores' => $storesNormalized,
             'pickup_cluster_addresses' => $addressIris,
             'export_enabled' => $this->isGranted('ROLE_ADMIN') ? 'on' : 'off',
+            'initial_task' => $request->query->get('task'),
         ]));
     }
 

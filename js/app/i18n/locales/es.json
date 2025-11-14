@@ -770,8 +770,6 @@
         "INCIDENTS_ATTACHMENTS": "Archivos adjuntos",
         "INCIDENTS_UPLOAD": "Subir",
         "INCIDENTS_IMAGE_TOO_BIG": "La imagen es demasiado grande",
-        "INCIDENTS_ORDER_NUMBER": "Pedido N°{{number}}",
-        "INCIDENTS_ORDER_ID": "Pedido #{{id}}",
         "INCIDENTS_DELIVERY_DETAILS": "Detalles de la entrega",
         "INCIDENTS_TASK_ID": "Tarea #{{id}}",
         "INCIDENTS_TASK_TYPE": "Tipo",

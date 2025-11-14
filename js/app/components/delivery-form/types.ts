@@ -15,7 +15,6 @@ export type DeliveryFormValues = {
 };
 
 export type FlagsContextType = {
-  isDispatcher: boolean;
   isDebugPricing: boolean;
   isPriceBreakdownEnabled: boolean;
 };
