@@ -148,12 +148,13 @@ export function OrderHistory({ order, tasks = [] }: Props) {
       children: (
         <>
           <p>
-            {moment(event.createdAt).format('lll')}{' '}
+            {moment(event.createdAt).format('lll')} {event.type}
+          </p>
+          <p>
             <SourceLink
               sourceEntity={event.sourceEntity}
               sourceEntityType={event.sourceEntityType}
-            />{' '}
-            {event.type}
+            />
           </p>
           <EventDetails event={event} />
         </>
