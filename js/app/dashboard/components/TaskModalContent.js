@@ -29,6 +29,7 @@ import {
 import { selectCurrentTask, selectCurrentTaskEvents } from '../redux/selectors'
 import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 import { phoneNumberExample } from '../utils'
+import { OrderAlert } from './OrderAlert';
 
 const itemColor = event => {
   switch (event.name) {
@@ -446,6 +447,14 @@ class TaskModalContent extends React.Component {
               onCloseClick={this.onCloseClick.bind(this)}
             />
             <div className="modal-body">
+              {values.metadata?.order_id ? (
+                <div className="form-group">
+                  <OrderAlert
+                    orderId={values.metadata.order_id}
+                    orderNumber={values.metadata.order_number}
+                  />
+                </div>
+              ) : null}
               <div className="form-group text-center">
                 <Radio.Group
                   name="type"
