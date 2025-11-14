@@ -6,16 +6,18 @@ use AppBundle\Entity\Task;
 
 class Cancel
 {
-    private $task;
-
-    public function __construct(Task $task)
+    /**
+     * @param Task[] $tasks
+     */
+    public function __construct(private readonly array $tasks)
     {
-        $this->task = $task;
     }
 
-    public function getTask()
+    /**
+     * @return Task[]
+     */
+    public function getTasks(): array
     {
-        return $this->task;
+        return $this->tasks;
     }
 }
-

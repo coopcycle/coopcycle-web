@@ -17,6 +17,7 @@ use AppBundle\Action\Task\Done as TaskDone;
 use AppBundle\Action\Task\Events as TaskEvents;
 use AppBundle\Action\Task\FailureReasons as TaskFailureReasons;
 use AppBundle\Action\Task\Incident as TaskIncident;
+use AppBundle\Action\Task\Incidents as TaskIncidents;
 use AppBundle\Action\Task\Failed as TaskFailed;
 use AppBundle\Action\Task\Unassign as TaskUnassign;
 use AppBundle\Action\Task\Duplicate as TaskDuplicate;
@@ -201,6 +202,13 @@ use Symfony\Component\Validator\Constraints as Assert;
             controller: TaskFailureReasons::class,
             openapiContext: ['summary' => 'Retrieves possible failure reasons for a Task'],
             security: 'is_granted(\'view\', object)'
+        ),
+        new Get(
+            uriTemplate: '/tasks/{id}/incidents',
+            controller: TaskIncidents::class,
+            openapiContext: ['summary' => 'Retrieves incidents for a Task'],
+            normalizationContext: ['groups' => ['incident']],
+            security: "is_granted('view', object)"
         ),
         new Put(
             uriTemplate: '/tasks/{id}/incidents',

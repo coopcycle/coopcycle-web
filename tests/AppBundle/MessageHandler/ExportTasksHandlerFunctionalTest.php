@@ -2,17 +2,11 @@
 
 namespace Tests\AppBundle\MessageHandler;
 
-use AppBundle\CubeJs\TokenFactory;
-use AppBundle\Entity\User;
 use AppBundle\Message\ExportTasks;
 use AppBundle\MessageHandler\ExportTasksHandler;
-use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Utils\PriceFormatter;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManagerInterface;
-use Fidry\AliceDataFixtures\LoaderInterface;
-use Nucleos\UserBundle\Model\UserManager;
-use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -49,7 +43,7 @@ class ExportTasksHandlerFunctionalTest extends KernelTestCase
     public function testExport()
     {
         $this->fixturesLoader->load([
-            __DIR__.'/../Resources/fixtures/tasks.yml'
+            __DIR__.'/../../../fixtures/ORM/tasks_export.yml'
         ]);
 
         $csv = call_user_func_array($this->handler, [ new ExportTasks(new \DateTime('2018-03-01'), new \DateTime('2018-03-03')) ]);

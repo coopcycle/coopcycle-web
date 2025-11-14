@@ -9,10 +9,7 @@ use AppBundle\Domain\Task\Event\TaskUpdated;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
-use AppBundle\Service\OrderManager;
-use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
@@ -33,7 +30,6 @@ class TaskSubscriber
     private $tasksToUpdate = [];
     private $postFlushEvents = [];
     private $createdAddresses;
-    private $statusChanges = []; 
 
     public function __construct(
         MessageBusInterface $eventBus,
@@ -41,7 +37,6 @@ class TaskSubscriber
         EntityChangeSetProcessor $processor,
         LoggerInterface $logger,
         private Geocoder $geocoder,
-        private OrderManager $orderManager
     ) {
         $this->eventBus = $eventBus;
         $this->eventStore = $eventStore;
@@ -59,7 +54,6 @@ class TaskSubscriber
         $this->postFlushEvents = [];
         $this->processor->eraseMessages();
         $this->createdAddresses = new \SplObjectStorage();
-        $this->statusChanges = [];
 
         $em = $args->getEntityManager();
         $uow = $em->getUnitOfWork();
@@ -103,9 +97,6 @@ class TaskSubscriber
             $taskEvent = $this->eventStore->createEvent($domainEvent);
             $task->addEvent($taskEvent);
             $this->postFlushEvents[] = $domainEvent;
-            if (isset($changeset['status'])) {
-                $this->statusChanges[spl_object_id($task)] = $changeset['status'];
-            }
         }
 
         if (count($this->tasksToUpdate) > 0) {
@@ -144,7 +135,6 @@ class TaskSubscriber
         }
 
         $this->logger->debug(sprintf('There are %d "task:updated" events to handle', count($this->tasksToUpdate)));
-        $this->handleStateChangesForTasks($em, $this->tasksToUpdate);
 
         $this->logger->debug(sprintf('There are %d more events to handle', count($this->postFlushEvents)));
         foreach ($this->postFlushEvents as $postFlushEvent) {
@@ -156,7 +146,6 @@ class TaskSubscriber
         $this->tasksToUpdate = [];
         $this->postFlushEvents = [];
         $this->processor->eraseMessages();
-        $this->statusChanges = [];
     }
 
     /**
@@ -196,52 +185,6 @@ class TaskSubscriber
                             ];
                         }
                     }
-                }
-            }
-        }
-    }
-
-    /**
-     * @param Task[] $tasksToUpdate
-     */
-    private function handleStateChangesForTasks(EntityManagerInterface $em, array $tasksToUpdate): void
-    {
-        foreach ($tasksToUpdate as $taskToUpdate) {
-
-            $taskId = spl_object_id($taskToUpdate);
-            if (!isset($this->statusChanges[$taskId])) {
-                continue;
-            }
-
-            [$oldValue, $newValue] = $this->statusChanges[$taskId];
-
-            if ($newValue === Task::STATUS_CANCELLED) {
-
-                $delivery = $taskToUpdate->getDelivery();
-                if (null === $delivery) {
-                    continue;
-                }
-
-                $order = $delivery->getOrder();
-                if (null === $order) {
-                    continue;
-                }
-
-                // if all tasks of a delivery are cancelled, cancel the linked order
-                $tasks = $delivery->getTasks();
-                $cancelOrder = true;
-                foreach ($tasks as $task) {
-                    if ($task->getId() !== $taskToUpdate->getId() && $task->getStatus() !== Task::STATUS_CANCELLED) {
-                        $cancelOrder = false;
-                        break;
-                    }
-                }
-
-                // do not cancel order if order is "refused"
-                if ($cancelOrder && $order->getState() !== OrderInterface::STATE_CANCELLED && $order->getState() !== OrderInterface::STATE_REFUSED) {
-                    $this->eventBus->dispatch(new TaskUpdated($taskToUpdate));
-                    $this->orderManager->cancel($order, 'All tasks were cancelled');
-                    $em->flush();
                 }
             }
         }
