@@ -106,7 +106,7 @@ class RemotePushNotificationManager
 
                 if ($failure->target()->type() === MessageTarget::TOKEN) {
 
-                    $this->pushNotificationLogger->error(sprintf('FCM: Error sending message to token "%s": %s',
+                    $this->pushNotificationLogger->warning(sprintf('FCM: Error sending message to token "%s": %s',
                         $this->loggingUtils->redact($failure->target()->value()),
                         $failure->error()->getMessage()
                     ));
@@ -117,7 +117,7 @@ class RemotePushNotificationManager
                         foreach ($tokens as $token) {
                             if ($token->getToken() === $failure->target()->value()) {
 
-                                $this->pushNotificationLogger->info(sprintf('FCM: Removing remote push token "%s"',
+                                $this->pushNotificationLogger->warning(sprintf('FCM: Removing remote push token "%s"',
                                     $this->loggingUtils->redact($failure->target()->value()),
                                 ));
 
@@ -129,12 +129,41 @@ class RemotePushNotificationManager
                     }
                 }
             }
-        } else {
+        }
+
+        $successfulTargets = $report->validTokens();
+
+        if (count($successfulTargets) > 0) {
             $this->pushNotificationLogger->info(sprintf('FCM: Message sent to %d devices; tokens: %s',
-                count($deviceTokens),
+                count($successfulTargets),
                 implode(', ', array_map(function ($token) {
                     return $this->loggingUtils->redact($token);
-                }, $deviceTokens))));
+                }, $successfulTargets))));
+        }
+
+        // Unknown tokens are tokens that are valid but not know to the currently
+        // used Firebase project. This can, for example, happen when you are
+        // sending from a project on a staging environment to tokens in a
+        // production environment
+        $unknownTargets = $report->unknownTokens();
+
+        if (count($unknownTargets) > 0) {
+            $this->pushNotificationLogger->warning(sprintf('FCM: Message NOT sent to %d unknown devices; tokens: %s',
+                count($unknownTargets),
+                implode(', ', array_map(function ($token) {
+                    return $this->loggingUtils->redact($token);
+                }, $unknownTargets))));
+        }
+
+        // Invalid (=malformed) tokens
+        $invalidTargets = $report->invalidTokens();
+
+        if (count($invalidTargets) > 0) {
+            $this->pushNotificationLogger->warning(sprintf('FCM: Message NOT sent to %d invalid devices; tokens: %s',
+                count($invalidTargets),
+                implode(', ', array_map(function ($token) {
+                    return $this->loggingUtils->redact($token);
+                }, $invalidTargets))));
         }
     }
 
