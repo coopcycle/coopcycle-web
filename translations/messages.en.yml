@@ -1722,3 +1722,4 @@ promotions.human_readable.coupon: "%name% with coupon %code%"
 promotions.human_readable.discount_items_total_above: "%name%: %discount_amount% discount above %amount%"
 form.offer_delivery.decrease_platform_fee.label: Decrease platform fees
 form.offer_delivery.decrease_platform_fee.help: If checked, platform fees will be decreased to apply the promotion
+restaurant.form.pawapay_enabled.label: Enable pawaPay for this shop

@@ -128,6 +128,11 @@
         <option name="default">stripe</option>
       </options>
     </field>
+    <field name="pawapayEnabled" type="boolean" column="pawapay_enabled">
+      <options>
+        <option name="default">1</option>
+      </options>
+    </field>
     <many-to-one field="contract" target-entity="AppBundle\Entity\Contract" inversed-by="restaurants">
       <cascade>
         <cascade-persist/>
