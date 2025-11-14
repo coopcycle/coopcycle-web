@@ -1908,6 +1908,8 @@ Feature: Tasks
               "baz": "bat",
               "delivery_position": 1,
               "zero_waste": false,
+              "order_id": 1,
+              "order_number": "ORDER1",
               "order_total": "@integer@"
             },
             "weight": null,
@@ -1946,6 +1948,8 @@ Feature: Tasks
             "metadata":{
               "delivery_position": 2,
               "zero_waste": false,
+              "order_id": 1,
+              "order_number": "ORDER1",
               "order_total": "@integer@"
             },
             "weight": null,
