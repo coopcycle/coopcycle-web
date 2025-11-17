@@ -131,7 +131,9 @@ class Customer extends BaseCustomer implements TaggableInterface, CustomerInterf
      */
     public function getAddresses(): Collection
     {
-        return $this->addresses;
+        return $this->addresses->filter(function (Address $address) {
+            return !$address->isDeleted();
+        });
     }
 
     /**
