@@ -34,15 +34,11 @@ import {
   openExportModal,
   openNewTaskModal,
   openNewRecurrenceRuleModal,
-  setCurrentTask,
-  openTaskTaskList,
-  selectTask,
 } from '../redux/actions';
 import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 import DeliveryCreateNewButton from '../../components/DeliveryCreateNewButton'
-import { selectInitialTask, selectNav, selectStores } from '../redux/selectors';
+import { selectNav, selectStores } from '../redux/selectors';
 import SearchInput from './SearchInput'
-import { selectTaskById } from '../../../shared/src/logistics/redux/selectors'
 
 const { Header } = Layout
 const { useBreakpoint } = Grid
@@ -343,8 +339,6 @@ const NavbarAntd = () => {
   const [isOverflowMenuVisible, setIsOverflowMenuVisible] = useState(false)
 
   const imports = useSelector(state => state.imports)
-  const initialTaskUri = useSelector(selectInitialTask)
-  const initialTask = useSelector(state => selectTaskById(state, initialTaskUri))
 
   // Effect for handling imports popover (equivalent to componentDidUpdate)
   useEffect(() => {
@@ -360,19 +354,6 @@ const NavbarAntd = () => {
       }
     })
   }, [imports])
-
-  // Effect for handling initial task selection from URL
-  useEffect(() => {
-    if (initialTask) {
-      setTimeout(() => {
-        // highlight task in the list
-        dispatch(selectTask(initialTask))
-        dispatch(openTaskTaskList(initialTask))
-        // open task modal
-        dispatch(setCurrentTask(initialTask))
-      }, 500)
-    }
-  }, []) // no deps to run once
 
   if (screens.xl) {
     return (
