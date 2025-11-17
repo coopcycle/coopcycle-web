@@ -7,7 +7,7 @@ type Props = {
   orderNumber?: string;
 };
 
-export function OrderAlert({ orderId, orderNumber }: Props) {
+export function TaskOrderInfo({ orderId, orderNumber }: Props) {
   const { t } = useTranslation();
 
   const orderWithNumber = t('ORDER_WITH_NUMBER', {
@@ -18,7 +18,7 @@ export function OrderAlert({ orderId, orderNumber }: Props) {
     <Alert
       message={
         <span>
-          {t('ADMIN_DASHBOARD_TASK_FORM_ORDER_ALERT', {
+          {t('ADMIN_DASHBOARD_TASK_FORM_ORDER_INFO', {
             order: orderWithNumber,
           })}
         </span>

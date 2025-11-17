@@ -112,7 +112,7 @@
         "ADMIN_DASHBOARD_TASK_FORM_ADDRESS_TELEPHONE_HELP": "Exemple : {{example}}",
         "ADMIN_DASHBOARD_TASK_FORM_SAVE": "Enregistrer",
         "ADMIN_DASHBOARD_TASK_FORM_CREATE": "Générer les tâches",
-        "ADMIN_DASHBOARD_TASK_FORM_ORDER_ALERT": "Cette tâche fait partie de {{order}}",
+        "ADMIN_DASHBOARD_TASK_FORM_ORDER_INFO": "Cette tâche fait partie de {{order}}",
         "ADMIN_DASHBOARD_TASK_DOWNLOAD_PDF": "Télécharger en PDF",
         "ADMIN_DASHBOARD_COMPLETE_FORM_SUCCESS": "Terminer",
         "ADMIN_DASHBOARD_COMPLETE_FORM_FAILURE": "Signaler un problème",
