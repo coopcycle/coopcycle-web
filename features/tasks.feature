@@ -1909,7 +1909,7 @@ Feature: Tasks
               "delivery_position": 1,
               "zero_waste": false,
               "order_id": 1,
-              "order_number": "ORDER1",
+              "order_number": "A1",
               "order_total": "@integer@"
             },
             "weight": null,
@@ -1949,7 +1949,7 @@ Feature: Tasks
               "delivery_position": 2,
               "zero_waste": false,
               "order_id": 1,
-              "order_number": "ORDER1",
+              "order_number": "A1",
               "order_total": "@integer@"
             },
             "weight": null,
@@ -2018,7 +2018,7 @@ Feature: Tasks
             "metadata": {
               "delivery_position": 1,
               "order_id": 1,
-              "order_number": "ORDER1",
+              "order_number": "A1",
               "order_total": "@integer@",
               "zero_waste": false,
               "has_loopeat_returns": false
@@ -2050,7 +2050,7 @@ Feature: Tasks
             "metadata": {
               "delivery_position": 2,
               "order_id": 1,
-              "order_number": "ORDER1",
+              "order_number": "A1",
               "order_total": "@integer@",
               "zero_waste": false,
               "has_loopeat_returns": false
