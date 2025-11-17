@@ -72,7 +72,7 @@ context('Delivery (role: dispatcher)', () => {
 
     //Task details modal
     cy.get('form[name="task"]').should('exist');
-    cy.get('[data-testid="task-modal-header"]')
+    cy.get('[data-testid="task-modal-title"]')
       .invoke('text')
       .should('contain', 'Acme›Task 1-1');
   });

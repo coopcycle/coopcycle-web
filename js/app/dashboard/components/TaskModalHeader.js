@@ -10,7 +10,7 @@ const HeaderText = ({ task }) => {
   if (!!task && Object.prototype.hasOwnProperty.call(task, '@id')) {
 
     return (
-      <span data-testid="task-modal-header">
+      <span data-testid="task-modal-title">
         { (task.orgName && !_.isEmpty(task.orgName)) && (
         <span>
           <span>{ task.orgName }</span>
