@@ -52,6 +52,12 @@ context('Delivery (role: dispatcher)', () => {
         cy.contains(
           /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
         ).should('exist');
+
+        cy.get(`[data-testid=taskWithNumberLink]`).should(
+          'contain',
+          'Tâche 1-1',
+        );
+
         cy.get(`[data-testid=taskWithNumberLink]`)
           .should('have.attr', 'href')
           .and(
@@ -74,6 +80,6 @@ context('Delivery (role: dispatcher)', () => {
     cy.get('form[name="task"]').should('exist');
     cy.get('[data-testid="task-modal-title"]')
       .invoke('text')
-      .should('contain', 'Acme›Task 1-1');
+      .should('contain', 'Acme›Tâche 1-1');
   });
 });

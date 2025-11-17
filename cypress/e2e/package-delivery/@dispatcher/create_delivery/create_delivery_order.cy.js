@@ -109,7 +109,7 @@ context('Delivery (role: dispatcher)', () => {
         ).should('exist');
         cy.get(`[data-testid=taskWithNumberLink]`).should(
           'contain',
-          'Task 1-1',
+          'Tâche 1-1',
         );
       });
     // Dropoff
@@ -121,7 +121,7 @@ context('Delivery (role: dispatcher)', () => {
         );
         cy.get(`[data-testid=taskWithNumberLink]`).should(
           'contain',
-          'Task 1-2',
+          'Tâche 1-2',
         );
       });
 
@@ -178,7 +178,7 @@ context('Delivery (role: dispatcher)', () => {
         ).should('exist');
         cy.get(`[data-testid=taskWithNumberLink]`)
           .invoke('text')
-          .should('match', /Task #\d+/);
+          .should('match', /Tâche #\d+/);
       });
     // Dropoff
     cy.get('[data-testid="delivery-itinerary"] .ant-timeline-item')
@@ -189,7 +189,7 @@ context('Delivery (role: dispatcher)', () => {
         );
         cy.get(`[data-testid=taskWithNumberLink]`)
           .invoke('text')
-          .should('match', /Task #\d+/);
+          .should('match', /Tâche #\d+/);
       });
 
     cy.get('[data-testid="tax-included"]').contains('4,99 €');

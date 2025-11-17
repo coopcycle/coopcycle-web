@@ -24,10 +24,10 @@ context('Delivery (role: dispatcher)', () => {
     cy.get('form[name="task"]').should('exist');
     cy.get('[data-testid="task-modal-title"]')
       .invoke('text')
-      .should('contain', 'Acme›Task A1-1');
+      .should('contain', 'Acme›Tâche A1-1');
 
     cy.get('[data-testid="order-info"]').within(() => {
-      cy.contains('This task is a part of Order A1').should('exist');
+      cy.contains('Cette tâche fait partie de Commande A1').should('exist');
 
       // Remove target="_blank" to allow navigation in same window and verify the result
       cy.window().then(win => {
@@ -37,7 +37,7 @@ context('Delivery (role: dispatcher)', () => {
       });
 
       cy.get('[data-testid="view-order"]')
-        .contains('Voir Order A1')
+        .contains('Voir Commande A1')
         .should('exist');
       cy.get('[data-testid="view-order"]').click();
     });
