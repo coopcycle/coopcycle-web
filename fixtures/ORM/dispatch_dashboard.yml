@@ -151,7 +151,7 @@ AppBundle\Entity\Sylius\Order:
         - "@resto_1"
     __calls:
       #      FIXME: that does not set an order number on each task (normally it's handled by OrderSubscriber)
-      - setNumber: [ "ORDER <current()>" ]
+      - setNumber: [ "A<current()>" ]
       - setState: [ 'new' ]
       - setShippingTimeRange: [ '@range_1' ]
 
