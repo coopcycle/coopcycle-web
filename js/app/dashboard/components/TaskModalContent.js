@@ -448,7 +448,7 @@ class TaskModalContent extends React.Component {
             />
             <div className="modal-body">
               {values.metadata?.order_id ? (
-                <div className="form-group">
+                <div className="form-group" data-testid="order-info">
                   <OrderAlert
                     orderId={values.metadata.order_id}
                     orderNumber={values.metadata.order_number}

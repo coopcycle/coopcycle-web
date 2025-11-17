@@ -26,6 +26,7 @@ export function OrderAlert({ orderId, orderNumber }: Props) {
       type="info"
       action={
         <Button
+          data-testid="view-order"
           size="small"
           onClick={() =>
             window.open(
