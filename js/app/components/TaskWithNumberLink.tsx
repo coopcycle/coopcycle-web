@@ -18,7 +18,8 @@ export function TaskWithNumberLink({ task }: Props) {
         date: moment(task.before).format('YYYY-MM-DD'),
         task: task['@id'],
       })}
-      openInNewTab>
+      openInNewTab
+      testId="taskWithNumberLink">
       {t('TASK_WITH_NUMBER', {
         number: formatTaskNumber(task),
       })}

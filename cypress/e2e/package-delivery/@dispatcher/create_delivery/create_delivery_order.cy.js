@@ -73,10 +73,14 @@ context('Delivery (role: dispatcher)', () => {
     })
     cy.reactSelect(2)
 
-    cy.get('[data-testid="tax-included"]').contains('4,99 €')
+    cy.get(`[data-testid="delivery-itinerary"]`).within(() => {
+      cy.get(`[data-testid=taskWithNumberLink]`).should('not.exist');
+    });
 
-    cy.get('[data-testid="price-calculation-debug-tool"]').should('be.visible')
-    cy.get('[data-testid="price-calculation-debug-tool"]').click()
+    cy.get('[data-testid="tax-included"]').contains('4,99 €');
+
+    cy.get('[data-testid="price-calculation-debug-tool"]').should('be.visible');
+    cy.get('[data-testid="price-calculation-debug-tool"]').click();
     cy.get('[data-testid="price-calculation-debug-tool"]').within(() => {
       cy.get('[data-testid="price-calculation-debug-tool-rule"]').contains(
         'Rule #2: Plus de 0.00 km - €4.99',
@@ -95,15 +99,33 @@ context('Delivery (role: dispatcher)', () => {
     // Wait for React components to load
     cy.get('[data-testid="delivery-itinerary"]', {
       timeout: 10000,
-    }).should('be.visible')
-    cy.get('[data-testid=delivery-itinerary]')
-      .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)
-      .should('exist')
-    cy.get('[data-testid=delivery-itinerary]')
-      .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
-      .should('exist')
+    }).should('be.visible');
+    // Pickup
+    cy.get('[data-testid="delivery-itinerary"] .ant-timeline-item')
+      .eq(0)
+      .within(() => {
+        cy.contains(
+          /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
+        ).should('exist');
+        cy.get(`[data-testid=taskWithNumberLink]`).should(
+          'contain',
+          'Task 1-1',
+        );
+      });
+    // Dropoff
+    cy.get('[data-testid="delivery-itinerary"] .ant-timeline-item')
+      .eq(1)
+      .within(() => {
+        cy.contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/).should(
+          'exist',
+        );
+        cy.get(`[data-testid=taskWithNumberLink]`).should(
+          'contain',
+          'Task 1-2',
+        );
+      });
 
-    cy.get('[data-testid="order-edit"]').click()
+    cy.get('[data-testid="order-edit"]').click();
 
     // Edit Delivery page
     cy.urlmatch(/\/admin\/deliveries\/[0-9]+$/)
@@ -143,6 +165,33 @@ context('Delivery (role: dispatcher)', () => {
       tags: ['Perishable'],
     })
 
-    cy.get('[data-testid="tax-included"]').contains('4,99 €')
-  })
-})
+    // Wait for React components to load
+    cy.get('[data-testid="delivery-itinerary"]', {
+      timeout: 10000,
+    }).should('be.visible');
+    // Pickup
+    cy.get('[data-testid="delivery-itinerary"] .ant-timeline-item')
+      .eq(0)
+      .within(() => {
+        cy.contains(
+          /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
+        ).should('exist');
+        cy.get(`[data-testid=taskWithNumberLink]`)
+          .invoke('text')
+          .should('match', /Task #\d+/);
+      });
+    // Dropoff
+    cy.get('[data-testid="delivery-itinerary"] .ant-timeline-item')
+      .eq(1)
+      .within(() => {
+        cy.contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/).should(
+          'exist',
+        );
+        cy.get(`[data-testid=taskWithNumberLink]`)
+          .invoke('text')
+          .should('match', /Task #\d+/);
+      });
+
+    cy.get('[data-testid="tax-included"]').contains('4,99 €');
+  });
+});
