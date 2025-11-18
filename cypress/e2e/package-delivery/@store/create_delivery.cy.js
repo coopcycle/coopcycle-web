@@ -52,6 +52,10 @@ context('Delivery (role: store)', () => {
       .invoke('text')
       .should('contains', 'Distance : 1.50 kms')
 
+    cy.get(`[data-testid="delivery-itinerary"]`).within(() => {
+      cy.get(`[data-testid=taskWithNumberLink]`).should('not.exist');
+    });
+
     cy.get('button[type="submit"]').click()
 
     // Delivery page (view mode)
@@ -67,6 +71,11 @@ context('Delivery (role: store)', () => {
     cy.get('[data-testid=delivery-itinerary]')
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
       .should('exist')
+
+    cy.get(`[data-testid="delivery-itinerary"]`).within(() => {
+      cy.get(`[data-testid=taskWithNumberLink]`).should('not.exist');
+    });
+
     cy.get('[data-testid=tax-included]').contains(/4.99/)
   })
 })

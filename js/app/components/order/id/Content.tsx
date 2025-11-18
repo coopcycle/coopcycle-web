@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Map from '../../DeliveryMap';
 import Itinerary from '../../DeliveryItinerary';
 import { Button, Modal } from 'antd';
 import { OrderHistory } from './OrderHistory';
 import { Order, PutDeliveryRequest } from '../../../api/types';
+import { UserContext } from '../../../UserContext';
 
 type Props = {
   order: Order;
@@ -13,6 +14,7 @@ type Props = {
 
 export function Content({ order, delivery }: Props) {
   const { t } = useTranslation();
+  const { isDispatcher } = useContext(UserContext);
 
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
 
@@ -40,6 +42,7 @@ export function Content({ order, delivery }: Props) {
           <div className="py-3" />
           <Itinerary
             tasks={delivery.tasks}
+            withTaskLinks={isDispatcher}
             withTimeRange
             withDescription
             withPackages

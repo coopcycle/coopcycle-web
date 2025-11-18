@@ -5,14 +5,15 @@ import { TaskWithNumberLink } from './TaskWithNumberLink';
 
 type Props = {
   task: Pick<TaskPayload, '@id' | 'type' | 'address' | 'before' | 'metadata'>;
+  withLink?: boolean;
 };
 
-export function TaskLabel({ task }: Props) {
+export function TaskLabel({ task, withLink = false }: Props) {
   const { t } = useTranslation();
 
   return (
     <span>
-      {task['@id'] ? (
+      {withLink && task['@id'] ? (
         <>
           <TaskWithNumberLink task={task} />{' '}
         </>

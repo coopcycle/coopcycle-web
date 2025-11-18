@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Divider, Spin } from 'antd';
 import { useSelector } from 'react-redux';
 
-import FlagsContext from '../../FlagsContext';
 import {
   CalculationOutput,
   ManualSupplementValues,
@@ -16,6 +15,7 @@ import { useOrderManualSupplements } from '../../hooks/useOrderManualSupplements
 import { OverridePrice } from './OverridePrice';
 import { OrderOnCheckout } from './OrderOnCheckout';
 import { OrderEditing } from './OrderEditing';
+import { UserContext } from '../../../../UserContext';
 
 type Props = {
   storeNodeId: string;
@@ -32,7 +32,7 @@ const Order = ({
   initialManualSupplements: existingSupplements = [],
   setPriceLoading,
 }: Props) => {
-  const { isDispatcher } = useContext(FlagsContext);
+  const { isDispatcher } = useContext(UserContext);
 
   const mode = useSelector(selectMode);
   const { values } = useDeliveryFormFormikContext();

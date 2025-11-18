@@ -167,5 +167,5 @@ AppBundle\Entity\Sylius\Order:
         - "@restaurant_1"
     __calls:
       #      FIXME: that does not set an order number on each task (normally it's handled by OrderSubscriber)
-      - setNumber: [ "ORDER1" ]
+      - setNumber: [ "A1" ]
       - setState: [ 'new' ]

@@ -79,7 +79,9 @@
   <div class="flex-1 ml-md-4">
     <div id="react-root"
          data-order="{{ order|serialize('jsonld', {groups: ['order', 'pricing_deliveries']}) }}"
-         data-delivery="{{ formData is not empty ? formData|serialize('jsonld', {groups: ['delivery', 'address']}) : '' }}">
+         data-delivery="{{ delivery is not empty ? delivery|serialize('jsonld', {groups: ['delivery', 'address', 'set-temporary-id-when-missing']}) : '' }}"
+         data-is-dispatcher="{{ is_granted('ROLE_DISPATCHER') ? 'true' : 'false' }}"
+    >
       {# rendered by React #}
     </div>
   </div>
