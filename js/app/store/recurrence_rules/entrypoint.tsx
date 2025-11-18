@@ -12,6 +12,7 @@ import { AppRootWithDefaults } from '../../utils/react';
 import FlagsContext from '../../components/delivery-form/FlagsContext';
 
 import '../../bootstrap-reset.scss';
+import { UserContext } from '../../UserContext';
 
 const buildInitialState = () => {
   return {
@@ -49,17 +50,19 @@ document.addEventListener('DOMContentLoaded', () => {
     root.render(
       <AppRootWithDefaults>
         <Provider store={store}>
-          <FlagsContext.Provider
-            value={{ isDispatcher, isDebugPricing, isPriceBreakdownEnabled }}>
-            <DeliveryForm
-              storeNodeId={storeNodeId}
-              //FIXME; might lead to bugs
-              deliveryId={recurrenceRuleId}
-              //FIXME; might lead to bugs
-              deliveryNodeId={recurrenceRuleNodeId}
-              preLoadedFormData={preLoadedFormData}
-            />
-          </FlagsContext.Provider>
+          <UserContext.Provider value={{ isDispatcher }}>
+            <FlagsContext.Provider
+              value={{ isDebugPricing, isPriceBreakdownEnabled }}>
+              <DeliveryForm
+                storeNodeId={storeNodeId}
+                //FIXME; might lead to bugs
+                deliveryId={recurrenceRuleId}
+                //FIXME; might lead to bugs
+                deliveryNodeId={recurrenceRuleNodeId}
+                preLoadedFormData={preLoadedFormData}
+              />
+            </FlagsContext.Provider>
+          </UserContext.Provider>
         </Provider>
       </AppRootWithDefaults>,
     );

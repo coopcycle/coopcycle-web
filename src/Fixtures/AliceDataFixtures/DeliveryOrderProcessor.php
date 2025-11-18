@@ -61,10 +61,6 @@ final class DeliveryOrderProcessor implements ProcessorInterface
             $productVariants
         );
 
-        foreach ($delivery->getTasks() as $task) {
-            $task->setMetadata('order_number', $order->getNumber());
-        }
-
         // Changes are flushed inside FeatureContext
         // Flushing here makes tests too slow
     }

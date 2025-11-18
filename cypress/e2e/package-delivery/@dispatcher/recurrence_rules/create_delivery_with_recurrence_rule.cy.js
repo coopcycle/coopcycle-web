@@ -124,6 +124,10 @@ describe('Delivery with recurrence rule (role: dispatcher)', () => {
       tags: ['Perishable'],
     })
 
+    cy.get(`[data-testid="delivery-itinerary"]`).within(() => {
+      cy.get(`[data-testid=taskWithNumberLink]`).should('not.exist');
+    });
+    
     cy.get('[data-testid="tax-included"]').contains('4,99 €')
 
     cy.get('[data-testid="recurrence-container"]').contains(

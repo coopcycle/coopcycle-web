@@ -1,6 +1,7 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import _ from 'lodash'
+import { formatTaskNumber } from '../../utils/taskUtils';
 
 const HeaderText = ({ task }) => {
 
@@ -9,14 +10,14 @@ const HeaderText = ({ task }) => {
   if (!!task && Object.prototype.hasOwnProperty.call(task, '@id')) {
 
     return (
-      <span>
+      <span data-testid="task-modal-title">
         { (task.orgName && !_.isEmpty(task.orgName)) && (
         <span>
           <span>{ task.orgName }</span>
           <span className="mx-2">›</span>
         </span>
         ) }
-        <span>{ t('ADMIN_DASHBOARD_TASK_TITLE', { id: task.id }) }</span>
+        <span>{ t('TASK_WITH_NUMBER', { number: formatTaskNumber(task) }) }</span>
       </span>
     )
   }

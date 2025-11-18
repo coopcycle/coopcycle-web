@@ -8,7 +8,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <span class="navbar-brand">
+      <span class="navbar-brand" data-testid="order-title">
         {% if is_granted('ROLE_ADMIN') and order.hasVendor() %}
         {% if order.isMultiVendor() %}
         <span>{{ order.vendor.name }}</span>

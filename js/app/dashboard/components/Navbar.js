@@ -34,10 +34,10 @@ import {
   openExportModal,
   openNewTaskModal,
   openNewRecurrenceRuleModal,
-} from '../redux/actions'
+} from '../redux/actions';
 import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 import DeliveryCreateNewButton from '../../components/DeliveryCreateNewButton'
-import { selectStores } from '../redux/selectors'
+import { selectNav, selectStores } from '../redux/selectors';
 import SearchInput from './SearchInput'
 
 const { Header } = Layout
@@ -45,7 +45,7 @@ const { useBreakpoint } = Grid
 
 const DateNavigation = () => {
   const selectedDate = useSelector(selectSelectedDate)
-  const nav = useSelector(state => state.config.nav)
+  const nav = useSelector(selectNav)
 
   const prevUrl = window.Routing.generate('admin_dashboard_fullscreen', {
     date: moment(selectedDate).subtract(1, 'days').format('YYYY-MM-DD'),

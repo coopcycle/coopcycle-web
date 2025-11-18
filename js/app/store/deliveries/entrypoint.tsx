@@ -12,6 +12,7 @@ import DeliveryForm from '../../components/delivery-form/DeliveryForm';
 import Modal from 'react-modal';
 
 import '../../bootstrap-reset.scss';
+import { UserContext } from '../../UserContext';
 
 const buildInitialState = () => {
   return {
@@ -55,17 +56,19 @@ const Form = ({
   }, [dispatch, deliveryNodeId]);
 
   return (
-    <FlagsContext.Provider
-      value={{ isDispatcher, isDebugPricing, isPriceBreakdownEnabled }}>
-      <DeliveryForm
-        storeNodeId={storeNodeId}
-        deliveryId={deliveryId}
-        deliveryNodeId={deliveryNodeId}
-        delivery={delivery ? JSON.parse(delivery) : null}
-        order={order ? JSON.parse(order) : null}
-        preLoadedFormData={formData ? JSON.parse(formData) : null}
-      />
-    </FlagsContext.Provider>
+    <UserContext.Provider value={{ isDispatcher }}>
+      <FlagsContext.Provider
+        value={{ isDebugPricing, isPriceBreakdownEnabled }}>
+        <DeliveryForm
+          storeNodeId={storeNodeId}
+          deliveryId={deliveryId}
+          deliveryNodeId={deliveryNodeId}
+          delivery={delivery ? JSON.parse(delivery) : null}
+          order={order ? JSON.parse(order) : null}
+          preLoadedFormData={formData ? JSON.parse(formData) : null}
+        />
+      </FlagsContext.Provider>
+    </UserContext.Provider>
   );
 };
 
