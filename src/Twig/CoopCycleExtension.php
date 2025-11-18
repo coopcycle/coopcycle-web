@@ -70,7 +70,8 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('expand_tags', array(TagsRuntime::class, 'expandTags')),
             new TwigFilter('placeholder_image', array(AssetsRuntime::class, 'placeholderImage')),
             new TwigFilter('recurr_rule', array(RecurrRuleFormatResolver::class, 'format'), ['needs_context' => true]),
-            new TwigFilter('humanize_promotion', array(LocalBusinessRuntime::class, 'humanizePromotion'))
+            new TwigFilter('humanize_promotion', array(LocalBusinessRuntime::class, 'humanizePromotion')),
+            new TwigFilter('is_promotion_not_expired', array(LocalBusinessRuntime::class, 'isPromotionNotExpired')),
         );
     }
 

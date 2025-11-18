@@ -33,11 +33,14 @@
   {% endif %}
 
   {% if restaurant.hasFeaturedPromotion() %}
+    {% set featured_promotion = restaurant.getFeaturedPromotion() %}
+    {% if featured_promotion|is_promotion_not_expired %}
     <nav class="restaurant-banner">
       <div class="alert alert-warning text-center">
         <i class="fa fa-xl fa-gift mr-2"></i><span>{{ restaurant.getFeaturedPromotion()|humanize_promotion }}</span>
       </div>
     </nav>
+    {% endif %}
   {% endif %}
 
 {% endblock %}
