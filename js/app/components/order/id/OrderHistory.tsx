@@ -130,7 +130,7 @@ const SourceLink = ({
     case 'ORDER':
       return null;
     case 'TASK':
-      return <TaskLabel task={sourceEntity} />;
+      return <TaskLabel task={sourceEntity} withLink />;
     case 'INCIDENT':
       return <IncidentLink incidentId={sourceEntity.id} />;
     default:
