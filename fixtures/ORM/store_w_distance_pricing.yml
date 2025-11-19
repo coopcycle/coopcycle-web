@@ -23,7 +23,7 @@ AppBundle\Entity\Delivery\PricingRuleSet:
 AppBundle\Entity\Delivery\PricingRule:
   pricing_rule_1:
     expression: 'distance \> 0'
-    price: 199
+    price: 'price_range(distance, 100, 1000, 0)'
     position: 0
     ruleSet: '@pricing_rule_set_1'
 
