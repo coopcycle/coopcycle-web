@@ -6,6 +6,7 @@ use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Entity\BusinessRestaurantGroupRestaurantMenu;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\Taxon;
 use AppBundle\Entity\Zone;
 use AppBundle\Enum\FoodEstablishment;
@@ -23,6 +24,8 @@ use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\Join;
+use Sylius\Component\Promotion\Checker\Eligibility\PromotionEligibilityCheckerInterface;
+use Sylius\Component\Promotion\Checker\Eligibility\PromotionCouponEligibilityCheckerInterface;
 use Sylius\Component\Promotion\Model\PromotionInterface;
 use Sylius\Component\Promotion\Model\PromotionCouponInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -44,7 +47,9 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         private RestaurantDecorator $restaurantDecorator,
         private BusinessContext $businessContext,
         private SettingsManager $settingsManager,
-        private PriceFormatter $priceFormatter)
+        private PriceFormatter $priceFormatter,
+        private PromotionEligibilityCheckerInterface $promotionExpirationChecker,
+        private PromotionCouponEligibilityCheckerInterface $promotionCouponExpirationChecker)
     {}
 
     /**
@@ -274,5 +279,15 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
             '%discount_amount%' => $this->priceFormatter->formatWithSymbol($discountAmount),
             '%amount%' => $this->priceFormatter->formatWithSymbol($amount),
         ]);
+    }
+
+    public function isPromotionNotExpired(PromotionInterface|PromotionCouponInterface $promotion): bool
+    {
+        if ($promotion instanceof PromotionCouponInterface) {
+
+            return $this->promotionCouponExpirationChecker->isEligible(new Order(), $promotion);
+        }
+
+        return $this->promotionExpirationChecker->isEligible(new Order(), $promotion);
     }
 }
