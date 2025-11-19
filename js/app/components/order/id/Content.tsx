@@ -28,11 +28,13 @@ export function Content({ order, delivery }: Props) {
 
   return (
     <>
-      <div className="py-3">
-        <Button type="default" onClick={showHistoryModal}>
-          {t('ADMIN_DASHBOARD_ORDER_SHOW_HISTORY')}
-        </Button>
-      </div>
+      {isDispatcher ? (
+        <div className="py-3">
+          <Button type="default" onClick={showHistoryModal}>
+            {t('ADMIN_DASHBOARD_ORDER_SHOW_HISTORY')}
+          </Button>
+        </div>
+      ) : null}
       {delivery ? (
         <div>
           <Map
