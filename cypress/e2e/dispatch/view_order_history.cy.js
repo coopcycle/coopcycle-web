@@ -3,7 +3,7 @@ context('Delivery (role: dispatcher)', () => {
     cy.loadFixturesWithSetup([
       'user_dispatcher.yml',
       'tags.yml',
-      'store_default.yml',
+      'store_with_invalid_pricing.yml',
     ]);
 
     cy.setMockDateTime('2025-04-23 8:30:00');
@@ -67,15 +67,11 @@ context('Delivery (role: dispatcher)', () => {
         });
 
       // Verify task:created for Tâche 1-1 Retrait: Warehouse exists
-      cy.get('.ant-timeline-item')
-        .contains('[data-testid="taskWithNumberLink"]', 'Tâche 1-1')
-        .parents('.ant-timeline-item')
+      cy.get('.ant-timeline-item:contains("task:created")')
+        .filter(':contains("Tâche 1-1")')
         .within(() => {
-          cy.get('.ant-timeline-item-content').should(
-            'contain',
-            'task:created',
-          );
           cy.get(`[data-testid=taskWithNumberLink]`)
+            .should('contain', 'Tâche 1-1')
             .should('have.attr', 'href')
             .and(
               'match',
@@ -86,15 +82,11 @@ context('Delivery (role: dispatcher)', () => {
         });
 
       // Verify task:created for Tâche 1-2 Dépôt: Office exists
-      cy.get('.ant-timeline-item')
-        .contains('[data-testid="taskWithNumberLink"]', 'Tâche 1-2')
-        .parents('.ant-timeline-item')
+      cy.get('.ant-timeline-item:contains("task:created")')
+        .filter(':contains("Tâche 1-2")')
         .within(() => {
-          cy.get('.ant-timeline-item-content').should(
-            'contain',
-            'task:created',
-          );
           cy.get(`[data-testid=taskWithNumberLink]`)
+            .should('contain', 'Tâche 1-2')
             .should('have.attr', 'href')
             .and(
               'match',
@@ -102,6 +94,24 @@ context('Delivery (role: dispatcher)', () => {
             );
           cy.get('.ant-timeline-item-content').should('contain', 'Dépôt');
           cy.get('.ant-timeline-item-content').should('contain', 'Office');
+        });
+
+      // Verify task:incident-reported for Tâche 1-1 exists
+      cy.get('.ant-timeline-item')
+        .contains('.ant-timeline-item-content', 'task:incident-reported')
+        .parent('.ant-timeline-item')
+        .within(() => {
+          cy.get('[data-testid="taskWithNumberLink"]').should(
+            'contain',
+            'Tâche 1-1',
+          );
+          cy.get('a')
+            .contains('Incident #1')
+            .should('have.attr', 'href', '/admin/incidents/1');
+          cy.get('.ant-timeline-item-content').should(
+            'contain',
+            "Commande #1: Le prix de livraison n'a pas pu être calculé. Veuillez l'entrer manuellement et vérifier la tarification.",
+          );
         });
     });
   });
