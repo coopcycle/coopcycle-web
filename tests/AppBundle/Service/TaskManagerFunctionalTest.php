@@ -63,7 +63,7 @@ class TaskManagerFunctionalTest extends KernelTestCase
             __DIR__.'/../../../fixtures/ORM/setup_default.yml',
             __DIR__.'/../../../fixtures/ORM/user_dispatcher.yml',
             __DIR__.'/../../../fixtures/ORM/store_with_task_pricing.yml',
-            __DIR__.'/../../../fixtures/ORM/task_manager_two_non_cancelled.yml',
+            __DIR__.'/../../../fixtures/ORM/package_delivery_order_multi_dropoff.yml',
         ], $_SERVER, [], PurgeMode::createDeleteMode());
 
         /** @var Task $task */
@@ -72,7 +72,7 @@ class TaskManagerFunctionalTest extends KernelTestCase
         $order = $entities['order_1'];
 
         $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
-        $this->assertEquals(699, $order->getTotal());
+        $this->assertEquals(899, $order->getTotal());
 
         // Cancel the order
         $this->taskManager->cancel($task);
@@ -80,7 +80,8 @@ class TaskManagerFunctionalTest extends KernelTestCase
 
         // Assert that linked order is NOT cancelled
         $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
-        $this->assertEquals(200, $order->getTotal());
+        // Assert that price has been recalculated
+        $this->assertEquals(400, $order->getTotal());
     }
 
     function testOnWithOnlyOneCancelledTask()
@@ -112,7 +113,7 @@ class TaskManagerFunctionalTest extends KernelTestCase
             __DIR__.'/../../../fixtures/ORM/setup_default.yml',
             __DIR__.'/../../../fixtures/ORM/user_dispatcher.yml',
             __DIR__.'/../../../fixtures/ORM/store_without_pricing.yml',
-            __DIR__.'/../../../fixtures/ORM/task_manager_two_non_cancelled.yml',
+            __DIR__.'/../../../fixtures/ORM/package_delivery_order_multi_dropoff.yml',
         ], $_SERVER, [], PurgeMode::createDeleteMode());
 
         /** @var Task $task */
@@ -129,6 +130,7 @@ class TaskManagerFunctionalTest extends KernelTestCase
 
         // Assert that linked order is NOT cancelled
         $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
+        // Assert that the arbitrary price has NOT been recalculated
         $this->assertEquals($oldTotal, $order->getTotal());
     }
 }
