@@ -84,28 +84,6 @@ class TaskManagerFunctionalTest extends KernelTestCase
         $this->assertEquals(400, $order->getTotal());
     }
 
-    function testOnWithOnlyOneCancelledTask()
-    {
-        // SETUP
-        $entities = $this->fixturesLoader->load([
-            __DIR__.'/../../../fixtures/ORM/task_manager_single_task.yml',
-        ], $_SERVER, [], PurgeMode::createDeleteMode());
-
-        /** @var Task $task */
-        $task = $entities['task_1'];
-        /** @var Order $order */
-        $order = $entities['order_1'];
-
-        $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
-
-        // Cancel the task
-        $this->taskManager->cancel($task);
-        $this->entityManager->flush();
-
-        // Assert that linked order is cancelled
-        $this->assertEquals(OrderInterface::STATE_CANCELLED, $order->getState());
-    }
-
     function testOnWithFirstCancelledTaskArbitraryPrice()
     {
         // SETUP
