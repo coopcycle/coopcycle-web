@@ -11,12 +11,18 @@ import TimeRange from '../utils/TimeRange'
 import { AntdConfigProvider, timePickerProps } from '../utils/antd'
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 
-let minutes = []
+const minutes = []
 for (let i = 0; i <= 60; i++) {
-  if (0 !== i % 15) {
+  if (0 !== i % 5) {
     minutes.push(i)
   }
 }
+
+const disabledTime = (dayjs, type) => ({
+  disabledHours: () => [],
+  disabledMinutes: () => minutes,
+  disabledSeconds: () => [],
+})
 
 class OpeningHours extends React.Component {
 
@@ -145,10 +151,6 @@ class OpeningHours extends React.Component {
     return this.rowsToString(this.state.rows)
   }
 
-  disabledMinutes() {
-    return minutes
-  }
-
   renderRow(row, index) {
 
     const { weekdays, rev } = this.state
@@ -166,7 +168,7 @@ class OpeningHours extends React.Component {
                 <TimePicker.RangePicker
                   {...timePickerProps}
                   defaultValue={[startValue, endValue]}
-                  disabledMinutes={this.disabledMinutes}
+                  disabledTime={disabledTime}
                   disabled={this.state.disabled}
                   hideDisabledOptions
                   placeholder={["Heure", "Heure"]}

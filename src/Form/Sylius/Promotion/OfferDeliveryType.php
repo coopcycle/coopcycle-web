@@ -145,17 +145,6 @@ class OfferDeliveryType extends AbstractType
             return $coupon->getPromotion();
         }
 
-        foreach ($restaurant->getPromotions() as $p) {
-            foreach ($p->getActions() as $action) {
-                if ($action->getType() === DeliveryPercentageDiscountPromotionActionCommand::TYPE) {
-                    $configuration = $action->getConfiguration();
-                    if ($configuration['percentage'] === 1.0) {
-                        return $p;
-                    }
-                }
-            }
-        }
-
         $promotion = new Promotion();
 
         // FIXME Unrelated translation key
