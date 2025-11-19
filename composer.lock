@@ -1432,12 +1432,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/transporter.git",
-                "reference": "97fd7e6bfd92cb3ffda86a09cdeedffc3a3fc687"
+                "reference": "e92275ddc73b0d4c0c370e157da39ab26165f9d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/97fd7e6bfd92cb3ffda86a09cdeedffc3a3fc687",
-                "reference": "97fd7e6bfd92cb3ffda86a09cdeedffc3a3fc687",
+                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/e92275ddc73b0d4c0c370e157da39ab26165f9d1",
+                "reference": "e92275ddc73b0d4c0c370e157da39ab26165f9d1",
                 "shasum": ""
             },
             "require": {
@@ -1467,7 +1467,7 @@
                 "source": "https://github.com/coopcycle/transporter/tree/master",
                 "issues": "https://github.com/coopcycle/transporter/issues"
             },
-            "time": "2025-07-30T05:25:31+00:00"
+            "time": "2025-11-19T11:48:51+00:00"
         },
         {
             "name": "craue/config-bundle",
@@ -29904,16 +29904,16 @@
     ],
     "minimum-stability": "dev",
     "stability-flags": {
-        "drupal/core-vendor-hardening": 20,
-        "shahonseven/php-color-hash": 20,
+        "behatch/contexts": 20,
         "coopcycle/transporter": 20,
-        "behatch/contexts": 20
+        "drupal/core-vendor-hardening": 20,
+        "shahonseven/php-color-hash": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.2"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
 }
