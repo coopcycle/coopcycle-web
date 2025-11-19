@@ -48,7 +48,7 @@ class TaskManagerFunctionalTest extends KernelTestCase
 
         $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
 
-        // Cancel the order
+        // Cancel the task
         $this->taskManager->cancel($task);
         $this->entityManager->flush();
 
@@ -74,7 +74,7 @@ class TaskManagerFunctionalTest extends KernelTestCase
         $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
         $this->assertEquals(899, $order->getTotal());
 
-        // Cancel the order
+        // Cancel the task
         $this->taskManager->cancel($task);
         $this->entityManager->flush();
 
@@ -98,7 +98,7 @@ class TaskManagerFunctionalTest extends KernelTestCase
 
         $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
 
-        // Cancel the order
+        // Cancel the task
         $this->taskManager->cancel($task);
         $this->entityManager->flush();
 
@@ -124,7 +124,7 @@ class TaskManagerFunctionalTest extends KernelTestCase
         $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
         $oldTotal = $order->getTotal();
 
-        // Cancel the order
+        // Cancel the task
         $this->taskManager->cancel($task);
         $this->entityManager->flush();
 
