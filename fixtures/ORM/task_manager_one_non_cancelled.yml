@@ -28,3 +28,4 @@ AppBundle\Entity\Sylius\Order:
         - "@delivery_1"
     __calls:
       - setState: [ 'new' ]
+    # The rest of initialization is done by DeliveryOrderProcessor
