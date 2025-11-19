@@ -11,6 +11,7 @@ use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
 use AppBundle\Entity\Task;
 use AppBundle\Message\Task\Command\Cancel as CommandCancel;
 use AppBundle\Pricing\PricingManager;
+use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use Psr\Log\LoggerInterface;
@@ -24,6 +25,7 @@ class CancelHandler
 {
     public function __construct(
         private readonly MessageBusInterface $eventBus,
+        private readonly DeliveryManager $deliveryManager,
         private readonly OrderManager $orderManager,
         private readonly PricingManager $pricingManager,
         private readonly LoggerInterface $logger
@@ -51,8 +53,8 @@ class CancelHandler
      */
     private function handleStateChangesForTasks(array $cancelledTasks): void
     {
-        // Track orders that need price recalculation to avoid processing the same order multiple times
-        $ordersToRecalculate = [];
+        // Track orders that need processing to avoid processing the same order multiple times
+        $ordersToProcess = [];
 
         foreach ($cancelledTasks as $cancelledTask) {
 
@@ -81,15 +83,29 @@ class CancelHandler
                 $this->eventBus->dispatch(new TaskUpdated($cancelledTask));
                 $this->orderManager->cancel($order, 'All tasks were cancelled');
             } elseif (!$cancelOrder && $order->getState() !== OrderInterface::STATE_CANCELLED && $order->getState() !== OrderInterface::STATE_REFUSED) {
-                // For non-cancelled orders with cancelled tasks, mark for price recalculation
-                $ordersToRecalculate[$order->getId()] = ['order' => $order, 'delivery' => $delivery];
+                // For non-cancelled orders with cancelled tasks, mark for processing
+                $ordersToProcess[$order->getId()] = ['order' => $order, 'delivery' => $delivery];
             }
         }
 
-        // Recalculate prices for all affected orders (outside the loop to avoid recalculating price of the same order multiple times)
-        foreach ($ordersToRecalculate as $data) {
-            $this->recalculatePriceIfNeeded($data['order'], $data['delivery']);
+        // Process all affected orders (outside the loop to avoid recalculating price of the same order multiple times)
+        foreach ($ordersToProcess as $data) {
+            $this->processOrderIfNeeded($data['order'], $data['delivery']);
         }
+    }
+
+    private function processOrderIfNeeded(OrderInterface $order, Delivery $delivery): void
+    {
+        if ($order->isFoodtech()) {
+            // It's not possible to cancel tasks for foodtech orders only an entire order can be cancelled
+            // so the logic that follows does not apply
+            $this->logger->info('Skipping processing for foodtech order', ['order' => $order->getId()]);
+            return;
+        }
+
+        $this->deliveryManager->calculateRoute($delivery);
+
+        $this->recalculatePriceIfNeeded($order, $delivery);
     }
 
     /**
@@ -97,11 +113,6 @@ class CancelHandler
      */
     private function recalculatePriceIfNeeded(OrderInterface $order, Delivery $delivery): void
     {
-        if ($order->isFoodtech()) {
-            $this->logger->info('Skipping price recalculation for foodtech order', ['order' => $order->getId()]);
-            return;
-        }
-
         $deliveryPrice = $order->getDeliveryPrice();
         if ($deliveryPrice instanceof ArbitraryPrice) {
             $this->logger->info('Keeping arbitrary price after task cancellation', ['order' => $order->getId()]);

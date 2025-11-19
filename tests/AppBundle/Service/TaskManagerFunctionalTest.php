@@ -133,4 +133,32 @@ class TaskManagerFunctionalTest extends KernelTestCase
         // Assert that the arbitrary price has NOT been recalculated
         $this->assertEquals($oldTotal, $order->getTotal());
     }
+
+    function testOnWithFirstCancelledTaskWithPricePerDistance()
+    {
+        // SETUP
+        $entities = $this->fixturesLoader->load([
+            __DIR__.'/../../../fixtures/ORM/setup_default.yml',
+            __DIR__.'/../../../fixtures/ORM/user_dispatcher.yml',
+            __DIR__.'/../../../fixtures/ORM/store_w_distance_pricing.yml',
+            __DIR__.'/../../../fixtures/ORM/package_delivery_order_multi_dropoff.yml',
+        ], $_SERVER, [], PurgeMode::createDeleteMode());
+
+        /** @var Task $task */
+        $task = $entities['task_2'];
+        /** @var Order $order */
+        $order = $entities['order_1'];
+
+        $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
+        $this->assertEquals(600, $order->getTotal());
+
+        // Cancel the task
+        $this->taskManager->cancel($task);
+        $this->entityManager->flush();
+
+        // Assert that linked order is NOT cancelled
+        $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
+        // Assert that price has been recalculated
+        $this->assertEquals(400, $order->getTotal());
+    }
 }
