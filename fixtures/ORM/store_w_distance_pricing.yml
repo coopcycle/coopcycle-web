@@ -19,6 +19,7 @@ AppBundle\Entity\TimeSlot:
 AppBundle\Entity\Delivery\PricingRuleSet:
   pricing_rule_set_1:
     name: Default
+    rules: [ '@pricing_rule_1' ]
 
 AppBundle\Entity\Delivery\PricingRule:
   pricing_rule_1:
