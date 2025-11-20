@@ -483,7 +483,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
      */
     public function assignTo(User $user): void
     {
-        $tasks = $this->getTasks();
+        $tasks = $this->getTasks('not task.isCancelled()');
         array_walk(
             $tasks,
             function (Task $task) use ($user) {
