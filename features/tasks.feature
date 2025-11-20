@@ -3457,3 +3457,40 @@ Feature: Tasks
       """
     Then the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "new"
     Then the database entity "AppBundle\Entity\Sylius\Order" should have a property "total" with value "400"
+
+  Scenario: Cancel once task in multi-dropoff order with distance pricing - order stays new and price recalculated
+    Given the fixtures files are loaded with purge:
+      | setup_default.yml |
+    Given the fixtures files are loaded:
+      | user_dispatcher.yml                    |
+      | store_w_distance_pricing.yml           |
+      | package_delivery_order_multi_dropoff.yml |
+    And the user "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "new"
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "total" with value "600"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/2/cancel" with body:
+      """
+      {}
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks/2",
+        "@type":"Task",
+        "id":2,
+        "status":"CANCELLED",
+        "@*@":"@*@"
+      }
+      """
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "new"
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "total" with value "400"
