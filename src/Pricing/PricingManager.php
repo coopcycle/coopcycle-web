@@ -80,7 +80,7 @@ class PricingManager
 
         // Store might be null if it's an embedded form
         $store = $delivery->getStore();
-        foreach ($delivery->getTasks() as $task) {
+        foreach ($delivery->getTasks('not task.isCancelled()') as $task) {
             if (null === $task->getTimeSlot() && null !== $store) {
                 // Try to find a time slot by range, when a time slot is not set explicitly
 

@@ -1,0 +1,14 @@
+include:
+  - address_store.yml
+  - address_warehouse.yml
+  - address_client_1.yml
+
+AppBundle\Entity\Store:
+  store_1:
+    name: 'Acme'
+    address: '@address_store'
+    enabled: true
+    pricingRuleSet: null
+    __calls:
+      - addAddress: [ "@address_warehouse" ]
+      - addAddress: [ "@address_client_1" ]

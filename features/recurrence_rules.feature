@@ -547,7 +547,7 @@ Feature: Task recurrence rules
         }
       }
       """
-    Then the database should contain an order with a total price 199
+    Then the database should contain an order with a total price 500
 
   Scenario: Can not generate orders based on the recurrence rules in the past
     Given the fixtures files are loaded:

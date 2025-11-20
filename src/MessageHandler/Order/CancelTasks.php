@@ -25,7 +25,7 @@ class CancelTasks
             return;
         }
 
-        foreach ($order->getDelivery()->getTasks() as $task) {
+        foreach ($order->getDelivery()->getTasks('not task.isCancelled()') as $task) {
             $this->taskManager->cancel($task);
         }
     }

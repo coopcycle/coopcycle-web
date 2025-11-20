@@ -269,7 +269,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     public function getWeight()
     {
         $totalWeight = null;
-        foreach ($this->getTasks() as $task) {
+        foreach ($this->getTasks('not task.isCancelled()') as $task) {
             if (null !== $task->getWeight()) {
                 $totalWeight += $task->getWeight();
             }
@@ -483,7 +483,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
      */
     public function assignTo(User $user): void
     {
-        $tasks = $this->getTasks();
+        $tasks = $this->getTasks('not task.isCancelled()');
         array_walk(
             $tasks,
             function (Task $task) use ($user) {
@@ -527,7 +527,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
         $hash = new \SplObjectStorage();
 
-        foreach ($this->getTasks() as $task) {
+        foreach ($this->getTasks('not task.isCancelled()') as $task) {
             if ($task->hasPackages()) {
                 foreach ($task->getPackages() as $package) {
                     $object = $package->getPackage();

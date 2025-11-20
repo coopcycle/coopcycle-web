@@ -120,10 +120,7 @@ class DeliveryManager
             }
         }
 
-        $coords = array_map(fn ($task) => $task->getAddress()->getGeo(), $delivery->getTasks());
-        $distance = $this->routing->getDistance(...$coords);
-
-        $delivery->setDistance(ceil($distance));
+        $this->calculateRoute($delivery);
     }
 
     public function createTasksFromRecurrenceRule(Task\RecurrenceRule $recurrenceRule, string $startDate, bool $persist = true): array
@@ -193,21 +190,21 @@ class DeliveryManager
         return $delivery;
     }
 
-    public function calculateRoute(TaskCollectionInterface $taskCollection): void
+    public function calculateRoute(Delivery $delivery): void
     {
         $coordinates = [];
-        foreach ($taskCollection->getTasks() as $task) {
+        foreach ($delivery->getTasks('not task.isCancelled()') as $task) {
             $coordinates[] = $task->getAddress()->getGeo();
         }
 
         if (count($coordinates) <= 1) {
-            $taskCollection->setDistance(0);
-            $taskCollection->setDuration(0);
-            $taskCollection->setPolyline('');
+            $delivery->setDistance(0);
+            $delivery->setDuration(0);
+            $delivery->setPolyline('');
         } else {
-            $taskCollection->setDistance($this->routing->getDistance(...$coordinates));
-            $taskCollection->setDuration($this->routing->getDuration(...$coordinates));
-            $taskCollection->setPolyline($this->routing->getPolyline(...$coordinates));
+            $delivery->setDistance($this->routing->getDistance(...$coordinates));
+            $delivery->setDuration($this->routing->getDuration(...$coordinates));
+            $delivery->setPolyline($this->routing->getPolyline(...$coordinates));
         }
     }
 }

@@ -5150,7 +5150,7 @@ Feature: Deliveries
         }
       }
       """
-    # Now update one task with recalculatePrice flag set to true: price should be recalculated: 499 + 200 (weight) + 200 (manual supplement) = 899
+    # Now update one task with recalculatePrice flag set to true: price should be recalculated: 499 + 250 (weight) + 200 (manual supplement) = 949
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "PUT" request to "/api/deliveries/1" with body:
@@ -5199,7 +5199,7 @@ Feature: Deliveries
           "@id":"@string@.startsWith('/api/orders')",
           "@type":"http://schema.org/Order",
           "number": @string@,
-          "total": 899,
+          "total": 949,
           "taxTotal": @integer@,
           "paymentGateway": @string@
         }

@@ -20,7 +20,7 @@ AppBundle\Entity\Delivery\PricingRule:
     ruleSet: '@pricing_rule_set_with_supplements'
   pricing_rule_weight:
     expression: 'weight > 25000'
-    price: 200
+    price: 250
     position: 2
     ruleSet: '@pricing_rule_set_with_supplements'
   manual_supplement_1:
@@ -36,7 +36,7 @@ AppBundle\Entity\Delivery\PricingRule:
   #  manual supplement not belonging to a pricing rule for this store
   manual_supplement_3:
     expression: 'false'
-    price: 300
+    price: 320
     position: 1
     ruleSet: '@pricing_rule_set_2'
 

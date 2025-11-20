@@ -33,7 +33,7 @@ class TaskManager
 
     public function cancel(Task $task)
     {
-        $this->commandBus->dispatch(new Cancel($task));
+        $this->commandBus->dispatch(new Cancel([$task]));
     }
 
     public function deleteGroup(TaskGroup $taskGroup)

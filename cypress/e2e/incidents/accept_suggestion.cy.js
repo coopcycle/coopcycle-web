@@ -65,7 +65,7 @@ describe('Incident suggestion management (role: dispatcher)', () => {
 
     cy.get('[data-testid="suggestion-price-change"]')
       .should('be.visible')
-      .should('contain.text', 'Changement de prix suggéré : +2,00 €');
+      .should('contain.text', 'Changement de prix suggéré : +2,50 €');
 
     // Verify old and new price values are displayed
     cy.get('[data-testid="suggestion-old-price-value"]').within(() => {
@@ -77,7 +77,7 @@ describe('Incident suggestion management (role: dispatcher)', () => {
     cy.get('[data-testid="suggestion-new-price-value"]').within(() => {
       cy.get('[data-testid="tax-included"]').should(
         'contain.text',
-        'TTC 6,99 €',
+        'TTC 7,49 €',
       );
     });
 
@@ -102,15 +102,15 @@ describe('Incident suggestion management (role: dispatcher)', () => {
       cy.verifyCart([
         {
           name: 'Supplément de commande',
-          total: '6,99 €',
+          total: '7,49 €',
           options: [
             {
               name: '1 × Plus de 0.00 km',
               price: '4,99 €',
             },
             {
-              name: '1 × Plus de 25.00 kg - €2.00',
-              price: '2,00 €',
+              name: '1 × Plus de 25.00 kg - €2.50',
+              price: '2,50 €',
             },
           ],
         },
@@ -152,11 +152,11 @@ describe('Incident suggestion management (role: dispatcher)', () => {
 
       cy.get('[data-testid="timeline-event-metadata"]').should(
         'contain.text',
-        'Changement de prix accepté : +2,00 €',
+        'Changement de prix accepté : +2,50 €',
       );
     });
 
     // Verify the order total is updated
-    cy.get('[data-testid="order-total"]').should('contain.text', '6,99 €');
+    cy.get('[data-testid="order-total"]').should('contain.text', '7,49 €');
   });
 });

@@ -18,8 +18,6 @@ use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Sylius\Product\ProductOptionValueInterface;
-use Doctrine\ORM\EntityNotFoundException;
 use Psr\Log\LoggerInterface;
 use Recurr\Exception\InvalidRRule;
 use Recurr\Rule;
@@ -223,10 +221,10 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
 
     private function hasManualSupplementsChanged(ManualSupplements $manualSupplements, OrderInterface $existingOrder): bool
     {
-        $existingManualSupplements = $this->extractExistingManualSupplements($existingOrder);
+        $existingManualSupplements = $existingOrder->getManualSupplements();
 
         // Convert both arrays to maps indexed by pricing rule ID
-        $existingMap = $this->buildSupplementMap($existingManualSupplements);
+        $existingMap = $this->buildSupplementMap($existingManualSupplements->orderSupplements);
         $newMap = $this->buildSupplementMap($manualSupplements->orderSupplements);
 
         if (count($existingMap) !== count($newMap)) {
@@ -240,40 +238,6 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         }
 
         return false;
-    }
-
-    /**
-     * @return ManualSupplement[]
-     */
-    private function extractExistingManualSupplements(OrderInterface $existingOrder): array
-    {
-        $existingManualSupplements = [];
-
-        foreach ($existingOrder->getItems() as $item) {
-            $variant = $item->getVariant();
-
-            /** @var ProductOptionValueInterface $optionValue */
-            foreach ($variant->getOptionValues() as $optionValue) {
-                try {
-                    // Find the PricingRule linked to this ProductOptionValue
-                    $pricingRule = $optionValue->getPricingRule();
-                } catch (EntityNotFoundException $e) {
-                    // This happens when a pricing rule has been modified
-                    // and the linked product option value has been disabled
-                    // but is still attached to a product variant
-                    $pricingRule = null;
-                }
-
-                if (!is_null($pricingRule) && $pricingRule->isManualSupplement()) {
-                    $existingManualSupplements[] = new ManualSupplement(
-                        $pricingRule,
-                        $variant->formatQuantityForOptionValue($optionValue)
-                    );
-                }
-            }
-        }
-
-        return $existingManualSupplements;
     }
 
     /**

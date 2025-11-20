@@ -35,7 +35,11 @@ export default function ReportIncidentModal(props) {
         open={isOpen}
         onCancel={() => setIsOpen(false)}
         footer={null}
-        bodyStyle={{ minHeight: '300px' }}>
+        styles={{
+          body: {
+            minHeight: '300px'
+          },
+        }}>
         <ReportIncidentModalContent task={firstTask} />
       </Modal>
     </>

@@ -65,9 +65,13 @@ use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Entity\Vendor;
 use AppBundle\Payment\MercadopagoPreferenceResponse;
+use AppBundle\Pricing\ManualSupplement;
+use AppBundle\Pricing\ManualSupplements;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
+use AppBundle\Sylius\Product\ProductOptionValueInterface;
+use Doctrine\ORM\EntityNotFoundException;
 use AppBundle\Validator\Constraints\DabbaOrder as AssertDabbaOrder;
 use AppBundle\Validator\Constraints\IsOrderModifiable as AssertOrderIsModifiable;
 use AppBundle\Validator\Constraints\LoopEatOrder as AssertLoopEatOrder;
@@ -1938,6 +1942,37 @@ class Order extends BaseOrder implements OrderInterface
             // custom price
             return new ArbitraryPrice($productVariant->getName(), $this->getTotal());
         }
+    }
+
+    public function getManualSupplements(): ManualSupplements
+    {
+        $manualSupplements = [];
+
+        foreach ($this->getItems() as $item) {
+            $variant = $item->getVariant();
+
+            /** @var ProductOptionValueInterface $optionValue */
+            foreach ($variant->getOptionValues() as $optionValue) {
+                try {
+                    // Find the PricingRule linked to this ProductOptionValue
+                    $pricingRule = $optionValue->getPricingRule();
+                } catch (EntityNotFoundException $e) {
+                    // This happens when a pricing rule has been modified
+                    // and the linked product option value has been disabled
+                    // but is still attached to a product variant
+                    $pricingRule = null;
+                }
+
+                if (!is_null($pricingRule) && $pricingRule->isManualSupplement()) {
+                    $manualSupplements[] = new ManualSupplement(
+                        $pricingRule,
+                        $variant->formatQuantityForOptionValue($optionValue)
+                    );
+                }
+            }
+        }
+
+        return new ManualSupplements($manualSupplements);
     }
 
     public function getExports(): Collection
