@@ -3397,7 +3397,7 @@ Feature: Tasks
       | telephone | 0033612345678     |
     And the user "bob" has role "ROLE_DISPATCHER"
     And the user "bob" is authenticated
-    Then the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "new"
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "new"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "PUT" request to "/api/tasks/2/cancel" with body:
@@ -3418,9 +3418,9 @@ Feature: Tasks
         "@*@":"@*@"
       }
       """
-    Then the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "cancelled"
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "cancelled"
 
-  Scenario: Cancel first task in multi-dropoff delivery with task pricing - order stays new and price recalculated
+  Scenario: Cancel one task in multi-dropoff order with task pricing - order stays new and price recalculated
     Given the fixtures files are loaded with purge:
       | setup_default.yml |
     Given the fixtures files are loaded:
@@ -3433,8 +3433,8 @@ Feature: Tasks
       | telephone | 0033612345678     |
     And the user "bob" has role "ROLE_DISPATCHER"
     And the user "bob" is authenticated
-    Then the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "new"
-    Then the database entity "AppBundle\Entity\Sylius\Order" should have a property "total" with value "899"
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "new"
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "total" with value "899"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "PUT" request to "/api/tasks/1/cancel" with body:
@@ -3455,8 +3455,8 @@ Feature: Tasks
         "@*@":"@*@"
       }
       """
-    Then the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "new"
-    Then the database entity "AppBundle\Entity\Sylius\Order" should have a property "total" with value "400"
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "new"
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "total" with value "400"
 
   Scenario: Cancel once task in multi-dropoff order with distance pricing - order stays new and price recalculated
     Given the fixtures files are loaded with purge:
