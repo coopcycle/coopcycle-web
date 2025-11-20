@@ -36,7 +36,7 @@ AppBundle\Entity\Delivery\PricingRule:
   #  manual supplement not belonging to a pricing rule for this store
   manual_supplement_3:
     expression: 'false'
-    price: 300
+    price: 320
     position: 1
     ruleSet: '@pricing_rule_set_2'
 
