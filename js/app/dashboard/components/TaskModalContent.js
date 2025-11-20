@@ -167,6 +167,7 @@ class TaskModalContent extends React.Component {
         {!!task && task.status === 'TODO' && (
           <button
             type="button"
+            data-testid="cancel-task-button"
             className="btn btn-danger pull-left"
             onClick={() => this.onCancelClick(task)}
             disabled={this.props.loading}>
