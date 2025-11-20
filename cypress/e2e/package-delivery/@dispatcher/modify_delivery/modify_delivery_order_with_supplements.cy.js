@@ -162,8 +162,8 @@ context('Delivery (role: dispatcher)', () => {
     cy.get('[data-testid="apply-new-price"]').should('be.checked');
     cy.get('[data-testid="keep-original-price"]').should('not.be.checked');
 
-    //The price should be recalculated to €9.99 (€7.99 original + €2.00 for weight)
-    cy.get('[data-testid="tax-included"]').contains('9,99 €');
+    //The price should be recalculated to €10.49 (€7.99 original + €2.50 for weight)
+    cy.get('[data-testid="tax-included"]').contains('10,49 €');
 
     cy.get('button[type="submit"]').click();
 
@@ -172,6 +172,6 @@ context('Delivery (role: dispatcher)', () => {
 
     cy.get('[data-testid="order-total-including-tax"]')
       .find('[data-testid="value"]')
-      .contains('€9.99');
+      .contains('€10.49');
   });
 });
