@@ -114,7 +114,13 @@ class CancelHandler
      */
     private function recalculatePriceIfNeeded(OrderInterface $order, Delivery $delivery): void
     {
-        $deliveryPrice = $order->getDeliveryPrice();
+        try {
+            $deliveryPrice = $order->getDeliveryPrice();
+        } catch (\Exception $e) {
+            $this->feeCalculationLogger->warning('Failed to get delivery price', ['order' => $order->getId()]);
+            return;
+        }
+
         if ($deliveryPrice instanceof ArbitraryPrice) {
             $this->feeCalculationLogger->info('Keeping arbitrary price after task cancellation', ['order' => $order->getId()]);
             return;
