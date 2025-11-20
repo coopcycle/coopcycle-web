@@ -28,7 +28,8 @@ class CancelHandler
         private readonly DeliveryManager $deliveryManager,
         private readonly OrderManager $orderManager,
         private readonly PricingManager $pricingManager,
-        private readonly LoggerInterface $logger
+        private readonly LoggerInterface $logger,
+        private readonly LoggerInterface $feeCalculationLogger
     )
     {}
 
@@ -115,7 +116,12 @@ class CancelHandler
     {
         $deliveryPrice = $order->getDeliveryPrice();
         if ($deliveryPrice instanceof ArbitraryPrice) {
-            $this->logger->info('Keeping arbitrary price after task cancellation', ['order' => $order->getId()]);
+            $this->feeCalculationLogger->info('Keeping arbitrary price after task cancellation', ['order' => $order->getId()]);
+            return;
+        }
+
+        if (null === $delivery->getStore()) {
+            $this->feeCalculationLogger->info('Skipping price recalculation for order without a Store', ['order' => $order->getId()]);
             return;
         }
 
@@ -131,7 +137,7 @@ class CancelHandler
 
         $this->pricingManager->processDeliveryOrder($order, $productVariants);
 
-        $this->logger->info('Recalculated price after task cancellation', [
+        $this->feeCalculationLogger->info('Recalculated price after task cancellation', [
             'order' => $order->getId(),
             'oldTotal' => $oldTotal,
             'newTotal' => $order->getTotal(),
