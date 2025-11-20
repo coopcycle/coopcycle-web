@@ -3387,3 +3387,35 @@ Feature: Tasks
     And the user "sarah" sends a "GET" request to "/api/tasks/2/incidents"
     Then the response status code should be 403
     And the response should be in JSON
+    
+  Scenario: Cancel the last task - order should be cancelled
+    Given the fixtures files are loaded:
+      | task_manager_one_non_cancelled.yml |
+    And the user "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    Then the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "new"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/2/cancel" with body:
+      """
+      {}
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks/2",
+        "@type":"Task",
+        "id":2,
+        "type":"PICKUP",
+        "status":"CANCELLED",
+        "@*@":"@*@"
+      }
+      """
+    Then the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "cancelled"
