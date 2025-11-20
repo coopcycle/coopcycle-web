@@ -36,5 +36,6 @@ AppBundle\Entity\Sylius\Order:
       '@sylius.factory.order::createForDelivery':
         - "@delivery_1"
     __calls:
+      - setNumber: [ "A1" ]
       - setState: [ 'new' ]
     # The rest of initialization is done by DeliveryOrderProcessor
