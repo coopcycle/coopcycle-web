@@ -7,18 +7,18 @@ AppBundle\Entity\Task:
   task_1:
     type: 'PICKUP'
     status: 'TODO'
-    doneAfter: <identity(new \DateTime('today'))>
-    doneBefore: <identity(new \DateTime('today'))>
+    doneAfter: <identity(new \DateTime('today 10:30:00'))>
+    doneBefore: <identity(new \DateTime('today 11:30:00'))>
     address: "@address_store"
   task_2:
     status: 'TODO'
-    doneAfter: <identity(new \DateTime('today'))>
-    doneBefore: <identity(new \DateTime('today'))>
+    doneAfter: <identity(new \DateTime('today 10:30:00'))>
+    doneBefore: <identity(new \DateTime('today 14:30:00'))>
     address: "@address_client_1"
   task_3:
     status: 'TODO'
-    doneAfter: <identity(new \DateTime('today'))>
-    doneBefore: <identity(new \DateTime('today'))>
+    doneAfter: <identity(new \DateTime('today 10:30:00'))>
+    doneBefore: <identity(new \DateTime('today 16:30:00'))>
     address: "@address_warehouse"
 
 AppBundle\Entity\Delivery:
