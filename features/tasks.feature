@@ -3494,3 +3494,76 @@ Feature: Tasks
       """
     And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "new"
     And the database entity "AppBundle\Entity\Sylius\Order" should have a property "total" with value "400"
+
+  Scenario: Cancel once task in multi-dropoff order with manual supplements - order stays accepted, price recalculated and manual supplements kept
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | store_with_manual_supplements.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "dispatcher" is loaded:
+      | email      | dispatcher@coopcycle.org |
+      | password   | 123456            |
+    And the user "dispatcher" has role "ROLE_DISPATCHER"
+    And the user "dispatcher" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "tasks": [
+          {
+            "type": "pickup",
+            "address": "24, Rue de la Paix Paris",
+            "doneBefore": "tomorrow 13:00"
+          },
+          {
+            "type": "dropoff",
+            "address": "48, Rue de Rivoli Paris",
+            "doneBefore": "tomorrow 15:00"
+          },
+          {
+            "type": "dropoff",
+            "address": "48, Rue de Rivoli Paris",
+            "doneBefore": "tomorrow 16:00",
+            "weight": 30000
+          }
+        ],
+        "order": {
+          "manualSupplements": [
+            {
+              "pricingRule": "/api/pricing_rules/3",
+              "quantity": 1
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "accepted"
+    # Base: 499, weight: 250, manual supplement: 200
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "total" with value "949"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "PUT" request to "/api/tasks/3/cancel" with body:
+    """
+    {}
+    """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "@context":"/api/contexts/Task",
+      "@id":"/api/tasks/3",
+      "@type":"Task",
+      "id":3,
+      "status":"CANCELLED",
+      "@*@":"@*@"
+    }
+    """
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "accepted"
+    # Base: 499, manual supplement: 200
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "total" with value "699"
