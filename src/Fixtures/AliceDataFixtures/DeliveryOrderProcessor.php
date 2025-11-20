@@ -48,6 +48,11 @@ final class DeliveryOrderProcessor implements ProcessorInterface
 
         $this->deliveryManager->setDefaults($delivery);
 
+        // Skip orders without a store (B2C clients)
+        if (null === $delivery->getStore()) {
+            return;
+        }
+
         $productVariants = $this->pricingManager->getProductVariantsWithPricingStrategy(
             $delivery,
             new CalculateUsingPricingRules()
