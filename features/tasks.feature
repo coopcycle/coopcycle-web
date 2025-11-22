@@ -3307,3 +3307,83 @@ Feature: Tasks
         }
       }
       """
+
+  Scenario: Retrieve task incidents
+    Given the fixtures files are loaded:
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "Package damaged",
+        "failureReasonCode": "DAMAGED",
+        "task": "/api/tasks/2"
+      }
+      """
+    Then the response status code should be 201
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/tasks/2/incidents"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks/2/incidents",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@type":"Incident",
+            "@id":"@string@.startsWith('/api/incidents')",
+            "id":@integer@,
+            "title":"Endommagé",
+            "status":"OPEN",
+            "priority":@integer@,
+            "task":"/api/tasks/2",
+            "failureReasonCode":"DAMAGED",
+            "description":"Package damaged",
+            "images":[],
+            "events":[],
+            "createdBy":"@string@.startsWith('/api/users')",
+            "createdAt":"@string@.isDateTime()",
+            "updatedAt":"@string@.isDateTime()",
+            "tags":[],
+            "metadata":{"@*@":"@*@"}
+          }
+        ],
+        "hydra:totalItems":1,
+        "hydra:search":{
+          "@type":"hydra:IriTemplate",
+          "hydra:template":"/api/tasks/2/incidents{?date,assigned,organization}",
+          "hydra:variableRepresentation":"BasicRepresentation",
+          "hydra:mapping":@array@
+        }
+      }
+      """
+
+  Scenario: Not authorized to retrieve task incidents
+    Given the fixtures files are loaded:
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the courier "sarah" is loaded:
+      | email     | sarah@coopcycle.org |
+      | password  | 123456              |
+      | telephone | 0033612345678       |
+    And the user "sarah" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "GET" request to "/api/tasks/2/incidents"
+    Then the response status code should be 403
+    And the response should be in JSON

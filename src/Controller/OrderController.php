@@ -31,7 +31,6 @@ use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderTransitions;
 use AppBundle\Sylius\Payment\Context as PaymentContext;
-use AppBundle\Utils\OrderEventCollection;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints\ShippingAddress as ShippingAddressConstraint;
