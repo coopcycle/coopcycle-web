@@ -5,7 +5,7 @@ import { asText } from '../ShippingTimeRange';
 import { Task, TaskPayload } from '../../api/types';
 import { TaskLabel } from '../TaskLabel';
 
-const Dot = ({ type }) => {
+const Dot = ({ type }: { type: Task['type'] }) => {
   return (
     <i
       className={`fa ${taskTypeListIcon(type)}`}
@@ -15,12 +15,20 @@ const Dot = ({ type }) => {
 };
 
 type Props = {
-  tasks: TaskPayload[]|Task[];
+  tasks: TaskPayload[] | Task[];
   withTaskLinks?: boolean;
   withTimeRange?: boolean;
   withDescription?: boolean;
   withPackages?: boolean;
 };
+
+const IsCancelledWrapper = ({
+  task,
+  children,
+}: {
+  task: TaskPayload | Task;
+  children: React.ReactNode;
+}) => (task.status === 'CANCELLED' ? <del>{children}</del> : <>{children}</>);
 
 export default ({
   tasks,
@@ -29,42 +37,47 @@ export default ({
   withDescription = false,
   withPackages = false,
 }: Props) => {
-  const timelineItems = tasks.map((task, index) => ({
-    key: `task-${index}`,
-    dot: <Dot type={task.type} />,
-    children: (
-      <>
-        <div>
-          <TaskLabel task={task} withLink={withTaskLinks} />
-          {withTimeRange ? (
-            <span className="pull-right">
-              <i className="fa fa-clock-o" />
-              {' ' + asText([task.after, task.before])}
-            </span>
-          ) : null}
-        </div>
-        {task.address?.streetAddress ? (
-          <div>{task.address?.streetAddress}</div>
-        ) : null}
-        {withDescription && task.address.description ? (
-          <div className="speech-bubble">
-            <i className="fa fa-quote-left" /> {' ' + task.address.description}
-          </div>
-        ) : null}
-        {withPackages ? (
-          <ul>
-            {task.packages?.map((p, index) =>
-              p.quantity > 0 ? (
-                <li key={index}>
-                  {p.quantity} {p.type}
-                </li>
-              ) : null,
-            )}
-          </ul>
-        ) : null}
-      </>
-    ),
-  }));
+  const timelineItems = tasks.map((task, index) => {
+    return {
+      key: `task-${index}`,
+      dot: <Dot type={task.type} />,
+      children: (
+        <IsCancelledWrapper task={task}>
+          <>
+            <div className="d-flex justify-content-between align-items-center">
+              <TaskLabel task={task} withLink={withTaskLinks} />
+              {withTimeRange ? (
+                <span>
+                  <i className="fa fa-clock-o" />
+                  {' ' + asText([task.after, task.before])}
+                </span>
+              ) : null}
+            </div>
+            {task.address?.streetAddress ? (
+              <div>{task.address?.streetAddress}</div>
+            ) : null}
+            {withDescription && task.address.description ? (
+              <div className="speech-bubble">
+                <i className="fa fa-quote-left" />{' '}
+                {' ' + task.address.description}
+              </div>
+            ) : null}
+            {withPackages ? (
+              <ul>
+                {task.packages?.map((p, index) =>
+                  p.quantity > 0 ? (
+                    <li key={index}>
+                      {p.quantity} {p.type}
+                    </li>
+                  ) : null,
+                )}
+              </ul>
+            ) : null}
+          </>
+        </IsCancelledWrapper>
+      ),
+    };
+  });
 
   return <Timeline data-testid="delivery-itinerary" items={timelineItems} />;
 };
