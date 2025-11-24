@@ -243,4 +243,9 @@ trait StripeTrait
 
         return [];
     }
+
+    public function hasPaymentIntent(): bool
+    {
+        return isset($this->details['payment_intent']);
+    }
 }
