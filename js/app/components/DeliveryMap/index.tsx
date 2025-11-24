@@ -3,11 +3,12 @@ import L from 'leaflet';
 import 'leaflet-arrowheads';
 require('beautifymarker');
 import { MapContainer, Marker, TileLayer, useMap } from 'react-leaflet';
-import { taskTypeColor, taskTypeMapIcon } from '../../styles';
+import { taskColor, taskTypeMapIcon } from '../../styles';
 import MapHelper from '../../MapHelper';
 import { useTranslation } from 'react-i18next';
 
 import './Map.scss';
+import { Address, AddressPayload, Task, TaskPayload } from '../../api/types';
 
 const createMarkerIcon = (icon, iconShape, color) => {
   return L.BeautifyIcon.icon({
@@ -64,9 +65,22 @@ const FitBoundsToMarkers = ({ positions, maxZoom = 17 }) => {
       }
     }
   }, [map, positions, maxZoom]);
+
+  return null;
 };
 
-export default ({ defaultAddress, tasks }) => {
+type Props = {
+  defaultAddress: AddressPayload | Address;
+  tasks: TaskPayload[] | Task[];
+};
+
+type Geo = {
+  latLng: number[];
+  type: Task['type'];
+  status: Task['status'];
+};
+
+export default ({ defaultAddress, tasks }: Props) => {
   const defaultGeo = useMemo(() => {
     if (defaultAddress) {
       return {
@@ -77,7 +91,7 @@ export default ({ defaultAddress, tasks }) => {
     return null;
   }, [defaultAddress]);
 
-  const [deliveryGeo, setDeliveryGeo] = useState([]);
+  const [deliveryGeo, setDeliveryGeo] = useState([] as Geo[]);
   const [deliveryRoute, setDeliveryRoute] = useState('');
   const [distance, setDistance] = useState({ kms: 0 });
 
@@ -88,6 +102,7 @@ export default ({ defaultAddress, tasks }) => {
       .map(task => ({
         latLng: [task.address.geo?.latitude, task.address.geo?.longitude],
         type: task.type,
+        status: task.status,
       }))
       .filter(item => item.latLng[0] && item.latLng[1]);
 
@@ -98,7 +113,9 @@ export default ({ defaultAddress, tasks }) => {
   }, [tasks, deliveryGeo, setDeliveryGeo]);
 
   useEffect(() => {
-    const latLngArray = deliveryGeo.map(item => item.latLng);
+    const latLngArray = deliveryGeo
+      .filter(item => item.status !== 'CANCELLED')
+      .map(item => item.latLng);
 
     if (latLngArray.length > 1) {
       MapHelper.route(latLngArray).then(route => {
@@ -129,7 +146,7 @@ export default ({ defaultAddress, tasks }) => {
                 position={geo.latLng}
                 icon={taskTypeMapIcon(geo.type)}
                 iconShape="marker"
-                color={taskTypeColor(geo.type)}
+                color={taskColor(geo.type, geo.status)}
               />
             ))
           : null}
