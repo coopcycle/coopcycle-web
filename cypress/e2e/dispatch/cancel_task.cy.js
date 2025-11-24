@@ -75,6 +75,33 @@ context('Dispatch dashboard (role: dispatcher)', () => {
       .invoke('text')
       .should('contain', 'Commande A1');
 
+    // Verify first task (cancelled) has strikethrough styling
+    cy.get('[data-testid="delivery-itinerary"] .ant-timeline-item')
+      .eq(0)
+      .within(() => {
+        cy.get('del').should('exist');
+        cy.get('del').within(() => {
+          cy.contains(/272,? rue Saint Honoré,? 75001,? Paris/).should('exist');
+          cy.get(`[data-testid=taskWithNumberLink]`).should(
+            'contain',
+            'Tâche A1',
+          );
+        });
+      });
+
+    // Verify that other (non-cancelled) tasks don't have strikethrough styling
+    cy.get('[data-testid="delivery-itinerary"] .ant-timeline-item')
+      .eq(1)
+      .within(() => {
+        cy.get('del').should('not.exist');
+      });
+
+    cy.get('[data-testid="delivery-itinerary"] .ant-timeline-item')
+      .eq(2)
+      .within(() => {
+        cy.get('del').should('not.exist');
+      });
+
     // Open order history modal
     cy.contains('button', "Afficher l'historique").click();
 
