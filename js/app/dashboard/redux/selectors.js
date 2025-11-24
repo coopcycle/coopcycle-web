@@ -139,72 +139,89 @@ export const selectStandaloneTasks = createSelector(
   selectTaskIdToTourIdMap,
   (unassignedTasks, taskListGroupMode, taskIdToTourIdMap) => {
 
-    let standaloneTasks = unassignedTasks
+    // We exclude tasks assigned to tours or inside folders (if that mode is active)
+    const taskPool = filter(unassignedTasks, task => {
+      const isAssignedToTour = taskIdToTourIdMap.has(task['@id'])
+      const isHiddenInFolder = taskListGroupMode === 'GROUP_MODE_FOLDERS' && belongsToGroup(task)
 
-    if (taskListGroupMode === 'GROUP_MODE_FOLDERS') {
-      standaloneTasks = filter(unassignedTasks, task => !belongsToGroup(task))
+      return !isAssignedToTour && !isHiddenInFolder
+    })
+
+    const PICKUP_MODES = ['GROUP_MODE_PICKUP_DESC', 'GROUP_MODE_PICKUP_ASC']
+    const DROPOFF_MODES = ['GROUP_MODE_DROPOFF_DESC', 'GROUP_MODE_DROPOFF_ASC']
+
+    const isPickupMode = PICKUP_MODES.includes(taskListGroupMode)
+    const isDropoffMode = DROPOFF_MODES.includes(taskListGroupMode)
+
+    // Early Exit: If not a grouping mode, use default sort
+    if (!isPickupMode && !isDropoffMode) {
+      // Create a copy to sort safely
+      return [...taskPool].sort(sortUnassignedTasks)
     }
 
-    // === DROPOFF SORTING ===
-    if (taskListGroupMode === 'GROUP_MODE_DROPOFF_DESC' || taskListGroupMode === 'GROUP_MODE_DROPOFF_ASC') {
+    // Determine if we sort by Pickup or Dropoff, and the direction
+    const primaryType = isPickupMode ? 'PICKUP' : 'DROPOFF'
+    const isDesc = ['GROUP_MODE_PICKUP_DESC', 'GROUP_MODE_DROPOFF_DESC'].includes(taskListGroupMode)
 
-      const dropoffTasks = filter(standaloneTasks, t => t.type === 'DROPOFF')
+    const primaryTasks = filter(taskPool, t => t.type === primaryType)
 
-      dropoffTasks.sort((a, b) => {
-        return sortUnassignedTasks(a, b) > 0
-          ? (taskListGroupMode === 'GROUP_MODE_DROPOFF_DESC' ? -1 : 1)
-          : (taskListGroupMode === 'GROUP_MODE_DROPOFF_DESC' ? 1 : -1)
-      })
+    primaryTasks.sort((a, b) => {
+      const comparison = sortUnassignedTasks(a, b)
+      return isDesc ? -comparison : comparison
+    })
 
-      const grouped = reduce(dropoffTasks, (acc, task) => {
-        if (task.previous) {
-          const prev = find(standaloneTasks, t => t['@id'] === task.previous)
-          if (prev && !acc.find(t => t['@id'] === prev['@id'])) {
-            acc.push(prev)
-          }
-        }
-        acc.push(task)
-        return acc
-      }, [])
+    // We use a Set to track "consumed" tasks to easily identify orphans later
+    const consumedIds = new Set()
+    const groupedTasks = []
 
-      standaloneTasks = grouped
-    }
+    if (isPickupMode) {
+      // === PICKUP MODE ===
+      // Pattern: [Parent Pickup] -> [Child Dropoffs...]
+      primaryTasks.forEach(pickup => {
+        consumedIds.add(pickup['@id'])
+        groupedTasks.push(pickup)
 
-    // === PICKUP SORTING ===
-    else if (taskListGroupMode === 'GROUP_MODE_PICKUP_DESC' || taskListGroupMode === 'GROUP_MODE_PICKUP_ASC') {
+        // Find all dropoffs linked to this pickup
+        const children = filter(taskPool, t => t.previous === pickup['@id'])
 
-      const pickupTasks = filter(standaloneTasks, t => t.type === 'PICKUP')
-
-      pickupTasks.sort((a, b) => {
-        return sortUnassignedTasks(a, b) > 0
-          ? (taskListGroupMode === 'GROUP_MODE_PICKUP_DESC' ? -1 : 1)
-          : (taskListGroupMode === 'GROUP_MODE_PICKUP_DESC' ? 1 : -1)
-      })
-
-      const grouped = reduce(pickupTasks, (acc, task) => {
-        // find the dropoff(s) associated with this pickup
-        const drops = filter(standaloneTasks, t => t.previous === task['@id'])
-        acc.push(task)
-        drops.forEach(drop => {
-          if (!acc.find(t => t['@id'] === drop['@id'])) {
-            acc.push(drop)
+        children.forEach(child => {
+          if (!consumedIds.has(child['@id'])) {
+            groupedTasks.push(child)
+            consumedIds.add(child['@id'])
           }
         })
-        return acc
-      }, [])
+      })
 
-      standaloneTasks = grouped
+    } else {
+      // === DROPOFF MODE ===
+      // Pattern: [Parent Pickup] -> [Current Dropoff]
+      primaryTasks.forEach(dropoff => {
+        // Find the pickup this dropoff belongs to
+        if (dropoff.previous) {
+          const parent = find(taskPool, t => t['@id'] === dropoff.previous)
+
+          // Add parent if it exists and hasn't been added by a previous sibling
+          if (parent && !consumedIds.has(parent['@id'])) {
+            groupedTasks.push(parent)
+            consumedIds.add(parent['@id'])
+          }
+        }
+
+        groupedTasks.push(dropoff)
+        consumedIds.add(dropoff['@id'])
+      })
     }
 
-    // === DEFAULT SORT ===
-    else {
-      standaloneTasks.sort(sortUnassignedTasks)
-    }
+    // Any task in the pool that wasn't consumed by the grouping logic is added here.
+    // This catches standalone tasks, reschedule bugs, or sync delays.
+    const orphans = filter(taskPool, t => !consumedIds.has(t['@id']))
 
-    return filter(standaloneTasks, t => !taskIdToTourIdMap.has(t['@id']))
+    // Sort orphans by time so they appear logically at the end
+    orphans.sort(sortUnassignedTasks)
+
+    return [...groupedTasks, ...orphans]
   }
 )
-
 
 export const selectVisibleTaskIds = createSelector(
   selectAllTasks,
