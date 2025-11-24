@@ -66,14 +66,14 @@ class PaygreenController extends AbstractController
             throw new \Exception(sprintf('Payment with id "%d" does not exist', $paymentId));
         }
 
-        $paymentOrder = $this->paygreenManager->createPaymentOrder($payment);
+        $this->paygreenManager->createPaymentOrder($payment);
 
         $this->entityManager->flush();
 
         return [
             $payment->getPaygreenPaymentOrderId(),
             $payment->getPaygreenObjectSecret(),
-            $paymentOrder['hosted_payment_url']
+            $payment->getPaygreenHostedPaymentUrl(),
         ];
     }
 

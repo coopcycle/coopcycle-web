@@ -86,7 +86,7 @@ class PaygreenManager
         $order->addAdjustment($feeAdjustment);
     }
 
-    public function createPaymentOrder(PaymentInterface $payment)
+    public function createPaymentOrder(PaymentInterface $payment): void
     {
         $this->authenticate();
 
@@ -94,22 +94,6 @@ class PaygreenManager
 
         if (null === $order->getId() || null === $order->getShippingAddress() || null === $order->getCustomer()) {
             return;
-        }
-
-        $shopId = $order->getRestaurant()->getPaygreenShopId();
-        $reference = sprintf('ord_%s', $this->hashids8->encode($order->getId()));
-
-        // If a valid payment order already exists for this order, we cancel it
-        $response = $this->paygreenClient->listPaymentOrder($reference);
-        if ($response->getStatusCode() === 200) {
-            $data = json_decode($response->getBody()->getContents(), true);
-            if (count($data['data']) > 0) {
-                foreach ($data['data'] as $po) {
-                    if ($po['status'] === 'payment_order.pending') {
-                        $this->paygreenClient->cancelPaymentOrder($po['id']);
-                    }
-                }
-            }
         }
 
         $address = $this->createAddress($order);
@@ -134,14 +118,17 @@ class PaygreenManager
         $this->orderNumberAssigner->assignNumber($order);
 
         $paymentOrder = new PaygreenModel\PaymentOrder();
-        $paymentOrder->setReference($reference);
+        // We do *NOT* use setReference, because it's hard to manage
+        // in case we need to recreate a new PaymentOrder for the same order
+        // « A PaymentOrder for this reference has already been processed today »
+        // $paymentOrder->setReference($reference);
         $paymentOrder->setBuyer($buyer);
         $paymentOrder->setAmount($order->getTotal());
         $paymentOrder->setAutoCapture(false);
         $paymentOrder->setCurrency($payment->getCurrencyCode());
         $paymentOrder->setShippingAddress($address);
         $paymentOrder->setDescription(sprintf('Order %s', $order->getNumber()));
-        $paymentOrder->setShopId($shopId);
+        $paymentOrder->setShopId($order->getRestaurant()->getPaygreenShopId());
         $paymentOrder->setReturnUrl($this->getCallbackUrl('paygreen_return'));
         $paymentOrder->setCancelUrl($this->getCallbackUrl('paygreen_cancel'));
         $paymentOrder->setEligibleAmounts($this->getEligibleAmounts($order));
@@ -163,8 +150,6 @@ class PaygreenManager
         $payment->setPaygreenPaymentOrderId($data['data']['id']);
         $payment->setPaygreenObjectSecret($data['data']['object_secret']);
         $payment->setPaygreenHostedPaymentUrl($data['data']['hosted_payment_url']);
-
-        return $data['data'];
     }
 
     public function getEnabledPlatforms($shopId): array
