@@ -8,7 +8,23 @@ export function taskTypeColor(type) {
       return '#2ECC71'
     default:
       // fallback color; should not happen normally
-      return '#CCC'
+      return '#BBB'
+  }
+}
+
+export function taskColor(type, status) {
+  if (status === 'CANCELLED') {
+    return '#BBB'
+  }
+
+  switch (type.toUpperCase()) {
+    case 'PICKUP':
+      return '#E74C3C'
+    case 'DROPOFF':
+      return '#2ECC71'
+    default:
+      // fallback color; should not happen normally
+      return '#BBB'
   }
 }
 

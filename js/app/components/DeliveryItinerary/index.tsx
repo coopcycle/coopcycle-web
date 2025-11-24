@@ -1,15 +1,21 @@
 import React from 'react';
 import { Timeline } from 'antd';
-import { taskTypeColor, taskTypeListIcon } from '../../styles';
+import { taskColor, taskTypeListIcon } from '../../styles';
 import { asText } from '../ShippingTimeRange';
 import { Task, TaskPayload } from '../../api/types';
 import { TaskLabel } from '../TaskLabel';
 
-const Dot = ({ type }: { type: Task['type'] }) => {
+const Dot = ({
+  type,
+  status,
+}: {
+  type: Task['type'];
+  status: Task['status'];
+}) => {
   return (
     <i
       className={`fa ${taskTypeListIcon(type)}`}
-      style={{ color: taskTypeColor(type) }}
+      style={{ color: taskColor(type, status) }}
     />
   );
 };
@@ -40,7 +46,7 @@ export default ({
   const timelineItems = tasks.map((task, index) => {
     return {
       key: `task-${index}`,
-      dot: <Dot type={task.type} />,
+      dot: <Dot type={task.type} status={task.status} />,
       children: (
         <IsCancelledWrapper task={task}>
           <>
