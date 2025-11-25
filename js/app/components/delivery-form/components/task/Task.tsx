@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { Field } from 'formik';
 import AddressBookNew from './AddressBook';
 import { Button, Input } from 'antd';
@@ -25,7 +25,7 @@ type Props = {
   addresses: Address[];
   taskId: string;
   storeDeliveryInfos: Partial<Store>;
-  onRemove: () => void;
+  onDelete: () => void;
   showRemoveButton: boolean;
   tags: Tag[];
   isExpanded: boolean;
@@ -38,7 +38,7 @@ const Task = ({
   addresses,
   taskId,
   storeDeliveryInfos,
-  onRemove,
+  onDelete,
   showRemoveButton,
   tags,
   isExpanded,
@@ -57,6 +57,10 @@ const Task = ({
 
   const { data: timeSlotLabels } = useGetStoreTimeSlotsQuery(storeNodeId);
   const { data: packages } = useGetStorePackagesQuery(storeNodeId);
+
+  const onRemove = useCallback(() => {
+    onDelete(taskIndex);
+  }, [onDelete, taskIndex]);
 
   return (
     <div
@@ -95,8 +99,7 @@ const Task = ({
           <i
             data-testid="task-remove"
             className="fa fa-trash cursor-pointer"
-            onClick={() => onRemove(taskIndex)}
-            type="button"
+            onClick={onRemove}
           />
         )}
       </div>
@@ -163,10 +166,7 @@ const Task = ({
       </div>
       <div className={isExpanded ? 'task__footer' : 'task__footer--hidden'}>
         {showRemoveButton && (
-          <Button
-            onClick={() => onRemove(taskIndex)}
-            type="button"
-            className="mb-4">
+          <Button onClick={onRemove} type="default" danger className="mb-4">
             {t(`DELIVERY_FORM_REMOVE_${taskValues.type}`)}
           </Button>
         )}
