@@ -19,6 +19,7 @@ import { useSelector } from 'react-redux';
 import { selectMode } from '../../redux/formSlice';
 import type { Address, Store, Tag } from '../../../../api/types';
 import { UserContext } from '../../../../UserContext';
+import { isTemporaryId } from '../../idUtils';
 
 type Props = {
   storeNodeId: string;
@@ -59,8 +60,12 @@ const Task = ({
   const { data: packages } = useGetStorePackagesQuery(storeNodeId);
 
   const onRemove = useCallback(() => {
-    onDelete(taskIndex);
-  }, [onDelete, taskIndex]);
+    if (mode === Mode.DELIVERY_UPDATE && !isTemporaryId(taskId)) {
+      setFieldValue(`tasks[${taskIndex}].status`, 'CANCELLED');
+    } else {
+      onDelete(taskIndex);
+    }
+  }, [mode, onDelete, taskIndex, taskId, setFieldValue]);
 
   return (
     <div
