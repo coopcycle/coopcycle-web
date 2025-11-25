@@ -228,12 +228,12 @@ const DeliveryForm = ({
         if (Array.isArray(task?.packages)) {
           acc.packagesCount += task.packages.reduce(
             (sum, item) => sum + (item?.quantity || 0),
-            0
+            0,
           );
         }
         return acc;
       },
-      { packagesTotalWeight: 0, packagesCount: 0 }
+      { packagesTotalWeight: 0, packagesCount: 0 },
     );
 
     for (let i = 0; i < values.tasks.length; i++) {
@@ -275,8 +275,6 @@ const DeliveryForm = ({
         errors.tasks[i] = taskErrors;
       }
     }
-
-
 
     // expand all tasks with errors
     if (Object.keys(errors.tasks).length > 0) {
@@ -524,7 +522,7 @@ const DeliveryForm = ({
                       })}
 
                       {storeDeliveryInfos.multiPickupEnabled &&
-                        (mode === Mode.DELIVERY_CREATE || isDispatcher) ? (
+                      (mode === Mode.DELIVERY_CREATE || isDispatcher) ? (
                         <div className="new-order__pickups__add p-4 border mb-4">
                           <p>{t('DELIVERY_FORM_MULTIPICKUP')}</p>
                           <Button
@@ -600,7 +598,7 @@ const DeliveryForm = ({
                       })}
 
                       {storeDeliveryInfos.multiDropEnabled &&
-                        (mode === Mode.DELIVERY_CREATE || isDispatcher) ? (
+                      (mode === Mode.DELIVERY_CREATE || isDispatcher) ? (
                         <div className="new-order__dropoffs__add p-4 border mb-4">
                           <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
                           <Button
@@ -672,7 +670,7 @@ const DeliveryForm = ({
                 </div>
 
                 {mode !== Mode.DELIVERY_UPDATE ||
-                  (mode === Mode.DELIVERY_UPDATE && order) ? (
+                (mode === Mode.DELIVERY_UPDATE && order) ? (
                   <div className="order-informations__total-price border-top py-3">
                     <Order
                       storeNodeId={storeNodeId}
@@ -698,7 +696,7 @@ const DeliveryForm = ({
                 ) : null}
 
                 {modeIn(mode, [Mode.DELIVERY_CREATE, Mode.DELIVERY_UPDATE]) &&
-                  isDispatcher ? (
+                isDispatcher ? (
                   <div
                     className="border-top py-3"
                     data-testid="saved_order__container">
