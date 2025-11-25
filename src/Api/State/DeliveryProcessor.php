@@ -204,6 +204,10 @@ class DeliveryProcessor implements ProcessorInterface
             $task->setType($type);
         }
 
+        if ($this->authorizationChecker->isGranted('ROLE_DISPATCHER') && $data->status) {
+            $task->setStatus($data->status);
+        }
+
         // Legacy props
         if (isset($data->doneAfter) && !isset($data->after)) {
             $data->after = $data->doneAfter;
