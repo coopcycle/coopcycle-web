@@ -988,6 +988,14 @@ Cypress.Commands.add('validateDeliveryItinerary', (tasks, options = {}) => {
           }
         }
 
+        if (task.type) {
+          cy.contains(task.type).should('exist')
+        }
+
+        if (task.name) {
+          cy.contains(task.name).should('exist')
+        }
+
         // Validate address
         if (task.address) {
           cy.contains(task.address).should('exist')
