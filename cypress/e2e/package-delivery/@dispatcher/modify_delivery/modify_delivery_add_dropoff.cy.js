@@ -45,6 +45,19 @@ context('Delivery (role: dispatcher)', () => {
       ).click();
     });
 
+    cy.validateDeliveryItinerary(
+      [
+        {
+          address: /272,? rue Saint Honoré,? 75001,? Paris/,
+        },
+        {
+          address: /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
+          packages: [{ name: 'SMALL', quantity: 1 }],
+        },
+      ],
+      { withTaskLinks: false },
+    );
+
     // 1 x SMALL packages
     cy.get('[data-testid="tax-included"]').contains('5,00 €');
 
@@ -53,14 +66,27 @@ context('Delivery (role: dispatcher)', () => {
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/);
 
-    cy.get('[data-testid="order-total-including-tax"]')
-      .find('[data-testid="value"]')
-      .contains('€5.00');
-
     // Wait for React components to load
     cy.get('[data-testid="delivery-itinerary"]', {
       timeout: 10000,
     }).should('be.visible');
+
+    cy.get('[data-testid="order-total-including-tax"]')
+      .find('[data-testid="value"]')
+      .contains('€5.00');
+
+    cy.validateDeliveryItinerary([
+      {
+        taskLink: 'Tâche 1-1',
+        address: /272,? rue Saint Honoré,? 75001,? Paris/,
+        packages: [{ name: 'SMALL', quantity: 1 }],
+      },
+      {
+        taskLink: 'Tâche 1-2',
+        address: /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
+        packages: [{ name: 'SMALL', quantity: 1 }],
+      },
+    ]);
 
     cy.intercept('POST', '/api/retail_prices/calculate').as(
       'calculateRetailPrice',
@@ -135,5 +161,23 @@ context('Delivery (role: dispatcher)', () => {
     cy.get('[data-testid="order-total-including-tax"]')
       .find('[data-testid="value"]')
       .contains('€10.00');
+
+    cy.validateDeliveryItinerary([
+      {
+        taskLink: 'Tâche 1-1',
+        address: /272,? rue Saint Honoré,? 75001,? Paris/,
+        packages: [{ name: 'SMALL', quantity: 2 }],
+      },
+      {
+        taskLink: 'Tâche 1-2',
+        address: /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
+        packages: [{ name: 'SMALL', quantity: 1 }],
+      },
+      {
+        taskLink: 'Tâche 1-3',
+        address: /72,? Rue Saint-Maur,? 75011,? Paris/,
+        packages: [{ name: 'SMALL', quantity: 1 }],
+      },
+    ]);
   });
 });
