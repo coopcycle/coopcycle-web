@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Button, Checkbox } from 'antd';
 import { Formik, Form, FieldArray, FormikErrors } from 'formik';
 import moment, { Moment } from 'moment';
-import { v4 as uuidv4 } from 'uuid';
 
 import Spinner from '../../components/core/Spinner.js';
 import BarcodesModal from '../../../../assets/react/controllers/BarcodesModal.jsx';
@@ -43,8 +42,7 @@ import {
 } from '../../api/types';
 import { useDatadog } from '../../hooks/useDatadog';
 import { UserContext } from '../../UserContext';
-
-const generateTempId = (): string => `temp-${uuidv4()}`;
+import { generateTempId } from './idUtils';
 
 const getTaskId = (task: TaskType): string | null => {
   return task['@id'];
