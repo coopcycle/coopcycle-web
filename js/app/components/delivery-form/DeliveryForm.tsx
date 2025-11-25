@@ -506,7 +506,6 @@ const DeliveryForm = ({
                               storeDeliveryInfos={storeDeliveryInfos}
                               onRemove={arrayHelpers.remove}
                               showRemoveButton={pickupIndex > 0}
-                              isDispatcher={isDispatcher}
                               tags={tags}
                               isExpanded={expandedTasks[originalIndex]}
                               onToggleExpanded={isExpanded =>
@@ -584,7 +583,6 @@ const DeliveryForm = ({
                               storeDeliveryInfos={storeDeliveryInfos}
                               onRemove={arrayHelpers.remove}
                               showRemoveButton={dropoffIndex > 0}
-                              isDispatcher={isDispatcher}
                               tags={tags}
                               isExpanded={expandedTasks[originalIndex]}
                               onToggleExpanded={isExpanded =>

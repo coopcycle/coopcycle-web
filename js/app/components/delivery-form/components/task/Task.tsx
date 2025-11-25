@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Field } from 'formik';
 import AddressBookNew from './AddressBook';
-import { Input, Button } from 'antd';
+import { Button, Input } from 'antd';
 import Packages from './Packages';
 import { useTranslation } from 'react-i18next';
 import TotalWeight from './TotalWeight';
@@ -18,9 +18,9 @@ import { Mode } from '../../mode';
 import { useSelector } from 'react-redux';
 import { selectMode } from '../../redux/formSlice';
 import type { Address, Store, Tag } from '../../../../api/types';
+import { UserContext } from '../../../../UserContext';
 
 type Props = {
-  isDispatcher: boolean;
   storeNodeId: string;
   addresses: Address[];
   taskId: string;
@@ -34,7 +34,6 @@ type Props = {
 };
 
 const Task = ({
-  isDispatcher,
   storeNodeId,
   addresses,
   taskId,
@@ -47,6 +46,8 @@ const Task = ({
   showPackages,
 }: Props) => {
   const { t } = useTranslation();
+
+  const { isDispatcher } = useContext(UserContext);
 
   const mode = useSelector(selectMode);
   const { values, taskValues, setFieldValue, taskIndex } =
