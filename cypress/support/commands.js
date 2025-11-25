@@ -926,3 +926,79 @@ Cypress.Commands.add('verifyOrder', expectedItems => {
       })
   })
 })
+
+/**
+ * Validates the delivery itinerary
+
+ * Example usage:
+ *
+ * // Basic usage with addresses only
+ * cy.validateDeliveryItinerary([
+ *   { address: /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/ },
+ *   { address: /72,? Rue Saint-Maur,? 75011,? Paris,? France/ }
+ * ])
+ *
+ * // With task links (regex pattern)
+ * cy.validateDeliveryItinerary([
+ *   {
+ *     address: /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
+ *     taskLink: /Tâche #\d+/,
+ *   },
+ *   {
+ *     address: /72,? Rue Saint-Maur,? 75011,? Paris,? France/,
+ *     taskLink: /Tâche #\d+/,
+ *   }
+ * ])
+ */
+Cypress.Commands.add('validateDeliveryItinerary', (tasks, options = {}) => {
+  // If withTaskLinks is explicitly false, check that no task links exist
+  if (options.withTaskLinks === false) {
+    cy.get('[data-testid="delivery-itinerary"]').within(() => {
+      cy.get('[data-testid=taskWithNumberLink]').should('not.exist')
+    })
+  }
+
+  // Validate the number of timeline items matches the tasks array
+  cy.get('[data-testid="delivery-itinerary"] .ant-timeline-item').should(
+    'have.length',
+    tasks.length,
+  )
+
+  // Validate each task
+  tasks.forEach((task, index) => {
+    cy.get('[data-testid="delivery-itinerary"] .ant-timeline-item')
+      .eq(index)
+      .within(() => {
+        // Validate task link
+        if (task.taskLink !== undefined) {
+          if (task.taskLink === false) {
+            // Assert task link should not exist for this specific item
+            cy.get('[data-testid=taskWithNumberLink]').should('not.exist')
+          } else if (typeof task.taskLink === 'string') {
+            // String: check if it contains the text
+            cy.get('[data-testid=taskWithNumberLink]').should(
+              'contain',
+              task.taskLink,
+            )
+          } else if (task.taskLink instanceof RegExp) {
+            // RegExp: check if text matches the pattern
+            cy.get('[data-testid=taskWithNumberLink]')
+              .invoke('text')
+              .should('match', task.taskLink)
+          }
+        }
+
+        // Validate address
+        if (task.address) {
+          cy.contains(task.address).should('exist')
+        }
+
+        // Validate packages
+        if (task.packages && task.packages.length > 0) {
+          task.packages.forEach(pkg => {
+            cy.contains(`${pkg.quantity} ${pkg.name}`).should('exist')
+          })
+        }
+      })
+  })
+})
