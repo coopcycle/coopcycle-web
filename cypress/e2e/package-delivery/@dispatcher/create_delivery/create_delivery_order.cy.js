@@ -100,30 +100,16 @@ context('Delivery (role: dispatcher)', () => {
     cy.get('[data-testid="delivery-itinerary"]', {
       timeout: 10000,
     }).should('be.visible');
-    // Pickup
-    cy.get('[data-testid="delivery-itinerary"] .ant-timeline-item')
-      .eq(0)
-      .within(() => {
-        cy.contains(
-          /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
-        ).should('exist');
-        cy.get(`[data-testid=taskWithNumberLink]`).should(
-          'contain',
-          'Tâche 1-1',
-        );
-      });
-    // Dropoff
-    cy.get('[data-testid="delivery-itinerary"] .ant-timeline-item')
-      .eq(1)
-      .within(() => {
-        cy.contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/).should(
-          'exist',
-        );
-        cy.get(`[data-testid=taskWithNumberLink]`).should(
-          'contain',
-          'Tâche 1-2',
-        );
-      });
+    cy.validateDeliveryItinerary([
+      {
+        taskLink: 'Tâche 1-1',
+        address: /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
+      },
+      {
+        taskLink: 'Tâche 1-2',
+        address: /72,? Rue Saint-Maur,? 75011,? Paris,? France/,
+      },
+    ]);
 
     cy.get('[data-testid="order-edit"]').click();
 
@@ -169,28 +155,17 @@ context('Delivery (role: dispatcher)', () => {
     cy.get('[data-testid="delivery-itinerary"]', {
       timeout: 10000,
     }).should('be.visible');
-    // Pickup
-    cy.get('[data-testid="delivery-itinerary"] .ant-timeline-item')
-      .eq(0)
-      .within(() => {
-        cy.contains(
-          /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
-        ).should('exist');
-        cy.get(`[data-testid=taskWithNumberLink]`)
-          .invoke('text')
-          .should('match', /Tâche #\d+/);
-      });
-    // Dropoff
-    cy.get('[data-testid="delivery-itinerary"] .ant-timeline-item')
-      .eq(1)
-      .within(() => {
-        cy.contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/).should(
-          'exist',
-        );
-        cy.get(`[data-testid=taskWithNumberLink]`)
-          .invoke('text')
-          .should('match', /Tâche #\d+/);
-      });
+    cy.validateDeliveryItinerary(
+      [
+        {
+          address: /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
+        },
+        {
+          address: /72,? Rue Saint-Maur,? 75011,? Paris,? France/,
+        },
+      ],
+      { withTaskLinks: false },
+    );
 
     cy.get('[data-testid="tax-included"]').contains('4,99 €');
   });
