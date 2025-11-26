@@ -38,7 +38,7 @@ context('Dispatch dashboard (role: dispatcher)', () => {
 
     cy.wait('@putCancelTask');
     // Wait for async work to complete
-    cy.consumeMessages(5);
+    cy.consumeMessages();
 
     cy.get('[data-rfd-droppable-id="unassigned"] > .taskList__tasks')
       .children()
