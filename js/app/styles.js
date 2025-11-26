@@ -17,15 +17,7 @@ export function taskColor(type, status) {
     return '#777'
   }
 
-  switch (type.toUpperCase()) {
-    case 'PICKUP':
-      return '#E74C3C'
-    case 'DROPOFF':
-      return '#2ECC71'
-    default:
-      // fallback color; should not happen normally
-      return '#777'
-  }
+  return taskTypeColor(type)
 }
 
 export function taskTypeMapIcon(type) {
