@@ -2,9 +2,11 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import ClipboardJS from 'clipboard';
 import { RootWithDefaults } from '../../../utils/react';
-import Map from '../../../components/DeliveryMap';
-import Itinerary from '../../../components/DeliveryItinerary';
 import i18n from '../../../i18n';
+import { Content } from './Content';
+import { accountSlice } from '../../../entities/account/reduxSlice';
+import { createStoreFromPreloadedState } from './redux/store';
+import { Provider } from 'react-redux';
 import { UserContext } from '../../../UserContext';
 
 new ClipboardJS('#copy');
@@ -17,31 +19,30 @@ $('[data-change-state] button[type="submit"]').on('click', function (e) {
   }
 });
 
-const el = document.querySelector('#delivery-info');
+const buildInitialState = () => {
+  return {
+    [accountSlice.name]: accountSlice.getInitialState(),
+  };
+};
+
+const store = createStoreFromPreloadedState(buildInitialState());
+
+const el = document.querySelector('#react-root');
 
 if (el) {
-  const delivery = JSON.parse(el.dataset.delivery);
+  const order = JSON.parse(el.dataset.order);
+  // delivery can be empty for foodtech takeaway orders
+  const delivery = el.dataset.delivery ? JSON.parse(el.dataset.delivery) : null;
   const isDispatcher = el.dataset.isDispatcher === 'true';
 
   const root = createRoot(el);
   root.render(
     <RootWithDefaults>
-      <UserContext.Provider value={{ isDispatcher }}>
-        <div>
-          <Map
-            defaultAddress={delivery.tasks[0].address}
-            tasks={delivery.tasks}
-          />
-          <div className="py-3" />
-          <Itinerary
-            tasks={delivery.tasks}
-            withTaskLinks={isDispatcher}
-            withTimeRange
-            withDescription
-            withPackages
-          />
-        </div>
-      </UserContext.Provider>
+      <Provider store={store}>
+        <UserContext.Provider value={{ isDispatcher }}>
+          <Content order={order} delivery={delivery} />
+        </UserContext.Provider>
+      </Provider>
     </RootWithDefaults>,
   );
 }

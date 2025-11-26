@@ -77,13 +77,13 @@
     </div>
   </div>
   <div class="flex-1 ml-md-4">
-    {% if delivery is not empty %}
-      <div id="delivery-info"
-           data-delivery="{{ delivery|serialize('jsonld', {groups: ['delivery', 'address', 'set-temporary-id-when-missing']}) }}"
-           data-is-dispatcher="{{ is_granted('ROLE_DISPATCHER') ? 'true' : 'false' }}">
-        {# rendered by React #}
-      </div>
-    {% endif %}
+    <div id="react-root"
+         data-order="{{ order|serialize('jsonld', {groups: ['order', 'pricing_deliveries']}) }}"
+         data-delivery="{{ delivery is not empty ? delivery|serialize('jsonld', {groups: ['delivery', 'address', 'set-temporary-id-when-missing']}) : '' }}"
+         data-is-dispatcher="{{ is_granted('ROLE_DISPATCHER') ? 'true' : 'false' }}"
+    >
+      {# rendered by React #}
+    </div>
   </div>
 </div>
 
@@ -125,9 +125,12 @@
 
 {% endblock %}
 
+{% block styles %}
+  {{ encore_entry_link_tags('order-item') }}
+{% endblock %}
+
 {% block scripts %}
 {{ encore_entry_script_tags('order-item') }}
-{{ encore_entry_script_tags('delivery-map') }}
 <script>
 {% include "_partials/order/receipt_modal.js.twig" %}
 </script>

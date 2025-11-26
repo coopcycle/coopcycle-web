@@ -25,7 +25,6 @@ use AppBundle\Service\OrderManager;
 use AppBundle\Service\TaskManager;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Utils\OrderEventCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
