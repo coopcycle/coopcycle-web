@@ -31,6 +31,7 @@ class Settings
         'administrator_email',
         'guest_checkout_enabled',
         'motto',
+        'paygreen_public_key',
     ];
 
     public function __construct(
