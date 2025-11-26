@@ -8,7 +8,7 @@ export function taskTypeColor(type) {
       return '#2ECC71'
     default:
       // fallback color; should not happen normally
-      return '#BBB'
+      return '#777'
   }
 }
 
