@@ -14,7 +14,7 @@ export function taskTypeColor(type) {
 
 export function taskColor(type, status) {
   if (status === 'CANCELLED') {
-    return '#BBB'
+    return '#777'
   }
 
   switch (type.toUpperCase()) {
@@ -24,7 +24,7 @@ export function taskColor(type, status) {
       return '#2ECC71'
     default:
       // fallback color; should not happen normally
-      return '#BBB'
+      return '#777'
   }
 }
 
