@@ -79,7 +79,7 @@ class TaskManagerFunctionalTest extends KernelTestCase
         $this->taskManager->cancel($task);
         $this->entityManager->flush();
 
-        TestUtils::consumeMessages(self::$kernel);
+        TestUtils::consumeMessages(self::getContainer());
 
         // Assert that linked order is NOT cancelled
         $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
@@ -137,7 +137,7 @@ class TaskManagerFunctionalTest extends KernelTestCase
         $this->taskManager->cancel($task);
         $this->entityManager->flush();
 
-        TestUtils::consumeMessages(self::$kernel);
+        TestUtils::consumeMessages(self::getContainer());
 
         // Assert that linked order is NOT cancelled
         $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());

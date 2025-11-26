@@ -64,12 +64,6 @@ services:
     tags:
       - { name: 'console.command', command: 'coopcycle:tests:log' }
 
-  AppBundle\Command\ConsumeMessagesCommand:
-    arguments:
-      $receiverLocator: '@messenger.receiver_locator'
-    tags:
-      - { name: 'console.command', command: 'coopcycle:messenger:consume-test' }
-
   AppBundle\Command\SetupCommand:
     arguments:
       $productRepository: '@sylius.repository.product'

@@ -4,11 +4,13 @@ namespace Tests\AppBundle;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\ConsoleOutput;
-use Symfony\Component\Console\Tester\CommandTester;
-use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Messenger\EventListener\StopWorkerOnTimeLimitListener;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Worker;
 
 class TestUtils
 {
@@ -23,17 +25,18 @@ class TestUtils
         return new ConsoleLogger($output, $verbosityLevelMap);
     }
 
-    /**
-     * Consume messages from the async transport.
-     * This is a wrapper around the coopcycle:messenger:consume-test command.
-     */
-    public static function consumeMessages(KernelInterface $kernel, int $timeLimitInSeconds = 5): void
-    {
-        $application = new Application($kernel);
-        $command = $application->find('coopcycle:messenger:consume-test');
-        $commandTester = new CommandTester($command);
-        $commandTester->execute([
-            '--time-limit' => $timeLimitInSeconds,
+    public static function consumeMessages(ContainerInterface $container, int $timeLimitInSeconds = 5) {
+        $transport = $container->get('messenger.transport.async');
+        $bus = $container->get(MessageBusInterface::class);
+
+        // Create an event dispatcher with a listener to stop after processing all messages
+        $eventDispatcher = new EventDispatcher();
+        $eventDispatcher->addSubscriber(new StopWorkerOnTimeLimitListener($timeLimitInSeconds));
+
+        // Create and run the worker
+        $worker = new Worker([$transport], $bus, $eventDispatcher);
+        $worker->run([
+            'sleep' => 0, // Don't sleep between messages
         ]);
     }
 }
