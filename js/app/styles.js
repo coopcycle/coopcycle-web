@@ -68,3 +68,20 @@ export function taskTypeListIcon(type) {
       return 'fa-question'
   }
 }
+
+export function taskListIcon(type, status) {
+  switch (status) {
+    case 'TODO':
+      return taskTypeListIcon(type)
+    case 'DOING':
+      return 'fa-play'
+    case 'DONE':
+      return 'fa-check'
+    case 'FAILED':
+      return 'fa-remove'
+    case 'CANCELLED':
+      return 'fa-ban'
+  }
+
+  return 'fa-question'
+}
