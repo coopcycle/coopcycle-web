@@ -1,5 +1,3 @@
-import React from 'react'
-
 export function taskTypeColor(type) {
   switch (type.toUpperCase()) {
     case 'PICKUP':
@@ -33,7 +31,7 @@ export function taskTypeMapIcon(type) {
 }
 
 export function taskMapIcon(type, status) {
-  switch (status) {
+  switch (status.toUpperCase()) {
     case 'TODO':
       return taskTypeMapIcon(type)
     case 'DOING':
@@ -62,7 +60,7 @@ export function taskTypeListIcon(type) {
 }
 
 export function taskListIcon(type, status) {
-  switch (status) {
+  switch (status.toUpperCase()) {
     case 'TODO':
       return taskTypeListIcon(type)
     case 'DOING':
