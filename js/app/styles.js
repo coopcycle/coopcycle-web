@@ -40,6 +40,23 @@ export function taskTypeMapIcon(type) {
   }
 }
 
+export function taskMapIcon(type, status) {
+  switch (status) {
+    case 'TODO':
+      return taskTypeMapIcon(type)
+    case 'DOING':
+      return 'play'
+    case 'DONE':
+      return 'check'
+    case 'FAILED':
+      return 'remove'
+    case 'CANCELLED':
+      return 'ban'
+  }
+
+  return 'question'
+}
+
 export function taskTypeListIcon(type) {
   switch (type.toUpperCase()) {
     case 'PICKUP':
