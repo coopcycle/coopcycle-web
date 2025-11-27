@@ -14,20 +14,21 @@ import {
   useGetStorePackagesQuery,
   useGetStoreTimeSlotsQuery,
 } from '../../../../api/slice';
-import { Mode } from '../../mode';
+import { Mode, modeIn } from '../../mode';
 import { useSelector } from 'react-redux';
 import { selectMode } from '../../redux/formSlice';
 import type { Address, Store, Tag } from '../../../../api/types';
 import { UserContext } from '../../../../UserContext';
 import { isTemporaryId } from '../../idUtils';
+import { DeleteOutlined, UndoOutlined } from '@ant-design/icons';
 
 type Props = {
   storeNodeId: string;
   addresses: Address[];
   taskId: string;
   storeDeliveryInfos: Partial<Store>;
-  onDelete: () => void;
-  showRemoveButton: boolean;
+  onDelete: (index: number) => void;
+  canDelete: boolean;
   tags: Tag[];
   isExpanded: boolean;
   onToggleExpanded: (expanded: boolean) => void;
@@ -40,7 +41,7 @@ const Task = ({
   taskId,
   storeDeliveryInfos,
   onDelete,
-  showRemoveButton,
+  canDelete,
   tags,
   isExpanded,
   onToggleExpanded,
@@ -56,16 +57,28 @@ const Task = ({
       taskId: taskId,
     });
 
+  const showDeleteButton =
+    (modeIn(mode, [Mode.DELIVERY_CREATE, Mode.RECURRENCE_RULE_UPDATE]) ||
+      (mode === Mode.DELIVERY_UPDATE && isTemporaryId(taskId))) &&
+    canDelete;
+
+  const isExistingTask =
+    mode === Mode.DELIVERY_UPDATE && !isTemporaryId(taskId);
+
   const { data: timeSlotLabels } = useGetStoreTimeSlotsQuery(storeNodeId);
   const { data: packages } = useGetStorePackagesQuery(storeNodeId);
 
-  const onRemove = useCallback(() => {
-    if (mode === Mode.DELIVERY_UPDATE && !isTemporaryId(taskId)) {
-      setFieldValue(`tasks[${taskIndex}].status`, 'CANCELLED');
-    } else {
-      onDelete(taskIndex);
-    }
-  }, [mode, onDelete, taskIndex, taskId, setFieldValue]);
+  const _onDelete = useCallback(() => {
+    onDelete(taskIndex);
+  }, [onDelete, taskIndex]);
+
+  const onCancel = useCallback(() => {
+    setFieldValue(`tasks[${taskIndex}].status`, 'CANCELLED');
+  }, [taskIndex, setFieldValue]);
+
+  const onRestore = useCallback(() => {
+    setFieldValue(`tasks[${taskIndex}].status`, 'TODO');
+  }, [taskIndex, setFieldValue]);
 
   return (
     <div
@@ -100,11 +113,11 @@ const Task = ({
             }></i>
         </button>
 
-        {showRemoveButton && (
+        {showDeleteButton && (
           <i
             data-testid="task-remove"
             className="fa fa-trash cursor-pointer"
-            onClick={onRemove}
+            onClick={_onDelete}
           />
         )}
       </div>
@@ -170,11 +183,29 @@ const Task = ({
         )}
       </div>
       <div className={isExpanded ? 'task__footer' : 'task__footer--hidden'}>
-        {showRemoveButton && (
-          <Button onClick={onRemove} type="default" danger className="mb-4">
+        {showDeleteButton ? (
+          <Button onClick={_onDelete} type="default" danger>
             {t(`DELIVERY_FORM_REMOVE_${taskValues.type}`)}
           </Button>
-        )}
+        ) : null}
+        {isDispatcher && isExistingTask && taskValues.status === 'TODO' ? (
+          <Button
+            onClick={onCancel}
+            type="primary"
+            icon={<DeleteOutlined />}
+            danger>
+            {t('ADMIN_DASHBOARD_CANCEL_TASK')}
+          </Button>
+        ) : null}
+        {isDispatcher && isExistingTask && taskValues.status === 'CANCELLED' ? (
+          <Button
+            onClick={onRestore}
+            color="green"
+            variant="solid"
+            icon={<UndoOutlined />}>
+            {t('ADMIN_DASHBOARD_RESTORE')}
+          </Button>
+        ) : null}
       </div>
     </div>
   );
