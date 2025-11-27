@@ -93,11 +93,12 @@ class DeliveryProcessor implements ProcessorInterface
                         }
                     }, $data->tasks);
 
-                    //remove tasks that are not in the request
+                    //cancel tasks that are not present in the request
                     foreach ($delivery->getTasks() as $task) {
                         if (!in_array($task, $tasks)) {
-                            $delivery->removeTask($task);
-                            $this->entityManager->remove($task);
+                            if (!$task->isCancelled()) {
+                                $task->setStatus(Task::STATUS_CANCELLED);
+                            }
                         }
                     }
 
