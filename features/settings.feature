@@ -35,6 +35,7 @@ Feature: Settings
         "motto": "@string@||@null@",
         "order_confirm_message": @string@,
         "edenred_client_id": "@string@",
-        "edenred_authorization_endpoint": "@string@"
+        "edenred_authorization_endpoint": "@string@",
+        "paygreen_public_key": "@null@"
       }
       """

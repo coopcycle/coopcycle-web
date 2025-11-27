@@ -3456,6 +3456,7 @@ Feature: Tasks
       }
       """
     And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "new"
+    Then the async messages are consumed
     And the database entity "AppBundle\Entity\Sylius\Order" should have a property "total" with value "400"
 
   Scenario: Cancel once task in multi-dropoff order with distance pricing - order stays new and price recalculated
@@ -3493,6 +3494,7 @@ Feature: Tasks
       }
       """
     And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "new"
+    Then the async messages are consumed
     And the database entity "AppBundle\Entity\Sylius\Order" should have a property "total" with value "400"
 
   Scenario: Cancel once task in multi-dropoff order with manual supplements - order stays accepted, price recalculated and manual supplements kept
@@ -3565,5 +3567,6 @@ Feature: Tasks
     }
     """
     And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "accepted"
+    Then the async messages are consumed
     # Base: 499, manual supplement: 200
     And the database entity "AppBundle\Entity\Sylius\Order" should have a property "total" with value "699"

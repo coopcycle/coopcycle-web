@@ -9,6 +9,7 @@ use Fidry\AliceDataFixtures\LoaderInterface;
 use Fidry\AliceDataFixtures\Persistence\PurgeMode;
 use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Tests\AppBundle\TestUtils;
 
 class TaskManagerFunctionalTest extends KernelTestCase
 {
@@ -78,6 +79,8 @@ class TaskManagerFunctionalTest extends KernelTestCase
         $this->taskManager->cancel($task);
         $this->entityManager->flush();
 
+        TestUtils::consumeMessages(self::getContainer());
+
         // Assert that linked order is NOT cancelled
         $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
         // Assert that price has been recalculated
@@ -133,6 +136,8 @@ class TaskManagerFunctionalTest extends KernelTestCase
         // Cancel the task
         $this->taskManager->cancel($task);
         $this->entityManager->flush();
+
+        TestUtils::consumeMessages(self::getContainer());
 
         // Assert that linked order is NOT cancelled
         $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
