@@ -17,7 +17,7 @@ context('Delivery (role: dispatcher)', () => {
     cy.removeEnvVar('PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED');
   })
 
-  it('create delivery order with multiple dropoff points', function () {
+  it('keep the same price when modifying order with multiple dropoff points', function () {
     cy.visit('/admin/stores')
 
     cy.get('[data-testid=store_Acme__list_item]')

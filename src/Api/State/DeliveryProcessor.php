@@ -83,7 +83,15 @@ class DeliveryProcessor implements ProcessorInterface
 
             if (is_array($data->tasks) && count($data->tasks) > 0) {
                 if ($isEditOperation) {
-                    $tasks = array_map(fn(TaskDto $taskInput) => $this->transformIntoExistingTask($taskInput, $delivery->getTasks(), $store), $data->tasks);
+                    $tasks = array_map(function(TaskDto $taskInput) use ($delivery, $store) {
+                        if ($taskInput->id !== null) {
+                            return $this->transformIntoExistingTask($taskInput, $delivery->getTasks(), $store);
+                        } else {
+                            $newTask = $this->transformIntoNewTask($taskInput, $store);
+                            $delivery->addTask($newTask);
+                            return $newTask;
+                        }
+                    }, $data->tasks);
 
                     //remove tasks that are not in the request
                     foreach ($delivery->getTasks() as $task) {
