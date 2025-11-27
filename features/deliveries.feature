@@ -5531,3 +5531,347 @@ Feature: Deliveries
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON node "order.total" should be equal to 1999
+
+  Scenario: Update delivery: change tasks status as a dispatcher
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | store_with_task_pricing.yml |
+    Given the current time is "2020-04-02 9:00:00"
+    And the user "dispatcher" is loaded:
+      | email      | dispatcher@coopcycle.org |
+      | password   | 123456            |
+    And the user "dispatcher" has role "ROLE_DISPATCHER"
+    And the user "dispatcher" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "tasks": [
+          {
+            "type": "PICKUP",
+            "address": "24, Rue de la Paix",
+            "before": "2020-04-03 13:00"
+          },
+          {
+            "type": "DROPOFF",
+            "address": "48, Rue de Rivoli",
+            "before": "2020-04-03 13:30"
+          },
+          {
+            "type": "DROPOFF",
+            "address": "48, Rue de Rivoli",
+            "before": "2020-04-03 15:30"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"@string@.startsWith('/api/deliveries')",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":@integer@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
+        "tasks": [
+          {
+            "@id": "\/api\/tasks\/1",
+            "@type": "Task",
+            "id": 1,
+            "type": "PICKUP",
+            "status": "TODO",
+            "after": "2020-04-03T12:45:00@string@",
+            "before": "2020-04-03T13:00:00@string@",
+            "@*@": "@*@"
+          },
+          {
+            "@id": "\/api\/tasks\/2",
+            "@type": "Task",
+            "id": 2,
+            "type": "DROPOFF",
+            "status": "TODO",
+            "after": "2020-04-03T13:15:00@string@",
+            "before": "2020-04-03T13:30:00@string@",
+            "@*@": "@*@"
+          },
+          {
+            "@id": "\/api\/tasks\/3",
+            "@type": "Task",
+            "id": 3,
+            "type": "DROPOFF",
+            "status": "TODO",
+            "after": "2020-04-03T15:15:00@string@",
+            "before": "2020-04-03T15:30:00@string@",
+            "@*@": "@*@"
+          }
+        ],
+        "pickup":{"@*@":"@*@"},
+        "dropoff":{"@*@":"@*@"},
+        "trackingUrl": @string@,
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": 899,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "PUT" request to "/api/deliveries/1" with body:
+      """
+      {
+        "tasks": [
+          {
+            "id": 1
+          },
+          {
+            "id": 2,
+            "status": "CANCELLED"
+          },
+          {
+            "id": 3
+          }
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"/api/deliveries/1",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
+        "tasks": [
+          {
+            "@id": "\/api\/tasks\/1",
+            "@type": "Task",
+            "id": 1,
+            "type": "PICKUP",
+            "status": "TODO",
+            "after": "2020-04-03T12:45:00@string@",
+            "before": "2020-04-03T13:00:00@string@",
+            "@*@": "@*@"
+          },
+          {
+            "@id": "\/api\/tasks\/2",
+            "@type": "Task",
+            "id": 2,
+            "type": "DROPOFF",
+            "status": "CANCELLED",
+            "after": "2020-04-03T13:15:00@string@",
+            "before": "2020-04-03T13:30:00@string@",
+            "@*@": "@*@"
+          },
+          {
+            "@id": "\/api\/tasks\/3",
+            "@type": "Task",
+            "id": 3,
+            "type": "DROPOFF",
+            "status": "TODO",
+            "after": "2020-04-03T15:15:00@string@",
+            "before": "2020-04-03T15:30:00@string@",
+            "@*@": "@*@"
+          }
+        ],
+        "pickup":{"@*@":"@*@"},
+        "dropoff":{"@*@":"@*@"},
+        "trackingUrl": @string@,
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": 899,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
+      }
+      """
+
+  # FIXME: shouldn't we block editing of deliveries for store owners?
+  Scenario: Can't change task status as store owner
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | store_with_task_pricing.yml |
+    Given the current time is "2020-04-02 9:00:00"
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the store with name "Acme" belongs to user "bob"
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "tasks": [
+          {
+            "type": "PICKUP",
+            "address": "24, Rue de la Paix",
+            "before": "2020-04-03 13:00"
+          },
+          {
+            "type": "DROPOFF",
+            "address": "48, Rue de Rivoli",
+            "before": "2020-04-03 13:30"
+          },
+          {
+            "type": "DROPOFF",
+            "address": "48, Rue de Rivoli",
+            "before": "2020-04-03 15:30"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"@string@.startsWith('/api/deliveries')",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":@integer@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
+        "tasks": [
+          {
+            "@id": "\/api\/tasks\/1",
+            "@type": "Task",
+            "id": 1,
+            "type": "PICKUP",
+            "status": "TODO",
+            "after": "2020-04-03T12:45:00@string@",
+            "before": "2020-04-03T13:00:00@string@",
+            "@*@": "@*@"
+          },
+          {
+            "@id": "\/api\/tasks\/2",
+            "@type": "Task",
+            "id": 2,
+            "type": "DROPOFF",
+            "status": "TODO",
+            "after": "2020-04-03T13:15:00@string@",
+            "before": "2020-04-03T13:30:00@string@",
+            "@*@": "@*@"
+          },
+          {
+            "@id": "\/api\/tasks\/3",
+            "@type": "Task",
+            "id": 3,
+            "type": "DROPOFF",
+            "status": "TODO",
+            "after": "2020-04-03T15:15:00@string@",
+            "before": "2020-04-03T15:30:00@string@",
+            "@*@": "@*@"
+          }
+        ],
+        "pickup":{"@*@":"@*@"},
+        "dropoff":{"@*@":"@*@"},
+        "trackingUrl": @string@,
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": 899,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/deliveries/1" with body:
+      """
+      {
+        "tasks": [
+          {
+            "id": 1
+          },
+          {
+            "id": 2,
+            "status": "CANCELLED"
+          },
+          {
+            "id": 3
+          }
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"/api/deliveries/1",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
+        "tasks": [
+          {
+            "@id": "\/api\/tasks\/1",
+            "@type": "Task",
+            "id": 1,
+            "type": "PICKUP",
+            "status": "TODO",
+            "after": "2020-04-03T12:45:00@string@",
+            "before": "2020-04-03T13:00:00@string@",
+            "@*@": "@*@"
+          },
+          {
+            "@id": "\/api\/tasks\/2",
+            "@type": "Task",
+            "id": 2,
+            "type": "DROPOFF",
+            "status": "TODO",
+            "after": "2020-04-03T13:15:00@string@",
+            "before": "2020-04-03T13:30:00@string@",
+            "@*@": "@*@"
+          },
+          {
+            "@id": "\/api\/tasks\/3",
+            "@type": "Task",
+            "id": 3,
+            "type": "DROPOFF",
+            "status": "TODO",
+            "after": "2020-04-03T15:15:00@string@",
+            "before": "2020-04-03T15:30:00@string@",
+            "@*@": "@*@"
+          }
+        ],
+        "pickup":{"@*@":"@*@"},
+        "dropoff":{"@*@":"@*@"},
+        "trackingUrl": @string@,
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": 899,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
+      }
+      """
