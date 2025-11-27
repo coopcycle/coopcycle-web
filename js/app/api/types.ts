@@ -324,7 +324,7 @@ export type IncidentMetadataSuggestion = {
 export type Task = JsonLdEntity & {
   id: number;
   type: 'PICKUP' | 'DROPOFF';
-  status: string;
+  status: 'TODO' | 'DOING' | 'DONE' | 'FAILED' | 'CANCELLED';
   address: Address;
   comments?: string;
   createdAt: string;
