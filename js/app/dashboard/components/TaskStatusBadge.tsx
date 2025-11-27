@@ -1,31 +1,51 @@
 import React from 'react';
-import classNames from 'classnames';
+import { Tag } from 'antd';
 import { Task } from '../../api/types';
 
 type Props = {
   task: Task;
+  className?: string;
 };
 
-export default function ({ task }: Props) {
+type StatusConfig = {
+  color: string;
+  icon: string;
+};
+
+const statusConfig: Record<Task['status'], StatusConfig> = {
+  TODO: {
+    color: 'default',
+    icon: 'fa-clock-o',
+  },
+  DOING: {
+    color: 'processing',
+    icon: 'fa-bicycle',
+  },
+  FAILED: {
+    color: 'error',
+    icon: 'fa-exclamation-triangle',
+  },
+  DONE: {
+    color: 'success',
+    icon: 'fa-check',
+  },
+  CANCELLED: {
+    color: 'error',
+    icon: 'fa-times',
+  },
+};
+
+export default function TaskStatusBadge({ task, className }: Props) {
   const { status } = task;
+  const config = statusConfig[status];
+
   return (
-    <span
-      style={{
-        borderRadius: '18px',
-        padding: '2px 8px',
-        border: '1px dashed #d9d9d9',
-        textTransform: 'capitalize',
-        fontSize: '0.9em',
-      }}>
-      <i
-        className={classNames('fa mr-2', {
-          'fa-clock-o text-default': status == 'TODO',
-          'fa-bicycle text-info': status == 'DOING',
-          'fa-exclamation-triangle text-warning': status == 'FAILED',
-          'fa-check text-success': status == 'DONE',
-          'fa-times text-danger': status == 'CANCELLED',
-        })}></i>
+    <Tag
+      color={config.color}
+      icon={<i className={`fa ${config.icon} mr-1`} aria-hidden="true"></i>}
+      style={{ textTransform: 'capitalize' }}
+      className={className}>
       {status.toLowerCase()}
-    </span>
+    </Tag>
   );
 }
