@@ -150,6 +150,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function clearData()
     {
         $this->databasePurger->purge();
+        $this->redis->flushDB();
     }
 
     /**
