@@ -2,6 +2,7 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import _ from 'lodash'
 import { formatTaskNumber } from '../../utils/taskUtils';
+import TaskStatusBadge from './TaskStatusBadge';
 
 const HeaderText = ({ task }) => {
 
@@ -10,7 +11,7 @@ const HeaderText = ({ task }) => {
   if (!!task && Object.prototype.hasOwnProperty.call(task, '@id')) {
 
     return (
-      <span data-testid="task-modal-title">
+      <span className="d-inline-flex align-items-end" data-testid="task-modal-title">
         { (task.orgName && !_.isEmpty(task.orgName)) && (
         <span>
           <span>{ task.orgName }</span>
@@ -18,6 +19,7 @@ const HeaderText = ({ task }) => {
         </span>
         ) }
         <span>{ t('TASK_WITH_NUMBER', { number: formatTaskNumber(task) }) }</span>
+        <TaskStatusBadge task={ task } className="ml-2" />
       </span>
     )
   }
