@@ -31,7 +31,7 @@ export function taskTypeMapIcon(type) {
 }
 
 export function taskMapIcon(type, status) {
-  switch (status.toUpperCase()) {
+  switch (status?.toUpperCase()) {
     case 'TODO':
       return taskTypeMapIcon(type)
     case 'DOING':
@@ -42,9 +42,9 @@ export function taskMapIcon(type, status) {
       return 'remove'
     case 'CANCELLED':
       return 'ban'
+    default:
+      return taskTypeMapIcon(type)
   }
-
-  return 'question'
 }
 
 export function taskTypeListIcon(type) {
@@ -60,7 +60,7 @@ export function taskTypeListIcon(type) {
 }
 
 export function taskListIcon(type, status) {
-  switch (status.toUpperCase()) {
+  switch (status?.toUpperCase()) {
     case 'TODO':
       return taskTypeListIcon(type)
     case 'DOING':
@@ -71,7 +71,7 @@ export function taskListIcon(type, status) {
       return 'fa-remove'
     case 'CANCELLED':
       return 'fa-ban'
+    default:
+      return taskTypeListIcon(type)
   }
-
-  return 'fa-question'
 }
