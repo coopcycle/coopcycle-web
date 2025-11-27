@@ -11,6 +11,7 @@ import CourierPopupContent from './CourierPopupContent'
 import { createLeafletIcon } from '../../components/Avatar'
 import { isMarkerInsidePolygon } from '../utils'
 import { createRoot } from 'react-dom/client'
+import { taskMapIcon } from '../../styles';
 
 const tagsColor = tags => {
   const tag = _.first(tags)
@@ -33,30 +34,6 @@ const taskColor = (task, selected, useAvatarColors, polylineEnabled = {}, tourPo
   } else {
     return '#777'
   }
-}
-
-const taskIcon = task => {
-
-  switch (task.status) {
-  case 'TODO':
-    if (task.type === 'PICKUP') {
-      return 'cube'
-    }
-    if (task.type === 'DROPOFF') {
-      return 'arrow-down'
-    }
-    break
-  case 'DOING':
-    return 'play'
-  case 'DONE':
-    return 'check'
-  case 'FAILED':
-    return 'remove'
-  case 'CANCELLED':
-    return 'ban'
-  }
-
-  return 'question'
 }
 
 const polylineOptions = {
@@ -179,7 +156,7 @@ export default class MapProxy {
     let marker = this.taskMarkers.get(task['@id'])
 
     const color = taskColor(task, selected, useAvatarColors, polylineEnabled, tourPolylinesEnabled, taskIdToTourIdMap, tourIdToColorMap)
-    const iconName = taskIcon(task)
+    const iconName = taskMapIcon(task.type, task.status)
     const coords = [task.address.geo.latitude, task.address.geo.longitude]
     const latLng = L.latLng(task.address.geo.latitude, task.address.geo.longitude)
 
