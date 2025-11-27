@@ -2,6 +2,8 @@
 
 namespace AppBundle\Sylius\Payment;
 
+use Symfony\Component\Serializer\Annotation\Groups;
+
 trait PaygreenTrait
 {
     public function setPaygreenPaymentOrderId(string $paymentOrderId)
@@ -9,6 +11,7 @@ trait PaygreenTrait
         $this->details = array_merge($this->details, ['paygreen_payment_order_id' => $paymentOrderId]);
     }
 
+    #[Groups(['payment_details'])]
     public function getPaygreenPaymentOrderId(): ?string
     {
         if (isset($this->details['paygreen_payment_order_id'])) {
@@ -28,6 +31,7 @@ trait PaygreenTrait
         $this->details = array_merge($this->details, ['paygreen_object_secret' => $objectSecret]);
     }
 
+    #[Groups(['payment_details'])]
     public function getPaygreenObjectSecret(): ?string
     {
         if (isset($this->details['paygreen_object_secret'])) {

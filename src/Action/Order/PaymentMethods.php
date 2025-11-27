@@ -45,6 +45,7 @@ class PaymentMethods
 
         if (!$data->isMultiVendor() && 'paygreen' === $this->gatewayResolver->resolveForOrder($data)) {
             $paygreenPlatforms = $this->paygreenManager->getEnabledPlatforms($data->getRestaurant()->getPaygreenShopId());
+
             if (in_array('restoflash', $paygreenPlatforms)) {
                 $output->addMethod('restoflash');
             }
@@ -53,6 +54,12 @@ class PaymentMethods
             }
             if (in_array('swile', $paygreenPlatforms)) {
                 $output->addMethod('swile');
+            }
+            if (in_array('google_pay', $paygreenPlatforms)) {
+                $output->addMethod('google_pay');
+            }
+            if (in_array('apple_pay', $paygreenPlatforms)) {
+                $output->addMethod('apple_pay');
             }
         }
 

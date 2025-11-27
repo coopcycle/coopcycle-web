@@ -1,6 +1,6 @@
 import React from 'react';
 import { Timeline } from 'antd';
-import { taskColor, taskTypeListIcon } from '../../styles';
+import { taskColor, taskListIcon } from '../../styles';
 import { asText } from '../ShippingTimeRange';
 import { Task, TaskPayload } from '../../api/types';
 import { TaskLabel } from '../TaskLabel';
@@ -14,7 +14,7 @@ const Dot = ({
 }) => {
   return (
     <i
-      className={`fa ${taskTypeListIcon(type)}`}
+      className={`fa ${taskListIcon(type, status)}`}
       style={{ color: taskColor(type, status) }}
     />
   );

@@ -3,7 +3,7 @@ import L from 'leaflet';
 import 'leaflet-arrowheads';
 require('beautifymarker');
 import { MapContainer, Marker, TileLayer, useMap } from 'react-leaflet';
-import { taskColor, taskTypeMapIcon } from '../../styles';
+import { taskColor, taskMapIcon } from '../../styles';
 import MapHelper from '../../MapHelper';
 import { useTranslation } from 'react-i18next';
 
@@ -144,7 +144,7 @@ export default ({ defaultAddress, tasks }: Props) => {
               <CustomMarker
                 key={index}
                 position={geo.latLng}
-                icon={taskTypeMapIcon(geo.type)}
+                icon={taskMapIcon(geo.type, geo.status)}
                 iconShape="marker"
                 color={taskColor(geo.type, geo.status)}
               />

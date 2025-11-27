@@ -100,7 +100,7 @@ Cypress.Commands.add('resetMockDateTime', () => {
   // cy.clock() will be reset automatically
 })
 
-Cypress.Commands.add('consumeMessages', (timeLimitInSeconds = 10) => {
+Cypress.Commands.add('consumeMessages', (timeLimitInSeconds = 5) => {
   cy.symfonyConsole(`messenger:consume async --time-limit=${ timeLimitInSeconds }`);
 })
 
