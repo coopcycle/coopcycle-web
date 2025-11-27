@@ -28,7 +28,7 @@ class CheckDeliveryValidator extends ConstraintValidator
         }
 
         if (null === $object->getDistance()) {
-            $coords = array_map(fn ($task) => $task->getAddress()->getGeo(), $object->getTasks());
+            $coords = array_map(fn ($task) => $task->getAddress()->getGeo(), $object->getTasks('not task.isCancelled()'));
             $distance = $this->routing->getDistance(...$coords);
 
             $object->setDistance(ceil($distance));

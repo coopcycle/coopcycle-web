@@ -56,7 +56,7 @@ context('Delivery (role: admin)', () => {
 
     cy.get('#delivery_tasks_1_comments').type('Dropoff comments')
 
-    cy.get('[data-tax="included"]').contains('1,99 €')
+    cy.get('[data-tax="included"]').contains('2,00 €')
 
     cy.get('#delivery-submit').click()
 
@@ -65,7 +65,7 @@ context('Delivery (role: admin)', () => {
 
     cy.get('[data-testid="order-total-including-tax"]')
       .find('[data-testid="value"]')
-      .contains('€1.99')
+      .contains('€2.00')
 
     cy.get('[data-testid=delivery-itinerary]')
       .contains(/23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/)

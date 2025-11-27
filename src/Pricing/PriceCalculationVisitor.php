@@ -52,7 +52,7 @@ class PriceCalculationVisitor
          */
         $deliveryProductVariant = null;
 
-        $tasks = $delivery->getTasks();
+        $tasks = $delivery->getTasks('not task.isCancelled()');
 
         // Apply the rules to each task/point
         foreach ($tasks as $task) {
@@ -129,7 +129,7 @@ class PriceCalculationVisitor
         }
 
         if ($ruleSet->getStrategy() === 'map') {
-            $tasks = $delivery->getTasks();
+            $tasks = $delivery->getTasks('not task.isCancelled()');
 
             return $this->processRuleSet($delivery, $deliveryAsExpressionLanguageValues, $delivery, $ruleSet, function (PricingRule $rule) use ($tasks) {
                 // LEGACY_TARGET_DYNAMIC is used for backward compatibility
@@ -152,7 +152,7 @@ class PriceCalculationVisitor
         }
 
         if ($ruleSet->getStrategy() === 'map') {
-            $tasks = $delivery->getTasks();
+            $tasks = $delivery->getTasks('not task.isCancelled()');
 
             return $this->processRuleSet($task, $taskAsExpressionLanguageValues, $delivery, $ruleSet, function (PricingRule $rule) use ($tasks) {
                 // LEGACY_TARGET_DYNAMIC is used for backward compatibility

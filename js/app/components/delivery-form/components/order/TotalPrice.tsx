@@ -11,7 +11,7 @@ export const TotalPrice = ({ overridePrice, total, taxTotal }: Props) => {
   const { t } = useTranslation();
 
   return (
-    <li
+    <div
       className={`list-group-item d-flex flex-column ${overridePrice ? 'text-decoration-line-through' : ''}`}>
       <div>
         <span className="font-weight-semi-bold">
@@ -33,6 +33,6 @@ export const TotalPrice = ({ overridePrice, total, taxTotal }: Props) => {
           </span>
         </span>
       </div>
-    </li>
+    </div>
   );
 };

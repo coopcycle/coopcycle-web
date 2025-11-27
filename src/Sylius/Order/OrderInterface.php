@@ -13,6 +13,7 @@ use AppBundle\Entity\Sylius\PriceInterface;
 use AppBundle\Entity\Vendor;
 use AppBundle\LoopEat\LoopeatAwareInterface;
 use AppBundle\LoopEat\OAuthCredentialsInterface as LoopeatOAuthCredentialsInterface;
+use AppBundle\Pricing\ManualSupplements;
 use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Channel\Model\ChannelAwareInterface;
 use Sylius\Component\Customer\Model\CustomerAwareInterface;
@@ -186,6 +187,8 @@ interface OrderInterface extends
     public function isFoodtech(): bool;
 
     public function getDeliveryPrice(): PriceInterface;
+
+    public function getManualSupplements(): ManualSupplements;
 
     public function getExports(): Collection;
 }

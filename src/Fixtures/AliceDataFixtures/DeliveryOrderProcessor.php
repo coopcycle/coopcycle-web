@@ -6,11 +6,13 @@ use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
 use AppBundle\Pricing\PricingManager;
+use AppBundle\Service\DeliveryManager;
 use Fidry\AliceDataFixtures\ProcessorInterface;
 
 final class DeliveryOrderProcessor implements ProcessorInterface
 {
     public function __construct(
+        private readonly DeliveryManager $deliveryManager,
         private readonly PricingManager $pricingManager,
     ) {
     }
@@ -41,6 +43,13 @@ final class DeliveryOrderProcessor implements ProcessorInterface
 
         $delivery = $order->getDelivery();
         if (null === $delivery) {
+            return;
+        }
+
+        $this->deliveryManager->setDefaults($delivery);
+
+        // Skip orders without a store (B2C clients)
+        if (null === $delivery->getStore()) {
             return;
         }
 

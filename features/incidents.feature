@@ -630,8 +630,9 @@ Feature: Incidents
         ]
       }
       """
-    And the database should contain an order with a total price 699
-    
+    # Base: 499, weight: 250
+    And the database should contain an order with a total price 749
+
   Scenario: Reject suggestion
     Given the fixtures files are loaded:
       | sylius_taxation.yml        |

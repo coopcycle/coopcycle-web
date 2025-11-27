@@ -13,6 +13,7 @@ import { HistoryEvent, useOrderHistory } from './hooks/useOrderHistory';
 import { IncidentEventView } from '../../../admin/incidents/[id]/components/IncidentEventView';
 import { Link } from '../../core/Link';
 import { TaskLabel } from '../../TaskLabel';
+import { TotalPrice } from '../../delivery-form/components/order/TotalPrice';
 
 const itemColor = (event: HistoryEvent) => {
   switch (event.type) {
@@ -52,6 +53,23 @@ const OrderEventDetails = ({ event }: { event: OrderEvent }) => {
     <>
       {typeof event.data.newState === 'string' ? (
         <p>{event.data.newState}</p>
+      ) : null}
+      {typeof event.data.new_total === 'number' &&
+      typeof event.data.new_tax_total === 'number' &&
+      typeof event.data.old_total === 'number' &&
+      typeof event.data.old_tax_total === 'number' ? (
+        <div>
+          <TotalPrice
+            overridePrice={true}
+            total={event.data.old_total}
+            taxTotal={event.data.old_tax_total}
+          />
+          <TotalPrice
+            overridePrice={false}
+            total={event.data.new_total}
+            taxTotal={event.data.new_tax_total}
+          />
+        </div>
       ) : null}
     </>
   );

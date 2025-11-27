@@ -30,7 +30,7 @@ class Cancel
             }
         }
 
-        foreach ($data->getTasks() as $task) {
+        foreach ($data->getTasks('not task.isCancelled()') as $task) {
             $this->taskManager->cancel($task);
         }
 

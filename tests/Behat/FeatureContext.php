@@ -47,6 +47,8 @@ use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Redis;
 use Stripe\Stripe;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Carbon\Carbon;
@@ -148,6 +150,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function clearData()
     {
         $this->databasePurger->purge();
+        $this->redis->flushDB();
     }
 
     /**
@@ -321,6 +324,24 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function enableMaintenance()
     {
         $this->redis->set('maintenance', '1');
+    }
+
+    /**
+     * @Given the async messages are consumed
+     * @Given the async messages are consumed with time limit :timeLimit seconds
+     */
+    public function theAsyncMessagesAreConsumed(int $timeLimit = 5)
+    {
+        $application = new Application($this->kernel);
+        $application->setAutoExit(false);
+
+        $command = $application->find('messenger:consume');
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute([
+            'receivers' => ['async'],
+            '--time-limit' => $timeLimit,
+        ]);
     }
 
     private function createUser($username, $email, $password, array $data = [])

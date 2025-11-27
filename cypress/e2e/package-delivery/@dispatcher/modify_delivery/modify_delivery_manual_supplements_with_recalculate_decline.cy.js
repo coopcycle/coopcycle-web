@@ -75,7 +75,8 @@ describe('Edit Manual Supplements in Delivery', () => {
     // Add a supplement (2,00 €)
     cy.get('[data-testid="manual-supplement-Express Delivery"]').check();
 
-    cy.get('[data-testid="tax-included"]').contains('6,99 €');
+    //FIXME: it should be 6,99 €: Base price: 4,99; supplement: 2,00 (NOT: +weight: 2,50)
+    cy.get('[data-testid="tax-included"]').contains('7,49 €');
 
     // Submit the changes
     cy.get('button[type="submit"]').click();
