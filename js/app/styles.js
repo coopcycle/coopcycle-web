@@ -1,3 +1,5 @@
+export const FA_CANCELLED = 'fa-ban'
+
 export function taskTypeColor(type) {
   switch (type.toUpperCase()) {
     case 'PICKUP':
@@ -70,7 +72,7 @@ export function taskListIcon(type, status) {
     case 'FAILED':
       return 'fa-remove'
     case 'CANCELLED':
-      return 'fa-ban'
+      return FA_CANCELLED
     default:
       return taskTypeListIcon(type)
   }

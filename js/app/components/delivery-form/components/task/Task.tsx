@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 import { Field } from 'formik';
 import AddressBookNew from './AddressBook';
 import { Button, Input } from 'antd';
@@ -21,6 +21,8 @@ import type { Address, Store, Tag } from '../../../../api/types';
 import { UserContext } from '../../../../UserContext';
 import { isTemporaryId } from '../../idUtils';
 import { DeleteOutlined, UndoOutlined } from '@ant-design/icons';
+import { FA_CANCELLED, taskTypeListIcon } from '../../../../styles';
+import IsCancelledTaskWrapper from '../../../../IsCancelledTaskWrapper';
 
 type Props = {
   storeNodeId: string;
@@ -65,6 +67,14 @@ const Task = ({
   const isExistingTask =
     mode === Mode.DELIVERY_UPDATE && !isTemporaryId(taskId);
 
+  const taskIcon = useMemo(() => {
+    if (isExistingTask && taskValues.status === 'CANCELLED') {
+      return FA_CANCELLED;
+    } else {
+      return taskTypeListIcon(taskValues.type);
+    }
+  }, [taskValues.type, taskValues.type]);
+
   const { data: timeSlotLabels } = useGetStoreTimeSlotsQuery(storeNodeId);
   const { data: packages } = useGetStorePackagesQuery(storeNodeId);
 
@@ -89,16 +99,14 @@ const Task = ({
         onClick={() => {
           onToggleExpanded(!isExpanded);
         }}>
-        {taskValues.type === 'PICKUP' ? (
-          <i className="fa fa-arrow-up"></i>
-        ) : (
-          <i className="fa fa-arrow-down"></i>
-        )}
-        <h4 className="task__header__title ml-2 mb-4">
-          {taskValues.address?.streetAddress
-            ? taskValues.address.streetAddress
-            : t(`DELIVERY_FORM_${taskValues.type}_INFORMATIONS`)}
-        </h4>
+        <i className={`fa ${taskIcon}`} />
+        <IsCancelledTaskWrapper task={taskValues}>
+          <h4 className="task__header__title ml-2 mb-4">
+            {taskValues.address?.streetAddress
+              ? taskValues.address.streetAddress
+              : t(`DELIVERY_FORM_${taskValues.type}_INFORMATIONS`)}
+          </h4>
+        </IsCancelledTaskWrapper>
 
         <button
           data-testid="toggle-button"

@@ -4,6 +4,7 @@ import { taskColor, taskListIcon } from '../../styles';
 import { asText } from '../ShippingTimeRange';
 import { Task, TaskPayload } from '../../api/types';
 import { TaskLabel } from '../TaskLabel';
+import IsCancelledTaskWrapper from '../../IsCancelledTaskWrapper';
 
 const Dot = ({
   type,
@@ -28,14 +29,6 @@ type Props = {
   withPackages?: boolean;
 };
 
-const IsCancelledWrapper = ({
-  task,
-  children,
-}: {
-  task: TaskPayload | Task;
-  children: React.ReactNode;
-}) => (task.status === 'CANCELLED' ? <del>{children}</del> : <>{children}</>);
-
 export default ({
   tasks,
   withTaskLinks = false,
@@ -48,7 +41,7 @@ export default ({
       key: `task-${index}`,
       dot: <Dot type={task.type} status={task.status} />,
       children: (
-        <IsCancelledWrapper task={task}>
+        <IsCancelledTaskWrapper task={task}>
           <>
             <div className="d-flex justify-content-between align-items-center">
               <TaskLabel task={task} withLink={withTaskLinks} />
@@ -80,7 +73,7 @@ export default ({
               </ul>
             ) : null}
           </>
-        </IsCancelledWrapper>
+        </IsCancelledTaskWrapper>
       ),
     };
   });
