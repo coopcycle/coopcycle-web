@@ -95,13 +95,24 @@ services:
       - 'php_cache:/var/www/html/var/cache'
       - 'php_public_images:/var/www/html/web/images'
 
+  varnish:
+    image: varnish:7
+    depends_on:
+      - nginx
+    ports:
+      - '80:80'
+    volumes:
+      - ./docker/varnish/default.vcl:/etc/varnish/default.vcl:ro
+    environment:
+      - VARNISH_SIZE=256M
+
   nginx:
     image: 'nginx:1.25-alpine'
     depends_on:
       - php
       - centrifugo
-    ports:
-      - '80:80'
+    expose:
+      - 8080
     volumes:
       - './docker/nginx/conf.d:/etc/nginx/conf.d:ro'
       - './web:/var/www/html/web:ro'
