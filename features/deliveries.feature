@@ -4912,9 +4912,30 @@ Feature: Deliveries
         "duration":@integer@,
         "polyline":@string@,
         "tasks": [
-          {"@*@": "@*@"},
-          {"@*@": "@*@"},
-          {"@*@": "@*@"}
+          {
+            "@id": "\/api\/tasks\/1",
+            "@type": "Task",
+            "id": 1,
+            "type": "PICKUP",
+            "status": "TODO",
+            "@*@": "@*@"
+          },
+          {
+            "@id": "\/api\/tasks\/2",
+            "@type": "Task",
+            "id": 2,
+            "type": "DROPOFF",
+            "status": "TODO",
+            "@*@": "@*@"
+          },
+          {
+            "@id": "\/api\/tasks\/3",
+            "@type": "Task",
+            "id": 3,
+            "type": "DROPOFF",
+            "status": "TODO",
+            "@*@": "@*@"
+          }
         ],
         "pickup":{"@*@":"@*@"},
         "dropoff":{"@*@":"@*@"},
@@ -4958,8 +4979,30 @@ Feature: Deliveries
         "duration":@integer@,
         "polyline":@string@,
         "tasks": [
-          {"@*@": "@*@"},
-          {"@*@": "@*@"}
+          {
+            "@id": "\/api\/tasks\/1",
+            "@type": "Task",
+            "id": 1,
+            "type": "PICKUP",
+            "status": "TODO",
+            "@*@": "@*@"
+          },
+          {
+            "@id": "\/api\/tasks\/2",
+            "@type": "Task",
+            "id": 2,
+            "type": "DROPOFF",
+            "status": "TODO",
+            "@*@": "@*@"
+          },
+          {
+            "@id": "\/api\/tasks\/3",
+            "@type": "Task",
+            "id": 3,
+            "type": "DROPOFF",
+            "status": "CANCELLED",
+            "@*@": "@*@"
+          }
         ],
         "pickup":{"@*@":"@*@"},
         "dropoff":{"@*@":"@*@"},
@@ -5021,13 +5064,34 @@ Feature: Deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
-                "distance":@integer@,
+        "distance":@integer@,
         "duration":@integer@,
         "polyline":@string@,
         "tasks": [
-          {"@*@": "@*@"},
-          {"@*@": "@*@"},
-          {"@*@": "@*@"}
+          {
+            "@id": "\/api\/tasks\/1",
+            "@type": "Task",
+            "id": 1,
+            "type": "PICKUP",
+            "status": "TODO",
+            "@*@": "@*@"
+          },
+          {
+            "@id": "\/api\/tasks\/2",
+            "@type": "Task",
+            "id": 2,
+            "type": "DROPOFF",
+            "status": "TODO",
+            "@*@": "@*@"
+          },
+          {
+            "@id": "\/api\/tasks\/3",
+            "@type": "Task",
+            "id": 3,
+            "type": "DROPOFF",
+            "status": "TODO",
+            "@*@": "@*@"
+          }
         ],
         "pickup":{"@*@":"@*@"},
         "dropoff":{"@*@":"@*@"},
@@ -5074,8 +5138,30 @@ Feature: Deliveries
         "duration":@integer@,
         "polyline":@string@,
         "tasks": [
-          {"@*@": "@*@"},
-          {"@*@": "@*@"}
+          {
+            "@id": "\/api\/tasks\/1",
+            "@type": "Task",
+            "id": 1,
+            "type": "PICKUP",
+            "status": "TODO",
+            "@*@": "@*@"
+          },
+          {
+            "@id": "\/api\/tasks\/2",
+            "@type": "Task",
+            "id": 2,
+            "type": "DROPOFF",
+            "status": "TODO",
+            "@*@": "@*@"
+          },
+          {
+            "@id": "\/api\/tasks\/3",
+            "@type": "Task",
+            "id": 3,
+            "type": "DROPOFF",
+            "status": "CANCELLED",
+            "@*@": "@*@"
+          }
         ],
         "pickup":{"@*@":"@*@"},
         "dropoff":{"@*@":"@*@"},
