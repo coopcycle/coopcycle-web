@@ -9,7 +9,6 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\Api\State\CartItemProcessor;
 use AppBundle\Api\State\DeleteCartItemProcessor;

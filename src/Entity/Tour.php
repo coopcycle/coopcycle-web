@@ -9,7 +9,7 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\QueryParameter;
 use AppBundle\Api\Dto\TourInput;
 use AppBundle\Api\State\TourProcessor;
 use AppBundle\Entity\Sylius\Order;
@@ -30,7 +30,15 @@ use AppBundle\Vroom\Shipment as VroomShipment;
             processor: TourProcessor::class
         ),
         new Delete(security: 'is_granted(\'ROLE_DISPATCHER\')'),
-        new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\')', paginationEnabled: false),
+        new GetCollection(
+            security: 'is_granted(\'ROLE_DISPATCHER\')',
+            paginationEnabled: false,
+            parameters: [
+                'date' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\DateFilter'
+                )
+            ]
+        ),
         new Post(
             security: 'is_granted(\'ROLE_DISPATCHER\')',
             input: TourInput::class,
@@ -40,7 +48,6 @@ use AppBundle\Vroom\Shipment as VroomShipment;
     normalizationContext: ['groups' => ['task_collection', 'tour']],
     denormalizationContext: ['groups' => ['tour']]
 )]
-#[ApiFilter(filterClass: DateFilter::class, properties: ['date'])]
 class Tour extends TaskCollection implements TaskCollectionInterface
 {
     private $date;

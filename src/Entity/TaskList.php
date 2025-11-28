@@ -9,7 +9,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\QueryParameter;
 use AppBundle\Action\TaskList\Create as CreateTaskListController;
 use AppBundle\Action\TaskList\Optimize as OptimizeController;
 use AppBundle\Action\TaskList\SetItems as SetTaskListItemsController;
@@ -84,7 +84,12 @@ use Symfony\Component\Validator\Constraints as Assert;
                 ]
             ],
             security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_OAUTH2_TASKS\')',
-            provider: TaskListProvider::class
+            provider: TaskListProvider::class,
+            parameters: [
+                'date' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\DateFilter'
+                )
+            ]
         ),
         new Post(
             controller: CreateTaskListController::class,
@@ -94,12 +99,16 @@ use Symfony\Component\Validator\Constraints as Assert;
             uriTemplate: '/task_lists/v2',
             openapiContext: ['summary' => 'Retrieves TaskLists as lists of tours and tasks.'],
             security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_OAUTH2_TASKS\')',
-            provider: TaskListProvider::class
+            provider: TaskListProvider::class,
+            parameters: [
+                'date' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\DateFilter'
+                )
+            ]
         )
     ],
     normalizationContext: ['groups' => ['task_list']]
 )]
-#[ApiFilter(filterClass: DateFilter::class, properties: ['date'])]
 class TaskList implements TaskCollectionInterface
 {
     use TaskCollectionTrait;

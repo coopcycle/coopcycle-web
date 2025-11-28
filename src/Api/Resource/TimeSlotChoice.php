@@ -5,7 +5,6 @@ namespace AppBundle\Api\Resource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Action\NotFoundAction;
 use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;

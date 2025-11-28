@@ -6,7 +6,6 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Dabba\CustomerCredentials as DabbaCustomerCredentials;
 use AppBundle\Entity\LoopEat\CustomerCredentials;

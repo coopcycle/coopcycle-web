@@ -5,7 +5,7 @@ namespace AppBundle\Entity;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
+
 #[ApiResource(operations: [new Get()])]
 class Hub extends LocalBusinessGroup
 {

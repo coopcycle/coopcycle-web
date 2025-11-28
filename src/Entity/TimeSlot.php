@@ -7,7 +7,6 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\TimeSlot\Choices as ChoicesController;
 use AppBundle\Action\TimeSlot\StoreOpeningHours as OpeningHours;
 use AppBundle\Api\State\ValidationAwareRemoveProcessor;

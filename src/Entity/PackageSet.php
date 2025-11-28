@@ -8,7 +8,6 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Action\NotFoundAction;
 use AppBundle\Action\PackageSet\Applications;
 use AppBundle\Api\State\ValidationAwareRemoveProcessor;

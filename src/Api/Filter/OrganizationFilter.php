@@ -2,68 +2,53 @@
 
 namespace AppBundle\Api\Filter;
 
-use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
+use ApiPlatform\Doctrine\Orm\Filter\FilterInterface;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ParameterNotFound;
 use AppBundle\Entity\Organization;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr;
-use Doctrine\Persistence\ManagerRegistry;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 
-final class OrganizationFilter extends AbstractFilter
+final class OrganizationFilter implements FilterInterface
 {
-    private $security;
-
     public function __construct(
-        ManagerRegistry $managerRegistry,
-        Security $security,
-        ?LoggerInterface $logger = null,
-        ?array $properties = null,
-        ?NameConverterInterface $nameConverter = null)
-    {
-        $this->security = $security;
-
-        parent::__construct($managerRegistry, $logger, $properties, $nameConverter);
+        private readonly Security $security
+    ) {
     }
 
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
+    public function apply(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
     {
-        // otherwise filter is applied to order and page as well
-        if (!$this->isPropertyEnabled($property, $resourceClass)) {
+        $parameter = $context['parameter'] ?? null;
+        $value = $parameter?->getValue();
+
+        // The parameter may not be present
+        if ($value instanceof ParameterNotFound || null === $value) {
             return;
         }
 
         $user = $this->security->getUser();
 
+        if (!$user) {
+            return;
+        }
+
+        // Only admin can filter by organization
         if ($user->hasRole('ROLE_ADMIN')) {
             $orgName = filter_var($value);
-
+            $alias = $queryBuilder->getRootAliases()[0];
             $valueParameter = $queryNameGenerator->generateParameterName('org_name');
 
             $queryBuilder->andWhere(sprintf('org.name = :%s', $valueParameter));
             $queryBuilder->setParameter($valueParameter, $orgName);
-            $queryBuilder->innerJoin(Organization::class, 'org', Expr\Join::WITH, 'o.organization = org.id');
+            $queryBuilder->innerJoin(Organization::class, 'org', Expr\Join::WITH, sprintf('%s.organization = org.id', $alias));
         }
     }
 
     public function getDescription(string $resourceClass): array
     {
-        if (!$this->properties) {
-            return [];
-        }
-
-        $description = [];
-        foreach ($this->properties as $property => $strategy) {
-            $description[$property] = [
-                'property' => $property,
-                'type' => 'string',
-                'required' => false,
-            ];
-        }
-
-        return $description;
+        // For BC, this function is not useful anymore when documentation occurs on the Parameter
+        return [];
     }
 }
