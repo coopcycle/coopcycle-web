@@ -21,6 +21,7 @@ use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\TagManager;
+use AppBundle\Service\TaskManager;
 use AppBundle\Service\TimeSlotManager;
 use AppBundle\Spreadsheet\ParseMetadataTrait;
 use Carbon\Carbon;
@@ -45,6 +46,7 @@ class DeliveryProcessor implements ProcessorInterface
         private readonly Geocoder $geocoder,
         private readonly EntityManagerInterface $entityManager,
         private readonly DeliveryManager $deliveryManager,
+        private readonly TaskManager $taskManager,
         private readonly TimeSlotManager $timeSlotManager,
         private readonly LoggerInterface $logger
     )
@@ -83,6 +85,14 @@ class DeliveryProcessor implements ProcessorInterface
 
             if (is_array($data->tasks) && count($data->tasks) > 0) {
                 if ($isEditOperation) {
+                    $oldTaskStatuses = [];
+                    foreach ($delivery->getTasks() as $task) {
+                        if (null === $task->getId()) {
+                            continue;
+                        }
+                        $oldTaskStatuses[$task->getId()] = $task->getStatus();
+                    }
+
                     $tasks = array_map(function(TaskDto $taskInput) use ($delivery, $store) {
                         if ($taskInput->id !== null) {
                             return $this->transformIntoExistingTask($taskInput, $delivery->getTasks(), $store);
@@ -93,11 +103,25 @@ class DeliveryProcessor implements ProcessorInterface
                         }
                     }, $data->tasks);
 
-                    //cancel tasks that are not present in the request
                     foreach ($delivery->getTasks() as $task) {
+                        //cancel tasks that are not present in the request
                         if (!in_array($task, $tasks)) {
                             if (!$task->isCancelled()) {
-                                $task->setStatus(Task::STATUS_CANCELLED);
+                                $this->taskManager->cancel($task);
+                            }
+                        // check if there are changes in the status for existing tasks
+                        } elseif (null !== $task->getId()) {
+                            $currentStatus = $oldTaskStatuses[$task->getId()];
+                            $newStatus = $task->getStatus();
+
+                            if ($currentStatus === $newStatus) {
+                                continue;
+                            }
+
+                            if ($newStatus === Task::STATUS_CANCELLED) {
+                                $this->taskManager->cancel($task);
+                            } elseif ($currentStatus === Task::STATUS_CANCELLED && $newStatus === Task::STATUS_TODO) {
+                                $this->taskManager->restore($task);
                             }
                         }
                     }
