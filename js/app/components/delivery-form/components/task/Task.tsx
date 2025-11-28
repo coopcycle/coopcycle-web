@@ -208,6 +208,7 @@ const Task = ({
         ) : null}
         {isDispatcher && isExistingTask && taskValues.status === 'CANCELLED' ? (
           <Button
+            data-testid="task-restore"
             onClick={onRestore}
             color="green"
             variant="solid"
