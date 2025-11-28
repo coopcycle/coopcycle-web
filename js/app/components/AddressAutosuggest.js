@@ -10,6 +10,7 @@ import { withTranslation, useTranslation } from 'react-i18next'
 import _ from 'lodash'
 import axios from 'axios'
 import classNames from 'classnames'
+import { OpenLocationCode } from 'open-location-code'
 
 import '../i18n'
 import { getCountry, localeDetector } from '../i18n'
@@ -111,8 +112,31 @@ const adapters = {
     geocode: geocodeGOOG,
     configure: configureGOOG,
     onSuggestionSelected: onSuggestionSelectedGOOG,
+  }
+}
+
+const openLocationCode = new OpenLocationCode()
+
+// Lazy compute coordinates
+// Needed to avoid func exec before DOM is ready
+const coordinates = {
+  get value() {
+    delete this.value
+    const element = document.getElementById('cpccl_settings')
+    if (!element) return (this.value = [0, 0])
+
+    try {
+      const [lat, lng] = JSON.parse(element.dataset.latlng)
+        .split(',')
+        .map(s => parseFloat(s.trim()))
+      return (this.value = [lat, lng])
+    } catch {
+      return (this.value = [0, 0])
+    }
   },
 }
+
+
 
 // WARNING
 // Do *NOT* use arrow functions, to allow binding
@@ -299,6 +323,14 @@ const localize = (func, adapter, thisArg) => {
 const getSuggestionValue = suggestion => suggestion.value
 
 const renderSuggestion = suggestion => {
+  if (suggestion.type === 'plus_code') {
+    return (
+      <div>
+        <i className="fa fa-map-marker mr-2" aria-hidden="true"></i>
+        {suggestion.value}
+      </div>
+    )
+  }
   const parts = [suggestion.value]
 
   if (suggestion.type === 'address') {
@@ -411,6 +443,23 @@ class AddressAutosuggest extends Component {
         return
       }
 
+      // Check if the input is a plus code - takes priority over all adapters
+      const plusCodeMatch = value.match(/\b[23456789CFGHJMPQRVWX]{2,8}\+[23456789CFGHJMPQRVWX]{2,4}\b/i)
+      if (plusCodeMatch) {
+        this.setState({
+          suggestions: [{
+            title: 'Plus code',
+            suggestions: [{
+              type: 'plus_code',
+              value: plusCodeMatch[0].toUpperCase(),
+              index: 0,
+            }],
+          }],
+          multiSection: true,
+        })
+        return
+      }
+
       if (value.trimStart().length < 5) {
         this.onSuggestionsFetchRequestedThrottled({ value })
       } else {
@@ -420,7 +469,6 @@ class AddressAutosuggest extends Component {
 
     // Localized methods
     this.getInitialState = localize('getInitialState', adapter, this)
-    this.onSuggestionSelected = localize('onSuggestionSelected', adapter, this)
     this.transformSuggestion = localize('transformSuggestion', adapter, this)
     this.placeholder = localize('placeholder', adapter, this)
     this.poweredBy = localize('poweredBy', adapter, this)
@@ -437,6 +485,57 @@ class AddressAutosuggest extends Component {
     this.handleKeyDown = this.handleKeyDown.bind(this)
 
     this.state = this.getInitialState()
+
+
+    this.onSuggestionSelected = localize('onSuggestionSelected', adapter, this)
+    const originalOnSuggestionSelected = this.onSuggestionSelected.bind(this)
+    this.onSuggestionSelected = (event, { suggestion }) => {
+      if (suggestion.type === 'plus_code') {
+        if (!openLocationCode.isValid(suggestion.value)) {
+          // Handle invalid plus code
+          if (this.props.reportValidity) {
+            this.autosuggest.input.setCustomValidity(
+              this.props.t('INVALID_PLUS_CODE'),
+            )
+            if (HTMLInputElement.prototype.reportValidity) {
+              this.autosuggest.input.reportValidity()
+            }
+          }
+          return
+        }
+
+        // Decode the plus code to get coordinates
+        const [cc_lat, cc_long] = coordinates.value
+        const { latitudeCenter: latitude, longitudeCenter: longitude } =
+          openLocationCode.decode(
+            openLocationCode.recoverNearest(
+              suggestion.value, cc_lat, cc_long
+            )
+          )
+
+        // Create address object with decoded coordinates
+        const address = {
+          streetAddress: suggestion.value,
+          latitude,
+          longitude,
+          geo: { latitude, longitude },
+          geohash: ngeohash.encode(latitude, longitude, 11),
+          isPrecise: true,
+          needsGeocoding: false,
+          provider: 'PLUS_CODE',
+        }
+
+        this.props.onAddressSelected(
+          this.state.value,
+          address,
+          suggestion.type,
+        )
+        return
+      }
+
+      // Call the original adapter-specific or generic onSuggestionSelected
+      originalOnSuggestionSelected(event, { suggestion })
+    }
   }
 
   componentDidMount() {
