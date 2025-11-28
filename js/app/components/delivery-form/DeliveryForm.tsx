@@ -502,8 +502,8 @@ const DeliveryForm = ({
                               addresses={addresses}
                               storeNodeId={storeNodeId}
                               storeDeliveryInfos={storeDeliveryInfos}
-                              onDelete={index => arrayHelpers.remove(index)}
-                              showRemoveButton={pickupIndex > 0}
+                              onRemove={index => arrayHelpers.remove(index)}
+                              canRemove={pickupIndex > 0}
                               tags={tags}
                               isExpanded={expandedTasks[originalIndex]}
                               onToggleExpanded={isExpanded =>
@@ -579,8 +579,8 @@ const DeliveryForm = ({
                               addresses={addresses}
                               storeNodeId={storeNodeId}
                               storeDeliveryInfos={storeDeliveryInfos}
-                              onDelete={index => arrayHelpers.remove(index)}
-                              canDelete={dropoffIndex > 0}
+                              onRemove={index => arrayHelpers.remove(index)}
+                              canRemove={dropoffIndex > 0}
                               tags={tags}
                               isExpanded={expandedTasks[originalIndex]}
                               onToggleExpanded={isExpanded =>

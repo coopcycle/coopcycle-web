@@ -29,8 +29,8 @@ type Props = {
   addresses: Address[];
   taskId: string;
   storeDeliveryInfos: Partial<Store>;
-  onDelete: (index: number) => void;
-  canDelete: boolean;
+  onRemove: (index: number) => void;
+  canRemove: boolean;
   tags: Tag[];
   isExpanded: boolean;
   onToggleExpanded: (expanded: boolean) => void;
@@ -42,8 +42,8 @@ const Task = ({
   addresses,
   taskId,
   storeDeliveryInfos,
-  onDelete,
-  canDelete,
+  onRemove,
+  canRemove,
   tags,
   isExpanded,
   onToggleExpanded,
@@ -59,10 +59,10 @@ const Task = ({
       taskId: taskId,
     });
 
-  const showDeleteButton =
+  const showRemoveButton =
     (modeIn(mode, [Mode.DELIVERY_CREATE, Mode.RECURRENCE_RULE_UPDATE]) ||
       (mode === Mode.DELIVERY_UPDATE && isTemporaryId(taskId))) &&
-    canDelete;
+    canRemove;
 
   const isExistingTask =
     mode === Mode.DELIVERY_UPDATE && !isTemporaryId(taskId);
@@ -78,9 +78,9 @@ const Task = ({
   const { data: timeSlotLabels } = useGetStoreTimeSlotsQuery(storeNodeId);
   const { data: packages } = useGetStorePackagesQuery(storeNodeId);
 
-  const _onDelete = useCallback(() => {
-    onDelete(taskIndex);
-  }, [onDelete, taskIndex]);
+  const _onRemove = useCallback(() => {
+    onRemove(taskIndex);
+  }, [onRemove, taskIndex]);
 
   const onCancel = useCallback(() => {
     setFieldValue(`tasks[${taskIndex}].status`, 'CANCELLED');
@@ -121,11 +121,11 @@ const Task = ({
             }></i>
         </button>
 
-        {showDeleteButton && (
+        {showRemoveButton && (
           <i
             data-testid="task-remove"
             className="fa fa-trash cursor-pointer"
-            onClick={_onDelete}
+            onClick={_onRemove}
           />
         )}
       </div>
@@ -191,8 +191,8 @@ const Task = ({
         )}
       </div>
       <div className={isExpanded ? 'task__footer' : 'task__footer--hidden'}>
-        {showDeleteButton ? (
-          <Button onClick={_onDelete} type="default" danger>
+        {showRemoveButton ? (
+          <Button onClick={_onRemove} type="default" danger>
             {t(`DELIVERY_FORM_REMOVE_${taskValues.type}`)}
           </Button>
         ) : null}
