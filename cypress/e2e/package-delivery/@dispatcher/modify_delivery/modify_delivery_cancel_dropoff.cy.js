@@ -142,5 +142,27 @@ context('Delivery (role: dispatcher)', () => {
     cy.get('[data-testid="order-total-including-tax"]')
       .find('[data-testid="value"]')
       .contains('€6.99');
+
+    // Open order history modal
+    cy.contains('button', "Afficher l'historique").click();
+
+    // Verify history events
+    cy.get('.ant-modal').within(() => {
+      cy.get('.ant-modal-title').should('contain', 'Historique de la commande');
+
+      cy.get('.ant-timeline-item:contains("task:cancelled")')
+        .filter(':contains("Tâche 1-3")')
+        .within(() => {
+          cy.get(`[data-testid=taskWithNumberLink]`)
+            .should('contain', 'Tâche 1-3')
+            .should('have.attr', 'href')
+            .and(
+              'match',
+              /^\/admin\/dashboard\/fullscreen\/2025-04-23\?task=\/api\/tasks\/\d+$/,
+            );
+          cy.get('.ant-timeline-item-content').should('contain', 'Dépôt');
+          cy.get('.ant-timeline-item-content').should('contain', 'Office 2');
+        });
+    });
   });
 });
