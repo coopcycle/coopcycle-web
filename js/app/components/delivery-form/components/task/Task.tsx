@@ -73,7 +73,7 @@ const Task = ({
     } else {
       return taskTypeListIcon(taskValues.type);
     }
-  }, [taskValues.type, taskValues.type]);
+  }, [isExistingTask, taskValues]);
 
   const { data: timeSlotLabels } = useGetStoreTimeSlotsQuery(storeNodeId);
   const { data: packages } = useGetStorePackagesQuery(storeNodeId);
