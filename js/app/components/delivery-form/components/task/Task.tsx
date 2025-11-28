@@ -198,6 +198,7 @@ const Task = ({
         ) : null}
         {isDispatcher && isExistingTask && taskValues.status === 'TODO' ? (
           <Button
+            data-testid="task-cancel"
             onClick={onCancel}
             type="primary"
             icon={<DeleteOutlined />}
