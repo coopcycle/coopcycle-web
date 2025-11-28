@@ -992,6 +992,13 @@ Cypress.Commands.add('validateDeliveryItinerary', (tasks, options = {}) => {
           cy.contains(task.type).should('exist')
         }
 
+        // Verify that cancelled tasks have strikethrough styling
+        if (task.status && task.status === 'CANCELLED') {
+          cy.get('del').should('exist');
+        } else {
+          cy.get('del').should('not.exist');
+        }
+
         if (task.name) {
           cy.contains(task.name).should('exist')
         }

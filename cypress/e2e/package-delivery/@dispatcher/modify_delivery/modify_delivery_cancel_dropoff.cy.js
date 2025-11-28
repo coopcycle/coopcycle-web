@@ -14,7 +14,7 @@ context('Delivery (role: dispatcher)', () => {
     cy.removeEnvVar('PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED');
   });
 
-  it('remove a dropoff from an existing order', function () {
+  it('cancel a dropoff from an existing order', function () {
     cy.visit('/admin/stores/1/deliveries/new');
 
     // Create delivery with 1 pickup + 2 dropoffs to get €8.99 total
@@ -71,9 +71,10 @@ context('Delivery (role: dispatcher)', () => {
 
     cy.get('[data-testid="tax-included"]').contains('8,99 €');
 
-    // Remove one dropoff task
+    // Cancel one dropoff task
     cy.get('[data-testid="form-task-2"]').within(() => {
-      cy.get('[data-testid="task-remove"]').click();
+      cy.get('[data-testid="toggle-button"]').click();
+      cy.get('[data-testid="task-cancel"]').click();
     });
 
     cy.validateDeliveryItinerary(
@@ -86,6 +87,12 @@ context('Delivery (role: dispatcher)', () => {
         {
           type: 'Dépôt',
           name: 'Office',
+          address: /72,? Rue Saint-Maur,? 75011,? Paris/,
+        },
+        {
+          type: 'Dépôt',
+          status: 'CANCELLED',
+          name: 'Office 2',
           address: /72,? Rue Saint-Maur,? 75011,? Paris/,
         },
       ],
@@ -107,6 +114,30 @@ context('Delivery (role: dispatcher)', () => {
 
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/);
+
+    // Wait for React components to load
+    cy.get('[data-testid="delivery-itinerary"]', {
+      timeout: 10000,
+    }).should('be.visible');
+
+    cy.validateDeliveryItinerary([
+      {
+        type: 'Retrait',
+        name: 'Warehouse',
+        address: /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
+      },
+      {
+        type: 'Dépôt',
+        name: 'Office',
+        address: /72,? Rue Saint-Maur,? 75011,? Paris/,
+      },
+      {
+        type: 'Dépôt',
+        status: 'CANCELLED',
+        name: 'Office 2',
+        address: /72,? Rue Saint-Maur,? 75011,? Paris/,
+      },
+    ]);
 
     cy.get('[data-testid="order-total-including-tax"]')
       .find('[data-testid="value"]')
