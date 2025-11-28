@@ -22,11 +22,7 @@ import {
   Delivery,
   PostDeliveryRequest,
 } from '../../../api/types';
-
-// check if a task ID is temporary (not from backend)
-const isTemporaryId = (taskId: string | null): boolean => {
-  return taskId !== null && taskId.startsWith('temp-');
-};
+import { isTemporaryId } from '../idUtils';
 
 function serializeAddress(
   address: AddressPayload,

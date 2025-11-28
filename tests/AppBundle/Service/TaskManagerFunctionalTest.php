@@ -50,7 +50,7 @@ class TaskManagerFunctionalTest extends KernelTestCase
         $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
 
         // Cancel the task
-        $this->taskManager->cancel($task);
+        $this->taskManager->cancel($task, recalculatePrice: true);
         $this->entityManager->flush();
 
         // Assert that linked order is cancelled
@@ -76,7 +76,7 @@ class TaskManagerFunctionalTest extends KernelTestCase
         $this->assertEquals(899, $order->getTotal());
 
         // Cancel the task
-        $this->taskManager->cancel($task);
+        $this->taskManager->cancel($task, recalculatePrice: true);
         $this->entityManager->flush();
 
         TestUtils::consumeMessages(self::getContainer());
@@ -86,6 +86,37 @@ class TaskManagerFunctionalTest extends KernelTestCase
         // Assert that price has been recalculated
         $this->assertEquals(400, $order->getTotal());
     }
+
+    function testOnWithFirstCancelledTaskDontRecalculatePrice()
+    {
+        // SETUP
+        $entities = $this->fixturesLoader->load([
+            __DIR__.'/../../../fixtures/ORM/setup_default.yml',
+            __DIR__.'/../../../fixtures/ORM/user_dispatcher.yml',
+            __DIR__.'/../../../fixtures/ORM/store_with_task_pricing.yml',
+            __DIR__.'/../../../fixtures/ORM/package_delivery_order_multi_dropoff.yml',
+        ], $_SERVER, [], PurgeMode::createDeleteMode());
+
+        /** @var Task $task */
+        $task = $entities['task_1'];
+        /** @var Order $order */
+        $order = $entities['order_1'];
+
+        $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
+        $this->assertEquals(899, $order->getTotal());
+
+        // Cancel the task
+        $this->taskManager->cancel($task);
+        $this->entityManager->flush();
+
+        TestUtils::consumeMessages(self::getContainer());
+
+        // Assert that linked order is NOT cancelled
+        $this->assertEquals(OrderInterface::STATE_NEW, $order->getState());
+        // Assert that price has NOT been recalculated
+        $this->assertEquals(899, $order->getTotal());
+    }
+
 
     function testOnWithFirstCancelledTaskArbitraryPrice()
     {
@@ -106,7 +137,7 @@ class TaskManagerFunctionalTest extends KernelTestCase
         $oldTotal = $order->getTotal();
 
         // Cancel the task
-        $this->taskManager->cancel($task);
+        $this->taskManager->cancel($task, recalculatePrice: true);
         $this->entityManager->flush();
 
         // Assert that linked order is NOT cancelled
@@ -134,7 +165,7 @@ class TaskManagerFunctionalTest extends KernelTestCase
         $this->assertEquals(600, $order->getTotal());
 
         // Cancel the task
-        $this->taskManager->cancel($task);
+        $this->taskManager->cancel($task, recalculatePrice: true);
         $this->entityManager->flush();
 
         TestUtils::consumeMessages(self::getContainer());

@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { Button, Checkbox } from 'antd';
 import { Formik, Form, FieldArray, FormikErrors } from 'formik';
 import moment, { Moment } from 'moment';
-import { v4 as uuidv4 } from 'uuid';
 
 import Spinner from '../../components/core/Spinner.js';
 import BarcodesModal from '../../../../assets/react/controllers/BarcodesModal.jsx';
@@ -43,8 +42,7 @@ import {
 } from '../../api/types';
 import { useDatadog } from '../../hooks/useDatadog';
 import { UserContext } from '../../UserContext';
-
-const generateTempId = (): string => `temp-${uuidv4()}`;
+import { generateTempId } from './idUtils';
 
 const getTaskId = (task: TaskType): string | null => {
   return task['@id'];
@@ -228,12 +226,12 @@ const DeliveryForm = ({
         if (Array.isArray(task?.packages)) {
           acc.packagesCount += task.packages.reduce(
             (sum, item) => sum + (item?.quantity || 0),
-            0
+            0,
           );
         }
         return acc;
       },
-      { packagesTotalWeight: 0, packagesCount: 0 }
+      { packagesTotalWeight: 0, packagesCount: 0 },
     );
 
     for (let i = 0; i < values.tasks.length; i++) {
@@ -275,8 +273,6 @@ const DeliveryForm = ({
         errors.tasks[i] = taskErrors;
       }
     }
-
-
 
     // expand all tasks with errors
     if (Object.keys(errors.tasks).length > 0) {
@@ -506,9 +502,8 @@ const DeliveryForm = ({
                               addresses={addresses}
                               storeNodeId={storeNodeId}
                               storeDeliveryInfos={storeDeliveryInfos}
-                              onRemove={arrayHelpers.remove}
-                              showRemoveButton={pickupIndex > 0}
-                              isDispatcher={isDispatcher}
+                              onRemove={index => arrayHelpers.remove(index)}
+                              canRemove={pickupIndex > 0}
                               tags={tags}
                               isExpanded={expandedTasks[originalIndex]}
                               onToggleExpanded={isExpanded =>
@@ -524,7 +519,7 @@ const DeliveryForm = ({
                       })}
 
                       {storeDeliveryInfos.multiPickupEnabled &&
-                        (mode === Mode.DELIVERY_CREATE || isDispatcher) ? (
+                      (mode === Mode.DELIVERY_CREATE || isDispatcher) ? (
                         <div className="new-order__pickups__add p-4 border mb-4">
                           <p>{t('DELIVERY_FORM_MULTIPICKUP')}</p>
                           <Button
@@ -584,9 +579,8 @@ const DeliveryForm = ({
                               addresses={addresses}
                               storeNodeId={storeNodeId}
                               storeDeliveryInfos={storeDeliveryInfos}
-                              onRemove={arrayHelpers.remove}
-                              showRemoveButton={dropoffIndex > 0}
-                              isDispatcher={isDispatcher}
+                              onRemove={index => arrayHelpers.remove(index)}
+                              canRemove={dropoffIndex > 0}
                               tags={tags}
                               isExpanded={expandedTasks[originalIndex]}
                               onToggleExpanded={isExpanded =>
@@ -600,7 +594,7 @@ const DeliveryForm = ({
                       })}
 
                       {storeDeliveryInfos.multiDropEnabled &&
-                        (mode === Mode.DELIVERY_CREATE || isDispatcher) ? (
+                      (mode === Mode.DELIVERY_CREATE || isDispatcher) ? (
                         <div className="new-order__dropoffs__add p-4 border mb-4">
                           <p>{t('DELIVERY_FORM_MULTIDROPOFF')}</p>
                           <Button
@@ -672,7 +666,7 @@ const DeliveryForm = ({
                 </div>
 
                 {mode !== Mode.DELIVERY_UPDATE ||
-                  (mode === Mode.DELIVERY_UPDATE && order) ? (
+                (mode === Mode.DELIVERY_UPDATE && order) ? (
                   <div className="order-informations__total-price border-top py-3">
                     <Order
                       storeNodeId={storeNodeId}
@@ -698,7 +692,7 @@ const DeliveryForm = ({
                 ) : null}
 
                 {modeIn(mode, [Mode.DELIVERY_CREATE, Mode.DELIVERY_UPDATE]) &&
-                  isDispatcher ? (
+                isDispatcher ? (
                   <div
                     className="border-top py-3"
                     data-testid="saved_order__container">

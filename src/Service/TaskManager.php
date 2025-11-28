@@ -31,9 +31,9 @@ class TaskManager
         $this->commandBus->dispatch(new MarkAsDone($task, $notes, $contactName));
     }
 
-    public function cancel(Task $task)
+    public function cancel(Task $task, bool $recalculatePrice = false)
     {
-        $this->commandBus->dispatch(new Cancel([$task]));
+        $this->commandBus->dispatch(new Cancel([$task], $recalculatePrice));
     }
 
     public function deleteGroup(TaskGroup $taskGroup)

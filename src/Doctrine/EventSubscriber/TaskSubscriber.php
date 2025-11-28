@@ -93,6 +93,13 @@ class TaskSubscriber
         foreach ($this->tasksToUpdate as $task) {
             $changeset = $uow->getEntityChangeSet($task);
 
+            $isOnlyStatusChange = count($changeset) === 1 && isset($changeset['status']);
+            // If the only change is the status, and we should already have an event for that,
+            // so we don't need to emit a "task:updated" event
+            if ($isOnlyStatusChange) {
+                continue;
+            }
+
             $domainEvent = new TaskUpdated($task);
             $taskEvent = $this->eventStore->createEvent($domainEvent);
             $task->addEvent($taskEvent);

@@ -21,8 +21,10 @@ use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\TagManager;
+use AppBundle\Service\TaskManager;
 use AppBundle\Service\TimeSlotManager;
 use AppBundle\Spreadsheet\ParseMetadataTrait;
+use AppBundle\Utils\DateUtils;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
@@ -45,6 +47,7 @@ class DeliveryProcessor implements ProcessorInterface
         private readonly Geocoder $geocoder,
         private readonly EntityManagerInterface $entityManager,
         private readonly DeliveryManager $deliveryManager,
+        private readonly TaskManager $taskManager,
         private readonly TimeSlotManager $timeSlotManager,
         private readonly LoggerInterface $logger
     )
@@ -83,6 +86,14 @@ class DeliveryProcessor implements ProcessorInterface
 
             if (is_array($data->tasks) && count($data->tasks) > 0) {
                 if ($isEditOperation) {
+                    $oldTaskStatuses = [];
+                    foreach ($delivery->getTasks() as $task) {
+                        if (null === $task->getId()) {
+                            continue;
+                        }
+                        $oldTaskStatuses[$task->getId()] = $task->getStatus();
+                    }
+
                     $tasks = array_map(function(TaskDto $taskInput) use ($delivery, $store) {
                         if ($taskInput->id !== null) {
                             return $this->transformIntoExistingTask($taskInput, $delivery->getTasks(), $store);
@@ -93,11 +104,26 @@ class DeliveryProcessor implements ProcessorInterface
                         }
                     }, $data->tasks);
 
-                    //remove tasks that are not in the request
                     foreach ($delivery->getTasks() as $task) {
+                        //cancel tasks that are not present in the request
                         if (!in_array($task, $tasks)) {
-                            $delivery->removeTask($task);
-                            $this->entityManager->remove($task);
+                            if (!$task->isCancelled()) {
+                                $this->taskManager->cancel($task);
+                            }
+                        // check if there are changes in the status for existing tasks
+                        } elseif (null !== $task->getId()) {
+                            $currentStatus = $oldTaskStatuses[$task->getId()];
+                            $newStatus = $task->getStatus();
+
+                            if ($currentStatus === $newStatus) {
+                                continue;
+                            }
+
+                            if ($newStatus === Task::STATUS_CANCELLED) {
+                                $this->taskManager->cancel($task);
+                            } elseif ($currentStatus === Task::STATUS_CANCELLED && $newStatus === Task::STATUS_TODO) {
+                                $this->taskManager->restore($task);
+                            }
                         }
                     }
 
@@ -204,6 +230,10 @@ class DeliveryProcessor implements ProcessorInterface
             $task->setType($type);
         }
 
+        if ($this->authorizationChecker->isGranted('ROLE_DISPATCHER') && $data->status) {
+            $task->setStatus($data->status);
+        }
+
         // Legacy props
         if (isset($data->doneAfter) && !isset($data->after)) {
             $data->after = $data->doneAfter;
@@ -221,8 +251,13 @@ class DeliveryProcessor implements ProcessorInterface
 
             $range = $data->timeSlot;
 
-            $task->setAfter($range->getLower());
-            $task->setBefore($range->getUpper());
+            // Only update if the values have actually changed
+            if ($task->getAfter() === null || DateUtils::isNotEqual($task->getAfter(), $range->getLower())) {
+                $task->setAfter($range->getLower());
+            }
+            if ($task->getBefore() === null || DateUtils::isNotEqual($task->getBefore(), $range->getUpper())) {
+                $task->setBefore($range->getUpper());
+            }
 
         } elseif ($data->before || $data->after) {
 
@@ -242,10 +277,11 @@ class DeliveryProcessor implements ProcessorInterface
                 $range = TsRange::create($after, $before);
             }
 
-            if ($after) {
+            // Only update if the values have actually changed
+            if ($after && ($task->getAfter() === null || DateUtils::isNotEqual($task->getAfter(), $after))) {
                 $task->setAfter($after);
             }
-            if ($before) {
+            if ($before && ($task->getBefore() === null || DateUtils::isNotEqual($task->getBefore(), $before))) {
                 $task->setBefore($before);
             }
         }

@@ -44,4 +44,14 @@ class DateUtils
 
         return $date->format('Y-m-d') === $now->format('Y-m-d');
     }
+
+    public static function isEqual(\DateTime $date1, \DateTime $date2): bool
+    {
+        return $date1->getTimestamp() === $date2->getTimestamp();
+    }
+
+    public static function isNotEqual(\DateTime $date1, \DateTime $date2): bool
+    {
+        return !self::isEqual($date1, $date2);
+    }
 }

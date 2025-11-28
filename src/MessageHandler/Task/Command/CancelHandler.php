@@ -18,6 +18,8 @@ use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 #[AsMessageHandler(bus: 'command.bus')]
 class CancelHandler
 {
+    private bool $recalculatePrice;
+
     public function __construct(
         private readonly MessageBusInterface $eventBus,
         private readonly OrderManager $orderManager,
@@ -28,6 +30,8 @@ class CancelHandler
     public function __invoke(CommandCancel $command)
     {
         // TODO Reorder linked tasks?
+
+        $this->recalculatePrice = $command->shouldRecalculatePrice();
 
         foreach ($command->getTasks() as $task) {
             $event = new Event\TaskCancelled($task);
@@ -96,6 +100,6 @@ class CancelHandler
             return;
         }
 
-        $this->eventBus->dispatch(new ProcessOrderAfterTaskCancellation($order));
+        $this->eventBus->dispatch(new ProcessOrderAfterTaskCancellation($order, $this->recalculatePrice));
     }
 }

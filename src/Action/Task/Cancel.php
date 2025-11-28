@@ -6,7 +6,7 @@ class Cancel extends Base
 {
     public function __invoke($data)
     {
-        $this->taskManager->cancel($data);
+        $this->taskManager->cancel($data, recalculatePrice: true);
 
         return $data;
     }
