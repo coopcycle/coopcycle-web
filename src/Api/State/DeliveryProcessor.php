@@ -24,6 +24,7 @@ use AppBundle\Service\TagManager;
 use AppBundle\Service\TaskManager;
 use AppBundle\Service\TimeSlotManager;
 use AppBundle\Spreadsheet\ParseMetadataTrait;
+use AppBundle\Utils\DateUtils;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
@@ -250,8 +251,13 @@ class DeliveryProcessor implements ProcessorInterface
 
             $range = $data->timeSlot;
 
-            $task->setAfter($range->getLower());
-            $task->setBefore($range->getUpper());
+            // Only update if the values have actually changed
+            if ($task->getAfter() === null || DateUtils::isNotEqual($task->getAfter(), $range->getLower())) {
+                $task->setAfter($range->getLower());
+            }
+            if ($task->getBefore() === null || DateUtils::isNotEqual($task->getBefore(), $range->getUpper())) {
+                $task->setBefore($range->getUpper());
+            }
 
         } elseif ($data->before || $data->after) {
 
@@ -271,10 +277,11 @@ class DeliveryProcessor implements ProcessorInterface
                 $range = TsRange::create($after, $before);
             }
 
-            if ($after) {
+            // Only update if the values have actually changed
+            if ($after && ($task->getAfter() === null || DateUtils::isNotEqual($task->getAfter(), $after))) {
                 $task->setAfter($after);
             }
-            if ($before) {
+            if ($before && ($task->getBefore() === null || DateUtils::isNotEqual($task->getBefore(), $before))) {
                 $task->setBefore($before);
             }
         }
