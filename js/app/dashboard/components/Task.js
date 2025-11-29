@@ -17,6 +17,7 @@ import { getTaskPackages, getTaskVolumeUnits, selectTaskById } from '../../../sh
 import { formatVolumeUnits, formatWeight } from '../redux/utils'
 import { toast } from 'react-toastify'
 import i18next from 'i18next'
+import { formatTaskNumber } from '../../utils/taskUtils';
 
 moment.locale($('html').attr('lang'))
 
@@ -53,16 +54,7 @@ const TaskCaption = ({ task }) => {
     <span>
       <span className="mr-1">
         <span className="text-monospace font-weight-bold">
-          { task.metadata?.order_number ?
-            <>
-              {
-                task.metadata?.delivery_position ?
-                <>{task.metadata.order_number}-{task.metadata.delivery_position}</>
-                : task.metadata.order_number
-              }
-            </>
-            : `#${ task.id }`
-          }
+          { formatTaskNumber(task) }
         </span>
         {/* keep the task ID displayed for the web dispatcher while migrating the client code as the rider sees the task ID in the app */}
         <span className='text-muted ml-1'>

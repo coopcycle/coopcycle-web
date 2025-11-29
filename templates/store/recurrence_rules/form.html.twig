@@ -1,0 +1,68 @@
+{% extends layout %}
+
+{% set title = 'subscription.title'|trans({ '%id%': recurrenceRule.id }) %}
+
+{% block prepare_title %}
+  {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ title) }}
+{% endblock %}
+
+{% block breadcrumb %}
+
+  {% if is_granted('ROLE_DISPATCHER') %}
+    {% set store = delivery.store %}
+
+    <li><a href="{{ path('admin_stores') }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+    <li><a href="{{ path('admin_store', { id: store.id }) }}">{{ store.name }}</a></li>
+    <li><a href="{{ path('admin_store_recurrence_rules', { id: store.id }) }}">{% trans %}stores.recurrence_rules{% endtrans %}</a></li>
+    <li>#{{ recurrenceRule.id }}</li>
+  {% endif %}
+
+{% endblock %}
+
+{% block subnav %}
+  {% if is_granted('ROLE_DISPATCHER') %}
+    {% include 'delivery/_partials/navbar.html.twig' %}
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+
+  {% if is_granted('ROLE_DISPATCHER') %}
+    <div class="alert alert-info">
+      To access the legacy version of this page <a data-testid="go-to-legacy-form" class="text-decoration-underline" href="{{ path('admin_store_recurrence_rule_legacy', { storeId: store.id, recurrenceRuleId: recurrenceRule.id }) }}">click here</a>.
+    </div>
+  {% endif %}
+
+  {% block alerts %}
+    {% if recurrenceRule.isCancelled() %}
+      <div class="alert alert-warning">
+        {% trans %}subscription.deleted.warning{% endtrans %}
+      </div>
+    {% endif %}
+  {% endblock %}
+
+  {% if not recurrenceRule.isCancelled() %}
+    <div
+      id="recurrence-rule-form"
+      data-store-node-id="{{ store|get_iri_from_item }}"
+      data-recurrence-rule-id="{{ recurrenceRule.id }}"
+      data-recurrence-rule-node-id="{{ recurrenceRule|get_iri_from_item }}"
+      data-recurrence-rule="{{ recurrenceRule.rule.getString() }}"
+      data-form-data="{{ formData ? formData|serialize('jsonld', {groups: ['delivery', 'address', 'barcode']}) : '' }}"
+      data-is-dispatcher="{{ isDispatcher ? 'true' : 'false' }}"
+      data-is-debug-pricing="{{ debug_pricing ? 'true' : 'false' }}"
+      data-is-price-breakdown-enabled="{{ ui_package_delivery_price_breakdown_enabled ? 'true' : 'false' }}"
+    >
+      {# Managed with React #}
+    </div>
+  {% endif %}
+
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('recurrence-rule-form-react') }}
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('recurrence-rule-form-react') }}
+{% endblock %}

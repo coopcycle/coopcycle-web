@@ -2,7 +2,7 @@
 
 namespace AppBundle\Action\Task;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\TaskImage;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -39,12 +39,12 @@ class AddImagesToTasks
 
         $imagesObj = [];
         foreach($images as $image) {
-            $imagesObj[] = $this->iriConverter->getItemFromIri($image);
+            $imagesObj[] = $this->iriConverter->getResourceFromIri($image);
         }
 
         $tasksResults = [];
         foreach($tasks as $task) {
-            $taskObj = $this->iriConverter->getItemFromIri($task);
+            $taskObj = $this->iriConverter->getResourceFromIri($task);
 
             if (null === $imagesObj[0]->getTask()) {
                 // existing task_images have not a task associated yet

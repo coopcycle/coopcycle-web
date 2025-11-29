@@ -30,7 +30,7 @@ final class SessionSubscriber implements EventSubscriberInterface
         CartContextInterface $cartContext,
         SessionStorage $storage,
         bool $enabled,
-        LoggerInterface $logger = null)
+        ?LoggerInterface $logger = null)
     {
         $this->cartContext = $cartContext;
         $this->storage = $storage;

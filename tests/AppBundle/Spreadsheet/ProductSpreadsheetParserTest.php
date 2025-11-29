@@ -33,9 +33,9 @@ class ProductSpreadsheetParserTest extends KernelTestCase
         $adapter = new LocalFilesystemAdapter(__DIR__ . '/../Resources/spreadsheet');
         $this->filesystem = new Filesystem($adapter);
 
-        $serializer = self::$container->get(SerializerInterface::class);
-        $productFactory = self::$container->get('sylius.factory.product');
-        $variantFactory = self::$container->get('sylius.factory.product_variant');
+        $serializer = self::getContainer()->get(SerializerInterface::class);
+        $productFactory = self::getContainer()->get('sylius.factory.product');
+        $variantFactory = self::getContainer()->get('sylius.factory.product_variant');
         $this->taxCategoryRepository = $this->prophesize(TaxCategoryRepositoryInterface::class);
 
         $baseStandard = new TaxCategory();

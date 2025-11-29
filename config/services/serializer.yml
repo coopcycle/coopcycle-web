@@ -3,15 +3,29 @@ services:
   _defaults:
     autowire: true
     autoconfigure: true
+    bind:
 
   misd_phone_number.serializer.normalizer:
     class: AppBundle\Serializer\PhoneNumberNormalizer
     arguments:
       $region: '%country_iso%'
 
+  AppBundle\Serializer\TemporaryIdNormalizer:
+    tags:
+      - { name: serializer.normalizer, priority: 130 }
+
   AppBundle\Serializer\DeliveryNormalizer:
     arguments:
       $normalizer: '@api_platform.jsonld.normalizer.item'
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  AppBundle\Serializer\DeliveryDtoNormalizer:
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  AppBundle\Serializer\TaskDtoNormalizer:
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  AppBundle\Serializer\DeliveryOrderDtoNormalizer:
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   AppBundle\Serializer\RestaurantNormalizer:
@@ -23,6 +37,7 @@ services:
   AppBundle\Serializer\TaskNormalizer:
     arguments:
       $normalizer: '@api_platform.jsonld.normalizer.item'
+      $objectNormalizer: "@serializer.normalizer.object"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
   AppBundle\Serializer\TaskListNormalizer:
@@ -141,7 +156,7 @@ services:
       $secret: '%secret%'
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
-  AppBundle\Serializer\PatchAwareStoreNormalizer:
+  AppBundle\Serializer\PricingRuleNormalizer:
     arguments:
-      $normalizer: "@api_platform.jsonld.normalizer.item"
+      - "@api_platform.jsonld.normalizer.item"
     tags: [ { name: serializer.normalizer, priority: 128 } ]

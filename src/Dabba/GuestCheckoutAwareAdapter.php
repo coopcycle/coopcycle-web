@@ -3,11 +3,11 @@
 namespace AppBundle\Dabba;
 
 use AppBundle\Sylius\Order\OrderInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class GuestCheckoutAwareAdapter implements OAuthCredentialsInterface
 {
-    public function __construct(private OrderInterface $order, private SessionInterface $session)
+    public function __construct(private OrderInterface $order, private RequestStack $requestStack)
     {}
 
     public function getDabbaAccessToken()
@@ -17,7 +17,7 @@ class GuestCheckoutAwareAdapter implements OAuthCredentialsInterface
             return $this->order->getCustomer()->getDabbaAccessToken();
         }
 
-        return $this->session->get(sprintf('dabba.order.%d.access_token', $this->order->getId()));
+        return $this->requestStack->getSession()->get(sprintf('dabba.order.%d.access_token', $this->order->getId()));
     }
 
     public function setDabbaAccessToken($accessToken)
@@ -27,7 +27,7 @@ class GuestCheckoutAwareAdapter implements OAuthCredentialsInterface
             return $this->order->getCustomer()->setDabbaAccessToken($accessToken);
         }
 
-        $this->session->set(
+        $this->requestStack->getSession()->set(
             sprintf('dabba.order.%d.access_token', $this->order->getId()),
             $accessToken
         );
@@ -40,7 +40,7 @@ class GuestCheckoutAwareAdapter implements OAuthCredentialsInterface
             return $this->order->getCustomer()->getDabbaRefreshToken();
         }
 
-        return $this->session->get(sprintf('dabba.order.%d.refresh_token', $this->order->getId()));
+        return $this->requestStack->getSession()->get(sprintf('dabba.order.%d.refresh_token', $this->order->getId()));
     }
 
     public function setDabbaRefreshToken($refreshToken)
@@ -50,7 +50,7 @@ class GuestCheckoutAwareAdapter implements OAuthCredentialsInterface
             return $this->order->getCustomer()->setDabbaRefreshToken($refreshToken);
         }
 
-        $this->session->set(
+        $this->requestStack->getSession()->set(
             sprintf('dabba.order.%d.refresh_token', $this->order->getId()),
             $refreshToken
         );
@@ -63,8 +63,8 @@ class GuestCheckoutAwareAdapter implements OAuthCredentialsInterface
             return $this->order->getCustomer()->hasDabbaCredentials();
         }
 
-        return $this->session->has(sprintf('dabba.order.%d.access_token', $this->order->getId()))
-            && $this->session->has(sprintf('dabba.order.%d.refresh_token', $this->order->getId()));
+        return $this->requestStack->getSession()->has(sprintf('dabba.order.%d.access_token', $this->order->getId()))
+            && $this->requestStack->getSession()->has(sprintf('dabba.order.%d.refresh_token', $this->order->getId()));
     }
 
     public function clearDabbaCredentials()

@@ -2,7 +2,7 @@
 
 namespace AppBundle\Serializer\JsonLd;
 
-use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Sylius\Taxon;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use Sylius\Component\Locale\Provider\LocaleProvider;
@@ -158,5 +158,12 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
     public function supportsDenormalization($data, $type, $format = null)
     {
         return false;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            Taxon::class => true, // supports*() call result is cached
+        ];
     }
 }

@@ -2,42 +2,37 @@
 
 namespace AppBundle\Api\Resource;
 
-use ApiPlatform\Core\Action\NotFoundAction;
-use AppBundle\Action\Delivery\CalculateRetailPrice as CalculateController;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Action\NotFoundAction;
 use AppBundle\Api\Dto\CalculationOutput;
-use AppBundle\Api\Dto\DeliveryInput;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
-use AppBundle\Entity\Delivery\OrderItem;
+use AppBundle\Api\Dto\DeliveryInputDto;
+use AppBundle\Api\State\CalculateRetailPriceProcessor;
+use AppBundle\Sylius\Order\OrderInterface;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
 #[ApiResource(
-    collectionOperations: [
-        'calc_price' => [
-            'method' => 'POST',
-            'path' => '/retail_prices/calculate',
-            'input' => DeliveryInput::class,
-            'controller' => CalculateController::class,
-            'status' => 200,
-            'write' => false,
-            'denormalization_context' => ['groups' => ['pricing_deliveries']],
-            'access_control' => "is_granted('ROLE_DISPATCHER') or is_granted('ROLE_STORE') or is_granted('ROLE_OAUTH2_DELIVERIES')",
-            'openapi_context' => ['summary' => 'Calculates price of a Delivery']
-        ]
+    operations: [
+        new Get(
+            controller: NotFoundAction::class,
+            output: false,
+            read: false
+        ),
+        new Post(
+            uriTemplate: '/retail_prices/calculate',
+            status: 200,
+            openapiContext: ['summary' => 'Calculates price of a Delivery'],
+            denormalizationContext: ['groups' => ['pricing_deliveries']],
+            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_STORE\') or is_granted(\'ROLE_OAUTH2_DELIVERIES\')',
+            input: DeliveryInputDto::class,
+            processor: CalculateRetailPriceProcessor::class
+        )
     ],
-    itemOperations: [
-        'get' => [
-            'method' => 'GET',
-            'controller' => NotFoundAction::class,
-            'read' => false,
-            'output' => false
-        ]
-    ],
-    attributes: [
-        'normalization_context' => ['groups' => ['pricing_deliveries']]
-    ]
+    normalizationContext: ['groups' => ['pricing_deliveries']]
 )]
 final class RetailPrice
 {
@@ -55,12 +50,9 @@ final class RetailPrice
 
     private bool $taxIncluded;
 
-    /**
-     * @param OrderItem[] $items
-     */
     public function __construct(
         #[Groups(['pricing_deliveries'])]
-        public readonly array $items,
+        public readonly OrderInterface $order,
         #[Groups(['pricing_deliveries'])]
         public readonly CalculationOutput $calculation,
         int $taxIncludedAmount,

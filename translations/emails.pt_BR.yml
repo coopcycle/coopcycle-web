@@ -87,17 +87,3 @@ task.failed.body: |
 order.payment.subject: Pagamento do seu pedido %order.number%
 order.payment.body: "Olá,\n<br>\nNós finalizamos uma entrega que você  solicitou\n\
   <br>\nVocê encontrará um link abaixo para permitir o pagamento por cartão de crédito.\n"
-covid_19.body: "<h1>Instruções para seguir em sua entrega</h1>\n<p>Com a atual pandemia\
-  \ do COVID-19 (Coronavirus), você <strong>deve estritamente</strong> seguir as seguintes\
-  \ instruções:</p>\n<h2>1. Respeitar distanciamento social</h2>\n<p>Nós vamos deixar\
-  \ seu pedido no pé da sua porta, para que você não tenha que se aproximar da pessoa\
-  \ que trouxe sua entrega. Também não há necessidade de gorjeta.</p>\n<h2>2. Tira\
-  \ seu pedido da embalagem após recebimento</h2>\n<p>O vírus pode sobreviver em superfícies\
-  \ de cartolina e plástico por vários dias. Portanto embalagens são um alto risco\
-  \ de transmissão do vírus.\nNós então pedimos que você <strong>abra seu pedido e\
-  \ transfira o conteúdo para pratos</strong>.</p>\n<h2>3. Descarte de embalagens</h2>\n\
-  <p>Uma vez que seu pedido está fora da embalagem, não se esqueça de <strong>descartar\
-  \ a embalagem em uma lixeira fechada</strong> para evitar contato acidental após\
-  \ uso.</p>\n<h2>4. Lave suas mãos!</h2>\n<p>Assim que você retirar seu pedido da\
-  \ embalagem e realizar o devido descarte, <strong>lave suas mãos!</strong></p>\n"
-covid_19.subject: COVID-19 | Instruções importantes sobre seu pedido

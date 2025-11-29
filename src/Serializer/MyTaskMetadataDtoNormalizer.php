@@ -29,6 +29,7 @@ class MyTaskMetadataDtoNormalizer implements ContextAwareNormalizerInterface, No
 
         $this->unsetIfNull($data, [
             'delivery_position',
+            'order_id',
             'order_number',
             'payment_method',
             'order_total',
@@ -48,7 +49,7 @@ class MyTaskMetadataDtoNormalizer implements ContextAwareNormalizerInterface, No
         }
     }
 
-    public function supportsNormalization($data, ?string $format = null, array $context = [])
+    public function supportsNormalization($data, ?string $format = null, array $context = []): bool
     {
         // Make sure we're not called twice
         if (isset($context[self::ALREADY_CALLED])) {
@@ -56,5 +57,12 @@ class MyTaskMetadataDtoNormalizer implements ContextAwareNormalizerInterface, No
         }
 
         return $data instanceof MyTaskMetadataDto;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            MyTaskMetadataDto::class => false, // supports*() call result is NOT cached
+        ];
     }
 }

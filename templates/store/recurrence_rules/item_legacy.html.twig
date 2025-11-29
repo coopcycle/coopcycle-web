@@ -1,0 +1,36 @@
+{% extends 'delivery/form.html.twig' %}
+
+{% block prepare_title %}
+  {{ add_title_prefix('basics.editing'|trans ~ ': ' ~ 'subscription.title'|trans({ '%id%': recurrenceRule.id })) }}
+{% endblock %}
+
+{% block breadcrumb %}
+
+  {% if is_granted('ROLE_DISPATCHER') %}
+    {% set store = delivery.store %}
+
+    <li><a href="{{ path('admin_stores') }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+    <li><a href="{{ path('admin_store', { id: store.id }) }}">{{ store.name }}</a></li>
+    <li><a href="{{ path('admin_store_recurrence_rules', { id: store.id }) }}">{% trans %}stores.recurrence_rules{% endtrans %}</a></li>
+    <li>#{{ recurrenceRule.id }}</li>
+  {% endif %}
+
+{% endblock %}
+
+{% if is_granted('ROLE_DISPATCHER') %}
+  {% set title = 'subscription.title'|trans({ '%id%': recurrenceRule.id }) %}
+{% endif %}
+
+{% block content %}
+  {% if is_granted('ROLE_DISPATCHER') %}
+    {% set store = delivery.store %}
+
+    <div class="alert alert-info">
+      This legacy version of the page will be removed soon. If you still need it, please let us know on Stack #dev channel ASAP.
+      To access the more-friendly, new version of the page <a class="text-decoration-underline" href="{{ path('admin_store_recurrence_rule', { storeId: store.id, recurrenceRuleId: recurrenceRule.id }) }}">click here</a>.
+    </div>
+  {% endif %}
+
+  {{ parent() }}
+
+{% endblock %}

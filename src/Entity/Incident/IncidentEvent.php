@@ -36,6 +36,8 @@ class IncidentEvent
     const TYPE_APPLY_PRICE_DIFF = "applied_price_diff";
     const TYPE_CANCEL_TASK = "cancelled";
     const TYPE_TRANSPORTER_REPORT = "transporter_reported";
+    const TYPE_ACCEPT_SUGGESTION = "accepted_suggestion";
+    const TYPE_REJECT_SUGGESTION = "rejected_suggestion";
 
     public function getId()
     {

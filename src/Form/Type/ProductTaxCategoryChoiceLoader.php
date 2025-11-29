@@ -9,6 +9,7 @@ use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
+use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
 use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -43,7 +44,7 @@ class ProductTaxCategoryChoiceLoader implements ChoiceLoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadChoiceList($value = null)
+    public function loadChoiceList(?callable $value = null): ChoiceListInterface
     {
         $qb = $this->taxCategoryRepository->createQueryBuilder('c');
         $qb->andWhere($qb->expr()->notIn('c.code', self::$serviceTaxCategories));
@@ -80,7 +81,7 @@ class ProductTaxCategoryChoiceLoader implements ChoiceLoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadChoicesForValues(array $values, $value = null)
+    public function loadChoicesForValues(array $values, ?callable $value = null): array
     {
         // Optimize
         if (empty($values)) {
@@ -93,7 +94,7 @@ class ProductTaxCategoryChoiceLoader implements ChoiceLoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadValuesForChoices(array $choices, $value = null)
+    public function loadValuesForChoices(array $choices, ?callable $value = null): array
     {
         // Optimize
         if (empty($choices)) {

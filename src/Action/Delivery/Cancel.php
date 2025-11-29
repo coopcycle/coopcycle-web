@@ -23,14 +23,14 @@ class Cancel
     {
         // It would have been cleaner to implement it via a validator,
         // but DELETE operations do not trigger validation
-        // @see ApiPlatform\Core\Validator\EventListener\ValidateListener
+        // @see ApiPlatform\Symfony\EventListener\ValidateListener
         foreach ($data->getTasks() as $task) {
             if ($task->isAssigned()) {
                 throw new BadRequestHttpException('Tasks have already been assigned');
             }
         }
 
-        foreach ($data->getTasks() as $task) {
+        foreach ($data->getTasks('not task.isCancelled()') as $task) {
             $this->taskManager->cancel($task);
         }
 

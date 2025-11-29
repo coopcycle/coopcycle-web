@@ -1,0 +1,45 @@
+{
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+
+    /* Modules */
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "paths": {
+      //      "@app/*": ["./js/app/*"],
+      //      "@shared/*": ["./js/shared/*"]
+    },
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+
+    /* Emit */
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": true,
+    "outDir": "./web/build",
+    "removeComments": false,
+    "noEmit": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./web/build/.tsbuildinfo",
+
+    /* JavaScript Support */
+    "allowJs": true,
+
+    /* Interop Constraints */
+    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Completeness */
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "noErrorTruncation": true,
+
+    /* Type Checking */
+    "strict": true
+  },
+  "include": ["js/**/*", "assets/**/*"]
+}

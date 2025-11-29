@@ -3,35 +3,28 @@
 namespace Tests\AppBundle\Payment;
 
 use AppBundle\Edenred\Client as EdenredClient;
-use AppBundle\Entity\Refund;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Payment\Gateway;
 use AppBundle\Payment\GatewayResolver;
-use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\StripeManager;
-use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\Collection;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
-use SimpleBus\Message\Recorder\RecordsMessages;
 use Stripe;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentMethod;
-use Prophecy\Argument;
 
 class GatewayTest extends TestCase
 {
     use ProphecyTrait;
 
-    private $eventRecorder;
     private $stripeManager;
 
     private $handler;
 
     public function setUp(): void
     {
-        $this->eventRecorder = $this->prophesize(RecordsMessages::class);
         $this->stripeManager = $this->prophesize(StripeManager::class);
         $this->gatewayResolver = $this->prophesize(GatewayResolver::class);
         $this->edenred = $this->prophesize(EdenredClient::class);

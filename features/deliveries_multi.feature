@@ -2,7 +2,6 @@ Feature: Multi-step deliveries
 
   Scenario: Create delivery with pickup & dropoff with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -39,6 +38,9 @@ Feature: Multi-step deliveries
         "@id":"@string@.startsWith('/api/deliveries')",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"@string@.startsWith('/api/tasks')",
@@ -54,6 +56,7 @@ Feature: Multi-step deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -86,6 +89,7 @@ Feature: Multi-step deliveries
               "latitude":@double@,
               "longitude":@double@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -104,13 +108,20 @@ Feature: Multi-step deliveries
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
   Scenario: Create delivery with pickup & dropoff + packages with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -159,6 +170,9 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":@integer@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":@string@,
@@ -175,6 +189,7 @@ Feature: Multi-step deliveries
               "latitude":@number@,
               "longitude":@number@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -192,8 +207,9 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":4,
               "volume_per_package": 3,
-              "short_code": "AB",
-              "labels":@array@
+              "short_code": "XL",
+              "labels":@array@,
+              "tasks":@array@
             }
           ],
           "barcode": @array@,
@@ -216,6 +232,7 @@ Feature: Multi-step deliveries
               "latitude":@number@,
               "longitude":@number@
             },
+            "provider": null,
             "streetAddress":@string@,
             "telephone":null,
             "name":null,
@@ -233,8 +250,9 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2,
               "volume_per_package": 3,
-              "short_code": "AB",
-              "labels":@array@
+              "short_code": "XL",
+              "labels":@array@,
+              "tasks":@array@
             }
           ],
           "barcode": @array@,
@@ -242,13 +260,20 @@ Feature: Multi-step deliveries
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
   Scenario: Create delivery with multiple pickups & 1 dropoff + packages with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -269,7 +294,7 @@ Feature: Multi-step deliveries
           },
           {
             "type": "pickup",
-            "address": "22, Rue de la Paix Paris",
+            "address": "101, Rue de la Paix Paris",
             "before": "tomorrow 13:15"
           },
           {
@@ -293,7 +318,42 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
-        "tasks":@array@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
+        "tasks":[
+          {
+            "@type":"Task",
+            "@id":"/api/tasks/1",
+            "type":"PICKUP",
+            "packages":[],
+            "@*@":"@*@"
+          },
+          {
+            "@type":"Task",
+            "type":"PICKUP",
+            "@id":"/api/tasks/2",
+            "packages":[],
+            "@*@":"@*@"
+          },
+          {
+            "@type":"Task",
+            "type":"DROPOFF",
+            "@id":"/api/tasks/3",
+            "packages":[
+              {
+                "type":"XL",
+                "name":"XL",
+                "quantity":2,
+                "volume_per_package": 3,
+                "short_code": "XL",
+                "labels":@array@,
+                "tasks":@array@
+              }
+            ],
+            "@*@":"@*@"
+          }
+        ],
         "pickup":{
           "@id":"/api/tasks/1",
           "@type":"Task",
@@ -309,27 +369,19 @@ Feature: Multi-step deliveries
               "latitude":@double@,
               "longitude":@double@
             },
-            "streetAddress":"24 Rue de la Paix, 75002 Paris",
+            "provider": null,
+            "streetAddress":"Rue de la Paix 24, 75002 Paris",
             "telephone":null,
             "name":null,
             "description": null
           },
           "comments":"2 × XL\n1.50 kg",
-          "weight":1500,
+          "weight":null,
           "after":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "doneAfter":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
-          "packages":[
-            {
-              "type":"XL",
-              "name":"XL",
-              "quantity":2,
-              "volume_per_package": 3,
-              "short_code": "AB",
-              "labels":@array@
-            }
-          ],
+          "packages":[],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
           "tags": [],
@@ -347,10 +399,11 @@ Feature: Multi-step deliveries
             "contactName":null,
             "geo":{
               "@type":"GeoCoordinates",
-              "latitude":48.856872,
-              "longitude":2.354618
+              "latitude":48.8566,
+              "longitude":2.3522
             },
-            "streetAddress":"48 Rue de Rivoli, 75004 Paris",
+            "provider": null,
+            "streetAddress":"Rue de Rivoli 48, 75004 Paris",
             "telephone":null,
             "name":null,
             "description": null
@@ -367,8 +420,9 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2,
               "volume_per_package": 3,
-              "short_code": "AB",
-              "labels":@array@
+              "short_code": "XL",
+              "labels":@array@,
+              "tasks":@array@
             }
           ],
           "barcode": @array@,
@@ -376,13 +430,20 @@ Feature: Multi-step deliveries
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
   Scenario: Create delivery with multiple pickups & 1 dropoff, without time slot for pickups
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_products.yml |
       | sylius_taxation.yml |
       | payment_methods.yml |
@@ -402,7 +463,7 @@ Feature: Multi-step deliveries
           },
           {
             "type": "pickup",
-            "address": "22, Rue de la Paix Paris"
+            "address": "101, Rue de la Paix Paris"
           },
           {
             "type": "dropoff",
@@ -425,6 +486,9 @@ Feature: Multi-step deliveries
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "tasks":@array@,
         "pickup":{
           "@id":"/api/tasks/1",
@@ -441,27 +505,19 @@ Feature: Multi-step deliveries
               "latitude":@double@,
               "longitude":@double@
             },
-            "streetAddress":"24 Rue de la Paix, 75002 Paris",
+            "provider": null,
+            "streetAddress":"Rue de la Paix 24, 75002 Paris",
             "telephone":null,
             "name":null,
             "description": null
           },
           "comments":"2 × XL\n1.50 kg",
-          "weight":1500,
+          "weight":null,
           "after":"@string@.isDateTime()",
           "before":"@string@.isDateTime()",
           "doneAfter":"@string@.isDateTime()",
           "doneBefore":"@string@.isDateTime()",
-          "packages":[
-            {
-              "type":"XL",
-              "name":"XL",
-              "quantity":2,
-              "volume_per_package": 3,
-              "short_code": "AB",
-              "labels":@array@
-            }
-          ],
+          "packages":[],
           "barcode": @array@,
           "createdAt":"@string@.isDateTime()",
           "tags": [],
@@ -479,10 +535,11 @@ Feature: Multi-step deliveries
             "contactName":null,
             "geo":{
               "@type":"GeoCoordinates",
-              "latitude":48.856872,
-              "longitude":2.354618
+              "latitude":48.8566,
+              "longitude":2.3522
             },
-            "streetAddress":"48 Rue de Rivoli, 75004 Paris",
+            "provider": null,
+            "streetAddress":"Rue de Rivoli 48, 75004 Paris",
             "telephone":null,
             "name":null,
             "description": null
@@ -499,8 +556,9 @@ Feature: Multi-step deliveries
               "name":"XL",
               "quantity":2,
               "volume_per_package": 3,
-              "short_code": "AB",
-              "labels":@array@
+              "short_code": "XL",
+              "labels":@array@,
+              "tasks":@array@
             }
           ],
           "barcode": @array@,
@@ -508,13 +566,20 @@ Feature: Multi-step deliveries
           "tags": [],
           "metadata": {"@*@": "@*@"}
         },
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
       }
       """
 
   Scenario: Suggest delivery optimizations with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the setting "latlng" has value "48.856613,2.352222"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -527,7 +592,7 @@ Feature: Multi-step deliveries
         "tasks": [
           {
             "type": "pickup",
-            "address": "24 Rue de Rivoli, 75004 Paris",
+            "address": "44 Rue de Rivoli, 75004 Paris",
             "after": "tomorrow 13:00",
             "before": "tomorrow 13:15"
           },
@@ -539,7 +604,7 @@ Feature: Multi-step deliveries
           },
           {
             "type": "dropoff",
-            "address": "45 Rue de Rivoli, 75001 Paris",
+            "address": "48 Rue de Rivoli, 75004 Paris",
             "after": "tomorrow 13:15",
             "before": "tomorrow 13:30"
           }
@@ -556,7 +621,6 @@ Feature: Multi-step deliveries
           "@id": @string@,
           "suggestions": [
             {
-              "@context": {"@*@": "@*@"},
               "@type": "OptimizationSuggestion",
               "@id": @string@,
               "gain": {
@@ -570,5 +634,159 @@ Feature: Multi-step deliveries
               ]
             }
           ]
+      }
+      """
+
+  Scenario: Create delivery with multiple pickups & 1 dropoff + packages in pickups with OAuth
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | stores.yml          |
+    Given the setting "latlng" has value "48.856613,2.352222"
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "tasks": [
+          {
+            "type": "pickup",
+            "address": "24, Rue de la Paix Paris",
+            "before": "tomorrow 13:00",
+            "weight": 1500,
+            "packages": [
+              {"type": "XL", "quantity": 2}
+            ]
+          },
+          {
+            "type": "pickup",
+            "address": "101, Rue de la Paix Paris",
+            "before": "tomorrow 13:15",
+            "weight": 1500,
+            "packages": [
+              {"type": "XL", "quantity": 3}
+            ]
+          },
+          {
+            "type": "dropoff",
+            "address": "48, Rue de Rivoli Paris",
+            "before": "tomorrow 13:30"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@type":"http://schema.org/ParcelDelivery",
+        "@id":"/api/deliveries/1",
+        "id":@integer@,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
+        "pickup":{"@*@":"@*@"},
+        "dropoff":{"@*@":"@*@"},
+        "tasks":[
+          {
+            "@type":"Task",
+            "@id":"/api/tasks/1",
+            "type":"PICKUP",
+            "packages":[
+              {
+                "type":"XL",
+                "name":"XL",
+                "quantity":2,
+                "volume_per_package": 3,
+                "short_code": "XL",
+                "labels":@array@,
+                "tasks":[
+                  "/api/tasks/1"
+                ]
+              }
+            ],
+            "@*@":"@*@"
+          },
+          {
+            "@type":"Task",
+            "type":"PICKUP",
+            "@id":"/api/tasks/2",
+            "packages":[
+              {
+                "type":"XL",
+                "name":"XL",
+                "quantity":3,
+                "volume_per_package": 3,
+                "short_code": "XL",
+                "labels":@array@,
+                "tasks":[
+                  "/api/tasks/2"
+                ]
+              }
+            ],
+            "@*@":"@*@"
+          },
+          {
+            "@type":"Task",
+            "type":"DROPOFF",
+            "@id":"/api/tasks/3",
+            "packages":[
+              {
+                "type":"XL",
+                "name":"XL",
+                "quantity":5,
+                "volume_per_package": 3,
+                "short_code": "XL",
+                "labels":@array@,
+                "tasks":[
+                  "/api/tasks/1",
+                  "/api/tasks/2"
+                ]
+              }
+            ],
+            "@*@":"@*@"
+          }
+        ],
+        "trackingUrl":@string@,
+        "order": {
+          "@id":"@string@.startsWith('/api/orders')",
+          "@type":"http://schema.org/Order",
+          "number": @string@,
+          "total": @integer@,
+          "taxTotal": @integer@,
+          "paymentGateway": @string@
+        }
+      }
+      """
+    Given I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "GET" request to "/api/tasks/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """git
+      {
+        "@id":"/api/tasks/1",
+        "type":"PICKUP",
+        "status":"TODO",
+        "packages":[
+          {
+            "name":"XL",
+            "type":"XL",
+            "quantity":2,
+            "volume_per_package":3,
+            "short_code":"XL",
+            "labels":"@array@.count(2)",
+            "tasks":[
+              "/api/tasks/1"
+            ]
+          }
+        ],
+        "@*@":"@*@"
       }
       """

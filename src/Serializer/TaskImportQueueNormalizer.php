@@ -43,7 +43,7 @@ class TaskImportQueueNormalizer implements ContextAwareNormalizerInterface, Norm
         return $data;
     }
 
-    public function supportsNormalization($data, $format = null, array $context = [])
+    public function supportsNormalization($data, $format = null, array $context = []): bool
     {
         // Make sure we're not called twice
         if (isset($context[self::ALREADY_CALLED])) {
@@ -51,5 +51,12 @@ class TaskImportQueueNormalizer implements ContextAwareNormalizerInterface, Norm
         }
 
         return $data instanceof ImportQueue;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            ImportQueue::class => false, // supports*() call result is NOT cached
+        ];
     }
 }

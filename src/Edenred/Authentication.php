@@ -2,7 +2,7 @@
 
 namespace AppBundle\Edenred;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use GuzzleHttp\Client as GuzzleClient;
@@ -53,7 +53,7 @@ class Authentication
         $state = $this->jwtEncoder->encode([
             'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
             // The "sub" (Subject) claim contains the IRI of a resource
-            'sub' => $this->iriConverter->getIriFromItem($subject),
+            'sub' => $this->iriConverter->getIriFromResource($subject),
         ]);
 
         $queryString = http_build_query([
@@ -78,7 +78,7 @@ class Authentication
 
     public function getSubject(array $payload)
     {
-        return $this->iriConverter->getItemFromIri($payload['sub']);
+        return $this->iriConverter->getResourceFromIri($payload['sub']);
     }
 
     /**

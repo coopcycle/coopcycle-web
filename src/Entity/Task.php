@@ -2,16 +2,22 @@
 
 namespace AppBundle\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Task\AddImagesToTasks;
 use AppBundle\Action\Task\Assign as TaskAssign;
-use AppBundle\Action\Task\BulkAssign as TaskBulkAssign;
 use AppBundle\Action\Task\Cancel as TaskCancel;
 use AppBundle\Action\Task\Done as TaskDone;
 use AppBundle\Action\Task\Events as TaskEvents;
 use AppBundle\Action\Task\FailureReasons as TaskFailureReasons;
 use AppBundle\Action\Task\Incident as TaskIncident;
+use AppBundle\Action\Task\Incidents as TaskIncidents;
 use AppBundle\Action\Task\Failed as TaskFailed;
 use AppBundle\Action\Task\Unassign as TaskUnassign;
 use AppBundle\Action\Task\Duplicate as TaskDuplicate;
@@ -22,12 +28,16 @@ use AppBundle\Action\Task\RemoveFromGroup;
 use AppBundle\Action\Task\BulkMarkAsDone as TaskBulkMarkAsDone;
 use AppBundle\Action\Task\Context as TaskContext;
 use AppBundle\Action\Task\AppendToComment as TaskAppendToComment;
+use AppBundle\Api\Dto\AssignTasksDto;
 use AppBundle\Api\Dto\BioDeliverInput;
 use AppBundle\Api\Filter\AssignedFilter;
 use AppBundle\Api\Filter\TaskDateFilter;
 use AppBundle\Api\Filter\TaskOrderFilter;
 use AppBundle\Api\Filter\TaskFilter;
 use AppBundle\Api\Filter\OrganizationFilter;
+use AppBundle\Api\State\AssignTasksProcessor;
+use AppBundle\Api\State\BioDeliverProcessor;
+use AppBundle\Api\State\TasksProvider;
 use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Task\Event as TaskDomainEvent;
 use AppBundle\Entity\Delivery\FailureReason;
@@ -43,7 +53,7 @@ use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Entity\Package\PackagesAwareTrait;
-use AppBundle\ExpressionLanguage\PackagesResolver;
+use AppBundle\Entity\TimeSlot\TimeSlotAwareInterface;
 use AppBundle\Utils\Barcode\Barcode;
 use AppBundle\Utils\Barcode\BarcodeUtils;
 use AppBundle\Validator\Constraints\Task as AssertTask;
@@ -56,276 +66,279 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
-use stdClass;
 
 #[ApiResource(
-    collectionOperations: [
-        'get' => [
-            'method' => 'GET',
-            'access_control' => "is_granted('ROLE_DISPATCHER') or is_granted('ROLE_COURIER')",
-            'pagination' => [
-                'enabled_parameter_name' => 'pagination',
-                'items_per_page_parameter_name' => 'itemsPerPage'
-            ],
-            'pagination_enabled' => false,
-            'pagination_client_enabled' => true
-        ],
-        'post' => [
-            'method' => 'POST',
-            'access_control' => "is_granted('ROLE_DISPATCHER')",
-            'denormalization_context' => ['groups' => ['task_create']],
-            'validation_groups' => ['Default']
-        ],
-        'tasks_assign' => [
-            'method' => 'PUT',
-            'path' => '/tasks/assign',
-            'controller' => TaskBulkAssign::class,
-            'access_control' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
-            'openapi_context' => [
-                'summary' => 'Assigns multiple Tasks at once to a messenger',
-                'parameters' => [[
-                    'in' => 'body',
-                    'name' => 'N/A',
-                    'schema' => [
-                        'type' => 'object',
-                        'properties' => [
-                            'username' => ['type' => 'string'],
-                            'tasks' => ['type' => 'array']
-                        ]
-                    ],
-                    'style' => 'form'
-                ]]
-            ]
-        ],
-        'tasks_done' => [
-            'method' => 'PUT',
-            'path' => '/tasks/done',
-            'controller' => TaskBulkMarkAsDone::class,
-            'access_control' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
-            'openapi_context' => [
-                'summary' => 'Mark multiple Tasks as done at once',
-                'parameters' => [[
-                    'in' => 'body',
-                    'name' => 'N/A',
-                    'schema' => [
-                        'type' => 'object',
-                        'properties' => ['tasks' => ['type' => 'array']]
-                    ],
-                    'style' => 'form'
-                ]]
-            ]
-        ],
-        'tasks_images' => [
-            'method' => 'PUT',
-            'path' => '/tasks/images',
-            'denormalization_context' => ['groups' => ['tasks_images']],
-            'controller' => AddImagesToTasks::class,
-            'access_control' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_COURIER')",
-            'openapi_context' => [
-                'summary' => '',
-                'parameters' => [[
-                    'in' => 'body',
-                    'name' => 'N/A',
-                    'schema' => [
-                        'type' => 'object',
-                        'properties' => [
-                            'tasks' => ['type' => 'array'],
-                            'images' => ['type' => 'array']
-                        ]
-                    ],
-                    'style' => 'form'
-                ]]
-            ]
-        ]
-    ],
-    itemOperations: [
-        'get' => [
-            'method' => 'GET',
-            'access_control' => "is_granted('view', object)"
-        ],
-        'put' => [
-            'method' => 'PUT',
-            'access_control' => "is_granted('ROLE_DISPATCHER') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
-            'denormalization_context' => ['groups' => ['task_edit']]
-        ],
-        'task_start' => [
-            'method' => 'PUT',
-            'path' => '/tasks/{id}/start',
-            'controller' => TaskStart::class,
-            'access_control' => "is_granted('ROLE_DISPATCHER') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
-            'openapi_context' => ['summary' => 'Marks a Task as started']
-        ],
-        'task_done' => [
-            'method' => 'PUT',
-            'path' => '/tasks/{id}/done',
-            'controller' => TaskDone::class,
-            'denormalization_context' => ['groups' => ['task_operation']],
-            'access_control' => "is_granted('ROLE_DISPATCHER') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
-            'openapi_context' => [
+    operations: [
+        new Get(security: 'is_granted(\'view\', object)'),
+        new Put(
+            requirements: ['id' => '[0-9]+'],
+            denormalizationContext: ['groups' => ['task_edit']],
+            // Make sure to add requirements for operations like "/tasks/assign" to work
+            security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))'
+        ),
+        new Put(
+            uriTemplate: '/tasks/{id}/start',
+            controller: TaskStart::class,
+            openapiContext: ['summary' => 'Marks a Task as started'],
+            security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))'
+        ),
+        new Put(
+            uriTemplate: '/tasks/{id}/done',
+            controller: TaskDone::class,
+            openapiContext: [
                 'summary' => 'Marks a Task as done',
-                'parameters' => [[
-                    'in' => 'body',
-                    'name' => 'N/A',
-                    'schema' => [
-                        'type' => 'object',
-                        'properties' => ['notes' => ['type' => 'string']]
-                    ],
-                    'style' => 'form'
-                ]]
-            ]
-        ],
-        'task_failed' => [
-            'method' => 'PUT',
-            'path' => '/tasks/{id}/failed',
-            'controller' => TaskFailed::class,
-            'denormalization_context' => ['groups' => ['task_operation']],
-            'access_control' => "is_granted('ROLE_DISPATCHER') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
-            'openapi_context' => [
+                'parameters' => [
+                    [
+                        'in' => 'body',
+                        'name' => 'N/A',
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => ['notes' => ['type' => 'string']]
+                        ],
+                        'style' => 'form'
+                    ]
+                ]
+            ],
+            denormalizationContext: ['groups' => ['task_operation']],
+            security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))'
+        ),
+        new Put(
+            uriTemplate: '/tasks/{id}/failed',
+            controller: TaskFailed::class,
+            openapiContext: [
                 'summary' => 'Marks a Task as failed',
-                'parameters' => [[
-                    'in' => 'body',
-                    'name' => 'N/A',
-                    'schema' => [
-                        'type' => 'object',
-                        'properties' => ['notes' => ['type' => 'string']]
-                    ],
-                    'style' => 'form'
-                ]]
-            ]
-        ],
-        'task_assign' => [
-            'method' => 'PUT',
-            'path' => '/tasks/{id}/assign',
-            'controller' => TaskAssign::class,
-            'denormalization_context' => ['groups' => ['task_operation']],
-            'access_control' => "is_granted('ROLE_DISPATCHER') or is_granted('ROLE_COURIER')",
-            'openapi_context' => [
+                'parameters' => [
+                    [
+                        'in' => 'body',
+                        'name' => 'N/A',
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => ['notes' => ['type' => 'string']]
+                        ],
+                        'style' => 'form'
+                    ]
+                ]
+            ],
+            denormalizationContext: ['groups' => ['task_operation']],
+            security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))'
+        ),
+        new Put(
+            uriTemplate: '/tasks/{id}/assign',
+            controller: TaskAssign::class,
+            openapiContext: [
                 'summary' => 'Assigns a Task to a messenger',
-                'parameters' => [[
-                    'in' => 'body',
-                    'name' => 'N/A',
-                    'schema' => [
-                        'type' => 'object',
-                        'properties' => ['username' => ['type' => 'string']]
-                    ],
-                    'style' => 'form'
-                ]]
-            ]
-        ],
-        'task_remove_from_group' => [
-            'method' => 'DELETE',
-            'path' => '/tasks/{id}/group',
-            'controller' => RemoveFromGroup::class,
-            'write' => false,
-            'denormalization_context' => ['groups' => ['task_operation']],
-            'access_control' => "is_granted('ROLE_DISPATCHER') or is_granted('edit', object)",
-            'openapi_context' => ['summary' => 'Remove a task from the group to which it belongs']
-        ],
-        'task_unassign' => [
-            'method' => 'PUT',
-            'path' => '/tasks/{id}/unassign',
-            'controller' => TaskUnassign::class,
-            'denormalization_context' => ['groups' => ['task_operation']],
-            'access_control' => "is_granted('ROLE_DISPATCHER') or (is_granted('ROLE_COURIER') and object.isAssignedTo(user))",
-            'openapi_context' => ['summary' => 'Unassigns a Task from a messenger']
-        ],
-        'task_cancel' => [
-            'method' => 'PUT',
-            'path' => '/tasks/{id}/cancel',
-            'controller' => TaskCancel::class,
-            'denormalization_context' => ['groups' => ['task_operation']],
-            'access_control' => "is_granted('ROLE_DISPATCHER')",
-            'openapi_context' => ['summary' => 'Cancels a Task']
-        ],
-        'task_duplicate' => [
-            'method' => 'POST',
-            'path' => '/tasks/{id}/duplicate',
-            'controller' => TaskDuplicate::class,
-            'denormalization_context' => ['groups' => ['task_operation']],
-            'access_control' => "is_granted('ROLE_DISPATCHER')",
-            'openapi_context' => ['summary' => 'Duplicates a Task']
-        ],
-        'task_reschedule' => [
-            'method' => 'PUT',
-            'path' => '/tasks/{id}/reschedule',
-            'controller' => TaskReschedule::class,
-            'denormalization_context' => ['groups' => ['task_operation']],
-            'access_control' => "is_granted('ROLE_DISPATCHER')",
-            'openapi_context' => [
+                'parameters' => [
+                    [
+                        'in' => 'body',
+                        'name' => 'N/A',
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => ['username' => ['type' => 'string']]
+                        ],
+                        'style' => 'form'
+                    ]
+                ]
+            ],
+            denormalizationContext: ['groups' => ['task_operation']],
+            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_COURIER\')'
+        ),
+        new Delete(
+            uriTemplate: '/tasks/{id}/group',
+            controller: RemoveFromGroup::class,
+            openapiContext: ['summary' => 'Remove a task from the group to which it belongs'],
+            denormalizationContext: ['groups' => ['task_operation']],
+            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'edit\', object)',
+            write: false
+        ),
+        new Put(
+            uriTemplate: '/tasks/{id}/unassign',
+            controller: TaskUnassign::class,
+            openapiContext: ['summary' => 'Unassigns a Task from a messenger'],
+            denormalizationContext: ['groups' => ['task_operation']],
+            security: 'is_granted(\'ROLE_DISPATCHER\') or (is_granted(\'ROLE_COURIER\') and object.isAssignedTo(user))'
+        ),
+        new Put(
+            uriTemplate: '/tasks/{id}/cancel',
+            controller: TaskCancel::class,
+            openapiContext: ['summary' => 'Cancels a Task'],
+            denormalizationContext: ['groups' => ['task_operation']],
+            security: 'is_granted(\'ROLE_DISPATCHER\')'
+        ),
+        new Post(
+            uriTemplate: '/tasks/{id}/duplicate',
+            controller: TaskDuplicate::class,
+            openapiContext: ['summary' => 'Duplicates a Task'],
+            denormalizationContext: ['groups' => ['task_operation']],
+            security: 'is_granted(\'ROLE_DISPATCHER\')'
+        ),
+        new Put(
+            uriTemplate: '/tasks/{id}/reschedule',
+            controller: TaskReschedule::class,
+            openapiContext: [
                 'summary' => 'Reschedules a Task',
-                'parameters' => [[
-                    'in' => 'body',
-                    'name' => 'N/A',
-                    'schema' => [
-                        'type' => 'object',
-                        'properties' => [
-                            'after' => ['type' => 'string', 'format' => 'date-time'],
-                            'before' => ['type' => 'string', 'format' => 'date-time']
-                        ]
-                    ],
-                    'style' => 'form'
-                ]]
-            ]
-        ],
-        'task_failure_reasons' => [
-            'method' => 'GET',
-            'path' => '/tasks/{id}/failure_reasons',
-            'controller' => TaskFailureReasons::class,
-            'security' => "is_granted('view', object)",
-            'openapi_context' => ['summary' => 'Retrieves possible failure reasons for a Task']
-        ],
-        'task_incident' => [
-            'method' => 'PUT',
-            'path' => '/tasks/{id}/incidents',
-            'controller' => TaskIncident::class,
-            'security' => "is_granted('view', object)",
-            'openapi_context' => ['summary' => 'Creates an incident for a Task']
-        ],
-        'task_events' => [
-            'method' => 'GET',
-            'path' => '/tasks/{id}/events',
-            'controller' => TaskEvents::class,
-            'security' => "is_granted('view', object)",
-            'openapi_context' => ['summary' => 'Retrieves events for a Task']
-        ],
-        'task_restore' => [
-            'method' => 'PUT',
-            'path' => '/tasks/{id}/restore',
-            'controller' => TaskRestore::class,
-            'denormalization_context' => ['groups' => ['task_operation']],
-            'access_control' => "is_granted('ROLE_DISPATCHER')",
-            'openapi_context' => ['summary' => 'Restores a Task']
-        ],
-        'put_bio_deliver' => [
-            'method' => 'PUT',
-            'path' => '/tasks/{id}/bio_deliver',
-            'security' => "is_granted('ROLE_OAUTH2_TASKS')",
-            'input' => BioDeliverInput::class,
-            'denormalization_context' => ['groups' => ['task_edit']]
-        ],
-        'get_task_context' => [
-            'method' => 'GET',
-            'path' => '/tasks/{id}/context',
-            'controller' => TaskContext::class,
-            'security' => "is_granted('view', object)"
-        ],
-        'put_task_append_to_comment' => [
-            'method' => 'PUT',
-            'path' => '/tasks/{id}/append_to_comment',
-            'controller' => TaskAppendToComment::class,
-            'security' => "is_granted('view', object)"
-        ]
+                'parameters' => [
+                    [
+                        'in' => 'body',
+                        'name' => 'N/A',
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'after' => [
+                                    'type' => 'string',
+                                    'format' => 'date-time'
+                                ],
+                                'before' => ['type' => 'string', 'format' => 'date-time']
+                            ]
+                        ],
+                        'style' => 'form'
+                    ]
+                ]
+            ],
+            denormalizationContext: ['groups' => ['task_operation']],
+            security: 'is_granted(\'ROLE_DISPATCHER\')'
+        ),
+        new Get(
+            uriTemplate: '/tasks/{id}/failure_reasons',
+            controller: TaskFailureReasons::class,
+            openapiContext: ['summary' => 'Retrieves possible failure reasons for a Task'],
+            security: 'is_granted(\'view\', object)'
+        ),
+        new Get(
+            uriTemplate: '/tasks/{id}/incidents',
+            controller: TaskIncidents::class,
+            openapiContext: ['summary' => 'Retrieves incidents for a Task'],
+            normalizationContext: ['groups' => ['incident']],
+            security: "is_granted('view', object)"
+        ),
+        new Put(
+            uriTemplate: '/tasks/{id}/incidents',
+            controller: TaskIncident::class,
+            openapiContext: ['summary' => 'Creates an incident for a Task'],
+            security: 'is_granted(\'view\', object)'
+        ),
+        new Get(
+            uriTemplate: '/tasks/{id}/events',
+            controller: TaskEvents::class,
+            openapiContext: ['summary' => 'Retrieves events for a Task'],
+            security: 'is_granted(\'view\', object)'
+        ),
+        new Put(
+            uriTemplate: '/tasks/{id}/restore',
+            controller: TaskRestore::class,
+            openapiContext: ['summary' => 'Restores a Task'],
+            denormalizationContext: ['groups' => ['task_operation']],
+            security: 'is_granted(\'ROLE_DISPATCHER\')'
+        ),
+        new Put(
+            uriTemplate: '/tasks/{id}/bio_deliver',
+            denormalizationContext: ['groups' => ['task_edit']],
+            security: 'is_granted(\'ROLE_OAUTH2_TASKS\')',
+            input: BioDeliverInput::class,
+            processor: BioDeliverProcessor::class
+        ),
+        new Get(
+            uriTemplate: '/tasks/{id}/context',
+            controller: TaskContext::class,
+            security: 'is_granted(\'view\', object)'
+        ),
+        new Put(
+            uriTemplate: '/tasks/{id}/append_to_comment',
+            controller: TaskAppendToComment::class,
+            security: 'is_granted(\'view\', object)'
+        ),
+        new GetCollection(
+            paginationEnabled: false,
+            paginationClientEnabled: true,
+            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_COURIER\')',
+            provider: TasksProvider::class
+        ),
+        new Post(
+            denormalizationContext: ['groups' => ['task_create']],
+            security: 'is_granted(\'ROLE_DISPATCHER\')',
+            validationContext: ['groups' => ['Default']]
+        ),
+        new Put(
+            uriTemplate: '/tasks/assign',
+            input: AssignTasksDto::class,
+            processor: AssignTasksProcessor::class,
+            openapiContext: [
+                'summary' => 'Assigns multiple Tasks at once to a messenger',
+                'parameters' => [
+                    [
+                        'in' => 'body',
+                        'name' => 'N/A',
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'username' => ['type' => 'string'],
+                                'tasks' => ['type' => 'array']
+                            ]
+                        ],
+                        'style' => 'form'
+                    ]
+                ]
+            ],
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
+            denormalizationContext: ['groups' => ['tasks_assign']],
+        ),
+        new Put(
+            uriTemplate: '/tasks/done',
+            controller: TaskBulkMarkAsDone::class,
+            openapiContext: [
+                'summary' => 'Mark multiple Tasks as done at once',
+                'parameters' => [
+                    [
+                        'in' => 'body',
+                        'name' => 'N/A',
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'tasks' => ['type' => 'array']
+                            ]
+                        ],
+                        'style' => 'form'
+                    ]
+                ]
+            ],
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
+            write: false
+        ),
+        new Put(
+            uriTemplate: '/tasks/images',
+            controller: AddImagesToTasks::class,
+            openapiContext: [
+                'summary' => '',
+                'parameters' => [
+                    [
+                        'in' => 'body',
+                        'name' => 'N/A',
+                        'schema' => [
+                            'type' => 'object',
+                            'properties' => [
+                                'tasks' => ['type' => 'array'],
+                                'images' => ['type' => 'array']
+                            ]
+                        ],
+                        'style' => 'form'
+                    ]
+                ]
+            ],
+            denormalizationContext: ['groups' => ['tasks_images']],
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
+            write: false,
+            deserialize: false
+        )
     ],
-    attributes: ['normalization_context' => ['groups' => ['task', 'delivery', 'address']]]
+    normalizationContext: ['groups' => ['task', 'delivery', 'address']]
 )]
-#[ApiFilter(TaskOrderFilter::class)]
-#[ApiFilter(TaskDateFilter::class, properties: ['date'])]
-#[ApiFilter(TaskFilter::class)]
-#[ApiFilter(AssignedFilter::class, properties: ['assigned'])]
-#[ApiFilter(OrganizationFilter::class, properties: ['organization'])]
+#[ApiFilter(filterClass: TaskOrderFilter::class)]
+#[ApiFilter(filterClass: TaskDateFilter::class, properties: ['date'])]
+#[ApiFilter(filterClass: TaskFilter::class)]
+#[ApiFilter(filterClass: AssignedFilter::class, properties: ['assigned'])]
+#[ApiFilter(filterClass: OrganizationFilter::class, properties: ['organization'])]
 #[UniqueEntity(fields: ['organization', 'ref'], errorPath: 'ref')]
 #[AssertTask]
-class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwareInterface
+class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwareInterface, TimeSlotAwareInterface
 {
     use TaggableTrait;
     use OrganizationAwareTrait;
@@ -334,6 +347,8 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
      * We actually don't expose the 'packages' property in the API, we use aggregates :
      * - DROPOFF : all packages aggregated by package name
      * - PICKUP : all packages of the delivery aggregated by package name
+     *
+     * @use PackagesAwareTrait<TaskPackage>
     */
     use PackagesAwareTrait;
     use EDIFACTMessageAwareTrait;
@@ -357,7 +372,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     private $id;
 
     #[Assert\Choice(['PICKUP', 'DROPOFF'])]
-    #[Groups(['task', 'task_create', 'task_edit', 'delivery_create', 'pricing_deliveries', 'delivery'])]
+    #[Groups(['task', 'task_create', 'task_edit', 'delivery_create', 'delivery'])]
     private $type = self::TYPE_DROPOFF;
 
     #[Groups(['task', 'delivery'])]
@@ -365,9 +380,12 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
     private $delivery;
 
+    /**
+     * @var Address
+     */
     #[Assert\NotNull]
     #[Assert\Valid]
-    #[Groups(['task', 'task_create', 'task_edit', 'address', 'address_create', 'delivery_create', 'pricing_deliveries'])]
+    #[Groups(['task', 'task_create', 'task_edit', 'address', 'address_create', 'delivery_create'])]
     private $address;
 
     private $doneAfter;
@@ -436,9 +454,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
      * We actually don't expose the 'weight' property in the API, we expose :
      * - DROPOFF : weight property
      * - PICKUP : sum of weight of all the dropoffs
-     * @var int
+     * @var int|null
      */
-    #[Groups(['task', 'task_create', 'task_edit', 'delivery', 'delivery_create', 'pricing_deliveries'])]
+    #[Groups(['task', 'task_create', 'task_edit', 'delivery', 'delivery_create'])]
     private $weight;
 
     #[Groups(['task'])]
@@ -456,6 +474,8 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     #[Groups(['task'])]
     private $traveledDistanceMeter = 0;
 
+    // Denormalized manually inside the TaskNormalizer
+    private ?TimeSlot $timeSlot = null;
 
     public function __construct()
     {
@@ -465,14 +485,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $this->edifactMessages = new ArrayCollection();
         $this->incidents = new ArrayCollection();
     }
-
-    /**
-    * Non-DB-mapped property to store packages and weight aggregates (see on $weight and $packages property for aggregates definitions)
-    * // FIXME : make annotation works with PHPStan
-    * ['weight' => int|null, 'packages' => ['name' => string, 'type' => string, 'quantity' => int]|null]
-    */
-    private $prefetchedPackagesAndWeight;
-
 
     public function getId()
     {
@@ -578,7 +590,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
      * @return Task
      */
     #[SerializedName('after')]
-    #[Groups(['task', 'task_create', 'task_edit', 'delivery', 'delivery_create', 'pricing_deliveries'])]
+    #[Groups(['task', 'task_create', 'task_edit', 'delivery', 'delivery_create'])]
     public function setAfter(?\DateTime $doneAfter)
     {
         $this->doneAfter = $doneAfter;
@@ -587,7 +599,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     }
 
     #[SerializedName('before')]
-    #[Groups(['task', 'task_create', 'task_edit', 'delivery', 'delivery_create', 'pricing_deliveries'])]
+    #[Groups(['task', 'task_create', 'task_edit', 'delivery', 'delivery_create'])]
     public function getBefore()
     {
         return $this->doneBefore;
@@ -664,7 +676,10 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         if ($event->getName() === 'task:failed' && $this->containsEventWithName('task:failed')) {
             return;
         }
-
+        if ($event->getName() === 'task:updated' && $this->containsEventWithName('task:updated')) {
+            return;
+        }
+        
         $this->events->add($event);
     }
 
@@ -675,7 +690,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @return Task
      */
-    public function setPrevious(Task $previous = null)
+    public function setPrevious(?Task $previous = null)
     {
         $this->previous = $previous;
 
@@ -694,7 +709,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @return Task
      */
-    public function setNext(Task $next = null)
+    public function setNext(?Task $next = null)
     {
         $this->next = $next;
 
@@ -736,7 +751,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
      * @param \DateTime|null $date
      * @return void
      */
-    public function assignTo(User $courier, \DateTime $date = null)
+    public function assignTo(User $courier, ?\DateTime $date = null)
     {
         if (null === $date) {
             @trigger_error('Not specifying a date when calling assignTo() is deprecated', E_USER_DEPRECATED);
@@ -785,7 +800,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @return Task
      */
-    public function setGroup(TaskGroup $group = null)
+    public function setGroup(?TaskGroup $group = null)
     {
         $this->group = $group;
 
@@ -1041,6 +1056,9 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         return $this;
     }
 
+    /**
+     * @return ArrayCollection<TaskPackage>
+     */
     public function getPackages()
     {
         return $this->packages;
@@ -1118,10 +1136,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         })->toArray());
     }
 
-    /**
-     * @return int
-     */
-    public function getWeight()
+    public function getWeight() : int|null
     {
         return $this->weight;
     }
@@ -1140,48 +1155,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     public function addToStore(Store $store)
     {
         $this->setOrganization($store->getOrganization());
-    }
-    /**
-     * @return stdClass
-     */
-    public function toExpressionLanguageObject()
-    {
-        $taskObject = new \stdClass();
-
-        $taskObject->type = $this->getType();
-        $taskObject->address = $this->getAddress();
-        $taskObject->createdAt = $this->getCreatedAt();
-        $taskObject->after = $this->getAfter();
-        $taskObject->before = $this->getBefore();
-        $taskObject->doorstep = $this->isDoorstep();
-
-        return $taskObject;
-    }
-
-    public function toExpressionLanguageValues()
-    {
-        //FIXME: to be removed?; for now it might still be needed to maintain backwards compatibility
-        // for move information see app/DoctrineMigrations/Version20250304220001.php
-        $values = Delivery::toExpressionLanguageValues($this->getDelivery());
-
-        $emptyObject = new \stdClass();
-        $emptyObject->address = null;
-        $emptyObject->createdAt = null;
-        $emptyObject->after = null;
-        $emptyObject->before = null;
-        $emptyObject->doorstep = false;
-
-        $thisObj = $this->toExpressionLanguageObject();
-
-        $values['distance'] = -1;
-        $values['weight'] = $this->getWeight();
-        $values['pickup'] = $this->isPickup() ? $thisObj : $emptyObject;
-        $values['dropoff'] = $this->isDropoff() ? $thisObj : $emptyObject;
-        $values['packages'] = new PackagesResolver($this);
-
-        $values['task'] = $thisObj;
-
-        return $values;
     }
 
     /**
@@ -1208,26 +1181,6 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     public function addIncident(Incident $incident): void
     {
         $this->incidents[] = $incident;
-    }
-
-    /**
-     * Get the value of prefetchedPackagesAndWeight
-     */
-    public function getPrefetchedPackagesAndWeight()
-    {
-        return $this->prefetchedPackagesAndWeight;
-    }
-
-    /**
-     * Set the value of prefetchedPackagesAndWeight
-     *
-     * @return  self
-     */
-    public function setPrefetchedPackagesAndWeight($prefetchedPackagesAndWeight)
-    {
-        $this->prefetchedPackagesAndWeight = $prefetchedPackagesAndWeight;
-
-        return $this;
     }
 
     public static function fixTimeWindow(Task $task)
@@ -1365,4 +1318,15 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         $this->setMetadata($metadata);
         return $this;
     }
+
+    public function getTimeSlot(): ?TimeSlot
+    {
+        return $this->timeSlot;
+    }
+
+    public function setTimeSlot(?TimeSlot $timeSlot): void
+    {
+        $this->timeSlot = $timeSlot;
+    }
+
 }

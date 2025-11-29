@@ -3,7 +3,6 @@ Feature: Manage shops
   Scenario: Retrieve a store via restaurants endpoint
     Given the current time is "2021-12-22 13:00:00"
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | shops.yml           |
@@ -31,10 +30,12 @@ Feature: Manage shops
             "latitude":48.864577,
             "longitude":2.333338
           },
+          "provider": null,
           "streetAddress":"272, rue Saint Honoré 75001 Paris 1er",
           "telephone":null,
           "name":null,
-          "description": null
+          "description": null,
+          "contactName": null
         },
         "state":"normal",
         "telephone":null,
@@ -68,6 +69,7 @@ Feature: Manage shops
           "deliveryMethod":["http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"]
         },
         "isOpen":true,
+        "nextOpeningDate":"@string@.isDateTime()",
         "hub":null,
         "loopeatEnabled":false,
         "tags":@array@,

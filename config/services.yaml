@@ -5,8 +5,6 @@ imports:
   - { resource: services/validators.yml }
   - { resource: services/commands.yml }
   - { resource: services/doctrine_extensions.yml }
-  - { resource: services/message_bus/order.yml }
-  - { resource: services/message_bus/task.yml }
 
 # Learn more about services, parameters and containers at
 # http://symfony.com/doc/current/book/service_container.html
@@ -73,6 +71,8 @@ parameters:
   business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
   transporters_config: '%env(json:TRANSPORTERS_CONFIG)%'
   billing_enabled: '%env(bool:BILLING_ENABLED)%'
+  package_delivery_ui_price_breakdown_enabled_default: true
+  package_delivery_ui_price_breakdown_enabled: '%env(default:package_delivery_ui_price_breakdown_enabled_default:bool:PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED)%'
 
 services:
 
@@ -82,6 +82,10 @@ services:
     public: false
     bind:
       $locale: "%env(COOPCYCLE_LOCALE)%"
+      $country: "%country_iso%"
+      $environment: "%kernel.environment%"
+      $packageDeliveryUiPriceBreakdownEnabled: "%package_delivery_ui_price_breakdown_enabled%"
+      $taxIncl: '%env(bool:COOPCYCLE_TAX_INCL)%'
 
   # For some cache pools, want *STABLE* cache keys between deploys.
   # To achieve this, we *EXPLICITLY* set a namespace,
@@ -121,12 +125,21 @@ services:
     resource: '../src/Controller'
     tags: ['controller.service_arguments']
 
-  AppBundle\Api\DataTransformer\:
-    resource: '../src/Api/DataTransformer/*'
+  # AppBundle\Api\DataTransformer\:
+  #   resource: '../src/Api/DataTransformer/*'
+
+  AppBundle\Api\State\:
+    resource: '../src/Api/State/*'
 
   AppBundle\Api\Filter\:
     resource: '../src/Api/Filter/*'
     tags: ['api_platform.filter']
+
+  AppBundle\ExpressionLanguage\:
+    resource: '../src/ExpressionLanguage/*'
+
+  AppBundle\Pricing\:
+    resource: '../src/Pricing/*'
 
   coopcycle.repository.restaurant: '@AppBundle\Entity\RestaurantRepository'
 
@@ -211,6 +224,14 @@ services:
   League\Flysystem\Filesystem $deliveryImportsFilesystem: '@delivery_imports_filesystem'
   Kreait\Firebase\Contract\Messaging $firebaseMessaging: '@kreait_firebase.coopcycle.messaging'
   Sylius\Component\Order\Processor\OrderProcessorInterface $orderPaymentProcessor: '@sylius.order_processing.order_payment_processor'
+  ApiPlatform\State\ProcessorInterface $persistProcessor: '@api_platform.doctrine.orm.state.persist_processor'
+  Sylius\Component\Resource\Factory\FactoryInterface $orderItemFactory: '@sylius.factory.order_item'
+  Sylius\Component\Resource\Repository\RepositoryInterface $customerRepository: '@sylius.repository.customer'
+  Sylius\Component\Resource\Factory\FactoryInterface $customerFactory: '@sylius.factory.customer'
+  Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorageFactory: '@session.storage.factory.native'
+  Sylius\Component\Promotion\Checker\Eligibility\PromotionEligibilityCheckerInterface $promotionExpirationChecker: '@promotion.expiration_checker'
+  Sylius\Component\Promotion\Checker\Eligibility\PromotionCouponEligibilityCheckerInterface $promotionCouponExpirationChecker: '@promotion_coupon.expiration_checker'
+  Symfony\Contracts\HttpClient\HttpClientInterface $pawapayClient: '@pawapay.client'
 
   AppBundle\Routing\FoodtechEnabledAwareLoader:
     arguments:
@@ -239,15 +260,11 @@ services:
   AppBundle\LoopEat\Context: ~
 
   AppBundle\LoopEat\ContextInitializer:
-    arguments:
-      $processingFee: "%env(int:LOOPEAT_PROCESSING_FEE)%"
-      $processingFeeBehavior: "%env(LOOPEAT_PROCESSING_FEE_BEHAVIOR)%"
     tags:
       - { name: monolog.logger, channel: loopeat }
 
   AppBundle\Controller\RestaurantController:
     arguments:
-      $orderManager: '@sylius.manager.order'
       $validator: '@validator'
       $productRepository: '@sylius.repository.product'
       $orderItemRepository: '@sylius.repository.order_item'
@@ -506,26 +523,22 @@ services:
         label: 'Is items total above'
         form_type: AppBundle\Form\Sylius\Promotion\Rule\IsItemsTotalAboveConfigurationType
 
+  AppBundle\Sylius\Product\ProductOptionValueFactory:
+    decorates: sylius.factory.product_option_value
+    public: false
+
+  AppBundle\Sylius\Product\ProductVariantFactory:
+    decorates: sylius.factory.product_variant
+    public: false
+
   coopcycle.sylius.factory.product_variant:
     class: AppBundle\Sylius\Product\ProductVariantFactory
-    decorates: sylius.factory.product_variant
-    arguments:
-      - "@coopcycle.sylius.factory.product_variant.inner"
-      - "@sylius.repository.product"
-      - "@sylius.repository.tax_category"
-      - "@coopcycle.settings_manager"
-      - "@translator"
-    public: false
 
   AppBundle\Sylius\Order\OrderFactory:
     decorates: sylius.factory.order
     arguments:
       $factory: '@AppBundle\Sylius\Order\OrderFactory.inner'
       $channelContext: "@sylius.context.channel"
-      $orderItemFactory: "@sylius.factory.order_item"
-      $productVariantFactory: "@sylius.factory.product_variant"
-      $orderItemQuantityModifier: "@sylius.order_item_quantity_modifier"
-      $orderModifier: "@sylius.order_modifier"
     public: false
 
   coopcycle.sylius.product_variant_resolver.lazy:
@@ -578,6 +591,9 @@ services:
         - '@AppBundle\ExpressionLanguage\PricePercentageExpressionLanguageProvider'
         - '@AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider'
 
+  # Make our custom ExpressionLanguage the default
+  Symfony\Component\ExpressionLanguage\ExpressionLanguage: '@AppBundle\ExpressionLanguage\ExpressionLanguage'
+
   AppBundle\EventListener\RegistrationListener:
     tags:
       - { name: kernel.event_subscriber }
@@ -589,6 +605,7 @@ services:
 
   AppBundle\EventListener\SyliusIdGeneratorSubscriber:
     tags:
+      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
       - { name: doctrine.event_subscriber, connection: default }
 
   AppBundle\EventListener\LogoutSubscriber: ~
@@ -596,14 +613,11 @@ services:
   AppBundle\EventListener\TaggableSubscriber:
     arguments: [ '@coopcycle.tag_manager' ]
     tags:
+      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
       - { name: doctrine.event_subscriber, connection: default }
       - { name: monolog.logger, channel: coopcycle.tagging }
 
   AppBundle\Service\DeliveryManager:
-    arguments:
-      $expressionLanguage: "@coopcycle.expression_language"
-    tags:
-      - { name: monolog.logger, channel: fee_calculation }
 
   AppBundle\Utils\PreparationTimeCalculator:
     arguments:
@@ -726,6 +740,23 @@ services:
   sylius.repository.order:
     alias: AppBundle\Entity\Sylius\OrderRepository
 
+  AppBundle\Entity\Sylius\ProductOptionRepository:
+    factory: [ '@doctrine.orm.default_entity_manager', getRepository ]
+    arguments:
+      - AppBundle\Entity\Sylius\ProductOption
+    calls:
+      - method: setEntityManager
+        arguments: [ '@doctrine.orm.default_entity_manager' ]
+      - method: setProductRepository
+        arguments: [ '@sylius.repository.product' ]
+      - method: setProductOptionFactory
+        arguments: [ '@sylius.factory.product_option' ]
+      - method: setLocaleProvider
+        arguments: [ '@sylius.locale_provider' ]
+
+  sylius.repository.product_option:
+    alias: AppBundle\Entity\Sylius\ProductOptionRepository
+
   AppBundle\Entity\TaskListRepository: ~
 
   AppBundle\Entity\TourRepository: ~
@@ -742,7 +773,7 @@ services:
     autowire: false
     autoconfigure: false
     public: true
-    parent: ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter
+    parent: 'api_platform.doctrine.orm.date_filter'
     arguments:
       $properties: []
 
@@ -801,58 +832,48 @@ services:
 
   # needs to be run before TaskSubscriber as it reflects Tour.tasks changes into task.assignedTo attribute
   AppBundle\Doctrine\EventSubscriber\TourSubscriber:
-    arguments:
-      $eventBus: '@event_bus'
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
+      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
       - { name: doctrine.event_subscriber, connection: default, priority: 48 }
 
   AppBundle\Doctrine\EventSubscriber\TaskSubscriber:
-    arguments:
-      $eventBus: '@event_bus'
-      $eventStore: '@coopcycle.domain.event_store'
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
-      - { name: doctrine.event_subscriber, connection: default, priority: 32 }
 
   AppBundle\Doctrine\EventSubscriber\TaskCollectionSubscriber:
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
+      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
       - { name: doctrine.event_subscriber, connection: default, priority: 16 }
 
   AppBundle\Doctrine\EventSubscriber\TaskListSubscriber:
-    arguments:
-      $eventBus: '@event_bus'
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
+      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
       - { name: doctrine.event_subscriber, connection: default, priority: 16 }
 
   AppBundle\Doctrine\EventSubscriber\OrganizationSubscriber:
     tags:
-      - { name: doctrine.event_subscriber }
-
-  AppBundle\Doctrine\EventSubscriber\OrderSubscriber:
-    tags:
+      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
       - { name: doctrine.event_subscriber }
 
   AppBundle\Doctrine\EventSubscriber\SearchDeliveriesSubscriber:
     tags:
       - { name: monolog.logger, channel: coopcycle.search }
+      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
       - { name: doctrine.event_subscriber }
 
   AppBundle\Doctrine\EventSubscriber\DeliverySubscriber:
     tags:
+      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
       - { name: doctrine.event_subscriber }
 
   # needs to be run last to take into account all changes
   AppBundle\Doctrine\EventSubscriber\LoggerSubscriber:
     tags:
+      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
       - { name: doctrine.event_subscriber, priority: -100 }
-
-  AppBundle\Api\EventSubscriber\SubresourceDenyAccessListener:
-    arguments:
-        $denyAccessListener: '@api_platform.security.listener.request.deny_access'
-    tags: [ 'kernel.event_subscriber' ]
 
   AppBundle\Api\EventSubscriber\DeliverySubscriber:
     tags: [ 'kernel.event_subscriber' ]
@@ -891,6 +912,7 @@ services:
 
   AppBundle\Doctrine\EventSubscriber\ShopsEventsForTypesenseSubscriber:
     tags:
+      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
       - { name: doctrine.event_subscriber }
 
   AppBundle\Action\Settings:
@@ -912,6 +934,7 @@ services:
     arguments:
       $confirmationEnabled: '%nucleos_profile.registration.confirmation.enabled%'
       $mailer: '@nucleos_profile.mailer'
+      $constraintViolationListNormalizer: '@api_platform.problem.normalizer.constraint_violation_list'
 
   AppBundle\Action\ResettingSendEmail:
     public: true
@@ -938,11 +961,6 @@ services:
     tags:
       - { name: monolog.logger, channel: stripe }
 
-  AppBundle\Action\Delivery\CalculateRetailPrice:
-    public: true
-    arguments:
-      $state: "%region_iso%"
-
   AppBundle\Action\CentrifugoToken:
     public: true
     arguments:
@@ -958,13 +976,6 @@ services:
     public: true
     arguments:
       $centrifugoNamespace: '%centrifugo_namespace%'
-
-  AppBundle\Action\Urbantz\ReceiveWebhook:
-    public: true
-    arguments:
-      $country: "%country_iso%"
-    tags:
-      - { name: monolog.logger, channel: urbantz }
 
   AppBundle\Action\GoogleSignIn:
     public: true
@@ -1000,62 +1011,28 @@ services:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 5 }
 
-  AppBundle\Api\DataProvider\RestaurantCollectionDataProvider:
-    parent: 'api_platform.doctrine.orm.collection_data_provider'
-    tags:
-      - { name: 'api_platform.collection_data_provider', priority: 2 }
-    calls:
-      - setRestaurantFilter: ['@coopcycle.utils.restaurant_filter']
-      - setTimingRegistry: ['@AppBundle\Service\TimingRegistry']
-    autoconfigure: false
-    autowire: false
-    public: false
-
-  AppBundle\Api\DataProvider\TaskListCollectionDataProvider:
-    parent: 'api_platform.doctrine.orm.collection_data_provider'
-    tags:
-      - { name: 'api_platform.collection_data_provider', priority: 2 }
-    calls:
-      - setTokenExtractor: ['@AppBundle\Security\TokenStoreExtractor']
-    autoconfigure: false
-    autowire: false
-    public: false
-
-  AppBundle\Api\DataProvider\TaskCollectionDataProvider:
+  AppBundle\Api\State\TasksProvider:
     arguments:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
-    tags:
-      - { name: 'api_platform.collection_data_provider', priority: 2 }
 
   AppBundle\Api\DataProvider\RestaurantPledgeFilterExtension:
     tags:
       - { name: 'api_platform.doctrine.orm.query_extension.collection', priority: -18 }
 
-  AppBundle\Api\DataProvider\StoreAddressesSubresourceDataProvider:
-    arguments:
-      $requestStack: '@request_stack'
-      $doctrine: '@doctrine'
-    tags:
-      - { name: 'api_platform.subresource_data_provider', priority: 2 }
-    autoconfigure: false
-
-  AppBundle\Api\DataProvider\UrbantzWebhookEventDataProvider: ~
-
-  AppBundle\Api\DataProvider\TaxRateCollectionDataProvider:
-    tags: [ { name: 'api_platform.collection_data_provider', priority: 2 } ]
-    autoconfigure: false
-
-  AppBundle\Api\DataProvider\InvoiceLineItemGroupedByOrganizationCollectionDataProvider:
+  AppBundle\Api\State\InvoiceLineItemsGroupedByOrganizationProvider:
     arguments:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
-    tags:
-      - { name: 'api_platform.collection_data_provider', priority: 2 }
 
-  AppBundle\Api\DataProvider\InvoiceLineItemCollectionDataProvider:
+  AppBundle\Api\State\InvoiceLineItemsProvider:
     arguments:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
-    tags:
-      - { name: 'api_platform.collection_data_provider', priority: 2 }
+
+  AppBundle\Api\State\MyOrdersProvider:
+    arguments:
+      $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
+  AppBundle\Api\Dto\DeliveryMapper:
+  AppBundle\Api\Dto\TaskMapper:
 
   AppBundle\Utils\RestaurantFilter:
     arguments:
@@ -1112,14 +1089,36 @@ services:
 
   AppBundle\Mjml\MjmlServerRenderer: ~
 
-  AppBundle\Api\DataTransformer\CartItemInputDataTransformer:
+  AppBundle\Api\State\CartItemProcessor:
     arguments:
       $orderItemFactory: "@sylius.factory.order_item"
       $variantResolver: "@coopcycle.sylius.product_variant_resolver.lazy"
+    tags: [ 'api_platform.state_processor' ]
 
-  AppBundle\Api\DataTransformer\CartSessionInputDataTransformer:
+  AppBundle\Api\State\CartSessionProcessor:
     arguments:
       $orderFactory: "@sylius.factory.order"
+    tags: [ 'api_platform.state_processor' ]
+
+  AppBundle\Api\State\CalculateRetailPriceProcessor:
+    arguments:
+      $state: "%region_iso%"
+    tags: [ 'api_platform.state_processor' ]
+
+  AppBundle\Api\State\EvaluatePricingRuleProcessor:
+    tags: [ 'api_platform.state_processor' ]
+
+  AppBundle\Api\State\PricingRuleSetProcessor:
+    arguments:
+      $decorated: '@api_platform.doctrine.orm.state.persist_processor'
+    tags: [ 'api_platform.state_processor' ]
+
+  AppBundle\Api\State\UrbantzWebhookProcessor:
+    arguments:
+      $country: "%country_iso%"
+    tags:
+      - { name: monolog.logger, channel: urbantz }
+      - { name: api_platform.state_processor }
 
   AppBundle\Twig\CoopCycleExtension:
     arguments:
@@ -1151,6 +1150,10 @@ services:
       - { name: monolog.logger, channel: stripe }
 
   AppBundle\Service\MercadopagoManager: ~
+
+  AppBundle\Service\PawapayManager:
+    arguments:
+      $countryCode: '%env(default::PAWAPAY_COUNTRY_CODE)%'
 
   AppBundle\Sylius\Order\ReceiptGenerator:
     arguments:
@@ -1184,18 +1187,11 @@ services:
 
   AppBundle\MessageHandler\EmailHandler: ~
 
-  AppBundle\Api\Swagger\SwaggerDecorator:
-      decorates: 'api_platform.openapi.factory'
-      arguments: [ '@AppBundle\Api\Swagger\SwaggerDecorator.inner' ]
-      autoconfigure: false
-
   AppBundle\MessageHandler\ImportTasksHandler: ~
 
   AppBundle\MessageHandler\CalculateTaskDistanceHandler: ~
 
   AppBundle\MessageHandler\CalculateRouteHandler:
-    arguments:
-      $eventBus: '@simple_bus.event_bus'
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
 
@@ -1283,6 +1279,7 @@ services:
   AppBundle\Payment\Gateway\Edenred: ~
   AppBundle\Payment\Gateway\MercadoPago: ~
   AppBundle\Payment\Gateway\Paygreen: ~
+  AppBundle\Payment\Gateway\Pawapay: ~
 
   AppBundle\Payment\Gateway:
     arguments:
@@ -1291,6 +1288,7 @@ services:
         edenred: '@AppBundle\Payment\Gateway\Edenred'
         mercadopago: '@AppBundle\Payment\Gateway\MercadoPago'
         paygreen: '@AppBundle\Payment\Gateway\Paygreen'
+        pawapay: '@AppBundle\Payment\Gateway\Pawapay'
 
   AppBundle\Security\BusinessVoter:
     tags: [ 'security.voter' ]
@@ -1450,12 +1448,6 @@ services:
       $locale: '%env(COOPCYCLE_LOCALE)%'
       $legacyTaxes: '%env(bool:COOPCYCLE_LEGACY_TAXES)%'
 
-  AppBundle\Api\DataPersister\UrbantzWebhookDataPersister: ~
-
-  AppBundle\Api\DataPersister\DeleteValidationAwareDataPersister:
-    arguments:
-      $dataPersister: '@api_platform.doctrine.orm.data_persister'
-
   AppBundle\Security\BearerTokenAuthenticator:
     abstract: true
 
@@ -1560,8 +1552,6 @@ services:
     arguments:
       $fleetKey: '%tile38_fleet_key%'
 
-  AppBundle\Pricing\PricingManager: ~
-
   AppBundle\Form\BusinessAccountRegistrationFlow:
     autoconfigure: true
 
@@ -1612,7 +1602,7 @@ services:
 
   AppBundle\Paygreen\EnvironmentFactory:
     arguments:
-      $environment: '%env(PAYGREEN_ENVIRONMENT)%'
+      $paygreenEnvironment: '%env(PAYGREEN_ENVIRONMENT)%'
 
   Paygreen\Sdk\Payment\V3\Environment:
     factory: '@AppBundle\Paygreen\EnvironmentFactory'
@@ -1652,3 +1642,87 @@ services:
       $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
 
   AppBundle\Utils\Defaults: ~
+
+  AppBundle\Api\Filter\AssignedFilter:
+    arguments:
+      $properties: { assigned: ~ }
+      $security: '@security.helper'
+    tags: [ 'api_platform.filter' ]
+
+  AppBundle\Fixtures\DatabasePurger: ~
+
+  AppBundle\Domain\EventStore: ~
+
+  AppBundle\MessageHandler\Task\SendSms:
+    arguments:
+      - '@coopcycle.settings_manager'
+      - '@sylius.repository.order'
+      - '@messenger.default_bus'
+      - '@libphonenumber\PhoneNumberUtil'
+      - '@router'
+      - '@translator'
+      - '%secret%'
+
+  AppBundle\MessageHandler\Task\NotifyUrbantz:
+    arguments:
+      - '@urbantz.client'
+      - '@doctrine.orm.default_entity_manager'
+      - '%secret%'
+      - '@monolog.logger.urbantz'
+
+  AppBundle\MessageHandler\Task\NotifyLoopeat:
+    arguments:
+      - '@AppBundle\LoopEat\Client'
+      - '@monolog.logger.loopeat'
+
+
+  AppBundle\Session\NativeSessionStorageFactory:
+    decorates: session.storage.factory.native
+    arguments: ['@.inner']
+
+  AppBundle\Transporter\Proximus\ProximusImporter:
+    lazy: true
+    arguments:
+      - "%env(PROXIMUS_SYNC_URI)%"
+
+  AppBundle\Transporter\Proximus\ProximusTransformer:
+    lazy: true
+
+  hwi_oauth.user.provider.entity:
+    class: HWI\Bundle\OAuthBundle\Security\Core\User\EntityUserProvider
+    arguments:
+      $class: AppBundle\Entity\User
+      $properties:
+        'facebook': 'facebook'
+
+  sentry.callback.before_send:
+    class: 'AppBundle\Service\Sentry'
+    factory: ['@AppBundle\Service\Sentry', "getBeforeSend"]
+
+  AppBundle\Api\LegacyEntrypointAction:
+    decorates: api_platform.action.entrypoint
+    arguments: ['@.inner']
+
+  sylius.promotion_end_eligibility_checker:
+    class: AppBundle\Sylius\Promotion\Checker\Eligibility\PromotionEndEligibilityChecker
+
+  promotion_coupon.expiration_checker:
+    class: Sylius\Component\Promotion\Checker\Eligibility\CompositePromotionCouponEligibilityChecker
+    arguments:
+      - [ "@sylius.promotion_coupon_duration_eligibility_checker",
+          "@sylius.checker.promotion_coupon.duration_eligibility" ]
+
+  promotion.expiration_checker:
+    class: Sylius\Component\Promotion\Checker\Eligibility\CompositePromotionEligibilityChecker
+    arguments:
+      - [ "@sylius.promotion_archival_eligibility_checker",
+          "@sylius.promotion_end_eligibility_checker",
+          "@sylius.promotion_usage_limit_eligibility_checker" ]
+
+  AppBundle\Payment\PawapayClientFactory: ~
+
+  pawapay.client:
+    class: Symfony\Contracts\HttpClient\HttpClientInterface
+    factory: '@AppBundle\Payment\PawapayClientFactory'
+    arguments: ['%env(PAWAPAY_API_URL)%']
+    lazy: true

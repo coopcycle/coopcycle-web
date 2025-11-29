@@ -2,7 +2,6 @@ Feature: Time slots
 
   Scenario: Retrieve time slot choices
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the current time is "2020-04-02 11:00:00"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -53,7 +52,6 @@ Feature: Time slots
 
   Scenario: Delete time slot fails
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |

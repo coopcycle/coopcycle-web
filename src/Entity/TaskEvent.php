@@ -2,10 +2,13 @@
 
 namespace AppBundle\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiResource(collectionOperations: [], itemOperations: ['get' => ['method' => 'GET', 'security' => "is_granted('view', object.getTask())"]])]
+#[ApiResource(operations: [new Get(security: 'is_granted(\'view\', object.getTask())')])]
 class TaskEvent
 {
     private $id;
@@ -28,7 +31,7 @@ class TaskEvent
         $name,
         array $data = [],
         array $metadata = [],
-        \DateTime $createdAt = null)
+        ?\DateTime $createdAt = null)
     {
         if (null === $createdAt) {
             $createdAt = new \DateTime();

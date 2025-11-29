@@ -1,3 +1,0 @@
-#!/usr/bin/env sh
-
-docker compose exec php php vendor/bin/behat "$@"

@@ -6,6 +6,7 @@ use AppBundle\Edenred\Client as EdenredClient;
 use AppBundle\Payment\GatewayResolver;
 use AppBundle\Service\LoggingUtils;
 use AppBundle\Service\PaygreenManager;
+use AppBundle\Service\PawapayManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Payment\Context as PaymentContext;
@@ -23,25 +24,19 @@ use Webmozart\Assert\Assert;
 
 final class OrderPaymentProcessor implements OrderProcessorInterface
 {
-    private $paymentMethodRepository;
-    private $paymentFactory;
-    private $currencyContext;
-
     public function __construct(
-        PaymentMethodRepositoryInterface $paymentMethodRepository,
-        PaymentFactoryInterface $paymentFactory,
-        CurrencyContextInterface $currencyContext,
+        private PaymentMethodRepositoryInterface $paymentMethodRepository,
+        private PaymentFactoryInterface $paymentFactory,
+        private CurrencyContextInterface $currencyContext,
         private PaymentContext $paymentContext,
         private EdenredClient $edenredClient,
         private StripeManager $stripeManager,
         private PaygreenManager $paygreenManager,
+        private PawapayManager $pawapayManager,
         private GatewayResolver $gatewayResolver,
         private LoggerInterface $checkoutLogger,
         private LoggingUtils $loggingUtils)
     {
-        $this->paymentMethodRepository = $paymentMethodRepository;
-        $this->paymentFactory = $paymentFactory;
-        $this->currencyContext = $currencyContext;
     }
 
     /**
@@ -65,10 +60,20 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
             return;
         }
 
-        $targetStates = [
-            OrderInterface::STATE_CART => PaymentInterface::STATE_CART,
-            OrderInterface::STATE_NEW  => PaymentInterface::STATE_NEW
-        ];
+        if ($order->isFoodtech()) {
+            $targetStates = [
+                OrderInterface::STATE_CART => PaymentInterface::STATE_CART,
+                OrderInterface::STATE_NEW  => PaymentInterface::STATE_NEW
+            ];
+        } else {
+            // non-foodtech/Package Delivery orders
+            $targetStates = [
+                OrderInterface::STATE_CART => PaymentInterface::STATE_CART,
+                OrderInterface::STATE_NEW  => PaymentInterface::STATE_NEW,
+                // Allow to have an "accepted" order with incomplete payment
+                OrderInterface::STATE_ACCEPTED  => PaymentInterface::STATE_NEW
+            ];
+        }
 
         if (!in_array($order->getState(), array_keys($targetStates))) {
             return;
@@ -80,7 +85,7 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
             return $payment->getState() === $targetState;
         });
 
-        /** @var Collection */
+        /** @var Collection $paymentsToKeep */
         $paymentsToKeep = new ArrayCollection();
 
         switch ($this->paymentContext->getMethod()) {
@@ -142,6 +147,12 @@ final class OrderPaymentProcessor implements OrderProcessorInterface
                         break;
                     case 'paygreen':
                         $this->paygreenManager->createPaymentOrder($cardPayment);
+                        break;
+                    // FIXME
+                    // Actually for pawaPay it should not be "CARD"
+                    // but something else like "MOBILE_PAYMENT"
+                    case 'pawapay':
+                        $this->pawapayManager->createPaymentPage($cardPayment);
                         break;
                 }
                 $paymentsToKeep->add($cardPayment);

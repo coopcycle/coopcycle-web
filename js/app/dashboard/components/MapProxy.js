@@ -10,8 +10,8 @@ import LeafletPopupContent from './LeafletPopupContent'
 import CourierPopupContent from './CourierPopupContent'
 import { createLeafletIcon } from '../../components/Avatar'
 import { isMarkerInsidePolygon } from '../utils'
-import { render } from 'react-dom'
 import { createRoot } from 'react-dom/client'
+import { taskMapIcon } from '../../styles';
 
 const tagsColor = tags => {
   const tag = _.first(tags)
@@ -34,30 +34,6 @@ const taskColor = (task, selected, useAvatarColors, polylineEnabled = {}, tourPo
   } else {
     return '#777'
   }
-}
-
-const taskIcon = task => {
-
-  switch (task.status) {
-  case 'TODO':
-    if (task.type === 'PICKUP') {
-      return 'cube'
-    }
-    if (task.type === 'DROPOFF') {
-      return 'arrow-down'
-    }
-    break
-  case 'DOING':
-    return 'play'
-  case 'DONE':
-    return 'check'
-  case 'FAILED':
-    return 'remove'
-  case 'CANCELLED':
-    return 'ban'
-  }
-
-  return 'question'
 }
 
 const polylineOptions = {
@@ -139,7 +115,7 @@ export default class MapProxy {
 
     this.map.selectArea.enable()
 
-    this.map.on('areaselected', (e) => {
+    this.map.on('selectarea:selected', (e) => {
       L.Util.requestAnimFrame(() => {
         const markers = []
         this.map.eachLayer((layer) => {
@@ -180,7 +156,7 @@ export default class MapProxy {
     let marker = this.taskMarkers.get(task['@id'])
 
     const color = taskColor(task, selected, useAvatarColors, polylineEnabled, tourPolylinesEnabled, taskIdToTourIdMap, tourIdToColorMap)
-    const iconName = taskIcon(task)
+    const iconName = taskMapIcon(task.type, task.status)
     const coords = [task.address.geo.latitude, task.address.geo.longitude]
     const latLng = L.latLng(task.address.geo.latitude, task.address.geo.longitude)
 
@@ -390,14 +366,14 @@ export default class MapProxy {
 
       popupComponent = React.createRef()
       const popupContent = document.createElement('div')
-      const cb = () => {
-        this.courierPopups.set(username, popupComponent)
-      }
+      const root = createRoot(popupContent)
 
-      render(<CourierPopupContent
+      root.render(<CourierPopupContent
         ref={ popupComponent }
         username={ username }
-        lastSeen={ lastSeen } />, popupContent, cb)
+        lastSeen={ lastSeen } />)
+
+      this.courierPopups.set(username, popupComponent)
 
       const tooltip = L.tooltip({
         offset: [ 0, -15 ],

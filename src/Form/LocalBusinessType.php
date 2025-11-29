@@ -74,7 +74,7 @@ abstract class LocalBusinessType extends AbstractType
                 'label' => 'localBusiness.form.telephone',
             ]);
 
-        if ($this->billingEnabled) {
+        if ($this->authorizationChecker->isGranted('ROLE_ADMIN') && $this->billingEnabled) {
             $builder->add('billingMethod', ChoiceType::class, [
                 'label' => 'form.billing_method.label',
                 'help' => 'form.billing_method.help',

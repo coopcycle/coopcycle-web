@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class CentrifugeController extends AbstractController
 {
@@ -56,7 +56,7 @@ class CentrifugeController extends AbstractController
             if ($channel === $trackingChannel && $this->isGranted('ROLE_ADMIN')) {
                 $response['channels'][] = [
                     'channel' => $channel,
-                    'token' => $centrifugoClient->generatePrivateChannelToken($data['client'], $channel, (time() + 3600)),
+                    'token' => $centrifugoClient->generateSubscriptionToken($data['client'], $channel, (time() + 3600)),
                 ];
             }
         }

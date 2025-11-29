@@ -26,7 +26,7 @@ class DateUtils
      * @param mixed $date
      * @param \DateTime|null $now
      */
-    public static function isToday($date, \DateTime $now = null): bool
+    public static function isToday($date, ?\DateTime $now = null): bool
     {
         if (!$date instanceof TsRange && !$date instanceof \DateTime) {
             throw new \InvalidArgumentException(sprintf('$date should be an instance of %s or %s',

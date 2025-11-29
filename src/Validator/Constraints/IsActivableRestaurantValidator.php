@@ -13,20 +13,13 @@ use AppBundle\Payment\GatewayResolver;
 
 class IsActivableRestaurantValidator extends ConstraintValidator
 {
-    private $settingsManager;
-    private $gatewayResolver;
-    private $cashEnabled;
-    private $stripeConnectRequired;
-
-    public function __construct(SettingsManager $settingsManager, GatewayResolver $gatewayResolver,
-        bool $cashEnabled,
-        bool $stripeConnectRequired = true)
-    {
-        $this->settingsManager = $settingsManager;
-        $this->gatewayResolver = $gatewayResolver;
-        $this->cashEnabled = $cashEnabled;
-        $this->stripeConnectRequired = $stripeConnectRequired;
-    }
+    public function __construct(
+        private SettingsManager $settingsManager,
+        private GatewayResolver $gatewayResolver,
+        private bool $cashEnabled,
+        private bool $stripeConnectRequired = true,
+        private bool $mercadopagoConnectRequired = false)
+    {}
 
     public function validate($object, Constraint $constraint)
     {
@@ -93,7 +86,7 @@ class IsActivableRestaurantValidator extends ConstraintValidator
                         switch ($gateway) {
                             case 'mercadopago':
                                 $mercadopagoAccount = $object->getMercadopagoAccount();
-                                if (null === $mercadopagoAccount) {
+                                if ($this->mercadopagoConnectRequired &&null === $mercadopagoAccount) {
                                     $violations['mercadopagoAccounts'] = $constraint->mercadopagoAccountMessage;
                                 } else {
                                     $supportsAtLeastOneGateway = true;

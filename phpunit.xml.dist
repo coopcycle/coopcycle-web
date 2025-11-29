@@ -17,6 +17,8 @@
     <server name="KERNEL_CLASS" value="AppBundle\Kernel"/>
     <!-- https://symfony.com/blog/new-in-symfony-3-1-deprecation-helper-improvements -->
     <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak"/>
+    <!-- Use in-memory transport for PHPUnit tests (single process) -->
+    <env name="MESSENGER_TRANSPORT_DSN" value="in-memory://" force="true"/>
   </php>
   <testsuites>
     <testsuite name="Project Test Suite">

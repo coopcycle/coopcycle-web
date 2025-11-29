@@ -6,6 +6,7 @@ use AppBundle\Entity\Contract;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderItem;
+use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\NullLoggingUtils;
 use AppBundle\Sylius\Order\AdjustmentInterface;
@@ -58,6 +59,7 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
             static::$kernel->getContainer()->get('sylius.order_item_quantity_modifier');
 
         $this->deliveryManager = $this->prophesize(DeliveryManager::class);
+        $this->pricingManager = $this->prophesize(PricingManager::class);
 
         $this->promotionRepository = $this->prophesize(PromotionRepositoryInterface::class);
 
@@ -65,6 +67,7 @@ class OrderOptionsFeeProcessorTest extends KernelTestCase
             $this->adjustmentFactory,
             $this->translator->reveal(),
             $this->deliveryManager->reveal(),
+            $this->pricingManager->reveal(),
             $this->promotionRepository->reveal(),
             new NullLogger(),
             new NullLoggingUtils()

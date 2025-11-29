@@ -21,8 +21,8 @@ class OrderValidator extends ConstraintValidator
     public function __construct(
         private PriceFormatter $priceFormatter,
         private FulfillmentMethodResolver $fulfillmentMethodResolver,
-        LoggerInterface $checkoutLogger = null,
-        LoggingUtils $loggingUtils = null,
+        ?LoggerInterface $checkoutLogger = null,
+        ?LoggingUtils $loggingUtils = null,
     )
     {
         $this->checkoutLogger = $checkoutLogger ?? new NullLogger();

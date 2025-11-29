@@ -247,8 +247,9 @@ admin_restaurant_products:
             restaurants: admin_restaurants
             restaurant: admin_restaurant
             product: admin_restaurant_product
+            products: admin_restaurant_products
             new_product: admin_restaurant_product_new
-    methods: [ GET ]
+    methods: [ GET, POST ]
 
 admin_restaurant_product_new:
     path: /admin/restaurants/{id}/products/new
@@ -406,10 +407,37 @@ admin_restaurant_new_promotion:
             restaurant_promotions: admin_restaurant_promotions
     methods: [ GET, POST ]
 
+admin_restaurant_archive_promotion:
+    path: /admin/restaurants/{restaurantId}/promotions/archive
+    defaults:
+        _controller: AppBundle\Controller\AdminController::archiveRestaurantPromotionAction
+        layout: 'admin.html.twig'
+        routes:
+            restaurant_promotions: admin_restaurant_promotions
+    methods: [ POST ]
+
+admin_restaurant_feature_promotion:
+    path: /admin/restaurants/{restaurantId}/promotions/feature
+    defaults:
+        _controller: AppBundle\Controller\AdminController::featureRestaurantPromotionAction
+        layout: 'admin.html.twig'
+        routes:
+            restaurant_promotions: admin_restaurant_promotions
+    methods: [ POST ]
+
 admin_restaurant_promotion:
     path: /admin/restaurants/{restaurantId}/promotions/{promotionId}
     defaults:
         _controller: AppBundle\Controller\AdminController::restaurantPromotionAction
+        layout: 'admin.html.twig'
+        routes:
+            restaurant_promotions: admin_restaurant_promotions
+    methods: [ GET, POST ]
+
+admin_restaurant_promotion_coupon:
+    path: /admin/restaurants/{restaurantId}/promotions/{promotionId}/coupons/{couponId}
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantPromotionCouponAction
         layout: 'admin.html.twig'
         routes:
             restaurant_promotions: admin_restaurant_promotions
@@ -593,51 +621,51 @@ admin_store_recurrence_rules:
       store_recurrence_rule: admin_store_recurrence_rule
   methods:  [ GET ]
 
-admin_store_delivery_new:
-    path: /admin/stores/{id}/deliveries/new
+admin_store_delivery_new_legacy:
+    path: /admin/stores/{id}/deliveries/new/legacy
     defaults:
         _controller: AppBundle\Controller\AdminController::newStoreDeliveryAction
         layout: 'admin.html.twig'
         routes:
             stores: admin_stores
             store: admin_store
-            success: admin_store_deliveries
             back: admin_deliveries
     methods:  [ GET, POST ]
 
-admin_store_delivery_new_beta:
-    path: /admin/stores/{id}/deliveries/new/beta
+admin_store_delivery_new:
+    path: /admin/stores/{id}/deliveries/new
     defaults:
         _controller: AppBundle\Controller\AdminController::newStoreDeliveryReactFormAction
         layout: 'admin.html.twig'
         routes:
             stores: admin_stores
             store: admin_store
-            success: admin_store_deliveries
+            store_deliveries: admin_store_deliveries
             back: admin_deliveries
+            store_new: admin_store_delivery_new
     methods:  [ GET ]
 
-admin_delivery:
-  path: /admin/deliveries/{id}
+admin_delivery_legacy:
+  path: /admin/deliveries/{id}/legacy
   defaults:
       _controller: AppBundle\Controller\AdminController::deliveryAction
       layout: 'admin.html.twig'
       routes:
-          success: admin_deliveries
           back: admin_deliveries
   methods:  [ GET, POST ]
 
 
-admin_delivery_beta:
-  path: /admin/deliveries/{id}/beta
+admin_delivery:
+  path: /admin/deliveries/{id}
   defaults:
       _controller: AppBundle\Controller\AdminController::deliveryItemReactFormAction
       layout: 'admin.html.twig'
       routes:
         stores: admin_stores
         store: admin_store
-        success: admin_store_deliveries
+        store_deliveries: admin_store_deliveries
         back: admin_deliveries
+        store_new: admin_store_delivery_new
   methods:  [ GET ]
 
 admin_store_delivery_download_images:
@@ -648,6 +676,15 @@ admin_store_delivery_download_images:
 
 admin_store_recurrence_rule:
   path: /admin/stores/{storeId}/recurrence-rules/{recurrenceRuleId}
+  defaults:
+    _controller: AppBundle\Controller\AdminController::recurrenceRuleReactFormAction
+    layout: 'admin.html.twig'
+    routes:
+      redirect_default: admin_store_recurrence_rules
+  methods:  [ GET ]
+
+admin_store_recurrence_rule_legacy:
+  path: /admin/stores/{storeId}/recurrence-rules/{recurrenceRuleId}/legacy
   defaults:
     _controller: AppBundle\Controller\AdminController::recurrenceRuleAction
     layout: 'admin.html.twig'

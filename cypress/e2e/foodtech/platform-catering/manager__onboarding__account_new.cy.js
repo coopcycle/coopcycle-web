@@ -1,8 +1,6 @@
 describe('Platform catering; manager; onboarding with a new user account', () => {
   beforeEach(() => {
-    cy.symfonyConsole(
-      'coopcycle:fixtures:load -f cypress/fixtures/business_account_manager_invitation_new_user.yml',
-    )
+    cy.loadFixtures('business_account_manager_invitation_new_user.yml')
   })
 
   it('should activate a business account', () => {
@@ -11,7 +9,7 @@ describe('Platform catering; manager; onboarding with a new user account', () =>
     // Personal info step
     cy.intercept('GET', '/register/suggest?*').as('getSuggest')
 
-    cy.get('#businessAccountRegistration_user_username').clear('')
+    cy.get('#businessAccountRegistration_user_username').clear()
     cy.get('#businessAccountRegistration_user_username').type('manager01')
 
     cy.wait('@getSuggest', { timeout: 5000 })
@@ -26,18 +24,18 @@ describe('Platform catering; manager; onboarding with a new user account', () =>
     cy.get('button[type="submit"]').click()
 
     // Company info step
-    cy.get('#businessAccountRegistration_businessAccount_legalName').clear('')
+    cy.get('#businessAccountRegistration_businessAccount_legalName').clear()
     cy.get('#businessAccountRegistration_businessAccount_legalName').type(
       'Business Name Ltd',
     )
-    cy.get('#businessAccountRegistration_businessAccount_vatNumber').clear('')
+    cy.get('#businessAccountRegistration_businessAccount_vatNumber').clear()
     cy.get('#businessAccountRegistration_businessAccount_vatNumber').type(
       'FR12345678901',
     )
     cy.get('.btn-primary').click()
 
     // Confirmation page
-    cy.url().should('include', '/register/confirmed')
+    cy.urlmatch('/register/confirmed', 'include')
     cy.get('.content').should('contain', 'Félicitations')
   })
 })

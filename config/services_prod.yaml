@@ -1,0 +1,3 @@
+parameters:
+    router.request_context.scheme: 'https'
+    nucleos_profile.registration.confirmation.enabled: true

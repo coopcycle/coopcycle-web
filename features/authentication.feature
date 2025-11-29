@@ -117,7 +117,6 @@ Feature: Authenticate
 
   Scenario: Authenticated request with OAuth (for store)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -139,7 +138,6 @@ Feature: Authenticate
 
   Scenario: Authenticated request with OAuth (for shop)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -163,7 +161,6 @@ Feature: Authenticate
 
   Scenario: Authenticated request with API key
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     And the store with name "Acme" has an API key
     When I add "Content-Type" header equal to "application/ld+json"

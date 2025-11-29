@@ -2,8 +2,13 @@
 
 namespace AppBundle\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\MyRestaurants;
 use AppBundle\Action\Restaurant\Close as CloseController;
 use AppBundle\Action\Restaurant\Menu;
@@ -13,6 +18,8 @@ use AppBundle\Action\Restaurant\Menus;
 use AppBundle\Action\Restaurant\Orders;
 use AppBundle\Action\Restaurant\Timing;
 use AppBundle\Api\Dto\RestaurantInput;
+use AppBundle\Api\State\UpdateRestaurantProcessor;
+use AppBundle\Api\State\RestaurantProvider;
 use AppBundle\Entity\Base\LocalBusiness as BaseLocalBusiness;
 use AppBundle\Entity\LocalBusiness\CatalogInterface;
 use AppBundle\Entity\LocalBusiness\CatalogTrait;
@@ -38,16 +45,89 @@ use Cocur\Slugify\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
+use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
+use Sylius\Component\Promotion\Model\PromotionInterface;
+use Sylius\Component\Promotion\Model\PromotionCouponInterface;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
-/**
- * @Vich\Uploadable
- */
-#[ApiResource(shortName: 'Restaurant', attributes: ['denormalization_context' => ['groups' => ['order_create', 'restaurant_update']], 'normalization_context' => ['groups' => ['restaurant', 'address', 'order']]], collectionOperations: ['get' => ['method' => 'GET', 'pagination_enabled' => false, 'normalization_context' => ['groups' => ['restaurant', 'address', 'order', 'restaurant_list']]], 'me_restaurants' => ['method' => 'GET', 'path' => '/me/restaurants', 'controller' => MyRestaurants::class]], itemOperations: ['get' => ['method' => 'GET', 'normalization_context' => ['groups' => ['restaurant', 'address', 'order', 'restaurant_potential_action']], 'security' => "is_granted('view', object)"], 'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_ADMIN')"], 'restaurant_menu' => ['method' => 'GET', 'path' => '/restaurants/{id}/menu', 'controller' => Menu::class, 'normalization_context' => ['groups' => ['restaurant_menu']]], 'restaurant_menus' => ['method' => 'GET', 'path' => '/restaurants/{id}/menus', 'controller' => Menus::class, 'normalization_context' => ['groups' => ['restaurant_menus']]], 'put' => ['method' => 'PUT', 'input' => RestaurantInput::class, 'denormalization_context' => ['groups' => ['restaurant_update']], 'security' => "is_granted('edit', object)"], 'close' => ['method' => 'PUT', 'path' => '/restaurants/{id}/close', 'controller' => CloseController::class, 'security' => "is_granted('edit', object)"], 'restaurant_deliveries' => ['method' => 'GET', 'path' => '/restaurants/{id}/deliveries/{date}', 'controller' => RestaurantDeliveriesController::class, 'access_control' => "is_granted('ROLE_ADMIN')", 'normalization_context' => ['groups' => ['delivery', 'address', 'restaurant_delivery']]], 'restaurant_timing' => ['method' => 'GET', 'path' => '/restaurants/{id}/timing', 'controller' => Timing::class, 'normalization_context' => ['groups' => ['restaurant_timing']]], 'restaurant_orders' => ['method' => 'GET', 'path' => '/restaurants/{id}/orders', 'controller' => Orders::class, 'security' => "is_granted('edit', object)"]])]
+#[Vich\Uploadable]
+#[ApiResource(
+    shortName: 'Restaurant',
+    operations: [
+        new Get(
+            normalizationContext: [
+                'groups' => [
+                    'restaurant',
+                    'address',
+                    'order',
+                    'restaurant_potential_action'
+                ]
+            ],
+            security: 'is_granted(\'view\', object)'
+        ),
+        new Delete(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new Get(
+            uriTemplate: '/restaurants/{id}/menu',
+            controller: Menu::class,
+            normalizationContext: ['groups' => ['restaurant_menu']]
+        ),
+        new Get(
+            uriTemplate: '/restaurants/{id}/menus',
+            controller: Menus::class,
+            normalizationContext: ['groups' => ['restaurant_menus']]
+        ),
+        new Put(
+            denormalizationContext: ['groups' => ['restaurant_update']],
+            security: 'is_granted(\'edit\', object)',
+            input: RestaurantInput::class,
+            processor: UpdateRestaurantProcessor::class
+        ),
+        new Put(
+            uriTemplate: '/restaurants/{id}/close',
+            controller: CloseController::class,
+            security: 'is_granted(\'edit\', object)'
+        ),
+        new Get(
+            uriTemplate: '/restaurants/{id}/deliveries',
+            controller: RestaurantDeliveriesController::class,
+            normalizationContext: ['groups' => ['delivery', 'address', 'restaurant_delivery']],
+            security: 'is_granted(\'ROLE_ADMIN\')'
+        ),
+        new Get(
+            uriTemplate: '/restaurants/{id}/timing',
+            controller: Timing::class,
+            normalizationContext: ['groups' => ['restaurant_timing']]
+        ),
+        new Get(
+            uriTemplate: '/restaurants/{id}/orders',
+            controller: Orders::class,
+            security: 'is_granted(\'edit\', object)'
+        ),
+        new GetCollection(
+            uriTemplate: '/restaurants',
+            paginationEnabled: false,
+            normalizationContext: [
+                'groups' => [
+                    'restaurant',
+                    'address',
+                    'order',
+                    'restaurant_list'
+                ]
+            ],
+            provider: RestaurantProvider::class
+        ),
+        new GetCollection(
+            uriTemplate: '/me/restaurants',
+            controller: MyRestaurants::class
+        )
+    ],
+    normalizationContext: ['groups' => ['restaurant', 'address', 'order']],
+    denormalizationContext: ['groups' => ['order_create', 'restaurant_update']]
+)]
 #[AssertIsActivableRestaurant(groups: ['activable'])]
 class LocalBusiness extends BaseLocalBusiness implements
     CatalogInterface,
@@ -55,7 +135,8 @@ class LocalBusiness extends BaseLocalBusiness implements
     OrganizationAwareInterface,
     ShippingOptionsInterface,
     CustomFailureReasonInterface,
-    Vendor
+    Vendor,
+    SoftDeleteableInterface
 {
     use Timestampable;
     use SoftDeleteable;
@@ -85,9 +166,9 @@ class LocalBusiness extends BaseLocalBusiness implements
     /**
      * @var string The name of the item
      */
+    #[ApiProperty(iris: ['http://schema.org/name'])]
     #[Assert\Type(type: 'string')]
-    #[ApiProperty(iri: 'http://schema.org/name')]
-    #[Groups(['restaurant', 'order', 'restaurant_seo', 'restaurant_simple', 'order', 'order_minimal'])]
+    #[Groups(['restaurant', 'order', 'restaurant_seo', 'restaurant_simple', 'order', 'foodtech_order_minimal'])]
     protected $name;
 
     #[Groups(['restaurant'])]
@@ -126,7 +207,7 @@ class LocalBusiness extends BaseLocalBusiness implements
     /**
      * @var Address
      */
-    #[Groups(['restaurant', 'order', 'restaurant_seo', 'restaurant_simple', 'order', 'order_minimal'])]
+    #[Groups(['restaurant', 'order', 'restaurant_seo', 'restaurant_simple', 'order', 'foodtech_order_minimal'])]
     protected $address;
 
     /**
@@ -137,7 +218,7 @@ class LocalBusiness extends BaseLocalBusiness implements
     /**
      * @var string The website of the restaurant.
      */
-    #[ApiProperty(iri: 'https://schema.org/URL')]
+    #[ApiProperty(iris: ['https://schema.org/URL'])]
     protected $website;
 
     protected $stripeAccounts;
@@ -216,6 +297,8 @@ class LocalBusiness extends BaseLocalBusiness implements
     protected bool $autoAcceptOrdersEnabled = false;
 
     protected string $paymentGateway = 'stripe';
+
+    protected bool $pawapayEnabled = true;
 
     public function __construct()
     {
@@ -632,6 +715,11 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function getPromotions()
     {
         return $this->promotions;
+    }
+
+    public function hasPromotion($promotion)
+    {
+        return $this->promotions->contains($promotion);
     }
 
     public function isFeatured(): bool
@@ -1089,5 +1177,51 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function getPaymentGateway(): string
     {
         return $this->paymentGateway;
+    }
+
+    public function hasFeaturedPromotion(): bool
+    {
+        foreach ($this->getPromotions() as $promotion) {
+            if ($promotion->isFeatured()) {
+                return true;
+            }
+            if ($promotion->isCouponBased()) {
+                foreach ($promotion->getCoupons() as $coupon) {
+                    if ($coupon->isFeatured()) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function getFeaturedPromotion(): PromotionInterface|PromotionCouponInterface|null
+    {
+        foreach ($this->getPromotions() as $promotion) {
+            if ($promotion->isFeatured()) {
+                return $promotion;
+            }
+            if ($promotion->isCouponBased()) {
+                foreach ($promotion->getCoupons() as $coupon) {
+                    if ($coupon->isFeatured()) {
+                        return $coupon;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public function isPawapayEnabled(): bool
+    {
+        return $this->pawapayEnabled;
+    }
+
+    public function setPawapayEnabled($enabled = true)
+    {
+        $this->pawapayEnabled = $enabled;
     }
 }

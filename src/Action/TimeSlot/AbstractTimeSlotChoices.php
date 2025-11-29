@@ -36,7 +36,6 @@ abstract class AbstractTimeSlotChoices
         }
 
         $response = new TimeSlotChoices();
-        $response->id = Uuid::uuid4()->toString();
         $response->choices = $choices;
 
         return $response;

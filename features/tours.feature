@@ -2,7 +2,6 @@ Feature: Tours
 
     Scenario: Retrieve task with tour
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
       | users.yml           |
     And the user "bob" has role "ROLE_ADMIN"
@@ -27,7 +26,6 @@ Feature: Tours
 
     Scenario: Delete a tour unauthorized
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -41,7 +39,6 @@ Feature: Tours
 
     Scenario: Delete a tour
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "sarah" is loaded:
       | email     | sarah@coopcycle.org |

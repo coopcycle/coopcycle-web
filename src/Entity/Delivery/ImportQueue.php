@@ -2,17 +2,37 @@
 
 namespace AppBundle\Entity\Delivery;
 
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Entity\Store;
 use AppBundle\Action\Delivery\ImportQueueCsv as CsvController;
 use AppBundle\Action\Delivery\ImportQueueRedownload as RedownloadController;
 use AppBundle\Spreadsheet\SpreadsheetParseResult;
-use ApiPlatform\Core\Annotation\ApiResource;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ApiResource(shortName: 'DeliveryImportQueue', normalizationContext: ['groups' => ['delivery_import_queue']], collectionOperations: [], itemOperations: ['get' => ['method' => 'GET', 'normalizationContext' => ['groups' => ['delivery_import_queue']], 'security' => "is_granted('view', object)"], 'csv' => ['method' => 'GET', 'path' => '/delivery_import_queues/{id}/csv', 'controller' => CsvController::class, 'security' => "is_granted('view', object)"], 'redownload' => ['method' => 'GET', 'path' => '/delivery_import_queues/{id}/redownload', 'controller' => RedownloadController::class, 'security' => "is_granted('view', object)"]])]
+#[ApiResource(
+    shortName: 'DeliveryImportQueue',
+    operations: [
+        new Get(normalizationContext: ['groups' => ['delivery_import_queue']],
+            security: 'is_granted(\'view\', object)'),
+        new Get(
+            uriTemplate: '/delivery_import_queues/{id}/csv',
+            controller: CsvController::class,
+            security: 'is_granted(\'view\', object)'
+        ),
+        new Get(
+            uriTemplate: '/delivery_import_queues/{id}/redownload',
+            controller: RedownloadController::class,
+            security: 'is_granted(\'view\', object)'
+        )
+    ],
+    normalizationContext: ['groups' => ['delivery_import_queue']]
+)]
 class ImportQueue
 {
     use Timestampable;

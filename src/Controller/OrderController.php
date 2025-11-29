@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\OrderConfirmTrait;
 use AppBundle\Controller\Utils\SelectPaymentMethodTrait;
@@ -31,7 +31,6 @@ use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderTransitions;
 use AppBundle\Sylius\Payment\Context as PaymentContext;
-use AppBundle\Utils\OrderEventCollection;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints\ShippingAddress as ShippingAddressConstraint;
@@ -51,10 +50,9 @@ use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -87,8 +85,7 @@ class OrderController extends AbstractController
         OrderProcessorInterface $orderProcessor,
         TranslatorInterface $translator,
         SettingsManager $settingsManager,
-        EmbedContext $embedContext,
-        SessionInterface $session)
+        EmbedContext $embedContext)
     {
         if (!$settingsManager->get('guest_checkout_enabled')) {
             if (!$embedContext->isEnabled()) {
@@ -127,6 +124,8 @@ class OrderController extends AbstractController
                 sprintf('dabba.order.%d.access_token', $order->getId());
             $dabbaRefreshTokenKey =
                 sprintf('dabba.order.%d.refresh_token', $order->getId());
+
+            $session = $request->getSession();
 
             if ($session->has($dabbaAccessTokenKey) && $session->has($dabbaRefreshTokenKey)) {
                 $order->getCustomer()->setDabbaAccessToken(
@@ -498,12 +497,12 @@ class OrderController extends AbstractController
     #[Route(path: '/order/confirm/{hashid}', name: 'order_confirm')]
     public function confirmAction($hashid,
         OrderRepository $orderRepository,
-        FlashBagInterface $flashBag,
         JWSProviderInterface $jwsProvider,
         IriConverterInterface $iriConverter,
-        SessionInterface $session,
         Filesystem $assetsFilesystem,
-        CentrifugoClient $centrifugoClient)
+        CentrifugoClient $centrifugoClient,
+        Request $request,
+        NormalizerInterface $normalizer)
     {
         $hashids = new Hashids($this->getParameter('secret'), 16);
 
@@ -529,6 +528,8 @@ class OrderController extends AbstractController
         $dabbaRefreshTokenKey =
             sprintf('dabba.order.%d.refresh_token', $id);
 
+        $session = $request->getSession();
+
         if ($session->has($dabbaAccessTokenKey) && $session->has($dabbaRefreshTokenKey)) {
 
             $order->getCustomer()->setDabbaAccessToken(
@@ -543,6 +544,10 @@ class OrderController extends AbstractController
             $session->remove($dabbaAccessTokenKey);
             $session->remove($dabbaRefreshTokenKey);
         }
+
+        /** @var Session $session */
+        $session = $request->getSession();
+        $flashBag = $session->getFlashBag();
 
         $resetSession = $flashBag->has('reset_session') && !empty($flashBag->get('reset_session'));
         $trackGoal = $flashBag->has('track_goal') && !empty($flashBag->get('track_goal'));
@@ -564,7 +569,7 @@ class OrderController extends AbstractController
         return $this->render('order/foodtech.html.twig', $this->auth([
             'order' => $order,
             'orderAccessToken' => $this->orderAccessTokenManager->create($order), // token to pull order state from the api during guest checkout
-            'order_normalized' => $this->get('serializer')->normalize($order, 'jsonld', [
+            'order_normalized' => $normalizer->normalize($order, 'jsonld', [
                 'groups' => ['order'],
                 'is_web' => true
             ]),
@@ -647,7 +652,7 @@ class OrderController extends AbstractController
     }
 
     #[Route(path: '/order/{hashid}/preview', name: 'order_preview')]
-    public function dataPreviewAction($hashid, OrderRepository $orderRepository)
+    public function dataPreviewAction($hashid, OrderRepository $orderRepository, NormalizerInterface $normalizer)
     {
         $hashids = new Hashids($this->getParameter('secret'), 16);
 
@@ -664,10 +669,7 @@ class OrderController extends AbstractController
             throw $this->createNotFoundException(sprintf('Order #%d does not exist', $id));
         }
 
-        $orderNormalized = $this->get('serializer')->normalize($order, 'jsonld', [
-            'resource_class' => Order::class,
-            'operation_type' => 'item',
-            'item_operation_name' => 'get',
+        $orderNormalized = $normalizer->normalize($order, 'jsonld', [
             'groups' => ['order', 'address']
         ]);
 
@@ -709,7 +711,6 @@ class OrderController extends AbstractController
             'cart_form' => $cartForm->createView(),
             'cart_timing' => $orderTimeHelper->getTimeInfo($order),
             'order_access_token' => $this->orderAccessTokenManager->create($order),
-            'addresses_normalized' => $this->getUserAddresses(),
             'is_player' => true,
         ]));
     }

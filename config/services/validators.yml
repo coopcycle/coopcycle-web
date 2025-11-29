@@ -17,6 +17,7 @@ services:
     arguments:
       $cashEnabled: '%env(bool:CASH_ON_DELIVERY_ENABLED)%'
       $stripeConnectRequired: '%env(bool:STRIPE_CONNECT_REQUIRED)%'
+      $mercadopagoConnectRequired: '%env(bool:MERCADOPAGO_CONNECT_REQUIRED)%'
     tags:
       - { name: validator.constraint_validator }
 
@@ -101,5 +102,13 @@ services:
       - { name: validator.constraint_validator }
 
   AppBundle\Validator\Constraints\SiretValidator:
+    tags:
+      - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\ManualSupplementsValidator:
+    tags:
+      - { name: validator.constraint_validator }
+
+  AppBundle\Validator\Constraints\IncidentMetadataValidator:
     tags:
       - { name: validator.constraint_validator }

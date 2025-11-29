@@ -13,8 +13,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Intl\Languages;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class SearchController extends AbstractController
 {
@@ -67,7 +68,8 @@ class SearchController extends AbstractController
     public function deliveriesAction(Request $request,
         EntityManagerInterface $entityManager,
         Client $client,
-        UrlGeneratorInterface $urlGenerator)
+        UrlGeneratorInterface $urlGenerator,
+        NormalizerInterface $normalizer)
     {
         $user = $this->getUser();
 
@@ -114,7 +116,7 @@ class SearchController extends AbstractController
 
         $hits = [];
         foreach ($results as $result) {
-            $hits[] = $this->get('serializer')->normalize($result, 'jsonld', [
+            $hits[] = $normalizer->normalize($result, 'jsonld', [
                 'groups' => ['delivery', 'task', 'address']
             ]);
         }
@@ -130,6 +132,21 @@ class SearchController extends AbstractController
             return new JsonResponse([
                 'latitude' => $address->getGeo()->getLatitude(),
                 'longitude' => $address->getGeo()->getLongitude(),
+            ]);
+        }
+
+        return new JsonResponse([], 400);
+    }
+
+    #[Route(path: '/search/reverse', name: 'search_reverse')]
+    public function reverseAction(Request $request, Geocoder $geocoder)
+    {
+        if ($address = $geocoder->reverse($request->query->get('lat'), $request->query->get('lng'))) {
+
+            return new JsonResponse([
+                'address' => $address->getStreetAddress(),
+                'locality' => $address->getAddressLocality(),
+                'postalCode' => $address->getPostalCode(),
             ]);
         }
 

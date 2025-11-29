@@ -4,7 +4,7 @@ namespace AppBundle\Action\Task;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
-use AppBundle\Pricing\PricingManager;
+use AppBundle\Service\DeliveryOrderManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Recurr\Transformer\ArrayTransformer;
 use Recurr\Transformer\Constraint\BetweenConstraint;
@@ -16,7 +16,8 @@ class RecurrenceRuleBetween
     public function __construct(
         private readonly DenormalizerInterface $denormalizer,
         private readonly EntityManagerInterface $entityManager,
-        private readonly PricingManager $pricingManager)
+        private readonly DeliveryOrderManager $deliveryOrderManager,
+    )
     {
     }
 
@@ -82,7 +83,7 @@ class RecurrenceRuleBetween
             $delivery = Delivery::createWithTasks(...$tasks);
             $data->getStore()->addDelivery($delivery);
             $this->entityManager->persist($delivery);
-            $this->pricingManager->createOrder($delivery);
+            $this->deliveryOrderManager->createOrder($delivery);
         }
 
         $this->entityManager->flush();

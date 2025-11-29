@@ -26,6 +26,9 @@
 {% if form.multiDropEnabled is defined %}
   {{ form_row(form.multiDropEnabled) }}
 {% endif %}
+{% if form.multiPickupEnabled is defined %}
+  {{ form_row(form.multiPickupEnabled) }}
+{% endif %}
 {% if form.checkExpression is defined %}
   {{ form_row(form.checkExpression) }}
 {% endif %}
@@ -38,7 +41,7 @@
 {% if form.vars.data.id is not null %}
   <hr>
   <div {{ react_component('Store/TimeSlot', {
-    store: form.vars.data|serialize,
+    store: form.vars.data|serialize('json', { groups: ['store'] }),
   }) }}>
   </div>
 {% endif %}

@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\AppBundle\Domain\Order\Reactor;
+namespace Tests\AppBundle\MessageHandler\Order;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Domain\Order\Event;
-use AppBundle\Domain\Order\Reactor\SendRemotePushNotification;
+use AppBundle\MessageHandler\Order\SendRemotePushNotification;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Sylius\Order;
@@ -32,7 +32,7 @@ class SendRemotePushNotificationTest extends KernelTestCase
         self::bootKernel();
 
         // @see https://symfony.com/blog/new-in-symfony-4-1-simpler-service-testing
-        $iriConverter = self::$container->get(IriConverterInterface::class);
+        $iriConverter = self::getContainer()->get(IriConverterInterface::class);
 
         $this->messageBus = $this->prophesize(MessageBusInterface::class);
 
@@ -42,12 +42,12 @@ class SendRemotePushNotificationTest extends KernelTestCase
                 return new Envelope($args[0]);
             });
 
-        $admin = new User();
-        $admin->setUsername('admin');
+        $this->admin = new User();
+        $this->admin->setUsername('admin');
 
         $this->userManager = $this->prophesize(UserManager::class);
-        $this->userManager->findUsersByRole('ROLE_ADMIN')
-            ->willReturn([ $admin ]);
+        $this->userManager->findUsersByRoles(['ROLE_ADMIN', 'ROLE_DISPATCHER'])
+            ->willReturn([ $this->admin ]);
 
         $this->translator = $this->prophesize(TranslatorInterface::class);
 
@@ -71,6 +71,8 @@ class SendRemotePushNotificationTest extends KernelTestCase
     {
         $owner = new User();
         $owner->setUsername('bob');
+        $this->userManager->findUserByUsername('bob')
+            ->willReturn($owner);
 
         $order = new Order();
 
@@ -92,7 +94,8 @@ class SendRemotePushNotificationTest extends KernelTestCase
             ->messageBus
             ->dispatch(new PushNotification(
                 'New order!',
-                [ 'admin' ],
+                '',
+                [ $this->admin ],
             ))
             ->shouldHaveBeenCalledTimes(1);
 
@@ -100,7 +103,8 @@ class SendRemotePushNotificationTest extends KernelTestCase
             ->messageBus
             ->dispatch(new PushNotification(
                 'New order!',
-                [ 'bob' ],
+                '',
+                [ $owner ],
                 [
                     'event' => [
                         'name' => 'order:created',

@@ -32,7 +32,7 @@ class Pay
         private GatewayResolver $gatewayResolver,
         private MercadopagoManager $mercadopagoManager,
         private bool $cashEnabled = false,
-        LoggerInterface $logger = null)
+        ?LoggerInterface $logger = null)
     {
         $this->logger = $logger ?? new NullLogger();
     }

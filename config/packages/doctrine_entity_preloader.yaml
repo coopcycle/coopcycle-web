@@ -1,0 +1,3 @@
+services:
+    ShipMonk\DoctrineEntityPreloader\EntityPreloader:
+        arguments: ['@doctrine.orm.entity_manager']

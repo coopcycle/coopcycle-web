@@ -2,6 +2,7 @@
 
 namespace AppBundle\Utils;
 
+use AppBundle\Entity\Sylius\ProductOptionValue;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 
 class OptionsPayloadConverter
@@ -16,10 +17,12 @@ class OptionsPayloadConverter
         foreach ($options as $option) {
             // Legacy
             if (is_string($option)) {
-                $optionValue = $this->productOptionValueRepository->findOneByCode($option);
+                /** @var ProductOptionValue|null $optionValue */
+                $optionValue = $this->productOptionValueRepository->findOneBy(['code' => $option]);
                 $optionValues->attach($optionValue);
             } else {
-                $optionValue = $this->productOptionValueRepository->findOneByCode($option['code']);
+                /** @var ProductOptionValue|null $optionValue */
+                $optionValue = $this->productOptionValueRepository->findOneBy(['code' => $option['code']]);
                 if ($optionValue && $product->hasOptionValue($optionValue)) {
                     $quantity = isset($option['quantity']) ? (int) $option['quantity'] : 0;
                     $quantity = $this->getQuantity($optionValue, $quantity);

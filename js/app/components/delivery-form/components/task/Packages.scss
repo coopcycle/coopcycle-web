@@ -1,0 +1,38 @@
+.packages-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &__quantity {
+    display: flex;
+    max-width: 35%;
+
+    &__button {
+      background-color: #f3f2f2f8;
+      flex-shrink: 1;
+    }
+
+    &__input {
+      min-width: 40%;
+    }
+  }
+
+  &__name {
+    min-width: 60%;
+  }
+}
+
+@media (max-width: 576px) {
+  .packages-item {
+    &__quantity {
+      min-width: 50%;
+
+      &__button {
+        max-width: 30%;
+      }
+    }
+    &__name {
+      min-width: 50%;
+    }
+  }
+}

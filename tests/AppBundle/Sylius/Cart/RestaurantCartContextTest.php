@@ -248,6 +248,8 @@ class RestaurantCartContextTest extends TestCase
         $restaurant = $this->prophesize(LocalBusiness::class);
         $restaurant->isEnabled()->willReturn(false);
 
+        $this->authorizationChecker->isGranted('edit', $restaurant->reveal())->willReturn(false);
+
         $this->restaurantResolver
             ->resolve()
             ->willReturn(null);

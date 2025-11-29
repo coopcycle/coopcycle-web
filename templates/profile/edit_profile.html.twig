@@ -49,7 +49,7 @@
 function delete_my_account() {
   if (window._auth) {
     if (prompt("{% trans %}profile.type_username_to_confirm{% endtrans %}") === window._auth.user.username) {
-      fetch('{{ path('api_mes_delete_item') }}', {
+      fetch('{{ path('_api_/me_delete') }}', {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${window._auth.jwt}`,

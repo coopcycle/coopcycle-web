@@ -30,7 +30,7 @@ class LocalBusinessWithMenuType extends AbstractType
                 'choice_value' => 'id',
             ]);
 
-        $modifier = function (FormInterface $form, LocalBusiness $restaurant = null) {
+        $modifier = function (FormInterface $form, ?LocalBusiness $restaurant = null) {
             $menus = null === $restaurant ? array() : $restaurant->getTaxons();
 
             $form->add('menu', EntityType::class, [

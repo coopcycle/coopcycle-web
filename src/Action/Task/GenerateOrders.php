@@ -4,7 +4,8 @@ namespace AppBundle\Action\Task;
 
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task;
-use AppBundle\Pricing\PricingManager;
+use AppBundle\Service\DeliveryOrderManager;
+use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Recurr\Transformer\ArrayTransformer;
 use Recurr\Transformer\Constraint\BetweenConstraint;
@@ -15,7 +16,8 @@ class GenerateOrders
 {
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
-        private readonly PricingManager $pricingManager)
+        private readonly DeliveryOrderManager $deliveryOrderManager,
+    )
     {
     }
 
@@ -30,7 +32,7 @@ class GenerateOrders
             throw new BadRequestHttpException('Date is required');
         }
 
-        if (new \DateTime($date . ' 23:59') < new \DateTime()) {
+        if (Carbon::parse($date . ' 23:59')->isPast()) {
             throw new BadRequestHttpException('Date must be in the future');
         }
 
@@ -49,7 +51,7 @@ class GenerateOrders
         $orders = [];
 
         foreach ($subscriptions as $subscription) {
-            $order = $this->pricingManager->createOrderFromRecurrenceRule($subscription, $date);
+            $order = $this->deliveryOrderManager->createOrderFromRecurrenceRule($subscription, $date);
             if (null !== $order) {
                 $orders[] = $order;
             }
@@ -58,7 +60,7 @@ class GenerateOrders
         return $orders;
     }
 
-    private function filterByDate(Task\RecurrenceRule $subscription, string $startDate): bool
+    private function filterByDate(Task\RecurrenceRule $recurrence, string $startDate): bool
     {
         $after = new \DateTime($startDate . ' 00:00');
         $before = new \DateTime($startDate . ' 23:59');
@@ -70,10 +72,10 @@ class GenerateOrders
             $inc = true
         );
 
-        $rule = $subscription->getRule();
+        $rule = $recurrence->getRule();
 
-        $rule->setStartDate($after);
-        $rule->setEndDate($before);
+        $rule->setStartDate($recurrence->getCreatedAt());
+        $rule->setEndDate(null);
 
         $occurrences = $transformer->transform($rule, $constraint);
 

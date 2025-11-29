@@ -22,7 +22,7 @@
       </div>
       <div class="delivery-pricing-ruleset__rule__expression"
         {% if pricing_rule is not empty %}
-        data-expression="{{ pricing_rule.expression|parse_expression|coopcycle_normalize(null, [], 'json')|json_encode|e('html_attr') }}"
+        data-expression="{{ pricing_rule.expression|parse_rule_expression|coopcycle_normalize(null, [], 'json')|json_encode|e('html_attr') }}"
         {% endif %}
         >
         <div class="rule-expression-container"></div>
@@ -36,7 +36,7 @@
   <div>
     <div class="delivery-pricing-ruleset__rule__price"
       {% if pricing_rule is not empty %}
-      data-price-expression="{{ pricing_rule.price|parse_expression|coopcycle_normalize(null, [], 'json')|json_encode|e('html_attr') }}"
+      data-price-expression="{{ pricing_rule.price|parse_price|coopcycle_normalize(null, [], 'json')|json_encode|e('html_attr') }}"
       {% endif %}
       >
       <div class="d-flex align-items-center">

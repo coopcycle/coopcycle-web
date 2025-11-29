@@ -2,20 +2,40 @@
 
 namespace AppBundle\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Api\Dto\CreateRemotePushTokenRequest;
-use AppBundle\Action\DeleteToken as DeleteTokenController;
+use AppBundle\Api\State\RemotePushTokenProcessor;
+use AppBundle\Api\State\RemotePushTokenProvider;
 
-#[ApiResource(collectionOperations: ['post' => ['path' => '/me/remote_push_tokens', 'input' => CreateRemotePushTokenRequest::class]], itemOperations: ['get' => ['method' => 'GET'], 'delete_by_token' => ['method' => 'DELETE', 'path' => '/me/remote_push_tokens/{token}', 'read' => false, 'write' => false, 'controller' => DeleteTokenController::class, 'requirements' => ['token' => '.+']]])]
+#[ApiResource(
+    operations: [
+        new Get(),
+        new Delete(
+            uriTemplate: '/me/remote_push_tokens/{token}',
+            provider: RemotePushTokenProvider::class,
+        ),
+        new Post(
+            uriTemplate: '/me/remote_push_tokens',
+            input: CreateRemotePushTokenRequest::class,
+            processor: RemotePushTokenProcessor::class
+        )
+    ]
+)]
 class RemotePushToken
 {
+    #[ApiProperty(identifier: false)]
     protected $id;
 
     protected $user;
 
     protected $platform;
 
+    #[ApiProperty(identifier: true)]
     protected $token;
 
     protected $createdAt;

@@ -1,0 +1,39 @@
+AppBundle\Entity\Sylius\ProductOption:
+  product_option_fixed_price_rules:
+    currentLocale: fr
+    code: 'CPCCL-ODDLVR-FIXED'
+    name: 'Fixed Price'
+    strategy: 'option_value'
+    additional: true
+  product_option_percentage_price_rules:
+    currentLocale: fr
+    code: 'CPCCL-ODDLVR-PERCENTAGE'
+    name: 'Percentage Price'
+    strategy: 'option_value'
+    additional: true
+  product_option_range_price_rules:
+    currentLocale: fr
+    code: 'CPCCL-ODDLVR-RANGE'
+    name: 'Range Price'
+    strategy: 'option_value'
+    additional: true
+  product_option_package_price_rules:
+    currentLocale: fr
+    code: 'CPCCL-ODDLVR-PACKAGE'
+    name: 'Package Price'
+    strategy: 'option_value'
+    additional: true
+
+AppBundle\Entity\Sylius\Product:
+  on_demand_delivery:
+    code: CPCCL-ODDLVR
+    currentLocale: fr
+    name: Livraison à la demande
+    slug: livraison-a-la-demande
+    enabled: true
+    options: [
+      "@product_option_fixed_price_rules",
+      "@product_option_percentage_price_rules",
+      "@product_option_range_price_rules",
+      "@product_option_package_price_rules"
+    ]

@@ -1,0 +1,152 @@
+import React, { useState } from 'react';
+import moment from 'moment';
+import { Dropdown, Flex, Row, Select, Statistic, notification } from 'antd';
+import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import PageHeader from '../../../../components/PageHeader';
+import { connectWithRedux } from '../../[id]/redux/incidentStore';
+import { selectIncident, selectLoaded } from '../../[id]/redux/incidentSlice';
+import { useUsername } from '../../[id]/hooks/useUsername';
+import ActionBox from './ActionBox';
+
+async function _handleStatusSubmit(id, body) {
+  const httpClient = new window._auth.httpClient();
+  return await httpClient.patch(
+    window.Routing.generate('_api_/incidents/{id}{._format}_patch', { id }),
+    body,
+  );
+}
+async function syncData(id, body, t) {
+  const { error } = await _handleStatusSubmit(id, body);
+  if (error) {
+    notification.error({ message: t('SOMETHING_WENT_WRONG') });
+  }
+}
+
+function _prioryToLabel(key) {
+  switch (key) {
+    case 1:
+      return 'HIGH';
+    case 2:
+      return 'MEDIUM';
+    case 3:
+      return 'LOW';
+  }
+}
+
+function _statusBtn(status) {
+  switch (status) {
+    case 'OPEN':
+      return {
+        next: 'CLOSED',
+        label: 'CLOSE_THIS_INCIDENT',
+        icon: <i className="fa fa-dot-circle-o mr-2" />,
+      };
+    case 'CLOSED':
+      return {
+        next: 'OPEN',
+        label: 'REOPEN_THIS_INCIDENT',
+        icon: <i className="fa fa-check-circle-o mr-2" />,
+      };
+  }
+}
+
+export default connectWithRedux(function ({ isLastmile }) {
+  const loaded = useSelector(selectLoaded);
+  const incident = useSelector(selectIncident);
+  const [priority, setPriority] = useState(incident.priority);
+  const [status, setStatus] = useState(incident.status);
+  const [tags, setTags] = useState(incident.tags);
+
+  const username = useUsername(incident.createdBy);
+
+  const { t } = useTranslation();
+
+  if (!loaded) {
+    return null;
+  }
+
+  const { next, label, icon } = _statusBtn(status);
+
+  return (
+    <PageHeader
+      title={incident.title}
+      extra={[
+        <Flex key="actions" gap="middle">
+          <ActionBox isLastmile={isLastmile} />
+          <Dropdown.Button
+            key="close"
+            onClick={() => {
+              setStatus(next);
+              syncData(incident.id, { status: next }, t);
+            }}
+            menu={{
+              onClick: ({ key }) => {
+                key = parseInt(key);
+                setPriority(key);
+                syncData(incident.id, { priority: key }, t);
+              },
+              items: [
+                {
+                  label: t('SET_TO_PRIORITY', {
+                    priority: t('LOW').toLowerCase(),
+                  }),
+                  key: 3,
+                },
+                {
+                  label: t('SET_TO_PRIORITY', {
+                    priority: t('MEDIUM').toLowerCase(),
+                  }),
+                  key: 2,
+                },
+                {
+                  label: t('SET_TO_PRIORITY', {
+                    priority: t('HIGH').toLowerCase(),
+                  }),
+                  key: 1,
+                },
+              ],
+            }}>
+            {icon}
+            {t(label)}
+          </Dropdown.Button>
+        </Flex>,
+      ]}>
+      <Row className="mb-3">
+        <Statistic
+          data-testid="incident-status"
+          title={t('STATUS')}
+          style={{ textTransform: 'capitalize', marginLeft: '12px' }}
+          value={t(status)}
+        />
+        <Statistic
+          data-testid="incident-priority"
+          title={t('PRIORITY')}
+          value={t(_prioryToLabel(priority))}
+          style={{ margin: '0 22px' }}
+        />
+        <Statistic
+          data-testid="incident-reported-by"
+          title={t('REPORTED_BY')}
+          value={username ?? '?'}
+        />
+      </Row>
+      <Row justify="space-between" className="mt-3">
+        <Select
+          mode="tags"
+          placeholder={t('PLUS_ADD_TAGS')}
+          onBlur={() => syncData(incident.id, { tags }, t)}
+          onChange={tags => setTags(tags)}
+          options={tags.map(t => ({ label: t, value: t }))}
+          style={{ marginLeft: '2px', width: '300px' }}
+          variant="borderless"
+        />
+        <div data-testid="incident-reported-at">
+          <div className="pb-1">{t('INCIDENT_REPORTED_AT')} :</div>
+          <i className="fa fa-calendar pr-1" />
+          {moment(incident.createdAt).format('LLL')}
+        </div>
+      </Row>
+    </PageHeader>
+  );
+});

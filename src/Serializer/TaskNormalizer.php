@@ -2,22 +2,24 @@
 
 namespace AppBundle\Serializer;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
-use ApiPlatform\Core\Exception\InvalidArgumentException;
-use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Exception\InvalidArgumentException;
+use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\Metadata\Resource\Factory\ResourceMetadataCollectionFactoryInterface;
+use AppBundle\Api\Dto\TaskMapper;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Package;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\TagManager;
-use AppBundle\Utils\Barcode\BarcodeUtils;
 use Carbon\CarbonPeriod;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Serializer\Normalizer\ContextAwareDenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
-class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
+class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInterface
 {
     public function __construct(
         private readonly ItemNormalizer $normalizer,
@@ -26,12 +28,21 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         private readonly UserManagerInterface $userManager,
         private readonly Geocoder $geocoder,
         private readonly EntityManagerInterface $entityManager,
-        private readonly UrlGeneratorInterface $urlGenerator
+        private readonly ResourceMetadataCollectionFactoryInterface $resourceMetadataFactory,
+        private readonly TaskMapper $taskMapper,
+        private ObjectNormalizer $objectNormalizer,
+        private readonly LoggerInterface $logger
     )
     {}
 
     public function normalize($object, $format = null, array $context = array())
     {
+        // Since API Platform 2.7, IRIs for custom operations have changed
+        // It means that when doing PUT /api/tasks/{id}/assign, the @id will be /api/tasks/{id}/assign, not /api/tasks/{id} like before
+        // In our JS code, we often override the state with the entire response
+        // This custom code makes sure it works like before, by tricking IriConverter
+        $context['operation'] = $this->resourceMetadataFactory->create(Task::class)->getOperation();
+
         $data = $this->normalizer->normalize($object, $format, $context);
 
         if (!is_array($data)) {
@@ -67,105 +78,44 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 
             $data['previous'] = null;
             if ($object->hasPrevious()) {
-                $data['previous'] = $this->iriConverter->getIriFromItem($object->getPrevious());
+                $data['previous'] = $this->iriConverter->getIriFromResource($object->getPrevious());
             }
 
             $data['next'] = null;
             if ($object->hasNext()) {
-                $data['next'] = $this->iriConverter->getIriFromItem($object->getNext());
+                $data['next'] = $this->iriConverter->getIriFromResource($object->getNext());
             }
         }
 
-        $barcode = BarcodeUtils::getRawBarcodeFromTask($object);
-        $barcode_token = BarcodeUtils::getToken($barcode);
-        $data['barcode'] = [
-            'barcode' => $barcode,
-            'label' => [
-                'token' => $barcode_token,
-                'url' => $this->urlGenerator->generate(
-                    'task_label_pdf',
-                    ['code' => $barcode, 'token' => $barcode_token],
-                    UrlGeneratorInterface::ABSOLUTE_URL
-                )
-            ]
-        ];
+        $data['barcode'] = $this->taskMapper->getBarcode($object);
 
         $data['packages'] = [];
 
-        if (!is_null($object->getPrefetchedPackagesAndWeight())) {
-            $data['packages'] = !is_null($object->getPrefetchedPackagesAndWeight()['packages']) ? $object->getPrefetchedPackagesAndWeight()['packages'] : [];
-            $data['weight'] = $object->getPrefetchedPackagesAndWeight()['weight'];
-        } elseif ($object->isPickup()) {
-            // for a pickup in a delivery, the serialized weight is the sum of the dropoff weight and the packages are the "sum" of the dropoffs packages
-            $delivery = $object->getDelivery();
+        $delivery = $object->getDelivery();
 
-            if (null !== $delivery) {
-                $deliveryId = $delivery->getId();
+        $packages = $this->taskMapper->getPackages(
+            $object,
+            $delivery?->getTasks() ?? []
+        );
 
-                $qb =  $this->entityManager
-                    ->getRepository(Task::class)
-                    ->createQueryBuilder('t');
+        $data['packages'] = array_map(fn ($package) => $this->objectNormalizer->normalize($package, 'json'), $packages);
 
-                $query = $qb
-                    ->select('p.id', 'MAX(tp.id) as task_package_id', 'p.name AS name', 'p.name AS type', 'sum(tp.quantity) AS quantity', 'p.averageVolumeUnits AS volume_per_package', 'p.shortCode AS short_code')
-                    ->join('t.packages', 'tp', 'WITH', 'tp.task = t.id')
-                    ->join('tp.package', 'p', 'WITH', 'tp.package = p.id')
-                    ->join('t.delivery', 'd', 'WITH', 'd.id = :deliveryId')
-                    ->groupBy('p.id', 'p.name', 'p.averageVolumeUnits', 'p.shortCode')
-                    ->setParameter('deliveryId', $deliveryId)
-                    ->getQuery();
+        $data['weight'] = $this->taskMapper->getWeight(
+            $object,
+            $delivery?->getTasks() ?? []
+        );
 
-                $data['packages'] = $query->getResult();
-
-                $qbWeight =  $this->entityManager
-                    ->getRepository(Task::class)
-                    ->createQueryBuilder('t');
-
-                $data['weight'] = $qbWeight
-                    ->select('sum(t.weight)')
-                    ->join('t.delivery', 'd', 'WITH', 'd.id = :deliveryId')
-                    ->setParameter('deliveryId', $deliveryId)
-                    ->groupBy('d.id')
-                    ->getQuery()
-                    ->getResult()[0]["1"];
-            }
-        } else {
-
-            $qb =  $this->entityManager
-                ->getRepository(Task::class)
-                ->createQueryBuilder('t');
-
-            $data['packages'] = $qb
-                ->select('p.id', 'tp.id as task_package_id', 'p.name AS name', 'p.name AS type', 'tp.quantity AS quantity', 'p.averageVolumeUnits AS volume_per_package', 'p.shortCode AS short_code')
-                ->join('t.packages', 'tp', 'WITH', 'tp.task = t.id')
-                ->join('tp.package', 'p', 'WITH', 'tp.package = p.id')
-                ->andWhere('t.id = :taskId')
-                ->setParameter('taskId', $object->getId())
-                ->getQuery()
-                ->getResult();
-        }
-
-        // Add labels
-        foreach ($data['packages'] as $i => $p) {
-
-            $data['packages'][$i]['labels'] = [];
-
-            $barcodes = BarcodeUtils::getBarcodesFromTaskAndPackageIds($object->getId(), $p['task_package_id'], $p['quantity']);
-            foreach ($barcodes as $barcode) {
-                $labelUrl = $this->urlGenerator->generate(
-                    'task_label_pdf',
-                    ['code' => $barcode, 'token' => BarcodeUtils::getToken($barcode)],
-                    UrlGeneratorInterface::ABSOLUTE_URL
-                );
-                $data['packages'][$i]['labels'][] = $labelUrl;
-            }
-
-            unset($data['packages'][$i]['id']);
-            unset($data['packages'][$i]['task_package_id']);
-        }
-
+        // Set metadata
         if (isset($data['metadata']) && is_array($data['metadata'])) {
             $data['metadata']['zero_waste'] = $object->isZeroWaste();
+
+            if (null !== ($delivery = $object->getDelivery())) {
+                if (null !== ($order = $delivery->getOrder())) {
+                    $data['metadata']['order_id'] = $order->getId();
+                    $data['metadata']['order_number'] = $order->getNumber();
+                    $data['metadata']['order_total'] = $order->getTotal();
+                }
+            }
         }
 
         return $data;
@@ -178,6 +128,18 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function denormalize($data, $class, $format = null, array $context = array())
     {
+        /**
+         * FIXME: Avoid using this method in the new code
+         * It exists only to support legacy use cases
+         * Prefer using the DeliveryInput/DeliveryInputDataTransformer instead
+         */
+
+        $this->logger->info('Deprecated: TaskNormalizer::denormalize', [
+            'class' => $class,
+            'data' => $data,
+            'context' => $context,
+        ]);
+
         // Legacy props
         if (isset($data['doneAfter']) && !isset($data['after'])) {
             $data['after'] = $data['doneAfter'];
@@ -191,7 +153,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         $address = null;
         if (isset($data['address']) && is_string($data['address'])) {
             try {
-                $this->iriConverter->getItemFromIri($data['address']);
+                $this->iriConverter->getResourceFromIri($data['address']);
             } catch (InvalidArgumentException $e) {
                 $addressAsString = $data['address'];
                 unset($data['address']);
@@ -281,8 +243,19 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
         return $task;
     }
 
-    public function supportsDenormalization($data, $type, $format = null)
+    public function supportsDenormalization($data, string $type, ?string $format = null, array $context = []): bool
     {
+        if (isset($context['input'])) {
+            return false;
+        }
+
         return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === Task::class;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            Task::class => false, // supports*() call result is NOT cached
+        ];
     }
 }

@@ -1,0 +1,33 @@
+include:
+  - restaurant.yml
+
+AppBundle\Entity\User:
+  takeaway_user:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - '<userName()>'
+        - '123456'
+        - '<email()>'
+        - true
+        - false
+    roles: [ 'ROLE_USER' ]
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+
+AppBundle\DataType\TsRange:
+  takeaway_pickup_range:
+    __factory:
+      create:
+        - <identity(new \DateTime('today 18:00:00'))>
+        - <identity(new \DateTime('today 18:30:00'))>
+
+AppBundle\Entity\Sylius\Order:
+  takeaway_order:
+    __factory:
+      '@sylius.factory.order::createForRestaurant':
+        - "@restaurant"
+    __calls:
+      - setState: ['new']
+      - setNumber: ['TAKEAWAY<randomNumber()>']
+      - setTakeaway: [true]
+      - setShippingTimeRange: ['@takeaway_pickup_range']
+      - setShippingAddress: [null]

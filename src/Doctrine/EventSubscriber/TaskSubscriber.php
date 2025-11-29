@@ -5,23 +5,21 @@ namespace AppBundle\Doctrine\EventSubscriber;
 use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\EntityChangeSetProcessor;
 use AppBundle\Domain\EventStore;
 use AppBundle\Domain\Task\Event\TaskCreated;
+use AppBundle\Domain\Task\Event\TaskUpdated;
 use AppBundle\Entity\Address;
-use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Service\Geocoder;
-use AppBundle\Service\OrderManager;
-use AppBundle\Sylius\Order\OrderInterface;
-use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\UnitOfWork;
 use Psr\Log\LoggerInterface;
-use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class TaskSubscriber implements EventSubscriber
+#[AsDoctrineListener(event: Events::onFlush, priority: 32, connection: 'default')]
+#[AsDoctrineListener(event: Events::postFlush, priority: 32, connection: 'default')]
+class TaskSubscriber
 {
     private $eventBus;
     private $eventStore;
@@ -34,28 +32,18 @@ class TaskSubscriber implements EventSubscriber
     private $createdAddresses;
 
     public function __construct(
-        MessageBus $eventBus,
+        MessageBusInterface $eventBus,
         EventStore $eventStore,
         EntityChangeSetProcessor $processor,
         LoggerInterface $logger,
         private Geocoder $geocoder,
-        private OrderManager $orderManager
-    )
-    {
+    ) {
         $this->eventBus = $eventBus;
         $this->eventStore = $eventStore;
         $this->processor = $processor;
         $this->logger = $logger;
 
         $this->createdAddresses = new \SplObjectStorage();
-    }
-
-    public function getSubscribedEvents()
-    {
-        return array(
-            Events::onFlush,
-            Events::postFlush,
-        );
     }
 
     public function onFlush(OnFlushEventArgs $args)
@@ -102,17 +90,30 @@ class TaskSubscriber implements EventSubscriber
             $this->processor->process($task, $uow->getEntityChangeSet($task));
         }
 
-        foreach ($this->processor->recordedMessages() as $recordedMessage) {
+        foreach ($this->tasksToUpdate as $task) {
+            $changeset = $uow->getEntityChangeSet($task);
+
+            $domainEvent = new TaskUpdated($task);
+            $taskEvent = $this->eventStore->createEvent($domainEvent);
+            $task->addEvent($taskEvent);
+            $this->postFlushEvents[] = $domainEvent;
+        }
+
+        if (count($this->tasksToUpdate) > 0) {
+            $uow->computeChangeSets();
+        }
+
+        foreach ($this->processor->recordedMessages as $recordedMessage) {
             // If the task is not persisted yet (i.e entity insertions),
             // we handle the event in postFlush
             if ($uow->isScheduledForInsert($recordedMessage->getTask())) {
                 $this->postFlushEvents[] = $recordedMessage;
                 continue;
             }
-            $this->eventBus->handle($recordedMessage);
+            $this->eventBus->dispatch($recordedMessage);
         }
 
-        if (count($this->processor->recordedMessages()) > 0) {
+        if (count($this->processor->recordedMessages) > 0) {
             $uow->computeChangeSets();
         }
     }
@@ -130,19 +131,19 @@ class TaskSubscriber implements EventSubscriber
 
         $this->logger->debug(sprintf('There are %d "task:created" events to handle', count($this->createdTasks)));
         foreach ($this->createdTasks as $task) {
-            $this->eventBus->handle(new TaskCreated($task));
+            $this->eventBus->dispatch(new TaskCreated($task));
         }
 
         $this->logger->debug(sprintf('There are %d "task:updated" events to handle', count($this->tasksToUpdate)));
-        $this->handleStateChangesForTasks($em, $this->tasksToUpdate);
 
         $this->logger->debug(sprintf('There are %d more events to handle', count($this->postFlushEvents)));
         foreach ($this->postFlushEvents as $postFlushEvent) {
             $this->logger->debug(sprintf('Handling event %s', $postFlushEvent::messageName()));
-            $this->eventBus->handle($postFlushEvent);
+            $this->eventBus->dispatch($postFlushEvent);
         }
 
         $this->createdTasks = [];
+        $this->tasksToUpdate = [];
         $this->postFlushEvents = [];
         $this->processor->eraseMessages();
     }
@@ -153,7 +154,7 @@ class TaskSubscriber implements EventSubscriber
      *
      * @param UnitOfWork $uow
      */
-    private function handleAddressesChangesForTasks(/* UnitOfWork */ $uow, array $tasksToUpdate, \SplObjectStorage $createdAddresses)
+    private function handleAddressesChangesForTasks(/* UnitOfWork */$uow, array $tasksToUpdate, \SplObjectStorage $createdAddresses)
     {
         $isAddress = function ($entity) {
             return $entity instanceof Address;
@@ -184,56 +185,6 @@ class TaskSubscriber implements EventSubscriber
                             ];
                         }
                     }
-
-                }
-
-            }
-
-        }
-    }
-
-    /**
-     * @param Task[] $tasksToUpdate
-     */
-    private function handleStateChangesForTasks(EntitymanagerInterface $em, array $tasksToUpdate): void
-    {
-        $uow = $em->getUnitOfWork();
-        foreach ($tasksToUpdate as $taskToUpdate) {
-
-            $changeset = $uow->getEntityChangeSet($taskToUpdate);
-
-            if (!isset($changeset['status'])) {
-                continue;
-            }
-
-            [ $oldValue, $newValue ] = $changeset['status'];
-
-            if ($newValue === Task::STATUS_CANCELLED) {
-
-                $delivery = $taskToUpdate->getDelivery();
-                if (null === $delivery) {
-                    continue;
-                }
-
-                $order = $delivery->getOrder();
-                if (null === $order) {
-                    continue;
-                }
-
-                // if all tasks of a delivery are cancelled, cancel the linked order
-                $tasks = $delivery->getTasks();
-                $cancelOrder = true;
-                foreach ($tasks as $task) {
-                    if ($task->getId() !== $taskToUpdate->getId() && $task->getStatus() !== Task::STATUS_CANCELLED) {
-                        $cancelOrder = false;
-                        break;
-                    }
-                }
-
-                // do not cancel order if order is "refused"
-                if ($cancelOrder && $order->getState() !== OrderInterface::STATE_CANCELLED && $order->getState() !== OrderInterface::STATE_REFUSED) {
-                    $this->orderManager->cancel($order, 'All tasks were cancelled');
-                    $em->flush();
                 }
             }
         }

@@ -8,7 +8,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <span class="navbar-brand">
+      <span class="navbar-brand" data-testid="order-title">
         {% if is_granted('ROLE_ADMIN') and order.hasVendor() %}
         {% if order.isMultiVendor() %}
         <span>{{ order.vendor.name }}</span>
@@ -28,26 +28,53 @@
       <div class="nav navbar-nav navbar-right">
         {% if is_granted('ROLE_DISPATCHER') and order.isDeliveryForStore() %}
           <li>
-            <a href="{{ path('admin_order_edit', { id: order.id }) }}">
+            <a href="{{ path('admin_order_edit', { id: order.id }) }}" data-testid="order-edit">
               <i class="fa fa-pencil"></i>  {% trans %}basics.edit{% endtrans %}
             </a>
           </li>
+          <li>
+            <a href="{{ path('admin_store_delivery_new', { id: order.delivery.store.id, frmrdr: order|hashid(16) }) }}" data-testid="order_clone">
+              <i class="fa fa-clone"></i>  {% trans %}basics.clone{% endtrans %}
+            </a>
+          </li>
         {% endif %}
-        {% if is_granted('ROLE_DISPATCHER') and order.delivery is not empty %}
+        {% if is_granted('ROLE_DISPATCHER') %}
+        <li>
+          {% if order.hasReceipt() %}
+            <a target="_blank" href="{{ path('admin_order_receipt', { orderNumber: order.number }) }}">
+              <i class="fa fa-file-pdf-o mr-2" aria-hidden="true"></i><span>{{ 'order.download_receipt'|trans }}</span>
+            </a>
+          {% elseif order.hasVendor() and order.state == 'fulfilled' %}
+            <a href="#"
+              data-toggle="modal"
+              data-target="#order-receipt-modal"
+              data-action="{{ path('admin_order_receipt_generate', { orderNumber: order.number }) }}">
+              <i class="fa fa-file-pdf-o mr-2" aria-hidden="true"></i><span>{{ 'order.generate_receipt'|trans }}</span>
+            </a>
+          {% endif %}
+        {% endif %}
+        </li>
+        {% set show_more = order.delivery is not empty or (order.hasVendor() and order.state == 'fulfilled') %}
+        {% if is_granted('ROLE_DISPATCHER') and show_more %}
           <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                aria-haspopup="true" aria-expanded="false">{{ 'basics.more'|trans }} <span
                 class="caret"></span></a>
             <ul class="dropdown-menu">
-
+              {% if order.delivery is not empty %}
               <li id="report-incident" {{ react_component('admin/orders/[id]/ReportIncidentModal', {
                 items: order.delivery.items|serialize('jsonld', {groups: ['task', 'task_collection', 'address']})
               }) }}>
+              {% endif %}
+              {% if order.hasVendor() and order.state == 'fulfilled' %}
+              <li>
+                <a href="{{ path('admin_new_promotion_coupon_from_template', { template: 'credit_note', order: order.id }) }}">Créer un avoir commercial</a>
               </li>
-
+              {% endif %}
             </ul>
           </li>
         {% endif %}
+        {% include '_partials/delivery/create_new_button.html.twig' with { navbar: true } %}
       </div>
     </div>
   </div>

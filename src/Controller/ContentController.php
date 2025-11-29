@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[Route(path: '/{_locale}', requirements: ['_locale' => '%locale_regex%'])]
@@ -97,14 +97,6 @@ class ContentController extends AbstractController
 
         return $this->render('content/markdown.html.twig', [
             'text' => $text
-        ]);
-    }
-
-    #[Route(path: '/covid-19', name: 'covid_19')]
-    public function covid19Action(TranslatorInterface $translator)
-    {
-        return $this->render('content/raw.html.twig', [
-            'text' => $translator->trans('covid_19.body', [], 'emails')
         ]);
     }
 

@@ -1,0 +1,3 @@
+include:
+  - setup_default.yml
+  - stores_excl_setup.yml

@@ -1,13 +1,12 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
-import { ConfigProvider, Calendar, DatePicker } from 'antd'
+import { Calendar, DatePicker } from 'antd'
 import moment from 'moment'
 import _ from 'lodash'
 import axios from 'axios'
 
-import 'antd/es/select/style/index.css'
-
-import { antdLocale, localeDetector } from '../i18n'
+import { localeDetector } from '../i18n'
+import { AntdConfigProvider } from '../utils/antd'
 
 const baseURL = location.protocol + '//' + location.host
 
@@ -21,7 +20,7 @@ let locale = localeDetector(),
 
 let token
 
-closingRules = _.map(closingRules, function (item) {
+closingRules = _.map(closingRules, function(item) {
   return {
     ...item,
     startDate: moment(item.startDate),
@@ -52,22 +51,22 @@ function onChange(dates) {
 
 class ClosingRuleRangePicker extends React.Component {
 
-  render () {
+  render() {
     return (
-      <ConfigProvider locale={antdLocale}>
+      <AntdConfigProvider>
         <RangePicker
           format="DD/MM/YYYY à HH:mm"
           showTime={{ format: 'HH:mm' }}
           onChange={onChange}
         />
-      </ConfigProvider>
+      </AntdConfigProvider>
     )
   }
 }
 
 class ClosingRulesCalendar extends React.Component {
 
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
       rules: props.rules
@@ -94,7 +93,7 @@ class ClosingRulesCalendar extends React.Component {
     }
   }
 
-  dateCellRender (date) {
+  dateCellRender(date) {
 
     return (
       <li>{
@@ -102,33 +101,33 @@ class ClosingRulesCalendar extends React.Component {
           if (item.startDate.isBefore(date, 'day') && item.endDate.isAfter(date, 'day')) {
             return (
               <ol key={index} className="calendar-close">
-                <button type="button" className="close" onClick={()=> this.onDeleteClick(item)}><span>&times;</span></button>
+                <button type="button" className="close" onClick={() => this.onDeleteClick(item)}><span>&times;</span></button>
                 <span>Fermé ce jour</span>
-                { item.reason && <span><br/>{item.reason}</span> }
+                {item.reason && <span><br />{item.reason}</span>}
               </ol>
             )
           } else if (item.startDate.isSame(date, 'day') && item.endDate.isSame(date, 'day')) {
             return (
               <ol key={index} className="calendar-close">
-                <button type="button" className="close" onClick={()=> this.onDeleteClick(item)}><span>&times;</span></button>
+                <button type="button" className="close" onClick={() => this.onDeleteClick(item)}><span>&times;</span></button>
                 <span>Fermé de {item.startDate.format('HH:mm')} à {item.endDate.format('HH:mm')}</span>
-                {item.reason && <span><br/>{item.reason}</span>}
+                {item.reason && <span><br />{item.reason}</span>}
               </ol>
             )
           } else if (item.startDate.isSame(date, 'day') && item.endDate.isAfter(date, 'day')) {
             return (
               <ol key={index} className="calendar-close">
-                <button type="button" className="close" onClick={()=> this.onDeleteClick(item)}><span>&times;</span></button>
+                <button type="button" className="close" onClick={() => this.onDeleteClick(item)}><span>&times;</span></button>
                 <span>Fermé à partir de {item.startDate.format('HH:mm')}</span>
-                {item.reason && <span><br/>{item.reason}</span>}
+                {item.reason && <span><br />{item.reason}</span>}
               </ol>
             )
           } else if (item.startDate.isBefore(date, 'day') && item.endDate.isSame(date, 'day')) {
             return (
               <ol key={index} className="calendar-close">
-                <button type="button" className="close" onClick={()=> this.onDeleteClick(item)}><span>&times;</span></button>
-                <span>{ `Fermé jusqu'à ${item.endDate.format('HH:mm')}` }</span>
-                {item.reason && <span><br/>{item.reason}</span>}
+                <button type="button" className="close" onClick={() => this.onDeleteClick(item)}><span>&times;</span></button>
+                <span>{`Fermé jusqu'à ${item.endDate.format('HH:mm')}`}</span>
+                {item.reason && <span><br />{item.reason}</span>}
               </ol>
             )
           }
@@ -138,11 +137,11 @@ class ClosingRulesCalendar extends React.Component {
     )
   }
 
-  render () {
+  render() {
     return (
-      <ConfigProvider locale={antdLocale}>
+      <AntdConfigProvider>
         <Calendar dateCellRender={this.dateCellRender.bind(this)} />
-      </ConfigProvider>
+      </AntdConfigProvider>
     )
   }
 }

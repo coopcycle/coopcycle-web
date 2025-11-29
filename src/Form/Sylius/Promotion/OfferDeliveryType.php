@@ -3,11 +3,13 @@
 namespace AppBundle\Form\Sylius\Promotion;
 
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Sylius\Promotion;
 use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsRestaurantRuleChecker;
 use Ramsey\Uuid\Uuid;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
-use Sylius\Component\Promotion\Model\Promotion;
+use Sylius\Component\Promotion\Model\PromotionInterface;
+use Sylius\Component\Promotion\Model\PromotionCoupon;
 use Sylius\Component\Promotion\Model\PromotionAction;
 use Sylius\Component\Promotion\Repository\PromotionCouponRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
@@ -16,26 +18,21 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OfferDeliveryType extends AbstractType
 {
-    private $promotionRuleFactory;
-    private $promotionCouponRepository;
-    private $translator;
-
     public function __construct(
-        FactoryInterface $promotionRuleFactory,
-        PromotionCouponRepositoryInterface $promotionCouponRepository,
-        TranslatorInterface $translator)
-    {
-        $this->promotionRuleFactory = $promotionRuleFactory;
-        $this->promotionCouponRepository = $promotionCouponRepository;
-        $this->translator = $translator;
-    }
+        private FactoryInterface $promotionRuleFactory,
+        private PromotionCouponRepositoryInterface $promotionCouponRepository,
+        private TranslatorInterface $translator,
+        private AuthorizationCheckerInterface $authorizationChecker)
+    {}
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -45,28 +42,14 @@ class OfferDeliveryType extends AbstractType
                 'label' => false,
             ]);
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
+        // Set data in sub form
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
             $form = $event->getForm();
+            $data = $event->getData();
 
-            $localBusiness = $options['local_business'];
+            $form->get('coupon')->setData($event->getData());
 
-            $promotion = null;
-            foreach ($localBusiness->getPromotions() as $p) {
-                foreach ($p->getActions() as $action) {
-                    if ($action->getType() === DeliveryPercentageDiscountPromotionActionCommand::TYPE) {
-                        $configuration = $action->getConfiguration();
-                        if ($configuration['percentage'] === 1.0 && $configuration['decrase_platform_fee'] === false) {
-                            $promotion = $p;
-                            break 2;
-                        }
-                    }
-                }
-            }
-
-            if ($promotion) {
-                $event->setData($promotion);
-            }
         });
 
         // Add custom help option to coupon.code form
@@ -74,6 +57,7 @@ class OfferDeliveryType extends AbstractType
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
             $form = $event->getForm();
+            $data = $event->getData();
 
             $couponForm = $form->get('coupon');
 
@@ -86,56 +70,114 @@ class OfferDeliveryType extends AbstractType
             $couponForm->add('code', get_class($config->getType()->getInnerType()), $options);
         });
 
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+
+            $form = $event->getForm();
+            $data = $event->getData();
+
+            if ($this->authorizationChecker->isGranted('ROLE_DISPATCHER')) {
+
+                $promotion = $data?->getPromotion();
+
+                $isChecked = false;
+
+                if (null !== $promotion) {
+                    foreach ($promotion->getActions() as $action) {
+                        if ($action->getType() === DeliveryPercentageDiscountPromotionActionCommand::TYPE) {
+                            $configuration = $action->getConfiguration();
+                            $isChecked = $configuration['decrase_platform_fee'];
+                            break;
+                        }
+                    }
+                }
+
+                // TODO Fix typo
+                $form
+                    ->add('decrasePlatformFee', CheckboxType::class, [
+                        'mapped' => false,
+                        'required' => false,
+                        'label' => 'form.offer_delivery.decrease_platform_fee.label',
+                        'help' => 'form.offer_delivery.decrease_platform_fee.help',
+                        'data' => $isChecked,
+                    ]);
+            }
+
+        });
+
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($options) {
 
             $form = $event->getForm();
-            $promotion = $event->getData();
-
             $coupon = $form->get('coupon')->getData();
 
-            if ($exists = $this->promotionCouponRepository->findOneBy(['code' => $coupon->getCode()])) {
-                $message =
-                    $this->translator->trans('form.offer_delivery.coupon_code.error.exists');
-                $form->get('coupon')->get('code')->addError(new FormError($message));
+            $decreasePlatformFee = $form->has('decrasePlatformFee') ? $form->get('decrasePlatformFee')->getData() : false;
 
-                return;
+            if (null === $coupon->getId()) {
+                if ($exists = $this->promotionCouponRepository->findOneBy(['code' => $coupon->getCode()])) {
+                    $message =
+                        $this->translator->trans('form.offer_delivery.coupon_code.error.exists');
+                    $form->get('coupon')->get('code')->addError(new FormError($message));
+
+                    return;
+                }
             }
 
-            if (null === $promotion->getId()) {
+            $promotion = $this->getOrCreatePromotion($coupon, $options['local_business'], $decreasePlatformFee);
 
-                // FIXME Unrelated translation key
-                $promotion->setName($this->translator->trans('promotions.heading.free_delivery'));
-                $promotion->setCouponBased(true);
-
-                $promotion->setCode(Uuid::uuid4()->toString());
-                $promotion->setPriority(1);
-
-                $isRestaurantRule = $this->promotionRuleFactory->createNew();
-                $isRestaurantRule->setType(IsRestaurantRuleChecker::TYPE);
-                $isRestaurantRule->setConfiguration([
-                    'restaurant_id' => $options['local_business']->getId()
-                ]);
-
-                $promotion->addRule($isRestaurantRule);
-
-                $promotionAction = new PromotionAction();
-                $promotionAction->setType(DeliveryPercentageDiscountPromotionActionCommand::TYPE);
-                $promotionAction->setConfiguration([
-                    'percentage' => 1.0,
-                    'decrase_platform_fee' => false,
-                ]);
-
-                $promotion->addAction($promotionAction);
+            if (null !== $promotion->getId()) {
+                foreach ($promotion->getActions() as $action) {
+                    if ($action->getType() === DeliveryPercentageDiscountPromotionActionCommand::TYPE) {
+                        $configuration = $action->getConfiguration();
+                        $configuration['decrase_platform_fee'] = $decreasePlatformFee;
+                        $action->setConfiguration($configuration);
+                        break;
+                    }
+                }
+            } else {
+                $promotion->addCoupon($coupon);
             }
 
-            $promotion->addCoupon($coupon);
         });
+    }
+
+    private function getOrCreatePromotion(PromotionCoupon $coupon, LocalBusiness $restaurant, bool $decreasePlatformFee = false): PromotionInterface
+    {
+        if (null !== $coupon->getPromotion()) {
+            return $coupon->getPromotion();
+        }
+
+        $promotion = new Promotion();
+
+        // FIXME Unrelated translation key
+        $promotion->setName($this->translator->trans('promotions.heading.free_delivery'));
+        $promotion->setCouponBased(true);
+
+        $promotion->setCode(Uuid::uuid4()->toString());
+        $promotion->setPriority(1);
+
+        $isRestaurantRule = $this->promotionRuleFactory->createNew();
+        $isRestaurantRule->setType(IsRestaurantRuleChecker::TYPE);
+        $isRestaurantRule->setConfiguration([
+            'restaurant_id' => $restaurant->getId()
+        ]);
+
+        $promotion->addRule($isRestaurantRule);
+
+        $promotionAction = new PromotionAction();
+        $promotionAction->setType(DeliveryPercentageDiscountPromotionActionCommand::TYPE);
+        $promotionAction->setConfiguration([
+            'percentage' => 1.0,
+            'decrase_platform_fee' => $decreasePlatformFee,
+        ]);
+
+        $promotion->addAction($promotionAction);
+
+        return $promotion;
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => Promotion::class,
+            'data_class' => PromotionCoupon::class,
         ));
 
         $resolver->setRequired('local_business');

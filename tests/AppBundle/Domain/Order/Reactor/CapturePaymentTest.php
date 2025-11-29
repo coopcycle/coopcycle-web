@@ -1,10 +1,10 @@
 <?php
 
-namespace Tests\AppBundle\Domain\Order\Reactor;
+namespace Tests\AppBundle\MessageHandler\Order;
 
 use AppBundle\Domain\Order\Event\OrderCancelled;
 use AppBundle\Domain\Order\Event\OrderFulfilled;
-use AppBundle\Domain\Order\Reactor\CapturePayment;
+use AppBundle\MessageHandler\Order\CapturePayment;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Payment\Gateway;
 use AppBundle\Payment\GatewayResolver;

@@ -25,19 +25,6 @@ registration.email.confirm: Potvrdit e-mail
 registration.email.message: "<h2> Vítejte v %brand_name%, %username%</h2>\nTuto zprávu\
   \ jste obdrželi, protože jste se nedávno zaregistrovali k %brand_name%.\n<br>\n\
   Potvrďte svou e-mailovou adresu kliknutím na tlačítko níže.\n"
-covid_19.body: "<h1> Pokyny, které je třeba dodržovat při dodávce </h1>\n<p> Vzhledem\
-  \ k současné pandemii COVID-19 (Coronavirus) musíte <strong> přísně </strong> dodržovat\
-  \ následující pokyny: </p>\n<h2> 1. Respektujte sociální distancování </h2>\n<p>\
-  \ Vaši objednávku zanecháme na prahu, takže se nemusíte přiblížit k osobě, která\
-  \ ji přijde doručit. Také není třeba zanechávat spropitné. </p>\n<h2> 2. Rozbalte\
-  \ objednávku po přijetí </h2>\n<p> Virus může přežít na kartonových a plastových\
-  \ površích několik dní. Balení je proto vysoce rizikovou cestou přenosu viru.\n\
-  Proto vás žádáme, abyste <strong> rozbalili objednávku a přenesli obsah na talíře\
-  \ </strong>. </p>\n<h2> 3. Zlikvidujte obal </h2>\n<p> Jakmile je objednávka rozbalena,\
-  \ nezapomeňte <strong> zlikvidovat obal v uzavřeném koši </strong>, abyste se ho\
-  \ nechtěně nedotkli později.</p>\n<h2> 4. Umyjte si ruce! </h2>\n<p> Jakmile rozbalíte\
-  \ objednávku a zlikvidujete obal, <strong> umyjte si ruce! </strong> </p>\n"
-covid_19.subject: COVID-19 | Důležité pokyny pro vaši objednávku
 order.payment.body: "Dobrý den,\n<br>\nDokončili jsme dodávku, kterou jste si u nás\
   \ objednali.\n<br>\nNíže naleznete odkaz, který vám umožní platit kreditní kartou.\n"
 order.payment.subject: Platba vaší objednávky %order.number%

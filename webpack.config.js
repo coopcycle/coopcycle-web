@@ -2,9 +2,10 @@ var Encore = require('@symfony/webpack-encore')
 var webpack = require('webpack')
 var path = require('path')
 var ESLintPlugin = require('eslint-webpack-plugin')
+const AntdMomentWebpackPlugin = require('@ant-design/moment-webpack-plugin');
 
 if (!Encore.isRuntimeEnvironmentConfigured()) {
-    Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
+  Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
 }
 
 Encore
@@ -28,23 +29,34 @@ Encore
   .addEntry('common', './js/app/common.js')
   .addEntry('customize-form', './js/app/customize/form.js')
   .addEntry('dashboard', './js/app/dashboard/index.js')
-  .addEntry('datadog', './js/app/datadog.js')
+  .addEntry('datadog', './js/app/datadog.ts')
   .addEntry('delivery-form', './js/app/delivery/form.js')
   .addEntry('delivery-homepage', './js/app/delivery/homepage.js')
   .addEntry('delivery-list', './js/app/delivery/list.js')
   .addEntry('delivery-map', './js/app/delivery/map.js')
   .addEntry('delivery-embed-start-form', './js/app/delivery/embed-start.js')
   .addEntry('delivery-pricing-rules', './js/app/delivery/pricing/pricing-rules.js')
+  .addEntry('pricing-rule-set-form-react', './js/app/admin/pricing/entrypoint.tsx')
   .addEntry('delivery-tracking', './js/app/delivery/tracking.js')
+  .addEntry('delivery-form-react', './js/app/store/deliveries/entrypoint.tsx')
+  .addEntry('recurrence-rule-form-react', './js/app/store/recurrence_rules/entrypoint.tsx')
+  .addEntry('invoicing', './js/app/admin/invoicing/entrypoint.tsx')
   .addEntry('notifications', './js/app/notifications/index.js')
   .addEntry('foodtech-dashboard', './js/app/foodtech/dashboard/index.js')
   .addEntry('metrics', './js/app/metrics/index.js')
   .addEntry('metrics-admin', './js/app/metrics/admin.js')
   .addEntry('metrics-loopeat', './js/app/metrics/loopeat.js')
   .addEntry('optins', './js/app/optins/index.js')
+  // FoodTech checkout; "Address" page (path: '/order/')
   .addEntry('order-index', './js/app/order/index.js')
+  // FoodTech checkout; "Payment" page (path: '/order/payment/')
   .addEntry('order-payment', './js/app/order/payment/index.js')
+  // FoodTech checkout; "Confirmation" page (path: '/order/confirm/{hashid}')
+  // Profile > Orders (only FoodTech orders) (path: '/profile/orders/{id}')
   .addEntry('order-details', './js/app/order/details/index.js')
+  // Dispatcher: Order page (path: '/admin/orders/{id}')
+  // Profile > Orders (only Package Delivery (non FoodTech) orders) (path: '/profile/orders/{id}')
+  .addEntry('order-item', './js/app/components/order/id/entrypoint.tsx')
   .addEntry('product-form', './js/app/product/form.js')
   .addEntry('package-set-form', './js/app/admin/package-set.js')
   .addEntry('product-list', './js/app/product/list.js')
@@ -62,7 +74,7 @@ Encore
   .addEntry('restaurant-dashboard', './js/app/dashboard/@restaurant/dashboard.js')
   .addEntry('search-address', './js/app/search/address.js')
   .addEntry('search-user', './js/app/search/user.js')
-  .addEntry('sentry', './js/app/sentry.js')
+  .addEntry('sentry', './js/app/sentry.ts')
   .addEntry('store-form', './js/app/admin/store/form.js')
   .addEntry('stores-list', './js/app/admin/store/list.js')
   .addEntry('task-list', './js/app/delivery/task-list.js')
@@ -76,7 +88,9 @@ Encore
   .addEntry('widgets-admin', './js/app/widgets/admin.js')
   .addEntry('zone-preview', './js/app/zone/preview.js')
   .addEntry('failure-form', './js/app/failure/form.js')
-  .addEntry('incident-form', './js/app/incident/form.js')
+  .addEntry('incidents-ux-react-controllers', './js/app/admin/incidents/ux-react-controllers/index.js')
+  .addEntry('incidents-list', './js/app/admin/incidents/incidents-list.tsx')
+  .addEntry('incident-details', './js/app/admin/incidents/[id]/incident-details.tsx')
 
   // @see https://symfony.com/doc/current/frontend/encore/custom-loaders-plugins.html#adding-custom-plugins
   // @see https://github.com/moment/moment/issues/2373
@@ -110,6 +124,9 @@ Encore
   // but, you probably want this, unless you're building a single-page app
   .enableSingleRuntimeChunk()
 
+  .enableTypeScriptLoader(function(tsConfig) {
+    tsConfig.transpileOnly = true
+  })
   .enableReactPreset()
 
   .enablePostCssLoader()
@@ -137,8 +154,15 @@ Encore
 
   .enableVersioning(Encore.isProduction())
 
+  .addPlugin(new webpack.ProvidePlugin({
+    process: 'process/browser'
+  }))
+
 if (!Encore.isProduction()) {
-  Encore.enableEslintPlugin()
+  Encore.addPlugin(new ESLintPlugin({
+    configType: 'flat',
+    eslintPath: 'eslint/use-at-your-own-risk'
+  }))
 }
 
 // https://github.com/webpack/webpack-dev-server/blob/master/CHANGELOG.md#400-beta0-2020-11-27
@@ -161,6 +185,8 @@ Encore.configureDevServerOptions(options => {
     overlay: false
   }
 })
+
+Encore.addPlugin(new AntdMomentWebpackPlugin())
 
 let webpackConfig = Encore.getWebpackConfig()
 

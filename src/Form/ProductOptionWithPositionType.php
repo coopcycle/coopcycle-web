@@ -56,7 +56,7 @@ class ProductOptionWithPositionType extends AbstractType
                 ->add('enabled', CheckboxType::class, [
                     'required' => false,
                     'label' => $data['option']->getName(),
-                    'data' => $data['product']->hasOption($data['option']),
+                    'data' => $data['product']->isOptionEnabled($data['option']),
                 ]);
         });
     }

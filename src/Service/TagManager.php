@@ -26,6 +26,10 @@ class TagManager
 
     public function getTags(TaggableInterface $taggable)
     {
+        if (null === $taggable->getId()) {
+            return [];
+        }
+
         return $this->cache->get($this->getCacheKey($taggable), function (ItemInterface $item) use ($taggable) {
 
             // Cache for 1 day
@@ -252,5 +256,69 @@ class TagManager
             ->getQuery()
             ->getArrayResult()
             ;
+    }
+
+    public function warmupCache(TaggableInterface ...$taggables)
+    {
+        $resourceClasses = [];
+        $taggablesById = [];
+
+        foreach ($taggables as $taggable) {
+            $resourceClasses[] = $taggable->getTaggableResourceClass();
+            $taggablesById[$taggable->getId()] = $taggable;
+        }
+
+        $resourceClasses = array_unique($resourceClasses);
+
+        if (count($resourceClasses) > 1) {
+            throw new \Exception('It is not possible to warmup cache of different classes.');
+        }
+
+        $taggingRepository = $this->entityManager->getRepository(Tagging::class);
+
+        // Use a "fetch join" in DQL,
+        // so that calling $tagging->getTag() doesn't fire an additional query
+        $query = $this->entityManager->createQuery('SELECT tagging, tag FROM AppBundle\Entity\Tagging tagging JOIN tagging.tag tag WHERE tagging.resourceClass = :resource_class AND tagging.resourceId IN (:resource_ids)');
+        $query->setParameter('resource_class', current($resourceClasses));
+        $query->setParameter('resource_ids', array_map(fn($t) => $t->getId(), $taggables));
+
+        $taggings = $query->getResult();
+
+        $tagsByTaggable = new \SplObjectStorage();
+
+        foreach ($taggings as $tagging) {
+            $taggable = $taggablesById[$tagging->getResourceId()];
+            $tags = isset($tagsByTaggable[$taggable]) ? $tagsByTaggable[$taggable] : [];
+
+            $tagsByTaggable[$taggable] = array_merge($tags, [
+                $tagging->getTag()
+            ]);
+        }
+
+        foreach ($tagsByTaggable as $taggable) {
+
+            $cacheKey = $this->getCacheKey($taggable);
+
+            $tags = [];
+            foreach ($tagsByTaggable[$taggable] as $tag) {
+                $tags[] = [
+                    'name' => $tag->getName(),
+                    'slug' => $tag->getSlug(),
+                    'color' => $tag->getColor(),
+                ];
+            }
+
+            if (count($tags) === 0) {
+                continue;
+            }
+
+            $cacheItem = $this->cache->getItem($cacheKey);
+            if (!$cacheItem->isHit()) {
+                // Cache for 1 day
+                $cacheItem->expiresAfter(60 * 60 * 24);
+                $cacheItem->set($tags);
+                $this->cache->save($cacheItem);
+            }
+        }
     }
 }

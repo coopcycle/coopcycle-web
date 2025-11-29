@@ -18,6 +18,11 @@ class OrderStateChanged extends Event implements DomainEvent
         return 'order:state_changed';
     }
 
+    public function getTriggeredBy(): Event
+    {
+        return $this->triggeredBy;
+    }
+
     public function toPayload()
     {
         return [

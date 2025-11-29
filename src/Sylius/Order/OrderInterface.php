@@ -13,6 +13,7 @@ use AppBundle\Entity\Sylius\PriceInterface;
 use AppBundle\Entity\Vendor;
 use AppBundle\LoopEat\LoopeatAwareInterface;
 use AppBundle\LoopEat\OAuthCredentialsInterface as LoopeatOAuthCredentialsInterface;
+use AppBundle\Pricing\ManualSupplements;
 use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Channel\Model\ChannelAwareInterface;
 use Sylius\Component\Customer\Model\CustomerAwareInterface;
@@ -60,6 +61,8 @@ interface OrderInterface extends
      * The order was cancelled because the customer didn't show up.
      */
     public const CANCEL_REASON_NO_SHOW = 'NO_SHOW';
+
+    public function getItemsSorted(): Collection;
 
     public function getTaxTotal(): int;
 
@@ -183,9 +186,9 @@ interface OrderInterface extends
 
     public function isFoodtech(): bool;
 
-    public function getDeliveryItem(): ?OrderItemInterface;
-
     public function getDeliveryPrice(): PriceInterface;
+
+    public function getManualSupplements(): ManualSupplements;
 
     public function getExports(): Collection;
 }

@@ -3,12 +3,11 @@
 namespace Tests\AppBundle\Domain\Task\Reactor;
 
 use AppBundle\Domain\Task\Event\TaskDone;
-use AppBundle\Domain\Task\Event\TaskFailed;
-use AppBundle\Domain\Task\Reactor\SendEmail;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
+use AppBundle\MessageHandler\Task\SendEmail;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -89,10 +88,12 @@ class SendEmailTest extends TestCase
         $bob = $this->prophesize(User::class);
         $bob->getFullName()->willReturn('Bob');
         $bob->getEmail()->willReturn('bob@acme.com');
+        $bob->isEnabled()->willReturn(true);
 
         $sarah = $this->prophesize(User::class);
         $sarah->getFullName()->willReturn('Sarah');
         $sarah->getEmail()->willReturn('sarah@acme.com');
+        $sarah->isEnabled()->willReturn(true);
 
         $store->getOwners()->add($bob->reveal());
         $store->getOwners()->add($sarah->reveal());
@@ -111,6 +112,43 @@ class SendEmailTest extends TestCase
 
         $this->emailManager
             ->sendTo($message, 'Bob <bob@acme.com>', 'Sarah <sarah@acme.com>')
+            ->shouldBeCalled();
+
+        call_user_func_array($this->sendEmail, [ new TaskDone($task, 'Lorem ipsum') ]);
+    }
+
+
+    public function testSendsEmailToStoreOwnersWithDisabledOwners()
+    {
+        $store = new Store();
+
+        $bob = $this->prophesize(User::class);
+        $bob->getFullName()->willReturn('Bob');
+        $bob->getEmail()->willReturn('bob@acme.com');
+        $bob->isEnabled()->willReturn(false);
+
+        $sarah = $this->prophesize(User::class);
+        $sarah->getFullName()->willReturn('Sarah');
+        $sarah->getEmail()->willReturn('sarah@acme.com');
+        $sarah->isEnabled()->willReturn(true);
+
+        $store->getOwners()->add($bob->reveal());
+        $store->getOwners()->add($sarah->reveal());
+
+        $delivery = new Delivery();
+        $delivery->setStore($store);
+
+        $task = new Task();
+        $task->setDelivery($delivery);
+
+        $message = new Email();
+
+        $this->emailManager
+            ->createTaskCompletedMessage($task)
+            ->willReturn($message);
+
+        $this->emailManager
+            ->sendTo($message, 'Sarah <sarah@acme.com>')
             ->shouldBeCalled();
 
         call_user_func_array($this->sendEmail, [ new TaskDone($task, 'Lorem ipsum') ]);

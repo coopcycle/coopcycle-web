@@ -100,6 +100,8 @@ RUN chmod +x /usr/local/bin/docker-app-start
 RUN chmod +x /usr/local/bin/enable-xdebug
 RUN chmod +x bin/demo
 
+RUN git config --global --add safe.directory /var/www/html
+
 # allow superuser to run plugins as root
 # ref https://stackoverflow.com/questions/68973158/sh-symfony-cmd-command-not-found
 ENV COMPOSER_ALLOW_SUPERUSER 1

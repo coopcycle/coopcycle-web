@@ -1,0 +1,9 @@
+{
+  "nodes": {
+    "nodes": {
+      "left": { "nodes": [], "attributes": { "name": "time_slot" } },
+      "right": { "nodes": [], "attributes": { "value": "/api/time_slots/2" } }
+    },
+    "attributes": { "operator": "==" }
+  }
+}

@@ -1,10 +1,9 @@
-imports:
-    - { resource: ../dev/framework.yaml }
-
 framework:
     test: ~
     session:
-        storage_id: session.storage.mock_file
+      handler_id: ~
+      storage_factory_id: session.storage.factory.mock_file
+      cookie_secure: false
     cache:
         prefix_seed: "%database_name%_test"
         app: cache.adapter.array

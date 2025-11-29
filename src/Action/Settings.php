@@ -9,7 +9,7 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToCheckFileExistence;
 use Liip\ImagineBundle\Service\FilterService;
 use Misd\PhoneNumberBundle\Serializer\Normalizer\PhoneNumberNormalizer;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,6 +31,7 @@ class Settings
         'administrator_email',
         'guest_checkout_enabled',
         'motto',
+        'paygreen_public_key',
     ];
 
     public function __construct(

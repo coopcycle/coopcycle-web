@@ -4,7 +4,7 @@ namespace AppBundle\Api\EventSubscriber;
 
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Security\TokenStoreExtractor;
-use ApiPlatform\Core\EventListener\EventPriorities;
+use ApiPlatform\Symfony\EventListener\EventPriorities;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ViewEvent;

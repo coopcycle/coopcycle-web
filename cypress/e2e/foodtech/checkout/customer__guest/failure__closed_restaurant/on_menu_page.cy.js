@@ -6,12 +6,15 @@ describe(
       describe(` (${ customerType })`, () => {
 
         beforeEach(() => {
+          cy.loadFixtures('checkout.yml')
 
-          cy.symfonyConsole(
-            'coopcycle:fixtures:load -f cypress/fixtures/checkout.yml')
+          cy.setMockDateTime('2025-01-10 21:30:00')
 
-          cy.symfonyConsole(
-            'craue:setting:create --section="general" --name="guest_checkout_enabled" --value="1" --force')
+          cy.symfonyConsole('craue:setting:create --section="general" --name="guest_checkout_enabled" --value="1" --force')
+        })
+
+        afterEach(() => {
+          cy.resetMockDateTime()
         })
 
         context('restaurant is closed while the customer is on the menu page' +
@@ -85,7 +88,7 @@ describe(
 
               cy.get('.order-button:visible').click()
 
-              cy.location('pathname').should('eq', '/order/')
+              cy.urlmatch(/\/order\/$/)
             })
         })
 

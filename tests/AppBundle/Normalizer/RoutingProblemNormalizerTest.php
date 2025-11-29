@@ -2,7 +2,7 @@
 
 namespace Tests\AppBundle\Normalizer;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Address;
@@ -60,7 +60,7 @@ class RoutingProblemNormalizerTest extends KernelTestCase
             $task_id += 1;
         }
 
-        $iriConverter = self::$container->get(IriConverterInterface::class);
+        $iriConverter = self::getContainer()->get(IriConverterInterface::class);
 
         $vehicle1 = new Vehicle(1, 'bike', $address1->getGeo()->toGeocoderCoordinates(), $address1->getGeo()->toGeocoderCoordinates());
         $routingProblem = new RoutingProblem();
@@ -69,7 +69,7 @@ class RoutingProblemNormalizerTest extends KernelTestCase
             $routingProblem->addJob(
                 Task::toVroomJob(
                     $task,
-                    $iriConverter->getItemIriFromResourceClass(Task::class, ['id' => $task->getId()])
+                    $iriConverter->getIriFromResource(Task::class, context: ['uri_variables' => ['id' => $task->getId()]])
                 ));
         }
         $routingProblem->addVehicle($vehicle1);

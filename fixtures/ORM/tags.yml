@@ -1,0 +1,10 @@
+AppBundle\Entity\Tag:
+  tag_important:
+    name: Important
+    color: '#FF0000'
+  tag_fragile:
+    name: Fragile
+    color: '#00FF00'
+  tag_perishable:
+    name: Perishable
+    color: '#0000FF'

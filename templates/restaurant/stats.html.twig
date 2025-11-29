@@ -56,7 +56,15 @@
   {% include 'restaurant/_partials/refunds.html.twig' %}
 {% else %}
 
-<div class="mb-4 d-flex justify-content-end">
+<div class="mb-4 d-flex justify-content-end align-items-center">
+  {% if stats.hasMealVouchers() %}
+    {% if show_only_meal_vouchers %}
+      {% set filter_link_params = app.request.query.all()|filter((v, k) => k != 'show_only')|merge({ id: restaurant.id }) %}
+    {% else %}
+      {% set filter_link_params = app.request.query.all()|merge({ id: restaurant.id, show_only: 'meal_vouchers' }) %}
+    {% endif %}
+    <a href="{{ path(stats_route, filter_link_params) }}" class="mr-4">{{ (show_only_meal_vouchers ? 'restaurant.stats.show_all' : 'restaurant.stats.show_only_meal_vouchers')|trans }}</a>
+  {% endif %}
   <div class="btn-group">
     <button type="button" class="btn btn-default">
       {{ with_details ? 'restaurant.stats.view_detailed'|trans : 'restaurant.stats.view_simple'|trans }}

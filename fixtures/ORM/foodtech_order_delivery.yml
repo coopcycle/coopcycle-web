@@ -1,0 +1,45 @@
+include:
+  - restaurant.yml
+
+AppBundle\Entity\Base\GeoCoordinates:
+  delivery_customer_geo:
+    __construct: [ "48.846656", "2.369052" ]
+
+AppBundle\Entity\Address:
+  delivery_customer_address:
+    addressLocality: 'Paris'
+    postalCode: '75012'
+    streetAddress: '456, avenue de la République 75012 Paris'
+    geo: "@delivery_customer_geo"
+
+AppBundle\Entity\User:
+  delivery_user:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - '<userName()>'
+        - '123456'
+        - '<email()>'
+        - true
+        - false
+    roles: [ 'ROLE_USER' ]
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+
+AppBundle\DataType\TsRange:
+  delivery_time_range:
+    __factory:
+      create:
+        - <identity(new \DateTime('today 19:00:00'))>
+        - <identity(new \DateTime('today 19:30:00'))>
+
+AppBundle\Entity\Sylius\Order:
+  delivery_order:
+    __factory:
+      '@sylius.factory.order::createForRestaurant':
+        - "@restaurant"
+    __calls:
+      - setState: ['new']
+      - setNumber: ['DELIVERY<randomNumber()>']
+      - setTakeaway: [false]
+      - setShippingTimeRange: ['@delivery_time_range']
+      - setShippingAddress: ['@delivery_customer_address']
+      - setBillingAddress: ['@delivery_customer_address']

@@ -204,7 +204,7 @@ order.payer.email: Email
 order.payer.title: Informações do cliente
 order.shipping_date.title: Seu horário de envio
 order.preparation_expected_at: Preparação esperada em% date%
-order.total_tax_by_rate: Total %nome%
+order.total_tax_by_rate: IVA %nome%
 order.total_tax: IVA
 order.items_total: Total de produtos
 order.total_including_tax: Total (com IVA)
@@ -385,9 +385,11 @@ meta.title: Plataforma de logística para cooperativas
 stores.addresses: Endereços
 stores.deliveries.task_unassigned: Não atribuída
 stores.deliveries: Entregas
+stores.orders: Pedidos
 stores.api_keys: Chaves API
 stores.users: Usuários
 stores.createNewDelivery: Criar entrega
+stores.createNewOrder: Criar novo pedido
 stores.settings: Ajustes
 stores.manage: Gerenciar
 roles.ROLE_STORE.help: 'Proprietário da loja: gerenciar lojas atribuídas, entregas…'

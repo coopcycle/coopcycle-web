@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\AppBundle\Domain\Order\Reactor;
+namespace Tests\AppBundle\MessageHandler\Order;
 
 use AppBundle\Domain\Order\Event\OrderCreated;
-use AppBundle\Domain\Order\Reactor\CreateLoopeatOrder;
+use AppBundle\MessageHandler\Order\CreateLoopeatOrder;
 use AppBundle\Entity\Restaurant;
 use AppBundle\Entity\Vendor;
 use AppBundle\Sylius\Order\OrderInterface;

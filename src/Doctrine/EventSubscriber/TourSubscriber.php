@@ -11,7 +11,7 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
 use Psr\Log\LoggerInterface;
-use SimpleBus\Message\Bus\MessageBus;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class TourSubscriber implements EventSubscriber
 {
@@ -22,7 +22,7 @@ class TourSubscriber implements EventSubscriber
 
     public function __construct(
         private LoggerInterface $logger,
-        private MessageBus $eventBus
+        private MessageBusInterface $eventBus
     ) {}
 
     public function getSubscribedEvents()
@@ -114,12 +114,12 @@ class TourSubscriber implements EventSubscriber
     public function postFlush(PostFlushEventArgs $args) {
 
         foreach ($this->insertedTours as $insertedTour) {
-            $this->eventBus->handle(new TourCreated($insertedTour));
+            $this->eventBus->dispatch(new TourCreated($insertedTour));
         }
         $this->insertedTours = [];
 
         foreach($this->updatedTours as $updatedTour) {
-            $this->eventBus->handle(new TourUpdated($updatedTour));
+            $this->eventBus->dispatch(new TourUpdated($updatedTour));
         }
         $this->updatedTours = [];
     }

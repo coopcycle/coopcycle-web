@@ -71,9 +71,3 @@ framework:
                 base_uri: "https://api.insee.fr/api-sirene/3.11/"
                 headers:
                     X-INSEE-Api-Key-Integration: '%env(INSEE_PORTAIL_API_KEY)%'
-
-# when@test:
-#     framework:
-#         test: true
-#         session:
-#             storage_factory_id: session.storage.factory.mock_file

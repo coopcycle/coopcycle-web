@@ -13,7 +13,7 @@ use Sylius\Component\Order\Context\CartContextInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * @see https://developers.paygreen.fr/reference/post_create_payment_order
@@ -66,14 +66,14 @@ class PaygreenController extends AbstractController
             throw new \Exception(sprintf('Payment with id "%d" does not exist', $paymentId));
         }
 
-        $paymentOrder = $this->paygreenManager->createPaymentOrder($payment);
+        $this->paygreenManager->createPaymentOrder($payment);
 
         $this->entityManager->flush();
 
         return [
             $payment->getPaygreenPaymentOrderId(),
             $payment->getPaygreenObjectSecret(),
-            $paymentOrder['hosted_payment_url']
+            $payment->getPaygreenHostedPaymentUrl(),
         ];
     }
 

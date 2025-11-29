@@ -12,7 +12,6 @@ use Doctrine\Persistence\ObjectRepository;
 use Hashids\Hashids;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
-use SimpleBus\Message\Bus\MessageBus;
 use Stripe;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,6 +20,7 @@ use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class StripeControllerTest extends TestCase
 {
@@ -34,7 +34,7 @@ class StripeControllerTest extends TestCase
     {
         $this->entityManager = $this->prophesize(EntityManagerInterface::class);
         $this->orderManager = $this->prophesize(OrderManager::class);
-        $this->eventBus = $this->prophesize(MessageBus::class);
+        $this->eventBus = $this->prophesize(MessageBusInterface::class);
         $this->orderNumberAssigner = $this->prophesize(OrderNumberAssignerInterface::class);
         $this->stripeManager = $this->prophesize(StripeManager::class);
         $this->adjustmentFactory = $this->prophesize(AdjustmentFactoryInterface::class);

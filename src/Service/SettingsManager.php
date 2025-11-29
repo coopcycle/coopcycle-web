@@ -11,6 +11,7 @@ use libphonenumber\NumberParseException;
 use libphonenumber\PhoneNumberUtil;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Process\Exception\ProcessTimedOutException;
 use Symfony\Component\Process\Process;
 
 class SettingsManager
@@ -44,6 +45,7 @@ class SettingsManager
         'google_api_key_custom',
         'paygreen_public_key',
         'paygreen_secret_key',
+        'pawapay_api_key',
     ];
 
     private static $boolean = [
@@ -234,13 +236,14 @@ class SettingsManager
         $supportsStripe = $this->canEnableStripeTestmode() || $this->canEnableStripeLivemode();
         $supportsMercadopago = $this->canEnableMercadopagoTestmode() || $this->canEnableMercadopagoLivemode();
         $supportsPaygreen = $this->configKeysAreNotEmpty('paygreen_public_key', 'paygreen_secret_key', 'paygreen_shop_id');
+        $supportsPawapay = $this->configKeysAreNotEmpty('pawapay_api_key');
 
         if ($this->forceStripe) {
 
             return $supportsStripe;
         }
 
-        return $supportsStripe || $supportsMercadopago || $supportsPaygreen;
+        return $supportsStripe || $supportsMercadopago || $supportsPaygreen || $supportsPawapay;
     }
 
     public function canSendSms()
@@ -293,6 +296,9 @@ class SettingsManager
             $this->craueConfig->set($name, $value);
 
         } catch (\RuntimeException $e) {
+
+            // TODO
+            // Check that exception message matches "Setting "$name" couldn't be found."
 
             $className = $this->configEntityName;
 
@@ -375,40 +381,48 @@ class SettingsManager
     {
         // TODO Add caching
 
-        // If there is a REVISION file in project dir containing a SHA1, trust it
-        $revisionFile = $this->projectDir . '/REVISION';
-        if (file_exists($revisionFile)) {
+        try {
 
-            $sha1 = trim(file_get_contents($revisionFile));
+            // If there is a REVISION file in project dir containing a SHA1, trust it
+            $revisionFile = $this->projectDir . '/REVISION';
+            if (file_exists($revisionFile)) {
 
-            $process = new Process(['git', 'ls-remote', '--tags', 'https://github.com/coopcycle/coopcycle-web.git']);
-            $process->run();
+                $sha1 = trim(file_get_contents($revisionFile));
 
-            if ($process->isSuccessful()) {
-                $lines = explode("\n", $process->getOutput());
-                foreach ($lines as $line) {
-                    $pattern = sprintf('#^%s[ \t]+refs\/tags\/(v[0-9\.]+)$#', $sha1);
-                    if (1 === preg_match($pattern, $line, $matches)) {
-                        return trim($matches[1]);
+                $process = new Process(['git', 'ls-remote', '--tags', 'https://github.com/coopcycle/coopcycle-web.git']);
+                $process->setTimeout(5);
+                $process->run();
+
+                if ($process->isSuccessful()) {
+                    $lines = explode("\n", $process->getOutput());
+                    foreach ($lines as $line) {
+                        $pattern = sprintf('#^%s[ \t]+refs\/tags\/(v[0-9\.]+)$#', $sha1);
+                        if (1 === preg_match($pattern, $line, $matches)) {
+                            return trim($matches[1]);
+                        }
                     }
                 }
             }
-        }
 
-        // https://stackoverflow.com/questions/2324195/how-to-get-tags-on-current-commit
-        $process = new Process(['git', 'tag', '--points-at', 'HEAD'], $this->projectDir);
-        $process->run();
+            // https://stackoverflow.com/questions/2324195/how-to-get-tags-on-current-commit
+            $process = new Process(['git', 'tag', '--points-at', 'HEAD'], $this->projectDir);
+            $process->setTimeout(5);
+            $process->run();
 
-        if (!$process->isSuccessful()) {
+            if (!$process->isSuccessful()) {
+                return 'dev-master';
+            }
+
+            $version = trim($process->getOutput());
+
+            if (empty($version)) {
+                return 'dev-master';
+            }
+
+            return $version;
+
+        } catch (ProcessTimedOutException $e) {
             return 'dev-master';
         }
-
-        $version = trim($process->getOutput());
-
-        if (empty($version)) {
-            return 'dev-master';
-        }
-
-        return $version;
     }
 }

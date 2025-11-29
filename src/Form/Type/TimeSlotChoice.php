@@ -35,7 +35,7 @@ class TimeSlotChoice
         return $this->timeRange;
     }
 
-    public function hasBegun(\DateTimeInterface $now = null, string $priorNotice = null)
+    public function hasBegun(?\DateTimeInterface $now = null, ?string $priorNotice = null)
     {
         if (null === $now) {
             $now = Carbon::now();
@@ -55,7 +55,7 @@ class TimeSlotChoice
         return $now >= $after;
     }
 
-    public function hasFinished(\DateTimeInterface $now = null, string $priorNotice = null)
+    public function hasFinished(?\DateTimeInterface $now = null, ?string $priorNotice = null)
     {
         if (null === $now) {
             $now = Carbon::now();
@@ -126,6 +126,17 @@ class TimeSlotChoice
         $range->upper = $upper;
 
         return $range;
+    }
+
+    public function equals(TsRange $range): bool
+    {
+        $rangeToString = function (TsRange $r) {
+            return sprintf('%s - %s', $r->lower->format('Y-m-d H:i'), $r->upper->format('Y-m-d H:i'));
+        };
+
+        $thisRange = $this->toTsRange();
+
+        return $rangeToString($thisRange) === $rangeToString($range);
     }
 
     public function __toString()

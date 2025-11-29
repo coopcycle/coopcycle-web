@@ -31,4 +31,12 @@ class PhoneNumberNormalizer extends BasePhoneNumberNormalizer
         // https://github.com/coopcycle/coopcycle-plugins/issues/21
         return 'libphonenumber\PhoneNumber' === $type && (\is_string($data) || false === $data);
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            'libphonenumber\PhoneNumber' => true, // supports*() call result is cached
+            'false' => true, // supports*() call result is cached
+        ];
+    }
 }

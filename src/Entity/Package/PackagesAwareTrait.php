@@ -3,11 +3,18 @@
 namespace AppBundle\Entity\Package;
 
 use AppBundle\Entity\Package;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+/**
+ * @template T of PackageWithQuantityInterface
+ */
 trait PackagesAwareTrait
 {
 
+    /**
+     * @var ArrayCollection<int, T>
+     */
     #[Groups(['package'])]
     protected $packages;
 

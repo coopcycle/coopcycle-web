@@ -2,7 +2,7 @@
 
 namespace AppBundle\Serializer;
 
-use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\TaskImage;
 use League\Flysystem\FileNotFoundException;
 use Imagine\Exception\RuntimeException as ImagineRuntimeException;
@@ -58,5 +58,12 @@ class TaskImageNormalizer implements NormalizerInterface, DenormalizerInterface
     public function supportsDenormalization($data, $type, $format = null)
     {
         return false;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            TaskImage::class => true, // supports*() call result is cached
+        ];
     }
 }

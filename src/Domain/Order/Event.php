@@ -38,7 +38,7 @@ abstract class Event extends BaseEvent implements SerializableEventInterface, Hu
         ];
     }
 
-    public function forHumans(TranslatorInterface $translator, UserInterface $user = null)
+    public function forHumans(TranslatorInterface $translator, ?UserInterface $user = null)
     {
         $params = [
             '%aggregate_id%' => $this->getOrder()->getId(),

@@ -101,7 +101,7 @@ export default function ModalContent() {
   const isSaved = Boolean(recurrenceRule)
 
   return (
-    <div>
+    <div data-testid="recurrence__modal__content">
       <div className="modal-header">
         <button
           type="button"

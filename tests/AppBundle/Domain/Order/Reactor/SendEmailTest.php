@@ -1,13 +1,12 @@
 <?php
 
-namespace Tests\AppBundle\Domain\Order\Reactor;
+namespace Tests\AppBundle\MessageHandler\Order;
 
 use AppBundle\Domain\Order\Event;
-use AppBundle\Domain\Order\Reactor\SendEmail;
+use AppBundle\MessageHandler\Order\SendEmail;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\User;
-use AppBundle\Entity\Vendor;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Message\OrderReceiptEmail;
 use AppBundle\Service\EmailManager;
@@ -22,7 +21,6 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Argument;
 use Symfony\Component\Mime\Email;
-use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
 
@@ -34,13 +32,12 @@ class SendEmailTest extends TestCase
     {
         $this->emailManager = $this->prophesize(EmailManager::class);
         $this->settingsManager = $this->prophesize(SettingsManager::class);
-        $this->eventBus = $this->prophesize(MessageBus::class);
-        $this->messageBus = $this->prophesize(MessageBusInterface::class);
+        $this->eventBus = $this->prophesize(MessageBusInterface::class);
         $this->notificationPreferences = $this->prophesize(NotificationPreferences::class);
 
         $this->settingsManager->get('administrator_email')->willReturn('admin@acme.com');
 
-        $this->messageBus
+        $this->eventBus
             ->dispatch(Argument::type(OrderReceiptEmail::class))
             ->will(function ($args) {
                 return new Envelope($args[0]);
@@ -54,7 +51,6 @@ class SendEmailTest extends TestCase
             $this->emailManager->reveal(),
             $this->settingsManager->reveal(),
             $this->eventBus->reveal(),
-            $this->messageBus->reveal(),
             $this->notificationPreferences->reveal()
         );
     }
@@ -84,9 +80,11 @@ class SendEmailTest extends TestCase
 
         $bob->getEmail()->willReturn('bob@example.com');
         $bob->getFullName()->willReturn('Bob');
+        $bob->isEnabled()->willReturn(true);
 
         $jane->getEmail()->willReturn('jane@example.com');
         $jane->getFullName()->willReturn('Jane');
+        $jane->isEnabled()->willReturn(true);
 
         $restaurant = $this->prophesize(LocalBusiness::class);
 
@@ -131,7 +129,7 @@ class SendEmailTest extends TestCase
             ->shouldBeCalledTimes(3);
 
         $this->eventBus
-            ->handle(Argument::that(function (Event\EmailSent $event) {
+            ->dispatch(Argument::that(function (Event\EmailSent $event) {
 
                 $payload = $event->toPayload();
 
@@ -144,7 +142,8 @@ class SendEmailTest extends TestCase
 
                 return isset($payload['recipient']) && in_array($payload['recipient'], $emails);
             }))
-            ->shouldBeCalled(4);
+            ->shouldBeCalled(4)
+            ->willReturn(new Envelope(new Event\EmailSent($order->reveal(), 'john@example.com')));
 
         call_user_func_array($this->sendEmail, [ new Event\OrderCreated($order->reveal()) ]);
     }
@@ -161,9 +160,11 @@ class SendEmailTest extends TestCase
 
         $bob->getEmail()->willReturn('bob@example.com');
         $bob->getFullName()->willReturn('Bob');
+        $bob->isEnabled()->willReturn(true);
 
         $jane->getEmail()->willReturn('jane@example.com');
         $jane->getFullName()->willReturn('Jane');
+        $jane->isEnabled()->willReturn(true);
 
         $restaurant1 = $this->prophesize(LocalBusiness::class);
         $restaurant2 = $this->prophesize(LocalBusiness::class);
@@ -226,7 +227,7 @@ class SendEmailTest extends TestCase
             ->shouldBeCalledTimes(2);
 
         $this->eventBus
-            ->handle(Argument::that(function (Event\EmailSent $event) {
+            ->dispatch(Argument::that(function (Event\EmailSent $event) {
 
                 $payload = $event->toPayload();
 
@@ -239,7 +240,8 @@ class SendEmailTest extends TestCase
                 // when it is a multi vendor order
                 return isset($payload['recipient']) && !in_array($payload['recipient'], $emails);
             }))
-            ->shouldBeCalled(4);
+            ->shouldBeCalled(4)
+            ->willReturn(new Envelope(new Event\EmailSent($order->reveal(), 'john@example.com')));
 
         call_user_func_array($this->sendEmail, [ new Event\OrderCreated($order->reveal()) ]);
     }
@@ -262,7 +264,7 @@ class SendEmailTest extends TestCase
             ->shouldBeCalledTimes(3);
 
         $this->eventBus
-            ->handle(Argument::that(function (Event\EmailSent $event) {
+            ->dispatch(Argument::that(function (Event\EmailSent $event) {
 
                 $payload = $event->toPayload();
 
@@ -275,7 +277,8 @@ class SendEmailTest extends TestCase
 
                 return isset($payload['recipient']) && in_array($payload['recipient'], $emails);
             }))
-            ->shouldBeCalled(4);
+            ->shouldBeCalled(4)
+            ->willReturn(new Envelope(new Event\EmailSent($order->reveal(), 'john@example.com')));
 
         call_user_func_array($this->sendEmail, [ new Event\OrderAccepted($order->reveal()) ]);
     }
@@ -303,7 +306,7 @@ class SendEmailTest extends TestCase
         call_user_func_array($this->sendEmail, [ new Event\OrderFulfilled($order->reveal()) ]);
 
         $this
-            ->messageBus
+            ->eventBus
             ->dispatch(new OrderReceiptEmail('ABC123'))
             ->shouldHaveBeenCalled();
     }
@@ -320,9 +323,11 @@ class SendEmailTest extends TestCase
 
         $bob->getEmail()->willReturn('bob@example.com');
         $bob->getFullName()->willReturn('Bob');
+        $bob->isEnabled()->willReturn(true);
 
         $jane->getEmail()->willReturn('jane@example.com');
         $jane->getFullName()->willReturn('Jane');
+        $jane->isEnabled()->willReturn(true);
 
         $restaurant = $this->prophesize(LocalBusiness::class);
 
@@ -371,7 +376,7 @@ class SendEmailTest extends TestCase
             ->shouldBeCalledTimes(2);
 
         $this->eventBus
-            ->handle(Argument::that(function (Event\EmailSent $event) {
+            ->dispatch(Argument::that(function (Event\EmailSent $event) {
 
                 $payload = $event->toPayload();
 
@@ -384,7 +389,8 @@ class SendEmailTest extends TestCase
 
                 return isset($payload['recipient']) && in_array($payload['recipient'], $emails);
             }))
-            ->shouldBeCalled(4);
+            ->shouldBeCalled(4)
+            ->willReturn(new Envelope(new Event\EmailSent($order->reveal(), 'john@example.com')));;
 
         call_user_func_array($this->sendEmail, [ new Event\OrderCreated($order->reveal()) ]);
     }

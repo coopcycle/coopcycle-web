@@ -2,8 +2,8 @@
 
 namespace AppBundle\Controller;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
-use ApiPlatform\Core\Exception\ItemNotFoundException;
+use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Exception\ItemNotFoundException;
 use AppBundle\Entity\MercadopagoAccount;
 use AppBundle\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -12,7 +12,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -49,7 +49,7 @@ class MercadopagoController extends AbstractController
         }
 
         try {
-            $restaurant = $iriConverter->getItemFromIri($payload['sub']);
+            $restaurant = $iriConverter->getResourceFromIri($payload['sub']);
         } catch (ItemNotFoundException $e) {
             throw $this->createAccessDeniedException();
         }

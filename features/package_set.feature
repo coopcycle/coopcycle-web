@@ -1,8 +1,9 @@
 Feature: Package set
+
   Scenario: Get the applications of a package set
     Given the fixtures files are loaded:
-    | sylius_channels.yml |
     | packages.yml |
+    | packages_usage.yml |
     And the user "admin" is loaded:
     | email      | admin@coopcycle.org |
     | password   | 123456            |
@@ -17,7 +18,7 @@ Feature: Package set
     """
       {
           "@context": "/api/contexts/PackageSet",
-          "@id": "/api/package_sets",
+          "@id": "/api/package_sets/1/applications",
           "@type": "hydra:Collection",
           "hydra:member": [
               {
@@ -37,8 +38,8 @@ Feature: Package set
 
   Scenario: Delete a package set fails
     Given the fixtures files are loaded:
-    | sylius_channels.yml |
-    | dispatch.yml |
+    | packages.yml |
+    | packages_usage.yml |
     And the user "admin" is loaded:
     | email      | admin@coopcycle.org |
     | password   | 123456            |
@@ -62,7 +63,6 @@ Feature: Package set
 
   Scenario: Delete a package set (of which a package has been linked to a task)
     Given the fixtures files are loaded:
-    | sylius_channels.yml |
     | dispatch.yml |
     And the user "admin" is loaded:
     | email      | admin@coopcycle.org |

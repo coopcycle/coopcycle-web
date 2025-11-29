@@ -2,7 +2,7 @@
 
 namespace AppBundle\Serializer;
 
-use ApiPlatform\Core\JsonLd\Serializer\ObjectNormalizer;
+use ApiPlatform\JsonLd\Serializer\ObjectNormalizer;
 use AppBundle\Entity\Base\GeoCoordinates;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -29,5 +29,12 @@ class GeoCoordinatesNormalizer implements NormalizerInterface
     public function supportsNormalization($data, $format = null)
     {
         return $this->normalizer->supportsNormalization($data, $format) && $data instanceof GeoCoordinates;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            GeoCoordinates::class => true, // supports*() call result is cached
+        ];
     }
 }

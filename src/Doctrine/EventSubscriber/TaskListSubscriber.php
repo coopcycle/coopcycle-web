@@ -2,10 +2,9 @@
 
 namespace AppBundle\Doctrine\EventSubscriber;
 
+use AppBundle\Domain\TaskList\Event\TaskListUpdated;
+use AppBundle\Domain\TaskList\Event\TaskListUpdatedv2;
 use AppBundle\Entity\TaskList;
-use AppBundle\Domain\Task\Event\TaskListUpdated;
-use AppBundle\Domain\Task\Event\TaskListUpdatedv2;
-use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList\Item;
 use AppBundle\Entity\TaskListRepository;
 use AppBundle\Message\PushNotification;
@@ -13,14 +12,12 @@ use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\RoutingInterface;
 use Carbon\Carbon;
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
 use Nucleos\UserBundle\Model\UserInterface;
 use Psr\Log\LoggerInterface;
-use SimpleBus\Message\Bus\MessageBus;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -29,7 +26,6 @@ class TaskListSubscriber implements EventSubscriber
     private $taskLists = [];
 
     public function __construct(
-        private readonly MessageBus $eventBus,
         private readonly MessageBusInterface $messageBus,
         private readonly TranslatorInterface $translator,
         private readonly RoutingInterface $routing,
@@ -53,7 +49,7 @@ class TaskListSubscriber implements EventSubscriber
         $coordinates = [];
         $tasks = [];
         $vehicle = $taskList->getVehicle();
-        
+
         if (!is_null($vehicle)) {
             $coordinates[] = $taskList->getVehicle()->getWarehouse()->getAddress()->getGeo();
         }
@@ -143,7 +139,7 @@ class TaskListSubscriber implements EventSubscriber
                 continue;
             }
 
-            [ $oldValue, $newValue ] = $entityChangeSet['vehicle']; // recalculate distances and co2 when starting vehicle/warehouse has changed 
+            [ $oldValue, $newValue ] = $entityChangeSet['vehicle']; // recalculate distances and co2 when starting vehicle/warehouse has changed
 
             if ($oldValue !== $newValue) {
                 $this->addTaskList($taskList);
@@ -175,8 +171,8 @@ class TaskListSubscriber implements EventSubscriber
             // legacy event and new version of event
             // see https://github.com/coopcycle/coopcycle-app/issues/1803
             $myTaskListDto = $this->taskListRepository->findMyTaskListAsDto($taskList->getCourier(), $taskList->getDate());
-            $this->eventBus->handle(new TaskListUpdated($taskList->getCourier(), $myTaskListDto));
-            $this->eventBus->handle(new TaskListUpdatedv2($taskList));
+            $this->messageBus->dispatch(new TaskListUpdated($taskList->getCourier(), $myTaskListDto));
+            $this->messageBus->dispatch(new TaskListUpdatedv2($taskList));
 
             $date = $taskList->getDate();
             $users = isset($usersByDate[$date]) ? $usersByDate[$date] : [];
@@ -197,15 +193,13 @@ class TaskListSubscriber implements EventSubscriber
             $users = $usersByDate[$date];
             $users = array_unique($users);
 
-            // We do not send push notifications to users with role ROLE_ADMIN,
+            // We do not send push notifications to users with role ROLE_ADMIN or ROLE_DISPATCHER,
             // they have WebSockets to get live updates
-            $users = array_filter($users, fn(UserInterface $user) => !$user->hasRole('ROLE_ADMIN'));
+            $users = array_filter($users, fn(UserInterface $user) => !($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_DISPATCHER')));
 
             if (count($users) === 0) {
                 continue;
             }
-
-            $usernames = array_map(fn(UserInterface $user) => $user->getUsername(), $users);
 
             $data = [
                 'event' => [
@@ -225,11 +219,11 @@ class TaskListSubscriber implements EventSubscriber
             }
 
             if (RemotePushNotificationManager::isEnabled()) {
-
+                $usernames = array_map(fn(UserInterface $user) => $user->getUsername(), $users);
                 $this->logger->debug(sprintf('Sending push notification to %s', implode(', ', $usernames)));
 
                 $this->messageBus->dispatch(
-                    new PushNotification($message, $usernames, $data)
+                    new PushNotification($message, "", $users, $data)
                 );
             }
         }

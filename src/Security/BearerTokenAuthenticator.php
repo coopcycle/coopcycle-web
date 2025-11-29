@@ -7,7 +7,7 @@ use AppBundle\Entity\User;
 use AppBundle\Security\ApiKeyManager;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Bundle\OAuth2ServerBundle\Security\Authenticator\OAuth2Authenticator;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\Authenticator\Token\JWTPostAuthenticationToken;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authenticator\JWTAuthenticator;
 use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\AuthorizationHeaderTokenExtractor;
 use Lexik\Bundle\JWTAuthenticationBundle\TokenExtractor\TokenExtractorInterface;
@@ -20,7 +20,6 @@ use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\PreAuthenticatedUserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
-use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 
 /**
@@ -118,9 +117,9 @@ class BearerTokenAuthenticator extends AbstractAuthenticator
     }
 
     private function authenticateWithLexik(Request $request): Passport {
-        $passport = $this->jwtAuthenticator->doAuthenticate($request);
+        $passport = $this->jwtAuthenticator->authenticate($request);
 
-        $token = $this->jwtAuthenticator->createAuthenticatedToken($passport, $this->firewallName);
+        $token = $this->jwtAuthenticator->createToken($passport, $this->firewallName);
 
         if ($rawSessionToken = $this->sessionTokenExtractor->extract($request)) {
             if ($cart = $this->orderAccessTokenManager->parse($rawSessionToken)) {
@@ -140,7 +139,7 @@ class BearerTokenAuthenticator extends AbstractAuthenticator
             throw new AuthenticationException("Invalid OAuth2 token", 0, $e);
         }
 
-        $token = $this->oauth2Authenticator->createAuthenticatedToken($passport, $this->firewallName);
+        $token = $this->oauth2Authenticator->createToken($passport, $this->firewallName);
         $passport->setAttribute('oauth2_token', $token);
 
         return $passport;
@@ -155,7 +154,7 @@ class BearerTokenAuthenticator extends AbstractAuthenticator
             $user->setUsername($rawToken);
             $user->setRoles(['ROLE_AD_HOC_CUSTOMER']);
 
-            $token = new JWTUserToken([], $user, $rawToken, $this->firewallName);
+            $token = new JWTPostAuthenticationToken($user, $this->firewallName, [], $rawToken);
             $token->setAttribute('cart', $cart);
 
             $passport = new SelfValidatingPassport(new UserBadge($token->getCredentials()), [
@@ -174,7 +173,7 @@ class BearerTokenAuthenticator extends AbstractAuthenticator
         $this->logger->info('BearerTokenAuthenticator; '.$request->getRequestUri().' failed to authenticate with '.$authenticator.': '.$e->getMessage(). ' '.$e->getMessageKey());
     }
 
-    public function createAuthenticatedToken(PassportInterface $passport, string $firewallName): TokenInterface
+    public function createToken(Passport $passport, string $firewallName): TokenInterface
     {
         $apiKeyToken = $passport->getAttribute('apikey_token');
 

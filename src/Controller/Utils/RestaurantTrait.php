@@ -2,7 +2,8 @@
 
 namespace AppBundle\Controller\Utils;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Metadata\GetCollection;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Edenred\SynchronizerClient;
@@ -19,6 +20,10 @@ use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductImage;
 use AppBundle\Entity\Sylius\ProductTaxon;
+use AppBundle\Entity\Sylius\ProductVariant;
+use AppBundle\Entity\Sylius\ProductVariantTranslation;
+use AppBundle\Entity\Sylius\Promotion;
+use AppBundle\Entity\Sylius\PromotionCoupon;
 use AppBundle\Entity\Sylius\TaxCategory;
 use AppBundle\Entity\Sylius\TaxonRepository;
 use AppBundle\Form\ApiAppType;
@@ -37,6 +42,7 @@ use AppBundle\Form\Sylius\Promotion\ItemsTotalBasedPromotionType;
 use AppBundle\Form\Sylius\Promotion\OfferDeliveryType;
 use AppBundle\Form\Type\ProductTaxCategoryChoiceType;
 use AppBundle\LoopEat\Client as LoopeatClient;
+use AppBundle\Message\CopyProducts;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Product\ProductInterface;
@@ -63,8 +69,12 @@ use Sylius\Component\Payment\Model\PaymentMethodInterface;
 use Sylius\Component\Product\Model\ProductTranslation;
 use Sylius\Component\Product\Repository\ProductOptionRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
+use Sylius\Component\Promotion\Checker\Eligibility\PromotionEligibilityCheckerInterface;
+use Sylius\Component\Promotion\Checker\Eligibility\PromotionCouponEligibilityCheckerInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\Form\ChoiceList\Loader\CallbackChoiceLoader;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -74,11 +84,15 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Vich\UploaderBundle\Handler\UploadHandler;
@@ -111,7 +125,8 @@ trait RestaurantTrait
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
         TranslatorInterface $translator,
-        LoopeatClient $loopeatClient)
+        LoopeatClient $loopeatClient,
+        CacheInterface $appCache)
     {
         $form = $this->createForm(RestaurantType::class, $restaurant, [
             'loopeat_enabled' => $this->getParameter('loopeat_enabled'),
@@ -129,12 +144,12 @@ trait RestaurantTrait
             $messages = $session->getFlashBag()->get('stripe_account');
             if (!empty($messages)) {
                 foreach ($messages as $stripeAccountId) {
-                    $stripeAccount = $this->getDoctrine()
+                    $stripeAccount = $this->entityManager
                         ->getRepository(StripeAccount::class)
                         ->find($stripeAccountId);
                     if ($stripeAccount) {
                         $restaurant->addStripeAccount($stripeAccount);
-                        $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
+                        $this->entityManager->flush();
 
                         $this->addFlash(
                             'notice',
@@ -161,8 +176,8 @@ trait RestaurantTrait
 
                 if ($form->getClickedButton() && 'delete' === $form->getClickedButton()->getName()) {
 
-                    $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->remove($restaurant);
-                    $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
+                    $this->entityManager->remove($restaurant);
+                    $this->entityManager->flush();
 
                     return $this->redirectToRoute($routes['restaurants']);
                 }
@@ -210,8 +225,8 @@ trait RestaurantTrait
                     }
                 }
 
-                $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->persist($restaurant);
-                $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
+                $this->entityManager->persist($restaurant);
+                $this->entityManager->flush();
 
                 if (!$wasDepositRefundEnabled && $restaurant->isDepositRefundEnabled()) {
                     $this->addFlash(
@@ -241,8 +256,6 @@ trait RestaurantTrait
             $activationErrors = ValidationUtils::serializeValidationErrors($violations);
         }
 
-
-
         $loopeatAuthorizeUrl = '';
         if ($this->getParameter('loopeat_enabled') && $restaurant->isLoopeatEnabled()) {
 
@@ -257,7 +270,7 @@ trait RestaurantTrait
             // Use a JWT as the "state" parameter
             $state = $jwtEncoder->encode([
                 'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
-                'sub' => $iriConverter->getIriFromItem($restaurant),
+                'sub' => $iriConverter->getIriFromResource($restaurant),
                 // The "iss" (Issuer) claim contains a redirect URL
                 'iss' => $redirectAfterUri,
             ]);
@@ -270,7 +283,17 @@ trait RestaurantTrait
             $loopeatAuthorizeUrl = $loopeatClient->getRestaurantOAuthAuthorizeUrl($params);
         }
 
-        $cuisines = $this->getDoctrine()->getRepository(Cuisine::class)->findAll();
+        $cuisines = $appCache->get('translated_cuisines', function (ItemInterface $item) use ($translator) {
+
+            // We could cache this forever, but from time to time we add cuisines
+            $item->expiresAfter(60 * 60 * 24);
+
+            return array_map(fn($c) => [
+                'id' => $c->getId(),
+                'name' => $translator->trans($c->getName(), domain: 'cuisines'),
+            ], $this->entityManager->getRepository(Cuisine::class)->findAll());
+
+        });
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'restaurant' => $restaurant,
@@ -279,7 +302,7 @@ trait RestaurantTrait
             'form' => $form->createView(),
             'layout' => $request->attributes->get('layout'),
             'loopeat_authorize_url' => $loopeatAuthorizeUrl,
-            'cuisines' => $this->get('serializer')->normalize($cuisines, 'json', ['groups' => ['restaurant']]),
+            'cuisines' => $this->normalizer->normalize($cuisines, 'json', ['groups' => ['restaurant']]),
         ], $routes));
     }
 
@@ -288,26 +311,24 @@ trait RestaurantTrait
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
         TranslatorInterface $translator,
-        LoopeatClient $loopeatClient)
+        LoopeatClient $loopeatClient,
+        CacheInterface $appCache)
     {
-        $repository = $this->getDoctrine()->getRepository(LocalBusiness::class);
+        $repository = $this->entityManager->getRepository(LocalBusiness::class);
 
         $restaurant = $repository->find($id);
 
         $this->accessControl($restaurant);
 
         if ($request->query->has('format') && 'json' === $request->query->get('format')) {
-            $restaurantNormalized = $this->get('serializer')->normalize($restaurant, 'jsonld', [
-                'resource_class' => LocalBusiness::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
+            $restaurantNormalized = $this->normalizer->normalize($restaurant, 'jsonld', [
                 'groups' => ['restaurant']
             ]);
 
             return new JsonResponse($restaurantNormalized);
         }
 
-        return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator, $loopeatClient);
+        return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator, $loopeatClient, $appCache);
     }
 
     public function newRestaurantAction(Request $request,
@@ -315,19 +336,20 @@ trait RestaurantTrait
         JWTEncoderInterface $jwtEncoder,
         IriConverterInterface $iriConverter,
         TranslatorInterface $translator,
-        LoopeatClient $loopeatClient)
+        LoopeatClient $loopeatClient,
+        CacheInterface $appCache)
     {
         // TODO Check roles
         $restaurant = new LocalBusiness();
         $restaurant->setContract(new Contract());
 
-        return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator, $loopeatClient);
+        return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator, $loopeatClient, $appCache);
     }
 
     public function restaurantNewAdhocOrderAction($restaurantId, Request $request,
         JWTTokenManagerInterface $jwtManager)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
@@ -347,10 +369,7 @@ trait RestaurantTrait
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
-            'restaurant_normalized' => $this->get('serializer')->normalize($restaurant, 'jsonld', [
-                'resource_class' => LocalBusiness::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
+            'restaurant_normalized' => $this->normalizer->normalize($restaurant, 'jsonld', [
                 'groups' => ['restaurant']
             ]),
             'restaurant' => $restaurant,
@@ -364,7 +383,7 @@ trait RestaurantTrait
         IriConverterInterface $iriConverter,
         AuthorizationCheckerInterface $authorizationChecker)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
@@ -382,7 +401,7 @@ trait RestaurantTrait
                 return $this->redirectToRoute($request->attributes->get('_route'), [
                     'restaurantId' => $restaurant->getId(),
                     'date' => $date->format('Y-m-d'),
-                    'order' => $iriConverter->getItemIriFromResourceClass(Order::class, [$order])
+                    'order' => $iriConverter->getIriFromResource(Order::class, context: ['uri_variables' => ['id' => $order]])
                 ], 301);
             }
         }
@@ -404,17 +423,13 @@ trait RestaurantTrait
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
-            'restaurant_normalized' => $this->get('serializer')->normalize($restaurant, 'jsonld', [
-                'resource_class' => LocalBusiness::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
+            'restaurant_normalized' => $this->normalizer->normalize($restaurant, 'jsonld', [
                 'groups' => ['restaurant']
             ]),
-            'orders_normalized' => $this->get('serializer')->normalize($orders, 'jsonld', [
+            'orders_normalized' => $this->normalizer->normalize($orders, 'jsonld', [
                 'resource_class' => Order::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
-                'groups' => ['order_minimal']
+                'operation' => new GetCollection(),
+                'groups' => ['foodtech_order_minimal']
             ]),
             'initial_order' => $request->query->get('order'),
             'routes' => $routes,
@@ -425,7 +440,7 @@ trait RestaurantTrait
 
     public function restaurantMenuTaxonsAction($id, Request $request, FactoryInterface $taxonFactory)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
@@ -456,7 +471,7 @@ trait RestaurantTrait
 
             $restaurant->addTaxon($menuTaxon);
 
-            $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute($routes['menu_taxon'], [
                 'restaurantId' => $restaurant->getId(),
@@ -477,7 +492,7 @@ trait RestaurantTrait
         TaxonRepository $taxonRepository,
         TranslatorInterface $translator)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
@@ -488,7 +503,7 @@ trait RestaurantTrait
 
         $restaurant->setMenuTaxon($menuTaxon);
 
-        $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
+        $this->entityManager->flush();
 
         $this->addFlash(
             'notice',
@@ -507,7 +522,7 @@ trait RestaurantTrait
         TaxonRepository $taxonRepository,
         EntityManagerInterface $entityManager)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
@@ -538,7 +553,7 @@ trait RestaurantTrait
     {
         $routes = $request->attributes->get('routes');
 
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
@@ -675,7 +690,7 @@ trait RestaurantTrait
 
     public function restaurantPlanningAction($id, Request $request, TranslatorInterface $translator)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
@@ -692,9 +707,7 @@ trait RestaurantTrait
             $closingRule = $form->getData();
             $restaurant->addClosingRule($closingRule);
 
-            $this->getDoctrine()
-                ->getManagerForClass(LocalBusiness::class)
-                ->flush();
+            $this->entityManager->flush();
 
             $this->addFlash(
                 'notice',
@@ -705,7 +718,7 @@ trait RestaurantTrait
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
-            'closing_rules_json' => $this->get('serializer')->serialize($restaurant->getClosingRules(), 'json', ['groups' => ['planning']]),
+            'closing_rules_json' => $this->serializer->serialize($restaurant->getClosingRules(), 'json', ['groups' => ['planning']]),
             'restaurant' => $restaurant,
             'routes' => $routes,
             'form' => $form->createView()
@@ -743,15 +756,19 @@ trait RestaurantTrait
     }
 
     #[HideSoftDeleted]
-    public function restaurantProductsAction($id, Request $request, IriConverterInterface $iriConverter, PaginatorInterface $paginator)
+    public function restaurantProductsAction($id, Request $request,
+        IriConverterInterface $iriConverter,
+        PaginatorInterface $paginator,
+        TranslatorInterface $translator,
+        MessageBusInterface $messageBus)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
         $this->accessControl($restaurant);
 
-        $qb = $this->getDoctrine()
+        $qb = $this->entityManager
             ->getRepository(Product::class)
             ->createQueryBuilder('p');
 
@@ -772,11 +789,59 @@ trait RestaurantTrait
 
         $routes = $request->attributes->get('routes');
 
+        $copyForm = $this->createFormBuilder()
+            ->add('restaurant', ChoiceType::class, [
+                'choice_loader' => new CallbackChoiceLoader(function () use ($restaurant) {
+                    $otherRestaurants = $this->entityManager
+                        ->getRepository(LocalBusiness::class)
+                        ->findOthers($restaurant);
+
+                    $choices = [];
+                    foreach ($otherRestaurants as $otherRestaurant) {
+                        $choices[$otherRestaurant['name']] = $otherRestaurant['id'];
+                    }
+
+                    return $choices;
+                })
+            ])
+            ->getForm();
+
+        $copyForm->handleRequest($request);
+        if ($copyForm->isSubmitted() && $copyForm->isValid()) {
+
+            $destId = $copyForm->get('restaurant')->getData();
+
+            $dest = $this->entityManager
+                ->getRepository(LocalBusiness::class)
+                ->find($destId);
+
+            if (count($dest->getProducts()) > 0) {
+
+                $this->addFlash(
+                    'error',
+                    $translator->trans('restaurant.copy_products.not_empty')
+                );
+
+                return $this->redirectToRoute($routes['products'], ['id' => $id]);
+            }
+
+            // Run this asynchronously, because it may be long
+            $messageBus->dispatch(new CopyProducts($id, $destId));
+
+            $this->addFlash(
+                'notice',
+                $translator->trans('restaurant.copy_products.copying')
+            );
+
+            return $this->redirectToRoute($routes['products'], ['id' => $destId]);
+        }
+
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'products' => $products,
             'restaurant' => $restaurant,
-            'restaurant_iri' => $iriConverter->getIriFromItem($restaurant),
+            'restaurant_iri' => $iriConverter->getIriFromResource($restaurant),
+            'copy_form' => $copyForm->createView(),
         ], $routes));
     }
 
@@ -784,9 +849,15 @@ trait RestaurantTrait
         ObjectRepository $productRepository,
         EntityManagerInterface $entityManager,
         EventDispatcherInterface $dispatcher,
-        LoopeatClient $loopeatClient)
+        LoopeatClient $loopeatClient,
+        bool $taxIncl)
     {
-        $restaurant = $this->getDoctrine()
+        $filterCollection = $entityManager->getFilters();
+        if ($filterCollection->isEnabled('disabled_filter')) {
+            $filterCollection->disable('disabled_filter');
+        }
+
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
@@ -817,6 +888,46 @@ trait RestaurantTrait
 
             $entityManager->flush();
 
+            $priceFormName = $taxIncl ? 'taxIncluded' : 'taxExcluded';
+            $price = $form->get('priceWithTax')->get($priceFormName)->getData();
+            $taxCategory = $form->get('priceWithTax')->get('taxCategory')->getData();
+
+            // Update name (translations)
+
+            $dql = $entityManager
+                ->createQueryBuilder()
+                ->from(ProductVariant::class, 'v')
+                ->select('v.id')
+                ->where('v.product = :product')
+                ->getDQL()
+            ;
+
+            $qb = $entityManager->createQueryBuilder();
+            $qb
+                ->update(ProductVariantTranslation::class, 't')
+                ->set('t.name', ':name')
+                ->where($qb->expr()->in('t.translatable', $dql))
+                ->setParameter('name', $product->getName())
+                ->setParameter('product', $product);
+
+            $qb->getQuery()->execute();
+
+            // Update price & tax category
+
+            $qb = $entityManager
+                ->createQueryBuilder()
+                ->update(ProductVariant::class, 'v')
+                ->set('v.price', ':price')
+                ->set('v.taxCategory', ':taxCategory')
+                ->where('v.product = :product')
+                ->setParameters([
+                    'price' => $price,
+                    'taxCategory' => $taxCategory,
+                    'product' => $product
+                ]);
+
+            $qb->getQuery()->execute();
+
             $dispatcher->dispatch(new GenericEvent($restaurant), 'catalog.updated');
 
             return $this->redirectToRoute($routes['products'], ['id' => $restaurantId]);
@@ -835,7 +946,12 @@ trait RestaurantTrait
         EntityManagerInterface $entityManager,
         LoopeatClient $loopeatClient)
     {
-        $restaurant = $this->getDoctrine()
+        $filterCollection = $entityManager->getFilters();
+        if ($filterCollection->isEnabled('disabled_filter')) {
+            $filterCollection->disable('disabled_filter');
+        }
+
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
@@ -873,7 +989,7 @@ trait RestaurantTrait
     #[HideSoftDeleted]
     public function restaurantProductOptionsAction($id, Request $request)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
@@ -898,7 +1014,7 @@ trait RestaurantTrait
             $filterCollection->disable('disabled_filter');
         }
 
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
@@ -949,7 +1065,7 @@ trait RestaurantTrait
 
     public function restaurantProductOptionPreviewAction(Request $request,
         FactoryInterface $productOptionFactory,
-        NormalizerInterface $serializer,
+        ObjectNormalizer $normalizer,
         LocaleProviderInterface $localeProvider)
     {
         $productOption = $productOptionFactory
@@ -979,8 +1095,13 @@ trait RestaurantTrait
                 }
             }
 
+
             return new JsonResponse(
-                $serializer->normalize($productOption, 'json', ['groups' => ['product_option']])
+                $normalizer->normalize($productOption, context: [
+                    'groups' => ['product_option'],
+                    // Disable IRI generation as objects don't have ids
+                    'iri' => false,
+                ])
             );
         }
 
@@ -991,7 +1112,7 @@ trait RestaurantTrait
         FactoryInterface $productOptionFactory,
         EntityManagerInterface $entityManager)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
@@ -1032,7 +1153,7 @@ trait RestaurantTrait
         SettingsManager $settingsManager,
         JWTEncoderInterface $jwtEncoder)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
@@ -1110,7 +1231,7 @@ trait RestaurantTrait
         IriConverterInterface $iriConverter,
         MercadopagoManager $mercadopagoManager)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
@@ -1133,7 +1254,7 @@ trait RestaurantTrait
             // The "iss" (Issuer) claim contains a redirect URL
             'iss' => $redirectAfterUri,
             // The "sub" (Subject) claim contains a restaurant IRI
-            'sub' => $iriConverter->getIriFromItem($restaurant),
+            'sub' => $iriConverter->getIriFromResource($restaurant),
             // The custom "mplm" (Mercado Pago livemode) contains a boolean
             'mplm' => 'no',
         ]);
@@ -1144,6 +1265,12 @@ trait RestaurantTrait
 
         $url = $oAuth->getAuthorizationURL($settingsManager->get('mercadopago_app_id'), $redirectUri, $state);
 
+        // Temporary fix until this is merged
+        // https://github.com/mercadopago/sdk-php/pull/539
+        if (!str_starts_with($url, 'https://auth.mercadopago.com/authorization')) {
+            $url = str_replace('https://auth.mercadopago.com', 'https://auth.mercadopago.com/authorization', $url);
+        }
+
         return $this->redirect($url);
     }
 
@@ -1153,7 +1280,7 @@ trait RestaurantTrait
         EntityManagerInterface $entityManager,
         TranslatorInterface $translator)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
@@ -1174,7 +1301,7 @@ trait RestaurantTrait
 
     public function preparationTimeAction($id, Request $request, PreparationTimeCalculator $calculator)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
@@ -1212,14 +1339,11 @@ trait RestaurantTrait
                     $restaurant->getPreparationTimeRules()
                         ->removeElement($preparationTimeRule);
 
-                    $this->getDoctrine()
-                        ->getManagerForClass(PreparationTimeRule::class)
-                        ->remove($preparationTimeRule);
+                    $this->entityManager->remove($preparationTimeRule);
                 }
             }
 
-            $em = $this->getDoctrine()->getManagerForClass(LocalBusiness::class);
-            $em->flush();
+            $this->entityManager->flush();
 
             return $this->redirectToRoute($routes['success'], ['id' => $id]);
         }
@@ -1242,7 +1366,7 @@ trait RestaurantTrait
     {
         $tab = $request->query->get('tab', 'orders');
 
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
@@ -1259,6 +1383,8 @@ trait RestaurantTrait
                 $end
             );
 
+        $showOnlyMealVouchers = $request->query->has('show_only') && 'meal_vouchers' === $request->query->get('show_only');
+
         $stats = new RestaurantStats(
             $entityManager,
             $start,
@@ -1268,8 +1394,10 @@ trait RestaurantTrait
             $this->getParameter('kernel.default_locale'),
             $translator,
             $taxesHelper,
-            false, false,
-            $this->getParameter('nonprofits_enabled')
+            withVendorName: false,
+            withMessenger: false,
+            nonProfitsEnabled: $this->getParameter('nonprofits_enabled'),
+            showOnlyMealVouchers: $showOnlyMealVouchers
         );
 
         if ($request->isMethod('POST')) {
@@ -1289,7 +1417,7 @@ trait RestaurantTrait
             return $response;
         }
 
-        return $this->render('restaurant/stats.html.twig', $this->withRoutes([
+        return $this->render('restaurant/stats.html.twig', $this->auth($this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'stats' => $stats,
@@ -1300,7 +1428,8 @@ trait RestaurantTrait
             'cube_token' => $tokenFactory->createToken(['vendor_id' => $restaurant->getId()]),
             'picker_type' => $request->query->has('date') ? 'date' : 'month',
             'with_details' => $request->query->getBoolean('details', false),
-        ]));
+            'show_only_meal_vouchers' => $showOnlyMealVouchers
+        ])));
     }
 
     private function extractRange(Request $request)
@@ -1338,7 +1467,7 @@ trait RestaurantTrait
 
     public function newRestaurantReusablePackagingAction($id, Request $request, TranslatorInterface $translator)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
@@ -1353,7 +1482,7 @@ trait RestaurantTrait
 
             $restaurant->addReusablePackaging($reusablePackaging);
 
-            $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
+            $this->entityManager->flush();
 
             $this->addFlash(
                 'notice',
@@ -1372,7 +1501,7 @@ trait RestaurantTrait
 
     public function restaurantDepositRefundAction($id, Request $request, TranslatorInterface $translator)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
@@ -1383,7 +1512,7 @@ trait RestaurantTrait
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
+            $this->entityManager->flush();
 
             $this->addFlash(
                 'notice',
@@ -1402,24 +1531,50 @@ trait RestaurantTrait
         ]));
     }
 
-    public function restaurantPromotionsAction($id, Request $request)
+    public function restaurantPromotionsAction($id,
+        PromotionEligibilityCheckerInterface $promotionExpirationChecker,
+        PromotionCouponEligibilityCheckerInterface $promotionCouponExpirationChecker,
+        Request $request)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
         $this->accessControl($restaurant);
 
+        $ongoing = [];
+        $past = [];
+
+        foreach ($restaurant->getPromotions() as $promotion) {
+            if ($promotion->isCouponBased()) {
+                foreach ($promotion->getCoupons() as $coupon) {
+
+                    if (!$promotionCouponExpirationChecker->isEligible(new Order(), $coupon)) {
+                        $past[] = $coupon;
+                    } else {
+                        $ongoing[] = $coupon;
+                    }
+                }
+            } else {
+                if (!$promotionExpirationChecker->isEligible(new Order(), $promotion)) {
+                    $past[] = $promotion;
+                } else {
+                    $ongoing[] = $promotion;
+                }
+            }
+        }
+
         return $this->render('restaurant/promotions.html.twig', $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
-            'promotions' => $restaurant->getPromotions(),
+            'past_promotions' => $past,
+            'ongoing_promotions' => $ongoing,
         ]));
     }
 
     public function newRestaurantPromotionAction($id, Request $request, TranslatorInterface $translator)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
@@ -1441,17 +1596,11 @@ trait RestaurantTrait
                     $form->handleRequest($request);
                     if ($form->isSubmitted() && $form->isValid()) {
 
-                        $promotion = $form->getData();
+                        $coupon = $form->get('coupon')->getData();
 
-                        $restaurant->addPromotion($promotion);
+                        $restaurant->addPromotion($coupon->getPromotion());
 
-                        $this->getDoctrine()
-                            ->getManagerForClass(LocalBusiness::class)->flush();
-
-                        // $this->addFlash(
-                        //     'notice',
-                        //     $translator->trans('global.changesSaved')
-                        // );
+                        $this->entityManager->flush();
 
                         return $this->redirectToRoute($routes['promotions'], ['id' => $id]);
                     }
@@ -1475,8 +1624,7 @@ trait RestaurantTrait
 
                         $restaurant->addPromotion($promotion);
 
-                        $this->getDoctrine()
-                            ->getManagerForClass(LocalBusiness::class)->flush();
+                        $this->entityManager->flush();
 
                         // $this->addFlash(
                         //     'notice',
@@ -1498,11 +1646,87 @@ trait RestaurantTrait
         return $this->redirectToRoute($routes['promotions'], ['id' => $id]);
     }
 
-    public function restaurantPromotionAction($restaurantId, $promotionId, Request $request)
+    public function restaurantPromotionAction($restaurantId, $promotionId, TranslatorInterface $translator, Request $request)
     {
-        // TODO Implement
+        $restaurant = $this->entityManager
+            ->getRepository(LocalBusiness::class)
+            ->find($restaurantId);
 
-        throw $this->createNotFoundException();
+        $promotion = $this->entityManager
+            ->getRepository(Promotion::class)
+            ->find($promotionId);
+
+        if (!$restaurant->hasPromotion($promotion)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $form = $this->createForm(ItemsTotalBasedPromotionType::class, $promotion, [
+            'local_business' => $restaurant
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->entityManager->flush();
+
+            $this->addFlash(
+                'notice',
+                $translator->trans('global.changesSaved')
+            );
+
+            $routes = $this->getRestaurantRoutes();
+
+            return $this->redirectToRoute($routes['promotions'], ['id' => $restaurantId]);
+        }
+
+        return $this->render('restaurant/promotion.html.twig', $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'form' => $form->createView(),
+            'promotion_type' => 'items_total',
+        ]));
+    }
+
+    public function restaurantPromotionCouponAction($restaurantId, $promotionId, $couponId, TranslatorInterface $translator, Request $request)
+    {
+        $restaurant = $this->entityManager
+            ->getRepository(LocalBusiness::class)
+            ->find($restaurantId);
+
+        $coupon = $this->entityManager
+            ->getRepository(PromotionCoupon::class)
+            ->find($couponId);
+
+        $promotion = $coupon->getPromotion();
+
+        if (!$restaurant->hasPromotion($promotion)) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $form = $this->createForm(OfferDeliveryType::class, $coupon, [
+            'local_business' => $restaurant
+        ]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->entityManager->flush();
+
+            $this->addFlash(
+                'notice',
+                $translator->trans('global.changesSaved')
+            );
+
+            $routes = $this->getRestaurantRoutes();
+
+            return $this->redirectToRoute($routes['promotions'], ['id' => $restaurantId]);
+        }
+
+        return $this->render('restaurant/promotion.html.twig', $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'form' => $form->createView(),
+            'promotion_type' => 'offer_delivery',
+        ]));
     }
 
     public function deleteProductImageAction($restaurantId, $productId, $imageName,
@@ -1510,7 +1734,7 @@ trait RestaurantTrait
         ObjectRepository $productRepository,
         UploadHandler $uploadHandler)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
@@ -1523,7 +1747,7 @@ trait RestaurantTrait
             throw $this->createNotFoundException();
         }
 
-        $image = $this->getDoctrine()
+        $image = $this->entityManager
             ->getRepository(ProductImage::class)
             ->findOneByImageName($imageName);
 
@@ -1538,7 +1762,7 @@ trait RestaurantTrait
         $uploadHandler->remove($image, 'imageFile');
 
         $product->getImages()->removeElement($image);
-        $this->getDoctrine()->getManagerForClass(Product::class)->flush();
+        $this->entityManager->flush();
 
         return new Response('', 204);
     }
@@ -1592,7 +1816,7 @@ trait RestaurantTrait
                 foreach($restaurantsToSync as $restaurant) {
                     $restaurant->setEdenredSyncSent(true);
                 }
-                $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
+                $this->entityManager->flush();
             }
 
             return $this->render('restaurant/edenred_sync.html.twig', $this->withRoutes([
@@ -1604,7 +1828,7 @@ trait RestaurantTrait
         }
 
         if ($request->query->has('section') && $request->query->get('section') === 'added') {
-            $restaurants = $this->getDoctrine()
+            $restaurants = $this->entityManager
                 ->getRepository(LocalBusiness::class)
                 ->findBy([ 'edenredSyncSent' => true ]);
 
@@ -1622,7 +1846,7 @@ trait RestaurantTrait
 
     public function refreshRestaurantEdenredAction($restaurantId, Request $request, SynchronizerClient $synchronizerClient)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
@@ -1643,7 +1867,7 @@ trait RestaurantTrait
             }
 
             if ($hasUpdates) {
-                $this->getDoctrine()->getManagerForClass(LocalBusiness::class)->flush();
+                $this->entityManager->flush();
             }
         }
 
@@ -1662,7 +1886,7 @@ trait RestaurantTrait
         $id,
         Request $request)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
@@ -1687,7 +1911,7 @@ trait RestaurantTrait
         $id,
         Request $request)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
@@ -1702,13 +1926,8 @@ trait RestaurantTrait
         if ($form->isSubmitted() && $form->isValid()) {
             $apiApp = $form->getData();
 
-            $this->getDoctrine()
-                ->getManagerForClass(ApiApp::class)
-                ->persist($apiApp);
-
-            $this->getDoctrine()
-                ->getManagerForClass(ApiApp::class)
-                ->flush();
+            $this->entityManager->persist($apiApp);
+            $this->entityManager->flush();
 
             $this->addFlash(
                 'notice',
@@ -1731,7 +1950,7 @@ trait RestaurantTrait
         UploadHandler $uploadHandler,
         EntityManagerInterface $entityManager)
     {
-        $restaurant = $this->getDoctrine()
+        $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
@@ -1770,7 +1989,7 @@ trait RestaurantTrait
         SlugifyInterface $slugify,
         Request $request)
     {
-        $qb = $this->getDoctrine()->getRepository(OrderInterface::class)
+        $qb = $this->entityManager->getRepository(OrderInterface::class)
             ->createQueryBuilder('o');
 
         $qb->join(PaymentInterface::class, 'p', Expr\Join::WITH, 'p.order = o.id');
@@ -1824,7 +2043,7 @@ trait RestaurantTrait
 
             $restaurantId = $request->request->getInt('restaurant');
 
-            $exported = $this->getDoctrine()->getRepository(LocalBusiness::class)
+            $exported = $this->entityManager->getRepository(LocalBusiness::class)
                 ->find($restaurantId);
 
             if (null === $exported) {
@@ -1885,5 +2104,109 @@ trait RestaurantTrait
             'orders' => $hash,
             'payment_methods' => $paymentMethods,
         ]));
+    }
+
+    public function archiveRestaurantPromotionAction($restaurantId, Request $request)
+    {
+        $restaurant = $this->entityManager
+            ->getRepository(LocalBusiness::class)
+            ->find($restaurantId);
+
+        if ($request->isMethod('POST')) {
+
+            $type = $request->request->get('type');
+            $id = $request->request->getInt('id');
+
+            if ($type === 'coupon') {
+
+                $coupon = null;
+                foreach ($restaurant->getPromotions() as $promotion) {
+                    if ($promotion->isCouponBased()) {
+                        foreach ($promotion->getCoupons() as $c) {
+                            if ($id === $c->getId()) {
+                                $coupon = $c;
+                                break 2;
+                            }
+                        }
+                    }
+                }
+
+                if ($coupon) {
+                    $coupon->setExpiresAt(new \DateTime('now'));
+                    $this->entityManager->flush();
+                }
+
+            } elseif ($type === 'promotion') {
+
+                foreach ($restaurant->getPromotions() as $promotion) {
+                    if (!$promotion->isCouponBased() && $id === $promotion->getId()) {
+                        $promotion->setArchivedAt(new \DateTime('now'));
+                        $this->entityManager->flush();
+                        break;
+                    }
+                }
+
+            }
+
+        }
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->redirectToRoute($routes['restaurant_promotions'], ['id' => $restaurantId]);
+    }
+
+    public function featureRestaurantPromotionAction($restaurantId, Request $request)
+    {
+        $restaurant = $this->entityManager
+            ->getRepository(LocalBusiness::class)
+            ->find($restaurantId);
+
+        // TODO Access control
+
+        if ($request->isMethod('POST')) {
+
+            $type = $request->request->get('type');
+            $id = $request->request->getInt('id');
+
+            foreach ($restaurant->getPromotions() as $promotion) {
+                $promotion->setFeatured(false);
+                if ($promotion->isCouponBased()) {
+                    foreach ($promotion->getCoupons() as $coupon) {
+                        $coupon->setFeatured(false);
+                    }
+                }
+            }
+
+            if ($type === 'coupon') {
+
+                foreach ($restaurant->getPromotions() as $promotion) {
+                    if ($promotion->isCouponBased()) {
+                        foreach ($promotion->getCoupons() as $coupon) {
+                            if ($id === $coupon->getId()) {
+                                $coupon->setFeatured(true);
+                                break 2;
+                            }
+                        }
+                    }
+                }
+
+            } elseif ($type === 'promotion') {
+
+                foreach ($restaurant->getPromotions() as $promotion) {
+                    if (!$promotion->isCouponBased() && $id === $promotion->getId()) {
+                        $promotion->setFeatured(true);
+                        $this->entityManager->flush();
+                        break;
+                    }
+                }
+
+            }
+
+            $this->entityManager->flush();
+        }
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->redirectToRoute($routes['restaurant_promotions'], ['id' => $restaurantId]);
     }
 }

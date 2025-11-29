@@ -2,7 +2,7 @@
 
 namespace AppBundle\Serializer\JsonLd;
 
-use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Enum\Allergen;
 use AppBundle\Enum\RestrictedDiet;
 use Sylius\Component\Locale\Provider\LocaleProvider;
@@ -113,5 +113,12 @@ class ProductNormalizer implements NormalizerInterface, DenormalizerInterface
     public function supportsDenormalization($data, $type, $format = null)
     {
         return false;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            ProductInterface::class => true, // supports*() call result is cached
+        ];
     }
 }

@@ -32,8 +32,7 @@ class OrdersRateLimitFunctionalTest extends KernelTestCase
 
         Carbon::setTestNow(Carbon::parse('2023-03-28 12:30:00'));
 
-        // @see https://symfony.com/blog/new-in-symfony-4-1-simpler-service-testing
-        $this->redis = self::$container->get(Redis::class);
+        $this->redis = self::getContainer()->get(Redis::class);
 
         $this->rateLimiter = new OrdersRateLimit(
             $this->redis,

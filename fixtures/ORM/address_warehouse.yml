@@ -1,0 +1,13 @@
+AppBundle\Entity\Base\GeoCoordinates:
+  geo_warehouse:
+    __construct: [ "48.8758311", "2.3675732" ]
+
+AppBundle\Entity\Address:
+  address_warehouse:
+    name: 'Warehouse'
+    contactName: 'John Doe'
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33112121212'))>
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '23, Avenue Claude Vellefaux, 75010 Paris, France'
+    geo: "@geo_warehouse"

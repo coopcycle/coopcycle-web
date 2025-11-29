@@ -95,6 +95,14 @@ class CheckoutPaymentType extends AbstractType
                             'mapped' => false,
                         ]);
                     break;
+                case 'pawapay':
+                    if (!$order->getRestaurant()->isPawapayEnabled()) {
+                        // FIXME
+                        // Actually for pawaPay it should not be "CARD"
+                        // but something else like "MOBILE_PAYMENT"
+                        unset($choices['Credit card']);
+                    }
+                    break;
             }
 
             if ($this->cashEnabled || $order->supportsCashOnDelivery()) {

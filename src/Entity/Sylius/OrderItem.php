@@ -2,18 +2,76 @@
 
 namespace AppBundle\Entity\Sylius;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
+use AppBundle\Api\Dto\CartItemInput;
+use AppBundle\Api\State\CartItemProcessor;
+use AppBundle\Api\State\DeleteCartItemProcessor;
+use AppBundle\Api\State\UpdateCartItemProcessor;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
-use Sylius\Component\Order\Model\OrderInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Sylius\Component\Order\Model\AdjustmentInterface as BaseAdjustmentInterface;
 use Sylius\Component\Order\Model\OrderItem as BaseOrderItem;
 use Sylius\Component\Order\Model\OrderItemInterface as BaseOrderItemInterface;
 
-#[ApiResource(attributes: ['normalization_context' => ['groups' => ['order']], 'composite_identifier' => false], itemOperations: ['get' => ['method' => 'GET', 'path' => '/orders/{order}/items/{id}']], collectionOperations: [])]
+#[ApiResource(
+    uriTemplate: '/orders/{order}/items/{id}',
+    operations: [
+        new Get(
+            security: 'is_granted(\'edit\', object.getOrder())',
+        ),
+        new Delete(
+            processor: DeleteCartItemProcessor::class,
+            normalizationContext: ['groups' => ['cart']],
+            security: 'is_granted(\'edit\', object.getOrder())',
+            status: 200,
+        ),
+        new Put(
+            processor: UpdateCartItemProcessor::class,
+            input: CartItemInput::class,
+            normalizationContext: ['groups' => ['cart']],
+            denormalizationContext: ['groups' => ['cart']],
+            security: 'is_granted(\'edit\', object.getOrder())',
+            validationContext: ['groups' => ['cart']]
+        ),
+    ],
+    uriVariables: [
+        'order' => new Link(fromClass: Order::class, toProperty: 'order'),
+        'id' => new Link(fromClass: self::class),
+    ],
+    normalizationContext: ['groups' => ['order']],
+)]
+// https://github.com/api-platform/api-platform/issues/571#issuecomment-1473665701
+#[ApiResource(
+    uriTemplate: '/orders/{id}/items',
+    operations: [
+        new Post(
+            openapiContext: ['summary' => 'Adds items to a Order resource.'],
+            normalizationContext: ['groups' => ['cart']],
+            denormalizationContext: ['groups' => ['cart']],
+            validationContext: ['groups' => ['cart']],
+            input: CartItemInput::class,
+            read: false,
+            // FIXME Implement security
+            // security: 'is_granted(\'edit\', object)',
+            processor: CartItemProcessor::class
+        )
+    ],
+    uriVariables: [
+        'id' => new Link(fromClass: Order::class, fromProperty: 'items')
+    ]
+)]
 class OrderItem extends BaseOrderItem implements OrderItemInterface
 {
     /**
@@ -56,6 +114,19 @@ class OrderItem extends BaseOrderItem implements OrderItemInterface
         $this->variant = $variant;
     }
 
+    public function getAdjustmentsSorted(?string $type = null): Collection
+    {
+        // Make sure adjustments are always in the same order
+        // We order them by id asc
+
+        $adjustments = $this->getAdjustments($type);
+        $adjustmentsArray = $adjustments->toArray();
+        usort($adjustmentsArray, function (BaseAdjustmentInterface $a, BaseAdjustmentInterface $b) {
+            return $a->getId() <=> $b->getId();
+        });
+        return new ArrayCollection($adjustmentsArray);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -72,12 +143,6 @@ class OrderItem extends BaseOrderItem implements OrderItemInterface
     public function setCustomer(?CustomerInterface $customer): void
     {
         $this->customer = $customer;
-    }
-
-    #[ApiProperty(identifier: true)]
-    public function getOrder(): ?OrderInterface
-    {
-        return parent::getOrder();
     }
 
     public function hasOverridenLoopeatQuantityForPackaging(ReusablePackaging $packaging): bool

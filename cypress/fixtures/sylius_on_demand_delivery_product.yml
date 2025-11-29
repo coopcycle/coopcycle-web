@@ -1,7 +1,0 @@
-AppBundle\Entity\Sylius\Product:
-  on_demand_delivery:
-    code: CPCCL-ODDLVR
-    currentLocale: fr
-    name: Livraison à la demande
-    slug: livraison-a-la-demande
-    enabled: true

@@ -21,7 +21,7 @@ class DeliveryQuoteVoter extends Voter
         $this->storeExtractor = $storeExtractor;
     }
 
-    protected function supports($attribute, $subject)
+    protected function supports($attribute, $subject): bool
     {
         if (!$subject instanceof DeliveryQuote) {
             return false;
@@ -30,7 +30,7 @@ class DeliveryQuoteVoter extends Voter
         return $attribute === self::CONFIRM;
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             return true;

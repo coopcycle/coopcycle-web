@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\AppBundle\Domain\Order\Reactor;
+namespace Tests\AppBundle\MessageHandler\Order;
 
 use AppBundle\Domain\Order\Event;
-use AppBundle\Domain\Order\Reactor\EnhanceShippingAddress;
+use AppBundle\MessageHandler\Order\EnhanceShippingAddress;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;

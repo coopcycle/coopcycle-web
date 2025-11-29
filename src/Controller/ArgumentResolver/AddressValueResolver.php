@@ -2,9 +2,9 @@
 
 namespace AppBundle\Controller\ArgumentResolver;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
-use ApiPlatform\Core\Exception\InvalidArgumentException;
-use ApiPlatform\Core\Exception\ItemNotFoundException;
+use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Exception\InvalidArgumentException;
+use ApiPlatform\Exception\ItemNotFoundException;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,12 +28,12 @@ class AddressValueResolver implements ArgumentValueResolverInterface
         $this->iriConverter = $iriConverter;
     }
 
-    public function supports(Request $request, ArgumentMetadata $argument)
+    public function supports(Request $request, ArgumentMetadata $argument): bool
     {
         return $request->attributes->get('_route') === 'restaurant' && Address::class === $argument->getType();
     }
 
-    public function resolve(Request $request, ArgumentMetadata $argument)
+    public function resolve(Request $request, ArgumentMetadata $argument): \Traversable|array
     {
         if (!$request->query->has('address')) {
             return yield null;
@@ -54,7 +54,7 @@ class AddressValueResolver implements ArgumentValueResolverInterface
 
         if (is_object($user) && count($user->getAddresses()) > 0 && isset($data['@id'])) {
             try {
-                $address = $this->iriConverter->getItemFromIri($data['@id']);
+                $address = $this->iriConverter->getResourceFromIri($data['@id']);
 
                 if ($user->getAddresses()->contains($address)) {
                     return yield $address;
@@ -72,6 +72,10 @@ class AddressValueResolver implements ArgumentValueResolverInterface
 
             if ($latitude && $longitude) {
                 $address->setGeo(new GeoCoordinates($latitude, $longitude));
+            }
+
+            if (isset($data['provider']) && in_array($data['provider'], Address::PROVIDERS)) {
+                $address->setProvider($data['provider']);
             }
 
             return yield $address;

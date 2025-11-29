@@ -1,7 +1,6 @@
 Feature: Tasks
-    Scenario: Retrieve tasks check order task.doneBefore ASC and pickup before dropoff (GH #4277)
+  Scenario: Retrieve tasks check order task.doneBefore ASC and pickup before dropoff (GH #4277)
       Given the fixtures files are loaded:
-        | sylius_channels.yml |
         | tasks.yml           |
       And the courier "bob" is loaded:
         | email     | bob@coopcycle.org |
@@ -192,10 +191,8 @@ Feature: Tasks
       }
       """
 
-
   Scenario: Retrieve assigned tasks
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -281,7 +278,6 @@ Feature: Tasks
 
   Scenario: Retrieve assigned tasks when not created yet
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -314,7 +310,6 @@ Feature: Tasks
 
   Scenario: Retrieve task events
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -331,10 +326,10 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
+        "@id":"/api/tasks/2/events",
         "@type":"hydra:Collection",
         "hydra:member":@array@,
-        "hydra:totalItems":2,
+        "hydra:totalItems":3,
         "hydra:search":{
           "@type":"hydra:IriTemplate",
           "hydra:template":"/api/tasks/2/events{?date,assigned,organization}",
@@ -346,7 +341,6 @@ Feature: Tasks
 
   Scenario: Not authorized to retrieve task events
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -366,7 +360,6 @@ Feature: Tasks
 
   Scenario: Mark task as done
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -423,7 +416,6 @@ Feature: Tasks
 
   Scenario: Reschedule failed or cancelled task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -484,7 +476,6 @@ Feature: Tasks
 
   Scenario: Add task to a group
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
       | users.yml           |
     And the user "bob" has role "ROLE_ADMIN"
@@ -516,7 +507,6 @@ Feature: Tasks
 
   Scenario: Remove task from a group
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
       | users.yml           |
     And the user "bob" has role "ROLE_ADMIN"
@@ -545,7 +535,6 @@ Feature: Tasks
 
   Scenario: Start a task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -610,7 +599,6 @@ Feature: Tasks
 
   Scenario: Mark task as done with contact name
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -647,6 +635,7 @@ Feature: Tasks
             "latitude":48.846656,
             "longitude":2.369052
           },
+          "provider": null,
           "streetAddress":"18, avenue Ledru-Rollin 75012 Paris 12ème",
           "telephone":null,
           "firstName":"John",
@@ -684,7 +673,6 @@ Feature: Tasks
 
   Scenario: Mark task as failed with notes
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -743,7 +731,6 @@ Feature: Tasks
 
   Scenario: Mark task as failed with failure reason via failed endpoint
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -809,7 +796,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
+        "@id":"/api/tasks/2/events",
         "@type":"hydra:Collection",
         "hydra:member":[
           "@...@",
@@ -828,113 +815,15 @@ Feature: Tasks
             "createdAt":"@string@.isDateTime()"
           }
         ],
-        "hydra:totalItems":4,
+        "hydra:totalItems":5,
         "hydra:search":{
           "@*@":"@*@"
         }
       }
       """
 
-  Scenario: Report incident
-    Given the fixtures files are loaded:
-      | sylius_channels.yml |
-      | tasks.yml           |
-    And the courier "bob" is loaded:
-      | email     | bob@coopcycle.org |
-      | password  | 123456            |
-      | telephone | 0033612345678     |
-    And the user "bob" is authenticated
-    And the tasks with comments matching "#bob" are assigned to "bob"
-    When I add "Content-Type" header equal to "application/ld+json"
-    And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "POST" request to "/api/incidents" with body:
-      """
-      {
-        "description": "PACKAGE WET",
-        "failureReasonCode": "DAMAGED",
-        "task": "/api/tasks/2"
-      }
-      """
-    Then the response status code should be 201
-    And the response should be in JSON
-    And the JSON should match:
-      """
-      {
-        "@context":"/api/contexts/Incident",
-        "@id":"@string@",
-        "@type":"Incident",
-        "id":@integer@,
-        "title":"Endommagé",
-        "status":"OPEN",
-        "priority":@integer@,
-        "task":"/api/tasks/2",
-        "failureReasonCode":"DAMAGED",
-        "description":"PACKAGE WET",
-        "images":[],
-        "events":[],
-        "createdBy":"/api/users/1",
-        "createdAt":"@string@.isDateTime()",
-        "updatedAt":"@string@.isDateTime()",
-        "tags":[],
-                  "metadata": {"@*@": "@*@"}
-      }
-      """
-
-  Scenario: Report incident (with metadata)
-    Given the fixtures files are loaded:
-      | sylius_channels.yml |
-      | tasks.yml           |
-    And the courier "bob" is loaded:
-      | email     | bob@coopcycle.org |
-      | password  | 123456            |
-      | telephone | 0033612345678     |
-    And the user "bob" is authenticated
-    And the tasks with comments matching "#bob" are assigned to "bob"
-    When I add "Content-Type" header equal to "application/ld+json"
-    And I add "Accept" header equal to "application/ld+json"
-    And the user "bob" sends a "POST" request to "/api/incidents" with body:
-      """
-      {
-        "description": "PACKAGE WET",
-        "failureReasonCode": "DAMAGED",
-        "task": "/api/tasks/2",
-        "metadata": [
-          {"foo":"bar"},
-          {"baz":"bat"}
-        ]
-      }
-      """
-    Then the response status code should be 201
-    And the response should be in JSON
-    And the JSON should match:
-      """
-      {
-        "@context":"/api/contexts/Incident",
-        "@id":"@string@",
-        "@type":"Incident",
-        "id":@integer@,
-        "title":"Endommagé",
-        "status":"OPEN",
-        "priority":@integer@,
-        "task":"/api/tasks/2",
-        "failureReasonCode":"DAMAGED",
-        "description":"PACKAGE WET",
-        "images":[],
-        "events":[],
-        "createdBy":"/api/users/1",
-        "createdAt":"@string@.isDateTime()",
-        "updatedAt":"@string@.isDateTime()",
-        "tags":[],
-        "metadata": [
-          {"foo":"bar"},
-          {"baz":"bat"}
-        ]
-      }
-      """
-
   Scenario: Task is already completed
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -963,7 +852,6 @@ Feature: Tasks
 
   Scenario: Previous task must be completed before marking as done
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -992,7 +880,6 @@ Feature: Tasks
 
   Scenario: Previous task must be completed before marking as failed
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -1021,7 +908,6 @@ Feature: Tasks
 
   Scenario: Only assigned courier can mark a task as done
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -1044,7 +930,6 @@ Feature: Tasks
 
   Scenario: Only assigned courier can mark a task as failed
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -1067,7 +952,6 @@ Feature: Tasks
 
   Scenario: Cancelled task can't be marked as done
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -1086,7 +970,6 @@ Feature: Tasks
 
   Scenario: Cancelled task can't be marked as failed
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -1105,7 +988,6 @@ Feature: Tasks
 
   Scenario: Create task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
@@ -1152,6 +1034,7 @@ Feature: Tasks
             "latitude":48.870473,
             "longitude":2.331933
           },
+          "provider": null,
           "streetAddress":"101 Rue de la Paix, 75002 Paris",
           "telephone":"+33612345678",
           "name":null,
@@ -1188,7 +1071,6 @@ Feature: Tasks
 
   Scenario: Create task with after & before
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
@@ -1235,6 +1117,7 @@ Feature: Tasks
             "latitude":48.870473,
             "longitude":2.331933
           },
+          "provider": null,
           "streetAddress":"101 Rue de la Paix, 75002 Paris",
           "telephone":null,
           "name":null,
@@ -1273,7 +1156,6 @@ Feature: Tasks
 
   Scenario: Not authorized to create task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
@@ -1287,6 +1169,7 @@ Feature: Tasks
             "latitude": 48.870473,
             "longitude": 2.331933
           }
+          "provider": null,
         },
         "doneAfter": "2018-12-24T23:30:00+01:00",
         "doneBefore": "2018-12-24T23:59:59+01:00"
@@ -1296,7 +1179,6 @@ Feature: Tasks
 
   Scenario: Not authorized to retrieve task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -1312,7 +1194,6 @@ Feature: Tasks
 
   Scenario: Authorized to retrieve task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -1328,7 +1209,6 @@ Feature: Tasks
 
   Scenario: Not enough permissions to create task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "bob" is authenticated
     When I add "Content-Type" header equal to "application/ld+json"
@@ -1343,6 +1223,7 @@ Feature: Tasks
             "latitude": 48.870473,
             "longitude": 2.331933
           }
+          "provider": null,
         },
         "doneAfter": "2018-12-24T23:30:00+01:00",
         "doneBefore": "2018-12-24T23:59:59+01:00"
@@ -1352,7 +1233,6 @@ Feature: Tasks
 
   Scenario: Retrieve tasks filtered by date
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_COURIER"
     And the user "sarah" is authenticated
@@ -1456,7 +1336,6 @@ Feature: Tasks
 
   Scenario: Retrieve tasks filtered by date for dispatcher without pagination
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_DISPATCHER"
     And the user "sarah" is authenticated
@@ -1508,8 +1387,9 @@ Feature: Tasks
               "type": "SMALL",
               "quantity": 4,
               "volume_per_package": 1,
-              "short_code": "AB",
-              "labels": @array@
+              "short_code": "SM",
+              "labels": @array@,
+              "tasks": @array@
             }],
             "emittedCo2": "@integer@",
             "traveledDistanceMeter": "@integer@",
@@ -1620,8 +1500,9 @@ Feature: Tasks
               "type": "SMALL",
               "quantity": 4,
               "volume_per_package": 1,
-              "short_code": "AB",
-              "labels": @array@
+              "short_code": "SM",
+              "labels": @array@,
+              "tasks": @array@
             }],
             "emittedCo2": "@integer@",
             "traveledDistanceMeter": "@integer@",
@@ -1644,7 +1525,6 @@ Feature: Tasks
 
   Scenario: Retrieve tasks filtered by date for dispatcher with pagination
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_DISPATCHER"
     And the user "sarah" is authenticated
@@ -1696,8 +1576,9 @@ Feature: Tasks
               "type": "SMALL",
               "quantity": 4,
               "volume_per_package": 1,
-              "short_code": "AB",
-              "labels": @array@
+              "short_code": "SM",
+              "labels": @array@,
+              "tasks": @array@
             }],
             "emittedCo2": "@integer@",
             "traveledDistanceMeter": "@integer@",
@@ -1740,11 +1621,11 @@ Feature: Tasks
         ],
         "hydra:totalItems":4,
         "hydra:view":{
-          "@id":"/api/tasks?date=2024-12-01&pagination=true&itemsPerPage=2&page=1",
+          "@id":"/api/tasks?date=2024-12-01&itemsPerPage=2&pagination=true&page=1",
           "@type":"hydra:PartialCollectionView",
-          "hydra:first":"/api/tasks?date=2024-12-01&pagination=true&itemsPerPage=2&page=1",
-          "hydra:last":"/api/tasks?date=2024-12-01&pagination=true&itemsPerPage=2&page=2",
-          "hydra:next":"/api/tasks?date=2024-12-01&pagination=true&itemsPerPage=2&page=2"
+          "hydra:first":"/api/tasks?date=2024-12-01&itemsPerPage=2&pagination=true&page=1",
+          "hydra:last":"/api/tasks?date=2024-12-01&itemsPerPage=2&pagination=true&page=2",
+          "hydra:next":"/api/tasks?date=2024-12-01&itemsPerPage=2&pagination=true&page=2"
         },
         "hydra:search":{
           "@type":"hydra:IriTemplate",
@@ -1757,7 +1638,6 @@ Feature: Tasks
 
   Scenario: Retrieve unassigned tasks filtered by date for dispatcher
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_DISPATCHER"
     And the user "sarah" is authenticated
@@ -1809,7 +1689,7 @@ Feature: Tasks
         ],
         "hydra:totalItems":1,
         "hydra:view":{
-          "@id":"/api/tasks?date=2018-12-01&assigned=no",
+          "@id":"/api/tasks?assigned=no&date=2018-12-01",
           "@type":"hydra:PartialCollectionView"
         },
         "hydra:search":{
@@ -1823,7 +1703,6 @@ Feature: Tasks
 
   Scenario: Retrieve tasks filtered by date for dispatcher+courier (GH #4125)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "bob" has role "ROLE_DISPATCHER"
     And the user "bob" has role "ROLE_COURIER"
@@ -1994,9 +1873,208 @@ Feature: Tasks
       }
       """
 
+  Scenario: Retrieve order tasks with correct metadata
+    Given the fixtures files are loaded:
+      | dispatch.yml        |
+    And the user "sarah" has role "ROLE_DISPATCHER"
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "GET" request to "/api/tasks?date=2025-05-28"
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/Task",
+        "@id": "/api/tasks",
+        "@type": "hydra:Collection",
+        "hydra:member": [
+          {
+            "@id": "/api/tasks/@string@",
+            "@type": "Task",
+            "id": "@integer@.greaterThan(0)",
+            "type": "PICKUP",
+            "status": "TODO",
+            "address": {"@*@":"@*@"},
+            "comments": "",
+            "createdAt": "@string@.isDateTime()",
+            "updatedAt": "@string@.isDateTime()",
+            "group": null,
+            "doorstep": false,
+            "ref": null,
+            "recurrenceRule": null,
+            "metadata":{
+              "foo": "bar",
+              "baz": "bat",
+              "delivery_position": 1,
+              "zero_waste": false,
+              "order_id": 1,
+              "order_number": "A1",
+              "order_total": "@integer@"
+            },
+            "weight": null,
+            "incidents": [],
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@",
+            "tags": [],
+            "after": "2025-05-28T10:30:00@string@",
+            "before": "2025-05-28T11:00:00@string@",
+            "doneAfter": "2025-05-28T10:30:00@string@",
+            "doneBefore": "2025-05-28T11:00:00@string@",
+            "isAssigned": true,
+            "assignedTo": "sarah",
+            "orgName": "Nodaiwa",
+            "images": [],
+            "hasIncidents": false,
+            "previous": null,
+            "next": "/api/tasks/@string@",
+            "barcode": {"@*@":"@*@"},
+            "packages": []
+          },
+          {
+            "@id": "/api/tasks/@string@",
+            "@type": "Task",
+            "id": "@integer@.greaterThan(0)",
+            "type": "DROPOFF",
+            "status": "TODO",
+            "address": {"@*@":"@*@"},
+            "comments": "",
+            "createdAt": "@string@.isDateTime()",
+            "updatedAt": "@string@.isDateTime()",
+            "group": null,
+            "doorstep": false,
+            "ref": null,
+            "recurrenceRule": null,
+            "metadata":{
+              "delivery_position": 2,
+              "zero_waste": false,
+              "order_id": 1,
+              "order_number": "A1",
+              "order_total": "@integer@"
+            },
+            "weight": null,
+            "incidents": [],
+            "emittedCo2": "@integer@",
+            "traveledDistanceMeter": "@integer@",
+            "tags": [],
+            "after": "2025-05-28T11:30:00@string@",
+            "before": "2025-05-28T12:00:00@string@",
+            "doneAfter": "2025-05-28T11:30:00@string@",
+            "doneBefore": "2025-05-28T12:00:00@string@",
+            "isAssigned": true,
+            "assignedTo": "sarah",
+            "orgName": "Nodaiwa",
+            "images": [],
+            "hasIncidents": false,
+            "previous": "/api/tasks/@string@",
+            "next": null,
+            "barcode": {"@*@":"@*@"},
+            "packages": []
+          }
+        ],
+        "hydra:totalItems": 2,
+        "hydra:view":{
+          "@id": "/api/tasks?date=2025-05-28",
+          "@type": "hydra:PartialCollectionView"
+        },
+        "hydra:search": {"@*@":"@*@"}
+      }
+      """
+
+  Scenario: Retrieve courier assigned tasks with correct metadata
+    Given the fixtures files are loaded:
+      | dispatch.yml        |
+    And the user "sarah" has role "ROLE_COURIER"
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "GET" request to "/api/me/tasks/2025-05-28"
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/TaskList",
+        "@id": "@string@.startsWith('/api/task_lists/')",
+        "id": "@integer@",
+        "@type": "TaskList",
+        "items": [
+          {
+            "@id": "/api/tasks/@string@",
+            "@context": "/api/contexts/Task",
+            "@type": "Task",
+            "id": "@integer@.greaterThan(0)",
+            "type": "PICKUP",
+            "status": "TODO",
+            "address": {"@*@":"@*@"},
+            "after": "2025-05-28T10:30:00@string@",
+            "before": "2025-05-28T11:00:00@string@",
+            "doneAfter": "2025-05-28T10:30:00@string@",
+            "doneBefore": "2025-05-28T11:00:00@string@",
+            "comments": "",
+            "updatedAt": "@string@.isDateTime()",
+            "previous": null,
+            "tags": [],
+            "doorstep": false,
+            "metadata": {
+              "delivery_position": 1,
+              "order_id": 1,
+              "order_number": "A1",
+              "order_total": "@integer@",
+              "zero_waste": false,
+              "has_loopeat_returns": false
+            },
+            "weight": null,
+            "hasIncidents": false,
+            "orgName": "Nodaiwa",
+            "next": "/api/tasks/@string@",
+            "packages": [],
+            "createdAt": "@string@.isDateTime()"
+          },
+          {
+            "@id": "/api/tasks/@string@",
+            "@context": "/api/contexts/Task",
+            "@type": "Task",
+            "id": "@integer@.greaterThan(0)",
+            "type": "DROPOFF",
+            "status": "TODO",
+            "address": {"@*@":"@*@"},
+            "after": "2025-05-28T11:30:00@string@",
+            "before": "2025-05-28T12:00:00@string@",
+            "doneAfter": "2025-05-28T11:30:00@string@",
+            "doneBefore": "2025-05-28T12:00:00@string@",
+            "comments": "",
+            "updatedAt": "@string@.isDateTime()",
+            "previous": "/api/tasks/@string@",
+            "tags": [],
+            "doorstep": false,
+            "metadata": {
+              "delivery_position": 2,
+              "order_id": 1,
+              "order_number": "A1",
+              "order_total": "@integer@",
+              "zero_waste": false,
+              "has_loopeat_returns": false
+            },
+            "weight": null,
+            "hasIncidents": false,
+            "orgName": "Nodaiwa",
+            "next": null,
+            "packages": [],
+            "createdAt": "@string@.isDateTime()"
+          }
+        ],
+        "distance": "@integer@",
+        "duration": "@integer@",
+        "polyline": "@string@",
+        "date": "2025-05-28",
+        "username": "sarah",
+        "createdAt": "@string@.isDateTime()",
+        "updatedAt": "@string@.isDateTime()"
+      }
+      """
+
   Scenario: Duplicate task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_ADMIN"
     And the user "sarah" is authenticated
@@ -2049,7 +2127,6 @@ Feature: Tasks
 
   Scenario: Cannot edit task type
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_ADMIN"
     And the user "sarah" is authenticated
@@ -2082,7 +2159,6 @@ Feature: Tasks
 
   Scenario: Can edit task type
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_ADMIN"
     And the user "sarah" is authenticated
@@ -2099,7 +2175,6 @@ Feature: Tasks
 
   Scenario: Can't edit task status
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -2122,6 +2197,9 @@ Feature: Tasks
         "@id":"/api/deliveries/1",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "pickup":{
           "@id":@string@,
           "@type":"Task",
@@ -2160,14 +2238,14 @@ Feature: Tasks
           "packages":[],
           "barcode":{"@*@":"@*@"}
         },
+        "tasks":@array@,
         "trackingUrl": @string@,
-        "tasks":@array@
+        "order": null
       }
       """
 
   Scenario: Can complete pickup & dropoff
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | deliveries.yml      |
     And the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -2185,9 +2263,12 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Delivery",
-        "@id":"/api/deliveries/1",
+        "@id":"/api/deliveries/1/pick",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "pickup":{
           "@id":@string@,
           "@type":"Task",
@@ -2227,7 +2308,8 @@ Feature: Tasks
           "barcode":{"@*@":"@*@"}
         },
         "tasks":@array@,
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": null
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -2244,9 +2326,12 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Delivery",
-        "@id":"/api/deliveries/1",
+        "@id":"/api/deliveries/1/drop",
         "@type":"http://schema.org/ParcelDelivery",
         "id":1,
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":@string@,
         "pickup":{
           "@id":@string@,
           "@type":"Task",
@@ -2286,13 +2371,13 @@ Feature: Tasks
           "barcode":{"@*@":"@*@"}
         },
         "tasks":@array@,
-        "trackingUrl": @string@
+        "trackingUrl": @string@,
+        "order": null
       }
       """
 
   Scenario: Import tasks with CSV format
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
       | tags.yml            |
     Given the store with name "Acme" has an OAuth client named "Acme"
@@ -2302,10 +2387,10 @@ Feature: Tasks
     And the OAuth client "Acme" sends a "POST" request to "/api/tasks/import" with body:
       """
       type,address.streetAddress,address.telephone,address.name,after,before,tags
-      pickup,"1, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,"important"
-      dropoff,"54, rue du Faubourg Saint Denis Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,"important fragile"
-      dropoff,"68, rue du Faubourg Saint Denis Paris",,Baz,2018-02-15 10:00,2018-02-15 11:00,"fragile"
-      dropoff,"42, rue de Rivoli Paris",,Bat,2018-02-15 11:30,2018-02-15 12:00,
+      pickup,"44, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,"important"
+      dropoff,"24, Rue de la Paix Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,"important fragile"
+      dropoff,"101, Rue de la Paix Paris",,Baz,2018-02-15 10:00,2018-02-15 11:00,"fragile"
+      dropoff,"52, rue de Rivoli Paris",,Bat,2018-02-15 11:30,2018-02-15 12:00,
       """
     Then the response status code should be 201
     And the JSON should match:
@@ -2332,7 +2417,6 @@ Feature: Tasks
 
   Scenario: Import tasks with CSV format (one line)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
       | tags.yml            |
     Given the store with name "Acme" has an OAuth client named "Acme"
@@ -2342,7 +2426,7 @@ Feature: Tasks
     And the OAuth client "Acme" sends a "POST" request to "/api/tasks/import" with body:
       """
       type,address.streetAddress,address.telephone,address.name,after,before,tags
-      pickup,"1, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,"important"
+      pickup,"44, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,"important"
       """
     Then the response status code should be 201
     And the JSON should match:
@@ -2362,7 +2446,6 @@ Feature: Tasks
 
   Scenario: Import tasks with CSV format with duplicate ref
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -2371,8 +2454,8 @@ Feature: Tasks
     And the OAuth client "Acme" sends a "POST" request to "/api/tasks/import" with body:
       """
       type,address.streetAddress,address.telephone,address.name,after,before,ref
-      pickup,"1, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,123456
-      dropoff,"54, rue du Faubourg Saint Denis Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,123456
+      pickup,"44, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,123456
+      dropoff,"24, Rue de la Paix Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,123456
       """
     Then the response status code should be 400
     And the response should be in JSON
@@ -2395,7 +2478,6 @@ Feature: Tasks
 
   Scenario: Import tasks with CSV format with existing ref
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
@@ -2405,8 +2487,8 @@ Feature: Tasks
     And the OAuth client "Acme" sends a "POST" request to "/api/tasks/import" with body:
       """
       type,address.streetAddress,address.telephone,address.name,after,before,ref
-      pickup,"1, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,654321
-      dropoff,"54, rue du Faubourg Saint Denis Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,123456
+      pickup,"44, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,654321
+      dropoff,"24, Rue de la Paix Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,123456
       """
     Then the response status code should be 400
     And the response should be in JSON
@@ -2429,12 +2511,11 @@ Feature: Tasks
 
   Scenario: Authorized to retrieve task group
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the store with name "Acme" has imported tasks:
       | type    | address.streetAddress                 | after            | before           |
-      | pickup  | 1, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
-      | dropoff | 54, rue du Faubourg Saint Denis Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | pickup  | 44, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | dropoff | 24, Rue de la Paix Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
     Given the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
@@ -2458,12 +2539,11 @@ Feature: Tasks
 
   Scenario: Not authorized to retrieve task group
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the store with name "Acme" has imported tasks:
       | type    | address.streetAddress                 | after            | before           |
-      | pickup  | 1, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
-      | dropoff | 54, rue du Faubourg Saint Denis Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | pickup  | 44, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | dropoff | 24, Rue de la Paix Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
     Given the store with name "Acme2" has an OAuth client named "Acme2"
     And the OAuth client with name "Acme2" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
@@ -2473,7 +2553,6 @@ Feature: Tasks
 
   Scenario: Create task with invalid address
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
@@ -2482,7 +2561,7 @@ Feature: Tasks
     And the user "bob" sends a "POST" request to "/api/tasks" with body:
       """
       {
-        "address": {},
+        "address": {"provider": null},
         "doneAfter": "2020-09-01T13:53:29.536Z",
         "doneBefore": "2020-09-01T14:23:29.537Z"
       }
@@ -2627,12 +2706,11 @@ Feature: Tasks
 
   Scenario: Authorized to retrieve task events
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the store with name "Acme" has imported tasks:
       | type    | address.streetAddress                 | after            | before           |
-      | pickup  | 1, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
-      | dropoff | 54, rue du Faubourg Saint Denis Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | pickup  | 44, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | dropoff | 24, Rue de la Paix Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
     Given the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
@@ -2643,7 +2721,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
+        "@id":"/api/tasks/1/events",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
@@ -2652,8 +2730,7 @@ Feature: Tasks
             "name":"task:created",
             "data":[],
             "createdAt":"@string@.isDateTime()"
-          }
-        ],
+          }],
         "hydra:totalItems":1,
         "hydra:search":{
           "@*@":"@*@"
@@ -2663,7 +2740,6 @@ Feature: Tasks
 
   Scenario: Import tasks with CSV format (async)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
       | tags.yml            |
     Given the store with name "Acme" has an OAuth client named "Acme"
@@ -2673,10 +2749,10 @@ Feature: Tasks
     And the OAuth client "Acme" sends a "POST" request to "/api/tasks/import_async" with body:
       """
       type,address.streetAddress,address.telephone,address.name,after,before,tags
-      pickup,"1, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,"important"
-      dropoff,"54, rue du Faubourg Saint Denis Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,"important fragile"
-      dropoff,"68, rue du Faubourg Saint Denis Paris",,Baz,2018-02-15 10:00,2018-02-15 11:00,"fragile"
-      dropoff,"42, rue de Rivoli Paris",,Bat,2018-02-15 11:30,2018-02-15 12:00,
+      pickup,"44, rue de Rivoli Paris",,Foo,2018-02-15 09:00,2018-02-15 10:00,"important"
+      dropoff,"24, Rue de la Paix Paris",,Bar,2018-02-15 09:00,2018-02-15 10:00,"important fragile"
+      dropoff,"101, Rue de la Paix Paris",,Baz,2018-02-15 10:00,2018-02-15 11:00,"fragile"
+      dropoff,"52, rue de Rivoli Paris",,Bat,2018-02-15 11:30,2018-02-15 12:00,
       """
     Then the response status code should be 201
     And the JSON should match:
@@ -2690,7 +2766,6 @@ Feature: Tasks
 
   Scenario: Restore a cancelled task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_ADMIN"
     And the user "sarah" is authenticated
@@ -2789,7 +2864,6 @@ Feature: Tasks
 
   Scenario: Doesn't double package quantity
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_ADMIN"
     And the user "sarah" is authenticated
@@ -2817,8 +2891,9 @@ Feature: Tasks
               "name":"SMALL",
               "quantity":4,
               "volume_per_package": 1,
-              "short_code": "AB",
-              "labels":@array@
+              "short_code": "SM",
+              "labels":@array@,
+              "tasks":@array@
             }
          ],
          "@*@": "@*@"
@@ -2827,12 +2902,11 @@ Feature: Tasks
 
   Scenario: Can update address.name & comments
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | stores.yml          |
     Given the store with name "Acme" has imported tasks:
       | type    | address.streetAddress                 | after            | before           |
-      | pickup  | 1, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
-      | dropoff | 54, rue du Faubourg Saint Denis Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | pickup  | 44, rue de Rivoli Paris                | 2018-02-15 09:00 | 2018-02-15 10:00 |
+      | dropoff | 24, Rue de la Paix Paris | 2018-02-15 09:00 | 2018-02-15 10:00 |
     Given the store with name "Acme" has an OAuth client named "Acme"
     And the OAuth client with name "Acme" has an access token
     When I add "Content-Type" header equal to "application/ld+json"
@@ -2842,7 +2916,7 @@ Feature: Tasks
       {
         "address": {
           "name": "Foo"
-        },
+        , "provider": null},
         "comments": "Lorem ipsum"
       }
       """
@@ -2862,7 +2936,6 @@ Feature: Tasks
 
   Scenario: Mark multiple tasks as done
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -2908,7 +2981,6 @@ Feature: Tasks
 
   Scenario: Mark multiple tasks as done when they are in the same delivery and in wrong order regarding database IDs
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | mark_as_done_in_delivery.yml |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -2930,7 +3002,6 @@ Feature: Tasks
       """
     Then the response status code should be 200
     And the response should be in JSON
-    Then print last JSON response
     And the JSON should match:
       """
       {
@@ -2963,7 +3034,6 @@ Feature: Tasks
 
   Scenario: Mark one tasks as done and another one as failed
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -3004,7 +3074,6 @@ Feature: Tasks
 
   Scenario: Assign images to multiple tasks
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -3032,7 +3101,7 @@ Feature: Tasks
       """
         {
           "@context":"/api/contexts/Task",
-          "@id":"/api/tasks",
+          "@id":"/api/tasks/images",
           "@type":"hydra:Collection",
           "hydra:member": [
             {
@@ -3057,7 +3126,6 @@ Feature: Tasks
 
   Scenario: Upload image
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -3081,9 +3149,39 @@ Feature: Tasks
       }
       """
 
+  Scenario: Upload image with wrong format
+    Given the fixtures files are loaded:
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "multipart/form-data"
+    And the user "bob" sends a "POST" request to "/api/task_images" with parameters:
+      | key      | value           |
+      | file     | @at3_1m4_01.tif |
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ConstraintViolationList",
+        "@type":"ConstraintViolationList",
+        "hydra:title":"An error occurred",
+        "hydra:description":@string@,
+        "violations":[
+          {
+            "propertyPath":"file",
+            "message":@string@,
+            "code":"744f00bc-4389-4c74-92de-9a43cde55534"
+          }
+        ]
+      }
+      """
+
   Scenario: Upload image with task in header
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -3110,7 +3208,6 @@ Feature: Tasks
 
   Scenario: Upload image with tasks in header
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | tasks.yml           |
     And the courier "bob" is loaded:
       | email     | bob@coopcycle.org |
@@ -3137,7 +3234,6 @@ Feature: Tasks
 
   Scenario: Retrieve custom failure reasons
     Given the fixtures files are loaded:
-      | sylius_channels.yml  |
       | tasks.yml            |
       | stores_with_orgs.yml |
       | failure_reasons.yml  |
@@ -3156,24 +3252,23 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
+        "@id":"/api/tasks/2/failure_reasons",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
             "@type":"FailureReason",
-            "@id":"@string@",
+            "@id": @string@,
             "code":"DAMAGED",
             "description":"Damaged",
             "metadata":[]
           },
           {
             "@type":"FailureReason",
-            "@id":"@string@",
+            "@id": @string@,
             "code":"REFUSED",
             "description":"Refused",
             "metadata":[]
-          }
-        ],
+          }],
         "hydra:totalItems":2,
         "hydra:search":{
           "@type":"hydra:IriTemplate",
@@ -3186,7 +3281,6 @@ Feature: Tasks
 
   Scenario: Retrieve default failure reasons
     Given the fixtures files are loaded:
-      | sylius_channels.yml  |
       | tasks.yml            |
       | stores_with_orgs.yml |
     And the courier "bob" is loaded:
@@ -3204,7 +3298,7 @@ Feature: Tasks
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
+        "@id":"/api/tasks/2/failure_reasons",
         "@type":"hydra:Collection",
         "hydra:member":@array@,
         "hydra:totalItems":22,
@@ -3213,3 +3307,266 @@ Feature: Tasks
         }
       }
       """
+
+  Scenario: Retrieve task incidents
+    Given the fixtures files are loaded:
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "Package damaged",
+        "failureReasonCode": "DAMAGED",
+        "task": "/api/tasks/2"
+      }
+      """
+    Then the response status code should be 201
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/tasks/2/incidents"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks/2/incidents",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "@type":"Incident",
+            "@id":"@string@.startsWith('/api/incidents')",
+            "id":@integer@,
+            "title":"Endommagé",
+            "status":"OPEN",
+            "priority":@integer@,
+            "task":"/api/tasks/2",
+            "failureReasonCode":"DAMAGED",
+            "description":"Package damaged",
+            "images":[],
+            "events":[],
+            "createdBy":"@string@.startsWith('/api/users')",
+            "createdAt":"@string@.isDateTime()",
+            "updatedAt":"@string@.isDateTime()",
+            "tags":[],
+            "metadata":{"@*@":"@*@"}
+          }
+        ],
+        "hydra:totalItems":1,
+        "hydra:search":{
+          "@type":"hydra:IriTemplate",
+          "hydra:template":"/api/tasks/2/incidents{?date,assigned,organization}",
+          "hydra:variableRepresentation":"BasicRepresentation",
+          "hydra:mapping":@array@
+        }
+      }
+      """
+
+  Scenario: Not authorized to retrieve task incidents
+    Given the fixtures files are loaded:
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the courier "sarah" is loaded:
+      | email     | sarah@coopcycle.org |
+      | password  | 123456              |
+      | telephone | 0033612345678       |
+    And the user "sarah" is authenticated
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "GET" request to "/api/tasks/2/incidents"
+    Then the response status code should be 403
+    And the response should be in JSON
+    
+  Scenario: Cancel the last task - order should be cancelled
+    Given the fixtures files are loaded:
+      | task_manager_one_non_cancelled.yml |
+    And the user "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "new"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/2/cancel" with body:
+      """
+      {}
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks/2",
+        "@type":"Task",
+        "id":2,
+        "type":"PICKUP",
+        "status":"CANCELLED",
+        "@*@":"@*@"
+      }
+      """
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "cancelled"
+
+  Scenario: Cancel one task in multi-dropoff order with task pricing - order stays new and price recalculated
+    Given the fixtures files are loaded with purge:
+      | setup_default.yml |
+    Given the fixtures files are loaded:
+      | user_dispatcher.yml                    |
+      | store_with_task_pricing.yml            |
+      | package_delivery_order_multi_dropoff.yml |
+    And the user "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "new"
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "total" with value "899"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/1/cancel" with body:
+      """
+      {}
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks/1",
+        "@type":"Task",
+        "id":1,
+        "type":"PICKUP",
+        "status":"CANCELLED",
+        "@*@":"@*@"
+      }
+      """
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "new"
+    Then the async messages are consumed
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "total" with value "400"
+
+  Scenario: Cancel once task in multi-dropoff order with distance pricing - order stays new and price recalculated
+    Given the fixtures files are loaded with purge:
+      | setup_default.yml |
+    Given the fixtures files are loaded:
+      | user_dispatcher.yml                    |
+      | store_w_distance_pricing.yml           |
+      | package_delivery_order_multi_dropoff.yml |
+    And the user "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "new"
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "total" with value "600"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/tasks/2/cancel" with body:
+      """
+      {}
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks/2",
+        "@type":"Task",
+        "id":2,
+        "status":"CANCELLED",
+        "@*@":"@*@"
+      }
+      """
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "new"
+    Then the async messages are consumed
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "total" with value "400"
+
+  Scenario: Cancel once task in multi-dropoff order with manual supplements - order stays accepted, price recalculated and manual supplements kept
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | store_with_manual_supplements.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "dispatcher" is loaded:
+      | email      | dispatcher@coopcycle.org |
+      | password   | 123456            |
+    And the user "dispatcher" has role "ROLE_DISPATCHER"
+    And the user "dispatcher" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "tasks": [
+          {
+            "type": "pickup",
+            "address": "24, Rue de la Paix Paris",
+            "doneBefore": "tomorrow 13:00"
+          },
+          {
+            "type": "dropoff",
+            "address": "48, Rue de Rivoli Paris",
+            "doneBefore": "tomorrow 15:00"
+          },
+          {
+            "type": "dropoff",
+            "address": "48, Rue de Rivoli Paris",
+            "doneBefore": "tomorrow 16:00",
+            "weight": 30000
+          }
+        ],
+        "order": {
+          "manualSupplements": [
+            {
+              "pricingRule": "/api/pricing_rules/3",
+              "quantity": 1
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "accepted"
+    # Base: 499, weight: 250, manual supplement: 200
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "total" with value "949"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "dispatcher" sends a "PUT" request to "/api/tasks/3/cancel" with body:
+    """
+    {}
+    """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "@context":"/api/contexts/Task",
+      "@id":"/api/tasks/3",
+      "@type":"Task",
+      "id":3,
+      "status":"CANCELLED",
+      "@*@":"@*@"
+    }
+    """
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "accepted"
+    Then the async messages are consumed
+    # Base: 499, manual supplement: 200
+    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "total" with value "699"

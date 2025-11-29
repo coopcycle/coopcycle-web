@@ -331,10 +331,37 @@ dashboard_restaurant_new_promotion:
             restaurant_promotions: dashboard_restaurant_promotions
     methods: [ GET, POST ]
 
+dashboard_restaurant_archive_promotion:
+    path: /dashboard/restaurants/{restaurantId}/promotions/archive
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::archiveRestaurantPromotionAction
+        layout: 'dashboard.html.twig'
+        routes:
+            restaurant_promotions: dashboard_restaurant_promotions
+    methods: [ POST ]
+
+dashboard_restaurant_feature_promotion:
+    path: /dashboard/restaurants/{restaurantId}/promotions/feature
+    defaults:
+        _controller: AppBundle\Controller\DashboardController::featureRestaurantPromotionAction
+        layout: 'dashboard.html.twig'
+        routes:
+            restaurant_promotions: dashboard_restaurant_promotions
+    methods: [ POST ]
+
 dashboard_restaurant_promotion:
     path: /dashboard/restaurants/{restaurantId}/promotions/{promotionId}
     defaults:
         _controller: AppBundle\Controller\DashboardController::restaurantPromotionAction
+        layout: 'dashboard.html.twig'
+        routes:
+            restaurant_promotions: dashboard_restaurant_promotions
+    methods: [ GET, POST ]
+
+dashboard_restaurant_promotion_coupon:
+    path: /dashboard/restaurants/{restaurantId}/promotions/{promotionId}/coupons/{couponId}
+    defaults:
+        _controller: AppBundle\Controller\AdminController::restaurantPromotionCouponAction
         layout: 'dashboard.html.twig'
         routes:
             restaurant_promotions: dashboard_restaurant_promotions
@@ -379,10 +406,11 @@ dashboard_delivery:
       _controller: AppBundle\Controller\DashboardController::deliveryItemReactFormAction
       layout: 'dashboard.html.twig'
       routes:
-        stores: admin_stores
-        store: admin_store
-        success: admin_store_deliveries
-        back: admin_deliveries
+        stores: dashboard_stores
+        store: dashboard_store
+        store_deliveries: dashboard_store
+        back: dashboard
+        store_new: dashboard_store_delivery_new
   methods:  [ GET, POST ]
 
 dashboard_store_delivery_new:
@@ -393,8 +421,9 @@ dashboard_store_delivery_new:
         routes:
             stores: dashboard_stores
             store: dashboard_store
-            success: dashboard_store_deliveries
+            store_deliveries: dashboard_store_deliveries
             back: dashboard
+            store_new: dashboard_store_delivery_new
         show_left_menu: false
     methods:  [ GET, POST ]
 

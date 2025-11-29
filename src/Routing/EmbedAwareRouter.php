@@ -19,7 +19,7 @@ use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
 
-class EmbedAwareRouter implements WarmableInterface, ServiceSubscriberInterface, RouterInterface, RequestMatcherInterface
+class EmbedAwareRouter implements WarmableInterface, RouterInterface, RequestMatcherInterface
 {
     /**
      * @var Router
@@ -57,29 +57,22 @@ class EmbedAwareRouter implements WarmableInterface, ServiceSubscriberInterface,
         return $this->router->warmUp($cacheDir);
     }
 
-    public static function getSubscribedServices()
+    public function setContext(RequestContext $context): void
     {
-        return [
-            'routing.loader' => LoaderInterface::class,
-        ];
+        $this->router->setContext($context);
     }
 
-    public function setContext(RequestContext $context)
-    {
-        return $this->router->setContext($context);
-    }
-
-    public function getContext()
+    public function getContext(): RequestContext
     {
         return $this->router->getContext();
     }
 
-    public function matchRequest(Request $request)
+    public function matchRequest(Request $request): array
     {
         return $this->router->matchRequest($request);
     }
 
-    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH)
+    public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH): string
     {
         if (in_array($name, self::$allowedRouteNames)) {
             $request = $this->requestStack->getCurrentRequest();
@@ -93,7 +86,7 @@ class EmbedAwareRouter implements WarmableInterface, ServiceSubscriberInterface,
         return $this->router->generate($name, $parameters, $referenceType);
     }
 
-    public function match(string $pathinfo)
+    public function match(string $pathinfo): array
     {
         return $this->router->match($pathinfo);
     }

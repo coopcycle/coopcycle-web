@@ -54,4 +54,6 @@ interface CustomerInterface extends BaseCustomerInterface, LoopeatCredentialsInt
     public function setEdenredAccessToken($accessToken);
 
     public function setEdenredRefreshToken($refreshToken);
+
+    public function getUsername(): string;
 }

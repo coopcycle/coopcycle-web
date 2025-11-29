@@ -2,7 +2,7 @@
 
 namespace AppBundle\Sylius\Promotion\Checker\Rule;
 
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Security;
 use Sylius\Component\Promotion\Checker\Rule\RuleCheckerInterface;
 use Sylius\Component\Promotion\Model\PromotionSubjectInterface;
 
@@ -10,12 +10,8 @@ class IsCustomerRuleChecker implements RuleCheckerInterface
 {
     const TYPE = 'is_customer';
 
-    private $tokenStorage;
-
-    public function __construct(TokenStorageInterface $tokenStorage)
-    {
-    	$this->tokenStorage = $tokenStorage;
-    }
+    public function __construct(private Security $security)
+    {}
 
     /**
      * {@inheritdoc}
@@ -26,15 +22,12 @@ class IsCustomerRuleChecker implements RuleCheckerInterface
             return true;
         }
 
-    	if (null === $token = $this->tokenStorage->getToken()) {
+        $user = $this->security->getUser();
+
+        if (!$user) {
             return false;
         }
 
-        if (!is_object($user = $token->getUser())) {
-            // e.g. anonymous authentication
-            return false;
-        }
-
-        return $user->getUsername() === $configuration['username'];
+        return $user->getUserIdentifier() === $configuration['username'];
     }
 }

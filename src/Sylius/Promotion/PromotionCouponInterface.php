@@ -9,4 +9,8 @@ interface PromotionCouponInterface extends BasePromotionCouponInterface
     public function getPerCustomerUsageLimit(): ?int;
 
     public function setPerCustomerUsageLimit(?int $perCustomerUsageLimit): void;
+
+    public function setFeatured($featured = true): void;
+
+    public function isFeatured(): bool;
 }

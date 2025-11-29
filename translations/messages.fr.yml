@@ -1,4 +1,5 @@
 global.changesSaved: Changements sauvegardés.
+visitDocumentation.label: Consulter la documentation
 navbar.login: Connexion
 navbar.myAccount: Mon compte
 navbar.switch_to_business: Compte %name%
@@ -90,6 +91,7 @@ delivery.with_id: 'Livraison #%id%'
 subscription.title: 'Règle de récurrence #%id%'
 subscription.generated_order: 'Cette commande a été générée par une règle de récurrence'
 subscription.view: 'Voir la règle de récurrence'
+subscription.deleted.warning: Cette règle de récurrence a été supprimée. Vous ne pouvez plus la modifier.
 restaurants.no_results: Nous n'avons pas trouvé de restaurant correspondant à votre
   recherche ☹<br>Essayez avec une autre adresse ou d'autres filtres
 localBusiness.form.orderingDelayMinutes: Délai additionnel pour les prises de commandes
@@ -275,7 +277,7 @@ order.total_excluding_tax: Total HT
 order.total_including_tax: Total TTC
 order.items_total: Total produits
 order.total_tax: TVA
-order.total_tax_by_rate: Total %name%
+order.total_tax_by_rate: TVA %name%
 order.preparation_expected_at: Préparation à démarrer pour %date%
 order.preparation_expected_for: Préparation attendue pour %date%
 order.net_total_including_tax: Total TTC (net)
@@ -695,6 +697,7 @@ roles.ROLE_STORE.help: 'Magasin : gérer les magasins qui lui sont assignés, cr
 stores.manage: Gérer
 stores.settings: Paramètres
 stores.createNewDelivery: Créer une livraison
+stores.createNewOrder: Créer une nouvelle commande
 stores.users: Utilisateurs
 stores.pricing_rule_set: Tarification
 stores.deliveries: Livraisons
@@ -702,6 +705,7 @@ stores.deliveries.heading: 'Livraison %delivery_id% - %delivery_distance%'
 stores.deliveries.heading2: 'Livraison %delivery_id%'
 stores.api_keys: Clés d'API
 stores.deliveries.task_unassigned: Non assignée
+stores.orders: Commandes
 stores.addresses: Adresses
 stores.deliveries.bookmarks: Commandes enregistrées
 stores.deliveries.bookmarks.empty_message: Marquez les commandes sur la page de Livraison pour les retrouver facilement plus tard
@@ -775,6 +779,35 @@ embed.delivery.contact_heading: Contact
 embed.delivery.specify_billing_address: Spécifier une adresse de facturation
 embed.delivery.billing_address: Adresse de facturation
 notifications.empty: Aucune notification
+notifications.tap_to_open: Appuyez pour ouvrir
+notifications.delivery_created: Une livraison avec enlèvement %date% a été créée
+notifications.tasks_changed: Les tâches du %date% ont changé !
+notifications.tasks_changed_today: Vos tâches pour aujourd'hui ont été mises à jour
+notifications.restaurant.new_order: Nouvelle commande à confirmer
+notifications.restaurant.accepted_order: "Nouvelle commande"
+notifications.messenger_approaching: Bonjour %customer% ! Votre livreur·se %messenger%
+  est tout·e proche. Tenez-vous prêt·e !
+form.settings.notifications.title: Notifications
+form.settings.notifications.order.created: Commande créée
+form.settings.notifications.order.updated: Commande mise à jour
+form.settings.notifications.order.accepted: Commande acceptée
+form.settings.notifications.order.refused: Commande refusée
+form.settings.notifications.order.delayed: Commande retardée
+form.settings.notifications.order.cancelled: Commande annulée
+form.settings.notifications.order.picked: Commande récupérée
+form.settings.notifications.order.dropped: Commande déposée
+form.settings.notifications.order.fulfilled: Commande terminée
+form.settings.notifications.task.created: Tâche créée
+form.settings.notifications.task.updated: Tâche mise à jour
+form.settings.notifications.task.assigned: Tâche assignée
+form.settings.notifications.task.unassigned: Tâche désassignée
+form.settings.notifications.task.started: Tâche commencée
+form.settings.notifications.task.done: Tâche terminée
+form.settings.notifications.task.failed: Tâche échouée
+form.settings.notifications.task.cancelled: Tâche annulée
+form.settings.notifications.task.rescheduled: Tâche reprogrammée
+form.settings.notifications.help: En désactivant les notifications pour les événements ci-dessous,
+  les administrateurs ne recevront pas d'e-mails, ni de notifications dans la barre de menu.
 adminDashboard.statistics: Statistiques
 adminDashboard.activity.title: Activité
 activity.task.created: "@%owner% a créé la tâche #task/%aggregate_id%\n"
@@ -946,7 +979,6 @@ receipt.footer_item.total_incl_tax: Total TTC
 receipt.total: Total TTC
 receipt.billing_details: Commande payée par %payment_method% le %date%
 receipt.emitter_details: Commande au restaurant <strong>%restaurant_name%</strong>
-notifications.restaurant.new_order: Nouvelle commande à confirmer
 profile.loopeat.connect: Connecter mon compte %name%
 profile.loopeat.connected: Compte %name% connecté
 profile.loopeat.disconnect: Déconnecter mon compte %name%
@@ -960,11 +992,10 @@ task.receipt.reference: 'Référence : <strong>%ref%</strong>'
 basics.hours: '%count% heure|%count% heures'
 basics.days: '%count% jour|%count% jours'
 basics.weeks: '%count% semaine|%count% semaines'
+basics.months: '%count% mois'
 basics.none: Aucun
 basics.yes: Oui
 basics.no: Non
-notifications.messenger_approaching: Bonjour %customer% ! Votre livreur·se %messenger%
-  est tout·e proche. Tenez-vous prêt·e !
 order.export.heading.restaurant_name: Restaurant
 order.export.heading.order_number: Numéro de commande
 order.export.heading.completed_at: Livrée le
@@ -987,7 +1018,6 @@ form.order_export.messenger.label: Inclure une colonne avec le coursier ayant li
   la commande
 basics.show: Afficher
 basics.hide: Masquer
-notifications.tasks_changed: Les tâches du %date% ont changé !
 restaurant_promotion.offer_delivery: Offrir les frais de livraison
 restaurant_promotion.offer_delivery.help: Cela vous permet d'offrir les frais de livraison
   <strong>sur votre propre part</strong>. Votre marge sera réduite du montant des
@@ -1174,9 +1204,6 @@ form.fulfillment_method.pre_ordering_allowed.help: Si vous décochez cette case,
   client·es ne pourront commander que pour le jour même.
 form.fulfillment_method.options.range_duration.label: Durée des créneaux
 ordering_delay.admin_reminder: Vous avez configuré un délai de pickup global pour les commandes foodtech
-notifications.delivery_created: Une livraison avec enlèvement %date% a été créée
-notifications.tasks_changed_today: Vos tâches pour aujourd'hui ont été mises à jour
-notifications.tap_to_open: Appuyez pour ouvrir
 profile.edenred.connected: Compte Edenred connecté
 profile.edenred.connect: Connecter mon compte Edenred
 edenred.oauth_connect.success: Votre compte Edenred est connecté !
@@ -1368,29 +1395,10 @@ form.failure_reason.description.label: Description
 basics.manage: Gérer
 basics.settings: Paramètres
 form.store_type.failure_reason_set.label: "Motifs d'échec"
-form.store_type.failure_reason_set.help: Sélectionnez une liste de <a href="%failure_reason_set%">raisons d\'échec</a> à utiliser dans ce %entity%.
+form.store_type.failure_reason_set.help: Sélectionnez une liste de <a href="%failure_reason_set%">motifs dʼéchec</a> à utiliser dans ce %entity%.
 profile.delete_my_account: "Supprimer mon compte"
 profile.type_username_to_confirm: "Saisissez votre nom d'utilisateur pour confirmer la suppression du compte"
 form.pricing_rule_set.options.label: Options
-form.settings.notifications.title: Notifications
-form.settings.notifications.order.created: Commande créée
-form.settings.notifications.order.accepted: Commande acceptée
-form.settings.notifications.order.refused: Commande refusée
-form.settings.notifications.order.delayed: Commande retardée
-form.settings.notifications.order.cancelled: Commande annulée
-form.settings.notifications.order.picked: Commande récupérée
-form.settings.notifications.order.dropped: Commande déposée
-form.settings.notifications.order.fulfilled: Commande terminée
-form.settings.notifications.order.updated: Commande mise à jour
-form.settings.notifications.task.created: Tâche créée
-form.settings.notifications.task.assigned: Tâche assignée
-form.settings.notifications.task.unassigned: Tâche désassignée
-form.settings.notifications.task.started: Tâche commencée
-form.settings.notifications.task.done: Tâche terminée
-form.settings.notifications.task.failed: Tâche échouée
-form.settings.notifications.task.cancelled: Tâche annulée
-form.settings.notifications.task.rescheduled: Tâche reprogrammée
-form.settings.notifications.help: En désactivant les notifications pour les événements ci-dessous, les administrateurs ne recevront pas d'e-mails, ni de notifications dans la barre de menu.
 tags.featured: À la une
 tags.exclusive: Exclusivités
 tags.shops.new: Nouveautés
@@ -1497,7 +1505,6 @@ basics.delete_selected: "Supprimer la sélection"
 delivery.table.heading.owner: "Propriétaire"
 delivery.import.success_message: "Votre fichier a été traité avec succès, %count% livraisons ont été créées"
 form.delivery_import.file.label: "Fichier"
-notifications.restaurant.accepted_order: "Nouvelle commande"
 food_establishment.CAFE_OR_COFFEE_SHOP: "Café ou salon de thé"
 food_establishment.DISTILLERY: "Distillerie"
 food_establishment.FAST_FOOD_RESTAURANT: "Restaurant de restauration rapide"
@@ -1617,3 +1624,35 @@ form.settings.on_demand_delivery_product_name.label: "Nom du produit"
 form.settings.on_demand_delivery_product_name.help: "Le nom qui apparaîtra dans le récapitulatif de commande et la facture"
 form.settings.accounting_account.label: "Code comptable"
 form.settings.accounting_account.help: "Le code comptable par défaut pour enregistrer les commandes de livraison à la demande dans le système comptable."
+restaurant.stats.show_only_meal_vouchers: Afficher uniquement les commandes payées en titres-restaurant
+restaurant.stats.show_all: Afficher toutes les commandes
+pricing.variant.pickup_point: Point de retrait
+pricing.variant.dropoff_point: Point de dépôt
+pricing.variant.order_supplement: Supplément de commande
+pricing.rule.humanizer.inside_zone: dans
+pricing.rule.humanizer.outside_zone: hors
+pricing.rule.humanizer.address_zone_format: 'adresse %task_type% %direction% zone "%zone_name%"'
+pricing.rule.humanizer.between: entre %left% et %right%
+pricing.rule.humanizer.less_than: moins de %value%
+pricing.rule.humanizer.more_than: plus de %value%
+pricing.rule.humanizer.kg_unit: '%value% kg'
+pricing.rule.humanizer.km_unit: '%value% km'
+pricing.rule.humanizer.task_type_is: 'taux de %value%'
+pricing.rule.humanizer.time_range_length: 'créneau horaire de %task_type% %operator% %value%'
+pricing.rule.humanizer.diff: 'délai de préavis pour %task_type% %operator% %value%'
+pricing.rule.humanizer.order_items_total: 'total du panier %operator% %value%'
+pricing.rule.humanizer.packages_volume_units: 'volume du colis %operator% %value%'
+pricing.rule.humanizer.packages_contains_at_least_one: 'colis %package_name%'
+pricing.rule.humanizer.price_range: '%unit_price% par %step%'
+pricing.rule.humanizer.price_range_with_threshold: 'au-dessus de %threshold% - %unit_price% par %step%'
+pricing.rule.humanizer.price_per_package: '%unit_price% par %package_name%'
+adminDashboard.promotions.ongoing: Promotions actives
+adminDashboard.promotions.past: Promotions passées
+order.download_receipt: Télécharger le reçu
+order.generate_receipt: Générer le reçu
+promotions.feature: Afficher
+promotions.featured: Affiché
+promotions.human_readable.discount_items_total_above: "%name% : %discount_amount% de réduction à partir de %amount% dʼachats"
+promotions.human_readable.coupon: "%name% avec le code %code%"
+form.offer_delivery.decrease_platform_fee.label: Diminuer les frais de plateforme
+form.offer_delivery.decrease_platform_fee.help: Les frais de plateforme seront diminués pour appliquer cette promotion

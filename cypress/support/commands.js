@@ -24,27 +24,188 @@
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
+import moment from 'moment'
+
 Cypress.Commands.add('terminal', command => {
+  cy.log(`exec: ${command}`)
+
   const prefix = Cypress.env('COMMAND_PREFIX')
-  let cmd = `${command}`
-  if (prefix) {
-    cmd = `${prefix} ${cmd}`
-  }
-  cy.exec(cmd)
+  cy.exec(prefix ? `${prefix} ${command}` : command, {timeout: 60000, log: false})
 })
 
 Cypress.Commands.add('symfonyConsole', command => {
-  const prefix = Cypress.env('COMMAND_PREFIX')
-  let cmd = `bin/console ${command} --env="test"`
-  if (prefix) {
-    cmd = `${prefix} ${cmd}`
+  cy.terminal(`bin/console ${command} --env="test"`)
+})
+
+Cypress.Commands.add('loadFixtures', (fixtures, setup=false) => {
+  const fixturesString = (Array.isArray(fixtures) ? fixtures : [fixtures]).map(f => `-f fixtures/ORM/${f}`).join(' ')
+  cy.symfonyConsole(`coopcycle:fixtures:load${setup ? ' -s fixtures/ORM/setup_default.yml' : ''} ${fixturesString}`)
+})
+
+Cypress.Commands.add('loadFixturesWithSetup', fixtures => {
+  cy.loadFixtures(fixtures, true)
+})
+
+Cypress.Commands.add('setEnvVar', (key, value) => {
+  cy.terminal(`echo ${key}=${value} >> .env.test`)
+})
+
+Cypress.Commands.add('removeEnvVar', (key) => {
+  cy.terminal(`sed -i '/${key}=/{d}' .env.test`)
+})
+
+Cypress.Commands.add('urlmatch', (pattern, type='match', from='pathname') => {
+  cy.location(from, { timeout: 10000 }).should(type, pattern)
+})
+
+Cypress.Commands.add('getIfExists', (selector, callbackWhenNotFound=null) => {
+  cy.document().then(($document) => {
+    if ($document.querySelectorAll(selector).length) {
+      return cy.get(selector, { timeout: 5000 }).should('exist')
+    }
+
+    return cy.log(`The element '${selector}' was not found in DOM!`).then(() => {
+        return callbackWhenNotFound ? callbackWhenNotFound(selector) : null
+      })
+  })
+})
+
+Cypress.Commands.add('setMockDateTime', dateTime => {
+  // Reset previous mocks (if any)
+  cy.resetMockDateTime()
+
+  cy.symfonyConsole(`coopcycle:datetime:mock -d "${dateTime}"`)
+
+  cy.clock(new Date(dateTime), ['Date']).then(clock => {
+    // Set up a timer to tick the clock forward every 100ms
+    const timerId = setInterval(() => {
+      clock.tick(100, { log: false })
+    }, 100)
+
+    // Store the timer ID so it can be cleared later
+    Cypress.env('clockTimer', timerId)
+  })
+})
+
+Cypress.Commands.add('resetMockDateTime', () => {
+  cy.symfonyConsole('coopcycle:datetime:mock --reset')
+
+  // Clear the interval that's advancing the clock
+  const timerId = Cypress.env('clockTimer')
+
+  if (timerId) {
+    clearInterval(timerId)
   }
-  cy.exec(cmd)
+
+  // cy.clock() will be reset automatically
+})
+
+Cypress.Commands.add('consumeMessages', (timeLimitInSeconds = 5) => {
+  cy.symfonyConsole(`messenger:consume async --time-limit=${ timeLimitInSeconds }`);
+})
+
+Cypress.Commands.add('antdSelect', (selector, text) => {
+  // open select
+  cy.get(selector).click()
+
+  cy.wait(1000)
+
+  const toMoment = textValue => {
+    if (/^\d{1,2}:\d{2}$/.test(textValue)) {
+      const [hours, minutes] = textValue.split(':').map(Number)
+      if (hours >= 0 && hours < 24 && minutes >= 0 && minutes < 60) {
+        return moment().hours(hours).minutes(minutes)
+      }
+    }
+
+    return null
+  }
+
+  cy.root({ log: false })
+    .closest('body')
+    .find('.ant-select-dropdown:visible')
+    .not('.ant-select-dropdown-hidden')
+    .within(() => {
+      let attempts = 0
+      const maxAttempts = 10
+
+      function tryFindOption() {
+        cy.get('.rc-virtual-list-holder-inner .ant-select-item-option', {
+          log: false,
+        }).then($options => {
+          if (!$options || $options.length === 0) {
+            cy.log(
+              `No options found for selector "${selector}" with text "${text}"`,
+            )
+            throw new Error(
+              `No options found for selector "${selector}" with text "${text}"`,
+            )
+          }
+
+          cy.log(
+            `Searching for option with text "${text}"; elements: "${$options
+              .toArray()
+              .map(el => el.textContent)
+              .join(', ')}"`,
+          )
+          const option = $options.filter((index, el) =>
+            el.textContent.includes(text),
+          )
+
+          if (option.length) {
+            cy.wrap(option).click()
+            return
+          }
+
+          // Fail early to debug test failures on CI
+          const textMoment = toMoment(text)
+          const firstOptionText = $options.toArray()[0].textContent
+          const firstOptionMoment = toMoment(firstOptionText)
+          if (
+            textMoment &&
+            firstOptionMoment &&
+            textMoment.isBefore(firstOptionMoment)
+          ) {
+            cy.log(
+              `The text "${text}" is before the first option "${firstOptionText}", skipping further attempts.`,
+            )
+            throw new Error(
+              `The text "${text}" is before the first option "${firstOptionText}", skipping further attempts.`,
+            )
+          }
+
+          if (attempts >= maxAttempts) {
+            cy.log(
+              `Could not find option with text "${text}" after ${maxAttempts} scroll attempts`,
+            )
+            throw new Error(
+              `Could not find option with text "${text}" after ${maxAttempts} scroll attempts`,
+            )
+          }
+
+          attempts++
+
+          cy.get('.rc-virtual-list-holder').trigger('wheel', {
+            deltaX: 0,
+            deltaY: 32 * 6, // 1 row = ~32px
+            deltaMode: 0,
+          })
+          cy.wait(500)
+          tryFindOption()
+        })
+      }
+
+      tryFindOption()
+    })
+})
+
+Cypress.Commands.add('reactSelect', (index) => {
+  cy.get(`[id*="react-select-"][id*="-option-${index}"]`).click()
 })
 
 Cypress.Commands.add('clickRestaurant', (name, pathnameRegexp) => {
   cy.contains(name).click()
-  cy.location('pathname').should('match', pathnameRegexp)
+  cy.urlmatch(pathnameRegexp)
 })
 
 Cypress.Commands.add('addProduct',
@@ -79,6 +240,7 @@ Cypress.Commands.add('addProduct',
   })
 
 Cypress.Commands.add('login', (username, password) => {
+  cy.visit('/login')
   cy.get('[name="_username"]').type(username)
   cy.get('[name="_password"]').type(password)
   cy.get('[name="_submit"]').click()
@@ -92,10 +254,12 @@ Cypress.Commands.add('searchAddress', (selector, search, match, index = 0) => {
   cy.get(selector)
     .should('be.visible')
 
-  cy.wait(500)
+  cy.get(`${ selector } input[type="search"][data-is-address-picker="true"]`, { timeout: 5000 })
+    .should('be.visible')
 
   cy.get(`${ selector } input[type="search"][data-is-address-picker="true"]`)
-    .should('be.visible')
+    .eq(index)
+    .clear()
 
   cy.get(`${ selector } input[type="search"][data-is-address-picker="true"]`)
     .eq(index)
@@ -126,29 +290,42 @@ Cypress.Commands.add('newPickupAddress',
     cy.get('#delivery_tasks_0_address_contactName__display').type(contactName)
   })
 
-  Cypress.Commands.add('betaEnterAddressAtPosition',
-    (taskFormIndex, addressSearch, addressMatch,
-      businessName, telephone, contactName, comments) => {
+Cypress.Commands.add('betaEnterAddressAtPosition',
+  (taskFormIndex, addressSearch, addressMatch,
+    businessName, telephone, contactName) => {
 
-      cy.searchAddress(
-        `[data-testid-form=task-${taskFormIndex}]`,
-        addressSearch,
-        addressMatch,
-      )
-  
-      cy.get(`input[name="tasks[${taskFormIndex}].address.name"]`).clear()
-      cy.get(`input[name="tasks[${taskFormIndex}].address.name"]`).type(businessName)
+    cy.searchAddress(
+      `[data-testid=form-task-${taskFormIndex}]`,
+      addressSearch,
+      addressMatch,
+    )
 
-      cy.get(`input[name="tasks[${taskFormIndex}].address.formattedTelephone"]`).clear()
-      cy.get(`input[name="tasks[${taskFormIndex}].address.formattedTelephone"]`).type(telephone)
+    cy.get(`input[name="tasks[${taskFormIndex}].address.name"]`).clear()
+    cy.get(`input[name="tasks[${taskFormIndex}].address.name"]`).type(businessName)
 
-      cy.get(`input[name="tasks[${taskFormIndex}].address.contactName"]`).clear()
-      cy.get(`input[name="tasks[${taskFormIndex}].address.contactName"]`).type(contactName)
+    cy.get(`input[name="tasks[${taskFormIndex}].address.formattedTelephone"]`).clear()
+    cy.get(`input[name="tasks[${taskFormIndex}].address.formattedTelephone"]`).type(telephone)
 
-      cy.get(`[name="tasks[${taskFormIndex}].comments"]`).clear()
-      cy.get(`[name="tasks[${taskFormIndex}].comments"]`).type(comments)
-  
-    })
+    cy.get(`input[name="tasks[${taskFormIndex}].address.contactName"]`).clear()
+    cy.get(`input[name="tasks[${taskFormIndex}].address.contactName"]`).type(contactName)
+
+  })
+
+Cypress.Commands.add('betaEnterWeightAtPosition',
+  (taskFormIndex, weight) => {
+
+    cy.get(`[name="tasks[${taskFormIndex}].weight"]`).clear()
+    cy.get(`[name="tasks[${taskFormIndex}].weight"]`).type(weight)
+
+  })
+
+Cypress.Commands.add('betaEnterCommentAtPosition',
+  (taskFormIndex, comments) => {
+
+    cy.get(`[name="tasks[${taskFormIndex}].comments"]`).clear()
+    cy.get(`[name="tasks[${taskFormIndex}].comments"]`).type(comments)
+
+  })
 
 Cypress.Commands.add('chooseSavedPickupAddress',
   (index) => {
@@ -180,6 +357,126 @@ Cypress.Commands.add('chooseSavedDropoff1Address',
     cy.get('#rc_select_1').click()
     cy.get(`.rc-virtual-list-holder-inner > :nth-child(${ index }):visible`).click()
   })
+
+Cypress.Commands.add('betaChooseSavedAddressAtPosition',
+  (taskFormIndex, addressIndex) => {
+
+    cy.get(`[data-testid="form-task-${taskFormIndex}"]`).within(() => {
+      cy.get('[data-testid="address-select"]').click()
+      cy.wait(300)
+      cy.root()
+        .closest('body')
+        .find('.ant-select-dropdown:visible')
+        .not('.ant-select-dropdown-hidden')
+        .within(() => {
+          cy.get(`.rc-virtual-list-holder-inner > :nth-child(${ addressIndex })`).click()
+        })
+    })
+  })
+
+Cypress.Commands.add(
+  'betaTaskShouldHaveValue',
+  ({
+    taskFormIndex,
+    addressName,
+    telephone,
+    contactName,
+    address,
+    date,
+    hourRange,
+    timeAfter,
+    timeBefore,
+    packages,
+    weight,
+    comments,
+    tags,
+  }) => {
+    cy.get(`[data-testid="form-task-${taskFormIndex}"]`).within(() => {
+      cy.get('.task__header').contains(address).should('exist')
+
+      cy.get(`[data-testid=address-select]`).within(() => {
+        cy.contains(addressName).should('exist')
+      })
+
+      cy.get(`.address-infos`).within(() => {
+        cy.get(`[name="tasks[${taskFormIndex}].address.name"]`).should(
+          'have.value',
+          addressName,
+        )
+        cy.get(
+          `[name="tasks[${taskFormIndex}].address.formattedTelephone"]`,
+        ).should('have.value', telephone)
+        cy.get(`[name="tasks[${taskFormIndex}].address.contactName"]`).should(
+          'have.value',
+          contactName,
+        )
+      })
+
+      cy.get(`.address__autosuggest`).within(() => {
+        cy.get('input').invoke('val').should('match', address)
+      })
+
+      if (date !== undefined) {
+        cy.get(`[data-testid=date-picker]`).should('have.value', date)
+      }
+
+      if (hourRange !== undefined) {
+        cy.get(`[data-testid=hour-picker]`).within(() => {
+          cy.contains(hourRange).should('exist')
+        })
+      }
+
+      if (timeAfter && timeBefore) {
+        cy.get(`[data-testid=select-after]`).within(() => {
+          cy.contains(timeAfter).should('exist')
+        })
+        cy.get(`[data-testid=select-before]`).within(() => {
+          cy.contains(timeBefore).should('exist')
+        })
+      }
+
+      if (packages !== undefined) {
+        packages.forEach(pkg => {
+          cy.get(`[data-testid="${pkg.nodeId}"]`).within(() => {
+            cy.get('input').should('have.value', pkg.quantity)
+          })
+        })
+      }
+
+      if (weight !== undefined) {
+        cy.get(`[name="tasks[${taskFormIndex}].weight"]`).should(
+          'have.value',
+          weight,
+        )
+      }
+
+      if (comments !== undefined) {
+        cy.get(`[name="tasks[${taskFormIndex}].comments"]`)
+          .contains(comments)
+          .should('exist')
+      }
+
+      if (tags !== undefined) {
+        cy.get(`[data-testid=tags-select]`).within(() => {
+          tags.forEach(tag => {
+            cy.contains(tag).should('exist')
+          })
+        })
+      }
+    })
+  },
+)
+
+Cypress.Commands.add(
+  'betaTaskCollapsedShouldHaveValue',
+  ({ taskFormIndex, address }) => {
+    cy.get(`[data-testid="form-task-${taskFormIndex}"]`).within(() => {
+      cy.get('.task__header').contains(address).should('exist')
+
+      cy.get(`[data-testid=address-select]`).should('not.be.visible')
+    })
+  },
+)
 
 Cypress.Commands.add('enterCreditCard', () => {
   const date = new Date(),
@@ -277,13 +574,431 @@ Cypress.Commands.add('closeRestaurantForToday',
   })
 
 Cypress.Commands.add('chooseDaysOfTheWeek', (daysOfTheWeek) => {
-  for (let i = 1; i < 7; i++) {
-    if (daysOfTheWeek.includes(i)) {
-      cy.get(`:nth-child(${ i }) > .ant-checkbox > .ant-checkbox-input`)
-        .check()
-    } else {
-      cy.get(`:nth-child(${ i }) > .ant-checkbox > .ant-checkbox-input`)
-        .uncheck()
+  cy.get('[data-testid="recurrence__modal__content"]')
+    .within(() => {
+      for (let i = 1; i < 7; i++) {
+        if (daysOfTheWeek.includes(i)) {
+          cy.get(`:nth-child(${ i }) > .ant-checkbox > .ant-checkbox-input`)
+            .check()
+        } else {
+          cy.get(`:nth-child(${ i }) > .ant-checkbox > .ant-checkbox-input`)
+            .uncheck()
+        }
+      }
+    })
+})
+
+Cypress.Commands.add('shouldHaveValueIfVisible', (selector, value) => {
+  cy.root().then($root => {
+    if ($root.find(`${selector}:visible`).length > 0) {
+      cy.get(selector).should('have.value', value)
     }
+  })
+})
+
+/**
+ * Validates a pricing rule condition
+ */
+// Example usage:
+// cy.validatePricingRuleCondition({
+//   type: 'packages',
+//   operator: 'containsAtLeastOne',
+//   packageName: 'XL',
+// })
+Cypress.Commands.add('validatePricingRuleCondition', condition => {
+  cy.get('[data-testid="condition-type-select"]').should(
+    'have.value',
+    condition.type,
+  )
+  cy.get('[data-testid="condition-operator-select"]').should(
+    'have.value',
+    condition.operator,
+  )
+
+  if (condition.type === 'packages' && condition.packageName) {
+    cy.get('[data-testid="condition-package-select"]').should(
+      'contain',
+      condition.packageName,
+    )
+  } else if (condition.type === 'time_slot' && condition.timeSlot) {
+    cy.get('[data-testid="condition-time-slot-select"]').should(
+      'contain',
+      condition.timeSlot,
+    )
+  } else if (condition.value !== undefined) {
+    cy.shouldHaveValueIfVisible(
+      '[data-testid="condition-number-input"]',
+      condition.value,
+    )
+    cy.shouldHaveValueIfVisible(
+      '[data-testid="condition-task-type-select"]',
+      condition.value,
+    )
   }
+})
+
+/**
+ * Validates multiple pricing rule conditions
+ * @param {Array<Object>} conditions - Array of conditions to validate
+ */
+Cypress.Commands.add('validatePricingRuleConditions', conditions => {
+  conditions.forEach((condition, index) => {
+    cy.get(`[data-testid="condition-${index}"]`).within(() => {
+      cy.validatePricingRuleCondition(condition)
+    })
+  })
+})
+
+Cypress.Commands.add('validatePricingRulePrice', price => {
+  switch (price.type) {
+    case 'fixed':
+      cy.get('[data-testid="rule-fixed-price-input"]').should(
+        'have.value',
+        price.value,
+      )
+      break
+
+    case 'percentage':
+      cy.get('[data-testid="rule-price-type"]').should('contain', 'Pourcentage')
+      cy.get('[data-testid="rule-percentage-input"]').should(
+        'have.value',
+        price.percentage,
+      )
+      break
+
+    case 'range':
+      cy.get('[data-testid="rule-price-type"]').should(
+        'contain',
+        'Prix TTC par tranches',
+      )
+      cy.get('[data-testid="rule-price-range-price"]').should(
+        'have.value',
+        price.range.price,
+      )
+      cy.get('[data-testid="rule-price-range-step"]').should(
+        'have.value',
+        price.range.step,
+      )
+      cy.get('[data-testid="rule-price-range-threshold"]').should(
+        'have.value',
+        price.range.threshold,
+      )
+      break
+
+    case 'per_package':
+      cy.get('[data-testid="rule-price-type"]').should(
+        'contain',
+        'Prix par colis',
+      )
+      cy.get('[data-testid="rule-per-package-name"]').should(
+        'contain',
+        price.perPackage.packageName,
+      )
+      cy.get('[data-testid="rule-per-package-unit-price"]').should(
+        'have.value',
+        price.perPackage.unitPrice,
+      )
+      cy.get('[data-testid="rule-per-package-offset"]').should(
+        'have.value',
+        price.perPackage.offset,
+      )
+      cy.get('[data-testid="rule-per-package-discount-price"]').should(
+        'have.value',
+        price.perPackage.discountPrice,
+      )
+      break
+
+    default:
+      throw new Error(`Unsupported price type: ${price.type}`)
+  }
+})
+
+/**
+ * Validates individual pricing rule
+ */
+// Example usage:
+// cy.validatePricingRule({
+//   index: 0,
+//   conditions: [{ type: 'packages', operator: '==', packageName: 'SMALL' }],
+//   price: { type: 'range', range: { price: 3, step: 2, threshold: 1 } }
+// })
+//
+Cypress.Commands.add('validatePricingRule', rule => {
+  cy.get(`[data-testid="pricing-rule-set-rule-${rule.index}"]`).should(
+    'be.visible',
+  )
+  cy.get(`[data-testid="pricing-rule-set-rule-${rule.index}"]`).within(() => {
+    if (rule.name) {
+      cy.get('[data-testid="rule-name"]').should('have.value', rule.name)
+    }
+
+    if (rule.conditions && rule.conditions.length > 0) {
+      cy.validatePricingRuleConditions(rule.conditions)
+    }
+
+    if (rule.price) {
+      cy.validatePricingRulePrice(rule.price)
+    }
+  })
+})
+
+/**
+ * Validates multiple pricing rules
+ * @param {Array<Object>} rules - Array of rules to validate
+ */
+Cypress.Commands.add('validatePricingRules', rules => {
+  rules.forEach(rule => {
+    cy.validatePricingRule(rule)
+  })
+})
+
+/**
+ * Validates the pricing rule set form data
+ */
+// Example usage:
+// cy.validatePricingRuleSet({
+//   name: 'My Rule Set',
+//   strategy: 'map',
+//   deliveryRules: [
+//     {
+//       index: 0,
+//       conditions: [{ type: 'distance', operator: '>', value: 0 }],
+//       price: { type: 'fixed', value: 5 }
+//     }
+//   ]
+// })
+Cypress.Commands.add('validatePricingRuleSet', ruleSet => {
+  // Validate form name
+  cy.get('input[id*="name"]').should('have.value', ruleSet.name)
+
+  // Validate strategy
+  cy.get(`input[value="${ruleSet.strategy}"]`).should('be.checked')
+
+  // Validate delivery rules
+  if (ruleSet.deliveryRules && ruleSet.deliveryRules.length > 0) {
+    cy.get('[data-rfd-droppable-id="pricing-rules-delivery"]').within(() => {
+      cy.get('[data-testid^="pricing-rule-set-rule-"]').should(
+        'have.length',
+        ruleSet.deliveryRules.length,
+      )
+    })
+    cy.validatePricingRules(ruleSet.deliveryRules)
+  }
+
+  // Validate delivery manual supplement rules
+  if (ruleSet.deliveryManualSupplements && ruleSet.deliveryManualSupplements.length > 0) {
+    cy.get('[data-rfd-droppable-id="manual-supplements-delivery"]').within(() => {
+      cy.get('[data-testid^="pricing-rule-set-rule-"]').should(
+        'have.length',
+        ruleSet.deliveryManualSupplements.length,
+      )
+    })
+    cy.validatePricingRules(ruleSet.deliveryManualSupplements)
+  }
+
+  // Validate task rules
+  if (ruleSet.taskRules && ruleSet.taskRules.length > 0) {
+    cy.get('[data-rfd-droppable-id="pricing-rules-task"]').within(() => {
+      cy.get('[data-testid^="pricing-rule-set-rule-"]').should(
+        'have.length',
+        ruleSet.taskRules.length,
+      )
+    })
+    cy.validatePricingRules(ruleSet.taskRules)
+  }
+
+  // Validate legacy rules
+  if (ruleSet.legacyRules && ruleSet.legacyRules.length > 0) {
+    cy.get('[data-testid="legacy-rules-section"]').within(() => {
+      cy.get('[data-testid^="pricing-rule-set-rule-"]').should(
+        'have.length',
+        ruleSet.legacyRules.length,
+      )
+    })
+    cy.validatePricingRules(ruleSet.legacyRules)
+  }
+})
+
+/**
+ * Verifies cart items in the Cart component
+ * @param {Array<Object>} expectedItems - Array of expected cart items
+ *
+ * Example usage:
+ * cy.verifyCart([
+ *   {
+ *     name: 'Supplément de commande',
+ *     total: '4,99 €',
+ *     options: [
+ *       {
+ *         name: 'Plus de 0.00 km',
+ *         price: '4,99 €',
+ *       },
+ *     ],
+ *   },
+ * ])
+ */
+Cypress.Commands.add('verifyCart', expectedItems => {
+  expectedItems.forEach((expectedItem, itemIndex) => {
+    cy.get(`[data-testid="order-item-${itemIndex}"]`)
+      .should('be.visible')
+      .within(() => {
+        // Verify item name
+        cy.get('[data-testid="name"]').should('contain.text', expectedItem.name)
+
+        // Verify item total
+        cy.get('[data-testid="total"]').should(
+          'contain.text',
+          expectedItem.total,
+        )
+
+        // Verify options if provided
+        if (expectedItem.options && expectedItem.options.length > 0) {
+          expectedItem.options.forEach((expectedOption, optionIndex) => {
+            cy.get(
+              `[data-testid="product-option-value-${optionIndex}"]`,
+            ).within(() => {
+              cy.get('[data-testid="name"]').should(
+                'contain.text',
+                expectedOption.name,
+              )
+              cy.get('[data-testid="price"]').should(
+                'contain.text',
+                expectedOption.price,
+              )
+            })
+          })
+        }
+      })
+  })
+})
+
+/**
+ * Verifies order items in the Order
+ * @param {Array<Object>} expectedItems - Array of expected order items
+ *
+ * Example usage:
+ * cy.verifyOrder([
+ *   {
+ *     name: 'Supplément de commande',
+ *     total: '4,99 €',
+ *     adjustments: [
+ *       {
+ *         name: 'Plus de 0.00 km',
+ *         price: '4,99 €',
+ *       },
+ *     ],
+ *   },
+ * ])
+ */
+Cypress.Commands.add('verifyOrder', expectedItems => {
+  expectedItems.forEach((expectedItem, itemIndex) => {
+    cy.get(`[data-testid="order-item-${itemIndex}"]`)
+      .should('be.visible')
+      .within(() => {
+        // Verify item name
+        cy.get('[data-testid="name"]').should('contain.text', expectedItem.name)
+
+        // Verify item total
+        cy.get('[data-testid="total"]').should(
+          'contain.text',
+          expectedItem.total,
+        )
+
+        // Verify adjustments if provided
+        if (expectedItem.adjustments && expectedItem.adjustments.length > 0) {
+          expectedItem.adjustments.forEach(
+            (expectedAdjustment, adjustmentIndex) => {
+              cy.get(`[data-testid="adjustment-${adjustmentIndex}"]`).within(
+                () => {
+                  cy.get('[data-testid="name"]').should(
+                    'contain.text',
+                    expectedAdjustment.name,
+                  )
+                  cy.get('[data-testid="price"]').should(
+                    'contain.text',
+                    expectedAdjustment.price,
+                  )
+                },
+              )
+            },
+          )
+        }
+      })
+  })
+})
+
+/**
+ * Validates the delivery itinerary
+
+ * Example usage:
+ *
+ * // Basic usage with addresses only
+ * cy.validateDeliveryItinerary([
+ *   { address: /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/ },
+ *   { address: /72,? Rue Saint-Maur,? 75011,? Paris,? France/ }
+ * ])
+ *
+ * // With task links (regex pattern)
+ * cy.validateDeliveryItinerary([
+ *   {
+ *     address: /23,? Avenue Claude Vellefaux,? 75010,? Paris,? France/,
+ *     taskLink: /Tâche #\d+/,
+ *   },
+ *   {
+ *     address: /72,? Rue Saint-Maur,? 75011,? Paris,? France/,
+ *     taskLink: /Tâche #\d+/,
+ *   }
+ * ])
+ */
+Cypress.Commands.add('validateDeliveryItinerary', (tasks, options = {}) => {
+  // If withTaskLinks is explicitly false, check that no task links exist
+  if (options.withTaskLinks === false) {
+    cy.get('[data-testid="delivery-itinerary"]').within(() => {
+      cy.get('[data-testid=taskWithNumberLink]').should('not.exist')
+    })
+  }
+
+  // Validate the number of timeline items matches the tasks array
+  cy.get('[data-testid="delivery-itinerary"] .ant-timeline-item').should(
+    'have.length',
+    tasks.length,
+  )
+
+  // Validate each task
+  tasks.forEach((task, index) => {
+    cy.get('[data-testid="delivery-itinerary"] .ant-timeline-item')
+      .eq(index)
+      .within(() => {
+        // Validate task link
+        if (task.taskLink !== undefined) {
+          if (task.taskLink === false) {
+            // Assert task link should not exist for this specific item
+            cy.get('[data-testid=taskWithNumberLink]').should('not.exist')
+          } else if (typeof task.taskLink === 'string') {
+            // String: check if it contains the text
+            cy.get('[data-testid=taskWithNumberLink]').should(
+              'contain',
+              task.taskLink,
+            )
+          } else if (task.taskLink instanceof RegExp) {
+            // RegExp: check if text matches the pattern
+            cy.get('[data-testid=taskWithNumberLink]')
+              .invoke('text')
+              .should('match', task.taskLink)
+          }
+        }
+
+        // Validate address
+        if (task.address) {
+          cy.contains(task.address).should('exist')
+        }
+
+        // Validate packages
+        if (task.packages && task.packages.length > 0) {
+          task.packages.forEach(pkg => {
+            cy.contains(`${pkg.quantity} ${pkg.name}`).should('exist')
+          })
+        }
+      })
+  })
 })

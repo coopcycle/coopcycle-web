@@ -1,0 +1,5 @@
+include:
+  - setup_default.yml
+  - user_admin.yml
+  - addresses.yml
+  - restaurants2.yml

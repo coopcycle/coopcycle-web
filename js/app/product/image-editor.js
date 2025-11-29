@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { render, unmountComponentAtNode } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import Dropzone from 'react-dropzone'
 import Cropper from 'react-cropper'
 import axios from 'axios'
@@ -50,7 +50,7 @@ const NavBtn = ({ ratio, size, onClick, canvas, selected }) => (
       e.preventDefault()
       onClick()
     }}>
-    <img style={{ width: '100%' }} src={ canvas ? canvas.toDataURL() : `//via.placeholder.com/${size.join('x')}/e5e5e5?text=${ratio}` } />
+    <img style={{ width: '100%' }} src={ canvas ? canvas.toDataURL() : `//placehold.co/${size.join('x')}/e5e5e5/000000?text=${ratio}` } />
   </a>
 )
 
@@ -281,14 +281,16 @@ export function openEditor({ actionUrl, productId, existingImages, onClose }) {
 
   Modal.setAppElement(editor)
 
-  render(<Editor
+  const root = createRoot(editor)
+
+  root.render(<Editor
     existingImages={ existingImages }
     actionUrl={ actionUrl }
     productId={ productId }
     onClose={ (images) => {
-      unmountComponentAtNode(editor)
+      root.unmount()
       document.body.removeChild(editor)
 
       onClose(images)
-    }} />, editor)
+    }} />)
 }

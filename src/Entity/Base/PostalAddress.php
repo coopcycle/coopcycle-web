@@ -2,7 +2,7 @@
 
 namespace AppBundle\Entity\Base;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Metadata\ApiProperty;
 use libphonenumber\PhoneNumber;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -20,7 +20,7 @@ abstract class PostalAddress
      */
     #[Groups(['address_create'])]
     #[Assert\Type(type: 'string')]
-    #[ApiProperty(iri: 'https://schema.org/addressCountry')]
+    #[ApiProperty(types: ['https://schema.org/addressCountry'])]
     protected $addressCountry;
 
     /**
@@ -28,7 +28,7 @@ abstract class PostalAddress
      */
     #[Groups(['address_create', 'order_update'])]
     #[Assert\Type(type: 'string')]
-    #[ApiProperty(iri: 'https://schema.org/addressLocality')]
+    #[ApiProperty(types: ['https://schema.org/addressLocality'])]
     protected $addressLocality;
 
     /**
@@ -36,15 +36,15 @@ abstract class PostalAddress
      */
     #[Groups(['address_create'])]
     #[Assert\Type(type: 'string')]
-    #[ApiProperty(iri: 'https://schema.org/addressRegion')]
+    #[ApiProperty(types: ['https://schema.org/addressRegion'])]
     protected $addressRegion;
 
     /**
      * @var string The name of the item.
      */
-    #[Groups(['address', 'address_create', 'task_create', 'task_edit'])]
+    #[Groups(['address', 'address_create', 'task_create', 'task_edit', 'delivery_create', 'pricing_deliveries'])]
     #[Assert\Type(type: 'string')]
-    #[ApiProperty(iri: 'https://schema.org/name')]
+    #[ApiProperty(types: ['https://schema.org/name'])]
     private $name;
 
     /**
@@ -52,32 +52,31 @@ abstract class PostalAddress
      */
     #[Groups(['address_create', 'order_update', 'task_create', 'address_gb'])]
     #[Assert\Type(type: 'string')]
-    #[ApiProperty(iri: 'https://schema.org/postalCode')]
+    #[ApiProperty(types: ['https://schema.org/postalCode'])]
     protected $postalCode;
 
     /**
      * @var string The post office box number for PO box addresses.
      */
     #[Assert\Type(type: 'string')]
-    #[ApiProperty(iri: 'https://schema.org/postOfficeBoxNumber')]
+    #[ApiProperty(types: ['https://schema.org/postOfficeBoxNumber'])]
     protected $postOfficeBoxNumber;
 
     /**
      * @var string The street address. For example, 1600 Amphitheatre Pkwy.
      */
-    #[Groups(['address', 'address_create', 'task_create', 'task_edit', 'order_update', 'cart', 'delivery_create', 'pricing_deliveries'])]
+    #[Groups(['address', 'address_create', 'task_create', 'task_edit', 'delivery_create', 'pricing_deliveries', 'order_update', 'cart'])]
     #[Assert\Type(type: 'string')]
     #[Assert\NotBlank]
-    #[ApiProperty(iri: 'https://schema.org/streetAddress')]
+    #[ApiProperty(types: ['https://schema.org/streetAddress'])]
     protected $streetAddress;
 
     /**
      * @var PhoneNumber|null
-     *
-     * @AssertPhoneNumber(groups={"Default", "cart"})
      */
-    #[Groups(['address', 'address_create', 'task_create', 'task_edit', 'order_update', 'cart', 'delivery_create'])]
-    #[ApiProperty(iri: 'https://schema.org/telephone')]
+    #[Groups(['address', 'address_create', 'task_create', 'task_edit', 'delivery_create', 'pricing_deliveries', 'order_update', 'cart'])]
+    #[ApiProperty(types: ['https://schema.org/telephone'])]
+    #[AssertPhoneNumber(groups: ['Default', 'cart'])]
     protected $telephone;
 
     /**

@@ -2,7 +2,6 @@ Feature: Taxes
 
   Scenario: Retrieve tax rates
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
     When I add "Content-Type" header equal to "application/json"
     And I send a "GET" request to "/api/tax_rates"

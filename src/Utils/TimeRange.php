@@ -21,7 +21,7 @@ class TimeRange
         7 => 'Su'
     ];
 
-    private function __construct(string $range = null)
+    private function __construct(?string $range = null)
     {
         $range = trim($range);
 

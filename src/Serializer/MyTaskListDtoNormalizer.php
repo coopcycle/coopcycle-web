@@ -44,7 +44,7 @@ class MyTaskListDtoNormalizer implements ContextAwareNormalizerInterface, Normal
         return $data;
     }
 
-    public function supportsNormalization($data, ?string $format = null, array $context = [])
+    public function supportsNormalization($data, ?string $format = null, array $context = []): bool
     {
         // Make sure we're not called twice
         if (isset($context[self::ALREADY_CALLED])) {
@@ -52,5 +52,12 @@ class MyTaskListDtoNormalizer implements ContextAwareNormalizerInterface, Normal
         }
 
         return $data instanceof MyTaskListDto;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            MyTaskListDto::class => false, // supports*() call result is NOT cached
+        ];
     }
 }

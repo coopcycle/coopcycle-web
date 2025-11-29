@@ -2,12 +2,31 @@
 
 namespace AppBundle\Api\Dto;
 
+use ApiPlatform\Action\NotFoundAction;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
+#[ApiResource(
+    operations: [
+        new Get(
+            uriTemplate: '/invoice_line_items/{id}',
+            requirements: ['id' => '^(?!.*grouped_by_organization|.*export).*$'],
+            controller: NotFoundAction::class,
+            output: false,
+            // Make sure to add requirements for operations like "/invoice_line_items/grouped_by_organization" to work
+            read: false
+        )
+    ]
+)]
 class InvoiceLineItem
 {
-    public readonly string $invoiceId;
+    #[ApiProperty(identifier: true)]
+    public string $id;
+
+    public string $invoiceId;
 
     public readonly \DateTime $invoiceDate;
 
@@ -45,6 +64,7 @@ class InvoiceLineItem
     public readonly array $exports;
 
     public function __construct(
+        string $id,
         string $invoiceId,
         \DateTime $invoiceDate,
         ?int $storeId,
@@ -61,6 +81,7 @@ class InvoiceLineItem
         array $exports,
     )
     {
+        $this->id = $id;
         $this->invoiceId = $invoiceId;
         $this->invoiceDate = $invoiceDate;
         $this->storeId = $storeId;

@@ -2,30 +2,35 @@
 
 namespace AppBundle\Entity\Delivery;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use AppBundle\Action\PricingRule\Evaluate as EvaluateController;
-use AppBundle\Api\Dto\DeliveryInput;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use AppBundle\Api\State\EvaluatePricingRuleProcessor;
+use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\YesNoOutput;
+use AppBundle\Entity\Sylius\ProductOptionValue;
+use AppBundle\ExpressionLanguage\PriceEvaluation;
 use AppBundle\Validator\Constraints\PricingRule as AssertPricingRule;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
-    collectionOperations: [],
-    itemOperations: [
-        'get' => ['method' => 'GET'],
-        'evaluate' => [
-            'method' => 'POST',
-            'status' => 200,
-            'path' => '/pricing_rules/{id}/evaluate',
-            'controller' => EvaluateController::class,
-            'access_control' => "is_granted('ROLE_ADMIN') or is_granted('ROLE_STORE')",
-            'input' => DeliveryInput::class,
-            'output' => YesNoOutput::class,
-            'denormalization_context' => ['groups' => ['delivery_create', 'pricing_deliveries']],
-            'write' => false,
-            'openapi_context' => ['summary' => 'Evaluates a PricingRule']]
+    operations: [
+        new Get(),
+        new Post(
+            uriTemplate: '/pricing_rules/{id}/evaluate',
+            status: 200,
+            openapiContext: ['summary' => 'Evaluates a PricingRule'],
+            denormalizationContext: ['groups' => ['delivery_create', 'pricing_deliveries']],
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_STORE\')',
+            input: DeliveryInputDto::class,
+            output: YesNoOutput::class,
+            processor: EvaluatePricingRuleProcessor::class
+        )
     ]
 )]
 #[AssertPricingRule]
@@ -34,6 +39,7 @@ class PricingRule
     /**
      * @var int
      */
+    #[Groups(['pricing_rule_set:read'])]
     protected $id;
 
     const TARGET_DELIVERY = 'DELIVERY';
@@ -47,23 +53,40 @@ class PricingRule
      */
     const LEGACY_TARGET_DYNAMIC = 'LEGACY_TARGET_DYNAMIC';
 
-    #[Groups(['pricing_deliveries'])]
+    #[Groups(['pricing_deliveries', 'pricing_rule_set:read', 'pricing_rule_set:write'])]
     #[Assert\Choice(choices: ["DELIVERY", "TASK", "LEGACY_TARGET_DYNAMIC"])]
     protected string $target = self::TARGET_DELIVERY;
 
-    #[Groups(['original_rules', 'pricing_deliveries'])]
+    #[Groups(['original_rules', 'pricing_deliveries', 'pricing_rule_set:read', 'pricing_rule_set:write'])]
     #[Assert\Type(type: 'string')]
     #[Assert\NotBlank]
     protected $expression;
 
-    #[Groups(['original_rules', 'pricing_deliveries'])]
+    #[Groups(['original_rules', 'pricing_deliveries', 'pricing_rule_set:read', 'pricing_rule_set:write'])]
     #[Assert\Type(type: 'string')]
     protected $price;
 
-    #[Groups(['original_rules', 'pricing_deliveries'])]
+    #[Groups(['original_rules', 'pricing_deliveries', 'pricing_rule_set:read', 'pricing_rule_set:write'])]
     protected $position;
 
     protected $ruleSet;
+
+    /**
+     * Temporary storage for name during processing
+     * @var string|null
+     */
+    protected $nameInput;
+
+    /**
+     * Each PricingRule can have zero, one, or many ProductOptionValues.
+     * @var Collection<int, ProductOptionValue>
+     */
+    protected $productOptionValues;
+
+    public function __construct()
+    {
+        $this->productOptionValues = new ArrayCollection();
+    }
 
     /**
      * Gets id.
@@ -133,7 +156,63 @@ class PricingRule
         return $this;
     }
 
-    public function matches(array $values, ExpressionLanguage $language = null)
+    /**
+     * @return Collection<int, ProductOptionValue>
+     */
+    public function getProductOptionValues(): Collection
+    {
+        // excludes disabled product option values
+        return $this->productOptionValues;
+    }
+
+    public function addProductOptionValue(ProductOptionValue $productOptionValue): self
+    {
+        if (!$this->productOptionValues->contains($productOptionValue)) {
+            $this->productOptionValues->add($productOptionValue);
+            $productOptionValue->setPricingRule($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductOptionValue(ProductOptionValue $productOptionValue): self
+    {
+        if ($this->productOptionValues->removeElement($productOptionValue)) {
+            // set the owning side to null (unless already changed)
+            if ($productOptionValue->getPricingRule() === $this) {
+                $productOptionValue->setPricingRule(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getNameInput(): ?string
+    {
+        return $this->nameInput;
+    }
+
+    #[Groups(['pricing_rule_set:write'])]
+    #[SerializedName("name")]
+    public function setNameInput(?string $nameInput): self
+    {
+        $this->nameInput = $nameInput;
+
+        return $this;
+    }
+
+    #[Groups(['pricing_deliveries', 'pricing_rule_set:read'])]
+    public function getName(): ?string
+    {
+        // Return the value of the first ProductOptionValue if any exists
+        $productOptionValue = $this->productOptionValues->first();
+        return $productOptionValue instanceof ProductOptionValue ? $productOptionValue->getValue() : null;
+    }
+
+    public function matches(array $values, ?ExpressionLanguage $language = null)
     {
         if (null === $language) {
             $language = new ExpressionLanguage();
@@ -142,26 +221,22 @@ class PricingRule
         return $language->evaluate($this->getExpression(), $values);
     }
 
-    public function apply(array $values, ExpressionLanguage $language = null): ProductOption
+    /**
+     * @return int|PriceEvaluation|PriceEvaluation[]
+     */
+    public function apply(array $values, ?ExpressionLanguage $language = null): int|PriceEvaluation|array
     {
         if (null === $language) {
             $language = new ExpressionLanguage();
         }
 
         $priceExpression = $this->getPrice();
-        $result = $language->evaluate($priceExpression, $values);
 
-        if (str_contains($priceExpression, 'price_percentage')) {
-            return new ProductOption(
-                $this,
-                0,
-                $result
-            );
-        } else {
-            return new ProductOption(
-                $this,
-                $result,
-            );
-        }
+        return $language->evaluate($priceExpression, $values);
+    }
+
+    public function isManualSupplement()
+    {
+        return $this->getExpression() === 'false';
     }
 }

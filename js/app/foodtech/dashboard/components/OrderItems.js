@@ -24,8 +24,8 @@ const Adjustments = ({ item, type }) => {
 
   return (
     <ul className="list-unstyled">
-      { item.adjustments[type].map((adjustment) =>
-        <li key={ `adjustment-${adjustment.id}` }>
+      { item.adjustments[type].map((adjustment, index) =>
+        <li key={ `adjustment-${index}` }>
           <small className="text-muted">{ adjustment.label }</small>
         </li>
       ) }

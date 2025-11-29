@@ -4,13 +4,14 @@ namespace AppBundle\Command;
 
 use AppBundle\DataType\TsRange;
 use AppBundle\Domain\Order\Event\OrderAccepted;
-use AppBundle\Domain\Order\Reactor\CreateTasks;
+use AppBundle\MessageHandler\Order\CreateTasks;
 use AppBundle\Entity;
 use AppBundle\Faker\AddressProvider;
 use AppBundle\Faker\RestaurantProvider;
 use AppBundle\Service\Geocoder;
 use Craue\ConfigBundle\Util\Config;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Exception\TableNotFoundException;
 use Faker;
@@ -54,10 +55,18 @@ class InitDemoCommand extends Command
         'sylius_tax_rate',
     ];
 
+    private $createdUsers = [];
+    private $createdRestaurants = [];
+    private $createdStores = [];
+
     private static $users = [
         'admin' => [
             'password' => 'admin',
             'roles' => ['ROLE_ADMIN']
+        ],
+        'dispatcher' => [
+            'password' => 'dispatcher',
+            'roles' => ['ROLE_DISPATCHER']
         ],
     ];
 
@@ -65,6 +74,14 @@ class InitDemoCommand extends Command
         48.857498,
         2.335402,
     ];
+
+    private static $usersToCreate = 10;
+    private static $couriersToCreate = 10;
+    private static $restaurantsToCreate = 10;
+    private static $storesToCreate = 10;
+    private static $foodTechOrdersToCreate = 5;
+    //TODO: implement
+    private static $packageDeliveryOrdersToCreate = 0;
 
     protected function configure()
     {
@@ -83,6 +100,7 @@ class InitDemoCommand extends Command
 
     public function __construct(
         private ManagerRegistry $doctrine,
+        private EntityManagerInterface $entityManager,
         private UserManipulator $userManipulator,
         private LoaderInterface $fixturesLoader,
         private Faker\Generator $faker,
@@ -112,7 +130,7 @@ class InitDemoCommand extends Command
 
         $this->faker->addProvider($restaurantProvider);
 
-        $this->ormPurger = new ORMPurger($this->doctrine->getManager(), $this->excludedTables);
+        $this->ormPurger = new ORMPurger($this->entityManager, $this->excludedTables);
         // $this->ormPurger->setPurgeMode(ORMPurger::PURGE_MODE_TRUNCATE);
 
         $store = new FlockStore();
@@ -146,23 +164,30 @@ class InitDemoCommand extends Command
             }
 
             $output->writeln('Creating users…');
-            for ($i = 1; $i <= 50; $i++) {
+            for ($i = 1; $i <= self::$usersToCreate; $i++) {
                 $username = "user_{$i}";
                 $user = $this->createUser($username, ['password' => $username]);
                 $user->addAddress($this->faker->randomAddress);
             }
             $this->doctrine->getManagerForClass(Entity\User::class)->flush();
+            $this->createdUsers = $this->doctrine->getRepository(Entity\User::class)
+                ->createQueryBuilder('u')
+                ->where("u.username LIKE 'user_%'")
+                ->getQuery()
+                ->getResult();
 
             $output->writeln('Creating couriers…');
-            for ($i = 1; $i <= 50; $i++) {
+            for ($i = 1; $i <= self::$couriersToCreate; $i++) {
                 $this->createCourier("bot_{$i}");
             }
 
             $output->writeln('Creating restaurants…');
             $this->createRestaurants($output);
+            $this->createdRestaurants = $this->doctrine->getRepository(Entity\LocalBusiness::class)->findAll();
 
             $output->writeln('Creating stores…');
             $this->createStores();
+            $this->createdStores = $this->doctrine->getRepository(Entity\Store::class)->findAll();
 
             $output->writeln('Creating orders…');
             $this->createOrders();
@@ -527,11 +552,11 @@ class InitDemoCommand extends Command
     private function createRestaurants(OutputInterface $output)
     {
         $foodTaxCategory =
-            $this->taxCategoryRepository->findOneByCode('BASE_REDUCED');
+            $this->taxCategoryRepository->findOneBy(['code' => 'BASE_REDUCED']);
 
         $em = $this->doctrine->getManagerForClass(Entity\LocalBusiness::class);
 
-        for ($i = 1; $i <= 50; $i++) {
+        for ($i = 1; $i <= self::$restaurantsToCreate; $i++) {
 
             $restaurant = $this->createRestaurant($this->faker->randomAddress, $foodTaxCategory);
 
@@ -552,7 +577,7 @@ class InitDemoCommand extends Command
                 $em->clear();
 
                 // As we have cleared the whole UnitOfWork, we need to restore the TaxCategory entity
-                $foodTaxCategory = $this->taxCategoryRepository->findOneByCode('BASE_REDUCED');
+                $foodTaxCategory = $this->taxCategoryRepository->findOneBy(['code' => 'BASE_REDUCED']);
             }
         }
 
@@ -561,12 +586,14 @@ class InitDemoCommand extends Command
 
     private function createStores()
     {
-        for ($i = 1; $i <= 25; $i++) {
+        $em = $this->doctrine->getManagerForClass(Entity\Store::class);
+
+        for ($i = 1; $i <= self::$storesToCreate; $i++) {
             $store = $this->createStore($this->faker->randomAddress);
             $pricingRuleSet = $this->createPricingRuleSet($store);
             $store->setPricingRuleSet($pricingRuleSet);
-            $this->doctrine->getManagerForClass(Entity\Store::class)->persist($store);
-            $this->doctrine->getManagerForClass(Entity\Store::class)->flush();
+            $em->persist($store);
+            $em->flush();
 
             $username = "store_{$i}";
             $user = $this->createUser($username, [
@@ -581,14 +608,25 @@ class InitDemoCommand extends Command
 
     private function createOrders()
     {
-        for ($i = 1; $i <= 25; $i++) {
-            $restaurant = $this->doctrine->getRepository(Entity\LocalBusiness::class)->findOneBy(['id' => $i]);
+        //$user = $this->doctrine->getRepository(Entity\User::class)->findOneBy(['username' => 'user_1']);
 
-            $this->createOrder('00'.$i, $restaurant);
+        for ($i = 1; $i <= self::$foodTechOrdersToCreate; $i++) {
+            $restaurant = $this->createdRestaurants[array_rand($this->createdRestaurants)];
+            $user = $this->createdUsers[array_rand($this->createdUsers)];
+            // Fetching the user again because if not, it fails with error:
+            // "A new entity was found through the relationship 'AppBundle\Entity\User#channel' that was not configured to cascade persist operations for entity: Web."
+            $user = $this->doctrine->getRepository(Entity\User::class)->findOneBy(['username' => $user->getUsername()]);
+
+            $this->createFoodTechOrder('00'.$i, $restaurant, $user);
+        }
+
+        for ($i = 1; $i <= self::$packageDeliveryOrdersToCreate; $i++) {
+            $store = $this->createdStores[array_rand($this->createdStores)];
+            //TODO: implement
         }
     }
 
-    private function createOrder($id, $restaurant)
+    private function createFoodTechOrder($id, $restaurant, $user)
     {
         $em = $this->doctrine->getManagerForClass(Entity\Sylius\Order::class);
         $order = new Entity\Sylius\Order();
@@ -596,7 +634,6 @@ class InitDemoCommand extends Command
 
         $order->setRestaurant($restaurant);
 
-        $user = $this->doctrine->getRepository(Entity\User::class)->findOneBy(['username' => 'user_1']);
         $order->setCustomer($user->getCustomer());
         $order->setShippingAddress($user->getCustomer()->getAddresses()->first());
 

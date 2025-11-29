@@ -1,0 +1,68 @@
+AppBundle\Entity\Base\GeoCoordinates:
+  geo_1:
+    __construct: [ "48.864577", "2.333338" ]
+  geo_warehouse:
+    __construct: [ "48.8758311", "2.3675732" ]
+  geo_client_1:
+    __construct: [ "48.8638614", "2.3762269" ]
+  geo_point_not_optimized:
+    __construct: [ "48.878304", "2.3737405" ]
+
+AppBundle\Entity\Address:
+  address_1:
+    name: 'Acme'
+    contactName: 'Acme'
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33112121210'))>
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
+    geo: "@geo_1"
+  warehouse:
+    name: 'Warehouse'
+    contactName: 'John Doe'
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33112121212'))>
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '23, Avenue Claude Vellefaux, 75010 Paris, France'
+    geo: "@geo_warehouse"
+  client_1:
+    name: 'Client 1'
+    contactName: 'Jane smith'
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33112121414'))>
+    addressLocality: 'Paris'
+    postalCode: '75009'
+    streetAddress: '72, Rue Saint-Maur, 75011 Paris, France'
+    geo: "@geo_client_1"
+  point_not_optimized:
+    name: 'Not Optimized Point'
+    contactName: 'Jane smith'
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33112121416'))>
+    addressLocality: 'Paris'
+    postalCode: '75019'
+    streetAddress: '26, Av. Mathurin Moreau, 75019 Paris, France'
+    geo: "@geo_point_not_optimized"
+
+AppBundle\Entity\Delivery\PricingRuleSet:
+  pricing_rule_set_1:
+    name: Default
+    rules: [ '@pricing_rule_1' ]
+
+AppBundle\Entity\Delivery\PricingRule:
+  pricing_rule_1:
+    expression: 'distance \> 0'
+    price: 499
+    position: 1
+    ruleSet: '@pricing_rule_set_1'
+
+AppBundle\Entity\Store:
+  store_1:
+    name: 'Acme'
+    address: "@address_1"
+    enabled: true
+    multiDropEnabled: true
+    pricingRuleSet: '@pricing_rule_set_1'
+    __calls:
+      - addAddress: [ "@address_1" ]
+      - addAddress: [ "@warehouse" ]
+      - addAddress: [ "@client_1" ]
+      - addAddress: [ "@point_not_optimized" ]

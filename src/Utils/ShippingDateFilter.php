@@ -31,7 +31,7 @@ class ShippingDateFilter
      *
      * @throws \RedisException
      */
-    public function accept(OrderInterface $order, TsRange $range, \DateTime $now = null): bool
+    public function accept(OrderInterface $order, TsRange $range, ?\DateTime $now = null): bool
     {
         if (null === $now) {
             $now = Carbon::now();
@@ -138,7 +138,7 @@ class ShippingDateFilter
         return true;
     }
 
-    private function isOpen(array $openingHours, \DateTime $date, Collection $closingRules = null): bool
+    private function isOpen(array $openingHours, \DateTime $date, ?Collection $closingRules = null): bool
     {
         $oh = SpatieOpeningHoursRegistry::get(
             $openingHours,

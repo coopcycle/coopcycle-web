@@ -46,7 +46,7 @@ class OrderDepositRefundProcessorTest extends TestCase
         $this->orderDepositRefundProcessor = new OrderDepositRefundProcessor(
             $this->adjustmentFactory->reveal(),
             $this->translator->reveal(),
-            $loopeatProcessingFee = 200
+            $loopeatProcessingFee = '200'
         );
     }
 
@@ -279,6 +279,9 @@ class OrderDepositRefundProcessorTest extends TestCase
                     ['format_id' => 1, 'quantity' => 2]
                 ]
             ]);
+        $order
+            ->countLoopeatReturns()
+            ->willReturn(0);
 
         $adjustment = $this->prophesize(AdjustmentInterface::class)->reveal();
 
@@ -366,6 +369,9 @@ class OrderDepositRefundProcessorTest extends TestCase
         $order
             ->hasLoopeatReturns()
             ->willReturn(false);
+        $order
+            ->countLoopeatReturns()
+            ->willReturn(0);
 
         $adjustment = $this->prophesize(AdjustmentInterface::class)->reveal();
 
@@ -450,6 +456,9 @@ class OrderDepositRefundProcessorTest extends TestCase
         $order
             ->hasLoopeatReturns()
             ->willReturn(true);
+        $order
+            ->countLoopeatReturns()
+            ->willReturn(3);
 
         $adjustment = $this->prophesize(AdjustmentInterface::class)->reveal();
 
@@ -488,6 +497,127 @@ class OrderDepositRefundProcessorTest extends TestCase
         $order
             ->addAdjustment(Argument::that(function (Adjustment $adjustment) {
                 return $adjustment->getAmount() === 200;
+            }))
+            ->shouldBeCalled();
+
+        $this->orderDepositRefundProcessor->process($order->reveal());
+    }
+
+    public function withFormulaProvider()
+    {
+        return [
+            [
+                2,
+                250
+            ],
+            [
+                3,
+                250
+            ],
+            [
+                4,
+                350
+            ],
+            [
+                6,
+                550
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider withFormulaProvider
+     */
+    public function testLoopeatProcessingFeeOnReturnsWithReturnsWithFormula(int $returnsCount, int $expectedAmount)
+    {
+        $this->orderDepositRefundProcessor = new OrderDepositRefundProcessor(
+            $this->adjustmentFactory->reveal(),
+            $this->translator->reveal(),
+            // 2.50€ TTC jusqu'à 3 boîtes puis 1€ TTC la boîte supplémentaire
+            $loopeatProcessingFee = 'returns_count <= 3 ? 250 : ((returns_count - 3) * 100) + 250'
+        );
+
+        $this->orderDepositRefundProcessor
+            ->setLoopeatProcessingFeeBehavior(OrderDepositRefundProcessor::LOOPEAT_PROCESSING_FEE_BEHAVIOR_ON_RETURNS);
+
+        $reusablePackaging = new ReusablePackaging();
+        $reusablePackaging->setPrice(0);
+        $reusablePackaging->setData(['id' => 1]);
+        $reusablePackaging->setType(reusablePackaging::TYPE_LOOPEAT);
+        $reusablePackaging->setName('Small box');
+
+        $restaurant = new LocalBusiness();
+        $restaurant->setDepositRefundEnabled(true);
+        $restaurant->addReusablePackaging($reusablePackaging);
+        $restaurant->setLoopeatEnabled(true);
+
+        $order = $this->prophesize(Order::class);
+        $order
+            ->isReusablePackagingEnabled()
+            ->willReturn(true);
+        $order
+            ->hasVendor()
+            ->willReturn(true);
+        $order
+            ->isMultiVendor()
+            ->willReturn(false);
+        $order
+            ->getRestaurant()
+            ->willReturn($restaurant);
+        $order
+            ->removeAdjustmentsRecursively(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)
+            ->shouldBeCalled();
+        $order
+            ->getLoopeatDeliver()
+            ->willReturn([
+                1 => [
+                    ['format_id' => 1, 'quantity' => 3]
+                ]
+            ]);
+        $order
+            ->hasLoopeatReturns()
+            ->willReturn(true);
+        $order
+            ->countLoopeatReturns()
+            ->willReturn($returnsCount);
+
+        $adjustment = $this->prophesize(AdjustmentInterface::class)->reveal();
+
+        $this->adjustmentFactory->createWithData(
+            AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
+            Argument::type('string'),
+            Argument::type('integer'),
+            Argument::type('bool')
+        )
+            ->shouldBeCalled()
+            ->will(function ($args) {
+                $adjustment = new Adjustment();
+                $adjustment->setType($args[0]);
+                $adjustment->setAmount($args[2]);
+
+                return $adjustment;
+            });
+
+        $item1 = $this->createOrderItem($restaurant, $reusablePackaging, $quantity = 1, $units = 0.5, $enabled = true, $id = 1);
+        $item1
+            ->addAdjustment(Argument::that(function (Adjustment $adjustment) {
+                return $adjustment->getAmount() === 0;
+            }))
+            ->shouldBeCalled();
+
+        $item2 = $this->createOrderItem($restaurant, $reusablePackaging, $quantity = 2, $units = 1, $enabled = true, $id = 2);
+        $item2
+            ->addAdjustment(Argument::that(function (Adjustment $adjustment) {
+                return $adjustment->getAmount() === 0;
+            }))
+            ->shouldBeCalled();
+
+        $items = new ArrayCollection([ $item1->reveal(), $item2->reveal() ]);
+        $order->getItems()->willReturn($items);
+
+        $order
+            ->addAdjustment(Argument::that(function (Adjustment $adjustment) use ($expectedAmount) {
+                return $adjustment->getAmount() === $expectedAmount;
             }))
             ->shouldBeCalled();
 

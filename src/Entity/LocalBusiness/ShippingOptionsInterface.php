@@ -22,5 +22,5 @@ interface ShippingOptionsInterface
      * @param ExpressionLanguage|null $language
      * @return bool
      */
-    public function canDeliverAddress(Address $address, $distance, ExpressionLanguage $language = null);
+    public function canDeliverAddress(Address $address, $distance, ?ExpressionLanguage $language = null);
 }

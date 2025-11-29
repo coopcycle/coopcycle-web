@@ -2,7 +2,7 @@
 
 namespace AppBundle\MessageHandler;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Delivery;
 use AppBundle\Message\WoopitWebhook;
 use BenjaminFavre\OAuthHttpClient\OAuthHttpClient;
@@ -31,7 +31,7 @@ class WoopitWebhookHandler
         IriConverterInterface $iriConverter,
         EntityManagerInterface $entityManager,
         Hashids $hashids12,
-        LoggerInterface $logger = null)
+        ?LoggerInterface $logger = null)
     {
         $this->woopitClient = $woopitClient;
         $this->iriConverter = $iriConverter;
@@ -42,7 +42,7 @@ class WoopitWebhookHandler
 
     public function __invoke(WoopitWebhook $message)
     {
-        $delivery = $this->iriConverter->getItemFromIri($message->getObject());
+        $delivery = $this->iriConverter->getResourceFromIri($message->getObject());
 
         if (!$delivery instanceof Delivery) {
             return;
@@ -94,7 +94,7 @@ class WoopitWebhookHandler
                 sprintf('Sending status update to Woopit for delivery with id %s', $deliveryId)
             );
 
-            $response = $this->woopitClient->request('PUT', "deliveries/${deliveryId}/status", [
+            $response = $this->woopitClient->request('PUT', "deliveries/{$deliveryId}/status", [
                 'json' => array_merge(
                     [
                         'date' => Carbon::now(),

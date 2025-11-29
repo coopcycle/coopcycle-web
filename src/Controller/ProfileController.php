@@ -2,18 +2,15 @@
 
 namespace AppBundle\Controller;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
-use AppBundle\Controller\Utils\AccessControlTrait;
-use AppBundle\Controller\Utils\DeliveryTrait;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\LoopeatTrait;
 use AppBundle\Controller\Utils\OrderTrait;
-use AppBundle\Controller\Utils\RestaurantTrait;
-use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\Edenred\Authentication as EdenredAuthentication;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TaskList;
@@ -26,7 +23,8 @@ use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\TopBarNotifications;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\TaskManager;
-use AppBundle\Utils\OrderEventCollection;
+use AppBundle\Sylius\Customer\CustomerInterface;
+use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -34,13 +32,11 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Exception\JWTDecodeFailureException;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\PreAuthenticationJWTUserToken;
+use Lexik\Bundle\JWTAuthenticationBundle\Security\Authenticator\Token\JWTPostAuthenticationToken;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
 use Cocur\Slugify\SlugifyInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
 use phpcent\Client as CentrifugoClient;
-use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -48,7 +44,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Exception\ExceptionInterface as RoutingException;
 use Symfony\Component\Routing\RouterInterface;
@@ -67,7 +63,9 @@ class ProfileController extends AbstractController
 
     public function __construct(
         protected OrderRepositoryInterface $orderRepository,
-        protected JWTTokenManagerInterface $JWTTokenManager
+        protected JWTTokenManagerInterface $JWTTokenManager,
+        protected EntityManagerInterface $entityManager,
+        protected NormalizerInterface $normalizer
     )
     { }
 
@@ -99,7 +97,7 @@ class ProfileController extends AbstractController
             // Use a JWT as the "state" parameter
             $state = $jwtEncoder->encode([
                 'exp' => (new \DateTime('+1 hour'))->getTimestamp(),
-                'sub' => $iriConverter->getIriFromItem($customer),
+                'sub' => $iriConverter->getIriFromResource($customer),
                 // The "iss" (Issuer) claim contains a redirect URL
                 'iss' => $redirectAfterUri,
             ]);
@@ -183,14 +181,16 @@ class ProfileController extends AbstractController
     public function orderAction($id, Request $request,
         OrderManager $orderManager,
         DeliveryManager $deliveryManager,
-        JWTManagerInterface $jwtManager,
+        JWTTokenManagerInterface $jwtManager,
         JWSProviderInterface $jwsProvider,
         IriConverterInterface $iriConverter,
         NormalizerInterface $normalizer,
         CentrifugoClient $centrifugoClient)
     {
+        /** @var OrderInterface|null */
         $order = $this->orderRepository->find($id);
 
+        /** @var CustomerInterface */
         $customer = $order->getCustomer();
 
         if ($customer->hasUser() && $customer->getUser() !== $this->getUser()) {
@@ -246,7 +246,7 @@ class ProfileController extends AbstractController
     }
 
     #[Route(path: '/profile/addresses/new', name: 'profile_address_new')]
-    public function newAddressAction(Request $request)
+    public function newAddressAction(Request $request, EntityManagerInterface $entityManager)
     {
         $address = new Address();
 
@@ -262,9 +262,8 @@ class ProfileController extends AbstractController
 
             $this->getUser()->addAddress($address);
 
-            $manager = $this->getDoctrine()->getManagerForClass(Address::class);
-            $manager->persist($address);
-            $manager->flush();
+            $entityManager->persist($address);
+            $entityManager->flush();
 
             return $this->redirectToRoute('profile_addresses');
         }
@@ -283,14 +282,14 @@ class ProfileController extends AbstractController
     }
 
     #[Route(path: '/profile/tasks', name: 'profile_tasks')]
-    public function tasksAction(Request $request)
+    public function tasksAction(Request $request, EntityManagerInterface $entityManager)
     {
         $date = new \DateTime();
         if ($request->query->has('date')) {
             $date = new \DateTime($request->query->get('date'));
         }
 
-        $taskList = $this->getDoctrine()
+        $taskList = $entityManager
             ->getRepository(TaskList::class)
             ->findOneBy([
                 'courier' => $this->getUser(),
@@ -309,9 +308,9 @@ class ProfileController extends AbstractController
     }
 
     #[Route(path: '/profile/tasks/{id}/complete', name: 'profile_task_complete')]
-    public function completeTaskAction($id, Request $request, TaskManager $taskManager, TranslatorInterface $translator)
+    public function completeTaskAction($id, Request $request, TaskManager $taskManager, TranslatorInterface $translator, EntityManagerInterface $entityManager)
     {
-        $task = $this->getDoctrine()
+        $task = $entityManager
             ->getRepository(Task::class)
             ->find($id);
 
@@ -334,9 +333,7 @@ class ProfileController extends AbstractController
                         $taskManager->markAsFailed($task, $notes);
                     }
 
-                    $this->getDoctrine()
-                        ->getManagerForClass(Task::class)
-                        ->flush();
+                    $entityManager->flush();
 
                 } catch (\Exception $e) {
                     $this->addFlash(
@@ -356,7 +353,7 @@ class ProfileController extends AbstractController
 
     #[Route(path: '/profile/jwt', methods: ['GET'], name: 'profile_jwt')]
     public function jwtAction(Request $request,
-        JWTManagerInterface $jwtManager,
+        JWTTokenManagerInterface $jwtManager,
         CentrifugoClient $centrifugoClient)
     {
         $user = $this->getUser();
@@ -366,7 +363,7 @@ class ProfileController extends AbstractController
             $jwt = $request->getSession()->get('_jwt');
 
             try {
-                $token = new PreAuthenticationJWTUserToken($jwt);
+                $token = new JWTPostAuthenticationToken($this->getUser(), 'web', [], $jwt);
                 $jwtManager->decode($token);
             } catch (JWTDecodeFailureException $e) {
                 if (JWTDecodeFailureException::EXPIRED_TOKEN === $e->getReason()) {

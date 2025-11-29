@@ -13,12 +13,12 @@ class DeliveryImportQueueVoter extends Voter
     {
     }
 
-    protected function supports($attribute, $subject)
+    protected function supports($attribute, $subject): bool
     {
         return $subject instanceof ImportQueue;
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
             return true;

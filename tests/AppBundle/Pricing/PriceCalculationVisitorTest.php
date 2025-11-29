@@ -8,18 +8,33 @@ use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Package;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\TimeSlot;
 use AppBundle\Entity\Zone;
+use AppBundle\ExpressionLanguage\DeliveryExpressionLanguageVisitor;
+use AppBundle\ExpressionLanguage\ExpressionLanguage;
 use AppBundle\ExpressionLanguage\PickupExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\PricePercentageExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\PricePerPackageExpressionLanguageProvider;
 use AppBundle\ExpressionLanguage\PriceRangeExpressionLanguageProvider;
+use AppBundle\ExpressionLanguage\TaskExpressionLanguageVisitor;
 use AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider;
+use AppBundle\Fixtures\DatabasePurger;
+use AppBundle\Pricing\OnDemandDeliveryProductProcessor;
 use AppBundle\Pricing\PriceCalculationVisitor;
+use AppBundle\Pricing\PriceExpressionParser;
+use AppBundle\Pricing\ProductVariantNameGenerator;
+use AppBundle\Pricing\RuleHumanizer;
+use AppBundle\Service\PricingRuleSetManager;
+use AppBundle\Sylius\Product\ProductOptionValueFactory;
+use AppBundle\Sylius\Product\ProductVariantFactory;
 use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Fidry\AliceDataFixtures\LoaderInterface;
+use Fidry\AliceDataFixtures\Persistence\PurgeMode;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 
@@ -27,7 +42,60 @@ class PriceCalculationVisitorTest extends KernelTestCase
 {
     use ProphecyTrait;
 
-    private $expressionLanguage;
+    private $priceCalculationVisitor;
+
+    private function createWithExpressionLanguage($expressionLanguage): PriceCalculationVisitor
+    {
+        $deliveryExpressionLanguageVisitor = self::getContainer()->get(DeliveryExpressionLanguageVisitor::class);
+        $taskExpressionLanguageVisitor = self::getContainer()->get(TaskExpressionLanguageVisitor::class);
+        $productOptionValueFactory = self::getContainer()->get(ProductOptionValueFactory::class);
+        $productVariantFactory = self::getContainer()->get(ProductVariantFactory::class);
+        $ruleHumanizer = self::getContainer()->get(RuleHumanizer::class);
+        $pricingRuleSetManager = self::getContainer()->get(PricingRuleSetManager::class);
+        $translator = self::getContainer()->get('translator');
+        $entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        $logger = self::getContainer()->get(LoggerInterface::class);
+
+        return new PriceCalculationVisitor(
+            $expressionLanguage,
+            $deliveryExpressionLanguageVisitor,
+            $taskExpressionLanguageVisitor,
+            $productVariantFactory,
+            new ProductVariantNameGenerator($translator),
+            new OnDemandDeliveryProductProcessor(
+                $productOptionValueFactory,
+                $ruleHumanizer,
+                $expressionLanguage,
+                new PriceExpressionParser($expressionLanguage),
+                $pricingRuleSetManager,
+                $entityManager,
+                $logger
+            ),
+            $logger
+        );
+    }
+
+    private function createPickupTask(): Task
+    {
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+
+        $address = new Address();
+        $pickup->setAddress($address);
+
+        return $pickup;
+    }
+
+    private function createDropoffTask(): Task
+    {
+        $dropoff = new Task();
+        $dropoff->setType(Task::TYPE_DROPOFF);
+
+        $address = new Address();
+        $dropoff->setAddress($address);
+
+        return $dropoff;
+    }
 
     protected function setUp(): void
     {
@@ -35,24 +103,46 @@ class PriceCalculationVisitorTest extends KernelTestCase
 
         self::bootKernel();
 
-        $this->expressionLanguage = static::$kernel->getContainer()->get('coopcycle.expression_language');
-        $this->expressionLanguage->registerProvider(
+        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
+
+        $dbPurger = self::getContainer()->get(DatabasePurger::class);
+
+        $dbPurger->purge();
+        $dbPurger->resetSequences();
+
+        /** @var LoaderInterface $fixturesLoader */
+        $fixturesLoader = self::getContainer()->get('fidry_alice_data_fixtures.loader.doctrine');
+
+        $fixturesLoader->load([
+            __DIR__.'/../../../fixtures/ORM/settings_mandatory.yml',
+            __DIR__.'/../../../fixtures/ORM/sylius_channels.yml',
+            __DIR__.'/../../../fixtures/ORM/sylius_products.yml',
+        ], $_SERVER, [], PurgeMode::createNoPurgeMode());
+
+        $expressionLanguage = static::$kernel->getContainer()->get('coopcycle.expression_language');
+        $expressionLanguage->registerProvider(
             new PickupExpressionLanguageProvider()
         );
-        $this->expressionLanguage->registerProvider(
+        $expressionLanguage->registerProvider(
             new PricePerPackageExpressionLanguageProvider()
         );
-        $this->expressionLanguage->registerProvider(
+        $expressionLanguage->registerProvider(
             new PriceRangeExpressionLanguageProvider()
         );
-        $this->expressionLanguage->registerProvider(
+        $expressionLanguage->registerProvider(
             new PricePercentageExpressionLanguageProvider()
         );
+
+        $this->priceCalculationVisitor = $this->createWithExpressionLanguage($expressionLanguage);
     }
 
     public function tearDown(): void
     {
         Carbon::setTestNow();
+
+        /** @see https://joeymasip.medium.com/symfony-phpunit-testing-database-data-322383ed0603 */
+        $this->entityManager->close();
+        $this->entityManager = null;
     }
 
     public function testGetPrice()
@@ -82,13 +172,11 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $rule3,
         ]));
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
-
         $delivery = new Delivery();
         $delivery->setDistance(1500);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(599, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(599, $output->getPrice());
     }
 
     public function testGetPriceWithMapStrategy()
@@ -118,13 +206,11 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $rule3,
         ]));
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
-
         $delivery = new Delivery();
         $delivery->setDistance(1500);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(699, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(699, $output->getPrice());
     }
 
     public function testLegacyGetPriceWithMapStrategy()
@@ -160,13 +246,11 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $rule3,
         ]));
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
-
         $delivery = new Delivery();
         $delivery->setDistance(1500);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(699, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(699, $output->getPrice());
     }
 
     public function testMultiPointGetPriceWithMapStrategyAndMixedTargets()
@@ -194,26 +278,21 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
-
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
         $dropoff1->setWeight(6000);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setBefore(new \DateTime('2024-06-17 13:30:00'));
         $dropoff2->setWeight(5500);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(500, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(500, $output->getPrice());
     }
 
     public function testMultiPointGetPriceWithMapStrategyAndTaskTarget()
@@ -242,26 +321,21 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
-
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
         $dropoff1->setWeight(6000);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setBefore(new \DateTime('2024-06-17 13:30:00'));
         $dropoff2->setWeight(5500);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(500, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(500, $output->getPrice());
     }
 
     public function testMultiPointGetPriceWithMapStrategyAndDeliveryTarget()
@@ -290,26 +364,21 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
-
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
         $dropoff1->setWeight(6000);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setBefore(new \DateTime('2024-06-17 13:30:00'));
         $dropoff2->setWeight(5500);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(300, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(300, $output->getPrice());
     }
 
     public function testMultiPointGetPriceWithZones()
@@ -386,24 +455,21 @@ class PriceCalculationVisitorTest extends KernelTestCase
             new ZoneExpressionLanguageProvider($zoneRepository->reveal())
         );
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $expressionLanguage);
+        $priceCalculationVisitor = $this->createWithExpressionLanguage($expressionLanguage);
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setAddress($pickupAddress);
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setAddress($dropoff1Address);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setAddress($dropoff2Address);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(500, $visitor->getPrice());
+        $output = $priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(500, $output->getPrice());
     }
 
     public function testLegacyMultiPointGetPriceWithZones()
@@ -480,24 +546,21 @@ class PriceCalculationVisitorTest extends KernelTestCase
             new ZoneExpressionLanguageProvider($zoneRepository->reveal())
         );
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $expressionLanguage);
+        $priceCalculationVisitor = $this->createWithExpressionLanguage($expressionLanguage);
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setAddress($pickupAddress);
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setAddress($dropoff1Address);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setAddress($dropoff2Address);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(500, $visitor->getPrice());
+        $output = $priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(500, $output->getPrice());
     }
 
     public function testMultiPointGetPriceWithDiffHoursGreaterThan()
@@ -527,23 +590,18 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
+        $pickup = $this->createPickupTask();
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
-
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setWeight(6000);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setWeight(5500);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(400, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(400, $output->getPrice());
     }
 
     public function testLegacyMultiPointGetPriceWithDiffHoursGreaterThan()
@@ -573,23 +631,18 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
+        $pickup = $this->createPickupTask();
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
-
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setWeight(6000);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setWeight(5500);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(400, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(400, $output->getPrice());
     }
 
     public function testMultiPointGetPriceWithDiffHoursLessThan()
@@ -621,24 +674,19 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
-
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(100, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(100, $output->getPrice());
     }
 
     public function testLegacyMultiPointGetPriceWithDiffHoursLessThan()
@@ -670,24 +718,19 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
-
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(100, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(100, $output->getPrice());
     }
 
     public function testGetPriceWithDiffDaysGreaterThan()
@@ -707,24 +750,19 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
-
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setBefore(new \DateTime('2024-06-25 13:30:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setWeight(6000);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setWeight(5500);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(100, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(100, $output->getPrice());
     }
 
     public function testGetPriceWithDiffDaysLessThan()
@@ -744,24 +782,19 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
-
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(100, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(100, $output->getPrice());
     }
 
     public function testMultiPointGetPriceWithTaskTypeCondition()
@@ -791,21 +824,16 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
+        $pickup = $this->createPickupTask();
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $dropoff1 = $this->createDropoffTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
-
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(500, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(500, $output->getPrice());
     }
 
     public function testLegacyMultiPointGetPriceWithTaskTypeCondition()
@@ -835,21 +863,16 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
+        $pickup = $this->createPickupTask();
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $dropoff1 = $this->createDropoffTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
-
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(500, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(500, $output->getPrice());
     }
 
     public function testApplyWeightRuleOnSumWithDeliveryTarget()
@@ -868,23 +891,18 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $rule1,
         ]));
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
+        $pickup = $this->createPickupTask();
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
-
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setWeight(6000);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setWeight(5500);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(200, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(200, $output->getPrice());
     }
 
     public function testApplyWeightRuleOnEachTaskWithTaskTarget()
@@ -903,23 +921,18 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $rule1,
         ]));
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
+        $pickup = $this->createPickupTask();
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
-
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setWeight(6000);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setWeight(5500);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(400, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(400, $output->getPrice());
     }
 
     public function testGetPriceWithTimeRangeLengthLessThan()
@@ -943,21 +956,17 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $rule2,
         ]));
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
 
-
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setAfter(new \DateTime('2024-06-17 13:00:00'));
         $pickup->setBefore(new \DateTime('2024-06-17 13:59:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(599, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(599, $output->getPrice());
     }
 
     public function testGetPriceWithTimeRangeLengthGreaterThan()
@@ -981,20 +990,16 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $rule2,
         ]));
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
-
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setAfter(new \DateTime('2024-06-17 13:00:00'));
         $pickup->setBefore(new \DateTime('2024-06-17 15:30:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(301, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(301, $output->getPrice());
     }
 
     public function testApplyPackagesRuleOnSumWithDeliveryTarget()
@@ -1012,26 +1017,21 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
-
         $package = new Package();
         $package->setName('XXL');
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->addPackageWithQuantity($package, 1);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->addPackageWithQuantity($package, 2);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(100, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(100, $output->getPrice());
     }
 
     public function testApplyPackagesRuleOnEachTaskWithTaskTarget()
@@ -1049,26 +1049,21 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
-
         $package = new Package();
         $package->setName('XXL');
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->addPackageWithQuantity($package, 1);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->addPackageWithQuantity($package, 2);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(200, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(200, $output->getPrice());
     }
 
     public function testApplyPackagesTotalVolumeUnitsOnSumWithDeliveryTarget()
@@ -1086,27 +1081,22 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
-
         $package = new Package();
         $package->setName('XXL');
         $package->setMaxVolumeUnits(10);
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->addPackageWithQuantity($package, 1);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->addPackageWithQuantity($package, 2);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(100, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(100, $output->getPrice());
     }
 
     public function testApplyPackagesTotalVolumeUnitsOnEachTaskWithTaskTarget()
@@ -1124,27 +1114,22 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
-
         $package = new Package();
         $package->setName('XXL');
         $package->setMaxVolumeUnits(10);
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->addPackageWithQuantity($package, 1);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->addPackageWithQuantity($package, 2);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(200, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(200, $output->getPrice());
     }
 
     public function testMultiPointGetPriceWithPricePerPackage()
@@ -1174,26 +1159,21 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
-
         $package = new Package();
         $package->setName('XXL');
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->addPackageWithQuantity($package, 1);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->addPackageWithQuantity($package, 2);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(400, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(400, $output->getPrice());
     }
 
     public function testLegacyMultiPointGetPriceWithPricePerPackage()
@@ -1223,26 +1203,21 @@ class PriceCalculationVisitorTest extends KernelTestCase
         ]));
 
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
-
         $package = new Package();
         $package->setName('XXL');
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->addPackageWithQuantity($package, 1);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->addPackageWithQuantity($package, 2);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(400, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(400, $output->getPrice());
     }
 
     public function testGetPriceWithPriceRangeByDistance()
@@ -1261,13 +1236,11 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $rule1,
         ]));
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
-
         $delivery = new Delivery();
         $delivery->setDistance(6000);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(600, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(600, $output->getPrice());
     }
 
     public function testGetPriceWithPriceRangeByWeight()
@@ -1286,23 +1259,18 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $rule1,
         ]));
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
+        $pickup = $this->createPickupTask();
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
-
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setWeight(6000);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setWeight(5500);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(2400, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(2400, $output->getPrice());
     }
 
     public function testGetPriceWithPriceRangeByVolumeUnits()
@@ -1321,28 +1289,23 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $rule1,
         ]));
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
-
         $package = new Package();
         $package->setName('XXL');
         $package->setMaxVolumeUnits(10);
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->addPackageWithQuantity($package, 1);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->addPackageWithQuantity($package, 2);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
         $delivery->setDistance(1500);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(6000, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(6000, $output->getPrice());
     }
 
     public function testGetPriceWithMapStrategyAndPricePercentageSurcharge()
@@ -1370,21 +1333,17 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $rule2,
         ]));
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
-
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1]);
         $delivery->setDistance(1500);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(575, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(575, $output->getPrice());
     }
 
     public function testGetPriceWithMapStrategyAndPricePercentageDiscount()
@@ -1412,21 +1371,17 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $rule2,
         ]));
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
-
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1]);
         $delivery->setDistance(1500);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(425, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(425, $output->getPrice());
     }
 
     /**
@@ -1462,24 +1417,19 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $rule3,
         ]));
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
+        $pickup = $this->createPickupTask();
 
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
-
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setWeight(6000);
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setWeight(12500);
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
         $delivery->setDistance(1500);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(1325, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(1325, $output->getPrice());
     }
 
     /**
@@ -1518,24 +1468,91 @@ class PriceCalculationVisitorTest extends KernelTestCase
             $rule3,
         ]));
 
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage);
-
-        $pickup = new Task();
-        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup = $this->createPickupTask();
         $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff1 = new Task();
-        $dropoff1->setType(Task::TYPE_DROPOFF);
+        $dropoff1 = $this->createDropoffTask();
         $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
-        $dropoff2 = new Task();
-        $dropoff2->setType(Task::TYPE_DROPOFF);
+        $dropoff2 = $this->createDropoffTask();
         $dropoff2->setBefore(new \DateTime('2024-06-17 13:30:00'));
 
         $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1, $dropoff2]);
         $delivery->setDistance(1500);
 
-        $visitor->visit($delivery);
-        $this->assertEquals(1495, $visitor->getPrice());
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(1495, $output->getPrice());
+    }
+
+    public function testGetPriceWithMatchingTimeSlot()
+    {
+
+        Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
+
+        $rule1 = new PricingRule();
+        $rule1->setTarget(PricingRule::TARGET_TASK);
+        $rule1->setExpression('time_slot == "/api/time_slots/1"');
+        $rule1->setPrice('500');
+        $rule1->setPosition(0);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+        ]));
+
+        $timeSlot = $this->prophesize(TimeSlot::class);
+        $timeSlot->getId()->willReturn(1);
+
+        $pickup = $this->createPickupTask();
+        $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
+        $pickup->setTimeSlot($timeSlot->reveal());
+
+        $dropoff1 = $this->createDropoffTask();
+        $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1]);
+        $delivery->setDistance(1500);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(500, $output->getPrice());
+    }
+
+    public function testGetPriceWithNotMatchingTimeSlot()
+    {
+
+        Carbon::setTestNow(Carbon::parse('2024-06-17 12:00:00'));
+
+        $rule1 = new PricingRule();
+        $rule1->setTarget(PricingRule::TARGET_TASK);
+        $rule1->setExpression('time_slot != "/api/time_slots/1"');
+        $rule1->setPrice('550');
+        $rule1->setPosition(0);
+
+        $ruleSet = new PricingRuleSet();
+        $ruleSet->setStrategy('map');
+        $ruleSet->setRules(new ArrayCollection([
+            $rule1,
+        ]));
+
+        $timeSlot1 = $this->prophesize(TimeSlot::class);
+        $timeSlot1->getId()->willReturn(1);
+
+        $pickup = $this->createPickupTask();
+        $pickup->setBefore(new \DateTime('2024-06-17 13:30:00'));
+        $pickup->setTimeSlot($timeSlot1->reveal());
+
+        $timeSlot2 = $this->prophesize(TimeSlot::class);
+        $timeSlot2->getId()->willReturn(2);
+
+        $dropoff1 = $this->createDropoffTask();
+        $dropoff1->setBefore(new \DateTime('2024-06-17 13:30:00'));
+        $dropoff1->setTimeSlot($timeSlot2->reveal());
+
+        $delivery = Delivery::createWithTasks(...[$pickup, $dropoff1]);
+        $delivery->setDistance(1500);
+
+        $output = $this->priceCalculationVisitor->visit($delivery, $ruleSet);
+        $this->assertEquals(550, $output->getPrice());
     }
 }

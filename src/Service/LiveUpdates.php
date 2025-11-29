@@ -4,6 +4,7 @@ namespace AppBundle\Service;
 
 use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Domain\HumanReadableEventInterface;
+use AppBundle\Domain\NamedMessage;
 use AppBundle\Domain\SerializableEventInterface;
 use AppBundle\Domain\SilentEventInterface;
 use AppBundle\Message\TopBarNotification;
@@ -12,7 +13,6 @@ use AppBundle\Service\NotificationPreferences;
 use AppBundle\Sylius\Order\OrderInterface;
 use phpcent\Client as CentrifugoClient;
 use Psr\Log\LoggerInterface;
-use SimpleBus\Message\Name\NamedMessage;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -41,21 +41,12 @@ class LiveUpdates
 
     public function toAdmins($message, array $data = [])
     {
-        $admins = $this->userManager->findUsersByRole('ROLE_ADMIN');
-
-        $this->toUsers($admins, $message, $data);
+        $this->toRoles(['ROLE_ADMIN'], $message, $data);
     }
 
     public function toUserAndAdmins(UserInterface $user, $message, array $data = [])
     {
-        $users = $this->userManager->findUsersByRole('ROLE_ADMIN');
-
-        // If the user is also an admin, don't notify twice
-        if (!in_array($user, $users, true)) {
-            $users[] = $user;
-        }
-
-        $this->toUsers($users, $message, $data);
+        $this->toUserAndRoles($user, ['ROLE_ADMIN'], $message, $data);
     }
 
     public function toOrderWatchers(OrderInterface $order, $message, array $data = [])
@@ -81,6 +72,34 @@ class LiveUpdates
             $channel,
             ['event' => $payload]
         );
+    }
+
+    /**
+     * @param string[] $roles
+     * @param NamedMessage|string $message
+     */
+    public function toRoles($roles, $message, array $data = [])
+    {
+        $users = $this->userManager->findUsersByRoles($roles);
+
+        $this->toUsers($users, $message, $data);
+    }
+
+    /**
+     * @param UserInterface $user
+     * @param string[] $roles
+     * @param NamedMessage|string $message
+     */
+    public function toUserAndRoles($user, $roles, $message, array $data = [])
+    {
+        $users = $this->userManager->findUsersByRoles($roles);
+
+        // If the user has any role selected, don't notify twice
+        if (!in_array($user, $users, true)) {
+            $users[] = $user;
+        }
+
+        $this->toUsers($users, $message, $data);
     }
 
     /**
@@ -146,7 +165,7 @@ class LiveUpdates
         if ($message instanceof HumanReadableEventInterface) {
 
             $usernames = array_map(function (UserInterface $user) {
-                return $user->getUsername();
+                return $user->getUserIdentifier();
             }, $users);
 
             $text = $message->forHumans($this->translator, $this->getUser());
@@ -164,7 +183,7 @@ class LiveUpdates
      */
     private function getEventsChannelName($user)
     {
-        $username = $user instanceof UserInterface ? $user->getUsername() : $user;
+        $username = $user instanceof UserInterface ? $user->getUserIdentifier() : $user;
 
         return sprintf('%s_events#%s', $this->namespace, $username);
     }

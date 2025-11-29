@@ -2,7 +2,7 @@
 
 namespace AppBundle\Serializer;
 
-use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Tour;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -37,5 +37,12 @@ class TourNormalizer implements NormalizerInterface
     public function supportsNormalization($data, $format = null)
     {
         return $this->normalizer->supportsNormalization($data, $format) && $data instanceof Tour;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            Tour::class => true, // supports*() call result is cached
+        ];
     }
 }

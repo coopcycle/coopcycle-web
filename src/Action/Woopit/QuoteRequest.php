@@ -5,6 +5,7 @@ namespace AppBundle\Action\Woopit;
 use AppBundle\Entity\Woopit\QuoteRequest as WoopitQuoteRequest;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Woopit\WoopitIntegration;
+use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
 use AppBundle\Service\PriceHelper;
@@ -17,17 +18,13 @@ class QuoteRequest
     use CreateDeliveryTrait;
 
     public function __construct(
-        private DeliveryManager $deliveryManager,
-        private Geocoder $geocoder,
-        private PriceHelper $priceHelper,
-        private EntityManagerInterface $entityManager,
-        private ValidatorInterface $checkDeliveryValidator)
+        private readonly DeliveryManager $deliveryManager,
+        private readonly PricingManager $pricingManager,
+        private readonly Geocoder $geocoder,
+        private readonly PriceHelper $priceHelper,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly ValidatorInterface $checkDeliveryValidator)
     {
-        $this->deliveryManager = $deliveryManager;
-        $this->geocoder = $geocoder;
-        $this->priceHelper = $priceHelper;
-        $this->entityManager = $entityManager;
-        $this->checkDeliveryValidator = $checkDeliveryValidator;
     }
 
     public function __invoke(WoopitQuoteRequest $data)
@@ -63,7 +60,7 @@ class QuoteRequest
 
         $pricingRuleSet = $store->getPricingRuleSet();
 
-        $price = $this->deliveryManager->getPrice($delivery, $pricingRuleSet);
+        $price = $this->pricingManager->getPrice($delivery, $pricingRuleSet);
 
         if (null === $price) {
             return new JsonResponse([

@@ -1,8 +1,8 @@
-import { createSelector } from 'reselect'
 import Fuse from 'fuse.js'
 import Holidays from 'date-holidays'
 import { rrulestr } from 'rrule'
 import {
+  createSelector,
   createEntityAdapter,
 } from '@reduxjs/toolkit'
 
@@ -52,7 +52,13 @@ export const selectTaskListGroupMode = state => state.taskListGroupMode
 export const selectSplitDirection = state => state.rightPanelSplitDirection
 export const selectPolylineEnabledByUsername = username => state => state.polylineEnabled[username]
 export const selectTourPolylinesEnabledById = tourId => state => state.tourPolylinesEnabled[tourId]
+
+export const selectNav = state => state.config.nav
+export const selectInitialTask = state => state.config.initialTask
+
 export const selectAllTags = state => state.config.tags
+
+export const selectStores = state => state.config.stores
 
 export const getProductNameById = id => store => {
   return store.dashboard.dashboards.filter(({ Id }) => Id === id)[0]
@@ -96,7 +102,7 @@ export const selectGroups = createSelector(
       const keys = Array.from(groupsMap.keys())
       const group = find(keys, group => group.id === task.group.id)
       if (!group) {
-        groupsMap.set(task.group, [ task ])
+        groupsMap.set(task.group, [task])
       } else {
         groupsMap.get(group).push(task)
       }
@@ -126,49 +132,94 @@ const sortUnassignedTasks = (taskA, taskB) => {
   return 1
 }
 
+
 export const selectStandaloneTasks = createSelector(
   selectUnassignedTasks,
   state => state.taskListGroupMode,
   selectTaskIdToTourIdMap,
   (unassignedTasks, taskListGroupMode, taskIdToTourIdMap) => {
 
-    let standaloneTasks = unassignedTasks
+    // We exclude tasks assigned to tours or inside folders (if that mode is active)
+    const taskPool = filter(unassignedTasks, task => {
+      const isAssignedToTour = taskIdToTourIdMap.has(task['@id'])
+      const isHiddenInFolder = taskListGroupMode === 'GROUP_MODE_FOLDERS' && belongsToGroup(task)
 
-    if (taskListGroupMode === 'GROUP_MODE_FOLDERS') {
-      standaloneTasks = filter(unassignedTasks, task => !belongsToGroup(task))
+      return !isAssignedToTour && !isHiddenInFolder
+    })
+
+    const PICKUP_MODES = ['GROUP_MODE_PICKUP_DESC', 'GROUP_MODE_PICKUP_ASC']
+    const DROPOFF_MODES = ['GROUP_MODE_DROPOFF_DESC', 'GROUP_MODE_DROPOFF_ASC']
+
+    const isPickupMode = PICKUP_MODES.includes(taskListGroupMode)
+    const isDropoffMode = DROPOFF_MODES.includes(taskListGroupMode)
+
+    // Early Exit: If not a grouping mode, use default sort
+    if (!isPickupMode && !isDropoffMode) {
+      // Create a copy to sort safely
+      return [...taskPool].sort(sortUnassignedTasks)
     }
 
-    // Order by dropoff desc, with pickup before
-    if (taskListGroupMode === 'GROUP_MODE_DROPOFF_DESC' || taskListGroupMode === 'GROUP_MODE_DROPOFF_ASC') {
+    // Determine if we sort by Pickup or Dropoff, and the direction
+    const primaryType = isPickupMode ? 'PICKUP' : 'DROPOFF'
+    const isDesc = ['GROUP_MODE_PICKUP_DESC', 'GROUP_MODE_DROPOFF_DESC'].includes(taskListGroupMode)
 
-      const dropoffTasks = filter(standaloneTasks, t => t.type === 'DROPOFF')
+    const primaryTasks = filter(taskPool, t => t.type === primaryType)
 
-      dropoffTasks.sort((a, b) => {
-        return sortUnassignedTasks(a, b) > 0 ?
-          (taskListGroupMode === 'GROUP_MODE_DROPOFF_DESC' ? -1 : 1)
-          :
-          (taskListGroupMode === 'GROUP_MODE_DROPOFF_DESC' ? 1 : -1)
+    primaryTasks.sort((a, b) => {
+      const comparison = sortUnassignedTasks(a, b)
+      return isDesc ? -comparison : comparison
+    })
+
+    // We use a Set to track "consumed" tasks to easily identify orphans later
+    const consumedIds = new Set()
+    const groupedTasks = []
+
+    if (isPickupMode) {
+      // === PICKUP MODE ===
+      // Pattern: [Parent Pickup] -> [Child Dropoffs...]
+      primaryTasks.forEach(pickup => {
+        consumedIds.add(pickup['@id'])
+        groupedTasks.push(pickup)
+
+        // Find all dropoffs linked to this pickup
+        const children = filter(taskPool, t => t.previous === pickup['@id'])
+
+        children.forEach(child => {
+          if (!consumedIds.has(child['@id'])) {
+            groupedTasks.push(child)
+            consumedIds.add(child['@id'])
+          }
+        })
       })
 
-      const grouped = reduce(dropoffTasks, (acc, task) => {
-        if (task.previous) {
-          const prev = find(standaloneTasks, t => t['@id'] === task.previous)
+    } else {
+      // === DROPOFF MODE ===
+      // Pattern: [Parent Pickup] -> [Current Dropoff]
+      primaryTasks.forEach(dropoff => {
+        // Find the pickup this dropoff belongs to
+        if (dropoff.previous) {
+          const parent = find(taskPool, t => t['@id'] === dropoff.previous)
 
-          if (prev && !acc.find(t => t['@id'] === prev['@id'])) { // avoid inserting the pickup several time for multi-dropoff
-            acc.push(prev)
+          // Add parent if it exists and hasn't been added by a previous sibling
+          if (parent && !consumedIds.has(parent['@id'])) {
+            groupedTasks.push(parent)
+            consumedIds.add(parent['@id'])
           }
         }
-        acc.push(task)
 
-        return acc
-      }, [])
-
-      standaloneTasks = grouped
-    } else {
-      standaloneTasks.sort(sortUnassignedTasks)
+        groupedTasks.push(dropoff)
+        consumedIds.add(dropoff['@id'])
+      })
     }
 
-    return filter(standaloneTasks, t => !taskIdToTourIdMap.has(t['@id']))
+    // Any task in the pool that wasn't consumed by the grouping logic is added here.
+    // This catches standalone tasks, reschedule bugs, or sync delays.
+    const orphans = filter(taskPool, t => !consumedIds.has(t['@id']))
+
+    // Sort orphans by time so they appear logically at the end
+    orphans.sort(sortUnassignedTasks)
+
+    return [...groupedTasks, ...orphans]
   }
 )
 
@@ -267,7 +318,7 @@ const fuseOptions = {
   threshold: 0.4,
   minMatchCharLength: 3,
   ignoreLocation: true,
-  keys: ['id', 'metadata.order_number', 'tags.name', 'tags.slug', 'address.contactName', 'address.name','address.streetAddress','comments', 'orgName']
+  keys: ['id', 'metadata.order_number', 'tags.name', 'tags.slug', 'address.contactName', 'address.name', 'address.streetAddress', 'comments', 'orgName']
 }
 
 export const selectFuseSearch = createSelector(
@@ -315,7 +366,7 @@ export const selectRecurrenceRules = createSelector(
   (date, rrules) => {
 
     const startOfDayUTC = moment.utc(`${moment(date).format('YYYY-MM-DD')} 00:00:00`).toDate()
-    const endOfDayUTC   = moment.utc(`${moment(date).format('YYYY-MM-DD')} 23:59:59`).toDate()
+    const endOfDayUTC = moment.utc(`${moment(date).format('YYYY-MM-DD')} 23:59:59`).toDate()
 
     return filter(rrules, rrule => {
 
@@ -390,17 +441,17 @@ export const selectLinkedTasksIds = createSelector(
 
 export const selectTagsSelectOptions = createSelector(
   selectAllTags,
-  (allTags) => allTags.map((tag) => {return {...tag, isTag: true, label: tag.name, value: tag.slug}})
+  (allTags) => allTags.map((tag) => { return { ...tag, isTag: true, label: tag.name, value: tag.slug } })
 )
 
-const tourColorPalette = ["#556b2f","#8b4513","#8b0000","#808000","#483d8b","#008000","#3cb371","#bc8f8f","#b8860b","#4682b4","#d2691e","#9acd32","#20b2aa","#00008b","#32cd32","#8b008b","#d2b48c","#9932cc","#ff0000","#ff8c00","#ffd700","#6a5acd","#c71585","#0000cd","#00ff00","#00fa9a","#dc143c","#00ffff","#f4a460","#0000ff","#a020f0","#adff2f","#ff6347","#da70d6","#ff00ff","#db7093","#f0e68c","#fa8072","#ffff54","#6495ed","#dda0dd","#90ee90","#87cefa","#ff69b4"]
+const tourColorPalette = ["#556b2f", "#8b4513", "#8b0000", "#808000", "#483d8b", "#008000", "#3cb371", "#bc8f8f", "#b8860b", "#4682b4", "#d2691e", "#9acd32", "#20b2aa", "#00008b", "#32cd32", "#8b008b", "#d2b48c", "#9932cc", "#ff0000", "#ff8c00", "#ffd700", "#6a5acd", "#c71585", "#0000cd", "#00ff00", "#00fa9a", "#dc143c", "#00ffff", "#f4a460", "#0000ff", "#a020f0", "#adff2f", "#ff6347", "#da70d6", "#ff00ff", "#db7093", "#f0e68c", "#fa8072", "#ffff54", "#6495ed", "#dda0dd", "#90ee90", "#87cefa", "#ff69b4"]
 
 export const selectTourIdToColorMap = createSelector(
   selectAllTours,
   (allTours) => {
     let toColorMap = new Map()
     allTours.forEach((tour, index) => {
-        toColorMap.set(tour["@id"], tourColorPalette[index % tourColorPalette.length])
+      toColorMap.set(tour["@id"], tourColorPalette[index % tourColorPalette.length])
+    })
+    return toColorMap
   })
-  return toColorMap
-})

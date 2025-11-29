@@ -31,6 +31,10 @@ class GatewayResolver
             return 'mercadopago';
         }
 
+        if ('gh' === $country) {
+            return 'pawapay';
+        }
+
         return 'stripe';
     }
 
@@ -62,6 +66,14 @@ class GatewayResolver
         $payment->getDetails();
 
         if ($payment->hasPaygreenPaymentOrderId()) {
+
+            // Hotfix Stripe being used instead of PayGreen
+            // In this case the Payment has both "paygreen_payment_order_id" & "payment_intent"
+            // https://github.com/coopcycle/coopcycle-app/issues/2079
+            if ($payment->hasPaymentIntent()) {
+                return 'stripe';
+            }
+
             return 'paygreen';
         }
 

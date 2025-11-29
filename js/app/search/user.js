@@ -8,6 +8,9 @@ document.querySelectorAll('[data-search="user"]').forEach((el) => {
   const hiddenInput = document.createElement('input')
   hiddenInput.setAttribute('type', 'hidden')
   hiddenInput.setAttribute('name', el.getAttribute('name'))
+  if (el.value) {
+    hiddenInput.value = el.value
+  }
   el.parentNode.insertBefore(hiddenInput, el)
 
   el.parentNode.removeChild(el)
@@ -17,6 +20,7 @@ document.querySelectorAll('[data-search="user"]').forEach((el) => {
     placeholder: el.getAttribute('placeholder'),
     onSuggestionSelected: function(suggestion) {
       hiddenInput.value = suggestion.username
-    }
+    },
+    initialValue: el.value ?? ''
   })
 })

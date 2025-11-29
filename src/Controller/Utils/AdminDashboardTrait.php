@@ -2,13 +2,11 @@
 
 namespace AppBundle\Controller\Utils;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
-use ApiPlatform\Core\Exception\InvalidArgumentException;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\User;
-use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
@@ -30,7 +28,7 @@ use Nucleos\UserBundle\Model\UserInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use phpcent\Client as CentrifugoClient;
 use Psr\Log\LoggerInterface;
 use Redis;
@@ -43,6 +41,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Vich\UploaderBundle\Storage\StorageInterface;
 
 trait AdminDashboardTrait
@@ -62,32 +62,29 @@ trait AdminDashboardTrait
         return $this->redirectToRoute('admin_dashboard_fullscreen', array_merge($defaultParams, $params));
     }
 
-    /**
-     * @Route("/admin/dashboard", name="admin_dashboard")
-     */
+    #[Route("/admin/dashboard", name: "admin_dashboard")]
     public function dashboardAction(Request $request,
         TaskManager $taskManager,
-        JWTManagerInterface $jwtManager,
+        JWTTokenManagerInterface $jwtManager,
         CentrifugoClient $centrifugoClient,
         Redis $tile38,
         IriConverterInterface $iriConverter,
-        TagManager $tagManager)
+        TagManager $tagManager,
+        NormalizerInterface $normalizer)
     {
         return $this->dashboardFullscreenAction((new \DateTime())->format('Y-m-d'),
-            $request, $taskManager, $jwtManager, $centrifugoClient, $tile38, $iriConverter, $tagManager);
+            $request, $taskManager, $jwtManager, $centrifugoClient, $tile38, $iriConverter, $tagManager, $normalizer);
     }
 
-    /**
-     * @Route("/admin/dashboard/fullscreen/{date}", name="admin_dashboard_fullscreen",
-     *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}"})
-     */
+    #[Route("/admin/dashboard/fullscreen/{date}", name: "admin_dashboard_fullscreen", requirements: ["date" => "[0-9]{4}-[0-9]{2}-[0-9]{2}"])]
     public function dashboardFullscreenAction($date, Request $request,
         TaskManager $taskManager,
-        JWTManagerInterface $jwtManager,
+        JWTTokenManagerInterface $jwtManager,
         CentrifugoClient $centrifugoClient,
         Redis $tile38,
         IriConverterInterface $iriConverter,
-        TagManager $tagManager)
+        TagManager $tagManager,
+        NormalizerInterface $normalizer)
     {
         new Hashids($this->getParameter('secret'), 8);
 
@@ -120,7 +117,7 @@ trait AdminDashboardTrait
             return $response;
         }
 
-        $couriers = $this->getDoctrine()
+        $couriers = $this->entityManager
             ->getRepository(User::class)
             ->createQueryBuilder('u')
             ->select('u.username')
@@ -130,34 +127,27 @@ trait AdminDashboardTrait
             ->getQuery()
             ->getArrayResult();
 
-        $this->getDoctrine()->getManager()->getFilters()->enable('soft_deleteable');
+        $this->entityManager->getFilters()->enable('soft_deleteable');
         // insert here all queries for soft deletable that you don't want to show in the dashboard
 
         $recurrenceRules =
-            $this->getDoctrine()->getRepository(TaskRecurrenceRule::class)->findByGenerateOrders(false);
+            $this->entityManager->getRepository(TaskRecurrenceRule::class)->findByGenerateOrders(false);
 
-        $recurrenceRulesNormalized = array_map(function (TaskRecurrenceRule $recurrenceRule) {
-            return $this->get('serializer')->normalize($recurrenceRule, 'jsonld', [
-                'resource_class' => TaskRecurrenceRule::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
-            ]);
+        $recurrenceRulesNormalized = array_map(function (TaskRecurrenceRule $recurrenceRule) use ($normalizer) {
+            return $normalizer->normalize($recurrenceRule, 'jsonld');
         }, $recurrenceRules);
 
-        $stores = $this->getDoctrine()->getRepository(Store::class)->findBy([], ['name' => 'ASC']);
+        $stores = $this->entityManager->getRepository(Store::class)->findBy([], ['name' => 'ASC']);
 
-        $this->getDoctrine()->getManager()->getFilters()->disable('soft_deleteable');
+        $this->entityManager->getFilters()->disable('soft_deleteable');
 
-        $storesNormalized = array_map(function (Store $store) {
-            return $this->get('serializer')->normalize($store, 'jsonld', [
-                'resource_class' => Store::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
+        $storesNormalized = array_map(function (Store $store) use ($normalizer) {
+            return $normalizer->normalize($store, 'jsonld', [
                 'groups' => ['store', 'store_with_packages']
             ]);
         }, $stores);
 
-        $qb = $this->getDoctrine()
+        $qb = $this->entityManager
             ->getRepository(Address::class)
             ->createQueryBuilder('a');
         $qb
@@ -172,7 +162,7 @@ trait AdminDashboardTrait
             );
 
         $addressIris = array_map(
-            fn ($address) => $iriConverter->getItemIriFromResourceClass(Address::class, $address),
+            fn ($address) => $iriConverter->getIriFromResource(Address::class, context: ['uri_variables' => $address]),
             $qb->getQuery()->getArrayResult()
         );
 
@@ -191,6 +181,7 @@ trait AdminDashboardTrait
             'stores' => $storesNormalized,
             'pickup_cluster_addresses' => $addressIris,
             'export_enabled' => $this->isGranted('ROLE_ADMIN') ? 'on' : 'off',
+            'initial_task' => $request->query->get('task'),
         ]));
     }
 
@@ -252,7 +243,7 @@ trait AdminDashboardTrait
     protected function getTaskList(\DateTime $date, UserInterface $user)
     {
         $this->denyAccessUnlessGranted('ROLE_DISPATCHER');
-        $taskList = $this->getDoctrine()
+        $taskList = $this->entityManager
             ->getRepository(TaskList::class)
             ->findOneBy(['date' => $date, 'courier' => $user]);
 
@@ -265,12 +256,8 @@ trait AdminDashboardTrait
         return $taskList;
     }
 
-    /**
-     * @Route("/admin/task-lists/{date}/{username}", name="admin_task_list_create",
-     *   methods={"POST"},
-     *   requirements={"date"="[0-9]{4}-[0-9]{2}-[0-9]{2}"})
-     */
-    public function createTaskListAction($date, $username, Request $request, UserManagerInterface $userManager)
+    #[Route("/admin/task-lists/{date}/{username}", name: "admin_task_list_create", requirements: ["date" => "[0-9]{4}-[0-9]{2}-[0-9]{2}"], methods: ["POST"])]
+    public function createTaskListAction($date, $username, Request $request, UserManagerInterface $userManager, NormalizerInterface $normalizer)
     {
         $this->denyAccessUnlessGranted('ROLE_DISPATCHER');
 
@@ -280,27 +267,18 @@ trait AdminDashboardTrait
         $taskList = $this->getTaskList($date, $user);
 
         if (null === $taskList->getId()) {
-            $this->getDoctrine()
-                ->getManagerForClass(TaskList::class)
-                ->persist($taskList);
-            $this->getDoctrine()
-                ->getManagerForClass(TaskList::class)
-                ->flush();
+            $this->entityManager->persist($taskList);
+            $this->entityManager->flush();
         }
 
-        $taskListNormalized = $this->get('serializer')->normalize($taskList, 'jsonld', [
-            'resource_class' => TaskList::class,
-            'operation_type' => 'item',
-            'item_operation_name' => 'get',
+        $taskListNormalized = $normalizer->normalize($taskList, 'jsonld', [
             'groups' => ['task_list']
         ]);
 
         return new JsonResponse($taskListNormalized);
     }
 
-    /**
-     * @Route("/admin/tasks/{taskId}/images/{imageId}/download", name="admin_task_image_download")
-     */
+    #[Route("/admin/tasks/{taskId}/images/{imageId}/download", name: "admin_task_image_download")]
     public function downloadTaskImageAction($taskId, $imageId,
         StorageInterface $storage,
         SlugifyInterface $slugify,
@@ -308,7 +286,7 @@ trait AdminDashboardTrait
     {
         $this->denyAccessUnlessGranted('ROLE_DISPATCHER');
 
-        $image = $this->getDoctrine()->getRepository(TaskImage::class)->find($imageId);
+        $image = $this->entityManager->getRepository(TaskImage::class)->find($imageId);
 
         if (!$image) {
             throw new NotFoundHttpException(sprintf('Image #%d not found', $imageId));

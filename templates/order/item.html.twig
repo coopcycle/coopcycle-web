@@ -13,15 +13,20 @@
   {% if is_granted('ROLE_DISPATCHER') %}
     {% if delivery is not empty %}
       {% set store = delivery.store %}
-      {% if store is not null %}
-        <li><a href="{{ path('admin_stores') }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
-        <li><a href="{{ path('admin_store', { id: store.id }) }}">{{ store.name }}</a></li>
-      {% endif %}
+    {% else %}
+      {% set store = null %}
     {% endif %}
-    {# TODO: display properly the restaurant(s) for foodtech orders #}
 
-    <li><a href="{{ path('admin_orders') }}">{% trans %}adminDashboard.orders.title{% endtrans %}</a></li>
-    <li>{{ order.number }}</li>
+    {% if store is not null %}
+      <li><a href="{{ path('admin_stores') }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+      <li><a data-testid="store" href="{{ path('admin_store', { id: store.id }) }}">{{ store.name }}</a></li>
+      <li><a href="{{ path('admin_store_deliveries', { id: store.id }) }}">{% trans %}stores.orders{% endtrans %}</a></li>
+      <li>{{ order.number }}</li>
+    {% else %}
+      {# TODO: display properly the restaurant(s) for foodtech orders #}
+      <li><a href="{{ path('admin_orders') }}">{% trans %}adminDashboard.orders.title{% endtrans %}</a></li>
+      <li>{{ order.number }}</li>
+    {% endif %}
   {% endif %}
 
 {% endblock %}
@@ -30,7 +35,13 @@
 
 {{ form_start(form) }}
 
-{% include 'order/_partials/navbar.html.twig' %}
+{% if is_granted('ROLE_DISPATCHER') %}
+  <div class="d-flex">
+    <div class="flex-grow-1">
+      {% include 'order/_partials/navbar.html.twig' %}
+    </div>
+  </div>
+{% endif %}
 
 {% if form.accept is defined %}
   <div class="alert alert-info">
@@ -43,7 +54,7 @@
 {% endif %}
 
 <div class="d-md-flex flex-md-row">
-  <div class="flex-fill mr-md-4" data-change-state>
+  <div class="flex-1 mr-md-4" data-change-state>
     <div class="mb-4">
       {% include '_partials/order/items.html.twig' with { with_total_excluding_tax: true } %}
       {% if order.customer is not empty %}
@@ -65,10 +76,14 @@
       {% endif %}
     </div>
   </div>
-  <div class="flex-fill ml-md-4">
-    {% if delivery is not empty %}
-    {% include 'order/_partials/delivery.html.twig' %}
-    {% endif %}
+  <div class="flex-1 ml-md-4">
+    <div id="react-root"
+         data-order="{{ order|serialize('jsonld', {groups: ['order', 'pricing_deliveries']}) }}"
+         data-delivery="{{ delivery is not empty ? delivery|serialize('jsonld', {groups: ['delivery', 'address', 'set-temporary-id-when-missing']}) : '' }}"
+         data-is-dispatcher="{{ is_granted('ROLE_DISPATCHER') ? 'true' : 'false' }}"
+    >
+      {# rendered by React #}
+    </div>
   </div>
 </div>
 
@@ -106,23 +121,17 @@
   </div>
 {% endif %}
 
+{% include "_partials/order/receipt_modal.html.twig" %}
+
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('order-item') }}
 {% endblock %}
 
 {% block scripts %}
-{{ encore_entry_script_tags('delivery-map') }}
+{{ encore_entry_script_tags('order-item') }}
 <script>
-new ClipboardJS('#copy');
-{% if delivery is not empty %}
-new CoopCycle.DeliveryMap('map', {
-  pickup: [ {{ delivery.pickup.address.geo.latitude }}, {{ delivery.pickup.address.geo.longitude }} ],
-  dropoff: [ {{ delivery.dropoff.address.geo.latitude }}, {{ delivery.dropoff.address.geo.longitude }} ]
-});
-{% endif %}
-$('[data-change-state] button[type="submit"]').on('click', function(e) {
-  var message = $(e.target).data('message');
-  if (!window.confirm(message || '{{ 'basics.are_you_sure'|trans }}')) {
-    e.preventDefault();
-  }
-});
+{% include "_partials/order/receipt_modal.js.twig" %}
 </script>
 {% endblock %}

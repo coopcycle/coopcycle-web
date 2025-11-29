@@ -6,7 +6,6 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\User;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Sylius\Order\OrderInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Security\Authentication\Token\JWTUserToken;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authenticator\Token\JWTPostAuthenticationToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -48,7 +47,7 @@ class OrderActionsVoter extends Voter
     {
     }
 
-    protected function supports($attribute, $subject)
+    protected function supports($attribute, $subject): bool
     {
         if (!in_array($attribute, self::$actions)) {
             return false;
@@ -61,7 +60,7 @@ class OrderActionsVoter extends Voter
         return true;
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
         if (self::VIEW_PUBLIC === $attribute) {
 
@@ -115,7 +114,7 @@ class OrderActionsVoter extends Voter
         $ownsRestaurant = $this->isGrantedRestaurant($subject);
 
         $isCartSessionOwner = false;
-        if (($token instanceof JWTUserToken || $token instanceof JWTPostAuthenticationToken) && $token->hasAttribute('cart')) {
+        if ($token instanceof JWTPostAuthenticationToken && $token->hasAttribute('cart')) {
 
             $cart = $token->getAttribute('cart');
 

@@ -2,7 +2,7 @@
 
 namespace AppBundle\Twig;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Address;
 use AppBundle\OpeningHours\SpatieOpeningHoursRegistry;
 use AppBundle\Sylius\Product\ProductOptionInterface;
@@ -56,7 +56,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('time_range_for_humans_short', array(OrderRuntime::class, 'timeRangeForHumansShort')),
             new TwigFilter('promotion_rule_for_humans', array(PromotionRuntime::class, 'ruleForHumans')),
             new TwigFilter('promotion_action_for_humans', array(PromotionRuntime::class, 'actionForHumans')),
-            new TwigFilter('get_iri_from_item', array($this, 'getIriFromItem')),
+            new TwigFilter('get_iri_from_item', array($this, 'getIriFromResource')),
             new TwigFilter('oauth2_proxy', array(OAuthRuntime::class, 'modifyUrl')),
             new TwigFilter('restaurant_microdata', array(LocalBusinessRuntime::class, 'seo')),
             new TwigFilter('delay_for_humans', array(LocalBusinessRuntime::class, 'delayForHumans')),
@@ -65,10 +65,13 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('day_localized', array($this, 'dayLocalized')),
             new TwigFilter('opening_hours_for_day_matches', array($this, 'openingHoursForDayMatches')),
             new TwigFilter('cache_key', array(KeyGenerator::class, 'generateKey')),
-            new TwigFilter('parse_expression', array(ExpressionLanguageRuntime::class, 'parseExpression')),
+            new TwigFilter('parse_rule_expression', array(ExpressionLanguageRuntime::class, 'parseRuleExpression')),
+            new TwigFilter('parse_price', array(ExpressionLanguageRuntime::class, 'parsePrice')),
             new TwigFilter('expand_tags', array(TagsRuntime::class, 'expandTags')),
             new TwigFilter('placeholder_image', array(AssetsRuntime::class, 'placeholderImage')),
             new TwigFilter('recurr_rule', array(RecurrRuleFormatResolver::class, 'format'), ['needs_context' => true]),
+            new TwigFilter('humanize_promotion', array(LocalBusinessRuntime::class, 'humanizePromotion')),
+            new TwigFilter('is_promotion_not_expired', array(LocalBusinessRuntime::class, 'isPromotionNotExpired')),
         );
     }
 
@@ -99,6 +102,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('should_show_pre_order', array(LocalBusinessRuntime::class, 'shouldShowPreOrder')),
             new TwigFunction('loopeat_authorization_url', array(LoopeatRuntime::class, 'getAuthorizationUrl')),
             new TwigFunction('loopeat_name', array(LoopeatRuntime::class, 'getName')),
+            new TwigFunction('loopeat_returns_fee', array(LoopeatRuntime::class, 'getReturnsFee')),
             new TwigFunction('restaurant_tags', array(LocalBusinessRuntime::class, 'tags')),
             new TwigFunction('restaurant_badges', array(LocalBusinessRuntime::class, 'badges')),
             new TwigFunction('coopcycle_configtest', array(SettingResolver::class, 'configTest')),
@@ -109,6 +113,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('add_title_prefix', array(PageTitlePrefixResolver::class, 'addTitlePrefix')),
             new TwigFunction('coopcycle_version', array(SettingResolver::class, 'getVersion')),
             new TwigFunction('coopcycle_github_release_link', array(SettingResolver::class, 'getGithubReleaseLink')),
+            new TwigFunction('addresses_normalized', array(UserRuntime::class, 'getUserAddresses')),
         );
     }
 
@@ -154,8 +159,6 @@ class CoopCycleExtension extends AbstractExtension
         if ('jsonld' === $format) {
             $context = array_merge($context, [
                 'resource_class' => $resourceClass,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
             ]);
         }
 
@@ -200,9 +203,9 @@ class CoopCycleExtension extends AbstractExtension
         return $var instanceof $class;
     }
 
-    public function getIriFromItem($item)
+    public function getIriFromResource($item)
     {
-        return $this->iriConverter->getIriFromItem($item);
+        return $this->iriConverter->getIriFromResource($item);
     }
 
     public function gramsToKilos($grams)

@@ -3,7 +3,6 @@ Feature: Group orders
   Scenario: Create invitation link for order
     Given the current time is "2023-01-25 11:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |

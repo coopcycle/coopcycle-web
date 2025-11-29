@@ -40,13 +40,12 @@ twig:
         edenred_enabled: '%env(bool:EDENRED_ENABLED)%'
         cubejs_api_url: '%env(CUBEJS_API_URL)%'
         ui_tasks_metrics_enabled: '%env(bool:UI_TASKS_METRICS_ENABLED)%'
+        ui_package_delivery_price_breakdown_enabled: '%package_delivery_ui_price_breakdown_enabled%'
         dabba_context: '@AppBundle\Dabba\Context'
         group_orders_enabled: '%group_orders_enabled%'
         business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
         odoo_url: '%env(ODOO_URL)%'
         invitation_link_provider: '@AppBundle\Service\InvitationLinkProviderService'
-        loopeat_processing_fee: '%env(int:LOOPEAT_PROCESSING_FEE)%'
-        loopeat_processing_fee_behavior: '%env(LOOPEAT_PROCESSING_FEE_BEHAVIOR)%'
         paygreen_environment: '%env(PAYGREEN_ENVIRONMENT)%'
 
     exception_controller: null

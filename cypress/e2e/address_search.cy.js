@@ -1,8 +1,6 @@
 context('Address search', () => {
   beforeEach(() => {
-
-    cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/checkout.yml')
-
+    cy.loadFixtures('checkout.yml')
   })
 
   it('search address with useless address details', () => {

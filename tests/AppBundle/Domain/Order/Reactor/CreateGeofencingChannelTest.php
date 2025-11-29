@@ -1,9 +1,9 @@
 <?php
 
-namespace Tests\AppBundle\Domain\Order\Reactor;
+namespace Tests\AppBundle\MessageHandler\Order;
 
 use AppBundle\Domain\Order\Event\OrderPicked;
-use AppBundle\Domain\Order\Reactor\CreateGeofencingChannel;
+use AppBundle\MessageHandler\Order\CreateGeofencingChannel;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;

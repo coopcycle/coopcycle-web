@@ -87,19 +87,6 @@ task.failed.body: |
 order.payment.subject: 'Zure %order.number% eskaeraren ordainketa'
 order.payment.body: "Kaixo,\n<br>\nUsted ha solicitado un servicio de entrega con nosotros.\n\
   <br>\nAzpian kreditu-txartelarekin ordaintzeko esteka bat aurkituko duzu.\n"
-covid_19.subject: 'COVID-19 | Zure eskaerarentzako argibide garrantzitsuak'
-covid_19.body: "<h1>Zure banaketa jarraitzeko instrukzioak</h1>\n<p>Uneko COVID-19\
-  \ (Coronavirus) pandemia dela eta, hurrengo instrukzioak <strong>jarraitu behar\
-  \ dituzu</strong> :</p>\n<h2>1. Mantendu distantzia soziala</h2>\n<p>Zure eskaera\
-  \ ate aurrean utziko dugu, banatzera datorren pertsonarengana hurbiltzeko beharra\
-  \ izan ez dezazun. Ez da beharrezkoa eskupekorik uztea ere.</p>\n<h2>2. Ireki zure\
-  \ eskaera hartu ostean</h2>\n<p>Birusa kartoizko eta plastikozko azaletan hainbat\
-  \ egun iraun dezake bizirik. Paketeak beraz birusaren transmisio bektore oso altuak\
-  \ dira.\nHorregatik <strong>zure eskaera paketetik atera eta platerretan zerbitzatzea</strong>\
-  \ eskatzen dizugu.</p>\n<h2>3. Paketea nola bota</h2>\n<p>Zure eskaera paketetik\
-  \ atera ostean, ziurtatu <strong>paketea itxitako zaborrontzi batean botatzen duzula</strong>\
-  \ gero nahi gabe ukitu ez dezazun.</p>\n<h2>4. Garbitu eskuak!</h2>\n<p>Zure eskaera\
-  \ paketetik atera eta paketea bota ostean, <strong>garbitu zure eskuak!</strong></p>\n"
 
 order.expiring_authorization.subject: 'Orainketa baimena laster iraungiko da'
 order.expiring_authorization.text: 'Ordainketa baimena <strong>%order.number%</strong>

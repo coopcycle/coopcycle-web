@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect'
+import { createSelector } from '@reduxjs/toolkit'
 import { apiSlice } from '../../api/slice'
 import { selectOrderNodeId, selectShippingTimeRange } from './reduxSlice'
 

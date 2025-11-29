@@ -16,8 +16,8 @@ class UserManager implements UserManagerInterface
     public function __construct(
         DoctrineUserManager $decorated,
         private ObjectManager $objectManager,
-        private CanonicalFieldsUpdater $canonicalFieldsUpdater)
-    {
+        private CanonicalFieldsUpdater $canonicalFieldsUpdater
+    ) {
         $this->decorated = $decorated;
     }
 
@@ -59,6 +59,31 @@ class UserManager implements UserManagerInterface
             ->setParameter('roles', sprintf('%%%s%%', $role));
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param string[] $roles
+     * @return array
+     */
+    public function findUsersByRoles($roles)
+    {
+        if (empty($roles)) {
+            return [];
+        }
+
+        $qb = $this->objectManager->getRepository($this->decorated->getClass())
+            ->createQueryBuilder('u');
+
+        $orX = $qb->expr()->orX();
+
+        foreach ($roles as $i => $role) {
+            $orX->add($qb->expr()->like('u.roles', ":role_$i"));
+            $qb->setParameter("role_$i", sprintf('%%%s%%', $role));
+        }
+
+        return $qb->andWhere($orX)
+            ->getQuery()
+            ->getResult();
     }
 
     public function deleteUser(UserInterface $user): void

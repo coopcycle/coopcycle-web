@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Doctrine\EventSubscriber\TaskSubscriber\TaskListProvider;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
@@ -11,7 +11,7 @@ use AppBundle\Service\TaskManager;
 use AppBundle\Utils\Barcode\BarcodeUtils;
 use Doctrine\Persistence\ManagerRegistry;
 use Picqer\Barcode\BarcodeGeneratorSVG;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -53,7 +53,7 @@ class BarcodeController extends AbstractController
         $barcode = $this->barcodeUtils::parse($request->get('code'));
 
         /** @var ?Task $task */
-        $task = $this->getDoctrine()
+        $task = $this->doctrine
             ->getRepository(Task::class)
             ->findByBarcode($barcode->getRawBarcode());
 
@@ -67,7 +67,7 @@ class BarcodeController extends AbstractController
         $this->taskManager->scan($task);
         $this->doctrine->getManager()->flush();
 
-        $iri = $iriConverter->getIriFromItem($task);
+        $iri = $iriConverter->getIriFromResource($task);
         return $this->json([
             "ressource" => $iri,
             "client_action" => $clientAction,
@@ -184,7 +184,7 @@ class BarcodeController extends AbstractController
 
         $phoneUtil = $phoneUtil::getInstance();
         /** @var ?Task $ressource */
-        $ressource = $this->getDoctrine()
+        $ressource = $this->doctrine
             ->getRepository(Task::class)
             ->find($barcode->getEntityId());
 
@@ -195,7 +195,7 @@ class BarcodeController extends AbstractController
         $package = null;
         if ($barcode->isContainsPackages()) {
             //NOTE: Dont rely on lazy loading
-            $package = $this->getDoctrine()
+            $package = $this->doctrine
                 ->getRepository(Package::class)
                 ->find($barcode->getPackageTaskId())?->getPackage()?->getName();
         }

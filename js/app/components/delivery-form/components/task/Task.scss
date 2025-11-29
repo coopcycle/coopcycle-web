@@ -1,0 +1,21 @@
+.task {
+  &__header {
+    display: flex;
+    gap: 1em;
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  &__button {
+    border: none;
+    background-color: #fff;
+  }
+
+  &__body--hidden {
+    display: none;
+  }
+
+  &__footer--hidden {
+    display: none;
+  }
+}

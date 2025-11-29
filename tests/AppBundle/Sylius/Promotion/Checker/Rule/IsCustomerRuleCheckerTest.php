@@ -6,8 +6,7 @@ use AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Sylius\Component\Promotion\Model\PromotionSubjectInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class IsCustomerRuleCheckerTest extends TestCase
@@ -20,10 +19,10 @@ class IsCustomerRuleCheckerTest extends TestCase
 
     public function setUp(): void
     {
-        $this->tokenStorage = $this->prophesize(TokenStorageInterface::class);
+        $this->security = $this->prophesize(Security::class);
 
         $this->ruleChecker = new IsCustomerRuleChecker(
-            $this->tokenStorage->reveal()
+            $this->security->reveal()
         );
     }
 
@@ -46,17 +45,12 @@ class IsCustomerRuleCheckerTest extends TestCase
 
         $user = $this->prophesize(UserInterface::class);
         $user
-            ->getUsername()
+            ->getUserIdentifier()
             ->willReturn('john');
 
-        $token = $this->prophesize(TokenInterface::class);
-        $token
+        $this->security
             ->getUser()
             ->willReturn($user->reveal());
-
-        $this->tokenStorage
-            ->getToken()
-            ->willReturn($token->reveal());
 
         $this->assertTrue($this->ruleChecker->isEligible($order->reveal(), $configuration));
     }
@@ -71,17 +65,12 @@ class IsCustomerRuleCheckerTest extends TestCase
 
         $user = $this->prophesize(UserInterface::class);
         $user
-            ->getUsername()
+            ->getUserIdentifier()
             ->willReturn('jane');
 
-        $token = $this->prophesize(TokenInterface::class);
-        $token
+        $this->security
             ->getUser()
             ->willReturn($user->reveal());
-
-        $this->tokenStorage
-            ->getToken()
-            ->willReturn($token->reveal());
 
         $this->assertFalse($this->ruleChecker->isEligible($order->reveal(), $configuration));
     }

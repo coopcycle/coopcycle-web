@@ -9,12 +9,12 @@ class WarehouseDelete extends Constraint
 {
     public string $mode = 'strict';
 
-    public function validatedBy()
+    public function validatedBy(): string
     {
         return get_class($this).'Validator';
     }
 
-    public function getTargets()
+    public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;
     }

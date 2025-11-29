@@ -3,60 +3,33 @@
 namespace AppBundle\Service;
 
 use AppBundle\Entity\Delivery;
-use AppBundle\Entity\Delivery\PricingRuleSet;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\Exception\ShippingAddressMissingException;
 use AppBundle\Exception\NoAvailableTimeSlotException;
-use AppBundle\Pricing\PriceCalculationVisitor;
 use AppBundle\Security\TokenStoreExtractor;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\OrderTimelineCalculator;
 use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
+/**
+ * Operations on the Delivery entity for both FoodTech and Package Delivery/'LastMile' activities
+ * (don't confuse with (Package Delivery/'LastMile') orders)
+ */
 class DeliveryManager
 {
     public function __construct(
         private readonly DenormalizerInterface $denormalizer,
-        private readonly ExpressionLanguage $expressionLanguage,
         private readonly RoutingInterface $routing,
         private readonly OrderTimeHelper $orderTimeHelper,
         private readonly OrderTimelineCalculator $orderTimelineCalculator,
         private readonly TokenStoreExtractor $storeExtractor,
         private readonly EntityManagerInterface $entityManager,
-        private readonly LoggerInterface $logger = new NullLogger()
     )
     {}
-
-    public function getPrice(Delivery $delivery, ?PricingRuleSet $ruleSet): ?int
-    {
-        // if no Pricing Rules are defined, the default rule is to set the price to 0
-        if (null === $ruleSet) {
-            return 0;
-        }
-
-        $visitor = $this->getPriceCalculation($delivery, $ruleSet);
-        // if the Pricing Rules are configured but none of them matched, the price is null
-        return $visitor->getPrice();
-    }
-
-    public function getPriceCalculation(Delivery $delivery, ?PricingRuleSet $ruleSet): ?PriceCalculationVisitor
-    {
-        // if no Pricing Rules are defined, the default rule is to set the price to 0
-        if (null === $ruleSet) {
-            return null;
-        }
-
-        $visitor = new PriceCalculationVisitor($ruleSet, $this->expressionLanguage, $this->logger);
-        $visitor->visit($delivery);
-        return $visitor;
-    }
 
     public function createFromOrder(OrderInterface $order)
     {
@@ -147,10 +120,7 @@ class DeliveryManager
             }
         }
 
-        $coords = array_map(fn ($task) => $task->getAddress()->getGeo(), $delivery->getTasks());
-        $distance = $this->routing->getDistance(...$coords);
-
-        $delivery->setDistance(ceil($distance));
+        $this->calculateRoute($delivery);
     }
 
     public function createTasksFromRecurrenceRule(Task\RecurrenceRule $recurrenceRule, string $startDate, bool $persist = true): array
@@ -179,6 +149,16 @@ class DeliveryManager
 
             $task->setOrganization($store->getOrganization());
             $task->setRecurrenceRule($recurrenceRule);
+
+            $task->setTags(array_map(function ($tag) {
+                // hotfix for a case when tags are improperly saved as objects instead of slugs
+                // https://github.com/coopcycle/coopcycle/issues/399
+                if (is_array($tag)) { // @phpstan-ignore-line
+                    return $tag['slug'];
+                } else {
+                    return $tag;
+                }
+            }, $task->getTags()));
 
             if ($persist) {
                 $this->entityManager->persist($task);
@@ -210,21 +190,21 @@ class DeliveryManager
         return $delivery;
     }
 
-    public function calculateRoute(TaskCollectionInterface $taskCollection): void
+    public function calculateRoute(Delivery $delivery): void
     {
         $coordinates = [];
-        foreach ($taskCollection->getTasks() as $task) {
+        foreach ($delivery->getTasks('not task.isCancelled()') as $task) {
             $coordinates[] = $task->getAddress()->getGeo();
         }
 
         if (count($coordinates) <= 1) {
-            $taskCollection->setDistance(0);
-            $taskCollection->setDuration(0);
-            $taskCollection->setPolyline('');
+            $delivery->setDistance(0);
+            $delivery->setDuration(0);
+            $delivery->setPolyline('');
         } else {
-            $taskCollection->setDistance($this->routing->getDistance(...$coordinates));
-            $taskCollection->setDuration($this->routing->getDuration(...$coordinates));
-            $taskCollection->setPolyline($this->routing->getPolyline(...$coordinates));
+            $delivery->setDistance($this->routing->getDistance(...$coordinates));
+            $delivery->setDuration($this->routing->getDuration(...$coordinates));
+            $delivery->setPolyline($this->routing->getPolyline(...$coordinates));
         }
     }
 }

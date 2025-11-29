@@ -113,6 +113,11 @@ class NucleosUserBundleUserProvider implements UserProviderInterface, AccountCon
         return $user;
     }
 
+    public function loadUserByIdentifier(string $identifier): UserInterface
+    {
+        return $this->userManager->findUserByUsername($identifier);
+    }
+
     /**
      * {@inheritdoc}
      */

@@ -2,8 +2,9 @@ Feature: Retail prices
 
   Scenario: Get delivery price with JWT for admin user
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -41,17 +42,56 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × Plus de 0.00 km - €4.99",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 499,
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
 
   Scenario: Get delivery price with JWT for dispatcher user
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "dispatcher" is loaded:
@@ -89,17 +129,56 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × Plus de 0.00 km - €4.99",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 499,
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
 
   Scenario: Get delivery price with JWT (without tax)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -137,17 +216,56 @@ Feature: Retail prices
           "amount":83,
           "included": false
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × Plus de 0.00 km - €4.99",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 499,
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
 
   Scenario: Get delivery price with packages (JWT)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -188,17 +306,56 @@ Feature: Retail prices
           "amount":217,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 1299,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × Colis XL - €12.99",
+                    "amount": 1299
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 217
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 1299,
+          "taxTotal": 217,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
 
   Scenario: Get delivery price with packages in task (JWT)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -239,17 +396,146 @@ Feature: Retail prices
           "amount":217,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 1299,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × Colis XL - €12.99",
+                    "amount": 1299
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 217
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 1299,
+          "taxTotal": 217,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
+        "calculation": {"@*@":"@*@"}
+      }
+      """
+
+  Scenario: Get delivery price with packages in task (quantity as string) (JWT)
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | stores.yml          |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/3",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00",
+          "packages": [
+            {"type": "XL", "quantity": "2"}
+          ]
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RetailPrice",
+        "@id":@string@,
+        "@type":"RetailPrice",
+        "amount":1299,
+        "currency":"EUR",
+        "tax":{
+          "amount":217,
+          "included": true
+        },
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 1299,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × Colis XL - €12.99",
+                    "amount": 1299
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 217
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 1299,
+          "taxTotal": 217,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
 
   Scenario: Get delivery price with weight in task (JWT)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -288,17 +574,56 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × Moins de 2.00 kg - €4.99",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 499,
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
 
   Scenario: Get delivery price with latlLng (JWT)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -346,17 +671,56 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × Plus de 0.00 km - €4.99",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 499,
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
 
   Scenario: Get delivery price with geo (JWT)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -404,17 +768,445 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × Plus de 0.00 km - €4.99",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 499,
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
         "calculation": {"@*@":"@*@"}
+      }
+      """
+
+  Scenario: Get delivery price for an admin user with timeSlotUrl and timeSlot range in ISO 8601
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | stores.yml          |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    Given the current time is "2020-04-02 11:00:00"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "timeSlotUrl": "/api/time_slots/1",
+          "timeSlot": "2020-04-02T10:00:00Z/2020-04-02T12:00:00Z"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "timeSlotUrl": "/api/time_slots/1",
+          "timeSlot": "2020-04-02T10:00:00Z/2020-04-02T12:00:00Z"
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RetailPrice",
+        "@id":@string@,
+        "@type":"RetailPrice",
+        "amount":499,
+        "currency":"EUR",
+        "tax":{
+          "amount":83,
+          "included": true
+        },
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × Plus de 0.00 km - €4.99",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 499,
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
+        "calculation": {"@*@":"@*@"}
+      }
+      """
+
+  Scenario: Get delivery price for an admin user with an implicit timeSlot
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | store_w_time_slot_pricing.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    Given the current time is "2020-04-02 11:00:00"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "after": "2020-04-02 12:00",
+          "before": "2020-04-02 14:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "after": "2020-04-02 12:00",
+          "before": "2020-04-02 14:00"
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RetailPrice",
+        "@id":@string@,
+        "@type":"RetailPrice",
+        "amount":699,
+        "currency":"EUR",
+        "tax":{
+          "amount":117,
+          "included": true
+        },
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Point de retrait #1",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Point de retrait #1"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × /api/time_slots/1, taux de retrait - €4.99",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              }
+            },
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Point de dépôt #1",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Point de dépôt #1"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 200,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × Taux de dépôt - €2.00",
+                    "amount": 200
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 33
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 699,
+          "taxTotal": 116,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
+        "calculation": {"@*@":"@*@"}
+      }
+      """
+
+  Scenario: Get delivery price for an admin user with a range not belonging to a timeSlot
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | store_w_time_slot_pricing.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    Given the current time is "2020-04-02 11:00:00"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "after": "2020-04-02 12:10",
+          "before": "2020-04-02 14:10"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "after": "2020-04-02 12:10",
+          "before": "2020-04-02 14:10"
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RetailPrice",
+        "@id":@string@,
+        "@type":"RetailPrice",
+        "amount":200,
+        "currency":"EUR",
+        "tax":{
+          "amount":33,
+          "included": true
+        },
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Point de dépôt #1",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Point de dépôt #1"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 200,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × Taux de dépôt - €2.00",
+                    "amount": 200
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 33
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 200,
+          "taxTotal": 33,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
+        "calculation": {"@*@":"@*@"}
+      }
+      """
+
+  Scenario: Can't get delivery price with invalid timeSlotUrl for admin user
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | stores.yml          |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    Given the current time is "2020-04-02 11:00:00"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "timeSlotUrl": "/api/time_slots/123456",
+          "timeSlot": "2020-04-02T10:00:00Z/2020-04-02T12:00:00Z"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "timeSlotUrl": "/api/time_slots/123456",
+          "timeSlot": "2020-04-02T10:00:00Z/2020-04-02T12:00:00Z"
+        }
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Error",
+        "@type":"hydra:Error",
+        "hydra:title":"An error occurred",
+        "hydra:description": "Item not found for \"/api/time_slots/123456\".",
+        "trace":@array@
+      }
+      """
+
+  Scenario: Can't get delivery price with invalid timeSlot range for admin user
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | stores.yml          |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    Given the current time is "2020-04-02 11:00:00"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "timeSlotUrl": "/api/time_slots/1",
+          "timeSlot": "2020-04-02T10:05:00Z/2020-04-02T12:05:00Z"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "timeSlotUrl": "/api/time_slots/1",
+          "timeSlot": "2020-04-02T10:05:00Z/2020-04-02T12:05:00Z"
+        }
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Error",
+        "@type":"hydra:Error",
+        "hydra:title":"An error occurred",
+        "hydra:description":"task.timeSlot.invalid",
+        "trace":@array@
       }
       """
 
   Scenario: Get delivery price with OAuth
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -448,17 +1240,56 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": null,
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × Plus de 0.00 km - €4.99",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 499,
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
 
   Scenario: Get delivery price with array of tasks
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the setting "latlng" has value "48.856613,2.352222"
@@ -495,9 +1326,47 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": null,
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × Plus de 0.00 km - €4.99",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 499,
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
@@ -505,8 +1374,9 @@ Feature: Retail prices
   Scenario: Get delivery price with multiple dropoffs
     Given the current time is "2021-08-25 09:00:00"
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the setting "latlng" has value "48.856613,2.352222"
@@ -550,17 +1420,56 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": null,
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × Plus de 0.00 km - €4.99",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 499,
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
 
   Scenario: Get delivery price with OAuth (implicit pickup)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the store with name "Acme" has an OAuth client named "Acme"
@@ -590,17 +1499,56 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": null,
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × Plus de 0.00 km - €4.99",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 499,
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
 
   Scenario: Can't calculate a price for another store
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "bob" is loaded:
@@ -624,8 +1572,9 @@ Feature: Retail prices
 
   Scenario: Get delivery price with JWT with explicit store
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "bob" is loaded:
@@ -660,17 +1609,56 @@ Feature: Retail prices
           "amount":83,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 499,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × Plus de 0.00 km - €4.99",
+                    "amount": 499
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 499,
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
 
   Scenario: Get delivery price when there is two packages with the same name in different pricing rule set
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | store_w_package_pricing.yml |
     And the user "admin" is loaded:
       | email      | admin@coopcycle.org |
@@ -710,17 +1698,56 @@ Feature: Retail prices
           "amount":@integer@,
           "included": true
         },
-        "items": [
-          @...@
-        ],
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 699,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × Volume du colis moins de 9 - €6.99",
+                    "amount": 699
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 0%",
+                    "amount": 0
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 699,
+          "taxTotal": 0,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
         "calculation": {"@*@":"@*@"}
       }
       """
 
   Scenario: Can't calculate a price
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
       | stores.yml          |
     And the setting "subject_to_vat" has value "1"
     And the user "admin" is loaded:
@@ -752,7 +1779,491 @@ Feature: Retail prices
         "@context":"/api/contexts/Error",
         "@type":"hydra:Error",
         "hydra:title":"An error occurred",
-        "hydra:description":"delivery.price.error.priceCalculation",
+        "hydra:description":"Le prix de la course n'a pas pu être calculé.",
+        "calculation": {"@*@":"@*@"}
+      }
+      """
+
+  Scenario: Manual supplement validation - supplement without uri
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | store_with_manual_supplements.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00"
+        },
+        "order": {
+          "manualSupplements": [
+            {
+              "quantity": 1
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ConstraintViolationList",
+        "@type":"ConstraintViolationList",
+        "hydra:title":"An error occurred",
+        "hydra:description":"order.manualSupplements[0][pricingRule]: Supplément manuel invalide",
+        "violations":[
+          {
+            "propertyPath":"order.manualSupplements[0][pricingRule]",
+            "message":"Supplément manuel invalide",
+            "code":null
+          }
+        ]
+      }
+      """
+
+  Scenario: Manual supplement validation - supplement not belonging to store's pricing rule set
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | store_with_manual_supplements.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00"
+        },
+        "order": {
+          "manualSupplements": [
+            {
+              "pricingRule": "/api/pricing_rules/5",
+              "quantity": 1
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ConstraintViolationList",
+        "@type":"ConstraintViolationList",
+        "hydra:title":"An error occurred",
+        "hydra:description":@string@,
+        "violations":[
+          {
+            "propertyPath":"order.manualSupplements[0][pricingRule]",
+            "message":@string@,
+            "code":null
+          }
+        ]
+      }
+      """
+    
+  Scenario: Manual supplement validation - supplement with valid uri
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | store_with_manual_supplements.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00"
+        },
+        "order": {
+          "manualSupplements": [
+            {
+              "pricingRule": "/api/pricing_rules/3",
+              "quantity": 1
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RetailPrice",
+        "@id":@string@,
+        "@type":"RetailPrice",
+        "amount":699,
+        "currency":"EUR",
+        "tax":{
+          "amount":117,
+          "included": true
+        },
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 699,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                   {
+                    "label": "1 × Plus de 0.00 km - €4.99",
+                    "amount": 499
+                  }
+                ],
+                "order_item_package_delivery_manual_supplement": [
+                  {
+                    "label": "1 × Express Delivery",
+                    "amount": 200
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 117
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 699,
+          "taxTotal": 117,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
+        "calculation": {"@*@":"@*@"}
+      }
+      """
+
+  Scenario: Manual supplement - range-based (waiting time)
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | store_with_range_supplements.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00"
+        },
+        "order": {
+          "manualSupplements": [
+            {
+              "pricingRule": "/api/pricing_rules/2",
+              "quantity": 15
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    # 499 + 1500 (waiting time: 500 per 5 minutes) = 1999
+      """
+      {
+        "@context":"/api/contexts/RetailPrice",
+        "@id":@string@,
+        "@type":"RetailPrice",
+        "amount":1999,
+        "currency":"EUR",
+        "tax":{
+          "amount":333,
+          "included": true
+        },
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 1999,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                   {
+                    "label": "1 × Plus de 0.00 km - €4.99",
+                    "amount": 499
+                  }
+                ],
+                "order_item_package_delivery_manual_supplement": [
+                  {
+                    "label": "3 × Waiting time supplement",
+                    "amount": 1500
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 333
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 1999,
+          "taxTotal": 333,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
+        "calculation": {"@*@":"@*@"}
+      }
+      """
+    
+  # https://github.com/coopcycle/coopcycle/issues/543
+  Scenario: Bug in 'Price per package' rules - recalculate price with different package quantity
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | sylius_products.yml |
+      | store_with_price_per_packages.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00",
+          "packages": [
+            {"type": "XL", "quantity": 1}
+          ]
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RetailPrice",
+        "@id":@string@,
+        "@type":"RetailPrice",
+        "amount":500,
+        "currency":"EUR",
+        "tax":{
+          "amount":83,
+          "included": true
+        },
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 500,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × Colis XL - price_per_package(packages, \"XL\", 500, 2, 1000)",
+                    "amount": 500
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 83
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 500,
+          "taxTotal": 83,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
+        "calculation": {"@*@":"@*@"}
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/retail_prices/calculate" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "before": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "before": "tomorrow 15:00",
+          "packages": [
+            {"type": "XL", "quantity": 2}
+          ]
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/RetailPrice",
+        "@id":@string@,
+        "@type":"RetailPrice",
+        "amount":1500,
+        "currency":"EUR",
+        "tax":{
+          "amount":250,
+          "included": true
+        },
+        "order": {
+          "@id": @string@,
+          "@type":"Order",
+          "items": [
+            {
+              "@id": @string@,
+              "@type": "OrderItem",
+              "name": "Livraison à la demande",
+              "variantName": "Supplément de commande",
+              "vendor": null,
+              "player": {"@*@":"@*@"},
+              "variant": {
+                "@id": @string@,
+                "@type": "ProductVariant",
+                "code": @string@,
+                "name": "Supplément de commande"
+              },
+              "quantity": 1,
+              "unitPrice": 0,
+              "total": 1500,
+              "adjustments": {
+                "order_item_package_delivery_calculated": [
+                  {
+                    "label": "1 × Colis XL - price_per_package(packages, \"XL\", 500, 2, 1000)",
+                    "amount": 500
+                  },
+                  {
+                    "label": "1 × Colis XL - price_per_package(packages, \"XL\", 500, 2, 1000)",
+                    "amount": 1000
+                  }
+                ],
+                "tax": [
+                  {
+                    "label": "TVA 20%",
+                    "amount": 250
+                  }
+                ]
+              }
+            }
+          ],
+          "total": 1500,
+          "taxTotal": 250,
+          "shippingAddress": {"@*@":"@*@"},
+          "paymentGateway": @string@
+        },
         "calculation": {"@*@":"@*@"}
       }
       """

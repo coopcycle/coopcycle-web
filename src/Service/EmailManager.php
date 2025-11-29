@@ -49,14 +49,14 @@ class EmailManager
 
     private function getFrom(): Address
     {
-        return Address::fromString(
+        return Address::create(
             sprintf('%s <%s>', $this->settingsManager->get('brand_name'), $this->transactionalAddress)
         );
     }
 
     private function getReplyTo(): Address
     {
-        return Address::fromString(
+        return Address::create(
             sprintf('%s <%s>', $this->settingsManager->get('brand_name'), $this->settingsManager->get('administrator_email'))
         );
     }

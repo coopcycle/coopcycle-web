@@ -31,8 +31,8 @@ class RestaurantResolver
     public function __construct(
         private RequestStack $requestStack,
         private LocalBusinessRepository $repository,
-        LoggerInterface $logger = null,
-        LoggingUtils $loggingUtils = null)
+        ?LoggerInterface $logger = null,
+        ?LoggingUtils $loggingUtils = null)
     {
         $this->logger = $logger ?? new NullLogger();
         $this->loggingUtils = $loggingUtils ?? new NullLoggingUtils();

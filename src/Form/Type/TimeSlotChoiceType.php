@@ -47,7 +47,7 @@ class TimeSlotChoiceType extends AbstractType
 
                 return $this->datePeriodFormatter->toHumanReadable($choice->toDatePeriod());
             },
-            'choice_value' => function (TimeSlotChoice $choice = null) {
+            'choice_value' => function (?TimeSlotChoice $choice = null) {
                 return $choice ? (string) $choice : '';
             },
         ]);

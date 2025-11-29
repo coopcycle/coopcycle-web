@@ -3,8 +3,9 @@
 namespace Tests\Behat;
 
 use ACSEO\TypesenseBundle\Manager\CollectionManager;
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\DataType\TsRange;
+use AppBundle\Doctrine\EventSubscriber\MockDateSubscriber;
 use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\ClosingRule;
@@ -16,9 +17,11 @@ use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\ReusablePackagings;
 use AppBundle\Entity\Store;
+use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
+use AppBundle\Fixtures\DatabasePurger;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Entity\Sylius\Product;
@@ -33,23 +36,27 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Testwork\Tester\Result\TestResult;
 use Behat\Testwork\Tester\Result\ExceptionResult;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Faker\Generator as FakerGenerator;
+use Fidry\AliceDataFixtures\Persistence\PurgeMode;
 use Nucleos\UserBundle\Model\UserManager;
 use Nucleos\UserBundle\Util\UserManipulator;
 use PHPUnit\Framework\Assert;
+use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Redis;
 use Stripe\Stripe;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Carbon\Carbon;
 use libphonenumber\PhoneNumberUtil;
 use Fidry\AliceDataFixtures\LoaderInterface;
 use League\Bundle\OAuth2ServerBundle\Model\Client as OAuthClient;
-use League\Bundle\OAuth2ServerBundle\Model\Grant;
-use League\Bundle\OAuth2ServerBundle\Model\Scope;
+use League\Bundle\OAuth2ServerBundle\ValueObject\Grant;
+use League\Bundle\OAuth2ServerBundle\ValueObject\Scope;
 use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use League\OAuth2\Server\AuthorizationServer;
@@ -59,7 +66,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken;
 use Typesense\Exceptions\ObjectNotFound;
-
 
 /**
  * Defines application features from the specific context.
@@ -85,6 +91,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function __construct(
         protected ManagerRegistry $doctrine,
+        protected EntityManagerInterface $entityManager,
+        protected DatabasePurger $databasePurger,
         protected PhoneNumberUtil $phoneNumberUtil,
         protected LoaderInterface $fixturesLoader,
         protected SettingsManager $settingsManager,
@@ -100,7 +108,10 @@ class FeatureContext implements Context, SnippetAcceptingContext
         protected OrderRepository $orderRepository,
         protected KernelInterface $kernel,
         protected UserManager $userManager,
-        protected CollectionManager $typesenseCollectionManager)
+        protected CollectionManager $typesenseCollectionManager,
+        protected MockDateSubscriber $mockDateSubscriber,
+        protected LoggerInterface $logger,
+    )
     {
         $this->tokens = [];
         $this->oAuthTokens = [];
@@ -110,6 +121,15 @@ class FeatureContext implements Context, SnippetAcceptingContext
     protected function getContainer()
     {
         return $this->kernel->getContainer();
+    }
+
+    /**
+     * @BeforeScenario
+     */
+    public function logScenarioName(BeforeScenarioScope $scope)
+    {
+        $scenario = $scope->getScenario();
+        $this->logger->info(sprintf("TestRun: Before test: %s", $scenario->getTitle()));
     }
 
     /**
@@ -129,8 +149,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function clearData()
     {
-        $purger = new ORMPurger($this->doctrine->getManager());
-        $purger->purge();
+        $this->databasePurger->purge();
+        $this->redis->flushDB();
     }
 
     /**
@@ -138,11 +158,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function resetSequences()
     {
-        $connection = $this->doctrine->getConnection();
-        $rows = $connection->fetchAllAssociative('SELECT sequence_name FROM information_schema.sequences');
-        foreach ($rows as $row) {
-            $connection->executeQuery(sprintf('ALTER SEQUENCE %s RESTART WITH 1', $row['sequence_name']));
-        }
+        $this->databasePurger->resetSequences();
     }
 
     /**
@@ -157,17 +173,12 @@ class FeatureContext implements Context, SnippetAcceptingContext
     /**
      * @BeforeScenario
      */
-    public function createChannels()
+    public function setupMandatoryEntities()
     {
-        $this->theFixturesFileIsLoaded('sylius_channels.yml');
-    }
-
-    /**
-     * @BeforeScenario
-     */
-    public function createMandatorySettings()
-    {
-        $this->theSettingHasValue('latlng', '48.856613,2.352222');
+        $this->fixturesLoader->load([
+            __DIR__.'/../../fixtures/ORM/settings_mandatory.yml',
+            __DIR__.'/../../fixtures/ORM/sylius_channels.yml'
+        ], $_SERVER, [], PurgeMode::createNoPurgeMode());
     }
 
     /**
@@ -224,9 +235,12 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theFixturesFileIsLoaded($filename)
     {
-        $this->fixturesLoader->load([
-            __DIR__.'/../../features/fixtures/ORM/'.$filename
-        ]);
+        $filename = $this->transformFixtureFilename($filename);
+
+        $this->fixturesLoader->load([ $filename ], $_SERVER, [], PurgeMode::createNoPurgeMode());
+
+        // Flush changes made by custom processors
+        $this->entityManager->flush();
     }
 
     /**
@@ -235,10 +249,48 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function theFixturesFilesAreLoaded(TableNode $table)
     {
         $filenames = array_map(function (array $row) {
-            return __DIR__.'/../../features/fixtures/ORM/'.current($row);
+            return $this->transformFixtureFilename(current($row));
         }, $table->getRows());
 
-        $this->fixturesLoader->load($filenames);
+        $this->fixturesLoader->load($filenames, $_SERVER, [], PurgeMode::createNoPurgeMode());
+
+        // Flush changes made by custom processors
+        $this->entityManager->flush();
+    }
+
+    /**
+     * @Given the fixtures file :filename is loaded with purge
+     */
+    public function theFixturesFileIsLoadedWithPurge($filename)
+    {
+        $filename = $this->transformFixtureFilename($filename);
+
+        $this->fixturesLoader->load([ $filename ], $_SERVER);
+
+        // Flush changes made by custom processors
+        $this->entityManager->flush();
+    }
+
+    /**
+     * @Given the fixtures files are loaded with purge:
+     */
+    public function theFixturesFilesAreLoadedWithPurge(TableNode $table)
+    {
+        $filenames = array_map(function (array $row) {
+            return $this->transformFixtureFilename(current($row));
+        }, $table->getRows());
+
+        $this->fixturesLoader->load($filenames, $_SERVER);
+
+        // Flush changes made by custom processors
+        $this->entityManager->flush();
+    }
+
+    private function transformFixtureFilename($filename)
+    {
+        $dir = __DIR__.'/../../fixtures/ORM/';
+
+        return $dir . $filename;
     }
 
     /**
@@ -259,6 +311,11 @@ class FeatureContext implements Context, SnippetAcceptingContext
         Carbon::setTestNow(Carbon::parse($datetime));
 
         $this->redis->set('datetime:now', Carbon::now()->toAtomString());
+
+        // Mock createdAt and updatedAt fields in the database
+        $this->entityManager->getEventManager()->addEventSubscriber(
+            $this->mockDateSubscriber
+        );
     }
 
     /**
@@ -267,6 +324,24 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function enableMaintenance()
     {
         $this->redis->set('maintenance', '1');
+    }
+
+    /**
+     * @Given the async messages are consumed
+     * @Given the async messages are consumed with time limit :timeLimit seconds
+     */
+    public function theAsyncMessagesAreConsumed(int $timeLimit = 5)
+    {
+        $application = new Application($this->kernel);
+        $application->setAutoExit(false);
+
+        $command = $application->find('messenger:consume');
+        $commandTester = new CommandTester($command);
+
+        $commandTester->execute([
+            'receivers' => ['async'],
+            '--time-limit' => $timeLimit,
+        ]);
     }
 
     private function createUser($username, $email, $password, array $data = [])
@@ -441,7 +516,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     /**
      * @When I send an authenticated :method request to :url
      */
-    public function iSendAnAuthenticatedRequestTo($method, $url, PyStringNode $body = null)
+    public function iSendAnAuthenticatedRequestTo($method, $url, ?PyStringNode $body = null)
     {
         $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->jwt);
         $this->restContext->iSendARequestTo($method, $url, $body);
@@ -663,7 +738,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     /**
      * FIXME Too complicated, too low level
      */
-    private function createRandomOrder(LocalBusiness $restaurant, UserInterface $user, \DateTime $shippedAt = null)
+    private function createRandomOrder(LocalBusiness $restaurant, UserInterface $user, ?\DateTime $shippedAt = null)
     {
         $order = $this->getContainer()->get('sylius.factory.order')
             ->createForRestaurant($restaurant);
@@ -941,7 +1016,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $jwtEncoder = $this->getContainer()->get('lexik_jwt_authentication.encoder');
 
         $payload = [
-            'sub' => $this->iriConverter->getIriFromItem($cart, \ApiPlatform\Core\Api\UrlGeneratorInterface::ABS_URL),
+            'sub' => $this->iriConverter->getIriFromResource($cart, \ApiPlatform\Api\UrlGeneratorInterface::ABS_URL),
         ];
         $this->jwt = $jwtEncoder->encode($payload);
     }
@@ -957,7 +1032,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $jwtEncoder = $this->getContainer()->get('lexik_jwt_authentication.encoder');
 
         $payload = [
-            'sub' => $this->iriConverter->getIriFromItem($cart, \ApiPlatform\Core\Api\UrlGeneratorInterface::ABS_URL),
+            'sub' => $this->iriConverter->getIriFromResource($cart, \ApiPlatform\Api\UrlGeneratorInterface::ABS_URL),
             'exp' => time() - (60 * 60),
         ];
         $this->jwt = $jwtEncoder->encode($payload);
@@ -998,7 +1073,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $jwtEncoder = $this->getContainer()->get('lexik_jwt_authentication.encoder');
 
         $payload = [
-            'sub' => $this->iriConverter->getIriFromItem($cart, \ApiPlatform\Core\Api\UrlGeneratorInterface::ABS_URL),
+            'sub' => $this->iriConverter->getIriFromResource($cart, \ApiPlatform\Api\UrlGeneratorInterface::ABS_URL),
         ];
 
         $this->restContext->iAddHeaderEqualTo($headerName, sprintf('Bearer %s', $jwtEncoder->encode($payload)));
@@ -1205,7 +1280,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theZoneFileIsLoaded($filename)
     {
-        $filePath = __DIR__.'/../../features/fixtures/'.$filename.'.geojson';
+        $filePath = __DIR__.'/../../fixtures/'.$filename.'.geojson';
 
         $contents = file_get_contents($filePath);
 
@@ -1296,5 +1371,29 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $store->setDefaultCourier($user);
 
         $this->doctrine->getManagerForClass(Store::class)->flush();
+    }
+
+    /**
+     * @Then the database should contain an order with a total price :price
+     */
+    public function theDatabaseShouldContainAnOrderWithATotalPrice($price)
+    {
+        $order = $this->doctrine->getRepository(Order::class)->findOneBy(['total' => $price]);
+
+        if (null === $order) {
+            Assert::fail(sprintf('No order found with total price %s', $price));
+        }
+    }
+
+    /**
+     * @Then the database entity :className should have a property :fieldName with value :value
+     */
+    public function theDatabaseEntityShouldHaveAPropertyWithValue($className, $fieldName, $value)
+    {
+        $object = $this->doctrine->getRepository($className)->findOneBy([$fieldName => $value]);
+
+        if (null === $object) {
+            Assert::fail(sprintf('No %s found with %s = %s', $className, $fieldName, $value));
+        }
     }
 }

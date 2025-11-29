@@ -6,7 +6,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\Group as TaskGroup;
 use AppBundle\Serializer\TaskNormalizer as BaseTaskNormalizer;
 use AppBundle\Sylius\Order\AdjustmentInterface;
-use ApiPlatform\Core\Serializer\ItemNormalizer;
+use ApiPlatform\Serializer\ItemNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -38,7 +38,7 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
             $data = [ $data ];
         }
 
-        return array_map(function ($item) use ($context) {
+        $tasks = array_map(function ($item) use ($context) {
 
             // This is needed, because CsvDecoder will transform empty rows to empty strings,
             // causing the error "The string supplied did not seem to be a phone number."
@@ -52,10 +52,26 @@ class TaskNormalizer implements NormalizerInterface, DenormalizerInterface
 
             return $this->normalizer->denormalize($item, Task::class, 'jsonld', $context);
         }, $data);
+
+        $group = new TaskGroup();
+        $group->setName(sprintf('Import %s', date('d/m H:i')));
+
+        foreach ($tasks as $task) {
+            $group->addTask($task);
+        }
+
+        return $group;
     }
 
     public function supportsDenormalization($data, $type, $format = null)
     {
         return TaskGroup::class === $type && 'csv' === $format;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return $format === 'csv' ? [
+            TaskGroup::class => true, // supports*() call result is cached
+        ] : [];
     }
 }

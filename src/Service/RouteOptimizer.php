@@ -2,7 +2,7 @@
 
 namespace AppBundle\Service;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
@@ -120,13 +120,13 @@ class RouteOptimizer
                     $routingProblem->addShipment(Delivery::toVroomShipment(
                         $delivery,
                         $task,
-                        $this->iriConverter->getItemIriFromResourceClass(Task::class, ['id' => $delivery->getPickup()->getId()]),
-                        $this->iriConverter->getItemIriFromResourceClass(Task::class, ['id' => $task->getId()])
+                        $this->iriConverter->getIriFromResource(Task::class, context: ['uri_variables' => ['id' => $delivery->getPickup()->getId()]]),
+                        $this->iriConverter->getIriFromResource(Task::class, context: ['uri_variables' => ['id' => $task->getId()]])
                     ));
                 } else if (null == $task->getDelivery()) {
                     $routingProblem->addJob(Task::toVroomJob(
                         $task,
-                        $this->iriConverter->getItemIriFromResourceClass(Task::class, ['id' => $task->getId()])
+                        $this->iriConverter->getIriFromResource(Task::class, context: ['uri_variables' => ['id' => $task->getId()]])
                     ));
                 }
             }
@@ -136,7 +136,7 @@ class RouteOptimizer
             if (count($tour->getTasks())) {
                 $vroomStep = Tour::toVroomStep(
                     $tour,
-                    $this->iriConverter->getItemIriFromResourceClass(Tour::class, ['id' => $tour->getId()])
+                    $this->iriConverter->getIriFromResource(Tour::class, context: ['uri_variables' => ['id' => $tour->getId()]])
                 );
                 $routingProblem->addJob($vroomStep);
             }

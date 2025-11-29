@@ -71,6 +71,7 @@ class RestaurantType extends LocalBusinessType
                 'with_description' => false,
                 'label' => false,
                 'help' => 'localBusiness.form.business_address.help',
+                'required' => false,
             ])
             ;
 
@@ -190,6 +191,13 @@ class RestaurantType extends LocalBusinessType
                             'mapped' => false,
                             'data' => 'paygreen' === $restaurant->getPaymentGateway(),
                             'disabled' => empty($restaurant->getPaygreenShopId()),
+                        ]);
+                    }
+
+                    if ($this->gatewayResolver->supports('pawapay')) {
+                        $form->add('pawapayEnabled', CheckboxType::class, [
+                            'label' => 'restaurant.form.pawapay_enabled.label',
+                            'required' => false,
                         ]);
                     }
 

@@ -28,10 +28,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -151,7 +150,7 @@ class UserController extends AbstractController
         $avatar
             ->create($username)
             ->setBackground($colorHash->hex($username))
-            ->save($dir . "${username}.png");
+            ->save($dir . "{$username}.png");
 
         list($type, $data) = explode(';', (string) $avatar->toBase64());
         list(, $data)      = explode(',', $data);
@@ -164,14 +163,14 @@ class UserController extends AbstractController
     }
 
     #[Route(path: '/register/resend-email', name: 'register_resend_email', methods: ['POST'])]
-    public function resendRegistrationEmailAction(Request $request, UserManagerInterface $userManager, RegistrationMailer $mailer, SessionInterface $session)
+    public function resendRegistrationEmailAction(Request $request, UserManagerInterface $userManager, RegistrationMailer $mailer)
     {
         if ($request->request->has('email')) {
             $email = $request->request->get('email');
             $user = $userManager->findUserByEmail($email);
             if ($user !== null) {
                 $mailer->sendConfirmationEmailMessage($user);
-                $session->set('fos_user_send_confirmation_email/email', $email);
+                $request->getSession()->set('fos_user_send_confirmation_email/email', $email);
                 return $this->redirectToRoute('nucleos_profile_registration_check_email');
             }
         }
@@ -188,7 +187,7 @@ class UserController extends AbstractController
         Security $security,
         TokenGeneratorInterface $tokenGenerator)
     {
-        $repository = $this->getDoctrine()->getRepository(Invitation::class);
+        $repository = $objectManager->getRepository(Invitation::class);
 
         if (null === $invitation = $repository->findOneByCode($code)) {
             throw $this->createNotFoundException();

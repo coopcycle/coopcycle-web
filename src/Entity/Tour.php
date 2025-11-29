@@ -2,10 +2,16 @@
 
 namespace AppBundle\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Api\Dto\TourInput;
+use AppBundle\Api\State\TourProcessor;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -15,8 +21,26 @@ use AppBundle\Entity\TaskList\Item;
 use AppBundle\Vroom\Job as VroomJob;
 use AppBundle\Vroom\Shipment as VroomShipment;
 
-#[ApiResource(collectionOperations: ['get' => ['method' => 'GET', 'access_control' => "is_granted('ROLE_DISPATCHER')", 'pagination_enabled' => false], 'post' => ['method' => 'POST', 'input' => TourInput::class, 'security' => "is_granted('ROLE_DISPATCHER')"]], itemOperations: ['get' => ['method' => 'GET', 'security' => "is_granted('ROLE_DISPATCHER')"], 'put' => ['method' => 'PUT', 'input' => TourInput::class, 'security' => "is_granted('ROLE_DISPATCHER')"], 'delete' => ['method' => 'DELETE', 'security' => "is_granted('ROLE_DISPATCHER')"]], attributes: ['denormalization_context' => ['groups' => ['tour']], 'normalization_context' => ['groups' => ['task_collection', 'tour']]])]
-#[ApiFilter(DateFilter::class, properties: ['date'])]
+#[ApiResource(
+    operations: [
+        new Get(security: 'is_granted(\'ROLE_DISPATCHER\')'),
+        new Put(
+            security: 'is_granted(\'ROLE_DISPATCHER\')',
+            input: TourInput::class,
+            processor: TourProcessor::class
+        ),
+        new Delete(security: 'is_granted(\'ROLE_DISPATCHER\')'),
+        new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\')', paginationEnabled: false),
+        new Post(
+            security: 'is_granted(\'ROLE_DISPATCHER\')',
+            input: TourInput::class,
+            processor: TourProcessor::class
+        )
+    ],
+    normalizationContext: ['groups' => ['task_collection', 'tour']],
+    denormalizationContext: ['groups' => ['tour']]
+)]
+#[ApiFilter(filterClass: DateFilter::class, properties: ['date'])]
 class Tour extends TaskCollection implements TaskCollectionInterface
 {
     private $date;

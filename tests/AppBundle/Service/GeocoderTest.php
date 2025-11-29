@@ -34,8 +34,10 @@ class GeocoderTest extends TestCase
         $this->geocoder = new Geocoder(
             $this->rateLimiterStore->reveal(),
             $this->settingsManager->reveal(),
-            '', '', 'fr', 'fr', 1,
-            $this->rateLimiterStore->reveal()
+            '', '',
+            'fr', 'fr',
+            1, $this->rateLimiterStore->reveal(),
+            'test',
         );
         $this->geocoder->setGeocoder($this->innerGeocoder->reveal());
     }

@@ -4,6 +4,8 @@ namespace AppBundle\Functional;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Delivery\PricingRule;
+use AppBundle\ExpressionLanguage\DeliveryExpressionLanguageVisitor;
+use AppBundle\ExpressionLanguage\PriceEvaluation;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -28,6 +30,25 @@ class CoursiersBordelaisTest extends TestCase
             self::createPricingRule('vehicle == "cargo_bike" and distance in 5000..8000', '21.00'),
             self::createPricingRule('vehicle == "cargo_bike" and distance > 8000', '21.00 + (ceil((distance - 8000) / 1000) * 5.00)'),
         ];
+    }
+
+    private function apply(PricingRule $rule, array $values, ?ExpressionLanguage $language = null): int
+    {
+        $result = $rule->apply($values, $language);
+
+        $total = 0;
+
+        if (is_array($result)) {
+            foreach ($result as $item) {
+                $total += $item->unitPrice * $item->quantity;
+            }
+        } elseif ($result instanceof PriceEvaluation) {
+            $total = $result->unitPrice * $result->quantity;
+        } else {
+            $total = $result;
+        }
+
+        return $total;
     }
 
     private static function createPricingRule($expression, $price): PricingRule
@@ -70,11 +91,11 @@ class CoursiersBordelaisTest extends TestCase
     {
         $expressionLanguage = new ExpressionLanguage();
         $expressionLanguage->addFunction(ExpressionFunction::fromPhp('ceil'));
+        $deliveryExpressionLanguageVisitor = new DeliveryExpressionLanguageVisitor();
 
         foreach ($this->pricingRules as $pricingRule) {
-            if ($pricingRule->matches(Delivery::toExpressionLanguageValues($delivery), $expressionLanguage)) {
-                $productOption = $pricingRule->apply(Delivery::toExpressionLanguageValues($delivery), $expressionLanguage);
-                $this->assertEquals($expectedPrice, $productOption->getPriceAdditive());
+            if ($pricingRule->matches($deliveryExpressionLanguageVisitor->toExpressionLanguageValues($delivery), $expressionLanguage)) {
+                $this->assertEquals($expectedPrice, $this->apply($pricingRule, $deliveryExpressionLanguageVisitor->toExpressionLanguageValues($delivery), $expressionLanguage));
             }
         }
     }

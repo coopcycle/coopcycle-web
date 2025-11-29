@@ -2,7 +2,7 @@
 
 namespace AppBundle\Serializer\Json;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use Sylius\Component\Order\Model\OrderItemInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -33,6 +33,8 @@ class OrderItemNormalizer implements NormalizerInterface, DenormalizerInterface
 
         $adjustmentTypes = [
             AdjustmentInterface::MENU_ITEM_MODIFIER_ADJUSTMENT,
+            AdjustmentInterface::ORDER_ITEM_PACKAGE_DELIVERY_CALCULATED_ADJUSTMENT,
+            AdjustmentInterface::ORDER_ITEM_PACKAGE_DELIVERY_MANUAL_SUPPLEMENT_ADJUSTMENT,
             AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT,
             AdjustmentInterface::TAX_ADJUSTMENT,
         ];
@@ -47,9 +49,6 @@ class OrderItemNormalizer implements NormalizerInterface, DenormalizerInterface
             $adjustmentsByType[$adjustmentType] = array_map(function ($adj) {
 
                 return [
-                    // FIXME
-                    // Actually, we don't need the id to be serialized
-                    'id' => $adj['@id'],
                     'label' => $adj['label'],
                     'amount' => $adj['amount'],
                 ];
@@ -67,7 +66,7 @@ class OrderItemNormalizer implements NormalizerInterface, DenormalizerInterface
 
         if ($restaurant) {
             $data['vendor'] = [
-                '@id' => $this->iriConverter->getIriFromItem($restaurant),
+                '@id' => $this->iriConverter->getIriFromResource($restaurant),
                 'name' => $restaurant->getName(),
             ];
         } else {
@@ -91,5 +90,12 @@ class OrderItemNormalizer implements NormalizerInterface, DenormalizerInterface
     public function supportsDenormalization($data, $type, $format = null)
     {
         return false;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            OrderItemInterface::class => true, // supports*() call result is cached
+        ];
     }
 }

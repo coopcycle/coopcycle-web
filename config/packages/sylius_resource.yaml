@@ -43,9 +43,13 @@ sylius_product:
         product_variant:
             classes:
                 model: AppBundle\Entity\Sylius\ProductVariant
+            translation:
+                classes:
+                    model: AppBundle\Entity\Sylius\ProductVariantTranslation
         product_option:
             classes:
                 model: AppBundle\Entity\Sylius\ProductOption
+                repository: AppBundle\Entity\Sylius\ProductOptionRepository
         product_option_value:
             classes:
                 model: AppBundle\Entity\Sylius\ProductOptionValue
@@ -71,6 +75,9 @@ sylius_currency:
 
 sylius_promotion:
     resources:
+        promotion:
+            classes:
+                model: AppBundle\Entity\Sylius\Promotion
         promotion_subject:
             classes:
                 model: AppBundle\Entity\Sylius\Order

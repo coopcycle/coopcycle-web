@@ -2,137 +2,200 @@
 
 namespace AppBundle\Entity;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Metadata\Link;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Delivery\Cancel as CancelDelivery;
-use AppBundle\Action\Delivery\Create as CreateDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
-use AppBundle\Action\Delivery\Edit as EditDelivery;
 use AppBundle\Action\Delivery\BulkAsync as BulkAsyncDelivery;
+use AppBundle\Action\Delivery\PODExport as PODExportDelivery;
 use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
-use AppBundle\Api\Dto\DeliveryInput;
+use AppBundle\Api\Dto\DeliveryFromTasksInput;
+use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\OptimizationSuggestions;
 use AppBundle\Api\Filter\DeliveryOrderFilter;
+use AppBundle\Api\Filter\DeliveryTaskDateFilter;
+use AppBundle\Api\State\DeliveryCreateOrUpdateProcessor;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Edifact\EDIFACTMessageAwareTrait;
 use AppBundle\Entity\Package\PackagesAwareInterface;
 use AppBundle\Entity\Package\PackagesAwareTrait;
 use AppBundle\Entity\Package\PackageWithQuantity;
-use AppBundle\Entity\Sylius\ArbitraryPrice;
-use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
-use AppBundle\ExpressionLanguage\PackagesResolver;
+use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Validator\Constraints\CheckDelivery as AssertCheckDelivery;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use AppBundle\Vroom\Shipment as VroomShipment;
+use DeliveryPODExportInput;
 use Doctrine\Common\Collections\ArrayCollection;
-use Sylius\Component\Order\Model\OrderInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @see http://schema.org/ParcelDelivery Documentation on Schema.org
  */
 #[ApiResource(
-    collectionOperations: [
-        'post' => [
-            'method' => 'POST',
-            'denormalization_context' => ['groups' => ['delivery_create']],
-            'controller' => CreateDelivery::class,
-            'openapi_context' => ['parameters' => Delivery::OPENAPI_CONTEXT_POST_PARAMETERS],
-            'input_formats' => ['jsonld' => ['application/ld+json']],
-            'security_post_denormalize' => "is_granted('create', object)"
-        ],
-        'check' => [
-            'method' => 'POST',
-            'path' => '/deliveries/assert',
-            'write' => false,
-            'status' => 200,
-            'validation_groups' => ['Default', 'delivery_check'],
-            'denormalization_context' => ['groups' => ['delivery_create']],
-            'security_post_denormalize' => "is_granted('create', object)",
-            'openapi_context' => [
+    types: ['http://schema.org/ParcelDelivery'],
+    operations: [
+        new Get(security: 'is_granted(\'view\', object)'),
+        new Put(
+            denormalizationContext: ['groups' => ['delivery_create']],
+            security: 'is_granted(\'edit\', object)',
+            input: DeliveryInputDto::class,
+            output: Delivery::class,
+            processor: DeliveryCreateOrUpdateProcessor::class
+        ),
+        new Put(
+            uriTemplate: '/deliveries/{id}/pick',
+            controller: PickDelivery::class,
+            openapiContext: ['summary' => 'Marks a Delivery as picked'],
+            security: 'is_granted(\'edit\', object)'
+        ),
+        new Put(
+            uriTemplate: '/deliveries/{id}/drop',
+            controller: DropDelivery::class,
+            openapiContext: ['summary' => 'Marks a Delivery as dropped'],
+            security: 'is_granted(\'edit\', object)'
+        ),
+        new Delete(
+            controller: CancelDelivery::class,
+            openapiContext: ['summary' => 'Cancels a Delivery'],
+            security: 'is_granted(\'edit\', object)',
+            write: false,
+            name: 'cancel'
+        ),
+        new Post(
+            inputFormats: ['jsonld' => ['application/ld+json']],
+            openapiContext: [
+                'parameters' => [
+                    [
+                        'name' => 'delivery',
+                        'in' => 'body',
+                        'schema' => [
+                            'type' => 'object',
+                            'required' => ['dropoff'],
+                            'properties' => [
+                                'dropoff' => ['$ref' => '#/definitions/Task-task_create'],
+                                'pickup' => ['$ref' => '#/definitions/Task-task_create']
+                            ]
+                        ],
+                        'style' => 'form'
+                    ]
+                ]
+            ],
+            denormalizationContext: ['groups' => ['delivery_create']],
+            securityPostDenormalize: 'is_granted(\'create\', object)',
+            input: DeliveryInputDto::class,
+            output: Delivery::class,
+            processor: DeliveryCreateOrUpdateProcessor::class
+        ),
+        new Post(
+            uriTemplate: '/deliveries/assert',
+            status: 200,
+            openapiContext: [
                 'summary' => 'Asserts a Delivery is feasible',
-                'parameters' => Delivery::OPENAPI_CONTEXT_POST_PARAMETERS
-            ]
-        ],
-        'from_tasks' => [
-            'method' => 'POST',
-            'path' => '/deliveries/from_tasks',
-            'input' => DeliveryInput::class,
-            'denormalization_context' => ['groups' => ['delivery_create_from_tasks']],
-            'security' => "is_granted('ROLE_ADMIN')"
-        ],
-        'suggest_optimizations' => [
-            'method' => 'POST',
-            'path' => '/deliveries/suggest_optimizations',
-            'write' => false,
-            'status' => 200,
-            'controller' => SuggestOptimizationsController::class,
-            'output' => OptimizationSuggestions::class,
-            'denormalization_context' => ['groups' => ['delivery_create']],
-            'normalization_context' => ['groups' => ['optimization_suggestions'], 'api_sub_level' => true],
-            'security_post_denormalize' => "is_granted('create', object)",
-            'openapi_context' => [
+                'parameters' => [
+                    [
+                        'name' => 'delivery',
+                        'in' => 'body',
+                        'schema' => [
+                            'type' => 'object',
+                            'required' => ['dropoff'],
+                            'properties' => [
+                                'dropoff' => ['$ref' => '#/definitions/Task-task_create'],
+                                'pickup' => ['$ref' => '#/definitions/Task-task_create']
+                            ]
+                        ],
+                        'style' => 'form'
+                    ]
+                ]
+            ],
+            denormalizationContext: ['groups' => ['delivery_create']],
+            securityPostDenormalize: 'is_granted(\'create\', object)',
+            validationContext: ['groups' => ['Default', 'delivery_check']],
+            write: false
+        ),
+        new Post(
+            uriTemplate: '/deliveries/from_tasks',
+            denormalizationContext: ['groups' => ['delivery_create_from_tasks']],
+            security: 'is_granted(\'ROLE_ADMIN\')',
+            input: DeliveryFromTasksInput::class,
+            output: Delivery::class,
+            processor: DeliveryCreateOrUpdateProcessor::class
+        ),
+        new Post(
+            uriTemplate: '/deliveries/suggest_optimizations',
+            types: ['OptimizationSuggestions'],
+            status: 200,
+            controller: SuggestOptimizationsController::class,
+            openapiContext: [
                 'summary' => 'Suggests optimizations for a delivery',
-                'parameters' => Delivery::OPENAPI_CONTEXT_POST_PARAMETERS
-            ]
-        ],
-        'deliveries_import_async' => [
-            'method' => 'POST',
-            'path' => '/deliveries/import_async',
-            'deserialize' => false,
-            'input_formats' => ['csv' => ['text/csv']],
-            'controller' => BulkAsyncDelivery::class,
-            'security' => "is_granted('ROLE_OAUTH2_DELIVERIES')"
-        ]
+                'parameters' => [
+                    [
+                        'name' => 'delivery',
+                        'in' => 'body',
+                        'schema' => [
+                            'type' => 'object',
+                            'required' => ['dropoff'],
+                            'properties' => [
+                                'dropoff' => ['$ref' => '#/definitions/Task-task_create'],
+                                'pickup' => ['$ref' => '#/definitions/Task-task_create']
+                            ]
+                        ],
+                        'style' => 'form'
+                    ]
+                ]
+            ],
+            normalizationContext: [
+                'groups' => ['optimization_suggestions'],
+                'api_sub_level' => true
+            ],
+            denormalizationContext: ['groups' => ['delivery_create']],
+            securityPostDenormalize: 'is_granted(\'create\', object)',
+            output: OptimizationSuggestions::class,
+            write: false,
+        ),
+        new Post(
+            uriTemplate: '/deliveries/import_async',
+            inputFormats: ['csv' => ['text/csv']],
+            controller: BulkAsyncDelivery::class,
+            security: 'is_granted(\'ROLE_OAUTH2_DELIVERIES\')',
+            deserialize: false
+        ),
+        new Post(
+            uriTemplate: '/deliveries/pod_export',
+            controller: PODExportDelivery::class,
+            /* input: DeliveryPODExportInput::class, */
+            write: false,
+            deserialize: false
+        )
     ],
-    iri: 'http://schema.org/ParcelDelivery',
-    itemOperations: [
-        'get' => [
-            'method' => 'GET',
-            'security' => "is_granted('view', object)"
-        ],
-        'put' => [
-            'method' => 'PUT',
-            'controller' => EditDelivery::class,
-            'security' => "is_granted('edit', object)",
-            'denormalization_context' => ['groups' => ['delivery_create']]
-        ],
-        'pick' => [
-            'method' => 'PUT',
-            'path' => '/deliveries/{id}/pick',
-            'controller' => PickDelivery::class,
-            'security' => "is_granted('edit', object)",
-            'openapi_context' => ['summary' => 'Marks a Delivery as picked']
-        ],
-        'drop' => [
-            'method' => 'PUT',
-            'path' => '/deliveries/{id}/drop',
-            'controller' => DropDelivery::class,
-            'security' => "is_granted('edit', object)",
-            'openapi_context' => ['summary' => 'Marks a Delivery as dropped']
-        ],
-        'cancel' => [
-            'method' => 'DELETE',
-            'controller' => CancelDelivery::class,
-            'write' => false,
-            'security' => "is_granted('edit', object)",
-            'openapi_context' => ['summary' => 'Cancels a Delivery']
-        ]
-    ],
-    attributes: [
-        'order' => ['createdAt' => 'DESC'],
-        'denormalization_context' => ['groups' => ['order_create']],
-        'normalization_context' => ['groups' => ['delivery', 'address']],
-        'pagination_items_per_page' => 15
-    ]
+    normalizationContext: ['groups' => ['delivery', 'address', 'package_delivery_order_minimal']],
+    denormalizationContext: ['groups' => ['order_create']],
+    order: ['createdAt' => 'DESC'],
+    paginationItemsPerPage: 15
 )]
-#[ApiFilter(OrderFilter::class, properties: ['createdAt'])]
-#[ApiFilter(DeliveryOrderFilter::class, properties: ['dropoff.before'])]
 #[AssertDelivery]
 #[AssertCheckDelivery(groups: ['delivery_check'])]
+#[ApiFilter(filterClass: OrderFilter::class, properties: ['createdAt'])]
+#[ApiFilter(filterClass: DeliveryOrderFilter::class, properties: ['dropoff.before'])]
+#[ApiFilter(filterClass: DeliveryTaskDateFilter::class)]
+#[ApiResource(
+    uriTemplate: '/stores/{id}/deliveries',
+    types: ['http://schema.org/ParcelDelivery'],
+    operations: [new GetCollection()],
+    uriVariables: [
+        'id' => new Link(fromClass: Store::class, toProperty: 'store')
+    ],
+    normalizationContext: ['groups' => ['delivery', 'address', 'package_delivery_order_minimal']],
+    security: "is_granted('edit', request)"
+)]
 class Delivery extends TaskCollection implements TaskCollectionInterface, PackagesAwareInterface
 {
     use PackagesAwareTrait;
@@ -144,32 +207,18 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     #[Groups(['delivery'])]
     protected $id;
 
+    #[Groups(['package_delivery_order_minimal'])]
     private $order;
 
     private $vehicle = self::VEHICLE_BIKE;
 
-    #[Groups(['delivery_create', 'pricing_deliveries'])]
-    private $store;
+    public const TYPE_SIMPLE = 'simple';
+    public const TYPE_MULTI_DROPOFF = 'multi_dropoff';
+    public const TYPE_MULTI_PICKUP = 'multi_pickup';
+    public const TYPE_MULTI_MULTI = 'multi_multi';
 
-    /**
-     * @var ?ArbitraryPrice
-     */
     #[Groups(['delivery_create'])]
-    private $arbitraryPrice;
-
-    const OPENAPI_CONTEXT_POST_PARAMETERS = [[
-        "name" => "delivery",
-        "in" => "body",
-        "schema" => [
-            "type" => "object",
-            "required" => ["dropoff"],
-            "properties" => [
-                "dropoff" => ['$ref' => '#/definitions/Task-task_create'],
-                "pickup" => ['$ref' => '#/definitions/Task-task_create'],
-            ]
-        ],
-        "style" => "form"
-    ]];
+    private $store;
 
     public function __construct()
     {
@@ -190,6 +239,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         $this->addTask($dropoff);
 
         $this->packages = new ArrayCollection();
+        $this->edifactMessages = new ArrayCollection();
     }
 
     public function addTask(Task $task, $position = null)
@@ -204,7 +254,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     }
 
 
-    public function getOrder()
+    public function getOrder(): ?OrderInterface
     {
         return $this->order;
     }
@@ -219,7 +269,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     public function getWeight()
     {
         $totalWeight = null;
-        foreach ($this->getTasks() as $task) {
+        foreach ($this->getTasks('not task.isCancelled()') as $task) {
             if (null !== $task->getWeight()) {
                 $totalWeight += $task->getWeight();
             }
@@ -265,7 +315,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     public function getPickup()
     {
         foreach ($this->getTasks() as $task) {
-            if ($task->getType() === Task::TYPE_PICKUP) {
+            if ($task->isPickup()) {
                 return $task;
             }
         }
@@ -281,13 +331,13 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     {
         if (count($this->getTasks()) > 2) {
             foreach (array_reverse($this->getTasks()) as $task) {
-                if ($task->getType() === Task::TYPE_DROPOFF) {
+                if ($task->isDropoff()) {
                     return $task;
                 }
             }
         } else {
             foreach ($this->getTasks() as $task) {
-                if ($task->getType() === Task::TYPE_DROPOFF) {
+                if ($task->isDropoff()) {
                     return $task;
                 }
             }
@@ -337,17 +387,29 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
         if (count($tasks) > 2) {
 
-            $pickup = array_shift($tasks);
+            $pickups  = array_values(array_filter($tasks, fn($t) => $t->isPickup()));
+            $dropoffs = array_values(array_filter($tasks, fn($t) => $t->isDropoff()));
 
-            // Make sure the first task is a pickup
-            $pickup->setType(Task::TYPE_PICKUP);
+            $type = self::getType($tasks);
 
-            $this->addTask($pickup);
-
-            foreach ($tasks as $dropoff) {
-                $dropoff->setPrevious($pickup);
-                $this->addTask($dropoff);
+            switch ($type) {
+                case self::TYPE_MULTI_DROPOFF:
+                case self::TYPE_SIMPLE:
+                    foreach ($tasks as $task) {
+                        if ($task->isDropoff()) {
+                            $task->setPrevious($pickups[0]);
+                        }
+                        $this->addTask($task);
+                    }
+                    break;
+                default:
+                    // For multiple pickups we don't set constraints
+                    foreach ($tasks as $task) {
+                        $this->addTask($task);
+                    }
+                    break;
             }
+
         } else {
 
             [$pickup, $dropoff] = $tasks;
@@ -421,7 +483,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
      */
     public function assignTo(User $user): void
     {
-        $tasks = $this->getTasks();
+        $tasks = $this->getTasks('not task.isCancelled()');
         array_walk(
             $tasks,
             function (Task $task) use ($user) {
@@ -456,13 +518,16 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         return true;
     }
 
+    /**
+     * @return ArrayCollection<PackageWithQuantity>
+     */
     public function getPackages()
     {
         $packages = new ArrayCollection();
 
         $hash = new \SplObjectStorage();
 
-        foreach ($this->getTasks() as $task) {
+        foreach ($this->getTasks('not task.isCancelled()') as $task) {
             if ($task->hasPackages()) {
                 foreach ($task->getPackages() as $package) {
                     $object = $package->getPackage();
@@ -500,50 +565,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
                 break;
             }
         }
-    }
-
-    private static function createTaskObject(?Task $task)
-    {
-        $taskObject = new \stdClass();
-        if ($task) {
-
-            return $task->toExpressionLanguageObject();
-        }
-
-        return $taskObject;
-    }
-
-    private static function createOrderObject(?Order $order)
-    {
-        $object = new \stdClass();
-        if ($order) {
-            $object->itemsTotal = $order->getItemsTotal();
-        } else {
-            $object->itemsTotal = 0;
-        }
-
-        return $object;
-    }
-
-    public static function toExpressionLanguageValues(Delivery $delivery)
-    {
-        $pickup = self::createTaskObject($delivery->getPickup());
-        $dropoff = self::createTaskObject($delivery->getDropoff());
-        $order = self::createOrderObject($delivery->getOrder());
-
-        $emptyTaskObject = new \stdClass();
-        $emptyTaskObject->type = '';
-
-        return [
-            'distance' => $delivery->getDistance(),
-            'weight' => $delivery->getWeight(),
-            'vehicle' => $delivery->getVehicle(),
-            'pickup' => $pickup,
-            'dropoff' => $dropoff,
-            'packages' => new PackagesResolver($delivery),
-            'order' => $order,
-            'task' => $emptyTaskObject,
-        ];
     }
 
     public function setPickupRange(\DateTime $after, \DateTime $before)
@@ -618,29 +639,34 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         return $messages;
     }
 
-    /**
-     * Get the value of arbitraryPrice
-     */
-    public function hasArbitraryPrice(): bool
+    public static function getType(array $tasks): string
     {
-        return !is_null($this->arbitraryPrice);
-    }
+        $pickups = array_filter($tasks, fn($t) => $t->isPickup());
+        $dropoffs = array_filter($tasks, fn($t) => $t->isDropoff());
 
-    /**
-     * Get the value of arbitraryPrice
-     */
-    public function getArbitraryPrice(): ?ArbitraryPrice
-    {
-        return $this->arbitraryPrice;
-    }
+        $isSimple = count($pickups) === 1 && count($dropoffs) === 1;
 
-    /**
-     * Set the value of arbitraryPrice
-     */
-    public function setArbitraryPrice(ArbitraryPrice $arbitraryPrice): self
-    {
-        $this->arbitraryPrice = $arbitraryPrice;
+        if ($isSimple) {
+            return self::TYPE_SIMPLE;
+        }
 
-        return $this;
+        $isMultiDropoffs = count($pickups) === 1 && count($dropoffs) > 1;
+        $isMultiPickups = count($pickups) > 1 && count($dropoffs) === 1;
+
+        $pickupsWithPackages = array_filter($pickups, fn($t) => count($t->getPackages()) > 0);
+        $dropoffsWithPackages = array_filter($dropoffs, fn($t) => count($t->getPackages()) > 0);
+
+        $isCleanMultiPickups = $isMultiPickups && count($dropoffsWithPackages) === 0;
+        $isCleanMultiDropoffs = $isMultiDropoffs && count($pickupsWithPackages) === 0;
+
+        if ($isCleanMultiPickups) {
+            return self::TYPE_MULTI_PICKUP;
+        }
+
+        if ($isCleanMultiDropoffs) {
+            return self::TYPE_MULTI_DROPOFF;
+        }
+
+        return self::TYPE_MULTI_MULTI;
     }
 }

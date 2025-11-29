@@ -2,9 +2,10 @@
 
 namespace AppBundle\Command;
 
+use AppBundle\Fixtures\DatabasePurger;
+use Doctrine\ORM\EntityManagerInterface;
 use Fidry\AliceDataFixtures\LoaderInterface;
 use Fidry\AliceDataFixtures\Persistence\PurgeMode;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,10 +18,12 @@ class LoadFixturesCommand extends Command
     private ?StyleInterface $io;
 
     public function __construct(
+        private readonly DatabasePurger $databasePurger,
         private readonly LoaderInterface $fixturesLoader,
+        private readonly EntityManagerInterface $entityManager,
         private readonly string $projectDir,
-        private readonly string $environment,
-        private readonly LoggerInterface $logger)
+        private readonly string $environment
+    )
     {
         parent::__construct();
     }
@@ -59,17 +62,21 @@ class LoadFixturesCommand extends Command
             return 1;
         }
 
+        $output->writeln('Purging database…');
+        $this->databasePurger->purge();
+        $this->databasePurger->resetSequences();
+
         $setupFile = $input->getOption('setup');
 
         $hasSetupFile = null !== $setupFile;
         if ($hasSetupFile) {
-            $this->logger->info('Loading fixtures from setup file: ' . $setupFile);
+            $output->writeln('Loading fixtures from setup file: ' . $setupFile);
 
             $filePaths = [
                 $this->projectDir . '/' . $setupFile
             ];
 
-            $this->fixturesLoader->load($filePaths, $_SERVER);
+            $this->fixturesLoader->load($filePaths, $_SERVER, [], PurgeMode::createNoPurgeMode());
         }
 
         $files = $input->getOption('file');
@@ -79,11 +86,14 @@ class LoadFixturesCommand extends Command
             return 1;
         }
 
-        $this->logger->info('Loading fixtures from files: ' . implode(', ', $files));
+        $output->writeln('Loading fixtures from files: ' . implode(', ', $files));
 
         $filePaths = array_map(fn($file) => $this->projectDir . '/' . $file, $files);
 
-        $this->fixturesLoader->load($filePaths, $_SERVER, [], $hasSetupFile ? PurgeMode::createNoPurgeMode() : null);
+        $this->fixturesLoader->load($filePaths, $_SERVER, [], PurgeMode::createNoPurgeMode());
+
+        // Flush changes made by custom processors
+        $this->entityManager->flush();
 
         return 0;
     }

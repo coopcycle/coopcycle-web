@@ -2,7 +2,8 @@
 
 namespace AppBundle\Serializer;
 
-use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\Metadata\Resource\Factory\ResourceMetadataCollectionFactoryInterface;
 use AppBundle\Assets\PlaceholderImageResolver;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Entity\LocalBusiness;
@@ -37,11 +38,18 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         private TranslatorInterface $translator,
         private PlaceholderImageResolver $placeholderImageResolver,
         private RestaurantDecorator $restaurantDecorator,
+        private readonly ResourceMetadataCollectionFactoryInterface $resourceMetadataFactory,
         private string $locale)
     {}
 
     public function normalize($object, $format = null, array $context = array())
     {
+        // Since API Platform 2.7, IRIs for custom operations have changed
+        // It means that when doing PUT /api/restaurants/{id}/close, the @id will be /api/orders/{id}/close, not /api/restaurants/{id} like before
+        // In our JS code, we often override the state with the entire response
+        // This custom code makes sure it works like before, by tricking IriConverter
+        $context['operation'] = $this->resourceMetadataFactory->create(LocalBusiness::class)->getOperation();
+
         $data = $this->normalizer->normalize($object, $format, $context);
 
         $data['@type'] = $object->getType();
@@ -90,11 +98,8 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         }
         unset($data['activeMenuTaxon']);
 
-        $isOpen = $object->isOpen();
-        $data['isOpen'] = $isOpen;
-        if (!$isOpen) {
-            $data['nextOpeningDate'] = $object->getNextOpeningDate();
-        }
+        $data['isOpen'] = $object->isOpen();
+        $data['nextOpeningDate'] = $object->getNextOpeningDate();
 
         if (isset($data['facets'])) {
             $cuisines =
@@ -203,5 +208,12 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
     public function supportsDenormalization($data, $type, $format = null)
     {
         return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === LocalBusiness::class;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            LocalBusiness::class => true, // supports*() call result is cached
+        ];
     }
 }

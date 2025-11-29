@@ -2,7 +2,6 @@ Feature: Food Tech
 
   Scenario: Restaurant does not belong to user
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     And the user "bob" is loaded:
@@ -19,7 +18,6 @@ Feature: Food Tech
   Scenario: Retrieve restaurant orders
     Given the current time is "2018-08-27 12:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -45,12 +43,11 @@ Feature: Food Tech
     When the user "bob" sends a "GET" request to "/api/restaurants/1/orders?date=2018-08-27"
     Then the response status code should be 200
     And the response should be in JSON
-    # FIXME @id should be "/api/restaurants/1/orders"
     And the JSON should match:
       """
       {
-        "@context":"/api/contexts/Order",
-        "@id":@string@,
+        "@context":"/api/contexts/Restaurant",
+        "@id":"/api/restaurants/1/orders",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
@@ -101,19 +98,12 @@ Feature: Food Tech
         "hydra:view":{
           "@id":"/api/restaurants/1/orders?date=2018-08-27",
           "@type":"hydra:PartialCollectionView"
-        },
-        "hydra:search":{
-          "@type":"hydra:IriTemplate",
-          "hydra:template":@string@,
-          "hydra:variableRepresentation":"BasicRepresentation",
-          "hydra:mapping":@array@
         }
       }
       """
 
   Scenario: Refuse order with reason
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -156,6 +146,7 @@ Feature: Food Tech
         "shippingAddress":{"@*@":"@*@"},
         "reusablePackagingEnabled":false,
         "reusablePackagingPledgeReturn":0,
+        "reusablePackagingQuantity": @integer@,
         "shippingTimeRange":[
           "2018-08-27T12:25:00+02:00",
           "2018-08-27T12:35:00+02:00"
@@ -170,18 +161,25 @@ Feature: Food Tech
         "state":"refused",
         "createdAt":"@string@.isDateTime()",
         "taxTotal":222,
-        "restaurant":@...@,
+        "restaurant":{"@*@":"@*@"},
         "shippedAt":"2018-08-27T12:30:00+02:00",
-        "preparationExpectedAt":"2018-08-27T12:25:00+02:00",
-        "pickupExpectedAt":"2018-08-27T12:35:00+02:00",
+        "preparationExpectedAt":"2018-08-27T12:05:00+02:00",
+        "pickupExpectedAt":"2018-08-27T12:15:00+02:00",
         "adjustments":{"@*@": "@*@"},
-        "events":@array@
+        "events":@array@,
+        "preparationTime":"@string@||@null@",
+        "shippingTime":"@string@||@null@",
+        "paymentMethod": "CARD",
+        "hasReceipt":@boolean@,
+        "invitation": "@string@||@null@",
+        "paymentGateway":@string@,
+        "hasEdenredCredentials":@boolean@,
+        "assignedTo": "@string@||@null@"
       }
       """
 
   Scenario: Delay order
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -215,7 +213,6 @@ Feature: Food Tech
 
   Scenario: Not authorized to delay order
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -259,7 +256,6 @@ Feature: Food Tech
 
   Scenario: Accept order (with empty JSON payload)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -341,7 +337,6 @@ Feature: Food Tech
 
   Scenario: Accept order when restaurant is closed
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -424,7 +419,6 @@ Feature: Food Tech
 
   Scenario: Not authorized to accept order (with empty JSON payload)
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -463,7 +457,6 @@ Feature: Food Tech
 
   Scenario: Disable product
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     And the restaurant with id "1" has products:
@@ -488,7 +481,6 @@ Feature: Food Tech
 
   Scenario: Disable product option value
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     And the restaurant with id "1" has products:
@@ -525,7 +517,6 @@ Feature: Food Tech
 
   Scenario: Enable disabled product option value
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     And the restaurant with id "1" has products:
@@ -562,7 +553,6 @@ Feature: Food Tech
 
   Scenario: Not authorized to disable product
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     Given the user "bob" is loaded:
@@ -584,7 +574,6 @@ Feature: Food Tech
   Scenario: Close restaurant
     Given the current time is "2020-10-02 11:00:00"
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | products.yml        |
       | restaurants.yml     |
     And the restaurant with id "1" has products:
@@ -608,7 +597,7 @@ Feature: Food Tech
       """
       {
         "@context":"/api/contexts/Restaurant",
-        "@id":@string@,
+        "@id":"/api/restaurants/1",
         "@type":"http://schema.org/Restaurant",
         "id":@integer@,
         "name":"Nodaiwa",
@@ -651,7 +640,6 @@ Feature: Food Tech
   Scenario: Retrieve order with OAuth
     Given the current time is "2018-08-27 12:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |
@@ -679,7 +667,6 @@ Feature: Food Tech
   Scenario: Accept order with OAuth
     Given the current time is "2018-08-27 12:00:00"
     And the fixtures files are loaded:
-      | sylius_channels.yml |
       | payment_methods.yml |
       | products.yml        |
       | restaurants.yml     |

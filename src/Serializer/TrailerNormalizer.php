@@ -2,7 +2,7 @@
 
 namespace AppBundle\Serializer;
 
-use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\Trailer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -34,5 +34,12 @@ class TrailerNormalizer implements NormalizerInterface
     public function supportsNormalization($data, $format = null)
     {
         return $this->normalizer->supportsNormalization($data, $format) && $data instanceof Trailer;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            Trailer::class => true, // supports*() call result is cached
+        ];
     }
 }

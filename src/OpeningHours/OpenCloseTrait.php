@@ -17,7 +17,7 @@ trait OpenCloseTrait
     private $nextOpeningDateCache = [];
     private $nextClosingDateCache = [];
 
-    public function hasClosingRuleFor(\DateTime $date = null, \DateTime $now = null): bool
+    public function hasClosingRuleFor(?\DateTime $date = null, ?\DateTime $now = null): bool
     {
         $date = $date ?? Carbon::now();
         $now = $now ?? Carbon::now();
@@ -48,7 +48,7 @@ trait OpenCloseTrait
         return false;
     }
 
-    public function matchClosingRuleFor(\DateTime $date = null, \DateTime $now = null): ?ClosingRule
+    public function matchClosingRuleFor(?\DateTime $date = null, ?\DateTime $now = null): ?ClosingRule
     {
         $date = $date ?? Carbon::now();
         $now = $now ?? Carbon::now();
@@ -79,7 +79,7 @@ trait OpenCloseTrait
         return null;
     }
 
-    public function isOpen(\DateTime $now = null): bool
+    public function isOpen(?\DateTime $now = null): bool
     {
         if (!$now) {
             $now = Carbon::now();
@@ -94,7 +94,7 @@ trait OpenCloseTrait
         return $this->isOpenCache[$now->format(\DateTime::ATOM)];
     }
 
-    public function getNextOpeningDate(\DateTime $now = null)
+    public function getNextOpeningDate(?\DateTime $now = null)
     {
         if (!$now) {
             $now = Carbon::now();
@@ -113,7 +113,7 @@ trait OpenCloseTrait
         }
     }
 
-    public function getNextClosingDate(\DateTime $now = null)
+    public function getNextClosingDate(?\DateTime $now = null)
     {
         if (!$now) {
             $now = Carbon::now();

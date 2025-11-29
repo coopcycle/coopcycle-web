@@ -4,6 +4,7 @@ namespace AppBundle\Log;
 
 use AppBundle\Messenger\Stamp\RouteStamp;
 use Monolog\Attribute\AsMonologProcessor;
+use Monolog\LogRecord;
 
 /**
  * This processor adds the route and controller information to the log records coming from the Messenger.
@@ -12,7 +13,7 @@ use Monolog\Attribute\AsMonologProcessor;
 #[AsMonologProcessor]
 class MessengerRouteProcessor extends MessengerStampProcessor
 {
-    public function __invoke(array $record): array
+    public function __invoke(LogRecord $record): LogRecord
     {
         $stamp = $this->getStamp();
 

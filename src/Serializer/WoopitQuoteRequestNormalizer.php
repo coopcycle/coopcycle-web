@@ -35,4 +35,11 @@ class WoopitQuoteRequestNormalizer implements NormalizerInterface
         return $data instanceof QuoteRequest
             && $data->state === QuoteRequest::STATE_NEW;
     }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            QuoteRequest::class => false, // supports*() call result is NOT cached
+        ];
+    }
 }

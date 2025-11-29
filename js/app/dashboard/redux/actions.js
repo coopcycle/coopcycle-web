@@ -8,7 +8,13 @@ import {
   createTaskListSuccess,
   createTaskListFailure
 } from '../../coopcycle-frontend-js/logistics/redux'
-import { selectExpandedTaskListPanelsIds, selectNextWorkingDay, selectSelectedTasks, selectTaskLists } from './selectors'
+import {
+  selectExpandedTaskListPanelsIds,
+  selectNav,
+  selectNextWorkingDay,
+  selectSelectedTasks,
+  selectTaskLists,
+} from './selectors';
 import { createAction } from '@reduxjs/toolkit'
 import { selectTaskById, selectTaskListByUsername } from '../../../shared/src/logistics/redux/selectors'
 import { createClient } from '../utils/client'
@@ -269,7 +275,7 @@ export function putTaskListItems(username, items) {
 
     const date = selectSelectedDate(state)
 
-    const url = window.Routing.generate('api_task_lists_set_items_item', {
+    const url = window.Routing.generate('_api_/task_lists/set_items/{date}/{username}_put', {
       date: date.format('YYYY-MM-DD'),
       username,
     })
@@ -309,7 +315,7 @@ export function setTaskListVehicle(username, vehicleId) {
 
     const tasksList = selectTaskListByUsername(getState(), {username: username})
 
-    const url = window.Routing.generate('api_task_lists_patch_item', {
+    const url = window.Routing.generate('_api_/task_lists/{id}{._format}_patch', {
       id: tasksList.id,
     })
 
@@ -352,7 +358,7 @@ export function setTaskListTrailer(username, trailerId) {
 
     const tasksList = selectTaskListByUsername(getState(), {username: username})
 
-    const url = window.Routing.generate('api_task_lists_patch_item', {
+    const url = window.Routing.generate('_api_/task_lists/{id}{._format}_patch', {
       id: tasksList.id,
     })
 
@@ -508,12 +514,49 @@ export function openNewTaskModal() {
   return { type: OPEN_NEW_TASK_MODAL }
 }
 
-export function closeNewTaskModal() {
+function _closeNewTaskModal() {
   return { type: CLOSE_NEW_TASK_MODAL }
 }
 
-export function setCurrentTask(task) {
+export function closeNewTaskModal() {
+  return (dispatch) => {
+    dispatch(_closeNewTaskModal())
+    dispatch(setCurrentTask(null))
+  }
+}
+
+function _setCurrentTask(task) {
   return { type: SET_CURRENT_TASK, task }
+}
+
+export function setCurrentTask(task) {
+  return (dispatch, getState) => {
+    const state = getState()
+    const date = selectSelectedDate(state)
+    const nav = selectNav(state)
+
+    let routeParams = {
+      date: date.format('YYYY-MM-DD')
+    }
+
+    // Add nav parameter if it's off
+    if (nav === 'off') {
+      routeParams.nav = 'off'
+    }
+
+    // Add task parameter if a task is selected
+    if (task) {
+      routeParams.task = task['@id']
+    }
+
+    dispatch(_setCurrentTask(task))
+
+    window.history.replaceState(
+      {},
+      document.title,
+      window.Routing.generate('admin_dashboard_fullscreen', routeParams)
+    )
+  }
 }
 
 export function createTaskRequest() {
@@ -740,7 +783,7 @@ export function cancelTask(task) {
 
 export function cancelTasks(tasks) {
 
-  return function(dispatch, getState) {
+  return async function(dispatch, getState) {
 
     const { jwt } = getState()
 
@@ -748,26 +791,28 @@ export function cancelTasks(tasks) {
 
     const httpClient = createClient(dispatch)
 
-    const requests = tasks.map(task => {
+    const responses = []
 
-      return httpClient.request({
-        method: 'put',
-        url: `${task['@id']}/cancel`,
-        data: {},
-        headers: {
-          'Authorization': `Bearer ${jwt}`,
-          'Accept': 'application/ld+json',
-          'Content-Type': 'application/ld+json'
-        }
-      })
-    })
+    try {
+      for (const task of tasks) {
+        const response = await httpClient.request({
+          method: 'put',
+          url: `${task['@id']}/cancel`,
+          data: {},
+          headers: {
+            'Authorization': `Bearer ${jwt}`,
+            'Accept': 'application/ld+json',
+            'Content-Type': 'application/ld+json'
+          }
+        })
+        responses.push(response)
+      }
 
-    Promise.all(requests)
-      .then(values => {
-        dispatch(createTaskSuccess())
-        values.forEach(response => dispatch(updateTask(response.data)))
-      })
-      .catch(error => dispatch(cancelTaskFailure(error)))
+      dispatch(createTaskSuccess())
+      responses.forEach(response => dispatch(updateTask(response.data)))
+    } catch (error) {
+      dispatch(cancelTaskFailure(error))
+    }
   }
 }
 
@@ -1679,7 +1724,7 @@ export function loadOrganizations() {
 
     const data = await client.paginatedRequest({
       method: 'GET',
-      url: window.Routing.generate('api_organizations_get_collection'),
+      url: window.Routing.generate('_api_/organizations{._format}_get_collection'),
       headers: {
         'Authorization': `Bearer ${jwt}`,
         'Accept': 'application/ld+json',
@@ -1698,7 +1743,7 @@ export function loadVehicles() {
 
     const data = await client.paginatedRequest({
       method: 'GET',
-      url: window.Routing.generate('api_vehicles_get_collection'),
+      url: window.Routing.generate('_api_/vehicles{._format}_get_collection'),
       headers: {
         'Authorization': `Bearer ${jwt}`,
         'Accept': 'application/ld+json',
@@ -1718,7 +1763,7 @@ export function loadTrailers() {
 
     const data = await client.paginatedRequest({
       method: 'GET',
-      url: window.Routing.generate('api_trailers_get_collection'),
+      url: window.Routing.generate('_api_/trailers{._format}_get_collection'),
       headers: {
         'Authorization': `Bearer ${jwt}`,
         'Accept': 'application/ld+json',
@@ -1738,7 +1783,7 @@ export function loadWarehouses() {
 
     const data = await client.paginatedRequest({
       method: 'GET',
-      url: window.Routing.generate('api_warehouses_get_collection'),
+      url: window.Routing.generate('_api_/warehouses{._format}_get_collection'),
       headers: {
         'Authorization': `Bearer ${jwt}`,
         'Accept': 'application/ld+json',

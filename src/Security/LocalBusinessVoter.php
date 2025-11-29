@@ -26,7 +26,7 @@ class LocalBusinessVoter extends Voter
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    protected function supports($attribute, $subject)
+    protected function supports($attribute, $subject): bool
     {
         if (!in_array($attribute, self::$actions)) {
             return false;
@@ -39,7 +39,7 @@ class LocalBusinessVoter extends Voter
         return true;
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
         if (self::VIEW === $attribute && $subject->isEnabled()) {
             return true;

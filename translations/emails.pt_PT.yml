@@ -43,20 +43,6 @@ admin.send_invitation.body: "Olá %username%, \n<br>\nEste é um convite ao Espa
 admin.send_invitation.subject: Convite à CoopCycle!
 admin.pledge.subject: Foi enviada uma nova sugestão!
 admin.order_foodtech.created.body: "Olá,\n<br>\nFoi feito um novo pedido para <strong>%restaurant.name%</strong>.\n"
-covid_19.body: "<h1>Instruções a seguir para a sua entrega</h1>\n<p>Dada a atual pandemia\
-  \ de COVID-19 (Coronavírus), você <strong>deve seguir rigorosamente</strong> as\
-  \ seguintes instruções:</p>\n<h2>1. Respeitar a distância social</h2>\n<p>Deixaremos\
-  \ o pedido à sua porta para que você não necessite de se aproximar da pessoa que\
-  \ o vem entregar. Também não há necessidade de deixar gratificação.</p>\n<h2>2.\
-  \ Abra a embalagem depois de a receber</h2>\n<p>O vírus pode sobreviver em superfícies\
-  \ de papel e plástico por vários dias. A embalagem é, portanto, uma via de alto\
-  \ risco de transmissão do vírus.\nSolicitamos, portanto, que <strong> abra a embalagem\
-  \ e transfira o conteúdo para pratos</strong>.</p>\n<h2>3. Descarte a embalagem</h2>\n\
-  <p>Depois de abrir a embalagem, certifique-se que <strong>descarta a embalagem e\
-  \ a coloca num saco fechado</strong>, garantindo assim que não lhe toca inadvertidamente\
-  \ mais tarde.</p>\n<h2>4. Lave as mãos!</h2>\n<p>Depois de abrir e descartar a embalagem,\
-  \ <strong>lave as mãos!</strong></p>\n"
-covid_19.subject: COVID-19 | Instruções importantes para o seu pedido
 order.payment.body: "Olá,\n<br>\nConcluímos uma entrega que você nos solicitou.\n\
   <br>\nAbaixo encontrará uma ligação que lhe permitirá pagar com cartão de crédito.\n"
 order.payment.subject: Pagamento do seu pedido %order.number%

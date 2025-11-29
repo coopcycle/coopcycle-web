@@ -26,7 +26,7 @@ class Client
         RefreshTokenHandler $refreshTokenHandler,
         private Authentication $authentication,
         array $config = [],
-        LoggerInterface $logger = null
+        ?LoggerInterface $logger = null
     )
     {
         if (isset($config['handler']) && $config['handler'] instanceof HandlerStack) {

@@ -21,7 +21,7 @@
   </thead>
   <tbody>
   {% for order in orders %}
-  <tr>
+  <tr data-testid="order-list-item-{{ order.id }}">
     <td width="5%">
       {% if is_granted('ROLE_ADMIN') or (order.customer is not null and order.customer == app.user.customer) %}
       <a href="{{ path(routes.order, { id: order.id }) }}" class="text-monospace">

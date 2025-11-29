@@ -19,8 +19,6 @@ abstract class Event extends BaseEvent implements SerializableEventInterface
             $this->tour,
             'jsonld', [
                 'resource_class' => Tour::class,
-                'operation_type' => 'item',
-                'item_operation_name' => 'get',
                 'groups' => ['task_collection', 'tour']
             ]);
 

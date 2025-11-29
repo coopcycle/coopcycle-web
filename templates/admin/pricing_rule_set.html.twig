@@ -22,12 +22,20 @@
 
 {% block content %}
   {% set pricing_rule_set = form.vars.value %}
+
+  {% include '_partials/legacy_new_switch_alert.html.twig' with {
+    message: 'This is the classic version of the pricing rule set form.',
+    button_text: 'Try New Beta Version',
+    button_url: pricing_rule_set.id ? path('admin_deliveries_pricing_ruleset_beta', { id: pricing_rule_set.id }) : path('admin_deliveries_pricing_ruleset_beta_new'),
+    button_class: 'btn-primary'
+  } %}
+
   {{ form_start(form) }}
 
     {{ form_errors(form) }}
 
     {% if pricing_rule_set.id %}
-      <div {{ react_component('ShowApplications', { 'objectId': pricing_rule_set.id, fetchUrl: 'api_pricing_rule_sets_applications_item' }) }}>
+      <div {{ react_component('ShowApplications', { 'objectId': pricing_rule_set.id, fetchUrl: '_api_/pricing_rule_sets/{id}/applications_get' }) }}>
         {# server side rendered content; will be replaced by react #}
         <span class="loader loader--dark"></span>
       </div>

@@ -3,11 +3,12 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\LocalBusiness;
+use Doctrine\ORM\EntityManagerInterface;
 use Liip\ImagineBundle\Service\FilterService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * The "og:image" property of a restaurant used to return a 404
@@ -20,11 +21,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class BrokenImageController extends AbstractController
 {
     #[Route(path: '/{dir}/{subdir}/{filename}.{extension}', name: 'legacy_image', requirements: ['dir' => '[a-z0-9]{2}', 'subdir' => '[a-z0-9]{2}', 'filename' => '[a-z0-9]+', 'extension' => '(?i:jpg|png|jpeg|gif|webp|tif)'])]
-    public function redirectAction($dir, $subdir, $filename, $extension, FilterService $imagineFilter)
+    public function redirectAction($dir, $subdir, $filename, $extension, FilterService $imagineFilter, EntityManagerInterface $entityManager)
     {
         $imageName = sprintf('%s.%s', $filename, $extension);
 
-        if (!$restaurant = $this->getDoctrine()->getRepository(LocalBusiness::class)->findOneBy(['imageName' => $imageName])) {
+        if (!$restaurant = $entityManager->getRepository(LocalBusiness::class)->findOneBy(['imageName' => $imageName])) {
             throw $this->createNotFoundException();
         }
 

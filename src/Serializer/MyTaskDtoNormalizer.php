@@ -2,7 +2,7 @@
 
 namespace AppBundle\Serializer;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Api\Dto\MyTaskDto;
 use AppBundle\Entity\Task;
 use AppBundle\Service\TagManager;
@@ -47,11 +47,11 @@ class MyTaskDtoNormalizer implements ContextAwareNormalizerInterface, Normalizer
         }
 
         if ($object->previous) {
-            $data['previous'] = $this->iriConverter->getItemIriFromResourceClass(Task::class, ['id' => $object->previous]);
+            $data['previous'] = $this->iriConverter->getIriFromResource(Task::class, context: ['uri_variables' => ['id' => $object->previous]]);
         }
 
         if ($object->next) {
-            $data['next'] = $this->iriConverter->getItemIriFromResourceClass(Task::class, ['id' => $object->next]);
+            $data['next'] = $this->iriConverter->getIriFromResource(Task::class, context: ['uri_variables' => ['id' => $object->next]]);
         }
 
         // Make sure "orgName" is a string
@@ -62,7 +62,7 @@ class MyTaskDtoNormalizer implements ContextAwareNormalizerInterface, Normalizer
         return $data;
     }
 
-    public function supportsNormalization($data, ?string $format = null, array $context = [])
+    public function supportsNormalization($data, ?string $format = null, array $context = []): bool
     {
         // Make sure we're not called twice
         if (isset($context[self::ALREADY_CALLED])) {
@@ -70,5 +70,12 @@ class MyTaskDtoNormalizer implements ContextAwareNormalizerInterface, Normalizer
         }
 
         return $data instanceof MyTaskDto;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            MyTaskDto::class => false, // supports*() call result is NOT cached
+        ];
     }
 }

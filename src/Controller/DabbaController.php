@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
@@ -15,10 +15,9 @@ use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DabbaController extends AbstractController
@@ -63,7 +62,7 @@ class DabbaController extends AbstractController
             return $this->redirectToRoute('order');
         }
 
-        $subject = $iriConverter->getItemFromIri($payload['sub']);
+        $subject = $iriConverter->getResourceFromIri($payload['sub']);
 
         if (!$subject instanceof Order) {
             throw new BadRequestHttpException(sprintf('Subject should be an instance of "%s"', Order::class));

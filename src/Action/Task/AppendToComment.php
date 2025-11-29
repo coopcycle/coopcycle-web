@@ -6,19 +6,13 @@ use AppBundle\Entity\Task;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Core\User\UserInterface;
 
-class AppendToComment extends Base {
-
-    private UserInterface $user;
-
+class AppendToComment extends Base
+{
     public function __construct(
         private EntityManagerInterface $entityManager,
-        Security $security,
-    )
-    {
-        $this->user = $security->getUser();
-    }
+        private Security $security)
+    {}
 
     public function __invoke(Task $data, Request $request): Task
     {
@@ -29,7 +23,7 @@ class AppendToComment extends Base {
 
         $data->appendToComments(
             sprintf("%s: %s",
-                $this->user->getUserIdentifier(),
+                $this->security->getUser()->getUserIdentifier(),
                 $note
             )
         );

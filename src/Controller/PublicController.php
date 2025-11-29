@@ -3,11 +3,13 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Form\Checkout\CheckoutPayment;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
 use AppBundle\Form\Order\AdhocOrderType;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\StripeManager;
+use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use phpcent\Client as CentrifugoClient;
@@ -19,7 +21,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 #[Route(path: '/{_locale}/pub', requirements: ['_locale' => '%locale_regex%'])]
 class PublicController extends AbstractController
@@ -43,6 +45,8 @@ class PublicController extends AbstractController
         }
 
         $id = current($decoded);
+
+        /** @var OrderInterface|null */
         $order = $this->orderRepository->find($id);
 
         if (null === $order) {
@@ -55,8 +59,9 @@ class PublicController extends AbstractController
 
         $this->denyAccessUnlessGranted('view_public', $order);
 
-        $completedPayment = $order->getPayments()
-            ->filter(fn (PaymentInterface $payment): bool => $payment->getState() === PaymentInterface::STATE_COMPLETED)
+        // payment may be in "authorized" state (waiting for capture by finishing the drop)
+        $completedOrAuthorizedPayment = $order->getPayments()
+            ->filter(fn (PaymentInterface $payment): bool => $payment->getState() === PaymentInterface::STATE_COMPLETED || $payment->getState() === PaymentInterface::STATE_AUTHORIZED)
             ->first();
 
         $failedPayment = $order->getPayments()
@@ -65,11 +70,11 @@ class PublicController extends AbstractController
 
         $parameters = [
             'order' => $order,
-            'completed_payment' => $completedPayment,
+            'completed_payment' => $completedOrAuthorizedPayment,
             'failed_payment' => $failedPayment,
         ];
 
-        if (!$completedPayment) {
+        if (!$completedOrAuthorizedPayment) {
 
             $checkoutPayment = new CheckoutPayment($order);
             $paymentForm = $this->createForm(CheckoutPaymentType::class, $checkoutPayment);
@@ -79,6 +84,7 @@ class PublicController extends AbstractController
 
                 $stripeToken = $paymentForm->get('stripePayment')->get('stripeToken')->getData();
 
+                /** @var Payment */
                 $lastPayment = $order->getPayments()
                     ->filter(fn (PaymentInterface $payment): bool =>
                         in_array($payment->getState(), [PaymentInterface::STATE_CART, PaymentInterface::STATE_NEW])
@@ -117,7 +123,8 @@ class PublicController extends AbstractController
     #[Route(path: '/d/{hashid}', name: 'public_delivery')]
     public function deliveryAction($hashid, Request $request,
         CentrifugoClient $centrifugoClient,
-        Hashids $hashids8)
+        Hashids $hashids8,
+        EntityManagerInterface $entityManager)
     {
         $decoded = $hashids8->decode($hashid);
 
@@ -126,7 +133,7 @@ class PublicController extends AbstractController
         }
 
         $id = current($decoded);
-        $delivery = $this->getDoctrine()->getRepository(Delivery::class)->find($id);
+        $delivery = $entityManager->getRepository(Delivery::class)->find($id);
 
         if (null === $delivery) {
             throw $this->createNotFoundException(sprintf('Delivery #%d does not exist', $id));

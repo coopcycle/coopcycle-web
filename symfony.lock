@@ -39,12 +39,19 @@
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
-            "version": "1.0",
-            "ref": "a2759dd6123694c8d901d0ec80006e044c2e6457"
+            "version": "1.10",
+            "ref": "64d8583af5ea57b7afa4aba4b159907f3a148b05"
         },
-        "files": [
-            "config/routes/annotations.yaml"
-        ]
+        "files": []
+    },
+    "doctrine/deprecations": {
+        "version": "1.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "1.0",
+            "ref": "87424683adc81d7dc305eefec1fced883084aab9"
+        }
     },
     "doctrine/doctrine-bundle": {
         "version": "2.13",
@@ -397,18 +404,6 @@
             "config/packages/ramsey_uuid_doctrine.yaml"
         ]
     },
-    "sensio/framework-extra-bundle": {
-        "version": "6.2",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "5.2",
-            "ref": "fb7e19da7f013d0d422fa9bce16f5c510e27609b"
-        },
-        "files": [
-            "config/packages/sensio_framework_extra.yaml"
-        ]
-    },
     "sentry/sentry-symfony": {
         "version": "4.10",
         "recipe": {
@@ -419,6 +414,18 @@
         },
         "files": [
             "config/packages/sentry.yaml"
+        ]
+    },
+    "shipmonk/doctrine-entity-preloader": {
+        "version": "1.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "1.0",
+            "ref": "6bee147a5ee0ca3cc07b24c1d3c28a67710d090c"
+        },
+        "files": [
+            "config/packages/doctrine_entity_preloader.yaml"
         ]
     },
     "snc/redis-bundle": {

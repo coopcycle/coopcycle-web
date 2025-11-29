@@ -2,7 +2,6 @@
 
 namespace AppBundle\ExpressionLanguage;
 
-use Doctrine\ORM\EntityRepository;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionFunctionProviderInterface;
 
@@ -14,22 +13,29 @@ class PricePerPackageExpressionLanguageProvider implements ExpressionFunctionPro
             // FIXME Need to test compilation
         };
 
-        $evaluator = function ($arguments, $packages, $packageName, $basePrice, $offset, $discountPrice) {
+        $evaluator = function ($arguments, $packages, $packageName, $basePrice, $offset, $discountPrice): PriceEvaluation|array {
 
             $quantity = $packages->quantity($packageName);
 
             // Means no discount
             if (0 === $offset) {
 
-                return $basePrice * $quantity;
+                return new PriceEvaluation($basePrice, $quantity);
             }
 
             $rest = $quantity - ($offset - 1);
-            $rest = $rest < 0 ? 0 : $rest;
+
+            // No packages above the threshold
+            if ($rest <= 0) {
+                return new PriceEvaluation($basePrice, $quantity);
+            }
 
             $quantityWithBasePrice = min($quantity, ($offset - 1));
 
-            return ($basePrice * $quantityWithBasePrice) + ($discountPrice * $rest);
+            return [
+                new PriceEvaluation($basePrice, $quantityWithBasePrice),
+                new PriceEvaluation($discountPrice, $rest),
+            ];
         };
 
         return array(

@@ -53,7 +53,7 @@ class EntityChangeSetProcessorTest extends TestCase
         $processor = new EntityChangeSetProcessor($this->taskListProvider->reveal(), null, $this->entityManager->reveal());
         $processor->process($task, []);
 
-        $this->assertCount(0, $processor->recordedMessages());
+        $this->assertCount(0, $processor->recordedMessages);
     }
 
     public function testTaskWasAssigned()
@@ -76,7 +76,7 @@ class EntityChangeSetProcessorTest extends TestCase
             'assignedTo' => [ null, $user ]
         ]);
 
-        $this->assertCount(1, $processor->recordedMessages());
+        $this->assertCount(1, $processor->recordedMessages);
         $this->assertCount(1, $taskList->getTasks());
         $this->assertTrue($taskList->containsTask($task));
     }
@@ -118,7 +118,7 @@ class EntityChangeSetProcessorTest extends TestCase
             'assignedTo' => [ $bob, $claire ]
         ]);
 
-        $this->assertCount(1, $processor->recordedMessages());
+        $this->assertCount(1, $processor->recordedMessages);
 
         $this->assertFalse($taskListForBob->containsTask($task));
         $this->assertTrue($taskListForClaire->containsTask($task));
@@ -150,7 +150,7 @@ class EntityChangeSetProcessorTest extends TestCase
             'assignedTo' => [ $bob, null ]
         ]);
 
-        $this->assertCount(1, $processor->recordedMessages());
+        $this->assertCount(1, $processor->recordedMessages);
 
         $this->assertFalse($taskListForBob->containsTask($task));
     }

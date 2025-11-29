@@ -17,4 +17,6 @@ interface LoopeatAwareInterface
     public function hasLoopeatReturns();
 
     public function supportsLoopeat(): bool;
+
+    public function getLoopeatDeliver();
 }

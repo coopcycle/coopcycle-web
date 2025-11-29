@@ -2,7 +2,7 @@
 
 namespace AppBundle\MessageHandler;
 
-use ApiPlatform\Core\Api\IriConverterInterface;
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\TaskImage;
 use AppBundle\Message\WoopitDocumentWebhook;
@@ -30,14 +30,14 @@ class WoopitDocumentHandler
         private Hashids $hashids12,
         private UploaderHelper $uploaderHelper,
         private FilterService $imagineFilter,
-        LoggerInterface $logger = null)
+        ?LoggerInterface $logger = null)
     {
         $this->logger = $logger ?? new NullLogger();
     }
 
     public function __invoke(WoopitDocumentWebhook $message)
     {
-        $taskImage = $this->iriConverter->getItemFromIri($message->getObject());
+        $taskImage = $this->iriConverter->getResourceFromIri($message->getObject());
 
         if (!$taskImage instanceof TaskImage) {
             return;
@@ -79,7 +79,7 @@ class WoopitDocumentHandler
                 sprintf('[WOOPIT] Sending new document to Woopit for delivery with id %s', $deliveryId)
             );
 
-            $response = $this->woopitClient->request('POST', "deliveries/${deliveryId}/documents", [
+            $response = $this->woopitClient->request('POST', "deliveries/{$deliveryId}/documents", [
                 'headers' => $formData->getPreparedHeaders()->toArray(),
                 'body' => $formData->bodyToIterable(),
             ]);

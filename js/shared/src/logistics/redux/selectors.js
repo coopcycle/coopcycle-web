@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit'
 import { mapToColor } from './taskUtils';
 import { organizationAdapter, taskAdapter, taskListAdapter, tourAdapter, trailerAdapter, vehicleAdapter, warehouseAdapter } from './adapters'
 import i18next from 'i18next';

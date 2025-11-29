@@ -43,7 +43,7 @@ class OrderTimeHelperTest extends KernelTestCase
         $this->preparationTimeCalculator = $this->prophesize(PreparationTimeCalculator::class);
         $this->shippingDateFilter = $this->prophesize(ShippingDateFilter::class);
         $this->shippingTimeCalculator = $this->prophesize(ShippingTimeCalculator::class);
-        $this->redis = self::$container->get(Redis::class);
+        $this->redis = self::getContainer()->get(Redis::class);
 
         $this->timeRegistry = $this->prophesize(TimeRegistry::class);
         $this->timeRegistry->getAveragePreparationTime()->willReturn(0);
@@ -52,7 +52,7 @@ class OrderTimeHelperTest extends KernelTestCase
         $this->fulfillmentMethodResolver = $this->prophesize(FulfillmentMethodResolver::class);
 
         $this->helper = new OrderTimeHelper(
-            self::$container->get(ShippingDateFilter::class),
+            self::getContainer()->get(ShippingDateFilter::class),
             $this->preparationTimeCalculator->reveal(),
             $this->shippingTimeCalculator->reveal(),
             $this->timeRegistry->reveal(),

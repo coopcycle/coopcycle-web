@@ -28,7 +28,7 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
     public function __construct(
         array $openingHours,
         TimeRegistry $timeRegistry,
-        Collection $closingRules = null,
+        ?Collection $closingRules = null,
         int $rangeDuration = 10,
         bool $preOrderingAllowed = true)
     {
@@ -42,7 +42,7 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadChoiceList($value = null): ChoiceListInterface
+    public function loadChoiceList(?callable $value = null): ChoiceListInterface
     {
         $now = Carbon::now();
 
@@ -153,7 +153,7 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadChoicesForValues(array $values, $value = null)
+    public function loadChoicesForValues(array $values, ?callable $value = null): array
     {
         // Optimize
         if (empty($values)) {
@@ -166,7 +166,7 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadValuesForChoices(array $choices, $value = null)
+    public function loadValuesForChoices(array $choices, ?callable $value = null): array
     {
         // Optimize
         if (empty($choices)) {

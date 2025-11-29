@@ -106,22 +106,6 @@ order.payment.body: |
   Vous nous avez commandé une prestation de livraison.
   <br>
   Vous trouverez ci-dessous un lien vous permettant de payer par carte bleue.
-covid_19.subject: COVID-19 | Instructions importantes pour votre commande
-covid_19.body: "<h1>Consignes à suivre pour votre livraison</h1>\n<p>Face à l'épidémie\
-  \ de COVID-19 (Coronavirus) en cours, vous devez respecter <strong>impérativement</strong>\
-  \ les consignes suivantes : </p>\n<h2>1. Respectez la distanciation sociale</h2>\n\
-  <p>Nous déposerons votre commande sur le pas de votre porte, vous n'aurez pas à\
-  \ approcher de la personne qui vient vous livrer. Il est également inutile de laisser\
-  \ un pourboire.</p>\n<h2>2. Déballez votre commande après réception</h2>\n<p>Le\
-  \ virus peut subsister plusieurs jours sur les surfaces en carton et en plastique.\
-  \ Les emballages sont donc l'un des plus gros vecteurs de transmission du virus.\
-  \ Nous vous demandons donc impérativement de <strong>déballer votre commande, et\
-  \ de transvaser le contenu dans des assiettes</strong>.\n</p>\n<h2>3. Jetez les\
-  \ emballages</h2>\n<p>Une fois votre commande déballée, veillez à <strong>jeter\
-  \ les emballages dans une poubelle fermée</strong>, afin d'éviter de les toucher\
-  \ plus tard par inadvertance.</p>\n<h2>4. Lavez-vous les mains !</h2>\n<p>Une fois\
-  \ que vous avez déballé votre commande et jeté les emballages, <strong>lavez-vous\
-  \ impérativement les mains !</strong></p>\n"
 
 order.expiring_authorization.subject: Une pré-autorisation va bientôt expirer
 order.expiring_authorization.text:

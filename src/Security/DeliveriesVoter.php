@@ -2,6 +2,7 @@
 
 namespace AppBundle\Security;
 
+use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -29,32 +30,43 @@ class DeliveriesVoter extends Voter
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    protected function supports($attribute, $subject)
+    protected function supports($attribute, $subject): bool
     {
         if (!in_array($attribute, self::$actions)) {
             return false;
         }
 
-        if (!$subject instanceof Delivery) {
+        if (!$subject instanceof Delivery && !$subject instanceof DeliveryInputDto) {
             return false;
         }
 
         return true;
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
         if ($this->authorizationChecker->isGranted('ROLE_DISPATCHER')) {
             return true;
         }
 
+        $store = $this->getStore($subject);
+
         if ($this->authorizationChecker->isGranted('ROLE_OAUTH2_DELIVERIES')) {
 
-            if (self::CREATE === $attribute && null === $subject->getStore()) {
+            if (self::CREATE === $attribute && null === $store) {
                 return true;
             }
         }
 
-        return $this->authorizationChecker->isGranted('edit', $subject->getStore());
+        return $this->authorizationChecker->isGranted('edit', $store);
+    }
+
+    private function getStore($subject)
+    {
+        if ($subject instanceof DeliveryInputDto) {
+            return $subject->store;
+        }
+
+        return $subject->getStore();
     }
 }

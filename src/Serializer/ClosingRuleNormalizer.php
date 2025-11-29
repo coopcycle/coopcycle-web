@@ -2,7 +2,7 @@
 
 namespace AppBundle\Serializer;
 
-use ApiPlatform\Core\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
 use AppBundle\Entity\ClosingRule;
 use AppBundle\Utils\OpeningHoursSpecification;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -42,5 +42,12 @@ class ClosingRuleNormalizer implements NormalizerInterface, DenormalizerInterfac
     public function supportsDenormalization($data, $type, $format = null)
     {
         return $this->normalizer->supportsDenormalization($data, $type, $format) && $type === ClosingRule::class;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return [
+            ClosingRule::class => true, // supports*() call result is cached
+        ];
     }
 }

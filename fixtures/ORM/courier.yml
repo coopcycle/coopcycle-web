@@ -1,0 +1,135 @@
+include:
+  # Needs `setup_default.yml` to be loaded first with -s option
+  - stores_excl_setup.yml
+  - user_courier.yml
+
+AppBundle\Entity\Task:
+  task_1:
+    address: "@address_1"
+    doneAfter: <identity(new \DateTime('today 10:30:00'))>
+    doneBefore: <identity(new \DateTime('today 11:00:00'))>
+    type: PICKUP
+    __calls:
+      - assignTo: [ "@jane", <identity(new \DateTime('today 09:30:00'))> ]
+  task_2:
+    address: "@address_2"
+    doneAfter: <identity(new \DateTime('today 11:30:00'))>
+    doneBefore: <identity(new \DateTime('today 12:00:00'))>
+    __calls:
+      - assignTo: [ "@jane", <identity(new \DateTime('today 09:30:00'))> ]
+
+AppBundle\Entity\Delivery:
+  delivery_1:
+    __factory:
+      createWithTasks:
+        - '@task_1'
+        - '@task_2'
+    __calls:
+      - setOrder:
+          - '@order_1'
+      - setPickupRange:
+          - <identity(new \DateTime('today 10:30:00'))>
+          - <identity(new \DateTime('today 11:00:00'))>
+      - setDropoffRange:
+          - <identity(new \DateTime('today 12:00:00'))>
+          - <identity(new \DateTime('today 14:00:00'))>
+    store: "@store_1"
+
+AppBundle\Entity\Sylius\Order:
+  order_1:
+    __factory:
+      '@sylius.factory.order::createForRestaurant':
+        - "@resto_1"
+    __calls:
+      - setNumber: [ "A1" ]
+      - setState: [ 'new' ]
+      - setShippingTimeRange: [ '@range_1' ]
+
+AppBundle\DataType\TsRange:
+  range_1:
+    __factory:
+      create:
+        - <identity(new \DateTime('today 10:00:00'))>
+        - <identity(new \DateTime('today 20:00:00'))>
+
+### All the following fixtures are duplicated from other files,
+### but since the fixtures are A REAL MESS/PAIN... I have no choice.
+### If I load `setup_default.yml` with `-s` I can't access references like `@tva_conso_immediate`
+### If I don't load that way, then I don't have channels, taxation, etc...
+
+AppBundle\Entity\LocalBusiness:
+  resto_1:
+    name: Resto 1
+    address: "@address_1"
+    openingHours: [ 'Mo-Su 09:30-23:59' ]
+    enabled: true
+    contract: "@contract_1"
+    edenred_enabled: false
+    edenred_trcard_enabled: false
+    edenred_sync_sent: false
+    __calls:
+      - setMinimumAmount: [ 'delivery', 1500 ]
+      - addProduct: [ "@pizza" ]
+
+AppBundle\Entity\Contract:
+  contract_1:
+    flatDeliveryPrice: 350
+    feeRate: 0.00
+
+AppBundle\Entity\Sylius\Product:
+  pizza:
+    code: PIZZA
+    currentLocale: fr
+    name: Pizza
+    slug: pizza
+    enabled: true
+    options: [ "@pizza_topping" ]
+    variants: [ "@pizza_pepperoni", "@pizza_extra_cheese" ]
+
+AppBundle\Entity\Sylius\ProductVariant:
+  pizza_pepperoni:
+    taxCategory: "@tva_cons_imm"
+    currentLocale: fr
+    name: Pizza Pepperoni
+    code: PIZZA_PEPPERONI
+    price: 900
+    optionValues: [ "@pizza_topping_pepperoni" ]
+  pizza_extra_cheese:
+    taxCategory: "@tva_cons_imm"
+    currentLocale: fr
+    name: Pizza Extra Cheese
+    code: PIZZA_EXTRA_CHEESE
+    price: 900
+    optionValues: [ "@pizza_topping_extra_cheese" ]
+
+AppBundle\Entity\Sylius\ProductOptionValue:
+  pizza_topping_pepperoni:
+    code: PIZZA_TOPPING_PEPPERONI
+    currentLocale: fr
+    value: Pepperoni
+  pizza_topping_extra_cheese:
+    code: PIZZA_TOPPING_EXTRA_CHEESE
+    currentLocale: fr
+    value: Extra cheese
+
+AppBundle\Entity\Sylius\ProductOption:
+  pizza_topping:
+    code: PIZZA_TOPPING
+    strategy: free
+    currentLocale: fr
+    name: Pizza topping
+    values: [ "@pizza_topping_pepperoni", "@pizza_topping_extra_cheese" ]
+
+AppBundle\Entity\Sylius\TaxCategory:
+  tva_cons_imm:
+    code: tva_cons_imm
+    name: "TVA consommation immédiate"
+    rates: [ "@tvai_10" ]
+
+AppBundle\Entity\Sylius\TaxRate:
+  tvai_10:
+    name: tax_rate.intermediary
+    code: FR_BASE_INTERMEDIARY
+    amount: 0.1
+    includedInPrice: true
+    calculator: default

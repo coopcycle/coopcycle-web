@@ -2,15 +2,31 @@
 
 namespace AppBundle\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\Webhook\Create as CreateController;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use League\Bundle\OAuth2ServerBundle\Model\Client;
 
-#[ApiResource(collectionOperations: ['post' => ['method' => 'POST', 'controller' => CreateController::class, 'security_post_denormalize' => "is_granted('create', object)", 'denormalization_context' => ['groups' => ['webhook_create']], 'normalization_context' => ['groups' => ['webhook', 'webhook_with_secret']]]], itemOperations: ['get' => ['method' => 'GET', 'security' => "is_granted('view', object)"], 'delete' => ['method' => 'DELETE', 'security' => "is_granted('edit', object)"]], attributes: ['normalization_context' => ['groups' => ['webhook']]])]
+#[ApiResource(
+    operations: [
+        new Get(security: 'is_granted(\'view\', object)'),
+        new Delete(security: 'is_granted(\'edit\', object)'),
+        new Post(
+            controller: CreateController::class,
+            normalizationContext: ['groups' => ['webhook', 'webhook_with_secret']],
+            denormalizationContext: ['groups' => ['webhook_create']],
+            securityPostDenormalize: 'is_granted(\'create\', object)'
+        )
+    ],
+    normalizationContext: ['groups' => ['webhook']]
+)]
 class Webhook
 {
     use Timestampable;
@@ -36,9 +52,9 @@ class Webhook
     /**
      * @var string
      */
+    #[ApiProperty(openapiContext: ['type' => 'string', 'enum' => self::EVENTS])]
     #[Assert\Choice(callback: 'getEvents')]
     #[Groups(['webhook', 'webhook_create'])]
-    #[ApiProperty(attributes: ['openapi_context' => ['type' => 'string', 'enum' => Webhook::EVENTS]])]
     private $event;
 
     /**

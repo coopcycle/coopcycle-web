@@ -2,8 +2,8 @@ Feature: Woopit
 
   Scenario: Receive & confirm quote
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | sylius_products.yml |
       | stores.yml          |
       | woopit_integrations.yml          |
     And the setting "subject_to_vat" has value "1"
@@ -313,8 +313,8 @@ Feature: Woopit
 
   Scenario: Receive & cancel quote
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | sylius_products.yml |
       | stores.yml          |
       | woopit_integrations.yml          |
     And the setting "subject_to_vat" has value "1"
@@ -433,8 +433,8 @@ Feature: Woopit
 
   Scenario: Receive, confirm quote & cancel delivery
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | sylius_products.yml |
       | stores.yml          |
       | woopit_integrations.yml          |
     And the setting "subject_to_vat" has value "1"
@@ -653,8 +653,8 @@ Feature: Woopit
 
   Scenario: Receive, confirm quote & update delivery
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | sylius_products.yml |
       | stores.yml          |
       | woopit_integrations.yml          |
     And the setting "subject_to_vat" has value "1"
@@ -911,11 +911,11 @@ Feature: Woopit
         },
         "delivery": {
           "address": {
-            "addressLine1": "20, Rue Malher",
+            "addressLine1": "64, Rue Alexandre Dumas",
             "addressLine2": "Entrée D",
             "elevator": true,
             "floor": 2,
-            "postalCode": "75004",
+            "postalCode": "75011",
             "city": "Paris",
             "country": "FR",
             "doorCode": 23
@@ -998,8 +998,8 @@ Feature: Woopit
 
   Scenario: Receive & refuse quote due to non existing store
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | sylius_products.yml |
       | stores.yml          |
       | woopit_integrations.yml          |
     And the setting "subject_to_vat" has value "1"
@@ -1083,8 +1083,8 @@ Feature: Woopit
 
   Scenario: Receive & refuse quote due to delivery area not covered
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | sylius_products.yml |
       | stores.yml          |
       | woopit_integrations.yml          |
     Given the geojson file "woopit_zone" for a zone is loaded
@@ -1134,11 +1134,11 @@ Feature: Woopit
         },
         "delivery": {
           "location": {
-            "addressLine1": "153 Bd de Magenta",
+            "addressLine1": "64 Rue Alexandre Dumas",
             "addressLine2": "Appt 9",
             "elevator": true,
             "floor": 2,
-            "postalCode": "75010",
+            "postalCode": "75011",
             "city": "Paris",
             "country": "FR",
             "doorCode": "5678",
@@ -1170,8 +1170,8 @@ Feature: Woopit
 
   Scenario: Receive & reject quote due to weight
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | sylius_products.yml |
       | stores.yml          |
       | woopit_integrations.yml          |
     And the setting "subject_to_vat" has value "1"
@@ -1285,8 +1285,8 @@ Feature: Woopit
 
   Scenario: Receive & reject quote due to width
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | sylius_products.yml |
       | stores.yml          |
       | woopit_integrations.yml          |
     And the setting "subject_to_vat" has value "1"
@@ -1401,8 +1401,8 @@ Feature: Woopit
 
   Scenario: Receive & reject quote due to height
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | sylius_products.yml |
       | stores.yml          |
       | woopit_integrations.yml          |
     And the setting "subject_to_vat" has value "1"
@@ -1517,8 +1517,8 @@ Feature: Woopit
 
   Scenario: Receive & reject quote due to length
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | sylius_products.yml |
       | stores.yml          |
       | woopit_integrations.yml          |
     And the setting "subject_to_vat" has value "1"
@@ -1633,8 +1633,8 @@ Feature: Woopit
 
   Scenario: Receive & reject quote due to not allowed frozen products
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_taxation.yml |
+      | sylius_products.yml |
       | stores.yml          |
       | woopit_integrations.yml          |
     And the setting "subject_to_vat" has value "1"

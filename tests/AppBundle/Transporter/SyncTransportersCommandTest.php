@@ -22,9 +22,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
-
-
-
 class SyncTransportersCommandTest extends KernelTestCase {
 
     use ProphecyTrait;
@@ -74,12 +71,12 @@ class SyncTransportersCommandTest extends KernelTestCase {
         self::bootKernel();
 
         // LOAD FROM CONTAINER & PROPHESIZE
-        $this->entityManager = self::$container->get(EntityManagerInterface::class);
-        $this->taskManager = self::$container->get(TaskManager::class);
-        $this->fixturesLoader = self::$container->get('fidry_alice_data_fixtures.loader.doctrine');
+        $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
+        $this->taskManager = self::getContainer()->get(TaskManager::class);
+        $this->fixturesLoader = self::getContainer()->get('fidry_alice_data_fixtures.loader.doctrine');
         $this->params = $this->prophesize(ParameterBagInterface::class);
         $this->settingManager = $this->prophesize(SettingsManager::class);
-        $this->logger = self::$container->get(LoggerInterface::class);
+        $this->logger = self::getContainer()->get(LoggerInterface::class);
         $this->syncDBSchenkerFs = new Filesystem(new InMemoryFilesystemAdapter());
         $this->syncInBMVFs = new Filesystem(new InMemoryFilesystemAdapter());
         $this->syncOutBMVFs = new Filesystem(new InMemoryFilesystemAdapter());
@@ -88,7 +85,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
         // LOAD AND PERSIST FIXTURES
         $entities = $this->fixturesLoader->load([
-            __DIR__.'/../../../features/fixtures/ORM/stores.yml'
+            __DIR__.'/../../../fixtures/ORM/settings_mandatory.yml',
+            __DIR__.'/../../../fixtures/ORM/stores.yml'
         ]);
 
         array_walk($entities, function($entity) {
@@ -149,8 +147,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $this->params->reveal(),
             $this->settingManager->reveal(),
             $this->logger,
-            self::$container->get(ImportFromPoint::class),
-            self::$container->get(ReportFromCC::class),
+            self::getContainer()->get(ImportFromPoint::class),
+            self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs
         );
     }
@@ -189,8 +187,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $params->reveal(),
             $settingManager->reveal(),
             $this->logger,
-            self::$container->get(ImportFromPoint::class),
-            self::$container->get(ReportFromCC::class),
+            self::getContainer()->get(ImportFromPoint::class),
+            self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs
         );
 
@@ -232,8 +230,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $params->reveal(),
             $settingManager->reveal(),
             $this->logger,
-            self::$container->get(ImportFromPoint::class),
-            self::$container->get(ReportFromCC::class),
+            self::getContainer()->get(ImportFromPoint::class),
+            self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs
         );
 
@@ -275,8 +273,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $params->reveal(),
             $settingManager->reveal(),
             $this->logger,
-            self::$container->get(ImportFromPoint::class),
-            self::$container->get(ReportFromCC::class),
+            self::getContainer()->get(ImportFromPoint::class),
+            self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs
         );
 
@@ -318,8 +316,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $params->reveal(),
             $settingManager->reveal(),
             $this->logger,
-            self::$container->get(ImportFromPoint::class),
-            self::$container->get(ReportFromCC::class),
+            self::getContainer()->get(ImportFromPoint::class),
+            self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs
         );
 
@@ -357,8 +355,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $params->reveal(),
             $settingManager->reveal(),
             $this->logger,
-            self::$container->get(ImportFromPoint::class),
-            self::$container->get(ReportFromCC::class),
+            self::getContainer()->get(ImportFromPoint::class),
+            self::getContainer()->get(ReportFromCC::class),
             $this->edifactFs
         );
 
@@ -517,7 +515,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
 
         $this->assertEquals(
-            '64 Rue Alexandre Dumas, 75011 Paris',
+            'Rue Alexandre Dumas 64, 75011 Paris',
             $dropoff->getAddress()->getStreetaddress()
         );
         $this->assertEquals(new GeoCoordinates(48.854034, 2.395023), $dropoff->getAddress()->getGeo());

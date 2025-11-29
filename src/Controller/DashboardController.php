@@ -17,9 +17,12 @@ use Hashids\Hashids;
 use Knp\Component\Pager\PaginatorInterface;
 use League\Flysystem\Filesystem;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DashboardController extends AbstractController
@@ -35,7 +38,9 @@ class DashboardController extends AbstractController
         private readonly EntityManagerInterface $entityManager,
         private readonly TranslatorInterface $translator,
         private readonly bool $adhocOrderEnabled,
-        private readonly JWTTokenManagerInterface $JWTTokenManager
+        private readonly JWTTokenManagerInterface $JWTTokenManager,
+        protected NormalizerInterface $normalizer,
+        protected SerializerInterface $serializer
     )
     {
     }
@@ -59,6 +64,9 @@ class DashboardController extends AbstractController
             'promotions' => 'dashboard_restaurant_promotions',
             'promotion_new' => 'dashboard_restaurant_new_promotion',
             'promotion' => 'dashboard_restaurant_promotion',
+            'promotion_archive' => 'dashboard_restaurant_archive_promotion',
+            'promotion_feature' => 'dashboard_restaurant_feature_promotion',
+            'promotion_coupon' => 'dashboard_restaurant_promotion_coupon',
             'product_option_preview' => 'dashboard_restaurant_product_option_preview',
             'reusable_packaging_new' => 'dashboard_restaurant_new_reusable_packaging',
             'mercadopago_oauth_redirect' => 'dashboard_restaurant_mercadopago_oauth_redirect',
@@ -95,7 +103,8 @@ class DashboardController extends AbstractController
         DeliveryRepository $deliveryRepository,
         MessageBusInterface $messageBus,
         Hashids $hashids8,
-        Filesystem $deliveryImportsFilesystem
+        Filesystem $deliveryImportsFilesystem,
+        LoggerInterface $logger,
     )
     {
         $user = $this->getUser();
@@ -117,11 +126,12 @@ class DashboardController extends AbstractController
                 $request,
                 $paginator,
                 deliveryRepository: $deliveryRepository,
+                messageBus: $messageBus,
                 entityManager: $entityManager,
                 hashids8: $hashids8,
                 deliveryImportsFilesystem: $deliveryImportsFilesystem,
-                messageBus: $messageBus,
-                slugify: $slugify
+                slugify: $slugify,
+                logger: $logger,
             );
         }
 

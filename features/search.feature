@@ -2,7 +2,6 @@ Feature: Search
 
   Scenario: Search restaurants with Typesense
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |
@@ -43,7 +42,6 @@ Feature: Search
 
   Scenario: Search restaurants by product name with Typesense
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | sylius_locales.yml  |
       | products.yml        |
       | restaurants.yml     |

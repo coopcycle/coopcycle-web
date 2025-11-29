@@ -23,13 +23,16 @@ services:
       dockerfile: './docker/webpack/Dockerfile'
       context: '.'
     image: coopcycle/webpack
+    depends_on:
+      php:
+        condition: service_healthy
+        restart: true
     ports:
       - '8080:8080'
     volumes:
       # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
       - '.:/srv/coopcycle'
       - 'webpack_php_cache:/srv/coopcycle/var/cache'
-      - 'node_modules_webpack:/srv/coopcycle/node_modules/'
 
   osrm:
     build: './docker/osrm'
@@ -82,6 +85,7 @@ services:
       - php
     restart: always
     environment:
+      - APP_ENV
       - GOOGLE_API_KEY
       - STRIPE_PUBLISHABLE_KEY
       - STRIPE_SECRET_KEY
@@ -142,7 +146,7 @@ services:
       - MJML_MINIFY=false
 
   minio:
-    image: minio/minio
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
     command: server --console-address ":9001" /data
     ports:
       - "9000:9000"
@@ -153,13 +157,19 @@ services:
       - MINIO_ACCESS_KEY=${S3_CREDENTIALS_KEY}
       - MINIO_SECRET_KEY=${S3_CREDENTIALS_SECRET}
       - MINIO_REGION=${S3_REGION}
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   # https://github.com/minio/minio/issues/4882
   # https://docs.min.io/docs/minio-client-complete-guide#policy
   minio_client:
-    image: minio/mc
+    image: minio/mc:RELEASE.2025-04-16T18-13-26Z
     depends_on:
-      - minio
+      minio:
+        condition: service_healthy
     environment:
       - S3_CREDENTIALS_KEY
       - S3_CREDENTIALS_SECRET
@@ -200,7 +210,7 @@ services:
       - ./sonic.cfg:/etc/sonic.cfg
 
   centrifugo:
-    image: centrifugo/centrifugo:v2
+    image: centrifugo/centrifugo:v4
     ports:
       - "8100:8000"
     depends_on:
@@ -208,12 +218,18 @@ services:
     environment:
       - CENTRIFUGO_TOKEN_HMAC_SECRET_KEY
       - CENTRIFUGO_API_KEY
-      - CENTRIFUGO_V3_USE_OFFSET=true
       - CENTRIFUGO_ENGINE=redis
-      - CENTRIFUGO_REDIS_URL=redis://redis:6379
+      - CENTRIFUGO_REDIS_ADDRESS=redis://redis:6379
       - CENTRIFUGO_ADMIN=true
       - CENTRIFUGO_ADMIN_PASSWORD=centrifugo
       - CENTRIFUGO_ADMIN_SECRET=centrifugo
+      - CENTRIFUGO_ALLOWED_ORIGINS=*
+      - CENTRIFUGO_RECOVER=true
+      - CENTRIFUGO_HISTORY_SIZE=10
+      - CENTRIFUGO_HISTORY_TTL=300s
+      - CENTRIFUGO_USE_CLIENT_PROTOCOL_V1_BY_DEFAULT=true
+      - CENTRIFUGO_SKIP_USER_CHECK_IN_SUBSCRIPTION_TOKEN=true
+      - CENTRIFUGO_ALLOW_USER_LIMITED_CHANNELS=true
 
   # https://cube.dev/docs/getting-started-docker
   cube:
@@ -244,8 +260,7 @@ services:
     volumes:
       - ./cube:/cube/conf/schema
       - ./cube.js:/cube/conf/cube.js
-    logging:
-      driver: none
+    attach: false
 
   typesense:
     image: typesense/typesense:0.22.2
@@ -256,39 +271,7 @@ services:
       - TYPESENSE_DATA_DIR=/data
     volumes:
       - typesense_data:/data
-    logging:
-      driver: none
-
-  storybook-react:
-    build:
-      dockerfile: './docker/storybook-react/Dockerfile'
-      context: '.'
-    ports:
-      - '6007:6007'
-    depends_on:
-      - webpack
-    volumes:
-      # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
-      - '.:/srv/coopcycle'
-      - 'node_modules_webpack:/srv/coopcycle/node_modules/'
-    profiles:
-      - devFrontend
-
-  storybook:
-    build:
-      dockerfile: './docker/storybook/Dockerfile'
-      context: '.'
-    ports:
-      - '6006:6006'
-    depends_on:
-      - webpack
-      - storybook-react
-    volumes:
-      # https://stackoverflow.com/questions/29181032/add-a-volume-to-docker-but-exclude-a-sub-folder
-      - '.:/srv/coopcycle'
-      - 'node_modules_webpack:/srv/coopcycle/node_modules/'
-    profiles:
-      - devFrontend
+    attach: false
 
   odoo-web:
     image: odoo:17.0
@@ -319,7 +302,6 @@ services:
       - devOdoo
 
 volumes:
-  node_modules_webpack:
   pg_data:
   php_cache:
   php_profiles:

@@ -1,53 +1,46 @@
 context('Checkout', () => {
-    beforeEach(() => {
+  beforeEach(() => {
+    cy.loadFixtures('checkout.yml')
+  })
 
-      cy.symfonyConsole('coopcycle:fixtures:load -f cypress/fixtures/checkout.yml')
+  it('order something at restaurant with existing address', () => {
+    cy.login('jane', '12345678')
 
-    })
+    cy.urlmatch(/\/fr\/$/)
 
-    it('order something at restaurant with existing address', () => {
+    cy.get('[data-search="address"] input[type="search"]')
+      .type('1 rue de', { timeout: 5000, delay: 300 })
 
-        cy.visit('/login')
-
-        cy.login('jane', '12345678')
-
-        cy.location('pathname').should('eq', '/fr/')
-
-        cy.get('[data-search="address"] input[type="search"]')
-          .type('1 rue de', { timeout: 5000, delay: 300 })
-
-        cy.get('[data-search="address"]')
-          .find('.react-autosuggest__suggestions-container', { timeout: 5000 })
-          .find('.react-autosuggest__section-container', { timeout: 5000 })
-          // There should be 2 sections
-          .then(($sections) => {
-            cy.wrap($sections).should('have.length', 2)
-          })
-          // The first section should contain saved addresses
-          .then(($sections) => {
-            cy.wrap($sections)
-              .eq(0)
-              .find('.react-autosuggest__section-title')
-              .invoke('text')
-              .should('eq', 'Adresses sauvegardées')
-          })
-
-        // Click on the first suggestion
-        cy.get('[data-search="address"]')
-          .find('.react-autosuggest__suggestions-container')
-          .find('.react-autosuggest__section-container')
+    cy.get('[data-search="address"]')
+      .find('.react-autosuggest__suggestions-container', { timeout: 5000 })
+      .find('.react-autosuggest__section-container', { timeout: 5000 })
+      // There should be 2 sections
+      .then(($sections) => {
+        cy.wrap($sections).should('have.length', 2)
+      })
+      // The first section should contain saved addresses
+      .then(($sections) => {
+        cy.wrap($sections)
           .eq(0)
-          .contains('1, Rue de Rivoli, Paris, France')
-          .click()
+          .find('.react-autosuggest__section-title')
+          .invoke('text')
+          .should('eq', 'Adresses sauvegardées')
+      })
 
-        cy.location().then((loc) => {
-          expect(loc.pathname).to.eq('/fr/restaurants')
-          expect(loc.search).to.match(/\?geohash=[a-z0-9]+&address=[A-Za-z0-9%=]+/)
-        })
+    // Click on the first suggestion
+    cy.get('[data-search="address"]')
+      .find('.react-autosuggest__suggestions-container')
+      .find('.react-autosuggest__section-container')
+      .eq(0)
+      .contains('1, Rue de Rivoli, Paris, France')
+      .click()
 
-        cy.contains('Crazy Hamburger').click()
+    cy.urlmatch(/\/fr\/restaurants$/)
+    cy.urlmatch(/\?geohash=[a-z0-9]+&address=[A-Za-z0-9%=]+/, 'match', 'search')
 
-        cy.get('#restaurant__fulfilment-details__container [data-testid="cart.shippingAddress"]')
-          .should('have.text', '1, Rue de Rivoli, Paris, France')
-    })
+    cy.contains('Crazy Hamburger').click()
+
+    cy.get('#restaurant__fulfilment-details__container [data-testid="cart.shippingAddress"]')
+      .should('have.text', '1, Rue de Rivoli, Paris, France')
+  })
 })

@@ -53,6 +53,7 @@ Feature: Dispatch
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
             "username":"sarah",
+            "color": "#865c2d",
             "date":"2018-12-01",
             "vehicle": null,
             "trailer": null
@@ -68,6 +69,7 @@ Feature: Dispatch
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
             "username":"bob",
+            "color": "#867d2d",
             "date":"2018-12-01",
             "vehicle": null,
             "trailer": null
@@ -102,7 +104,7 @@ Feature: Dispatch
       """
       {
         "@context":"/api/contexts/TaskList",
-        "@id":"/api/task_lists",
+        "@id":"/api/task_lists/v2",
         "@type":"hydra:Collection",
         "hydra:member":[
           {
@@ -120,7 +122,8 @@ Feature: Dispatch
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
             "date":"2018-12-01",
-            "username":"sarah"
+            "username":"sarah",
+            "color":"#865c2d"
           },
           {
             "@id":"/api/task_lists/4",
@@ -137,7 +140,8 @@ Feature: Dispatch
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
             "date":"2018-12-01",
-            "username":"bob"
+            "username":"bob",
+            "color":"#867d2d"
           }
         ],
         "hydra:totalItems":2,
@@ -197,7 +201,6 @@ Feature: Dispatch
 
   Scenario: Administrator can assign task
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
@@ -328,7 +331,6 @@ Feature: Dispatch
 
   Scenario: Administrator can self-assign task already assigned to someone else
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
@@ -340,7 +342,7 @@ Feature: Dispatch
       """
     Then the response status code should be 200
     And the response should be in JSON
-    
+
   Scenario: Courier can unassign task assigned to him/her
     Given the fixtures files are loaded:
       | dispatch.yml        |
@@ -438,7 +440,8 @@ Feature: Dispatch
           "createdAt":"@string@.isDateTime()",
           "updatedAt":"@string@.isDateTime()",
           "date":"2018-12-02",
-          "username":"bob"
+          "username":"bob",
+          "color":"#867d2d"
         },
         "unassignedCount":0
       }
@@ -511,6 +514,7 @@ Feature: Dispatch
             "polyline":"iyfiH}tfM??",
             "date":"2018-12-01",
             "username":"sarah",
+            "color": "#865c2d",
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
             "vehicle": null,
@@ -534,6 +538,7 @@ Feature: Dispatch
             "polyline":"iyfiH}tfM??",
             "date":"2018-12-01",
             "username":"bob",
+            "color": "#867d2d",
             "createdAt":"@string@.isDateTime()",
             "updatedAt":"@string@.isDateTime()",
             "vehicle": null,
@@ -619,6 +624,8 @@ Feature: Dispatch
 
   Scenario: Create delivery from tasks
     Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_ADMIN"
     And the user "sarah" is authenticated
@@ -642,6 +649,9 @@ Feature: Dispatch
          "@id":@string@,
          "@type":"http://schema.org/ParcelDelivery",
          "id":@integer@,
+         "distance":@integer@,
+         "duration":@integer@,
+         "polyline":@string@,
          "pickup":{
             "@id":"/api/tasks/4",
             "@type":"Task",
@@ -655,12 +665,15 @@ Feature: Dispatch
             "@*@":"@*@"
          },
          "tasks":@array@,
-         "trackingUrl":@string@
+         "trackingUrl": @string@,
+         "order": {"@*@": "@*@"}
       }
       """
 
   Scenario: Create delivery from tasks (multiple)
     Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
       | dispatch.yml        |
     And the user "sarah" has role "ROLE_ADMIN"
     And the user "sarah" is authenticated
@@ -685,6 +698,9 @@ Feature: Dispatch
          "@id":@string@,
          "@type":"http://schema.org/ParcelDelivery",
          "id":@integer@,
+         "distance":@integer@,
+         "duration":@integer@,
+         "polyline":@string@,
          "tasks":@array@,
          "pickup":{
             "@id":"/api/tasks/4",
@@ -700,7 +716,8 @@ Feature: Dispatch
             "id":8,
             "@*@":"@*@"
          },
-         "trackingUrl":@string@
+         "trackingUrl": @string@,
+         "order": {"@*@": "@*@"}
       }
       """
 
@@ -812,7 +829,7 @@ Feature: Dispatch
       """
       {
          "@context":"/api/contexts/Tour",
-         "@id":"/api/tours/3",
+         "@id":"/api/tours/4",
          "@type":"Tour",
          "name":"Monday tour",
          "date": "2018-03-02",
@@ -831,7 +848,6 @@ Feature: Dispatch
 
   Scenario: Administrator can assign multiple tasks at once
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | dispatch.yml        |
     And the user "bob" has role "ROLE_ADMIN"
     And the user "bob" is authenticated
@@ -853,7 +869,7 @@ Feature: Dispatch
       """
       {
         "@context":"/api/contexts/Task",
-        "@id":"/api/tasks",
+        "@id":"/api/tasks/assign",
         "@type":"hydra:Collection",
         "hydra:member": [
           {

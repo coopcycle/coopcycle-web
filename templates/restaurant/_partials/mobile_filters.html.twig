@@ -48,7 +48,7 @@
             <div class="checkbox px-3 mb-4">
             <label>
             <input type="checkbox" name="cuisine[]" value="{{ cuisine.name }}"
-                {% if cuisine.name in app.request.query.get('cuisine')|join(',') %}checked{% endif %}>
+                {% if cuisine.name in app.request.query.all('cuisine')|join(',') %}checked{% endif %}>
                 {{ cuisine.name|trans({}, 'cuisines') }}
             </label>
             </div>

@@ -13,4 +13,8 @@
 
   {% include '_partials/recurrence_rule/list.html.twig' with { items: recurrence_rules, empty_message: 'stores.recurrence_rules.empty_message' } %}
 
+  <div class="text-center">
+    {{ knp_pagination_render(pagination, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
+  </div>
+
 {% endblock %}

@@ -2,7 +2,6 @@ Feature: Optin Consents
 
   Scenario: Retrieve user consents
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | optin_consents.yml  |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -39,7 +38,6 @@ Feature: Optin Consents
 
   Scenario: User accepts the consent to receive the Newsletter
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | optin_consents.yml  |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |
@@ -83,7 +81,6 @@ Feature: Optin Consents
 
   Scenario: User rejects consent for Marketing
     Given the fixtures files are loaded:
-      | sylius_channels.yml |
       | optin_consents.yml  |
     And the user "bob" is loaded:
       | email      | bob@coopcycle.org |

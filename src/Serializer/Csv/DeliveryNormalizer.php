@@ -4,7 +4,7 @@ namespace AppBundle\Serializer\Csv;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Sylius\Order\AdjustmentInterface;
-use ApiPlatform\Core\Serializer\ItemNormalizer;
+use ApiPlatform\Serializer\ItemNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
@@ -62,5 +62,12 @@ class DeliveryNormalizer implements NormalizerInterface
     public function supportsNormalization($data, $format = null)
     {
         return 'csv' === $format && $data instanceof Delivery;
+    }
+
+    public function getSupportedTypes(?string $format): array
+    {
+        return $format === 'csv' ? [
+            Delivery::class => true, // supports*() call result is cached
+        ] : [];
     }
 }

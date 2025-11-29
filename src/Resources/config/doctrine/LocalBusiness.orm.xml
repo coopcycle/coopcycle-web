@@ -128,6 +128,11 @@
         <option name="default">stripe</option>
       </options>
     </field>
+    <field name="pawapayEnabled" type="boolean" column="pawapay_enabled">
+      <options>
+        <option name="default">1</option>
+      </options>
+    </field>
     <many-to-one field="contract" target-entity="AppBundle\Entity\Contract" inversed-by="restaurants">
       <cascade>
         <cascade-persist/>
@@ -177,7 +182,7 @@
         <cascade-all/>
       </cascade>
     </one-to-many>
-    <one-to-one field="mercadopagoAccount" target-entity="AppBundle\Entity\MercadopagoAccount" mapped-by="restaurant" orphan-removal="true">
+    <one-to-one field="mercadopagoAccount" target-entity="AppBundle\Entity\MercadopagoAccount" orphan-removal="true">
       <cascade>
         <cascade-all/>
       </cascade>
@@ -248,7 +253,7 @@
         </inverse-join-columns>
       </join-table>
     </many-to-many>
-    <many-to-many field="promotions" target-entity="Sylius\Component\Promotion\Model\Promotion">
+    <many-to-many field="promotions" target-entity="Sylius\Component\Promotion\Model\PromotionInterface">
       <cascade>
         <cascade-persist/>
       </cascade>

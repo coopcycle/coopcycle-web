@@ -21,20 +21,14 @@ class DeliveryRequest
     use CreateDeliveryTrait;
 
     public function __construct(
-        private DeliveryManager $deliveryManager,
-        private Geocoder $geocoder,
-        private Hashids $hashids12,
-        private EntityManagerInterface $entityManager,
-        private PhoneNumberUtil $phoneNumberUtil,
-        private ValidatorInterface $checkDeliveryValidator,
-        private UrlGeneratorInterface $urlGenerator)
+        private readonly DeliveryManager $deliveryManager,
+        private readonly Geocoder $geocoder,
+        private readonly Hashids $hashids12,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly PhoneNumberUtil $phoneNumberUtil,
+        private readonly ValidatorInterface $checkDeliveryValidator,
+        private readonly UrlGeneratorInterface $urlGenerator)
     {
-        $this->deliveryManager = $deliveryManager;
-        $this->geocoder = $geocoder;
-        $this->hashids12 = $hashids12;
-        $this->entityManager = $entityManager;
-        $this->phoneNumberUtil = $phoneNumberUtil;
-        $this->checkDeliveryValidator = $checkDeliveryValidator;
     }
 
     public function __invoke(WoopitQuoteRequest $data)
@@ -91,8 +85,8 @@ class DeliveryRequest
         $this->entityManager->persist($woopitDelivery);
         $this->entityManager->flush();
 
-        $data->deliveryObject = $delivery;
-        $data->state = WoopitQuoteRequest::STATE_CONFIRMED;
+        $quoteRequest->deliveryObject = $delivery;
+        $quoteRequest->state = WoopitQuoteRequest::STATE_CONFIRMED;
 
         $dropoff = $delivery->getDropoff();
 
@@ -100,7 +94,7 @@ class DeliveryRequest
 
             $parcelId = sprintf('pkg_%s', $this->hashids12->encode($package->getId()));
 
-            $data->parcels[] = [
+            $quoteRequest->parcels[] = [
                 'id' => $parcelId,
             ];
 
@@ -109,7 +103,7 @@ class DeliveryRequest
 
                 $barcodeToken = BarcodeUtils::getToken($barcode);
 
-                $data->labels[] = [
+                $quoteRequest->labels[] = [
                     'id' => sprintf('lbl_%s', $this->hashids12->encode($dropoff->getId(), $package->getId(), $i)),
                     'type' => 'url',
                     'mode' => 'pdf',
@@ -119,6 +113,6 @@ class DeliveryRequest
             }
         }
 
-        return $data;
+        return $quoteRequest;
     }
 }

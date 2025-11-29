@@ -1,7 +1,0 @@
-Sylius\Component\Channel\Model\Channel:
-  web:
-    code: web
-    name: Web
-  app:
-    code: app
-    name: App
