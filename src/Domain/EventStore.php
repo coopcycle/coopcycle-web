@@ -11,6 +11,7 @@ use AppBundle\Entity\TaskEvent;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 class EventStore extends ArrayCollection
 {
@@ -89,13 +90,48 @@ class EventStore extends ArrayCollection
         $request = $this->requestStack->getCurrentRequest();
         if ($request) {
             $metadata['client_ip'] = $request->getClientIp();
+
+            if ($request->headers->has('User-Agent')) {
+                $metadata['user_agent'] = $request->headers->get('User-Agent');
+            } else {
+                $metadata['user_agent'] = 'unknown';
+            }
+
+            $metadata['route'] = $request->attributes->get('_route');
         }
 
         $user = $this->getUser();
         if ($user) {
             $metadata['username'] = $user->getUsername();
+            $metadata['role'] = $this->getRole($user);
         }
 
         return $metadata;
+    }
+
+    private function getRole(UserInterface $user): ?string
+    {
+        // Define roles priority for searching
+        $rolesPriority = [
+            'ROLE_ADMIN',
+            'ROLE_DISPATCHER',
+            'ROLE_COURIER',
+            'ROLE_RESTAURANT',
+            'ROLE_STORE',
+        ];
+
+        $userRoles = $user->getRoles();
+
+        foreach ($rolesPriority as $role) {
+            if (in_array($role, $userRoles, true)) {
+                return $role;
+            }
+        }
+
+        if (count($userRoles) > 0) {
+            return $userRoles[0];
+        } else {
+            return 'ROLE_USER';
+        }
     }
 }
