@@ -78,5 +78,21 @@ context('Delivery (role: dispatcher)', () => {
     cy.get('[data-testid=delivery-itinerary]')
       .contains(/72,? Rue Saint-Maur,? 75011,? Paris,? France/)
       .should('exist')
+
+    // Open order history modal
+    cy.contains('button', "Afficher l'historique").click();
+
+    cy.get('.ant-modal').within(() => {
+      cy.get('.ant-modal-title').should('contain', 'Historique de la commande');
+
+      // Verify the price update event is displayed in the timeline
+      cy.get('.ant-timeline-item')
+        .contains('.ant-timeline-item-content', 'order:price_updated')
+        .parent('.ant-timeline-item')
+        .within(() => {
+          cy.get('[data-testid="tax-included-previous"]').contains('4,99 €');
+          cy.get('[data-testid="tax-included"]').contains('72,00 €');
+        });
+    });
   })
 })

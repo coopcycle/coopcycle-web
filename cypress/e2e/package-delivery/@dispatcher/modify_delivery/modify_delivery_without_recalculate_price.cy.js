@@ -74,8 +74,25 @@ context('Delivery (role: dispatcher)', () => {
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/);
 
+    // Wait for React components to load
+    cy.get('[data-testid="delivery-itinerary"]', {
+      timeout: 10000,
+    }).should('be.visible')
+
     cy.get('[data-testid="order-total-including-tax"]')
       .find('[data-testid="value"]')
       .contains('€8.99');
+
+    // Open order history modal
+    cy.contains('button', "Afficher l'historique").click();
+
+    cy.get('.ant-modal').within(() => {
+      cy.get('.ant-modal-title').should('contain', 'Historique de la commande');
+
+      // Verify there is no price update event is displayed in the timeline
+      cy.get('.ant-timeline-item')
+        .contains('.ant-timeline-item-content', 'order:price_updated')
+        .should('not.exist');
+    });
   });
 });
