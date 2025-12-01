@@ -7,6 +7,7 @@ use AppBundle\Action\Base;
 use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\DeliveryOrderDto;
 use AppBundle\Api\State\DeliveryCreateOrUpdateProcessor;
+use AppBundle\Domain\Order\Event\OrderPriceUpdated;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Incident\IncidentEvent;
@@ -19,6 +20,7 @@ use Sylius\Component\Order\Factory\AdjustmentFactoryInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Symfony\Component\HttpFoundation\InputBag;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -34,6 +36,7 @@ class IncidentAction extends Base
         private readonly TranslatorInterface $translator,
         private readonly DenormalizerInterface $denormalizer,
         private readonly DeliveryCreateOrUpdateProcessor $deliveryProcessor,
+        private readonly MessageBusInterface $eventBus,
     )
     {
     }
@@ -144,6 +147,9 @@ class IncidentAction extends Base
             throw new \InvalidArgumentException("There is no order linked to this task");
         }
 
+        $oldTotal = $order->getTotal();
+        $oldTaxTotal = $order->getTaxTotal();
+
         if ($order->getTotal() + $priceDiff < 0) {
             throw new \InvalidArgumentException("Price diff cannot be negative");
         }
@@ -156,12 +162,18 @@ class IncidentAction extends Base
 
         $this->orderProcessor->process($order);
 
+        $priceUpdatedEvent = new OrderPriceUpdated($order,
+            $order->getTotal(),
+            $order->getTaxTotal(),
+            $oldTotal,
+            $oldTaxTotal
+        );
+        $this->eventBus->dispatch($priceUpdatedEvent);
+
         $this->entityManager->persist($order);
 
         $event->setType(IncidentEvent::TYPE_APPLY_PRICE_DIFF);
         $event->setMetadata(["diff" => $priceDiff]);
-
-        //TODO:: Merge https://github.com/coopcycle/coopcycle-web/pull/3845
     }
 
     private function createTransporterReport(Incident &$data, IncidentEvent &$event, InputBag $params): void
