@@ -7,6 +7,7 @@ use ApiPlatform\State\ProcessorInterface;
 use ApiPlatform\Symfony\Validator\Exception\ValidationException;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInputDto;
+use AppBundle\Domain\Order\Event\OrderPriceUpdated;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\UpdateManualSupplements;
@@ -21,6 +22,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use Psr\Log\LoggerInterface;
 use Recurr\Exception\InvalidRRule;
 use Recurr\Rule;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -33,6 +35,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         private readonly PricingManager $pricingManager,
         private readonly DeliveryOrderManager $deliveryOrderManager,
         private readonly OrderManager $orderManager,
+        private readonly MessageBusInterface $eventBus,
         private readonly AuthorizationCheckerInterface $authorizationCheckerInterface,
         private readonly ValidatorInterface $validator,
         private readonly LoggerInterface $logger,
@@ -133,6 +136,9 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                     );
                 }
 
+                $oldTotal = $order->getTotal();
+                $oldTaxTotal = $order->getTaxTotal();
+
                 if (!is_null($arbitraryPrice)) {
                     $productVariants = $this->pricingManager->getProductVariantsWithPricingStrategy(
                         $delivery,
@@ -162,6 +168,16 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                     $this->pricingManager->processDeliveryOrder($order, $productVariants);
                 } else {
                     $this->logger->info('Keeping existing price', ['order' => $order->getId()]);
+                }
+
+                if ($oldTotal !== $order->getTotal() || $oldTaxTotal !== $order->getTaxTotal()) {
+                    $event = new OrderPriceUpdated($order,
+                        $order->getTotal(),
+                        $order->getTaxTotal(),
+                        $oldTotal,
+                        $oldTaxTotal
+                    );
+                    $this->eventBus->dispatch($event);
                 }
             }
         }
