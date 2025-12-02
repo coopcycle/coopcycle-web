@@ -130,7 +130,7 @@ class IncidentAction extends Base
     private function cancelTask(Incident &$data, IncidentEvent &$event): void
     {
         $task = $data->getTask();
-        $this->taskManager->cancel($task);
+        $this->taskManager->cancel($task, recalculatePrice: true);
         $event->setType(IncidentEvent::TYPE_CANCEL_TASK);
     }
 
