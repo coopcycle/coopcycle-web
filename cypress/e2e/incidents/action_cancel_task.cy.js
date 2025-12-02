@@ -42,6 +42,9 @@ describe('Incident management (role: dispatcher)', () => {
     cy.get('[data-testid="cancel-button"]').click();
     cy.get('.ant-popconfirm-buttons > .ant-btn-primary').click();
 
+    // Wait for async work to complete
+    cy.consumeMessages();
+
     // wait for a page to reload before proceeding
     cy.wait(3000);
 
