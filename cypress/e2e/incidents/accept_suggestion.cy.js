@@ -40,7 +40,7 @@ describe('Incident suggestion management (role: dispatcher)', () => {
 
     cy.get('[data-testid="incident-reported-by"]')
       .should('be.visible')
-      .should('contain.text', 'bob');
+      .should('contain.text', 'zak');
 
     // Verify incident body - description
     cy.get('[data-testid="incident-description"]')
