@@ -3,6 +3,7 @@ describe('Incident suggestion management (role: dispatcher)', () => {
     cy.loadFixtures([
       'setup_default.yml',
       'user_dispatcher.yml',
+      'user_courier.yml',
       'store_with_manual_supplements.yml',
       'package_delivery_order.yml',
       'incident_with_suggestion.yml',
