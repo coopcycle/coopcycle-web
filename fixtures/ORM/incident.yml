@@ -1,0 +1,9 @@
+AppBundle\Entity\Incident\Incident:
+  incident_1:
+    title: 'Not at home'
+    status: 'OPEN'
+    priority: 2
+    failureReasonCode: 'NOT_AT_HOME'
+    description: 'Tried twice'
+    task: '@task_2'
+    createdBy: '@zak_courier'
