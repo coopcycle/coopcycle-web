@@ -55,6 +55,7 @@ function areAdjustmentsEqual(
 function areItemsEqual(item1: OrderItem, item2: OrderItem): boolean {
   return (
     item1.total === item2.total &&
+    item1.variant?.name === item2.variant?.name &&
     areAdjustmentsEqual(item1.adjustments, item2.adjustments)
   );
 }
