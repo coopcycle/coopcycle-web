@@ -23,7 +23,7 @@ final class TaskDto
     #[Groups(['delivery', 'pricing_deliveries', 'delivery_create'])]
     public string|null $type = null;
 
-    #[Groups(["delivery"])]
+    #[Groups(['delivery', 'pricing_deliveries', 'delivery_create'])]
     public string|null $status = null;
 
     /**

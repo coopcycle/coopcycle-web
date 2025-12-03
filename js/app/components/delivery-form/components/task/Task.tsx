@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 import { Field } from 'formik';
 import AddressBookNew from './AddressBook';
-import { Input, Button } from 'antd';
+import { Button, Input } from 'antd';
 import Packages from './Packages';
 import { useTranslation } from 'react-i18next';
 import TotalWeight from './TotalWeight';
@@ -14,19 +14,23 @@ import {
   useGetStorePackagesQuery,
   useGetStoreTimeSlotsQuery,
 } from '../../../../api/slice';
-import { Mode } from '../../mode';
+import { Mode, modeIn } from '../../mode';
 import { useSelector } from 'react-redux';
 import { selectMode } from '../../redux/formSlice';
 import type { Address, Store, Tag } from '../../../../api/types';
+import { UserContext } from '../../../../UserContext';
+import { isTemporaryId } from '../../idUtils';
+import { DeleteOutlined, UndoOutlined } from '@ant-design/icons';
+import { FA_CANCELLED, taskTypeListIcon } from '../../../../styles';
+import IsCancelledTaskWrapper from '../../../../IsCancelledTaskWrapper';
 
 type Props = {
-  isDispatcher: boolean;
   storeNodeId: string;
   addresses: Address[];
   taskId: string;
   storeDeliveryInfos: Partial<Store>;
-  onRemove: () => void;
-  showRemoveButton: boolean;
+  onRemove: (index: number) => void;
+  canRemove: boolean;
   tags: Tag[];
   isExpanded: boolean;
   onToggleExpanded: (expanded: boolean) => void;
@@ -34,13 +38,12 @@ type Props = {
 };
 
 const Task = ({
-  isDispatcher,
   storeNodeId,
   addresses,
   taskId,
   storeDeliveryInfos,
   onRemove,
-  showRemoveButton,
+  canRemove,
   tags,
   isExpanded,
   onToggleExpanded,
@@ -48,14 +51,44 @@ const Task = ({
 }: Props) => {
   const { t } = useTranslation();
 
+  const { isDispatcher } = useContext(UserContext);
+
   const mode = useSelector(selectMode);
   const { values, taskValues, setFieldValue, taskIndex } =
     useDeliveryFormFormikContext({
       taskId: taskId,
     });
 
+  const showRemoveButton =
+    (modeIn(mode, [Mode.DELIVERY_CREATE, Mode.RECURRENCE_RULE_UPDATE]) ||
+      (mode === Mode.DELIVERY_UPDATE && isTemporaryId(taskId))) &&
+    canRemove;
+
+  const isExistingTask =
+    mode === Mode.DELIVERY_UPDATE && !isTemporaryId(taskId);
+
+  const taskIcon = useMemo(() => {
+    if (isExistingTask && taskValues.status === 'CANCELLED') {
+      return FA_CANCELLED;
+    } else {
+      return taskTypeListIcon(taskValues.type);
+    }
+  }, [isExistingTask, taskValues]);
+
   const { data: timeSlotLabels } = useGetStoreTimeSlotsQuery(storeNodeId);
   const { data: packages } = useGetStorePackagesQuery(storeNodeId);
+
+  const _onRemove = useCallback(() => {
+    onRemove(taskIndex);
+  }, [onRemove, taskIndex]);
+
+  const onCancel = useCallback(() => {
+    setFieldValue(`tasks[${taskIndex}].status`, 'CANCELLED');
+  }, [taskIndex, setFieldValue]);
+
+  const onRestore = useCallback(() => {
+    setFieldValue(`tasks[${taskIndex}].status`, 'TODO');
+  }, [taskIndex, setFieldValue]);
 
   return (
     <div
@@ -66,16 +99,14 @@ const Task = ({
         onClick={() => {
           onToggleExpanded(!isExpanded);
         }}>
-        {taskValues.type === 'PICKUP' ? (
-          <i className="fa fa-arrow-up"></i>
-        ) : (
-          <i className="fa fa-arrow-down"></i>
-        )}
-        <h4 className="task__header__title ml-2 mb-4">
-          {taskValues.address?.streetAddress
-            ? taskValues.address.streetAddress
-            : t(`DELIVERY_FORM_${taskValues.type}_INFORMATIONS`)}
-        </h4>
+        <i className={`fa ${taskIcon}`} />
+        <IsCancelledTaskWrapper task={taskValues}>
+          <h4 className="task__header__title ml-2 mb-4">
+            {taskValues.address?.streetAddress
+              ? taskValues.address.streetAddress
+              : t(`DELIVERY_FORM_${taskValues.type}_INFORMATIONS`)}
+          </h4>
+        </IsCancelledTaskWrapper>
 
         <button
           data-testid="toggle-button"
@@ -94,8 +125,7 @@ const Task = ({
           <i
             data-testid="task-remove"
             className="fa fa-trash cursor-pointer"
-            onClick={() => onRemove(taskIndex)}
-            type="button"
+            onClick={_onRemove}
           />
         )}
       </div>
@@ -161,14 +191,31 @@ const Task = ({
         )}
       </div>
       <div className={isExpanded ? 'task__footer' : 'task__footer--hidden'}>
-        {showRemoveButton && (
-          <Button
-            onClick={() => onRemove(taskIndex)}
-            type="button"
-            className="mb-4">
+        {showRemoveButton ? (
+          <Button onClick={_onRemove} type="default" danger>
             {t(`DELIVERY_FORM_REMOVE_${taskValues.type}`)}
           </Button>
-        )}
+        ) : null}
+        {isDispatcher && isExistingTask && taskValues.status === 'TODO' ? (
+          <Button
+            data-testid="task-cancel"
+            onClick={onCancel}
+            type="primary"
+            icon={<DeleteOutlined />}
+            danger>
+            {t('ADMIN_DASHBOARD_CANCEL_TASK')}
+          </Button>
+        ) : null}
+        {isDispatcher && isExistingTask && taskValues.status === 'CANCELLED' ? (
+          <Button
+            data-testid="task-restore"
+            onClick={onRestore}
+            color="green"
+            variant="solid"
+            icon={<UndoOutlined />}>
+            {t('ADMIN_DASHBOARD_RESTORE')}
+          </Button>
+        ) : null}
       </div>
     </div>
   );
