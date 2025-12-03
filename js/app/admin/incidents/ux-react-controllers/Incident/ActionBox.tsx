@@ -59,7 +59,10 @@ export default function ({ isLastmile }) {
     {
       key: 'reschedule',
       component: () => (
-        <Button style={styles.btn} onClick={() => setRescheduleDrawer(true)}>
+        <Button
+          data-testid="reschedule-button"
+          style={styles.btn}
+          onClick={() => setRescheduleDrawer(true)}>
           {t('RESCHEDULE_THE_TASK')}
         </Button>
       ),
@@ -77,7 +80,9 @@ export default function ({ isLastmile }) {
               location.reload();
             }
           }}>
-          <Button style={styles.btn}>{t('CANCEL_THE_TASK')}</Button>
+          <Button data-testid="cancel-button" style={styles.btn}>
+            {t('CANCEL_THE_TASK')}
+          </Button>
         </Popconfirm>
       ),
       shouldRender: task.status !== 'DONE' && task.status !== 'CANCELLED',
@@ -85,7 +90,10 @@ export default function ({ isLastmile }) {
     {
       key: 'apply-price-diff',
       component: () => (
-        <Button style={styles.btn} onClick={() => setPriceDiffDrawer(true)}>
+        <Button
+          data-testid="apply-price-diff-button"
+          style={styles.btn}
+          onClick={() => setPriceDiffDrawer(true)}>
           {t('APPLY_A_PRICE_DIFFERENCE')}
         </Button>
       ),

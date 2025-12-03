@@ -137,7 +137,7 @@ const PageHeader = ({
       )}
 
       <Row justify="space-between" align="top">
-        <Col flex="auto">
+        <Col flex="1">
           {renderTitle()}
           {renderSubTitle()}
         </Col>

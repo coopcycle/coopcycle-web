@@ -41,6 +41,7 @@ export default function ({ incident, order }) {
       )}
       <p className="mt-3">
         <Button
+          data-testid="submit-price-diff-button"
           disabled={!value || submitting}
           onClick={async () => {
             setSubmitting(true);

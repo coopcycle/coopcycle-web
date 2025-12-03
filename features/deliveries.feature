@@ -4035,6 +4035,18 @@ Feature: Deliveries
                   }
               },
               "createdAt": "@string@.isDateTime()"
+          },
+          {
+            "@type": "OrderEvent",
+            "@id": @string@,
+            "type": "order:price_updated",
+            "data": {
+              "new_total": 2000,
+              "new_tax_total": 0,
+              "old_total": 1200,
+              "old_tax_total": 0
+            },
+            "createdAt": "@string@.isDateTime()"
           }
       ],
       "id": 1,
