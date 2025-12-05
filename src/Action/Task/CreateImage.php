@@ -27,18 +27,18 @@ class CreateImage
 
         $taskImage = new TaskImage();
 
-        // Ugly hack to improve task validation speed
-        if ($request->headers->has('X-Attach-To')) {
-            $tasks = array_map(function(string $task): Task {
-                return $this->iriConverter->getResourceFromIri($task);
-            }, explode(';', $request->headers->get('X-Attach-To')));
-        }
-
         $taskImage->setFile($uploadedFile);
 
         $this->validator->validate($taskImage, ['groups' => ['task_image_create']]);
 
-        if (isset($tasks)) {
+        // Ugly hack to improve task validation speed
+        if ($request->headers->has('X-Attach-To')) {
+
+            $tasks = array_map(
+                fn(string $task): Task => $this->iriConverter->getResourceFromIri($task),
+                explode(';', $request->headers->get('X-Attach-To'))
+            );
+
             $this->cloneAndAttach($tasks, $taskImage);
         }
 
@@ -47,16 +47,18 @@ class CreateImage
 
     private function cloneAndAttach(array $tasks, TaskImage $taskImage): void
     {
+        $this->entityManager->persist($taskImage);
+
         $first = array_shift($tasks);
-        $first->addImages([$taskImage]);
+        $taskImage->setTask($first);
 
         foreach ($tasks as $task) {
 
-            $taskImageClone = clone $taskImage;
+            $otherTaskImage = new TaskImage();
+            $otherTaskImage->setImageName($taskImage->getImageName());
+            $otherTaskImage->setTask($task);
 
-            $task->addImages([$taskImageClone]);
-
-            $this->entityManager->persist($taskImageClone);
+            $this->entityManager->persist($otherTaskImage);
         }
     }
 }
