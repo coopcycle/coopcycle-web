@@ -46,7 +46,7 @@ use AppBundle\Action\Store\Packages;
 #[ApiResource(
     types: ['http://schema.org/Store'],
     operations: [
-        new Get(security: "is_granted('ROLE_DISPATCHER') or is_granted('edit', object)"),
+        new Get(security: "is_granted('ROLE_DISPATCHER') or is_granted('ROLE_COURIER') or is_granted('edit', object)"),
         new Delete(security: "is_granted('ROLE_ADMIN')"),
         new Patch(security: "is_granted('ROLE_ADMIN')"),
         new Get(
