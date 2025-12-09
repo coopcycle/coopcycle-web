@@ -222,7 +222,7 @@ export type OrderEvent = {
 export type TaskEvent = {
   name: string;
   createdAt: string;
-  data?: Record<string, unknown>
+  data?: Record<string, unknown>;
 };
 
 export type OrderTimeline = {
