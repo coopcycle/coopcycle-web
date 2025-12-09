@@ -53,7 +53,7 @@ use AppBundle\Action\Store\Packages;
             uriTemplate: '/stores/{id}/time_slots',
             controller: StoreTimeSlots::class,
             normalizationContext: ['groups' => ['store_time_slots']],
-            security: "is_granted('ROLE_DISPATCHER') or is_granted('edit', object)"
+            security: "is_granted('ROLE_DISPATCHER') or is_granted('ROLE_COURIER') or is_granted('edit', object)"
         ),
         new Get(
             uriTemplate: '/stores/{id}/packages',
