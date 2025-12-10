@@ -59,7 +59,7 @@ use AppBundle\Action\Store\Packages;
             uriTemplate: '/stores/{id}/packages',
             controller: Packages::class,
             normalizationContext: ['groups' => ['store_packages']],
-            security: "is_granted('ROLE_DISPATCHER') or is_granted('edit', object)"
+            security: "is_granted('ROLE_DISPATCHER') or is_granted('ROLE_COURIER') or is_granted('edit', object)"
         ),
         new Post(
             uriTemplate: '/stores/{id}/addresses',
