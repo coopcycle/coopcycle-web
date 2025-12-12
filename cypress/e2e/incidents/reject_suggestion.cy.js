@@ -3,6 +3,7 @@ describe('Incident suggestion management (role: dispatcher)', () => {
     cy.loadFixtures([
       'setup_default.yml',
       'user_dispatcher.yml',
+      'user_courier.yml',
       'store_with_manual_supplements.yml',
       'package_delivery_order.yml',
       'incident_with_suggestion.yml',
@@ -39,7 +40,7 @@ describe('Incident suggestion management (role: dispatcher)', () => {
 
     cy.get('[data-testid="incident-reported-by"]')
       .should('be.visible')
-      .should('contain.text', 'bob');
+      .should('contain.text', 'zak');
 
     // Verify incident body - description
     cy.get('[data-testid="incident-description"]')

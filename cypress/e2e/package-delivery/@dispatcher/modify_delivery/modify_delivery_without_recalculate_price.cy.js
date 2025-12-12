@@ -18,7 +18,7 @@ context('Delivery (role: dispatcher)', () => {
     // This test verifies that when modifying a delivery and selecting "Keep original price",
     // maintains the original price.
     // Initial: 1 PICKUP + 2 DROPOFF = €4.99 + €2.00 + €2.00 = €8.99
-    // After removing 1 DROPOFF without recalculation: should stay €8.99
+    // After cancelling 1 DROPOFF without recalculation: should stay €8.99
     cy.visit('/admin/stores/1/deliveries/new');
 
     // Create delivery with 1 pickup + 2 dropoffs to get €8.99 total
@@ -54,10 +54,11 @@ context('Delivery (role: dispatcher)', () => {
 
     cy.get('[data-testid="tax-included"]').contains('8,99 €');
 
-    // Remove one dropoff task to trigger price change detection
+    // Cancel one dropoff task to trigger price change detection
     // This should change the price from €8.99 to €6.99 if recalculated
     cy.get('[data-testid="form-task-2"]').within(() => {
-      cy.get('[data-testid="task-remove"]').click();
+      cy.get('[data-testid="toggle-button"]').click();
+      cy.get('[data-testid="task-cancel"]').click();
     });
 
     cy.get('[data-testid="keep-original-price"]', { timeout: 10000 }).should(
@@ -73,8 +74,25 @@ context('Delivery (role: dispatcher)', () => {
     // Order page
     cy.urlmatch(/\/admin\/orders\/[0-9]+$/);
 
+    // Wait for React components to load
+    cy.get('[data-testid="delivery-itinerary"]', {
+      timeout: 10000,
+    }).should('be.visible')
+
     cy.get('[data-testid="order-total-including-tax"]')
       .find('[data-testid="value"]')
       .contains('€8.99');
+
+    // Open order history modal
+    cy.contains('button', "Afficher l'historique").click();
+
+    cy.get('.ant-modal').within(() => {
+      cy.get('.ant-modal-title').should('contain', 'Historique de la commande');
+
+      // Verify there is no price update event is displayed in the timeline
+      cy.get('.ant-timeline-item')
+        .contains('.ant-timeline-item-content', 'order:price_updated')
+        .should('not.exist');
+    });
   });
 });

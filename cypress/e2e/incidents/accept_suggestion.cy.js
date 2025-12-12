@@ -3,6 +3,7 @@ describe('Incident suggestion management (role: dispatcher)', () => {
     cy.loadFixtures([
       'setup_default.yml',
       'user_dispatcher.yml',
+      'user_courier.yml',
       'store_with_manual_supplements.yml',
       'package_delivery_order.yml',
       'incident_with_suggestion.yml',
@@ -39,7 +40,7 @@ describe('Incident suggestion management (role: dispatcher)', () => {
 
     cy.get('[data-testid="incident-reported-by"]')
       .should('be.visible')
-      .should('contain.text', 'bob');
+      .should('contain.text', 'zak');
 
     // Verify incident body - description
     cy.get('[data-testid="incident-description"]')
@@ -158,5 +159,37 @@ describe('Incident suggestion management (role: dispatcher)', () => {
 
     // Verify the order total is updated
     cy.get('[data-testid="order-total"]').should('contain.text', '7,49 €');
+
+    // Remove target="_blank" to allow navigation in same window and verify the result
+    cy.window().then(win => {
+      cy.stub(win, 'open').callsFake(url => {
+        win.location.href = url;
+      });
+    });
+    cy.get('[data-testid="view-order"]').click();
+
+    // Order page
+    cy.urlmatch(/\/admin\/orders\/[0-9]+$/);
+
+    // Wait for React components to load
+    cy.get('[data-testid="delivery-itinerary"]', {
+      timeout: 10000,
+    }).should('be.visible');
+
+    // Open order history modal
+    cy.contains('button', "Afficher l'historique").click();
+
+    cy.get('.ant-modal').within(() => {
+      cy.get('.ant-modal-title').should('contain', 'Historique de la commande');
+
+      // Verify the price update event is displayed in the timeline
+      cy.get('.ant-timeline-item')
+        .contains('.ant-timeline-item-content', 'order:price_updated')
+        .parent('.ant-timeline-item')
+        .within(() => {
+          cy.get('[data-testid="tax-included-previous"]').contains('4,99 €');
+          cy.get('[data-testid="tax-included"]').contains('7,49 €');
+        });
+    });
   });
 });

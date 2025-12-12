@@ -9,7 +9,7 @@ AppBundle\Entity\User:
         - false
     roles: [ 'ROLE_COURIER' ]
     telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
-  zak:
+  zak_courier:
     __factory:
       '@Nucleos\UserBundle\Util\UserManipulator::create':
         - 'zak'

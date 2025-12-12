@@ -47,10 +47,10 @@ class ProcessOrderAfterTaskCancellationHandler
             return;
         }
 
-        $this->processOrderIfNeeded($order, $delivery);
+        $this->processOrderIfNeeded($order, $delivery, $message->shouldRecalculatePrice());
     }
 
-    private function processOrderIfNeeded($order, Delivery $delivery): void
+    private function processOrderIfNeeded($order, Delivery $delivery, bool $recalculatePrice): void
     {
         if ($order->isFoodtech()) {
             // It's not possible to cancel tasks for foodtech orders only an entire order can be cancelled
@@ -61,7 +61,9 @@ class ProcessOrderAfterTaskCancellationHandler
 
         $this->deliveryManager->calculateRoute($delivery);
 
-        $this->recalculatePriceIfNeeded($order, $delivery);
+        if ($recalculatePrice) {
+            $this->recalculatePriceIfNeeded($order, $delivery);
+        }
     }
 
     /**

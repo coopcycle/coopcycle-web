@@ -17,9 +17,10 @@ function formatTime(task) {
   return moment(task.after).format('LL');
 }
 
-function _externalLink(link) {
+function _externalLink(link, testID) {
   return (
     <Button
+      data-testid={testID}
       onClick={() => window.open(link, '_blank')}
       type="dashed"
       style={{ float: 'right' }}
@@ -45,7 +46,7 @@ function Heading({ task, delivery, order }) {
     });
 
     const link = window.Routing.generate('admin_order', { id: order.id });
-    return header(orderWithNumber, _externalLink(link));
+    return header(orderWithNumber, _externalLink(link, 'view-order'));
   }
 
   if (delivery?.id) {
