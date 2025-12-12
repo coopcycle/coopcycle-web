@@ -5,13 +5,11 @@ namespace AppBundle\Domain;
 use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Domain\Order\Event as OrderDomainEvent;
 use AppBundle\Domain\Task\Event as TaskDomainEvent;
-use AppBundle\Domain\DomainEvent;
 use AppBundle\Entity\Sylius\OrderEvent;
 use AppBundle\Entity\TaskEvent;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class EventStore extends ArrayCollection
 {
@@ -103,13 +101,17 @@ class EventStore extends ArrayCollection
         $user = $this->getUser();
         if ($user) {
             $metadata['username'] = $user->getUsername();
-            $metadata['role'] = $this->getRole($user);
         }
+
+        $roles = $this->tokenStorage->getToken()?->getRoleNames() ?? [];
+
+        $metadata['roles'] = $roles;
+        $metadata['roles_category'] = $this->getRolesCategory($roles);
 
         return $metadata;
     }
 
-    private function getRole(UserInterface $user): ?string
+    private function getRolesCategory(array $roles): ?string
     {
         // Define roles priority for searching
         $rolesPriority = [
@@ -120,18 +122,16 @@ class EventStore extends ArrayCollection
             'ROLE_STORE',
         ];
 
-        $userRoles = $user->getRoles();
-
         foreach ($rolesPriority as $role) {
-            if (in_array($role, $userRoles, true)) {
+            if (in_array($role, $roles, true)) {
                 return $role;
             }
         }
 
-        if (count($userRoles) > 0) {
-            return $userRoles[0];
+        if (count($roles) > 0) {
+            return $roles[0];
         } else {
-            return 'ROLE_USER';
+            return 'ROLE_UNKNOWN';
         }
     }
 }
