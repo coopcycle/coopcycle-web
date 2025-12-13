@@ -9,6 +9,10 @@ use Symfony\Component\Messenger\Middleware\StackInterface;
 use Symfony\Component\Messenger\Stamp\ConsumedByWorkerStamp;
 use Symfony\Component\Messenger\Stamp\StampInterface;
 
+/**
+ * This class is used to add an extra data to a message (via a stamp)
+ * that is later on added to log messages created by the Messenger component.
+ */
 abstract class StampMiddleware implements MiddlewareInterface
 {
     private ?StampInterface $currentStamp = null;
