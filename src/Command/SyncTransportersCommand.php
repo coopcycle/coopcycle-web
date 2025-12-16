@@ -413,8 +413,12 @@ class SyncTransportersCommand extends Command {
 
     private function storeInboundEdi(Point $task, string $filename): EDIFACTMessage
     {
+        $messageType = match ($task->getType()) {
+            INOVERTMessageType::SCONTR => EDIFACTMessage::MESSAGE_TYPE_SCONTR,
+            INOVERTMessageType::PICKUP => EDIFACTMessage::MESSAGE_TYPE_PICKUP
+        };
         $edi = new EDIFACTMessage();
-        $edi->setMessageType(EDIFACTMessage::MESSAGE_TYPE_SCONTR);
+        $edi->setMessageType($messageType);
         $edi->setReference($task->getId());
         $edi->setTransporter($this->transporter);
         $edi->setDirection(EDIFACTMessage::DIRECTION_INBOUND);
