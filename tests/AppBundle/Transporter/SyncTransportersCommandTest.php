@@ -31,6 +31,10 @@ class SyncTransportersCommandTest extends KernelTestCase {
     UNA:+,? ' UNB+UNOC:1+123456789:22+987654321:22+240325:1951+2206' UNH+1+SCONTR:3:2:GT:GTF210+ACG' BGM++240325' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC' DTM+DEP+240325' NAD+DP+98765432100010:05++COOPCYCLE TESTING INC' TSR+++3' CAG+P+V' TDT++++3' DOC+730+++ACG+2278663' UNS+D' RFF+CN+JOY0123456789' GID++1:23+1:21' MSE+CGW+15:KG' NAD+CN+++JOHN DOE:ZIMP COMPANY+64 RUE ALEXANDRE DUMAS+PARIS++75+FR' CTA+IC+:JOHN DOE+06 01 02 03 04:AL' NAD+CO+++HOME DEPOT+54 ROUTE DE TREGUIER:BP 8+LOUANNEC++22+FR' DTM+DES+240322' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC+LE BREHAT:ALLEE DES CHATELETS+PLOUFRAGAN++22440+FR' CAG+P+V+++++++++227004' TSR++D:E+3' TXT+DEL+TEL ?: 06 01 02 03 04 POUR PRENDRE UN RENDEZ VOUS DE LIVRAISON' GDS+G+DIVERS' PCI+23' GIN+BN+*2222121907222700470100691001300' DOC+WBL::JOY0123456789+++ACG+70100691+219072' DOC+824+++PRI+FRSBK830689437' UNS+S' UNT+26+1' UNZ+1+2206'
     EDI;
 
+    const EDI_PICKUP_SAMPLE = <<<EDI
+    UNA:+.? ' UNB+UNOC:1+311799456:22+423810365:22+251127:1251+3045' UNH+1+PICKUP:3:2:GT:GTF310' BGM++251127+251127' NAD+MS+31179945601800:05++DBSCHENKER TESTING INC' DTM+BOD+251127' NAD+MR+42381036500068:05++COOPCYCLE TESTING INC' NAD+PW+++TEST+ZA DE LA PRADE:RTE DE NANTES+LOMENER++56+FR' DTM+EDD+251127' TSR+E02++3' CAG+P+V' GDS+G+PALETTE' TDT++++3' DOC+ACO+++ACG' UNS+D' RFF+CN+JOY560000410920251001' GID++1:23+1:21' MSE+CGW+100:KG' NAD+IC+31179945601800++SCHENKER FRANCE+PARC D ACTIVITES SUD LANDES+LOMENER++56270+FR' NAD+CN+++OE / TESTS5+64 RUE ALEXANDRE DUMAS+PARIS++75+FR' NAD+PP+++SCHENKER FRANCE / EXPLOITATION' CAG+P+V+++++++++560000' TSR+E02++3' DOC+WBL+++PRI+00000000+219066' DOC+824+++PRI+FRLRT503000000' UNS+S' UNT+25+1' UNZ+1+3045'
+    EDI;
+
     const INVALID_ADDRESS_EDI_SAMPLE = <<<EDI
     UNA:+,? ' UNB+UNOC:1+123456789:22+987654321:22+240325:1951+2206' UNH+1+SCONTR:3:2:GT:GTF210+ACG' BGM++240325' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC' DTM+DEP+240325' NAD+DP+98765432100010:05++COOPCYCLE TESTING INC' TSR+++3' CAG+P+V' TDT++++3' DOC+730+++ACG+2278663' UNS+D' RFF+CN+JOY0123456789' GID++1:23+1:21' MSE+CGW+15:KG' NAD+CN+++JOHN DOE:ZIMP COMPANY+INVALID ADDRESS+VOID CITY++00+FR' NAD+CO+++HOME DEPOT+54 ROUTE DE TREGUIER:BP 8+LOUANNEC++22+FR' DTM+DES+240322' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC+LE BREHAT:ALLEE DES CHATELETS+PLOUFRAGAN++22440+FR' CAG+P+V+++++++++227004' TSR++D:E+3' GDS+G+DIVERS' PCI+23' GIN+BN+*2222121907222700470100691001300' DOC+WBL::JOY0123456789+++ACG+70100691+219072' DOC+824+++PRI+FRSBK830689437' UNS+S' UNT+26+1' UNZ+1+2206'
     EDI;
@@ -48,6 +52,22 @@ class SyncTransportersCommandTest extends KernelTestCase {
     NAD+MS+0000011:5++DBSchenker Testing Inc.'
     UNS+D'
     RFF+UNC+JOY0123456789'
+    RSJ+MS+LIV+CFM'
+    EDI;
+
+    const PARTIAL_REPORT_PICKUP_EDI_SAMPLE = <<<EDI
+    UNB+UNOC:1+4447190000:22+0000011:22+
+    NAD+MR+4447190000:5++Coopcycle Testing Inc.'
+    NAD+MS+0000011:5++DBSchenker Testing Inc.'
+    UNS+D'
+    RFF+UNC+JOY560000410920251001'
+    RSJ+MS+AAR+CFM'
+    RSJ+MS+MLV+CFM'
+    RSJ+MS+LIV+CFM'
+    NAD+MR+4447190000:5++Coopcycle Testing Inc.'
+    NAD+MS+0000011:5++DBSchenker Testing Inc.'
+    UNS+D'
+    RFF+UNC+JOY560000410920251001'
     RSJ+MS+LIV+CFM'
     EDI;
 
@@ -631,6 +651,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
 
         $reportContent = $this->syncDBSchenkerFs->read($dir_list[0]['path']);
 
+        //FIXME: Should chop-chop while iterative to be sure the order is respected.
         foreach(explode("\n", self::PARTIAL_REPORT_EDI_SAMPLE) as $line) {
             $this->assertStringContainsString(
                 $line,
@@ -639,6 +660,166 @@ class SyncTransportersCommandTest extends KernelTestCase {
         }
 
     }
+
+    public function testValidSyncOnePickupTask(): void
+    {
+        // Insert edi to sync
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_DBS),
+            self::EDI_PICKUP_SAMPLE
+        );
+
+        // Valid the file is there
+        $dir_list = $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray();
+        $this->assertCount(1, $dir_list);
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+
+        // Check command output
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 1 tasks', $output);
+        $this->assertStringContainsString('No messages to send', $output);
+
+        // Check if command removed the file to sync
+        $dir_list = $this->syncDBSchenkerFs->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray();
+        $this->assertCount(0, $dir_list);
+
+        $delivery = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $this->assertCount(1, $delivery);
+
+        /** @var Delivery $delivery */
+        $delivery = array_shift($delivery);
+        $this->assertCount(2, $delivery->getTasks());
+
+
+        /** @var Task $pickup */
+        $pickup = $delivery->getPickup();
+        /** @var Task $dropoff */
+        $dropoff = $delivery->getDropoff();
+
+
+        $this->assertEquals('DBSchenker', $delivery->getStore()->getName());
+
+        $this->assertEquals(
+            '18, avenue Ledru-Rollin 75012 Paris 12ème',
+            $dropoff->getAddress()->getStreetaddress()
+        );
+        $this->assertEquals(new GeoCoordinates(48.864577, 2.333338), $dropoff->getAddress()->getGeo());
+
+
+
+        $this->assertEquals(
+            'Rue Alexandre Dumas 64, 75011 Paris',
+            $pickup->getAddress()->getStreetaddress()
+        );
+        $this->assertEquals(new GeoCoordinates(48.854034, 2.395023), $pickup->getAddress()->getGeo());
+
+        $this->assertEquals(
+            'OE / TESTS5',
+            $pickup->getAddress()->getCompany()
+        );
+
+        $this->assertEquals(100000, $delivery->getWeight());
+        $this->assertEquals($pickup, $dropoff->getPrevious());
+
+        $ediMessage = $dropoff->getImportMessage();
+        $this->assertNotNull($ediMessage);
+        $this->assertEquals('JOY560000410920251001', $ediMessage->getReference());
+        $this->assertEquals('DBSCHENKER', $ediMessage->getTransporter());
+        $this->assertEquals(
+            EDIFACTMessage::DIRECTION_INBOUND,
+            $ediMessage->getDirection()
+        );
+
+        $this->assertEquals(
+            EDIFACTMessage::MESSAGE_TYPE_PICKUP,
+            $ediMessage->getMessageType()
+        );
+
+
+        $this->assertCount(1, $dropoff->getEdifactMessages());
+        $this->taskManager->start($pickup);
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($pickup);
+        $this->entityManager->flush();
+        $this->taskManager->start($dropoff);
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($dropoff);
+        $this->entityManager->flush();
+
+        $this->assertCount(3, $pickup->getEdifactMessages());
+        $this->assertCount(2, $dropoff->getEdifactMessages());
+
+        $pickupReportEDIMessage = $pickup->getEdifactMessages()->map(function (EDIFACTMessage $message) {
+            return [$message->getMessageType(), $message->getSubMessageType()];
+        });
+        $this->assertEquals(
+            [
+                [EDIFACTMessage::MESSAGE_TYPE_PICKUP, null],
+                [EDIFACTMessage::MESSAGE_TYPE_REPORT, 'AAR|CFM'],
+                [EDIFACTMessage::MESSAGE_TYPE_REPORT, 'MLV|CFM'],
+            ],
+            $pickupReportEDIMessage->toArray()
+        );
+
+        /** @var EDIFACTMessage $reportEDIMessage */
+        $dropoffReportEDIMessage = $dropoff->getEdifactMessages()->last();
+
+        $this->assertEquals('JOY560000410920251001', $dropoffReportEDIMessage->getReference());
+        $this->assertEquals('DBSCHENKER', $dropoffReportEDIMessage->getTransporter());
+        $this->assertEquals(
+            EDIFACTMessage::MESSAGE_TYPE_REPORT,
+            $dropoffReportEDIMessage->getMessageType()
+        );
+        $this->assertEquals(
+            EDIFACTMessage::DIRECTION_OUTBOUND,
+            $dropoffReportEDIMessage->getDirection()
+        );
+        $this->assertEquals(
+            'LIV|CFM',
+            $dropoffReportEDIMessage->getSubMessageType()
+        );
+        $this->assertNull($dropoffReportEDIMessage->getSyncedAt());
+
+
+        $this->assertCount(0, $this->syncDBSchenkerFs->listContents(sprintf('from_%s', self::FS_MASK_DBS))->toArray());
+        $this->assertCount(0, $this->syncOutBMVFs->listContents('/')->toArray());
+
+        $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
+        $this->assertCount(3, $unsynced);
+
+        $commandTester->execute([
+            'transporter' => 'DBSCHENKER'
+        ]);
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 0 tasks', $output);
+        $this->assertStringContainsString('3 messages to send', $output);
+
+
+        $this->assertCount(0, $this->syncOutBMVFs->listContents('/')->toArray());
+        $dir_list = $this->syncDBSchenkerFs->listContents(sprintf('from_%s', self::FS_MASK_DBS))->toArray();
+        $this->assertCount(1, $dir_list);
+        $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('DBSCHENKER');
+        $this->assertCount(0, $unsynced);
+
+
+        $reportContent = $this->syncDBSchenkerFs->read($dir_list[0]['path']);
+
+        //FIXME: Should chop-chop while iterative to be sure the order is respected.
+        foreach(explode("\n", self::PARTIAL_REPORT_PICKUP_EDI_SAMPLE) as $line) {
+            $this->assertStringContainsString(
+                $line,
+                $reportContent
+            );
+        }
+
+    }
+
 
     public function testMultipleFilesystemsSync(): void
     {
