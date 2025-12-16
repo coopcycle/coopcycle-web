@@ -7,6 +7,7 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Task;
+use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TaskManager;
 use AppBundle\Transporter\ImportFromPoint;
@@ -60,6 +61,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
     protected Filesystem $syncInBMVFs;
     protected Filesystem $syncOutBMVFs;
     protected Filesystem $edifactFs;
+    protected DeliveryOrderManager $deliveryOrderManager;
     protected $params;
     protected $settingManager;
 
@@ -81,6 +83,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->syncInBMVFs = new Filesystem(new InMemoryFilesystemAdapter());
         $this->syncOutBMVFs = new Filesystem(new InMemoryFilesystemAdapter());
         $this->edifactFs = new Filesystem(new InMemoryFilesystemAdapter());
+        $this->deliveryOrderManager = self::getContainer()->get(DeliveryOrderManager::class);
 
 
         // LOAD AND PERSIST FIXTURES
@@ -149,7 +152,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $this->logger,
             self::getContainer()->get(ImportFromPoint::class),
             self::getContainer()->get(ReportFromCC::class),
-            $this->edifactFs
+            $this->edifactFs,
+            $this->deliveryOrderManager
         );
     }
 
@@ -189,7 +193,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $this->logger,
             self::getContainer()->get(ImportFromPoint::class),
             self::getContainer()->get(ReportFromCC::class),
-            $this->edifactFs
+            $this->edifactFs,
+            $this->deliveryOrderManager,
         );
 
         $this->expectException(\Exception::class);
@@ -232,7 +237,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $this->logger,
             self::getContainer()->get(ImportFromPoint::class),
             self::getContainer()->get(ReportFromCC::class),
-            $this->edifactFs
+            $this->edifactFs,
+            $this->deliveryOrderManager,
         );
 
         $this->expectException(\Exception::class);
@@ -275,7 +281,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $this->logger,
             self::getContainer()->get(ImportFromPoint::class),
             self::getContainer()->get(ReportFromCC::class),
-            $this->edifactFs
+            $this->edifactFs,
+            $this->deliveryOrderManager,
         );
 
         $this->expectException(\Exception::class);
@@ -318,7 +325,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $this->logger,
             self::getContainer()->get(ImportFromPoint::class),
             self::getContainer()->get(ReportFromCC::class),
-            $this->edifactFs
+            $this->edifactFs,
+            $this->deliveryOrderManager,
         );
 
         $this->expectException(\Exception::class);
@@ -357,7 +365,8 @@ class SyncTransportersCommandTest extends KernelTestCase {
             $this->logger,
             self::getContainer()->get(ImportFromPoint::class),
             self::getContainer()->get(ReportFromCC::class),
-            $this->edifactFs
+            $this->edifactFs,
+            $this->deliveryOrderManager,
         );
 
         $this->expectException(\Exception::class);

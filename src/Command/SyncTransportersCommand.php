@@ -8,6 +8,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Edifact\EDIFACTMessageRepository;
 use AppBundle\Entity\Store;
+use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Transporter\ImportFromPoint;
 use AppBundle\Transporter\ReportFromCC;
@@ -69,7 +70,8 @@ class SyncTransportersCommand extends Command {
         private LoggerInterface $transporterLogger,
         private ImportFromPoint $importFromPoint,
         private ReportFromCC $reportFromCC,
-        private Filesystem $edifactFs
+        private Filesystem $edifactFs,
+        private DeliveryOrderManager $deliveryOrderManager,
     )
     { parent::__construct(); }
 
@@ -287,13 +289,21 @@ class SyncTransportersCommand extends Command {
     {
         $count = 0;
         foreach ($sync->pull() as $content) {
-            $messages = Transporter::parse(
+            [$type, $messages] = Transporter::parse(
                 $content,
-                INOVERTMessageType::SCONTR,
                 TransporterName::from($this->transporter)
             );
+
+            if (count($messages) > 1) {
+                $this->transporterLogger->notice(
+                    sprintf("%s messages to import from a single EDIFACT", count($messages)),
+                );
+            }
+
             $filename = sprintf(
-                "SCONTR-%s_%s.%s.edi", mb_strtolower($this->transporter),
+                "%s-%s_%s.%s.edi",
+                mb_strtoupper($type->value),
+                mb_strtolower($this->transporter),
                 date('Y-m-d_His'), uniqid()
             );
 
@@ -303,7 +313,7 @@ class SyncTransportersCommand extends Command {
 
             foreach ($messages as $tasks) {
                 foreach ($tasks->getTasks() as $task) {
-                    $edifactMessage = $this->storeSCONTR($task, $filename);
+                    $edifactMessage = $this->storeInboundEdi($task, $filename);
                     $this->importTask($task, $edifactMessage);
                     $count++;
                 }
@@ -317,32 +327,76 @@ class SyncTransportersCommand extends Command {
     }
 
     private function importTask(Point $point, EDIFACTMessage $edi): void {
+        match($point->getType()) {
+            INOVERTMessageType::SCONTR => $this->importScontrTask($point, $edi),
+            INOVERTMessageType::PICKUP => $this->importPickupTask($point, $edi),
+        };
+    }
+
+    private function importScontrTask(Point $point, EDIFACTMessage $edi): void {
         if ($this->output->isVerbose()) {
             $this->debugPoint($point);
         }
 
         // PICKUP SETUP
-        $pickup = $this->importFromPoint->buildPickupTask($this->HQAddress->clone(), $edi);
+        $pickup = $this->importFromPoint
+            ->buildScontr2PickupTask($this->HQAddress->clone(), $edi);
 
         // DROPOFF SETUP
-        $task = $this->importFromPoint->import($point, $edi);
-        $task->setPrevious($pickup);
+        $dropoff = $this->importFromPoint->import($point, $edi);
+        $dropoff->setPrevious($pickup);
 
+
+        $pickup->setAfter($this->startOfDay());
+        $pickup->setBefore($this->endOfDay());
+        $dropoff->setAfter($this->startOfDay());
+        $dropoff->setBefore($this->endOfDay());
 
         // DELIVERY SETUP
         $delivery = new Delivery();
-        $delivery->setTasks([$pickup, $task]);
+        $delivery->setTasks([$pickup, $dropoff]);
         $delivery->setStore($this->store);
-
-        //TODO: Change this, methods are marked as deprecated
-        $delivery->setPickupRange($this->startOfDay(), $this->endOfDay());
-        $delivery->setDropoffRange($this->startOfDay(), $this->endOfDay());
 
         if (!$this->dryRun) {
             $this->entityManager->persist($edi);
             $this->entityManager->persist($pickup);
-            $this->entityManager->persist($task);
+            $this->entityManager->persist($dropoff);
             $this->entityManager->persist($delivery);
+            /* $this->deliveryOrderManager->createOrder($delivery, ['persist' => false, 'throwException' => false]); */
+            $this->entityManager->flush();
+        }
+    }
+
+    private function importPickupTask(Point $point, EDIFACTMessage $edi): void {
+        if ($this->output->isVerbose()) {
+            $this->debugPoint($point);
+        }
+
+
+        // PICKUP SETUP
+        $pickup = $this->importFromPoint->import($point, $edi);
+
+        // DROPOFF SETUP
+        $dropoff = $this->importFromPoint
+            ->buildPickup2DropoffTask($this->HQAddress->clone(), $edi);
+        $dropoff->setPrevious($pickup);
+
+        $pickup->setAfter($this->startOfDay());
+        $pickup->setBefore($this->endOfDay());
+        $dropoff->setAfter($this->startOfDay());
+        $dropoff->setBefore($this->endOfDay());
+
+        // DELIVERY SETUP
+        $delivery = new Delivery();
+        $delivery->setTasks([$pickup, $dropoff]);
+        $delivery->setStore($this->store);
+
+        if (!$this->dryRun) {
+            $this->entityManager->persist($edi);
+            $this->entityManager->persist($pickup);
+            $this->entityManager->persist($dropoff);
+            $this->entityManager->persist($delivery);
+            /* $this->deliveryOrderManager->createOrder($delivery, ['persist' => false, 'throwException' => false]); */
             $this->entityManager->flush();
         }
     }
@@ -357,7 +411,7 @@ class SyncTransportersCommand extends Command {
         return $carbon->endOfDay()->toDateTime();
     }
 
-    private function storeSCONTR(Point $task, string $filename): EDIFACTMessage
+    private function storeInboundEdi(Point $task, string $filename): EDIFACTMessage
     {
         $edi = new EDIFACTMessage();
         $edi->setMessageType(EDIFACTMessage::MESSAGE_TYPE_SCONTR);
