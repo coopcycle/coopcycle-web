@@ -23,6 +23,11 @@ class DeliveryFormData
     public function __invoke(Task $data, Request $request)
     {
         $delivery = $data->getDelivery();
+
+        if (null === $delivery) {
+            return new JsonResponse(['error' => 'No data found.'], 404);
+        }
+
         $order = $delivery?->getOrder();
 
         $price = $order?->getDeliveryPrice();
