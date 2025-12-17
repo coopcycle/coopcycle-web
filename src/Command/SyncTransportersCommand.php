@@ -8,6 +8,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Edifact\EDIFACTMessageRepository;
 use AppBundle\Entity\Store;
+use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
 use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Transporter\ImportFromPoint;
@@ -344,6 +345,8 @@ class SyncTransportersCommand extends Command {
 
         // DROPOFF SETUP
         $dropoff = $this->importFromPoint->import($point, $edi);
+
+        $pickup->setNext($dropoff);
         $dropoff->setPrevious($pickup);
 
 
@@ -362,9 +365,17 @@ class SyncTransportersCommand extends Command {
             $this->entityManager->persist($pickup);
             $this->entityManager->persist($dropoff);
             $this->entityManager->persist($delivery);
-            /* $this->deliveryOrderManager->createOrder($delivery, ['persist' => false, 'throwException' => false]); */
+            $this->createOrderForDelivery($delivery);
             $this->entityManager->flush();
         }
+    }
+
+    private function createOrderForDelivery(Delivery $delivery): void {
+        $this->deliveryOrderManager->createOrder($delivery, [
+            'pricingStrategy' => new CalculateUsingPricingRules(),
+            /* 'persist' => false, */
+            /* 'throwException' => false, */
+        ]);
     }
 
     private function importPickupTask(Point $point, EDIFACTMessage $edi): void {
@@ -379,6 +390,8 @@ class SyncTransportersCommand extends Command {
         // DROPOFF SETUP
         $dropoff = $this->importFromPoint
             ->buildPickup2DropoffTask($this->HQAddress->clone(), $edi);
+
+        $pickup->setNext($dropoff);
         $dropoff->setPrevious($pickup);
 
         $pickup->setAfter($this->startOfDay());
@@ -396,7 +409,7 @@ class SyncTransportersCommand extends Command {
             $this->entityManager->persist($pickup);
             $this->entityManager->persist($dropoff);
             $this->entityManager->persist($delivery);
-            /* $this->deliveryOrderManager->createOrder($delivery, ['persist' => false, 'throwException' => false]); */
+            $this->createOrderForDelivery($delivery);
             $this->entityManager->flush();
         }
     }
