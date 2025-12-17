@@ -133,8 +133,7 @@ class DeliveryOrderManager
 
                 $this->createIncident->__invoke(
                     $incident,
-                    $isUserWithAccount ? $user : null,
-                    $this->requestStack->getCurrentRequest()
+                    $isUserWithAccount ? $user : null
                 );
             }
         }
