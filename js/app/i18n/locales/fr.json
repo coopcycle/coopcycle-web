@@ -789,7 +789,6 @@
         "INCIDENTS_TASK_DETAILS": "détails",
         "INCIDENTS_ACTION_COMPLETED_SUCCESSFULLY": "Action effectuée avec succès",
         "INCIDENTS_ACTION_FAILED": "Échec de l'action",
-        "INCIDENTS_ERROR_LOADING_SUGGESTION": "Erreur lors du chargement de la suggestion",
         "INCIDENTS_SUGGESTED_PRICE_CHANGE": "Changement de prix suggéré : {{diff}}",
         "INCIDENTS_OLD_PRICE": "Ancien prix",
         "INCIDENTS_NEW_PRICE": "Nouveau prix",

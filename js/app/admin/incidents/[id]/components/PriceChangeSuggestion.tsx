@@ -31,7 +31,7 @@ export function PriceChangeSuggestion({
 
   if (error || !suggestedOrder || !diff || suggestionPriceDiff === undefined) {
     return (
-      <Alert message={t('INCIDENTS_ERROR_LOADING_SUGGESTION')} type="error" />
+      <Alert message={t('INCIDENTS_ERROR_LOADING_SUGGESTED_PRICE_CHANGE')} type="error" />
     );
   }
 
