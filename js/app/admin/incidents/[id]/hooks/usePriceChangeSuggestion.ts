@@ -71,7 +71,7 @@ export function usePriceChangeSuggestion(
     }
 
     return calculatePriceData?.order;
-  }, [calculatePriceData?.order]);
+  }, [storeUri, calculatePriceData?.order]);
 
   const suggestionPriceDiff = useMemo(() => {
     if (!suggestedOrder?.total) {
@@ -119,6 +119,7 @@ export function usePriceChangeSuggestion(
   }, [storeUri, suggestion, calculatePrice]);
 
   return {
+    storeUri,
     isLoading,
     error,
     existingOrder,

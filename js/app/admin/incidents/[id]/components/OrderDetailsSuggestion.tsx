@@ -34,6 +34,7 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
   const suggestionPreview = useSuggestionPreview(suggestion);
 
   const {
+    storeUri,
     isLoading,
     error,
     existingOrder,
@@ -113,14 +114,19 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
           />
         </Col>
       </Row>
-      <PriceChangeSuggestion
-        isLoading={isLoading}
-        error={error}
-        existingOrder={existingOrder}
-        suggestedOrder={suggestedOrder}
-        suggestionPriceDiff={suggestionPriceDiff}
-        diff={diff}
-      />
+      {
+        // price change suggestion only makes sense for local commerce and last mile orders
+        storeUri ? (
+          <PriceChangeSuggestion
+            isLoading={isLoading}
+            error={error}
+            existingOrder={existingOrder}
+            suggestedOrder={suggestedOrder}
+            suggestionPriceDiff={suggestionPriceDiff}
+            diff={diff}
+          />
+        ) : null
+      }
       <Row gutter={16}>
         <Col span={12}>
           <Button
