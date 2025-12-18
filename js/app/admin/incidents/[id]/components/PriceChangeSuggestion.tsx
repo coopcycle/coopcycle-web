@@ -31,10 +31,19 @@ export function PriceChangeSuggestion({
 
   if (error || !suggestedOrder || !diff || suggestionPriceDiff === undefined) {
     return (
-      <Alert
-        message={t('INCIDENTS_ERROR_LOADING_SUGGESTED_PRICE_CHANGE')}
-        type="error"
-      />
+      <Row>
+        <Col span={24}>
+          <h3 data-testid="suggestion-price-change">
+            {t('INCIDENTS_SUGGESTED_PRICE_CHANGE', {
+              diff: '',
+            })}
+          </h3>
+          <Alert
+            message={t('INCIDENTS_ERROR_LOADING_SUGGESTED_PRICE_CHANGE')}
+            type="error"
+          />
+        </Col>
+      </Row>
     );
   }
 
