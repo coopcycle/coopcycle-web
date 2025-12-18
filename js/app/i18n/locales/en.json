@@ -802,6 +802,7 @@
         "INCIDENTS_ACTION_COMPLETED_SUCCESSFULLY": "Action completed successfully",
         "INCIDENTS_ACTION_FAILED": "Failed to perform action",
         "INCIDENTS_ERROR_LOADING_SUGGESTION": "Error loading suggestion",
+        "INCIDENTS_SUGGESTED_CHANGES": "Suggested changes",
         "INCIDENTS_SUGGESTED_PRICE_CHANGE": "Suggested price change: {{diff}}",
         "INCIDENTS_OLD_PRICE": "Old price",
         "INCIDENTS_NEW_PRICE": "New price",
