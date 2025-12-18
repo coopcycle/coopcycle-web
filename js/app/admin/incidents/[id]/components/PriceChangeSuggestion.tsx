@@ -31,7 +31,10 @@ export function PriceChangeSuggestion({
 
   if (error || !suggestedOrder || !diff || suggestionPriceDiff === undefined) {
     return (
-      <Alert message={t('INCIDENTS_ERROR_LOADING_SUGGESTED_PRICE_CHANGE')} type="error" />
+      <Alert
+        message={t('INCIDENTS_ERROR_LOADING_SUGGESTED_PRICE_CHANGE')}
+        type="error"
+      />
     );
   }
 
@@ -48,43 +51,47 @@ export function PriceChangeSuggestion({
           </h3>
         </Col>
       </Row>
-      <Row gutter={16}>
-        <Col span={12}>
-          <h4>{t('INCIDENTS_OLD_PRICE')}</h4>
-        </Col>
-        <Col span={12}>
-          <h4>{t('INCIDENTS_NEW_PRICE')}</h4>
-        </Col>
-      </Row>
-      <Row gutter={16}>
-        <Col span={12} data-testid="suggestion-old-price-value">
-          <TotalPrice
-            overridePrice={true}
-            total={existingOrder.total}
-            taxTotal={existingOrder.taxTotal}
-          />
-        </Col>
-        <Col span={12} data-testid="suggestion-new-price-value">
-          <TotalPrice
-            overridePrice={false}
-            total={suggestedOrder.total}
-            taxTotal={suggestedOrder.taxTotal}
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col span={24}>
-          <h4>{t('INCIDENTS_SUGGESTED_MODIFICATIONS')}</h4>
-        </Col>
-      </Row>
-      <Row gutter={16}>
-        <Col span={12} data-testid="suggestion-old-items">
-          <Cart orderItems={diff[0]} overridePrice={true} />
-        </Col>
-        <Col span={12} data-testid="suggestion-new-items">
-          <Cart orderItems={diff[1]} overridePrice={false} />
-        </Col>
-      </Row>
+      {diff[0].length > 0 || diff[1].length > 0 ? (
+        <>
+          <Row gutter={16}>
+            <Col span={12}>
+              <h4>{t('INCIDENTS_OLD_PRICE')}</h4>
+            </Col>
+            <Col span={12}>
+              <h4>{t('INCIDENTS_NEW_PRICE')}</h4>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12} data-testid="suggestion-old-price-value">
+              <TotalPrice
+                overridePrice={true}
+                total={existingOrder.total}
+                taxTotal={existingOrder.taxTotal}
+              />
+            </Col>
+            <Col span={12} data-testid="suggestion-new-price-value">
+              <TotalPrice
+                overridePrice={false}
+                total={suggestedOrder.total}
+                taxTotal={suggestedOrder.taxTotal}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col span={24}>
+              <h4>{t('INCIDENTS_SUGGESTED_MODIFICATIONS')}</h4>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12} data-testid="suggestion-old-items">
+              <Cart orderItems={diff[0]} overridePrice={true} />
+            </Col>
+            <Col span={12} data-testid="suggestion-new-items">
+              <Cart orderItems={diff[1]} overridePrice={false} />
+            </Col>
+          </Row>
+        </>
+      ) : null}
     </>
   );
 }
