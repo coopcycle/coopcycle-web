@@ -67,7 +67,7 @@ export function usePriceChangeSuggestion(
 
   const suggestedOrder = useMemo(() => {
     if (!calculatePriceData?.order) {
-      return null;
+      return undefined;
     }
 
     return calculatePriceData?.order;
@@ -83,7 +83,7 @@ export function usePriceChangeSuggestion(
 
   const diff = useMemo(() => {
     if (!suggestedOrder?.items) {
-      return null;
+      return undefined;
     }
 
     return [

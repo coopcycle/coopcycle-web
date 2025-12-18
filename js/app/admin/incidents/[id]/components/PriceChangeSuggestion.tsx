@@ -10,9 +10,9 @@ type Props = {
   isLoading: boolean;
   error: unknown;
   existingOrder: Order;
-  suggestedOrder: Order | null;
+  suggestedOrder?: Order;
   suggestionPriceDiff?: number;
-  diff: OrderItem[][] | null;
+  diff?: OrderItem[][];
 };
 
 export function PriceChangeSuggestion({
