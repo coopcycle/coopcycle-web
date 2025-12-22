@@ -103,7 +103,7 @@ export const OrderDetailsSuggestion = ({ event }: Props) => {
       <Row>
         <Col span={24}>
           <Collapse
-            defaultActiveKey={['suggestion-preview']}
+            defaultActiveKey={[]}
             items={[
               {
                 key: 'suggestion-preview',
