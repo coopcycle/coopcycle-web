@@ -10,6 +10,8 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
+use AppBundle\Api\Dto\DisableProduct;
+use AppBundle\Api\State\DisableProductProcessor;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\ReusablePackagings;
@@ -28,7 +30,14 @@ use Symfony\Component\Validator\Constraints as Assert;
     operations: [
         new Get(),
         new Put(denormalizationContext: ['groups' => ['product_update']], security: 'is_granted(\'edit\', object)'),
-        new Delete(security: 'is_granted(\'edit\', object)')
+        new Delete(security: 'is_granted(\'edit\', object)'),
+        new Put(
+            uriTemplate: '/products/{id}/disable',
+            processor: DisableProductProcessor::class,
+            input: DisableProduct::class,
+            denormalizationContext: ['groups' => ['product_disable']],
+            security: 'is_granted(\'edit\', object)'
+        )
     ],
     normalizationContext: ['groups' => ['product']]
 )]
