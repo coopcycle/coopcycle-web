@@ -32,8 +32,6 @@ class DisableProductProcessor implements ProcessorInterface
 
         $until = new \DateTimeImmutable($data->until);
 
-        var_dump($until->format('Y-m-d h:i:s'));
-
         // Schedule a message to re-enable the product later
         $this->messageBus->dispatch(new EnableProduct($product), [
             DelayStamp::delayUntil($until),
