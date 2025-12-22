@@ -695,3 +695,27 @@ Feature: Food Tech
       """
     Then the response status code should be 200
     And the response should be in JSON
+
+  Scenario: Disable product until tomorrow
+    Given the fixtures files are loaded:
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_RESTAURANT"
+    And the restaurant with id "1" belongs to user "bob"
+    And the user "bob" is authenticated
+    And I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "PUT" request to "/api/products/1/disable" with body:
+      """
+      {
+        "until": "tomorrow 00:00"
+      }
+      """
+    Then the response status code should be 200
