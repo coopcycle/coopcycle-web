@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Link;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\GetCollection;
@@ -11,12 +12,15 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Action\CreateAddress;
+use AppBundle\Action\DeleteAddress;
 use AppBundle\Api\State\StoreAddressesProvider;
 use AppBundle\Entity\Base\BaseAddress;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\Store;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
+use Gedmo\SoftDeleteable\SoftDeleteable as SoftDeleteableInterface;
+use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 
 /**
  * @see http://schema.org/Place Documentation on Schema.org
@@ -26,6 +30,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
     operations: [
         new Get(security: 'is_granted(\'ROLE_ADMIN\')'),
         new Patch(security: 'is_granted(\'edit\', object)'),
+        new Delete(security: 'is_granted(\'edit\', object)'),
         new GetCollection(security: 'is_granted(\'ROLE_ADMIN\')'),
         new Post(uriTemplate: '/me/addresses', controller: CreateAddress::class)
     ],
@@ -42,8 +47,9 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
     normalizationContext: ['groups' => ['address']],
     provider: StoreAddressesProvider::class
 )]
-class Address extends BaseAddress
+class Address extends BaseAddress implements SoftDeleteableInterface
 {
+    use SoftDeleteable;
 
     const PROVIDER_MAPPICKER = 'MAP_PICKER';
     const PROVIDERS = [
