@@ -4,7 +4,6 @@ namespace AppBundle\Action\Order;
 
 use AppBundle\Api\Dto\LoopeatFormats as LoopeatFormatsObject;
 use AppBundle\Api\Dto\LoopeatFormat;
-use AppBundle\LoopEat\Client as LoopEatClient;
 use AppBundle\Validator\Constraints\LoopeatStock as AssertLoopeatStock;
 use Sylius\Component\Order\Model\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
@@ -18,15 +17,12 @@ class LoopeatFormats
 {
     public function __construct(
         private NormalizerInterface $normalizer,
-        private LoopEatClient $loopeatClient,
         private ValidatorInterface $validator)
     {}
 
     public function __invoke($data)
     {
         $output = new LoopeatFormatsObject();
-
-        $this->loopeatClient->getRestaurantContainers($data);
 
         foreach ($data->getItems() as $item) {
 
