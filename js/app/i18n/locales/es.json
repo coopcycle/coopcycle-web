@@ -792,6 +792,8 @@
         "INCIDENTS_NEW_PRICE": "Precio nuevo",
         "INCIDENTS_SUGGESTED_MODIFICATIONS": "Modificaciones sugeridas",
         "INCIDENTS_REFUSE_SUGGESTIONS": "Rechazar sugerencias",
-        "INCIDENTS_APPLY_SUGGESTIONS": "Aplicar sugerencias"
+        "INCIDENTS_APPLY_SUGGESTIONS": "Aplicar sugerencias",
+        "INCIDENTS_SUGGESTED_CHANGES": "Cambios sugeridos",
+        "INCIDENTS_ERROR_LOADING_SUGGESTED_PRICE_CHANGE": "No pudimos calcular el precio con los cambios sugeridos"
     }
 }
