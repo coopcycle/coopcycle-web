@@ -28,7 +28,7 @@ class DeliveryFormData
             return new JsonResponse(['error' => 'No data found.'], 404);
         }
 
-        $order = $delivery?->getOrder();
+        $order = $delivery->getOrder();
 
         $price = $order?->getDeliveryPrice();
 
