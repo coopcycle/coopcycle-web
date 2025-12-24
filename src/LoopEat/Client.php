@@ -482,7 +482,7 @@ class Client
         }
     }
 
-    public function getRestaurantContainers(OrderInterface $order)
+    public function getRestaurantContainers(OrderInterface $order): array
     {
         try {
 
@@ -502,8 +502,9 @@ class Client
 
         } catch (RequestException $e) {
             $this->logger->error($e->getMessage());
-            return false;
         }
+
+        return [];
     }
 
     public function updatePickupFormat(OrderInterface $order, $formatId, $quantity)

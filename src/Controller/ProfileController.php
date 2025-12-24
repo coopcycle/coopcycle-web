@@ -240,9 +240,9 @@ class ProfileController extends AbstractController
     #[Route(path: '/profile/addresses', name: 'profile_addresses')]
     public function addressesAction(Request $request)
     {
-        return $this->render('profile/addresses.html.twig', array(
+        return $this->render('profile/addresses.html.twig', $this->auth([
             'addresses' => $this->getUser()->getAddresses(),
-        ));
+        ]));
     }
 
     #[Route(path: '/profile/addresses/new', name: 'profile_address_new')]
