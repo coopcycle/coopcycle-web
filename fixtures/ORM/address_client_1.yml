@@ -7,6 +7,7 @@ AppBundle\Entity\Address:
     name: 'Office'
     contactName: 'Jane smith'
     telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33112121414'))>
+    description: 'Leave at the reception'
     addressLocality: 'Paris'
     postalCode: '75009'
     streetAddress: '72, Rue Saint-Maur, 75011 Paris, France'
