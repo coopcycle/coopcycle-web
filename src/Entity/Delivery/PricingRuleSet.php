@@ -24,7 +24,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
     operations: [
         new Get(
             normalizationContext: ['groups' => ['pricing_rule_set:read']],
-            security: "is_granted('ROLE_DISPATCHER')"
+            security: "is_granted('ROLE_DISPATCHER') or is_granted('ROLE_COURIER')"
         ),
         new Put(
             normalizationContext: ['groups' => ['pricing_rule_set:read']],

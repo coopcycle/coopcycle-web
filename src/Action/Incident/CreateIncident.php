@@ -2,7 +2,9 @@
 
 namespace AppBundle\Action\Incident;
 
+use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Validator\Exception\ValidationException;
+use AppBundle\Api\Dto\DeliveryMapper;
 use AppBundle\Entity\Delivery\FailureReason;
 use AppBundle\Entity\Delivery\FailureReasonRegistry;
 use AppBundle\Entity\Incident\Incident;
@@ -22,6 +24,8 @@ class CreateIncident
         private readonly TaskManager $taskManager,
         private readonly FailureReasonRegistry $failureReasonRegistry,
         private readonly ValidatorInterface $validator,
+        private readonly DeliveryMapper $deliveryMapper,
+        private readonly IriConverterInterface $iriConverter
     )
     { }
 
@@ -154,6 +158,29 @@ class CreateIncident
                 $posB = $taskPositionMap[$b['id']] ?? PHP_INT_MAX;
                 return $posA <=> $posB;
             });
+
+            $order = $delivery->getOrder();
+
+            if (null !== $order) {
+                $manualSupplements = $this->deliveryMapper->extractManualSupplementsFromOrder($order);
+
+                if (!empty($manualSupplements)) {
+                    // Initialize order array if it doesn't exist
+                    if (!isset($suggestion['order'])) {
+                        $suggestion['order'] = [];
+                    }
+
+                    // Set manualSupplements if not already set (don't override existing values including an empty array)
+                    if (!isset($suggestion['order']['manualSupplements'])) {
+                        $suggestion['order']['manualSupplements'] = array_map(function($supplement) {
+                            return [
+                                'pricingRule' => $this->iriConverter->getIriFromResource($supplement->pricingRule),
+                                'quantity' => $supplement->quantity,
+                            ];
+                        }, $manualSupplements);
+                    }
+                }
+            }
 
             $metadata[$index]['suggestion'] = $suggestion;
         }

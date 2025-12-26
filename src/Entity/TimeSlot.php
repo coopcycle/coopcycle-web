@@ -36,7 +36,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             uriTemplate: '/time_slots/{id}/choices',
             controller: OpeningHours::class,
             normalizationContext: ['groups' => ['time_slot_choices'], 'api_sub_level' => true],
-            security: 'is_granted(\'edit\', object)'
+            security: "is_granted('edit', object) or is_granted('ROLE_COURIER')"
         ),
         new GetCollection(security: 'is_granted(\'ROLE_ADMIN\')'),
         new GetCollection(

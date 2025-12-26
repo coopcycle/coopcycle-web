@@ -9,6 +9,12 @@ class MyTaskMetadataDto
     #[Groups(["task"])]
     public readonly ?int $delivery_position;
 
+    /**
+     * @var string|null Store URI/'@id'
+     */
+    #[Groups(["task"])]
+    public readonly ?string $store;
+
     #[Groups(["task"])]
     public readonly ?int $order_id;
 
@@ -29,6 +35,7 @@ class MyTaskMetadataDto
 
     public function __construct(
         ?int $delivery_position,
+        ?string $store,
         ?int $order_id,
         ?string $order_number,
         ?string $payment_method,
@@ -38,6 +45,7 @@ class MyTaskMetadataDto
     )
     {
         $this->delivery_position = $delivery_position;
+        $this->store = $store;
         $this->order_id = $order_id;
         $this->order_number = $order_number;
         $this->payment_method = $payment_method;
