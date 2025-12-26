@@ -70,9 +70,15 @@ class LoopeatStockValidator extends ConstraintValidator
 
     private function getMissingQuantity($formatId, $expectedQuantity, $restaurantContainers): int
     {
-        $format = current(array_filter($restaurantContainers, function ($format) use ($formatId) {
+        $matches = array_filter($restaurantContainers, function ($format) use ($formatId) {
             return $format['format_id'] === $formatId;
-        }));
+        });
+
+        if (count($matches) !== 1) {
+            return 0;
+        }
+
+        $format = current($matches);
 
         $quantityInStock = $format['quantity'];
 

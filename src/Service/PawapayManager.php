@@ -7,6 +7,7 @@ use AppBundle\Payment\GatewayInterface;
 use AppBundle\Service\SettingsManager;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
+use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Component\Currency\Context\CurrencyContextInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -19,8 +20,10 @@ class PawapayManager
         private readonly CurrencyContextInterface $currencyContext,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly SettingsManager $settingsManager,
+        private readonly OrderNumberAssignerInterface $orderNumberAssigner,
         private readonly LoggerInterface $logger,
         private string $locale,
+        private bool $useApiV1 = false,
         private ?string $countryCode = null
     )
     {}
@@ -40,15 +43,36 @@ class PawapayManager
             return;
         }
 
-        // https://api.sandbox.pawapay.io/v2/predict-provider
-        $response = $this->pawapayClient->request('POST', 'v2/predict-provider', [
-            'json' => [
-                'phoneNumber' => $customer->getPhoneNumber()
-            ]
-        ]);
+        if (null !== $order->getId()) {
+            $this->orderNumberAssigner->assignNumber($order);
+        }
 
-        $data = $response->toArray();
-        $phoneNumber = $data['phoneNumber'];
+        // Example phone number +233241234567
+        $phoneNumber = $customer->getPhoneNumber();
+
+        if ($this->useApiV1) {
+
+            // https://docs.pawapay.io/v1/api-reference/toolkit/predict-correspondent
+            $response = $this->pawapayClient->request('POST', 'v1/predict-correspondent', [
+                'json' => [
+                    'msisdn' => $phoneNumber
+                ]
+            ]);
+
+            $data = $response->toArray();
+            $phoneNumber = $data['msisdn'];
+        } else {
+
+            // https://docs.pawapay.io/v2/api-reference/toolkit/predict-provider
+            $response = $this->pawapayClient->request('POST', 'v2/predict-provider', [
+                'json' => [
+                    'phoneNumber' => $phoneNumber
+                ]
+            ]);
+
+            $data = $response->toArray();
+            $phoneNumber = $data['phoneNumber'];
+        }
 
         $depositId = Uuid::uuid4()->toString();
 
@@ -62,13 +86,7 @@ class PawapayManager
             // Even in sandbox mode, Pawapay does not allow http://localhost
             // When developing, replace this with https://demo.coopcycle.org/pawapay/return for example
             'returnUrl' => $this->urlGenerator->generate('pawapay_return_url', referenceType: UrlGeneratorInterface::ABSOLUTE_URL),
-            'amountDetails' => [
-                "amount" => strval($numberFormatter->format($order->getTotal() / 100)), // Make sure it is a string
-                "currency" => strtoupper($this->currencyContext->getCurrencyCode())
-            ],
             'country' => $this->countryCode,
-            // Example phone number 233241234567
-            'phoneNumber' => $phoneNumber,
             'reason' => sprintf('Order %s', $order->getNumber()),
             'metadata' => [
                 [
@@ -82,11 +100,28 @@ class PawapayManager
             ],
         ];
 
+        if ($this->useApiV1) {
+            $payload = array_merge($payload, [
+                'amount' => strval($numberFormatter->format($order->getTotal() / 100)), // Make sure it is a string
+                // Example phone number 233241234567
+                'msisdn' => $phoneNumber,
+            ]);
+        } else {
+            $payload = array_merge($payload, [
+                'amountDetails' => [
+                    "amount" => strval($numberFormatter->format($order->getTotal() / 100)), // Make sure it is a string
+                    "currency" => strtoupper($this->currencyContext->getCurrencyCode())
+                ],
+                // Example phone number 233241234567
+                'phoneNumber' => $phoneNumber,
+            ]);
+        }
+
         $this->logger->info(
             sprintf('Order #%d | PawapayManager::createPaymentPage | %s', $order->getId(), json_encode($payload))
         );
 
-        $response = $this->pawapayClient->request('POST', 'v2/paymentpage', [
+        $response = $this->pawapayClient->request('POST', ($this->useApiV1 ? 'v1/widget/sessions' : 'v2/paymentpage'), [
             'json' => $payload
         ]);
 
