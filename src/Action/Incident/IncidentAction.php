@@ -244,9 +244,9 @@ class IncidentAction extends Base
 
         $metadata = $data->getMetadata();
 
-        $suggestionMetadata = array_filter($metadata, function ($item) {
+        $suggestionMetadata = array_values(array_filter($metadata, function ($item) {
             return isset($item['suggestion']);
-        });
+        }));
 
         /** @var DeliveryInputDto $deliveryData */
         $deliveryData = $this->denormalizer->denormalize(
