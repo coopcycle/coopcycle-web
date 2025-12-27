@@ -1,0 +1,78 @@
+<?php
+
+namespace AppBundle\Messenger;
+
+use AppBundle\Log\MessengerRequestContextProcessor;
+use AppBundle\Messenger\Stamp\RequestContextStamp;
+use AppBundle\Service\RequestContext;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\Middleware\StackInterface;
+use Symfony\Component\Messenger\Stamp\StampInterface;
+
+class RequestContextMiddleware extends StampMiddleware
+{
+    public function __construct(
+        private readonly RequestContext $requestContext,
+        MessengerRequestContextProcessor $stampProcessor,
+    )
+    {
+        parent::__construct($stampProcessor);
+    }
+
+    public function handle(Envelope $envelope, StackInterface $stack): Envelope
+    {
+        // If stamp exists, set it on RequestContext service
+        if ($stamp = $envelope->last($this->getStampFqcn())) {
+            /** @var RequestContextStamp $stamp */
+            $this->requestContext->setFromStamp(
+                $stamp->getRequestId(),
+                $stamp->getRoute(),
+                $stamp->getController(),
+                $stamp->getClientIp(),
+                $stamp->getUserAgent(),
+                $stamp->getUsername(),
+                $stamp->getRoles()
+            );
+
+            try {
+                return parent::handle($envelope, $stack);
+            } finally {
+                $this->requestContext->clear();
+            }
+        }
+
+        return parent::handle($envelope, $stack);
+    }
+
+    protected function getStampFqcn(): string
+    {
+        return RequestContextStamp::class;
+    }
+
+    protected function createStamp(): ?StampInterface
+    {
+        $requestId = $this->requestContext->getRequestId();
+        $route = $this->requestContext->getRoute();
+        $controller = $this->requestContext->getController();
+        $clientIp = $this->requestContext->getClientIp();
+        $userAgent = $this->requestContext->getUserAgent();
+        $username = $this->requestContext->getUsername();
+        $roles = $this->requestContext->getRoles();
+
+        // Only create stamp if we have at least some data
+        if ($requestId || $route || $controller || $clientIp || $userAgent || $username || !empty($roles)) {
+            return new RequestContextStamp(
+                $requestId,
+                $route,
+                $controller,
+                $clientIp,
+                $userAgent,
+                $username,
+                $roles
+            );
+        }
+
+        return null;
+    }
+}
+
