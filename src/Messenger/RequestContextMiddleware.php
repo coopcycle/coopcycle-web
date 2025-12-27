@@ -21,9 +21,9 @@ class RequestContextMiddleware extends StampMiddleware
 
     public function handle(Envelope $envelope, StackInterface $stack): Envelope
     {
-        // If stamp exists, set it on RequestContext service
-        if ($stamp = $envelope->last($this->getStampFqcn())) {
-            /** @var RequestContextStamp $stamp */
+        // Check if stamp exists and set context from it
+        $stamp = $envelope->last($this->getStampFqcn());
+        if ($stamp instanceof RequestContextStamp) {
             $this->requestContext->setFromStamp(
                 $stamp->getRequestId(),
                 $stamp->getRoute(),
@@ -33,15 +33,17 @@ class RequestContextMiddleware extends StampMiddleware
                 $stamp->getUsername(),
                 $stamp->getRoles()
             );
+        }
 
-            try {
-                return parent::handle($envelope, $stack);
-            } finally {
+        try {
+            // Call parent to handle stamp attachment/consumption and propagation
+            return parent::handle($envelope, $stack);
+        } finally {
+            // Clear context after processing to avoid leaking between messages
+            if ($stamp instanceof RequestContextStamp) {
                 $this->requestContext->clear();
             }
         }
-
-        return parent::handle($envelope, $stack);
     }
 
     protected function getStampFqcn(): string

@@ -2,29 +2,19 @@
 
 namespace AppBundle\Domain;
 
-use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Domain\Order\Event as OrderDomainEvent;
 use AppBundle\Domain\Task\Event as TaskDomainEvent;
 use AppBundle\Entity\Sylius\OrderEvent;
 use AppBundle\Entity\TaskEvent;
+use AppBundle\Service\RequestContext;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class EventStore extends ArrayCollection
 {
-    use TokenStorageTrait;
-
-    private $requestStack;
-
     public function __construct(
-        TokenStorageInterface $tokenStorage,
-        RequestStack $requestStack)
-    {
+        private readonly RequestContext $requestContext
+    ) {
         parent::__construct([]);
-
-        $this->tokenStorage = $tokenStorage;
-        $this->requestStack = $requestStack;
     }
 
     public function createEvent(DomainEvent $event)
@@ -85,25 +75,25 @@ class EventStore extends ArrayCollection
     {
         $metadata = [];
 
-        $request = $this->requestStack->getCurrentRequest();
-        if ($request) {
-            $metadata['client_ip'] = $request->getClientIp();
-
-            if ($request->headers->has('User-Agent')) {
-                $metadata['user_agent'] = $request->headers->get('User-Agent');
-            } else {
-                $metadata['user_agent'] = 'unknown';
-            }
-
-            $metadata['route'] = $request->attributes->get('_route');
+        if ($clientIp = $this->requestContext->getClientIp()) {
+            $metadata['client_ip'] = $clientIp;
         }
 
-        $user = $this->getUser();
-        if ($user) {
-            $metadata['username'] = $user->getUsername();
+        if ($userAgent = $this->requestContext->getUserAgent()) {
+            $metadata['user_agent'] = $userAgent;
+        } else {
+            $metadata['user_agent'] = 'unknown';
         }
 
-        $roles = $this->tokenStorage->getToken()?->getRoleNames() ?? [];
+        if ($route = $this->requestContext->getRoute()) {
+            $metadata['route'] = $route;
+        }
+
+        if ($username = $this->requestContext->getUsername()) {
+            $metadata['username'] = $username;
+        }
+
+        $roles = $this->requestContext->getRoles();
 
         $metadata['roles'] = $roles;
         $metadata['roles_category'] = $this->getRolesCategory($roles);
