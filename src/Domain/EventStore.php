@@ -2,30 +2,19 @@
 
 namespace AppBundle\Domain;
 
-use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Domain\Order\Event as OrderDomainEvent;
 use AppBundle\Domain\Task\Event as TaskDomainEvent;
-use AppBundle\Domain\DomainEvent;
 use AppBundle\Entity\Sylius\OrderEvent;
 use AppBundle\Entity\TaskEvent;
+use AppBundle\Service\RequestContext;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class EventStore extends ArrayCollection
 {
-    use TokenStorageTrait;
-
-    private $requestStack;
-
     public function __construct(
-        TokenStorageInterface $tokenStorage,
-        RequestStack $requestStack)
-    {
+        private readonly RequestContext $requestContext
+    ) {
         parent::__construct([]);
-
-        $this->tokenStorage = $tokenStorage;
-        $this->requestStack = $requestStack;
     }
 
     public function createEvent(DomainEvent $event)
@@ -86,16 +75,53 @@ class EventStore extends ArrayCollection
     {
         $metadata = [];
 
-        $request = $this->requestStack->getCurrentRequest();
-        if ($request) {
-            $metadata['client_ip'] = $request->getClientIp();
+        if ($clientIp = $this->requestContext->getClientIp()) {
+            $metadata['client_ip'] = $clientIp;
         }
 
-        $user = $this->getUser();
-        if ($user) {
-            $metadata['username'] = $user->getUsername();
+        if ($userAgent = $this->requestContext->getUserAgent()) {
+            $metadata['user_agent'] = $userAgent;
+        } else {
+            $metadata['user_agent'] = 'unknown';
         }
+
+        if ($route = $this->requestContext->getRoute()) {
+            $metadata['route'] = $route;
+        }
+
+        if ($username = $this->requestContext->getUsername()) {
+            $metadata['username'] = $username;
+        }
+
+        $roles = $this->requestContext->getRoles();
+
+        $metadata['roles'] = $roles;
+        $metadata['roles_category'] = $this->getRolesCategory($roles);
 
         return $metadata;
+    }
+
+    private function getRolesCategory(array $roles): ?string
+    {
+        // Define roles priority for searching
+        $rolesPriority = [
+            'ROLE_ADMIN',
+            'ROLE_DISPATCHER',
+            'ROLE_COURIER',
+            'ROLE_RESTAURANT',
+            'ROLE_STORE',
+        ];
+
+        foreach ($rolesPriority as $role) {
+            if (in_array($role, $roles, true)) {
+                return $role;
+            }
+        }
+
+        if (count($roles) > 0) {
+            return $roles[0];
+        } else {
+            return 'ROLE_UNKNOWN';
+        }
     }
 }

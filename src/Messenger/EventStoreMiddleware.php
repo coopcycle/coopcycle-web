@@ -8,7 +8,6 @@ use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Middleware\MiddlewareInterface;
 use Symfony\Component\Messenger\Middleware\StackInterface;
 
-
 class EventStoreMiddleware implements MiddlewareInterface
 {
 
