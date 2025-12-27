@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form\Checkout;
 
+use AppBundle\Entity\Address;
 use AppBundle\Entity\Nonprofit;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Form\AddressType;
@@ -63,9 +64,14 @@ class CheckoutAddressType extends AbstractType
         $builder->get('shippingAddress')->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
 
             $form = $event->getForm();
+            $data = $event->getData();
 
             // Disable shippingAddress.streetAddress
             $this->disableChildForm($form, 'streetAddress');
+
+            if ($data instanceof Address && $data->getProvider() === Address::PROVIDER_PLUS_CODE) {
+                $this->setAddressDescriptionRequired($form, 'description');
+            }
         });
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
@@ -226,6 +232,17 @@ class CheckoutAddressType extends AbstractType
         $config = $child->getConfig();
         $options = $config->getOptions();
         $options['disabled'] = true;
+
+        $form->add($name, get_class($config->getType()->getInnerType()), $options);
+    }
+
+    private function setAddressDescriptionRequired(FormInterface $form, $name)
+    {
+        $child = $form->get($name);
+
+        $config = $child->getConfig();
+        $options = $config->getOptions();
+        $options['required'] = true;
 
         $form->add($name, get_class($config->getType()->getInnerType()), $options);
     }
