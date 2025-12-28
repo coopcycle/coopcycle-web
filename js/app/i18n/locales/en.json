@@ -410,7 +410,7 @@
         "CART_PRODUCT_OPTIONS_INVALID": "Some selections are not available",
         "CART_PRODUCT_OPTIONS_VALUES_RANGE": "Please choose between {{min}} and {{max}} values",
         "CART_PRODUCT_OPTIONS_VALUES_RANGE_AT_LEAST": "Please choose at least {{count}} value(s)",
-        "CART_PRODUCT_OPTIONS_VALUES_RANGE_UP_TO": "Please choose up to {{count}} value(s)",
+        "CART_PRODUCT_OPTIONS_VALUES_RANGE_UP_TO": "You can choose up to {{count}} value(s)",
         "RESTAURANT_DASHBOARD_INFO_RUSH": "Use this button to activate the 'rush' mode",
         "RESTAURANT_DASHBOARD_NEW_ORDERS": "New orders",
         "RESTAURANT_DASHBOARD_ACCEPTED_ORDERS": "Accepted orders",
