@@ -185,6 +185,9 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
      */
     protected ?string $storeGLN = null;
 
+    #[Groups(['store'])]
+    protected $cashOnDeliveryEnabled = false;
+
     public function __construct()
     {
         $this->deliveries = new ArrayCollection();
@@ -648,5 +651,25 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     public function setMultiPickupEnabled(bool $enabled)
     {
         $this->multiPickupEnabled = $enabled;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCashOnDeliveryEnabled()
+    {
+        return $this->cashOnDeliveryEnabled;
+    }
+
+    /**
+     * @param bool $enabled
+     *
+     * @return self
+     */
+    public function setCashOnDeliveryEnabled($enabled)
+    {
+        $this->cashOnDeliveryEnabled = $enabled;
+
+        return $this;
     }
 }
