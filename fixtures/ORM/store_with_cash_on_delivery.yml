@@ -1,0 +1,12 @@
+include:
+  - address_store.yml
+  - pricing_rule_set_distance.yml
+
+AppBundle\Entity\Store:
+  store_1:
+    name: 'Acme'
+    address: '@address_store'
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_distance'
+    prefillPickupAddress: true
+    cashOnDeliveryEnabled: true
