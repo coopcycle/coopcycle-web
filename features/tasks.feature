@@ -3570,3 +3570,139 @@ Feature: Tasks
     Then the async messages are consumed
     # Base: 499, manual supplement: 200
     And the database entity "AppBundle\Entity\Sylius\Order" should have a property "total" with value "699"
+    
+  Scenario: Get delivery form data for a task
+      Given the fixtures files are loaded with purge:
+        | setup_default.yml |
+      Given the fixtures files are loaded:
+        | store_basic.yml                      |
+        | package_delivery_order_assigned.yml  |
+    And the user "jane" has role "ROLE_COURIER"
+    And the user "jane" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "jane" sends a "GET" request to "/api/tasks/1/delivery_form_data"
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/Delivery",
+        "@id": "/api/deliveries/1",
+        "@type": "http://schema.org/ParcelDelivery",
+        "id": 1,
+        "pickup": {"@*@":"@*@"},
+        "dropoff": {"@*@":"@*@"},
+        "tasks": [
+          {
+            "@type": "Task",
+            "@id":"@string@.startsWith('/api/tasks')",
+            "id": "@integer@",
+            "createdAt": "@string@.isDateTime()",
+            "updatedAt": "@string@.isDateTime()",
+            "type": "PICKUP",
+            "status": "TODO",
+            "address": {
+              "@id": "@string@.startsWith('/api/addresses')",
+              "@type": "http://schema.org/Place",
+              "id": "@integer@",
+              "company": null,
+              "contactName": "John Doe",
+              "complete": false,
+              "provider": null,
+              "description": "Behind the building",
+              "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": 48.8758311,
+                "longitude": 2.3675732
+              },
+              "addressCountry": null,
+              "addressLocality": "Paris",
+              "addressRegion": null,
+              "postalCode": "75001",
+              "postOfficeBoxNumber": null,
+              "streetAddress": "23, Avenue Claude Vellefaux, 75010 Paris, France",
+              "telephone": "+33112121212",
+              "deletedAt": null,
+              "firstName": "John",
+              "lastName": "Doe",
+              "deleted": false,
+              "name": "Warehouse"
+            },
+            "after": "@string@.isDateTime()",
+            "before": "@string@.isDateTime()",
+            "doneAfter": "@string@.isDateTime()",
+            "doneBefore": "@string@.isDateTime()",
+            "comments": "1.00 kg",
+            "tags": [],
+            "weight": null,
+            "packages": [],
+            "metadata": {
+              "delivery_position": 1
+            },
+            "barcode": {
+              "barcode": "@string@",
+              "label": {"@*@":"@*@"}
+            }
+          },
+          {
+            "@type": "Task",
+            "@id":"@string@.startsWith('/api/tasks')",
+            "id": "@integer@",
+            "createdAt": "@string@.isDateTime()",
+            "updatedAt": "@string@.isDateTime()",
+            "type": "DROPOFF",
+            "status": "TODO",
+            "address": {
+              "@id": "@string@.startsWith('/api/addresses')",
+              "@type": "http://schema.org/Place",
+              "id": "@integer@",
+              "company": null,
+              "contactName": "Jane smith",
+              "complete": false,
+              "provider": null,
+              "description": "Leave at the reception",
+              "geo": {
+                "@type": "GeoCoordinates",
+                "latitude": 48.8638614,
+                "longitude": 2.3762269
+              },
+              "addressCountry": null,
+              "addressLocality": "Paris",
+              "addressRegion": null,
+              "postalCode": "75009",
+              "postOfficeBoxNumber": null,
+              "streetAddress": "72, Rue Saint-Maur, 75011 Paris, France",
+              "telephone": "+33112121414",
+              "deletedAt": null,
+              "firstName": "Jane",
+              "lastName": "smith",
+              "deleted": false,
+              "name": "Office"
+            },
+            "after": "@string@.isDateTime()",
+            "before": "@string@.isDateTime()",
+            "doneAfter": "@string@.isDateTime()",
+            "doneBefore": "@string@.isDateTime()",
+            "comments": "",
+            "tags": [],
+            "weight": 1000,
+            "packages": [],
+            "metadata": {
+              "delivery_position": 2
+            },
+            "barcode": {
+              "barcode": "@string@",
+              "label": {"@*@":"@*@"}
+            }
+          }
+        ],
+        "order": {
+          "@type": "Order",
+          "@id": "/api/orders/1",
+          "id": 1,
+          "manualSupplements": [],
+          "arbitraryPrice": null,
+          "isSavedOrder": false
+        }
+      }
+      """
