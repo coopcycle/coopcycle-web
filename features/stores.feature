@@ -83,7 +83,8 @@ Feature: Stores
             "weightRequired":@boolean@,
             "packagesRequired":@boolean@,
             "multiDropEnabled": @boolean@,
-            "multiPickupEnabled": @boolean@
+            "multiPickupEnabled": @boolean@,
+            "cashOnDeliveryEnabled": @boolean@
           }
         ],
         "hydra:totalItems":1
@@ -124,7 +125,8 @@ Feature: Stores
             "weightRequired": @boolean@,
             "packagesRequired": @boolean@,
             "multiDropEnabled": @boolean@,
-            "multiPickupEnabled": @boolean@
+            "multiPickupEnabled": @boolean@,
+            "cashOnDeliveryEnabled": @boolean@
           },
           "@array_previous_repeat@"
         ],
@@ -177,7 +179,8 @@ Feature: Stores
         "packagesRequired":@boolean@,
         "prefillPickupAddress": @boolean@,
         "multiDropEnabled": @boolean@,
-        "multiPickupEnabled": @boolean@
+        "multiPickupEnabled": @boolean@,
+        "cashOnDeliveryEnabled": @boolean@
       }
       """
 
@@ -222,7 +225,8 @@ Feature: Stores
         "packagesRequired":@boolean@,
         "prefillPickupAddress": @boolean@,
         "multiDropEnabled": @boolean@,
-        "multiPickupEnabled": @boolean@
+        "multiPickupEnabled": @boolean@,
+        "cashOnDeliveryEnabled": @boolean@
       }
       """
 
@@ -858,7 +862,8 @@ Feature: Stores
           "packagesRequired":@boolean@,
           "prefillPickupAddress": @boolean@,
           "multiDropEnabled": @boolean@,
-          "multiPickupEnabled": @boolean@
+          "multiPickupEnabled": @boolean@,
+          "cashOnDeliveryEnabled": @boolean@
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -896,7 +901,8 @@ Feature: Stores
           "packagesRequired":@boolean@,
           "prefillPickupAddress": @boolean@,
           "multiDropEnabled": @boolean@,
-          "multiPickupEnabled": @boolean@
+          "multiPickupEnabled": @boolean@,
+          "cashOnDeliveryEnabled": @boolean@
       }
       """
 
