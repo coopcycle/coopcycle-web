@@ -723,6 +723,17 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Given the store with name :name has cash on delivery enabled
+     */
+    public function theStoreWithNameHasCashOnDeliveryEnabled($name)
+    {
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($name);
+        $store->setCashOnDeliveryEnabled(true);
+
+        $this->doctrine->getManagerForClass(Store::class)->flush();
+    }
+
+    /**
      * @Given the restaurant with id :id belongs to user :username
      */
     public function theRestaurantWithIdBelongsToUser($id, $username)

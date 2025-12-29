@@ -9,10 +9,10 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Api\State\StoreAddressProcessor;
 use AppBundle\Action\MyStores;
 use AppBundle\Action\Store\AddAddress;
+use AppBundle\Action\Store\PaymentMethods as StorePaymentMethods;
 use AppBundle\Entity\Base\LocalBusiness;
 use AppBundle\Entity\Model\CustomFailureReasonInterface;
 use AppBundle\Entity\Model\CustomFailureReasonTrait;
@@ -20,8 +20,6 @@ use AppBundle\Entity\Model\OrganizationAwareInterface;
 use AppBundle\Entity\Model\OrganizationAwareTrait;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
-use AppBundle\Entity\Address;
-use AppBundle\Entity\Package;
 use AppBundle\Entity\Task\RecurrenceRule;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -35,7 +33,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use AppBundle\Action\TimeSlot\StoreTimeSlots;
 use AppBundle\Action\Store\Packages;
-
 
 /**
  * A retail good store.
@@ -59,6 +56,14 @@ use AppBundle\Action\Store\Packages;
             uriTemplate: '/stores/{id}/packages',
             controller: Packages::class,
             normalizationContext: ['groups' => ['store_packages']],
+            security: "is_granted('ROLE_DISPATCHER') or is_granted('ROLE_COURIER') or is_granted('edit', object)"
+        ),
+        new Get(
+            uriTemplate: '/stores/{id}/payment_methods',
+            types: ['PaymentMethodsOutput'],
+            controller: StorePaymentMethods::class,
+            openapiContext: ['summary' => 'Get available payment methods for a Store resource.'],
+            normalizationContext: ['api_sub_level' => true],
             security: "is_granted('ROLE_DISPATCHER') or is_granted('ROLE_COURIER') or is_granted('edit', object)"
         ),
         new Post(
