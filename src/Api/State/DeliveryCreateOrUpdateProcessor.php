@@ -25,6 +25,7 @@ use Recurr\Exception\InvalidRRule;
 use Recurr\Rule;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -191,15 +192,30 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         // Handle payment method if specified
         if ($data instanceof DeliveryInputDto && !is_null($data->order?->paymentMethod)) {
             $store = $delivery->getStore();
+            if (null === $store) {
+                $this->logger->warning('Payment method specified but no store found', [
+                    'paymentMethod' => $data->order->paymentMethod,
+                ]);
+                throw new BadRequestHttpException('order.paymentMethod is not valid');
+            }
+
             if (!in_array($data->order->paymentMethod, $this->deliveryOrderManager->getSupportedPaymentMethods($store), true)) {
-                throw new \Exception(sprintf('Payment method "%s" is not enabled for this store', $data->order->paymentMethod));
+                $this->logger->warning('Payment method is not enabled for this store', [
+                    'paymentMethod' => $data->order->paymentMethod,
+                    'store' => $store->getId(),
+                    'supportedMethods' => $this->deliveryOrderManager->getSupportedPaymentMethods($store),
+                ]);
+                throw new BadRequestHttpException('order.paymentMethod is not valid');
             }
 
             $code = strtoupper($data->order->paymentMethod);
 
             $paymentMethod = $this->paymentMethodRepository->findOneByCode($code);
             if (null === $paymentMethod) {
-                throw new \Exception(sprintf('Payment method "%s" not found', $code));
+                $this->logger->warning('Payment method not found', [
+                    'paymentMethod' => $code,
+                ]);
+                throw new BadRequestHttpException('order.paymentMethod is not valid');
             }
 
             $this->paymentContext->setMethod($code);
