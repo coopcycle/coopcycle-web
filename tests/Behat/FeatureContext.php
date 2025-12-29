@@ -1397,6 +1397,33 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Then the database should contain a payment with method :methodCode and amount :amount
+     */
+    public function theDatabaseShouldContainAPaymentWithMethod($methodCode, $amount)
+    {
+        $paymentMethodRepository = $this->getContainer()->get('sylius.repository.payment_method');
+        $paymentRepository = $this->getContainer()->get('sylius.repository.payment');
+
+        $paymentMethod = $paymentMethodRepository->findOneByCode($methodCode);
+
+        if (null === $paymentMethod) {
+            Assert::fail(sprintf('No payment method found with code %s', $methodCode));
+        }
+
+        $payment = $paymentRepository->findOneBy(['method' => $paymentMethod]);
+
+        if (null === $payment) {
+            Assert::fail(sprintf('No payment found with method code %s', $methodCode));
+        }
+
+        Assert::assertEquals((int) $amount, $payment->getAmount(), sprintf(
+            'Expected payment amount to be %d, but got %d',
+            (int) $amount,
+            $payment->getAmount()
+        ));
+    }
+
+    /**
      * @Then the database entity :className should have a property :fieldName with value :value
      */
     public function theDatabaseEntityShouldHaveAPropertyWithValue($className, $fieldName, $value)
