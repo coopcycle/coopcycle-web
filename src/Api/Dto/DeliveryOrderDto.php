@@ -25,4 +25,7 @@ class DeliveryOrderDto
 
     #[Groups(['delivery', 'delivery_create'])]
     public bool|null $isSavedOrder = null;
+
+    #[Groups(['delivery', 'delivery_create'])]
+    public string|null $paymentMethod = null;
 }

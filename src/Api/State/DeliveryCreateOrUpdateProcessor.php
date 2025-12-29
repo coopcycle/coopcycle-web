@@ -19,9 +19,12 @@ use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Payment\Context as PaymentContext;
 use Psr\Log\LoggerInterface;
 use Recurr\Exception\InvalidRRule;
 use Recurr\Rule;
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
+use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -39,6 +42,9 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         private readonly AuthorizationCheckerInterface $authorizationCheckerInterface,
         private readonly ValidatorInterface $validator,
         private readonly LoggerInterface $logger,
+        private readonly PaymentMethodRepositoryInterface $paymentMethodRepository,
+        private readonly PaymentContext $paymentContext,
+        private readonly OrderProcessorInterface $orderPaymentProcessor,
     ) {
     }
 
@@ -180,6 +186,19 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                     $this->eventBus->dispatch($event);
                 }
             }
+        }
+
+        // Handle payment method if specified
+        if ($data instanceof DeliveryInputDto && !is_null($data->order?->paymentMethod)) {
+            $code = strtoupper($data->order->paymentMethod);
+
+            $paymentMethod = $this->paymentMethodRepository->findOneByCode($code);
+            if (null === $paymentMethod) {
+                throw new \Exception(sprintf('Payment method "%s" not found', $code));
+            }
+
+            $this->paymentContext->setMethod($code);
+            $this->orderPaymentProcessor->process($order);
         }
 
         /** @var string $rrule */
