@@ -16,7 +16,7 @@
       <td>
         {% include '_partials/payment/state.html.twig' with { payment: payment } %}
       </td>
-      <td>
+      <td data-testid="payment-{{ loop.index0 }}:method-name">
         {{ payment.method.name }}
       </td>
       <td class="text-right">

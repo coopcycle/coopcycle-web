@@ -98,6 +98,7 @@ export const OrderOnCheckout = ({
           <BlockLabel label={t('PAYMENT_FORM_TITLE')} />
           <Checkbox
             checked={values.order.paymentMethod === 'cash_on_delivery'}
+            data-testid="cash-on-delivery-checkbox"
             onChange={e => {
               setFieldValue(
                 'order.paymentMethod',
