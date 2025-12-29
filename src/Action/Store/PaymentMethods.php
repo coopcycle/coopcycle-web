@@ -4,11 +4,12 @@ namespace AppBundle\Action\Store;
 
 use AppBundle\Api\Dto\PaymentMethodsOutput;
 use AppBundle\Entity\Store;
+use AppBundle\Service\DeliveryOrderManager;
 
 class PaymentMethods
 {
     public function __construct(
-        private bool $cashEnabled
+        private DeliveryOrderManager $deliveryOrderManager
     ) {
     }
 
@@ -16,8 +17,9 @@ class PaymentMethods
     {
         $output = new PaymentMethodsOutput();
 
-        if ($this->cashEnabled || $data->isCashOnDeliveryEnabled()) {
-            $output->addMethod('cash_on_delivery');
+        $supportedMethods = $this->deliveryOrderManager->getSupportedPaymentMethods($data);
+        foreach ($supportedMethods as $method) {
+            $output->addMethod($method);
         }
 
         return $output;

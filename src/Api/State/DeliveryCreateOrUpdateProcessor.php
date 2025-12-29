@@ -190,6 +190,11 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
 
         // Handle payment method if specified
         if ($data instanceof DeliveryInputDto && !is_null($data->order?->paymentMethod)) {
+            $store = $delivery->getStore();
+            if (!in_array($data->order->paymentMethod, $this->deliveryOrderManager->getSupportedPaymentMethods($store), true)) {
+                throw new \Exception(sprintf('Payment method "%s" is not enabled for this store', $data->order->paymentMethod));
+            }
+
             $code = strtoupper($data->order->paymentMethod);
 
             $paymentMethod = $this->paymentMethodRepository->findOneByCode($code);
