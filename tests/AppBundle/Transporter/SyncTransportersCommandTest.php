@@ -887,7 +887,6 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertCount(3, $pickup->getEdifactMessages());
         $this->assertCount(2, $dropoff->getEdifactMessages());
 
-
         $commandTester->execute([
             'transporter' => 'BMV'
         ]);
