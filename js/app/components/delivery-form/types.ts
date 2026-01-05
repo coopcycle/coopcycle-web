@@ -2,6 +2,7 @@ import { ManualSupplementValues, TaskPayload } from '../../api/types';
 
 export type OrderFormValues = {
   manualSupplements: ManualSupplementValues[];
+  paymentMethod?: string;
   recalculatePrice?: boolean;
   isSavedOrder?: boolean;
 };

@@ -29,6 +29,10 @@
 {% if form.multiPickupEnabled is defined %}
   {{ form_row(form.multiPickupEnabled) }}
 {% endif %}
+{% if form.cashOnDeliveryEnabled is defined %}
+  {{ form_row(form.cashOnDeliveryEnabled) }}
+{% endif %}
+<hr>
 {% if form.checkExpression is defined %}
   {{ form_row(form.checkExpression) }}
 {% endif %}

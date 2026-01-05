@@ -86,6 +86,12 @@ const AddressBook = ({
     const selectedAddress = addresses.find(
       address => address['@id'] === selectedId,
     );
+
+    if (!selectedAddress) {
+      console.error('Selected address not found');
+      return;
+    }
+
     const formattedTelephone = getFormattedValue(selectedAddress.telephone);
 
     setFieldValue(`tasks[${index}].address`, {

@@ -83,7 +83,8 @@ Feature: Stores
             "weightRequired":@boolean@,
             "packagesRequired":@boolean@,
             "multiDropEnabled": @boolean@,
-            "multiPickupEnabled": @boolean@
+            "multiPickupEnabled": @boolean@,
+            "cashOnDeliveryEnabled": @boolean@
           }
         ],
         "hydra:totalItems":1
@@ -124,7 +125,8 @@ Feature: Stores
             "weightRequired": @boolean@,
             "packagesRequired": @boolean@,
             "multiDropEnabled": @boolean@,
-            "multiPickupEnabled": @boolean@
+            "multiPickupEnabled": @boolean@,
+            "cashOnDeliveryEnabled": @boolean@
           },
           "@array_previous_repeat@"
         ],
@@ -177,7 +179,8 @@ Feature: Stores
         "packagesRequired":@boolean@,
         "prefillPickupAddress": @boolean@,
         "multiDropEnabled": @boolean@,
-        "multiPickupEnabled": @boolean@
+        "multiPickupEnabled": @boolean@,
+        "cashOnDeliveryEnabled": @boolean@
       }
       """
 
@@ -222,7 +225,8 @@ Feature: Stores
         "packagesRequired":@boolean@,
         "prefillPickupAddress": @boolean@,
         "multiDropEnabled": @boolean@,
-        "multiPickupEnabled": @boolean@
+        "multiPickupEnabled": @boolean@,
+        "cashOnDeliveryEnabled": @boolean@
       }
       """
 
@@ -858,7 +862,8 @@ Feature: Stores
           "packagesRequired":@boolean@,
           "prefillPickupAddress": @boolean@,
           "multiDropEnabled": @boolean@,
-          "multiPickupEnabled": @boolean@
+          "multiPickupEnabled": @boolean@,
+          "cashOnDeliveryEnabled": @boolean@
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -896,7 +901,8 @@ Feature: Stores
           "packagesRequired":@boolean@,
           "prefillPickupAddress": @boolean@,
           "multiDropEnabled": @boolean@,
-          "multiPickupEnabled": @boolean@
+          "multiPickupEnabled": @boolean@,
+          "cashOnDeliveryEnabled": @boolean@
       }
       """
 
@@ -1011,5 +1017,87 @@ Feature: Stores
                    "name": "XL"
                }],
            "hydra:totalItems": 2
+      }
+      """
+
+  Scenario: Get store payment methods when cash is globally disabled and store has not enabled it
+    Given the fixtures files are loaded:
+      | stores.yml |
+    And the user "bob" is loaded:
+      | email    | bob@coopcycle.org |
+      | password | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the store with name "Acme" belongs to user "bob"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/stores/1/payment_methods"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":{"@*@":"@*@"},
+        "@type":"PaymentMethodsOutput",
+        "@id":@string@,
+        "methods":[]
+      }
+      """
+
+#  Scenario: Get store payment methods when cash is globally enabled
+#    Given the fixtures files are loaded:
+#      | stores.yml |
+##    FIXME: figure out how to set 'CASH_ON_DELIVERY_ENABLED' from .env only for this scenario
+#    And the user "bob" is loaded:
+#      | email    | bob@coopcycle.org |
+#      | password | 123456            |
+#    And the user "bob" has role "ROLE_STORE"
+#    And the store with name "Acme" belongs to user "bob"
+#    And the user "bob" is authenticated
+#    When I add "Content-Type" header equal to "application/ld+json"
+#    And I add "Accept" header equal to "application/ld+json"
+#    And the user "bob" sends a "GET" request to "/api/stores/1/payment_methods"
+#    Then the response status code should be 200
+#    And the response should be in JSON
+#    And the JSON should match:
+#      """
+#      {
+#        "@context":{"@*@":"@*@"},
+#        "@type":"PaymentMethodsOutput",
+#        "@id":@string@,
+#        "methods":[
+#          {
+#            "type":"cash_on_delivery"
+#          }
+#        ]
+#      }
+#      """
+
+  Scenario: Get store payment methods when store has enabled cash on delivery
+    Given the fixtures files are loaded:
+      | stores.yml |
+    And the store with name "Acme" has cash on delivery enabled
+    And the user "bob" is loaded:
+      | email    | bob@coopcycle.org |
+      | password | 123456            |
+    And the user "bob" has role "ROLE_STORE"
+    And the store with name "Acme" belongs to user "bob"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/stores/1/payment_methods"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":{"@*@":"@*@"},
+        "@type":"PaymentMethodsOutput",
+        "@id":@string@,
+        "methods":[
+          {
+            "type":"cash_on_delivery"
+          }
+        ]
       }
       """

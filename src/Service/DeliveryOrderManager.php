@@ -6,6 +6,7 @@ use AppBundle\Action\Incident\CreateIncident;
 use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Incident\Incident;
+use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\ProductRepository;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
@@ -36,6 +37,7 @@ class DeliveryOrderManager
         private readonly OrderFactory $orderFactory,
         private readonly PricingManager $pricingManager,
         private readonly CreateIncident $createIncident,
+        private readonly bool $cashEnabled,
     ) {
         $this->tokenStorage = $tokenStorage;
     }
@@ -187,5 +189,22 @@ class DeliveryOrderManager
         }
 
         return $order;
+    }
+
+    /**
+     * Get the list of supported payment methods for a store.
+     *
+     * @param Store $store
+     * @return string[] Array of payment method codes (e.g., ['cash_on_delivery'])
+     */
+    public function getSupportedPaymentMethods(Store $store): array
+    {
+        $methods = [];
+
+        if ($this->cashEnabled || $store->isCashOnDeliveryEnabled()) {
+            $methods[] = 'cash_on_delivery';
+        }
+
+        return $methods;
     }
 }

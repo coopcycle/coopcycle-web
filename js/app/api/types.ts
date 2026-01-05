@@ -483,6 +483,7 @@ export type ManualSupplementValues = {
 
 export type OrderPayload = {
   manualSupplements: ManualSupplementValues[];
+  paymentMethod?: string;
   arbitraryPrice?: {
     variantName: string;
     variantPrice: number;
@@ -600,4 +601,12 @@ export type OrderValidation = {
 export type RecurrenceRulesGenerateOrdersResponse = {
   generated: number;
   orders: Order[];
+};
+
+export type PaymentMethod = {
+  type: string;
+};
+
+export type PaymentMethodsOutput = {
+  methods: PaymentMethod[];
 };
