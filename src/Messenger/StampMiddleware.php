@@ -2,7 +2,6 @@
 
 namespace AppBundle\Messenger;
 
-use AppBundle\Log\MessengerStampProcessor;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Middleware\MiddlewareInterface;
 use Symfony\Component\Messenger\Middleware\StackInterface;
@@ -10,31 +9,23 @@ use Symfony\Component\Messenger\Stamp\ConsumedByWorkerStamp;
 use Symfony\Component\Messenger\Stamp\StampInterface;
 
 /**
- * This class is used to add an extra data to a message (via a stamp)
- * that is later on added to log messages created by the Messenger component.
+ * This class is used to pass extra data to the Messenger/Worker (via a stamp)
+ * for example, to enhance log messages created by the Messenger/Worker.
  */
 abstract class StampMiddleware implements MiddlewareInterface
 {
     private ?StampInterface $currentStamp = null;
 
-    public function __construct(
-        private readonly MessengerStampProcessor $messengerStampProcessor
-    )
-    {
-    }
-
     public function handle(Envelope $envelope, StackInterface $stack): Envelope
     {
-        // (2) Stamp consumption: If a stamp exists, set it on the MessengerStampProcessor (monolog processor)
+        // (2) Stamp consumption
         if ($stamp = $envelope->last($this->getStampFqcn())) {
-            $this->messengerStampProcessor->setStamp($stamp);
-            $this->currentStamp = $stamp;
+            $this->setCurrentStamp($stamp);
 
             try {
                 return $stack->next()->handle($envelope, $stack);
             } finally {
-                $this->messengerStampProcessor->setStamp(null);
-                $this->currentStamp = null;
+                $this->clearCurrentStamp($stamp);
             }
         }
 
@@ -51,4 +42,14 @@ abstract class StampMiddleware implements MiddlewareInterface
     abstract protected function getStampFqcn(): string;
 
     abstract protected function createStamp(): ?StampInterface;
+
+    protected function setCurrentStamp(StampInterface $stamp): void
+    {
+        $this->currentStamp = $stamp;
+    }
+
+    protected function clearCurrentStamp(StampInterface $stamp): void
+    {
+        $this->currentStamp = null;
+    }
 }
