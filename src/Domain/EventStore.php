@@ -96,32 +96,8 @@ class EventStore extends ArrayCollection
         $roles = $this->requestContext->getRoles();
 
         $metadata['roles'] = $roles;
-        $metadata['roles_category'] = $this->getRolesCategory($roles);
+        $metadata['roles_category'] = $this->requestContext->getRolesCategory();
 
         return $metadata;
-    }
-
-    private function getRolesCategory(array $roles): ?string
-    {
-        // Define roles priority for searching
-        $rolesPriority = [
-            'ROLE_ADMIN',
-            'ROLE_DISPATCHER',
-            'ROLE_COURIER',
-            'ROLE_RESTAURANT',
-            'ROLE_STORE',
-        ];
-
-        foreach ($rolesPriority as $role) {
-            if (in_array($role, $roles, true)) {
-                return $role;
-            }
-        }
-
-        if (count($roles) > 0) {
-            return $roles[0];
-        } else {
-            return 'ROLE_UNKNOWN';
-        }
     }
 }
