@@ -525,7 +525,7 @@ class RestaurantStats implements \Countable
         foreach ($this->result as $order) {
 
             $taxAdjustments =
-                array_filter($order->adjustments, fn($adjustment) => $adjustment['type'] === 'tax');
+                array_filter($order->adjustments ?: [], fn($adjustment) => $adjustment['type'] === 'tax');
 
             $this->taxTotals[$order->getId()] = array_combine(
                 $this->taxColumns,
