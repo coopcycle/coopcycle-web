@@ -81,8 +81,6 @@ class EventStore extends ArrayCollection
 
         if ($userAgent = $this->requestContext->getUserAgent()) {
             $metadata['user_agent'] = $userAgent;
-        } else {
-            $metadata['user_agent'] = 'unknown';
         }
 
         if ($route = $this->requestContext->getRoute()) {
