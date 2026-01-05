@@ -126,32 +126,6 @@ class RequestContext
         return $this->tokenStorage->getToken()?->getRoleNames() ?? [];
     }
 
-    public function getRolesCategory(): ?string
-    {
-        $roles = $this->getRoles();
-
-        // Define roles priority for searching
-        $rolesPriority = [
-            'ROLE_ADMIN',
-            'ROLE_DISPATCHER',
-            'ROLE_COURIER',
-            'ROLE_RESTAURANT',
-            'ROLE_STORE',
-        ];
-
-        foreach ($rolesPriority as $role) {
-            if (in_array($role, $roles, true)) {
-                return $role;
-            }
-        }
-
-        if (count($roles) > 0) {
-            return $roles[0];
-        } else {
-            return 'ROLE_UNKNOWN';
-        }
-    }
-
     /**
      * Pre-fill context from stamp (worker context)
      */

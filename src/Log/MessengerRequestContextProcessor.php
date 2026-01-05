@@ -51,7 +51,6 @@ class MessengerRequestContextProcessor
 
         if (!empty($this->requestContext->getRoles())) {
             $record['extra']['token']['roles'] = $this->requestContext->getRoles();
-            $record['extra']['token']['roles_category'] = $this->requestContext->getRolesCategory();
         }
 
         return $record;

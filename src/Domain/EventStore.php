@@ -93,10 +93,7 @@ class EventStore extends ArrayCollection
             $metadata['username'] = $username;
         }
 
-        $roles = $this->requestContext->getRoles();
-
-        $metadata['roles'] = $roles;
-        $metadata['roles_category'] = $this->requestContext->getRolesCategory();
+        $metadata['roles'] = $this->requestContext->getRoles();
 
         return $metadata;
     }
