@@ -2,7 +2,7 @@
 
 namespace AppBundle\Log;
 
-use AppBundle\Messenger\Stamp\RequestContextStamp;
+use AppBundle\Service\RequestContext;
 use Monolog\Attribute\AsMonologProcessor;
 use Monolog\LogRecord;
 
@@ -10,50 +10,50 @@ use Monolog\LogRecord;
  * This processor adds request context information to log records coming from the Messenger.
  */
 #[AsMonologProcessor]
-class MessengerRequestContextProcessor extends MessengerStampProcessor
+class MessengerRequestContextProcessor
 {
+    public function __construct(
+        private readonly RequestContext $requestContext
+    )
+    {
+    }
+
     public function __invoke(LogRecord $record): LogRecord
     {
-        //FIXME: get from RequestContext service instead of stamp?
-        $stamp = $this->getStamp();
+        if ($requestId = $this->requestContext->getRequestId()) {
+            $record['extra']['request_id'] = $requestId;
+        }
 
-        if ($stamp instanceof RequestContextStamp) {
+        if ($route = $this->requestContext->getRoute()) {
+            $record['extra']['requests'] = [
+                [
+                    'controller' => $this->requestContext->getController(),
+                    'route' => $route
+                ]
+            ];
+        }
 
-            if ($requestId = $stamp->getRequestId()) {
-                $record['extra']['request_id'] = $requestId;
-            }
+        if ($clientIp = $this->requestContext->getClientIp()) {
+            $record['extra']['client_ip'] = $clientIp;
+        }
 
-            if ($route = $stamp->getRoute()) {
-                $record['extra']['requests'] = [
-                    [
-                        'controller' => $stamp->getController(),
-                        'route' => $route
-                    ]
-                ];
-            }
+        if ($userAgent = $this->requestContext->getUserAgent()) {
+            $record['extra']['user_agent'] = $userAgent;
+        }
 
-            if ($clientIp = $stamp->getClientIp()) {
-                $record['extra']['client_ip'] = $clientIp;
-            }
+        if (!$record['extra']['token']) {
+            $record['extra']['token'] = [];
+        }
 
-            if ($userAgent = $stamp->getUserAgent()) {
-                $record['extra']['user_agent'] = $userAgent;
-            }
+        if ($username = $this->requestContext->getUsername()) {
+            $record['extra']['token']['user_identifier'] = $username;
+        }
 
-            if (!$record['extra']['token']) {
-                $record['extra']['token'] = [];
-            }
-
-            if ($username = $stamp->getUsername()) {
-                $record['extra']['token']['user_identifier'] = $username;
-            }
-
-            if (!empty($stamp->getRoles())) {
-                $record['extra']['token']['roles'] = $stamp->getRoles();
-            }
+        if (!empty($this->requestContext->getRoles())) {
+            $record['extra']['token']['roles'] = $this->requestContext->getRoles();
+            $record['extra']['token']['roles_category'] = $this->requestContext->getRolesCategory();
         }
 
         return $record;
     }
 }
-
