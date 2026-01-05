@@ -24,11 +24,14 @@ class MessengerRequestContextProcessor
             $record['extra']['request_id'] = $requestId;
         }
 
-        if ($route = $this->requestContext->getRoute()) {
+        $route = $this->requestContext->getRoute();
+        $controller = $this->requestContext->getController();
+
+        if ($route || $controller) {
             $record['extra']['requests'] = [
                 [
-                    'controller' => $this->requestContext->getController(),
-                    'route' => $route
+                    'route' => $route ?? 'unknown',
+                    'controller' => $controller ?? 'unknown',
                 ]
             ];
         }
