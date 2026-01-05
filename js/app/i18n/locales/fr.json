@@ -326,7 +326,7 @@
         "CART_PRODUCT_OPTIONS_INVALID": "Certaines options ne sont pas disponibles",
         "CART_PRODUCT_OPTIONS_VALUES_RANGE": "Veuillez choisir entre {{min}} et {{max}} valeurs",
         "CART_PRODUCT_OPTIONS_VALUES_RANGE_AT_LEAST": "Veuillez choisir au moins {{count}} valeur(s)",
-        "CART_PRODUCT_OPTIONS_VALUES_RANGE_UP_TO": "Veuillez choisir jusqu'à {{count}} valeur(s)",
+        "CART_PRODUCT_OPTIONS_VALUES_RANGE_UP_TO": "Vous pouvez choisir jusqu'à {{count}} valeur(s)",
         "RESTAURANTS_AND_STORES": "Restaurants et magasins",
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI": "Déplacer {{count}} tâches au prochain jour",
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI": "Déplacer {{count}} tâches au prochain jour ouvré ({{nextWorkingDay}})",
