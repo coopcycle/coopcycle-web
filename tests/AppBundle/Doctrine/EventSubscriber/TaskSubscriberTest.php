@@ -17,7 +17,7 @@ use AppBundle\Entity\Tour;
 use AppBundle\Entity\TourRepository;
 use AppBundle\Entity\User;
 use AppBundle\Service\Geocoder;
-use AppBundle\Service\OrderManager;
+use AppBundle\Service\RequestContext;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
@@ -26,10 +26,8 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 
 // Avoid error "Returning by reference not supported" with Prophecy
@@ -78,24 +76,28 @@ class TaskSubscriberTest extends TestCase
             ->getRepository(Tour::class)
             ->willReturn($this->tourRepository->reveal());
 
-        $tokenStorage = $this->prophesize(TokenStorageInterface::class);
-        $requestStack = $this->prophesize(RequestStack::class);
+        $requestContext = $this->prophesize(RequestContext::class);
+        $requestContext->getRoute()->willReturn('test_route');
+        $requestContext->getController()->willReturn('test_controller');
+        $requestContext->getClientIp()->willReturn('127.0.0.1');
+        $requestContext->getUserAgent()->willReturn('test_user_agent');
+        $requestContext->getUsername()->willReturn('test_username');
+        $requestContext->getRoles()->willReturn(['ROLE_USER']);
+        $requestContext->getRequestId()->willReturn('test_request_id');
 
-        $eventStore = new EventStore($tokenStorage->reveal(), $requestStack->reveal());
+        $eventStore = new EventStore($requestContext->reveal());
 
         $taskListProvider = new TaskListProvider($this->entityManager->reveal());
         $changeSetProcessor = new EntityChangeSetProcessor($taskListProvider, null, $this->entityManager->reveal());
 
         $this->geocoder = $this->prophesize(Geocoder::class);
-        $this->orderManager = $this->prophesize(OrderManager::class);
 
         $this->subscriber = new TaskSubscriber(
             $this->eventBus->reveal(),
             $eventStore,
             $changeSetProcessor,
             new NullLogger(),
-            $this->geocoder->reveal(),
-            $this->orderManager->reveal()
+            $this->geocoder->reveal()
         );
     }
 
