@@ -28,6 +28,7 @@ class MyTaskMetadataDtoNormalizer implements ContextAwareNormalizerInterface, No
         unset($data['@id']);
 
         $this->unsetIfNull($data, [
+            'store',
             'delivery_position',
             'order_id',
             'order_number',

@@ -19,9 +19,13 @@ use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Payment\Context as PaymentContext;
 use Psr\Log\LoggerInterface;
 use Recurr\Exception\InvalidRRule;
 use Recurr\Rule;
+use Sylius\Component\Order\Processor\OrderProcessorInterface;
+use Sylius\Component\Payment\Repository\PaymentMethodRepositoryInterface;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -39,6 +43,9 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         private readonly AuthorizationCheckerInterface $authorizationCheckerInterface,
         private readonly ValidatorInterface $validator,
         private readonly LoggerInterface $logger,
+        private readonly PaymentMethodRepositoryInterface $paymentMethodRepository,
+        private readonly PaymentContext $paymentContext,
+        private readonly OrderProcessorInterface $orderPaymentProcessor,
     ) {
     }
 
@@ -180,6 +187,39 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
                     $this->eventBus->dispatch($event);
                 }
             }
+        }
+
+        // Handle payment method if specified
+        if ($data instanceof DeliveryInputDto && !is_null($data->order?->paymentMethod)) {
+            $store = $delivery->getStore();
+            if (null === $store) {
+                $this->logger->warning('Payment method specified but no store found', [
+                    'paymentMethod' => $data->order->paymentMethod,
+                ]);
+                throw new BadRequestHttpException('order.paymentMethod is not valid');
+            }
+
+            if (!in_array($data->order->paymentMethod, $this->deliveryOrderManager->getSupportedPaymentMethods($store), true)) {
+                $this->logger->warning('Payment method is not enabled for this store', [
+                    'paymentMethod' => $data->order->paymentMethod,
+                    'store' => $store->getId(),
+                    'supportedMethods' => $this->deliveryOrderManager->getSupportedPaymentMethods($store),
+                ]);
+                throw new BadRequestHttpException('order.paymentMethod is not valid');
+            }
+
+            $code = strtoupper($data->order->paymentMethod);
+
+            $paymentMethod = $this->paymentMethodRepository->findOneByCode($code);
+            if (null === $paymentMethod) {
+                $this->logger->warning('Payment method not found', [
+                    'paymentMethod' => $code,
+                ]);
+                throw new BadRequestHttpException('order.paymentMethod is not valid');
+            }
+
+            $this->paymentContext->setMethod($code);
+            $this->orderPaymentProcessor->process($order);
         }
 
         /** @var string $rrule */

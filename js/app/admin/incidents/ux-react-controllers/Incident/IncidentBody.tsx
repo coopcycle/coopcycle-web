@@ -24,7 +24,11 @@ export default connectWithRedux(function () {
       return incident.events;
     }
 
-    const suggestionObj = incident.metadata.find(el => Boolean(el.suggestion));
+    const metadata = Array.isArray(incident.metadata)
+      ? incident.metadata
+      : [incident.metadata];
+
+    const suggestionObj = metadata.find(el => Boolean(el.suggestion));
 
     if (!suggestionObj) {
       return incident.events;

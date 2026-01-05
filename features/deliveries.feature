@@ -4227,6 +4227,7 @@ Feature: Deliveries
       }
       """
     Then the database should contain an order with a total price 499
+    Then the database should contain a payment with method "CARD" and amount "499"
 
   Scenario: Create delivery with recurrence as an admin
     Given the fixtures files are loaded:
@@ -5971,5 +5972,94 @@ Feature: Deliveries
           "taxTotal": @integer@,
           "paymentGateway": @string@
         }
+      }
+      """
+
+  Scenario: Create delivery with cash on delivery payment method
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | store_with_cash_on_delivery.yml |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "tasks": [
+          {
+            "type": "PICKUP",
+            "address": "24, Rue de la Paix Paris",
+            "after": "tomorrow 12:00",
+            "before": "tomorrow 13:00"
+          },
+          {
+            "type": "DROPOFF",
+            "address": "48, Rue de Rivoli Paris",
+            "after": "tomorrow 13:30",
+            "before": "tomorrow 14:30"
+          }
+        ],
+        "order": {
+          "paymentMethod": "cash_on_delivery"
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    Then the database should contain a payment with method "CASH_ON_DELIVERY" and amount "499"
+
+  Scenario: Cannot create delivery with cash on delivery when not enabled for store
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | store_basic.yml     |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "tasks": [
+          {
+            "type": "PICKUP",
+            "address": "24, Rue de la Paix Paris",
+            "after": "tomorrow 12:00",
+            "before": "tomorrow 13:00"
+          },
+          {
+            "type": "DROPOFF",
+            "address": "48, Rue de Rivoli Paris",
+            "after": "tomorrow 13:30",
+            "before": "tomorrow 14:30"
+          }
+        ],
+        "order": {
+          "paymentMethod": "cash_on_delivery"
+        }
+      }
+      """
+    Then the response status code should be 400
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/Error",
+        "@type": "hydra:Error",
+        "hydra:title": "An error occurred",
+        "hydra:description": "order.paymentMethod is not valid",
+        "trace":@array@
       }
       """

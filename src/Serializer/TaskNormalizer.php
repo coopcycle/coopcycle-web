@@ -115,6 +115,10 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
                     $data['metadata']['order_number'] = $order->getNumber();
                     $data['metadata']['order_total'] = $order->getTotal();
                 }
+
+                if (null !== ($store = $delivery->getStore())) {
+                    $data['metadata']['store'] = $this->iriConverter->getIriFromResource($store);
+                }
             }
         }
 

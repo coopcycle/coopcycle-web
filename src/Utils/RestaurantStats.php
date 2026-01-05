@@ -166,7 +166,7 @@ class RestaurantStats implements \Countable
 
         $this->result = array_map(function ($order) use ($adjustmentsByOrderId) {
 
-            $order->adjustments = $adjustmentsByOrderId[$order->id];
+            $order->adjustments = $adjustmentsByOrderId[$order->id] ?? [];
 
             return $order;
 

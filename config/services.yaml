@@ -619,6 +619,10 @@ services:
 
   AppBundle\Service\DeliveryManager:
 
+  AppBundle\Service\DeliveryOrderManager:
+    arguments:
+      $cashEnabled: '%env(bool:CASH_ON_DELIVERY_ENABLED)%'
+
   AppBundle\Utils\PreparationTimeCalculator:
     arguments:
       - {
@@ -971,6 +975,9 @@ services:
     arguments:
       $cashEnabled: '%env(bool:CASH_ON_DELIVERY_ENABLED)%'
       $edenredEnabled: '%env(bool:EDENRED_ENABLED)%'
+
+  AppBundle\Action\Store\PaymentMethods:
+    public: true
 
   AppBundle\Action\Order\Centrifugo:
     public: true

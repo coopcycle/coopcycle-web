@@ -723,6 +723,17 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Given the store with name :name has cash on delivery enabled
+     */
+    public function theStoreWithNameHasCashOnDeliveryEnabled($name)
+    {
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($name);
+        $store->setCashOnDeliveryEnabled(true);
+
+        $this->doctrine->getManagerForClass(Store::class)->flush();
+    }
+
+    /**
      * @Given the restaurant with id :id belongs to user :username
      */
     public function theRestaurantWithIdBelongsToUser($id, $username)
@@ -1383,6 +1394,33 @@ class FeatureContext implements Context, SnippetAcceptingContext
         if (null === $order) {
             Assert::fail(sprintf('No order found with total price %s', $price));
         }
+    }
+
+    /**
+     * @Then the database should contain a payment with method :methodCode and amount :amount
+     */
+    public function theDatabaseShouldContainAPaymentWithMethod($methodCode, $amount)
+    {
+        $paymentMethodRepository = $this->getContainer()->get('sylius.repository.payment_method');
+        $paymentRepository = $this->getContainer()->get('sylius.repository.payment');
+
+        $paymentMethod = $paymentMethodRepository->findOneByCode($methodCode);
+
+        if (null === $paymentMethod) {
+            Assert::fail(sprintf('No payment method found with code %s', $methodCode));
+        }
+
+        $payment = $paymentRepository->findOneBy(['method' => $paymentMethod]);
+
+        if (null === $payment) {
+            Assert::fail(sprintf('No payment found with method code %s', $methodCode));
+        }
+
+        Assert::assertEquals((int) $amount, $payment->getAmount(), sprintf(
+            'Expected payment amount to be %d, but got %d',
+            (int) $amount,
+            $payment->getAmount()
+        ));
     }
 
     /**

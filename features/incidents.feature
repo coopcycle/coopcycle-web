@@ -786,3 +786,281 @@ Feature: Incidents
       }
       """
     And the database should contain an order with a total price 499
+
+  Scenario: Report incident: pre-fill missing manual supplements in suggestion
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml        |
+      | payment_methods.yml        |
+      | sylius_products.yml        |
+      | store_with_manual_supplements_mixed.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    # First create a delivery with both fixed price and range-based manual supplements
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "doneBefore": "tomorrow 13:00",
+          "comments": "#bob"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "doneBefore": "tomorrow 15:00"
+        },
+        "order": {
+          "manualSupplements": [
+            {
+              "pricingRule": "/api/pricing_rules/2",
+              "quantity": 1
+            },
+            {
+              "pricingRule": "/api/pricing_rules/3",
+              "quantity": 1
+            },
+            {
+              "pricingRule": "/api/pricing_rules/4",
+              "quantity": 15
+            },
+            {
+              "pricingRule": "/api/pricing_rules/5",
+              "quantity": 3
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    # Now create an incident with a suggestion that doesn't have manualSupplements
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "Need to update delivery details",
+        "failureReasonCode": "INCORRECT_ITEM",
+        "task": "/api/tasks/2",
+        "metadata": [
+          {
+            "suggestion": {
+              "tasks": [
+                {
+                  "id": 2,
+                  "packages": [
+                    {"type": "XL", "quantity": 3}
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Incident",
+        "@id":"@string@",
+        "@type":"Incident",
+        "id":@integer@,
+        "title":"Article incorrect",
+        "status":"OPEN",
+        "priority":@integer@,
+        "task":"/api/tasks/2",
+        "failureReasonCode":"INCORRECT_ITEM",
+        "description":"Need to update delivery details",
+        "images":[],
+        "events":[],
+        "createdBy":"/api/users/2",
+        "createdAt":"@string@.isDateTime()",
+        "updatedAt":"@string@.isDateTime()",
+        "tags":[],
+        "metadata": [
+          {
+            "suggestion": {
+              "id": 1,
+              "tasks": [
+                {
+                  "id": 2,
+                  "packages": [
+                    {"type": "XL", "quantity": 3}
+                  ]
+                },
+                {
+                  "id": 1
+                }
+              ],
+              "order": {
+                "manualSupplements": [
+                  {
+                    "pricingRule": "/api/pricing_rules/2",
+                    "quantity": 1
+                  },
+                  {
+                    "pricingRule": "/api/pricing_rules/3",
+                    "quantity": 1
+                  },
+                  {
+                    "pricingRule": "/api/pricing_rules/4",
+                    "quantity": 3
+                  },
+                  {
+                    "pricingRule": "/api/pricing_rules/5",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      }
+      """
+
+  Scenario: Report incident: keep empty manual supplements array in suggestion
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml        |
+      | payment_methods.yml        |
+      | sylius_products.yml        |
+      | store_with_manual_supplements_mixed.yml |
+    And the setting "subject_to_vat" has value "1"
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    And the user "admin" is loaded:
+      | email      | admin@coopcycle.org |
+      | password   | 123456            |
+    And the user "admin" has role "ROLE_ADMIN"
+    And the user "admin" is authenticated
+    # First create a delivery with both fixed price and range-based manual supplements
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "admin" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store":"/api/stores/1",
+        "pickup": {
+          "address": "24, Rue de la Paix Paris",
+          "doneBefore": "tomorrow 13:00",
+          "comments": "#bob"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli Paris",
+          "doneBefore": "tomorrow 15:00"
+        },
+        "order": {
+          "manualSupplements": [
+            {
+              "pricingRule": "/api/pricing_rules/2",
+              "quantity": 1
+            },
+            {
+              "pricingRule": "/api/pricing_rules/3",
+              "quantity": 1
+            },
+            {
+              "pricingRule": "/api/pricing_rules/4",
+              "quantity": 15
+            },
+            {
+              "pricingRule": "/api/pricing_rules/5",
+              "quantity": 3
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the tasks with comments matching "#bob" are assigned to "bob"
+    # Now create an incident with a suggestion that has an empty manualSupplements array
+    Given the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "Need to update delivery details without supplements",
+        "failureReasonCode": "INCORRECT_ITEM",
+        "task": "/api/tasks/2",
+        "metadata": [
+          {
+            "suggestion": {
+              "tasks": [
+                {
+                  "id": 2,
+                  "packages": [
+                    {"type": "XL", "quantity": 3}
+                  ]
+                }
+              ],
+              "order": {
+                "manualSupplements": []
+              }
+            }
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Incident",
+        "@id":"@string@",
+        "@type":"Incident",
+        "id":@integer@,
+        "title":"Article incorrect",
+        "status":"OPEN",
+        "priority":@integer@,
+        "task":"/api/tasks/2",
+        "failureReasonCode":"INCORRECT_ITEM",
+        "description":"Need to update delivery details without supplements",
+        "images":[],
+        "events":[],
+        "createdBy":"/api/users/2",
+        "createdAt":"@string@.isDateTime()",
+        "updatedAt":"@string@.isDateTime()",
+        "tags":[],
+        "metadata": [
+          {
+            "suggestion": {
+              "id": 1,
+              "tasks": [
+                {
+                  "id": 2,
+                  "packages": [
+                    {"type": "XL", "quantity": 3}
+                  ]
+                },
+                {
+                  "id": 1
+                }
+              ],
+              "order": {
+                "manualSupplements": []
+              }
+            }
+          }
+        ]
+      }
+      """
