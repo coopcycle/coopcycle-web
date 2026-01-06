@@ -132,7 +132,7 @@ class RequestContext
     public function setFromStamp(
         ?string $requestId,
         ?string $route,
-        ?string $controller,
+        string|array|null $controller,
         ?string $clientIp,
         ?string $userAgent,
         ?string $username,
