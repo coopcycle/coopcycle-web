@@ -11,7 +11,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Doctrine\Orm\Filter\ExistsFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\QueryParameter;
 use AppBundle\Action\Order\Accept as OrderAccept;
 use AppBundle\Action\Order\AddPlayer;
 use AppBundle\Action\Order\Assign as OrderAssign;
@@ -337,7 +337,23 @@ use Webmozart\Assert\Assert as WMAssert;
             validate: false,
             processor: ConfigurePaymentProcessor::class
         ),
-        new GetCollection(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new GetCollection(
+            security: 'is_granted(\'ROLE_ADMIN\')',
+            parameters: [
+                'date' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\OrderDateFilter'
+                ),
+                'state' => new QueryParameter(
+                    filter: 'api_platform.doctrine.orm.search_filter'
+                ),
+                'exports' => new QueryParameter(
+                    filter: 'api_platform.doctrine.orm.exists_filter'
+                ),
+                'delivery.store.id' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\OrderStoreFilter'
+                )
+            ]
+        ),
         new Post(
             denormalizationContext: ['groups' => ['order_create', 'address_create']]
         ),
@@ -387,7 +403,21 @@ use Webmozart\Assert\Assert as WMAssert;
             ],
             normalizationContext: ['groups' => ['default_invoice_line_item']],
             security: 'is_granted(\'ROLE_ADMIN\')',
-            provider: InvoiceLineItemsGroupedByOrganizationProvider::class
+            provider: InvoiceLineItemsGroupedByOrganizationProvider::class,
+            parameters: [
+                'date' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\OrderDateFilter'
+                ),
+                'state' => new QueryParameter(
+                    filter: 'api_platform.doctrine.orm.search_filter'
+                ),
+                'exports' => new QueryParameter(
+                    filter: 'api_platform.doctrine.orm.exists_filter'
+                ),
+                'delivery.store.id' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\OrderStoreFilter'
+                )
+            ]
         ),
         new GetCollection(
             uriTemplate: '/invoice_line_items',
@@ -397,7 +427,21 @@ use Webmozart\Assert\Assert as WMAssert;
             ],
             normalizationContext: ['groups' => ['default_invoice_line_item']],
             security: 'is_granted(\'ROLE_ADMIN\')',
-            provider: InvoiceLineItemsProvider::class
+            provider: InvoiceLineItemsProvider::class,
+            parameters: [
+                'date' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\OrderDateFilter'
+                ),
+                'state' => new QueryParameter(
+                    filter: 'api_platform.doctrine.orm.search_filter'
+                ),
+                'exports' => new QueryParameter(
+                    filter: 'api_platform.doctrine.orm.exists_filter'
+                ),
+                'delivery.store.id' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\OrderStoreFilter'
+                )
+            ]
         ),
         new GetCollection(
             uriTemplate: '/invoice_line_items/export',
@@ -405,7 +449,21 @@ use Webmozart\Assert\Assert as WMAssert;
             paginationEnabled: false,
             normalizationContext: ['groups' => ['export_invoice_line_item']],
             security: 'is_granted(\'ROLE_ADMIN\')',
-            provider: InvoiceLineItemsProvider::class
+            provider: InvoiceLineItemsProvider::class,
+            parameters: [
+                'date' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\OrderDateFilter'
+                ),
+                'state' => new QueryParameter(
+                    filter: 'api_platform.doctrine.orm.search_filter'
+                ),
+                'exports' => new QueryParameter(
+                    filter: 'api_platform.doctrine.orm.exists_filter'
+                ),
+                'delivery.store.id' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\OrderStoreFilter'
+                )
+            ]
         ),
         new GetCollection(
             uriTemplate: '/invoice_line_items/export/odoo',
@@ -413,7 +471,21 @@ use Webmozart\Assert\Assert as WMAssert;
             paginationEnabled: false,
             normalizationContext: ['groups' => ['odoo_export_invoice_line_item']],
             security: 'is_granted(\'ROLE_ADMIN\')',
-            provider: InvoiceLineItemsProvider::class
+            provider: InvoiceLineItemsProvider::class,
+            parameters: [
+                'date' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\OrderDateFilter'
+                ),
+                'state' => new QueryParameter(
+                    filter: 'api_platform.doctrine.orm.search_filter'
+                ),
+                'exports' => new QueryParameter(
+                    filter: 'api_platform.doctrine.orm.exists_filter'
+                ),
+                'delivery.store.id' => new QueryParameter(
+                    filter: 'AppBundle\Api\Filter\OrderStoreFilter'
+                )
+            ]
         )
     ],
     normalizationContext: ['groups' => ['order', 'address']],
@@ -423,10 +495,6 @@ use Webmozart\Assert\Assert as WMAssert;
 #[AssertOrderIsModifiable(groups: ['cart'])]
 #[AssertLoopEatOrder(groups: ['loopeat'])]
 #[AssertDabbaOrder(groups: ['dabba'])]
-#[ApiFilter(filterClass: OrderDateFilter::class, properties: ['date' => 'exact'])]
-#[ApiFilter(filterClass: SearchFilter::class, properties: ['state' => 'exact'])]
-#[ApiFilter(filterClass: ExistsFilter::class, properties: ['exports'])]
-#[ApiFilter(filterClass: OrderStoreFilter::class)]
 class Order extends BaseOrder implements OrderInterface
 {
     use VytalCodeAwareTrait;

@@ -7,7 +7,6 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Api\Dto\CreateRemotePushTokenRequest;
 use AppBundle\Api\State\RemotePushTokenProcessor;
 use AppBundle\Api\State\RemotePushTokenProvider;

@@ -2,68 +2,95 @@
 
 namespace AppBundle\Api\Filter;
 
-use ApiPlatform\Doctrine\Orm\Filter\AbstractFilter;
+use ApiPlatform\Doctrine\Orm\Filter\FilterInterface;
 use ApiPlatform\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ParameterNotFound;
 use AppBundle\Entity\Sylius\Order;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr\Join;
-use Doctrine\Persistence\ManagerRegistry;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
-use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
-use Symfony\Component\PropertyInfo\Type;
 
-final class OrderStoreFilter extends AbstractFilter
+final class OrderStoreFilter implements FilterInterface
 {
     private string $storeIdProperty = 'delivery.store.id';
-    private string $storeIdAlias = 'store';
 
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
+    public function apply(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
     {
         if ($resourceClass !== Order::class) {
             return;
         }
 
-        // expose alias in the API instead of a path to a nested property
-        if ($this->storeIdAlias === $property) {
+        $parameter = $context['parameter'] ?? null;
+        $value = $parameter?->getValue();
 
-            $alias = $queryBuilder->getRootAliases()[0];
+        // The parameter may not be present
+        if ($value instanceof ParameterNotFound || null === $value) {
+            return;
+        }
 
-            [$alias, $field] = $this->addJoinsForNestedProperty($this->storeIdProperty, $alias, $queryBuilder, $queryNameGenerator, $resourceClass, Join::INNER_JOIN);
+        $alias = $queryBuilder->getRootAliases()[0];
 
-            $valueParameter = $queryNameGenerator->generateParameterName($field);
+        // Add joins for nested property delivery.store.id
+        [$joinAlias, $field] = $this->addJoinsForNestedProperty($this->storeIdProperty, $alias, $queryBuilder, $queryNameGenerator, $resourceClass, Join::INNER_JOIN);
 
-            if (is_array($value)) {
+        $valueParameter = $queryNameGenerator->generateParameterName($field);
 
-                $queryBuilder
-                    ->andWhere($queryBuilder->expr()->in(sprintf('%s.%s', $alias, $field), sprintf(':%s', $valueParameter)))
-                    ->setParameter($valueParameter, $value);
+        if (is_array($value)) {
+            $queryBuilder
+                ->andWhere($queryBuilder->expr()->in(sprintf('%s.%s', $joinAlias, $field), sprintf(':%s', $valueParameter)))
+                ->setParameter($valueParameter, $value);
 
-                return;
+            return;
+        }
+
+        $queryBuilder
+            ->andWhere(\sprintf('%s.%s = :%s', $joinAlias, $field, $valueParameter))
+            ->setParameter($valueParameter, $value);
+    }
+
+    /**
+     * Helper method to add joins for nested properties (copied from AbstractFilter for compatibility)
+     */
+    private function addJoinsForNestedProperty(string $property, string $rootAlias, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $joinType): array
+    {
+        $propertyParts = explode('.', $property);
+        $parentAlias = $rootAlias;
+        $alias = null;
+
+        while (count($propertyParts) > 1) {
+            $part = array_shift($propertyParts);
+            $alias = $queryNameGenerator->generateJoinAlias($part);
+
+            $parts = $queryBuilder->getDQLPart('join');
+            $joinExists = false;
+
+            if (isset($parts[$parentAlias])) {
+                foreach ($parts[$parentAlias] as $join) {
+                    if ($join->getJoin() === sprintf('%s.%s', $parentAlias, $part)) {
+                        $alias = $join->getAlias();
+                        $joinExists = true;
+                        break;
+                    }
+                }
             }
 
-            $queryBuilder
-                ->andWhere(\sprintf('%s.%s = :%s', $alias, $field, $valueParameter))
-                ->setParameter($valueParameter, $value, (string) $this->getDoctrineFieldType($property, $resourceClass));
+            if (!$joinExists) {
+                if ($joinType === Join::INNER_JOIN) {
+                    $queryBuilder->innerJoin(sprintf('%s.%s', $parentAlias, $part), $alias);
+                } else {
+                    $queryBuilder->leftJoin(sprintf('%s.%s', $parentAlias, $part), $alias);
+                }
+            }
+
+            $parentAlias = $alias;
         }
+
+        return [$parentAlias, $propertyParts[0]];
     }
 
     public function getDescription(string $resourceClass): array
     {
-        return [
-            'store' => [
-                'property' => $this->storeIdAlias,
-                'type' => Type::BUILTIN_TYPE_INT,
-                'required' => false,
-                'is_collection' => false,
-            ],
-            'store[]'=> [
-                'property' => $this->storeIdAlias,
-                'type' => Type::BUILTIN_TYPE_INT,
-                'required' => false,
-                'is_collection' => true,
-            ]
-        ];
+        // For BC, this function is not useful anymore when documentation occurs on the Parameter
+        return [];
     }
 }

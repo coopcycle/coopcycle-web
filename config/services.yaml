@@ -773,13 +773,6 @@ services:
     public: true
     class: AppBundle\Service\Routing\OsrmWithFallback
 
-  AppBundle\Api\Filter\DeliveryOrderFilter:
-    autowire: false
-    autoconfigure: false
-    public: true
-    parent: 'api_platform.doctrine.orm.date_filter'
-    arguments:
-      $properties: []
 
   coopcycle.web_success_handler:
     class: AppBundle\EventListener\AuthenticationWebSuccessHandler
@@ -1651,11 +1644,6 @@ services:
 
   AppBundle\Utils\Defaults: ~
 
-  AppBundle\Api\Filter\AssignedFilter:
-    arguments:
-      $properties: { assigned: ~ }
-      $security: '@security.helper'
-    tags: [ 'api_platform.filter' ]
 
   AppBundle\Fixtures\DatabasePurger: ~
 

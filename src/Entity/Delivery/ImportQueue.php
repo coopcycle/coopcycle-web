@@ -5,7 +5,6 @@ namespace AppBundle\Entity\Delivery;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Entity\Store;
 use AppBundle\Action\Delivery\ImportQueueCsv as CsvController;
 use AppBundle\Action\Delivery\ImportQueueRedownload as RedownloadController;

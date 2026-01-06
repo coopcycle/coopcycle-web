@@ -7,7 +7,6 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\DataType\NumRange;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Sylius\Product\ProductOptionInterface;

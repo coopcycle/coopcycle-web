@@ -7,7 +7,6 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Action\NotFoundAction;
 use AppBundle\Action\Delivery\ConfirmQuote as ConfirmDeliveryQuoteController;
 use AppBundle\Api\Dto\DeliveryInputDto;
