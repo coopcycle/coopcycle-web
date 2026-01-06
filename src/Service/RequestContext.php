@@ -56,7 +56,7 @@ class RequestContext
         return null;
     }
 
-    public function getController(): ?string
+    public function getController(): string|array|null
     {
         if ($this->prefilledFromStamp) {
             return $this->controller;
