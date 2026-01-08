@@ -101,7 +101,7 @@ class RestaurantPromotionType extends AbstractType
             $this->moveTo($event->getForm(), 'actions', -3);
         });
 
-        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) use ($options) {
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
 
             $form = $event->getForm();
             $promotion = $event->getData();
