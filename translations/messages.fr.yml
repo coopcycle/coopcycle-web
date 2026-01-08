@@ -1280,15 +1280,15 @@ adminDashboard.nonprofits.title: Associations
 adminDashboard.nonprofits.confirm_delete: Êtes-vous sûr de supprimer cette association
   ?
 restaurants.pre_order: Pré-commander
-restaurant.closedOpensTodayLaterWarning: Ce restaurant est fermé maintenant mais ouvre
+restaurant.closedOpensTodayLaterWarning: Cette boutique est fermée maintenant mais ouvre
   aujourd'hui à <strong>%time%</strong>.
 restaurant.canOrderForLater: Mais vous pouvez pré-commander !
-restaurant.closedOpensTomorrowWarning: Ce restaurant est fermé pour la journée mais
+restaurant.closedOpensTomorrowWarning: Cette boutique est fermée pour la journée mais
   ouvre demain à <strong>%time%</strong>.
 restaurant.canOrderForTomorrow: Vous pouvez pré-commander pour demain !
-restaurant.closedOpensAfterTomorrowWarning: Ce restaurant est fermé jusqu'au <strong>%date%</strong>.
+restaurant.closedOpensAfterTomorrowWarning: Cette boutique est fermée jusqu'au <strong>%date%</strong>.
 restaurant.canOrderForOtherDay: Vous pouvez pré-commander pour ce jour.
-restaurant.closedNowWarning: Ce restaurant est fermé actuellement.
+restaurant.closedNowWarning: Cette boutique est fermée actuellement.
 restaurant.form.section.en_boite_le_plat: En Boîte Le Plat
 restaurant.form.en_boite_le_plat_enabled.label: Activer le système de consigne En
   Boîte Le Plat
