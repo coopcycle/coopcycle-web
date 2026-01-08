@@ -8,7 +8,9 @@ restaurant.contract.variableDeliveryPrice.pickOne: Vyberte si prosím alespoň j
   cenu
 restaurant.contract.variableCustomerAmount.pickOne: Vyberte si prosím alespoň jednu
   cenu
-loopeat.insufficient_balance: Váš zůstatek LoopEat (X) nestačí na zabalení celé objednávky
+loopeat.insufficient_balance: Váš zůstatek na účtu %name% je nedostatečný pro využití
+  nulového odpadu, k dokončení objednávky chybí %amount%. Vraťte prosím krabičky nebo
+  doplňte prostředky do peněženky.
 order.state.notModifiable: Objednávku již nelze upravit
 product.reusablePackagingUnit.mustBeGreaterThanZero: Musíte zadat množství větší než
   0
@@ -55,3 +57,6 @@ spreadsheet.alternative_columns: Musíte zadat sloupec " %column% " nebo " %othe
 spreadsheet.csv_encoding: Soubory CSV musí být kódovány v UTF-8
 siret.invalid: Neplatné číslo SIRET
 siret.head_office: Musíte uvést číslo SIRET provozovny, nikoliv sídla.
+loopeat.request_failed: Chyba spojení s %name%
+restaurant.paygreenShopId.notSet: Konfigurace ID obchodu Paygreen
+form.package_set.duplicatePackageNames: Názvy balíčků musí být v sadě balíčků jedinečné
