@@ -25,7 +25,7 @@ Feature: Incidents
       """
       {
         "@context":"/api/contexts/Incident",
-        "@id":"@string@",
+        "@id":"/api/incidents/1",
         "@type":"Incident",
         "id":@integer@,
         "title":"Endommagé",
@@ -43,6 +43,9 @@ Feature: Incidents
         "metadata": {"@*@": "@*@"}
       }
       """
+    Given I add "Content-Type" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/incidents/1"
+    Then the response status code should be 200
 
   Scenario: Report incident (with metadata)
     Given the fixtures files are loaded:

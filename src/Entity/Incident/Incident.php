@@ -25,7 +25,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
     operations: [
-        new Get(security: 'is_granted("ROLE_COURIER")'),
+        new Get(security: 'is_granted("view", object)'),
         new Patch(security: 'is_granted("ROLE_COURIER")'),
         new Put(security: 'is_granted("ROLE_COURIER")'),
         new Post(
