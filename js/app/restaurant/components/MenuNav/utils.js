@@ -1,5 +1,13 @@
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent#encoding_for_rfc3986
+function encodeRFC3986URIComponent(str) {
+  return encodeURIComponent(str).replace(
+    /[!'()*]/g,
+    (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`,
+  );
+}
+
 export const elementId = (section) => {
-  return encodeURI(section.name)
+  return encodeRFC3986URIComponent(section.name)
 }
 
 export const sectionToLink = (section) => {
