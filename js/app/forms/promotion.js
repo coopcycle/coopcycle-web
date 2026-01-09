@@ -1,3 +1,8 @@
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import { Switch } from 'antd'
+import { useTranslation } from 'react-i18next';
+
 function addFormToCollection(e) {
 
   e.preventDefault();
@@ -106,3 +111,28 @@ couponBased.addEventListener('change', (e) => {
 });
 
 handleCouponBased(couponBased.checked);
+
+const switchContainer = document.createElement('div');
+
+const CouponBasedSwitch = () => {
+
+  const { t } = useTranslation();
+
+  return (
+    <div className="d-flex align-items-center">
+      <Switch
+        defaultChecked={ couponBased.checked }
+        disabled={ couponBased.disabled }
+        onChange={ (checked) => {
+          couponBased.checked = checked;
+          couponBased.dispatchEvent(new Event('change'));
+        } } />
+      <span className="ml-2">{ t('PROMOTION_COUPON_BASED') }</span>
+    </div>
+  )
+}
+
+couponBased.closest('.checkbox').classList.add('d-none');
+
+createRoot(switchContainer).render(<CouponBasedSwitch />)
+couponBased.closest('.form-group').appendChild(switchContainer);
