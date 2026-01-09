@@ -1654,3 +1654,5 @@ promotions.human_readable.coupon: "%name% avec le code %code%"
 form.offer_delivery.decrease_platform_fee.label: Diminuer les frais de plateforme
 form.offer_delivery.decrease_platform_fee.help: Les frais de plateforme seront diminués pour appliquer cette promotion
 sylius.form.promotion_action.delivery_percentage_discount: 'Remise en pourcentage sur les frais de livraison'
+restaurant_promotion.rules.help: Ajoutez des règles pour définir ce qui déclenche l'application de la promotion
+restaurant_promotion.actions.help: Ajoutez des actions pour définir comment la promotion est appliquée

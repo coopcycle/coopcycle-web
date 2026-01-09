@@ -1719,3 +1719,5 @@ form.offer_delivery.decrease_platform_fee.label: Decrease platform fees
 form.offer_delivery.decrease_platform_fee.help: If checked, platform fees will be decreased to apply the promotion
 restaurant.form.pawapay_enabled.label: Enable pawaPay for this shop
 sylius.form.promotion_action.delivery_percentage_discount: 'Delivery percentage discount'
+restaurant_promotion.rules.help: Add rules to define what triggers the promotion
+restaurant_promotion.actions.help: Add actions to define how the promotion is applied
