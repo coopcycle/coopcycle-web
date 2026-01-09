@@ -1029,7 +1029,7 @@ Feature: Incidents
       """
       {
         "@context":"/api/contexts/Incident",
-        "@id":"@string@",
+        "@id":"/api/incidents/1",
         "@type":"Incident",
         "id":@integer@,
         "title":"Article incorrect",
@@ -1067,3 +1067,10 @@ Feature: Incidents
         ]
       }
       """
+    # Make sure that the store can retrieve incident via OAuth token
+    Given the store with name "Store with Mixed Supplements" has an OAuth client named "Store with Mixed Supplements"
+    And the OAuth client with name "Store with Mixed Supplements" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Store with Mixed Supplements" sends a "GET" request to "/api/incidents/1"
+    Then the response status code should be 200
