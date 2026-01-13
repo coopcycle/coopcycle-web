@@ -44,14 +44,24 @@ class Taxon extends BaseTaxon implements Comparable
         $this->taxonProducts = $taxonProducts;
     }
 
-    public function addProduct(ProductInterface $product)
+    public function addProduct(ProductInterface $product, int $position = 0)
     {
         if (!$this->containsProduct($product)) {
             $productTaxon = new ProductTaxon();
             $productTaxon->setTaxon($this);
             $productTaxon->setProduct($product);
+            $productTaxon->setPosition($position);
 
             $this->taxonProducts->add($productTaxon);
+        } else {
+            foreach ($this->taxonProducts as $taxonProduct) {
+                if ($taxonProduct->getProduct() === $product) {
+                    var_dump('CHANGE POS', $taxonProduct->getPosition(), $position);
+                    $taxonProduct->setPosition($position);
+                    // var_dump($position);
+                    break;
+                }
+            }
         }
     }
 
@@ -81,6 +91,11 @@ class Taxon extends BaseTaxon implements Comparable
         }
 
         return false;
+    }
+
+    public function isEmpty(): bool
+    {
+        return count($this->taxonProducts) === 0;
     }
 
     /**

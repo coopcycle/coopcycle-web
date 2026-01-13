@@ -37,17 +37,20 @@ class RestaurantMenuSectionProcessor implements ProcessorInterface
 
             $section = $this->sectionProvider->provide($operation, $uriVariables, $context);
 
-            // Handle removed products
-            foreach ($section->getTaxonProducts() as $originalTaxonProduct) {
-                if (!in_array($originalTaxonProduct->getProduct(), $data->products, true)) {
+            // We clear the section to make sure positions are right
+            if (!$section->isEmpty()) {
+                foreach ($section->getTaxonProducts() as $originalTaxonProduct) {
                     $section->removeProduct($originalTaxonProduct->getProduct());
                     $this->entityManager->remove($originalTaxonProduct);
                 }
+                $this->entityManager->flush();
             }
 
-            foreach ($data->products as $product) {
-                $section->addProduct($product);
+            foreach ($data->products as $position => $product) {
+                $section->addProduct($product, $position);
             }
+
+            // $this->taxonRepository->reorder($section, 'position');
 
             $this->entityManager->flush();
 
