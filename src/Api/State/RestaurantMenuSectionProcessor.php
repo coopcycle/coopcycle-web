@@ -10,6 +10,7 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Sylius\Taxon;
 use AppBundle\Entity\Sylius\TaxonRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Resource\Factory\FactoryInterface;
@@ -35,6 +36,14 @@ class RestaurantMenuSectionProcessor implements ProcessorInterface
         if ($operation instanceof Put) {
 
             $section = $this->sectionProvider->provide($operation, $uriVariables, $context);
+
+            // Handle removed products
+            foreach ($section->getTaxonProducts() as $originalTaxonProduct) {
+                if (!in_array($originalTaxonProduct->getProduct(), $data->products, true)) {
+                    $section->removeProduct($originalTaxonProduct->getProduct());
+                    $this->entityManager->remove($originalTaxonProduct);
+                }
+            }
 
             foreach ($data->products as $product) {
                 $section->addProduct($product);

@@ -46,11 +46,13 @@ class Taxon extends BaseTaxon implements Comparable
 
     public function addProduct(ProductInterface $product)
     {
-        $productTaxon = new ProductTaxon();
-        $productTaxon->setTaxon($this);
-        $productTaxon->setProduct($product);
+        if (!$this->containsProduct($product)) {
+            $productTaxon = new ProductTaxon();
+            $productTaxon->setTaxon($this);
+            $productTaxon->setProduct($product);
 
-        $this->taxonProducts->add($productTaxon);
+            $this->taxonProducts->add($productTaxon);
+        }
     }
 
     public function getProducts()
@@ -58,6 +60,27 @@ class Taxon extends BaseTaxon implements Comparable
         return $this->taxonProducts->map(function (ProductTaxon $productTaxon): ProductInterface {
             return $productTaxon->getProduct();
         });
+    }
+
+    public function removeProduct(ProductInterface $product)
+    {
+        foreach ($this->taxonProducts as $taxonProduct) {
+            if ($taxonProduct->getProduct() === $product) {
+                $this->taxonProducts->removeElement($taxonProduct);
+                break;
+            }
+        }
+    }
+
+    public function containsProduct(ProductInterface $product): bool
+    {
+        foreach ($this->taxonProducts as $taxonProduct) {
+            if ($taxonProduct->getProduct() === $product) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

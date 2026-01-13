@@ -1185,3 +1185,50 @@ Feature: Manage restaurants
         ]
       }
       """
+    Given I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "PUT" request to "/api/restaurants/1/menus/1/sections/4" with body:
+      """
+      {
+        "products": [
+          "/api/products/3"
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/Menu",
+        "@id": "/api/restaurants/menus/1",
+        "@type": "http://schema.org/Menu",
+        "name": "Menu",
+        "identifier": @string@,
+        "hasMenuSection": [
+            {
+              "name": "Pizzas",
+              "hasMenuItem": @array@
+            },
+            {
+              "name": "Burger",
+              "hasMenuItem": @array@
+            },
+            {
+              "name": "Salads",
+              "hasMenuItem": [
+                {
+                  "@type":"MenuItem",
+                  "name":"Salad",
+                  "description":null,
+                  "identifier":"SALAD",
+                  "enabled":false,
+                  "reusablePackagingEnabled":false,
+                  "offers":{"@type":"Offer","price":499},
+                  "images":[]
+                }
+              ]
+            }
+        ]
+      }
+      """
