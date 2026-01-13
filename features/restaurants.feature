@@ -1039,3 +1039,149 @@ Feature: Manage restaurants
     And I add "Content-Type" header equal to "application/ld+json"
     When the user "bob" sends a "DELETE" request to "/api/opening_hours_specifications/1"
     Then the response status code should be 204
+
+  Scenario: Create menu
+    Given the fixtures files are loaded:
+      | sylius_locales.yml  |
+      | products.yml        |
+      | restaurants.yml     |
+    # And the restaurant with id "1" is closed between "2018-08-27 12:00:00" and "2018-08-28 10:00:00"
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_RESTAURANT"
+    And the restaurant with id "1" belongs to user "bob"
+    And the user "bob" is authenticated
+    And I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "POST" request to "/api/restaurants/1/menus" with body:
+      """
+      {
+        "name": "Default"
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Menu",
+        "@id":"/api/restaurants/menus/1",
+        "@type":"http://schema.org/Menu",
+        "name":"Default",
+        "identifier":"@string@"
+      }
+      """
+
+  @debug
+  Scenario: Add menu section
+    Given the fixtures files are loaded:
+      | sylius_locales.yml  |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the restaurant with id "1" has menu:
+      | section | product   |
+      | Pizzas  | PIZZA     |
+      | Burger  | HAMBURGER |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_RESTAURANT"
+    And the restaurant with id "1" belongs to user "bob"
+    And the user "bob" is authenticated
+    And I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "POST" request to "/api/restaurants/1/menus/1/sections" with body:
+      """
+      {
+        "name": "Salads"
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/Menu",
+        "@id": "/api/restaurants/menus/1",
+        "@type": "http://schema.org/Menu",
+        "name": "Menu",
+        "identifier": @string@,
+        "hasMenuSection": [
+            {
+                "name": "Pizzas",
+                "hasMenuItem": @array@
+            },
+            {
+                "name": "Burger",
+                "hasMenuItem": @array@
+            },
+            {
+                "name": "Salads",
+                "hasMenuItem": []
+            }
+        ]
+      }
+      """
+    Given I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "PUT" request to "/api/restaurants/1/menus/1/sections/4" with body:
+      """
+      {
+        "products": [
+          "/api/products/3",
+          "/api/products/4"
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/Menu",
+        "@id": "/api/restaurants/menus/1",
+        "@type": "http://schema.org/Menu",
+        "name": "Menu",
+        "identifier": @string@,
+        "hasMenuSection": [
+            {
+              "name": "Pizzas",
+              "hasMenuItem": @array@
+            },
+            {
+              "name": "Burger",
+              "hasMenuItem": @array@
+            },
+            {
+              "name": "Salads",
+              "hasMenuItem": [
+                {
+                  "@type":"MenuItem",
+                  "name":"Salad",
+                  "description":null,
+                  "identifier":"SALAD",
+                  "enabled":false,
+                  "reusablePackagingEnabled":false,
+                  "offers":{"@type":"Offer","price":499},
+                  "images":[]
+                },
+                {
+                  "@type":"MenuItem",
+                  "name":"Cake",
+                  "description":null,
+                  "identifier":"CAKE",
+                  "enabled":false,
+                  "reusablePackagingEnabled":false,
+                  "offers":{"@type":"Offer","price":699},
+                  "images":[]
+                }
+              ]
+            }
+        ]
+      }
+      """

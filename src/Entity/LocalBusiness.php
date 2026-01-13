@@ -3,12 +3,13 @@
 namespace AppBundle\Entity;
 
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use AppBundle\Action\MyRestaurants;
 use AppBundle\Action\Restaurant\Close as CloseController;
 use AppBundle\Action\Restaurant\Menu;
@@ -17,9 +18,13 @@ use AppBundle\Action\Restaurant\ReusablePackagings;
 use AppBundle\Action\Restaurant\Menus;
 use AppBundle\Action\Restaurant\Orders;
 use AppBundle\Action\Restaurant\Timing;
+use AppBundle\Api\Dto\MenuInput;
 use AppBundle\Api\Dto\RestaurantInput;
 use AppBundle\Api\State\UpdateRestaurantProcessor;
 use AppBundle\Api\State\RestaurantProvider;
+use AppBundle\Api\State\RestaurantMenuProcessor;
+use AppBundle\Api\State\RestaurantMenuSectionProcessor;
+use AppBundle\Api\State\RestaurantMenuSectionProvider;
 use AppBundle\Entity\Base\LocalBusiness as BaseLocalBusiness;
 use AppBundle\Entity\LocalBusiness\CatalogInterface;
 use AppBundle\Entity\LocalBusiness\CatalogTrait;
@@ -123,7 +128,29 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
         new GetCollection(
             uriTemplate: '/me/restaurants',
             controller: MyRestaurants::class
-        )
+        ),
+        new Post(
+            uriTemplate: '/restaurants/{id}/menus',
+            processor: RestaurantMenuProcessor::class,
+            input: MenuInput::class,
+            normalizationContext: ['groups' => ['restaurant_menus']],
+            denormalizationContext: ['groups' => ['restaurant_menus']]
+        ),
+        new Put(
+            uriTemplate: '/restaurants/{id}/menus/{menuId}/sections/{sectionId}',
+            provider: RestaurantMenuSectionProvider::class,
+            processor: RestaurantMenuSectionProcessor::class,
+            input: MenuInput::class,
+            normalizationContext: ['groups' => ['restaurant_menu']],
+            denormalizationContext: ['groups' => ['restaurant_menu']]
+        ),
+        new Post(
+            uriTemplate: '/restaurants/{id}/menus/{menuId}/sections',
+            processor: RestaurantMenuSectionProcessor::class,
+            input: MenuInput::class,
+            normalizationContext: ['groups' => ['restaurant_menu']],
+            denormalizationContext: ['groups' => ['restaurant_menu']]
+        ),
     ],
     normalizationContext: ['groups' => ['restaurant', 'address', 'order']],
     denormalizationContext: ['groups' => ['order_create', 'restaurant_update']]
