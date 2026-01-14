@@ -407,7 +407,6 @@ Feature: Manage restaurants
       | Burgers | HAMBURGER |
     When I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/restaurants/1/menu"
-    Then print last JSON response
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
@@ -420,6 +419,7 @@ Feature: Manage restaurants
       "identifier":@string@,
       "hasMenuSection":[
         {
+          "@id":"/api/restaurants/1/menus/1/sections/2",
           "name":"Pizzas",
           "hasMenuItem":[
             {
@@ -469,6 +469,7 @@ Feature: Manage restaurants
           ]
         },
         {
+          "@id":"/api/restaurants/1/menus/1/sections/3",
           "name":"Burgers",
           "hasMenuItem":[
             {

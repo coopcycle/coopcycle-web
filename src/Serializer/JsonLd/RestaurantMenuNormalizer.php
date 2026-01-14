@@ -7,6 +7,7 @@ use AppBundle\Entity\Sylius\Taxon;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use Sylius\Component\Locale\Provider\LocaleProvider;
 use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -22,7 +23,8 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
         private ItemNormalizer $normalizer,
         private ProductNormalizer $productNormalizer,
         private LocaleProvider $localeProvider,
-        private ProductVariantResolverInterface $variantResolver)
+        private ProductVariantResolverInterface $variantResolver,
+        private UrlGeneratorInterface $urlGenerator)
     {
     }
 
@@ -115,6 +117,14 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
         foreach ($object->getChildren() as $child) {
 
             $section = [
+                // FIXME
+                // Ugly but works and is tested in Behat
+                // This should be handled by a custom normalizer for Taxon class
+                '@id' => $this->urlGenerator->generate('_api_/restaurants/{id}/menus/{menuId}/sections/{sectionId}_get', [
+                    'id' => $context['uri_variables']['id'],
+                    'menuId' => $object->getId(),
+                    'sectionId' => $child->getId(),
+                ]),
                 'name' => $child->getName(),
                 'hasMenuItem' => [],
             ];
