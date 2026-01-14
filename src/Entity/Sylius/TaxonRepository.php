@@ -15,11 +15,17 @@ class TaxonRepository extends BaseTaxonRepository
     {
         parent::__construct($em, $class);
 
+        // TODO Remove in constructor
         $this->nestedTreeRepository = new NestedTreeRepository($em, $class);
     }
 
     public function reorder($node, $sortByField = null, $direction = 'ASC', $verify = true)
     {
         return $this->nestedTreeRepository->reorder($node, $sortByField, $direction, $verify);
+    }
+
+    public function getNestedTreeRepository()
+    {
+        return $this->nestedTreeRepository;
     }
 }

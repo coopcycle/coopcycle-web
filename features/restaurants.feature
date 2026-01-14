@@ -1073,7 +1073,6 @@ Feature: Manage restaurants
       }
       """
 
-  @debug
   Scenario: Edit menu sections
     Given the fixtures files are loaded:
       | sylius_locales.yml  |
@@ -1287,6 +1286,138 @@ Feature: Manage restaurants
                 }
               ]
             }
+        ]
+      }
+      """
+
+  @debug
+  Scenario: Reorder menu sections
+    Given the fixtures files are loaded:
+      | sylius_locales.yml  |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the restaurant with id "1" has menu:
+      | section  | product   |
+      | Pizzas   | PIZZA     |
+      | Burgers  | HAMBURGER |
+      | Salads   | SALAD     |
+      | Desserts | CAKE      |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_RESTAURANT"
+    And the restaurant with id "1" belongs to user "bob"
+    And the user "bob" is authenticated
+    Given I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "GET" request to "/api/restaurants/1/menu"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+          "@context": "/api/contexts/Menu",
+          "@id": "/api/restaurants/menus/1",
+          "@type": "http://schema.org/Menu",
+          "name": "Menu",
+          "identifier": @string@,
+          "hasMenuSection": [
+              {
+                  "name": "Pizzas",
+                  "hasMenuItem": @array@
+              },
+              {
+                  "name": "Burgers",
+                  "hasMenuItem": @array@
+              },
+              {
+                  "name": "Salads",
+                  "hasMenuItem": @array@
+              },
+              {
+                  "name": "Desserts",
+                  "hasMenuItem": @array@
+              }
+          ]
+      }
+      """
+    And I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "PUT" request to "/api/restaurants/1/menus/1" with body:
+      """
+      {
+        "sections": [
+          "/api/restaurants/1/menus/1/sections/4",
+          "/api/restaurants/1/menus/1/sections/5",
+          "/api/restaurants/1/menus/1/sections/2",
+          "/api/restaurants/1/menus/1/sections/3"
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/Menu",
+        "@id": "/api/restaurants/menus/1",
+        "@type": "http://schema.org/Menu",
+        "name": "Menu",
+        "identifier": @string@,
+        "hasMenuSection": [
+            {
+              "name": "Salads",
+              "hasMenuItem": @array@
+            },
+            {
+              "name": "Desserts",
+              "hasMenuItem": @array@
+            },
+            {
+              "name": "Pizzas",
+              "hasMenuItem": @array@
+            },
+            {
+              "name": "Burgers",
+              "hasMenuItem": @array@
+            }
+        ]
+      }
+      """
+    Given I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "GET" request to "/api/restaurants/1/menu"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/Menu",
+        "@id": "/api/restaurants/menus/1",
+        "@type": "http://schema.org/Menu",
+        "name": "Menu",
+        "identifier": @string@,
+        "hasMenuSection": [
+          {
+            "name": "Salads",
+            "hasMenuItem": @array@
+          },
+          {
+            "name": "Desserts",
+            "hasMenuItem": @array@
+          },
+          {
+            "name": "Pizzas",
+            "hasMenuItem": @array@
+          },
+          {
+            "name": "Burgers",
+            "hasMenuItem": @array@
+          }
         ]
       }
       """

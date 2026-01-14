@@ -15,4 +15,7 @@ final class MenuInput
      */
     #[Groups(["restaurant_menu"])]
     public $products = [];
+
+    #[Groups(["restaurant_menus"])]
+    public $sections = [];
 }

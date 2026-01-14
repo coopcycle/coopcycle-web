@@ -137,6 +137,19 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
             denormalizationContext: ['groups' => ['restaurant_menus']]
         ),
         new Put(
+            uriTemplate: '/restaurants/{id}/menus/{menuId}',
+            processor: RestaurantMenuProcessor::class,
+            input: MenuInput::class,
+            normalizationContext: ['groups' => ['restaurant_menus']],
+            denormalizationContext: ['groups' => ['restaurant_menus']]
+        ),
+        new Get(
+            uriTemplate: '/restaurants/{id}/menus/{menuId}/sections/{sectionId}',
+            provider: RestaurantMenuSectionProvider::class,
+            normalizationContext: ['groups' => ['restaurant_menu']],
+            denormalizationContext: ['groups' => ['restaurant_menu']]
+        ),
+        new Put(
             uriTemplate: '/restaurants/{id}/menus/{menuId}/sections/{sectionId}',
             provider: RestaurantMenuSectionProvider::class,
             processor: RestaurantMenuSectionProcessor::class,
