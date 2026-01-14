@@ -15,134 +15,19 @@
 
   {% if menu.id is not null %}
 
-    {{ form_start(menu_editor_form) }}
-
     <div class="alert alert-info">
-      <i class="fa fa-info-circle"></i> {% trans %}form.menu_editor.help{% endtrans %}
+      <i class="fa fa-info-circle mr-2"></i>{% trans %}form.menu_editor.help{% endtrans %}
     </div>
 
-    {{ form_row(menu_editor_form.name) }}
-
-    <div class="menuEditor mb-4">
-      <div class="menuEditor__left">
-        {% for child in menu_editor_form.children %}
-          <div class="menuEditor__panel mb-4" data-taxon-id="{{ child.vars.value.id }}">
-            <h4 class="menuEditor__panel__title">
-              <i class="fa fa-arrows" aria-hidden="true"></i>  
-                <a href="#"
-                data-toggle="modal"
-                data-target="#editTaxonModal"
-                data-edit-taxon-id="{{ child.vars.value.id }}">
-                  <span>{{ child.vars.value.name }}<span>  <i class="fa fa-pencil" aria-hidden="true"></i>
-                </a>
-              {% set delete_section_params = {
-                restaurantId: restaurant.id,
-                menuId: menu.id,
-                sectionId: child.vars.value.id
-              } %}
-              <a class="pull-right"
-                href="{{ path(delete_section_route, delete_section_params) }}"
-                data-delete-taxon-id="{{ child.vars.value.id }}">
-                <i class="fa fa-close"></i>
-              </a>
-            </h4>
-            <div class="menuEditor__panel__body" data-draggable-target data-taxon-id="{{ child.vars.value.id }}">
-              {% for product in child.vars.value.products %}
-              <div class="menuEditor__product" data-product-id="{{ product.id }}">
-                {{ product.name }}
-              </div>
-              {% endfor %}
-            </div>
-          </div>
-        {% endfor %}
-        <div class="d-flex flex-row align-items-center justify-content-between border p-4">
-          <strong>{{ 'form.menu_taxon.add_child.label'|trans }}</strong>
-          <button type="button" class="btn btn-success" data-toggle="modal" data-target="#newChildTaxonModal">
-            <i class="fa fa-plus mr-2"></i><span>{{ 'basics.add'|trans }}</span>
-          </button>
-        </div>
-      </div>
-      <div class="menuEditor__right">
-        <div class="menuEditor__panel menuEditor__productList">
-          <h4 class="menuEditor__panel__title">
-            {{ 'form.menu_editor.products_panel.title'|trans }}
-          </h4>
-          <div class="menuEditor__panel__body" data-draggable-source>
-            {% for product in menu_editor_form.vars.value.products %}
-              <div class="menuEditor__product" data-product-id="{{ product.id }}">
-                {{ product.name }}
-              </div>
-            {% endfor %}
-          </div>
-        </div>
-      </div>
-    </div>
+    <div id="menu-editor"
+      data-restaurant="{{ restaurant|coopcycle_normalize('AppBundle\\Entity\\LocalBusiness', ['restaurant'], 'jsonld')|json_encode|e('html_attr') }}"
+      {# data-menu="{{ path('_api_/restaurants/menus/{id}_get', { id: menu.id }) }}" #}
+      data-menu="{{ menu|coopcycle_normalize('AppBundle\\Entity\\Sylius\\Taxon', ['restaurant'], 'jsonld')|json_encode|e('html_attr') }}"
+    ></div>
 
     <p class="help-block">
       {% trans with { '%products_url%': path(products_route, { id: restaurant.id }) } %}form.menu_editor.products.help{% endtrans %}
     </p>
-
-    <button type="submit" class="btn btn-block btn-lg btn-primary">
-      {{ 'form.menu_editor.save.label'|trans }}
-    </button>
-
-    {# Useful for debugging #}
-    {% set debug_menu_editor = false %}
-    <div class="{% if not debug_menu_editor %}hidden{% endif %}">
-    {{ form_widget(menu_editor_form.children, { label: false }) }}
-    </div>
-
-    {{ form_end(menu_editor_form) }}
-
-    <form id="delete_section" method="post" action=""></form>
-
-    <div class="modal fade" id="editTaxonModal" tabindex="-1" role="dialog" aria-labelledby="editTaxonModalLabel">
-      <div class="modal-dialog" role="document">
-        <form class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-            <h4 class="modal-title" id="editTaxonModalLabel">{{ 'form.menu_editor.taxon_modal.title'|trans }}</h4>
-          </div>
-          <div class="modal-body">
-            <input type="hidden">
-            <div class="form-group">
-              <label for="taxon-name" class="control-label">{{ 'basics.name'|trans }}</label>
-              <input type="text" class="form-control" id="taxon-name" data-prop="name">
-            </div>
-            <div class="form-group">
-              <label for="taxon-description" class="control-label">{{ 'basics.description'|trans }}</label>
-              <textarea class="form-control" id="taxon-description" data-prop="description"></textarea>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'basics.cancel'|trans }}</button>
-            <button type="submit" class="btn btn-primary">{{ 'basics.save'|trans }}</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <div class="modal fade" id="newChildTaxonModal" tabindex="-1" role="dialog" aria-labelledby="newChildTaxonModalLabel">
-      <div class="modal-dialog" role="document">
-        {{ form_start(form, { attr: { 'class': 'modal-content' } }) }}
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-            <h4 class="modal-title" id="newChildTaxonModalLabel">{{ 'form.menu_taxon.add_child.label'|trans }}</h4>
-          </div>
-          <div class="modal-body">
-            {{ form_row(form.name, { attr: { 'placeholder': 'form.menu_taxon.child_name.placeholder' } }) }}
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'basics.cancel'|trans }}</button>
-            <button type="submit" class="btn btn-primary">{{ 'basics.save'|trans }}</button>
-          </div>
-        {{ form_end(form) }}
-      </div>
-    </div>
 
   {% endif %}
 

@@ -1,204 +1,221 @@
-import Sortable from 'sortablejs'
+import React, { useEffect, useState } from 'react';
+import { createRoot } from 'react-dom/client'
+import {
+  DndContext,
+  useDroppable,
+  useDraggable,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  MouseSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  useSortable,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities';
+import _ from 'lodash';
 
 import './menu-editor.scss'
 
-const childrenContainer = document.querySelector('#menu_editor_children')
-const source = document.querySelector('[data-draggable-source]')
+const httpClient = new window._auth.httpClient()
 
-let productContainers = []
+const Section = ({ section, index }) => {
 
-if (source) {
-  productContainers.push(source)
+  return (
+    <div className="menuEditor__panel mb-4">
+      <h4 className="menuEditor__panel__title">
+        <i className="fa fa-arrows mr-2" aria-hidden="true"></i>
+        <a href="#">
+          <span className="mr-2">{ section.name }</span>
+          <i className="fa fa-pencil" aria-hidden="true"></i>
+        </a>
+        <a className="pull-right" href="#">
+          <i className="fa fa-close"></i>
+        </a>
+      </h4>
+      <div className="menuEditor__panel__body">
+        <SortableContext
+          // The SortableContext component also optionally accepts an id prop.
+          // If an id is not provided, one will be auto-generated for you.
+          // The id prop is for advanced use cases.
+          // If you're building custom sensors, you'll have access to each sortable element's data prop,
+          // which will contain the containerId associated to that sortable context.
+          id={ section['@id'] }
+          // https://docs.dndkit.com/presets/sortable/sortable-context
+          // It requires that you pass it a sorted array of the unique identifiers
+          // associated with the elements that use the useSortable hook within it.
+          items={ section.hasMenuItem.map(product => product['@id']) }
+          strategy={verticalListSortingStrategy}>
+        { section.hasMenuItem.map((product) => (
+          <Product key={ product['@id'] } product={ product } />
+        )) }
+        </SortableContext>
+      </div>
+    </div>
+  )
 }
 
-productContainers = productContainers.concat(
-  [].slice.call(document.querySelectorAll('[data-draggable-target]'))
-)
+const LeftPanel = ({ sections }) => {
 
-const sectionContainers = [].slice.call(document.querySelectorAll('.menuEditor__left'))
-
-function resolveProductInput(taxonId, productId) {
-  const formContainer = childrenContainer
-    .querySelector(`[data-taxon-id="${taxonId}"]`)
-    .querySelector('[data-prototype]')
-  return $(formContainer)
-    .find('[name$="[product]"]')
-    .filter((index, el) => $(el).val() === productId)
+  return (
+    <div className="menuEditor__left">
+      { sections.map((section, index) => (
+        <Section key={`section-${index}`} section={section} index={ index } />
+      ))}
+      <div className="d-flex flex-row align-items-center justify-content-between border p-4">
+        <strong>Add child</strong>
+        <button type="button" className="btn btn-success" data-toggle="modal" data-target="#newChildTaxonModal">
+          <i className="fa fa-plus mr-2"></i><span>Add</span>
+        </button>
+      </div>
+    </div>
+  )
 }
 
-function reorderSource() {
-  const els = Array.from(source.querySelectorAll('[data-product-id]'))
-  els.sort((a, b) => a.textContent.trim() < b.textContent.trim() ? -1 : 1)
-  els.forEach(el => {
-    el.parentNode.appendChild(el)
-  })
+const RightPanel = ({ products }) => {
+
+  return (
+    <div className="menuEditor__right">
+      <div className="menuEditor__panel menuEditor__productList">
+        <h4 className="menuEditor__panel__title">
+          Products {/*{{ 'form.menu_editor.products_panel.title'|trans }}*/}
+        </h4>
+        <div className="menuEditor__panel__body">
+          {/*{ products.map((product, index) => (
+            <Product key={ `product-${index}` } product={product} />
+          )) }*/}
+        </div>
+      </div>
+    </div>
+  )
 }
 
-function reorderProducts(taxonId) {
+const Product = ({ product }) => {
 
-  const container = document
-    .querySelector(`[data-draggable-target][data-taxon-id="${taxonId}"]`)
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({ id: product['@id'] });
 
-  const productPositions = [].slice.call(container.children).map((el, index) => {
-    return {
-      product: el.getAttribute('data-product-id'),
-      position: (index + 1)
-    }
-  })
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
 
-  productPositions.forEach(productPosition => {
-    const productInput = resolveProductInput(taxonId, productPosition.product)
-    if (productInput) {
-      $(productInput)
-        .closest('div')
-        .find('[name$="[position]"]')
-        .val(productPosition.position)
-    }
-  })
-
+  return (
+    <div className="menuEditor__product" ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      { product.name }
+    </div>
+  )
 }
 
-function resolveSectionInput(taxonId) {
+const MenuEditor = ({ restaurant, defaultMenu }) => {
 
-  return childrenContainer
-    .querySelector(`[data-taxon-id="${taxonId}"]`)
-    .querySelector('[name$="[position]"]')
-}
+  const [ menu, setMenu ] = useState(defaultMenu)
+  const [ products, setProducts ] = useState([])
 
-function reorderSections() {
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(MouseSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
-  const sectionPositions = [].slice.call(document.querySelectorAll('.menuEditor__left .menuEditor__panel')).map((el, index) => {
-    return {
-      section: el.getAttribute('data-taxon-id'),
-      position: index
-    }
-  })
-
-  sectionPositions.forEach(sectionPosition => {
-    const sectionInput = resolveSectionInput(sectionPosition.section)
-    sectionInput.value = sectionPosition.position
-  })
-}
-
-$('#editTaxonModal form').on('submit', function(e) {
-  e.preventDefault()
-
-  const taxonId = parseInt($(this).find('input[type="hidden"]').val(), 10)
-  const taxonName = $(this).find('input[type="text"][data-prop="name"]').val()
-  const taxonDesc = $(this).find('textarea[data-prop="description"]').val()
-
-  $(`[data-edit-taxon-id="${taxonId}"] > span`).text(taxonName)
-
-  const nameInput = childrenContainer
-    .querySelector(`[data-taxon-id="${taxonId}"]`)
-    .querySelector('[data-prop="name"]')
-
-  nameInput.value = taxonName
-
-  const descInput = childrenContainer
-    .querySelector(`[data-taxon-id="${taxonId}"]`)
-    .querySelector('[data-prop="description"]')
-
-  descInput.value = taxonDesc
-
-  $('#editTaxonModal').modal('hide')
-})
-
-$('#editTaxonModal').on('show.bs.modal', function (e) {
-
-  const $trigger = $(e.relatedTarget)
-  const $modal = $(this)
-
-  const taxonId = $trigger.data('edit-taxon-id')
-
-  const taxonName =
-    childrenContainer
-      .querySelector(`[data-taxon-id="${taxonId}"]`)
-      .querySelector('[data-prop="name"]')
-      .value
-
-  const taxonDesc =
-    childrenContainer
-      .querySelector(`[data-taxon-id="${taxonId}"]`)
-      .querySelector('[data-prop="description"]')
-      .value
-
-  $modal.find('.modal-body input[type="hidden"]').val(taxonId)
-  $modal.find('.modal-body [data-prop="name"]').val(taxonName)
-  $modal.find('.modal-body [data-prop="description"]').val(taxonDesc)
-})
-
-function removeProduct(taxonId, productId) {
-  const productInput = resolveProductInput(taxonId, productId)
-  if (productInput) {
-    $(productInput).closest('div').remove()
+  const fetchProducts = () => {
+    // setIsLoading(true)
+    httpClient.get(restaurant['@id'] + '/products').then(({ response }) => {
+      // setIsLoading(false)
+      setProducts(response['hydra:member']);
+    })
   }
+
+  useEffect(() => {
+    // fetchMenu()
+    fetchProducts()
+  }, [])
+
+  function handleDragEnd(event) {
+
+    console.log('handleDragEnd', event)
+
+    const { active, over } = event;
+
+    if (active.id !== over.id) {
+
+      // Items have been reordered
+      const activeSection = active.data.current.sortable.containerId;
+      const overSection = over.data.current.sortable.containerId;
+
+      if (activeSection === overSection) {
+
+        const sectionIndex = _.findIndex(menu.hasMenuSection, (s) => s['@id'] === activeSection);
+        const items = menu.hasMenuSection[sectionIndex].hasMenuItem;
+
+        const oldIndex = _.findIndex(items, (i) => i['@id'] === active.id);
+        const newIndex = _.findIndex(items, (i) => i['@id'] === over.id);
+
+        const newItems = arrayMove(items, oldIndex, newIndex);
+
+        const newSections = menu.hasMenuSection.slice();
+
+        newSections.splice(sectionIndex, 1, {
+          ...menu.hasMenuSection[sectionIndex],
+          hasMenuItem: newItems
+        });
+
+        const payload = {
+          products: newItems.map((i) => i['@id'])
+        }
+
+        // console.log('activeSection', activeSection['@id'])
+
+        httpClient.put(activeSection, payload).then(({ response, error }) => {
+          console.log('error', error)
+          console.log('OKKKK', response);
+          // setIsLoading(false)
+          // setProducts(response['hydra:member']);
+        })
+
+        const newMenu = {
+          ...menu,
+          hasMenuSection: newSections,
+        }
+
+        setMenu(newMenu);
+      }
+
+    }
+
+    // if (event.over && event.over.id === 'droppable') {
+    //   setIsDropped(true);
+    // }
+  }
+
+  return (
+    <DndContext onDragEnd={handleDragEnd} sensors={sensors} collisionDetection={closestCenter}>
+      <div className="menuEditor mb-4">
+        {/* TODO Add form input for menu name */}
+        { menu ? <LeftPanel sections={ menu.hasMenuSection } /> : null }
+        { menu ? <RightPanel products={ products } /> : null }
+      </div>
+    </DndContext>
+  )
 }
 
-productContainers.forEach(container => {
-  new Sortable(container, {
-    group: 'products',
-    animation: 250,
-    onAdd: function(e) {
-      if (e.to.hasAttribute('data-draggable-target')) {
+const container = document.getElementById('menu-editor');
 
-        const taxonId = e.to.getAttribute('data-taxon-id')
-        const productId = e.item.getAttribute('data-product-id')
-
-        const formContainer = childrenContainer
-          .querySelector(`[data-taxon-id="${taxonId}"]`)
-          .querySelector('[data-prototype]')
-
-        const prototype = formContainer.getAttribute('data-prototype')
-
-        const index = $(formContainer).children().length
-        const form = prototype.replace(/__taxonProducts__/g, index)
-
-        const $form = $(form)
-
-        $form
-          .find('[name$="[product]"]')
-          .val(productId)
-        $form
-          .find('[name$="[position]"]')
-          .val(index + 1)
-
-        $(formContainer).append($form)
-
-        reorderProducts(taxonId)
-      }
-    },
-    onUpdate: function(e) {
-      if (e.to.hasAttribute('data-draggable-target')) {
-        const taxonId = e.to.getAttribute('data-taxon-id')
-        reorderProducts(taxonId)
-      }
-    },
-    onRemove: function(e) {
-      if (e.from.hasAttribute('data-draggable-target')) {
-        const taxonId = e.from.getAttribute('data-taxon-id')
-        const productId = e.item.getAttribute('data-product-id')
-
-        removeProduct(taxonId, productId)
-        reorderProducts(taxonId)
-      }
-
-      if (e.from.hasAttribute('data-draggable-target') &&
-        e.to.hasAttribute('data-draggable-source')) {
-        reorderSource()
-      }
-    },
-  })
-})
-
-sectionContainers.forEach(container => {
-  new Sortable(container, {
-    group: 'sections',
-    animation: 250,
-    onUpdate: function() {
-      reorderSections()
-    },
-  })
-})
-
-reorderSource()
+createRoot(container).render(
+  <MenuEditor
+    restaurant={ JSON.parse(container.dataset.restaurant) }
+    defaultMenu={ JSON.parse(container.dataset.menu) } />
+)

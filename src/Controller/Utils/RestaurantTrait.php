@@ -679,13 +679,13 @@ trait RestaurantTrait
             return $this->redirect($request->headers->get('referer'));
         }
 
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
+        return $this->render($request->attributes->get('template'), $this->auth($this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'menu' => $menuTaxon,
             'form' => $form->createView(),
             'menu_editor_form' => $menuEditorForm->createView(),
-        ], $routes));
+        ], $routes)));
     }
 
     public function restaurantPlanningAction($id, Request $request, TranslatorInterface $translator)

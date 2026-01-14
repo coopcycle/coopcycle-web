@@ -121,7 +121,7 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
                 // Ugly but works and is tested in Behat
                 // This should be handled by a custom normalizer for Taxon class
                 '@id' => $this->urlGenerator->generate('_api_/restaurants/{id}/menus/{menuId}/sections/{sectionId}_get', [
-                    'id' => $context['uri_variables']['id'],
+                    'id' => 22, // $context['uri_variables']['id'],
                     'menuId' => $object->getId(),
                     'sectionId' => $child->getId(),
                 ]),
