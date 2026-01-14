@@ -113,6 +113,7 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
         $object->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
 
         foreach ($object->getChildren() as $child) {
+
             $section = [
                 'name' => $child->getName(),
                 'hasMenuItem' => [],
@@ -126,10 +127,6 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
                     $productData = $this->productNormalizer->normalize($product, $format, $context);
 
                     $productData['@type'] = 'MenuItem';
-
-                    //just to preserve the existing format (tested with Behat), maybe there is no harm in keeping these fields
-                    unset($productData['@context']);
-                    unset($productData['@id']);
 
                     if ($product->hasOptions()) {
                         $productData['menuAddOn'] = $this->normalizeOptions($product->getOptions());

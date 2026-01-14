@@ -391,6 +391,7 @@ Feature: Manage restaurants
     And the user "bob" sends a "GET" request to "/api/restaurants/6"
     Then the response status code should be 403
 
+  @debug
   Scenario: Retrieve a restaurant's menu
     Given the fixtures files are loaded:
       | sylius_locales.yml  |
@@ -406,6 +407,7 @@ Feature: Manage restaurants
       | Burgers | HAMBURGER |
     When I add "Accept" header equal to "application/ld+json"
     And I send a "GET" request to "/api/restaurants/1/menu"
+    Then print last JSON response
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
@@ -422,6 +424,8 @@ Feature: Manage restaurants
           "hasMenuItem":[
             {
               "@type":"MenuItem",
+              "@context":"/api/contexts/Product",
+              "@id":"/api/products/1",
               "name":"Pizza",
               "description":null,
               "identifier":"PIZZA",
@@ -469,6 +473,8 @@ Feature: Manage restaurants
           "hasMenuItem":[
             {
               "@type":"MenuItem",
+              "@context":"/api/contexts/Product",
+              "@id":"/api/products/2",
               "name":"Hamburger",
               "description":null,
               "identifier":"HAMBURGER",
@@ -1290,7 +1296,6 @@ Feature: Manage restaurants
       }
       """
 
-  @debug
   Scenario: Reorder menu sections
     Given the fixtures files are loaded:
       | sylius_locales.yml  |
