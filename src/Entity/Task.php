@@ -857,6 +857,12 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $this;
     }
+
+    public function incrementImageCount()
+    {
+        $this->imageCount = $this->imageCount + 1;
+    }
+
     /**
      * @return Task
      */
