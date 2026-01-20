@@ -391,7 +391,6 @@ Feature: Manage restaurants
     And the user "bob" sends a "GET" request to "/api/restaurants/6"
     Then the response status code should be 403
 
-  @debug
   Scenario: Retrieve a restaurant's menu
     Given the fixtures files are loaded:
       | sylius_locales.yml  |
@@ -1427,3 +1426,192 @@ Feature: Manage restaurants
         ]
       }
       """
+
+  @debug
+  Scenario: Updating products in section removes them from previous section
+    Given the fixtures files are loaded:
+      | sylius_locales.yml  |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the restaurant with id "1" has menu:
+      | section | product   |
+      | Pizzas  | PIZZA     |
+      | Burger  | HAMBURGER |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_RESTAURANT"
+    And the restaurant with id "1" belongs to user "bob"
+    And the user "bob" is authenticated
+    Given I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "GET" request to "/api/restaurants/1/menu"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/Menu",
+        "@id": "/api/restaurants/menus/1",
+        "@type": "http://schema.org/Menu",
+        "name": "Menu",
+        "identifier": @string@,
+        "hasMenuSection": [
+          {
+            "@id":"/api/restaurants/22/menus/1/sections/2",
+            "name": "Pizzas",
+            "hasMenuItem": "@array@.count(1)"
+          },
+          {
+            "@id":"/api/restaurants/22/menus/1/sections/3",
+            "name": "Burger",
+            "hasMenuItem": "@array@.count(1)"
+          }
+        ]
+      }
+      """
+    And I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "PUT" request to "/api/restaurants/1/menus/1/sections/3" with body:
+      """
+      {
+        "products": [
+          "/api/products/1",
+          "/api/products/2"
+        ]
+      }
+      """
+    # Then print last response
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/Menu",
+        "@id": "/api/restaurants/menus/1",
+        "@type": "http://schema.org/Menu",
+        "name": "Menu",
+        "identifier": @string@,
+        "hasMenuSection": [
+            {
+              "@id":"/api/restaurants/22/menus/1/sections/2",
+              "name": "Pizzas",
+              "hasMenuItem": "@array@.count(0)"
+            },
+            {
+              "@id":"/api/restaurants/22/menus/1/sections/3",
+              "name": "Burger",
+              "hasMenuItem": "@array@.count(2)"
+            }
+        ]
+      }
+      """
+    # Given I add "Accept" header equal to "application/ld+json"
+    # And I add "Content-Type" header equal to "application/ld+json"
+    # When the user "bob" sends a "PUT" request to "/api/restaurants/1/menus/1/sections/4" with body:
+    #   """
+    #   {
+    #     "products": [
+    #       "/api/products/3"
+    #     ]
+    #   }
+    #   """
+    # Then the response status code should be 200
+    # And the response should be in JSON
+    # And the JSON should match:
+    #   """
+    #   {
+    #     "@context": "/api/contexts/Menu",
+    #     "@id": "/api/restaurants/menus/1",
+    #     "@type": "http://schema.org/Menu",
+    #     "name": "Menu",
+    #     "identifier": @string@,
+    #     "hasMenuSection": [
+    #         {
+    #           "name": "Pizzas",
+    #           "hasMenuItem": @array@
+    #         },
+    #         {
+    #           "name": "Burger",
+    #           "hasMenuItem": @array@
+    #         },
+    #         {
+    #           "name": "Salads",
+    #           "hasMenuItem": [
+    #             {
+    #               "@type":"MenuItem",
+    #               "name":"Salad",
+    #               "description":null,
+    #               "identifier":"SALAD",
+    #               "enabled":false,
+    #               "reusablePackagingEnabled":false,
+    #               "offers":{"@type":"Offer","price":499},
+    #               "images":[]
+    #             }
+    #           ]
+    #         }
+    #     ]
+    #   }
+    #   """
+    # Given I add "Accept" header equal to "application/ld+json"
+    # And I add "Content-Type" header equal to "application/ld+json"
+    # When the user "bob" sends a "PUT" request to "/api/restaurants/1/menus/1/sections/4" with body:
+    #   """
+    #   {
+    #     "products": [
+    #       "/api/products/4",
+    #       "/api/products/3"
+    #     ]
+    #   }
+    #   """
+    # Then the response status code should be 200
+    # And the response should be in JSON
+    # And the JSON should match:
+    #   """
+    #   {
+    #     "@context": "/api/contexts/Menu",
+    #     "@id": "/api/restaurants/menus/1",
+    #     "@type": "http://schema.org/Menu",
+    #     "name": "Menu",
+    #     "identifier": @string@,
+    #     "hasMenuSection": [
+    #         {
+    #           "name": "Pizzas",
+    #           "hasMenuItem": @array@
+    #         },
+    #         {
+    #           "name": "Burger",
+    #           "hasMenuItem": @array@
+    #         },
+    #         {
+    #           "name": "Salads",
+    #           "hasMenuItem": [
+    #             {
+    #               "@type":"MenuItem",
+    #               "name":"Cake",
+    #               "description":null,
+    #               "identifier":"CAKE",
+    #               "enabled":false,
+    #               "reusablePackagingEnabled":false,
+    #               "offers":{"@type":"Offer","price":699},
+    #               "images":[]
+    #             },
+    #             {
+    #               "@type":"MenuItem",
+    #               "name":"Salad",
+    #               "description":null,
+    #               "identifier":"SALAD",
+    #               "enabled":false,
+    #               "reusablePackagingEnabled":false,
+    #               "offers":{"@type":"Offer","price":499},
+    #               "images":[]
+    #             }
+    #           ]
+    #         }
+    #     ]
+    #   }
+    #   """
