@@ -20,8 +20,6 @@ export default (state = initialState, action) => {
             hasMenuItem: products,
         }
 
-        console.log('newSection', newSection)
-
         const newSections = state.hasMenuSection.slice();
 
         newSections.splice(sectionIndex, 1, newSection);

@@ -10,8 +10,6 @@ export function fetchProducts(restaurant) {
   return async function(dispatch, getState) {
     try {
       const { response, error } = await httpClient.get(restaurant['@id'] + '/products');
-      console.log(response)
-      // setIsLoading(false)
       dispatch(fetchProductsSuccess(response['hydra:member']));
     } catch (e) {
       console.error(e);
@@ -127,5 +125,23 @@ export function setSectionProducts(sectionId, products) {
     // } catch (e) {
     //   console.error(e);
     // }
+  }
+}
+
+export function moveProductToSection(product, index, sectionId) {
+  return async function(dispatch, getState) {
+
+    const { menu } = getState();
+
+    console.log('moveProductToSection', product, index, sectionId)
+
+    const section = _.find(menu.hasMenuSection, (s) => s['@id'] === sectionId);
+
+    dispatch(removeProductFromSection(product['@id']));
+
+    const newProducts = Array.from(section.hasMenuItem);
+    newProducts.splice(index, 0, product);
+
+    dispatch(setSectionProducts(sectionId, newProducts))
   }
 }

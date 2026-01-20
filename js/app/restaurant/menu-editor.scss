@@ -14,9 +14,11 @@
     flex: 1;
   }
   &__product {
+    cursor: move;
     padding: 10px;
     margin-bottom: 10px;
     background-color: lighten(lightgrey, 10%);
+    position: relative;
   }
   &__product:last-child {
     margin-bottom: 0;
@@ -51,4 +53,38 @@
       }
     }
   }
+
+}
+
+/* Drop indicator styling */
+.drop-indicator {
+  position: absolute;
+  z-index: 10;
+  background-color: #1D4ED8;
+  pointer-events: none;
+  box-sizing: border-box;
+  height: 2px;
+  left: 4px;
+  right: 0;
+}
+
+/* Small circle styling */
+.drop-indicator::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  position: absolute;
+  border: 2px solid #1D4ED8;
+  border-radius: 50%;
+  top: -4px;
+  left: -10px;
+
+}
+
+.edge-top {
+  top: calc(-0.65 * (var(--gap, 0px) + 2px));
+}
+
+.edge-bottom {
+  bottom: calc(-0.65 * (var(--gap, 0px) + 2px));
 }

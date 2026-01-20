@@ -1,25 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { createRoot } from 'react-dom/client'
-// import {
-//   DndContext,
-//   useDroppable,
-//   useDraggable,
-//   closestCenter,
-//   closestCorners,
-//   KeyboardSensor,
-//   PointerSensor,
-//   MouseSensor,
-//   useSensor,
-//   useSensors,
-// } from '@dnd-kit/core';
-// import {
-//   arrayMove,
-//   SortableContext,
-//   useSortable,
-//   sortableKeyboardCoordinates,
-//   verticalListSortingStrategy,
-// } from '@dnd-kit/sortable'
-// import { CSS } from '@dnd-kit/utilities';
 
 // https://blog.logrocket.com/implement-pragmatic-drag-drop-library-guide/
 import {
@@ -36,7 +16,7 @@ import _ from 'lodash';
 import { Provider, useDispatch, useSelector } from 'react-redux'
 
 import { createStoreFromPreloadedState } from './menu-editor/store'
-import { fetchProducts, removeProductFromSection, addProductToSection, setSectionProducts } from './menu-editor/actions'
+import { fetchProducts, removeProductFromSection, addProductToSection, setSectionProducts, moveProductToSection } from './menu-editor/actions'
 import { selectProducts, selectMenuSections } from './menu-editor/selectors'
 
 import './menu-editor.scss'
@@ -45,7 +25,7 @@ const httpClient = new window._auth.httpClient()
 
 const Section = ({ section, index }) => {
 
-  const ref = useRef(null); // Create a ref for the column
+  const ref = useRef(null);
   const [ isDraggedOver, setIsDraggedOver ] = useState(false);
 
   useEffect(() => {
@@ -105,12 +85,25 @@ const LeftPanel = () => {
 
 const RightPanel = () => {
 
-  // const { isOver, setNodeRef } = useDroppable({
-  //   id: 'products',
-  // });
+  const ref = useRef(null);
   const products = useSelector(selectProducts)
 
-  // console.log('isOver', isOver)
+  const [ isDraggedOver, setIsDraggedOver ] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+
+    // Set up the drop target for the column element
+    return dropTargetForElements({
+      element: el,
+      onDragStart: () => setIsDraggedOver(true),
+      onDragEnter: () => setIsDraggedOver(true),
+      onDragLeave: () => setIsDraggedOver(false),
+      onDrop: () => setIsDraggedOver(false),
+      getData: () => ({ sectionId: 'products' }),
+      getIsSticky: () => true,
+    });
+  }, [ products ]);
 
   return (
     <div className="menuEditor__right">
@@ -118,7 +111,7 @@ const RightPanel = () => {
         <h4 className="menuEditor__panel__title">
           Products {/*{{ 'form.menu_editor.products_panel.title'|trans }}*/}
         </h4>
-        <div className="menuEditor__panel__body">
+        <div className={`menuEditor__panel__body ${isDraggedOver ? "menuEditor__panel__body--dragged" : ""}`} ref={ref}>
           { products.map((product, index) => (
             <Product key={ `product-${index}` } product={ product } />
           )) }
@@ -131,6 +124,9 @@ const RightPanel = () => {
 const Product = ({ product }) => {
 
   const [ isDragging, setIsDragging ] = useState(false);
+  // State to track the closest edge during drag over
+  const [closestEdge, setClosestEdge] = useState(null);
+
   const ref = useRef(null);
 
   useEffect(() => {
@@ -160,36 +156,57 @@ const Product = ({ product }) => {
           });
         },
         getIsSticky: () => true, // To make a drop target "sticky"
-        // onDragEnter: (args) => {
-        //   if (args.source.data.productId !== product['@id']) {
-        //     console.log("onDragEnter", args);
-        //   }
-        // },
+        onDragEnter: (args) => {
+          // Update the closest edge when a draggable item enters the drop zone
+          if (args.source.data.productId !== product['@id']) {
+            setClosestEdge(extractClosestEdge(args.self.data));
+          }
+        },
+        onDrag: (args) => {
+          // Continuously update the closest edge while dragging over the drop zone
+          if (args.source.data.productId !== product['@id']) {
+            setClosestEdge(extractClosestEdge(args.self.data));
+          }
+        },
+        onDragLeave: () => {
+          // Reset the closest edge when the draggable item leaves the drop zone
+          setClosestEdge(null);
+        },
+        onDrop: () => {
+          // Reset the closest edge when the draggable item is dropped
+          setClosestEdge(null);
+        },
       })
     );
-    // Update the dependency array
   }, [ product['@id'] ]);
 
   return (
     <div className="menuEditor__product" ref={ref}>
       { product.name }
+      {/* render the DropIndicator if there's a closest edge */}
+      {closestEdge && <DropIndicator edge={closestEdge} gap="8px" />}
     </div>
   )
 }
 
+const DropIndicator = ({ edge, gap }) => {
+  const edgeClassMap = {
+    top: "edge-top",
+    bottom: "edge-bottom",
+  };
+
+  const edgeClass = edgeClassMap[edge];
+
+  const style = {
+    "--gap": gap,
+  };
+
+  return <div className={`drop-indicator ${edgeClass}`} style={style}></div>;
+};
+
 const MenuEditor = ({ restaurant }) => {
 
-  // const [ menu, setMenu ] = useState(defaultMenu)
-
   const dispatch = useDispatch()
-
-  // const sensors = useSensors(
-  //   useSensor(PointerSensor),
-  //   useSensor(MouseSensor),
-  //   useSensor(KeyboardSensor, {
-  //     coordinateGetter: sortableKeyboardCoordinates,
-  //   })
-  // );
 
   useEffect(() => {
     dispatch(fetchProducts(restaurant));
@@ -199,8 +216,6 @@ const MenuEditor = ({ restaurant }) => {
 
   const reorderProduct = useCallback(
     ({ sectionId, startIndex, finishIndex }) => {
-
-      // console.log('reorderProduct', sectionId)
 
       // Get the source column data
       const sourceSectionData = _.find(sections, (s) => s['@id'] === sectionId);
@@ -213,22 +228,92 @@ const MenuEditor = ({ restaurant }) => {
         finishIndex,
       });
 
-      console.log('updatedItems', updatedItems)
+      dispatch(setSectionProducts(sectionId, updatedItems))
+    },
+    [sections]
+  );
 
-      // Create a new object for the source column
-      // with the updated list of cards
-      // const updatedSourceColumn = {
-      //   ...sourceColumnData,
-      //   cards: updatedItems,
-      // };
+  const moveProduct = useCallback(
+    ({
+      movedProductIndexInSourceSection,
+      sourceSectionId,
+      destinationSectionId,
+      movedProductIndexInDestinationSection,
+    }) => {
 
-      // Update columns state
+      console.log('moveProduct', sourceSectionId, movedProductIndexInSourceSection, destinationSectionId)
+
+      if (sourceSectionId !== 'products') {
+
+        const section = _.find(sections, (s) => s['@id'] === sourceSectionId);
+        const productToMove = section.hasMenuItem[movedProductIndexInSourceSection];
+
+        // Moved from section back to products
+        if (destinationSectionId === 'products') {
+          dispatch(removeProductFromSection(productToMove['@id']));
+          return;
+
+        }
+
+        // Moved from a section to another section
+
+        // Determine the new index in the destination column
+        const newIndexInDestination = movedProductIndexInDestinationSection ?? 0;
+
+        // const newDestinationProducts = Array.from(section.hasMenuItem);
+        // newDestinationProducts.splice(newIndexInDestination, 0, productToMove);
+
+        // dispatch(removeProductFromSection(productToMove['@id']));
+        // dispatch(setSectionProducts(destinationSectionId, newDestinationProducts));
+        // dispatch(removeProductFromSection(productToMove['@id']));
+
+        dispatch(moveProductToSection(productToMove, newIndexInDestination, destinationSectionId))
+
+        return;
+
+      }
+
+      /*
+      // Get data of the source column
+      const sourceColumnData = columnsData[sourceColumnId];
+
+      // Get data of the destination column
+      const destinationColumnData = columnsData[destinationColumnId];
+
+      // Identify the card to move
+      const cardToMove = sourceColumnData.cards[movedCardIndexInSourceColumn];
+
+      // Remove the moved card from the source column
+      const newSourceColumnData = {
+        ...sourceColumnData,
+        cards: sourceColumnData.cards.filter(
+          (card) => card.id !== cardToMove.id
+        ),
+      };
+
+      // Create a copy of the destination column's cards array
+      const newDestinationCards = Array.from(destinationColumnData.cards);
+
+      // Determine the new index in the destination column
+      const newIndexInDestination = movedCardIndexInDestinationColumn ?? 0;
+
+      // Insert the moved card into the new index in the destination column
+      newDestinationCards.splice(newIndexInDestination, 0, cardToMove);
+
+      // Create new destination column data with the moved card
+      const newFinishColumnData = {
+        ...destinationColumnData,
+        cards: newDestinationCards,
+      };
+      */
+
+      // Update the state with the new columns data
       // setColumnsData({
       //   ...columnsData,
-      //   [columnId]: updatedSourceColumn,
+      //   [sourceColumnId]: newSourceColumnData,
+      //   [destinationColumnId]: newFinishColumnData,
       // });
 
-      dispatch(setSectionProducts(sectionId, updatedItems))
     },
     [sections]
   );
@@ -265,8 +350,6 @@ const MenuEditor = ({ restaurant }) => {
       // Reordering within a column by dropping in an empty space
       if (location.current.dropTargets.length === 1) {
 
-        console.log('reorder')
-
         // Get the destination column from the current drop targets
         const [destinationSectionRecord] = location.current.dropTargets;
 
@@ -293,9 +376,19 @@ const MenuEditor = ({ restaurant }) => {
 
           return;
         }
+
+        // When columns are different, move the card to the new column
+        moveProduct({
+          movedProductIndexInSourceSection: draggedProductIndex,
+          sourceSectionId,
+          destinationSectionId,
+        });
+
+        return;
       }
 
       if (location.current.dropTargets.length === 2) {
+
         // Destructure and extract the destination card and column data from the drop targets
         const [destinationProductRecord, destinationSectionRecord] =
           location.current.dropTargets;
@@ -335,6 +428,19 @@ const MenuEditor = ({ restaurant }) => {
 
           return;
         }
+
+        // Determine the new index for the moved card in the destination column.
+        const destinationIndex =
+          closestEdgeOfTarget === "bottom"
+            ? indexOfTarget + 1
+            : indexOfTarget;
+
+        moveProduct({
+          movedProductIndexInSourceSection: draggedProductIndex,
+          sourceSectionId,
+          destinationSectionId,
+          movedProductIndexInDestinationSection: destinationIndex,
+        });
       }
     }
   }, [ sections ]); // TODO Add sections to dependencies array
@@ -347,17 +453,11 @@ const MenuEditor = ({ restaurant }) => {
   }, [handleDrop]);
 
   return (
-    // <DndContext
-    //   onDragOver={handleDragOver}
-    //   onDragEnd={handleDragEnd}
-    //   sensors={sensors}
-    //   collisionDetection={ /*closestCenter*/ closestCorners}>
-      <div className="menuEditor mb-4">
-        {/* TODO Add form input for menu name */}
-        <LeftPanel />
-        <RightPanel />
-      </div>
-    // </DndContext>
+    <div className="menuEditor mb-4">
+      {/* TODO Add form input for menu name */}
+      <LeftPanel />
+      <RightPanel />
+    </div>
   )
 }
 
