@@ -9,7 +9,11 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Metadata\ApiFilter;
+use AppBundle\Api\Filter\IncidentFilter;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Task;
@@ -23,8 +27,17 @@ use AppBundle\Validator\Constraints as AppAssert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ApiFilter(IncidentFilter::class, properties: ['status', 'priority', 'store', 'restaurant', 'customer', 'createdBy'])]
+#[ApiFilter(OrderFilter::class, properties: ['createdAt', 'priority'])]
+#[ApiFilter(DateFilter::class, properties: ['createdAt'])]
 #[ApiResource(
     operations: [
+        new GetCollection(
+            uriTemplate: '/incidents/filters',
+            /* security: 'is_granted("ROLE_DISPATCHER")', */
+            controller: IncidentFastList::class,
+            serialize: false
+        ),
         new Get(security: 'is_granted("view", object)'),
         new Patch(security: 'is_granted("ROLE_COURIER")'),
         new Put(security: 'is_granted("ROLE_COURIER")'),
@@ -39,13 +52,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
             security: 'is_granted("ROLE_COURIER")'
         ),
         new GetCollection(
-            controller: IncidentFastList::class,
-            security: 'is_granted("ROLE_COURIER")'
+            security: 'is_granted("ROLE_COURIER")',
+            order: ['id' => 'DESC']
         ),
         new Post(
             controller: CreateIncident::class,
             security: 'is_granted("ROLE_COURIER")'
-        )
+        ),
     ],
     normalizationContext: ['groups' => ['incident']]
 )]
