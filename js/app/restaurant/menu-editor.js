@@ -5,6 +5,7 @@ import {
   useDroppable,
   useDraggable,
   closestCenter,
+  closestCorners,
   KeyboardSensor,
   PointerSensor,
   MouseSensor,
@@ -20,12 +21,26 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities';
 import _ from 'lodash';
+import { Provider, useDispatch, useSelector } from 'react-redux'
+
+import { createStoreFromPreloadedState } from './menu-editor/store'
+import { fetchProducts, removeProductFromSection } from './menu-editor/actions'
+import { selectProducts, selectMenuSections } from './menu-editor/selectors'
 
 import './menu-editor.scss'
+
+// https://github.com/clauderic/dnd-kit/blob/master/stories/2%20-%20Presets/Sortable/MultipleContainers.tsx
 
 const httpClient = new window._auth.httpClient()
 
 const Section = ({ section, index }) => {
+
+  const { setNodeRef } = useDroppable({
+    id: section['@id'],
+    data: {
+      type: 'section',
+    }
+  });
 
   return (
     <div className="menuEditor__panel mb-4">
@@ -39,29 +54,31 @@ const Section = ({ section, index }) => {
           <i className="fa fa-close"></i>
         </a>
       </h4>
-      <div className="menuEditor__panel__body">
-        <SortableContext
-          // The SortableContext component also optionally accepts an id prop.
-          // If an id is not provided, one will be auto-generated for you.
-          // The id prop is for advanced use cases.
-          // If you're building custom sensors, you'll have access to each sortable element's data prop,
-          // which will contain the containerId associated to that sortable context.
-          id={ section['@id'] }
-          // https://docs.dndkit.com/presets/sortable/sortable-context
-          // It requires that you pass it a sorted array of the unique identifiers
-          // associated with the elements that use the useSortable hook within it.
-          items={ section.hasMenuItem.map(product => product['@id']) }
-          strategy={verticalListSortingStrategy}>
-        { section.hasMenuItem.map((product) => (
-          <Product key={ product['@id'] } product={ product } />
-        )) }
-        </SortableContext>
-      </div>
+      <SortableContext
+        // The SortableContext component also optionally accepts an id prop.
+        // If an id is not provided, one will be auto-generated for you.
+        // The id prop is for advanced use cases.
+        // If you're building custom sensors, you'll have access to each sortable element's data prop,
+        // which will contain the containerId associated to that sortable context.
+        id={ section['@id'] }
+        // https://docs.dndkit.com/presets/sortable/sortable-context
+        // It requires that you pass it a sorted array of the unique identifiers
+        // associated with the elements that use the useSortable hook within it.
+        items={ section.hasMenuItem.map(product => product['@id']) }
+        strategy={verticalListSortingStrategy}>
+        <div ref={ setNodeRef } className="menuEditor__panel__body">
+          { section.hasMenuItem.map((product) => (
+            <Product key={ product['@id'] } product={ product } />
+          )) }
+        </div>
+      </SortableContext>
     </div>
   )
 }
 
-const LeftPanel = ({ sections }) => {
+const LeftPanel = () => {
+
+  const sections = useSelector(selectMenuSections)
 
   return (
     <div className="menuEditor__left">
@@ -78,7 +95,14 @@ const LeftPanel = ({ sections }) => {
   )
 }
 
-const RightPanel = ({ products }) => {
+const RightPanel = () => {
+
+  const { isOver, setNodeRef } = useDroppable({
+    id: 'products',
+  });
+  const products = useSelector(selectProducts)
+
+  console.log('isOver', isOver)
 
   return (
     <div className="menuEditor__right">
@@ -86,11 +110,13 @@ const RightPanel = ({ products }) => {
         <h4 className="menuEditor__panel__title">
           Products {/*{{ 'form.menu_editor.products_panel.title'|trans }}*/}
         </h4>
-        <div className="menuEditor__panel__body">
-          {/*{ products.map((product, index) => (
-            <Product key={ `product-${index}` } product={product} />
-          )) }*/}
-        </div>
+        <SortableContext id="products" items={ products.map(p => p['@id']) } strategy={ verticalListSortingStrategy }>
+          <div ref={ setNodeRef } className="menuEditor__panel__body" style={{ backgroundColor: isOver ? 'blue' : 'lightblue' }}>
+            { products.map((product, index) => (
+              <Product key={ `product-${index}` } product={ product } />
+            )) }
+          </div>
+        </SortableContext>
       </div>
     </div>
   )
@@ -104,7 +130,12 @@ const Product = ({ product }) => {
     setNodeRef,
     transform,
     transition,
-  } = useSortable({ id: product['@id'] });
+  } = useSortable({
+    id: product['@id'],
+    data: {
+      type: 'product'
+    }
+  });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -118,10 +149,11 @@ const Product = ({ product }) => {
   )
 }
 
-const MenuEditor = ({ restaurant, defaultMenu }) => {
+const MenuEditor = ({ restaurant }) => {
 
-  const [ menu, setMenu ] = useState(defaultMenu)
-  const [ products, setProducts ] = useState([])
+  // const [ menu, setMenu ] = useState(defaultMenu)
+
+  const dispatch = useDispatch()
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -131,18 +163,9 @@ const MenuEditor = ({ restaurant, defaultMenu }) => {
     })
   );
 
-  const fetchProducts = () => {
-    // setIsLoading(true)
-    httpClient.get(restaurant['@id'] + '/products').then(({ response }) => {
-      // setIsLoading(false)
-      setProducts(response['hydra:member']);
-    })
-  }
-
   useEffect(() => {
-    // fetchMenu()
-    fetchProducts()
-  }, [])
+    dispatch(fetchProducts(restaurant));
+  }, [dispatch])
 
   function handleDragEnd(event) {
 
@@ -150,6 +173,7 @@ const MenuEditor = ({ restaurant, defaultMenu }) => {
 
     const { active, over } = event;
 
+    /*
     if (active.id !== over.id) {
 
       // Items have been reordered
@@ -177,13 +201,9 @@ const MenuEditor = ({ restaurant, defaultMenu }) => {
           products: newItems.map((i) => i['@id'])
         }
 
-        // console.log('activeSection', activeSection['@id'])
-
-        httpClient.put(activeSection, payload).then(({ response, error }) => {
+        httpClient.put(activeSection, payload).then(({ error, response }) => {
+          // TODO Do something in case of error
           console.log('error', error)
-          console.log('OKKKK', response);
-          // setIsLoading(false)
-          // setProducts(response['hydra:member']);
         })
 
         const newMenu = {
@@ -195,18 +215,85 @@ const MenuEditor = ({ restaurant, defaultMenu }) => {
       }
 
     }
+    */
+  }
 
-    // if (event.over && event.over.id === 'droppable') {
-    //   setIsDropped(true);
-    // }
+  function handleDragOver(event) {
+
+    console.log('handleDragOver', event)
+
+    const { active, over } = event;
+    const { id } = active;
+    const { id: overId } = over;
+
+    const isOverProducts = overId === 'products' || over.data.current?.sortable?.containerId === 'products';
+    const isOverProduct = over.data.current?.type === 'product';
+
+    if (active.data.current.type === 'product') {
+      if (isOverProducts) {
+        // console.log(`drag over --> ${id} is over ${overId}`);
+        dispatch(removeProductFromSection(id))
+      } else if (isOverProduct) {
+        console.log('Move to section')
+      }
+
+    }
+
+    /*
+    if (active.id !== over.id) {
+
+      // Items have been reordered
+      const activeSection = active.data.current.sortable.containerId;
+      const overSection = over.data.current.sortable.containerId;
+
+      if (activeSection === overSection) {
+
+        const sectionIndex = _.findIndex(menu.hasMenuSection, (s) => s['@id'] === activeSection);
+        const items = menu.hasMenuSection[sectionIndex].hasMenuItem;
+
+        const oldIndex = _.findIndex(items, (i) => i['@id'] === active.id);
+        const newIndex = _.findIndex(items, (i) => i['@id'] === over.id);
+
+        const newItems = arrayMove(items, oldIndex, newIndex);
+
+        const newSections = menu.hasMenuSection.slice();
+
+        newSections.splice(sectionIndex, 1, {
+          ...menu.hasMenuSection[sectionIndex],
+          hasMenuItem: newItems
+        });
+
+        const payload = {
+          products: newItems.map((i) => i['@id'])
+        }
+
+        httpClient.put(activeSection, payload).then(({ error, response }) => {
+          // TODO Do something in case of error
+          console.log('error', error)
+        })
+
+        const newMenu = {
+          ...menu,
+          hasMenuSection: newSections,
+        }
+
+        setMenu(newMenu);
+      }
+
+    }
+    */
   }
 
   return (
-    <DndContext onDragEnd={handleDragEnd} sensors={sensors} collisionDetection={closestCenter}>
+    <DndContext
+      onDragOver={handleDragOver}
+      onDragEnd={handleDragEnd}
+      sensors={sensors}
+      collisionDetection={ /*closestCenter*/ closestCorners}>
       <div className="menuEditor mb-4">
         {/* TODO Add form input for menu name */}
-        { menu ? <LeftPanel sections={ menu.hasMenuSection } /> : null }
-        { menu ? <RightPanel products={ products } /> : null }
+        { menu ? <LeftPanel /> : null }
+        { menu ? <RightPanel /> : null }
       </div>
     </DndContext>
   )
@@ -214,8 +301,18 @@ const MenuEditor = ({ restaurant, defaultMenu }) => {
 
 const container = document.getElementById('menu-editor');
 
+const menu = JSON.parse(container.dataset.menu);
+
+let preloadedState = {
+  menu
+};
+
+const store = createStoreFromPreloadedState(preloadedState);
+
 createRoot(container).render(
-  <MenuEditor
-    restaurant={ JSON.parse(container.dataset.restaurant) }
-    defaultMenu={ JSON.parse(container.dataset.menu) } />
+  <Provider store={ store }>
+    <MenuEditor
+      restaurant={ JSON.parse(container.dataset.restaurant) }
+      defaultMenu={ JSON.parse(container.dataset.menu) } />
+  </Provider>
 )
