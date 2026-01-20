@@ -35,6 +35,8 @@
   "devDependencies": {
     "@ant-design/icons": "^5.6.1",
     "@ant-design/moment-webpack-plugin": "^1.0.0",
+    "@atlaskit/pragmatic-drag-and-drop": "^1.7.7",
+    "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.1.0",
     "@babel/core": "^7.27.1",
     "@babel/plugin-proposal-object-rest-spread": "^7.19.4",
     "@babel/preset-react": "^7.27.1",

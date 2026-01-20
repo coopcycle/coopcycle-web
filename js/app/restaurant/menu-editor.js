@@ -1,46 +1,67 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { createRoot } from 'react-dom/client'
+// import {
+//   DndContext,
+//   useDroppable,
+//   useDraggable,
+//   closestCenter,
+//   closestCorners,
+//   KeyboardSensor,
+//   PointerSensor,
+//   MouseSensor,
+//   useSensor,
+//   useSensors,
+// } from '@dnd-kit/core';
+// import {
+//   arrayMove,
+//   SortableContext,
+//   useSortable,
+//   sortableKeyboardCoordinates,
+//   verticalListSortingStrategy,
+// } from '@dnd-kit/sortable'
+// import { CSS } from '@dnd-kit/utilities';
+
+// https://blog.logrocket.com/implement-pragmatic-drag-drop-library-guide/
 import {
-  DndContext,
-  useDroppable,
-  useDraggable,
-  closestCenter,
-  closestCorners,
-  KeyboardSensor,
-  PointerSensor,
-  MouseSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  useSortable,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities';
+  draggable,
+  dropTargetForElements,
+  monitorForElements,
+} from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
+import { combine } from '@atlaskit/pragmatic-drag-and-drop/combine';
+import { attachClosestEdge, extractClosestEdge } from '@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge';
+import { getReorderDestinationIndex } from "@atlaskit/pragmatic-drag-and-drop-hitbox/util/get-reorder-destination-index";
+import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder"
+
 import _ from 'lodash';
 import { Provider, useDispatch, useSelector } from 'react-redux'
 
 import { createStoreFromPreloadedState } from './menu-editor/store'
-import { fetchProducts, removeProductFromSection } from './menu-editor/actions'
+import { fetchProducts, removeProductFromSection, addProductToSection, setSectionProducts } from './menu-editor/actions'
 import { selectProducts, selectMenuSections } from './menu-editor/selectors'
 
 import './menu-editor.scss'
-
-// https://github.com/clauderic/dnd-kit/blob/master/stories/2%20-%20Presets/Sortable/MultipleContainers.tsx
 
 const httpClient = new window._auth.httpClient()
 
 const Section = ({ section, index }) => {
 
-  const { setNodeRef } = useDroppable({
-    id: section['@id'],
-    data: {
-      type: 'section',
-    }
-  });
+  const ref = useRef(null); // Create a ref for the column
+  const [ isDraggedOver, setIsDraggedOver ] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+
+    // Set up the drop target for the column element
+    return dropTargetForElements({
+      element: el,
+      onDragStart: () => setIsDraggedOver(true),
+      onDragEnter: () => setIsDraggedOver(true),
+      onDragLeave: () => setIsDraggedOver(false),
+      onDrop: () => setIsDraggedOver(false),
+      getData: () => ({ sectionId: section['@id'] }),
+      getIsSticky: () => true,
+    });
+  }, [section['@id']]);
 
   return (
     <div className="menuEditor__panel mb-4">
@@ -54,24 +75,11 @@ const Section = ({ section, index }) => {
           <i className="fa fa-close"></i>
         </a>
       </h4>
-      <SortableContext
-        // The SortableContext component also optionally accepts an id prop.
-        // If an id is not provided, one will be auto-generated for you.
-        // The id prop is for advanced use cases.
-        // If you're building custom sensors, you'll have access to each sortable element's data prop,
-        // which will contain the containerId associated to that sortable context.
-        id={ section['@id'] }
-        // https://docs.dndkit.com/presets/sortable/sortable-context
-        // It requires that you pass it a sorted array of the unique identifiers
-        // associated with the elements that use the useSortable hook within it.
-        items={ section.hasMenuItem.map(product => product['@id']) }
-        strategy={verticalListSortingStrategy}>
-        <div ref={ setNodeRef } className="menuEditor__panel__body">
-          { section.hasMenuItem.map((product) => (
-            <Product key={ product['@id'] } product={ product } />
-          )) }
-        </div>
-      </SortableContext>
+      <div className={`menuEditor__panel__body ${isDraggedOver ? "menuEditor__panel__body--dragged" : ""}`} ref={ref}>
+        { section.hasMenuItem.map((product) => (
+          <Product key={ product['@id'] } product={ product } />
+        )) }
+      </div>
     </div>
   )
 }
@@ -97,12 +105,12 @@ const LeftPanel = () => {
 
 const RightPanel = () => {
 
-  const { isOver, setNodeRef } = useDroppable({
-    id: 'products',
-  });
+  // const { isOver, setNodeRef } = useDroppable({
+  //   id: 'products',
+  // });
   const products = useSelector(selectProducts)
 
-  console.log('isOver', isOver)
+  // console.log('isOver', isOver)
 
   return (
     <div className="menuEditor__right">
@@ -110,13 +118,11 @@ const RightPanel = () => {
         <h4 className="menuEditor__panel__title">
           Products {/*{{ 'form.menu_editor.products_panel.title'|trans }}*/}
         </h4>
-        <SortableContext id="products" items={ products.map(p => p['@id']) } strategy={ verticalListSortingStrategy }>
-          <div ref={ setNodeRef } className="menuEditor__panel__body" style={{ backgroundColor: isOver ? 'blue' : 'lightblue' }}>
-            { products.map((product, index) => (
-              <Product key={ `product-${index}` } product={ product } />
-            )) }
-          </div>
-        </SortableContext>
+        <div className="menuEditor__panel__body">
+          { products.map((product, index) => (
+            <Product key={ `product-${index}` } product={ product } />
+          )) }
+        </div>
       </div>
     </div>
   )
@@ -124,26 +130,48 @@ const RightPanel = () => {
 
 const Product = ({ product }) => {
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({
-    id: product['@id'],
-    data: {
-      type: 'product'
-    }
-  });
+  const [ isDragging, setIsDragging ] = useState(false);
+  const ref = useRef(null);
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
+  useEffect(() => {
+    const el = ref.current;
+
+    return combine(
+      draggable({
+        element: el,
+        getInitialData: () => ({ type: 'product', productId: product['@id'] }),
+        onDragStart: () => setIsDragging(true),
+        onDrop: () => setIsDragging(false),
+      }),
+      // Add dropTargetForElements to make the card a drop target
+      dropTargetForElements({
+        element: el,
+        getData: ({ input, element }) => {
+          // To attach card data to a drop target
+          const data = { type: "product", productId: product['@id'] };
+
+          // Attaches the closest edge (top or bottom) to the data object
+          // This data will be used to determine where to drop card relative
+          // to the target card.
+          return attachClosestEdge(data, {
+            input,
+            element,
+            allowedEdges: ["top", "bottom"],
+          });
+        },
+        getIsSticky: () => true, // To make a drop target "sticky"
+        // onDragEnter: (args) => {
+        //   if (args.source.data.productId !== product['@id']) {
+        //     console.log("onDragEnter", args);
+        //   }
+        // },
+      })
+    );
+    // Update the dependency array
+  }, [ product['@id'] ]);
 
   return (
-    <div className="menuEditor__product" ref={setNodeRef} style={style} {...attributes} {...listeners}>
+    <div className="menuEditor__product" ref={ref}>
       { product.name }
     </div>
   )
@@ -155,147 +183,181 @@ const MenuEditor = ({ restaurant }) => {
 
   const dispatch = useDispatch()
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(MouseSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
+  // const sensors = useSensors(
+  //   useSensor(PointerSensor),
+  //   useSensor(MouseSensor),
+  //   useSensor(KeyboardSensor, {
+  //     coordinateGetter: sortableKeyboardCoordinates,
+  //   })
+  // );
 
   useEffect(() => {
     dispatch(fetchProducts(restaurant));
   }, [dispatch])
 
-  function handleDragEnd(event) {
+  const sections = useSelector(selectMenuSections)
 
-    console.log('handleDragEnd', event)
+  const reorderProduct = useCallback(
+    ({ sectionId, startIndex, finishIndex }) => {
 
-    const { active, over } = event;
+      // console.log('reorderProduct', sectionId)
 
-    /*
-    if (active.id !== over.id) {
+      // Get the source column data
+      const sourceSectionData = _.find(sections, (s) => s['@id'] === sectionId);
 
-      // Items have been reordered
-      const activeSection = active.data.current.sortable.containerId;
-      const overSection = over.data.current.sortable.containerId;
+      // Call the reorder function to get a new array
+      // of cards with the moved card's new position
+      const updatedItems = reorder({
+        list: sourceSectionData.hasMenuItem,
+        startIndex,
+        finishIndex,
+      });
 
-      if (activeSection === overSection) {
+      console.log('updatedItems', updatedItems)
 
-        const sectionIndex = _.findIndex(menu.hasMenuSection, (s) => s['@id'] === activeSection);
-        const items = menu.hasMenuSection[sectionIndex].hasMenuItem;
+      // Create a new object for the source column
+      // with the updated list of cards
+      // const updatedSourceColumn = {
+      //   ...sourceColumnData,
+      //   cards: updatedItems,
+      // };
 
-        const oldIndex = _.findIndex(items, (i) => i['@id'] === active.id);
-        const newIndex = _.findIndex(items, (i) => i['@id'] === over.id);
+      // Update columns state
+      // setColumnsData({
+      //   ...columnsData,
+      //   [columnId]: updatedSourceColumn,
+      // });
 
-        const newItems = arrayMove(items, oldIndex, newIndex);
+      dispatch(setSectionProducts(sectionId, updatedItems))
+    },
+    [sections]
+  );
 
-        const newSections = menu.hasMenuSection.slice();
+  // Function to handle drop events
+  const handleDrop = useCallback(({ source, location }) => {
 
-        newSections.splice(sectionIndex, 1, {
-          ...menu.hasMenuSection[sectionIndex],
-          hasMenuItem: newItems
-        });
-
-        const payload = {
-          products: newItems.map((i) => i['@id'])
-        }
-
-        httpClient.put(activeSection, payload).then(({ error, response }) => {
-          // TODO Do something in case of error
-          console.log('error', error)
-        })
-
-        const newMenu = {
-          ...menu,
-          hasMenuSection: newSections,
-        }
-
-        setMenu(newMenu);
-      }
-
-    }
-    */
-  }
-
-  function handleDragOver(event) {
-
-    console.log('handleDragOver', event)
-
-    const { active, over } = event;
-    const { id } = active;
-    const { id: overId } = over;
-
-    const isOverProducts = overId === 'products' || over.data.current?.sortable?.containerId === 'products';
-    const isOverProduct = over.data.current?.type === 'product';
-
-    if (active.data.current.type === 'product') {
-      if (isOverProducts) {
-        // console.log(`drag over --> ${id} is over ${overId}`);
-        dispatch(removeProductFromSection(id))
-      } else if (isOverProduct) {
-        console.log('Move to section')
-      }
-
+    // Early return if there are no drop targets in the current location
+    const destination = location.current.dropTargets.length;
+    if (!destination) {
+      return;
     }
 
-    /*
-    if (active.id !== over.id) {
+    // Check if the source of the drag is a card to handle card-specific logic
+    if (source.data.type === "product") {
 
-      // Items have been reordered
-      const activeSection = active.data.current.sortable.containerId;
-      const overSection = over.data.current.sortable.containerId;
+      // Retrieve the ID of the card being dragged
+      const draggedProductId = source.data.productId;
 
-      if (activeSection === overSection) {
+      // Get the source column from the initial drop targets
+      const [, sourceSectionRecord] = location.initial.dropTargets;
 
-        const sectionIndex = _.findIndex(menu.hasMenuSection, (s) => s['@id'] === activeSection);
-        const items = menu.hasMenuSection[sectionIndex].hasMenuItem;
+      // Retrieve the ID of the source column
+      const sourceSectionId = sourceSectionRecord.data.sectionId;
 
-        const oldIndex = _.findIndex(items, (i) => i['@id'] === active.id);
-        const newIndex = _.findIndex(items, (i) => i['@id'] === over.id);
+      // Get the data of the source column
+      const sourceSectionData = _.find(sections, (s) => s['@id'] === sourceSectionId); // columnsData[sourceSectionId];
 
-        const newItems = arrayMove(items, oldIndex, newIndex);
+      // Get the index of the card being dragged in the source column
+      const draggedProductIndex = sourceSectionData.hasMenuItem.findIndex(
+        (product) => product['@id'] === draggedProductId
+      );
 
-        const newSections = menu.hasMenuSection.slice();
+      // Reordering within a column by dropping in an empty space
+      if (location.current.dropTargets.length === 1) {
 
-        newSections.splice(sectionIndex, 1, {
-          ...menu.hasMenuSection[sectionIndex],
-          hasMenuItem: newItems
-        });
+        console.log('reorder')
 
-        const payload = {
-          products: newItems.map((i) => i['@id'])
+        // Get the destination column from the current drop targets
+        const [destinationSectionRecord] = location.current.dropTargets;
+
+        // Retrieve the ID of the destination column
+        const destinationSectionId = destinationSectionRecord.data.sectionId;
+
+        // check if the source and destination columns are the same
+        if (sourceSectionId === destinationSectionId) {
+
+          // Calculate the destination index for the dragged card within the same column
+          const destinationIndex = getReorderDestinationIndex({
+            startIndex: draggedProductIndex,
+            indexOfTarget: sourceSectionData.hasMenuItem.length - 1,
+            closestEdgeOfTarget: null,
+            axis: "vertical",
+          });
+
+          // will implement this function
+          reorderProduct({
+            sectionId: sourceSectionData.sectionId,
+            startIndex: draggedProductIndex,
+            finishIndex: destinationIndex,
+          });
+
+          return;
         }
-
-        httpClient.put(activeSection, payload).then(({ error, response }) => {
-          // TODO Do something in case of error
-          console.log('error', error)
-        })
-
-        const newMenu = {
-          ...menu,
-          hasMenuSection: newSections,
-        }
-
-        setMenu(newMenu);
       }
 
+      if (location.current.dropTargets.length === 2) {
+        // Destructure and extract the destination card and column data from the drop targets
+        const [destinationProductRecord, destinationSectionRecord] =
+          location.current.dropTargets;
+
+        // Extract the destination column ID from the destination column data
+        const destinationSectionId = destinationSectionRecord.data.sectionId;
+
+        // Retrieve the destination column data using the destination column ID
+        const destinationSection = _.find(sections, (s) => s['@id'] === destinationSectionId);
+
+        // Find the index of the target card within the destination column's cards
+        const indexOfTarget = destinationSection.hasMenuItem.findIndex(
+          (product) => product['@id'] === destinationProductRecord.data.productId
+        );
+
+        // Determine the closest edge of the target card: top or bottom
+        const closestEdgeOfTarget = extractClosestEdge(
+          destinationProductRecord.data
+        );
+
+        // Check if the source and destination columns are the same
+        if (sourceSectionId === destinationSectionId) {
+          // Calculate the destination index for the card to be reordered within the same column
+          const destinationIndex = getReorderDestinationIndex({
+            startIndex: draggedProductIndex,
+            indexOfTarget,
+            closestEdgeOfTarget,
+            axis: "vertical",
+          });
+
+          // Perform the card reordering within the same column
+          reorderProduct({
+            sectionId: sourceSectionId,
+            startIndex: draggedProductIndex,
+            finishIndex: destinationIndex,
+          });
+
+          return;
+        }
+      }
     }
-    */
-  }
+  }, [ sections ]); // TODO Add sections to dependencies array
+
+  // setup the monitor
+  useEffect(() => {
+    return monitorForElements({
+      onDrop: handleDrop,
+    });
+  }, [handleDrop]);
 
   return (
-    <DndContext
-      onDragOver={handleDragOver}
-      onDragEnd={handleDragEnd}
-      sensors={sensors}
-      collisionDetection={ /*closestCenter*/ closestCorners}>
+    // <DndContext
+    //   onDragOver={handleDragOver}
+    //   onDragEnd={handleDragEnd}
+    //   sensors={sensors}
+    //   collisionDetection={ /*closestCenter*/ closestCorners}>
       <div className="menuEditor mb-4">
         {/* TODO Add form input for menu name */}
-        { menu ? <LeftPanel /> : null }
-        { menu ? <RightPanel /> : null }
+        <LeftPanel />
+        <RightPanel />
       </div>
-    </DndContext>
+    // </DndContext>
   )
 }
 
