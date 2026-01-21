@@ -344,10 +344,10 @@ const MenuEditor = ({ restaurant }) => {
         }
 
         // Retrieve the destination column data using the destination column ID
-        const destinationSection = _.find(sections, (s) => s['@id'] === destinationSectionId);
+        const destinationItems = destinationSectionId === 'products' ? products : _.find(sections, (s) => s['@id'] === destinationSectionId).hasMenuItem;
 
         // Find the index of the target card within the destination column's cards
-        const indexOfTarget = destinationSection.hasMenuItem.findIndex(
+        const indexOfTarget = destinationItems.findIndex(
           (product) => product['@id'] === destinationProductRecord.data.productId
         );
 
