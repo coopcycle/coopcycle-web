@@ -1320,6 +1320,7 @@ Feature: Manage restaurants
       }
       """
 
+  @debug
   Scenario: Reorder menu sections
     Given the fixtures files are loaded:
       | sylius_locales.yml  |
@@ -1349,45 +1350,45 @@ Feature: Manage restaurants
     And the JSON should match:
       """
       {
-          "@context": "/api/contexts/Menu",
-          "@id": "/api/restaurants/menus/1",
-          "@type": "http://schema.org/Menu",
-          "name": "Menu",
-          "identifier": @string@,
-          "hasMenuSection": [
-              {
-                "@id":"/api/restaurants/22/menus/1/sections/2",
-                "name": "Pizzas",
-                "hasMenuItem": @array@
-              },
-              {
-                "@id":"/api/restaurants/22/menus/1/sections/3",
-                "name": "Burgers",
-                "hasMenuItem": @array@
-              },
-              {
-                "@id":"/api/restaurants/22/menus/1/sections/4",
-                "name": "Salads",
-                "hasMenuItem": @array@
-              },
-              {
-                "@id":"/api/restaurants/22/menus/1/sections/5",
-                "name": "Desserts",
-                "hasMenuItem": @array@
-              }
-          ]
+        "@context": "/api/contexts/Menu",
+        "@id": "/api/restaurants/menus/1",
+        "@type": "http://schema.org/Menu",
+        "name": "Menu",
+        "identifier": @string@,
+        "hasMenuSection": [
+          {
+            "@id":"/api/restaurants/menus/1/sections/2",
+            "name": "Pizzas",
+            "hasMenuItem": @array@
+          },
+          {
+            "@id":"/api/restaurants/menus/1/sections/3",
+            "name": "Burgers",
+            "hasMenuItem": @array@
+          },
+          {
+            "@id":"/api/restaurants/menus/1/sections/4",
+            "name": "Salads",
+            "hasMenuItem": @array@
+          },
+          {
+            "@id":"/api/restaurants/menus/1/sections/5",
+            "name": "Desserts",
+            "hasMenuItem": @array@
+          }
+        ]
       }
       """
     And I add "Accept" header equal to "application/ld+json"
     And I add "Content-Type" header equal to "application/ld+json"
-    When the user "bob" sends a "PUT" request to "/api/restaurants/1/menus/1" with body:
+    When the user "bob" sends a "PUT" request to "/api/restaurants/menus/1" with body:
       """
       {
         "sections": [
-          "/api/restaurants/1/menus/1/sections/4",
-          "/api/restaurants/1/menus/1/sections/5",
-          "/api/restaurants/1/menus/1/sections/2",
-          "/api/restaurants/1/menus/1/sections/3"
+          "/api/restaurants/menus/1/sections/4",
+          "/api/restaurants/menus/1/sections/5",
+          "/api/restaurants/menus/1/sections/2",
+          "/api/restaurants/menus/1/sections/3"
         ]
       }
       """
@@ -1403,22 +1404,22 @@ Feature: Manage restaurants
         "identifier": @string@,
         "hasMenuSection": [
             {
-              "@id":"/api/restaurants/22/menus/1/sections/4",
+              "@id":"/api/restaurants/menus/1/sections/4",
               "name": "Salads",
               "hasMenuItem": @array@
             },
             {
-              "@id":"/api/restaurants/22/menus/1/sections/5",
+              "@id":"/api/restaurants/menus/1/sections/5",
               "name": "Desserts",
               "hasMenuItem": @array@
             },
             {
-              "@id":"/api/restaurants/22/menus/1/sections/2",
+              "@id":"/api/restaurants/menus/1/sections/2",
               "name": "Pizzas",
               "hasMenuItem": @array@
             },
             {
-              "@id":"/api/restaurants/22/menus/1/sections/3",
+              "@id":"/api/restaurants/menus/1/sections/3",
               "name": "Burgers",
               "hasMenuItem": @array@
             }
@@ -1440,22 +1441,22 @@ Feature: Manage restaurants
         "identifier": @string@,
         "hasMenuSection": [
           {
-            "@id":"/api/restaurants/22/menus/1/sections/4",
+            "@id":"/api/restaurants/menus/1/sections/4",
             "name": "Salads",
             "hasMenuItem": @array@
           },
           {
-            "@id":"/api/restaurants/22/menus/1/sections/5",
+            "@id":"/api/restaurants/menus/1/sections/5",
             "name": "Desserts",
             "hasMenuItem": @array@
           },
           {
-            "@id":"/api/restaurants/22/menus/1/sections/2",
+            "@id":"/api/restaurants/menus/1/sections/2",
             "name": "Pizzas",
             "hasMenuItem": @array@
           },
           {
-            "@id":"/api/restaurants/22/menus/1/sections/3",
+            "@id":"/api/restaurants/menus/1/sections/3",
             "name": "Burgers",
             "hasMenuItem": @array@
           }
@@ -1497,12 +1498,12 @@ Feature: Manage restaurants
         "identifier": @string@,
         "hasMenuSection": [
           {
-            "@id":"/api/restaurants/22/menus/1/sections/2",
+            "@id":"/api/restaurants/menus/1/sections/2",
             "name": "Pizzas",
             "hasMenuItem": "@array@.count(1)"
           },
           {
-            "@id":"/api/restaurants/22/menus/1/sections/3",
+            "@id":"/api/restaurants/menus/1/sections/3",
             "name": "Burger",
             "hasMenuItem": "@array@.count(1)"
           }
@@ -1532,12 +1533,12 @@ Feature: Manage restaurants
         "identifier": @string@,
         "hasMenuSection": [
             {
-              "@id":"/api/restaurants/22/menus/1/sections/2",
+              "@id":"/api/restaurants/menus/1/sections/2",
               "name": "Pizzas",
               "hasMenuItem": "@array@.count(0)"
             },
             {
-              "@id":"/api/restaurants/22/menus/1/sections/3",
+              "@id":"/api/restaurants/menus/1/sections/3",
               "name": "Burger",
               "hasMenuItem": "@array@.count(2)"
             }

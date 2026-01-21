@@ -52,7 +52,7 @@ use Sylius\Component\Taxonomy\Model\Taxon as BaseTaxon;
         ),
         new Get(
             uriTemplate: '/restaurants/menus/{id}/sections/{sectionId}',
-            // provider: RestaurantMenuSectionProvider::class,
+            provider: RestaurantMenuSectionProvider::class,
             normalizationContext: ['groups' => ['restaurant_menu']],
             denormalizationContext: ['groups' => ['restaurant_menu']]
         ),

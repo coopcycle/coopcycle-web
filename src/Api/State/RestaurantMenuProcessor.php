@@ -73,7 +73,7 @@ class RestaurantMenuProcessor implements ProcessorInterface
             // so that object is fully reloaded from database
             $this->entityManager->clear();
 
-            return $this->taxonRepository->find($uriVariables['menuId']);
+            return $this->taxonRepository->find($uriVariables['id']);
         }
 
         /** @var LocalBusiness */
