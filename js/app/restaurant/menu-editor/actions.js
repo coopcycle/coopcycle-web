@@ -50,10 +50,15 @@ export function setSectionProducts(sectionId, products) {
     }
 
     try {
+
       const { response, error } = await httpClient.put(sectionId, {
         products: products.map((p) => p['@id'])
       });
-      console.log(response, error)
+
+      if (error) {
+        console.error(error);
+      }
+
     } catch (e) {
       console.error(e);
     }

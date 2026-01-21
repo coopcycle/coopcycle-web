@@ -25,28 +25,44 @@ const httpClient = new window._auth.httpClient()
 
 const Section = ({ section, index }) => {
 
-  const ref = useRef(null);
+  const dropTargetRef = useRef(null);
+  const draggableRef = useRef(null);
+  const dragHandleRef = useRef(null);
+
   const [ isDraggedOver, setIsDraggedOver ] = useState(false);
+  const [ isDraggeding, setIsDragging ] = useState(false);
 
   useEffect(() => {
-    const el = ref.current;
 
-    // Set up the drop target for the column element
-    return dropTargetForElements({
-      element: el,
-      onDragStart: () => setIsDraggedOver(true),
-      onDragEnter: () => setIsDraggedOver(true),
-      onDragLeave: () => setIsDraggedOver(false),
-      onDrop: () => setIsDraggedOver(false),
-      getData: () => ({ sectionId: section['@id'] }),
-      getIsSticky: () => true,
-    });
+    const dropTargetEl = dropTargetRef.current;
+    const draggableEl = draggableRef.current;
+    const dragHandleEl = dragHandleRef.current;
+
+    return combine(
+      dropTargetForElements({
+        element: dropTargetEl,
+        onDragStart: () => setIsDraggedOver(true),
+        onDragEnter: () => setIsDraggedOver(true),
+        onDragLeave: () => setIsDraggedOver(false),
+        onDrop: () => setIsDraggedOver(false),
+        getData: () => ({ sectionId: section['@id'] }),
+        getIsSticky: () => true,
+      }),
+      draggable({
+        element: draggableEl,
+        // https://atlassian.design/components/pragmatic-drag-and-drop/core-package/adapters/element/about#drag-handles
+        dragHandle: dragHandleEl,
+        getInitialData: () => ({ type: 'section', sectionId: section['@id'] }),
+        onDragStart: () => setIsDragging(true),
+        onDrop: () => setIsDragging(false),
+      })
+    );
   }, [section['@id']]);
 
   return (
-    <div className="menuEditor__panel mb-4">
+    <div className="menuEditor__panel mb-4" ref={draggableRef}>
       <h4 className="menuEditor__panel__title">
-        <i className="fa fa-arrows mr-2" aria-hidden="true"></i>
+        <i className="fa fa-arrows mr-2" ref={dragHandleRef}></i>
         <a href="#">
           <span className="mr-2">{ section.name }</span>
           <i className="fa fa-pencil" aria-hidden="true"></i>
@@ -55,7 +71,7 @@ const Section = ({ section, index }) => {
           <i className="fa fa-close"></i>
         </a>
       </h4>
-      <div className={`menuEditor__panel__body ${isDraggedOver ? "menuEditor__panel__body--dragged" : ""}`} ref={ref}>
+      <div className={`menuEditor__panel__body ${isDraggedOver ? "menuEditor__panel__body--dragged" : ""}`} ref={dropTargetRef}>
         { section.hasMenuItem.map((product) => (
           <Product key={ product['@id'] } product={ product } />
         )) }
@@ -158,13 +174,13 @@ const Product = ({ product }) => {
         getIsSticky: () => true, // To make a drop target "sticky"
         onDragEnter: (args) => {
           // Update the closest edge when a draggable item enters the drop zone
-          if (args.source.data.productId !== product['@id']) {
+          if (args.source.data.type === 'product' && args.source.data.productId !== product['@id']) {
             setClosestEdge(extractClosestEdge(args.self.data));
           }
         },
         onDrag: (args) => {
           // Continuously update the closest edge while dragging over the drop zone
-          if (args.source.data.productId !== product['@id']) {
+          if (args.source.data.type === 'product' && args.source.data.productId !== product['@id']) {
             setClosestEdge(extractClosestEdge(args.self.data));
           }
         },
