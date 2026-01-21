@@ -472,7 +472,7 @@ services:
     tags:
       - name: sylius.promotion_action
         type: delivery_percentage_discount
-        label: 'Delivery percentage discount'
+        label: 'sylius.form.promotion_action.delivery_percentage_discount'
         form_type: Sylius\Bundle\PromotionBundle\Form\Type\Action\PercentageDiscountConfigurationType
 
   sylius.promotion_action.fixed_discount:
@@ -482,8 +482,8 @@ services:
     tags:
       - name: sylius.promotion_action
         type: order_fixed_discount
-        label: 'Fixed discount'
-        form_type: Sylius\Bundle\PromotionBundle\Form\Type\Action\FixedDiscountConfigurationType
+        label: 'sylius.form.promotion_action.order_fixed_discount'
+        form_type: AppBundle\Form\Sylius\Promotion\CurrencyAwareFixedDiscountConfigurationType
 
   sylius.promotion_action.percentage_discount:
     class: AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand
@@ -492,7 +492,7 @@ services:
     tags:
       - name: sylius.promotion_action
         type: order_percentage_discount
-        label: 'Percentage discount'
+        label: 'sylius.form.promotion_action.order_percentage_discount'
         form_type: Sylius\Bundle\PromotionBundle\Form\Type\Action\PercentageDiscountConfigurationType
 
   sylius.promotion.eligibility_checker.promotion_coupon_per_customer_usage_limit:
@@ -520,7 +520,7 @@ services:
     tags:
       - name: sylius.promotion_rule_checker
         type: is_items_total_above
-        label: 'Is items total above'
+        label: 'sylius.form.promotion_rule.item_total'
         form_type: AppBundle\Form\Sylius\Promotion\Rule\IsItemsTotalAboveConfigurationType
 
   AppBundle\Sylius\Product\ProductOptionValueFactory:
@@ -1739,3 +1739,12 @@ services:
     factory: '@AppBundle\Payment\PawapayClientFactory'
     arguments: ['%env(PAWAPAY_API_URL)%']
     lazy: true
+
+  # This service decorates the "type" field in Sylius\Bundle\PromotionBundle\Form\Type\PromotionRuleType
+  # It will filter out some rules defined in the 3rd argument
+  AppBundle\Form\Sylius\Promotion\Type\FilteringPromotionRuleChoiceType:
+    decorates: sylius.form.type.promotion_rule_choice
+    arguments:
+      - '@.inner'
+      - '%sylius.promotion_rules%'
+      - ['is_customer', 'is_restaurant']

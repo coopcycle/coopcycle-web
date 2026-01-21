@@ -808,6 +808,7 @@
         "INCIDENTS_NEW_PRICE": "New price",
         "INCIDENTS_SUGGESTED_MODIFICATIONS": "Suggested modifications",
         "INCIDENTS_REFUSE_SUGGESTIONS": "Refuse suggestions",
-        "INCIDENTS_APPLY_SUGGESTIONS": "Apply suggestions"
+        "INCIDENTS_APPLY_SUGGESTIONS": "Apply suggestions",
+        "PROMOTION_COUPON_BASED": "This promotion is based on a coupon code"
       }
 }
