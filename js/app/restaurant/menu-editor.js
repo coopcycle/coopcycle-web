@@ -16,7 +16,7 @@ import _ from 'lodash';
 import { Provider, useDispatch, useSelector } from 'react-redux'
 
 import { createStoreFromPreloadedState } from './menu-editor/store'
-import { fetchProducts, removeProductFromSection, addProductToSection, setSectionProducts, moveProductToSection } from './menu-editor/actions'
+import { fetchProducts, removeProductFromSection, setSectionProducts, moveProductToSection } from './menu-editor/actions'
 import { selectProducts, selectMenuSections } from './menu-editor/selectors'
 
 import './menu-editor.scss'
@@ -213,17 +213,15 @@ const MenuEditor = ({ restaurant }) => {
   }, [dispatch])
 
   const sections = useSelector(selectMenuSections)
+  const products = useSelector(selectProducts)
 
   const reorderProduct = useCallback(
     ({ sectionId, startIndex, finishIndex }) => {
 
-      // Get the source column data
-      const sourceSectionData = _.find(sections, (s) => s['@id'] === sectionId);
+      const section = _.find(sections, (s) => s['@id'] === sectionId);
 
-      // Call the reorder function to get a new array
-      // of cards with the moved card's new position
       const updatedItems = reorder({
-        list: sourceSectionData.hasMenuItem,
+        list: section.hasMenuItem,
         startIndex,
         finishIndex,
       });
@@ -243,79 +241,22 @@ const MenuEditor = ({ restaurant }) => {
 
       console.log('moveProduct', sourceSectionId, movedProductIndexInSourceSection, destinationSectionId)
 
-      if (sourceSectionId !== 'products') {
+      const sourceItems = sourceSectionId === 'products' ? products : _.find(sections, (s) => s['@id'] === sourceSectionId).hasMenuItem;
+      const productToMove = sourceItems[movedProductIndexInSourceSection];
 
-        const section = _.find(sections, (s) => s['@id'] === sourceSectionId);
-        const productToMove = section.hasMenuItem[movedProductIndexInSourceSection];
-
-        // Moved from section back to products
-        if (destinationSectionId === 'products') {
-          dispatch(removeProductFromSection(productToMove['@id']));
-          return;
-
-        }
-
-        // Moved from a section to another section
-
-        // Determine the new index in the destination column
-        const newIndexInDestination = movedProductIndexInDestinationSection ?? 0;
-
-        // const newDestinationProducts = Array.from(section.hasMenuItem);
-        // newDestinationProducts.splice(newIndexInDestination, 0, productToMove);
-
-        // dispatch(removeProductFromSection(productToMove['@id']));
-        // dispatch(setSectionProducts(destinationSectionId, newDestinationProducts));
-        // dispatch(removeProductFromSection(productToMove['@id']));
-
-        dispatch(moveProductToSection(productToMove, newIndexInDestination, destinationSectionId))
-
+      // Moved from section back to right column
+      if (destinationSectionId === 'products') {
+        dispatch(removeProductFromSection(productToMove['@id']));
         return;
-
       }
 
-      /*
-      // Get data of the source column
-      const sourceColumnData = columnsData[sourceColumnId];
-
-      // Get data of the destination column
-      const destinationColumnData = columnsData[destinationColumnId];
-
-      // Identify the card to move
-      const cardToMove = sourceColumnData.cards[movedCardIndexInSourceColumn];
-
-      // Remove the moved card from the source column
-      const newSourceColumnData = {
-        ...sourceColumnData,
-        cards: sourceColumnData.cards.filter(
-          (card) => card.id !== cardToMove.id
-        ),
-      };
-
-      // Create a copy of the destination column's cards array
-      const newDestinationCards = Array.from(destinationColumnData.cards);
-
-      // Determine the new index in the destination column
-      const newIndexInDestination = movedCardIndexInDestinationColumn ?? 0;
-
-      // Insert the moved card into the new index in the destination column
-      newDestinationCards.splice(newIndexInDestination, 0, cardToMove);
-
-      // Create new destination column data with the moved card
-      const newFinishColumnData = {
-        ...destinationColumnData,
-        cards: newDestinationCards,
-      };
-      */
-
-      // Update the state with the new columns data
-      // setColumnsData({
-      //   ...columnsData,
-      //   [sourceColumnId]: newSourceColumnData,
-      //   [destinationColumnId]: newFinishColumnData,
-      // });
+      // Moved from a section to another section
+      // Determine the new index in the destination section
+      const newIndexInDestination = movedProductIndexInDestinationSection ?? 0;
+      dispatch(moveProductToSection(productToMove, newIndexInDestination, destinationSectionId));
 
     },
-    [sections]
+    [sections, products]
   );
 
   // Function to handle drop events
@@ -340,10 +281,12 @@ const MenuEditor = ({ restaurant }) => {
       const sourceSectionId = sourceSectionRecord.data.sectionId;
 
       // Get the data of the source column
-      const sourceSectionData = _.find(sections, (s) => s['@id'] === sourceSectionId); // columnsData[sourceSectionId];
+      const sourceSectionData = _.find(sections, (s) => s['@id'] === sourceSectionId);
+
+      const sourceItems = sourceSectionId === 'products' ? products : sourceSectionData.hasMenuItem;
 
       // Get the index of the card being dragged in the source column
-      const draggedProductIndex = sourceSectionData.hasMenuItem.findIndex(
+      const draggedProductIndex = sourceItems.findIndex(
         (product) => product['@id'] === draggedProductId
       );
 
@@ -362,12 +305,11 @@ const MenuEditor = ({ restaurant }) => {
           // Calculate the destination index for the dragged card within the same column
           const destinationIndex = getReorderDestinationIndex({
             startIndex: draggedProductIndex,
-            indexOfTarget: sourceSectionData.hasMenuItem.length - 1,
+            indexOfTarget: sourceItems.length - 1,
             closestEdgeOfTarget: null,
             axis: "vertical",
           });
 
-          // will implement this function
           reorderProduct({
             sectionId: sourceSectionData.sectionId,
             startIndex: draggedProductIndex,
@@ -395,6 +337,11 @@ const MenuEditor = ({ restaurant }) => {
 
         // Extract the destination column ID from the destination column data
         const destinationSectionId = destinationSectionRecord.data.sectionId;
+
+        if (sourceSectionId === 'products' && destinationSectionId === 'products') {
+          // Do nothing when reordering right column
+          return;
+        }
 
         // Retrieve the destination column data using the destination column ID
         const destinationSection = _.find(sections, (s) => s['@id'] === destinationSectionId);
@@ -443,7 +390,7 @@ const MenuEditor = ({ restaurant }) => {
         });
       }
     }
-  }, [ sections ]); // TODO Add sections to dependencies array
+  }, [ sections, products ]);
 
   // setup the monitor
   useEffect(() => {
