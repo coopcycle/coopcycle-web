@@ -23,8 +23,6 @@ use AppBundle\Api\Dto\RestaurantInput;
 use AppBundle\Api\State\UpdateRestaurantProcessor;
 use AppBundle\Api\State\RestaurantProvider;
 use AppBundle\Api\State\RestaurantMenuProcessor;
-use AppBundle\Api\State\RestaurantMenuSectionProcessor;
-use AppBundle\Api\State\RestaurantMenuSectionProvider;
 use AppBundle\Entity\Base\LocalBusiness as BaseLocalBusiness;
 use AppBundle\Entity\LocalBusiness\CatalogInterface;
 use AppBundle\Entity\LocalBusiness\CatalogTrait;
@@ -135,34 +133,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
             input: MenuInput::class,
             normalizationContext: ['groups' => ['restaurant_menus']],
             denormalizationContext: ['groups' => ['restaurant_menus']]
-        ),
-        new Put(
-            uriTemplate: '/restaurants/{id}/menus/{menuId}',
-            processor: RestaurantMenuProcessor::class,
-            input: MenuInput::class,
-            normalizationContext: ['groups' => ['restaurant_menus']],
-            denormalizationContext: ['groups' => ['restaurant_menus']]
-        ),
-        new Get(
-            uriTemplate: '/restaurants/{id}/menus/{menuId}/sections/{sectionId}',
-            provider: RestaurantMenuSectionProvider::class,
-            normalizationContext: ['groups' => ['restaurant_menu']],
-            denormalizationContext: ['groups' => ['restaurant_menu']]
-        ),
-        new Put(
-            uriTemplate: '/restaurants/{id}/menus/{menuId}/sections/{sectionId}',
-            provider: RestaurantMenuSectionProvider::class,
-            processor: RestaurantMenuSectionProcessor::class,
-            input: MenuInput::class,
-            normalizationContext: ['groups' => ['restaurant_menu']],
-            denormalizationContext: ['groups' => ['restaurant_menu']]
-        ),
-        new Post(
-            uriTemplate: '/restaurants/{id}/menus/{menuId}/sections',
-            processor: RestaurantMenuSectionProcessor::class,
-            input: MenuInput::class,
-            normalizationContext: ['groups' => ['restaurant_menu']],
-            denormalizationContext: ['groups' => ['restaurant_menu']]
         ),
     ],
     normalizationContext: ['groups' => ['restaurant', 'address', 'order']],

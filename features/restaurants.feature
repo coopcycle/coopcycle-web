@@ -1079,6 +1079,7 @@ Feature: Manage restaurants
       }
       """
 
+  @debug
   Scenario: Edit menu sections
     Given the fixtures files are loaded:
       | sylius_locales.yml  |
@@ -1100,7 +1101,7 @@ Feature: Manage restaurants
     And the user "bob" is authenticated
     And I add "Accept" header equal to "application/ld+json"
     And I add "Content-Type" header equal to "application/ld+json"
-    When the user "bob" sends a "POST" request to "/api/restaurants/1/menus/1/sections" with body:
+    When the user "bob" sends a "POST" request to "/api/restaurants/menus/1/sections" with body:
       """
       {
         "name": "Salads"
@@ -1118,23 +1119,26 @@ Feature: Manage restaurants
         "identifier": @string@,
         "hasMenuSection": [
             {
-                "name": "Pizzas",
-                "hasMenuItem": @array@
+              "@id": "/api/restaurants/menus/1/sections/2",
+              "name": "Pizzas",
+              "hasMenuItem": @array@
             },
             {
-                "name": "Burger",
-                "hasMenuItem": @array@
+              "@id": "/api/restaurants/menus/1/sections/3",
+              "name": "Burger",
+              "hasMenuItem": @array@
             },
             {
-                "name": "Salads",
-                "hasMenuItem": []
+              "@id": "/api/restaurants/menus/1/sections/4",
+              "name": "Salads",
+              "hasMenuItem": []
             }
         ]
       }
       """
     Given I add "Accept" header equal to "application/ld+json"
     And I add "Content-Type" header equal to "application/ld+json"
-    When the user "bob" sends a "PUT" request to "/api/restaurants/1/menus/1/sections/4" with body:
+    When the user "bob" sends a "PUT" request to "/api/restaurants/menus/1/sections/4" with body:
       """
       {
         "products": [
@@ -1143,6 +1147,7 @@ Feature: Manage restaurants
         ]
       }
       """
+    Then print last JSON response
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
@@ -1155,18 +1160,23 @@ Feature: Manage restaurants
         "identifier": @string@,
         "hasMenuSection": [
             {
+              "@id": "/api/restaurants/menus/1/sections/2",
               "name": "Pizzas",
               "hasMenuItem": @array@
             },
             {
+              "@id": "/api/restaurants/menus/1/sections/3",
               "name": "Burger",
               "hasMenuItem": @array@
             },
             {
+              "@id": "/api/restaurants/menus/1/sections/4",
               "name": "Salads",
               "hasMenuItem": [
                 {
-                  "@type":"MenuItem",
+                  "@context": "/api/contexts/Product",
+                  "@id": "/api/products/3",
+                  "@type": "MenuItem",
                   "name":"Salad",
                   "description":null,
                   "identifier":"SALAD",
@@ -1176,7 +1186,9 @@ Feature: Manage restaurants
                   "images":[]
                 },
                 {
-                  "@type":"MenuItem",
+                  "@context": "/api/contexts/Product",
+                  "@id": "/api/products/4",
+                  "@type": "MenuItem",
                   "name":"Cake",
                   "description":null,
                   "identifier":"CAKE",
@@ -1192,7 +1204,7 @@ Feature: Manage restaurants
       """
     Given I add "Accept" header equal to "application/ld+json"
     And I add "Content-Type" header equal to "application/ld+json"
-    When the user "bob" sends a "PUT" request to "/api/restaurants/1/menus/1/sections/4" with body:
+    When the user "bob" sends a "PUT" request to "/api/restaurants/menus/1/sections/4" with body:
       """
       {
         "products": [
@@ -1212,17 +1224,22 @@ Feature: Manage restaurants
         "identifier": @string@,
         "hasMenuSection": [
             {
+              "@id": "/api/restaurants/menus/1/sections/2",
               "name": "Pizzas",
               "hasMenuItem": @array@
             },
             {
+              "@id": "/api/restaurants/menus/1/sections/3",
               "name": "Burger",
               "hasMenuItem": @array@
             },
             {
+              "@id": "/api/restaurants/menus/1/sections/4",
               "name": "Salads",
               "hasMenuItem": [
                 {
+                  "@context": "/api/contexts/Product",
+                  "@id": "/api/products/3",
                   "@type":"MenuItem",
                   "name":"Salad",
                   "description":null,
@@ -1239,7 +1256,7 @@ Feature: Manage restaurants
       """
     Given I add "Accept" header equal to "application/ld+json"
     And I add "Content-Type" header equal to "application/ld+json"
-    When the user "bob" sends a "PUT" request to "/api/restaurants/1/menus/1/sections/4" with body:
+    When the user "bob" sends a "PUT" request to "/api/restaurants/menus/1/sections/4" with body:
       """
       {
         "products": [
@@ -1260,17 +1277,22 @@ Feature: Manage restaurants
         "identifier": @string@,
         "hasMenuSection": [
             {
+              "@id": "/api/restaurants/menus/1/sections/2",
               "name": "Pizzas",
               "hasMenuItem": @array@
             },
             {
+              "@id": "/api/restaurants/menus/1/sections/3",
               "name": "Burger",
               "hasMenuItem": @array@
             },
             {
+              "@id": "/api/restaurants/menus/1/sections/4",
               "name": "Salads",
               "hasMenuItem": [
                 {
+                  "@context": "/api/contexts/Product",
+                  "@id": "/api/products/4",
                   "@type":"MenuItem",
                   "name":"Cake",
                   "description":null,
@@ -1281,6 +1303,8 @@ Feature: Manage restaurants
                   "images":[]
                 },
                 {
+                  "@context": "/api/contexts/Product",
+                  "@id": "/api/products/3",
                   "@type":"MenuItem",
                   "name":"Salad",
                   "description":null,
@@ -1332,20 +1356,24 @@ Feature: Manage restaurants
           "identifier": @string@,
           "hasMenuSection": [
               {
-                  "name": "Pizzas",
-                  "hasMenuItem": @array@
+                "@id":"/api/restaurants/22/menus/1/sections/2",
+                "name": "Pizzas",
+                "hasMenuItem": @array@
               },
               {
-                  "name": "Burgers",
-                  "hasMenuItem": @array@
+                "@id":"/api/restaurants/22/menus/1/sections/3",
+                "name": "Burgers",
+                "hasMenuItem": @array@
               },
               {
-                  "name": "Salads",
-                  "hasMenuItem": @array@
+                "@id":"/api/restaurants/22/menus/1/sections/4",
+                "name": "Salads",
+                "hasMenuItem": @array@
               },
               {
-                  "name": "Desserts",
-                  "hasMenuItem": @array@
+                "@id":"/api/restaurants/22/menus/1/sections/5",
+                "name": "Desserts",
+                "hasMenuItem": @array@
               }
           ]
       }
@@ -1375,18 +1403,22 @@ Feature: Manage restaurants
         "identifier": @string@,
         "hasMenuSection": [
             {
+              "@id":"/api/restaurants/22/menus/1/sections/4",
               "name": "Salads",
               "hasMenuItem": @array@
             },
             {
+              "@id":"/api/restaurants/22/menus/1/sections/5",
               "name": "Desserts",
               "hasMenuItem": @array@
             },
             {
+              "@id":"/api/restaurants/22/menus/1/sections/2",
               "name": "Pizzas",
               "hasMenuItem": @array@
             },
             {
+              "@id":"/api/restaurants/22/menus/1/sections/3",
               "name": "Burgers",
               "hasMenuItem": @array@
             }
@@ -1408,18 +1440,22 @@ Feature: Manage restaurants
         "identifier": @string@,
         "hasMenuSection": [
           {
+            "@id":"/api/restaurants/22/menus/1/sections/4",
             "name": "Salads",
             "hasMenuItem": @array@
           },
           {
+            "@id":"/api/restaurants/22/menus/1/sections/5",
             "name": "Desserts",
             "hasMenuItem": @array@
           },
           {
+            "@id":"/api/restaurants/22/menus/1/sections/2",
             "name": "Pizzas",
             "hasMenuItem": @array@
           },
           {
+            "@id":"/api/restaurants/22/menus/1/sections/3",
             "name": "Burgers",
             "hasMenuItem": @array@
           }
@@ -1427,7 +1463,6 @@ Feature: Manage restaurants
       }
       """
 
-  @debug
   Scenario: Updating products in section removes them from previous section
     Given the fixtures files are loaded:
       | sylius_locales.yml  |
@@ -1485,7 +1520,6 @@ Feature: Manage restaurants
         ]
       }
       """
-    # Then print last response
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
@@ -1510,108 +1544,3 @@ Feature: Manage restaurants
         ]
       }
       """
-    # Given I add "Accept" header equal to "application/ld+json"
-    # And I add "Content-Type" header equal to "application/ld+json"
-    # When the user "bob" sends a "PUT" request to "/api/restaurants/1/menus/1/sections/4" with body:
-    #   """
-    #   {
-    #     "products": [
-    #       "/api/products/3"
-    #     ]
-    #   }
-    #   """
-    # Then the response status code should be 200
-    # And the response should be in JSON
-    # And the JSON should match:
-    #   """
-    #   {
-    #     "@context": "/api/contexts/Menu",
-    #     "@id": "/api/restaurants/menus/1",
-    #     "@type": "http://schema.org/Menu",
-    #     "name": "Menu",
-    #     "identifier": @string@,
-    #     "hasMenuSection": [
-    #         {
-    #           "name": "Pizzas",
-    #           "hasMenuItem": @array@
-    #         },
-    #         {
-    #           "name": "Burger",
-    #           "hasMenuItem": @array@
-    #         },
-    #         {
-    #           "name": "Salads",
-    #           "hasMenuItem": [
-    #             {
-    #               "@type":"MenuItem",
-    #               "name":"Salad",
-    #               "description":null,
-    #               "identifier":"SALAD",
-    #               "enabled":false,
-    #               "reusablePackagingEnabled":false,
-    #               "offers":{"@type":"Offer","price":499},
-    #               "images":[]
-    #             }
-    #           ]
-    #         }
-    #     ]
-    #   }
-    #   """
-    # Given I add "Accept" header equal to "application/ld+json"
-    # And I add "Content-Type" header equal to "application/ld+json"
-    # When the user "bob" sends a "PUT" request to "/api/restaurants/1/menus/1/sections/4" with body:
-    #   """
-    #   {
-    #     "products": [
-    #       "/api/products/4",
-    #       "/api/products/3"
-    #     ]
-    #   }
-    #   """
-    # Then the response status code should be 200
-    # And the response should be in JSON
-    # And the JSON should match:
-    #   """
-    #   {
-    #     "@context": "/api/contexts/Menu",
-    #     "@id": "/api/restaurants/menus/1",
-    #     "@type": "http://schema.org/Menu",
-    #     "name": "Menu",
-    #     "identifier": @string@,
-    #     "hasMenuSection": [
-    #         {
-    #           "name": "Pizzas",
-    #           "hasMenuItem": @array@
-    #         },
-    #         {
-    #           "name": "Burger",
-    #           "hasMenuItem": @array@
-    #         },
-    #         {
-    #           "name": "Salads",
-    #           "hasMenuItem": [
-    #             {
-    #               "@type":"MenuItem",
-    #               "name":"Cake",
-    #               "description":null,
-    #               "identifier":"CAKE",
-    #               "enabled":false,
-    #               "reusablePackagingEnabled":false,
-    #               "offers":{"@type":"Offer","price":699},
-    #               "images":[]
-    #             },
-    #             {
-    #               "@type":"MenuItem",
-    #               "name":"Salad",
-    #               "description":null,
-    #               "identifier":"SALAD",
-    #               "enabled":false,
-    #               "reusablePackagingEnabled":false,
-    #               "offers":{"@type":"Offer","price":499},
-    #               "images":[]
-    #             }
-    #           ]
-    #         }
-    #     ]
-    #   }
-    #   """

@@ -2,25 +2,61 @@
 
 namespace AppBundle\Entity\Sylius;
 
-use ApiPlatform\Metadata\Get;
+use AppBundle\Api\Dto\MenuInput;
+use AppBundle\Api\State\RestaurantMenuProcessor;
+use AppBundle\Api\State\RestaurantMenuSectionProcessor;
+use AppBundle\Api\State\RestaurantMenuSectionProvider;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Comparable;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Taxonomy\Model\Taxon as BaseTaxon;
-use AppBundle\Action\Restaurant\ActivateMenu;
 
 #[ApiResource(
     shortName: 'Menu',
     types: ['http://schema.org/Menu'],
     operations: [
-    new Get(
-        uriTemplate: '/restaurants/menus/{id}'
-    )
-],
+        new Get(
+            uriTemplate: '/restaurants/menus/{id}'
+        ),
+        new Put(
+            uriTemplate: '/restaurants/menus/{id}',
+            processor: RestaurantMenuProcessor::class,
+            input: MenuInput::class,
+            normalizationContext: ['groups' => ['restaurant_menus']],
+            denormalizationContext: ['groups' => ['restaurant_menus']],
+            // TODO Add security
+        ),
+        new Post(
+            uriTemplate: '/restaurants/menus/{id}/sections',
+            processor: RestaurantMenuSectionProcessor::class,
+            input: MenuInput::class,
+            normalizationContext: ['groups' => ['restaurant_menu']],
+            denormalizationContext: ['groups' => ['restaurant_menu']],
+            // TODO Add security
+        ),
+        new Put(
+            uriTemplate: '/restaurants/menus/{id}/sections/{sectionId}',
+            provider: RestaurantMenuSectionProvider::class,
+            processor: RestaurantMenuSectionProcessor::class,
+            input: MenuInput::class,
+            normalizationContext: ['groups' => ['restaurant_menu']],
+            denormalizationContext: ['groups' => ['restaurant_menu']],
+            // TODO Add security
+        ),
+        new Get(
+            uriTemplate: '/restaurants/menus/{id}/sections/{sectionId}',
+            // provider: RestaurantMenuSectionProvider::class,
+            normalizationContext: ['groups' => ['restaurant_menu']],
+            denormalizationContext: ['groups' => ['restaurant_menu']]
+        ),
+    ],
     normalizationContext: ['groups' => ['restaurant']]
 )]
 class Taxon extends BaseTaxon implements Comparable

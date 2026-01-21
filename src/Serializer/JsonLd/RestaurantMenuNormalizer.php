@@ -3,6 +3,7 @@
 namespace AppBundle\Serializer\JsonLd;
 
 use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
+use ApiPlatform\Metadata\Resource\Factory\ResourceMetadataCollectionFactoryInterface;
 use AppBundle\Entity\Sylius\Taxon;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use Sylius\Component\Locale\Provider\LocaleProvider;
@@ -24,7 +25,8 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
         private ProductNormalizer $productNormalizer,
         private LocaleProvider $localeProvider,
         private ProductVariantResolverInterface $variantResolver,
-        private UrlGeneratorInterface $urlGenerator)
+        private UrlGeneratorInterface $urlGenerator,
+        private ResourceMetadataCollectionFactoryInterface $resourceMetadataFactory)
     {
     }
 
@@ -105,6 +107,10 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
 
     public function normalize($object, $format = null, array $context = array())
     {
+        // Force the IRI of the root resource to correspond to the GET operation
+        // If we don't do this, the IRI when doing PUT /api/restaurants/menus/1/sections/1 can be wrong
+        $context['operation'] = $this->resourceMetadataFactory->create(Taxon::class)->getOperation();
+
         $data = $this->normalizer->normalize($object, $format, $context);
 
         if (isset($data['code'])) {
@@ -120,9 +126,8 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
                 // FIXME
                 // Ugly but works and is tested in Behat
                 // This should be handled by a custom normalizer for Taxon class
-                '@id' => $this->urlGenerator->generate('_api_/restaurants/{id}/menus/{menuId}/sections/{sectionId}_get', [
-                    'id' => 22, // $context['uri_variables']['id'],
-                    'menuId' => $object->getId(),
+                '@id' => $this->urlGenerator->generate('_api_/restaurants/menus/{id}/sections/{sectionId}_get', [
+                    'id' => $object->getId(),
                     'sectionId' => $child->getId(),
                 ]),
                 'name' => $child->getName(),

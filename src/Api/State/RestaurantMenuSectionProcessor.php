@@ -31,7 +31,8 @@ class RestaurantMenuSectionProcessor implements ProcessorInterface
      */
     public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
     {
-        $menu = $this->taxonRepository->find($uriVariables['menuId']);
+        // FIXME Replace by ItemProvider
+        $menu = $this->taxonRepository->find($uriVariables['id']);
 
         if ($operation instanceof Put) {
 

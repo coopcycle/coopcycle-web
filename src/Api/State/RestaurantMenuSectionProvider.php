@@ -17,7 +17,7 @@ final class RestaurantMenuSectionProvider implements ProviderInterface
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
-        $menu = $this->taxonRepository->find($uriVariables['menuId']);
+        $menu = $this->taxonRepository->find($uriVariables['id']);
         $section = $this->taxonRepository->find($uriVariables['sectionId']);
 
         return $section;

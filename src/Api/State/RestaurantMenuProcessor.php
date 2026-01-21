@@ -36,7 +36,8 @@ class RestaurantMenuProcessor implements ProcessorInterface
     {
         if ($operation instanceof Put) {
 
-            $menu = $this->taxonRepository->find($uriVariables['menuId']);
+            // FIXME Replace by ItemProvider?
+            $menu = $this->taxonRepository->find($uriVariables['id']);
 
             $nestedTreeRepository = $this->taxonRepository->getNestedTreeRepository();
 

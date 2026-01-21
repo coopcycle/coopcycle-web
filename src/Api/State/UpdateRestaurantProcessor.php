@@ -21,6 +21,8 @@ class UpdateRestaurantProcessor implements ProcessorInterface
         /** @var LocalBusiness */
         $restaurant = $this->provider->provide($operation, $uriVariables, $context);
 
+        // FIXME
+        // Check if menu belongs to restaurant
         if (is_object($data->hasMenu)) {
             $restaurant->setMenuTaxon($data->hasMenu);
         }
