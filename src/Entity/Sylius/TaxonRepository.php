@@ -22,19 +22,4 @@ class TaxonRepository extends BaseTaxonRepository
     {
         return $this->nestedTreeRepository->reorder($node, $sortByField, $direction, $verify);
     }
-
-    public function findWithMenuData($menuId)
-    {
-        return $this->createQueryBuilder('t')
-            ->leftJoin('t.children', 'children')
-            ->leftJoin('children.taxonProducts', 'taxonProducts')
-            ->leftJoin('taxonProducts.product', 'product')
-            ->addSelect('children')
-            ->addSelect('taxonProducts')
-            ->addSelect('product')
-            ->andWhere('t.id = :menuId')
-            ->setParameter('menuId', $menuId)
-            ->getQuery()
-            ->getOneOrNullResult();
-    }
 }

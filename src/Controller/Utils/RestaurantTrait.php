@@ -62,6 +62,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use MercadoPago;
 use Ramsey\Uuid\Uuid;
+use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
@@ -555,12 +556,18 @@ trait RestaurantTrait
 
         $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
-            ->findWithProducts($restaurantId);
+            ->find($restaurantId);
 
         $this->accessControl($restaurant);
 
         $menuTaxon = $taxonRepository
-            ->findWithMenuData($menuId);
+            ->find($menuId);
+
+        $preloader = new EntityPreloader($entityManager);
+        $preloader->preload([$restaurant], 'products');
+        $preloader->preload([$menuTaxon], 'children');
+        $children = $preloader->preload($menuTaxon->getChildren()->toArray(), 'taxonProducts');
+        $preloader->preload($children, 'product');
 
         // Handle deletion
         $menuForm = $this->createForm(MenuTaxonType::class, $menuTaxon);
