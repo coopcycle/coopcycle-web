@@ -9,6 +9,8 @@ export const setMenuSections = createAction('MENU_EDITOR/SET_MENU_SECTIONS');
 export const openModal = createAction('MENU_EDITOR/OPEN_MODAL');
 export const closeModal = createAction('MENU_EDITOR/CLOSE_MODAL');
 
+import { selectMenuSections } from './selectors'
+
 export function fetchProducts(restaurant) {
   return async function(dispatch, getState) {
     try {
@@ -23,9 +25,9 @@ export function fetchProducts(restaurant) {
 export function removeProductFromSection(productId) {
   return async function(dispatch, getState) {
 
-    const { menu } = getState();
+    const sections = selectMenuSections(getState())
 
-    const section = _.find(menu.hasMenuSection, (s) => _.findIndex(s.hasMenuItem, (i) => i['@id'] === productId) !== -1);
+    const section = _.find(sections, (s) => _.findIndex(s.hasMenuItem, (i) => i['@id'] === productId) !== -1);
 
     if (section) {
 
@@ -39,9 +41,9 @@ export function removeProductFromSection(productId) {
 export function setSectionProducts(sectionId, products) {
   return async function(dispatch, getState) {
 
-    const { menu } = getState();
+    const sections = selectMenuSections(getState())
 
-    const section = _.find(menu.hasMenuSection, (s) => s['@id'] === sectionId);
+    const section = _.find(sections, (s) => s['@id'] === sectionId);
 
     if (section) {
       dispatch(updateSectionProducts({
@@ -69,10 +71,9 @@ export function setSectionProducts(sectionId, products) {
 export function moveProductToSection(product, index, sectionId) {
   return async function(dispatch, getState) {
 
-    const { menu } = getState();
+    const sections = selectMenuSections(getState())
 
-    const section = _.find(menu.hasMenuSection, (s) => s['@id'] === sectionId);
-
+    const section = _.find(sections, (s) => s['@id'] === sectionId);
     dispatch(removeProductFromSection(product['@id']));
 
     const newProducts = Array.from(section.hasMenuItem);
@@ -109,7 +110,9 @@ export function addSection(name) {
 
     const { menu } = getState();
 
-    const newSections = Array.from(menu.hasMenuSection);
+    const sections = selectMenuSections(getState())
+
+    const newSections = Array.from(sections);
     newSections.push({
       name,
       hasMenuItem: [],
@@ -138,9 +141,9 @@ export function addSection(name) {
 export function deleteSection(section) {
   return async function(dispatch, getState) {
 
-    const { menu } = getState();
+    const sections = selectMenuSections(getState())
 
-    const sectionIndex = menu.hasMenuSection.findIndex((s) => s['@id'] === section['@id']);
+    const sectionIndex = sections.findIndex((s) => s['@id'] === section['@id']);
 
     const newSections = Array.from(menu.hasMenuSection);
     newSections.splice(sectionIndex, 1);
@@ -166,10 +169,10 @@ export function deleteSection(section) {
 export function setSectionName(sectionId, name) {
   return async function(dispatch, getState) {
 
-    const { menu } = getState();
+    const sections = selectMenuSections(getState())
 
-    const sectionIndex = menu.hasMenuSection.findIndex((s) => s['@id'] === sectionId);
-    const section = _.find(menu.hasMenuSection, (s) => s['@id'] === sectionId);
+    const sectionIndex = sections.findIndex((s) => s['@id'] === sectionId);
+    const section = _.find(sections, (s) => s['@id'] === sectionId);
 
     if (section.name === name) {
       return;
@@ -180,7 +183,7 @@ export function setSectionName(sectionId, name) {
       name
     }
 
-    const newSections = Array.from(menu.hasMenuSection);
+    const newSections = Array.from(sections);
     newSections.splice(sectionIndex, 1, newSection);
 
     dispatch(setMenuSections(newSections));

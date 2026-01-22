@@ -10,7 +10,7 @@ export const selectMenuName = (state) => state.menu.name
 
 export const selectMenuSections = createSelector(
   selectMenu,
-  (menu) => menu.hasMenuSection
+  (menu) => menu.hasMenuSection || []
 )
 
 const selectMenuProducts = createSelector(
