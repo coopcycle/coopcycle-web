@@ -26,6 +26,10 @@ use Sylius\Component\Taxonomy\Model\Taxon as BaseTaxon;
         new Get(
             uriTemplate: '/restaurants/menus/{id}'
         ),
+        new Delete(
+            uriTemplate: '/restaurants/menus/{id}',
+            security: 'is_granted("edit", object)'
+        ),
         new Put(
             uriTemplate: '/restaurants/menus/{id}',
             processor: RestaurantMenuProcessor::class,

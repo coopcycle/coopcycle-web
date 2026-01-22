@@ -107,3 +107,4 @@ fos_js_routing:
         - _api_/deliveries/pod_export_post
         - _api_/addresses/{id}{._format}_delete
         - _api_/restaurants/{id}/products_get_collection
+        - _api_/restaurants/menus/{id}_delete

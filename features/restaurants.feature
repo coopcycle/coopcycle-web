@@ -1079,7 +1079,50 @@ Feature: Manage restaurants
       }
       """
 
-  @debug
+  Scenario: Delete menu
+    Given the fixtures files are loaded:
+      | sylius_locales.yml  |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the restaurant with id "1" has menu:
+      | section | product   |
+      | Pizzas  | PIZZA     |
+      | Burger  | HAMBURGER |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_RESTAURANT"
+    And the restaurant with id "1" belongs to user "bob"
+    And the user "bob" is authenticated
+    And I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "POST" request to "/api/restaurants/1/menus" with body:
+      """
+      {
+        "name": "Other"
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Menu",
+        "@id":"/api/restaurants/menus/4",
+        "@type":"http://schema.org/Menu",
+        "name":"Other",
+        "identifier":"@string@"
+      }
+      """
+    And I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "DELETE" request to "/api/restaurants/menus/4"
+    Then the response status code should be 204
+
   Scenario: Edit menu sections
     Given the fixtures files are loaded:
       | sylius_locales.yml  |

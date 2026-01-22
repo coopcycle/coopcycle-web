@@ -28,7 +28,6 @@ use AppBundle\Entity\Sylius\TaxCategory;
 use AppBundle\Entity\Sylius\TaxonRepository;
 use AppBundle\Form\ApiAppType;
 use AppBundle\Form\ClosingRuleType;
-use AppBundle\Form\MenuTaxonType;
 use AppBundle\Form\MenuType;
 use AppBundle\Form\PreparationTimeRulesType;
 use AppBundle\Form\ProductOptionType;
@@ -446,11 +445,6 @@ trait RestaurantTrait
         $routes = $request->attributes->get('routes');
         $menus = $restaurant->getTaxons();
 
-        $forms = [];
-        foreach ($menus as $menu) {
-            $forms[$menu->getId()] = $this->createForm(MenuTaxonType::class, $menu)->createView();
-        }
-
         $form = $this->createFormBuilder()
             ->add('name', TextType::class)
             ->getForm();
@@ -478,13 +472,12 @@ trait RestaurantTrait
             ]);
         }
 
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
+        return $this->render($request->attributes->get('template'), $this->auth($this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'menus' => $menus,
             'restaurant' => $restaurant,
-            'forms' => $forms,
             'form' => $form->createView(),
-        ], $routes));
+        ], $routes)));
     }
 
     public function activateRestaurantMenuTaxonAction($restaurantId, $menuId, Request $request,
