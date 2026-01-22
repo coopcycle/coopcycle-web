@@ -6,12 +6,15 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\Doctrine\Orm\State\ItemProvider;
 use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Entity\LocalBusiness;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+
 
 class UpdateRestaurantProcessor implements ProcessorInterface
 {
     public function __construct(
         private readonly ItemProvider $provider,
         private readonly ProcessorInterface $persistProcessor,
+        private readonly AuthorizationCheckerInterface $authorizationChecker
     )
     {
     }
@@ -21,10 +24,10 @@ class UpdateRestaurantProcessor implements ProcessorInterface
         /** @var LocalBusiness */
         $restaurant = $this->provider->provide($operation, $uriVariables, $context);
 
-        // FIXME
-        // Check if menu belongs to restaurant
         if (is_object($data->hasMenu)) {
-            $restaurant->setMenuTaxon($data->hasMenu);
+            if ($this->authorizationChecker->isGranted('edit', $data->hasMenu)) {
+                $restaurant->setMenuTaxon($data->hasMenu);
+            }
         }
 
         if (!empty($data->state)) {
