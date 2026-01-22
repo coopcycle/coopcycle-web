@@ -44,6 +44,10 @@ class RestaurantMenuVoter extends Voter
             return false;
         }
 
+        if ($this->authorizationChecker->isGranted('ROLE_ADMIN')) {
+            return true;
+        }
+
         if (!$this->authorizationChecker->isGranted('ROLE_RESTAURANT')) {
             return false;
         }
