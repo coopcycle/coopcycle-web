@@ -1319,8 +1319,11 @@ Feature: Manage restaurants
         ]
       }
       """
+    Given I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "DELETE" request to "/api/restaurants/menus/1/sections/4"
+    Then the response status code should be 204
 
-  @debug
   Scenario: Reorder menu sections
     Given the fixtures files are loaded:
       | sylius_locales.yml  |

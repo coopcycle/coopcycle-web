@@ -1,5 +1,8 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { createRoot } from 'react-dom/client'
+import { createRoot } from 'react-dom/client';
+import Modal from 'react-modal';
+import { Formik } from 'formik';
+import { useTranslation } from 'react-i18next';
 
 // https://blog.logrocket.com/implement-pragmatic-drag-drop-library-guide/
 import {
@@ -16,14 +19,26 @@ import _ from 'lodash';
 import { Provider, useDispatch, useSelector } from 'react-redux'
 
 import { createStoreFromPreloadedState } from './menu-editor/store'
-import { fetchProducts, removeProductFromSection, setSectionProducts, moveProductToSection } from './menu-editor/actions'
-import { selectProducts, selectMenuSections } from './menu-editor/selectors'
+import {
+  fetchProducts,
+  removeProductFromSection,
+  setSectionProducts,
+  moveProductToSection,
+  updateSectionsOrder,
+  openModal,
+  closeModal,
+  addSection,
+  deleteSection,
+} from './menu-editor/actions'
+import { selectProducts, selectMenuSections, selectIsModalOpen } from './menu-editor/selectors'
 
 import './menu-editor.scss'
 
 const httpClient = new window._auth.httpClient()
 
-const Section = ({ section, index }) => {
+const Section = ({ section }) => {
+
+  const dispatch = useDispatch();
 
   const dropTargetRef = useRef(null);
   const draggableRef = useRef(null);
@@ -31,6 +46,9 @@ const Section = ({ section, index }) => {
 
   const [ isDraggedOver, setIsDraggedOver ] = useState(false);
   const [ isDraggeding, setIsDragging ] = useState(false);
+
+  // State to track the closest edge during drag over
+  const [closestEdge, setClosestEdge] = useState(null);
 
   useEffect(() => {
 
@@ -45,8 +63,41 @@ const Section = ({ section, index }) => {
         onDragEnter: () => setIsDraggedOver(true),
         onDragLeave: () => setIsDraggedOver(false),
         onDrop: () => setIsDraggedOver(false),
-        getData: () => ({ sectionId: section['@id'] }),
+        // getData: () => ({ sectionId: section['@id'] }),
+        getData: ({ input, element }) => {
+          // To attach card data to a drop target
+          const data = { type: "section", sectionId: section['@id'] };
+
+          // Attaches the closest edge (top or bottom) to the data object
+          // This data will be used to determine where to drop card relative
+          // to the target card.
+          return attachClosestEdge(data, {
+            input,
+            element,
+            allowedEdges: ["top", "bottom"],
+          });
+        },
         getIsSticky: () => true,
+        onDragEnter: (args) => {
+          // Update the closest edge when a draggable item enters the drop zone
+          if (args.source.data.type === 'section' && args.source.data.sectionId !== section['@id']) {
+            setClosestEdge(extractClosestEdge(args.self.data));
+          }
+        },
+        onDrag: (args) => {
+          // Continuously update the closest edge while dragging over the drop zone
+          if (args.source.data.type === 'section' && args.source.data.sectionId !== section['@id']) {
+            setClosestEdge(extractClosestEdge(args.self.data));
+          }
+        },
+        onDragLeave: () => {
+          // Reset the closest edge when the draggable item leaves the drop zone
+          setClosestEdge(null);
+        },
+        onDrop: () => {
+          // Reset the closest edge when the draggable item is dropped
+          setClosestEdge(null);
+        },
       }),
       draggable({
         element: draggableEl,
@@ -67,7 +118,10 @@ const Section = ({ section, index }) => {
           <span className="mr-2">{ section.name }</span>
           <i className="fa fa-pencil" aria-hidden="true"></i>
         </a>
-        <a className="pull-right" href="#">
+        <a className="pull-right" href="#" onClick={ (e) => {
+          e.preventDefault();
+          dispatch(deleteSection(section));
+        }}>
           <i className="fa fa-close"></i>
         </a>
       </h4>
@@ -76,12 +130,15 @@ const Section = ({ section, index }) => {
           <Product key={ product['@id'] } product={ product } />
         )) }
       </div>
+      {/* render the DropIndicator if there's a closest edge */}
+      {closestEdge && <DropIndicator edge={closestEdge} gap="8px" />}
     </div>
   )
 }
 
 const LeftPanel = () => {
 
+  const dispatch = useDispatch();
   const sections = useSelector(selectMenuSections)
 
   return (
@@ -91,7 +148,7 @@ const LeftPanel = () => {
       ))}
       <div className="d-flex flex-row align-items-center justify-content-between border p-4">
         <strong>Add child</strong>
-        <button type="button" className="btn btn-success" data-toggle="modal" data-target="#newChildTaxonModal">
+        <button type="button" className="btn btn-success" onClick={ () => dispatch(openModal()) }>
           <i className="fa fa-plus mr-2"></i><span>Add</span>
         </button>
       </div>
@@ -109,7 +166,6 @@ const RightPanel = () => {
   useEffect(() => {
     const el = ref.current;
 
-    // Set up the drop target for the column element
     return dropTargetForElements({
       element: el,
       onDragStart: () => setIsDraggedOver(true),
@@ -155,7 +211,7 @@ const Product = ({ product }) => {
         onDragStart: () => setIsDragging(true),
         onDrop: () => setIsDragging(false),
       }),
-      // Add dropTargetForElements to make the card a drop target
+      // Add dropTargetForElements to make the product a drop target
       dropTargetForElements({
         element: el,
         getData: ({ input, element }) => {
@@ -222,7 +278,8 @@ const DropIndicator = ({ edge, gap }) => {
 
 const MenuEditor = ({ restaurant }) => {
 
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   useEffect(() => {
     dispatch(fetchProducts(restaurant));
@@ -230,6 +287,21 @@ const MenuEditor = ({ restaurant }) => {
 
   const sections = useSelector(selectMenuSections)
   const products = useSelector(selectProducts)
+  const isModalOpen = useSelector(selectIsModalOpen);
+
+  const reorderSections = useCallback(
+    ({ startIndex, finishIndex }) => {
+
+      const updatedItems = reorder({
+        list: sections,
+        startIndex,
+        finishIndex,
+      });
+
+      dispatch(updateSectionsOrder(updatedItems))
+    },
+    [sections]
+  );
 
   const reorderProduct = useCallback(
     ({ sectionId, startIndex, finishIndex }) => {
@@ -254,8 +326,6 @@ const MenuEditor = ({ restaurant }) => {
       destinationSectionId,
       movedProductIndexInDestinationSection,
     }) => {
-
-      console.log('moveProduct', sourceSectionId, movedProductIndexInSourceSection, destinationSectionId)
 
       const sourceItems = sourceSectionId === 'products' ? products : _.find(sections, (s) => s['@id'] === sourceSectionId).hasMenuItem;
       const productToMove = sourceItems[movedProductIndexInSourceSection];
@@ -406,6 +476,49 @@ const MenuEditor = ({ restaurant }) => {
         });
       }
     }
+
+    if (source.data.type === "section") {
+
+      const draggedSectionId = source.data.sectionId;
+
+      if (location.current.dropTargets.length === 2) {
+        // Destructure and extract the destination card and column data from the drop targets
+        const [destinationProductRecord, destinationSectionRecord] = location.current.dropTargets;
+
+        // Extract the destination column ID from the destination column data
+        const destinationSectionId = destinationSectionRecord.data.sectionId;
+
+        const draggedSectionIndex = sections.findIndex(
+          (section) => section['@id'] === draggedSectionId
+        );
+
+        // Find the index of the target card within the destination column's cards
+        const indexOfTarget = sections.findIndex(
+          (section) => section['@id'] === destinationSectionRecord.data.sectionId
+        );
+
+        // Determine the closest edge of the target card: top or bottom
+        const closestEdgeOfTarget = extractClosestEdge(
+          destinationSectionRecord.data
+        );
+
+        const destinationIndex = getReorderDestinationIndex({
+          startIndex: draggedSectionIndex,
+          indexOfTarget,
+          closestEdgeOfTarget,
+          axis: "vertical",
+        });
+
+        if (draggedSectionIndex !== destinationIndex) {
+          reorderSections({
+            startIndex: draggedSectionIndex,
+            finishIndex: destinationIndex,
+          });
+        }
+
+      }
+    }
+
   }, [ sections, products ]);
 
   // setup the monitor
@@ -420,6 +533,51 @@ const MenuEditor = ({ restaurant }) => {
       {/* TODO Add form input for menu name */}
       <LeftPanel />
       <RightPanel />
+      <Modal
+        appElement={ document.getElementById('menu-editor') }
+        isOpen={ isModalOpen }
+        onRequestClose={ () => dispatch(closeModal()) }
+        shouldCloseOnOverlayClick={ true }
+        className="ReactModal__Content--adhoc-order-item"
+        overlayClassName="ReactModal__Overlay--adhoc-order-item">
+        <Formik
+          initialValues={{ name: '' }}
+          // validate={ this._validate }
+          // TODO Add validation
+          onSubmit={ ({ name }) => dispatch(addSection(name)) }
+          validateOnBlur={ false }
+          validateOnChange={ false }>
+          {({
+            values,
+            errors,
+            touched,
+            handleSubmit,
+            handleChange,
+            handleBlur,
+          }) => (
+          <form onSubmit={ handleSubmit }>
+            <div className="modal-header">
+              <button type="button" className="close" onClick={ () => dispatch(closeModal()) } aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 className="modal-title" id="user-modal-label">{ t('ADMIN_DASHBOARD_NAV_EXPORT') }</h4>
+            </div>
+            <div className="modal-body">
+              <div className={ errors.name && touched.name ? 'form-group has-error' : 'form-group' }>
+                <label className="control-label" htmlFor="name">{ t('ADHOC_ORDER_ITEM_NAME_LABEL') }</label>
+                <input type="text" name="name" className="form-control" autoComplete="off"
+                  onChange={ handleChange }
+                  onBlur={ handleBlur }
+                  value={ values.name } />
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button type="button" className="btn btn-default"
+                onClick={ () => dispatch(closeModal()) }>{ t('ADMIN_DASHBOARD_CANCEL') }</button>
+              <button type="submit" className="btn btn-primary">{ t('ADMIN_DASHBOARD_NAV_EXPORT') }</button>
+            </div>
+          </form>
+        )}
+        </Formik>
+      </Modal>
     </div>
   )
 }
@@ -437,7 +595,6 @@ const store = createStoreFromPreloadedState(preloadedState);
 createRoot(container).render(
   <Provider store={ store }>
     <MenuEditor
-      restaurant={ JSON.parse(container.dataset.restaurant) }
-      defaultMenu={ JSON.parse(container.dataset.menu) } />
+      restaurant={ JSON.parse(container.dataset.restaurant) } />
   </Provider>
 )

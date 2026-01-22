@@ -5,6 +5,9 @@ const httpClient = new window._auth.httpClient();
 
 export const fetchProductsSuccess = createAction('MENU_EDITOR/FETCH_PRODUCTS_SUCCESS');
 export const updateSectionProducts = createAction('MENU_EDITOR/UPDATE_SECTION_PRODUCTS');
+export const setMenuSections = createAction('MENU_EDITOR/SET_MENU_SECTIONS');
+export const openModal = createAction('MENU_EDITOR/OPEN_MODAL');
+export const closeModal = createAction('MENU_EDITOR/CLOSE_MODAL');
 
 export function fetchProducts(restaurant) {
   return async function(dispatch, getState) {
@@ -25,8 +28,6 @@ export function removeProductFromSection(productId) {
     const section = _.find(menu.hasMenuSection, (s) => _.findIndex(s.hasMenuItem, (i) => i['@id'] === productId) !== -1);
 
     if (section) {
-
-      console.log('removeProductFromSection', productId, section['@id'])
 
       const itemsWithoutProduct = section.hasMenuItem.filter((i) => i['@id'] !== productId)
 
@@ -70,8 +71,6 @@ export function moveProductToSection(product, index, sectionId) {
 
     const { menu } = getState();
 
-    console.log('moveProductToSection', product, index, sectionId)
-
     const section = _.find(menu.hasMenuSection, (s) => s['@id'] === sectionId);
 
     dispatch(removeProductFromSection(product['@id']));
@@ -80,5 +79,86 @@ export function moveProductToSection(product, index, sectionId) {
     newProducts.splice(index, 0, product);
 
     dispatch(setSectionProducts(sectionId, newProducts))
+  }
+}
+
+export function updateSectionsOrder(sections) {
+  return async function(dispatch, getState) {
+    dispatch(setMenuSections(sections));
+
+    try {
+
+      const { menu } = getState();
+
+      const { response, error } = await httpClient.put(menu['@id'], {
+        sections: sections.map((s) => s['@id'])
+      });
+
+      if (error) {
+        console.error(error);
+      }
+
+    } catch (e) {
+      console.error(e);
+    }
+  }
+}
+
+export function addSection(name) {
+  return async function(dispatch, getState) {
+
+    const { menu } = getState();
+
+    const newSections = Array.from(menu.hasMenuSection);
+    newSections.push({
+      name,
+      hasMenuItem: [],
+    })
+
+    try {
+
+      const { response, error } = await httpClient.post(menu['@id'] + '/sections', {
+        name
+      });
+
+      if (error) {
+        console.error(error);
+      } else {
+        dispatch(setMenuSections(response.hasMenuSection));
+      }
+
+      dispatch(closeModal());
+
+    } catch (e) {
+      console.error(e);
+    }
+  }
+}
+
+export function deleteSection(section) {
+  return async function(dispatch, getState) {
+
+    const { menu } = getState();
+
+    const sectionIndex = menu.hasMenuSection.findIndex((s) => s['@id'] === section['@id']);
+
+    const newSections = Array.from(menu.hasMenuSection);
+    newSections.splice(sectionIndex, 1);
+
+    dispatch(setMenuSections(newSections));
+
+    try {
+
+      const { response, error } = await httpClient.delete(section['@id'], {
+        name
+      });
+
+      if (error) {
+        console.error(error);
+      }
+
+    } catch (e) {
+      console.error(e);
+    }
   }
 }

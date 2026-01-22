@@ -31,3 +31,5 @@ export const selectProducts = createSelector(
   selectAllProducts,
   (menuProducts, allProducts) => _.filter(allProducts, (p) => !menuProducts.includes(p['@id']))
 )
+
+export const selectIsModalOpen = (state) => state.menu.isModalOpen;

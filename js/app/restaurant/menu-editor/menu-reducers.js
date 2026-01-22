@@ -1,10 +1,14 @@
 const initialState = {
   name: '',
   hasMenuSection: [],
+  isModalOpen: false,
 }
 
 import {
-  updateSectionProducts
+  updateSectionProducts,
+  setMenuSections,
+  openModal,
+  closeModal,
 } from './actions'
 
 export default (state = initialState, action) => {
@@ -28,6 +32,25 @@ export default (state = initialState, action) => {
             ...state,
             hasMenuSection: newSections
         }
+
+    case setMenuSections.type:
+
+      return {
+        ...state,
+        hasMenuSection: Array.from(action.payload),
+      }
+
+    case openModal.type:
+      return {
+        ...state,
+        isModalOpen: true,
+      }
+
+    case closeModal.type:
+      return {
+        ...state,
+        isModalOpen: false,
+      }
   }
 
   return state

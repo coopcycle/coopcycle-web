@@ -9,6 +9,7 @@ use AppBundle\Api\State\RestaurantMenuSectionProvider;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
@@ -51,6 +52,12 @@ use Sylius\Component\Taxonomy\Model\Taxon as BaseTaxon;
             // TODO Add security
         ),
         new Get(
+            uriTemplate: '/restaurants/menus/{id}/sections/{sectionId}',
+            provider: RestaurantMenuSectionProvider::class,
+            normalizationContext: ['groups' => ['restaurant_menu']],
+            denormalizationContext: ['groups' => ['restaurant_menu']]
+        ),
+        new Delete(
             uriTemplate: '/restaurants/menus/{id}/sections/{sectionId}',
             provider: RestaurantMenuSectionProvider::class,
             normalizationContext: ['groups' => ['restaurant_menu']],

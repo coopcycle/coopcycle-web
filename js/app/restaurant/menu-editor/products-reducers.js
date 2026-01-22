@@ -15,17 +15,6 @@ export default (state = initialState, action) => {
         ...state,
         products: action.payload,
       };
-
-    /*
-    case updateSectionProducts.type:
-
-      const { products } = action.payload
-
-      return {
-        ...state,
-        products,
-      };
-    */
   }
 
   return state
