@@ -14,6 +14,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Resource\Factory\FactoryInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class RestaurantMenuSectionProcessor implements ProcessorInterface
 {
@@ -21,7 +23,8 @@ class RestaurantMenuSectionProcessor implements ProcessorInterface
         private readonly RestaurantMenuSectionProvider $sectionProvider,
         private readonly FactoryInterface $taxonFactory,
         private readonly TaxonRepository $taxonRepository,
-        private readonly EntityManagerInterface $entityManager)
+        private readonly EntityManagerInterface $entityManager,
+        private readonly EventDispatcherInterface $eventDispatcher)
     {}
 
     /**
@@ -77,28 +80,26 @@ class RestaurantMenuSectionProcessor implements ProcessorInterface
                 $section->setDescription($data->description);
             }
 
-            // $this->taxonRepository->reorder($section, 'position');
+        } else {
 
-            $this->entityManager->flush();
+            $section = $this->taxonFactory->createNew();
 
-            return $menu;
+            $uuid = Uuid::uuid1()->toString();
+
+            $section->setCode($uuid);
+            $section->setSlug($uuid);
+            $section->setName($data->name);
+            $section->setDescription($data->description);
+
+            $menu->addChild($section);
         }
 
-        $section = $this->taxonFactory->createNew();
-
-        $uuid = Uuid::uuid1()->toString();
-
-        $section->setCode($uuid);
-        $section->setSlug($uuid);
-        $section->setName($data->name);
-        $section->setDescription($data->description);
-
-        $menu->addChild($section);
-
         $this->entityManager->flush();
+
+        // Dispatch event to clear Twig cache
+        $restaurant = $this->taxonRepository->getRestaurantForMenu($menu);
+        $this->eventDispatcher->dispatch(new GenericEvent($restaurant), 'catalog.updated');
 
         return $menu;
     }
 }
-
-

@@ -15,6 +15,8 @@ use Doctrine\ORM\Mapping;
 use Psr\Log\LoggerInterface;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Resource\Factory\FactoryInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class RestaurantMenuProcessor implements ProcessorInterface
 {
@@ -25,6 +27,7 @@ class RestaurantMenuProcessor implements ProcessorInterface
         private readonly TaxonRepository $taxonRepository,
         private readonly EntityManagerInterface $entityManager,
         private readonly IriConverterInterface $iriConverter,
+        private readonly EventDispatcherInterface $eventDispatcher,
         private readonly LoggerInterface $logger)
     {}
 
@@ -76,6 +79,11 @@ class RestaurantMenuProcessor implements ProcessorInterface
             // so that object is fully reloaded from database
             $this->entityManager->clear();
 
+            $restaurant = $this->taxonRepository->getRestaurantForMenu($menu);
+
+            // Dispatch event to clear Twig cache
+            $this->eventDispatcher->dispatch(new GenericEvent($restaurant), 'catalog.updated');
+
             return $this->taxonRepository->find($uriVariables['id']);
         }
 
@@ -94,11 +102,9 @@ class RestaurantMenuProcessor implements ProcessorInterface
 
         $this->persistProcessor->process($restaurant, $operation, $uriVariables, $context);
 
-        // TODO Dispatch event to clear Twig cache
-        // $dispatcher->dispatch(new GenericEvent($restaurant), 'catalog.updated');
+        // Dispatch event to clear Twig cache
+        $this->eventDispatcher->dispatch(new GenericEvent($restaurant), 'catalog.updated');
 
         return $menuTaxon;
     }
 }
-
-
