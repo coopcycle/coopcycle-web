@@ -228,15 +228,6 @@ admin_restaurant_menu_taxon_activate:
             menu_taxons: admin_restaurant_menu_taxons
     methods: [ POST ]
 
-admin_delete_restaurant_menu_taxon_child:
-    path: /admin/restaurants/{restaurantId}/menus/{menuId}/sections/{sectionId}/delete
-    defaults:
-        _controller: AppBundle\Controller\AdminController::deleteRestaurantMenuTaxonChildAction
-        layout: 'admin.html.twig'
-        routes:
-            menu_taxon: admin_restaurant_menu_taxon
-    methods: [ POST ]
-
 admin_restaurant_products:
     path: /admin/restaurants/{id}/products
     defaults:
