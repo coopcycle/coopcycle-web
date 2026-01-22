@@ -5,14 +5,11 @@ namespace AppBundle\Api\State;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
 use AppBundle\Entity\Sylius\TaxonRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
 
 final class RestaurantMenuSectionProvider implements ProviderInterface
 {
     public function __construct(
-        private readonly TaxonRepository $taxonRepository,
-        private readonly EntityManagerInterface $entityManager)
+        private readonly TaxonRepository $taxonRepository)
     {}
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null

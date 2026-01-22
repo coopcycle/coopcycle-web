@@ -20,7 +20,6 @@ class RestaurantMenuProcessor implements ProcessorInterface
 {
     public function __construct(
         private readonly ItemProvider $provider,
-        private readonly RestaurantMenuSectionProvider $sectionProvider,
         private readonly ProcessorInterface $persistProcessor,
         private readonly FactoryInterface $taxonFactory,
         private readonly TaxonRepository $taxonRepository,

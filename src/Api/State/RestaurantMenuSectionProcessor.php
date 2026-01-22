@@ -14,13 +14,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 use Sylius\Component\Resource\Factory\FactoryInterface;
-// use Sylius\Component\Taxonomy\Model\Taxon;
 
 class RestaurantMenuSectionProcessor implements ProcessorInterface
 {
     public function __construct(
         private readonly RestaurantMenuSectionProvider $sectionProvider,
-        private readonly ProcessorInterface $persistProcessor,
         private readonly FactoryInterface $taxonFactory,
         private readonly TaxonRepository $taxonRepository,
         private readonly EntityManagerInterface $entityManager)
@@ -36,6 +34,7 @@ class RestaurantMenuSectionProcessor implements ProcessorInterface
 
         if ($operation instanceof Put) {
 
+            /** @var Taxon */
             $section = $this->sectionProvider->provide($operation, $uriVariables, $context);
 
             // Remove the product from existing sections
@@ -49,7 +48,9 @@ class RestaurantMenuSectionProcessor implements ProcessorInterface
 
             if (!empty($productTaxonsToRemove)) {
                 foreach ($productTaxonsToRemove as $productTaxon) {
-                    $productTaxon->getTaxon()->removeProduct($productTaxon->getProduct());
+                    /** @var Taxon */
+                    $taxon = $productTaxon->getTaxon();
+                    $taxon->removeProduct($productTaxon->getProduct());
                     $this->entityManager->remove($productTaxon);
                 }
                 $this->entityManager->flush();
