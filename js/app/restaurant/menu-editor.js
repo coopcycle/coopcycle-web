@@ -353,7 +353,6 @@ const SectionModal = () => {
       <Form.Item
         name="description"
         label={t('MENU_EDITOR.SECTION_DESCRIPTION_LABEL')}
-        rules={[{ required: true }]}
       >
         <Input />
       </Form.Item>
