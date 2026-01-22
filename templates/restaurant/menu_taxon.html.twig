@@ -1,9 +1,5 @@
 {% extends 'restaurant/layout.html.twig' %}
 
-{% form_theme form 'bootstrap_3_layout.html.twig' %}
-{% form_theme menu_editor_form 'form/menu_editor.html.twig' %}
-{% form_theme menu_editor_form.name 'bootstrap_3_layout.html.twig' %}
-
 {% block breadcrumb %}
   <li><a href="{{ path(restaurants_route) }}">{% trans %}adminDashboard.shops.title{% endtrans %}</a></li>
   <li><a href="{{ path(restaurant_route, { id: restaurant.id }) }}">{{ restaurant.name }}</a></li>
@@ -21,7 +17,6 @@
 
     <div id="menu-editor"
       data-restaurant="{{ restaurant|coopcycle_normalize('AppBundle\\Entity\\LocalBusiness', ['restaurant'], 'jsonld')|json_encode|e('html_attr') }}"
-      {# data-menu="{{ path('_api_/restaurants/menus/{id}_get', { id: menu.id }) }}" #}
       data-menu="{{ menu|coopcycle_normalize('AppBundle\\Entity\\Sylius\\Taxon', ['restaurant', 'restaurant_menu'], 'jsonld')|json_encode|e('html_attr') }}"
     ></div>
 
@@ -38,18 +33,5 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-$('#menu_taxon_save').on('click', function(e) {
-  $('#menu_taxon_childName').removeAttr('required')
-});
-$('[data-delete-taxon-id]').on('click', function(e) {
-  e.preventDefault();
-  $('#delete_section').attr('action', $(this).attr('href'));
-  $('#delete_section').submit();
-})
-setTimeout(function() {
-  $('.flash-messages .alert').fadeOut();
-}, 1000);
-</script>
 {{ encore_entry_script_tags('restaurant-menu-editor') }}
 {% endblock %}
