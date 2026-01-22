@@ -94,6 +94,9 @@ class RestaurantMenuProcessor implements ProcessorInterface
 
         $this->persistProcessor->process($restaurant, $operation, $uriVariables, $context);
 
+        // TODO Dispatch event to clear Twig cache
+        // $dispatcher->dispatch(new GenericEvent($restaurant), 'catalog.updated');
+
         return $menuTaxon;
     }
 }
