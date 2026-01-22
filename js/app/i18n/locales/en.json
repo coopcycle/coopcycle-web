@@ -808,6 +808,12 @@
         "INCIDENTS_NEW_PRICE": "New price",
         "INCIDENTS_SUGGESTED_MODIFICATIONS": "Suggested modifications",
         "INCIDENTS_REFUSE_SUGGESTIONS": "Refuse suggestions",
-        "INCIDENTS_APPLY_SUGGESTIONS": "Apply suggestions"
+        "INCIDENTS_APPLY_SUGGESTIONS": "Apply suggestions",
+        "MENU_EDITOR": {
+            "ADD_SECTION": "Add a section",
+            "PRODUCTS": "Products",
+            "SECTION_NAME_LABEL": "Name",
+            "SECTION_NAME_PLACEHOLDER": "Example: main courses, desserts…"
+        }
       }
 }

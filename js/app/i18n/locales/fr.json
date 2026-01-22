@@ -796,6 +796,12 @@
         "INCIDENTS_REFUSE_SUGGESTIONS": "Refuser les suggestions",
         "INCIDENTS_APPLY_SUGGESTIONS": "Appliquer les suggestions",
         "INCIDENTS_SUGGESTED_CHANGES": "Modifications suggérées",
-        "INCIDENTS_ERROR_LOADING_SUGGESTED_PRICE_CHANGE": "Nous n'avons pas pu calculer le prix avec les modifications suggérées"
+        "INCIDENTS_ERROR_LOADING_SUGGESTED_PRICE_CHANGE": "Nous n'avons pas pu calculer le prix avec les modifications suggérées",
+        "MENU_EDITOR": {
+            "ADD_SECTION": "Ajouter une section",
+            "PRODUCTS": "Produits",
+            "SECTION_NAME_LABEL": "Nom",
+            "SECTION_NAME_PLACEHOLDER": "Exemple : plats, desserts…"
+        }
     }
 }

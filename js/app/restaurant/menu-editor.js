@@ -1,10 +1,8 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
-import Modal from 'react-modal';
-import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 
-import { Typography } from 'antd';
+import { Form, Modal, Typography, Input } from 'antd';
 const { Text } = Typography;
 
 // https://blog.logrocket.com/implement-pragmatic-drag-drop-library-guide/
@@ -143,6 +141,7 @@ const Section = ({ section }) => {
 
 const LeftPanel = () => {
 
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const sections = useSelector(selectMenuSections)
 
@@ -151,10 +150,9 @@ const LeftPanel = () => {
       { sections.map((section, index) => (
         <Section key={`section-${index}`} section={section} index={ index } />
       ))}
-      <div className="d-flex flex-row align-items-center justify-content-between border p-4">
-        <strong>Add child</strong>
+      <div className="d-flex flex-row align-items-center justify-content-end border-top pt-4">
         <button type="button" className="btn btn-success" onClick={ () => dispatch(openModal()) }>
-          <i className="fa fa-plus mr-2"></i><span>Add</span>
+          <i className="fa fa-plus mr-2"></i><span>{t('MENU_EDITOR.ADD_SECTION')}</span>
         </button>
       </div>
     </div>
@@ -293,6 +291,8 @@ const MenuEditor = ({ restaurant }) => {
   const sections = useSelector(selectMenuSections)
   const products = useSelector(selectProducts)
   const isModalOpen = useSelector(selectIsModalOpen);
+
+  const [form] = Form.useForm();
 
   const reorderSections = useCallback(
     ({ startIndex, finishIndex }) => {
@@ -538,50 +538,31 @@ const MenuEditor = ({ restaurant }) => {
       {/* TODO Add form input for menu name */}
       <LeftPanel />
       <RightPanel />
+      { /* https://5x.ant.design/components/form#form-demo-form-in-modal */ }
       <Modal
-        appElement={ document.getElementById('menu-editor') }
-        isOpen={ isModalOpen }
-        onRequestClose={ () => dispatch(closeModal()) }
-        shouldCloseOnOverlayClick={ true }
-        className="ReactModal__Content--adhoc-order-item"
-        overlayClassName="ReactModal__Overlay--adhoc-order-item">
-        <Formik
-          initialValues={{ name: '' }}
-          // validate={ this._validate }
-          // TODO Add validation
-          onSubmit={ ({ name }) => dispatch(addSection(name)) }
-          validateOnBlur={ false }
-          validateOnChange={ false }>
-          {({
-            values,
-            errors,
-            touched,
-            handleSubmit,
-            handleChange,
-            handleBlur,
-          }) => (
-          <form onSubmit={ handleSubmit }>
-            <div className="modal-header">
-              <button type="button" className="close" onClick={ () => dispatch(closeModal()) } aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <h4 className="modal-title" id="user-modal-label">{ t('ADMIN_DASHBOARD_NAV_EXPORT') }</h4>
-            </div>
-            <div className="modal-body">
-              <div className={ errors.name && touched.name ? 'form-group has-error' : 'form-group' }>
-                <label className="control-label" htmlFor="name">{ t('ADHOC_ORDER_ITEM_NAME_LABEL') }</label>
-                <input type="text" name="name" className="form-control" autoComplete="off"
-                  onChange={ handleChange }
-                  onBlur={ handleBlur }
-                  value={ values.name } />
-              </div>
-            </div>
-            <div className="modal-footer">
-              <button type="button" className="btn btn-default"
-                onClick={ () => dispatch(closeModal()) }>{ t('ADMIN_DASHBOARD_CANCEL') }</button>
-              <button type="submit" className="btn btn-primary">{ t('ADMIN_DASHBOARD_NAV_EXPORT') }</button>
-            </div>
-          </form>
-        )}
-        </Formik>
+        open={ isModalOpen }
+        onCancel={ () => dispatch(closeModal()) }
+        okButtonProps={{ autoFocus: true, htmlType: 'submit' }}
+        destroyOnHidden
+        modalRender={(children) => (
+          <Form
+            layout="vertical"
+            form={form}
+            name="section"
+            initialValues={{ name: '' }}
+            clearOnDestroy
+            onFinish={ (values) => dispatch(addSection(values.name)) }
+          >
+            {children}
+          </Form>
+        )}>
+        <Form.Item
+          name="name"
+          label={t('MENU_EDITOR.SECTION_NAME_LABEL')}
+          rules={[{ required: true }]}
+        >
+          <Input placeholder={t('MENU_EDITOR.SECTION_NAME_PLACEHOLDER')} />
+        </Form.Item>
       </Modal>
     </div>
   )
