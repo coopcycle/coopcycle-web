@@ -9,6 +9,12 @@
   &__right {
     padding-left: 15px;
     display: flex;
+
+    // Make the panel "sticky" on scroll
+    // https://stackoverflow.com/questions/44446671/my-position-sticky-element-isnt-sticky-when-using-flexbox
+    position: sticky;
+    top: 10px;
+    align-self: flex-start;
   }
   &__productList {
     flex: 1;

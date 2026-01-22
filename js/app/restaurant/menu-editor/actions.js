@@ -171,6 +171,10 @@ export function setSectionName(sectionId, name) {
     const sectionIndex = menu.hasMenuSection.findIndex((s) => s['@id'] === sectionId);
     const section = _.find(menu.hasMenuSection, (s) => s['@id'] === sectionId);
 
+    if (section.name === name) {
+      return;
+    }
+
     const newSection = {
       ...section,
       name
