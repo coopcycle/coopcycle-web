@@ -813,7 +813,8 @@
             "ADD_SECTION": "Add a section",
             "PRODUCTS": "Products",
             "SECTION_NAME_LABEL": "Name",
-            "SECTION_NAME_PLACEHOLDER": "Example: main courses, desserts…"
+            "SECTION_NAME_PLACEHOLDER": "Example: main courses, desserts…",
+            "SECTION_DESCRIPTION_LABEL": "Description"
         }
       }
 }

@@ -1079,6 +1079,7 @@ Feature: Manage restaurants
       }
       """
 
+  @debug
   Scenario: Edit menu sections
     Given the fixtures files are loaded:
       | sylius_locales.yml  |
@@ -1103,9 +1104,11 @@ Feature: Manage restaurants
     When the user "bob" sends a "POST" request to "/api/restaurants/menus/1/sections" with body:
       """
       {
-        "name": "Salads"
+        "name": "Salads",
+        "description": "Not only for turtles"
       }
       """
+    Then print last response
     Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
@@ -1120,16 +1123,19 @@ Feature: Manage restaurants
             {
               "@id": "/api/restaurants/menus/1/sections/2",
               "name": "Pizzas",
+              "description": null,
               "hasMenuItem": @array@
             },
             {
               "@id": "/api/restaurants/menus/1/sections/3",
               "name": "Burger",
+              "description": null,
               "hasMenuItem": @array@
             },
             {
               "@id": "/api/restaurants/menus/1/sections/4",
               "name": "Salads",
+              "description": "Not only for turtles",
               "hasMenuItem": []
             }
         ]
@@ -1161,16 +1167,19 @@ Feature: Manage restaurants
             {
               "@id": "/api/restaurants/menus/1/sections/2",
               "name": "Pizzas",
+              "description": null,
               "hasMenuItem": @array@
             },
             {
               "@id": "/api/restaurants/menus/1/sections/3",
               "name": "Burger",
+              "description": null,
               "hasMenuItem": @array@
             },
             {
               "@id": "/api/restaurants/menus/1/sections/4",
               "name": "Salads",
+              "description": "Not only for turtles",
               "hasMenuItem": [
                 {
                   "@context": "/api/contexts/Product",
@@ -1225,16 +1234,19 @@ Feature: Manage restaurants
             {
               "@id": "/api/restaurants/menus/1/sections/2",
               "name": "Pizzas",
+              "description": null,
               "hasMenuItem": @array@
             },
             {
               "@id": "/api/restaurants/menus/1/sections/3",
               "name": "Burger",
+              "description": null,
               "hasMenuItem": @array@
             },
             {
               "@id": "/api/restaurants/menus/1/sections/4",
               "name": "Salads",
+              "description": "Not only for turtles",
               "hasMenuItem": [
                 {
                   "@context": "/api/contexts/Product",
@@ -1278,16 +1290,19 @@ Feature: Manage restaurants
             {
               "@id": "/api/restaurants/menus/1/sections/2",
               "name": "Pizzas",
+              "description": null,
               "hasMenuItem": @array@
             },
             {
               "@id": "/api/restaurants/menus/1/sections/3",
               "name": "Burger",
+              "description": null,
               "hasMenuItem": @array@
             },
             {
               "@id": "/api/restaurants/menus/1/sections/4",
               "name": "Salads",
+              "description": "Not only for turtles",
               "hasMenuItem": [
                 {
                   "@context": "/api/contexts/Product",

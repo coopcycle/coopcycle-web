@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { useTranslation } from 'react-i18next';
 
 import { Button, Form, Modal, Typography, Input } from 'antd';
+import { EditOutlined } from '@ant-design/icons';
 const { Text } = Typography;
 
 // https://blog.logrocket.com/implement-pragmatic-drag-drop-library-guide/
@@ -29,11 +30,19 @@ import {
   openModal,
   closeModal,
   addSection,
+  updateSection,
   deleteSection,
-  setSectionName,
   setMenuName,
+  createSectionFlow,
+  editSectionFlow,
 } from './menu-editor/actions'
-import { selectProducts, selectMenuSections, selectIsModalOpen, selectMenuName } from './menu-editor/selectors'
+import {
+  selectProducts,
+  selectMenuSections,
+  selectIsModalOpen,
+  selectMenuName,
+  selectSectionInModal,
+} from './menu-editor/selectors'
 
 import './menu-editor.scss'
 
@@ -116,11 +125,10 @@ const Section = ({ section }) => {
   return (
     <div className="menuEditor__panel mb-4" ref={draggableRef}>
       <h4 className="menuEditor__panel__title">
-        <div className="d-flex">
+        <div className="d-flex align-items-center">
           <i className="fa fa-arrows mr-2" ref={dragHandleRef}></i>
-          <Text editable={{
-            onChange: (value) => dispatch(setSectionName(section['@id'], value))
-          }}>{section.name}</Text>
+          <Text>{section.name}</Text>
+          <Button type="link" icon={<EditOutlined />} onClick={() => dispatch(editSectionFlow(section))}></Button>
         </div>
         <a className="pull-right" href="#" onClick={ (e) => {
           e.preventDefault();
@@ -152,7 +160,7 @@ const LeftPanel = () => {
         <Section key={`section-${index}`} section={section} index={ index } />
       ))}
       <div className="d-flex flex-row align-items-center justify-content-end border-top pt-4">
-        <button type="button" className="btn btn-success" onClick={ () => dispatch(openModal()) }>
+        <button type="button" className="btn btn-success" onClick={ () => dispatch(createSectionFlow()) }>
           <i className="fa fa-plus mr-2"></i><span>{t('MENU_EDITOR.ADD_SECTION')}</span>
         </button>
       </div>
@@ -280,6 +288,79 @@ const DropIndicator = ({ edge, gap }) => {
   return <div className={`drop-indicator ${edgeClass}`} style={style}></div>;
 };
 
+const MenuNameForm = () => {
+
+  const [form] = Form.useForm();
+
+  const dispatch = useDispatch();
+  const menuName = useSelector(selectMenuName);
+
+  return (
+    <Form
+      layout="inline"
+      form={form}
+      initialValues={{ name: menuName }}
+      onFinish={ (values) => dispatch(setMenuName(values.name)) }
+    >
+      <Form.Item label="Name" name="name">
+        <Input />
+      </Form.Item>
+      <Form.Item>
+        <Button type="primary" htmlType="submit">Submit</Button>
+      </Form.Item>
+    </Form>
+  )
+}
+
+const SectionModal = () => {
+
+  const dispatch = useDispatch();
+  const { t } = useTranslation();
+  const [form] = Form.useForm();
+
+  const isModalOpen = useSelector(selectIsModalOpen);
+  const section = useSelector(selectSectionInModal)
+
+  const isNewSection = !Object.prototype.hasOwnProperty.call(section, '@id')
+
+  // https://5x.ant.design/components/form#form-demo-form-in-modal
+  return (
+    <Modal
+      open={ isModalOpen }
+      onCancel={ () => dispatch(closeModal()) }
+      okButtonProps={{ autoFocus: true, htmlType: 'submit' }}
+      destroyOnHidden
+      modalRender={(children) => (
+        <Form
+          layout="vertical"
+          form={form}
+          name="section"
+          initialValues={section}
+          clearOnDestroy
+          onFinish={ (values) => dispatch(isNewSection ? addSection(values.name, values.description) : updateSection(section['@id'], values.name, values.description)) }
+        >
+          {children}
+        </Form>
+      )}>
+      <Form.Item
+        name="name"
+        label={t('MENU_EDITOR.SECTION_NAME_LABEL')}
+        rules={[{ required: true }]}
+      >
+        <Input placeholder={t('MENU_EDITOR.SECTION_NAME_PLACEHOLDER')} />
+      </Form.Item>
+
+      <Form.Item
+        name="description"
+        label={t('MENU_EDITOR.SECTION_DESCRIPTION_LABEL')}
+        rules={[{ required: true }]}
+      >
+        <Input />
+      </Form.Item>
+    </Modal>
+  )
+}
+
 const MenuEditor = ({ restaurant }) => {
 
   const dispatch = useDispatch();
@@ -291,11 +372,6 @@ const MenuEditor = ({ restaurant }) => {
 
   const sections = useSelector(selectMenuSections)
   const products = useSelector(selectProducts)
-  const isModalOpen = useSelector(selectIsModalOpen);
-  const menuName = useSelector(selectMenuName);
-
-  const [sectionForm] = Form.useForm();
-  const [menuForm] = Form.useForm();
 
   const reorderSections = useCallback(
     ({ startIndex, finishIndex }) => {
@@ -538,49 +614,12 @@ const MenuEditor = ({ restaurant }) => {
 
   return (
     <>
-      <Form
-        layout="inline"
-        form={menuForm}
-        initialValues={{ name: menuName }}
-        onFinish={ (values) => dispatch(setMenuName(values.name)) }
-      >
-        <Form.Item label="Name" name="name">
-          <Input />
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit">Submit</Button>
-        </Form.Item>
-      </Form>
+      <MenuNameForm />
       <hr />
       <div className="menuEditor mb-4">
         <LeftPanel />
         <RightPanel />
-        { /* https://5x.ant.design/components/form#form-demo-form-in-modal */ }
-        <Modal
-          open={ isModalOpen }
-          onCancel={ () => dispatch(closeModal()) }
-          okButtonProps={{ autoFocus: true, htmlType: 'submit' }}
-          destroyOnHidden
-          modalRender={(children) => (
-            <Form
-              layout="vertical"
-              form={sectionForm}
-              name="section"
-              initialValues={{ name: '' }}
-              clearOnDestroy
-              onFinish={ (values) => dispatch(addSection(values.name)) }
-            >
-              {children}
-            </Form>
-          )}>
-          <Form.Item
-            name="name"
-            label={t('MENU_EDITOR.SECTION_NAME_LABEL')}
-            rules={[{ required: true }]}
-          >
-            <Input placeholder={t('MENU_EDITOR.SECTION_NAME_PLACEHOLDER')} />
-          </Form.Item>
-        </Modal>
+        <SectionModal />
       </div>
     </>
   )

@@ -10,6 +10,9 @@ final class MenuInput
     #[Groups(["restaurant_menus", "restaurant_menu"])]
     public $name;
 
+    #[Groups(["restaurant_menus", "restaurant_menu"])]
+    public $description;
+
     /**
      * @var Product[]
      */

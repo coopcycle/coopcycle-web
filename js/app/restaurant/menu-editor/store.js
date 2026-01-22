@@ -3,6 +3,7 @@ import { thunk } from 'redux-thunk'
 import { apiSlice } from '../../api/slice'
 import menuReducers from './menu-reducers'
 import productsReducers from './products-reducers'
+import uiReducers from './ui-reducers'
 
 const middlewares = [ thunk, apiSlice.middleware ]
 
@@ -15,6 +16,7 @@ const composeEnhancers = (typeof window !== 'undefined' &&
 const reducer = combineReducers({
   menu: menuReducers,
   products: productsReducers,
+  ui: uiReducers,
   [apiSlice.reducerPath]: apiSlice.reducer,
 })
 

@@ -131,6 +131,7 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
                     'sectionId' => $child->getId(),
                 ]),
                 'name' => $child->getName(),
+                'description' => $child->getDescription(),
                 'hasMenuItem' => [],
             ];
 

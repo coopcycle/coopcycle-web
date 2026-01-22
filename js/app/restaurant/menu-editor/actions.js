@@ -8,6 +8,8 @@ export const updateSectionProducts = createAction('MENU_EDITOR/UPDATE_SECTION_PR
 export const setMenuSections = createAction('MENU_EDITOR/SET_MENU_SECTIONS');
 export const openModal = createAction('MENU_EDITOR/OPEN_MODAL');
 export const closeModal = createAction('MENU_EDITOR/CLOSE_MODAL');
+export const createSectionFlow = createAction('MENU_EDITOR/CREATE_SECTION_FLOW');
+export const editSectionFlow = createAction('MENU_EDITOR/EDIT_SECTION_FLOW');
 
 import { selectMenuSections } from './selectors'
 
@@ -105,7 +107,7 @@ export function updateSectionsOrder(sections) {
   }
 }
 
-export function addSection(name) {
+export function addSection(name, description) {
   return async function(dispatch, getState) {
 
     const { menu } = getState();
@@ -115,13 +117,15 @@ export function addSection(name) {
     const newSections = Array.from(sections);
     newSections.push({
       name,
+      description,
       hasMenuItem: [],
     })
 
     try {
 
       const { response, error } = await httpClient.post(menu['@id'] + '/sections', {
-        name
+        name,
+        description,
       });
 
       if (error) {
@@ -145,7 +149,7 @@ export function deleteSection(section) {
 
     const sectionIndex = sections.findIndex((s) => s['@id'] === section['@id']);
 
-    const newSections = Array.from(menu.hasMenuSection);
+    const newSections = Array.from(sections);
     newSections.splice(sectionIndex, 1);
 
     dispatch(setMenuSections(newSections));
@@ -166,24 +170,25 @@ export function deleteSection(section) {
   }
 }
 
-export function setSectionName(sectionId, name) {
+export function updateSection(sectionId, name, description) {
   return async function(dispatch, getState) {
 
     const sections = selectMenuSections(getState())
-
-    const sectionIndex = sections.findIndex((s) => s['@id'] === sectionId);
     const section = _.find(sections, (s) => s['@id'] === sectionId);
 
-    if (section.name === name) {
+    if (section.name === name && section.description === description) {
       return;
     }
 
     const newSection = {
       ...section,
-      name
+      name,
+      description
     }
 
     const newSections = Array.from(sections);
+
+    const sectionIndex = sections.findIndex((s) => s['@id'] === sectionId);
     newSections.splice(sectionIndex, 1, newSection);
 
     dispatch(setMenuSections(newSections));
@@ -195,6 +200,8 @@ export function setSectionName(sectionId, name) {
       if (error) {
         console.error(error);
       }
+
+      dispatch(closeModal());
 
     } catch (e) {
       console.error(e);

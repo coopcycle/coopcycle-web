@@ -1,6 +1,5 @@
 import {
   createSelector,
-  // createEntityAdapter,
 } from '@reduxjs/toolkit'
 import _ from 'lodash';
 
@@ -34,4 +33,6 @@ export const selectProducts = createSelector(
   (menuProducts, allProducts) => _.filter(allProducts, (p) => !menuProducts.includes(p['@id']))
 )
 
-export const selectIsModalOpen = (state) => state.menu.isModalOpen;
+export const selectIsModalOpen = (state) => state.ui.isModalOpen;
+
+export const selectSectionInModal = (state) => state.ui.sectionInModal;

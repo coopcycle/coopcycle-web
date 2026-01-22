@@ -73,6 +73,10 @@ class RestaurantMenuSectionProcessor implements ProcessorInterface
                 $section->setName($data->name);
             }
 
+            if (!empty($data->description)) {
+                $section->setDescription($data->description);
+            }
+
             // $this->taxonRepository->reorder($section, 'position');
 
             $this->entityManager->flush();
@@ -87,6 +91,7 @@ class RestaurantMenuSectionProcessor implements ProcessorInterface
         $section->setCode($uuid);
         $section->setSlug($uuid);
         $section->setName($data->name);
+        $section->setDescription($data->description);
 
         $menu->addChild($section);
 
