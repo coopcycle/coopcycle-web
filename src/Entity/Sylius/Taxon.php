@@ -32,7 +32,7 @@ use Sylius\Component\Taxonomy\Model\Taxon as BaseTaxon;
             input: MenuInput::class,
             normalizationContext: ['groups' => ['restaurant_menus']],
             denormalizationContext: ['groups' => ['restaurant_menus']],
-            // TODO Add security
+            security: 'is_granted("edit", object)'
         ),
         new Post(
             uriTemplate: '/restaurants/menus/{id}/sections',
@@ -40,7 +40,7 @@ use Sylius\Component\Taxonomy\Model\Taxon as BaseTaxon;
             input: MenuInput::class,
             normalizationContext: ['groups' => ['restaurant_menu']],
             denormalizationContext: ['groups' => ['restaurant_menu']],
-            // TODO Add security
+            security: 'is_granted("edit", object)'
         ),
         new Put(
             uriTemplate: '/restaurants/menus/{id}/sections/{sectionId}',
@@ -49,19 +49,20 @@ use Sylius\Component\Taxonomy\Model\Taxon as BaseTaxon;
             input: MenuInput::class,
             normalizationContext: ['groups' => ['restaurant_menu']],
             denormalizationContext: ['groups' => ['restaurant_menu']],
-            // TODO Add security
+            security: 'is_granted("edit", object)'
         ),
         new Get(
             uriTemplate: '/restaurants/menus/{id}/sections/{sectionId}',
             provider: RestaurantMenuSectionProvider::class,
             normalizationContext: ['groups' => ['restaurant_menu']],
-            denormalizationContext: ['groups' => ['restaurant_menu']]
+            denormalizationContext: ['groups' => ['restaurant_menu']],
         ),
         new Delete(
             uriTemplate: '/restaurants/menus/{id}/sections/{sectionId}',
             provider: RestaurantMenuSectionProvider::class,
             normalizationContext: ['groups' => ['restaurant_menu']],
-            denormalizationContext: ['groups' => ['restaurant_menu']]
+            denormalizationContext: ['groups' => ['restaurant_menu']],
+            security: 'is_granted("edit", object)'
         ),
     ],
     normalizationContext: ['groups' => ['restaurant']]

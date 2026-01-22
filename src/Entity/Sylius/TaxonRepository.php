@@ -2,10 +2,11 @@
 
 namespace AppBundle\Entity\Sylius;
 
+use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 use Sylius\Component\Product\Model\ProductInterface;
-// use Sylius\Component\Taxonomy\Model\TaxonInterface;
+use Sylius\Component\Taxonomy\Model\TaxonInterface;
 use Sylius\Bundle\TaxonomyBundle\Doctrine\ORM\TaxonRepository as BaseTaxonRepository;
 
 class TaxonRepository extends BaseTaxonRepository
@@ -33,11 +34,16 @@ class TaxonRepository extends BaseTaxonRepository
             ->setParameter('product', $product);
 
         return $qb->getQuery()->getOneOrNullResult();
+    }
 
-        // if ($taxonProduct) {
-        //     return $taxonProduct->getTaxon();
-        // }
+    public function getRestaurantForMenu(TaxonInterface $menu): ?LocalBusiness
+    {
+        $qb = $this->getEntityManager()->getRepository(LocalBusiness::class)->createQueryBuilder('o')
+            ->innerJoin('o.taxons', 't')
+            ->andWhere('t.id = :id')
+            ->setParameter('id', $menu)
+            ;
 
-        // return null;
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }
