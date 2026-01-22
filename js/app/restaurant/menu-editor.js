@@ -4,6 +4,9 @@ import Modal from 'react-modal';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 
+import { Typography } from 'antd';
+const { Text } = Typography;
+
 // https://blog.logrocket.com/implement-pragmatic-drag-drop-library-guide/
 import {
   draggable,
@@ -29,6 +32,7 @@ import {
   closeModal,
   addSection,
   deleteSection,
+  setSectionName,
 } from './menu-editor/actions'
 import { selectProducts, selectMenuSections, selectIsModalOpen } from './menu-editor/selectors'
 
@@ -113,11 +117,12 @@ const Section = ({ section }) => {
   return (
     <div className="menuEditor__panel mb-4" ref={draggableRef}>
       <h4 className="menuEditor__panel__title">
-        <i className="fa fa-arrows mr-2" ref={dragHandleRef}></i>
-        <a href="#">
-          <span className="mr-2">{ section.name }</span>
-          <i className="fa fa-pencil" aria-hidden="true"></i>
-        </a>
+        <div className="d-flex">
+          <i className="fa fa-arrows mr-2" ref={dragHandleRef}></i>
+          <Text editable={{
+            onChange: (value) => dispatch(setSectionName(section['@id'], value))
+          }}>{section.name}</Text>
+        </div>
         <a className="pull-right" href="#" onClick={ (e) => {
           e.preventDefault();
           dispatch(deleteSection(section));

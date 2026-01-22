@@ -162,3 +162,35 @@ export function deleteSection(section) {
     }
   }
 }
+
+export function setSectionName(sectionId, name) {
+  return async function(dispatch, getState) {
+
+    const { menu } = getState();
+
+    const sectionIndex = menu.hasMenuSection.findIndex((s) => s['@id'] === sectionId);
+    const section = _.find(menu.hasMenuSection, (s) => s['@id'] === sectionId);
+
+    const newSection = {
+      ...section,
+      name
+    }
+
+    const newSections = Array.from(menu.hasMenuSection);
+    newSections.splice(sectionIndex, 1, newSection);
+
+    dispatch(setMenuSections(newSections));
+
+    try {
+
+      const { response, error } = await httpClient.put(section['@id'], newSection);
+
+      if (error) {
+        console.error(error);
+      }
+
+    } catch (e) {
+      console.error(e);
+    }
+  }
+}

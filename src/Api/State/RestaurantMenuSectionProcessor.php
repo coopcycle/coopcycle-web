@@ -68,6 +68,10 @@ class RestaurantMenuSectionProcessor implements ProcessorInterface
                 $section->addProduct($product, $position);
             }
 
+            if (!empty($data->name)) {
+                $section->setName($data->name);
+            }
+
             // $this->taxonRepository->reorder($section, 'position');
 
             $this->entityManager->flush();
