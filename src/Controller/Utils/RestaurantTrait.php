@@ -519,10 +519,7 @@ trait RestaurantTrait
     #[HideSoftDeleted]
     public function restaurantMenuTaxonAction($restaurantId, $menuId, Request $request,
         TaxonRepository $taxonRepository,
-        FactoryInterface $taxonFactory,
-        EntityManagerInterface $entityManager,
-        EventDispatcherInterface $dispatcher,
-        TranslatorInterface $translator)
+        EntityManagerInterface $entityManager)
     {
         $routes = $request->attributes->get('routes');
 
