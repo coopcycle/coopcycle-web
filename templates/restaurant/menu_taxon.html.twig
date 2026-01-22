@@ -22,7 +22,7 @@
     <div id="menu-editor"
       data-restaurant="{{ restaurant|coopcycle_normalize('AppBundle\\Entity\\LocalBusiness', ['restaurant'], 'jsonld')|json_encode|e('html_attr') }}"
       {# data-menu="{{ path('_api_/restaurants/menus/{id}_get', { id: menu.id }) }}" #}
-      data-menu="{{ menu|coopcycle_normalize('AppBundle\\Entity\\Sylius\\Taxon', ['restaurant'], 'jsonld')|json_encode|e('html_attr') }}"
+      data-menu="{{ menu|coopcycle_normalize('AppBundle\\Entity\\Sylius\\Taxon', ['restaurant', 'restaurant_menu'], 'jsonld')|json_encode|e('html_attr') }}"
     ></div>
 
     <p class="help-block">

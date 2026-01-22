@@ -4,7 +4,9 @@ import {
 } from '@reduxjs/toolkit'
 import _ from 'lodash';
 
-const selectMenu = (state) => state.menu
+export const selectMenu = (state) => state.menu
+
+export const selectMenuName = (state) => state.menu.name
 
 export const selectMenuSections = createSelector(
   selectMenu,

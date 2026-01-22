@@ -198,3 +198,31 @@ export function setSectionName(sectionId, name) {
     }
   }
 }
+
+export function setMenuName(name) {
+  return async function(dispatch, getState) {
+
+    const { menu } = getState();
+
+    if (menu.name === name) {
+      return;
+    }
+
+    const newMenu = {
+      ...menu,
+      name
+    }
+
+    try {
+
+      const { response, error } = await httpClient.put(menu['@id'], newMenu);
+
+      if (error) {
+        console.error(error);
+      }
+
+    } catch (e) {
+      console.error(e);
+    }
+  }
+}

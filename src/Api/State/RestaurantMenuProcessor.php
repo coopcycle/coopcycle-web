@@ -65,6 +65,10 @@ class RestaurantMenuProcessor implements ProcessorInterface
                 $this->logger->debug(sprintf('Menu section "%s" was moved from %d to %d', $section->getName(), $originalPosition, $newPosition));
             }
 
+            if (!empty($data->name)) {
+                $menu->setName($data->name);
+            }
+
             // The moveUp/moveDown functions do flush changes,
             // but we still need to flush the position changes
             $this->entityManager->flush();

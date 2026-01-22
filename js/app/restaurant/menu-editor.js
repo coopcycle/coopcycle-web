@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useTranslation } from 'react-i18next';
 
-import { Form, Modal, Typography, Input } from 'antd';
+import { Button, Form, Modal, Typography, Input } from 'antd';
 const { Text } = Typography;
 
 // https://blog.logrocket.com/implement-pragmatic-drag-drop-library-guide/
@@ -31,8 +31,9 @@ import {
   addSection,
   deleteSection,
   setSectionName,
+  setMenuName,
 } from './menu-editor/actions'
-import { selectProducts, selectMenuSections, selectIsModalOpen } from './menu-editor/selectors'
+import { selectProducts, selectMenuSections, selectIsModalOpen, selectMenuName } from './menu-editor/selectors'
 
 import './menu-editor.scss'
 
@@ -291,8 +292,10 @@ const MenuEditor = ({ restaurant }) => {
   const sections = useSelector(selectMenuSections)
   const products = useSelector(selectProducts)
   const isModalOpen = useSelector(selectIsModalOpen);
+  const menuName = useSelector(selectMenuName);
 
-  const [form] = Form.useForm();
+  const [sectionForm] = Form.useForm();
+  const [menuForm] = Form.useForm();
 
   const reorderSections = useCallback(
     ({ startIndex, finishIndex }) => {
@@ -534,37 +537,52 @@ const MenuEditor = ({ restaurant }) => {
   }, [handleDrop]);
 
   return (
-    <div className="menuEditor mb-4">
-      {/* TODO Add form input for menu name */}
-      <LeftPanel />
-      <RightPanel />
-      { /* https://5x.ant.design/components/form#form-demo-form-in-modal */ }
-      <Modal
-        open={ isModalOpen }
-        onCancel={ () => dispatch(closeModal()) }
-        okButtonProps={{ autoFocus: true, htmlType: 'submit' }}
-        destroyOnHidden
-        modalRender={(children) => (
-          <Form
-            layout="vertical"
-            form={form}
-            name="section"
-            initialValues={{ name: '' }}
-            clearOnDestroy
-            onFinish={ (values) => dispatch(addSection(values.name)) }
-          >
-            {children}
-          </Form>
-        )}>
-        <Form.Item
-          name="name"
-          label={t('MENU_EDITOR.SECTION_NAME_LABEL')}
-          rules={[{ required: true }]}
-        >
-          <Input placeholder={t('MENU_EDITOR.SECTION_NAME_PLACEHOLDER')} />
+    <>
+      <Form
+        layout="inline"
+        form={menuForm}
+        initialValues={{ name: menuName }}
+        onFinish={ (values) => dispatch(setMenuName(values.name)) }
+      >
+        <Form.Item label="Name" name="name">
+          <Input />
         </Form.Item>
-      </Modal>
-    </div>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">Submit</Button>
+        </Form.Item>
+      </Form>
+      <hr />
+      <div className="menuEditor mb-4">
+        <LeftPanel />
+        <RightPanel />
+        { /* https://5x.ant.design/components/form#form-demo-form-in-modal */ }
+        <Modal
+          open={ isModalOpen }
+          onCancel={ () => dispatch(closeModal()) }
+          okButtonProps={{ autoFocus: true, htmlType: 'submit' }}
+          destroyOnHidden
+          modalRender={(children) => (
+            <Form
+              layout="vertical"
+              form={sectionForm}
+              name="section"
+              initialValues={{ name: '' }}
+              clearOnDestroy
+              onFinish={ (values) => dispatch(addSection(values.name)) }
+            >
+              {children}
+            </Form>
+          )}>
+          <Form.Item
+            name="name"
+            label={t('MENU_EDITOR.SECTION_NAME_LABEL')}
+            rules={[{ required: true }]}
+          >
+            <Input placeholder={t('MENU_EDITOR.SECTION_NAME_PLACEHOLDER')} />
+          </Form.Item>
+        </Modal>
+      </div>
+    </>
   )
 }
 
