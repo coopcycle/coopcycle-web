@@ -572,4 +572,15 @@ class LocalBusinessRepository extends EntityRepository
 
         $this->getEntityManager()->flush();
     }
+
+    public function findWithProducts($restaurantId)
+    {
+        return $this->createQueryBuilder('r')
+            ->leftJoin('r.products', 'products')
+            ->addSelect('products')
+            ->andWhere('r.id = :id')
+            ->setParameter('id', $restaurantId)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

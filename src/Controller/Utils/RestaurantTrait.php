@@ -555,12 +555,12 @@ trait RestaurantTrait
 
         $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
-            ->find($restaurantId);
+            ->findWithProducts($restaurantId);
 
         $this->accessControl($restaurant);
 
         $menuTaxon = $taxonRepository
-            ->find($menuId);
+            ->findWithMenuData($menuId);
 
         // Handle deletion
         $menuForm = $this->createForm(MenuTaxonType::class, $menuTaxon);
