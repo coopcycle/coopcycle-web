@@ -42,6 +42,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Geotools\Geotools;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Psr\Log\LoggerInterface;
+use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
@@ -421,6 +422,16 @@ class RestaurantController extends AbstractController
                 'number_of_votes' => $numberOfVotes,
                 'has_already_voted' => $checkVote
             ]);
+        }
+
+        $preloader = new EntityPreloader($this->entityManager);
+        $preloader->preload([$restaurant], 'taxons');
+        if ($restaurant->getMenuTaxon()) {
+            $preloader->preload([$restaurant->getMenuTaxon()], 'children');
+            $children = $restaurant->getMenuTaxon()->getChildren()->toArray();
+            $taxonProducts = $preloader->preload($children, 'taxonProducts');
+            $products = $preloader->preload($taxonProducts, 'product');
+            $preloader->preload($products, 'images');
         }
 
         $order = $cartContext->getCart();
