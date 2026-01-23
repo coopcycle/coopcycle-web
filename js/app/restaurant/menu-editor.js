@@ -2,8 +2,8 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Form, Modal, Typography, Input } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
+import { Button, Form, Modal, Typography, Input, Popconfirm } from 'antd';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 const { Text } = Typography;
 
 // https://blog.logrocket.com/implement-pragmatic-drag-drop-library-guide/
@@ -51,6 +51,7 @@ const httpClient = new window._auth.httpClient()
 const Section = ({ section }) => {
 
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const dropTargetRef = useRef(null);
   const draggableRef = useRef(null);
@@ -130,12 +131,14 @@ const Section = ({ section }) => {
           <Text>{section.name}</Text>
           <Button type="link" icon={<EditOutlined />} onClick={() => dispatch(editSectionFlow(section))}></Button>
         </div>
-        <a className="pull-right" href="#" onClick={ (e) => {
-          e.preventDefault();
-          dispatch(deleteSection(section));
-        }}>
-          <i className="fa fa-close"></i>
-        </a>
+        <Popconfirm
+          title={t('ARE_YOU_SURE')}
+          onConfirm={() => dispatch(deleteSection(section))}
+          okText={t('YES')}
+          cancelText={t('NO')}
+        >
+          <DeleteOutlined />
+        </Popconfirm>
       </h4>
       <div className={`menuEditor__panel__body ${isDraggedOver ? "menuEditor__panel__body--dragged" : ""}`} ref={dropTargetRef}>
         { section.hasMenuItem.map((product) => (
