@@ -420,6 +420,7 @@ Feature: Manage restaurants
         {
           "@id":"/api/restaurants/menus/1/sections/2",
           "name":"Pizzas",
+          "description":null,
           "hasMenuItem":[
             {
               "@type":"MenuItem",
@@ -470,6 +471,7 @@ Feature: Manage restaurants
         {
           "@id":"/api/restaurants/menus/1/sections/3",
           "name":"Burgers",
+          "description":null,
           "hasMenuItem":[
             {
               "@type":"MenuItem",
@@ -1419,21 +1421,25 @@ Feature: Manage restaurants
           {
             "@id":"/api/restaurants/menus/1/sections/2",
             "name": "Pizzas",
+            "description":null,
             "hasMenuItem": @array@
           },
           {
             "@id":"/api/restaurants/menus/1/sections/3",
             "name": "Burgers",
+            "description":null,
             "hasMenuItem": @array@
           },
           {
             "@id":"/api/restaurants/menus/1/sections/4",
             "name": "Salads",
+            "description":null,
             "hasMenuItem": @array@
           },
           {
             "@id":"/api/restaurants/menus/1/sections/5",
             "name": "Desserts",
+            "description":null,
             "hasMenuItem": @array@
           }
         ]
@@ -1466,21 +1472,25 @@ Feature: Manage restaurants
             {
               "@id":"/api/restaurants/menus/1/sections/4",
               "name": "Salads",
+              "description":null,
               "hasMenuItem": @array@
             },
             {
               "@id":"/api/restaurants/menus/1/sections/5",
               "name": "Desserts",
+              "description":null,
               "hasMenuItem": @array@
             },
             {
               "@id":"/api/restaurants/menus/1/sections/2",
               "name": "Pizzas",
+              "description":null,
               "hasMenuItem": @array@
             },
             {
               "@id":"/api/restaurants/menus/1/sections/3",
               "name": "Burgers",
+              "description":null,
               "hasMenuItem": @array@
             }
         ]
@@ -1503,21 +1513,25 @@ Feature: Manage restaurants
           {
             "@id":"/api/restaurants/menus/1/sections/4",
             "name": "Salads",
+            "description":null,
             "hasMenuItem": @array@
           },
           {
             "@id":"/api/restaurants/menus/1/sections/5",
             "name": "Desserts",
+            "description":null,
             "hasMenuItem": @array@
           },
           {
             "@id":"/api/restaurants/menus/1/sections/2",
             "name": "Pizzas",
+            "description":null,
             "hasMenuItem": @array@
           },
           {
             "@id":"/api/restaurants/menus/1/sections/3",
             "name": "Burgers",
+            "description":null,
             "hasMenuItem": @array@
           }
         ]
@@ -1560,11 +1574,13 @@ Feature: Manage restaurants
           {
             "@id":"/api/restaurants/menus/1/sections/2",
             "name": "Pizzas",
+            "description":null,
             "hasMenuItem": "@array@.count(1)"
           },
           {
             "@id":"/api/restaurants/menus/1/sections/3",
             "name": "Burger",
+            "description":null,
             "hasMenuItem": "@array@.count(1)"
           }
         ]
@@ -1595,11 +1611,13 @@ Feature: Manage restaurants
             {
               "@id":"/api/restaurants/menus/1/sections/2",
               "name": "Pizzas",
+              "description":null,
               "hasMenuItem": "@array@.count(0)"
             },
             {
               "@id":"/api/restaurants/menus/1/sections/3",
               "name": "Burger",
+              "description":null,
               "hasMenuItem": "@array@.count(2)"
             }
         ]
