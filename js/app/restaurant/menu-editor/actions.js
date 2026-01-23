@@ -156,9 +156,7 @@ export function deleteSection(section) {
 
     try {
 
-      const { response, error } = await httpClient.delete(section['@id'], {
-        name
-      });
+      const { response, error } = await httpClient.delete(section['@id']);
 
       if (error) {
         console.error(error);
