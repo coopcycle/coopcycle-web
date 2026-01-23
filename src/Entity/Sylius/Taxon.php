@@ -104,7 +104,6 @@ class Taxon extends BaseTaxon implements Comparable
         } else {
             foreach ($this->taxonProducts as $taxonProduct) {
                 if ($taxonProduct->getProduct() === $product) {
-                    var_dump('CHANGE POS', $taxonProduct->getPosition(), $position);
                     $taxonProduct->setPosition($position);
                     // var_dump($position);
                     break;
