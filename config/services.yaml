@@ -121,6 +121,9 @@ services:
   AppBundle\MessageHandler\:
     resource: '../src/MessageHandler/*'
 
+  AppBundle\Scheduler\:
+    resource: '../src/Scheduler/*'
+
   AppBundle\Controller\:
     resource: '../src/Controller'
     tags: ['controller.service_arguments']
