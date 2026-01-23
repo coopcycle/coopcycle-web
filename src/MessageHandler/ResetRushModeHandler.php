@@ -12,12 +12,13 @@ class ResetRushModeHandler
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
+        private string $appName,
         private LoggerInterface $logger)
     {
     }
 
     public function __invoke(ResetRushMode $message)
     {
-        $this->logger->info('Resetting rush mode');
+        $this->logger->info(sprintf('Resetting rush mode for instance "%s"', $this->appName));
     }
 }
