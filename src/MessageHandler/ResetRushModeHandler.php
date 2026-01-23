@@ -3,7 +3,6 @@
 namespace AppBundle\MessageHandler;
 
 use AppBundle\Message\ResetRushMode;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
@@ -11,7 +10,6 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 class ResetRushModeHandler
 {
     public function __construct(
-        private EntityManagerInterface $entityManager,
         private string $appName,
         private LoggerInterface $logger)
     {
