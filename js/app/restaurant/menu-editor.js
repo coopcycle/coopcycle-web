@@ -72,11 +72,6 @@ const Section = ({ section }) => {
     return combine(
       dropTargetForElements({
         element: dropTargetEl,
-        onDragStart: () => setIsDraggedOver(true),
-        onDragEnter: () => setIsDraggedOver(true),
-        onDragLeave: () => setIsDraggedOver(false),
-        onDrop: () => setIsDraggedOver(false),
-        // getData: () => ({ sectionId: section['@id'] }),
         getData: ({ input, element }) => {
           // To attach card data to a drop target
           const data = { type: "section", sectionId: section['@id'] };
@@ -91,11 +86,13 @@ const Section = ({ section }) => {
           });
         },
         getIsSticky: () => true,
+        onDragStart: () => setIsDraggedOver(true),
         onDragEnter: (args) => {
           // Update the closest edge when a draggable item enters the drop zone
           if (args.source.data.type === 'section' && args.source.data.sectionId !== section['@id']) {
             setClosestEdge(extractClosestEdge(args.self.data));
           }
+          setIsDraggedOver(true)
         },
         onDrag: (args) => {
           // Continuously update the closest edge while dragging over the drop zone
@@ -106,10 +103,12 @@ const Section = ({ section }) => {
         onDragLeave: () => {
           // Reset the closest edge when the draggable item leaves the drop zone
           setClosestEdge(null);
+          setIsDraggedOver(false);
         },
         onDrop: () => {
           // Reset the closest edge when the draggable item is dropped
           setClosestEdge(null);
+          setIsDraggedOver(false);
         },
       }),
       draggable({
@@ -124,7 +123,7 @@ const Section = ({ section }) => {
   }, [section['@id']]);
 
   return (
-    <div className="menuEditor__panel mb-4" ref={draggableRef}>
+    <div className={`menuEditor__panel mb-4 ${isDraggedOver ? "menuEditor__panel--dragged" : ""}`} ref={draggableRef}>
       <h4 className="menuEditor__panel__title">
         <div className="d-flex align-items-center">
           <i className="fa fa-arrows mr-2" ref={dragHandleRef}></i>
@@ -140,7 +139,7 @@ const Section = ({ section }) => {
           <DeleteOutlined />
         </Popconfirm>
       </h4>
-      <div className={`menuEditor__panel__body ${isDraggedOver ? "menuEditor__panel__body--dragged" : ""}`} ref={dropTargetRef}>
+      <div className="menuEditor__panel__body" ref={dropTargetRef}>
         { section.hasMenuItem.map((product) => (
           <Product key={ product['@id'] } product={ product } />
         )) }
@@ -194,11 +193,11 @@ const RightPanel = () => {
 
   return (
     <div className="menuEditor__right">
-      <div className="menuEditor__panel menuEditor__productList">
+      <div className={`menuEditor__panel menuEditor__productList ${isDraggedOver ? "menuEditor__panel--dragged" : ""}`}>
         <h4 className="menuEditor__panel__title">
           Products {/*{{ 'form.menu_editor.products_panel.title'|trans }}*/}
         </h4>
-        <div className={`menuEditor__panel__body ${isDraggedOver ? "menuEditor__panel__body--dragged" : ""}`} ref={ref}>
+        <div className="menuEditor__panel__body" ref={ref}>
           { products.map((product, index) => (
             <Product key={ `product-${index}` } product={ product } />
           )) }

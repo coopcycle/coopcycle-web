@@ -31,10 +31,13 @@
   }
 
   &__panel {
+
+    $panel: &;
+
     position: relative;
-    // margin-bottom: 20px;
     display: flex;
     flex-direction: column;
+
     &__title {
       padding: 10px;
       background-color: lightgrey;
@@ -55,9 +58,14 @@
       border-top: none;
       padding: 10px;
       min-height: 50px;
+    }
 
-      &--dragged {
-        background-color: #fafafa;
+    &--dragged {
+      #{$panel}__title {
+        background-color: grey;
+      }
+      #{$panel}__body {
+        border-color: grey;
       }
     }
   }
