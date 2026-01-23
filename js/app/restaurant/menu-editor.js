@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 
 import { Button, Form, Modal, Typography, Input, Popconfirm } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-const { Text } = Typography;
 
 // https://blog.logrocket.com/implement-pragmatic-drag-drop-library-guide/
 import {
@@ -125,11 +124,11 @@ const Section = ({ section }) => {
   return (
     <div className={`menuEditor__panel mb-4 ${isDraggedOver ? "menuEditor__panel--dragged" : ""}`} ref={draggableRef}>
       <h4 className="menuEditor__panel__title">
-        <div className="d-flex align-items-center">
+        <span className="d-flex align-items-center">
           <i className="fa fa-arrows mr-2" ref={dragHandleRef}></i>
-          <Text>{section.name}</Text>
+          <span>{section.name}</span>
           <Button type="link" icon={<EditOutlined />} onClick={() => dispatch(editSectionFlow(section))}></Button>
-        </div>
+        </span>
         <Popconfirm
           title={t('ARE_YOU_SURE')}
           onConfirm={() => dispatch(deleteSection(section))}
@@ -173,6 +172,7 @@ const LeftPanel = () => {
 const RightPanel = () => {
 
   const ref = useRef(null);
+  const { t } = useTranslation();
   const products = useSelector(selectProducts)
 
   const [ isDraggedOver, setIsDraggedOver ] = useState(false);
@@ -195,7 +195,7 @@ const RightPanel = () => {
     <div className="menuEditor__right">
       <div className={`menuEditor__panel menuEditor__productList ${isDraggedOver ? "menuEditor__panel--dragged" : ""}`}>
         <h4 className="menuEditor__panel__title">
-          Products {/*{{ 'form.menu_editor.products_panel.title'|trans }}*/}
+          {t('MENU_EDITOR.PRODUCTS')}
         </h4>
         <div className="menuEditor__panel__body" ref={ref}>
           { products.map((product, index) => (
