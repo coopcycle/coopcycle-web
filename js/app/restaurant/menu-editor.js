@@ -57,7 +57,7 @@ const Section = ({ section }) => {
   const dragHandleRef = useRef(null);
 
   const [ isDraggedOver, setIsDraggedOver ] = useState(false);
-  const [ isDraggeding, setIsDragging ] = useState(false);
+  const [ isDragging, setIsDragging ] = useState(false);
 
   // State to track the closest edge during drag over
   const [closestEdge, setClosestEdge] = useState(null);
