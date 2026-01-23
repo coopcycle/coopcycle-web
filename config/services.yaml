@@ -86,6 +86,7 @@ services:
       $environment: "%kernel.environment%"
       $packageDeliveryUiPriceBreakdownEnabled: "%package_delivery_ui_price_breakdown_enabled%"
       $taxIncl: '%env(bool:COOPCYCLE_TAX_INCL)%'
+      $appName: '%env(COOPCYCLE_APP_NAME)%'
 
   # For some cache pools, want *STABLE* cache keys between deploys.
   # To achieve this, we *EXPLICITLY* set a namespace,
@@ -120,6 +121,9 @@ services:
 
   AppBundle\MessageHandler\:
     resource: '../src/MessageHandler/*'
+
+  AppBundle\Scheduler\:
+    resource: '../src/Scheduler/*'
 
   AppBundle\Controller\:
     resource: '../src/Controller'

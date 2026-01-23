@@ -68,3 +68,4 @@ framework:
             'AppBundle\Message\CopyProducts': async
             'AppBundle\Message\Order\ProcessOrderAfterTaskCancellation': async
             'AppBundle\Message\ResetRestaurantState': async
+            'AppBundle\Message\ResetRushMode': async
