@@ -883,8 +883,6 @@ services:
       #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
       - { name: doctrine.event_subscriber, priority: -100 }
 
-  AppBundle\Doctrine\EventSubscriber\RestaurantStateSubscriber: ~
-
   AppBundle\Api\EventSubscriber\DeliverySubscriber:
     tags: [ 'kernel.event_subscriber' ]
 
