@@ -3,7 +3,8 @@ const initialState = {
   sectionInModal: {
     name: '',
     description: ''
-  }
+  },
+  isLoading: false,
 }
 
 import {
@@ -11,6 +12,7 @@ import {
   closeModal,
   createSectionFlow,
   editSectionFlow,
+  setIsLoading,
 } from './actions'
 
 export default (state = initialState, action) => {
@@ -40,6 +42,12 @@ export default (state = initialState, action) => {
         ...state,
         isModalOpen: true,
         sectionInModal: action.payload,
+      }
+
+    case setIsLoading.type:
+      return {
+        ...state,
+        isLoading: action.payload,
       }
   }
 

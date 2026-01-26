@@ -45,12 +45,6 @@
       margin: 0;
       display: flex;
       justify-content: space-between;
-      > a {
-        color: #fff;
-        &:hover {
-          color: darken(#fff, 5%);
-        }
-      }
     }
     &__body {
       flex: 1;

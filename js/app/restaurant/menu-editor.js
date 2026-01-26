@@ -41,6 +41,7 @@ import {
   selectIsModalOpen,
   selectMenuName,
   selectSectionInModal,
+  selectIsLoading,
 } from './menu-editor/selectors'
 
 import './menu-editor.scss'
@@ -61,6 +62,8 @@ const Section = ({ section }) => {
 
   // State to track the closest edge during drag over
   const [closestEdge, setClosestEdge] = useState(null);
+
+  const isLoading = useSelector(selectIsLoading);
 
   useEffect(() => {
 
@@ -85,6 +88,7 @@ const Section = ({ section }) => {
           });
         },
         getIsSticky: () => true,
+        canDrop: () => !isLoading,
         onDragStart: () => setIsDraggedOver(true),
         onDragEnter: (args) => {
           // Update the closest edge when a draggable item enters the drop zone
@@ -119,7 +123,7 @@ const Section = ({ section }) => {
         onDrop: () => setIsDragging(false),
       })
     );
-  }, [section['@id']]);
+  }, [ section['@id'], isLoading ]);
 
   return (
     <div className={`menuEditor__panel mb-4 ${isDraggedOver ? "menuEditor__panel--dragged" : ""}`} ref={draggableRef}>
@@ -215,6 +219,8 @@ const Product = ({ product }) => {
 
   const ref = useRef(null);
 
+  const isLoading = useSelector(selectIsLoading);
+
   useEffect(() => {
     const el = ref.current;
 
@@ -224,6 +230,7 @@ const Product = ({ product }) => {
         getInitialData: () => ({ type: 'product', productId: product['@id'] }),
         onDragStart: () => setIsDragging(true),
         onDrop: () => setIsDragging(false),
+        canDrag: () => !isLoading,
       }),
       // Add dropTargetForElements to make the product a drop target
       dropTargetForElements({
@@ -242,6 +249,7 @@ const Product = ({ product }) => {
           });
         },
         getIsSticky: () => true, // To make a drop target "sticky"
+        canDrop: () => !isLoading,
         onDragEnter: (args) => {
           // Update the closest edge when a draggable item enters the drop zone
           if (args.source.data.type === 'product' && args.source.data.productId !== product['@id']) {
@@ -264,7 +272,7 @@ const Product = ({ product }) => {
         },
       })
     );
-  }, [ product['@id'] ]);
+  }, [ product['@id'], isLoading ]);
 
   return (
     <div className="menuEditor__product" ref={ref}>

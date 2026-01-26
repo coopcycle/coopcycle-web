@@ -10,6 +10,7 @@ export const openModal = createAction('MENU_EDITOR/OPEN_MODAL');
 export const closeModal = createAction('MENU_EDITOR/CLOSE_MODAL');
 export const createSectionFlow = createAction('MENU_EDITOR/CREATE_SECTION_FLOW');
 export const editSectionFlow = createAction('MENU_EDITOR/EDIT_SECTION_FLOW');
+export const setIsLoading = createAction('MENU_EDITOR/SET_IS_LOADING');
 
 import { selectMenuSections } from './selectors'
 
@@ -56,6 +57,8 @@ export function setSectionProducts(sectionId, products) {
 
     try {
 
+      dispatch(setIsLoading(true))
+
       const { response, error } = await httpClient.put(sectionId, {
         products: products.map((p) => p['@id'])
       });
@@ -67,6 +70,8 @@ export function setSectionProducts(sectionId, products) {
     } catch (e) {
       console.error(e);
     }
+
+    dispatch(setIsLoading(false))
   }
 }
 
@@ -93,6 +98,8 @@ export function updateSectionsOrder(sections) {
 
       const { menu } = getState();
 
+      dispatch(setIsLoading(true))
+
       const { response, error } = await httpClient.put(menu['@id'], {
         sections: sections.map((s) => s['@id'])
       });
@@ -104,6 +111,8 @@ export function updateSectionsOrder(sections) {
     } catch (e) {
       console.error(e);
     }
+
+    dispatch(setIsLoading(false))
   }
 }
 
@@ -123,6 +132,8 @@ export function addSection(name, description) {
 
     try {
 
+      dispatch(setIsLoading(true))
+
       const { response, error } = await httpClient.post(menu['@id'] + '/sections', {
         name,
         description,
@@ -139,6 +150,8 @@ export function addSection(name, description) {
     } catch (e) {
       console.error(e);
     }
+
+    dispatch(setIsLoading(false))
   }
 }
 
@@ -156,6 +169,8 @@ export function deleteSection(section) {
 
     try {
 
+      dispatch(setIsLoading(true))
+
       const { response, error } = await httpClient.delete(section['@id']);
 
       if (error) {
@@ -165,6 +180,8 @@ export function deleteSection(section) {
     } catch (e) {
       console.error(e);
     }
+
+    dispatch(setIsLoading(false))
   }
 }
 
@@ -193,6 +210,8 @@ export function updateSection(sectionId, name, description) {
 
     try {
 
+      dispatch(setIsLoading(true))
+
       const { response, error } = await httpClient.put(section['@id'], newSection);
 
       if (error) {
@@ -204,6 +223,8 @@ export function updateSection(sectionId, name, description) {
     } catch (e) {
       console.error(e);
     }
+
+    dispatch(setIsLoading(false))
   }
 }
 
@@ -223,6 +244,8 @@ export function setMenuName(name) {
 
     try {
 
+      dispatch(setIsLoading(true))
+
       const { response, error } = await httpClient.put(menu['@id'], newMenu);
 
       if (error) {
@@ -232,5 +255,7 @@ export function setMenuName(name) {
     } catch (e) {
       console.error(e);
     }
+
+    dispatch(setIsLoading(false))
   }
 }
