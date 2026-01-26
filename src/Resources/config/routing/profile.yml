@@ -189,15 +189,6 @@ dashboard_restaurant_menu_taxon_activate:
             menu_taxons: dashboard_restaurant_menu_taxons
     methods: [ POST ]
 
-dashboard_delete_restaurant_menu_taxon_child:
-    path: /dashboard/restaurants/{restaurantId}/menus/{menuId}/sections/{sectionId}/delete
-    defaults:
-        _controller: AppBundle\Controller\DashboardController::deleteRestaurantMenuTaxonChildAction
-        layout: 'dashboard.html.twig'
-        routes:
-            menu_taxon: dashboard_restaurant_menu_taxon
-    methods: [ POST ]
-
 dashboard_restaurant_products:
     path: /dashboard/restaurants/{id}/products
     defaults:

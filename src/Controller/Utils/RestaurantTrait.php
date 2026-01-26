@@ -28,8 +28,6 @@ use AppBundle\Entity\Sylius\TaxCategory;
 use AppBundle\Entity\Sylius\TaxonRepository;
 use AppBundle\Form\ApiAppType;
 use AppBundle\Form\ClosingRuleType;
-use AppBundle\Form\MenuEditorType;
-use AppBundle\Form\MenuTaxonType;
 use AppBundle\Form\MenuType;
 use AppBundle\Form\PreparationTimeRulesType;
 use AppBundle\Form\ProductOptionType;
@@ -47,7 +45,6 @@ use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Sylius\Taxation\TaxesHelper;
-use AppBundle\Utils\MenuEditor;
 use AppBundle\Utils\PreparationTimeCalculator;
 use AppBundle\Utils\RestaurantStats;
 use AppBundle\Utils\ValidationUtils;
@@ -448,11 +445,6 @@ trait RestaurantTrait
         $routes = $request->attributes->get('routes');
         $menus = $restaurant->getTaxons();
 
-        $forms = [];
-        foreach ($menus as $menu) {
-            $forms[$menu->getId()] = $this->createForm(MenuTaxonType::class, $menu)->createView();
-        }
-
         $form = $this->createFormBuilder()
             ->add('name', TextType::class)
             ->getForm();
@@ -480,13 +472,12 @@ trait RestaurantTrait
             ]);
         }
 
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
+        return $this->render($request->attributes->get('template'), $this->auth($this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'menus' => $menus,
             'restaurant' => $restaurant,
-            'forms' => $forms,
             'form' => $form->createView(),
-        ], $routes));
+        ], $routes)));
     }
 
     public function activateRestaurantMenuTaxonAction($restaurantId, $menuId, Request $request,
@@ -518,39 +509,10 @@ trait RestaurantTrait
         ]);
     }
 
-
-    public function deleteRestaurantMenuTaxonChildAction($restaurantId, $menuId, $sectionId, Request $request,
-        TaxonRepository $taxonRepository,
-        EntityManagerInterface $entityManager)
-    {
-        $restaurant = $this->entityManager
-            ->getRepository(LocalBusiness::class)
-            ->find($restaurantId);
-
-        $this->accessControl($restaurant);
-
-        $menuTaxon = $taxonRepository->find($menuId);
-        $toRemove = $taxonRepository->find($sectionId);
-
-        $menuTaxon->removeChild($toRemove);
-
-        $entityManager->flush();
-
-        $routes = $request->attributes->get('routes');
-
-        return $this->redirectToRoute($routes['menu_taxon'], [
-            'restaurantId' => $restaurant->getId(),
-            'menuId' => $menuTaxon->getId()
-        ]);
-    }
-
     #[HideSoftDeleted]
     public function restaurantMenuTaxonAction($restaurantId, $menuId, Request $request,
         TaxonRepository $taxonRepository,
-        FactoryInterface $taxonFactory,
-        EntityManagerInterface $entityManager,
-        EventDispatcherInterface $dispatcher,
-        TranslatorInterface $translator)
+        EntityManagerInterface $entityManager)
     {
         $routes = $request->attributes->get('routes');
 
@@ -564,135 +526,15 @@ trait RestaurantTrait
             ->find($menuId);
 
         $preloader = new EntityPreloader($entityManager);
-        $preloader->preload([$restaurant], 'products');
         $preloader->preload([$menuTaxon], 'children');
         $children = $preloader->preload($menuTaxon->getChildren()->toArray(), 'taxonProducts');
         $preloader->preload($children, 'product');
 
-        // Handle deletion
-        $menuForm = $this->createForm(MenuTaxonType::class, $menuTaxon);
-        $menuForm->handleRequest($request);
-        if ($menuForm->isSubmitted() && $menuForm->isValid()) {
-            if ($menuForm->getClickedButton() && 'delete' === $menuForm->getClickedButton()->getName()) {
-
-                $restaurant->removeTaxon($menuTaxon);
-                $entityManager->remove($menuTaxon);
-
-                $entityManager->flush();
-
-                return $this->redirectToRoute($routes['menu_taxons'], ['id' => $restaurantId]);
-            }
-        }
-
-        $form = $this->createFormBuilder()
-            ->add('name', TextType::class)
-            ->getForm();
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $name = $form->get('name')->getData();
-
-            $uuid = Uuid::uuid1()->toString();
-
-            $child = $taxonFactory->createNew();
-            $child->setCode($uuid);
-            $child->setSlug($uuid);
-            $child->setName($name);
-
-            $menuTaxon->addChild($child);
-            $entityManager->flush();
-
-            $this->addFlash(
-                'notice',
-                $translator->trans('global.changesSaved')
-            );
-
-            return $this->redirect($request->headers->get('referer'));
-        }
-
-        $menuEditor = new MenuEditor($restaurant, $menuTaxon);
-        $menuEditorForm = $this->createForm(MenuEditorType::class, $menuEditor);
-
-        $originalTaxonProducts = new \SplObjectStorage();
-        foreach ($menuEditor->getChildren() as $child) {
-            $taxonProducts = new ArrayCollection();
-            foreach ($child->getTaxonProducts() as $taxonProduct) {
-                $taxonProducts->add($taxonProduct);
-            }
-
-            $originalTaxonProducts[$child] = $taxonProducts;
-        }
-
-        // This will be used to determine if sections have been reordered
-        $originalSectionPositions = [];
-        foreach ($menuEditor->getChildren() as $child) {
-            $originalSectionPositions[$child->getPosition()] = $child->getId();
-        }
-        ksort($originalSectionPositions);
-        $originalSectionPositions = array_values($originalSectionPositions);
-
-        $menuEditorForm->handleRequest($request);
-        if ($menuEditorForm->isSubmitted() && $menuEditorForm->isValid()) {
-
-            $menuEditor = $menuEditorForm->getData();
-
-            $newSectionPositions = [];
-
-            foreach ($menuEditor->getChildren() as $child) {
-
-                // The section is empty
-                if (count($originalTaxonProducts[$child]) > 0 && count($child->getTaxonProducts()) === 0) {
-                    foreach ($originalTaxonProducts[$child] as $originalTaxonProduct) {
-                        $originalTaxonProducts[$child]->removeElement($originalTaxonProduct);
-                        $entityManager->remove($originalTaxonProduct);
-                    }
-                    continue;
-                }
-
-                $newSectionPositions[$child->getPosition()] = $child->getId();
-
-                foreach ($child->getTaxonProducts() as $taxonProduct) {
-
-                    $taxonProduct->setTaxon($child);
-
-                    foreach ($originalTaxonProducts[$child] as $originalTaxonProduct) {
-                        if (!$child->getTaxonProducts()->contains($originalTaxonProduct)) {
-                            $child->getTaxonProducts()->removeElement($originalTaxonProduct);
-                            $entityManager->remove($originalTaxonProduct);
-                        }
-                    }
-                }
-            }
-
-            ksort($newSectionPositions);
-            $newSectionPositions = array_values($newSectionPositions);
-
-            if ($originalSectionPositions !== $newSectionPositions) {
-                $taxonRepository->reorder($menuTaxon, 'position');
-            }
-
-            $entityManager->flush();
-
-            if ($restaurant->getMenuTaxon() === $menuTaxon) {
-                $dispatcher->dispatch(new GenericEvent($restaurant), 'catalog.updated');
-            }
-
-            $this->addFlash(
-                'notice',
-                $translator->trans('global.changesSaved')
-            );
-
-            return $this->redirect($request->headers->get('referer'));
-        }
-
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
+        return $this->render($request->attributes->get('template'), $this->auth($this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'menu' => $menuTaxon,
-            'form' => $form->createView(),
-            'menu_editor_form' => $menuEditorForm->createView(),
-        ], $routes));
+        ], $routes)));
     }
 
     public function restaurantPlanningAction($id, Request $request, TranslatorInterface $translator)

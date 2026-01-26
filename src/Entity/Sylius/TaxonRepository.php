@@ -2,24 +2,48 @@
 
 namespace AppBundle\Entity\Sylius;
 
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping;
+use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Sylius\ProductTaxon;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
+use Sylius\Component\Product\Model\ProductInterface;
+use Sylius\Component\Taxonomy\Model\TaxonInterface;
 use Sylius\Bundle\TaxonomyBundle\Doctrine\ORM\TaxonRepository as BaseTaxonRepository;
 
 class TaxonRepository extends BaseTaxonRepository
 {
     private $nestedTreeRepository;
 
-    public function __construct(EntityManagerInterface $em, Mapping\ClassMetadata $class)
-    {
-        parent::__construct($em, $class);
-
-        $this->nestedTreeRepository = new NestedTreeRepository($em, $class);
-    }
-
     public function reorder($node, $sortByField = null, $direction = 'ASC', $verify = true)
     {
-        return $this->nestedTreeRepository->reorder($node, $sortByField, $direction, $verify);
+        return $this->getNestedTreeRepository()->reorder($node, $sortByField, $direction, $verify);
+    }
+
+    public function getNestedTreeRepository()
+    {
+        if (null === $this->nestedTreeRepository) {
+            $this->nestedTreeRepository = new NestedTreeRepository($this->_em, $this->_class);
+        }
+
+        return $this->nestedTreeRepository;
+    }
+
+    public function getProductTaxon(ProductInterface $product): ?ProductTaxon
+    {
+        $qb = $this->getEntityManager()->getRepository(ProductTaxon::class)->createQueryBuilder('pt')
+            ->andWhere('pt.product = :product')
+            ->setParameter('product', $product);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function getRestaurantForMenu(TaxonInterface $menu): ?LocalBusiness
+    {
+        $qb = $this->getEntityManager()->getRepository(LocalBusiness::class)->createQueryBuilder('o')
+            ->innerJoin('o.taxons', 't')
+            ->andWhere('t.id = :id')
+            ->setParameter('id', $menu)
+            ;
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }
