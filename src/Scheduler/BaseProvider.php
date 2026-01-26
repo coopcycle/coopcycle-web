@@ -14,7 +14,7 @@ class BaseProvider implements ScheduleProviderInterface
     public function getSchedule(): Schedule
     {
         return (new Schedule())->add(
-            RecurringMessage::every('5 minutes', new ResetRushMode())
+            RecurringMessage::cron('@midnight', new ResetRushMode())
         );
     }
 }
