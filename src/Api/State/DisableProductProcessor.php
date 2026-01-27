@@ -5,6 +5,7 @@ namespace AppBundle\Api\State;
 use ApiPlatform\Doctrine\Orm\State\ItemProvider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
+use ApiPlatform\Symfony\Validator\Exception\ValidationException;
 use AppBundle\Api\Dto\DisableProduct;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Message\EnableProduct;
@@ -30,7 +31,15 @@ class DisableProductProcessor implements ProcessorInterface
 
         $product->setEnabled(false);
 
-        $until = new \DateTimeImmutable($data->until);
+        try {
+            $until = new \DateTimeImmutable($data->until);
+        } catch (\Exception $e) {
+            throw new ValidationException('Invalid date format for "until" parameter');
+        }
+
+        if ($until <= new \DateTimeImmutable()) {
+            throw new ValidationException('The "until" date must be in the future');
+        }
 
         // Schedule a message to re-enable the product later
         $this->messageBus->dispatch(new EnableProduct($product), [
