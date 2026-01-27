@@ -18,7 +18,6 @@ use AppBundle\Pricing\PricingManager;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -29,7 +28,6 @@ class DeliveryOrderManager
     public function __construct(
         TokenStorageInterface $tokenStorage,
         private readonly EntityManagerInterface $entityManager,
-        private readonly RequestStack $requestStack,
         private readonly TranslatorInterface $translator,
         private readonly ProductRepository $productRepository,
         private readonly DeliveryManager $deliveryManager,
@@ -135,8 +133,7 @@ class DeliveryOrderManager
 
                 $this->createIncident->__invoke(
                     $incident,
-                    $isUserWithAccount ? $user : null,
-                    $this->requestStack->getCurrentRequest()
+                    $isUserWithAccount ? $user : null
                 );
             }
         }

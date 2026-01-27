@@ -1432,12 +1432,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/transporter.git",
-                "reference": "97fd7e6bfd92cb3ffda86a09cdeedffc3a3fc687"
+                "reference": "f2c54c997f4b0e4578a86dbb3deec9244ef4c23f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/97fd7e6bfd92cb3ffda86a09cdeedffc3a3fc687",
-                "reference": "97fd7e6bfd92cb3ffda86a09cdeedffc3a3fc687",
+                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/f2c54c997f4b0e4578a86dbb3deec9244ef4c23f",
+                "reference": "f2c54c997f4b0e4578a86dbb3deec9244ef4c23f",
                 "shasum": ""
             },
             "require": {
@@ -1467,7 +1467,7 @@
                 "source": "https://github.com/coopcycle/transporter/tree/master",
                 "issues": "https://github.com/coopcycle/transporter/issues"
             },
-            "time": "2025-07-30T05:25:31+00:00"
+            "time": "2025-12-16T14:58:51+00:00"
         },
         {
             "name": "craue/config-bundle",
@@ -12061,12 +12061,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/edifact-mapping.git",
-                "reference": "888e8b522fc2bf17132586ad348cfb434b21a23c"
+                "reference": "c4067f69ceee888f26d7cbc7ef401fbb01e1a7b1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/edifact-mapping/zipball/888e8b522fc2bf17132586ad348cfb434b21a23c",
-                "reference": "888e8b522fc2bf17132586ad348cfb434b21a23c",
+                "url": "https://api.github.com/repos/coopcycle/edifact-mapping/zipball/c4067f69ceee888f26d7cbc7ef401fbb01e1a7b1",
+                "reference": "c4067f69ceee888f26d7cbc7ef401fbb01e1a7b1",
                 "shasum": ""
             },
             "default-branch": true,
@@ -12091,7 +12091,7 @@
             "support": {
                 "source": "https://github.com/coopcycle/edifact-mapping/tree/master"
             },
-            "time": "2023-12-07T11:41:17+00:00"
+            "time": "2025-12-16T14:43:20+00:00"
         },
         {
             "name": "php-http/client-common",
@@ -29904,16 +29904,16 @@
     ],
     "minimum-stability": "dev",
     "stability-flags": {
-        "drupal/core-vendor-hardening": 20,
-        "shahonseven/php-color-hash": 20,
+        "behatch/contexts": 20,
         "coopcycle/transporter": 20,
-        "behatch/contexts": 20
+        "drupal/core-vendor-hardening": 20,
+        "shahonseven/php-color-hash": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.2"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
 }
