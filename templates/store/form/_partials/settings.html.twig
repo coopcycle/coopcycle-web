@@ -21,7 +21,11 @@
   {{ form_row(form.weightRequired) }}
 {% endif %}
 {% if form.packagesRequired is defined %}
-  {{ form_row(form.packagesRequired) }}
+  {% set packages_required_attr = {} %}
+  {% if form.packageSet is defined and form.packageSet.vars.data is null %}
+    {% set packages_required_attr = { disabled: 'disabled' } %}
+  {% endif %}
+  {{ form_row(form.packagesRequired, { attr: packages_required_attr }) }}
 {% endif %}
 {% if form.multiDropEnabled is defined %}
   {{ form_row(form.multiDropEnabled) }}
@@ -84,4 +88,3 @@
   <hr>
   {{ form_row(form.storeGLN) }}
 {% endif %}
-

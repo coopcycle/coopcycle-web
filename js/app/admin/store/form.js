@@ -136,6 +136,25 @@ if (timeSlotsEl && timeSlotEl) {
   document.querySelector('#store_timeSlot').closest('.form-group').classList.add('d-none')
 }
 
+const packageSetSelect = document.querySelector('#store_packageSet')
+const packagesRequiredCheckbox = document.querySelector('#store_packagesRequired')
+
+if (packageSetSelect && packagesRequiredCheckbox) {
+  const updatePackagesRequiredState = () => {
+    const hasPackageSet = packageSetSelect.value && packageSetSelect.value !== ''
+
+    if (!hasPackageSet) {
+      packagesRequiredCheckbox.checked = false
+      packagesRequiredCheckbox.setAttribute('disabled', 'disabled')
+    } else {
+      packagesRequiredCheckbox.removeAttribute('disabled')
+    }
+  }
+
+  updatePackagesRequiredState()
+  packageSetSelect.addEventListener('change', updatePackagesRequiredState)
+}
+
 
 // Delete confirmation
 $('#store_delete').on('click', e => {

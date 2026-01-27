@@ -169,6 +169,10 @@ class StoreType extends LocalBusinessType
             $form = $event->getForm();
             $store = $event->getData();
 
+            if (null === $store->getPackageSet()) {
+                $store->setPackagesRequired(false);
+            }
+
             if (null === $store->getId()) {
                 $defaultAddress = $store->getAddress();
                 $store->addAddress($defaultAddress);
