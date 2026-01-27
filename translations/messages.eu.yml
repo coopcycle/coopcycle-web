@@ -389,6 +389,7 @@ form.store_type.package_set.label: 'Pakete-sorta'
 form.store_type.package_set.placeholder: 'Hautatu pakete-sorta bat'
 form.store_type.weight_required.label: 'Eskatu pisua'
 form.store_type.packages_required.label: 'Eskatu paketeak'
+form.store_type.packages_required.disabled_help: Please configure a package set first
 form.delivery.vehicle.placeholder: 'Eskatu garraio mota bat'
 form.delivery.pickup.label: 'Batzeko helbidea'
 form.delivery.pickup.address_placeholder: 'Etxeko zenbakia eta kalearen izena, area,

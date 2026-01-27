@@ -10,3 +10,4 @@ order.shippedAt.expired: Termin dostawy wygasł
 order.shippedAt.notAvailable: Data dostawy nie jest już dostępna
 order.shippedAt.notEmpty: Data dostawy nie może być pusta
 order.items.containsDisabledProduct: Zamówienie zawiera wyłączony produkt
+store.packages_required.package_set_required: A package set must be selected when packages are required

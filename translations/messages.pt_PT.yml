@@ -682,6 +682,7 @@ form.delivery.pickup.address_placeholder: Número de casa e nome da rua, área, 
 form.delivery.pickup.label: Endereço de recolha
 form.delivery.vehicle.placeholder: Escolha um veículo
 form.store_type.packages_required.label: Pedir os pacotes
+form.store_type.packages_required.disabled_help: Please configure a package set first
 form.store_type.weight_required.label: Pedir para inserir o peso
 form.store_type.package_set.placeholder: Escolha um pacote múltiplo
 form.store_type.package_set.label: Pacote múltiplo

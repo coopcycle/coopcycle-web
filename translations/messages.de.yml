@@ -846,6 +846,7 @@ form.vehicle.max_weight.label: Maximales Gewicht (kg)
 form.address.company_name.label: Firmenname
 form.integration.maxWeight.label: Maximal erlaubtes Gewicht (kg)
 form.store_type.packages_required.label: Erfordert Anzahl der Pakete
+form.store_type.packages_required.disabled_help: Please configure a package set first
 form.integration.maxLength.label: Maximal erlaubte Länge (cm)
 tasks.mark_as_done.has_previous: 'Aufgabe #%failed_task% kann nicht abgeschlossen
   werden. Zunächst muss #%previous_task% abgeschlossen werden.'

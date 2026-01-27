@@ -1023,6 +1023,7 @@ form.payment.refund_application_fee.help: "Si marqueu aquesta casella, la comiss
   \ que cobra la plataforma al soci es retornarà proporcionalment \n<br> \n<a href=\"\
   https://stripe.com/docs/connect/direct-charges#issuing-refunds\">Learn more</a>\n"
 form.store_type.packages_required.label: Requerir l'entrada de paquets
+form.store_type.packages_required.disabled_help: Please configure a package set first
 form.store_type.package_set.placeholder: Triar un conjunt de paquets
 adminDashboard.customize.title: Personalitzar
 form.settings.mercadopago_testmode.help: "En mode « test », cal utilitzar <a href=\"%url%\"\

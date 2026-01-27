@@ -47,3 +47,4 @@ restaurant.contract.variableCustomerAmount.pickOne: Favor escolher ao menos um v
 restaurant.contract.variableDeliveryPrice.pickOne: Favor escolher ao menos um valor
 
 pricing_rule.expression.syntax_error: Erro de sintaxe na expressão "%expression%"
+store.packages_required.package_set_required: A package set must be selected when packages are required

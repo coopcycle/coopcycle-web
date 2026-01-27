@@ -279,6 +279,7 @@ form.store_type.package_set.label: 'Csomagkészlet'
 form.store_type.package_set.placeholder: 'Válassz csomagkészletet'
 form.store_type.weight_required.label: 'Súly megadása szükséges'
 form.store_type.packages_required.label: 'Csomagok megadása szükséges'
+form.store_type.packages_required.disabled_help: Please configure a package set first
 form.delivery.vehicle.placeholder: 'Válassz egy járműtípust'
 form.delivery.pickup.label: 'Átvételi cím'
 form.delivery.pickup.address_placeholder: 'Házszám és utcanév, terület, irányítószám,
