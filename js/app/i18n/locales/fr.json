@@ -200,7 +200,7 @@
         "CART_CHANGE_RESTAURANT_MODAL_BTN_NO": "Retourner à ma commande",
         "NOT_AVAILABLE_ATM": "Indisponible pour l'instant",
         "CART_ADDRESS_MODAL_HELP_TEXT": "Veuillez entrer votre adresse avec précision, en précisant le numéro et le nom de la rue",
-        "CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS": "Retourner à la liste des restaurants",
+        "CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS": "Retourner à la liste des boutiques",
         "CART_DELIVERY_TIME_DIFF": "Dans {{diff}} minutes",
         "CART_DELIVERY_TIME_EDIT": "Modifier",
         "CART_DELIVERY_TIME_ASAP": "Au plus tôt",
@@ -326,7 +326,7 @@
         "CART_PRODUCT_OPTIONS_INVALID": "Certaines options ne sont pas disponibles",
         "CART_PRODUCT_OPTIONS_VALUES_RANGE": "Veuillez choisir entre {{min}} et {{max}} valeurs",
         "CART_PRODUCT_OPTIONS_VALUES_RANGE_AT_LEAST": "Veuillez choisir au moins {{count}} valeur(s)",
-        "CART_PRODUCT_OPTIONS_VALUES_RANGE_UP_TO": "Veuillez choisir jusqu'à {{count}} valeur(s)",
+        "CART_PRODUCT_OPTIONS_VALUES_RANGE_UP_TO": "Vous pouvez choisir jusqu'à {{count}} valeur(s)",
         "RESTAURANTS_AND_STORES": "Restaurants et magasins",
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI": "Déplacer {{count}} tâches au prochain jour",
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI": "Déplacer {{count}} tâches au prochain jour ouvré ({{nextWorkingDay}})",
@@ -614,7 +614,7 @@
         "ADMIN_DASHBOARD_LOADING_ORGS": "Chargement des magasins et boutiques...",
         "ADMIN_DASHBOARD_NO_COMPATIBLE_TRAILER": "Aucune remorque compatible avec ce vélo",
         "ADMIN_VEHICLE_TO_WAREHOUSE_PAGE": "Vers la page d'administration des entrepôts",
-        "CART_ADDRESS_MODAL_BACK_TO_RESTAURANT": "Retourner au restaurant",
+        "CART_ADDRESS_MODAL_BACK_TO_RESTAURANT": "Retourner à la boutique",
         "CART_CHANGE_TIME_FAILED": "Une erreur s'est produite lors de la définition de l'heure",
         "DROPZONE_REMOVE_FILE": "Supprimer le fichier",
         "ADMIN_DASHBOARD_CREATE_GROUP": "Créer un groupe",
@@ -789,12 +789,19 @@
         "INCIDENTS_TASK_DETAILS": "détails",
         "INCIDENTS_ACTION_COMPLETED_SUCCESSFULLY": "Action effectuée avec succès",
         "INCIDENTS_ACTION_FAILED": "Échec de l'action",
-        "INCIDENTS_ERROR_LOADING_SUGGESTION": "Erreur lors du chargement de la suggestion",
         "INCIDENTS_SUGGESTED_PRICE_CHANGE": "Changement de prix suggéré : {{diff}}",
         "INCIDENTS_OLD_PRICE": "Ancien prix",
         "INCIDENTS_NEW_PRICE": "Nouveau prix",
         "INCIDENTS_SUGGESTED_MODIFICATIONS": "Modifications suggérées",
         "INCIDENTS_REFUSE_SUGGESTIONS": "Refuser les suggestions",
-        "INCIDENTS_APPLY_SUGGESTIONS": "Appliquer les suggestions"
+        "INCIDENTS_APPLY_SUGGESTIONS": "Appliquer les suggestions",
+        "INCIDENTS_SUGGESTED_CHANGES": "Modifications suggérées",
+        "INCIDENTS_ERROR_LOADING_SUGGESTED_PRICE_CHANGE": "Nous n'avons pas pu calculer le prix avec les modifications suggérées",
+        "MENU_EDITOR": {
+            "ADD_SECTION": "Ajouter une section",
+            "PRODUCTS": "Produits",
+            "SECTION_NAME_LABEL": "Nom",
+            "SECTION_NAME_PLACEHOLDER": "Exemple : plats, desserts…"
+        }
     }
 }

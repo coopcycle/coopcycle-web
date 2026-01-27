@@ -1,10 +1,11 @@
 describe('Delivery with recurrence rule (role: dispatcher)', () => {
   beforeEach(() => {
-    cy.loadFixturesWithSetup([
+    cy.loadFixtures([
+      'setup_default.yml',
       'user_dispatcher.yml',
       'tags.yml',
       'store_advanced.yml',
-    ])
+    ]);
 
     cy.setMockDateTime('2025-04-23 8:30:00')
 

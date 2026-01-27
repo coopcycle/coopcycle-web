@@ -363,8 +363,8 @@
         "CART_TIME_RANGE_CHANGED_MODAL_CHOOSE_RESTAURANT_ACTION": "Choose another restaurant",
         "NOT_AVAILABLE_ATM": "Not available at the moment",
         "CART_ADDRESS_MODAL_HELP_TEXT": "Please enter your address accurately, with the street number and name",
-        "CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS": "Go back to restaurants list",
-        "CART_ADDRESS_MODAL_BACK_TO_RESTAURANT": "Go back to restaurant",
+        "CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS": "Go back to shops list",
+        "CART_ADDRESS_MODAL_BACK_TO_RESTAURANT": "Go back to shop",
         "CART_ADDRESS_MODAL_NO_THANKS_TAKEAWAY": "I will collect the order myself",
         "CART_DELIVERY_TIME_DIFF": "In {{diff}} minutes",
         "CART_DELIVERY_TIME_EDIT": "Change",
@@ -410,7 +410,7 @@
         "CART_PRODUCT_OPTIONS_INVALID": "Some selections are not available",
         "CART_PRODUCT_OPTIONS_VALUES_RANGE": "Please choose between {{min}} and {{max}} values",
         "CART_PRODUCT_OPTIONS_VALUES_RANGE_AT_LEAST": "Please choose at least {{count}} value(s)",
-        "CART_PRODUCT_OPTIONS_VALUES_RANGE_UP_TO": "Please choose up to {{count}} value(s)",
+        "CART_PRODUCT_OPTIONS_VALUES_RANGE_UP_TO": "You can choose up to {{count}} value(s)",
         "RESTAURANT_DASHBOARD_INFO_RUSH": "Use this button to activate the 'rush' mode",
         "RESTAURANT_DASHBOARD_NEW_ORDERS": "New orders",
         "RESTAURANT_DASHBOARD_ACCEPTED_ORDERS": "Accepted orders",
@@ -801,12 +801,20 @@
         "INCIDENTS_TASK_DETAILS": "details",
         "INCIDENTS_ACTION_COMPLETED_SUCCESSFULLY": "Action completed successfully",
         "INCIDENTS_ACTION_FAILED": "Failed to perform action",
-        "INCIDENTS_ERROR_LOADING_SUGGESTION": "Error loading suggestion",
+        "INCIDENTS_SUGGESTED_CHANGES": "Suggested changes",
+        "INCIDENTS_ERROR_LOADING_SUGGESTED_PRICE_CHANGE": "We couldn't calculate the price with the suggested changes",
         "INCIDENTS_SUGGESTED_PRICE_CHANGE": "Suggested price change: {{diff}}",
         "INCIDENTS_OLD_PRICE": "Old price",
         "INCIDENTS_NEW_PRICE": "New price",
         "INCIDENTS_SUGGESTED_MODIFICATIONS": "Suggested modifications",
         "INCIDENTS_REFUSE_SUGGESTIONS": "Refuse suggestions",
-        "INCIDENTS_APPLY_SUGGESTIONS": "Apply suggestions"
+        "INCIDENTS_APPLY_SUGGESTIONS": "Apply suggestions",
+        "MENU_EDITOR": {
+            "ADD_SECTION": "Add a section",
+            "PRODUCTS": "Products",
+            "SECTION_NAME_LABEL": "Name",
+            "SECTION_NAME_PLACEHOLDER": "Example: main courses, desserts…",
+            "SECTION_DESCRIPTION_LABEL": "Description"
+        }
       }
 }

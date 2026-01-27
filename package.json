@@ -35,6 +35,8 @@
   "devDependencies": {
     "@ant-design/icons": "^5.6.1",
     "@ant-design/moment-webpack-plugin": "^1.0.0",
+    "@atlaskit/pragmatic-drag-and-drop": "^1.7.7",
+    "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.1.0",
     "@babel/core": "^7.27.1",
     "@babel/plugin-proposal-object-rest-spread": "^7.19.4",
     "@babel/preset-react": "^7.27.1",
@@ -164,7 +166,7 @@
     "react-select": "^5.10.1",
     "react-split": "^2.0.14",
     "react-spreadsheet": "^0.9.2",
-    "react-stickynode": "^4.1.0",
+    "react-stickynode": "^5.0.2",
     "react-timeago": "^8.2.0",
     "react-toastify": "^11.0.5",
     "reduce-reducers": "^1.0.4",

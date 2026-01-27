@@ -20,9 +20,9 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
     operations: [
         new Get(),
         new Post(
-            defaults: ['_api_receive' => false],
             controller: CreateImage::class,
-            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')'
+            security: 'is_granted(\'ROLE_ADMIN\') or is_granted(\'ROLE_COURIER\')',
+            deserialize: false
         )
     ],
     normalizationContext: ['groups' => ['incident_image']]

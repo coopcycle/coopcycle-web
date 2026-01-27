@@ -222,7 +222,7 @@ export type OrderEvent = {
 export type TaskEvent = {
   name: string;
   createdAt: string;
-  data?: Record<string, unknown>
+  data?: Record<string, unknown>;
 };
 
 export type OrderTimeline = {
@@ -310,7 +310,7 @@ export type Incident = JsonLdEntity & {
   description?: string;
   events: IncidentEvent[];
   createdBy?: Uri;
-  metadata: Record<string, unknown>;
+  metadata: object | unknown[];
   createdAt: string;
   updatedAt?: string;
 };
@@ -483,6 +483,7 @@ export type ManualSupplementValues = {
 
 export type OrderPayload = {
   manualSupplements: ManualSupplementValues[];
+  paymentMethod?: string;
   arbitraryPrice?: {
     variantName: string;
     variantPrice: number;
@@ -600,4 +601,12 @@ export type OrderValidation = {
 export type RecurrenceRulesGenerateOrdersResponse = {
   generated: number;
   orders: Order[];
+};
+
+export type PaymentMethod = {
+  type: string;
+};
+
+export type PaymentMethodsOutput = {
+  methods: PaymentMethod[];
 };

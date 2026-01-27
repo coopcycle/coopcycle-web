@@ -41,6 +41,7 @@ import {
   Incident,
   User,
   TaskEvent,
+  PaymentMethodsOutput,
 } from './types';
 
 // Define our single API slice object
@@ -124,6 +125,9 @@ export const apiSlice = createApi({
 
     getStore: builder.query<Store, Uri>({
       query: (uri: Uri) => uri,
+    }),
+    getStorePaymentMethods: builder.query<PaymentMethodsOutput, Uri>({
+      query: (uri: Uri) => `${uri}/payment_methods`,
     }),
     getStoreAddresses: builder.query<Address[], string>({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
@@ -343,6 +347,7 @@ export const {
   useGetStoreAddressesQuery,
   useGetStoreTimeSlotsQuery,
   useGetStorePackagesQuery,
+  useGetStorePaymentMethodsQuery,
   usePostStoreAddressMutation,
   usePatchAddressMutation,
   useCalculatePriceMutation,

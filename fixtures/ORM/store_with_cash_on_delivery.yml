@@ -1,0 +1,24 @@
+include:
+  - address_store.yml
+  - pricing_rule_set_distance.yml
+
+AppBundle\Entity\Store:
+  store_1:
+    name: 'Acme'
+    address: '@address_store'
+    enabled: true
+    pricingRuleSet: '@pricing_rule_set_distance'
+    prefillPickupAddress: true
+    cashOnDeliveryEnabled: true
+
+AppBundle\Entity\User:
+  store_owner:
+    __factory:
+      '@Nucleos\UserBundle\Util\UserManipulator::create':
+        - 'store_1'
+        - 'store_1'
+        - 'store1@coopcycle.org'
+        - true
+        - false
+    roles: [ 'ROLE_USER', 'ROLE_STORE' ]
+    stores: [ '@store_1' ]

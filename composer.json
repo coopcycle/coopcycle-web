@@ -172,7 +172,9 @@
         "symfony/lock": "*",
         "symfony/proxy-manager-bridge": "*",
         "phpstan/phpdoc-parser": "^1.33",
-        "benjaminfavre/oauth2-http-client": "^3.0"
+        "benjaminfavre/oauth2-http-client": "^3.0",
+        "symfony/scheduler": "6.4.*",
+        "dragonmantank/cron-expression": "^3.6"
     },
     "require-dev": {
         "symfony/debug-bundle": "*",

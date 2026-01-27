@@ -2,7 +2,9 @@
 
 namespace Tests\AppBundle\Action\Incident;
 
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Action\Incident\CreateIncident;
+use AppBundle\Api\Dto\DeliveryMapper;
 use AppBundle\Entity\Delivery\FailureReasonRegistry;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Task;
@@ -26,6 +28,8 @@ class CreateIncidentTest extends TestCase
         $taskManager = $this->prophesize(TaskManager::class);
         $failureReasonRegistry = $this->prophesize(FailureReasonRegistry::class);
         $validator = $this->prophesize(ValidatorInterface::class);
+        $deliveryMapper = $this->prophesize(DeliveryMapper::class);
+        $iriConverter = $this->prophesize(IriConverterInterface::class);
 
         $failureReasonRegistry->getFailureReasons()->willReturn([]);
 
@@ -43,7 +47,14 @@ class CreateIncidentTest extends TestCase
 
         $taskManager->incident($task, '', 'N/A', Argument::type('array'), $incident)->shouldBeCalled();
 
-        $action = new CreateIncident($em->reveal(), $taskManager->reveal(), $failureReasonRegistry->reveal(), $validator->reveal());
+        $action = new CreateIncident(
+            $em->reveal(),
+            $taskManager->reveal(),
+            $failureReasonRegistry->reveal(),
+            $validator->reveal(),
+            $deliveryMapper->reveal(),
+            $iriConverter->reveal()
+        );
 
         $response = call_user_func_array($action, [$incident, $user, $request]);
 

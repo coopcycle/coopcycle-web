@@ -1,10 +1,11 @@
 context('Delivery (role: dispatcher)', () => {
   beforeEach(() => {
-    cy.loadFixturesWithSetup([
+    cy.loadFixtures([
+      'setup_default.yml',
       'user_dispatcher.yml',
       'tags.yml',
       'store_advanced.yml',
-    ])
+    ]);
     cy.setEnvVar('PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED', '1')
 
     cy.setMockDateTime('2025-04-23 8:30:00')

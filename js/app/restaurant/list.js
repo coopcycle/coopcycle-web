@@ -253,7 +253,18 @@ function submitFilter(e) {
   })
 }
 
+const filtersRadioButtons = {}
+
 $('.shops-side-bar-filters input[type=radio]').on('click', function (e) {
+
+  // https://stackoverflow.com/questions/63904118/check-uncheck-radio-button-using-javascript-and-html
+  if (filtersRadioButtons[e.currentTarget.name] === e.currentTarget.value) {
+    e.currentTarget.checked = false;
+    filtersRadioButtons[e.currentTarget.name] = '';
+  } else {
+    filtersRadioButtons[e.currentTarget.name] = e.currentTarget.value;
+  }
+
   submitFilter(e)
 });
 

@@ -87,6 +87,15 @@ class StoreType extends LocalBusinessType
                     'label' => 'form.store.check_expression'
                 ]);
 
+            if ($this->cashOnDeliveryOptinEnabled) {
+                $builder
+                    ->add('cashOnDeliveryEnabled', CheckboxType::class, [
+                        'label' => 'store.form.cash_on_delivery_enabled.label',
+                        'help' => 'store.form.cash_on_delivery_enabled.help',
+                        'required' => false,
+                    ]);
+            }
+
             if ($this->transportersEnabled) {
                 $transporterConfig = $this->transportersConfig;
                 $choices = array_reduce(array_keys($this->transportersConfig), function ($acc, $transporter) use (&$transporterConfig) {

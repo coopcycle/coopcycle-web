@@ -25,13 +25,27 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
     operations: [
-        new Get(),
-        new Patch(),
-        new Put(),
-        new Post(uriTemplate: '/incidents/{id}/comments', controller: CreateComment::class),
-        new Put(uriTemplate: '/incidents/{id}/action', controller: IncidentAction::class),
-        new GetCollection(controller: IncidentFastList::class),
-        new Post(controller: CreateIncident::class)
+        new Get(security: 'is_granted("view", object)'),
+        new Patch(security: 'is_granted("ROLE_COURIER")'),
+        new Put(security: 'is_granted("ROLE_COURIER")'),
+        new Post(
+            uriTemplate: '/incidents/{id}/comments',
+            controller: CreateComment::class,
+            security: 'is_granted("ROLE_COURIER")'
+        ),
+        new Put(
+            uriTemplate: '/incidents/{id}/action',
+            controller: IncidentAction::class,
+            security: 'is_granted("ROLE_COURIER")'
+        ),
+        new GetCollection(
+            controller: IncidentFastList::class,
+            security: 'is_granted("ROLE_COURIER")'
+        ),
+        new Post(
+            controller: CreateIncident::class,
+            security: 'is_granted("ROLE_COURIER")'
+        )
     ],
     normalizationContext: ['groups' => ['incident']]
 )]

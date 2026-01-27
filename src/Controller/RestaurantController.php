@@ -42,6 +42,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Geotools\Geotools;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Psr\Log\LoggerInterface;
+use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
@@ -423,6 +424,16 @@ class RestaurantController extends AbstractController
             ]);
         }
 
+        $preloader = new EntityPreloader($this->entityManager);
+        $preloader->preload([$restaurant], 'taxons');
+        if ($restaurant->getMenuTaxon()) {
+            $preloader->preload([$restaurant->getMenuTaxon()], 'children');
+            $children = $restaurant->getMenuTaxon()->getChildren()->toArray();
+            $taxonProducts = $preloader->preload($children, 'taxonProducts');
+            $products = $preloader->preload($taxonProducts, 'product');
+            $preloader->preload($products, 'images');
+        }
+
         $order = $cartContext->getCart();
 
         if (null !== $address) {
@@ -755,7 +766,7 @@ class RestaurantController extends AbstractController
         SettingsManager $settingsManager,
         TranslatorInterface $translator)
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
 
         if ('yes' !== $settingsManager->get('enable_restaurant_pledges')) {
             throw new NotFoundHttpException();
@@ -796,7 +807,7 @@ class RestaurantController extends AbstractController
     #[Route(path: '/restaurant/{id}/vote', name: 'restaurant_vote', methods: ['POST'])]
     public function voteAction($id, SettingsManager $settingsManager)
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
 
         if ('yes' !== $settingsManager->get('enable_restaurant_pledges')) {
             throw new NotFoundHttpException();

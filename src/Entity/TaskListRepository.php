@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Api\Dto\MyTaskListDto;
 use AppBundle\Api\Dto\MyTaskDto;
 use AppBundle\Api\Dto\MyTaskMetadataDto;
@@ -17,7 +18,8 @@ class TaskListRepository extends ServiceEntityRepository
     public function __construct(
         ManagerRegistry $registry,
         private readonly TaskMapper $taskMapper,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
+        private readonly IriConverterInterface $iriConverter,
     )
     {
         parent::__construct($registry, TaskList::class);
@@ -69,6 +71,7 @@ class TaskListRepository extends ServiceEntityRepository
             ->select([
                 't',
                 'delivery.id AS deliveryId',
+                's.id AS storeId',
                 'o.id AS orderId',
                 'o.number AS orderNumber',
                 'o.total AS orderTotal',
@@ -82,6 +85,7 @@ class TaskListRepository extends ServiceEntityRepository
             ->from(Task::class, 't')
             ->leftJoin('t.delivery', 'delivery')
             ->leftJoin('delivery.order', 'o')
+            ->leftJoin('delivery.store', 's')
             ->leftJoin('t.organization', 'org')
             ->leftJoin('o.loopeatDetails', 'loopeatDetails')
             ->leftJoin('t.packages', 'taskPackage')
@@ -208,6 +212,7 @@ class TaskListRepository extends ServiceEntityRepository
                 $row['organizationName'],
                 new MyTaskMetadataDto(
                     $task->getMetadata()['delivery_position'] ?? null, //FIXME extract from the query
+                    $row['storeId'] ? $this->iriConverter->getIriFromResource(Store::class, context: ['uri_variables' => ['id' => $row['storeId']]]) : null,
                     $row['orderId'] ?? null,
                     $row['orderNumber'] ?? null,
                     $this->getPaymentMethod($paymentMethodsByOrderId, $orderId),

@@ -2,25 +2,14 @@ include:
   - address_store.yml
   - address_warehouse.yml
   - address_client_1.yml
-
-AppBundle\Entity\Delivery\PricingRuleSet:
-  pricing_rule_set_1:
-    name: Default
-    rules: [ '@pricing_rule_1' ]
-
-AppBundle\Entity\Delivery\PricingRule:
-  pricing_rule_1:
-    expression: 'distance \> 0'
-    price: 499
-    position: 1
-    ruleSet: '@pricing_rule_set_1'
+  - pricing_rule_set_distance.yml
 
 AppBundle\Entity\Store:
   store_1:
     name: 'Acme'
     address: "@address_store"
     enabled: true
-    pricingRuleSet: '@pricing_rule_set_1'
+    pricingRuleSet: '@pricing_rule_set_distance'
     __calls:
       - addAddress: [ "@address_warehouse" ]
       - addAddress: [ "@address_client_1" ]
@@ -36,4 +25,3 @@ AppBundle\Entity\User:
         - false
     roles: [ 'ROLE_USER', 'ROLE_STORE' ]
     stores: [ '@store_1' ]
-    

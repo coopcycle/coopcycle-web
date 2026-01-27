@@ -1,0 +1,261 @@
+import { createAction } from '@reduxjs/toolkit'
+import _ from 'lodash'
+
+const httpClient = new window._auth.httpClient();
+
+export const fetchProductsSuccess = createAction('MENU_EDITOR/FETCH_PRODUCTS_SUCCESS');
+export const updateSectionProducts = createAction('MENU_EDITOR/UPDATE_SECTION_PRODUCTS');
+export const setMenuSections = createAction('MENU_EDITOR/SET_MENU_SECTIONS');
+export const openModal = createAction('MENU_EDITOR/OPEN_MODAL');
+export const closeModal = createAction('MENU_EDITOR/CLOSE_MODAL');
+export const createSectionFlow = createAction('MENU_EDITOR/CREATE_SECTION_FLOW');
+export const editSectionFlow = createAction('MENU_EDITOR/EDIT_SECTION_FLOW');
+export const setIsLoading = createAction('MENU_EDITOR/SET_IS_LOADING');
+
+import { selectMenuSections } from './selectors'
+
+export function fetchProducts(restaurant) {
+  return async function(dispatch, getState) {
+    try {
+      const { response, error } = await httpClient.get(restaurant['@id'] + '/products');
+      dispatch(fetchProductsSuccess(response['hydra:member']));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+}
+
+export function removeProductFromSection(productId) {
+  return async function(dispatch, getState) {
+
+    const sections = selectMenuSections(getState())
+
+    const section = _.find(sections, (s) => _.findIndex(s.hasMenuItem, (i) => i['@id'] === productId) !== -1);
+
+    if (section) {
+
+      const itemsWithoutProduct = section.hasMenuItem.filter((i) => i['@id'] !== productId)
+
+      dispatch(setSectionProducts(section['@id'], itemsWithoutProduct));
+    }
+  }
+}
+
+export function setSectionProducts(sectionId, products) {
+  return async function(dispatch, getState) {
+
+    const sections = selectMenuSections(getState())
+
+    const section = _.find(sections, (s) => s['@id'] === sectionId);
+
+    if (section) {
+      dispatch(updateSectionProducts({
+        section,
+        products
+      }));
+    }
+
+    try {
+
+      dispatch(setIsLoading(true))
+
+      const { response, error } = await httpClient.put(sectionId, {
+        products: products.map((p) => p['@id'])
+      });
+
+      if (error) {
+        console.error(error);
+      }
+
+    } catch (e) {
+      console.error(e);
+    }
+
+    dispatch(setIsLoading(false))
+  }
+}
+
+export function moveProductToSection(product, index, sectionId) {
+  return async function(dispatch, getState) {
+
+    const sections = selectMenuSections(getState())
+
+    const section = _.find(sections, (s) => s['@id'] === sectionId);
+    dispatch(removeProductFromSection(product['@id']));
+
+    const newProducts = Array.from(section.hasMenuItem);
+    newProducts.splice(index, 0, product);
+
+    dispatch(setSectionProducts(sectionId, newProducts))
+  }
+}
+
+export function updateSectionsOrder(sections) {
+  return async function(dispatch, getState) {
+    dispatch(setMenuSections(sections));
+
+    try {
+
+      const { menu } = getState();
+
+      dispatch(setIsLoading(true))
+
+      const { response, error } = await httpClient.put(menu['@id'], {
+        sections: sections.map((s) => s['@id'])
+      });
+
+      if (error) {
+        console.error(error);
+      }
+
+    } catch (e) {
+      console.error(e);
+    }
+
+    dispatch(setIsLoading(false))
+  }
+}
+
+export function addSection(name, description) {
+  return async function(dispatch, getState) {
+
+    const { menu } = getState();
+
+    const sections = selectMenuSections(getState())
+
+    const newSections = Array.from(sections);
+    newSections.push({
+      name,
+      description,
+      hasMenuItem: [],
+    })
+
+    try {
+
+      dispatch(setIsLoading(true))
+
+      const { response, error } = await httpClient.post(menu['@id'] + '/sections', {
+        name,
+        description,
+      });
+
+      if (error) {
+        console.error(error);
+      } else {
+        dispatch(setMenuSections(response.hasMenuSection));
+      }
+
+      dispatch(closeModal());
+
+    } catch (e) {
+      console.error(e);
+    }
+
+    dispatch(setIsLoading(false))
+  }
+}
+
+export function deleteSection(section) {
+  return async function(dispatch, getState) {
+
+    const sections = selectMenuSections(getState())
+
+    const sectionIndex = sections.findIndex((s) => s['@id'] === section['@id']);
+
+    const newSections = Array.from(sections);
+    newSections.splice(sectionIndex, 1);
+
+    dispatch(setMenuSections(newSections));
+
+    try {
+
+      dispatch(setIsLoading(true))
+
+      const { response, error } = await httpClient.delete(section['@id']);
+
+      if (error) {
+        console.error(error);
+      }
+
+    } catch (e) {
+      console.error(e);
+    }
+
+    dispatch(setIsLoading(false))
+  }
+}
+
+export function updateSection(sectionId, name, description) {
+  return async function(dispatch, getState) {
+
+    const sections = selectMenuSections(getState())
+    const section = _.find(sections, (s) => s['@id'] === sectionId);
+
+    if (section.name === name && section.description === description) {
+      return;
+    }
+
+    const newSection = {
+      ...section,
+      name,
+      description
+    }
+
+    const newSections = Array.from(sections);
+
+    const sectionIndex = sections.findIndex((s) => s['@id'] === sectionId);
+    newSections.splice(sectionIndex, 1, newSection);
+
+    dispatch(setMenuSections(newSections));
+
+    try {
+
+      dispatch(setIsLoading(true))
+
+      const { response, error } = await httpClient.put(section['@id'], newSection);
+
+      if (error) {
+        console.error(error);
+      }
+
+      dispatch(closeModal());
+
+    } catch (e) {
+      console.error(e);
+    }
+
+    dispatch(setIsLoading(false))
+  }
+}
+
+export function setMenuName(name) {
+  return async function(dispatch, getState) {
+
+    const { menu } = getState();
+
+    if (menu.name === name) {
+      return;
+    }
+
+    const newMenu = {
+      ...menu,
+      name
+    }
+
+    try {
+
+      dispatch(setIsLoading(true))
+
+      const { response, error } = await httpClient.put(menu['@id'], newMenu);
+
+      if (error) {
+        console.error(error);
+      }
+
+    } catch (e) {
+      console.error(e);
+    }
+
+    dispatch(setIsLoading(false))
+  }
+}

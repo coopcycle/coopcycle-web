@@ -120,7 +120,7 @@ class DeliveryMapper
      * @param OrderInterface $order
      * @return ManualSupplementDto[]
      */
-    private function extractManualSupplementsFromOrder(OrderInterface $order): array
+    public function extractManualSupplementsFromOrder(OrderInterface $order): array
     {
         $manualSupplements = [];
 

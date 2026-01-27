@@ -57,7 +57,7 @@ services:
   AppBundle\Serializer\MyTaskListDtoNormalizer:
     tags: [ { name: serializer.normalizer, priority: 128 } ]
 
-  AppBundle\Serializer\TaskImageNormalizer:
+  AppBundle\Serializer\TaskOrIncidentImageNormalizer:
     arguments:
       $normalizer: '@api_platform.jsonld.normalizer.item'
     tags: [ { name: serializer.normalizer, priority: 128 } ]

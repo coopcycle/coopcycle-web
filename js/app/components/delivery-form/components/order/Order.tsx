@@ -131,6 +131,7 @@ const Order = ({
       <div>
         {modeIn(mode, [Mode.DELIVERY_CREATE, Mode.RECURRENCE_RULE_UPDATE]) ? (
           <OrderOnCheckout
+            storeNodeId={storeNodeId}
             orderManualSupplements={orderManualSupplements}
             overridePrice={overridePrice}
             newOrder={newOrder}

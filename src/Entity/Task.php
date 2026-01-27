@@ -27,6 +27,7 @@ use AppBundle\Action\Task\Start as TaskStart;
 use AppBundle\Action\Task\RemoveFromGroup;
 use AppBundle\Action\Task\BulkMarkAsDone as TaskBulkMarkAsDone;
 use AppBundle\Action\Task\Context as TaskContext;
+use AppBundle\Action\Task\DeliveryFormData as TaskDeliveryFormData;
 use AppBundle\Action\Task\AppendToComment as TaskAppendToComment;
 use AppBundle\Api\Dto\AssignTasksDto;
 use AppBundle\Api\Dto\BioDeliverInput;
@@ -240,6 +241,11 @@ use Symfony\Component\Validator\Constraints as Assert;
             uriTemplate: '/tasks/{id}/context',
             controller: TaskContext::class,
             security: 'is_granted(\'view\', object)'
+        ),
+        new Get(
+            uriTemplate: '/tasks/{id}/delivery_form_data',
+            controller: TaskDeliveryFormData::class,
+            security: "is_granted('view', object)"
         ),
         new Put(
             uriTemplate: '/tasks/{id}/append_to_comment',
@@ -851,6 +857,12 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $this;
     }
+
+    public function incrementImageCount()
+    {
+        $this->imageCount = $this->imageCount + 1;
+    }
+
     /**
      * @return Task
      */
