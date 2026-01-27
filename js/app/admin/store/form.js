@@ -140,14 +140,25 @@ const packageSetSelect = document.querySelector('#store_packageSet')
 const packagesRequiredCheckbox = document.querySelector('#store_packagesRequired')
 
 if (packageSetSelect && packagesRequiredCheckbox) {
+  const disabledTooltip = packagesRequiredCheckbox.dataset.disabledTooltip
+  const packagesRequiredLabel = packagesRequiredCheckbox.closest('label')
+
   const updatePackagesRequiredState = () => {
     const hasPackageSet = packageSetSelect.value && packageSetSelect.value !== ''
 
     if (!hasPackageSet) {
       packagesRequiredCheckbox.checked = false
       packagesRequiredCheckbox.setAttribute('disabled', 'disabled')
+      packagesRequiredCheckbox.setAttribute('aria-disabled', 'true')
+      if (packagesRequiredLabel && disabledTooltip) {
+        packagesRequiredLabel.setAttribute('title', disabledTooltip)
+      }
     } else {
       packagesRequiredCheckbox.removeAttribute('disabled')
+      packagesRequiredCheckbox.removeAttribute('aria-disabled')
+      if (packagesRequiredLabel) {
+        packagesRequiredLabel.removeAttribute('title')
+      }
     }
   }
 

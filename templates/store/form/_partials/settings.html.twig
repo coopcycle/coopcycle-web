@@ -21,9 +21,9 @@
   {{ form_row(form.weightRequired) }}
 {% endif %}
 {% if form.packagesRequired is defined %}
-  {% set packages_required_attr = {} %}
+  {% set packages_required_attr = { 'data-disabled-tooltip': 'form.store_type.package_set.placeholder'|trans } %}
   {% if form.packageSet is defined and form.packageSet.vars.data is null %}
-    {% set packages_required_attr = { disabled: 'disabled' } %}
+    {% set packages_required_attr = packages_required_attr|merge({ disabled: 'disabled' }) %}
   {% endif %}
   {{ form_row(form.packagesRequired, { attr: packages_required_attr }) }}
 {% endif %}
