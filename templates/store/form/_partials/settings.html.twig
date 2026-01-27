@@ -21,11 +21,18 @@
   {{ form_row(form.weightRequired) }}
 {% endif %}
 {% if form.packagesRequired is defined %}
-  {% set packages_required_attr = { 'data-disabled-tooltip': 'form.store_type.package_set.placeholder'|trans } %}
+  {% set packages_required_attr = { 'data-disabled-help': 'form.store_type.packages_required.disabled_help'|trans } %}
+  {% set packages_required_help_attr = { class: 'js-packages-required-help' } %}
+  {% set packages_required_help = null %}
   {% if form.packageSet is defined and form.packageSet.vars.data is null %}
-    {% set packages_required_attr = packages_required_attr|merge({ disabled: 'disabled' }) %}
+    {% set packages_required_attr = packages_required_attr|merge({ disabled: 'disabled', 'aria-disabled': 'true' }) %}
+    {% set packages_required_help = 'form.store_type.packages_required.disabled_help'|trans %}
   {% endif %}
-  {{ form_row(form.packagesRequired, { attr: packages_required_attr }) }}
+  {% if packages_required_help is not null %}
+    {{ form_row(form.packagesRequired, { attr: packages_required_attr, help: packages_required_help, help_attr: packages_required_help_attr }) }}
+  {% else %}
+    {{ form_row(form.packagesRequired, { attr: packages_required_attr, help_attr: packages_required_help_attr }) }}
+  {% endif %}
 {% endif %}
 {% if form.multiDropEnabled is defined %}
   {{ form_row(form.multiDropEnabled) }}
