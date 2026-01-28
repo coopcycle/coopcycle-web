@@ -820,7 +820,7 @@
             "NUMBER_OF_ORDERS": "Number of orders: {{count}}",
             "FIRST_ORDER": "First order: {{date}}",
             "LAST_ORDER": "Last order: {{date}}",
-            "FAVORITE_RESTAURANT": "Favorite restaurant: {{name}}"
+            "FAVORITE_RESTAURANT": "Favorite restaurant: {{- name}}"
         }
       }
 }
