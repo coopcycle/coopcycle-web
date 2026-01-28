@@ -180,3 +180,51 @@ Feature: Users
         "fullName":"John Doe"
       }
       """
+
+  Scenario: Retrieve customer insights
+    Given the current time is "2026-01-28 12:00:00"
+    Given the fixtures files are loaded:
+      | users.yml           |
+      | payment_methods.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the restaurant with id "2" has products:
+      | code      |
+      | SALAD     |
+      | CAKE      |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+      | givenName  | John              |
+      | familyName | Doe               |
+    And the user "bob" has role "ROLE_ADMIN"
+    Given the user "bob" is authenticated
+    And the user "bob" has ordered something for "2025-12-31 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-11-15 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-10-01 12:30:00" at the restaurant with id "2" and the order is fulfilled
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/customers/1/insights"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": {
+          "@*@":"@*@"
+        },
+        "@type": "CustomerInsightsDto",
+        "@id": @string@,
+        "averageOrderTotal": @integer@,
+        "firstOrderedAt": "@string@.isDateTime()",
+        "lastOrderedAt": "@string@.isDateTime()",
+        "numberOfOrders": 3,
+        "favoriteRestaurant":"/api/restaurants/1"
+      }
+      """

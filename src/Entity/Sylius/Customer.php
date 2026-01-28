@@ -7,6 +7,8 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
+use AppBundle\Api\Dto\CustomerInsightsDto;
+use AppBundle\Api\State\CustomerInsightsProvider;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Dabba\CustomerCredentials as DabbaCustomerCredentials;
 use AppBundle\Entity\LoopEat\CustomerCredentials;
@@ -30,14 +32,20 @@ use AppBundle\Entity\Model\TaggableTrait;
 #[ApiResource(
     shortName: 'Customer',
     operations: [
-    new Get(
-        security: 'is_granted(\'ROLE_ADMIN\') or user.getCustomer() == object'
-    ),
-    new Put(
-        denormalizationContext: ['groups' => ['customer_update']],
-        security: 'is_granted(\'ROLE_ADMIN\') or user.getCustomer() == object'
-    )
-],
+        new Get(
+            security: 'is_granted(\'ROLE_ADMIN\') or user.getCustomer() == object',
+        ),
+        new Get(
+            uriTemplate: '/customers/{id}/insights',
+            security: 'is_granted("ROLE_ADMIN")',
+            provider: CustomerInsightsProvider::class,
+            output: CustomerInsightsDto::class,
+        ),
+        new Put(
+            denormalizationContext: ['groups' => ['customer_update']],
+            security: 'is_granted(\'ROLE_ADMIN\') or user.getCustomer() == object'
+        )
+    ],
     normalizationContext: ['groups' => ['customer']]
 )]
 class Customer extends BaseCustomer implements TaggableInterface, CustomerInterface

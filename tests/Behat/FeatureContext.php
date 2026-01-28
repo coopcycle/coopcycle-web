@@ -831,6 +831,22 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Given the user :username has ordered something for :date at the restaurant with id :id and the order is fulfilled
+     */
+    public function theUserHasOrderedSomethingForAtRestaurantWithIdAndTheOrderIsFulfilled($username, $date, $id)
+    {
+        $user = $this->userManager->findUserByUsername($username);
+
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
+
+        $order = $this->createRandomOrder($restaurant, $user, new \DateTime($date));
+        $order->setState(OrderInterface::STATE_FULFILLED);
+
+        $this->getContainer()->get('sylius.manager.order')->persist($order);
+        $this->getContainer()->get('sylius.manager.order')->flush();
+    }
+
+    /**
      * @Given the product with code :code is soft deleted
      */
     public function softDeleteProductWithCode($code)
