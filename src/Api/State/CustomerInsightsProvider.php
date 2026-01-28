@@ -14,14 +14,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr;
-use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 final class CustomerInsightsProvider implements ProviderInterface
 {
     public function __construct(
         private readonly ItemProvider $provider,
-        private readonly EntityManagerInterface $entityManager,
-        private readonly AuthorizationCheckerInterface $authorizationChecker)
+        private readonly EntityManagerInterface $entityManager)
     {}
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
