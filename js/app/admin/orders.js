@@ -113,7 +113,7 @@ if (rootElement) {
 
 const httpClient = new window._auth.httpClient();
 
-const CustomerPopoverContent = ({ isLoading, customer, customerInsights }) => {
+const CustomerPopoverContent = ({ isLoading, customer, customerInsights, link }) => {
 
   const { t } = useTranslation();
 
@@ -140,11 +140,16 @@ const CustomerPopoverContent = ({ isLoading, customer, customerInsights }) => {
         { customerInsights.favoriteRestaurant ? (
         <li>{ t('CUSTOMER_INSIGHTS.FAVORITE_RESTAURANT', { name: customerInsights.favoriteRestaurant.name }) }</li>) : null }
       </ul>
+      {link !== '#' ? (
+        <div className="text-right">
+          <a href={ link }>→ {t('SEE_ALL')}</a>
+        </div>
+      ) : null }
     </div>
   )
 }
 
-const CustomerPopover = forwardRef(({ iri }, ref) => {
+const CustomerPopover = forwardRef(({ iri, link }, ref) => {
 
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -182,7 +187,8 @@ const CustomerPopover = forwardRef(({ iri }, ref) => {
         <CustomerPopoverContent
           isLoading={isLoading}
           customer={customer}
-          customerInsights={customerInsights} />
+          customerInsights={customerInsights}
+          link={link} />
       }
       trigger="click"
       open={isOpen}
@@ -200,7 +206,7 @@ document.querySelectorAll('[data-customer]').forEach(customerEl => {
 
   const ref = createRef()
 
-  createRoot(container).render(<CustomerPopover ref={ref} iri={ customerEl.dataset.customer } />)
+  createRoot(container).render(<CustomerPopover ref={ref} iri={ customerEl.dataset.customer } link={customerEl.getAttribute('href')} />)
 
   customerEl.addEventListener('click', (e) => {
     e.preventDefault();
