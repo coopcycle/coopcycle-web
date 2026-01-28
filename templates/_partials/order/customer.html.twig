@@ -1,7 +1,8 @@
 {% if customer.hasUser() %}
   <a href="{{ path('admin_user_details', { username: customer.username }) }}"
     class="d-block text-truncate" style="max-width: 120px;"
-    title="{{ customer.user.username|e('html_attr') }}">
+    title="{{ customer.user.username|e('html_attr') }}"
+    data-customer-insights="{{ ((customer|get_iri_from_item) ~ '/insights')|e('html_attr') }}">
     <i class="fa fa-user mr-1"></i>
     <span>{{ customer.user.username }}</span>
     {% if customer.tags|length > 0 %}
