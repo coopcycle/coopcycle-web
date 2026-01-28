@@ -125,11 +125,12 @@ const CustomerPopoverContent = ({ isLoading, customer, customerInsights }) => {
 
   return (
     <div>
+      <div className="text-right"><i className="fa fa-info-circle"></i></div>
       <ul className="list-unstyled">
         <li><a href={`mailto:${customer.email}`}>{customer.email}</a></li>
         <li>{formatPhoneNumber(customer.phoneNumber)}</li>
       </ul>
-      <hr/>
+      <div className="text-right"><i className="fa fa-bar-chart"></i></div>
       <ul className="list-unstyled">
         <li>{ t('CUSTOMER_INSIGHTS.NUMBER_OF_ORDERS', { count: customerInsights.numberOfOrders }) }</li>
         { customerInsights.firstOrderedAt ? (
@@ -156,6 +157,7 @@ const CustomerPopover = forwardRef(({ iri }, ref) => {
       setIsLoading(true)
       setIsOpen(true)
 
+      // TODO Make requests in parallel
       const { response: customer } = await httpClient.get(iri);
       const { response: insights } = await httpClient.get(`${iri}/insights`);
 
@@ -190,7 +192,7 @@ const CustomerPopover = forwardRef(({ iri }, ref) => {
   )
 })
 
-document.querySelectorAll('[data-customer-insights]').forEach(customerEl => {
+document.querySelectorAll('[data-customer]').forEach(customerEl => {
 
   const container = document.createElement("span");
 
