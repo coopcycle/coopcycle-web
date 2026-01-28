@@ -802,6 +802,12 @@
             "PRODUCTS": "Produits",
             "SECTION_NAME_LABEL": "Nom",
             "SECTION_NAME_PLACEHOLDER": "Exemple : plats, desserts…"
+        },
+        "CUSTOMER_INSIGHTS": {
+            "NUMBER_OF_ORDERS": "Nombre de commandes : {{count}}",
+            "FIRST_ORDER": "Première commande : {{date}}",
+            "LAST_ORDER": "Dernière commande : {{date}}",
+            "FAVORITE_RESTAURANT": "Restaurant préféré : {{- name}}"
         }
     }
 }

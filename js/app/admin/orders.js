@@ -1,11 +1,38 @@
 import { createRoot } from 'react-dom/client'
 import cubejs from '@cubejs-client/core';
 import { QueryRenderer } from '@cubejs-client/react';
-import { Spin } from 'antd';
-import React from 'react';
+import { Spin, Popover, Button } from 'antd';
+import React, { useImperativeHandle, createRef, forwardRef, useState } from 'react';
 import 'chart.js/auto'; // ideally we should only import the component that we need: https://react-chartjs-2.js.org/docs/migration-to-v4/#tree-shaking
 import { Line } from 'react-chartjs-2';
 import moment from 'moment'
+import { ThreeDots } from 'react-loader-spinner'
+
+import dayjs from 'dayjs'
+import 'dayjs/locale/en';
+import 'dayjs/locale/es';
+import 'dayjs/locale/fr';
+
+import TimeAgo from 'react-timeago'
+import { makeIntlFormatter } from 'react-timeago/defaultFormatter'
+import { useTranslation } from 'react-i18next';
+
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
+
+const locale = $('html').attr('lang')
+
+dayjs.locale(locale);
+
+const intlFormatter = makeIntlFormatter({
+  locale, // string
+  // localeMatcher?: 'best fit', // 'lookup' | 'best fit',
+  // numberingSystem?: 'latn' // Intl$NumberingSystem such as 'arab', 'deva', 'hebr' etc.
+  // style?: 'long', // 'long' | 'short' | 'narrow',
+  // numeric?: 'auto', //  'always' | 'auto', Using 'auto` will convert "1 day ago" to "yesterday" etc.
+})
+
 
 const COLORS_SERIES = ['#FF6492', '#141446', '#7A77FF'];
 const commonOptions = {
@@ -92,3 +119,90 @@ if (rootElement) {
 
   createRoot(rootElement).render(<ChartRenderer />);
 }
+
+const httpClient = new window._auth.httpClient();
+
+const CustomerPopoverContent = ({ isLoading, customerInsights }) => {
+
+  const { t } = useTranslation();
+
+  if (isLoading) {
+    return (
+      <ThreeDots wrapperClass="justify-content-center" width="24" height="24" />
+    )
+  }
+
+  return (
+    <div>
+      <ul className="list-unstyled">
+        <li>{ t('CUSTOMER_INSIGHTS.NUMBER_OF_ORDERS', { count: customerInsights.numberOfOrders }) }</li>
+        <li>{ t('CUSTOMER_INSIGHTS.FIRST_ORDER', { date: dayjs().to(dayjs(customerInsights.firstOrderedAt)) }) }</li>
+        <li>{ t('CUSTOMER_INSIGHTS.LAST_ORDER', { date: dayjs().to(dayjs(customerInsights.lastOrderedAt)) }) }</li>
+        { customerInsights.favoriteRestaurant ? (
+        <li>{ t('CUSTOMER_INSIGHTS.FAVORITE_RESTAURANT', { name: customerInsights.favoriteRestaurant.name }) }</li>
+        ) : null }
+      </ul>
+    </div>
+  )
+}
+
+const CustomerPopover = forwardRef(({ iri }, ref) => {
+
+  const [isOpen, setIsOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [customerInsights, setCustomerInsights] = useState(null)
+
+  useImperativeHandle(ref, () => ({
+    async open() {
+
+      setIsLoading(true)
+      setIsOpen(true)
+
+      const { response: insights } = await httpClient.get(iri);
+
+      let favoriteRestaurant = null
+      if (insights.favoriteRestaurant) {
+        const { response: fav } = await httpClient.get(insights.favoriteRestaurant)
+        favoriteRestaurant = fav
+      }
+
+      setCustomerInsights({
+        ...insights,
+        favoriteRestaurant
+      })
+      setIsLoading(false)
+
+    },
+  }), []);
+
+  return (
+    <Popover
+      content={
+        <CustomerPopoverContent
+          isLoading={isLoading}
+          customerInsights={customerInsights} />
+      }
+      title="Insights 📊"
+      trigger="click"
+      open={isOpen}
+      onOpenChange={setIsOpen}
+      placement="right">
+    </Popover>
+  )
+})
+
+document.querySelectorAll('[data-customer-insights]').forEach(customerEl => {
+
+  const container = document.createElement("span");
+
+  customerEl.appendChild(container)
+
+  const ref = createRef()
+
+  createRoot(container).render(<CustomerPopover ref={ref} iri={ customerEl.dataset.customerInsights } />)
+
+  customerEl.addEventListener('click', (e) => {
+    e.preventDefault();
+    ref.current.open();
+  })
+})

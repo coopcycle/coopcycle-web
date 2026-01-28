@@ -815,6 +815,12 @@
             "SECTION_NAME_LABEL": "Name",
             "SECTION_NAME_PLACEHOLDER": "Example: main courses, desserts…",
             "SECTION_DESCRIPTION_LABEL": "Description"
+        },
+        "CUSTOMER_INSIGHTS": {
+            "NUMBER_OF_ORDERS": "Number of orders: {{count}}",
+            "FIRST_ORDER": "First order: {{date}}",
+            "LAST_ORDER": "Last order: {{date}}",
+            "FAVORITE_RESTAURANT": "Favorite restaurant: {{name}}"
         }
       }
 }
