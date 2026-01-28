@@ -334,6 +334,15 @@ function geocodeAndSync() {
       return
     }
 
+    if (cart.shippingAddress?.provider !== null) {
+      dispatch(changeAddress({
+        ...cart.shippingAddress,
+        isPrecise: true,
+      }))
+
+      return
+    }
+
     dispatch(fetchRequest())
 
     geocode(cart.shippingAddress.streetAddress).then(address => {
@@ -419,7 +428,7 @@ export function changeAddress(address) {
       restaurant
     } = getState()
 
-    if (address.isPrecise || address.provider === 'MAP_PICKER') {
+    if (address.isPrecise || address?.provider !== null) {
 
       // Change field value immediately
       dispatch(setStreetAddress(address.streetAddress))

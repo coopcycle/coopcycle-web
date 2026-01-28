@@ -87,10 +87,10 @@ export default withTranslation()(({ order, t }) => {
           <ul className="list-unstyled">
             <li>{order.shippingAddress.streetAddress}</li>
           </ul>
-                    {order.shippingAddress.provider === 'MAP_PICKER' && (
+          {order.shippingAddress?.provider !== null && (
             <span className="text-info small" style={{ display: 'block', marginTop: '3px' }}>
               <i className="fa fa-map-marker" aria-hidden="true" style={{ marginRight: '5px' }}></i>
-              {t('CART_SHIPPING_ADDRESS_MAP_PICKED')}
+              {t(`CART_SHIPPING_ADDRESS_${order.shippingAddress.provider}`)}
             </span>
           )}
           {order.shippingAddress.description && (
