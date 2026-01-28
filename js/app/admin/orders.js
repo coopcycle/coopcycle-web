@@ -13,8 +13,6 @@ import 'dayjs/locale/en';
 import 'dayjs/locale/es';
 import 'dayjs/locale/fr';
 
-import TimeAgo from 'react-timeago'
-import { makeIntlFormatter } from 'react-timeago/defaultFormatter'
 import { useTranslation } from 'react-i18next';
 
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -24,15 +22,6 @@ dayjs.extend(relativeTime);
 const locale = $('html').attr('lang')
 
 dayjs.locale(locale);
-
-const intlFormatter = makeIntlFormatter({
-  locale, // string
-  // localeMatcher?: 'best fit', // 'lookup' | 'best fit',
-  // numberingSystem?: 'latn' // Intl$NumberingSystem such as 'arab', 'deva', 'hebr' etc.
-  // style?: 'long', // 'long' | 'short' | 'narrow',
-  // numeric?: 'auto', //  'always' | 'auto', Using 'auto` will convert "1 day ago" to "yesterday" etc.
-})
-
 
 const COLORS_SERIES = ['#FF6492', '#141446', '#7A77FF'];
 const commonOptions = {
@@ -136,11 +125,12 @@ const CustomerPopoverContent = ({ isLoading, customerInsights }) => {
     <div>
       <ul className="list-unstyled">
         <li>{ t('CUSTOMER_INSIGHTS.NUMBER_OF_ORDERS', { count: customerInsights.numberOfOrders }) }</li>
-        <li>{ t('CUSTOMER_INSIGHTS.FIRST_ORDER', { date: dayjs().to(dayjs(customerInsights.firstOrderedAt)) }) }</li>
-        <li>{ t('CUSTOMER_INSIGHTS.LAST_ORDER', { date: dayjs().to(dayjs(customerInsights.lastOrderedAt)) }) }</li>
+        { customerInsights.firstOrderedAt ? (
+        <li>{ t('CUSTOMER_INSIGHTS.FIRST_ORDER', { date: dayjs().to(dayjs(customerInsights.firstOrderedAt)) }) }</li>) : null }
+        { customerInsights.lastOrderedAt ? (
+        <li>{ t('CUSTOMER_INSIGHTS.LAST_ORDER', { date: dayjs().to(dayjs(customerInsights.lastOrderedAt)) }) }</li>) : null }
         { customerInsights.favoriteRestaurant ? (
-        <li>{ t('CUSTOMER_INSIGHTS.FAVORITE_RESTAURANT', { name: customerInsights.favoriteRestaurant.name }) }</li>
-        ) : null }
+        <li>{ t('CUSTOMER_INSIGHTS.FAVORITE_RESTAURANT', { name: customerInsights.favoriteRestaurant.name }) }</li>) : null }
       </ul>
     </div>
   )
