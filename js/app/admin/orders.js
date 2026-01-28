@@ -7,6 +7,8 @@ import 'chart.js/auto'; // ideally we should only import the component that we n
 import { Line } from 'react-chartjs-2';
 import moment from 'moment'
 import { ThreeDots } from 'react-loader-spinner'
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
+import { phoneNumber as formatPhoneNumber } from '../utils/format';
 
 import dayjs from 'dayjs'
 import 'dayjs/locale/en';
@@ -111,7 +113,7 @@ if (rootElement) {
 
 const httpClient = new window._auth.httpClient();
 
-const CustomerPopoverContent = ({ isLoading, customerInsights }) => {
+const CustomerPopoverContent = ({ isLoading, customer, customerInsights }) => {
 
   const { t } = useTranslation();
 
@@ -123,6 +125,11 @@ const CustomerPopoverContent = ({ isLoading, customerInsights }) => {
 
   return (
     <div>
+      <ul className="list-unstyled">
+        <li><a href={`mailto:${customer.email}`}>{customer.email}</a></li>
+        <li>{formatPhoneNumber(customer.phoneNumber)}</li>
+      </ul>
+      <hr/>
       <ul className="list-unstyled">
         <li>{ t('CUSTOMER_INSIGHTS.NUMBER_OF_ORDERS', { count: customerInsights.numberOfOrders }) }</li>
         { customerInsights.firstOrderedAt ? (
@@ -140,6 +147,7 @@ const CustomerPopover = forwardRef(({ iri }, ref) => {
 
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [customer, setCustomer] = useState(null)
   const [customerInsights, setCustomerInsights] = useState(null)
 
   useImperativeHandle(ref, () => ({
@@ -148,14 +156,15 @@ const CustomerPopover = forwardRef(({ iri }, ref) => {
       setIsLoading(true)
       setIsOpen(true)
 
-      const { response: insights } = await httpClient.get(iri);
+      const { response: customer } = await httpClient.get(iri);
+      const { response: insights } = await httpClient.get(`${iri}/insights`);
 
       let favoriteRestaurant = null
       if (insights.favoriteRestaurant) {
         const { response: fav } = await httpClient.get(insights.favoriteRestaurant)
         favoriteRestaurant = fav
       }
-
+      setCustomer(customer)
       setCustomerInsights({
         ...insights,
         favoriteRestaurant
@@ -170,9 +179,9 @@ const CustomerPopover = forwardRef(({ iri }, ref) => {
       content={
         <CustomerPopoverContent
           isLoading={isLoading}
+          customer={customer}
           customerInsights={customerInsights} />
       }
-      title="Insights 📊"
       trigger="click"
       open={isOpen}
       onOpenChange={setIsOpen}
@@ -189,7 +198,7 @@ document.querySelectorAll('[data-customer-insights]').forEach(customerEl => {
 
   const ref = createRef()
 
-  createRoot(container).render(<CustomerPopover ref={ref} iri={ customerEl.dataset.customerInsights } />)
+  createRoot(container).render(<CustomerPopover ref={ref} iri={ customerEl.dataset.customer } />)
 
   customerEl.addEventListener('click', (e) => {
     e.preventDefault();
