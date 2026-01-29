@@ -60,4 +60,3 @@ siret.head_office: Musíte uvést číslo SIRET provozovny, nikoliv sídla.
 loopeat.request_failed: Chyba spojení s %name%
 restaurant.paygreenShopId.notSet: Konfigurace ID obchodu Paygreen
 form.package_set.duplicatePackageNames: Názvy balíčků musí být v sadě balíčků jedinečné
-store.packages_required.package_set_required: A package set must be selected when packages are required

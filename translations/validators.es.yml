@@ -76,4 +76,3 @@ loopeat.insufficient_stock: Cantidad insuficiente de envases reutilizables parar
   %name% »
 siret.invalid: Numero SIRET invalido
 form.package_set.duplicatePackageNames: Los nombres de los paquetes deben ser únicos en un conjunto de paquetes
-store.packages_required.package_set_required: A package set must be selected when packages are required

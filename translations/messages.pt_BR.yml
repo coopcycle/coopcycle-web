@@ -382,7 +382,6 @@ form.store_type.time_slot.label: Horário
 form.store_type.package_set.label: Conjunto de embalagem
 form.store_type.weight_required.label: Exigir preenchimento de peso
 form.store_type.packages_required.label: Exigir preenchimento de embalagem
-form.store_type.packages_required.disabled_help: Please configure a package set first
 form.delivery.vehicle.placeholder: Escolhe tipo de veículo
 form.delivery.pickup.label: Endereço de coleta
 form.delivery.pickup.address_placeholder: Número da casa e nome da rua, bairro, CEP,

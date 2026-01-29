@@ -39,4 +39,3 @@ restaurant.contract.notValid: Sartu banaketa-kontratuaren terminoak (administrat
 restaurant.name.notBlank: Sartu jatetxearen izena
 restaurant.telephone.notBlank: Sartu zure telefono-zenbakia
 restaurant.openingHours.notBlank: Sartu gutxienez irekiera-ordu bat
-store.packages_required.package_set_required: A package set must be selected when packages are required

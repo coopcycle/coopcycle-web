@@ -1152,7 +1152,6 @@ form.payment.refund_comment.label: Comentarios
 form.payment.refund_liable.help: Cuál de las partes es responsable por el incidente?
 form.payment.refund_liable.label: Parte responsable
 form.store_type.packages_required.label: Pedir los paquetes
-form.store_type.packages_required.disabled_help: Please configure a package set first
 loopeat.oauth_connect.success: ¡Cuenta de %name% conectada con éxito!
 form.attach_to_org.modal.title: Adjuntar a la tienda
 form.time_slot.choices.error.empty: La lista de opciones no puede ser vacío

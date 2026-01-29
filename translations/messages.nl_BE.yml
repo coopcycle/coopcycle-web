@@ -48,4 +48,3 @@ profile.addresses.add: Toevoegen
 basics.add: Toevoegen
 stores.createNewOrder: 'Nieuwe bestelling aanmaken'
 stores.orders: 'Bestellingen'
-form.store_type.packages_required.disabled_help: Please configure a package set first
