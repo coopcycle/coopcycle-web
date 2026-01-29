@@ -306,3 +306,17 @@ function applyClickListenerForRestaurantItem() {
 }
 
 // applyClickListenerForRestaurantItem()
+
+document.querySelectorAll('[data-cuisine-name]').forEach((cuisineCheckbox) => {
+
+  if (cuisineCheckbox.dataset.cuisineIcon) {
+
+    const iconEl = document.createElement('iconify-icon');
+    iconEl.setAttribute('icon', cuisineCheckbox.dataset.cuisineIcon);
+    iconEl.style.fontSize = '24px';
+    iconEl.style.verticalAlign = 'middle';
+
+
+    cuisineCheckbox.closest('label').appendChild(iconEl)
+  }
+});
