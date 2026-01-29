@@ -1,22 +1,18 @@
-{% if customer.hasUser() %}
-  <a href="{{ path('admin_user_details', { username: customer.username }) }}"
-    class="d-block text-truncate" style="max-width: 120px;"
-    title="{{ customer.user.username|e('html_attr') }}">
-    <i class="fa fa-user mr-1"></i>
-    <span>{{ customer.user.username }}</span>
-    {% if customer.tags|length > 0 %}
-    <span class="ml-1">
-      {% for tag in customer.tags|expand_tags %}
-        <i title="{{ tag.slug }}" class="fa fa-circle mr-1" style="color: {{ tag.color }};"></i>
-      {% endfor %}
-    </span>
-    {% endif %}
+<span class="d-block">
+  <a
+    href="{{ customer.hasUser() ? path('admin_user_details', { username: customer.username }) : '#' }}"
+    class="text-truncate"
+    style="max-width: 240px;"
+    title="{{ (customer.hasUser() ? customer.user.username : customer.emailCanonical)|e('html_attr') }}"
+    data-customer="{{ customer|get_iri_from_item|e('html_attr') }}">
+    <i class="fa fa-user{% if not customer.hasUser() %}-secret{% endif %} mr-1"></i>
+    <span>{{ customer.hasUser() ? customer.user.username : customer.emailCanonical }}</span>
   </a>
-{% else %}
-  <span
-    class="d-block text-truncate" style="max-width: 120px;"
-    title="{{ customer.emailCanonical|e('html_attr') }}">
-    <i class="fa fa-user mr-1"></i>
-    <span>{{ customer.emailCanonical }}</span>
+  {% if customer.tags|length > 0 %}
+  <span class="ml-1">
+    {% for tag in customer.tags|expand_tags %}
+      <i title="{{ tag.slug }}" class="fa fa-circle mr-1" style="color: {{ tag.color }};"></i>
+    {% endfor %}
   </span>
-{% endif %}
+  {% endif %}
+</span>

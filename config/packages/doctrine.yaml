@@ -62,6 +62,7 @@ doctrine:
                 JSON_GET_FIELD: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\JsonGetField
                 JSON_AGG: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\JsonAgg
                 JSON_BUILD_OBJECT: AppBundle\Doctrine\Functions\JsonBuildObject
+                DATE_SUBTRACT: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\DateSubtract
             datetime_functions:
                 date: DoctrineExtensions\Query\Mysql\Date
         filters:

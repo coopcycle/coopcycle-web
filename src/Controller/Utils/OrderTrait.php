@@ -107,7 +107,7 @@ trait OrderTrait
             $parameters['cube_token'] = $tokenFactory->createToken();
         }
 
-        return $this->render($request->attributes->get('template'), $parameters, $response);
+        return $this->render($request->attributes->get('template'), $this->auth($parameters), $response);
     }
 
     public function orderReceiptPreviewAction($id, Request $request, ReceiptGenerator $generator, OrderRepository $orderRepository)

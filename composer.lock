@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0336cd74ac85e61baea1ede577cd25bf",
+    "content-hash": "fd8c062af544c8cb0caa24c227b96d9b",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -10049,38 +10049,42 @@
         },
         {
             "name": "martin-georgiev/postgresql-for-doctrine",
-            "version": "v1.8.0",
+            "version": "v4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/martin-georgiev/postgresql-for-doctrine.git",
-                "reference": "826d1df0d5db6cdd8a3e99bc4b5957dc7122c5d2"
+                "reference": "71f8b7e50b3d49e4b7d2e54ac95353be4c3b41be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/martin-georgiev/postgresql-for-doctrine/zipball/826d1df0d5db6cdd8a3e99bc4b5957dc7122c5d2",
-                "reference": "826d1df0d5db6cdd8a3e99bc4b5957dc7122c5d2",
+                "url": "https://api.github.com/repos/martin-georgiev/postgresql-for-doctrine/zipball/71f8b7e50b3d49e4b7d2e54ac95353be4c3b41be",
+                "reference": "71f8b7e50b3d49e4b7d2e54ac95353be4c3b41be",
                 "shasum": ""
             },
             "require": {
-                "doctrine/dbal": "~2.5||~3.0",
+                "doctrine/dbal": "~2.10||~3.0||~4.0",
                 "ext-ctype": "*",
                 "ext-json": "*",
                 "ext-mbstring": "*",
-                "php": "^7.2||^8.0"
+                "php": "^8.2 <8.6"
             },
             "require-dev": {
-                "doctrine/orm": "~2.5||~3.0",
-                "friendsofphp/php-cs-fixer": "^3.8",
-                "php-coveralls/php-coveralls": "^2.5",
-                "phpstan/phpstan": "^1.7",
-                "phpstan/phpstan-phpunit": "^1.1",
-                "phpunit/phpunit": "^9.5",
-                "qossmic/deptrac-shim": "^0.23 || ^0.24",
-                "symfony/cache": "^4.0||^5.0||^6.0"
+                "deptrac/deptrac": "^4.0",
+                "doctrine/orm": "~2.14||~3.0",
+                "ekino/phpstan-banned-code": "^3.0",
+                "friendsofphp/php-cs-fixer": "^3.92.3",
+                "phpstan/phpstan": "^2.1.33",
+                "phpstan/phpstan-deprecation-rules": "^2.0.3",
+                "phpstan/phpstan-doctrine": "^2.0.12",
+                "phpstan/phpstan-phpunit": "^2.0.11",
+                "phpunit/phpunit": "^10.5.60",
+                "rector/rector": "^2.3.0",
+                "symfony/cache": "^6.4||^7.0",
+                "symfony/var-exporter": "^6.4||^7.0"
             },
             "suggest": {
-                "doctrine/orm": "~2.5||~3.0",
-                "php": "^8.1"
+                "doctrine/orm": "~2.14||~3.0",
+                "php": "^8.4"
             },
             "type": "library",
             "autoload": {
@@ -10114,15 +10118,19 @@
             ],
             "support": {
                 "issues": "https://github.com/martin-georgiev/postgresql-for-doctrine/issues",
-                "source": "https://github.com/martin-georgiev/postgresql-for-doctrine/tree/v1.8.0"
+                "source": "https://github.com/martin-georgiev/postgresql-for-doctrine/tree/v4.0.0"
             },
             "funding": [
+                {
+                    "url": "https://github.com/sponsors/martin-georgiev",
+                    "type": "custom"
+                },
                 {
                     "url": "https://github.com/martin-georgiev",
                     "type": "github"
                 }
             ],
-            "time": "2022-08-21T11:56:27+00:00"
+            "time": "2025-12-30T09:56:25+00:00"
         },
         {
             "name": "mercadopago/dx-php",
