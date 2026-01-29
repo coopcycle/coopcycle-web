@@ -17,8 +17,29 @@ import { selectMenuSections } from './selectors'
 export function fetchProducts(restaurant) {
   return async function(dispatch, getState) {
     try {
-      const { response, error } = await httpClient.get(restaurant['@id'] + '/products');
-      dispatch(fetchProductsSuccess(response['hydra:member']));
+      dispatch(doFetchProducts(restaurant['@id'] + '/products'));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+}
+
+// Fetches all products with pagination
+function doFetchProducts(iri, results = []) {
+  return async function(dispatch, getState) {
+    try {
+
+      const { response, error } = await httpClient.get(iri);
+
+      if (Object.prototype.hasOwnProperty.call(response, 'hydra:view')) {
+        if (Object.prototype.hasOwnProperty.call(response['hydra:view'], 'hydra:next')) {
+          dispatch(doFetchProducts(response['hydra:view']['hydra:next'], results.concat(response['hydra:member'])));
+          return;
+        }
+      }
+
+      dispatch(fetchProductsSuccess(results.concat(response['hydra:member'])));
+
     } catch (e) {
       console.error(e);
     }
