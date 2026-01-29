@@ -118,6 +118,7 @@
     "html-loader": "^2.1.2",
     "i18next": "^19.9.2",
     "i18next-browser-languagedetector": "^6.1.8",
+    "iconify-icon": "^3.0.2",
     "inputmask": "^5.0.7",
     "jest": "^26.6.3",
     "jquery": "^3.6.1",
