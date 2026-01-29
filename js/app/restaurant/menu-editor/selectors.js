@@ -30,7 +30,7 @@ const selectAllProducts = (state) => state.products.products
 export const selectProducts = createSelector(
   selectMenuProducts,
   selectAllProducts,
-  (menuProducts, allProducts) => _.filter(allProducts, (p) => !menuProducts.includes(p['@id']))
+  (menuProducts, allProducts) => _.sortBy(_.filter(allProducts, (p) => !menuProducts.includes(p['@id'])), ['name'])
 )
 
 export const selectIsModalOpen = (state) => state.ui.isModalOpen;
