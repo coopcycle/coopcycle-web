@@ -11,16 +11,14 @@ export const closeModal = createAction('MENU_EDITOR/CLOSE_MODAL');
 export const createSectionFlow = createAction('MENU_EDITOR/CREATE_SECTION_FLOW');
 export const editSectionFlow = createAction('MENU_EDITOR/EDIT_SECTION_FLOW');
 export const setIsLoading = createAction('MENU_EDITOR/SET_IS_LOADING');
+export const setIsLoadingProducts = createAction('MENU_EDITOR/SET_IS_LOADING_PRODUCTS');
 
 import { selectMenuSections } from './selectors'
 
 export function fetchProducts(restaurant) {
   return async function(dispatch, getState) {
-    try {
-      dispatch(doFetchProducts(restaurant['@id'] + '/products'));
-    } catch (e) {
-      console.error(e);
-    }
+    dispatch(setIsLoadingProducts(true));
+    dispatch(doFetchProducts(restaurant['@id'] + '/products'));
   }
 }
 

@@ -18,6 +18,7 @@ import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder"
 
 import _ from 'lodash';
 import { Provider, useDispatch, useSelector } from 'react-redux'
+import { ProgressBar } from 'react-loader-spinner'
 
 import { createStoreFromPreloadedState } from './menu-editor/store'
 import {
@@ -42,6 +43,7 @@ import {
   selectMenuName,
   selectSectionInModal,
   selectIsLoading,
+  selectIsLoadingProducts,
 } from './menu-editor/selectors'
 
 import './menu-editor.scss'
@@ -178,6 +180,7 @@ const RightPanel = () => {
   const ref = useRef(null);
   const { t } = useTranslation();
   const products = useSelector(selectProducts)
+  const isLoading = useSelector(selectIsLoadingProducts)
 
   const [ isDraggedOver, setIsDraggedOver ] = useState(false);
 
@@ -202,6 +205,10 @@ const RightPanel = () => {
           {t('MENU_EDITOR.PRODUCTS')}
         </h4>
         <div className="menuEditor__panel__body" ref={ref}>
+          { isLoading && (
+          <div className="text-center">
+            <ProgressBar width="40" height="40" />
+          </div> )}
           { products.map((product, index) => (
             <Product key={ `product-${index}` } product={ product } />
           )) }

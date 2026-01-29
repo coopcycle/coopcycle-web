@@ -5,6 +5,7 @@ const initialState = {
     description: ''
   },
   isLoading: false,
+  isLoadingProducts: false,
 }
 
 import {
@@ -13,6 +14,8 @@ import {
   createSectionFlow,
   editSectionFlow,
   setIsLoading,
+  setIsLoadingProducts,
+  fetchProductsSuccess,
 } from './actions'
 
 export default (state = initialState, action) => {
@@ -48,6 +51,18 @@ export default (state = initialState, action) => {
       return {
         ...state,
         isLoading: action.payload,
+      }
+
+    case setIsLoadingProducts.type:
+      return {
+        ...state,
+        isLoadingProducts: action.payload,
+      }
+
+    case fetchProductsSuccess.type:
+      return {
+        ...state,
+        isLoadingProducts: false,
       }
   }
 
