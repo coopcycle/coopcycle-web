@@ -136,6 +136,58 @@ if (timeSlotsEl && timeSlotEl) {
   document.querySelector('#store_timeSlot').closest('.form-group').classList.add('d-none')
 }
 
+const packageSetSelect = document.querySelector('#store_packageSet')
+const packagesRequiredCheckbox = document.querySelector('#store_packagesRequired')
+
+if (packageSetSelect && packagesRequiredCheckbox) {
+  const disabledHelp = packagesRequiredCheckbox.dataset.disabledHelp
+  const formGroup = packagesRequiredCheckbox.closest('.form-group')
+  const helpClass = 'js-packages-required-help'
+
+  const ensureHelpEl = () => {
+    if (!formGroup) {
+      return null
+    }
+
+    let helpEl = formGroup.querySelector(`.${helpClass}`)
+    if (!helpEl) {
+      helpEl = document.createElement('span')
+      helpEl.classList.add('help-block', helpClass)
+      formGroup.appendChild(helpEl)
+    }
+
+    return helpEl
+  }
+
+  const updatePackagesRequiredState = () => {
+    const hasPackageSet = packageSetSelect.value && packageSetSelect.value !== ''
+
+    if (!hasPackageSet) {
+      packagesRequiredCheckbox.checked = false
+      packagesRequiredCheckbox.setAttribute('disabled', 'disabled')
+      packagesRequiredCheckbox.setAttribute('aria-disabled', 'true')
+      if (disabledHelp) {
+        const currentHelpEl = ensureHelpEl()
+        if (currentHelpEl) {
+          currentHelpEl.textContent = disabledHelp
+        }
+      }
+    } else {
+      packagesRequiredCheckbox.removeAttribute('disabled')
+      packagesRequiredCheckbox.removeAttribute('aria-disabled')
+      if (formGroup) {
+        const helpEl = formGroup.querySelector(`.${helpClass}`)
+        if (helpEl) {
+          helpEl.remove()
+        }
+      }
+    }
+  }
+
+  updatePackagesRequiredState()
+  packageSetSelect.addEventListener('change', updatePackagesRequiredState)
+}
+
 
 // Delete confirmation
 $('#store_delete').on('click', e => {

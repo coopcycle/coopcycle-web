@@ -160,6 +160,7 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     #[Groups(['store'])]
     private $weightRequired = false;
 
+    #[Assert\Expression('!value or this.getPackageSet() != null', message: 'store.packages_required.package_set_required')]
     #[Groups(['store'])]
     private $packagesRequired = false;
 
