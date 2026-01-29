@@ -1,4 +1,5 @@
 import numbro from 'numbro'
+import 'iconify-icon';
 
 // @see http://symfony.com/doc/3.4/frontend/encore/legacy-apps.html
 const $ = require('jquery')
