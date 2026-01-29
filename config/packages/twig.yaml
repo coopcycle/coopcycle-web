@@ -47,5 +47,6 @@ twig:
         odoo_url: '%env(ODOO_URL)%'
         invitation_link_provider: '@AppBundle\Service\InvitationLinkProviderService'
         paygreen_environment: '%env(PAYGREEN_ENVIRONMENT)%'
+        iconify_api_url: '%env(ICONIFY_API_URL)%'
 
     exception_controller: null
