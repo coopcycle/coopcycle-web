@@ -649,7 +649,6 @@ form.settings.stripe_testmode.help: 'W trybie « test », będziesz musiał uży
   nie zostaną wymienione.</strong> '
 form.preparation_time_rule.expression.label: Ekspresja
 form.store_type.package_set.label: Zestaw paczek
-form.store_type.packages_required.disabled_help: Please configure a package set first
 form.store_type.prefill_pickup_address.label: Wypełnij automatycznie adres odbioru
 task.type.DROPOFF: Doręczenie
 form.task.dropoff.doorstep.label: Dostawa pod próg drzwi

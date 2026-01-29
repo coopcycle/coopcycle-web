@@ -406,7 +406,6 @@ form.store_type.package_set.label: 'Paquet conchunto'
 form.store_type.package_set.placeholder: 'Tría un paquet conchunto'
 form.store_type.weight_required.label: 'Pedir lo peso'
 form.store_type.packages_required.label: 'Pedir entrada de paquetz'
-form.store_type.packages_required.disabled_help: Please configure a package set first
 form.delivery.vehicle.placeholder: 'Tría un vehíclo'
 form.delivery.pickup.label: 'Adreza de recullida'
 form.delivery.pickup.address_placeholder: 'Numero de casa y nombre d''a carrera, aria,

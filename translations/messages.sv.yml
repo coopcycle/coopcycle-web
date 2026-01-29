@@ -102,4 +102,3 @@ order.list.total: 'Totalt'
 order.list.shippedAt: 'Leveranstid'
 stores.createNewOrder: 'Skapa ny beställning'
 stores.orders: 'Beställningar'
-form.store_type.packages_required.disabled_help: Please configure a package set first
