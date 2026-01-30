@@ -230,6 +230,13 @@ class RestaurantController extends AbstractController
 
         $matches = array_values(array_filter($matches));
 
+        // Preload entities to optimize N+1 queries
+        $preloader = new EntityPreloader($this->entityManager);
+        $preloader->preload($matches, 'promotions');
+        $preloader->preload($matches, 'preparationTimeRules');
+        // Many-to-many associations with order by are not supported
+        // $preloader->preload($matches, 'servesCuisine');
+
         if ($request->query->has('geohash') || $request->query->has('address')) {
 
             $geohash = null;
