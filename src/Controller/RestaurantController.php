@@ -224,11 +224,10 @@ class RestaurantController extends AbstractController
             }, $repository->findByFilters($request->query->all()));
         });
 
-        $matches = array_map(function ($id) use ($repository) {
-            return $repository->find($id);
-        }, $restaurantsIds);
+        $qb = $repository->createQueryBuilder('r');
+        $qb->add('where', $qb->expr()->in('r.id', $restaurantsIds));
 
-        $matches = array_values(array_filter($matches));
+        $matches = $qb->getQuery()->getResult();
 
         // Preload entities to optimize N+1 queries
         $preloader = new EntityPreloader($this->entityManager);
