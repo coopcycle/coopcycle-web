@@ -1,10 +1,25 @@
 @use "sass:math";
 
-@import "../../../assets/css/vars.scss";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
+// https://getbootstrap.com/docs/5.3/customize/sass/#importing
+
+// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
+@import "bootstrap/scss/functions";
+
+// 3. Include remainder of required Bootstrap stylesheets (including any separate color mode stylesheets)
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/variables-dark";
+
+// 4. Include any default map overrides here
+
+// 5. Include remainder of required parts
+// @import "../node_modules/bootstrap/scss/maps";
+@import "~bootstrap/scss/mixins";
+// @import "../node_modules/bootstrap/scss/root";
+
 @import "~skeleton-screen-css/dist/index.scss";
 
 @import "./restaurant-card.scss";
+@import "./swiper.scss";
 
 .shops-content {
   display: flex;
@@ -13,7 +28,7 @@
 
 .shops-list-paginator {
   text-align: center;
-  font-size: $font-size-h2;
+  font-size: $h2-font-size;
 }
 
 .restaurant-side-bar {
@@ -46,43 +61,11 @@ button[aria-expanded='false'] .filter-caret {
 
 .restaurant-list-header {
   margin-top: -20px;
-  padding-top: $bs-base-margin;
-  margin-bottom: $bs-base-margin;
-  background-color: $main-blue-light;
+  padding-top: $spacer;
+  margin-bottom: $spacer;
+  background-color: $blue;
   background-image: url(../../../assets/pattern.svg);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
-}
-
-.swiper {
-  figcaption {
-    font-size: $font-size-h4;
-  }
-}
-.swiper-nav-prev,
-.swiper-nav-next {
-  position: absolute;
-  top: 35%;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  outline: none !important;
-  z-index: 10;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--swiper-navigation-color, var(--swiper-theme-color));
-}
-.swiper-button-disabled {
-  display: none;
-}
-.swiper-nav-prev {
-  left: 10px;
-  right: auto;
-}
-.swiper-nav-next {
-  right: 10px;
-  left: auto;
 }

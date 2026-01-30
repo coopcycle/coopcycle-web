@@ -8,7 +8,7 @@
 
   // Define width *ONLY* for larger screens
   // On small screens, it should take 100% width
-  @media (min-width: $screen-sm-min) {
+  @include media-breakpoint-up(sm) {
     width: 333px;
   }
   height: 346px;
