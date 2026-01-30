@@ -32,7 +32,7 @@ class AssetsController extends AbstractController
 
 
     #[Route(path: '/assets/banner.svg', name: 'assets_banner_svg')]
-    public function bannerAction(Request $request, Filesystem $assetsFilesystem, CacheInterface $projectCache)
+    public function bannerAction(Request $request, Filesystem $assetsFilesystem, CacheInterface $appCache)
     {
         try {
             if (!$assetsFilesystem->fileExists('banner.svg')) {
@@ -42,7 +42,7 @@ class AssetsController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $svg = $projectCache->get('banner_svg', function (ItemInterface $item) use ($assetsFilesystem) {
+        $svg = $appCache->get('banner_svg', function (ItemInterface $item) use ($assetsFilesystem) {
 
             $item->expiresAfter(3600);
 

@@ -18,7 +18,7 @@ class CustomizeType extends AbstractType
     public function __construct(
         private SettingsManager $settingsManager,
         private Filesystem $assetsFilesystem,
-        private CacheInterface $projectCache)
+        private CacheInterface $appCache)
     {}
 
     private function getContentData($filename)
@@ -139,8 +139,8 @@ class CustomizeType extends AbstractType
                 $aboutUsEnabled
             );
 
-            $this->projectCache->delete('content.about_us');
-            $this->projectCache->delete('content.about_us.exists');
+            $this->appCache->delete('content.about_us');
+            $this->appCache->delete('content.about_us.exists');
 
             // Order confirm
 
@@ -153,8 +153,8 @@ class CustomizeType extends AbstractType
                 $orderConfirmEnabled
             );
 
-            $this->projectCache->delete('content.order_confirm');
-            $this->projectCache->delete('content.order_confirm.exists');
+            $this->appCache->delete('content.order_confirm');
+            $this->appCache->delete('content.order_confirm.exists');
 
             // Custom legal, terms, privacy
 

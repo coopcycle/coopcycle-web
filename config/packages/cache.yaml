@@ -8,8 +8,6 @@ framework:
                 adapter: cache.app
             s3_flysystem.cache:
                 adapter: cache.app
-            project.cache:
-                adapter: cache.app
             tag_manager.cache:
                 adapters:
                   - cache.adapter.array

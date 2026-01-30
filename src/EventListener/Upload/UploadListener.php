@@ -36,7 +36,7 @@ final class UploadListener
         private readonly MessageBusInterface $messageBus,
         private readonly ProductSpreadsheetParser $productSpreadsheetParser,
         private readonly IriConverterInterface $iriConverter,
-        private readonly CacheInterface $projectCache,
+        private readonly CacheInterface $appCache,
         private readonly ValidatorInterface $validator,
         private readonly string $secret,
         private readonly bool $isDemo,
@@ -148,7 +148,7 @@ final class UploadListener
         $this->settingsManager->set('company_logo', $file->getBasename());
         $this->settingsManager->flush();
 
-        $this->projectCache->delete('content.company_logo.base_64');
+        $this->appCache->delete('content.company_logo.base_64');
     }
 
     private function onTasksUpload(PostPersistEvent $event)
@@ -199,7 +199,7 @@ final class UploadListener
             throw new UploadException('Banner can\'t be changed in demo mode');
         }
 
-        $this->projectCache->delete('banner_svg_stat');
-        $this->projectCache->delete('banner_svg');
+        $this->appCache->delete('banner_svg_stat');
+        $this->appCache->delete('banner_svg');
     }
 }

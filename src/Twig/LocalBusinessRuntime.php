@@ -41,7 +41,7 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         private TranslatorInterface $translator,
         private NormalizerInterface $serializer,
         private LocalBusinessRepository $repository,
-        private CacheInterface $projectCache,
+        private CacheInterface $appCache,
         private EntityManagerInterface $entityManager,
         private TimingRegistry $timingRegistry,
         private RestaurantDecorator $restaurantDecorator,
@@ -99,7 +99,7 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
 
     public function restaurantsSuggestions(): array
     {
-        return $this->projectCache->get('restaurant.suggestions', function (ItemInterface $item) {
+        return $this->appCache->get('restaurant.suggestions', function (ItemInterface $item) {
 
             $item->expiresAfter(60 * 5);
 

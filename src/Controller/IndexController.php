@@ -74,7 +74,7 @@ class IndexController extends AbstractController
     }
 
     #[HideSoftDeleted]
-    public function indexAction(LocalBusinessRepository $repository, CacheInterface $projectCache,
+    public function indexAction(LocalBusinessRepository $repository, CacheInterface $appCache,
         TimingRegistry $timingRegistry,
         UrlGeneratorInterface $urlGenerator,
         TranslatorInterface $translator,
@@ -108,7 +108,7 @@ class IndexController extends AbstractController
             $cacheKey = sprintf('homepage.%s.%s', $keyForShopType, $cacheKeySuffix);
 
             [ $shops, $shopsCount ] =
-                $this->getItems($repository, $shopType, $projectCache, $cacheKey, $timingRegistry);
+                $this->getItems($repository, $shopType, $appCache, $cacheKey, $timingRegistry);
 
             if ($shopsCount > 0) {
                 $sections[] = [

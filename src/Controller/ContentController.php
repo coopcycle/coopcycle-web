@@ -15,13 +15,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class ContentController extends AbstractController
 {
     #[Route(path: ['an' => '/sobre-nosotros', 'ca' => '/sobre-nosaltres', 'da' => '/om-os', 'de' => '/uber-uns', 'en' => '/about-us', 'es' => '/sobre-nosotros', 'eu' => '/guri-buruz', 'fr' => '/a-propos', 'hu' => '/rolunk', 'it' => '/riguardo-a-noi', 'pl' => '/o-nas', 'pt_BR' => '/sobre-nos', 'pt_PT' => '/sobre-nos'], name: 'about_us')]
-    public function aboutUsAction(Request $request, Filesystem $assetsFilesystem, CacheInterface $projectCache)
+    public function aboutUsAction(Request $request, Filesystem $assetsFilesystem, CacheInterface $appCache)
     {
         if (!$assetsFilesystem->fileExists('about_us.md')) {
             throw $this->createNotFoundException();
         }
 
-        $aboutUs = $projectCache->get('content.about_us', function (ItemInterface $item) use ($assetsFilesystem) {
+        $aboutUs = $appCache->get('content.about_us', function (ItemInterface $item) use ($assetsFilesystem) {
 
             $item->expiresAfter(300);
 

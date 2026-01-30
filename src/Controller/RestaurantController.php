@@ -154,20 +154,20 @@ class RestaurantController extends AbstractController
     #[Route(path: '/restaurants', name: 'restaurants')]
     public function legacyRestaurantsAction(Request $request,
         LocalBusinessRepository $repository,
-        CacheInterface $projectCache,
+        CacheInterface $appCache,
         BusinessContext $businessContext)
     {
         $requestClone = clone $request;
 
         $requestClone->attributes->set('type', LocalBusiness::getKeyForType(FoodEstablishment::RESTAURANT));
 
-        return $this->listAction($requestClone, $repository, $projectCache, $businessContext);
+        return $this->listAction($requestClone, $repository, $appCache, $businessContext);
     }
 
     #[Route(path: '/shops', name: 'shops')]
     public function listAction(Request $request,
         LocalBusinessRepository $repository,
-        CacheInterface $projectCache,
+        CacheInterface $appCache,
         BusinessContext $businessContext)
     {
         $originalParams = $request->query->all();
@@ -214,7 +214,7 @@ class RestaurantController extends AbstractController
             $request->query->set('cuisine', $cuisineIds);
         }
 
-        $restaurantsIds = $projectCache->get($cacheKey, function (ItemInterface $item) use ($repository, $request) {
+        $restaurantsIds = $appCache->get($cacheKey, function (ItemInterface $item) use ($repository, $request) {
 
             $item->expiresAfter(60 * 5);
 
@@ -743,9 +743,9 @@ class RestaurantController extends AbstractController
 
 
     #[Route(path: '/restaurants/map', name: 'restaurants_map')]
-    public function mapAction(Request $request, SlugifyInterface $slugify, CacheInterface $projectCache)
+    public function mapAction(Request $request, SlugifyInterface $slugify, CacheInterface $appCache)
     {
-        $restaurants = $projectCache->get('homepage.map', function (ItemInterface $item) use ($slugify) {
+        $restaurants = $appCache->get('homepage.map', function (ItemInterface $item) use ($slugify) {
 
             $item->expiresAfter(60 * 30);
 
@@ -842,14 +842,14 @@ class RestaurantController extends AbstractController
     #[Route(path: '/stores', name: 'stores')]
     public function legacyStoreListAction(Request $request,
         LocalBusinessRepository $repository,
-        CacheInterface $projectCache,
+        CacheInterface $appCache,
         BusinessContext $businessContext)
     {
         $requestClone = clone $request;
 
         $requestClone->attributes->set('type', LocalBusiness::getKeyForType(Store::GROCERY_STORE));
 
-        return $this->listAction($requestClone, $repository, $projectCache, $businessContext);
+        return $this->listAction($requestClone, $repository, $appCache, $businessContext);
     }
 
     #[Route(path: '/restaurants/tags/{tags}', name: 'restaurants_by_tags')]
