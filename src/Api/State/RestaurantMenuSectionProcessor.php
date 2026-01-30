@@ -43,7 +43,7 @@ class RestaurantMenuSectionProcessor implements ProcessorInterface
             // Remove the product from existing sections
             $productTaxonsToRemove = [];
             foreach ($data->products as $product) {
-                $productTaxon = $this->taxonRepository->getProductTaxon($product, $section);
+                $productTaxon = $this->taxonRepository->getProductTaxon($product, $menu);
                 if ($productTaxon) {
                     $productTaxonsToRemove[] = $productTaxon;
                 }

@@ -5,6 +5,7 @@ namespace AppBundle\Entity\Sylius;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Sylius\Taxon;
+use Doctrine\ORM\Query\Expr;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Taxonomy\Model\TaxonInterface;
@@ -28,13 +29,18 @@ class TaxonRepository extends BaseTaxonRepository
         return $this->nestedTreeRepository;
     }
 
-    public function getProductTaxon(ProductInterface $product, Taxon $section): ?ProductTaxon
+    public function getProductTaxon(ProductInterface $product, Taxon $menu): ?ProductTaxon
     {
+        if (!$menu->isRoot()) {
+            throw new \LogicException('The provided Taxon is not a root taxon.');
+        }
+
         $qb = $this->getEntityManager()->getRepository(ProductTaxon::class)->createQueryBuilder('pt')
+            ->join(Taxon::class, 't', Expr\Join::WITH, 'pt.taxon = t.id')
             ->andWhere('pt.product = :product')
-            ->andWhere('pt.taxon = :taxon')
+            ->andWhere('t.root = :root')
             ->setParameter('product', $product)
-            ->setParameter('taxon', $section);
+            ->setParameter('root', $menu);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
