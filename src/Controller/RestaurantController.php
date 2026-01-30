@@ -233,6 +233,8 @@ class RestaurantController extends AbstractController
         $preloader = new EntityPreloader($this->entityManager);
         $preloader->preload($matches, 'promotions');
         $preloader->preload($matches, 'preparationTimeRules');
+        $preloader->preload($matches, 'fulfillmentMethods');
+        $preloader->preload($matches, 'closingRules');
         // Many-to-many associations with order by are not supported
         // $preloader->preload($matches, 'servesCuisine');
 
