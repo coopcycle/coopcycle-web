@@ -224,19 +224,24 @@ class RestaurantController extends AbstractController
             }, $repository->findByFilters($request->query->all()));
         });
 
-        $qb = $repository->createQueryBuilder('r');
-        $qb->add('where', $qb->expr()->in('r.id', $restaurantsIds));
+        $matches = [];
 
-        $matches = $qb->getQuery()->getResult();
+        if (count($restaurantsIds) > 0) {
 
-        // Preload entities to optimize N+1 queries
-        $preloader = new EntityPreloader($this->entityManager);
-        $preloader->preload($matches, 'promotions');
-        $preloader->preload($matches, 'preparationTimeRules');
-        $preloader->preload($matches, 'fulfillmentMethods');
-        $preloader->preload($matches, 'closingRules');
-        // Many-to-many associations with order by are not supported
-        // $preloader->preload($matches, 'servesCuisine');
+            $qb = $repository->createQueryBuilder('r');
+            $qb->add('where', $qb->expr()->in('r.id', $restaurantsIds));
+
+            $matches = $qb->getQuery()->getResult();
+
+            // Preload entities to optimize N+1 queries
+            $preloader = new EntityPreloader($this->entityManager);
+            $preloader->preload($matches, 'promotions');
+            $preloader->preload($matches, 'preparationTimeRules');
+            $preloader->preload($matches, 'fulfillmentMethods');
+            $preloader->preload($matches, 'closingRules');
+            // Many-to-many associations with order by are not supported
+            // $preloader->preload($matches, 'servesCuisine');
+        }
 
         if ($request->query->has('geohash') || $request->query->has('address')) {
 
