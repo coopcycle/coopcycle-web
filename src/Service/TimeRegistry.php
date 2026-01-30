@@ -19,7 +19,7 @@ class TimeRegistry
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        private CacheInterface $appCache)
+        private CacheInterface $timeRegistryCache)
     {
         $this->entityManager = $entityManager;
     }
@@ -28,7 +28,7 @@ class TimeRegistry
     {
         $cacheKey = sprintf('%s|%s', 'TimeRegistry', self::AVERAGE_PREPARATION_CACHE_KEY);
 
-        $result = $this->appCache->get($cacheKey, function (ItemInterface $item) {
+        $result = $this->timeRegistryCache->get($cacheKey, function (ItemInterface $item) {
 
             $item->expiresAfter(60 * 5);
 
@@ -46,7 +46,7 @@ class TimeRegistry
     {
         $cacheKey = sprintf('%s|%s', 'TimeRegistry', self::AVERAGE_SHIPPING_CACHE_KEY);
 
-        $result = $this->appCache->get($cacheKey, function (ItemInterface $item) {
+        $result = $this->timeRegistryCache->get($cacheKey, function (ItemInterface $item) {
 
             $item->expiresAfter(60 * 5);
 
