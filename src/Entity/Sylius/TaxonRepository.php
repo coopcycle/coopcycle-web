@@ -4,6 +4,7 @@ namespace AppBundle\Entity\Sylius;
 
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\ProductTaxon;
+use AppBundle\Entity\Sylius\Taxon;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Taxonomy\Model\TaxonInterface;
@@ -27,11 +28,13 @@ class TaxonRepository extends BaseTaxonRepository
         return $this->nestedTreeRepository;
     }
 
-    public function getProductTaxon(ProductInterface $product): ?ProductTaxon
+    public function getProductTaxon(ProductInterface $product, Taxon $section): ?ProductTaxon
     {
         $qb = $this->getEntityManager()->getRepository(ProductTaxon::class)->createQueryBuilder('pt')
             ->andWhere('pt.product = :product')
-            ->setParameter('product', $product);
+            ->andWhere('pt.taxon = :taxon')
+            ->setParameter('product', $product)
+            ->setParameter('taxon', $section);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
