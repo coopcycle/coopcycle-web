@@ -79,7 +79,7 @@
         "craue/config-bundle": "~2.0",
         "knplabs/knp-paginator-bundle": "^5.0",
         "league/csv": "^9.3",
-        "twig/twig": "^2.0 || ^3.0",
+        "twig/twig": "^3.0",
         "sylius/order-bundle": "^1.7.5",
         "sylius/payment-bundle": "^1.7.5",
         "laravolt/avatar": "^6",
