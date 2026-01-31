@@ -1,8 +1,88 @@
 {% extends "base.html.twig" %}
 
 {% block body %}
+
+{% set categories = [
+  { key: 'featured', transKey: 'homepage.featured' },
+  { key: 'exclusive', transKey: 'homepage.exclusive' },
+  { key: 'new', transKey: 'homepage.shops.new' },
+  { key: 'zerowaste', transKey: 'restaurant.list.tags.zerowaste' }
+] %}
+
 {% include "restaurant/_partials/list_header.html.twig" %}
-<div class="container-full-hd container--extra-space-on-sides shops-content">
+
+<div class="container-fluid">
+  <ul class="nav nav-underline">
+    <li class="nav-item">
+      <a
+        class="nav-link {% if not app.request.query.has('category') %}active{% endif %}"
+        href="{{ path('shops', { geohash: geohash, address: address }) }}"><i class="fa fa-lg fa-home" aria-hidden="true"></i></a>
+    </li>
+    {# No need to show types tabs if only one type #}
+    {% if types|length > 1 %}
+      {% for type in types %}
+        {# TODO Add tab for shop type #}
+      {% endfor %}
+    {% endif %}
+    {% for category in categories %}
+      {% set is_active = app.request.query.get('category') == category.key %}
+      <li class="nav-item">
+        <a
+          class="nav-link {% if is_active %}active{% endif %}"
+          {% if not is_active %}
+          href="{{ path('shops', { geohash: geohash, address: address, category: category.key }) }}"
+          data-filter="category"
+          {% endif %}>{{ category.transKey|trans }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+
+{% if cuisines|length > 0 %}
+<div class="container-fluid">
+  <ul class="nav">
+    {% for cuisine in cuisines %}
+      {% set is_active = cuisine.name in app.request.query.all('cuisine') %}
+      {% set query_params = { geohash: geohash, address: address, category: app.request.query.get('category') } %}
+      {% if cuisine.name not in app.request.query.all('cuisine') %}
+        {% set query_params = query_params|merge({ cuisine: [ cuisine.name ] }) %}
+      {% endif %}
+      <li class="nav-item">
+        <a class="nav-link text-center {% if is_active %}active{% endif %}"
+          href="{{ path('shops', query_params) }}"
+          data-filter="cuisine">
+          <span class="d-block">
+            {% if cuisine.hasIcon() %}
+            <iconify-icon icon="{{ cuisine.icon|e('html_attr') }}" style="font-size: 30px;"></iconify-icon>
+            {% else %}
+            <iconify-icon icon="fluent-color:search-sparkle-16" style="font-size: 30px;"></iconify-icon>
+            {% endif %}
+          </span>
+          <span>{{ cuisine.name|trans({}, 'cuisines') }}</span>
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+<div class="container-fluid shops-content">
+{% if count == 0 %}
+  <div class="col-md-6 col-md-offset-3 alert alert-warning text-center">
+    {{ 'restaurants.no_results'|trans|raw }}
+  </div>
+{% else %}
+  <div id="shops-list" class="row display-flex restaurant-list">
+    {% include "_partials/restaurant/shops_list.html.twig" %}
+  </div>
+  <div id="shops-list-paginator"
+    data-page="{{page}}"
+    data-pages="{{pages}}">
+  </div>
+{% endif %}
+</div>
+
+{# <div class="container-full-hd container--extra-space-on-sides shops-content">
   <div class="restaurant-side-bar container-fluid d-none d-sm-block">
     <a href="{{ path('shops', {'geohash': geohash, 'address': address}) }}" class="btn btn-lg btn-default w-100">
       <i class="fa fa-trash mr-sm-2"></i>
@@ -76,11 +156,6 @@
             <strong><span class="filter-caret caret"></span></strong>
           </div>
         </button>
-        {% set categories = [
-          {key: 'featured', transKey: 'homepage.featured'},
-          {key: 'exclusive', transKey: 'homepage.exclusive'},
-          {key: 'new', transKey: 'homepage.shops.new'},
-          {key: 'zerowaste', transKey: 'restaurant.list.tags.zerowaste'}] %}
         <div class="collapse in" id="collapseCategory">
         {% for category in categories %}
           <div class="radio px-3 mb-4">
@@ -116,7 +191,7 @@
       {% endif %}
     </div>
   </div>
-</div>
+</div> #}
 
 <div id="optins"
   data-brand-name={{ coopcycle_setting('brand_name')|json_encode|e('html_attr') }}></div>

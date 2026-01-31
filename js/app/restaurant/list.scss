@@ -16,6 +16,9 @@
 @import "~bootstrap/scss/mixins";
 // @import "../node_modules/bootstrap/scss/root";
 
+// 6. Include any other optional stylesheet partials as desired; list below is not inclusive of all available stylesheets
+@import "~bootstrap/scss/nav";
+
 @import "~skeleton-screen-css/dist/index.scss";
 
 @import "./restaurant-card.scss";

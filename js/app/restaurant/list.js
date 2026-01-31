@@ -272,6 +272,60 @@ $('.shops-side-bar-filters input[type=checkbox]').on('click', function (e) {
   submitFilter(e)
 });
 
+document.querySelectorAll('[data-filter]').forEach((el) => {
+
+  if (el.hasAttribute('href')) {
+    el.addEventListener('click', (e) => {
+
+      e.preventDefault();
+
+      $('.shops-content').LoadingOverlay('show', {
+        image: false,
+      })
+
+      const shopsEl = $("#shops-list")
+
+      const filterURL = e.currentTarget.href;
+
+      $.ajax({
+        url : filterURL,
+        type: 'get',
+        cache: false,
+        success: function(data) {
+
+          reRenderPaginator(data)
+
+          shopsEl.empty().append($.parseHTML(data.rendered_list)) // show results
+
+          renderFulfillmentBadgeAfterAjax()
+
+          // applyClickListenerForRestaurantItem()
+
+          // Update URL with applied filters
+          window.history.pushState({}, '', filterURL);
+
+          $('.shops-content').LoadingOverlay('hide', {
+            image: false,
+          })
+        }
+      });
+
+    })
+  }
+})
+
+// https://developer.mozilla.org/en-US/docs/Web/API/History_API/Working_with_the_History_API
+// Handle forward/back buttons
+window.addEventListener("popstate", (event) => {
+  console.log('popstate', event)
+  // // If a state has been provided, we have a "simulated" page
+  // // and we update the current page.
+  // if (event.state) {
+  //   // Simulate the loading of the previous page
+  //   displayContent(event.state);
+  // }
+});
+
 /**
  * When the user clicks on a restaurant and
  * there is no address scroll into the search bar, and ask for an address.
@@ -306,17 +360,3 @@ function applyClickListenerForRestaurantItem() {
 }
 
 // applyClickListenerForRestaurantItem()
-
-document.querySelectorAll('[data-cuisine-name]').forEach((cuisineCheckbox) => {
-
-  if (cuisineCheckbox.dataset.cuisineIcon) {
-
-    const iconEl = document.createElement('iconify-icon');
-    iconEl.setAttribute('icon', cuisineCheckbox.dataset.cuisineIcon);
-    iconEl.style.fontSize = '24px';
-    iconEl.style.verticalAlign = 'middle';
-
-
-    cuisineCheckbox.closest('label').appendChild(iconEl)
-  }
-});
