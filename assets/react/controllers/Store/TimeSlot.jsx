@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Select, Radio, Spin, notification } from "antd";
-import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
 
