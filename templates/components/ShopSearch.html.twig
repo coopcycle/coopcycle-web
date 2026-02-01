@@ -5,10 +5,10 @@
 
   <div class="container-fluid">
 
-    <div class="swiper filters categories">
-      <ul class="swiper-wrapper nav nav-underline mb-4">
+    <div class="swiper filters categories mb-4">
+      <ul class="swiper-wrapper nav nav-underline">
         <li class="nav-item swiper-slide">
-          <a class="nav-link">
+          <a class="nav-link {% if this.category is empty %}active{% endif %}" href="{{ path('shops') }}">
             <i class="fa fa-lg fa-home" aria-hidden="true"></i>
           </a>
         </li>
@@ -52,14 +52,15 @@
       <div id="page--{{ page }}" data-live-ignore="true" style="display: contents;">
         {% include "_partials/restaurant/shops_list.html.twig" with { restaurants: this.shops } %}
       </div>
+      <span class="overlay" data-loading="show">
+        <span class="loader"></span>
+      </span>
     </div>
     <div class="text-center">
       {% if this.hasMore %}
-          <button class="btn btn-lg btn-default" {{ live_action('more') }}>
-              Load More
-          </button>
-      {% else %}
-          <span class="code">The End</span>
+        <button class="btn btn-lg btn-default" {{ live_action('more') }}>
+          Load More
+        </button>
       {% endif %}
     </div>
 

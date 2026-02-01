@@ -74,7 +74,9 @@ button[aria-expanded='false'] .filter-caret {
 }
 
 .filters {
+
   width: 100%;
+
   // https://stackoverflow.com/questions/64240299/how-to-make-auto-slides-per-view-with-dynamic-content-using-swiper-reactjs
   .swiper-slide {
     width: auto !important;
@@ -82,9 +84,6 @@ button[aria-expanded='false'] .filter-caret {
   .nav.swiper-wrapper {
     flex-wrap: nowrap;
   }
-}
-
-.filters {
 
   // gap: $spacer;
 
@@ -92,14 +91,84 @@ button[aria-expanded='false'] .filter-caret {
     // https://stackoverflow.com/questions/29503227/how-to-make-flexbox-items-the-same-size
     // flex: 1 1 0px;
   }
-  & > li > a {
+  .nav > li > a {
     cursor: pointer;
   }
-  & > li > a.active {
-    background-color: $warning-bg-subtle;
-  }
+
 
   .nav-link {
     padding: $nav-link-padding-y $nav-link-padding-x;
   }
+}
+
+.cuisines {
+  .nav > li > a.active {
+    background-color: $warning-bg-subtle;
+  }
+}
+
+// https://blog.logrocket.com/css-overlay/
+.restaurant-list {
+
+  position: relative;
+
+  &--loading {
+    &:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.1);
+      z-index: 1;
+    }
+  }
+
+  .overlay {
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.1);
+
+    .loader {
+
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+
+      width: 48px;
+      height: 48px;
+      border: 5px solid #FFF;
+      border-bottom-color: transparent;
+      border-radius: 50%;
+      display: inline-block;
+      box-sizing: border-box;
+      animation: rotation 1s linear infinite;
+    }
+
+    @keyframes rotation {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  }
+
+
+  // &:after {
+  //   position: fixed;
+  //   content: "";
+  //   top: 0;
+  //   left: 0;
+  //   bottom: 0;
+  //   right: 0;
+  //   background: rgba(0,0,0,0.5);
+  //   z-index: -2;
+  // }
 }

@@ -19,6 +19,7 @@
 							{% include "components/restaurant/card/restaurant_card.html.twig" with {
                 url: local_business_path(restaurant, restaurant_path_params),
                 image: coopcycle_asset(restaurant, 'imageFile', 'restaurant_thumbnail')|placeholder_image('restaurant_thumbnail'),
+                id: restaurant.id,
                 name: restaurant.name,
                 description: restaurant.description,
                 address: restaurant.address.streetAddress,

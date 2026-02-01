@@ -1726,3 +1726,4 @@ promotions.human_readable.discount_items_total_above: "%name%: %discount_amount%
 form.offer_delivery.decrease_platform_fee.label: Decrease platform fees
 form.offer_delivery.decrease_platform_fee.help: If checked, platform fees will be decreased to apply the promotion
 restaurant.form.pawapay_enabled.label: Enable pawaPay for this shop
+basics.not_available_atm: Not available at the moment
