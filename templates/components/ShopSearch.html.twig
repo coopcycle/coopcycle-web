@@ -3,35 +3,37 @@
    (e.g. a <div>) where the attributes are applied to #}
 <div {{ attributes }}>
 
-  <ul class="nav nav-underline">
-    <li class="nav-item">
-      <a class="nav-link">
-        <i class="fa fa-lg fa-home" aria-hidden="true"></i>
-      </a>
-    </li>
-    {% for category in this.categories %}
+  <div class="container-fluid">
+    <ul class="nav nav-underline mb-4">
       <li class="nav-item">
-        <a class="nav-link {% if category.key == this.category %}active{% endif %}" {{ live_action('setCategory', { key: category.key }) }}>{{ category.transKey|trans }}</a>
+        <a class="nav-link">
+          <i class="fa fa-lg fa-home" aria-hidden="true"></i>
+        </a>
+      </li>
+      {% for category in this.categories %}
+        <li class="nav-item">
+          <a class="nav-link {% if category.key == this.category %}active{% endif %}" {{ live_action('setCategory', { key: category.key }) }}>{{ category.transKey|trans }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <ul class="nav cuisines">
+    {% for cuisine in this.cuisines %}
+      <li class="nav-item">
+        <a class="nav-link text-center {% if cuisine.name in this.cuisine %}active{% endif %}" {{ live_action('toggleCuisine', { name: cuisine.name }) }}>
+          <span class="d-block">
+            {% if cuisine.hasIcon() %}
+            <iconify-icon icon="{{ cuisine.icon|e('html_attr') }}" style="font-size: 30px;"></iconify-icon>
+            {% else %}
+            <iconify-icon icon="fluent-color:search-sparkle-16" style="font-size: 30px;"></iconify-icon>
+            {% endif %}
+          </span>
+          <small>{{ cuisine.name|trans({}, 'cuisines') }}</small>
+        </a>
       </li>
     {% endfor %}
-  </ul>
-
-  <ul class="nav">
-  {% for cuisine in this.cuisines %}
-    <li class="nav-item">
-      <a class="nav-link text-center" {{ live_action('toggleCuisine', { name: cuisine.name }) }}>
-        <span class="d-block">
-          {% if cuisine.hasIcon() %}
-          <iconify-icon icon="{{ cuisine.icon|e('html_attr') }}" style="font-size: 30px;"></iconify-icon>
-          {% else %}
-          <iconify-icon icon="fluent-color:search-sparkle-16" style="font-size: 30px;"></iconify-icon>
-          {% endif %}
-        </span>
-        <span>{{ cuisine.name|trans({}, 'cuisines') }}</span>
-      </a>
-    </li>
-  {% endfor %}
-  </ul>
+    </ul>
+  </div>
 
   <div class="container-fluid">
     <div id="results-{{ this.filtersKey }}" class="display-flex restaurant-list">

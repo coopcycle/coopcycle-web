@@ -119,26 +119,13 @@ class ShopSearch
         } else {
             $this->cuisine[] = $name;
         }
-
-        // $this->page = 1;
-
-        // $this->emit('filtersChanged');
+        $this->page = 1;
     }
 
     #[LiveAction]
     public function setCategory(#[LiveArg] string $key)
     {
         $this->category = $key;
-
-        // $this->page = 1;
-        // $this->cuisine = [];
-
-        // $this->emit('filtersChanged');
-    }
-
-    #[LiveListener('filtersChanged')]
-    public function resetPage()
-    {
         $this->page = 1;
     }
 }
