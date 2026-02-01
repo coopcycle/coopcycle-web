@@ -130,99 +130,12 @@ new Swiper('.swiper', {
   observeParents: true
 })
 
-function renderFulfillmentBadgeAfterAjax() {
-  document.querySelectorAll('[data-fulfillment]').forEach(el => {
-    // render fulfillment badge only to new elements
-    if (el.firstChild.classList && el.firstChild.classList.contains('rendered-badge')) {
-      return;
-    }
-    addFulfillmentBadge(el)
-  })
-}
-
-function submitFilter(e) {
-  $('.shops-content').LoadingOverlay('show', {
-    image: false,
-  })
-
-  const shopsEl = $("#shops-list")
-
-  $.ajax({
-    url : $(e.target).closest('form').attr('path'),
-    data: $(e.target).closest('form').serialize(),
-    type: $(e.target).closest('form').attr('method'),
-    cache: false,
-    success: function(data) {
-
-      shopsEl.empty().append($.parseHTML(data.rendered_list)) // show results
-
-      renderFulfillmentBadgeAfterAjax()
-
-      // applyClickListenerForRestaurantItem()
-
-      // update URL with applied filters
-      const searchParams = new URLSearchParams($(e.target).closest('form').serialize())
-      const path = `${$(e.target).closest('form').attr('path')}?${searchParams.toString()}`
-      window.history.pushState({path}, '', path)
-
-      $('.shops-content').LoadingOverlay('hide', {
-        image: false,
-      })
-    }
-  })
-}
-
-document.querySelectorAll('[data-filter]').forEach((el) => {
-
-  if (el.hasAttribute('href')) {
-    el.addEventListener('click', (e) => {
-
-      e.preventDefault();
-
-      $('.shops-content').LoadingOverlay('show', {
-        image: false,
-      })
-
-      const shopsEl = $("#shops-list")
-
-      const filterURL = e.currentTarget.href;
-
-      $.ajax({
-        url : filterURL,
-        type: 'get',
-        cache: false,
-        success: function(data) {
-
-          shopsEl.empty().append($.parseHTML(data.rendered_list)) // show results
-
-          renderFulfillmentBadgeAfterAjax()
-
-          // applyClickListenerForRestaurantItem()
-
-          // Update URL with applied filters
-          window.history.pushState({}, '', filterURL);
-
-          $('.shops-content').LoadingOverlay('hide', {
-            image: false,
-          })
-        }
-      });
-
-    })
-  }
+new Swiper('.filters', {
+  direction: 'horizontal',
+  freeMode: true,
+  slidesPerView: 'auto',
+  lazyLoading: false,
 })
-
-// https://developer.mozilla.org/en-US/docs/Web/API/History_API/Working_with_the_History_API
-// Handle forward/back buttons
-window.addEventListener("popstate", (event) => {
-  console.log('popstate', event)
-  // // If a state has been provided, we have a "simulated" page
-  // // and we update the current page.
-  // if (event.state) {
-  //   // Simulate the loading of the previous page
-  //   displayContent(event.state);
-  // }
-});
 
 /**
  * When the user clicks on a restaurant and

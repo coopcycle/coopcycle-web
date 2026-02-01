@@ -73,15 +73,22 @@ button[aria-expanded='false'] .filter-caret {
   background-position: center center;
 }
 
-.nav.cuisines {
+.cuisines {
+
+  gap: $spacer;
+
   li.nav-item {
     // https://stackoverflow.com/questions/29503227/how-to-make-flexbox-items-the-same-size
-    flex: 1 1 0px;
+    // flex: 1 1 0px;
   }
   & > li > a {
     cursor: pointer;
   }
   & > li > a.active {
     background-color: $warning-bg-subtle;
+  }
+  // https://stackoverflow.com/questions/64240299/how-to-make-auto-slides-per-view-with-dynamic-content-using-swiper-reactjs
+  .swiper-slide {
+    width: auto !important;
   }
 }
