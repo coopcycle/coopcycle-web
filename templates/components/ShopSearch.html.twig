@@ -4,29 +4,32 @@
 <div {{ attributes }}>
 
   <div class="container-fluid">
-    <ul class="nav nav-underline mb-4">
-      <li class="nav-item">
-        <a class="nav-link">
-          <i class="fa fa-lg fa-home" aria-hidden="true"></i>
-        </a>
-      </li>
-      {% for category in this.categories %}
-        <li class="nav-item">
-          <a class="nav-link {% if category.key == this.category %}active{% endif %}" {{ live_action('setCategory', { key: category.key }) }}>{{ category.transKey|trans }}</a>
-        </li>
-      {% endfor %}
-    </ul>
 
-    <div class="filters">
-      <ul class="cuisines swiper-wrapper">
+    <div class="swiper filters categories">
+      <ul class="swiper-wrapper nav nav-underline mb-4">
+        <li class="nav-item swiper-slide">
+          <a class="nav-link">
+            <i class="fa fa-lg fa-home" aria-hidden="true"></i>
+          </a>
+        </li>
+        {% for category in this.categories %}
+          <li class="nav-item swiper-slide">
+            <a class="nav-link {% if category.key == this.category %}active{% endif %}" {{ live_action('setCategory', { key: category.key }) }}>{{ category.transKey|trans }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="swiper filters cuisines">
+      <ul class="swiper-wrapper nav">
       {% for cuisine in this.cuisines %}
         <li class="swiper-slide">
           <a class="nav-link text-center {% if cuisine.name in this.cuisine %}active{% endif %}" {{ live_action('toggleCuisine', { name: cuisine.name }) }}>
             <span class="d-block">
               {% if cuisine.hasIcon() %}
-              <iconify-icon icon="{{ cuisine.icon|e('html_attr') }}" style="font-size: 30px;"></iconify-icon>
+                {{ ux_icon(cuisine.icon, { style: 'font-size: 30px' }) }}
               {% else %}
-              <iconify-icon icon="fluent-color:search-sparkle-16" style="font-size: 30px;"></iconify-icon>
+                {{ ux_icon('fluent-color:search-sparkle-16', { style: 'font-size: 30px;' }) }}
               {% endif %}
             </span>
             <small>{{ cuisine.name|trans({}, 'cuisines') }}</small>

@@ -73,9 +73,20 @@ button[aria-expanded='false'] .filter-caret {
   background-position: center center;
 }
 
-.cuisines {
+.filters {
+  width: 100%;
+  // https://stackoverflow.com/questions/64240299/how-to-make-auto-slides-per-view-with-dynamic-content-using-swiper-reactjs
+  .swiper-slide {
+    width: auto !important;
+  }
+  .nav.swiper-wrapper {
+    flex-wrap: nowrap;
+  }
+}
 
-  gap: $spacer;
+.filters {
+
+  // gap: $spacer;
 
   li.nav-item {
     // https://stackoverflow.com/questions/29503227/how-to-make-flexbox-items-the-same-size
@@ -87,8 +98,8 @@ button[aria-expanded='false'] .filter-caret {
   & > li > a.active {
     background-color: $warning-bg-subtle;
   }
-  // https://stackoverflow.com/questions/64240299/how-to-make-auto-slides-per-view-with-dynamic-content-using-swiper-reactjs
-  .swiper-slide {
-    width: auto !important;
+
+  .nav-link {
+    padding: $nav-link-padding-y $nav-link-padding-x;
   }
 }

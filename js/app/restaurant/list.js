@@ -13,6 +13,7 @@ require('gasparesganga-jquery-loading-overlay')
 
 import 'swiper/css';
 import 'swiper/css/navigation'
+import 'swiper/css/free-mode'
 
 import './list.scss'
 
@@ -116,7 +117,7 @@ const calculateBreakpoints = () => {
 
 const swiperBreakpoints = calculateBreakpoints()
 
-new Swiper('.swiper', {
+new Swiper('.restaurant-collection-swiper', {
   modules: [ Navigation ],
   slidesPerView: 'auto',
   slidesPerGroup: 1,
@@ -130,11 +131,24 @@ new Swiper('.swiper', {
   observeParents: true
 })
 
-new Swiper('.filters', {
+new Swiper('.cuisines', {
   direction: 'horizontal',
   freeMode: true,
   slidesPerView: 'auto',
   lazyLoading: false,
+  snapToSlideEdge: true,
+  sticky: true,
+  spaceBetween: 20
+})
+
+new Swiper('.categories', {
+  direction: 'horizontal',
+  freeMode: true,
+  slidesPerView: 'auto',
+  lazyLoading: false,
+  snapToSlideEdge: true,
+  sticky: true,
+  spaceBetween: 0
 })
 
 /**

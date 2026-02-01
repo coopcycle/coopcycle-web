@@ -175,7 +175,8 @@
         "benjaminfavre/oauth2-http-client": "^3.0",
         "symfony/scheduler": "6.4.*",
         "dragonmantank/cron-expression": "^3.6",
-        "symfony/ux-live-component": "^2.32"
+        "symfony/ux-live-component": "^2.32",
+        "symfony/ux-icons": "^2.32"
     },
     "require-dev": {
         "symfony/debug-bundle": "*",
