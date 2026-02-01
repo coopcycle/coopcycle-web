@@ -84,88 +84,8 @@ function addFulfillmentBadge(el) {
 }
 
 document.querySelectorAll('[data-fulfillment]').forEach(el => {
-  addFulfillmentBadge(el)
+  // addFulfillmentBadge(el)
 })
-
-const Paginator = ({ page, pages }) => {
-  const [currentPage, setCurrentPage] = useState(page)
-  const [totalPages] = useState(pages)
-  const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    // scroll to top when shops list screen is rendered
-    window.scrollTo(0, 0)
-  }, [])
-
-  const ref = useRef()
-
-  const inViewport = useIntersection(ref, '10px')
-
-  const loadMore = () => {
-    if (!loading) {
-      const newPage = currentPage < totalPages ? currentPage + 1 : currentPage
-
-      if (newPage > currentPage) {
-        setLoading(true)
-
-        const shopsEl = $("#shops-list")
-
-        $.ajax({
-          url : window.location.pathname + window.location.search,
-          data: {
-            page: newPage,
-          },
-          type: 'GET',
-          cache: false,
-          success: function(data) {
-            shopsEl.append($.parseHTML(data.rendered_list))
-            renderFulfillmentBadgeAfterAjax()
-            setTimeout(() => {
-              setCurrentPage(newPage)
-              setLoading(false)
-            }, 100)
-          }
-        })
-      }
-    }
-  }
-
-  if (inViewport && !loading) {
-    loadMore();
-  }
-
-  return (
-    <div ref={ref} className="shops-list-paginator">
-      {loading && <span><i className="fa fa-spinner fa-spin"></i></span>}
-    </div>
-  )
-}
-
-const paginatorEl = document.getElementById('shops-list-paginator')
-const paginatorRoot = paginatorEl ? createRoot(paginatorEl) : null
-
-if (paginatorRoot) {
-  paginatorRoot.render(
-    <StrictMode>
-      <Paginator
-        page={Number(paginatorEl.dataset.page)}
-        pages={Number(paginatorEl.dataset.pages)} />
-    </StrictMode>
-  )
-}
-
-function reRenderPaginator(data) {
-  if (paginatorRoot) {
-    paginatorRoot.render(
-      <StrictMode>
-        <Paginator
-          page={Number(data.page)}
-          pages={Number(data.pages)} />
-      </StrictMode>
-    )
-  }
-}
-
 
 // Make sure that the same values are set in css
 const CONTAINER_MARGIN = 16
@@ -233,7 +153,6 @@ function submitFilter(e) {
     type: $(e.target).closest('form').attr('method'),
     cache: false,
     success: function(data) {
-      reRenderPaginator(data)
 
       shopsEl.empty().append($.parseHTML(data.rendered_list)) // show results
 
@@ -252,25 +171,6 @@ function submitFilter(e) {
     }
   })
 }
-
-const filtersRadioButtons = {}
-
-$('.shops-side-bar-filters input[type=radio]').on('click', function (e) {
-
-  // https://stackoverflow.com/questions/63904118/check-uncheck-radio-button-using-javascript-and-html
-  if (filtersRadioButtons[e.currentTarget.name] === e.currentTarget.value) {
-    e.currentTarget.checked = false;
-    filtersRadioButtons[e.currentTarget.name] = '';
-  } else {
-    filtersRadioButtons[e.currentTarget.name] = e.currentTarget.value;
-  }
-
-  submitFilter(e)
-});
-
-$('.shops-side-bar-filters input[type=checkbox]').on('click', function (e) {
-  submitFilter(e)
-});
 
 document.querySelectorAll('[data-filter]').forEach((el) => {
 
@@ -292,8 +192,6 @@ document.querySelectorAll('[data-filter]').forEach((el) => {
         type: 'get',
         cache: false,
         success: function(data) {
-
-          reRenderPaginator(data)
 
           shopsEl.empty().append($.parseHTML(data.rendered_list)) // show results
 

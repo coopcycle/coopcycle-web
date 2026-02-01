@@ -11,17 +11,17 @@
 
 {% include "restaurant/_partials/list_header.html.twig" %}
 
-<div class="container-fluid">
+{{ component('ShopSearch') }}
+
+{# <div class="container-fluid">
   <ul class="nav nav-underline">
     <li class="nav-item">
       <a
         class="nav-link {% if not app.request.query.has('category') %}active{% endif %}"
         href="{{ path('shops', { geohash: geohash, address: address }) }}"><i class="fa fa-lg fa-home" aria-hidden="true"></i></a>
     </li>
-    {# No need to show types tabs if only one type #}
     {% if types|length > 1 %}
       {% for type in types %}
-        {# TODO Add tab for shop type #}
       {% endfor %}
     {% endif %}
     {% for category in categories %}
@@ -36,9 +36,9 @@
       </li>
     {% endfor %}
   </ul>
-</div>
+</div> #}
 
-{% if cuisines|length > 0 %}
+{# {% if cuisines|length > 0 %}
 <div class="container-fluid">
   <ul class="nav">
     {% for cuisine in cuisines %}
@@ -64,9 +64,9 @@
     {% endfor %}
   </ul>
 </div>
-{% endif %}
+{% endif %} #}
 
-<div class="container-fluid shops-content">
+{# <div class="container-fluid shops-content">
 {% if count == 0 %}
   <div class="col-md-6 col-md-offset-3 alert alert-warning text-center">
     {{ 'restaurants.no_results'|trans|raw }}
@@ -80,7 +80,7 @@
     data-pages="{{pages}}">
   </div>
 {% endif %}
-</div>
+</div> #}
 
 {# <div class="container-full-hd container--extra-space-on-sides shops-content">
   <div class="restaurant-side-bar container-fluid d-none d-sm-block">

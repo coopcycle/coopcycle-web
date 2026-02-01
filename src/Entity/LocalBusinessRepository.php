@@ -314,7 +314,7 @@ class LocalBusinessRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findByFilters($filters)
+    public function findByFilters($filters, bool $asQueryBuilder = false)
     {
         $qb = $this->createQueryBuilder('r');
 
@@ -330,8 +330,8 @@ class LocalBusinessRepository extends EntityRepository
                         break;
                     case 'cuisine':
                         $qb
-                            ->innerJoin('r.servesCuisine', 'c', 'WITH', $qb->expr()->in('c.id', ':cuisineIds'))
-                            ->setParameter('cuisineIds', $value);
+                            ->innerJoin('r.servesCuisine', 'c', 'WITH', $qb->expr()->in('c.name', ':cuisines'))
+                            ->setParameter('cuisines', $value);
                         break;
                     case 'category':
                         switch($value) {
@@ -368,7 +368,7 @@ class LocalBusinessRepository extends EntityRepository
             }
         }
 
-        return $qb->getQuery()->getResult();
+        return $asQueryBuilder ? $qb : $qb->getQuery()->getResult();
     }
 
     public function countZeroWaste()

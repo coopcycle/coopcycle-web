@@ -1,0 +1,60 @@
+{# templates/components/ProductSearch.html.twig #}
+{# for the Live Component to work, there must be a single root element
+   (e.g. a <div>) where the attributes are applied to #}
+<div {{ attributes }}>
+
+  <ul class="nav nav-underline">
+    <li class="nav-item">
+      <a class="nav-link">
+        <i class="fa fa-lg fa-home" aria-hidden="true"></i>
+      </a>
+    </li>
+    {% for category in this.categories %}
+      <li class="nav-item">
+        <a class="nav-link {% if category.key == this.category %}active{% endif %}" {{ live_action('setCategory', { key: category.key }) }}>{{ category.transKey|trans }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+
+  <ul class="nav">
+  {% for cuisine in this.cuisines %}
+    <li class="nav-item">
+      <a class="nav-link text-center" {{ live_action('toggleCuisine', { name: cuisine.name }) }}>
+        <span class="d-block">
+          {% if cuisine.hasIcon() %}
+          <iconify-icon icon="{{ cuisine.icon|e('html_attr') }}" style="font-size: 30px;"></iconify-icon>
+          {% else %}
+          <iconify-icon icon="fluent-color:search-sparkle-16" style="font-size: 30px;"></iconify-icon>
+          {% endif %}
+        </span>
+        <span>{{ cuisine.name|trans({}, 'cuisines') }}</span>
+      </a>
+    </li>
+  {% endfor %}
+  </ul>
+
+  <div class="container-fluid">
+    <div id="results-{{ this.filtersKey }}" class="display-flex restaurant-list">
+      {% if page > 1 %}
+        {# 🦊 #}
+        {# Adding a fake "previous page" div is enough to trick the system #}
+        {# It must have the same ID than the original page #}
+        <div id="page--{{ page - 1 }}" data-live-ignore="true"></div>
+      {% endif %}
+      {# https://caniuse.com/css-display-contents #}
+      <div id="page--{{ page }}" data-live-ignore="true" style="display: contents;">
+        {% include "_partials/restaurant/shops_list.html.twig" with { restaurants: this.shops } %}
+      </div>
+    </div>
+    <div class="text-center">
+      {% if this.hasMore %}
+          <button class="btn btn-lg btn-default" {{ live_action('more') }}>
+              Load More
+          </button>
+      {% else %}
+          <span class="code">The End</span>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
