@@ -42,9 +42,15 @@ class ShopSearch
 
     public int $pageCount;
 
+    /**
+     * @var string|null
+     */
     #[LiveProp(url: true)]
     public ?string $geohash = null;
 
+    /**
+     * @var array|null
+     */
     #[LiveProp(url: true, hydrateWith: 'hydrateAddress')]
     public ?array $address = null;
 
@@ -139,9 +145,9 @@ class ShopSearch
 
             $geohash = null;
 
-            if (!empty($this->geohash) && strlen($this->geohash) > 0) {
+            if (!empty($this->geohash)) {
                 $geohash = $this->geohash;
-            } else if (!empty($this->address) && is_array($this->address)) {
+            } else if (!empty($this->address)) {
                 $geohash = $this->address['geohash'] ?? null;
             }
 
