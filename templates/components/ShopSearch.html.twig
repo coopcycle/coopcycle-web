@@ -38,31 +38,36 @@
   </div>
 
   <div class="container-fluid">
-    {# https://symfony.com/bundles/ux-live-component/current/index.html#skipping-updating-certain-elements #}
-    {# To force an ignored element to re-render, give its parent element an id attribute. #}
-    {# During a re-render, if this value changes, all of the children of the element will be re-rendered, even those with data-live-ignore. #}
-    <div id="results-{{ this.cacheKey }}" class="grid restaurant-list">
-      {% if page > 1 %}
-        {# 🦊 #}
-        {# Adding a fake "previous page" div is enough to trick the system #}
-        {# It must have the same ID than the original page #}
-        <div id="page--{{ page - 1 }}" data-live-ignore="true"></div>
-      {% endif %}
-      {# https://caniuse.com/css-display-contents #}
-      <div id="page--{{ page }}" data-live-ignore="true" style="display: contents;">
-        {% include "_partials/restaurant/shops_list.html.twig" with { restaurants: this.shops } %}
+    {% if this.shops|length == 0 %}
+      <div class="col-md-6 col-md-offset-3 alert alert-warning text-center">
+        {{ 'restaurants.no_results'|trans|raw }}
       </div>
-      <span class="overlay" data-loading="show">
-        <span class="loader"></span>
-      </span>
-    </div>
-    <div class="text-center">
-      {% if this.hasMore %}
-        <button class="btn btn-lg btn-default" {{ live_action('more') }}>
-          Load More
-        </button>
-      {% endif %}
-    </div>
-
+    {% else %}
+      {# https://symfony.com/bundles/ux-live-component/current/index.html#skipping-updating-certain-elements #}
+      {# To force an ignored element to re-render, give its parent element an id attribute. #}
+      {# During a re-render, if this value changes, all of the children of the element will be re-rendered, even those with data-live-ignore. #}
+      <div id="results-{{ this.cacheKey }}" class="grid restaurant-list">
+        {% if page > 1 %}
+          {# 🦊 #}
+          {# Adding a fake "previous page" div is enough to trick the system #}
+          {# It must have the same ID than the original page #}
+          <div id="page--{{ page - 1 }}" data-live-ignore="true"></div>
+        {% endif %}
+        {# https://caniuse.com/css-display-contents #}
+        <div id="page--{{ page }}" data-live-ignore="true" style="display: contents;">
+          {% include "_partials/restaurant/shops_list.html.twig" with { restaurants: this.shops } %}
+        </div>
+        <span class="overlay" data-loading="show">
+          <span class="loader"></span>
+        </span>
+      </div>
+      <div class="text-center">
+        {% if this.hasMore %}
+          <button class="btn btn-lg btn-default" {{ live_action('more') }}>
+            Load More
+          </button>
+        {% endif %}
+      </div>
+    {% endif %}
   </div>
 </div>
