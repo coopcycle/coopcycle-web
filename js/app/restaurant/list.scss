@@ -28,42 +28,10 @@ $enable-cssgrid: true;
 @import "./restaurant-card.scss";
 @import "./swiper.scss";
 
-.shops-content {
-  display: flex;
-  flex-direction: row;
-}
-
-.shops-list-paginator {
-  text-align: center;
-  font-size: $h2-font-size;
-}
-
-.restaurant-side-bar {
-  min-width: 20%;
-}
-
-.restaurant-main-content {
-  min-width: 80%;
-}
-
 .restaurant-list {
-  // gap: 32px;
   h1 {
     display: inline-block;
   }
-}
-
-.filter-section-btn {
-  outline: none !important;
-}
-
-.filter-caret {
-  transform: scale(1.6) rotate(-180deg);
-  margin-left: 8px;
-  margin-top: -4px;
-}
-button[aria-expanded='false'] .filter-caret {
-  transform: scale(1.6) rotate(0deg);
 }
 
 .restaurant-list-header {

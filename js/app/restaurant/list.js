@@ -26,48 +26,37 @@ import i18n from '../i18n'
  */
 window.history.scrollRestoration = 'manual'
 
-// Make sure that the same values are set in css
-const CONTAINER_MARGIN = 16
-const CONTAINER_MARGIN_MD = 64
-const ITEM_MARGIN = 16
-const ITEM_WIDTH = 333
-
-const calculateBreakpoints = () => {
-  const breakpoints = {}
-
-  let listOfWidths = _.range(480, 1920, 50)
-  listOfWidths.push(576, 768, 992, 1200, 1600, 1920) // add bootstrap breakpoints
-  listOfWidths = _.uniq(listOfWidths)
-  listOfWidths.sort((a, b) => a - b)
-
-  listOfWidths.forEach(width => {
-    const containerMargin = width >= 768 ? CONTAINER_MARGIN_MD : CONTAINER_MARGIN
-    const slidesPerView = (width - containerMargin * 2) / (ITEM_WIDTH + ITEM_MARGIN * 2)
-
-    breakpoints[width] = {
-      slidesPerView,
-      slidesPerGroup: Math.floor(slidesPerView),
-    }
-  })
-
-  return breakpoints
-}
-
-const swiperBreakpoints = calculateBreakpoints()
-
 new Swiper('.restaurant-collection-swiper', {
   modules: [ Navigation ],
   slidesPerView: 'auto',
   slidesPerGroup: 1,
+  spaceBetween: 20,
   navigation: {
     nextEl: '.swiper-nav-next',
     prevEl: '.swiper-nav-prev',
   },
   lazyLoading: true,
-  breakpoints: swiperBreakpoints,
+  // https://getbootstrap.com/docs/5.3/layout/breakpoints/
+  breakpoints: {
+    // Small devices (landscape phones, 576px and up)
+    576: {
+      slidesPerView: 2,
+    },
+    // Medium devices (tablets, 768px and up)
+    768: {
+      slidesPerView: 3,
+    },
+    // Large devices (desktops, 992px and up)
+    992: {
+      slidesPerView: 4,
+    },
+    // X-Large devices (large desktops, 1200px and up)
+    1200: {
+      slidesPerView: 6,
+    }
+  },
   observer: true, // to be initialized properly inside a hidden container
   observeParents: true,
-  spaceBetween: 20,
 })
 
 new Swiper('.cuisines', {
