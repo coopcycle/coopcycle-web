@@ -133,3 +133,8 @@ $enable-cssgrid: true;
   }
 
 }
+
+a.more {
+  font-size: $font-size-lg;
+  cursor: pointer;
+}

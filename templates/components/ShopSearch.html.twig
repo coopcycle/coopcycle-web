@@ -46,7 +46,7 @@
       {# https://symfony.com/bundles/ux-live-component/current/index.html#skipping-updating-certain-elements #}
       {# To force an ignored element to re-render, give its parent element an id attribute. #}
       {# During a re-render, if this value changes, all of the children of the element will be re-rendered, even those with data-live-ignore. #}
-      <div id="results-{{ this.cacheKey }}" class="grid restaurant-list">
+      <div id="results-{{ this.cacheKey }}" class="grid restaurant-list mb-4">
         {% if page > 1 %}
           {# 🦊 #}
           {# Adding a fake "previous page" div is enough to trick the system #}
@@ -63,9 +63,9 @@
       </div>
       <div class="text-center">
         {% if this.hasMore %}
-          <button class="btn btn-lg btn-default" {{ live_action('more') }}>
-            Load More
-          </button>
+          <a class="more" {{ live_action('more') }}>
+            ↓ {{ 'basics.more_results'|trans }}
+          </a>
         {% endif %}
       </div>
     {% endif %}
