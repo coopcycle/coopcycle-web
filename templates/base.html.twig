@@ -100,22 +100,6 @@
     <script src="{{ asset('bundles/fosjsrouting/js/router.min.js') }}"></script>
     <script src="{{ path('fos_js_routing_js', { callback: 'fos.Router.setData' }) }}"></script>
 
-    {# https://iconify.design/docs/api/config.html #}
-    <script>
-    // Define global variable
-    IconifyProviders = {
-      // For overwriting public API
-      '': {
-        resources: ['{{ iconify_api_url }}'],
-      },
-
-      // For creating alternative API provider
-      // 'awesome-icons': {
-      //     resources: ['https://iconify.myproject.tld'],
-      // },
-    };
-    </script>
-
     {{ encore_entry_script_tags('common') }}
     {{ encore_entry_script_tags('widgets') }}
 

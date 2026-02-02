@@ -301,11 +301,6 @@ services:
     profiles:
       - devOdoo
 
-  iconify:
-    image: iconify/api:latest
-    ports:
-      - "3001:3000"
-
 volumes:
   pg_data:
   php_cache:
