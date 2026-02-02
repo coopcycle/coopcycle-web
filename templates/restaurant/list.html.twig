@@ -2,13 +2,6 @@
 
 {% block body %}
 
-{% set categories = [
-  { key: 'featured', transKey: 'homepage.featured' },
-  { key: 'exclusive', transKey: 'homepage.exclusive' },
-  { key: 'new', transKey: 'homepage.shops.new' },
-  { key: 'zerowaste', transKey: 'restaurant.list.tags.zerowaste' }
-] %}
-
 {% include "restaurant/_partials/list_header.html.twig" %}
 
 {{ component('ShopSearch') }}

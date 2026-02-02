@@ -34,12 +34,9 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use AppBundle\Utils\OptionsPayloadConverter;
 use AppBundle\Utils\OrderTimeHelper;
-use AppBundle\Utils\RestaurantFilter;
-use AppBundle\Utils\SortableRestaurantIterator;
 use AppBundle\Utils\ValidationUtils;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use League\Geotools\Geotools;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Psr\Log\LoggerInterface;
 use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
@@ -82,7 +79,6 @@ class RestaurantController extends AbstractController
         private OrderModifierInterface $orderModifier,
         private OrderTimeHelper $orderTimeHelper,
         private Serializer $serializer,
-        private RestaurantFilter $restaurantFilter,
         private RestaurantResolver $restaurantResolver,
         private MessageBusInterface $eventBus,
         protected JWTTokenManagerInterface $JWTTokenManager,
@@ -152,26 +148,20 @@ class RestaurantController extends AbstractController
     }
 
     #[Route(path: '/restaurants', name: 'restaurants')]
-    public function legacyRestaurantsAction(Request $request,
-        LocalBusinessRepository $repository,
-        CacheInterface $appCache,
-        BusinessContext $businessContext)
+    public function legacyRestaurantsAction()
     {
-        $requestClone = clone $request;
-
-        $requestClone->attributes->set('type', LocalBusiness::getKeyForType(FoodEstablishment::RESTAURANT));
-
-        return $this->listAction($requestClone, $repository, $appCache, $businessContext);
+        return $this->redirectToRoute(
+            'shops',
+            [
+                'type' => LocalBusiness::getKeyForType(FoodEstablishment::RESTAURANT)
+            ],
+            Response::HTTP_MOVED_PERMANENTLY
+        );
     }
 
     #[Route(path: '/shops', name: 'shops')]
-    public function listAction(Request $request,
-        LocalBusinessRepository $repository,
-        CacheInterface $appCache,
-        BusinessContext $businessContext)
+    public function listAction(Request $request)
     {
-        $originalParams = $request->query->all();
-
         $mode = $request->query->get('mode', 'list');
 
         if (!in_array($mode, ['list', 'map'])) {
@@ -185,141 +175,9 @@ class RestaurantController extends AbstractController
             ]);
         }
 
-        $repository->setBusinessContext($businessContext);
-
-        // find cuisines which can be selected by user to filter
-        $cuisines = $repository->findExistingCuisines();
-
-        $cacheKey = $this->getShopsListCacheKey($request);
-
-        if ($businessContext->isActive()) {
-            $cacheKey = sprintf('%s.%s', $cacheKey, '_business');
-        }
-
-        if ($request->query->has('type')) {
-            $type = LocalBusiness::getTypeForKey($request->query->get('type'));
-            // for filtering we need in query param the full type instead of the key
-            $request->query->set('type', $type);
-        }
-
-        if ($request->query->has('cuisine')) {
-            // filter by cuisine id (index) instead of name
-            $cuisineTypes = $request->query->all('cuisine');
-            $cuisineIds = [];
-            foreach ($cuisines as $cuisine) {
-                if (in_array($cuisine->getName(), $cuisineTypes)) {
-                    $cuisineIds[] = $cuisine->getId();
-                }
-            }
-            $request->query->set('cuisine', $cuisineIds);
-        }
-
-        $restaurantsIds = $appCache->get($cacheKey, function (ItemInterface $item) use ($repository, $request) {
-
-            $item->expiresAfter(60 * 5);
-
-            return array_map(function (LocalBusiness $restaurant) {
-
-                return $restaurant->getId();
-            }, $repository->findByFilters($request->query->all()));
-        });
-
-        $matches = [];
-
-        if (count($restaurantsIds) > 0) {
-
-            $qb = $repository->createQueryBuilder('r');
-            $qb->add('where', $qb->expr()->in('r.id', $restaurantsIds));
-
-            $matches = $qb->getQuery()->getResult();
-
-            // Preload entities to optimize N+1 queries
-            $preloader = new EntityPreloader($this->entityManager);
-            $preloader->preload($matches, 'promotions');
-            $preloader->preload($matches, 'preparationTimeRules');
-            $preloader->preload($matches, 'fulfillmentMethods');
-            $preloader->preload($matches, 'closingRules');
-            // Many-to-many associations with order by are not supported
-            // $preloader->preload($matches, 'servesCuisine');
-        }
-
-        if ($request->query->has('geohash') || $request->query->has('address')) {
-
-            $geohash = null;
-
-            if ($request->query->has('geohash') && strlen($request->query->get('geohash')) > 0) {
-                $geohash = $request->query->get('geohash');
-            } else if ($request->query->has('address') && strlen($request->query->get('address')) > 0) {
-                $address = urldecode(base64_decode($request->query->get('address')));
-
-                if (!$address) {
-                    return;
-                }
-
-                $geohash = json_decode($address)->geohash;
-            }
-
-            if (null !== $geohash) {
-                $geotools = new Geotools();
-
-                try {
-
-                    $decoded = $geotools->geohash()->decode($geohash);
-
-                    $latitude = $decoded->getCoordinate()->getLatitude();
-                    $longitude = $decoded->getCoordinate()->getLongitude();
-
-                    $matches = $this->restaurantFilter->matchingLatLng($matches, $latitude, $longitude);
-
-                } catch (\InvalidArgumentException|\RuntimeException $e) {
-                    // Some funny guys may have tried a SQL injection
-                }
-            }
-        }
-
-        $iterator = new SortableRestaurantIterator($matches, $this->timingRegistry);
-        $matches = iterator_to_array($iterator);
-
-        $count = count($matches);
-
-        $page = $request->query->getInt('page', 1);
-        $offset = ($page - 1) * self::ITEMS_PER_PAGE;
-
-        $matches = array_slice($matches, $offset, self::ITEMS_PER_PAGE);
-
-        $pages = ceil($count / self::ITEMS_PER_PAGE);
-
-        $countByType = $repository->countByType();
-        $types = array_keys($countByType);
-
-        $request->query->replace($originalParams);
-
-        // AJAX request from filters or pagination
-        if ($request->isXmlHttpRequest()) {
-            $list = $this->renderView('_partials/restaurant/shops_list.html.twig', [
-                'restaurants' => $matches,
-                'count' => $count,
-            ]);
-
-            $response = new JsonResponse();
-            $response->setData(array(
-                'rendered_list' => $list,
-                'page' => $page,
-                'pages' => $pages,
-            ));
-
-            return $response;
-        }
-
         return $this->render('restaurant/list.html.twig', array(
-            'count' => $count,
-            'restaurants' => $matches,
-            'page' => $page,
-            'pages' => $pages,
             'geohash' => $request->query->get('geohash'),
             'address' => $request->query->get('address'),
-            'types' => $types,
-            'cuisines' => $cuisines,
         ));
     }
 
@@ -840,16 +698,15 @@ class RestaurantController extends AbstractController
     }
 
     #[Route(path: '/stores', name: 'stores')]
-    public function legacyStoreListAction(Request $request,
-        LocalBusinessRepository $repository,
-        CacheInterface $appCache,
-        BusinessContext $businessContext)
+    public function legacyStoreListAction()
     {
-        $requestClone = clone $request;
-
-        $requestClone->attributes->set('type', LocalBusiness::getKeyForType(Store::GROCERY_STORE));
-
-        return $this->listAction($requestClone, $repository, $appCache, $businessContext);
+        return $this->redirectToRoute(
+            'shops',
+            [
+                'type' => LocalBusiness::getKeyForType(Store::GROCERY_STORE)
+            ],
+            Response::HTTP_MOVED_PERMANENTLY
+        );
     }
 
     #[Route(path: '/restaurants/tags/{tags}', name: 'restaurants_by_tags')]
@@ -863,32 +720,6 @@ class RestaurantController extends AbstractController
             Response::HTTP_MOVED_PERMANENTLY
         );
     }
-
-    /**
-     * The cache key is built with all query params alphabetically sorted.
-     * With this function we make sure that same filters in different order represent the same cache key.
-     */
-    private function getShopsListCacheKey($request)
-    {
-        $parameters = [
-            'category',
-            'cuisine',
-            'type',
-        ];
-
-        $query = array_filter($request->query->all(), fn ($key) => in_array($key, $parameters), ARRAY_FILTER_USE_KEY);
-
-        if (isset($query['cuisine'])) {
-            sort($query['cuisine']);
-        }
-
-        ksort($query);
-
-        $cacheKey = http_build_query($query);
-
-        return sprintf('shops.list.filters|%s', $cacheKey);
-    }
-
 
     private function persistAndFlushCart($cart): void {
         $isExisting = $cart->getId() !== null;

@@ -1,6 +1,3 @@
-{# templates/components/ProductSearch.html.twig #}
-{# for the Live Component to work, there must be a single root element
-   (e.g. a <div>) where the attributes are applied to #}
 <div {{ attributes }}>
 
   <div class="container-fluid">
@@ -41,7 +38,10 @@
   </div>
 
   <div class="container-fluid">
-    <div id="results-{{ this.filtersKey }}" class="grid restaurant-list">
+    {# https://symfony.com/bundles/ux-live-component/current/index.html#skipping-updating-certain-elements #}
+    {# To force an ignored element to re-render, give its parent element an id attribute. #}
+    {# During a re-render, if this value changes, all of the children of the element will be re-rendered, even those with data-live-ignore. #}
+    <div id="results-{{ this.cacheKey }}" class="grid restaurant-list">
       {% if page > 1 %}
         {# 🦊 #}
         {# Adding a fake "previous page" div is enough to trick the system #}

@@ -6,13 +6,6 @@
 
   @include card;
 
-  // Define width *ONLY* for larger screens
-  // On small screens, it should take 100% width
-  @include media-breakpoint-up(sm) {
-    // width: 333px;
-  }
-  // height: 346px;
-
   margin: 1rem;
   border-radius: 8px;
   overflow: hidden;

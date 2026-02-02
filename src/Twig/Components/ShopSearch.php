@@ -5,8 +5,16 @@ namespace AppBundle\Twig\Components;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Business\Context as BusinessContext;
+use AppBundle\Service\TimingRegistry;
+use AppBundle\Utils\RestaurantFilter;
+use AppBundle\Utils\SortableRestaurantIterator;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
+use League\Geotools\Geotools;
+use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
@@ -34,9 +42,19 @@ class ShopSearch
 
     public int $pageCount;
 
+    #[LiveProp(url: true)]
+    public ?string $geohash = null;
+
+    #[LiveProp(url: true, hydrateWith: 'hydrateAddress')]
+    public ?array $address = null;
+
     public function __construct(
         private LocalBusinessRepository $shopRepository,
         private BusinessContext $businessContext,
+        private RestaurantFilter $restaurantFilter,
+        private CacheInterface $appCache,
+        private EntityManagerInterface $entityManager,
+        private TimingRegistry $timingRegistry,
         private PaginatorInterface $paginator)
     {
     }
@@ -84,26 +102,75 @@ class ShopSearch
         return $filters;
     }
 
-    public function getFiltersKey(): string
-    {
-        return json_encode($this->getFilters());
-    }
-
     public function getShops(): PaginationInterface
     {
-        $filters = $this->getFilters();
-
+        // TODO Check if this is needed
         // $this->shopRepository->setBusinessContext($this->businessContext);
 
-        $qb = $this->shopRepository->findByFilters($filters, true);
+        $restaurantsIds = $this->appCache->get($this->getCacheKey(), function (ItemInterface $item) {
+
+            $item->expiresAfter(60 * 5);
+
+            return array_map(fn (LocalBusiness $s) => $s->getId(), $this->shopRepository->findByFilters($this->getFilters()));
+        });
+
+        $matches = [];
+
+        if (count($restaurantsIds) > 0) {
+
+            $qb = $this->shopRepository->createQueryBuilder('r');
+            $qb->add('where', $qb->expr()->in('r.id', $restaurantsIds));
+
+            $matches = $qb->getQuery()->getResult();
+
+            // Preload entities to optimize N+1 queries
+            $preloader = new EntityPreloader($this->entityManager);
+            $preloader->preload($matches, 'promotions');
+            $preloader->preload($matches, 'preparationTimeRules');
+            $preloader->preload($matches, 'fulfillmentMethods');
+            $preloader->preload($matches, 'closingRules');
+            // Many-to-many associations with order by are not supported
+            // $preloader->preload($matches, 'servesCuisine');
+        }
+
+        if (!empty($this->geohash) || !empty($this->address)) {
+
+            // $matches = $qb->getQuery()->getResult();
+
+            $geohash = null;
+
+            if (!empty($this->geohash) && strlen($this->geohash) > 0) {
+                $geohash = $this->geohash;
+            } else if (!empty($this->address) && is_array($this->address)) {
+                $geohash = $this->address['geohash'] ?? null;
+            }
+
+            if (null !== $geohash) {
+
+                $geotools = new Geotools();
+
+                try {
+
+                    $decoded = $geotools->geohash()->decode($geohash);
+
+                    $latitude = $decoded->getCoordinate()->getLatitude();
+                    $longitude = $decoded->getCoordinate()->getLongitude();
+
+                    $matches = $this->restaurantFilter->matchingLatLng($matches, $latitude, $longitude);
+
+                } catch (\InvalidArgumentException|\RuntimeException $e) {
+                    // Some funny guys may have tried a SQL injection
+                }
+            }
+        }
+
+        $iterator = new SortableRestaurantIterator($matches, $this->timingRegistry);
+        $matches = iterator_to_array($iterator);
 
         $shops = $this->paginator->paginate(
-            $qb,
+            $matches,
             $this->page,
-            15,
-            [
-                // PaginatorInterface::DISTINCT => false,
-            ]
+            12
         );
 
         $this->pageCount = (int) \ceil($shops->getTotalItemCount() / $shops->getItemNumberPerPage());
@@ -127,5 +194,46 @@ class ShopSearch
     {
         $this->category = $key;
         $this->page = 1;
+    }
+
+    /**
+     * The cache key is built with all query params alphabetically sorted.
+     * With this function we make sure that same filters in different order represent the same cache key.
+     */
+    public function getCacheKey(): string
+    {
+        $query = [
+            'category' => $this->category,
+            'cuisine' => $this->cuisine,
+            // 'type',
+        ];
+
+        $query = array_filter($query);
+
+        // $query = array_filter($request->query->all(), fn ($key) => in_array($key, $parameters), ARRAY_FILTER_USE_KEY);
+
+        if (isset($query['cuisine'])) {
+            sort($query['cuisine']);
+        }
+
+        ksort($query);
+
+        $cacheKey = sprintf('shops.list.filters|%s', http_build_query($query));
+
+        if ($this->businessContext->isActive()) {
+
+            return sprintf('%s.%s', $cacheKey, '_business');
+        }
+
+        return $cacheKey;
+    }
+
+    public function hydrateAddress($data): ?array
+    {
+        if (empty($data)) {
+            return null;
+        }
+
+        return json_decode(urldecode(base64_decode($data)), true);
     }
 }
