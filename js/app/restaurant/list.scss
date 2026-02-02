@@ -89,19 +89,19 @@ button[aria-expanded='false'] .filter-caret {
     flex-wrap: nowrap;
   }
 
-  // gap: $spacer;
-
-  li.nav-item {
-    // https://stackoverflow.com/questions/29503227/how-to-make-flexbox-items-the-same-size
-    // flex: 1 1 0px;
-  }
   .nav > li > a {
     cursor: pointer;
   }
-
-
   .nav-link {
     padding: $nav-link-padding-y $nav-link-padding-x;
+  }
+}
+
+.categories {
+  --bs-nav-link-font-size: #{$font-size-lg};
+
+  .nav-underline {
+    --bs-nav-underline-gap: 0;
   }
 }
 
@@ -164,15 +164,4 @@ button[aria-expanded='false'] .filter-caret {
     }
   }
 
-
-  // &:after {
-  //   position: fixed;
-  //   content: "";
-  //   top: 0;
-  //   left: 0;
-  //   bottom: 0;
-  //   right: 0;
-  //   background: rgba(0,0,0,0.5);
-  //   z-index: -2;
-  // }
 }
