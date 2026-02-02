@@ -66,7 +66,8 @@ new Swiper('.restaurant-collection-swiper', {
   lazyLoading: true,
   breakpoints: swiperBreakpoints,
   observer: true, // to be initialized properly inside a hidden container
-  observeParents: true
+  observeParents: true,
+  spaceBetween: 20,
 })
 
 new Swiper('.cuisines', {
