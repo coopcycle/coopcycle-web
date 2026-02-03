@@ -37,6 +37,9 @@ class ShopSearch
     #[LiveProp(writable: true, url: true)]
     public string $category = '';
 
+    #[LiveProp(writable: true, url: true)]
+    public string $type = '';
+
     #[LiveProp(writable: true)]
     public int $page = 1;
 
@@ -86,6 +89,11 @@ class ShopSearch
         ];
     }
 
+    public function getTypes(): array
+    {
+        return array_keys($this->shopRepository->countByType());
+    }
+
     public function getCuisines(): array
     {
         return $this->shopRepository->findExistingCuisines();
@@ -101,8 +109,13 @@ class ShopSearch
         }
 
         if (!empty($this->category)) {
-            $typeForKey = LocalBusiness::getTypeForKey($this->category);
-            $filters['category'] = $typeForKey ?? $this->category;
+            $filters['category'] = $this->category;
+        }
+
+        if (!empty($this->type)) {
+            if ($typeForKey = LocalBusiness::getTypeForKey($this->type)) {
+                $filters['type'] = $typeForKey;
+            }
         }
 
         return $filters;
@@ -199,6 +212,13 @@ class ShopSearch
     public function setCategory(#[LiveArg] string $key)
     {
         $this->category = $key;
+        $this->page = 1;
+    }
+
+    #[LiveAction]
+    public function setType(#[LiveArg] string $type)
+    {
+        $this->type = $type;
         $this->page = 1;
     }
 

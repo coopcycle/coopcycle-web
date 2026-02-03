@@ -5,14 +5,21 @@
     <div class="swiper filters categories mb-4">
       <ul class="swiper-wrapper nav nav-underline">
         <li class="nav-item swiper-slide">
-          <a class="nav-link {% if this.category is empty %}active{% endif %}" href="{{ path('shops') }}">
+          <a class="nav-link {% if this.category is empty and this.type is empty %}active{% endif %}" href="{{ path('shops') }}">
             <i class="fa fa-lg fa-home" aria-hidden="true"></i>
           </a>
         </li>
+        {% if this.types|length > 1 %}
+        {% for type in this.types %}
+        <li class="nav-item swiper-slide">
+          <a class="nav-link {% if this.type == type %}active{% endif %}" {{ live_action('setType', { type: type }) }}>{{ type|local_business_type }}</a>
+        </li>
+        {% endfor %}
+        {% endif %}
         {% for category in this.categories %}
-          <li class="nav-item swiper-slide">
-            <a class="nav-link {% if category.key == this.category %}active{% endif %}" {{ live_action('setCategory', { key: category.key }) }}>{{ category.transKey|trans }}</a>
-          </li>
+        <li class="nav-item swiper-slide">
+          <a class="nav-link {% if category.key == this.category %}active{% endif %}" {{ live_action('setCategory', { key: category.key }) }}>{{ category.transKey|trans }}</a>
+        </li>
         {% endfor %}
       </ul>
     </div>
