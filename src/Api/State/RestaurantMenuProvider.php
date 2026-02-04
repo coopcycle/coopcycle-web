@@ -19,6 +19,10 @@ final class RestaurantMenuProvider implements ProviderInterface
     {
         $menu = $this->provider->provide($operation, $uriVariables, $context);
 
+        if (!$menu->isRoot()) {
+            return null;
+        }
+
         if (null !== $menu) {
             $preloader = new EntityPreloader($this->entityManager);
 
