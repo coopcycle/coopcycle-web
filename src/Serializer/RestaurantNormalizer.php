@@ -54,11 +54,6 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
 
         $data['@type'] = $object->getType();
 
-        if (isset($data['closingRules'])) {
-            $data['specialOpeningHoursSpecification'] = $data['closingRules'];
-            unset($data['closingRules']);
-        }
-
         $imagePath = $this->uploaderHelper->asset($object, 'imageFile');
         if (empty($imagePath)) {
             $imagePath = '/img/cuisine/default.jpg';
