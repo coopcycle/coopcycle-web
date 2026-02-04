@@ -36,6 +36,9 @@ class RestaurantDecorator
                 $tags[] = $this->translator->trans($cuisine->getName(), [], 'cuisines');
             }
 
+            // Make sure the tags are sorted alphabetically
+            asort($tags);
+
             return $tags;
         });
     }
