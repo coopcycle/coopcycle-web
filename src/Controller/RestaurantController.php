@@ -8,6 +8,7 @@ use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\UserTrait;
+use AppBundle\Doctrine\EntityPreloader\LocalBusinessPreloader;
 use AppBundle\Domain\Order\Event\OrderUpdated;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessRestaurantGroup;
@@ -88,6 +89,7 @@ class RestaurantController extends AbstractController
         protected JWTTokenManagerInterface $JWTTokenManager,
         private TimingRegistry $timingRegistry,
         private OrderAccessTokenManager $orderAccessTokenManager,
+        private LocalBusinessPreloader $preloader,
         private LoggerInterface $checkoutLogger,
         private LoggingUtils $loggingUtils,
         private string $environment
@@ -234,13 +236,7 @@ class RestaurantController extends AbstractController
             $matches = $qb->getQuery()->getResult();
 
             // Preload entities to optimize N+1 queries
-            $preloader = new EntityPreloader($this->entityManager);
-            $preloader->preload($matches, 'promotions');
-            $preloader->preload($matches, 'preparationTimeRules');
-            $preloader->preload($matches, 'fulfillmentMethods');
-            $preloader->preload($matches, 'closingRules');
-            // Many-to-many associations with order by are not supported
-            // $preloader->preload($matches, 'servesCuisine');
+            $this->preloader->preload($matches);
         }
 
         if ($request->query->has('geohash') || $request->query->has('address')) {

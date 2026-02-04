@@ -145,6 +145,9 @@ services:
   AppBundle\Pricing\:
     resource: '../src/Pricing/*'
 
+  AppBundle\Doctrine\EntityPreloader\:
+    resource: '../src/Doctrine/EntityPreloader/*'
+
   coopcycle.repository.restaurant: '@AppBundle\Entity\RestaurantRepository'
 
   coopcycle.preparation_time_calculator: '@AppBundle\Utils\PreparationTimeCalculator'
