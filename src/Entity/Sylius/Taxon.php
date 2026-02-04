@@ -4,6 +4,7 @@ namespace AppBundle\Entity\Sylius;
 
 use AppBundle\Api\Dto\MenuInput;
 use AppBundle\Api\State\RestaurantMenuProcessor;
+use AppBundle\Api\State\RestaurantMenuProvider;
 use AppBundle\Api\State\RestaurantMenuSectionProcessor;
 use AppBundle\Api\State\RestaurantMenuSectionProvider;
 use ApiPlatform\Metadata\ApiResource;
@@ -24,7 +25,8 @@ use Sylius\Component\Taxonomy\Model\Taxon as BaseTaxon;
     types: ['http://schema.org/Menu'],
     operations: [
         new Get(
-            uriTemplate: '/restaurants/menus/{id}'
+            uriTemplate: '/restaurants/menus/{id}',
+            provider: RestaurantMenuProvider::class
         ),
         new Delete(
             uriTemplate: '/restaurants/menus/{id}',
