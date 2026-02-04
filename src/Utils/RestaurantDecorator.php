@@ -37,7 +37,7 @@ class RestaurantDecorator
             }
 
             // Make sure the tags are sorted alphabetically
-            asort($tags);
+            sort($tags);
 
             return $tags;
         });
