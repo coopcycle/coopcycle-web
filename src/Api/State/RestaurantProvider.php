@@ -10,7 +10,6 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Utils\SortableRestaurantIterator;
 use AppBundle\Utils\RestaurantFilter;
-use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
 
 final class RestaurantProvider implements ProviderInterface
 {

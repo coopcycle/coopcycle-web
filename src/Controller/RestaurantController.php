@@ -43,7 +43,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use League\Geotools\Geotools;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Psr\Log\LoggerInterface;
-use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
