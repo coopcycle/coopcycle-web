@@ -4,7 +4,7 @@ namespace AppBundle\Doctrine\EntityPreloader;
 
 use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
 
-final class LocalBusinessPreloader
+class LocalBusinessPreloader
 {
     public function __construct(private EntityPreloader $preloader)
     {}
