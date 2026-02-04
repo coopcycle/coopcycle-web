@@ -54,8 +54,8 @@ class ShopSearch
     /**
      * @var array|null
      */
-    #[LiveProp(url: true, hydrateWith: 'hydrateAddress')]
-    public ?array $address = null;
+    #[LiveProp(url: true)]
+    public ?string $address = null;
 
     public function __construct(
         private LocalBusinessRepository $shopRepository,
@@ -252,14 +252,5 @@ class ShopSearch
         }
 
         return $cacheKey;
-    }
-
-    public function hydrateAddress($data): ?array
-    {
-        if (empty($data)) {
-            return null;
-        }
-
-        return json_decode(urldecode(base64_decode($data)), true);
     }
 }
