@@ -433,15 +433,8 @@ class RestaurantController extends AbstractController
             ]);
         }
 
-        $preloader = new EntityPreloader($this->entityManager);
-        $preloader->preload([$restaurant], 'taxons');
-        if ($restaurant->getMenuTaxon()) {
-            $preloader->preload([$restaurant->getMenuTaxon()], 'children');
-            $children = $restaurant->getMenuTaxon()->getChildren()->toArray();
-            $taxonProducts = $preloader->preload($children, 'taxonProducts');
-            $products = $preloader->preload($taxonProducts, 'product');
-            $preloader->preload($products, 'images');
-        }
+        // Preload to optimize N+1 queries
+        $this->preloader->preload($restaurant);
 
         $order = $cartContext->getCart();
 

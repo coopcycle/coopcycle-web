@@ -12,7 +12,19 @@ final class LocalBusinessPreloader
     public function preload($entities)
     {
         if (!is_array($entities)) {
-            $entities = [ $entities ];
+
+            $this->preloader->preload([$entities], 'taxons');
+            $menu = $entities->getMenuTaxon();
+
+            if ($menu) {
+                $this->preloader->preload([$menu], 'children');
+                $children = $menu->getChildren()->toArray();
+                $taxonProducts = $this->preloader->preload($children, 'taxonProducts');
+                $products = $this->preloader->preload($taxonProducts, 'product');
+                $this->preloader->preload($products, 'images');
+            }
+
+            return;
         }
 
         $promotions = $this->preloader->preload($entities, 'promotions');
