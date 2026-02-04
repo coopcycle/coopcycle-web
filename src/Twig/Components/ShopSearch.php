@@ -52,7 +52,7 @@ class ShopSearch
     public ?string $geohash = null;
 
     /**
-     * @var array|null
+     * @var string|null
      */
     #[LiveProp(url: true)]
     public ?string $address = null;
@@ -161,7 +161,7 @@ class ShopSearch
             if (!empty($this->geohash)) {
                 $geohash = $this->geohash;
             } else if (!empty($this->address)) {
-                $geohash = $this->address['geohash'] ?? null;
+                $geohash = $this->getAddressGeohash($this->address) ?? null;
             }
 
             if (null !== $geohash) {
@@ -252,5 +252,12 @@ class ShopSearch
         }
 
         return $cacheKey;
+    }
+
+    private function getAddressGeohash(string $address): ?string
+    {
+        $data = json_decode(urldecode(base64_decode($address)), true);
+
+        return $data['geohash'] ?? null;
     }
 }
