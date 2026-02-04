@@ -22,7 +22,6 @@ use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Sylius\Product\ProductVariantInterface;
 use AppBundle\Utils\OptionsPayloadConverter;
 use AppBundle\Utils\OrderTimeHelper;
-use AppBundle\Utils\RestaurantFilter;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Prophecy\Argument;
@@ -76,7 +75,6 @@ class RestaurantControllerTest extends WebTestCase
         $this->orderTimeHelper = $this->prophesize(OrderTimeHelper::class);
         $this->restaurantResolver = $this->prophesize(RestaurantResolver::class);
         $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
-        $this->restaurantFilter = $this->prophesize(RestaurantFilter::class);
         $this->timingRegistry = $this->prophesize(TimingRegistry::class);
         $this->orderAccessTokenManager = $this->prophesize(OrderAccessTokenManager::class);
 
@@ -130,7 +128,6 @@ class RestaurantControllerTest extends WebTestCase
             $this->orderModifier->reveal(),
             $this->orderTimeHelper->reveal(),
             $this->serializer,
-            $this->restaurantFilter->reveal(),
             $this->restaurantResolver->reveal(),
             $eventBus->reveal(),
             $jwtTokenManager->reveal(),
