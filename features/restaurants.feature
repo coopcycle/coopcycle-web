@@ -205,6 +205,36 @@ Feature: Manage restaurants
     }
     """
 
+  Scenario: Retrieve a restaurant with cuisines sorted alphabetically
+    And the fixtures files are loaded:
+      | sylius_locales.yml  |
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the restaurant with id "1" has menu:
+      | section | product   |
+      | Pizzas  | PIZZA     |
+      | Burger  | HAMBURGER |
+    When I add "Accept" header equal to "application/ld+json"
+    And I send a "GET" request to "/api/restaurants/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+    """
+    {
+      "@context":"/api/contexts/Restaurant",
+      "@id":"/api/restaurants/1",
+      "tags": [
+        "Asiatique",
+        "Italienne"
+      ],
+      "@*@":"@*@"
+    }
+    """
+
   Scenario: Retrieve a closed restaurant
     Given the current time is "2021-12-19 12:00:00"
     Given the fixtures files are loaded:
