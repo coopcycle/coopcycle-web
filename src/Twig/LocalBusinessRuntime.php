@@ -49,7 +49,8 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         private SettingsManager $settingsManager,
         private PriceFormatter $priceFormatter,
         private PromotionEligibilityCheckerInterface $promotionExpirationChecker,
-        private PromotionCouponEligibilityCheckerInterface $promotionCouponExpirationChecker)
+        private PromotionCouponEligibilityCheckerInterface $promotionCouponExpirationChecker,
+        private string $locale)
     {}
 
     /**
@@ -262,7 +263,13 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
 
         foreach ($promotion->getActions() as $action) {
             if ($action->getType() === FixedDiscountPromotionActionCommand::TYPE) {
-                $discountAmount = $action->getConfiguration()['amount'];
+                $discountAmount = $this->priceFormatter->formatWithSymbol($action->getConfiguration()['amount']);
+                break;
+            }
+            if ($action->getType() === PercentageDiscountPromotionActionCommand::TYPE) {
+                $formatter = new \NumberFormatter($this->locale, \NumberFormatter::PERCENT);
+                $formatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 0);
+                $discountAmount = $formatter->format($action->getConfiguration()['percentage']);
                 break;
             }
         }
@@ -276,7 +283,7 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
 
         return $this->translator->trans('promotions.human_readable.discount_items_total_above', [
             '%name%' => $promotion->getName(),
-            '%discount_amount%' => $this->priceFormatter->formatWithSymbol($discountAmount),
+            '%discount_amount%' => $discountAmount,
             '%amount%' => $this->priceFormatter->formatWithSymbol($amount),
         ]);
     }
