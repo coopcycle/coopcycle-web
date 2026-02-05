@@ -99,6 +99,7 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         if (isset($data['facets'])) {
             $cuisines =
                 array_map(fn ($c) => $this->translator->trans($c, [], 'cuisines'), $data['facets']['cuisine']);
+            sort($cuisines);
             $data['facets']['cuisine'] = $cuisines;
 
             $data['facets']['type'] =
