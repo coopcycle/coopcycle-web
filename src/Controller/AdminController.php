@@ -232,12 +232,13 @@ class AdminController extends AbstractController
         } else {
             $qb = $this->orderRepository
                 ->createOptimizedQueryBuilder('o');
-            $qb
-                ->andWhere('o.state != :state')
-                ->setParameter('state', OrderInterface::STATE_CART)
-                ->orderBy('LOWER(o.shippingTimeRange)', 'DESC')
-                ;
         }
+
+        $qb
+            ->andWhere('o.state != :state')
+            ->setParameter('state', OrderInterface::STATE_CART);
+
+        $qb->orderBy('LOWER(o.shippingTimeRange)', 'DESC');
 
         if (!$showCanceled) {
             $qb
