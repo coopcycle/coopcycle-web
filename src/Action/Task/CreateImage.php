@@ -52,11 +52,15 @@ class CreateImage
         $first = array_shift($tasks);
         $taskImage->setTask($first);
 
+        $first->incrementImageCount();
+
         foreach ($tasks as $task) {
 
             $otherTaskImage = new TaskImage();
             $otherTaskImage->setImageName($taskImage->getImageName());
             $otherTaskImage->setTask($task);
+
+            $task->incrementImageCount();
 
             $this->entityManager->persist($otherTaskImage);
         }

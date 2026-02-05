@@ -65,6 +65,7 @@ use AppBundle\Form\MercadopagoLivemodeType;
 use AppBundle\Form\Model\Promotion as PromotionDto;
 use AppBundle\Form\NewCustomOrderType;
 use AppBundle\Form\NonprofitType;
+use AppBundle\Form\OrderExportType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\PackageSetType;
 use AppBundle\Form\PricingRuleSetType;
@@ -77,6 +78,7 @@ use AppBundle\Form\TimeSlotType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\UsersExportType;
 use AppBundle\Form\ZoneCollectionType;
+use AppBundle\Message\ExportOrders;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Serializer\ApplicationsNormalizer;
 use AppBundle\Service\ActivityManager;
@@ -125,6 +127,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bridge\Twig\Mime\BodyRenderer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -132,6 +135,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -142,7 +146,6 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 use Twig\Environment as TwigEnvironment;
 use phpcent\Client as CentrifugoClient;
-
 
 class AdminController extends AbstractController
 {
@@ -233,8 +236,6 @@ class AdminController extends AbstractController
                 ->andWhere('o.state != :state')
                 ->setParameter('state', OrderInterface::STATE_CART)
                 ->orderBy('LOWER(o.shippingTimeRange)', 'DESC')
-                ->setFirstResult(($request->query->getInt('p', 1) - 1) * self::ITEMS_PER_PAGE)
-                ->setMaxResults(self::ITEMS_PER_PAGE)
                 ;
         }
 
@@ -252,6 +253,76 @@ class AdminController extends AbstractController
                 PaginatorInterface::DISTINCT => false,
             ]
         );
+    }
+
+    public function orderListAction(Request $request,
+        TranslatorInterface $translator,
+        PaginatorInterface $paginator,
+        CubeJsTokenFactory $tokenFactory,
+        MessageBusInterface $messageBus
+    )
+    {
+        $response = new Response();
+
+        $showCanceled = false;
+        if ($request->query->has('show_canceled')) {
+            $showCanceled = $request->query->getBoolean('show_canceled');
+            $response->headers->setCookie(new Cookie('__show_canceled', $showCanceled ? 'on' : 'off'));
+        } elseif ($request->cookies->has('__show_canceled')) {
+            $showCanceled = $request->cookies->getBoolean('__show_canceled');
+        }
+
+        $parameters = [
+            'orders' => $this->getOrderList($request, $paginator, $showCanceled),
+            'routes' => $request->attributes->get('routes'),
+            'show_canceled' => $showCanceled,
+        ];
+
+        if ($this->isGranted('ROLE_ADMIN')) {
+
+            $orderExportForm = $this->createForm(OrderExportType::class);
+            $orderExportForm->handleRequest($request);
+
+            if ($orderExportForm->isSubmitted() && $orderExportForm->isValid()) {
+
+                $start = $orderExportForm->get('start')->getData();
+                $end = $orderExportForm->get('end')->getData();
+
+                $withMessenger = $orderExportForm->has('messenger') && $orderExportForm->get('messenger')->getData();
+
+                //HERE
+                $envelope = $messageBus->dispatch(new ExportOrders(
+                    $start,
+                    $end,
+                    $withMessenger
+                ));
+
+                /** @var HandledStamp $handledStamp */
+                $handledStamp = $envelope->last(HandledStamp::class);
+                $stats = $handledStamp->getResult();
+
+                if (is_null($stats)) {
+                    $this->addFlash('error', $translator->trans('order.export.empty'));
+
+                    return $this->redirectToRoute($request->attributes->get('_route'));
+                }
+
+                $filename = sprintf('coopcycle-orders-%s-%s.csv', $start->format('Y-m-d'), $end->format('Y-m-d'));
+
+                $response = new Response($stats);
+                $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
+                    ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                    $filename
+                ));
+
+                return $response;
+            }
+
+            $parameters['order_export_form'] = $orderExportForm->createView();
+            $parameters['cube_token'] = $tokenFactory->createToken();
+        }
+
+        return $this->render($request->attributes->get('template'), $this->auth($parameters), $response);
     }
 
     #[Route(path: '/admin/orders/search', name: 'admin_orders_search')]
@@ -742,27 +813,6 @@ class AdminController extends AbstractController
         }
 
         return $this->userTracking($user, 'admin');
-    }
-
-    protected function getRestaurantList(Request $request)
-    {
-        $repository = $this->entityManager->getRepository(LocalBusiness::class);
-
-        $countAll = $repository
-            ->createQueryBuilder('r')->select('COUNT(r)')
-            ->getQuery()->getSingleScalarResult();
-
-        $pages = ceil($countAll / self::ITEMS_PER_PAGE);
-        $page = $request->query->getInt('p', 1);
-
-        $offset = self::ITEMS_PER_PAGE * ($page - 1);
-
-        $restaurants = $repository->findBy([], [
-            'enabled' => 'DESC',
-            'name' => 'ASC',
-        ], self::ITEMS_PER_PAGE, $offset);
-
-        return [ $restaurants, $pages, $page ];
     }
 
     #[Route(path: '/admin/deliveries', name: 'admin_deliveries')]
@@ -2743,7 +2793,7 @@ class AdminController extends AbstractController
 
 
     #[HideSoftDeleted]
-    public function restaurantListAction(Request $request, SettingsManager $settingsManager)
+    public function restaurantListAction(Request $request, SettingsManager $settingsManager, PaginatorInterface $paginator)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -2790,13 +2840,20 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_restaurants');
         }
 
-        [ $restaurants, $pages, $page ] = $this->getRestaurantList($request);
+        $qb = $this->entityManager->getRepository(LocalBusiness::class)->createQueryBuilder('r');
+        $qb
+            ->addOrderBy('r.enabled', 'DESC')
+            ->addOrderBy('r.name', 'ASC');
+
+        $restaurants = $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE
+        );
 
         return $this->render($request->attributes->get('template'), $this->auth([
             'layout' => $request->attributes->get('layout'),
             'restaurants' => $restaurants,
-            'pages' => $pages,
-            'page' => $page,
             'dashboard_route' => $routes['dashboard'],
             'menu_taxon_route' => $routes['menu_taxon'],
             'menu_taxons_route' => $routes['menu_taxons'],

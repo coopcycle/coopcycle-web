@@ -52,7 +52,7 @@
     </td>
     {% endif %}
     <td>
-      {% if order.customer is not null %}
+      {% if is_granted('ROLE_ADMIN') and order.customer is not null %}
         {% include '_partials/order/customer.html.twig' with { customer: order.customer } %}
       {% endif %}
       {% include '_partials/order/summary.html.twig' %}

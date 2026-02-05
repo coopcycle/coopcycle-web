@@ -637,6 +637,75 @@ Feature: Food Tech
       }
       """
 
+  Scenario: Close restaurant does not return past closingRules (specialOpeningHoursSpecification)
+    Given the current time is "2020-10-02 11:00:00"
+    Given the fixtures files are loaded:
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    # We create some expired closing rules
+    And the restaurant with id "1" is closed between "2018-08-27 12:00:00" and "2018-08-28 10:00:00"
+    And the restaurant with id "1" is closed between "2020-10-01 23:30:00" and "2020-10-01 23:59:59"
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_RESTAURANT"
+    And the restaurant with id "1" belongs to user "bob"
+    And the user "bob" is authenticated
+    And I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "PUT" request to "/api/restaurants/1/close" with body:
+      """
+      {}
+      """
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Restaurant",
+        "@id":"/api/restaurants/1",
+        "@type":"http://schema.org/Restaurant",
+        "id":@integer@,
+        "name":"Nodaiwa",
+        "description":null,
+        "enabled":true,
+        "depositRefundEnabled":false,
+        "depositRefundOptin":true,
+        "address":{"@*@":"@*@"},
+        "state":"normal",
+        "telephone":"+33612345678",
+        "fulfillmentMethods":@array@,
+        "openingHoursSpecification":@array@,
+        "specialOpeningHoursSpecification":[
+          {
+            "@id":@string@,
+            "@type":"OpeningHoursSpecification",
+            "id":@integer@,
+            "opens":"23:59",
+            "closes":"00:00",
+            "validFrom":"2020-10-02",
+            "validThrough":"2020-10-02"
+          }
+        ],
+        "image":@string@,
+        "bannerImage":@string@,
+        "isOpen":false,
+        "nextOpeningDate":@string@,
+        "hub":null,
+        "loopeatEnabled":false,
+        "tags":@array@,
+        "badges":@array@,
+        "autoAcceptOrdersEnabled": @boolean@,
+        "edenredMerchantId": null,
+        "edenredTRCardEnabled": false,
+        "edenredSyncSent": false,
+        "edenredEnabled": false
+      }
+      """
+
   Scenario: Retrieve order with OAuth
     Given the current time is "2018-08-27 12:00:00"
     And the fixtures files are loaded:
@@ -695,3 +764,27 @@ Feature: Food Tech
       """
     Then the response status code should be 200
     And the response should be in JSON
+
+  Scenario: Disable product until tomorrow
+    Given the fixtures files are loaded:
+      | products.yml        |
+      | restaurants.yml     |
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_RESTAURANT"
+    And the restaurant with id "1" belongs to user "bob"
+    And the user "bob" is authenticated
+    And I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "PUT" request to "/api/products/1/disable" with body:
+      """
+      {
+        "until": "tomorrow 00:00"
+      }
+      """
+    Then the response status code should be 200

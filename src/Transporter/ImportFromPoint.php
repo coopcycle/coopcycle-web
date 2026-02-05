@@ -14,6 +14,7 @@ use Transporter\DTO\Mesurement;
 use Transporter\DTO\NameAndAddress;
 use Transporter\DTO\Point;
 use Transporter\Enum\CommunicationMeanType;
+use Transporter\Enum\INOVERTMessageType;
 use Transporter\Enum\NameAndAddressType;
 use libphonenumber\PhoneNumber;
 use libphonenumber\PhoneNumberUtil;
@@ -58,7 +59,13 @@ class ImportFromPoint {
         ->map(fn(CommunicationMean $c) => $c->getType()->name . ': ' . $c->getValue())
         ->join("\n");
 
+        $taskType = match ($point->getType()) {
+            INOVERTMessageType::SCONTR => Task::TYPE_DROPOFF,
+            INOVERTMessageType::PICKUP => Task::TYPE_PICKUP,
+        };
+
         $task = new Task();
+        $task->setType($taskType);
         $task->setAddress($address);
         $task->setComments($point->getComments());
         $task->setMetadata('imported_from', $imported_from);
@@ -85,13 +92,28 @@ class ImportFromPoint {
         return $task;
     }
 
-    public function buildPickupTask(
+    public function buildScontr2PickupTask(
         Address $address,
         ?EDIFACTMessage $edi = null
     ): Task
     {
         $task = new Task();
         $task->setType(Task::TYPE_PICKUP);
+        $task->setAddress($address);
+        if (!is_null($edi)) {
+            $task->addEdifactMessage($edi);
+        }
+
+        return $task;
+    }
+
+    public function buildPickup2DropoffTask(
+        Address $address,
+        ?EDIFACTMessage $edi = null
+    ): Task
+    {
+        $task = new Task();
+        $task->setType(Task::TYPE_DROPOFF);
         $task->setAddress($address);
         if (!is_null($edi)) {
             $task->addEdifactMessage($edi);

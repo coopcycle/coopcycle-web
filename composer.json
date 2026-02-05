@@ -97,7 +97,7 @@
         "oneup/uploader-bundle": "^5.0",
         "sylius/promotion-bundle": "^1.7.5",
         "notfloran/mjml-bundle": "^3.0",
-        "martin-georgiev/postgresql-for-doctrine": "^1.3",
+        "martin-georgiev/postgresql-for-doctrine": "^4",
         "hautelook/alice-bundle": "^2.10.0",
         "nyholm/psr7": "^1.1",
         "hwi/oauth-bundle": "^2",
@@ -172,7 +172,9 @@
         "symfony/lock": "*",
         "symfony/proxy-manager-bridge": "*",
         "phpstan/phpdoc-parser": "^1.33",
-        "benjaminfavre/oauth2-http-client": "^3.0"
+        "benjaminfavre/oauth2-http-client": "^3.0",
+        "symfony/scheduler": "6.4.*",
+        "dragonmantank/cron-expression": "^3.6"
     },
     "require-dev": {
         "symfony/debug-bundle": "*",

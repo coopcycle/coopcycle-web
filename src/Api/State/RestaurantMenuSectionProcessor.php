@@ -1,0 +1,105 @@
+<?php
+
+namespace AppBundle\Api\State;
+
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\State\ProcessorInterface;
+use AppBundle\Api\Dto\MenuInput;
+use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Sylius\ProductTaxon;
+use AppBundle\Entity\Sylius\Taxon;
+use AppBundle\Entity\Sylius\TaxonRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
+use Ramsey\Uuid\Uuid;
+use Sylius\Component\Resource\Factory\FactoryInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+
+class RestaurantMenuSectionProcessor implements ProcessorInterface
+{
+    public function __construct(
+        private readonly RestaurantMenuSectionProvider $sectionProvider,
+        private readonly FactoryInterface $taxonFactory,
+        private readonly TaxonRepository $taxonRepository,
+        private readonly EntityManagerInterface $entityManager,
+        private readonly EventDispatcherInterface $eventDispatcher)
+    {}
+
+    /**
+     * @param MenuInput $data
+     */
+    public function process($data, Operation $operation, array $uriVariables = [], array $context = [])
+    {
+        // FIXME Replace by ItemProvider
+        $menu = $this->taxonRepository->find($uriVariables['id']);
+
+        if ($operation instanceof Put) {
+
+            /** @var Taxon */
+            $section = $this->sectionProvider->provide($operation, $uriVariables, $context);
+
+            // Remove the product from existing sections
+            $productTaxonsToRemove = [];
+            foreach ($data->products as $product) {
+                $productTaxon = $this->taxonRepository->getProductTaxon($product, $menu);
+                if ($productTaxon) {
+                    $productTaxonsToRemove[] = $productTaxon;
+                }
+            }
+
+            if (!empty($productTaxonsToRemove)) {
+                foreach ($productTaxonsToRemove as $productTaxon) {
+                    /** @var Taxon */
+                    $taxon = $productTaxon->getTaxon();
+                    $taxon->removeProduct($productTaxon->getProduct());
+                    $this->entityManager->remove($productTaxon);
+                }
+                $this->entityManager->flush();
+            }
+
+            // We clear the section to make sure positions are right
+            if (!$section->isEmpty()) {
+                foreach ($section->getTaxonProducts() as $originalTaxonProduct) {
+                    $section->removeProduct($originalTaxonProduct->getProduct());
+                    $this->entityManager->remove($originalTaxonProduct);
+                }
+                $this->entityManager->flush();
+            }
+
+            foreach ($data->products as $position => $product) {
+                $section->addProduct($product, $position);
+            }
+
+            if (!empty($data->name)) {
+                $section->setName($data->name);
+            }
+
+            if (!empty($data->description)) {
+                $section->setDescription($data->description);
+            }
+
+        } else {
+
+            $section = $this->taxonFactory->createNew();
+
+            $uuid = Uuid::uuid1()->toString();
+
+            $section->setCode($uuid);
+            $section->setSlug($uuid);
+            $section->setName($data->name);
+            $section->setDescription($data->description);
+
+            $menu->addChild($section);
+        }
+
+        $this->entityManager->flush();
+
+        // Dispatch event to clear Twig cache
+        $restaurant = $this->taxonRepository->getRestaurantForMenu($menu);
+        $this->eventDispatcher->dispatch(new GenericEvent($restaurant), 'catalog.updated');
+
+        return $menu;
+    }
+}

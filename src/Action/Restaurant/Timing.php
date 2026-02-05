@@ -15,7 +15,7 @@ class Timing
     public function __construct(
         private OrderFactory $orderFactory,
         private OrderTimeHelper $orderTimeHelper,
-        private CacheInterface $projectCache)
+        private CacheInterface $appCache)
     {}
 
     private function toTimeInfo($data): TimeInfo
@@ -56,7 +56,7 @@ class Timing
 
         if ($restaurant->isFulfillmentMethodEnabled('delivery')) {
 
-            $result['delivery'] = $this->projectCache->get($deliveryCacheKey, function (ItemInterface $item) use ($restaurant) {
+            $result['delivery'] = $this->appCache->get($deliveryCacheKey, function (ItemInterface $item) use ($restaurant) {
 
                 $item->expiresAfter(60 * 5);
 
@@ -76,7 +76,7 @@ class Timing
 
         if ($restaurant->isFulfillmentMethodEnabled('collection')) {
 
-            $result['collection'] = $this->projectCache->get($collectionCacheKey, function (ItemInterface $item) use ($restaurant) {
+            $result['collection'] = $this->appCache->get($collectionCacheKey, function (ItemInterface $item) use ($restaurant) {
 
                 $item->expiresAfter(60 * 5);
 

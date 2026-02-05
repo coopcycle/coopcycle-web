@@ -12,7 +12,7 @@
 
 {% block content %}
 
-<div class="d-flex flex-column justify-content-between">
+<div class="d-flex flex-column justify-content-between mb-4">
   <div class="d-flex align-items-center justify-content-between">
     <div id="search-restaurants" class="w-25 mr-4">
       <input type="text" class="form-control">
@@ -81,9 +81,11 @@
     </div>
   </div>
 </div>
-{% include "admin/pagination.html.twig" %}
+
 {% include "_partials/restaurant/list.html.twig" %}
-{% include "admin/pagination.html.twig" %}
+<div class="text-center">
+  {{ knp_pagination_render(restaurants, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
+</div>
 
 {% endblock %}
 

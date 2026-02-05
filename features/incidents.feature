@@ -1074,3 +1074,74 @@ Feature: Incidents
     And I add "Accept" header equal to "application/ld+json"
     And the OAuth client "Store with Mixed Supplements" sends a "GET" request to "/api/incidents/1"
     Then the response status code should be 200
+
+
+  Scenario: Report incident with image
+    Given the fixtures files are loaded:
+      | tasks.yml           |
+    And the courier "bob" is loaded:
+      | email     | bob@coopcycle.org |
+      | password  | 123456            |
+      | telephone | 0033612345678     |
+    And the user "bob" is authenticated
+    Given I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/incidents" with body:
+      """
+      {
+        "description": "PACKAGE WET",
+        "failureReasonCode": "DAMAGED",
+        "task": "/api/tasks/2"
+      }
+      """
+    Then the response status code should be 201
+    Given I add "Content-Type" header equal to "multipart/form-data"
+    And I add "X-Attach-To" header equal to "/api/incidents/1"
+    And the user "bob" sends a "POST" request to "/api/incident_images" with parameters:
+      | key      | value              |
+      | file     | @beer.jpg |
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/IncidentImage",
+        "@id":"/api/incident_images/1",
+        "@type":"http://schema.org/MediaObject",
+        "thumbnail":@string@
+      }
+      """
+    Given I add "Content-Type" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/incidents/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Incident",
+        "@id":"/api/incidents/1",
+        "@type":"Incident",
+        "id":@integer@,
+        "title":@string@,
+        "status":"OPEN",
+        "priority":@integer@,
+        "task":"/api/tasks/2",
+        "failureReasonCode":"DAMAGED",
+        "description":"PACKAGE WET",
+        "images":[
+          {
+            "@id":"/api/incident_images/1",
+            "@type":"http://schema.org/MediaObject",
+            "id":1,
+            "imageName":@string@,
+            "thumbnail":@string@
+          }
+        ],
+        "events":[],
+        "createdBy":"/api/users/1",
+        "metadata":[],
+        "createdAt":"@string@.isDateTime()",
+        "updatedAt":"@string@.isDateTime()",
+        "tags":[]
+      }
+      """

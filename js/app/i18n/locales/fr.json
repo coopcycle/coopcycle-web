@@ -769,7 +769,8 @@
         "PRICING_RULE_PICKER_UNIT_KG": "kg",
         "DELIVERY_FORM_KEEP_ORIGINAL_PRICE": "Conserver le prix d'origine",
         "DELIVERY_FORM_APPLY_NEW_PRICE": "Appliquer le nouveau prix",
-        "CART_SHIPPING_ADDRESS_MAP_PICKED": "Adresse sélectionnée sur la carte",
+        "CART_SHIPPING_ADDRESS_MAP_PICKER": "Adresse sélectionnée sur la carte",
+        "CART_SHIPPING_ADDRESS_PLUS_CODE": "Adresse sélectionnée via le plus code",
         "ADDRESS_AUTOSUGGEST_MAP_PICKER_LABEL": "Vous ne trouvez pas votre adresse ?",
         "SELECT_YOUR_LOCATION": "Sélectionnez votre position",
         "CONFIRM_LOCATION": "Confirmer la position",
@@ -797,6 +798,18 @@
         "INCIDENTS_APPLY_SUGGESTIONS": "Appliquer les suggestions",
         "INCIDENTS_SUGGESTED_CHANGES": "Modifications suggérées",
         "INCIDENTS_ERROR_LOADING_SUGGESTED_PRICE_CHANGE": "Nous n'avons pas pu calculer le prix avec les modifications suggérées",
+        "MENU_EDITOR": {
+            "ADD_SECTION": "Ajouter une section",
+            "PRODUCTS": "Produits",
+            "SECTION_NAME_LABEL": "Nom",
+            "SECTION_NAME_PLACEHOLDER": "Exemple : plats, desserts…"
+        },
+        "CUSTOMER_INSIGHTS": {
+            "NUMBER_OF_ORDERS": "Nombre de commandes : {{count}}",
+            "FIRST_ORDER": "Première commande : {{date}}",
+            "LAST_ORDER": "Dernière commande : {{date}}",
+            "FAVORITE_RESTAURANT": "Restaurant préféré : {{- name}}"
+        },
         "PROMOTION_COUPON_BASED": "Cette promotion est basée sur un code promo"
     }
 }

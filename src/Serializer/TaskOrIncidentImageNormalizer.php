@@ -3,6 +3,7 @@
 namespace AppBundle\Serializer;
 
 use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
+use AppBundle\Entity\Incident\IncidentImage;
 use AppBundle\Entity\TaskImage;
 use League\Flysystem\FileNotFoundException;
 use Imagine\Exception\RuntimeException as ImagineRuntimeException;
@@ -15,7 +16,7 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 
-class TaskImageNormalizer implements NormalizerInterface, DenormalizerInterface
+class TaskOrIncidentImageNormalizer implements NormalizerInterface, DenormalizerInterface
 {
     private $normalizer;
     private $uploaderHelper;
@@ -36,8 +37,11 @@ class TaskImageNormalizer implements NormalizerInterface, DenormalizerInterface
         $data =  $this->normalizer->normalize($object, $format, $context);
 
         try {
+
+            $filterName = $object instanceof IncidentImage ? 'incident_image_thumbnail' : 'task_image_thumbnail';
+
             $imagePath = $this->uploaderHelper->asset($object, 'file');
-            $data['thumbnail'] = $this->imagineFilter->getUrlOfFilteredImage($imagePath, 'task_image_thumbnail');
+            $data['thumbnail'] = $this->imagineFilter->getUrlOfFilteredImage($imagePath, $filterName);
         } catch (NotLoadableException | FilesystemException | ImagineRuntimeException | LiipLogicException $e) {
             return $data;
         }
@@ -47,7 +51,8 @@ class TaskImageNormalizer implements NormalizerInterface, DenormalizerInterface
 
     public function supportsNormalization($data, $format = null)
     {
-        return $this->normalizer->supportsNormalization($data, $format) && $data instanceof TaskImage;
+        return $this->normalizer->supportsNormalization($data, $format)
+            && ($data instanceof TaskImage || $data instanceof IncidentImage);
     }
 
     public function denormalize($data, $class, $format = null, array $context = array())
@@ -64,6 +69,7 @@ class TaskImageNormalizer implements NormalizerInterface, DenormalizerInterface
     {
         return [
             TaskImage::class => true, // supports*() call result is cached
+            IncidentImage::class => true,
         ];
     }
 }

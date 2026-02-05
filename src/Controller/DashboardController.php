@@ -88,11 +88,6 @@ class DashboardController extends AbstractController
         ];
     }
 
-    protected function getOrderList(Request $request, PaginatorInterface $paginator, $showCanceled = false)
-    {
-        return [];
-    }
-
     public function indexAction(Request $request,
         SlugifyInterface $slugify,
         TranslatorInterface $translator,

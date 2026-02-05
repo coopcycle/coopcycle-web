@@ -781,7 +781,8 @@
         "PRICING_RULE_PICKER_VEHICLE_CARGO_BIKE": "Cargo Bike",
         "PRICING_RULE_PICKER_UNIT_KM": "km",
         "PRICING_RULE_PICKER_UNIT_KG": "kg",
-        "CART_SHIPPING_ADDRESS_MAP_PICKED": "Address selected via the map",
+        "CART_SHIPPING_ADDRESS_MAP_PICKER": "Address selected via the map",
+        "CART_SHIPPING_ADDRESS_PLUS_CODE": "Address selected via the plus code",
         "ADDRESS_AUTOSUGGEST_MAP_PICKER_LABEL": "Cannot find your address?",
         "SELECT_YOUR_LOCATION": "Select your location",
         "CONFIRM_LOCATION": "Confirm location",
@@ -809,6 +810,19 @@
         "INCIDENTS_SUGGESTED_MODIFICATIONS": "Suggested modifications",
         "INCIDENTS_REFUSE_SUGGESTIONS": "Refuse suggestions",
         "INCIDENTS_APPLY_SUGGESTIONS": "Apply suggestions",
+        "MENU_EDITOR": {
+            "ADD_SECTION": "Add a section",
+            "PRODUCTS": "Products",
+            "SECTION_NAME_LABEL": "Name",
+            "SECTION_NAME_PLACEHOLDER": "Example: main courses, desserts…",
+            "SECTION_DESCRIPTION_LABEL": "Description"
+        },
+        "CUSTOMER_INSIGHTS": {
+            "NUMBER_OF_ORDERS": "Number of orders: {{count}}",
+            "FIRST_ORDER": "First order: {{date}}",
+            "LAST_ORDER": "Last order: {{date}}",
+            "FAVORITE_RESTAURANT": "Favorite restaurant: {{- name}}"
+        },
         "PROMOTION_COUPON_BASED": "This promotion is based on a coupon code"
       }
 }

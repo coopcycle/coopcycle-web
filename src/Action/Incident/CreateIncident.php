@@ -10,7 +10,6 @@ use AppBundle\Entity\Delivery\FailureReasonRegistry;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Service\TaskManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -54,7 +53,7 @@ class CreateIncident
         return self::DEFAULT_TITLE;
     }
 
-    public function __invoke(Incident $data, ?UserInterface $user, Request $request): Incident
+    public function __invoke(Incident $data, ?UserInterface $user): Incident
     {
         // The default API platform validator is called on the object returned by the Controller/Action
         // but we need to validate the delivery before we can create an incident

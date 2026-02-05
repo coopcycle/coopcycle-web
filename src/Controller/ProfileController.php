@@ -156,7 +156,7 @@ class ProfileController extends AbstractController
         )));
     }
 
-    protected function getOrderList(Request $request, PaginatorInterface $paginator, $showCanceled = false)
+    protected function getOrderList(Request $request, PaginatorInterface $paginator)
     {
         Assert::isInstanceOf($this->orderRepository, EntityRepository::class);
 
@@ -176,6 +176,16 @@ class ProfileController extends AbstractController
                 PaginatorInterface::DISTINCT => false,
             ]
         );
+    }
+
+    public function orderListAction(Request $request, PaginatorInterface $paginator)
+    {
+        $parameters = [
+            'orders' => $this->getOrderList($request, $paginator),
+            'routes' => $request->attributes->get('routes'),
+        ];
+
+        return $this->render($request->attributes->get('template'), $this->auth($parameters));
     }
 
     public function orderAction($id, Request $request,

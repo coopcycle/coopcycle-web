@@ -14,6 +14,7 @@ class EDIFACTMessage
     const DIRECTION_OUTBOUND = 'OUTBOUND';
 
     const MESSAGE_TYPE_SCONTR = 'SCONTR';
+    const MESSAGE_TYPE_PICKUP = 'PICKUP';
     const MESSAGE_TYPE_REPORT = 'REPORT';
 
     private int $id;

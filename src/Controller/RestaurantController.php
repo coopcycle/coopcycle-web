@@ -8,6 +8,7 @@ use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\UserTrait;
+use AppBundle\Doctrine\EntityPreloader\LocalBusinessPreloader;
 use AppBundle\Domain\Order\Event\OrderUpdated;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessRestaurantGroup;
@@ -87,6 +88,7 @@ class RestaurantController extends AbstractController
         protected JWTTokenManagerInterface $JWTTokenManager,
         private TimingRegistry $timingRegistry,
         private OrderAccessTokenManager $orderAccessTokenManager,
+        private LocalBusinessPreloader $preloader,
         private LoggerInterface $checkoutLogger,
         private LoggingUtils $loggingUtils,
         private string $environment
@@ -153,20 +155,20 @@ class RestaurantController extends AbstractController
     #[Route(path: '/restaurants', name: 'restaurants')]
     public function legacyRestaurantsAction(Request $request,
         LocalBusinessRepository $repository,
-        CacheInterface $projectCache,
+        CacheInterface $appCache,
         BusinessContext $businessContext)
     {
         $requestClone = clone $request;
 
         $requestClone->attributes->set('type', LocalBusiness::getKeyForType(FoodEstablishment::RESTAURANT));
 
-        return $this->listAction($requestClone, $repository, $projectCache, $businessContext);
+        return $this->listAction($requestClone, $repository, $appCache, $businessContext);
     }
 
     #[Route(path: '/shops', name: 'shops')]
     public function listAction(Request $request,
         LocalBusinessRepository $repository,
-        CacheInterface $projectCache,
+        CacheInterface $appCache,
         BusinessContext $businessContext)
     {
         $originalParams = $request->query->all();
@@ -213,7 +215,7 @@ class RestaurantController extends AbstractController
             $request->query->set('cuisine', $cuisineIds);
         }
 
-        $restaurantsIds = $projectCache->get($cacheKey, function (ItemInterface $item) use ($repository, $request) {
+        $restaurantsIds = $appCache->get($cacheKey, function (ItemInterface $item) use ($repository, $request) {
 
             $item->expiresAfter(60 * 5);
 
@@ -223,11 +225,18 @@ class RestaurantController extends AbstractController
             }, $repository->findByFilters($request->query->all()));
         });
 
-        $matches = array_map(function ($id) use ($repository) {
-            return $repository->find($id);
-        }, $restaurantsIds);
+        $matches = [];
 
-        $matches = array_values(array_filter($matches));
+        if (count($restaurantsIds) > 0) {
+
+            $qb = $repository->createQueryBuilder('r');
+            $qb->add('where', $qb->expr()->in('r.id', $restaurantsIds));
+
+            $matches = $qb->getQuery()->getResult();
+
+            // Preload entities to optimize N+1 queries
+            $this->preloader->preload($matches);
+        }
 
         if ($request->query->has('geohash') || $request->query->has('address')) {
 
@@ -422,6 +431,9 @@ class RestaurantController extends AbstractController
                 'has_already_voted' => $checkVote
             ]);
         }
+
+        // Preload to optimize N+1 queries
+        $this->preloader->preload($restaurant);
 
         $order = $cartContext->getCart();
 
@@ -719,9 +731,9 @@ class RestaurantController extends AbstractController
 
 
     #[Route(path: '/restaurants/map', name: 'restaurants_map')]
-    public function mapAction(Request $request, SlugifyInterface $slugify, CacheInterface $projectCache)
+    public function mapAction(Request $request, SlugifyInterface $slugify, CacheInterface $appCache)
     {
-        $restaurants = $projectCache->get('homepage.map', function (ItemInterface $item) use ($slugify) {
+        $restaurants = $appCache->get('homepage.map', function (ItemInterface $item) use ($slugify) {
 
             $item->expiresAfter(60 * 30);
 
@@ -755,7 +767,7 @@ class RestaurantController extends AbstractController
         SettingsManager $settingsManager,
         TranslatorInterface $translator)
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
 
         if ('yes' !== $settingsManager->get('enable_restaurant_pledges')) {
             throw new NotFoundHttpException();
@@ -796,7 +808,7 @@ class RestaurantController extends AbstractController
     #[Route(path: '/restaurant/{id}/vote', name: 'restaurant_vote', methods: ['POST'])]
     public function voteAction($id, SettingsManager $settingsManager)
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
 
         if ('yes' !== $settingsManager->get('enable_restaurant_pledges')) {
             throw new NotFoundHttpException();
@@ -818,14 +830,14 @@ class RestaurantController extends AbstractController
     #[Route(path: '/stores', name: 'stores')]
     public function legacyStoreListAction(Request $request,
         LocalBusinessRepository $repository,
-        CacheInterface $projectCache,
+        CacheInterface $appCache,
         BusinessContext $businessContext)
     {
         $requestClone = clone $request;
 
         $requestClone->attributes->set('type', LocalBusiness::getKeyForType(Store::GROCERY_STORE));
 
-        return $this->listAction($requestClone, $repository, $projectCache, $businessContext);
+        return $this->listAction($requestClone, $repository, $appCache, $businessContext);
     }
 
     #[Route(path: '/restaurants/tags/{tags}', name: 'restaurants_by_tags')]

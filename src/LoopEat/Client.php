@@ -41,7 +41,7 @@ class Client
         private JWTEncoderInterface $jwtEncoder,
         private IriConverterInterface $iriConverter,
         private UrlGeneratorInterface $urlGenerator,
-        private CacheInterface $projectCache,
+        private CacheInterface $appCache,
         private LoggerInterface $logger,
         array $config = [])
     {
@@ -60,7 +60,7 @@ class Client
         $this->jwtEncoder = $jwtEncoder;
         $this->iriConverter = $iriConverter;
         $this->urlGenerator = $urlGenerator;
-        $this->projectCache = $projectCache;
+        $this->appCache = $appCache;
         $this->logger = $logger;
     }
 
@@ -281,7 +281,7 @@ class Client
 
     public function initiative()
     {
-        return $this->projectCache->get('loopeat.initiative', function (ItemInterface $item) {
+        return $this->appCache->get('loopeat.initiative', function (ItemInterface $item) {
 
             $item->expiresAfter(60 * 60 * 24);
 
