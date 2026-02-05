@@ -35,6 +35,7 @@ class RestaurantPromotionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         // We remove some unused fields, or fields that we manage behind the scenes
+        $builder->remove('description');
         $builder->remove('translations');
         $builder->remove('exclusive');
         $builder->remove('appliesToDiscounted');
