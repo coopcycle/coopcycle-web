@@ -234,9 +234,24 @@ class AdminController extends AbstractController
                 ->createOptimizedQueryBuilder('o');
         }
 
-        $qb
-            ->andWhere('o.state != :state')
-            ->setParameter('state', OrderInterface::STATE_CART);
+        if ($request->query->has('date')) {
+            $date = new \DateTimeImmutable($request->query->get('date'));
+            $qb
+                ->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE')
+                ->setParameter('range', sprintf('[%s, %s]', $date->format('Y-m-d 00:00:00'), $date->format('Y-m-d 23:59:59')));
+        }
+
+        // TODO Don't allow state=cart
+        if ($request->query->has('state')) {
+            $state = $request->query->all('state');
+            $qb
+                ->andWhere('o.state IN (:state)')
+                ->setParameter('state', $state);
+        } else {
+            $qb
+                ->andWhere('o.state != :state')
+                ->setParameter('state', OrderInterface::STATE_CART);
+        }
 
         $qb->orderBy('LOWER(o.shippingTimeRange)', 'DESC');
 
@@ -273,10 +288,21 @@ class AdminController extends AbstractController
             $showCanceled = $request->cookies->getBoolean('__show_canceled');
         }
 
+        $filters = [];
+
+        if ($request->query->has('date')) {
+            $filters['date'] = $request->query->get('date');
+        }
+
+        if ($request->query->has('state')) {
+            $filters['state'] = $request->query->all('state');
+        }
+
         $parameters = [
             'orders' => $this->getOrderList($request, $paginator, $showCanceled),
             'routes' => $request->attributes->get('routes'),
             'show_canceled' => $showCanceled,
+            'filters' => $filters,
         ];
 
         if ($this->isGranted('ROLE_ADMIN')) {
