@@ -2,33 +2,18 @@
 
 namespace AppBundle\Controller\Utils;
 
-use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
-use AppBundle\Form\OrderExportType;
-use AppBundle\Message\ExportOrders;
 use AppBundle\Service\OrderManager;
 use AppBundle\Sylius\Order\ReceiptGenerator;
 use Doctrine\ORM\EntityManagerInterface;
-use Knp\Component\Pager\PaginatorInterface;
-use Knp\Component\Pager\Pagination\PaginationInterface;
 use League\Flysystem\Filesystem;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Messenger\Stamp\HandledStamp;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 trait OrderTrait
 {
-    /**
-     * @return PaginationInterface|array
-     */
-    abstract protected function getOrderList(Request $request, PaginatorInterface $paginator, $showCanceled = false);
-
     private function orderAsJson(Order $order)
     {
         $orderNormalized = $this->normalizer->normalize($order, 'jsonld', [
@@ -36,76 +21,6 @@ trait OrderTrait
         ]);
 
         return new JsonResponse($orderNormalized, 200);
-    }
-
-    public function orderListAction(Request $request,
-        TranslatorInterface $translator,
-        PaginatorInterface $paginator,
-        CubeJsTokenFactory $tokenFactory,
-        MessageBusInterface $messageBus
-    )
-    {
-        $response = new Response();
-
-        $showCanceled = false;
-        if ($request->query->has('show_canceled')) {
-            $showCanceled = $request->query->getBoolean('show_canceled');
-            $response->headers->setCookie(new Cookie('__show_canceled', $showCanceled ? 'on' : 'off'));
-        } elseif ($request->cookies->has('__show_canceled')) {
-            $showCanceled = $request->cookies->getBoolean('__show_canceled');
-        }
-
-        $parameters = [
-            'orders' => $this->getOrderList($request, $paginator, $showCanceled),
-            'routes' => $request->attributes->get('routes'),
-            'show_canceled' => $showCanceled,
-        ];
-
-        if ($this->isGranted('ROLE_ADMIN')) {
-
-            $orderExportForm = $this->createForm(OrderExportType::class);
-            $orderExportForm->handleRequest($request);
-
-            if ($orderExportForm->isSubmitted() && $orderExportForm->isValid()) {
-
-                $start = $orderExportForm->get('start')->getData();
-                $end = $orderExportForm->get('end')->getData();
-
-                $withMessenger = $orderExportForm->has('messenger') && $orderExportForm->get('messenger')->getData();
-
-                //HERE
-                $envelope = $messageBus->dispatch(new ExportOrders(
-                    $start,
-                    $end,
-                    $withMessenger
-                ));
-
-                /** @var HandledStamp $handledStamp */
-                $handledStamp = $envelope->last(HandledStamp::class);
-                $stats = $handledStamp->getResult();
-
-                if (is_null($stats)) {
-                    $this->addFlash('error', $translator->trans('order.export.empty'));
-
-                    return $this->redirectToRoute($request->attributes->get('_route'));
-                }
-
-                $filename = sprintf('coopcycle-orders-%s-%s.csv', $start->format('Y-m-d'), $end->format('Y-m-d'));
-
-                $response = new Response($stats);
-                $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
-                    ResponseHeaderBag::DISPOSITION_ATTACHMENT,
-                    $filename
-                ));
-
-                return $response;
-            }
-
-            $parameters['order_export_form'] = $orderExportForm->createView();
-            $parameters['cube_token'] = $tokenFactory->createToken();
-        }
-
-        return $this->render($request->attributes->get('template'), $this->auth($parameters), $response);
     }
 
     public function orderReceiptPreviewAction($id, Request $request, ReceiptGenerator $generator, OrderRepository $orderRepository)
