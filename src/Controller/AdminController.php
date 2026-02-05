@@ -2783,8 +2783,6 @@ class AdminController extends AbstractController
         return $this->render($request->attributes->get('template'), $this->auth([
             'layout' => $request->attributes->get('layout'),
             'restaurants' => $restaurants,
-            // 'pages' => $pages,
-            // 'page' => $page,
             'dashboard_route' => $routes['dashboard'],
             'menu_taxon_route' => $routes['menu_taxon'],
             'menu_taxons_route' => $routes['menu_taxons'],
