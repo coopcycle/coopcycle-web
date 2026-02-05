@@ -1650,8 +1650,12 @@ order.download_receipt: Télécharger le reçu
 order.generate_receipt: Générer le reçu
 promotions.feature: Afficher
 promotions.featured: Affiché
-promotions.human_readable.discount_items_total_above: "%name% : %discount_amount% de réduction à partir de %amount% dʼachats"
-promotions.human_readable.coupon: "%name% avec le code %code%"
+promotions.human_readable.action: "%discount_amount% de réduction"
+promotions.human_readable.delivery_action: "%discount_amount% de réduction sur les frais de livraison"
+promotions.human_readable.rule_items_total_above: "à partir de %amount% dʼachats"
+promotions.human_readable.rule_cart_quantity: "à partir de %count% article(s) acheté(s)"
+promotions.human_readable.coupon: "%description% avec le code %code%"
+promotions.human_readable.text: "%name% : %description%"
 form.offer_delivery.decrease_platform_fee.label: Diminuer les frais de plateforme
 form.offer_delivery.decrease_platform_fee.help: Les frais de plateforme seront diminués pour appliquer cette promotion
 sylius.form.promotion_action.delivery_percentage_discount: 'Remise en pourcentage sur les frais de livraison'

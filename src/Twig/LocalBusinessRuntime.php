@@ -14,10 +14,12 @@ use AppBundle\Enum\Store;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Promotion\Action\DeliveryPercentageDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Action\FixedDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsRestaurantRuleChecker;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsItemsTotalAboveRuleChecker;
+use Sylius\Component\Promotion\Checker\Rule\CartQuantityRuleChecker;
 use AppBundle\Utils\PriceFormatter;
 use AppBundle\Utils\RestaurantDecorator;
 use Carbon\Carbon;
@@ -253,7 +255,7 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
             $parentPromotion = $promotion->getPromotion();
 
             return $this->translator->trans('promotions.human_readable.coupon', [
-                '%name%' => $parentPromotion->getName(),
+                '%description%' => $this->humanizePromotion($parentPromotion),
                 '%code%' => $promotion->getCode(),
             ]);
         }
@@ -261,6 +263,7 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
         $discountAmount = 0;
         $amount = 0;
 
+        $actionsKey = 'promotions.human_readable.action';
         foreach ($promotion->getActions() as $action) {
             if ($action->getType() === FixedDiscountPromotionActionCommand::TYPE) {
                 $discountAmount = $this->priceFormatter->formatWithSymbol($action->getConfiguration()['amount']);
@@ -272,19 +275,47 @@ class LocalBusinessRuntime implements RuntimeExtensionInterface
                 $discountAmount = $formatter->format($action->getConfiguration()['percentage']);
                 break;
             }
-        }
+            if ($action->getType() === DeliveryPercentageDiscountPromotionActionCommand::TYPE) {
 
-        foreach ($promotion->getRules() as $rule) {
-            if ($rule->getType() === IsItemsTotalAboveRuleChecker::TYPE) {
-                $amount = $rule->getConfiguration()['amount'];
+                $percentage = $action->getConfiguration()['percentage'];
+
+                if (1.0 === $percentage) {
+                    $actionsKey = 'promotions.heading.free_delivery';
+                } else {
+                    $formatter = new \NumberFormatter($this->locale, \NumberFormatter::PERCENT);
+                    $formatter->setAttribute(\NumberFormatter::MIN_FRACTION_DIGITS, 0);
+                    $discountAmount = $formatter->format($action->getConfiguration()['percentage']);
+                    $actionsKey = 'promotions.human_readable.delivery_action';
+                }
+
                 break;
             }
         }
 
-        return $this->translator->trans('promotions.human_readable.discount_items_total_above', [
-            '%name%' => $promotion->getName(),
+        $actions = $this->translator->trans($actionsKey, [
             '%discount_amount%' => $discountAmount,
-            '%amount%' => $this->priceFormatter->formatWithSymbol($amount),
+        ]);
+
+        $rules = '';
+
+        foreach ($promotion->getRules() as $rule) {
+            if ($rule->getType() === IsItemsTotalAboveRuleChecker::TYPE) {
+                $rules = $this->translator->trans('promotions.human_readable.rule_items_total_above', [
+                    '%amount%' => $this->priceFormatter->formatWithSymbol($rule->getConfiguration()['amount'])
+                ]);
+                break;
+            }
+            if ($rule->getType() === CartQuantityRuleChecker::TYPE) {
+                $rules = $this->translator->trans('promotions.human_readable.rule_cart_quantity', [
+                    '%count%' => $this->priceFormatter->formatWithSymbol($rule->getConfiguration()['count'])
+                ]);
+                break;
+            }
+        }
+
+        return $this->translator->trans('promotions.human_readable.text', [
+            '%name%' => $promotion->getName(),
+            '%description%' => sprintf('%s %s', $actions, $rules),
         ]);
     }
 

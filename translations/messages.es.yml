@@ -1796,3 +1796,9 @@ pricing.rule.humanizer.packages_contains_at_least_one: 'paquetes %package_name%'
 pricing.rule.humanizer.price_range: '%unit_price% por %step%'
 pricing.rule.humanizer.price_range_with_threshold: 'por encima de %threshold% - %unit_price% por %step%'
 pricing.rule.humanizer.price_per_package: '%unit_price% por %package_name%'
+promotions.human_readable.action: "%discount_amount% de descuento"
+promotions.human_readable.delivery_action: "%discount_amount% de descuento en la entrega"
+promotions.human_readable.rule_items_total_above: "a partir de %amount%"
+promotions.human_readable.rule_cart_quantity: "a partir de %count% artículos comprados"
+promotions.human_readable.coupon: "%description% with coupon %code%"
+promotions.human_readable.text: "%name%: %description%"
