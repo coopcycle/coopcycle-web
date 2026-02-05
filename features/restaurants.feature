@@ -616,7 +616,7 @@ Feature: Manage restaurants
     When the user "bob" sends a "PUT" request to "/api/restaurants/1" with body:
       """
       {
-        "hasMenu": "/api/restaurants/menus/2"
+        "hasMenu": "/api/restaurants/menus/4"
       }
       """
     Then the response status code should be 200
@@ -638,7 +638,7 @@ Feature: Manage restaurants
         "telephone":"+33612345678",
         "openingHoursSpecification":@array@,
         "specialOpeningHoursSpecification":@array@,
-        "hasMenu":"/api/restaurants/menus/2",
+        "hasMenu":"/api/restaurants/menus/4",
         "image":@string@,
         "loopeatEnabled":false,
         "edenredMerchantId": null,

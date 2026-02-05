@@ -744,27 +744,6 @@ class AdminController extends AbstractController
         return $this->userTracking($user, 'admin');
     }
 
-    protected function getRestaurantList(Request $request)
-    {
-        $repository = $this->entityManager->getRepository(LocalBusiness::class);
-
-        $countAll = $repository
-            ->createQueryBuilder('r')->select('COUNT(r)')
-            ->getQuery()->getSingleScalarResult();
-
-        $pages = ceil($countAll / self::ITEMS_PER_PAGE);
-        $page = $request->query->getInt('p', 1);
-
-        $offset = self::ITEMS_PER_PAGE * ($page - 1);
-
-        $restaurants = $repository->findBy([], [
-            'enabled' => 'DESC',
-            'name' => 'ASC',
-        ], self::ITEMS_PER_PAGE, $offset);
-
-        return [ $restaurants, $pages, $page ];
-    }
-
     #[Route(path: '/admin/deliveries', name: 'admin_deliveries')]
     public function deliveriesAction(Request $request,
         PaginatorInterface $paginator,
@@ -2743,7 +2722,7 @@ class AdminController extends AbstractController
 
 
     #[HideSoftDeleted]
-    public function restaurantListAction(Request $request, SettingsManager $settingsManager)
+    public function restaurantListAction(Request $request, SettingsManager $settingsManager, PaginatorInterface $paginator)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -2790,13 +2769,20 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_restaurants');
         }
 
-        [ $restaurants, $pages, $page ] = $this->getRestaurantList($request);
+        $qb = $this->entityManager->getRepository(LocalBusiness::class)->createQueryBuilder('r');
+        $qb
+            ->addOrderBy('r.enabled', 'DESC')
+            ->addOrderBy('r.name', 'ASC');
+
+        $restaurants = $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE
+        );
 
         return $this->render($request->attributes->get('template'), $this->auth([
             'layout' => $request->attributes->get('layout'),
             'restaurants' => $restaurants,
-            'pages' => $pages,
-            'page' => $page,
             'dashboard_route' => $routes['dashboard'],
             'menu_taxon_route' => $routes['menu_taxon'],
             'menu_taxons_route' => $routes['menu_taxons'],
