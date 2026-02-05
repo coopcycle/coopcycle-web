@@ -36,8 +36,7 @@ use AppBundle\Form\Restaurant\DepositRefundSettingsType;
 use AppBundle\Form\Restaurant\ReusablePackagingType;
 use AppBundle\Form\RestaurantType;
 use AppBundle\Form\ReusablePackagingChoiceLoader;
-use AppBundle\Form\Sylius\Promotion\ItemsTotalBasedPromotionType;
-use AppBundle\Form\Sylius\Promotion\OfferDeliveryType;
+use AppBundle\Form\Sylius\Promotion\RestaurantPromotionType;
 use AppBundle\Form\Type\ProductTaxCategoryChoiceType;
 use AppBundle\LoopEat\Client as LoopeatClient;
 use AppBundle\Message\CopyProducts;
@@ -59,6 +58,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use MercadoPago;
 use Ramsey\Uuid\Uuid;
+use Sylius\Bundle\PromotionBundle\Form\Type\PromotionType;
 use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -1399,9 +1399,9 @@ trait RestaurantTrait
                 foreach ($promotion->getCoupons() as $coupon) {
 
                     if (!$promotionCouponExpirationChecker->isEligible(new Order(), $coupon)) {
-                        $past[] = $coupon;
+                        $past[] = $promotion;
                     } else {
-                        $ongoing[] = $coupon;
+                        $ongoing[] = $promotion;
                     }
                 }
             } else {
@@ -1431,68 +1431,27 @@ trait RestaurantTrait
 
         $routes = $this->getRestaurantRoutes();
 
-        if ($request->query->has('type')) {
+        $form = $this->createForm(RestaurantPromotionType::class, null, [
+            'local_business' => $restaurant,
+        ]);
 
-            $type = $request->query->get('type');
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
 
-            switch ($type) {
-                case 'offer_delivery':
+            $promotion = $form->getData();
 
-                    $form = $this->createForm(OfferDeliveryType::class, null, [
-                        'local_business' => $restaurant
-                    ]);
+            $restaurant->addPromotion($promotion);
 
-                    $form->handleRequest($request);
-                    if ($form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->flush();
 
-                        $coupon = $form->get('coupon')->getData();
-
-                        $restaurant->addPromotion($coupon->getPromotion());
-
-                        $this->entityManager->flush();
-
-                        return $this->redirectToRoute($routes['promotions'], ['id' => $id]);
-                    }
-
-                    return $this->render('restaurant/promotion.html.twig', $this->withRoutes([
-                        'layout' => $request->attributes->get('layout'),
-                        'restaurant' => $restaurant,
-                        'form' => $form->createView(),
-                        'promotion_type' => $type,
-                    ]));
-
-                case 'items_total':
-                    $form = $this->createForm(ItemsTotalBasedPromotionType::class, null, [
-                        'local_business' => $restaurant
-                    ]);
-
-                    $form->handleRequest($request);
-                    if ($form->isSubmitted() && $form->isValid()) {
-
-                        $promotion = $form->getData();
-
-                        $restaurant->addPromotion($promotion);
-
-                        $this->entityManager->flush();
-
-                        // $this->addFlash(
-                        //     'notice',
-                        //     $translator->trans('global.changesSaved')
-                        // );
-
-                        return $this->redirectToRoute($routes['promotions'], ['id' => $id]);
-                    }
-
-                    return $this->render('restaurant/promotion.html.twig', $this->withRoutes([
-                        'layout' => $request->attributes->get('layout'),
-                        'restaurant' => $restaurant,
-                        'form' => $form->createView(),
-                        'promotion_type' => $type,
-                    ]));
-            }
+            return $this->redirectToRoute($routes['promotions'], ['id' => $id]);
         }
 
-        return $this->redirectToRoute($routes['promotions'], ['id' => $id]);
+        return $this->render('restaurant/promotion.html.twig', $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'form' => $form->createView(),
+        ]));
     }
 
     public function restaurantPromotionAction($restaurantId, $promotionId, TranslatorInterface $translator, Request $request)
@@ -1509,7 +1468,7 @@ trait RestaurantTrait
             throw $this->createAccessDeniedException();
         }
 
-        $form = $this->createForm(ItemsTotalBasedPromotionType::class, $promotion, [
+        $form = $this->createForm(RestaurantPromotionType::class, $promotion, [
             'local_business' => $restaurant
         ]);
 
@@ -1533,48 +1492,6 @@ trait RestaurantTrait
             'restaurant' => $restaurant,
             'form' => $form->createView(),
             'promotion_type' => 'items_total',
-        ]));
-    }
-
-    public function restaurantPromotionCouponAction($restaurantId, $promotionId, $couponId, TranslatorInterface $translator, Request $request)
-    {
-        $restaurant = $this->entityManager
-            ->getRepository(LocalBusiness::class)
-            ->find($restaurantId);
-
-        $coupon = $this->entityManager
-            ->getRepository(PromotionCoupon::class)
-            ->find($couponId);
-
-        $promotion = $coupon->getPromotion();
-
-        if (!$restaurant->hasPromotion($promotion)) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $form = $this->createForm(OfferDeliveryType::class, $coupon, [
-            'local_business' => $restaurant
-        ]);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $this->entityManager->flush();
-
-            $this->addFlash(
-                'notice',
-                $translator->trans('global.changesSaved')
-            );
-
-            $routes = $this->getRestaurantRoutes();
-
-            return $this->redirectToRoute($routes['promotions'], ['id' => $restaurantId]);
-        }
-
-        return $this->render('restaurant/promotion.html.twig', $this->withRoutes([
-            'layout' => $request->attributes->get('layout'),
-            'restaurant' => $restaurant,
-            'form' => $form->createView(),
-            'promotion_type' => 'offer_delivery',
         ]));
     }
 
@@ -2010,45 +1927,49 @@ trait RestaurantTrait
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
-        // TODO Access control
+        $this->denyAccessUnlessGranted('edit', $restaurant);
 
         if ($request->isMethod('POST')) {
 
-            $type = $request->request->get('type');
+            $couponBased = $request->request->getBoolean('coupon_based');
             $id = $request->request->getInt('id');
 
-            foreach ($restaurant->getPromotions() as $promotion) {
-                $promotion->setFeatured(false);
-                if ($promotion->isCouponBased()) {
-                    foreach ($promotion->getCoupons() as $coupon) {
-                        $coupon->setFeatured(false);
-                    }
-                }
-            }
+            $target = null;
 
-            if ($type === 'coupon') {
-
+            if ($couponBased) {
                 foreach ($restaurant->getPromotions() as $promotion) {
                     if ($promotion->isCouponBased()) {
                         foreach ($promotion->getCoupons() as $coupon) {
                             if ($id === $coupon->getId()) {
-                                $coupon->setFeatured(true);
+                                $target = $coupon;
                                 break 2;
                             }
                         }
                     }
                 }
-
-            } elseif ($type === 'promotion') {
-
+            } else {
                 foreach ($restaurant->getPromotions() as $promotion) {
                     if (!$promotion->isCouponBased() && $id === $promotion->getId()) {
-                        $promotion->setFeatured(true);
-                        $this->entityManager->flush();
+                        $target = $promotion;
                         break;
                     }
                 }
+            }
 
+            if (null !== $target) {
+
+                $wasFeatured = $target->isFeatured();
+
+                // Clear previously featured promotions
+                foreach ($restaurant->getPromotions() as $promotion) {
+                    $promotion->setFeatured(false);
+                    if ($promotion->isCouponBased()) {
+                        foreach ($promotion->getCoupons() as $coupon) {
+                            $coupon->setFeatured(false);
+                        }
+                    }
+                }
+                $target->setFeatured(!$wasFeatured);
             }
 
             $this->entityManager->flush();

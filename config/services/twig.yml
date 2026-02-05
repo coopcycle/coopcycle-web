@@ -55,3 +55,7 @@ services:
   AppBundle\Twig\SyliusVariantResolver:
     arguments:
       $productVariantResolver: '@coopcycle.sylius.product_variant_resolver.lazy'
+
+  AppBundle\Twig\LocalBusinessRuntime:
+    arguments:
+      $locale: '%env(COOPCYCLE_LOCALE)%'

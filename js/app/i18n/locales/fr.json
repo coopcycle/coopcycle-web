@@ -809,6 +809,7 @@
             "FIRST_ORDER": "Première commande : {{date}}",
             "LAST_ORDER": "Dernière commande : {{date}}",
             "FAVORITE_RESTAURANT": "Restaurant préféré : {{- name}}"
-        }
+        },
+        "PROMOTION_COUPON_BASED": "Cette promotion est basée sur un code promo"
     }
 }

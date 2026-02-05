@@ -8,23 +8,9 @@
 {% block content %}
 
 <div class="text-right mb-4">
-  <div class="btn-group">
-    <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      <i class="fa fa-plus mr-2"></i>{{ 'basics.add'|trans }} <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu dropdown-menu-right">
-      <li>
-        <a href="{{ path(promotion_new_route, { id: restaurant.id, type: 'offer_delivery' }) }}">
-          {{ 'restaurant_promotion.offer_delivery'|trans }}
-        </a>
-      </li>
-      <li>
-        <a href="{{ path(promotion_new_route, { id: restaurant.id, type: 'items_total' }) }}">
-          {{ 'restaurant_promotion.items_total'|trans }}
-        </a>
-      </li>
-    </ul>
-  </div>
+  <a class="btn btn-success" href="{{ path(promotion_new_route, { id: restaurant.id }) }}">
+    <i class="fa fa-plus mr-2"></i><span>{{ 'basics.add'|trans }}</span>
+  </a>
 </div>
 
 <ul class="nav nav-tabs" role="tablist">
