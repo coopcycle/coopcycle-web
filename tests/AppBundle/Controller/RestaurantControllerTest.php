@@ -3,6 +3,7 @@
 namespace Tests\AppBundle\Controller;
 
 use AppBundle\Controller\RestaurantController;
+use AppBundle\Doctrine\EntityPreloader\LocalBusinessPreloader;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Contract;
@@ -77,6 +78,7 @@ class RestaurantControllerTest extends WebTestCase
         $this->eventDispatcher = $this->prophesize(EventDispatcherInterface::class);
         $this->timingRegistry = $this->prophesize(TimingRegistry::class);
         $this->orderAccessTokenManager = $this->prophesize(OrderAccessTokenManager::class);
+        $this->preloader = $this->prophesize(LocalBusinessPreloader::class);
 
         $this->localBusinessRepository = $this->prophesize(LocalBusinessRepository::class);
 
@@ -133,6 +135,7 @@ class RestaurantControllerTest extends WebTestCase
             $jwtTokenManager->reveal(),
             $this->timingRegistry->reveal(),
             $this->orderAccessTokenManager->reveal(),
+            $this->preloader->reveal(),
             new NullLogger(),
             new NullLoggingUtils(),
             'test',

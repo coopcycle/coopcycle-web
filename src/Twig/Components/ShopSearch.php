@@ -2,6 +2,7 @@
 
 namespace AppBundle\Twig\Components;
 
+use AppBundle\Doctrine\EntityPreloader\LocalBusinessPreloader;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Business\Context as BusinessContext;
@@ -12,7 +13,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use League\Geotools\Geotools;
-use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -64,7 +64,8 @@ class ShopSearch
         private CacheInterface $appCache,
         private EntityManagerInterface $entityManager,
         private TimingRegistry $timingRegistry,
-        private PaginatorInterface $paginator)
+        private PaginatorInterface $paginator,
+        private LocalBusinessPreloader $preloader)
     {
     }
 
@@ -143,13 +144,7 @@ class ShopSearch
             $matches = $qb->getQuery()->getResult();
 
             // Preload entities to optimize N+1 queries
-            $preloader = new EntityPreloader($this->entityManager);
-            $preloader->preload($matches, 'promotions');
-            $preloader->preload($matches, 'preparationTimeRules');
-            $preloader->preload($matches, 'fulfillmentMethods');
-            $preloader->preload($matches, 'closingRules');
-            // Many-to-many associations with order by are not supported
-            // $preloader->preload($matches, 'servesCuisine');
+            $this->preloader->preload($matches);
         }
 
         if (!empty($this->geohash) || !empty($this->address)) {

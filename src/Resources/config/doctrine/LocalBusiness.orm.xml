@@ -225,9 +225,6 @@
           <join-column name="cuisine_id" referenced-column-name="id" nullable="true"/>
         </inverse-join-columns>
       </join-table>
-      <order-by>
-        <order-by-field name="name" direction="ASC"/>
-      </order-by>
     </many-to-many>
     <many-to-many field="owners" target-entity="AppBundle\Entity\User" mapped-by="restaurants"/>
     <one-to-many field="products" target-entity="AppBundle\Entity\Sylius\Product" mapped-by="restaurant">

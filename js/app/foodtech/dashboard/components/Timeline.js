@@ -87,12 +87,12 @@ export default withTranslation()(({ order, t }) => {
           <ul className="list-unstyled">
             <li>{order.shippingAddress.streetAddress}</li>
           </ul>
-          {order.shippingAddress?.provider !== null && (
+          {order.shippingAddress?.provider ? (
             <span className="text-info small" style={{ display: 'block', marginTop: '3px' }}>
               <i className="fa fa-map-marker" aria-hidden="true" style={{ marginRight: '5px' }}></i>
               {t(`CART_SHIPPING_ADDRESS_${order.shippingAddress.provider}`)}
             </span>
-          )}
+          ) : null }
           {order.shippingAddress.description && (
             <div className="speech-bubble">
               <i className="fa fa-quote-left"></i>{' '}

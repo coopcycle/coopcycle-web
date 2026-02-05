@@ -8,6 +8,7 @@ use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Controller\Utils\InjectAuthTrait;
 use AppBundle\Controller\Utils\UserTrait;
+use AppBundle\Doctrine\EntityPreloader\LocalBusinessPreloader;
 use AppBundle\Domain\Order\Event\OrderUpdated;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessRestaurantGroup;
@@ -39,7 +40,6 @@ use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Psr\Log\LoggerInterface;
-use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
@@ -84,6 +84,7 @@ class RestaurantController extends AbstractController
         protected JWTTokenManagerInterface $JWTTokenManager,
         private TimingRegistry $timingRegistry,
         private OrderAccessTokenManager $orderAccessTokenManager,
+        private LocalBusinessPreloader $preloader,
         private LoggerInterface $checkoutLogger,
         private LoggingUtils $loggingUtils,
         private string $environment
@@ -295,15 +296,8 @@ class RestaurantController extends AbstractController
             ]);
         }
 
-        $preloader = new EntityPreloader($this->entityManager);
-        $preloader->preload([$restaurant], 'taxons');
-        if ($restaurant->getMenuTaxon()) {
-            $preloader->preload([$restaurant->getMenuTaxon()], 'children');
-            $children = $restaurant->getMenuTaxon()->getChildren()->toArray();
-            $taxonProducts = $preloader->preload($children, 'taxonProducts');
-            $products = $preloader->preload($taxonProducts, 'product');
-            $preloader->preload($products, 'images');
-        }
+        // Preload to optimize N+1 queries
+        $this->preloader->preload($restaurant);
 
         $order = $cartContext->getCart();
 
