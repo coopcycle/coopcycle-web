@@ -9,7 +9,6 @@ use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Utils\RestaurantFilter;
 use AppBundle\Utils\SortableRestaurantIterator;
-use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use League\Geotools\Geotools;
@@ -62,7 +61,6 @@ class ShopSearch
         private BusinessContext $businessContext,
         private RestaurantFilter $restaurantFilter,
         private CacheInterface $appCache,
-        private EntityManagerInterface $entityManager,
         private TimingRegistry $timingRegistry,
         private PaginatorInterface $paginator,
         private LocalBusinessPreloader $preloader)
