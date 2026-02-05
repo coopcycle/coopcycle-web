@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { DatePicker, Flex, Select, Tag, Button } from 'antd';
 import qs from 'qs'
 import _ from 'lodash'
-import dayjs from 'dayjs';
+import moment from 'moment'
+
+import { AntdConfigProvider } from '../../../js/app/utils/antd'
 
 const options = [{ value: 'new' }, { value: 'accepted' }, { value: 'fulfilled' }, { value: 'refused' }];
 
@@ -39,47 +41,47 @@ export default function OrderListFilters({ defaultFilters }) {
   if (defaultFilters.date) {
     datePickerProps = {
       ...datePickerProps,
-      // FIXME
-      // Breaks, maybe need to add ConfigProvider
-      // defaultValue: dayjs(defaultFilters.date)
+      defaultValue: moment(defaultFilters.date)
     }
   }
 
   return (
-    <Flex gap="small" wrap>
-      <DatePicker
-        onChange={(date, dateString) => {
-          setFilters({
-            ...filters,
-            date: dateString
-          })
-        }}
-        {...datePickerProps}
-      />
-      <Select
-        mode="multiple"
-        tagRender={tagRender}
-        defaultValue={[]}
-        style={{ minWidth: '100px' }}
-        options={options}
-        defaultValue={ defaultFilters.state }
-        onChange={(value) => {
-          setFilters({
-            ...filters,
-            state: value
-          })
-        }}
-      />
-      <Button
-        disabled={ _.isEmpty(filters) }
-        onClick={() => {
-          window.location.href = `${window.location.pathname}?${qs.stringify(filters)}`;
-        }}>Apply filters</Button>
-      <Button
-        disabled={ _.isEmpty(filters) }
-        onClick={() => {
-          window.location.href = window.location.pathname;
-        }}>Clear filters</Button>
-    </Flex>
+    <AntdConfigProvider>
+      <Flex gap="small" wrap>
+        <DatePicker
+          onChange={(date, dateString) => {
+            setFilters({
+              ...filters,
+              date: dateString
+            })
+          }}
+          {...datePickerProps}
+        />
+        <Select
+          mode="multiple"
+          tagRender={tagRender}
+          defaultValue={[]}
+          style={{ minWidth: '100px' }}
+          options={options}
+          defaultValue={ defaultFilters.state }
+          onChange={(value) => {
+            setFilters({
+              ...filters,
+              state: value
+            })
+          }}
+        />
+        <Button
+          disabled={ _.isEmpty(filters) }
+          onClick={() => {
+            window.location.href = `${window.location.pathname}?${qs.stringify(filters)}`;
+          }}>Apply filters</Button>
+        <Button
+          disabled={ _.isEmpty(filters) }
+          onClick={() => {
+            window.location.href = window.location.pathname;
+          }}>Clear filters</Button>
+      </Flex>
+    </AntdConfigProvider>
   )
 }
