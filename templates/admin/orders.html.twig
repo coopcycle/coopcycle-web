@@ -48,9 +48,8 @@
   style="min-height: 180px;"></div>
 {% endif %}
 
-<div {{ react_component('OrderListFilters', { defaultFilters: filters }) }}>
-    Loading...
-</div>
+<div {{ react_component('OrderListFilters', { defaultFilters: filters }) }}></div>
+<hr/>
 {% include "_partials/order/list.html.twig" %}
 <div class="text-center">
   {{ knp_pagination_render(orders, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
