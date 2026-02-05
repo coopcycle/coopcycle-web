@@ -1934,39 +1934,42 @@ trait RestaurantTrait
             $couponBased = $request->request->getBoolean('coupon_based');
             $id = $request->request->getInt('id');
 
-            // Clear previously featured promotions
-            foreach ($restaurant->getPromotions() as $promotion) {
-                $promotion->setFeatured(false);
-                if ($promotion->isCouponBased()) {
-                    foreach ($promotion->getCoupons() as $coupon) {
-                        $coupon->setFeatured(false);
-                    }
-                }
-            }
+            $target = null;
 
             if ($couponBased) {
-
                 foreach ($restaurant->getPromotions() as $promotion) {
                     if ($promotion->isCouponBased()) {
                         foreach ($promotion->getCoupons() as $coupon) {
                             if ($id === $coupon->getId()) {
-                                $coupon->setFeatured(true);
+                                $target = $coupon;
                                 break 2;
                             }
                         }
                     }
                 }
-
             } else {
-
                 foreach ($restaurant->getPromotions() as $promotion) {
                     if (!$promotion->isCouponBased() && $id === $promotion->getId()) {
-                        $promotion->setFeatured(true);
-                        $this->entityManager->flush();
+                        $target = $promotion;
                         break;
                     }
                 }
+            }
 
+            if (null !== $target) {
+
+                $wasFeatured = $target->isFeatured();
+
+                // Clear previously featured promotions
+                foreach ($restaurant->getPromotions() as $promotion) {
+                    $promotion->setFeatured(false);
+                    if ($promotion->isCouponBased()) {
+                        foreach ($promotion->getCoupons() as $coupon) {
+                            $coupon->setFeatured(false);
+                        }
+                    }
+                }
+                $target->setFeatured(!$wasFeatured);
             }
 
             $this->entityManager->flush();
