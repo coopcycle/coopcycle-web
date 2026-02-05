@@ -233,8 +233,6 @@ class AdminController extends AbstractController
                 ->andWhere('o.state != :state')
                 ->setParameter('state', OrderInterface::STATE_CART)
                 ->orderBy('LOWER(o.shippingTimeRange)', 'DESC')
-                ->setFirstResult(($request->query->getInt('p', 1) - 1) * self::ITEMS_PER_PAGE)
-                ->setMaxResults(self::ITEMS_PER_PAGE)
                 ;
         }
 
