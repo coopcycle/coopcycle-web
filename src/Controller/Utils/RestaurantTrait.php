@@ -2082,9 +2082,10 @@ trait RestaurantTrait
 
         if ($request->isMethod('POST')) {
 
-            $type = $request->request->get('type');
+            $couponBased = $request->request->getBoolean('coupon_based');
             $id = $request->request->getInt('id');
 
+            // Clear previously featured promotions
             foreach ($restaurant->getPromotions() as $promotion) {
                 $promotion->setFeatured(false);
                 if ($promotion->isCouponBased()) {
@@ -2094,7 +2095,7 @@ trait RestaurantTrait
                 }
             }
 
-            if ($type === 'coupon') {
+            if ($couponBased) {
 
                 foreach ($restaurant->getPromotions() as $promotion) {
                     if ($promotion->isCouponBased()) {
@@ -2107,7 +2108,7 @@ trait RestaurantTrait
                     }
                 }
 
-            } elseif ($type === 'promotion') {
+            } else {
 
                 foreach ($restaurant->getPromotions() as $promotion) {
                     if (!$promotion->isCouponBased() && $id === $promotion->getId()) {

@@ -67,12 +67,13 @@
       </td>
       <td class="text-right"></td>
       {% if show_feature %}
+      {% set is_featured = promotion.isCouponBased ? coupon.featured : promotion.featured %}
       <td>
         <form method="post" action="{{ path(promotion_feature_route, {restaurantId: restaurant.id }) }}">
-          <input type="hidden" name="type" value="promotion" />
-          <input type="hidden" name="id" value={{ promotion.id }} />
-          <button class="btn btn-sm {% if promotion.featured %}btn-success{% endif %}">
-            {% if promotion.featured %}
+          <input type="hidden" name="id" value={{ promotion.isCouponBased ? coupon.id : promotion.id }} />
+          <input type="hidden" name="coupon_based" value="{{ promotion.isCouponBased ? '1' : '0' }}" />
+          <button class="btn btn-sm {% if is_featured %}btn-success{% endif %}">
+            {% if is_featured %}
               <i class="fa fa-check mr-1"></i><span>{{ 'promotions.featured'|trans }}</span>
             {% else %}
               <i class="fa fa-arrow-right mr-1"></i><span>{{ 'promotions.feature'|trans }}</span>
