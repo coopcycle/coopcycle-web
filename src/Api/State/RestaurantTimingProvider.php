@@ -2,11 +2,11 @@
 
 namespace AppBundle\Api\State;
 
+use AppBundle\Api\Dto\Timing;
+use AppBundle\Api\Dto\TimeInfo;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Service\TimingRegistry;
-use AppBundle\Utils\Timing;
-use AppBundle\Utils\TimeInfo;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\Doctrine\Orm\State\ItemProvider;
 use ApiPlatform\State\ProviderInterface;
