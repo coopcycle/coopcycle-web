@@ -92,7 +92,7 @@ export default function OrderListFilters({ defaultFilters }) {
       <Flex gap="small" wrap align="center">
         <Typography.Text>{ t('ADMIN_DASHBOARD_NAV_FILTERS') }</Typography.Text>
         <Divider type="vertical" />
-        <Typography.Text>Date</Typography.Text>
+        <Typography.Text>{t('DATE')}</Typography.Text>
         <DatePicker
           onChange={(date, dateString) => {
             setFilters({
