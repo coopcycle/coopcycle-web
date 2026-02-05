@@ -23,7 +23,7 @@ final class RestaurantTimingProvider implements ProviderInterface
         /** @var LocalBusiness */
         $restaurant = $this->provider->provide($operation, $uriVariables, $context);
 
-        $result = $this->timingRegistry->getAllFulfilmentMethodsForObject($restaurant);
+        $result = $this->timingRegistry->getAllFulfillmentMethodsForObject($restaurant);
 
         $timing = new Timing();
 

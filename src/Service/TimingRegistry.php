@@ -19,7 +19,7 @@ class TimingRegistry
         private CacheInterface $foodtechCache)
     {}
 
-    public function getAllFulfilmentMethodsForObject($restaurant)
+    public function getAllFulfillmentMethodsForObject($restaurant)
     {
         $cacheKey = sprintf('restaurant.%d.%s.timing', $restaurant->getId(), 'all');
 
