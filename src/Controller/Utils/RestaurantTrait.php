@@ -1927,7 +1927,7 @@ trait RestaurantTrait
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
-        // TODO Access control
+        $this->denyAccessUnlessGranted('edit', $restaurant);
 
         if ($request->isMethod('POST')) {
 
