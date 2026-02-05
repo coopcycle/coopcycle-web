@@ -55,8 +55,6 @@ trait OrderTrait
             $showCanceled = $request->cookies->getBoolean('__show_canceled');
         }
 
-        $request->attributes->get('routes');
-
         $parameters = [
             'orders' => $this->getOrderList($request, $paginator, $showCanceled),
             'routes' => $request->attributes->get('routes'),
