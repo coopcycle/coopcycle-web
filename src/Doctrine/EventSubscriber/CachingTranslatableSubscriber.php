@@ -56,7 +56,10 @@ final class CachingTranslatableSubscriber implements EventSubscriber
         $metadata->enableCache(['usage' => ClassMetadataInfo::CACHE_USAGE_NONSTRICT_READ_WRITE]);
 
         if ($metadata->hasAssociation('translations')) {
-            $metadata->enableAssociationCache('translations', ['usage' => ClassMetadataInfo::CACHE_USAGE_NONSTRICT_READ_WRITE]);
+            $metadata->enableAssociationCache('translations', [
+                'usage' => ClassMetadataInfo::CACHE_USAGE_NONSTRICT_READ_WRITE,
+                'region' => 'sylius_translations',
+            ]);
         }
     }
 
@@ -67,6 +70,9 @@ final class CachingTranslatableSubscriber implements EventSubscriber
     {
         $className = $metadata->name;
 
-        $metadata->enableCache(['usage' => ClassMetadataInfo::CACHE_USAGE_NONSTRICT_READ_WRITE]);
+        $metadata->enableCache([
+            'usage' => ClassMetadataInfo::CACHE_USAGE_NONSTRICT_READ_WRITE,
+            'region' => 'sylius_translations',
+        ]);
     }
 }
