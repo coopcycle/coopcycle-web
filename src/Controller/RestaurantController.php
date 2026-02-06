@@ -32,7 +32,6 @@ use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Sylius\Cart\RestaurantResolver;
 use AppBundle\Sylius\Order\OrderInterface;
-use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use AppBundle\Utils\OptionsPayloadConverter;
 use AppBundle\Utils\OrderTimeHelper;
 use AppBundle\Utils\RestaurantFilter;
@@ -47,6 +46,7 @@ use Sylius\Component\Order\Context\CartContextInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
+use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -77,7 +77,7 @@ class RestaurantController extends AbstractController
         private RepositoryInterface $productRepository,
         private RepositoryInterface $orderItemRepository,
         private FactoryInterface $orderItemFactory,
-        private LazyProductVariantResolverInterface $productVariantResolver,
+        private ProductVariantResolverInterface $productVariantResolver,
         private OrderItemQuantityModifierInterface $orderItemQuantityModifier,
         private OrderModifierInterface $orderModifier,
         private OrderTimeHelper $orderTimeHelper,

@@ -4,8 +4,8 @@ namespace AppBundle\Form\Type;
 
 use AppBundle\Entity\Sylius\TaxRate;
 use AppBundle\Form\Type\MoneyType;
-use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use AppBundle\Sylius\Taxation\Resolver\TaxRateResolver;
+use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
 use Sylius\Component\Taxation\Calculator\CalculatorInterface;
 use Sylius\Component\Taxation\Resolver\TaxRateResolverInterface;
 use Symfony\Component\Form\AbstractType;
@@ -22,7 +22,7 @@ class PriceWithTaxType extends AbstractType
      * @param TaxRateResolver $taxRateResolver
      */
     public function __construct(
-        private LazyProductVariantResolverInterface $variantResolver,
+        private ProductVariantResolverInterface $variantResolver,
         private TaxRateResolverInterface $taxRateResolver,
         private CalculatorInterface $calculator,
         private bool $taxIncl = true)

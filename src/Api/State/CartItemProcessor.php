@@ -7,12 +7,12 @@ use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Service\RoutingInterface;
-use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use AppBundle\Utils\OptionsPayloadConverter;
 use Doctrine\ORM\EntityManagerInterface;
 use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
+use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 
 class CartItemProcessor implements ProcessorInterface
@@ -20,7 +20,7 @@ class CartItemProcessor implements ProcessorInterface
     public function __construct(
         private readonly ProductRepositoryInterface $productRepository,
         private readonly OptionsPayloadConverter $optionsPayloadConverter,
-        private readonly LazyProductVariantResolverInterface $variantResolver,
+        private readonly ProductVariantResolverInterface $variantResolver,
         private readonly FactoryInterface $orderItemFactory,
         private readonly OrderItemQuantityModifierInterface $orderItemQuantityModifier,
         private readonly OrderModifierInterface $orderModifier,

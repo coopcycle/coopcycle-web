@@ -179,7 +179,6 @@ services:
 
   Doctrine\ORM\Mapping\Driver\AttributeReader: ~
 
-  Sylius\Component\Product\Resolver\ProductVariantResolverInterface: '@sylius.product_variant_resolver.default'
   Sylius\Component\Currency\Context\CurrencyContextInterface: '@sylius.context.currency'
   Sylius\Component\Order\Context\CartContextInterface: '@sylius.context.cart.composite'
   Sylius\Component\Channel\Repository\ChannelRepositoryInterface: '@sylius.repository.channel'
@@ -276,7 +275,6 @@ services:
       $productRepository: '@sylius.repository.product'
       $orderItemRepository: '@sylius.repository.order_item'
       $orderItemFactory: '@sylius.factory.order_item'
-      $productVariantResolver: '@coopcycle.sylius.product_variant_resolver.lazy'
       $orderItemQuantityModifier: '@sylius.order_item_quantity_modifier'
       $orderModifier: '@sylius.order_modifier'
       $serializer: '@serializer'
@@ -548,12 +546,12 @@ services:
       $channelContext: "@sylius.context.channel"
     public: false
 
-  coopcycle.sylius.product_variant_resolver.lazy:
-    class: AppBundle\Sylius\Product\LazyProductVariantResolver
+  AppBundle\Sylius\Product\LazyProductVariantResolver:
     arguments:
       - "@sylius.product_variant_resolver.default"
       - "@sylius.factory.product_variant"
-    public: true
+    tags:
+      - { name: sylius.product_variant_resolver, priority: 256 }
 
   AppBundle\Sylius\Cart\RestaurantResolver:
     tags:
@@ -1106,7 +1104,6 @@ services:
   AppBundle\Api\State\CartItemProcessor:
     arguments:
       $orderItemFactory: "@sylius.factory.order_item"
-      $variantResolver: "@coopcycle.sylius.product_variant_resolver.lazy"
     tags: [ 'api_platform.state_processor' ]
 
   AppBundle\Api\State\CartSessionProcessor:

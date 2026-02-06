@@ -11,7 +11,6 @@ use AppBundle\LoopEat\Client as LoopeatClient;
 use AppBundle\LoopEat\Context as LoopeatContext;
 use AppBundle\LoopEat\ContextInitializer as LoopeatContextInitializer;
 use AppBundle\Payment\GatewayResolver;
-use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\OptionsPayloadConverter;
 use AppBundle\Utils\PriceFormatter;
@@ -21,6 +20,7 @@ use Sylius\Component\Order\Modifier\OrderItemQuantityModifierInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Product\Repository\ProductRepositoryInterface;
+use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Serializer\Normalizer\ContextAwareDenormalizerInterface;
@@ -35,7 +35,7 @@ class OrderNormalizer implements NormalizerInterface, ContextAwareDenormalizerIn
         private ChannelContextInterface $channelContext,
         private ProductRepositoryInterface $productRepository,
         private OptionsPayloadConverter $optionsPayloadConverter,
-        private LazyProductVariantResolverInterface $variantResolver,
+        private ProductVariantResolverInterface $variantResolver,
         private FactoryInterface $orderItemFactory,
         private OrderItemQuantityModifierInterface $orderItemQuantityModifier,
         private OrderModifierInterface $orderModifier,

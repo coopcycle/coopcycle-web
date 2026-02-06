@@ -12,7 +12,6 @@ use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Enum\Allergen;
 use AppBundle\Enum\RestrictedDiet;
 use AppBundle\Form\Type\PriceWithTaxType;
-use AppBundle\Sylius\Product\LazyProductVariantResolverInterface;
 use AppBundle\Sylius\Product\ProductInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
