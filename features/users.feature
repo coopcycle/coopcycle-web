@@ -228,3 +228,98 @@ Feature: Users
         "favoriteRestaurant":"/api/restaurants/1"
       }
       """
+
+  Scenario: Retrieve customer orders (with pagination)
+    Given the current time is "2026-01-28 12:00:00"
+    Given the fixtures files are loaded:
+      | users.yml           |
+      | payment_methods.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the restaurant with id "2" has products:
+      | code      |
+      | SALAD     |
+      | CAKE      |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+      | givenName  | John              |
+      | familyName | Doe               |
+    And the user "bob" has role "ROLE_ADMIN"
+    Given the user "bob" is authenticated
+    # 36 orders, 30 per page -> 2 pages
+    And the user "bob" has ordered something for "2025-12-31 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-11-15 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-10-01 12:30:00" at the restaurant with id "2" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-12-31 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-11-15 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-10-01 12:30:00" at the restaurant with id "2" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-12-31 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-11-15 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-10-01 12:30:00" at the restaurant with id "2" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-12-31 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-11-15 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-10-01 12:30:00" at the restaurant with id "2" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-12-31 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-11-15 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-10-01 12:30:00" at the restaurant with id "2" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-12-31 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-11-15 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-10-01 12:30:00" at the restaurant with id "2" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-12-31 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-11-15 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-10-01 12:30:00" at the restaurant with id "2" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-12-31 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-11-15 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-10-01 12:30:00" at the restaurant with id "2" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-12-31 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-11-15 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-10-01 12:30:00" at the restaurant with id "2" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-12-31 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-11-15 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-10-01 12:30:00" at the restaurant with id "2" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-12-31 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-11-15 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-10-01 12:30:00" at the restaurant with id "2" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-12-31 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-11-15 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And the user "bob" has ordered something for "2025-10-01 12:30:00" at the restaurant with id "2" and the order is fulfilled
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/me/orders"
+    Then the response status code should be 200
+    And print last JSON response
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/Order",
+        "@id": "/api/me/orders",
+        "@type": "hydra:Collection",
+        "hydra:totalItems": 36,
+        "hydra:member": [
+          {
+            "@id": "@string@.startsWith('/api/orders')",
+            "total": @integer@,
+            "items": @array@,
+            "@*@": "@*@"
+          },
+          "@array_previous_repeat@"
+        ],
+        "hydra:view": {
+          "@id": "/api/me/orders?page=1",
+          "@type": "hydra:PartialCollectionView",
+          "hydra:first": "/api/me/orders?page=1",
+          "hydra:last": "/api/me/orders?page=2",
+          "hydra:next": "/api/me/orders?page=2"
+        },
+        "hydra:search": {
+          "@*@":"@*@"
+        }
+      }
+      """
