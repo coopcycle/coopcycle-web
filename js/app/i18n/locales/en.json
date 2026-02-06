@@ -822,6 +822,7 @@
             "FIRST_ORDER": "First order: {{date}}",
             "LAST_ORDER": "Last order: {{date}}",
             "FAVORITE_RESTAURANT": "Favorite restaurant: {{- name}}"
-        }
+        },
+        "OWNER": "Owner"
       }
 }

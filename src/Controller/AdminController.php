@@ -6,6 +6,7 @@ use ACSEO\TypesenseBundle\Finder\CollectionFinderInterface;
 use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
 use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Exception\ItemNotFoundException;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Api\Dto\ResourceApplication;
 use AppBundle\Controller\Utils\AccessControlTrait;
@@ -225,19 +226,54 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_dashboard');
     }
 
-    protected function getOrderList(Request $request, PaginatorInterface $paginator, $showCanceled = false)
+    protected function getOrderList(Request $request, PaginatorInterface $paginator, IriConverterInterface $iriConverter, $showCanceled = false)
     {
         if ($request->query->has('q')) {
             $qb = $this->orderRepository->search($request->query->get('q'));
         } else {
             $qb = $this->orderRepository
                 ->createOptimizedQueryBuilder('o');
+        }
+
+        if ($request->query->has('date')) {
+            $date = new \DateTimeImmutable($request->query->get('date'));
+            $qb
+                ->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE')
+                ->setParameter('range', sprintf('[%s, %s]', $date->format('Y-m-d 00:00:00'), $date->format('Y-m-d 23:59:59')));
+        }
+
+        // TODO Don't allow state=cart
+        if ($request->query->has('state')) {
+            $state = $request->query->all('state');
+            $qb
+                ->andWhere('o.state IN (:state)')
+                ->setParameter('state', $state);
+        } else {
             $qb
                 ->andWhere('o.state != :state')
-                ->setParameter('state', OrderInterface::STATE_CART)
-                ->orderBy('LOWER(o.shippingTimeRange)', 'DESC')
-                ;
+                ->setParameter('state', OrderInterface::STATE_CART);
         }
+
+        if ($request->query->has('owner')) {
+            try {
+                $owner = $iriConverter->getResourceFromIri($request->query->get('owner'));
+                if ($owner instanceof Store) {
+                    $qb
+                        ->join(Delivery::class, 'd', Expr\Join::WITH, 'd.order = o.id')
+                        ->join(Store::class, 's', Expr\Join::WITH, 'd.store = s.id')
+                        ->andWhere('s.id = :store')
+                        ->setParameter('store', $owner)
+                        ;
+                }
+                if ($owner instanceof LocalBusiness) {
+                    $qb = OrderRepository::addVendorClause($qb, 'o', $owner);
+                }
+            } catch (ItemNotFoundException $e) {
+                // Do nothing
+            }
+        }
+
+        $qb->orderBy('LOWER(o.shippingTimeRange)', 'DESC');
 
         if (!$showCanceled) {
             $qb
@@ -259,7 +295,8 @@ class AdminController extends AbstractController
         TranslatorInterface $translator,
         PaginatorInterface $paginator,
         CubeJsTokenFactory $tokenFactory,
-        MessageBusInterface $messageBus
+        MessageBusInterface $messageBus,
+        IriConverterInterface $iriConverter
     )
     {
         $response = new Response();
@@ -272,10 +309,33 @@ class AdminController extends AbstractController
             $showCanceled = $request->cookies->getBoolean('__show_canceled');
         }
 
+        $filters = [];
+
+        if ($request->query->has('date')) {
+            $filters['date'] = $request->query->get('date');
+        }
+
+        if ($request->query->has('state')) {
+            $filters['state'] = $request->query->all('state');
+        }
+
+        if ($request->query->has('owner')) {
+            try {
+                $owner = $iriConverter->getResourceFromIri($request->query->get('owner'));
+                $filters['owner'] = [
+                    'label' => $owner->getName(),
+                    'value' => $request->query->get('owner')
+                ];
+            } catch (ItemNotFoundException $e) {
+                // Do nothing
+            }
+        }
+
         $parameters = [
-            'orders' => $this->getOrderList($request, $paginator, $showCanceled),
+            'orders' => $this->getOrderList($request, $paginator, $iriConverter, $showCanceled),
             'routes' => $request->attributes->get('routes'),
             'show_canceled' => $showCanceled,
+            'filters' => $filters,
         ];
 
         if ($this->isGranted('ROLE_ADMIN')) {
