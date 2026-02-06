@@ -21,6 +21,7 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
     private $variantFactory;
     private $businessContext;
     private $entityManager;
+    private array $cache = [];
 
     public function __construct(
         ProductVariantResolverInterface $variantResolver,
@@ -51,7 +52,11 @@ class LazyProductVariantResolver implements LazyProductVariantResolverInterface
             }
         }
 
-        return $this->variantResolver->getVariant($product);
+        if (!isset($this->cache[$product->getId()])) {
+            $this->cache[$product->getId()] = $this->variantResolver->getVariant($product);
+        }
+
+        return $this->cache[$product->getId()];
     }
 
     /**
