@@ -74,3 +74,15 @@ doctrine:
                 enabled: true
         resolve_target_entities:
             Sylius\Component\Order\Model\OrderInterface: AppBundle\Sylius\Order\OrderInterface
+        # https://medium.com/@dotcom.software/using-doctrines-l2-cache-in-symfony-eba300ab1e6
+        # https://gist.github.com/kunicmarko20/74118570887c4bf067160536e49737d3
+        second_level_cache:
+            enabled: true
+            log_enabled: true
+            regions:
+                sylius_translations:
+                    # expire automatically after 10 days
+                    lifetime: 864000
+                    cache_driver:
+                        type: service
+                        id: translations.cache
