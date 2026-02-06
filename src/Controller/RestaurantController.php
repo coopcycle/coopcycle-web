@@ -131,7 +131,7 @@ class RestaurantController extends AbstractController
             'cartTiming' => $this->getOrderTiming($cart),
             'orderAccessToken' => $this->getOrderAccessToken($cart),
             'errors' => $errors,
-            'restaurantTiming' => $this->timingRegistry->getAllFulfilmentMethodsForObject($restaurant),
+            'restaurantTiming' => $this->timingRegistry->getAllFulfillmentMethodsForObject($restaurant),
         ]);
     }
 
@@ -477,7 +477,7 @@ class RestaurantController extends AbstractController
 
         return $this->render('restaurant/index.html.twig', $this->auth([
             'restaurant' => $restaurant,
-            'restaurant_timing' => $this->timingRegistry->getAllFulfilmentMethodsForObject($restaurant),
+            'restaurant_timing' => $this->timingRegistry->getAllFulfillmentMethodsForObject($restaurant),
             'cart_form' => $cartForm->createView(),
             'cart_timing' => $this->getOrderTiming($order),
             'order_access_token' => $this->getOrderAccessToken($order),

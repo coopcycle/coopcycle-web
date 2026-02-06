@@ -16,14 +16,14 @@ class TimingRegistry
         private EntityManagerInterface $entityManager,
         private OrderFactory $orderFactory,
         private OrderTimeHelper $orderTimeHelper,
-        private CacheInterface $appCache)
+        private CacheInterface $foodtechCache)
     {}
 
-    public function getAllFulfilmentMethodsForObject($restaurant)
+    public function getAllFulfillmentMethodsForObject($restaurant)
     {
         $cacheKey = sprintf('restaurant.%d.%s.timing', $restaurant->getId(), 'all');
 
-        return $this->appCache->get($cacheKey, function (ItemInterface $item)
+        return $this->foodtechCache->get($cacheKey, function (ItemInterface $item)
         use ($restaurant) {
             $item->expiresAfter(60 * 5);
 
@@ -35,7 +35,7 @@ class TimingRegistry
     {
         $cacheKey = sprintf('restaurant.%d.%s.timing', $id, 'all');
 
-        return $this->appCache->get($cacheKey, function (ItemInterface $item)
+        return $this->foodtechCache->get($cacheKey, function (ItemInterface $item)
         use ($id) {
 
             $restaurant = $this->entityManager->getRepository(LocalBusiness::class)->find($id);
@@ -56,7 +56,7 @@ class TimingRegistry
     {
         $cacheKey = sprintf('restaurant.%d.%s.timing', $restaurant->getId(), $fulfillmentMethod);
 
-        return $this->appCache->get($cacheKey, function (ItemInterface $item)
+        return $this->foodtechCache->get($cacheKey, function (ItemInterface $item)
             use ($restaurant, $fulfillmentMethod) {
 
             if (!$restaurant->isFulfillmentMethodEnabled($fulfillmentMethod)) {
@@ -75,7 +75,7 @@ class TimingRegistry
     {
         $cacheKey = sprintf('restaurant.%d.%s.timing', $id, $fulfillmentMethod);
 
-        return $this->appCache->get($cacheKey, function (ItemInterface $item)
+        return $this->foodtechCache->get($cacheKey, function (ItemInterface $item)
             use ($id, $fulfillmentMethod) {
 
             $restaurant = $this->entityManager->getRepository(LocalBusiness::class)->find($id);

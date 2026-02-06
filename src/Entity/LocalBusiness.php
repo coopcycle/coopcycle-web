@@ -17,12 +17,12 @@ use AppBundle\Action\Restaurant\Deliveries as RestaurantDeliveriesController;
 use AppBundle\Action\Restaurant\ReusablePackagings;
 use AppBundle\Action\Restaurant\Menus;
 use AppBundle\Action\Restaurant\Orders;
-use AppBundle\Action\Restaurant\Timing;
 use AppBundle\Api\Dto\MenuInput;
 use AppBundle\Api\Dto\RestaurantInput;
 use AppBundle\Api\State\UpdateRestaurantProcessor;
 use AppBundle\Api\State\RestaurantProvider;
 use AppBundle\Api\State\RestaurantMenuProcessor;
+use AppBundle\Api\State\RestaurantTimingProvider;
 use AppBundle\Entity\Base\LocalBusiness as BaseLocalBusiness;
 use AppBundle\Entity\LocalBusiness\CatalogInterface;
 use AppBundle\Entity\LocalBusiness\CatalogTrait;
@@ -102,7 +102,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
         ),
         new Get(
             uriTemplate: '/restaurants/{id}/timing',
-            controller: Timing::class,
+            provider: RestaurantTimingProvider::class,
             normalizationContext: ['groups' => ['restaurant_timing']]
         ),
         new Get(
