@@ -294,7 +294,6 @@ Feature: Users
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "GET" request to "/api/me/orders"
     Then the response status code should be 200
-    And print last JSON response
     And the JSON should match:
       """
       {
