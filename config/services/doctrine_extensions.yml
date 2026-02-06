@@ -107,3 +107,8 @@ services:
         tags:
             #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
             - { name: doctrine.event_subscriber, connection: default }
+
+    sylius.translation.translatable_listener.caching_aware:
+        class: AppBundle\Doctrine\EventSubscriber\CachingTranslatableSubscriber
+        tags:
+            - { name: doctrine.event_subscriber, connection: default, priority: 98 }
