@@ -8,7 +8,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * https://en.wikipedia.org/wiki/List_of_cuisines
  * http://developer-tripadvisor.com/partner/json-api/business-content/cuisines/
- * https://github.com/Factual/places/blob/master/restaurants/factual_cuisines.json
+ * https://developers.google.com/my-business/reference/rest/v4/FoodMenus?hl=fr
+ * https://wiki.openstreetmap.org/wiki/Key:cuisine
  */
 class CuisineProvider
 {

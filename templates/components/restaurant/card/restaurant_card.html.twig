@@ -1,4 +1,4 @@
-<div class="restaurant-item">
+<div class="restaurant-item g-col-12 g-col-sm-6 g-col-md-4 g-col-lg-3">
 	<a title="{{ name is defined ? name : "Empty name"|u.truncate(48, '…', false) }}" href="{{ url is defined ? url : "#" }}" data-restaurant-path>
 
 		<div class="restaurant-image">
@@ -24,11 +24,11 @@
 		<div class="restaurant-details">
 			<h4 class="restaurant-item__title">{{ name is defined and name|trim != "" ? name|u.truncate(48, '…', false) : "Empty name" }}</h4>
 
-			<div
-				class="timing" data-preorder="{{ should_show_pre_order|default(false)|json_encode|e('html_attr') }}" data-fulfillment="{{ fulfillment_timing_url is defined ? fulfillment_timing_url : "" }}">
-				{# Managed with React #}
-				<span class="restaurant-item__time-range"><div class="ssc-line w-50"></div></span>
-			</div>
+			{{ component('FulfillmentBadge', {
+				loading: 'lazy',
+				id: id,
+				isPreOrder: should_show_pre_order|default(false)
+			}) }}
 
 			<div class="details">
 				{% if tags is defined and tags is not empty %}

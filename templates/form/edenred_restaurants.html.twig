@@ -1,7 +1,6 @@
 {% extends 'bootstrap_3_layout.html.twig' %}
 
 {% block _form_restaurants_row %}
-{% spaceless %}
 <div class="form-horizontal mt-4">
   <div class="form-group form-group-sm">
     <label class="col-sm-2 control-label">{{ 'adminDashboard.users.edit.addRestaurant'|trans }}</label>
@@ -22,11 +21,9 @@
     </tbody>
   </table>
 </div>
-{% endspaceless %}
 {% endblock %}
 
 {% block _form_restaurants_entry_widget %}
-{% spaceless %}
 <tr {{ form.vars.data and form.vars.data.edenredSyncSent ? 'style="text-decoration: line-through;"' : '__restaurant_style__' }} >
   <td>
     {{ form.vars.data ? form.vars.data.name : '__restaurant_name__' }}
@@ -38,5 +35,4 @@
     <a href="#" data-remove="restaurant"><span class="glyphicon glyphicon-trash"></span></a>
   </td>
 </tr>
-{% endspaceless %}
 {% endblock %}

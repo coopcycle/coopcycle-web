@@ -148,6 +148,9 @@ services:
   AppBundle\Doctrine\EntityPreloader\:
     resource: '../src/Doctrine/EntityPreloader/*'
 
+  AppBundle\Twig\Components\:
+    resource: '../src/Twig/Components/*'
+
   coopcycle.repository.restaurant: '@AppBundle\Entity\RestaurantRepository'
 
   coopcycle.preparation_time_calculator: '@AppBundle\Utils\PreparationTimeCalculator'
