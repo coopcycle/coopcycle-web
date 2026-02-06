@@ -53,7 +53,7 @@ class ProductType extends AbstractType
         private LocaleProviderInterface $localeProvider,
         private TranslatorInterface $translator,
         private EntityManagerInterface $entityManager,
-        private LazyProductVariantResolverInterface $variantResolver,
+        private ProductVariantResolverInterface $variantResolver,
         private bool $taxIncl = true,
         private bool $businessAccountEnabled = false)
     {}
