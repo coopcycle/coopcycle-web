@@ -13,23 +13,20 @@ use Sylius\Component\Resource\Metadata\RegistryInterface;
 use Sylius\Component\Resource\Model\TranslatableInterface;
 use Sylius\Component\Resource\Model\TranslationInterface;
 
+use Sylius\Bundle\ResourceBundle\EventListener\ORMTranslatableListener;
+
 /**
  * @see https://gist.github.com/kunicmarko20/74118570887c4bf067160536e49737d3
  */
-final class CachingTranslatableSubscriber implements EventSubscriber
+final class CachingTranslatableSubscriber
 {
-    public function getSubscribedEvents(): array
-    {
-        return [
-            Events::loadClassMetadata,
-        ];
-    }
+    public function __construct(private ORMTranslatableListener $decorated)
+    {}
 
-    /**
-     * Add mapping to translatable entities
-     */
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs): void
     {
+        $this->decorated->loadClassMetadata($eventArgs);
+
         $classMetadata = $eventArgs->getClassMetadata();
         $reflection = $classMetadata->getReflectionClass();
 
@@ -46,14 +43,20 @@ final class CachingTranslatableSubscriber implements EventSubscriber
         }
     }
 
+    public function postLoad(LifecycleEventArgs $args): void
+    {
+        $this->decorated->postLoad($args);
+    }
+
     /**
      * Add mapping data to a translatable entity.
      */
     private function mapTranslatable(ClassMetadata $metadata): void
     {
-        $className = $metadata->name;
-
-        $metadata->enableCache(['usage' => ClassMetadataInfo::CACHE_USAGE_NONSTRICT_READ_WRITE]);
+        $metadata->enableCache([
+            'usage' => ClassMetadataInfo::CACHE_USAGE_NONSTRICT_READ_WRITE,
+            'region' => 'sylius_translations',
+        ]);
 
         if ($metadata->hasAssociation('translations')) {
             $metadata->enableAssociationCache('translations', [
@@ -68,11 +71,11 @@ final class CachingTranslatableSubscriber implements EventSubscriber
      */
     private function mapTranslation(ClassMetadata $metadata): void
     {
-        $className = $metadata->name;
-
-        $metadata->enableCache([
-            'usage' => ClassMetadataInfo::CACHE_USAGE_NONSTRICT_READ_WRITE,
-            'region' => 'sylius_translations',
-        ]);
+        if ($metadata->hasAssociation('translatable')) {
+            $metadata->enableCache([
+                'usage' => ClassMetadataInfo::CACHE_USAGE_NONSTRICT_READ_WRITE,
+                'region' => 'sylius_translations',
+            ]);
+        }
     }
 }

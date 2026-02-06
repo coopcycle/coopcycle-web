@@ -85,4 +85,4 @@ doctrine:
                     lifetime: 864000
                     cache_driver:
                         type: service
-                        id: cache.app
+                        id: translations.cache
