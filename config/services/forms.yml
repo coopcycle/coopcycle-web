@@ -212,8 +212,6 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\Checkout\CheckoutPaymentType:
-    arguments:
-      $cashEnabled: '%env(bool:CASH_ON_DELIVERY_ENABLED)%'
     tags: [ form.type ]
 
   AppBundle\Form\Type\PriceWithTaxType:

@@ -979,12 +979,14 @@ services:
 
   AppBundle\Action\Order\PaymentMethods:
     public: true
-    arguments:
-      $cashEnabled: '%env(bool:CASH_ON_DELIVERY_ENABLED)%'
-      $edenredEnabled: '%env(bool:EDENRED_ENABLED)%'
 
   AppBundle\Action\Store\PaymentMethods:
     public: true
+
+  AppBundle\Payment\PaymentMethodsResolver:
+    arguments:
+      $cashEnabled: '%env(bool:CASH_ON_DELIVERY_ENABLED)%'
+      $edenredEnabled: '%env(bool:EDENRED_ENABLED)%'
 
   AppBundle\Action\Order\Centrifugo:
     public: true
