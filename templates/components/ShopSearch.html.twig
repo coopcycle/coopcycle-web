@@ -1,3 +1,14 @@
+{# Sort cuisines alphabetically #}
+{% set cuisines = [] %}
+{% for cuisine in this.cuisines %}
+  {% set cuisines = cuisines|merge([{
+    label: cuisine.name|trans({}, 'cuisines'),
+    value: cuisine.name,
+    icon: cuisine.hasIcon() ? cuisine.icon : 'fluent-color:search-sparkle-16'
+  }]) %}
+{% endfor %}
+{% set cuisines = cuisines|sort((a, b) => a.label <=> b.label) %}
+
 <div {{ attributes }}>
 
   <div class="container-fluid mb-4 border-bottom">
@@ -26,17 +37,13 @@
 
     <div class="swiper filters cuisines">
       <ul class="swiper-wrapper nav">
-      {% for cuisine in this.cuisines %}
+      {% for cuisine in cuisines %}
         <li class="nav-item swiper-slide">
-          <a class="nav-link text-center {% if cuisine.name in this.cuisine %}active{% endif %}" {{ live_action('toggleCuisine', { name: cuisine.name }) }}>
+          <a class="nav-link text-center {% if cuisine.value in this.cuisine %}active{% endif %}" {{ live_action('toggleCuisine', { name: cuisine.value }) }}>
             <span class="d-block">
-              {% if cuisine.hasIcon() %}
-                {{ ux_icon(cuisine.icon, { style: 'font-size: 30px' }) }}
-              {% else %}
-                {{ ux_icon('fluent-color:search-sparkle-16', { style: 'font-size: 30px;' }) }}
-              {% endif %}
+              {{ ux_icon(cuisine.icon, { style: 'font-size: 30px' }) }}
             </span>
-            <small>{{ cuisine.name|trans({}, 'cuisines') }}</small>
+            <small>{{ cuisine.label }}</small>
           </a>
         </li>
       {% endfor %}
