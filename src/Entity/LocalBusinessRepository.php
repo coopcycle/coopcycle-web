@@ -302,10 +302,13 @@ class LocalBusinessRepository extends EntityRepository
     }
 
     public function findExistingCuisines() {
+
         $qb = $this->createQueryBuilder('r')
             ->select('c')
             ->from(Cuisine::class, 'c')
-            ->innerJoin('c.restaurants', 'cr');
+            ->innerJoin('c.restaurants', 'cr')
+            ->andWhere('r.enabled = :enabled')
+            ->setParameter('enabled', true);
 
         $this->addBusinessContextClause($qb, 'r');
 
