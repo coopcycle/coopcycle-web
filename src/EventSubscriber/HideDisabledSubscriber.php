@@ -3,6 +3,7 @@
 namespace AppBundle\EventSubscriber;
 
 use AppBundle\Annotation\HideDisabled;
+use AppBundle\Doctrine\Filter\DisabledFilter;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -34,6 +35,7 @@ class HideDisabledSubscriber implements EventSubscriberInterface
             if (isset($arguments['classes']) && !empty($arguments['classes'])) {
                 $filters = $this->entityManager->getFilters();
                 if ($filters->isEnabled('disabled_filter')) {
+                    /** @var DisabledFilter */
                     $filter = $filters->getFilter('disabled_filter');
                     foreach ($arguments['classes'] as $class) {
                         $filter->add($class);
