@@ -2,31 +2,31 @@
 african: academicons:africarxiv
 # albanian: Albanian
 algerian: emojione:flag-for-algeria
-# alsatian: Alsatian
+alsatian: noto:pretzel
 american: circle-flags:us
 # andalusian: Andalusian
 # aragonese: Aragonese
-# argentine: Argentine
+argentine: emojione:flag-for-argentina
 # armenian: Armenian
 asian: twemoji:steaming-bowl
 # asturian: Asturian
 # australian: Australian
 # austrian: Austrian
 # auvergne: Auvergne
-# bagels: Bagels
-# bakery: Bakery
+bagels: noto:bagel
+bakery: noto:croissant
 # bangladeshi: Bangladeshi
-# barbecue: Barbecue
+barbecue: noto:cut-of-meat
 # basque: Basque
-# belgian: Belgian
+belgian: emojione:flag-for-belgium
 bento: noto-v1:bento-box
 bistro: noto-v1:wine-glass
-# brazilian: Brazilian
+brazilian: emojione:flag-for-brazil
 # british: British
 burgers: twemoji:hamburger
 # burgundy: Burgundy
 # burmese: Burmese
-# cafe: Cafe
+cafe: streamline-kameleon-color:coffee-paper-glass
 # cajun: Cajun
 # californian: Californian
 # calzones: Calzones
@@ -41,7 +41,7 @@ chicken: emojione:chicken
 # chilean: Chilean
 chinese: emojione:flag-for-china
 # chowder: Chowder
-# coffee: Coffee
+coffee: streamline-kameleon-color:coffee-paper-glass
 # colombian: Colombian
 # contemporary: Contemporary
 # continental: Continental
@@ -62,7 +62,7 @@ donuts: token-branded:donut
 # egyptian: Egyptian
 # english: English
 # ethiopian: Ethiopian
-# european: European
+european: emojione:flag-for-european-union
 # extremaduran: Extremaduran
 fast_food: twemoji:french-fries
 # filipino: Filipino
@@ -76,8 +76,8 @@ french: fxemoji:franceflag
 # gastropub: Gastropub
 # german: German
 gluten_free: healthicons:gluten-free-outline
-# greek: Greek
-# grill: Grill
+greek: emojione:flag-for-greece
+grill: noto:cut-of-meat
 # gyros: Gyros
 # haitian: Haitian
 halal: streamline-color:islam-flat
@@ -87,7 +87,7 @@ healthy: noto:red-apple
 home_made: streamline-emojis:woman-cook-2
 hot_dogs: noto:hot-dog
 ice_cream: noto:ice-cream
-# indian: Indian
+indian: emojione:flag-for-india
 # indonesian: Indonesian
 # international: International
 # irish: Irish
