@@ -275,44 +275,44 @@ class LocalBusinessRepository extends EntityRepository
 
     public function countByCuisine(): array
     {
-        $qb = $this->createQueryBuilder('r')
-            ->select('COUNT(r.id) AS cnt')
-            ->addSelect('c.id')
-            ->addSelect('c.name')
-            ->innerJoin('r.servesCuisine', 'c');
+        $qb = $this->createQueryBuilder('r');
+        $qb
+            ->innerJoin('r.servesCuisine', 'c')
+            ->select('c.name')
+            ->addSelect('COUNT(r.id) AS cnt');
 
         $this->addBusinessContextClause($qb, 'r');
 
         $qb
-            ->groupBy('c.id')
+            ->groupBy('c.name')
             ->orderBy('cnt', 'DESC');
 
-        return $qb->getQuery()->getResult();
+        $result = $qb->getQuery()->getArrayResult();
+
+        return array_combine(
+            array_map(fn ($res) => $res['name'], $result),
+            array_map(fn ($res) => $res['cnt'], $result)
+        );
     }
 
-    public function findByCuisine($cuisine) {
+    public function findByCuisine(string $cuisine)
+    {
         $qb = $this->createQueryBuilder('r')
             ->innerJoin('r.servesCuisine', 'c')
-            ->andWhere('c.id = :cuisine_id')
-            ->setParameter('cuisine_id', $cuisine);
+            ->andWhere('c.name = :cuisine')
+            ->setParameter('cuisine', $cuisine);
 
         $this->addBusinessContextClause($qb, 'r');
 
         return $qb->getQuery()->getResult();
     }
 
-    public function findExistingCuisines() {
-
-        $qb = $this->createQueryBuilder('r')
-            ->select('c')
-            ->from(Cuisine::class, 'c')
-            ->innerJoin('c.restaurants', 'cr')
-            ->andWhere('r.enabled = :enabled')
-            ->setParameter('enabled', true);
-
-        $this->addBusinessContextClause($qb, 'r');
-
-        $qb->orderBy('c.name');
+    public function findExistingCuisines()
+    {
+        $qb = $this->getEntityManager()->getRepository(Cuisine::class)
+            ->createQueryBuilder('c')
+            ->andWhere('c.name IN (:cuisines)')
+            ->setParameter('cuisines', array_keys($this->countByCuisine()));
 
         return $qb->getQuery()->getResult();
     }
