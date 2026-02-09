@@ -60,6 +60,11 @@ new Swiper('.restaurant-collection-swiper', {
 })
 
 new Swiper('.cuisines', {
+  modules: [ Navigation ],
+  navigation: {
+    nextEl: '.swiper-button-next',
+    prevEl: '.swiper-button-prev',
+  },
   direction: 'horizontal',
   freeMode: true,
   slidesPerView: 'auto',
