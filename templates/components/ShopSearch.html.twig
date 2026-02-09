@@ -11,9 +11,9 @@
 
 <div {{ attributes }}>
 
-  <div class="container-fluid mb-4 border-bottom">
+  <div class="container-fluid mb-4">
 
-    <div class="swiper filters categories mb-4">
+    <div class="swiper filters categories border-bottom mb-4">
       <ul class="swiper-wrapper nav nav-underline">
         <li class="nav-item swiper-slide">
           <a class="nav-link {% if this.category is empty and this.type is empty %}active{% endif %}" href="{{ path('shops') }}">
