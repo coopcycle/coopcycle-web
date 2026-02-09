@@ -208,6 +208,7 @@ class ShopSearch
     public function setCategory(#[LiveArg] string $key)
     {
         $this->category = $key;
+        $this->type = '';
         $this->page = 1;
     }
 
@@ -215,6 +216,7 @@ class ShopSearch
     public function setType(#[LiveArg] string $type)
     {
         $this->type = $type;
+        $this->category = '';
         $this->page = 1;
     }
 
