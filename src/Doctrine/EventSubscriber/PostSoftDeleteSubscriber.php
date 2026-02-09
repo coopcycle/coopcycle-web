@@ -12,10 +12,12 @@ use AppBundle\Entity\Trailer;
 use AppBundle\Entity\Vehicle;
 use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Sylius\Product\ProductOptionInterface;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Gedmo\SoftDeleteable\SoftDeleteableListener;
 
+#[AsDoctrineListener(event: SoftDeleteableListener::POST_SOFT_DELETE, connection: 'default')]
 class PostSoftDeleteSubscriber implements EventSubscriber
 {
     /**
