@@ -84,12 +84,27 @@ class ShopSearch
 
     public function getCategories(): array
     {
-        return [
-          [ 'key' => 'featured', 'transKey' =>'homepage.featured' ],
-          [ 'key' => 'exclusive', 'transKey' => 'homepage.exclusive' ],
-          [ 'key' => 'new', 'transKey' => 'homepage.shops.new' ],
-          [ 'key' => 'zerowaste', 'transKey' => 'restaurant.list.tags.zerowaste' ],
+        $zeroWasteCount = $this->shopRepository->countZeroWaste();
+        $featuredCount = $this->shopRepository->countFeatured();
+        $exclusiveCount = $this->shopRepository->countExclusive();
+
+        $categories = [
+            [ 'key' => 'new', 'transKey' => 'homepage.shops.new' ],
         ];
+
+        if ($zeroWasteCount > 0) {
+            $categories[] = [ 'key' => 'zerowaste', 'transKey' => 'restaurant.list.tags.zerowaste' ];
+        }
+
+        if ($featuredCount > 0) {
+            $categories[] = [ 'key' => 'featured', 'transKey' =>'homepage.featured' ];
+        }
+
+         if ($exclusiveCount > 0) {
+            $categories[] = [ 'key' => 'exclusive', 'transKey' => 'homepage.exclusive' ];
+        }
+
+        return $categories;
     }
 
     public function getTypes(): array

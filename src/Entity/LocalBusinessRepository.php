@@ -597,4 +597,28 @@ class LocalBusinessRepository extends EntityRepository
 
         $this->getEntityManager()->flush();
     }
+
+    public function countFeatured(): int
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->select('COUNT(r.id)')
+            ->andWhere('r.featured = :featured')
+            ->setParameter('featured', true);
+
+        $this->addBusinessContextClause($qb, 'r');
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function countExclusive(): int
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->select('COUNT(r.id)')
+            ->andWhere('r.exclusive = :exclusive')
+            ->setParameter('exclusive', true);
+
+        $this->addBusinessContextClause($qb, 'r');
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
 }
