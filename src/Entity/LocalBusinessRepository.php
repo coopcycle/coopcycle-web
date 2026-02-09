@@ -307,23 +307,39 @@ class LocalBusinessRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findExistingCuisines()
+    public function findCuisinesByFilters(array $filters = [])
     {
-        $names = array_keys($this->countByCuisine());
+        if (empty($filters)) {
 
-        if (count($names) === 0) {
-            return [];
+            $names = array_keys($this->countByCuisine());
+
+            if (count($names) === 0) {
+                return [];
+            }
+
+            $qb = $this->getEntityManager()->getRepository(Cuisine::class)
+                ->createQueryBuilder('c')
+                ->andWhere('c.name IN (:cuisines)')
+                ->setParameter('cuisines', $names);
+
+            return $qb->getQuery()->getResult();
         }
 
+        unset($filters['cuisine']);
+
+        $subquery = $this->findByFilters($filters, true);
+        $subquery->select('r.id');
+
         $qb = $this->getEntityManager()->getRepository(Cuisine::class)
-            ->createQueryBuilder('c')
-            ->andWhere('c.name IN (:cuisines)')
-            ->setParameter('cuisines', $names);
+                ->createQueryBuilder('c');
+        $qb->innerJoin('c.restaurants', 'rc', Expr\Join::WITH, $qb->expr()->in('rc.id', $subquery->getDQL()));
+        $qb->setParameters($subquery->getQuery()->getParameters());
+
 
         return $qb->getQuery()->getResult();
     }
 
-    public function findByFilters($filters, bool $asQueryBuilder = false)
+    public function findByFilters(array $filters, bool $asQueryBuilder = false)
     {
         $qb = $this->createQueryBuilder('r');
 
@@ -339,7 +355,7 @@ class LocalBusinessRepository extends EntityRepository
                         break;
                     case 'cuisine':
                         $qb
-                            ->innerJoin('r.servesCuisine', 'c', 'WITH', $qb->expr()->in('c.name', ':cuisines'))
+                            ->innerJoin('r.servesCuisine', 'c', Expr\Join::WITH, $qb->expr()->in('c.name', ':cuisines'))
                             ->setParameter('cuisines', $value);
                         break;
                     case 'category':

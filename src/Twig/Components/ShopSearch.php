@@ -99,7 +99,7 @@ class ShopSearch
 
     public function getCuisines(): array
     {
-        return $this->shopRepository->findExistingCuisines();
+        return $this->shopRepository->findCuisinesByFilters($this->getFilters());
     }
 
     // FIXME Should be "predictable", i.e alway in same order
