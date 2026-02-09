@@ -1,0 +1,80 @@
+<div {{ attributes }}>
+
+  <div class="container-fluid mb-4 border-bottom">
+
+    <div class="swiper filters categories mb-4">
+      <ul class="swiper-wrapper nav nav-underline">
+        <li class="nav-item swiper-slide">
+          <a class="nav-link {% if this.category is empty and this.type is empty %}active{% endif %}" href="{{ path('shops') }}">
+            <i class="fa fa-lg fa-home" aria-hidden="true"></i>
+          </a>
+        </li>
+        {% if this.types|length > 1 %}
+        {% for type in this.types %}
+        <li class="nav-item swiper-slide">
+          <a class="nav-link {% if this.type == type %}active{% endif %}" {{ live_action('setType', { type: type }) }}>{{ type|local_business_type }}</a>
+        </li>
+        {% endfor %}
+        {% endif %}
+        {% for category in this.categories %}
+        <li class="nav-item swiper-slide">
+          <a class="nav-link {% if category.key == this.category %}active{% endif %}" {{ live_action('setCategory', { key: category.key }) }}>{{ category.transKey|trans }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="swiper filters cuisines">
+      <ul class="swiper-wrapper nav">
+      {% for cuisine in this.cuisines %}
+        <li class="nav-item swiper-slide">
+          <a class="nav-link text-center {% if cuisine.name in this.cuisine %}active{% endif %}" {{ live_action('toggleCuisine', { name: cuisine.name }) }}>
+            <span class="d-block">
+              {% if cuisine.hasIcon() %}
+                {{ ux_icon(cuisine.icon, { style: 'font-size: 30px' }) }}
+              {% else %}
+                {{ ux_icon('fluent-color:search-sparkle-16', { style: 'font-size: 30px;' }) }}
+              {% endif %}
+            </span>
+            <small>{{ cuisine.name|trans({}, 'cuisines') }}</small>
+          </a>
+        </li>
+      {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    {% if this.shops|length == 0 %}
+      <div class="col-md-6 col-md-offset-3 alert alert-warning text-center">
+        {{ 'restaurants.no_results'|trans|raw }}
+      </div>
+    {% else %}
+      {# https://symfony.com/bundles/ux-live-component/current/index.html#skipping-updating-certain-elements #}
+      {# To force an ignored element to re-render, give its parent element an id attribute. #}
+      {# During a re-render, if this value changes, all of the children of the element will be re-rendered, even those with data-live-ignore. #}
+      <div id="results-{{ this.cacheKey }}" class="grid restaurant-list mb-4">
+        {% if page > 1 %}
+          {# 🦊 #}
+          {# Adding a fake "previous page" div is enough to trick the system #}
+          {# It must have the same ID than the original page #}
+          <div id="page--{{ page - 1 }}" data-live-ignore="true"></div>
+        {% endif %}
+        {# https://caniuse.com/css-display-contents #}
+        <div id="page--{{ page }}" data-live-ignore="true" style="display: contents;">
+          {% include "_partials/restaurant/shops_list.html.twig" with { restaurants: this.shops } %}
+        </div>
+        <span class="overlay" data-loading="show">
+          <span class="loader"></span>
+        </span>
+      </div>
+      <div class="text-center">
+        {% if this.hasMore %}
+          <a class="btn btn-lg btn-link" {{ live_action('more') }}>
+            ↓ {{ 'basics.more_results'|trans }}
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</div>

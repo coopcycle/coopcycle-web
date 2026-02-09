@@ -1,88 +1,135 @@
 @use "sass:math";
 
-@import "../../../assets/css/vars.scss";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
+// https://getbootstrap.com/docs/5.3/customize/sass/#importing
+
+// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
+@import "bootstrap/scss/functions";
+
+$enable-cssgrid: true;
+
+// 3. Include remainder of required Bootstrap stylesheets (including any separate color mode stylesheets)
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/variables-dark";
+
+// 4. Include any default map overrides here
+
+// 5. Include remainder of required parts
+@import "~bootstrap/scss/maps";
+@import "~bootstrap/scss/mixins";
+// @import "~bootstrap/scss/root";
+
+// 6. Include any other optional stylesheet partials as desired; list below is not inclusive of all available stylesheets
+// @import "~bootstrap/scss/utilities";
+@import "~bootstrap/scss/grid";
+@import "~bootstrap/scss/nav";
+
 @import "~skeleton-screen-css/dist/index.scss";
 
 @import "./restaurant-card.scss";
-
-.shops-content {
-  display: flex;
-  flex-direction: row;
-}
-
-.shops-list-paginator {
-  text-align: center;
-  font-size: $font-size-h2;
-}
-
-.restaurant-side-bar {
-  min-width: 20%;
-}
-
-.restaurant-main-content {
-  min-width: 80%;
-}
+@import "./swiper.scss";
 
 .restaurant-list {
-  // gap: 32px;
   h1 {
     display: inline-block;
   }
 }
 
-.filter-section-btn {
-  outline: none !important;
-}
-
-.filter-caret {
-  transform: scale(1.6) rotate(-180deg);
-  margin-left: 8px;
-  margin-top: -4px;
-}
-button[aria-expanded='false'] .filter-caret {
-  transform: scale(1.6) rotate(0deg);
-}
-
 .restaurant-list-header {
   margin-top: -20px;
-  padding-top: $bs-base-margin;
-  margin-bottom: $bs-base-margin;
-  background-color: $main-blue-light;
+  padding-top: $spacer;
+  margin-bottom: $spacer;
+  background-color: $blue;
   background-image: url(../../../assets/pattern.svg);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
 }
 
-.swiper {
-  figcaption {
-    font-size: $font-size-h4;
+.filters {
+
+  width: 100%;
+
+  // https://stackoverflow.com/questions/64240299/how-to-make-auto-slides-per-view-with-dynamic-content-using-swiper-reactjs
+  .swiper-slide {
+    width: auto !important;
+  }
+  .nav.swiper-wrapper {
+    flex-wrap: nowrap;
+  }
+
+  .nav > li > a {
+    cursor: pointer;
+  }
+  .nav-link {
+    padding: $nav-link-padding-y $nav-link-padding-x;
   }
 }
-.swiper-nav-prev,
-.swiper-nav-next {
-  position: absolute;
-  top: 35%;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  outline: none !important;
-  z-index: 10;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--swiper-navigation-color, var(--swiper-theme-color));
+
+.categories {
+  --bs-nav-link-font-size: #{$font-size-lg};
+
+  .nav-underline {
+    --bs-nav-underline-gap: 0;
+  }
 }
-.swiper-button-disabled {
-  display: none;
+
+.cuisines {
+  .nav > li > a.active {
+    background-color: $warning-bg-subtle;
+  }
 }
-.swiper-nav-prev {
-  left: 10px;
-  right: auto;
-}
-.swiper-nav-next {
-  right: 10px;
-  left: auto;
+
+// https://blog.logrocket.com/css-overlay/
+.restaurant-list {
+
+  position: relative;
+
+  &--loading {
+    &:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.1);
+      z-index: 1;
+    }
+  }
+
+  .overlay {
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.1);
+
+    .loader {
+
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+
+      width: 48px;
+      height: 48px;
+      border: 5px solid #FFF;
+      border-bottom-color: transparent;
+      border-radius: 50%;
+      display: inline-block;
+      box-sizing: border-box;
+      animation: rotation 1s linear infinite;
+    }
+
+    @keyframes rotation {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  }
+
 }
