@@ -1,9 +1,10 @@
 services:
-    Jsor\Doctrine\PostGIS\Event\ORMSchemaEventSubscriber:
+    Jsor\Doctrine\PostGIS\Event\ORMSchemaEventListener:
         tags: [{ name: doctrine.event_listener, event: postGenerateSchemaTable, connection: default }]
 
     Jsor\Doctrine\PostGIS\Driver\Middleware:
-        tags: [ doctrine.middleware ]
+        tags:
+            - { name: doctrine.middleware, connections: [ default ] }
 
 doctrine:
     dbal:
@@ -21,3 +22,7 @@ doctrine:
             string_functions:
                 ST_AsGeoJSON: 'Jsor\Doctrine\PostGIS\Functions\ST_AsGeoJSON'
                 ST_GeomFromGeoJSON: 'Jsor\Doctrine\PostGIS\Functions\ST_GeomFromGeoJSON'
+                ST_DWithin: Jsor\Doctrine\PostGIS\Functions\ST_DWithin
+                ST_GeomFromText: Jsor\Doctrine\PostGIS\Functions\ST_GeomFromText
+                ST_Distance: Jsor\Doctrine\PostGIS\Functions\ST_Distance
+                ST_AsText: Jsor\Doctrine\PostGIS\Functions\ST_AsText

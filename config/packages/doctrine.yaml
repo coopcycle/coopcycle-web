@@ -47,11 +47,6 @@ doctrine:
                 type: xml
         dql:
             string_functions:
-                ST_DWithin: Jsor\Doctrine\PostGIS\Functions\ST_DWithin
-                ST_GeomFromText: Jsor\Doctrine\PostGIS\Functions\ST_GeomFromText
-                ST_Distance: Jsor\Doctrine\PostGIS\Functions\ST_Distance
-                ST_GeomFromGeoJSON: Jsor\Doctrine\PostGIS\Functions\ST_GeomFromGeoJSON
-                ST_AsText: Jsor\Doctrine\PostGIS\Functions\ST_AsText
                 similarity: AppBundle\Doctrine\Functions\Similarity
                 TSRANGE: AppBundle\Doctrine\Functions\TsRange
                 OVERLAPS: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\Overlaps
