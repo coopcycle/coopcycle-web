@@ -309,7 +309,7 @@ class LocalBusinessRepository extends EntityRepository
 
     public function findExistingCuisines()
     {
-        $names = array_keys($this->countByCuisine();
+        $names = array_keys($this->countByCuisine());
 
         if (count($names) === 0) {
             return [];
