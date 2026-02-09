@@ -318,7 +318,7 @@ class LocalBusinessRepository extends EntityRepository
         $qb = $this->getEntityManager()->getRepository(Cuisine::class)
             ->createQueryBuilder('c')
             ->andWhere('c.name IN (:cuisines)')
-            ->setParameter('cuisines', array_keys($this->countByCuisine()));
+            ->setParameter('cuisines', $names);
 
         return $qb->getQuery()->getResult();
     }
