@@ -224,12 +224,10 @@ class ShopSearch
         $query = [
             'category' => $this->category,
             'cuisine' => $this->cuisine,
-            // 'type',
+            'type' => $this->type,
         ];
 
         $query = array_filter($query);
-
-        // $query = array_filter($request->query->all(), fn ($key) => in_array($key, $parameters), ARRAY_FILTER_USE_KEY);
 
         if (isset($query['cuisine'])) {
             sort($query['cuisine']);

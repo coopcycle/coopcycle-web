@@ -12,7 +12,7 @@
         {% if this.types|length > 1 %}
         {% for type in this.types %}
         <li class="nav-item swiper-slide">
-          <a class="nav-link {% if this.type == type %}active{% endif %}" {{ live_action('setType', { type: type }) }}>{{ type|local_business_type }}</a>
+          <a class="nav-link {% if this.type == type|local_business_type_key %}active{% endif %}" {{ live_action('setType', { type: type|local_business_type_key }) }}>{{ type|local_business_type }}</a>
         </li>
         {% endfor %}
         {% endif %}
