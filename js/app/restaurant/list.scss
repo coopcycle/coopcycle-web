@@ -83,10 +83,8 @@ $enable-cssgrid: true;
   .swiper-button-next,
   .swiper-button-prev {
     padding: calc(var(--swiper-navigation-size) / 2);
-    background-color: #dedede;
+    background-color: $gray-200;
     border-radius: calc(var(--swiper-navigation-size) / 2);
-    opacity: 0.9;
-
   }
   .swiper-button-next {
     &:after {
