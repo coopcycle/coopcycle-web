@@ -309,6 +309,12 @@ class LocalBusinessRepository extends EntityRepository
 
     public function findExistingCuisines()
     {
+        $names = array_keys($this->countByCuisine();
+
+        if (count($names) === 0) {
+            return [];
+        }
+
         $qb = $this->getEntityManager()->getRepository(Cuisine::class)
             ->createQueryBuilder('c')
             ->andWhere('c.name IN (:cuisines)')
