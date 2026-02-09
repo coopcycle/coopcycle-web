@@ -34,6 +34,8 @@ final class DisabledFilter extends SQLFilter
 
     public function add(string $class)
     {
-        $this->classes[] = $class;
+        if (!in_array($class, $this->classes)) {
+            $this->classes[] = $class;
+        }
     }
 }

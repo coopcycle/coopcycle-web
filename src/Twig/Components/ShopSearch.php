@@ -2,6 +2,7 @@
 
 namespace AppBundle\Twig\Components;
 
+use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Doctrine\EntityPreloader\LocalBusinessPreloader;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
@@ -9,6 +10,7 @@ use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Utils\RestaurantFilter;
 use AppBundle\Utils\SortableRestaurantIterator;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use League\Geotools\Geotools;
@@ -25,6 +27,7 @@ use Symfony\UX\LiveComponent\DefaultActionTrait;
  * https://ux.symfony.com/demos/live-component/infinite-scroll
  */
 #[AsLiveComponent]
+#[HideSoftDeleted]
 class ShopSearch
 {
     use ComponentToolsTrait;
@@ -63,7 +66,8 @@ class ShopSearch
         private CacheInterface $appCache,
         private TimingRegistry $timingRegistry,
         private PaginatorInterface $paginator,
-        private LocalBusinessPreloader $preloader)
+        private LocalBusinessPreloader $preloader,
+        private EntityManagerInterface $entityManager)
     {
     }
 
@@ -90,11 +94,21 @@ class ShopSearch
 
     public function getTypes(): array
     {
+        if ($this->entityManager->getFilters()->isEnabled('disabled_filter')) {
+            $filter = $this->entityManager->getFilters()->getFilter('disabled_filter');
+            $filter->add(LocalBusiness::class);
+        }
+
         return array_keys($this->shopRepository->countByType());
     }
 
     public function getCuisines(): array
     {
+        if ($this->entityManager->getFilters()->isEnabled('disabled_filter')) {
+            $filter = $this->entityManager->getFilters()->getFilter('disabled_filter');
+            $filter->add(LocalBusiness::class);
+        }
+
         return $this->shopRepository->findExistingCuisines();
     }
 
@@ -122,8 +136,12 @@ class ShopSearch
 
     public function getShops(): PaginationInterface
     {
-        // TODO Check if this is needed
-        // $this->shopRepository->setBusinessContext($this->businessContext);
+        $this->shopRepository->setBusinessContext($this->businessContext);
+
+        if ($this->entityManager->getFilters()->isEnabled('disabled_filter')) {
+            $filter = $this->entityManager->getFilters()->getFilter('disabled_filter');
+            $filter->add(LocalBusiness::class);
+        }
 
         $restaurantsIds = $this->appCache->get($this->getCacheKey(), function (ItemInterface $item) {
 
