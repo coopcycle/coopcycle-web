@@ -1,13 +1,21 @@
 services:
     Jsor\Doctrine\PostGIS\Event\ORMSchemaEventSubscriber:
-        tags: [{ name: doctrine.event_subscriber, connection: default }]
+        tags: [{ name: doctrine.event_listener, event: postGenerateSchemaTable, connection: default }]
+
+    Jsor\Doctrine\PostGIS\Driver\Middleware:
+        tags: [ doctrine.middleware ]
 
 doctrine:
     dbal:
         mapping_types:
             _text: string
         types:
-            geometry: 'Jsor\Doctrine\PostGIS\Types\GeometryType'
+            geography:
+                class: 'Jsor\Doctrine\PostGIS\Types\GeographyType'
+                commented: false
+            geometry:
+                class: 'Jsor\Doctrine\PostGIS\Types\GeometryType'
+                commented: false
     orm:
         dql:
             string_functions:

@@ -102,8 +102,8 @@ services:
             #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
             - { name: doctrine.event_subscriber }
 
-    postgis.event_subscriber:
-        class: AppBundle\Doctrine\PostGIS\ORMSchemaEventSubscriber
-        tags:
-            #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
-            - { name: doctrine.event_subscriber, connection: default }
+    # postgis.event_subscriber:
+    #     class: AppBundle\Doctrine\PostGIS\ORMSchemaEventSubscriber
+    #     tags:
+    #         #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
+    #         - { name: doctrine.event_subscriber, connection: default }
