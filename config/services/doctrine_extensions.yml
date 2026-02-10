@@ -96,7 +96,12 @@ services:
             # - [ setClock, [ '@clock' ] ]
 
 
-    AppBundle\Doctrine\EventSubscriber\PostSoftDeleteSubscriber: ~
+    AppBundle\Doctrine\EventSubscriber\PostSoftDeleteSubscriber:
+        tags:
+            # FIXME
+            # doctrine.event_subscriber is deprecated, but this doesn't work
+            # with doctrine.event_listener or #[AsDoctrineListener] attribute
+            - { name: doctrine.event_subscriber }
 
     postgis.event_subscriber:
         class: AppBundle\Doctrine\PostGIS\ORMSchemaEventSubscriber
