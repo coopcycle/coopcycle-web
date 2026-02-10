@@ -2,8 +2,10 @@
 
 namespace AppBundle\Controller;
 
+use ApiPlatform\Metadata\IriConverterInterface;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Entity\Store;
 use AppBundle\Pixabay\Client as PixabayClient;
 use AppBundle\Service\Geocoder;
 use Doctrine\DBAL\Connection;
@@ -159,5 +161,44 @@ class SearchController extends AbstractController
         $results = $pixabay->search($request->query->get('q'), $request->query->getInt('page', 1));
 
         return new JsonResponse(['hits' => $results]);
+    }
+
+    #[Route(path: '/search/order-owners', name: 'search_order_owners')]
+    public function orderOwnersAction(Request $request, EntityManagerInterface $entityManager, LocalBusinessRepository $repository, IriConverterInterface $iriConverter)
+    {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            throw $this->createAccessDeniedException();
+        }
+
+        $qb = $repository->createQueryBuilder('r');
+
+        $fieldValue = $qb->expr()->literal('%' . $request->query->get('q') . '%');
+
+        $qb->andWhere($qb->expr()->like('r.name', $fieldValue));
+
+        $results = $qb->getQuery()->getResult();
+
+        $hits = [];
+
+        foreach ($results as $restaurant) {
+            $hits[] = [
+                'label' => $restaurant->getName(),
+                'id' => $iriConverter->getIriFromResource($restaurant),
+            ];
+        }
+
+        $qb = $entityManager->getRepository(Store::class)->createQueryBuilder('s');
+        $qb->andWhere($qb->expr()->like('s.name', $fieldValue));
+
+        $results = $qb->getQuery()->getResult();
+
+        foreach ($results as $store) {
+            $hits[] = [
+                'label' => $store->getName(),
+                'value' => $iriConverter->getIriFromResource($store),
+            ];
+        }
+
+        return new JsonResponse(['hits' => $hits]);
     }
 }
