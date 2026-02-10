@@ -1155,12 +1155,9 @@ form.local_business_type.label: Type of business
 form.local_business_type.help: The types are using the <a href="https://schema.org/">schema.org</a>
   vocabulary for <a href="https://schema.org/FoodEstablishment">food establishments</a>
   and <a href="https://schema.org/Store">stores</a>
-restaurant_promotion.offer_delivery: Offer delivery fees
-restaurant_promotion.offer_delivery.help: This allows you to offer the delivery fees
-  <strong>on your own money</strong>. Your margin will be diminished by the amount
+restaurant_promotion.disclaimer: Your margin will be diminished by the amount
   of the delivery fees. This will <strong>not diminish</strong> the fees perceived
   by the platform.
-restaurant_promotion.items_total: Based on items total
 form.offer_delivery.coupon_code.error.exists: This code already exists
 form.offer_delivery.coupon_code.help: It is your responsibility to communicate this
   code to the customer, either personally or via social networks
@@ -1366,10 +1363,6 @@ restaurant.stats.view_simple: Simple view
 restaurant.stats.view_detailed: Detailed view
 form.items_total_promotion.items_total.label: Above items total
 form.items_total_promotion.fixed_discount_amount.label: Apply a discount of
-restaurant_promotion.items_total.help: This allows you to apply a discount above a certain amount.
-  Your margin will be diminished by the amount
-  of the discount. This will <strong>not diminish</strong> the fees perceived
-  by the platform.
 adminDashboard.metrics.title: Metrics
 restaurants.meal_vouchers_transactions.disclaimer: This page lists all the orders paid with meal vouchers, in part or in full.
   For these orders, all the money has been collected by the restaurant.
@@ -1721,10 +1714,17 @@ form.settings.pawapay.title: Pawapay configuration
 pawapay.payment_not_completed: The payment could not be processed
 promotions.feature: Display
 promotions.featured: Displayed
-promotions.human_readable.coupon: "%name% with coupon %code%"
-promotions.human_readable.discount_items_total_above: "%name%: %discount_amount% discount above %amount%"
+promotions.human_readable.action: "%discount_amount% discount"
+promotions.human_readable.delivery_action: "%discount_amount% discount on delivery"
+promotions.human_readable.rule_items_total_above: "above %amount%"
+promotions.human_readable.rule_cart_quantity: "above %count% bought item(s)"
+promotions.human_readable.coupon: "%description% with coupon %code%"
+promotions.human_readable.text: "%name%: %description%"
 form.offer_delivery.decrease_platform_fee.label: Decrease platform fees
 form.offer_delivery.decrease_platform_fee.help: If checked, platform fees will be decreased to apply the promotion
 restaurant.form.pawapay_enabled.label: Enable pawaPay for this shop
 basics.not_available_atm: Not available at the moment
 basics.more_results: More results
+sylius.form.promotion_action.delivery_percentage_discount: 'Delivery percentage discount'
+restaurant_promotion.rules.help: Add rules to define what triggers the promotion
+restaurant_promotion.actions.help: Add actions to define how the promotion is applied
