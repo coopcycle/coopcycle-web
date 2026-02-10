@@ -4,14 +4,16 @@ namespace AppBundle\Doctrine\EventSubscriber;
 
 use AppBundle\Entity\Delivery;
 use AppBundle\Message\DeliveryCreated;
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class DeliverySubscriber implements EventSubscriber
+#[AsDoctrineListener(event: Events::onFlush, connection: 'default')]
+#[AsDoctrineListener(event: Events::postFlush, connection: 'default')]
+class DeliverySubscriber
 {
     private $messageBus;
     private $deliveries = [];
@@ -20,14 +22,6 @@ class DeliverySubscriber implements EventSubscriber
     public function __construct(MessageBusInterface $messageBus)
     {
         $this->messageBus = $messageBus;
-    }
-
-    public function getSubscribedEvents()
-    {
-        return array(
-            Events::onFlush,
-            Events::postFlush,
-        );
     }
 
     public function onFlush(OnFlushEventArgs $args)

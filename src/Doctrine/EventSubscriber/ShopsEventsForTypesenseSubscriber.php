@@ -7,8 +7,8 @@ use ACSEO\TypesenseBundle\Manager\DocumentManager;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Enum\FoodEstablishment;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Events;
-use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Psr\Log\LoggerInterface;
 use Gedmo\SoftDeleteable\SoftDeleteableListener;
@@ -16,7 +16,9 @@ use Typesense\Exceptions\ObjectNotFound;
 use ACSEO\TypesenseBundle\Client\TypesenseClient;
 use AppBundle\Entity\Store;
 
-class ShopsEventsForTypesenseSubscriber implements EventSubscriber
+#[AsDoctrineListener(event: SoftDeleteableListener::POST_SOFT_DELETE, connection: 'default')]
+#[AsDoctrineListener(event: Events::postUpdate, connection: 'default')]
+class ShopsEventsForTypesenseSubscriber
 {
     private $productsCollection;
     private $maxPosts = 250;
@@ -28,14 +30,6 @@ class ShopsEventsForTypesenseSubscriber implements EventSubscriber
         private TypesenseClient $typesenseClient)
     {
         $this->productsCollection = array_search(Product::class, $this->collectionManager->getManagedClassNames(), true);
-    }
-
-    public function getSubscribedEvents()
-    {
-        return array(
-            SoftDeleteableListener::POST_SOFT_DELETE,
-            Events::postUpdate,
-        );
     }
 
     public function postSoftDelete(LifecycleEventArgs $args)

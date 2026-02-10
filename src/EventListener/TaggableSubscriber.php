@@ -4,14 +4,17 @@ namespace AppBundle\EventListener;
 
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Service\TagManager;
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
 use Psr\Log\LoggerInterface;
 
-class TaggableSubscriber implements EventSubscriber
+#[AsDoctrineListener(event: Events::onFlush, connection: 'default')]
+#[AsDoctrineListener(event: Events::postLoad, connection: 'default')]
+#[AsDoctrineListener(event: Events::postFlush, connection: 'default')]
+class TaggableSubscriber
 {
     private TagManager $tagManager;
     private LoggerInterface $logger;
@@ -26,15 +29,6 @@ class TaggableSubscriber implements EventSubscriber
 
         $this->added   = new \SplObjectStorage();
         $this->removed = new \SplObjectStorage();
-    }
-
-    public function getSubscribedEvents()
-    {
-        return array(
-            Events::onFlush,
-            Events::postLoad,
-            Events::postFlush,
-        );
     }
 
     public function onFlush(OnFlushEventArgs $args)

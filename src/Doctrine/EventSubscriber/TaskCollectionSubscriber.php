@@ -6,13 +6,15 @@ use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
 use AppBundle\Entity\TaskCollection;
 use AppBundle\Entity\TaskCollectionItem;
 use AppBundle\Service\RoutingInterface;
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Events;
 use Psr\Log\LoggerInterface;
 
-class TaskCollectionSubscriber implements EventSubscriber
+#[AsDoctrineListener(event: Events::prePersist, priority: 16, connection: 'default')]
+#[AsDoctrineListener(event: Events::onFlush, priority: 16, connection: 'default')]
+class TaskCollectionSubscriber
 {
     private $routing;
     private $logger;
@@ -23,14 +25,6 @@ class TaskCollectionSubscriber implements EventSubscriber
     {
         $this->routing = $routing;
         $this->logger = $logger;
-    }
-
-    public function getSubscribedEvents()
-    {
-        return array(
-            Events::prePersist,
-            Events::onFlush
-        );
     }
 
     private function calculate(TaskCollectionInterface $taskCollection)

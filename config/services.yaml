@@ -613,18 +613,13 @@ services:
     tags:
       - { name: kernel.event_subscriber }
 
-  AppBundle\EventListener\SyliusIdGeneratorSubscriber:
-    tags:
-      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
-      - { name: doctrine.event_subscriber, connection: default }
+  AppBundle\EventListener\SyliusIdGeneratorSubscriber: ~
 
   AppBundle\EventListener\LogoutSubscriber: ~
 
   AppBundle\EventListener\TaggableSubscriber:
     arguments: [ '@coopcycle.tag_manager' ]
     tags:
-      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
-      - { name: doctrine.event_subscriber, connection: default }
       - { name: monolog.logger, channel: coopcycle.tagging }
 
   AppBundle\Service\DeliveryManager:
@@ -848,8 +843,6 @@ services:
   AppBundle\Doctrine\EventSubscriber\TourSubscriber:
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
-      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
-      - { name: doctrine.event_subscriber, connection: default, priority: 48 }
 
   AppBundle\Doctrine\EventSubscriber\TaskSubscriber:
     tags:
@@ -858,36 +851,20 @@ services:
   AppBundle\Doctrine\EventSubscriber\TaskCollectionSubscriber:
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
-      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
-      - { name: doctrine.event_subscriber, connection: default, priority: 16 }
 
   AppBundle\Doctrine\EventSubscriber\TaskListSubscriber:
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
-      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
-      - { name: doctrine.event_subscriber, connection: default, priority: 16 }
 
-  AppBundle\Doctrine\EventSubscriber\OrganizationSubscriber:
-    tags:
-      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
-      - { name: doctrine.event_subscriber }
+  AppBundle\Doctrine\EventSubscriber\OrganizationSubscriber: ~
 
   AppBundle\Doctrine\EventSubscriber\SearchDeliveriesSubscriber:
     tags:
       - { name: monolog.logger, channel: coopcycle.search }
-      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
-      - { name: doctrine.event_subscriber }
 
-  AppBundle\Doctrine\EventSubscriber\DeliverySubscriber:
-    tags:
-      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
-      - { name: doctrine.event_subscriber }
+  AppBundle\Doctrine\EventSubscriber\DeliverySubscriber: ~
 
-  # needs to be run last to take into account all changes
-  AppBundle\Doctrine\EventSubscriber\LoggerSubscriber:
-    tags:
-      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
-      - { name: doctrine.event_subscriber, priority: -100 }
+  AppBundle\Doctrine\EventSubscriber\LoggerSubscriber: ~
 
   AppBundle\Api\EventSubscriber\DeliverySubscriber:
     tags: [ 'kernel.event_subscriber' ]
@@ -924,10 +901,7 @@ services:
       - { name: kernel.event_subscriber }
       - { name: monolog.logger, channel: urbantz }
 
-  AppBundle\Doctrine\EventSubscriber\ShopsEventsForTypesenseSubscriber:
-    tags:
-      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
-      - { name: doctrine.event_subscriber }
+  AppBundle\Doctrine\EventSubscriber\ShopsEventsForTypesenseSubscriber: ~
 
   AppBundle\Action\Settings:
     public: true

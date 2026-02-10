@@ -315,7 +315,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->redis->set('datetime:now', Carbon::now()->toAtomString());
 
         // Mock createdAt and updatedAt fields in the database
-        $this->entityManager->getEventManager()->addEventSubscriber(
+        $this->entityManager->getEventManager()->addEventListener(
+            ['prePersist', 'preUpdate'],
             $this->mockDateSubscriber
         );
     }
