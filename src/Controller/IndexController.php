@@ -160,16 +160,16 @@ class IndexController extends AbstractController
 
         $countByCuisine = $repository->countByCuisine();
 
-        foreach ($countByCuisine as $cuisine) {
-            if ($cuisine['cnt'] >= self::MIN_SHOPS_PER_CUISINE) {
-                $shopsByCuisine = $repository->findByCuisine($cuisine['id']);
+        foreach ($countByCuisine as $cuisineName => $count) {
+            if ($count >= self::MIN_SHOPS_PER_CUISINE) {
+                $shopsByCuisine = $repository->findByCuisine($cuisineName);
                 $shopsByCuisineIterator = new SortableRestaurantIterator($shopsByCuisine, $timingRegistry);
 
                 $sections[] = [
-                    'title' => $translator->trans($cuisine['name'], [], 'cuisines'),
+                    'title' => $translator->trans($cuisineName, [], 'cuisines'),
                     'shops' => iterator_to_array($shopsByCuisineIterator),
                     'view_all_path' => $urlGenerator->generate('shops', [
-                        'cuisine' => array($cuisine['name']),
+                        'cuisine' => array($cuisineName),
                     ]),
                 ];
 

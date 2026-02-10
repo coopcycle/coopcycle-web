@@ -16,7 +16,7 @@ framework:
                 adapters:
                   - cache.adapter.array
                   - cache.app
-            time_registry.cache:
+            foodtech.cache:
                 adapters:
                   - cache.adapter.array
                   - cache.app

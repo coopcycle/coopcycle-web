@@ -6,14 +6,6 @@
 
   @include card;
 
-  // Define width *ONLY* for larger screens
-  // On small screens, it should take 100% width
-  @media (min-width: $screen-sm-min) {
-    width: 333px;
-  }
-  height: 346px;
-
-  margin: 1rem;
   border-radius: 8px;
   overflow: hidden;
   transition: all 0.25s;
@@ -110,7 +102,7 @@
   }
 
   .timing {
-    span {
+    > span {
       display: flex;
       align-items: center;
       gap: 4px;

@@ -16,7 +16,7 @@ class RestaurantDecorator
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private CacheInterface $appCache,
+        private CacheInterface $foodtechCache,
         private TranslatorInterface $translator,
         private PromotionEligibilityCheckerInterface $promotionExpirationChecker,
         private PromotionCouponEligibilityCheckerInterface $promotionCouponExpirationChecker)
@@ -25,9 +25,9 @@ class RestaurantDecorator
 
     public function getTags(LocalBusiness $restaurant): array
     {
-        $cacheKey = sprintf('twig.restaurant.%s.tags', $restaurant->getId());
+        $cacheKey = sprintf('restaurant.%s.tags', $restaurant->getId());
 
-        return $this->appCache->get($cacheKey, function (ItemInterface $item) use ($restaurant) {
+        return $this->foodtechCache->get($cacheKey, function (ItemInterface $item) use ($restaurant) {
 
             $item->expiresAfter(60 * 5);
 
@@ -63,7 +63,7 @@ class RestaurantDecorator
             $badges[] = 'vytal';
         }
 
-        $newRestaurantIds = $this->appCache->get('twig.new_restaurants.ids', function (ItemInterface $item) {
+        $newRestaurantIds = $this->foodtechCache->get('new_restaurants.ids', function (ItemInterface $item) {
 
             $item->expiresAfter(60 * 60 * 24);
 

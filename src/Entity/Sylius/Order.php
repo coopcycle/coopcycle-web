@@ -376,7 +376,13 @@ use Webmozart\Assert\Assert as WMAssert;
             denormalizationContext: ['groups' => ['order_create', 'address_create']],
             write: false
         ),
-        new GetCollection(uriTemplate: '/me/orders', provider: MyOrdersProvider::class),
+        new GetCollection(
+            uriTemplate: '/me/orders',
+            provider: MyOrdersProvider::class,
+            // Optimize performance
+            // https://api-platform.com/docs/v3.4/core/pagination/#controlling-the-behavior-of-the-doctrine-orm-paginator
+            paginationFetchJoinCollection: false
+        ),
         new GetCollection(
             // FIXME Maybe it shouldn't be a path param
             // It should be like /invoice_line_items?grouped_by_organization=1

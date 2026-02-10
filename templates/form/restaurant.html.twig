@@ -149,7 +149,6 @@
 {% endblock %}
 
 {% block _hub_restaurants_row %}
-{% spaceless %}
 <div class="form-group">
   <table class="table" id="{{ form.vars.id }}" data-prototype="{{ form_widget(form.vars.prototype)|e('html_attr') }}">
     <thead>
@@ -170,11 +169,9 @@
     </div>
   </div>
 </div>
-{% endspaceless %}
 {% endblock %}
 
 {% block _hub_restaurants_entry_widget %}
-{% spaceless %}
 <tr>
   <td>
     {{ form.vars.data ? form.vars.data.name : '__restaurant_name__' }}
@@ -186,11 +183,9 @@
     <a href="#" data-remove="restaurant"><span class="glyphicon glyphicon-trash"></span></a>
   </td>
 </tr>
-{% endspaceless %}
 {% endblock %}
 
 {% block _business_restaurant_group_restaurantsWithMenu_row %}
-{% spaceless %}
 <div class="form-group">
   {{ form_label(form) }}
   <table class="table" id="{{ form.vars.id }}"
@@ -215,11 +210,9 @@
     </div>
   </div>
 </div>
-{% endspaceless %}
 {% endblock %}
 
 {% block _business_restaurant_group_restaurantsWithMenu_entry_widget %}
-{% spaceless %}
   <tr>
     <td>
       {{ form.vars.data ? form.vars.data.restaurant.name : '__restaurant_name__' }}
@@ -248,7 +241,6 @@
       <a href="#" data-remove="restaurant"><span class="glyphicon glyphicon-trash"></span></a>
     </td>
   </tr>
-{% endspaceless %}
 {% endblock %}
 
 {% block _restaurant_ordersRateLimiter_row %}
