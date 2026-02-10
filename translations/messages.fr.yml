@@ -1019,9 +1019,7 @@ form.order_export.messenger.label: Inclure une colonne avec le coursier ayant li
   la commande
 basics.show: Afficher
 basics.hide: Masquer
-restaurant_promotion.offer_delivery: Offrir les frais de livraison
-restaurant_promotion.offer_delivery.help: Cela vous permet d'offrir les frais de livraison
-  <strong>sur votre propre part</strong>. Votre marge sera réduite du montant des
+restaurant_promotion.disclaimer: Votre marge sera réduite du montant des
   frais de livraison. Cela ne <strong>diminuera pas</strong> les frais perçus par
   la plate-forme.
 form.offer_delivery.coupon_code.error.exists: Ce code existe déjà
@@ -1244,10 +1242,6 @@ restaurant.stats.view_simple: Affichage simple
 restaurant.stats.view_detailed: Affichage détaillé
 form.items_total_promotion.items_total.label: À partir de
 form.items_total_promotion.fixed_discount_amount.label: Appliquer une réduction de
-restaurant_promotion.items_total.help: Cela vous permet d'appliquer une réduction
-  à partir d'un montant d'achat. Votre marge sera réduite du montant de la réduction.
-  Cela ne <strong>diminuera pas</strong> les frais perçus par la plate-forme.
-restaurant_promotion.items_total: À partir d'un montant d'achats
 restaurants.meal_vouchers_transactions.disclaimer: Cette page liste l'ensemble des commandes
   payées en titres-restaurant, en partie ou en totalité. Pour ces commandes, l'ensemble de
   l'argent a été perçu par le restaurant. Vous devez donc envoyer une facture à chaque
@@ -1656,7 +1650,15 @@ order.download_receipt: Télécharger le reçu
 order.generate_receipt: Générer le reçu
 promotions.feature: Afficher
 promotions.featured: Affiché
-promotions.human_readable.discount_items_total_above: "%name% : %discount_amount% de réduction à partir de %amount% dʼachats"
-promotions.human_readable.coupon: "%name% avec le code %code%"
+promotions.human_readable.action: "%discount_amount% de réduction"
+promotions.human_readable.delivery_action: "%discount_amount% de réduction sur les frais de livraison"
+promotions.human_readable.rule_items_total_above: "à partir de %amount% dʼachats"
+promotions.human_readable.rule_cart_quantity: "à partir de %count% article(s) acheté(s)"
+promotions.human_readable.coupon: "%description% avec le code %code%"
+promotions.human_readable.text: "%name% : %description%"
 form.offer_delivery.decrease_platform_fee.label: Diminuer les frais de plateforme
 form.offer_delivery.decrease_platform_fee.help: Les frais de plateforme seront diminués pour appliquer cette promotion
+basics.more_results: Plus de résultats
+sylius.form.promotion_action.delivery_percentage_discount: 'Remise en pourcentage sur les frais de livraison'
+restaurant_promotion.rules.help: Ajoutez des règles pour définir ce qui déclenche l'application de la promotion
+restaurant_promotion.actions.help: Ajoutez des actions pour définir comment la promotion est appliquée

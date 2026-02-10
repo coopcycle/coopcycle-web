@@ -1,14 +1,14 @@
 <section class="homepage-restaurants">
-  <div class="container-full-hd container--extra-space-on-sides">
-		<div class="px-3 py-4 d-flex flex-row justify-content-between align-items-center">
+  <div class="container-fluid">
+		<div class="py-4 d-flex flex-row justify-content-between align-items-center">
 			<h3 class="m-0">{{ section_title }}</h3>
 			{% if show_more %}
 				<a class="restaurant-show-more" href="{{ view_all_path }}">{{ view_all }}<i class="fa fa-arrow-right ml-2"></i>
 				</a>
 			{% endif %}
 		</div>
-    <div class="row-no-gutters restaurant-list mb-4">
-			<div class="swiper">
+    <div class="restaurant-list restaurant-list-horizontal mb-4">
+			<div class="swiper restaurant-collection-swiper">
 				<div class="swiper-wrapper">
 					{% for restaurant in items %}
 						{% set restaurant_path_params = {} %}
@@ -19,6 +19,7 @@
 							{% include "components/restaurant/card/restaurant_card.html.twig" with {
                 url: local_business_path(restaurant, restaurant_path_params),
                 image: coopcycle_asset(restaurant, 'imageFile', 'restaurant_thumbnail')|placeholder_image('restaurant_thumbnail'),
+                id: restaurant.id,
                 name: restaurant.name,
                 description: restaurant.description,
                 address: restaurant.address.streetAddress,

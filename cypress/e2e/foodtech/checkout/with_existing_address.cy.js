@@ -35,7 +35,7 @@ context('Checkout', () => {
       .contains('1, Rue de Rivoli, Paris, France')
       .click()
 
-    cy.urlmatch(/\/fr\/restaurants$/)
+    cy.urlmatch(/\/fr\/shops$/)
     cy.urlmatch(/\?geohash=[a-z0-9]+&address=[A-Za-z0-9%=]+/, 'match', 'search')
 
     cy.contains('Crazy Hamburger').click()

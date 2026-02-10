@@ -823,6 +823,7 @@
             "LAST_ORDER": "Last order: {{date}}",
             "FAVORITE_RESTAURANT": "Favorite restaurant: {{- name}}"
         },
+        "PROMOTION_COUPON_BASED": "This promotion is based on a coupon code",
         "OWNER": "Owner"
       }
 }

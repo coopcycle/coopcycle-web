@@ -17,9 +17,44 @@ const taskListSelectors = taskListAdapter.getSelectors((state) => state.logistic
 export const taskSelectors = taskAdapter.getSelectors((state) => state.logistics.entities.tasks)
 export const tourSelectors = tourAdapter.getSelectors((state) => state.logistics.entities.tours)
 
+const normalizeRecurrenceRuleText = value =>
+  typeof value === 'string' ? value.trim() : ''
+
+const compareCaseInsensitive = (a, b) =>
+  a.localeCompare(b, undefined, { sensitivity: 'base' })
+
+const compareRecurrenceRules = (a, b) => {
+  const nameA = normalizeRecurrenceRuleText(a.name)
+  const nameB = normalizeRecurrenceRuleText(b.name)
+  const hasNameA = nameA.length > 0
+  const hasNameB = nameB.length > 0
+
+  if (hasNameA && hasNameB) {
+    const byName = compareCaseInsensitive(nameA, nameB)
+    if (byName !== 0) {
+      return byName
+    }
+  } else if (hasNameA !== hasNameB) {
+    return hasNameA ? -1 : 1
+  }
+
+  const byOrgName = compareCaseInsensitive(
+    normalizeRecurrenceRuleText(a.orgName),
+    normalizeRecurrenceRuleText(b.orgName)
+  )
+  if (byOrgName !== 0) {
+    return byOrgName
+  }
+
+  return compareCaseInsensitive(
+    normalizeRecurrenceRuleText(a['@id']),
+    normalizeRecurrenceRuleText(b['@id'])
+  )
+}
+
 export const recurrenceRulesAdapter = createEntityAdapter({
   selectId: (o) => o['@id'],
-  sortComparer: (a, b) => a.orgName.localeCompare(b.orgName),
+  sortComparer: compareRecurrenceRules,
 })
 
 // UI selectors

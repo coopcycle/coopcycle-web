@@ -707,7 +707,7 @@ class OrderController extends AbstractController
 
         return $this->render('restaurant/index.html.twig', $this->auth([
             'restaurant' => $order->getRestaurant(),
-            'restaurant_timing' => $this->timingRegistry->getAllFulfilmentMethodsForObject($order->getRestaurant()),
+            'restaurant_timing' => $this->timingRegistry->getAllFulfillmentMethodsForObject($order->getRestaurant()),
             'cart_form' => $cartForm->createView(),
             'cart_timing' => $orderTimeHelper->getTimeInfo($order),
             'order_access_token' => $this->orderAccessTokenManager->create($order),

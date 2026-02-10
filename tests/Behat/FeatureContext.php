@@ -63,6 +63,7 @@ use League\OAuth2\Server\AuthorizationServer;
 use GeoJson\GeoJson;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken;
 use Typesense\Exceptions\ObjectNotFound;
@@ -110,6 +111,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         protected UserManager $userManager,
         protected CollectionManager $typesenseCollectionManager,
         protected MockDateSubscriber $mockDateSubscriber,
+        protected PropertyAccessorInterface $propertyAccessor,
         protected LoggerInterface $logger,
     )
     {
@@ -1449,5 +1451,15 @@ class FeatureContext implements Context, SnippetAcceptingContext
         if (null === $object) {
             Assert::fail(sprintf('No %s found with %s = %s', $className, $fieldName, $value));
         }
+    }
+
+    /**
+     * @Then the database entity :className with id :id should have a property :fieldName with value :value
+     */
+    public function theDatabaseEntityWithIdShouldHaveAPropertyWithValue($className, $id, $fieldName, $value): void
+    {
+        $object = $this->doctrine->getRepository($className)->find($id);
+
+        Assert::assertEquals($value, $this->propertyAccessor->getValue($object, $fieldName));
     }
 }

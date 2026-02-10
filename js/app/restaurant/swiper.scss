@@ -1,0 +1,31 @@
+.swiper {
+  figcaption {
+    font-size: $h4-font-size;
+  }
+}
+.swiper-nav-prev,
+.swiper-nav-next {
+  position: absolute;
+  top: 35%;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  outline: none !important;
+  z-index: 10;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--swiper-navigation-color, var(--swiper-theme-color));
+}
+.swiper-button-disabled {
+  display: none;
+}
+.swiper-nav-prev {
+  left: 10px;
+  right: auto;
+}
+.swiper-nav-next {
+  right: 10px;
+  left: auto;
+}
