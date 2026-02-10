@@ -135,6 +135,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Symfony\Component\Routing\Attribute\Route;
@@ -477,14 +478,22 @@ class AdminController extends AbstractController
                             $liableParty = $paymentForm->get('liable')->getData();
                             $comments = $paymentForm->get('comments')->getData();
 
-                            $orderManager->refundPayment($payment, $amount, $liableParty, $comments);
+                            try {
 
-                            $this->entityManager->flush();
+                                $orderManager->refundPayment($payment, $amount, $liableParty, $comments);
+                                $this->entityManager->flush();
 
-                            $this->addFlash(
-                                'notice',
-                                $this->translator->trans('orders.payment_refunded')
-                            );
+                                $this->addFlash(
+                                    'notice',
+                                    $this->translator->trans('orders.payment_refunded')
+                                );
+
+                            } catch (HandlerFailedException $e) {
+                                $this->addFlash(
+                                    'error',
+                                    $e->getMessage()
+                                );
+                            }
 
                             return $this->redirectToRoute('admin_order', ['id' => $id]);
                         }
