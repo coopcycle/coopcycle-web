@@ -69,7 +69,7 @@ export default function OrderListFilters({ defaultFilters }) {
 
   const search = useCallback(async (text) => {
 
-    const { response } = await httpClient.get(`http://localhost/search/order-owners?q=${text}`);
+    const { response } = await httpClient.get(`//${window.location.host}/search/order-owners?q=${text}`);
 
     const opts = response.hits.map(h => ({
       label: h.label,
