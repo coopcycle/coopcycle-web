@@ -9,7 +9,7 @@
 {% endfor %}
 {% set cuisines = cuisines|sort((a, b) => a.label <=> b.label) %}
 
-<div {{ attributes }}>
+<div {{ attributes.defaults(stimulus_controller('shop-search')) }}>
 
   <div class="container-fluid mb-4">
 
