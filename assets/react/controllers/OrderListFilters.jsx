@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 import { AntdConfigProvider } from '../../../js/app/utils/antd'
 
-const httpClient = new window._auth.httpClient();
+const httpClient = window._auth ? new window._auth.httpClient() : null;
 
 const states = ['new', 'accepted', 'fulfilled', 'refused'];
 
