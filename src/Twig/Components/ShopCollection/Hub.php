@@ -35,7 +35,7 @@ class Hub extends ShopCollection
         return $this->hub->getName();
     }
 
-    public function getShops(): array
+    protected function doGetShops(): array
     {
         $iterator = new SortableRestaurantIterator($this->hub->getRestaurants(), $this->timingRegistry);
 

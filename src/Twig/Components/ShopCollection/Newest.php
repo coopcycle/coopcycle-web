@@ -21,7 +21,7 @@ class Newest extends ShopCollection
         return $this->translator->trans('homepage.shops.new');
     }
 
-    public function getShops(): array
+    protected function doGetShops(): array
     {
         $news = $this->repository->findLatest();
         $newsIterator = new SortableRestaurantIterator($news, $this->timingRegistry);

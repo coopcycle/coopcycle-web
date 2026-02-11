@@ -21,7 +21,7 @@ class Featured extends ShopCollection
         return $this->translator->trans('homepage.featured');
     }
 
-    public function getShops(): array
+    protected function doGetShops(): array
     {
         $exclusives = $this->repository->findFeatured();
         $exclusivesIterator = new SortableRestaurantIterator($exclusives, $this->timingRegistry);

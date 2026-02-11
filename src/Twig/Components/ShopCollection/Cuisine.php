@@ -23,11 +23,18 @@ class Cuisine extends ShopCollection
         return $this->translator->trans($this->cuisine, [], 'cuisines');
     }
 
-    public function getShops(): array
+    protected function doGetShops(): array
     {
         $shopsByCuisine = $this->repository->findByCuisine($this->cuisine);
         $shopsByCuisineIterator = new SortableRestaurantIterator($shopsByCuisine, $this->timingRegistry);
 
         return iterator_to_array($shopsByCuisineIterator);
+    }
+
+    protected function getCacheKeyParts(): array
+    {
+        return [
+            $this->cuisine
+        ];
     }
 }

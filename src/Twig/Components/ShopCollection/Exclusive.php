@@ -21,7 +21,7 @@ class Exclusive extends ShopCollection
         return $this->translator->trans('homepage.exclusive');
     }
 
-    public function getShops(): array
+    protected function doGetShops(): array
     {
         $exclusives = $this->repository->findExclusives();
         $exclusivesIterator = new SortableRestaurantIterator($exclusives, $this->timingRegistry);

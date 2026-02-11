@@ -26,7 +26,7 @@ class Type extends ShopCollection
         return $this->translator->trans(LocalBusiness::getTransKeyForType($shopType));
     }
 
-    public function getShops(): array
+    protected function doGetShops(): array
     {
         $shopType = LocalBusiness::getTypeForKey($this->type);
 
@@ -72,5 +72,12 @@ class Type extends ShopCollection
 
         return [ $items, $count ];
         */
+    }
+
+    protected function getCacheKeyParts(): array
+    {
+        return [
+            $this->type
+        ];
     }
 }
