@@ -19,7 +19,22 @@ abstract class ShopCollection
     {
     }
 
-    // TODO Call $repository->setBusinessContext($businessContext);
+    // TODO Implement caching
+    /*
+    $user = $this->getUser();
+
+    if ($user && ($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_RESTAURANT'))) {
+        $cacheKeySuffix = $user->getUsername();
+    } else {
+        $cacheKeySuffix = 'anonymous';
+    }
+
+    if ($user && $user->getBusinessAccount()) {
+        if ($businessContext->isActive()) {
+            $cacheKeySuffix = sprintf('%s.%s', $cacheKeySuffix, '_business');
+        }
+    }
+    */
 
     abstract public function getUrl(): string;
 

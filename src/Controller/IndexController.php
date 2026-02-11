@@ -33,10 +33,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class IndexController extends AbstractController
 {
     const EXPIRES_AFTER = 300;
-    const MAX_SECTIONS = 8;
-    const MIN_SHOPS_PER_CUISINE = 3;
-    const LATEST_SHOPS_LIMIT = 10;
-    const MAX_SHOPS_PER_SECTION = 15;
 
     private function getItems(LocalBusinessRepository $repository, string $type, CacheInterface $cache, string $cacheKey, TimingRegistry $timingRegistry)
     {
@@ -73,123 +69,13 @@ class IndexController extends AbstractController
         return [ $items, $count ];
     }
 
+    // TODO Add this attribute to Twig components
     #[HideSoftDeleted]
-    public function indexAction(LocalBusinessRepository $repository, CacheInterface $appCache,
-        TimingRegistry $timingRegistry,
-        UrlGeneratorInterface $urlGenerator,
-        TranslatorInterface $translator,
-        BusinessContext $businessContext,
-        EntityManagerInterface $entityManager,
-        FormFactoryInterface $formFactory)
+    public function indexAction()
     {
-        $user = $this->getUser();
-
-        if ($user && ($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_RESTAURANT'))) {
-            $cacheKeySuffix = $user->getUsername();
-        } else {
-            $cacheKeySuffix = 'anonymous';
-        }
-
-        if ($user && $user->getBusinessAccount()) {
-            if ($businessContext->isActive()) {
-                $cacheKeySuffix = sprintf('%s.%s', $cacheKeySuffix, '_business');
-            }
-        }
-
-        /*
-        $sections = [];
-
-        $repository->setBusinessContext($businessContext);
-
-        $shopsByType = array_keys($repository->countByType());
-
-        if (count($shopsByType) > 0) {
-            $shopType = array_shift($shopsByType);
-            $keyForShopType = LocalBusiness::getKeyForType($shopType);
-            $cacheKey = sprintf('homepage.%s.%s', $keyForShopType, $cacheKeySuffix);
-
-            [ $shops, $shopsCount ] =
-                $this->getItems($repository, $shopType, $appCache, $cacheKey, $timingRegistry);
-
-            if ($shopsCount > 0) {
-                $sections[] = [
-                    'title' => $translator->trans(LocalBusiness::getTransKeyForType($shopType)),
-                    'shops' => array_slice($shops, 0, self::MAX_SHOPS_PER_SECTION),
-                    'view_all_path' => $urlGenerator->generate('shops', [
-                        'type' => $keyForShopType,
-                    ]),
-                ];
-            }
-        }
-
-        $featured = $repository->findFeatured();
-        $featuredIterator = new SortableRestaurantIterator($featured, $timingRegistry);
-
-        if (count($featured) > 0) {
-            $sections[] = [
-                'title' => $translator->trans('homepage.featured'),
-                'shops' => iterator_to_array($featuredIterator),
-                'view_all_path' => $urlGenerator->generate('shops', [
-                    'category' => 'featured',
-                ]),
-            ];
-        }
-
-        $exclusives = $repository->findExclusives();
-        $exclusivesIterator = new SortableRestaurantIterator($exclusives, $timingRegistry);
-
-        if (count($exclusives) > 0) {
-            $sections[] = [
-                'title' => $translator->trans('homepage.exclusive'),
-                'shops' => iterator_to_array($exclusivesIterator),
-                'view_all_path' => $urlGenerator->generate('shops', [
-                    'category' => 'exclusive',
-                ]),
-            ];
-        }
-
-        $news = $repository->findLatest(self::LATEST_SHOPS_LIMIT);
-        $newsIterator = new SortableRestaurantIterator($news, $timingRegistry);
-
-        $sections[] = [
-            'title' => $translator->trans('homepage.shops.new'),
-            'shops' => iterator_to_array($newsIterator),
-            'view_all_path' => $urlGenerator->generate('shops', [
-                'category' => 'new',
-            ]),
-        ];
-
-        $countByCuisine = $repository->countByCuisine();
-
-        foreach ($countByCuisine as $cuisineName => $count) {
-            if ($count >= self::MIN_SHOPS_PER_CUISINE) {
-                $shopsByCuisine = $repository->findByCuisine($cuisineName);
-                $shopsByCuisineIterator = new SortableRestaurantIterator($shopsByCuisine, $timingRegistry);
-
-                $sections[] = [
-                    'title' => $translator->trans($cuisineName, [], 'cuisines'),
-                    'shops' => iterator_to_array($shopsByCuisineIterator),
-                    'view_all_path' => $urlGenerator->generate('shops', [
-                        'cuisine' => array($cuisineName),
-                    ]),
-                ];
-
-                if (count($sections) >= self::MAX_SECTIONS) {
-                    break;
-                }
-            }
-        }
-        */
-
-        $deliveryForm = $this->getDeliveryForm($entityManager);
-
-        $hashids = new Hashids($this->getParameter('secret'), 12);
-
-        return $this->render('index/index.html.twig', array(
-            'delivery_form' => $deliveryForm ?
-                $this->getDeliveryFormForm($formFactory, $deliveryForm)->createView() : null,
-            'hashid' => $deliveryForm ? $hashids->encode($deliveryForm->getId()) : '',
-        ));
+        // Everything is in Twig components
+        // @see src/Twig/Components/Homepage.php
+        return $this->render('index/index.html.twig');
     }
 
     #[Route(path: '/cart.json', name: 'cart_json')]
@@ -216,33 +102,5 @@ class IndexController extends AbstractController
     public function redirectToLocaleAction()
     {
         return new RedirectResponse(sprintf('/%s/', $this->getParameter('locale')), 302);
-    }
-
-    private function getDeliveryForm(EntityManagerInterface $entityManager): ?DeliveryForm
-    {
-        $qb = $entityManager
-            ->getRepository(DeliveryForm::class)
-            ->createQueryBuilder('f');
-
-        $qb->where('f.showHomepage = :showHomepage');
-        $qb->setParameter('showHomepage', ($showHomepage = true));
-        $qb->setMaxResults(1);
-
-        return $qb->getQuery()->getOneOrNullResult();
-    }
-
-    private function getDeliveryFormForm(FormFactoryInterface $formFactory, ?DeliveryForm $deliveryForm = null)
-    {
-        if ($deliveryForm) {
-
-            return $formFactory->createNamed('delivery', DeliveryEmbedType::class, new Delivery(), [
-                'with_weight'      => $deliveryForm->getWithWeight(),
-                'with_vehicle'     => $deliveryForm->getWithVehicle(),
-                'with_time_slot'   => $deliveryForm->getTimeSlot(),
-                'with_package_set' => $deliveryForm->getPackageSet(),
-            ]);
-        }
-
-        return null;
     }
 }

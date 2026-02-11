@@ -2,10 +2,16 @@
 
 namespace AppBundle\Twig\Components;
 
+use AppBundle\Entity\Delivery;
+use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Form\DeliveryEmbedType;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent]
@@ -16,7 +22,8 @@ class Homepage
 
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private LocalBusinessRepository $shopRepository)
+        private LocalBusinessRepository $shopRepository,
+        private FormFactoryInterface $formFactory)
     {}
 
     public function getZeroWasteCount(): int
@@ -75,5 +82,27 @@ class Homepage
 
         return $sections;
     }
-}
 
+    public function getDeliveryForm(): ?DeliveryForm
+    {
+        $qb = $this->entityManager
+            ->getRepository(DeliveryForm::class)
+            ->createQueryBuilder('f');
+
+        $qb->where('f.showHomepage = :showHomepage');
+        $qb->setParameter('showHomepage', ($showHomepage = true));
+        $qb->setMaxResults(1);
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    public function createDeliveryFormView(DeliveryForm $deliveryForm): FormView
+    {
+        return $this->formFactory->createNamed('delivery', DeliveryEmbedType::class, new Delivery(), [
+            'with_weight'      => $deliveryForm->getWithWeight(),
+            'with_vehicle'     => $deliveryForm->getWithVehicle(),
+            'with_time_slot'   => $deliveryForm->getTimeSlot(),
+            'with_package_set' => $deliveryForm->getPackageSet(),
+        ])->createView();
+    }
+}

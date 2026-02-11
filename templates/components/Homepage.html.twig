@@ -17,21 +17,15 @@
   </section>
 {% endif %}
 
-{#
-{% if delivery_form is not null %}
-  {% include 'index/_partials/delivery_form.html.twig' %}
+{% if this.deliveryForm is not empty %}
+  {% include 'index/_partials/delivery_form.html.twig' with {
+    delivery_form: this.createDeliveryFormView(this.deliveryForm),
+    hashid: this.deliveryForm|hashid(12)
+  } %}
 {% endif %}
-#}
 
 {% if this.hubs|length > 0 %}
   {% for hub in hubs %}
     {{ component('ShopCollection:Hub', { hub: hub }) }}
   {% endfor %}
 {% endif %}
-
-{#
-{{ component('ShopCollection:Cuisine', { cuisine: 'pizza' }) }}
-{{ component('ShopCollection:Featured') }}
-{{ component('ShopCollection:Exclusive') }}
-{{ component('ShopCollection:Newest') }}
-#}
