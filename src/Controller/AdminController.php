@@ -274,7 +274,7 @@ class AdminController extends AbstractController
             }
         }
 
-        $qb->orderBy('LOWER(o.shippingTimeRange)', 'DESC');
+        $qb->addOrderBy('LOWER(o.shippingTimeRange)', 'DESC');
 
         if (!$showCanceled) {
             $qb
