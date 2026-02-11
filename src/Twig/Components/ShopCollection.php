@@ -4,12 +4,14 @@ namespace AppBundle\Twig\Components;
 
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Service\TimingRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class ShopCollection
 {
     public function __construct(
+        protected EntityManagerInterface $entityManager,
         protected LocalBusinessRepository $repository,
         protected TimingRegistry $timingRegistry,
         protected TranslatorInterface $translator,
