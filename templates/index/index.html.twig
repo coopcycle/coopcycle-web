@@ -27,6 +27,11 @@
   </form>
 </section>
 
+{# {{ component('ExclusiveShopsCollection') }} #}
+{{ component('ShopCollection:Type', { type: 'restaurant' }) }}
+{{ component('ShopCollection:Cuisine', { cuisine: 'pizza' }) }}
+{{ component('ShopCollection:Exclusive') }}
+
 {% for section in sections %}
   {% include 'index/_partials/section.html.twig' with {
     items: section.shops,
