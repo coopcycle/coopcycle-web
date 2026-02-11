@@ -183,7 +183,7 @@ class SearchController extends AbstractController
         foreach ($results as $restaurant) {
             $hits[] = [
                 'label' => $restaurant->getName(),
-                'id' => $iriConverter->getIriFromResource($restaurant),
+                'value' => $iriConverter->getIriFromResource($restaurant),
             ];
         }
 

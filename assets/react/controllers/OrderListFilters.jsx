@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { AutoComplete, Checkbox, DatePicker, Divider, Flex, Select, Tag, Button, Typography } from 'antd';
+import { AutoComplete, Checkbox, DatePicker, Divider, Flex, Select, Tag, Button, Typography, Spin } from 'antd';
 import qs from 'qs'
 import _ from 'lodash'
 import moment from 'moment'
@@ -54,6 +54,7 @@ export default function OrderListFilters({ defaultFilters }) {
   const [filters, setFilters] = useState(transformDefaultFilters(defaultFilters));
   const [owners, setOwners] = useState([])
   const [ownerValue, setOwnerValue] = useState()
+  const [isFetching, setIsFetching] = useState(false)
 
   useEffect(() => {
     console.log(qs.stringify(filters))
@@ -69,14 +70,12 @@ export default function OrderListFilters({ defaultFilters }) {
 
   const search = useCallback(async (text) => {
 
+    setIsFetching(true);
+
     const { response } = await httpClient.get(`//${window.location.host}/search/order-owners?q=${text}`);
 
-    const opts = response.hits.map(h => ({
-      label: h.label,
-      value: h.value
-    }))
-
-    setOwners(opts)
+    setIsFetching(false);
+    setOwners(response.hits)
 
   }, [setOwners]);
 
@@ -134,7 +133,7 @@ export default function OrderListFilters({ defaultFilters }) {
           defaultActiveFirstOption={false}
           suffixIcon={null}
           filterOption={false}
-          notFoundContent={null}
+          notFoundContent={isFetching ? <Spin size="small" /> : t('NO_RESULTS')}
           options={owners}
           style={{ minWidth: '150px' }}
           placeholder={t('ADMIN_DASHBOARD_SEARCH')}

@@ -811,6 +811,7 @@
             "FAVORITE_RESTAURANT": "Restaurant préféré : {{- name}}"
         },
         "PROMOTION_COUPON_BASED": "Cette promotion est basée sur un code promo",
-        "OWNER": "Propriétaire"
+        "OWNER": "Propriétaire",
+        "NO_RESULTS": "Pas de résultats"
     }
 }
