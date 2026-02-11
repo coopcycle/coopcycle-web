@@ -2,10 +2,12 @@
 
 namespace AppBundle\Twig\Components;
 
+use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Service\TimingRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -21,7 +23,9 @@ abstract class ShopCollection
         protected TimingRegistry $timingRegistry,
         protected TranslatorInterface $translator,
         protected UrlGeneratorInterface $urlGenerator,
-        protected CacheInterface $appCache)
+        protected CacheInterface $appCache,
+        protected Security $security,
+        protected BusinessContext $businessContext)
     {}
 
     abstract public function getUrl(): string;
@@ -40,18 +44,10 @@ abstract class ShopCollection
 
         $parts = array_merge($parts, $this->getCacheKeyParts());
 
-        // TODO Add other cache parts
-        // if ($user && ($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_RESTAURANT'))) {
-        //     $cacheKeySuffix = $user->getUsername();
-        // } else {
-        //     $cacheKeySuffix = 'anonymous';
-        // }
-
-        // if ($user && $user->getBusinessAccount()) {
-        //     if ($businessContext->isActive()) {
-        //         $cacheKeySuffix = sprintf('%s.%s', $cacheKeySuffix, '_business');
-        //     }
-        // }
+        $user = $this->security->getUser();
+        if (null !== $user && $user->hasBusinessAccount() && $this->businessContext->isActive()) {
+            $parts[] = 'business';
+        }
 
         return implode('.', $parts);
     }
