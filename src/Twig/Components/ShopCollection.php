@@ -19,6 +19,8 @@ abstract class ShopCollection
     {
     }
 
+    // TODO Call $repository->setBusinessContext($businessContext);
+
     abstract public function getUrl(): string;
 
     abstract public function getTitle(): string;

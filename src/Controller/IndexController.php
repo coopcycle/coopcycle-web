@@ -96,6 +96,7 @@ class IndexController extends AbstractController
             }
         }
 
+        /*
         $sections = [];
 
         $repository->setBusinessContext($businessContext);
@@ -178,24 +179,16 @@ class IndexController extends AbstractController
                 }
             }
         }
-
-        $hubs = $entityManager->getRepository(Hub::class)->findBy([
-            'enabled' => true
-        ]);
+        */
 
         $deliveryForm = $this->getDeliveryForm($entityManager);
 
         $hashids = new Hashids($this->getParameter('secret'), 12);
 
-        $countZeroWaste = $repository->countZeroWaste();
-
         return $this->render('index/index.html.twig', array(
-            'sections' => $sections,
-            'hubs' => $hubs,
             'delivery_form' => $deliveryForm ?
                 $this->getDeliveryFormForm($formFactory, $deliveryForm)->createView() : null,
             'hashid' => $deliveryForm ? $hashids->encode($deliveryForm->getId()) : '',
-            'zero_waste_count' => $countZeroWaste,
         ));
     }
 
