@@ -260,7 +260,7 @@ class LocalBusinessRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findLatest($limit)
+    public function findLatest($limit = self::LATESTS_SHOPS_LIMIT)
     {
         $qb = $this->createQueryBuilder('r');
 
@@ -620,5 +620,16 @@ class LocalBusinessRepository extends EntityRepository
         $this->addBusinessContextClause($qb, 'r');
 
         return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function findNew($since = '3 months')
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->andWhere('r.createdAt > :since')
+            ->setParameter('since', date('Y-m-d', strtotime($since)));
+
+        $this->addBusinessContextClause($qb, 'r');
+
+        return $qb->getQuery()->getResult();
     }
 }

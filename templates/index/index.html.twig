@@ -27,12 +27,13 @@
   </form>
 </section>
 
-{# {{ component('ExclusiveShopsCollection') }} #}
 {{ component('ShopCollection:Type', { type: 'restaurant' }) }}
 {{ component('ShopCollection:Cuisine', { cuisine: 'pizza' }) }}
+{{ component('ShopCollection:Featured') }}
 {{ component('ShopCollection:Exclusive') }}
+{{ component('ShopCollection:Newest') }}
 
-{% for section in sections %}
+{# {% for section in sections %}
   {% include 'index/_partials/section.html.twig' with {
     items: section.shops,
     section_title: section.title,
@@ -40,7 +41,7 @@
     view_all_path: section.view_all_path|default(''),
     show_more: section.show_more is defined ? section.show_more : true,
   } %}
-{% endfor %}
+{% endfor %} #}
 
 {% if zero_waste_count > 0 %}
   <section class="homepage-zerowaste mb-4">
