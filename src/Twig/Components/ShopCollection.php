@@ -2,6 +2,7 @@
 
 namespace AppBundle\Twig\Components;
 
+use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
@@ -13,6 +14,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+#[HideSoftDeleted]
 abstract class ShopCollection
 {
     const EXPIRES_AFTER = 300;

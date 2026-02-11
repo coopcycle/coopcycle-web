@@ -2,6 +2,7 @@
 
 namespace AppBundle\Twig\Components;
 
+use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Hub;
@@ -15,6 +16,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent]
+#[HideSoftDeleted]
 class Homepage
 {
     const MAX_SECTIONS = 8;
