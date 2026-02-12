@@ -89,6 +89,7 @@ if (editorEl) {
         class: ShopCollection,
         config: {
           cuisines: JSON.parse(editorEl.dataset.cuisines),
+          shopTypes: JSON.parse(editorEl.dataset.shopTypes),
         }
       }
     },
