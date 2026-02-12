@@ -1,0 +1,23 @@
+/* */
+
+.swiper-slide {
+    padding: 80px 40px;
+    border: 1px solid lightgrey;
+    text-align: center;
+    overflow: hidden;
+}
+
+.top-right {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.shop-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
