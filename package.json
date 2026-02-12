@@ -48,6 +48,7 @@
     "@cypress/webpack-preprocessor": "^6.0.4",
     "@datadog/browser-logs": "^5.29.1",
     "@datadog/browser-rum": "^5.29.1",
+    "@editorjs/editorjs": "^2.31.1",
     "@hotwired/stimulus": "^3.2.2",
     "@hotwired/turbo": "^7.0.1",
     "@mapbox/polyline": "^1.1.0",
