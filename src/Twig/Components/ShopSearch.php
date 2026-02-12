@@ -7,6 +7,7 @@ use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Doctrine\EntityPreloader\LocalBusinessPreloader;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Business\Context as BusinessContext;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Utils\RestaurantFilter;
 use AppBundle\Utils\SortableRestaurantIterator;
@@ -61,6 +62,7 @@ class ShopSearch
 
     public function __construct(
         private LocalBusinessRepository $shopRepository,
+        private BusinessContext $businessContext,
         private RestaurantFilter $restaurantFilter,
         private CacheInterface $appCache,
         private TimingRegistry $timingRegistry,
