@@ -7,6 +7,8 @@ import Dropzone from 'dropzone'
 import EditorJS from '@editorjs/editorjs';
 import ShopCollection from './editorjs/shop-collection'
 
+import HomepageEditor from './HomepageEditor'
+
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/monokai.css'
 
@@ -76,13 +78,22 @@ if (dzEl) {
 
 // https://editorjs.io/configuration/#change-the-default-block
 
+const homepageEditorEl = document.getElementById('homepage-editor')
+
+if (homepageEditorEl) {
+  createRoot(homepageEditorEl).render(
+    <HomepageEditor
+      cuisines={JSON.parse(homepageEditorEl.dataset.cuisines)}
+      shopTypes={JSON.parse(homepageEditorEl.dataset.shopTypes)}
+    />
+  )
+}
+
+/*
 const editorEl = document.getElementById('editorjs');
 
 if (editorEl) {
   const editor = new EditorJS({
-    /**
-     * Id of Element that should contain Editor instance
-     */
     holder: 'editorjs',
     tools: {
       shop_collection: {
@@ -94,9 +105,6 @@ if (editorEl) {
       }
     },
     autofocus: true,
-    /**
-     * onChange callback
-     */
     onChange: (api, event) => {
       editor.save()
         .then((savedData) => {
@@ -108,3 +116,4 @@ if (editorEl) {
     }
   });
 }
+*/
