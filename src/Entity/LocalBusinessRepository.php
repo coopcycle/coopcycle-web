@@ -641,4 +641,17 @@ class LocalBusinessRepository extends EntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findByCollection(string $slug)
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->innerJoin(ShopCollectionItem::class, 'collection_item', Expr\Join::WITH, 'collection_item.shop = r.id')
+            ->innerJoin(ShopCollection::class, 'collection', Expr\Join::WITH, 'collection_item.collection = collection.id')
+            ->andWhere('collection.slug = :slug')
+            ->setParameter('slug', $slug);
+
+        $this->addBusinessContextClause($qb, 'r');
+
+        return $qb->getQuery()->getResult();
+    }
 }
