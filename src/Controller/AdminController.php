@@ -2591,6 +2591,7 @@ class AdminController extends AbstractController
         }
 
         $cuisines = $this->entityManager->getRepository(LocalBusiness::class)->findCuisinesByFilters();
+        $shopTypes = array_map(fn ($t) => LocalBusiness::getKeyForType($t), array_keys($this->entityManager->getRepository(LocalBusiness::class)->countByType()));
 
         return $this->render('admin/customize_homepage.html.twig', $this->auth([
             'cuisines' => array_map(function ($c) use ($translator) {
@@ -2598,7 +2599,8 @@ class AdminController extends AbstractController
                     'label' => $translator->trans($c->getName(), [], 'cuisines'),
                     'value' => $c->getName(),
                 ];
-            }, $cuisines)
+            }, $cuisines),
+            'shop_types' => $shopTypes,
         ]));
     }
 
@@ -3085,30 +3087,15 @@ class AdminController extends AbstractController
         return $this->render('admin/invoicing.html.twig', $this->auth([]));
     }
 
-    #[Route(path: '/admin/shop-collections/{id}/preview', name: 'admin_shop_collection_preview')]
-    public function shopCollectionPreviewAction($id,
+    #[Route(path: '/admin/shop-collections/preview/{component}', name: 'admin_shop_collection_preview')]
+    public function shopCollectionPreviewAction($component,
         EntityManagerInterface $entityManager,
         TranslatorInterface $translator,
         Request $request)
     {
-        if (!is_numeric($id) && str_starts_with($id, 'auto:')) {
-
-            [$auto, $type] = explode(':', $id);
-
-            return $this->render('admin/shop_collection_preview.html.twig', [
-                'component' => 'ShopCollection:'.ucfirst($type),
-                'props' => $request->query->all(),
-            ]);
-        }
-
-        $c = $entityManager->getRepository(ShopCollection::class)->find($id);
-
-        return $this->render('index/_partials/section.html.twig', [
-            'items' => array_map(fn ($i) => $i->getShop(), $c->getItems()->toArray()),
-            'section_title' => $c->getTitle(),
-            'view_all' => $translator->trans('index.view_all'),
-            'view_all_path' => '#',
-            'show_more' => false,
+        return $this->render('admin/shop_collection_preview.html.twig', [
+            'component' => 'ShopCollection:'.ucfirst($component),
+            'props' => $request->query->all(),
         ]);
     }
 
