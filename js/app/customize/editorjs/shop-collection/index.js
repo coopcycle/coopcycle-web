@@ -1,7 +1,11 @@
+import React, { useEffect, useState } from 'react'
+import { createRoot } from 'react-dom/client'
+
 import Swiper from 'swiper'
 import { Navigation } from 'swiper/modules'
 import _ from 'lodash'
 import qs from 'qs'
+import { Cascader } from 'antd';
 
 const httpClient = new window._auth.httpClient();
 
@@ -41,34 +45,67 @@ const swiperOpts = {
   observeParents: true,
 }
 
-const sectionTypes = [
-  {
-    label: 'New',
-    component: 'newest'
-  },
-  {
-    label: 'Featured',
-    component: 'featured'
-  },
-  {
-    label: 'Exclusive',
-    component: 'exclusive'
-  },
-  {
-    label: 'Cuisine',
-    component: 'cuisine',
-    args: ['cuisine']
-  },
-]
+const ComponentCascader = ({ onChange }) => {
 
-function hasArgs(component) {
-  const hash = _.keyBy(sectionTypes, 'component');
-  return !!hash[component]?.args
-}
+  // const [isLoaded, setIsLoaded] = useState(false)
+  const [options, setOptions] = useState([])
 
-function getArgs(component) {
-  const hash = _.keyBy(sectionTypes, 'component');
-  return hash[component]?.args || []
+  useEffect(() => {
+
+    async function fetchCollections() {
+      const { response, error } = await httpClient.get('/api/shop_collections');
+      const collections = response['hydra:member']
+
+      const otherOptions = []
+      if (collections.length > 0) {
+        otherOptions.push({
+          label: 'Custom',
+          value: 'custom',
+          children: collections.map((c) => ({
+            label: c.title,
+            value: qs.stringify({ slug: c.slug }),
+          }))
+        })
+      }
+
+      setOptions([
+        {
+          label: 'New',
+          value: 'newest'
+        },
+        {
+          label: 'Featured',
+          value: 'featured'
+        },
+        {
+          label: 'Exclusive',
+          value: 'exclusive'
+        },
+        ...otherOptions
+        // {
+        //   label: 'Cuisine',
+        //   component: 'cuisine',
+        //   args: ['cuisine']
+        // },
+      ])
+    }
+
+    console.log('Loading collections...')
+    fetchCollections()
+
+  }, [setOptions]);
+
+  if (options.length === 0) {
+    // TODO Show loader
+    return null;
+  }
+
+  return (
+    <Cascader
+      options={options}
+      onChange={onChange}
+      placeholder="Please select" />
+  )
 }
 
 export default class ShopCollection {
@@ -86,41 +123,12 @@ export default class ShopCollection {
     this.config = config;
   }
 
-  addInputsForArg(argName, wrapper, onChange) {
-    console.log(`Adding inputs for arg "${argName}"`)
-
-    if (argName === 'cuisine') {
-      const select = document.createElement('select');
-      select.name = argName;
-      // select.classList.add('form-control')
-
-      select.addEventListener('change', (e) => {
-        onChange({ cuisine: e.currentTarget.value })
-      })
-
-      const defaultOption = document.createElement('option');
-      defaultOption.innerHTML = 'Select...'
-
-      select.appendChild(defaultOption)
-
-      this.config.cuisines.forEach((c) => {
-        const option = document.createElement('option');
-        option.innerHTML = c.label
-        option.value = c.value
-        select.appendChild(option)
-      })
-      wrapper.appendChild(select)
-    }
-  }
-
-  showPreview(component, wrapper, args = {}) {
+  showPreview(wrapper, component, args = '') {
 
     wrapper.classList.add('cdx-loader')
 
-    const queryString = !_.isEmpty(args) ? `?${qs.stringify(args)}` : '';
-
     // /admin/shop-collections/{id}/preview
-    httpClient.get(`//${window.location.host}/admin/shop-collections/preview/${component}${queryString}`).then(({ response, error }) => {
+    httpClient.get(`//${window.location.host}/admin/shop-collections/preview/${component}?${args}`).then(({ response, error }) => {
 
       if (error) {
         return;
@@ -146,75 +154,18 @@ export default class ShopCollection {
     const wrapper = document.createElement('div');
     wrapper.style.marginBottom = '20px'
 
-    const select = document.createElement('select');
-    // select.classList.add('form-control')
+    const cascader = document.createElement('div')
+    createRoot(cascader).render(<ComponentCascader onChange={(value) => {
+      const [ component, args ] = value
+      this.showPreview(wrapper, component, args)
+    }} />)
 
-    const defaultOption = document.createElement('option');
-    defaultOption.innerHTML = 'Select...'
-
-    select.appendChild(defaultOption)
-
-    sectionTypes.forEach((s) => {
-      const option = document.createElement('option');
-      option.innerHTML = s.label
-      option.value = s.component
-      select.appendChild(option)
-    })
-
-    let collections = [];
-
-    wrapper.classList.add('cdx-loader')
-
-    httpClient.get('/api/shop_collections').then(({ response, error }) => {
-      collections = response['hydra:member']
-
-      response['hydra:member'].forEach((c) => {
-        const option = document.createElement('option');
-        option.innerHTML = c.title
-        option.value = 'custom'
-        option.setAttribute('data-args', JSON.stringify({ slug: c.slug }))
-
-        select.appendChild(option)
-        wrapper.classList.remove('cdx-loader')
-      })
-    })
-
-    select.addEventListener('change', (e) => {
-
-      const selectedValue = e.currentTarget.value;
-
-      console.log(`Selected ${selectedValue}`)
-
-      let args = {}
-      if (selectedValue === 'custom') {
-        const selectedOption = e.currentTarget.options[e.currentTarget.selectedIndex]
-        args = JSON.parse(selectedOption.dataset.args)
-      }
-
-      if (hasArgs(selectedValue)) {
-
-        getArgs(selectedValue).forEach((argName) => {
-          this.addInputsForArg(argName, wrapper, (args) => {
-            this.showPreview(selectedValue, wrapper, args)
-          })
-        })
-
-        return;
-
-      }
-
-      this.showPreview(selectedValue, wrapper, args)
-
-    })
-
-    wrapper.appendChild(select)
+    wrapper.appendChild(cascader)
 
     return wrapper;
   }
 
   save(blockContent) {
-    return {
-      url: blockContent.value
-    }
+    return {}
   }
 }
