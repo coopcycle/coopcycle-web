@@ -45,7 +45,7 @@ const swiperOpts = {
   observeParents: true,
 }
 
-const ComponentCascader = ({ onChange }) => {
+const ComponentCascader = ({ cuisines, onChange }) => {
 
   // const [isLoaded, setIsLoaded] = useState(false)
   const [options, setOptions] = useState([])
@@ -81,12 +81,15 @@ const ComponentCascader = ({ onChange }) => {
           label: 'Exclusive',
           value: 'exclusive'
         },
+        {
+          label: 'Cuisine',
+          value: 'cuisine',
+          children: cuisines.map(({ label, value }) => ({
+            label,
+            value: qs.stringify({ cuisine: value })
+          }))
+        },
         ...otherOptions
-        // {
-        //   label: 'Cuisine',
-        //   component: 'cuisine',
-        //   args: ['cuisine']
-        // },
       ])
     }
 
@@ -141,9 +144,6 @@ export default class ShopCollection {
       const swiper = new Swiper(collWrapper.querySelector('.swiper'), swiperOpts);
 
       wrapper.classList.remove('cdx-loader')
-
-      // TODO We can also keep the select, and update on change
-      // select.remove()
     })
   }
 
@@ -155,10 +155,14 @@ export default class ShopCollection {
     wrapper.style.marginBottom = '20px'
 
     const cascader = document.createElement('div')
-    createRoot(cascader).render(<ComponentCascader onChange={(value) => {
-      const [ component, args ] = value
-      this.showPreview(wrapper, component, args)
-    }} />)
+    createRoot(cascader).render(
+      <ComponentCascader
+        cuisines={this.config.cuisines}
+        onChange={(value) => {
+          const [ component, args ] = value
+          this.showPreview(wrapper, component, args)
+        }} />
+    )
 
     wrapper.appendChild(cascader)
 
