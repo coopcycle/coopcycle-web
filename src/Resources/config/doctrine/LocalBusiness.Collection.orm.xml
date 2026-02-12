@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
+  <entity name="AppBundle\Entity\LocalBusiness\Collection" table="shop_collection">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="title" type="text" column="title" nullable="false"/>
+    <field name="subtitle" type="text" column="subtitle" nullable="true"/>
+    <field name="slug" type="string" length="156" unique="true">
+      <gedmo:slug unique="true" updatable="false" separator="-" fields="title" />
+    </field>
+    <field name="createdAt" type="datetime" column="created_at">
+      <gedmo:timestampable on="create"/>
+    </field>
+    <field name="updatedAt" type="datetime" column="updated_at">
+      <gedmo:timestampable on="update"/>
+    </field>
+    <one-to-many field="items" target-entity="AppBundle\Entity\LocalBusiness\CollectionItem" mapped-by="collection" orphan-removal="true">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
+  </entity>
+</doctrine-mapping>
