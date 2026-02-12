@@ -2582,6 +2582,26 @@ class AdminController extends AbstractController
         ]);
     }
 
+    public function customizeHomepageAction(TranslatorInterface $translator, Request $request)
+    {
+        $isDemo = $this->getParameter('is_demo');
+
+        if ($isDemo) {
+            throw $this->createNotFoundException();
+        }
+
+        $cuisines = $this->entityManager->getRepository(LocalBusiness::class)->findCuisinesByFilters();
+
+        return $this->render('admin/customize_homepage.html.twig', $this->auth([
+            'cuisines' => array_map(function ($c) use ($translator) {
+                return [
+                    'label' => $translator->trans($c->getName(), [], 'cuisines'),
+                    'value' => $c->getName(),
+                ];
+            }, $cuisines)
+        ]));
+    }
+
     private function handleHubForm(Hub $hub, Request $request)
     {
         $form = $this->createForm(HubType::class, $hub);
@@ -3063,6 +3083,33 @@ class AdminController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         return $this->render('admin/invoicing.html.twig', $this->auth([]));
+    }
+
+    #[Route(path: '/admin/shop-collections/{id}/preview', name: 'admin_shop_collection_preview')]
+    public function shopCollectionPreviewAction($id,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
+        Request $request)
+    {
+        if (!is_numeric($id) && str_starts_with($id, 'auto:')) {
+
+            [$auto, $type] = explode(':', $id);
+
+            return $this->render('admin/shop_collection_preview.html.twig', [
+                'component' => 'ShopCollection:'.ucfirst($type),
+                'props' => $request->query->all(),
+            ]);
+        }
+
+        $c = $entityManager->getRepository(ShopCollection::class)->find($id);
+
+        return $this->render('index/_partials/section.html.twig', [
+            'items' => array_map(fn ($i) => $i->getShop(), $c->getItems()->toArray()),
+            'section_title' => $c->getTitle(),
+            'view_all' => $translator->trans('index.view_all'),
+            'view_all_path' => '#',
+            'show_more' => false,
+        ]);
     }
 
     public function customizeShopCollectionsAction(EntityManagerInterface $entityManager)
