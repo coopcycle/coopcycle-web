@@ -44,19 +44,19 @@ const swiperOpts = {
 const sectionTypes = [
   {
     label: 'New',
-    component: 'auto:newest'
+    component: 'newest'
   },
   {
     label: 'Featured',
-    component: 'auto:featured'
+    component: 'featured'
   },
   {
     label: 'Exclusive',
-    component: 'auto:exclusive'
+    component: 'exclusive'
   },
   {
     label: 'Cuisine',
-    component: 'auto:cuisine',
+    component: 'cuisine',
     args: ['cuisine']
   },
 ]
@@ -113,15 +113,14 @@ export default class ShopCollection {
     }
   }
 
-  showPreview(selectedValue, wrapper, args = {}) {
-    const identifier = !selectedValue.startsWith('auto:') ? selectedValue.match(/([0-9]*)$/gm)[0] : selectedValue;
+  showPreview(component, wrapper, args = {}) {
 
     wrapper.classList.add('cdx-loader')
 
     const queryString = !_.isEmpty(args) ? `?${qs.stringify(args)}` : '';
 
     // /admin/shop-collections/{id}/preview
-    httpClient.get(`//${window.location.host}/admin/shop-collections/${identifier}/preview${queryString}`).then(({ response, error }) => {
+    httpClient.get(`//${window.location.host}/admin/shop-collections/preview/${component}${queryString}`).then(({ response, error }) => {
 
       if (error) {
         return;
@@ -168,10 +167,13 @@ export default class ShopCollection {
 
     httpClient.get('/api/shop_collections').then(({ response, error }) => {
       collections = response['hydra:member']
+
       response['hydra:member'].forEach((c) => {
         const option = document.createElement('option');
         option.innerHTML = c.title
-        option.value = c['@id']
+        option.value = 'custom'
+        option.setAttribute('data-args', JSON.stringify({ slug: c.slug }))
+
         select.appendChild(option)
         wrapper.classList.remove('cdx-loader')
       })
@@ -182,6 +184,12 @@ export default class ShopCollection {
       const selectedValue = e.currentTarget.value;
 
       console.log(`Selected ${selectedValue}`)
+
+      let args = {}
+      if (selectedValue === 'custom') {
+        const selectedOption = e.currentTarget.options[e.currentTarget.selectedIndex]
+        args = JSON.parse(selectedOption.dataset.args)
+      }
 
       if (hasArgs(selectedValue)) {
 
@@ -195,7 +203,7 @@ export default class ShopCollection {
 
       }
 
-      this.showPreview(selectedValue, wrapper)
+      this.showPreview(selectedValue, wrapper, args)
 
     })
 
