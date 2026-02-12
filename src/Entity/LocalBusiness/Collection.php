@@ -54,6 +54,7 @@ class Collection
 
     private string $subtitle;
 
+    #[Groups(['shop_collection'])]
     private string $slug;
 
     public function __construct()
@@ -79,6 +80,11 @@ class Collection
     public function getTitle()
     {
         return $this->title;
+    }
+
+    public function getSlug()
+    {
+        return $this->slug;
     }
 
     public function addShop(LocalBusiness $shop)
