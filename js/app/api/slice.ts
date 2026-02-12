@@ -329,6 +329,16 @@ export const apiSlice = createApi({
       transformResponse: (response: HydraCollection<Incident>) =>
         response['hydra:member'],
     }),
+    // TODO Add types
+    updateShopCollection: builder.mutation({
+      query({ '@id': uri, ...body }) {
+        return {
+          url: uri,
+          method: 'PUT',
+          body,
+        };
+      },
+    }),
   }),
 });
 
@@ -368,4 +378,5 @@ export const {
   useGetUserQuery,
   useGetTaskEventsQuery,
   useGetTaskIncidentsQuery,
+  useUpdateShopCollectionMutation,
 } = apiSlice;

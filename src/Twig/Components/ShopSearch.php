@@ -43,6 +43,9 @@ class ShopSearch
     #[LiveProp(writable: true, url: true)]
     public string $type = '';
 
+    #[LiveProp(writable: true, url: true)]
+    public string $collection = '';
+
     #[LiveProp(writable: true)]
     public int $page = 1;
 
@@ -134,6 +137,10 @@ class ShopSearch
             if ($typeForKey = LocalBusiness::getTypeForKey($this->type)) {
                 $filters['type'] = $typeForKey;
             }
+        }
+
+        if (!empty($this->collection)) {
+            $filters['collection'] = $this->collection;
         }
 
         return $filters;

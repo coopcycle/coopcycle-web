@@ -52,6 +52,10 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
 
         $data = $this->normalizer->normalize($object, $format, $context);
 
+        if (is_string($data)) {
+            return $data;
+        }
+
         $data['@type'] = $object->getType();
 
         $imagePath = $this->uploaderHelper->asset($object, 'imageFile');

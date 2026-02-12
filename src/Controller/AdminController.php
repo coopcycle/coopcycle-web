@@ -34,6 +34,7 @@ use AppBundle\Entity\BusinessAccountInvitation;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Entity\LocalBusiness\Collection as ShopCollection;
 use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\BusinessRestaurantGroup;
@@ -3062,5 +3063,16 @@ class AdminController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         return $this->render('admin/invoicing.html.twig', $this->auth([]));
+    }
+
+    public function customizeShopCollectionsAction(EntityManagerInterface $entityManager)
+    {
+        $collections = $entityManager->getRepository(ShopCollection::class)->findAll();
+        $shops = $entityManager->getRepository(LocalBusiness::class)->findAll();
+
+        return $this->render('admin/customize_shop_collection.html.twig', $this->auth([
+            'collections' => $collections,
+            'shops' => $shops,
+        ]));
     }
 }

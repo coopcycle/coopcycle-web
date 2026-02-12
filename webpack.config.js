@@ -28,6 +28,7 @@ Encore
   .addEntry('business-account', './js/app/business-account/index.js')
   .addEntry('common', './js/app/common.js')
   .addEntry('customize-form', './js/app/customize/form.js')
+  .addEntry('customize-shop-collection', './js/app/customize/shop-collection.js')
   .addEntry('dashboard', './js/app/dashboard/index.js')
   .addEntry('datadog', './js/app/datadog.ts')
   .addEntry('delivery-form', './js/app/delivery/form.js')
