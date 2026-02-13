@@ -77,6 +77,7 @@ class CheckStatusCommand extends Command
         $qb->innerJoin(Order::class, 'o', Join::WITH, 'p.order = o.id');
 
         $qb->andWhere('o.state = :fulfilled')->setParameter('fulfilled', Order::STATE_FULFILLED);
+        $qb->andWhere('p.state = :completed')->setParameter('completed', Payment::STATE_COMPLETED);
         $qb->andWhere('RIGHT_EXISTS_ON_LEFT(CAST(p.details AS jsonb), \'paygreen_payment_order_id\') = TRUE');
 
         $qb->andWhere('o.createdAt BETWEEN :start AND :end');
@@ -98,6 +99,10 @@ class CheckStatusCommand extends Command
             $data = json_decode($response->getBody()->getContents(), true);
 
             $paymentOrder = $data['data'];
+
+            if ($paymentOrder['status'] === 'payment_order.successed') {
+                continue;
+            }
 
             $table->addRow([
                 $row['createdAt']->format(\DateTime::ATOM),
