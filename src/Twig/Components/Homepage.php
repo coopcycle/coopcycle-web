@@ -8,6 +8,7 @@ use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Entity\UI\Block;
 use AppBundle\Form\DeliveryEmbedType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -83,6 +84,11 @@ class Homepage
         }
 
         return $sections;
+    }
+
+    public function getBlocks(): array
+    {
+        return $this->entityManager->getRepository(Block::class)->findAll();
     }
 
     public function getDeliveryForm(): ?DeliveryForm

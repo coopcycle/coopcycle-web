@@ -1,3 +1,15 @@
+{% for block in this.blocks %}
+  {% if block.type == 'banner' %}
+  <section style="background-color: {{ block.data.backgroundColor }};">
+    <div class="container">
+      <div class="py-4">
+      {{ block.data.markdown|json_decode|markdown_to_html }}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+{% endfor %}
+
 {% for section in this.sections %}
   {{ component(section.component, section.props ?? []) }}
 {% endfor %}
