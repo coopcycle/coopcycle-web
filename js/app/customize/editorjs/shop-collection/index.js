@@ -45,7 +45,7 @@ const swiperOpts = {
   observeParents: true,
 }
 
-const ComponentCascader = ({ cuisines, onChange }) => {
+const ComponentCascader = ({ cuisines, onChange, defaultValue }) => {
 
   // const [isLoaded, setIsLoaded] = useState(false)
   const [options, setOptions] = useState([])
@@ -105,6 +105,7 @@ const ComponentCascader = ({ cuisines, onChange }) => {
 
   return (
     <Cascader
+      defaultValue={defaultValue}
       options={options}
       onChange={onChange}
       placeholder="Please select" />
@@ -124,9 +125,12 @@ export default class ShopCollection {
   constructor({ data, config }){
     this.data = data;
     this.config = config;
+    console.log(this)
   }
 
   showPreview(wrapper, component, args = '') {
+
+    console.log('showPreview', component, args)
 
     wrapper.classList.add('cdx-loader')
 
@@ -147,9 +151,26 @@ export default class ShopCollection {
     })
   }
 
+  _getDefaultValue() {
+    if (this.data && this.data.component) {
+
+      const value = [
+        this.data.component
+      ];
+
+      if (_.isObject(this.data.args) && _.size(this.data.args) > 0) {
+        value.push(qs.stringify(this.data.args))
+      }
+
+      return value
+    }
+
+    return []
+  }
+
   render() {
 
-    console.log('render', this.config)
+    console.log('render', this.data)
 
     const wrapper = document.createElement('div');
     wrapper.style.marginBottom = '20px'
@@ -157,12 +178,23 @@ export default class ShopCollection {
     const cascader = document.createElement('div')
     createRoot(cascader).render(
       <ComponentCascader
+        defaultValue={ this._getDefaultValue()  }
         cuisines={this.config.cuisines}
         onChange={(value) => {
           const [ component, args ] = value
           this.showPreview(wrapper, component, args)
+
+          this._data = {
+            component,
+            args: args ? qs.parse(args) : {}
+          }
         }} />
     )
+
+    if (this.data.component) {
+      this.showPreview(wrapper, this.data.component,
+        _.isObject(this.data.args) && _.size(this.data.args) > 0 ? qs.stringify(this.data.args) : '')
+    }
 
     wrapper.appendChild(cascader)
 
@@ -170,6 +202,6 @@ export default class ShopCollection {
   }
 
   save(blockContent) {
-    return {}
+    return this._data
   }
 }

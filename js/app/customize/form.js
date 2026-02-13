@@ -83,6 +83,7 @@ const homepageEditorEl = document.getElementById('homepage-editor')
 if (homepageEditorEl) {
   createRoot(homepageEditorEl).render(
     <HomepageEditor
+      homepage={JSON.parse(homepageEditorEl.dataset.homepage)}
       cuisines={JSON.parse(homepageEditorEl.dataset.cuisines)}
       shopTypes={JSON.parse(homepageEditorEl.dataset.shopTypes)}
     />
