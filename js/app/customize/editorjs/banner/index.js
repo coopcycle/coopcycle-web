@@ -59,10 +59,13 @@ export default class Banner {
   }
 
   constructor({ data, config }) {
+
+    console.log('CONSTRUCTOR', data)
+
     this.config = config;
     this.backgroundColor = data?.backgroundColor || '#1677ff'
-    // this.markdown = data?.markdown ? JSON.parse(data?.markdown) : '# Hello World'
-    this.markdown = data?.markdown || '# Hello World'
+    this.markdown = data?.markdown ? JSON.parse(data?.markdown) : '# Hello World'
+    // this.markdown = data?.markdown || '# Hello World'
   }
 
   render() {
