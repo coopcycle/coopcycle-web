@@ -52,6 +52,7 @@
     "@hotwired/stimulus": "^3.2.2",
     "@hotwired/turbo": "^7.0.1",
     "@mapbox/polyline": "^1.1.0",
+    "@mdxeditor/editor": "^3.52.3",
     "@nivo/core": "^0.87.0",
     "@nivo/heatmap": "^0.87.0",
     "@react-css/grid": "^2.2.0",

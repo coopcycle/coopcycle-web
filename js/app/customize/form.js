@@ -22,6 +22,8 @@ import '../restaurant/list.scss'
 
 import "dropzone/dist/dropzone.css"
 
+import '@mdxeditor/editor/style.css'
+
 Dropzone.autoDiscover = false
 
 document.querySelectorAll('textarea[data-preview]').forEach((textarea) => {
@@ -89,32 +91,3 @@ if (homepageEditorEl) {
     />
   )
 }
-
-/*
-const editorEl = document.getElementById('editorjs');
-
-if (editorEl) {
-  const editor = new EditorJS({
-    holder: 'editorjs',
-    tools: {
-      shop_collection: {
-        class: ShopCollection,
-        config: {
-          cuisines: JSON.parse(editorEl.dataset.cuisines),
-          shopTypes: JSON.parse(editorEl.dataset.shopTypes),
-        }
-      }
-    },
-    autofocus: true,
-    onChange: (api, event) => {
-      editor.save()
-        .then((savedData) => {
-          // console.log('SAVED', savedData);
-        })
-        .catch((error) => {
-          console.log('EditorJS save error', error)
-        })
-    }
-  });
-}
-*/
