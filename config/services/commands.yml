@@ -212,3 +212,7 @@ services:
         proximus: '@AppBundle\Transporter\Proximus\ProximusTransformer'
     tags:
       - { name: 'console.command', command: 'coopcycle:deliveries:import' }
+
+  AppBundle\Command\Paygreen\CheckStatusCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:paygreen:check-status' }

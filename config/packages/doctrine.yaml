@@ -63,6 +63,7 @@ doctrine:
                 JSON_AGG: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\JsonAgg
                 JSON_BUILD_OBJECT: AppBundle\Doctrine\Functions\JsonBuildObject
                 DATE_SUBTRACT: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\DateSubtract
+                RIGHT_EXISTS_ON_LEFT: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\TheRightExistsOnTheLeft
             datetime_functions:
                 date: DoctrineExtensions\Query\Mysql\Date
         filters:
