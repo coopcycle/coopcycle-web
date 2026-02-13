@@ -4,8 +4,10 @@ import { Button, Flex } from 'antd';
 import EditorJS from '@editorjs/editorjs';
 import ShopCollection from './editorjs/shop-collection'
 
+const httpClient = new window._auth.httpClient();
+
 // https://dev.to/sumankalia/how-to-integrate-editorjs-in-reactjs-2l6l
-const Editor = forwardRef(({ cuisines, shopTypes }, ref) => {
+const Editor = forwardRef(({ homepage, cuisines, shopTypes }, ref) => {
 
   // const ref = useRef();
 
@@ -26,21 +28,24 @@ const Editor = forwardRef(({ cuisines, shopTypes }, ref) => {
             }
           }
         },
-        autofocus: true,
+        autofocus: false,
         // Height of Editor's bottom area that allows to set focus on the last Block
         minHeight: 200,
         onReady: () => {
           ref.current = editor;
         },
-        onChange: (api, event) => {
-          editor.save()
-            .then((savedData) => {
-              console.log('SAVED', savedData);
-            })
-            .catch((error) => {
-              console.log('EditorJS save error', error)
-            })
+        data: {
+          blocks: homepage.blocks
         }
+        // onChange: (api, event) => {
+        //   editor.save()
+        //     .then((savedData) => {
+        //       console.log('SAVED', savedData);
+        //     })
+        //     .catch((error) => {
+        //       console.log('EditorJS save error', error)
+        //     })
+        // }
       });
     }
 
@@ -56,18 +61,19 @@ const Editor = forwardRef(({ cuisines, shopTypes }, ref) => {
   )
 })
 
-export default function({ cuisines, shopTypes }) {
+export default function({ homepage, cuisines, shopTypes }) {
 
   const ref = useRef();
 
   return (
     <div>
-      <Editor ref={ref} cuisines={cuisines} shopTypes={shopTypes} />
+      <Editor ref={ref} homepage={homepage} cuisines={cuisines} shopTypes={shopTypes} />
       <Flex justify="flex-end">
         <Button type="primary" onClick={async () => {
           const data = await ref.current.save()
-          console.log('Saving editor state', data)
-        }}>Primary Button</Button>
+          const { response } = await httpClient.put('/api/ui/homepage', { blocks: data.blocks });
+          console.log(response)
+        }}>Save</Button>
       </Flex>
     </div>
   )
