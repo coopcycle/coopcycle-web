@@ -45,57 +45,80 @@ const swiperOpts = {
   observeParents: true,
 }
 
+let optionsCache = []
+let isFetchingCollections = false
+let fetchCollectionsListeners = []
+
+async function fetchCollections(cuisines, setOptions) {
+
+  if (optionsCache.length > 0) {
+    setOptions(optionsCache)
+    return
+  }
+
+  // If another fetch is already running,
+  // stack a listener that will be called later
+  if (isFetchingCollections) {
+    fetchCollectionsListeners.push(setOptions)
+    return
+  }
+
+  isFetchingCollections = true
+
+  const { response, error } = await httpClient.get('/api/shop_collections');
+  const collections = response['hydra:member']
+
+  isFetchingCollections = false
+
+  const otherOptions = []
+  if (collections.length > 0) {
+    otherOptions.push({
+      label: 'Custom',
+      value: 'custom',
+      children: collections.map((c) => ({
+        label: c.title,
+        value: qs.stringify({ slug: c.slug }),
+      }))
+    })
+  }
+
+  const options = [
+    {
+      label: 'New',
+      value: 'newest'
+    },
+    {
+      label: 'Featured',
+      value: 'featured'
+    },
+    {
+      label: 'Exclusive',
+      value: 'exclusive'
+    },
+    {
+      label: 'Cuisine',
+      value: 'cuisine',
+      children: cuisines.map(({ label, value }) => ({
+        label,
+        value: qs.stringify({ cuisine: value })
+      }))
+    },
+    ...otherOptions
+  ]
+
+  optionsCache = options
+
+  setOptions(options)
+
+  fetchCollectionsListeners.forEach((listener) => listener.call(null, options))
+}
+
 const ComponentCascader = ({ cuisines, onChange, defaultValue }) => {
 
-  // const [isLoaded, setIsLoaded] = useState(false)
   const [options, setOptions] = useState([])
 
   useEffect(() => {
-
-    async function fetchCollections() {
-      const { response, error } = await httpClient.get('/api/shop_collections');
-      const collections = response['hydra:member']
-
-      const otherOptions = []
-      if (collections.length > 0) {
-        otherOptions.push({
-          label: 'Custom',
-          value: 'custom',
-          children: collections.map((c) => ({
-            label: c.title,
-            value: qs.stringify({ slug: c.slug }),
-          }))
-        })
-      }
-
-      setOptions([
-        {
-          label: 'New',
-          value: 'newest'
-        },
-        {
-          label: 'Featured',
-          value: 'featured'
-        },
-        {
-          label: 'Exclusive',
-          value: 'exclusive'
-        },
-        {
-          label: 'Cuisine',
-          value: 'cuisine',
-          children: cuisines.map(({ label, value }) => ({
-            label,
-            value: qs.stringify({ cuisine: value })
-          }))
-        },
-        ...otherOptions
-      ])
-    }
-
-    console.log('Loading collections...')
-    fetchCollections()
-
+    fetchCollections(cuisines, setOptions)
   }, [setOptions]);
 
   if (options.length === 0) {
@@ -192,6 +215,7 @@ export default class ShopCollection {
     )
 
     if (this.data.component) {
+      this._data = this.data
       this.showPreview(wrapper, this.data.component,
         _.isObject(this.data.args) && _.size(this.data.args) > 0 ? qs.stringify(this.data.args) : '')
     }
