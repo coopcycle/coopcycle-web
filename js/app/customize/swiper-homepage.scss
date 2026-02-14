@@ -8,6 +8,11 @@
     // Make all slides same height
     // https://github.com/nolimits4web/swiper/issues/2372#issuecomment-349004052
     height: auto;
+
+    // TODO
+    // Enable only when in edit mode
+    overflow: inherit;
+
     > a {
       text-decoration: inherit;
       color: inherit;
@@ -32,6 +37,11 @@
         flex-direction: column;
         justify-content: space-between;
         align-items: flex-start;
+        .btn {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
       }
       &-right {
         width: calc(100% / 3);
@@ -57,16 +67,23 @@
         }
       }
     }
+    &.swiper-slide-editing {
+      margin-top: 2em;
+    }
   }
   .swiper-slide-toolbar {
     position: absolute;
     z-index: 1;
-    right: 0.5em;
-    top: 0.5em;
+    right: 0;
+    top: -0.5em;
+    background: $gray-200;
+    border-radius: 24px;
+    padding: 0.5em;
   }
   .swiper-image-upload {
     position: absolute;
     top: 50%;
     left: 50%;
+    transform: translate(-50%, -50%);
   }
 }

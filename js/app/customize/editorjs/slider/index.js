@@ -14,6 +14,7 @@ import ContentEditable from 'react-contenteditable'
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard';
 import XHR from '@uppy/xhr-upload';
+import { ArrowRight } from 'lucide-react';
 
 const LastSlideContent = ({ onClick }) => {
 
@@ -127,6 +128,7 @@ const SlideContent = ({ uploadEndpoint, slide, index, onChange }) => {
               html={buttonText.current}
               onBlur={handleButtonTextBlur}
               onChange={handleButtonTextChange} />
+            <ArrowRight size={12} className="ml-2" />
           </button>
         </div>
         <div className="swiper-slide-content-right">
@@ -163,9 +165,33 @@ const SliderEditor = ({ defaultSlides, onChange, uploadEndpoint }) => {
         return (
           <SwiperSlide
             tag="li"
-            key={`slide-${index}`}>
+            key={`slide-${index}`}
+            className="swiper-slide-editing">
+            <SlideContent
+              uploadEndpoint={uploadEndpoint}
+              slide={slide}
+              index={index}
+              onChange={(s) => {
+                console.log(`Slide ${index} has changed`, s)
+                const newSlides = [...slides]
+                newSlides.splice(index, 1, {
+                  ...slides[index],
+                  ...s,
+                })
+                setSlides(newSlides)
+              }} />
             <span className="swiper-slide-toolbar">
               <Flex>
+                <Tooltip title="Color">
+                  <ColorPicker defaultValue={ slide.backgroundColor || '#ffffff' } size="small" onChange={(color) => {
+                    const newSlides = [...slides]
+                      newSlides.splice(index, 1, {
+                        ...slides[index],
+                        backgroundColor: color.toHexString()
+                    })
+                    setSlides(newSlides)
+                  }} />
+                </Tooltip>
                 <Tooltip title="Link">
                   <Popover
                     title="Link"
@@ -185,16 +211,6 @@ const SliderEditor = ({ defaultSlides, onChange, uploadEndpoint }) => {
                     <Button type="text" size="small" shape="circle" icon={<LinkOutlined />} />
                   </Popover>
                 </Tooltip>
-                <Tooltip title="Color">
-                  <ColorPicker defaultValue={ slide.backgroundColor || '#ffffff' } size="small" onChange={(color) => {
-                    const newSlides = [...slides]
-                      newSlides.splice(index, 1, {
-                        ...slides[index],
-                        backgroundColor: color.toHexString()
-                    })
-                    setSlides(newSlides)
-                  }} />
-                </Tooltip>
                 <Tooltip title="Delete">
                   <Button type="text" size="small" shape="circle" icon={<CloseOutlined />} onClick={() => {
                     const newSlides = [...slides]
@@ -204,19 +220,6 @@ const SliderEditor = ({ defaultSlides, onChange, uploadEndpoint }) => {
                 </Tooltip>
               </Flex>
             </span>
-            <SlideContent
-              uploadEndpoint={uploadEndpoint}
-              slide={slide}
-              index={index}
-              onChange={(s) => {
-                console.log(`Slide ${index} has changed`, s)
-                const newSlides = [...slides]
-                newSlides.splice(index, 1, {
-                  ...slides[index],
-                  ...s,
-                })
-                setSlides(newSlides)
-              }} />
           </SwiperSlide>
         )
       }) }

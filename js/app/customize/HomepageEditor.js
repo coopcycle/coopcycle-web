@@ -6,10 +6,8 @@ import ShopCollection from './editorjs/shop-collection'
 import Banner from './editorjs/banner'
 import Slider from './editorjs/slider'
 
-const httpClient = new window._auth.httpClient();
-
 // https://dev.to/sumankalia/how-to-integrate-editorjs-in-reactjs-2l6l
-const Editor = forwardRef(({ homepage, cuisines, shopTypes, uploadEndpoint }, ref) => {
+const Editor = forwardRef(({ homepage, cuisines, shopTypes, uploadEndpoint, ctaIcon }, ref) => {
 
   // const ref = useRef();
 
@@ -27,13 +25,14 @@ const Editor = forwardRef(({ homepage, cuisines, shopTypes, uploadEndpoint }, re
             config: {
               cuisines,
               shopTypes,
+              ctaIcon,
             }
           },
           banner: Banner,
           slider: {
             class: Slider,
             config: {
-              uploadEndpoint
+              uploadEndpoint,
             }
           }
         },
@@ -70,13 +69,14 @@ const Editor = forwardRef(({ homepage, cuisines, shopTypes, uploadEndpoint }, re
   )
 })
 
-export default function({ homepage, cuisines, shopTypes, uploadEndpoint }) {
+export default function({ homepage, cuisines, shopTypes, uploadEndpoint, ctaIcon }) {
 
   const ref = useRef();
+  const httpClient = new window._auth.httpClient();
 
   return (
     <div>
-      <Editor ref={ref} homepage={homepage} cuisines={cuisines} shopTypes={shopTypes} uploadEndpoint={uploadEndpoint} />
+      <Editor ref={ref} homepage={homepage} cuisines={cuisines} shopTypes={shopTypes} uploadEndpoint={uploadEndpoint} ctaIcon={ctaIcon} />
       <Flex justify="flex-end">
         <Button type="primary" onClick={async () => {
           const data = await ref.current.save()
