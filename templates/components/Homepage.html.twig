@@ -9,7 +9,7 @@
   </section>
   {% endif %}
   {% if block.type == 'slider' %}
-  <section>
+  <section class="pt-4">
     <div class="container-fluid">
       <div class="swiper swiper-homepage">
         <ol class="swiper-wrapper">
@@ -24,7 +24,11 @@
                     <span>{{ slide.buttonText }}</span>
                   </button>
                 </div>
-                <div class="swiper-slide-content-right"></div>
+                <div class="swiper-slide-content-right">
+                  {% if slide.image is defined and slide.image is not empty %}
+                    <img src="{{ slide.image }}" />
+                  {% endif %}
+                </div>
               </div>
             </a>
           </li>

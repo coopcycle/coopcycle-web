@@ -35,6 +35,16 @@
       }
       &-right {
         width: calc(100% / 3);
+        position: relative;
+        > img {
+          object-fit: cover;
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          right: 0;
+          height: 100%;
+          width: 100%;
+        }
       }
     }
     &.swiper-slide-last {
@@ -50,6 +60,7 @@
   }
   .swiper-slide-toolbar {
     position: absolute;
+    z-index: 1;
     right: 0.5em;
     top: 0.5em;
   }
