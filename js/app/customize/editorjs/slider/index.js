@@ -5,8 +5,9 @@ import {
   CloseOutlined,
   EditOutlined,
   PlusSquareOutlined,
+  LinkOutlined,
 } from '@ant-design/icons';
-import { ColorPicker, Button, Flex, Tooltip } from 'antd';
+import { ColorPicker, Button, Flex, Tooltip, Popover, Input } from 'antd';
 import sanitizeHtml from 'sanitize-html';
 import ContentEditable from 'react-contenteditable'
 
@@ -117,7 +118,26 @@ const SliderEditor = ({ defaultSlides, onChange }) => {
             key={`slide-${index}`}>
             <span className="swiper-slide-toolbar">
               <Flex>
-                <Tooltip title="Edit">
+                <Tooltip title="Link">
+                  <Popover
+                    title="Link"
+                    trigger="click"
+                    content={() => {
+                      return (
+                        <Input placeholder="http://" value={slide.href} onChange={(e) => {
+                          const newSlides = [...slides]
+                            newSlides.splice(index, 1, {
+                              ...slides[index],
+                              href: e.target.value
+                          })
+                          setSlides(newSlides)
+                        }} />
+                      )
+                    }}>
+                    <Button type="text" size="small" shape="circle" icon={<LinkOutlined />} />
+                  </Popover>
+                </Tooltip>
+                <Tooltip title="Color">
                   <ColorPicker defaultValue={ slide.backgroundColor || '#ffffff' } size="small" onChange={(color) => {
                     const newSlides = [...slides]
                       newSlides.splice(index, 1, {

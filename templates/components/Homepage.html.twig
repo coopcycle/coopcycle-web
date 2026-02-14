@@ -15,7 +15,7 @@
         <ol class="swiper-wrapper">
           {% for slide in block.data.slides %}
           <li class="swiper-slide">
-            <a href="#" style="background-color: {{ slide.backgroundColor}};">
+            <a href="{{ slide.href }}" target="_blank" style="background-color: {{ slide.backgroundColor}};">
               <div class="swiper-slide-content">
                 <div class="swiper-slide-content-left">
                   <h4>{{ slide.title }}</h4>
