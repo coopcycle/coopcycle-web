@@ -90,7 +90,11 @@ const SlideContent = ({ slide, index, onChange }) => {
               onChange={handleButtonTextChange} />
           </button>
         </div>
-        <div className="swiper-slide-content-right"></div>
+        <div className="swiper-slide-content-right">
+          { slide.image ? (
+            <img src={slide.image} />
+          ) : null}
+        </div>
       </div>
     </a>
   )
@@ -181,6 +185,8 @@ const SliderEditor = ({ defaultSlides, onChange }) => {
               text: 'New slide',
               buttonText: 'Learn more',
               backgroundColor: '#ffffff',
+              // image: null,
+              image: 'http://localhost/media/cache/restaurant_thumbnail/69/8d/698da5eeab00f.jpg',
             }
           ])
         }} />
@@ -208,6 +214,7 @@ export default class Slider {
         text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
         buttonText: 'Learn more',
         backgroundColor: '#ffffff',
+        image: null,
       },
       {
         href: '#',
@@ -215,6 +222,7 @@ export default class Slider {
         text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
         buttonText: 'Learn more',
         backgroundColor: '#ffffff',
+        image: null,
       },
     ]
   }
