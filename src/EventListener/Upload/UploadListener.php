@@ -15,6 +15,7 @@ use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints\Spreadsheet as AssertSpreadsheet;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
+use Liip\ImagineBundle\Service\FilterService;
 use Oneup\UploaderBundle\Event\PostPersistEvent;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -38,6 +39,7 @@ final class UploadListener
         private readonly IriConverterInterface $iriConverter,
         private readonly CacheInterface $appCache,
         private readonly ValidatorInterface $validator,
+        private readonly FilterService $imagineFilter,
         private readonly string $secret,
         private readonly bool $isDemo,
         private readonly LoggerInterface $logger)
@@ -94,6 +96,10 @@ final class UploadListener
 
         if ($type === 'tasks') {
             return $this->onTasksUpload($event);
+        }
+
+        if ($type === 'homepage_slide') {
+            return $this->onHomepageSlideUpload($event);
         }
 
         if ($type === 'restaurant' || $type === 'restaurant_banner') {
@@ -201,5 +207,22 @@ final class UploadListener
 
         $this->appCache->delete('banner_svg_stat');
         $this->appCache->delete('banner_svg');
+    }
+
+    private function onHomepageSlideUpload(PostPersistEvent $event)
+    {
+        $file = $event->getFile();
+        $fileSystem = $file->getFilesystem();
+
+        if ($this->isDemo) {
+            throw new UploadException('Slides can\'t be uploaded in demo mode');
+        }
+
+        $url = $this->imagineFilter->getUrlOfFilteredImage($file->getPathname(), 'homepage_slider_images_thumbnail');
+
+        $response = $event->getResponse();
+        $response['url'] = $url;
+
+        return $response;
     }
 }

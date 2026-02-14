@@ -6,10 +6,14 @@ import {
   EditOutlined,
   PlusSquareOutlined,
   LinkOutlined,
+  UploadOutlined,
 } from '@ant-design/icons';
 import { ColorPicker, Button, Flex, Tooltip, Popover, Input } from 'antd';
 import sanitizeHtml from 'sanitize-html';
 import ContentEditable from 'react-contenteditable'
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard';
+import XHR from '@uppy/xhr-upload';
 
 const LastSlideContent = ({ onClick }) => {
 
@@ -26,11 +30,46 @@ const LastSlideContent = ({ onClick }) => {
   )
 }
 
-const SlideContent = ({ slide, index, onChange }) => {
+const SlideContent = ({ uploadEndpoint, slide, index, onChange }) => {
 
   const title = useRef(slide.title);
   const text = useRef(slide.text);
   const buttonText = useRef(slide.buttonText);
+
+  const uniqueKey = `swiper-image-upload-button-${index}`
+
+  useEffect(() => {
+    console.log(`Configuring Uppy with ${uploadEndpoint} for slide ${index}`)
+    const uppy = new Uppy({
+      id: uniqueKey
+    })
+      .use(Dashboard, {
+        trigger: `#${uniqueKey}`,
+        inline: false,
+        target: 'body'
+      })
+      .use(XHR, {
+        endpoint: uploadEndpoint,
+        // Only send our own metadata fields.
+        allowedMetaFields: ['type', 'slide'],
+      });
+    uppy.on('file-added', (file) => {
+      const meta = {
+        type: 'homepage_slide',
+        slide: index,
+      }
+      console.log(`File added ${file.id}`, meta)
+      uppy.setFileMeta(file.id, meta);
+    });
+    uppy.on('upload-success', (file, response) => {
+      if (response.status === 200 && response.body?.url) {
+        onChange({
+          ...slide,
+          image: response.body?.url,
+        })
+      }
+    })
+  }, [])
 
   const handleTextChange = (e) => {
     text.current = e.target.value;
@@ -94,19 +133,24 @@ const SlideContent = ({ slide, index, onChange }) => {
           { slide.image ? (
             <img src={slide.image} />
           ) : null}
+          <span className="swiper-image-upload">
+            <Button id={uniqueKey} className="swiper-image-upload-button" shape="circle" icon={<UploadOutlined />} />
+          </span>
         </div>
       </div>
     </a>
   )
 }
 
-const SliderEditor = ({ defaultSlides, onChange }) => {
+const SliderEditor = ({ defaultSlides, onChange, uploadEndpoint }) => {
 
   const [slides, setSlides] = useState(defaultSlides)
 
   useEffect(() => {
     onChange(slides)
   }, [slides, onChange])
+
+  console.log('SliderEditor.render()')
 
   return (
     <Swiper
@@ -161,10 +205,11 @@ const SliderEditor = ({ defaultSlides, onChange }) => {
               </Flex>
             </span>
             <SlideContent
+              uploadEndpoint={uploadEndpoint}
               slide={slide}
               index={index}
               onChange={(s) => {
-                console.log(`Slide ${index} has changed`)
+                console.log(`Slide ${index} has changed`, s)
                 const newSlides = [...slides]
                 newSlides.splice(index, 1, {
                   ...slides[index],
@@ -185,8 +230,7 @@ const SliderEditor = ({ defaultSlides, onChange }) => {
               text: 'New slide',
               buttonText: 'Learn more',
               backgroundColor: '#ffffff',
-              // image: null,
-              image: 'http://localhost/media/cache/restaurant_thumbnail/69/8d/698da5eeab00f.jpg',
+              image: null,
             }
           ])
         }} />
@@ -235,6 +279,7 @@ export default class Slider {
     const sliderEditorEl = document.createElement('div');
 
     createRoot(sliderEditorEl).render(<SliderEditor
+      uploadEndpoint={this.config.uploadEndpoint}
       defaultSlides={this.slides}
       onChange={(slides) => {
         console.log('Slides updated', slides)

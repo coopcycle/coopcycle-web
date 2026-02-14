@@ -24,6 +24,9 @@ import "dropzone/dist/dropzone.css"
 
 import '@mdxeditor/editor/style.css'
 
+import '@uppy/core/css/style.min.css';
+import '@uppy/dashboard/css/style.min.css';
+
 Dropzone.autoDiscover = false
 
 document.querySelectorAll('textarea[data-preview]').forEach((textarea) => {
@@ -88,6 +91,7 @@ if (homepageEditorEl) {
       homepage={JSON.parse(homepageEditorEl.dataset.homepage)}
       cuisines={JSON.parse(homepageEditorEl.dataset.cuisines)}
       shopTypes={JSON.parse(homepageEditorEl.dataset.shopTypes)}
+      uploadEndpoint={homepageEditorEl.dataset.uploadEndpoint}
     />
   )
 }

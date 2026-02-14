@@ -11,7 +11,8 @@
     <div id="homepage-editor"
       data-homepage={{ homepage|serialize('jsonld', { groups: 'ui.homepage' })|e('html_attr') }}
       data-cuisines={{ cuisines|json_encode|e('html_attr') }}
-      data-shop-types={{ shop_types|json_encode|e('html_attr') }}></div>
+      data-shop-types={{ shop_types|json_encode|e('html_attr') }}
+      data-upload-endpoint={{ oneup_uploader_endpoint('homepage_slider')|e('html_attr') }}></div>
 {% endblock %}
 
 {% block styles %}
