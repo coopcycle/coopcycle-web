@@ -52,6 +52,12 @@
         width: calc(100% / 3);
       }
     }
+    &.swiper-slide-last {
+      > a {
+        display: flex;
+        justify-content: center;
+      }
+    }
   }
   .swiper-slide-toolbar {
     position: absolute;

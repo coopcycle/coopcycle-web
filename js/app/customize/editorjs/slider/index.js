@@ -1,4 +1,4 @@
-import React, { useEffect, useState, createRef } from 'react'
+import React, { useEffect, useState, createRef, useRef } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Swiper, SwiperSlide, useSwiper } from 'swiper/react';
 import {
@@ -8,6 +8,7 @@ import {
 } from '@ant-design/icons';
 import { Button, Flex, Tooltip } from 'antd';
 import sanitizeHtml from 'sanitize-html';
+import ContentEditable from 'react-contenteditable'
 
 const LastSlideContent = ({ onClick }) => {
 
@@ -19,7 +20,77 @@ const LastSlideContent = ({ onClick }) => {
       onClick()
       setTimeout(() => swiper.slideTo(swiper.slides.length, 500), 50)
     }}>
-      <PlusSquareOutlined />
+      <PlusSquareOutlined style={{ fontSize: '24px' }} />
+    </a>
+  )
+}
+
+const SlideContent = ({ slide, index, onChange }) => {
+
+  const title = useRef(slide.title);
+  const text = useRef(slide.text);
+  const buttonText = useRef(slide.buttonText);
+
+  const handleTextChange = (e) => {
+    text.current = e.target.value;
+    onChange({
+      ...slide,
+      text: e.target.value,
+    })
+  };
+
+  const handleTextBlur = () => {
+    // TODO Sanitize
+  };
+
+  const handleTitleChange = (e) => {
+    title.current = e.target.value;
+    onChange({
+      ...slide,
+      title: e.target.value,
+    })
+  };
+
+  const handleTitleBlur = () => {
+    // TODO Sanitize
+  };
+
+  const handleButtonTextChange = (e) => {
+    buttonText.current = e.target.value;
+    onChange({
+      ...slide,
+      buttonText: e.target.value,
+    })
+  };
+
+  const handleButtonTextBlur = () => {
+    // TODO Sanitize
+  };
+
+  return (
+    <a href="#">
+      <div className="swiper-slide-content">
+        <div className="swiper-slide-content-left">
+          <ContentEditable
+            tagName="h4"
+            html={title.current}
+            onBlur={handleTitleBlur}
+            onChange={handleTitleChange} />
+          <ContentEditable
+            tagName="p"
+            html={text.current}
+            onBlur={handleTextBlur}
+            onChange={handleTextChange} />
+          <button type="button" className="btn btn-xs">
+            <ContentEditable
+              tagName="span"
+              html={buttonText.current}
+              onBlur={handleButtonTextBlur}
+              onChange={handleButtonTextChange} />
+          </button>
+        </div>
+        <div className="swiper-slide-content-right"></div>
+      </div>
     </a>
   )
 }
@@ -38,8 +109,6 @@ const SliderEditor = ({ defaultSlides, onChange }) => {
       className="swiper-homepage"
       spaceBetween={20}
       slidesPerView={3}
-      onSlideChange={() => console.log('slide change')}
-      onSwiper={(swiper) => console.log(swiper)}
     >
       { slides.map((slide, index) => {
         return (
@@ -60,45 +129,22 @@ const SliderEditor = ({ defaultSlides, onChange }) => {
                 </Tooltip>
               </Flex>
             </span>
-            <a href="#">
-              <div className="swiper-slide-content">
-                <div className="swiper-slide-content-left">
-                  <h4
-                    contentEditable={true}
-                    suppressContentEditableWarning={true}
-                    onInput={(e) => {
-                      const newSlides = [...slides]
-                      newSlides.splice(index, 1, {
-                        ...slides[index],
-                        title: sanitizeHtml(e.target.innerText)
-                      })
-                      setSlides(newSlides)
-                    }}>{slide.title}</h4>
-                  <p
-                    contentEditable={true}
-                    suppressContentEditableWarning={true}
-                    onInput={(e) => {
-                      const newSlides = [...slides]
-                      newSlides.splice(index, 1, {
-                        ...slides[index],
-                        text: sanitizeHtml(e.target.innerText)
-                      })
-                      setSlides(newSlides)
-                    }}>{slide.text}</p>
-                  <button type="button" className="btn btn-xs">
-                    <span
-                      contentEditable={true}
-                      suppressContentEditableWarning={true}
-                      onInput={(e) => console.log('Edited', e.target.innerText)}>{slide.buttonText}</span>
-                  </button>
-                </div>
-                <div className="swiper-slide-content-right"></div>
-              </div>
-            </a>
+            <SlideContent
+              slide={slide}
+              index={index}
+              onChange={(s) => {
+                console.log(`Slide ${index} has changed`)
+                const newSlides = [...slides]
+                newSlides.splice(index, 1, {
+                  ...slides[index],
+                  ...s,
+                })
+                setSlides(newSlides)
+              }} />
           </SwiperSlide>
         )
       }) }
-      <SwiperSlide tag="li">
+      <SwiperSlide tag="li" className="swiper-slide-last">
         <LastSlideContent onClick={() => {
           setSlides([
             ...slides,
@@ -154,6 +200,7 @@ export default class Slider {
       defaultSlides={this.slides}
       onChange={(slides) => {
         console.log('Slides updated', slides)
+        this.slides = slides
       }} />)
 
     wrapper.appendChild(sliderEditorEl)
@@ -162,6 +209,8 @@ export default class Slider {
   }
 
   save(blockContent) {
-    return {}
+    return {
+      slides: this.slides
+    }
   }
 }
