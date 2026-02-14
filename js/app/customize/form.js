@@ -86,12 +86,14 @@ if (dzEl) {
 const homepageEditorEl = document.getElementById('homepage-editor')
 
 if (homepageEditorEl) {
+  // console.log(homepageEditorEl.dataset.ctaIcon)
   createRoot(homepageEditorEl).render(
     <HomepageEditor
       homepage={JSON.parse(homepageEditorEl.dataset.homepage)}
       cuisines={JSON.parse(homepageEditorEl.dataset.cuisines)}
       shopTypes={JSON.parse(homepageEditorEl.dataset.shopTypes)}
       uploadEndpoint={homepageEditorEl.dataset.uploadEndpoint}
+      ctaIcon={homepageEditorEl.dataset.ctaIcon}
     />
   )
 }

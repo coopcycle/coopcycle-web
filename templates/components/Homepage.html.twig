@@ -1,15 +1,21 @@
+<div class="pt-4">
 {% for block in this.blocks %}
   {% if block.type == 'banner' %}
-  <section style="background-color: {{ block.data.backgroundColor }};">
+  <section class="mb-4" style="background-color: {{ block.data.backgroundColor }};">
     <div class="container">
-      <div class="py-4">
-      {{ block.data.markdown|json_decode|markdown_to_html }}
+      <div class="pb-3">
+      {# FIXME There is a serialization problem #}
+      {% set md = block.data.markdown|json_decode %}
+      {% if md is empty %}
+        {% set md = block.data.markdown %}
+      {% endif %}
+      {{ md ? md|markdown_to_html : '' }}
       </div>
     </div>
   </section>
   {% endif %}
   {% if block.type == 'slider' %}
-  <section class="pt-4">
+  <section class="mb-4">
     <div class="container-fluid">
       <div class="swiper swiper-homepage">
         <ol class="swiper-wrapper">
@@ -22,6 +28,7 @@
                   <p>{{ slide.text }}</p>
                   <button type="button" class="btn btn-xs">
                     <span>{{ slide.buttonText }}</span>
+                    {{ ux_icon('lucide:arrow-right', { class: 'ml-2' }) }}
                   </button>
                 </div>
                 <div class="swiper-slide-content-right">
@@ -41,6 +48,7 @@
   </section>
   {% endif %}
 {% endfor %}
+<div>
 
 {% for section in this.sections %}
   {{ component(section.component, section.props ?? []) }}

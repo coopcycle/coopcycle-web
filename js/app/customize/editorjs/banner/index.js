@@ -64,8 +64,12 @@ export default class Banner {
 
     this.config = config;
     this.backgroundColor = data?.backgroundColor || '#1677ff'
-    this.markdown = data?.markdown ? JSON.parse(data?.markdown) : '# Hello World'
-    // this.markdown = data?.markdown || '# Hello World'
+    try {
+      this.markdown = JSON.parse(data?.markdown)
+    } catch (e) {
+      this.markdown = data?.markdown
+    }
+    this.markdown = this.markdown || '# Hello World'
   }
 
   render() {

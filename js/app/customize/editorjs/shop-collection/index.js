@@ -7,8 +7,6 @@ import _ from 'lodash'
 import qs from 'qs'
 import { Cascader } from 'antd';
 
-const httpClient = new window._auth.httpClient();
-
 // TODO
 // Do not duplicate code
 // At the same time, breakpoints should be reduced for EditorJS width
@@ -49,7 +47,13 @@ let optionsCache = []
 let isFetchingCollections = false
 let fetchCollectionsListeners = []
 
+let httpClient
+
 async function fetchCollections(cuisines, setOptions) {
+
+  if (!httpClient) {
+    httpClient = new window._auth.httpClient();
+  }
 
   if (optionsCache.length > 0) {
     setOptions(optionsCache)
@@ -149,11 +153,17 @@ export default class ShopCollection {
     this.data = data;
     this.config = config;
     console.log(this)
+
+
   }
 
   showPreview(wrapper, component, args = '') {
 
     console.log('showPreview', component, args)
+
+    if (!httpClient) {
+      httpClient = new window._auth.httpClient();
+    }
 
     wrapper.classList.add('cdx-loader')
 
