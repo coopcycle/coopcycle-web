@@ -3,200 +3,22 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Annotation\HideSoftDeleted;
-use AppBundle\Business\Context as BusinessContext;
-use AppBundle\Entity\Delivery;
-use AppBundle\Entity\DeliveryForm;
-use AppBundle\Entity\Hub;
-use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\LocalBusinessRepository;
-use AppBundle\Enum\FoodEstablishment;
-use AppBundle\Enum\Store;
-use AppBundle\Form\DeliveryEmbedType;
-use AppBundle\Service\TimingRegistry;
-use AppBundle\Utils\SortableRestaurantIterator;
-use Doctrine\ORM\EntityManagerInterface;
-use Hashids\Hashids;
-use MyCLabs\Enum\Enum;
-use Symfony\Contracts\Cache\CacheInterface;
 use Sylius\Component\Order\Context\CartContextInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Contracts\Cache\ItemInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class IndexController extends AbstractController
 {
-    const EXPIRES_AFTER = 300;
-    const MAX_SECTIONS = 8;
-    const MIN_SHOPS_PER_CUISINE = 3;
-    const LATEST_SHOPS_LIMIT = 10;
-    const MAX_SHOPS_PER_SECTION = 15;
-
-    private function getItems(LocalBusinessRepository $repository, string $type, CacheInterface $cache, string $cacheKey, TimingRegistry $timingRegistry)
+    #[HideSoftDeleted] // This is needed to hide deleted addresses
+    public function indexAction()
     {
-        $typeRepository = $repository->withTypeFilter($type);
-
-        $itemsIds = $cache->get($cacheKey, function (ItemInterface $item) use ($typeRepository, $timingRegistry) {
-
-            $item->expiresAfter(self::EXPIRES_AFTER);
-
-            $items = $typeRepository->findAllForType();
-
-            $iterator = new SortableRestaurantIterator($items, $timingRegistry);
-            $items = iterator_to_array($iterator);
-
-            return array_map(fn(LocalBusiness $lb) => $lb->getId(), $items);
-        });
-
-        foreach ($itemsIds as $id) {
-            // If one of the items can't be found (probably because it's disabled),
-            // we invalidate the cache
-            if (null === $typeRepository->find($id)) {
-                $cache->delete($cacheKey);
-
-                return $this->getItems($repository, $type, $cache, $cacheKey, $timingRegistry);
-            }
-        }
-
-        $count = count($itemsIds);
-        $items = array_map(
-            fn(int $id): LocalBusiness => $typeRepository->find($id),
-            $itemsIds
-        );
-
-        return [ $items, $count ];
-    }
-
-    #[HideSoftDeleted]
-    public function indexAction(LocalBusinessRepository $repository, CacheInterface $appCache,
-        TimingRegistry $timingRegistry,
-        UrlGeneratorInterface $urlGenerator,
-        TranslatorInterface $translator,
-        BusinessContext $businessContext,
-        EntityManagerInterface $entityManager,
-        FormFactoryInterface $formFactory)
-    {
-        $user = $this->getUser();
-
-        if ($user && ($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_RESTAURANT'))) {
-            $cacheKeySuffix = $user->getUsername();
-        } else {
-            $cacheKeySuffix = 'anonymous';
-        }
-
-        if ($user && $user->getBusinessAccount()) {
-            if ($businessContext->isActive()) {
-                $cacheKeySuffix = sprintf('%s.%s', $cacheKeySuffix, '_business');
-            }
-        }
-
-        $sections = [];
-
-        $repository->setBusinessContext($businessContext);
-
-        $shopsByType = array_keys($repository->countByType());
-
-        if (count($shopsByType) > 0) {
-            $shopType = array_shift($shopsByType);
-            $keyForShopType = LocalBusiness::getKeyForType($shopType);
-            $cacheKey = sprintf('homepage.%s.%s', $keyForShopType, $cacheKeySuffix);
-
-            [ $shops, $shopsCount ] =
-                $this->getItems($repository, $shopType, $appCache, $cacheKey, $timingRegistry);
-
-            if ($shopsCount > 0) {
-                $sections[] = [
-                    'title' => $translator->trans(LocalBusiness::getTransKeyForType($shopType)),
-                    'shops' => array_slice($shops, 0, self::MAX_SHOPS_PER_SECTION),
-                    'view_all_path' => $urlGenerator->generate('shops', [
-                        'type' => $keyForShopType,
-                    ]),
-                ];
-            }
-        }
-
-        $featured = $repository->findFeatured();
-        $featuredIterator = new SortableRestaurantIterator($featured, $timingRegistry);
-
-        if (count($featured) > 0) {
-            $sections[] = [
-                'title' => $translator->trans('homepage.featured'),
-                'shops' => iterator_to_array($featuredIterator),
-                'view_all_path' => $urlGenerator->generate('shops', [
-                    'category' => 'featured',
-                ]),
-            ];
-        }
-
-        $exclusives = $repository->findExclusives();
-        $exclusivesIterator = new SortableRestaurantIterator($exclusives, $timingRegistry);
-
-        if (count($exclusives) > 0) {
-            $sections[] = [
-                'title' => $translator->trans('homepage.exclusive'),
-                'shops' => iterator_to_array($exclusivesIterator),
-                'view_all_path' => $urlGenerator->generate('shops', [
-                    'category' => 'exclusive',
-                ]),
-            ];
-        }
-
-        $news = $repository->findLatest(self::LATEST_SHOPS_LIMIT);
-        $newsIterator = new SortableRestaurantIterator($news, $timingRegistry);
-
-        $sections[] = [
-            'title' => $translator->trans('homepage.shops.new'),
-            'shops' => iterator_to_array($newsIterator),
-            'view_all_path' => $urlGenerator->generate('shops', [
-                'category' => 'new',
-            ]),
-        ];
-
-        $countByCuisine = $repository->countByCuisine();
-
-        foreach ($countByCuisine as $cuisineName => $count) {
-            if ($count >= self::MIN_SHOPS_PER_CUISINE) {
-                $shopsByCuisine = $repository->findByCuisine($cuisineName);
-                $shopsByCuisineIterator = new SortableRestaurantIterator($shopsByCuisine, $timingRegistry);
-
-                $sections[] = [
-                    'title' => $translator->trans($cuisineName, [], 'cuisines'),
-                    'shops' => iterator_to_array($shopsByCuisineIterator),
-                    'view_all_path' => $urlGenerator->generate('shops', [
-                        'cuisine' => array($cuisineName),
-                    ]),
-                ];
-
-                if (count($sections) >= self::MAX_SECTIONS) {
-                    break;
-                }
-            }
-        }
-
-        $hubs = $entityManager->getRepository(Hub::class)->findBy([
-            'enabled' => true
-        ]);
-
-        $deliveryForm = $this->getDeliveryForm($entityManager);
-
-        $hashids = new Hashids($this->getParameter('secret'), 12);
-
-        $countZeroWaste = $repository->countZeroWaste();
-
-        return $this->render('index/index.html.twig', array(
-            'sections' => $sections,
-            'hubs' => $hubs,
-            'delivery_form' => $deliveryForm ?
-                $this->getDeliveryFormForm($formFactory, $deliveryForm)->createView() : null,
-            'hashid' => $deliveryForm ? $hashids->encode($deliveryForm->getId()) : '',
-            'zero_waste_count' => $countZeroWaste,
-        ));
+        // Everything is in Twig components
+        // @see src/Twig/Components/Homepage.php
+        return $this->render('index/index.html.twig');
     }
 
     #[Route(path: '/cart.json', name: 'cart_json')]
@@ -223,33 +45,5 @@ class IndexController extends AbstractController
     public function redirectToLocaleAction()
     {
         return new RedirectResponse(sprintf('/%s/', $this->getParameter('locale')), 302);
-    }
-
-    private function getDeliveryForm(EntityManagerInterface $entityManager): ?DeliveryForm
-    {
-        $qb = $entityManager
-            ->getRepository(DeliveryForm::class)
-            ->createQueryBuilder('f');
-
-        $qb->where('f.showHomepage = :showHomepage');
-        $qb->setParameter('showHomepage', ($showHomepage = true));
-        $qb->setMaxResults(1);
-
-        return $qb->getQuery()->getOneOrNullResult();
-    }
-
-    private function getDeliveryFormForm(FormFactoryInterface $formFactory, ?DeliveryForm $deliveryForm = null)
-    {
-        if ($deliveryForm) {
-
-            return $formFactory->createNamed('delivery', DeliveryEmbedType::class, new Delivery(), [
-                'with_weight'      => $deliveryForm->getWithWeight(),
-                'with_vehicle'     => $deliveryForm->getWithVehicle(),
-                'with_time_slot'   => $deliveryForm->getTimeSlot(),
-                'with_package_set' => $deliveryForm->getPackageSet(),
-            ]);
-        }
-
-        return null;
     }
 }

@@ -141,8 +141,6 @@ class ShopSearch
 
     public function getShops(): PaginationInterface
     {
-        $this->shopRepository->setBusinessContext($this->businessContext);
-
         $restaurantsIds = $this->appCache->get($this->getCacheKey(), function (ItemInterface $item) {
 
             $item->expiresAfter(60 * 5);

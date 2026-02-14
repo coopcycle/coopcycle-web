@@ -1,0 +1,9 @@
+{% if this.shops|length > 0 %}
+{% include 'index/_partials/section.html.twig' with {
+    items: this.shops,
+    section_title: this.title,
+    view_all: 'index.view_all'|trans,
+    view_all_path: this.url,
+    show_more: true,
+} %}
+{% endif %}
