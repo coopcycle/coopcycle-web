@@ -27,6 +27,7 @@ $enable-cssgrid: true;
 
 @import "./restaurant-card.scss";
 @import "./swiper.scss";
+@import '../customize/swiper-homepage.scss';
 
 @import "~font-awesome/scss/_variables.scss";
 @import "~font-awesome/scss/_mixins.scss";
