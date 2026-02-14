@@ -86,13 +86,32 @@ new Swiper('.categories', {
 
 new Swiper('.swiper-homepage', {
   modules: [ Navigation ],
-  slidesPerView: 3,
+  slidesPerView: 'auto',
+  slidesPerGroup: 1,
   spaceBetween: 20,
   navigation: {
     nextEl: '.swiper-button-next',
     prevEl: '.swiper-button-prev',
   },
-  direction: 'horizontal',
+  // https://getbootstrap.com/docs/5.3/layout/breakpoints/
+  breakpoints: {
+    // Small devices (landscape phones, 576px and up)
+    576: {
+      slidesPerView: 1,
+    },
+    // Medium devices (tablets, 768px and up)
+    768: {
+      slidesPerView: 2,
+    },
+    // Large devices (desktops, 992px and up)
+    992: {
+      slidesPerView: 3,
+    },
+    // X-Large devices (large desktops, 1200px and up)
+    1200: {
+      slidesPerView: 4,
+    }
+  },
 })
 
 /**
