@@ -1,3 +1,6 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+
 .CodeMirror {
   height: 400px;
 }
@@ -8,4 +11,51 @@
 
 .coopcycle-mdx-editor-dark {
   color: #ffffff;
+}
+
+/* Slider block */
+
+.swiper-homepage {
+  ol.swiper-wrapper {
+    padding: 0 !important;
+  }
+  .swiper-slide {
+    // Make all slides same height
+    // https://github.com/nolimits4web/swiper/issues/2372#issuecomment-349004052
+    height: auto;
+    > a {
+      text-decoration: inherit;
+      color: inherit;
+      display: block;
+      height: 100%;
+      border: 1px solid $gray-200;
+      border-radius: 4px;
+      &:hover {
+        border: 1px solid $gray-400;
+      }
+    }
+    .swiper-slide-content {
+      display: flex;
+      height: 100%;
+      &-left, &-right {
+        flex-grow: 1;
+      }
+      &-left {
+        width: calc((100% / 3) * 2);
+        padding: 0 1em 1em 1em;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      &-right {
+        width: calc(100% / 3);
+      }
+    }
+  }
+  .swiper-slide-toolbar {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
 }
