@@ -93,6 +93,8 @@ export default class Banner {
       }}
       onChangeMarkdown={(markdown) => {
         // Make sure markdown is on a single line & escaped
+        // FIXME Problem with save/reload
+        // Unexpected token '#', "### Hello "... is not valid JSON
         this.markdown = JSON.stringify(markdown)
       }} />
     )

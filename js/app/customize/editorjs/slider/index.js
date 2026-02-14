@@ -6,7 +6,7 @@ import {
   EditOutlined,
   PlusSquareOutlined,
 } from '@ant-design/icons';
-import { Button, Flex, Tooltip } from 'antd';
+import { ColorPicker, Button, Flex, Tooltip } from 'antd';
 import sanitizeHtml from 'sanitize-html';
 import ContentEditable from 'react-contenteditable'
 
@@ -68,7 +68,7 @@ const SlideContent = ({ slide, index, onChange }) => {
   };
 
   return (
-    <a href="#">
+    <a href="#" onClick={(e) => e.preventDefault()} style={{ backgroundColor: slide.backgroundColor || '#ffffff' }}>
       <div className="swiper-slide-content">
         <div className="swiper-slide-content-left">
           <ContentEditable
@@ -118,10 +118,17 @@ const SliderEditor = ({ defaultSlides, onChange }) => {
             <span className="swiper-slide-toolbar">
               <Flex>
                 <Tooltip title="Edit">
-                  <Button type="text" shape="circle" icon={<EditOutlined />} />
+                  <ColorPicker defaultValue={ slide.backgroundColor || '#ffffff' } size="small" onChange={(color) => {
+                    const newSlides = [...slides]
+                      newSlides.splice(index, 1, {
+                        ...slides[index],
+                        backgroundColor: color.toHexString()
+                    })
+                    setSlides(newSlides)
+                  }} />
                 </Tooltip>
                 <Tooltip title="Delete">
-                  <Button type="text" shape="circle" icon={<CloseOutlined />} onClick={() => {
+                  <Button type="text" size="small" shape="circle" icon={<CloseOutlined />} onClick={() => {
                     const newSlides = [...slides]
                     newSlides.splice(index, 1)
                     setSlides(newSlides)
@@ -152,7 +159,8 @@ const SliderEditor = ({ defaultSlides, onChange }) => {
               href: '#',
               title: 'New title',
               text: 'New slide',
-              buttonText: 'Learn more'
+              buttonText: 'Learn more',
+              backgroundColor: '#ffffff',
             }
           ])
         }} />
@@ -179,12 +187,14 @@ export default class Slider {
         title: 'Title 1',
         text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
         buttonText: 'Learn more',
+        backgroundColor: '#ffffff',
       },
       {
         href: '#',
         title: 'Title 2',
         text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
         buttonText: 'Learn more',
+        backgroundColor: '#ffffff',
       },
     ]
   }
