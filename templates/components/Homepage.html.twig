@@ -8,6 +8,34 @@
     </div>
   </section>
   {% endif %}
+  {% if block.type == 'slider' %}
+  <section>
+    <div class="container-fluid">
+      <div class="swiper swiper-homepage">
+        <ol class="swiper-wrapper">
+          {% for slide in block.data.slides %}
+          <li class="swiper-slide">
+            <a href="#" style="background-color: {{ slide.backgroundColor}};">
+              <div class="swiper-slide-content">
+                <div class="swiper-slide-content-left">
+                  <h4>{{ slide.title }}</h4>
+                  <p>{{ slide.text }}</p>
+                  <button type="button" class="btn btn-xs">
+                    <span>{{ slide.buttonText }}</span>
+                  </button>
+                </div>
+                <div class="swiper-slide-content-right"></div>
+              </div>
+            </a>
+          </li>
+          {% endfor %}
+        </ol>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+      </div>
+    </div>
+  </section>
+  {% endif %}
 {% endfor %}
 
 {% for section in this.sections %}

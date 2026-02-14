@@ -84,6 +84,17 @@ new Swiper('.categories', {
   spaceBetween: 0
 })
 
+new Swiper('.swiper-homepage', {
+  modules: [ Navigation ],
+  slidesPerView: 3,
+  spaceBetween: 20,
+  navigation: {
+    nextEl: '.swiper-button-next',
+    prevEl: '.swiper-button-prev',
+  },
+  direction: 'horizontal',
+})
+
 /**
  * When the user clicks on a restaurant and
  * there is no address scroll into the search bar, and ask for an address.
