@@ -4,6 +4,7 @@ import { Button, Flex } from 'antd';
 import EditorJS from '@editorjs/editorjs';
 import ShopCollection from './editorjs/shop-collection'
 import Banner from './editorjs/banner'
+import Slider from './editorjs/slider'
 
 const httpClient = new window._auth.httpClient();
 
@@ -29,6 +30,7 @@ const Editor = forwardRef(({ homepage, cuisines, shopTypes }, ref) => {
             }
           },
           banner: Banner,
+          slider: Slider,
         },
         autofocus: false,
         // Height of Editor's bottom area that allows to set focus on the last Block
