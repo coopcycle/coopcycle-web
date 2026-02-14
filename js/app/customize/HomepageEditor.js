@@ -9,7 +9,7 @@ import Slider from './editorjs/slider'
 const httpClient = new window._auth.httpClient();
 
 // https://dev.to/sumankalia/how-to-integrate-editorjs-in-reactjs-2l6l
-const Editor = forwardRef(({ homepage, cuisines, shopTypes }, ref) => {
+const Editor = forwardRef(({ homepage, cuisines, shopTypes, uploadEndpoint }, ref) => {
 
   // const ref = useRef();
 
@@ -30,7 +30,12 @@ const Editor = forwardRef(({ homepage, cuisines, shopTypes }, ref) => {
             }
           },
           banner: Banner,
-          slider: Slider,
+          slider: {
+            class: Slider,
+            config: {
+              uploadEndpoint
+            }
+          }
         },
         autofocus: false,
         // Height of Editor's bottom area that allows to set focus on the last Block
@@ -65,13 +70,13 @@ const Editor = forwardRef(({ homepage, cuisines, shopTypes }, ref) => {
   )
 })
 
-export default function({ homepage, cuisines, shopTypes }) {
+export default function({ homepage, cuisines, shopTypes, uploadEndpoint }) {
 
   const ref = useRef();
 
   return (
     <div>
-      <Editor ref={ref} homepage={homepage} cuisines={cuisines} shopTypes={shopTypes} />
+      <Editor ref={ref} homepage={homepage} cuisines={cuisines} shopTypes={shopTypes} uploadEndpoint={uploadEndpoint} />
       <Flex justify="flex-end">
         <Button type="primary" onClick={async () => {
           const data = await ref.current.save()

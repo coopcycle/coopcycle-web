@@ -60,3 +60,12 @@ oneup_uploader:
                 text/html: ['svg']
                 image/svg+xml: ['svg']
                 image/svg: ['svg']
+        homepage_slider:
+            frontend: dropzone
+            storage:
+                type: flysystem
+                filesystem: oneup_flysystem.homepage_slider_images_filesystem
+            allowed_mimetypes:
+                image/jpg: []
+                image/jpeg: []
+                image/png: []
