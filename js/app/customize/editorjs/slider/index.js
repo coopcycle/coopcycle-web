@@ -7,14 +7,17 @@ import {
   PlusSquareOutlined,
   LinkOutlined,
   UploadOutlined,
+  CalendarOutlined,
+  CalendarTwoTone,
 } from '@ant-design/icons';
-import { Button, Flex, Tooltip, Popover, Input } from 'antd';
+import { Button, Flex, Tooltip, Popover, Input, DatePicker } from 'antd';
 import sanitizeHtml from 'sanitize-html';
 import ContentEditable from 'react-contenteditable'
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard';
 import XHR from '@uppy/xhr-upload';
 import { ArrowRight } from 'lucide-react';
+import moment from 'moment'
 
 import ColorPicker from '../../color-picker';
 
@@ -54,6 +57,8 @@ function handleContentEditableBlur(slide, ref, onChange) {
     text: ref.current,
   })
 }
+
+const isExpired = (slide) => slide.expiresAt ? moment().isAfter(slide.expiresAt) : false;
 
 const SlideContent = ({ uploadEndpoint, slide, index, onChange }) => {
 
@@ -97,9 +102,12 @@ const SlideContent = ({ uploadEndpoint, slide, index, onChange }) => {
   }, [])
 
   return (
-    <a href="#" onClick={(e) => e.preventDefault()} style={{ backgroundColor: slide.backgroundColor || '#ffffff' }}>
+    <a href="#" onClick={(e) => e.preventDefault()} style={{
+      backgroundColor: slide.backgroundColor || '#ffffff',
+      opacity: isExpired(slide) ? 0.6 : 1,
+    }}>
       <div className={ `swiper-slide-content` }>
-        <div className="swiper-slide-content-left">
+        <div className="swiper-slide-content-left" style={{ position: 'relative' }}>
           <ContentEditable
             tagName="h4"
             html={title.current}
@@ -120,6 +128,20 @@ const SlideContent = ({ uploadEndpoint, slide, index, onChange }) => {
               onBlur={() => handleContentEditableBlur(slide, buttonText, onChange)} />
             <ArrowRight size={12} className="ml-2" />
           </button>
+          <div className="swiper-slide-color-picker">
+            <Tooltip title="Color">
+              <ColorPicker
+                defaultValue={ slide.backgroundColor || '#ffffff' }
+                size="small"
+                onChange={(color, css, colorScheme) => {
+                  onChange({
+                    ...slide,
+                    backgroundColor: color.toHexString(),
+                    colorScheme: colorScheme,
+                  })
+                }} />
+            </Tooltip>
+          </div>
         </div>
         <div className="swiper-slide-content-right">
           { slide.image ? (
@@ -134,6 +156,56 @@ const SlideContent = ({ uploadEndpoint, slide, index, onChange }) => {
   )
 }
 
+const SlideToolbar = ({ slide, onChange, onClickDelete }) => {
+  return (
+    <Flex>
+      <Tooltip title="Expiration">
+        <Popover
+          title="Expiration date"
+          trigger="click"
+          content={() => {
+            return (
+              <DatePicker
+                showTime
+                defaultValue={ slide.expiresAt ? moment(slide.expiresAt) : null }
+                onChange={(value, dateString) => {
+                  onChange({
+                    ...slide,
+                    expiresAt: dateString,
+                  })
+                }} />
+            )
+          }}>
+          <Button type="text" size="small" shape="circle" icon={
+            <CalendarOutlined
+              style={ slide.expiresAt ? { color: isExpired(slide) ? 'red' : 'blue' } : null } /> }
+            />
+        </Popover>
+      </Tooltip>
+      <Tooltip title="Link">
+        <Popover
+          title="Link"
+          trigger="click"
+          content={() => {
+            return (
+              <Input placeholder="http://" value={slide.href} onChange={(e) => {
+                onChange({
+                  ...slide,
+                  href: e.target.value,
+                })
+              }} />
+            )
+          }}>
+          <Button type="text" size="small" shape="circle" icon={<LinkOutlined />} />
+        </Popover>
+      </Tooltip>
+      <Tooltip title="Delete">
+        <Button type="text" size="small" shape="circle" icon={<CloseOutlined />} onClick={onClickDelete} />
+      </Tooltip>
+    </Flex>
+  )
+}
+
 const SliderEditor = ({ defaultSlides, onChange, uploadEndpoint }) => {
 
   const [slides, setSlides] = useState(defaultSlides)
@@ -141,8 +213,6 @@ const SliderEditor = ({ defaultSlides, onChange, uploadEndpoint }) => {
   useEffect(() => {
     onChange(slides)
   }, [slides, onChange])
-
-  console.log('SliderEditor.render()')
 
   return (
     <Swiper
@@ -162,7 +232,6 @@ const SliderEditor = ({ defaultSlides, onChange, uploadEndpoint }) => {
               slide={slide}
               index={index}
               onChange={(s) => {
-                console.log(`Slide ${index} has changed`, s)
                 const newSlides = [...slides]
                 newSlides.splice(index, 1, {
                   ...slides[index],
@@ -171,45 +240,21 @@ const SliderEditor = ({ defaultSlides, onChange, uploadEndpoint }) => {
                 setSlides(newSlides)
               }} />
             <span className="swiper-slide-toolbar">
-              <Flex>
-                <Tooltip title="Color">
-                  <ColorPicker defaultValue={ slide.backgroundColor || '#ffffff' } size="small" onChange={(color, css, colorScheme) => {
-                    const newSlides = [...slides]
-                      newSlides.splice(index, 1, {
-                        ...slides[index],
-                        backgroundColor: color.toHexString(),
-                        colorScheme: colorScheme,
-                    })
-                    setSlides(newSlides)
-                  }} />
-                </Tooltip>
-                <Tooltip title="Link">
-                  <Popover
-                    title="Link"
-                    trigger="click"
-                    content={() => {
-                      return (
-                        <Input placeholder="http://" value={slide.href} onChange={(e) => {
-                          const newSlides = [...slides]
-                            newSlides.splice(index, 1, {
-                              ...slides[index],
-                              href: e.target.value
-                          })
-                          setSlides(newSlides)
-                        }} />
-                      )
-                    }}>
-                    <Button type="text" size="small" shape="circle" icon={<LinkOutlined />} />
-                  </Popover>
-                </Tooltip>
-                <Tooltip title="Delete">
-                  <Button type="text" size="small" shape="circle" icon={<CloseOutlined />} onClick={() => {
-                    const newSlides = [...slides]
-                    newSlides.splice(index, 1)
-                    setSlides(newSlides)
-                  }} />
-                </Tooltip>
-              </Flex>
+              <SlideToolbar
+                slide={slide}
+                onChange={(s) => {
+                  const newSlides = [...slides]
+                  newSlides.splice(index, 1, {
+                    ...slides[index],
+                    ...s,
+                  })
+                  setSlides(newSlides)
+                }}
+                onClickDelete={() => {
+                  const newSlides = [...slides]
+                  newSlides.splice(index, 1)
+                  setSlides(newSlides)
+                }} />
             </span>
           </SwiperSlide>
         )
@@ -279,7 +324,7 @@ export default class Slider {
       uploadEndpoint={this.config.uploadEndpoint}
       defaultSlides={this.slides}
       onChange={(slides) => {
-        // console.log('Slides updated', slides)
+        console.log('Slides have changed', slides)
         this.slides = slides
       }} />)
 
