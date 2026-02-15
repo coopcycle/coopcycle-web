@@ -147,7 +147,11 @@ const ComponentCascader = ({ cuisines, onChange, defaultValue }) => {
 function showSkeleton(wrapper) {
   const container = document.createElement('div');
   createRoot(container).render(
-    <div className="ssc" data-loader>
+    <div className="ssc px-3 pb-3" data-loader>
+      <div className="align-start flex justify-between mb">
+        <div className="ssc-head-line w-40"></div>
+        <div className="ssc-head-line w-20"></div>
+      </div>
       <div className="align-start flex justify-between">
         <div className="ssc-card ssc-wrapper w-30">
           <div className="mb ssc-head-line"></div>
@@ -203,7 +207,6 @@ export default class ShopCollection {
     wrapper.classList.add('cdx-loader')
     showSkeleton(wrapper)
 
-    // /admin/shop-collections/{id}/preview
     httpClient.get(`//${window.location.host}/admin/shop-collections/preview/${component}?${args}`).then(({ response, error }) => {
 
       if (error) {
