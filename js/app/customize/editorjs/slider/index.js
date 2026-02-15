@@ -39,6 +39,22 @@ const LastSlideContent = ({ onClick }) => {
   )
 }
 
+function handleContentEditableChange(e, ref) {
+  ref.current = e.target.value;
+}
+
+function handleContentEditableBlur(slide, ref, onChange) {
+  ref.current = sanitizeHtml(unescapeHTML(ref.current), {
+    // https://github.com/apostrophecms/sanitize-html?tab=readme-ov-file#what-if-i-dont-want-to-allow-any-tags
+    allowedTags: [],
+    allowedAttributes: {},
+  });
+  onChange({
+    ...slide,
+    text: ref.current,
+  })
+}
+
 const SlideContent = ({ uploadEndpoint, slide, index, onChange }) => {
 
   const title = useRef(slide.title);
@@ -80,52 +96,6 @@ const SlideContent = ({ uploadEndpoint, slide, index, onChange }) => {
     })
   }, [])
 
-  const handleTextChange = (e) => {
-    console.log('handleTextChange')
-    text.current = e.target.value;
-    // onChange({
-    //   ...slide,
-    //   text: e.target.value,
-    // })
-  };
-
-  const handleTextBlur = () => {
-    console.log('handleTextBlur', unescapeHTML(text.current))
-    text.current = sanitizeHtml(unescapeHTML(text.current), {
-      allowedTags: [],
-      allowedAttributes: {},
-    });
-    console.log('handleTextBlur (after)', text.current)
-    onChange({
-      ...slide,
-      text: text.current,
-    })
-  };
-
-  const handleTitleChange = (e) => {
-    title.current = e.target.value;
-    onChange({
-      ...slide,
-      title: e.target.value,
-    })
-  };
-
-  const handleTitleBlur = () => {
-    // TODO Sanitize
-  };
-
-  const handleButtonTextChange = (e) => {
-    buttonText.current = e.target.value;
-    onChange({
-      ...slide,
-      buttonText: e.target.value,
-    })
-  };
-
-  const handleButtonTextBlur = () => {
-    // TODO Sanitize
-  };
-
   return (
     <a href="#" onClick={(e) => e.preventDefault()} style={{ backgroundColor: slide.backgroundColor || '#ffffff' }}>
       <div className={ `swiper-slide-content` }>
@@ -133,21 +103,21 @@ const SlideContent = ({ uploadEndpoint, slide, index, onChange }) => {
           <ContentEditable
             tagName="h4"
             html={title.current}
-            onBlur={handleTitleBlur}
-            onChange={handleTitleChange}
+            onChange={(e) => handleContentEditableChange(e, title)}
+            onBlur={() => handleContentEditableBlur(slide, title, onChange)}
             className={`coopcycle-homepage-bg-${slide.colorScheme}`} />
           <ContentEditable
             tagName="p"
             html={text.current}
-            onBlur={handleTextBlur}
-            onChange={handleTextChange}
+            onChange={(e) => handleContentEditableChange(e, text)}
+            onBlur={() => handleContentEditableBlur(slide, text, onChange)}
             className={`coopcycle-homepage-bg-${slide.colorScheme}`} />
           <button type="button" className="btn btn-xs">
             <ContentEditable
               tagName="span"
               html={buttonText.current}
-              onBlur={handleButtonTextBlur}
-              onChange={handleButtonTextChange} />
+              onChange={(e) => handleContentEditableChange(e, buttonText)}
+              onBlur={() => handleContentEditableBlur(slide, buttonText, onChange)} />
             <ArrowRight size={12} className="ml-2" />
           </button>
         </div>
