@@ -1,7 +1,7 @@
 import React, { useEffect, useState, createRef } from 'react'
 import { createRoot } from 'react-dom/client'
-import { ColorPicker } from 'antd';
 import chroma from 'chroma-js'
+import ColorPicker from '../../color-picker';
 
 import {
   MDXEditor,
@@ -30,15 +30,10 @@ const Editor = ({ markdown, backgroundColor, onChangeColor, onChangeMarkdown }) 
                 defaultValue={backgroundColor}
                 showText
                 size="small"
-                onChange={(color, css) => {
-
+                onChange={(color, css, colorScheme) => {
                   const colorHex = color.toHexString();
-
-                  // https://github.com/gka/chroma.js/issues/181
-                  const colorScheme = chroma(colorHex).get('lab.l') < 70 ? 'dark' : 'light'
-                  setClassName(`coopcycle-mdx-editor-${colorScheme}`)
-
-                  onChangeColor(colorHex)
+                  setClassName(`coopcycle-homepage-bg-${colorScheme}`)
+                  onChangeColor(colorHex, colorScheme)
                 }} />
             </>
           )
@@ -59,9 +54,6 @@ export default class Banner {
   }
 
   constructor({ data, config }) {
-
-    console.log('CONSTRUCTOR', data)
-
     this.config = config;
     this.backgroundColor = data?.backgroundColor || '#1677ff'
     try {
@@ -70,6 +62,7 @@ export default class Banner {
       this.markdown = data?.markdown
     }
     this.markdown = this.markdown || '# Hello World'
+    this.colorScheme = data.colorScheme || 'light'
   }
 
   render() {
@@ -91,9 +84,10 @@ export default class Banner {
     createRoot(mdxEditorEl).render(<Editor
       markdown={this.markdown}
       backgroundColor={this.backgroundColor}
-      onChangeColor={(color) => {
+      onChangeColor={(color, colorScheme) => {
         bannerEl.style.backgroundColor = color
         this.backgroundColor = color
+        this.colorScheme = colorScheme
       }}
       onChangeMarkdown={(markdown) => {
         // Make sure markdown is on a single line & escaped
@@ -113,6 +107,7 @@ export default class Banner {
     return {
       markdown: this.markdown,
       backgroundColor: this.backgroundColor,
+      colorScheme: this.colorScheme,
     }
   }
 }
