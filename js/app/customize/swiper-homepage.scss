@@ -82,6 +82,12 @@
     right: 0;
     top: -2em;
   }
+  .swiper-slide-color-picker {
+    position: absolute;
+    z-index: 1;
+    top: 0.3em;
+    right: 0.3em;
+  }
   .swiper-image-upload {
     position: absolute;
     top: 50%;

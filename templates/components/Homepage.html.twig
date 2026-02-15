@@ -15,11 +15,13 @@
   </section>
   {% endif %}
   {% if block.type == 'slider' %}
+  {# Filter out expired slides #}
+  {% set slides = block.data.slides|filter(s => s.expiresAt is defined ? ('now'|date('U') < s.expiresAt|date('U')) : true) %}
   <section class="mb-4">
     <div class="container-fluid">
       <div class="swiper swiper-homepage">
         <ol class="swiper-wrapper">
-          {% for slide in block.data.slides %}
+          {% for slide in slides %}
           <li class="swiper-slide">
             <a href="{{ slide.href }}" target="_blank" style="background-color: {{ slide.backgroundColor}};">
               <div class="swiper-slide-content">
