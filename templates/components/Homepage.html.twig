@@ -3,7 +3,7 @@
   {% if block.type == 'banner' %}
   <section class="mb-4" style="background-color: {{ block.data.backgroundColor }};">
     <div class="container">
-      <div class="pb-3">
+      <div class="pb-3 coopcycle-homepage-bg-{{ block.data.colorScheme }}">
       {# FIXME There is a serialization problem #}
       {% set md = block.data.markdown|json_decode %}
       {% if md is empty %}
@@ -24,8 +24,8 @@
             <a href="{{ slide.href }}" target="_blank" style="background-color: {{ slide.backgroundColor}};">
               <div class="swiper-slide-content">
                 <div class="swiper-slide-content-left">
-                  <h4>{{ slide.title }}</h4>
-                  <p>{{ slide.text }}</p>
+                  <h4 class="coopcycle-homepage-bg-{{ slide.colorScheme ?? 'light' }}">{{ slide.title }}</h4>
+                  <p class="coopcycle-homepage-bg-{{ slide.colorScheme ?? 'light' }}">{{ slide.text }}</p>
                   <button type="button" class="btn btn-xs">
                     <span>{{ slide.buttonText }}</span>
                     {{ ux_icon('lucide:arrow-right', { class: 'ml-2' }) }}

@@ -8,13 +8,21 @@ import {
   LinkOutlined,
   UploadOutlined,
 } from '@ant-design/icons';
-import { ColorPicker, Button, Flex, Tooltip, Popover, Input } from 'antd';
+import { Button, Flex, Tooltip, Popover, Input } from 'antd';
 import sanitizeHtml from 'sanitize-html';
 import ContentEditable from 'react-contenteditable'
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard';
 import XHR from '@uppy/xhr-upload';
 import { ArrowRight } from 'lucide-react';
+
+import ColorPicker from '../../color-picker';
+
+function unescapeHTML(string) {
+  const el = document.createElement("span");
+  el.innerHTML = string;
+  return el.innerText;
+}
 
 const LastSlideContent = ({ onClick }) => {
 
@@ -73,15 +81,25 @@ const SlideContent = ({ uploadEndpoint, slide, index, onChange }) => {
   }, [])
 
   const handleTextChange = (e) => {
+    console.log('handleTextChange')
     text.current = e.target.value;
-    onChange({
-      ...slide,
-      text: e.target.value,
-    })
+    // onChange({
+    //   ...slide,
+    //   text: e.target.value,
+    // })
   };
 
   const handleTextBlur = () => {
-    // TODO Sanitize
+    console.log('handleTextBlur', unescapeHTML(text.current))
+    text.current = sanitizeHtml(unescapeHTML(text.current), {
+      allowedTags: [],
+      allowedAttributes: {},
+    });
+    console.log('handleTextBlur (after)', text.current)
+    onChange({
+      ...slide,
+      text: text.current,
+    })
   };
 
   const handleTitleChange = (e) => {
@@ -110,18 +128,20 @@ const SlideContent = ({ uploadEndpoint, slide, index, onChange }) => {
 
   return (
     <a href="#" onClick={(e) => e.preventDefault()} style={{ backgroundColor: slide.backgroundColor || '#ffffff' }}>
-      <div className="swiper-slide-content">
+      <div className={ `swiper-slide-content` }>
         <div className="swiper-slide-content-left">
           <ContentEditable
             tagName="h4"
             html={title.current}
             onBlur={handleTitleBlur}
-            onChange={handleTitleChange} />
+            onChange={handleTitleChange}
+            className={`coopcycle-homepage-bg-${slide.colorScheme}`} />
           <ContentEditable
             tagName="p"
             html={text.current}
             onBlur={handleTextBlur}
-            onChange={handleTextChange} />
+            onChange={handleTextChange}
+            className={`coopcycle-homepage-bg-${slide.colorScheme}`} />
           <button type="button" className="btn btn-xs">
             <ContentEditable
               tagName="span"
@@ -183,11 +203,12 @@ const SliderEditor = ({ defaultSlides, onChange, uploadEndpoint }) => {
             <span className="swiper-slide-toolbar">
               <Flex>
                 <Tooltip title="Color">
-                  <ColorPicker defaultValue={ slide.backgroundColor || '#ffffff' } size="small" onChange={(color) => {
+                  <ColorPicker defaultValue={ slide.backgroundColor || '#ffffff' } size="small" onChange={(color, css, colorScheme) => {
                     const newSlides = [...slides]
                       newSlides.splice(index, 1, {
                         ...slides[index],
-                        backgroundColor: color.toHexString()
+                        backgroundColor: color.toHexString(),
+                        colorScheme: colorScheme,
                     })
                     setSlides(newSlides)
                   }} />
@@ -234,6 +255,7 @@ const SliderEditor = ({ defaultSlides, onChange, uploadEndpoint }) => {
               buttonText: 'Learn more',
               backgroundColor: '#ffffff',
               image: null,
+              colorScheme: 'light',
             }
           ])
         }} />
@@ -262,6 +284,7 @@ export default class Slider {
         buttonText: 'Learn more',
         backgroundColor: '#ffffff',
         image: null,
+        colorScheme: 'light',
       },
       {
         href: '#',
@@ -270,6 +293,7 @@ export default class Slider {
         buttonText: 'Learn more',
         backgroundColor: '#ffffff',
         image: null,
+        colorScheme: 'light',
       },
     ]
   }
@@ -285,7 +309,7 @@ export default class Slider {
       uploadEndpoint={this.config.uploadEndpoint}
       defaultSlides={this.slides}
       onChange={(slides) => {
-        console.log('Slides updated', slides)
+        // console.log('Slides updated', slides)
         this.slides = slides
       }} />)
 

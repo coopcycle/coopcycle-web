@@ -1,3 +1,11 @@
+.coopcycle-homepage-bg-light {
+  color: #000000;
+}
+
+.coopcycle-homepage-bg-dark {
+  color: #ffffff;
+}
+
 /* Slider block */
 
 .swiper-homepage {
@@ -11,7 +19,7 @@
 
     // TODO
     // Enable only when in edit mode
-    overflow: inherit;
+    // overflow: inherit;
 
     > a {
       text-decoration: inherit;
@@ -20,6 +28,7 @@
       height: 100%;
       border: 1px solid $gray-200;
       border-radius: 4px;
+      overflow: hidden;
       &:hover {
         border: 1px solid $gray-400;
       }
@@ -75,10 +84,7 @@
     position: absolute;
     z-index: 1;
     right: 0;
-    top: -0.5em;
-    background: $gray-200;
-    border-radius: 24px;
-    padding: 0.5em;
+    top: -2em;
   }
   .swiper-image-upload {
     position: absolute;
