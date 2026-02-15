@@ -5,7 +5,7 @@ import Swiper from 'swiper'
 import { Navigation } from 'swiper/modules'
 import _ from 'lodash'
 import qs from 'qs'
-import { Cascader } from 'antd';
+import { Cascader, Skeleton, Card, Space } from 'antd';
 
 // TODO
 // Do not duplicate code
@@ -126,8 +126,13 @@ const ComponentCascader = ({ cuisines, onChange, defaultValue }) => {
   }, [setOptions]);
 
   if (options.length === 0) {
-    // TODO Show loader
-    return null;
+    return (
+      <div className="ssc">
+        <div className="ssc-wrapper w-30">
+          <div className="mb ssc-head-line"></div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -139,22 +144,52 @@ const ComponentCascader = ({ cuisines, onChange, defaultValue }) => {
   )
 }
 
+function showSkeleton(wrapper) {
+  const container = document.createElement('div');
+  createRoot(container).render(
+    <div className="ssc" data-loader>
+      <div className="align-start flex justify-between">
+        <div className="ssc-card ssc-wrapper w-30">
+          <div className="mb ssc-head-line"></div>
+          <div className="mbs ssc-line w-80"></div>
+          <div className="mbs ssc-line w-40"></div>
+          <div className="mbs ssc-line w-60"></div>
+        </div>
+        <div className="ssc-card ssc-wrapper w-30">
+          <div className="mb ssc-head-line"></div>
+          <div className="mbs ssc-line w-80"></div>
+          <div className="mbs ssc-line w-40"></div>
+          <div className="mbs ssc-line w-60"></div>
+        </div>
+        <div className="ssc-card ssc-wrapper w-30">
+          <div className="mb ssc-head-line"></div>
+          <div className="mbs ssc-line w-80"></div>
+          <div className="mbs ssc-line w-40"></div>
+          <div className="mbs ssc-line w-60"></div>
+        </div>
+      </div>
+    </div>
+  )
+  wrapper.appendChild(container)
+}
+
+function hideSkeleton(wrapper) {
+  wrapper.querySelector('[data-loader]').remove()
+}
+
 export default class ShopCollection {
 
   static get toolbox() {
     return {
       title: 'Shop Collection',
       // https://lucide.dev/icons/utensils
-      icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-utensils-icon lucide-utensils"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>'
+      icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-utensils-icon lucide-utensils"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>'
     };
   }
 
   constructor({ data, config }){
     this.data = data;
     this.config = config;
-    console.log(this)
-
-
   }
 
   showPreview(wrapper, component, args = '') {
@@ -166,6 +201,7 @@ export default class ShopCollection {
     }
 
     wrapper.classList.add('cdx-loader')
+    showSkeleton(wrapper)
 
     // /admin/shop-collections/{id}/preview
     httpClient.get(`//${window.location.host}/admin/shop-collections/preview/${component}?${args}`).then(({ response, error }) => {
@@ -181,6 +217,7 @@ export default class ShopCollection {
       const swiper = new Swiper(collWrapper.querySelector('.swiper'), swiperOpts);
 
       wrapper.classList.remove('cdx-loader')
+      hideSkeleton(wrapper)
     })
   }
 
@@ -224,13 +261,13 @@ export default class ShopCollection {
         }} />
     )
 
+    wrapper.appendChild(cascader)
+
     if (this.data.component) {
       this._data = this.data
       this.showPreview(wrapper, this.data.component,
         _.isObject(this.data.args) && _.size(this.data.args) > 0 ? qs.stringify(this.data.args) : '')
     }
-
-    wrapper.appendChild(cascader)
 
     return wrapper;
   }
