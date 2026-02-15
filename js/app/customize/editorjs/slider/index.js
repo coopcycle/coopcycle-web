@@ -9,6 +9,8 @@ import {
   UploadOutlined,
   CalendarOutlined,
   CalendarTwoTone,
+  LeftOutlined,
+  RightOutlined,
 } from '@ant-design/icons';
 import { Button, Flex, Tooltip, Popover, Input, DatePicker } from 'antd';
 import sanitizeHtml from 'sanitize-html';
@@ -60,15 +62,22 @@ function handleContentEditableBlur(slide, ref, onChange) {
 
 const isExpired = (slide) => slide.expiresAt ? moment().isAfter(slide.expiresAt) : false;
 
-const SlideContent = ({ uploadEndpoint, slide, index, onChange }) => {
+const SlideContent = ({ slide, index, uploadEndpoint, onChange }) => {
 
   const title = useRef(slide.title);
   const text = useRef(slide.text);
   const buttonText = useRef(slide.buttonText);
 
+  useEffect(() => {
+    title.current = slide.title
+    text.current = slide.text
+    buttonText.current = slide.buttonText
+  }, [ slide ])
+
   const uniqueKey = `swiper-image-upload-button-${index}`
 
   useEffect(() => {
+
     console.log(`Configuring Uppy with ${uploadEndpoint} for slide ${index}`)
     const uppy = new Uppy({
       id: uniqueKey
@@ -99,6 +108,7 @@ const SlideContent = ({ uploadEndpoint, slide, index, onChange }) => {
         })
       }
     })
+
   }, [])
 
   return (
@@ -110,20 +120,20 @@ const SlideContent = ({ uploadEndpoint, slide, index, onChange }) => {
         <div className="swiper-slide-content-left" style={{ position: 'relative' }}>
           <ContentEditable
             tagName="h4"
-            html={title.current}
+            html={title.current || ''}
             onChange={(e) => handleContentEditableChange(e, title)}
             onBlur={() => handleContentEditableBlur(slide, title, onChange)}
             className={`coopcycle-homepage-bg-${slide.colorScheme}`} />
           <ContentEditable
             tagName="p"
-            html={text.current}
+            html={text.current || ''}
             onChange={(e) => handleContentEditableChange(e, text)}
             onBlur={() => handleContentEditableBlur(slide, text, onChange)}
             className={`coopcycle-homepage-bg-${slide.colorScheme}`} />
           <button type="button" className="btn btn-xs">
             <ContentEditable
               tagName="span"
-              html={buttonText.current}
+              html={buttonText.current || ''}
               onChange={(e) => handleContentEditableChange(e, buttonText)}
               onBlur={() => handleContentEditableBlur(slide, buttonText, onChange)} />
             <ArrowRight size={12} className="ml-2" />
@@ -156,9 +166,15 @@ const SlideContent = ({ uploadEndpoint, slide, index, onChange }) => {
   )
 }
 
-const SlideToolbar = ({ slide, onChange, onClickDelete }) => {
+const SlideToolbar = ({ slide, index, isLast, onChange, onClickDelete, onClickMoveLeft, onClickMoveRight }) => {
   return (
     <Flex>
+      <Tooltip title="Move left">
+        <Button type="text" disabled={ index === 0 } size="small" shape="circle" icon={<LeftOutlined />} onClick={onClickMoveLeft} />
+      </Tooltip>
+      <Tooltip title="Move right">
+        <Button type="text" disabled={ isLast } size="small" shape="circle" icon={<RightOutlined />} onClick={onClickMoveRight} />
+      </Tooltip>
       <Tooltip title="Expiration">
         <Popover
           title="Expiration date"
@@ -242,6 +258,8 @@ const SliderEditor = ({ defaultSlides, onChange, uploadEndpoint }) => {
             <span className="swiper-slide-toolbar">
               <SlideToolbar
                 slide={slide}
+                index={index}
+                isLast={slides.length === 0 || index === (slides.length - 1)}
                 onChange={(s) => {
                   const newSlides = [...slides]
                   newSlides.splice(index, 1, {
@@ -253,6 +271,26 @@ const SliderEditor = ({ defaultSlides, onChange, uploadEndpoint }) => {
                 onClickDelete={() => {
                   const newSlides = [...slides]
                   newSlides.splice(index, 1)
+                  setSlides(newSlides)
+                }}
+                onClickMoveLeft={() => {
+                  const newSlides = [...slides]
+                  newSlides.splice(index - 1, 1, {
+                    ...slides[index],
+                  })
+                  newSlides.splice(index, 1, {
+                    ...slides[index - 1],
+                  })
+                  setSlides(newSlides)
+                }}
+                onClickMoveRight={() => {
+                  const newSlides = [...slides]
+                  newSlides.splice(index + 1, 1, {
+                    ...slides[index],
+                  })
+                  newSlides.splice(index, 1, {
+                    ...slides[index + 1],
+                  })
                   setSlides(newSlides)
                 }} />
             </span>
