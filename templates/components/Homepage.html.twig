@@ -1,15 +1,23 @@
 <div class="pt-4">
 {% for block in this.blocks %}
+  {% if block.type == 'shop_collection' %}
+    {{ component(('ShopCollection:' ~ (block.data.component|capitalize)), block.data.args ?? []) }}
+  {% endif %}
   {% if block.type == 'banner' %}
   <section class="mb-4" style="background-color: {{ block.data.backgroundColor }};">
     <div class="container">
-      <div class="pb-3 coopcycle-homepage-bg-{{ block.data.colorScheme }}">
-      {# FIXME There is a serialization problem #}
-      {% set md = block.data.markdown|json_decode %}
-      {% if md is empty %}
-        {% set md = block.data.markdown %}
-      {% endif %}
-      {{ md ? md|markdown_to_html : '' }}
+      <div class="py-3 coopcycle-homepage-banner coopcycle-homepage-bg-{{ block.data.colorScheme }}">
+        <div class="coopcycle-homepage-banner-content">
+        {# FIXME There is a serialization problem #}
+        {% set md = block.data.markdown|json_decode %}
+        {% if md is empty %}
+          {% set md = block.data.markdown %}
+        {% endif %}
+        {{ md ? md|markdown_to_html : '' }}
+        </div>
+        <div>
+          {{ ux_icon('lucide:arrow-right', { style: 'font-size: 2em;' }) }}
+        </div>
       </div>
     </div>
   </section>

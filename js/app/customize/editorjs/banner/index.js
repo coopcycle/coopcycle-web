@@ -5,13 +5,13 @@ import ColorPicker from '../../color-picker';
 
 import {
   MDXEditor,
-  BlockTypeSelect, BoldItalicUnderlineToggles,
-  headingsPlugin, toolbarPlugin,
+  BlockTypeSelect, BoldItalicUnderlineToggles, CreateLink,
+  headingsPlugin, toolbarPlugin, linkDialogPlugin, linkPlugin
 } from '@mdxeditor/editor'
 
-const Editor = ({ markdown, backgroundColor, onChangeColor, onChangeMarkdown }) => {
+const Editor = ({ markdown, backgroundColor, onChangeColor, onChangeMarkdown, colorScheme }) => {
 
-  const [className, setClassName] = useState('coopcycle-mdx-editor-dark')
+  const [className, setClassName] = useState(`coopcycle-mdx-editor-content coopcycle-homepage-bg-${colorScheme}`)
 
   return (
     // https://mdxeditor.dev/editor/api/interfaces/MDXEditorProps
@@ -20,19 +20,22 @@ const Editor = ({ markdown, backgroundColor, onChangeColor, onChangeMarkdown }) 
       markdown={markdown}
       plugins={[
         headingsPlugin(),
+        linkPlugin(),
+        linkDialogPlugin(),
         toolbarPlugin({
           toolbarClassName: 'coopcycle-mdx-editor-toolbar',
           toolbarContents: () => (
             <>
               <BlockTypeSelect />
               <BoldItalicUnderlineToggles />
+              <CreateLink />
               <ColorPicker
                 defaultValue={backgroundColor}
                 showText
                 size="small"
                 onChange={(color, css, colorScheme) => {
                   const colorHex = color.toHexString();
-                  setClassName(`coopcycle-homepage-bg-${colorScheme}`)
+                  setClassName(`coopcycle-mdx-editor-content coopcycle-homepage-bg-${colorScheme}`)
                   onChangeColor(colorHex, colorScheme)
                 }} />
             </>
@@ -70,20 +73,18 @@ export default class Banner {
     const wrapper = document.createElement('div');
     wrapper.style.marginBottom = '20px'
 
+
+
     const bannerEl = document.createElement('div');
     bannerEl.style.backgroundColor = this.backgroundColor
     bannerEl.style.width = '100%'
     bannerEl.style.minHeight = '80px'
 
-    const colorPickerEl = document.createElement('span')
-    colorPickerEl.style.position = 'absolute'
-    colorPickerEl.style.top = '10px'
-    colorPickerEl.style.right = '10px'
-
     const mdxEditorEl = document.createElement('div')
     createRoot(mdxEditorEl).render(<Editor
       markdown={this.markdown}
       backgroundColor={this.backgroundColor}
+      colorScheme={this.colorScheme}
       onChangeColor={(color, colorScheme) => {
         bannerEl.style.backgroundColor = color
         this.backgroundColor = color

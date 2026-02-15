@@ -27,6 +27,8 @@ import '@mdxeditor/editor/style.css'
 import '@uppy/core/css/style.min.css';
 import '@uppy/dashboard/css/style.min.css';
 
+import 'skeleton-screen-css/dist/index.scss'
+
 Dropzone.autoDiscover = false
 
 document.querySelectorAll('textarea[data-preview]').forEach((textarea) => {
