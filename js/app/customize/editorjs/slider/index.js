@@ -48,7 +48,7 @@ function handleContentEditableChange(e, ref) {
   ref.current = e.target.value;
 }
 
-function handleContentEditableBlur(slide, ref, onChange) {
+function handleContentEditableBlur(slide, ref, prop, onChange) {
   ref.current = sanitizeHtml(unescapeHTML(ref.current), {
     // https://github.com/apostrophecms/sanitize-html?tab=readme-ov-file#what-if-i-dont-want-to-allow-any-tags
     allowedTags: [],
@@ -56,7 +56,7 @@ function handleContentEditableBlur(slide, ref, onChange) {
   });
   onChange({
     ...slide,
-    text: ref.current,
+    [prop]: ref.current,
   })
 }
 
@@ -122,26 +122,26 @@ const SlideContent = ({ slide, index, uploadEndpoint, onChange }) => {
             tagName="h4"
             html={title.current || ''}
             onChange={(e) => handleContentEditableChange(e, title)}
-            onBlur={() => handleContentEditableBlur(slide, title, onChange)}
+            onBlur={() => handleContentEditableBlur(slide, title, 'title', onChange)}
             className={`coopcycle-homepage-bg-${slide.colorScheme}`} />
           <ContentEditable
             tagName="p"
             html={text.current || ''}
             onChange={(e) => handleContentEditableChange(e, text)}
-            onBlur={() => handleContentEditableBlur(slide, text, onChange)}
+            onBlur={() => handleContentEditableBlur(slide, text, 'text', onChange)}
             className={`coopcycle-homepage-bg-${slide.colorScheme}`} />
           <button type="button" className="btn btn-xs">
             <ContentEditable
               tagName="span"
               html={buttonText.current || ''}
               onChange={(e) => handleContentEditableChange(e, buttonText)}
-              onBlur={() => handleContentEditableBlur(slide, buttonText, onChange)} />
+              onBlur={() => handleContentEditableBlur(slide, buttonText, 'buttonText', onChange)} />
             <ArrowRight size={12} className="ml-2" />
           </button>
           <div className="swiper-slide-color-picker">
             <Tooltip title="Color">
               <ColorPicker
-                defaultValue={ slide.backgroundColor || '#ffffff' }
+                value={ slide.backgroundColor || '#ffffff' }
                 size="small"
                 onChange={(color, css, colorScheme) => {
                   onChange({
