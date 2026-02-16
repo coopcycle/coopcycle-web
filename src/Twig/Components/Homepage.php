@@ -2,6 +2,7 @@
 
 namespace AppBundle\Twig\Components;
 
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
@@ -26,7 +27,8 @@ class Homepage
     public function __construct(
         private EntityManagerInterface $entityManager,
         private LocalBusinessRepository $shopRepository,
-        private FormFactoryInterface $formFactory)
+        private FormFactoryInterface $formFactory,
+        private IriConverterInterface $iriConverter)
     {}
 
     public function getZeroWasteCount(): int
@@ -112,5 +114,10 @@ class Homepage
             'with_time_slot'   => $deliveryForm->getTimeSlot(),
             'with_package_set' => $deliveryForm->getPackageSet(),
         ])->createView();
+    }
+
+    public function getResourceFromIri(string $iri): ?DeliveryForm
+    {
+        return $this->iriConverter->getResourceFromIri($iri);
     }
 }

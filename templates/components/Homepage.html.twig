@@ -57,17 +57,23 @@
     </div>
   </section>
   {% endif %}
+  {% if block.type == 'delivery_form' %}
+    {% set form = this.getResourceFromIri(block.data.form) %}
+    {% include 'index/_partials/delivery_form.html.twig' with {
+      delivery_form: this.createDeliveryFormView(form),
+      hashid: form|hashid(12)
+    } %}
+  {% endif %}
 {% endfor %}
 <div>
 
-{% for section in this.sections %}
+{# {% for section in this.sections %}
   {{ component(section.component, section.props ?? []) }}
 {% endfor %}
 
 {% if this.zeroWasteCount > 0 %}
   <section class="homepage-zerowaste mb-4">
     <div class="container">
-      {# FIXME Wrong URL #}
       <a href="{{ path('restaurants_by_tags', { tags: 'zerowaste' }) }}" class="d-flex justify-content-between align-items-center py-4">
         <span>
           <i class="fa fa-lg fa-globe mr-2" aria-hidden="true"></i>
@@ -90,4 +96,4 @@
   {% for hub in hubs %}
     {{ component('ShopCollection:Hub', { hub: hub }) }}
   {% endfor %}
-{% endif %}
+{% endif %} #}
