@@ -42,7 +42,7 @@ chicken: emojione:chicken
 chinese: emojione:flag-for-china
 # chowder: Chowder
 coffee: streamline-kameleon-color:coffee-paper-glass
-# colombian: Colombian
+colombian: emojione:flag-for-colombia
 # contemporary: Contemporary
 # continental: Continental
 # corsica: Corsica
@@ -68,11 +68,11 @@ fast_food: twemoji:french-fries
 # filipino: Filipino
 # fish_and_chips: Fish and Chips
 # fondue: Fondue
-french: fxemoji:franceflag
+french: emojione:flag-for-france
 # frozen_yogurt: Frozen Yogurt
 # fusion: Fusion
 # galician: Galician
-# gastronomic: Gastronomic
+gastronomic: streamline-sharp:chef-toque-hat
 # gastropub: Gastropub
 # german: German
 gluten_free: healthicons:gluten-free-outline
@@ -80,21 +80,21 @@ greek: emojione:flag-for-greece
 grill: noto:cut-of-meat
 # gyros: Gyros
 # haitian: Haitian
-halal: streamline-color:islam-flat
+halal: hugeicons:halal
 # hand_made: Hand Made
-# hawaiian: Hawaiian
+hawaiian: fxemoji:palmtree
 healthy: noto:red-apple
 home_made: streamline-emojis:woman-cook-2
 hot_dogs: noto:hot-dog
 ice_cream: noto:ice-cream
 indian: emojione:flag-for-india
 # indonesian: Indonesian
-# international: International
+international: glyphs-poly:globe-west
 # irish: Irish
 # israeli: Israeli
 italian: fxemoji:italianflag
 # jamaican: Jamaican
-japanese: fxemoji:japanesedolls
+japanese: emojione:flag-for-japan
 # juices: Juices
 kebab: noto:taco
 # korean_barbeque: Korean Barbeque
@@ -112,7 +112,7 @@ mediterranean: noto:shallow-pan-of-food
 mexican: emojione:flag-for-mexico
 # middle_eastern: Middle Eastern
 # mongolian: Mongolian
-# moroccan: Moroccan
+moroccan: circle-flags:ma
 # nepalese: Nepalese
 # noodle_bar: Noodle Bar
 # norwegian: Norwegian
@@ -122,7 +122,7 @@ mexican: emojione:flag-for-mexico
 # pakistani: Pakistani
 # pan_asian: Pan Asian
 pasta: noto:spaghetti
-# pastries: Pastries
+pastries: twemoji:shortcake
 # persian: Persian
 # peruvian: Peruvian
 # pho: Pho
