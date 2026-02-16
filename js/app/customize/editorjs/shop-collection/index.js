@@ -128,9 +128,7 @@ const ComponentCascader = ({ cuisines, onChange, defaultValue }) => {
   if (options.length === 0) {
     return (
       <div className="ssc">
-        <div className="ssc-wrapper w-30">
-          <div className="mb ssc-head-line"></div>
-        </div>
+        <div className="ssc-head-line w-20"></div>
       </div>
     );
   }
@@ -147,7 +145,7 @@ const ComponentCascader = ({ cuisines, onChange, defaultValue }) => {
 function showSkeleton(wrapper) {
   const container = document.createElement('div');
   createRoot(container).render(
-    <div className="ssc px-3 pb-3" data-loader>
+    <div className="ssc p-3" data-loader>
       <div className="align-start flex justify-between mb">
         <div className="ssc-head-line w-40"></div>
         <div className="ssc-head-line w-20"></div>
@@ -198,10 +196,13 @@ export default class ShopCollection {
 
   showPreview(wrapper, component, args = '') {
 
-    console.log('showPreview', component, args)
-
     if (!httpClient) {
       httpClient = new window._auth.httpClient();
+    }
+
+    const preview = wrapper.querySelector('[data-preview]')
+    if (preview) {
+      preview.remove();
     }
 
     wrapper.classList.add('cdx-loader')
@@ -214,6 +215,7 @@ export default class ShopCollection {
       }
 
       const collWrapper = document.createElement('div');
+      collWrapper.setAttribute('data-preview', '')
       collWrapper.innerHTML = response
       wrapper.appendChild(collWrapper)
 
@@ -242,8 +244,6 @@ export default class ShopCollection {
   }
 
   render() {
-
-    console.log('render', this.data)
 
     const wrapper = document.createElement('div');
     wrapper.style.marginBottom = '20px'
