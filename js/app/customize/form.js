@@ -29,6 +29,8 @@ import '@uppy/dashboard/css/style.min.css';
 
 import 'skeleton-screen-css/dist/index.scss'
 
+import '../delivery/homepage.scss'
+
 Dropzone.autoDiscover = false
 
 document.querySelectorAll('textarea[data-preview]').forEach((textarea) => {
@@ -96,6 +98,7 @@ if (homepageEditorEl) {
       shopTypes={JSON.parse(homepageEditorEl.dataset.shopTypes)}
       uploadEndpoint={homepageEditorEl.dataset.uploadEndpoint}
       ctaIcon={homepageEditorEl.dataset.ctaIcon}
+      deliveryForms={JSON.parse(homepageEditorEl.dataset.deliveryForms)}
     />
   )
 }

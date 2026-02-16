@@ -2591,10 +2591,12 @@ class AdminController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $homepage = $cuisines = $this->entityManager->getRepository(Homepage::class)->findOneBy([]);
+        $homepage = $this->entityManager->getRepository(Homepage::class)->findOneBy([]);
 
         $cuisines = $this->entityManager->getRepository(LocalBusiness::class)->findCuisinesByFilters();
         $shopTypes = array_map(fn ($t) => LocalBusiness::getKeyForType($t), array_keys($this->entityManager->getRepository(LocalBusiness::class)->countByType()));
+
+        $deliveryForms = $this->entityManager->getRepository(DeliveryForm::class)->findAll([]);
 
         return $this->render('admin/customize_homepage.html.twig', $this->auth([
             'homepage' => $homepage,
@@ -2605,6 +2607,7 @@ class AdminController extends AbstractController
                 ];
             }, $cuisines),
             'shop_types' => $shopTypes,
+            'delivery_forms' => $deliveryForms,
         ]));
     }
 
