@@ -224,9 +224,15 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: none;
   }
 
+  .address-autosuggest__input {
+    font-size: 1.1em;
+    padding: 0;
+  }
+
   .address-autosuggest__input-wrapper:before {
     color: lightsteelblue;
     background-color: transparent;
+    font-size: 28px;
   }
 
 }
