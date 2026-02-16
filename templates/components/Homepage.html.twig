@@ -60,6 +60,8 @@
   {% if block.type == 'delivery_form' %}
     {% set form = this.getResourceFromIri(block.data.form) %}
     {% include 'index/_partials/delivery_form.html.twig' with {
+      title: block.data.title,
+      text: block.data.text,
       delivery_form: this.createDeliveryFormView(form),
       hashid: form|hashid(12)
     } %}

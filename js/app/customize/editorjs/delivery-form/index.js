@@ -1,20 +1,66 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import { Select } from 'antd';
+import sanitizeHtml from 'sanitize-html';
+import ContentEditable from 'react-contenteditable'
 
-function showPreview (wrapper) {
-  const formPreviewEl = document.createElement('div')
-  createRoot(formPreviewEl).render(<DeliveryFormPreview />)
-  wrapper.appendChild(formPreviewEl)
+function unescapeHTML(string) {
+  const el = document.createElement("span");
+  el.innerHTML = string;
+  return el.innerText;
 }
 
-const DeliveryFormPreview = () => {
+const DeliveryFormPreview = ({ title, text, onChange }) => {
+
+  const titleRef = useRef(title);
+  const textRef = useRef(text);
+
+  useEffect(() => {
+    titleRef.current = title
+  }, [ title ])
+
+  useEffect(() => {
+    textRef.current = text
+  }, [ text ])
+
   return (
     <section className="homepage-delivery">
       <div className="homepage-delivery-text">
-        <h2 className="mt-0">Vous avez besoin dune livraison ?</h2>
-        <p><strong>CoopCycle</strong> propose des services locaux et non polluants de livraison à vélo à la demande. Expédiez un colis ponctuellement ou de manière récurrente pour votre entreprise.</p>
+        <ContentEditable
+          tagName="h2"
+          html={titleRef.current}
+          onChange={(e) => {
+            titleRef.current = e.target.value
+          }}
+          onBlur={() => {
+            titleRef.current = sanitizeHtml(unescapeHTML(titleRef.current), {
+              // https://github.com/apostrophecms/sanitize-html?tab=readme-ov-file#what-if-i-dont-want-to-allow-any-tags
+              allowedTags: [],
+              allowedAttributes: {},
+            });
+            onChange({
+              title: titleRef.current,
+              text: textRef.current,
+            })
+          }} />
+        <ContentEditable
+          tagName="p"
+          html={textRef.current}
+          onChange={(e) => {
+            textRef.current = e.target.value
+          }}
+          onBlur={() => {
+            textRef.current = sanitizeHtml(unescapeHTML(textRef.current), {
+              // https://github.com/apostrophecms/sanitize-html?tab=readme-ov-file#what-if-i-dont-want-to-allow-any-tags
+              allowedTags: [],
+              allowedAttributes: {},
+            });
+            onChange({
+              title: titleRef.current,
+              text: textRef.current,
+            })
+          }} />
       </div>
       <div className="homepage-delivery-form">
         <form className="form-horizontal">
@@ -42,6 +88,20 @@ export default class DeliveryForm {
   constructor({ data, config }){
     this.config = config;
     this.form = data.form || null
+    this.title = data.title || `Lorem ipsum dolor sit amet`
+    this.text = data.text || `Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.`
+  }
+
+  showPreview (wrapper) {
+    const formPreviewEl = document.createElement('div')
+    createRoot(formPreviewEl).render(<DeliveryFormPreview
+      title={ this.title }
+      text={ this.text }
+      onChange={({ title, text }) => {
+        this.title = title
+        this.text = text
+      }} />)
+    wrapper.appendChild(formPreviewEl)
   }
 
   render() {
@@ -56,14 +116,14 @@ export default class DeliveryForm {
       style={{ width: 120 }}
       onChange={(value) => {
         this.form = value
-        showPreview(wrapper)
+        this.showPreview(wrapper)
       }}
       options={this.config.forms.map((f, i) => ({ value: f['@id'], label: `Form #${i + 1}` }))}
     />);
     wrapper.appendChild(selectEl)
 
     if (this.form) {
-      showPreview(wrapper)
+      this.showPreview(wrapper)
     }
 
     return wrapper;
@@ -71,7 +131,9 @@ export default class DeliveryForm {
 
   save(blockContent) {
     return {
-      form: this.form
+      form: this.form,
+      title: this.title,
+      text: this.text,
     }
   }
 }
