@@ -11,5 +11,11 @@
   }
 }
 
+// https://github.com/codex-team/editor.js/discussions/1891#discussioncomment-1983770
+.ce-block__content,
+.ce-toolbar__content {
+  max-width: 850px;
+}
+
 // Can be imported twice
 // @import './swiper-homepage.scss'
