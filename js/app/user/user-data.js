@@ -39,14 +39,17 @@ class httpClient {
       if (err.response) {
         if (err.response.status === 401) {
           if (depth < 3) {
-            await this._refreshToken();
+            const jwt = await this._refreshToken();
             return await this.request(
               {
                 method,
                 url,
                 data,
                 params,
-                headers: sendHeaders,
+                headers: {
+                  ...sendHeaders,
+                  Authorization: `Bearer ${jwt}`,
+                },
                 options
               },
               depth + 1,
@@ -88,6 +91,8 @@ class httpClient {
     });
     const { jwt } = await token.json();
     this.setToken(jwt);
+
+    return jwt
   }
 }
 
