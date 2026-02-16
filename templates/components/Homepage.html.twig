@@ -59,12 +59,14 @@
   {% endif %}
   {% if block.type == 'delivery_form' %}
     {% set form = this.getResourceFromIri(block.data.form) %}
+    <section class="mb-4" style="background-color: #212121;">
     {% include 'index/_partials/delivery_form.html.twig' with {
       title: block.data.title,
       text: block.data.text,
       delivery_form: this.createDeliveryFormView(form),
       hashid: form|hashid(12)
     } %}
+    </section>
   {% endif %}
 {% endfor %}
 <div>

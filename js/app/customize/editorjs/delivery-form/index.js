@@ -25,53 +25,55 @@ const DeliveryFormPreview = ({ title, text, onChange }) => {
   }, [ text ])
 
   return (
-    <section className="homepage-delivery">
-      <div className="homepage-delivery-text">
-        <ContentEditable
-          tagName="h2"
-          html={titleRef.current}
-          onChange={(e) => {
-            titleRef.current = e.target.value
-          }}
-          onBlur={() => {
-            titleRef.current = sanitizeHtml(unescapeHTML(titleRef.current), {
-              // https://github.com/apostrophecms/sanitize-html?tab=readme-ov-file#what-if-i-dont-want-to-allow-any-tags
-              allowedTags: [],
-              allowedAttributes: {},
-            });
-            onChange({
-              title: titleRef.current,
-              text: textRef.current,
-            })
-          }} />
-        <ContentEditable
-          tagName="p"
-          html={textRef.current}
-          onChange={(e) => {
-            textRef.current = e.target.value
-          }}
-          onBlur={() => {
-            textRef.current = sanitizeHtml(unescapeHTML(textRef.current), {
-              // https://github.com/apostrophecms/sanitize-html?tab=readme-ov-file#what-if-i-dont-want-to-allow-any-tags
-              allowedTags: [],
-              allowedAttributes: {},
-            });
-            onChange({
-              title: titleRef.current,
-              text: textRef.current,
-            })
-          }} />
-      </div>
-      <div className="homepage-delivery-form">
-        <form className="form-horizontal">
-          <div className="ssc">
-            <div className="mb ssc-head-line w-100"></div>
-            <div className="mb ssc-head-line w-100"></div>
-          </div>
-          <button type="button" className="btn btn-block btn-lg btn-primary">Suivant →</button>
-        </form>
-      </div>
-    </section>
+    <div style={{ backgroundColor: '#212121' }}>
+      <section className="homepage-delivery">
+        <div className="homepage-delivery-text">
+          <ContentEditable
+            tagName="h2"
+            html={titleRef.current}
+            onChange={(e) => {
+              titleRef.current = e.target.value
+            }}
+            onBlur={() => {
+              titleRef.current = sanitizeHtml(unescapeHTML(titleRef.current), {
+                // https://github.com/apostrophecms/sanitize-html?tab=readme-ov-file#what-if-i-dont-want-to-allow-any-tags
+                allowedTags: [],
+                allowedAttributes: {},
+              });
+              onChange({
+                title: titleRef.current,
+                text: textRef.current,
+              })
+            }} />
+          <ContentEditable
+            tagName="p"
+            html={textRef.current}
+            onChange={(e) => {
+              textRef.current = e.target.value
+            }}
+            onBlur={() => {
+              textRef.current = sanitizeHtml(unescapeHTML(textRef.current), {
+                // https://github.com/apostrophecms/sanitize-html?tab=readme-ov-file#what-if-i-dont-want-to-allow-any-tags
+                allowedTags: [],
+                allowedAttributes: {},
+              });
+              onChange({
+                title: titleRef.current,
+                text: textRef.current,
+              })
+            }} />
+        </div>
+        <div className="homepage-delivery-form">
+          <form className="form-horizontal">
+            <div className="ssc">
+              <div className="mb ssc-head-line w-100"></div>
+              <div className="mb ssc-head-line w-100"></div>
+            </div>
+            <button type="button" className="btn btn-block btn-lg btn-primary">Suivant →</button>
+          </form>
+        </div>
+      </section>
+    </div>
   )
 }
 
