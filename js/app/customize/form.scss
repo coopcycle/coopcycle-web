@@ -5,5 +5,11 @@
   height: 400px;
 }
 
+.codex-editor {
+  .swiper {
+    z-index: 0;
+  }
+}
+
 // Can be imported twice
 // @import './swiper-homepage.scss'
