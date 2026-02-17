@@ -17,6 +17,7 @@ import {
   apiSlice,
   useUpdateShopCollectionMutation,
   useCreateShopCollectionMutation,
+  useDeleteShopCollectionMutation,
 } from '../api/slice';
 
 import 'swiper/css';
@@ -53,6 +54,10 @@ const app = createSlice({
     },
     addCollection: (state, action) => {
       state.collections.push(action.payload)
+    },
+    removeCollection: (state, action) => {
+      const index = _.findIndex(state.collections, (c) => c['@id'] === action.payload['@id'])
+      state.collections.splice(index, 1)
     }
   },
 })
@@ -177,6 +182,7 @@ const CollectionSwiper = ({ collection }) => {
       )) }
       <div slot="container-end" className="pt-2">
         <Flex justify="flex-end" gap="small">
+          <DeleteButton collection={ collection } />
           <AddButton collection={ collection } />
           <SaveButton collection={ collection } />
         </Flex>
@@ -212,6 +218,22 @@ const SaveButton = ({ collection }) => {
         updateShopCollection(collection)
       }}
     >Save</Button>
+  )
+}
+
+const DeleteButton = ({ collection }) => {
+
+  const [ deleteShopCollection, { isLoading } ] = useDeleteShopCollectionMutation();
+
+  const dispatch = useDispatch()
+  const swiper = useSwiper();
+
+  return (
+    <Button danger onClick={async () => {
+      const result = await deleteShopCollection(collection['@id']);
+      console.log('result', result)
+      dispatch(app.actions.removeCollection(collection))
+    }}>Delete</Button>
   )
 }
 

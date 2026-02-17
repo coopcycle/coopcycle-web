@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity\LocalBusiness;
 
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\ApiResource;
@@ -33,6 +34,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
             uriTemplate: '/shop_collections/{id}',
             processor: ShopCollectionProcessor::class,
             input: ShopCollectionInput::class,
+            security: 'is_granted("ROLE_ADMIN")'
+        ),
+        new Delete(
+            uriTemplate: '/shop_collections/{id}',
             security: 'is_granted("ROLE_ADMIN")'
         ),
     ],

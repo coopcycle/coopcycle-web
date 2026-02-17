@@ -349,6 +349,12 @@ export const apiSlice = createApi({
         };
       },
     }),
+    deleteShopCollection: builder.mutation<void, string>({
+      query: uri => ({
+        url: uri,
+        method: 'DELETE',
+      }),
+    }),
   }),
 });
 
@@ -390,4 +396,5 @@ export const {
   useGetTaskIncidentsQuery,
   useUpdateShopCollectionMutation,
   useCreateShopCollectionMutation,
+  useDeleteShopCollectionMutation,
 } = apiSlice;
