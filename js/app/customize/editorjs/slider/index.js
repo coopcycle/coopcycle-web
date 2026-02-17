@@ -49,16 +49,15 @@ function handleContentEditableChange(e, ref) {
   ref.current = e.target.value;
 }
 
-function handleContentEditableBlur(slide, ref, prop, onChange) {
+function handleContentEditableBlur(ref, cb) {
+
   ref.current = sanitizeHtml(unescapeHTML(ref.current), {
     // https://github.com/apostrophecms/sanitize-html?tab=readme-ov-file#what-if-i-dont-want-to-allow-any-tags
     allowedTags: [],
     allowedAttributes: {},
   });
-  onChange({
-    ...slide,
-    [prop]: ref.current,
-  })
+
+  cb(ref.current)
 }
 
 const isExpired = (slide) => slide.expiresAt ? moment().isAfter(slide.expiresAt) : false;
@@ -104,7 +103,6 @@ const SlideContent = ({ slide, index, uploadEndpoint, onChange }) => {
     uppy.on('upload-success', (file, response) => {
       if (response.status === 200 && response.body?.url) {
         onChange({
-          ...slide,
           image: response.body?.url,
         })
       }
@@ -123,20 +121,32 @@ const SlideContent = ({ slide, index, uploadEndpoint, onChange }) => {
             tagName="h4"
             html={title.current || ''}
             onChange={(e) => handleContentEditableChange(e, title)}
-            onBlur={() => handleContentEditableBlur(slide, title, 'title', onChange)}
+            onBlur={() => handleContentEditableBlur(title, (newValue) => {
+              onChange({
+                title: newValue,
+              })
+            })}
             className={`coopcycle-homepage-bg-${slide.colorScheme}`} />
           <ContentEditable
             tagName="p"
             html={text.current || ''}
             onChange={(e) => handleContentEditableChange(e, text)}
-            onBlur={() => handleContentEditableBlur(slide, text, 'text', onChange)}
+            onBlur={() => handleContentEditableBlur(text, (newValue) => {
+              onChange({
+                text: newValue,
+              })
+            })}
             className={`coopcycle-homepage-bg-${slide.colorScheme}`} />
           <button type="button" className="btn btn-xs">
             <ContentEditable
               tagName="span"
               html={buttonText.current || ''}
               onChange={(e) => handleContentEditableChange(e, buttonText)}
-              onBlur={() => handleContentEditableBlur(slide, buttonText, 'buttonText', onChange)} />
+              onBlur={() => handleContentEditableBlur(buttonText, (newValue) => {
+                onChange({
+                  buttonText: newValue,
+                })
+              })} />
             <ArrowRight size={12} className="ml-2" />
           </button>
           <div className="swiper-slide-color-picker">
@@ -146,7 +156,6 @@ const SlideContent = ({ slide, index, uploadEndpoint, onChange }) => {
                 size="small"
                 onChange={(color, css, colorScheme) => {
                   onChange({
-                    ...slide,
                     backgroundColor: color.toHexString(),
                     colorScheme: colorScheme,
                   })
@@ -190,7 +199,6 @@ const SlideToolbar = ({ slide, index, isLast, onChange, onClickDelete, onClickMo
                 defaultValue={ slide.expiresAt ? moment(slide.expiresAt) : null }
                 onChange={(value, dateString) => {
                   onChange({
-                    ...slide,
                     expiresAt: dateString,
                   })
                 }} />
@@ -210,7 +218,6 @@ const SlideToolbar = ({ slide, index, isLast, onChange, onClickDelete, onClickMo
             return (
               <Input placeholder="http://" value={slide.href} onChange={(e) => {
                 onChange({
-                  ...slide,
                   href: e.target.value,
                 })
               }} />
