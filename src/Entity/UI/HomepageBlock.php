@@ -42,4 +42,14 @@ class HomepageBlock
     {
         return $this->id;
     }
+
+    public function setPosition($position)
+    {
+        $this->position = $position;
+    }
+
+    public function getPosition()
+    {
+        return $this->position;
+    }
 }

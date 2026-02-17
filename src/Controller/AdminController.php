@@ -2591,12 +2591,12 @@ class AdminController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $blocks = $this->entityManager->getRepository(HomepageBlock::class)->findAll([]);
+        $blocks = $this->entityManager->getRepository(HomepageBlock::class)->findAll();
 
         $cuisines = $this->entityManager->getRepository(LocalBusiness::class)->findCuisinesByFilters();
         $shopTypes = array_map(fn ($t) => LocalBusiness::getKeyForType($t), array_keys($this->entityManager->getRepository(LocalBusiness::class)->countByType()));
 
-        $deliveryForms = $this->entityManager->getRepository(DeliveryForm::class)->findAll([]);
+        $deliveryForms = $this->entityManager->getRepository(DeliveryForm::class)->findAll();
 
         return $this->render('admin/customize_homepage.html.twig', $this->auth([
             'blocks' => $blocks,

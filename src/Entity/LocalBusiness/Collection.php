@@ -72,19 +72,34 @@ class Collection
         return $this->id;
     }
 
-    public function setTitle(string $title)
-    {
-        $this->title = $title;
-    }
-
     public function getItems()
     {
         return $this->items;
     }
 
+    public function setTitle(string $title)
+    {
+        $this->title = $title;
+    }
+
     public function getTitle()
     {
         return $this->title;
+    }
+
+    public function setSubtitle(string $subtitle)
+    {
+        $this->subtitle = $subtitle;
+    }
+
+    public function getSubtitle()
+    {
+        return $this->subtitle;
+    }
+
+    public function setSlug($slug)
+    {
+        $this->slug = $slug;
     }
 
     public function getSlug()

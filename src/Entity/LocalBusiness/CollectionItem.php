@@ -27,6 +27,11 @@ class CollectionItem
         $this->collection = $collection;
     }
 
+    public function getCollection()
+    {
+        return $this->collection;
+    }
+
     public function setShop(LocalBusiness $shop)
     {
         $this->shop = $shop;
@@ -35,6 +40,11 @@ class CollectionItem
     public function setPosition(int $position)
     {
         $this->position = $position;
+    }
+
+    public function getPosition()
+    {
+        return $this->position;
     }
 }
 
