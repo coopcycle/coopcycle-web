@@ -17,5 +17,12 @@
   max-width: 850px;
 }
 
+// https://github.com/codex-team/editor.js/discussions/1897
+.ce-popover__items {
+  .ce-popover-item[data-item-name="paragraph"] {
+    display: none;
+  }
+}
+
 // Can be imported twice
 // @import './swiper-homepage.scss'
