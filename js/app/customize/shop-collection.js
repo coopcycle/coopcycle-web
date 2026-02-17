@@ -12,6 +12,8 @@ import { Provider, useSelector, useDispatch } from 'react-redux'
 import { Navigation, Manipulation } from 'swiper/modules'
 import { Swiper, SwiperSlide, useSwiper } from 'swiper/react'
 
+import { useTranslation } from 'react-i18next';
+
 import { accountSlice } from '../entities/account/reduxSlice';
 import {
   apiSlice,
@@ -152,6 +154,7 @@ const ShopLogo = ({ shop }) => {
 const CollectionSwiper = ({ collection }) => {
 
   const dispatch = useDispatch()
+  const { t } = useTranslation();
 
   return (
     <Swiper
@@ -181,10 +184,16 @@ const CollectionSwiper = ({ collection }) => {
         </SwiperSlide>
       )) }
       <div slot="container-end" className="pt-2">
-        <Flex justify="flex-end" gap="small">
-          <DeleteButton collection={ collection } />
-          <AddButton collection={ collection } />
-          <SaveButton collection={ collection } />
+        <Flex justify="space-between" align="center">
+          <span className="help-block">
+            <i className="fa fa-info-circle mr-2"></i>
+            <span>{t('SHOP_COLLECTIONS.SORT_DISCLAIMER')}</span>
+          </span>
+          <Flex justify="flex-end" gap="small">
+            <DeleteButton collection={ collection } />
+            <AddButton collection={ collection } />
+            <SaveButton collection={ collection } />
+          </Flex>
         </Flex>
       </div>
     </Swiper>
@@ -193,6 +202,8 @@ const CollectionSwiper = ({ collection }) => {
 
 const AddButton = ({ collection }) => {
 
+  const { t } = useTranslation();
+
   const dispatch = useDispatch()
   const swiper = useSwiper();
 
@@ -200,12 +211,13 @@ const AddButton = ({ collection }) => {
     <Button onClick={() => {
       dispatch(app.actions.addSlide({ collection }))
       setTimeout(() => swiper.slideTo(swiper.slides.length, 500), 150)
-    }}>Add shop</Button>
+    }}>{t('SHOP_COLLECTIONS.ADD_SHOP')}</Button>
   )
 }
 
 const SaveButton = ({ collection }) => {
 
+  const { t } = useTranslation();
   const [ updateShopCollection, { isLoading } ] = useUpdateShopCollectionMutation();
 
   return (
@@ -217,12 +229,13 @@ const SaveButton = ({ collection }) => {
         // TODO Check errors
         updateShopCollection(collection)
       }}
-    >Save</Button>
+    >{t('SAVE_BUTTON')}</Button>
   )
 }
 
 const DeleteButton = ({ collection }) => {
 
+  const { t } = useTranslation();
   const [ deleteShopCollection, { isLoading } ] = useDeleteShopCollectionMutation();
 
   const dispatch = useDispatch()
@@ -233,12 +246,13 @@ const DeleteButton = ({ collection }) => {
       const result = await deleteShopCollection(collection['@id']);
       console.log('result', result)
       dispatch(app.actions.removeCollection(collection))
-    }}>Delete</Button>
+    }}>{t('ADMIN_DASHBOARD_DELETE')}</Button>
   )
 }
 
 const CreateButton = () => {
 
+  const { t } = useTranslation();
   const dispatch = useDispatch()
   const [ createShopCollection, { isLoading } ] = useCreateShopCollectionMutation();
 
@@ -250,7 +264,7 @@ const CreateButton = () => {
         const collection = await createShopCollection({ title: 'Lorem ipsum' }).unwrap()
         dispatch(app.actions.addCollection(collection))
       }}
-    >Add collection</Button>
+    >{t('SHOP_COLLECTIONS.ADD_COLLECTION')}</Button>
   )
 }
 

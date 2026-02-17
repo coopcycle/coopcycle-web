@@ -812,6 +812,11 @@
         },
         "PROMOTION_COUPON_BASED": "Cette promotion est basée sur un code promo",
         "OWNER": "Propriétaire",
-        "NO_RESULTS": "Pas de résultats"
+        "NO_RESULTS": "Pas de résultats",
+        "SHOP_COLLECTIONS": {
+            "SORT_DISCLAIMER": "Les boutiques seront triées par tranche horaire",
+            "ADD_COLLECTION": "Ajouter une collection",
+            "ADD_SHOP": "Ajouter une boutique"
+        }
     }
 }

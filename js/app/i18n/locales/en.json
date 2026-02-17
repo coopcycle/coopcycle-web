@@ -825,6 +825,11 @@
         },
         "PROMOTION_COUPON_BASED": "This promotion is based on a coupon code",
         "OWNER": "Owner",
-        "NO_RESULTS": "No results"
+        "NO_RESULTS": "No results",
+        "SHOP_COLLECTIONS": {
+            "SORT_DISCLAIMER": "The shops would still be ordered by time slot",
+            "ADD_COLLECTION": "Add a collection",
+            "ADD_SHOP": "Add a shop"
+        }
       }
 }
