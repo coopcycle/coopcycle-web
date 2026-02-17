@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, forwardRef } from 'react'
+import React, { useEffect, useRef, forwardRef, useState } from 'react'
 import { Button, Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
 
@@ -80,6 +80,7 @@ export default function({ blocks, cuisines, shopTypes, uploadEndpoint, ctaIcon, 
 
   const ref = useRef();
   const { t } = useTranslation();
+  const [isLoading, setIsLoading] = useState(false)
 
   const httpClient = new window._auth.httpClient();
 
@@ -94,10 +95,11 @@ export default function({ blocks, cuisines, shopTypes, uploadEndpoint, ctaIcon, 
         deliveryForms={deliveryForms}
         t={t} />
       <Flex justify="flex-end">
-        <Button type="primary" onClick={async () => {
+        <Button type="primary" loading={isLoading} onClick={async () => {
+          setIsLoading(true)
           const data = await ref.current.save()
           const { response } = await httpClient.put('/api/ui/homepage/blocks', { blocks: data.blocks });
-          console.log(response)
+          setIsLoading(false)
         }}>Save</Button>
       </Flex>
     </div>
