@@ -15,6 +15,8 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 class DeliveryForm
 {
     public string $form;
+    public string $title = '';
+    public string $text = '';
 
     public function __construct(
         private FormFactoryInterface $formFactory,

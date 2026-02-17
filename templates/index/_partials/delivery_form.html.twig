@@ -1,8 +1,8 @@
 <div class="container">
   <section class="homepage-delivery">
     <div class="homepage-delivery-text">
-      <h2>{% if title is defined %}{{ title }}{% else %}{{ 'homepage.form.title'|trans }}{% endif %}</h2>
-      <p>{% if text is defined %}{{ text }}{% else %}{% trans with { '%brand_name%': coopcycle_setting('brand_name') } %}homepage.form.content{% endtrans %}{% endif %}</p>
+      <h2>{% if title is defined and title is not empty %}{{ title }}{% else %}{{ 'homepage.form.title'|trans }}{% endif %}</h2>
+      <p>{% if text is defined and text is not empty %}{{ text }}{% else %}{% trans with { '%brand_name%': coopcycle_setting('brand_name') } %}homepage.form.content{% endtrans %}{% endif %}</p>
     </div>
     <div class="homepage-delivery-form">
       {{ form_start(delivery_form, {
