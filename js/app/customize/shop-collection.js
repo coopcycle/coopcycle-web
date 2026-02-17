@@ -22,6 +22,8 @@ import 'swiper/css';
 import 'swiper/css/navigation'
 
 import './shop-collection.scss'
+import '../restaurant/list.scss'
+import 'skeleton-screen-css/dist/index.scss'
 
 const initialState = {
   shops: [],
@@ -84,7 +86,43 @@ const ShopSelect = ({ collection, shop, index }) => {
   )
 }
 
-const ShopImage = ({ shop }) => {
+const ShopPreview = ({ collection, shop, index, onClickDelete }) => {
+  return (
+    <div className="restaurant-item">
+      <a>
+        <div className="restaurant-image">
+          <div className="restaurant-banner">
+            <img src="//placehold.co/480x270" />
+          </div>
+          <div className="restaurant-logo">
+            <ShopLogo shop={shop} />
+          </div>
+          <div className="badges"></div>
+        </div>
+        <div className="restaurant-details">
+          <div className="restaurant-item__title">
+            <ShopSelect collection={collection} shop={shop} index={index} />
+          </div>
+          <div>
+            <div className="ssc">
+              <div className="ssc-line w-40"></div>
+            </div>
+          </div>
+          <div className="details">
+            <div className="ssc w-100">
+              <div className="ssc-line w-100"></div>
+            </div>
+          </div>
+        </div>
+        <span className="top-right">
+          <Button type="link" icon={<CloseOutlined />} onClick={onClickDelete} />
+        </span>
+      </a>
+  </div>
+  )
+}
+
+const ShopLogo = ({ shop }) => {
 
   const image = useSelector((state) => {
     const s = _.find(state.app.shops, (s) => s['@id'] === shop)
@@ -92,11 +130,13 @@ const ShopImage = ({ shop }) => {
   })
 
   if (!image) {
-    return null
+    return (
+      <img src="//placehold.co/512x512" />
+    )
   }
 
   return (
-    <img className="shop-image" src={image} />
+    <img src={image} />
   )
 }
 
@@ -124,11 +164,11 @@ const CollectionSwiper = ({ collection }) => {
       </div>
       { collection.shops.map((shop, index) => (
         <SwiperSlide key={`shop-${index}`}>
-          <ShopImage shop={shop} />
-          <span className="top-right">
-            <Button type="link" icon={<CloseOutlined />} onClick={ () => dispatch(app.actions.removeSlide({ collection, index })) } />
-          </span>
-          <ShopSelect collection={collection} shop={shop} index={index} />
+          <ShopPreview
+            collection={collection}
+            shop={shop}
+            index={index}
+            onClickDelete={() => dispatch(app.actions.removeSlide({ collection, index }))} />
         </SwiperSlide>
       )) }
       <div slot="container-end" className="pt-2">
