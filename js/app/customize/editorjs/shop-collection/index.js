@@ -117,7 +117,7 @@ async function fetchCollections(cuisines, setOptions) {
   fetchCollectionsListeners.forEach((listener) => listener.call(null, options))
 }
 
-const ComponentCascader = ({ cuisines, onChange, defaultValue }) => {
+const ComponentCascader = ({ placeholder, cuisines, onChange, defaultValue }) => {
 
   const [options, setOptions] = useState([])
 
@@ -138,7 +138,7 @@ const ComponentCascader = ({ cuisines, onChange, defaultValue }) => {
       defaultValue={defaultValue}
       options={options}
       onChange={onChange}
-      placeholder="Please select" />
+      placeholder={placeholder} />
   )
 }
 
@@ -189,9 +189,10 @@ export default class ShopCollection {
     };
   }
 
-  constructor({ data, config }){
+  constructor({ data, config, api }){
     this.data = data;
     this.config = config;
+    this.api = api;
   }
 
   showPreview(wrapper, component, args = '') {
@@ -253,6 +254,7 @@ export default class ShopCollection {
       <ComponentCascader
         defaultValue={ this._getDefaultValue()  }
         cuisines={this.config.cuisines}
+        placeholder={this.api.i18n.t('select_value')}
         onChange={(value) => {
           const [ component, args ] = value
           this.showPreview(wrapper, component, args)

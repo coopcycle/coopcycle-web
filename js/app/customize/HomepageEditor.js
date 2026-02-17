@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, forwardRef } from 'react'
 import { Button, Flex } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 import EditorJS from '@editorjs/editorjs';
 import ShopCollection from './editorjs/shop-collection'
@@ -8,7 +9,7 @@ import Slider from './editorjs/slider'
 import DeliveryForm from './editorjs/delivery-form'
 
 // https://dev.to/sumankalia/how-to-integrate-editorjs-in-reactjs-2l6l
-const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, ctaIcon, deliveryForms }, ref) => {
+const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, ctaIcon, deliveryForms, t }, ref) => {
 
   // const ref = useRef();
 
@@ -51,7 +52,9 @@ const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, ctaIco
         },
         data: {
           blocks,
-        }
+        },
+        // https://editorjs.io/i18n/
+        i18n: t('HOMEPAGE_EDITOR', { returnObjects: true }),
         // onChange: (api, event) => {
         //   editor.save()
         //     .then((savedData) => {
@@ -79,6 +82,8 @@ const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, ctaIco
 export default function({ blocks, cuisines, shopTypes, uploadEndpoint, ctaIcon, deliveryForms }) {
 
   const ref = useRef();
+  const { t } = useTranslation();
+
   const httpClient = new window._auth.httpClient();
 
   return (
@@ -89,7 +94,8 @@ export default function({ blocks, cuisines, shopTypes, uploadEndpoint, ctaIcon, 
         shopTypes={shopTypes}
         uploadEndpoint={uploadEndpoint}
         ctaIcon={ctaIcon}
-        deliveryForms={deliveryForms} />
+        deliveryForms={deliveryForms}
+        t={t} />
       <Flex justify="flex-end">
         <Button type="primary" onClick={async () => {
           const data = await ref.current.save()

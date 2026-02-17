@@ -830,6 +830,15 @@
             "SORT_DISCLAIMER": "The shops would still be ordered by time slot",
             "ADD_COLLECTION": "Add a collection",
             "ADD_SHOP": "Add a shop"
+        },
+        "HOMEPAGE_EDITOR": {
+            "messages": {
+                "tools": {
+                    "shop_collection": {
+                        "select_value": "Select a value"
+                    }
+                }
+            }
         }
       }
 }

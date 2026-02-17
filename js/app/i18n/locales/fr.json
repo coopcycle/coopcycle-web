@@ -817,6 +817,20 @@
             "SORT_DISCLAIMER": "Les boutiques seront triées par tranche horaire",
             "ADD_COLLECTION": "Ajouter une collection",
             "ADD_SHOP": "Ajouter une boutique"
+        },
+        "HOMEPAGE_EDITOR": {
+            "messages": {
+                "toolNames": {
+                    "Shop Collection": "Collection de boutiques",
+                    "Banner": "Bannière",
+                    "Delivery Form": "Formulaire de livraison"
+                },
+                "tools": {
+                    "shop_collection": {
+                        "select_value": "Sélectionnez une valeur"
+                    }
+                }
+            }
         }
     }
 }
