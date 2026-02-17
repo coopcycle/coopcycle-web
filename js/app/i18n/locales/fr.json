@@ -828,6 +828,12 @@
                 "tools": {
                     "shop_collection": {
                         "select_value": "Sélectionnez une valeur"
+                    },
+                    "slider": {
+                        "move_left": "Déplacer à gauche",
+                        "move_right": "Déplacer à droite",
+                        "expiration_date": "Date d'expiration",
+                        "link": "Lien"
                     }
                 }
             }

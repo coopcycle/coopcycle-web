@@ -20,6 +20,7 @@ import Dashboard from '@uppy/dashboard';
 import XHR from '@uppy/xhr-upload';
 import { ArrowRight } from 'lucide-react';
 import moment from 'moment'
+import { useTranslation } from 'react-i18next';
 
 import ColorPicker from '../../color-picker';
 
@@ -167,17 +168,20 @@ const SlideContent = ({ slide, index, uploadEndpoint, onChange }) => {
 }
 
 const SlideToolbar = ({ slide, index, isLast, onChange, onClickDelete, onClickMoveLeft, onClickMoveRight }) => {
+
+  const { t } = useTranslation()
+
   return (
     <Flex>
-      <Tooltip title="Move left">
+      <Tooltip title={ t('HOMEPAGE_EDITOR.messages.tools.slider.move_left') }>
         <Button type="text" disabled={ index === 0 } size="small" shape="circle" icon={<LeftOutlined />} onClick={onClickMoveLeft} />
       </Tooltip>
-      <Tooltip title="Move right">
+      <Tooltip title={ t('HOMEPAGE_EDITOR.messages.tools.slider.move_right') }>
         <Button type="text" disabled={ isLast } size="small" shape="circle" icon={<RightOutlined />} onClick={onClickMoveRight} />
       </Tooltip>
-      <Tooltip title="Expiration">
+      <Tooltip title={ t('HOMEPAGE_EDITOR.messages.tools.slider.expiration_date') }>
         <Popover
-          title="Expiration date"
+          title={t('HOMEPAGE_EDITOR.messages.tools.slider.expiration_date')}
           trigger="click"
           content={() => {
             return (
@@ -198,9 +202,9 @@ const SlideToolbar = ({ slide, index, isLast, onChange, onClickDelete, onClickMo
             />
         </Popover>
       </Tooltip>
-      <Tooltip title="Link">
+      <Tooltip title={t('HOMEPAGE_EDITOR.messages.tools.slider.link')}>
         <Popover
-          title="Link"
+          title={t('HOMEPAGE_EDITOR.messages.tools.slider.link')}
           trigger="click"
           content={() => {
             return (
@@ -215,7 +219,7 @@ const SlideToolbar = ({ slide, index, isLast, onChange, onClickDelete, onClickMo
           <Button type="text" size="small" shape="circle" icon={<LinkOutlined />} />
         </Popover>
       </Tooltip>
-      <Tooltip title="Delete">
+      <Tooltip title={t('ADMIN_DASHBOARD_DELETE')}>
         <Button type="text" size="small" shape="circle" icon={<CloseOutlined />} onClick={onClickDelete} />
       </Tooltip>
     </Flex>

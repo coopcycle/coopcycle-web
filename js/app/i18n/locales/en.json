@@ -836,6 +836,12 @@
                 "tools": {
                     "shop_collection": {
                         "select_value": "Select a value"
+                    },
+                    "slider": {
+                        "move_left": "Move left",
+                        "move_right": "Move right",
+                        "expiration_date": "Expiration date",
+                        "link": "Link"
                     }
                 }
             }
