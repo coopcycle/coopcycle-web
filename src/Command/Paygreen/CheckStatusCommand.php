@@ -87,7 +87,7 @@ class CheckStatusCommand extends Command
         $qb->orderBy('o.createdAt', 'DESC');
 
         $table = new Table($output);
-        $table->setHeaders(['Created at', 'Number', 'PayGreen status']);
+        $table->setHeaders(['Created at', 'Number', 'PayGreen status', 'Stripe Payment Intent']);
 
         $rows = $qb->getQuery()->getArrayResult();
 
@@ -108,6 +108,7 @@ class CheckStatusCommand extends Command
                 $row['createdAt']->format(\DateTime::ATOM),
                 $row['number'],
                 $paymentOrder['status'],
+                $row['details']['payment_intent'] ?? ''
             ]);
 
         }
