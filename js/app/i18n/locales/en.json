@@ -832,6 +832,7 @@
             "ADD_SHOP": "Add a shop"
         },
         "HOMEPAGE_EDITOR": {
+            "placeholder": "Type \"/\" to insert a block",
             "messages": {
                 "tools": {
                     "shop_collection": {

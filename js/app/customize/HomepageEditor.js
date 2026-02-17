@@ -11,15 +11,12 @@ import DeliveryForm from './editorjs/delivery-form'
 // https://dev.to/sumankalia/how-to-integrate-editorjs-in-reactjs-2l6l
 const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, ctaIcon, deliveryForms, t }, ref) => {
 
-  // const ref = useRef();
-
   useEffect(() => {
 
     if (!ref.current) {
 
-      console.log('Init EditorJS')
-
       const editor = new EditorJS({
+        placeholder: t('HOMEPAGE_EDITOR.placeholder'),
         holder: 'editorjs',
         tools: {
           shop_collection: {
