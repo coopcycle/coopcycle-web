@@ -9,7 +9,7 @@ use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
-use AppBundle\Entity\UI\Block;
+use AppBundle\Entity\UI\HomepageBlock;
 use AppBundle\Form\DeliveryEmbedType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
@@ -85,7 +85,7 @@ class Homepage
 
     public function getBlocks(): array
     {
-        return $this->entityManager->getRepository(Block::class)->findAll();
+        return $this->entityManager->getRepository(HomepageBlock::class)->findAll();
     }
 
     public function getDeliveryForm(): ?DeliveryForm

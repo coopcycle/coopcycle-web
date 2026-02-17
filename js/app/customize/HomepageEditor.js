@@ -8,7 +8,7 @@ import Slider from './editorjs/slider'
 import DeliveryForm from './editorjs/delivery-form'
 
 // https://dev.to/sumankalia/how-to-integrate-editorjs-in-reactjs-2l6l
-const Editor = forwardRef(({ homepage, cuisines, shopTypes, uploadEndpoint, ctaIcon, deliveryForms }, ref) => {
+const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, ctaIcon, deliveryForms }, ref) => {
 
   // const ref = useRef();
 
@@ -50,7 +50,7 @@ const Editor = forwardRef(({ homepage, cuisines, shopTypes, uploadEndpoint, ctaI
           ref.current = editor;
         },
         data: {
-          blocks: homepage.blocks
+          blocks,
         }
         // onChange: (api, event) => {
         //   editor.save()
@@ -76,7 +76,7 @@ const Editor = forwardRef(({ homepage, cuisines, shopTypes, uploadEndpoint, ctaI
   )
 })
 
-export default function({ homepage, cuisines, shopTypes, uploadEndpoint, ctaIcon, deliveryForms }) {
+export default function({ blocks, cuisines, shopTypes, uploadEndpoint, ctaIcon, deliveryForms }) {
 
   const ref = useRef();
   const httpClient = new window._auth.httpClient();
@@ -84,12 +84,16 @@ export default function({ homepage, cuisines, shopTypes, uploadEndpoint, ctaIcon
   return (
     <div>
       <Editor ref={ref}
-        homepage={homepage}
-        cuisines={cuisines} shopTypes={shopTypes} uploadEndpoint={uploadEndpoint} ctaIcon={ctaIcon} deliveryForms={deliveryForms} />
+        blocks={blocks}
+        cuisines={cuisines}
+        shopTypes={shopTypes}
+        uploadEndpoint={uploadEndpoint}
+        ctaIcon={ctaIcon}
+        deliveryForms={deliveryForms} />
       <Flex justify="flex-end">
         <Button type="primary" onClick={async () => {
           const data = await ref.current.save()
-          const { response } = await httpClient.put('/api/ui/homepage', { blocks: data.blocks });
+          const { response } = await httpClient.put('/api/ui/homepage/blocks', { blocks: data.blocks });
           console.log(response)
         }}>Save</Button>
       </Flex>

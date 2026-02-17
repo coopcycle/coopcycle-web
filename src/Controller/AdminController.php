@@ -47,7 +47,7 @@ use AppBundle\Entity\Sylius\TaxRate;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
-use AppBundle\Entity\UI\Homepage;
+use AppBundle\Entity\UI\HomepageBlock;
 use AppBundle\Entity\Woopit\WoopitIntegration;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\AttachToOrganizationType;
@@ -2591,7 +2591,7 @@ class AdminController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $homepage = $this->entityManager->getRepository(Homepage::class)->findOneBy([]);
+        $blocks = $this->entityManager->getRepository(HomepageBlock::class)->findAll([]);
 
         $cuisines = $this->entityManager->getRepository(LocalBusiness::class)->findCuisinesByFilters();
         $shopTypes = array_map(fn ($t) => LocalBusiness::getKeyForType($t), array_keys($this->entityManager->getRepository(LocalBusiness::class)->countByType()));
@@ -2599,7 +2599,7 @@ class AdminController extends AbstractController
         $deliveryForms = $this->entityManager->getRepository(DeliveryForm::class)->findAll([]);
 
         return $this->render('admin/customize_homepage.html.twig', $this->auth([
-            'homepage' => $homepage,
+            'blocks' => $blocks,
             'cuisines' => array_map(function ($c) use ($translator) {
                 return [
                     'label' => $translator->trans($c->getName(), [], 'cuisines'),
