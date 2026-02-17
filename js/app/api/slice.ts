@@ -339,6 +339,16 @@ export const apiSlice = createApi({
         };
       },
     }),
+    // TODO Add types
+    createShopCollection: builder.mutation({
+      query(body) {
+        return {
+          url: `/api/shop_collections`,
+          method: 'POST',
+          body,
+        };
+      },
+    }),
   }),
 });
 
@@ -379,4 +389,5 @@ export const {
   useGetTaskEventsQuery,
   useGetTaskIncidentsQuery,
   useUpdateShopCollectionMutation,
+  useCreateShopCollectionMutation,
 } = apiSlice;

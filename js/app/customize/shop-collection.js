@@ -15,7 +15,8 @@ import { Swiper, SwiperSlide, useSwiper } from 'swiper/react'
 import { accountSlice } from '../entities/account/reduxSlice';
 import {
   apiSlice,
-  useUpdateShopCollectionMutation
+  useUpdateShopCollectionMutation,
+  useCreateShopCollectionMutation,
 } from '../api/slice';
 
 import 'swiper/css';
@@ -49,6 +50,9 @@ const app = createSlice({
     setTitle: (state, action) => {
       const index = _.findIndex(state.collections, (c) => c['@id'] === action.payload.collection['@id'])
       state.collections[index].title = action.payload.title
+    },
+    addCollection: (state, action) => {
+      state.collections.push(action.payload)
     }
   },
 })
@@ -211,6 +215,23 @@ const SaveButton = ({ collection }) => {
   )
 }
 
+const CreateButton = () => {
+
+  const dispatch = useDispatch()
+  const [ createShopCollection, { isLoading } ] = useCreateShopCollectionMutation();
+
+  return (
+    <Button
+      type="primary"
+      loading={isLoading}
+      onClick={async () => {
+        const collection = await createShopCollection({ title: 'Lorem ipsum' }).unwrap()
+        dispatch(app.actions.addCollection(collection))
+      }}
+    >Add collection</Button>
+  )
+}
+
 const Editor = () => {
 
   const collections = useSelector((state) => state.app.collections)
@@ -223,6 +244,11 @@ const Editor = () => {
           <hr />
         </div>
       ))}
+      <div>
+        <Flex justify="flex-end" gap="small">
+          <CreateButton />
+        </Flex>
+      </div>
     </div>
   )
 }

@@ -6,6 +6,10 @@
 
 {% block content %}
 
+  <div class="alert alert-info">
+  Use the page below to create arbitrary shop collections.
+  </div>
+
     {% set all_shops = shops|map((s) => {
       '@id': s|get_iri_from_item,
       name: s.name,
