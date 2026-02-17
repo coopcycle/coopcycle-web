@@ -1,0 +1,16 @@
+<section class="mb-4" style="background-color: {{ this.backgroundColor }};">
+  <div class="container">
+    <div class="py-3 coopcycle-homepage-banner coopcycle-homepage-bg-{{ this.colorScheme }}">
+      <div class="coopcycle-homepage-banner-content">
+      {% set md = this.markdown|json_decode %}
+      {% if md is empty %}
+        {% set md = this.markdown %}
+      {% endif %}
+      {{ md ? md|markdown_to_html : '' }}
+      </div>
+      <div>
+        {{ ux_icon('lucide:arrow-right', { style: 'font-size: 2em;' }) }}
+      </div>
+    </div>
+  </div>
+</section>

@@ -12,9 +12,6 @@ use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\UI\Block;
 use AppBundle\Form\DeliveryEmbedType;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent]
@@ -26,9 +23,7 @@ class Homepage
 
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private LocalBusinessRepository $shopRepository,
-        private FormFactoryInterface $formFactory,
-        private IriConverterInterface $iriConverter)
+        private LocalBusinessRepository $shopRepository)
     {}
 
     public function getZeroWasteCount(): int
@@ -104,20 +99,5 @@ class Homepage
         $qb->setMaxResults(1);
 
         return $qb->getQuery()->getOneOrNullResult();
-    }
-
-    public function createDeliveryFormView(DeliveryForm $deliveryForm): FormView
-    {
-        return $this->formFactory->createNamed('delivery', DeliveryEmbedType::class, new Delivery(), [
-            'with_weight'      => $deliveryForm->getWithWeight(),
-            'with_vehicle'     => $deliveryForm->getWithVehicle(),
-            'with_time_slot'   => $deliveryForm->getTimeSlot(),
-            'with_package_set' => $deliveryForm->getPackageSet(),
-        ])->createView();
-    }
-
-    public function getResourceFromIri(string $iri): ?DeliveryForm
-    {
-        return $this->iriConverter->getResourceFromIri($iri);
     }
 }

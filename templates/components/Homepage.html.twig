@@ -4,100 +4,13 @@
     {{ component(('ShopCollection:' ~ (block.data.component|capitalize)), block.data.args ?? []) }}
   {% endif %}
   {% if block.type == 'banner' %}
-  <section class="mb-4" style="background-color: {{ block.data.backgroundColor }};">
-    <div class="container">
-      <div class="py-3 coopcycle-homepage-banner coopcycle-homepage-bg-{{ block.data.colorScheme }}">
-        <div class="coopcycle-homepage-banner-content">
-        {# FIXME There is a serialization problem #}
-        {% set md = block.data.markdown|json_decode %}
-        {% if md is empty %}
-          {% set md = block.data.markdown %}
-        {% endif %}
-        {{ md ? md|markdown_to_html : '' }}
-        </div>
-        <div>
-          {{ ux_icon('lucide:arrow-right', { style: 'font-size: 2em;' }) }}
-        </div>
-      </div>
-    </div>
-  </section>
+    {{ component('Banner', block.data) }}
   {% endif %}
   {% if block.type == 'slider' %}
-  {# Filter out expired slides #}
-  {% set slides = block.data.slides|filter(s => s.expiresAt is defined ? ('now'|date('U') < s.expiresAt|date('U')) : true) %}
-  <section class="mb-4">
-    <div class="container-fluid">
-      <div class="swiper swiper-homepage">
-        <ol class="swiper-wrapper">
-          {% for slide in slides %}
-          <li class="swiper-slide">
-            <a href="{{ slide.href }}" target="_blank" style="background-color: {{ slide.backgroundColor}};">
-              <div class="swiper-slide-content">
-                <div class="swiper-slide-content-left">
-                  <h4 class="coopcycle-homepage-bg-{{ slide.colorScheme ?? 'light' }}">{{ slide.title }}</h4>
-                  <p class="coopcycle-homepage-bg-{{ slide.colorScheme ?? 'light' }}">{{ slide.text }}</p>
-                  <button type="button" class="btn btn-xs">
-                    <span>{{ slide.buttonText }}</span>
-                    {{ ux_icon('lucide:arrow-right', { class: 'ml-2' }) }}
-                  </button>
-                </div>
-                <div class="swiper-slide-content-right">
-                  {% if slide.image is defined and slide.image is not empty %}
-                    <img src="{{ slide.image }}" />
-                  {% endif %}
-                </div>
-              </div>
-            </a>
-          </li>
-          {% endfor %}
-        </ol>
-        <div class="swiper-button-prev"></div>
-        <div class="swiper-button-next"></div>
-      </div>
-    </div>
-  </section>
+    {{ component('Slider', { slides: block.data.slides }) }}
   {% endif %}
   {% if block.type == 'delivery_form' %}
-    {% set form = this.getResourceFromIri(block.data.form) %}
-    <section class="mb-4" style="background-color: #212121;">
-    {% include 'index/_partials/delivery_form.html.twig' with {
-      title: block.data.title,
-      text: block.data.text,
-      delivery_form: this.createDeliveryFormView(form),
-      hashid: form|hashid(12)
-    } %}
-    </section>
+    {{ component('DeliveryForm', block.data) }}
   {% endif %}
 {% endfor %}
 <div>
-
-{# {% for section in this.sections %}
-  {{ component(section.component, section.props ?? []) }}
-{% endfor %}
-
-{% if this.zeroWasteCount > 0 %}
-  <section class="homepage-zerowaste mb-4">
-    <div class="container">
-      <a href="{{ path('restaurants_by_tags', { tags: 'zerowaste' }) }}" class="d-flex justify-content-between align-items-center py-4">
-        <span>
-          <i class="fa fa-lg fa-globe mr-2" aria-hidden="true"></i>
-          <span>{{ 'homepage.zerowaste'|trans }}</span>
-        </span>
-        <i class="fa fa-lg fa-arrow-right"></i>
-      </a>
-    </div>
-  </section>
-{% endif %}
-
-{% if this.deliveryForm is not empty %}
-  {% include 'index/_partials/delivery_form.html.twig' with {
-    delivery_form: this.createDeliveryFormView(this.deliveryForm),
-    hashid: this.deliveryForm|hashid(12)
-  } %}
-{% endif %}
-
-{% if this.hubs|length > 0 %}
-  {% for hub in hubs %}
-    {{ component('ShopCollection:Hub', { hub: hub }) }}
-  {% endfor %}
-{% endif %} #}
