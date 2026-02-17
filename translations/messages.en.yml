@@ -1728,3 +1728,4 @@ basics.more_results: More results
 sylius.form.promotion_action.delivery_percentage_discount: 'Delivery percentage discount'
 restaurant_promotion.rules.help: Add rules to define what triggers the promotion
 restaurant_promotion.actions.help: Add actions to define how the promotion is applied
+customize.homepage: New! Customize homepage

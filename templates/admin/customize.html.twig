@@ -7,6 +7,11 @@
 {% endblock %}
 
 {% block content %}
+
+<div class="alert alert-info">
+  <a href="{{ path('admin_customize_homepage') }}">✨ {{ 'customize.homepage'|trans }}</a>
+</div>
+
 {{ form_start(form) }}
 
   {{ form_row(form.motto) }}
