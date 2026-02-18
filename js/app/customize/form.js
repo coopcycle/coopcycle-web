@@ -97,8 +97,8 @@ if (homepageEditorEl) {
       cuisines={JSON.parse(homepageEditorEl.dataset.cuisines)}
       shopTypes={JSON.parse(homepageEditorEl.dataset.shopTypes)}
       uploadEndpoint={homepageEditorEl.dataset.uploadEndpoint}
-      ctaIcon={homepageEditorEl.dataset.ctaIcon}
       deliveryForms={JSON.parse(homepageEditorEl.dataset.deliveryForms)}
+      shopCollections={JSON.parse(homepageEditorEl.dataset.shopCollections)}
     />
   )
 }

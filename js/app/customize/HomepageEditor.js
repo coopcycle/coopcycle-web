@@ -9,7 +9,7 @@ import Slider from './editorjs/slider'
 import DeliveryForm from './editorjs/delivery-form'
 
 // https://dev.to/sumankalia/how-to-integrate-editorjs-in-reactjs-2l6l
-const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, ctaIcon, deliveryForms, t }, ref) => {
+const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryForms, shopCollections, t }, ref) => {
 
   useEffect(() => {
 
@@ -24,7 +24,7 @@ const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, ctaIco
             config: {
               cuisines,
               shopTypes,
-              ctaIcon,
+              customCollections: shopCollections,
             }
           },
           banner: Banner,
@@ -76,7 +76,7 @@ const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, ctaIco
   )
 })
 
-export default function({ blocks, cuisines, shopTypes, uploadEndpoint, ctaIcon, deliveryForms }) {
+export default function({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryForms, shopCollections }) {
 
   const ref = useRef();
   const { t } = useTranslation();
@@ -91,8 +91,8 @@ export default function({ blocks, cuisines, shopTypes, uploadEndpoint, ctaIcon, 
         cuisines={cuisines}
         shopTypes={shopTypes}
         uploadEndpoint={uploadEndpoint}
-        ctaIcon={ctaIcon}
         deliveryForms={deliveryForms}
+        shopCollections={shopCollections}
         t={t} />
       <Flex justify="flex-end">
         <Button type="primary" loading={isLoading} onClick={async () => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import Swiper from 'swiper'
@@ -43,95 +43,47 @@ const swiperOpts = {
   observeParents: true,
 }
 
-let optionsCache = []
-let isFetchingCollections = false
-let fetchCollectionsListeners = []
+const ComponentCascader = ({ placeholder, cuisines, customCollections, onChange, defaultValue }) => {
 
-let httpClient
+  const options = useMemo(() => {
 
-async function fetchCollections(cuisines, setOptions) {
+    const otherOptions = []
+    if (customCollections.length > 0) {
+      otherOptions.push({
+        label: 'Custom',
+        value: 'custom',
+        children: customCollections.map((c) => ({
+          label: c.title,
+          value: qs.stringify({ slug: c.slug }),
+        }))
+      })
+    }
 
-  if (!httpClient) {
-    httpClient = new window._auth.httpClient();
-  }
+    return [
+      {
+        label: 'New',
+        value: 'newest'
+      },
+      {
+        label: 'Featured',
+        value: 'featured'
+      },
+      {
+        label: 'Exclusive',
+        value: 'exclusive'
+      },
+      {
+        label: 'Cuisine',
+        value: 'cuisine',
+        children: cuisines.map(({ label, value }) => ({
+          label,
+          value: qs.stringify({ cuisine: value })
+        }))
+      },
+      ...otherOptions
+    ]
 
-  if (optionsCache.length > 0) {
-    setOptions(optionsCache)
-    return
-  }
-
-  // If another fetch is already running,
-  // stack a listener that will be called later
-  if (isFetchingCollections) {
-    fetchCollectionsListeners.push(setOptions)
-    return
-  }
-
-  isFetchingCollections = true
-
-  const { response, error } = await httpClient.get('/api/shop_collections');
-  const collections = response['hydra:member']
-
-  isFetchingCollections = false
-
-  const otherOptions = []
-  if (collections.length > 0) {
-    otherOptions.push({
-      label: 'Custom',
-      value: 'custom',
-      children: collections.map((c) => ({
-        label: c.title,
-        value: qs.stringify({ slug: c.slug }),
-      }))
-    })
-  }
-
-  const options = [
-    {
-      label: 'New',
-      value: 'newest'
-    },
-    {
-      label: 'Featured',
-      value: 'featured'
-    },
-    {
-      label: 'Exclusive',
-      value: 'exclusive'
-    },
-    {
-      label: 'Cuisine',
-      value: 'cuisine',
-      children: cuisines.map(({ label, value }) => ({
-        label,
-        value: qs.stringify({ cuisine: value })
-      }))
-    },
-    ...otherOptions
-  ]
-
-  optionsCache = options
-
-  setOptions(options)
-
-  fetchCollectionsListeners.forEach((listener) => listener.call(null, options))
-}
-
-const ComponentCascader = ({ placeholder, cuisines, onChange, defaultValue }) => {
-
-  const [options, setOptions] = useState([])
-
-  useEffect(() => {
-    fetchCollections(cuisines, setOptions)
-  }, [setOptions]);
-
-  if (options.length === 0) {
-    return (
-      <div className="ssc">
-        <div className="ssc-head-line w-20"></div>
-      </div>
-    );
-  }
+  }, [customCollections])
 
   return (
     <Cascader
@@ -193,13 +145,10 @@ export default class ShopCollection {
     this.data = data;
     this.config = config;
     this.api = api;
+    this.httpClient = new window._auth.httpClient();
   }
 
   showPreview(wrapper, component, args = '') {
-
-    if (!httpClient) {
-      httpClient = new window._auth.httpClient();
-    }
 
     const preview = wrapper.querySelector('[data-preview]')
     if (preview) {
@@ -209,7 +158,7 @@ export default class ShopCollection {
     wrapper.classList.add('cdx-loader')
     showSkeleton(wrapper)
 
-    httpClient.get(`//${window.location.host}/admin/shop-collections/preview/${component}?${args}`).then(({ response, error }) => {
+    this.httpClient.get(`//${window.location.host}/admin/shop-collections/preview/${component}?${args}`).then(({ response, error }) => {
 
       if (error) {
         return;
@@ -254,6 +203,7 @@ export default class ShopCollection {
       <ComponentCascader
         defaultValue={ this._getDefaultValue()  }
         cuisines={this.config.cuisines}
+        customCollections={this.config.customCollections}
         placeholder={this.api.i18n.t('select_value')}
         onChange={(value) => {
           const [ component, args ] = value

@@ -2598,6 +2598,8 @@ class AdminController extends AbstractController
 
         $deliveryForms = $this->entityManager->getRepository(DeliveryForm::class)->findAll();
 
+        $shopCollections = $this->entityManager->getRepository(ShopCollection::class)->findAll();
+
         return $this->render('admin/customize_homepage.html.twig', $this->auth([
             'blocks' => $blocks,
             'cuisines' => array_map(function ($c) use ($translator) {
@@ -2608,6 +2610,7 @@ class AdminController extends AbstractController
             }, $cuisines),
             'shop_types' => $shopTypes,
             'delivery_forms' => $deliveryForms,
+            'shop_collections' => $shopCollections,
         ]));
     }
 

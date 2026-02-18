@@ -14,7 +14,8 @@
       data-shop-types="{{ shop_types|json_encode|e('html_attr') }}"
       data-upload-endpoint="{{ oneup_uploader_endpoint('homepage_slider')|e('html_attr') }}"
       data-cta-icon="{{ ux_icon('lucide:arrow-right')|e('html_attr') }}"
-      data-delivery-forms="{{ delivery_forms|serialize('jsonld') }}"></div>
+      data-delivery-forms="{{ delivery_forms|serialize('jsonld') }}"
+      data-shop-collections="{{ shop_collections|serialize('jsonld', { groups: 'shop_collection' }) }}"></div>
 {% endblock %}
 
 {% block styles %}
