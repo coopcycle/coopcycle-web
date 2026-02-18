@@ -39,3 +39,4 @@ export const selectSectionInModal = (state) => state.ui.sectionInModal;
 
 export const selectIsLoading = (state) => state.ui.isLoading;
 export const selectIsLoadingProducts = (state) => state.ui.isLoadingProducts;
+export const selectIsLoadingSection = (state) => state.ui.isLoadingSection;

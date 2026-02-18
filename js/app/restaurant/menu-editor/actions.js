@@ -12,6 +12,7 @@ export const createSectionFlow = createAction('MENU_EDITOR/CREATE_SECTION_FLOW')
 export const editSectionFlow = createAction('MENU_EDITOR/EDIT_SECTION_FLOW');
 export const setIsLoading = createAction('MENU_EDITOR/SET_IS_LOADING');
 export const setIsLoadingProducts = createAction('MENU_EDITOR/SET_IS_LOADING_PRODUCTS');
+export const setIsLoadingSection = createAction('MENU_EDITOR/SET_IS_LOADING_SECTION');
 
 import { selectMenuSections } from './selectors'
 
@@ -77,6 +78,7 @@ export function setSectionProducts(sectionId, products) {
     try {
 
       dispatch(setIsLoading(true))
+      dispatch(setIsLoadingSection(sectionId))
 
       const { response, error } = await httpClient.put(sectionId, {
         products: products.map((p) => p['@id'])

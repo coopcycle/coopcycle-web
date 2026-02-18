@@ -6,6 +6,7 @@ const initialState = {
   },
   isLoading: false,
   isLoadingProducts: false,
+  isLoadingSection: null,
 }
 
 import {
@@ -16,6 +17,7 @@ import {
   setIsLoading,
   setIsLoadingProducts,
   fetchProductsSuccess,
+  setIsLoadingSection,
 } from './actions'
 
 export default (state = initialState, action) => {
@@ -48,6 +50,15 @@ export default (state = initialState, action) => {
       }
 
     case setIsLoading.type:
+
+      if (action.payload === false) {
+        return {
+          ...state,
+          isLoading: action.payload,
+          isLoadingSection: null
+        }
+      }
+
       return {
         ...state,
         isLoading: action.payload,
@@ -63,6 +74,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         isLoadingProducts: false,
+      }
+
+    case setIsLoadingSection.type:
+      return {
+        ...state,
+        isLoadingSection: action.payload,
       }
   }
 
