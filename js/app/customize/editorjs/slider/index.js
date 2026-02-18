@@ -14,13 +14,13 @@ import {
 } from '@ant-design/icons';
 import { Button, Flex, Tooltip, Popover, Input, DatePicker } from 'antd';
 import sanitizeHtml from 'sanitize-html';
-import ContentEditable from 'react-contenteditable'
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard';
 import XHR from '@uppy/xhr-upload';
 import { ArrowRight } from 'lucide-react';
 import moment from 'moment'
 import { useTranslation } from 'react-i18next';
+import { useEditable } from 'use-editable'
 
 import ColorPicker from '../../color-picker';
 
@@ -64,15 +64,34 @@ const isExpired = (slide) => slide.expiresAt ? moment().isAfter(slide.expiresAt)
 
 const SlideContent = ({ slide, index, uploadEndpoint, onChange }) => {
 
-  const title = useRef(slide.title);
-  const text = useRef(slide.text);
-  const buttonText = useRef(slide.buttonText);
+  const [title, setTitle] = useState(slide.title);
+  const [text, setText] = useState(slide.text);
+  const [buttonText, setButtonText] = useState(slide.buttonText);
 
-  useEffect(() => {
-    title.current = slide.title
-    text.current = slide.text
-    buttonText.current = slide.buttonText
-  }, [ slide ])
+  const titleRef = useRef(null);
+  const textRef = useRef(null);
+  const buttonTextRef = useRef(null);
+
+  useEditable(titleRef, (val, pos) => {
+    setTitle(val)
+    onChange({
+      title: val,
+    })
+  });
+
+  useEditable(textRef, (val, pos) => {
+    setText(val)
+    onChange({
+      text: val,
+    })
+  });
+
+  useEditable(buttonTextRef, (val, pos) => {
+    setButtonText(val)
+    onChange({
+      buttonText: val,
+    })
+  });
 
   const uniqueKey = `swiper-image-upload-button-${index}`
 
@@ -97,7 +116,6 @@ const SlideContent = ({ slide, index, uploadEndpoint, onChange }) => {
         type: 'homepage_slide',
         slide: index,
       }
-      console.log(`File added ${file.id}`, meta)
       uppy.setFileMeta(file.id, meta);
     });
     uppy.on('upload-success', (file, response) => {
@@ -117,36 +135,10 @@ const SlideContent = ({ slide, index, uploadEndpoint, onChange }) => {
     }}>
       <div className={ `swiper-slide-content` }>
         <div className="swiper-slide-content-left" style={{ position: 'relative' }}>
-          <ContentEditable
-            tagName="h4"
-            html={title.current || ''}
-            onChange={(e) => handleContentEditableChange(e, title)}
-            onBlur={() => handleContentEditableBlur(title, (newValue) => {
-              onChange({
-                title: newValue,
-              })
-            })}
-            className={`coopcycle-homepage-bg-${slide.colorScheme}`} />
-          <ContentEditable
-            tagName="p"
-            html={text.current || ''}
-            onChange={(e) => handleContentEditableChange(e, text)}
-            onBlur={() => handleContentEditableBlur(text, (newValue) => {
-              onChange({
-                text: newValue,
-              })
-            })}
-            className={`coopcycle-homepage-bg-${slide.colorScheme}`} />
+          <h4 ref={titleRef}>{title}</h4>
+          <p ref={textRef}>{text}</p>
           <button type="button" className="btn btn-xs">
-            <ContentEditable
-              tagName="span"
-              html={buttonText.current || ''}
-              onChange={(e) => handleContentEditableChange(e, buttonText)}
-              onBlur={() => handleContentEditableBlur(buttonText, (newValue) => {
-                onChange({
-                  buttonText: newValue,
-                })
-              })} />
+            <span ref={buttonTextRef}>{buttonText}</span>
             <ArrowRight size={12} className="ml-2" />
           </button>
           <div className="swiper-slide-color-picker">
@@ -265,7 +257,8 @@ const SliderEditor = ({ defaultSlides, onChange, uploadEndpoint }) => {
                   ...s,
                 })
                 setSlides(newSlides)
-              }} />
+              }}
+              />
             <span className="swiper-slide-toolbar">
               <SlideToolbar
                 slide={slide}

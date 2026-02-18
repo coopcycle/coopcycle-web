@@ -201,6 +201,7 @@
     "typescript-eslint": "^8.37.0",
     "url-loader": "^4.1.1",
     "use-deep-compare": "^1.1.0",
+    "use-editable": "^2.3.3",
     "webpack": "^5.99.9",
     "webpack-cli": "^5.1.4",
     "x-data-spreadsheet": "^1.1.9"
