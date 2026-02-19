@@ -19,6 +19,7 @@ import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder"
 import _ from 'lodash';
 import { Provider, useDispatch, useSelector } from 'react-redux'
 import { ProgressBar } from 'react-loader-spinner'
+import classNames from 'classnames';
 
 import { createStoreFromPreloadedState } from './menu-editor/store'
 import {
@@ -44,6 +45,7 @@ import {
   selectSectionInModal,
   selectIsLoading,
   selectIsLoadingProducts,
+  selectIsLoadingSection,
 } from './menu-editor/selectors'
 
 import './menu-editor.scss'
@@ -66,6 +68,7 @@ const Section = ({ section }) => {
   const [closestEdge, setClosestEdge] = useState(null);
 
   const isLoading = useSelector(selectIsLoading);
+  const isLoadingSection = useSelector(selectIsLoadingSection)
 
   useEffect(() => {
 
@@ -128,7 +131,10 @@ const Section = ({ section }) => {
   }, [ section['@id'], isLoading ]);
 
   return (
-    <div className={`menuEditor__panel mb-4 ${isDraggedOver ? "menuEditor__panel--dragged" : ""}`} ref={draggableRef}>
+    <div className={classNames('menuEditor__panel', 'mb-4', {
+        'menuEditor__panel--dragged': isDraggedOver,
+        'menuEditor__panel--loading': isLoadingSection === section['@id']
+      })} ref={draggableRef}>
       <h4 className="menuEditor__panel__title">
         <span className="d-flex align-items-center">
           <i className="fa fa-arrows mr-2" ref={dragHandleRef}></i>

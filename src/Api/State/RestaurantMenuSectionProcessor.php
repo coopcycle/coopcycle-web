@@ -13,6 +13,7 @@ use AppBundle\Entity\Sylius\TaxonRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
+use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -24,7 +25,8 @@ class RestaurantMenuSectionProcessor implements ProcessorInterface
         private readonly FactoryInterface $taxonFactory,
         private readonly TaxonRepository $taxonRepository,
         private readonly EntityManagerInterface $entityManager,
-        private readonly EventDispatcherInterface $eventDispatcher)
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly EntityPreloader $preloader)
     {}
 
     /**
@@ -40,33 +42,28 @@ class RestaurantMenuSectionProcessor implements ProcessorInterface
             /** @var Taxon */
             $section = $this->sectionProvider->provide($operation, $uriVariables, $context);
 
-            // Remove the product from existing sections
-            $productTaxonsToRemove = [];
-            foreach ($data->products as $product) {
-                $productTaxon = $this->taxonRepository->getProductTaxon($product, $menu);
-                if ($productTaxon) {
-                    $productTaxonsToRemove[] = $productTaxon;
-                }
-            }
+            // Optimized version in raw SQL
 
-            if (!empty($productTaxonsToRemove)) {
-                foreach ($productTaxonsToRemove as $productTaxon) {
-                    /** @var Taxon */
-                    $taxon = $productTaxon->getTaxon();
-                    $taxon->removeProduct($productTaxon->getProduct());
-                    $this->entityManager->remove($productTaxon);
-                }
-                $this->entityManager->flush();
-            }
+            // 1. Remove the product from existing sections
+            $qb = $this->entityManager->getRepository(ProductTaxon::class)->createQueryBuilder('tp');
+            $qb
+                ->delete()
+                ->andWhere('tp.taxon != :section')
+                ->andWhere('tp.product IN (:products)')
+                ->setParameter('section', $section)
+                ->setParameter('products', array_map(fn ($p) => $p->getId(), $data->products));
 
+            $qb->getQuery()->execute();
+
+            // 2. Clear the section
             // We clear the section to make sure positions are right
-            if (!$section->isEmpty()) {
-                foreach ($section->getTaxonProducts() as $originalTaxonProduct) {
-                    $section->removeProduct($originalTaxonProduct->getProduct());
-                    $this->entityManager->remove($originalTaxonProduct);
-                }
-                $this->entityManager->flush();
-            }
+            $qb = $this->entityManager->getRepository(ProductTaxon::class)->createQueryBuilder('tp');
+            $qb
+                ->delete()
+                ->andWhere('tp.taxon = :section')
+                ->setParameter('section', $section);
+
+            $qb->getQuery()->execute();
 
             foreach ($data->products as $position => $product) {
                 $section->addProduct($product, $position);
@@ -100,6 +97,11 @@ class RestaurantMenuSectionProcessor implements ProcessorInterface
         $restaurant = $this->taxonRepository->getRestaurantForMenu($menu);
         $this->eventDispatcher->dispatch(new GenericEvent($restaurant), 'catalog.updated');
 
-        return $menu;
+        // Preload entities
+        $taxonProducts = $this->preloader->preload([$section], 'taxonProducts');
+        $products = $this->preloader->preload($taxonProducts, 'product');
+        $this->preloader->preload($products, 'images');
+
+        return $section;
     }
 }

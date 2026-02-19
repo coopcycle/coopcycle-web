@@ -120,22 +120,21 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
 
         $object->setCurrentLocale($this->localeProvider->getDefaultLocaleCode());
 
-        foreach ($object->getChildren() as $child) {
+        if (!$object->isRoot()) {
 
-            $section = [
-                // FIXME
-                // Ugly but works and is tested in Behat
-                // This should be handled by a custom normalizer for Taxon class
-                '@id' => $this->urlGenerator->generate('_api_/restaurants/menus/{id}/sections/{sectionId}_get', [
-                    'id' => $object->getId(),
-                    'sectionId' => $child->getId(),
-                ]),
-                'name' => $child->getName(),
-                'description' => $child->getDescription(),
-                'hasMenuItem' => [],
-            ];
+            // FIXME
+            // Ugly but works and is tested in Behat
+            // This should be handled by a custom normalizer for Taxon class
+            $data['@id'] = $this->urlGenerator->generate('_api_/restaurants/menus/{id}/sections/{sectionId}_get', [
+                'id' => $object->getParent()->getId(),
+                'sectionId' => $object->getId(),
+            ]);
 
-            foreach ($child->getProducts() as $product) {
+            $data['description'] = $object->getDescription();
+
+            $data['hasMenuItem'] = [];
+
+            foreach ($object->getProducts() as $product) {
 
                 $defaultVariant = $this->variantResolver->getVariant($product);
 
@@ -148,11 +147,44 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
                         $productData['menuAddOn'] = $this->normalizeOptions($product->getOptions());
                     }
 
-                    $section['hasMenuItem'][] = $productData;
+                    $data['hasMenuItem'][] = $productData;
                 }
             }
+        } else {
+            foreach ($object->getChildren() as $child) {
 
-            $data['hasMenuSection'][] = $section;
+                $section = [
+                    // FIXME
+                    // Ugly but works and is tested in Behat
+                    // This should be handled by a custom normalizer for Taxon class
+                    '@id' => $this->urlGenerator->generate('_api_/restaurants/menus/{id}/sections/{sectionId}_get', [
+                        'id' => $object->getId(),
+                        'sectionId' => $child->getId(),
+                    ]),
+                    'name' => $child->getName(),
+                    'description' => $child->getDescription(),
+                    'hasMenuItem' => [],
+                ];
+
+                foreach ($child->getProducts() as $product) {
+
+                    $defaultVariant = $this->variantResolver->getVariant($product);
+
+                    if ($defaultVariant) {
+                        $productData = $this->productNormalizer->normalize($product, $format, $context);
+
+                        $productData['@type'] = 'MenuItem';
+
+                        if ($product->hasOptions()) {
+                            $productData['menuAddOn'] = $this->normalizeOptions($product->getOptions());
+                        }
+
+                        $section['hasMenuItem'][] = $productData;
+                    }
+                }
+
+                $data['hasMenuSection'][] = $section;
+            }
         }
 
         return $data;

@@ -1,3 +1,7 @@
+@import "~font-awesome/scss/_variables.scss";
+@import "~font-awesome/scss/_mixins.scss";
+@import "~font-awesome/scss/_animated.scss";
+
 .menuEditor {
   display: flex;
   &__left, &__right {
@@ -60,6 +64,29 @@
       }
       #{$panel}__body {
         border-color: grey;
+      }
+    }
+
+    &--loading {
+      &:before {
+        @include fa-icon();
+        content: $fa-var-spinner;
+        @extend .fa-pulse;
+        font-size: 2em;
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 3;
+      }
+      &:after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        background: rgba(0, 0, 0, 0.1);
       }
     }
   }

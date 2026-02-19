@@ -182,7 +182,6 @@ services:
 
   Doctrine\ORM\Mapping\Driver\AttributeReader: ~
 
-  Sylius\Component\Product\Resolver\ProductVariantResolverInterface: '@sylius.product_variant_resolver.default'
   Sylius\Component\Currency\Context\CurrencyContextInterface: '@sylius.context.currency'
   Sylius\Component\Order\Context\CartContextInterface: '@sylius.context.cart.composite'
   Sylius\Component\Channel\Repository\ChannelRepositoryInterface: '@sylius.repository.channel'
@@ -558,6 +557,9 @@ services:
       - "@sylius.product_variant_resolver.default"
       - "@sylius.factory.product_variant"
     public: true
+
+  # We override the default variant resolver
+  Sylius\Component\Product\Resolver\ProductVariantResolverInterface: '@coopcycle.sylius.product_variant_resolver.lazy'
 
   AppBundle\Sylius\Cart\RestaurantResolver:
     tags:

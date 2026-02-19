@@ -12,6 +12,7 @@ export const createSectionFlow = createAction('MENU_EDITOR/CREATE_SECTION_FLOW')
 export const editSectionFlow = createAction('MENU_EDITOR/EDIT_SECTION_FLOW');
 export const setIsLoading = createAction('MENU_EDITOR/SET_IS_LOADING');
 export const setIsLoadingProducts = createAction('MENU_EDITOR/SET_IS_LOADING_PRODUCTS');
+export const setIsLoadingSection = createAction('MENU_EDITOR/SET_IS_LOADING_SECTION');
 
 import { selectMenuSections } from './selectors'
 
@@ -77,6 +78,7 @@ export function setSectionProducts(sectionId, products) {
     try {
 
       dispatch(setIsLoading(true))
+      dispatch(setIsLoadingSection(sectionId))
 
       const { response, error } = await httpClient.put(sectionId, {
         products: products.map((p) => p['@id'])
@@ -111,6 +113,7 @@ export function moveProductToSection(product, index, sectionId) {
 
 export function updateSectionsOrder(sections) {
   return async function(dispatch, getState) {
+
     dispatch(setMenuSections(sections));
 
     try {
@@ -142,13 +145,6 @@ export function addSection(name, description) {
 
     const sections = selectMenuSections(getState())
 
-    const newSections = Array.from(sections);
-    newSections.push({
-      name,
-      description,
-      hasMenuItem: [],
-    })
-
     try {
 
       dispatch(setIsLoading(true))
@@ -161,7 +157,12 @@ export function addSection(name, description) {
       if (error) {
         console.error(error);
       } else {
-        dispatch(setMenuSections(response.hasMenuSection));
+
+        const newSections = Array.from(sections);
+        newSections.push(response)
+
+        dispatch(setMenuSections(newSections));
+
       }
 
       dispatch(closeModal());
