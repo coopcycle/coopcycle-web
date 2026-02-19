@@ -113,6 +113,7 @@ export function moveProductToSection(product, index, sectionId) {
 
 export function updateSectionsOrder(sections) {
   return async function(dispatch, getState) {
+
     dispatch(setMenuSections(sections));
 
     try {
@@ -144,13 +145,6 @@ export function addSection(name, description) {
 
     const sections = selectMenuSections(getState())
 
-    const newSections = Array.from(sections);
-    newSections.push({
-      name,
-      description,
-      hasMenuItem: [],
-    })
-
     try {
 
       dispatch(setIsLoading(true))
@@ -163,7 +157,12 @@ export function addSection(name, description) {
       if (error) {
         console.error(error);
       } else {
-        dispatch(setMenuSections(response.hasMenuSection));
+
+        const newSections = Array.from(sections);
+        newSections.push(response)
+
+        dispatch(setMenuSections(newSections));
+
       }
 
       dispatch(closeModal());

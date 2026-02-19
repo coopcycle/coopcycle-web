@@ -132,6 +132,8 @@ class RestaurantMenuNormalizer implements NormalizerInterface, DenormalizerInter
 
             $data['description'] = $object->getDescription();
 
+            $data['hasMenuItem'] = [];
+
             foreach ($object->getProducts() as $product) {
 
                 $defaultVariant = $this->variantResolver->getVariant($product);
