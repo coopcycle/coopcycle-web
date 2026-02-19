@@ -148,7 +148,7 @@ class Product extends BaseProduct implements ProductInterface, Comparable, SoftD
     {
         $options = $this->options->toArray();
 
-        uasort($options, function ($a, $b) {
+        usort($options, function ($a, $b) {
             if ($a->getPosition() === $b->getPosition()) return 0;
             return $a->getPosition() < $b->getPosition() ? -1 : 1;
         });
