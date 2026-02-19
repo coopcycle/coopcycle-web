@@ -160,6 +160,7 @@ class Product extends BaseProduct implements ProductInterface, Comparable, SoftD
             $options
         );
 
+        /** @var ArrayCollection<array-key, ProductOptionInterface> */
         return new ArrayCollection($values);
     }
     /**
