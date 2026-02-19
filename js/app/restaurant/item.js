@@ -65,22 +65,26 @@ function init() {
     return
   }
 
-  $('form[data-product-simple]').on('submit', function(e) {
-    e.preventDefault()
-    $(e.currentTarget).closest('.modal').modal('hide')
-    store.dispatch(queueAddItem($(this).attr('action'), 1))
+  document.addEventListener('submit', (e) => {
+    const productSimple = e.target.closest('form[data-product-simple]');
+    if (productSimple) {
+      e.preventDefault();
+      // $(e.currentTarget).closest('.modal').modal('hide')
+      store.dispatch(queueAddItem(productSimple.getAttribute('action'), 1))
+    }
   })
 
-  document.querySelectorAll('[data-modal="product-details"]').forEach(el => {
-    el.addEventListener('click', () => {
-      const product    = JSON.parse(el.dataset.product)
-      const options    = JSON.parse(el.dataset.productOptions)
-      const images     = JSON.parse(el.dataset.productImages)
-      const price      = JSON.parse(el.dataset.productPrice)
-      const formAction = el.dataset.formAction
+  document.addEventListener('click', (e) => {
+    const productDetails = e.target.closest('[data-modal="product-details"]');
+    if (productDetails) {
+      const product    = JSON.parse(productDetails.dataset.product)
+      const options    = JSON.parse(productDetails.dataset.productOptions)
+      const images     = JSON.parse(productDetails.dataset.productImages)
+      const price      = JSON.parse(productDetails.dataset.productPrice)
+      const formAction = productDetails.dataset.formAction
 
       store.dispatch(openProductOptionsModal(product, options, images, price, formAction))
-    })
+    }
   })
 
   const cartForm = document.querySelector('form[name="cart"]')
