@@ -98,12 +98,12 @@ class RestaurantMenuSectionProcessor implements ProcessorInterface
         $this->eventDispatcher->dispatch(new GenericEvent($restaurant), 'catalog.updated');
 
         // Preload entities
-        $this->preloader->preload([$menu], 'children');
-        $children = $menu->getChildren()->toArray();
-        $taxonProducts = $this->preloader->preload($children, 'taxonProducts');
+        // $this->preloader->preload([$menu], 'children');
+        // $children = $menu->getChildren()->toArray();
+        $taxonProducts = $this->preloader->preload([$section], 'taxonProducts');
         $products = $this->preloader->preload($taxonProducts, 'product');
         $this->preloader->preload($products, 'images');
 
-        return $menu;
+        return $section;
     }
 }

@@ -1155,6 +1155,7 @@ Feature: Manage restaurants
     When the user "bob" sends a "DELETE" request to "/api/restaurants/menus/4"
     Then the response status code should be 204
 
+  @debug
   Scenario: Edit menu sections
     Given the fixtures files are loaded:
       | sylius_locales.yml  |
@@ -1190,30 +1191,11 @@ Feature: Manage restaurants
       """
       {
         "@context": "/api/contexts/Menu",
-        "@id": "/api/restaurants/menus/1",
         "@type": "http://schema.org/Menu",
-        "name": "Menu",
+        "@id": "/api/restaurants/menus/1/sections/4",
         "identifier": @string@,
-        "hasMenuSection": [
-            {
-              "@id": "/api/restaurants/menus/1/sections/2",
-              "name": "Pizzas",
-              "description": null,
-              "hasMenuItem": @array@
-            },
-            {
-              "@id": "/api/restaurants/menus/1/sections/3",
-              "name": "Burger",
-              "description": null,
-              "hasMenuItem": @array@
-            },
-            {
-              "@id": "/api/restaurants/menus/1/sections/4",
-              "name": "Salads",
-              "description": "Not only for turtles",
-              "hasMenuItem": []
-            }
-        ]
+        "name": "Salads",
+        "description": "Not only for turtles"
       }
       """
     Given I add "Accept" header equal to "application/ld+json"
@@ -1227,61 +1209,43 @@ Feature: Manage restaurants
         ]
       }
       """
-    Then print last JSON response
+    Then print last response
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
       """
       {
         "@context": "/api/contexts/Menu",
-        "@id": "/api/restaurants/menus/1",
         "@type": "http://schema.org/Menu",
-        "name": "Menu",
+        "@id": "/api/restaurants/menus/1/sections/4",
+        "name": "Salads",
+        "description": "Not only for turtles",
         "identifier": @string@,
-        "hasMenuSection": [
-            {
-              "@id": "/api/restaurants/menus/1/sections/2",
-              "name": "Pizzas",
-              "description": null,
-              "hasMenuItem": @array@
-            },
-            {
-              "@id": "/api/restaurants/menus/1/sections/3",
-              "name": "Burger",
-              "description": null,
-              "hasMenuItem": @array@
-            },
-            {
-              "@id": "/api/restaurants/menus/1/sections/4",
-              "name": "Salads",
-              "description": "Not only for turtles",
-              "hasMenuItem": [
-                {
-                  "@context": "/api/contexts/Product",
-                  "@id": "/api/products/3",
-                  "@type": "MenuItem",
-                  "name":"Salad",
-                  "description":null,
-                  "identifier":"SALAD",
-                  "enabled":false,
-                  "reusablePackagingEnabled":false,
-                  "offers":{"@type":"Offer","price":499},
-                  "images":[]
-                },
-                {
-                  "@context": "/api/contexts/Product",
-                  "@id": "/api/products/4",
-                  "@type": "MenuItem",
-                  "name":"Cake",
-                  "description":null,
-                  "identifier":"CAKE",
-                  "enabled":false,
-                  "reusablePackagingEnabled":false,
-                  "offers":{"@type":"Offer","price":699},
-                  "images":[]
-                }
-              ]
-            }
+        "hasMenuItem": [
+          {
+            "@context": "/api/contexts/Product",
+            "@id": "/api/products/3",
+            "@type": "MenuItem",
+            "name":"Salad",
+            "description":null,
+            "identifier":"SALAD",
+            "enabled":false,
+            "reusablePackagingEnabled":false,
+            "offers":{"@type":"Offer","price":499},
+            "images":[]
+          },
+          {
+            "@context": "/api/contexts/Product",
+            "@id": "/api/products/4",
+            "@type": "MenuItem",
+            "name":"Cake",
+            "description":null,
+            "identifier":"CAKE",
+            "enabled":false,
+            "reusablePackagingEnabled":false,
+            "offers":{"@type":"Offer","price":699},
+            "images":[]
+          }
         ]
       }
       """
@@ -1301,42 +1265,24 @@ Feature: Manage restaurants
       """
       {
         "@context": "/api/contexts/Menu",
-        "@id": "/api/restaurants/menus/1",
         "@type": "http://schema.org/Menu",
-        "name": "Menu",
+        "@id": "/api/restaurants/menus/1/sections/4",
+        "name": "Salads",
+        "description": "Not only for turtles",
         "identifier": @string@,
-        "hasMenuSection": [
-            {
-              "@id": "/api/restaurants/menus/1/sections/2",
-              "name": "Pizzas",
-              "description": null,
-              "hasMenuItem": @array@
-            },
-            {
-              "@id": "/api/restaurants/menus/1/sections/3",
-              "name": "Burger",
-              "description": null,
-              "hasMenuItem": @array@
-            },
-            {
-              "@id": "/api/restaurants/menus/1/sections/4",
-              "name": "Salads",
-              "description": "Not only for turtles",
-              "hasMenuItem": [
-                {
-                  "@context": "/api/contexts/Product",
-                  "@id": "/api/products/3",
-                  "@type":"MenuItem",
-                  "name":"Salad",
-                  "description":null,
-                  "identifier":"SALAD",
-                  "enabled":false,
-                  "reusablePackagingEnabled":false,
-                  "offers":{"@type":"Offer","price":499},
-                  "images":[]
-                }
-              ]
-            }
+        "hasMenuItem": [
+          {
+            "@context": "/api/contexts/Product",
+            "@id": "/api/products/3",
+            "@type":"MenuItem",
+            "name":"Salad",
+            "description":null,
+            "identifier":"SALAD",
+            "enabled":false,
+            "reusablePackagingEnabled":false,
+            "offers":{"@type":"Offer","price":499},
+            "images":[]
+          }
         ]
       }
       """
@@ -1357,54 +1303,36 @@ Feature: Manage restaurants
       """
       {
         "@context": "/api/contexts/Menu",
-        "@id": "/api/restaurants/menus/1",
         "@type": "http://schema.org/Menu",
-        "name": "Menu",
+        "@id": "/api/restaurants/menus/1/sections/4",
+        "name": "Salads",
+        "description": "Not only for turtles",
         "identifier": @string@,
-        "hasMenuSection": [
-            {
-              "@id": "/api/restaurants/menus/1/sections/2",
-              "name": "Pizzas",
-              "description": null,
-              "hasMenuItem": @array@
-            },
-            {
-              "@id": "/api/restaurants/menus/1/sections/3",
-              "name": "Burger",
-              "description": null,
-              "hasMenuItem": @array@
-            },
-            {
-              "@id": "/api/restaurants/menus/1/sections/4",
-              "name": "Salads",
-              "description": "Not only for turtles",
-              "hasMenuItem": [
-                {
-                  "@context": "/api/contexts/Product",
-                  "@id": "/api/products/4",
-                  "@type":"MenuItem",
-                  "name":"Cake",
-                  "description":null,
-                  "identifier":"CAKE",
-                  "enabled":false,
-                  "reusablePackagingEnabled":false,
-                  "offers":{"@type":"Offer","price":699},
-                  "images":[]
-                },
-                {
-                  "@context": "/api/contexts/Product",
-                  "@id": "/api/products/3",
-                  "@type":"MenuItem",
-                  "name":"Salad",
-                  "description":null,
-                  "identifier":"SALAD",
-                  "enabled":false,
-                  "reusablePackagingEnabled":false,
-                  "offers":{"@type":"Offer","price":499},
-                  "images":[]
-                }
-              ]
-            }
+        "hasMenuItem": [
+          {
+            "@context": "/api/contexts/Product",
+            "@id": "/api/products/4",
+            "@type":"MenuItem",
+            "name":"Cake",
+            "description":null,
+            "identifier":"CAKE",
+            "enabled":false,
+            "reusablePackagingEnabled":false,
+            "offers":{"@type":"Offer","price":699},
+            "images":[]
+          },
+          {
+            "@context": "/api/contexts/Product",
+            "@id": "/api/products/3",
+            "@type":"MenuItem",
+            "name":"Salad",
+            "description":null,
+            "identifier":"SALAD",
+            "enabled":false,
+            "reusablePackagingEnabled":false,
+            "offers":{"@type":"Offer","price":499},
+            "images":[]
+          }
         ]
       }
       """
