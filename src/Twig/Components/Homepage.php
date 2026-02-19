@@ -44,15 +44,16 @@ class Homepage
     {
         $sections = [];
 
-        // TODO Maybe Make sure there is a minimal number?
         $typeByCount = array_flip($this->shopRepository->countByType());
-        krsort($typeByCount);
-        $typeWithMostShops = array_shift($typeByCount);
+        if (count($typeByCount) > 0) {
+            krsort($typeByCount);
+            $typeWithMostShops = array_shift($typeByCount);
 
-        $sections[] = [
-            'component' => 'ShopCollection:Type',
-            'props' => ['type' => LocalBusiness::getKeyForType($typeWithMostShops)]
-        ];
+            $sections[] = [
+                'component' => 'ShopCollection:Type',
+                'props' => ['type' => LocalBusiness::getKeyForType($typeWithMostShops)]
+            ];
+        }
 
         $sections[] = [
             'component' => 'ShopCollection:Featured'
