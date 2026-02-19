@@ -1,6 +1,10 @@
-<section class="mb-4" style="background-color: {{ this.backgroundColor }};">
+<section class="mb-4 coopcycle-homepage-bg-{{ this.colorScheme }}" style="background-color: {{ this.backgroundColor }};">
   <div class="container">
-    <div class="py-3 coopcycle-homepage-banner coopcycle-homepage-bg-{{ this.colorScheme }}">
+    {% if this.link is not empty %}
+    <a href="{{ this.link }}" class="py-3 coopcycle-homepage-banner">
+    {% else %}
+    <div class="py-3 coopcycle-homepage-banner">
+    {% endif %}
       <div class="coopcycle-homepage-banner-content">
       {% set md = this.markdown|json_decode %}
       {% if md is empty %}
@@ -11,6 +15,11 @@
       <div>
         {{ ux_icon('lucide:arrow-right', { style: 'font-size: 2em;' }) }}
       </div>
+    {% if this.link is not empty %}
+    </a>
+    {% else %}
+    </div>
+    {% endif %}
     </div>
   </div>
 </section>

@@ -10,5 +10,6 @@ class Banner
     public $backgroundColor;
     public $colorScheme;
     public $markdown;
+    public $link;
 }
 

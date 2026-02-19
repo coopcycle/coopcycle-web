@@ -2,14 +2,16 @@ import React, { useEffect, useState, createRef } from 'react'
 import { createRoot } from 'react-dom/client'
 import chroma from 'chroma-js'
 import ColorPicker from '../../color-picker';
+import { Input, Space } from 'antd';
+import { LinkOutlined } from '@ant-design/icons';
 
 import {
   MDXEditor,
-  BlockTypeSelect, BoldItalicUnderlineToggles, CreateLink,
-  headingsPlugin, toolbarPlugin, linkDialogPlugin, linkPlugin
+  BlockTypeSelect, BoldItalicUnderlineToggles,
+  headingsPlugin, toolbarPlugin,
 } from '@mdxeditor/editor'
 
-const Editor = ({ markdown, backgroundColor, onChangeColor, onChangeMarkdown, colorScheme }) => {
+const Editor = ({ markdown, backgroundColor, onChangeColor, onChangeMarkdown, colorScheme, link, onChangeLink }) => {
 
   const [className, setClassName] = useState(`coopcycle-mdx-editor-content coopcycle-homepage-bg-${colorScheme}`)
 
@@ -20,15 +22,12 @@ const Editor = ({ markdown, backgroundColor, onChangeColor, onChangeMarkdown, co
       markdown={markdown}
       plugins={[
         headingsPlugin(),
-        linkPlugin(),
-        linkDialogPlugin(),
         toolbarPlugin({
           toolbarClassName: 'coopcycle-mdx-editor-toolbar',
           toolbarContents: () => (
             <>
               <BlockTypeSelect />
               <BoldItalicUnderlineToggles />
-              <CreateLink />
               <ColorPicker
                 defaultValue={backgroundColor}
                 showText
@@ -38,6 +37,7 @@ const Editor = ({ markdown, backgroundColor, onChangeColor, onChangeMarkdown, co
                   setClassName(`coopcycle-mdx-editor-content coopcycle-homepage-bg-${colorScheme}`)
                   onChangeColor(colorHex, colorScheme)
                 }} />
+              <Input defaultValue={link} size="small" style={{ width: 170 }} prefix={<LinkOutlined />} onChange={onChangeLink} />
             </>
           )
         }),
@@ -66,6 +66,7 @@ export default class Banner {
     }
     this.markdown = this.markdown || '# Hello World'
     this.colorScheme = data.colorScheme || 'light'
+    this.link = data.link || null
   }
 
   render() {
@@ -85,6 +86,7 @@ export default class Banner {
       markdown={this.markdown}
       backgroundColor={this.backgroundColor}
       colorScheme={this.colorScheme}
+      link={this.link}
       onChangeColor={(color, colorScheme) => {
         bannerEl.style.backgroundColor = color
         this.backgroundColor = color
@@ -95,6 +97,9 @@ export default class Banner {
         // FIXME Problem with save/reload
         // Unexpected token '#', "### Hello "... is not valid JSON
         this.markdown = JSON.stringify(markdown)
+      }}
+      onChangeLink={(e) => {
+        this.link = e.target.value
       }} />
     )
     bannerEl.appendChild(mdxEditorEl)
@@ -109,6 +114,7 @@ export default class Banner {
       markdown: this.markdown,
       backgroundColor: this.backgroundColor,
       colorScheme: this.colorScheme,
+      link: this.link,
     }
   }
 }

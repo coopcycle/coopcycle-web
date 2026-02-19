@@ -12,6 +12,13 @@
   align-items: center;
 }
 
+a.coopcycle-homepage-banner {
+  color: inherit;
+  &:hover {
+    text-decoration: inherit;
+  }
+}
+
 .coopcycle-mdx-editor-content,
 .coopcycle-homepage-banner-content {
   h1, h2, h3, h4, h5, h6 {
