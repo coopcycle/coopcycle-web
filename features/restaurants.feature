@@ -1193,7 +1193,8 @@ Feature: Manage restaurants
         "@id": "/api/restaurants/menus/1/sections/4",
         "identifier": @string@,
         "name": "Salads",
-        "description": "Not only for turtles"
+        "description": "Not only for turtles",
+        "hasMenuItem": []
       }
       """
     Given I add "Accept" header equal to "application/ld+json"
