@@ -1155,7 +1155,6 @@ Feature: Manage restaurants
     When the user "bob" sends a "DELETE" request to "/api/restaurants/menus/4"
     Then the response status code should be 204
 
-  @debug
   Scenario: Edit menu sections
     Given the fixtures files are loaded:
       | sylius_locales.yml  |
@@ -1184,7 +1183,6 @@ Feature: Manage restaurants
         "description": "Not only for turtles"
       }
       """
-    Then print last response
     Then the response status code should be 201
     And the response should be in JSON
     And the JSON should match:
@@ -1209,7 +1207,6 @@ Feature: Manage restaurants
         ]
       }
       """
-    Then print last response
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
@@ -1555,6 +1552,23 @@ Feature: Manage restaurants
         ]
       }
       """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/Menu",
+        "@id": "/api/restaurants/menus/1/sections/3",
+        "@type": "http://schema.org/Menu",
+        "name": "Burger",
+        "description":null,
+        "identifier": @string@,
+        "hasMenuItem": "@array@.count(2)"
+      }
+      """
+    Given I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "GET" request to "/api/restaurants/1/menu"
     Then the response status code should be 200
     And the response should be in JSON
     And the JSON should match:
