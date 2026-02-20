@@ -16,7 +16,7 @@ const OptionValueLabel = ({ option, optionValue }) => (
 
 export const OptionValue = ({ index, option, optionValue }) => {
 
-  const { incrementValueQuantity } = useProductOptions()
+  const { setValueQuantity } = useProductOptions()
 
   return (
     <div
@@ -28,7 +28,7 @@ export const OptionValue = ({ index, option, optionValue }) => {
           value={optionValue.code}
           onClick={() => {
             window._paq.push(['trackEvent', 'Checkout', 'selectOption'])
-            incrementValueQuantity(option, optionValue)
+            setValueQuantity(option, optionValue, 1)
           }}/>
         <OptionValueLabel option={option} optionValue={optionValue}/>
       </label>
