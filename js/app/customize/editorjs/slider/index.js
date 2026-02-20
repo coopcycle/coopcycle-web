@@ -62,6 +62,17 @@ function handleContentEditableBlur(ref, cb) {
 
 const isExpired = (slide) => slide.expiresAt ? moment().isAfter(slide.expiresAt) : false;
 
+function sanitize(value, edit) {
+  const sanitized = sanitizeHtml(unescapeHTML(value), {
+    // https://github.com/apostrophecms/sanitize-html?tab=readme-ov-file#what-if-i-dont-want-to-allow-any-tags
+    allowedTags: [],
+    allowedAttributes: {},
+  });
+  if (sanitized !== value) {
+    edit.update(sanitized)
+  }
+}
+
 const SlideContent = ({ slide, index, uploadEndpoint, onChange }) => {
 
   const [title, setTitle] = useState(slide.title);
@@ -72,21 +83,21 @@ const SlideContent = ({ slide, index, uploadEndpoint, onChange }) => {
   const textRef = useRef(null);
   const buttonTextRef = useRef(null);
 
-  useEditable(titleRef, (val, pos) => {
+  const titleEdit = useEditable(titleRef, (val, pos) => {
     setTitle(val)
     onChange({
       title: val,
     })
   });
 
-  useEditable(textRef, (val, pos) => {
+  const textEdit = useEditable(textRef, (val, pos) => {
     setText(val)
     onChange({
       text: val,
     })
   });
 
-  useEditable(buttonTextRef, (val, pos) => {
+  const buttonTextEdit = useEditable(buttonTextRef, (val, pos) => {
     setButtonText(val)
     onChange({
       buttonText: val,
@@ -135,10 +146,10 @@ const SlideContent = ({ slide, index, uploadEndpoint, onChange }) => {
     }}>
       <div className={ `swiper-slide-content` }>
         <div className="swiper-slide-content-left" style={{ position: 'relative' }}>
-          <h4 ref={titleRef}>{title}</h4>
-          <p ref={textRef}>{text}</p>
+          <h4 ref={titleRef} onBlur={() => sanitize(title, titleEdit)}>{title}</h4>
+          <p ref={textRef} onBlur={() => sanitize(text, textEdit)}>{text}</p>
           <button type="button" className="btn btn-xs">
-            <span ref={buttonTextRef}>{buttonText}</span>
+            <span ref={buttonTextRef} onBlur={() => sanitize(buttonText, buttonTextEdit)}>{buttonText}</span>
             <ArrowRight size={12} className="ml-2" />
           </button>
           <div className="swiper-slide-color-picker">
