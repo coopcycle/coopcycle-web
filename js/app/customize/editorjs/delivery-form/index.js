@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 
 import { Select } from 'antd';
 import sanitizeHtml from 'sanitize-html';
-import ContentEditable from 'react-contenteditable'
+import { useEditable } from 'use-editable'
 
 function unescapeHTML(string) {
   const el = document.createElement("span");
@@ -11,57 +11,47 @@ function unescapeHTML(string) {
   return el.innerText;
 }
 
-const DeliveryFormPreview = ({ title, text, onChange }) => {
+function sanitize(value, edit) {
+  const sanitized = sanitizeHtml(unescapeHTML(value), {
+    // https://github.com/apostrophecms/sanitize-html?tab=readme-ov-file#what-if-i-dont-want-to-allow-any-tags
+    allowedTags: [],
+    allowedAttributes: {},
+  });
+  if (sanitized !== value) {
+    edit.update(sanitized)
+  }
+}
 
-  const titleRef = useRef(title);
-  const textRef = useRef(text);
+const DeliveryFormPreview = ({ defaultTitle, defaultText, onChange }) => {
 
-  useEffect(() => {
-    titleRef.current = title
-  }, [ title ])
+  const [title, setTitle] = useState(defaultTitle);
+  const [text, setText] = useState(defaultText);
 
-  useEffect(() => {
-    textRef.current = text
-  }, [ text ])
+  const titleRef = useRef(null);
+  const textRef = useRef(null);
+
+  const titleEdit = useEditable(titleRef, (val, pos) => {
+    setTitle(val)
+    onChange({
+      title: val,
+      text,
+    })
+  });
+
+  const textEdit = useEditable(textRef, (val, pos) => {
+    setText(val)
+    onChange({
+      text: val,
+      title,
+    })
+  });
 
   return (
     <div style={{ backgroundColor: '#212121' }}>
       <section className="homepage-delivery">
         <div className="homepage-delivery-text">
-          <ContentEditable
-            tagName="h2"
-            html={titleRef.current}
-            onChange={(e) => {
-              titleRef.current = e.target.value
-            }}
-            onBlur={() => {
-              titleRef.current = sanitizeHtml(unescapeHTML(titleRef.current), {
-                // https://github.com/apostrophecms/sanitize-html?tab=readme-ov-file#what-if-i-dont-want-to-allow-any-tags
-                allowedTags: [],
-                allowedAttributes: {},
-              });
-              onChange({
-                title: titleRef.current,
-                text: textRef.current,
-              })
-            }} />
-          <ContentEditable
-            tagName="p"
-            html={textRef.current}
-            onChange={(e) => {
-              textRef.current = e.target.value
-            }}
-            onBlur={() => {
-              textRef.current = sanitizeHtml(unescapeHTML(textRef.current), {
-                // https://github.com/apostrophecms/sanitize-html?tab=readme-ov-file#what-if-i-dont-want-to-allow-any-tags
-                allowedTags: [],
-                allowedAttributes: {},
-              });
-              onChange({
-                title: titleRef.current,
-                text: textRef.current,
-              })
-            }} />
+          <h2 ref={titleRef} onBlur={() => sanitize(title, titleEdit)}>{title}</h2>
+          <p ref={textRef} onBlur={() => sanitize(text, textEdit)}>{text}</p>
         </div>
         <div className="homepage-delivery-form">
           <form className="form-horizontal">
@@ -97,8 +87,8 @@ export default class DeliveryForm {
   showPreview (wrapper) {
     const formPreviewEl = document.createElement('div')
     createRoot(formPreviewEl).render(<DeliveryFormPreview
-      title={ this.title }
-      text={ this.text }
+      defaultTitle={ this.title }
+      defaultText={ this.text }
       onChange={({ title, text }) => {
         this.title = title
         this.text = text
