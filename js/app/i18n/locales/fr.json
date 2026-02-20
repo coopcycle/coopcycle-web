@@ -812,6 +812,32 @@
         },
         "PROMOTION_COUPON_BASED": "Cette promotion est basée sur un code promo",
         "OWNER": "Propriétaire",
-        "NO_RESULTS": "Pas de résultats"
+        "NO_RESULTS": "Pas de résultats",
+        "SHOP_COLLECTIONS": {
+            "SORT_DISCLAIMER": "Les boutiques seront triées par tranche horaire",
+            "ADD_COLLECTION": "Ajouter une collection",
+            "ADD_SHOP": "Ajouter une boutique"
+        },
+        "HOMEPAGE_EDITOR": {
+            "placeholder": "Tapez \"/\" pour insérer un bloc",
+            "messages": {
+                "toolNames": {
+                    "Shop Collection": "Collection de boutiques",
+                    "Banner": "Bannière",
+                    "Delivery Form": "Formulaire de livraison"
+                },
+                "tools": {
+                    "shop_collection": {
+                        "select_value": "Sélectionnez une valeur"
+                    },
+                    "slider": {
+                        "move_left": "Déplacer à gauche",
+                        "move_right": "Déplacer à droite",
+                        "expiration_date": "Date d'expiration",
+                        "link": "Lien"
+                    }
+                }
+            }
+        }
     }
 }

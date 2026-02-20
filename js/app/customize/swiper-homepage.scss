@@ -1,0 +1,117 @@
+.coopcycle-homepage-bg-light {
+  color: #000000;
+}
+
+.coopcycle-homepage-bg-dark {
+  color: #ffffff;
+}
+
+.coopcycle-homepage-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+a.coopcycle-homepage-banner {
+  color: inherit;
+  &:hover {
+    text-decoration: inherit;
+  }
+}
+
+.coopcycle-mdx-editor-content,
+.coopcycle-homepage-banner-content {
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+  }
+}
+
+/* Slider block */
+
+.swiper-homepage {
+  ol.swiper-wrapper {
+    padding: 0 !important;
+  }
+  .swiper-slide {
+    // Make all slides same height
+    // https://github.com/nolimits4web/swiper/issues/2372#issuecomment-349004052
+    height: auto;
+
+    > a {
+      text-decoration: inherit;
+      color: inherit;
+      display: block;
+      height: 100%;
+      border: 1px solid $gray-200;
+      border-radius: 8px;
+      overflow: hidden;
+      &:hover {
+        border: 1px solid $gray-400;
+      }
+    }
+    .swiper-slide-content {
+      display: flex;
+      height: 100%;
+      &-left, &-right {
+        flex-grow: 1;
+      }
+      &-left {
+        width: calc((100% / 3) * 2);
+        padding: 0 1em 1em 1em;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+        .btn {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+      &-right {
+        width: calc(100% / 3);
+        position: relative;
+        > img {
+          object-fit: cover;
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          right: 0;
+          height: 100%;
+          width: 100%;
+        }
+      }
+    }
+    &.swiper-slide-last {
+      > a {
+        display: flex;
+        justify-content: center;
+        color: $gray-200;
+        &:hover {
+          color: $gray-400;
+        }
+      }
+    }
+    &.swiper-slide-editing {
+      margin-top: 2em;
+    }
+  }
+  .swiper-slide-toolbar {
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    top: -2em;
+  }
+  .swiper-slide-color-picker {
+    position: absolute;
+    z-index: 1;
+    top: 0.3em;
+    right: 0.3em;
+  }
+  .swiper-image-upload {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}

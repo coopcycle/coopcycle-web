@@ -7,6 +7,8 @@ use AppBundle\Sylius\Product\ProductOptionInterface;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Entity\Cuisine;
+use AppBundle\Entity\LocalBusiness\Collection as ShopCollection;
+use AppBundle\Entity\LocalBusiness\CollectionItem as ShopCollectionItem;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductImage;
 use AppBundle\Entity\Sylius\ProductOption;
@@ -387,6 +389,13 @@ class LocalBusinessRepository extends EntityRepository
                             default:
                                 break;
                         }
+                    case 'collection':
+                        $qb
+                            ->innerJoin(ShopCollectionItem::class, 'collection_item', Expr\Join::WITH, 'collection_item.shop = r.id')
+                            ->innerJoin(ShopCollection::class, 'collection', Expr\Join::WITH, 'collection_item.collection = collection.id')
+                            ->andWhere('collection.slug = :slug')
+                            ->setParameter('slug', $value);
+                        break;
                     default:
                         break;
                 }
@@ -627,6 +636,19 @@ class LocalBusinessRepository extends EntityRepository
         $qb = $this->createQueryBuilder('r')
             ->andWhere('r.createdAt > :since')
             ->setParameter('since', date('Y-m-d', strtotime($since)));
+
+        $this->addBusinessContextClause($qb, 'r');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findByCollection(string $slug)
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->innerJoin(ShopCollectionItem::class, 'collection_item', Expr\Join::WITH, 'collection_item.shop = r.id')
+            ->innerJoin(ShopCollection::class, 'collection', Expr\Join::WITH, 'collection_item.collection = collection.id')
+            ->andWhere('collection.slug = :slug')
+            ->setParameter('slug', $slug);
 
         $this->addBusinessContextClause($qb, 'r');
 

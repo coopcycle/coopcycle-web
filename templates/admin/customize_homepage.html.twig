@@ -1,0 +1,27 @@
+{% extends "admin.html.twig" %}
+
+{% block breadcrumb %}
+<li>{% trans %}adminDashboard.customize.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+    <div class="alert alert-info">
+      Use the editor below to arrange homepage blocks.
+    </div>
+    <div id="homepage-editor"
+      data-blocks="{{ blocks|serialize('jsonld', { groups: 'ui.homepage' })|e('html_attr') }}"
+      data-cuisines="{{ cuisines|json_encode|e('html_attr') }}"
+      data-shop-types="{{ shop_types|json_encode|e('html_attr') }}"
+      data-upload-endpoint="{{ oneup_uploader_endpoint('homepage_slider')|e('html_attr') }}"
+      data-cta-icon="{{ ux_icon('lucide:arrow-right')|e('html_attr') }}"
+      data-delivery-forms="{{ delivery_forms|serialize('jsonld') }}"
+      data-shop-collections="{{ shop_collections|serialize('jsonld', { groups: 'shop_collection' }) }}"></div>
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('customize-form') }}
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('customize-form') }}
+{% endblock %}

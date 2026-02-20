@@ -1663,3 +1663,4 @@ sylius.form.promotion_action.delivery_percentage_discount: 'Remise en pourcentag
 restaurant_promotion.rules.help: Ajoutez des règles pour définir ce qui déclenche l'application de la promotion
 restaurant_promotion.actions.help: Ajoutez des actions pour définir comment la promotion est appliquée
 restaurants.on_sale: En promo
+customize.homepage: Nouveau ! Personnalisez la page d'accueil

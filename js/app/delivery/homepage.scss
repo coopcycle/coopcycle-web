@@ -1,4 +1,82 @@
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
+// https://getbootstrap.com/docs/5.3/customize/sass/#importing
+
+// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
+@import "bootstrap/scss/functions";
+
+// 3. Include remainder of required Bootstrap stylesheets (including any separate color mode stylesheets)
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/variables-dark";
+
+// 4. Include any default map overrides here
+
+// 5. Include remainder of required parts
+@import "~bootstrap/scss/maps";
+@import "~bootstrap/scss/mixins";
+// @import "~bootstrap/scss/root";
+
+.homepage-search {
+  position: relative;
+  margin-top: -20px;
+  background-color: $blue-100;
+  background-image: url(../../../assets/pattern.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  &-container {
+    position: relative;
+    display: flex;
+    width: 50%;
+    margin: 0 auto;
+    justify-content: center;
+    @include media-breakpoint-down(sm) {
+      width: 80%;
+    }
+  }
+  margin-bottom: 50px;
+}
+
+.homepage-map {
+  margin-bottom: -40px;
+  color: #ccc;
+}
+
+.homepage-searchbox-container {
+  position: absolute;
+  bottom: -40px;
+  width: 100%;
+  left: 0;
+}
+
+.homepage-searchbox {
+
+  padding: 20px 25px;
+  background-color: #ffff;
+  border-radius: 12px;
+  box-shadow: 0px 4px 50px rgba(0, 0, 0, 0.08);
+
+  .address-autosuggest__container {
+    margin: 0;
+  }
+
+  /*
+  input[type="search"] {
+    border: none;
+    box-shadow: none;
+  }
+
+  .address-autosuggest__input {
+    font-size: 1.1em;
+    padding: 0;
+  }
+
+  .address-autosuggest__input-wrapper:before {
+    color: lightsteelblue;
+    background-color: transparent;
+    font-size: 28px;
+  }
+  */
+
+}
 
 .homepage-delivery {
 
@@ -6,14 +84,14 @@
   display: flex;
   justify-content: flex-end;
 
-  background: #212121;
   padding: 40px 60px;
 
-  @media (max-width: $screen-xs-max) {
-    flex-direction: column;
-  }
+  flex-direction: column;
 
-  margin-bottom: 80px;
+  @include media-breakpoint-up(sm) {
+    flex-direction: row;
+    justify-content: space-between;
+  }
 
   form {
     background: #FFFFFF;
@@ -26,25 +104,25 @@
   }
 
   &-form {
-    @media (min-width: $screen-sm-min) {
-      position: absolute;
+    order: 2;
+    @include media-breakpoint-up(sm) {
+      order: 1;
       min-width: 50%;
-      bottom: -50px;
-      left: 60px;
-    }
-    @media (max-width: $screen-xs-max) {
-      order: 2;
     }
   }
 
   &-text {
-    color: #e5e5e5;
-    @media (min-width: $screen-sm-min) {
-      width: calc(50% - 90px);
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 0;
     }
-    @media (max-width: $screen-xs-max) {
-      order: 1;
-      margin-bottom: 30px;
+    color: #e5e5e5;
+
+    order: 1;
+    margin-bottom: 30px;
+
+    @include media-breakpoint-up(sm) {
+      order: 2;
+      width: calc(50% - 90px);
     }
   }
 }

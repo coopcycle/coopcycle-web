@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="AppBundle\Entity\LocalBusiness\CollectionItem" table="shop_collection_item">
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="position" type="integer" column="position"/>
+    <many-to-one field="shop" target-entity="AppBundle\Entity\LocalBusiness"/>
+    <many-to-one field="collection" target-entity="AppBundle\Entity\LocalBusiness\Collection" inversed-by="items">
+      <join-columns>
+        <join-column name="collection_id" referenced-column-name="id" on-delete="SET NULL"/>
+      </join-columns>
+    </many-to-one>
+  </entity>
+</doctrine-mapping>

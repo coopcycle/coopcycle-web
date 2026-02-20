@@ -1,31 +1,16 @@
-{% for section in this.sections %}
-  {{ component(section.component, section.props ?? []) }}
+<div class="pt-4">
+{% for block in this.blocks %}
+  {% if block.type == 'shop_collection' %}
+    {{ component(('ShopCollection:' ~ (block.data.component|capitalize)), block.data.args ?? []) }}
+  {% endif %}
+  {% if block.type == 'banner' %}
+    {{ component('Banner', block.data) }}
+  {% endif %}
+  {% if block.type == 'slider' %}
+    {{ component('Slider', { slides: block.data.slides }) }}
+  {% endif %}
+  {% if block.type == 'delivery_form' %}
+    {{ component('DeliveryForm', block.data) }}
+  {% endif %}
 {% endfor %}
-
-{% if this.zeroWasteCount > 0 %}
-  <section class="homepage-zerowaste mb-4">
-    <div class="container">
-      {# FIXME Wrong URL #}
-      <a href="{{ path('restaurants_by_tags', { tags: 'zerowaste' }) }}" class="d-flex justify-content-between align-items-center py-4">
-        <span>
-          <i class="fa fa-lg fa-globe mr-2" aria-hidden="true"></i>
-          <span>{{ 'homepage.zerowaste'|trans }}</span>
-        </span>
-        <i class="fa fa-lg fa-arrow-right"></i>
-      </a>
-    </div>
-  </section>
-{% endif %}
-
-{% if this.deliveryForm is not empty %}
-  {% include 'index/_partials/delivery_form.html.twig' with {
-    delivery_form: this.createDeliveryFormView(this.deliveryForm),
-    hashid: this.deliveryForm|hashid(12)
-  } %}
-{% endif %}
-
-{% if this.hubs|length > 0 %}
-  {% for hub in hubs %}
-    {{ component('ShopCollection:Hub', { hub: hub }) }}
-  {% endfor %}
-{% endif %}
+<div>

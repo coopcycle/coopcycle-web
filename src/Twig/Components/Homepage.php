@@ -2,17 +2,17 @@
 
 namespace AppBundle\Twig\Components;
 
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Entity\UI\HomepageBlock;
 use AppBundle\Form\DeliveryEmbedType;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
 #[AsTwigComponent]
@@ -25,7 +25,8 @@ class Homepage
     public function __construct(
         private EntityManagerInterface $entityManager,
         private LocalBusinessRepository $shopRepository,
-        private FormFactoryInterface $formFactory)
+        private IriConverterInterface $iriConverter,
+        private TranslatorInterface $translator)
     {}
 
     public function getZeroWasteCount(): int
@@ -40,31 +41,44 @@ class Homepage
         ]);
     }
 
-    public function getSections(): array
+    private function getDefaultBlocks(): array
     {
-        $sections = [];
+        $blocks = [];
 
         $typeByCount = array_flip($this->shopRepository->countByType());
         if (count($typeByCount) > 0) {
             krsort($typeByCount);
             $typeWithMostShops = array_shift($typeByCount);
-
-            $sections[] = [
-                'component' => 'ShopCollection:Type',
-                'props' => ['type' => LocalBusiness::getKeyForType($typeWithMostShops)]
+            $blocks[] = [
+                'type' => 'shop_collection',
+                'data' => [
+                    'component' => 'type',
+                    'args' => [
+                        'type' => LocalBusiness::getKeyForType($typeWithMostShops)
+                    ]
+                ]
             ];
         }
 
-        $sections[] = [
-            'component' => 'ShopCollection:Featured'
+        $blocks[] = [
+            'type' => 'shop_collection',
+            'data' => [
+                'component' => 'featured'
+            ],
         ];
 
-        $sections[] = [
-            'component' => 'ShopCollection:Exclusive'
+        $blocks[] = [
+            'type' => 'shop_collection',
+            'data' => [
+                'component' => 'exclusive'
+            ],
         ];
 
-        $sections[] = [
-            'component' => 'ShopCollection:Newest'
+        $blocks[] = [
+            'type' => 'shop_collection',
+            'data' => [
+                'component' => 'newest'
+            ],
         ];
 
         $countByCuisine = $this->shopRepository->countByCuisine();
@@ -72,18 +86,56 @@ class Homepage
         foreach ($countByCuisine as $cuisineName => $count) {
             if ($count >= self::MIN_SHOPS_PER_CUISINE) {
 
-                $sections[] = [
-                    'component' => 'ShopCollection:Cuisine',
-                    'props' => ['cuisine' => $cuisineName],
+                $blocks[] = [
+                    'type' => 'shop_collection',
+                    'data' => [
+                        'component' => 'cuisine',
+                        'args' => ['cuisine' => $cuisineName],
+                    ],
                 ];
 
-                if (count($sections) >= self::MAX_SECTIONS) {
+                if (count($blocks) >= self::MAX_SECTIONS) {
                     break;
                 }
             }
         }
 
-        return $sections;
+        if ($this->getZeroWasteCount() > 0) {
+            $blocks[] = [
+                'type' => 'banner',
+                'data' => [
+                    'markdown' => '### ' . $this->translator->trans('homepage.zerowaste'),
+                    'backgroundColor' => '#00dd61',
+                    'colorScheme' => 'dark',
+                ],
+            ];
+        }
+
+        $deliveryForm = $this->getDeliveryForm();
+        if (null !== $deliveryForm) {
+            $blocks[] = [
+                'type' => 'delivery_form',
+                'data' => [
+                    'form' => $this->iriConverter->getIriFromResource($deliveryForm),
+                    'backgroundColor' => '#212121',
+                    'colorScheme' => 'dark',
+                ],
+            ];
+        }
+
+        return $blocks;
+    }
+
+    public function getBlocks(): array
+    {
+        $blocks = $this->entityManager->getRepository(HomepageBlock::class)->findAll();
+
+        // Default homepage
+        if (count($blocks) === 0) {
+            return $this->getDefaultBlocks();
+        }
+
+        return $blocks;
     }
 
     public function getDeliveryForm(): ?DeliveryForm
@@ -97,15 +149,5 @@ class Homepage
         $qb->setMaxResults(1);
 
         return $qb->getQuery()->getOneOrNullResult();
-    }
-
-    public function createDeliveryFormView(DeliveryForm $deliveryForm): FormView
-    {
-        return $this->formFactory->createNamed('delivery', DeliveryEmbedType::class, new Delivery(), [
-            'with_weight'      => $deliveryForm->getWithWeight(),
-            'with_vehicle'     => $deliveryForm->getWithVehicle(),
-            'with_time_slot'   => $deliveryForm->getTimeSlot(),
-            'with_package_set' => $deliveryForm->getPackageSet(),
-        ])->createView();
     }
 }

@@ -1,0 +1,31 @@
+<section class="mb-4">
+  <div class="container-fluid">
+    <div class="swiper swiper-homepage">
+      <ol class="swiper-wrapper">
+        {% for slide in this.filteredSlides %}
+        <li class="swiper-slide">
+          <a href="{{ slide.href }}" target="_blank" style="background-color: {{ slide.backgroundColor}};">
+            <div class="swiper-slide-content">
+              <div class="swiper-slide-content-left">
+                <h4 class="coopcycle-homepage-bg-{{ slide.colorScheme ?? 'light' }}">{{ slide.title }}</h4>
+                <p class="coopcycle-homepage-bg-{{ slide.colorScheme ?? 'light' }}">{{ slide.text }}</p>
+                <button type="button" class="btn btn-xs">
+                  <span>{{ slide.buttonText }}</span>
+                  {{ ux_icon('lucide:arrow-right', { class: 'ml-2' }) }}
+                </button>
+              </div>
+              <div class="swiper-slide-content-right">
+                {% if slide.image is defined and slide.image is not empty %}
+                  <img src="{{ slide.image }}" />
+                {% endif %}
+              </div>
+            </div>
+          </a>
+        </li>
+        {% endfor %}
+      </ol>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+    </div>
+  </div>
+</section>

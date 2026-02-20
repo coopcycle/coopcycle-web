@@ -34,6 +34,7 @@ use AppBundle\Entity\BusinessAccountInvitation;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Entity\LocalBusiness\Collection as ShopCollection;
 use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\BusinessRestaurantGroup;
@@ -46,6 +47,7 @@ use AppBundle\Entity\Sylius\TaxRate;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
+use AppBundle\Entity\UI\HomepageBlock;
 use AppBundle\Entity\Woopit\WoopitIntegration;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\AttachToOrganizationType;
@@ -2581,6 +2583,37 @@ class AdminController extends AbstractController
         ]);
     }
 
+    public function customizeHomepageAction(TranslatorInterface $translator, Request $request)
+    {
+        $isDemo = $this->getParameter('is_demo');
+
+        if ($isDemo) {
+            throw $this->createNotFoundException();
+        }
+
+        $blocks = $this->entityManager->getRepository(HomepageBlock::class)->findAll();
+
+        $cuisines = $this->entityManager->getRepository(LocalBusiness::class)->findCuisinesByFilters();
+        $shopTypes = array_map(fn ($t) => LocalBusiness::getKeyForType($t), array_keys($this->entityManager->getRepository(LocalBusiness::class)->countByType()));
+
+        $deliveryForms = $this->entityManager->getRepository(DeliveryForm::class)->findAll();
+
+        $shopCollections = $this->entityManager->getRepository(ShopCollection::class)->findAll();
+
+        return $this->render('admin/customize_homepage.html.twig', $this->auth([
+            'blocks' => $blocks,
+            'cuisines' => array_map(function ($c) use ($translator) {
+                return [
+                    'label' => $translator->trans($c->getName(), [], 'cuisines'),
+                    'value' => $c->getName(),
+                ];
+            }, $cuisines),
+            'shop_types' => $shopTypes,
+            'delivery_forms' => $deliveryForms,
+            'shop_collections' => $shopCollections,
+        ]));
+    }
+
     private function handleHubForm(Hub $hub, Request $request)
     {
         $form = $this->createForm(HubType::class, $hub);
@@ -3062,5 +3095,28 @@ class AdminController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         return $this->render('admin/invoicing.html.twig', $this->auth([]));
+    }
+
+    #[Route(path: '/admin/shop-collections/preview/{component}', name: 'admin_shop_collection_preview')]
+    public function shopCollectionPreviewAction($component,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
+        Request $request)
+    {
+        return $this->render('admin/shop_collection_preview.html.twig', [
+            'component' => 'ShopCollection:'.ucfirst($component),
+            'props' => $request->query->all(),
+        ]);
+    }
+
+    public function customizeShopCollectionsAction(EntityManagerInterface $entityManager)
+    {
+        $collections = $entityManager->getRepository(ShopCollection::class)->findAll();
+        $shops = $entityManager->getRepository(LocalBusiness::class)->findAll();
+
+        return $this->render('admin/customize_shop_collection.html.twig', $this->auth([
+            'collections' => $collections,
+            'shops' => $shops,
+        ]));
     }
 }

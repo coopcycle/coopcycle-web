@@ -1,0 +1,33 @@
+{% extends "admin.html.twig" %}
+
+{% block breadcrumb %}
+<li>{% trans %}adminDashboard.customize.title{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+  <div class="alert alert-info">
+  Use the page below to create arbitrary shop collections.
+  </div>
+
+    {% set all_shops = shops|map((s) => {
+      '@id': s|get_iri_from_item,
+      name: s.name,
+      image: coopcycle_asset(s, 'imageFile', 'restaurant_thumbnail')|placeholder_image('restaurant_thumbnail')
+    }) %}
+
+    <div id="shop-collection-editor"
+      data-shops="{{ all_shops|json_encode|e('html_attr') }}"
+      data-collections={{ collections|serialize('jsonld', { groups: 'shop_collection'})|e('html_attr') }}>
+    </div>
+
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('customize-shop-collection') }}
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('customize-shop-collection') }}
+{% endblock %}
+

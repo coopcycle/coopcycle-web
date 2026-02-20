@@ -1,3 +1,28 @@
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+
 .CodeMirror {
   height: 400px;
 }
+
+.codex-editor {
+  .swiper {
+    z-index: 0;
+  }
+}
+
+// https://github.com/codex-team/editor.js/discussions/1891#discussioncomment-1983770
+.ce-block__content,
+.ce-toolbar__content {
+  max-width: 850px;
+}
+
+// https://github.com/codex-team/editor.js/discussions/1897
+.ce-popover__items {
+  .ce-popover-item[data-item-name="paragraph"] {
+    display: none;
+  }
+}
+
+// Can be imported twice
+// @import './swiper-homepage.scss'

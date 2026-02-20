@@ -162,6 +162,22 @@ liip_imagine:
                 optipng:
                     strip_all: true
                     level: 4
+        homepage_slider_images_thumbnail:
+            data_loader: homepage_slider_images
+            filters:
+                upscale:
+                    min: [ 768, 768 ]
+                thumbnail:
+                    size: [ 768, 768 ]
+                    mode: outbound
+            post_processors:
+                jpegoptim:
+                    strip_all: true
+                    max: 80
+                    progressive: true
+                optipng:
+                    strip_all: true
+                    level: 4
     loaders:
         default:
             filesystem:
@@ -186,3 +202,6 @@ liip_imagine:
         incident_images:
             flysystem:
                 filesystem_service: oneup_flysystem.incident_images_filesystem
+        homepage_slider_images:
+            flysystem:
+                filesystem_service: oneup_flysystem.homepage_slider_images_filesystem

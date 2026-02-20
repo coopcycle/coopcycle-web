@@ -1596,3 +1596,93 @@ Feature: Manage restaurants
         ]
       }
       """
+
+  Scenario: Create & update a shop collection
+    Given the fixtures files are loaded:
+      | sylius_locales.yml  |
+      | products.yml        |
+      | restaurants.yml     |
+    Given the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    Given I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "POST" request to "/api/shop_collections" with body:
+      """
+      {
+        "title": "Our selection",
+        "shops": [
+          "/api/restaurants/1",
+          "/api/restaurants/2"
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ShopCollection",
+        "@id":"/api/shop_collections/1",
+        "@type":"ShopCollection",
+        "title":"Our selection",
+        "shops": [
+          "/api/restaurants/1",
+          "/api/restaurants/2"
+        ]
+      }
+      """
+    Given I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "PUT" request to "/api/shop_collections/1" with body:
+      """
+      {
+        "shops": [
+          "/api/restaurants/1",
+          "/api/restaurants/2",
+          "/api/restaurants/3"
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ShopCollection",
+        "@id":"/api/shop_collections/1",
+        "@type":"ShopCollection",
+        "title":"Our selection",
+        "shops": [
+          "/api/restaurants/1",
+          "/api/restaurants/2",
+          "/api/restaurants/3"
+        ]
+      }
+      """
+    Given I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "PUT" request to "/api/shop_collections/1" with body:
+      """
+      {
+        "title": "Our best restaurants"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ShopCollection",
+        "@id":"/api/shop_collections/1",
+        "@type":"ShopCollection",
+        "title":"Our best restaurants",
+        "shops": [
+          "/api/restaurants/1",
+          "/api/restaurants/2",
+          "/api/restaurants/3"
+        ]
+      }
+      """

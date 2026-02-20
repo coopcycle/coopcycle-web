@@ -1,0 +1,9 @@
+{% set form_object = this.getResourceFromIri(this.form) %}
+<section class="mb-4" style="background-color: #212121;">
+{% include 'index/_partials/delivery_form.html.twig' with {
+  title: this.title,
+  text: this.text,
+  delivery_form: this.createDeliveryFormView(form_object),
+  hashid: form_object|hashid(12)
+} %}
+</section>

@@ -72,6 +72,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFilter('recurr_rule', array(RecurrRuleFormatResolver::class, 'format'), ['needs_context' => true]),
             new TwigFilter('humanize_promotion', array(LocalBusinessRuntime::class, 'humanizePromotion')),
             new TwigFilter('is_promotion_not_expired', array(LocalBusinessRuntime::class, 'isPromotionNotExpired')),
+            new TwigFilter('json_decode', array($this, 'jsonDecode')),
         );
     }
 
@@ -230,5 +231,10 @@ class CoopCycleExtension extends AbstractExtension
         $now = Carbon::now();
 
         return $day === strtolower($now->englishDayOfWeek) && $openingHoursForDay->isOpenAt(Time::fromDateTime($now));
+    }
+
+    function jsonDecode($json)
+    {
+        return json_decode($json, true);
     }
 }

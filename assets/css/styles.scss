@@ -175,52 +175,6 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-.homepage-search {
-  position: relative;
-  margin-top: -20px;
-  background-color: $main-blue-light;
-  background-image: url(../pattern.svg);
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center center;
-  &-container {
-    position: relative;
-    display: flex;
-    width: 50%;
-    margin: 0 auto;
-    justify-content: center;
-    @media (max-width: $screen-sm-max) {
-      width: 80%;
-    }
-  }
-  margin-bottom: 50px;
-}
-
-.homepage-map {
-  margin-bottom: -40px;
-  color: #ccc;
-}
-
-.homepage-searchbox-container {
-  position: absolute;
-  bottom: -40px;
-  width: 100%;
-  left: 0;
-}
-
-.homepage-searchbox {
-
-  padding: 20px 25px;
-  background-color: #ffff;
-  border-radius: 12px;
-  box-shadow: 0px 4px 50px rgba(0, 0, 0, 0.08);
-
-  .address-autosuggest__container {
-    margin: 0;
-  }
-
-}
-
 .restaurant-show-more {
   font-size: $font-size-large;
   color: #585858;

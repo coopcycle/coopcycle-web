@@ -740,6 +740,20 @@ admin_task_receipt:
     defaults: { _controller: AppBundle\Controller\AdminController::taskReceiptAction }
     methods:  [ GET ]
 
+admin_customize_shop_collections:
+    path: /admin/customize/shop-collections
+    defaults:
+        _controller: AppBundle\Controller\AdminController::customizeShopCollectionsAction
+        layout: 'admin.html.twig'
+    methods:  [ GET, POST ]
+
+admin_customize_homepage:
+    path: /admin/customize/homepage
+    defaults:
+        _controller: AppBundle\Controller\AdminController::customizeHomepageAction
+        layout: 'admin.html.twig'
+    methods:  [ GET, POST ]
+
 admin_customize:
     path: /admin/customize
     defaults:
