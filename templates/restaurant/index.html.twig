@@ -1,4 +1,4 @@
-{% extends "base.html.twig" %}
+{% extends "frontend.html.twig" %}
 
 {% set restaurant_edit_route = is_granted('ROLE_ADMIN') ? 'admin_restaurant' : 'dashboard_restaurant' %}
 {% set restaurant_edit_url = path(restaurant_edit_route, { id: restaurant.id }) %}
