@@ -30,7 +30,7 @@ function renderSwitch($input) {
 
   const $parent = $input.closest('div.checkbox').parent()
 
-  const $switch = $('<div class="display-inline-block">')
+  const $switch = $('<div class="d-inline-block">')
   const $hidden = $('<input>')
 
   $switch.addClass('switch')
