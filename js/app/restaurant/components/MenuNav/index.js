@@ -87,7 +87,7 @@ export default function MenuNav(props) {
             className={ classNames(
               {
                 'overflow-hidden': section.isVisible,
-                'display-none': !section.isVisible,
+                'd-none': !section.isVisible,
               },
             ) }>
             <Link href={ sectionToLink(section) } title={ section.name } />
