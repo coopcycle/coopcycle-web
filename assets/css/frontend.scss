@@ -85,6 +85,8 @@
 
 @import "account-creation.scss";
 
+@import "antd.scss";
+
 .btn-facebook {
   background: #3B5998;
   border-radius: 0;
@@ -166,4 +168,41 @@
   width: 100%;
   background: white;
   z-index: 3;
+}
+
+.banner-title {
+  color: $white;
+  font-weight: 700;
+  margin-top: 30px;
+  margin-bottom: 60px;
+  @media (max-width: $screen-xs-max) {
+    font-size: 26px;
+    text-align: center;
+  }
+}
+
+.banner {
+  padding: 10px 0;
+  background-color: $orange;
+  color: #fff;
+  margin-top: -20px;
+  margin-bottom: 20px;
+  a {
+    color: $light-orange;
+  }
+  &-message {
+    p {
+      display: inline;
+    }
+  }
+}
+
+.login-container {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  &__content {
+    min-width: 100%;
+  }
 }

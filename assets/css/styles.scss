@@ -90,40 +90,6 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 400;
 }
 
-.banner-title {
-  color: $white;
-  font-weight: 700;
-  margin-top: 30px;
-  margin-bottom: 60px;
-  @media (max-width: $screen-xs-max) {
-    font-size: 26px;
-    text-align: center;
-  }
-}
-
-.banner-search {
-  margin-top: $bs-base-margin * 2;
-  @media (max-width: $screen-xs-max) {
-    margin-top: 0;
-  }
-}
-
-.banner {
-  padding: 10px 0;
-  background-color: $orange;
-  color: #fff;
-  margin-top: -20px;
-  margin-bottom: 20px;
-  a {
-    color: $light-orange;
-  }
-  &-message {
-    p {
-      display: inline;
-    }
-  }
-}
-
 .flash-messages {
   margin-top: -20px;
   margin-bottom: 20px;
@@ -138,10 +104,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn--loading > .btn__loading_indicator {
   display:inline-block;
-}
-
-.ant-calendar-picker {
-  margin-right: 5px;
 }
 
 .text-monospace {
@@ -189,16 +151,6 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-.login-container {
-  display: flex;
-  height: 100%;
-  align-items: center;
-  justify-content: center;
-  &__content {
-    min-width: 100%;
-  }
-}
-
 .button-icon {
   padding: 0;
   cursor: pointer;
@@ -231,23 +183,4 @@ h1, h2, h3, h4, h5, h6 {
 // https://github.com/coopcycle/coopcycle-web/issues/3296
 .leaflet-container {
   font-size: 12px;
-}
-
-.ant-alert-info {
-  background-color: $alert-info-bg !important;
-  border-color: $alert-info-border !important;
-
-  .ant-alert-icon {
-    color: $alert-info-text !important;
-  }
-
-  .ant-alert-message {
-    color: $alert-info-text !important;
-  }
-}
-
-.ant-input::placeholder {
-  // copy-paste from bootstrap
-  color: #999;
-  opacity: 1;
 }
