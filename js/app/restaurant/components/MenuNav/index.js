@@ -78,7 +78,7 @@ export default function MenuNav(props) {
       getCurrentAnchor={ getCurrentAnchor }
       onChange={ onChange }
       targetOffset={ height }>
-      <div className="custom-container pt-3 d-flex"
+      <div className="container-fluid pt-3 d-flex"
            ref={ rootRef }>
         { displaySections.map((section) => (
           <div
