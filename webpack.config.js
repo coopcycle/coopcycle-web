@@ -19,7 +19,7 @@ Encore
   // .setManifestKeyPrefix('/build')
 
   .addEntry('app', './assets/app.js')
-  .addEntry('admin', './js/app/admin.js')
+  .addEntry('admin', './assets/admin.js')
   .addEntry('admin-cube', './js/app/admin/cube.js')
   .addEntry('admin-orders', './js/app/admin/orders.js')
   .addEntry('admin-restaurants', './js/app/admin/restaurants.js')
@@ -40,7 +40,7 @@ Encore
   .addEntry('pricing-rule-set-form-react', './js/app/admin/pricing/entrypoint.tsx')
   .addEntry('delivery-tracking', './js/app/delivery/tracking.js')
   .addEntry('delivery-form-react', './js/app/store/deliveries/entrypoint.tsx')
-  .addEntry('frontend', './js/app/frontend.js')
+  .addEntry('frontend', './assets/frontend.js')
   .addEntry('recurrence-rule-form-react', './js/app/store/recurrence_rules/entrypoint.tsx')
   .addEntry('invoicing', './js/app/admin/invoicing/entrypoint.tsx')
   .addEntry('notifications', './js/app/notifications/index.js')
