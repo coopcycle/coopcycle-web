@@ -43,22 +43,6 @@ h1, h2, h3, h4, h5, h6 {
   flex-wrap: wrap;
 }
 
-.footer {
-  width: 100%;
-  padding: $base-margin 0;
-  margin-top: $base-margin-l;
-  background-color: #212121;
-  color: $white;
-
-  a.footer-link {
-    color: $white;
-  }
-
-  @media screen and (max-width: $screen-md-min) {
-    display: none;
-  }
-}
-
 .btn-google-play {
   display: inline-block;
   width: 180px;
@@ -108,13 +92,6 @@ h1, h2, h3, h4, h5, h6 {
   & ~ .table > tbody > tr:first-child > td {
     border-top: none;
   }
-}
-
-.maintenance {
-  @extend .alert;
-  @extend .alert-danger;
-  text-align: center;
-  padding: 40px;
 }
 
 // ------------------ Admin ------------------
@@ -268,15 +245,6 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-.btn-facebook {
-  background: #3B5998;
-  border-radius: 0;
-  color: #fff;
-  border-width: 1px;
-  border-style: solid;
-  border-color: #263961;
-}
-
 .login-container {
   display: flex;
   height: 100%;
@@ -285,13 +253,6 @@ h1, h2, h3, h4, h5, h6 {
   &__content {
     min-width: 100%;
   }
-}
-.btn-facebook:link, .btn-facebook:visited {
-  color: #fff;
-}
-.btn-facebook:active, .btn-facebook:hover {
-  background: #263961;
-  color: #fff;
 }
 
 .restaurant-pledge__image {
@@ -333,16 +294,6 @@ h1, h2, h3, h4, h5, h6 {
     td:last-child {
       font-family: "Roboto Mono", monospace;
     }
-  }
-}
-
-.homepage-zerowaste {
-  background-color: #00DD61;
-  color: lighten(#00DD61, 50%);
-  a {
-    font-size: $font-size-large;
-    color: lighten(#00DD61, 50%);
-    text-decoration: none;
   }
 }
 
