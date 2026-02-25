@@ -121,3 +121,11 @@
   background-color: #ededed;
   border-bottom: 1px solid darken(#ededed, 10%);
 }
+
+.button-icon {
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  appearance: none;
+}

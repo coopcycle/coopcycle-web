@@ -38,11 +38,6 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: center;
 }
 
-.row--full-height {
-  display: flex;
-  flex-wrap: wrap;
-}
-
 .navbar-brand {
   font-family: "Raleway", Helvetica, Arial, sans-serif;
 }
@@ -110,33 +105,6 @@ h1, h2, h3, h4, h5, h6 {
   font-family: "Roboto Mono", "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
 }
 
-.bike-icon {
-
-  $icon-size: 48px;
-
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center center;
-  width: $icon-size;
-  height: $icon-size;
-  margin: 0 auto;
-
-  &--bike {
-    background-image: url(../svg/noun_1149947_cc.svg);
-  }
-
-  &--cargo_bike {
-    background-image: url(../svg/noun_1149946_cc.svg);
-  }
-}
-
-.btn-group--vehicle {
-  width: 100%;
-  > label {
-    min-width: 50%;
-  }
-}
-
 .btn-transparent {
   background: transparent;
 }
@@ -149,14 +117,6 @@ h1, h2, h3, h4, h5, h6 {
   &__map {
     flex: 1;
   }
-}
-
-.button-icon {
-  padding: 0;
-  cursor: pointer;
-  background: transparent;
-  border: 0;
-  appearance: none;
 }
 
 .about-us {

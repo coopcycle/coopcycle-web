@@ -206,3 +206,30 @@
     min-width: 100%;
   }
 }
+
+.btn-group--vehicle {
+  width: 100%;
+  > label {
+    min-width: 50%;
+  }
+}
+
+.bike-icon {
+
+  $icon-size: 48px;
+
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  width: $icon-size;
+  height: $icon-size;
+  margin: 0 auto;
+
+  &--bike {
+    background-image: url(../svg/noun_1149947_cc.svg);
+  }
+
+  &--cargo_bike {
+    background-image: url(../svg/noun_1149946_cc.svg);
+  }
+}
