@@ -9,20 +9,6 @@ body {
   }
 }
 
-.content {
-  flex: 1;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: "Open Sans", Helvetica, Arial, sans-serif;
-}
-
-.h2 {
-  @media screen and (max-width: $screen-md-min) {
-    margin-bottom: 10px;
-  }
-}
-
 .table > tbody > tr > td {
   vertical-align: middle;
 }

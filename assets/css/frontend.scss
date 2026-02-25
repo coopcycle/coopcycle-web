@@ -87,6 +87,11 @@
 
 @import "antd.scss";
 
+// Allows to stick the footer to the bottom
+.content {
+  flex: 1;
+}
+
 .btn-facebook {
   background: #3B5998;
   border-radius: 0;
