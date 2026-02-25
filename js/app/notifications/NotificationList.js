@@ -30,7 +30,7 @@ class NotificationList extends React.Component {
 
     if (notifications.length === 0) {
       return (
-        <div className="alert alert-warning nomargin">{ this.props.t('NOTIFICATIONS_EMPTY') }</div>
+        <div className="alert alert-warning m-0">{ this.props.t('NOTIFICATIONS_EMPTY') }</div>
       )
     }
 
