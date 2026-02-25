@@ -135,3 +135,36 @@
   text-align: center;
   padding: 40px;
 }
+
+.btn-google-play {
+  display: inline-block;
+  width: 180px;
+  margin-right: -12px;
+  & > img {
+    display: inline-block;
+    width: 100%;
+  }
+}
+
+.restaurant-show-more {
+  font-size: $font-size-large;
+  color: #585858;
+  text-decoration: underline;
+  text-align: right;
+  &:hover {
+    color: lighten(#585858, 10%);
+  }
+}
+
+.restaurant-pledge__image {
+  max-width: 66.6666%;
+}
+
+.checkout-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: white;
+  z-index: 3;
+}

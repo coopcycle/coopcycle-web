@@ -43,16 +43,6 @@ h1, h2, h3, h4, h5, h6 {
   flex-wrap: wrap;
 }
 
-.btn-google-play {
-  display: inline-block;
-  width: 180px;
-  margin-right: -12px;
-  & > img {
-    display: inline-block;
-    width: 100%;
-  }
-}
-
 .navbar-brand {
   font-family: "Raleway", Helvetica, Arial, sans-serif;
 }
@@ -95,16 +85,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 // ------------------ Admin ------------------
-
-.navbar--admin {
-  .navbar-nav.navbar-right {
-    @media (max-width: 1480px) {
-      .navbar-label {
-        display: none;
-      }
-    }
-  }
-}
 
 .label {
   font-weight: 400;
@@ -150,42 +130,6 @@ h1, h2, h3, h4, h5, h6 {
   .alert {
     margin-bottom: 0;
   }
-}
-
-.restaurant-show-more {
-  font-size: $font-size-large;
-  color: #585858;
-  text-decoration: underline;
-  text-align: right;
-  &:hover {
-    color: lighten(#585858, 10%);
-  }
-}
-
-.dashboard-subnav {
-  background-color: $primary-default;
-  border-bottom: 1px solid darken($primary-default, 20%);
-  margin-top: -20px;
-  h3 {
-    color: white;
-  }
-  a {
-    color: white;
-  }
-  .navbar {
-    .navbar-toggle {
-      background-color: darken($primary-default, 50%);
-      border-color: white;
-      .icon-bar {
-        background-color: white;
-      }
-    }
-  }
-}
-
-.dashboard-actions {
-  background-color: #ededed;
-  border-bottom: 1px solid darken(#ededed, 10%);
 }
 
 .btn > .btn__loading_indicator {
@@ -255,10 +199,6 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-.restaurant-pledge__image {
-  max-width: 66.6666%;
-}
-
 .button-icon {
   padding: 0;
   cursor: pointer;
@@ -277,15 +217,6 @@ h1, h2, h3, h4, h5, h6 {
     @extend .table;
     @extend .table-bordered;
   }
-}
-
-.checkout-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: white;
-  z-index: 3;
 }
 
 .table-order-items {
@@ -319,23 +250,4 @@ h1, h2, h3, h4, h5, h6 {
   // copy-paste from bootstrap
   color: #999;
   opacity: 1;
-}
-
-#company_address .form-group {
-  margin-right: 0px;
-  margin-left: 0px;
-}
-
-.btn-primary-red {
-  background-color: #E4022D;
-  color: #F2F2F3;
-
-  .inactive {
-    background-color: #FF7A94;
-  }
-
-  &:hover {
-    color: #F2F2F3;
-  }
-
 }

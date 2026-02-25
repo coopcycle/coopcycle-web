@@ -84,3 +84,39 @@
 @import "address-autosuggest.scss";
 
 @import "account-creation.scss";
+
+.navbar--admin {
+  .navbar-nav.navbar-right {
+    @media (max-width: 1480px) {
+      .navbar-label {
+        display: none;
+      }
+    }
+  }
+}
+
+.dashboard-subnav {
+  background-color: $primary-default;
+  border-bottom: 1px solid darken($primary-default, 20%);
+  margin-top: -20px;
+  h3 {
+    color: white;
+  }
+  a {
+    color: white;
+  }
+  .navbar {
+    .navbar-toggle {
+      background-color: darken($primary-default, 50%);
+      border-color: white;
+      .icon-bar {
+        background-color: white;
+      }
+    }
+  }
+}
+
+.dashboard-actions {
+  background-color: #ededed;
+  border-bottom: 1px solid darken(#ededed, 10%);
+}
