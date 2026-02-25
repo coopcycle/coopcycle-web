@@ -1,6 +1,7 @@
 {% extends "base.html.twig" %}
 
 {% block styles_common %}
+  {{ encore_entry_link_tags('frontend') }}
   {% block styles %}{% endblock %}
   {% if coopcycle_has_banner() %}
   <style>
@@ -34,13 +35,13 @@
   {% include '_partials/banner.html.twig' %}
 {% endblock %}
 
-{# {% block body %}
-THIS IS BODY
-{% block content %}{% endblock %}
-{% endblock %} #}
-
 {% block footer %}
   {% if not embed_context.enabled %}
   {% include "footer.html.twig" %}
   {% endif %}
+{% endblock %}
+
+{% block scripts_common %}
+  {{ encore_entry_script_tags('frontend') }}
+  {% block scripts %}{% endblock %}
 {% endblock %}

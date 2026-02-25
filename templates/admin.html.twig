@@ -43,12 +43,14 @@
 {% endblock %}
 
 {% block styles_common %}
+  {{ encore_entry_link_tags('admin') }}
   {{ encore_entry_link_tags('widgets-admin') }}
   {{ encore_entry_link_tags('admin-version') }}
   {% block styles %}{% endblock %}
 {% endblock %}
 
 {% block scripts_common %}
+  {{ encore_entry_script_tags('admin') }}
   {{ encore_entry_script_tags('widgets-admin') }}
   {{ encore_entry_script_tags('admin-version') }}
   {% block scripts %}{% endblock %}
