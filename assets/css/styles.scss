@@ -3,7 +3,7 @@ html {
 }
 
 body {
-  @media screen and (min-width: $screen-md-min) {
+  @media screen and (min-width: $grid-float-breakpoint) {
     display: flex;
     flex-direction: column;
   }
