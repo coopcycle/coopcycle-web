@@ -32,12 +32,6 @@ $enable-cssgrid: true;
 @import "~font-awesome/scss/_variables.scss";
 @import "~font-awesome/scss/_mixins.scss";
 
-.restaurant-list {
-  h1 {
-    display: inline-block;
-  }
-}
-
 .restaurant-list-header {
   margin-top: -20px;
   padding-top: $spacer;
@@ -105,6 +99,10 @@ $enable-cssgrid: true;
 .restaurant-list {
 
   position: relative;
+
+  h1 {
+    display: inline-block;
+  }
 
   &--loading {
     &:before {
