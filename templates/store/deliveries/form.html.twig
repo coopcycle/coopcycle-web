@@ -78,20 +78,9 @@
 
 {% block content %}
 
-  {% if is_granted('ROLE_DISPATCHER') %}
-    {% if is_new %}
-      <div class="alert alert-info">
-        To access the legacy version of the delivery form <a data-testid="go-to-legacy-form" class="text-decoration-underline" href="{{ path('admin_store_delivery_new_legacy', { id: store.id }) }}">click here</a>.
-      </div>
-    {% else %}
-      <div class="alert alert-info">
-        To access the legacy version of the delivery form <a data-testid="go-to-legacy-form" class="text-decoration-underline" href="{{ path('admin_delivery_legacy', { id: delivery.id }) }}">click here</a>.
-      </div>
-    {% endif %}
+  {% if from_order is defined %}
+    <div class="alert alert-info">{{ ('form.delivery.' ~ from_action ~ '_disclaimer')|trans({ '%number%': from_order.number }) }}</div>
   {% endif %}
-
-  {% block alerts %}
-  {% endblock %}
 
   <div
     id="delivery-form"
@@ -107,6 +96,25 @@
   >
     {# Managed with React #}
   </div>
+
+  {% if is_granted('ROLE_DISPATCHER') %}
+    {% if is_new %}
+      <div class="text-right">
+        <small>
+          <a data-testid="go-to-legacy-form" class="text-decoration-underline"
+            href="{{ path('admin_store_delivery_new_legacy', { id: store.id }) }}">{{ 'basics.use_legacy_version'|trans }}</a>
+        </small>
+      </div>
+    {% else %}
+      <div class="text-right">
+        <small>
+          <a data-testid="go-to-legacy-form" class="text-decoration-underline"
+            href="{{ path('admin_delivery_legacy', { id: delivery.id }) }}">{{ 'basics.use_legacy_version'|trans }}</a>
+        </small>
+      </div>
+    {% endif %}
+  {% endif %}
+
 {% endblock %}
 
 {% block styles %}

@@ -1666,3 +1666,6 @@ restaurants.on_sale: En promo
 customize.homepage: Nouveau ! Personnalisez la page d'accueil
 basics.clone: Cloner
 basics.reverse: Inverser
+basics.use_legacy_version: Utiliser la version obsolète
+form.delivery.clone_disclaimer: Vous êtes en train de cloner la commande %number%
+form.delivery.reverse_disclaimer: Vous êtes en train d'inverser la commande %number%

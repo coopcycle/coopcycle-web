@@ -404,6 +404,7 @@ trait StoreTrait
         $formData = null;
 
         // pre-fill fields with the data from a previous order
+        $fromOrder = null;
         if ($this->isGranted('ROLE_DISPATCHER') && $request->query->has('from') && $request->query->has('action')) {
             $fromOrder = $this->getFromOrder($iriConverter, $request->query->get('from'));
             if ('clone' === $request->query->get('action')) {
@@ -438,6 +439,8 @@ trait StoreTrait
                 'show_left_menu' => true,
                 'isDispatcher' => $this->isGranted('ROLE_DISPATCHER'),
                 'debug_pricing' => $request->query->getBoolean('debug', false),
+                'from_order' => $fromOrder,
+                'from_action' => $request->query->get('action'),
         ]));
     }
 

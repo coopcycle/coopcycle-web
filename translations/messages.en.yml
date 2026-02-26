@@ -1731,3 +1731,6 @@ restaurant_promotion.actions.help: Add actions to define how the promotion is ap
 restaurants.on_sale: On sale
 customize.homepage: New! Customize homepage
 basics.reverse: Reverse
+basics.use_legacy_version: Use the legacy version
+form.delivery.clone_disclaimer: You are currently cloning the order %number%
+form.delivery.reverse_disclaimer: You are currently reversing the order %number%
