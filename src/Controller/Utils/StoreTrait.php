@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Utils;
 
 use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Metadata\Exception\ItemNotFoundException;
 use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\DeliveryMapper;
 use AppBundle\Entity\Address;
@@ -290,7 +291,8 @@ trait StoreTrait
         OrderManager $orderManager,
         EntityManagerInterface $entityManager,
         TranslatorInterface $translator,
-        LoggerInterface $logger)
+        LoggerInterface $logger,
+        IriConverterInterface $iriConverter)
     {
         $routes = $request->attributes->get('routes');
 
@@ -303,9 +305,9 @@ trait StoreTrait
         $delivery = null;
         $previousArbitraryPrice = null;
 
-        if ($this->isGranted('ROLE_ADMIN')) {
+        if ($this->isGranted('ROLE_DISPATCHER')) {
             // pre-fill fields with the data from a previous order
-            $data = $this->duplicateOrder($request, $store, $pricingManager);
+            $data = $this->duplicateOrder($request, $store, $pricingManager, $iriConverter);
             if (null !== $data) {
                 $delivery = $data->delivery;
                 $previousArbitraryPrice = $data->previousArbitraryPrice;
@@ -400,7 +402,7 @@ trait StoreTrait
         $formData = null;
 
         // pre-fill fields with the data from a previous order
-        if ($this->isGranted('ROLE_DISPATCHER') && $data = $this->duplicateOrder($request, $store, $pricingManager)) {
+        if ($this->isGranted('ROLE_DISPATCHER') && $data = $this->duplicateOrder($request, $store, $pricingManager, $iriConverter)) {
             $formData = $deliveryMapper->map(
                 $data->delivery,
                 null,
@@ -436,21 +438,36 @@ trait StoreTrait
         ]));
     }
 
-    private function duplicateOrder(Request $request, Store $store, PricingManager $pricingManager): OrderDuplicate | null
+    private function getOrderFromQuery(IriConverterInterface $iriConverter, string $iri): OrderInterface
     {
-        $hashid = $request->query->get('frmrdr');
+        $deliveryOrOrder = $iriConverter->getResourceFromIri($iri);
 
-        if (null === $hashid) {
+        if (!$deliveryOrOrder instanceof Delivery && !$deliveryOrOrder instanceof OrderInterface) {
+            throw new ItemNotFoundException();
+        }
+
+        if ($deliveryOrOrder instanceof Delivery) {
+            return $deliveryOrOrder->getOrder();
+        }
+
+        return $deliveryOrOrder;
+    }
+
+    private function duplicateOrder(Request $request,
+        Store $store,
+        PricingManager $pricingManager,
+        IriConverterInterface $iriConverter): OrderDuplicate | null
+    {
+        if (!$request->query->has('clone')) {
             return null;
         }
 
-        $hashids = new Hashids($this->getParameter('secret'), 16);
-        $decoded = $hashids->decode($hashid);
-        if (count($decoded) !== 1) {
+        try {
+            $fromOrder = $this->getOrderFromQuery($iriConverter, $request->query->get('clone'));
+        } catch (ItemNotFoundException $e) {
             return null;
         }
 
-        $fromOrder = current($decoded);
         return $pricingManager->duplicateOrder($store, $fromOrder);
     }
 
