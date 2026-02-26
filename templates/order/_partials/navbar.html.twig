@@ -37,6 +37,11 @@
               <i class="fa fa-clone"></i>  {% trans %}basics.clone{% endtrans %}
             </a>
           </li>
+          <li>
+            <a href="{{ path('admin_store_delivery_new', { id: order.delivery.store.id, reverse: order|get_iri_from_item }) }}" data-testid="order_reverse">
+              <i class="fa fa-refresh"></i>  {% trans %}basics.reverse{% endtrans %}
+            </a>
+          </li>
         {% endif %}
         {% if is_granted('ROLE_DISPATCHER') %}
         <li>
