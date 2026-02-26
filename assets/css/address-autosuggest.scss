@@ -1,3 +1,5 @@
+@import "./react-autosuggest";
+
 .address-autosuggest {
 
   &__container {
@@ -21,7 +23,7 @@
       text-align: center;
       width: $input-height-base;
       line-height: $input-height-base;
-      background-color: $main-blue;
+      background-color: $brand-primary;
 
       border-top-left-radius: $input-border-radius;
       border-bottom-left-radius: $input-border-radius;
@@ -79,7 +81,7 @@
   }
 
   &__addon {
-    background-color: $main-blue;
+    background-color: $brand-primary;
     display: flex;
     align-items: center;
     padding-left: 12px;

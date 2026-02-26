@@ -5,6 +5,8 @@ import { debounce } from 'lodash'
 import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 
+import '../../../assets/css/react-autosuggest.scss'
+
 // ------------------ Autosuggest ------------------
 
 
