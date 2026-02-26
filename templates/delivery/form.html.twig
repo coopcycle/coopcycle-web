@@ -149,7 +149,7 @@
       {% endif %}
       {% if is_granted('ROLE_DISPATCHER') and not is_new and is_store_delivery_order and delivery.order is not empty %}
         <a href="{{ path('admin_store_delivery_new',
-          { id: delivery.store.id, clone: delivery.order|get_iri_from_item }
+          { id: delivery.store.id, from: delivery.order|get_iri_from_item, action: 'clone' }
         ) }}" class="btn btn-block btn-lg btn-secondary">
           {% trans %}orders.duplicate{% endtrans %}
         </a>
