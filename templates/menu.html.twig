@@ -74,6 +74,12 @@
       </li>
       <li>
         <details>
+          {#
+          FIXME
+          Align to end to avoid horizontal scroll
+          Probably need to stop using menu compoent, just dropdown
+          https://daisyui.com/components/dropdown/#dropdown--aligns-to-end-of-button-horizontally
+          #}
           <summary>{{ current_locale }}</summary>
           <ul class="bg-base-100 rounded-t-none p-2 z-2">
             {% for locale, label in locales %}
