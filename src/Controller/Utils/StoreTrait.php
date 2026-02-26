@@ -412,8 +412,9 @@ trait StoreTrait
         }
 
         if ($request->query->has('reverse')) {
-            $source = $iriConverter->getResourceFromIri($request->query->get('reverse'));
-            $reverse = $source->reverse();
+
+            $fromOrder = $this->getOrderFromQuery($iriConverter, $request->query->get('reverse'));
+            $reverse = $fromOrder->getDelivery()->reverse();
 
             $formData = $deliveryMapper->map(
                 $reverse,
