@@ -140,7 +140,7 @@ function ComboBox({ t }) {
       <div className={ cx('form-group form-group-search has-loader', isLoading && 'has-loader-loading') }>
         <input
           placeholder={ t('SEARCH_PLACEHOLDER') }
-          className="form-control search-navbar-input"
+          className="input input-bordered w-24 md:w-auto"
           { ...getInputProps() }
         />
       </div>

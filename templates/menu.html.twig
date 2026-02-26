@@ -1,68 +1,73 @@
-<nav class="navbar navbar-default navbar-coopcycle">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-main" aria-expanded="false">
-        <span class="sr-only">Menu</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand navbar-brand-img">
-        <img src="{{ coopcycle_company_logo() }}" />
+{% set default_locale = 'en' %}
+{% set locales = {
+  'an': 'Aragonés',
+  'ca': 'Català',
+  'de': 'Deutsch',
+  'en': 'English',
+  'es': 'Español',
+  'eu': 'Euskara',
+  'fr': 'Français',
+  'it': 'Italiano',
+  'hu': 'Magyar',
+  'pl': 'Polski',
+  'pt_BR': 'Português (Brasil)',
+  'pt_PT': 'Português (Portugal)',
+} %}
+{% set current_locale = default_locale %}
+{% if locales[app.request.locale] is defined %}
+  {% set current_locale = locales[app.request.locale] %}
+{% endif %}
+
+<nav class="navbar bg-base-100">
+  <div class="navbar-start">
+    <img src="{{ coopcycle_company_logo() }}" width="30" height="30" />
+    <a class="btn btn-ghost text-xl font-raleway" href="{{ path('homepage') }}">{{ coopcycle_setting('brand_name') }}</a>
+    <div class="flex gap-2">
+      <a href="{{ path('admin_index') }}" title="{{ 'adminDashboard.title'|trans|e('html_attr') }}">
+        <i class="fa fa-lock"></i><span class="ml-2 hidden md:inline">{{ 'adminDashboard.title'|trans }}</span>
       </a>
-      <a class="navbar-brand" href="{{ path('homepage') }}">{{ coopcycle_setting('brand_name') }}</a>
-    </div>
-
-    <div class="collapse navbar-collapse" id="navbar-main">
-
-      <ul class="nav navbar-nav">
-        {% if is_granted('ROLE_DISPATCHER') %}
-        <li>
-            <a class="nav--to-dispatch" href="{{ path('admin_index') }}" title="{{ 'adminDashboard.title'|trans|e('html_attr') }}">
-              <i class="fa fa-lock"></i><span class="hidden-sm ml-2">{{ 'adminDashboard.title'|trans }}</span>
-            </a>
-        </li>
-        {% endif %}
-        {% if coopcycle_has_about_us() %}
-        <li>
-          <a href="{{ path('about_us') }}">
-            {% trans %}nav.about_us{% endtrans %}
-          </a>
-        </li>
-        {% endif %}
-      </ul>
-
-      <div class="navbar-form navbar-left" style="position: relative;" {{ react_component('NavBarSearch') }}>
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="{{ 'basics.search'|trans }}">
-        </div>
-      </div>
-
-      {% set default_locale = 'en' %}
-      {% set locales = {
-        'an': 'Aragonés',
-        'ca': 'Català',
-        'de': 'Deutsch',
-        'en': 'English',
-        'es': 'Español',
-        'eu': 'Euskara',
-        'fr': 'Français',
-        'it': 'Italiano',
-        'hu': 'Magyar',
-        'pl': 'Polski',
-        'pt_BR': 'Português (Brasil)',
-        'pt_PT': 'Português (Portugal)',
-      } %}
-      {% set current_locale = default_locale %}
-      {% if locales[app.request.locale] is defined %}
-        {% set current_locale = locales[app.request.locale] %}
+      {% if coopcycle_has_about_us() %}
+      <a href="{{ path('about_us') }}">
+        {% trans %}nav.about_us{% endtrans %}
+      </a>
       {% endif %}
-      <ul class="nav navbar-nav navbar-right">
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-            {{ current_locale }} <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
+    </div>
+  </div>
+  <div class="navbar-center">
+    <div class="relative" {{ react_component('NavBarSearch') }}>
+      <input type="text" class="input input-bordered w-24 md:w-auto" placeholder="{{ 'basics.search'|trans }}" />
+    </div>
+  </div>
+  <div class="navbar-end">
+    <ul class="menu menu-horizontal px-1">
+      <li>
+        <details>
+          <summary>
+            <img src="{{ path('user_avatar', { username: app.user.username }) }}" width="20" height="20" class="mr-2" />
+            <span>{{ app.user.username }}</span>
+          </summary>
+          <ul class="bg-base-100 rounded-t-none p-2 z-2">
+            <li>
+              <a href="{{ path('profile_edit') }}">
+                {% trans %}navbar.myAccount{% endtrans %}
+              </a>
+            </li>
+            {% if is_granted('DASHBOARD_VIEW') %}
+            <li><a href="{{ path('dashboard') }}">{{ 'adminDashboard.dashboard.title'|trans }}</a></li>
+            {% endif %}
+            <li><a href="{{ path('nucleos_user_security_logout') }}">{% trans from 'NucleosUserBundle' %}layout.logout{% endtrans %}</a></li>
+          </ul>
+        </details>
+      </li>
+      <li id="notifications">
+        <a href="#">
+          <span class="badge">0</span>
+        </a>
+      </li>
+      <li>
+        <details>
+          <summary>{{ current_locale }}</summary>
+          <ul class="bg-base-100 rounded-t-none p-2 z-2">
             {% for locale, label in locales %}
               {% if locale != app.request.locale %}
               <li>
@@ -71,25 +76,66 @@
               {% endif %}
             {% endfor %}
           </ul>
-        </li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
-        {% if coopcycle_setting('foodtech_enabled') %}
-        <li {{ react_component('NavBarCart', { 'url': path('cart_json'), 'href': path('order') }) }}>
-            <a href="#">
-              <i class="fa fa-shopping-basket mr-2" aria-hidden="true"></i>
-              <span>{{ 0|price_format }}</span>
-            </a>
-        </li>
-        {% endif %}
-        {% if app.user %}
-          {% include '_partials/user/account_dropdown.html.twig' %}
-        {% else %}
-          <li>
-            <a href="{{ path('nucleos_user_security_login') }}">{% trans %}navbar.login{% endtrans %}</a>
-          </li>
-        {% endif %}
-      </ul>
-    </div>
+        </details>
+      </li>
+    </ul>
   </div>
+
+  {#
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-main" aria-expanded="false">
+      <span class="sr-only">Menu</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand navbar-brand-img">
+      <img src="{{ coopcycle_company_logo() }}" />
+    </a>
+    <a class="navbar-brand" href="{{ path('homepage') }}">{{ coopcycle_setting('brand_name') }}</a>
+  </div>
+
+  <div class="collapse navbar-collapse" id="navbar-main">
+
+    <ul class="nav navbar-nav">
+      {% if is_granted('ROLE_DISPATCHER') %}
+      <li>
+          <a class="nav--to-dispatch" href="{{ path('admin_index') }}" title="{{ 'adminDashboard.title'|trans|e('html_attr') }}">
+            <i class="fa fa-lock"></i><span class="hidden-sm ml-2">{{ 'adminDashboard.title'|trans }}</span>
+          </a>
+      </li>
+      {% endif %}
+      {% if coopcycle_has_about_us() %}
+      <li>
+        <a href="{{ path('about_us') }}">
+          {% trans %}nav.about_us{% endtrans %}
+        </a>
+      </li>
+      {% endif %}
+    </ul>
+
+    <div class="navbar-form navbar-left" style="position: relative;" {{ react_component('NavBarSearch') }}>
+      <div class="form-group">
+        <input type="text" class="form-control" placeholder="{{ 'basics.search'|trans }}">
+      </div>
+    </div>
+    <ul class="nav navbar-nav navbar-right">
+      {% if coopcycle_setting('foodtech_enabled') %}
+      <li {{ react_component('NavBarCart', { 'url': path('cart_json'), 'href': path('order') }) }}>
+          <a href="#">
+            <i class="fa fa-shopping-basket mr-2" aria-hidden="true"></i>
+            <span>{{ 0|price_format }}</span>
+          </a>
+      </li>
+      {% endif %}
+      {% if app.user %}
+        {% include '_partials/user/account_dropdown.html.twig' %}
+      {% else %}
+        <li>
+          <a href="{{ path('nucleos_user_security_login') }}">{% trans %}navbar.login{% endtrans %}</a>
+        </li>
+      {% endif %}
+    </ul>
+  </div>
+  #}
 </nav>
