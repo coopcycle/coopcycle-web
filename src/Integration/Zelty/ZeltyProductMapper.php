@@ -22,12 +22,12 @@ class ZeltyProductMapper
         private SlugifyInterface $slugify,
     ) {}
 
-    public function importDishes(array $dishes, LocalBusiness $restaurant, array $optionsMap, string $locale, array $taxesMap): array
+    public function importDishes(array $dishes, LocalBusiness $restaurant, array $optionsMap, string $locale, array $taxesMap, ?TaxCategory $defaultTaxCategory = null): array
     {
         $productMap = [];
 
         foreach ($dishes as $dish) {
-            $product = $this->importDish($dish, $restaurant, $optionsMap, $locale, $taxesMap);
+            $product = $this->importDish($dish, $restaurant, $optionsMap, $locale, $taxesMap, $defaultTaxCategory);
             $productMap[$product->getCode()] = $product;
         }
 
@@ -39,7 +39,7 @@ class ZeltyProductMapper
         return $this->em->getRepository(Product::class)->findOneBy(['code' => $code]);
     }
 
-    private function importDish(ZeltyItem $dish, LocalBusiness $restaurant, array $optionsMap, string $locale, array $taxesMap): Product
+    private function importDish(ZeltyItem $dish, LocalBusiness $restaurant, array $optionsMap, string $locale, array $taxesMap, ?TaxCategory $defaultTaxCategory = null): Product
     {
         $product = $this->em->getRepository(Product::class)->findOneBy([
             'code' => $dish->id,
@@ -79,7 +79,7 @@ class ZeltyProductMapper
             $product->setEnabled(!$dish->disabled);
         }
 
-        $this->importProductVariant($product, $dish, $taxesMap);
+        $this->importProductVariant($product, $dish, $taxesMap, $defaultTaxCategory);
 
         $this->em->persist($product);
         $this->em->flush();
@@ -87,7 +87,7 @@ class ZeltyProductMapper
         return $product;
     }
 
-    private function importProductVariant(Product $product, ZeltyItem $dish, array $taxesMap): void
+    private function importProductVariant(Product $product, ZeltyItem $dish, array $taxesMap, ?TaxCategory $defaultTaxCategory = null): void
     {
         $price = $dish->price?->price ?? 0;
 
@@ -103,11 +103,13 @@ class ZeltyProductMapper
         if ($shouldCreateNewVariant) {
             /** @var ProductVariant $variant */
             $variant = $this->variantFactory->createForProduct($product);
-            $variant->setCode(sprintf('%s_%s', $product->getCode(), $dish->id));
+            $variant->setCode(sprintf('%s_variant', $dish->id));
             $variant->setPrice($price);
 
             if ($dish->taxRule?->taxId && isset($taxesMap[$dish->taxRule->taxId])) {
                 $variant->setTaxCategory($taxesMap[$dish->taxRule->taxId]);
+            } elseif (null !== $defaultTaxCategory) {
+                $variant->setTaxCategory($defaultTaxCategory);
             }
 
             $product->addVariant($variant);

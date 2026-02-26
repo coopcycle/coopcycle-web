@@ -50,6 +50,17 @@ class ZeltyTaxesMapper
         return $this->taxCategoryMap;
     }
 
+    public function getDefaultTaxCategory(): ?TaxCategory
+    {
+        $coopcycleRates = $this->taxesHelper->getBaseRates();
+
+        if (empty($coopcycleRates)) {
+            return null;
+        }
+
+        return $coopcycleRates[0]->getCategory();
+    }
+
     private function findMatchingTaxRate(array $coopcycleRates, float $targetRate): ?TaxRate
     {
         foreach ($coopcycleRates as $ccTax) {

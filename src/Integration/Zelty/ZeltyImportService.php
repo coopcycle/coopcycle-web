@@ -4,6 +4,7 @@ namespace AppBundle\Integration\Zelty;
 
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Integration\Zelty\Dto\ZeltyCatalogParser;
+use Psr\Log\LoggerInterface;
 
 class ZeltyImportService
 {
@@ -13,10 +14,13 @@ class ZeltyImportService
         private ZeltyProductMapper $productMapper,
         private ZeltyTaxonMapper $taxonMapper,
         private ZeltyTaxesMapper $taxesMapper,
+        private ?LoggerInterface $logger = null,
     ) {}
 
     public function import(array $payload, LocalBusiness $restaurant): void
     {
+        $this->logger?->info(sprintf('Starting Zelty catalog import for restaurant %d', $restaurant->getId()));
+
         $catalog = $this->parser->parse($payload);
 
         $taxCategoryMap = $this->taxesMapper->importTaxes();
@@ -29,14 +33,17 @@ class ZeltyImportService
             $restaurant,
             $locale
         );
+        $this->logger?->info(sprintf('Imported %d options', count($optionsMap)));
 
         $productsMap = $this->productMapper->importDishes(
             $catalog->getDishes(),
             $restaurant,
             $optionsMap,
             $locale,
-            $taxCategoryMap
+            $taxCategoryMap,
+            $this->taxesMapper->getDefaultTaxCategory()
         );
+        $this->logger?->info(sprintf('Imported %d products', count($productsMap)));
 
         $menuPartsMap = [];
         foreach ($catalog->menuParts as $menuPart) {
@@ -50,6 +57,7 @@ class ZeltyImportService
             $menuPartsMap,
             $locale
         );
+        $this->logger?->info(sprintf('Imported %d menus', count($menusMap)));
 
         $this->taxonMapper->importTags(
             $catalog->tags,
@@ -58,5 +66,8 @@ class ZeltyImportService
             $menusMap,
             $locale
         );
+        $this->logger?->info(sprintf('Imported %d tags', count($catalog->tags)));
+
+        $this->logger?->info(sprintf('Completed Zelty catalog import for restaurant %d', $restaurant->getId()));
     }
 }
