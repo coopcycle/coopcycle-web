@@ -305,12 +305,14 @@ trait StoreTrait
         $delivery = null;
         $previousArbitraryPrice = null;
 
-        if ($this->isGranted('ROLE_DISPATCHER')) {
-            // pre-fill fields with the data from a previous order
-            $data = $this->duplicateOrder($request, $store, $pricingManager, $iriConverter);
-            if (null !== $data) {
-                $delivery = $data->delivery;
-                $previousArbitraryPrice = $data->previousArbitraryPrice;
+        if ($this->isGranted('ROLE_DISPATCHER') && $request->query->has('from') && $request->query->has('action')) {
+            if ('clone' === $request->query->get('action')) {
+                $fromOrder = $this->getFromOrder($iriConverter, $request->query->get('from'));
+                /** @var OrderDuplicate  */
+                $duplicate = $pricingManager->duplicateOrder($store, $fromOrder);
+
+                $delivery = $duplicate->delivery;
+                $previousArbitraryPrice = $duplicate->previousArbitraryPrice;
             }
         }
 
@@ -402,26 +404,26 @@ trait StoreTrait
         $formData = null;
 
         // pre-fill fields with the data from a previous order
-        if ($this->isGranted('ROLE_DISPATCHER') && $data = $this->duplicateOrder($request, $store, $pricingManager, $iriConverter)) {
-            $formData = $deliveryMapper->map(
-                $data->delivery,
-                null,
-                $data->previousArbitraryPrice,
-                false
-            );
-        }
-
-        if ($this->isGranted('ROLE_DISPATCHER') && $request->query->has('reverse')) {
-
-            $fromOrder = $this->getOrderFromQuery($iriConverter, $request->query->get('reverse'));
-            $reverse = $fromOrder->getDelivery()->reverse();
-
-            $formData = $deliveryMapper->map(
-                $reverse,
-                null,
-                null,
-                false
-            );
+        if ($this->isGranted('ROLE_DISPATCHER') && $request->query->has('from') && $request->query->has('action')) {
+            $fromOrder = $this->getFromOrder($iriConverter, $request->query->get('from'));
+            if ('clone' === $request->query->get('action')) {
+                /** @var OrderDuplicate  */
+                $duplicate = $pricingManager->duplicateOrder($store, $fromOrder);
+                $formData = $deliveryMapper->map(
+                    $duplicate->delivery,
+                    null,
+                    $duplicate->previousArbitraryPrice,
+                    false
+                );
+            } elseif ('reverse' === $request->query->get('action')) {
+                $reverse = $fromOrder->getDelivery()->reverse();
+                $formData = $deliveryMapper->map(
+                    $reverse,
+                    null,
+                    null,
+                    false
+                );
+            }
         }
 
         return $this->render(
@@ -439,7 +441,7 @@ trait StoreTrait
         ]));
     }
 
-    private function getOrderFromQuery(IriConverterInterface $iriConverter, string $iri): OrderInterface
+    private function getFromOrder(IriConverterInterface $iriConverter, string $iri): OrderInterface
     {
         $deliveryOrOrder = $iriConverter->getResourceFromIri($iri);
 
@@ -452,24 +454,6 @@ trait StoreTrait
         }
 
         return $deliveryOrOrder;
-    }
-
-    private function duplicateOrder(Request $request,
-        Store $store,
-        PricingManager $pricingManager,
-        IriConverterInterface $iriConverter): OrderDuplicate | null
-    {
-        if (!$request->query->has('clone')) {
-            return null;
-        }
-
-        try {
-            $fromOrder = $this->getOrderFromQuery($iriConverter, $request->query->get('clone'));
-        } catch (ItemNotFoundException $e) {
-            return null;
-        }
-
-        return $pricingManager->duplicateOrder($store, $fromOrder);
     }
 
     public function recurrenceRuleReactFormAction(
