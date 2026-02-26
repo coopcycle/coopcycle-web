@@ -1,26 +1,28 @@
-// https://tailwindcss.com/docs/installation/framework-guides/symfony
-// https://tailwindcss.com/docs/detecting-classes-in-source-files#disabling-automatic-detection
+@import "./fonts.css";
+
+/* https://tailwindcss.com/docs/installation/framework-guides/symfony *
+/* https://tailwindcss.com/docs/detecting-classes-in-source-files#disabling-automatic-detection */
 @import "tailwindcss" source(none);
 
-// @source "../../js/app";
+/* @source "../../js/app"; */
 @source "../../templates/**/*.html.twig";
 
 @plugin "daisyui";
 
-/*
-@import "fonts.scss";
-
-@import "antd/dist/reset.css";
+/* @import "antd/dist/reset.css"; */
 
 @import "font-awesome/css/font-awesome.min.css";
 @import "beautifymarker/leaflet-beautify-marker-icon.css";
 
 @import "leaflet/dist/leaflet.css";
 
+/*
 @import "font-awesome/scss/_variables.scss";
 @import "font-awesome/scss/_mixins.scss";
 @import "font-awesome/scss/_animated.scss";
+*/
 
+/*
 // Changing the collapsed mobile navbar breakpoint
 // The navbar collapses into its vertical mobile view when the viewport is narrower than @grid-float-breakpoint,
 // and expands into its horizontal non-mobile view when the viewport is at least @grid-float-breakpoint in width.
@@ -102,7 +104,9 @@ $grid-float-breakpoint: 1001px;
 @import "account-creation.scss";
 
 @import "antd.scss";
+*/
 
+/*
 // Allows to stick the footer to the bottom
 .content {
   flex: 1;
