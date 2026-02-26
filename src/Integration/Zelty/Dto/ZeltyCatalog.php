@@ -6,6 +6,7 @@ class ZeltyCatalog
 {
     public function __construct(
         public readonly string $id,
+        public readonly ?string $name = null,
         public readonly ?string $locale = null,
         public readonly ?string $currency = null,
         public readonly array $tags = [],

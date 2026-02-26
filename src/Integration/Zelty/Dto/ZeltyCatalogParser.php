@@ -20,6 +20,7 @@ class ZeltyCatalogParser
 
         return new ZeltyCatalog(
             id: $data['id'],
+            name: $data['name'] ?? null,
             locale: $data['locale'] ?? null,
             currency: $data['currency'] ?? null,
             tags: $tags,

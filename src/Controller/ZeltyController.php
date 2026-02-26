@@ -29,8 +29,8 @@ class ZeltyController extends AbstractController
         $this->entityManager->getConnection()->beginTransaction();
         try {
             $this->importService->import($payload, $restaurant);
-            /* $this->entityManager->getConnection()->commit(); */
-            $this->entityManager->getConnection()->rollBack();
+            $this->entityManager->getConnection()->commit();
+            /* $this->entityManager->getConnection()->rollBack(); */
             return new JsonResponse(['status' => 'success']);
         } catch (\Exception $e) {
             $this->entityManager->getConnection()->rollBack();

@@ -3,7 +3,9 @@
 namespace AppBundle\Integration\Zelty;
 
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Sylius\Taxon;
 use AppBundle\Integration\Zelty\Dto\ZeltyCatalogParser;
+use Cocur\Slugify\SlugifyInterface;
 use Psr\Log\LoggerInterface;
 
 class ZeltyImportService
@@ -14,6 +16,7 @@ class ZeltyImportService
         private ZeltyProductMapper $productMapper,
         private ZeltyTaxonMapper $taxonMapper,
         private ZeltyTaxesMapper $taxesMapper,
+        private SlugifyInterface $slugify,
         private ?LoggerInterface $logger = null,
     ) {}
 
@@ -26,6 +29,8 @@ class ZeltyImportService
         $taxCategoryMap = $this->taxesMapper->importTaxes();
 
         $locale = $catalog->locale ?? 'en';
+
+        $rootTaxon = $this->createOrGetRootTaxon($restaurant, $catalog, $locale);
 
         $optionsMap = $this->optionMapper->importOptions(
             $catalog->options,
@@ -52,7 +57,7 @@ class ZeltyImportService
 
         $menusMap = $this->taxonMapper->importMenus(
             $catalog->getMenus(),
-            $restaurant,
+            $rootTaxon,
             $productsMap,
             $menuPartsMap,
             $locale
@@ -61,7 +66,7 @@ class ZeltyImportService
 
         $this->taxonMapper->importTags(
             $catalog->tags,
-            $restaurant,
+            $rootTaxon,
             $productsMap,
             $menusMap,
             $locale
@@ -69,5 +74,43 @@ class ZeltyImportService
         $this->logger?->info(sprintf('Imported %d tags', count($catalog->tags)));
 
         $this->logger?->info(sprintf('Completed Zelty catalog import for restaurant %d', $restaurant->getId()));
+    }
+
+    private function createOrGetRootTaxon(LocalBusiness $restaurant, $catalog, string $locale): Taxon
+    {
+        $code = 'zelty_import_' . $restaurant->getId();
+        
+        $em = $this->taxonMapper->getEntityManager();
+        
+        $taxon = $em->getRepository(Taxon::class)->findOneBy(['code' => $code]);
+
+        if (null === $taxon) {
+            $taxon = new Taxon();
+            $taxon->setCode($code);
+            $taxon->setCurrentLocale($locale);
+            
+            $slug = sprintf('imported-catalog-from-zelty-%d', $restaurant->getId());
+            $taxon->setSlug($this->slugify->slugify($slug));
+            
+            $name = $catalog->name ?? 'Imported catalog from Zelty';
+            $taxon->setName($name);
+            
+            $taxon->setEnabled(true);
+            
+            $em->persist($taxon);
+            $em->flush();
+            
+            if (!$restaurant->getTaxons()->contains($taxon)) {
+                $restaurant->addTaxon($taxon);
+            }
+            
+            return $taxon;
+        }
+
+        if (!$restaurant->getTaxons()->contains($taxon)) {
+            $restaurant->addTaxon($taxon);
+        }
+
+        return $taxon;
     }
 }

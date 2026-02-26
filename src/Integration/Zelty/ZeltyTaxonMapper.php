@@ -21,9 +21,14 @@ class ZeltyTaxonMapper
         private SlugifyInterface $slugify,
     ) {}
 
+    public function getEntityManager(): EntityManagerInterface
+    {
+        return $this->em;
+    }
+
     public function importMenus(
         array $menus,
-        LocalBusiness $restaurant,
+        Taxon $parentTaxon,
         array $productsMap,
         array $menuPartsMap,
         string $locale
@@ -31,12 +36,8 @@ class ZeltyTaxonMapper
         $taxonMap = [];
 
         foreach ($menus as $menu) {
-            $taxon = $this->importMenu($menu, $restaurant, $productsMap, $menuPartsMap, $locale);
+            $taxon = $this->importMenu($menu, $parentTaxon, $productsMap, $menuPartsMap, $locale);
             $taxonMap[$taxon->getCode()] = $taxon;
-
-            if (!$restaurant->getTaxons()->contains($taxon)) {
-                $restaurant->addTaxon($taxon);
-            }
         }
 
         return $taxonMap;
@@ -44,23 +45,19 @@ class ZeltyTaxonMapper
 
     public function importTags(
         array $tags,
-        LocalBusiness $restaurant,
+        Taxon $parentTaxon,
         array $productsMap,
         array $menusMap,
         string $locale
     ): void {
         foreach ($tags as $tag) {
-            $taxon = $this->importTag($tag, $restaurant, $productsMap, $menusMap, $locale);
-
-            if (!$restaurant->getTaxons()->contains($taxon)) {
-                $restaurant->addTaxon($taxon);
-            }
+            $this->importTag($tag, $parentTaxon, $productsMap, $menusMap, $locale);
         }
     }
 
     private function importMenu(
         ZeltyItem $menu,
-        LocalBusiness $restaurant,
+        Taxon $parentTaxon,
         array $productsMap,
         array $menuPartsMap,
         string $locale
@@ -86,6 +83,7 @@ class ZeltyTaxonMapper
             }
 
             $taxon->setEnabled(!$menu->disabled);
+            $taxon->setParent($parentTaxon);
 
             $this->em->persist($taxon);
             $this->em->flush();
@@ -197,7 +195,7 @@ class ZeltyTaxonMapper
 
     private function importTag(
         ZeltyTag $tag,
-        LocalBusiness $restaurant,
+        Taxon $parentTaxon,
         array $productsMap,
         array $menusMap,
         string $locale
@@ -223,6 +221,7 @@ class ZeltyTaxonMapper
             }
 
             $taxon->setEnabled(!$tag->disabled);
+            $taxon->setParent($parentTaxon);
 
             $this->em->persist($taxon);
             $this->em->flush();
