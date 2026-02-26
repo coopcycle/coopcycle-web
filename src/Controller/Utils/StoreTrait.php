@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller\Utils;
 
+use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\DeliveryMapper;
 use AppBundle\Entity\Address;
@@ -16,7 +17,6 @@ use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Sylius\PricingStrategy;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
-use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\AddUserType;
@@ -386,6 +386,7 @@ trait StoreTrait
         EntityManagerInterface $entityManager,
         PricingManager $pricingManager,
         DeliveryMapper $deliveryMapper,
+        IriConverterInterface $iriConverter
     ) {
         $store = $entityManager
             ->getRepository(Store::class)
@@ -404,6 +405,18 @@ trait StoreTrait
                 $data->delivery,
                 null,
                 $data->previousArbitraryPrice,
+                false
+            );
+        }
+
+        if ($request->query->has('reverse')) {
+            $source = $iriConverter->getResourceFromIri($request->query->get('reverse'));
+            $reverse = $source->reverse();
+
+            $formData = $deliveryMapper->map(
+                $reverse,
+                null,
+                null,
                 false
             );
         }

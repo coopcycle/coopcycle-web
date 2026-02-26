@@ -669,4 +669,13 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
         return self::TYPE_MULTI_MULTI;
     }
+
+    public function reverse(): Delivery
+    {
+        // TODO Only allow to reverse "simple" deliveries
+        $pickup = $this->getPickup();
+        $dropoff = $this->getDropoff();
+
+        return self::createWithAddress($dropoff->getAddress(), $pickup->getAddress());
+    }
 }
