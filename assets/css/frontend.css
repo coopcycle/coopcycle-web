@@ -4,6 +4,7 @@
 /* https://tailwindcss.com/docs/detecting-classes-in-source-files#disabling-automatic-detection */
 @import "tailwindcss" source(none);
 
+/* Define theme */
 @theme {
   --font-sans: "Open Sans", sans-serif;
   --font-mono: "Roboto Mono", "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;

@@ -40,10 +40,18 @@
   </div>
   <div class="navbar-end">
     <ul class="menu menu-horizontal px-1">
+      {% if coopcycle_setting('foodtech_enabled') %}
+      <li {{ react_component('NavBarCart', { 'url': path('cart_json'), 'href': path('order') }) }}>
+          <a href="#">
+            <i class="fa fa-shopping-basket mr-2" aria-hidden="true"></i>
+            <span>{{ 0|price_format }}</span>
+          </a>
+      </li>
+      {% endif %}
       <li>
         <details>
           <summary>
-            <img src="{{ path('user_avatar', { username: app.user.username }) }}" width="20" height="20" class="mr-2" />
+            <img src="{{ path('user_avatar', { username: app.user.username }) }}" width="20" height="20" />
             <span>{{ app.user.username }}</span>
           </summary>
           <ul class="bg-base-100 rounded-t-none p-2 z-2">
@@ -80,62 +88,4 @@
       </li>
     </ul>
   </div>
-
-  {#
-  <div class="navbar-header">
-    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-main" aria-expanded="false">
-      <span class="sr-only">Menu</span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-    </button>
-    <a class="navbar-brand navbar-brand-img">
-      <img src="{{ coopcycle_company_logo() }}" />
-    </a>
-    <a class="navbar-brand" href="{{ path('homepage') }}">{{ coopcycle_setting('brand_name') }}</a>
-  </div>
-
-  <div class="collapse navbar-collapse" id="navbar-main">
-
-    <ul class="nav navbar-nav">
-      {% if is_granted('ROLE_DISPATCHER') %}
-      <li>
-          <a class="nav--to-dispatch" href="{{ path('admin_index') }}" title="{{ 'adminDashboard.title'|trans|e('html_attr') }}">
-            <i class="fa fa-lock"></i><span class="hidden-sm ml-2">{{ 'adminDashboard.title'|trans }}</span>
-          </a>
-      </li>
-      {% endif %}
-      {% if coopcycle_has_about_us() %}
-      <li>
-        <a href="{{ path('about_us') }}">
-          {% trans %}nav.about_us{% endtrans %}
-        </a>
-      </li>
-      {% endif %}
-    </ul>
-
-    <div class="navbar-form navbar-left" style="position: relative;" {{ react_component('NavBarSearch') }}>
-      <div class="form-group">
-        <input type="text" class="form-control" placeholder="{{ 'basics.search'|trans }}">
-      </div>
-    </div>
-    <ul class="nav navbar-nav navbar-right">
-      {% if coopcycle_setting('foodtech_enabled') %}
-      <li {{ react_component('NavBarCart', { 'url': path('cart_json'), 'href': path('order') }) }}>
-          <a href="#">
-            <i class="fa fa-shopping-basket mr-2" aria-hidden="true"></i>
-            <span>{{ 0|price_format }}</span>
-          </a>
-      </li>
-      {% endif %}
-      {% if app.user %}
-        {% include '_partials/user/account_dropdown.html.twig' %}
-      {% else %}
-        <li>
-          <a href="{{ path('nucleos_user_security_login') }}">{% trans %}navbar.login{% endtrans %}</a>
-        </li>
-      {% endif %}
-    </ul>
-  </div>
-  #}
 </nav>
