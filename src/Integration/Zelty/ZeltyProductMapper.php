@@ -50,7 +50,7 @@ class ZeltyProductMapper
             $product = $this->productFactory->createNew();
             $product->setCode($dish->id);
             $product->setRestaurant($restaurant);
-            $product->setSlug($this->slugify->slugify($dish->name ?? $dish->id));
+            $product->setSlug($this->slugify->slugify(($dish->name ?? $dish->id) . '-' . $dish->id));
 
             $product->setCurrentLocale($locale);
 

@@ -18,7 +18,7 @@ class ZeltyTaxesMapper
     ) {
         //FIXME: Use the dependency injection to set the auth token
         // See how to set it based on context.
-        $this->zeltyClient->setAuth('[REDACTED]');
+        $this->zeltyClient->setAuth('MTg4ODY6PTuQglWZY8qt2gmi/FjT1xjbRx0=');
     }
 
     public function importTaxes(): array

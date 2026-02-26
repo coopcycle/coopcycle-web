@@ -148,9 +148,12 @@ class ZeltyTaxonMapper
 
     private function linkProductsToSection(Taxon $section, array $dishIds, array $productsMap): void
     {
-        $existingProductTaxons = [];
-        foreach ($section->getTaxonProducts() as $productTaxon) {
-            $existingProductTaxons[$productTaxon->getProduct()->getCode()] = $productTaxon;
+        $existingProductTaxons = $this->em->getRepository(ProductTaxon::class)->findBy([
+            'taxon' => $section,
+        ]);
+        $existingMap = [];
+        foreach ($existingProductTaxons as $pt) {
+            $existingMap[$pt->getProduct()->getCode()] = $pt;
         }
 
         foreach ($dishIds as $position => $dishId) {
@@ -161,7 +164,7 @@ class ZeltyTaxonMapper
             /** @var Product $product */
             $product = $productsMap[$dishId];
 
-            if (!isset($existingProductTaxons[$dishId])) {
+            if (!isset($existingMap[$dishId])) {
                 $productTaxon = new ProductTaxon();
                 $productTaxon->setTaxon($section);
                 $productTaxon->setProduct($product);
@@ -170,13 +173,13 @@ class ZeltyTaxonMapper
                 $section->addProduct($product, $position);
                 $this->em->persist($productTaxon);
             } else {
-                $productTaxon = $existingProductTaxons[$dishId];
+                $productTaxon = $existingMap[$dishId];
                 $productTaxon->setPosition($position);
-                unset($existingProductTaxons[$dishId]);
+                unset($existingMap[$dishId]);
             }
         }
 
-        foreach ($existingProductTaxons as $productTaxon) {
+        foreach ($existingMap as $productTaxon) {
             $section->removeProduct($productTaxon->getProduct());
             $this->em->remove($productTaxon);
         }
@@ -224,19 +227,39 @@ class ZeltyTaxonMapper
 
     private function linkItemsToTag(Taxon $tag, array $itemIds, array $productsMap, array $menusMap): void
     {
-        foreach ($itemIds as $itemId) {
-            if (isset($productsMap[$itemId])) {
-                $product = $productsMap[$itemId];
-                if (!$tag->containsProduct($product)) {
-                    $productTaxon = new ProductTaxon();
-                    $productTaxon->setTaxon($tag);
-                    $productTaxon->setProduct($product);
-                    $productTaxon->setPosition(0);
+        $existingProductTaxons = $this->em->getRepository(ProductTaxon::class)->findBy([
+            'taxon' => $tag,
+        ]);
+        $existingMap = [];
+        foreach ($existingProductTaxons as $pt) {
+            $existingMap[$pt->getProduct()->getCode()] = $pt;
+        }
 
-                    $tag->addProduct($product);
-                    $this->em->persist($productTaxon);
-                }
+        foreach ($itemIds as $position => $itemId) {
+            if (!isset($productsMap[$itemId])) {
+                continue;
             }
+
+            $product = $productsMap[$itemId];
+
+            if (!isset($existingMap[$itemId])) {
+                $productTaxon = new ProductTaxon();
+                $productTaxon->setTaxon($tag);
+                $productTaxon->setProduct($product);
+                $productTaxon->setPosition($position);
+
+                $tag->addProduct($product, $position);
+                $this->em->persist($productTaxon);
+            } else {
+                $productTaxon = $existingMap[$itemId];
+                $productTaxon->setPosition($position);
+                unset($existingMap[$itemId]);
+            }
+        }
+
+        foreach ($existingMap as $productTaxon) {
+            $tag->removeProduct($productTaxon->getProduct());
+            $this->em->remove($productTaxon);
         }
 
         $this->em->flush();
