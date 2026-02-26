@@ -23,9 +23,11 @@
     <img src="{{ coopcycle_company_logo() }}" width="30" height="30" />
     <a class="btn btn-ghost text-xl font-raleway" href="{{ path('homepage') }}">{{ coopcycle_setting('brand_name') }}</a>
     <div class="flex gap-2">
-      <a href="{{ path('admin_index') }}" title="{{ 'adminDashboard.title'|trans|e('html_attr') }}">
+      {% if is_granted('ROLE_DISPATCHER') %}
+      <a class="link" href="{{ path('admin_index') }}" title="{{ 'adminDashboard.title'|trans|e('html_attr') }}">
         <i class="fa fa-lock"></i><span class="ml-2 hidden md:inline">{{ 'adminDashboard.title'|trans }}</span>
       </a>
+      {% endif %}
       {% if coopcycle_has_about_us() %}
       <a href="{{ path('about_us') }}">
         {% trans %}nav.about_us{% endtrans %}
@@ -34,6 +36,8 @@
     </div>
   </div>
   <div class="navbar-center">
+    {# We need the "relative" class on the container element,
+    so that the dropdown menu is relative to it  #}
     <div class="relative" {{ react_component('NavBarSearch') }}>
       <input type="text" class="input input-bordered w-24 md:w-auto" placeholder="{{ 'basics.search'|trans }}" />
     </div>
