@@ -1,7 +1,7 @@
 @import "../../../../../assets/css/vars.scss";
 
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/_forms.scss";
+@import "bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
+@import "bootstrap-sass/assets/stylesheets/bootstrap/_forms.scss";
 
 @mixin modal-padding-horizontal() {
   padding-left: $modal-inner-padding;
