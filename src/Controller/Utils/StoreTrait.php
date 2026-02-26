@@ -411,7 +411,7 @@ trait StoreTrait
             );
         }
 
-        if ($request->query->has('reverse')) {
+        if ($this->isGranted('ROLE_DISPATCHER') && $request->query->has('reverse')) {
 
             $fromOrder = $this->getOrderFromQuery($iriConverter, $request->query->get('reverse'));
             $reverse = $fromOrder->getDelivery()->reverse();
