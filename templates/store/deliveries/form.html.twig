@@ -78,7 +78,7 @@
 
 {% block content %}
 
-  {% if from_order is defined %}
+  {% if from_order is defined and from_order is not empty %}
     <div class="alert alert-info">{{ ('form.delivery.' ~ from_action ~ '_disclaimer')|trans({ '%number%': from_order.number }) }}</div>
   {% endif %}
 
