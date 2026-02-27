@@ -42,6 +42,7 @@ import {
 } from '../../api/types';
 import { useDatadog } from '../../hooks/useDatadog';
 import { UserContext } from '../../UserContext';
+import FlagsContext from './FlagsContext';
 import { generateTempId } from './idUtils';
 
 const getTaskId = (task: TaskType): string | null => {
@@ -168,6 +169,7 @@ const DeliveryForm = ({
   preLoadedFormData,
 }: Props) => {
   const { isDispatcher } = useContext(UserContext);
+  const { isReverseDeliveryEnabled } = useContext(FlagsContext);
 
   const mode = useSelector(selectMode);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -348,6 +350,7 @@ const DeliveryForm = ({
       }
 
       setInitialValues(initialValues);
+
 
       // For simple deliveries, expand all tasks by default
       if (initialValues.tasks.length <= 2) {
@@ -704,6 +707,20 @@ const DeliveryForm = ({
                         setFieldValue('order.isSavedOrder', e.target.checked);
                       }}>
                       {t('DELIVERY_FORM_SAVED_ORDER')}
+                    </Checkbox>
+                  </div>
+                ) : null}
+
+                {mode === Mode.DELIVERY_CREATE && isDispatcher && isReverseDeliveryEnabled ? (
+                  <div
+                    className="border-top py-3">
+                    <Checkbox
+                      name="delivery.add_reverse"
+                      onChange={e => {
+                        e.stopPropagation();
+                        setFieldValue('addReverse', e.target.checked);
+                      }}>
+                      {t('DELIVERY_FORM_ADD_REVERSE')}
                     </Checkbox>
                   </div>
                 ) : null}

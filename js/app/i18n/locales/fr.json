@@ -815,6 +815,7 @@
                     }
                 }
             }
-        }
+        },
+        "DELIVERY_FORM_ADD_REVERSE": "Créer aussi une livraison inversée"
     }
 }

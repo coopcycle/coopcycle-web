@@ -823,6 +823,7 @@
                     }
                 }
             }
-        }
+        },
+        "DELIVERY_FORM_ADD_REVERSE": "Also create a reverse delivery"
       }
 }

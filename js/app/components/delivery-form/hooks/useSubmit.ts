@@ -165,6 +165,7 @@ export default function useSubmit(
 
   const checkSuggestionsOnSubmit = useCallback(
     async (values: DeliveryFormValues) => {
+
       // no point in checking suggestions for only one pickup and one dropoff task
       if (values.tasks.length < 3) {
         return false;
@@ -206,6 +207,7 @@ export default function useSubmit(
 
   const handleSubmit = useCallback(
     async (values: DeliveryFormValues) => {
+
       const hasSuggestions = await checkSuggestionsOnSubmit(values);
       if (hasSuggestions) {
         // the form will be submitted again after the user accepts or rejects the suggestions (see SuggestionModal)
@@ -277,6 +279,10 @@ export default function useSubmit(
 
       setIsSubmitted(true);
 
+      const { addReverse } = values;
+
+      const storeId = storeNodeId.split('/').pop();
+
       if (modeIn(mode, [Mode.DELIVERY_CREATE, Mode.DELIVERY_UPDATE])) {
         const delivery = data as Delivery;
         const deliveryId = delivery.id;
@@ -284,17 +290,20 @@ export default function useSubmit(
         const orderId = orderUri?.split('/').pop();
 
         if (isDispatcher) {
-          if (orderId) {
-            window.location = `/admin/orders/${orderId}`;
+          if (addReverse) {
+            window.location.href = `/admin/stores/${storeId}/deliveries/new?from=${orderUri}&action=reverse`;
           } else {
-            window.location = `/admin/deliveries/${deliveryId}`;
+            if (orderId) {
+              window.location.href = `/admin/orders/${orderId}`;
+            } else {
+              window.location.href = `/admin/deliveries/${deliveryId}`;
+            }
           }
         } else {
-          window.location = `/dashboard/deliveries/${deliveryId}`;
+          window.location.href = `/dashboard/deliveries/${deliveryId}`;
         }
       } else if (mode === Mode.RECURRENCE_RULE_UPDATE) {
-        const storeId = storeNodeId.split('/').pop();
-        window.location = `/admin/stores/${storeId}/recurrence-rules`;
+        window.location.href = `/admin/stores/${storeId}/recurrence-rules`;
       }
     },
     [
