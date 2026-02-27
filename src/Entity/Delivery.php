@@ -33,6 +33,7 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Validator\Constraints\CheckDelivery as AssertCheckDelivery;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use AppBundle\Vroom\Shipment as VroomShipment;
+use Carbon\Carbon;
 use DeliveryPODExportInput;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -676,6 +677,22 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         $pickup = $this->getPickup();
         $dropoff = $this->getDropoff();
 
-        return self::createWithAddress($dropoff->getAddress(), $pickup->getAddress());
+        $reverse = self::createWithAddress($dropoff->getAddress(), $pickup->getAddress());
+
+        $reverse->setPickupRange($this->getDropoff()->getAfter(), $this->getDropoff()->getBefore());
+
+        $seconds = $this->getDuration();
+        if ($seconds > 0) {
+            $after = Carbon::make($reverse->getPickup()->getBefore())->addSeconds($seconds);
+        } else {
+            // Add 1h by default
+            $after = Carbon::make($reverse->getPickup()->getBefore())->addHour();
+        }
+
+        $before = Carbon::make($after)->addMinutes('15');
+
+        $reverse->setDropoffRange($after, $before);
+
+        return $reverse;
     }
 }
