@@ -19,6 +19,7 @@ use AppBundle\Entity\Sylius\PricingStrategy;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
 use AppBundle\Entity\Task\RecurrenceRule;
+use AppBundle\Exception\DeliveryNotReversableException;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\AddUserType;
 use AppBundle\Form\Order\NewOrderType;
@@ -398,6 +399,8 @@ trait StoreTrait
 
         $this->accessControl($store, 'edit_delivery');
 
+        $errors = [];
+
         $delivery = $store->createDelivery();
 
         /** @var DeliveryInputDto|null $formData */
@@ -417,13 +420,17 @@ trait StoreTrait
                     false
                 );
             } elseif ('reverse' === $request->query->get('action')) {
-                $reverse = $fromOrder->getDelivery()->reverse();
-                $formData = $deliveryMapper->map(
-                    $reverse,
-                    null,
-                    null,
-                    false
-                );
+                try {
+                    $reverse = $fromOrder->getDelivery()->reverse();
+                    $formData = $deliveryMapper->map(
+                        $reverse,
+                        null,
+                        null,
+                        false
+                    );
+                } catch (DeliveryNotReversableException $e) {
+                    $errors[] = 'form.delivery.errors.not_reversable';
+                }
             }
         }
 
@@ -441,6 +448,7 @@ trait StoreTrait
                 'debug_pricing' => $request->query->getBoolean('debug', false),
                 'from_order' => $fromOrder,
                 'from_action' => $request->query->get('action'),
+                'errors' => $errors,
         ]));
     }
 

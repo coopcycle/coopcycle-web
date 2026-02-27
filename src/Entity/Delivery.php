@@ -29,6 +29,7 @@ use AppBundle\Entity\Package\PackagesAwareInterface;
 use AppBundle\Entity\Package\PackagesAwareTrait;
 use AppBundle\Entity\Package\PackageWithQuantity;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
+use AppBundle\Exception\DeliveryNotReversableException;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Validator\Constraints\CheckDelivery as AssertCheckDelivery;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
@@ -673,6 +674,11 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
     public function reverse(): Delivery
     {
+        if (self::getType($this->getTasks()) !== self::TYPE_SIMPLE) {
+            throw new DeliveryNotReversableException();
+        }
+
+
         // TODO Only allow to reverse "simple" deliveries
         $pickup = $this->getPickup();
         $dropoff = $this->getDropoff();

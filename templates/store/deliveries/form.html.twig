@@ -78,7 +78,11 @@
 
 {% block content %}
 
-  {% if from_order is defined and from_order is not empty %}
+  {% if errors is not empty %}
+    {% for error in errors %}
+      <div class="alert alert-danger">{{ error|trans }}</div>
+    {% endfor %}
+  {% elseif from_order is defined and from_order is not empty %}
     <div class="alert alert-info">{{ ('form.delivery.' ~ from_action ~ '_disclaimer')|trans({ '%number%': from_order.number }) }}</div>
   {% endif %}
 
