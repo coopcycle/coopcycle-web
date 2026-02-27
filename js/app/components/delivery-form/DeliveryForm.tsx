@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { Button, Checkbox } from 'antd';
+import { Button, Checkbox, Tooltip } from 'antd';
 import { Formik, Form, FieldArray, FormikErrors } from 'formik';
 import moment, { Moment } from 'moment';
+import { InfoCircleOutlined } from '@ant-design/icons'
 
 import Spinner from '../../components/core/Spinner.js';
 import BarcodesModal from '../../../../assets/react/controllers/BarcodesModal.jsx';
@@ -722,6 +723,9 @@ const DeliveryForm = ({
                       }}>
                       {t('DELIVERY_FORM_ADD_REVERSE')}
                     </Checkbox>
+                    <Tooltip title={t('DELIVERY_FORM_ADD_REVERSE_HELP')}>
+                      <InfoCircleOutlined />
+                    </Tooltip>
                   </div>
                 ) : null}
 
