@@ -94,7 +94,7 @@ export default function({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryF
   useEffect(() => {
     async function doUpdatePreview() {
         const data = await ref.current.save()
-        window.open('/fr/', '_blank').focus();
+        window.open(window.Routing.generate('homepage'), '_blank').focus();
         setTimeout(() => updatePreview(data), 1000);
     }
     if (isPreviewEnabled) {

@@ -55,7 +55,7 @@
   channel.addEventListener ('message', (event) => {
    const { blocks } = event.data;
    const encoded = btoa(JSON.stringify(blocks));
-   window.location.href = '/fr/?preview=' + encoded
+   window.location.href = window.location.pathname + '?preview=' + encoded;
   });
   </script>
 {% endblock %}
