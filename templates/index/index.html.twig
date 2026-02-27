@@ -27,7 +27,7 @@
   </form>
 </section>
 
-{{ component('Homepage') }}
+{{ component('Homepage', { preview: preview }) }}
 
 <div id="optins" data-brand-name={{ coopcycle_setting('brand_name')|json_encode|e('html_attr') }}>
 </div>
@@ -45,4 +45,12 @@
   {{ encore_entry_script_tags('restaurant-list') }}
   {{ encore_entry_script_tags('delivery-homepage') }}
   {{ encore_entry_script_tags('optins') }}
+  <script>
+  const channel = new BroadcastChannel('homepage-preview');
+  channel.addEventListener ('message', (event) => {
+   const { blocks } = event.data;
+   const encoded = btoa(JSON.stringify(blocks));
+   window.location.href = '/fr/?preview=' + encoded
+  });
+  </script>
 {% endblock %}

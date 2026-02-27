@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, forwardRef, useState } from 'react'
 import { Button, Flex } from 'antd';
 import { useTranslation } from 'react-i18next';
+import _ from 'lodash';
 
 import EditorJS from '@editorjs/editorjs';
 import ShopCollection from './editorjs/shop-collection'
@@ -10,6 +11,14 @@ import DeliveryForm from './editorjs/delivery-form'
 
 // https://dev.to/sumankalia/how-to-integrate-editorjs-in-reactjs-2l6l
 const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryForms, shopCollections, t }, ref) => {
+
+  // https://blog.bitsrc.io/4-ways-to-communicate-across-browser-tabs-in-realtime-e4f5f6cbedca
+  const channel = new BroadcastChannel('homepage-preview');
+
+  const updatePreview = _.debounce((data) => {
+    console.log('Refreshing preview')
+    channel.postMessage(data);
+  }, 500)
 
   useEffect(() => {
 
@@ -46,6 +55,11 @@ const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, delive
         minHeight: 200,
         onReady: () => {
           ref.current = editor;
+        },
+        onChange: async (api, event) => {
+          console.log('EditorJS changed', event)
+          const data = await editor.save();
+          updatePreview(data);
         },
         data: {
           blocks,
@@ -94,13 +108,17 @@ export default function({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryF
         deliveryForms={deliveryForms}
         shopCollections={shopCollections}
         t={t} />
-      <Flex justify="flex-end">
+      <Flex justify="flex-end" gap="small">
+        <Button onClick={() => {
+          // TODO
+          // Put editor in preview mode
+        }}>{ t('HOMEPAGE_EDITOR.preview') }</Button>
         <Button type="primary" loading={isLoading} onClick={async () => {
           setIsLoading(true)
           const data = await ref.current.save()
           const { response } = await httpClient.put('/api/ui/homepage/blocks', { blocks: data.blocks });
           setIsLoading(false)
-        }}>Save</Button>
+        }}>{ t('SAVE_BUTTON') }</Button>
       </Flex>
     </div>
   )

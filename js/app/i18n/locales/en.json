@@ -809,6 +809,7 @@
             "ADD_SHOP": "Add a shop"
         },
         "HOMEPAGE_EDITOR": {
+            "preview": "Preview",
             "placeholder": "Type \"/\" to insert a block",
             "messages": {
                 "tools": {

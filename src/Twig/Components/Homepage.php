@@ -22,6 +22,8 @@ class Homepage
     const MAX_SECTIONS = 8;
     const MIN_SHOPS_PER_CUISINE = 3;
 
+    public string $preview;
+
     public function __construct(
         private EntityManagerInterface $entityManager,
         private LocalBusinessRepository $shopRepository,
@@ -128,6 +130,10 @@ class Homepage
 
     public function getBlocks(): array
     {
+        if (!empty($this->preview)) {
+            return json_decode(base64_decode($this->preview), true);
+        }
+
         $blocks = $this->entityManager->getRepository(HomepageBlock::class)->findAll();
 
         // Default homepage
