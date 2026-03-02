@@ -1,8 +1,13 @@
 import numbro from 'numbro'
+import Alpine from 'alpinejs'
 
 // @see http://symfony.com/doc/3.4/frontend/encore/legacy-apps.html
 const $ = require('jquery')
 global.$ = global.jQuery = $
+
+// https://alpinejs.dev/essentials/installation
+window.Alpine = Alpine
+Alpine.start()
 
 require('bootstrap-sass')
 
