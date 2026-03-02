@@ -1,179 +1,179 @@
-# afghan: Afghan
+afghan: circle-flags:af
 african: academicons:africarxiv
-# albanian: Albanian
+albanian: circle-flags:al
 algerian: emojione:flag-for-algeria
 alsatian: noto:pretzel
 american: circle-flags:us
-# andalusian: Andalusian
-# aragonese: Aragonese
+andalusian: noto:olive
+aragonese: circle-flags:es-ar
 argentine: emojione:flag-for-argentina
-# armenian: Armenian
+armenian: circle-flags:am
 asian: twemoji:steaming-bowl
-# asturian: Asturian
-# australian: Australian
-# austrian: Austrian
-# auvergne: Auvergne
+asturian: noto:octopus
+australian: circle-flags:au
+austrian: circle-flags:at
+auvergne: noto:cheese-wedge
 bagels: noto:bagel
 bakery: noto:croissant
-# bangladeshi: Bangladeshi
+bangladeshi: circle-flags:bd
 barbecue: noto:cut-of-meat
-# basque: Basque
+basque: circle-flags:es-pv
 belgian: emojione:flag-for-belgium
 bento: noto-v1:bento-box
 bistro: noto-v1:wine-glass
 brazilian: emojione:flag-for-brazil
-# british: British
+british: circle-flags:gb
 burgers: twemoji:hamburger
-# burgundy: Burgundy
-# burmese: Burmese
+burgundy: noto:wine-glass
+burmese: circle-flags:mm
 cafe: streamline-kameleon-color:coffee-paper-glass
-# cajun: Cajun
-# californian: Californian
-# calzones: Calzones
-# cambodian: Cambodian
-# canadian: Canadian
-# canary: Canary
-# caribbean: Caribbean
-# castiza: Castiza
-# catalan: Catalan
-# cheesesteaks: Cheesesteaks
+cajun: noto:hot-pepper
+californian: circle-flags:us-ca
+calzones: noto:stuffed-flatbread
+cambodian: circle-flags:kh
+canadian: circle-flags:ca
+canary: circle-flags:ic
+caribbean: noto:tropical-drink
+castiza: noto:squid
+catalan: circle-flags:es-ct
+cheesesteaks: noto:cheese-wedge
 chicken: emojione:chicken
-# chilean: Chilean
+chilean: circle-flags:cl
 chinese: emojione:flag-for-china
-# chowder: Chowder
+chowder: noto:pot-of-food
 coffee: streamline-kameleon-color:coffee-paper-glass
 colombian: emojione:flag-for-colombia
-# contemporary: Contemporary
-# continental: Continental
-# corsica: Corsica
-# creole: Creole
+contemporary: noto:fork-and-knife-with-plate
+continental: noto:fork-and-knife-with-plate
+corsica: noto:chestnut
+creole: noto:crab
 crepes: noto:pancakes
-# cuban: Cuban
-# czech: Czech
-# deli: Deli
-# dim_sum: Dim Sum
-# diner: Diner
-# dominican: Dominican
+cuban: circle-flags:cu
+czech: circle-flags:cz
+deli: noto:bread
+dim_sum: noto:dumpling
+diner: noto:fork-and-knife-with-plate
+dominican: circle-flags:do
 donuts: token-branded:donut
-# dutch: Dutch
-# eastern_european: Eastern European
-# eclectic: Eclectic
-# ecuadorean: Ecuadorean
-# egyptian: Egyptian
+dutch: circle-flags:nl
+eastern_european: noto:dumpling
+eclectic: noto:fork-and-knife-with-plate
+ecuadorean: circle-flags:ec
+egyptian: circle-flags:eg
 english: circle-flags:lang-en
-# ethiopian: Ethiopian
+ethiopian: circle-flags:et
 european: emojione:flag-for-european-union
-# extremaduran: Extremaduran
+extremaduran: noto:pig
 fast_food: twemoji:french-fries
-# filipino: Filipino
-# fish_and_chips: Fish and Chips
-# fondue: Fondue
+filipino: circle-flags:ph
+fish_and_chips: noto:fish
+fondue: noto:fondue
 french: emojione:flag-for-france
-# frozen_yogurt: Frozen Yogurt
-# fusion: Fusion
-# galician: Galician
+frozen_yogurt: noto:soft-ice-cream
+fusion: noto:fork-and-knife-with-plate
+galician: circle-flags:es-ga
 gastronomic: streamline-sharp:chef-toque-hat
-# gastropub: Gastropub
-# german: German
+gastropub: noto:beer-mug
+german: circle-flags:de
 gluten_free: healthicons:gluten-free-outline
 greek: emojione:flag-for-greece
 grill: noto:cut-of-meat
-# gyros: Gyros
-# haitian: Haitian
+gyros: noto:stuffed-flatbread
+haitian: circle-flags:ht
 halal: hugeicons:halal
-# hand_made: Hand Made
+hand_made: noto:raised-hand
 hawaiian: fxemoji:palmtree
 healthy: noto:red-apple
 home_made: streamline-emojis:woman-cook-2
 hot_dogs: noto:hot-dog
 ice_cream: noto:ice-cream
 indian: emojione:flag-for-india
-# indonesian: Indonesian
+indonesian: circle-flags:id
 international: glyphs-poly:globe-west
-# irish: Irish
-# israeli: Israeli
+irish: circle-flags:ie
+israeli: circle-flags:il
 italian: fxemoji:italianflag
-# jamaican: Jamaican
+jamaican: circle-flags:jm
 japanese: emojione:flag-for-japan
-# juices: Juices
+juices: noto:beverage-box
 kebab: noto:taco
-# korean_barbeque: Korean Barbeque
-# korean: Korean
-# kosher: Kosher
-# latin_american: Latin American
-# latin: Latin
+korean_barbeque: circle-flags:kr
+korean: circle-flags:kr
+kosher: emojione:star-of-david
+latin_american: noto:ear-of-corn
+latin: noto:tamale
 lebanese: emojione:flag-for-lebanon
-# levantine: Levantine
+levantine: noto:falafel
 local: glyphs-poly:map-marker-line
-# lyonnais: Lyonnais
-# malaysian: Malaysian
-# manchega: Manchega
+lyonnais: noto:pot-of-food
+malaysian: circle-flags:my
+manchega: noto:cheese-wedge
 mediterranean: noto:shallow-pan-of-food
 mexican: emojione:flag-for-mexico
-# middle_eastern: Middle Eastern
-# mongolian: Mongolian
+middle_eastern: noto:falafel
+mongolian: circle-flags:mn
 moroccan: circle-flags:ma
-# nepalese: Nepalese
-# noodle_bar: Noodle Bar
-# norwegian: Norwegian
-# organic: Organic
-# oysters: Oysters
-# pacific_rim: Pacific Rim
-# pakistani: Pakistani
-# pan_asian: Pan Asian
+nepalese: circle-flags:np
+noodle_bar: noto:steaming-bowl
+norwegian: circle-flags:no
+organic: noto:herb
+oysters: noto:oyster
+pacific_rim: noto:tropical-fish
+pakistani: circle-flags:pk
+pan_asian: noto:steaming-bowl
 pasta: noto:spaghetti
 pastries: twemoji:shortcake
-# persian: Persian
-# peruvian: Peruvian
-# pho: Pho
+persian: circle-flags:ir
+peruvian: circle-flags:pe
+pho: emojione:steaming-bowl
 pizza: noto:pizza
-# plant_based: Plant Based
+plant_based: noto:broccoli
 poke_bowl: fluent-emoji-flat:green-salad
-# polish: Polish
-# polynesian: Polynesian
-# portuguese: Portuguese
-# provencal: Provençal
-# pub_food: Pub Food
-# puerto_rican: Puerto Rican
-# raw: Raw
-# ribs: Ribs
+polish: circle-flags:pl
+polynesian: noto:coconut
+portuguese: circle-flags:pt
+provencal: noto:sunflower
+pub_food: noto:beer-mug
+puerto_rican: circle-flags:pr
+raw: noto:carrot
+ribs: noto:meat-on-bone
 rice_based: twemoji:taco
-# russian: Russian
+russian: circle-flags:ru
 salad: twemoji:green-salad
-# salvadoran: Salvadoran
+salvadoran: circle-flags:sv
 sandwiches: noto:sandwich
-# savoy: Savoy
-# scandinavian: Scandinavian
+savoy: noto:fondue
+scandinavian: noto:fish
 seafood: noto:shrimp
-# senegalese: Senegalese
-# singaporean: Singaporean
-# smoothies: Smoothies
-# soul_food: Soul Food
+senegalese: circle-flags:sn
+singaporean: circle-flags:sg
+smoothies: noto:cup-with-straw
+soul_food: noto:bacon
 soup: twemoji:bowl-with-spoon
-# south_african: South African
-# south_american: South American
-# southern: Southern
-# south_pacific: South Pacific
-# southwestern: Southwestern
+south_african: circle-flags:za
+south_american: noto:avocado
+southern: noto:fried-shrimp
+south_pacific: noto:tropical-fish
+southwestern: noto:cactus
 spanish: emojione:flag-for-spain
-# steakhouse: Steakhouse
-# steak: Steak
+steak: twemoji:cut-of-meat
+steakhouse: twemoji:cut-of-meat
 steetfood: fluent-emoji-flat:cityscape-at-dusk
-# subs: Subs
+subs: noto:baguette-bread
 sushi: twemoji:sushi
-# taiwanese: Taiwanese
+taiwanese: circle-flags:tw
 tapas: noto:woman-dancing
 tea: emojione:teacup-without-handle
 tex_mex: emojione:flag-for-mexico
 thai: emojione:flag-for-thailand
-# tibetan: Tibetan
-# traditional: Traditional
-# tunisian: Tunisian
-# turkish: Turkish
-# ukrainian: Ukrainian
+tibetan: noto:snow-capped-mountain
+traditional: noto:fork-and-knife-with-plate
+tunisian: circle-flags:tn
+turkish: circle-flags:tr
+ukrainian: circle-flags:ua
 vegan: lucide:vegan
 vegetarian: noto:seedling
 venezuelan: emojione:flag-for-venezuela
 vietnamese: emojione:flag-for-vietnam
-# wings: Wings
-# wraps: Wraps
+wings: noto:poultry-leg
+wraps: noto:burrito
