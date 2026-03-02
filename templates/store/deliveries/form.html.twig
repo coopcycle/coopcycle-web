@@ -79,7 +79,7 @@
 {% block content %}
 
   {% set has_from_order = from_order is defined and from_order is not empty %}
-  {% if errors is not empty %}
+  {% if errors is defined and errors is not empty %}
     {% for error in errors %}
       <div class="alert alert-danger">{{ error|trans }}</div>
     {% endfor %}
