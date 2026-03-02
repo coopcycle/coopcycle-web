@@ -27,7 +27,12 @@
   </form>
 </section>
 
-{{ component('Homepage') }}
+{% set homepage_props = {} %}
+{% if is_granted('ROLE_ADMIN') and preview is defined and preview is not empty %}
+  {% set homepage_props = { preview: preview } %}
+{% endif %}
+
+{{ component('Homepage', homepage_props) }}
 
 <div id="optins" data-brand-name={{ coopcycle_setting('brand_name')|json_encode|e('html_attr') }}>
 </div>
@@ -45,4 +50,14 @@
   {{ encore_entry_script_tags('restaurant-list') }}
   {{ encore_entry_script_tags('delivery-homepage') }}
   {{ encore_entry_script_tags('optins') }}
+  {% if is_granted('ROLE_ADMIN') %}
+  <script>
+  const channel = new BroadcastChannel('homepage-preview');
+  channel.addEventListener ('message', (event) => {
+   const { blocks } = event.data;
+   const encoded = btoa(JSON.stringify(blocks));
+   window.location.href = window.location.pathname + '?preview=' + encoded;
+  });
+  </script>
+  {% endif %}
 {% endblock %}

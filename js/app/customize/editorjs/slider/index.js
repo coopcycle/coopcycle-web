@@ -3,12 +3,10 @@ import { createRoot } from 'react-dom/client'
 import { Swiper, SwiperSlide, useSwiper } from 'swiper/react';
 import {
   CloseOutlined,
-  EditOutlined,
   PlusSquareOutlined,
   LinkOutlined,
   UploadOutlined,
   CalendarOutlined,
-  CalendarTwoTone,
   LeftOutlined,
   RightOutlined,
 } from '@ant-design/icons';

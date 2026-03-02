@@ -14,11 +14,13 @@ use Symfony\Component\Routing\Attribute\Route;
 class IndexController extends AbstractController
 {
     #[HideSoftDeleted] // This is needed to hide deleted addresses
-    public function indexAction()
+    public function indexAction(Request $request)
     {
         // Everything is in Twig components
         // @see src/Twig/Components/Homepage.php
-        return $this->render('index/index.html.twig');
+        return $this->render('index/index.html.twig', [
+            'preview' => $request->query->get('preview'),
+        ]);
     }
 
     #[Route(path: '/cart.json', name: 'cart_json')]

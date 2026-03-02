@@ -1,12 +1,19 @@
 import React, { useEffect, useRef, forwardRef, useState } from 'react'
 import { Button, Flex } from 'antd';
+import { EyeOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
+import _ from 'lodash';
 
 import EditorJS from '@editorjs/editorjs';
 import ShopCollection from './editorjs/shop-collection'
 import Banner from './editorjs/banner'
 import Slider from './editorjs/slider'
 import DeliveryForm from './editorjs/delivery-form'
+
+// https://blog.bitsrc.io/4-ways-to-communicate-across-browser-tabs-in-realtime-e4f5f6cbedca
+const channel = new BroadcastChannel('homepage-preview');
+
+const updatePreview = _.debounce((data) => channel.postMessage(data), 500)
 
 // https://dev.to/sumankalia/how-to-integrate-editorjs-in-reactjs-2l6l
 const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryForms, shopCollections, t }, ref) => {
@@ -52,15 +59,10 @@ const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, delive
         },
         // https://editorjs.io/i18n/
         i18n: t('HOMEPAGE_EDITOR', { returnObjects: true }),
-        // onChange: (api, event) => {
-        //   editor.save()
-        //     .then((savedData) => {
-        //       console.log('SAVED', savedData);
-        //     })
-        //     .catch((error) => {
-        //       console.log('EditorJS save error', error)
-        //     })
-        // }
+        onChange: async (api, event) => {
+          const data = await editor.save();
+          updatePreview(data);
+        },
       });
     }
 
@@ -81,8 +83,20 @@ export default function({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryF
   const ref = useRef();
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false)
+  const [isPreviewEnabled, setIsPreviewEnabled] = useState(false)
 
   const httpClient = new window._auth.httpClient();
+
+  useEffect(() => {
+    async function doUpdatePreview() {
+        const data = await ref.current.save()
+        window.open(window.Routing.generate('homepage'), '_blank').focus();
+        setTimeout(() => updatePreview(data), 1000);
+    }
+    if (isPreviewEnabled) {
+      doUpdatePreview();
+    }
+  }, [isPreviewEnabled])
 
   return (
     <div>
@@ -94,13 +108,16 @@ export default function({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryF
         deliveryForms={deliveryForms}
         shopCollections={shopCollections}
         t={t} />
-      <Flex justify="flex-end">
+      <Flex justify="flex-end" gap="small">
+        <Button icon={<EyeOutlined />} onClick={() => {
+          setIsPreviewEnabled(!isPreviewEnabled)
+        }}>{ t(isPreviewEnabled ? 'HOMEPAGE_EDITOR.disable_preview' : 'HOMEPAGE_EDITOR.enable_preview') }</Button>
         <Button type="primary" loading={isLoading} onClick={async () => {
           setIsLoading(true)
           const data = await ref.current.save()
           const { response } = await httpClient.put('/api/ui/homepage/blocks', { blocks: data.blocks });
           setIsLoading(false)
-        }}>Save</Button>
+        }}>{ t('SAVE_BUTTON') }</Button>
       </Flex>
     </div>
   )
