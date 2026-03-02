@@ -815,6 +815,8 @@
                     }
                 }
             }
-        }
+        },
+        "DELIVERY_FORM_ADD_REVERSE": "Créer aussi une livraison inversée",
+        "DELIVERY_FORM_ADD_REVERSE_HELP": "Après avoir sauvegardé, vous serez redirigé·e vers une nouvelle page avec le retrait et le dépôt inversés"
     }
 }

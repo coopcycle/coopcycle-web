@@ -1664,3 +1664,9 @@ restaurant_promotion.rules.help: Ajoutez des règles pour définir ce qui décle
 restaurant_promotion.actions.help: Ajoutez des actions pour définir comment la promotion est appliquée
 restaurants.on_sale: En promo
 customize.homepage: Nouveau ! Personnalisez la page d'accueil
+basics.clone: Cloner
+basics.reverse: Inverser
+basics.use_legacy_version: Utiliser la version obsolète
+form.delivery.clone_disclaimer: Vous êtes en train de cloner la commande %number%
+form.delivery.reverse_disclaimer: Vous êtes en train d'inverser la commande %number%
+form.delivery.errors.not_reversable: Vous pouvez seulement inverser les livraisons avec 1 pickup et 1 dropoff

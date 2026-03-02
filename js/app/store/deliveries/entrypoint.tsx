@@ -36,7 +36,11 @@ type Props = {
   isDispatcher: boolean;
   isDebugPricing: boolean;
   isPriceBreakdownEnabled: boolean;
+<<<<<<< HEAD
   documentUploadEndpoint: string;
+=======
+  isReverseDeliveryEnabled: boolean;
+>>>>>>> master
 };
 
 const Form = ({
@@ -49,7 +53,11 @@ const Form = ({
   isDispatcher,
   isDebugPricing,
   isPriceBreakdownEnabled,
+<<<<<<< HEAD
   documentUploadEndpoint,
+=======
+  isReverseDeliveryEnabled,
+>>>>>>> master
 }: Props) => {
   const dispatch = useDispatch();
 
@@ -64,7 +72,7 @@ const Form = ({
   return (
     <UserContext.Provider value={{ isDispatcher }}>
       <FlagsContext.Provider
-        value={{ isDebugPricing, isPriceBreakdownEnabled }}>
+        value={{ isDebugPricing, isPriceBreakdownEnabled, isReverseDeliveryEnabled }}>
         <UploadContext.Provider value={{ endpoint: documentUploadEndpoint }}>
           <DeliveryForm
             storeNodeId={storeNodeId}
@@ -101,7 +109,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const isDebugPricing = container.dataset.isDebugPricing === 'true';
   const isPriceBreakdownEnabled =
     container.dataset.isPriceBreakdownEnabled === 'true';
+<<<<<<< HEAD
   const documentUploadEndpoint = container.dataset.documentUploadEndpoint;
+=======
+  const isReverseDeliveryEnabled =
+    container.dataset.isReverseDeliveryEnabled === 'true';
+>>>>>>> master
 
   const root = createRoot(container);
   root.render(
@@ -117,7 +130,11 @@ document.addEventListener('DOMContentLoaded', () => {
           isDispatcher={isDispatcher}
           isDebugPricing={isDebugPricing}
           isPriceBreakdownEnabled={isPriceBreakdownEnabled}
+<<<<<<< HEAD
           documentUploadEndpoint={documentUploadEndpoint}
+=======
+          isReverseDeliveryEnabled={isReverseDeliveryEnabled}
+>>>>>>> master
         />
       </Provider>
     </AppRootWithDefaults>,
