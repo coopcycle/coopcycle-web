@@ -24,6 +24,7 @@ use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Nonprofit;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\DeliveryRepository;
@@ -3117,5 +3118,15 @@ class AdminController extends AbstractController
             'collections' => $collections,
             'shops' => $shops,
         ]));
+    }
+
+    #[Route(path: '/admin/cuisine-icons', name: 'admin_cuisine_icons')]
+    public function cuisineIconsAction(EntityManagerInterface $entityManager)
+    {
+        $cuisines = $entityManager->getRepository(Cuisine::class)->findAll();
+
+        return $this->render('admin/cuisine_icons.html.twig', [
+            'cuisines' => $cuisines,
+        ]);
     }
 }
