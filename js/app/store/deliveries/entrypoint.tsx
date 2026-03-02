@@ -36,11 +36,8 @@ type Props = {
   isDispatcher: boolean;
   isDebugPricing: boolean;
   isPriceBreakdownEnabled: boolean;
-<<<<<<< HEAD
-  documentUploadEndpoint: string;
-=======
   isReverseDeliveryEnabled: boolean;
->>>>>>> master
+  documentUploadEndpoint: string;
 };
 
 const Form = ({
@@ -53,11 +50,8 @@ const Form = ({
   isDispatcher,
   isDebugPricing,
   isPriceBreakdownEnabled,
-<<<<<<< HEAD
-  documentUploadEndpoint,
-=======
   isReverseDeliveryEnabled,
->>>>>>> master
+  documentUploadEndpoint,
 }: Props) => {
   const dispatch = useDispatch();
 
@@ -109,12 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const isDebugPricing = container.dataset.isDebugPricing === 'true';
   const isPriceBreakdownEnabled =
     container.dataset.isPriceBreakdownEnabled === 'true';
-<<<<<<< HEAD
-  const documentUploadEndpoint = container.dataset.documentUploadEndpoint;
-=======
   const isReverseDeliveryEnabled =
     container.dataset.isReverseDeliveryEnabled === 'true';
->>>>>>> master
+  const documentUploadEndpoint = container.dataset.documentUploadEndpoint;
 
   const root = createRoot(container);
   root.render(
@@ -130,11 +121,8 @@ document.addEventListener('DOMContentLoaded', () => {
           isDispatcher={isDispatcher}
           isDebugPricing={isDebugPricing}
           isPriceBreakdownEnabled={isPriceBreakdownEnabled}
-<<<<<<< HEAD
-          documentUploadEndpoint={documentUploadEndpoint}
-=======
           isReverseDeliveryEnabled={isReverseDeliveryEnabled}
->>>>>>> master
+          documentUploadEndpoint={documentUploadEndpoint}
         />
       </Provider>
     </AppRootWithDefaults>,
