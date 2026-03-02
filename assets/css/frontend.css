@@ -15,6 +15,8 @@
 /* Do not scan all JS files atm */
 /* @source "../../js/app"; */
 @source "../../js/app/search/navbar.js";
+@source "../../js/app/components/order";
+@source "../../js/app/restaurant/components";
 
 @plugin "daisyui";
 
@@ -22,6 +24,8 @@
 @import "beautifymarker/leaflet-beautify-marker-icon.css";
 
 @import "leaflet/dist/leaflet.css";
+
+@import "./react-modal.css";
 
 /*
 @import "font-awesome/scss/_variables.scss";
