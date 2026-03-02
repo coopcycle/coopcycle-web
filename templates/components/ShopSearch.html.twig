@@ -11,7 +11,7 @@
 
 <div {{ attributes.defaults(stimulus_controller('shop-search')) }}>
 
-  <div class="container-fluid mb-4">
+  <div class="mb-4">
 
     <div class="swiper filters categories mb-4">
       <ul class="swiper-wrapper">
@@ -53,7 +53,7 @@
     </div>
   </div>
 
-  <div class="container-fluid">
+  <div class="mx-auto px-4">
     {% if this.shops|length == 0 %}
       <div class="alert alert-warning text-center">
         {{ 'restaurants.no_results'|trans|raw }}

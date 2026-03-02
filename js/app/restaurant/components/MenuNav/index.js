@@ -78,7 +78,7 @@ export default function MenuNav(props) {
       getCurrentAnchor={ getCurrentAnchor }
       onChange={ onChange }
       targetOffset={ height }>
-      <div className="container-fluid pt-3 d-flex"
+      <div className="mx-auto px-4 pt-3 flex"
            ref={ rootRef }>
         { displaySections.map((section) => (
           <div
@@ -87,7 +87,7 @@ export default function MenuNav(props) {
             className={ classNames(
               {
                 'overflow-hidden': section.isVisible,
-                'd-none': !section.isVisible,
+                'hidden': !section.isVisible,
               },
             ) }>
             <Link href={ sectionToLink(section) } title={ section.name } />

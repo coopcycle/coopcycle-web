@@ -20,14 +20,6 @@ $card-padding-lg: 2rem;
   }
 }
 
-#restaurant__fulfilment-details__container {
-  display: none;
-
-  @media (min-width: $screen-lg-min) {
-    display: block;
-  }
-}
-
 .fulfillment-details {
   display: flex;
   flex-direction: column;
