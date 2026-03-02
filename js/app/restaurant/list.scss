@@ -1,28 +1,5 @@
 @use "sass:math";
 
-// https://getbootstrap.com/docs/5.3/customize/sass/#importing
-
-// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
-@import "bootstrap/scss/functions";
-
-$enable-cssgrid: true;
-
-// 3. Include remainder of required Bootstrap stylesheets (including any separate color mode stylesheets)
-@import "bootstrap/scss/variables";
-@import "bootstrap/scss/variables-dark";
-
-// 4. Include any default map overrides here
-
-// 5. Include remainder of required parts
-@import "bootstrap/scss/maps";
-@import "bootstrap/scss/mixins";
-// @import "bootstrap/scss/root";
-
-// 6. Include any other optional stylesheet partials as desired; list below is not inclusive of all available stylesheets
-// @import "bootstrap/scss/utilities";
-@import "bootstrap/scss/grid";
-@import "bootstrap/scss/nav";
-
 @import "skeleton-screen-css/dist/index.scss";
 
 @import "./restaurant-card.scss";
@@ -33,51 +10,28 @@ $enable-cssgrid: true;
 @import "font-awesome/scss/_mixins.scss";
 
 .restaurant-list-header {
-  padding-top: $spacer;
-  margin-bottom: $spacer;
-  background-color: $blue;
   background-image: url(../../../assets/pattern.svg);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
 }
 
+.restaurant-list-header .react-autosuggest__container {
+  margin-bottom: 0;
+}
+
 .filters {
-
   width: 100%;
-
   // https://stackoverflow.com/questions/64240299/how-to-make-auto-slides-per-view-with-dynamic-content-using-swiper-reactjs
   .swiper-slide {
     width: auto !important;
   }
-  .nav.swiper-wrapper {
-    flex-wrap: nowrap;
-  }
-
-  .nav > li > a {
-    cursor: pointer;
-  }
-  .nav-link {
-    padding: $nav-link-padding-y $nav-link-padding-x;
-  }
-}
-
-.categories {
-  --bs-nav-link-font-size: #{$font-size-lg};
-
-  .nav-underline {
-    --bs-nav-underline-gap: 0;
-  }
 }
 
 .cuisines {
-  .nav > li > a.active {
-    background-color: $warning-bg-subtle;
-  }
   .swiper-button-next,
   .swiper-button-prev {
     padding: calc(var(--swiper-navigation-size) / 2);
-    background-color: $gray-200;
     border-radius: calc(var(--swiper-navigation-size) / 2);
   }
   .swiper-button-next {

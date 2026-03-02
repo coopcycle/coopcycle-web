@@ -1,5 +1,5 @@
 @mixin card() {
-  background-color: $white;
+  background-color: white;
 
   &:hover {
     box-shadow: 0 4px 16px 0 rgba($color: #000000, $alpha: 0.05);

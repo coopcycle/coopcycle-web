@@ -16,8 +16,6 @@
 
 .homepage-search {
   position: relative;
-  // margin-top: -20px;
-  background-color: $blue-100;
   background-image: url(../../../assets/pattern.svg);
   background-repeat: no-repeat;
   background-size: cover;
@@ -33,11 +31,6 @@
     }
   }
   margin-bottom: 50px;
-}
-
-.homepage-map {
-  margin-bottom: -40px;
-  color: #ccc;
 }
 
 .homepage-searchbox-container {
