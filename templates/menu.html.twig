@@ -20,10 +20,17 @@
 
 <nav class="bg-neutral-primary border-default" x-data="{ mobileMenuOpen : false }">
   <div class="flex flex-wrap items-center justify-between px-4 py-2.5">
-    <a href="{{ path('homepage') }}" class="flex items-center space-x-3 rtl:space-x-reverse">
-      <img src="{{ coopcycle_company_logo() }}" width="30" height="30" />
-      <span class="self-center text-xl text-headings font-semibold whitespace-nowrap font-raleway">{{ coopcycle_setting('brand_name') }}</span>
-    </a>
+    <div class="flex items-center gap-2">
+      <a href="{{ path('homepage') }}" class="flex items-center space-x-3 rtl:space-x-reverse">
+        <img src="{{ coopcycle_company_logo() }}" width="30" height="30" />
+        <span class="self-center text-xl text-headings font-semibold whitespace-nowrap font-raleway">{{ coopcycle_setting('brand_name') }}</span>
+      </a>
+      {% if is_granted('ROLE_DISPATCHER') %}
+      <a class="link" href="{{ path('admin_index') }}" title="{{ 'adminDashboard.title'|trans|e('html_attr') }}">
+        <i class="fa fa-lock"></i><span class="ml-2 hidden md:inline">{{ 'adminDashboard.title'|trans }}</span>
+      </a>
+      {% endif %}
+    </div>
     <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="inline-flex items-center p-2 ms-3 w-10 h-10 justify-center w-10 h-10 justify-center text-heading bg-neutral-primary box-border border border-transparent hover:bg-neutral-secondary-medium focus:ring-4 focus:ring-neutral-tertiary font-medium leading-5 rounded-base focus:outline-none md:hidden" aria-controls="navbar-dropdown" aria-expanded="false">
       <span class="sr-only">Open main menu</span>
       <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h14"/></svg>
