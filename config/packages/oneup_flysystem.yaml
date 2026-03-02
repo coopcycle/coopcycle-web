@@ -65,6 +65,11 @@ oneup_flysystem:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: assets/slides
+        documents:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: documents
     filesystems:
         assets:
             adapter: assets
@@ -118,3 +123,7 @@ oneup_flysystem:
             adapter: homepage_slider_images
             alias: homepage_slider_images_filesystem
             mount: homepage_slider_images
+        documents:
+            adapter: documents
+            alias: documents_filesystem
+            mount: documents
