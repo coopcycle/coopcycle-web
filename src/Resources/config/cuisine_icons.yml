@@ -60,7 +60,7 @@ donuts: token-branded:donut
 # eclectic: Eclectic
 # ecuadorean: Ecuadorean
 # egyptian: Egyptian
-# english: English
+english: circle-flags:lang-en
 # ethiopian: Ethiopian
 european: emojione:flag-for-european-union
 # extremaduran: Extremaduran
@@ -165,7 +165,7 @@ sushi: twemoji:sushi
 tapas: noto:woman-dancing
 tea: emojione:teacup-without-handle
 tex_mex: emojione:flag-for-mexico
-# thai: Thai
+thai: emojione:flag-for-thailand
 # tibetan: Tibetan
 # traditional: Traditional
 # tunisian: Tunisian
@@ -173,7 +173,7 @@ tex_mex: emojione:flag-for-mexico
 # ukrainian: Ukrainian
 vegan: lucide:vegan
 vegetarian: noto:seedling
-# venezuelan: Venezuelan
-# vietnamese: Vietnamese
+venezuelan: emojione:flag-for-venezuela
+vietnamese: emojione:flag-for-vietnam
 # wings: Wings
 # wraps: Wraps
