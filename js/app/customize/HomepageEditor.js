@@ -13,10 +13,7 @@ import DeliveryForm from './editorjs/delivery-form'
 // https://blog.bitsrc.io/4-ways-to-communicate-across-browser-tabs-in-realtime-e4f5f6cbedca
 const channel = new BroadcastChannel('homepage-preview');
 
-const updatePreview = _.debounce((data) => {
-  console.log('Refreshing preview')
-  channel.postMessage(data);
-}, 500)
+const updatePreview = _.debounce((data) => channel.postMessage(data), 500)
 
 // https://dev.to/sumankalia/how-to-integrate-editorjs-in-reactjs-2l6l
 const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryForms, shopCollections, t }, ref) => {
@@ -63,7 +60,6 @@ const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, delive
         // https://editorjs.io/i18n/
         i18n: t('HOMEPAGE_EDITOR', { returnObjects: true }),
         onChange: async (api, event) => {
-          console.log('EditorJS changed', event)
           const data = await editor.save();
           updatePreview(data);
         },
