@@ -1,5 +1,5 @@
-import React, { useCallback, useContext, useMemo } from 'react';
-import { Field } from 'formik';
+import React, { useCallback, useContext, useMemo, useEffect, useRef } from 'react';
+import { Field, FieldArray } from 'formik';
 import AddressBookNew from './AddressBook';
 import { Button, Input } from 'antd';
 import Packages from './Packages';
@@ -23,6 +23,11 @@ import { isTemporaryId } from '../../idUtils';
 import { DeleteOutlined, UndoOutlined } from '@ant-design/icons';
 import { FA_CANCELLED, taskTypeListIcon } from '../../../../styles';
 import IsCancelledTaskWrapper from '../../../../IsCancelledTaskWrapper';
+
+import UploadContext from '../../UploadContext';
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard';
+import XHR from '@uppy/xhr-upload';
 
 type Props = {
   storeNodeId: string;
@@ -52,6 +57,7 @@ const Task = ({
   const { t } = useTranslation();
 
   const { isDispatcher } = useContext(UserContext);
+  const { endpoint } = useContext(UploadContext);
 
   const mode = useSelector(selectMode);
   const { values, taskValues, setFieldValue, taskIndex } =
@@ -89,6 +95,53 @@ const Task = ({
   const onRestore = useCallback(() => {
     setFieldValue(`tasks[${taskIndex}].status`, 'TODO');
   }, [taskIndex, setFieldValue]);
+
+  const uploadButtonRef = useRef(null);
+  const documentsArrayHelpersRef = useRef(null);
+
+  useEffect(() => {
+    const uppy = new Uppy({
+      id: `delivery-form-uppy-${taskId}`,
+      restrictions: {
+        allowedFileTypes: [
+          // TODO Add this in UploadContext
+          'image/jpg',
+          'image/jpeg',
+          'image/png',
+          'application/pdf',
+          'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ]
+      }
+    })
+      .use(Dashboard, {
+        trigger: uploadButtonRef.current,
+        inline: false,
+        target: 'body'
+      })
+      .use(XHR, {
+        endpoint,
+        // Only send our own metadata fields.
+        allowedMetaFields: ['name', 'type'],
+      });
+    uppy.on('file-added', (file) => {
+      const meta = {
+        type: 'document',
+        name: file.name,
+      }
+      uppy.setFileMeta(file.id, meta);
+    });
+    uppy.on('upload-success', (file, response) => {
+      if (response.status === 200 && response.body?.url) {
+        documentsArrayHelpersRef.current.push(response.body?.url)
+      }
+    })
+
+    return () => {
+      uppy.destroy();
+    };
+
+  }, [taskId, endpoint, uploadButtonRef])
 
   return (
     <div
@@ -189,6 +242,32 @@ const Task = ({
             </div>
           </div>
         )}
+
+        <FieldArray name={`tasks[${taskIndex}].metadata.documents`}>
+          {arrayHelpers => {
+
+            // https://stackoverflow.com/questions/56368406/how-can-i-use-formik-arrayhelper-outside-of-fieldarray
+            documentsArrayHelpersRef.current = arrayHelpers;
+
+            const documents = taskValues.metadata?.documents || [];
+
+            return (
+              <>
+                <ul>
+                  {documents.map(document => (
+                    <li>{document}</li>
+                  ))}
+                </ul>
+                <div className="text-right">
+                  <button type="button" className="btn" ref={uploadButtonRef}>
+                    <i className="fa fa-upload mr-1" aria-hidden="true"></i><span>Upload</span>
+                  </button>
+                </div>
+              </>
+            )
+          }}
+        </FieldArray>
+
       </div>
       <div className={isExpanded ? 'task__footer' : 'task__footer--hidden'}>
         {showRemoveButton ? (
