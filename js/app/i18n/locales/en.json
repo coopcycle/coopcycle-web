@@ -825,6 +825,8 @@
                     }
                 }
             }
-        }
+        },
+        "DELIVERY_FORM_TASK_DOCUMENTS": "Documents",
+        "DELIVERY_FORM_TASK_DOCUMENT_UPLOAD": "Add a document"
       }
 }

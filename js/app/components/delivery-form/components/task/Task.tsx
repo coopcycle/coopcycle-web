@@ -29,6 +29,8 @@ import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard';
 import XHR from '@uppy/xhr-upload';
 
+const basename = (str: string) => str.substr(str.lastIndexOf('/') + 1)
+
 type Props = {
   storeNodeId: string;
   addresses: Address[];
@@ -252,18 +254,25 @@ const Task = ({
             const documents = taskValues.metadata?.documents || [];
 
             return (
-              <>
-                <ul>
-                  {documents.map(document => (
-                    <li>{document}</li>
+              <div className="mb-4">
+                <label
+                  className="block mb-2 font-weight-bold">
+                  {t('DELIVERY_FORM_TASK_DOCUMENTS')}
+                </label>
+                <ul className="list-unstyled">
+                  {documents.map((documentUrl, index) => (
+                    <li key={`task-${taskId}-document-${index}`}>
+                      <a href={documentUrl} target="_blank">{basename(documentUrl)}</a>
+                    </li>
                   ))}
                 </ul>
                 <div className="text-right">
-                  <button type="button" className="btn" ref={uploadButtonRef}>
-                    <i className="fa fa-upload mr-1" aria-hidden="true"></i><span>Upload</span>
+                  <button type="button" className="btn btn-sm" ref={uploadButtonRef}>
+                    <i className="fa fa-upload mr-1" aria-hidden="true"></i>
+                    <span>{t('DELIVERY_FORM_TASK_DOCUMENT_UPLOAD')}</span>
                   </button>
                 </div>
-              </>
+              </div>
             )
           }}
         </FieldArray>
