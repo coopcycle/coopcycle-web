@@ -6063,3 +6063,181 @@ Feature: Deliveries
         "trace":@array@
       }
       """
+
+  Scenario: Create delivery with documents & update documents
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | store_with_cash_on_delivery.yml |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "tasks": [
+          {
+            "type": "PICKUP",
+            "address": "24, Rue de la Paix Paris",
+            "after": "tomorrow 12:00",
+            "before": "tomorrow 13:00",
+            "metadata": {
+              "documents": [
+                "https://demo.coopcycle.org/documents/file.pdf"
+              ]
+            }
+          },
+          {
+            "type": "DROPOFF",
+            "address": "48, Rue de Rivoli Paris",
+            "after": "tomorrow 13:30",
+            "before": "tomorrow 14:30"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"/api/deliveries/1",
+        "@type":"http://schema.org/ParcelDelivery",
+        "pickup":{
+          "@id":"/api/tasks/2",
+          "@type":"Task",
+          "type":"PICKUP",
+          "metadata":{
+            "documents":[
+              "https://demo.coopcycle.org/documents/file.pdf"
+            ],
+            "delivery_position": 1,
+            "@*@":"@*@"
+          },
+          "@*@":"@*@"
+        },
+        "dropoff":{
+          "@id":"/api/tasks/1",
+          "@type":"Task",
+          "type":"DROPOFF",
+          "metadata":{
+            "delivery_position": 2,
+            "@*@":"@*@"
+          },
+          "@*@":"@*@"
+        },
+        "tasks":[
+          {
+            "@id":"/api/tasks/2",
+            "@type":"Task",
+            "type":"PICKUP",
+            "metadata":{
+              "documents":[
+                "https://demo.coopcycle.org/documents/file.pdf"
+              ],
+              "delivery_position": 1,
+              "@*@":"@*@"
+            },
+            "@*@":"@*@"
+          },
+          {
+            "@id":"/api/tasks/1",
+            "@type":"Task",
+            "id":1,
+            "type":"DROPOFF",
+            "metadata":{
+              "delivery_position": 2,
+              "@*@":"@*@"
+            },
+            "@*@":"@*@"
+          }
+        ],
+        "trackingUrl":@string@,
+        "@*@":"@*@"
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/deliveries/1" with body:
+      """
+      {
+        "tasks": [
+          {
+            "@id": "/api/tasks/2",
+            "id": 2,
+            "metadata":{
+              "documents":[
+                "https://demo.coopcycle.org/documents/file.pdf",
+                "https://demo.coopcycle.org/documents/another_file.pdf"
+              ]
+            }
+          },
+          {
+            "@id": "/api/tasks/1",
+            "id": 1
+          }
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"/api/deliveries/1",
+        "@type":"http://schema.org/ParcelDelivery",
+        "pickup":{
+          "@id":"/api/tasks/2",
+          "@type":"Task",
+          "type":"PICKUP",
+          "metadata":{
+            "documents":[
+              "https://demo.coopcycle.org/documents/file.pdf",
+              "https://demo.coopcycle.org/documents/another_file.pdf"
+            ],
+            "delivery_position": 1,
+            "@*@":"@*@"
+          },
+          "@*@":"@*@"
+        },
+        "dropoff":{
+          "@id":"/api/tasks/1",
+          "@type":"Task",
+          "type":"DROPOFF",
+          "@*@":"@*@"
+        },
+        "tasks":[
+          {
+            "@id":"/api/tasks/2",
+            "@type":"Task",
+            "type":"PICKUP",
+            "metadata":{
+              "documents":[
+                "https://demo.coopcycle.org/documents/file.pdf",
+                "https://demo.coopcycle.org/documents/another_file.pdf"
+              ],
+              "delivery_position": 1,
+              "@*@":"@*@"
+            },
+            "@*@":"@*@"
+          },
+          {
+            "@id":"/api/tasks/1",
+            "@type":"Task",
+            "id":1,
+            "type":"DROPOFF",
+            "@*@":"@*@"
+          }
+        ],
+        "trackingUrl":@string@,
+        "@*@":"@*@"
+      }
+      """
