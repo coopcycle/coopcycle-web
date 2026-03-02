@@ -28,7 +28,7 @@
 </section>
 
 {% set homepage_props = {} %}
-{% if preview is defined and preview is not empty %}
+{% if is_granted('ROLE_ADMIN') and preview is defined and preview is not empty %}
   {% set homepage_props = { preview: preview } %}
 {% endif %}
 
@@ -50,6 +50,7 @@
   {{ encore_entry_script_tags('restaurant-list') }}
   {{ encore_entry_script_tags('delivery-homepage') }}
   {{ encore_entry_script_tags('optins') }}
+  {% if is_granted('ROLE_ADMIN') %}
   <script>
   const channel = new BroadcastChannel('homepage-preview');
   channel.addEventListener ('message', (event) => {
@@ -58,4 +59,5 @@
    window.location.href = window.location.pathname + '?preview=' + encoded;
   });
   </script>
+  {% endif %}
 {% endblock %}

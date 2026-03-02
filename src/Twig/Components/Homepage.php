@@ -12,6 +12,7 @@ use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\UI\HomepageBlock;
 use AppBundle\Form\DeliveryEmbedType;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
@@ -28,7 +29,8 @@ class Homepage
         private EntityManagerInterface $entityManager,
         private LocalBusinessRepository $shopRepository,
         private IriConverterInterface $iriConverter,
-        private TranslatorInterface $translator)
+        private TranslatorInterface $translator,
+        private AuthorizationCheckerInterface $authorizationChecker)
     {}
 
     public function getZeroWasteCount(): int
@@ -130,7 +132,7 @@ class Homepage
 
     public function getBlocks(): array
     {
-        if (!empty($this->preview)) {
+        if ($this->authorizationChecker->isGranted('ROLE_ADMIN') && !empty($this->preview)) {
             return json_decode(base64_decode($this->preview), true);
         }
 
