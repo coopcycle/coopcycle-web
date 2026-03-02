@@ -13,11 +13,13 @@ export type DeliveryFormValues = {
   order: OrderFormValues;
   variantIncVATPrice?: number;
   variantName?: string;
+  addReverse?: boolean;
 };
 
 export type FlagsContextType = {
   isDebugPricing: boolean;
   isPriceBreakdownEnabled: boolean;
+  isReverseDeliveryEnabled: boolean;
 };
 
 export type PriceValues = {
