@@ -218,7 +218,8 @@ class TaskListRepository extends ServiceEntityRepository
                     $this->getPaymentMethod($paymentMethodsByOrderId, $orderId),
                     $row['orderTotal'] ?? null,
                     $this->getLoopeatReturns($orderId, $task, $row),
-                    $this->getIsZeroWaste($orderId, $zeroWasteOrders)
+                    $this->getIsZeroWaste($orderId, $zeroWasteOrders),
+                    $task->getMetadata()['documents'] ?? []
                 )
             );
         }, $tasksQueryResult);
@@ -254,7 +255,7 @@ class TaskListRepository extends ServiceEntityRepository
 
     /**
      * Find the most recent tasklist this task has been assigned in.
-     * 
+     *
      * The task has been done in the context of this TaskList.
      */
     public function findLastTaskListByTask(Task $task) {
