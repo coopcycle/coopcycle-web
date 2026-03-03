@@ -1,12 +1,16 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Select } from 'antd'
-import _ from 'lodash'
+import { DatePicker } from 'antd'
+import dayjs from 'dayjs'
+import weekday from 'dayjs/plugin/weekday'
+import localeData from 'dayjs/plugin/localeData'
+
+dayjs.extend(weekday)
+dayjs.extend(localeData)
 
 import { changeDateRange, changeView } from '../redux/actions'
-import { dateRanges } from '../utils'
 
-const { Option } = Select
+const { RangePicker } = DatePicker
 
 const Navbar = ({ dateRange, changeDateRange, changeView, zeroWaste }) => {
 
@@ -37,13 +41,11 @@ const Navbar = ({ dateRange, changeDateRange, changeView, zeroWaste }) => {
         </React.Fragment>
         ) }
       </div>
-      <Select
-        defaultValue={ dateRange }
-        onChange={ changeDateRange }>
-        { _.map(dateRanges, (label, key) =>
-          <Option key={ key } value={ key }>{ label }</Option>
-        )}
-      </Select>
+      <RangePicker
+        allowClear={false}
+        value={[ dayjs(dateRange[0]), dayjs(dateRange[1]) ]}
+        onChange={(_, dateStrings) => changeDateRange(dateStrings)}
+      />
     </div>
   )
 }
