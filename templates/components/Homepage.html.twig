@@ -1,16 +1,18 @@
 <div class="pt-4">
 {% for block in this.blocks %}
-  {% if block.type == 'shop_collection' %}
-    {{ component(('ShopCollection:' ~ (block.data.component|capitalize)), block.data.args ?? []) }}
-  {% endif %}
-  {% if block.type == 'banner' %}
-    {{ component('Banner', block.data) }}
-  {% endif %}
-  {% if block.type == 'slider' %}
-    {{ component('Slider', { slides: block.data.slides }) }}
-  {% endif %}
-  {% if block.type == 'delivery_form' %}
-    {{ component('DeliveryForm', block.data) }}
+  {% if block.type is defined and block.data is defined %}
+    {% if block.type == 'shop_collection' %}
+      {{ component(('ShopCollection:' ~ (block.data.component|capitalize)), block.data.args ?? []) }}
+    {% endif %}
+    {% if block.type == 'banner' %}
+      {{ component('Banner', block.data) }}
+    {% endif %}
+    {% if block.type == 'slider' %}
+      {{ component('Slider', { slides: block.data.slides }) }}
+    {% endif %}
+    {% if block.type == 'delivery_form' %}
+      {{ component('DeliveryForm', block.data) }}
+    {% endif %}
   {% endif %}
 {% endfor %}
 <div>
