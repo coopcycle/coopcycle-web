@@ -829,6 +829,26 @@
         "DELIVERY_FORM_ADD_REVERSE": "Also create a reverse delivery",
         "DELIVERY_FORM_ADD_REVERSE_HELP": "After saving, you will be redirected to a new page, with pickup & dropoff reversed",
         "DELIVERY_FORM_TASK_DOCUMENTS": "Documents",
-        "DELIVERY_FORM_TASK_DOCUMENT_UPLOAD": "Add a document"
+        "DELIVERY_FORM_TASK_DOCUMENT_UPLOAD": "Add a document",
+        "METRICS": {
+            "NUMBER_OF_STORES": "Number of stores",
+            "AVERAGE_DISTANCE": "Average distance",
+            "NUMBER_OF_TASKS": "Number of tasks",
+            "TASKS_TIMING": "Tasks done on time, too early or too late",
+            "AVERAGE_TASK_TIMING_MINUTES": "Average number of minutes tasks are done too early/late",
+            "PICKUPS_TIMING_DISTRIBUTION": "Number of PICKUPs done X minutes earlier/later than planned",
+            "DROPOFFS_TIMING_DISTRIBUTION": "Number of DROPOFFs done X minutes earlier/later than planned",
+            "PICKUPS_PERCENTAGE_DISTRIBUTION": "Number of PICKUPs done % earlier/later than planned",
+            "DROPOFFS_PERCENTAGE_DISTRIBUTION": "Number of DROPOFFs done % earlier/later than planned",
+            "ZERO_WASTE_ORDERS": "Zero waste orders",
+            "INCOME_PER_DAY_AND_HOUR": "Income per day of week and hour range",
+            "INCOME_PER_WEEK": "Income per week",
+            "BEST_RESTAURANTS": "Best restaurants",
+            "AVERAGE_ORDER_TOTAL": "Average order total",
+            "ORDERS_PER_DAY_OF_WEEK": "Number of orders per day of week",
+            "ORDERS_PER_HOUR_RANGE": "Number of orders per hour range",
+            "ORDERS_PER_ZONE": "Number of orders per zone",
+            "ORDERS_PER_PAYMENT_METHOD": "Number of orders per payment method"
+        }
       }
 }
