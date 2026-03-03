@@ -211,7 +211,7 @@ class TaskListRepository extends ServiceEntityRepository
                 ($tasksWithIncidents[$task->getId()] ?? 0) > 0,
                 $row['organizationName'],
                 new MyTaskMetadataDto(
-                    $task->getMetadata()['delivery_position'] ?? null, //FIXME extract from the query
+                    $task->getMetadata()['delivery_position'] ?? null, // FIXME extract from the query
                     $row['storeId'] ? $this->iriConverter->getIriFromResource(Store::class, context: ['uri_variables' => ['id' => $row['storeId']]]) : null,
                     $row['orderId'] ?? null,
                     $row['orderNumber'] ?? null,
@@ -219,7 +219,7 @@ class TaskListRepository extends ServiceEntityRepository
                     $row['orderTotal'] ?? null,
                     $this->getLoopeatReturns($orderId, $task, $row),
                     $this->getIsZeroWaste($orderId, $zeroWasteOrders),
-                    $task->getMetadata()['documents'] ?? []
+                    $task->getMetadata()['documents'] ?? null // FIXME extract from the query
                 )
             );
         }, $tasksQueryResult);
