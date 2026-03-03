@@ -262,7 +262,7 @@ const Task = ({
                 <ul className="list-unstyled">
                   {documents.map((documentUrl, index) => (
                     <li key={`task-${taskId}-document-${index}`}>
-                      <a href={documentUrl} target="_blank">{basename(documentUrl)}</a>
+                      <a href={documentUrl} target="_blank" rel="noreferrer">{basename(documentUrl)}</a>
                     </li>
                   ))}
                 </ul>
