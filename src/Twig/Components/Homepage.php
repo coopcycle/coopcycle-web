@@ -133,7 +133,10 @@ class Homepage
     public function getBlocks(): array
     {
         if ($this->authorizationChecker->isGranted('ROLE_ADMIN') && !empty($this->preview)) {
-            return json_decode(base64_decode($this->preview), true);
+            $json = base64_decode($this->preview);
+            if (json_validate($json)) {
+                return json_decode($json, true);
+            }
         }
 
         $blocks = $this->entityManager->getRepository(HomepageBlock::class)->findAll();
