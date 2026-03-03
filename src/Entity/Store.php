@@ -690,4 +690,9 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     {
         return $this->document;
     }
+
+    public function hasDocument(): bool
+    {
+        return !empty($this->document);
+    }
 }
