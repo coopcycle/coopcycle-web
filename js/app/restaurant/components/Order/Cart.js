@@ -45,7 +45,7 @@ export default function Cart() {
     return (
       <div className="flex flex-col items-center" data-testid="cart.empty">
         <div className="py-8">
-          <ShoppingBag size="32" />
+          <ShoppingBag className="text-neutral-content" size="32" />
         </div>
         <div className="alert alert-info alert-soft w-full">
           <i className="fa fa-info-circle"></i><span>{ t('CART_EMPTY') }</span>

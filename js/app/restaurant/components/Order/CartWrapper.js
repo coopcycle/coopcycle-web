@@ -50,7 +50,7 @@ export default function CartWrapper() {
   return (
     <div>
       { cartItemsRelatedErrors.length > 0 ? (
-        <div className="alert alert-warning">
+        <div className="alert alert-soft alert-warning">
           <i className="fa fa-warning"></i>
           <span>{ _.first(cartItemsRelatedErrors) }</span>
         </div>) : null }
