@@ -194,6 +194,8 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     #[Groups(['store'])]
     protected $cashOnDeliveryEnabled = false;
 
+    private ?string $document;
+
     public function __construct()
     {
         $this->deliveries = new ArrayCollection();
@@ -677,5 +679,15 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         $this->cashOnDeliveryEnabled = $enabled;
 
         return $this;
+    }
+
+    public function setDocument(?string $document = null)
+    {
+        $this->document = $document;
+    }
+
+    public function getDocument(): string
+    {
+        return $this->document;
     }
 }
