@@ -13,7 +13,10 @@ import DeliveryForm from './editorjs/delivery-form'
 // https://blog.bitsrc.io/4-ways-to-communicate-across-browser-tabs-in-realtime-e4f5f6cbedca
 const channel = new BroadcastChannel('homepage-preview');
 
-const updatePreview = _.debounce((data) => channel.postMessage(data), 500)
+// https://github.com/codex-team/editor.js/discussions/1897
+const sanitizeBlocks = (blocks) => blocks.filter(block => block.type !== 'paragraph')
+
+const updatePreview = _.debounce((data) => channel.postMessage({ ...data, blocks: sanitizeBlocks(data.blocks) }), 500)
 
 // https://dev.to/sumankalia/how-to-integrate-editorjs-in-reactjs-2l6l
 const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryForms, shopCollections, t }, ref) => {
@@ -115,7 +118,7 @@ export default function({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryF
         <Button type="primary" loading={isLoading} onClick={async () => {
           setIsLoading(true)
           const data = await ref.current.save()
-          const { response } = await httpClient.put('/api/ui/homepage/blocks', { blocks: data.blocks });
+          const { response } = await httpClient.put('/api/ui/homepage/blocks', { blocks: sanitizeBlocks(data.blocks) });
           setIsLoading(false)
         }}>{ t('SAVE_BUTTON') }</Button>
       </Flex>
