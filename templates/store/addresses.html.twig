@@ -19,7 +19,8 @@
   <table class="table">
     <tbody>
     {% for address in store.addresses %}
-      <tr {% if address is same as(store.address) %}class="active"{% endif %}>
+      {% set is_default_address = address is same as(store.address) %}
+      <tr {% if is_default_address %}class="active"{% endif %}>
         <td>
           <span class="d-block">
             {% if address.name is not empty %}
@@ -33,7 +34,7 @@
           {% endif %}
         </td>
         <td class="text-right">
-          {% if address is not same as(store.address) %}
+          {% if not is_default_address %}
             {% set form_name = 'setAsDefault_' ~ address.id %}
             {% if form[form_name] is defined %}
               {{ form_widget(form[form_name], { attr: { class: 'btn btn-xs btn-default' } }) }}
@@ -53,6 +54,15 @@
             data-description="{{ address.description|e('html_attr') }}"
             data-telephone="{{ (address.telephone is not empty ? address.telephone|phone_number_format('NATIONAL') : '')|e('html_attr') }}"
             data-contact-name="{{ address.contactName|e('html_attr') }}">{{ 'basics.edit'|trans }}</a>
+        </td>
+        <td>
+          {% if not is_default_address %}
+          <span {{ react_component('DeleteIcon', {
+            objectId: address.id,
+            objectName: address.name ?? address.streetAddress,
+            deleteUrl: '_api_/addresses/{id}{._format}_delete'
+          }) }}></span>
+          {% endif %}
         </td>
       </tr>
     {% endfor %}

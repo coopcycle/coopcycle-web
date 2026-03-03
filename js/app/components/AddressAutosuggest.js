@@ -12,6 +12,8 @@ import axios from 'axios'
 import classNames from 'classnames'
 import { OpenLocationCode } from 'open-location-code'
 
+import '../../../assets/css/address-autosuggest.scss'
+
 import '../i18n'
 import { getCountry, localeDetector } from '../i18n'
 

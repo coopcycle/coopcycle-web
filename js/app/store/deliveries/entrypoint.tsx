@@ -32,6 +32,7 @@ type Props = {
   isDispatcher: boolean;
   isDebugPricing: boolean;
   isPriceBreakdownEnabled: boolean;
+  isReverseDeliveryEnabled: boolean;
 };
 
 const Form = ({
@@ -44,6 +45,7 @@ const Form = ({
   isDispatcher,
   isDebugPricing,
   isPriceBreakdownEnabled,
+  isReverseDeliveryEnabled,
 }: Props) => {
   const dispatch = useDispatch();
 
@@ -58,7 +60,7 @@ const Form = ({
   return (
     <UserContext.Provider value={{ isDispatcher }}>
       <FlagsContext.Provider
-        value={{ isDebugPricing, isPriceBreakdownEnabled }}>
+        value={{ isDebugPricing, isPriceBreakdownEnabled, isReverseDeliveryEnabled }}>
         <DeliveryForm
           storeNodeId={storeNodeId}
           deliveryId={deliveryId}
@@ -93,6 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const isDebugPricing = container.dataset.isDebugPricing === 'true';
   const isPriceBreakdownEnabled =
     container.dataset.isPriceBreakdownEnabled === 'true';
+  const isReverseDeliveryEnabled =
+    container.dataset.isReverseDeliveryEnabled === 'true';
 
   const root = createRoot(container);
   root.render(
@@ -108,6 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
           isDispatcher={isDispatcher}
           isDebugPricing={isDebugPricing}
           isPriceBreakdownEnabled={isPriceBreakdownEnabled}
+          isReverseDeliveryEnabled={isReverseDeliveryEnabled}
         />
       </Provider>
     </AppRootWithDefaults>,

@@ -33,8 +33,13 @@
             </a>
           </li>
           <li>
-            <a href="{{ path('admin_store_delivery_new', { id: order.delivery.store.id, frmrdr: order|hashid(16) }) }}" data-testid="order_clone">
+            <a href="{{ path('admin_store_delivery_new', { id: order.delivery.store.id, from: order|get_iri_from_item, action: 'clone' }) }}" data-testid="order_clone">
               <i class="fa fa-clone"></i>  {% trans %}basics.clone{% endtrans %}
+            </a>
+          </li>
+          <li>
+            <a href="{{ path('admin_store_delivery_new', { id: order.delivery.store.id, from: order|get_iri_from_item, action: 'reverse' }) }}" data-testid="order_reverse">
+              <i class="fa fa-refresh"></i>  {% trans %}basics.reverse{% endtrans %}
             </a>
           </li>
         {% endif %}

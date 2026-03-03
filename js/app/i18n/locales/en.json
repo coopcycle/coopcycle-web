@@ -809,6 +809,8 @@
             "ADD_SHOP": "Add a shop"
         },
         "HOMEPAGE_EDITOR": {
+            "enable_preview": "Enable preview",
+            "disable_preview": "Disable preview",
             "placeholder": "Type \"/\" to insert a block",
             "messages": {
                 "tools": {
@@ -823,6 +825,8 @@
                     }
                 }
             }
-        }
+        },
+        "DELIVERY_FORM_ADD_REVERSE": "Also create a reverse delivery",
+        "DELIVERY_FORM_ADD_REVERSE_HELP": "After saving, you will be redirected to a new page, with pickup & dropoff reversed"
       }
 }

@@ -1,7 +1,10 @@
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
-@import "~font-awesome/scss/_variables.scss";
-@import "~font-awesome/scss/_mixins.scss";
-@import "~font-awesome/scss/_animated.scss";
+@import "bootstrap-sass/assets/stylesheets/bootstrap/_variables";
+@import "bootstrap-sass/assets/stylesheets/bootstrap/_mixins";
+@import "bootstrap-sass/assets/stylesheets/bootstrap/_forms";
+
+@import "font-awesome/scss/_variables";
+@import "font-awesome/scss/_mixins";
+@import "font-awesome/scss/_animated";
 
 .react-autosuggest__container {
   position: relative;

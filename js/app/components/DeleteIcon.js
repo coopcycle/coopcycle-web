@@ -10,7 +10,8 @@ export default function DeleteIcon({ deleteUrl, objectId, objectName, errorMessa
 
   const { t } = useTranslation(),
     [loading, setLoading] = useState(false),
-    onDeleteClick = async () => {
+    onDeleteClick = async (e) => {
+      e.preventDefault()
       if (!window.confirm(t('CONFIRM_DELETE_WITH_PLACEHOLDER', { object_name: objectName }))) {
           return
       }
@@ -37,7 +38,7 @@ export default function DeleteIcon({ deleteUrl, objectId, objectName, errorMessa
     <>
       { loading ?
         <span className="loader loader--dark"></span> :
-        (<a className="text-danger" onClick={() => onDeleteClick()}>
+        (<a className="text-danger" onClick={onDeleteClick} href="#">
           <i className="fa fa-trash delete-package"></i>
         </a>)
       }

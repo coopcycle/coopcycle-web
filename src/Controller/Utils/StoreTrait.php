@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller\Utils;
 
+use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Metadata\Exception\ItemNotFoundException;
 use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\DeliveryMapper;
 use AppBundle\Entity\Address;
@@ -16,8 +18,8 @@ use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Sylius\PricingStrategy;
 use AppBundle\Entity\Sylius\UseArbitraryPrice;
 use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
-use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\RecurrenceRule;
+use AppBundle\Exception\DeliveryNotReversableException;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\AddUserType;
 use AppBundle\Form\Order\NewOrderType;
@@ -290,7 +292,8 @@ trait StoreTrait
         OrderManager $orderManager,
         EntityManagerInterface $entityManager,
         TranslatorInterface $translator,
-        LoggerInterface $logger)
+        LoggerInterface $logger,
+        IriConverterInterface $iriConverter)
     {
         $routes = $request->attributes->get('routes');
 
@@ -303,12 +306,14 @@ trait StoreTrait
         $delivery = null;
         $previousArbitraryPrice = null;
 
-        if ($this->isGranted('ROLE_ADMIN')) {
-            // pre-fill fields with the data from a previous order
-            $data = $this->duplicateOrder($request, $store, $pricingManager);
-            if (null !== $data) {
-                $delivery = $data->delivery;
-                $previousArbitraryPrice = $data->previousArbitraryPrice;
+        if ($this->isGranted('ROLE_DISPATCHER') && $request->query->has('from') && $request->query->has('action')) {
+            if ('clone' === $request->query->get('action')) {
+                $fromOrder = $this->getFromOrder($iriConverter, $request->query->get('from'));
+                /** @var OrderDuplicate  */
+                $duplicate = $pricingManager->duplicateOrder($store, $fromOrder);
+
+                $delivery = $duplicate->delivery;
+                $previousArbitraryPrice = $duplicate->previousArbitraryPrice;
             }
         }
 
@@ -386,6 +391,7 @@ trait StoreTrait
         EntityManagerInterface $entityManager,
         PricingManager $pricingManager,
         DeliveryMapper $deliveryMapper,
+        IriConverterInterface $iriConverter
     ) {
         $store = $entityManager
             ->getRepository(Store::class)
@@ -393,19 +399,39 @@ trait StoreTrait
 
         $this->accessControl($store, 'edit_delivery');
 
+        $errors = [];
+
         $delivery = $store->createDelivery();
 
         /** @var DeliveryInputDto|null $formData */
         $formData = null;
 
         // pre-fill fields with the data from a previous order
-        if ($this->isGranted('ROLE_DISPATCHER') && $data = $this->duplicateOrder($request, $store, $pricingManager)) {
-            $formData = $deliveryMapper->map(
-                $data->delivery,
-                null,
-                $data->previousArbitraryPrice,
-                false
-            );
+        $fromOrder = null;
+        if ($this->isGranted('ROLE_DISPATCHER') && $request->query->has('from') && $request->query->has('action')) {
+            $fromOrder = $this->getFromOrder($iriConverter, $request->query->get('from'));
+            if ('clone' === $request->query->get('action')) {
+                /** @var OrderDuplicate  */
+                $duplicate = $pricingManager->duplicateOrder($store, $fromOrder);
+                $formData = $deliveryMapper->map(
+                    $duplicate->delivery,
+                    null,
+                    $duplicate->previousArbitraryPrice,
+                    false
+                );
+            } elseif ('reverse' === $request->query->get('action')) {
+                try {
+                    $reverse = $fromOrder->getDelivery()->reverse();
+                    $formData = $deliveryMapper->map(
+                        $reverse,
+                        null,
+                        null,
+                        false
+                    );
+                } catch (DeliveryNotReversableException $e) {
+                    $errors[] = 'form.delivery.errors.not_reversable';
+                }
+            }
         }
 
         return $this->render(
@@ -420,25 +446,25 @@ trait StoreTrait
                 'show_left_menu' => true,
                 'isDispatcher' => $this->isGranted('ROLE_DISPATCHER'),
                 'debug_pricing' => $request->query->getBoolean('debug', false),
+                'from_order' => $fromOrder,
+                'from_action' => $request->query->get('action'),
+                'errors' => $errors,
         ]));
     }
 
-    private function duplicateOrder(Request $request, Store $store, PricingManager $pricingManager): OrderDuplicate | null
+    private function getFromOrder(IriConverterInterface $iriConverter, string $iri): OrderInterface
     {
-        $hashid = $request->query->get('frmrdr');
+        $deliveryOrOrder = $iriConverter->getResourceFromIri($iri);
 
-        if (null === $hashid) {
-            return null;
+        if (!$deliveryOrOrder instanceof Delivery && !$deliveryOrOrder instanceof OrderInterface) {
+            throw new ItemNotFoundException();
         }
 
-        $hashids = new Hashids($this->getParameter('secret'), 16);
-        $decoded = $hashids->decode($hashid);
-        if (count($decoded) !== 1) {
-            return null;
+        if ($deliveryOrOrder instanceof Delivery) {
+            return $deliveryOrOrder->getOrder();
         }
 
-        $fromOrder = current($decoded);
-        return $pricingManager->duplicateOrder($store, $fromOrder);
+        return $deliveryOrOrder;
     }
 
     public function recurrenceRuleReactFormAction(
@@ -879,6 +905,7 @@ trait StoreTrait
         ]);
     }
 
+    #[HideSoftDeleted]
     public function storeAddressesAction($id, Request $request, TranslatorInterface $translator)
     {
         $store = $this->entityManager
@@ -908,7 +935,7 @@ trait StoreTrait
 
         $addressForm = $this->createStoreAddressForm($address);
 
-        return $this->render('store/addresses.html.twig', [
+        return $this->render('store/addresses.html.twig', $this->auth([
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'form' => $form->createView(),
@@ -918,7 +945,7 @@ trait StoreTrait
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
             'store_addresses_route' => $routes['store_addresses'],
-        ]);
+        ]));
     }
 
     private function createStoreAddressForm(Address $address)
