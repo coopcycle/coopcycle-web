@@ -791,7 +791,13 @@
             "ORDERS_PER_DAY_OF_WEEK": "Número de pedidos por día de la semana",
             "ORDERS_PER_HOUR_RANGE": "Número de pedidos por franja horaria",
             "ORDERS_PER_ZONE": "Número de pedidos por zona",
-            "ORDERS_PER_PAYMENT_METHOD": "Número de pedidos por método de pago"
+            "ORDERS_PER_PAYMENT_METHOD": "Número de pedidos por método de pago",
+            "PRESET_THIS_WEEK": "Esta semana",
+            "PRESET_LAST_WEEK": "La semana pasada",
+            "PRESET_THIS_MONTH": "Este mes",
+            "PRESET_LAST_MONTH": "El mes pasado",
+            "PRESET_LAST_3_MONTHS": "Los últimos 3 meses",
+            "PRESET_LAST_6_MONTHS": "Los últimos 6 meses"
         }
     }
 }
