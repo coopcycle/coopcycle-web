@@ -4,22 +4,6 @@
 $card-padding: 1rem;
 $card-padding-lg: 2rem;
 
-#restaurant-body {
-  .panel {
-    border: none;
-    border-radius: 16px;
-    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, .03);
-  }
-
-  .panel-body {
-    padding: $card-padding;
-
-    @media (min-width: $screen-lg-min) {
-      padding: $card-padding-lg;
-    }
-  }
-}
-
 .fulfillment-details {
   display: flex;
   flex-direction: column;
@@ -33,7 +17,6 @@ $card-padding-lg: 2rem;
 
 // mobile (and small tablets)
 .order-overlay {
-  background-color: $body-bg;
 
   position: fixed;
   top: 0;
@@ -78,32 +61,6 @@ $card-padding-lg: 2rem;
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-  }
-}
-
-.order-overlay__content {
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-}
-
-.panel-cart-wrapper {
-  display: flex;
-  flex-direction: column;
-
-  @media (min-width: $screen-lg-min) {
-    overflow-y: auto;
-  }
-
-  .panel-body {
-    // min-height: 350px;
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-
-    @media (min-width: $screen-lg-min) {
-      overflow-y: auto;
     }
   }
 }

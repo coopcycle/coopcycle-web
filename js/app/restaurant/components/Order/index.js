@@ -15,12 +15,18 @@ function OrderOverlay() {
 
   return (
     <div
-      className={classNames('order-overlay', 'flex', 'lg:hidden', {
-        'order-overlay--show': isMobileCartVisible,
-      })}>
+      className={classNames(
+        'order-overlay',
+        'flex',
+        'lg:hidden',
+        'bg-base-100',
+        {
+          'order-overlay--show': isMobileCartVisible,
+        }
+      )}>
       <MobileOrderHeading />
 
-      <div className="order-overlay__content">
+      <div className="flex flex-col overflow-y-auto p-4">
         <FulfillmentDetails />
         <CartWrapper />
       </div>

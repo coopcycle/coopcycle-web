@@ -60,7 +60,7 @@ export default function CartWrapper() {
           <ReusablePackagingSwitch />) : null }
         <CartTotal />
         <div
-          className="mt-4 d-flex align-items-center justify-content-center flex-wrap">
+          className="mt-4 flex flex-wrap">
           <InvitePeopleToOrderButton />
           <CartButton />
         </div>
