@@ -685,7 +685,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         if ($event->getName() === 'task:updated' && $this->containsEventWithName('task:updated')) {
             return;
         }
-        
+
         $this->events->add($event);
     }
 
@@ -1042,12 +1042,12 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @return void
      */
-    public function setMetadata($key)
+    public function setMetadata(...$args)
     {
-        if (func_num_args() === 1 && is_array(func_get_arg(0))) {
-            $this->metadata = func_get_arg(0);
-        } elseif (func_num_args() === 2) {
-            $this->metadata[func_get_arg(0)] = func_get_arg(1);
+        if (count($args) === 1 && is_array($args[0])) {
+            $this->metadata = $args[0];
+        } elseif (count($args) === 2) {
+            $this->metadata[$args[0]] = $args[1];
         }
     }
     /**

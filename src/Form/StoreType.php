@@ -85,6 +85,9 @@ class StoreType extends LocalBusinessType
                 ))
                 ->add('checkExpression', HiddenType::class, [
                     'label' => 'form.store.check_expression'
+                ])
+                ->add('document', HiddenType::class, [
+                    'label' => 'form.store.document'
                 ]);
 
             if ($this->cashOnDeliveryOptinEnabled) {

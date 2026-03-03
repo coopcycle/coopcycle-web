@@ -26,3 +26,7 @@ export type PriceValues = {
   VAT: number;
   exVAT: number;
 };
+
+export type UploadContextType = {
+  endpoint: string;
+};

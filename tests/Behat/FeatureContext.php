@@ -1471,4 +1471,15 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         Assert::assertEquals($value, $this->propertyAccessor->getValue($object, $fieldName));
     }
+
+    /**
+     * @Given the store with name :name has document :document
+     */
+    public function theStoreWithNameHasDocument($name, $document): void
+    {
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($name);
+        $store->setDocument($document);
+
+        $this->doctrine->getManagerForClass(Store::class)->flush();
+    }
 }
