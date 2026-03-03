@@ -3,7 +3,7 @@
   <div {{ react_component('MenuNav', { sections: section_names }) }}>
     {# server side rendered content; will be replaced by react #}
     <div class="ant-anchor">
-      <div class="mx-auto px-4 pt-3 flex">
+      <div class="mx-auto px-4 flex">
         {% for section in sections %}
           {# 'id' is used on the JS side to get element's width #}
           <div class="ant-anchor-link" id="menu-nav-section-{{ section.name|url_encode }}">

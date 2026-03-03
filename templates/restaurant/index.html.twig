@@ -181,9 +181,9 @@
     {% endif %}
 
     <main class="mx-auto px-4">
-      <div class="md:flex md:gap-4">
+      <div class="lg:flex lg:gap-4">
         {% if menu is not null %}
-          <div class="md:w-8/12">
+          <div class="lg:w-8/12">
             <div id="menu">
               {#
               WARNING
@@ -196,10 +196,13 @@
               {% endcache %}
             </div>
           </div>
-          <div class="md:w-4/12">
+          {#
+          The --restaurant-menu-nav-height CSS variable is the height of the menu sections navbar
+          #}
+          <div class="lg:w-4/12 lg:flex lg:sticky lg:h-[50vh]" style="top: calc(var(--restaurant-menu-nav-height) + calc(var(--spacing) * 4));">
             {% if restaurant.isFulfillmentMethodEnabled('delivery') or restaurant.isFulfillmentMethodEnabled('collection') %}
-              {{ form_start(cart_form, { attr: { 'data-cart-url': path('restaurant_cart', { id: restaurant.id }) } }) }}
-              <div id="cart"></div>
+              {{ form_start(cart_form, { attr: { class: 'contents', 'data-cart-url': path('restaurant_cart', { id: restaurant.id }) } }) }}
+              <div id="cart" class="contents"></div>
               {{ form_end(cart_form) }}
             {% else %}
               <div class="alert alert-warning">

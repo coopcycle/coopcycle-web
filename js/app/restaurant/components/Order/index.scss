@@ -34,7 +34,6 @@ $card-padding-lg: 2rem;
 // mobile (and small tablets)
 .order-overlay {
   background-color: $body-bg;
-  padding: 0 1rem;
 
   position: fixed;
   top: 0;
@@ -45,12 +44,7 @@ $card-padding-lg: 2rem;
   transition: transform 0.4s;
   z-index: 2;
 
-  display: flex;
   flex-direction: column;
-
-  @media (min-width: $screen-lg-min) {
-    display: none;
-  }
 
   &--show {
     transform: translateY(0);
@@ -60,29 +54,6 @@ $card-padding-lg: 2rem;
 .ReactModal__Body--open {
   .order-overlay {
     z-index: unset;
-  }
-}
-
-// desktop (and larger tablets)
-.sticky-outer-wrapper {
-  display: none;
-
-  @media (min-width: $screen-lg-min) {
-    display: block;
-  }
-}
-
-@media (min-width: $screen-lg-min) {
-  .sticky-inner-wrapper {
-    max-height: calc(100vh - var(--restaurant-menu-nav-height));
-    display: flex;
-    flex-direction: column;
-  }
-
-  .sticky-outer-wrapper.active {
-    .sticky-inner-wrapper {
-      padding-top: 1rem;
-    }
   }
 }
 
@@ -126,7 +97,7 @@ $card-padding-lg: 2rem;
   }
 
   .panel-body {
-    min-height: 350px;
+    // min-height: 350px;
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
@@ -148,14 +119,6 @@ $card-padding-lg: 2rem;
     font-size: 20px;
     font-weight: 600;
   }
-}
-
-.cart__empty {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 }
 
 .cart__items {
