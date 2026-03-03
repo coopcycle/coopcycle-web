@@ -6,6 +6,7 @@ import AverageCart from './AverageCart'
 import OrderCountPerDayOfWeek from './OrderCountPerDayOfWeek'
 import OrderCountPerHourRange from './OrderCountPerHourRange'
 import OrderCountPerZone from './OrderCountPerZone'
+import OrderCountPerPaymentMethod from './OrderCountPerPaymentMethod'
 import ChartPanel from './ChartPanel'
 
 const Dashboard = ({ dateRange }) => {
@@ -27,6 +28,9 @@ const Dashboard = ({ dateRange }) => {
         </ChartPanel>
         <ChartPanel title="Number of orders per zone">
           <OrderCountPerZone dateRange={ dateRange } />
+        </ChartPanel>
+        <ChartPanel title="Number of orders per payment method">
+          <OrderCountPerPaymentMethod dateRange={ dateRange } />
         </ChartPanel>
       </div>
     </div>
