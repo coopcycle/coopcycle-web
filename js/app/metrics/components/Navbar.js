@@ -32,24 +32,24 @@ const Navbar = ({ dateRange, changeDateRange, changeView, zeroWaste }) => {
         <a href="#" onClick={ e => {
           e.preventDefault()
           changeView('marketplace')
-        }}>Marketplace</a>
+        }}>{ t('METRICS.NAV_MARKETPLACE') }</a>
         <span className="mx-2">|</span>
         <a href="#" onClick={ e => {
           e.preventDefault()
           changeView('logistics')
-        }}>Logistics</a>
+        }}>{ t('METRICS.NAV_LOGISTICS') }</a>
         <span className="mx-2">|</span>
         <a href="#" onClick={ e => {
           e.preventDefault()
           changeView('profitability')
-        }}>Profitability</a>
+        }}>{ t('METRICS.NAV_PROFITABILITY') }</a>
         { zeroWaste && (
         <React.Fragment>
           <span className="mx-2">|</span>
           <a href="#" onClick={ e => {
             e.preventDefault()
             changeView('zerowaste')
-          }}>Zero waste</a>
+          }}>{ t('METRICS.NAV_ZERO_WASTE') }</a>
         </React.Fragment>
         ) }
       </div>
