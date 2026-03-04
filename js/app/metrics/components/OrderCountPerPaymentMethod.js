@@ -30,8 +30,13 @@ const Chart = ({ dateRange }) => {
         "operator": "equals",
         "values": [
           "FOODTECH"
-        ]
-      }
+        ],
+      },
+      {
+        "member": "OrderExport.payment_method",
+        "operator": "notContains",
+        "values": ["", null]
+      },
     ],
     "timeDimensions": [
       {
