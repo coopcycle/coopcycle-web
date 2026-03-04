@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { DatePicker } from 'antd'
+import { DatePicker, Tabs } from 'antd'
 import dayjs from 'dayjs'
 import weekday from 'dayjs/plugin/weekday'
 import localeData from 'dayjs/plugin/localeData'
@@ -14,7 +14,7 @@ import { changeDateRange, changeView } from '../redux/actions'
 
 const { RangePicker } = DatePicker
 
-const Navbar = ({ dateRange, changeDateRange, changeView, zeroWaste }) => {
+const Navbar = ({ view, dateRange, changeDateRange, changeView, zeroWaste }) => {
   const { t } = useTranslation()
 
   const presets = [
@@ -26,46 +26,36 @@ const Navbar = ({ dateRange, changeDateRange, changeView, zeroWaste }) => {
     { label: t('METRICS.PRESET_LAST_6_MONTHS'), value: [ dayjs().subtract(6, 'month').startOf('month'),    dayjs() ] },
   ]
 
+  const items = [
+    { key: 'marketplace',   label: t('METRICS.NAV_MARKETPLACE') },
+    { key: 'logistics',     label: t('METRICS.NAV_LOGISTICS') },
+    { key: 'profitability', label: t('METRICS.NAV_PROFITABILITY') },
+    ...(zeroWaste ? [{ key: 'zerowaste', label: t('METRICS.NAV_ZERO_WASTE') }] : []),
+  ]
+
   return (
-    <div className="d-flex align-items-center justify-content-between border-bottom py-4 mb-4">
-      <div>
-        <a href="#" onClick={ e => {
-          e.preventDefault()
-          changeView('marketplace')
-        }}>{ t('METRICS.NAV_MARKETPLACE') }</a>
-        <span className="mx-2">|</span>
-        <a href="#" onClick={ e => {
-          e.preventDefault()
-          changeView('logistics')
-        }}>{ t('METRICS.NAV_LOGISTICS') }</a>
-        <span className="mx-2">|</span>
-        <a href="#" onClick={ e => {
-          e.preventDefault()
-          changeView('profitability')
-        }}>{ t('METRICS.NAV_PROFITABILITY') }</a>
-        { zeroWaste && (
-        <React.Fragment>
-          <span className="mx-2">|</span>
-          <a href="#" onClick={ e => {
-            e.preventDefault()
-            changeView('zerowaste')
-          }}>{ t('METRICS.NAV_ZERO_WASTE') }</a>
-        </React.Fragment>
-        ) }
-      </div>
-      <RangePicker
-        allowClear={false}
-        presets={presets}
-        value={[ dayjs(dateRange[0]), dayjs(dateRange[1]) ]}
-        onChange={(_, dateStrings) => changeDateRange(dateStrings)}
-      />
-    </div>
+    <Tabs
+      activeKey={view}
+      items={items}
+      onChange={changeView}
+      tabBarExtraContent={{
+        right: (
+          <RangePicker
+            allowClear={false}
+            presets={presets}
+            value={[ dayjs(dateRange[0]), dayjs(dateRange[1]) ]}
+            onChange={(_, dateStrings) => changeDateRange(dateStrings)}
+          />
+        )
+      }}
+    />
   )
 }
 
 function mapStateToProps(state) {
 
   return {
+    view: state.view,
     dateRange: state.dateRange,
     zeroWaste: state.zeroWaste,
   }
