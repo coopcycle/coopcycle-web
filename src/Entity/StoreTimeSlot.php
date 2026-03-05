@@ -2,13 +2,16 @@
 
 namespace AppBundle\Entity;
 
-use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
-#[ApiResource(operations: [new Get(), new Post(), new GetCollection()])]
+
+#[ApiResource(
+    operations: [
+        new Get(),
+    ]
+)]
 class StoreTimeSlot {
     private int $id;
     private Store $store;
