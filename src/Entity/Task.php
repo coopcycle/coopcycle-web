@@ -250,7 +250,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Put(
             uriTemplate: '/tasks/{id}/append_to_comment',
             controller: TaskAppendToComment::class,
-            security: 'is_granted(\'view\', object)'
+            security: 'is_granted(\'edit\', object)'
         ),
         new GetCollection(
             paginationEnabled: false,
