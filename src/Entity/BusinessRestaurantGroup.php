@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\LocalBusiness\AddressResolver;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 
@@ -63,7 +65,7 @@ class BusinessRestaurantGroup extends LocalBusinessGroup
     {
         $restaurants = $this->getRestaurants();
         if (count($restaurants) > 0) {
-            return $restaurants->first()->getAddress();
+            return AddressResolver::resolveAddress($restaurants->first(), new \DateTimeImmutable());
         }
         return null;
     }
