@@ -148,7 +148,7 @@ class AssetsController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/documents/{path}', name: 'document_public', methods: ['GET'])]
+    #[Route(path: '/documents/{path}', name: 'document_public', methods: ['GET'], requirements: ['path' => '[0-9a-z\-]+\/.+'])]
     public function documentPublicAction($path, Filesystem $documentsFilesystem): Response
     {
         try {
