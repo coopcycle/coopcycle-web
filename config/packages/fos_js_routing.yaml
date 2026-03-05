@@ -34,7 +34,7 @@ fos_js_routing:
         - admin_restaurant
         - admin_store
         - admin_restaurant_dashboard
-        - admin_restaurant_image_from_url
+        - admin_restaurant_image_from_pixabay
         - admin_restaurant_stats
         - admin_business_restaurant_group
         - admin_tags
@@ -57,7 +57,7 @@ fos_js_routing:
         - dashboard_order_delay
         - dashboard_order_fulfill
         - dashboard_restaurant_dashboard
-        - dashboard_restaurant_image_from_url
+        - dashboard_restaurant_image_from_pixabay
         - dashboard_restaurant_stats
         - homepage
         - routing_route
