@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Action\NotFoundAction;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
@@ -14,7 +15,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ApiResource(
     operations: [
-        new Get(),
+        new Get(security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_ADMIN\')'),
         new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_ADMIN\')')
     ],
     normalizationContext: ['groups' => ['org']],
