@@ -564,7 +564,7 @@ export default function(name, options) {
       }
 
       if (subscription.isCancelled) {
-        $('button[type="submit"]').addClass('display-none');
+        $('button[type="submit"]').addClass('d-none');
       }
     }
 

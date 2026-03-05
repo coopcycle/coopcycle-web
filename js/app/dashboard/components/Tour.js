@@ -119,7 +119,7 @@ const Tour = ({ tourId, draggableIndex, vehicleMaxWeight, vehicleMaxVolumeUnits 
       {(provided) => (
         <div ref={ provided.innerRef } { ...provided.draggableProps } { ...provided.dragHandleProps }>
           <div
-            className="panel panel-default panel--tour nomargin task__draggable"
+            className="panel panel-default panel--tour m-0 task__draggable"
             style={{ opacity: isLoading ? 0.7 : 1, pointerEvents: isLoading ? 'none' : 'initial' }}
           >
             <div className="panel-heading" role="tab" onClick={() => dispatch(toggleTourPanelExpanded(tour['@id']))}>
@@ -152,7 +152,7 @@ const Tour = ({ tourId, draggableIndex, vehicleMaxWeight, vehicleMaxVolumeUnits 
                   {(provided, snapshot) => (
                     <div ref={ provided.innerRef } { ...provided.droppableProps }>
                       <div
-                      className="taskList__tasks list-group m-0 p-0 nomargin"
+                      className="taskList__tasks list-group m-0 p-0"
                       style={getDroppableListStyle(snapshot.isDraggingOver)}
                       >
                         { _.map(tour.items, (taskId, index) =>

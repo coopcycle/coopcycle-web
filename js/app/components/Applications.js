@@ -69,7 +69,7 @@ export default function ShowApplications(props) {
             <span>{t('ADMIN_NO_APPLICATIONS')}</span>
           }
           { expanded ?
-            <ul className="nomargin">
+            <ul className="m-0">
               { applications.map((pricingRuleSetApplication, index) => {return <LinkToApplication key={index} pricingRuleSetApplication={pricingRuleSetApplication} />}) }
             </ul> :
             null

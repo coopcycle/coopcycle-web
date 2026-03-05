@@ -25,7 +25,7 @@
             <a href="{{ path('admin_packages', { id: store.packageSet.id }) }}">{{ 'form.store_type.package_set.label'|trans }} {{ store.packageSet.name }}</a>
           {% endif %}
           {% if store.prefillPickupAddress or store.timeSlot is not empty %}
-            <ul class="list-unstyled nomargin">
+            <ul class="list-unstyled m-0">
               {% if store.prefillPickupAddress %}
                 <li>
                   <small class="text-muted">{{ 'form.store_type.prefill_pickup_address.label'|trans }}</small>

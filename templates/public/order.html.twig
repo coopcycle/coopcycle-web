@@ -1,4 +1,4 @@
-{% extends "base.html.twig" %}
+{% extends "frontend.html.twig" %}
 
 {% if payment_form is defined %}
   {% form_theme payment_form 'bootstrap_3_layout.html.twig' %}
@@ -36,10 +36,10 @@
 
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h4 class="nomargin">{{ 'embed.delivery.summary.title'|trans }}</h4>
+          <h4 class="m-0">{{ 'embed.delivery.summary.title'|trans }}</h4>
         </div>
         <div class="panel-body">
-          <p class="nomargin text-right">
+          <p class="m-0 text-right">
             <i class="fa fa-clock-o"></i> {{ 'basics.created_at'|trans({ '%date%': order.createdAt|format_datetime('medium', 'short') }) }}
           </p>
         </div>

@@ -1,4 +1,4 @@
-{% extends "base.html.twig" %}
+{% extends "frontend.html.twig" %}
 
 {% block body %}
 
@@ -43,7 +43,7 @@
         {% endfor %}
       </ul>
     {% endif %}
-    <div class="row display-flex restaurant-list">
+    <div class="grid restaurant-list">
       {% for restaurant in hub.restaurants %}
         {% if business_type_filter is empty or business_type_filter == restaurant.type %}
           {% set restaurant_path_params = {} %}
