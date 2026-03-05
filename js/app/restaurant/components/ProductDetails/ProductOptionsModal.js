@@ -35,7 +35,7 @@ class ProductOptionsModal extends Component {
         shouldCloseOnOverlayClick={ true }
         contentLabel={ this.props.name }
         overlayClassName="ReactModal__Overlay--cart"
-        className="ReactModal__Content--product-options ReactModal__Content-clear-legacy-padding"
+        className="ReactModal__Content--product-options w-9/10 h-8/10 md:w-lg md:h-auto md:min-h-1/2 md:max-h-8/10"
         htmlOpenClassName="ReactModal__Html--open"
         bodyOpenClassName="ReactModal__Body--open">
         { this.props.isOpen &&
