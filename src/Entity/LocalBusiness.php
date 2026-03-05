@@ -406,30 +406,6 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     public function getAddress()
     {
-        $daysOfWeek = [
-            'Mo',
-            'Tu',
-            'We',
-            'Th',
-            'Fr',
-            'Sa',
-            'Su',
-        ];
-
-        $now = Carbon::now();
-        $index = $now->isoWeekday() - 1;
-        $currentDow = $daysOfWeek[$index];
-
-        if (count($this->dayOfWeekAddresses) > 0) {
-            foreach ($this->dayOfWeekAddresses as $dowAddress) {
-                $dows = $dowAddress->getDaysOfWeek();
-                $dows = explode(',', $dows);
-                if (in_array($currentDow, $dows)) {
-                    return $dowAddress->getAddress();
-                }
-            }
-        }
-
         return $this->address;
     }
 
