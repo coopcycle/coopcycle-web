@@ -31,7 +31,7 @@ async function deliveriesCount(id, { from, to }) {
 async function downloadZIP(id, { from, to }) {
   const httpClient = new window._auth.httpClient()
   const { response, error } = await httpClient.post(
-    window.Routing.generate('_api_/deliveries/pod_export_post'),
+    window.Routing.generate('_api_/stores/{id}/pod_export_post', {id}),
     {
       store: id,
       from: from.toISOString(),
