@@ -2,8 +2,10 @@
 
 namespace AppBundle\Entity;
 
+use ApiPlatform\Action\NotFoundAction;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
@@ -15,7 +17,11 @@ use AppBundle\Action\UpdateOptinConsent;
  */
 #[ApiResource(
     operations: [
-        new Get(),
+        new Get(
+            controller: NotFoundAction::class,
+            read: false,
+            output: false
+        ),
         new GetCollection(uriTemplate: '/me/optin-consents', controller: MyOptinConsents::class),
         new Put(uriTemplate: '/me/optin-consents', controller: UpdateOptinConsent::class)
     ]
