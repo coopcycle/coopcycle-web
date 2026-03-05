@@ -190,6 +190,16 @@ use Webmozart\Assert\Assert as WMAssert;
             security: 'is_granted(\'edit\', object)',
             validationContext: ['groups' => ['cart']]
         ),
+        new Post(
+            openapiContext: ['summary' => 'Adds items to a Order resource.'],
+            uriTemplate: '/orders/{id}/items',
+            normalizationContext: ['groups' => ['cart']],
+            denormalizationContext: ['groups' => ['cart']],
+            validationContext: ['groups' => ['cart']],
+            input: CartItemInput::class,
+            processor: CartItemProcessor::class,
+            security: 'is_granted(\'edit\', object)',
+        ),
         new Get(
             uriTemplate: '/orders/{id}/timing',
             controller: OrderTiming::class,
