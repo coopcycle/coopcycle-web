@@ -79,7 +79,7 @@ export default function DeliveriesProofs({ store_id = null }) {
           downloadZIP(storeID, week.current)
         }}
         okText={t('DELIVERY_PROOFS_DOWNLOAD_BUTTON')}>
-        <p>
+        <div>
           {t('DELIVERY_PROOFS_CHOOSE_WEEK')}:
           <DatePicker
             picker="week"
@@ -91,7 +91,7 @@ export default function DeliveriesProofs({ store_id = null }) {
               setLoading(false)
             }}
           />
-        </p>
+        </div>
         <Card>
           <div className="d-flex align-items-center justify-content-between">
             <strong>{t('DELIVERY_PROOFS_TOTAL_DELIVERIES')}</strong>
