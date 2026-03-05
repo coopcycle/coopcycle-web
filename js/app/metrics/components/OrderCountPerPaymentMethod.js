@@ -23,20 +23,24 @@ const Chart = ({ dateRange }) => {
     ],
     "filters": [
       {
-        // FIXME
-        // Naming things is hard...
-        // This is all we have to distinguish foodtech/last-mile orders
-        "member": "OrderExport.applied_billing",
-        "operator": "equals",
-        "values": [
-          "FOODTECH"
-        ],
-      },
-      {
-        "member": "OrderExport.payment_method",
-        "operator": "notContains",
-        "values": ["", null]
-      },
+        "and": [
+          {
+            // FIXME
+            // Naming things is hard...
+            // This is all we have to distinguish foodtech/last-mile orders
+            "member": "OrderExport.applied_billing",
+            "operator": "equals",
+            "values": [
+              "FOODTECH"
+            ],
+          },
+          {
+            "member": "OrderExport.payment_method",
+            "operator": "notEquals",
+            "values": ["", null]
+          },
+        ]
+      }
     ],
     "timeDimensions": [
       {
