@@ -67,7 +67,7 @@ export default function DeliveriesProofs({ store_id = null }) {
   return (
     <>
       <a href="#" onClick={() => setVisible(true)}>
-        <i class="fa fa-flag-checkered mr-2"></i>
+        <i className="fa fa-flag-checkered mr-2"></i>
         <span>{t('DELIVERY_PROOFS_LINK_TEXT')}</span>
       </a>
       <Modal
