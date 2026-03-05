@@ -294,7 +294,11 @@ use Webmozart\Assert\Assert as WMAssert;
             security: 'is_granted(\'edit\', object)',
             validate: false
         ),
-        new Post(uriTemplate: '/orders/{id}/players', controller: AddPlayer::class),
+        new Post(
+            uriTemplate: '/orders/{id}/players',
+            controller: AddPlayer::class,
+            security: 'is_granted(\'edit\', object)',
+        ),
         new Get(
             uriTemplate: '/orders/{id}/loopeat_formats',
             controller: LoopeatFormatsController::class,
