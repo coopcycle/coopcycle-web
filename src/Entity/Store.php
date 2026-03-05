@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use AppBundle\Api\State\StoreAddressProcessor;
 use AppBundle\Action\MyStores;
+use AppBundle\Action\Delivery\PODExport as PODExportDelivery;
 use AppBundle\Action\Store\AddAddress;
 use AppBundle\Action\Store\PaymentMethods as StorePaymentMethods;
 use AppBundle\Entity\Base\LocalBusiness;
@@ -75,7 +76,15 @@ use AppBundle\Action\Store\Packages;
         new GetCollection(
             security: "is_granted('ROLE_DISPATCHER')"
         ),
-        new GetCollection(uriTemplate: '/me/stores', controller: MyStores::class)
+        new GetCollection(uriTemplate: '/me/stores', controller: MyStores::class),
+        new Post(
+            uriTemplate: '/stores/{id}/pod_export',
+            controller: PODExportDelivery::class,
+            /* input: DeliveryPODExportInput::class, */
+            write: false,
+            deserialize: false,
+            security: "is_granted('edit', object)",
+        ),
     ],
     normalizationContext: ['groups' => ['store', 'address']]
 )]
