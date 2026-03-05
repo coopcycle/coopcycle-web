@@ -1,0 +1,18 @@
+{% extends "frontend.html.twig" %}
+
+{% block banner %}
+{% endblock %}
+
+{% block body %}
+<div class="mx-auto px-4 w-full lg:w-3/4">
+  <header class="flex justify-center">
+  {% include 'order/breadcrumb.html.twig' %}
+  </header>
+  {% block order_body %}
+  {% endblock %}
+</div>
+
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

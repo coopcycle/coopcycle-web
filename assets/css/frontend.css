@@ -16,6 +16,7 @@
 /* @source "../../js/app"; */
 @source "../../js/app/search/navbar.js";
 @source "../../js/app/components/order";
+@source "../../js/app/components/Payment";
 @source "../../js/app/restaurant/components";
 
 @plugin "daisyui";
