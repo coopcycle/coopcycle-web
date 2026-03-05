@@ -1735,3 +1735,5 @@ basics.use_legacy_version: Use the legacy version
 form.delivery.clone_disclaimer: You are currently cloning the order %number%
 form.delivery.reverse_disclaimer: You are currently reversing the order %number%
 form.delivery.errors.not_reversable: You can only reverse deliveries with 1 pickup & 1 dropoff
+form.store.document: Document
+basics.upload: Upload

@@ -190,6 +190,16 @@ use Webmozart\Assert\Assert as WMAssert;
             security: 'is_granted(\'edit\', object)',
             validationContext: ['groups' => ['cart']]
         ),
+        new Post(
+            openapiContext: ['summary' => 'Adds items to a Order resource.'],
+            uriTemplate: '/orders/{id}/items',
+            normalizationContext: ['groups' => ['cart']],
+            denormalizationContext: ['groups' => ['cart']],
+            validationContext: ['groups' => ['cart']],
+            input: CartItemInput::class,
+            processor: CartItemProcessor::class,
+            security: 'is_granted(\'edit\', object)',
+        ),
         new Get(
             uriTemplate: '/orders/{id}/timing',
             controller: OrderTiming::class,
@@ -284,7 +294,11 @@ use Webmozart\Assert\Assert as WMAssert;
             security: 'is_granted(\'edit\', object)',
             validate: false
         ),
-        new Post(uriTemplate: '/orders/{id}/players', controller: AddPlayer::class),
+        new Post(
+            uriTemplate: '/orders/{id}/players',
+            controller: AddPlayer::class,
+            security: 'is_granted(\'edit\', object)',
+        ),
         new Get(
             uriTemplate: '/orders/{id}/loopeat_formats',
             controller: LoopeatFormatsController::class,

@@ -132,7 +132,8 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
             processor: RestaurantMenuProcessor::class,
             input: MenuInput::class,
             normalizationContext: ['groups' => ['restaurant_menus']],
-            denormalizationContext: ['groups' => ['restaurant_menus']]
+            denormalizationContext: ['groups' => ['restaurant_menus']],
+            security: 'is_granted(\'edit\', object)'
         ),
     ],
     normalizationContext: ['groups' => ['restaurant', 'address', 'order']],

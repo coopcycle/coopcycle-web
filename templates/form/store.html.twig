@@ -23,3 +23,21 @@
   {{ block('delivery_perimeter_expression_widget') }}
 {% endblock %}
 
+{% block _store_document_row %}
+  {{ form_label(form) }}
+  <div>
+    <div class="d-flex justify-content-between mb-2" id="store-document-container">
+    {% if form.vars.data is not empty %}
+      <a href="{{ form.vars.data }}" target="_blank">{{ form.vars.data|split('/')|last }}</a>
+      <a href="#" id="store-document-delete"><i class="fa fa-trash"></i></a>
+    {% endif %}
+    </div>
+    <button type="button" class="btn btn-sm btn-default"
+      id="store-document-upload"
+      data-document-upload-endpoint="{{ oneup_uploader_endpoint('documents')|e('html_attr') }}">
+      <i class="fa fa-upload mr-1"></i>
+      <span>{{ 'basics.upload'|trans }}</span>
+    </button>
+    {{ form_widget(form) }}
+  </div>
+{% endblock %}

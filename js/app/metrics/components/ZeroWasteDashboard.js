@@ -1,15 +1,17 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 
 import ZeroWasteOrderCount from './ZeroWasteOrderCount'
 import ChartPanel from './ChartPanel'
 
 const Dashboard = ({ dateRange }) => {
+  const { t } = useTranslation()
 
   return (
     <div>
       <div className="metrics-grid">
-        <ChartPanel title="Zero waste orders">
+        <ChartPanel title={t('METRICS.ZERO_WASTE_ORDERS')}>
           <ZeroWasteOrderCount dateRange={ dateRange } />
         </ChartPanel>
       </div>

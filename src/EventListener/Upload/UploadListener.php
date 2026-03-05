@@ -22,6 +22,7 @@ use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Vich\UploaderBundle\Handler\UploadHandler;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
@@ -40,6 +41,7 @@ final class UploadListener
         private readonly CacheInterface $appCache,
         private readonly ValidatorInterface $validator,
         private readonly FilterService $imagineFilter,
+        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly string $secret,
         private readonly bool $isDemo,
         private readonly LoggerInterface $logger)
@@ -100,6 +102,10 @@ final class UploadListener
 
         if ($type === 'homepage_slide') {
             return $this->onHomepageSlideUpload($event);
+        }
+
+        if ($type === 'document') {
+            return $this->onDocumentUpload($event);
         }
 
         if ($type === 'restaurant' || $type === 'restaurant_banner') {
@@ -219,6 +225,23 @@ final class UploadListener
         }
 
         $url = $this->imagineFilter->getUrlOfFilteredImage($file->getPathname(), 'homepage_slider_images_thumbnail');
+
+        $response = $event->getResponse();
+        $response['url'] = $url;
+
+        return $response;
+    }
+
+    private function onDocumentUpload(PostPersistEvent $event)
+    {
+        $file = $event->getFile();
+        $fileSystem = $file->getFilesystem();
+
+        $url = $this->urlGenerator->generate(
+            'document_public',
+            ['path' => $file->getPathname()],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
 
         $response = $event->getResponse();
         $response['url'] = $url;

@@ -799,10 +799,10 @@ admin_nonprofit:
     layout: 'admin.html.twig'
   methods: [ GET, POST ]
 
-admin_restaurant_image_from_url:
-  path: /admin/restaurants/{id}/image-from-url
+admin_restaurant_image_from_pixabay:
+  path: /admin/restaurants/{id}/image-from-pixabay
   defaults:
-    _controller: AppBundle\Controller\AdminController::restaurantImageFromUrlAction
+    _controller: AppBundle\Controller\AdminController::restaurantImageFromPixabayAction
     layout: 'admin.html.twig'
     routes:
       restaurants: admin_restaurants

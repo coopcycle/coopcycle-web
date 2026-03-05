@@ -95,3 +95,8 @@
   <hr>
   {{ form_row(form.storeGLN) }}
 {% endif %}
+
+{% if form.document is defined %}
+  <hr>
+  {{ form_row(form.document) }}
+{% endif %}
