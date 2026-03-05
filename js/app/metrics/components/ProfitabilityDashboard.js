@@ -21,10 +21,10 @@ const Dashboard = ({ dateRange }) => {
         <InputNumber defaultValue={ fixedCosts } onChange={ setFixedCostsDebounced } />
       </Form.Item>
       <div className="metrics-grid">
-        <ChartPanel title="Income per day of week and hour range" className="d-block">
+        <ChartPanel title={t('METRICS.INCOME_PER_DAY_AND_HOUR')} className="d-block">
           <ProfitabilityHeatmap dateRange={ dateRange } fixedCosts={ fixedCosts } />
         </ChartPanel>
-        <ChartPanel title="Income per week">
+        <ChartPanel title={t('METRICS.INCOME_PER_WEEK')}>
           <ProfitabilityBars dateRange={ dateRange } fixedCosts={ fixedCosts } />
         </ChartPanel>
       </div>

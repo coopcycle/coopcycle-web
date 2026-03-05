@@ -41,6 +41,7 @@ use AppBundle\Form\Sylius\Promotion\RestaurantPromotionType;
 use AppBundle\Form\Type\ProductTaxCategoryChoiceType;
 use AppBundle\LoopEat\Client as LoopeatClient;
 use AppBundle\Message\CopyProducts;
+use AppBundle\Pixabay\Client as PixabayClient;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Product\ProductInterface;
@@ -1749,22 +1750,27 @@ trait RestaurantTrait
         ], $routes));
     }
 
-    public function restaurantImageFromUrlAction($id, Request $request,
+    public function restaurantImageFromPixabayAction($id, Request $request,
         UploadHandler $uploadHandler,
-        EntityManagerInterface $entityManager)
+        EntityManagerInterface $entityManager,
+        PixabayClient $pixabayClient)
     {
         $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
-        $url = $request->request->get('url');
+        $pixabayId = $request->request->get('pixabay_id');
 
         // https://stackoverflow.com/questions/40454950/set-symfony-uploaded-file-by-url-input
+        $webformatURL = $pixabayClient->getWebformatURLById($pixabayId);
+        if (null === $webformatURL) {
+            throw new BadRequestHttpException(sprintf('Image %s not found on Pixabay', $pixabayId));
+        }
 
         $file = tmpfile();
         $newfile = stream_get_meta_data($file)['uri'];
 
-        copy($url, $newfile);
+        copy($webformatURL, $newfile);
         $mimeType = mime_content_type($newfile);
         $size = filesize($newfile);
         $finalName = md5(uniqid(rand(), true)) . '.jpg';

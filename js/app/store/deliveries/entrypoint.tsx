@@ -8,11 +8,15 @@ import { Provider, useDispatch } from 'react-redux';
 import { setMode } from '../../components/delivery-form/redux/formSlice';
 import { Mode } from '../../components/delivery-form/mode';
 import FlagsContext from '../../components/delivery-form/FlagsContext';
+import UploadContext from '../../components/delivery-form/UploadContext';
 import DeliveryForm from '../../components/delivery-form/DeliveryForm';
 import Modal from 'react-modal';
 
 import '../../bootstrap-reset.scss';
 import { UserContext } from '../../UserContext';
+
+import '@uppy/core/css/style.min.css';
+import '@uppy/dashboard/css/style.min.css';
 
 const buildInitialState = () => {
   return {
@@ -32,6 +36,8 @@ type Props = {
   isDispatcher: boolean;
   isDebugPricing: boolean;
   isPriceBreakdownEnabled: boolean;
+  isReverseDeliveryEnabled: boolean;
+  documentUploadEndpoint: string;
 };
 
 const Form = ({
@@ -44,6 +50,8 @@ const Form = ({
   isDispatcher,
   isDebugPricing,
   isPriceBreakdownEnabled,
+  isReverseDeliveryEnabled,
+  documentUploadEndpoint,
 }: Props) => {
   const dispatch = useDispatch();
 
@@ -58,15 +66,17 @@ const Form = ({
   return (
     <UserContext.Provider value={{ isDispatcher }}>
       <FlagsContext.Provider
-        value={{ isDebugPricing, isPriceBreakdownEnabled }}>
-        <DeliveryForm
-          storeNodeId={storeNodeId}
-          deliveryId={deliveryId}
-          deliveryNodeId={deliveryNodeId}
-          delivery={delivery ? JSON.parse(delivery) : null}
-          order={order ? JSON.parse(order) : null}
-          preLoadedFormData={formData ? JSON.parse(formData) : null}
-        />
+        value={{ isDebugPricing, isPriceBreakdownEnabled, isReverseDeliveryEnabled }}>
+        <UploadContext.Provider value={{ endpoint: documentUploadEndpoint }}>
+          <DeliveryForm
+            storeNodeId={storeNodeId}
+            deliveryId={deliveryId}
+            deliveryNodeId={deliveryNodeId}
+            delivery={delivery ? JSON.parse(delivery) : null}
+            order={order ? JSON.parse(order) : null}
+            preLoadedFormData={formData ? JSON.parse(formData) : null}
+            />
+        </UploadContext.Provider>
       </FlagsContext.Provider>
     </UserContext.Provider>
   );
@@ -93,6 +103,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const isDebugPricing = container.dataset.isDebugPricing === 'true';
   const isPriceBreakdownEnabled =
     container.dataset.isPriceBreakdownEnabled === 'true';
+  const isReverseDeliveryEnabled =
+    container.dataset.isReverseDeliveryEnabled === 'true';
+  const documentUploadEndpoint = container.dataset.documentUploadEndpoint;
 
   const root = createRoot(container);
   root.render(
@@ -108,6 +121,8 @@ document.addEventListener('DOMContentLoaded', () => {
           isDispatcher={isDispatcher}
           isDebugPricing={isDebugPricing}
           isPriceBreakdownEnabled={isPriceBreakdownEnabled}
+          isReverseDeliveryEnabled={isReverseDeliveryEnabled}
+          documentUploadEndpoint={documentUploadEndpoint}
         />
       </Provider>
     </AppRootWithDefaults>,

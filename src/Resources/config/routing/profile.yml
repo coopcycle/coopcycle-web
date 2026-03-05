@@ -445,10 +445,10 @@ profile_redirect_to_dashboard:
         _controller: AppBundle\Controller\ProfileController::redirectToDashboardAction
     methods:  [ GET ]
 
-dashboard_restaurant_image_from_url:
+dashboard_restaurant_image_from_pixabay:
     path: /dashboard/restaurants/{id}/image-from-url
     defaults:
-        _controller: AppBundle\Controller\DashboardController::restaurantImageFromUrlAction
+        _controller: AppBundle\Controller\DashboardController::restaurantImageFromPixabayAction
         layout: 'dashboard.html.twig'
         routes:
             restaurants: dashboard_restaurants

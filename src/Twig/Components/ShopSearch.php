@@ -250,6 +250,7 @@ class ShopSearch
             'category' => $this->category,
             'cuisine' => $this->cuisine,
             'type' => $this->type,
+            'collection' => $this->collection,
         ];
 
         $query = array_filter($query);

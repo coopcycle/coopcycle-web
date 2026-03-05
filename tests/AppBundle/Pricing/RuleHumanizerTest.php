@@ -179,7 +179,7 @@ class RuleHumanizerTest extends KernelTestCase
         $rule->setExpression('diff_days(pickup, \'in 1..2\')');
         $rule->setPrice('100');
 
-        $this->assertEquals('Délai de préavis pour retrait entre 1 jour et 2 jours  - €1.00', $this->humanizer->humanize($rule));
+        $this->assertEquals('Délai de préavis pour retrait entre 1 jour et 2 jours - €1.00', $this->humanizer->humanize($rule));
     }
 
     public function testOrderItemsTotal()
@@ -198,6 +198,15 @@ class RuleHumanizerTest extends KernelTestCase
         $rule->setPrice('100');
 
         $this->assertEquals('Volume du colis moins de 5 - €1.00', $this->humanizer->humanize($rule));
+    }
+
+    public function testPackagesTotalVolumeUnitsRange()
+    {
+        $rule = new PricingRule();
+        $rule->setExpression('packages.totalVolumeUnits() in 1..5');
+        $rule->setPrice('100');
+
+        $this->assertEquals('Volume du colis entre 1 vu et 5 vu - €1.00', $this->humanizer->humanize($rule));
     }
 
     public function testAnd()

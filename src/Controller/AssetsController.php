@@ -147,4 +147,20 @@ class AssetsController extends AbstractController
             'Content-Disposition' => sprintf('inline; filename="%s"', $path)
         ]);
     }
+
+    #[Route(path: '/documents/{path}', name: 'document_public', methods: ['GET'], requirements: ['path' => '[0-9a-z\-]+\/.+'])]
+    public function documentPublicAction($path, Filesystem $documentsFilesystem): Response
+    {
+        try {
+            $contents = $documentsFilesystem->read($path);
+            $mimeType = $documentsFilesystem->mimeType($path);
+        } catch (\Exception $e) {
+            throw $this->createNotFoundException();
+        }
+
+        return new Response($contents, 200, [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => sprintf('inline; filename="%s"', $path)
+        ]);
+    }
 }

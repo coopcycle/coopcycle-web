@@ -11,6 +11,7 @@ use AppBundle\Pricing\PriceExpressions\PricePerPackageExpression;
 use AppBundle\Pricing\PriceExpressions\PriceRangeExpression;
 use AppBundle\Utils\PriceFormatter;
 use Symfony\Component\ExpressionLanguage\Node\BinaryNode;
+use Symfony\Component\ExpressionLanguage\Node\ConstantNode;
 use Symfony\Component\ExpressionLanguage\Node\GetAttrNode;
 use Symfony\Component\ExpressionLanguage\Node\Node;
 use Symfony\Component\ExpressionLanguage\Node\FunctionNode;
@@ -194,11 +195,12 @@ class RuleHumanizer
                 '%right%' => $this->translator->trans($unitTranslationKey, ['%count%' => $matches[2]]),
             ]);
 
-            return $this->translator->trans('pricing.rule.humanizer.diff', [
+            // Use trim() to remove extra space at then because of empty %value%
+            return trim($this->translator->trans('pricing.rule.humanizer.diff', [
                 '%task_type%' => $taskType,
                 '%operator%' => $value,
                 '%value%' => '',
-            ]);
+            ]));
 
         } else {
             // Handle standard operators like "<", ">", etc.
@@ -252,7 +254,7 @@ class RuleHumanizer
                 $node->nodes['left']->attributes['type'] === 2 &&
                 $objectName === 'packages' &&
                 $propertyName === 'totalVolumeUnits') {
-                return $this->humanizePackagesTotalVolumeUnits($node->attributes['operator'], $node->nodes['right']->attributes['value']);
+                return $this->humanizePackagesTotalVolumeUnits($node->attributes['operator'], $node->nodes['right']);
             }
 
         } else {
@@ -319,14 +321,24 @@ class RuleHumanizer
         ]);
     }
 
-    private function humanizePackagesTotalVolumeUnits(string $operator, $value): string
+    private function humanizePackagesTotalVolumeUnits(string $operator, BinaryNode|ConstantNode $value): string
     {
-        $translatedOperator = $this->translateOperator($operator);
+        if ('in' === $operator) {
+            $translatedOperator = $this->translator->trans('pricing.rule.humanizer.between', [
+                '%left%' => $this->formatValue($value->nodes['left']->attributes['value'], 'packages.totalVolumeUnits()'),
+                '%right%' => $this->formatValue($value->nodes['right']->attributes['value'], 'packages.totalVolumeUnits()'),
+            ]);
+            $translatedValue = '';
+        } else {
+            $translatedOperator = $this->translateOperator($operator);
+            $translatedValue = $value->attributes['value'];
+        }
 
-        return $this->translator->trans('pricing.rule.humanizer.packages_volume_units', [
+        // Use trim() to remove extra space at then because of empty %value%
+        return trim($this->translator->trans('pricing.rule.humanizer.packages_volume_units', [
             '%operator%' => $translatedOperator,
-            '%value%' => $value,
-        ]);
+            '%value%' => $translatedValue,
+        ]));
     }
 
     private function humanizeOrderItemsTotal(string $operator, $value): string

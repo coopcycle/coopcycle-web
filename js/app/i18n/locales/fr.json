@@ -815,6 +815,38 @@
                     }
                 }
             }
+        },
+        "DELIVERY_FORM_ADD_REVERSE": "Créer aussi une livraison inversée",
+        "DELIVERY_FORM_ADD_REVERSE_HELP": "Après avoir sauvegardé, vous serez redirigé·e vers une nouvelle page avec le retrait et le dépôt inversés",
+        "METRICS": {
+            "NUMBER_OF_STORES": "Nombre de magasins",
+            "AVERAGE_DISTANCE": "Distance moyenne",
+            "NUMBER_OF_TASKS": "Nombre de tâches",
+            "TASKS_TIMING": "Tâches réalisées à temps, trop tôt ou trop tard",
+            "AVERAGE_TASK_TIMING_MINUTES": "Nombre moyen de minutes d'avance ou de retard sur les tâches",
+            "PICKUPS_TIMING_DISTRIBUTION": "Nombre d'enlèvements réalisés X minutes en avance/retard sur le prévu",
+            "DROPOFFS_TIMING_DISTRIBUTION": "Nombre de dépôts réalisés X minutes en avance/retard sur le prévu",
+            "PICKUPS_PERCENTAGE_DISTRIBUTION": "Nombre d'enlèvements réalisés % en avance/retard sur le prévu",
+            "DROPOFFS_PERCENTAGE_DISTRIBUTION": "Nombre de dépôts réalisés % en avance/retard sur le prévu",
+            "ZERO_WASTE_ORDERS": "Commandes zéro déchet",
+            "INCOME_PER_DAY_AND_HOUR": "Revenus par jour de semaine et plage horaire",
+            "INCOME_PER_WEEK": "Revenus par semaine",
+            "BEST_RESTAURANTS": "Meilleurs restaurants",
+            "AVERAGE_ORDER_TOTAL": "Total moyen de commande",
+            "ORDERS_PER_DAY_OF_WEEK": "Nombre de commandes par jour de semaine",
+            "ORDERS_PER_HOUR_RANGE": "Nombre de commandes par plage horaire",
+            "ORDERS_PER_ZONE": "Nombre de commandes par zone",
+            "ORDERS_PER_PAYMENT_METHOD": "Nombre de commandes par moyen de paiement",
+            "NAV_MARKETPLACE": "Marketplace",
+            "NAV_LOGISTICS": "Logistique",
+            "NAV_PROFITABILITY": "Rentabilité",
+            "NAV_ZERO_WASTE": "Zéro déchet",
+            "PRESET_THIS_WEEK": "Cette semaine",
+            "PRESET_LAST_WEEK": "La semaine dernière",
+            "PRESET_THIS_MONTH": "Ce mois-ci",
+            "PRESET_LAST_MONTH": "Le mois dernier",
+            "PRESET_LAST_3_MONTHS": "Les 3 derniers mois",
+            "PRESET_LAST_6_MONTHS": "Les 6 derniers mois"
         }
     }
 }

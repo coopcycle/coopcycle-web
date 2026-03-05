@@ -1,3 +1,9 @@
+services:
+  coopcycle.document_namer:
+    class: AppBundle\Uploader\Naming\DocumentNamer
+    arguments: [ '@request_stack' ]
+    public: true
+
 oneup_uploader:
     mappings:
         restaurant:
@@ -69,3 +75,16 @@ oneup_uploader:
                 image/jpg: []
                 image/jpeg: []
                 image/png: []
+        documents:
+            namer: coopcycle.document_namer
+            frontend: dropzone
+            storage:
+                type: flysystem
+                filesystem: oneup_flysystem.documents_filesystem
+            allowed_mimetypes:
+                image/jpg: []
+                image/jpeg: []
+                image/png: []
+                application/pdf: []
+                application/msword: []
+                application/vnd.openxmlformats-officedocument.wordprocessingml.document: []

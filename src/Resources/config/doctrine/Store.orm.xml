@@ -42,6 +42,7 @@
         <option name="default">0</option>
       </options>
     </field>
+    <field name="document" type="text" column="document" nullable="true"/>
     <one-to-many field="deliveries" target-entity="AppBundle\Entity\Delivery" mapped-by="store">
       <cascade>
         <cascade-persist/>

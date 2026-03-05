@@ -1,0 +1,21 @@
+{% extends "admin.html.twig" %}
+
+{% block content %}
+
+{% set translated_cuisines = [] %}
+{% for cuisine in cuisines %}
+  {% set translated_cuisines = translated_cuisines|merge([{
+    'name': cuisine.name|trans(domain: 'cuisines'),
+    'icon': cuisine.icon
+  }]) %}
+{% endfor %}
+
+<ul class="list-unstyled">
+{% for cuisine in translated_cuisines|sort((a, b) => a.name <=> b.name) %}
+  <li class="d-flex align-items-center justify-content-between {% if cuisine.icon is empty %}bg-warning{% endif %}">
+    <span class="mr-2">{{ cuisine.name }}</span>
+    <span>{{ ux_icon(cuisine.icon ?? 'ph:empty-bold', { style: 'font-size: 2em;'}) }}</span>
+  </li>
+{% endfor %}
+</ul>
+{% endblock %}

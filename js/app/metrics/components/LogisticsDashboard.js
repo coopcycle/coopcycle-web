@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 
 import ChartPanel from './ChartPanel'
 import AverageDistance from './AverageDistance'
@@ -32,14 +33,15 @@ const gridWithFilterStyle = {
 
 const Dashboard = ({ dateRange, allTags, tasksMetricsEnabled }) => {
   const [ selectedTags, setSelectedTags ] = useState([])
+  const { t } = useTranslation()
 
   return (
     <div>
       <div className="metrics-grid">
-        <ChartPanel title="Number of stores">
+        <ChartPanel title={t('METRICS.NUMBER_OF_STORES')}>
           <StoreCumulativeCount dateRange={ dateRange } />
         </ChartPanel>
-        <ChartPanel title="Average distance">
+        <ChartPanel title={t('METRICS.AVERAGE_DISTANCE')}>
           <AverageDistance dateRange={ dateRange } />
         </ChartPanel>
       </div>
@@ -48,18 +50,18 @@ const Dashboard = ({ dateRange, allTags, tasksMetricsEnabled }) => {
                     defaultValue={ selectedTags }
                     onChange={ tags => setSelectedTags(tags) } />
         <div className="metrics-grid" style={gridWithFilterStyle}>
-          <ChartPanel title="Number of tasks">
+          <ChartPanel title={t('METRICS.NUMBER_OF_TASKS')}>
             <NumberOfTasks dateRange={ dateRange } tags={ selectedTags } />
           </ChartPanel>
           {tasksMetricsEnabled && (
             <>
-              <ChartPanel title="Tasks done on time, too early or too late" featurePreview={true}>
+              <ChartPanel title={t('METRICS.TASKS_TIMING')} featurePreview={true}>
                 <TasksDoneTiming
                   dateRange={ dateRange }
                   tags={ selectedTags } />
               </ChartPanel>
               <div/>
-              <ChartPanel title="Average number of minutes Tasks are done too early/late" featurePreview={true}>
+              <ChartPanel title={t('METRICS.AVERAGE_TASK_TIMING_MINUTES')} featurePreview={true}>
                 <AverageTiming
                   dateRange={ dateRange }
                   tags={ selectedTags } />
@@ -70,28 +72,28 @@ const Dashboard = ({ dateRange, allTags, tasksMetricsEnabled }) => {
       </div>
       <div className="metrics-grid">
         {tasksMetricsEnabled && (
-          <ChartPanel title="Number Of PICKUPs done X minutes earlier/later than planned" featurePreview={true}>
+          <ChartPanel title={t('METRICS.PICKUPS_TIMING_DISTRIBUTION')} featurePreview={true}>
             <DistributionOfTasksByTiming
               dateRange={ dateRange }
               taskType="PICKUP"/>
           </ChartPanel>
         )}
         {tasksMetricsEnabled && (
-          <ChartPanel title="Number Of DROPOFFs done X minutes earlier/later than planned" featurePreview={true}>
+          <ChartPanel title={t('METRICS.DROPOFFS_TIMING_DISTRIBUTION')} featurePreview={true}>
             <DistributionOfTasksByTiming
               dateRange={ dateRange }
               taskType="DROPOFF"/>
           </ChartPanel>
         )}
         {tasksMetricsEnabled && (
-          <ChartPanel title="Number Of PICKUPs done % earlier/later than planned" featurePreview={true}>
+          <ChartPanel title={t('METRICS.PICKUPS_PERCENTAGE_DISTRIBUTION')} featurePreview={true}>
             <DistributionOfTasksByPercentage
               dateRange={ dateRange }
               taskType="PICKUP"/>
           </ChartPanel>
         )}
         {tasksMetricsEnabled && (
-          <ChartPanel title="Number Of DROPOFFs done % earlier/later than planned" featurePreview={true}>
+          <ChartPanel title={t('METRICS.DROPOFFS_PERCENTAGE_DISTRIBUTION')} featurePreview={true}>
             <DistributionOfTasksByPercentage
               dateRange={ dateRange }
               taskType="DROPOFF"/>
