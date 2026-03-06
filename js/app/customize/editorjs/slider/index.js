@@ -109,13 +109,18 @@ const SlideContent = ({ slide, index, uploadEndpoint, onChange }) => {
 
     console.log(`Configuring Uppy with ${uploadEndpoint} for slide ${index}`)
     const uppy = new Uppy({
-      id: uniqueKey
+      id: uniqueKey,
+      restrictions: {
+        allowedFileTypes: ['image/*'],
+      }
     })
       .use(Dashboard, {
         trigger: `#${uniqueKey}`,
         inline: false,
         target: 'body',
         autoOpen: 'imageEditor',
+        closeAfterFinish: true,
+        allowMultipleUploadBatches: false,
       })
       .use(ImageEditor, {
         // Warning: Uppy uses Cropper 1.x
@@ -143,7 +148,11 @@ const SlideContent = ({ slide, index, uploadEndpoint, onChange }) => {
       }
     })
 
-  }, [])
+    return () => {
+      uppy.destroy();
+    }
+
+  }, [index, onChange, uniqueKey, uploadEndpoint])
 
   return (
     <a href="#" onClick={(e) => e.preventDefault()} style={{
