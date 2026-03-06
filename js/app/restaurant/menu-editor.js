@@ -666,6 +666,7 @@ createRoot(container).render(
       position="top-right"
       autoClose={500}
       hideProgressBar={true}
-      transition={Zoom}/>
+      transition={Zoom}
+      closeButton={false}/>
   </Provider>
 )
