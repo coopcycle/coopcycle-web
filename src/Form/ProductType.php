@@ -145,6 +145,8 @@ class ProductType extends AbstractType
                 'entry_options' => [ 'label' => false ],
                 'mapped' => false,
                 'data' => $this->getSortedOptions($product, $options),
+                'allow_add' => true,
+                'allow_delete' => true,
             ]);
 
             if (null !== $product->getId()) {

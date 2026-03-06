@@ -128,7 +128,9 @@
 <div id="product-form-data"
   data-action-url="{{ oneup_uploader_endpoint('product') }}"
   data-product-id="{{ product.id }}"
-  data-product-images="{{ product_images|json_encode|e('html_attr') }}"></div>
+  data-product-images="{{ product_images|json_encode|e('html_attr') }}"
+  data-product-options-search-url="{{ path(product_options_route, { id: restaurant.id, format: 'json'  }) }}"
+  data-product-options-search-placeholder="{{ 'basics.search'|trans }}"></div>
 
 {% endblock %}
 

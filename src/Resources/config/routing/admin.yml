@@ -269,6 +269,7 @@ admin_restaurant_product:
             restaurants: admin_restaurants
             restaurant: admin_restaurant
             products: admin_restaurant_products
+            product_options: admin_restaurant_product_options
 
 admin_restaurant_planning:
     path: /admin/restaurants/{id}/planning
