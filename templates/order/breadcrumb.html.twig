@@ -9,7 +9,7 @@
   {% set step = 4 %}
 {% endif %}
 
-<ol class="steps mb-5">
+<ol class="steps w-full mb-5">
   <li class="step step-primary">
     <a href="{{ path((order.isMultiVendor() ? 'hub' : 'restaurant'), {
         id:   order.vendor.id,
