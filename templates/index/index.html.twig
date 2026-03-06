@@ -2,13 +2,13 @@
 
 {% block body %}
 
-<section class="homepage-search" data-search="address"
+<header class="homepage-search bg-blue-400" data-search="address"
   data-addresses="{{ addresses_normalized()|json_encode()|e('html') }}"
   data-tracking-category="Homepage"
   data-restaurants="{{ coopcycle_restaurants_suggestions()|json_encode()|e('html') }}">
   <div class="homepage-search-container">
     {% set motto = coopcycle_setting('motto') %}
-    <h1 class="banner-title text-center">
+    <h1 class="font-title text-center text-white mt-4 mb-16 text-2xl md:text-3xl lg:text-4xl font-bold">
       {{ motto is not empty ? motto : ('index.banner'|trans) }}
     </h1>
     <div class="homepage-searchbox-container">
@@ -25,7 +25,7 @@
     <input type="hidden" name="geohash">
     <input type="hidden" name="address">
   </form>
-</section>
+</header>
 
 {% set homepage_props = {} %}
 {% if is_granted('ROLE_ADMIN') and preview is defined and preview is not empty %}

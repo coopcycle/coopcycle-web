@@ -30,7 +30,7 @@ export default ({card}) => {
 
     if (Object.keys(availableIcons).includes(card.brand.toLowerCase())) {
       return (
-        <img src={ availableIcons[card.brand.toLowerCase()] } height={ 36 }  className="mr-4" />
+        <img src={ availableIcons[card.brand.toLowerCase()] } className="mr-4 w-8" />
       )
     } else {
       return (
@@ -43,10 +43,10 @@ export default ({card}) => {
   }
 
   return (
-    <div className="d-flex align-items-center">
+    <div className="flex items-center">
       { creditCardIcon() }
-      <div className="d-flex flex-column">
-        <label className="mb-0">···· { card.last4 }</label>
+      <div className="flex flex-column gap-2 items-center">
+        <label>···· { card.last4 }</label>
         <small>{ t('EXPIRATION') }: { card.exp_month }/{ card.exp_year }</small>
       </div>
     </div>

@@ -107,11 +107,8 @@
       align-items: center;
       gap: 4px;
       --size: 20px;
-      font-weight: 600;
 
       &.pre-order {
-        font-weight: normal;
-
         svg {
           --size: 18px;
         }

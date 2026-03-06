@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { Anchor } from 'antd'
 import useSize from '@react-hook/size'
 
@@ -73,12 +73,21 @@ export default function MenuNav(props) {
     }
   }
 
+  // This is used by the cart sidebar to position sticky element
+  useEffect(() => {
+    const height = rootRef.current.clientHeight
+    document.documentElement.style.setProperty(
+      '--restaurant-menu-nav-height',
+      `${height}px`,
+    )
+  }, [rootRef])
+
   return (
     <Anchor
       getCurrentAnchor={ getCurrentAnchor }
       onChange={ onChange }
       targetOffset={ height }>
-      <div className="container-fluid pt-3 d-flex"
+      <div className="mx-auto px-4 flex"
            ref={ rootRef }>
         { displaySections.map((section) => (
           <div
@@ -87,7 +96,7 @@ export default function MenuNav(props) {
             className={ classNames(
               {
                 'overflow-hidden': section.isVisible,
-                'd-none': !section.isVisible,
+                'hidden': !section.isVisible,
               },
             ) }>
             <Link href={ sectionToLink(section) } title={ section.name } />

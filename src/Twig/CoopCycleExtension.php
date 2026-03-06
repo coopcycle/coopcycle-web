@@ -115,6 +115,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('coopcycle_version', array(SettingResolver::class, 'getVersion')),
             new TwigFunction('coopcycle_github_release_link', array(SettingResolver::class, 'getGithubReleaseLink')),
             new TwigFunction('addresses_normalized', array(UserRuntime::class, 'getUserAddresses')),
+            new TwigFunction('coopcycle_theme', array(AppearanceRuntime::class, 'getTheme')),
         );
     }
 
