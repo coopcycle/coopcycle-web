@@ -26,6 +26,7 @@ import '@mdxeditor/editor/style.css'
 
 import '@uppy/core/css/style.min.css';
 import '@uppy/dashboard/css/style.min.css';
+import '@uppy/image-editor/css/style.min.css';
 
 import 'skeleton-screen-css/dist/index.scss'
 
