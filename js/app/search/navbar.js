@@ -140,7 +140,7 @@ function ComboBox({ t }) {
         {/* FIXME
         The "label" HTML tag style is overriden by Bootstrap in AddressAutosuggest
         Use a span atm */}
-        <span className="input input-bordered w-24 md:w-auto">
+        <span className="input input-bordered bg-base-100 text-base-content w-24 md:w-auto">
           <i className="fa fa-search"></i>
           <input
             placeholder={t('SEARCH_PLACEHOLDER')}

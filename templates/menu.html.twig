@@ -18,7 +18,7 @@
   {% set current_locale = locales[app.request.locale] %}
 {% endif %}
 
-<nav class="bg-neutral-primary border-default" x-data="{ mobileMenuOpen : false }">
+<nav class="bg-primary text-primary-content border-default" x-data="{ mobileMenuOpen : false }">
   <div class="flex flex-wrap items-center justify-between px-4 py-2.5">
     <div class="flex items-center gap-2">
       <a href="{{ path('homepage') }}" class="flex items-center space-x-3 rtl:space-x-reverse">
