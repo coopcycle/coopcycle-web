@@ -36,7 +36,7 @@
 						{% include "components/restaurant/tag/restaurant_tag.html.twig" with {value: tag} %}
 					{% endfor %}
 				{% elseif description is defined and description is not empty %}
-					<span class="text-muted">{{ description|striptags|u.truncate(48, '…', false)|raw|nl2br }}</span>
+					<span class="text-muted">{{ description|markdown_to_html|striptags|u.truncate(48, '…', false)|raw|nl2br }}</span>
 				{% elseif address is defined %}
 					<span class="text-muted">{{ address|u.truncate(48, '…', false) }}</span>
 				{% else %}
