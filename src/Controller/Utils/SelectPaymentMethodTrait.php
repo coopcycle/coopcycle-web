@@ -49,15 +49,6 @@ trait SelectPaymentMethodTrait
             return new JsonResponse(['message' => 'Payment method is not available for this order'], 400);
         }
 
-        // The "CASH_ON_DELIVERY" payment method may not be enabled,
-        // however if it's enabled at shop level, it is allowed
-        $bypass = $code === 'CASH_ON_DELIVERY' && $order->supportsCashOnDelivery();
-
-        if (!$paymentMethod->isEnabled() && !$bypass) {
-
-            return new JsonResponse(['message' => 'Payment method is not enabled'], 400);
-        }
-
         $paymentContext->setMethod($code);
 
         $orderPaymentProcessor->process($order);
