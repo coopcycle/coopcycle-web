@@ -7,6 +7,7 @@ use AppBundle\Entity\Delivery\FailureReasonSet;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Form\Restaurant\DabbaType;
+use AppBundle\Form\Restaurant\DayOfWeekAddressType;
 use AppBundle\Form\Restaurant\FulfillmentMethodType;
 use AppBundle\Form\Restaurant\LoopeatType;
 use AppBundle\Form\Restaurant\ShippingOptionsTrait;
@@ -72,6 +73,9 @@ class RestaurantType extends LocalBusinessType
                 'label' => false,
                 'help' => 'localBusiness.form.business_address.help',
                 'required' => false,
+            ])
+            ->add('dayOfWeekAddresses', CollectionType::class, [
+                'entry_type' => DayOfWeekAddressType::class,
             ])
             ;
 

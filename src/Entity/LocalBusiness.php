@@ -44,6 +44,7 @@ use AppBundle\OpeningHours\OpenCloseInterface;
 use AppBundle\OpeningHours\OpenCloseTrait;
 use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Validator\Constraints\IsActivableRestaurant as AssertIsActivableRestaurant;
+use Carbon\Carbon;
 use Cocur\Slugify\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -311,6 +312,8 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected bool $pawapayEnabled = true;
 
+    protected $dayOfWeekAddresses;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -323,6 +326,7 @@ class LocalBusiness extends BaseLocalBusiness implements
         $this->preparationTimeRules = new ArrayCollection();
         $this->reusablePackagings = new ArrayCollection();
         $this->promotions = new ArrayCollection();
+        $this->dayOfWeekAddresses = new ArrayCollection();
 
         $this->fulfillmentMethods = new ArrayCollection();
         $this->addFulfillmentMethod('delivery', true);
@@ -1234,5 +1238,10 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function setPawapayEnabled($enabled = true)
     {
         $this->pawapayEnabled = $enabled;
+    }
+
+    public function getDayOfWeekAddresses()
+    {
+        return $this->dayOfWeekAddresses;
     }
 }

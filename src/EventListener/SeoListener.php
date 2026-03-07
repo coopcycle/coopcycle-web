@@ -3,6 +3,7 @@
 namespace AppBundle\EventListener;
 
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\LocalBusiness\AddressResolver;
 use AppBundle\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Liip\ImagineBundle\Service\FilterService;
@@ -104,18 +105,20 @@ class SeoListener
             $this->seoPage->addMeta('name', 'description', $restaurant->getDescription());
         }
 
+        $address = AddressResolver::resolveAddress($restaurant, new \DateTimeImmutable());
+
         $this->seoPage
             ->addMeta('property', 'og:title', $this->seoPage->getTitle())
             ->addMeta('property', 'og:description', sprintf('%s, %s %s',
-                $restaurant->getAddress()->getStreetAddress(),
-                $restaurant->getAddress()->getPostalCode(),
-                $restaurant->getAddress()->getAddressLocality()
+                $address->getStreetAddress(),
+                $address->getPostalCode(),
+                $address->getAddressLocality()
             ))
             // https://developers.facebook.com/docs/reference/opengraph/object-type/restaurant.restaurant/
             ->addMeta('property', 'og:type', 'restaurant.restaurant')
-            ->addMeta('property', 'restaurant:contact_info:street_address', $restaurant->getAddress()->getStreetAddress())
-            ->addMeta('property', 'place:location:latitude', (string) $restaurant->getAddress()->getGeo()->getLatitude())
-            ->addMeta('property', 'place:location:longitude', (string) $restaurant->getAddress()->getGeo()->getLongitude())
+            ->addMeta('property', 'restaurant:contact_info:street_address', $address->getStreetAddress())
+            ->addMeta('property', 'place:location:latitude', (string) $address->getGeo()->getLatitude())
+            ->addMeta('property', 'place:location:longitude', (string) $address->getGeo()->getLongitude())
             ;
 
         $website = $restaurant->getWebsite();
@@ -123,7 +126,7 @@ class SeoListener
             $this->seoPage->addMeta('property', 'restaurant:contact_info:website', $website);
         }
 
-        $locality = $restaurant->getAddress()->getAddressLocality();
+        $locality = $address->getAddressLocality();
         if (!empty($locality)) {
             $this->seoPage->addMeta('property', 'restaurant:contact_info:locality', $locality);
         }
