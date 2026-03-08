@@ -19,7 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -28,9 +28,9 @@ class UpdateProfileType extends AbstractType
     private $countryIso;
 
     public function __construct(
-        private TokenStorageInterface $tokenStorage,
         private TranslatorInterface $translator,
         private LoopeatClient $loopeatClient,
+        private AuthorizationCheckerInterface $authorizationChecker,
         string $countryIso)
     {
         $this->countryIso = strtoupper($countryIso);
@@ -55,12 +55,7 @@ class UpdateProfileType extends AbstractType
                 'required' => false,
             ]);
 
-        $isAdmin = false;
-        if ($token = $this->tokenStorage->getToken()) {
-            if ($user = $token->getUser()) {
-                $isAdmin = $user->hasRole('ROLE_ADMIN');
-            }
-        }
+        $isAdmin = $this->authorizationChecker->isGranted('ROLE_ADMIN');
 
         if ($isAdmin) {
             $builder
