@@ -57,7 +57,7 @@ class UpdateProfileType extends AbstractType
 
         $isAdmin = $this->authorizationChecker->isGranted('ROLE_ADMIN');
 
-        if ($isAdmin) {
+        if ($options['with_admin_controls'] && $isAdmin) {
             $builder
                 ->add('quotesAllowed', CheckboxType::class, [
                 'label' => 'form.user.quotes_allowed.label',
@@ -81,7 +81,7 @@ class UpdateProfileType extends AbstractType
                         'disabled' => !$isAdmin,
                     ]);
 
-                if ($isAdmin) {
+                if ($options['with_admin_controls'] && $isAdmin) {
                     $form
                         ->add('enabled', CheckboxType::class, [
                             'label' => 'user.edit.enabled.label',
@@ -163,6 +163,7 @@ class UpdateProfileType extends AbstractType
            'with_restaurants' => false,
            'with_stores' => false,
            'with_roles' => false,
+           'with_admin_controls' => true,
            'editable_roles' => []
         ));
     }
