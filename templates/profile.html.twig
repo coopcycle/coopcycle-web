@@ -18,11 +18,11 @@
 {% endblock %}
 
 {% block body %}
-<div class="container container--full-height">
-  <div class="row">
+<div class="mx-auto">
+  <div class="flex flex-col lg:flex-row">
     {% if (show_left_menu ?? true) %}
-    <div class="col-sm-3">
-      <ul class="nav nav-pills nav-stacked">
+    <div>
+      <ul class="menu">
         <li
           class="{{ app.request.attributes.get('_route') in [ 'nucleos_profile_profile_show', 'profile_edit' ] ? 'active' : '' }}">
           <a href="{{ path('profile_edit') }}">
@@ -98,7 +98,7 @@
       </ul>
     </div>
     {% endif %}
-    <div class="{{ (show_left_menu ?? true) ? 'col-sm-9' : 'col-sm-12' }}">
+    <div class="lg:flex-1">
       {% block subnav %}{% endblock %}
       {% block content %}{% endblock %}
     </div>
