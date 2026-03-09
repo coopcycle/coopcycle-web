@@ -50,7 +50,9 @@
   {{ form_start(form, { attr: { class: (embed_context.enabled ? 'pt-4' : '') } }) }}
 
   <div class="row">
-    <div class="col-xs-12 form-content">
+    <div class="col-xs-12 form-content relative">
+
+      <div id="loading-overlay" class="contents"></div>
 
       {% for suggestion in coopcycle_checkout_suggestions(order) %}
         {% if suggestion.type == 'CONTINUE_SHOPPING_HUB' %}

@@ -184,7 +184,8 @@
       <div class="lg:flex lg:gap-4">
         {% if menu is not null %}
           <div class="lg:w-8/12">
-            <div id="menu">
+            <div id="menu" class="relative">
+              <div id="loading-overlay" class="contents"></div>
               {#
               WARNING
               We cache the following block for performance
