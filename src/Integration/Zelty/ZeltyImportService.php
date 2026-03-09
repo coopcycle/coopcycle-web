@@ -3,6 +3,7 @@
 namespace AppBundle\Integration\Zelty;
 
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Sylius\Taxon;
 use AppBundle\Integration\Zelty\Dto\ZeltyCatalogParser;
 use Cocur\Slugify\SlugifyInterface;
@@ -15,6 +16,7 @@ class ZeltyImportService
         private ZeltyCatalogParser $parser,
         private ZeltyOptionMapper $optionMapper,
         private ZeltyProductMapper $productMapper,
+        private ZeltyMenuMapper $menuMapper,
         private ZeltyTaxonMapper $taxonMapper,
         private ZeltyTaxesMapper $taxesMapper,
         private SlugifyInterface $slugify,
@@ -57,21 +59,22 @@ class ZeltyImportService
             $menuPartsMap[$menuPart->id] = $menuPart;
         }
 
-        $menusMap = $this->taxonMapper->importMenus(
+        $menusMap = $this->menuMapper->importMenus(
             $catalog->getMenus(),
-            $rootTaxon,
-            $productsMap,
             $menuPartsMap,
+            $productsMap,
+            $restaurant,
             $locale,
-            $restaurant
+            $this->taxesMapper->getDefaultTaxCategory()
         );
         $this->logger?->info(sprintf('Imported %d menus', count($menusMap)));
+
+        $menusTaxon = $this->createOrGetMenusTaxon($restaurant, $rootTaxon, $locale, $menusMap);
 
         $this->taxonMapper->importTags(
             $catalog->tags,
             $rootTaxon,
             $productsMap,
-            $menusMap,
             $locale
         );
         $this->logger?->info(sprintf('Imported %d tags', count($catalog->tags)));
@@ -106,13 +109,49 @@ class ZeltyImportService
             if (!$restaurant->getTaxons()->contains($taxon)) {
                 $restaurant->addTaxon($taxon);
             }
-            
-            return $taxon;
+        } else {
+            if (!$restaurant->getTaxons()->contains($taxon)) {
+                $restaurant->addTaxon($taxon);
+            }
         }
 
-        if (!$restaurant->getTaxons()->contains($taxon)) {
-            $restaurant->addTaxon($taxon);
+        return $taxon;
+    }
+
+    private function createOrGetMenusTaxon(LocalBusiness $restaurant, Taxon $rootTaxon, string $locale, array $menusMap): Taxon
+    {
+        $code = 'zelty_menus_' . $restaurant->getId();
+        
+        $em = $this->taxonMapper->getEntityManager();
+        
+        $taxon = $em->getRepository(Taxon::class)->findOneBy(['code' => $code]);
+
+        if (null === $taxon) {
+            $taxon = new Taxon();
+            $taxon->setCode($code);
+            $taxon->setCurrentLocale($locale);
+            $taxon->setSlug($this->slugify->slugify('nos-menus-' . $restaurant->getId()));
+            $taxon->setName('Nos Menus');
+            $taxon->setEnabled(true);
+            $taxon->setParent($rootTaxon);
+            
+            $em->persist($taxon);
+            $em->flush();
+            
+            if (!$restaurant->getTaxons()->contains($taxon)) {
+                $restaurant->addTaxon($taxon);
+            }
         }
+
+        foreach ($menusMap as $menuProduct) {
+            $productTaxon = new \AppBundle\Entity\Sylius\ProductTaxon();
+            $productTaxon->setProduct($menuProduct);
+            $productTaxon->setTaxon($taxon);
+            $productTaxon->setPosition(0);
+            $em->persist($productTaxon);
+        }
+
+        $em->flush();
 
         return $taxon;
     }

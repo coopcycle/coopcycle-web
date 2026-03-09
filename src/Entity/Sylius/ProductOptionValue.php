@@ -13,6 +13,7 @@ use Sylius\Component\Product\Model\ProductOptionValue as BaseProductOptionValue;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\SerializedName;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ApiResource(
     operations: [
@@ -40,6 +41,13 @@ class ProductOptionValue extends BaseProductOptionValue implements ProductOption
      * @var PricingRule|null
      */
     protected $pricingRule;
+
+    /**
+     * Metadata for storing additional data like linked dish IDs.
+     * @var array<string, mixed>
+     */
+    #[ORM\Column(type: 'jsonb', options: ['default' => '{}'])]
+    protected $metadata = [];
 
     public function __construct()
     {
@@ -70,6 +78,26 @@ class ProductOptionValue extends BaseProductOptionValue implements ProductOption
     public function setPricingRule(?PricingRule $pricingRule): void
     {
         $this->pricingRule = $pricingRule;
+    }
+
+    public function getMetadata(): array
+    {
+        return $this->metadata;
+    }
+
+    public function setMetadata(array $metadata): void
+    {
+        $this->metadata = $metadata;
+    }
+
+    public function getMetadataValue(string $key, mixed $default = null): mixed
+    {
+        return $this->metadata[$key] ?? $default;
+    }
+
+    public function setMetadataValue(string $key, mixed $value): void
+    {
+        $this->metadata[$key] = $value;
     }
 
     #[Groups(['product', 'restaurant_menu', 'restaurant_menus'])]
