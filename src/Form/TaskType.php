@@ -50,10 +50,7 @@ class TaskType extends AbstractType
                 'required' => false,
                 'attr' => ['rows' => '2', 'placeholder' => 'form.task.comments.placeholder']
             ])
-            ->add('imported_from')
-            ->add('position', HiddenType::class, [
-                'mapped' => false,
-            ]);
+            ->add('imported_from');
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
