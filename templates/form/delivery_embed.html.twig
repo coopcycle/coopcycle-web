@@ -5,7 +5,7 @@
 
   {{ form_label(form) }}
 
-  {{ form_row(form.address) }}
+  {{ form_row(form.address, { label: false }) }}
 
   {% if form.doneBefore is defined %}
     {{ form_row(form.doneBefore, { label: 'form.delivery.' ~ (form.vars.data.type|lower) ~ '.doneBefore.label' }) }}
