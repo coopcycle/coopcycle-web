@@ -250,3 +250,5 @@ export const selectReusablePackagingEnabled = createSelector(
 )
 
 export const selectIsTimeRangeChangedModalOpen = state => state.isTimeRangeChangedModalOpen
+
+export const selectIsLoadingOverlayVisible = state => state.isLoadingOverlayVisible
