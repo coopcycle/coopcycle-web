@@ -30,11 +30,12 @@ class ThemeType extends AbstractType
             ])
             ;
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
 
             $form = $event->getForm();
 
             $theme = $this->settingsManager->get('theme');
+
             if ($theme) {
                 $theme = json_decode($theme, true);
                 $event->setData($theme);

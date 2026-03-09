@@ -1741,3 +1741,5 @@ form.product.options.add: Add an option
 form.customize.theme.label: Theme
 form.theme.primary.label: Primary
 form.theme.primary.help: Primary brand color, The main color of your brand
+form.theme.primary-content.label: Primary content
+form.theme.primary-content.help: Foreground content color to use on primary color
