@@ -50,18 +50,6 @@ col-md-9
 
   {{ form_row(form.comments) }}
 
-  {% if form.doorstep is defined %}
-    {{ form_row(form.doorstep) }}
-  {% endif %}
-
-  {% if form.barcode is defined and form.vars.data.type != "PICKUP" %}
-    {{ form_row(form.barcode) }}
-  {% endif %}
-
-  {% if form.tagsAsString is defined %}
-    {{ form_row(form.tagsAsString) }}
-  {% endif %}
-
   {# The fields below are hidden #}
 
   {{ form_widget(form.type) }}
@@ -164,27 +152,10 @@ col-md-9
   <div id="{{ form.vars.id ~ '_widget' }}"></div>
 {% endblock %}
 
-{% block _delivery_tasks_entry_tagsAsString_widget %}
-<div id="{{ form.vars.id ~ '_widget' }}"></div>
-{{ block('hidden_widget') }}
-{% endblock %}
-
 {% block _delivery_tasks_widget %}
 {{ block('collection_widget') }}
-{% if form.parent.addTask is defined %}
-  <div class="text-right">
-    {{ form_widget(form.parent.addTask, {
-      attr: { class: 'btn-primary' },
-      label: '<i class="fa fa-plus mr-1"></i><span>' ~ ('basics.add'|trans) ~ '</span>',
-      label_html: true
-    }) }}
-  </div>
-{% endif %}
 {% endblock %}
 
 {% block _delivery_tasks_entry_timeSlot_widget %}
   {{ form_widget(form) }}
-  {% if form.parent.switchTimeSlot is defined %}
-    {{ form_widget(form.parent.switchTimeSlot) }}
-  {% endif %}
 {% endblock %}
