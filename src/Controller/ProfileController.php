@@ -139,10 +139,6 @@ class ProfileController extends AbstractController
                 $user->getCustomer()->clearLoopEatCredentials();
             }
 
-            if ($editForm->getClickedButton() && 'dabbaDisconnect' === $editForm->getClickedButton()->getName()) {
-                $user->getCustomer()->clearDabbaCredentials();
-            }
-
             $userManager->updateUser($user);
 
             $this->addFlash(

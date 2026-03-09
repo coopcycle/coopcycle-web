@@ -10,7 +10,6 @@ use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Api\Dto\CustomerInsightsDto;
 use AppBundle\Api\State\CustomerInsightsProvider;
 use AppBundle\Entity\Address;
-use AppBundle\Entity\Dabba\CustomerCredentials as DabbaCustomerCredentials;
 use AppBundle\Entity\LoopEat\CustomerCredentials;
 use AppBundle\Entity\Edenred\CustomerCredentials as EdenredCustomerCredentials;
 use AppBundle\Entity\Paygreen\CustomerDetails as PaygreenCustomerDetails;
@@ -67,8 +66,6 @@ class Customer extends BaseCustomer implements TaggableInterface, CustomerInterf
     protected ?CustomerCredentials $loopeatCredentials = null;
 
     protected ?EdenredCustomerCredentials $edenredCredentials = null;
-
-    protected ?DabbaCustomerCredentials $dabbaCredentials = null;
 
     protected ?PaygreenCustomerDetails $paygreenDetails = null;
 
@@ -320,64 +317,6 @@ class Customer extends BaseCustomer implements TaggableInterface, CustomerInterf
 
         $this->edenredCredentials->setCustomer(null);
         $this->edenredCredentials = null;
-    }
-
-    public function getDabbaAccessToken()
-    {
-        if (null == $this->dabbaCredentials) {
-
-            return null;
-        }
-
-        return $this->dabbaCredentials->getAccessToken();
-    }
-
-    public function setDabbaAccessToken($accessToken)
-    {
-        if (null === $this->dabbaCredentials) {
-
-            $this->dabbaCredentials = new DabbaCustomerCredentials();
-            $this->dabbaCredentials->setCustomer($this);
-        }
-
-        $this->dabbaCredentials->setAccessToken($accessToken);
-    }
-
-    public function getDabbaRefreshToken()
-    {
-        if (null === $this->dabbaCredentials) {
-
-            return null;
-        }
-
-        return $this->dabbaCredentials->getRefreshToken();
-    }
-
-    public function setDabbaRefreshToken($refreshToken)
-    {
-        if (null === $this->dabbaCredentials) {
-
-            $this->dabbaCredentials = new DabbaCustomerCredentials();
-            $this->dabbaCredentials->setCustomer($this);
-        }
-
-        $this->dabbaCredentials->setRefreshToken($refreshToken);
-    }
-
-    public function hasDabbaCredentials(): bool
-    {
-        return null !== $this->dabbaCredentials && $this->dabbaCredentials->hasCredentials();
-    }
-
-    public function clearDabbaCredentials()
-    {
-        if (null === $this->dabbaCredentials) {
-
-            return;
-        }
-
-        $this->dabbaCredentials->setCustomer(null);
-        $this->dabbaCredentials = null;
     }
 
     public function setPaygreenBuyerId(string $buyerId)

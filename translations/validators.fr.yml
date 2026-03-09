@@ -58,8 +58,6 @@ time_range_jump.next_day: Il n'est plus possible de commander pour aujourd'hui
 
 order.shippingTimeRange.notAvailable: Indisponible pour l'instant
 
-dabba.insufficient_wallet: Il vous manque %amount% sur votre cagnotte Dabba
-
 googlemaps.api_key.invalid: La clé d'API Google Maps n'est pas valide. %error%
 
 spreadsheet.missing_column: Vous devez définir une colonne « %column% »
