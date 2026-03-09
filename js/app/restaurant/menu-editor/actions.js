@@ -1,5 +1,7 @@
 import { createAction } from '@reduxjs/toolkit'
 import _ from 'lodash'
+import { toast } from 'react-toastify'
+import i18n from '../../i18n'
 
 const httpClient = new window._auth.httpClient();
 
@@ -15,6 +17,14 @@ export const setIsLoadingProducts = createAction('MENU_EDITOR/SET_IS_LOADING_PRO
 export const setIsLoadingSection = createAction('MENU_EDITOR/SET_IS_LOADING_SECTION');
 
 import { selectMenuSections } from './selectors'
+
+function notify({ error }) {
+  if (error) {
+    toast.warn(i18n.t('SAVE_ERROR'), { toastId: 'menu-editor' })
+  } else {
+    toast.success(i18n.t('SAVE_SUCCESS'), { toastId: 'menu-editor' })
+  }
+}
 
 export function fetchProducts(restaurant) {
   return async function(dispatch, getState) {
@@ -87,6 +97,8 @@ export function setSectionProducts(sectionId, products) {
       if (error) {
         console.error(error);
       }
+
+      notify({ error })
 
     } catch (e) {
       console.error(e);
@@ -197,6 +209,8 @@ export function deleteSection(section) {
         console.error(error);
       }
 
+      notify({ error })
+
     } catch (e) {
       console.error(e);
     }
@@ -239,6 +253,7 @@ export function updateSection(sectionId, name, description) {
       }
 
       dispatch(closeModal());
+      notify({ error })
 
     } catch (e) {
       console.error(e);
@@ -271,6 +286,8 @@ export function setMenuName(name) {
       if (error) {
         console.error(error);
       }
+
+      notify({ error })
 
     } catch (e) {
       console.error(e);

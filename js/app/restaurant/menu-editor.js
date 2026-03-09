@@ -20,6 +20,7 @@ import _ from 'lodash';
 import { Provider, useDispatch, useSelector } from 'react-redux'
 import { ProgressBar } from 'react-loader-spinner'
 import classNames from 'classnames';
+import { ToastContainer, Zoom } from 'react-toastify'
 
 import { createStoreFromPreloadedState } from './menu-editor/store'
 import {
@@ -660,6 +661,12 @@ const store = createStoreFromPreloadedState(preloadedState);
 createRoot(container).render(
   <Provider store={ store }>
     <MenuEditor
-      restaurant={ JSON.parse(container.dataset.restaurant) } />
+      restaurant={JSON.parse(container.dataset.restaurant)} />
+    <ToastContainer
+      position="top-right"
+      autoClose={500}
+      hideProgressBar={true}
+      transition={Zoom}
+      closeButton={false}/>
   </Provider>
 )

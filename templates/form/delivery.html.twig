@@ -1,80 +1,4 @@
-{% extends 'bootstrap_3_horizontal_layout.html.twig' %}
-
-{% block form_label_class -%}
-col-md-3
-{%- endblock form_label_class %}
-
-{% block form_group_class -%}
-col-md-9
-{%- endblock form_group_class %}
-
-{% block task_row %}
-<div id="{{ form.vars.id }}"
-  class="delivery__form__task delivery__form__task--{{ form.vars.data.type|lower }}"
-  data-form="task">
-  {% if form.vars.data.type|lower == 'dropoff' %}
-  <a href="#"
-    class="btn btn-transparent"
-    style="position: absolute; right: 0; top: -18px;"
-    data-delete="task">
-    <span class="mr-1">{{ 'basics.delete'|trans }}</span><i class="fa fa-lg fa-times"></i>
-  </a>
-  {% endif %}
-  {{ form_widget(form) }}
-</div>
-{% endblock %}
-
-{% block task_widget %}
-
-  {{ form_row(form.address) }}
-
-  {% if form.doneBefore is defined %}
-    {{ form_row(form.doneBefore, { label: 'form.delivery.' ~ (form.vars.data.type|lower) ~ '.doneBefore.label' }) }}
-  {% endif %}
-
-  {% if form.timeSlot is defined %}
-    {{ form_row(form.timeSlot) }}
-  {% endif %}
-
-  {% if form.switchTimeSlot is defined and not form.switchTimeSlot.rendered %}
-    {{ form_row(form.switchTimeSlot) }}
-  {% endif %}
-
-  {% if form.packages is defined %}
-    {{ form_row(form.packages) }}
-  {% endif %}
-
-  {% if form.weight is defined %}
-    {{ form_row(form.weight) }}
-  {% endif %}
-
-  {{ form_row(form.comments) }}
-
-  {% if form.doorstep is defined %}
-    {{ form_row(form.doorstep) }}
-  {% endif %}
-
-  {% if form.barcode is defined and form.vars.data.type != "PICKUP" %}
-    {{ form_row(form.barcode) }}
-  {% endif %}
-
-  {% if form.tagsAsString is defined %}
-    {{ form_row(form.tagsAsString) }}
-  {% endif %}
-
-  {# The fields below are hidden #}
-
-  {{ form_widget(form.type) }}
-
-  {% if form.doneAfter is defined %}
-    {{ form_widget(form.doneAfter) }}
-  {% endif %}
-
-  {% if form.position is defined %}
-    {{ form_widget(form.position, { attr: { 'data-position': '' } }) }}
-  {% endif %}
-
-{% endblock %}
+{% extends 'bootstrap_3_layout.html.twig' %}
 
 {% block delivery_vehicle_widget %}
 <div>
@@ -143,18 +67,6 @@ col-md-9
   {{ block('packages_entry_widget') }}
 {% endblock %}
 
-{% block _delivery_tasks_entry_row %}
-  {{ block('task_row') }}
-{% endblock %}
-
-{% block _delivery_tasks_entry_widget %}
-  {{ block('task_widget') }}
-{% endblock %}
-
-{% block _delivery_tasks_entry_type_widget %}
-  {{ block('hidden_widget') }}
-{% endblock %}
-
 {% block _delivery_tasks_entry_doneAfter_widget %}
   {{ block('hidden_widget') }}
 {% endblock %}
@@ -164,27 +76,10 @@ col-md-9
   <div id="{{ form.vars.id ~ '_widget' }}"></div>
 {% endblock %}
 
-{% block _delivery_tasks_entry_tagsAsString_widget %}
-<div id="{{ form.vars.id ~ '_widget' }}"></div>
-{{ block('hidden_widget') }}
-{% endblock %}
-
 {% block _delivery_tasks_widget %}
 {{ block('collection_widget') }}
-{% if form.parent.addTask is defined %}
-  <div class="text-right">
-    {{ form_widget(form.parent.addTask, {
-      attr: { class: 'btn-primary' },
-      label: '<i class="fa fa-plus mr-1"></i><span>' ~ ('basics.add'|trans) ~ '</span>',
-      label_html: true
-    }) }}
-  </div>
-{% endif %}
 {% endblock %}
 
 {% block _delivery_tasks_entry_timeSlot_widget %}
   {{ form_widget(form) }}
-  {% if form.parent.switchTimeSlot is defined %}
-    {{ form_widget(form.parent.switchTimeSlot) }}
-  {% endif %}
 {% endblock %}

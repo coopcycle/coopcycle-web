@@ -234,6 +234,13 @@ class RestaurantType extends LocalBusinessType
             }
         });
 
+        $builder->get('description')->addEventListener(
+            FormEvents::PRE_SUBMIT,
+            function (FormEvent $event) {
+                $event->setData(strip_tags($event->getData()));
+            }
+        );
+
         $builder->addEventListener(
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) {

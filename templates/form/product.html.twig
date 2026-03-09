@@ -68,3 +68,33 @@
 {% block _product_businessRestaurantGroupPrices_entry_widget %}
   {{ block('businessRestaurantGroup_price_entry_widget') }}
 {% endblock %}
+
+{% block _product_options_row %}
+  <div class="mb-4">
+    {{ block('form_row') }}
+    <div class="d-flex align-items-center justify-content-end" style="gap: 1em;">
+      <span>{{ 'form.product.options.add'|trans }}</span>
+      <span id="product-options-search" style="max-width: 20%;"></span>
+    </div>
+  </div>
+{% endblock %}
+
+{% block _product_options_entry_row %}
+  <div class="form-group">
+    {{ form_widget(form) }}
+    <i class="fa fa-bars handle"></i>
+  </div>
+{% endblock %}
+
+{% block _product_options_entry_widget %}
+  <div class="d-flex">
+    {{ form_widget(form.enabled) }}
+    {{ form_widget(form.option) }}
+    {{ form_widget(form.position) }}
+  </div>
+{% endblock %}
+
+{% block _product_options_entry_enabled_widget %}
+<input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+<span data-product-option-prop="name" class="ml-2">{{ form.vars.label }}</span>
+{% endblock %}

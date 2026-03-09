@@ -216,6 +216,7 @@ dashboard_restaurant_product:
             restaurants: dashboard_restaurants
             restaurant: dashboard_restaurant
             products: dashboard_restaurant_products
+            product_options: dashboard_restaurant_product_options
 
 dashboard_restaurant_planning:
     path: /dashboard/restaurants/{id}/planning

@@ -19,19 +19,7 @@
 
 {% endblock %}
 
-{% block subnav %}
-  {% if is_granted('ROLE_DISPATCHER') %}
-    {% include 'delivery/_partials/navbar.html.twig' %}
-  {% endif %}
-{% endblock %}
-
 {% block content %}
-
-  {% if is_granted('ROLE_DISPATCHER') %}
-    <div class="alert alert-info">
-      To access the legacy version of this page <a data-testid="go-to-legacy-form" class="text-decoration-underline" href="{{ path('admin_store_recurrence_rule_legacy', { storeId: store.id, recurrenceRuleId: recurrenceRule.id }) }}">click here</a>.
-    </div>
-  {% endif %}
 
   {% block alerts %}
     {% if recurrenceRule.isCancelled() %}

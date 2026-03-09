@@ -1672,3 +1672,4 @@ form.delivery.reverse_disclaimer: Vous êtes en train d'inverser la commande %nu
 form.delivery.errors.not_reversable: Vous pouvez seulement inverser les livraisons avec 1 pickup et 1 dropoff
 form.store.document: Document
 basics.upload: Télécharger
+form.product.options.add: Ajouter une option

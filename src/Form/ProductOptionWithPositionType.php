@@ -18,7 +18,11 @@ class ProductOptionWithPositionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('option', HiddenType::class)
+            ->add('option', HiddenType::class, [
+                'attr' => [
+                    'data-name' => 'option'
+                ]
+            ])
             ->add('position', HiddenType::class, [
                 'attr' => [
                     'data-name' => 'position'
@@ -33,8 +37,8 @@ class ProductOptionWithPositionType extends AbstractType
             $form
                 ->add('enabled', CheckboxType::class, [
                     'required' => false,
-                    'label' => $data['name'],
-                    'data' => $data['enabled'],
+                    'label' => $data['name'] ?? '',
+                    'data' => $data['enabled'] ?? false,
                 ]);
         });
     }

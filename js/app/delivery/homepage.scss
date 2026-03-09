@@ -99,4 +99,9 @@
       width: calc(50% - 90px);
     }
   }
+
+  /* Hide the address description field */
+  .form-group:has(textarea#delivery_tasks_1_address_description) {
+    display: none;
+  }
 }
