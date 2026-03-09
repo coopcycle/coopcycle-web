@@ -25,4 +25,6 @@ interface ProductInterface extends BaseProductInterface
     public function getReusablePackagings(): Collection;
 
     public function isOptionEnabled(ProductOptionInterface $option): bool;
+
+    public function getProductOptions();
 }
