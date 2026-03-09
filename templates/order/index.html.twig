@@ -54,7 +54,8 @@
     {{ form_start(form, { attr: { style: 'padding-bottom: 66px;', class: (embed_context.enabled ? 'pt-4' : '') } }) }}
 
     <div class="row">
-      <div class="col-xs-12 form-content">
+      <div class="col-xs-12 form-content" style="position: relative;">
+        <div id="loading-overlay" style="display: content;"></div>
 
         {% include 'order/breadcrumb.html.twig' %}
 
