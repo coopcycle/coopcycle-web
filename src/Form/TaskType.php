@@ -214,7 +214,6 @@ class TaskType extends AbstractType
         $view->children['address']->vars['label'] =
             sprintf('form.delivery.%s.label', $taskType);
 
-        // FIXME Doesn't work, placeholder stays the same
         $streetAddress = $view->children['address']->children['streetAddress'];
         $streetAddress->vars['attr'] = array_merge(
             $streetAddress->vars['attr'] ?? [],
