@@ -2,7 +2,6 @@ twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
     form_themes:
-        - 'form/address_book.html.twig'
         - 'form/price_with_tax.html.twig'
         - 'form/delivery_zone_picker.html.twig'
         - 'form/delivery.html.twig'

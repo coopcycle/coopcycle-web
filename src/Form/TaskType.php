@@ -11,7 +11,6 @@ use AppBundle\Form\Type\TimeSlotChoiceType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -27,13 +26,6 @@ class TaskType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $addressBookOptions = [
-            'label' => 'form.task.address.label',
-            'with_addresses' => [],
-            'with_remember_address' => false,
-            'with_address_props' => false,
-        ];
-
         $builder
             ->add('type', ChoiceType::class, [
                 'choices' => [
@@ -44,7 +36,9 @@ class TaskType extends AbstractType
                 'multiple' => false,
                 'disabled' => false,
             ])
-            ->add('address', AddressBookType::class, $addressBookOptions)
+            ->add('address', AddressType::class, [
+                'with_widget' => true,
+            ])
             ->add('comments', TextareaType::class, [
                 'label' => 'form.task.comments.label',
                 'required' => false,
@@ -229,8 +223,8 @@ class TaskType extends AbstractType
         $view->children['address']->vars['label'] =
             sprintf('form.delivery.%s.label', $taskType);
 
-        $streetAddress = $view->children['address']->children['newAddress']->children['streetAddress'];
-
+        // FIXME Doesn't work, placeholder stays the same
+        $streetAddress = $view->children['address']->children['streetAddress'];
         $streetAddress->vars['attr'] = array_merge(
             $streetAddress->vars['attr'] ?? [],
             [ 'placeholder' => sprintf('form.delivery.%s.address_placeholder', $taskType) ]

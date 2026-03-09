@@ -1,5 +1,4 @@
 import moment from 'moment'
-import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
 
 import './embed-start.scss'
@@ -73,12 +72,6 @@ taskForms.forEach(function(el) {
       }
     })
   }
-
-  new AddressBook(document.querySelector(`#${el.id}_address`), {
-    existingAddressControl: document.querySelector(`#${el.id}_address_existingAddress`),
-    newAddressControl: document.querySelector(`#${el.id}_address_newAddress_streetAddress`),
-    isNewAddressControl: document.querySelector(`#${el.id}_address_isNewAddress`),
-  })
 
   const packages = document.querySelector(`#${el.id}_packages`)
 
