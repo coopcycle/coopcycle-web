@@ -52,12 +52,6 @@ services:
     autoconfigure: false
     tags: [ form.type ]
 
-  AppBundle\Form\NewCustomOrderType:
-    parent: AppBundle\Form\DeliveryType
-    autowire: false
-    autoconfigure: false
-    tags: [ form.type ]
-
   AppBundle\Form\OrderType:
     arguments: [ '@sm.factory', '@security.authorization_checker' ]
     tags: [ form.type ]
