@@ -29,8 +29,9 @@ import './menu.scss'
 import './components/Order/index.scss'
 import '../components/order/index.scss'
 
-import '@mantine/core/styles.css';
-import '@mantine/core/styles/LoadingOverlay.css';
+// https://mantine.dev/styles/mantine-styles/#css-layers
+import '@mantine/core/styles.layer.css';
+import '@mantine/core/styles/LoadingOverlay.layer.css';
 
 import ProductOptionsModal from './components/ProductDetails/ProductOptionsModal'
 import ChangeRestaurantOnAddProductModal from './components/ChangeRestaurantOnAddProductModal'
