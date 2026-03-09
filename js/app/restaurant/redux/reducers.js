@@ -28,6 +28,7 @@ import {
   STOP_ASKING_ENABLE_REUSABLE_PACKAGING,
   ENABLE_REUSABLE_PACKAGING,
   DISABLE_REUSABLE_PACKAGING,
+  SET_LOADING_OVERLAY_VISIBLE,
   updateCartTiming,
 } from './actions'
 import { setShippingTimeRange } from '../../entities/order/reduxSlice'
@@ -98,6 +99,8 @@ export const initialState = {
   },
   isGroupOrdersEnabled: false,
   shouldAskToEnableReusablePackaging: false,
+  // WARNING This defaults to true to show the overlay immediately
+  isLoadingOverlayVisible: true,
 }
 
 export const isFetching = (state = initialState.isFetching, action = {}) => {
@@ -409,6 +412,15 @@ export const shouldAskToEnableReusablePackaging = (state = initialState.shouldAs
   switch (action.type) {
   case STOP_ASKING_ENABLE_REUSABLE_PACKAGING:
     return false
+  default:
+    return state
+  }
+}
+
+export const isLoadingOverlayVisible = (state = initialState.isLoadingOverlayVisible, action = {}) => {
+  switch (action.type) {
+  case SET_LOADING_OVERLAY_VISIBLE:
+    return action.payload
   default:
     return state
   }

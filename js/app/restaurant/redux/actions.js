@@ -49,6 +49,8 @@ export const STOP_ASKING_ENABLE_REUSABLE_PACKAGING = 'STOP_ASKING_ENABLE_REUSABL
 export const DISABLE_REUSABLE_PACKAGING = 'DISABLE_REUSABLE_PACKAGING'
 export const ENABLE_REUSABLE_PACKAGING = 'ENABLE_REUSABLE_PACKAGING'
 
+export const SET_LOADING_OVERLAY_VISIBLE = 'SET_LOADING_OVERLAY_VISIBLE';
+
 export const fetchRequest = createFsAction(FETCH_REQUEST)
 export const fetchSuccess = createFsAction(FETCH_SUCCESS)
 export const fetchFailure = createFsAction(FETCH_FAILURE)
@@ -88,6 +90,8 @@ export const playerUpdateEvent = createFsAction(PLAYER_UPDATE_EVENT)
 export const stopAskingToEnableReusablePackaging = createFsAction(STOP_ASKING_ENABLE_REUSABLE_PACKAGING)
 
 export const updateCartTiming = createAction("UPDATE_CART_TIMING")
+
+export const setLoadingOverlayVisible = createAction(SET_LOADING_OVERLAY_VISIBLE)
 
 const httpClient = axios.create()
 function getRoutingParams(params) {
@@ -165,7 +169,7 @@ function handleAjaxResponse(res, dispatch, broadcast = true) {
     dispatch(setOrderAccessToken({ orderNodeId, orderAccessToken }))
   }
 
-  $('#menu').LoadingOverlay('hide')
+  dispatch(setLoadingOverlayVisible(false))
   if (broadcast) {
     notifyListeners(res.cart)
   }
@@ -321,7 +325,7 @@ function geocodeAndSync() {
 
     // No need to sync address for guests
     if (isPlayer) {
-      $('#menu').LoadingOverlay('hide')
+      dispatch(setLoadingOverlayVisible(false))
       return
     }
 
@@ -347,7 +351,7 @@ function geocodeAndSync() {
 
     geocode(cart.shippingAddress.streetAddress).then(address => {
 
-      $('#menu').LoadingOverlay('hide')
+      dispatch(setLoadingOverlayVisible(false))
 
       if (address) {
         dispatch(geocodingSuccess())
@@ -369,7 +373,7 @@ export function sync() {
     const { cart, player: { player } } = getState()
 
     if (cart.takeaway) {
-      $('#menu').LoadingOverlay('hide')
+      dispatch(setLoadingOverlayVisible(false))
       return
     }
 
