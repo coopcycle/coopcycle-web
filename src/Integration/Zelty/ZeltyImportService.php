@@ -7,6 +7,7 @@ use AppBundle\Entity\Sylius\Taxon;
 use AppBundle\Integration\Zelty\Dto\ZeltyCatalogParser;
 use Cocur\Slugify\SlugifyInterface;
 use Psr\Log\LoggerInterface;
+use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 
 class ZeltyImportService
 {
@@ -17,6 +18,7 @@ class ZeltyImportService
         private ZeltyTaxonMapper $taxonMapper,
         private ZeltyTaxesMapper $taxesMapper,
         private SlugifyInterface $slugify,
+        private LocaleProviderInterface $localeProvider,
         private ?LoggerInterface $logger = null,
     ) {}
 
@@ -28,7 +30,7 @@ class ZeltyImportService
 
         $taxCategoryMap = $this->taxesMapper->importTaxes();
 
-        $locale = $catalog->locale ?? 'en';
+        $locale = $this->localeProvider->getDefaultLocaleCode();
 
         $rootTaxon = $this->createOrGetRootTaxon($restaurant, $catalog, $locale);
 
@@ -60,7 +62,8 @@ class ZeltyImportService
             $rootTaxon,
             $productsMap,
             $menuPartsMap,
-            $locale
+            $locale,
+            $restaurant
         );
         $this->logger?->info(sprintf('Imported %d menus', count($menusMap)));
 

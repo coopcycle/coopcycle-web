@@ -31,12 +31,13 @@ class ZeltyTaxonMapper
         Taxon $parentTaxon,
         array $productsMap,
         array $menuPartsMap,
-        string $locale
+        string $locale,
+        LocalBusiness $restaurant
     ): array {
         $taxonMap = [];
 
         foreach ($menus as $menu) {
-            $taxon = $this->importMenu($menu, $parentTaxon, $productsMap, $menuPartsMap, $locale);
+            $taxon = $this->importMenu($menu, $parentTaxon, $productsMap, $menuPartsMap, $locale, $restaurant);
             $taxonMap[$taxon->getCode()] = $taxon;
         }
 
@@ -60,7 +61,8 @@ class ZeltyTaxonMapper
         Taxon $parentTaxon,
         array $productsMap,
         array $menuPartsMap,
-        string $locale
+        string $locale,
+        LocalBusiness $restaurant
     ): Taxon {
         $taxon = $this->em->getRepository(Taxon::class)->findOneBy([
             'code' => $menu->id,
@@ -87,22 +89,46 @@ class ZeltyTaxonMapper
 
             $this->em->persist($taxon);
             $this->em->flush();
+
+            if (!$restaurant->getTaxons()->contains($taxon)) {
+                $restaurant->addTaxon($taxon);
+            }
+        } else {
+            $taxon->setCurrentLocale($locale);
+            
+            if ($menu->name) {
+                $taxon->setName($menu->name);
+            }
+
+            if ($menu->description) {
+                $taxon->setDescription($menu->description);
+            }
+
+            $taxon->setEnabled(!$menu->disabled);
+            $taxon->setParent($parentTaxon);
+
+            if (!$restaurant->getTaxons()->contains($taxon)) {
+                $restaurant->addTaxon($taxon);
+            }
+
+            $this->em->flush();
         }
 
-        $this->importMenuParts($menu, $taxon, $productsMap, $menuPartsMap, $locale);
+        $this->importMenuParts($menu, $parentTaxon, $productsMap, $menuPartsMap, $locale, $restaurant);
 
         return $taxon;
     }
 
     private function importMenuParts(
         ZeltyItem $menu,
-        Taxon $parentTaxon,
+        Taxon $rootTaxon,
         array $productsMap,
         array $menuPartsMap,
-        string $locale
+        string $locale,
+        LocalBusiness $restaurant
     ): void {
         $existingChildren = [];
-        foreach ($parentTaxon->getChildren() as $child) {
+        foreach ($rootTaxon->getChildren() as $child) {
             $existingChildren[$child->getCode()] = $child;
         }
 
@@ -116,7 +142,7 @@ class ZeltyTaxonMapper
             }
 
             $part = $menuPartsMap[$partId];
-            $sectionCode = $menu->id . '_' . $partId;
+            $sectionCode = $partId;
 
             $section = $existingChildren[$sectionCode] ?? null;
 
@@ -124,29 +150,39 @@ class ZeltyTaxonMapper
                 /** @var Taxon $section */
                 $section = $this->taxonFactory->createNew();
                 $section->setCode($sectionCode);
-                $section->setSlug($this->slugify->slugify(($part->name ?? $partId) . '-' . $partId));
+                $section->setSlug($this->slugify->slugify(($menu->name ?? $menu->id) . '-' . ($part->name ?? $partId) . '-' . $partId));
 
                 $section->setCurrentLocale($locale);
 
                 if ($part->name) {
-                    $section->setName($part->name);
+                    $section->setName(sprintf('%s - %s', $menu->name, $part->name));
                 }
 
                 $section->setEnabled(!$menu->disabled);
-                $section->setParent($parentTaxon);
+                $section->setParent($rootTaxon);
 
                 $this->em->persist($section);
+                $this->em->flush();
+
+                if (!$restaurant->getTaxons()->contains($section)) {
+                    $restaurant->addTaxon($section);
+                }
+            } else {
+                $section->setCurrentLocale($locale);
+                $section->setSlug($this->slugify->slugify(($menu->name ?? $menu->id) . '-' . ($part->name ?? $partId) . '-' . $partId));
+                if ($part->name) {
+                    $section->setName(sprintf('%s - %s', $menu->name, $part->name));
+                }
+                $section->setEnabled(!$menu->disabled);
+
+                if (!$restaurant->getTaxons()->contains($section)) {
+                    $restaurant->addTaxon($section);
+                }
+
                 $this->em->flush();
             }
 
             $this->linkProductsToSection($section, $part->dishIds, $productsMap);
-        }
-
-        foreach ($existingChildren as $code => $child) {
-            $partId = str_replace($menu->id . '_', '', $code);
-            if (!in_array($partId, $handledPartIds)) {
-                $this->em->remove($child);
-            }
         }
 
         $this->em->flush();
@@ -224,6 +260,21 @@ class ZeltyTaxonMapper
             $taxon->setParent($parentTaxon);
 
             $this->em->persist($taxon);
+            $this->em->flush();
+        } else {
+            $taxon->setCurrentLocale($locale);
+
+            if ($tag->name) {
+                $taxon->setName($tag->name);
+            }
+
+            if ($tag->description) {
+                $taxon->setDescription($tag->description);
+            }
+
+            $taxon->setEnabled(!$tag->disabled);
+            $taxon->setParent($parentTaxon);
+
             $this->em->flush();
         }
 

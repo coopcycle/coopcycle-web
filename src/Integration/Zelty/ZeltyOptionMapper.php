@@ -53,14 +53,16 @@ class ZeltyOptionMapper
 
     private function importOption(ZeltyOption $zeltyOption, LocalBusiness $restaurant): ProductOption
     {
+        $optionCode = sprintf('%s_%d', $zeltyOption->id, $restaurant->getId());
+        
         $option = $this->em->getRepository(ProductOption::class)->findOneBy([
-            'code' => $zeltyOption->id,
+            'code' => $optionCode,
             'restaurant' => $restaurant,
         ]);
 
         if (null === $option) {
             $option = new ProductOption();
-            $option->setCode($zeltyOption->id);
+            $option->setCode($optionCode);
             $option->setPosition(0);
             $option->setRestaurant($restaurant);
 
@@ -73,9 +75,11 @@ class ZeltyOptionMapper
 
     private function importOptionValue(ZeltyOptionValue $zeltyValue, ProductOption $option, string $locale): ProductOptionValue
     {
+        $valueCode = sprintf('%s_%d', $zeltyValue->id, $option->getRestaurant()->getId());
+        
         $value = null;
         foreach ($option->getValues() as $existingValue) {
-            if ($existingValue->getCode() === $zeltyValue->id) {
+            if ($existingValue->getCode() === $valueCode) {
                 $value = $existingValue;
                 break;
             }
@@ -83,7 +87,7 @@ class ZeltyOptionMapper
 
         if (null === $value) {
             $value = new ProductOptionValue();
-            $value->setCode($zeltyValue->id);
+            $value->setCode($valueCode);
             $value->setCurrentLocale($locale);
             $value->setValue($this->slugify->slugify($zeltyValue->name ?? $zeltyValue->id));
             $value->setOption($option);
