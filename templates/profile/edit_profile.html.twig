@@ -6,9 +6,9 @@
   {{ form_start(form) }}
     <div class="form-section">
       <div class="header rounded-top">
-        <h5>{{ 'registration.step.personal'|trans }}</h5>
+        <h2>{{ 'registration.step.personal'|trans }}</h2>
       </div>
-      <div class="form rounded-bottom">
+      <div>
         <div class="row">
           <div class="col-md-6">
             {{ form_row(form.username) }}
@@ -20,26 +20,28 @@
         {{ form_row(form.email) }}
         {{ form_row(form.telephone) }}
 
-        <p><a class="btn btn-link-primary-default pl-0" href="{{ path('nucleos_user_change_password') }}">{% trans %}profile.password.change{% endtrans %}</a></p>
+        <div>
+          <a class="btn btn-primary btn-link" href="{{ path('nucleos_user_change_password') }}">{% trans %}profile.password.change{% endtrans %}</a>
+        </div>
 
         {% if form.loopeatDisconnect is defined %}
           <div class="form-group">
-            {{ form_widget(form.loopeatDisconnect, { attr: { class: 'btn-primary-default' } }) }}
+            {{ form_widget(form.loopeatDisconnect, { attr: { class: 'btn-primary' } }) }}
           </div>
         {% endif %}
 
         {% if form.dabbaDisconnect is defined %}
           <div class="form-group">
-            {{ form_widget(form.dabbaDisconnect, { attr: { class: 'btn-primary-default' } }) }}
+            {{ form_widget(form.dabbaDisconnect, { attr: { class: 'btn-primary' } }) }}
           </div>
         {% endif %}
 
         {{ form_rest(form) }}
       </div>
     </div>
-    <div class="d-flex justify-content-between p-4">
-      <button type="submit" class="btn btn-primary-default">{% trans %}basics.save{% endtrans %}</button>
-      <button type="button" onclick="delete_my_account()" class="btn btn-link-primary-default">{% trans %}profile.delete_my_account{% endtrans %}</button>
+    <div class="flex justify-between">
+      <button type="button" onclick="delete_my_account()" class="btn btn-outline btn-warning">{% trans %}profile.delete_my_account{% endtrans %}</button>
+      <button type="submit" class="btn btn-primary">{% trans %}basics.save{% endtrans %}</button>
     </div>
   {{ form_end(form) }}
 {% endblock %}
