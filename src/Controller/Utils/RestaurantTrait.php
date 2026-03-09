@@ -551,7 +551,7 @@ trait RestaurantTrait
             'with_reusable_packaging' =>
                 $restaurant->isDepositRefundEnabled() || $restaurant->isLoopeatEnabled() || $restaurant->isDabbaEnabled(),
             'reusable_packaging_choice_loader' => new ReusablePackagingChoiceLoader($restaurant, $loopeatClient, $entityManager),
-            'options_loader' => function (ProductInterface $product) use ($restaurant) {
+            'options_loader' => function (ProductInterface $product) {
 
                 $opts = [];
                 foreach ($product->getProductOptions() as $opt) {
