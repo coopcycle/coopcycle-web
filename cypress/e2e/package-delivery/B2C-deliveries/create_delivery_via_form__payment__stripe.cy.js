@@ -24,11 +24,11 @@ context('Delivery via form (payment options: Stripe only)', () => {
 
     cy.get('[data-form="task"]').each($el => {
       cy.wrap($el)
-        .find('[id$="address_newAddress_latitude"]')
+        .find('[id$="address_latitude"]')
         .invoke('val')
         .should('match', /[0-9.]+/)
       cy.wrap($el)
-        .find('[id$="address_newAddress_longitude"]')
+        .find('[id$="address_longitude"]')
         .invoke('val')
         .should('match', /[0-9.]+/)
     })
