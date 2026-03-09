@@ -30,7 +30,7 @@ function renderSwitch($input) {
 
   const $parent = $input.closest('div.checkbox').parent()
 
-  const $switch = $('<div class="display-inline-block">')
+  const $switch = $('<div class="d-inline-block">')
   const $hidden = $('<input>')
 
   $switch.addClass('switch')
@@ -134,7 +134,7 @@ const StockPhotoSearch = ({ url }) => {
                       method: 'POST',
                       url,
                       data: {
-                        url: result.webformatURL
+                        pixabay_id: result.id
                       }
                     }).then(() => window.document.location.reload())
                   }}>{ t('RESTAURANT_STOCK_PHOTOS_SELECT') }</a>
@@ -223,7 +223,7 @@ $(function() {
   const $bannerDropzoneContainer = $('<div>')
   const $bannerStockPhotoContainer = $('<div>')
 
-  const imageFromURL = window.Routing.generate(formData.dataset.imageFromUrlRoute, { id: formData.dataset.restaurantId })
+  const imageFromURL = window.Routing.generate(formData.dataset.imageFromPixabayRoute, { id: formData.dataset.restaurantId })
 
   createRoot($bannerStockPhotoContainer.get(0)).render(<StockPhotoSearch url={ imageFromURL } />)
 

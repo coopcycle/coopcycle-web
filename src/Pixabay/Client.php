@@ -56,4 +56,21 @@ class Client
             return $data['hits'];
         });
     }
+
+    public function getWebformatURLById(int $id): string|null
+    {
+        $response = $this->pixabayClient->request('GET', '', [
+            'query' => [
+                'id' => $id,
+            ]
+        ]);
+
+        $data = $response->toArray();
+
+        if (1 !== $data['total']) {
+            return null;
+        }
+
+        return $data['hits'][0]['webformatURL'];
+    }
 }

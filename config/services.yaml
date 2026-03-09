@@ -202,6 +202,8 @@ services:
   League\Flysystem\Filesystem $receiptsFilesystem: '@receipts_filesystem'
   League\Flysystem\Filesystem $ediMessagesFilesystem: '@edi_messages_filesystem'
   League\Flysystem\Filesystem $incidentImagesFilesystem: '@incident_images_filesystem'
+  League\Flysystem\Filesystem $documentsFilesystem: '@documents_filesystem'
+
   Nucleos\UserBundle\Util\Canonicalizer: '@nucleos_user.util.canonicalizer.simple'
 
   Spatie\GuzzleRateLimiterMiddleware\Store: '@AppBundle\Geocoder\RateLimiterStore'

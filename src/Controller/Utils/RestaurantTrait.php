@@ -41,6 +41,7 @@ use AppBundle\Form\Sylius\Promotion\RestaurantPromotionType;
 use AppBundle\Form\Type\ProductTaxCategoryChoiceType;
 use AppBundle\LoopEat\Client as LoopeatClient;
 use AppBundle\Message\CopyProducts;
+use AppBundle\Pixabay\Client as PixabayClient;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Product\ProductInterface;
@@ -550,15 +551,15 @@ trait RestaurantTrait
             'with_reusable_packaging' =>
                 $restaurant->isDepositRefundEnabled() || $restaurant->isLoopeatEnabled() || $restaurant->isDabbaEnabled(),
             'reusable_packaging_choice_loader' => new ReusablePackagingChoiceLoader($restaurant, $loopeatClient, $entityManager),
-            'options_loader' => function (ProductInterface $product) use ($restaurant) {
+            'options_loader' => function (ProductInterface $product) {
 
                 $opts = [];
-                foreach ($restaurant->getProductOptions() as $opt) {
+                foreach ($product->getProductOptions() as $opt) {
                     $opts[] = [
-                        'option'   => $opt->getId(),
-                        'name'     => $opt->getName(),
-                        'position' => $product->getPositionForOption($opt),
-                        'enabled'  => $product->isOptionEnabled($opt),
+                        'option'   => $opt->getOption()->getId(),
+                        'name'     => $opt->getOption()->getName(),
+                        'position' => $opt->getPosition(),
+                        'enabled'  => $opt->isEnabled(),
                     ];
                 }
 
@@ -689,9 +690,6 @@ trait RestaurantTrait
         LoopeatClient $loopeatClient,
         bool $taxIncl)
     {
-        // Hotfix for catalogs with 100+ options
-        ini_set('memory_limit', '512M');
-
         $filterCollection = $entityManager->getFilters();
         if ($filterCollection->isEnabled('disabled_filter')) {
             $filterCollection->disable('disabled_filter');
@@ -786,9 +784,6 @@ trait RestaurantTrait
         EntityManagerInterface $entityManager,
         LoopeatClient $loopeatClient)
     {
-        // Hotfix for catalogs with 100+ options
-        ini_set('memory_limit', '512M');
-
         $filterCollection = $entityManager->getFilters();
         if ($filterCollection->isEnabled('disabled_filter')) {
             $filterCollection->disable('disabled_filter');
@@ -869,6 +864,7 @@ trait RestaurantTrait
             $results = [];
             foreach ($options as $option) {
                 $results[] = [
+                    'id'   => $option->getId(),
                     'name' => $option->getName(),
                     'path' => $this->generateUrl($routes['product_option'], [
                         'restaurantId' => $restaurant->getId(),
@@ -892,9 +888,6 @@ trait RestaurantTrait
         EntityManagerInterface $entityManager,
         TranslatorInterface $translator)
     {
-        // Hotfix for catalogs with 100+ options
-        ini_set('memory_limit', '512M');
-
         $filterCollection = $entityManager->getFilters();
         if ($filterCollection->isEnabled('disabled_filter')) {
             $filterCollection->disable('disabled_filter');
@@ -1749,22 +1742,27 @@ trait RestaurantTrait
         ], $routes));
     }
 
-    public function restaurantImageFromUrlAction($id, Request $request,
+    public function restaurantImageFromPixabayAction($id, Request $request,
         UploadHandler $uploadHandler,
-        EntityManagerInterface $entityManager)
+        EntityManagerInterface $entityManager,
+        PixabayClient $pixabayClient)
     {
         $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
-        $url = $request->request->get('url');
+        $pixabayId = $request->request->get('pixabay_id');
 
         // https://stackoverflow.com/questions/40454950/set-symfony-uploaded-file-by-url-input
+        $webformatURL = $pixabayClient->getWebformatURLById($pixabayId);
+        if (null === $webformatURL) {
+            throw new BadRequestHttpException(sprintf('Image %s not found on Pixabay', $pixabayId));
+        }
 
         $file = tmpfile();
         $newfile = stream_get_meta_data($file)['uri'];
 
-        copy($url, $newfile);
+        copy($webformatURL, $newfile);
         $mimeType = mime_content_type($newfile);
         $size = filesize($newfile);
         $finalName = md5(uniqid(rand(), true)) . '.jpg';

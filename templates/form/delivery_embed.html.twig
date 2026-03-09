@@ -1,4 +1,4 @@
-{% extends 'bootstrap_3_layout.html.twig' %}
+{% extends 'form/delivery.html.twig' %}
 
 {% block task_embed_row %}
 <div id="{{ form.vars.id }}" data-form="task">
@@ -22,10 +22,6 @@
   {% if form.weight is defined %}
     {{ form_row(form.weight) }}
   {% endif %}
-
-  {{ form_row(form.address.newAddress.description) }}
-
-  {{ form_widget(form.type) }}
 
 </div>
 {% endblock %}

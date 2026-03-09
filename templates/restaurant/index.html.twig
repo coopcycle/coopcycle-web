@@ -1,4 +1,4 @@
-{% extends "base.html.twig" %}
+{% extends "frontend.html.twig" %}
 
 {% set restaurant_edit_route = is_granted('ROLE_ADMIN') ? 'admin_restaurant' : 'dashboard_restaurant' %}
 {% set restaurant_edit_url = path(restaurant_edit_route, { id: restaurant.id }) %}
@@ -48,7 +48,7 @@
 {% block body %}
   <div id="restaurant-body">
 
-    <header class="custom-container">
+    <header class="container-fluid">
       {% block restaurant_nav %}
         {% if not embed_context.enabled %}
         <div class="text-left mb-4">
@@ -181,11 +181,12 @@
     {% endif %}
 
     <main>
-      <div class="custom-container">
+      <div class="container-fluid">
         <div class="row">
           {% if menu is not null %}
             <div class="col-xs-12 col-lg-8">
-              <div id="menu">
+              <div id="menu" style="position: relative;">
+                <div id="loading-overlay" style="display: contents;"></div>
                 {#
                 WARNING
                 We cache the following block for performance

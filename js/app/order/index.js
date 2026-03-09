@@ -7,11 +7,19 @@ import Modal from 'react-modal'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
+
+import { MantineProvider } from '@mantine/core';
+import { LoadingOverlay } from '@mantine/core';
+
 import i18n, { getCurrencySymbol } from '../i18n'
 import LoopeatModal from './LoopeatModal'
 
 import './index.scss'
 import '../components/order/index.scss'
+
+// https://mantine.dev/styles/mantine-styles/#css-layers
+import '@mantine/core/styles.layer.css';
+import '@mantine/core/styles/LoadingOverlay.layer.css';
 
 import { disableBtn, enableBtn } from '../widgets/button'
 import { createStoreFromPreloadedState } from './redux/store'
@@ -33,8 +41,6 @@ import {
   selectPersistedTimeRange,
   timeRangeSlice,
 } from '../components/order/timeRange/reduxSlice'
-
-require('gasparesganga-jquery-loading-overlay')
 
 const {
   currency,
@@ -65,15 +71,18 @@ function enableTipInput() {
   })
 }
 
+const loadingOverlayRoot = createRoot(document.getElementById('loading-overlay'))
+
 function setLoading(isLoading) {
+
+  loadingOverlayRoot.render(
+    <MantineProvider>
+      <LoadingOverlay visible={isLoading} zIndex={1} overlayProps={{ radius: "sm", blur: 2 }} />
+    </MantineProvider>
+  )
   if (isLoading) {
-    $('.form-content').LoadingOverlay('show', {
-      image: false,
-      zIndex: 1,
-    })
     disableBtn(submitPageBtn)
   } else {
-    $('.form-content').LoadingOverlay('hide')
     enableBtn(submitPageBtn)
   }
 }

@@ -24,6 +24,7 @@ use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\Nonprofit;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\DeliveryRepository;
@@ -192,7 +193,7 @@ class AdminController extends AbstractController
             'reusable_packaging_new' => 'admin_restaurant_new_reusable_packaging',
             'mercadopago_oauth_redirect' => 'admin_restaurant_mercadopago_oauth_redirect',
             'mercadopago_oauth_remove' => 'admin_restaurant_mercadopago_oauth_remove',
-            'image_from_url' => 'admin_restaurant_image_from_url',
+            'image_from_pixabay' => 'admin_restaurant_image_from_pixabay',
         ];
     }
 
@@ -2494,44 +2495,6 @@ class AdminController extends AbstractController
         return $this->renderPackageSetForm($request, $packageSet, $objectManager);
     }
 
-    public function newOrderAction(
-        Request $request,
-        EntityManagerInterface $objectManager,
-        OrderFactory $orderFactory,
-        OrderNumberAssignerInterface $orderNumberAssigner,
-        PricingManager $pricingManager,
-    )
-    {
-        $delivery = new Delivery();
-        $form = $this->createForm(NewCustomOrderType::class, $delivery);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $delivery = $form->getData();
-
-            $variantName = $form->get('variantName')->getData();
-            $variantPrice = $form->get('variantPrice')->getData();
-
-            $order = $orderFactory->createForDelivery($delivery);
-            $pricingManager->processDeliveryOrder($order, [$pricingManager->getCustomProductVariant($delivery, new ArbitraryPrice($variantName, $variantPrice))]);
-
-            $order->setState(OrderInterface::STATE_ACCEPTED);
-
-            $objectManager->persist($order);
-            $objectManager->flush();
-
-            $orderNumberAssigner->assignNumber($order);
-
-            $objectManager->flush();
-
-            return $this->redirectToRoute('admin_order', [ 'id' => $order->getId() ]);
-        }
-
-        return $this->render('admin/new_order.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
     public function taskReceiptAction($id, TwigEnvironment $twig)
     {
         $task = $this->entityManager->getRepository(Task::class)->find($id);
@@ -3117,5 +3080,15 @@ class AdminController extends AbstractController
             'collections' => $collections,
             'shops' => $shops,
         ]));
+    }
+
+    #[Route(path: '/admin/cuisine-icons', name: 'admin_cuisine_icons')]
+    public function cuisineIconsAction(EntityManagerInterface $entityManager)
+    {
+        $cuisines = $entityManager->getRepository(Cuisine::class)->findAll();
+
+        return $this->render('admin/cuisine_icons.html.twig', [
+            'cuisines' => $cuisines,
+        ]);
     }
 }

@@ -14,10 +14,8 @@ class NameConverter implements AdvancedNameConverterInterface
 
     public function normalize(string $propertyName, ?string $class = null, ?string $format = null, array $context = []): string
     {
-        if (Taxon::class === $class) {
-            if ('menuChildren' === $propertyName) {
-                return $context['object']->isRoot() ? 'hasMenuSection' : 'hasMenuItem';
-            }
+        if (Taxon::class === $class && 'menuChildren' === $propertyName) {
+            return isset($context['object']) ? ($context['object']->isRoot() ? 'hasMenuSection' : 'hasMenuItem') : 'hasMenuSection';
         }
 
         return $this->nameConverter->normalize($propertyName, $class, $format, $context);

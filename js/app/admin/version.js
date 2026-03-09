@@ -4,21 +4,24 @@ import { compare } from 'compare-versions'
 import 'animate.css';
 
 const versionEl = document.getElementById('coopcycle-version');
-const version = versionEl.dataset.version;
 
-const lastViewedVersion = Cookies.get('__changelog_latest')
+if (versionEl) {
+  const version = versionEl.dataset.version;
 
-if (version !== 'dev-master') {
+  const lastViewedVersion = Cookies.get('__changelog_latest')
 
-    const shouldHighlight = lastViewedVersion ? compare(version, lastViewedVersion, '>') : true;
+  if (version !== 'dev-master') {
 
-    versionEl.addEventListener('click', () => Cookies.set('__changelog_latest', version));
+      const shouldHighlight = lastViewedVersion ? compare(version, lastViewedVersion, '>') : true;
 
-    if (shouldHighlight) {
-        versionEl.classList.add('font-weight-bold');
-        versionEl.classList.add('text-warning');
-        versionEl.classList.add('animate__animated', 'animate__delay-2s', 'animate__repeat-3', 'animate__headShake');
+      versionEl.addEventListener('click', () => Cookies.set('__changelog_latest', version));
 
-        versionEl.querySelector('[data-highlight="true"]').classList.remove('d-none');
-    }
+      if (shouldHighlight) {
+          versionEl.classList.add('font-weight-bold');
+          versionEl.classList.add('text-warning');
+          versionEl.classList.add('animate__animated', 'animate__delay-2s', 'animate__repeat-3', 'animate__headShake');
+
+          versionEl.querySelector('[data-highlight="true"]').classList.remove('d-none');
+      }
+  }
 }

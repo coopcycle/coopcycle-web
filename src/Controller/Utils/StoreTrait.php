@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller\Utils;
 
+use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Metadata\Exception\ItemNotFoundException;
 use AppBundle\Api\Dto\DeliveryInputDto;
 use AppBundle\Api\Dto\DeliveryMapper;
 use AppBundle\Entity\Address;
@@ -13,15 +15,10 @@ use AppBundle\Entity\Invitation;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\Sylius\OrderRepository;
-use AppBundle\Entity\Sylius\PricingStrategy;
-use AppBundle\Entity\Sylius\UseArbitraryPrice;
-use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
-use AppBundle\Entity\Task;
 use AppBundle\Entity\Task\RecurrenceRule;
+use AppBundle\Exception\DeliveryNotReversableException;
 use AppBundle\Exception\Pricing\NoRuleMatchedException;
 use AppBundle\Form\AddUserType;
-use AppBundle\Form\Order\NewOrderType;
-use AppBundle\Form\Order\ExistingRecurrenceRuleType;
 use AppBundle\Form\StoreAddressesType;
 use AppBundle\Form\StoreType;
 use AppBundle\Form\AddressType;
@@ -31,7 +28,6 @@ use AppBundle\Pricing\OrderDuplicate;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\DeliveryOrderManager;
-use AppBundle\Service\OrderManager;
 use AppBundle\Service\InvitationManager;
 use AppBundle\Sylius\Order\OrderInterface;
 use Carbon\Carbon;
@@ -46,9 +42,6 @@ use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Psr\Log\LoggerInterface;
-use Recurr\Exception\InvalidRRule;
-use Recurr\Rule;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -282,110 +275,13 @@ trait StoreTrait
         ]);
     }
 
-    public function newStoreDeliveryAction(
-        $id,
-        Request $request,
-        PricingManager $pricingManager,
-        DeliveryOrderManager $deliveryOrderManager,
-        OrderManager $orderManager,
-        EntityManagerInterface $entityManager,
-        TranslatorInterface $translator,
-        LoggerInterface $logger)
-    {
-        $routes = $request->attributes->get('routes');
-
-        $store = $entityManager
-            ->getRepository(Store::class)
-            ->find($id);
-
-        $this->accessControl($store, 'edit_delivery');
-
-        $delivery = null;
-        $previousArbitraryPrice = null;
-
-        if ($this->isGranted('ROLE_ADMIN')) {
-            // pre-fill fields with the data from a previous order
-            $data = $this->duplicateOrder($request, $store, $pricingManager);
-            if (null !== $data) {
-                $delivery = $data->delivery;
-                $previousArbitraryPrice = $data->previousArbitraryPrice;
-            }
-        }
-
-        if (null === $delivery) {
-            $delivery = $store->createDelivery();
-        }
-
-        $form = $this->createForm(NewOrderType::class, $delivery, [
-            'arbitrary_price' => $previousArbitraryPrice,
-            'validation_groups' => ['Default', 'delivery_check']
-        ]);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $delivery = $form->getData();
-
-            $priceForOrder = null;
-
-            if ($this->isGranted('ROLE_ADMIN') && $arbitraryPrice = $this->getArbitraryPrice($form)) {
-                $priceForOrder = new UseArbitraryPrice($arbitraryPrice);
-            } else {
-                $priceForOrder = new CalculateUsingPricingRules();
-            }
-
-            $order = null;
-            try {
-                $order = $deliveryOrderManager->createOrder($delivery, [
-                    'pricingStrategy' => $priceForOrder,
-                    // Force an admin to fix the pricing rules
-                    // maybe it would be a better UX to create an incident instead
-                    'throwException' => $this->isGranted('ROLE_ADMIN')
-                ]);
-
-            } catch (NoRuleMatchedException $e) {
-                $message = $translator->trans('delivery.price.error.priceCalculation', [], 'validators');
-                $form->addError(new FormError($message));
-            }
-
-            if (null !== $order) {
-
-                $this->handleRememberAddress($store, $form);
-                $this->handleBookmark($orderManager, $form, $order);
-
-                $this->handleNewRecurrenceRule($pricingManager, $logger, $store, $form, $delivery, $order, $priceForOrder);
-
-                if ($this->isGranted('ROLE_DISPATCHER')) {
-                    $order->setState(OrderInterface::STATE_ACCEPTED);
-                }
-
-                $entityManager->flush();
-
-                // TODO Add flash message
-
-                return $this->redirectToRoute('admin_order', [ 'id' => $order->getId() ]);
-            }
-        }
-
-        return $this->render('store/deliveries/new_legacy.html.twig', [
-            'layout' => $request->attributes->get('layout'),
-            'store' => $store,
-            'form' => $form->createView(),
-            'debug_pricing' => $request->query->getBoolean('debug', false),
-            'stores_route' => $routes['stores'],
-            'store_route' => $routes['store'],
-            'back_route' => $routes['back'],
-            'show_left_menu' => $request->attributes->get('show_left_menu', true),
-        ]);
-    }
-
     public function newStoreDeliveryReactFormAction(
         $id,
         Request $request,
         EntityManagerInterface $entityManager,
         PricingManager $pricingManager,
         DeliveryMapper $deliveryMapper,
+        IriConverterInterface $iriConverter
     ) {
         $store = $entityManager
             ->getRepository(Store::class)
@@ -393,19 +289,39 @@ trait StoreTrait
 
         $this->accessControl($store, 'edit_delivery');
 
+        $errors = [];
+
         $delivery = $store->createDelivery();
 
         /** @var DeliveryInputDto|null $formData */
         $formData = null;
 
         // pre-fill fields with the data from a previous order
-        if ($this->isGranted('ROLE_DISPATCHER') && $data = $this->duplicateOrder($request, $store, $pricingManager)) {
-            $formData = $deliveryMapper->map(
-                $data->delivery,
-                null,
-                $data->previousArbitraryPrice,
-                false
-            );
+        $fromOrder = null;
+        if ($this->isGranted('ROLE_DISPATCHER') && $request->query->has('from') && $request->query->has('action')) {
+            $fromOrder = $this->getFromOrder($iriConverter, $request->query->get('from'));
+            if ('clone' === $request->query->get('action')) {
+                /** @var OrderDuplicate  */
+                $duplicate = $pricingManager->duplicateOrder($store, $fromOrder);
+                $formData = $deliveryMapper->map(
+                    $duplicate->delivery,
+                    null,
+                    $duplicate->previousArbitraryPrice,
+                    false
+                );
+            } elseif ('reverse' === $request->query->get('action')) {
+                try {
+                    $reverse = $fromOrder->getDelivery()->reverse();
+                    $formData = $deliveryMapper->map(
+                        $reverse,
+                        null,
+                        null,
+                        false
+                    );
+                } catch (DeliveryNotReversableException $e) {
+                    $errors[] = 'form.delivery.errors.not_reversable';
+                }
+            }
         }
 
         return $this->render(
@@ -420,25 +336,25 @@ trait StoreTrait
                 'show_left_menu' => true,
                 'isDispatcher' => $this->isGranted('ROLE_DISPATCHER'),
                 'debug_pricing' => $request->query->getBoolean('debug', false),
+                'from_order' => $fromOrder,
+                'from_action' => $request->query->get('action'),
+                'errors' => $errors,
         ]));
     }
 
-    private function duplicateOrder(Request $request, Store $store, PricingManager $pricingManager): OrderDuplicate | null
+    private function getFromOrder(IriConverterInterface $iriConverter, string $iri): OrderInterface
     {
-        $hashid = $request->query->get('frmrdr');
+        $deliveryOrOrder = $iriConverter->getResourceFromIri($iri);
 
-        if (null === $hashid) {
-            return null;
+        if (!$deliveryOrOrder instanceof Delivery && !$deliveryOrOrder instanceof OrderInterface) {
+            throw new ItemNotFoundException();
         }
 
-        $hashids = new Hashids($this->getParameter('secret'), 16);
-        $decoded = $hashids->decode($hashid);
-        if (count($decoded) !== 1) {
-            return null;
+        if ($deliveryOrOrder instanceof Delivery) {
+            return $deliveryOrOrder->getOrder();
         }
 
-        $fromOrder = current($decoded);
-        return $pricingManager->duplicateOrder($store, $fromOrder);
+        return $deliveryOrOrder;
     }
 
     public function recurrenceRuleReactFormAction(
@@ -487,174 +403,6 @@ trait StoreTrait
             'isDispatcher' => $this->isGranted('ROLE_DISPATCHER'),
             'debug_pricing' => $request->query->getBoolean('debug', false),
         ]));
-    }
-
-    public function recurrenceRuleAction(
-        $storeId,
-        $recurrenceRuleId,
-        Request $request,
-        DeliveryManager $deliveryManager,
-        PricingManager $pricingManager,
-        EntityManagerInterface $entityManager,
-        LoggerInterface $logger,
-    )
-    {
-        $recurrenceRule = $entityManager
-            ->getRepository(RecurrenceRule::class)
-            ->find($recurrenceRuleId);
-
-        $store = $recurrenceRule->getStore();
-
-        // Currently the route is only accessible by ROLE_DISPATCHER,
-        // so this check is not doing much, but it would be useful
-        // if we decide to open the route to store owners
-        $this->denyAccessUnlessGranted('view', $store);
-
-        // The date is not relevant while viewing/editing the recurrence rules (only the time is),
-        // but as we have to provide it, we set it to tomorrow
-        // to make sure that tasks' after/before dates are in the future
-        $startDate = Carbon::now()->addDay()->format('Y-m-d');
-        $tempDelivery = $deliveryManager->createDeliveryFromRecurrenceRule($recurrenceRule, $startDate, false);
-
-        $routes = $request->attributes->get('routes');
-
-        $arbitraryPrice = null;
-        if ($arbitraryPriceTemplate = $recurrenceRule->getArbitraryPriceTemplate()) {
-            $arbitraryPrice = new ArbitraryPrice($arbitraryPriceTemplate['variantName'], $arbitraryPriceTemplate['variantPrice']);
-        }
-
-        $form = $this->createForm(ExistingRecurrenceRuleType::class, $tempDelivery, [
-            'arbitrary_price' => $arbitraryPrice,
-        ]);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $tempDelivery = $form->getData();
-
-            if ($this->isGranted('ROLE_ADMIN')) {
-                $arbitraryPrice = $this->getArbitraryPrice($form);
-            } else {
-                $arbitraryPrice = null;
-            }
-
-            $recurrRule = $this->getRecurrRule($form, $logger);
-
-            if (null !== $recurrRule) {
-                $pricingManager->updateRecurrenceRule($recurrenceRule, $tempDelivery, $recurrRule, $arbitraryPrice ? new UseArbitraryPrice($arbitraryPrice) : new CalculateUsingPricingRules());
-                $this->handleRememberAddress($store, $form);
-                $entityManager->flush();
-            } else {
-                $pricingManager->cancelRecurrenceRule($recurrenceRule, $tempDelivery);
-            }
-
-            return $this->redirectToRoute($routes['redirect_default'], ['id' => $storeId]);
-        }
-
-        return $this->render('store/recurrence_rules/item_legacy.html.twig', [
-            'layout' => $request->attributes->get('layout'),
-            'recurrenceRule' => $recurrenceRule,
-            'delivery' => $tempDelivery,
-            'form' => $form->createView(),
-            'debug_pricing' => $request->query->getBoolean('debug', false),
-        ]);
-    }
-
-    private function handleRememberAddress(Store $store, FormInterface $form)
-    {
-        foreach ($form->get('tasks') as $form) {
-            $addressForm = $form->get('address');
-            $rememberAddress = $addressForm->has('rememberAddress') && $addressForm->get('rememberAddress')->getData();
-            $duplicateAddress = $addressForm->has('duplicateAddress') && $addressForm->get('duplicateAddress')->getData();
-            // If the user has specified to duplicate address,
-            // we *DON'T* add it to the address book
-            if ($rememberAddress && !$duplicateAddress) {
-                $task = $form->getData();
-                $store->addAddress($task->getAddress());
-            }
-        }
-    }
-
-    private function handleBookmark(OrderManager $orderManager, FormInterface $form, OrderInterface $order): void
-    {
-        if (!$this->isGranted('ROLE_DISPATCHER')) {
-            return;
-        }
-
-        if (!$form->has('bookmark')) {
-            return;
-        }
-
-        $isBookmarked = true === $form->get('bookmark')->getData();
-        $orderManager->setBookmark($order, $isBookmarked);
-    }
-
-    private function handleNewRecurrenceRule(
-        PricingManager $pricingManager,
-        LoggerInterface $logger,
-        Store $store,
-        FormInterface $form,
-        Delivery $delivery,
-        OrderInterface $order,
-        PricingStrategy $pricingStrategy = new CalculateUsingPricingRules()): void
-    {
-        if (!$this->isGranted('ROLE_ADMIN')) {
-            return;
-        }
-
-        $recurrRule = $this->getRecurrRule($form, $logger);
-
-        if (null === $recurrRule) {
-            return;
-        }
-
-        $recurrenceRule = $pricingManager->createRecurrenceRule($store, $delivery, $recurrRule, $pricingStrategy);
-
-        if (null !== $recurrenceRule) {
-            $order->setSubscription($recurrenceRule);
-
-            foreach ($delivery->getTasks() as $task) {
-                $task->setRecurrenceRule($recurrenceRule);
-            }
-        }
-    }
-
-    private function getRecurrRule(FormInterface $form, LoggerInterface $logger): ?Rule
-    {
-        if (!$form->has('recurrence')) {
-            return null;
-        }
-
-        $recurrenceData = $form->get('recurrence')->getData();
-
-        if (null === $recurrenceData) {
-            return null;
-        }
-
-        $recurrence = json_decode($recurrenceData, true);
-
-        if (null === $recurrence) {
-            return null;
-        }
-
-        $ruleStr = $recurrence['rule'];
-
-        if (null === $ruleStr) {
-            return null;
-        }
-
-        $rule = null;
-        try {
-            $rule = new Rule($ruleStr);
-        } catch (InvalidRRule $e) {
-            $logger->warning('Invalid recurrence rule', [
-                'rule' => $ruleStr,
-                'exception' => $e->getMessage(),
-            ]);
-            return null;
-        }
-
-        return $rule;
     }
 
     public function storeAction($id, Request $request, TranslatorInterface $translator)
@@ -879,6 +627,7 @@ trait StoreTrait
         ]);
     }
 
+    #[HideSoftDeleted]
     public function storeAddressesAction($id, Request $request, TranslatorInterface $translator)
     {
         $store = $this->entityManager
@@ -908,7 +657,7 @@ trait StoreTrait
 
         $addressForm = $this->createStoreAddressForm($address);
 
-        return $this->render('store/addresses.html.twig', [
+        return $this->render('store/addresses.html.twig', $this->auth([
             'layout' => $request->attributes->get('layout'),
             'store' => $store,
             'form' => $form->createView(),
@@ -918,7 +667,7 @@ trait StoreTrait
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
             'store_addresses_route' => $routes['store_addresses'],
-        ]);
+        ]));
     }
 
     private function createStoreAddressForm(Address $address)

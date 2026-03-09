@@ -772,6 +772,36 @@
         "INCIDENTS_REFUSE_SUGGESTIONS": "Rechazar sugerencias",
         "INCIDENTS_APPLY_SUGGESTIONS": "Aplicar sugerencias",
         "INCIDENTS_SUGGESTED_CHANGES": "Cambios sugeridos",
-        "INCIDENTS_ERROR_LOADING_SUGGESTED_PRICE_CHANGE": "No pudimos calcular el precio con los cambios sugeridos"
+        "INCIDENTS_ERROR_LOADING_SUGGESTED_PRICE_CHANGE": "No pudimos calcular el precio con los cambios sugeridos",
+        "METRICS": {
+            "NUMBER_OF_STORES": "Número de tiendas",
+            "AVERAGE_DISTANCE": "Distancia media",
+            "NUMBER_OF_TASKS": "Número de tareas",
+            "TASKS_TIMING": "Tareas realizadas a tiempo, demasiado pronto o demasiado tarde",
+            "AVERAGE_TASK_TIMING_MINUTES": "Promedio de minutos de adelanto o retraso en las tareas",
+            "PICKUPS_TIMING_DISTRIBUTION": "Número de recogidas realizadas X minutos antes/después de lo previsto",
+            "DROPOFFS_TIMING_DISTRIBUTION": "Número de entregas realizadas X minutos antes/después de lo previsto",
+            "PICKUPS_PERCENTAGE_DISTRIBUTION": "Número de recogidas realizadas % antes/después de lo previsto",
+            "DROPOFFS_PERCENTAGE_DISTRIBUTION": "Número de entregas realizadas % antes/después de lo previsto",
+            "ZERO_WASTE_ORDERS": "Pedidos sin residuos",
+            "INCOME_PER_DAY_AND_HOUR": "Ingresos por día de la semana y franja horaria",
+            "INCOME_PER_WEEK": "Ingresos por semana",
+            "BEST_RESTAURANTS": "Mejores restaurantes",
+            "AVERAGE_ORDER_TOTAL": "Total medio de pedido",
+            "ORDERS_PER_DAY_OF_WEEK": "Número de pedidos por día de la semana",
+            "ORDERS_PER_HOUR_RANGE": "Número de pedidos por franja horaria",
+            "ORDERS_PER_ZONE": "Número de pedidos por zona",
+            "ORDERS_PER_PAYMENT_METHOD": "Número de pedidos por método de pago",
+            "NAV_MARKETPLACE": "Marketplace",
+            "NAV_LOGISTICS": "Logística",
+            "NAV_PROFITABILITY": "Rentabilidad",
+            "NAV_ZERO_WASTE": "Residuo cero",
+            "PRESET_THIS_WEEK": "Esta semana",
+            "PRESET_LAST_WEEK": "La semana pasada",
+            "PRESET_THIS_MONTH": "Este mes",
+            "PRESET_LAST_MONTH": "El mes pasado",
+            "PRESET_LAST_3_MONTHS": "Los últimos 3 meses",
+            "PRESET_LAST_6_MONTHS": "Los últimos 6 meses"
+        }
     }
 }

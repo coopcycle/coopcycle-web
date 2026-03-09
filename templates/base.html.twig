@@ -30,14 +30,6 @@
 
     {% block structured_data %}{% endblock %}
 
-    {% if coopcycle_has_banner() %}
-    <style>
-    .homepage-search, .restaurant-list-header {
-      background-image: url({{ url('assets_banner_svg')  }});
-    }
-    </style>
-    {% endif %}
-
     <link type="text/css" rel="stylesheet" href="{{ asset('bundles/craueformflow/css/buttons.css') }}" />
 
     {# run 'app' script in <head> as suggested by Turbo;
@@ -59,30 +51,12 @@
     data-currency-code="{{ currency_context.currencyCode }}"
     data-timezone="{{ coopcycle_setting('timezone') }}"
     data-turbo="false">
+    {# Will appear *ABOVE* content #}
     {% block menu %}
-      {% if not embed_context.enabled %}
-      {% include "menu.html.twig" %}
-      {% endif %}
     {% endblock %}
     {% block banner %}
-      {% if is_demo %}
-        <section class="banner">
-          <div class="container">
-            <div class="row">
-              <div class="col-md-8 col-md-offset-2 text-center">
-                <h3>{{ 'demo.disclaimer'|trans|raw }}</h3>
-                <h4 class="hidden-xs">{{ 'demo.disclaimer.subtitle'|trans|raw }}</h4>
-              </div>
-            </div>
-          </div>
-        </section>
-      {% endif %}
-      {% include '_partials/maintenance.html.twig' %}
-      {% include '_partials/banner.html.twig' %}
     {% endblock %}
-    {% block flash_messages %}
-      {% include '_partials/flash_messages.html.twig' %}
-    {% endblock %}
+    {% include '_partials/flash_messages.html.twig' %}
     <div class="content">
     {% block body %}{% endblock %}
     </div>

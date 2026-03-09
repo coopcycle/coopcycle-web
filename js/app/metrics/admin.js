@@ -16,13 +16,18 @@ if (rootElement) {
 
   const { dateRange, view, zeroWaste, tags, uiTasksMetricsEnabled } = { ...rootElement.dataset }
 
-  const store = createStore({
-    dateRange,
+  const preloadedState = {
     view,
     zeroWaste: JSON.parse(zeroWaste),
     tags: JSON.parse(tags),
     uiTasksMetricsEnabled,
-  })
+  }
+
+  if (dateRange && dateRange.includes(',')) {
+    preloadedState.dateRange = dateRange.split(',')
+  }
+
+  const store = createStore(preloadedState)
 
   const cubeApi = cubejs(
     rootElement.dataset.token,

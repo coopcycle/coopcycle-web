@@ -1,0 +1,22 @@
+.ant-calendar-picker {
+  margin-right: 5px;
+}
+
+.ant-alert-info {
+  background-color: $alert-info-bg !important;
+  border-color: $alert-info-border !important;
+
+  .ant-alert-icon {
+    color: $alert-info-text !important;
+  }
+
+  .ant-alert-message {
+    color: $alert-info-text !important;
+  }
+}
+
+.ant-input::placeholder {
+  // copy-paste from bootstrap
+  color: #999;
+  opacity: 1;
+}

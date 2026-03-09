@@ -3,9 +3,19 @@ import {
   CHANGE_VIEW,
 } from './actions'
 
+function getDefaultDateRange() {
+  const end = new Date()
+  const start = new Date()
+  start.setDate(start.getDate() - 30)
+  return [
+    start.toISOString().split('T')[0],
+    end.toISOString().split('T')[0],
+  ]
+}
+
 export const initialState = {
   view: 'marketplace',
-  dateRange: '30d',
+  dateRange: getDefaultDateRange(),
   zeroWaste: false,
   uiTasksMetricsEnabled: false,
 }

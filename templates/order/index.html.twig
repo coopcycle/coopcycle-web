@@ -1,4 +1,4 @@
-{% extends "base.html.twig" %}
+{% extends "frontend.html.twig" %}
 
 {% form_theme form 'form/order.html.twig' %}
 {% form_theme form_vytal 'form/order.html.twig' %}
@@ -54,7 +54,8 @@
     {{ form_start(form, { attr: { style: 'padding-bottom: 66px;', class: (embed_context.enabled ? 'pt-4' : '') } }) }}
 
     <div class="row">
-      <div class="col-xs-12 form-content">
+      <div class="col-xs-12 form-content" style="position: relative;">
+        <div id="loading-overlay" style="display: contents;"></div>
 
         {% include 'order/breadcrumb.html.twig' %}
 

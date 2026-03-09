@@ -15,7 +15,6 @@ use AppBundle\Action\Delivery\Cancel as CancelDelivery;
 use AppBundle\Action\Delivery\Drop as DropDelivery;
 use AppBundle\Action\Delivery\Pick as PickDelivery;
 use AppBundle\Action\Delivery\BulkAsync as BulkAsyncDelivery;
-use AppBundle\Action\Delivery\PODExport as PODExportDelivery;
 use AppBundle\Action\Delivery\SuggestOptimizations as SuggestOptimizationsController;
 use AppBundle\Api\Dto\DeliveryFromTasksInput;
 use AppBundle\Api\Dto\DeliveryInputDto;
@@ -29,11 +28,12 @@ use AppBundle\Entity\Package\PackagesAwareInterface;
 use AppBundle\Entity\Package\PackagesAwareTrait;
 use AppBundle\Entity\Package\PackageWithQuantity;
 use AppBundle\Entity\Task\CollectionInterface as TaskCollectionInterface;
+use AppBundle\Exception\DeliveryNotReversableException;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Validator\Constraints\CheckDelivery as AssertCheckDelivery;
 use AppBundle\Validator\Constraints\Delivery as AssertDelivery;
 use AppBundle\Vroom\Shipment as VroomShipment;
-use DeliveryPODExportInput;
+use Carbon\Carbon;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -168,13 +168,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
             security: 'is_granted(\'ROLE_OAUTH2_DELIVERIES\')',
             deserialize: false
         ),
-        new Post(
-            uriTemplate: '/deliveries/pod_export',
-            controller: PODExportDelivery::class,
-            /* input: DeliveryPODExportInput::class, */
-            write: false,
-            deserialize: false
-        )
     ],
     normalizationContext: ['groups' => ['delivery', 'address', 'package_delivery_order_minimal']],
     denormalizationContext: ['groups' => ['order_create']],
@@ -668,5 +661,35 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
         }
 
         return self::TYPE_MULTI_MULTI;
+    }
+
+    public function reverse(): Delivery
+    {
+        if (self::getType($this->getTasks()) !== self::TYPE_SIMPLE) {
+            throw new DeliveryNotReversableException();
+        }
+
+
+        // TODO Only allow to reverse "simple" deliveries
+        $pickup = $this->getPickup();
+        $dropoff = $this->getDropoff();
+
+        $reverse = self::createWithAddress($dropoff->getAddress(), $pickup->getAddress());
+
+        $reverse->setPickupRange($this->getDropoff()->getAfter(), $this->getDropoff()->getBefore());
+
+        $seconds = $this->getDuration();
+        if ($seconds > 0) {
+            $after = Carbon::make($reverse->getPickup()->getBefore())->addSeconds($seconds);
+        } else {
+            // Add 1h by default
+            $after = Carbon::make($reverse->getPickup()->getBefore())->addHour();
+        }
+
+        $before = Carbon::make($after)->addMinutes('15');
+
+        $reverse->setDropoffRange($after, $before);
+
+        return $reverse;
     }
 }

@@ -211,14 +211,15 @@ class TaskListRepository extends ServiceEntityRepository
                 ($tasksWithIncidents[$task->getId()] ?? 0) > 0,
                 $row['organizationName'],
                 new MyTaskMetadataDto(
-                    $task->getMetadata()['delivery_position'] ?? null, //FIXME extract from the query
+                    $task->getMetadata()['delivery_position'] ?? null, // FIXME extract from the query
                     $row['storeId'] ? $this->iriConverter->getIriFromResource(Store::class, context: ['uri_variables' => ['id' => $row['storeId']]]) : null,
                     $row['orderId'] ?? null,
                     $row['orderNumber'] ?? null,
                     $this->getPaymentMethod($paymentMethodsByOrderId, $orderId),
                     $row['orderTotal'] ?? null,
                     $this->getLoopeatReturns($orderId, $task, $row),
-                    $this->getIsZeroWaste($orderId, $zeroWasteOrders)
+                    $this->getIsZeroWaste($orderId, $zeroWasteOrders),
+                    $task->getMetadata()['documents'] ?? null // FIXME extract from the query
                 )
             );
         }, $tasksQueryResult);
@@ -254,7 +255,7 @@ class TaskListRepository extends ServiceEntityRepository
 
     /**
      * Find the most recent tasklist this task has been assigned in.
-     * 
+     *
      * The task has been done in the context of this TaskList.
      */
     public function findLastTaskListByTask(Task $task) {

@@ -216,6 +216,7 @@ dashboard_restaurant_product:
             restaurants: dashboard_restaurants
             restaurant: dashboard_restaurant
             products: dashboard_restaurant_products
+            product_options: dashboard_restaurant_product_options
 
 dashboard_restaurant_planning:
     path: /dashboard/restaurants/{id}/planning
@@ -445,10 +446,10 @@ profile_redirect_to_dashboard:
         _controller: AppBundle\Controller\ProfileController::redirectToDashboardAction
     methods:  [ GET ]
 
-dashboard_restaurant_image_from_url:
+dashboard_restaurant_image_from_pixabay:
     path: /dashboard/restaurants/{id}/image-from-url
     defaults:
-        _controller: AppBundle\Controller\DashboardController::restaurantImageFromUrlAction
+        _controller: AppBundle\Controller\DashboardController::restaurantImageFromPixabayAction
         layout: 'dashboard.html.twig'
         routes:
             restaurants: dashboard_restaurants

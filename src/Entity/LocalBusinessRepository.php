@@ -389,6 +389,8 @@ class LocalBusinessRepository extends EntityRepository
                             default:
                                 break;
                         }
+                        break;
+
                     case 'collection':
                         $qb
                             ->innerJoin(ShopCollectionItem::class, 'collection_item', Expr\Join::WITH, 'collection_item.shop = r.id')

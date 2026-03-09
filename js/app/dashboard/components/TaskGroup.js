@@ -4,8 +4,6 @@ import { connect } from "react-redux";
 import { withTranslation } from 'react-i18next'
 import Popconfirm from 'antd/lib/popconfirm'
 
-require('gasparesganga-jquery-loading-overlay')
-
 import Task from './Task'
 import { selectExpandedTasksGroupsPanelsIds } from '../redux/selectors'
 import { toggleTasksGroupPanelExpanded } from '../redux/actions'
@@ -76,14 +74,11 @@ class TaskGroup extends React.Component {
 
   async onEditSubmitted(e) {
     e.preventDefault()
-    $('.task__draggable').LoadingOverlay('show', {image: false})
     const group = Object.assign({}, this.state.group, {name: this.state.newName})
     const updatedGroup = await this.props.onEdit(group)
     this.setState({
       group: updatedGroup !== null ? updatedGroup : this.state.group,
       editName: false
-    }, () => {
-      $('.task__draggable').LoadingOverlay('hide')
     })
   }
 
@@ -98,7 +93,7 @@ class TaskGroup extends React.Component {
     })
 
     return (
-      <div className="panel panel-default panel--group nomargin task__draggable">
+      <div className="panel panel-default panel--group m-0 task__draggable">
         <div className="panel-heading" role="tab">
           <h4 className="panel-title d-flex align-items-center">
             <i className="fa fa-folder flex-grow-0"></i>

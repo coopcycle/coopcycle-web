@@ -19,7 +19,7 @@
       {% else %}
         {% set image_url = coopcycle_asset(store, 'imageFile', 'store_thumbnail') %}
         {% if image_url is empty %}
-          {% set image_url = '//via.placeholder.com/512.jpg' %}
+          {% set image_url = '//placehold.co/512x512' %}
         {% endif %}
         <div class="form-group">
           <div class="image-uploader"

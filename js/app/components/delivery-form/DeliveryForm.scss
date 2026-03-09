@@ -2,7 +2,6 @@
   display: flex;
   flex-wrap: wrap;
   gap: 2em;
-  padding: 2em;
 }
 
 .new-order {
@@ -27,7 +26,7 @@
 }
 
 .delivery-form {
-  justify-content: space-around;
+  justify-content: space-between;
 }
 
 .order-informations {
@@ -71,7 +70,6 @@
   }
 
   .new-order {
-    margin-top: 2em;
     width: 100%;
   }
 
