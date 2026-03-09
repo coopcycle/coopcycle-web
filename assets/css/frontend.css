@@ -153,13 +153,6 @@
     min-width: 100%;
   }
 }
-
-.btn-group--vehicle {
-  width: 100%;
-  > label {
-    min-width: 50%;
-  }
-}
 */
 
 .btn-google-play {
