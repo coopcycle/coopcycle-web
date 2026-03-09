@@ -78,6 +78,7 @@
     "@types/react": "^18.3.1",
     "@types/react-dom": "^18.3.1",
     "@uppy/dashboard": "^5.1.1",
+    "@uppy/image-editor": "^4.2.0",
     "@uppy/react": "^5.2.0",
     "@uppy/xhr-upload": "^5.1.1",
     "animate.css": "^4.1.1",

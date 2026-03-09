@@ -42,10 +42,8 @@ services:
     arguments:
       $routing: '@routing_service'
       $translator: '@translator'
-      $authorizationChecker: '@security.authorization_checker'
       $country: '%country_iso%'
       $locale: '%env(COOPCYCLE_LOCALE)%'
-      $orderManager: '@AppBundle\Service\OrderManager'
     tags: [ form.type ]
 
   AppBundle\Form\DeliveryEmbedType:
@@ -58,18 +56,6 @@ services:
     parent: AppBundle\Form\DeliveryType
     autowire: false
     autoconfigure: false
-    tags: [ form.type ]
-
-  AppBundle\Form\Order\NewOrderType:
-    parent: AppBundle\Form\DeliveryType
-    tags: [ form.type ]
-
-  AppBundle\Form\Order\ExistingOrderType:
-    parent: AppBundle\Form\DeliveryType
-    tags: [ form.type ]
-
-  AppBundle\Form\Order\ExistingRecurrenceRuleType:
-    parent: AppBundle\Form\DeliveryType
     tags: [ form.type ]
 
   AppBundle\Form\OrderType:
@@ -103,8 +89,6 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\TaskType:
-    arguments:
-      $locale: '%env(COOPCYCLE_LOCALE)%'
     tags: [ form.type ]
 
   AppBundle\Form\RestaurantType:
@@ -154,11 +138,6 @@ services:
   AppBundle\Form\MaintenanceType:
     arguments:
       - '@snc_redis.default'
-    tags: [ form.type ]
-
-  AppBundle\Form\AddressBookType:
-    arguments:
-      $country: '%country_iso%'
     tags: [ form.type ]
 
   sylius.form.extension.type.promotion_coupon:

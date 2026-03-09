@@ -551,15 +551,15 @@ trait RestaurantTrait
             'with_reusable_packaging' =>
                 $restaurant->isDepositRefundEnabled() || $restaurant->isLoopeatEnabled() || $restaurant->isDabbaEnabled(),
             'reusable_packaging_choice_loader' => new ReusablePackagingChoiceLoader($restaurant, $loopeatClient, $entityManager),
-            'options_loader' => function (ProductInterface $product) use ($restaurant) {
+            'options_loader' => function (ProductInterface $product) {
 
                 $opts = [];
-                foreach ($restaurant->getProductOptions() as $opt) {
+                foreach ($product->getProductOptions() as $opt) {
                     $opts[] = [
-                        'option'   => $opt->getId(),
-                        'name'     => $opt->getName(),
-                        'position' => $product->getPositionForOption($opt),
-                        'enabled'  => $product->isOptionEnabled($opt),
+                        'option'   => $opt->getOption()->getId(),
+                        'name'     => $opt->getOption()->getName(),
+                        'position' => $opt->getPosition(),
+                        'enabled'  => $opt->isEnabled(),
                     ];
                 }
 
@@ -690,9 +690,6 @@ trait RestaurantTrait
         LoopeatClient $loopeatClient,
         bool $taxIncl)
     {
-        // Hotfix for catalogs with 100+ options
-        ini_set('memory_limit', '512M');
-
         $filterCollection = $entityManager->getFilters();
         if ($filterCollection->isEnabled('disabled_filter')) {
             $filterCollection->disable('disabled_filter');
@@ -787,9 +784,6 @@ trait RestaurantTrait
         EntityManagerInterface $entityManager,
         LoopeatClient $loopeatClient)
     {
-        // Hotfix for catalogs with 100+ options
-        ini_set('memory_limit', '512M');
-
         $filterCollection = $entityManager->getFilters();
         if ($filterCollection->isEnabled('disabled_filter')) {
             $filterCollection->disable('disabled_filter');
@@ -870,6 +864,7 @@ trait RestaurantTrait
             $results = [];
             foreach ($options as $option) {
                 $results[] = [
+                    'id'   => $option->getId(),
                     'name' => $option->getName(),
                     'path' => $this->generateUrl($routes['product_option'], [
                         'restaurantId' => $restaurant->getId(),
@@ -893,9 +888,6 @@ trait RestaurantTrait
         EntityManagerInterface $entityManager,
         TranslatorInterface $translator)
     {
-        // Hotfix for catalogs with 100+ options
-        ini_set('memory_limit', '512M');
-
         $filterCollection = $entityManager->getFilters();
         if ($filterCollection->isEnabled('disabled_filter')) {
             $filterCollection->disable('disabled_filter');

@@ -14,6 +14,7 @@ import { Button, Flex, Tooltip, Popover, Input, DatePicker } from 'antd';
 import sanitizeHtml from 'sanitize-html';
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard';
+import ImageEditor from '@uppy/image-editor';
 import XHR from '@uppy/xhr-upload';
 import { ArrowRight } from 'lucide-react';
 import moment from 'moment'
@@ -108,12 +109,24 @@ const SlideContent = ({ slide, index, uploadEndpoint, onChange }) => {
 
     console.log(`Configuring Uppy with ${uploadEndpoint} for slide ${index}`)
     const uppy = new Uppy({
-      id: uniqueKey
+      id: uniqueKey,
+      restrictions: {
+        allowedFileTypes: ['image/*'],
+      }
     })
       .use(Dashboard, {
         trigger: `#${uniqueKey}`,
         inline: false,
-        target: 'body'
+        target: 'body',
+        autoOpen: 'imageEditor',
+        closeAfterFinish: true,
+        allowMultipleUploadBatches: false,
+      })
+      .use(ImageEditor, {
+        // Warning: Uppy uses Cropper 1.x
+        cropperOptions: {
+          aspectRatio: 1,
+        }
       })
       .use(XHR, {
         endpoint: uploadEndpoint,
@@ -135,7 +148,11 @@ const SlideContent = ({ slide, index, uploadEndpoint, onChange }) => {
       }
     })
 
-  }, [])
+    return () => {
+      uppy.destroy();
+    }
+
+  }, [index, onChange, uniqueKey, uploadEndpoint])
 
   return (
     <a href="#" onClick={(e) => e.preventDefault()} style={{

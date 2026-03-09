@@ -1,9 +1,55 @@
 import moment from 'moment'
-import AddressBook from '../delivery/AddressBook'
 import DateTimePicker from '../widgets/DateTimePicker'
-import { createPackagesWidget } from '../forms/delivery'
 
 import './embed-start.scss'
+
+function toPackages(el) {
+  const packages = []
+  $(`#${el.id}_packages_list`).children().each(function() {
+    packages.push({
+      type: $(this).find('select').val(),
+      quantity: $(this).find('input[type="number"]').val()
+    })
+  })
+  return packages
+}
+
+function createPackageForm(el, $list, cb) {
+  var counter = $list.data('widget-counter') || $list.children().length
+  var newWidget = $list.attr('data-prototype')
+  newWidget = newWidget.replace(/__package__/g, counter)
+  counter++
+  $list.data('widget-counter', counter)
+  var newElem = $(newWidget)
+  newElem.find('input[type="number"]').val(1)
+  newElem.find('input[type="number"]').on('change', () => {
+    if (cb && typeof cb === 'function') cb(toPackages(el))
+  })
+  newElem.appendTo($list)
+}
+
+function createPackagesWidget(el, packagesRequired, cb) {
+  const isNew = document.querySelectorAll(`#${el.id}_packages .delivery__form__packages__list-item`).length === 0
+  if (isNew && packagesRequired) {
+    createPackageForm(el, $(`#${el.id}_packages_list`), cb)
+  }
+  $(`#${el.id}_packages_add`).click(function() {
+    const selector = $(this).attr('data-target')
+    createPackageForm(el, $(selector), cb)
+    if (cb && typeof cb === 'function') cb(toPackages(el))
+  })
+  $(`#${el.id}_packages`).on('click', '[data-delete]', function() {
+    const $target = $($(this).attr('data-target'))
+    if ($target.length === 0) return
+    const $list = $target.parent()
+    if (packagesRequired && $list.children().length === 1) return
+    $target.remove()
+    if (cb && typeof cb === 'function') cb(toPackages(el))
+  })
+  $(`#${el.id}_packages`).on('change', 'select', function() {
+    if (cb && typeof cb === 'function') cb(toPackages(el))
+  })
+}
 
 const getDateTimePickerContainer = trigger => trigger.parentNode
 
@@ -26,12 +72,6 @@ taskForms.forEach(function(el) {
       }
     })
   }
-
-  new AddressBook(document.querySelector(`#${el.id}_address`), {
-    existingAddressControl: document.querySelector(`#${el.id}_address_existingAddress`),
-    newAddressControl: document.querySelector(`#${el.id}_address_newAddress_streetAddress`),
-    isNewAddressControl: document.querySelector(`#${el.id}_address_isNewAddress`),
-  })
 
   const packages = document.querySelector(`#${el.id}_packages`)
 

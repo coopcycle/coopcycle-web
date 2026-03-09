@@ -30,8 +30,6 @@ class NewCustomOrderType extends DeliveryType
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'with_tags' => false,
-            'with_address_props' => true,
             'asap_timing' => true,
         ]);
     }
