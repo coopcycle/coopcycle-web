@@ -36,7 +36,7 @@ final class Version20230531134316 extends AbstractMigration
                 $type = ReusablePackaging::TYPE_LOOPEAT;
             }
             if ($name === 'dabba') {
-                $type = ReusablePackaging::TYPE_DABBA;
+                $type = 'dabba';
             }
             if ($name === 'vytal') {
                 $type = ReusablePackaging::TYPE_VYTAL;
