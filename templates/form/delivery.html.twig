@@ -36,10 +36,6 @@ col-md-9
     {{ form_row(form.timeSlot) }}
   {% endif %}
 
-  {% if form.switchTimeSlot is defined and not form.switchTimeSlot.rendered %}
-    {{ form_row(form.switchTimeSlot) }}
-  {% endif %}
-
   {% if form.packages is defined %}
     {{ form_row(form.packages) }}
   {% endif %}
@@ -51,8 +47,6 @@ col-md-9
   {{ form_row(form.comments) }}
 
   {# The fields below are hidden #}
-
-  {{ form_widget(form.type) }}
 
   {% if form.doneAfter is defined %}
     {{ form_widget(form.doneAfter) }}

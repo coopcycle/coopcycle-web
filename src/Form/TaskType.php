@@ -27,15 +27,6 @@ class TaskType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('type', ChoiceType::class, [
-                'choices' => [
-                    'Pickup' => Task::TYPE_PICKUP,
-                    'Dropoff' => Task::TYPE_DROPOFF,
-                ],
-                'expanded' => true,
-                'multiple' => false,
-                'disabled' => false,
-            ])
             ->add('address', AddressType::class, [
                 'with_widget' => true,
             ])
