@@ -493,9 +493,6 @@ class Order extends BaseOrder implements OrderInterface
     protected $shippingTimeRange;
 
 
-    protected $nonprofit;
-
-
     #[Assert\Expression("!this.isTakeaway() or (this.isTakeaway() and this.getVendor().isFulfillmentMethodEnabled('collection'))", message: 'order.collection.not_available', groups: ['cart'])]
     protected $takeaway = false;
 
@@ -1505,16 +1502,6 @@ class Order extends BaseOrder implements OrderInterface
     public function isFree(): bool
     {
         return !$this->isEmpty() && $this->getItemsTotal() > 0 && $this->getTotal() === 0;
-    }
-
-    public function getNonprofit()
-    {
-        return $this->nonprofit;
-    }
-
-    public function setNonprofit($nonprofit)
-    {
-        $this->nonprofit = $nonprofit;
     }
 
     public function getInvitation()

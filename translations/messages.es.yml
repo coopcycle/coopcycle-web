@@ -1591,8 +1591,6 @@ store.form.cash_on_delivery_enabled.help: Esto permitirá clientes pagar en efec
 roles.ROLE_DISPATCHER.help: "Dispatcher: Acceso total a las tareas\n"
 activity.order.restored: 'El pedido #order/%aggregate_id% ha sido restablecido'
 order.cart.donation: Donación
-form.checkout_address.nonprofit.placeholder: Elige tu organización sin ánimo de lucro
-  favorita
 users.disabled: Desactivado
 vehicles.breadcrumb.help: Definir flota de vehículos
 vehicles.breadcrumb: Vehículos
@@ -1632,8 +1630,6 @@ loopeat.manage_modal.text: Puede liquidar el depósito con un importe a cargo de
 form.business_account.hub.label: Hub
 form.api_app.type.label: Mecanismo de autenticación de la API
 form.api_app.type.api_key.label: API Key - para Urbantz
-adminDashboard.nonprofits.confirm_delete: ¿Estás seguro de que quieres eliminar esta
-  organización sin ánimo de lucro?
 order.cart.donation.disclaimer: Le proponemos donar %percentage% de los ingresos de
   tu pedido a una de nuestras asociaciones colaboradoras. No pagarás más.
 form.task_export.dv4cul.label: Exportar en formato DV4CUL
@@ -1714,9 +1710,6 @@ form.business_account.hub.placeholder: Elegir hub
 form.api_app.type.oauth.label: OAuth - para WordPress
 form.settings.mercadopago.client_secret.label: Cliente secreto
 localBusiness.form.business_address.help: Esta dirección se utilizará en los recibos
-order.export.heading.nonprofit: Sin ánimo de lucro
-adminDashboard.nonprofits.createNew: Añadir una nueva organización sin ánimo de lucro
-adminDashboard.nonprofits.title: Organizaciones sin ánimo de lucro
 form.delivery.arbitrary_price.label: Definir el precio manualmente
 form.store_type.time_slots.label: Franjas horarias
 form.store_type.time_slots.set_as_default: Establecer como franja horaria por defecto
