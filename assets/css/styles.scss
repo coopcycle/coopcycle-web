@@ -3,23 +3,9 @@ html {
 }
 
 body {
-  @media screen and (min-width: $screen-md-min) {
+  @media screen and (min-width: $grid-float-breakpoint) {
     display: flex;
     flex-direction: column;
-  }
-}
-
-.content {
-  flex: 1;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: "Open Sans", Helvetica, Arial, sans-serif;
-}
-
-.h2 {
-  @media screen and (max-width: $screen-md-min) {
-    margin-bottom: 10px;
   }
 }
 
@@ -36,37 +22,6 @@ h1, h2, h3, h4, h5, h6 {
 .container--center {
   align-items: center;
   justify-content: center;
-}
-
-.row--full-height {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.footer {
-  width: 100%;
-  padding: $base-margin 0;
-  margin-top: $base-margin-l;
-  background-color: #212121;
-  color: $white;
-
-  a.footer-link {
-    color: $white;
-  }
-
-  @media screen and (max-width: $screen-md-min) {
-    display: none;
-  }
-}
-
-.btn-google-play {
-  display: inline-block;
-  width: 180px;
-  margin-right: -12px;
-  & > img {
-    display: inline-block;
-    width: 100%;
-  }
 }
 
 .navbar-brand {
@@ -110,61 +65,8 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-.maintenance {
-  @extend .alert;
-  @extend .alert-danger;
-  text-align: center;
-  padding: 40px;
-}
-
-// ------------------ Admin ------------------
-
-.navbar--admin {
-  .navbar-nav.navbar-right {
-    @media (max-width: 1480px) {
-      .navbar-label {
-        display: none;
-      }
-    }
-  }
-}
-
 .label {
   font-weight: 400;
-}
-
-.banner-title {
-  color: $white;
-  font-weight: 700;
-  margin-top: 30px;
-  margin-bottom: 60px;
-  @media (max-width: $screen-xs-max) {
-    font-size: 26px;
-    text-align: center;
-  }
-}
-
-.banner-search {
-  margin-top: $bs-base-margin * 2;
-  @media (max-width: $screen-xs-max) {
-    margin-top: 0;
-  }
-}
-
-.banner {
-  padding: 10px 0;
-  background-color: $orange;
-  color: #fff;
-  margin-top: -20px;
-  margin-bottom: 20px;
-  a {
-    color: $light-orange;
-  }
-  &-message {
-    p {
-      display: inline;
-    }
-  }
 }
 
 .flash-messages {
@@ -175,42 +77,6 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-.restaurant-show-more {
-  font-size: $font-size-large;
-  color: #585858;
-  text-decoration: underline;
-  text-align: right;
-  &:hover {
-    color: lighten(#585858, 10%);
-  }
-}
-
-.dashboard-subnav {
-  background-color: $primary-default;
-  border-bottom: 1px solid darken($primary-default, 20%);
-  margin-top: -20px;
-  h3 {
-    color: white;
-  }
-  a {
-    color: white;
-  }
-  .navbar {
-    .navbar-toggle {
-      background-color: darken($primary-default, 50%);
-      border-color: white;
-      .icon-bar {
-        background-color: white;
-      }
-    }
-  }
-}
-
-.dashboard-actions {
-  background-color: #ededed;
-  border-bottom: 1px solid darken(#ededed, 10%);
-}
-
 .btn > .btn__loading_indicator {
   display:none;
 }
@@ -219,39 +85,8 @@ h1, h2, h3, h4, h5, h6 {
   display:inline-block;
 }
 
-.ant-calendar-picker {
-  margin-right: 5px;
-}
-
 .text-monospace {
   font-family: "Roboto Mono", "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
-}
-
-.bike-icon {
-
-  $icon-size: 48px;
-
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center center;
-  width: $icon-size;
-  height: $icon-size;
-  margin: 0 auto;
-
-  &--bike {
-    background-image: url(../svg/noun_1149947_cc.svg);
-  }
-
-  &--cargo_bike {
-    background-image: url(../svg/noun_1149946_cc.svg);
-  }
-}
-
-.btn-group--vehicle {
-  width: 100%;
-  > label {
-    min-width: 50%;
-  }
 }
 
 .btn-transparent {
@@ -268,44 +103,6 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-.btn-facebook {
-  background: #3B5998;
-  border-radius: 0;
-  color: #fff;
-  border-width: 1px;
-  border-style: solid;
-  border-color: #263961;
-}
-
-.login-container {
-  display: flex;
-  height: 100%;
-  align-items: center;
-  justify-content: center;
-  &__content {
-    min-width: 100%;
-  }
-}
-.btn-facebook:link, .btn-facebook:visited {
-  color: #fff;
-}
-.btn-facebook:active, .btn-facebook:hover {
-  background: #263961;
-  color: #fff;
-}
-
-.restaurant-pledge__image {
-  max-width: 66.6666%;
-}
-
-.button-icon {
-  padding: 0;
-  cursor: pointer;
-  background: transparent;
-  border: 0;
-  appearance: none;
-}
-
 .about-us {
   font-size: $font-size-large;
   letter-spacing: 0.02em;
@@ -318,15 +115,6 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-.checkout-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: white;
-  z-index: 3;
-}
-
 .table-order-items {
   tbody tr,
   tfoot tr {
@@ -336,55 +124,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
-.homepage-zerowaste {
-  background-color: #00DD61;
-  color: lighten(#00DD61, 50%);
-  a {
-    font-size: $font-size-large;
-    color: lighten(#00DD61, 50%);
-    text-decoration: none;
-  }
-}
-
 // https://github.com/coopcycle/coopcycle-web/issues/3296
 .leaflet-container {
   font-size: 12px;
-}
-
-.ant-alert-info {
-  background-color: $alert-info-bg !important;
-  border-color: $alert-info-border !important;
-
-  .ant-alert-icon {
-    color: $alert-info-text !important;
-  }
-
-  .ant-alert-message {
-    color: $alert-info-text !important;
-  }
-}
-
-.ant-input::placeholder {
-  // copy-paste from bootstrap
-  color: #999;
-  opacity: 1;
-}
-
-#company_address .form-group {
-  margin-right: 0px;
-  margin-left: 0px;
-}
-
-.btn-primary-red {
-  background-color: #E4022D;
-  color: #F2F2F3;
-
-  .inactive {
-    background-color: #FF7A94;
-  }
-
-  &:hover {
-    color: #F2F2F3;
-  }
-
 }

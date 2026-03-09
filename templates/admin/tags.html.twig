@@ -31,7 +31,7 @@
   <td>
   	<form method="POST">
   	 <input type="hidden" name="tag" value="{{ tag.id }}">
-     <p class="text-right nomargin">
+     <p class="text-right m-0">
       {# TODO : uniformize with other delete methods in admin, use DeleteButton icon + API endpoint #}
   	  <button class="btn btn-danger" type="submit" name="delete" onclick="return confirm('{{ 'adminDashboard.tags.confirm_delete'|trans|escape('js') }}')">
         <i class="fa fa-trash"></i>

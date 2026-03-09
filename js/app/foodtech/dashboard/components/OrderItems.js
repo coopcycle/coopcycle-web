@@ -38,7 +38,7 @@ class OrderItems extends React.Component {
   renderItems(items) {
 
     return (
-      <table className="table table-condensed nomargin">
+      <table className="table table-condensed m-0">
         <tbody>
           { items.map((item, key) =>
             <tr key={ key }>

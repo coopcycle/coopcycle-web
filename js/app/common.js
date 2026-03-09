@@ -4,8 +4,6 @@ import numbro from 'numbro'
 const $ = require('jquery')
 global.$ = global.jQuery = $
 
-import '../../assets/css/main.scss'
-
 require('bootstrap-sass')
 
 import './i18n'

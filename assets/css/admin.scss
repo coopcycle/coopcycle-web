@@ -1,0 +1,133 @@
+@import "fonts.scss";
+
+@import "~antd/dist/reset.css";
+
+@import "~font-awesome/css/font-awesome.min.css";
+@import "~beautifymarker/leaflet-beautify-marker-icon.css";
+
+@import "~leaflet/dist/leaflet.css";
+
+@import "~font-awesome/scss/_variables.scss";
+@import "~font-awesome/scss/_mixins.scss";
+@import "~font-awesome/scss/_animated.scss";
+
+// Changing the collapsed mobile navbar breakpoint
+// The navbar collapses into its vertical mobile view when the viewport is narrower than @grid-float-breakpoint,
+// and expands into its horizontal non-mobile view when the viewport is at least @grid-float-breakpoint in width.
+// Adjust this variable in the Less source to control when the navbar collapses/expands.
+// The default value is 768px (the smallest "small" or "tablet" screen).
+
+$grid-float-breakpoint: 797px;
+
+// Bootstrap 3.x
+
+// Core variables and mixins
+@import "vars.scss";
+
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins";
+
+// Reset and dependencies
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_normalize";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_print";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_glyphicons";
+
+// Core CSS
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_scaffolding";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_type";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_code";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_grid";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_tables";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_forms";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_buttons";
+
+// Components
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_component-animations";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_dropdowns";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_button-groups";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_input-groups";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_navs";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_navbar";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_breadcrumbs";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_pagination";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_pager";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_labels";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_badges";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_jumbotron";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_thumbnails";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_alerts";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_progress-bars";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_media";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_list-group";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_panels";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_responsive-embed";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_wells";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_close";
+
+// Components w/ JavaScript
+@import "modals.scss";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_tooltip";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_popovers";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_carousel";
+
+// Utility classes
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_utilities";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/_responsive-utilities";
+
+// Bootstrap 4.x
+// https://getbootstrap.com/docs/4.1/getting-started/webpack/
+// @see https://getbootstrap.com/docs/4.1/getting-started/theming/
+@import "bootstrap-utilities.css";
+
+@import "utils.scss";
+
+@import "styles.scss";
+
+@import "speech-bubble.scss";
+
+@import "mercadopago.scss";
+
+@import "antd.scss";
+
+.navbar--admin {
+  .navbar-nav.navbar-right {
+    @media (max-width: 1480px) {
+      .navbar-label {
+        display: none;
+      }
+    }
+  }
+}
+
+.dashboard-subnav {
+  background-color: $primary-default;
+  border-bottom: 1px solid darken($primary-default, 20%);
+  margin-top: -20px;
+  h3 {
+    color: white;
+  }
+  a {
+    color: white;
+  }
+  .navbar {
+    .navbar-toggle {
+      background-color: darken($primary-default, 50%);
+      border-color: white;
+      .icon-bar {
+        background-color: white;
+      }
+    }
+  }
+}
+
+.dashboard-actions {
+  background-color: #ededed;
+  border-bottom: 1px solid darken(#ededed, 10%);
+}
+
+.button-icon {
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  appearance: none;
+}
