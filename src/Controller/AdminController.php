@@ -2495,44 +2495,6 @@ class AdminController extends AbstractController
         return $this->renderPackageSetForm($request, $packageSet, $objectManager);
     }
 
-    public function newOrderAction(
-        Request $request,
-        EntityManagerInterface $objectManager,
-        OrderFactory $orderFactory,
-        OrderNumberAssignerInterface $orderNumberAssigner,
-        PricingManager $pricingManager,
-    )
-    {
-        $delivery = new Delivery();
-        $form = $this->createForm(NewCustomOrderType::class, $delivery);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $delivery = $form->getData();
-
-            $variantName = $form->get('variantName')->getData();
-            $variantPrice = $form->get('variantPrice')->getData();
-
-            $order = $orderFactory->createForDelivery($delivery);
-            $pricingManager->processDeliveryOrder($order, [$pricingManager->getCustomProductVariant($delivery, new ArbitraryPrice($variantName, $variantPrice))]);
-
-            $order->setState(OrderInterface::STATE_ACCEPTED);
-
-            $objectManager->persist($order);
-            $objectManager->flush();
-
-            $orderNumberAssigner->assignNumber($order);
-
-            $objectManager->flush();
-
-            return $this->redirectToRoute('admin_order', [ 'id' => $order->getId() ]);
-        }
-
-        return $this->render('admin/new_order.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
     public function taskReceiptAction($id, TwigEnvironment $twig)
     {
         $task = $this->entityManager->getRepository(Task::class)->find($id);
