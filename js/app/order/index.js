@@ -193,11 +193,6 @@ document.querySelector('form[name="checkout_address"]').addEventListener('click'
   updateTip()
 })
 
-$('#guest-checkout-signin').on('shown.bs.collapse', function () {
-  const $password = $(this).find('input[type="password"]')
-  setTimeout(() => $password.focus(), 100)
-})
-
 document.querySelector('#apply-coupon').addEventListener('click', async function(e) {
 
   e.preventDefault()
