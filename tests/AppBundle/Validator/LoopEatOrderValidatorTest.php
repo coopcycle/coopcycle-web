@@ -71,9 +71,6 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
             ->getReusablePackagingQuantity()
             ->willReturn(3);
         $order
-            ->getReusablePackagingPledgeReturn()
-            ->willReturn(0);
-        $order
             ->isReusablePackagingEnabled()
             ->willReturn(true);
 
