@@ -1258,7 +1258,6 @@ trait RestaurantTrait
             $taxesHelper,
             withVendorName: false,
             withMessenger: false,
-            nonProfitsEnabled: $this->getParameter('nonprofits_enabled'),
             showOnlyMealVouchers: $showOnlyMealVouchers
         );
 

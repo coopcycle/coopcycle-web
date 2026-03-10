@@ -3,15 +3,12 @@
 namespace AppBundle\Form\Checkout;
 
 use AppBundle\Entity\Address;
-use AppBundle\Entity\Nonprofit;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Form\AddressType;
 use AppBundle\LoopEat\Context as LoopEatContext;
 use AppBundle\LoopEat\ContextInitializer as LoopEatContextInitializer;
 use AppBundle\Utils\PriceFormatter;
 use AppBundle\Validator\Constraints\LoopEatOrder;
-use Doctrine\ORM\EntityRepository;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -31,7 +28,6 @@ class CheckoutAddressType extends AbstractType
         private readonly PriceFormatter $priceFormatter,
         private readonly LoopEatContext $loopeatContext,
         private readonly LoopEatContextInitializer $loopeatContextInitializer,
-        private readonly bool $nonProfitsEnabled,
         private readonly string $enBoitLePlatUrl)
     {
     }
@@ -165,20 +161,6 @@ class CheckoutAddressType extends AbstractType
             }
         });
 
-        if ($this->nonProfitsEnabled) {
-            $builder->add('nonprofit', EntityType::class, [
-                'class' => Nonprofit::class,
-                'choice_label' => 'name',
-                'query_builder' => function (EntityRepository $er) {
-                    return $er->createQueryBuilder('u')
-                        ->where('u.enabled = true');
-                },
-                'expanded' => false,
-                'multiple' => false,
-                'required' => false,
-                'placeholder' => 'form.checkout_address.nonprofit.placeholder',
-            ]);
-        }
     }
 
     private function disableChildForm(FormInterface $form, $name)

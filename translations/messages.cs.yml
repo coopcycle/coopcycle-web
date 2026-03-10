@@ -1238,15 +1238,8 @@ restaurant.form.en_boite_le_plat_enabled.label: Povolit zálohový systém na mi
 form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: Chci zálohované
   <a href="%url%" target="_blank">Krabičky </a> na jídlo.
 order.cart.donation: Dary
-order.export.heading.nonprofit: Neziskové organizace
-adminDashboard.nonprofits.createNew: Přidat novou neziskovou organizaci
-adminDashboard.nonprofits.title: Neziskovky
-adminDashboard.nonprofits.confirm_delete: Opravdu chcete tuto neziskovou organizaci
-  smazat?
 order.cart.donation.disclaimer: Nabízíme vám možnost věnovat %percentage% z příjmů
   z vaší objednávky jednomu z našich partnerských sdružení. Nebudete platit více.
-form.checkout_address.nonprofit.placeholder: Vyberte si svou oblíbenou neziskovou
-  organizaci
 form.delivery.arbitrary_price.label: Definujte cenu ručně
 adminDashboard.users.confirmDeleteUser: Opravdu chcete odstranit uživatele s e-mailem
   %email%?

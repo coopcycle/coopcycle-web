@@ -45,11 +45,6 @@ oneup_flysystem:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: delivery_imports
-        nonprofits_images:
-            awss3v3:
-                client: s3_client
-                bucket: '%env(S3_BUCKET)%'
-                prefix: nonprofits
         edi_messages:
             awss3v3:
                 client: s3_client
@@ -107,10 +102,6 @@ oneup_flysystem:
             adapter: delivery_imports
             alias: delivery_imports_filesystem
             mount: delivery_imports
-        nonprofits_images:
-            adapter: nonprofits_images
-            alias: nonprofits_images_filesystem
-            mount: nonprofits_images
         edi_messages:
             adapter: edi_messages
             alias: edi_messages_filesystem

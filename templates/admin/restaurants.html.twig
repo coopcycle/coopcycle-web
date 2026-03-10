@@ -65,14 +65,6 @@
               {{ 'restaurants.meal_vouchers_transactions.title'|trans }}
             </a>
           </li>
-          {% if nonprofits_enabled %}
-            <li role="separator" class="divider"></li>
-            <li>
-              <a href="{{ path('admin_nonprofits') }}">
-                {{ 'adminDashboard.nonprofits.title'|trans }}
-              </a>
-            </li>
-          {% endif %}
         </ul>
       </div>
       <a href="{{ path('admin_restaurant_new') }}" class="btn btn-success ml-4">

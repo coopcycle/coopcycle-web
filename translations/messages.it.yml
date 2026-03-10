@@ -1323,12 +1323,6 @@ localBusiness.form.business_address.help: Questo indirizzo sarà usato per le ri
 form.local_business.mercadopago.connected: Connesso
 restaurant.form.section.en_boite_le_plat: En Boîte Le Plat
 order.cart.donation: Donazione
-order.export.heading.nonprofit: No profit
-adminDashboard.nonprofits.createNew: Aggiungere una nuova no profit
-adminDashboard.nonprofits.title: No profit
-adminDashboard.nonprofits.confirm_delete: Sei sicuro di voler eliminare questa no
-  profit?
 order.cart.donation.disclaimer: Ti proponiamo di donare %percentage% del ricavo del
   tuo ordine a una delle nostre associazioni partner. Non pagherai di più.
-form.checkout_address.nonprofit.placeholder: Scegli la tua no profit preferita
 form.delivery.arbitrary_price.label: Definisci il prezzo manualmente

@@ -7,7 +7,6 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Entity\Nonprofit;
 use AppBundle\Entity\Refund;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderItem;
@@ -68,7 +67,6 @@ class RestaurantStats implements \Countable
         private readonly TaxesHelper $taxesHelper,
         private readonly bool $withVendorName = false,
         private readonly bool $withMessenger = false,
-        private readonly bool $nonProfitsEnabled = false,
         private readonly bool $withBillingMethod = false,
         private readonly bool $includeTaxes = true,
         bool $showOnlyMealVouchers = false,
@@ -99,9 +97,6 @@ class RestaurantStats implements \Countable
             $this->loadMessengers();
         }
 
-        if ($nonProfitsEnabled) {
-            $this->addNonprofits();
-        }
 
         if ($showOnlyMealVouchers) {
             $this->filterMealVouchers();
@@ -423,43 +418,6 @@ class RestaurantStats implements \Countable
         }, $this->result);
     }
 
-    //DEADCODE: NON_PROFIT
-    private function addNonprofits()
-    {
-        if (count($this->ids) === 0) {
-            return;
-        }
-
-        $qb = $this->entityManager
-            ->getRepository(Nonprofit::class)
-            ->createQueryBuilder('np');
-
-        $qb
-            ->select('np.id')
-            ->addSelect('np.name')
-            ;
-
-        $nonProfits = $qb->getQuery()->getArrayResult();
-
-        $nonProfitsById = array_reduce($nonProfits, function ($accumulator, $nonProfit) {
-
-            $accumulator[$nonProfit['id']] = $nonProfit['name'];
-
-            return $accumulator;
-
-        }, []);
-
-        $this->result = array_map(function ($order) use ($nonProfitsById) {
-
-            if (!empty($order->nonprofitId)) {
-                $order->nonprofitName = $nonProfitsById[$order->nonprofitId];
-            }
-
-            return $order;
-
-        }, $this->result);
-    }
-
     private function addStores()
     {
         if (count($this->ids) === 0) {
@@ -706,9 +664,6 @@ class RestaurantStats implements \Countable
         $headings[] = 'net_revenue';
         $headings[] = 'incident_adjustments';
         $headings[] = 'incidents';
-        if ($this->nonProfitsEnabled) {
-            $headings[] = 'nonprofit';
-        }
         if ($this->withBillingMethod) {
             $headings[] = 'billing_method';
             $headings[] = 'applied_billing';
@@ -789,8 +744,6 @@ class RestaurantStats implements \Countable
                 return $this->formatNumber($order->getRefundTotal(), !$formatted);
             case 'net_revenue':
                 return $this->formatNumber($order->getRevenue(), !$formatted);
-            case 'nonprofit':
-                return $order->getNonprofit();
             case 'payment_method':
                 return $order->paymentMethod ? $this->translator->trans(sprintf('payment_method.%s', strtolower($order->paymentMethod))) : '';
             case 'incident_adjustments':
