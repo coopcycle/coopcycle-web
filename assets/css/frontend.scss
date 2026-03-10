@@ -244,3 +244,19 @@ $grid-float-breakpoint: 1001px;
     background-image: url(../svg/noun_1149946_cc.svg);
   }
 }
+
+/* When a modal window is open, remove scroll from body. */
+:is(html, body):has(:modal) {
+	overflow: hidden;
+}
+
+dialog::backdrop {
+  background-color: #000000;
+  opacity: .5;
+}
+
+dialog {
+  border-radius: 8px;
+  padding: 0;
+  border: none;
+}

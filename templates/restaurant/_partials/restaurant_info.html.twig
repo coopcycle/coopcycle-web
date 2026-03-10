@@ -43,10 +43,9 @@
     {% endif %}
 
     <div>
-      <a class="restaurant-opening-hours" href="#" data-toggle="modal"
-         data-target="#restaurant-opening-hours-modal">
+      <button class="restaurant-opening-hours" href="#" command="show-modal" commandfor="restaurant-opening-hours-modal">
         <i class="fa fa-clock-o"></i> {{ 'localBusiness.form.openingHours'|trans }}
-      </a>
+      </button>
     </div>
 
     <div><i class="fa fa-map-marker"></i>  {{ restaurant.address.streetAddress }}, {{ restaurant.address.postalCode }}, {{ restaurant.address.addressLocality }}</div>
