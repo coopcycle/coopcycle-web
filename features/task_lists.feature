@@ -273,3 +273,102 @@ Feature: Tasks lists
         ]
       }
       """
+
+  Scenario: Assign a task to a user, then assign it to another user, unassigns from first user
+    Given the fixtures files are loaded:
+      | tasks.yml        |
+      | users.yml        |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/task_lists/set_items/2018-03-02/bob" with body:
+      """
+      {"items" : ["/api/tasks/4", "/api/tasks/5"]}
+      """
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/TaskList",
+        "@id":"/api/task_lists/1",
+        "id": "@integer@",
+        "@type":"TaskList",
+        "items":["/api/tasks/4", "/api/tasks/5"],
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":"@string@",
+        "createdAt":"@string@.isDateTime()",
+        "updatedAt":"@string@.isDateTime()",
+        "date":"2018-03-02",
+        "username":"bob",
+        "color": @string@,
+        "vehicle": null,
+        "trailer": null
+      }
+      """
+    Given I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/task_lists/set_items/2018-03-02/sarah" with body:
+      """
+      {"items" : ["/api/tasks/4", "/api/tasks/5"]}
+      """
+    Then the response status code should be 200
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/TaskList",
+        "@id":"/api/task_lists/2",
+        "id": "@integer@",
+        "@type":"TaskList",
+        "items":["/api/tasks/4", "/api/tasks/5"],
+        "distance":@integer@,
+        "duration":@integer@,
+        "polyline":"@string@",
+        "createdAt":"@string@.isDateTime()",
+        "updatedAt":"@string@.isDateTime()",
+        "date":"2018-03-02",
+        "username":"sarah",
+        "color": @string@,
+        "vehicle": null,
+        "trailer": null
+      }
+      """
+      Given I add "Content-Type" header equal to "application/ld+json"
+      And I add "Accept" header equal to "application/ld+json"
+      And the user "bob" sends a "GET" request to "/api/task_lists/v2?date=2018-03-02"
+      Then the response status code should be 200
+      And the response should be in JSON
+      And the JSON should match:
+        """
+        {
+          "@context":"/api/contexts/TaskList",
+          "@id":"/api/task_lists/v2",
+          "@type":"hydra:Collection",
+          "hydra:totalItems":2,
+          "hydra:member":[
+            {
+              "@id":"/api/task_lists/1",
+              "items":[],
+              "username":"bob",
+              "@*@":"@*@"
+            },
+            {
+              "@id":"/api/task_lists/2",
+              "items":[
+                "/api/tasks/4",
+                "/api/tasks/5"
+              ],
+              "username":"sarah",
+              "@*@":"@*@"
+            }
+          ],
+          "hydra:view":{
+            "@id":"/api/task_lists/v2?date=2018-03-02",
+            "@type":"hydra:PartialCollectionView"
+          },
+          "hydra:search":{
+            "@*@":"@*@"
+          }
+        }
+        """
