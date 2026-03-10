@@ -26,7 +26,7 @@
         <div class="d-flex justify-content-between">
           <button type="button" class="btn btn-warning"
             @click="expanded = ! expanded">{{ 'layout.login'|trans({}, 'NucleosUserBundle') }}</button>
-          <button type="button" class="btn btn-transparent">{{ 'guest_checkout.use_another_email'|trans }}</button>
+          <a class="btn btn-transparent" href="#checkout_address_customer_email">{{ 'guest_checkout.use_another_email'|trans }}</a>
         </div>
         <div class="mt-4" id="guest-checkout-signin" x-show="expanded" x-collapse>
           <form action="{{ path("nucleos_user_security_check", { _target_path: path('order') }) }}" method="post">
