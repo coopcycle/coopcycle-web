@@ -220,7 +220,6 @@ document.querySelector('#apply-coupon').addEventListener('click', async function
     replaceOrderTable(html)
     enableTipInput()
     document.querySelector('#coupon-code').value = ''
-    $('#promotion-coupon-collapse').collapse('hide')
   } finally {
     setLoading(false)
   }
