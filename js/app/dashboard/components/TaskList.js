@@ -194,7 +194,7 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
               dispatch(onlyFilter('showIncidentReportedTasks'))
               e.stopPropagation()
             }}>
-            <Tooltip title="Incident(s)">
+            <Tooltip title="Incident(s)" placement="left">
               <span className='fa fa-warning text-warning' /> <span className="text-secondary">({incidentReported.length})</span>
             </Tooltip>
           </span>}
