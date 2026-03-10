@@ -155,7 +155,7 @@ Feature: Tasks lists
     }
     """
 
-   Scenario: Assign task with PUT then add a tour to the tasklist
+  Scenario: Assign task with PUT then add a tour to the tasklist
     Given the fixtures files are loaded:
       | tasks.yml        |
       | users.yml        |
@@ -216,7 +216,7 @@ Feature: Tasks lists
     }
     """
 
-   Scenario: Assign a tour with PUT, then add a task to the tour -> task.assignedTo is set correctly
+  Scenario: Assign a tour with PUT, then add a task to the tour -> task.assignedTo is set correctly
     Given the fixtures files are loaded:
       | tasks.yml        |
       | users.yml        |
