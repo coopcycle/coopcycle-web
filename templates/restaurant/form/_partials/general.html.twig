@@ -2,6 +2,13 @@
 {{ form_row(form.type) }}
 
 {{ form_row(form.address) }}
+{{ form_row(form.dayOfWeekAddresses) }}
+<div class="d-flex justify-content-end gap-2">
+  {{ form_help(form.dayOfWeekAddresses) }}
+  <button type="button" class="btn btn-sm" id="day-of-week-address-add">
+    {{ 'localBusiness.form.day_of_week_addresses.add'|trans }}
+  </button>
+</div>
 {{ form_row(form.useDifferentBusinessAddress) }}
 {{ form_row(form.businessAddress) }}
 
