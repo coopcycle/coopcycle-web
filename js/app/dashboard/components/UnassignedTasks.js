@@ -131,17 +131,11 @@ export const UnassignedTasks = ({ isGeneratingOrdersForRecurrenceRules, isGenera
   return (
     <div className="dashboard__panel">
       <div className="dashboard__panel__header">
-        <div className="row">
-          <div className="col-md-6 col-sm-12">
-            <h4>
-              <span>{t('DASHBOARD_UNASSIGNED')}</span>
-            </h4>
-          </div>
-          <div className="col-md-6 col-sm-12">
-            <h4 className="pull-right">
-              <Buttons />
-            </h4>
-          </div>
+        <div className="d-flex align-items-center justify-content-between">
+          <h4>
+            <span>{t('DASHBOARD_UNASSIGNED')}</span>
+          </h4>
+          <Buttons />
         </div>
         <div>
           <UnassignedTasksFilters />
