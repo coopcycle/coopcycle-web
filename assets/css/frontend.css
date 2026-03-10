@@ -1,0 +1,166 @@
+@import "./fonts.css";
+
+/* https://tailwindcss.com/docs/installation/framework-guides/symfony *
+/* https://tailwindcss.com/docs/detecting-classes-in-source-files#disabling-automatic-detection */
+@import "tailwindcss" source(none);
+
+/* Define theme */
+@theme {
+  --font-sans: "Open Sans", sans-serif;
+  --font-mono: "Roboto Mono", "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+  --font-raleway: "Raleway", Helvetica, Arial, sans-serif;
+}
+
+@source "../../templates/**/*.html.twig";
+/* Do not scan all JS files atm */
+/* @source "../../js/app"; */
+@source "../../js/app/search/navbar.js";
+@source "../../js/app/components/order";
+@source "../../js/app/components/Payment";
+@source "../../js/app/restaurant/components";
+
+@plugin "daisyui";
+
+@import "font-awesome/css/font-awesome.min.css";
+@import "beautifymarker/leaflet-beautify-marker-icon.css";
+
+@import "leaflet/dist/leaflet.css";
+
+@import "./react-modal.css";
+
+/*
+@import "font-awesome/scss/_variables.scss";
+@import "font-awesome/scss/_mixins.scss";
+@import "font-awesome/scss/_animated.scss";
+*/
+
+/*
+@import "utils.scss";
+
+@import "styles.scss";
+
+@import "speech-bubble.scss";
+@import "multistep-indicator.scss";
+
+@import "stripe.scss";
+
+@import "account-creation.scss";
+
+@import "antd.scss";
+*/
+
+/*
+// Allows to stick the footer to the bottom
+.content {
+  flex: 1;
+}
+
+.btn-facebook {
+  background: #3B5998;
+  border-radius: 0;
+  color: #fff;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #263961;
+}
+
+.btn-facebook:link, .btn-facebook:visited {
+  color: #fff;
+}
+.btn-facebook:active, .btn-facebook:hover {
+  background: #263961;
+  color: #fff;
+}
+
+.homepage-zerowaste {
+  background-color: #00DD61;
+  color: lighten(#00DD61, 50%);
+  a {
+    font-size: $font-size-large;
+    color: lighten(#00DD61, 50%);
+    text-decoration: none;
+  }
+}
+
+.footer {
+  width: 100%;
+  padding: $base-margin 0;
+  margin-top: $base-margin-l;
+  background-color: #212121;
+  color: $white;
+
+  a.footer-link {
+    color: $white;
+  }
+
+  @media screen and (max-width: $screen-md-min) {
+    display: none;
+  }
+}
+
+.maintenance {
+  @extend .alert;
+  @extend .alert-danger;
+  text-align: center;
+  padding: 40px;
+}
+
+.restaurant-show-more {
+  font-size: $font-size-large;
+  color: #585858;
+  text-decoration: underline;
+  text-align: right;
+  &:hover {
+    color: lighten(#585858, 10%);
+  }
+}
+
+.restaurant-pledge__image {
+  max-width: 66.6666%;
+}
+
+.checkout-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: white;
+  z-index: 3;
+}
+
+.banner {
+  padding: 10px 0;
+  background-color: $orange;
+  color: #fff;
+  margin-top: -20px;
+  margin-bottom: 20px;
+  a {
+    color: $light-orange;
+  }
+  &-message {
+    p {
+      display: inline;
+    }
+  }
+}
+
+.login-container {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  &__content {
+    min-width: 100%;
+  }
+}
+*/
+
+.btn-google-play {
+  display: inline-block;
+  width: 180px;
+  margin-right: -12px;
+  & > img {
+    display: inline-block;
+    width: 100%;
+  }
+}

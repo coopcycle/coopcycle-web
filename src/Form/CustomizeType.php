@@ -61,6 +61,9 @@ class CustomizeType extends AbstractType
                 'attr' => ['placeholder' => 'index.banner'],
                 'help' => 'form.customize.motto.help',
             ])
+            ->add('theme', ThemeType::class, [
+                'label' => 'form.customize.theme.label',
+            ])
             ->add('aboutUsEnabled', CheckboxType::class, [
                 'required' => false,
                 'label' => 'form.customize.about_us_enabled.label',

@@ -171,8 +171,8 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, cards, onSaveCr
             {
               cards.map((c) => {
                 return (
-                  <div className="d-flex align-items-center mb-2" key={c.id}>
-                    <input type="radio" name="credit-cards" id={c.id} className="mr-4" onClick={(e) => handleCardClicked(e, c)} />
+                  <div className="flex items-center gap-2 mb-2" key={c.id}>
+                    <input type="radio" name="credit-cards" id={c.id} className="radio mr-4" onClick={(e) => handleCardClicked(e, c)} />
                     <SavedCreditCard card={c.card} />
                   </div>
                 )

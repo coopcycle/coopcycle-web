@@ -2,12 +2,12 @@
 
 {% block delivery_vehicle_widget %}
 <div>
-  <div class="btn-group btn-group--vehicle" data-toggle="buttons">
+  <div class="join w-full">
   {% for child in form %}
     {% set value = child.vars.value %}
     {% set checked = child.vars.checked %}
     {% set label = child.vars.label %}
-    <label class="btn btn-default {% if checked %}active{% endif %}">
+    <label class="btn join-item w-1/2 h-auto px-2 py-4 {% if checked %}active{% endif %}">
       <div class="bike-icon bike-icon--{{ value }}"></div>
       <input type="radio" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} /> {{ label }}
     </label>

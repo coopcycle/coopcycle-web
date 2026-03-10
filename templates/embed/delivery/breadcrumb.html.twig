@@ -1,5 +1,5 @@
-<ol class="breadcrumb">
-  <li><a href="{{ path('embed_delivery_start', { hashid: hashid }) }}">{{ 'embed.breadcrumb.start'|trans }}</a></li>
-  <li>{{ 'embed.breadcrumb.summary'|trans }}</li>
-  <li>{{ 'embed.breadcrumb.confirm'|trans }}</li>
+<ol class="steps">
+  <li class="step step-primary"><a href="{{ path('embed_delivery_start', { hashid: hashid }) }}">{{ 'embed.breadcrumb.start'|trans }}</a></li>
+  <li class="step {% if step >= 2 %}step-primary{% endif %}">{{ 'embed.breadcrumb.summary'|trans }}</li>
+  <li class="step">{{ 'embed.breadcrumb.confirm'|trans }}</li>
 </ol>

@@ -23,6 +23,7 @@ export default function ProductQuantity() {
       </span>
       <DecrementQuantityButton onClick={ decrementQuantity } />
       <input
+        className="input"
         type="number"
         min="1"
         step="1"

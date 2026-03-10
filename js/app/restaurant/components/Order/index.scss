@@ -1,32 +1,8 @@
 @import "../../../../../assets/css/vars.scss";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
+@import "bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
 
 $card-padding: 1rem;
 $card-padding-lg: 2rem;
-
-#restaurant-body {
-  .panel {
-    border: none;
-    border-radius: 16px;
-    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, .03);
-  }
-
-  .panel-body {
-    padding: $card-padding;
-
-    @media (min-width: $screen-lg-min) {
-      padding: $card-padding-lg;
-    }
-  }
-}
-
-#restaurant__fulfilment-details__container {
-  display: none;
-
-  @media (min-width: $screen-lg-min) {
-    display: block;
-  }
-}
 
 .fulfillment-details {
   display: flex;
@@ -41,8 +17,6 @@ $card-padding-lg: 2rem;
 
 // mobile (and small tablets)
 .order-overlay {
-  background-color: $body-bg;
-  padding: 0 1rem;
 
   position: fixed;
   top: 0;
@@ -53,12 +27,7 @@ $card-padding-lg: 2rem;
   transition: transform 0.4s;
   z-index: 2;
 
-  display: flex;
   flex-direction: column;
-
-  @media (min-width: $screen-lg-min) {
-    display: none;
-  }
 
   &--show {
     transform: translateY(0);
@@ -68,29 +37,6 @@ $card-padding-lg: 2rem;
 .ReactModal__Body--open {
   .order-overlay {
     z-index: unset;
-  }
-}
-
-// desktop (and larger tablets)
-.sticky-outer-wrapper {
-  display: none;
-
-  @media (min-width: $screen-lg-min) {
-    display: block;
-  }
-}
-
-@media (min-width: $screen-lg-min) {
-  .sticky-inner-wrapper {
-    max-height: calc(100vh - var(--restaurant-menu-nav-height));
-    display: flex;
-    flex-direction: column;
-  }
-
-  .sticky-outer-wrapper.active {
-    .sticky-inner-wrapper {
-      padding-top: 1rem;
-    }
   }
 }
 
@@ -119,32 +65,6 @@ $card-padding-lg: 2rem;
   }
 }
 
-.order-overlay__content {
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-}
-
-.panel-cart-wrapper {
-  display: flex;
-  flex-direction: column;
-
-  @media (min-width: $screen-lg-min) {
-    overflow-y: auto;
-  }
-
-  .panel-body {
-    min-height: 350px;
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-
-    @media (min-width: $screen-lg-min) {
-      overflow-y: auto;
-    }
-  }
-}
-
 .hub-order,
 .group-order {
   display: flex;
@@ -156,14 +76,6 @@ $card-padding-lg: 2rem;
     font-size: 20px;
     font-weight: 600;
   }
-}
-
-.cart__empty {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 }
 
 .cart__items {

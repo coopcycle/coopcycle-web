@@ -1,1 +1,10 @@
-import './css/frontend.scss';
+import Alpine from 'alpinejs'
+import collapse from '@alpinejs/collapse'
+
+import './css/frontend.css';
+
+// https://alpinejs.dev/essentials/installation
+window.Alpine = Alpine
+
+Alpine.plugin(collapse)
+Alpine.start()

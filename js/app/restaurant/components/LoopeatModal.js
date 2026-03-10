@@ -40,7 +40,7 @@ const LoopeatModal = ({ isOpen, enableReusablePackaging }) => {
         <div className="mb-4">
           <PopupText />
         </div>
-        <div className="d-flex align-items-center justify-content-between">
+        <div className="flex items-center justify-between">
           <a href={ LoopeatContext.customerAppUrl } target="_blank" rel="noreferrer">{ t('LEARN_MORE') }</a>
           <button type="button" className="btn btn-primary" onClick={ enableReusablePackaging }>{ t('I_UNDERSTAND') }</button>
         </div>

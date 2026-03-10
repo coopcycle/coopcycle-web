@@ -70,4 +70,15 @@ class AppearanceRuntime implements RuntimeExtensionInterface
             return $this->assetsFilesystem->fileExists('about_us.md');
         });
     }
+
+    public function getTheme()
+    {
+        $theme = $this->settingsManager->get('theme');
+
+        if ($theme) {
+            return json_decode($theme, true);
+        }
+
+        return [];
+    }
 }

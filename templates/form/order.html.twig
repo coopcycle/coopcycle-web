@@ -59,15 +59,15 @@
 
     {{ form_widget(form) }}
 
-    <div class="d-flex flex-sm-row flex-column align-items-center justify-content-between mb-4">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
       <div>
-        <img src="{{ loopeat_context.logoUrl }}" class="mb-4" height="96">
+        <img src="{{ loopeat_context.logoUrl }}" class="mb-4 w-24">
       </div>
-      <div class="w-75 mx-3 mb-4">
+      <div class="md: w-3/4 mx-3 mb-4">
         <div>
           {% if isChecked %}
           <div class="mb-3">
-            <ul class="list-unstyled">
+            <ul class="text-sm">
               <li>{{ (loopeat_trans_prefix ~ '.reusable_quantity.label')|trans({
                 '%count%': order.reusablePackagingQuantity,
                 '%amount%': loopeat_context.requiredAmount|price_format
@@ -117,7 +117,7 @@
             <div>{{ (loopeat_trans_prefix ~ '.enable_zero_waste')|trans }}</div>
           </div>
           {% endif %}
-          <div class="d-flex justify-content-between loopeat-links">
+          <div class="flex justify-between loopeat-links">
             <a href="#" data-toggle="modal" data-target="#modal-loopeat-howitworks">{{ (loopeat_trans_prefix ~ '.how_it_works')|trans }} ›</a>
             <a href="{{ loopeat_context.customerAppUrl }}" target="_blank">{{ (loopeat_trans_prefix ~ '.website')|trans({ '%name%': loopeat_context.name }) }} ›</a>
           </div>

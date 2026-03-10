@@ -5,8 +5,6 @@ import axios from 'axios'
 import _ from 'lodash'
 import { withTranslation } from 'react-i18next'
 
-import './navbar.scss'
-
 const search = _.debounce((inputValue, setItems, setLoading) => {
 
   if (!inputValue) {
@@ -38,10 +36,10 @@ const Section = withTranslation()(({ items, title, highlightedIndex, getItemProp
 
   return (
     <>
-      <h5 className="px-3 mb-2">
-        <strong>{ title }</strong>
+      <h5 className="p-3 font-bold">
+        { title }
       </h5>
-      <ul className="list-unstyled">
+      <ul>
         { items.map((item, index) => {
 
           const indexWithOffset = index + offset
@@ -49,17 +47,18 @@ const Section = withTranslation()(({ items, title, highlightedIndex, getItemProp
           return (
             <li
               className={cx(
-                highlightedIndex === indexWithOffset && 'bg-info',
+                'cursor-pointer',
                 'py-2 px-3',
+                highlightedIndex === indexWithOffset && 'bg-sky-50',
               )}
               key={`search-result-${index}`}
               { ...getItemProps({ item, index: indexWithOffset }) }
             >
-              <span>{ item.name }</span>
+              <span className="text-sm">{ item.name }</span>
               { item.result_type === 'product' &&
                 <>
                   <br />
-                  <small className="text-muted">{ t('SEARCH_PRODUCT_ITEM_SUBTITLE', { shop: item.shop_name }) }</small>
+                  <small className="text-xs">{ t('SEARCH_PRODUCT_ITEM_SUBTITLE', { shop: item.shop_name }) }</small>
                 </>
               }
             </li>
@@ -102,7 +101,6 @@ function ComboBox({ t }) {
     getInputProps,
     highlightedIndex,
     getItemProps,
-    // selectedItem,
   } = useCombobox({
     onInputValueChange({ inputValue }) {
       search(inputValue, setItems, setLoading)
@@ -135,20 +133,27 @@ function ComboBox({ t }) {
     })
   }
 
+  // TODO Re-add loading
   return (
     <>
-      <div className={ cx('form-group form-group-search has-loader', isLoading && 'has-loader-loading') }>
-        <input
-          placeholder={ t('SEARCH_PLACEHOLDER') }
-          className="form-control search-navbar-input"
-          { ...getInputProps() }
-        />
+      <div className={cx('relative', /*isLoading && 'has-loader-loading'*/)}>
+        {/* FIXME
+        The "label" HTML tag style is overriden by Bootstrap in AddressAutosuggest
+        Use a span atm */}
+        <span className="input input-bordered bg-base-100 text-base-content w-24 md:w-auto">
+          <i className="fa fa-search"></i>
+          <input
+            placeholder={t('SEARCH_PLACEHOLDER')}
+            type="search"
+            { ...getInputProps() }
+            />
+        </span>
       </div>
       <div
         {...getMenuProps()}
         className={cx(
-          (isOpen && items.length > 0) && 'border',
-          'search-navbar-menu'
+          (isOpen && items.length > 0) && 'border border-gray-200 rounded-b-md',
+          'absolute h-screen max-h-[60vh] overflow-auto z-2 bg-base-100'
         )}
       >
         { isOpen &&

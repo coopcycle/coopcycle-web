@@ -46,9 +46,9 @@
 {% endblock %}
 
 {% block body %}
-  <div id="restaurant-body">
+  <div id="restaurant-body" class="bg-neutral-50">
 
-    <header class="container-fluid">
+    <header class="mx-auto px-4">
       {% block restaurant_nav %}
         {% if not embed_context.enabled %}
         <div class="text-left mb-4">
@@ -85,13 +85,14 @@
       {% if not openingInformation.isOpen %}
         {% set closingRule = openingInformation.matchClosingRuleFor %}
         {% if closingRule is not empty %}
-        <div class="alert alert-info text-center">
+        <div class="alert alert-info alert-soft mb-4">
           {% trans with { '%date%': closingRule.endDate|format_datetime('full', 'none') } %}
           restaurant.temporaryClosedWarning
           {% endtrans %}
         </div>
         {% else %}
-        <div class="alert alert-info text-center">
+        <div class="alert alert-info alert-soft mb-4">
+          <span>
           {% set next_opening_date = openingInformation.getNextOpeningDate() %}
           {% if next_opening_date %}
             {% set isOrderingAvailable = cart.shippingTimeRange is not null or restaurant_timing.firstChoiceKey is not null %}
@@ -123,6 +124,7 @@
             restaurant.closedNowWarning
             {% endtrans %}
           {% endif %}
+          </span>
         </div>
         {% endif %}
       {% endif %}
@@ -154,14 +156,12 @@
         </div>
       {% endif %}
 
-      <div class="row">
-        <div class="col-xs-12 col-lg-8">
-          {% set restaurant_banner = coopcycle_asset(restaurant, 'bannerImageFile', 'restaurant_banner')|placeholder_image(filter='restaurant_banner', obj=restaurant) %}
-          {% include 'restaurant/_partials/restaurant_info.html.twig' %}
-        </div>
-        <div class="col-xs-12 col-lg-4">
-          <div id="restaurant__fulfilment-details__container">
-          </div>
+      <div class="md:flex md:justify-between md:items-center">
+        {% include 'restaurant/_partials/restaurant_info.html.twig' with {
+          restaurant_banner: coopcycle_asset(restaurant, 'bannerImageFile', 'restaurant_banner')|placeholder_image(filter='restaurant_banner', obj=restaurant)
+        } %}
+        {# Only visible on large screens #}
+        <div id="restaurant__fulfilment-details__container" class="hidden lg:block">
         </div>
       </div>
     </header>
@@ -180,41 +180,42 @@
       {% include 'restaurant/_partials/menu_nav.html.twig' %}
     {% endif %}
 
-    <main>
-      <div class="container-fluid">
-        <div class="row">
-          {% if menu is not null %}
-            <div class="col-xs-12 col-lg-8">
-              <div id="menu" style="position: relative;">
-                <div id="loading-overlay" style="display: contents;"></div>
-                {#
-                WARNING
-                We cache the following block for performance
-                Iterating through all products, options… is a lot of database requests
-                #}
-                {% set cache_key = restaurant|cache_key(restaurant_menu_cache_annotation ~ (business_context.active ? '_business' : '')) %}
-                {% cache cache_key ttl(300) %}
-                  {% include 'restaurant/_partials/menu_content.html.twig' %}
-                {% endcache %}
+    <main class="mx-auto px-4">
+      <div class="lg:flex lg:gap-4">
+        {% if menu is not null %}
+          <div class="lg:w-8/12">
+            <div id="menu" class="relative">
+              <div id="loading-overlay" class="contents"></div>
+              {#
+              WARNING
+              We cache the following block for performance
+              Iterating through all products, options… is a lot of database requests
+              #}
+              {% set cache_key = restaurant|cache_key(restaurant_menu_cache_annotation ~ (business_context.active ? '_business' : '')) %}
+              {% cache cache_key ttl(300) %}
+                {% include 'restaurant/_partials/menu_content.html.twig' %}
+              {% endcache %}
+            </div>
+          </div>
+          {#
+          The --restaurant-menu-nav-height CSS variable is the height of the menu sections navbar
+          #}
+          <div class="lg:w-4/12 lg:flex lg:sticky lg:h-[50vh]" style="top: calc(var(--restaurant-menu-nav-height) + calc(var(--spacing) * 4));">
+            {% if restaurant.isFulfillmentMethodEnabled('delivery') or restaurant.isFulfillmentMethodEnabled('collection') %}
+              {{ form_start(cart_form, { attr: { class: 'contents', 'data-cart-url': path('restaurant_cart', { id: restaurant.id }) } }) }}
+              <div id="cart" class="contents"></div>
+              {{ form_end(cart_form) }}
+            {% else %}
+              <div class="alert alert-warning">
+                {% trans from 'validators' %}order.fulfillment_methods.empty{% endtrans %}
               </div>
-            </div>
-            <div class="col-xs-12 col-lg-4">
-              {% if restaurant.isFulfillmentMethodEnabled('delivery') or restaurant.isFulfillmentMethodEnabled('collection') %}
-                {{ form_start(cart_form, { attr: { 'data-cart-url': path('restaurant_cart', { id: restaurant.id }) } }) }}
-                <div id="cart"></div>
-                {{ form_end(cart_form) }}
-              {% else %}
-                <div class="alert alert-warning">
-                  {% trans from 'validators' %}order.fulfillment_methods.empty{% endtrans %}
-                </div>
-              {% endif %}
-            </div>
-          {% else %}
-            <div class="alert alert-warning">
-              {% trans %}restaurant.noMenuWarning{% endtrans %}
-            </div>
-          {% endif %}
-        </div>
+            {% endif %}
+          </div>
+        {% else %}
+          <div class="alert alert-warning">
+            {% trans %}restaurant.noMenuWarning{% endtrans %}
+          </div>
+        {% endif %}
       </div>
     </main>
 

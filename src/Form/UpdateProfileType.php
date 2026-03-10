@@ -19,7 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -28,9 +28,9 @@ class UpdateProfileType extends AbstractType
     private $countryIso;
 
     public function __construct(
-        private TokenStorageInterface $tokenStorage,
         private TranslatorInterface $translator,
         private LoopeatClient $loopeatClient,
+        private AuthorizationCheckerInterface $authorizationChecker,
         string $countryIso)
     {
         $this->countryIso = strtoupper($countryIso);
@@ -55,14 +55,9 @@ class UpdateProfileType extends AbstractType
                 'required' => false,
             ]);
 
-        $isAdmin = false;
-        if ($token = $this->tokenStorage->getToken()) {
-            if ($user = $token->getUser()) {
-                $isAdmin = $user->hasRole('ROLE_ADMIN');
-            }
-        }
+        $isAdmin = $this->authorizationChecker->isGranted('ROLE_ADMIN');
 
-        if ($isAdmin) {
+        if ($options['with_admin_controls'] && $isAdmin) {
             $builder
                 ->add('quotesAllowed', CheckboxType::class, [
                 'label' => 'form.user.quotes_allowed.label',
@@ -86,7 +81,7 @@ class UpdateProfileType extends AbstractType
                         'disabled' => !$isAdmin,
                     ]);
 
-                if ($isAdmin) {
+                if ($options['with_admin_controls'] && $isAdmin) {
                     $form
                         ->add('enabled', CheckboxType::class, [
                             'label' => 'user.edit.enabled.label',
@@ -162,6 +157,7 @@ class UpdateProfileType extends AbstractType
            'with_restaurants' => false,
            'with_stores' => false,
            'with_roles' => false,
+           'with_admin_controls' => true,
            'editable_roles' => []
         ));
     }

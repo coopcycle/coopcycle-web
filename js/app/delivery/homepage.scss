@@ -4,20 +4,18 @@
 @import "bootstrap/scss/functions";
 
 // 3. Include remainder of required Bootstrap stylesheets (including any separate color mode stylesheets)
-@import "~bootstrap/scss/variables";
-@import "~bootstrap/scss/variables-dark";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/variables-dark";
 
 // 4. Include any default map overrides here
 
 // 5. Include remainder of required parts
-@import "~bootstrap/scss/maps";
-@import "~bootstrap/scss/mixins";
-// @import "~bootstrap/scss/root";
+@import "bootstrap/scss/maps";
+@import "bootstrap/scss/mixins";
+// @import "bootstrap/scss/root";
 
 .homepage-search {
   position: relative;
-  margin-top: -20px;
-  background-color: $blue-100;
   background-image: url(../../../assets/pattern.svg);
   background-repeat: no-repeat;
   background-size: cover;
@@ -33,11 +31,6 @@
     }
   }
   margin-bottom: 50px;
-}
-
-.homepage-map {
-  margin-bottom: -40px;
-  color: #ccc;
 }
 
 .homepage-searchbox-container {
@@ -57,25 +50,6 @@
   .address-autosuggest__container {
     margin: 0;
   }
-
-  /*
-  input[type="search"] {
-    border: none;
-    box-shadow: none;
-  }
-
-  .address-autosuggest__input {
-    font-size: 1.1em;
-    padding: 0;
-  }
-
-  .address-autosuggest__input-wrapper:before {
-    color: lightsteelblue;
-    background-color: transparent;
-    font-size: 28px;
-  }
-  */
-
 }
 
 .homepage-delivery {

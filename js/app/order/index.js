@@ -82,8 +82,10 @@ function setLoading(isLoading) {
   )
   if (isLoading) {
     disableBtn(submitPageBtn)
+    submitPageBtn.querySelector('.loading').classList.remove('hidden')
   } else {
     enableBtn(submitPageBtn)
+    submitPageBtn.querySelector('.loading').classList.add('hidden')
   }
 }
 
@@ -270,7 +272,6 @@ const form = document.querySelector('form[name="checkout_address"]')
 form.addEventListener('submit', async function(event) {
   event.preventDefault()
 
-  submitPageBtn.classList.add('btn--loading')
   setLoading(true)
 
   const shippingTimeRange = selectShippingTimeRange(store.getState())
@@ -282,7 +283,6 @@ form.addEventListener('submit', async function(event) {
     try {
       await checkTimeRange(persistedTimeRange, store.getState, store.dispatch)
     } catch (error) {
-      submitPageBtn.classList.remove('btn--loading')
       setLoading(false)
       return
     }

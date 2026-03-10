@@ -5,7 +5,7 @@
 
   {{ form_label(form) }}
 
-  {{ form_row(form.address) }}
+  {{ form_row(form.address, { label: false }) }}
 
   {% if form.doneBefore is defined %}
     {{ form_row(form.doneBefore, { label: 'form.delivery.' ~ (form.vars.data.type|lower) ~ '.doneBefore.label' }) }}
@@ -27,7 +27,7 @@
 {% endblock %}
 
 {% block _delivery_vehicle_widget %}
-<div class="alert alert-info">
+<div class="alert alert-info mb-4">
   {{ 'form.delivery_embed.vehicle.disclaimer'|trans }}
 </div>
 {{ block('delivery_vehicle_widget') }}
@@ -38,7 +38,7 @@
 {% endblock %}
 
 {% block _delivery_tasks_entry_label %}
-  <h3>{{ label|trans }}</h3>
+  <h3 class="text-lg mb-2">{{ label|trans }}</h3>
 {% endblock %}
 
 {% block _delivery_billingAddress_widget %}
