@@ -90,7 +90,7 @@ html, body {
       margin: 0;
       background-color: $dark-gray;
       color: $white;
-      overflow-x: hidden;
+      overflow: hidden;
       a {
         color: $white;
         &:hover, &:active {
