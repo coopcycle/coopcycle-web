@@ -155,21 +155,25 @@ $('#modal-loopeat-howitworks').on('shown.bs.modal', function() {
   window._paq.push(['trackEvent', 'Checkout', 'openModal', 'zeroWasteHowItWorks']);
 });
 
-document.querySelector('#checkout_address_reusablePackagingEnabled').addEventListener('change', function() {
-  var isChecked = this.checked
-  var isVytal = this.dataset.vytal === 'true'
+const reusablePackagingEnabled = document.querySelector('#checkout_address_reusablePackagingEnabled');
 
-  window._paq.push(['trackEvent', 'Checkout', (isChecked ? 'zeroWasteEnable' : 'zeroWasteDisable')]);
+if (reusablePackagingEnabled) {
+  reusablePackagingEnabled.addEventListener('change', function() {
+    var isChecked = this.checked
+    var isVytal = this.dataset.vytal === 'true'
 
-  if (isVytal) {
+    window._paq.push(['trackEvent', 'Checkout', (isChecked ? 'zeroWasteEnable' : 'zeroWasteDisable')]);
 
-    $('#modal-vytal').modal('show');
+    if (isVytal) {
 
-  } else {
-    submitForm();
-  }
+      $('#modal-vytal').modal('show');
 
-});
+    } else {
+      submitForm();
+    }
+
+  });
+}
 
 $('#modal-vytal').on('hidden.bs.modal', function() {
   document.querySelector('#checkout_address_reusablePackagingEnabled').checked = false
