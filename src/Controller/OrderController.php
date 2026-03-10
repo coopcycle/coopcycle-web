@@ -124,7 +124,6 @@ class OrderController extends AbstractController
 
         $originalPromotionCoupon = $order->getPromotionCoupon();
         $wasReusablePackagingEnabled = $order->isReusablePackagingEnabled();
-        $originalReusablePackagingPledgeReturn = $order->getReusablePackagingPledgeReturn();
 
         $tipForm = $this->createForm(CheckoutTipType::class);
         $tipForm->handleRequest($request);
@@ -222,15 +221,11 @@ class OrderController extends AbstractController
             $reusablePackagingWasChanged =
                 $wasReusablePackagingEnabled !== $order->isReusablePackagingEnabled();
 
-            $reusablePackagingPledgeReturnWasChanged =
-                $originalReusablePackagingPledgeReturn !== $order->getReusablePackagingPledgeReturn();
-
             // In those cases, we always reload the page
-            if ($reusablePackagingWasChanged || $reusablePackagingPledgeReturnWasChanged) {
+            if ($reusablePackagingWasChanged) {
 
                 // Make sure to reset return counter
                 if (!$order->isReusablePackagingEnabled()) {
-                    $order->setReusablePackagingPledgeReturn(0);
                     $order->setLoopeatReturns([]);
                 }
 

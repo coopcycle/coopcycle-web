@@ -86,7 +86,7 @@ interface OrderInterface extends
 
     public function getShippingTimeRange(): ?TsRange;
 
-    
+
     public function getLastPayment(?string $state = null): ?PaymentInterface;
 
     public function getDelivery(): ?Delivery;
@@ -138,11 +138,6 @@ interface OrderInterface extends
 
     public function getItemsGroupedByVendor(): \SplObjectStorage;
 
-    /**
-     * @return int
-     */
-    public function getReusablePackagingPledgeReturn();
-
     public function getPercentageForRestaurant(LocalBusiness $restaurant): float;
 
     public function addRestaurant(LocalBusiness $restaurant, int $itemsTotal, int $transferAmount);
@@ -181,7 +176,7 @@ interface OrderInterface extends
      */
     public function getBookmarks(): Collection;
 
-    
+
     public function getLastPaymentByMethod(string|array $method, ?string $state = null): ?PaymentInterface;
 
     public function isFoodtech(): bool;

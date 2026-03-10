@@ -1064,8 +1064,6 @@ form.package_with_quantity.package.placeholder: 'Tría un tipo de paquet'
 form.time_slot.same_day_cutoff.label: 'Cutoff mesmo día'
 form.time_slot.same_day_cutoff.help: 'Per eixemplo, si seleccionas las 11:00, las
   opcions d''o mesmo día no s''amostrarán dimpués d''as 11:00'
-order.reusable_packaging.pledge_return.disclaimer: 'Lo/la client ha indicau que se
-  tornarán %count% paquetz'
 form:
   restaurant:
     name:

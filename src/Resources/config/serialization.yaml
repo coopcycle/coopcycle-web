@@ -88,8 +88,6 @@ Sylius\Component\Order\Model\Order:
       groups: ['order']
     reusablePackagingEnabled:
       groups: ['order', 'cart', 'order_update']
-    reusablePackagingPledgeReturn:
-      groups: ['order', 'cart', 'order_update']
     reusablePackagingQuantity:
       groups: ['order', 'cart', 'order_update']
     takeaway:
