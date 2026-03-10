@@ -142,20 +142,19 @@
 
     </div>
   </div>
-  <nav class="checkout-nav border-top">
-    <div class="container">
-      <div class="flex flex-row justify-between items-center py-4">
-        <!-- React component will be inserted here -->
-        <div id="order__fulfilment_time_range__container">
-        </div>
-        <div>
-          {% if form.quote is defined %}
-            {{ form_widget(form.quote, { attr: { class: 'btn-lg btn-default mr-2' } }) }}
-          {% endif %}
-          <button class="btn btn-lg btn-primary btn-submit-page" type="submit">
-            <i class="btn__loading_indicator fa fa-spinner fa-spin"></i> {% trans %}cart.widget.button{% endtrans %}
-          </button>
-        </div>
+  <nav class="checkout-nav border-t">
+    <div class="flex flex-row justify-between items-center py-4">
+      <!-- React component will be inserted here -->
+      <div id="order__fulfilment_time_range__container">
+      </div>
+      <div>
+        {% if form.quote is defined %}
+          {{ form_widget(form.quote, { attr: { class: 'btn-lg btn-default mr-2' } }) }}
+        {% endif %}
+        <button class="btn btn-lg btn-primary btn-submit-page" type="submit">
+          <span class="loading loading-spinner hidden"></span>
+          {% trans %}cart.widget.button{% endtrans %}
+        </button>
       </div>
     </div>
   </nav>
