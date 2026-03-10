@@ -195,12 +195,7 @@ document.querySelector('form[name="checkout_address"]').addEventListener('click'
 
 $('#guest-checkout-signin').on('shown.bs.collapse', function () {
   const $password = $(this).find('input[type="password"]')
-  $password.prop('required', true)
   setTimeout(() => $password.focus(), 100)
-})
-
-$('#guest-checkout-signin').on('hidden.bs.collapse', function () {
-  $(this).find('input[type="password"]').prop('required', false)
 })
 
 document.querySelector('#apply-coupon').addEventListener('click', async function(e) {

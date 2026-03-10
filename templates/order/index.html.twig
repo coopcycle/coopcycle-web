@@ -35,7 +35,8 @@
             <div class="input-group">
               <input type="password" name="_password"
                 class="form-control" id="guest-checkout-password"
-                placeholder="{{ 'security.login.password'|trans({}, 'NucleosUserBundle') }}">
+                placeholder="{{ 'security.login.password'|trans({}, 'NucleosUserBundle') }}"
+                x-bind:required="expanded">
               <span class="input-group-btn">
                 <button type="submit" class="btn btn-primary">
                   {{ 'security.login.submit'|trans({}, 'NucleosUserBundle') }}
