@@ -134,7 +134,6 @@ trait RestaurantTrait
             'edenred_enabled' => $this->getParameter('edenred_enabled'),
             'vytal_enabled' => $this->getParameter('vytal_enabled'),
             'en_boite_le_plat_enabled' => $this->getParameter('en_boite_le_plat_enabled'),
-            'dabba_enabled' => $this->getParameter('dabba_enabled'),
         ]);
 
         /** @var \Symfony\Component\HttpFoundation\Session\Session $session */
@@ -163,7 +162,6 @@ trait RestaurantTrait
 
         $wasDepositRefundEnabled = $restaurant->isDepositRefundEnabled();
         $wasVytalEnabled = $restaurant->isVytalEnabled();
-        $wasDabbaEnabled = $restaurant->isDabbaEnabled();
 
         $activationErrors = [];
         $formErrors = [];
@@ -202,21 +200,6 @@ trait RestaurantTrait
                         $reusablePackaging = new ReusablePackaging();
                         $reusablePackaging->setName('Vytal');
                         $reusablePackaging->setType(ReusablePackaging::TYPE_VYTAL);
-                        $reusablePackaging->setPrice(0);
-                        $reusablePackaging->setOnHold(0);
-                        $reusablePackaging->setOnHand(9999);
-                        $reusablePackaging->setTracked(false);
-
-                        $restaurant->addReusablePackaging($reusablePackaging);
-                    }
-                }
-
-                if (!$wasDabbaEnabled && $restaurant->isDabbaEnabled()) {
-
-                    if (!$restaurant->hasReusablePackagingWithName('Dabba')) {
-                        $reusablePackaging = new ReusablePackaging();
-                        $reusablePackaging->setName('Dabba');
-                        $reusablePackaging->setType(ReusablePackaging::TYPE_DABBA);
                         $reusablePackaging->setPrice(0);
                         $reusablePackaging->setOnHold(0);
                         $reusablePackaging->setOnHand(9999);
@@ -549,7 +532,7 @@ trait RestaurantTrait
         return $this->createForm(ProductType::class, $product, [
             'owner' => $restaurant,
             'with_reusable_packaging' =>
-                $restaurant->isDepositRefundEnabled() || $restaurant->isLoopeatEnabled() || $restaurant->isDabbaEnabled(),
+                $restaurant->isDepositRefundEnabled() || $restaurant->isLoopeatEnabled(),
             'reusable_packaging_choice_loader' => new ReusablePackagingChoiceLoader($restaurant, $loopeatClient, $entityManager),
             'options_loader' => function (ProductInterface $product) {
 

@@ -119,29 +119,7 @@ class OrderController extends AbstractController
 
             $order->setCustomer($user->getCustomer());
 
-            // Make sure to move Dabba credentials if any
-            $dabbaAccessTokenKey =
-                sprintf('dabba.order.%d.access_token', $order->getId());
-            $dabbaRefreshTokenKey =
-                sprintf('dabba.order.%d.refresh_token', $order->getId());
-
-            $session = $request->getSession();
-
-            if ($session->has($dabbaAccessTokenKey) && $session->has($dabbaRefreshTokenKey)) {
-                $order->getCustomer()->setDabbaAccessToken(
-                    $session->get($dabbaAccessTokenKey)
-                );
-                $order->getCustomer()->setDabbaRefreshToken(
-                    $session->get($dabbaRefreshTokenKey)
-                );
-            }
-
             $this->objectManager->flush();
-
-            if ($session->has($dabbaAccessTokenKey) && $session->has($dabbaRefreshTokenKey)) {
-                $session->remove($dabbaAccessTokenKey);
-                $session->remove($dabbaRefreshTokenKey);
-            }
         }
 
         $originalPromotionCoupon = $order->getPromotionCoupon();
@@ -522,28 +500,6 @@ class OrderController extends AbstractController
         $this->denyAccessUnlessGranted('view_public', $order);
 
         // TODO Check if order is in expected state (new or superior)
-
-        $dabbaAccessTokenKey =
-            sprintf('dabba.order.%d.access_token', $id);
-        $dabbaRefreshTokenKey =
-            sprintf('dabba.order.%d.refresh_token', $id);
-
-        $session = $request->getSession();
-
-        if ($session->has($dabbaAccessTokenKey) && $session->has($dabbaRefreshTokenKey)) {
-
-            $order->getCustomer()->setDabbaAccessToken(
-                $session->get($dabbaAccessTokenKey)
-            );
-            $order->getCustomer()->setDabbaRefreshToken(
-                $session->get($dabbaRefreshTokenKey)
-            );
-
-            $this->objectManager->flush();
-
-            $session->remove($dabbaAccessTokenKey);
-            $session->remove($dabbaRefreshTokenKey);
-        }
 
         /** @var Session $session */
         $session = $request->getSession();

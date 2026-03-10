@@ -102,10 +102,7 @@ class OrderNormalizer implements NormalizerInterface, ContextAwareDenormalizerIn
         // Suggest the customer to use reusable packaging via order payload
         if (null !== $restaurant &&
             $object->isEligibleToReusablePackaging() &&
-            $restaurant->isDepositRefundOptin() &&
-            // We don't allow (yet) to toggle reusable packaging for Dabba
-            // https://github.com/coopcycle/coopcycle-app/issues/1503
-            !$restaurant->isDabbaEnabled()) {
+            $restaurant->isDepositRefundOptin()) {
 
             $transKey = 'form.checkout_address.reusable_packaging_enabled.label';
             $packagingAmount = $object->getReusablePackagingAmount();

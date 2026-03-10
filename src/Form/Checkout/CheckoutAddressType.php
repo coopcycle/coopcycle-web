@@ -8,24 +8,17 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Form\AddressType;
 use AppBundle\LoopEat\Context as LoopEatContext;
 use AppBundle\LoopEat\ContextInitializer as LoopEatContextInitializer;
-use AppBundle\Dabba\Client as DabbaClient;
-use AppBundle\Dabba\Context as DabbaContext;
-use AppBundle\Dabba\GuestCheckoutAwareAdapter as DabbaAdapter;
 use AppBundle\Utils\PriceFormatter;
-use AppBundle\Validator\Constraints\DabbaOrder;
 use AppBundle\Validator\Constraints\LoopEatOrder;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -38,9 +31,6 @@ class CheckoutAddressType extends AbstractType
         private readonly PriceFormatter $priceFormatter,
         private readonly LoopEatContext $loopeatContext,
         private readonly LoopEatContextInitializer $loopeatContextInitializer,
-        private readonly RequestStack $requestStack,
-        private readonly DabbaClient $dabbaClient,
-        private readonly DabbaContext $dabbaContext,
         private readonly bool $nonProfitsEnabled,
         private readonly string $enBoitLePlatUrl)
     {
@@ -102,7 +92,6 @@ class CheckoutAddressType extends AbstractType
             if ($order->isEligibleToReusablePackaging()) {
 
                 $supportsLoopEat = $restaurant->isLoopeatEnabled() && $restaurant->hasLoopEatCredentials();
-                $supportsDabba = $restaurant->isDabbaEnabled(); // TODO Check if Dabba code is configured
 
                 // FIXME
                 // We need to check if $packagingQuantity > 0
@@ -118,39 +107,6 @@ class CheckoutAddressType extends AbstractType
                             'data-loopeat' => 'true',
                         ],
                     ]);
-
-                } elseif (!$order->isMultiVendor() && $supportsDabba) {
-
-                    $this->dabbaContext->initialize();
-
-                    $dabbaAdapter = new DabbaAdapter($order, $this->requestStack->getSession());
-
-                    $dabbaAuthorizeParams = [
-                        'state' => $this->dabbaClient->createStateParamForOrder($order),
-                    ];
-
-                    $form->add('reusablePackagingEnabled', CheckboxType::class, [
-                        'required' => false,
-                        'label' => 'form.checkout_address.reusable_packaging_dabba_enabled.label',
-                        'attr' => [
-                            'data-dabba' => 'true',
-                            'data-dabba-credentials' => var_export($dabbaAdapter->hasDabbaCredentials(), true),
-                            'data-dabba-authorize-url' => $this->dabbaClient->getOAuthAuthorizeUrl($dabbaAuthorizeParams),
-                            'data-dabba-expected-wallet' => $packagingQuantity * $this->dabbaContext->getUnitPrice(),
-                        ],
-                    ]);
-
-                    /*
-                    $form->add('reusablePackagingPledgeReturn', NumberType::class, [
-                        'required' => false,
-                        'html5' => true,
-                        'label' => 'form.checkout_address.reusable_packaging_dabba_returns.label',
-                        // WARNING
-                        // Need to use a string here, or it won't work as expected
-                        // https://github.com/symfony/symfony/issues/12499
-                        'empty_data' => '0',
-                    ]);
-                    */
 
                 } elseif (!$order->isMultiVendor() && $restaurant->isVytalEnabled()) {
 
@@ -255,7 +211,6 @@ class CheckoutAddressType extends AbstractType
 
         $resolver->setDefault('constraints', [
             new LoopEatOrder(),
-            new DabbaOrder(),
         ]);
     }
 }

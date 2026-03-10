@@ -1403,7 +1403,6 @@ payment_method:
   restoflash: Restoflash
 form.local_business.mercadopago.remove.connection: Odstranit spojení s Mercadopago
 form.task_export.dv4cul.label: Export ve formátu DV4CUL
-restaurant.form.dabba_enabled.label: Povolení systému vracení záloh Dabba
 adminDashboard.integrations.help: Umožňuje konfigurovat omezení integrace
 form.integration.maxLength.label: Maximální povolená délka (cm)
 tasks.mark_as_done.has_previous: 'Úkol #%failed_task% nemohl být dokončen, protože
@@ -1517,17 +1516,6 @@ form.checkout_address.reusable_packaging.loopeat.connect_account: Připojit se k
 form.checkout_address.reusable_packaging.loopeat.add_credits: Přidat kredity do mé
   peněženky
 form.checkout_address.reusable_packaging.loopeat.manage_deposit: Správa mého vkladu
-form.checkout_address.reusable_packaging_dabba_enabled.label: Chci použít odnosné
-  dózy s víkem
-form.checkout_address.reusable_packaging.dabba.learn_more: Více info k odnosným dózám
-  s víkem
-form.checkout_address.reusable_packaging.dabba.wallet.label: V peněžence Dabba máte
-  <strong>%amount%</strong>
-form.checkout_address.reusable_packaging.dabba.wallet.help: (%price% za krabičku na
-  oběd)
-form.checkout_address.reusable_packaging.dabba.return_pledge_label: Kurýrovi vrátíte
-  zálohu (zálohy) %field%
-form.checkout_address.reusable_packaging.dabba.add: Přidejte %missing% do své peněženky
 form.embed_settings.show_home_page.label: Zobrazit na úvodní stránce
 form.package.enter_details: Zobrazit/skrýt detaily
 form.package.description.label: Popis pro zákazníka
@@ -1550,9 +1538,6 @@ activity.order.restored: 'Objednávka #order/%aggregate_id% byla obnovena'
 basics.delete_selected: Smazat vybrané
 basics.address: Adresa
 loopeat.how_it_works.step_1.title: Zaregistruji se
-dabba.oauth_connect.success: Účet na zálohované boxy na jídlo úspěšně připojen!
-dabba.oauth_redirect.warning: Budete přesměrováni na webovou stránku Poskytovatele
-  boxů na jídlo, kde se můžete přihlásit nebo si vytvořit účet
 loopeat.how_it_works.step_1.text: Při dokončování objednávky se zaregistrujte na %name%.
 loopeat.how_it_works.step_2.title: Zaplatím první zálohu
 loopeat.how_it_works.step_3.title: Objednávám
@@ -1604,8 +1589,6 @@ vehicles.breadcrumb: Vozidla
 vehicles.breadcrumb.help: Definujte vozový park
 warehouses.breadcrumb: Sklady
 warehouses.breadcrumb.help: Definujte sklady
-restaurant.form.section.dabba: Dabba
-restaurant.form.dabba_code.label: Kód restaurace Dabba
 adminDashboard.integrations.title: Integrace
 integrations.breadcrumb: Integrace
 form.integration.name.label: Název Integrace
@@ -1617,7 +1600,6 @@ form.integration.maxWidth.label: Maximální povolená šířka (cm)
 form.integration.productTypes.label: Povolené typy produktů
 form.integration.woopitStoreId.label: Identifikátor obchodu Woopit
 integration.created.message: Integrace byla vytvořena.
-profile.dabba.disconnect: Odpojit Dabba
 form.task_export.colisactiv.label: Export ve formátu ColivActiv
 form.task_export.format.label: Formát exportu
 import.errors.at.row: Chyby na řádku %row_number%

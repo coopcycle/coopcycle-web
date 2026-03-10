@@ -51,8 +51,6 @@ framework:
                 base_uri: '%env(WOOPIT_CARRIER_API_URL)%/'
                 headers:
                     X-Api-Version: '%env(WOOPIT_API_VERSION)%'
-            dabba.client:
-                base_uri: "%env(DABBA_BASE_URL)%/"
             umap.client:
                 base_uri: "https://umap.openstreetmap.fr/"
             unsplash.client:

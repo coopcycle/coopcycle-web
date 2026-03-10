@@ -1596,8 +1596,6 @@ form.checkout_address.nonprofit.placeholder: Elige tu organización sin ánimo d
 users.disabled: Desactivado
 vehicles.breadcrumb.help: Definir flota de vehículos
 vehicles.breadcrumb: Vehículos
-restaurant.form.section.dabba: Dabba
-form.checkout_address.reusable_packaging_dabba_enabled.label: Quiero usar tupers Dabba
 form.task_export.colisactiv.label: Exportar con el formato ColivActiv
 adminDashboard.incidents.createNew: Crear una nueva incidencia
 order.export.heading.billing_method: Modo de facturación
@@ -1626,8 +1624,6 @@ roles.ROLE_DISPATCHER: Dispatcher
 basics.send_invitation.invitated_user_after_password_confirmation: Su cuenta ha sido
   creada, por favor compruebe su <a target="_blank" href="%restaurantEditUrl%"> información
   personal </a>
-dabba.oauth_redirect.warning: Se le redirigirá al sitio web de Dabba para que inicie
-  sesión o cree su cuenta.
 loopeat.how_it_works.title: "Su restaurante forma parte del « %name% » red: disfrute\
   \ de la comida para llevar o entregar en cajas reutilizables. Puede desactivar esta\
   \ opción en cualquier momento en su cesta de pedido.\n"
@@ -1641,8 +1637,6 @@ adminDashboard.nonprofits.confirm_delete: ¿Estás seguro de que quieres elimina
 order.cart.donation.disclaimer: Le proponemos donar %percentage% de los ingresos de
   tu pedido a una de nuestras asociaciones colaboradoras. No pagarás más.
 form.task_export.dv4cul.label: Exportar en formato DV4CUL
-restaurant.form.dabba_enabled.label: Activar el sistema de depósito y devolución Dabba
-profile.dabba.disconnect: Desconectar Dabba
 activity.task.rescheduled: "@%owner% ha reprogramado la tarea #task/%aggregate_id%\n"
 form.store_type.failure_reason_set.help: Seleccione una lista de<a href="%failure_reason_set%">
   incidencias </a> para ser usado en %entity%
@@ -1697,13 +1691,6 @@ form.checkout_address.reusable_packaging.loopeat.add_credits: Añadir créditos 
 form.checkout_address.reusable_packaging.loopeat.manage_deposit: Gestionar mi fianza
 form.checkout_address.reusable_packaging.loopeat.suggest_returns.label: Te sugerimos
   que devuelva sus tapers en el momento de la entrega
-form.checkout_address.reusable_packaging.dabba.learn_more: Saber mas sobre Dabba
-form.checkout_address.reusable_packaging.dabba.wallet.label: Tienes <strong>%amount%</strong>
-  en su cartera Dabba
-form.checkout_address.reusable_packaging.dabba.wallet.help: (%price% por tupper)
-form.checkout_address.reusable_packaging.dabba.return_pledge_label: Vas a devolver
-  %field% Dabba fianzas al repartidor
-form.checkout_address.reusable_packaging.dabba.add: Añadir %missing% a su cartera
 form.package.color.label: Color (haga clic para seleccionar)
 form.package.maxWeight.help: (Todavía no se utiliza en ninguna otra parte de la plataforma)
 activity.order.cancelled: "El pedido #order/#%aggregate_id% está cancelado\n"
@@ -1711,7 +1698,6 @@ authentication.unsubscribe: Puede darse de baja fácilmente en cualquier momento
   través de los enlaces para darse de baja que encontrará en cada uno de nuestros
   correos electrónicos
 users.dispatchers: Dispatchers
-dabba.oauth_connect.success: ¡Cuenta Dabba conectada con éxito!
 loopeat.how_it_works.step_1.title: Me apunto
 loopeat.how_it_works.step_1.text: Inscríbete en %name% al finalizar su pedido.
 loopeat.how_it_works.step_2.title: Pago mi primer depósito
@@ -1739,7 +1725,6 @@ form.vehicle.max_weight.label: Peso máximo (kg)
 restaurant.form.section.en_boite_le_plat: En Boîte Le Plat
 restaurant.form.en_boite_le_plat_enabled.label: ActivarEn Boîte Le Plat deposit-refund
   system
-restaurant.form.dabba_code.label: Código restaurante Dabba
 form.task_export.format.label: Formato de exportación
 stores.filters.input.placeholder: 'Buscar por dirección, nombre o #id'
 basics.filter: Filtro

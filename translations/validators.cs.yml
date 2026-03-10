@@ -48,7 +48,6 @@ googlemaps.api_key.invalid: Klíč Google Maps API není platný. %error%
 spreadsheet.missing_columns: Musíte zadat sloupec " %column% " nebo " %other_column%
   "
 order.adjustments.unexpectedCount: Neočekávaný počet úprav "%type%"
-dabba.insufficient_wallet: Ve vaší peněžence Dabba chybí %amount%
 loopeat.insufficient_stock: Nedostatečné množství opakovaně použitelných obalů pro
   " %name% "
 spreadsheet.missing_column: Musíte zadat sloupec " %column% "

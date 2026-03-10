@@ -1313,14 +1313,6 @@ shops.filters.title.types: Type de commerce
 shops.filters.title.categories: Catégories
 shops.filters.title.cuisines: Cuisines
 shops.filters.title: Filtres
-form.checkout_address.reusable_packaging_dabba_enabled.label: Je veux utiliser des consignes Dabba
-form.checkout_address.reusable_packaging.dabba.wallet.label: Vous avez <strong>%amount%</strong> sur votre cagnotte Dabba
-form.checkout_address.reusable_packaging.dabba.wallet.help: (%price% par consigne)
-form.checkout_address.reusable_packaging.dabba.return_pledge_label: Vous allez rendre
-  %field% consigne(s) Dabba au coursier
-form.checkout_address.reusable_packaging.dabba.learn_more: En savoir plus sur Dabba
-form.checkout_address.reusable_packaging.dabba.add: Ajouter %missing% sur votre cagnotte
-restaurant.form.dabba_code.label: Code restaurant Dabba
 adminDashboard.integrations.title : Intégrations
 adminDashboard.integrations.help : Permet de configurer les contraintes d'une intégration
 integrations.breadcrumb : Intégrations
@@ -1334,8 +1326,6 @@ form.integration.maxLength.label : Longueur maximale autorisée (cm)
 form.integration.productTypes.label : Types de produits autorisés
 form.integration.woopitStoreId.label : Identifiant du magasin Woopit
 integration.created.message : L'intégration a été créée.
-dabba.oauth_redirect.warning: Vous allez être redirigé·e vers le site de Dabba pour vous identifier ou créer votre compte
-profile.dabba.disconnect: Déconnecter mon compte Dabba
 security.login.remember_me: Se souvenir de moi
 loopeat.how_it_works.title: |
   Votre restaurant fait partie du réseau « %name% » : bénéficiez de plats à emporter ou livrés en boîtes consignées. Vous pouvez désactiver cette option à tout moment dans votre panier de commande.
@@ -1528,7 +1518,6 @@ form.local_business_type.label: "Type d'entreprise"
 form.local_business_type.help: "Les types utilisent le vocabulaire de <a href=\"https://schema.org/\">schema.org</a> pour les <a href=\"https://schema.org/FoodEstablishment\">établissements alimentaires</a> et les <a href=\"https://schema.org/Store\">magasins</a>"
 users.dispatchers: "Dispatcheurs"
 refund.list.disclaimer.admin: "Lorsque la plateforme est responsable de l'incident, cela signifie que la plateforme doit au commerçant le montant du remboursement, car le commerçant a effectivement remboursé le client."
-dabba.oauth_connect.success: "Compte Dabba connecté avec succès !"
 promotion_action.percentage_discount: "%percentage% de réduction"
 promotion_action.delivery_percentage_discount: "%percentage% de réduction sur les frais de livraison"
 promotion_action.fixed_discount: "%amount% de réduction"

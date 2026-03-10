@@ -10,7 +10,6 @@ class ReusablePackaging implements StockableInterface
 {
     public const TYPE_INTERNAL = 'internal';
     public const TYPE_LOOPEAT = 'loopeat';
-    public const TYPE_DABBA = 'dabba';
     public const TYPE_VYTAL = 'vytal';
 
     private $id;
