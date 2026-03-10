@@ -19,7 +19,7 @@ const Buttons = () => {
   const dispatch = useDispatch()
   return (
     <React.Fragment>
-      <a href="#" className="mr-3" onClick={ e => {
+      <a href="#" onClick={ e => {
         e.preventDefault()
         dispatch(openCreateTourModal())
       }}>
@@ -93,7 +93,7 @@ export const UnassignedTours = ({ splitCollapseAction }) => {
 
   return (
     <div className="dashboard__panel">
-      <h4 className="dashboard__panel__header d-flex justify-content-between">
+      <h4 className="dashboard__panel__header d-flex align-items-center justify-content-between">
         <a onClick={() => splitCollapseAction()}>
           <span className="mr-2">{ t('DASHBOARD_UNASSIGNED_TOURS') }</span>
           <span className="mr-2">({ tours.length + groups.length })</span>
@@ -107,7 +107,7 @@ export const UnassignedTours = ({ splitCollapseAction }) => {
             }
           </Tooltip>
         </a>
-        <span className="pull-right">
+        <span className="d-flex">
           <Tooltip
             placement="left"
             title={t("ADMIN_DASHBOARD_HIDE_SHOW_ON_MAP")}
