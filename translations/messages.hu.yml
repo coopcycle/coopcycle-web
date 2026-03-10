@@ -842,15 +842,9 @@ form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: 'Szeret
   <a href="https://enboiteleplat.fr/rennes/" target="_blank">En Boîte Le Plat</a>
   újrafelhasználható edényeket.'
 order.cart.donation: 'Adományozás'
-order.export.heading.nonprofit: 'Nonprofit'
-adminDashboard.nonprofits.createNew: 'Új nonprofit hozzáadása'
-adminDashboard.nonprofits.title: 'Nonprofitok'
-adminDashboard.nonprofits.confirm_delete: 'Biztos, hogy törölni akarod ezt a nonprofit
-  szervezetet?'
 order.cart.donation.disclaimer: 'Felajánljuk Neked, hogy a megrendelésedből származó
   bevételeknek %percentage% valamelyik partneregyesületünknek adományozzuk. Te nem
   fogsz többet fizetni.'
-form.checkout_address.nonprofit.placeholder: 'Válaszd ki a kedvenc nonprofit szervezeted'
 form.delivery.arbitrary_price.label: 'Ár beállítása manuálisan'
 stores.createNewOrder: 'Új rendelés létrehozása'
 stores.orders: 'Rendelések'

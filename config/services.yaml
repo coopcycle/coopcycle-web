@@ -58,12 +58,7 @@ parameters:
   craue_config.cache_adapter.class: Craue\ConfigBundle\CacheAdapter\SymfonyCacheComponentAdapter
   vytal_enabled: '%env(bool:VYTAL_ENABLED)%'
   en_boite_le_plat_enabled: '%env(bool:EN_BOITE_LE_PLAT_ENABLED)%'
-  nonprofits_enabled: '%env(bool:NONPROFITS_ENABLED)%'
   dv4cul_enabled: '%env(bool:DV4CUL_ENABLED)%'
-  dabba_enabled: '%env(bool:DABBA_ENABLED)%'
-  dabba_base_url: '%env(DABBA_BASE_URL)%'
-  dabba_client_id: '%env(DABBA_CLIENT_ID)%'
-  dabba_client_secret: '%env(DABBA_CLIENT_SECRET)%'
   typesense_shops_collection_name: "shops"
   typesense_products_collection_name: "products"
   colisactiv_enabled: '%env(bool:COLISACTIV_ENABLED)%'
@@ -1209,7 +1204,6 @@ services:
   AppBundle\MessageHandler\ExportOrdersHandler:
     arguments:
       $defaultLocale: "%kernel.default_locale%"
-      $nonProfitsEnabled: "%nonprofits_enabled%"
 
   AppBundle\Service\MaintenanceManager: ~
 
@@ -1519,16 +1513,6 @@ services:
         '@woopit.http_client',
         '@woopit.grant_type'
       ]
-
-  AppBundle\Dabba\Client:
-    arguments:
-      $baseUrl: "%dabba_base_url%"
-      $clientId: "%dabba_client_id%"
-      $clientSecret: "%dabba_client_secret%"
-
-  AppBundle\Dabba\Context:
-    tags:
-      - { name: monolog.logger, channel: dabba }
 
   AppBundle\Typesense\Converter\:
     resource: '../src/Typesense/Converter/*'

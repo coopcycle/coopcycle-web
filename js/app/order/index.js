@@ -155,18 +155,6 @@ $('#modal-loopeat-howitworks').on('shown.bs.modal', function() {
   window._paq.push(['trackEvent', 'Checkout', 'openModal', 'zeroWasteHowItWorks']);
 });
 
-$('#dabba-add-credit').on('click', function(e) {
-  e.preventDefault();
-
-  var expectedWallet = $('#checkout_address_reusablePackagingEnabled').data('dabbaExpectedWallet');
-  var authorizeUrl = $('#checkout_address_reusablePackagingEnabled').data('dabbaAuthorizeUrl');
-
-  $('#modal-dabba-redirect-warning [data-continue]')
-    .off('click')
-    .on('click', () => window.location.href = authorizeUrl + '&expected_wallet='+expectedWallet)
-  $('#modal-dabba-redirect-warning').modal('show');
-});
-
 $('#checkout_address_cancelReusablePackaging').on('click', function() {
   $('#checkout_address_reusablePackagingEnabled').prop('checked', false);
   submitForm();
@@ -179,23 +167,12 @@ $('#checkout_address_reusablePackagingPledgeReturn').on('change', _.debounce(fun
 $('#checkout_address_reusablePackagingEnabled').on('change', function() {
   var isChecked = $(this).is(':checked');
   var isVytal = $(this).data('vytal') === true;
-  var isDabba = $(this).data('dabba') === true;
-  var expectedWallet = $(this).data('dabbaExpectedWallet');
-  var hasDabbaCredentials = $(this).data('dabbaCredentials') === true;
-  var dabbaAuthorizeUrl = $(this).data('dabbaAuthorizeUrl') + `&expected_wallet=${expectedWallet}`;
 
   window._paq.push(['trackEvent', 'Checkout', (isChecked ? 'zeroWasteEnable' : 'zeroWasteDisable')]);
 
   if (isVytal) {
 
     $('#modal-vytal').modal('show');
-
-  } else if (isDabba && !hasDabbaCredentials && isChecked) {
-
-    $('#modal-dabba-redirect-warning [data-continue]')
-      .off('click')
-      .on('click', () => window.location.href = dabbaAuthorizeUrl)
-    $('#modal-dabba-redirect-warning').modal('show');
 
   } else {
     submitForm();
@@ -262,14 +239,6 @@ $('#apply-coupon').on('click', function(e) {
     }
   })
 })
-
-const nonprofitInput = document.getElementById('nonprofit_input');
-const nonprofitCards = Array.from(document.getElementsByClassName('nonprofit-card'))
-window.setNonprofit = function (elem) {
-  nonprofitInput.value = elem.dataset.value;
-  nonprofitCards.map(x => x.classList.remove('active'));
-  elem.classList.add("active");
-}
 
 const orderDataElement = document.querySelector('#js-order-data')
 const orderNodeId = orderDataElement.dataset.orderNodeId

@@ -21,7 +21,6 @@ use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Entity\ApiApp;
-use AppBundle\Entity\Nonprofit;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Cuisine;
@@ -68,7 +67,6 @@ use AppBundle\Form\MaintenanceType;
 use AppBundle\Form\MercadopagoLivemodeType;
 use AppBundle\Form\Model\Promotion as PromotionDto;
 use AppBundle\Form\NewCustomOrderType;
-use AppBundle\Form\NonprofitType;
 use AppBundle\Form\OrderExportType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\PackageSetType;
@@ -2925,89 +2923,9 @@ class AdminController extends AbstractController
             'products_route' => $routes['products'],
             'pledge_count' => $pledgeCount,
             'pledge_form' => $pledgeForm->createView(),
-            'nonprofits_enabled' => $this->getParameter('nonprofits_enabled'),
         ]));
     }
 
-
-    /**
-     * @return RedirectResponse|Response
-     */
-    private function handleNonprofitForm(Nonprofit $nonprofit, Request $request)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        $form = $this->createForm(NonprofitType::class, $nonprofit);
-
-        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
-            $this->entityManager->persist($nonprofit);
-            $this->entityManager->flush();
-
-            $this->addFlash(
-                'notice',
-                $this->translator->trans('global.changesSaved')
-            );
-
-            return $this->redirectToRoute('admin_nonprofits');
-        }
-
-        return $this->render('admin/nonprofit.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * Handle POST request from nonprofit form
-     *
-     * @return RedirectResponse|Response
-     */
-    public function newNonprofitAction(Request $request)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        $nonprofit = new Nonprofit();
-
-        return $this->handleNonprofitForm($nonprofit, $request);
-    }
-
-    /**
-     * Build and return the form of a specific nonprofit
-     *
-     * @return RedirectResponse|Response
-     */
-    public function nonprofitAction(int $id, Request $request)
-    {
-        $nonprofit = $this->entityManager->getRepository(Nonprofit::class)->find($id);
-
-        if (!$nonprofit) {
-            throw $this->createNotFoundException(sprintf('Nonprofit #%d does not exist', $id));
-        }
-
-        return $this->handleNonprofitForm($nonprofit, $request);
-    }
-
-    public function deleteNonprofitAction(int $id, Request $request): RedirectResponse
-    {
-        $nonprofit = $this->entityManager->getRepository(Nonprofit::class)->find($id);
-        $this->entityManager->remove($nonprofit);
-        $this->entityManager->flush();
-
-        return $this->redirectToRoute('admin_nonprofits');
-    }
-
-    /**
-     * Build the nonprofit list page
-     */
-    public function nonProfitsActionListAction(
-        Request $request
-    ): Response
-    {
-        $nonprofits = $this->entityManager->getRepository(Nonprofit::class)->findAll();
-
-        return $this->render('admin/nonprofits.html.twig', [
-            'nonprofits' => $nonprofits
-        ]);
-    }
 
     public function metricsAction(
         LocalBusinessRepository $localBusinessRepository,

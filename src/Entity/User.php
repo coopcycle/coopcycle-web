@@ -77,8 +77,6 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
 
     protected $quotesAllowed = false;
 
-    protected $defaultNonprofit;
-
     /**
      * @var CustomerInterface|null
      */
@@ -398,16 +396,6 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
         if (null !== $this->customer) {
             $this->customer->setEmail($email);
         }
-    }
-
-    public function getDefaultNonprofit()
-    {
-        return $this->defaultNonprofit;
-    }
-
-    public function setDefaultNonprofit($defaultNonprofit)
-    {
-        $this->defaultNonprofit = $defaultNonprofit;
     }
 
     /**

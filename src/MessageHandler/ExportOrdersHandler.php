@@ -21,7 +21,6 @@ class ExportOrdersHandler
         private PaginatorInterface $paginator,
         private TaxesHelper $taxesHelper,
         private string $defaultLocale,
-        private bool $nonProfitsEnabled
     )
     { }
 
@@ -39,7 +38,6 @@ class ExportOrdersHandler
             $this->taxesHelper,
             true,
             $message->isWithMessenger(),
-            $this->nonProfitsEnabled,
             $message->isWithBillingMethod(),
             $message->isIncludeTaxes(),
             includePaymentGateway: false

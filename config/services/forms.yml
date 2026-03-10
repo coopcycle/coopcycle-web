@@ -117,7 +117,6 @@ services:
 
   AppBundle\Form\Checkout\CheckoutAddressType:
     arguments:
-      $nonProfitsEnabled: '%env(bool:NONPROFITS_ENABLED)%'
       $enBoitLePlatUrl: '%env(EN_BOITE_LE_PLAT_URL)'
     tags: [ form.type ]
 

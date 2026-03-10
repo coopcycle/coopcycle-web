@@ -72,7 +72,6 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use Doctrine\ORM\EntityNotFoundException;
-use AppBundle\Validator\Constraints\DabbaOrder as AssertDabbaOrder;
 use AppBundle\Validator\Constraints\IsOrderModifiable as AssertOrderIsModifiable;
 use AppBundle\Validator\Constraints\LoopEatOrder as AssertLoopEatOrder;
 use AppBundle\Validator\Constraints\Order as AssertOrder;
@@ -442,7 +441,6 @@ use Webmozart\Assert\Assert as WMAssert;
 #[AssertOrder(groups: ['Default'])]
 #[AssertOrderIsModifiable(groups: ['cart'])]
 #[AssertLoopEatOrder(groups: ['loopeat'])]
-#[AssertDabbaOrder(groups: ['dabba'])]
 #[ApiFilter(filterClass: OrderDateFilter::class, properties: ['date' => 'exact'])]
 #[ApiFilter(filterClass: SearchFilter::class, properties: ['state' => 'exact'])]
 #[ApiFilter(filterClass: ExistsFilter::class, properties: ['exports'])]
@@ -493,9 +491,6 @@ class Order extends BaseOrder implements OrderInterface
 
     #[AssertShippingTimeRange(groups: ['Default', 'ShippingTime'])]
     protected $shippingTimeRange;
-
-
-    protected $nonprofit;
 
 
     #[Assert\Expression("!this.isTakeaway() or (this.isTakeaway() and this.getVendor().isFulfillmentMethodEnabled('collection'))", message: 'order.collection.not_available', groups: ['cart'])]
@@ -1011,7 +1006,6 @@ class Order extends BaseOrder implements OrderInterface
             !$restaurant->isDepositRefundEnabled()
             && !$restaurant->isLoopeatEnabled()
             && !$restaurant->isVytalEnabled()
-            && !$restaurant->isDabbaEnabled()
         ) {
             return false;
         }
@@ -1508,16 +1502,6 @@ class Order extends BaseOrder implements OrderInterface
     public function isFree(): bool
     {
         return !$this->isEmpty() && $this->getItemsTotal() > 0 && $this->getTotal() === 0;
-    }
-
-    public function getNonprofit()
-    {
-        return $this->nonprofit;
-    }
-
-    public function setNonprofit($nonprofit)
-    {
-        $this->nonprofit = $nonprofit;
     }
 
     public function getInvitation()

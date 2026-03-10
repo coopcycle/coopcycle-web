@@ -116,18 +116,6 @@
         </div>
       </div>
 
-      {% if form.nonprofit is defined and form.nonprofit.vars.choices|length > 0 %}
-      <div class="border-bottom mb-5">
-        <h4 class="bg-light p-3 mb-4">{{ 'order.cart.donation'|trans }}</h4>
-        <div class="alert alert-info">
-          {{ 'order.cart.donation.disclaimer'|trans({ '%percentage%': '0.02'|format_number(style='percent') }) }}
-        </div>
-        <div id="items">
-          {{ form_row(form.nonprofit, { label: false }) }}
-        </div>
-      </div>
-      {% endif %}
-
       {% if order.takeaway %}
       <div class="alert alert-warning">
         <i class="fa fa-warning mr-2"></i>
@@ -209,7 +197,7 @@
         <div class="modal-body">
           <div class="mb-4">{{ 'vytal.code.disclaimer'|trans|raw }}</div>
           <div class="input-group">
-            <div class="input-group-addon">V - </div>
+            <div class="input-group-addon">V - </div>
             {{ form_widget(form_vytal.code) }}
           </div>
         </div>
@@ -218,20 +206,6 @@
           <button type="submit" class="btn btn-primary btn-rounded btn-md">{{ 'basics.continue'|trans }}</button>
         </div>
       {{ form_end(form_vytal) }}
-    </div>
-  </div>
-
-  <div class="modal" id="modal-dabba-redirect-warning" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog modal-sm" role="document">
-      <div class="modal-content">
-        <div class="modal-body">
-          <p>{{ 'dabba.oauth_redirect.warning'|trans }}</p>
-        </div>
-        <div class="d-flex justify-content-between p-4 border-top">
-          <button type="button" class="btn btn-default btn-rounded btn-md" data-dismiss="modal">{{ 'basics.close'|trans }}</button>
-          <button type="button" class="btn btn-primary btn-rounded btn-md" data-continue>{{ 'basics.continue'|trans }}</button>
-        </div>
-      </div>
     </div>
   </div>
 

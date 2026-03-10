@@ -21,8 +21,6 @@ class OrderView
     public $adjustments = [];
     public $vendors = [];
 
-    public ?string $nonprofit = null;
-
     private $itemsTaxTotal;
     private $adjustmentsTotalCache = [];
     private $adjustmentsTotalRecursivelyCache = [];
@@ -31,8 +29,6 @@ class OrderView
 
     public $incidents = [];
 
-    public $nonprofitId;
-    public $nonprofitName;
     public $storeName;
     public $paymentMethod;
     public $billingMethod = 'unit';
@@ -199,10 +195,6 @@ class OrderView
         $order->total             = $data['total'];
         $order->incidents         = explode('\n', $data['incident_titles'] ?? '');
 
-        if (isset($data['nonprofit_id'])) {
-            $order->nonprofitId = $data['nonprofit_id'];
-        }
-
         return $order;
     }
 
@@ -211,11 +203,6 @@ class OrderView
         $total = array_reduce($this->refunds, fn ($total, $refund): int => $total + $refund['amount'], 0);
 
         return $total > 0 ? $total * -1 : $total;
-    }
-
-    public function getNonprofit(): ?string
-    {
-        return $this->nonprofitName;
     }
 
     public function getIncidents(): array

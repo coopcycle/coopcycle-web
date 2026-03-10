@@ -68,19 +68,6 @@ $vytalGreen: #53b848;
   justify-content: space-between;
 }
 
-.nonprofit-card {
-  .thumbnail {
-    cursor: pointer;
-    height: 340px;
-  }
-   &.active {
-    .thumbnail {
-      border: 1px solid #66afe9;
-      background-color: #f3faff;
-    }
-  }
-}
-
 .loopeat-links {
   opacity: 0.6;
   > a {
@@ -89,32 +76,3 @@ $vytalGreen: #53b848;
   }
 }
 
-#dabba-block {
-
-  background-color: #FEF9F4;
-  color: #F96C26;
-  position: relative;
-
-  & img.dabba-logo {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 1rem;
-    height: calc(100% - 4rem);
-    @media (min-width: $screen-sm-min) {
-      height: calc(100% - 2rem);
-    }
-  }
-
-  & #checkout_address_reusablePackagingPledgeReturn {
-    display: inline-block;
-    width: 3em;
-    padding: .1em .1em .1em .3em;
-    height: auto;
-    &::-webkit-inner-spin-button,
-    &::-webkit-outer-spin-button {
-     opacity: 1;
-    }
-  }
-
-}

@@ -30,12 +30,6 @@
           </div>
         {% endif %}
 
-        {% if form.dabbaDisconnect is defined %}
-          <div class="form-group">
-            {{ form_widget(form.dabbaDisconnect, { attr: { class: 'btn-primary' } }) }}
-          </div>
-        {% endif %}
-
         {{ form_rest(form) }}
       </div>
     </div>

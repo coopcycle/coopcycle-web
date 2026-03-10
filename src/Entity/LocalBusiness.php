@@ -291,11 +291,6 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $cashOnDeliveryEnabled = false;
 
-    protected $dabbaEnabled = false;
-
-    protected $dabbaCode;
-
-
     protected ?int $rateLimitRangeDuration;
 
     protected ?int $rateLimitAmount;
@@ -588,7 +583,7 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     public function isDepositRefundOptin(): bool
     {
-        if ($this->isLoopeatEnabled() || $this->isDabbaEnabled()) {
+        if ($this->isLoopeatEnabled()) {
 
             return true;
         }
@@ -1027,37 +1022,7 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     public function isZeroWaste()
     {
-        return $this->isDepositRefundEnabled() || $this->isLoopeatEnabled() || $this->isDabbaEnabled();
-    }
-
-    /**
-     * @return bool
-     */
-    public function isDabbaEnabled()
-    {
-        return $this->dabbaEnabled;
-    }
-
-    /**
-     * @param bool $enabled
-     *
-     * @return self
-     */
-    public function setDabbaEnabled($enabled)
-    {
-        $this->dabbaEnabled = $enabled;
-
-        return $this;
-    }
-
-    public function getDabbaCode()
-    {
-        return $this->dabbaCode;
-    }
-
-    public function setDabbaCode($dabbaCode)
-    {
-        $this->dabbaCode = $dabbaCode;
+        return $this->isDepositRefundEnabled() || $this->isLoopeatEnabled();
     }
 
     public function getShopCuisines()

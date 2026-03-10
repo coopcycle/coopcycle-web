@@ -6,7 +6,6 @@ use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\Delivery\FailureReasonSet;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Enum\FoodEstablishment;
-use AppBundle\Form\Restaurant\DabbaType;
 use AppBundle\Form\Restaurant\FulfillmentMethodType;
 use AppBundle\Form\Restaurant\LoopeatType;
 use AppBundle\Form\Restaurant\ShippingOptionsTrait;
@@ -143,13 +142,6 @@ class RestaurantType extends LocalBusinessType
                 'label' => 'restaurant.form.en_boite_le_plat_enabled.label',
                 'required' => false,
                 'disabled' => !$this->authorizationChecker->isGranted('ROLE_ADMIN'),
-            ]);
-        }
-
-        if ($options['dabba_enabled']) {
-            $builder->add('dabba', DabbaType::class, [
-                'mapped' => false,
-                'allow_toggle' => $this->authorizationChecker->isGranted('ROLE_ADMIN'),
             ]);
         }
 
@@ -324,7 +316,6 @@ class RestaurantType extends LocalBusinessType
             'edenred_enabled' => false,
             'vytal_enabled' => false,
             'en_boite_le_plat_enabled' => false,
-            'dabba_enabled' => false,
         ));
     }
 }
