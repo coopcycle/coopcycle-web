@@ -131,8 +131,8 @@ export const UnassignedTasks = ({ isGeneratingOrdersForRecurrenceRules, isGenera
   return (
     <div className="dashboard__panel">
       <div className="dashboard__panel__header">
-        <div className="d-flex align-items-center justify-content-between">
-          <h4>
+        <div className="d-flex align-items-center justify-content-between mb-3">
+          <h4 className="m-0">
             <span>{t('DASHBOARD_UNASSIGNED')}</span>
           </h4>
           <Buttons />
