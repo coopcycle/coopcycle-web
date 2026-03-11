@@ -168,7 +168,7 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
 
   return (
     <div>
-      <div className="pl-2 task-list__header" onClick={() => dispatch(toggleTaskListPanelExpanded(taskList['@id']))}>
+      <div className="task-list__header" onClick={() => dispatch(toggleTaskListPanelExpanded(taskList['@id']))}>
         <div className="mb-1 d-flex align-items-center task-list__badges">
           <Avatar username={ username } size="24" className="ml-2" />
           <strong className="mr-2">{ username }</strong>
