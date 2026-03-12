@@ -350,7 +350,7 @@ Feature: Incidents
         ]
       }
       """
-    
+
   Scenario: Report incident: with invalid suggestion in metadata
     Given the fixtures files are loaded:
       | tasks.yml |
@@ -1145,3 +1145,67 @@ Feature: Incidents
         "tags":[]
       }
       """
+
+    Scenario: Report incident & add metadata
+      Given the fixtures files are loaded:
+        | tasks.yml |
+      And the courier "bob" is loaded:
+        | email     | bob@coopcycle.org |
+        | password  | 123456            |
+        | telephone | 0033612345678     |
+      And the user "bob" is authenticated
+      And the tasks with comments matching "#bob" are assigned to "bob"
+      When I add "Content-Type" header equal to "application/ld+json"
+      And I add "Accept" header equal to "application/ld+json"
+      And the user "bob" sends a "POST" request to "/api/incidents" with body:
+        """
+        {
+          "description": "PACKAGE WET",
+          "failureReasonCode": "DAMAGED",
+          "task": "/api/tasks/2",
+          "metadata": [
+            {"foo":"bar"},
+            {"baz":"bat"}
+          ]
+        }
+        """
+      Then the response status code should be 201
+      And the response should be in JSON
+      And the JSON should match:
+        """
+        {
+          "@context":"/api/contexts/Incident",
+          "@id":"/api/incidents/1",
+          "@type":"Incident",
+          "metadata": [
+            {"foo":"bar"},
+            {"baz":"bat"}
+          ],
+          "@*@": "@*@"
+        }
+        """
+      Given I add "Content-Type" header equal to "application/ld+json"
+      And the user "bob" sends a "POST" request to "/api/incidents/1/metadata" with body:
+        """
+        {
+          "metadata": [
+            {"lorem": "ipsum"}
+          ]
+        }
+        """
+      Then the response status code should be 200
+      And the response should be in JSON
+      And the JSON should match:
+        """
+        {
+          "@context":"/api/contexts/Incident",
+          "@id":"/api/incidents/1",
+          "@type":"Incident",
+          "metadata": [
+            {"foo":"bar"},
+            {"baz":"bat"},
+            {"lorem":"ipsum"}
+          ],
+          "@*@": "@*@"
+        }
+        """
