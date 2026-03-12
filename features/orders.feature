@@ -1656,7 +1656,7 @@ Feature: Orders
       """
 
   @debug
-  Scenario: Retrieve all orders via OAuth
+  Scenario: Retrieve all orders via OAuth, then retrieve one order
     Given the fixtures files are loaded with purge:
       | setup_default.yml |
     Given the fixtures files are loaded:
@@ -1675,7 +1675,24 @@ Feature: Orders
         "@id":"/api/orders",
         "@type":"hydra:Collection",
         "hydra:totalItems":1000,
-        "hydra:member":@array@,
+        "hydra:member":[
+          {
+            "@id": @string@,
+            "@type": "http://schema.org/Order",
+            "shippingAddress": @string@,
+            "shippingTimeRange": [
+              "@string@.isDateTime()",
+              "@string@.isDateTime()"
+            ],
+            "number": @string@,
+            "total": @integer@,
+            "state": "new",
+            "createdAt": "@string@.isDateTime()",
+            "client": "@string@.startsWith('/api/stores/')",
+            "paymentGateway": @string@
+          },
+          "@array_previous_repeat@"
+        ],
         "hydra:view":{
           "@id":"/api/orders?page=1",
           "@type":"hydra:PartialCollectionView",
@@ -1686,5 +1703,52 @@ Feature: Orders
         "hydra:search":{
           "@*@":"@*@"
         }
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "GET" request to "/api/orders/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/orders/1",
+        "@type":"http://schema.org/Order",
+        "customer":null,
+        "shippingAddress":{
+          "@*@":"@*@"
+        },
+        "events":@array@,
+        "reusablePackagingEnabled":@boolean@,
+        "shippingTimeRange":@array@,
+        "takeaway":@boolean@,
+        "id":1,
+        "number":@string@,
+        "notes":null,
+        "items":@array@,
+        "itemsTotal":@integer@,
+        "total":@integer@,
+        "state":"new",
+        "createdAt":"@string@.isDateTime()",
+        "taxTotal":@integer@,
+        "restaurant":null,
+        "vendor":null,
+        "shippedAt":"@string@.isDateTime()",
+        "preparationExpectedAt":null,
+        "pickupExpectedAt":null,
+        "preparationTime":null,
+        "shippingTime":null,
+        "reusablePackagingQuantity":0,
+        "hasReceipt":false,
+        "paymentMethod":"CARD",
+        "assignedTo":null,
+        "adjustments":{
+          "@*@":"@*@"
+        },
+        "hasEdenredCredentials":false,
+        "invitation":null,
+        "paymentGateway":"stripe"
       }
       """

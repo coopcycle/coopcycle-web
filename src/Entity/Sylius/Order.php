@@ -62,6 +62,7 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LoopEat\OrderCredentials;
 use AppBundle\Entity\ReusablePackaging;
+use AppBundle\Entity\Store;
 use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Entity\Vendor;
 use AppBundle\Payment\MercadopagoPreferenceResponse;
@@ -351,7 +352,8 @@ use Webmozart\Assert\Assert as WMAssert;
             processor: ConfigurePaymentProcessor::class
         ),
         new GetCollection(
-            security: 'is_granted("ROLE_ADMIN") or is_granted("ROLE_OAUTH2_ORDERS:ALL")'
+            security: 'is_granted("ROLE_ADMIN") or is_granted("ROLE_OAUTH2_ORDERS:ALL")',
+            normalizationContext: ['groups' => ['order:list']]
         ),
         new Post(
             denormalizationContext: ['groups' => ['order_create', 'address_create']]
@@ -1971,5 +1973,18 @@ class Order extends BaseOrder implements OrderInterface
     public function getExports(): Collection
     {
         return $this->exports;
+    }
+
+    public function getClient(): LocalBusiness|Store|null
+    {
+        if ($this->hasVendor() and !$this->isMultiVendor()) {
+            return $this->getRestaurant();
+        }
+
+        if (null !== $this->getDelivery()) {
+            return $this->getDelivery()->getStore();
+        }
+
+        return null;
     }
 }
