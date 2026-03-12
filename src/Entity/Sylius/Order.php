@@ -38,8 +38,10 @@ use AppBundle\Action\Order\Timing as OrderTiming;
 use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\Api\Dto\ConfigurePaymentInput;
 use AppBundle\Api\Dto\ConfigurePaymentOutput;
+use AppBundle\Api\Dto\CreditNoteInput;
 use AppBundle\Api\Dto\InvoiceLineItemGroupedByOrganization;
 use AppBundle\Api\Dto\PaymentMethodsOutput;
+use AppBundle\Api\Dto\PaymentRefundInput;
 use AppBundle\Api\Dto\StripePaymentMethodOutput;
 use AppBundle\Api\Dto\LoopeatFormats;
 use AppBundle\Api\Dto\LoopeatReturns;
@@ -48,11 +50,14 @@ use AppBundle\Api\Filter\OrderDateFilter;
 use AppBundle\Api\Filter\OrderStoreFilter;
 use AppBundle\Api\State\CartItemProcessor;
 use AppBundle\Api\State\ConfigurePaymentProcessor;
+use AppBundle\Api\State\CreateCreditNoteProcessor;
 use AppBundle\Api\State\EdenredCredentialsProcessor;
 use AppBundle\Api\State\InvoiceLineItemsGroupedByOrganizationProvider;
 use AppBundle\Api\State\InvoiceLineItemsProvider;
 use AppBundle\Api\State\LoopeatFormatsProcessor;
 use AppBundle\Api\State\LoopeatReturnsProcessor;
+use AppBundle\Api\State\OrderPaymentsProvider;
+use AppBundle\Api\State\OrderRefundProcessor;
 use AppBundle\Api\State\MyOrdersProvider;
 use AppBundle\Api\State\ValidateOrderProvider;
 use AppBundle\DataType\TsRange;
@@ -433,7 +438,31 @@ use Webmozart\Assert\Assert as WMAssert;
             normalizationContext: ['groups' => ['odoo_export_invoice_line_item']],
             security: 'is_granted(\'ROLE_ADMIN\')',
             provider: InvoiceLineItemsProvider::class
-        )
+        ),
+        new Post(
+            uriTemplate: '/orders/{id}/credit_notes',
+            processor: CreateCreditNoteProcessor::class,
+            input: CreditNoteInput::class,
+            openapiContext: ['summary' => 'Creates a credit note for an Order resource.'],
+            security: 'is_granted("ROLE_DISPATCHER")',
+            denormalizationContext: ['groups' => ['order_credit_note']],
+            normalizationContext: ['groups' => ['promotion']],
+        ),
+        new Get(
+            uriTemplate: '/orders/{id}/payments',
+            openapiContext: ['summary' => 'Retrieves payments for an Order resource.'],
+            security: 'is_granted("ROLE_DISPATCHER")',
+            provider: OrderPaymentsProvider::class,
+            normalizationContext: ['groups' => ['payment']],
+        ),
+        new Put(
+            uriTemplate: '/orders/{id}/refund',
+            openapiContext: ['summary' => 'Refunds an Order resource.'],
+            security: 'is_granted("ROLE_DISPATCHER")',
+            input: PaymentRefundInput::class,
+            processor: OrderRefundProcessor::class,
+            denormalizationContext: ['groups' => ['payment_refund']],
+        ),
     ],
     normalizationContext: ['groups' => ['order', 'address']],
     denormalizationContext: ['groups' => ['order_create']]
