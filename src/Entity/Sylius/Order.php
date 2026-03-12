@@ -350,7 +350,9 @@ use Webmozart\Assert\Assert as WMAssert;
             validate: false,
             processor: ConfigurePaymentProcessor::class
         ),
-        new GetCollection(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new GetCollection(
+            security: 'is_granted("ROLE_ADMIN") or is_granted("ROLE_OAUTH2_ORDERS:ALL")'
+        ),
         new Post(
             denormalizationContext: ['groups' => ['order_create', 'address_create']]
         ),

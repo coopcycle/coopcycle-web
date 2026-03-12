@@ -1482,4 +1482,62 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         $this->doctrine->getManagerForClass(Store::class)->flush();
     }
+
+    /**
+     * @Given there is an OAuth client named :name with scopes :scopes
+     */
+    public function createOauthClientWithScopes($name, $scopes): void
+    {
+        $identifier = hash('md5', random_bytes(16));
+        $secret = hash('sha512', random_bytes(32));
+
+        $client = new OAuthClient($name, $identifier, $secret);
+        $client->setActive(true);
+
+        $clientCredentials = new Grant(OAuth2Grants::CLIENT_CREDENTIALS);
+        $client->setGrants($clientCredentials);
+
+        $scopes = array_map(fn ($s) => new Scope($s), explode(',', $scopes));
+
+        $client->setScopes(...$scopes);
+
+        $apiApp = new ApiApp();
+        $apiApp->setOauth2Client($client);
+        $apiApp->setName($name);
+        // $apiApp->setStore($store);
+
+        $this->doctrine->getManagerForClass(ApiApp::class)->persist($apiApp);
+        $this->doctrine->getManagerForClass(ApiApp::class)->flush();
+    }
+
+    /**
+     * @Given the OAuth client with name :name has an access token with scope :scope
+     */
+    public function createAccessTokenForOauthClientWithScopes(string $name, string $scope)
+    {
+        $apiApp = $this->doctrine->getRepository(ApiApp::class)->findOneByName($name);
+
+        $oAuthClient = $apiApp->getOauth2Client();
+
+        $identifier = $oAuthClient->getIdentifier();
+        $secret = $oAuthClient->getSecret();
+
+        $body = [
+            'grant_type' => 'client_credentials',
+            'scope' => $scope,
+        ];
+
+        $request = $this->httpMessageFactory->createRequest(
+            Request::create('/uri', $method = 'POST', $parameters = $body, $cookies = [], $files = [], $server = [
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode(sprintf('%s:%s', $identifier, $secret))),
+            ], $content = null)
+        );
+        $response = $this->httpMessageFactory->createResponse(new Response());
+
+        $response = $this->authorizationServer->respondToAccessTokenRequest($request, $response);
+
+        $data = json_decode($response->getBody(), true);
+
+        $this->oAuthTokens[$name] = $data['access_token'];
+    }
 }
