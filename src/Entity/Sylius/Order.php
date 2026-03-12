@@ -1241,7 +1241,7 @@ class Order extends BaseOrder implements OrderInterface
     }
 
     #[SerializedName('assignedTo')]
-    #[Groups(['order', 'foodtech_order_minimal'])]
+    #[Groups(['order', 'foodtech_order_minimal', 'order:list'])]
     public function getAssignedTo()
     {
         if (null !== $this->getDelivery()) {
