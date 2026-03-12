@@ -49,7 +49,7 @@ const columns: TableProps<DataType>['columns'] = [
 
 ];
 
-export default function ({ order }) {
+export default function ({ order, liablePartyForm }) {
 
   const { t } = useTranslation();
   const [ payments, setPayments ] = useState([])
@@ -75,6 +75,7 @@ export default function ({ order }) {
   return (
     <>
       <Form
+        form={liablePartyForm}
         layout="inline"
         initialValues={{
           liableParty: 'merchant',
