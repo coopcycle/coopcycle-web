@@ -1717,3 +1717,7 @@ form.delivery.errors.not_reversable: You can only reverse deliveries with 1 pick
 form.store.document: Document
 basics.upload: Upload
 form.product.options.add: Add an option
+form.day_of_week_address.days_of_week.label: Days of the week
+localBusiness.form.day_of_week_addresses.label: Addresses depending on the day of the week
+localBusiness.form.day_of_week_addresses.add: Add address
+localBusiness.form.day_of_week_addresses.help: Use this if the address changes during the week (i.e foodtrucks)

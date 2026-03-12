@@ -1654,3 +1654,7 @@ form.delivery.errors.not_reversable: Vous pouvez seulement inverser les livraiso
 form.store.document: Document
 basics.upload: Télécharger
 form.product.options.add: Ajouter une option
+form.day_of_week_address.days_of_week.label: Jours de la semaine
+localBusiness.form.day_of_week_addresses.label: Adresses en fonction du jour de la semaine
+localBusiness.form.day_of_week_addresses.add: Ajouter une adresse
+localBusiness.form.day_of_week_addresses.help: "Utilisez si l'adresse change durant la semaine (ex : foodtrucks)"

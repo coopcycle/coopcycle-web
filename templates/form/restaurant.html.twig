@@ -269,3 +269,34 @@
 {% block _business_restaurant_group_deliveryPerimeterExpression_row %}
   {{ block('delivery_perimeter_expression_widget') }}
 {% endblock %}
+
+{% block _restaurant_dayOfWeekAddresses_row %}
+{{ block('form_label') }}
+<ul class="list-unstyled"
+  id="{{ form.vars.id }}"
+  data-prototype="{{ form_widget(form.vars.prototype)|e('html_attr') }}">
+  {% for child in form.children %}
+    <li>{{ form_widget(child) }}</li>
+  {% endfor %}
+</ul>
+{% endblock %}
+
+{% block _restaurant_dayOfWeekAddresses_entry_widget %}
+  <div class="d-flex justify-content-between gap-4" id="{{ form.vars.id }}">
+    {{ form_widget(form.address, { attr: { class: "w-50" } }) }}
+    {{ form_widget(form.daysOfWeek) }}
+  </div>
+{% endblock %}
+
+{% block _restaurant_dayOfWeekAddresses_entry_daysOfWeek_widget %}
+  {% set values = form.vars.data|split(',') %}
+  <div class="d-flex gap-2 mt-2 {% if form.vars.errors|length > 0 %}text-danger{% endif %}" data-widget="days_of_week">
+    <input type="hidden" name="{{ form.vars.full_name }}" value="{{ form.vars.data }}">
+    {% for day in ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'] %}
+    <div class="checkbox m-0">
+      <label><input type="checkbox" value="{{ day }}" {% if day in values %}checked{% endif %} /> {{ day }}</label>
+    </div>
+    {% endfor %}
+    <a href="#" class="pl-3" data-action="delete"><i class="fa fa-trash"></i></a>
+  </div>
+{% endblock %}

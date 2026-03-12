@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next'
 
 import i18n from '../i18n'
 import DropzoneWidget from '../widgets/Dropzone'
+import AddressAutosuggestFormGroup from '../widgets/AddressAutosuggestFormGroup'
 
 import 'prismjs/themes/prism.css'
 import 'prismjs/plugins/toolbar/prism-toolbar.css'
@@ -293,3 +294,52 @@ $('#restaurant_delete').on('click', e => {
     e.preventDefault()
   }
 })
+
+document.getElementById('day-of-week-address-add').addEventListener('click', (e) => {
+  const container = document.getElementById('restaurant_dayOfWeekAddresses')
+  const item = document.createElement('li');
+
+  item.innerHTML = container
+    .dataset
+    .prototype
+    .replace(
+      /__name__/g,
+      container.children.length
+    );
+
+  new AddressAutosuggestFormGroup(item.querySelector('[data-widget="address-input"'))
+
+  const hiddenInput = item
+    .querySelector('[data-widget="days_of_week"]')
+    .querySelector('input[type="hidden"]')
+
+  const checkboxes = item
+    .querySelector('[data-widget="days_of_week"]')
+    .querySelectorAll('input[type="checkbox"]')
+
+  checkboxes
+    .forEach((checkbox) => {
+      checkbox.addEventListener('change', (e) => {
+        const values = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+        hiddenInput.value = values.join(',');
+      })
+    })
+
+ item
+    .querySelector('[data-action="delete"]')
+    .addEventListener('click', (e) => {
+      e.preventDefault()
+      e.target.closest('li').remove()
+    })
+
+  container.appendChild(item);
+})
+
+document.getElementById('restaurant_dayOfWeekAddresses')
+  .querySelectorAll('[data-action="delete"]')
+  .forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault()
+      e.target.closest('li').remove()
+    })
+  })
