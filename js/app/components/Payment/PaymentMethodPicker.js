@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import React, { useEffect, useState } from 'react'
 import _ from 'lodash'
-import classNames from 'classnames'
+import clsx from 'clsx'
 import PaymentMethodIcon from './PaymentMethodIcon'
 
 const methodPickerStyles = {
@@ -48,7 +48,7 @@ export default function PaymentMethodPicker({ methods, onSelect }) {
             return (
               <div style={ methodStyles } key={ m.type }>
                 <label>{ t('PM_CREDIT_OR_DEBIT_CARD') }</label>
-                <button type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === 'card' }) }
+                <button type="button" className={ clsx({ ...methodPickerBtnClassNames, active: method === 'card' }) }
                         onClick={ () => setMethod('card') }>
                   <PaymentMethodIcon code={ m.type } height="45" />
                 </button>
@@ -60,7 +60,7 @@ export default function PaymentMethodPicker({ methods, onSelect }) {
             return (
               <div style={ methodStyles } key={ m.type }>
                 <label>{ t('PM_EDENRED') }</label>
-                <button type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
+                <button type="button" className={ clsx({ ...methodPickerBtnClassNames, active: method === m.type }) }
                         onClick={ () => {
 
                           if (!m.data.edenredIsConnected) {
@@ -80,7 +80,7 @@ export default function PaymentMethodPicker({ methods, onSelect }) {
             return (
               <div style={ methodStyles } key={ m.type } data-testid="pm.cash">
                 <label>{ t('PM_CASH') }</label>
-                <button type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
+                <button type="button" className={ clsx({ ...methodPickerBtnClassNames, active: method === m.type }) }
                         onClick={ () => setMethod('cash_on_delivery') }>
                   <PaymentMethodIcon code={ m.type } height="45" />
                 </button>
@@ -93,7 +93,7 @@ export default function PaymentMethodPicker({ methods, onSelect }) {
               <div style={ methodStyles } key={ m.type } data-testid="pm.restoflash">
                 <label>{ t('PM_RESTOFLASH') }</label>
                 <button
-                  type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
+                  type="button" className={ clsx({ ...methodPickerBtnClassNames, active: method === m.type }) }
                   onClick={ () => setMethod('restoflash') }>
                   <PaymentMethodIcon code={ m.type } height="45" />
                 </button>
@@ -106,7 +106,7 @@ export default function PaymentMethodPicker({ methods, onSelect }) {
               <div style={ methodStyles } key={ m.type } data-testid="pm.conecs">
                 <label>{ t('PM_CONECS') }</label>
                 <button
-                  type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
+                  type="button" className={ clsx({ ...methodPickerBtnClassNames, active: method === m.type }) }
                   onClick={ () => setMethod('conecs') }>
                   <PaymentMethodIcon code={ m.type } height="45" />
                 </button>
@@ -119,7 +119,7 @@ export default function PaymentMethodPicker({ methods, onSelect }) {
               <div style={ methodStyles } key={ m.type } data-testid="pm.swile">
                 <label>{ t('PM_SWILE') }</label>
                 <button
-                  type="button" className={ classNames({ ...methodPickerBtnClassNames, active: method === m.type }) }
+                  type="button" className={ clsx({ ...methodPickerBtnClassNames, active: method === m.type }) }
                   onClick={ () => setMethod('swile') }>
                   <PaymentMethodIcon code={ m.type } height="45" />
                 </button>

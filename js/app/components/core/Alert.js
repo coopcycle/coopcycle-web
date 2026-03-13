@@ -1,5 +1,5 @@
 import React from 'react'
-import classNames from 'classnames'
+import clsx from 'clsx'
 import Spinner from './Spinner'
 
 // Bootstrap-based alert
@@ -15,7 +15,7 @@ export default ({
 }) => {
   return (
     <div
-      className={classNames('alert d-flex align-items-center', {
+      className={clsx('alert d-flex align-items-center', {
         'alert-success': success,
         'alert-info': info,
         'alert-warning': warning,

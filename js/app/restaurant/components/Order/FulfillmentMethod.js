@@ -1,11 +1,11 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 const Icon = ({ type }) => (
   <span className="mr-2">
     <i
-      className={classNames({
+      className={clsx({
         fa: true,
         'fa-bicycle': type === 'delivery',
         'fa-cube': type === 'collection',

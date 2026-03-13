@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useCombobox } from 'downshift'
-import cx from 'classnames'
+import cx from 'clsx'
 import axios from 'axios'
 import _ from 'lodash'
 import { withTranslation } from 'react-i18next'

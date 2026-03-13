@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import _ from 'lodash'
 import { Tooltip } from 'antd'
 import Popconfirm from 'antd/lib/popconfirm'
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 import Task from './Task'
 
@@ -208,7 +208,7 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
           vehicleMaxVolumeUnits={maxCarriableVolume}
         />
       </div>
-      <div className={classNames("panel-collapse collapse",{"in": isExpanded})}>
+      <div className={clsx("panel-collapse collapse",{"in": isExpanded})}>
         <div className="d-flex align-items-center mt-2 mb-2">
           <a
             className='tasklist__actions--icon ml-2'

@@ -4,7 +4,7 @@ import Modal from 'react-modal'
 import { connect } from 'react-redux'
 import ClipboardJS from 'clipboard'
 import { closeInvitePeopleToOrderModal, createInvitation } from '../redux/actions'
-import classNames from "classnames";
+import clsx from 'clsx';
 
 class InvitePeopleToOrderModal extends Component {
 
@@ -60,7 +60,7 @@ class InvitePeopleToOrderModal extends Component {
             <div className="input-group">
               <input type="text" className="form-control" defaultValue={this.generateLink()} />
             <span className="input-group-btn">
-              <button className={classNames("btn", {"btn-primary": !this.state.copied, "btn-success": this.state.copied})}
+              <button className={clsx("btn", {"btn-primary": !this.state.copied, "btn-success": this.state.copied})}
                       disabled={this.props.isRequesting}
                       type="button" id="copy-button"
                       title="Copy to Clipboard">
