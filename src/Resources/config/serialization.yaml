@@ -55,31 +55,31 @@ Sylius\Component\Order\Model\Order:
     vendor:
       groups: ['order', 'foodtech_order_minimal']
     shippingAddress:
-      groups: ['order', 'order_create', 'cart', 'order_update', 'foodtech_order_minimal']
+      groups: ['order', 'order_create', 'cart', 'order_update', 'foodtech_order_minimal', 'order:list']
     shippedAt:
       groups: ['order', 'order_create', 'cart', 'order_update']
     shippingTimeRange:
-      groups: ['order', 'order_create', 'cart', 'order_update', 'foodtech_order_minimal']
+      groups: ['order', 'order_create', 'cart', 'order_update', 'foodtech_order_minimal', 'order:list']
     customer:
       groups: ['order', 'cart', 'foodtech_order_minimal']
     items:
       groups: ['order', 'order_create', 'cart', 'pricing_deliveries']
     total:
-      groups: ['order', 'cart', 'pricing_deliveries', 'foodtech_order_minimal', 'package_delivery_order_minimal']
+      groups: ['order', 'cart', 'pricing_deliveries', 'foodtech_order_minimal', 'package_delivery_order_minimal', 'order:list']
     number:
-      groups: ['order', 'foodtech_order_minimal', 'package_delivery_order_minimal']
+      groups: ['order', 'foodtech_order_minimal', 'package_delivery_order_minimal', 'order:list']
     itemsTotal:
       groups: ['order', 'cart']
     taxTotal:
       groups: ['order', 'pricing_deliveries', 'package_delivery_order_minimal']
     state:
-      groups: ['order', 'foodtech_order_minimal']
+      groups: ['order', 'foodtech_order_minimal', 'order:list']
     events:
       groups: ['order']
     notes:
       groups: ['order', 'cart', 'order_update', 'foodtech_order_minimal']
     createdAt:
-      groups: ['order']
+      groups: ['order', 'order:list']
     timeline:
       groups: ['order_timeline']
     preparationExpectedAt:
@@ -102,6 +102,8 @@ Sylius\Component\Order\Model\Order:
       groups: ['order', 'order_update', 'foodtech_order_minimal']
     hasEdenredCredentials:
       groups: ['cart', 'order', 'order_update']
+    client:
+      groups: ['order:list']
 
 Sylius\Component\Order\Model\OrderItem:
   attributes:
