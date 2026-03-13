@@ -847,6 +847,16 @@
             "PRESET_LAST_MONTH": "Le mois dernier",
             "PRESET_LAST_3_MONTHS": "Les 3 derniers mois",
             "PRESET_LAST_6_MONTHS": "Les 6 derniers mois"
-        }
+        },
+        "CREATE_CREDIT_NOTE": "Créer un avoir commercial",
+        "REFUND": "Rembourser",
+        "CREDIT_NOTE_AMOUNT": "Montant de l'avoir",
+        "REFUND_AMOUNT": "Montant du remboursement",
+        "LIABLE_PARTY": "Partie responsable",
+        "LIABLE_PART_HELP": "Qui est responsable de l'incident ?",
+        "LIABLE_PARTY_MERCHANT": "Marchand",
+        "LIABLE_PARTY_PLATFORM": "Plateforme",
+        "REFUND_FULL": "Rembourser la totalité ({{amount}})",
+        "PARTIAL_REFUNDS_NOT_SUPPORTED": "Ce moyen de paiement ne supporte pas les remboursements partiels"
     }
 }

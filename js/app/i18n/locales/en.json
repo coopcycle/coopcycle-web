@@ -859,6 +859,17 @@
             "PRESET_LAST_MONTH": "Last month",
             "PRESET_LAST_3_MONTHS": "Last 3 months",
             "PRESET_LAST_6_MONTHS": "Last 6 months"
-        }
+        },
+        "CREATE_CREDIT_NOTE": "Create a credit note",
+        "REFUND": "Refund",
+        "CREDIT_NOTE_AMOUNT": "Credit note amount",
+        "CREDIT_NOTES": "Credit notes",
+        "REFUND_AMOUNT": "Refund amount",
+        "LIABLE_PARTY": "Liable party",
+        "LIABLE_PART_HELP": "Who is liable for the incident?",
+        "LIABLE_PARTY_MERCHANT": "Merchant",
+        "LIABLE_PARTY_PLATFORM": "Platform",
+        "REFUND_FULL": "Refund the order total ({{amount}})",
+        "PARTIAL_REFUNDS_NOT_SUPPORTED": "This payment method does not support partial refunds"
       }
 }

@@ -232,8 +232,22 @@ Sylius\Component\Payment\Model\Payment:
       groups: ['payment', 'order_configure_payment', 'payment_details']
     method:
       groups: ['payment', 'order_configure_payment', 'payment_details']
+    updatedAt:
+      groups: ['payment', 'order_configure_payment', 'payment_details']
 
 Sylius\Component\Payment\Model\PaymentMethod:
   attributes:
     code:
       groups: ['payment', 'order_configure_payment', 'payment_details']
+
+Sylius\Component\Promotion\Model\Promotion:
+  attributes:
+    name:
+      groups: ['promotion']
+    coupons:
+      groups: ['promotion']
+
+Sylius\Component\Promotion\Model\PromotionCoupon:
+  attributes:
+    code:
+      groups: ['promotion']

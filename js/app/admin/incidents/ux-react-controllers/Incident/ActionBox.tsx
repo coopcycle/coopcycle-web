@@ -3,6 +3,8 @@ import { Button, Divider, Drawer, Form, Modal, Popconfirm } from 'antd';
 import RescheduleTask from './ActionBox/RescheduleTask';
 import ApplyPriceDiffTask from './ActionBox/ApplyPriceDiffTask';
 import TransporterReport from './ActionBox/TransporterReport';
+import CreditNoteForm from './ActionBox/CreditNote';
+import RefundForm from './ActionBox/Refund';
 
 import { useTranslation } from 'react-i18next';
 
@@ -52,8 +54,13 @@ export default function ({ isLastmile }) {
   const [rescheduleDrawer, setRescheduleDrawer] = useState(false);
   const [priceDiffDrawer, setPriceDiffDrawer] = useState(false);
   const [transporterReportModal, setTransporterReportModal] = useState(false);
+  const [isCreditNoteModalVisible, setIsCreditNoteModalVisible] = useState(false);
+  const [isRefundModalVisible, setIsRefundModalVisible] = useState(false);
+  const [isFullRefundButtonLoading, setIsFullRefundButtonLoading] = useState(false);
 
   const [transporterForm] = Form.useForm();
+  const [creditNoteForm] = Form.useForm();
+  const [refundLiablePartyForm] = Form.useForm();
 
   const buttons = [
     {
@@ -110,6 +117,28 @@ export default function ({ isLastmile }) {
       ),
       shouldRender: transporterEnabled,
     },
+    {
+      key: 'create-credit-note',
+      component: () => (
+        <Button
+          style={styles.btn}
+          onClick={() => setIsCreditNoteModalVisible(true)}>
+          {t('CREATE_CREDIT_NOTE')}
+        </Button>
+      ),
+      shouldRender: !isLastmile && order && order.state !== 'cancelled',
+    },
+    {
+      key: 'refund',
+      component: () => (
+        <Button
+          style={styles.btn}
+          onClick={() => setIsRefundModalVisible(true)}>
+          {t('REFUND')}
+        </Button>
+      ),
+      shouldRender: !isLastmile && order && order.state !== 'cancelled',
+    },
   ]
     .filter(b => b.shouldRender)
     .map((b, index) => (
@@ -164,6 +193,42 @@ export default function ({ isLastmile }) {
             task={task}
             form={transporterForm}
           />
+        </Modal>
+        <Modal
+          width="840px"
+          title={t('CREATE_CREDIT_NOTE')}
+          open={isCreditNoteModalVisible}
+          onOk={() => creditNoteForm.submit()}
+          onCancel={() => setIsCreditNoteModalVisible(false)}>
+          <CreditNoteForm incident={incident} order={order} form={creditNoteForm} />
+        </Modal>
+        <Modal
+          width="840px"
+          title={t('REFUND')}
+          open={isRefundModalVisible}
+          onCancel={() => setIsRefundModalVisible(false)}
+          footer={[
+            <Button key="refund-full"
+              color="danger"
+              variant="outlined"
+              loading={isFullRefundButtonLoading}
+              onClick={async () => {
+                const httpClient = new window._auth.httpClient();
+                setIsFullRefundButtonLoading(true)
+                const { response, error } = await httpClient.put(
+                  order['@id'] + '/refund',
+                  refundLiablePartyForm.getFieldsValue(),
+                );
+                setIsFullRefundButtonLoading(false)
+                if (!error) {
+                  window.location.reload();
+                }
+              }}
+            >
+              {t('REFUND_FULL', { amount: (order.total / 100).formatMoney() })}
+            </Button>,
+          ]}>
+          <RefundForm order={order} liablePartyForm={refundLiablePartyForm} />
         </Modal>
       </Drawer>
     </>

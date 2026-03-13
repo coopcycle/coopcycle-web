@@ -24,9 +24,11 @@ use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
 use AppBundle\Fixtures\DatabasePurger;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Order\OrderNumberAssigner;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Zone;
+use AppBundle\Service\OrderManager;
 use AppBundle\Utils\OrderTimelineCalculator;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
@@ -65,6 +67,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
+use Sylius\Component\Payment\Model\PaymentInterface;
 use Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken;
 use Typesense\Exceptions\ObjectNotFound;
 
@@ -111,6 +114,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
         protected UserManager $userManager,
         protected CollectionManager $typesenseCollectionManager,
         protected MockDateSubscriber $mockDateSubscriber,
+        protected OrderManager $orderManager,
+        protected OrderNumberAssigner $orderNumberAssigner,
         protected PropertyAccessorInterface $propertyAccessor,
         protected LoggerInterface $logger,
     )
@@ -851,7 +856,19 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
         $order = $this->createRandomOrder($restaurant, $user, new \DateTime($date));
-        $order->setState(OrderInterface::STATE_FULFILLED);
+
+        $this->orderProcessor->process($order);
+
+        foreach ($order->getPayments() as $payment) {
+            // Make sure payment is in a state that allows transition to "completed"
+            $payment->setState(PaymentInterface::STATE_AUTHORIZED);
+        }
+
+        $this->getContainer()->get('sylius.manager.order')->persist($order);
+        $this->getContainer()->get('sylius.manager.order')->flush();
+
+        $this->orderNumberAssigner->assignNumber($order);
+        $this->orderManager->fulfill($order);
 
         $this->getContainer()->get('sylius.manager.order')->persist($order);
         $this->getContainer()->get('sylius.manager.order')->flush();
