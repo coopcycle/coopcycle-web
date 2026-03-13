@@ -90,9 +90,9 @@ services:
   #
   # https://symfony.com/doc/current/cache.html#creating-custom-namespaced-pools
   restart_workers_signal.cache:
-      parent: cache.adapter.redis
-      tags:
-          - { name: cache.pool, provider: snc_redis.default, namespace: messenger }
+    parent: cache.adapter.redis
+    tags:
+      - { name: cache.pool, provider: snc_redis.default, namespace: messenger }
 
   cache.messenger.restart_workers_signal: '@restart_workers_signal.cache'
 
@@ -257,10 +257,10 @@ services:
     calls:
       - method: setLoopEatClientId
         arguments:
-            - '%loopeat_client_id%'
+          - '%loopeat_client_id%'
       - method: setLoopEatClientSecret
         arguments:
-            - '%loopeat_client_secret%'
+          - '%loopeat_client_secret%'
     tags:
       - { name: monolog.logger, channel: loopeat }
 
@@ -576,7 +576,7 @@ services:
   coopcycle.expression_language.zone.provider:
     public: false
     class: AppBundle\ExpressionLanguage\ZoneExpressionLanguageProvider
-    arguments: [ '@coopcycle.repository.zone' ]
+    arguments: ['@coopcycle.repository.zone']
 
   AppBundle\ExpressionLanguage\PickupExpressionLanguageProvider: ~
 
@@ -613,7 +613,7 @@ services:
   AppBundle\EventListener\LogoutSubscriber: ~
 
   AppBundle\EventListener\TaggableSubscriber:
-    arguments: [ '@coopcycle.tag_manager' ]
+    arguments: ['@coopcycle.tag_manager']
     tags:
       - { name: monolog.logger, channel: coopcycle.tagging }
 
@@ -626,7 +626,7 @@ services:
   AppBundle\Utils\PreparationTimeCalculator:
     arguments:
       - {
-          'restaurant.state == "rush" and order.itemsTotal < 2000':        '20 minutes',
+          'restaurant.state == "rush" and order.itemsTotal < 2000': '20 minutes',
           'restaurant.state == "rush" and order.itemsTotal in 2000..5000': '30 minutes',
           'restaurant.state == "rush" and order.itemsTotal > 5000':        '45 minutes',
           'order.itemsTotal < 2000':                                       '10 minutes',
@@ -707,10 +707,10 @@ services:
     calls:
       - method: setRestaurantFilter
         arguments:
-            - '@coopcycle.utils.restaurant_filter'
+          - '@coopcycle.utils.restaurant_filter'
       - method: setBusinessContext
         arguments:
-            - '@AppBundle\Business\Context'
+          - '@AppBundle\Business\Context'
 
   AppBundle\Entity\HubRepository:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
@@ -724,16 +724,16 @@ services:
     calls:
       - method: setSecret
         arguments:
-            - '%secret%'
+          - '%secret%'
       - method: setSonicClient
         arguments:
-            - '@Psonic\Client'
+          - '@Psonic\Client'
       - method: setSonicSecretPassword
         arguments:
-            - '%sonic_secret_password%'
+          - '%sonic_secret_password%'
       - method: setSonicNamespace
         arguments:
-            - '%sonic_namespace%'
+          - '%sonic_namespace%'
 
   AppBundle\Entity\Sylius\OrderRepository:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
@@ -745,18 +745,18 @@ services:
     alias: AppBundle\Entity\Sylius\OrderRepository
 
   AppBundle\Entity\Sylius\ProductOptionRepository:
-    factory: [ '@doctrine.orm.default_entity_manager', getRepository ]
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
     arguments:
       - AppBundle\Entity\Sylius\ProductOption
     calls:
       - method: setEntityManager
-        arguments: [ '@doctrine.orm.default_entity_manager' ]
+        arguments: ['@doctrine.orm.default_entity_manager']
       - method: setProductRepository
-        arguments: [ '@sylius.repository.product' ]
+        arguments: ['@sylius.repository.product']
       - method: setProductOptionFactory
-        arguments: [ '@sylius.factory.product_option' ]
+        arguments: ['@sylius.factory.product_option']
       - method: setLocaleProvider
-        arguments: [ '@sylius.locale_provider' ]
+        arguments: ['@sylius.locale_provider']
 
   sylius.repository.product_option:
     alias: AppBundle\Entity\Sylius\ProductOptionRepository
@@ -862,32 +862,32 @@ services:
   AppBundle\Doctrine\EventSubscriber\LoggerSubscriber: ~
 
   AppBundle\Api\EventSubscriber\DeliverySubscriber:
-    tags: [ 'kernel.event_subscriber' ]
+    tags: ['kernel.event_subscriber']
 
   AppBundle\Api\EventSubscriber\TaskImportQueueSubscriber:
     arguments:
-        $secret: '%secret%'
-    tags: [ 'kernel.event_subscriber' ]
+      $secret: '%secret%'
+    tags: ['kernel.event_subscriber']
 
   AppBundle\Api\EventSubscriber\SoftDeletedSubscriber:
     arguments:
-        - '@doctrine'
-    tags: [ 'kernel.event_subscriber' ]
+      - '@doctrine'
+    tags: ['kernel.event_subscriber']
 
   AppBundle\Api\EventSubscriber\MaintenanceSubscriber:
     arguments:
-        - '@snc_redis.default'
-        - '@translator'
-    tags: [ 'kernel.event_subscriber' ]
+      - '@snc_redis.default'
+      - '@translator'
+    tags: ['kernel.event_subscriber']
 
   AppBundle\Api\EventSubscriber\TaskOrganizationSubscriber:
-    tags: [ 'kernel.event_subscriber' ]
+    tags: ['kernel.event_subscriber']
 
   AppBundle\Api\EventSubscriber\ProductOptionSubscriber:
-    tags: [ 'kernel.event_subscriber' ]
+    tags: ['kernel.event_subscriber']
 
   AppBundle\Api\EventSubscriber\ProductOptionValueSubscriber:
-    tags: [ 'kernel.event_subscriber' ]
+    tags: ['kernel.event_subscriber']
 
   AppBundle\Api\EventSubscriber\UrbantzSubscriber:
     arguments:
@@ -1092,12 +1092,12 @@ services:
     tags: [ 'api_platform.state_processor' ]
 
   AppBundle\Api\State\EvaluatePricingRuleProcessor:
-    tags: [ 'api_platform.state_processor' ]
+    tags: ['api_platform.state_processor']
 
   AppBundle\Api\State\PricingRuleSetProcessor:
     arguments:
       $decorated: '@api_platform.doctrine.orm.state.persist_processor'
-    tags: [ 'api_platform.state_processor' ]
+    tags: ['api_platform.state_processor']
 
   AppBundle\Api\State\UrbantzWebhookProcessor:
     arguments:
@@ -1123,13 +1123,13 @@ services:
   s3_client:
     class: Aws\S3\S3Client
     arguments:
-        - endpoint: '%env(S3_ENDPOINT)%'
-          version: latest
-          region: '%env(S3_REGION)%'
-          credentials:
-            key: '%env(S3_CREDENTIALS_KEY)%'
-            secret: '%env(S3_CREDENTIALS_SECRET)%'
-          use_path_style_endpoint: true
+      - endpoint: '%env(S3_ENDPOINT)%'
+        version: latest
+        region: '%env(S3_REGION)%'
+        credentials:
+          key: '%env(S3_CREDENTIALS_KEY)%'
+          secret: '%env(S3_CREDENTIALS_SECRET)%'
+        use_path_style_endpoint: true
 
   AppBundle\Service\StripeManager:
     tags:
@@ -1277,7 +1277,7 @@ services:
         pawapay: '@AppBundle\Payment\Gateway\Pawapay'
 
   AppBundle\Security\BusinessVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\EventSubscriber\RegistrationInitializeListener:
     arguments:
@@ -1288,55 +1288,55 @@ services:
   AppBundle\Embed\Context: ~
 
   AppBundle\Security\DeleteClosingRuleVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\OrderActionsVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\LocalBusinessVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\DashboardViewVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\ProductVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\DeliveriesVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\StoreVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\AddressVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\UserVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\TaskGroupVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\WebhookVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\ProductOptionValueVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\DeliveryQuoteVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\DeliveryImportQueueVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\TimeSlotVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\IncidentVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Security\RestaurantMenuVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   # While adding a priority is optional, it’s recommended to add one to make sure the expected value is injected.
   # The built-in RequestAttributeValueResolver, which fetches attributes from the Request, has a priority of 100.
@@ -1347,7 +1347,7 @@ services:
       - { name: controller.argument_value_resolver, priority: 125 }
 
   AppBundle\Security\TaskOperationsVoter:
-    tags: [ 'security.voter' ]
+    tags: ['security.voter']
 
   AppBundle\Sylius\Cart\SessionSubscriber:
     arguments:
@@ -1632,7 +1632,7 @@ services:
     arguments:
       $properties: { assigned: ~ }
       $security: '@security.helper'
-    tags: [ 'api_platform.filter' ]
+    tags: ['api_platform.filter']
 
   AppBundle\Fixtures\DatabasePurger: ~
 
@@ -1720,3 +1720,14 @@ services:
     decorates: api_platform.name_converter
     arguments:
       - '@.inner'
+
+  AppBundle\Integration\Zelty\Dto\ZeltyCatalogParser: ~
+  AppBundle\Integration\Zelty\ZeltyOptionMapper: ~
+  AppBundle\Integration\Zelty\ZeltyProductMapper: ~
+  AppBundle\Integration\Zelty\ZeltyMenuMapper: ~
+  AppBundle\Integration\Zelty\ZeltyTaxonMapper: ~
+  AppBundle\Integration\Zelty\ZeltyTaxesMapper: ~
+  AppBundle\Integration\Zelty\ZeltyClient: ~
+  AppBundle\Integration\Zelty\ZeltyImportService: ~
+
+  AppBundle\Controller\ZeltyController: ~
