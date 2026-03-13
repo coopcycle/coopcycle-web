@@ -10,7 +10,7 @@ import { appendToUnassignedTours, deleteGroup, editGroup, openCreateTourModal, s
 import { selectUnassignedTours } from '../../../shared/src/logistics/redux/selectors'
 import TaskGroup from './TaskGroup'
 import { selectAreToursEnabled, selectGroups, selectIsTourDragging, selectMapFiltersSetting, selectOrderOfUnassignedToursAndGroups, selectSplitDirection } from '../redux/selectors'
-import classNames from 'classnames'
+import clsx from 'clsx'
 import { getDroppableListStyle } from '../utils'
 import { Switch, Tooltip } from 'antd'
 
@@ -135,7 +135,7 @@ export const UnassignedTours = ({ splitCollapseAction }) => {
           {(provided, snapshot) => (
             <div ref={ provided.innerRef } { ...provided.droppableProps }>
                <div
-                  className={ classNames({
+                  className={ clsx({
                     'taskList__tasks': true,
                     'list-group': true,
                     'm-0': true,

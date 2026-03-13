@@ -1,5 +1,5 @@
 import React from 'react'
-import classNames from 'classnames'
+import clsx from 'clsx'
 import _ from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -48,7 +48,7 @@ export default function CartWrapper() {
     selectReusablePackagingFeatureEnabled)
 
   return (
-    <div className={ classNames(
+    <div className={ clsx(
       'panel',
       'panel-default',
       'panel-cart-wrapper') }>

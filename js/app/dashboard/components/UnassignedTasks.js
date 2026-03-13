@@ -31,7 +31,7 @@ import {
   selectUnassignedTasksLoading,
 } from '../redux/selectors'
 import { getDroppableListStyle } from '../utils'
-import classNames from 'classnames'
+import clsx from 'clsx'
 import UnassignedTasksFilters from '../../components/UnassignedTasksFilters'
 import { LoadingOutlined } from '@ant-design/icons'
 
@@ -182,7 +182,7 @@ export const UnassignedTasks = ({ isGeneratingOrdersForRecurrenceRules, isGenera
             {(provided, snapshot) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 <div
-                  className={classNames({
+                  className={clsx({
                     taskList__tasks: true,
                     'list-group': true,
                     'm-0': true,
@@ -224,7 +224,7 @@ export const UnassignedTasks = ({ isGeneratingOrdersForRecurrenceRules, isGenera
             <div ref={provided.innerRef} {...provided.droppableProps}>
               {
                 <div
-                  className={classNames({
+                  className={clsx({
                     taskList__tasks: true,
                     'list-group': true,
                     'm-0': true,

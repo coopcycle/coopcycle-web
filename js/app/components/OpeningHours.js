@@ -2,7 +2,7 @@ import React from 'react'
 import moment from 'moment'
 import _ from 'lodash'
 import { Radio, TimePicker } from 'antd'
-import classNames from 'classnames'
+import clsx from 'clsx'
 import PropTypes from 'prop-types'
 import { withTranslation } from 'react-i18next'
 
@@ -161,7 +161,7 @@ class OpeningHours extends React.Component {
       <Draggable key={index} draggableId={index.toString()} index={index}>
         {(provided) => (
           <tr key={`${index}-${rev}`} ref={provided.innerRef} {...provided.draggableProps}
-            className={classNames({ 'danger': (-1 !== this.props.rowsWithErrors.indexOf(index)) })}>
+            className={clsx({ 'danger': (-1 !== this.props.rowsWithErrors.indexOf(index)) })}>
             <td width="50%">
               <span className="d-block">
                 <i {...provided.dragHandleProps} className="fa fa-bars mr-3"></i>

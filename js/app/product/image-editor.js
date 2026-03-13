@@ -4,7 +4,7 @@ import Dropzone from 'react-dropzone'
 import Cropper from 'react-cropper'
 import axios from 'axios'
 import _ from 'lodash'
-import classNames from 'classnames'
+import clsx from 'clsx'
 import basename from 'locutus/php/filesystem/basename'
 import Modal from 'react-modal'
 import { Progress } from 'antd'
@@ -40,7 +40,7 @@ const Navbar = ({ onClose, onClickTab }) => (
 )
 
 const NavBtn = ({ ratio, size, onClick, canvas, selected }) => (
-  <a href="#" className={ classNames({
+  <a href="#" className={ clsx({
     'border': true,
     'border-primary': selected,
     'p-4': true,
@@ -57,7 +57,7 @@ const NavBtn = ({ ratio, size, onClick, canvas, selected }) => (
 const Gallery = ({ images, onDelete }) => (
   <div className="image-editor-gallery">
     { _.map(images, (image, key) => (
-      <div key={ `product-image-${key}` } className={ classNames({
+      <div key={ `product-image-${key}` } className={ clsx({
         'image-editor-gallery-item': true,
         'image-editor-gallery-item-ratio-16x9': image.ratio === '16:9'
       }) }>

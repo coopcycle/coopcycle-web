@@ -1,6 +1,6 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 import { AdditionalOptionValue, OptionValue } from './ProductOptionValue'
 import { getValuesRange, isMandatory, isValid } from './useProductOptions'
@@ -45,7 +45,7 @@ export const OptionGroup = ({ index, option }) => {
 
   return (
     <div id={ `product-option-group-${ option.code }` }
-         className={ classNames('product-option-group', {
+         className={ clsx('product-option-group', {
            'product-option-group--invalid': isSelectedAndNotValid,
          }) }>
       <div className="product-option-group__name">{ option.name }</div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import Sticky from 'react-stickynode'
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 import { sync } from '../../redux/actions'
 import { selectIsMobileCartVisible } from '../../redux/selectors'
@@ -16,7 +16,7 @@ function OrderOverlay() {
 
   return (
     <div
-      className={classNames('order-overlay', {
+      className={clsx('order-overlay', {
         'order-overlay--show': isMobileCartVisible,
       })}>
       <MobileOrderHeading />

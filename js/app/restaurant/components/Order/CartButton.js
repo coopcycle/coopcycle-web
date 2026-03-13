@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 import {
   selectIsFetching,
@@ -21,7 +21,7 @@ class CartButton extends Component {
     const disabled = (hasErrors || !isOrderAdmin || !isFulfilmentTimeSlotsAvailable || items.length === 0 || loading)
     const btnProps = disabled ? { disabled: true } : {}
 
-    return (<button type="submit" className={ classNames({
+    return (<button type="submit" className={ clsx({
       'order-button': true,
       'btn': true,
       'btn-lg': true,
