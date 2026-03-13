@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3d8d86f6ed68ebb8ba5c9c9f6d203220",
+    "content-hash": "ef3cbb27c058e99fbd1d77632bd1d241",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -24425,16 +24425,16 @@
         },
         {
             "name": "symfony/ux-react",
-            "version": "v2.32.0",
+            "version": "2.x-dev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/ux-react.git",
-                "reference": "e9b28032f593d3b2ff37044e194fb15ef9a2abfa"
+                "reference": "5de9dc5c342735fe214ad8d3b8d1be7f30d19b62"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ux-react/zipball/e9b28032f593d3b2ff37044e194fb15ef9a2abfa",
-                "reference": "e9b28032f593d3b2ff37044e194fb15ef9a2abfa",
+                "url": "https://api.github.com/repos/symfony/ux-react/zipball/5de9dc5c342735fe214ad8d3b8d1be7f30d19b62",
+                "reference": "5de9dc5c342735fe214ad8d3b8d1be7f30d19b62",
                 "shasum": ""
             },
             "require": {
@@ -24449,6 +24449,7 @@
                 "symfony/twig-bundle": "^5.4|^6.0|^7.0|^8.0",
                 "symfony/var-dumper": "^5.4|^6.0|^7.0|^8.0"
             },
+            "default-branch": true,
             "type": "symfony-bundle",
             "extra": {
                 "thanks": {
@@ -24481,7 +24482,7 @@
                 "symfony-ux"
             ],
             "support": {
-                "source": "https://github.com/symfony/ux-react/tree/v2.32.0"
+                "source": "https://github.com/symfony/ux-react/tree/2.x"
             },
             "funding": [
                 {
@@ -24501,7 +24502,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-12-02T07:12:06+00:00"
+            "time": "2026-02-28T08:33:37+00:00"
         },
         {
             "name": "symfony/ux-turbo",
