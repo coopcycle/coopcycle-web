@@ -1717,3 +1717,11 @@ form.delivery.errors.not_reversable: You can only reverse deliveries with 1 pick
 form.store.document: Document
 basics.upload: Upload
 form.product.options.add: Add an option
+form.api_app.store.placeholder: Choose a store to restrict access
+form.api_app.store.help: You can also leave empty if you want to allow access to all orders
+form.api_app.scopes.label: Scopes
+form.api_app.scopes.help: This allows to limit what the API client is authorized to access
+form.api_app.scope.deliveries: Deliveries
+form.api_app.scope.tasks: Tasks
+form.api_app.scope.orders: Orders
+form.api_app.scope.orders_all: All orders
