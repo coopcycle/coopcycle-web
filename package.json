@@ -21,9 +21,6 @@
   },
   "author": "",
   "license": "ISC",
-  "overrides": {
-    "graphiql": "^3.0.0"
-  },
   "dependencies": {
     "@geoman-io/leaflet-geoman-free": "^2.18.3",
     "@hello-pangea/dnd": "^18.0.1",
