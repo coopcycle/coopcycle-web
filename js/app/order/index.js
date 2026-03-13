@@ -7,6 +7,7 @@ import Modal from 'react-modal'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
+import axios from 'axios'
 
 import { MantineProvider } from '@mantine/core';
 import { LoadingOverlay } from '@mantine/core';
@@ -62,8 +63,9 @@ const getValue = (inputmask) => numbro.unformat(inputmask.unmaskedvalue())
 
 function enableTipInput() {
   im.mask('#tip-input')
-  $('#tip-input').on('change', updateTip)
-  $('#tip-input').on('keydown', function(e) {
+  const tipInput = document.querySelector('#tip-input')
+  tipInput.addEventListener('change', updateTip)
+  tipInput.addEventListener('keydown', function(e) {
     if (e.keyCode == 13) {
       e.preventDefault()
       e.target.blur()
@@ -87,38 +89,38 @@ function setLoading(isLoading) {
   }
 }
 
-const updateTip = _.debounce(function() {
+const replaceOrderTable = (html) => {
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(html, 'text/html')
+  const newTable = doc.querySelector('form[name="checkout_address"] table')
+  document.querySelector('form[name="checkout_address"] table').replaceWith(newTable)
+}
+
+const updateTip = _.debounce(async function() {
 
   const mask = document.querySelector('#tip-input').inputmask
   const newValue = mask.unmaskedvalue()
 
-  var $form = $('form[name="checkout_tip"]')
+  const tipForm = document.querySelector('form[name="checkout_tip"]')
 
-  var data = {}
-  data['checkout_tip[amount]'] = newValue
-  data['checkout_tip[_token]'] = $('#checkout_tip__token').val()
+  const params = new URLSearchParams()
+  params.append('checkout_tip[amount]', newValue)
+  params.append('checkout_tip[_token]', document.querySelector('#checkout_tip__token').value)
 
   setLoading(true)
 
-  $.ajax({
-    url : $form.attr('action'),
-    type: $form.attr('method'),
-    data : data,
-    success: function(html) {
-      $('form[name="checkout_address"] table').replaceWith(
-        $(html).find('form[name="checkout_address"] table')
-      )
-
-      enableTipInput()
-
-      setLoading(false)
-    }
-  })
+  try {
+    const { data: html } = await axios.post(tipForm.action, params, { withCredentials: true })
+    replaceOrderTable(html)
+    enableTipInput()
+  } finally {
+    setLoading(false)
+  }
 
 }, 350)
 
 function submitForm() {
-  $('#checkout_address_reusablePackagingEnabled').closest('form').submit();
+  document.querySelector('#checkout_address_reusablePackagingEnabled').closest('form').submit()
 }
 
 $('#modal-loopeat').on('shown.bs.modal', function(e) {
@@ -142,9 +144,7 @@ $('#modal-loopeat').on('shown.bs.modal', function(e) {
     oauthUrl={ oauthUrl }
     closeModal={ () => $('#modal-loopeat').modal('hide') }
     onChange={ returns => {
-      $('#loopeat_returns_returns').val(
-        JSON.stringify(returns)
-      )
+      document.querySelector('#loopeat_returns_returns').value = JSON.stringify(returns)
     }}
     onSubmit={ () => {
       document.querySelector('form[name="loopeat_returns"]').submit()
@@ -155,31 +155,36 @@ $('#modal-loopeat-howitworks').on('shown.bs.modal', function() {
   window._paq.push(['trackEvent', 'Checkout', 'openModal', 'zeroWasteHowItWorks']);
 });
 
-$('#checkout_address_reusablePackagingEnabled').on('change', function() {
-  var isChecked = $(this).is(':checked');
-  var isVytal = $(this).data('vytal') === true;
+const reusablePackagingEnabled = document.querySelector('#checkout_address_reusablePackagingEnabled');
 
-  window._paq.push(['trackEvent', 'Checkout', (isChecked ? 'zeroWasteEnable' : 'zeroWasteDisable')]);
+if (reusablePackagingEnabled) {
+  reusablePackagingEnabled.addEventListener('change', function() {
+    var isChecked = this.checked
+    var isVytal = this.dataset.vytal === 'true'
 
-  if (isVytal) {
+    window._paq.push(['trackEvent', 'Checkout', (isChecked ? 'zeroWasteEnable' : 'zeroWasteDisable')]);
 
-    $('#modal-vytal').modal('show');
+    if (isVytal) {
 
-  } else {
-    submitForm();
-  }
+      $('#modal-vytal').modal('show');
 
-});
+    } else {
+      submitForm();
+    }
+
+  });
+}
 
 $('#modal-vytal').on('hidden.bs.modal', function() {
-  $('#checkout_address_reusablePackagingEnabled').prop('checked', false);
+  document.querySelector('#checkout_address_reusablePackagingEnabled').checked = false
 });
 
 // ---
 
 enableTipInput()
 
-$('form[name="checkout_address"]').on('click', '#tip-incr', function(e) {
+document.querySelector('form[name="checkout_address"]').addEventListener('click', function(e) {
+  if (!e.target.closest('#tip-incr')) return
   e.preventDefault()
 
   const mask = document.querySelector('#tip-input').inputmask
@@ -188,47 +193,26 @@ $('form[name="checkout_address"]').on('click', '#tip-incr', function(e) {
   updateTip()
 })
 
-$('#guest-checkout-signin').on('shown.bs.collapse', function () {
-  const $password = $(this).find('input[type="password"]')
-  $password.prop('required', true)
-  setTimeout(() => $password.focus(), 100)
-})
-
-$('#guest-checkout-signin').on('hidden.bs.collapse', function () {
-  $(this).find('input[type="password"]').prop('required', false)
-})
-
-$('#apply-coupon').on('click', function(e) {
+document.querySelector('#apply-coupon').addEventListener('click', async function(e) {
 
   e.preventDefault()
 
-  const $form = $('form[name="checkout_coupon"]')
+  const couponForm = document.querySelector('form[name="checkout_coupon"]')
 
-  const data = {
-    'checkout_coupon[promotionCoupon]': $('#coupon-code').val(),
-    'checkout_coupon[_token]': $('#checkout_coupon__token').val(),
-  }
+  const params = new URLSearchParams()
+  params.append('checkout_coupon[promotionCoupon]', document.querySelector('#coupon-code').value)
+  params.append('checkout_coupon[_token]', document.querySelector('#checkout_coupon__token').value)
 
   setLoading(true)
 
-  $.ajax({
-    url : $form.attr('action'),
-    type: $form.attr('method'),
-    data : data,
-    success: function(html) {
-
-      $('form[name="checkout_address"] table').replaceWith(
-        $(html).find('form[name="checkout_address"] table')
-      )
-
-      enableTipInput()
-
-      $('#coupon-code').val('')
-      $('#promotion-coupon-collapse').collapse('hide')
-
-      setLoading(false)
-    }
-  })
+  try {
+    const { data: html } = await axios.post(couponForm.action, params, { withCredentials: true })
+    replaceOrderTable(html)
+    enableTipInput()
+    document.querySelector('#coupon-code').value = ''
+  } finally {
+    setLoading(false)
+  }
 })
 
 const orderDataElement = document.querySelector('#js-order-data')

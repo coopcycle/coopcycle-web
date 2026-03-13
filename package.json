@@ -34,6 +34,7 @@
     "whatwg-fetch": "^2.0.4"
   },
   "devDependencies": {
+    "@alpinejs/collapse": "^3.15.8",
     "@ant-design/icons": "^5.6.1",
     "@ant-design/moment-webpack-plugin": "^1.0.0",
     "@atlaskit/pragmatic-drag-and-drop": "^1.7.7",
@@ -83,6 +84,7 @@
     "@uppy/image-editor": "^4.2.0",
     "@uppy/react": "^5.2.0",
     "@uppy/xhr-upload": "^5.1.1",
+    "alpinejs": "^3.15.8",
     "animate.css": "^4.1.1",
     "antd": "^5.0.0",
     "autoprefixer": "^10.4.21",

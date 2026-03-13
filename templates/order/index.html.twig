@@ -18,25 +18,25 @@
 
     {% if form.customer.email is defined and not form.customer.email.vars.valid
       and form.customer.email.vars.errors.findByCodes(user_with_same_email_exists_code)|length > 0 %}
-      <div class="alert alert-warning">
+      <div class="alert alert-warning" x-data="{ expanded: false }">
         <div class="mb-3">
           <i class="fa fa-warning mr-1"></i>
           <span>{{ 'guest_checkout.user_with_same_email_exists'|trans }}</span>
         </div>
         <div class="d-flex justify-content-between">
           <button type="button" class="btn btn-warning"
-            data-toggle="collapse" data-target="#guest-checkout-signin"
-            aria-expanded="false" aria-controls="guest-checkout-signin">{{ 'layout.login'|trans({}, 'NucleosUserBundle') }}</button>
-          <button type="button" class="btn btn-transparent">{{ 'guest_checkout.use_another_email'|trans }}</button>
+            @click="expanded = ! expanded">{{ 'layout.login'|trans({}, 'NucleosUserBundle') }}</button>
+          <a class="btn btn-transparent" href="#checkout_address_customer_email">{{ 'guest_checkout.use_another_email'|trans }}</a>
         </div>
-        <div class="collapse mt-4" id="guest-checkout-signin">
+        <div class="mt-4" id="guest-checkout-signin" x-show="expanded" x-collapse>
           <form action="{{ path("nucleos_user_security_check", { _target_path: path('order') }) }}" method="post">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
             <input type="hidden" name="_username" value="{{ form.customer.email.vars.data }}" />
             <div class="input-group">
               <input type="password" name="_password"
                 class="form-control" id="guest-checkout-password"
-                placeholder="{{ 'security.login.password'|trans({}, 'NucleosUserBundle') }}">
+                placeholder="{{ 'security.login.password'|trans({}, 'NucleosUserBundle') }}"
+                x-bind:required="expanded">
               <span class="input-group-btn">
                 <button type="submit" class="btn btn-primary">
                   {{ 'security.login.submit'|trans({}, 'NucleosUserBundle') }}
@@ -96,26 +96,13 @@
               with_items: false,
               with_tip_form: form_tip
             } %}
-            <div class="row">
-              <div class="col-xs-12 col-sm-3 col-sm-offset-9 text-right">
-                <a role="button"
-                  data-toggle="collapse"
-                  href="#promotion-coupon-collapse"
-                  aria-expanded="false"
-                  aria-controls="promotion-coupon-collapse"
-                  class="d-block mb-4 font-weight-bold">
-                  {{ 'form.checkout_address.promotion_coupon.label'|trans }}
-                </a>
-                <div class="collapse" id="promotion-coupon-collapse">
-                  <div class="form-group">
-                    <div class="input-group input-group-sm">
-                      <input type="text" class="form-control" id="coupon-code">
-                      <span class="input-group-btn">
-                        <button class="btn btn-primary" type="button" id="apply-coupon">{{ 'form.checkout_address.add_promotion.label'|trans }}</button>
-                      </span>
-                    </div>
-                  </div>
-                </div>
+            <div class="d-flex align-items-center justify-content-end gap-4 mb-4">
+              <label>{{ 'form.checkout_address.promotion_coupon.label'|trans }}</label>
+              <div class="input-group input-group-sm">
+                <input type="text" class="form-control" id="coupon-code">
+                <span class="input-group-btn">
+                  <button class="btn btn-primary" type="button" id="apply-coupon">{{ 'form.checkout_address.add_promotion.label'|trans }}</button>
+                </span>
               </div>
             </div>
             {% if form.reusablePackagingEnabled is defined %}
