@@ -9,13 +9,13 @@ class ZeltyCatalogParser
         $data = $payload['data'];
 
         $tags = array_map(fn(array $tag) => $this->parseTag($tag), $data['tags'] ?? []);
-        
+
         $items = array_map(fn(array $item) => $this->parseItem($item), $data['items'] ?? []);
-        
+
         $menuParts = array_map(fn(array $part) => $this->parseMenuPart($part), $data['menuParts'] ?? []);
-        
+
         $options = array_map(fn(array $option) => $this->parseOption($option), $data['options'] ?? []);
-        
+
         $optionValues = array_map(fn(array $value) => $this->parseOptionValue($value), $data['optionValues'] ?? []);
 
         return new ZeltyCatalog(
@@ -84,6 +84,8 @@ class ZeltyCatalogParser
             id: $data['id'],
             name: $data['name'] ?? null,
             valueIds: $data['value_ids'] ?? [],
+            min_choices: $data['minimum_choices'] ?? 0,
+            max_choices: $data['maximum_choices'] ?? 1,
         );
     }
 
@@ -107,6 +109,7 @@ class ZeltyCatalogParser
             price: (int) ($data['price'] ?? 0),
             isFixed: $data['is_fixed'] ?? true,
             preventDiscounts: $data['prevent_discounts'] ?? false,
+            overrides: $data['overrides'] ?? [],
         );
     }
 

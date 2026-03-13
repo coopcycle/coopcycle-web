@@ -84,6 +84,8 @@ class ZeltyProductMapper
         $this->em->persist($product);
         $this->em->flush();
 
+        $this->linkOptions($product, $dish, $optionsMap);
+
         return $product;
     }
 
@@ -117,26 +119,30 @@ class ZeltyProductMapper
         }
     }
 
-    /* private function linkOptions(Product $product, ZeltyItem $dish, array $optionsMap): void */
-    /* { */
-    /*     foreach ($dish->optionIds as $optionId) { */
-    /*         if (isset($optionsMap[$optionId])) { */
-    /*             $option = $optionsMap[$optionId]; */
-    /**/
-    /*             $existingProductOptions = $this->em->getRepository(ProductOptions::class)->findOneBy([ */
-    /*                 'product' => $product, */
-    /*                 'option' => $option, */
-    /*             ]); */
-    /**/
-    /*             if (null === $existingProductOptions) { */
-    /*                 $productOptions = new ProductOptions(); */
-    /*                 $productOptions->setProduct($product); */
-    /*                 $productOptions->setOption($option); */
-    /*                 $productOptions->setEnabled(true); */
-    /*                 $product->addOption($option); */
-    /*                 $this->em->persist($productOptions); */
-    /*             } */
-    /*         } */
-    /*     } */
-    /* } */
+    private function linkOptions(Product $product, ZeltyItem $dish, array $optionsMap): void
+    {
+        foreach ($dish->optionIds as $zeltyOptionId) {
+            if (isset($optionsMap[$zeltyOptionId])) {
+                $option = $optionsMap[$zeltyOptionId];
+
+                $productId = $product->getId();
+                $optionDbId = $option->getId();
+
+                if (null !== $productId && null !== $optionDbId) {
+                    $existingProductOptions = $this->em->getRepository(\AppBundle\Entity\Sylius\ProductOptions::class)->findOneBy([
+                        'product' => $productId,
+                        'option' => $optionDbId,
+                    ]);
+
+                    if (null === $existingProductOptions) {
+                        $productOptions = new \AppBundle\Entity\Sylius\ProductOptions();
+                        $productOptions->setProduct($product);
+                        $productOptions->setOption($option);
+                        $productOptions->setEnabled(true);
+                        $this->em->persist($productOptions);
+                    }
+                }
+            }
+        }
+    }
 }

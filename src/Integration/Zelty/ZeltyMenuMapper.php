@@ -95,6 +95,9 @@ class ZeltyMenuMapper
 
         $this->importMenuVariant($product, $menu, $defaultTaxCategory);
 
+        $this->em->persist($product);
+        $this->em->flush();
+
         $this->importMenuPartsAsOptions($product, $menu, $menuPartsMap, $productsMap, $restaurant, $locale);
 
         $this->em->persist($product);
@@ -134,13 +137,17 @@ class ZeltyMenuMapper
         LocalBusiness $restaurant,
         string $locale
     ): void {
+        
+
         $existingOptions = [];
         foreach ($menuProduct->getOptions() as $option) {
             $existingOptions[$option->getCode()] = $option;
         }
 
         foreach ($menu->parts as $partId) {
+            
             if (!isset($menuPartsMap[$partId])) {
+                
                 continue;
             }
 
@@ -167,16 +174,29 @@ class ZeltyMenuMapper
                     }
 
                     $this->em->persist($option);
+                    $this->em->flush();
                 }
             }
 
             $this->em->clear(ProductOptions::class);
-            $existingProductOptions = $this->em->getRepository(ProductOptions::class)->findOneBy([
-                'product' => $menuProduct,
-                'option' => $option,
-            ]);
 
-            if (null === $existingProductOptions) {
+            $productId = $menuProduct->getId();
+            $optionId = $option->getId();
+
+            
+
+            $existingProductOptions = null;
+            if (null !== $productId && null !== $optionId) {
+                $existingProductOptions = $this->em->getRepository(ProductOptions::class)->findOneBy([
+                    'product' => $productId,
+                    'option' => $optionId,
+                ]);
+            }
+
+            
+
+            if (null === $existingProductOptions && null !== $productId && null !== $optionId) {
+                
                 $productOptions = new ProductOptions();
                 $productOptions->setProduct($menuProduct);
                 $productOptions->setOption($option);

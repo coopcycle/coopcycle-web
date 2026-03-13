@@ -137,10 +137,6 @@ class ZeltyImportService
             
             $em->persist($taxon);
             $em->flush();
-            
-            if (!$restaurant->getTaxons()->contains($taxon)) {
-                $restaurant->addTaxon($taxon);
-            }
         }
 
         foreach ($menusMap as $menuProduct) {
