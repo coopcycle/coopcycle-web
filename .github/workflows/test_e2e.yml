@@ -24,6 +24,7 @@ jobs:
       - name: Run CoopCycle Web
         uses: ./.github/actions/run-coopcycle-web
         timeout-minutes: 10
+      - run: docker compose exec -T webpack cat vendor/symfony/ux-react/assets/package.json
       - name: Setup CoopCycle
         run: docker compose exec -T php bin/console coopcycle:setup --env=test
       - name: Run Cypress
