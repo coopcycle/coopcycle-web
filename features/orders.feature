@@ -1655,7 +1655,6 @@ Feature: Orders
       }
       """
 
-  @debug
   Scenario: Retrieve all orders via OAuth, then retrieve one order
     Given the fixtures files are loaded with purge:
       | setup_default.yml |
