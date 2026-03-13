@@ -2958,16 +2958,6 @@ class AdminController extends AbstractController
         return $this->render('admin/warehouses.html.twig', $this->auth([]));
     }
 
-    #[Route(path: '/admin/cube', name: 'admin_cube')]
-    public function cubeAction(CubeJsTokenFactory $tokenFactory)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        return $this->render('admin/cube.html.twig', [
-            'cube_token' => $tokenFactory->createToken(),
-        ]);
-    }
-
     #[Route(path: '/admin/invoicing', name: 'admin_invoicing')]
     public function invoicingAction()
     {

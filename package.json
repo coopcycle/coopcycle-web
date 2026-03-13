@@ -43,7 +43,6 @@
     "@babel/preset-react": "^7.27.1",
     "@babel/register": "^7.27.1",
     "@cubejs-client/core": "^1.6.22",
-    "@cubejs-client/playground": "^1.6.22",
     "@cubejs-client/react": "^1.6.22",
     "@cypress/webpack-preprocessor": "^6.0.4",
     "@datadog/browser-logs": "^5.29.1",
