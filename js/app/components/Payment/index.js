@@ -1,5 +1,4 @@
 import React, { StrictMode } from 'react'
-import { render } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import _ from 'lodash'
 import axios from 'axios'
@@ -290,7 +289,7 @@ export default function(formSelector, options) {
               // without this condition the disclaimer is rendered every time cash is selected
               const el = document.createElement('div')
               document.querySelector('#checkout_payment_method').appendChild(el)
-              render(<Disclaimer />, el)
+              createRoot(el).render(<Disclaimer />)
             }
 
             break
@@ -326,9 +325,8 @@ export default function(formSelector, options) {
     const el = document.createElement('div')
     document.querySelector('#checkout_payment_method').appendChild(el)
 
-    render(
-      <PaymentMethodPicker methods={methods} onSelect={onSelect} />,
-      el
+    createRoot(el).render(
+      <PaymentMethodPicker methods={methods} onSelect={onSelect} />
     )
   }
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { render, unmountComponentAtNode } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { Elements, CardElement, ElementsConsumer } from '@stripe/react-stripe-js'
 import { useTranslation } from 'react-i18next'
 import _ from 'lodash'
@@ -236,7 +236,8 @@ export default {
 
     return new Promise((resolve) => {
 
-      render(
+      this._root = createRoot(el)
+      this._root.render(
         <Elements stripe={ this.stripe }>
           <ElementsConsumer>
           {({ elements }) => {
@@ -262,12 +263,15 @@ export default {
             )
           }}
           </ElementsConsumer>
-        </Elements>, el, resolve)
+        </Elements>
+      )
+      resolve()
     })
   },
   unmount() {
     if (this.el) {
-      unmountComponentAtNode(this.el)
+      this._root.unmount()
+      this._root = null
       this.el = null
     }
   },

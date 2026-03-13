@@ -10,7 +10,7 @@ import Modal from 'react-modal'
 
 import React, { useState } from 'react'
 import Spreadsheet from 'react-spreadsheet'
-import { render } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import Centrifuge from 'centrifuge'
 
 import './list.scss'
@@ -167,10 +167,10 @@ function addSpreadsheetView(viewIcon) {
 
       const data = parseResult.data.map(row => row.map(value => ({ value })))
 
-      render(<SpreadsheetViewer
+      createRoot(document.getElementById('delivery_import_spreadsheet')).render(<SpreadsheetViewer
         key={ parentEl.dataset.deliveryImportQueue }
         data={ data }
-        errors={ errors } />, document.getElementById('delivery_import_spreadsheet'))
+        errors={ errors } />)
     })
   }, false)
 }

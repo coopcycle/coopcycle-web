@@ -8,7 +8,7 @@ import 'prismjs'
 import 'prismjs/plugins/toolbar/prism-toolbar'
 import 'prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard'
 import axios from 'axios'
-import Grid from '@react-css/grid'
+// import Grid from '@react-css/grid'
 import { useTranslation } from 'react-i18next'
 
 import i18n from '../i18n'
@@ -114,7 +114,7 @@ const StockPhotoSearch = ({ url }) => {
         { results.length > 0 && (
           <>
             <hr />
-            <Grid columns="repeat(3, 1fr)" gap="5px">
+            {/* <Grid columns="repeat(3, 1fr)" gap="5px"> */}
             { results.map((result, index) => {
 
               return (
@@ -141,7 +141,7 @@ const StockPhotoSearch = ({ url }) => {
                 </div>
               )
             }) }
-            </Grid>
+            {/* </Grid> */}
             <div className="my-2 text-right">
               <button type="button" className="btn btn-default" onClick={ () => {
                 setPage(page + 1)
