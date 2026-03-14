@@ -92,7 +92,7 @@ export const UnassignedTours = ({ splitCollapseAction }) => {
   }
 
   return (
-    <div className="dashboard__panel">
+    <div className="dashboard__panel dashboard__panel--unassigned-tours">
       <h4 className="dashboard__panel__header d-flex align-items-center justify-content-between">
         <a onClick={() => splitCollapseAction()}>
           <span className="mr-2">{ t('DASHBOARD_UNASSIGNED_TOURS') }</span>

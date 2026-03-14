@@ -90,7 +90,6 @@ html, body {
       margin: 0;
       background-color: $dark-gray;
       color: $white;
-      overflow-x: hidden;
       a {
         color: $white;
         &:hover, &:active {
@@ -629,5 +628,12 @@ $pulse-color: #2ECC40;
         min-width: 25cqw;
       }
     }
+  }
+}
+
+.dashboard__panel--unassigned-tours {
+  // Make sure the ant.design Switch stays behind the split panes
+  .dashboard__panel__header {
+    overflow-x: hidden;
   }
 }
