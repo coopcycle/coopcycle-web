@@ -859,6 +859,7 @@
             "PRESET_LAST_MONTH": "Last month",
             "PRESET_LAST_3_MONTHS": "Last 3 months",
             "PRESET_LAST_6_MONTHS": "Last 6 months"
-        }
+        },
+        "ADMIN_DASHBOARD_TAG_TASKS": "Modify tags"
       }
 }
