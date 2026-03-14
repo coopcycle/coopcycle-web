@@ -3387,7 +3387,7 @@ Feature: Tasks
     And the user "sarah" sends a "GET" request to "/api/tasks/2/incidents"
     Then the response status code should be 403
     And the response should be in JSON
-    
+
   Scenario: Cancel the last task - order should be cancelled
     Given the fixtures files are loaded:
       | task_manager_one_non_cancelled.yml |
@@ -3570,7 +3570,7 @@ Feature: Tasks
     Then the async messages are consumed
     # Base: 499, manual supplement: 200
     And the database entity "AppBundle\Entity\Sylius\Order" should have a property "total" with value "699"
-    
+
   Scenario: Get delivery form data for a task
       Given the fixtures files are loaded with purge:
         | setup_default.yml |
@@ -3706,3 +3706,96 @@ Feature: Tasks
         }
       }
       """
+
+    Scenario: Add tags to task
+      Given the fixtures files are loaded:
+        | tasks.yml           |
+      And the courier "bob" is loaded:
+        | email     | bob@coopcycle.org |
+        | password  | 123456            |
+        | telephone | 0033612345678     |
+      And the user "bob" has role "ROLE_DISPATCHER"
+      And the user "bob" is authenticated
+      When I add "Content-Type" header equal to "application/ld+json"
+      And I add "Accept" header equal to "application/ld+json"
+      And the user "bob" sends a "PUT" request to "/api/tasks/2" with body:
+        """
+        {
+          "tags": ["important"]
+        }
+        """
+      Then the response status code should be 200
+      And the response should be in JSON
+      And the JSON should match:
+        """
+        {
+          "@context":"/api/contexts/Task",
+          "@id":"/api/tasks/2",
+          "@type":"Task",
+          "tags": [
+            {
+              "name": "Important",
+              "slug": "important",
+              "color": "#FF0000"
+            }
+          ],
+          "@*@": "@*@"
+        }
+        """
+      Given I add "Content-Type" header equal to "application/ld+json"
+      And I add "Accept" header equal to "application/ld+json"
+      And the user "bob" sends a "PUT" request to "/api/tasks/2" with body:
+        """
+        {
+          "tags": ["fragile"]
+        }
+        """
+      Then the response status code should be 200
+      And the response should be in JSON
+      And the JSON should match:
+        """
+        {
+          "@context":"/api/contexts/Task",
+          "@id":"/api/tasks/2",
+          "@type":"Task",
+          "tags": [
+            {
+              "name": "Fragile",
+              "slug": "fragile",
+              "color": "#FFFFFF"
+            }
+          ],
+          "@*@": "@*@"
+        }
+        """
+      Given I add "Content-Type" header equal to "application/ld+json"
+      And I add "Accept" header equal to "application/ld+json"
+      And the user "bob" sends a "PUT" request to "/api/tasks/2" with body:
+        """
+        {
+          "tags": ["important", "fragile"]
+        }
+        """
+      Then the response status code should be 200
+      And the response should be in JSON
+      And the JSON should match:
+        """
+        {
+          "@context":"/api/contexts/Task",
+          "@id":"/api/tasks/2",
+          "@type":"Task",
+          "tags": [
+            {
+              "name": "Fragile",
+              "slug": "fragile",
+              "color": "#FFFFFF"
+            },
+            {
+              "name": "Important",
+              "slug": "important",
+              "color": "#FF0000"
+            }
+          ],
+          "@*@": "@*@"
+        }
+        """
