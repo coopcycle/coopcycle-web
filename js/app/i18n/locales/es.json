@@ -802,6 +802,7 @@
             "PRESET_LAST_MONTH": "El mes pasado",
             "PRESET_LAST_3_MONTHS": "Los últimos 3 meses",
             "PRESET_LAST_6_MONTHS": "Los últimos 6 meses"
-        }
+        },
+        "ADMIN_DASHBOARD_TAG_TASKS": "Modificar las etiquetas"
     }
 }
