@@ -46,7 +46,7 @@ trait TaggableTrait
 
         if (property_exists($this, 'updatedAt')) {
             // Make sure to trigger a Doctrine update
-            $this->updatedAt = new \DateTimeImmutable();
+            $this->updatedAt = new \DateTime();
         }
     }
 
