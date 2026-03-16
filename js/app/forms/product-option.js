@@ -3,6 +3,7 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 
 import { OptionGroup } from '../restaurant/components/ProductDetails/ProductOptionGroup'
+import Search from '../widgets/Search'
 
 var $previewLoader = $('#preview-loader')
 var $form = $('form[name="product_option"]')
@@ -88,6 +89,16 @@ $('#product_option_additional').on('change', function() {
 if (!$('#product_option_additional').is(':checked')) {
   $('#product_option_valuesRange').hide();
 }
+
+document.querySelectorAll('[data-search="product"]').forEach((el) => {
+  new Search(el, {
+    url: document.querySelector('form[name="product_option"]').dataset.searchUrl,
+    placeholder: "Search product....",
+    onSuggestionSelected: function(suggestion) {
+      // window.location.href = suggestion.path;
+    }
+  });
+})
 
 updateUpperField($('#product_option_valuesRange_infinity').is(':checked'));
 
