@@ -24,7 +24,9 @@ export default function ReportIncidentModal(props) {
   return (
     <>
       <a
-        onClick={() => {
+        href="#"
+        onClick={(e) => {
+          e.preventDefault()
           setIsOpen(true)
         }}>
         <i className="fa fa-exclamation-triangle mr-1" />
