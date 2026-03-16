@@ -23,6 +23,58 @@ interface DataType {
   updatedAt: string;
 }
 
+const PaymentForm = ({ payment, liablePartyForm }) => {
+
+  const { t } = useTranslation();
+  const [isLoading, setIsLoading] = useState(false);
+
+  return (
+    <Form
+      layout="vertical"
+      name={`refund-payment-${payment['@id']}`}
+      initialValues={{
+        amount: payment.amount - payment.refundedAmount,
+      }}
+      onFinish={async (values: object) => {
+
+        const httpClient = new window._auth.httpClient();
+
+        setIsLoading(true)
+        const { response, error } = await httpClient.post(
+          payment['@id'] + '/refunds',
+          {
+            ...liablePartyForm.getFieldsValue(),
+            ...values
+          },
+        );
+        setIsLoading(false)
+
+        if (!error) {
+          window.location.reload();
+        }
+
+      }}
+      autoComplete="off">
+      <Form.Item name="amount"
+        label={t('REFUND_AMOUNT')}
+        help={payment.supportsPartialRefunds ? '' : t('PARTIAL_REFUNDS_NOT_SUPPORTED')}>
+        <InputNumber
+          min={0}
+          max={payment.amount - payment.refundedAmount}
+          parser={(value) => value * 100}
+          formatter={(value) => value / 100}
+          step={50}
+          disabled={!payment.supportsPartialRefunds} />
+      </Form.Item>
+      <Form.Item label={null}>
+        <Button loading={isLoading} type="primary" htmlType="submit" disabled={!payment.supportsPartialRefunds}>
+          {t('REFUND')}
+        </Button>
+      </Form.Item>
+    </Form>
+  )
+}
+
 export default function ({ order, liablePartyForm }) {
 
   const { t } = useTranslation();
@@ -110,35 +162,7 @@ export default function ({ order, liablePartyForm }) {
         dataSource={dataSource}
         pagination={false}
         expandable={{
-          expandedRowRender: (payment) => (
-            <Form
-              layout="vertical"
-              name={`refund-payment-${payment['@id']}`}
-              initialValues={{
-                amount: payment.amount - payment.refundedAmount,
-              }}
-              onFinish={async values => {
-                console.log('onFinish', values)
-              }}
-              autoComplete="off">
-              <Form.Item name="amount"
-                label={t('REFUND_AMOUNT')}
-                help={payment.supportsPartialRefunds ? '' : t('PARTIAL_REFUNDS_NOT_SUPPORTED')}>
-                <InputNumber
-                  min={0}
-                  max={payment.amount - payment.refundedAmount}
-                  parser={(value) => value * 100}
-                  formatter={(value) => value / 100}
-                  step={50}
-                  disabled={!payment.supportsPartialRefunds} />
-              </Form.Item>
-              <Form.Item label={null}>
-                <Button type="primary" htmlType="submit" disabled={!payment.supportsPartialRefunds}>
-                  {t('REFUND')}
-                </Button>
-              </Form.Item>
-            </Form>
-          ),
+          expandedRowRender: (payment) => <PaymentForm payment={payment} liablePartyForm={liablePartyForm} />,
           rowExpandable: (record) => true,
         }}
         />
