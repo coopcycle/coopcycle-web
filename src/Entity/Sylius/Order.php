@@ -58,6 +58,7 @@ use AppBundle\Api\State\LoopeatFormatsProcessor;
 use AppBundle\Api\State\LoopeatReturnsProcessor;
 use AppBundle\Api\State\OrderPaymentsProvider;
 use AppBundle\Api\State\OrderRefundProcessor;
+use AppBundle\Api\State\OrderRefundsProvider;
 use AppBundle\Api\State\MyOrdersProvider;
 use AppBundle\Api\State\ValidateOrderProvider;
 use AppBundle\DataType\TsRange;
@@ -466,6 +467,13 @@ use Webmozart\Assert\Assert as WMAssert;
             input: PaymentRefundInput::class,
             processor: OrderRefundProcessor::class,
             denormalizationContext: ['groups' => ['payment_refund']],
+        ),
+        new GetCollection(
+            uriTemplate: '/orders/{id}/refunds',
+            openapiContext: ['summary' => 'Retrieves refunds for an Order resource.'],
+            security: 'is_granted("ROLE_DISPATCHER")',
+            normalizationContext: ['groups' => ['order_refunds']],
+            provider: OrderRefundsProvider::class,
         ),
     ],
     normalizationContext: ['groups' => ['order', 'address']],
