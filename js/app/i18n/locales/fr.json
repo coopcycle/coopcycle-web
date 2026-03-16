@@ -848,6 +848,7 @@
             "PRESET_LAST_3_MONTHS": "Les 3 derniers mois",
             "PRESET_LAST_6_MONTHS": "Les 6 derniers mois"
         },
+        "ADMIN_DASHBOARD_TAG_TASKS": "Modifier les tags",
         "CREATE_CREDIT_NOTE": "Créer un avoir commercial",
         "REFUND": "Rembourser",
         "CREDIT_NOTE_AMOUNT": "Montant de l'avoir",

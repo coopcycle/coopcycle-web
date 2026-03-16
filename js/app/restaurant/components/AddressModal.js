@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import _ from 'lodash'
 import Modal from 'react-modal'
-import classNames from 'classnames'
+import clsx from 'clsx'
 import ngeohash from 'ngeohash'
 
 import AddressAutosuggest from '../../components/AddressAutosuggest'
@@ -84,7 +84,7 @@ class AddressModal extends Component {
         </header>
         <div>
           <span
-            className={classNames({
+            className={clsx({
               'text-center': true,
               'd-block': true,
               'mb-3': true,
@@ -110,7 +110,7 @@ class AddressModal extends Component {
         </div>
         <button
           type="button"
-          className={classNames({
+          className={clsx({
             btn: true,
             'btn-default': true,
             visible: this.props.isCollectionEnabled,

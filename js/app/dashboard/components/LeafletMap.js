@@ -5,7 +5,7 @@ import MapHelper from '../../MapHelper'
 import MapProxy from './MapProxy'
 import _ from 'lodash'
 import moment from 'moment'
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 import { setCurrentTask, assignAfter, selectTask, selectTasksByIds, toggleTask } from '../redux/actions'
 import { CourierMapLayer, TaskMapLayer, PolylineMapLayer, ClustersMapToggle } from './MapLayers'
@@ -68,7 +68,7 @@ const GroupTable = ({ tasks, onEditClick, onMouseEnter, onMouseLeave }) => {
               </a>
             </td>
             <td className="text-right">
-              <i className={ classNames({
+              <i className={ clsx({
                 'fa': true,
                 'fa-check': task.status === 'DONE',
                 'fa-play':  task.status === 'DOING',
@@ -84,7 +84,7 @@ const GroupTable = ({ tasks, onEditClick, onMouseEnter, onMouseLeave }) => {
         { pagesArray.map(p =>
           <a key={ `p-${p}` }
             href="#"
-            className={ classNames({
+            className={ clsx({
               'p-2': true,
               'bg-light': p === page
             }) }

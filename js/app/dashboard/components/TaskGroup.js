@@ -7,7 +7,7 @@ import Popconfirm from 'antd/lib/popconfirm'
 import Task from './Task'
 import { selectExpandedTasksGroupsPanelsIds } from '../redux/selectors'
 import { toggleTasksGroupPanelExpanded } from '../redux/actions'
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 class TaskGroup extends React.Component {
 
@@ -128,7 +128,7 @@ class TaskGroup extends React.Component {
             { this.state.editName && this.renderEditNameForm() }
           </h4>
         </div>
-        <div id={ `task-group-panel-${this.state.group.id}` } className={classNames("panel-collapse collapse", {"in": isExpanded})} role="tabpanel">
+        <div id={ `task-group-panel-${this.state.group.id}` } className={clsx("panel-collapse collapse", {"in": isExpanded})} role="tabpanel">
           <ul className="list-group">
             { tasks.map((task) => {
               return (

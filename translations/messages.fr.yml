@@ -1654,3 +1654,12 @@ form.delivery.errors.not_reversable: Vous pouvez seulement inverser les livraiso
 form.store.document: Document
 basics.upload: Télécharger
 form.product.options.add: Ajouter une option
+form.api_app.type.label: Mécanisme d'authentification
+form.api_app.store.placeholder: Choisissez un magasin pour restreindre l'accès
+form.api_app.store.help: Vous pouvez également laisser vide pour autoriser l'accès à toutes les commandes
+form.api_app.scopes.label: Périmètre
+form.api_app.scopes.help: Celà permet de limiter ce à quoi le client d'API est autorisé à accéder
+form.api_app.scope.deliveries: Livraisons
+form.api_app.scope.tasks: Tâches
+form.api_app.scope.orders: Commandes
+form.api_app.scope.orders_all: Toutes les commandes

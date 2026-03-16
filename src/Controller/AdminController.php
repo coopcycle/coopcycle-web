@@ -1848,8 +1848,7 @@ class AdminController extends AbstractController
 
         $qb = $this->entityManager
             ->getRepository(ApiApp::class)
-            ->createQueryBuilder('a')
-            ->andWhere('a.store IS NOT NULL');
+            ->createQueryBuilder('a');
 
         $apiApps = $qb->getQuery()->getResult();
 

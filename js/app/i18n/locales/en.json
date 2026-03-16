@@ -860,6 +860,7 @@
             "PRESET_LAST_3_MONTHS": "Last 3 months",
             "PRESET_LAST_6_MONTHS": "Last 6 months"
         },
+        "ADMIN_DASHBOARD_TAG_TASKS": "Modify tags",
         "CREATE_CREDIT_NOTE": "Create a credit note",
         "REFUND": "Refund",
         "CREDIT_NOTE_AMOUNT": "Credit note amount",

@@ -1856,3 +1856,95 @@ export function removePreviouslyAssignedTasks(username, items) {
     })
   }
 }
+
+export function addTagToTasks(slug, tasks) {
+
+  return function (dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    const httpClient = createClient(dispatch)
+
+    const requests = tasks.reduce((reqs, task) => {
+
+      const existingTags = task.tags.map(t => t.slug);
+      const newTags = _.uniq(existingTags.concat([slug]));
+
+      if (_.isEqual(newTags, existingTags)) {
+        return reqs;
+      }
+
+      return [
+        ...reqs,
+        httpClient.request({
+          method: 'put',
+          url: task['@id'],
+          data: {
+            tags: newTags
+          },
+          headers: {
+            'Authorization': `Bearer ${jwt}`,
+            'Accept': 'application/ld+json',
+            'Content-Type': 'application/ld+json'
+          }
+        })
+      ]
+
+    }, [])
+
+    Promise.all(requests)
+      .then(values => {
+        dispatch(createTaskSuccess())
+        values.forEach(response => dispatch(updateTask(response.data)))
+      })
+      .catch(error => dispatch(startTaskFailure(error)))
+  }
+}
+
+export function removeTagFromTasks(slug, tasks) {
+
+  return function (dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    const httpClient = createClient(dispatch)
+
+    const requests = tasks.reduce((reqs, task) => {
+
+      const existingTags = task.tags.map(t => t.slug);
+      const newTags = _.without(existingTags, slug);
+
+      if (_.isEqual(newTags, existingTags)) {
+        return reqs;
+      }
+
+      return [
+        ...reqs,
+        httpClient.request({
+          method: 'put',
+          url: task['@id'],
+          data: {
+            tags: newTags
+          },
+          headers: {
+            'Authorization': `Bearer ${jwt}`,
+            'Accept': 'application/ld+json',
+            'Content-Type': 'application/ld+json'
+          }
+        })
+      ]
+
+    }, [])
+
+    Promise.all(requests)
+      .then(values => {
+        dispatch(createTaskSuccess())
+        values.forEach(response => dispatch(updateTask(response.data)))
+      })
+      .catch(error => dispatch(startTaskFailure(error)))
+  }
+}

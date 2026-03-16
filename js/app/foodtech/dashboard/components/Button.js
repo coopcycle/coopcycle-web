@@ -1,11 +1,11 @@
 import React from 'react'
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 //FIXME; switch to using a Button component from coopcycle-web/js/app/components/core/Button.js which is based on this implementation
 export default ({ children, onClick, loading, icon, danger, success, primary }) => {
 
   return (
-    <button onClick={ onClick } className={ classNames({
+    <button onClick={ onClick } className={ clsx({
       'btn': true,
       'btn-primary': primary,
       'btn-success': success,
