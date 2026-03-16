@@ -859,6 +859,10 @@
         "LIABLE_PARTY_PLATFORM": "Plateforme",
         "REFUND_FULL": "Rembourser la totalité ({{amount}})",
         "PARTIAL_REFUNDS_NOT_SUPPORTED": "Ce moyen de paiement ne supporte pas les remboursements partiels",
-        "REFUNDS": "Remboursements"
+        "REFUNDS": "Remboursements",
+        "PAYMENT_AMOUNT": "Montant",
+        "PAYMENT_REFUNDED_AMOUNT": "Montant remboursé",
+        "PAYMENT_METHOD": "Moyen de paiement",
+        "PAYMENT_UPDATED_AT": "Dernière mise à jour"
     }
 }

@@ -56,7 +56,6 @@ export default function ({ isLastmile }) {
   const [transporterReportModal, setTransporterReportModal] = useState(false);
   const [isCreditNoteModalVisible, setIsCreditNoteModalVisible] = useState(false);
   const [isRefundModalVisible, setIsRefundModalVisible] = useState(false);
-  const [isFullRefundButtonLoading, setIsFullRefundButtonLoading] = useState(false);
 
   const [transporterForm] = Form.useForm();
   const [creditNoteForm] = Form.useForm();
@@ -207,27 +206,8 @@ export default function ({ isLastmile }) {
           title={t('REFUND')}
           open={isRefundModalVisible}
           onCancel={() => setIsRefundModalVisible(false)}
-          footer={[
-            <Button key="refund-full"
-              color="danger"
-              variant="outlined"
-              loading={isFullRefundButtonLoading}
-              onClick={async () => {
-                const httpClient = new window._auth.httpClient();
-                setIsFullRefundButtonLoading(true)
-                const { response, error } = await httpClient.put(
-                  order['@id'] + '/refund',
-                  refundLiablePartyForm.getFieldsValue(),
-                );
-                setIsFullRefundButtonLoading(false)
-                if (!error) {
-                  window.location.reload();
-                }
-              }}
-            >
-              {t('REFUND_FULL', { amount: (order.total / 100).formatMoney() })}
-            </Button>,
-          ]}>
+          footer={null} // Buttons are managed inside the modal
+        >
           <RefundForm order={order} liablePartyForm={refundLiablePartyForm} />
         </Modal>
       </Drawer>
