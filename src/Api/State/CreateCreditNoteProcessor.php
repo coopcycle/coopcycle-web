@@ -7,6 +7,7 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Api\Dto\CreditNoteInput;
 use AppBundle\Entity\Sylius\Order;
+use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker;
 use AppBundle\Sylius\Promotion\Checker\Rule\IsRestaurantRuleChecker;
 use AppBundle\Sylius\Payment\Context as PaymentContext;
@@ -48,6 +49,7 @@ class CreateCreditNoteProcessor implements ProcessorInterface
 
         $promotion->addAction($promotionAction);
 
+        /** @var CustomerInterface */
         $customer = $order->getCustomer();
 
         if ($customer->hasUser()) {
