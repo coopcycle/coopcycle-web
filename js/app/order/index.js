@@ -151,9 +151,16 @@ $('#modal-loopeat').on('shown.bs.modal', function(e) {
     }} />)
 });
 
-$('#modal-loopeat-howitworks').on('shown.bs.modal', function() {
-  window._paq.push(['trackEvent', 'Checkout', 'openModal', 'zeroWasteHowItWorks']);
-});
+const loopeatHowItWorksModal = document.querySelector('modal-loopeat-howitworks');
+if (loopeatHowItWorksModal) {
+  document.querySelector('[data-target="#modal-loopeat-howitworks"]').addEventListener('click', (e) => {
+    e.preventDefault();
+    // There is no "open" event on dialog element,
+    // so we need to use JavaScript to track event when modal is openn
+    loopeatHowItWorksModal.openModal();
+    window._paq.push(['trackEvent', 'Checkout', 'openModal', 'zeroWasteHowItWorks']);
+  });
+}
 
 const reusablePackagingEnabled = document.querySelector('#checkout_address_reusablePackagingEnabled');
 

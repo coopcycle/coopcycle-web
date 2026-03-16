@@ -89,7 +89,7 @@
           </div>
           {% endif %}
           <div class="d-flex justify-content-between loopeat-links">
-            <a href="#" data-toggle="modal" data-target="#modal-loopeat-howitworks">{{ (loopeat_trans_prefix ~ '.how_it_works')|trans }} ›</a>
+            <a href="#" data-target="#modal-loopeat-howitworks">{{ (loopeat_trans_prefix ~ '.how_it_works')|trans }} ›</a>
             <a href="{{ loopeat_context.customerAppUrl }}" target="_blank">{{ (loopeat_trans_prefix ~ '.website')|trans({ '%name%': loopeat_context.name }) }} ›</a>
           </div>
         </div>
@@ -119,28 +119,26 @@
       </div>
     </div>
 
-    <div class="modal fade" id="modal-loopeat-howitworks" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <span>{{ 'loopeat.how_it_works.title'|trans({ '%name%': loopeat_context.name }) }}</span>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <dialog id="modal-loopeat-howitworks">
+      <div class="modal-content">
+        <div class="modal-header d-flex">
+          <span>{{ 'loopeat.how_it_works.title'|trans({ '%name%': loopeat_context.name }) }}</span>
+          <button type="button" class="close" onclick="document.querySelector('#modal-loopeat-howitworks').close();"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body mb-0 p-4">
+          <div class="d-flex justify-content-between">
+            {% for loopeat_step in 1..4 %}
+              <div class="text-center w-25">
+                <span class="badge" style="background-color: #e17e3f;">{{ loopeat_step - 1 }}</span>
+                <h5 class="font-weight-bold mb-1" style="color: #e17e3f;">{{ ('loopeat.how_it_works.step_' ~ loopeat_step ~ '.title')|trans({ '%name%': loopeat_context.name }) }}</h5>
+                <p>{{ ('loopeat.how_it_works.step_' ~ loopeat_step ~ '.text')|trans({ '%name%': loopeat_context.name }) }}</p>
+              </div>
+            {% endfor %}
           </div>
-          <div class="modal-body mb-0 p-4">
-            <div class="d-flex justify-content-between">
-              {% for loopeat_step in 1..4 %}
-                <div class="text-center w-25">
-                  <span class="badge" style="background-color: #e17e3f;">{{ loopeat_step - 1 }}</span>
-                  <h5 class="font-weight-bold mb-1" style="color: #e17e3f;">{{ ('loopeat.how_it_works.step_' ~ loopeat_step ~ '.title')|trans({ '%name%': loopeat_context.name }) }}</h5>
-                  <p>{{ ('loopeat.how_it_works.step_' ~ loopeat_step ~ '.text')|trans({ '%name%': loopeat_context.name }) }}</p>
-                </div>
-              {% endfor %}
-            </div>
-            <img src="{{ asset('img/loopeat/how_it_works.svg') }}" class="w-100" />`
-          </div>
+          <img src="{{ asset('img/loopeat/how_it_works.svg') }}" class="w-100" />`
         </div>
       </div>
-    </div>
+    </dialog>
 
   {% elseif isVytal %}
     <div>
