@@ -856,8 +856,6 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
         $order = $this->createRandomOrder($restaurant, $user, new \DateTime($date));
-        // Make sure order is in a state that allows transition to "fulfilled"
-        $order->setState(OrderInterface::STATE_NEW);
 
         $this->orderProcessor->process($order);
 
@@ -869,8 +867,17 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->getContainer()->get('sylius.manager.order')->persist($order);
         $this->getContainer()->get('sylius.manager.order')->flush();
 
+        // Make sure order is in a state that allows transition to "fulfilled"
+        // @see AppBundle\Domain\Order\Workflow\Guard::isFulfillable
+
+        $order->setState(OrderInterface::STATE_NEW);
         $this->orderNumberAssigner->assignNumber($order);
+        $this->orderManager->accept($order);
+
+        $order->getDelivery()->getDropoff()->setStatus(Task::STATUS_DONE);
         $this->orderManager->fulfill($order);
+
+        Assert::assertEquals(OrderInterface::STATE_FULFILLED, $order->getState());
 
         $this->getContainer()->get('sylius.manager.order')->persist($order);
         $this->getContainer()->get('sylius.manager.order')->flush();
