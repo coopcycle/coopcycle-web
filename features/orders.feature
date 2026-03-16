@@ -1688,7 +1688,8 @@ Feature: Orders
             "state": "new",
             "createdAt": "@string@.isDateTime()",
             "client": "@string@.startsWith('/api/stores/')",
-            "paymentGateway": @string@
+            "paymentGateway": @string@,
+            "assignedTo": "@string@||@null@"
           },
           "@array_previous_repeat@"
         ],

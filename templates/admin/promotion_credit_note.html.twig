@@ -8,6 +8,14 @@
 {% endblock %}
 
 {% block content %}
+{% if order is not empty %}
+<div class="alert alert-warning d-flex justify-content-between">
+  <span>{{ 'form.credit_note.deprecated_warning'|trans }}</span>
+  <span {{ react_component('admin/orders/[id]/ReportIncidentModal', {
+    items: order.delivery.items|serialize('jsonld', { groups: ['task', 'task_collection', 'address'] })
+  }) }}></span>
+</div>
+{% endif %}
 {{ form_start(form) }}
   {{ form_widget(form) }}
   <button type="submit" class="btn btn-block btn-primary">

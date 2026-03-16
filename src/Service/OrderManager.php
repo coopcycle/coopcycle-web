@@ -93,6 +93,11 @@ class OrderManager
         $this->commandBus->dispatch(new OrderCommand\Refund($payment, $amount, $liableParty, $comments));
     }
 
+    public function refundOrder(OrderInterface $order, $liableParty = Refund::LIABLE_PARTY_PLATFORM, $comments = '')
+    {
+        $this->commandBus->dispatch(new OrderCommand\Refund($order, null, $liableParty, $comments));
+    }
+
     public function restore(OrderInterface $order)
     {
         $this->commandBus->dispatch(new OrderCommand\RestoreOrder($order));

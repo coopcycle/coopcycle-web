@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use AppBundle\Entity\Sylius\Payment;
 use Gedmo\Timestampable\Traits\Timestampable;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 class Refund
 {
@@ -14,9 +15,16 @@ class Refund
 
     private $id;
     private $payment;
+
+    #[Groups(['order_refunds'])]
     private $liableParty;
+
+    #[Groups(['order_refunds'])]
     private $amount;
+
+    #[Groups(['order_refunds'])]
     private $comments = '';
+
     private array $data = [];
 
     /**

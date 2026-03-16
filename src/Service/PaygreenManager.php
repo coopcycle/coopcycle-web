@@ -7,7 +7,6 @@ use AppBundle\Exception\RefundException;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\Defaults;
-use Carbon\Carbon;
 use Hashids\Hashids;
 use Paygreen\Sdk\Payment\V3\Client as PaygreenClient;
 use Paygreen\Sdk\Payment\V3\Model as PaygreenModel;

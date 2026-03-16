@@ -8,8 +8,8 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\ApiProperty;
-use ApiPlatform\Metadata\ApiFilter;
+use AppBundle\Api\Dto\IncidentMetadataInput;
+use AppBundle\Api\State\AddIncidentMetadataProcessor;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Task;
@@ -45,6 +45,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Post(
             controller: CreateIncident::class,
             security: 'is_granted("ROLE_COURIER")'
+        ),
+        new Post(
+            uriTemplate: '/incidents/{id}/metadata',
+            processor: AddIncidentMetadataProcessor::class,
+            input: IncidentMetadataInput::class,
+            security: 'is_granted("ROLE_COURIER")',
+            denormalizationContext: ['groups' => ['incident']],
+            status: 200,
         )
     ],
     normalizationContext: ['groups' => ['incident']]
