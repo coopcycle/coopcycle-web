@@ -186,7 +186,7 @@ if (reusablePackagingEnabled) {
 
     if (isVytal) {
 
-      $('#modal-vytal').modal('show');
+      document.querySelector('#modal-vytal').showModal();
 
     } else {
       submitForm();
@@ -195,9 +195,12 @@ if (reusablePackagingEnabled) {
   });
 }
 
-$('#modal-vytal').on('hidden.bs.modal', function() {
-  document.querySelector('#checkout_address_reusablePackagingEnabled').checked = false
-});
+const vytalModal = document.querySelector('#modal-vytal');
+if (vytalModal) {
+  vytalModal.addEventListener('close', function() {
+    document.querySelector('#checkout_address_reusablePackagingEnabled').checked = false
+  });
+}
 
 // ---
 
