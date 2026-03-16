@@ -3786,14 +3786,14 @@ Feature: Tasks
           "@type":"Task",
           "tags": [
             {
-              "name": "Fragile",
-              "slug": "fragile",
-              "color": "#FFFFFF"
+              "name": @string@,
+              "slug": "@string@.matchRegex('/(fragile|important)/')",
+              "color": @string@
             },
             {
-              "name": "Important",
-              "slug": "important",
-              "color": "#FF0000"
+              "name": @string@,
+              "slug": "@string@.matchRegex('/(fragile|important)/')",
+              "color": @string@
             }
           ],
           "@*@": "@*@"
