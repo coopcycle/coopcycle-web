@@ -195,6 +195,39 @@ function CreditNotes({ incident }) {
   )
 }
 
+function Refunds({ order }) {
+
+  const { t } = useTranslation();
+  const [refunds, setRefunds] = useState([])
+
+  useEffect(() => {
+    const httpClient = new window._auth.httpClient();
+    httpClient.get(order['@id'] + '/refunds').then(({ response, error }) => {
+      setRefunds(response['hydra:member'])
+    })
+  }, [order])
+
+  if (refunds.length === 0) {
+    return null
+  }
+
+  return (
+    <>
+      <h5>{t('REFUNDS')}</h5>
+      <ul className="list-unstyled">
+        {refunds.map((refund, index) => {
+          return (
+            <li key={`refund-${index}`} className="text-right">
+              <span className="text-monospace">{(refund.amount / 100).formatMoney()}</span>
+            </li>
+          )
+        })}
+      </ul>
+      <hr />
+    </>
+  )
+}
+
 export default function ({ delivery }) {
   delivery = JSON.parse(delivery);
   const { t } = useTranslation();
@@ -220,6 +253,7 @@ export default function ({ delivery }) {
       <hr />
       {order && <OrderDetails order={order} />}
       {order && <CreditNotes incident={incident} />}
+      {order && <Refunds order={order} />}
       <h5>
         <span style={{ textTransform: 'capitalize' }}>
           {task.type.toLowerCase()}

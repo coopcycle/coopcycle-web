@@ -858,6 +858,7 @@
         "LIABLE_PARTY_MERCHANT": "Marchand",
         "LIABLE_PARTY_PLATFORM": "Plateforme",
         "REFUND_FULL": "Rembourser la totalité ({{amount}})",
-        "PARTIAL_REFUNDS_NOT_SUPPORTED": "Ce moyen de paiement ne supporte pas les remboursements partiels"
+        "PARTIAL_REFUNDS_NOT_SUPPORTED": "Ce moyen de paiement ne supporte pas les remboursements partiels",
+        "REFUNDS": "Remboursements"
     }
 }

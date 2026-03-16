@@ -871,6 +871,7 @@
         "LIABLE_PARTY_MERCHANT": "Merchant",
         "LIABLE_PARTY_PLATFORM": "Platform",
         "REFUND_FULL": "Refund the order total ({{amount}})",
-        "PARTIAL_REFUNDS_NOT_SUPPORTED": "This payment method does not support partial refunds"
+        "PARTIAL_REFUNDS_NOT_SUPPORTED": "This payment method does not support partial refunds",
+        "REFUNDS": "Refunds"
       }
 }
