@@ -2350,7 +2350,9 @@ Feature: Carts
               "@type": "@string@",
               "code": "@string@.matchRegex('/(CARD|EDENRED)/')"
             },
-            "amount": @integer@
+            "amount": @integer@,
+            "updatedAt": "@string@.isDateTime()",
+            "supportsPartialRefunds": @boolean@
           },
           {
             "@context": {"@*@": "@*@"},
@@ -2362,7 +2364,9 @@ Feature: Carts
               "@type": "@string@",
               "code": "@string@.matchRegex('/(CARD|EDENRED)/')"
             },
-            "amount": @integer@
+            "amount": @integer@,
+            "updatedAt": "@string@.isDateTime()",
+            "supportsPartialRefunds": @boolean@
           }
         ],
         "redirectUrl":"@string@||@null@"
