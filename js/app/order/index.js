@@ -123,33 +123,46 @@ function submitForm() {
   document.querySelector('#checkout_address_reusablePackagingEnabled').closest('form').submit()
 }
 
-$('#modal-loopeat').on('shown.bs.modal', function(e) {
-  const customerContainers = JSON.parse(e.relatedTarget.dataset.customerContainers)
-  const formats = JSON.parse(e.relatedTarget.dataset.formats)
-  const formatsToDeliver = JSON.parse(e.relatedTarget.dataset.formatsToDeliver)
-  const returns = JSON.parse(e.relatedTarget.dataset.returns)
-  const creditsCountCents = JSON.parse(e.relatedTarget.dataset.creditsCountCents)
-  const requiredAmount = JSON.parse(e.relatedTarget.dataset.requiredAmount)
-  const containersCount = JSON.parse(e.relatedTarget.dataset.containersCount)
-  const oauthUrl = e.relatedTarget.dataset.oauthUrl
+const loopeatModal = document.querySelector('#modal-loopeat');
+const loopeatModalOpener = document.querySelector('[data-target="#modal-loopeat"]');
 
-  createRoot(this.querySelector('.modal-body [data-widget="loopeat-returns"]')).render(<LoopeatModal
-    customerContainers={ customerContainers }
-    formats={ formats }
-    formatsToDeliver={ formatsToDeliver }
-    initialReturns={ returns }
-    creditsCountCents={ creditsCountCents }
-    requiredAmount={ requiredAmount }
-    containersCount={ containersCount }
-    oauthUrl={ oauthUrl }
-    closeModal={ () => $('#modal-loopeat').modal('hide') }
-    onChange={ returns => {
-      document.querySelector('#loopeat_returns_returns').value = JSON.stringify(returns)
-    }}
-    onSubmit={ () => {
-      document.querySelector('form[name="loopeat_returns"]').submit()
-    }} />)
-});
+if (loopeatModal && loopeatModalOpener) {
+
+  const loopeatModalRoot =
+    createRoot(loopeatModal.querySelector('.modal-body [data-widget="loopeat-returns"]'))
+
+  loopeatModalOpener.addEventListener('click', function (e) {
+
+    const customerContainers = JSON.parse(e.currentTarget.dataset.customerContainers)
+    const formats = JSON.parse(e.currentTarget.dataset.formats)
+    const formatsToDeliver = JSON.parse(e.currentTarget.dataset.formatsToDeliver)
+    const returns = JSON.parse(e.currentTarget.dataset.returns)
+    const creditsCountCents = JSON.parse(e.currentTarget.dataset.creditsCountCents)
+    const requiredAmount = JSON.parse(e.currentTarget.dataset.requiredAmount)
+    const containersCount = JSON.parse(e.currentTarget.dataset.containersCount)
+    const oauthUrl = e.currentTarget.dataset.oauthUrl
+
+    loopeatModalRoot.render(<LoopeatModal
+      customerContainers={ customerContainers }
+      formats={ formats }
+      formatsToDeliver={ formatsToDeliver }
+      initialReturns={ returns }
+      creditsCountCents={ creditsCountCents }
+      requiredAmount={ requiredAmount }
+      containersCount={ containersCount }
+      oauthUrl={ oauthUrl }
+      closeModal={ () => loopeatModal.close() }
+      onChange={ returns => {
+        document.querySelector('#loopeat_returns_returns').value = JSON.stringify(returns)
+      }}
+      onSubmit={ () => {
+        document.querySelector('form[name="loopeat_returns"]').submit()
+      }} />)
+
+    loopeatModal.showModal();
+
+  });
+}
 
 const loopeatHowItWorksModal = document.querySelector('modal-loopeat-howitworks');
 if (loopeatHowItWorksModal) {

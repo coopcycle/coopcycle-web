@@ -97,8 +97,9 @@
       <div>
       {% if isChecked %}
         {% if loopeat_context.hasCredentials %}
-          <a class="btn btn-md btn-default" href="#"
-            data-toggle="modal"
+          <button
+            type="button"
+            class="btn btn-md btn-default"
             data-target="#modal-loopeat"
             data-customer-containers="{{ loopeat_context.containers|json_encode|e('html_attr') }}"
             data-formats="{{ loopeat_context.formats|json_encode|e('html_attr') }}"
@@ -111,7 +112,7 @@
           >
             <i class="fa fa-sliders mr-1"></i>
             <span>{{ (loopeat_trans_prefix ~ '.manage_deposit')|trans }}</span>
-          </a>
+          </button>
         {% else %}
           <a class="btn btn-md btn-default" href="{{ loopeat_authorization_url(order, loopeat_context.requiredAmount) }}">{{ (loopeat_trans_prefix ~ '.connect_account')|trans({ '%name%': loopeat_context.name }) }}</a>
         {% endif %}
