@@ -31,10 +31,6 @@ class OrderType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('payments', CollectionType::class, [
-            'entry_type' => PaymentType::class,
-        ]);
-
         $builder->addEventListener(
             FormEvents::POST_SET_DATA,
             function (FormEvent $event) {
