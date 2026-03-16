@@ -856,6 +856,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
         $order = $this->createRandomOrder($restaurant, $user, new \DateTime($date));
+        // Make sure order is in a state that allows transition to "fulfilled"
+        $order->setState(OrderInterface::STATE_NEW);
 
         $this->orderProcessor->process($order);
 
