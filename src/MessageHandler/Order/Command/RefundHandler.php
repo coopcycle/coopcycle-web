@@ -90,7 +90,7 @@ class RefundHandler
         // TODO Record event
     }
 
-    private function refundPayment(PaymentInterface $payment, int $amount = null, string $liableParty = '', string $comments = '')
+    private function refundPayment(PaymentInterface $payment, ?int $amount = null, string $liableParty = '', string $comments = '')
     {
         $stateMachine = $this->stateMachineFactory->get($payment, PaymentTransitions::GRAPH);
 
