@@ -9,8 +9,11 @@ use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Payment\Gateway;
 use AppBundle\Payment\GatewayResolver;
+use AppBundle\Service\PaygreenManager;
 use Doctrine\Common\Collections\ArrayCollection;
+use Paygreen\Sdk\Payment\V3\Client as PaygreenClient;
 use Prophecy\PhpUnit\ProphecyTrait;
+use Psr\Http\Message\ResponseInterface;
 use SM\Factory\FactoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -20,7 +23,6 @@ class RefundHandlerTest extends KernelTestCase
 {
     use ProphecyTrait;
 
-    private $stripeManager;
     private $stateMachineFactory;
     private $eventBus;
 
@@ -34,13 +36,18 @@ class RefundHandlerTest extends KernelTestCase
 
         $this->gateway = $this->prophesize(Gateway::class);
         $this->gatewayResolver = $this->prophesize(GatewayResolver::class);
-        // @see https://symfony.com/blog/new-in-symfony-4-1-simpler-service-testing
+
+        $this->paygreenClient = $this->prophesize(PaygreenClient::class);
+        $this->paygreenManager = $this->prophesize(PaygreenManager::class);
+
         $this->stateMachineFactory = self::getContainer()->get(FactoryInterface::class);
         $this->eventBus = $this->prophesize(MessageBusInterface::class);
 
         $this->handler = new RefundHandler(
             $this->gateway->reveal(),
             $this->gatewayResolver->reveal(),
+            $this->paygreenClient->reveal(),
+            $this->paygreenManager->reveal(),
             $this->stateMachineFactory,
             $this->eventBus->reveal()
         );
@@ -119,6 +126,7 @@ class RefundHandlerTest extends KernelTestCase
         $creditCard->setState(PaymentInterface::STATE_COMPLETED);
         $creditCard->setOrder($order->reveal());
         $creditCard->setAmount(2000);
+        $creditCard->setDetails(['paygreen_payment_order_id' => 'po_123456']);
 
         $this->gatewayResolver
             ->resolveForPayment($creditCard)
@@ -145,18 +153,31 @@ class RefundHandlerTest extends KernelTestCase
 
         $refund = new Refund();
 
-        $this->gateway
-            ->refund($creditCard, 2500)
-            ->willReturn($refund)
+        $response = $this->prophesize(ResponseInterface::class);
+        $response->getStatusCode()->willReturn(200);
+
+        $this->paygreenManager
+            ->authenticate()
+            ->shouldBeCalled();
+
+        $this->paygreenClient
+            ->refundPaymentOrder('po_123456')
+            ->willReturn($response)
             ->shouldBeCalled();
 
         $command = new RefundCommand($order->reveal(), null, Refund::LIABLE_PARTY_PLATFORM, 'Lorem ipsum');
 
-        // $this->assertFalse($payment->hasRefunds());
-
         call_user_func_array($this->handler, [ $command ]);
 
-        $this->assertEquals(Refund::LIABLE_PARTY_PLATFORM, $refund->getLiableParty());
-        $this->assertEquals('Lorem ipsum', $refund->getComments());
+        $this->assertTrue($creditCard->hasRefunds());
+        $this->assertTrue($conecs->hasRefunds());
+
+        // getRefundTotal
+
+        $this->assertEquals(Refund::LIABLE_PARTY_PLATFORM, $creditCard->getRefunds()[0]->getLiableParty());
+        $this->assertEquals('Lorem ipsum', $creditCard->getRefunds()[0]->getComments());
+
+        $this->assertEquals(2000, $creditCard->getRefundTotal());
+        $this->assertEquals(500, $conecs->getRefundTotal());
     }
 }

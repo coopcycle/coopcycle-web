@@ -2,9 +2,12 @@
 
 namespace AppBundle\MessageHandler\Order\Command;
 
+use AppBundle\Exception\RefundException;
 use AppBundle\Message\Order\Command\Refund as RefundCommand;
 use AppBundle\Payment\Gateway;
 use AppBundle\Payment\GatewayResolver;
+use AppBundle\Service\PaygreenManager;
+use Paygreen\Sdk\Payment\V3\Client as PaygreenClient;
 use SM\Factory\FactoryInterface as StateMachineFactoryInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
@@ -16,6 +19,8 @@ class RefundHandler
     public function __construct(
         private Gateway $gateway,
         private GatewayResolver $gatewayResolver,
+        private PaygreenClient $paygreenClient,
+        private PaygreenManager $paygreenManager,
         private StateMachineFactoryInterface $stateMachineFactory)
     {}
 
@@ -49,12 +54,24 @@ class RefundHandler
 
                 // For PayGreen, the PaymentOrder *should* be the same for both payments
                 if (count($gateways) === 1 && 'paygreen' === current($gateways)) {
-                    $this->refundPayment(
-                        $orderOrPayment->getLastPaymentByMethod('CARD', PaymentInterface::STATE_COMPLETED),
-                        $orderOrPayment->getTotal(),
-                        $liableParty,
-                        $comments
-                    );
+
+                    foreach ($orderOrPayment->getPayments() as $payment) {
+                        $refund = $payment->addRefund($payment->getAmount());
+                        $refund->setLiableParty($liableParty);
+                        $refund->setComments($comments);
+                    }
+
+                    $payment = $orderOrPayment->getLastPaymentByMethod('CARD', PaymentInterface::STATE_COMPLETED);
+                    $details = $payment->getDetails();
+
+                    $this->paygreenManager->authenticate();
+                    $response = $this->paygreenClient->refundPaymentOrder($details['paygreen_payment_order_id']);
+
+                    if ($response->getStatusCode() !== 200) {
+                        $data = json_decode($response->getBody()->getContents(), true);
+                        throw new RefundException($data['message']);
+                    }
+
                 } else {
                     foreach ($orderOrPayment->getPayments() as $payment) {
                         if (PaymentInterface::STATE_COMPLETED === $payment->getState()) {
