@@ -64,6 +64,8 @@ fos_js_routing:
         - user_avatar
         - public_share_order
         - order_set_guest_customer_email
+        - profile_task_complete
+        - profile_tasks
         - _api_/orders/{id}/players_post
         - _api_/orders/{id}/create_invitation_post
         - _api_/incidents/{id}/comments_post

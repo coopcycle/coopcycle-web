@@ -54,34 +54,22 @@
     </tbody>
   </table>
 
-  <div class="modal fade" id="task-complete-modal" tabindex="-1" role="dialog" aria-labelledby="task-complete-modal-label"></div>
+  <dialog id="task-complete-modal">
+    {# Content will be fetched in JavaScript #}
+  </dialog>
 
 {% endif %}
 
 {% endblock %}
 
 {% block scripts %}
-  <script>
-
-    var tasksURL = "{{ path('profile_tasks', { date: '__DATE__' }) }}";
-    var completeModalURL = "{{ path('profile_task_complete', { id: '__TASK_ID__' }) }}";
-
-    new CoopCycle.DatePicker(document.querySelector('#datepicker'), {
-      defaultValue: "{{ date|date('Y-m-d') }}",
-      onChange: function(date, dateString) {
-        window.location.replace(tasksURL.replace('__DATE__', date.format('YYYY-MM-DD')))
-      }
-    });
-
-    $('[data-task]').on('click', function(e) {
-      e.preventDefault();
-      if ($(e.currentTarget).hasClass('disabled')) {
-        return;
-      }
-      const taskID = $(e.currentTarget).data('task');
-      $('#task-complete-modal')
-        .load(completeModalURL.replace('__TASK_ID__', taskID), () => $('#task-complete-modal').modal({ show: true }));
-    });
-
-  </script>
+<script>
+  new CoopCycle.DatePicker(document.querySelector('#datepicker'), {
+    defaultValue: "{{ date|date('Y-m-d') }}",
+    onChange: function(date, dateString) {
+      window.location.replace(window.Routing.generate('profile_tasks', { date: date.format('YYYY-MM-DD') }))
+    }
+  });
+</script>
+{{ encore_entry_script_tags('profile-tasks') }}
 {% endblock %}
