@@ -878,7 +878,8 @@ Feature: Food Tech
             },
             "amount":2150,
             "updatedAt":"@string@.isDateTime()",
-            "supportsPartialRefunds": @boolean@
+            "supportsPartialRefunds": @boolean@,
+            "refundedAmount":0
           }
         ],
         "hydra:search":{
@@ -910,7 +911,8 @@ Feature: Food Tech
         },
         "amount":@integer@,
         "updatedAt":"@string@.isDateTime()",
-        "supportsPartialRefunds": @boolean@
+        "supportsPartialRefunds": @boolean@,
+        "refundedAmount":100
       }
       """
 
