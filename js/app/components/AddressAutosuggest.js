@@ -9,7 +9,7 @@ import { filter, debounce, throttle } from 'lodash'
 import { withTranslation, useTranslation } from 'react-i18next'
 import _ from 'lodash'
 import axios from 'axios'
-import classNames from 'classnames'
+import clsx from 'clsx'
 import { OpenLocationCode } from 'open-location-code'
 
 import '../../../assets/css/address-autosuggest.scss'
@@ -709,7 +709,7 @@ class AddressAutosuggest extends Component {
   renderInputComponent(inputProps) {
     return (
       <div
-        className={classNames({
+        className={clsx({
           'address-autosuggest__input-container': true,
           'has-error': this.props.error,
         })}>

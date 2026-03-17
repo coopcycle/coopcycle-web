@@ -19,7 +19,7 @@ import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder"
 import _ from 'lodash';
 import { Provider, useDispatch, useSelector } from 'react-redux'
 import { ProgressBar } from 'react-loader-spinner'
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { ToastContainer, Zoom } from 'react-toastify'
 
 import { createStoreFromPreloadedState } from './menu-editor/store'
@@ -132,7 +132,7 @@ const Section = ({ section }) => {
   }, [ section['@id'], isLoading ]);
 
   return (
-    <div className={classNames('menuEditor__panel', 'mb-4', {
+    <div className={clsx('menuEditor__panel', 'mb-4', {
         'menuEditor__panel--dragged': isDraggedOver,
         'menuEditor__panel--loading': isLoadingSection === section['@id']
       })} ref={draggableRef}>

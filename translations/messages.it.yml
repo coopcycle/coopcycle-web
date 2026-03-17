@@ -1028,8 +1028,6 @@ form:
       label: Persona di contatto per il ristorante
     name:
       label: Nome del ristorante
-order.reusable_packaging.pledge_return.disclaimer: Il cliente ha indicato che %count%
-  pacchetti saranno restituiti
 form.time_slot.same_day_cutoff.help: Per esempio, selezionando 11.00, opzioni del
   giorno stesso non verranno mostrate dopo le 11.00
 form.time_slot.same_day_cutoff.label: Soglia giornaliera

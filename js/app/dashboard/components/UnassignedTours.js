@@ -10,7 +10,7 @@ import { appendToUnassignedTours, deleteGroup, editGroup, openCreateTourModal, s
 import { selectUnassignedTours } from '../../../shared/src/logistics/redux/selectors'
 import TaskGroup from './TaskGroup'
 import { selectAreToursEnabled, selectGroups, selectIsTourDragging, selectMapFiltersSetting, selectOrderOfUnassignedToursAndGroups, selectSplitDirection } from '../redux/selectors'
-import classNames from 'classnames'
+import clsx from 'clsx'
 import { getDroppableListStyle } from '../utils'
 import { Switch, Tooltip } from 'antd'
 
@@ -19,7 +19,7 @@ const Buttons = () => {
   const dispatch = useDispatch()
   return (
     <React.Fragment>
-      <a href="#" className="mr-3" onClick={ e => {
+      <a href="#" onClick={ e => {
         e.preventDefault()
         dispatch(openCreateTourModal())
       }}>
@@ -92,8 +92,8 @@ export const UnassignedTours = ({ splitCollapseAction }) => {
   }
 
   return (
-    <div className="dashboard__panel">
-      <h4 className="dashboard__panel__header d-flex justify-content-between">
+    <div className="dashboard__panel dashboard__panel--unassigned-tours">
+      <h4 className="dashboard__panel__header d-flex align-items-center justify-content-between">
         <a onClick={() => splitCollapseAction()}>
           <span className="mr-2">{ t('DASHBOARD_UNASSIGNED_TOURS') }</span>
           <span className="mr-2">({ tours.length + groups.length })</span>
@@ -107,7 +107,7 @@ export const UnassignedTours = ({ splitCollapseAction }) => {
             }
           </Tooltip>
         </a>
-        <span className="pull-right">
+        <span className="d-flex">
           <Tooltip
             placement="left"
             title={t("ADMIN_DASHBOARD_HIDE_SHOW_ON_MAP")}
@@ -135,7 +135,7 @@ export const UnassignedTours = ({ splitCollapseAction }) => {
           {(provided, snapshot) => (
             <div ref={ provided.innerRef } { ...provided.droppableProps }>
                <div
-                  className={ classNames({
+                  className={ clsx({
                     'taskList__tasks': true,
                     'list-group': true,
                     'm-0': true,

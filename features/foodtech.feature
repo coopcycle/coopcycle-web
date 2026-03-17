@@ -59,7 +59,6 @@ Feature: Food Tech
             "shippingAddress":{"@*@":"@*@"},
             "shippedAt":"@string@.isDateTime()",
             "reusablePackagingEnabled":false,
-            "reusablePackagingPledgeReturn":0,
             "reusablePackagingQuantity": @integer@,
             "shippingTimeRange":@array@,
             "takeaway":false,
@@ -145,7 +144,6 @@ Feature: Food Tech
         "vendor":{"@*@":"@*@"},
         "shippingAddress":{"@*@":"@*@"},
         "reusablePackagingEnabled":false,
-        "reusablePackagingPledgeReturn":0,
         "reusablePackagingQuantity": @integer@,
         "shippingTimeRange":[
           "2018-08-27T12:25:00+02:00",
@@ -296,7 +294,6 @@ Feature: Food Tech
         "shippingAddress":{"@*@":"@*@"},
         "shippedAt":"@string@.isDateTime()",
         "reusablePackagingEnabled":false,
-        "reusablePackagingPledgeReturn": 0,
         "id":1,
         "number":null,
         "notes":null,
@@ -323,7 +320,6 @@ Feature: Food Tech
         "preparationTime":"@string@||@null@",
         "shippingTime":"@string@||@null@",
         "reusablePackagingEnabled":false,
-        "reusablePackagingPledgeReturn":0,
         "reusablePackagingQuantity": @integer@,
         "paymentMethod": "CARD",
         "hasReceipt":@boolean@,
@@ -378,7 +374,6 @@ Feature: Food Tech
         "shippingAddress":{"@*@":"@*@"},
         "shippedAt":"@string@.isDateTime()",
         "reusablePackagingEnabled":false,
-        "reusablePackagingPledgeReturn": 0,
         "id":1,
         "number":null,
         "notes":null,
@@ -405,7 +400,6 @@ Feature: Food Tech
         "preparationTime":"@string@||@null@",
         "shippingTime":"@string@||@null@",
         "reusablePackagingEnabled":false,
-        "reusablePackagingPledgeReturn":0,
         "reusablePackagingQuantity": @integer@,
         "paymentMethod": "CARD",
         "hasReceipt":@boolean@,
@@ -790,3 +784,195 @@ Feature: Food Tech
       }
       """
     Then the response status code should be 200
+
+  Scenario: Create credit note
+    Given the fixtures files are loaded:
+      | payment_methods.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "sarah" is loaded:
+      | email      | sarah@coopcycle.org |
+      | password   | 123456              |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the user "sarah" has ordered something for "2026-03-11 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "POST" request to "/api/orders/1/credit_notes" with body:
+      """
+      {
+        "amount": 250
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Promotion",
+        "@id":"/api/promotions/1",
+        "@type":"Promotion",
+        "name":"Lorem ipsum",
+        "coupons": [
+          {
+            "@type": "PromotionCoupon",
+            "@id": @string@,
+            "code": @string@
+          }
+        ]
+      }
+      """
+
+  Scenario: Retrieve order payments & refund payment
+    Given the fixtures files are loaded:
+      | payment_methods.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    Given the setting "stripe_test_secret_key" has value "sk_test_123"
+    And the setting "stripe_test_publishable_key" has value "pk_1234567890"
+    Given stripe client is ready to use
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "sarah" is loaded:
+      | email      | sarah@coopcycle.org |
+      | password   | 123456              |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the user "sarah" has ordered something for "2026-03-11 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    And I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "GET" request to "/api/orders/1/payments"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/orders/1/payments",
+        "@type":"hydra:Collection",
+        "hydra:totalItems":1,
+        "hydra:member":[
+          {
+            "@type":"Payment",
+            "@id":"/api/payments/1",
+            "method":{
+              "@type":"PaymentMethod",
+              "@id":@string@,
+              "code":"CARD"
+            },
+            "amount":2150,
+            "updatedAt":"@string@.isDateTime()",
+            "supportsPartialRefunds": @boolean@,
+            "refundedAmount":0
+          }
+        ],
+        "hydra:search":{
+          "@*@":"@*@"
+        }
+      }
+      """
+    Given I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "POST" request to "/api/payments/1/refunds" with body:
+      """
+      {
+        "amount": 100,
+        "liableParty": "merchant",
+        "comments": "Missing fries"
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Payment",
+        "@id":"/api/payments/1",
+        "@type":"Payment",
+        "method":{
+          "@type":"PaymentMethod",
+          "@id":@string@,
+          "code":"CARD"
+        },
+        "amount":@integer@,
+        "updatedAt":"@string@.isDateTime()",
+        "supportsPartialRefunds": @boolean@,
+        "refundedAmount":100
+      }
+      """
+
+  Scenario: Refund an order
+    Given the fixtures files are loaded:
+      | payment_methods.yml |
+      | products.yml        |
+      | restaurants.yml     |
+    Given the setting "stripe_test_secret_key" has value "sk_test_123"
+    And the setting "stripe_test_publishable_key" has value "pk_1234567890"
+    Given stripe client is ready to use
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "sarah" is loaded:
+      | email      | sarah@coopcycle.org |
+      | password   | 123456              |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    And the setting "default_tax_category" has value "tva_livraison"
+    And the setting "subject_to_vat" has value "1"
+    And the restaurant with id "1" has products:
+      | code      |
+      | PIZZA     |
+      | HAMBURGER |
+    And the user "sarah" has ordered something for "2026-03-11 12:30:00" at the restaurant with id "1" and the order is fulfilled
+    When I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "PUT" request to "/api/orders/1/refund" with body:
+      """
+      {
+        "liableParty":"merchant",
+        "comments":"Missing beer"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    Given I add "Accept" header equal to "application/ld+json"
+    And I add "Content-Type" header equal to "application/ld+json"
+    When the user "bob" sends a "GET" request to "/api/orders/1/refunds"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context": "/api/contexts/Order",
+        "@id": "/api/orders/1/refunds",
+        "@type": "hydra:Collection",
+        "hydra:totalItems": 1,
+        "hydra:member": [
+          {
+            "@type": "Refund",
+            "@id": @string@,
+            "amount": 2150,
+            "liableParty": "merchant",
+            "comments": "Missing beer"
+          }
+        ],
+        "hydra:search": {
+          "@*@":"@*@"
+        }
+      }
+      """

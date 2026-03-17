@@ -957,8 +957,6 @@ form.package_with_quantity.package.placeholder: Escolha um tipo de embalagem
 form.time_slot.same_day_cutoff.label: Ponto de corte do mesmo dia
 form.time_slot.same_day_cutoff.help: Por exempo, se você selecionar 11:00, escolhas
   feitas no mesmo dia não serão exibidas após 11:00
-order.reusable_packaging.pledge_return.disclaimer: O cliente indicou que %count% embalagens
-  serão retornadas
 delivery.table.heading.owner: Dono
 user.edit.enabled.label: Ativado
 form.local_business.iso_code.fr.siret: Número SIRET

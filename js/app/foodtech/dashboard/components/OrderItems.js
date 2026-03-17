@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 import { withTranslation } from 'react-i18next'
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 const isSameVendor = (restaurant, items) => {
 
@@ -42,7 +42,7 @@ class OrderItems extends React.Component {
         <tbody>
           { items.map((item, key) =>
             <tr key={ key }>
-              <td className={ classNames({
+              <td className={ clsx({
                 'text-blur': this.props.restaurant ? !isSameVendor(this.props.restaurant, [ item ]) : false
               }) }>
                 <span className="d-block">{ item.quantity } x { item.name }</span>
@@ -71,7 +71,7 @@ class OrderItems extends React.Component {
         { _.map(this.props.itemsGroups, (items, title) => {
           return (
             <React.Fragment key={ title }>
-              <h5 className={ classNames({
+              <h5 className={ clsx({
                 'text-muted': true,
                 'text-blur': this.props.restaurant ? !isSameVendor(this.props.restaurant, items) : false
               }) }>{ title }</h5>

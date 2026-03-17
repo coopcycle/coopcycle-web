@@ -598,3 +598,49 @@ $pulse-color: #2ECC40;
   max-height: 160px;
   overflow: auto;
 }
+
+/* Show the courier panels as columns above a certain width */
+.dashboard__aside {
+
+  container-type: inline-size;
+
+  @container (min-width: 992px) {
+    .dashboard__panel--assignees {
+
+      container-type: inline-size;
+
+      .dashboard__panel__scroll {
+        display: flex;
+        flex-direction: column;
+      }
+
+      @container (min-width: 576px) {
+        .dashboard__panel__scroll {
+          flex: 1;
+          flex-direction: row;
+          & > div {
+            min-width: 33.3333cqw;
+          }
+          & > div + div {
+            border-left: 1px solid lightgray;
+          }
+        }
+      }
+
+      @container (min-width: 768px) {
+        .dashboard__panel__scroll {
+          & > div {
+            min-width: 25cqw;
+          }
+        }
+      }
+    }
+  }
+}
+
+.dashboard__panel--unassigned-tours {
+  // Make sure the ant.design Switch stays behind the split panes
+  .dashboard__panel__header {
+    overflow-x: hidden;
+  }
+}

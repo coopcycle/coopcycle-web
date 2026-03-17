@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect, useState, useMemo } from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import _ from 'lodash'
 import {useTranslation} from 'react-i18next'
-import {Item, Menu, Submenu, Separator, useContextMenu} from 'react-contexify'
+import { Item, Menu, Submenu, Separator, useContextMenu } from 'react-contexify'
+import { Checkbox } from 'antd';
+import { useDebounce } from "@uidotdev/usehooks";
 
 import moment from 'moment'
 
@@ -28,9 +30,11 @@ import {
   startTasks,
   toggleTasksGroupPanelExpanded,
   toggleTourPanelExpanded,
-  unassignTasks
+  unassignTasks,
+  addTagToTasks,
+  removeTagFromTasks,
 } from '../../redux/actions'
-import {selectCouriersWithExclude, selectExpandedTasksGroupsPanelsIds, selectExpandedTourPanelsIds, selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks, selectTaskListsLoading, selectTaskToShow} from '../../redux/selectors'
+import {selectCouriersWithExclude, selectExpandedTasksGroupsPanelsIds, selectExpandedTourPanelsIds, selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks, selectTaskListsLoading, selectTaskToShow, selectAllTags} from '../../redux/selectors'
 import {selectUnassignedTasks} from '../../../coopcycle-frontend-js/logistics/redux'
 
 import 'react-contexify/dist/ReactContexify.css'
@@ -56,6 +60,83 @@ export const RESCHEDULE = 'RESCHEDULE'
 export const CREATE_DELIVERY = 'CREATE_DELIVERY'
 export const CREATE_TOUR = 'CREATE_TOUR'
 export const REPORT_INCIDENT = 'REPORT_INCIDENT'
+export const TAG_MULTI = 'TAG_MULTI'
+
+const BulkTagsEditor = ({ tags, selectedTasks }) => {
+
+  const dispatch = useDispatch()
+
+  const tasksByTag = useMemo(() => {
+    let result = selectedTasks.reduce((acc, task) => {
+      task.tags.forEach(t => {
+        acc = {
+          ...acc,
+          [t.slug]: (acc[t.slug] ?? []).concat([task['@id']])
+        }
+      })
+      return acc
+    }, {})
+
+    tags.forEach((t) => {
+      if (!result[t.slug]) {
+        result = {
+          ...result,
+          [t.slug]: [],
+        }
+      }
+    })
+
+    return result
+
+  }, [selectedTasks])
+
+  const [checkedList, setCheckedList] = useState(tasksByTag)
+  const checkedListDebounced = useDebounce(checkedList, 300);
+
+  useEffect(() => {
+    Object.keys(checkedListDebounced).map((tag) => {
+      const tasks = checkedListDebounced[tag];
+      // Skip "indeterminate" checkboxes
+      if (tasks.length === selectedTasks.length || tasks.length === 0) {
+        if (tasks.length === selectedTasks.length) {
+          dispatch(addTagToTasks(tag, selectedTasks));
+        } else {
+          dispatch(removeTagFromTasks(tag, selectedTasks));
+        }
+      }
+    })
+  }, [checkedListDebounced])
+
+  return (
+    <>
+      {tags.map((tag, index) => (
+      <Item closeOnClick={false} key={`tags-${index}`}>
+        <Checkbox
+          checked={checkedList[tag.slug].length > 0}
+          indeterminate={checkedList[tag.slug].length > 0 && checkedList[tag.slug].length < selectedTasks.length}
+          onChange={(e) => {
+            if (e.target.checked) {
+              setCheckedList({
+                ...checkedList,
+                [tag.slug]: selectedTasks.map((t) => t['@id']),
+              })
+            } else {
+              setCheckedList({
+                ...checkedList,
+                [tag.slug]: []
+              })
+            }
+          }}>
+            <span>
+            <i className="fa fa-circle mr-1" style={{ color: tag.color }}></i>
+            <span>{tag.name}</span>
+          </span>
+        </Checkbox>
+      </Item>
+      ))}
+    </>
+  )
+}
 
 const useAssignAction = function() {
   const dispatch = useDispatch()
@@ -119,6 +200,7 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
         actions.push(CANCEL_MULTI)
         actions.push(CREATE_GROUP)
         actions.push(CREATE_TOUR)
+        actions.push(TAG_MULTI)
       }
 
       if (containsOnlyGroupedTasks) {
@@ -180,6 +262,9 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
 const DynamicMenu = () => {
 
   const { t } = useTranslation()
+
+
+  const allTags = useSelector(selectAllTags)
 
   const allTasks = useSelector(selectAllTasks)
   const selectedTasks = useSelector(selectSelectedTasks)
@@ -320,6 +405,9 @@ const DynamicMenu = () => {
             <Avatar username={c.username} />  {c.username}
           </Item>
       )}
+      </Submenu>
+      <Submenu label={t('ADMIN_DASHBOARD_TAG_TASKS', { count: selectedTasks.length })} hidden={ !actions.includes(TAG_MULTI)}>
+        <BulkTagsEditor tags={allTags} selectedTasks={selectedTasks} />
       </Submenu>
       { !noActionAvailable && <Separator /> }
       <Item

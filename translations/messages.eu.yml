@@ -1099,8 +1099,6 @@ confirm.deposit_refund_enabled: Ordaintze-itzultze sistema gaituta dago, <a href
 info.deposit_refund: Azpiko zerrendako sarrera bakoitzak ontzi mota bat adierazten
   du (txikia, handia…). Ontziak sortu direnean, produktu bakoitzerako konfiguratu
   ditzakezu.
-order.reusable_packaging.pledge_return.disclaimer: Bezeroak %count% pakete bueltatuko
-  direla adierazi du
 form.checkout_address.telephone.help: Zurekin harremanetan jartzeko arazorik badagoen
 form.delivery_embed.vehicle.disclaimer: Karga-bizikleta bidez 50x40x20cm edota 6kg-ko
   elementuak banatzen ditugu.

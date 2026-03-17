@@ -227,7 +227,6 @@ Feature: Orders
       "preparationExpectedAt":null,
       "pickupExpectedAt":null,
       "reusablePackagingEnabled": false,
-      "reusablePackagingPledgeReturn":0,
       "reusablePackagingQuantity": @integer@,
       "vendor":{"@*@":"@*@"},
       "shippingTimeRange":["2017-09-02T12:25:00+02:00","2017-09-02T12:35:00+02:00"],
@@ -405,7 +404,6 @@ Feature: Orders
       "preparationExpectedAt":null,
       "pickupExpectedAt":null,
       "reusablePackagingEnabled": false,
-      "reusablePackagingPledgeReturn":0,
       "reusablePackagingQuantity": @integer@,
       "vendor":{"@*@":"@*@"},
       "shippingTimeRange":["2017-09-02T12:25:00+02:00","2017-09-02T12:35:00+02:00"],
@@ -704,7 +702,6 @@ Feature: Orders
       "preparationExpectedAt":null,
       "pickupExpectedAt":null,
       "reusablePackagingEnabled": false,
-      "reusablePackagingPledgeReturn":0,
       "reusablePackagingQuantity": @integer@,
       "vendor":{"@*@":"@*@"},
       "shippingTimeRange":@array@,
@@ -873,7 +870,6 @@ Feature: Orders
         "preparationExpectedAt":null,
         "pickupExpectedAt":null,
         "reusablePackagingEnabled": false,
-        "reusablePackagingPledgeReturn": 0,
         "reusablePackagingQuantity": @integer@,
         "takeaway":false,
         "assignedTo":"@string@||@null@",
@@ -1024,7 +1020,6 @@ Feature: Orders
       "preparationExpectedAt":null,
       "pickupExpectedAt":null,
       "reusablePackagingEnabled": false,
-      "reusablePackagingPledgeReturn":0,
       "reusablePackagingQuantity": @integer@,
       "vendor":{"@*@":"@*@"},
       "shippingTimeRange":["2017-09-02T12:25:00+02:00","2017-09-02T12:35:00+02:00"],
@@ -1207,7 +1202,6 @@ Feature: Orders
         "shippingAddress":{"@*@":"@*@"},
         "shippedAt":"@string@.isDateTime()",
         "reusablePackagingEnabled":false,
-        "reusablePackagingPledgeReturn": 0,
         "reusablePackagingQuantity": @integer@,
         "id":@integer@,
         "number":null,
@@ -1248,7 +1242,6 @@ Feature: Orders
         "preparationExpectedAt":null,
         "pickupExpectedAt":null,
         "adjustments":@array@,
-        "reusablePackagingPledgeReturn":0,
         "vendor":{"@*@":"@*@"},
         "shippingTimeRange":["2017-09-02T12:25:00+02:00","2017-09-02T12:35:00+02:00"],
         "takeaway":false,
@@ -1485,7 +1478,6 @@ Feature: Orders
           "shippedAt":null,
           "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
-          "reusablePackagingPledgeReturn": 0,
           "reusablePackagingQuantity": @integer@,
           "notes":null,
           "items":[],
@@ -1557,7 +1549,6 @@ Feature: Orders
           "shippedAt":null,
           "shippingTimeRange": null,
           "reusablePackagingEnabled":false,
-          "reusablePackagingPledgeReturn": 0,
           "reusablePackagingQuantity": @integer@,
           "notes":null,
           "items":[],
@@ -1664,3 +1655,100 @@ Feature: Orders
       }
       """
 
+  Scenario: Retrieve all orders via OAuth, then retrieve one order
+    Given the fixtures files are loaded with purge:
+      | setup_default.yml |
+    Given the fixtures files are loaded:
+      | package_delivery_orders.yml ||
+    And there is an OAuth client named "Acme" with scopes "orders:all"
+    And the OAuth client with name "Acme" has an access token with scope "orders:all"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "GET" request to "/api/orders"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/orders",
+        "@type":"hydra:Collection",
+        "hydra:totalItems":1000,
+        "hydra:member":[
+          {
+            "@id": @string@,
+            "@type": "http://schema.org/Order",
+            "shippingAddress": @string@,
+            "shippingTimeRange": [
+              "@string@.isDateTime()",
+              "@string@.isDateTime()"
+            ],
+            "number": @string@,
+            "total": @integer@,
+            "state": "new",
+            "createdAt": "@string@.isDateTime()",
+            "client": "@string@.startsWith('/api/stores/')",
+            "paymentGateway": @string@,
+            "assignedTo": "@string@||@null@"
+          },
+          "@array_previous_repeat@"
+        ],
+        "hydra:view":{
+          "@id":"/api/orders?page=1",
+          "@type":"hydra:PartialCollectionView",
+          "hydra:first":"/api/orders?page=1",
+          "hydra:last":"/api/orders?page=34",
+          "hydra:next":"/api/orders?page=2"
+        },
+        "hydra:search":{
+          "@*@":"@*@"
+        }
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "GET" request to "/api/orders/1"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Order",
+        "@id":"/api/orders/1",
+        "@type":"http://schema.org/Order",
+        "customer":null,
+        "shippingAddress":{
+          "@*@":"@*@"
+        },
+        "events":@array@,
+        "reusablePackagingEnabled":@boolean@,
+        "shippingTimeRange":@array@,
+        "takeaway":@boolean@,
+        "id":1,
+        "number":@string@,
+        "notes":null,
+        "items":@array@,
+        "itemsTotal":@integer@,
+        "total":@integer@,
+        "state":"new",
+        "createdAt":"@string@.isDateTime()",
+        "taxTotal":@integer@,
+        "restaurant":null,
+        "vendor":null,
+        "shippedAt":"@string@.isDateTime()",
+        "preparationExpectedAt":null,
+        "pickupExpectedAt":null,
+        "preparationTime":null,
+        "shippingTime":null,
+        "reusablePackagingQuantity":0,
+        "hasReceipt":false,
+        "paymentMethod":"CARD",
+        "assignedTo":null,
+        "adjustments":{
+          "@*@":"@*@"
+        },
+        "hasEdenredCredentials":false,
+        "invitation":null,
+        "paymentGateway":"stripe"
+      }
+      """

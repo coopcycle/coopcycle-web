@@ -3,7 +3,7 @@ import { Anchor } from 'antd'
 import useSize from '@react-hook/size'
 
 const { Link } = Anchor
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 import './menu-nav.scss'
 import MoreMenu from './MoreMenu'
@@ -93,7 +93,7 @@ export default function MenuNav(props) {
           <div
             key={ sectionElementId(section) }
             id={ sectionElementId(section) }
-            className={ classNames(
+            className={ clsx(
               {
                 'overflow-hidden': section.isVisible,
                 'hidden': !section.isVisible,

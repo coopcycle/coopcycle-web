@@ -75,10 +75,6 @@ class OrderTextEncoderTest extends KernelTestCase
             ->willReturn($hash);
 
         $order
-            ->getReusablePackagingPledgeReturn()
-            ->willReturn(0);
-
-        $order
             ->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT)
             ->willReturn($tipAmount);
 

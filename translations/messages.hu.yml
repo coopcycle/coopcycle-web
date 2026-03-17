@@ -684,8 +684,6 @@ form.package_with_quantity.package.placeholder: 'Válassza ki a csomag típusát
 form.time_slot.same_day_cutoff.label: 'Aznapi határidő'
 form.time_slot.same_day_cutoff.help: 'Ha például 11:00 órát választasz, az ugyanazon
   a napon történő választások nem jelennek meg 11:00 óra után'
-order.reusable_packaging.pledge_return.disclaimer: 'Az ügyfél jelezte, hogy %count%
-  csomagot fog visszaküldeni'
 form:
   restaurant:
     name:

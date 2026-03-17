@@ -16,7 +16,7 @@ import {
   selectTaskLists,
 } from './selectors';
 import { createAction } from '@reduxjs/toolkit'
-import { selectTaskById, selectTaskListByUsername } from '../../../shared/src/logistics/redux/selectors'
+import { selectTaskById, selectTaskListByUsername, selectItemAssignedTo } from '../../../shared/src/logistics/redux/selectors'
 import { createClient } from '../utils/client'
 
 export const UPDATE_TASK = 'UPDATE_TASK'
@@ -1791,5 +1791,160 @@ export function loadWarehouses() {
       }
     })
     dispatch(loadWarehousesSuccess(data))
+  }
+}
+
+/**
+ * Removes tasks from task list belonging to username
+ * @param {Array.Object} items - Items (tasks) to be removed
+ * @param {string} username - Username of the rider
+ */
+export function removeTasksFromTaskList(items, username) {
+
+  if (!Array.isArray(items)) {
+    items = [ items ]
+  }
+
+  return function(dispatch, getState) {
+
+    if (items.length === 0) {
+      return
+    }
+
+    const taskList = selectTaskListByUsername(getState(), {username: username}),
+      toRemove = items.map(i => i['@id'])
+
+    dispatch(modifyTaskListRequest(username, withoutItemsIRIs(taskList.items, toRemove)))
+  }
+}
+
+/**
+ * Removes previously assigned tasks to others than username from the state
+ * @param {string} username - Username of the rider
+ * @param {Array.Object} items - Items (tasks) to be removed
+ */
+export function removePreviouslyAssignedTasks(username, items) {
+
+  if (!Array.isArray(items)) {
+    items = [ items ]
+  }
+
+  return function(dispatch, getState) {
+
+    if (items.length === 0) {
+      return
+    }
+
+    const previouslyAssignedTo = items.reduce(
+      (result, t) => {
+        const previousAssignedTo = selectItemAssignedTo(getState(), t['@id']);
+        if (previousAssignedTo && previousAssignedTo !== username) {
+          result.push({ username: previousAssignedTo, task: t })
+        }
+        return result
+      },
+      []
+    );
+
+    const grouped = _.mapValues(
+      _.groupBy(previouslyAssignedTo, (i) => i.username),
+      (v) => v.map(u => u.task)
+    );
+
+    _.forEach(grouped, (tasks, username) => {
+      dispatch(removeTasksFromTaskList(tasks, username));
+    })
+  }
+}
+
+export function addTagToTasks(slug, tasks) {
+
+  return function (dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    const httpClient = createClient(dispatch)
+
+    const requests = tasks.reduce((reqs, task) => {
+
+      const existingTags = task.tags.map(t => t.slug);
+      const newTags = _.uniq(existingTags.concat([slug]));
+
+      if (_.isEqual(newTags, existingTags)) {
+        return reqs;
+      }
+
+      return [
+        ...reqs,
+        httpClient.request({
+          method: 'put',
+          url: task['@id'],
+          data: {
+            tags: newTags
+          },
+          headers: {
+            'Authorization': `Bearer ${jwt}`,
+            'Accept': 'application/ld+json',
+            'Content-Type': 'application/ld+json'
+          }
+        })
+      ]
+
+    }, [])
+
+    Promise.all(requests)
+      .then(values => {
+        dispatch(createTaskSuccess())
+        values.forEach(response => dispatch(updateTask(response.data)))
+      })
+      .catch(error => dispatch(startTaskFailure(error)))
+  }
+}
+
+export function removeTagFromTasks(slug, tasks) {
+
+  return function (dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    const httpClient = createClient(dispatch)
+
+    const requests = tasks.reduce((reqs, task) => {
+
+      const existingTags = task.tags.map(t => t.slug);
+      const newTags = _.without(existingTags, slug);
+
+      if (_.isEqual(newTags, existingTags)) {
+        return reqs;
+      }
+
+      return [
+        ...reqs,
+        httpClient.request({
+          method: 'put',
+          url: task['@id'],
+          data: {
+            tags: newTags
+          },
+          headers: {
+            'Authorization': `Bearer ${jwt}`,
+            'Accept': 'application/ld+json',
+            'Content-Type': 'application/ld+json'
+          }
+        })
+      ]
+
+    }, [])
+
+    Promise.all(requests)
+      .then(values => {
+        dispatch(createTaskSuccess())
+        values.forEach(response => dispatch(updateTask(response.data)))
+      })
+      .catch(error => dispatch(startTaskFailure(error)))
   }
 }

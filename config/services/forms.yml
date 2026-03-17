@@ -63,10 +63,6 @@ services:
     arguments: [ '@doctrine' ]
     tags: [ form.type ]
 
-  AppBundle\Form\PaymentType:
-    arguments: [ '@sm.factory', '@security.authorization_checker' ]
-    tags: [ form.type ]
-
   AppBundle\Form\TaskExportType:
     tags: [ form.type ]
 

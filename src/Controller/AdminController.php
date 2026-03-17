@@ -465,41 +465,6 @@ class AdminController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->getClickedButton()) {
 
-                if ('refund' === $form->getClickedButton()->getName()) {
-                    foreach ($form->get('payments') as $paymentForm) {
-                        if (!$paymentForm->has('refund')) {
-                            continue;
-                        }
-                        /** @var \Symfony\Component\Form\ClickableInterface $refundButton */
-                        $refundButton = $paymentForm->get('refund');
-                        if ($refundButton->isClicked()) {
-                            $payment = $paymentForm->getData();
-                            $amount = $paymentForm->get('amount')->getData();
-                            $liableParty = $paymentForm->get('liable')->getData();
-                            $comments = $paymentForm->get('comments')->getData();
-
-                            try {
-
-                                $orderManager->refundPayment($payment, $amount, $liableParty, $comments);
-                                $this->entityManager->flush();
-
-                                $this->addFlash(
-                                    'notice',
-                                    $this->translator->trans('orders.payment_refunded')
-                                );
-
-                            } catch (HandlerFailedException $e) {
-                                $this->addFlash(
-                                    'error',
-                                    $e->getMessage()
-                                );
-                            }
-
-                            return $this->redirectToRoute('admin_order', ['id' => $id]);
-                        }
-                    }
-                }
-
                 if ('accept' === $form->getClickedButton()->getName()) {
                     $orderManager->accept($order);
                 }
@@ -1848,8 +1813,7 @@ class AdminController extends AbstractController
 
         $qb = $this->entityManager
             ->getRepository(ApiApp::class)
-            ->createQueryBuilder('a')
-            ->andWhere('a.store IS NOT NULL');
+            ->createQueryBuilder('a');
 
         $apiApps = $qb->getQuery()->getResult();
 
@@ -2060,6 +2024,7 @@ class AdminController extends AbstractController
 
         $promotion = new PromotionDto();
 
+        $order = null;
         if ($request->query->has('order')) {
             $order = $this->entityManager->getRepository(Order::class)->find($request->query->has('order'));
             /** @var CustomerInterface */
@@ -2087,9 +2052,10 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_promotions');
         }
 
-        return $this->render('admin/promotion_credit_note.html.twig', [
+        return $this->render('admin/promotion_credit_note.html.twig', $this->auth([
             'form' => $form->createView(),
-        ]);
+            'order' => $order,
+        ]));
     }
 
     #[Route(path: '/admin/promotions/coupons/new', name: 'admin_new_promotion_coupon_from_template')]

@@ -25,6 +25,7 @@ const ModalContent = ({ onClickClose, onClickSubmit }) => {
                 { t('ADMIN_DASHBOARD_COURIERS') }
               </label>
               <CourierSelect
+                menuPlacement="top"
                 onChange={ selectedCouriers => {
                   setSelected(selectedCouriers)
                 }}

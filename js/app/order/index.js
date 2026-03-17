@@ -157,15 +157,6 @@ $('#modal-loopeat-howitworks').on('shown.bs.modal', function() {
   window._paq.push(['trackEvent', 'Checkout', 'openModal', 'zeroWasteHowItWorks']);
 });
 
-$('#checkout_address_cancelReusablePackaging').on('click', function() {
-  $('#checkout_address_reusablePackagingEnabled').prop('checked', false);
-  submitForm();
-});
-
-$('#checkout_address_reusablePackagingPledgeReturn').on('change', _.debounce(function() {
-  submitForm();
-}, 350));
-
 $('#checkout_address_reusablePackagingEnabled').on('change', function() {
   var isChecked = $(this).is(':checked');
   var isVytal = $(this).data('vytal') === true;

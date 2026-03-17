@@ -1164,8 +1164,6 @@ form:
       label: Persona de contacto para el restaurante
     name:
       label: Nombre del restaurante
-order.reusable_packaging.pledge_return.disclaimer: El cilente a indicado que %count%
-  envases serán devueltos
 form.time_slot.same_day_cutoff.help: Por ejemplo, si selecionas 11.00, opciones del
   mismo día no se mostrarán después de las 11.00
 form.time_slot.same_day_cutoff.label: Hora de límite diario

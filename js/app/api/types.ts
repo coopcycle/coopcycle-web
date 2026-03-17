@@ -262,7 +262,6 @@ export type Order = JsonLdEntity & {
   preparationExpectedAt?: string;
   pickupExpectedAt?: string;
   reusablePackagingEnabled?: boolean;
-  reusablePackagingPledgeReturn?: number;
   reusablePackagingQuantity?: number;
   preparationTime?: string;
   shippingTime?: string;
@@ -457,7 +456,6 @@ export type UpdateOrderRequest = {
   fulfillmentMethod?: string;
   paymentMethod?: string;
   reusablePackagingEnabled?: boolean;
-  reusablePackagingPledgeReturn?: number;
   reusablePackagingQuantity?: number;
 };
 

@@ -7,7 +7,7 @@ import { Button, Checkbox, Collapse, Input } from 'antd';
 import moment from 'moment';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import TimeRange from '../../../../utils/TimeRange';
 import RecurrenceRuleAsText from './RecurrenceRuleAsText';
@@ -216,7 +216,7 @@ const ModalContent = () => {
               </Panel>
             </Collapse>
             <div
-              className={classNames({
+              className={clsx({
                 'd-flex': true,
                 'p-4': true,
                 'justify-content-end': true,

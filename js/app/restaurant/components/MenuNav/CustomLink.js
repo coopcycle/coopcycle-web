@@ -1,5 +1,5 @@
 import React from 'react'
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 export default function CustomLink({
   title,
@@ -10,12 +10,12 @@ export default function CustomLink({
 }) {
   return (
     <div
-      className={ classNames(
+      className={ clsx(
         'ant-anchor-link',
         { 'ant-anchor-link-active': isActive })
       }>
       <a
-        className={ classNames(
+        className={ clsx(
           'ant-anchor-link-title',
           { 'ant-anchor-link-title-active': isActive })
         }
@@ -23,7 +23,7 @@ export default function CustomLink({
         onClick={ onClick }>
         <span>{ title }</span>
         { rightIcon
-          ? (<>&nbsp;<i className={ classNames('fa', rightIcon) } /></>)
+          ? (<>&nbsp;<i className={ clsx('fa', rightIcon) } /></>)
           : null }
       </a>
     </div>

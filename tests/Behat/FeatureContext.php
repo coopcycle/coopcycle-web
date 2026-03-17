@@ -24,9 +24,11 @@ use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
 use AppBundle\Fixtures\DatabasePurger;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Sylius\Order\OrderNumberAssigner;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\User;
 use AppBundle\Entity\Zone;
+use AppBundle\Service\OrderManager;
 use AppBundle\Utils\OrderTimelineCalculator;
 use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
@@ -65,6 +67,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
+use Sylius\Component\Payment\Model\PaymentInterface;
 use Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken;
 use Typesense\Exceptions\ObjectNotFound;
 
@@ -111,6 +114,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
         protected UserManager $userManager,
         protected CollectionManager $typesenseCollectionManager,
         protected MockDateSubscriber $mockDateSubscriber,
+        protected OrderManager $orderManager,
+        protected OrderNumberAssigner $orderNumberAssigner,
         protected PropertyAccessorInterface $propertyAccessor,
         protected LoggerInterface $logger,
     )
@@ -851,7 +856,28 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
 
         $order = $this->createRandomOrder($restaurant, $user, new \DateTime($date));
-        $order->setState(OrderInterface::STATE_FULFILLED);
+
+        $this->orderProcessor->process($order);
+
+        foreach ($order->getPayments() as $payment) {
+            // Make sure payment is in a state that allows transition to "completed"
+            $payment->setState(PaymentInterface::STATE_AUTHORIZED);
+        }
+
+        $this->getContainer()->get('sylius.manager.order')->persist($order);
+        $this->getContainer()->get('sylius.manager.order')->flush();
+
+        // Make sure order is in a state that allows transition to "fulfilled"
+        // @see AppBundle\Domain\Order\Workflow\Guard::isFulfillable
+
+        $order->setState(OrderInterface::STATE_NEW);
+        $this->orderNumberAssigner->assignNumber($order);
+        $this->orderManager->accept($order);
+
+        $order->getDelivery()->getDropoff()->setStatus(Task::STATUS_DONE);
+        $this->orderManager->fulfill($order);
+
+        Assert::assertEquals(OrderInterface::STATE_FULFILLED, $order->getState());
 
         $this->getContainer()->get('sylius.manager.order')->persist($order);
         $this->getContainer()->get('sylius.manager.order')->flush();
@@ -1481,5 +1507,63 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $store->setDocument($document);
 
         $this->doctrine->getManagerForClass(Store::class)->flush();
+    }
+
+    /**
+     * @Given there is an OAuth client named :name with scopes :scopes
+     */
+    public function createOauthClientWithScopes($name, $scopes): void
+    {
+        $identifier = hash('md5', random_bytes(16));
+        $secret = hash('sha512', random_bytes(32));
+
+        $client = new OAuthClient($name, $identifier, $secret);
+        $client->setActive(true);
+
+        $clientCredentials = new Grant(OAuth2Grants::CLIENT_CREDENTIALS);
+        $client->setGrants($clientCredentials);
+
+        $scopes = array_map(fn ($s) => new Scope($s), explode(',', $scopes));
+
+        $client->setScopes(...$scopes);
+
+        $apiApp = new ApiApp();
+        $apiApp->setOauth2Client($client);
+        $apiApp->setName($name);
+        // $apiApp->setStore($store);
+
+        $this->doctrine->getManagerForClass(ApiApp::class)->persist($apiApp);
+        $this->doctrine->getManagerForClass(ApiApp::class)->flush();
+    }
+
+    /**
+     * @Given the OAuth client with name :name has an access token with scope :scope
+     */
+    public function createAccessTokenForOauthClientWithScopes(string $name, string $scope)
+    {
+        $apiApp = $this->doctrine->getRepository(ApiApp::class)->findOneByName($name);
+
+        $oAuthClient = $apiApp->getOauth2Client();
+
+        $identifier = $oAuthClient->getIdentifier();
+        $secret = $oAuthClient->getSecret();
+
+        $body = [
+            'grant_type' => 'client_credentials',
+            'scope' => $scope,
+        ];
+
+        $request = $this->httpMessageFactory->createRequest(
+            Request::create('/uri', $method = 'POST', $parameters = $body, $cookies = [], $files = [], $server = [
+                'HTTP_AUTHORIZATION' => sprintf('Basic %s', base64_encode(sprintf('%s:%s', $identifier, $secret))),
+            ], $content = null)
+        );
+        $response = $this->httpMessageFactory->createResponse(new Response());
+
+        $response = $this->authorizationServer->respondToAccessTokenRequest($request, $response);
+
+        $data = json_decode($response->getBody(), true);
+
+        $this->oAuthTokens[$name] = $data['access_token'];
     }
 }

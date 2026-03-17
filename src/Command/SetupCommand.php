@@ -41,6 +41,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Yaml\Parser as YamlParser;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use ACSEO\TypesenseBundle\Manager\CollectionManager;
+use Typesense\Exceptions\ObjectAlreadyExists;
 
 class SetupCommand extends Command
 {
@@ -101,7 +103,8 @@ class SetupCommand extends Command
         private readonly string $localeRegex,
         private readonly string $cityZonesUrl,
         private readonly string $cityZonesProvider,
-        private readonly array $cityZonesOptions)
+        private readonly array $cityZonesOptions,
+        private readonly CollectionManager $collectionManager)
     {
         parent::__construct();
     }
@@ -142,6 +145,9 @@ class SetupCommand extends Command
 
         $output->writeln('<info>Checking Sylius payment methods are present…</info>');
         $this->createSyliusPaymentMethods($output);
+
+        $output->writeln('<info>Initializing Typesense collections…</info>');
+        $this->initializeTypesenseCollections($output);
 
         $output->writeln('<info>Checking « on demand delivery » product is present…</info>');
         $this->createOnDemandDeliveryProduct($output);
@@ -337,6 +343,20 @@ class SetupCommand extends Command
         }
 
         $this->productManager->flush();
+    }
+
+    private function initializeTypesenseCollections(OutputInterface $output)
+    {
+        $collectionDefinitions = $this->collectionManager->getCollectionDefinitions();
+
+        foreach ($collectionDefinitions as $name => $definition) {
+            try {
+                $this->collectionManager->createCollection($name);
+                $output->writeln(sprintf('Created Typesense collection "%s"', $name));
+            } catch (ObjectAlreadyExists $e) {
+                $output->writeln(sprintf('Typesense collection "%s" already exists', $name));
+            }
+        }
     }
 
     private function createAllergensAttributes(OutputInterface $output)

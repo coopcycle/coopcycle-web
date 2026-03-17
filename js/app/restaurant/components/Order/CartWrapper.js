@@ -1,5 +1,5 @@
 import React from 'react'
-import classNames from 'classnames'
+import clsx from 'clsx'
 import _ from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 import { toggleMobileCart } from '../../redux/actions'
 import {
@@ -31,13 +31,13 @@ export default function MobileOrderHeading() {
 
   return (
     <div
-      className={ classNames(
+      className={ clsx(
         'order-overlay__heading',
         'panel',
         'panel-default',
       ) }>
       <div
-        className={ classNames('panel-heading', {
+        className={ clsx('panel-heading', {
           'panel-heading--warning': errors.length > 0,
         }) }
         onClick={ handleClick }>

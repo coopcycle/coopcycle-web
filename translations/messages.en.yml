@@ -1195,8 +1195,6 @@ form.package_with_quantity.package.placeholder: Choose a type of package
 form.time_slot.same_day_cutoff.label: Same day cutoff
 form.time_slot.same_day_cutoff.help: For example of your select 11:00, choices on
   the same day won't be displayed after 11:00
-order.reusable_packaging.pledge_return.disclaimer: The customer has indicated that
-  %count% packages will be returned
 form:
   restaurant:
     name:
@@ -1719,6 +1717,17 @@ form.delivery.errors.not_reversable: You can only reverse deliveries with 1 pick
 form.store.document: Document
 basics.upload: Upload
 form.product.options.add: Add an option
+form.api_app.store.placeholder: Choose a store to restrict access
+form.api_app.store.help: You can also leave empty if you want to allow access to all orders
+form.api_app.scopes.label: Scopes
+form.api_app.scopes.help: This allows to limit what the API client is authorized to access
+form.api_app.scope.deliveries: Deliveries
+form.api_app.scope.tasks: Tasks
+form.api_app.scope.orders: Orders
+form.api_app.scope.orders_all: All orders
+form.order.payment_refund.tooltip: To refund, create an incident first
+form.credit_note.deprecated_warning: Creating credit notes via this page is deprecated, create an incident
+order.create_credit_note: Create a credit note
 form.customize.theme.label: Theme
 form.theme.primary.label: Primary
 form.theme.primary.help: Primary brand color, The main color of your brand

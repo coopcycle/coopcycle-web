@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import moment from 'moment';
-import { Button } from 'antd';
+import { Button, Skeleton } from 'antd';
 import './OrderDetails.scss';
 import { money, weight } from '../../utils';
 import TaskStatusBadge from '../../../../dashboard/components/TaskStatusBadge';
@@ -136,6 +136,98 @@ function CustomerDetails({ customer }) {
   );
 }
 
+function CouponCode({ promotion }) {
+
+  const [code, setCode] = useState('')
+
+  useEffect(() => {
+    const httpClient = new window._auth.httpClient();
+    httpClient.get(promotion).then(({ response, error }) => {
+      setCode(response.coupons[0].code)
+    })
+  }, [promotion])
+
+  if (!code) {
+    return (
+      <div>
+        <Skeleton.Button size="small" />
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      <span className="text-monospace">{code}</span>
+    </div>
+  )
+}
+
+function CreditNotes({ incident }) {
+  const { t } = useTranslation();
+
+  if (!Array.isArray(incident.metadata)) {
+    return null;
+  }
+
+  const hasCreditNotes = incident.metadata.reduce((hasCreditNotes, metadata) => {
+    if (hasCreditNotes) {
+      return true
+    }
+    return !!metadata.credit_note
+  }, false);
+
+  if (!hasCreditNotes) {
+    return null
+  }
+
+  return (
+    <>
+      <h5>{t('CREDIT_NOTES')}</h5>
+      {incident.metadata.map((metadata, index) => {
+        if (metadata.credit_note) {
+          return (
+            <CouponCode key={`credit-note-${index}`} promotion={metadata.credit_note} />
+          )
+        }
+      })}
+      <hr />
+    </>
+  )
+}
+
+function Refunds({ order }) {
+
+  const { t } = useTranslation();
+  const [refunds, setRefunds] = useState([])
+
+  useEffect(() => {
+    const httpClient = new window._auth.httpClient();
+    httpClient.get(order['@id'] + '/refunds').then(({ response, error }) => {
+      setRefunds(response['hydra:member'])
+    })
+  }, [order])
+
+  if (refunds.length === 0) {
+    return null
+  }
+
+  return (
+    <>
+      <h5>{t('REFUNDS')}</h5>
+      <ul className="list-unstyled">
+        {refunds.map((refund, index) => {
+          return (
+            <li key={`refund-${index}`} className="text-right">
+              <span className="text-monospace">{(refund.amount / 100).formatMoney()}</span>
+            </li>
+          )
+        })}
+      </ul>
+      <hr />
+    </>
+  )
+}
+
 export default function ({ delivery }) {
   delivery = JSON.parse(delivery);
   const { t } = useTranslation();
@@ -160,6 +252,8 @@ export default function ({ delivery }) {
       </p>
       <hr />
       {order && <OrderDetails order={order} />}
+      {order && <CreditNotes incident={incident} />}
+      {order && <Refunds order={order} />}
       <h5>
         <span style={{ textTransform: 'capitalize' }}>
           {task.type.toLowerCase()}

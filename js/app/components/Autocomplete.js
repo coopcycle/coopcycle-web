@@ -2,7 +2,7 @@ import React, { Component, Children } from 'react'
 import Autosuggest from 'react-autosuggest'
 import { defaultTheme } from 'react-autosuggest/dist/theme'
 import { debounce } from 'lodash'
-import classNames from 'classnames'
+import clsx from 'clsx'
 import { useTranslation } from 'react-i18next'
 
 import '../../../assets/css/react-autosuggest.scss'
@@ -32,7 +32,7 @@ const SuggestionsContainer = ({ containerProps, children, query, onShowMore }) =
   return (
     <div {...containerProps}>
       {children}
-      <div className={ classNames(
+      <div className={ clsx(
         { 'border-top': hasChildren },
         { 'p-3': hasChildren > 0 }
       )}>

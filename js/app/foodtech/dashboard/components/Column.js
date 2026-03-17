@@ -1,5 +1,5 @@
 import React from 'react'
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 import OrderCard from './OrderCard'
 import { useDispatch, useSelector } from 'react-redux'
@@ -12,7 +12,7 @@ export default ({ id, title, orders, active, context, onCardClick }) => {
   const dispatch = useDispatch()
 
   return (
-    <div className={ classNames('FoodtechDashboard__Column', {
+    <div className={ clsx('FoodtechDashboard__Column', {
       'FoodtechDashboard__Column--active': active,
       'FoodtechDashboard__Column--collapsed': isCollapsed,
     }) }>
@@ -21,7 +21,7 @@ export default ({ id, title, orders, active, context, onCardClick }) => {
           <span>{ title }</span>
           <span className="px-2">{ `(${ orders.length })` }</span>
           <div className="flex-1" />
-          <i className={ classNames('fa', {
+          <i className={ clsx('fa', {
             'fa-chevron-left': isCollapsed,
             'fa-chevron-right': !isCollapsed,
           }) } onClick={ () => dispatch(columnToggled(id)) } />

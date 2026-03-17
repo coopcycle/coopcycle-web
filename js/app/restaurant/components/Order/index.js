@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 import { sync } from '../../redux/actions'
 import { selectIsMobileCartVisible } from '../../redux/selectors'
@@ -15,7 +15,7 @@ function OrderOverlay() {
 
   return (
     <div
-      className={classNames(
+      className={clsx(
         'order-overlay',
         'flex',
         'lg:hidden',

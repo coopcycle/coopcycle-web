@@ -10,7 +10,7 @@ import hash from 'object-hash'
 import { Formik } from 'formik'
 import { useTranslation } from 'react-i18next'
 import { parsePhoneNumberFromString, AsYouType, isValidPhoneNumber } from 'libphonenumber-js'
-import classNames from 'classnames'
+import clsx from 'clsx'
 import Popconfirm from 'antd/lib/popconfirm'
 
 import { getCountry } from '../../i18n'
@@ -550,7 +550,7 @@ const ModalContent = ({ recurrenceRule, saveRecurrenceRule, closeRecurrenceRuleM
             { !_.isEmpty(error) &&
               <Alert message={ error } type="error" showIcon />
             }
-            <div className={ classNames({
+            <div className={ clsx({
               'd-flex': true,
               'p-4': true,
               'justify-content-end': !isSaved,

@@ -646,7 +646,7 @@ form.api_app.client_secret.label: Clé secrète
 form.credit_note.user_search.help: La réduction ne sera utilisable que par cet utilisateur
 form.credit_note.amount.label: Montant
 form.credit_note.name.label: Nom
-form.credit_note.name.help: Le nom de la réduction qui sera affiché dans le panier
+form.credit_note.name.help: Le nom de la réduction qui sera affichée dans le panier
 form.credit_note.restaurant.help: La réduction ne sera utilisable qu'en cas de commande
   dans ce restaurant. Laissez vide pour appliquer à tous les restaurants.
 form.embed_settings.with_vehicle.label: Ajouter le choix du type de véhicule
@@ -1062,8 +1062,6 @@ form.package_with_quantity.package.placeholder: Choisissez un type de marchandis
 form.time_slot.same_day_cutoff.label: Cutoff pour le jour même
 form.time_slot.same_day_cutoff.help: Par exemple si vous sélectionnez 11h, les choix
   pour le jour même ne seront pas affichés après 11h
-order.reusable_packaging.pledge_return.disclaimer: Le client a indiqué que %count%
-  emballages seront retournés
 form.customize.about_us_enabled.label: Activer la page à propos
 form.customize.motto.label: Slogan
 form.customize.motto.help: Ceci sera affiché sur la page d'accueil
@@ -1656,3 +1654,15 @@ form.delivery.errors.not_reversable: Vous pouvez seulement inverser les livraiso
 form.store.document: Document
 basics.upload: Télécharger
 form.product.options.add: Ajouter une option
+form.api_app.type.label: Mécanisme d'authentification
+form.api_app.store.placeholder: Choisissez un magasin pour restreindre l'accès
+form.api_app.store.help: Vous pouvez également laisser vide pour autoriser l'accès à toutes les commandes
+form.api_app.scopes.label: Périmètre
+form.api_app.scopes.help: Celà permet de limiter ce à quoi le client d'API est autorisé à accéder
+form.api_app.scope.deliveries: Livraisons
+form.api_app.scope.tasks: Tâches
+form.api_app.scope.orders: Commandes
+form.api_app.scope.orders_all: Toutes les commandes
+form.order.payment_refund.tooltip: Pour rembourser, créez d'abord un incident
+form.credit_note.deprecated_warning: Créer un avoir commercial pour un problème sur une commande via cette page est obsolète, créez plutôt un incident
+order.create_credit_note: Créer un avoir commercial
