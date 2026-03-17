@@ -21,7 +21,7 @@ const getOffset = (options, index) => {
   const prevOption = options[index - 1]
   const prevOffset = getOffset(options, (index - 1))
 
-  return prevOffset + (prevOption.additional ? prevOption.values.length : 1)
+  return prevOffset + (prevOption.additional ? prevOption.hasMenuItem.length : 1)
 }
 
 /* Exported to be able to test it */
