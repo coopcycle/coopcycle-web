@@ -64,7 +64,9 @@ export function isValid(option) {
 
 export const useProductOptions = () => {
 
-  const [ state, setState ] = useContext(ProductOptionsModalContext)
+  const [state, setState] = useContext(ProductOptionsModalContext)
+
+  console.log('useProductOptions', state)
 
   function setValueQuantity(option, optionValue, input) {
     const quantity = parseInt(input, 10)
@@ -152,10 +154,19 @@ export const useProductOptions = () => {
     return getValueQuantity(option, optionValue)
   }
 
+  function containsOptionValues(optionValueIds) {
+
+    return -1 !== _.findIndex(state.options, opt => {
+      const selectedOptVals = _.filter(opt.hasMenuItem, optVal => optVal.quantity > 0).map(optVal => optVal['@id'])
+      return _.intersection(selectedOptVals, optionValueIds).length > 0;
+    })
+  }
+
   return {
     getValueQuantity: getValueQuantityInput,
     setValueQuantity,
     incrementValueQuantity,
     decrementValueQuantity,
+    containsOptionValues,
   }
 }
