@@ -17,15 +17,14 @@ class ProductOptionNormalizer implements NormalizerInterface, DenormalizerInterf
 
     public function normalize($object, $format = null, array $context = array()): array
     {
-        $context[AbstractObjectNormalizer::SKIP_NULL_VALUES] = true;
-
         /** @var array{'@id': string, "@type": string, "hasMenuItem"?: array} */
         $data = $this->normalizer->normalize($object, $format, $context);
 
-        unset($data['@id']);
-        $data['@type'] = 'MenuSection';
-
         if (isset($data['hasMenuItem'])) {
+
+            unset($data['@id']);
+            $data['@type'] = 'MenuSection';
+
             // Sort option values by name
             usort($data['hasMenuItem'], function($a, $b) {
                 return $a['name'] < $b['name'] ? -1 : 1;
