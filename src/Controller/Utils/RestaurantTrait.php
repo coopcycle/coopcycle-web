@@ -960,7 +960,7 @@ trait RestaurantTrait
 
             return new JsonResponse(
                 $normalizer->normalize($productOption, context: [
-                    'groups' => ['product_option'],
+                    'groups' => ['restaurant_menu'],
                     // Disable IRI generation as objects don't have ids
                     'iri' => false,
                 ])
