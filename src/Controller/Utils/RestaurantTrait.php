@@ -919,7 +919,7 @@ trait RestaurantTrait
             return $this->redirect($request->headers->get('referer'));
         }
 
-        return $this->render($request->attributes->get('template'), $this->withRoutes($this->auth([
+        return $this->render($request->attributes->get('template'), $this->auth($this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'form' => $form->createView(),
