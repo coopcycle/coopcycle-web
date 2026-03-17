@@ -899,6 +899,7 @@ services:
       - { name: monolog.logger, channel: urbantz }
 
   AppBundle\Doctrine\EventSubscriber\ShopsEventsForTypesenseSubscriber: ~
+  AppBundle\Doctrine\EventSubscriber\DisabledProductListener: ~
 
   AppBundle\Action\Settings:
     public: true
