@@ -481,7 +481,8 @@ Feature: Manage restaurants
                       "offers":{
                         "@type":"Offer",
                         "price":0
-                      }
+                      },
+                      "dependsOn":@array@
                     },
                     {
                       "@type":"MenuItem",
@@ -491,7 +492,8 @@ Feature: Manage restaurants
                       "offers":{
                         "@type":"Offer",
                         "price":0
-                      }
+                      },
+                      "dependsOn":@array@
                     }
                   ]
                 }
