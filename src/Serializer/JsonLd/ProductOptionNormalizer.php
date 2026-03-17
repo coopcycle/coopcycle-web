@@ -21,8 +21,17 @@ class ProductOptionNormalizer implements NormalizerInterface, DenormalizerInterf
 
         $data = $this->normalizer->normalize($object, $format, $context);
 
+        unset($data['@id']);
+        $data['@type'] = 'MenuSection';
+
+        // Sort option values by name
+        usort($data['hasMenuItem'], function($a, $b) {
+            return $a['name'] < $b['name'] ? -1 : 1;
+        });
+
         if (isset($data['hasMenuItem']) && is_array($data['hasMenuItem'])) {
             foreach ($data['hasMenuItem'] as $i => $menuItem) {
+                $data['hasMenuItem'][$i]['@type'] = 'MenuItem';
                 if (isset($data['hasMenuItem'][$i]['dependsOn']) && is_array($data['hasMenuItem'][$i]['dependsOn'])) {
                     $data['hasMenuItem'][$i]['dependsOn'] = array_map(fn ($dependsOn) => $dependsOn['@id'],  $data['hasMenuItem'][$i]['dependsOn']);
                 }
