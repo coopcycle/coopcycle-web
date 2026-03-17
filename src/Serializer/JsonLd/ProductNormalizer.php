@@ -63,7 +63,6 @@ class ProductNormalizer implements NormalizerInterface, DenormalizerInterface
                     });
 
                     foreach ($data['menuAddOn'][$i]['hasMenuItem'] as $j => $menuItem) {
-                        unset($data['menuAddOn'][$i]['hasMenuItem'][$j]['@id']);
                         $data['menuAddOn'][$i]['hasMenuItem'][$j]['@type'] = 'MenuItem';
                     }
                 }
