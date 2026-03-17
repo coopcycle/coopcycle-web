@@ -66,8 +66,6 @@ export const useProductOptions = () => {
 
   const [state, setState] = useContext(ProductOptionsModalContext)
 
-  console.log('useProductOptions', state)
-
   function setValueQuantity(option, optionValue, input) {
     const quantity = parseInt(input, 10)
     _setValueQuantity(option, optionValue, quantity)
