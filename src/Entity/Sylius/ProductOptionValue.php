@@ -130,4 +130,9 @@ class ProductOptionValue extends BaseProductOptionValue implements ProductOption
     {
         return $this->dependsOn;
     }
+
+    public function setDependsOn(Collection $dependsOn)
+    {
+        $this->dependsOn = $dependsOn;
+    }
 }
