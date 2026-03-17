@@ -8,8 +8,6 @@
       data-product="{{ product|serialize('jsonld', { groups: ['product'] })|e('html_attr') }}"
       data-product-images="{{ product_images|json_encode|e('html_attr') }}"
       data-product-price="{{ (product|sylius_resolve_variant).price|e('html_attr') }}"
-{#      FIXME: data-product-options format is slightly different from the format returned by the API #}
-{#      switch to the API format to be able to shared code with the mobile app #}
       data-product-options="{{ product.options|serialize('jsonld', { groups: ['restaurant_menu'] })|e('html_attr') }}">
       {% include 'components/product/card/menu_item_inner.html.twig' %}
       {% if product.hasOptions() %}
