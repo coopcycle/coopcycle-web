@@ -600,6 +600,7 @@ trait RestaurantTrait
 
         if ('json' === $request->query->get('format')) {
             $results = array_map(fn ($p) => [
+                'id' => $p->getId(),
                 'name' => $p->getName(),
                 'path' => $this->generateUrl($routes['product'], [
                     'restaurantId' => $restaurant->getId(),

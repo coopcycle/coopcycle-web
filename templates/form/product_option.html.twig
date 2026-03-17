@@ -9,8 +9,17 @@
     <div class="flex-fill" data-shown="option_value">
       {{ form_widget(form.price) }}
     </div>
-    <div data-search="product" data-search-url="">
-      <input type="text" class="form-control" placeholder="{{ 'basics.search'|trans }}" disabled />
+    <div class="d-flex align-items-center gap-2">
+      <div data-search="product"
+        data-placeholder="{{ 'form.product_option_value.product.placeholder'|trans|e('html_attr') }}"
+        data-product="#{{ form.product.vars.id }}"
+        data-product-option-value="#{{ form.translations.vars.id }}">
+        <input type="text" class="form-control" placeholder="{{ 'basics.search'|trans }}" disabled />
+      </div>
+      {{ form_widget(form.product) }}
+      <a href="#" data-toggle="tooltip" data-placement="top" title="{{ 'form.product_option_value.product.tooltip'|trans|e('html_attr') }}">
+        <i class="fa fa-info-circle"></i>
+      </a>
     </div>
     <div>
       {{ form_widget(form.enabled) }}
