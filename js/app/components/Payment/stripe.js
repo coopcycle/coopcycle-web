@@ -199,12 +199,10 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, cards, onSaveCr
           {
             !isGuest(formOptions) ?
             <div className="form-group">
-              <div className="checkbox">
-                <label>
-                  <input type="checkbox" onChange={(e) => onSaveCreditCardChange(e.target.checked)}/>
-                    {t('SAVE_CREDIT_CARD')}
-                </label>
-              </div>
+              <label className="label">
+                <input type="checkbox" className="checkbox" onChange={(e) => onSaveCreditCardChange(e.target.checked)}/>
+                  {t('SAVE_CREDIT_CARD')}
+              </label>
             </div> : null
           }
         </div> : null

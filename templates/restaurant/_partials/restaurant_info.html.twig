@@ -1,6 +1,6 @@
 <section class="restaurant-info md:flex md:items-center md:gap-4">
   <div class="relative mb-4 md:mb-0">
-    <img class="rounded-md" src="{{ restaurant_banner }}" alt="{{ restaurant.name }}">
+    <img class="rounded-md w-full" src="{{ restaurant_banner }}" alt="{{ restaurant.name }}">
     {% if should_show_pre_order(restaurant) %}
       <figcaption class="absolute size-full flex items-center justify-center">
         <div class="absolute size-full bg-neutral-900 rounded-md opacity-50"></div>
