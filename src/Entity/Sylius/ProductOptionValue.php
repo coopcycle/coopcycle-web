@@ -107,4 +107,9 @@ class ProductOptionValue extends BaseProductOptionValue implements ProductOption
     {
         return $this->getValue();
     }
+
+    public function getProduct()
+    {
+        return $this->product;
+    }
 }
