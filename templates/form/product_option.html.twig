@@ -10,11 +10,13 @@
       {{ form_widget(form.price) }}
     </div>
     <div class="d-flex align-items-center gap-2">
-      <div data-search="product"
+      <div
+        data-search="product"
+        data-search-initial-value="{{ form.vars.data?.product ? form.vars.data.product.name : '' }}"
         data-placeholder="{{ 'form.product_option_value.product.placeholder'|trans|e('html_attr') }}"
         data-product="#{{ form.product.vars.id }}"
         data-product-option-value="#{{ form.translations.vars.id }}">
-        <input type="text" class="form-control" placeholder="{{ 'basics.search'|trans }}" disabled />
+        <input type="text" class="form-control" placeholder="{{ form.vars.data?.product ? form.vars.data.product.name : 'form.product_option_value.product.placeholder'|trans }}" disabled />
       </div>
       {{ form_widget(form.product) }}
       <a href="#" data-toggle="tooltip" data-placement="top" title="{{ 'form.product_option_value.product.tooltip'|trans|e('html_attr') }}">

@@ -93,12 +93,14 @@ if (!$('#product_option_additional').is(':checked')) {
 document.querySelectorAll('[data-search="product"]').forEach((el) => {
 
   const placeholder = el.dataset.placeholder;
+  const initialValue = el.dataset.searchInitialValue;
   const productInput = document.querySelector(el.dataset.product);
   const productOptionValueInput = document.querySelector(`${el.dataset.productOptionValue} > input[type="text"]`);
 
   new Search(el, {
     url: document.querySelector('form[name="product_option"]').dataset.searchUrl,
     placeholder: placeholder,
+    initialValue: initialValue,
     onSuggestionSelected: function (suggestion) {
       productInput.value = suggestion.id;
       // If the option value is empty, use the product name
