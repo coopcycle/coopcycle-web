@@ -41,6 +41,13 @@ class ProductOptionValue extends BaseProductOptionValue implements ProductOption
      */
     protected $pricingRule;
 
+    /**
+     * A ProductOptionValue may be linked to a Product.
+     * When a Product is linked, it allows synchronizing the "enabled" property.
+     * i.e when the linked Product is disabled, the ProductOptionValue is disabled as well.
+     */
+    protected $product = null;
+
     public function __construct()
     {
         parent::__construct();
