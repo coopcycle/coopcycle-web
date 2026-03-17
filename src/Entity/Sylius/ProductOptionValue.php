@@ -8,6 +8,8 @@ use ApiPlatform\Metadata\ApiResource;
 use AppBundle\Entity\Delivery\PricingRule;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Resource\Model\ToggleableTrait;
 use Sylius\Component\Product\Model\ProductOptionValue as BaseProductOptionValue;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -48,9 +50,13 @@ class ProductOptionValue extends BaseProductOptionValue implements ProductOption
      */
     protected $product = null;
 
+    protected $dependsOn;
+
     public function __construct()
     {
         parent::__construct();
+
+        $this->dependsOn = new ArrayCollection();
     }
 
     /**
@@ -116,5 +122,12 @@ class ProductOptionValue extends BaseProductOptionValue implements ProductOption
     public function setProduct(?Product $product)
     {
         $this->product = $product;
+    }
+
+    #[Groups(['product', 'restaurant_menu', 'restaurant_menus'])]
+    #[SerializedName('dependsOn')]
+    public function getDependsOn(): Collection
+    {
+        return $this->dependsOn;
     }
 }
