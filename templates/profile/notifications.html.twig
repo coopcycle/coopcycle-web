@@ -14,7 +14,10 @@
         </div>
       </div>
       <div class="form-group m-2">
-        <input id="notifications-remove-btn" class="btn btn-sm btn-primary" type="submit" value="{{ 'basics.delete_selected'|trans }}" />
+        <button id="notifications-remove-btn" class="btn btn-sm btn-primary" type="submit" disabled>
+          <span>{{ 'basics.delete_selected'|trans }}</span>
+          <span id="notifications-checked-count"></span>
+        </button>
       </div>
     </div>
     <turbo-frame id="notifications-list-{{currentPage}}">
@@ -51,25 +54,32 @@
 
 {% block scripts %}
   <script>
-    const originalNotificationRemoveBtnLabel = $('#notifications-remove-btn').val();
 
-    $(document).on('change', '#select-all', function() {
-      $('#notifications-table input[type="checkbox"]').prop('checked', $(this).prop('checked'));
-      setNotificationRemoveBtnLabel()
-    })
-
-    $(document).on('change', '#notifications-table input[type="checkbox"]', function() {
-      setNotificationRemoveBtnLabel()
-    })
-
-    function setNotificationRemoveBtnLabel() {
-      const countChecked = $('#notifications-table input[type="checkbox"]:checked').length;
-
+    function updateNotificationCount() {
+      const countChecked = document.querySelectorAll('#notifications-table input[type="checkbox"]:checked').length;
       if (countChecked > 0) {
-        $('#notifications-remove-btn').val(`${originalNotificationRemoveBtnLabel} (${countChecked})`)
+        document.querySelector('#notifications-checked-count').innerHTML = '(' + countChecked + ')';
+        document.querySelector('#notifications-remove-btn').removeAttribute('disabled')
       } else {
-        $('#notifications-remove-btn').val(originalNotificationRemoveBtnLabel)
+        document.querySelector('#notifications-checked-count').innerHTML = '';
+        document.querySelector('#notifications-remove-btn').setAttribute('disabled', true)
       }
     }
+
+    document.querySelector('#notifications-table').addEventListener('change', function (e) {
+      if (e.target.matches('input[type="checkbox"]')) {
+        updateNotificationCount();
+      }
+    });
+
+    document.addEventListener('change', function (e) {
+      if (e.target.matches('#select-all')) {
+        document.querySelectorAll('#notifications-table input[type="checkbox"]').forEach(function (el) {
+          el.checked = e.target.checked;
+        });
+        updateNotificationCount();
+      }
+    });
+
   </script>
 {% endblock %}
