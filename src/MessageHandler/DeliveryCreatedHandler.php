@@ -7,6 +7,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Message\DeliveryCreated;
 use AppBundle\Message\Email;
 use AppBundle\Message\PushNotification;
+use AppBundle\Security\UserManager;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use Carbon\Carbon;
@@ -25,6 +26,9 @@ class DeliveryCreatedHandler
 {
     private $logger;
 
+    /**
+     * @param UserManager $userManager
+     */
     public function __construct(
         private EntityManagerInterface $entityManager,
         private UserManagerInterface $userManager,
