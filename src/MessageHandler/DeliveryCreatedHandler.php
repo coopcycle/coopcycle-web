@@ -14,6 +14,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use NotFloran\MjmlBundle\Renderer\RendererInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -22,6 +23,7 @@ use Twig\Environment as TwigEnvironment;
 #[AsMessageHandler]
 class DeliveryCreatedHandler
 {
+    private $logger;
 
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -33,9 +35,10 @@ class DeliveryCreatedHandler
         private TwigEnvironment $twig,
         private SettingsManager $settingsManager,
         private string $locale,
-        private LoggerInterface $logger
-    )
-    { }
+        ?LoggerInterface $logger = null)
+    {
+        $this->logger = $logger ?? new NullLogger();
+    }
 
     public function __invoke(DeliveryCreated $message)
     {
