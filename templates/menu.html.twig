@@ -53,23 +53,27 @@
         </li>
         {% endif %}
         <li>
-          <details class="dropdown">
-            <summary class="btn btn-ghost">
-              <img src="{{ path('user_avatar', { username: app.user.username }) }}" width="20" height="20" />
-              <span>{{ app.user.username }}</span>
-            </summary>
-            <ul class="menu dropdown-content bg-base-100 rounded-t-none p-2 z-2">
-              <li>
-                <a href="{{ path('profile_edit') }}">
-                  {% trans %}navbar.myAccount{% endtrans %}
-                </a>
-              </li>
-              {% if is_granted('DASHBOARD_VIEW') %}
-              <li><a href="{{ path('dashboard') }}">{{ 'adminDashboard.dashboard.title'|trans }}</a></li>
-              {% endif %}
-              <li><a href="{{ path('nucleos_user_security_logout') }}">{% trans from 'NucleosUserBundle' %}layout.logout{% endtrans %}</a></li>
-            </ul>
-          </details>
+          {% if app.user %}
+            <details class="dropdown">
+              <summary class="btn btn-ghost">
+                <img src="{{ path('user_avatar', { username: app.user.username }) }}" width="20" height="20" />
+                <span>{{ app.user.username }}</span>
+              </summary>
+              <ul class="menu dropdown-content bg-base-100 rounded-t-none p-2 z-2">
+                <li>
+                  <a href="{{ path('profile_edit') }}">
+                    {% trans %}navbar.myAccount{% endtrans %}
+                  </a>
+                </li>
+                {% if is_granted('DASHBOARD_VIEW') %}
+                <li><a href="{{ path('dashboard') }}">{{ 'adminDashboard.dashboard.title'|trans }}</a></li>
+                {% endif %}
+                <li><a href="{{ path('nucleos_user_security_logout') }}">{% trans from 'NucleosUserBundle' %}layout.logout{% endtrans %}</a></li>
+              </ul>
+            </details>
+          {% else %}
+            <a href="{{ path('nucleos_user_security_login') }}">{% trans %}navbar.login{% endtrans %}</a>
+          {% endif %}
         </li>
         <li id="notifications">
           <a href="#">
