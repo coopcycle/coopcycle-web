@@ -48,10 +48,10 @@ export default function(formSelector, options) {
 
   function setLoading(isLoading) {
     if (isLoading) {
-      $('.btn-payment').addClass('btn--loading')
+      document.querySelector('.btn-payment > .loading').classList.remove('hidden')
       disableBtn(submitButton)
     } else {
-      $('.btn-payment').removeClass('btn--loading')
+      document.querySelector('.btn-payment > .loading').classList.add('hidden')
       enableBtn(submitButton)
     }
   }
