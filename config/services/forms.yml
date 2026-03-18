@@ -278,3 +278,6 @@ services:
 
   AppBundle\Form\Sylius\Promotion\Rule\IsItemsTotalAboveConfigurationType:
     tags: [ form.type ]
+
+  AppBundle\Form\ProductOptionValueType:
+    tags: [ form.type ]

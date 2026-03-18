@@ -3,6 +3,7 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 
 import { OptionGroup } from '../restaurant/components/ProductDetails/ProductOptionGroup'
+import Search from '../widgets/Search'
 
 var $previewLoader = $('#preview-loader')
 var $form = $('form[name="product_option"]')
@@ -44,6 +45,26 @@ $(document).on('click', '[data-delete-row]', function() {
   updatePreview()
 });
 
+function createProductSearch(el) {
+  const placeholder = el.dataset.placeholder;
+  const initialValue = el.dataset.searchInitialValue;
+  const productInput = document.querySelector(el.dataset.product);
+  const productOptionValueInput = document.querySelector(`${el.dataset.productOptionValue} > input[type="text"]`);
+
+  new Search(el, {
+    url: document.querySelector('form[name="product_option"]').dataset.searchUrl,
+    placeholder: placeholder,
+    initialValue: initialValue,
+    onSuggestionSelected: function (suggestion) {
+      productInput.value = suggestion.id;
+      // If the option value is empty, use the product name
+      if (!productOptionValueInput.value) {
+        productOptionValueInput.value = suggestion.name;
+      }
+    }
+  });
+}
+
 $('#add-option-value').on('click', function(e) {
 
   e.preventDefault();
@@ -61,6 +82,8 @@ $('#add-option-value').on('click', function(e) {
   $form.find("input[name$='[price]']").val(0)
 
   $form.find('[data-delete-row]').prop('disabled', false)
+
+  createProductSearch($form.find('[data-search="product"]')[0])
 
   $('#product_option_values').append($form);
 
@@ -88,6 +111,8 @@ $('#product_option_additional').on('change', function() {
 if (!$('#product_option_additional').is(':checked')) {
   $('#product_option_valuesRange').hide();
 }
+
+document.querySelectorAll('[data-search="product"]').forEach((el) => createProductSearch(el))
 
 updateUpperField($('#product_option_valuesRange_infinity').is(':checked'));
 
