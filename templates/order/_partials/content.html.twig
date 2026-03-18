@@ -1,19 +1,19 @@
-<div class="row">
-  <div class="col-xs-12 col-md-6">
-    <div class="border mb-3">
-      <h4 class="bg-light p-3 m-0">{{ order.vendor.name }}</h4>
+<div class="flex flex-col gap-4 md:flex-row">
+  <div class="md:w-1/2">
+    <div class="border border-base-300 mb-3">
+      <h4 class="bg-base-200 p-3">{{ order.vendor.name }}</h4>
       <div class="px-3 py-4" id="restaurant">
         {% include "_partials/order/restaurant_details.html.twig" %}
       </div>
-      <h4 class="bg-light p-3 m-0">{{ 'order.cart.title'|trans }}</h4>
+      <h4 class="bg-base-200 p-3">{{ 'order.cart.title'|trans }}</h4>
       <div id="items">
         {% include '_partials/order/items.html.twig' with { with_taxes: false } %}
       </div>
     </div>
   </div>
-  <div class="col-xs-12 col-md-6">
+  <div class="md:w-1/2">
     {% if order.number is not empty %}
-    <div class="alert alert-info">
+    <div class="alert alert-info mb-4">
       {% trans with { '%number%': order.number } %}order.number{% endtrans %}
     </div>
     {% endif %}
@@ -23,8 +23,8 @@
       data-centrifugo-channel="{{ centrifugo.channel|e('html_attr') }}"
       data-centrifugo-token="{{ centrifugo.token|e('html_attr') }}"></div>
     {% if not order.customer.hasUser() %}
-      <div class="border mb-3">
-        <h4 class="bg-light p-3 m-0">{{ 'authentication.not_registered_yet'|trans }}</h4>
+      <div class="border border-base-300 mb-3">
+        <h4 class="bg-base-200 p-3">{{ 'authentication.not_registered_yet'|trans }}</h4>
         <div class="px-3 py-4">
           <p>{{ 'authentication.register_benefits'|trans }}</p>
           <div class="text-right">
@@ -37,8 +37,8 @@
       </div>
     {% endif %}
     {% if order.state == 'new' and custom_message is defined and custom_message is not empty %}
-      <div class="border mb-3">
-        <h4 class="bg-light p-3 m-0">
+      <div class="border border-base-300 mb-3">
+        <h4 class="bg-base-200 p-3">
           <i class="fa fa-info-circle mr-2"></i>
           <span>{{ coopcycle_setting('brand_name') }}</span>
           </h4>
