@@ -29,16 +29,31 @@ class DisabledProductListener
                 continue;
             }
 
-            $unitOfWork->computeChangeSet($objectManager->getClassMetadata(Product::class), $entity);
+            $changeSet = $unitOfWork->getEntityChangeSet($entity);
 
-            $changeset = $unitOfWork->getEntityChangeSet($entity);
+            if (isset($changeSet['enabled'])) {
+                [, $newValue] = $changeSet['enabled'];
 
-            if (isset($changeset['enabled'])) {
-                [, $newValue] = $changeset['enabled'];
+                $filters = $objectManager->getFilters();
+                $wasEnabled = $filters->isEnabled('disabled_filter');
+                if ($wasEnabled) {
+                    $filters->disable('disabled_filter');
+                }
+
                 $optionValues = $objectManager->getRepository(ProductOptionValue::class)->findBy(['product' => $entity]);
+
+                if ($wasEnabled) {
+                    $filters->enable('disabled_filter');
+                }
                 foreach ($optionValues as $optionValue) {
-                    $optionValue->setEnabled($newValue);
-                    $unitOfWork->scheduleForUpdate($optionValue);
+                    if ($optionValue->isEnabled() !== $newValue) {
+                        $optionValue->setEnabled($newValue);
+                        $unitOfWork->scheduleForUpdate($optionValue);
+                        $unitOfWork->computeChangeSet(
+                            $objectManager->getClassMetadata(ProductOptionValue::class),
+                            $optionValue
+                        );
+                    }
                 }
 
                 $restaurant = $entity->getRestaurant();
