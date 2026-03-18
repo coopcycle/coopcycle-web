@@ -92,12 +92,6 @@ new CoopCycle.DeliveryMap('map', {
   polyline: "{{ delivery.polyline|e('js') }}"
 });
 
-document.getElementById('modify-form').addEventListener('click', function() {
-  const form = document.querySelector('form[name="delivery"]')
-  form.action = "{{ path('embed_delivery_start', { hashid: hashid }) }}"
-  form.submit()
-});
-
 </script>
 
 {% include 'payment/scripts.html.twig' with {
