@@ -600,6 +600,7 @@ trait RestaurantTrait
 
         if ('json' === $request->query->get('format')) {
             $results = array_map(fn ($p) => [
+                'id' => $p->getId(),
                 'name' => $p->getName(),
                 'path' => $this->generateUrl($routes['product'], [
                     'restaurantId' => $restaurant->getId(),
@@ -960,7 +961,7 @@ trait RestaurantTrait
 
             return new JsonResponse(
                 $normalizer->normalize($productOption, context: [
-                    'groups' => ['product_option'],
+                    'groups' => ['restaurant_menu'],
                     // Disable IRI generation as objects don't have ids
                     'iri' => false,
                 ])

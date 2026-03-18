@@ -45,12 +45,12 @@ export const OptionGroup = ({ index, option }) => {
 
   return (
     <div
-      id={`product-option-group-${option.code}`}
+      id={`product-option-group-${option.identifier}`}
       className="border-t border-base-300 pt-3">
       <h5 className={clsx('product-option-group__name', { 'text-error': isSelectedAndNotValid })}>{ option.name }</h5>
       <ValuesRange option={ option } isInvalid={isSelectedAndNotValid} />
       <div className="mt-2">
-        { option.values.map((optionValue, optionValueIndex) => (
+        { option.hasMenuItem.map((optionValue, optionValueIndex) => (
           <div key={ `option-value-${ optionValueIndex }` }>
             { !option.additional && <OptionValue
               option={ option }
