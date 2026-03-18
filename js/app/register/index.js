@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import axios from 'axios'
 import './split-terms-and-privacy'
 
 const emailInput =
@@ -48,7 +49,7 @@ const checkUsername = _.debounce(function() {
   feedbackEl.classList.remove('fa-check', 'fa-warning')
   feedbackEl.classList.add('fa-spinner', 'fa-spin')
 
-  $.getJSON('/register/suggest', { username, email }).then(result => {
+  axios.get('/register/suggest', { params: { username, email } }).then(({ data: result }) => {
 
     feedbackEl.classList.remove('fa-spinner', 'fa-spin')
 
@@ -117,7 +118,7 @@ const checkEmail = _.debounce(function() {
   feedbackEl.classList.remove('fa-check', 'fa-warning')
   feedbackEl.classList.add('fa-spinner', 'fa-spin')
 
-  $.getJSON('/register/check-email-exists', { email: emailInput.value }).then(result => {
+  axios.get('/register/check-email-exists', { params: { email: emailInput.value } }).then(({ data: result }) => {
 
     feedbackEl.classList.remove('fa-spinner', 'fa-spin')
 
