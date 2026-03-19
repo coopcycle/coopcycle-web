@@ -2,7 +2,7 @@
 
 /* https://tailwindcss.com/docs/installation/framework-guides/symfony *
 /* https://tailwindcss.com/docs/detecting-classes-in-source-files#disabling-automatic-detection */
-@import "tailwindcss" source(none);
+@import "tailwindcss" source(none) prefix(tw);
 
 /* Define theme */
 @theme {
@@ -15,9 +15,7 @@
 @source "../../js/app/components/AddressAutosuggest";
 
 /* https://daisyui.com/docs/config/#prefix */
-@plugin "daisyui" {
-  prefix: "aas-";
-}
+@plugin "daisyui";
 
 /*
 @import "./react-autosuggest";

@@ -56,16 +56,18 @@ import { storage, getFromCache } from './AddressAutosuggest/cache'
 import { getAdapter, getAdapterOptions } from './AddressAutosuggest/config'
 import MapPicker from './MapPicker'
 
-console.log('defaultTheme', defaultTheme)
-
 const theme = {
   ...defaultTheme,
-  container: `${defaultTheme.container} address-autosuggest__container`,
-  input: `${defaultTheme.input} aas-input`,
-  suggestionsContainer: `${defaultTheme.suggestionsContainer} address-autosuggest__suggestions-container`,
-  suggestionsContainerOpen: `${defaultTheme.suggestionsContainerOpen} address-autosuggest__suggestions-container--open`,
-  sectionTitle: `${defaultTheme.sectionTitle} address-autosuggest__section-title`,
+  container: `tw:relative`,
+  input: ``, // `tw:input tw:w-full`,
+  suggestionsContainer: `tw:absolute tw:left-0 tw:right-0 tw:z-2000`,
+  suggestionsContainerOpen: `tw:bg-base-100 tw:border-1 tw:border-base-300`,
+  suggestion: `tw:p-2 tw:cursor-pointer`,
+  suggestionHighlighted: 'tw:bg-base-300',
+  sectionTitle: `tw:px-2 tw:py-2.5`,
 }
+
+console.log('theme', theme)
 
 const defaultFuseOptions = {
   shouldSort: true,
@@ -369,29 +371,37 @@ const SuggestionsContainer = ({
   mapPickerEnabled
 }) => {
   const { t } = useTranslation()
+
   return (
     <div {...containerProps}>
       {children}
+      {Array.isArray(children) && (
       <div
-        className="address-autosuggest__suggestions-container__footer"
-        style={{ justifyContent: mapPickerEnabled ? 'space-between' : 'flex-end' }}>
+        className={clsx(
+          'tw:flex',
+          'tw:items-center',
+          'tw:gap-2',
+          'tw:p-2',
+          !mapPickerEnabled && 'tw:justify-end',
+          mapPickerEnabled && 'tw:justify-between',
+        )}>
         {mapPickerEnabled && (
-          <span className="text-info d-flex align-items-center">
+          <button
+            type="button"
+            // className="tw:btn tw:btn-link tw:btn-xs"
+            className="tw:text-xs"
+            onClick={() => {
+              onMapPickerLabelClick()
+            }}>
             <i
-              className="fa fa-question-circle mr-2"
+              className="fa fa-question-circle"
               aria-hidden="true"></i>
-            <button
-              type="button"
-              className="btn btn-link p-0"
-              onClick={() => {
-                onMapPickerLabelClick()
-              }}>
-              {t('ADDRESS_AUTOSUGGEST_MAP_PICKER_LABEL')}
-            </button>
-          </span>
+            {t('ADDRESS_AUTOSUGGEST_MAP_PICKER_LABEL')}
+          </button>
         )}
         <div>{poweredBy}</div>
       </div>
+      )}
     </div>
   )
 }
@@ -709,13 +719,21 @@ class AddressAutosuggest extends Component {
   }
 
   renderInputComponent(inputProps) {
+
+    console.log('renderInputComponent', inputProps)
+
+    // TODO Manage error state
+
     return (
-      <div
-        className={clsx({
-          'address-autosuggest__input-container': true,
-          'has-error': this.props.error,
-        })}>
-        <div className="address-autosuggest__input-wrapper">
+      <div className="tw:join tw:w-full">
+        <button className="tw:btn tw:btn-primary tw:join-item">
+          {/* https://lucide.dev/icons/map-pin */}
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-map-pin-icon lucide-map-pin tw:text-primary-content tw:w-4">
+            <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+        </button>
+        <div className="tw:input tw:join-item">
           <input {...inputProps} />
           {this.state.postcode && (
             <div className="address-autosuggest__addon">
@@ -730,7 +748,6 @@ class AddressAutosuggest extends Component {
           {this.state.value && (
             <button
               type="button"
-              className="address-autosuggest__close-button address-autosuggest__clear"
               onClick={() => this.onClear()}
               tabIndex="-1">
               <i className="fa fa-times-circle"></i>
@@ -881,6 +898,7 @@ class AddressAutosuggest extends Component {
           multiSection={multiSection}
           inputProps={inputProps}
           containerProps={this.props.containerProps}
+          alwaysRenderSuggestions={true}
           {...otherProps}
         />
         {this.props.mapPickerEnabled && <MapPicker
