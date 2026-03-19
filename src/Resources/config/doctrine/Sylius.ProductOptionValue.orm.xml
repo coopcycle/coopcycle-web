@@ -19,5 +19,15 @@
         <join-column name="product_id" referenced-column-name="id" nullable="true" on-delete="SET NULL"/>
       </join-columns>
     </many-to-one>
+    <many-to-many field="dependsOn" target-entity="AppBundle\Entity\Sylius\ProductOptionValue">
+      <join-table name="sylius_product_option_value_depends_on">
+        <join-columns>
+          <join-column name="source_product_option_value_id" referenced-column-name="id" />
+        </join-columns>
+        <inverse-join-columns>
+          <join-column name="target_product_option_value_id" referenced-column-name="id" />
+        </inverse-join-columns>
+      </join-table>
+    </many-to-many>
   </entity>
 </doctrine-mapping>

@@ -16,7 +16,7 @@ const OptionValueLabel = ({ option, optionValue }) => (
 
 export const OptionValue = ({ index, option, optionValue }) => {
 
-  const { setValueQuantity } = useProductOptions()
+  const { setValueQuantity, containsOptionValues } = useProductOptions()
 
   return (
     <div
@@ -26,6 +26,7 @@ export const OptionValue = ({ index, option, optionValue }) => {
           type="radio"
           name={`options[${index}][code]`}
           value={optionValue.identifier}
+          disabled={optionValue.dependsOn.length > 0 && !containsOptionValues(optionValue.dependsOn)}
           onClick={() => {
             window._paq.push(['trackEvent', 'Checkout', 'selectOption'])
             setValueQuantity(option, optionValue, 1)

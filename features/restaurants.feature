@@ -475,21 +475,25 @@ Feature: Manage restaurants
                   "hasMenuItem":[
                     {
                       "@type":"MenuItem",
+                      "@id": "/api/product_option_values/2",
                       "name":"Extra cheese",
                       "identifier":"PIZZA_TOPPING_EXTRA_CHEESE",
                       "offers":{
                         "@type":"Offer",
                         "price":0
-                      }
+                      },
+                      "dependsOn":@array@
                     },
                     {
                       "@type":"MenuItem",
+                      "@id": "/api/product_option_values/1",
                       "name":"Pepperoni",
                       "identifier":"PIZZA_TOPPING_PEPPERONI",
                       "offers":{
                         "@type":"Offer",
                         "price":0
-                      }
+                      },
+                      "dependsOn":@array@
                     }
                   ]
                 }
