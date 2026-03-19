@@ -899,7 +899,8 @@ class AddressAutosuggest extends Component {
           multiSection={multiSection}
           inputProps={inputProps}
           containerProps={this.props.containerProps}
-          alwaysRenderSuggestions={true}
+          // Useful for debugging (stays open)
+          // alwaysRenderSuggestions={true}
           {...otherProps}
         />
         {this.props.mapPickerEnabled && <MapPicker
