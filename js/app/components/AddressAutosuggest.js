@@ -64,7 +64,7 @@ const theme = {
   suggestionsContainerOpen: `tw:bg-base-100 tw:border-1 tw:border-base-300 tw:rounded-b-lg`,
   suggestion: `tw:p-2 tw:cursor-pointer`,
   suggestionHighlighted: 'tw:bg-base-300',
-  sectionTitle: `tw:px-2 tw:py-2.5`,
+  sectionTitle: ``,
 }
 
 const defaultFuseOptions = {
@@ -363,7 +363,7 @@ function shouldRenderSuggestions(value) {
   return value.trimStart().length > 3 || value.trimStart().endsWith(' ')
 }
 
-const renderSectionTitle = section => <strong>{section.title}</strong>
+const renderSectionTitle = section => <h5 className="tw:px-2 tw:py-2.5 tw:m-0!">{section.title}</h5>
 
 const getSectionSuggestions = section => section.suggestions
 
