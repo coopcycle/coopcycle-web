@@ -1,3 +1,25 @@
+@import "./fonts.css";
+
+/* https://tailwindcss.com/docs/installation/framework-guides/symfony *
+/* https://tailwindcss.com/docs/detecting-classes-in-source-files#disabling-automatic-detection */
+@import "tailwindcss" source(none);
+
+/* Define theme */
+@theme {
+  --font-sans: "Open Sans", sans-serif;
+  --font-mono: "Roboto Mono", "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+  --font-raleway: "Raleway", Helvetica, Arial, sans-serif;
+}
+
+@source "../../js/app/components/AddressAutosuggest.js";
+@source "../../js/app/components/AddressAutosuggest";
+
+/* https://daisyui.com/docs/config/#prefix */
+@plugin "daisyui" {
+  prefix: "aas-";
+}
+
+/*
 @import "./react-autosuggest";
 
 .address-autosuggest {
@@ -122,3 +144,4 @@
 .ReactModal__Content--mappicker {
   max-width: 50%;
 }
+*/

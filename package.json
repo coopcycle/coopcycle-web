@@ -111,6 +111,7 @@
     "cropperjs": "^1.5.12",
     "croppie": "^2.6.5",
     "cypress": "^14.4.1",
+    "daisyui": "^5.5.19",
     "database-cleaner": "^1.3.0",
     "date-holidays": "^3.16.10",
     "dayjs": "^1.11.13",

@@ -12,7 +12,7 @@ import axios from 'axios'
 import clsx from 'clsx'
 import { OpenLocationCode } from 'open-location-code'
 
-import '../../../assets/css/address-autosuggest.scss'
+import '../../../assets/css/address-autosuggest.css'
 
 import '../i18n'
 import { getCountry, localeDetector } from '../i18n'
@@ -56,10 +56,12 @@ import { storage, getFromCache } from './AddressAutosuggest/cache'
 import { getAdapter, getAdapterOptions } from './AddressAutosuggest/config'
 import MapPicker from './MapPicker'
 
+console.log('defaultTheme', defaultTheme)
+
 const theme = {
   ...defaultTheme,
   container: `${defaultTheme.container} address-autosuggest__container`,
-  input: `${defaultTheme.input} address-autosuggest__input`,
+  input: `${defaultTheme.input} aas-input`,
   suggestionsContainer: `${defaultTheme.suggestionsContainer} address-autosuggest__suggestions-container`,
   suggestionsContainerOpen: `${defaultTheme.suggestionsContainerOpen} address-autosuggest__suggestions-container--open`,
   sectionTitle: `${defaultTheme.sectionTitle} address-autosuggest__section-title`,
