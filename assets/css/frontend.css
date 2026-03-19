@@ -12,6 +12,8 @@
 }
 
 @source "../../templates/**/*.html.twig";
+@source "../../vendor/islesurlasorguetourisme/daisyui-form-bundle/templates/**/*.html.twig";
+
 /* Do not scan all JS files atm */
 /* @source "../../js/app"; */
 @source "../../js/app/search/navbar.js";
