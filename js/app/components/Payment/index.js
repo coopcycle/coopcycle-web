@@ -302,6 +302,12 @@ export default function(formSelector, options) {
       })
   }
 
+  // Replace radio buttons
+
+  document
+    .querySelectorAll('#checkout_payment_method input[type="radio"]')
+    .forEach(el => el.parentElement.classList.add('hidden'))
+
   if (methods.length === 1 && containsMethod(methods, 'card')) {
     axios
       .post(options.selectPaymentMethodURL, { method: 'CARD' })
