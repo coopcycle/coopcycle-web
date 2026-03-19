@@ -30,12 +30,12 @@ export default ({card}) => {
 
     if (Object.keys(availableIcons).includes(card.brand.toLowerCase())) {
       return (
-        <img src={ availableIcons[card.brand.toLowerCase()] } height={ 36 }  className="mr-4" />
+        <img src={ availableIcons[card.brand.toLowerCase()] } style={{ height: '36px' }}  className="mr-4" />
       )
     } else {
       return (
         <label className="mr-4">
-          <img src={ defaultCard } height={ 36 } className="mr-2" />
+          <img src={defaultCard} style={{ height: '36px' }} className="mr-2" />
           { card.brand.toUpperCase() }
         </label>
       )
