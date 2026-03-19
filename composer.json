@@ -178,7 +178,8 @@
         "symfony/ux-live-component": "^2.32",
         "symfony/ux-icons": "^2.32",
         "symfony/ux-twig-component": "^2.32",
-        "symfony/ux-autocomplete": "^2.32"
+        "symfony/ux-autocomplete": "^2.32",
+        "islesurlasorguetourisme/daisyui-form-bundle": "^0.2.0"
     },
     "require-dev": {
         "symfony/debug-bundle": "*",

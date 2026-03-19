@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3d8d86f6ed68ebb8ba5c9c9f6d203220",
+    "content-hash": "b6ea7643c9a7b917ef977671582634e5",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -7064,6 +7064,64 @@
                 "source": "https://github.com/InvensoGroup/invenso-rector/tree/v1.0.3"
             },
             "time": "2025-12-30T11:30:49+00:00"
+        },
+        {
+            "name": "islesurlasorguetourisme/daisyui-form-bundle",
+            "version": "v0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Isle-sur-la-Sorgue-Tourisme/daisyui-form-bundle.git",
+                "reference": "40af22e48fa7e503355980dc585c19928402d342"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Isle-sur-la-Sorgue-Tourisme/daisyui-form-bundle/zipball/40af22e48fa7e503355980dc585c19928402d342",
+                "reference": "40af22e48fa7e503355980dc585c19928402d342",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1",
+                "symfony/http-kernel": "^6.4 || ^7.0",
+                "symfony/twig-bridge": "^6.4 || ^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5 || ^10.0",
+                "symfony/form": "^6.4 || ^7.0",
+                "symfony/intl": "^6.4 || ^7.0",
+                "symfony/security-csrf": "^6.4 || ^7.0",
+                "symfony/test-pack": "^1.0",
+                "symfony/translation": "^6.4 || ^7.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Islesurlasorguetourisme\\DaisyuiFormBundle\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Enzo Brigati",
+                    "email": "ebrigati@islesurlasorguetourisme.com"
+                }
+            ],
+            "description": "A Symfony form theme bundle that provides seamless DaisyUI integration for automatically generated forms",
+            "homepage": "https://github.com/islesurlasorguetourisme/daisyui-form-bundle",
+            "keywords": [
+                "DaisyUI",
+                "bundle",
+                "form",
+                "symfony",
+                "theme"
+            ],
+            "support": {
+                "issues": "https://github.com/Isle-sur-la-Sorgue-Tourisme/daisyui-form-bundle/issues",
+                "source": "https://github.com/Isle-sur-la-Sorgue-Tourisme/daisyui-form-bundle/tree/v0.2"
+            },
+            "time": "2025-11-17T15:04:43+00:00"
         },
         {
             "name": "jaybizzle/crawler-detect",
