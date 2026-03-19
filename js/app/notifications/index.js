@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { render } from '../utils/react'
 import { Badge, Popover } from 'antd'
 import Centrifuge from 'centrifuge'
+import axios from 'axios'
 
 import NotificationList from './NotificationList'
 
@@ -43,22 +44,20 @@ const Notifications = ({ initialNotifications, initialCount, centrifuge, namespa
   }, [])
 
   const onRemove = (notification) => {
-    $.ajax(`${removeURL}/${notification.id}?format=json`, {
-      type: 'DELETE',
-      contentType: 'application/json',
-    }).then((res) => {
-      setNotifications(Object.values(res.notifications))
-      setCount(res.unread)
+    axios.delete(`${removeURL}/${notification.id}?format=json`, {
+      headers: { 'Content-Type': 'application/json' },
+    }).then(({ data }) => {
+      setNotifications(Object.values(data.notifications))
+      setCount(data.unread)
     })
   }
 
   const onDeleteAll = async () => {
-    return $.ajax(`${removeNotificationsURL}?all=true&format=json`, {
-      type: 'POST',
-      contentType: 'application/json',
-    }).then((res) => {
-      setNotifications(Object.values(res.notifications))
-      setCount(res.unread)
+    return axios.post(`${removeNotificationsURL}?all=true&format=json`, null, {
+      headers: { 'Content-Type': 'application/json' },
+    }).then(({ data }) => {
+      setNotifications(Object.values(data.notifications))
+      setCount(data.unread)
     })
   }
 
@@ -90,8 +89,8 @@ function bootstrap(el, options) {
 
   const theme = el.dataset.theme || 'light'
 
-  $.getJSON(options.notificationsURL, { format: 'json' })
-  .then(result => {
+  axios.get(options.notificationsURL, { params: { format: 'json' } })
+  .then(({ data: result }) => {
 
     const { unread, notifications } = result
 
@@ -109,8 +108,8 @@ function bootstrap(el, options) {
   .catch(() => { /* Fail silently */ })
 }
 
-$.getJSON(window.Routing.generate('profile_jwt'))
-  .then(result => {
+axios.get(window.Routing.generate('profile_jwt'))
+  .then(({ data: result }) => {
     const options = {
       notificationsURL: window.Routing.generate('profile_notifications'),
       removeNotificationURL:    window.Routing.generate('profile_notification_remove'),
