@@ -744,6 +744,7 @@ class AddressAutosuggest extends Component {
           {this.state.postcode && (
             <div
               className="tw:badge tw:badge-soft tw:badge-primary"
+              data-addon="postcode"
             >
               <span>{this.state.postcode.postcode}</span>
               <button
