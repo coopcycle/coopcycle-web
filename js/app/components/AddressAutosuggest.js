@@ -724,18 +724,22 @@ class AddressAutosuggest extends Component {
 
   renderInputComponent(inputProps) {
 
-    // TODO Manage error state
-
     return (
       <div className="tw:join tw:w-full">
-        <button className="tw:btn tw:btn-primary tw:join-item">
+        <button className={clsx('tw:btn tw:join-item',
+          !this.props.error && 'tw:btn-primary',
+          this.props.error && 'tw:btn-error')}>
           {/* https://lucide.dev/icons/map-pin */}
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-map-pin-icon lucide-map-pin tw:text-primary-content tw:w-4">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+            className={clsx('lucide lucide-map-pin-icon lucide-map-pin tw:w-4',
+              !this.props.error && 'tw:text-primary-content',
+              this.props.error && 'tw:text-error-content',
+            )}>
             <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
             <circle cx="12" cy="10" r="3" />
           </svg>
         </button>
-        <div className="tw:input tw:join-item tw:w-full">
+        <div className={clsx('tw:input tw:join-item tw:w-full', this.props.error && 'tw:input-error')}>
           <input {...inputProps} />
           {this.state.postcode && (
             <div
