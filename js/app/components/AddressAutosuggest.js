@@ -61,7 +61,7 @@ const theme = {
   container: `tw:relative`,
   input: ``, // `tw:input tw:w-full`,
   suggestionsContainer: `tw:absolute tw:left-0 tw:right-0 tw:z-2000`,
-  suggestionsContainerOpen: `tw:bg-base-100 tw:border-1 tw:border-base-300`,
+  suggestionsContainerOpen: `tw:bg-base-100 tw:border-1 tw:border-base-300 tw:rounded-b-lg`,
   suggestion: `tw:p-2 tw:cursor-pointer`,
   suggestionHighlighted: 'tw:bg-base-300',
   sectionTitle: `tw:px-2 tw:py-2.5`,
@@ -736,10 +736,11 @@ class AddressAutosuggest extends Component {
         <div className="tw:input tw:join-item">
           <input {...inputProps} />
           {this.state.postcode && (
-            <div className="address-autosuggest__addon">
+            <div
+              className="tw:badge tw:badge-soft tw:badge-primary"
+            >
               <span>{this.state.postcode.postcode}</span>
               <button
-                className="address-autosuggest__close-button"
                 onClick={() => this.setState({ value: '', postcode: null })}>
                 <i className="fa fa-times-circle"></i>
               </button>
