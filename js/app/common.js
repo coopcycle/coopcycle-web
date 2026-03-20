@@ -1,11 +1,5 @@
 import numbro from 'numbro'
 
-// @see http://symfony.com/doc/3.4/frontend/encore/legacy-apps.html
-const $ = require('jquery')
-global.$ = global.jQuery = $
-
-require('bootstrap-sass')
-
 import './i18n'
 import { setTimezone, getCurrencySymbol } from './i18n'
 import AddressAutosuggest from './widgets/AddressAutosuggest'
