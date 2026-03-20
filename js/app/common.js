@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       new AddressAutosuggest(
-        el.closest('.form-group'),
+        el.closest('.form-group') || el.parentElement,
         {
           required: el.required,
           address,
