@@ -30,12 +30,12 @@ export default ({card}) => {
 
     if (Object.keys(availableIcons).includes(card.brand.toLowerCase())) {
       return (
-        <img src={ availableIcons[card.brand.toLowerCase()] } className="mr-4 w-8" />
+        <img src={ availableIcons[card.brand.toLowerCase()] } className="w-8" />
       )
     } else {
       return (
-        <label className="mr-4">
-          <img src={defaultCard} style={{ height: '36px' }} className="mr-2" />
+        <label>
+          <img src={defaultCard} style={{ height: '36px' }} />
           { card.brand.toUpperCase() }
         </label>
       )
@@ -43,7 +43,7 @@ export default ({card}) => {
   }
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center gap-2">
       { creditCardIcon() }
       <div className="flex flex-column gap-2 items-center">
         <label>···· { card.last4 }</label>

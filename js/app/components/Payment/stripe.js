@@ -109,12 +109,12 @@ const CardholderNameInput = ({ onChange }) => {
 
   return (
     <React.Fragment>
-      <label className="control-label required">
+      <legend className="control-label required">
         { t('PAYMENT_FORM_CARDHOLDER_NAME') }
-      </label>
+      </legend>
       <input type="text"
-        required="required"
-        className="form-control"
+        required
+        className="input"
         value={ cardholderName }
         onChange={ e => setCardholderName(e.target.value) } />
     </React.Fragment>
@@ -163,42 +163,41 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, cards, onSaveCr
       )}
       {
         thereAreCardsToShow ?
-        <div>
-          <div className="form-group">
-            <label className="control-label">
+        <div className="mb-4">
+          <fieldset className="fieldset border border-base-300 rounded-box p-4 mb-4">
+            <legend className="fieldset-legend">
               {t('PAY_WITH_SAVED_CREDIT_CARD')}
-            </label>
+            </legend>
             {
               cards.map((c) => {
                 return (
                   <div className="flex items-center gap-2 mb-2" key={c.id}>
-                    <input type="radio" name="credit-cards" id={c.id} className="radio mr-4" onClick={(e) => handleCardClicked(e, c)} />
+                    <input type="radio" name="credit-cards" id={c.id} className="radio" onClick={(e) => handleCardClicked(e, c)} />
                     <SavedCreditCard card={c.card} />
                   </div>
                 )
               })
             }
+          </fieldset>
+          <div className="flex justify-end">
+              <button type="button" className="btn btn-sm btn-secondary" onClick={() => toggleCardForm()}>
+                {t('ADD_NEW_CREDIT_CARD')}
+              </button>
           </div>
-          <button type="button" className="btn btn-primary mb-4" onClick={() => toggleCardForm()}>
-            {t('ADD_NEW_CREDIT_CARD')}
-          </button>
         </div> : null
       }
       {
         (addNewCard || !thereAreCardsToShow || isGuest(formOptions)) ?
         <div id="card-form">
-          <div className="form-group">
+          <fieldset className="fieldset mb-3">
             <CardholderNameInput onChange={ onCardholderNameChange } />
-          </div>
-          <div className="form-group">
-            <label className="control-label hidden">
-              { t('PAYMENT_FORM_TITLE') }
-            </label>
+          </fieldset>
+          <div className="border border-base-content rounded-md p-3 mb-3">
             <CardElement options={{ style, hidePostalCode: true }} onChange={ onChange } />
           </div>
           {
             !isGuest(formOptions) ?
-            <div className="form-group">
+            <div>
               <label className="label">
                 <input type="checkbox" className="checkbox" onChange={(e) => onSaveCreditCardChange(e.target.checked)}/>
                   {t('SAVE_CREDIT_CARD')}
