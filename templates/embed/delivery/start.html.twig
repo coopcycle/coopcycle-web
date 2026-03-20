@@ -22,21 +22,22 @@
       {{ form_row(form.vehicle) }}
     {% endif %}
 
-    <h3>{{ 'embed.delivery.contact_heading'|trans }}</h3>
+    <h3 class="text-lg mb-2">{{ 'embed.delivery.contact_heading'|trans }}</h3>
 
     {{ form_row(form.name) }}
     {{ form_row(form.email) }}
     {{ form_row(form.telephone) }}
 
     <div x-data="{ expanded: false }"
-      x-init="$watch('expanded', value => toggleBillingAddressRequired(value))">
+      x-init="$watch('expanded', value => toggleBillingAddressRequired(value))"
+      class="mb-4">
       <p class="text-center">
-        <a role="button" @click="expanded = ! expanded">
+        <a role="button" @click.prevent="expanded = ! expanded" href="#">
           {{ 'embed.delivery.specify_billing_address'|trans }}
         </a>
       </p>
       <div x-show="expanded" x-collapse>
-        <h3>{{ 'embed.delivery.billing_address'|trans }}</h3>
+        <h3 class="text-lg mb-2">{{ 'embed.delivery.billing_address'|trans }}</h3>
         {{ form_widget(form.billingAddress) }}
       </div>
     </div>

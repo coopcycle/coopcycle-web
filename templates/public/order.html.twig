@@ -21,7 +21,7 @@
 <div class="mx-auto px-4">
 
   {% for message in app.flashes('embed_delivery') %}
-    <div class="alert alert-success">
+    <div class="alert alert-outline alert-success mb-4">
       {{ message|raw }}
     </div>
   {% endfor %}
@@ -34,7 +34,7 @@
     </div>
     <div class="md:w-1/2">
 
-      <div class="card bg-base-100 shadow-sm">
+      <div class="card bg-base-100 shadow-sm mb-4">
         <div class="card-body">
           <h4 class="card-title">{{ 'embed.delivery.summary.title'|trans }}</h4>
           <p class="m-0 text-right">
@@ -49,7 +49,7 @@
       {% endif %}
 
       {% if completed_payment is not empty %}
-        <div class="alert alert-success">
+        <div class="alert alert-outline alert-success">
           <i class="fa fa-check"></i> {{ 'embed.delivery.paid_at'|trans({ '%date%': completed_payment.updatedAt|format_datetime('medium', 'short') }) }}
         </div>
       {% endif %}

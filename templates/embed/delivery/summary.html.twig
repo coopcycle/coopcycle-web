@@ -8,7 +8,7 @@
 
 {% block body %}
 
-<div style="padding: 20px;">
+<div class="p-4">
 
   {% include "embed/delivery/breadcrumb.html.twig" with { step: 2 } %}
 
@@ -60,7 +60,8 @@
   <!-- Used to display form errors -->
   <div id="card-errors" role="alert"></div>
 
-  <button type="submit" class="btn btn-block btn-lg btn-primary" disabled="disabled">
+  <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" disabled="disabled">
+    <span class="loading loading-spinner hidden"></span>
     {% trans with { '%total%': price|price_format } %}order.payment.total{% endtrans %}
   </button>
 
