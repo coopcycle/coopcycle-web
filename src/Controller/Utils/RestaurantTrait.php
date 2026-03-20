@@ -919,11 +919,11 @@ trait RestaurantTrait
             return $this->redirect($request->headers->get('referer'));
         }
 
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
+        return $this->render($request->attributes->get('template'), $this->auth($this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'form' => $form->createView(),
-        ], $routes));
+        ], $routes)));
     }
 
     public function restaurantProductOptionPreviewAction(Request $request,
@@ -1005,11 +1005,11 @@ trait RestaurantTrait
             return $this->redirectToRoute($routes['product_options'], ['id' => $id]);
         }
 
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
+        return $this->render($request->attributes->get('template'), $this->auth($this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'form' => $form->createView(),
-        ], $routes));
+        ], $routes)));
     }
 
     public function stripeOAuthRedirectAction($id, Request $request,

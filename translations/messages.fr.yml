@@ -1668,3 +1668,5 @@ form.credit_note.deprecated_warning: Créer un avoir commercial pour un problèm
 order.create_credit_note: Créer un avoir commercial
 form.product_option_value.product.tooltip: Liez un produit de sorte que quand le produit est désactivé, cette option sera désactivée aussi
 form.product_option_value.product.placeholder: Rechercher un produit…
+form.product_option_value.depends_on.placeholder: Sélectionnez une valeur
+form.product_option_value.depends_on.tooltip: Sélectionnez une autre valeur dont cette valeur dépend

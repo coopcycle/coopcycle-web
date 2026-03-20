@@ -51,22 +51,6 @@ class ProductNormalizer implements NormalizerInterface, DenormalizerInterface
         if (isset($data['menuAddOn']) && is_array($data['menuAddOn'])) {
             if (empty($data['menuAddOn'])) {
                 unset($data['menuAddOn']);
-            } else {
-                foreach ($data['menuAddOn'] as $i => $menuAddOn) {
-
-                    unset($data['menuAddOn'][$i]['@id']);
-                    $data['menuAddOn'][$i]['@type'] = 'MenuSection';
-
-                    // Sort option values by name
-                    usort($data['menuAddOn'][$i]['hasMenuItem'], function($a, $b) {
-                        return $a['name'] < $b['name'] ? -1 : 1;
-                    });
-
-                    foreach ($data['menuAddOn'][$i]['hasMenuItem'] as $j => $menuItem) {
-                        unset($data['menuAddOn'][$i]['hasMenuItem'][$j]['@id']);
-                        $data['menuAddOn'][$i]['hasMenuItem'][$j]['@type'] = 'MenuItem';
-                    }
-                }
             }
         }
 

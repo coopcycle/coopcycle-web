@@ -35,7 +35,7 @@ export default ({card}) => {
     } else {
       return (
         <label className="mr-4">
-          <img src={ defaultCard } height={ 36 } className="mr-2" />
+          <img src={defaultCard} style={{ height: '36px' }} className="mr-2" />
           { card.brand.toUpperCase() }
         </label>
       )
