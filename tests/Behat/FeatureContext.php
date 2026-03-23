@@ -63,6 +63,8 @@ use League\Bundle\OAuth2ServerBundle\OAuth2Grants;
 use Symfony\Bridge\PsrHttpMessage\HttpMessageFactoryInterface;
 use League\OAuth2\Server\AuthorizationServer;
 use GeoJson\GeoJson;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
@@ -344,24 +346,24 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theAsyncMessagesAreConsumed(int $timeLimit = 5)
     {
+        // https://symfony.com/doc/6.4/console/command_in_controller.html
         $application = new Application($this->kernel);
         $application->setAutoExit(false);
 
-        // Ensure the Redis stream consumer group exists before consuming.
-        // The @BeforeScenario clearData() flushes Redis, which destroys consumer groups.
-        // When messages are dispatched they recreate the stream (via XADD) but not the
-        // consumer group, causing XREADGROUP to fail with "NOGROUP" error.
-        $setupCommand = $application->find('messenger:setup-transports');
-        $setupCommandTester = new CommandTester($setupCommand);
-        $setupCommandTester->execute([]);
-
-        $command = $application->find('messenger:consume');
-        $commandTester = new CommandTester($command);
-
-        $commandTester->execute([
+        $input = new ArrayInput([
+            'command' => 'messenger:consume',
             'receivers' => ['async'],
             '--time-limit' => $timeLimit,
+            '--env' => 'test',
         ]);
+
+        $output = new BufferedOutput();
+        $application->run($input, $output);
+
+        $content = $output->fetch();
+
+        // Fo debugging
+        // dump($content);
     }
 
     private function createUser($username, $email, $password, array $data = [])
