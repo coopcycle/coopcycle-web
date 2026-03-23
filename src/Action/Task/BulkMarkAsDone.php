@@ -81,8 +81,8 @@ class BulkMarkAsDone extends Base
 
 
         //TODO: Check if BulkMarkAsDone can be called on different TaskList.
-        $task = array_first($tasksObjs);
-        if (!is_null($task)) {
+        if (count($tasksObjs) > 0) {
+        $task = $tasksObjs[0];
             $this->eventBus->dispatch(
                 (new Envelope(new CalculateTaskDistance($task->getId())))->with(new DispatchAfterCurrentBusStamp())
             );
