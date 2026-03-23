@@ -304,7 +304,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     /**
      * @return Task|null
      */
-    #[Groups(['delivery'])]
     public function getPickup()
     {
         foreach ($this->getTasks() as $task) {
@@ -319,7 +318,6 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
     /**
      * @return Task|null
      */
-    #[Groups(['delivery'])]
     public function getDropoff()
     {
         if (count($this->getTasks()) > 2) {

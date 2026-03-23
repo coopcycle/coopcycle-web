@@ -51,6 +51,23 @@ class DeliveryNormalizer implements NormalizerInterface, ContextAwareDenormalize
 
         $data = $this->normalizer->normalize($object, $format, $context);
 
+        // Build pickup/dropoff from already-normalized tasks to avoid triple Task serialization.
+        // getPickup() and getDropoff() were removed from the 'delivery' serialization group
+        // to prevent each Task from being fully normalized 3 times (tasks + pickup + dropoff),
+        // which caused OOM errors.
+        if (isset($data['tasks']) && is_array($data['tasks'])) {
+            $data['pickup'] = null;
+            $data['dropoff'] = null;
+            foreach ($data['tasks'] as $task) {
+                if (($task['type'] ?? null) === 'PICKUP' && $data['pickup'] === null) {
+                    $data['pickup'] = $task;
+                }
+                if (($task['type'] ?? null) === 'DROPOFF') {
+                    $data['dropoff'] = $task;
+                }
+            }
+        }
+
         $data['trackingUrl'] = $this->urlGenerator->generate('public_delivery', [
             'hashid' => $this->hashids8->encode($object->getId())
         ], UrlGeneratorInterface::ABSOLUTE_URL);
