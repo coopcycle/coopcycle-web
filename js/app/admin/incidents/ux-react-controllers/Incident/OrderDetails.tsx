@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
-import { Button, Skeleton } from 'antd';
+import { Button, Skeleton, Tooltip } from 'antd';
 import './OrderDetails.scss';
 import { money, weight } from '../../utils';
 import TaskStatusBadge from '../../../../dashboard/components/TaskStatusBadge';
+import moment from 'moment';
 
 import store from '../../[id]/redux/incidentStore';
 import {
@@ -138,16 +139,17 @@ function CustomerDetails({ customer }) {
 
 function CouponCode({ promotion }) {
 
-  const [code, setCode] = useState('')
+  const [coupon, setCoupon] = useState(null)
+  const { t } = useTranslation();
 
   useEffect(() => {
     const httpClient = new window._auth.httpClient();
     httpClient.get(promotion).then(({ response, error }) => {
-      setCode(response.coupons[0].code)
+      setCoupon(response.coupons[0])
     })
   }, [promotion])
 
-  if (!code) {
+  if (!coupon) {
     return (
       <div>
         <Skeleton.Button size="small" />
@@ -156,9 +158,9 @@ function CouponCode({ promotion }) {
   }
 
   return (
-    <div>
-      <span className="text-monospace">{code}</span>
-    </div>
+    <Tooltip title={coupon.used === 0 ? t('COUPON_CODE_NOT_USED') : t('COUPON_CODE_USED', { ago: moment(coupon.updatedAt).fromNow() })}>
+      <span className="text-monospace" style={ coupon.used > 0 ? { textDecoration: 'line-through' } : {} }>{coupon.code}</span>
+    </Tooltip>
   )
 }
 

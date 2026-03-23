@@ -253,3 +253,5 @@ Sylius\Component\Promotion\Model\PromotionCoupon:
       groups: ['promotion']
     used:
       groups: ['promotion']
+    updatedAt:
+      groups: ['promotion']

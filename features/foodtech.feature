@@ -827,7 +827,8 @@ Feature: Food Tech
             "@type": "PromotionCoupon",
             "@id": @string@,
             "code": @string@,
-            "used": 0
+            "used": 0,
+            "updatedAt": "@string@.isDateTime()"
           }
         ]
       }
