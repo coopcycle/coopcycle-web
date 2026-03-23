@@ -21,6 +21,8 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInterface
 {
+    private const ALREADY_CALLED = 'TaskNormalizer_ALREADY_CALLED';
+
     public function __construct(
         private readonly ItemNormalizer $normalizer,
         private readonly IriConverterInterface $iriConverter,
@@ -37,6 +39,8 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
 
     public function normalize($object, $format = null, array $context = array())
     {
+        $context[self::ALREADY_CALLED] = true;
+
         // Since API Platform 2.7, IRIs for custom operations have changed
         // It means that when doing PUT /api/tasks/{id}/assign, the @id will be /api/tasks/{id}/assign, not /api/tasks/{id} like before
         // In our JS code, we often override the state with the entire response
@@ -125,8 +129,12 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
         return $data;
     }
 
-    public function supportsNormalization($data, $format = null)
+    public function supportsNormalization($data, $format = null, array $context = [])
     {
+        if (isset($context[self::ALREADY_CALLED])) {
+            return false;
+        }
+
         return $this->normalizer->supportsNormalization($data, $format) && $data instanceof Task;
     }
 

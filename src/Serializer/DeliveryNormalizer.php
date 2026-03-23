@@ -29,6 +29,8 @@ class DeliveryNormalizer implements NormalizerInterface, ContextAwareDenormalize
 {
     use ParseMetadataTrait;
 
+    private const ALREADY_CALLED = 'DeliveryNormalizer_ALREADY_CALLED';
+
     public function __construct(
         private readonly ItemNormalizer $normalizer,
         private readonly Geocoder $geocoder,
@@ -45,6 +47,8 @@ class DeliveryNormalizer implements NormalizerInterface, ContextAwareDenormalize
 
     public function normalize($object, $format = null, array $context = array())
     {
+        $context[self::ALREADY_CALLED] = true;
+
         $data = $this->normalizer->normalize($object, $format, $context);
 
         $data['trackingUrl'] = $this->urlGenerator->generate('public_delivery', [
@@ -71,8 +75,12 @@ class DeliveryNormalizer implements NormalizerInterface, ContextAwareDenormalize
         return $data;
     }
 
-    public function supportsNormalization($data, $format = null)
+    public function supportsNormalization($data, $format = null, array $context = [])
     {
+        if (isset($context[self::ALREADY_CALLED])) {
+            return false;
+        }
+
         return $this->normalizer->supportsNormalization($data, $format) && $data instanceof Delivery;
     }
 
