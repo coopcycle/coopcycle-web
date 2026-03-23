@@ -157,7 +157,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function clearData()
     {
         $this->databasePurger->purge();
-        $this->redis->flushDB();
+        $this->theRedisDatabaseIsEmpty();
+
     }
 
     /**
@@ -306,6 +307,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function theRedisDatabaseIsEmpty()
     {
         foreach ($this->redis->keys('*') as $key) {
+            if ($key === 'coopcycle_test:messages') {
+                continue;
+            }
             $this->redis->del($key);
         }
     }
