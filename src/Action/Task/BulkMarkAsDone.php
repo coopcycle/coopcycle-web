@@ -80,9 +80,13 @@ class BulkMarkAsDone extends Base
         $this->entityManager->flush();
 
 
-        $this->eventBus->dispatch(
-            (new Envelope(new CalculateTaskDistance($task->getId())))->with(new DispatchAfterCurrentBusStamp())
-        );
+        //TODO: Check if BulkMarkAsDone can be called on different TaskList.
+        $task = array_first($tasksObjs);
+        if (!is_null($task)) {
+            $this->eventBus->dispatch(
+                (new Envelope(new CalculateTaskDistance($task->getId())))->with(new DispatchAfterCurrentBusStamp())
+            );
+        }
 
         return new JsonResponse([
             'success' => $this->normalizerInterface->normalize($tasksResults, 'jsonld', ['groups' => ['task', 'delivery', 'address']]),
