@@ -527,6 +527,99 @@ Feature: Deliveries
       }
       """
 
+  Scenario: Create delivery with packages does not cause double normalization
+    # Regression test: TaskNormalizer and DeliveryNormalizer lacked ALREADY_CALLED guards.
+    # Without the guards, the serializer re-entered both normalizers for every task in the delivery,
+    # causing objectNormalizer->normalize($package) to run twice per task without serialization groups,
+    # which followed Doctrine associations (Package → PackageSet → Store → all store Deliveries)
+    # and exhausted memory (OOM at AbstractObjectNormalizer::getCacheKey, line 821).
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | store_with_packages.yml |
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "pickup": {
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli",
+          "doneBefore": "tomorrow 13:30",
+          "weight": 4000,
+          "packages": [
+            {"type": "SMALL", "quantity": 1},
+            {"type": "MEDIUM", "quantity": 2},
+            {"type": "XL", "quantity": 1}
+          ]
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"@string@.startsWith('/api/deliveries')",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":@integer@,
+        "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "type":"PICKUP",
+          "packages": [
+            {
+              "type": "SMALL",
+              "quantity": 1,
+              "@*@": "@*@"
+            },
+            {
+              "type": "MEDIUM",
+              "quantity": 2,
+              "@*@": "@*@"
+            },
+            {
+              "type": "XL",
+              "quantity": 1,
+              "@*@": "@*@"
+            }
+          ],
+          "@*@":"@*@"
+        },
+        "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "type":"DROPOFF",
+          "packages": [
+            {
+              "type": "SMALL",
+              "quantity": 1,
+              "@*@": "@*@"
+            },
+            {
+              "type": "MEDIUM",
+              "quantity": 2,
+              "@*@": "@*@"
+            },
+            {
+              "type": "XL",
+              "quantity": 1,
+              "@*@": "@*@"
+            }
+          ],
+          "@*@":"@*@"
+        },
+        "trackingUrl": @string@,
+        "@*@":"@*@"
+      }
+      """
+
   Scenario: Create delivery with weight and packages then update packages
     Given the fixtures files are loaded:
       | sylius_products.yml |
