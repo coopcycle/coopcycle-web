@@ -11,6 +11,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
+use AppBundle\Message\CalculateTaskDistance;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
+
 
 
 class BulkMarkAsDone extends Base
@@ -26,7 +31,8 @@ class BulkMarkAsDone extends Base
         TaskManager $taskManager,
         IriConverterInterface $iriConverter,
         EntityManagerInterface $entityManager,
-        NormalizerInterface $normalizerInterface
+        NormalizerInterface $normalizerInterface,
+        private MessageBusInterface $eventBus,
     )
     {
         parent::__construct($tokenStorage, $taskManager);
@@ -65,13 +71,18 @@ class BulkMarkAsDone extends Base
 
         foreach($tasksObjs as $task) {
             try {
-                $tasksResults[] = $this->done($task, $request);
+                $tasksResults[] = $this->done($task, $request, calculateCO2: false);
             } catch(BadRequestHttpException $e) {
                 $tasksFailed[$this->iriConverter->getIriFromResource($task)] = $e->getMessage();
             }
         }
 
         $this->entityManager->flush();
+
+
+        $this->eventBus->dispatch(
+            (new Envelope(new CalculateTaskDistance($task->getId())))->with(new DispatchAfterCurrentBusStamp())
+        );
 
         return new JsonResponse([
             'success' => $this->normalizerInterface->normalize($tasksResults, 'jsonld', ['groups' => ['task', 'delivery', 'address']]),
