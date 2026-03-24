@@ -45,7 +45,7 @@ export const OverridePrice = ({ overridePrice, setOverridePrice }: Props) => {
   );
 
   useEffect(() => {
-    if (overridePrice && newPrice.VAT > 0) {
+    if (overridePrice && newPrice.VAT >= 0) {
       setFieldValue('variantIncVATPrice', Math.round(newPrice.VAT * 100));
     }
 
