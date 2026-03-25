@@ -20,6 +20,8 @@ import { ArrowRight } from 'lucide-react';
 import moment from 'moment'
 import { useTranslation } from 'react-i18next';
 import { useEditable } from 'use-editable'
+import clsx from 'clsx';
+import _ from 'lodash'
 
 import ColorPicker from '../../color-picker';
 
@@ -74,6 +76,8 @@ function sanitize(value, edit) {
 
 const SlideContent = ({ slide, index, uploadEndpoint, onChange }) => {
 
+  const { t } = useTranslation();
+
   const [title, setTitle] = useState(slide.title);
   const [text, setText] = useState(slide.text);
   const [buttonText, setButtonText] = useState(slide.buttonText);
@@ -83,23 +87,25 @@ const SlideContent = ({ slide, index, uploadEndpoint, onChange }) => {
   const buttonTextRef = useRef(null);
 
   const titleEdit = useEditable(titleRef, (val, pos) => {
-    setTitle(val)
+    // A trailing "\n" is always added
+    // https://github.com/FormidableLabs/use-editable/issues/8#issuecomment-817390829
+    setTitle(val.slice(0, -1))
     onChange({
-      title: val,
+      title: val.slice(0, -1),
     })
   });
 
   const textEdit = useEditable(textRef, (val, pos) => {
-    setText(val)
+    setText(val.slice(0, -1))
     onChange({
-      text: val,
+      text: val.slice(0, -1),
     })
   });
 
   const buttonTextEdit = useEditable(buttonTextRef, (val, pos) => {
-    setButtonText(val)
+    setButtonText(val.slice(0, -1))
     onChange({
-      buttonText: val,
+      buttonText: val.slice(0, -1),
     })
   });
 
@@ -161,12 +167,40 @@ const SlideContent = ({ slide, index, uploadEndpoint, onChange }) => {
     }}>
       <div className={ `swiper-slide-content` }>
         <div className="swiper-slide-content-left" style={{ position: 'relative' }}>
-          <h4 ref={titleRef} onBlur={() => sanitize(title, titleEdit)}
-             className={ `coopcycle-homepage-bg-${slide.colorScheme}` }>{title}</h4>
-          <p ref={textRef} onBlur={() => sanitize(text, textEdit)}
-             className={ `coopcycle-homepage-bg-${slide.colorScheme}` }>{text}</p>
-          <button type="button" className="btn btn-xs">
-            <span ref={buttonTextRef} onBlur={() => sanitize(buttonText, buttonTextEdit)}>{buttonText}</span>
+          <h4
+            ref={titleRef}
+            onBlur={() => sanitize(title, titleEdit)}
+            // Remove tabindex to fix focus bug
+            // https://github.com/FormidableLabs/use-editable/issues/30#issuecomment-1895364623
+            tabIndex={-1}
+            className={clsx(
+              `coopcycle-homepage-bg-${slide.colorScheme}`,
+              // We add width: 100% in edit mode only,
+              // to make sure the contenteditable is focusable
+              'w-100'
+            )}
+            data-placeholder={t('HOMEPAGE_EDITOR.slider_title_placeholder')}>{title}</h4>
+          <p
+            ref={textRef}
+            onBlur={() => sanitize(text, textEdit)}
+            // Remove tabindex to fix focus bug
+            // https://github.com/FormidableLabs/use-editable/issues/30#issuecomment-1895364623
+            tabIndex={-1}
+            className={clsx(
+              `coopcycle-homepage-bg-${slide.colorScheme}`,
+              // We add width: 100% in edit mode only,
+              // to make sure the contenteditable is focusable
+              'w-100'
+            )}
+            data-placeholder={t('HOMEPAGE_EDITOR.slider_text_placeholder')}>{text}</p>
+          <button type="button" className="btn btn-default btn-xs">
+            <span
+              ref={buttonTextRef}
+              onBlur={() => sanitize(buttonText, buttonTextEdit)}
+              // Remove tabindex to fix focus bug
+              // https://github.com/FormidableLabs/use-editable/issues/30#issuecomment-1895364623
+              tabIndex={-1}
+              data-placeholder={t('HOMEPAGE_EDITOR.slider_button_text_placeholder')}>{buttonText}</span>
             <ArrowRight size={12} className="ml-2" />
           </button>
           <div className="swiper-slide-color-picker">

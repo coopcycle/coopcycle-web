@@ -824,7 +824,10 @@
                         "link": "Link"
                     }
                 }
-            }
+            },
+            "slider_title_placeholder": "Slide title",
+            "slider_text_placeholder": "Slide text",
+            "slider_button_text_placeholder": "Slide button text"
         },
         "DELIVERY_FORM_ADD_REVERSE": "Also create a reverse delivery",
         "DELIVERY_FORM_ADD_REVERSE_HELP": "After saving, you will be redirected to a new page, with pickup & dropoff reversed",

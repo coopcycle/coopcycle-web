@@ -814,7 +814,10 @@
                         "link": "Lien"
                     }
                 }
-            }
+            },
+            "slider_title_placeholder": "Titre du slide",
+            "slider_text_placeholder": "Texte du slide",
+            "slider_button_text_placeholder": "Texte du bouton"
         },
         "DELIVERY_FORM_ADD_REVERSE": "Créer aussi une livraison inversée",
         "DELIVERY_FORM_ADD_REVERSE_HELP": "Après avoir sauvegardé, vous serez redirigé·e vers une nouvelle page avec le retrait et le dépôt inversés",
