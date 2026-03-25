@@ -2,7 +2,9 @@
 {% for block in this.blocks %}
   {% if block.type is defined and block.data is defined %}
     {% if block.type == 'shop_collection' %}
-      {{ component(('ShopCollection:' ~ (block.data.component|capitalize)), block.data.args ?? []) }}
+      {% if block.data.component is defined and block.data.component is not empty %}
+        {{ component(('ShopCollection:' ~ (block.data.component|capitalize)), block.data.args ?? []) }}
+      {% endif %}
     {% endif %}
     {% if block.type == 'banner' %}
       {{ component('Banner', block.data) }}
