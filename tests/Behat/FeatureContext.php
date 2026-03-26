@@ -1572,4 +1572,12 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         $this->oAuthTokens[$name] = $data['access_token'];
     }
+
+    /**
+     * @Given the PHP memory limit is set to :value
+     */
+    public function setPhpMemoryLimit($value): void
+    {
+        ini_set('memory_limit', $value);
+    }
 }
