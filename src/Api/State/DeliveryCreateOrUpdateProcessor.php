@@ -59,8 +59,6 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         array $context = []
     ): Delivery {
 
-        ini_set('memory_limit', '512M');
-
         /** @var Delivery $delivery */
         $delivery = $this->decorated->process($data, $operation, $uriVariables, $context);
 

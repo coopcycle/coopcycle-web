@@ -23,8 +23,6 @@ class RecurrenceRuleBetween
 
     public function __invoke($data, Request $request)
     {
-        ini_set('memory_limit', '512M');
-
         $template = $data->getTemplate();
 
         if (empty($template)) {
