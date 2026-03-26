@@ -1,8 +1,8 @@
 {# TODO Skip if no variant is defined #}
 {% if product.enabled %}
-  <div class="menu-item">
+  <div class="menu-item card bg-base-200 text-base-content">
     <button
-      class="button-reset menu-item__inner-wrapper"
+      class="card-body"
       data-modal="product-details"
       data-form-action="{{ path('restaurant_add_product_to_cart', { id: product.restaurant.id, code: product.code })|e('html_attr') }}"
       data-product="{{ product|serialize('jsonld', { groups: ['product'] })|e('html_attr') }}"
@@ -21,7 +21,7 @@
         method="post"
         action="{{ path('restaurant_add_product_to_cart', { id: product.restaurant.id, code: product.code }) }}"
         data-product-simple
-        class="menu-item__add-wrapper menu-item__add-wrapper--active">
+        class="card-body">
         <button class="button-reset add-button" type="submit">
           +
         </button>

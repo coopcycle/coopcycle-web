@@ -1,10 +1,10 @@
 @import "./tag.scss";
 @import "./badge.scss";
-@import "../../../assets/css/mixins/card";
+// @import "../../../assets/css/mixins/card";
 
 .restaurant-item {
 
-  @include card;
+  // @include card;
 
   border-radius: 8px;
   overflow: hidden;
@@ -16,7 +16,6 @@
     display: flex;
     flex-direction: column;
     text-decoration: none;
-    color: black;
   }
 
   .restaurant-image {
@@ -78,7 +77,7 @@
     gap: 16px;
 
     h4 {
-      color: black;
+      // color: black;
       font-size: 16px;
       font-weight: bold;
       margin: 0;
