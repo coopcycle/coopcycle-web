@@ -1,55 +1,9 @@
-// https://getbootstrap.com/docs/5.3/customize/sass/#importing
-
-// 1. Include functions first (so you can manipulate colors, SVGs, calc, etc)
-@import "bootstrap/scss/functions";
-
-// 3. Include remainder of required Bootstrap stylesheets (including any separate color mode stylesheets)
-@import "bootstrap/scss/variables";
-@import "bootstrap/scss/variables-dark";
-
-// 4. Include any default map overrides here
-
-// 5. Include remainder of required parts
-@import "bootstrap/scss/maps";
-@import "bootstrap/scss/mixins";
-// @import "bootstrap/scss/root";
-
 .homepage-search {
   position: relative;
   background-image: url(../../../assets/pattern.svg);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
-  &-container {
-    position: relative;
-    display: flex;
-    width: 50%;
-    margin: 0 auto;
-    justify-content: center;
-    @include media-breakpoint-down(sm) {
-      width: 80%;
-    }
-  }
-  margin-bottom: 50px;
-}
-
-.homepage-searchbox-container {
-  position: absolute;
-  bottom: -40px;
-  width: 100%;
-  left: 0;
-}
-
-.homepage-searchbox {
-
-  padding: 20px 25px;
-  background-color: #ffff;
-  border-radius: 12px;
-  box-shadow: 0px 4px 50px rgba(0, 0, 0, 0.08);
-
-  .address-autosuggest__container {
-    margin: 0;
-  }
 }
 
 /* Hide the address description field */

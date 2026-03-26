@@ -2,21 +2,19 @@
 
 {% block body %}
 
-<header class="homepage-search bg-blue-400" data-search="address"
+<header class="bg-blue-400" data-search="address"
   data-addresses="{{ addresses_normalized()|json_encode()|e('html') }}"
   data-tracking-category="Homepage"
   data-restaurants="{{ coopcycle_restaurants_suggestions()|json_encode()|e('html') }}">
-  <div class="homepage-search-container">
+    <div class="relative mx-auto w-8/10 md:w-5/10 mb-16">
     {% set motto = coopcycle_setting('motto') %}
-    <h1 class="font-title text-center text-white mt-4 mb-16 text-2xl md:text-3xl lg:text-4xl font-bold">
+    <h1 class="font-title text-center text-white pt-4 pb-16 text-2xl md:text-3xl lg:text-4xl font-bold">
       {{ motto is not empty ? motto : ('index.banner'|trans) }}
     </h1>
-    <div class="homepage-searchbox-container">
-      <div class="homepage-searchbox" data-element>
+    <div class="absolute w-full -bottom-12">
+      <div class="bg-base-200 p-4 md:p-6 rounded-xl shadow-lg" data-element>
         <!-- This will be replaced by React -->
-        <div class="form-group m-0">
-          <input class="form-control" />
-        </div>
+        <input class="input" />
       </div>
     </div>
   </div>
