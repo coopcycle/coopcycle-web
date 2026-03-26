@@ -15,4 +15,6 @@
 @source "../../js/app/components/AddressAutosuggest";
 
 /* https://daisyui.com/docs/config/#prefix */
-@plugin "daisyui";
+@plugin "daisyui" {
+  themes: light --default; /* Don't support dark mode atm */
+}

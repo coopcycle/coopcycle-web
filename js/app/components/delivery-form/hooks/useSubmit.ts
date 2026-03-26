@@ -60,7 +60,7 @@ function convertValuesToDeliveryPayload(
     };
   }
 
-  if (values.variantIncVATPrice) {
+  if (typeof values.variantIncVATPrice === 'number') {
     data.order.arbitraryPrice = {
       variantName: values.variantName ?? '',
       variantPrice: values.variantIncVATPrice,
@@ -116,7 +116,7 @@ function convertValuesToRecurrenceRulePayload(values) {
     },
   };
 
-  if (values.variantIncVATPrice) {
+  if (typeof values.variantIncVATPrice === 'number') {
     data.arbitraryPriceTemplate = {
       variantName: values.variantName ?? '',
       variantPrice: values.variantIncVATPrice,
@@ -165,7 +165,6 @@ export default function useSubmit(
 
   const checkSuggestionsOnSubmit = useCallback(
     async (values: DeliveryFormValues) => {
-
       // no point in checking suggestions for only one pickup and one dropoff task
       if (values.tasks.length < 3) {
         return false;
@@ -207,7 +206,6 @@ export default function useSubmit(
 
   const handleSubmit = useCallback(
     async (values: DeliveryFormValues) => {
-
       const hasSuggestions = await checkSuggestionsOnSubmit(values);
       if (hasSuggestions) {
         // the form will be submitted again after the user accepts or rejects the suggestions (see SuggestionModal)
