@@ -11,6 +11,7 @@ use AppBundle\Integration\Zelty\Dto\ZeltyMenuPart;
 use AppBundle\Integration\Zelty\Dto\ZeltyTag;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Ramsey\Uuid\Uuid;
 use Sylius\Component\Taxonomy\Factory\TaxonFactoryInterface;
 
 class ZeltyTaxonMapper
@@ -76,7 +77,7 @@ class ZeltyTaxonMapper
 
         /** @var Taxon $taxon */
         $taxon = $this->taxonFactory->createNew();
-        $taxon->setCode($code);
+        $taxon->setCode(Uuid::uuid4()->toString());
         $taxon->setCurrentLocale($locale);
         $this->em->persist($taxon);
 
@@ -156,7 +157,7 @@ class ZeltyTaxonMapper
     ): Taxon {
         /** @var Taxon $section */
         $section = $this->taxonFactory->createNew();
-        $section->setCode($partId);
+        $section->setCode(Uuid::uuid4()->toString());
         $section->setZeltyCode($partId);
         $section->setCurrentLocale($locale);
         $section->setName(sprintf('%s - %s', $menu->name, $part->name));

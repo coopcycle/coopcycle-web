@@ -11,6 +11,7 @@ use AppBundle\Integration\Zelty\Dto\ZeltyItem;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Ramsey\Uuid\Uuid;
 use Sylius\Component\Product\Factory\ProductFactoryInterface;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 
@@ -110,7 +111,7 @@ class ZeltyProductMapper
     {
         /** @var Product $product */
         $product = $this->productFactory->createNew();
-        $product->setCode($dish->id);
+        $product->setCode(Uuid::uuid4()->toString());
         $product->setZeltyCode($dish->id);
         $product->setRestaurant($restaurant);
         $product->setSlug($this->generateProductSlug($dish));
@@ -206,7 +207,7 @@ class ZeltyProductMapper
     ): ProductVariant {
         /** @var ProductVariant $variant */
         $variant = $this->variantFactory->createForProduct($product);
-        $variant->setCode(sprintf('%s_variant', $dishId));
+        $variant->setCode(Uuid::uuid4()->toString());
         $variant->setPrice($price);
 
         if ($taxCategory !== null) {
