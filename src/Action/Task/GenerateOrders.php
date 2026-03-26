@@ -23,6 +23,8 @@ class GenerateOrders
 
     public function __invoke($data, Request $request)
     {
+        ini_set('memory_limit', '512M');
+
         //get query parameters
         $queryParams = $request->query->all();
 
