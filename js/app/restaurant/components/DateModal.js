@@ -40,6 +40,12 @@ class DateModal extends Component {
   }
 
   _onClickSubmit() {
+
+    // Update DOM element
+    const range = moment.range(this.state.value)
+    const timeSlotInputValue = `${range.start.format('YYYY-MM-DD')} ${range.start.format('HH:mm')}-${range.end.format('HH:mm')}`
+    document.querySelector(`[name="${this.props.timeSlotInputName}"]`).value = timeSlotInputValue
+
     this.props.changeDate(this.state.value)
     this.props.setDateModalOpen(false)
   }
@@ -53,9 +59,6 @@ class DateModal extends Component {
 
   render() {
 
-    const range = moment.range(this.state.value)
-    const timeSlotInputValue = `${range.start.format('YYYY-MM-DD')} ${range.start.format('HH:mm')}-${range.end.format('HH:mm')}`
-
     return (
       <Modal
         isOpen={ this.props.isOpen }
@@ -65,7 +68,6 @@ class DateModal extends Component {
         contentLabel={ this.props.t('CART_CHANGE_TIME_MODAL_LABEL') }
         className="ReactModal__Content--date">
         <form name="cart_time">
-          <input type="hidden" name={ this.props.timeSlotInputName } value={ timeSlotInputValue } />
           <h4 className="text-center">{ this.props.t('CART_CHANGE_TIME_MODAL_TITLE') }</h4>
           <div className="text-center">
             { this.props.behavior === 'time_slot' && (
