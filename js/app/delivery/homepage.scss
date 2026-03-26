@@ -52,56 +52,7 @@
   }
 }
 
-.homepage-delivery {
-
-  position: relative;
-  display: flex;
-  justify-content: flex-end;
-
-  padding: 40px 60px;
-
-  flex-direction: column;
-
-  @include media-breakpoint-up(sm) {
-    flex-direction: row;
-    justify-content: space-between;
-  }
-
-  form {
-    background: #FFFFFF;
-    box-shadow: 0px 4px 50px rgba(0, 0, 0, 0.1);
-    border-radius: 12px;
-    padding: 50px 40px;
-    button[type="submit"] {
-      background-color: #0076FF;
-    }
-  }
-
-  &-form {
-    order: 2;
-    @include media-breakpoint-up(sm) {
-      order: 1;
-      min-width: 50%;
-    }
-  }
-
-  &-text {
-    h1, h2, h3, h4, h5, h6 {
-      margin-top: 0;
-    }
-    color: #e5e5e5;
-
-    order: 1;
-    margin-bottom: 30px;
-
-    @include media-breakpoint-up(sm) {
-      order: 2;
-      width: calc(50% - 90px);
-    }
-  }
-
-  /* Hide the address description field */
-  .form-group:has(textarea#delivery_tasks_1_address_description) {
-    display: none;
-  }
+/* Hide the address description field */
+.mb-3:has(textarea#delivery_tasks_1_address_description) {
+  display: none;
 }
