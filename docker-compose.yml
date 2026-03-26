@@ -47,7 +47,7 @@ services:
     build:
       dockerfile: './docker/php/Dockerfile'
       context: '.'
-    image: coopcycle/php:${PHP_VERSION:-8.3}
+    image: coopcycle/php:${PHP_VERSION:-8.4}
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
@@ -81,7 +81,7 @@ services:
     build:
       dockerfile: './docker/php_worker/Dockerfile'
       context: '.'
-    image: coopcycle/php_worker:${PHP_VERSION:-8.3}
+    image: coopcycle/php_worker:${PHP_VERSION:-8.4}
     depends_on:
       - php
     restart: always
