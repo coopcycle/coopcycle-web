@@ -127,6 +127,7 @@
         <option name="default">1</option>
       </options>
     </field>
+    <field name="zeltyApiKey" type="string" column="zelty_api_key" nullable="true"/>
     <many-to-one field="contract" target-entity="AppBundle\Entity\Contract" inversed-by="restaurants">
       <cascade>
         <cascade-persist/>

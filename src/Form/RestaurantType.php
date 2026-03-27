@@ -21,6 +21,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -198,6 +199,19 @@ class RestaurantType extends LocalBusinessType
                             'label' => 'basics.delete',
                         ]);
                     }
+
+                    if ($options['zelty_enabled']) {
+                        $form->add('zeltyApiKey', PasswordType::class, [
+                            'always_empty' => false,
+                            'label' => 'restaurant.form.zelty_api_key',
+                            'required' => false,
+                            'mapped' => true,
+                            'attr' => ['placeholder' => $restaurant->getMaskedZeltyApiKey() ]
+                        ]);
+                        dump($restaurant->getMaskedZeltyApiKey());
+                    }
+
+
                 }
 
                 $isFoodEstablishment = FoodEstablishment::isValid($restaurant->getType());
@@ -316,6 +330,7 @@ class RestaurantType extends LocalBusinessType
             'edenred_enabled' => false,
             'vytal_enabled' => false,
             'en_boite_le_plat_enabled' => false,
+            'zelty_enabled' => false,
         ));
     }
 }

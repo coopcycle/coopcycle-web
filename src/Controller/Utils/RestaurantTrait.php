@@ -134,6 +134,7 @@ trait RestaurantTrait
             'edenred_enabled' => $this->getParameter('edenred_enabled'),
             'vytal_enabled' => $this->getParameter('vytal_enabled'),
             'en_boite_le_plat_enabled' => $this->getParameter('en_boite_le_plat_enabled'),
+            'zelty_enabled' => $this->getParameter('zelty_enabled'),
         ]);
 
         /** @var \Symfony\Component\HttpFoundation\Session\Session $session */

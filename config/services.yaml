@@ -68,6 +68,7 @@ parameters:
   billing_enabled: '%env(bool:BILLING_ENABLED)%'
   package_delivery_ui_price_breakdown_enabled_default: true
   package_delivery_ui_price_breakdown_enabled: '%env(default:package_delivery_ui_price_breakdown_enabled_default:bool:PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED)%'
+  zelty_enabled: '%env(bool:ZELTY_ENABLED)%'
 
 services:
 

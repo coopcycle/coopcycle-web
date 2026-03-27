@@ -27,6 +27,11 @@
   {{ form_row(form.failureReasonSet) }}
 {% endif %}
 
+{% if form.zeltyApiKey is defined %}
+  <hr>
+  {{ form_row(form.zeltyApiKey) }}
+{% endif %}
+
 {% if form.billingMethod is defined %}
   <hr>
   {{ form_row(form.billingMethod) }}

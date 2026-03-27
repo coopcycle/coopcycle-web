@@ -14,22 +14,18 @@ class ZeltyTaxesMapper
 {
     private array $taxCategoryMap = [];
 
-    private const ZELTY_AUTH_TOKEN = '';
-
     public function __construct(
         private ZeltyClient $zeltyClient,
         private TaxesHelper $taxesHelper,
         private ?LoggerInterface $logger = null
-    ) {
-        $this->initializeZeltyAuth();
-    }
+    ) { }
 
     /**
      * Initialize Zelty client with authentication.
      */
-    private function initializeZeltyAuth(): void
+    public function setZeltyApiKey(string $key): void
     {
-        $this->zeltyClient->setAuth(self::ZELTY_AUTH_TOKEN);
+        $this->zeltyClient->setAuth($key);
     }
 
     /**

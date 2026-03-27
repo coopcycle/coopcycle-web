@@ -38,10 +38,17 @@ class ZeltyImportService
      */
     public function import(array $payload, LocalBusiness $restaurant): void
     {
+
+        if (!$restaurant->hasZeltyApiKey()) {
+            throw new \Exception(sprintf('No Zelty key set for business: %s', $restaurant->getName()));
+        }
+
         $this->logInfo(sprintf('Starting Zelty catalog import for restaurant %d', $restaurant->getId()));
 
         $catalog = $this->parser->parse($payload);
         $locale = $this->localeProvider->getDefaultLocaleCode();
+
+        $this->taxesMapper->setZeltyApiKey($restaurant->getZeltyApiKey());
         $taxCategoryMap = $this->taxesMapper->importTaxes();
 
         $rootTaxon = $this->createOrGetRootTaxon($restaurant, $catalog, $locale);
@@ -156,7 +163,7 @@ class ZeltyImportService
      */
     private function createOrGetRootTaxon(LocalBusiness $restaurant, ZeltyCatalog $catalog, string $locale): Taxon
     {
-        $code = $this->generateRootTaxonCode($restaurant);
+        $code = 'zelty_import_' . $restaurant->getId();
 
         $taxon = $this->em->getRepository(Taxon::class)->findOneBy(['code' => $code]);
 
@@ -169,13 +176,6 @@ class ZeltyImportService
         return $taxon;
     }
 
-    /**
-     * Generate the code for the root import taxon.
-     */
-    private function generateRootTaxonCode(LocalBusiness $restaurant): string
-    {
-        return 'zelty_import_' . $restaurant->getId();
-    }
 
     /**
      * Create a new root taxon for the imported catalog.
