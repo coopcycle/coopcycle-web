@@ -7,9 +7,15 @@ jobs:
   PHP_UNIT:
     name: Run PHP unit tests
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php_version:
+          - '8.3'
+          - '8.4'
     env:
       STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      PHP_VERSION: ${{ matrix.php_version }}
     steps:
       - name: Set timezone
         uses: szenius/set-timezone@v2.0
