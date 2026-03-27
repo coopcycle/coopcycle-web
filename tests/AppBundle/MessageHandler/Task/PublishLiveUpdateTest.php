@@ -2,7 +2,6 @@
 
 namespace Tests\AppBundle\MessageHandler\Task;
 
-use AppBundle\Domain\Task\Event;
 use AppBundle\Domain\Task\Event\TaskAssigned;
 use AppBundle\Domain\Task\Event\TaskCancelled;
 use AppBundle\Domain\Task\Event\TaskCreated;
@@ -12,98 +11,114 @@ use AppBundle\Domain\Task\Event\TaskRescheduled;
 use AppBundle\Domain\Task\Event\TaskStarted;
 use AppBundle\Domain\Task\Event\TaskUnassigned;
 use AppBundle\Domain\Task\Event\TaskUpdated;
-use AppBundle\MessageHandler\Task\PublishLiveUpdate;
-use AppBundle\Service\LiveUpdates;
-use PHPUnit\Framework\TestCase;
-use Prophecy\PhpUnit\ProphecyTrait;
+use AppBundle\Entity\Task;
 use AppBundle\Entity\User;
+use AppBundle\Message\Task\PublishLiveUpdate as PublishLiveUpdateMessage;
+use AppBundle\MessageHandler\Task\PublishLiveUpdateHandler;
+use AppBundle\Service\LiveUpdates;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 
 class PublishLiveUpdateTest extends TestCase
 {
     use ProphecyTrait;
 
-    private PublishLiveUpdate $publishLiveUpdate;
     private $liveUpdates;
+    private $entityManager;
+    private $taskRepository;
+    private PublishLiveUpdateHandler $handler;
 
     public function setUp(): void
     {
         $this->liveUpdates = $this->prophesize(LiveUpdates::class);
-        $this->publishLiveUpdate = new PublishLiveUpdate(
-            $this->liveUpdates->reveal()
+        $this->taskRepository = $this->prophesize(EntityRepository::class);
+        $this->entityManager = $this->prophesize(EntityManagerInterface::class);
+        $this->entityManager
+            ->getRepository(Task::class)
+            ->willReturn($this->taskRepository->reveal());
+
+        $this->handler = new PublishLiveUpdateHandler(
+            $this->liveUpdates->reveal(),
+            $this->entityManager->reveal(),
         );
     }
 
-    public function testTaskEventsForAdminsAndDispatchers()
+    public function testTaskNotFoundReturnsEarly(): void
     {
-        $taskEvents = [
-            TaskAssigned::class,
-            TaskCancelled::class,
-            TaskCreated::class,
-            TaskDone::class,
-            TaskFailed::class,
-            TaskRescheduled::class,
-            TaskStarted::class,
-            TaskUnassigned::class,
-            TaskUpdated::class,
+        $this->taskRepository->find(99)->willReturn(null);
+
+        $this->liveUpdates->toRoles(Argument::any(), Argument::any())->shouldNotBeCalled();
+        $this->liveUpdates->toUserAndRoles(Argument::any(), Argument::any(), Argument::any())->shouldNotBeCalled();
+
+        ($this->handler)(new PublishLiveUpdateMessage(99, TaskDone::class));
+    }
+
+    /**
+     * @dataProvider nonUpdatedTaskEventClassProvider
+     */
+    public function testNonUpdatedTaskEventsPublishToRoles(string $eventClass): void
+    {
+        $task = $this->prophesize(Task::class);
+        $this->taskRepository->find(1)->willReturn($task->reveal());
+
+        $this->liveUpdates
+            ->toRoles(['ROLE_ADMIN', 'ROLE_DISPATCHER'], Argument::type($eventClass))
+            ->shouldBeCalledOnce();
+
+        ($this->handler)(new PublishLiveUpdateMessage(1, $eventClass));
+    }
+
+    public function nonUpdatedTaskEventClassProvider(): array
+    {
+        return [
+            [TaskAssigned::class],
+            [TaskCancelled::class],
+            [TaskCreated::class],
+            [TaskDone::class],
+            [TaskFailed::class],
+            [TaskRescheduled::class],
+            [TaskStarted::class],
+            [TaskUnassigned::class],
         ];
-
-        foreach ($taskEvents as $eventClass) {
-            $event = $this->prophesize($eventClass);
-
-            $this->liveUpdates->toRoles(
-            ['ROLE_ADMIN', 'ROLE_DISPATCHER'],
-            $event->reveal()
-        )->shouldBeCalledOnce();
-
-            ($this->publishLiveUpdate)($event->reveal());
-
-            // Reset mock expectations for next iteration
-            $this->liveUpdates = $this->prophesize(LiveUpdates::class);
-            $this->publishLiveUpdate = new PublishLiveUpdate(
-                $this->liveUpdates->reveal()
-            );
-        }
     }
 
-    public function testTaskUpdatedWithCourier()
+    public function testTaskUpdatedWithCourierPublishesToUserAndRoles(): void
     {
-        $user = $this->prophesize(User::class);
-        $event = $this->prophesize(TaskUpdated::class);
-        
-        $event->getCourier()->willReturn($user->reveal());
-        
-        $this->liveUpdates->toUserAndRoles(
-            $user->reveal(),
-            ['ROLE_ADMIN', 'ROLE_DISPATCHER'],
-            $event->reveal()
-        )->shouldBeCalledOnce();
+        $courier = $this->prophesize(User::class);
+        $task = $this->prophesize(Task::class);
+        $task->getAssignedCourier()->willReturn($courier->reveal());
 
-        ($this->publishLiveUpdate)($event->reveal());
+        $this->taskRepository->find(1)->willReturn($task->reveal());
+
+        $this->liveUpdates
+            ->toUserAndRoles(
+                $courier->reveal(),
+                ['ROLE_ADMIN', 'ROLE_DISPATCHER'],
+                Argument::type(TaskUpdated::class)
+            )
+            ->shouldBeCalledOnce();
+
+        $this->liveUpdates->toRoles(Argument::any(), Argument::any())->shouldNotBeCalled();
+
+        ($this->handler)(new PublishLiveUpdateMessage(1, TaskUpdated::class));
     }
 
-    public function testTaskUpdatedWithoutCourier()
+    public function testTaskUpdatedWithoutCourierPublishesToRoles(): void
     {
-        $event = $this->prophesize(TaskUpdated::class);
-        
-        $event->getCourier()->willReturn(null);
-        
-        $this->liveUpdates->toRoles(
-            ['ROLE_ADMIN', 'ROLE_DISPATCHER'],
-            $event->reveal()
-        )->shouldBeCalledOnce();
+        $task = $this->prophesize(Task::class);
+        $task->getAssignedCourier()->willReturn(null);
 
-        ($this->publishLiveUpdate)($event->reveal());
-    }
+        $this->taskRepository->find(1)->willReturn($task->reveal());
 
-    public function testDefaultCase()
-    {
-        $event = $this->prophesize(Event::class);
+        $this->liveUpdates
+            ->toRoles(['ROLE_ADMIN', 'ROLE_DISPATCHER'], Argument::type(TaskUpdated::class))
+            ->shouldBeCalledOnce();
 
-        $this->liveUpdates->toRoles(
-            ['ROLE_ADMIN', 'ROLE_DISPATCHER'],
-            $event->reveal()
-        )->shouldBeCalledOnce();
+        $this->liveUpdates->toUserAndRoles(Argument::any(), Argument::any(), Argument::any())->shouldNotBeCalled();
 
-        ($this->publishLiveUpdate)($event->reveal());
+        ($this->handler)(new PublishLiveUpdateMessage(1, TaskUpdated::class));
     }
 }
