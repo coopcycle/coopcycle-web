@@ -60,7 +60,7 @@
         "jsor/doctrine-postgis": "^2.3.0",
         "league/geotools": "^1.2",
         "gedmo/doctrine-extensions": "^3.19",
-        "snc/redis-bundle": "4.3.0",
+        "snc/redis-bundle": "^4.6.1",
         "knplabs/knp-time-bundle": "^2.0",
         "cocur/slugify": "^4.0",
         "gesdinet/jwt-refresh-token-bundle": "^1.0",
