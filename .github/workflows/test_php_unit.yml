@@ -12,6 +12,7 @@ jobs:
         php_version:
           - '8.3'
           - '8.4'
+      fail-fast: false
     env:
       STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
