@@ -259,13 +259,16 @@ class AdminController extends AbstractController
         }
 
         if ($request->query->has('owner')) {
+
+            $ownerInclude = $request->query->getBoolean('owner_include', true);
+
             try {
                 $owner = $iriConverter->getResourceFromIri($request->query->get('owner'));
                 if ($owner instanceof Store) {
                     $qb
                         ->join(Delivery::class, 'd', Expr\Join::WITH, 'd.order = o.id')
                         ->join(Store::class, 's', Expr\Join::WITH, 'd.store = s.id')
-                        ->andWhere('s.id = :store')
+                        ->andWhere($ownerInclude ? $qb->expr()->eq('s.id', ':store') : $qb->expr()->neq('s.id', ':store'))
                         ->setParameter('store', $owner)
                         ;
                 }
@@ -341,6 +344,10 @@ class AdminController extends AbstractController
             } catch (ItemNotFoundException $e) {
                 // Do nothing
             }
+        }
+
+        if ($request->query->has('owner_include')) {
+            $filters['owner_include'] = $request->query->getBoolean('owner_include');
         }
 
         $parameters = [
