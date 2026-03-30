@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <style>
+    /* Print in landscape mode */
+    /* https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@page/page-orientation */
+    @page landscape {
+      size: landscape;
+      page-orientation: rotate-left;
+    }
+    @media print {
+      .landscape {
+        page: landscape;
+      }
+    }
     body > header,
     body > footer {
       display: flex;
@@ -30,7 +41,7 @@
     }
     </style>
   </head>
-  <body>
+  <body class="landscape">
     <h1 style="text-align: center; margin-bottom: 0">
       {{ coopcycle_setting('brand_name')|upper }}
     </h1>
