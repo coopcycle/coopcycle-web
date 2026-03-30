@@ -81,6 +81,7 @@ services:
     build:
       dockerfile: './docker/php_worker/Dockerfile'
       context: '.'
+    image: coopcycle/php_worker:${PHP_VERSION:-8.4}
     depends_on:
       - php
     restart: always
