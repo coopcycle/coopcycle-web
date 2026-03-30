@@ -51,7 +51,18 @@
 <div {{ react_component('OrderListFilters', { defaultFilters: filters }) }}></div>
 <hr/>
 {% include "_partials/order/list.html.twig" %}
-<div class="text-center">
+
+<div class="d-flex align-items-center justify-content-center gap-4">
+  <form action="{{ path('admin_orders') }}" class="form-inline" method="get">
+    <div class="form-group">
+      <label for="items_per_page">{{ 'pagination.items_per_page'|trans }}</label>
+      <select id="items_per_page" name="per_page" class="form-control" style="max-width: 5em;">
+        <option>20</option>
+        <option {% if orders.itemNumberPerPage == 50 %}selected="selected"{% endif %}>50</option>
+        <option {% if orders.itemNumberPerPage == 100 %}selected="selected"{% endif %}>100</option>
+      </select>
+    </div>
+  </form>
   {{ knp_pagination_render(orders, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
 </div>
 
@@ -127,6 +138,10 @@ new CoopCycle.Search(document.querySelector('#orders-search'), {
   },
   searchOnEnter: true,
   initialValue: "{{ app.request.get('q', '') }}"
+});
+
+document.querySelector('[name="per_page"]').addEventListener('change', function (e) {
+  e.target.closest('form').submit();
 });
 
 </script>

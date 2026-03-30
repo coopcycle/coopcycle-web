@@ -1670,3 +1670,4 @@ form.product_option_value.product.tooltip: Liez un produit de sorte que quand le
 form.product_option_value.product.placeholder: Rechercher un produit…
 form.product_option_value.depends_on.placeholder: Sélectionnez une valeur
 form.product_option_value.depends_on.tooltip: Sélectionnez une autre valeur dont cette valeur dépend
+pagination.items_per_page: Nombre d'éléments par page
