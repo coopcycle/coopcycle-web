@@ -186,4 +186,8 @@ interface OrderInterface extends
     public function getManualSupplements(): ManualSupplements;
 
     public function getExports(): Collection;
+
+    public function isEnBoiteLePlat(): bool;
+
+    public function isEnBoiteLePlatPlatformFee(): bool;
 }
