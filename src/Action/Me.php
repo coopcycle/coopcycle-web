@@ -4,7 +4,6 @@ namespace AppBundle\Action;
 
 use Doctrine\Persistence\ManagerRegistry;
 use AppBundle\Entity\ApiApp;
-use AppBundle\Entity\User;
 use AppBundle\Security\Authentication\Token\ApiKeyToken;
 use Symfony\Bundle\SecurityBundle\Security;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
@@ -19,9 +18,6 @@ class Me
     {
     }
 
-    /**
-     * @return ApiApp|User
-     */
     public function __invoke()
     {
         $token = $this->security->getToken();
