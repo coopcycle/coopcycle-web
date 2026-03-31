@@ -102,6 +102,10 @@ class LiveUpdates
      */
     public function toUsers($users, $message, array $data = [])
     {
+        if (count($users) === 0) {
+            return;
+        }
+
         $messageName = $message instanceof NamedMessage ? $message::messageName() : $message;
 
         if ($message instanceof SerializableEventInterface && empty($data)) {

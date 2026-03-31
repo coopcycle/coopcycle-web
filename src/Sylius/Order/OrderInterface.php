@@ -190,4 +190,6 @@ interface OrderInterface extends
     public function isEnBoiteLePlat(): bool;
 
     public function isEnBoiteLePlatPlatformFee(): bool;
+
+    public function getNotificationRecipients(): array;
 }
