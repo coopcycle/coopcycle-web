@@ -10,7 +10,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 final class MyTasksProvider implements ProviderInterface
 {

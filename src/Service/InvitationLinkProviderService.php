@@ -2,32 +2,28 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Entity\BusinessAccountInvitation;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class InvitationLinkProviderService
 {
-    use TokenStorageTrait;
-
     private $urlGenerator;
     private $objectManager;
 
     public function __construct(
-        TokenStorageInterface $tokenStorage,
+        private Security $security,
         UrlGeneratorInterface $urlGenerator,
         EntityManagerInterface $objectManager)
     {
-        $this->tokenStorage = $tokenStorage;
         $this->urlGenerator = $urlGenerator;
         $this->objectManager = $objectManager;
     }
 
     public function getInvitationLink()
     {
-        $user = $this->getUser();
+        $user = $this->security->getUser();
 
         $businessAccountInvitation = $this->objectManager->getRepository(BusinessAccountInvitation::class)
             ->findOneBy([

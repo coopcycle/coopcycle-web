@@ -19,7 +19,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -28,7 +28,7 @@ class UpdateProfileType extends AbstractType
     private $countryIso;
 
     public function __construct(
-        private TokenStorageInterface $tokenStorage,
+        private Security $security,
         private TranslatorInterface $translator,
         private LoopeatClient $loopeatClient,
         string $countryIso)
@@ -56,10 +56,8 @@ class UpdateProfileType extends AbstractType
             ]);
 
         $isAdmin = false;
-        if ($token = $this->tokenStorage->getToken()) {
-            if ($user = $token->getUser()) {
-                $isAdmin = $user->hasRole('ROLE_ADMIN');
-            }
+        if ($user = $this->security->getUser()) {
+            $isAdmin = $user->hasRole('ROLE_ADMIN');
         }
 
         if ($isAdmin) {

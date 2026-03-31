@@ -10,8 +10,8 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\LoggerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -21,7 +21,7 @@ class LiveUpdatesTest extends TestCase
     use ProphecyTrait;
 
     private LiveUpdates $liveUpdates;
-    private $tokenStorageMock;
+    private $securityMock;
     private $userManagerMock;
     private $serializerMock;
     private $translatorMock;
@@ -33,7 +33,7 @@ class LiveUpdatesTest extends TestCase
 
     public function setUp(): void
     {
-        $this->tokenStorageMock = $this->prophesize(TokenStorageInterface::class);
+        $this->securityMock = $this->prophesize(Security::class);
         $this->userManagerMock = $this->prophesize(UserManager::class);
         $this->serializerMock = $this->prophesize(SerializerInterface::class);
         $this->translatorMock = $this->prophesize(TranslatorInterface::class);
@@ -43,7 +43,7 @@ class LiveUpdatesTest extends TestCase
         $this->realTimeMessageLoggerMock = $this->prophesize(LoggerInterface::class);
 
         $this->liveUpdates = new LiveUpdates(
-            $this->tokenStorageMock->reveal(),
+            $this->securityMock->reveal(),
             $this->userManagerMock->reveal(),
             $this->serializerMock->reveal(),
             $this->translatorMock->reveal(),

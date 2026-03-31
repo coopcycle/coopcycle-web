@@ -2,12 +2,11 @@
 
 namespace AppBundle\Action;
 
-use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Message\UpdateLocation as UpdateLocationMessage;
 use phpcent\Client as CentrifugoClient;
 use Redis;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -15,10 +14,8 @@ use Psr\Log\LoggerInterface;
 
 class UpdateLocation
 {
-    use TokenStorageTrait;
-
     public function __construct(
-        TokenStorageInterface $tokenStorage,
+        private Security $security,
         private MessageBusInterface $messageBus,
         private Redis $tile38,
         private string $fleetKey,
@@ -27,7 +24,6 @@ class UpdateLocation
         private string $centrifugoNamespace,
         private LoggerInterface $logger)
     {
-        $this->tokenStorage = $tokenStorage;
     }
 
     #[Route(path: '/me/location', name: 'me_location', methods: ['POST'])]
@@ -39,7 +35,7 @@ class UpdateLocation
             $data = json_decode($content, true);
         }
 
-        $username = $this->getUser()->getUsername();
+        $username = $this->security->getUser()->getUsername();
 
         if (count($data) === 0) {
             return new JsonResponse([]);
