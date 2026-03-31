@@ -2,7 +2,7 @@
 
 namespace AppBundle\Twig;
 
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Twig\Extension\RuntimeExtensionInterface;
 
