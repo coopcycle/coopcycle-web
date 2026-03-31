@@ -64,7 +64,10 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
       { isLoading ?
         <span className="loader loader--dark"></span>
         : <>
-          <a role="button" href="#" className="text-reset mr-2" onClick={ () => setToggleInputForName(true) }>
+          <a role="button" href="#" className="text-reset mr-2" onClick={(e) => {
+            e.preventDefault();
+            setToggleInputForName(true)
+          }}>
               <i className="fa fa-pencil"></i>
           </a>
           { tourAssignedTo ?
