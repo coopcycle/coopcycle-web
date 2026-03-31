@@ -49,7 +49,7 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
       <div className="flex-grow-0">
         <a role="button" href="#" className="text-reset mr-3"
           onClick={ e =>  onEditSubmitted(e)}
-          title={t("CHANGE_TOUR_NAME")}
+          title={t("SAVE_BUTTON")}
           >
           <i className="fa fa-check"></i>
         </a>
