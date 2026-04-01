@@ -242,25 +242,28 @@ class ZeltyProductMapper
      */
     private function linkOptionToProductIfNotExists(Product $product, $option): void
     {
-        $productId = $product->getId();
         $optionId = $option->getId();
 
-        if ($productId === null || $optionId === null) {
-            throw new \Exception("No product id or option id");
+        if ($optionId === null) {
+            throw new \Exception("No option id");
         }
 
-        $existingProductOptions = $this->em->getRepository(ProductOptions::class)->findOneBy([
-            'product' => $productId,
-            'option' => $optionId,
-        ]);
-
-        if ($existingProductOptions === null) {
-            $productOptions = new ProductOptions();
-            $productOptions->setProduct($product);
-            $productOptions->setOption($option);
-            $productOptions->setEnabled(true);
-            $this->em->persist($productOptions);
+        if ($product->hasOption($option)) {
+            return;
         }
+
+        $productId = $product->getId();
+        if ($productId !== null) {
+            $existingProductOptions = $this->em->getRepository(ProductOptions::class)->findOneBy([
+                'product' => $productId,
+                'option' => $optionId,
+            ]);
+            if ($existingProductOptions !== null) {
+                return;
+            }
+        }
+
+        $product->addOption($option);
 
         foreach ($option->getValues() as $optionValue) {
             if ($optionValue->getProduct() === null) {

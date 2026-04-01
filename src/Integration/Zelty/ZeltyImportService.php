@@ -46,6 +46,8 @@ class ZeltyImportService
         $this->logInfo(sprintf('Starting Zelty catalog import for restaurant %d', $restaurant->getId()));
 
         $catalog = $this->parser->parse($payload);
+        /* dump($catalog); */
+        /* die(); */
         $locale = $this->localeProvider->getDefaultLocaleCode();
 
         $this->taxesMapper->setZeltyApiKey($restaurant->getZeltyApiKey());
@@ -54,7 +56,7 @@ class ZeltyImportService
         $rootTaxon = $this->createOrGetRootTaxon($restaurant, $catalog, $locale);
         $optionsMap = $this->importOptions($catalog, $restaurant, $locale);
         $productsMap = $this->importDishes($catalog, $restaurant, $optionsMap, $locale, $taxCategoryMap);
-        $menusMap = $this->importMenus($catalog, $restaurant, $locale, $productsMap, $taxCategoryMap);
+        $menusMap = $this->importMenus($catalog, $restaurant, $locale, $productsMap, $optionsMap, $taxCategoryMap);
 
         $this->createOrGetMenusTaxon($restaurant, $rootTaxon, $locale, $menusMap);
         $this->taxonMapper->importTags($catalog->tags, $rootTaxon, $productsMap, $locale);
@@ -125,6 +127,7 @@ class ZeltyImportService
         LocalBusiness $restaurant,
         string $locale,
         array $productsMap,
+        array $optionsMap,
         array $taxCategoryMap
     ): array {
         $menuPartsMap = $this->indexMenuPartsById($catalog->menuParts);
@@ -133,6 +136,7 @@ class ZeltyImportService
             $catalog->getMenus(),
             $menuPartsMap,
             $productsMap,
+            $optionsMap,
             $restaurant,
             $locale,
             $this->taxesMapper->getDefaultTaxCategory()

@@ -43,6 +43,7 @@ class ZeltyMenuMapper
         array $menus,
         array $menuPartsMap,
         array $productsMap,
+        array $optionsMap,
         LocalBusiness $restaurant,
         string $locale,
         ?TaxCategory $defaultTaxCategory = null
@@ -50,7 +51,7 @@ class ZeltyMenuMapper
         $menuProductMap = [];
 
         foreach ($menus as $menu) {
-            $menuProduct = $this->importMenu($menu, $menuPartsMap, $productsMap, $restaurant, $locale, $defaultTaxCategory);
+            $menuProduct = $this->importMenu($menu, $menuPartsMap, $productsMap, $optionsMap, $restaurant, $locale, $defaultTaxCategory);
             $menuProductMap[$menu->id] = $menuProduct;
         }
 
@@ -64,6 +65,7 @@ class ZeltyMenuMapper
         ZeltyItem $menu,
         array $menuPartsMap,
         array $productsMap,
+        array $optionsMap,
         LocalBusiness $restaurant,
         string $locale,
         ?TaxCategory $defaultTaxCategory = null
@@ -76,7 +78,7 @@ class ZeltyMenuMapper
 
         $this->updateProductDetails($product, $menu);
         $this->importMenuVariant($product, $menu, $defaultTaxCategory);
-        $this->importMenuPartsAsOptions($product, $menu, $menuPartsMap, $productsMap, $restaurant, $locale);
+        $this->importMenuPartsAsOptions($product, $menu, $menuPartsMap, $productsMap, $optionsMap, $restaurant, $locale);
 
         $this->em->persist($product);
         $this->em->flush();
@@ -187,10 +189,12 @@ class ZeltyMenuMapper
         ZeltyItem $menu,
         array $menuPartsMap,
         array $productsMap,
+        array $optionsMap,
         LocalBusiness $restaurant,
         string $locale
     ): void {
         $existingOptions = $this->indexOptionsByCode($menuProduct);
+        $partOptionValuesMap = [];
 
         foreach ($menu->parts as $partId) {
             if (!isset($menuPartsMap[$partId])) {
@@ -200,7 +204,27 @@ class ZeltyMenuMapper
             $part = $menuPartsMap[$partId];
             $option = $this->getOrCreateMenuPartOption($part, $partId, $existingOptions, $restaurant, $locale);
             $this->linkOptionToProduct($menuProduct, $option);
-            $this->importPartOptionValues($option, $part, $menu, $productsMap, $locale);
+            $partOptionValues = $this->importPartOptionValues($option, $part, $menu, $productsMap, $locale);
+
+            foreach ($part->dishIds as $dishId) {
+                if (!isset($productsMap[$dishId])) {
+                    continue;
+                }
+                $dishProduct = $productsMap[$dishId];
+                $partOptionValue = $partOptionValues[$dishId] ?? null;
+
+                foreach ($dishProduct->getOptions() as $dishOption) {
+                    $this->linkOptionToProduct($menuProduct, $dishOption);
+
+                    if ($partOptionValue !== null) {
+                        foreach ($dishOption->getValues() as $dishOptionValue) {
+                            if (!$dishOptionValue->getDependsOn()->contains($partOptionValue)) {
+                                $dishOptionValue->getDependsOn()->add($partOptionValue);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         $this->em->flush();
@@ -276,25 +300,28 @@ class ZeltyMenuMapper
      */
     private function linkOptionToProduct(Product $menuProduct, ProductOption $option): void
     {
-        $productId = $menuProduct->getId();
         $optionId = $option->getId();
 
-        if ($productId === null || $optionId === null) {
-            throw new \Exception("No product id or option id");
+        if ($optionId === null) {
+            throw new \Exception("No option id");
         }
 
-        $existingProductOptions = $this->em->getRepository(ProductOptions::class)->findOneBy([
-            'product' => $productId,
-            'option' => $optionId,
-        ]);
-
-        if ($existingProductOptions === null) {
-            $productOptions = new ProductOptions();
-            $productOptions->setProduct($menuProduct);
-            $productOptions->setOption($option);
-            $productOptions->setEnabled(true);
-            $this->em->persist($productOptions);
+        if ($menuProduct->hasOption($option)) {
+            return;
         }
+
+        $productId = $menuProduct->getId();
+        if ($productId !== null) {
+            $existingProductOptions = $this->em->getRepository(ProductOptions::class)->findOneBy([
+                'product' => $productId,
+                'option' => $optionId,
+            ]);
+            if ($existingProductOptions !== null) {
+                return;
+            }
+        }
+
+        $menuProduct->addOption($option);
     }
 
     /**
@@ -306,8 +333,9 @@ class ZeltyMenuMapper
         ZeltyItem $menu,
         array $productsMap,
         string $locale
-    ): void {
+    ): array {
         $existingValues = $this->indexOptionValuesByCode($option);
+        $partOptionValues = [];
 
         foreach ($part->dishIds as $position => $dishId) {
             $valueCode = sprintf('%s_%s', $part->id, $dishId);
@@ -316,9 +344,12 @@ class ZeltyMenuMapper
             if (!$option->getValues()->contains($value)) {
                 $option->addValue($value);
             }
+            $partOptionValues[$dishId] = $value;
         }
 
         $this->em->flush();
+
+        return $partOptionValues;
     }
 
     /**
