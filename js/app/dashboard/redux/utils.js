@@ -100,7 +100,7 @@ export const isTaskVisible = (task, filters, date) => {
     showFinishedTasks,
     showCancelledTasks,
     showIncidentReportedTasks,
-    alwayShowUnassignedTasks,
+    alwaysShowUnassignedTasks,
     tags,
     excludedTags,
     includedOrgs,
@@ -159,7 +159,7 @@ export const isTaskVisible = (task, filters, date) => {
   }
 
   if (!task.isAssigned) {
-    if (alwayShowUnassignedTasks) {
+    if (alwaysShowUnassignedTasks) {
       return true
     }
 

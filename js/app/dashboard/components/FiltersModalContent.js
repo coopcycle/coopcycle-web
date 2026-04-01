@@ -63,8 +63,8 @@ class FiltersModalContent extends React.Component {
       values.showIncidentReportedTasks,
     );
     this.props.setFilterValue(
-      "alwayShowUnassignedTasks",
-      values.alwayShowUnassignedTasks,
+      "alwaysShowUnassignedTasks",
+      values.alwaysShowUnassignedTasks,
     );
     this.props.setFilterValue("tags", values.tags);
     this.props.setFilterValue("excludedTags", values.excludedTags);
@@ -82,7 +82,7 @@ class FiltersModalContent extends React.Component {
       showFinishedTasks: this.props.showFinishedTasks,
       showCancelledTasks: this.props.showCancelledTasks,
       showIncidentReportedTasks: this.props.showIncidentReportedTasks,
-      alwayShowUnassignedTasks: this.props.alwayShowUnassignedTasks,
+      alwaysShowUnassignedTasks: this.props.alwaysShowUnassignedTasks,
       tags: this.props.selectedTags,
       excludedTags: this.props.excludedTags,
       includedOrgs: this.props.includedOrgs,
@@ -275,9 +275,9 @@ class FiltersModalContent extends React.Component {
                         unCheckedChildren={this.props.t(
                           "ADMIN_DASHBOARD_FILTERS_HIDE",
                         )}
-                        defaultChecked={values.alwayShowUnassignedTasks}
+                        defaultChecked={values.alwaysShowUnassignedTasks}
                         onChange={(checked) =>
-                          setFieldValue("alwayShowUnassignedTasks", checked)
+                          setFieldValue("alwaysShowUnassignedTasks", checked)
                         }
                       />
                     </Form.Item>
@@ -379,7 +379,7 @@ function mapStateToProps(state) {
     showFinishedTasks,
     showCancelledTasks,
     showIncidentReportedTasks,
-    alwayShowUnassignedTasks,
+    alwaysShowUnassignedTasks,
     hiddenCouriers,
     timeRange,
     tags,
@@ -397,7 +397,7 @@ function mapStateToProps(state) {
     showFinishedTasks,
     showCancelledTasks,
     showIncidentReportedTasks,
-    alwayShowUnassignedTasks,
+    alwaysShowUnassignedTasks,
     selectedTags: tags,
     couriers: selectBookedUsernames(state),
     hiddenCouriers,
