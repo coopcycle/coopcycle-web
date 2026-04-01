@@ -14,6 +14,7 @@
     @media print {
       .landscape {
         page: landscape;
+        break-inside: avoid;
       }
     }
     body > header,
@@ -39,45 +40,52 @@
       border-top: 1px solid black;
       padding: 0.3em 0;
     }
+    h1, h2 {
+      margin: 0;
+    }
     </style>
   </head>
   <body class="landscape">
-    <h1 style="text-align: center; margin-bottom: 0">
-      {{ coopcycle_setting('brand_name')|upper }}
-    </h1>
-    <div style="font-size: 0.6em; text-align: right; line-height: 1em">
-    <ul>
-      <li>- powered by CoopCycle</li>
-      <li>Sustainable, cooperative logistics</li>
-    </ul>
-    </div>
-    <hr />
-    <div style="display: flex;">
-      <div style="flex: 1">FROM:</div>
-      <div style="flex: 3">
-      {% if from is not null %}
+    <div style="padding-top: 1em; padding-bottom: 1em;">
+      <h1 style="text-align: center; margin-bottom: 0">
+        {{ coopcycle_setting('brand_name')|upper }}
+      </h1>
+      <div style="font-size: 0.6em; text-align: right; line-height: 1em">
         <ul>
-          <li>{{ from.contactName }}</li>
-          <li>{{ from.streetAddress }}</li>
-        </ul>
-      {% endif %}
-      </div>
-    </div>
-    <hr />
-    <div style="display: flex;">
-      <div style="flex: 1">TO:</div>
-      <div style="flex: 3; font-weight: bold; font-size: 1.75em">
-        <ul>
-          <li>{{ task.address.contactName }}</li>
-          <li>{{ task.address.streetAddress }}</li>
-          <li>{{ phone }}</li>
+          <li>- powered by CoopCycle</li>
+          <li>Sustainable, cooperative logistics</li>
         </ul>
       </div>
     </div>
-    <hr />
-    <h2 style="text-align: center; font-size: 2.5em;">{{ task.address.postalCode }} {{ task.address.addressLocality|upper }}</h2>
-    <hr />
-    <div style="display: flex;">
+    <div style="display: flex; gap: 1em; justify-content: space-between; border-top: 1px solid #000000; border-bottom: 1px solid #000000;">
+      <div style="display: flex; gap: 1em; flex: 1; padding-top: 1em; padding-bottom: 1em;">
+        <div>FROM:</div>
+        <div>
+        {% if from is not null %}
+          <ul>
+            <li>{{ from.contactName }}</li>
+            <li>{{ from.streetAddress }}</li>
+          </ul>
+        {% endif %}
+        </div>
+      </div>
+      <div style="display: flex; gap: 1em; flex: 1; padding-top: 1em; padding-bottom: 1em;">
+        <div>TO:</div>
+        <div style="font-size: 1.25em; font-weight: bold;">
+          <ul>
+            <li>{{ task.address.contactName }}</li>
+            <li>{{ task.address.streetAddress }}</li>
+            <li>{{ phone }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div style="padding-top: 1em; padding-bottom: 1em; border-bottom: 1px solid #000000;">
+      <h2 style="text-align: center; font-size: 2.5em;">
+        {{ task.address.postalCode }} {{ task.address.addressLocality|upper }}
+      </h2>
+    </div>
+    <div style="display: flex; padding-top: 1em; padding-bottom: 1em; border-bottom: 1px solid #000000;">
       <div style="flex: 1">
         <ul>
           <li><strong>Ref:</strong></li>
@@ -111,12 +119,13 @@
         </ul>
       </div>
     </div>
-    <hr />
+    <div style="break-inside: avoid;  padding-top: 1em; padding-bottom: 1em;">
     {% for barcode in barcodes %}
       <div style="text-align: center">
         {{ barcode['svg']|raw }}
         <div>{{ barcode['code'] }}</div>
       </div>
     {% endfor %}
+    </div>
   </body>
 </html>
