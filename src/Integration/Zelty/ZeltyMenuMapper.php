@@ -13,7 +13,6 @@ use AppBundle\Integration\Zelty\Dto\ZeltyItem;
 use AppBundle\Integration\Zelty\Dto\ZeltyMenuPart;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Ramsey\Uuid\Uuid;
 use Sylius\Component\Product\Factory\ProductFactoryInterface;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 
@@ -103,7 +102,7 @@ class ZeltyMenuMapper
     {
         /** @var Product $product */
         $product = $this->productFactory->createNew();
-        $product->setCode(Uuid::uuid4()->toString());
+        $product->setCode($menu->id);
         $product->setZeltyCode($menu->id);
         $product->setRestaurant($restaurant);
         $product->setSlug($this->generateMenuSlug($menu));
@@ -167,7 +166,7 @@ class ZeltyMenuMapper
     ): ProductVariant {
         /** @var ProductVariant $variant */
         $variant = $this->variantFactory->createForProduct($product);
-        $variant->setCode(Uuid::uuid4()->toString());
+        $variant->setCode(sprintf('%s_variant', $menuId));
         $variant->setPrice($price);
 
         if ($defaultTaxCategory !== null) {
@@ -257,7 +256,7 @@ class ZeltyMenuMapper
     ): ProductOption {
         /** @var ProductOption $option */
         $option = new ProductOption();
-        $option->setCode(Uuid::uuid4()->toString());
+        $option->setCode($partId);
         $option->setPosition(0);
         $option->setRestaurant($restaurant);
         $option->setCurrentLocale($locale);
@@ -383,7 +382,7 @@ class ZeltyMenuMapper
 
         if ($value === null) {
             $value = new ProductOptionValue();
-            $value->setCode(Uuid::uuid4()->toString());
+            $value->setCode($valueCode);
             $value->setZeltyCode($dishId);
             $value->setCurrentLocale($locale);
 

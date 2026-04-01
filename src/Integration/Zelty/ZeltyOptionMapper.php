@@ -11,7 +11,6 @@ use AppBundle\Integration\Zelty\Dto\ZeltyOption;
 use AppBundle\Integration\Zelty\Dto\ZeltyOptionValue;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Ramsey\Uuid\Uuid;
 
 /**
  * Maps Zelty options and option values to Sylius product options.
@@ -138,7 +137,7 @@ class ZeltyOptionMapper
         string $optionCode
     ): ProductOption {
         $option = new ProductOption();
-        $option->setCode(Uuid::uuid4()->toString());
+        $option->setCode($optionCode);
         $option->setRestaurant($restaurant);
         $option->setCurrentLocale($locale);
         $option->setValuesRange($this->createChoicesRange($zeltyOption));
@@ -214,7 +213,7 @@ class ZeltyOptionMapper
         ?Product $product = null
     ): ProductOptionValue {
         $value = new ProductOptionValue();
-        $value->setCode(Uuid::uuid4()->toString());
+        $value->setCode($valueCode);
         $value->setZeltyCode($zeltyValue->id);
         $value->setCurrentLocale($locale);
         $value->setValue($zeltyValue->name);
