@@ -125,32 +125,6 @@ $card-padding-lg: 2rem;
   }
 }
 
-.cart__time {
-  display: block;
-  color: $state-success-text;
-
-  &:hover,
-  &:visited,
-  &:focus {
-    text-decoration: none;
-  }
-
-  &--not-today {
-    color: $state-danger-text;
-  }
-
-  &__text,
-  &__edit {
-    display: block;
-  }
-
-  &__text {
-  }
-
-  &__edit {
-  }
-}
-
 .button-composite {
   display: inline-flex;
   gap: 0.5rem;
