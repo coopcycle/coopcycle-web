@@ -2,24 +2,20 @@
 
 namespace AppBundle\Action;
 
-use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Api\Resource\Centrifugo;
 use phpcent\Client as CentrifugoClient;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class CentrifugoToken
 {
-    use TokenStorageTrait;
-
     private $centrifugo;
     private $centrifugoNamespace;
 
     public function __construct(
-        TokenStorageInterface $tokenStorage,
+        private Security $security,
         CentrifugoClient $centrifugo,
         string $centrifugoNamespace)
     {
-        $this->tokenStorage = $tokenStorage;
         $this->centrifugo = $centrifugo;
         $this->centrifugoNamespace = $centrifugoNamespace;
     }
@@ -28,7 +24,7 @@ class CentrifugoToken
     {
         $data = new Centrifugo();
         $data->token =
-            $this->centrifugo->generateConnectionToken($this->getUser()->getUsername(), (time() + 3600));
+            $this->centrifugo->generateConnectionToken($this->security->getUser()->getUsername(), (time() + 3600));
         $data->namespace = $this->centrifugoNamespace;
 
         return $data;

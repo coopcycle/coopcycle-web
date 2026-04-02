@@ -120,7 +120,7 @@ export default (state = initialState, action) => {
       let unassignedToursOrGroupsOrderIds
       unassignedToursOrGroupsOrderIds = [...state.unassignedToursOrGroupsOrderIds]
       _.remove(unassignedToursOrGroupsOrderIds, t => action.payload.itemsToRemoveIds.includes(t))
-      unassignedToursOrGroupsOrderIds = [...unassignedToursOrGroupsOrderIds, ...action.payload.itemsToAppendIds]
+      unassignedToursOrGroupsOrderIds = _.uniq([...unassignedToursOrGroupsOrderIds, ...action.payload.itemsToAppendIds])
       return {
         ...state,
         unassignedToursOrGroupsOrderIds: unassignedToursOrGroupsOrderIds,

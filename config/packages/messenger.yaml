@@ -70,3 +70,4 @@ framework:
             'AppBundle\Message\EnableProduct': async
             'AppBundle\Message\ResetRushMode': async
             'AppBundle\Message\SoftDelete\CleanupProductOption': async
+            'AppBundle\Message\Task\PublishLiveUpdate': async

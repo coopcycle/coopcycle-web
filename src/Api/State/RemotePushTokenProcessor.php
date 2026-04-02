@@ -7,7 +7,7 @@ use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Api\Dto\CreateRemotePushTokenRequest;
 use AppBundle\Entity\RemotePushToken;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class RemotePushTokenProcessor implements ProcessorInterface
 {

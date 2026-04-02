@@ -2024,4 +2024,24 @@ class Order extends BaseOrder implements OrderInterface
 
         return null;
     }
+
+    public function isEnBoiteLePlat(): bool
+    {
+        if (!$this->hasVendor() || $this->isMultiVendor() || !$this->isReusablePackagingEnabled()) {
+
+            return false;
+        }
+
+        return $this->getRestaurant()->isEnBoitLePlatEnabled();
+    }
+
+    public function isEnBoiteLePlatPlatformFee(): bool
+    {
+        if (!$this->hasVendor() || $this->isMultiVendor() || !$this->isReusablePackagingEnabled()) {
+
+            return false;
+        }
+
+        return $this->getRestaurant()->isEnBoitLePlatPlatformFee();
+    }
 }

@@ -1,4 +1,5 @@
 liip_imagine:
+    driver: imagick
     resolvers:
         default:
             web_path:

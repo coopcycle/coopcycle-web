@@ -13,7 +13,7 @@ export const defaultFilters = {
   showFinishedTasks: true,
   showCancelledTasks: false,
   showIncidentReportedTasks: true,
-  alwayShowUnassignedTasks: false,
+  alwaysShowUnassignedTasks: false,
   tags: [],
   excludedTags: [],
   excludedOrgs: [],

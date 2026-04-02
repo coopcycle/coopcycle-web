@@ -2,21 +2,15 @@
 
 namespace AppBundle\Action\Task;
 
-use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Service\TaskManager;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 abstract class Base
 {
-    use TokenStorageTrait;
-
     public function __construct(
-        TokenStorageInterface $tokenStorage,
         protected TaskManager $taskManager
     )
     {
-        $this->tokenStorage = $tokenStorage;
     }
 
     protected function getNotes(Request $request)

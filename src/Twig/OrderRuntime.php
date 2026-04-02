@@ -44,16 +44,17 @@ class OrderRuntime implements RuntimeExtensionInterface
         $sameElse =
             $this->translator->trans('time_range.same_else', ['%range%' => $rangeAsText]);
 
-        return Carbon::instance($range->getLower())
-            ->locale($this->locale)
-            ->calendar(null, [
-                'sameDay'  => $this->translator->trans('time_range.same_day', ['%range%' => $rangeAsText]),
-                'nextDay'  => $this->translator->trans('time_range.next_day', ['%range%' => $rangeAsText]),
-                'nextWeek' => sprintf('dddd [%s]', $rangeAsText),
-                'lastDay'  => $this->translator->trans('time_range.last_day', ['%range%' => $rangeAsText]),
-                'lastWeek' => $sameElse,
-                'sameElse' => $sameElse,
-            ]);
+        $carbon = Carbon::instance($range->getLower())->locale($this->locale);
+        if ($carbon->isToday()) {
+            return $this->translator->trans('time_range.same_day', ['%range%' => $rangeAsText]);
+        } elseif ($carbon->isTomorrow()) {
+            return $this->translator->trans('time_range.next_day', ['%range%' => $rangeAsText]);
+        } elseif ($carbon->isYesterday()) {
+            return $this->translator->trans('time_range.last_day', ['%range%' => $rangeAsText]);
+        } elseif ($carbon->isFuture() && $carbon->diffInDays() < 7) {
+            return $carbon->isoFormat(sprintf('dddd [%s]', $rangeAsText));
+        }
+        return $sameElse;
     }
 
     /**

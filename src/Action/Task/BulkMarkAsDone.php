@@ -9,7 +9,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use AppBundle\Message\CalculateTaskDistance;
@@ -27,7 +26,6 @@ class BulkMarkAsDone extends Base
     private $normalizerInterface;
 
     public function __construct(
-        TokenStorageInterface $tokenStorage,
         TaskManager $taskManager,
         IriConverterInterface $iriConverter,
         EntityManagerInterface $entityManager,
@@ -35,7 +33,7 @@ class BulkMarkAsDone extends Base
         private MessageBusInterface $eventBus,
     )
     {
-        parent::__construct($tokenStorage, $taskManager);
+        parent::__construct($taskManager);
 
         $this->iriConverter = $iriConverter;
         $this->entityManager = $entityManager;

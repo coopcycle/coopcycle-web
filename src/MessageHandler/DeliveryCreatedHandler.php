@@ -61,9 +61,20 @@ class DeliveryCreatedHandler
         $order = $delivery->getOrder();
         $pickup = $delivery->getPickup();
         $date = $pickup->getAfter();
-        $dateLocal = Carbon::instance($pickup->getAfter())
-            ->locale($this->locale)
-            ->calendar();
+        $c = Carbon::instance($pickup->getAfter())->locale($this->locale);
+        if ($c->isToday()) {
+            $dateLocal = $c->isoFormat('[Today at] LT');
+        } elseif ($c->isTomorrow()) {
+            $dateLocal = $c->isoFormat('[Tomorrow at] LT');
+        } elseif ($c->isYesterday()) {
+            $dateLocal = $c->isoFormat('[Yesterday at] LT');
+        } elseif ($c->isFuture() && $c->diffInDays() < 7) {
+            $dateLocal = $c->isoFormat('dddd [at] LT');
+        } elseif ($c->isPast() && Carbon::now()->diffInDays($c) < 7) {
+            $dateLocal = $c->isoFormat('[Last] dddd [at] LT');
+        } else {
+            $dateLocal = $c->isoFormat('L');
+        }
 
         [$title, $body] = $this->parseTitleAndBodyForPushNotification($delivery);
 

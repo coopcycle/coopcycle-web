@@ -205,7 +205,7 @@ class AsapChoiceLoaderTest extends TestCase
 
     public function testSameDayWithOneShippingOption()
     {
-        Carbon::setTestNowAndTimezone(Carbon::parse('2020-03-12 15:30:00'));
+        Carbon::setTestNow(Carbon::parse('2020-03-12 15:30:00'));
 
         $openingHours = [
             "Tu-Su 13:15-16:00",
@@ -251,7 +251,7 @@ class AsapChoiceLoaderTest extends TestCase
             "2020-03-19",
         ], $choices);
 
-        Carbon::setTestNowAndTimezone(Carbon::parse('2020-03-12 23:30:00'));
+        Carbon::setTestNow(Carbon::parse('2020-03-12 23:30:00'));
 
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();

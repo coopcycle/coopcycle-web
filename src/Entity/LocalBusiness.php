@@ -289,6 +289,8 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $enBoitLePlatEnabled = false;
 
+    protected $enBoitLePlatPlatformFee = false;
+
     protected $cashOnDeliveryEnabled = false;
 
     protected ?int $rateLimitRangeDuration;
@@ -985,6 +987,26 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function setEnBoitLePlatEnabled($enabled)
     {
         $this->enBoitLePlatEnabled = $enabled;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnBoitLePlatPlatformFee()
+    {
+        return $this->enBoitLePlatPlatformFee;
+    }
+
+    /**
+     * @param bool $platformFee
+     *
+     * @return self
+     */
+    public function setEnBoitLePlatPlatformFee(bool $platformFee)
+    {
+        $this->enBoitLePlatPlatformFee = $platformFee;
 
         return $this;
     }

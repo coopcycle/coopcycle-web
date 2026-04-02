@@ -17,14 +17,12 @@ use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Log\NullLogger;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
 {
     use ProphecyTrait;
 
-    protected $tokenStorage;
     protected $loopeatClient;
 
     public function setUp(): void
@@ -32,7 +30,6 @@ class LoopEatOrderValidatorTest extends ConstraintValidatorTestCase
         $this->loopeatContext = new LoopeatContext();
         $this->loopeatContext->name = 'Acme';
 
-        $this->tokenStorage = $this->prophesize(TokenStorageInterface::class);
         $this->loopeatClient = $this->prophesize(LoopEatClient::class);
         $this->priceFormatter = $this->prophesize(PriceFormatter::class);
         $this->session = $this->prophesize(SessionInterface::class);

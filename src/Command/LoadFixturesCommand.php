@@ -57,6 +57,8 @@ class LoadFixturesCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        ini_set('memory_limit', '512M');
+
         if ('test' !== $this->environment) {
             $this->io->error('This command can only be executed in test environment');
             return 1;

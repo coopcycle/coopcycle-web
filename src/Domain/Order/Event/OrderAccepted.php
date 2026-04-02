@@ -5,6 +5,7 @@ namespace AppBundle\Domain\Order\Event;
 use AppBundle\Domain\DomainEvent;
 use AppBundle\Domain\HasIconInterface;
 use AppBundle\Domain\Order\Event;
+use AppBundle\Domain\Order\FrontendEvent;
 
 /**
  * An event that occurs when a user accepts an order.
@@ -12,7 +13,7 @@ use AppBundle\Domain\Order\Event;
  * If you want to be notified when the order is in the "accepted" state, listen to OrderStateChanged event instead.
  * @see OrderStateChanged
  */
-class OrderAccepted extends Event implements DomainEvent, HasIconInterface
+class OrderAccepted extends Event implements DomainEvent, HasIconInterface, FrontendEvent
 {
     public static function messageName(): string
     {

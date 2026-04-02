@@ -21,6 +21,9 @@ class TaskManagerFunctionalTest extends KernelTestCase
     {
         parent::setUp();
         self::bootKernel();
+
+        ini_set('memory_limit', '1024M');
+
         $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
         $this->taskManager = self::getContainer()->get(TaskManager::class);
         $this->fixturesLoader = self::getContainer()->get('fidry_alice_data_fixtures.loader.doctrine');

@@ -227,7 +227,10 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_dashboard');
     }
 
-    protected function getOrderList(Request $request, PaginatorInterface $paginator, IriConverterInterface $iriConverter, $showCanceled = false)
+    protected function getOrderList(Request $request, Response $response,
+        PaginatorInterface $paginator,
+        IriConverterInterface $iriConverter,
+        $showCanceled = false)
     {
         if ($request->query->has('q')) {
             $qb = $this->orderRepository->search($request->query->get('q'));
@@ -256,13 +259,16 @@ class AdminController extends AbstractController
         }
 
         if ($request->query->has('owner')) {
+
+            $ownerInclude = $request->query->getBoolean('owner_include', true);
+
             try {
                 $owner = $iriConverter->getResourceFromIri($request->query->get('owner'));
                 if ($owner instanceof Store) {
                     $qb
                         ->join(Delivery::class, 'd', Expr\Join::WITH, 'd.order = o.id')
                         ->join(Store::class, 's', Expr\Join::WITH, 'd.store = s.id')
-                        ->andWhere('s.id = :store')
+                        ->andWhere($ownerInclude ? $qb->expr()->eq('s.id', ':store') : $qb->expr()->neq('s.id', ':store'))
                         ->setParameter('store', $owner)
                         ;
                 }
@@ -282,10 +288,18 @@ class AdminController extends AbstractController
                 ->setParameter('state_cancelled', OrderInterface::STATE_CANCELLED);
         }
 
+        $perPage = self::ITEMS_PER_PAGE;
+        if ($request->query->has('per_page')) {
+            $perPage = $request->query->getInt('per_page');
+            $response->headers->setCookie(new Cookie('__per_page', $perPage));
+        } elseif ($request->cookies->has('__per_page')) {
+            $perPage = $request->cookies->getInt('__per_page');
+        }
+
         return $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
-            self::ITEMS_PER_PAGE,
+            $perPage,
             [
                 PaginatorInterface::DISTINCT => false,
             ]
@@ -332,8 +346,12 @@ class AdminController extends AbstractController
             }
         }
 
+        if ($request->query->has('owner_include')) {
+            $filters['owner_include'] = $request->query->getBoolean('owner_include');
+        }
+
         $parameters = [
-            'orders' => $this->getOrderList($request, $paginator, $iriConverter, $showCanceled),
+            'orders' => $this->getOrderList($request, $response, $paginator, $iriConverter, $showCanceled),
             'routes' => $request->attributes->get('routes'),
             'show_canceled' => $showCanceled,
             'filters' => $filters,

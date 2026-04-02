@@ -49,7 +49,7 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
       <div className="flex-grow-0">
         <a role="button" href="#" className="text-reset mr-3"
           onClick={ e =>  onEditSubmitted(e)}
-          title={t("CHANGE_TOUR_NAME")}
+          title={t("SAVE_BUTTON")}
           >
           <i className="fa fa-check"></i>
         </a>
@@ -64,7 +64,10 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
       { isLoading ?
         <span className="loader loader--dark"></span>
         : <>
-          <a role="button" href="#" className="text-reset mr-2" onClick={ () => setToggleInputForName(true) }>
+          <a role="button" href="#" className="text-reset mr-2" onClick={(e) => {
+            e.preventDefault();
+            setToggleInputForName(true)
+          }}>
               <i className="fa fa-pencil"></i>
           </a>
           { tourAssignedTo ?

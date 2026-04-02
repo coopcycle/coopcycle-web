@@ -116,7 +116,7 @@ class CheckoutAddressType extends AbstractType
 
                 } elseif (!$order->isMultiVendor() && $restaurant->isEnBoitLePlatEnabled()) {
 
-                    $form->add('reusablePackagingEnabled', CheckboxType::class, [
+                    $enBoiteLePlatOptions = [
                         'required' => false,
                         'label' => 'form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label',
                         'label_translation_parameters' => [
@@ -126,7 +126,15 @@ class CheckoutAddressType extends AbstractType
                         'attr' => [
                             'data-en-boite-le-plat' => 'true',
                         ],
-                    ]);
+                    ];
+
+                    if (!$restaurant->isDepositRefundOptin()) {
+                        $enBoiteLePlatOptions['disabled'] = true;
+                        $enBoiteLePlatOptions['data'] = true;
+                        $enBoiteLePlatOptions['empty_data'] = true;
+                    }
+
+                    $form->add('reusablePackagingEnabled', CheckboxType::class, $enBoiteLePlatOptions);
 
                 } elseif ($restaurant->isDepositRefundEnabled() && $restaurant->isDepositRefundOptin()) {
 

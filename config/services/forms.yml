@@ -113,7 +113,7 @@ services:
 
   AppBundle\Form\Checkout\CheckoutAddressType:
     arguments:
-      $enBoitLePlatUrl: '%env(EN_BOITE_LE_PLAT_URL)'
+      $enBoitLePlatUrl: '%env(EN_BOITE_LE_PLAT_URL)%'
     tags: [ form.type ]
 
   AppBundle\Form\Checkout\CheckoutCustomerType:

@@ -592,6 +592,7 @@ class OrderFeeProcessorTest extends KernelTestCase
         $order->getTipAmount()->willReturn(null);
 
         $order->isLoopeat()->willReturn(true);
+        $order->isEnBoiteLePlat()->willReturn(false);
         $order->getAdjustmentsTotal(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)
             ->willReturn(90);
 
@@ -713,5 +714,58 @@ class OrderFeeProcessorTest extends KernelTestCase
 
         $this->assertCount(1, $feeAdjustments);
         $this->assertEquals(0, $order->getFeeTotal());
+    }
+
+    public function orderWithEnBoiteLePlatProvider()
+    {
+        return [
+            // When the deposit is collected by the restaurant, the platform fee is not increased
+            [false, 500],
+            // When the deposit is collected by the plaform, the platform fee is increased
+            [true, 800],
+        ];
+    }
+
+    /**
+     * @dataProvider orderWithEnBoiteLePlatProvider
+     */
+    public function testOrderWithEnBoiteLePlat(bool $enBoiteLePlatPlatformFee, int $expectedPlatformFee)
+    {
+        $contract = self::createContract(500, 0, 0.00);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+        $restaurant->setEnBoitLePlatEnabled(true);
+        $restaurant->setEnBoitLePlatPlatformFee(true);
+
+        $order = $this->prophesize(OrderInterface::class); // new Order();
+        $order->hasVendor()->willReturn(true);
+        $order->getVendorConditions()->willReturn($restaurant);
+        $order->isTakeAway()->willReturn(false);
+        $order->getItemsTotal()->willReturn(2000);
+
+        $order->getAdjustments(Argument::type('string'))
+            ->willReturn(new ArrayCollection([]));
+
+        $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT)
+            ->willReturn(0);
+
+        $order->getTipAmount()->willReturn(null);
+
+        $order->isLoopeat()->willReturn(false);
+        $order->isEnBoiteLePlat()->willReturn(true);
+        $order->isEnBoiteLePlatPlatformFee()->willReturn($enBoiteLePlatPlatformFee);
+        $order->getAdjustmentsTotal(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)
+            ->willReturn(300);
+
+        $order->removeAdjustments(Argument::that(function ($adjustment) {
+            return AdjustmentInterface::DELIVERY_ADJUSTMENT === $adjustment;
+        }))->shouldBeCalled();
+
+        $this->orderFeeProcessor->process($order->reveal());
+
+        $order->addAdjustment(Argument::that(function ($adjustment) use ($expectedPlatformFee) {
+            return AdjustmentInterface::FEE_ADJUSTMENT === $adjustment->getType() && $expectedPlatformFee === $adjustment->getAmount();
+        }))->shouldBeCalledOnce();
     }
 }

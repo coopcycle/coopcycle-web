@@ -2,7 +2,6 @@
 
 namespace AppBundle\Action\Store;
 
-use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Security\TokenStoreExtractor;
 use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;

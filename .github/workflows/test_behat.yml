@@ -7,17 +7,24 @@ jobs:
   BEHAT:
     name: Run Behat tests
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php_version:
+          - '8.3'
+          - '8.4'
+      fail-fast: false
     env:
       STRIPE_PUBLISHABLE_KEY: ${{ secrets.STRIPE_PUBLISHABLE_KEY }}
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
       STRIPE_CONNECT_CLIENT_ID: ${{ secrets.STRIPE_CONNECT_CLIENT_ID }}
       GEOCODE_EARTH_API_KEY: ${{ secrets.GEOCODE_EARTH_API_KEY }}
+      PHP_VERSION: ${{ matrix.php_version }}
     steps:
       - name: Set timezone
         uses: szenius/set-timezone@v2.0
         with:
           timezoneLinux: "Europe/Paris"
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Run CoopCycle Web
         uses: ./.github/actions/run-coopcycle-web
         timeout-minutes: 10

@@ -2,20 +2,20 @@
 
 namespace AppBundle\Action\Webhook;
 
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 
 class Create
 {
     public function __construct(
-        private TokenStorageInterface $tokenStorage,
+        private Security $security,
         private AccessTokenManagerInterface $accessTokenManager)
     {}
 
     public function __invoke($data)
     {
-        $token = $this->tokenStorage->getToken();
+        $token = $this->security->getToken();
 
         if ($token instanceof OAuth2Token) {
             $accessToken = $this->accessTokenManager->find($token->getCredentials());
