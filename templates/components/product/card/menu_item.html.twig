@@ -1,32 +1,29 @@
 {# TODO Skip if no variant is defined #}
 {% if product.enabled %}
-  <div class="menu-item card bg-base-200 text-base-content">
-    <button
-      class="card-body"
-      data-modal="product-details"
-      data-form-action="{{ path('restaurant_add_product_to_cart', { id: product.restaurant.id, code: product.code })|e('html_attr') }}"
-      data-product="{{ product|serialize('jsonld', { groups: ['product'] })|e('html_attr') }}"
-      data-product-images="{{ product_images|json_encode|e('html_attr') }}"
-      data-product-price="{{ (product|sylius_resolve_variant).price|e('html_attr') }}"
-      data-product-options="{{ product.options|serialize('jsonld', { groups: ['restaurant_menu'] })|e('html_attr') }}">
-      {% include 'components/product/card/menu_item_inner.html.twig' %}
-      {% if product.hasOptions() %}
-        <div class="menu-item__add-wrapper">
-          <div class="add-button">+</div>
-        </div>
+  <div class="menu-item card bg-base-300 text-base-content cursor-pointer">
+    <div class="card-body flex flex-row justify-between">
+      <button
+        class="w-full flex flex-row justify-between gap-4"
+        data-modal="product-details"
+        data-form-action="{{ path('restaurant_add_product_to_cart', { id: product.restaurant.id, code: product.code })|e('html_attr') }}"
+        data-product="{{ product|serialize('jsonld', { groups: ['product'] })|e('html_attr') }}"
+        data-product-images="{{ product_images|json_encode|e('html_attr') }}"
+        data-product-price="{{ (product|sylius_resolve_variant).price|e('html_attr') }}"
+        data-product-options="{{ product.options|serialize('jsonld', { groups: ['restaurant_menu'] })|e('html_attr') }}">
+        {% include 'components/product/card/menu_item_inner.html.twig' %}
+        {% if product.hasOptions() %}
+          <a class="btn h-full">+</a>
+        {% endif %}
+      </button>
+      {% if not product.hasOptions() %}
+        <form
+          method="post"
+          action="{{ path('restaurant_add_product_to_cart', { id: product.restaurant.id, code: product.code }) }}"
+          data-product-simple>
+          <button class="btn h-full" type="submit">+</button>
+        </form>
       {% endif %}
-    </button>
-    {% if not product.hasOptions() %}
-      <form
-        method="post"
-        action="{{ path('restaurant_add_product_to_cart', { id: product.restaurant.id, code: product.code }) }}"
-        data-product-simple
-        class="card-body">
-        <button class="button-reset add-button" type="submit">
-          +
-        </button>
-      </form>
-    {% endif %}
+    </div>
   </div>
 {% else %}
   <div class="menu-item menu-item--unavailable">
