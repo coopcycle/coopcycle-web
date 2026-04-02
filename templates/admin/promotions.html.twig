@@ -28,8 +28,8 @@
 
 {% if past|length > 0 %}
 <ul class="nav nav-tabs" role="tablist">
-  <li role="presentation" class="active"><a href="#ongoing" aria-controls="ongoing" role="tab" data-toggle="tab">{{ 'adminDashboard.promotions.ongoing'|trans }}</a></li>
-  <li role="presentation"><a href="#past" aria-controls="past" role="tab" data-toggle="tab">{{ 'adminDashboard.promotions.past'|trans }}</a></li>
+  <li role="presentation" class="active"><a href="#ongoing" aria-controls="ongoing" role="tab" data-toggle="tab">{{ 'adminDashboard.promotions.ongoing'|trans({ '%count%': ongoing|length }) }}</a></li>
+  <li role="presentation"><a href="#past" aria-controls="past" role="tab" data-toggle="tab">{{ 'adminDashboard.promotions.past'|trans({ '%count%': past|length }) }}</a></li>
 </ul>
 <div class="tab-content">
   <div role="tabpanel" class="tab-pane active" id="ongoing">
