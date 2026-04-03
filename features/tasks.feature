@@ -2965,6 +2965,8 @@ Feature: Tasks
               "@type":"Task",
               "id":1,
               "status": "DONE",
+              "isAssigned": true,
+              "assignedTo": "bob",
               "@*@":"@*@"
             },
             {
@@ -2972,6 +2974,8 @@ Feature: Tasks
               "@type":"Task",
               "id":2,
               "status": "DONE",
+              "isAssigned": true,
+              "assignedTo": "bob",
               "@*@":"@*@"
             }
           ],
