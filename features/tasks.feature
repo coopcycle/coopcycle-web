@@ -2942,7 +2942,7 @@ Feature: Tasks
       | password  | 123456            |
       | telephone | 0033612345678     |
     And the user "bob" is authenticated
-    And the tasks with comments matching "#bob" are assigned to "bob"
+    And the tasks with ids "1,2" are assigned to "bob"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "PUT" request to "/api/tasks/done" with body:

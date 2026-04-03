@@ -1421,4 +1421,17 @@ class FeatureContext implements Context, SnippetAcceptingContext
     {
         ini_set('memory_limit', $value);
     }
+
+    #[Given('the tasks with ids :ids are assigned to :username')]
+    public function theTasksWithIdsAreAssignedTo($ids, $username): void
+    {
+        $user = $this->doctrine->getRepository(User::class)->findOneBy(["username" => $username]);
+
+        foreach (explode(',', $ids) as $id) {
+            $task = $this->doctrine->getRepository(Task::class)->find($id);
+             $task->assignTo($user);
+        }
+
+        $this->doctrine->getManagerForClass(Task::class)->flush();
+    }
 }
