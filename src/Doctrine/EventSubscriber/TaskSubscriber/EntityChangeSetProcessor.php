@@ -104,7 +104,13 @@ class EntityChangeSetProcessor
 
         } else if ($oldValue !== null) { // task was assigned but is not anymore
 
-                $this->logger->debug(sprintf('Task#%d has been unassigned', $task->getId()));
+                $this->logger->warning(sprintf(
+                    'Task#%d is being unassigned (status: %s, assignedTo was: %s). Stack trace: %s',
+                    $task->getId(),
+                    $task->getStatus(),
+                    $oldValue->getUserIdentifier(),
+                    (new \Exception())->getTraceAsString()
+                ));
 
                 $taskList = $this->taskListProvider->getTaskList($task, $oldValue);
 
