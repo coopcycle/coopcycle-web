@@ -69,3 +69,5 @@ framework:
                 base_uri: "https://api.insee.fr/api-sirene/3.11/"
                 headers:
                     X-INSEE-Api-Key-Integration: '%env(INSEE_PORTAIL_API_KEY)%'
+            zelty.client:
+                base_uri:  "https://api.zelty.fr/2.10/"

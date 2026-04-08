@@ -308,6 +308,8 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected bool $pawapayEnabled = true;
 
+    protected ?string $zeltyApiKey = null;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -1221,5 +1223,34 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function setPawapayEnabled($enabled = true)
     {
         $this->pawapayEnabled = $enabled;
+    }
+
+    public function getZeltyApiKey(): ?string
+    {
+        return $this->zeltyApiKey;
+    }
+
+    public function setZeltyApiKey(?string $zeltyApiKey): void
+    {
+        $this->zeltyApiKey = $zeltyApiKey;
+    }
+
+    public function getMaskedZeltyApiKey(): ?string
+    {
+        if (!$this->hasZeltyApiKey()) {
+            return null;
+        }
+
+        $length = strlen($this->zeltyApiKey);
+        if ($length <= 8) {
+            return str_repeat('•', $length);
+        }
+
+        return '••••••••••••' . substr($this->zeltyApiKey, -4);
+    }
+
+    public function hasZeltyApiKey(): bool
+    {
+        return null !== $this->zeltyApiKey && '' !== $this->zeltyApiKey;
     }
 }

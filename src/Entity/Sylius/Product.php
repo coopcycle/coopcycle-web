@@ -57,6 +57,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Product extends BaseProduct implements ProductInterface, Comparable, SoftDeleteableInterface
 {
     use SoftDeleteable;
+    use \AppBundle\Integration\Zelty\HasZeltyMetadata;
 
     protected $reusablePackagingEnabled = false;
     protected $reusablePackagings;
