@@ -61,7 +61,7 @@ const PaymentForm = ({ payment, liablePartyForm }) => {
         <InputNumber
           min={0}
           max={payment.amount - payment.refundedAmount}
-          parser={(value) => value * 100}
+          parser={(value) => parseInt(value * 100, 10)}
           formatter={(value) => value / 100}
           step={50}
           disabled={!payment.supportsPartialRefunds} />
