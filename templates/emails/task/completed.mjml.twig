@@ -9,7 +9,7 @@
     '%address%': task.address.streetAddress,
   }, 'emails') | raw }}
   </mj-text>
-  <mj-button font-family="Raleway, Arial, sans-serif" background-color="#10ac84" color="white" href="{{ url('dashboard_delivery', { 'id': task.delivery.id }) }}">
+  <mj-button href="{{ url('dashboard_delivery', { 'id': task.delivery.id }) }}">
     {{ 'basics.view'|trans({}, 'messages') }}
   </mj-button>
 </mj-column>

@@ -10,10 +10,11 @@ import './style.css'
 const root = document.getElementById('email-editor')
 if (!root) throw new Error('Missing #email-editor element')
 
-const emailTypes       = JSON.parse(root.dataset.emailTypes)       // { type: { label_by_locale, variables, is_custom_by_locale } }
-const supportedLocales = JSON.parse(root.dataset.supportedLocales)  // { en: 'English', fr: 'Français', ... }
-const i18n             = JSON.parse(root.dataset.i18n)             // server-translated UI strings
-const apiBaseUrl       = root.dataset.apiUrl                        // /admin/customize/emails/__TYPE__
+const emailTypes        = JSON.parse(root.dataset.emailTypes)       // { type: { label_by_locale, variables, is_custom_by_locale } }
+const supportedLocales  = JSON.parse(root.dataset.supportedLocales)  // { en: 'English', fr: 'Français', ... }
+const i18n              = JSON.parse(root.dataset.i18n)             // server-translated UI strings
+const apiBaseUrl        = root.dataset.apiUrl                        // /admin/customize/emails/__TYPE__
+const styleSettingsUrl  = root.dataset.styleSettingsUrl             // /admin/customize/emails/settings
 
 // ─── State ────────────────────────────────────────────────────────────────────
 

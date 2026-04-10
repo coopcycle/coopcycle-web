@@ -25,7 +25,7 @@
   </mj-text>
   <mj-spacer container-background-color="#ecedee" height="1px" />
   {% include 'emails/order/_partials/items.mjml.twig' %}
-  <mj-button font-family="Raleway, Arial, sans-serif" background-color="#10ac84" color="white"
+  <mj-button
     href="{{ url('dashboard_restaurant_dashboard', { restaurantId: restaurant.id, order: order|get_iri_from_item }) }}">
   {{ 'order.view' | trans({}, 'emails') }}
   </mj-button>

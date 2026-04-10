@@ -2643,6 +2643,36 @@ class AdminController extends AbstractController
         ]);
     }
 
+    public function emailStyleSettingsAction(Request $request, EmailTemplateManager $emailTemplateManager, SettingsManager $settingsManager): JsonResponse
+    {
+        $isDemo = $this->getParameter('is_demo');
+
+        if ($isDemo) {
+            return $this->json(['error' => 'Not available in demo'], 403);
+        }
+
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+
+            $allowed = ['email_primary_color', 'email_background_color', 'email_content_background_color'];
+            foreach ($allowed as $key) {
+                if (isset($data[$key])) {
+                    $value = $data[$key];
+                    // Accept #rrggbb or #rgb hex colours only
+                    if (!preg_match('/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $value)) {
+                        return $this->json(['error' => sprintf('Invalid colour value for %s', $key)], 400);
+                    }
+                    $settingsManager->set($key, $value);
+                }
+            }
+            $settingsManager->flush();
+
+            return $this->json(['success' => true]);
+        }
+
+        return $this->json($emailTemplateManager->getEmailStyleSettings());
+    }
+
     private function handleHubForm(Hub $hub, Request $request)
     {
         $form = $this->createForm(HubType::class, $hub);

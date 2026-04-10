@@ -12,12 +12,19 @@
      data-email-types="{{ email_types | json_encode | e('html_attr') }}"
      data-supported-locales="{{ supported_locales | json_encode | e('html_attr') }}"
      data-api-url="{{ path('admin_customize_email_template', {type: '__TYPE__'}) }}"
+     data-style-settings-url="{{ path('admin_customize_email_settings') }}"
      data-i18n="{{ {
-       save:           'customize.email_editor.save'           | trans,
-       reset:          'customize.email_editor.reset'          | trans,
-       status_default: 'customize.email_editor.status.default' | trans,
-       status_custom:  'customize.email_editor.status.custom'  | trans,
-       variables:      'customize.email_editor.variables'      | trans
+       save:                      'customize.email_editor.save'                      | trans,
+       reset:                     'customize.email_editor.reset'                     | trans,
+       status_default:            'customize.email_editor.status.default'            | trans,
+       status_custom:             'customize.email_editor.status.custom'             | trans,
+       variables:                 'customize.email_editor.variables'                 | trans,
+       global_style:              'customize.email_editor.global_style'              | trans,
+       primary_color:             'customize.email_editor.primary_color'             | trans,
+       background_color:          'customize.email_editor.background_color'          | trans,
+       content_background_color:  'customize.email_editor.content_background_color'  | trans,
+       save_style:                'customize.email_editor.save_style'                | trans,
+       style_saved:               'customize.email_editor.style_saved'               | trans
      } | json_encode | e('html_attr') }}">
 
   {# ── Sidebar: list of editable email types ── #}

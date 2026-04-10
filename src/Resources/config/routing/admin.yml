@@ -728,6 +728,12 @@ admin_customize_emails:
         layout: 'admin.html.twig'
     methods:  [ GET ]
 
+admin_customize_email_settings:
+    path: /admin/customize/emails/settings
+    defaults:
+        _controller: AppBundle\Controller\AdminController::emailStyleSettingsAction
+    methods:  [ GET, POST ]
+
 admin_customize_email_template:
     path: /admin/customize/emails/{type}
     defaults:

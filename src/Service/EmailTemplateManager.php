@@ -15,35 +15,35 @@ class EmailTemplateManager
     public const CUSTOMER_EMAILS = [
         'order_created' => [
             'label_key' => 'customize.email_editor.email_type.order_created',
-            'variables'  => ['brand_name', 'order_number', 'order_url'],
+            'variables'  => ['brand_name', 'order_number', 'order_url', 'primary_color', 'background_color', 'content_background_color'],
         ],
         'order_accepted' => [
             'label_key' => 'customize.email_editor.email_type.order_accepted',
-            'variables'  => ['brand_name', 'order_number', 'order_url'],
+            'variables'  => ['brand_name', 'order_number', 'order_url', 'primary_color', 'background_color', 'content_background_color'],
         ],
         'order_cancelled' => [
             'label_key' => 'customize.email_editor.email_type.order_cancelled',
-            'variables'  => ['brand_name', 'order_number'],
+            'variables'  => ['brand_name', 'order_number', 'primary_color', 'background_color', 'content_background_color'],
         ],
         'order_delayed' => [
             'label_key' => 'customize.email_editor.email_type.order_delayed',
-            'variables'  => ['brand_name', 'order_number', 'delay'],
+            'variables'  => ['brand_name', 'order_number', 'delay', 'primary_color', 'background_color', 'content_background_color'],
         ],
         'order_payment' => [
             'label_key' => 'customize.email_editor.email_type.order_payment',
-            'variables'  => ['brand_name', 'order_number'],
+            'variables'  => ['brand_name', 'order_number', 'primary_color', 'background_color', 'content_background_color'],
         ],
         'order_payment_failed' => [
             'label_key' => 'customize.email_editor.email_type.order_payment_failed',
-            'variables'  => ['brand_name', 'order_number'],
+            'variables'  => ['brand_name', 'order_number', 'primary_color', 'background_color', 'content_background_color'],
         ],
         'order_receipt' => [
             'label_key' => 'customize.email_editor.email_type.order_receipt',
-            'variables'  => ['brand_name', 'order_number'],
+            'variables'  => ['brand_name', 'order_number', 'primary_color', 'background_color', 'content_background_color'],
         ],
         'task_completed' => [
             'label_key' => 'customize.email_editor.email_type.task_completed',
-            'variables'  => ['brand_name', 'delivery_id', 'tracking_url'],
+            'variables'  => ['brand_name', 'delivery_id', 'tracking_url', 'primary_color', 'background_color', 'content_background_color'],
         ],
     ];
 
@@ -148,9 +148,24 @@ class EmailTemplateManager
      * Returns a complete MJML document to use as the starting point in the editor.
      * Uses the existing email translations for the given locale.
      */
+    /**
+     * Returns the current global email colour settings with their defaults.
+     */
+    public function getEmailStyleSettings(): array
+    {
+        return [
+            'email_primary_color'            => $this->settingsManager->get('email_primary_color')            ?? '#10ac84',
+            'email_background_color'         => $this->settingsManager->get('email_background_color')         ?? '#eeeeee',
+            'email_content_background_color' => $this->settingsManager->get('email_content_background_color') ?? '#ffffff',
+        ];
+    }
+
     public function getDefaultMjml(string $type, string $locale = 'en'): string
     {
-        $brandName = $this->settingsManager->get('brand_name') ?? '{{brand_name}}';
+        $brandName      = $this->settingsManager->get('brand_name')            ?? '{{brand_name}}';
+        $primaryColor   = $this->settingsManager->get('email_primary_color')   ?? '#10ac84';
+        $bgColor        = $this->settingsManager->get('email_background_color') ?? '#eeeeee';
+        $contentBgColor = $this->settingsManager->get('email_content_background_color') ?? '#ffffff';
 
         $t = fn(string $key, array $params = []) =>
             $this->translator->trans($key, $params, 'emails', $locale);
@@ -206,7 +221,7 @@ class EmailTemplateManager
         $ctaMjml = '';
         if ($c['cta'] !== null) {
             $ctaMjml = sprintf(
-                "\n        <mj-button font-family=\"Raleway, Arial, sans-serif\" background-color=\"#10ac84\" color=\"white\" href=\"%s\">%s</mj-button>",
+                "\n        <mj-button href=\"%s\">%s</mj-button>",
                 htmlspecialchars($c['cta']['href'], ENT_QUOTES),
                 htmlspecialchars($c['cta']['label'], ENT_QUOTES)
             );
@@ -222,9 +237,10 @@ class EmailTemplateManager
     <mj-attributes>
       <mj-text align="center" color="#555" />
       <mj-all font-family="'Open Sans', Arial, sans-serif" />
+      <mj-button background-color="{$primaryColor}" color="white" font-family="Raleway, Arial, sans-serif" />
     </mj-attributes>
   </mj-head>
-  <mj-body background-color="#eeeeee">
+  <mj-body background-color="{$bgColor}">
     <mj-section>
       <mj-column>
         <mj-text font-family="Raleway, Arial, sans-serif" align="left">
@@ -232,7 +248,7 @@ class EmailTemplateManager
         </mj-text>
       </mj-column>
     </mj-section>
-    <mj-section background-color="#ffffff">
+    <mj-section background-color="{$contentBgColor}">
       <mj-column>
         <mj-text align="left" line-height="24px">
           <h3>{$heading}</h3>
@@ -265,7 +281,13 @@ MJML;
         foreach ($locales as $l) {
             $template = $this->getCustomTemplate($type, $l);
             if ($template !== null) {
-                return $this->substituteVariables($template, $variables);
+                $styles   = $this->getEmailStyleSettings();
+                $defaults = [
+                    'primary_color'            => $styles['email_primary_color'],
+                    'background_color'         => $styles['email_background_color'],
+                    'content_background_color' => $styles['email_content_background_color'],
+                ];
+                return $this->substituteVariables($template, array_merge($defaults, $variables));
             }
         }
 
