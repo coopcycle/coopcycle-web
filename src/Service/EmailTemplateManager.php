@@ -4,56 +4,76 @@ namespace AppBundle\Service;
 
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class EmailTemplateManager
 {
     /**
      * Customer-facing email types exposed in the editor.
-     * Internal emails (admin/owner/dispatcher) are intentionally excluded.
+     * Internal emails (admin / owner / dispatcher) are intentionally excluded.
      */
     public const CUSTOMER_EMAILS = [
         'order_created' => [
-            'label'     => 'Order Confirmed (Customer)',
-            'variables' => ['brand_name', 'order_number', 'order_url'],
+            'label_key' => 'customize.email_editor.email_type.order_created',
+            'variables'  => ['brand_name', 'order_number', 'order_url'],
         ],
         'order_accepted' => [
-            'label'     => 'Order Accepted',
-            'variables' => ['brand_name', 'order_number', 'order_url'],
+            'label_key' => 'customize.email_editor.email_type.order_accepted',
+            'variables'  => ['brand_name', 'order_number', 'order_url'],
         ],
         'order_cancelled' => [
-            'label'     => 'Order Cancelled',
-            'variables' => ['brand_name', 'order_number'],
+            'label_key' => 'customize.email_editor.email_type.order_cancelled',
+            'variables'  => ['brand_name', 'order_number'],
         ],
         'order_delayed' => [
-            'label'     => 'Order Delayed',
-            'variables' => ['brand_name', 'order_number', 'delay'],
+            'label_key' => 'customize.email_editor.email_type.order_delayed',
+            'variables'  => ['brand_name', 'order_number', 'delay'],
         ],
         'order_payment' => [
-            'label'     => 'Payment Confirmation',
-            'variables' => ['brand_name', 'order_number'],
+            'label_key' => 'customize.email_editor.email_type.order_payment',
+            'variables'  => ['brand_name', 'order_number'],
         ],
         'order_payment_failed' => [
-            'label'     => 'Payment Failed',
-            'variables' => ['brand_name', 'order_number'],
+            'label_key' => 'customize.email_editor.email_type.order_payment_failed',
+            'variables'  => ['brand_name', 'order_number'],
         ],
         'order_receipt' => [
-            'label'     => 'Order Receipt',
-            'variables' => ['brand_name', 'order_number'],
+            'label_key' => 'customize.email_editor.email_type.order_receipt',
+            'variables'  => ['brand_name', 'order_number'],
         ],
         'task_completed' => [
-            'label'     => 'Delivery Completed / Failed',
-            'variables' => ['brand_name', 'delivery_id', 'tracking_url'],
+            'label_key' => 'customize.email_editor.email_type.task_completed',
+            'variables'  => ['brand_name', 'delivery_id', 'tracking_url'],
         ],
+    ];
+
+    public const SUPPORTED_LOCALES = [
+        'en' => 'English',
+        'fr' => 'Français',
+        'es' => 'Español',
     ];
 
     public function __construct(
         private Filesystem $emailTemplatesFilesystem,
         private SettingsManager $settingsManager,
+        private TranslatorInterface $translator,
     ) {}
 
-    public function getEmailTypes(): array
+    public function getEmailTypes(string $locale = 'en'): array
     {
-        return self::CUSTOMER_EMAILS;
+        $types = [];
+        foreach (self::CUSTOMER_EMAILS as $type => $meta) {
+            $types[$type] = [
+                'label'     => $this->translator->trans($meta['label_key'], [], 'messages', $locale),
+                'variables' => $meta['variables'],
+            ];
+        }
+        return $types;
+    }
+
+    public function getSupportedLocales(): array
+    {
+        return self::SUPPORTED_LOCALES;
     }
 
     public function isValidType(string $type): bool
@@ -61,50 +81,63 @@ class EmailTemplateManager
         return isset(self::CUSTOMER_EMAILS[$type]);
     }
 
+    public function isValidLocale(string $locale): bool
+    {
+        return isset(self::SUPPORTED_LOCALES[$locale]);
+    }
+
+    private function storagePath(string $type, string $locale): string
+    {
+        return $locale . '/' . $type . '.mjml';
+    }
+
     /**
-     * Returns the custom MJML stored in S3, or null if no customisation exists.
+     * Returns the custom MJML stored in S3 for the given type+locale,
+     * or null if no customisation exists.
      */
-    public function getCustomTemplate(string $type): ?string
+    public function getCustomTemplate(string $type, string $locale = 'en'): ?string
     {
         if (!$this->isValidType($type)) {
             return null;
         }
 
         try {
-            if ($this->emailTemplatesFilesystem->fileExists($type . '.mjml')) {
-                return $this->emailTemplatesFilesystem->read($type . '.mjml');
+            $path = $this->storagePath($type, $locale);
+            if ($this->emailTemplatesFilesystem->fileExists($path)) {
+                return $this->emailTemplatesFilesystem->read($path);
             }
         } catch (FilesystemException $e) {
-            // fall through to default
+            // fall through
         }
 
         return null;
     }
 
     /**
-     * Saves a custom MJML template for the given type to S3.
+     * Saves a custom MJML template for the given type+locale to S3.
      */
-    public function saveTemplate(string $type, string $mjml): void
+    public function saveTemplate(string $type, string $mjml, string $locale = 'en'): void
     {
         if (!$this->isValidType($type)) {
             throw new \InvalidArgumentException(sprintf('Unknown email type: %s', $type));
         }
 
-        $this->emailTemplatesFilesystem->write($type . '.mjml', $mjml);
+        $this->emailTemplatesFilesystem->write($this->storagePath($type, $locale), $mjml);
     }
 
     /**
-     * Deletes the custom template so the default Twig template is used again.
+     * Deletes the custom template for the given type+locale so the default is used again.
      */
-    public function deleteTemplate(string $type): void
+    public function deleteTemplate(string $type, string $locale = 'en'): void
     {
         if (!$this->isValidType($type)) {
             return;
         }
 
         try {
-            if ($this->emailTemplatesFilesystem->fileExists($type . '.mjml')) {
-                $this->emailTemplatesFilesystem->delete($type . '.mjml');
+            $path = $this->storagePath($type, $locale);
+            if ($this->emailTemplatesFilesystem->fileExists($path)) {
+                $this->emailTemplatesFilesystem->delete($path);
             }
         } catch (FilesystemException $e) {
             // ignore
@@ -112,66 +145,74 @@ class EmailTemplateManager
     }
 
     /**
-     * Returns a complete MJML document to use as the starting point in the editor
-     * when no custom template has been saved yet.
+     * Returns a complete MJML document to use as the starting point in the editor.
+     * Uses the existing email translations for the given locale.
      */
-    public function getDefaultMjml(string $type): string
+    public function getDefaultMjml(string $type, string $locale = 'en'): string
     {
         $brandName = $this->settingsManager->get('brand_name') ?? '{{brand_name}}';
 
+        $t = fn(string $key, array $params = []) =>
+            $this->translator->trans($key, $params, 'emails', $locale);
+
         $contents = [
             'order_created' => [
-                'heading' => 'Order Confirmed!',
-                'body'    => 'Thank you for your order <strong>#{{order_number}}</strong>! We have received it and it is being processed.',
-                'cta'     => ['label' => 'View Order', 'href' => '{{order_url}}'],
+                'heading' => $t('order.created.subject', ['%order.number%' => '{{order_number}}']),
+                'body'    => $t('order.created.body'),
+                'cta'     => ['label' => $t('order.view'), 'href' => '{{order_url}}'],
             ],
             'order_accepted' => [
-                'heading' => 'Order Accepted!',
-                'body'    => 'Great news! Your order <strong>#{{order_number}}</strong> has been accepted and is being prepared.',
-                'cta'     => ['label' => 'View Order', 'href' => '{{order_url}}'],
+                'heading' => $t('order.accepted.subject', ['%order.number%' => '{{order_number}}']),
+                'body'    => $t('order.accepted.body.intro'),
+                'cta'     => ['label' => $t('order.view'), 'href' => '{{order_url}}'],
             ],
             'order_cancelled' => [
-                'heading' => 'Order Cancelled',
-                'body'    => 'We\'re sorry to inform you that your order <strong>#{{order_number}}</strong> has been cancelled. Please contact us if you have any questions.',
+                'heading' => $t('order.cancelled.subject', ['%order.number%' => '{{order_number}}']),
+                'body'    => $t('order.cancelled.body.intro'),
                 'cta'     => null,
             ],
             'order_delayed' => [
-                'heading' => 'Your Order Is Running Late',
-                'body'    => 'We wanted to let you know that your order <strong>#{{order_number}}</strong> is running approximately <strong>{{delay}} minutes</strong> late. We apologise for the inconvenience.',
+                'heading' => $t('order.delayed.subject', ['%order.number%' => '{{order_number}}']),
+                'body'    => $t('order.delayed.body', ['%delay%' => '{{delay}}']),
                 'cta'     => null,
             ],
             'order_payment' => [
-                'heading' => 'Payment Confirmed',
-                'body'    => 'Your payment for order <strong>#{{order_number}}</strong> has been confirmed. Thank you!',
+                'heading' => $t('order.payment.subject', ['%order.number%' => '{{order_number}}']),
+                'body'    => $t('order.payment.body'),
                 'cta'     => null,
             ],
             'order_payment_failed' => [
-                'heading' => 'Payment Failed',
-                'body'    => 'Unfortunately, the payment for your order <strong>#{{order_number}}</strong> has failed. Please try again or contact us for help.',
+                'heading' => $t('order.payment_failed.subject', ['%order.number%' => '{{order_number}}']),
+                'body'    => $t('order.payment_failed.body'),
                 'cta'     => null,
             ],
             'order_receipt' => [
-                'heading' => 'Your Receipt',
-                'body'    => 'Please find attached the receipt for your order <strong>#{{order_number}}</strong>. Thank you for choosing ' . $brandName . '.',
+                'heading' => $t('order.receipt.subject', ['%order.number%' => '{{order_number}}']),
+                'body'    => $t('order.receipt.body'),
                 'cta'     => null,
             ],
             'task_completed' => [
-                'heading' => 'Delivery Update',
-                'body'    => 'Your delivery <strong>#{{delivery_id}}</strong> status has been updated.',
-                'cta'     => ['label' => 'Track Delivery', 'href' => '{{tracking_url}}'],
+                'heading' => $t('task.dropoff.done.subject', ['%id%' => '{{delivery_id}}']),
+                'body'    => $t('task.dropoff.done.body', ['%id%' => '{{delivery_id}}', '%address%' => '']),
+                'cta'     => null,
             ],
         ];
 
-        $c = $contents[$type] ?? ['heading' => 'Notification', 'body' => '', 'cta' => null];
+        $c = $contents[$type] ?? ['heading' => '', 'body' => '', 'cta' => null];
+
+        // Escape body for MJML (strip newlines that break tag nesting)
+        $body = trim(preg_replace('/\s+/', ' ', $c['body']));
 
         $ctaMjml = '';
         if ($c['cta'] !== null) {
             $ctaMjml = sprintf(
                 "\n        <mj-button font-family=\"Raleway, Arial, sans-serif\" background-color=\"#10ac84\" color=\"white\" href=\"%s\">%s</mj-button>",
-                $c['cta']['href'],
-                $c['cta']['label']
+                htmlspecialchars($c['cta']['href'], ENT_QUOTES),
+                htmlspecialchars($c['cta']['label'], ENT_QUOTES)
             );
         }
+
+        $heading = htmlspecialchars($c['heading'], ENT_QUOTES);
 
         return <<<MJML
 <mjml>
@@ -194,8 +235,8 @@ class EmailTemplateManager
     <mj-section background-color="#ffffff">
       <mj-column>
         <mj-text align="left" line-height="24px">
-          <h3>{$c['heading']}</h3>
-          <p>{$c['body']}</p>
+          <h3>{$heading}</h3>
+          <p>{$body}</p>
         </mj-text>{$ctaMjml}
       </mj-column>
     </mj-section>
@@ -213,22 +254,32 @@ MJML;
 
     /**
      * Renders a stored custom MJML by substituting the given variable map.
-     * Returns null if no custom template is stored for the given type.
+     * Falls back to the next locale in the chain (given locale → 'en' → null).
+     * Returns null if no custom template exists for this type in any fallback locale.
      */
-    public function renderCustomTemplate(string $type, array $variables): ?string
+    public function renderCustomTemplate(string $type, array $variables, string $locale = 'en'): ?string
     {
-        $template = $this->getCustomTemplate($type);
-        if ($template === null) {
-            return null;
+        // Try requested locale first, then fall back to English
+        $locales = array_unique([$locale, 'en']);
+
+        foreach ($locales as $l) {
+            $template = $this->getCustomTemplate($type, $l);
+            if ($template !== null) {
+                return $this->substituteVariables($template, $variables);
+            }
         }
 
+        return null;
+    }
+
+    private function substituteVariables(string $template, array $variables): string
+    {
         $search  = [];
         $replace = [];
         foreach ($variables as $key => $value) {
             $search[]  = '{{' . $key . '}}';
             $replace[] = (string) $value;
         }
-
         return str_replace($search, $replace, $template);
     }
 }

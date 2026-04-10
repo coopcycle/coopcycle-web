@@ -10,11 +10,22 @@
 <div id="email-editor"
      class="ee-layout"
      data-email-types="{{ email_types | json_encode | e('html_attr') }}"
-     data-api-url="{{ path('admin_customize_email_template', {type: '__TYPE__'}) }}">
+     data-supported-locales="{{ supported_locales | json_encode | e('html_attr') }}"
+     data-api-url="{{ path('admin_customize_email_template', {type: '__TYPE__'}) }}"
+     data-i18n="{{ {
+       save:           'customize.email_editor.save'           | trans,
+       reset:          'customize.email_editor.reset'          | trans,
+       status_default: 'customize.email_editor.status.default' | trans,
+       status_custom:  'customize.email_editor.status.custom'  | trans,
+       variables:      'customize.email_editor.variables'      | trans
+     } | json_encode | e('html_attr') }}">
 
   {# ── Sidebar: list of editable email types ── #}
   <aside class="ee-sidebar">
-    <div class="ee-sidebar-header">Emails</div>
+    <div class="ee-sidebar-header">
+      {# Locale tabs rendered by JS #}
+      <div id="ee-locale-tabs" class="ee-locale-tabs"></div>
+    </div>
     <div id="ee-sidebar"></div>
   </aside>
 
@@ -22,18 +33,18 @@
   <div class="ee-main">
 
     <div class="ee-toolbar">
-      <span class="ee-toolbar-title">GrapeJS MJML Editor</span>
-      <span id="ee-status" class="ee-status ee-status--info">Select an email on the left to start editing.</span>
+      <span class="ee-toolbar-title">MJML Email Editor</span>
+      <span id="ee-status" class="ee-status ee-status--info"></span>
       <button id="ee-reset" class="btn btn-default btn-sm" type="button" disabled>
-        Reset to default
+        <span id="ee-reset-label"></span>
       </button>
       <button id="ee-save" class="btn btn-success btn-sm" type="button" disabled>
-        Save
+        <span id="ee-save-label"></span>
       </button>
     </div>
 
     <div class="ee-variables-bar">
-      <strong>Available variables:</strong>
+      <strong id="ee-variables-label"></strong>
       <span id="ee-variables"><em>—</em></span>
     </div>
 

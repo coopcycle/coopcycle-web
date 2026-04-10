@@ -2578,15 +2578,23 @@ class AdminController extends AbstractController
             throw $this->createNotFoundException();
         }
 
+        $supportedLocales = $emailTemplateManager->getSupportedLocales();
+
+        // Build email type metadata for every supported locale so the JS knows
+        // which locale×type combinations already have a custom template.
         $emailTypes = [];
-        foreach ($emailTemplateManager->getEmailTypes() as $type => $meta) {
-            $emailTypes[$type] = array_merge($meta, [
-                'is_custom' => $emailTemplateManager->getCustomTemplate($type) !== null,
-            ]);
+        foreach ($supportedLocales as $locale => $localeLabel) {
+            foreach ($emailTemplateManager->getEmailTypes($locale) as $type => $meta) {
+                $emailTypes[$type]['label_by_locale'][$locale] = $meta['label'];
+                $emailTypes[$type]['variables']                = $meta['variables'];
+                $emailTypes[$type]['is_custom_by_locale'][$locale] =
+                    $emailTemplateManager->getCustomTemplate($type, $locale) !== null;
+            }
         }
 
         return $this->render('admin/customize_emails.html.twig', $this->auth([
-            'email_types' => $emailTypes,
+            'email_types'       => $emailTypes,
+            'supported_locales' => $supportedLocales,
         ]));
     }
 
@@ -2602,6 +2610,11 @@ class AdminController extends AbstractController
             return $this->json(['error' => 'Unknown email type'], 404);
         }
 
+        $locale = $request->query->get('locale', 'en');
+        if (!$emailTemplateManager->isValidLocale($locale)) {
+            $locale = 'en';
+        }
+
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             $mjml = trim($data['mjml'] ?? '');
@@ -2610,22 +2623,22 @@ class AdminController extends AbstractController
                 return $this->json(['error' => 'Empty template'], 400);
             }
 
-            $emailTemplateManager->saveTemplate($type, $mjml);
+            $emailTemplateManager->saveTemplate($type, $mjml, $locale);
 
             return $this->json(['success' => true]);
         }
 
         if ($request->isMethod('DELETE')) {
-            $emailTemplateManager->deleteTemplate($type);
+            $emailTemplateManager->deleteTemplate($type, $locale);
 
             return $this->json(['success' => true]);
         }
 
-        // GET: return current MJML (custom from S3 or built-in default)
-        $custom = $emailTemplateManager->getCustomTemplate($type);
+        // GET: return current MJML for the requested locale
+        $custom = $emailTemplateManager->getCustomTemplate($type, $locale);
 
         return $this->json([
-            'mjml'      => $custom ?? $emailTemplateManager->getDefaultMjml($type),
+            'mjml'      => $custom ?? $emailTemplateManager->getDefaultMjml($type, $locale),
             'is_custom' => $custom !== null,
         ]);
     }

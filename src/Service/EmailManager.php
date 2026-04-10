@@ -18,6 +18,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Environment as TwigEnvironment;
 
@@ -42,7 +43,8 @@ class EmailManager
         $transactionalAddress,
         private EmailTemplateManager $emailTemplateManager,
         private UrlGeneratorInterface $urlGenerator,
-        private Hashids $hashids16)
+        private Hashids $hashids16,
+        private RequestStack $requestStack)
     {
         $this->mailer = $mailer;
         $this->templating = $templating;
@@ -120,15 +122,23 @@ class EmailManager
         $this->send($message->to(...$to));
     }
 
+    private function currentLocale(): string
+    {
+        return $this->requestStack->getCurrentRequest()?->getLocale() ?? 'en';
+    }
+
     /**
      * Renders a custom MJML template stored in S3, substituting variables.
-     * Returns null if no custom template is configured for the given type.
+     * Uses the current request locale with fallback to English.
+     * Returns null if no custom template is configured for this type in any fallback locale.
      */
     private function renderCustom(string $type, array $variables): ?string
     {
-        $mjml = $this->emailTemplateManager->renderCustomTemplate($type, array_merge([
-            'brand_name' => $this->settingsManager->get('brand_name'),
-        ], $variables));
+        $mjml = $this->emailTemplateManager->renderCustomTemplate(
+            $type,
+            array_merge(['brand_name' => $this->settingsManager->get('brand_name')], $variables),
+            $this->currentLocale()
+        );
 
         if ($mjml === null) {
             return null;

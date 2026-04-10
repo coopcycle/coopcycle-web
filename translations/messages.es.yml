@@ -1778,3 +1778,19 @@ promotions.human_readable.rule_items_total_above: "a partir de %amount%"
 promotions.human_readable.rule_cart_quantity: "a partir de %count% artículos comprados"
 promotions.human_readable.coupon: "%description% with coupon %code%"
 promotions.human_readable.text: "%name%: %description%"
+
+# Editor de emails
+customize.emails: Personalizar correos electrónicos
+customize.email_editor.email_type.order_created: Pedido confirmado (cliente)
+customize.email_editor.email_type.order_accepted: Pedido aceptado
+customize.email_editor.email_type.order_cancelled: Pedido cancelado
+customize.email_editor.email_type.order_delayed: Pedido retrasado
+customize.email_editor.email_type.order_payment: Confirmación de pago
+customize.email_editor.email_type.order_payment_failed: Pago fallido
+customize.email_editor.email_type.order_receipt: Recibo del pedido
+customize.email_editor.email_type.task_completed: Entrega completada / fallida
+customize.email_editor.save: Guardar
+customize.email_editor.reset: Restablecer por defecto
+customize.email_editor.status.default: Plantilla por defecto — guarde para personalizar
+customize.email_editor.status.custom: Plantilla personalizada
+customize.email_editor.variables: Variables disponibles
