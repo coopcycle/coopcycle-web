@@ -1,0 +1,54 @@
+{% extends "admin.html.twig" %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_customize') }}">{% trans %}adminDashboard.customize.title{% endtrans %}</a></li>
+<li>{% trans %}customize.emails{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+<div id="email-editor"
+     class="ee-layout"
+     data-email-types="{{ email_types | json_encode | e('html_attr') }}"
+     data-api-url="{{ path('admin_customize_email_template', {type: '__TYPE__'}) }}">
+
+  {# ── Sidebar: list of editable email types ── #}
+  <aside class="ee-sidebar">
+    <div class="ee-sidebar-header">Emails</div>
+    <div id="ee-sidebar"></div>
+  </aside>
+
+  {# ── Main editor area ── #}
+  <div class="ee-main">
+
+    <div class="ee-toolbar">
+      <span class="ee-toolbar-title">GrapeJS MJML Editor</span>
+      <span id="ee-status" class="ee-status ee-status--info">Select an email on the left to start editing.</span>
+      <button id="ee-reset" class="btn btn-default btn-sm" type="button" disabled>
+        Reset to default
+      </button>
+      <button id="ee-save" class="btn btn-success btn-sm" type="button" disabled>
+        Save
+      </button>
+    </div>
+
+    <div class="ee-variables-bar">
+      <strong>Available variables:</strong>
+      <span id="ee-variables"><em>—</em></span>
+    </div>
+
+    <div id="ee-canvas"></div>
+
+  </div>
+
+</div>
+
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('email-editor') }}
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('email-editor') }}
+{% endblock %}

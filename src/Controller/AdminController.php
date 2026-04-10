@@ -150,6 +150,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 use Twig\Environment as TwigEnvironment;
 use phpcent\Client as CentrifugoClient;
+use AppBundle\Service\EmailTemplateManager;
 
 class AdminController extends AbstractController
 {
@@ -2567,6 +2568,66 @@ class AdminController extends AbstractController
             'delivery_forms' => $deliveryForms,
             'shop_collections' => $shopCollections,
         ]));
+    }
+
+    public function customizeEmailsAction(Request $request, EmailTemplateManager $emailTemplateManager)
+    {
+        $isDemo = $this->getParameter('is_demo');
+
+        if ($isDemo) {
+            throw $this->createNotFoundException();
+        }
+
+        $emailTypes = [];
+        foreach ($emailTemplateManager->getEmailTypes() as $type => $meta) {
+            $emailTypes[$type] = array_merge($meta, [
+                'is_custom' => $emailTemplateManager->getCustomTemplate($type) !== null,
+            ]);
+        }
+
+        return $this->render('admin/customize_emails.html.twig', $this->auth([
+            'email_types' => $emailTypes,
+        ]));
+    }
+
+    public function emailTemplateAction(string $type, Request $request, EmailTemplateManager $emailTemplateManager): JsonResponse
+    {
+        $isDemo = $this->getParameter('is_demo');
+
+        if ($isDemo) {
+            return $this->json(['error' => 'Not available in demo'], 403);
+        }
+
+        if (!$emailTemplateManager->isValidType($type)) {
+            return $this->json(['error' => 'Unknown email type'], 404);
+        }
+
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            $mjml = trim($data['mjml'] ?? '');
+
+            if (empty($mjml)) {
+                return $this->json(['error' => 'Empty template'], 400);
+            }
+
+            $emailTemplateManager->saveTemplate($type, $mjml);
+
+            return $this->json(['success' => true]);
+        }
+
+        if ($request->isMethod('DELETE')) {
+            $emailTemplateManager->deleteTemplate($type);
+
+            return $this->json(['success' => true]);
+        }
+
+        // GET: return current MJML (custom from S3 or built-in default)
+        $custom = $emailTemplateManager->getCustomTemplate($type);
+
+        return $this->json([
+            'mjml'      => $custom ?? $emailTemplateManager->getDefaultMjml($type),
+            'is_custom' => $custom !== null,
+        ]);
     }
 
     private function handleHubForm(Hub $hub, Request $request)

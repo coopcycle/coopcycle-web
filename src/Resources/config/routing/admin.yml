@@ -721,6 +721,19 @@ admin_customize_homepage:
         layout: 'admin.html.twig'
     methods:  [ GET, POST ]
 
+admin_customize_emails:
+    path: /admin/customize/emails
+    defaults:
+        _controller: AppBundle\Controller\AdminController::customizeEmailsAction
+        layout: 'admin.html.twig'
+    methods:  [ GET ]
+
+admin_customize_email_template:
+    path: /admin/customize/emails/{type}
+    defaults:
+        _controller: AppBundle\Controller\AdminController::emailTemplateAction
+    methods:  [ GET, POST, DELETE ]
+
 admin_customize:
     path: /admin/customize
     defaults:

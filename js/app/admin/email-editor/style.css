@@ -1,0 +1,177 @@
+/* ─── Email Editor Layout ────────────────────────────────────────────────── */
+
+.ee-layout {
+  display: flex;
+  height: calc(100vh - 120px);
+  min-height: 600px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ─── Sidebar ────────────────────────────────────────────────────────────── */
+
+.ee-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: #f8f9fa;
+  border-right: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.ee-sidebar-header {
+  padding: 12px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6c757d;
+  border-bottom: 1px solid #ddd;
+  background: #fff;
+}
+
+.ee-email-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 14px;
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  font-size: 13px;
+  color: #333;
+  gap: 6px;
+  transition: background 0.1s;
+}
+
+.ee-email-btn:hover {
+  background: #e9ecef;
+}
+
+.ee-email-btn.is-active {
+  background: #10ac84;
+  color: #fff;
+}
+
+.ee-email-btn.is-active .ee-badge {
+  background: rgba(255,255,255,0.3);
+  color: #fff;
+}
+
+.ee-email-label {
+  flex: 1;
+  line-height: 1.3;
+}
+
+.ee-badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: #d4edda;
+  color: #155724;
+  white-space: nowrap;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* ─── Main area ──────────────────────────────────────────────────────────── */
+
+.ee-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* ─── Toolbar ────────────────────────────────────────────────────────────── */
+
+.ee-toolbar {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.ee-toolbar-title {
+  font-size: 13px;
+  color: #6c757d;
+  flex: 1;
+}
+
+.ee-status {
+  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+
+.ee-status--info    { color: #6c757d; }
+.ee-status--success { color: #155724; background: #d4edda; }
+.ee-status--error   { color: #721c24; background: #f8d7da; }
+
+/* ─── Variables panel ────────────────────────────────────────────────────── */
+
+.ee-variables-bar {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  background: #fffdf0;
+  border-bottom: 1px solid #ffeaa7;
+  font-size: 12px;
+  gap: 6px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.ee-variables-bar strong {
+  color: #856404;
+  white-space: nowrap;
+}
+
+.ee-var {
+  display: inline-block;
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-family: monospace;
+  font-size: 11px;
+  color: #664d03;
+  cursor: copy;
+  user-select: all;
+}
+
+.ee-var:hover {
+  background: #ffc107;
+}
+
+/* ─── GrapeJS canvas ─────────────────────────────────────────────────────── */
+
+#ee-canvas {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+#ee-canvas .gjs-editor {
+  height: 100%;
+}
+
+#ee-canvas .gjs-cv-canvas {
+  top: 0;
+  height: 100%;
+  width: 100%;
+}
+
+/* Override grapesjs default height */
+.gjs-editor-cont {
+  height: 100% !important;
+}
