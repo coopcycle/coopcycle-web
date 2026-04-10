@@ -15,31 +15,31 @@ class EmailTemplateManager
     public const CUSTOMER_EMAILS = [
         'order_created' => [
             'label_key' => 'customize.email_editor.email_type.order_created',
-            'variables'  => ['brand_name', 'order_number', 'order_url', 'primary_color', 'background_color', 'content_background_color'],
+            'variables'  => ['brand_name', 'order_number', 'order_url'],
         ],
         'order_accepted' => [
             'label_key' => 'customize.email_editor.email_type.order_accepted',
-            'variables'  => ['brand_name', 'order_number', 'order_url', 'primary_color', 'background_color', 'content_background_color'],
+            'variables'  => ['brand_name', 'order_number', 'order_url'],
         ],
         'order_cancelled' => [
             'label_key' => 'customize.email_editor.email_type.order_cancelled',
-            'variables'  => ['brand_name', 'order_number', 'primary_color', 'background_color', 'content_background_color'],
+            'variables'  => ['brand_name', 'order_number'],
         ],
         'order_delayed' => [
             'label_key' => 'customize.email_editor.email_type.order_delayed',
-            'variables'  => ['brand_name', 'order_number', 'delay', 'primary_color', 'background_color', 'content_background_color'],
+            'variables'  => ['brand_name', 'order_number', 'delay'],
         ],
         'order_payment' => [
             'label_key' => 'customize.email_editor.email_type.order_payment',
-            'variables'  => ['brand_name', 'order_number', 'primary_color', 'background_color', 'content_background_color'],
+            'variables'  => ['brand_name', 'order_number'],
         ],
         'order_receipt' => [
             'label_key' => 'customize.email_editor.email_type.order_receipt',
-            'variables'  => ['brand_name', 'order_number', 'primary_color', 'background_color', 'content_background_color'],
+            'variables'  => ['brand_name', 'order_number'],
         ],
         'task_completed' => [
             'label_key' => 'customize.email_editor.email_type.task_completed',
-            'variables'  => ['brand_name', 'delivery_id', 'tracking_url', 'primary_color', 'background_color', 'content_background_color'],
+            'variables'  => ['brand_name', 'delivery_id', 'tracking_url'],
         ],
     ];
 
