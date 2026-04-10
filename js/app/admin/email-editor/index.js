@@ -160,11 +160,17 @@ function initEditor(mjml) {
 
   editor = grapesjs.init({
     container: '#ee-canvas',
+    height: '100%',
     plugins: [mjmlPlugin],
-    pluginsOpts: { [mjmlPlugin]: {} },
+    pluginsOpts: {
+      [mjmlPlugin]: {
+        // Keep GrapeJS's own style manager reset so MJML colour/font
+        // properties appear in the Styles panel on the right.
+        resetStyleManager: true,
+      },
+    },
     storageManager: false,
     components: mjml,
-    panels: { defaults: [] },
   })
 }
 

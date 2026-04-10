@@ -177,25 +177,39 @@
   background: #ffc107;
 }
 
-/* ─── GrapeJS canvas ─────────────────────────────────────────────────────── */
+/* ─── GrapeJS canvas wrapper ─────────────────────────────────────────────── */
 
+/*
+ * #ee-canvas fills the remaining vertical space inside .ee-main.
+ * GrapeJS is told height:'100%' at init time, so it sizes itself to this.
+ * We must NOT override .gjs-cv-canvas positioning or GrapeJS's right panel
+ * (Style Manager / Traits) will disappear behind the canvas.
+ */
 #ee-canvas {
   flex: 1;
-  overflow: hidden;
+  min-height: 0;   /* required so flex child can shrink below its content */
   position: relative;
 }
 
-#ee-canvas .gjs-editor {
+/* Make the root GrapeJS wrapper fill our container */
+#ee-canvas > .gjs-editor-cont,
+#ee-canvas > .gjs-editor-cont > .gjs-editor {
   height: 100%;
+}
+
+/* ─── GrapeJS theme tweaks ───────────────────────────────────────────────── */
+
+/* Tighten the top GrapeJS toolbar so it doesn't compete with our own toolbar */
+#ee-canvas .gjs-pn-panel.gjs-pn-options {
+  right: 0;
+}
+
+/* Give the blocks/styles right panel a max-width cap */
+#ee-canvas .gjs-pn-views-container {
+  width: 260px;
 }
 
 #ee-canvas .gjs-cv-canvas {
-  top: 0;
-  height: 100%;
-  width: 100%;
-}
-
-/* Override grapesjs default height */
-.gjs-editor-cont {
-  height: 100% !important;
+  /* keep GrapeJS's own top offset (for its toolbar) but let width adapt */
+  width: calc(100% - 260px);
 }
