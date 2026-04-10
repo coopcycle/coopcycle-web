@@ -9,6 +9,7 @@
 
 <div id="email-editor"
      class="ee-layout"
+     data-locale="{{ app.request.locale }}"
      data-email-types="{{ email_types | json_encode | e('html_attr') }}"
      data-supported-locales="{{ supported_locales | json_encode | e('html_attr') }}"
      data-api-url="{{ path('admin_customize_email_template', {type: '__TYPE__'}) }}"

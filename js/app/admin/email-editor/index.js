@@ -5,6 +5,19 @@ import 'grapesjs/dist/css/grapes.min.css'
 
 import './style.css'
 
+// GrapeJS core locale messages (keyed by locale code)
+import gjsEn from 'grapesjs/locale/en'
+import gjsFr from 'grapesjs/locale/fr'
+import gjsEs from 'grapesjs/locale/es'
+
+// grapesjs-mjml locale messages
+import mjmlEn from 'grapesjs-mjml/locale/en'
+import mjmlFr from 'grapesjs-mjml/locale/fr'
+import mjmlEs from 'grapesjs-mjml/locale/es'
+
+const GJS_MESSAGES = { en: gjsEn, fr: gjsFr, es: gjsEs }
+const MJML_MESSAGES = { en: mjmlEn, fr: mjmlFr, es: mjmlEs }
+
 // ─── Bootstrap: read config from DOM ─────────────────────────────────────────
 
 const root = document.getElementById('email-editor')
@@ -15,6 +28,8 @@ const supportedLocales  = JSON.parse(root.dataset.supportedLocales)  // { en: 'E
 const i18n              = JSON.parse(root.dataset.i18n)             // server-translated UI strings
 const apiBaseUrl        = root.dataset.apiUrl                        // /admin/customize/emails/__TYPE__
 const styleSettingsUrl  = root.dataset.styleSettingsUrl             // /admin/customize/emails/settings
+// The Symfony app locale (user's own UI language), used for GrapeJS UI strings
+const appLocale         = root.dataset.locale || 'en'
 
 // ─── State ────────────────────────────────────────────────────────────────────
 
@@ -287,6 +302,8 @@ function initEditor(mjml) {
 
   document.getElementById('ee-canvas').innerHTML = ''
 
+  const locale = appLocale in GJS_MESSAGES ? appLocale : 'en'
+
   editor = grapesjs.init({
     container: '#ee-canvas',
     height: '100%',
@@ -296,6 +313,15 @@ function initEditor(mjml) {
         // Keep GrapeJS's own style manager reset so MJML colour/font
         // properties appear in the Styles panel on the right.
         resetStyleManager: true,
+      },
+    },
+    i18n: {
+      locale,
+      detectLocale: false,
+      localeFallback: 'en',
+      messages: {
+        en: { ...GJS_MESSAGES.en, ...(MJML_MESSAGES.en ?? {}) },
+        [locale]: { ...GJS_MESSAGES[locale], ...(MJML_MESSAGES[locale] ?? {}) },
       },
     },
     storageManager: false,
