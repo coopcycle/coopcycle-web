@@ -177,6 +177,82 @@
   background: #ffc107;
 }
 
+/* ─── Global Style sidebar entry ────────────────────────────────────────── */
+
+.ee-global-style-btn {
+  font-weight: 600;
+  color: #495057;
+}
+
+.ee-global-style-btn .ee-style-icon {
+  font-size: 15px;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.ee-global-style-btn.is-active .ee-style-icon {
+  opacity: 1;
+}
+
+.ee-sidebar-divider {
+  height: 1px;
+  background: #ddd;
+  margin: 4px 0;
+}
+
+/* ─── Global Style panel ─────────────────────────────────────────────────── */
+
+.ee-style-panel {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 24px;
+  background: #fff;
+}
+
+.ee-style-panel-inner {
+  max-width: 360px;
+}
+
+.ee-style-panel-title {
+  margin: 0 0 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+}
+
+.ee-style-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.ee-style-field label {
+  font-size: 13px;
+  color: #555;
+  flex: 1;
+}
+
+.ee-style-field input[type="color"] {
+  width: 48px;
+  height: 32px;
+  padding: 2px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  background: none;
+  flex-shrink: 0;
+}
+
+.ee-style-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
 /* ─── GrapeJS canvas wrapper ─────────────────────────────────────────────── */
 
 /*

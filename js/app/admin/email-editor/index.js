@@ -22,6 +22,7 @@ let currentType   = null
 let currentLocale = Object.keys(supportedLocales)[0]
 let editor        = null
 let isSaving      = false
+let styleView     = false   // true when the Global Style panel is shown
 
 // Track custom status per locale per type (initialised from server data)
 // Shape: { [type]: { [locale]: boolean } }
@@ -54,6 +55,24 @@ function setActiveLocaleTab(locale) {
 
 function buildSidebar() {
   const sidebar = document.getElementById('ee-sidebar')
+
+  // Global Style button — always at the top
+  const styleBtn = document.createElement('button')
+  styleBtn.type = 'button'
+  styleBtn.id = 'ee-global-style-btn'
+  styleBtn.className = 'ee-email-btn ee-global-style-btn'
+  styleBtn.innerHTML = `
+    <span class="ee-email-label">${i18n.global_style}</span>
+    <span class="ee-style-icon">&#9881;</span>
+  `
+  styleBtn.addEventListener('click', () => showStylePanel())
+  sidebar.appendChild(styleBtn)
+
+  // Divider
+  const divider = document.createElement('div')
+  divider.className = 'ee-sidebar-divider'
+  sidebar.appendChild(divider)
+
   for (const [type, meta] of Object.entries(emailTypes)) {
     const btn = document.createElement('button')
     btn.type = 'button'
@@ -121,6 +140,115 @@ function setStatus(msg, type = 'info') {
   el.className = 'ee-status ee-status--' + type
 }
 
+// ─── Global Style panel ───────────────────────────────────────────────────────
+
+function buildStylePanel() {
+  const panel = document.createElement('div')
+  panel.id = 'ee-style-panel'
+  panel.className = 'ee-style-panel'
+  panel.style.display = 'none'
+  panel.innerHTML = `
+    <div class="ee-style-panel-inner">
+      <h4 class="ee-style-panel-title">${i18n.global_style}</h4>
+      <div class="ee-style-field">
+        <label for="ee-color-primary">${i18n.primary_color}</label>
+        <input type="color" id="ee-color-primary" value="#10ac84">
+      </div>
+      <div class="ee-style-field">
+        <label for="ee-color-bg">${i18n.background_color}</label>
+        <input type="color" id="ee-color-bg" value="#eeeeee">
+      </div>
+      <div class="ee-style-field">
+        <label for="ee-color-content-bg">${i18n.content_background_color}</label>
+        <input type="color" id="ee-color-content-bg" value="#ffffff">
+      </div>
+      <div class="ee-style-actions">
+        <button id="ee-save-style" class="btn btn-success btn-sm" type="button">
+          ${i18n.save_style}
+        </button>
+        <span id="ee-style-status" class="ee-status ee-status--info"></span>
+      </div>
+    </div>
+  `
+  document.getElementById('ee-canvas').insertAdjacentElement('afterend', panel)
+}
+
+async function loadStyleSettings() {
+  try {
+    const res = await fetch(styleSettingsUrl, { headers: { Accept: 'application/json' } })
+    if (!res.ok) return
+    const data = await res.json()
+    if (data.email_primary_color)            document.getElementById('ee-color-primary').value    = data.email_primary_color
+    if (data.email_background_color)         document.getElementById('ee-color-bg').value          = data.email_background_color
+    if (data.email_content_background_color) document.getElementById('ee-color-content-bg').value  = data.email_content_background_color
+  } catch (_) { /* silent */ }
+}
+
+async function handleSaveStyle() {
+  const btn = document.getElementById('ee-save-style')
+  const statusEl = document.getElementById('ee-style-status')
+  btn.disabled = true
+  statusEl.textContent = ''
+  statusEl.className = 'ee-status ee-status--info'
+
+  try {
+    const body = {
+      email_primary_color:            document.getElementById('ee-color-primary').value,
+      email_background_color:         document.getElementById('ee-color-bg').value,
+      email_content_background_color: document.getElementById('ee-color-content-bg').value,
+    }
+    const res = await fetch(styleSettingsUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    statusEl.textContent = i18n.style_saved
+    statusEl.className = 'ee-status ee-status--success'
+  } catch (err) {
+    statusEl.textContent = 'Error: ' + err.message
+    statusEl.className = 'ee-status ee-status--error'
+  } finally {
+    btn.disabled = false
+  }
+}
+
+function showStylePanel() {
+  styleView = true
+  currentType = null
+
+  document.getElementById('ee-canvas').style.display = 'none'
+  document.getElementById('ee-style-panel').style.display = ''
+
+  // Toolbar: hide save/reset, clear status
+  document.getElementById('ee-save').style.display  = 'none'
+  document.getElementById('ee-reset').style.display = 'none'
+  document.getElementById('ee-variables-bar') && (document.getElementById('ee-variables-bar').style.display = 'none')
+  setStatus('')
+
+  // Highlight the global style button, deactivate email buttons
+  document.querySelectorAll('.ee-email-btn').forEach(b => b.classList.remove('is-active'))
+  document.getElementById('ee-global-style-btn').classList.add('is-active')
+
+  // Destroy any open GrapeJS instance
+  if (editor) {
+    editor.destroy()
+    editor = null
+  }
+
+  loadStyleSettings()
+}
+
+function hideStylePanel() {
+  styleView = false
+  document.getElementById('ee-canvas').style.display = ''
+  document.getElementById('ee-style-panel').style.display = 'none'
+  document.getElementById('ee-save').style.display  = ''
+  document.getElementById('ee-reset').style.display = ''
+  const varsBar = document.getElementById('ee-variables-bar')
+  if (varsBar) varsBar.style.display = ''
+}
+
 // ─── API ──────────────────────────────────────────────────────────────────────
 
 function apiUrl(type, locale) {
@@ -178,10 +306,8 @@ function initEditor(mjml) {
 // ─── Interaction handlers ─────────────────────────────────────────────────────
 
 async function selectEmail(type) {
-  if (type === currentType && !editor === false) {
-    // Already loaded — only skip if the editor is actually open
-    // (we always reload when the locale switches, handled in switchLocale)
-  }
+  if (styleView) hideStylePanel()
+
   currentType = type
   setActiveEmailBtn(type)
   updateVariablesPanel(type)
@@ -260,9 +386,11 @@ async function handleReset() {
 applyI18n()
 buildLocaleTabs()
 buildSidebar()
+buildStylePanel()
 
 document.getElementById('ee-save').addEventListener('click', handleSave)
 document.getElementById('ee-reset').addEventListener('click', handleReset)
+document.getElementById('ee-save-style').addEventListener('click', handleSaveStyle)
 
 // Auto-select first email type
 const firstType = Object.keys(emailTypes)[0]
