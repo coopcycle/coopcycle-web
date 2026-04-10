@@ -1680,7 +1680,6 @@ customize.email_editor.email_type.order_accepted: Commande acceptée
 customize.email_editor.email_type.order_cancelled: Commande annulée
 customize.email_editor.email_type.order_delayed: Commande retardée
 customize.email_editor.email_type.order_payment: Confirmation de paiement
-customize.email_editor.email_type.order_payment_failed: Échec du paiement
 customize.email_editor.email_type.order_receipt: Reçu de commande
 customize.email_editor.email_type.task_completed: Livraison terminée / échouée
 customize.email_editor.save: Enregistrer

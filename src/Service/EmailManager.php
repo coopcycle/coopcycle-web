@@ -352,16 +352,4 @@ class EmailManager
         return $this->createHtmlMessageWithReplyTo($subject, $body);
     }
 
-    public function createOrderPaymentFailedMessage(OrderInterface $order)
-    {
-        $subject = $this->translator->trans('order.payment_failed.subject', ['%order.number%' => $order->getNumber()], 'emails');
-
-        $body = $this->renderCustom('order_payment_failed', [
-            'order_number' => $order->getNumber(),
-        ]) ?? $this->mjml->render($this->templating->render('emails/order/payment_failed.mjml.twig', [
-            'order' => $order,
-        ]));
-
-        return $this->createHtmlMessageWithReplyTo($subject, $body);
-    }
 }

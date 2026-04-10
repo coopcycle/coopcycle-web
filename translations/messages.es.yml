@@ -1786,7 +1786,6 @@ customize.email_editor.email_type.order_accepted: Pedido aceptado
 customize.email_editor.email_type.order_cancelled: Pedido cancelado
 customize.email_editor.email_type.order_delayed: Pedido retrasado
 customize.email_editor.email_type.order_payment: Confirmación de pago
-customize.email_editor.email_type.order_payment_failed: Pago fallido
 customize.email_editor.email_type.order_receipt: Recibo del pedido
 customize.email_editor.email_type.task_completed: Entrega completada / fallida
 customize.email_editor.save: Guardar

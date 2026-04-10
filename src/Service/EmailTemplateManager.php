@@ -33,10 +33,6 @@ class EmailTemplateManager
             'label_key' => 'customize.email_editor.email_type.order_payment',
             'variables'  => ['brand_name', 'order_number', 'primary_color', 'background_color', 'content_background_color'],
         ],
-        'order_payment_failed' => [
-            'label_key' => 'customize.email_editor.email_type.order_payment_failed',
-            'variables'  => ['brand_name', 'order_number', 'primary_color', 'background_color', 'content_background_color'],
-        ],
         'order_receipt' => [
             'label_key' => 'customize.email_editor.email_type.order_receipt',
             'variables'  => ['brand_name', 'order_number', 'primary_color', 'background_color', 'content_background_color'],
@@ -194,11 +190,6 @@ class EmailTemplateManager
             'order_payment' => [
                 'heading' => $t('order.payment.subject', ['%order.number%' => '{{order_number}}']),
                 'body'    => $t('order.payment.body'),
-                'cta'     => null,
-            ],
-            'order_payment_failed' => [
-                'heading' => $t('order.payment_failed.subject', ['%order.number%' => '{{order_number}}']),
-                'body'    => $t('order.payment_failed.body'),
                 'cta'     => null,
             ],
             'order_receipt' => [
