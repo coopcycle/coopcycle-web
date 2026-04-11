@@ -187,9 +187,8 @@ class EmailManager
     public function createOrderCreatedMessageForAdmin(OrderInterface $order)
     {
         $subject = $this->translator->trans('admin.order.created.subject', [], 'emails');
-        $body = $this->mjml->render($this->templating->render('emails/order/created.mjml.twig', [
+        $body = $this->mjml->render($this->templating->render('emails/order/created_for_admin.mjml.twig', [
             'order' => $order,
-            'is_admin' => true
         ]));
 
         return $this->createHtmlMessage($subject, $body);
@@ -243,7 +242,7 @@ class EmailManager
     {
         $key = sprintf('task.%s.%s.subject', strtolower($task->getType()), $task->isDone() ? 'done' : 'failed');
 
-        $subject = $this->translator->trans($key, ['{{id}}' => $order->getDelivery()->getId()], 'emails');
+        $subject = $this->translator->trans($key, ['{{id}}' => $task->getDelivery()->getId()], 'emails');
 
         $trackingUrl = $this->urlGenerator->generate(
             'dashboard_delivery',
