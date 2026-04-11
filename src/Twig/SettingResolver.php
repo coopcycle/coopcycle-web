@@ -28,6 +28,18 @@ class SettingResolver implements RuntimeExtensionInterface
         return $this->settingsManager->get($name);
     }
 
+    public function resolveThemeColor(string $key, string $default = ''): string
+    {
+        $json = $this->settingsManager->get('theme');
+        if ($json) {
+            $theme = json_decode($json, true);
+            if (is_array($theme) && isset($theme[$key]) && $theme[$key] !== '') {
+                return $theme[$key];
+            }
+        }
+        return $default;
+    }
+
     public function getBoundingRect(): string
     {
         $latlng = $this->settingsManager->get('latlng');

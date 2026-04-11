@@ -1794,7 +1794,8 @@ customize.email_editor.status.default: Plantilla por defecto — guarde para per
 customize.email_editor.status.custom: Plantilla personalizada
 customize.email_editor.variables: Variables disponibles
 customize.email_editor.global_style: Estilo global
-customize.email_editor.primary_color: Color principal (botones y acentos)
+customize.email_editor.primary_color: Color principal (fondo del botón)
+customize.email_editor.primary_content_color: Color del texto principal (texto del botón)
 customize.email_editor.background_color: Color de fondo
 customize.email_editor.content_background_color: Color de fondo del contenido
 customize.email_editor.save_style: Guardar estilo global

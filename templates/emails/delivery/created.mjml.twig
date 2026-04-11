@@ -6,7 +6,10 @@
     {{ body }}
   </mj-text>
   <mj-button
-    href="{{ url('admin_dashboard_fullscreen', { date: delivery.pickup.after|date('Y-m-d'), nav: 'on' }) }}">
+    href="{{ url('admin_dashboard_fullscreen', { date: delivery.pickup.after|date('Y-m-d'), nav: 'on' }) }}"
+    background-color="{{ coopcycle_theme_color('primary', '#10ac84') }}"
+    color="{{ coopcycle_theme_color('primary-content', 'white') }}"
+    font-family="Raleway, Arial, sans-serif">
     {{ 'basics.view'|trans({}, 'messages') }}
   </mj-button>
 </mj-column>

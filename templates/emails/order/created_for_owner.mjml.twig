@@ -26,7 +26,10 @@
   <mj-spacer container-background-color="#ecedee" height="1px" />
   {% include 'emails/order/_partials/items.mjml.twig' %}
   <mj-button
-    href="{{ url('dashboard_restaurant_dashboard', { restaurantId: restaurant.id, order: order|get_iri_from_item }) }}">
+    href="{{ url('dashboard_restaurant_dashboard', { restaurantId: restaurant.id, order: order|get_iri_from_item }) }}"
+    background-color="{{ coopcycle_theme_color('primary', '#10ac84') }}"
+    color="{{ coopcycle_theme_color('primary-content', 'white') }}"
+    font-family="Raleway, Arial, sans-serif">
   {{ 'order.view' | trans({}, 'emails') }}
   </mj-button>
 </mj-column>

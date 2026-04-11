@@ -9,7 +9,10 @@
   <br>
   <br>
   <mj-button
-    href="{{ url('public_order', { hashid: order|hashid }) }}">
+    href="{{ url('public_order', { hashid: order|hashid }) }}"
+    background-color="{{ coopcycle_theme_color('primary', '#10ac84') }}"
+    color="{{ coopcycle_theme_color('primary-content', 'white') }}"
+    font-family="Raleway, Arial, sans-serif">
     {{ 'order.view' | trans({}, 'emails') }}
   </mj-button>
 </mj-column>

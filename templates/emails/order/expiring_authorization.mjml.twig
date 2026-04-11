@@ -13,7 +13,10 @@
     {% set url_params = { restaurantId: order.restaurant.id, order: order|get_iri_from_item } %}
   {% endif %}
   <mj-button
-    href="{{ url(route_name, url_params) }}">
+    href="{{ url(route_name, url_params) }}"
+    background-color="{{ coopcycle_theme_color('primary', '#10ac84') }}"
+    color="{{ coopcycle_theme_color('primary-content', 'white') }}"
+    font-family="Raleway, Arial, sans-serif">
   {{ 'order.view' | trans({}, 'emails') }}
   </mj-button>
 </mj-column>

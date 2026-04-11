@@ -5,10 +5,9 @@
     <mj-attributes>
       <mj-text align="center" color="#555" />
       <mj-all font-family="'Open Sans', Arial, sans-serif" />
-      <mj-button background-color="{{ coopcycle_setting('email_primary_color') ?? '#10ac84' }}" color="white" font-family="Raleway, Arial, sans-serif" />
     </mj-attributes>
   </mj-head>
-  <mj-body background-color="{{ coopcycle_setting('email_background_color') ?? '#eeeeee' }}">
+  <mj-body background-color="{{ coopcycle_theme_color('secondary', '#eeeeee') }}">
     <mj-section>
 		  <mj-column>
 		    <mj-text font-family="Raleway, Arial, sans-serif">
@@ -16,7 +15,7 @@
 		    </mj-text>
 		  </mj-column>
 		</mj-section>
-    <mj-section background-color="{{ coopcycle_setting('email_content_background_color') ?? '#ffffff' }}">
+    <mj-section background-color="{{ coopcycle_theme_color('secondary-content', '#ffffff') }}">
     {% block content %}
     {% endblock %}
     </mj-section>

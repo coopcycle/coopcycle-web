@@ -5,7 +5,7 @@
   <mj-text align="left" line-height="20px">
     {{ 'business_account.send_invitation.body' | trans({'%name%': account.name }, 'emails') | raw }}
   </mj-text>
-  <mj-button href="{{ url('invitation_define_password', {'code': invitation.code}) }}">
+  <mj-button href="{{ url('invitation_define_password', {'code': invitation.code}) }}" background-color="{{ coopcycle_theme_color('primary', '#10ac84') }}" color="{{ coopcycle_theme_color('primary-content', 'white') }}" font-family="Raleway, Arial, sans-serif">
   	{{ 'business_account.send_invitation.cta' | trans({}, 'emails') }}
   </mj-button>
 </mj-column>

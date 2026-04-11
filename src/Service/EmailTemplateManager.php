@@ -145,23 +145,64 @@ class EmailTemplateManager
      * Uses the existing email translations for the given locale.
      */
     /**
+     * Parses the 'theme' JSON from settings and returns colour values with defaults.
+     *
+     * @return array{primary: string, primary-content: string, secondary: string, secondary-content: string, accent: string, accent-content: string}
+     */
+    private function getThemeColors(): array
+    {
+        $defaults = [
+            'primary'           => '#10ac84',
+            'primary-content'   => 'white',
+            'secondary'         => '#eeeeee',
+            'secondary-content' => '#ffffff',
+            'accent'            => '#10ac84',
+            'accent-content'    => 'white',
+        ];
+
+        $json = $this->settingsManager->get('theme');
+        if (!$json) {
+            return $defaults;
+        }
+
+        $theme = json_decode($json, true);
+        if (!is_array($theme)) {
+            return $defaults;
+        }
+
+        foreach ($defaults as $key => $default) {
+            if (empty($theme[$key])) {
+                $theme[$key] = $default;
+            }
+        }
+
+        return $theme;
+    }
+
+    /**
      * Returns the current global email colour settings with their defaults.
+     * Keys use the DaisyUI theme naming from the 'theme' JSON in settings.
      */
     public function getEmailStyleSettings(): array
     {
+        $theme = $this->getThemeColors();
+
         return [
-            'email_primary_color'            => $this->settingsManager->get('email_primary_color')            ?? '#10ac84',
-            'email_background_color'         => $this->settingsManager->get('email_background_color')         ?? '#eeeeee',
-            'email_content_background_color' => $this->settingsManager->get('email_content_background_color') ?? '#ffffff',
+            'primary'           => $theme['primary'],
+            'primary-content'   => $theme['primary-content'],
+            'secondary'         => $theme['secondary'],
+            'secondary-content' => $theme['secondary-content'],
         ];
     }
 
     public function getDefaultMjml(string $type, string $locale = 'en'): string
     {
-        $brandName      = $this->settingsManager->get('brand_name')            ?? '{{brand_name}}';
-        $primaryColor   = $this->settingsManager->get('email_primary_color')   ?? '#10ac84';
-        $bgColor        = $this->settingsManager->get('email_background_color') ?? '#eeeeee';
-        $contentBgColor = $this->settingsManager->get('email_content_background_color') ?? '#ffffff';
+        $theme          = $this->getThemeColors();
+        $brandName      = $this->settingsManager->get('brand_name') ?? '{{brand_name}}';
+        $primaryColor   = $theme['primary'];
+        $primaryContent = $theme['primary-content'];
+        $bgColor        = $theme['secondary'];
+        $contentBgColor = $theme['secondary-content'];
 
         $t = fn(string $key, array $params = []) =>
             $this->translator->trans($key, $params, 'emails', $locale);
@@ -212,8 +253,10 @@ class EmailTemplateManager
         $ctaMjml = '';
         if ($c['cta'] !== null) {
             $ctaMjml = sprintf(
-                "\n        <mj-button href=\"%s\">%s</mj-button>",
+                "\n        <mj-button href=\"%s\" background-color=\"%s\" color=\"%s\" font-family=\"Raleway, Arial, sans-serif\">%s</mj-button>",
                 htmlspecialchars($c['cta']['href'], ENT_QUOTES),
+                htmlspecialchars($primaryColor, ENT_QUOTES),
+                htmlspecialchars($primaryContent, ENT_QUOTES),
                 htmlspecialchars($c['cta']['label'], ENT_QUOTES)
             );
         }
@@ -228,7 +271,6 @@ class EmailTemplateManager
     <mj-attributes>
       <mj-text align="center" color="#555" />
       <mj-all font-family="'Open Sans', Arial, sans-serif" />
-      <mj-button background-color="{$primaryColor}" color="white" font-family="Raleway, Arial, sans-serif" />
     </mj-attributes>
   </mj-head>
   <mj-body background-color="{$bgColor}">
@@ -272,11 +314,12 @@ MJML;
         foreach ($locales as $l) {
             $template = $this->getCustomTemplate($type, $l);
             if ($template !== null) {
-                $styles   = $this->getEmailStyleSettings();
+                $theme    = $this->getThemeColors();
                 $defaults = [
-                    'primary_color'            => $styles['email_primary_color'],
-                    'background_color'         => $styles['email_background_color'],
-                    'content_background_color' => $styles['email_content_background_color'],
+                    'primary_color'            => $theme['primary'],
+                    'primary_content_color'    => $theme['primary-content'],
+                    'background_color'         => $theme['secondary'],
+                    'content_background_color' => $theme['secondary-content'],
                 ];
                 return $this->substituteVariables($template, array_merge($defaults, $variables));
             }

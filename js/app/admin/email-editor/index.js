@@ -170,6 +170,10 @@ function buildStylePanel() {
         <input type="color" id="ee-color-primary" value="#10ac84">
       </div>
       <div class="ee-style-field">
+        <label for="ee-color-primary-content">${i18n.primary_content_color}</label>
+        <input type="color" id="ee-color-primary-content" value="#ffffff">
+      </div>
+      <div class="ee-style-field">
         <label for="ee-color-bg">${i18n.background_color}</label>
         <input type="color" id="ee-color-bg" value="#eeeeee">
       </div>
@@ -193,9 +197,10 @@ async function loadStyleSettings() {
     const res = await fetch(styleSettingsUrl, { headers: { Accept: 'application/json' } })
     if (!res.ok) return
     const data = await res.json()
-    if (data.email_primary_color)            document.getElementById('ee-color-primary').value    = data.email_primary_color
-    if (data.email_background_color)         document.getElementById('ee-color-bg').value          = data.email_background_color
-    if (data.email_content_background_color) document.getElementById('ee-color-content-bg').value  = data.email_content_background_color
+    if (data['primary'])           document.getElementById('ee-color-primary').value         = data['primary']
+    if (data['primary-content'])   document.getElementById('ee-color-primary-content').value  = data['primary-content']
+    if (data['secondary'])         document.getElementById('ee-color-bg').value               = data['secondary']
+    if (data['secondary-content']) document.getElementById('ee-color-content-bg').value       = data['secondary-content']
   } catch (_) { /* silent */ }
 }
 
@@ -208,9 +213,10 @@ async function handleSaveStyle() {
 
   try {
     const body = {
-      email_primary_color:            document.getElementById('ee-color-primary').value,
-      email_background_color:         document.getElementById('ee-color-bg').value,
-      email_content_background_color: document.getElementById('ee-color-content-bg').value,
+      'primary':           document.getElementById('ee-color-primary').value,
+      'primary-content':   document.getElementById('ee-color-primary-content').value,
+      'secondary':         document.getElementById('ee-color-bg').value,
+      'secondary-content': document.getElementById('ee-color-content-bg').value,
     }
     const res = await fetch(styleSettingsUrl, {
       method: 'POST',

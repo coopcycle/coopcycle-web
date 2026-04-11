@@ -2654,7 +2654,8 @@ class AdminController extends AbstractController
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
 
-            $allowed = ['email_primary_color', 'email_background_color', 'email_content_background_color'];
+            // Accepted DaisyUI theme keys that map to email colours
+            $allowed = ['primary', 'primary-content', 'secondary', 'secondary-content'];
             foreach ($allowed as $key) {
                 if (isset($data[$key])) {
                     $value = $data[$key];
@@ -2662,9 +2663,18 @@ class AdminController extends AbstractController
                     if (!preg_match('/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $value)) {
                         return $this->json(['error' => sprintf('Invalid colour value for %s', $key)], 400);
                     }
-                    $settingsManager->set($key, $value);
                 }
             }
+
+            // Merge into existing theme JSON (preserve keys managed by other features)
+            $existing = $settingsManager->get('theme');
+            $theme    = $existing ? (json_decode($existing, true) ?? []) : [];
+            foreach ($allowed as $key) {
+                if (isset($data[$key])) {
+                    $theme[$key] = $data[$key];
+                }
+            }
+            $settingsManager->set('theme', json_encode($theme));
             $settingsManager->flush();
 
             return $this->json(['success' => true]);
