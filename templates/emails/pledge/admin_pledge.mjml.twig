@@ -3,7 +3,7 @@
 {% block content %}
 <mj-column>
   <mj-text align="left" line-height="20px">
-  {{ 'admin.pledge.body' | trans({'%pledge.name%': pledge.name, '%username%': pledge.user.username}, 'emails') | raw }}
+  {{ 'admin.pledge.body' | trans({'{{pledge_name}}': pledge.name, '{{username}}': pledge.user.username}, 'emails') | raw }}
   </mj-text>
 </mj-column>
 {% endblock %}

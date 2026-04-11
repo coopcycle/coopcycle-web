@@ -5,8 +5,8 @@
   <mj-text align="left" line-height="20px">
   {% set trans_key = 'task.%s.%s.body'|format(task.type|lower, (task.done ? 'done' : 'failed')) %}
   {{ trans_key|trans({
-    '%id%': (task.delivery.order ? task.delivery.order.number : task.delivery.id),
-    '%address%': task.address.streetAddress,
+    '{{id}}': (task.delivery.order ? task.delivery.order.number : task.delivery.id),
+    '{{address}}': task.address.streetAddress,
   }, 'emails') | raw }}
   </mj-text>
   <mj-button href="{{ url('dashboard_delivery', { 'id': task.delivery.id }) }}" background-color="{{ coopcycle_theme_color('primary', '#10ac84') }}" color="{{ coopcycle_theme_color('primary-content', 'white') }}" font-family="Raleway, Arial, sans-serif">

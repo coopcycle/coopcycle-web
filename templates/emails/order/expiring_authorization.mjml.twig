@@ -3,7 +3,7 @@
 {% block content %}
 <mj-column>
   <mj-text align="left" line-height="20px">
-  {{ 'order.expiring_authorization.text'|trans({ '%order.number%': order.number }, 'emails')|raw }}
+  {{ 'order.expiring_authorization.text'|trans({ '{{order_number}}': order.number }, 'emails')|raw }}
   </mj-text>
   {% if is_admin %}
     {% set route_name = 'admin_order' %}

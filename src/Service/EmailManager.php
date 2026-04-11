@@ -158,7 +158,7 @@ class EmailManager
 
     public function createOrderCreatedMessageForCustomer(OrderInterface $order)
     {
-        $subject = $this->translator->trans('order.created.subject', ['%order.number%' => $order->getNumber()], 'emails');
+        $subject = $this->translator->trans('order.created.subject', ['{{order_number}}' => $order->getNumber()], 'emails');
 
         $body = $this->renderCustom('order_created', [
             'order_number' => $order->getNumber(),
@@ -174,7 +174,7 @@ class EmailManager
     {
         $subject = $this->translator->trans(
             'owner.order.created.subject',
-            ['%order.number%' => $order->getNumber()],
+            ['{{order_number}}' => $order->getNumber()],
             'emails');
         $body = $this->mjml->render($this->templating->render('emails/order/created_for_owner.mjml.twig', [
             'order' => $order,
@@ -197,7 +197,7 @@ class EmailManager
 
     public function createOrderPaymentMessage(OrderInterface $order)
     {
-        $subject = $this->translator->trans('order.payment.subject', ['%order.number%' => $order->getNumber()], 'emails');
+        $subject = $this->translator->trans('order.payment.subject', ['{{order_number}}' => $order->getNumber()], 'emails');
 
         $body = $this->renderCustom('order_payment', [
             'order_number' => $order->getNumber(),
@@ -210,7 +210,7 @@ class EmailManager
 
     public function createOrderCancelledMessage(OrderInterface $order)
     {
-        $subject = $this->translator->trans('order.cancelled.subject', ['%order.number%' => $order->getNumber()], 'emails');
+        $subject = $this->translator->trans('order.cancelled.subject', ['{{order_number}}' => $order->getNumber()], 'emails');
 
         $body = $this->renderCustom('order_cancelled', [
             'order_number' => $order->getNumber(),
@@ -227,7 +227,7 @@ class EmailManager
             $this->loopeatContextInitializer->initialize($order, $this->loopeatContext);
         }
 
-        $subject = $this->translator->trans('order.accepted.subject', ['%order.number%' => $order->getNumber()], 'emails');
+        $subject = $this->translator->trans('order.accepted.subject', ['{{order_number}}' => $order->getNumber()], 'emails');
 
         $body = $this->renderCustom('order_accepted', [
             'order_number' => $order->getNumber(),
@@ -243,7 +243,7 @@ class EmailManager
     {
         $key = sprintf('task.%s.%s.subject', strtolower($task->getType()), $task->isDone() ? 'done' : 'failed');
 
-        $subject = $this->translator->trans($key, ['%id%' => $task->getDelivery()->getId()], 'emails');
+        $subject = $this->translator->trans($key, ['{{id}}' => $order->getDelivery()->getId()], 'emails');
 
         $trackingUrl = $this->urlGenerator->generate(
             'dashboard_delivery',
@@ -263,7 +263,7 @@ class EmailManager
 
     public function createOrderDelayedMessage(OrderInterface $order, $delay = 10)
     {
-        $subject = $this->translator->trans('order.delayed.subject', ['%order.number%' => $order->getNumber()], 'emails');
+        $subject = $this->translator->trans('order.delayed.subject', ['{{order_number}}' => $order->getNumber()], 'emails');
 
         $body = $this->renderCustom('order_delayed', [
             'order_number' => $order->getNumber(),
@@ -320,7 +320,7 @@ class EmailManager
 
     private function createExpiringAuthorizationReminderMessage(OrderInterface $order, $isAdmin = false)
     {
-        $subject = $this->translator->trans('order.expiring_authorization.subject', ['%order.number%' => $order->getNumber()], 'emails');
+        $subject = $this->translator->trans('order.expiring_authorization.subject', ['{{order_number}}' => $order->getNumber()], 'emails');
         $body = $this->mjml->render($this->templating->render('emails/order/expiring_authorization.mjml.twig', [
             'order' => $order,
             'is_admin' => $isAdmin,
@@ -341,7 +341,7 @@ class EmailManager
 
     public function createOrderReceiptMessage(OrderInterface $order)
     {
-        $subject = $this->translator->trans('order.receipt.subject', ['%order.number%' => $order->getNumber()], 'emails');
+        $subject = $this->translator->trans('order.receipt.subject', ['{{order_number}}' => $order->getNumber()], 'emails');
 
         $body = $this->renderCustom('order_receipt', [
             'order_number' => $order->getNumber(),

@@ -209,38 +209,38 @@ class EmailTemplateManager
 
         $contents = [
             'order_created' => [
-                'heading' => $t('order.created.subject', ['%order.number%' => '{{order_number}}']),
+                'heading' => $t('order.created.subject'),
                 'body'    => $t('order.created.body'),
                 'cta'     => ['label' => $t('order.view'), 'href' => '{{order_url}}'],
             ],
             'order_accepted' => [
-                'heading' => $t('order.accepted.subject', ['%order.number%' => '{{order_number}}']),
+                'heading' => $t('order.accepted.subject'),
                 'body'    => $t('order.accepted.body.intro'),
                 'cta'     => ['label' => $t('order.view'), 'href' => '{{order_url}}'],
             ],
             'order_cancelled' => [
-                'heading' => $t('order.cancelled.subject', ['%order.number%' => '{{order_number}}']),
+                'heading' => $t('order.cancelled.subject'),
                 'body'    => $t('order.cancelled.body.intro'),
                 'cta'     => null,
             ],
             'order_delayed' => [
-                'heading' => $t('order.delayed.subject', ['%order.number%' => '{{order_number}}']),
-                'body'    => $t('order.delayed.body', ['%delay%' => '{{delay}}']),
+                'heading' => $t('order.delayed.subject'),
+                'body'    => $t('order.delayed.body'),
                 'cta'     => null,
             ],
             'order_payment' => [
-                'heading' => $t('order.payment.subject', ['%order.number%' => '{{order_number}}']),
+                'heading' => $t('order.payment.subject'),
                 'body'    => $t('order.payment.body'),
                 'cta'     => null,
             ],
             'order_receipt' => [
-                'heading' => $t('order.receipt.subject', ['%order.number%' => '{{order_number}}']),
+                'heading' => $t('order.receipt.subject'),
                 'body'    => $t('order.receipt.body'),
                 'cta'     => null,
             ],
             'task_completed' => [
-                'heading' => $t('task.dropoff.done.subject', ['%id%' => '{{delivery_id}}']),
-                'body'    => $t('task.dropoff.done.body', ['%id%' => '{{delivery_id}}', '%address%' => '']),
+                'heading' => $t('task.dropoff.done.subject'),
+                'body'    => $t('task.dropoff.done.body'),
                 'cta'     => null,
             ],
         ];

@@ -15,17 +15,17 @@
   <mj-text align="left" line-height="20px">
   {% set phone_number = order_phone_number(order) %}
   {{ ('order.foodtech.accepted.' ~ order.fulfillmentMethod ~ '.disclaimer')|trans({
-    '%name%': order.vendor.name,
-    '%phone_number%': phone_number ? phone_number|phone_number_format('NATIONAL') : 'N/A'
+    '{{name}}': order.vendor.name,
+    '{{phone_number}}': phone_number ? phone_number|phone_number_format('NATIONAL') : 'N/A'
   }, 'emails')|raw }}
   </mj-text>
   {% if order.isLoopeat() %}
   <mj-text align="left" line-height="20px">
   {% set returns_fee = loopeat_returns_fee(order) %}
   {% if returns_fee > 0 %}
-  {{ ('order.loopeat.accepted.with_fee')|trans({ '%name%': loopeat_context.name, '%amount%': returns_fee|price_format }, 'emails')|raw }}
+  {{ ('order.loopeat.accepted.with_fee')|trans({ '{{name}}': loopeat_context.name, '{{amount}}': returns_fee|price_format }, 'emails')|raw }}
   {% else %}
-  {{ ('order.loopeat.accepted')|trans({ '%name%': loopeat_context.name }, 'emails')|raw }}
+  {{ ('order.loopeat.accepted')|trans({ '{{name}}': loopeat_context.name }, 'emails')|raw }}
   {% endif %}
   </mj-text>
   {% endif %}
@@ -35,7 +35,7 @@
   {% else %}
   <mj-text align="left" line-height="20px">
   {{ 'order.public_url' | trans({
-    '%order.public_url%': url('public_order', { hashid: order|hashid }),
+    '{{order_public_url}}': url('public_order', { hashid: order|hashid }),
   }, 'emails') | raw }}
   </mj-text>
   {% endif %}

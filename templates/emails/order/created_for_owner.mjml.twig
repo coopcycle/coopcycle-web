@@ -4,8 +4,8 @@
 <mj-column>
   <mj-text align="left" line-height="20px">
   {{ 'owner.order.created.body' | trans({
-    '%order.url%': url('dashboard_restaurant_dashboard', { restaurantId: restaurant.id, order: order|get_iri_from_item }),
-    '%restaurant.name%': restaurant.name
+    '{{order_url}}': url('dashboard_restaurant_dashboard', { restaurantId: restaurant.id, order: order|get_iri_from_item }),
+    '{{restaurant_name}}': restaurant.name
   }, 'emails') | raw }}
   </mj-text>
   <mj-spacer container-background-color="#ecedee" height="1px" />

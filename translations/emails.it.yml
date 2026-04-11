@@ -1,59 +1,59 @@
 registration.email.subject: "Conferma email\n"
-registration.email.message: "<h2>Benvenuto su %brand_name%, %username%</h2>\nHai ricevuto\
-  \ questo messaggio perché hai appena registrato il tuo account su %brand_name%.\n\
+registration.email.message: "<h2>Benvenuto su {{brand_name}}, {{username}}</h2>\nHai ricevuto\
+  \ questo messaggio perché hai appena registrato il tuo account su {{brand_name}}.\n\
   <br>\nConferma il tuo indirizzo email cliccando sul tasto qui sotto.\n"
 registration.email.confirm: Conferma email
 registration.email.disclaimer: Questo link è valido una volta e serve ad attivare
   il tuo account
-registration.email.textMessage: "Benvenuto su %brand_name%, %username%,\\n\\n\nHai\
-  \ ricevuto questo messaggio perché hai appena registrato il tuo account su %brand_name%\
-  \ .\\n\nPer attivare la tua email, clicca sul link seguente: <a href=\"%confirmationUrl%\"\
-  \ rel=\"notrack\">%confirmationUrl%</a>.\n"
-resetting.email.message: <h2>Ciao %username%</h2> Per resettare la tua password, clicca
+registration.email.textMessage: "Benvenuto su {{brand_name}}, {{username}},\\n\\n\nHai\
+  \ ricevuto questo messaggio perché hai appena registrato il tuo account su {{brand_name}}\
+  \ .\\n\nPer attivare la tua email, clicca sul link seguente: <a href=\"{{confirmationUrl}}\"\
+  \ rel=\"notrack\">{{confirmationUrl}}</a>.\n"
+resetting.email.message: <h2>Ciao {{username}}</h2> Per resettare la tua password, clicca
   sul tasto qui sotto.
 resetting.email.reset: Resetta la password
 order.view: VIsualizza ordine
-order.public_url: "Per tracciare lo stato del tuo ordine, <a href=\"%order.public_url%\"\
+order.public_url: "Per tracciare lo stato del tuo ordine, <a href=\"{{order_public_url}}\"\
   >clicca qui</a>.\n"
 order.foodtech.accepted.delivery: "L'ordine ti sarà consegnato al seguente orario:"
 order.foodtech.accepted.delivery.disclaimer: Ti contatteremo in caso avessimo problemi
   a trovare il tuo indirizzo
 order.foodtech.accepted.collection: 'Dovrai ritirarlo alle ore:'
 order.foodtech.accepted.collection.disclaimer: Se riscontri un problema, contatta
-  <strong>%name%</strong> at <strong>%phone_number%</strong>, con abbastanza anticipo
+  <strong>{{name}}</strong> at <strong>{{phone_number}}</strong>, con abbastanza anticipo
   per annullare l'ordine.
 order.foodtech.cancelled: "Il ristorante è impossibilitato a preparare il tuo ordine\
-  \ %order.number%.\n<br>\nTi verrà automaticamente restituito l'importo pagato entro\
+  \ {{order_number}}.\n<br>\nTi verrà automaticamente restituito l'importo pagato entro\
   \ i prossimi 5 giorni.\n"
 admin.order.created.subject: Nuovo ordine da confermare
 admin.order.created.body: "Ciao,\n<br>\nUn nuovo ordine è stato creato.\n"
 admin.order_foodtech.created.body: "Ciao,\n<br>\nÈ stato creato un nuovo ordine per\
-  \ <strong>%restaurant.name%</strong>.\n"
+  \ <strong>{{restaurant_name}}</strong>.\n"
 admin.pledge.subject: È stato mandato un nuovo suggerimento!
 admin.send_invitation.subject: Invito su CoopCycle!
 admin.send_invitation.body: "Ciao,\n<br>\nQuesto è un invito per la piattaforma\
   \ CoopCycle, per completare la creazione del tuo account clicca sul link seguente.\n"
 admin.send_invitation.create_password: Crea la mia password
-admin.pledge.body: "Ciao,\n<br>\n%username% vorrebbe che %pledge.name% fosse su CoopCycle!\n"
+admin.pledge.body: "Ciao,\n<br>\n{{username}} vorrebbe che {{pledge_name}} fosse su CoopCycle!\n"
 user.pledge.subject: Il tuo suggerimento è stato caricato su CoopCycle!
-user.pledge.body: "Ciao,\n<br>\ngrazie a te, %pledge.name% ora è su CoopCycle!\n"
+user.pledge.body: "Ciao,\n<br>\ngrazie a te, {{pledge_name}} ora è su CoopCycle!\n"
 owner.order.created.subject: Nuovo ordine da confermare
-owner.order.created.body: "Ciao,\n<br>\nÈ arrivato un nuovo ordine per <strong>%restaurant.name%</strong>.\n"
-order.created.subject: L'ordine %order.number% è stato ricevuto
+owner.order.created.body: "Ciao,\n<br>\nÈ arrivato un nuovo ordine per <strong>{{restaurant_name}}</strong>.\n"
+order.created.subject: L'ordine {{order_number}} è stato ricevuto
 order.created.body: "Ciao,\n<br>\nAbbiamo ricevuto il tuo ordine.\n<br>\nVerificheremo\
   \ il tuo ordine il prima possibile e ti manderemo un'email appena sarà confermato.\n"
-order.accepted.subject: L'ordine %order.number% è stato confermato
+order.accepted.subject: L'ordine {{order_number}} è stato confermato
 order.accepted.body.intro: "Ciao,\n<br>\nIl tuo ordine è confermato."
-order.cancelled.subject: Il tuo ordine %order.number% è stato cancellato
+order.cancelled.subject: Il tuo ordine {{order_number}} è stato cancellato
 order.cancelled.body.intro: "Ciao,\n<br>\nCi dispiace, il tuo ordine è stato cancellato.\n"
-order.delayed.subject: Il tuo ordine %order.number% è in ritardo
-order.delayed.body: "Ciao,\n<br>\nCi dispiace, ma il tuo ordine è in ritardo di %delay%\
+order.delayed.subject: Il tuo ordine {{order_number}} è in ritardo
+order.delayed.body: "Ciao,\n<br>\nCi dispiace, ma il tuo ordine è in ritardo di {{delay}}\
   \ minuti.\n<br>\nCi scusiamo per l'inconveniente.\n"
-task.done.subject: 'Incarico #%task.id% completato'
-task.done.body: "Ciao,\n<br>\nL'incarico #%task.id% è stato completato.\n"
-task.failed.subject: "L'incarico #%task.id% non ha potuto essere completato"
-task.failed.body: "Ciao,\n<br>\nL'incarico #%task.id% non ha potuto essere completato.\n"
-order.payment.subject: Pagamento del tuo ordine %order.number%
+task.done.subject: 'Incarico #{{task_id}} completato'
+task.done.body: "Ciao,\n<br>\nL'incarico #{{task_id}} è stato completato.\n"
+task.failed.subject: "L'incarico #{{task_id}} non ha potuto essere completato"
+task.failed.body: "Ciao,\n<br>\nL'incarico #{{task_id}} non ha potuto essere completato.\n"
+order.payment.subject: Pagamento del tuo ordine {{order_number}}
 order.payment.body: "Ciao,\n<br>\nAbbiamo completato l'ordine che hai effettuato con\
   \ noi.\n<br>\nTroverai di seguito il tasto per poter pagare con carta di credito.\n"
 order.payment_failed.return_to_order: Torna all'ordine
@@ -61,8 +61,8 @@ order.receipt.body: "Ciao,\n<br>\nLa ricevuta del tuo ordine si trova in allegat
 order.payment_failed.body: "Ciao,\n<br>\nCi dispiace, c'è stato un errore nel processare\
   \ il pagamento. Per favore prova nuovamente con un metodo di pagamento diverso."
 order.payment_failed.subject: Si è verificato un errore nel processare il pagamento
-order.receipt.subject: Ricevuta del tuo ordine %order.number%
-order.expiring_authorization.text: L'autorizzazione per il pagamento <strong>%order.number%</strong>
+order.receipt.subject: Ricevuta del tuo ordine {{order_number}}
+order.expiring_authorization.text: L'autorizzazione per il pagamento <strong>{{order_number}}</strong>
   scadrà presto. <br> Completa l'ordine prima della scadenza dell'autorizzazione per
   evitare di perdere il denaro.
 order.expiring_authorization.subject: L'autorizzazione al pagamento scadrà presto

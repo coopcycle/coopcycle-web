@@ -6,12 +6,12 @@
     <mj-text align="left" line-height="20px">
     {% if order.hasVendor() %}
       {{ 'admin.order_foodtech.created.body' | trans({
-        '%order.url%': url('admin_order', { id: order.id }),
-        '%restaurant.name%': order.vendor.name
+        '{{order_url}}': url('admin_order', { id: order.id }),
+        '{{restaurant_name}}': order.vendor.name
       }, 'emails') | raw }}
     {% else %}
       {{ 'admin.order.created.body' | trans({
-        '%order.url%': url('admin_order', { id: order.id }),
+        '{{order_url}}': url('admin_order', { id: order.id }),
       }, 'emails') | raw }}
     {% endif %}
     </mj-text>
