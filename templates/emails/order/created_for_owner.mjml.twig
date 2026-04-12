@@ -1,7 +1,6 @@
 {% extends 'emails/layout.mjml.twig' %}
 
 {% block content %}
-<mj-column>
   <mj-text align="left" line-height="20px">
   {{ 'owner.order.created.body' | trans({
     '{{order_url}}': url('dashboard_restaurant_dashboard', { restaurantId: restaurant.id, order: order|get_iri_from_item }),
@@ -32,5 +31,4 @@
     font-family="Raleway, Arial, sans-serif">
   {{ 'order.view' | trans({}, 'emails') }}
   </mj-button>
-</mj-column>
 {% endblock %}

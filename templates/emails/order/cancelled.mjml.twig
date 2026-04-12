@@ -1,7 +1,6 @@
 {% extends 'emails/layout.mjml.twig' %}
 
 {% block content %}
-<mj-column>
   <mj-text align="left" line-height="20px">
   {{ 'order.cancelled.body.intro' | trans({}, 'emails') | raw }}
   {% if order.hasVendor() %}
@@ -10,5 +9,4 @@
   {{ 'order.foodtech.cancelled' | trans({ '{{order_number}}': order.number }, 'emails') | raw }}
   {% endif %}
   </mj-text>
-</mj-column>
 {% endblock %}

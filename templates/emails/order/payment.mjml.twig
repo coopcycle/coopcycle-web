@@ -1,7 +1,6 @@
 {% extends 'emails/layout.mjml.twig' %}
 
 {% block content %}
-<mj-column>
   <mj-text align="left" line-height="20px">
     {{ 'order.payment.body' | trans({}, 'emails') | raw }}
   </mj-text>
@@ -15,5 +14,4 @@
     font-family="Raleway, Arial, sans-serif">
     {{ 'order.view' | trans({}, 'emails') }}
   </mj-button>
-</mj-column>
 {% endblock %}
