@@ -2697,24 +2697,14 @@ class AdminController extends AbstractController
         if ($request->isMethod('DELETE')) {
             $emailTemplateManager->deleteTemplate($type, $locale);
 
-            $fragment = $emailTemplateManager->getDefaultFragment($type, $locale);
-            return $this->json([
-                'success'   => true,
-                'is_custom' => false,
-                'mjml'      => $emailTemplateManager->buildFragmentShell($fragment, $locale),
-            ]);
+            ['mjml' => $mjml, 'is_custom' => $isCustom] = $emailTemplateManager->buildEditorMjml($type, $locale);
+            return $this->json(['success' => true, 'is_custom' => false, 'mjml' => $mjml]);
         }
 
-        // GET: return a GrapeJS-ready shell wrapping the fragment
-        $custom   = $emailTemplateManager->getCustomTemplate($type, $locale);
-        $fragment = $custom !== null
-            ? $emailTemplateManager->ensureFragment($custom)
-            : $emailTemplateManager->getDefaultFragment($type, $locale);
+        // GET: return the full stitched MJML (layout + fragment) for GrapeJS
+        ['mjml' => $mjml, 'is_custom' => $isCustom] = $emailTemplateManager->buildEditorMjml($type, $locale);
 
-        return $this->json([
-            'mjml'      => $emailTemplateManager->buildFragmentShell($fragment, $locale),
-            'is_custom' => $custom !== null,
-        ]);
+        return $this->json(['mjml' => $mjml, 'is_custom' => $isCustom]);
     }
 
     public function emailStyleSettingsAction(Request $request, EmailTemplateManager $emailTemplateManager, SettingsManager $settingsManager): JsonResponse

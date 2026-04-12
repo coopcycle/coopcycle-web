@@ -387,13 +387,19 @@ MJML;
     }
 
     /**
-     * Wraps a fragment (inner mj-section blocks) in a full MJML shell that
-     * GrapeJS can render. The mj-head and body background are taken from the
-     * current layout (custom or default) so fonts and colours match.
+     * Builds the full MJML sent to the GrapeJS editor when editing a fragment.
+     *
+     * The layout is stitched with the fragment, but the content area is wrapped
+     * in two locked boundary markers (content_start / content_end). GrapeJS
+     * round-trips those markers verbatim, and the JS uses them to extract only
+     * the fragment when saving — ignoring changes made to layout sections.
+     *
+     * @return array{mjml: string, is_custom: bool}
      */
-    public function buildFragmentShell(string $fragment, string $locale = 'en'): string
+    public function buildEditorMjml(string $type, string $locale = 'en'): array
     {
-        $locales   = array_unique([$locale, 'en']);
+        $locales = array_unique([$locale, 'en']);
+
         $layoutMjml = null;
         foreach ($locales as $l) {
             $layoutMjml = $this->getCustomLayout($l);
@@ -401,24 +407,24 @@ MJML;
         }
         $layoutMjml = $layoutMjml ?? $this->getDefaultLayout();
 
-        $head    = '';
-        if (preg_match('/<mj-head[\s\S]*?<\/mj-head>/i', $layoutMjml, $m)) {
-            $head = $m[0];
+        $customFragment = null;
+        foreach ($locales as $l) {
+            $customFragment = $this->getCustomTemplate($type, $l);
+            if ($customFragment !== null) break;
         }
+        $isCustom = $customFragment !== null;
+        $fragment = $customFragment !== null
+            ? $this->ensureFragment($customFragment)
+            : $this->getDefaultFragment($type, $locale);
 
-        $bgColor = '#eeeeee';
-        if (preg_match('/<mj-body[^>]*background-color=["\']([^"\']+)["\'][^>]*>/i', $layoutMjml, $m)) {
-            $bgColor = $m[1];
-        }
+        $fragmentWithMarkers =
+            '<mj-raw data-slot="content_start"></mj-raw>' . "\n" .
+            $fragment . "\n" .
+            '<mj-raw data-slot="content_end"></mj-raw>';
 
-        return <<<MJML
-<mjml>
-  {$head}
-  <mj-body background-color="{$bgColor}">
-{$fragment}
-  </mj-body>
-</mjml>
-MJML;
+        $stitched = $this->resolveSlots($layoutMjml, ['content' => $fragmentWithMarkers]);
+
+        return ['mjml' => $stitched, 'is_custom' => $isCustom];
     }
 
     /**

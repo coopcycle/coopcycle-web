@@ -21,12 +21,20 @@ const MJML_MESSAGES = { en: mjmlEn, fr: mjmlFr, es: mjmlEs }
 // ─── Slot configuration ───────────────────────────────────────────────────────
 // Maps slot name → display label shown in the editor canvas and block panel.
 // 'content' is the layout's placeholder for per-email content.
+// 'content_start' / 'content_end' are locked boundary markers injected by the
+// server when editing a fragment — they bracket the editable area and are used
+// by extractFragment() to isolate what gets saved.
 
 const SLOT_LABELS = {
-  content:      'Email content',
-  order_items:  'Order items',
-  loopeat_info: 'Loopeat info',
+  content:       'Email content',
+  content_start: 'Content area start',
+  content_end:   'Content area end',
+  order_items:   'Order items',
+  loopeat_info:  'Loopeat info',
 }
+
+// Boundary slots are locked in-place and never shown as insertable blocks.
+const BOUNDARY_SLOTS = new Set(['content_start', 'content_end'])
 
 // Variables available in the layout template (shown in the variables bar)
 const LAYOUT_VARIABLES = [
@@ -387,12 +395,19 @@ function extractMjmlSection(mjml, tag) {
 }
 
 /**
- * Extracts the children of <mj-body> — just the inner sections, no wrapper.
- * Used when saving a fragment so only the content is stored.
+ * Extracts the fragment (inner mj-section blocks) from the full stitched MJML
+ * by locating the content_start / content_end boundary markers inserted by the
+ * server. Falls back to extracting the raw body content if markers are absent.
  */
-function extractBodyContent(mjml) {
-  const match = mjml.match(/<mj-body[^>]*>([\s\S]*?)<\/mj-body>/i)
-  return match ? match[1].trim() : ''
+function extractFragment(mjml) {
+  const match = mjml.match(
+    /<mj-raw[^>]*data-slot="content_start"[^>]*><\/mj-raw>([\s\S]*?)<mj-raw[^>]*data-slot="content_end"[^>]*><\/mj-raw>/i
+  )
+  if (match) return match[1].trim()
+
+  // Fallback: return body children (handles edge cases / legacy)
+  const bodyMatch = mjml.match(/<mj-body[^>]*>([\s\S]*?)<\/mj-body>/i)
+  return bodyMatch ? bodyMatch[1].trim() : ''
 }
 
 // ─── Slot components plugin ───────────────────────────────────────────────────
@@ -405,7 +420,8 @@ function extractBodyContent(mjml) {
 function createSlotsPlugin(slotNames) {
   return (editor) => {
     for (const slotName of slotNames) {
-      const label = SLOT_LABELS[slotName] ?? slotName
+      const isBoundary = BOUNDARY_SLOTS.has(slotName)
+      const label      = SLOT_LABELS[slotName] ?? slotName
 
       editor.Components.addType(`slot-${slotName}`, {
         isComponent: (el) =>
@@ -413,15 +429,18 @@ function createSlotsPlugin(slotNames) {
 
         model: {
           defaults: {
-            name: label,
-            tagName: 'mj-raw',
-            void: false,
-            droppable: false,
-            editable: false,
-            copyable: true,
-            removable: true,
-            attributes: { 'data-slot': slotName },
-            components: [],
+            name:          label,
+            tagName:       'mj-raw',
+            void:          false,
+            droppable:     false,
+            editable:      false,
+            copyable:      !isBoundary,
+            removable:     !isBoundary,
+            draggable:     !isBoundary,
+            selectable:    !isBoundary,
+            highlightable: !isBoundary,
+            attributes:    { 'data-slot': slotName },
+            components:    [],
           },
           toHTML() {
             return `<mj-raw data-slot="${slotName}"></mj-raw>`
@@ -430,29 +449,47 @@ function createSlotsPlugin(slotNames) {
 
         view: {
           onRender({ el }) {
-            el.innerHTML = `<div style="
-              padding: 10px 14px;
-              background: #eff6ff;
-              border: 2px dashed #60a5fa;
-              border-radius: 4px;
-              color: #1d4ed8;
-              font-size: 12px;
-              font-family: sans-serif;
-              text-align: center;
-              pointer-events: none;
-            ">&#x1F4E6; ${label}</div>`
+            if (isBoundary) {
+              const isStart = slotName === 'content_start'
+              el.innerHTML = `<div style="
+                padding: 3px 8px;
+                background: #f0fdf4;
+                border-top: 2px dashed #4ade80;
+                color: #15803d;
+                font-size: 11px;
+                font-family: sans-serif;
+                text-align: center;
+                pointer-events: none;
+                user-select: none;
+              ">${isStart ? '▼ editable content' : '▲ editable content'}</div>`
+            } else {
+              el.innerHTML = `<div style="
+                padding: 10px 14px;
+                background: #eff6ff;
+                border: 2px dashed #60a5fa;
+                border-radius: 4px;
+                color: #1d4ed8;
+                font-size: 12px;
+                font-family: sans-serif;
+                text-align: center;
+                pointer-events: none;
+              ">&#x1F4E6; ${label}</div>`
+            }
           },
         },
       })
 
-      editor.Blocks.add(`slot-${slotName}`, {
-        label,
-        category: 'Dynamic',
-        content: { type: `slot-${slotName}` },
-        media: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2M8 7V5a2 2 0 0 0-4 0v2"/>
-        </svg>`,
-      })
+      // Only expose insertable blocks for regular (non-boundary) slots
+      if (!isBoundary) {
+        editor.Blocks.add(`slot-${slotName}`, {
+          label,
+          category: 'Dynamic',
+          content: { type: `slot-${slotName}` },
+          media: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2M8 7V5a2 2 0 0 0-4 0v2"/>
+          </svg>`,
+        })
+      }
     }
   }
 }
@@ -472,8 +509,12 @@ function initEditor(mjml, isLayout = false) {
 
   const locale = appLocale in GJS_MESSAGES ? appLocale : 'en'
 
-  // Layout gets the 'content' slot; per-email fragments get their own slots
-  const activeSlots = isLayout ? ['content'] : (emailTypes[currentType]?.slots ?? [])
+  // Layout gets the 'content' slot.
+  // Fragments get boundary markers (so they're registered as locked components)
+  // plus the type's own dynamic slots (order_items, loopeat_info, etc.)
+  const activeSlots = isLayout
+    ? ['content']
+    : ['content_start', 'content_end', ...(emailTypes[currentType]?.slots ?? [])]
   const slotsPlugin = createSlotsPlugin(activeSlots)
 
   editor = grapesjs.init({
@@ -584,8 +625,8 @@ async function handleSave() {
       document.getElementById('ee-reset').disabled = false
       setStatus(i18n.status_custom, 'success')
     } else {
-      // Fragment: save only the body children (inner mj-section blocks)
-      const fragment = extractBodyContent(editorOutput)
+      // Fragment: extract only the content between boundary markers
+      const fragment = extractFragment(editorOutput)
       await saveTemplate(currentType, currentLocale, fragment)
       updateCustomBadge(currentType, currentLocale, true)
       document.getElementById('ee-reset').disabled = false
