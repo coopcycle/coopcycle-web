@@ -325,6 +325,7 @@ function createSlotsPlugin(slotNames) {
 
         model: {
           defaults: {
+            name: label,
             tagName: 'mj-raw',
             void: false,
             droppable: false,
