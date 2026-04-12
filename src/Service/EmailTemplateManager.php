@@ -248,9 +248,10 @@ class EmailTemplateManager
      */
     public function getDefaultLayout(): string
     {
-        $theme     = $this->getThemeColors();
-        $brandName = htmlspecialchars($this->settingsManager->get('brand_name') ?? '{{brand_name}}', ENT_QUOTES);
-        $bgColor   = htmlspecialchars($theme['secondary'], ENT_QUOTES);
+        $theme          = $this->getThemeColors();
+        $brandName      = htmlspecialchars($this->settingsManager->get('brand_name') ?? '{{brand_name}}', ENT_QUOTES);
+        $bgColor        = htmlspecialchars($theme['secondary'], ENT_QUOTES);
+        $contentBgColor = htmlspecialchars($theme['secondary-content'], ENT_QUOTES);
 
         return <<<MJML
 <mjml>
@@ -270,7 +271,11 @@ class EmailTemplateManager
         </mj-text>
       </mj-column>
     </mj-section>
-    <mj-raw data-slot="content"></mj-raw>
+    <mj-section background-color="{$contentBgColor}">
+      <mj-column>
+        <mj-raw data-slot="content"></mj-raw>
+      </mj-column>
+    </mj-section>
     <mj-section>
       <mj-column>
         <mj-text align="center" font-size="12px" color="#999999">
@@ -284,15 +289,15 @@ MJML;
     }
 
     /**
-     * Returns just the inner mj-section blocks (fragment) for the given email type.
-     * No <mjml>/<mj-head>/<mj-body> wrapper — these are stitched in by the layout.
+     * Returns the inner column content (fragment) for the given email type.
+     * Contains only mj-text / mj-button / mj-raw children — no mj-section or
+     * mj-column wrapper, because the layout now owns that wrapper.
      */
     public function getDefaultFragment(string $type, string $locale = 'en'): string
     {
         $theme          = $this->getThemeColors();
         $primaryColor   = $theme['primary'];
         $primaryContent = $theme['primary-content'];
-        $contentBgColor = $theme['secondary-content'];
 
         $t = fn(string $key, array $params = []) =>
             $this->translator->trans($key, $params, 'emails', $locale);
@@ -342,7 +347,7 @@ MJML;
         $ctaMjml = '';
         if ($c['cta'] !== null) {
             $ctaMjml = sprintf(
-                "\n    <mj-button href=\"%s\" background-color=\"%s\" color=\"%s\" font-family=\"Raleway, Arial, sans-serif\">%s</mj-button>",
+                "\n<mj-button href=\"%s\" background-color=\"%s\" color=\"%s\" font-family=\"Raleway, Arial, sans-serif\">%s</mj-button>",
                 htmlspecialchars($c['cta']['href'], ENT_QUOTES),
                 htmlspecialchars($primaryColor, ENT_QUOTES),
                 htmlspecialchars($primaryContent, ENT_QUOTES),
@@ -353,36 +358,46 @@ MJML;
         $slots     = self::CUSTOMER_EMAILS[$type]['slots'] ?? [];
         $slotsMjml = '';
         foreach ($slots as $slotName) {
-            $slotsMjml .= "\n    <mj-raw data-slot=\"{$slotName}\"></mj-raw>";
+            $slotsMjml .= "\n<mj-raw data-slot=\"{$slotName}\"></mj-raw>";
         }
 
-        $bgAttr = htmlspecialchars($contentBgColor, ENT_QUOTES);
-
         return <<<MJML
-<mj-section background-color="{$bgAttr}">
-  <mj-column>
-    <mj-text align="left" line-height="24px">
-      <h3>{$heading}</h3>
-      <p>{$body}</p>
-    </mj-text>{$slotsMjml}{$ctaMjml}
-  </mj-column>
-</mj-section>
+<mj-text align="left" line-height="24px">
+  <h3>{$heading}</h3>
+  <p>{$body}</p>
+</mj-text>{$slotsMjml}{$ctaMjml}
 MJML;
     }
 
     /**
-     * If the given string is a legacy full MJML document (starts with <mjml>),
-     * extracts and returns only the mj-body content. Otherwise returns as-is.
-     * Used to normalise templates saved before the layout/fragment split.
+     * Normalises a stored template to a plain fragment (mj-text / mj-button /
+     * mj-raw children only — no mj-section / mj-column / mjml wrappers).
+     *
+     * Handles three legacy formats:
+     *   1. Full MJML document  → extract mj-body → strip section+column
+     *   2. <mj-section><mj-column>…  → strip section+column
+     *   3. Already a plain fragment  → return as-is
      */
     public function ensureFragment(string $mjml): string
     {
-        if (!preg_match('/^\s*<mjml/i', $mjml)) {
-            return $mjml;
+        $mjml = trim($mjml);
+
+        // 1. Full MJML document
+        if (preg_match('/^<mjml/i', $mjml)) {
+            if (preg_match('/<mj-body[^>]*>([\s\S]*?)<\/mj-body>/i', $mjml, $m)) {
+                $mjml = trim($m[1]);
+            } else {
+                return $mjml;
+            }
         }
-        if (preg_match('/<mj-body[^>]*>([\s\S]*?)<\/mj-body>/i', $mjml, $m)) {
-            return trim($m[1]);
+
+        // 2. Old-style fragment wrapped in <mj-section><mj-column>
+        if (preg_match('/^<mj-section/i', $mjml)) {
+            if (preg_match('/<mj-column[^>]*>([\s\S]*?)<\/mj-column>/i', $mjml, $m)) {
+                return trim($m[1]);
+            }
         }
+
         return $mjml;
     }
 
