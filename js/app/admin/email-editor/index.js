@@ -47,6 +47,7 @@ let currentLocale = Object.keys(supportedLocales)[0]
 let editor        = null
 let isSaving      = false
 let styleView     = false   // true when the Global Style panel is shown
+let originalMjmlHead = ''   // preserved from the loaded template; GrapeJS breaks mj-head on parse
 
 // Track custom status per locale per type (initialised from server data)
 // Shape: { [type]: { [locale]: boolean } }
@@ -307,6 +308,16 @@ async function resetTemplate(type, locale) {
   return res.json()
 }
 
+// ─── MJML head/body helpers ───────────────────────────────────────────────────
+// The browser HTML parser does not treat custom elements (mj-font, mj-all, etc.)
+// as void, so GrapeJS nests mj-head children incorrectly on parse and serializes
+// a broken head. We preserve the original head string and splice it back on save.
+
+function extractMjmlSection(mjml, tag) {
+  const match = mjml.match(new RegExp(`<${tag}[\\s\\S]*?<\\/${tag}>`, 'i'))
+  return match ? match[0] : ''
+}
+
 // ─── Slot components plugin ───────────────────────────────────────────────────
 
 /**
@@ -376,6 +387,9 @@ function initEditor(mjml) {
     editor.destroy()
     editor = null
   }
+
+  // Capture the head before GrapeJS gets a chance to corrupt it
+  originalMjmlHead = extractMjmlSection(mjml, 'mj-head')
 
   document.getElementById('ee-canvas').innerHTML = ''
 
@@ -454,7 +468,9 @@ async function handleSave() {
   setStatus('Saving…')
 
   try {
-    const mjml = editor.getHtml()
+    const editorOutput = editor.getHtml()
+    const body = extractMjmlSection(editorOutput, 'mj-body')
+    const mjml = `<mjml>\n  ${originalMjmlHead}\n  ${body}\n</mjml>`
     await saveTemplate(currentType, currentLocale, mjml)
     updateCustomBadge(currentType, currentLocale, true)
     document.getElementById('ee-reset').disabled = false
