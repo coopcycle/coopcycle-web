@@ -1749,6 +1749,7 @@ customize.email_editor.reset: Reset to default
 customize.email_editor.status.default: Showing default template — save to customise
 customize.email_editor.status.custom: Showing custom template
 customize.email_editor.variables: Available variables
+customize.email_editor.layout: Layout
 customize.email_editor.global_style: Global Style
 customize.email_editor.primary_color: Primary colour (button background)
 customize.email_editor.primary_content_color: Primary text colour (button text)

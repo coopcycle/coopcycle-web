@@ -13,6 +13,8 @@
      data-email-types="{{ email_types | json_encode | e('html_attr') }}"
      data-supported-locales="{{ supported_locales | json_encode | e('html_attr') }}"
      data-api-url="{{ path('admin_customize_email_template', {type: '__TYPE__'}) }}"
+     data-layout-url="{{ path('admin_customize_email_layout') }}"
+     data-layout-is-custom="{{ layout_is_custom_by_locale | json_encode | e('html_attr') }}"
      data-style-settings-url="{{ path('admin_customize_email_settings') }}"
      data-i18n="{{ {
        save:                      'customize.email_editor.save'                      | trans,
@@ -20,6 +22,7 @@
        status_default:            'customize.email_editor.status.default'            | trans,
        status_custom:             'customize.email_editor.status.custom'             | trans,
        variables:                 'customize.email_editor.variables'                 | trans,
+       layout:                    'customize.email_editor.layout'                    | trans,
        global_style:              'customize.email_editor.global_style'              | trans,
        primary_color:             'customize.email_editor.primary_color'             | trans,
        primary_content_color:     'customize.email_editor.primary_content_color'     | trans,

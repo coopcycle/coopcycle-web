@@ -2593,12 +2593,75 @@ class AdminController extends AbstractController
             }
         }
 
+        $layoutIsCustomByLocale = [];
+        foreach ($supportedLocales as $locale => $localeLabel) {
+            $layoutIsCustomByLocale[$locale] = $emailTemplateManager->getCustomLayout($locale) !== null;
+        }
+
         return $this->render('admin/customize_emails.html.twig', $this->auth([
-            'email_types'       => $emailTypes,
-            'supported_locales' => $supportedLocales,
+            'email_types'              => $emailTypes,
+            'supported_locales'        => $supportedLocales,
+            'layout_is_custom_by_locale' => $layoutIsCustomByLocale,
         ]));
     }
 
+    /**
+     * GET/POST/DELETE /admin/customize/emails/layout
+     *
+     * Manages the shared layout template that wraps all per-type fragments.
+     */
+    public function emailLayoutAction(Request $request, EmailTemplateManager $emailTemplateManager): JsonResponse
+    {
+        $isDemo = $this->getParameter('is_demo');
+
+        if ($isDemo) {
+            return $this->json(['error' => 'Not available in demo'], 403);
+        }
+
+        $locale = $request->query->get('locale', 'en');
+        if (!$emailTemplateManager->isValidLocale($locale)) {
+            $locale = 'en';
+        }
+
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            $mjml = trim($data['mjml'] ?? '');
+
+            if (empty($mjml)) {
+                return $this->json(['error' => 'Empty template'], 400);
+            }
+
+            $emailTemplateManager->saveLayout($locale, $mjml);
+
+            return $this->json(['success' => true, 'is_custom' => true]);
+        }
+
+        if ($request->isMethod('DELETE')) {
+            $emailTemplateManager->deleteLayout($locale);
+
+            return $this->json([
+                'success'   => true,
+                'is_custom' => false,
+                'mjml'      => $emailTemplateManager->getDefaultLayout(),
+            ]);
+        }
+
+        // GET: return the layout MJML (custom or default)
+        $custom = $emailTemplateManager->getCustomLayout($locale);
+
+        return $this->json([
+            'mjml'      => $custom ?? $emailTemplateManager->getDefaultLayout(),
+            'is_custom' => $custom !== null,
+        ]);
+    }
+
+    /**
+     * GET/POST/DELETE /admin/customize/emails/{type}
+     *
+     * Manages per-email-type fragments (inner mj-section blocks only, no wrapper).
+     * GET returns a GrapeJS-ready shell (fragment wrapped in layout head + body).
+     * POST stores the raw fragment sent by the JS (body children only).
+     */
     public function emailTemplateAction(string $type, Request $request, EmailTemplateManager $emailTemplateManager): JsonResponse
     {
         $isDemo = $this->getParameter('is_demo');
@@ -2624,7 +2687,9 @@ class AdminController extends AbstractController
                 return $this->json(['error' => 'Empty template'], 400);
             }
 
-            $emailTemplateManager->saveTemplate($type, $mjml, $locale);
+            // Normalise: if the editor sent a full MJML document (e.g. legacy),
+            // extract only the body content so we always store a pure fragment.
+            $emailTemplateManager->saveTemplate($type, $emailTemplateManager->ensureFragment($mjml), $locale);
 
             return $this->json(['success' => true]);
         }
@@ -2632,14 +2697,22 @@ class AdminController extends AbstractController
         if ($request->isMethod('DELETE')) {
             $emailTemplateManager->deleteTemplate($type, $locale);
 
-            return $this->json(['success' => true]);
+            $fragment = $emailTemplateManager->getDefaultFragment($type, $locale);
+            return $this->json([
+                'success'   => true,
+                'is_custom' => false,
+                'mjml'      => $emailTemplateManager->buildFragmentShell($fragment, $locale),
+            ]);
         }
 
-        // GET: return current MJML for the requested locale
-        $custom = $emailTemplateManager->getCustomTemplate($type, $locale);
+        // GET: return a GrapeJS-ready shell wrapping the fragment
+        $custom   = $emailTemplateManager->getCustomTemplate($type, $locale);
+        $fragment = $custom !== null
+            ? $emailTemplateManager->ensureFragment($custom)
+            : $emailTemplateManager->getDefaultFragment($type, $locale);
 
         return $this->json([
-            'mjml'      => $custom ?? $emailTemplateManager->getDefaultMjml($type, $locale),
+            'mjml'      => $emailTemplateManager->buildFragmentShell($fragment, $locale),
             'is_custom' => $custom !== null,
         ]);
     }

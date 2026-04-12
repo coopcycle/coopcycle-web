@@ -95,6 +95,49 @@ class EmailTemplateManager
         return $locale . '/' . $type . '.mjml';
     }
 
+    private function layoutStoragePath(string $locale): string
+    {
+        return $locale . '/layout.mjml';
+    }
+
+    // ── Layout storage ────────────────────────────────────────────────────────
+
+    /**
+     * Returns the custom layout MJML for the given locale, or null if none saved.
+     */
+    public function getCustomLayout(string $locale = 'en'): ?string
+    {
+        try {
+            $path = $this->layoutStoragePath($locale);
+            if ($this->emailTemplatesFilesystem->fileExists($path)) {
+                return $this->emailTemplatesFilesystem->read($path);
+            }
+        } catch (FilesystemException $e) {}
+
+        return null;
+    }
+
+    /**
+     * Saves a custom layout MJML to S3.
+     */
+    public function saveLayout(string $locale, string $mjml): void
+    {
+        $this->emailTemplatesFilesystem->write($this->layoutStoragePath($locale), $mjml);
+    }
+
+    /**
+     * Deletes the custom layout for the given locale so the default is used again.
+     */
+    public function deleteLayout(string $locale = 'en'): void
+    {
+        try {
+            $path = $this->layoutStoragePath($locale);
+            if ($this->emailTemplatesFilesystem->fileExists($path)) {
+                $this->emailTemplatesFilesystem->delete($path);
+            }
+        } catch (FilesystemException $e) {}
+    }
+
     /**
      * Returns the custom MJML stored in S3 for the given type+locale,
      * or null if no customisation exists.
@@ -149,10 +192,6 @@ class EmailTemplateManager
     }
 
     /**
-     * Returns a complete MJML document to use as the starting point in the editor.
-     * Uses the existing email translations for the given locale.
-     */
-    /**
      * Parses the 'theme' JSON from settings and returns colour values with defaults.
      *
      * @return array{primary: string, primary-content: string, secondary: string, secondary-content: string, accent: string, accent-content: string}
@@ -203,13 +242,56 @@ class EmailTemplateManager
         ];
     }
 
-    public function getDefaultMjml(string $type, string $locale = 'en'): string
+    /**
+     * Generates the default layout MJML (full document) with a content slot.
+     * This is what the layout editor starts with when no custom layout is saved.
+     */
+    public function getDefaultLayout(): string
+    {
+        $theme     = $this->getThemeColors();
+        $brandName = htmlspecialchars($this->settingsManager->get('brand_name') ?? '{{brand_name}}', ENT_QUOTES);
+        $bgColor   = htmlspecialchars($theme['secondary'], ENT_QUOTES);
+
+        return <<<MJML
+<mjml>
+  <mj-head>
+    <mj-font name="Raleway" href="https://fonts.googleapis.com/css?family=Raleway:400,700" />
+    <mj-font name="Open Sans" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" />
+    <mj-attributes>
+      <mj-text align="center" color="#555" />
+      <mj-all font-family="'Open Sans', Arial, sans-serif" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="{$bgColor}">
+    <mj-section>
+      <mj-column>
+        <mj-text font-family="Raleway, Arial, sans-serif" align="left">
+          <h2>{$brandName}</h2>
+        </mj-text>
+      </mj-column>
+    </mj-section>
+    <mj-raw data-slot="content"></mj-raw>
+    <mj-section>
+      <mj-column>
+        <mj-text align="center" font-size="12px" color="#999999">
+          Powered by CoopCycle
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
+MJML;
+    }
+
+    /**
+     * Returns just the inner mj-section blocks (fragment) for the given email type.
+     * No <mjml>/<mj-head>/<mj-body> wrapper — these are stitched in by the layout.
+     */
+    public function getDefaultFragment(string $type, string $locale = 'en'): string
     {
         $theme          = $this->getThemeColors();
-        $brandName      = $this->settingsManager->get('brand_name') ?? '{{brand_name}}';
         $primaryColor   = $theme['primary'];
         $primaryContent = $theme['primary-content'];
-        $bgColor        = $theme['secondary'];
         $contentBgColor = $theme['secondary-content'];
 
         $t = fn(string $key, array $params = []) =>
@@ -253,15 +335,14 @@ class EmailTemplateManager
             ],
         ];
 
-        $c = $contents[$type] ?? ['heading' => '', 'body' => '', 'cta' => null];
-
-        // Escape body for MJML (strip newlines that break tag nesting)
-        $body = trim(preg_replace('/\s+/', ' ', $c['body']));
+        $c       = $contents[$type] ?? ['heading' => '', 'body' => '', 'cta' => null];
+        $body    = trim(preg_replace('/\s+/', ' ', $c['body']));
+        $heading = htmlspecialchars($c['heading'], ENT_QUOTES);
 
         $ctaMjml = '';
         if ($c['cta'] !== null) {
             $ctaMjml = sprintf(
-                "\n        <mj-button href=\"%s\" background-color=\"%s\" color=\"%s\" font-family=\"Raleway, Arial, sans-serif\">%s</mj-button>",
+                "\n    <mj-button href=\"%s\" background-color=\"%s\" color=\"%s\" font-family=\"Raleway, Arial, sans-serif\">%s</mj-button>",
                 htmlspecialchars($c['cta']['href'], ENT_QUOTES),
                 htmlspecialchars($primaryColor, ENT_QUOTES),
                 htmlspecialchars($primaryContent, ENT_QUOTES),
@@ -269,78 +350,129 @@ class EmailTemplateManager
             );
         }
 
-        $heading = htmlspecialchars($c['heading'], ENT_QUOTES);
-
-        // Slot markers for types that support dynamic content blocks
-        $slots = self::CUSTOMER_EMAILS[$type]['slots'] ?? [];
+        $slots     = self::CUSTOMER_EMAILS[$type]['slots'] ?? [];
         $slotsMjml = '';
         foreach ($slots as $slotName) {
-            $slotsMjml .= "\n        <mj-raw data-slot=\"{$slotName}\"></mj-raw>";
+            $slotsMjml .= "\n    <mj-raw data-slot=\"{$slotName}\"></mj-raw>";
+        }
+
+        $bgAttr = htmlspecialchars($contentBgColor, ENT_QUOTES);
+
+        return <<<MJML
+<mj-section background-color="{$bgAttr}">
+  <mj-column>
+    <mj-text align="left" line-height="24px">
+      <h3>{$heading}</h3>
+      <p>{$body}</p>
+    </mj-text>{$slotsMjml}{$ctaMjml}
+  </mj-column>
+</mj-section>
+MJML;
+    }
+
+    /**
+     * If the given string is a legacy full MJML document (starts with <mjml>),
+     * extracts and returns only the mj-body content. Otherwise returns as-is.
+     * Used to normalise templates saved before the layout/fragment split.
+     */
+    public function ensureFragment(string $mjml): string
+    {
+        if (!preg_match('/^\s*<mjml/i', $mjml)) {
+            return $mjml;
+        }
+        if (preg_match('/<mj-body[^>]*>([\s\S]*?)<\/mj-body>/i', $mjml, $m)) {
+            return trim($m[1]);
+        }
+        return $mjml;
+    }
+
+    /**
+     * Wraps a fragment (inner mj-section blocks) in a full MJML shell that
+     * GrapeJS can render. The mj-head and body background are taken from the
+     * current layout (custom or default) so fonts and colours match.
+     */
+    public function buildFragmentShell(string $fragment, string $locale = 'en'): string
+    {
+        $locales   = array_unique([$locale, 'en']);
+        $layoutMjml = null;
+        foreach ($locales as $l) {
+            $layoutMjml = $this->getCustomLayout($l);
+            if ($layoutMjml !== null) break;
+        }
+        $layoutMjml = $layoutMjml ?? $this->getDefaultLayout();
+
+        $head    = '';
+        if (preg_match('/<mj-head[\s\S]*?<\/mj-head>/i', $layoutMjml, $m)) {
+            $head = $m[0];
+        }
+
+        $bgColor = '#eeeeee';
+        if (preg_match('/<mj-body[^>]*background-color=["\']([^"\']+)["\'][^>]*>/i', $layoutMjml, $m)) {
+            $bgColor = $m[1];
         }
 
         return <<<MJML
 <mjml>
-  <mj-head>
-    <mj-font name="Raleway" href="https://fonts.googleapis.com/css?family=Raleway:400,700" />
-    <mj-font name="Open Sans" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" />
-    <mj-attributes>
-      <mj-text align="center" color="#555" />
-      <mj-all font-family="'Open Sans', Arial, sans-serif" />
-    </mj-attributes>
-  </mj-head>
+  {$head}
   <mj-body background-color="{$bgColor}">
-    <mj-section>
-      <mj-column>
-        <mj-text font-family="Raleway, Arial, sans-serif" align="left">
-          <h2>{$brandName}</h2>
-        </mj-text>
-      </mj-column>
-    </mj-section>
-    <mj-section background-color="{$contentBgColor}">
-      <mj-column>
-        <mj-text align="left" line-height="24px">
-          <h3>{$heading}</h3>
-          <p>{$body}</p>
-        </mj-text>{$slotsMjml}{$ctaMjml}
-      </mj-column>
-    </mj-section>
-    <mj-section>
-      <mj-column>
-        <mj-text align="center" font-size="12px" color="#999999">
-          Powered by CoopCycle
-        </mj-text>
-      </mj-column>
-    </mj-section>
+{$fragment}
   </mj-body>
 </mjml>
 MJML;
     }
 
     /**
-     * Renders a stored custom MJML by substituting the given variable map.
-     * Falls back to the next locale in the chain (given locale → 'en' → null).
-     * Returns null if no custom template exists for this type in any fallback locale.
+     * Renders the custom email for the given type by composing the layout and fragment.
+     *
+     * Logic:
+     *  - custom layout + custom fragment → stitch both
+     *  - custom layout + no fragment     → stitch layout with default fragment
+     *  - no layout     + custom fragment → stitch default layout with fragment
+     *  - neither                         → return null (fall back to Twig default)
+     *
+     * Variable substitution runs on the fully-stitched MJML so both layout and
+     * fragment can use {{variable}} placeholders.
      */
     public function renderCustomTemplate(string $type, array $variables, string $locale = 'en'): ?string
     {
-        // Try requested locale first, then fall back to English
         $locales = array_unique([$locale, 'en']);
 
+        // Resolve custom layout (locale → en fallback)
+        $layoutMjml = null;
         foreach ($locales as $l) {
-            $template = $this->getCustomTemplate($type, $l);
-            if ($template !== null) {
-                $theme    = $this->getThemeColors();
-                $defaults = [
-                    'primary_color'            => $theme['primary'],
-                    'primary_content_color'    => $theme['primary-content'],
-                    'background_color'         => $theme['secondary'],
-                    'content_background_color' => $theme['secondary-content'],
-                ];
-                return $this->substituteVariables($template, array_merge($defaults, $variables));
-            }
+            $layoutMjml = $this->getCustomLayout($l);
+            if ($layoutMjml !== null) break;
         }
 
-        return null;
+        // Resolve custom fragment (locale → en fallback)
+        $fragmentMjml = null;
+        foreach ($locales as $l) {
+            $fragmentMjml = $this->getCustomTemplate($type, $l);
+            if ($fragmentMjml !== null) break;
+        }
+
+        // Neither customised → use Twig default
+        if ($layoutMjml === null && $fragmentMjml === null) {
+            return null;
+        }
+
+        $layout   = $layoutMjml ?? $this->getDefaultLayout();
+        $fragment = $fragmentMjml !== null
+            ? $this->ensureFragment($fragmentMjml)   // normalise legacy full-MJML saves
+            : $this->getDefaultFragment($type, $locale);
+
+        // Stitch fragment into layout's content slot, then resolve per-email dynamic slots
+        $mjml = $this->resolveSlots($layout, ['content' => $fragment]);
+
+        $theme    = $this->getThemeColors();
+        $defaults = [
+            'primary_color'            => $theme['primary'],
+            'primary_content_color'    => $theme['primary-content'],
+            'background_color'         => $theme['secondary'],
+            'content_background_color' => $theme['secondary-content'],
+        ];
+
+        return $this->substituteVariables($mjml, array_merge($defaults, $variables));
     }
 
     /**

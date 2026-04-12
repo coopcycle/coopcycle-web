@@ -1687,6 +1687,7 @@ customize.email_editor.reset: Réinitialiser par défaut
 customize.email_editor.status.default: Modèle par défaut — enregistrez pour personnaliser
 customize.email_editor.status.custom: Modèle personnalisé
 customize.email_editor.variables: Variables disponibles
+customize.email_editor.layout: Mise en page
 customize.email_editor.global_style: Style global
 customize.email_editor.primary_color: Couleur principale (fond du bouton)
 customize.email_editor.primary_content_color: Couleur du texte principal (texte du bouton)

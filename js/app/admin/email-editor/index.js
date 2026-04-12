@@ -20,34 +20,46 @@ const MJML_MESSAGES = { en: mjmlEn, fr: mjmlFr, es: mjmlEs }
 
 // ─── Slot configuration ───────────────────────────────────────────────────────
 // Maps slot name → display label shown in the editor canvas and block panel.
-// Add new slot types here as the backend supports them.
+// 'content' is the layout's placeholder for per-email content.
 
 const SLOT_LABELS = {
+  content:      'Email content',
   order_items:  'Order items',
   loopeat_info: 'Loopeat info',
 }
+
+// Variables available in the layout template (shown in the variables bar)
+const LAYOUT_VARIABLES = [
+  'brand_name',
+  'background_color',
+  'content_background_color',
+  'primary_color',
+  'primary_content_color',
+]
 
 // ─── Bootstrap: read config from DOM ─────────────────────────────────────────
 
 const root = document.getElementById('email-editor')
 if (!root) throw new Error('Missing #email-editor element')
 
-const emailTypes        = JSON.parse(root.dataset.emailTypes)       // { type: { label_by_locale, variables, is_custom_by_locale } }
-const supportedLocales  = JSON.parse(root.dataset.supportedLocales)  // { en: 'English', fr: 'Français', ... }
-const i18n              = JSON.parse(root.dataset.i18n)             // server-translated UI strings
-const apiBaseUrl        = root.dataset.apiUrl                        // /admin/customize/emails/__TYPE__
-const styleSettingsUrl  = root.dataset.styleSettingsUrl             // /admin/customize/emails/settings
+const emailTypes           = JSON.parse(root.dataset.emailTypes)        // { type: { label_by_locale, variables, is_custom_by_locale } }
+const supportedLocales     = JSON.parse(root.dataset.supportedLocales)  // { en: 'English', fr: 'Français', ... }
+const i18n                 = JSON.parse(root.dataset.i18n)              // server-translated UI strings
+const apiBaseUrl           = root.dataset.apiUrl                         // /admin/customize/emails/__TYPE__
+const layoutApiUrl         = root.dataset.layoutUrl                      // /admin/customize/emails/layout
+const styleSettingsUrl     = root.dataset.styleSettingsUrl              // /admin/customize/emails/settings
 // The Symfony app locale (user's own UI language), used for GrapeJS UI strings
-const appLocale         = root.dataset.locale || 'en'
+const appLocale            = root.dataset.locale || 'en'
 
 // ─── State ────────────────────────────────────────────────────────────────────
 
-let currentType   = null
-let currentLocale = Object.keys(supportedLocales)[0]
-let editor        = null
-let isSaving      = false
-let styleView     = false   // true when the Global Style panel is shown
-let originalMjmlHead = ''   // preserved from the loaded template; GrapeJS breaks mj-head on parse
+let currentType      = null
+let currentLocale    = Object.keys(supportedLocales)[0]
+let editor           = null
+let isSaving         = false
+let styleView        = false    // true when the Global Style panel is shown
+let isEditingLayout  = false    // true when editing the shared layout
+let originalMjmlHead = ''       // preserved from the loaded template; GrapeJS breaks mj-head on parse
 
 // Track custom status per locale per type (initialised from server data)
 // Shape: { [type]: { [locale]: boolean } }
@@ -55,6 +67,8 @@ const customStatus = {}
 for (const [type, meta] of Object.entries(emailTypes)) {
   customStatus[type] = { ...meta.is_custom_by_locale }
 }
+
+const layoutIsCustomByLocale = JSON.parse(root.dataset.layoutIsCustom || '{}')
 
 // ─── DOM helpers ──────────────────────────────────────────────────────────────
 
@@ -93,6 +107,18 @@ function buildSidebar() {
   styleBtn.addEventListener('click', () => showStylePanel())
   sidebar.appendChild(styleBtn)
 
+  // Layout button — below Global Style, above email types
+  const layoutBtn = document.createElement('button')
+  layoutBtn.type = 'button'
+  layoutBtn.id = 'ee-layout-btn'
+  layoutBtn.className = 'ee-email-btn ee-layout-btn'
+  layoutBtn.innerHTML = `
+    <span class="ee-email-label">${i18n.layout}</span>
+    <span class="ee-badge" style="display:none">custom</span>
+  `
+  layoutBtn.addEventListener('click', () => selectLayout())
+  sidebar.appendChild(layoutBtn)
+
   // Divider
   const divider = document.createElement('div')
   divider.className = 'ee-sidebar-divider'
@@ -122,12 +148,21 @@ function refreshSidebar() {
     const badge = btn.querySelector('.ee-badge')
     badge.style.display = customStatus[type]?.[currentLocale] ? '' : 'none'
   }
+  // Refresh layout badge
+  const layoutBadge = document.querySelector('#ee-layout-btn .ee-badge')
+  if (layoutBadge) {
+    layoutBadge.style.display = layoutIsCustomByLocale[currentLocale] ? '' : 'none'
+  }
 }
 
 function setActiveEmailBtn(type) {
-  document.querySelectorAll('.ee-email-btn').forEach(btn => {
+  document.querySelectorAll('.ee-email-btn[data-type]').forEach(btn => {
     btn.classList.toggle('is-active', btn.dataset.type === type)
   })
+  if (type !== null) {
+    document.getElementById('ee-layout-btn')?.classList.remove('is-active')
+    document.getElementById('ee-global-style-btn')?.classList.remove('is-active')
+  }
 }
 
 function updateCustomBadge(type, locale, isCustom) {
@@ -139,9 +174,15 @@ function updateCustomBadge(type, locale, isCustom) {
   if (badge) badge.style.display = (locale === currentLocale && isCustom) ? '' : 'none'
 }
 
-function updateVariablesPanel(type) {
+function updateLayoutBadge(locale, isCustom) {
+  layoutIsCustomByLocale[locale] = isCustom
+  const badge = document.querySelector('#ee-layout-btn .ee-badge')
+  if (badge) badge.style.display = (locale === currentLocale && isCustom) ? '' : 'none'
+}
+
+function updateVariablesPanel(type, overrideVars = null) {
   const panel = document.getElementById('ee-variables')
-  const vars = emailTypes[type]?.variables ?? []
+  const vars = overrideVars ?? (emailTypes[type]?.variables ?? [])
   panel.innerHTML = vars.length
     ? vars.map(v => `<code class="ee-var" title="Click to copy">{{${v}}}</code>`).join('')
     : '<em>—</em>'
@@ -246,6 +287,7 @@ async function handleSaveStyle() {
 
 function showStylePanel() {
   styleView = true
+  isEditingLayout = false
   currentType = null
 
   document.getElementById('ee-canvas').style.display = 'none'
@@ -257,7 +299,7 @@ function showStylePanel() {
   document.getElementById('ee-variables-bar') && (document.getElementById('ee-variables-bar').style.display = 'none')
   setStatus('')
 
-  // Highlight the global style button, deactivate email buttons
+  // Highlight the global style button, deactivate others
   document.querySelectorAll('.ee-email-btn').forEach(b => b.classList.remove('is-active'))
   document.getElementById('ee-global-style-btn').classList.add('is-active')
 
@@ -282,18 +324,22 @@ function hideStylePanel() {
 
 // ─── API ──────────────────────────────────────────────────────────────────────
 
-function apiUrl(type, locale) {
+function templateApiUrl(type, locale) {
   return apiBaseUrl.replace('__TYPE__', type) + '?locale=' + locale
 }
 
+function layoutUrl(locale) {
+  return layoutApiUrl + '?locale=' + locale
+}
+
 async function loadTemplate(type, locale) {
-  const res = await fetch(apiUrl(type, locale), { headers: { Accept: 'application/json' } })
+  const res = await fetch(templateApiUrl(type, locale), { headers: { Accept: 'application/json' } })
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
 }
 
 async function saveTemplate(type, locale, mjml) {
-  const res = await fetch(apiUrl(type, locale), {
+  const res = await fetch(templateApiUrl(type, locale), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ mjml }),
@@ -303,7 +349,29 @@ async function saveTemplate(type, locale, mjml) {
 }
 
 async function resetTemplate(type, locale) {
-  const res = await fetch(apiUrl(type, locale), { method: 'DELETE' })
+  const res = await fetch(templateApiUrl(type, locale), { method: 'DELETE' })
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+  return res.json()
+}
+
+async function loadLayout(locale) {
+  const res = await fetch(layoutUrl(locale), { headers: { Accept: 'application/json' } })
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+  return res.json()
+}
+
+async function saveLayout(locale, mjml) {
+  const res = await fetch(layoutUrl(locale), {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ mjml }),
+  })
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+  return res.json()
+}
+
+async function resetLayout(locale) {
+  const res = await fetch(layoutUrl(locale), { method: 'DELETE' })
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
 }
@@ -316,6 +384,15 @@ async function resetTemplate(type, locale) {
 function extractMjmlSection(mjml, tag) {
   const match = mjml.match(new RegExp(`<${tag}[\\s\\S]*?<\\/${tag}>`, 'i'))
   return match ? match[0] : ''
+}
+
+/**
+ * Extracts the children of <mj-body> — just the inner sections, no wrapper.
+ * Used when saving a fragment so only the content is stored.
+ */
+function extractBodyContent(mjml) {
+  const match = mjml.match(/<mj-body[^>]*>([\s\S]*?)<\/mj-body>/i)
+  return match ? match[1].trim() : ''
 }
 
 // ─── Slot components plugin ───────────────────────────────────────────────────
@@ -382,7 +459,7 @@ function createSlotsPlugin(slotNames) {
 
 // ─── Editor lifecycle ─────────────────────────────────────────────────────────
 
-function initEditor(mjml) {
+function initEditor(mjml, isLayout = false) {
   if (editor) {
     editor.destroy()
     editor = null
@@ -395,7 +472,8 @@ function initEditor(mjml) {
 
   const locale = appLocale in GJS_MESSAGES ? appLocale : 'en'
 
-  const activeSlots = emailTypes[currentType]?.slots ?? []
+  // Layout gets the 'content' slot; per-email fragments get their own slots
+  const activeSlots = isLayout ? ['content'] : (emailTypes[currentType]?.slots ?? [])
   const slotsPlugin = createSlotsPlugin(activeSlots)
 
   editor = grapesjs.init({
@@ -404,8 +482,6 @@ function initEditor(mjml) {
     plugins: [mjmlPlugin, slotsPlugin],
     pluginsOpts: {
       [mjmlPlugin]: {
-        // Keep GrapeJS's own style manager reset so MJML colour/font
-        // properties appear in the Styles panel on the right.
         resetStyleManager: true,
       },
     },
@@ -425,8 +501,34 @@ function initEditor(mjml) {
 
 // ─── Interaction handlers ─────────────────────────────────────────────────────
 
+async function selectLayout() {
+  if (styleView) hideStylePanel()
+  isEditingLayout = true
+  currentType = null
+
+  document.querySelectorAll('.ee-email-btn').forEach(b => b.classList.remove('is-active'))
+  document.getElementById('ee-layout-btn').classList.add('is-active')
+
+  updateVariablesPanel(null, LAYOUT_VARIABLES)
+  setStatus('Loading…')
+  document.getElementById('ee-save').disabled  = true
+  document.getElementById('ee-reset').disabled = true
+
+  try {
+    const { mjml, is_custom } = await loadLayout(currentLocale)
+    initEditor(mjml, true)
+    updateLayoutBadge(currentLocale, is_custom)
+    setStatus(is_custom ? i18n.status_custom : i18n.status_default, 'info')
+    document.getElementById('ee-save').disabled  = false
+    document.getElementById('ee-reset').disabled = !is_custom
+  } catch (err) {
+    setStatus('Failed to load layout: ' + err.message, 'error')
+  }
+}
+
 async function selectEmail(type) {
   if (styleView) hideStylePanel()
+  isEditingLayout = false
 
   currentType = type
   setActiveEmailBtn(type)
@@ -437,7 +539,7 @@ async function selectEmail(type) {
 
   try {
     const { mjml, is_custom } = await loadTemplate(type, currentLocale)
-    initEditor(mjml)
+    initEditor(mjml, false)
     updateCustomBadge(type, currentLocale, is_custom)
     setStatus(is_custom ? i18n.status_custom : i18n.status_default, 'info')
     document.getElementById('ee-save').disabled  = false
@@ -453,8 +555,9 @@ async function switchLocale(locale) {
   setActiveLocaleTab(locale)
   refreshSidebar()
 
-  if (currentType) {
-    // Force reload for the new locale
+  if (isEditingLayout) {
+    await selectLayout()
+  } else if (currentType) {
     const savedType = currentType
     currentType = null
     await selectEmail(savedType)
@@ -462,19 +565,32 @@ async function switchLocale(locale) {
 }
 
 async function handleSave() {
-  if (!currentType || !editor || isSaving) return
+  if (!editor || isSaving) return
+  if (!isEditingLayout && !currentType) return
+
   isSaving = true
   document.getElementById('ee-save').disabled = true
   setStatus('Saving…')
 
   try {
     const editorOutput = editor.getHtml()
-    const body = extractMjmlSection(editorOutput, 'mj-body')
-    const mjml = `<mjml>\n  ${originalMjmlHead}\n  ${body}\n</mjml>`
-    await saveTemplate(currentType, currentLocale, mjml)
-    updateCustomBadge(currentType, currentLocale, true)
-    document.getElementById('ee-reset').disabled = false
-    setStatus(i18n.status_custom, 'success')
+
+    if (isEditingLayout) {
+      // Layout: save the full MJML (preserve head, use editor body)
+      const body = extractMjmlSection(editorOutput, 'mj-body')
+      const mjml = `<mjml>\n  ${originalMjmlHead}\n  ${body}\n</mjml>`
+      await saveLayout(currentLocale, mjml)
+      updateLayoutBadge(currentLocale, true)
+      document.getElementById('ee-reset').disabled = false
+      setStatus(i18n.status_custom, 'success')
+    } else {
+      // Fragment: save only the body children (inner mj-section blocks)
+      const fragment = extractBodyContent(editorOutput)
+      await saveTemplate(currentType, currentLocale, fragment)
+      updateCustomBadge(currentType, currentLocale, true)
+      document.getElementById('ee-reset').disabled = false
+      setStatus(i18n.status_custom, 'success')
+    }
   } catch (err) {
     setStatus('Save failed: ' + err.message, 'error')
   } finally {
@@ -484,19 +600,25 @@ async function handleSave() {
 }
 
 async function handleReset() {
-  if (!currentType || !editor) return
+  if (!editor) return
+  if (!isEditingLayout && !currentType) return
   if (!window.confirm('Reset to the default template? Your customisation for this language will be deleted.')) return
 
   document.getElementById('ee-reset').disabled = true
   setStatus('Resetting…')
 
   try {
-    await resetTemplate(currentType, currentLocale)
-    updateCustomBadge(currentType, currentLocale, false)
-    const { mjml } = await loadTemplate(currentType, currentLocale)
-    initEditor(mjml)
-    document.getElementById('ee-reset').disabled = true
-    setStatus(i18n.status_default, 'info')
+    if (isEditingLayout) {
+      const { mjml } = await resetLayout(currentLocale)
+      updateLayoutBadge(currentLocale, false)
+      initEditor(mjml, true)
+      setStatus(i18n.status_default, 'info')
+    } else {
+      const { mjml } = await resetTemplate(currentType, currentLocale)
+      updateCustomBadge(currentType, currentLocale, false)
+      initEditor(mjml, false)
+      setStatus(i18n.status_default, 'info')
+    }
   } catch (err) {
     setStatus('Reset failed: ' + err.message, 'error')
     document.getElementById('ee-reset').disabled = false
@@ -514,6 +636,5 @@ document.getElementById('ee-save').addEventListener('click', handleSave)
 document.getElementById('ee-reset').addEventListener('click', handleReset)
 document.getElementById('ee-save-style').addEventListener('click', handleSaveStyle)
 
-// Auto-select first email type
-const firstType = Object.keys(emailTypes)[0]
-if (firstType) selectEmail(firstType)
+// Auto-select the layout on first load
+selectLayout()

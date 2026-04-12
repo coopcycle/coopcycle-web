@@ -734,6 +734,12 @@ admin_customize_email_settings:
         _controller: AppBundle\Controller\AdminController::emailStyleSettingsAction
     methods:  [ GET, POST ]
 
+admin_customize_email_layout:
+    path: /admin/customize/emails/layout
+    defaults:
+        _controller: AppBundle\Controller\AdminController::emailLayoutAction
+    methods:  [ GET, POST, DELETE ]
+
 admin_customize_email_template:
     path: /admin/customize/emails/{type}
     defaults:
