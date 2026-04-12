@@ -301,7 +301,7 @@ class EmailTemplateManager
         <mj-text align="left" line-height="24px">
           <h3>{$heading}</h3>
           <p>{$body}</p>
-        </mj-text>{$ctaMjml}{$slotsMjml}
+        </mj-text>{$slotsMjml}{$ctaMjml}
       </mj-column>
     </mj-section>
     <mj-section>
