@@ -251,12 +251,15 @@ class EmailManager
 
         $subject = $this->translator->trans('order.accepted.subject', ['{{order_number}}' => $order->getNumber()], 'emails');
 
+        $loopeatSlot = $order->isLoopeat()
+            ? $this->templating->render('emails/order/_partials/loopeat_info.mjml.twig', ['order' => $order])
+            : '';
+
         $body = $this->renderCustom('order_accepted', [
             'order_number' => $order->getNumber(),
             'order_url'    => $this->orderUrl($order),
-        ]) ?? $this->mjml->render($this->templating->render('emails/order/accepted.mjml.twig', [
-            'order' => $order,
-        ]));
+        ], ['loopeat_info' => $loopeatSlot])
+            ?? $this->renderTwigMjml('emails/order/accepted.mjml.twig', ['order' => $order], ['loopeat_info' => $loopeatSlot]);
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);
     }

@@ -19,16 +19,7 @@
     '{{phone_number}}': phone_number ? phone_number|phone_number_format('NATIONAL') : 'N/A'
   }, 'emails')|raw }}
   </mj-text>
-  {% if order.isLoopeat() %}
-  <mj-text align="left" line-height="20px">
-  {% set returns_fee = loopeat_returns_fee(order) %}
-  {% if returns_fee > 0 %}
-  {{ ('order.loopeat.accepted.with_fee')|trans({ '{{name}}': loopeat_context.name, '{{amount}}': returns_fee|price_format }, 'emails')|raw }}
-  {% else %}
-  {{ ('order.loopeat.accepted')|trans({ '{{name}}': loopeat_context.name }, 'emails')|raw }}
-  {% endif %}
-  </mj-text>
-  {% endif %}
+  <mj-raw data-slot="loopeat_info"></mj-raw>
   <mj-button href="{{ url('order_confirm', { hashid: order|hashid(16) }) }}" background-color="{{ coopcycle_theme_color('primary', '#10ac84') }}" color="{{ coopcycle_theme_color('primary-content', 'white') }}" font-family="Raleway, Arial, sans-serif">
     {{ 'order.view' | trans({}, 'emails') }}
   </mj-button>

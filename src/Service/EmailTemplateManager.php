@@ -21,7 +21,7 @@ class EmailTemplateManager
         'order_accepted' => [
             'label_key' => 'customize.email_editor.email_type.order_accepted',
             'variables'  => ['brand_name', 'order_number', 'order_url'],
-            'slots'      => [],
+            'slots'      => ['loopeat_info'],
         ],
         'order_cancelled' => [
             'label_key' => 'customize.email_editor.email_type.order_cancelled',

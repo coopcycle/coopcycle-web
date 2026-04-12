@@ -23,7 +23,8 @@ const MJML_MESSAGES = { en: mjmlEn, fr: mjmlFr, es: mjmlEs }
 // Add new slot types here as the backend supports them.
 
 const SLOT_LABELS = {
-  order_items: 'Order items',
+  order_items:  'Order items',
+  loopeat_info: 'Loopeat info',
 }
 
 // ─── Bootstrap: read config from DOM ─────────────────────────────────────────
