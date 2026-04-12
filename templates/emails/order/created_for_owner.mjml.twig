@@ -24,7 +24,7 @@
     {{ 'order.preparation_expected_for'|trans({ '%date%': order.pickupExpectedAt|format_datetime('short', 'short') }) }}
   </mj-text>
   <mj-spacer container-background-color="#ecedee" height="1px" />
-  {% include 'emails/order/_partials/items.mjml.twig' %}
+  <mj-raw data-slot="order_items"></mj-raw>
   <mj-button
     href="{{ url('dashboard_restaurant_dashboard', { restaurantId: restaurant.id, order: order|get_iri_from_item }) }}"
     background-color="{{ coopcycle_theme_color('primary', '#10ac84') }}"

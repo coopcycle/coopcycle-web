@@ -133,6 +133,20 @@ class EmailManager
      * Returns null if no custom template is configured for this type in any fallback locale.
      */
     /**
+     * Renders a Twig MJML template, resolves slot markers, then compiles to HTML.
+     *
+     * @param array<string,string> $slots Map of slot name → pre-rendered MJML snippet
+     */
+    private function renderTwigMjml(string $template, array $context, array $slots = []): string
+    {
+        $mjml = $this->templating->render($template, $context);
+        if (!empty($slots)) {
+            $mjml = $this->emailTemplateManager->resolveSlots($mjml, $slots);
+        }
+        return $this->mjml->render($mjml);
+    }
+
+    /**
      * @param array<string,string> $slots Map of slot name → pre-rendered MJML snippet
      */
     private function renderCustom(string $type, array $variables, array $slots = []): ?string
@@ -167,14 +181,12 @@ class EmailManager
     {
         $subject = $this->translator->trans('order.created.subject', ['{{order_number}}' => $order->getNumber()], 'emails');
 
+        $orderItemsSlot = ['order_items' => $this->templating->render('emails/order/_partials/items.mjml.twig', ['order' => $order])];
+
         $body = $this->renderCustom('order_created', [
             'order_number' => $order->getNumber(),
             'order_url'    => $this->orderUrl($order),
-        ], [
-            'order_items' => $this->templating->render('emails/order/_partials/items.mjml.twig', ['order' => $order]),
-        ]) ?? $this->mjml->render($this->templating->render('emails/order/created.mjml.twig', [
-            'order' => $order,
-        ]));
+        ], $orderItemsSlot) ?? $this->renderTwigMjml('emails/order/created.mjml.twig', ['order' => $order], $orderItemsSlot);
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);
     }
@@ -185,10 +197,12 @@ class EmailManager
             'owner.order.created.subject',
             ['{{order_number}}' => $order->getNumber()],
             'emails');
-        $body = $this->mjml->render($this->templating->render('emails/order/created_for_owner.mjml.twig', [
-            'order' => $order,
+        $body = $this->renderTwigMjml('emails/order/created_for_owner.mjml.twig', [
+            'order'      => $order,
             'restaurant' => $restaurant,
-        ]));
+        ], [
+            'order_items' => $this->templating->render('emails/order/_partials/items.mjml.twig', ['order' => $order]),
+        ]);
 
         return $this->createHtmlMessage($subject, $body);
     }
@@ -207,13 +221,11 @@ class EmailManager
     {
         $subject = $this->translator->trans('order.payment.subject', ['{{order_number}}' => $order->getNumber()], 'emails');
 
+        $orderItemsSlot = ['order_items' => $this->templating->render('emails/order/_partials/items.mjml.twig', ['order' => $order])];
+
         $body = $this->renderCustom('order_payment', [
             'order_number' => $order->getNumber(),
-        ], [
-            'order_items' => $this->templating->render('emails/order/_partials/items.mjml.twig', ['order' => $order]),
-        ]) ?? $this->mjml->render($this->templating->render('emails/order/payment.mjml.twig', [
-            'order' => $order
-        ]));
+        ], $orderItemsSlot) ?? $this->renderTwigMjml('emails/order/payment.mjml.twig', ['order' => $order], $orderItemsSlot);
 
         return $this->createHtmlMessage($subject, $body);
     }
@@ -353,13 +365,11 @@ class EmailManager
     {
         $subject = $this->translator->trans('order.receipt.subject', ['{{order_number}}' => $order->getNumber()], 'emails');
 
+        $orderItemsSlot = ['order_items' => $this->templating->render('emails/order/_partials/items.mjml.twig', ['order' => $order])];
+
         $body = $this->renderCustom('order_receipt', [
             'order_number' => $order->getNumber(),
-        ], [
-            'order_items' => $this->templating->render('emails/order/_partials/items.mjml.twig', ['order' => $order]),
-        ]) ?? $this->mjml->render($this->templating->render('emails/order/receipt.mjml.twig', [
-            'order' => $order,
-        ]));
+        ], $orderItemsSlot) ?? $this->renderTwigMjml('emails/order/receipt.mjml.twig', ['order' => $order], $orderItemsSlot);
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);
     }
