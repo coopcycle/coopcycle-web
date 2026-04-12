@@ -494,6 +494,81 @@ function createSlotsPlugin(slotNames) {
   }
 }
 
+// ─── Layout section locking ───────────────────────────────────────────────────
+
+/**
+ * Recursively locks a GrapeJS component so it cannot be selected, moved,
+ * edited, copied, or dropped into.
+ */
+function lockComponentDeep(comp) {
+  comp.set({
+    locked:        true,   // GrapeJS native all-in-one lock flag
+    selectable:    false,
+    hoverable:     false,
+    removable:     false,
+    draggable:     false,
+    copyable:      false,
+    editable:      false,
+    highlightable: false,
+    droppable:     false,
+    layout_locked: true,   // custom flag for the component:selected safety-net
+  })
+  comp.components().each(child => lockComponentDeep(child))
+}
+
+/**
+ * Walks the entire component tree and returns all components matching
+ * the predicate. Does NOT recurse into matched components.
+ */
+function deepFind(root, predicate) {
+  const results = []
+  function walk(comp) {
+    if (predicate(comp)) results.push(comp)
+    else comp.components().each(walk)
+  }
+  root.components().each(walk)
+  return results
+}
+
+/**
+ * After the editor loads in fragment mode, locks the mj-head and all mj-body
+ * sections that fall outside the content_start / content_end boundary markers.
+ * Sections inside the boundary remain fully editable.
+ *
+ * Uses deepFind so the tree depth doesn't matter, and checks data-slot
+ * attributes (not component type) to locate the boundary markers reliably.
+ */
+function lockLayoutSections(editor) {
+  const wrapper = editor.getWrapper()
+  if (!wrapper) return
+
+  // Lock the entire mj-head (fonts, attributes — not user-editable here)
+  deepFind(wrapper, c => (c.get('tagName') || '').toLowerCase() === 'mj-head')
+    .forEach(lockComponentDeep)
+
+  // Find mj-body (may be nested inside an <mjml> wrapper component)
+  const bodies = deepFind(wrapper, c => (c.get('tagName') || '').toLowerCase() === 'mj-body')
+  if (!bodies.length) return
+
+  const body     = bodies[0]
+  const children = body.components()
+  let startIdx   = -1
+  let endIdx     = -1
+
+  // Use data-slot attribute to find boundary markers (type lookup is unreliable)
+  children.each((c, idx) => {
+    const attrs = c.get('attributes') || {}
+    if (attrs['data-slot'] === 'content_start') startIdx = idx
+    if (attrs['data-slot'] === 'content_end')   endIdx   = idx
+  })
+
+  if (startIdx === -1 && endIdx === -1) return
+
+  children.each((comp, idx) => {
+    if (idx < startIdx || idx > endIdx) lockComponentDeep(comp)
+  })
+}
+
 // ─── Editor lifecycle ─────────────────────────────────────────────────────────
 
 function initEditor(mjml, isLayout = false) {
@@ -538,6 +613,10 @@ function initEditor(mjml, isLayout = false) {
     storageManager: false,
     components: mjml,
   })
+
+  if (!isLayout) {
+    editor.on('load', () => lockLayoutSections(editor))
+  }
 }
 
 // ─── Interaction handlers ─────────────────────────────────────────────────────
