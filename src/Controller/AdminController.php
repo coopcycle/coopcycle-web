@@ -2587,6 +2587,7 @@ class AdminController extends AbstractController
             foreach ($emailTemplateManager->getEmailTypes($locale) as $type => $meta) {
                 $emailTypes[$type]['label_by_locale'][$locale] = $meta['label'];
                 $emailTypes[$type]['variables']                = $meta['variables'];
+                $emailTypes[$type]['slots']                    = $meta['slots'];
                 $emailTypes[$type]['is_custom_by_locale'][$locale] =
                     $emailTemplateManager->getCustomTemplate($type, $locale) !== null;
             }

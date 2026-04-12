@@ -18,6 +18,14 @@ import mjmlEs from 'grapesjs-mjml/locale/es'
 const GJS_MESSAGES = { en: gjsEn, fr: gjsFr, es: gjsEs }
 const MJML_MESSAGES = { en: mjmlEn, fr: mjmlFr, es: mjmlEs }
 
+// ─── Slot configuration ───────────────────────────────────────────────────────
+// Maps slot name → display label shown in the editor canvas and block panel.
+// Add new slot types here as the backend supports them.
+
+const SLOT_LABELS = {
+  order_items: 'Order items',
+}
+
 // ─── Bootstrap: read config from DOM ─────────────────────────────────────────
 
 const root = document.getElementById('email-editor')
@@ -298,6 +306,67 @@ async function resetTemplate(type, locale) {
   return res.json()
 }
 
+// ─── Slot components plugin ───────────────────────────────────────────────────
+
+/**
+ * Returns a GrapeJS plugin that registers a component type and block for each
+ * slot name in the given array. Must be added AFTER mjmlPlugin so its
+ * isComponent() check takes priority over the built-in mj-raw type.
+ */
+function createSlotsPlugin(slotNames) {
+  return (editor) => {
+    for (const slotName of slotNames) {
+      const label = SLOT_LABELS[slotName] ?? slotName
+
+      editor.Components.addType(`slot-${slotName}`, {
+        isComponent: (el) =>
+          el.tagName === 'MJ-RAW' && el.getAttribute('data-slot') === slotName,
+
+        model: {
+          defaults: {
+            tagName: 'mj-raw',
+            void: false,
+            droppable: false,
+            editable: false,
+            copyable: true,
+            removable: true,
+            attributes: { 'data-slot': slotName },
+            components: [],
+          },
+          toHTML() {
+            return `<mj-raw data-slot="${slotName}"></mj-raw>`
+          },
+        },
+
+        view: {
+          onRender({ el }) {
+            el.innerHTML = `<div style="
+              padding: 10px 14px;
+              background: #eff6ff;
+              border: 2px dashed #60a5fa;
+              border-radius: 4px;
+              color: #1d4ed8;
+              font-size: 12px;
+              font-family: sans-serif;
+              text-align: center;
+              pointer-events: none;
+            ">&#x1F4E6; ${label}</div>`
+          },
+        },
+      })
+
+      editor.Blocks.add(`slot-${slotName}`, {
+        label,
+        category: 'Dynamic',
+        content: { type: `slot-${slotName}` },
+        media: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2M8 7V5a2 2 0 0 0-4 0v2"/>
+        </svg>`,
+      })
+    }
+  }
+}
+
 // ─── Editor lifecycle ─────────────────────────────────────────────────────────
 
 function initEditor(mjml) {
@@ -310,10 +379,13 @@ function initEditor(mjml) {
 
   const locale = appLocale in GJS_MESSAGES ? appLocale : 'en'
 
+  const activeSlots = emailTypes[currentType]?.slots ?? []
+  const slotsPlugin = createSlotsPlugin(activeSlots)
+
   editor = grapesjs.init({
     container: '#ee-canvas',
     height: '100%',
-    plugins: [mjmlPlugin],
+    plugins: [mjmlPlugin, slotsPlugin],
     pluginsOpts: {
       [mjmlPlugin]: {
         // Keep GrapeJS's own style manager reset so MJML colour/font

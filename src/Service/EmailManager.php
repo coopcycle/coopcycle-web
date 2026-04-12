@@ -132,7 +132,10 @@ class EmailManager
      * Uses the current request locale with fallback to English.
      * Returns null if no custom template is configured for this type in any fallback locale.
      */
-    private function renderCustom(string $type, array $variables): ?string
+    /**
+     * @param array<string,string> $slots Map of slot name → pre-rendered MJML snippet
+     */
+    private function renderCustom(string $type, array $variables, array $slots = []): ?string
     {
         $mjml = $this->emailTemplateManager->renderCustomTemplate(
             $type,
@@ -142,6 +145,10 @@ class EmailManager
 
         if ($mjml === null) {
             return null;
+        }
+
+        if (!empty($slots)) {
+            $mjml = $this->emailTemplateManager->resolveSlots($mjml, $slots);
         }
 
         return $this->mjml->render($mjml);
@@ -163,6 +170,8 @@ class EmailManager
         $body = $this->renderCustom('order_created', [
             'order_number' => $order->getNumber(),
             'order_url'    => $this->orderUrl($order),
+        ], [
+            'order_items' => $this->templating->render('emails/order/_partials/items.mjml.twig', ['order' => $order]),
         ]) ?? $this->mjml->render($this->templating->render('emails/order/created.mjml.twig', [
             'order' => $order,
         ]));
@@ -200,6 +209,8 @@ class EmailManager
 
         $body = $this->renderCustom('order_payment', [
             'order_number' => $order->getNumber(),
+        ], [
+            'order_items' => $this->templating->render('emails/order/_partials/items.mjml.twig', ['order' => $order]),
         ]) ?? $this->mjml->render($this->templating->render('emails/order/payment.mjml.twig', [
             'order' => $order
         ]));
@@ -344,6 +355,8 @@ class EmailManager
 
         $body = $this->renderCustom('order_receipt', [
             'order_number' => $order->getNumber(),
+        ], [
+            'order_items' => $this->templating->render('emails/order/_partials/items.mjml.twig', ['order' => $order]),
         ]) ?? $this->mjml->render($this->templating->render('emails/order/receipt.mjml.twig', [
             'order' => $order,
         ]));

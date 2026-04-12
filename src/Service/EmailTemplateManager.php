@@ -16,30 +16,37 @@ class EmailTemplateManager
         'order_created' => [
             'label_key' => 'customize.email_editor.email_type.order_created',
             'variables'  => ['brand_name', 'order_number', 'order_url'],
+            'slots'      => ['order_items'],
         ],
         'order_accepted' => [
             'label_key' => 'customize.email_editor.email_type.order_accepted',
             'variables'  => ['brand_name', 'order_number', 'order_url'],
+            'slots'      => [],
         ],
         'order_cancelled' => [
             'label_key' => 'customize.email_editor.email_type.order_cancelled',
             'variables'  => ['brand_name', 'order_number'],
+            'slots'      => [],
         ],
         'order_delayed' => [
             'label_key' => 'customize.email_editor.email_type.order_delayed',
             'variables'  => ['brand_name', 'order_number', 'delay'],
+            'slots'      => [],
         ],
         'order_payment' => [
             'label_key' => 'customize.email_editor.email_type.order_payment',
             'variables'  => ['brand_name', 'order_number'],
+            'slots'      => ['order_items'],
         ],
         'order_receipt' => [
             'label_key' => 'customize.email_editor.email_type.order_receipt',
             'variables'  => ['brand_name', 'order_number'],
+            'slots'      => ['order_items'],
         ],
         'task_completed' => [
             'label_key' => 'customize.email_editor.email_type.task_completed',
             'variables'  => ['brand_name', 'delivery_id', 'tracking_url'],
+            'slots'      => [],
         ],
     ];
 
@@ -62,6 +69,7 @@ class EmailTemplateManager
             $types[$type] = [
                 'label'     => $this->translator->trans($meta['label_key'], [], 'messages', $locale),
                 'variables' => $meta['variables'],
+                'slots'     => $meta['slots'],
             ];
         }
         return $types;
@@ -263,6 +271,13 @@ class EmailTemplateManager
 
         $heading = htmlspecialchars($c['heading'], ENT_QUOTES);
 
+        // Slot markers for types that support dynamic content blocks
+        $slots = self::CUSTOMER_EMAILS[$type]['slots'] ?? [];
+        $slotsMjml = '';
+        foreach ($slots as $slotName) {
+            $slotsMjml .= "\n        <mj-raw data-slot=\"{$slotName}\"></mj-raw>";
+        }
+
         return <<<MJML
 <mjml>
   <mj-head>
@@ -286,7 +301,7 @@ class EmailTemplateManager
         <mj-text align="left" line-height="24px">
           <h3>{$heading}</h3>
           <p>{$body}</p>
-        </mj-text>{$ctaMjml}
+        </mj-text>{$ctaMjml}{$slotsMjml}
       </mj-column>
     </mj-section>
     <mj-section>
@@ -326,6 +341,24 @@ MJML;
         }
 
         return null;
+    }
+
+    /**
+     * Replaces slot markers with pre-rendered MJML snippets before compilation.
+     * Must be called BEFORE passing the MJML to the compiler.
+     *
+     * @param array<string,string> $slots Map of slot name → MJML snippet string
+     */
+    public function resolveSlots(string $mjml, array $slots): string
+    {
+        foreach ($slots as $slotName => $slotMjml) {
+            $mjml = preg_replace(
+                '/<mj-raw\s+data-slot="' . preg_quote($slotName, '/') . '"\s*(?:\/>|>\s*<\/mj-raw>)/i',
+                $slotMjml,
+                $mjml
+            );
+        }
+        return $mjml;
     }
 
     private function substituteVariables(string $template, array $variables): string
