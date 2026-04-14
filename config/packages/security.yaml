@@ -80,6 +80,12 @@ security:
             stateless: true
             bearer_token: true
 
+        api_tasks:
+            pattern:   ^/api/tasks$
+            methods: [ GET ]
+            stateless: true
+            bearer_token: true
+
         api_tasks_import:
             pattern:   ^/api/tasks/import
             methods: [ POST ]

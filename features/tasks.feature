@@ -3797,3 +3797,42 @@ Feature: Tasks
           "@*@": "@*@"
         }
         """
+
+  Scenario: Retrieve all tasks via OAuth with tasks:all scope
+    Given the fixtures files are loaded:
+      | tasks.yml |
+    And there is an OAuth client named "Acme" with scopes "tasks:all"
+    And the OAuth client with name "Acme" has an access token with scope "tasks:all"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "GET" request to "/api/tasks"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks",
+        "@type":"hydra:Collection",
+        "hydra:totalItems":11,
+        "hydra:member":[
+          {
+            "@id":"@string@.startsWith('/api/tasks')",
+            "@type":"Task",
+            "@*@":"@*@"
+          },
+          "@array_previous_repeat@"
+        ],
+        "@*@":"@*@"
+      }
+      """
+
+  Scenario: Deny access to task collection via OAuth without tasks:all scope
+    Given the fixtures files are loaded:
+      | tasks.yml |
+    And there is an OAuth client named "Acme" with scopes "tasks"
+    And the OAuth client with name "Acme" has an access token with scope "tasks"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "GET" request to "/api/tasks"
+    Then the response status code should be 403
