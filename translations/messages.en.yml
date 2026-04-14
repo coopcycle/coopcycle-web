@@ -1725,6 +1725,7 @@ form.api_app.scope.deliveries: Deliveries
 form.api_app.scope.tasks: Tasks
 form.api_app.scope.orders: Orders
 form.api_app.scope.orders_all: All orders
+form.api_app.scope.tasks_all: All tasks
 form.order.payment_refund.tooltip: To refund, create an incident first
 form.credit_note.deprecated_warning: Creating credit notes via this page is deprecated, create an incident
 order.create_credit_note: Create a credit note

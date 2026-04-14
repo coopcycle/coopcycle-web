@@ -1663,6 +1663,7 @@ form.api_app.scope.deliveries: Livraisons
 form.api_app.scope.tasks: Tâches
 form.api_app.scope.orders: Commandes
 form.api_app.scope.orders_all: Toutes les commandes
+form.api_app.scope.tasks_all: Toutes les tâches
 form.order.payment_refund.tooltip: Pour rembourser, créez d'abord un incident
 form.credit_note.deprecated_warning: Créer un avoir commercial pour un problème sur une commande via cette page est obsolète, créez plutôt un incident
 order.create_credit_note: Créer un avoir commercial

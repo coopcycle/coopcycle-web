@@ -255,7 +255,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new GetCollection(
             paginationEnabled: false,
             paginationClientEnabled: true,
-            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_COURIER\')',
+            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_COURIER\') or is_granted(\'ROLE_OAUTH2_TASKS:ALL\')',
             provider: TasksProvider::class
         ),
         new Post(
