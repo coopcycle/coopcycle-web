@@ -82,7 +82,7 @@ class OrderActionsVoter extends Voter
         if ($token instanceof OAuth2Token) {
 
             if ($this->authorizationChecker->isGranted('ROLE_OAUTH2_ORDERS:ALL')) {
-                return true;
+                return self::VIEW === $attribute;
             }
 
             if (!$this->authorizationChecker->isGranted('ROLE_OAUTH2_ORDERS')) {

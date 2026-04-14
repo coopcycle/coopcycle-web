@@ -78,6 +78,10 @@ class TaskOperationsVoter extends Voter
 
     private function voteOnAttributeWithOAuth($subject)
     {
+        if ($this->authorizationChecker->isGranted('ROLE_OAUTH2_TASKS:ALL')) {
+            return true;
+        }
+
         if (!$this->authorizationChecker->isGranted('ROLE_OAUTH2_TASKS')) {
             return false;
         }
