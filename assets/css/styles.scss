@@ -42,10 +42,12 @@ body {
   border-radius: 0;
   border-bottom: 2px solid #ecf0f1;
 
+  /*
   .nav--to-dispatch {
     text-decoration: underline;
     font-weight: 700;
   }
+  */
 }
 
 .page-header {
@@ -75,14 +77,6 @@ body {
   .alert {
     margin-bottom: 0;
   }
-}
-
-.btn > .btn__loading_indicator {
-  display:none;
-}
-
-.btn--loading > .btn__loading_indicator {
-  display:inline-block;
 }
 
 .text-monospace {

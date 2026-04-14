@@ -48,10 +48,10 @@ export default function(formSelector, options) {
 
   function setLoading(isLoading) {
     if (isLoading) {
-      $('.btn-payment').addClass('btn--loading')
+      document.querySelector('.btn-payment > .loading').classList.remove('hidden')
       disableBtn(submitButton)
     } else {
-      $('.btn-payment').removeClass('btn--loading')
+      document.querySelector('.btn-payment > .loading').classList.add('hidden')
       enableBtn(submitButton)
     }
   }
@@ -305,8 +305,8 @@ export default function(formSelector, options) {
   // Replace radio buttons
 
   document
-    .querySelectorAll('#checkout_payment_method .radio')
-    .forEach(el => el.classList.add('d-none'))
+    .querySelectorAll('#checkout_payment_method input[type="radio"]')
+    .forEach(el => el.parentElement.classList.add('hidden'))
 
   if (methods.length === 1 && containsMethod(methods, 'card')) {
     axios

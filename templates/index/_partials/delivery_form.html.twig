@@ -1,42 +1,42 @@
-<div class="container">
-  <section class="homepage-delivery">
-    <div class="homepage-delivery-text">
-      <h2>{% if title is defined and title is not empty %}{{ title }}{% else %}{{ 'homepage.form.title'|trans }}{% endif %}</h2>
-      <p>{% if text is defined and text is not empty %}{{ text }}{% else %}{% trans with { '%brand_name%': coopcycle_setting('brand_name') } %}homepage.form.content{% endtrans %}{% endif %}</p>
-    </div>
-    <div class="homepage-delivery-form">
-      {{ form_start(delivery_form, {
-        action: path('embed_delivery_start', { hashid: hashid }),
-        attr: {
-          autocomplete: 'off',
-        } }) }}
+{% form_theme delivery_form '@DaisyuiForm/form/daisyui_layout.html.twig' %}
 
-        {% set pickup_form  = null %}
-        {% set dropoff_form = null %}
+<section class="flex flex-col gap-4 md:flex-row">
+  <div class="md:order-2 md:w-1/2">
+    <h2>{% if title is defined and title is not empty %}{{ title }}{% else %}{{ 'homepage.form.title'|trans }}{% endif %}</h2>
+    <p>{% if text is defined and text is not empty %}{{ text }}{% else %}{% trans with { '%brand_name%': coopcycle_setting('brand_name') } %}homepage.form.content{% endtrans %}{% endif %}</p>
+  </div>
+  <div class="md:order-1 md:w-1/2 bg-base-300 p-8 shadow-sm rounded-lg">
+    {{ form_start(delivery_form, {
+      action: path('embed_delivery_start', { hashid: hashid }),
+      attr: {
+        autocomplete: 'off',
+      } }) }}
 
-        {% for task_form in delivery_form.tasks %}
-          {% if task_form.vars.data.type == 'PICKUP' %}
-            {% set pickup_form = task_form %}
-          {% else %}
-            {% set dropoff_form = task_form %}
-          {% endif %}
-        {% endfor %}
+      {% set pickup_form  = null %}
+      {% set dropoff_form = null %}
 
-        <div class="mb-4">
-        {{ form_widget(dropoff_form.address) }}
-        </div>
-        {% if dropoff_form.timeSlot is defined %}
-        <div class="mb-4">
-        {{ form_widget(dropoff_form.timeSlot) }}
-        </div>
+      {% for task_form in delivery_form.tasks %}
+        {% if task_form.vars.data.type == 'PICKUP' %}
+          {% set pickup_form = task_form %}
+        {% else %}
+          {% set dropoff_form = task_form %}
         {% endif %}
+      {% endfor %}
 
-        {% if delivery_form._token is defined %}
-          {{ form_widget(delivery_form._token) }}
-        {% endif %}
+      <div class="mb-4">
+      {{ form_widget(dropoff_form.address) }}
+      </div>
+      {% if dropoff_form.timeSlot is defined %}
+      <div class="mb-4">
+      {{ form_widget(dropoff_form.timeSlot) }}
+      </div>
+      {% endif %}
 
-        <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'basics.next'|trans }} →</button>
-      {{ form_end(delivery_form, { render_rest: false }) }}
-    </div>
-  </section>
-</div>
+      {% if delivery_form._token is defined %}
+        {{ form_widget(delivery_form._token) }}
+      {% endif %}
+
+      <button type="submit" class="btn btn-block btn-lg btn-primary">{{ 'basics.next'|trans }} →</button>
+    {{ form_end(delivery_form, { render_rest: false }) }}
+  </div>
+</section>

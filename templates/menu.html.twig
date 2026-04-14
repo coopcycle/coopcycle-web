@@ -1,94 +1,99 @@
-<nav class="navbar navbar-default navbar-coopcycle">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-main" aria-expanded="false">
-        <span class="sr-only">Menu</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand navbar-brand-img">
-        <img src="{{ coopcycle_company_logo() }}" />
+{% set default_locale = 'en' %}
+{% set locales = {
+  'an': 'Aragonés',
+  'ca': 'Català',
+  'de': 'Deutsch',
+  'en': 'English',
+  'es': 'Español',
+  'eu': 'Euskara',
+  'fr': 'Français',
+  'it': 'Italiano',
+  'hu': 'Magyar',
+  'pl': 'Polski',
+  'pt_BR': 'Português (Brasil)',
+  'pt_PT': 'Português (Portugal)',
+} %}
+{% set current_locale = default_locale %}
+{% if locales[app.request.locale] is defined %}
+  {% set current_locale = locales[app.request.locale] %}
+{% endif %}
+
+<nav class="bg-primary text-primary-content border-default" x-data="{ mobileMenuOpen : false }">
+  <div class="flex flex-wrap items-center justify-between px-4 py-2.5">
+    <div class="flex items-center gap-2">
+      <a href="{{ path('homepage') }}" class="flex items-center space-x-3 rtl:space-x-reverse">
+        <img src="{{ coopcycle_company_logo() }}" width="30" height="30" />
+        <span class="self-center text-xl text-headings font-semibold whitespace-nowrap font-raleway">{{ coopcycle_setting('brand_name') }}</span>
       </a>
-      <a class="navbar-brand" href="{{ path('homepage') }}">{{ coopcycle_setting('brand_name') }}</a>
-    </div>
-
-    <div class="collapse navbar-collapse" id="navbar-main">
-
-      <ul class="nav navbar-nav">
-        {% if is_granted('ROLE_DISPATCHER') %}
-        <li>
-            <a class="nav--to-dispatch" href="{{ path('admin_index') }}" title="{{ 'adminDashboard.title'|trans|e('html_attr') }}">
-              <i class="fa fa-lock"></i><span class="hidden-sm ml-2">{{ 'adminDashboard.title'|trans }}</span>
-            </a>
-        </li>
-        {% endif %}
-        {% if coopcycle_has_about_us() %}
-        <li>
-          <a href="{{ path('about_us') }}">
-            {% trans %}nav.about_us{% endtrans %}
-          </a>
-        </li>
-        {% endif %}
-      </ul>
-
-      <div class="navbar-form navbar-left" style="position: relative;" {{ react_component('NavBarSearch') }}>
-        <div class="form-group">
-          <input type="text" class="form-control" placeholder="{{ 'basics.search'|trans }}">
-        </div>
-      </div>
-
-      {% set default_locale = 'en' %}
-      {% set locales = {
-        'an': 'Aragonés',
-        'ca': 'Català',
-        'de': 'Deutsch',
-        'en': 'English',
-        'es': 'Español',
-        'eu': 'Euskara',
-        'fr': 'Français',
-        'it': 'Italiano',
-        'hu': 'Magyar',
-        'pl': 'Polski',
-        'pt_BR': 'Português (Brasil)',
-        'pt_PT': 'Português (Portugal)',
-      } %}
-      {% set current_locale = default_locale %}
-      {% if locales[app.request.locale] is defined %}
-        {% set current_locale = locales[app.request.locale] %}
+      {% if is_granted('ROLE_DISPATCHER') %}
+      <a class="link" href="{{ path('admin_index') }}" title="{{ 'adminDashboard.title'|trans|e('html_attr') }}">
+        <i class="fa fa-lock"></i><span class="ml-2 hidden md:inline">{{ 'adminDashboard.title'|trans }}</span>
+      </a>
       {% endif %}
-      <ul class="nav navbar-nav navbar-right">
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-            {{ current_locale }} <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
-            {% for locale, label in locales %}
-              {% if locale != app.request.locale %}
-              <li>
-                <a href="{{ path(app.request.get('_route'), app.request.get('_route_params')|merge({'_locale': locale})) }}">{{ label }}</a>
-              </li>
-              {% endif %}
-            {% endfor %}
-          </ul>
+    </div>
+    <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="inline-flex items-center p-2 ms-3 w-10 h-10 justify-center w-10 h-10 justify-center text-heading bg-neutral-primary box-border border border-transparent hover:bg-neutral-secondary-medium focus:ring-4 focus:ring-neutral-tertiary font-medium leading-5 rounded-base focus:outline-none md:hidden" aria-controls="navbar-dropdown" aria-expanded="false">
+      <span class="sr-only">Open main menu</span>
+      <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h14"/></svg>
+    </button>
+    <div class="hidden w-full md:block md:w-auto" :class="{ 'hidden' : !mobileMenuOpen}">
+      <ul class="flex flex-col font-medium mt-4 rounded-base bg-neutral-secondary-soft md:flex-row md:items-center md:mt-0 md:text-sm md:space-x-4 space-y-1">
+        <li>
+          {# We need the "relative" class on the container element,
+          so that the dropdown menu is relative to it  #}
+          <div class="relative" {{ react_component('NavBarSearch') }}>
+            <input type="text" class="input input-bordered w-24 md:w-auto" placeholder="{{ 'basics.search'|trans }}" />
+          </div>
         </li>
-      </ul>
-      <ul class="nav navbar-nav navbar-right">
         {% if coopcycle_setting('foodtech_enabled') %}
         <li {{ react_component('NavBarCart', { 'url': path('cart_json'), 'href': path('order') }) }}>
             <a href="#">
-              <i class="fa fa-shopping-basket mr-2" aria-hidden="true"></i>
+              <i class="fa fa-shopping-basket mr-1" aria-hidden="true"></i>
               <span>{{ 0|price_format }}</span>
             </a>
         </li>
         {% endif %}
-        {% if app.user %}
-          {% include '_partials/user/account_dropdown.html.twig' %}
-        {% else %}
-          <li>
+        <li>
+          {% if app.user %}
+            <details class="dropdown">
+              <summary class="btn btn-ghost">
+                <img src="{{ path('user_avatar', { username: app.user.username }) }}" width="20" height="20" />
+                <span>{{ app.user.username }}</span>
+              </summary>
+              <ul class="menu dropdown-content bg-base-100 rounded-t-none p-2 z-2">
+                <li>
+                  <a href="{{ path('profile_edit') }}">
+                    {% trans %}navbar.myAccount{% endtrans %}
+                  </a>
+                </li>
+                {% if is_granted('DASHBOARD_VIEW') %}
+                <li><a href="{{ path('dashboard') }}">{{ 'adminDashboard.dashboard.title'|trans }}</a></li>
+                {% endif %}
+                <li><a href="{{ path('nucleos_user_security_logout') }}">{% trans from 'NucleosUserBundle' %}layout.logout{% endtrans %}</a></li>
+              </ul>
+            </details>
+          {% else %}
             <a href="{{ path('nucleos_user_security_login') }}">{% trans %}navbar.login{% endtrans %}</a>
-          </li>
-        {% endif %}
+          {% endif %}
+        </li>
+        <li id="notifications">
+          <a href="#">
+            <span class="badge">0</span>
+          </a>
+        </li>
+        <li>
+          <details class="dropdown dropdown-end">
+            <summary class="btn btn-ghost">{{ current_locale }}</summary>
+            <ul class="menu dropdown-content bg-base-100 rounded-t-none p-2 z-2">
+              {% for locale, label in locales %}
+                {% if locale != app.request.locale %}
+                <li>
+                  <a href="{{ path(app.request.get('_route'), app.request.get('_route_params')|merge({'_locale': locale})) }}">{{ label }}</a>
+                </li>
+                {% endif %}
+              {% endfor %}
+            </ul>
+          </details>
+        </li>
       </ul>
     </div>
   </div>

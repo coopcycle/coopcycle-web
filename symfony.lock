@@ -186,6 +186,9 @@
     "invenso/rector": {
         "version": "1.0.2"
     },
+    "islesurlasorguetourisme/daisyui-form-bundle": {
+        "version": "v0.2"
+    },
     "jms/serializer-bundle": {
         "version": "4.2",
         "recipe": {

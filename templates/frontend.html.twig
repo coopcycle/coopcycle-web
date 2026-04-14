@@ -9,6 +9,17 @@
     background-image: url({{ url('assets_banner_svg')  }});
   }
   </style>
+  {% set theme = coopcycle_theme() %}
+
+  {% if theme|length > 0 %}
+    <style>
+      :root {
+      {% for theme_variable, theme_value in theme %}
+        --color-{{ theme_variable }}: {{ theme_value }};
+      {% endfor %}
+      }
+    </style>
+  {% endif %}
   {% endif %}
 {% endblock %}
 
@@ -16,6 +27,7 @@
   {% if not embed_context.enabled %}
   {% include "menu.html.twig" %}
   {% endif %}
+
 {% endblock %}
 
 {% block banner %}

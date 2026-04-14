@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { isTimeRangeSignificantlyDifferent } from '../../../utils/order/helpers'
-import Spinner from '../../core/Spinner'
 import ShippingTimeRange from '../../ShippingTimeRange'
 import {
   selectFulfilmentTimeRange,
@@ -49,15 +48,15 @@ export default function TimeRange() {
   }, [ shippingTimeRange, persistedTimeRange, fulfilmentTimeRange ])
 
   if (isLoading) {
-    return (<Spinner />)
+    return (<span className="loading loading-spinner loading-md"></span>)
   }
 
   return (
     <span className="text-success">
-            <i className="fa fa-clock-o fa-lg mr-2"></i>
-            <strong data-testid="order.time">
-              <ShippingTimeRange value={ fulfilmentTimeRange } />
-            </strong>
-          </span>
+      <i className="fa fa-clock-o fa-lg mr-2"></i>
+      <strong data-testid="order.time">
+        <ShippingTimeRange value={ fulfilmentTimeRange } />
+      </strong>
+    </span>
   )
 }

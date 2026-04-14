@@ -73,7 +73,7 @@ class AddressModal extends Component {
         className="ReactModal__Content--enter-address"
         htmlOpenClassName="ReactModal__Html--open"
         bodyOpenClassName="ReactModal__Body--open">
-        <header className="d-flex align-items-center justify-content-between mb-5">
+        <header className="flex items-center justify-between mb-5">
           {this.renderBackButton()}
           <button
             type="button"
@@ -86,9 +86,9 @@ class AddressModal extends Component {
           <span
             className={clsx({
               'text-center': true,
-              'd-block': true,
+              'block': true,
               'mb-3': true,
-              'text-danger': this.props.isError,
+              'text-red-400': this.props.isError,
             })}>
             {this.props.helpText}
           </span>

@@ -1,117 +1,105 @@
-{% extends "frontend.html.twig" %}
+{% extends "order/layout.html.twig" %}
 
 {% form_theme form 'form/order.html.twig' %}
 
-{% block banner %}
-{% endblock %}
+{% block order_body %}
 
-{% block body %}
+<div id="react-root"></div>
 
-<div class="container container--full-height">
+{% if not order.empty %}
 
-  <div id="react-root"></div>
+  {{ form_start(form, { attr: { class: (embed_context.enabled ? 'pt-4' : '') } }) }}
+  <div class="row">
+    <div class="col-xs-12">
 
-  {% if not order.empty %}
+      <div id="order-error-container">
+        {% if pre_submit_errors is defined and pre_submit_errors|length > 0 %}
+          {% include 'order/_partials/errors.html.twig' with {
+            errors: pre_submit_errors,
+          } %}
+        {% endif %}
+      </div>
 
-    {{ form_start(form, { attr: { style: 'padding-bottom: 66px;', class: (embed_context.enabled ? 'pt-4' : '') } }) }}
-    <div class="row">
-      <div class="col-xs-12">
-        {% include 'order/breadcrumb.html.twig' %}
-
-        <div id="order-error-container">
-          {% if pre_submit_errors is defined and pre_submit_errors|length > 0 %}
-            {% include 'order/_partials/errors.html.twig' with {
-              errors: pre_submit_errors,
-            } %}
-          {% endif %}
+      <h2 class="font-weight-bold m-0 mb-5">{{ order.vendor.name }}</h2>
+      <div>
+        <h4 class="bg-base-200 p-3 mb-4">{{ 'order.cart.title'|trans }}</h4>
+        <div id="items">
+          {% include '_partials/order/items.html.twig' with { with_taxes: false, with_items: false } %}
         </div>
+      </div>
 
-        <h2 class="font-weight-bold m-0 mb-5">{{ order.vendor.name }}</h2>
+      <div class="mb-4">
+        <h4 class="bg-base-200 p-3 mb-4">{% trans %}order.payment.title{% endtrans %}</h4>
         <div>
-          <h4 class="bg-light p-3 m-0">{{ 'order.cart.title'|trans }}</h4>
-          <div id="items">
-            {% include '_partials/order/items.html.twig' with { with_taxes: false, with_items: false } %}
-          </div>
-        </div>
 
-        <div class="mb-4">
-          <h4 class="bg-light p-3 m-0 mb-4">{% trans %}order.payment.title{% endtrans %}</h4>
-          <div>
-
-            {% if error is defined %}
-              <div class="alert alert-danger">
-                {{ error }}
-              </div>
-            {% endif %}
-
-            {{ form_errors(form) }}
-
-            {% if form.method is defined %}
-              {{ form_row(form.method) }}
-            {% endif %}
-
-            {{ form_widget(form.stripePayment.stripeToken) }}
-            {{ form_widget(form.stripePayment.savedPaymentMethodId) }}
-
-            <div id="card-onmount-focus">
-              <div id="card-element">
-                <!-- a React element will be inserted here. -->
-              </div>
-              <div id="paygreen-container"></div>
-              {#
-              We DO NOT add the methods container on purpose,
-              because we manage them at a upper level.
-              #}
-              <!--
-              <div id="paygreen-methods-container"></div>
-              -->
-              <div>
-                <div id="paygreen-pan-frame" class="mb-3"></div>
-                <div class="d-flex justify-content-between mb-3">
-                  <div id="paygreen-exp-frame"></div>
-                  <div id="paygreen-cvv-frame"></div>
-                </div>
-                <div id="paygreen-reuse-checkbox-container"></div>
-              </div>
+          {% if error is defined %}
+            <div class="alert alert-danger">
+              {{ error }}
             </div>
+          {% endif %}
 
-            <div id="card-errors" role="alert" class="text-danger"></div>
+          {{ form_errors(form) }}
 
+          {% if form.method is defined %}
+            {{ form_widget(form.method) }}
+          {% endif %}
+
+          {{ form_widget(form.stripePayment.stripeToken) }}
+          {{ form_widget(form.stripePayment.savedPaymentMethodId) }}
+
+          <div id="card-onmount-focus">
+            <div id="card-element">
+              <!-- a React element will be inserted here. -->
+            </div>
+            <div id="paygreen-container"></div>
+            {#
+            We DO NOT add the methods container on purpose,
+            because we manage them at a upper level.
+            #}
+            <!--
+            <div id="paygreen-methods-container"></div>
+            -->
+            <div>
+              <div id="paygreen-pan-frame" class="mb-3"></div>
+              <div class="d-flex justify-content-between mb-3">
+                <div id="paygreen-exp-frame"></div>
+                <div id="paygreen-cvv-frame"></div>
+              </div>
+              <div id="paygreen-reuse-checkbox-container"></div>
+            </div>
           </div>
+
+          <div id="card-errors" role="alert" class="text-danger"></div>
+
         </div>
       </div>
     </div>
-    <nav class="checkout-nav border-top">
-      <div class="container">
-        <div class="d-flex flex-row justify-content-between align-items-center py-3">
-          <!-- React component will be inserted here -->
-          <div id="order__fulfilment_time_range__container">
-          </div>
-          <div>
-            <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" disabled="disabled">
-              <i class="btn__loading_indicator fa fa-spinner fa-spin"></i> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
-            </button>
-          </div>
-        </div>
+  </div>
+  <nav class="checkout-nav border-top">
+    <div class="flex flex-col gap-4 md:flex-row md:justify-between md:items-center py-3">
+      <!-- React component will be inserted here -->
+      <div id="order__fulfilment_time_range__container" class="py-4">
       </div>
-    </nav>
-    {{ form_end(form) }}
-
-  {% else %}
-    <div class="alert alert-warning">
-      {% trans from 'validators' %}cart.empty{% endtrans %}
+      <div>
+        <button type="submit" class="btn btn-lg btn-primary btn-payment" disabled="disabled">
+          <span class="loading loading-spinner hidden"></span> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
+        </button>
+      </div>
     </div>
-  {% endif %}
-</div>
+  </nav>
+  {{ form_end(form) }}
 
-  <div id="js-order-data"
-       data-order-node-id="{{ order|get_iri_from_item }}"
-       data-order-shipping-time-range="{{ shipping_time_range is not null ? shipping_time_range|json_encode|e('html_attr') }}"
-       data-order-access-token="{{ order_access_token is defined ? order_access_token }}"></div>
+{% else %}
+  <div class="alert alert-warning">
+    {% trans from 'validators' %}cart.empty{% endtrans %}
+  </div>
+{% endif %}
 
-{% endblock %}
+<div id="js-order-data"
+      data-order-node-id="{{ order|get_iri_from_item }}"
+      data-order-shipping-time-range="{{ shipping_time_range is not null ? shipping_time_range|json_encode|e('html_attr') }}"
+      data-order-access-token="{{ order_access_token is defined ? order_access_token }}"></div>
 
-{% block footer %}
 {% endblock %}
 
 {% block styles %}
