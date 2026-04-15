@@ -1253,7 +1253,7 @@ class LocalBusiness extends BaseLocalBusiness implements
         }
     }
 
-    public function addAddressForDayOfWeek(Address $address, string $daysOfWeek)
+    public function addAddressForDayOfWeek(string $daysOfWeek, Address $address)
     {
         $dayOfWeekAddress = new DayOfWeekAddress();
         $dayOfWeekAddress->setRestaurant($this);
