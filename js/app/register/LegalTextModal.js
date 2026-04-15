@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import ReactMarkdown from 'react-markdown'
 import Modal from 'react-modal'
+import axios from 'axios'
 
 import './index.scss'
 
@@ -54,7 +55,7 @@ export default ({termsAndConditionsCheck, privacyPolicyCheck}) => {
       let text = typeText
       if (!text) {
         try {
-          const result = await $.getJSON(`/${document.documentElement.lang}/${type}-text`)
+          const { data: result } = await axios.get(`/${document.documentElement.lang}/${type}-text`)
           if (result?.text) {
             text = result.text
             setTypeText(text)

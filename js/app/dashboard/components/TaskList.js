@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import _ from 'lodash'
 import { Tooltip } from 'antd'
 import Popconfirm from 'antd/lib/popconfirm'
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 import Task from './Task'
 
@@ -168,7 +168,7 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
 
   return (
     <div>
-      <div className="pl-2 task-list__header" onClick={() => dispatch(toggleTaskListPanelExpanded(taskList['@id']))}>
+      <div className="task-list__header" onClick={() => dispatch(toggleTaskListPanelExpanded(taskList['@id']))}>
         <div className="mb-1 d-flex align-items-center task-list__badges">
           <Avatar username={ username } size="24" className="ml-2" />
           <strong className="mr-2">{ username }</strong>
@@ -194,7 +194,7 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
               dispatch(onlyFilter('showIncidentReportedTasks'))
               e.stopPropagation()
             }}>
-            <Tooltip title="Incident(s)">
+            <Tooltip title="Incident(s)" placement="left">
               <span className='fa fa-warning text-warning' /> <span className="text-secondary">({incidentReported.length})</span>
             </Tooltip>
           </span>}
@@ -208,7 +208,7 @@ export const TaskList = ({ username, distance, duration, taskListsLoading }) => 
           vehicleMaxVolumeUnits={maxCarriableVolume}
         />
       </div>
-      <div className={classNames("panel-collapse collapse",{"in": isExpanded})}>
+      <div className={clsx("panel-collapse collapse",{"in": isExpanded})}>
         <div className="d-flex align-items-center mt-2 mb-2">
           <a
             className='tasklist__actions--icon ml-2'

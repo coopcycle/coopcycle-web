@@ -271,7 +271,7 @@ class OrderTimeHelperTest extends KernelTestCase
     public function testWith90minPriorNotice()
     {
         $now = Carbon::parse('2021-01-27 17:08:00');
-        Carbon::setTestNowAndTimezone($now);
+        Carbon::setTestNow($now);
 
         $fulfillmentMethod = $this->setUpFullfillmentMethodForTest(["Mo-Sa 11:30-14:00","Mo-Sa 18:00-20:30"], 90);
 
@@ -296,7 +296,7 @@ class OrderTimeHelperTest extends KernelTestCase
         $now = Carbon::parse('2021-01-28 11:30:00');
 
         // It's a Thursday
-        Carbon::setTestNowAndTimezone($now);
+        Carbon::setTestNow($now);
 
         $fulfillmentMethod = $this->setUpFullfillmentMethodForTest(["Mo-Fr 11:30-14:30"], 120);
 

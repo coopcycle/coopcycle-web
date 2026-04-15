@@ -24,6 +24,18 @@ abstract class Event extends BaseEvent implements SerializableEventInterface, Hu
         return $this->task;
     }
 
+    /**
+     * Reconstruct an event instance from a Task without invoking the subclass constructor.
+     * Safe to use when only getTask(), normalize(), and forHumans() are needed,
+     * since those only rely on $this->task.
+     */
+    public static function fromTask(Task $task): static
+    {
+        $instance = (new \ReflectionClass(static::class))->newInstanceWithoutConstructor();
+        $instance->task = $task;
+        return $instance;
+    }
+
     public function normalize(NormalizerInterface $serializer)
     {
         $normalized = $serializer->normalize($this->getTask(), 'jsonld', [

@@ -1,0 +1,54 @@
+<table class="table">
+  <thead>
+    <th>{% trans %}sylius.ui.code{% endtrans %}</th>
+    <th>{% trans %}sylius.form.promotion.rules{% endtrans %}</th>
+    <th>{% trans %}sylius.form.promotion.actions{% endtrans %}</th>
+    <th>{% trans %}sylius.form.promotion_coupon.usage_limit{% endtrans %}</th>
+    <th>{% trans %}sylius.form.promotion_coupon.per_customer_usage_limit{% endtrans %}</th>
+    <th>{% trans %}sylius.form.promotion_coupon.expires_at{% endtrans %}</th>
+    <th class="text-right">{% trans %}promotion_coupon.used.label{% endtrans %}</th>
+  </thead>
+  <tbody>
+  {% for coupon in promotion_coupons %}
+    <tr>
+      <td width="5%">
+        <a href="{{ path('admin_promotion_coupon', { id: coupon.promotion.id, code: coupon.code }) }}">
+          {{ coupon.code }}
+        </a>
+      </td>
+      <td>
+        <ul class="list-unstyled">
+        {% for promotion_rule in coupon.promotion.rules %}
+          <li>
+            <small>{{ promotion_rule|promotion_rule_for_humans }}</small>
+          </li>
+        {% endfor %}
+        </ul>
+      </td>
+      <td>
+        <ul class="list-unstyled">
+        {% for promotion_action in coupon.promotion.actions %}
+          <li>
+            <small>{{ promotion_action|promotion_action_for_humans }}</small>
+          </li>
+        {% endfor %}
+        </ul>
+      </td>
+      <td>
+        {{ coupon.usageLimit }}
+      </td>
+      <td>
+        {{ coupon.perCustomerUsageLimit }}
+      </td>
+      <td>
+        {% if coupon.expiresAt is not empty %}
+          {{ coupon.expiresAt|format_datetime('short', 'short') }}
+        {% endif %}
+      </td>
+      <td class="text-right">
+        {{ coupon.used }}
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>

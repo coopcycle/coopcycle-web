@@ -181,9 +181,19 @@ class CoopCycleExtension extends AbstractExtension
     {
         $locale = $context['app']->getRequest()->getLocale();
 
-        $carbon = Carbon::parse($date);
-
-        return strtolower($carbon->locale($locale)->calendar());
+        $carbon = Carbon::parse($date)->locale($locale);
+        if ($carbon->isToday()) {
+            return strtolower($carbon->isoFormat('[Today at] LT'));
+        } elseif ($carbon->isTomorrow()) {
+            return strtolower($carbon->isoFormat('[Tomorrow at] LT'));
+        } elseif ($carbon->isYesterday()) {
+            return strtolower($carbon->isoFormat('[Yesterday at] LT'));
+        } elseif ($carbon->isFuture() && $carbon->diffInDays() < 7) {
+            return strtolower($carbon->isoFormat('dddd [at] LT'));
+        } elseif ($carbon->isPast() && Carbon::now()->diffInDays($carbon) < 7) {
+            return strtolower($carbon->isoFormat('[Last] dddd [at] LT'));
+        }
+        return strtolower($carbon->isoFormat('L'));
     }
 
     public function hashid(object $object, $minHashLength = 8)

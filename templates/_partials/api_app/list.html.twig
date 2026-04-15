@@ -22,9 +22,13 @@
       <td>
         {{ api_app.name }}
       </td>
-      {% if with_stores ?? true %}
+      {% if (with_stores ?? true) %}
       <td>
-        {{ api_app.store.name }}
+        {% if api_app.store is not empty %}
+          {{ api_app.store.name }}
+        {% else %}
+          ＊
+        {% endif %}
       </td>
       {% endif %}
       {% if api_app.type == 'oauth' %}

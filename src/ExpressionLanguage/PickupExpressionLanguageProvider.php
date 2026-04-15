@@ -34,9 +34,9 @@ class PickupExpressionLanguageProvider implements ExpressionFunctionProviderInte
             }
 
             $before = Carbon::instance($task->before);
-            $diff = $before->diffInDays($now);
+            $diff = (int) abs($before->diffInDays($now));
 
-            if ($diff === 0) {
+            if ($diff < 1) {
                 $diff = $before->isSameDay($now) ? 0 : 1;
             }
 
@@ -74,7 +74,7 @@ class PickupExpressionLanguageProvider implements ExpressionFunctionProviderInte
             }
 
             $before = Carbon::instance($task->before);
-            $diff = $before->floatDiffInHours($now);
+            $diff = abs($before->diffInHours($now));
 
             if (null === $expression) {
                 return $diff;
@@ -102,7 +102,7 @@ class PickupExpressionLanguageProvider implements ExpressionFunctionProviderInte
             $after = Carbon::instance($task->after);
             $before = Carbon::instance($task->before);
 
-            $diff = $before->floatDiffInHours($after);
+            $diff = abs($before->diffInHours($after));
 
             if (null === $expression) {
                 return $diff;

@@ -7,12 +7,15 @@ use AppBundle\Entity\Task;
 use AppBundle\Message\DeliveryCreated;
 use AppBundle\Message\Email;
 use AppBundle\Message\PushNotification;
+use AppBundle\Security\UserManager;
 use AppBundle\Service\EmailManager;
 use AppBundle\Service\SettingsManager;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use NotFloran\MjmlBundle\Renderer\RendererInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -21,53 +24,57 @@ use Twig\Environment as TwigEnvironment;
 #[AsMessageHandler]
 class DeliveryCreatedHandler
 {
-    private $entityManager;
-    private $userManager;
-    private $emailManager;
-    private $mjml;
-    private $messageBus;
-    private $translator;
-    private $twig;
-    private $settingsManager;
-    private $locale;
+    private $logger;
 
+    /**
+     * @param UserManager $userManager
+     */
     public function __construct(
-        EntityManagerInterface $entityManager,
-        UserManagerInterface $userManager,
-        EmailManager $emailManager,
-        RendererInterface $mjml,
-        MessageBusInterface $messageBus,
-        TranslatorInterface $translator,
-        TwigEnvironment $twig,
-        SettingsManager $settingsManager,
-        string $locale)
+        private EntityManagerInterface $entityManager,
+        private UserManagerInterface $userManager,
+        private EmailManager $emailManager,
+        private RendererInterface $mjml,
+        private MessageBusInterface $messageBus,
+        private TranslatorInterface $translator,
+        private TwigEnvironment $twig,
+        private SettingsManager $settingsManager,
+        private string $locale,
+        ?LoggerInterface $logger = null)
     {
-        $this->entityManager = $entityManager;
-        $this->userManager = $userManager;
-        $this->emailManager = $emailManager;
-        $this->mjml = $mjml;
-        $this->messageBus = $messageBus;
-        $this->translator = $translator;
-        $this->twig = $twig;
-        $this->settingsManager = $settingsManager;
-        $this->locale = $locale;
+        $this->logger = $logger ?? new NullLogger();
     }
 
     public function __invoke(DeliveryCreated $message)
     {
-        // TODO Log activity?
+        $this->logger->info(sprintf("[%s]: Delivery %d created", get_class($this), $message->getDeliveryId()));
 
         $delivery = $this->entityManager->getRepository(Delivery::class)->find($message->getDeliveryId());
         if (!$delivery) {
+            $this->logger->error(sprintf(
+                "[%s]: Delivery %d not found, skipping notification",
+                get_class($this),
+                $message->getDeliveryId()
+            ));
             return;
         }
 
         $order = $delivery->getOrder();
         $pickup = $delivery->getPickup();
         $date = $pickup->getAfter();
-        $dateLocal = Carbon::instance($pickup->getAfter())
-            ->locale($this->locale)
-            ->calendar();
+        $c = Carbon::instance($pickup->getAfter())->locale($this->locale);
+        if ($c->isToday()) {
+            $dateLocal = $c->isoFormat('[Today at] LT');
+        } elseif ($c->isTomorrow()) {
+            $dateLocal = $c->isoFormat('[Tomorrow at] LT');
+        } elseif ($c->isYesterday()) {
+            $dateLocal = $c->isoFormat('[Yesterday at] LT');
+        } elseif ($c->isFuture() && $c->diffInDays() < 7) {
+            $dateLocal = $c->isoFormat('dddd [at] LT');
+        } elseif ($c->isPast() && Carbon::now()->diffInDays($c) < 7) {
+            $dateLocal = $c->isoFormat('[Last] dddd [at] LT');
+        } else {
+            $dateLocal = $c->isoFormat('L');
+        }
 
         [$title, $body] = $this->parseTitleAndBodyForPushNotification($delivery);
 
@@ -93,6 +100,10 @@ class DeliveryCreatedHandler
         $adminEmail = $this->settingsManager->get('administrator_email');
 
         if (!$adminEmail) {
+            $this->logger->error(sprintf(
+                "[%s]: Admin email not found, skipping notification",
+                get_class($this)
+            ));
             return;
         }
 

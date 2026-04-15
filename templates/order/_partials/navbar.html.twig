@@ -73,7 +73,7 @@
               {% endif %}
               {% if order.hasVendor() and order.state == 'fulfilled' %}
               <li>
-                <a href="{{ path('admin_new_promotion_coupon_from_template', { template: 'credit_note', order: order.id }) }}">Créer un avoir commercial</a>
+                <a href="{{ path('admin_new_promotion_coupon_from_template', { template: 'credit_note', order: order.id }) }}">{{ 'order.create_credit_note'|trans }}</a>
               </li>
               {% endif %}
             </ul>

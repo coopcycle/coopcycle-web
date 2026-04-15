@@ -1,5 +1,5 @@
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
 
 .CodeMirror {
   height: 400px;
@@ -26,3 +26,11 @@
 
 // Can be imported twice
 // @import './swiper-homepage.scss'
+
+/* https://axorax.medium.com/add-placeholder-text-to-div-with-contenteditable-true-ac8b3246b55e */
+/* https://stackoverflow.com/questions/37844735/custom-placeholder-with-contenteditable-element */
+[data-placeholder]:empty:before{
+  content: attr(data-placeholder);
+  color: #ced4da;
+  font-style: italic;
+}

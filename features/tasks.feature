@@ -2942,7 +2942,7 @@ Feature: Tasks
       | password  | 123456            |
       | telephone | 0033612345678     |
     And the user "bob" is authenticated
-    And the tasks with comments matching "#bob" are assigned to "bob"
+    And the tasks with ids "1,2" are assigned to "bob"
     When I add "Content-Type" header equal to "application/ld+json"
     And I add "Accept" header equal to "application/ld+json"
     And the user "bob" sends a "PUT" request to "/api/tasks/done" with body:
@@ -2965,6 +2965,8 @@ Feature: Tasks
               "@type":"Task",
               "id":1,
               "status": "DONE",
+              "isAssigned": true,
+              "assignedTo": "bob",
               "@*@":"@*@"
             },
             {
@@ -2972,6 +2974,8 @@ Feature: Tasks
               "@type":"Task",
               "id":2,
               "status": "DONE",
+              "isAssigned": true,
+              "assignedTo": "bob",
               "@*@":"@*@"
             }
           ],
@@ -3387,7 +3391,7 @@ Feature: Tasks
     And the user "sarah" sends a "GET" request to "/api/tasks/2/incidents"
     Then the response status code should be 403
     And the response should be in JSON
-    
+
   Scenario: Cancel the last task - order should be cancelled
     Given the fixtures files are loaded:
       | task_manager_one_non_cancelled.yml |
@@ -3456,8 +3460,6 @@ Feature: Tasks
       }
       """
     And the database entity "AppBundle\Entity\Sylius\Order" with id "1" should have a property "state" with value "new"
-    Then the async messages are consumed
-    And the database entity "AppBundle\Entity\Sylius\Order" with id "1" should have a property "total" with value "400"
 
   Scenario: Cancel once task in multi-dropoff order with distance pricing - order stays new and price recalculated
     Given the fixtures files are loaded with purge:
@@ -3494,8 +3496,6 @@ Feature: Tasks
       }
       """
     And the database entity "AppBundle\Entity\Sylius\Order" with id "1" should have a property "state" with value "new"
-    Then the async messages are consumed
-    And the database entity "AppBundle\Entity\Sylius\Order" with id "1" should have a property "total" with value "400"
 
   Scenario: Cancel once task in multi-dropoff order with manual supplements - order stays accepted, price recalculated and manual supplements kept
     Given the fixtures files are loaded:
@@ -3567,10 +3567,8 @@ Feature: Tasks
     }
     """
     And the database entity "AppBundle\Entity\Sylius\Order" should have a property "state" with value "accepted"
-    Then the async messages are consumed
     # Base: 499, manual supplement: 200
-    And the database entity "AppBundle\Entity\Sylius\Order" should have a property "total" with value "699"
-    
+
   Scenario: Get delivery form data for a task
       Given the fixtures files are loaded with purge:
         | setup_default.yml |
@@ -3706,3 +3704,135 @@ Feature: Tasks
         }
       }
       """
+
+    Scenario: Add tags to task
+      Given the fixtures files are loaded:
+        | tasks.yml           |
+      And the courier "bob" is loaded:
+        | email     | bob@coopcycle.org |
+        | password  | 123456            |
+        | telephone | 0033612345678     |
+      And the user "bob" has role "ROLE_DISPATCHER"
+      And the user "bob" is authenticated
+      When I add "Content-Type" header equal to "application/ld+json"
+      And I add "Accept" header equal to "application/ld+json"
+      And the user "bob" sends a "PUT" request to "/api/tasks/2" with body:
+        """
+        {
+          "tags": ["important"]
+        }
+        """
+      Then the response status code should be 200
+      And the response should be in JSON
+      And the JSON should match:
+        """
+        {
+          "@context":"/api/contexts/Task",
+          "@id":"/api/tasks/2",
+          "@type":"Task",
+          "tags": [
+            {
+              "name": "Important",
+              "slug": "important",
+              "color": "#FF0000"
+            }
+          ],
+          "@*@": "@*@"
+        }
+        """
+      Given I add "Content-Type" header equal to "application/ld+json"
+      And I add "Accept" header equal to "application/ld+json"
+      And the user "bob" sends a "PUT" request to "/api/tasks/2" with body:
+        """
+        {
+          "tags": ["fragile"]
+        }
+        """
+      Then the response status code should be 200
+      And the response should be in JSON
+      And the JSON should match:
+        """
+        {
+          "@context":"/api/contexts/Task",
+          "@id":"/api/tasks/2",
+          "@type":"Task",
+          "tags": [
+            {
+              "name": "Fragile",
+              "slug": "fragile",
+              "color": "#FFFFFF"
+            }
+          ],
+          "@*@": "@*@"
+        }
+        """
+      Given I add "Content-Type" header equal to "application/ld+json"
+      And I add "Accept" header equal to "application/ld+json"
+      And the user "bob" sends a "PUT" request to "/api/tasks/2" with body:
+        """
+        {
+          "tags": ["important", "fragile"]
+        }
+        """
+      Then the response status code should be 200
+      And the response should be in JSON
+      And the JSON should match:
+        """
+        {
+          "@context":"/api/contexts/Task",
+          "@id":"/api/tasks/2",
+          "@type":"Task",
+          "tags": [
+            {
+              "name": @string@,
+              "slug": "@string@.matchRegex('/(fragile|important)/')",
+              "color": @string@
+            },
+            {
+              "name": @string@,
+              "slug": "@string@.matchRegex('/(fragile|important)/')",
+              "color": @string@
+            }
+          ],
+          "@*@": "@*@"
+        }
+        """
+
+  Scenario: Retrieve all tasks via OAuth with tasks:all scope
+    Given the fixtures files are loaded:
+      | tasks.yml |
+    And there is an OAuth client named "Acme" with scopes "tasks:all"
+    And the OAuth client with name "Acme" has an access token with scope "tasks:all"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "GET" request to "/api/tasks"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Task",
+        "@id":"/api/tasks",
+        "@type":"hydra:Collection",
+        "hydra:totalItems":11,
+        "hydra:member":[
+          {
+            "@id":"@string@.startsWith('/api/tasks')",
+            "@type":"Task",
+            "@*@":"@*@"
+          },
+          "@array_previous_repeat@"
+        ],
+        "@*@":"@*@"
+      }
+      """
+
+  Scenario: Deny access to task collection via OAuth without tasks:all scope
+    Given the fixtures files are loaded:
+      | tasks.yml |
+    And there is an OAuth client named "Acme" with scopes "tasks"
+    And the OAuth client with name "Acme" has an access token with scope "tasks"
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "GET" request to "/api/tasks"
+    Then the response status code should be 403

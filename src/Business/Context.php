@@ -8,7 +8,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class Context
 {

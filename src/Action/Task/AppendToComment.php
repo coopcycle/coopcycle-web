@@ -5,7 +5,7 @@ namespace AppBundle\Action\Task;
 use AppBundle\Entity\Task;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class AppendToComment extends Base
 {

@@ -116,6 +116,7 @@ use Redis;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
+use Sylius\Component\Promotion\Checker\Eligibility\PromotionCouponEligibilityCheckerInterface;
 use Sylius\Component\Promotion\Factory\PromotionCouponFactoryInterface;
 use Sylius\Component\Promotion\Model\PromotionCouponInterface;
 use Sylius\Component\Promotion\Model\PromotionInterface;
@@ -227,7 +228,10 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_dashboard');
     }
 
-    protected function getOrderList(Request $request, PaginatorInterface $paginator, IriConverterInterface $iriConverter, $showCanceled = false)
+    protected function getOrderList(Request $request, Response $response,
+        PaginatorInterface $paginator,
+        IriConverterInterface $iriConverter,
+        $showCanceled = false)
     {
         if ($request->query->has('q')) {
             $qb = $this->orderRepository->search($request->query->get('q'));
@@ -256,13 +260,16 @@ class AdminController extends AbstractController
         }
 
         if ($request->query->has('owner')) {
+
+            $ownerInclude = $request->query->getBoolean('owner_include', true);
+
             try {
                 $owner = $iriConverter->getResourceFromIri($request->query->get('owner'));
                 if ($owner instanceof Store) {
                     $qb
                         ->join(Delivery::class, 'd', Expr\Join::WITH, 'd.order = o.id')
                         ->join(Store::class, 's', Expr\Join::WITH, 'd.store = s.id')
-                        ->andWhere('s.id = :store')
+                        ->andWhere($ownerInclude ? $qb->expr()->eq('s.id', ':store') : $qb->expr()->neq('s.id', ':store'))
                         ->setParameter('store', $owner)
                         ;
                 }
@@ -282,10 +289,18 @@ class AdminController extends AbstractController
                 ->setParameter('state_cancelled', OrderInterface::STATE_CANCELLED);
         }
 
+        $perPage = self::ITEMS_PER_PAGE;
+        if ($request->query->has('per_page')) {
+            $perPage = $request->query->getInt('per_page');
+            $response->headers->setCookie(new Cookie('__per_page', $perPage));
+        } elseif ($request->cookies->has('__per_page')) {
+            $perPage = $request->cookies->getInt('__per_page');
+        }
+
         return $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
-            self::ITEMS_PER_PAGE,
+            $perPage,
             [
                 PaginatorInterface::DISTINCT => false,
             ]
@@ -332,8 +347,12 @@ class AdminController extends AbstractController
             }
         }
 
+        if ($request->query->has('owner_include')) {
+            $filters['owner_include'] = $request->query->getBoolean('owner_include');
+        }
+
         $parameters = [
-            'orders' => $this->getOrderList($request, $paginator, $iriConverter, $showCanceled),
+            'orders' => $this->getOrderList($request, $response, $paginator, $iriConverter, $showCanceled),
             'routes' => $request->attributes->get('routes'),
             'show_canceled' => $showCanceled,
             'filters' => $filters,
@@ -464,41 +483,6 @@ class AdminController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->getClickedButton()) {
-
-                if ('refund' === $form->getClickedButton()->getName()) {
-                    foreach ($form->get('payments') as $paymentForm) {
-                        if (!$paymentForm->has('refund')) {
-                            continue;
-                        }
-                        /** @var \Symfony\Component\Form\ClickableInterface $refundButton */
-                        $refundButton = $paymentForm->get('refund');
-                        if ($refundButton->isClicked()) {
-                            $payment = $paymentForm->getData();
-                            $amount = $paymentForm->get('amount')->getData();
-                            $liableParty = $paymentForm->get('liable')->getData();
-                            $comments = $paymentForm->get('comments')->getData();
-
-                            try {
-
-                                $orderManager->refundPayment($payment, $amount, $liableParty, $comments);
-                                $this->entityManager->flush();
-
-                                $this->addFlash(
-                                    'notice',
-                                    $this->translator->trans('orders.payment_refunded')
-                                );
-
-                            } catch (HandlerFailedException $e) {
-                                $this->addFlash(
-                                    'error',
-                                    $e->getMessage()
-                                );
-                            }
-
-                            return $this->redirectToRoute('admin_order', ['id' => $id]);
-                        }
-                    }
-                }
 
                 if ('accept' === $form->getClickedButton()->getName()) {
                     $orderManager->accept($order);
@@ -1848,8 +1832,7 @@ class AdminController extends AbstractController
 
         $qb = $this->entityManager
             ->getRepository(ApiApp::class)
-            ->createQueryBuilder('a')
-            ->andWhere('a.store IS NOT NULL');
+            ->createQueryBuilder('a');
 
         $apiApps = $qb->getQuery()->getResult();
 
@@ -2005,18 +1988,28 @@ class AdminController extends AbstractController
     }
 
     #[Route(path: '/admin/promotions', name: 'admin_promotions')]
-    public function promotionsAction(EntityManagerInterface $entityManager)
+    public function promotionsAction(EntityManagerInterface $entityManager,
+        PromotionCouponEligibilityCheckerInterface $promotionCouponExpirationChecker)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $qb = $this->entityManager->getRepository(PromotionCouponInterface::class)->createQueryBuilder('c');
-        $qb->andWhere('c.expiresAt IS NULL OR c.expiresAt > :date');
-        $qb->setParameter('date', new \DateTime());
 
         $promotionCoupons = $qb->getQuery()->getResult();
 
+        $ongoing = $past = [];
+
+        foreach ($promotionCoupons as $promotionCoupon) {
+            if (!$promotionCouponExpirationChecker->isEligible(new Order(), $promotionCoupon)) {
+                $past[] = $promotionCoupon;
+            } else {
+                $ongoing[] = $promotionCoupon;
+            }
+        }
+
         return $this->render('admin/promotions.html.twig', [
-            'promotion_coupons' => $promotionCoupons,
+            'ongoing' => $ongoing,
+            'past' => $past,
         ]);
     }
 
@@ -2060,6 +2053,7 @@ class AdminController extends AbstractController
 
         $promotion = new PromotionDto();
 
+        $order = null;
         if ($request->query->has('order')) {
             $order = $this->entityManager->getRepository(Order::class)->find($request->query->has('order'));
             /** @var CustomerInterface */
@@ -2087,9 +2081,10 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_promotions');
         }
 
-        return $this->render('admin/promotion_credit_note.html.twig', [
+        return $this->render('admin/promotion_credit_note.html.twig', $this->auth([
             'form' => $form->createView(),
-        ]);
+            'order' => $order,
+        ]));
     }
 
     #[Route(path: '/admin/promotions/coupons/new', name: 'admin_new_promotion_coupon_from_template')]

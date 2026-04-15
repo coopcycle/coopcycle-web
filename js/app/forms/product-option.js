@@ -1,8 +1,11 @@
 import { debounce } from 'lodash'
 import React from 'react'
 import { createRoot } from 'react-dom/client'
+import { Cascader } from 'antd';
+import _ from 'lodash';
 
 import { OptionGroup } from '../restaurant/components/ProductDetails/ProductOptionGroup'
+import Search from '../widgets/Search'
 
 var $previewLoader = $('#preview-loader')
 var $form = $('form[name="product_option"]')
@@ -44,6 +47,84 @@ $(document).on('click', '[data-delete-row]', function() {
   updatePreview()
 });
 
+function createProductSearch(el) {
+  const placeholder = el.dataset.placeholder;
+  const initialValue = el.dataset.searchInitialValue;
+  const productInput = document.querySelector(el.dataset.product);
+  const productOptionValueInput = document.querySelector(`${el.dataset.productOptionValue} > input[type="text"]`);
+
+  new Search(el, {
+    url: document.querySelector('form[name="product_option"]').dataset.searchProductsUrl,
+    placeholder: placeholder,
+    initialValue: initialValue,
+    onSuggestionSelected: function (suggestion) {
+      productInput.value = suggestion.id;
+      // If the option value is empty, use the product name
+      if (!productOptionValueInput.value) {
+        productOptionValueInput.value = suggestion.name;
+      }
+    }
+  });
+}
+
+function createProductOptionSearch(el) {
+
+  const httpClient = new window._auth.httpClient();
+
+  const targetEl = document.querySelector(el.dataset.target)
+
+  const optionValueIds = Array.from(targetEl.querySelectorAll('input[type="hidden"]')).map((input) => input.value);
+  const excludeProductOptionId = el.dataset.exclude
+  const placeholder = el.dataset.placeholder
+
+  const productOptions = JSON.parse(document.querySelector('form[name="product_option"]').dataset.productOptions)
+
+  // Don't allow self referencing
+  const otherProductOptions = _.filter(productOptions, (opt) => opt['@id'] !== excludeProductOptionId);
+  const cascaderOptions = otherProductOptions.map((opt) => {
+    return {
+      value: opt['@id'],
+      label: opt.name,
+      disableCheckbox: true,
+      children: opt.values.map((optVal) => ({
+        value: optVal['@id'],
+        label: optVal.value,
+      }))
+    }
+  })
+
+  const defaultValue = optionValueIds.map(optionValueId => {
+    const productOption = _.find(productOptions, (opt) => {
+      const optionValueIds = opt.values.map((optVal) => optVal['@id'])
+      return optionValueIds.includes(optionValueId);
+    })
+
+    return [ productOption['@id'], optionValueId ]
+  })
+
+  createRoot(el).render(<Cascader
+    multiple={true}
+    defaultValue={defaultValue}
+    options={cascaderOptions}
+    onChange={(values) => {
+      // Clear the element
+      targetEl.innerHTML = '';
+      values.forEach((value, index) => {
+
+        const [, optionValueId] = value
+
+        const container = document.createElement('div')
+        container.innerHTML = targetEl.dataset.prototype.replace(/__name__/g, index);
+
+        const input = container.querySelector(':first-child');
+        input.value = optionValueId
+
+        targetEl.appendChild(input)
+      })
+    }}
+    placeholder={placeholder} />)
+}
+
 $('#add-option-value').on('click', function(e) {
 
   e.preventDefault();
@@ -63,6 +144,9 @@ $('#add-option-value').on('click', function(e) {
   $form.find('[data-delete-row]').prop('disabled', false)
 
   $('#product_option_values').append($form);
+
+  createProductSearch($form.find('[data-search="product"]')[0])
+  createProductOptionSearch($form.find('[data-search="product-option"]')[0])
 
 });
 
@@ -88,6 +172,9 @@ $('#product_option_additional').on('change', function() {
 if (!$('#product_option_additional').is(':checked')) {
   $('#product_option_valuesRange').hide();
 }
+
+document.querySelectorAll('[data-search="product"]').forEach((el) => createProductSearch(el))
+document.querySelectorAll('[data-search="product-option"]').forEach((el) => createProductOptionSearch(el))
 
 updateUpperField($('#product_option_valuesRange_infinity').is(':checked'));
 

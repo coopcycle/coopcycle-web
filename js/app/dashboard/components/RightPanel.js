@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { DragDropContext } from '@hello-pangea/dnd'
 import Split from 'react-split'
+import { useHotkey } from '@tanstack/react-hotkeys'
 
 import { ToastContainer } from 'react-toastify'
 
@@ -17,7 +18,7 @@ import { UnassignedTours } from './UnassignedTours'
 import TaskLists from './TaskLists'
 import TasksContextMenu from './context-menus/TasksContextMenu'
 import { handleDragEnd, handleDragStart } from '../redux/handleDrag'
-import { selectCouriers, selectSplitDirection, selectAreToursEnabled } from '../redux/selectors'
+import { selectCouriers, selectSplitDirection, selectAreToursEnabled, selectVisibleTaskIds } from '../redux/selectors'
 import { useDispatch, useSelector } from 'react-redux'
 import VehicleSelectMenu from './context-menus/VehicleSelectMenu'
 import { useRecurrenceRulesGenerateOrdersMutation } from '../../api/slice'
@@ -32,6 +33,14 @@ const DashboardApp = ({ loadingAnim }) => {
   const couriersList = useSelector(selectCouriers)
   const splitDirection = useSelector(selectSplitDirection)
   const date = useSelector(selectSelectedDate)
+  const visibleTasksIds = useSelector(selectVisibleTaskIds)
+
+  useHotkey('Mod+A', () => {
+    dispatch(selectTasksByIds(visibleTasksIds));
+  })
+  useHotkey('Escape', () => {
+    dispatch(selectTasksByIds([]))
+  })
 
   const [
     generateOrders,
@@ -98,12 +107,8 @@ const DashboardApp = ({ loadingAnim }) => {
     generateOrders(date)
   }, [date, generateOrders, isUninitialized]);
 
-  const unselectAll = () => {
-    dispatch(selectTasksByIds([]))
-  }
-
   return (
-    <div className="dashboard__aside-container" onKeyDown={ (e) => e.keyCode === 27 && unselectAll() }>
+    <div className="dashboard__aside-container">
       <DragDropContext
         // https://github.com/atlassian/@hello-pangea/dnd/blob/master/docs/patterns/multi-drag.md
         onDragStart={ (result) => dispatch(handleDragStart(result)) }

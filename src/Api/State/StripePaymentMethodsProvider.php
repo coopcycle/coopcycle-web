@@ -7,7 +7,7 @@ use ApiPlatform\Doctrine\Orm\State\CollectionProvider;
 use ApiPlatform\State\ProviderInterface;
 use AppBundle\Api\Dto\StripePaymentMethodsOutput;
 use AppBundle\Service\StripeManager;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 final class StripePaymentMethodsProvider implements ProviderInterface
 {

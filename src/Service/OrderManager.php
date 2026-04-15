@@ -12,7 +12,7 @@ use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\PaymentTransitions;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 /**
  * Operations on the Order entity for both FoodTech and Package Delivery/'LastMile' activities
@@ -91,6 +91,11 @@ class OrderManager
     public function refundPayment(PaymentInterface $payment, $amount = null, $liableParty = Refund::LIABLE_PARTY_PLATFORM, $comments = '')
     {
         $this->commandBus->dispatch(new OrderCommand\Refund($payment, $amount, $liableParty, $comments));
+    }
+
+    public function refundOrder(OrderInterface $order, $liableParty = Refund::LIABLE_PARTY_PLATFORM, $comments = '')
+    {
+        $this->commandBus->dispatch(new OrderCommand\Refund($order, null, $liableParty, $comments));
     }
 
     public function restore(OrderInterface $order)

@@ -18,7 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -33,7 +33,7 @@ abstract class LocalBusinessType extends AbstractType
 
     public function __construct(
         protected AuthorizationCheckerInterface $authorizationChecker,
-        protected TokenStorageInterface $tokenStorage,
+        protected Security $security,
         protected EntityManagerInterface $entityManager,
         protected SerializerInterface $serializer,
         protected GatewayResolver $gatewayResolver,

@@ -66,7 +66,7 @@ const AddressBook = ({
   const [alreadyAskedForModification, setAlreadyAskedForModification] =
     useState<boolean>(false);
   const [selectValue, setSelectValue] = useState<string>(
-    values.tasks[index].address.name,
+    values.tasks[index].address['@id'],
   );
 
   /* To handle the case where the user picked a remembered address in select but change contactName, name or telephone value */
@@ -106,10 +106,10 @@ const AddressBook = ({
   };
 
   useEffect(() => {
-    if (shallPrefillAddress) {
+    if (shallPrefillAddress && addresses.length > 0) {
       handleAddressSelected(storeDeliveryInfos.address['@id']);
     }
-  }, [shallPrefillAddress]);
+  }, [shallPrefillAddress, addresses, storeDeliveryInfos]);
 
   /** The value used by the input is formatedTelephone, as we need to send telephone with international area code
    * We also need to set the value to null if input is empty because React treats it as empty string and it causes validation errors from the back

@@ -210,6 +210,8 @@ services:
   Sylius\Component\Resource\Factory\FactoryInterface $taxonFactory: '@sylius.factory.taxon'
   Sylius\Component\Resource\Factory\FactoryInterface $productFactory: '@sylius.factory.product'
   Sylius\Component\Resource\Factory\FactoryInterface $productOptionFactory: '@sylius.factory.product_option'
+  Sylius\Component\Resource\Factory\FactoryInterface $promotionRuleFactory: '@sylius.factory.promotion_rule'
+  Sylius\Component\Resource\Factory\FactoryInterface $promotionFactory: '@sylius.factory.promotion'
   League\Flysystem\Filesystem $assetsFilesystem: '@assets_filesystem'
   Redis $tile38: '@snc_redis.tile38'
   Sylius\Component\Resource\Repository\RepositoryInterface $taxRateRepository: '@sylius.repository.tax_rate'
@@ -897,6 +899,7 @@ services:
       - { name: monolog.logger, channel: urbantz }
 
   AppBundle\Doctrine\EventSubscriber\ShopsEventsForTypesenseSubscriber: ~
+  AppBundle\Doctrine\EventSubscriber\DisabledProductListener: ~
 
   AppBundle\Action\Settings:
     public: true

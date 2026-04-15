@@ -7,8 +7,8 @@ import { clearSelectedTasks,
   putTaskListItems as putTaskListItemsAction,
   modifyTour as modifyTourAction,
   removeTasksFromTour as removeTasksFromTourAction,
-  setUnassignedTasksLoading,
-  unassignTasks as unassignTasksAction
+  unassignTasks as unassignTasksAction,
+  removePreviouslyAssignedTasks,
 } from "./actions"
 import { belongsToTour, selectGroups, selectOrderOfUnassignedTasks, selectSelectedTasks } from "./selectors"
 import { isValidTasksMultiSelect, withOrderTasks } from "./utils"
@@ -76,14 +76,14 @@ export function handleDragEnd(
 
       newTasksListItems.splice(index, 0, ...selectedItems.map(it => it['@id']))
 
-      const previousAssignedTo = selectItemAssignedTo(getState(), selectedItems[0]['@id'])
-      if(previousAssignedTo && previousAssignedTo !== tasksList.username) {
-        dispatch(setUnassignedTasksLoading(true))
-        await dispatch(unassignTasks(previousAssignedTo, selectedItems))
-        dispatch(setUnassignedTasksLoading(false))
-      }
+      // Tasks may have been moved between couriers
+      // No need to unassign via API, because the PUT operation will take care of this
+      // This action just removes the previously assigned tasks, if any
+      // It does *NOT* perform any HTTP request, it is to reflect change visually
+      dispatch(removePreviouslyAssignedTasks(tasksList.username, selectedItems))
 
-      return dispatch(putTaskListItems(tasksList.username, newTasksListItems))
+      // This will actually perform the PUT operation
+      dispatch(putTaskListItems(tasksList.username, newTasksListItems))
     }
 
     // dropped nowhere

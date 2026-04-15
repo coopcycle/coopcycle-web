@@ -18,20 +18,21 @@ class DatePeriodFormatter
 
     public function toHumanReadable(\DatePeriod $period): string
     {
-        $calendar = Carbon::instance($period->start)
-            ->locale($this->locale)
-            ->calendar(null, [
-                'sameDay' => '[' . $this->translator->trans('basics.today') . ']',
-                'nextDay' => '[' . $this->translator->trans('basics.tomorrow') . ']',
-                'nextWeek' => 'dddd',
-            ]);
+        $carbon = Carbon::instance($period->start)->locale($this->locale);
+        if ($carbon->isToday()) {
+            $day = $this->translator->trans('basics.today');
+        } elseif ($carbon->isTomorrow()) {
+            $day = $this->translator->trans('basics.tomorrow');
+        } else {
+            $day = $carbon->isoFormat('dddd');
+        }
 
         $fmt = new \IntlDateFormatter($this->locale,
             \IntlDateFormatter::NONE,
             \IntlDateFormatter::SHORT);
 
         return $this->translator->trans('time_slot.human_readable', [
-            '%day%' => ucfirst(strtolower($calendar)),
+            '%day%' => ucfirst(strtolower($day)),
             '%start%' => $fmt->format($period->start),
             '%end%' => $fmt->format($period->end),
         ]);

@@ -15,12 +15,15 @@ use Carbon\CarbonPeriod;
 use Doctrine\ORM\EntityManagerInterface;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 use Symfony\Component\Serializer\Normalizer\ContextAwareDenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInterface
 {
+    private const ALREADY_CALLED = 'TaskNormalizer_ALREADY_CALLED';
+
     public function __construct(
         private readonly ItemNormalizer $normalizer,
         private readonly IriConverterInterface $iriConverter,
@@ -37,11 +40,16 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
 
     public function normalize($object, $format = null, array $context = array())
     {
+        $context[self::ALREADY_CALLED] = true;
+
         // Since API Platform 2.7, IRIs for custom operations have changed
         // It means that when doing PUT /api/tasks/{id}/assign, the @id will be /api/tasks/{id}/assign, not /api/tasks/{id} like before
         // In our JS code, we often override the state with the entire response
         // This custom code makes sure it works like before, by tricking IriConverter
         $context['operation'] = $this->resourceMetadataFactory->create(Task::class)->getOperation();
+        // The 'operation' key is excluded from the serializer cache key because serializing an API Platform
+        // Operation object pulls in a large object graph and causes out-of-memory errors.
+        $context[AbstractObjectNormalizer::EXCLUDE_FROM_CACHE_KEY][] = 'operation';
 
         $data = $this->normalizer->normalize($object, $format, $context);
 
@@ -125,8 +133,12 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
         return $data;
     }
 
-    public function supportsNormalization($data, $format = null)
+    public function supportsNormalization($data, $format = null, array $context = [])
     {
+        if (isset($context[self::ALREADY_CALLED])) {
+            return false;
+        }
+
         return $this->normalizer->supportsNormalization($data, $format) && $data instanceof Task;
     }
 
@@ -224,7 +236,7 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
                 $tz = date_default_timezone_get();
 
                 // FIXME Catch Exception
-                $period = CarbonPeriod::createFromIso($data['timeSlot']);
+                $period = CarbonPeriod::create($data['timeSlot']);
 
                 $task->setAfter($period->getStartDate()->tz($tz)->toDateTime());
                 $task->setBefore($period->getEndDate()->tz($tz)->toDateTime());

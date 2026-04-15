@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import _ from 'lodash'
 import { useTranslation } from 'react-i18next'
-import classNames from 'classnames'
+import clsx from 'clsx'
 import { Checkbox } from 'antd'
 
 function getNameFromId(formatId, formats) {
@@ -50,7 +50,7 @@ const LoopeatModal = function({ customerContainers, formats, formatsToDeliver, i
             const isSelected = !!_.find(returns, r => r.format_id === container.format_id)
 
             return (
-              <tr key={ `container-${index}` } className={ classNames({
+              <tr key={ `container-${index}` } className={ clsx({
                 'active': isSelected
               }) }>
                 <td style={{ width: '1px', whiteSpace: 'nowrap' }}>
@@ -119,7 +119,7 @@ const LoopeatModal = function({ customerContainers, formats, formatsToDeliver, i
             </tr>
           </tfoot>
         </table>
-        <p className={ classNames({
+        <p className={ clsx({
           'text-center': true,
           'text-success': missing <= 0,
           'text-danger': missing > 0,

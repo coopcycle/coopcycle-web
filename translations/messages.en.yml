@@ -1684,8 +1684,8 @@ pricing.rule.humanizer.packages_contains_at_least_one: packages %package_name%
 pricing.rule.humanizer.price_range: '%unit_price% per %step%'
 pricing.rule.humanizer.price_range_with_threshold: 'above %threshold% - %unit_price% per %step%'
 pricing.rule.humanizer.price_per_package: '%unit_price% per %package_name%'
-adminDashboard.promotions.ongoing: Ongoing promotions
-adminDashboard.promotions.past: Past promotions
+adminDashboard.promotions.ongoing: Ongoing promotions (%count%)
+adminDashboard.promotions.past: Past promotions (%count%)
 order.download_receipt: Download receipt
 order.generate_receipt: Generate receipt
 form.settings.pawapay_api_key.label: Pawapay API key
@@ -1721,3 +1721,21 @@ form.day_of_week_address.days_of_week.label: Days of the week
 localBusiness.form.day_of_week_addresses.label: Addresses depending on the day of the week
 localBusiness.form.day_of_week_addresses.add: Add address
 localBusiness.form.day_of_week_addresses.help: Use this if the address changes during the week (i.e foodtrucks)
+form.api_app.store.placeholder: Choose a store to restrict access
+form.api_app.store.help: You can also leave empty if you want to allow access to all orders
+form.api_app.scopes.label: Scopes
+form.api_app.scopes.help: This allows to limit what the API client is authorized to access
+form.api_app.scope.deliveries: Deliveries
+form.api_app.scope.tasks: Tasks
+form.api_app.scope.orders: Orders
+form.api_app.scope.orders_all: All orders
+form.api_app.scope.tasks_all: All tasks
+form.order.payment_refund.tooltip: To refund, create an incident first
+form.credit_note.deprecated_warning: Creating credit notes via this page is deprecated, create an incident
+order.create_credit_note: Create a credit note
+form.product_option_value.product.tooltip: Link a product so that when the product is disabled, this option value will be disabled as well
+form.product_option_value.product.placeholder: Search a product…
+form.product_option_value.depends_on.placeholder: Select a value
+form.product_option_value.depends_on.tooltip: Select another value which this value depends on
+pagination.items_per_page: Items per page
+restaurant.form.en_boite_le_plat_platform_fee.label: The deposit should be collected by the platform

@@ -8,7 +8,7 @@ import Popconfirm from 'antd/lib/popconfirm'
 import Task from './Task'
 import { removeTasksFromTour, modifyTour, deleteTour, unassignTasks, toggleTourPanelExpanded, toggleTourPolyline } from '../redux/actions'
 import { selectTourById, selectItemAssignedTo, selectTourWeight, selectTourVolumeUnits } from '../../../shared/src/logistics/redux/selectors'
-import classNames from 'classnames'
+import clsx from 'clsx'
 import { getDroppableListStyle } from '../utils'
 import { selectIsTourDragging, selectExpandedTourPanelsIds, selectLoadingTourPanelsIds, selectTourPolylinesEnabledById, selectTourIdToColorMap } from '../redux/selectors'
 import ExtraInformations from './TaskCollectionDetails'
@@ -49,7 +49,7 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
       <div className="flex-grow-0">
         <a role="button" href="#" className="text-reset mr-3"
           onClick={ e =>  onEditSubmitted(e)}
-          title={t("CHANGE_TOUR_NAME")}
+          title={t("SAVE_BUTTON")}
           >
           <i className="fa fa-check"></i>
         </a>
@@ -64,7 +64,10 @@ const RenderEditNameForm = ({children, tour, isLoading}) => {
       { isLoading ?
         <span className="loader loader--dark"></span>
         : <>
-          <a role="button" href="#" className="text-reset mr-2" onClick={ () => setToggleInputForName(true) }>
+          <a role="button" href="#" className="text-reset mr-2" onClick={(e) => {
+            e.preventDefault();
+            setToggleInputForName(true)
+          }}>
               <i className="fa fa-pencil"></i>
           </a>
           { tourAssignedTo ?
@@ -134,7 +137,7 @@ const Tour = ({ tourId, draggableIndex, vehicleMaxWeight, vehicleMaxVolumeUnits 
               </h4>
               <ExtraInformations duration={tour.duration} distance={tour.distance} weight={weight} volumeUnits={volumeUnits} vehicleMaxWeight={vehicleMaxWeight} vehicleMaxVolumeUnits={vehicleMaxVolumeUnits}/>
             </div>
-            <div className={classNames("panel-collapse collapse", {"in": isExpanded})} role="tabpanel">
+            <div className={clsx("panel-collapse collapse", {"in": isExpanded})} role="tabpanel">
               { tour.items.length > 0 ?
                 <div className="d-flex align-items-center mt-2 mb-2">
                   <a

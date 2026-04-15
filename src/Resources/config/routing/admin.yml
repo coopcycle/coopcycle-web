@@ -312,6 +312,7 @@ admin_restaurant_product_option:
         routes:
             restaurants: admin_restaurants
             restaurant: admin_restaurant
+            products: admin_restaurant_products
             product_options: admin_restaurant_product_options
     methods: [ GET, POST ]
 

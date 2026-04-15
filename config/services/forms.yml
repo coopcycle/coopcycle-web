@@ -63,10 +63,6 @@ services:
     arguments: [ '@doctrine' ]
     tags: [ form.type ]
 
-  AppBundle\Form\PaymentType:
-    arguments: [ '@sm.factory', '@security.authorization_checker' ]
-    tags: [ form.type ]
-
   AppBundle\Form\TaskExportType:
     tags: [ form.type ]
 
@@ -117,7 +113,7 @@ services:
 
   AppBundle\Form\Checkout\CheckoutAddressType:
     arguments:
-      $enBoitLePlatUrl: '%env(EN_BOITE_LE_PLAT_URL)'
+      $enBoitLePlatUrl: '%env(EN_BOITE_LE_PLAT_URL)%'
     tags: [ form.type ]
 
   AppBundle\Form\Checkout\CheckoutCustomerType:
@@ -281,4 +277,7 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\Sylius\Promotion\Rule\IsItemsTotalAboveConfigurationType:
+    tags: [ form.type ]
+
+  AppBundle\Form\ProductOptionValueType:
     tags: [ form.type ]

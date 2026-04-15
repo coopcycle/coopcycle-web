@@ -155,3 +155,13 @@ services:
     arguments:
       - "@api_platform.jsonld.normalizer.item"
     tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  AppBundle\Serializer\PaymentNormalizer:
+    arguments:
+      - "@api_platform.jsonld.normalizer.item"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]
+
+  AppBundle\Serializer\JsonLd\ProductOptionNormalizer:
+    arguments:
+      - "@api_platform.jsonld.normalizer.item"
+    tags: [ { name: serializer.normalizer, priority: 128 } ]

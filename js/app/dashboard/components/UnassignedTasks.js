@@ -31,7 +31,7 @@ import {
   selectUnassignedTasksLoading,
 } from '../redux/selectors'
 import { getDroppableListStyle } from '../utils'
-import classNames from 'classnames'
+import clsx from 'clsx'
 import UnassignedTasksFilters from '../../components/UnassignedTasksFilters'
 import { LoadingOutlined } from '@ant-design/icons'
 
@@ -131,17 +131,11 @@ export const UnassignedTasks = ({ isGeneratingOrdersForRecurrenceRules, isGenera
   return (
     <div className="dashboard__panel">
       <div className="dashboard__panel__header">
-        <div className="row">
-          <div className="col-md-6 col-sm-12">
-            <h4>
-              <span>{t('DASHBOARD_UNASSIGNED')}</span>
-            </h4>
-          </div>
-          <div className="col-md-6 col-sm-12">
-            <h4 className="pull-right">
-              <Buttons />
-            </h4>
-          </div>
+        <div className="d-flex align-items-center justify-content-between mb-3">
+          <h4 className="m-0">
+            <span>{t('DASHBOARD_UNASSIGNED')}</span>
+          </h4>
+          <Buttons />
         </div>
         <div>
           <UnassignedTasksFilters />
@@ -188,7 +182,7 @@ export const UnassignedTasks = ({ isGeneratingOrdersForRecurrenceRules, isGenera
             {(provided, snapshot) => (
               <div ref={provided.innerRef} {...provided.droppableProps}>
                 <div
-                  className={classNames({
+                  className={clsx({
                     taskList__tasks: true,
                     'list-group': true,
                     'm-0': true,
@@ -230,7 +224,7 @@ export const UnassignedTasks = ({ isGeneratingOrdersForRecurrenceRules, isGenera
             <div ref={provided.innerRef} {...provided.droppableProps}>
               {
                 <div
-                  className={classNames({
+                  className={clsx({
                     taskList__tasks: true,
                     'list-group': true,
                     'm-0': true,

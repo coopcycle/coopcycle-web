@@ -4,7 +4,7 @@ namespace AppBundle\Action\Order;
 
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -15,7 +15,7 @@ use Nucleos\UserBundle\Util\Canonicalizer as CanonicalizerInterface;
 class Assign
 {
     public function __construct(
-        private TokenStorageInterface $tokenStorage,
+        private Security $security,
         private RepositoryInterface $customerRepository,
         private CanonicalizerInterface $canonicalizer,
         private FactoryInterface $customerFactory,
@@ -24,7 +24,7 @@ class Assign
 
     public function __invoke($data, Request $request)
     {
-        if (null === $token = $this->tokenStorage->getToken()) {
+        if (null === $token = $this->security->getToken()) {
             return $data;
         }
 

@@ -17,9 +17,9 @@ class TaskLists extends React.Component {
 
     return (
       <div className="dashboard__panel dashboard__panel--assignees">
-        <h4 className="dashboard__panel__header d-flex justify-content-between">
+        <h4 className="dashboard__panel__header d-flex align-items-center justify-content-between">
           <span>{ this.props.t('DASHBOARD_ASSIGNED') }</span>
-          <span className="pull-right">
+          <span className="d-flex align-items-center">
             <Tooltip
               title={this.props.t("ADMIN_DASHBOARD_HIDE_SHOW_ON_MAP")}
               placement="left"

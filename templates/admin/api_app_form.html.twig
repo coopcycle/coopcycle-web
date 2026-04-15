@@ -17,3 +17,34 @@
   </button>
 {{ form_end(form) }}
 {% endblock %}
+
+{% block scripts %}
+<script>
+function disableScopes(selectEl) {
+
+  if (selectEl.disabled) {
+    return;
+  }
+
+  var checkboxesToDisable = [];
+  var checkboxesToEnable = [];
+  if (!selectEl.value) {
+    checkboxesToDisable = Array.from(document.querySelectorAll('#api_app_scopes input[type="checkbox"]:not([value="orders:all"]):not([value="tasks:all"])'));
+    checkboxesToEnable = Array.from(document.querySelectorAll('#api_app_scopes input[type="checkbox"][value="orders:all"], #api_app_scopes input[type="checkbox"][value="tasks:all"]'));
+  } else {
+    checkboxesToDisable = Array.from(document.querySelectorAll('#api_app_scopes input[type="checkbox"][value="orders:all"], #api_app_scopes input[type="checkbox"][value="tasks:all"]'));
+    checkboxesToEnable = Array.from(document.querySelectorAll('#api_app_scopes input[type="checkbox"]:not([value="orders:all"]):not([value="tasks:all"])'));
+  }
+  checkboxesToDisable.forEach(function (checkbox) {
+    checkbox.setAttribute('disabled', true);
+  });
+  checkboxesToEnable.forEach(function (checkbox) {
+    checkbox.removeAttribute('disabled');
+  });
+}
+document.querySelector('#api_app_store').addEventListener('change', function (e) {
+  disableScopes(e.target)
+});
+disableScopes(document.querySelector('#api_app_store'));
+</script>
+{% endblock %}

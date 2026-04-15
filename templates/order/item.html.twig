@@ -88,16 +88,11 @@
 </div>
 
 <h3 id="payments">{{ 'order.payments'|trans }}</h3>
-{% do form.payments.setRendered %}
 {% include 'order/_partials/payments.html.twig' %}
 
 {% if is_granted('ROLE_ADMIN') and not order.hasVendor() %}
   {% include 'order/_partials/payment_link.html.twig' %}
 {% endif %}
-
-{% for payment_form in form.payments %}
-  {% include 'order/_partials/payment_form.html.twig' %}
-{% endfor %}
 
 {{ form_end(form) }}
 
@@ -133,5 +128,9 @@
 {{ encore_entry_script_tags('order-item') }}
 <script>
 {% include "_partials/order/receipt_modal.js.twig" %}
+</script>
+<script>
+// Tooltip for refund button
+$('[data-toggle="tooltip"]').tooltip()
 </script>
 {% endblock %}

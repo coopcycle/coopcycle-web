@@ -29,6 +29,8 @@ class DeliveryNormalizer implements NormalizerInterface, ContextAwareDenormalize
 {
     use ParseMetadataTrait;
 
+    private const ALREADY_CALLED = 'DeliveryNormalizer_ALREADY_CALLED';
+
     public function __construct(
         private readonly ItemNormalizer $normalizer,
         private readonly Geocoder $geocoder,
@@ -45,7 +47,26 @@ class DeliveryNormalizer implements NormalizerInterface, ContextAwareDenormalize
 
     public function normalize($object, $format = null, array $context = array())
     {
+        $context[self::ALREADY_CALLED] = true;
+
         $data = $this->normalizer->normalize($object, $format, $context);
+
+        // Build pickup/dropoff from already-normalized tasks to avoid triple Task serialization.
+        // getPickup() and getDropoff() were removed from the 'delivery' serialization group
+        // to prevent each Task from being fully normalized 3 times (tasks + pickup + dropoff),
+        // which caused OOM errors.
+        if (isset($data['tasks']) && is_array($data['tasks'])) {
+            $data['pickup'] = null;
+            $data['dropoff'] = null;
+            foreach ($data['tasks'] as $task) {
+                if (($task['type'] ?? null) === 'PICKUP' && $data['pickup'] === null) {
+                    $data['pickup'] = $task;
+                }
+                if (($task['type'] ?? null) === 'DROPOFF') {
+                    $data['dropoff'] = $task;
+                }
+            }
+        }
 
         $data['trackingUrl'] = $this->urlGenerator->generate('public_delivery', [
             'hashid' => $this->hashids8->encode($object->getId())
@@ -71,8 +92,12 @@ class DeliveryNormalizer implements NormalizerInterface, ContextAwareDenormalize
         return $data;
     }
 
-    public function supportsNormalization($data, $format = null)
+    public function supportsNormalization($data, $format = null, array $context = [])
     {
+        if (isset($context[self::ALREADY_CALLED])) {
+            return false;
+        }
+
         return $this->normalizer->supportsNormalization($data, $format) && $data instanceof Delivery;
     }
 
@@ -120,7 +145,7 @@ class DeliveryNormalizer implements NormalizerInterface, ContextAwareDenormalize
                 $tz = date_default_timezone_get();
 
                 // FIXME Catch Exception
-                $period = CarbonPeriod::createFromIso($data['timeSlot']);
+                $period = CarbonPeriod::create($data['timeSlot']);
 
                 $task->setAfter($period->getStartDate()->tz($tz)->toDateTime());
                 $task->setBefore($period->getEndDate()->tz($tz)->toDateTime());

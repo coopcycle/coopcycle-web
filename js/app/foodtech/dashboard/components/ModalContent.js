@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { withTranslation } from 'react-i18next'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { Formik, Field } from 'formik'
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 import { getCountry } from '../../../i18n'
 import {
@@ -89,7 +89,7 @@ const LoopeatFormats = withTranslation()(({ t, order, loopeatFormats, updateLoop
                         <td><small>{format.format_name}</small></td>
                         <td className="text-right">
                           <small className={
-                            classNames({
+                            clsx({
                               'text-success': format.missing_quantity === 0,
                               'text-warning': format.missing_quantity > 0,
                             })

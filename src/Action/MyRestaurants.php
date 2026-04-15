@@ -2,20 +2,16 @@
 
 namespace AppBundle\Action;
 
-use AppBundle\Action\Utils\TokenStorageTrait;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class MyRestaurants
 {
-    use TokenStorageTrait;
-
-    public function __construct(TokenStorageInterface $tokenStorage)
+    public function __construct(private Security $security)
     {
-        $this->tokenStorage = $tokenStorage;
     }
 
     public function __invoke()
     {
-        return $this->getUser()->getRestaurants();
+        return $this->security->getUser()->getRestaurants();
     }
 }

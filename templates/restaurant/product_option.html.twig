@@ -24,7 +24,10 @@
 
 <div class="d-sm-flex flex-row">
   <div class="w-75 mr-4">
-  {{ form_start(form) }}
+  {{ form_start(form, { attr: {
+    'data-search-products-url': path(products_route, { id: restaurant.id, format: 'json' }),
+    'data-product-options': restaurant.productOptions|serialize('jsonld', { groups: ['product_option'] }),
+  } }) }}
 
     {{ form_errors(form) }}
 
@@ -73,4 +76,7 @@
 
 {% block scripts %}
 {{ encore_entry_script_tags('product-option-form') }}
+<script>
+$('[data-toggle="tooltip"]').tooltip()
+</script>
 {% endblock %}

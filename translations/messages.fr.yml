@@ -646,7 +646,7 @@ form.api_app.client_secret.label: Clé secrète
 form.credit_note.user_search.help: La réduction ne sera utilisable que par cet utilisateur
 form.credit_note.amount.label: Montant
 form.credit_note.name.label: Nom
-form.credit_note.name.help: Le nom de la réduction qui sera affiché dans le panier
+form.credit_note.name.help: Le nom de la réduction qui sera affichée dans le panier
 form.credit_note.restaurant.help: La réduction ne sera utilisable qu'en cas de commande
   dans ce restaurant. Laissez vide pour appliquer à tous les restaurants.
 form.embed_settings.with_vehicle.label: Ajouter le choix du type de véhicule
@@ -1625,8 +1625,8 @@ pricing.rule.humanizer.packages_contains_at_least_one: 'colis %package_name%'
 pricing.rule.humanizer.price_range: '%unit_price% par %step%'
 pricing.rule.humanizer.price_range_with_threshold: 'au-dessus de %threshold% - %unit_price% par %step%'
 pricing.rule.humanizer.price_per_package: '%unit_price% par %package_name%'
-adminDashboard.promotions.ongoing: Promotions actives
-adminDashboard.promotions.past: Promotions passées
+adminDashboard.promotions.ongoing: Promotions actives (%count%)
+adminDashboard.promotions.past: Promotions passées (%count%)
 order.download_receipt: Télécharger le reçu
 order.generate_receipt: Générer le reçu
 promotions.feature: Afficher
@@ -1658,3 +1658,22 @@ form.day_of_week_address.days_of_week.label: Jours de la semaine
 localBusiness.form.day_of_week_addresses.label: Adresses en fonction du jour de la semaine
 localBusiness.form.day_of_week_addresses.add: Ajouter une adresse
 localBusiness.form.day_of_week_addresses.help: "Utilisez si l'adresse change durant la semaine (ex : foodtrucks)"
+form.api_app.type.label: Mécanisme d'authentification
+form.api_app.store.placeholder: Choisissez un magasin pour restreindre l'accès
+form.api_app.store.help: Vous pouvez également laisser vide pour autoriser l'accès à toutes les commandes
+form.api_app.scopes.label: Périmètre
+form.api_app.scopes.help: Celà permet de limiter ce à quoi le client d'API est autorisé à accéder
+form.api_app.scope.deliveries: Livraisons
+form.api_app.scope.tasks: Tâches
+form.api_app.scope.orders: Commandes
+form.api_app.scope.orders_all: Toutes les commandes
+form.api_app.scope.tasks_all: Toutes les tâches
+form.order.payment_refund.tooltip: Pour rembourser, créez d'abord un incident
+form.credit_note.deprecated_warning: Créer un avoir commercial pour un problème sur une commande via cette page est obsolète, créez plutôt un incident
+order.create_credit_note: Créer un avoir commercial
+form.product_option_value.product.tooltip: Liez un produit de sorte que quand le produit est désactivé, cette option sera désactivée aussi
+form.product_option_value.product.placeholder: Rechercher un produit…
+form.product_option_value.depends_on.placeholder: Sélectionnez une valeur
+form.product_option_value.depends_on.tooltip: Sélectionnez une autre valeur dont cette valeur dépend
+pagination.items_per_page: Nombre d'éléments par page
+restaurant.form.en_boite_le_plat_platform_fee.label: Le montant de la consigne est collecté par la plateforme

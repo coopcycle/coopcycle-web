@@ -8,29 +8,29 @@
 $enable-cssgrid: true;
 
 // 3. Include remainder of required Bootstrap stylesheets (including any separate color mode stylesheets)
-@import "~bootstrap/scss/variables";
-@import "~bootstrap/scss/variables-dark";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/variables-dark";
 
 // 4. Include any default map overrides here
 
 // 5. Include remainder of required parts
-@import "~bootstrap/scss/maps";
-@import "~bootstrap/scss/mixins";
-// @import "~bootstrap/scss/root";
+@import "bootstrap/scss/maps";
+@import "bootstrap/scss/mixins";
+// @import "bootstrap/scss/root";
 
 // 6. Include any other optional stylesheet partials as desired; list below is not inclusive of all available stylesheets
-// @import "~bootstrap/scss/utilities";
-@import "~bootstrap/scss/grid";
-@import "~bootstrap/scss/nav";
+// @import "bootstrap/scss/utilities";
+@import "bootstrap/scss/grid";
+@import "bootstrap/scss/nav";
 
-@import "~skeleton-screen-css/dist/index.scss";
+@import "skeleton-screen-css/dist/index.scss";
 
 @import "./restaurant-card.scss";
 @import "./swiper.scss";
 @import '../customize/swiper-homepage.scss';
 
-@import "~font-awesome/scss/_variables.scss";
-@import "~font-awesome/scss/_mixins.scss";
+@import "font-awesome/scss/_variables.scss";
+@import "font-awesome/scss/_mixins.scss";
 
 .restaurant-list-header {
   margin-top: -20px;

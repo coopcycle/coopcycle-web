@@ -14,8 +14,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Validator\ValidatorInterface as BaseValidatorInterface;
 
@@ -23,7 +23,7 @@ final class OrderSubscriber implements EventSubscriberInterface
 {
 
     public function __construct(
-        private TokenStorageInterface $tokenStorage,
+        private Security $security,
         private OrderTimeHelper $orderTimeHelper,
         private OrderProcessorInterface $orderProcessor,
         private BaseValidatorInterface $baseValidator,
@@ -44,20 +44,6 @@ final class OrderSubscriber implements EventSubscriberInterface
                 ['process', EventPriorities::PRE_WRITE],
             ],
         ];
-    }
-
-    private function getUser()
-    {
-        if (null === $token = $this->tokenStorage->getToken()) {
-            return;
-        }
-
-        if (!is_object($user = $token->getUser())) {
-            // e.g. anonymous authentication
-            return;
-        }
-
-        return $user;
     }
 
     public function validateAccept(RequestEvent $event)
@@ -96,11 +82,11 @@ final class OrderSubscriber implements EventSubscriberInterface
         //     $delivery->setDate(new \DateTime($delivery->getDate()));
         // }
 
-        $user = $this->getUser();
+        $user = $this->security->getUser();
 
         // Make sure customer is set
         if (null === $order->getCustomer() && null !== $user) {
-            $order->setCustomer($this->getUser()->getCustomer());
+            $order->setCustomer($user->getCustomer());
         }
         if ($request->attributes->get('_route') === '_api_/orders{._format}_post'
             && $order->hasVendor() && null === $order->getId() && null === $order->getShippingTimeRange()) {

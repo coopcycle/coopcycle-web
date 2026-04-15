@@ -824,7 +824,10 @@
                         "link": "Link"
                     }
                 }
-            }
+            },
+            "slider_title_placeholder": "Slide title",
+            "slider_text_placeholder": "Slide text",
+            "slider_button_text_placeholder": "Slide button text"
         },
         "DELIVERY_FORM_ADD_REVERSE": "Also create a reverse delivery",
         "DELIVERY_FORM_ADD_REVERSE_HELP": "After saving, you will be redirected to a new page, with pickup & dropoff reversed",
@@ -859,6 +862,25 @@
             "PRESET_LAST_MONTH": "Last month",
             "PRESET_LAST_3_MONTHS": "Last 3 months",
             "PRESET_LAST_6_MONTHS": "Last 6 months"
-        }
+        },
+        "ADMIN_DASHBOARD_TAG_TASKS": "Modify tags",
+        "CREATE_CREDIT_NOTE": "Create a credit note",
+        "REFUND": "Refund",
+        "CREDIT_NOTE_AMOUNT": "Credit note amount",
+        "CREDIT_NOTES": "Credit notes",
+        "REFUND_AMOUNT": "Refund amount",
+        "LIABLE_PARTY": "Liable party",
+        "LIABLE_PART_HELP": "Who is liable for the incident?",
+        "LIABLE_PARTY_MERCHANT": "Merchant",
+        "LIABLE_PARTY_PLATFORM": "Platform",
+        "REFUND_FULL": "Refund the order total ({{amount}})",
+        "PARTIAL_REFUNDS_NOT_SUPPORTED": "This payment method does not support partial refunds",
+        "REFUNDS": "Refunds",
+        "PAYMENT_AMOUNT": "Amount",
+        "PAYMENT_REFUNDED_AMOUNT": "Refunded amount",
+        "PAYMENT_METHOD": "Payment method",
+        "PAYMENT_UPDATED_AT": "Last updated",
+        "COUPON_CODE_NOT_USED": "Not used yet",
+        "COUPON_CODE_USED": "Used {{ago}}"
       }
 }

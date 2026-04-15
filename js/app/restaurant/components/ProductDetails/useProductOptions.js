@@ -10,7 +10,20 @@ const defaultValuesRange = {
   isUpperInfinite: true,
 }
 
-export const getValuesRange = option => option.valuesRange || defaultValuesRange
+const parseValuesRange = (rangeStr) => {
+  if (!rangeStr) return defaultValuesRange
+  const parts = rangeStr.replace(/[\[\]()\s]/g, '').split(',')
+  const lower = parts[0] || '0'
+  const upper = parts[1]
+  const isUpperInfinite = !upper || upper === ''
+  return {
+    lower,
+    upper: isUpperInfinite ? null : upper,
+    isUpperInfinite,
+  }
+}
+
+export const getValuesRange = option => parseValuesRange(option.valuesRange)
 
 export function isMandatory(option) {
   if (option.additional) {
@@ -23,7 +36,7 @@ export function isMandatory(option) {
 }
 
 export function isValid(option) {
-  const totalQuantity = option.values.reduce(
+  const totalQuantity = option.hasMenuItem.reduce(
     (quantity, val) => quantity + val.quantity,
     0
   )
@@ -51,7 +64,7 @@ export function isValid(option) {
 
 export const useProductOptions = () => {
 
-  const [ state, setState ] = useContext(ProductOptionsModalContext)
+  const [state, setState] = useContext(ProductOptionsModalContext)
 
   function setValueQuantity(option, optionValue, input) {
     const quantity = parseInt(input, 10)
@@ -73,11 +86,11 @@ export const useProductOptions = () => {
   function _setValueQuantity(option, optionValue, quantity) {
     const newOptions = state.options.map(opt => {
 
-      if (opt.code === option.code) {
+      if (opt.identifier === option.identifier) {
 
-        const newValues = opt.values.map(val => {
+        const newValues = opt.hasMenuItem.map(val => {
 
-          if (val.code === optionValue.code) {
+          if (val.identifier === optionValue.identifier) {
             if (Number.isNaN(quantity)) {
               return {
                 ...val,
@@ -98,8 +111,8 @@ export const useProductOptions = () => {
 
         return {
           ...opt,
-          values: newValues,
-          total: newValues.reduce((total, val) => total + (val.price * val.quantity), 0),
+          hasMenuItem: newValues,
+          total: newValues.reduce((total, val) => total + (val.offers.price * val.quantity), 0),
         }
       }
 
@@ -115,9 +128,9 @@ export const useProductOptions = () => {
 
   function getValueQuantity(option, optionValue) {
 
-    const opt = _.find(state.options, opt => opt.code === option.code)
+    const opt = _.find(state.options, opt => opt.identifier === option.identifier)
     if (opt) {
-      const val = _.find(opt.values, val => val.code === optionValue.code)
+      const val = _.find(opt.hasMenuItem, val => val.identifier === optionValue.identifier)
       if (val) {
         return val.quantity
       }
@@ -128,9 +141,9 @@ export const useProductOptions = () => {
 
   function getValueQuantityInput(option, optionValue) {
 
-    const opt = _.find(state.options, opt => opt.code === option.code)
+    const opt = _.find(state.options, opt => opt.identifier === option.identifier)
     if (opt) {
-      const val = _.find(opt.values, val => val.code === optionValue.code)
+      const val = _.find(opt.hasMenuItem, val => val.identifier === optionValue.identifier)
       if (val) {
         return val.quantityInput ?? getValueQuantity(option, optionValue)
       }
@@ -139,10 +152,19 @@ export const useProductOptions = () => {
     return getValueQuantity(option, optionValue)
   }
 
+  function containsOptionValues(optionValueIds) {
+
+    return -1 !== _.findIndex(state.options, opt => {
+      const selectedOptVals = _.filter(opt.hasMenuItem, optVal => optVal.quantity > 0).map(optVal => optVal['@id'])
+      return _.intersection(selectedOptVals, optionValueIds).length > 0;
+    })
+  }
+
   return {
     getValueQuantity: getValueQuantityInput,
     setValueQuantity,
     incrementValueQuantity,
     decrementValueQuantity,
+    containsOptionValues,
   }
 }

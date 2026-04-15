@@ -81,22 +81,3 @@ taskForms.forEach(function(el) {
   }
 
 })
-
-function setBillingAddressRequired(required) {
-  if (required) {
-    $('#delivery_billingAddress_streetAddress').prop('required', true)
-  } else {
-    $('#delivery_billingAddress_streetAddress').prop('required', false)
-    $('#delivery_billingAddress_streetAddress').removeAttr('required')
-  }
-}
-
-$('#billing-address').on('hidden.bs.collapse', function () {
-  setBillingAddressRequired(false)
-})
-
-$('#billing-address').on('shown.bs.collapse', function () {
-  setBillingAddressRequired(true)
-})
-
-setBillingAddressRequired(false)

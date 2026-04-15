@@ -7,16 +7,16 @@ import {
 
 const OptionValueLabel = ({ option, optionValue }) => (
   <>
-    <div className="product-option-item__name">{optionValue.value}</div>
-    {(option.strategy === 'option_value' && optionValue.price > 0) && (
-      <div className="product-option-item__price">+{(optionValue.price / 100).formatMoney()}</div>
+    <div className="product-option-item__name">{optionValue.name}</div>
+    {(option.additionalType === 'option_value' && optionValue.offers.price > 0) && (
+      <div className="product-option-item__price">+{(optionValue.offers.price / 100).formatMoney()}</div>
     )}
   </>
 )
 
 export const OptionValue = ({ index, option, optionValue }) => {
 
-  const { setValueQuantity } = useProductOptions()
+  const { setValueQuantity, containsOptionValues } = useProductOptions()
 
   return (
     <div
@@ -25,7 +25,8 @@ export const OptionValue = ({ index, option, optionValue }) => {
         <input
           type="radio"
           name={`options[${index}][code]`}
-          value={optionValue.code}
+          value={optionValue.identifier}
+          disabled={optionValue.dependsOn.length > 0 && !containsOptionValues(optionValue.dependsOn)}
           onClick={() => {
             window._paq.push(['trackEvent', 'Checkout', 'selectOption'])
             setValueQuantity(option, optionValue, 1)
@@ -47,10 +48,7 @@ export const AdditionalOptionValue = ({
   const valuesRange = getValuesRange(option)
   const quantity = getValueQuantity(option, optionValue)
 
-  let inputProps = {}
-  if (!valuesRange.isUpperInfinite) {
-    inputProps = { ...inputProps, max: valuesRange.upper }
-  }
+  const inputProps = !valuesRange.isUpperInfinite ? { max: valuesRange.upper } : {}
 
   const realIndex = index + valueIndex
 
@@ -58,7 +56,7 @@ export const AdditionalOptionValue = ({
     <div className="product-option-item product-option-item-range">
       <input
         type="hidden" name={`options[${realIndex}][code]`}
-        value={optionValue.code}/>
+        value={optionValue.identifier}/>
       <label
         htmlFor={''}
         onClick={() => {

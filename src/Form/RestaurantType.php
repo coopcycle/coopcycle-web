@@ -151,6 +151,11 @@ class RestaurantType extends LocalBusinessType
                 'required' => false,
                 'disabled' => !$this->authorizationChecker->isGranted('ROLE_ADMIN'),
             ]);
+            $builder->add('enBoitLePlatPlatformFee', CheckboxType::class, [
+                'label' => 'restaurant.form.en_boite_le_plat_platform_fee.label',
+                'required' => false,
+                'disabled' => !$this->authorizationChecker->isGranted('ROLE_ADMIN'),
+            ]);
         }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {

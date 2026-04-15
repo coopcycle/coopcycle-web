@@ -22,7 +22,7 @@ use Sylius\Component\Channel\Model\ChannelInterface;
 use Sylius\Component\Order\Context\CartNotFoundException;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 class RestaurantCartContextTest extends TestCase
 {

@@ -9,10 +9,10 @@ import { filter, debounce, throttle } from 'lodash'
 import { withTranslation, useTranslation } from 'react-i18next'
 import _ from 'lodash'
 import axios from 'axios'
-import classNames from 'classnames'
+import clsx from 'clsx'
 import { OpenLocationCode } from 'open-location-code'
 
-import '../../../assets/css/address-autosuggest.scss'
+import '../../../assets/css/address-autosuggest.css'
 
 import '../i18n'
 import { getCountry, localeDetector } from '../i18n'
@@ -58,11 +58,13 @@ import MapPicker from './MapPicker'
 
 const theme = {
   ...defaultTheme,
-  container: `${defaultTheme.container} address-autosuggest__container`,
-  input: `${defaultTheme.input} address-autosuggest__input`,
-  suggestionsContainer: `${defaultTheme.suggestionsContainer} address-autosuggest__suggestions-container`,
-  suggestionsContainerOpen: `${defaultTheme.suggestionsContainerOpen} address-autosuggest__suggestions-container--open`,
-  sectionTitle: `${defaultTheme.sectionTitle} address-autosuggest__section-title`,
+  container: `tw:relative`,
+  input: ``, // The styles are in renderInputComponent
+  suggestionsContainer: `tw:absolute tw:left-0 tw:right-0 tw:z-2000`,
+  suggestionsContainerOpen: `tw:bg-base-100 tw:border-1 tw:border-base-300 tw:rounded-b-lg`,
+  suggestion: `tw:p-2 tw:cursor-pointer`,
+  suggestionHighlighted: 'tw:bg-base-300',
+  sectionTitle: ``,
 }
 
 const defaultFuseOptions = {
@@ -327,8 +329,14 @@ const getSuggestionValue = suggestion => suggestion.value
 const renderSuggestion = suggestion => {
   if (suggestion.type === 'plus_code') {
     return (
-      <div>
-        <i className="fa fa-map-marker mr-2" aria-hidden="true"></i>
+      <div className="tw:flex tw:items-center tw:gap-1">
+        {/* https://lucide.dev/icons/map-pin-plus */}
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-map-pin-plus-icon lucide-map-pin-plus tw:w-4">
+          <path d="M19.914 11.105A7.298 7.298 0 0 0 20 10a8 8 0 0 0-16 0c0 4.993 5.539 10.193 7.399 11.799a1 1 0 0 0 1.202 0 32 32 0 0 0 .824-.738" />
+          <circle cx="12" cy="10" r="3" />
+          <path d="M16 18h6" />
+          <path d="M19 15v6" />
+        </svg>
         {suggestion.value}
       </div>
     )
@@ -355,7 +363,7 @@ function shouldRenderSuggestions(value) {
   return value.trimStart().length > 3 || value.trimStart().endsWith(' ')
 }
 
-const renderSectionTitle = section => <strong>{section.title}</strong>
+const renderSectionTitle = section => <h5 className="tw:px-2 tw:py-2.5 tw:m-0!">{section.title}</h5>
 
 const getSectionSuggestions = section => section.suggestions
 
@@ -367,29 +375,37 @@ const SuggestionsContainer = ({
   mapPickerEnabled
 }) => {
   const { t } = useTranslation()
+
   return (
     <div {...containerProps}>
       {children}
+      {Array.isArray(children) && (
       <div
-        className="address-autosuggest__suggestions-container__footer"
-        style={{ justifyContent: mapPickerEnabled ? 'space-between' : 'flex-end' }}>
+        className={clsx(
+          'tw:flex',
+          'tw:items-center',
+          'tw:gap-2',
+          'tw:p-2',
+          !mapPickerEnabled && 'tw:justify-end',
+          mapPickerEnabled && 'tw:justify-between',
+        )}>
         {mapPickerEnabled && (
-          <span className="text-info d-flex align-items-center">
+          <button
+            type="button"
+            // className="tw:btn tw:btn-link tw:btn-xs"
+            className="tw:text-xs"
+            onClick={() => {
+              onMapPickerLabelClick()
+            }}>
             <i
-              className="fa fa-question-circle mr-2"
+              className="fa fa-question-circle"
               aria-hidden="true"></i>
-            <button
-              type="button"
-              className="btn btn-link p-0"
-              onClick={() => {
-                onMapPickerLabelClick()
-              }}>
-              {t('ADDRESS_AUTOSUGGEST_MAP_PICKER_LABEL')}
-            </button>
-          </span>
+            {t('ADDRESS_AUTOSUGGEST_MAP_PICKER_LABEL')}
+          </button>
         )}
         <div>{poweredBy}</div>
       </div>
+      )}
     </div>
   )
 }
@@ -707,19 +723,31 @@ class AddressAutosuggest extends Component {
   }
 
   renderInputComponent(inputProps) {
+
     return (
-      <div
-        className={classNames({
-          'address-autosuggest__input-container': true,
-          'has-error': this.props.error,
-        })}>
-        <div className="address-autosuggest__input-wrapper">
+      <div className="tw:join tw:w-full">
+        <button className={clsx('tw:btn tw:join-item',
+          !this.props.error && 'tw:btn-primary',
+          this.props.error && 'tw:btn-error')}>
+          {/* https://lucide.dev/icons/map-pin */}
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+            className={clsx('lucide lucide-map-pin-icon lucide-map-pin tw:w-4',
+              !this.props.error && 'tw:text-primary-content',
+              this.props.error && 'tw:text-error-content',
+            )}>
+            <path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+        </button>
+        <div className={clsx('tw:input tw:join-item tw:w-full', this.props.error && 'tw:input-error')}>
           <input {...inputProps} />
           {this.state.postcode && (
-            <div className="address-autosuggest__addon">
+            <div
+              className="tw:badge tw:badge-soft tw:badge-primary"
+              data-addon="postcode"
+            >
               <span>{this.state.postcode.postcode}</span>
               <button
-                className="address-autosuggest__close-button"
                 onClick={() => this.setState({ value: '', postcode: null })}>
                 <i className="fa fa-times-circle"></i>
               </button>
@@ -728,7 +756,6 @@ class AddressAutosuggest extends Component {
           {this.state.value && (
             <button
               type="button"
-              className="address-autosuggest__close-button address-autosuggest__clear"
               onClick={() => this.onClear()}
               tabIndex="-1">
               <i className="fa fa-times-circle"></i>
@@ -879,6 +906,8 @@ class AddressAutosuggest extends Component {
           multiSection={multiSection}
           inputProps={inputProps}
           containerProps={this.props.containerProps}
+          // Useful for debugging (stays open)
+          // alwaysRenderSuggestions={true}
           {...otherProps}
         />
         {this.props.mapPickerEnabled && <MapPicker
