@@ -29,12 +29,14 @@ final class TaskFilter extends AbstractFilter
 
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, ?Operation $operation = null, array $context = []): void
     {
+        $user = $this->security->getUser();
+
         // otherwise filter is applied to order and page as well
         if (!$this->isPropertyEnabled($property, $resourceClass)) {
             return;
         }
 
-        if (!($this->security->isGranted('ROLE_ADMIN') || $this->security->isGranted('ROLE_DISPATCHER')) && $this->security->isGranted('ROLE_COURIER')) {
+        if (null !== $user && !($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_DISPATCHER')) && $user->hasRole('ROLE_COURIER')) {
 
             $parameterName = $queryNameGenerator->generateParameterName('user');
             $queryBuilder
