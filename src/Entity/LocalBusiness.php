@@ -1280,20 +1280,8 @@ class LocalBusiness extends BaseLocalBusiness implements
         $this->dayOfWeekDeliveryPerimeterExpressions->removeElement($entry);
     }
 
-    public function canDeliverAddress(Address $address, $distance, ?\Symfony\Component\ExpressionLanguage\ExpressionLanguage $language = null): bool
+    protected function resolveDeliveryPerimeterExpression(): string
     {
-        if (null === $language) {
-            $language = new \Symfony\Component\ExpressionLanguage\ExpressionLanguage();
-        }
-
-        $expression = DeliveryPerimeterExpressionResolver::resolve($this);
-
-        $dropoff = new \stdClass();
-        $dropoff->address = $address;
-
-        return $language->evaluate($expression, [
-            'distance' => $distance,
-            'dropoff'  => $dropoff,
-        ]);
+        return DeliveryPerimeterExpressionResolver::resolve($this);
     }
 }

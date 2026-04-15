@@ -47,6 +47,11 @@ trait ShippingOptionsTrait
         $this->deliveryPerimeterExpression = $deliveryPerimeterExpression;
     }
 
+    protected function resolveDeliveryPerimeterExpression(): string
+    {
+        return $this->deliveryPerimeterExpression;
+    }
+
     public function canDeliverAddress(Address $address, $distance, ?ExpressionLanguage $language = null)
     {
         if (null === $language) {
@@ -56,7 +61,7 @@ trait ShippingOptionsTrait
         $dropoff = new \stdClass();
         $dropoff->address = $address;
 
-        return $language->evaluate($this->deliveryPerimeterExpression, [
+        return $language->evaluate($this->resolveDeliveryPerimeterExpression(), [
             'distance' => $distance,
             'dropoff' => $dropoff,
         ]);
