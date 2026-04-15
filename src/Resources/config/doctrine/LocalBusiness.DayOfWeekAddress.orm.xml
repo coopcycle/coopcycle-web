@@ -4,7 +4,7 @@
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
-    <many-to-one field="restaurant" target-entity="AppBundle\Entity\LocalBusiness">
+    <many-to-one field="restaurant" target-entity="AppBundle\Entity\LocalBusiness" inversed-by="dayOfWeekAddresses">
     </many-to-one>
     <many-to-one field="address" target-entity="AppBundle\Entity\Address">
       <cascade>
