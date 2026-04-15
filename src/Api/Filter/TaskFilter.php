@@ -36,7 +36,7 @@ final class TaskFilter extends AbstractFilter
             return;
         }
 
-        if (null !== $user && !($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_DISPATCHER')) && $user->hasRole('ROLE_COURIER')) {
+        if ($user instanceof \AppBundle\Entity\User && !($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_DISPATCHER')) && $user->hasRole('ROLE_COURIER')) {
 
             $parameterName = $queryNameGenerator->generateParameterName('user');
             $queryBuilder
