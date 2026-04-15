@@ -1721,6 +1721,9 @@ form.day_of_week_address.days_of_week.label: Days of the week
 localBusiness.form.day_of_week_addresses.label: Addresses depending on the day of the week
 localBusiness.form.day_of_week_addresses.add: Add address
 localBusiness.form.day_of_week_addresses.help: Use this if the address changes during the week (i.e foodtrucks)
+localBusiness.form.day_of_week_delivery_perimeter_expressions.label: Delivery perimeter depending on the day of the week
+localBusiness.form.day_of_week_delivery_perimeter_expressions.add: Add delivery perimeter
+localBusiness.form.day_of_week_delivery_perimeter_expressions.help: Use this if the delivery zone changes during the week
 form.api_app.store.placeholder: Choose a store to restrict access
 form.api_app.store.help: You can also leave empty if you want to allow access to all orders
 form.api_app.scopes.label: Scopes

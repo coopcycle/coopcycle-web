@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next'
 import i18n from '../i18n'
 import DropzoneWidget from '../widgets/Dropzone'
 import AddressAutosuggestFormGroup from '../widgets/AddressAutosuggestFormGroup'
+import DeliveryZonePicker from '../components/DeliveryZonePicker'
 
 import 'prismjs/themes/prism.css'
 import 'prismjs/plugins/toolbar/prism-toolbar.css'
@@ -343,3 +344,75 @@ document.getElementById('restaurant_dayOfWeekAddresses')
       e.target.closest('li').remove()
     })
   })
+
+function initDayOfWeekCheckboxes(item) {
+  const widget = item.querySelector('[data-widget="days_of_week"]')
+  if (!widget) return
+
+  const hiddenInput = widget.querySelector('input[type="hidden"]')
+  const checkboxes = widget.querySelectorAll('input[type="checkbox"]')
+
+  checkboxes.forEach((checkbox) => {
+    checkbox.addEventListener('change', () => {
+      hiddenInput.value = Array.from(checkboxes)
+        .filter(cb => cb.checked)
+        .map(cb => cb.value)
+        .join(',')
+    })
+  })
+}
+
+function initDeliveryPerimeterExpressionWidget(el) {
+  const input = el.querySelector('input[type="hidden"]')
+  if (!input) return
+
+  const container = document.createElement('div')
+
+  createRoot(container).render(
+    <DeliveryZonePicker
+      zones={ JSON.parse(el.dataset.zones) }
+      expression={ el.dataset.defaultValue || '' }
+      onExprChange={ expr => { input.value = expr } }
+    />
+  )
+
+  el.appendChild(container)
+}
+
+const addDeliveryPerimeterBtn = document.getElementById('day-of-week-delivery-perimeter-expression-add')
+
+if (addDeliveryPerimeterBtn) {
+
+  const container = document.getElementById('restaurant_dayOfWeekDeliveryPerimeterExpressions')
+
+  // Init delete + checkbox sync on items that already exist on page load
+  container.querySelectorAll('li').forEach(item => {
+    initDayOfWeekCheckboxes(item)
+    item.querySelectorAll('[data-action="delete"]').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault()
+        e.target.closest('li').remove()
+      })
+    })
+  })
+
+  addDeliveryPerimeterBtn.addEventListener('click', () => {
+    const item = document.createElement('li')
+
+    item.innerHTML = container.dataset.prototype.replace(/__name__/g, container.children.length)
+
+    initDayOfWeekCheckboxes(item)
+
+    const widgetEl = item.querySelector('[data-widget="delivery-perimeter-expression"]')
+    if (widgetEl) {
+      initDeliveryPerimeterExpressionWidget(widgetEl)
+    }
+
+    item.querySelector('[data-action="delete"]').addEventListener('click', (e) => {
+      e.preventDefault()
+      e.target.closest('li').remove()
+    })
+
+    container.appendChild(item)
+  })
+}

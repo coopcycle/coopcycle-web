@@ -29,6 +29,8 @@ use AppBundle\Entity\LocalBusiness\CatalogInterface;
 use AppBundle\Entity\LocalBusiness\CatalogTrait;
 use AppBundle\Entity\LocalBusiness\ClosingRulesTrait;
 use AppBundle\Entity\LocalBusiness\DayOfWeekAddress;
+use AppBundle\Entity\LocalBusiness\DayOfWeekDeliveryPerimeterExpression;
+use AppBundle\Entity\LocalBusiness\DeliveryPerimeterExpressionResolver;
 use AppBundle\Entity\LocalBusiness\FoodEstablishmentTrait;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethodsTrait;
@@ -313,6 +315,8 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $dayOfWeekAddresses;
 
+    protected $dayOfWeekDeliveryPerimeterExpressions;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -326,6 +330,7 @@ class LocalBusiness extends BaseLocalBusiness implements
         $this->reusablePackagings = new ArrayCollection();
         $this->promotions = new ArrayCollection();
         $this->dayOfWeekAddresses = new ArrayCollection();
+        $this->dayOfWeekDeliveryPerimeterExpressions = new ArrayCollection();
 
         $this->fulfillmentMethods = new ArrayCollection();
         $this->addFulfillmentMethod('delivery', true);
@@ -1256,5 +1261,39 @@ class LocalBusiness extends BaseLocalBusiness implements
         $dayOfWeekAddress->setDaysOfWeek($daysOfWeek);
 
         $this->dayOfWeekAddresses->add($dayOfWeekAddress);
+    }
+
+    public function getDayOfWeekDeliveryPerimeterExpressions()
+    {
+        return $this->dayOfWeekDeliveryPerimeterExpressions;
+    }
+
+    public function addDayOfWeekDeliveryPerimeterExpression(DayOfWeekDeliveryPerimeterExpression $entry): void
+    {
+        $entry->setRestaurant($this);
+
+        $this->dayOfWeekDeliveryPerimeterExpressions->add($entry);
+    }
+
+    public function removeDayOfWeekDeliveryPerimeterExpression(DayOfWeekDeliveryPerimeterExpression $entry): void
+    {
+        $this->dayOfWeekDeliveryPerimeterExpressions->removeElement($entry);
+    }
+
+    public function canDeliverAddress(Address $address, $distance, ?\Symfony\Component\ExpressionLanguage\ExpressionLanguage $language = null): bool
+    {
+        if (null === $language) {
+            $language = new \Symfony\Component\ExpressionLanguage\ExpressionLanguage();
+        }
+
+        $expression = DeliveryPerimeterExpressionResolver::resolve($this);
+
+        $dropoff = new \stdClass();
+        $dropoff->address = $address;
+
+        return $language->evaluate($expression, [
+            'distance' => $distance,
+            'dropoff'  => $dropoff,
+        ]);
     }
 }

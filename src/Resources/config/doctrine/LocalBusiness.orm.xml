@@ -283,5 +283,10 @@
         <cascade-all/>
       </cascade>
     </one-to-many>
+    <one-to-many field="dayOfWeekDeliveryPerimeterExpressions" target-entity="AppBundle\Entity\LocalBusiness\DayOfWeekDeliveryPerimeterExpression" mapped-by="restaurant">
+      <cascade>
+        <cascade-all/>
+      </cascade>
+    </one-to-many>
   </entity>
 </doctrine-mapping>
