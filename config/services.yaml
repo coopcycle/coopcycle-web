@@ -1629,6 +1629,29 @@ services:
     arguments:
       $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
 
+  AppBundle\Integration\Rdc\Api\RdcClientInterface:
+    class: AppBundle\Integration\Rdc\Api\RdcClient
+    arguments:
+      $keycloakBaseUrl: '%env(KEYCLOAK_BASE_URL)%'
+      $keycloakRealm: '%env(KEYCLOAK_REALM)%'
+      $keycloakClientId: '%env(KEYCLOAK_CLIENT_ID)%'
+      $keycloakClientSecret: '%env(KEYCLOAK_CLIENT_SECRET)%'
+      $keycloakUsername: '%env(KEYCLOAK_USERNAME)%'
+      $keycloakPassword: '%env(KEYCLOAK_PASSWORD)%'
+      $rdcInstanceBaseUrl: '%env(RDC_INSTANCE_BASE_URL)%'
+      $memberProvider: '%env(RDC_MEMBER_PROVIDER)%'
+      $aclAuthorizations: '%env(json:RDC_ACL_AUTHORIZATIONS)%'
+
+  AppBundle\Integration\Rdc\Webhook\WebhookPayloadParser: ~
+
+  AppBundle\Integration\Rdc\Webhook\RdcIdempotencyChecker: ~
+
+  AppBundle\Controller\Api\RdcWebhookController:
+    arguments:
+      $rdcWebhookSecret: '%env(RDC_WEBHOOK_SECRET)%'
+    tags:
+      - { name: monolog.logger, channel: rdc }
+
   AppBundle\Utils\Defaults: ~
 
   AppBundle\Api\Filter\AssignedFilter:
