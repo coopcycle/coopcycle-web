@@ -11,3 +11,13 @@
 {% if form.deliveryPerimeterExpression is defined %}
   {{ form_row(form.deliveryPerimeterExpression) }}
 {% endif %}
+
+{% if form.dayOfWeekDeliveryPerimeterExpressions is defined %}
+  {{ form_row(form.dayOfWeekDeliveryPerimeterExpressions) }}
+  <div class="d-flex align-items-center justify-content-end gap-2">
+    {{ form_help(form.dayOfWeekDeliveryPerimeterExpressions) }}
+    <button type="button" class="btn btn-default btn-sm" id="day-of-week-delivery-perimeter-expression-add">
+      {{ 'localBusiness.form.day_of_week_delivery_perimeter_expressions.add'|trans }}
+    </button>
+  </div>
+{% endif %}

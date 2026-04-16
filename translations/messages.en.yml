@@ -1717,6 +1717,12 @@ form.delivery.errors.not_reversable: You can only reverse deliveries with 1 pick
 form.store.document: Document
 basics.upload: Upload
 form.product.options.add: Add an option
+form.day_of_week_address.days_of_week.label: Days of the week
+localBusiness.form.day_of_week_addresses.label: Addresses depending on the day of the week
+localBusiness.form.day_of_week_addresses.add: Add address
+localBusiness.form.day_of_week_addresses.help: Use this if the address changes during the week (i.e foodtrucks)
+localBusiness.form.day_of_week_delivery_perimeter_expressions.label: Delivery perimeter depending on the day of the week
+localBusiness.form.day_of_week_delivery_perimeter_expressions.add: Add delivery perimeter
 form.api_app.store.placeholder: Choose a store to restrict access
 form.api_app.store.help: You can also leave empty if you want to allow access to all orders
 form.api_app.scopes.label: Scopes

@@ -1654,6 +1654,12 @@ form.delivery.errors.not_reversable: Vous pouvez seulement inverser les livraiso
 form.store.document: Document
 basics.upload: Télécharger
 form.product.options.add: Ajouter une option
+form.day_of_week_address.days_of_week.label: Jours de la semaine
+localBusiness.form.day_of_week_addresses.label: Adresses en fonction du jour de la semaine
+localBusiness.form.day_of_week_addresses.add: Ajouter une adresse
+localBusiness.form.day_of_week_addresses.help: "Utilisez si l'adresse change durant la semaine (ex : foodtrucks)"
+localBusiness.form.day_of_week_delivery_perimeter_expressions.label: Périmètre de livraison en fonction du jour de la semaine
+localBusiness.form.day_of_week_delivery_perimeter_expressions.add: Ajouter un périmètre de livraison
 form.api_app.type.label: Mécanisme d'authentification
 form.api_app.store.placeholder: Choisissez un magasin pour restreindre l'accès
 form.api_app.store.help: Vous pouvez également laisser vide pour autoriser l'accès à toutes les commandes

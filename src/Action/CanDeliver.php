@@ -5,6 +5,7 @@ namespace AppBundle\Action;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\LocalBusiness\AddressResolver;
 use AppBundle\Service\RoutingInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use AppBundle\ExpressionLanguage\ExpressionLanguage;
@@ -27,7 +28,7 @@ class CanDeliver
 
         // TODO Manage 404
 
-        $origin = $restaurant->getAddress()->getGeo();
+        $origin = AddressResolver::resolveAddress($restaurant)->getGeo();
         $destination = new GeoCoordinates($latitude, $longitude);
         $destinationAddress = new Address();
         $destinationAddress->setGeo($destination);

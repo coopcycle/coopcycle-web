@@ -24,9 +24,13 @@ use AppBundle\Api\State\RestaurantProvider;
 use AppBundle\Api\State\RestaurantMenuProcessor;
 use AppBundle\Api\State\RestaurantTimingProvider;
 use AppBundle\Entity\Base\LocalBusiness as BaseLocalBusiness;
+use AppBundle\Entity\Address;
 use AppBundle\Entity\LocalBusiness\CatalogInterface;
 use AppBundle\Entity\LocalBusiness\CatalogTrait;
 use AppBundle\Entity\LocalBusiness\ClosingRulesTrait;
+use AppBundle\Entity\LocalBusiness\DayOfWeekAddress;
+use AppBundle\Entity\LocalBusiness\DayOfWeekDeliveryPerimeterExpression;
+use AppBundle\Entity\LocalBusiness\DeliveryPerimeterExpressionResolver;
 use AppBundle\Entity\LocalBusiness\FoodEstablishmentTrait;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethodsTrait;
@@ -44,6 +48,7 @@ use AppBundle\OpeningHours\OpenCloseInterface;
 use AppBundle\OpeningHours\OpenCloseTrait;
 use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Validator\Constraints\IsActivableRestaurant as AssertIsActivableRestaurant;
+use Carbon\Carbon;
 use Cocur\Slugify\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -308,6 +313,10 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected bool $pawapayEnabled = true;
 
+    protected $dayOfWeekAddresses;
+
+    protected $dayOfWeekDeliveryPerimeterExpressions;
+
     public function __construct()
     {
         $this->servesCuisine = new ArrayCollection();
@@ -320,6 +329,8 @@ class LocalBusiness extends BaseLocalBusiness implements
         $this->preparationTimeRules = new ArrayCollection();
         $this->reusablePackagings = new ArrayCollection();
         $this->promotions = new ArrayCollection();
+        $this->dayOfWeekAddresses = new ArrayCollection();
+        $this->dayOfWeekDeliveryPerimeterExpressions = new ArrayCollection();
 
         $this->fulfillmentMethods = new ArrayCollection();
         $this->addFulfillmentMethod('delivery', true);
@@ -1221,5 +1232,56 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function setPawapayEnabled($enabled = true)
     {
         $this->pawapayEnabled = $enabled;
+    }
+
+    public function getDayOfWeekAddresses()
+    {
+        return $this->dayOfWeekAddresses;
+    }
+
+    public function addDayOfWeekAddress(DayOfWeekAddress $dayOfWeekAddress)
+    {
+        $dayOfWeekAddress->setRestaurant($this);
+
+        $this->dayOfWeekAddresses->add($dayOfWeekAddress);
+    }
+
+    public function removeDayOfWeekAddress(DayOfWeekAddress $dayOfWeekAddress)
+    {
+        if ($this->dayOfWeekAddresses->contains($dayOfWeekAddress)) {
+            $this->dayOfWeekAddresses->removeElement($dayOfWeekAddress);
+        }
+    }
+
+    public function addAddressForDayOfWeek(string $daysOfWeek, Address $address)
+    {
+        $dayOfWeekAddress = new DayOfWeekAddress();
+        $dayOfWeekAddress->setRestaurant($this);
+        $dayOfWeekAddress->setAddress($address);
+        $dayOfWeekAddress->setDaysOfWeek($daysOfWeek);
+
+        $this->dayOfWeekAddresses->add($dayOfWeekAddress);
+    }
+
+    public function getDayOfWeekDeliveryPerimeterExpressions()
+    {
+        return $this->dayOfWeekDeliveryPerimeterExpressions;
+    }
+
+    public function addDayOfWeekDeliveryPerimeterExpression(DayOfWeekDeliveryPerimeterExpression $entry): void
+    {
+        $entry->setRestaurant($this);
+
+        $this->dayOfWeekDeliveryPerimeterExpressions->add($entry);
+    }
+
+    public function removeDayOfWeekDeliveryPerimeterExpression(DayOfWeekDeliveryPerimeterExpression $entry): void
+    {
+        $this->dayOfWeekDeliveryPerimeterExpressions->removeElement($entry);
+    }
+
+    protected function resolveDeliveryPerimeterExpression(): string
+    {
+        return DeliveryPerimeterExpressionResolver::resolve($this);
     }
 }
