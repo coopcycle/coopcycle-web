@@ -1660,7 +1660,6 @@ localBusiness.form.day_of_week_addresses.add: Ajouter une adresse
 localBusiness.form.day_of_week_addresses.help: "Utilisez si l'adresse change durant la semaine (ex : foodtrucks)"
 localBusiness.form.day_of_week_delivery_perimeter_expressions.label: Périmètre de livraison en fonction du jour de la semaine
 localBusiness.form.day_of_week_delivery_perimeter_expressions.add: Ajouter un périmètre de livraison
-localBusiness.form.day_of_week_delivery_perimeter_expressions.help: "Utilisez si la zone de livraison change durant la semaine"
 form.api_app.type.label: Mécanisme d'authentification
 form.api_app.store.placeholder: Choisissez un magasin pour restreindre l'accès
 form.api_app.store.help: Vous pouvez également laisser vide pour autoriser l'accès à toutes les commandes

@@ -83,7 +83,7 @@ class RestaurantType extends LocalBusinessType
             ])
             ->add('dayOfWeekDeliveryPerimeterExpressions', CollectionType::class, [
                 'label' => 'localBusiness.form.day_of_week_delivery_perimeter_expressions.label',
-                'help' => 'localBusiness.form.day_of_week_delivery_perimeter_expressions.help',
+                'help' => 'localBusiness.form.day_of_week_addresses.help',
                 'entry_type' => DayOfWeekDeliveryPerimeterExpressionType::class,
                 'allow_add' => true,
                 'allow_delete' => true,
