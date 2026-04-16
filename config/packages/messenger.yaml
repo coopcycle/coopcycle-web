@@ -34,6 +34,8 @@ framework:
                     # which can free up database connections in a worker,
                     # instead of keeping them open forever
                     - doctrine_close_connection
+        failure_transport: failed
+
         transports:
             # https://symfony.com/doc/current/messenger.html#redis-transport
             #
@@ -49,7 +51,15 @@ framework:
             # https://github.com/symfony/symfony-docs/pull/11869
             # https://github.com/symfony/symfony-docs/pull/14888
             #
-            async: "%env(MESSENGER_TRANSPORT_DSN)%"
+            async:
+                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
+                retry_strategy:
+                    max_retries: 3
+                    delay: 1000
+                    multiplier: 2
+                    max_delay: 10000
+            failed:
+                dsn: "%env(MESSENGER_TRANSPORT_DSN)%"
         routing:
             'AppBundle\Message\CalculateRoute': async
             'AppBundle\Message\DeliveryCreated': async
@@ -71,3 +81,5 @@ framework:
             'AppBundle\Message\ResetRushMode': async
             'AppBundle\Message\SoftDelete\CleanupProductOption': async
             'AppBundle\Message\Task\PublishLiveUpdate': async
+            'AppBundle\Message\RdcPickupStatusUpdateMessage': async
+            'AppBundle\Message\RdcDropoffStatusUpdateMessage': async

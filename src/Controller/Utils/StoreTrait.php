@@ -235,6 +235,21 @@ trait StoreTrait
 
             }
 
+            $rdcConnectionId = $store->getRdcConnectionId();
+            if (!empty($rdcConnectionId)) {
+                $fstore = $this->entityManager->getRepository(Store::class)
+                    ->findOneByRdcConnectionId($rdcConnectionId);
+
+                if ($fstore !== null && $fstore !== $store) {
+                    $this->addFlash(
+                        'error',
+                        sprintf('This RDC connection is already assigned to another store (%s)', $fstore->getName())
+                    );
+
+                    return $this->redirectToRoute($routes['store'], [ 'id' => $store->getId() ]);
+                }
+            }
+
             $this->entityManager->persist($store);
             $this->entityManager->flush();
 
