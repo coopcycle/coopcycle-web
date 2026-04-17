@@ -120,7 +120,7 @@ const Packages = ({ taskId, packages }: Props) => {
                 const newPackagesPicked = [...packagesPicked];
                 newPackagesPicked[packageIndex] = {
                   type: item.name,
-                  quantity: e.target.value,
+                  quantity: parseInt(e.target.value, 10) || 0,
                 };
                 setPackagesPicked(newPackagesPicked);
               }}
