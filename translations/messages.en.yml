@@ -191,6 +191,7 @@ restaurant.form.exclusive.docs_path: /en/food-tech/restaurants/general-settings/
 restaurant.form.quotes_allowed.label: 'This restaurant also accepts quotes (e.g.: catering)'
 restaurant.form.quotes_allowed.docs_path: /en/food-tech/restaurants/general-settings/#quotes-allowed
 restaurant.form.loopeat_enabled.label: Enable LoopEat deposit-refund system
+restaurant.form.loopeat_mandatory.label: Make %name% mandatory for all orders
 restaurant.form.loopeat_disconnect.label: Disconnect %name%
 restaurant.form.featured.label: This restaurant is featured on homepage
 restaurant.form.featured.docs_path: /en/food-tech/restaurants/general-settings/#featured

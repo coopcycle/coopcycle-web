@@ -218,6 +218,12 @@ class LocalBusiness extends BaseLocalBusiness implements
     #[Groups(['order'])]
     protected $loopeatEnabled = false;
 
+    /**
+     * @var bool
+     */
+    #[Groups(['order'])]
+    protected $loopeatMandatory = false;
+
     protected $pledge;
 
     /**
@@ -701,6 +707,18 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function setLoopeatEnabled($loopeatEnabled)
     {
         $this->loopeatEnabled = $loopeatEnabled;
+
+        return $this;
+    }
+
+    public function isLoopeatMandatory(): bool
+    {
+        return $this->loopeatMandatory;
+    }
+
+    public function setLoopeatMandatory(bool $loopeatMandatory): self
+    {
+        $this->loopeatMandatory = $loopeatMandatory;
 
         return $this;
     }

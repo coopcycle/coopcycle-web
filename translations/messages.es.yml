@@ -887,6 +887,7 @@ form.price_with_tax.tax_incl.label: Precio (IVA incl.)
 deliveries.filter.clear: Mostrar todo
 restaurant.form.loopeat_enabled.label: Habilite el sistema de depósito y reembolso
   de LoopEat
+restaurant.form.loopeat_mandatory.label: Hacer %name% obligatorio para todos los pedidos
 food_establishment.BAKERY: Panadería
 restaurant.contract.variableDeliveryPrice.placeholder: Por favor seleccione un conjunto
   de reglas de precios
