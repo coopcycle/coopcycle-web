@@ -1742,3 +1742,26 @@ form.product_option_value.depends_on.placeholder: Select a value
 form.product_option_value.depends_on.tooltip: Select another value which this value depends on
 pagination.items_per_page: Items per page
 restaurant.form.en_boite_le_plat_platform_fee.label: The deposit should be collected by the platform
+
+# Email editor
+customize.emails: Customize emails
+customize.email_editor.email_type.order_created: Order Confirmed (Customer)
+customize.email_editor.email_type.order_accepted: Order Accepted
+customize.email_editor.email_type.order_cancelled: Order Cancelled
+customize.email_editor.email_type.order_delayed: Order Delayed
+customize.email_editor.email_type.order_payment: Payment Confirmation
+customize.email_editor.email_type.order_receipt: Order Receipt
+customize.email_editor.email_type.task_completed: Delivery Completed / Failed
+customize.email_editor.save: Save
+customize.email_editor.reset: Reset to default
+customize.email_editor.status.default: Showing default template — save to customise
+customize.email_editor.status.custom: Showing custom template
+customize.email_editor.variables: Available variables
+customize.email_editor.layout: Layout
+customize.email_editor.global_style: Global Style
+customize.email_editor.primary_color: Primary colour (button background)
+customize.email_editor.primary_content_color: Primary text colour (button text)
+customize.email_editor.background_color: Background colour
+customize.email_editor.content_background_color: Content background colour
+customize.email_editor.save_style: Save global style
+customize.email_editor.style_saved: Global style saved

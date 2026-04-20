@@ -1,0 +1,77 @@
+{% extends "admin.html.twig" %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_customize') }}">{% trans %}adminDashboard.customize.title{% endtrans %}</a></li>
+<li>{% trans %}customize.emails{% endtrans %}</li>
+{% endblock %}
+
+{% block content %}
+
+<div id="email-editor"
+     class="ee-layout"
+     data-locale="{{ app.request.locale }}"
+     data-email-types="{{ email_types | json_encode | e('html_attr') }}"
+     data-supported-locales="{{ supported_locales | json_encode | e('html_attr') }}"
+     data-api-url="{{ path('admin_customize_email_template', {type: '__TYPE__'}) }}"
+     data-layout-url="{{ path('admin_customize_email_layout') }}"
+     data-layout-is-custom="{{ layout_is_custom_by_locale | json_encode | e('html_attr') }}"
+     data-style-settings-url="{{ path('admin_customize_email_settings') }}"
+     data-i18n="{{ {
+       save:                      'customize.email_editor.save'                      | trans,
+       reset:                     'customize.email_editor.reset'                     | trans,
+       status_default:            'customize.email_editor.status.default'            | trans,
+       status_custom:             'customize.email_editor.status.custom'             | trans,
+       variables:                 'customize.email_editor.variables'                 | trans,
+       layout:                    'customize.email_editor.layout'                    | trans,
+       global_style:              'customize.email_editor.global_style'              | trans,
+       primary_color:             'customize.email_editor.primary_color'             | trans,
+       primary_content_color:     'customize.email_editor.primary_content_color'     | trans,
+       background_color:          'customize.email_editor.background_color'          | trans,
+       content_background_color:  'customize.email_editor.content_background_color'  | trans,
+       save_style:                'customize.email_editor.save_style'                | trans,
+       style_saved:               'customize.email_editor.style_saved'               | trans
+     } | json_encode | e('html_attr') }}">
+
+  {# ── Sidebar: list of editable email types ── #}
+  <aside class="ee-sidebar">
+    <div class="ee-sidebar-header">
+      {# Locale tabs rendered by JS #}
+      <div id="ee-locale-tabs" class="ee-locale-tabs"></div>
+    </div>
+    <div id="ee-sidebar"></div>
+  </aside>
+
+  {# ── Main editor area ── #}
+  <div class="ee-main">
+
+    <div class="ee-toolbar">
+      <span class="ee-toolbar-title">MJML Email Editor</span>
+      <span id="ee-status" class="ee-status ee-status--info"></span>
+      <button id="ee-reset" class="btn btn-default btn-sm" type="button" disabled>
+        <span id="ee-reset-label"></span>
+      </button>
+      <button id="ee-save" class="btn btn-success btn-sm" type="button" disabled>
+        <span id="ee-save-label"></span>
+      </button>
+    </div>
+
+    <div id="ee-variables-bar" class="ee-variables-bar">
+      <strong id="ee-variables-label"></strong>
+      <span id="ee-variables"><em>—</em></span>
+    </div>
+
+    <div id="ee-canvas"></div>
+
+  </div>
+
+</div>
+
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('email-editor') }}
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('email-editor') }}
+{% endblock %}

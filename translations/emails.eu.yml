@@ -1,31 +1,31 @@
 registration.email.subject: |
   E-posta berrespena
 registration.email.message: |
-  <h2>Ongi etorri %brand_name%-(e)ra, %username%</h2>
-  Mezu hau jaso duzu %brand_name%-(e)n kontu berria sortu duzulako.
+  <h2>Ongi etorri {{brand_name}}-(e)ra, {{username}}</h2>
+  Mezu hau jaso duzu {{brand_name}}-(e)n kontu berria sortu duzulako.
   <br>
   Berretsi zure helbide elektronikoa azpiko botoian klik eginez.
 registration.email.confirm: 'Berretsi e-posta'
 registration.email.disclaimer: 'Esteka hau zure kontua balioztatzeko aldi batean soilik
   erabili daiteke'
 registration.email.textMessage: |
-  Ongi etorri %brand_name%-(e)ra, %username%,\n\n
-  Mezu hau jaso duzu %brand_name%-(e)n kontu berria sortu duzulako.\n
-  Zure e-posta berresteko, egin klik hurrengo estekan: <a href="%confirmationUrl%" rel="notrack">%confirmationUrl%</a>.
-resetting.email.message: '<h2>Kaixo %username%</h2> Zure pasahitza berresteko, mesedez,
+  Ongi etorri {{brand_name}}-(e)ra, {{username}},\n\n
+  Mezu hau jaso duzu {{brand_name}}-(e)n kontu berria sortu duzulako.\n
+  Zure e-posta berresteko, egin klik hurrengo estekan: <a href="{{confirmationUrl}}" rel="notrack">{{confirmationUrl}}</a>.
+resetting.email.message: '<h2>Kaixo {{username}}</h2> Zure pasahitza berresteko, mesedez,
   egin klik azpiko botoian.'
 resetting.email.reset: 'Berezarri pasahitza'
 order.view: 'Ikusi eskaera'
 order.public_url: |
-  Zure eskaeraren egoera jarraitzeko, <a href="%order.public_url%">egin klik hemen</a>.
+  Zure eskaeraren egoera jarraitzeko, <a href="{{order_public_url}}">egin klik hemen</a>.
 order.foodtech.accepted.delivery: "Ordu honetan helduko zaizu zure eskaera:"
 order.foodtech.accepted.delivery.disclaimer: "Zurekin harremanetan jarriko gara helbidea\
   \ aurkitzeko arazoak baditugun"
 order.foodtech.accepted.collection: "Ordu honetan jaso beharko duzu zure eskaera:"
 order.foodtech.accepted.collection.disclaimer: "Arazorik baduzu, jarri harremanetan\
-  \ <strong>%name%</strong>-(r)ekin <strong>%phone_number%</strong> telefono zenbakian\
+  \ <strong>{{name}}</strong>-(r)ekin <strong>{{phone_number}}</strong> telefono zenbakian\
   \ denborarekin zure eskaera ezeztatu ahal izateko."
-order.foodtech.cancelled: "Jatetxeak ezin du zure %order.number% eskaera prestatu.\n\
+order.foodtech.cancelled: "Jatetxeak ezin du zure {{order_number}} eskaera prestatu.\n\
   <br>\nZure dirua hurrengo 5 egunetan itzuliko zaizu automatikoki.\n"
 admin.order.created.subject: 'Eskaera berria konfirmatzeke'
 admin.order.created.body: |
@@ -35,7 +35,7 @@ admin.order.created.body: |
 admin.order_foodtech.created.body: |
   Kaixo,
   <br>
-  Eskaera berria sortu da <strong>%restaurant.name%</strong>(r)entzako.
+  Eskaera berria sortu da <strong>{{restaurant_name}}</strong>(r)entzako.
 admin.pledge.subject: 'Iradokizun berria bidali da!'
 admin.send_invitation.subject: 'CoopCyclera gonbidapena!'
 admin.send_invitation.body: |
@@ -46,54 +46,54 @@ admin.send_invitation.create_password: 'Nire pasahitza sortu'
 admin.pledge.body: |
   Kaixo,
   <br>
-  %username% k %pledge.name% CoopCyclen egotea nahi du!
+  {{username}} k {{pledge_name}} CoopCyclen egotea nahi du!
 user.pledge.subject: 'Zure iradokizuna orain CoopCyclen dago!'
 user.pledge.body: |
   Kaixo,
   <br>
-  Zuri esker, %pledge.name% CoopCyclen dago orain!
+  Zuri esker, {{pledge_name}} CoopCyclen dago orain!
 owner.order.created.subject: 'Eskaera berria berresteko'
 owner.order.created.body: |
   Aupa,
   <br>
-  Eskaera berria sortu da <strong>%restaurant.name%</strong>(r)entzako.
-order.created.subject: '%order.number% eskaera jaso da'
+  Eskaera berria sortu da <strong>{{restaurant_name}}</strong>(r)entzako.
+order.created.subject: '{{order_number}} eskaera jaso da'
 order.created.body: "Kaixo\n<br>\nZure eskaera jaso dugu.\n<br>\nAhalik eta azkarren\
   \ egiaztatuko dugu zure eskaera eta baieztatzean mezu elektroniko bat bidaliko dizugu.\n"
-order.accepted.subject: 'Zure %order.number% eskaera baieztatu da'
+order.accepted.subject: 'Zure {{order_number}} eskaera baieztatu da'
 order.accepted.body.intro: "Kaixo,\n<br>\nZure eskaera baieztatu da."
-order.cancelled.subject: 'Zure %order.number% eskaera bertan behera utzi da'
+order.cancelled.subject: 'Zure {{order_number}} eskaera bertan behera utzi da'
 order.cancelled.body.intro: |
   Kaixo,
   <br>
   Sentitzen dugu, baina zure eskaera bertan behera utzi da.
-order.delayed.subject: 'Zure %order.number% eskaera atzeratu egin da'
+order.delayed.subject: 'Zure {{order_number}} eskaera atzeratu egin da'
 order.delayed.body: |
   Kaixo,
   <br>
-  Sentitzen dugu, baina zure eskaera %delay% minutuz atzeratuko da.
+  Sentitzen dugu, baina zure eskaera {{delay}} minutuz atzeratuko da.
   <br>
   Barkatu eragozpenak.
-task.done.subject: '#%task.id% zeregina gauzatu da'
+task.done.subject: '#{{task_id}} zeregina gauzatu da'
 task.done.body: |
   Kaixo,
   <br>
-  #%task.id% zeregina burutu da.
-task.failed.subject: 'Ezin izan da #%task.id% zeregina burutu'
+  #{{task_id}} zeregina burutu da.
+task.failed.subject: 'Ezin izan da #{{task_id}} zeregina burutu'
 task.failed.body: |
   Kaixo,
   <br>
-  Ezin izan da #%task.id% zeregina burutu.
-order.payment.subject: 'Zure %order.number% eskaeraren ordainketa'
+  Ezin izan da #{{task_id}} zeregina burutu.
+order.payment.subject: 'Zure {{order_number}} eskaeraren ordainketa'
 order.payment.body: "Kaixo,\n<br>\nUsted ha solicitado un servicio de entrega con nosotros.\n\
   <br>\nAzpian kreditu-txartelarekin ordaintzeko esteka bat aurkituko duzu.\n"
 
 order.expiring_authorization.subject: 'Orainketa baimena laster iraungiko da'
-order.expiring_authorization.text: 'Ordainketa baimena <strong>%order.number%</strong>
+order.expiring_authorization.text: 'Ordainketa baimena <strong>{{order_number}}</strong>
   eskaerarako laster iraungiko da. <br> Eskaera bukatu beharko zenuke baimena iraungi
   baino lehen dirua galtzen saihesteko.'
 
-order.receipt.subject: 'Zure %order.number% eskaeraren ordainagiria'
+order.receipt.subject: 'Zure {{order_number}} eskaeraren ordainagiria'
 order.receipt.body: "Kaixo,\n<br>\nZure eskaeraren ordainagiria erantsi da."
 
 order.payment_failed.subject: 'Errore bat gertatu da zure ordainketa prozesatzen'

@@ -1,64 +1,64 @@
 registration.email.subject: "Confirmació el teu correu electrònic\n"
-registration.email.message: "<h2>Et donem la benvinguda a %brand_name%, %username%</h2>\n\
-  Has rebut aquest missatge perque t'has registrat recentment a %brand_name%.\n<br>\n\
+registration.email.message: "<h2>Et donem la benvinguda a {{brand_name}}, {{username}}</h2>\n\
+  Has rebut aquest missatge perque t'has registrat recentment a {{brand_name}}.\n<br>\n\
   Confirma la teva adreça de correu electrònic fent clic al botó següent.\n"
 registration.email.confirm: Confirma el correu electrònic
 registration.email.disclaimer: Aquest enllaç només es pot utilitzar una vegada per
   validar el vostre compte
-registration.email.textMessage: "Et donem la benvinguda a %brand_name%, %username%,\\\
-  n\\n\nHeu rebut aquest missatge perquè us heu registrat recentment a un compte %brand_name%.\\\
-  n\nPer confirmar el correu electrònic, feu clic a l’enllaç següent: <a href=\"%confirmationUrl%\"\
-  \ rel=\"notrack\">%confirmationUrl%</a>.\n"
-resetting.email.message: <h2>Hola %username%</h2> Per restablir la vostra contrasenya,
+registration.email.textMessage: "Et donem la benvinguda a {{brand_name}}, {{username}},\\\
+  n\\n\nHeu rebut aquest missatge perquè us heu registrat recentment a un compte {{brand_name}}.\\\
+  n\nPer confirmar el correu electrònic, feu clic a l’enllaç següent: <a href=\"{{confirmationUrl}}\"\
+  \ rel=\"notrack\">{{confirmationUrl}}</a>.\n"
+resetting.email.message: <h2>Hola {{username}}</h2> Per restablir la vostra contrasenya,
   feu clic al botó següent.
 resetting.email.reset: Restablir la contrasenya
 order.view: Veure comanda
-order.public_url: "Per fer el seguiment de l’estat de la comanda, <a href=\"%order.public_url%\"\
+order.public_url: "Per fer el seguiment de l’estat de la comanda, <a href=\"{{order_public_url}}\"\
   >clica aquí</a>.\n"
-order.foodtech.cancelled: "El restaurant no pot preparar la vostra comanda %order.number%.\n\
+order.foodtech.cancelled: "El restaurant no pot preparar la vostra comanda {{order_number}}.\n\
   <br>\nNo s’ha carregat el vostre compte.\n"
 admin.order.created.subject: S'ha de confirmar la nova comanda
 admin.order.created.body: "Hola,\n<br>\nS'ha creat una nova comanda.\n"
-admin.order_foodtech.created.body: "Hola,\n<br>\nS'ha creat una nova comanda per <strong>%restaurant.name%</strong>.\n"
+admin.order_foodtech.created.body: "Hola,\n<br>\nS'ha creat una nova comanda per <strong>{{restaurant_name}}</strong>.\n"
 admin.pledge.subject: S'ha enviat un nou suggeriment!
-admin.pledge.body: "Hola,\n<br>\n%username% li agradaria %pledge.name% estar a CoopCycle\
+admin.pledge.body: "Hola,\n<br>\n{{username}} li agradaria {{pledge_name}} estar a CoopCycle\
   \ !\n"
 user.pledge.subject: El vostre suggeriment és ara a CoopCycle!
-user.pledge.body: "Hola,\n<br>\nGràcies a tu, %pledge.name% ara és a CoopCycle!!\n"
+user.pledge.body: "Hola,\n<br>\nGràcies a tu, {{pledge_name}} ara és a CoopCycle!!\n"
 owner.order.created.subject: Nova comanda per confirmar
-owner.order.created.body: "Hola,\n<br>\nS'ha efectuat una nova comanda per <strong>%restaurant.name%</strong>.\n"
-order.created.subject: La comanda %order.number% ha estat rebuda
+owner.order.created.body: "Hola,\n<br>\nS'ha efectuat una nova comanda per <strong>{{restaurant_name}}</strong>.\n"
+order.created.subject: La comanda {{order_number}} ha estat rebuda
 order.created.body: "Hola,\n<br>\nHem registrat la vostra comanda.\n<br>\nComprobarem\
   \ la vostra comanda tan aviat com sigui possible i ens posarem en contacte amb tu\
   \ quan es confirmi.\n"
-order.accepted.subject: La teva comanda %order.number% ha estat confirmat
+order.accepted.subject: La teva comanda {{order_number}} ha estat confirmat
 order.accepted.body.intro: "Hola,\n<br>\nLa vostra comanda està confirmada."
-order.cancelled.subject: La teva comanda %order.number% ha estat cancel·lat
+order.cancelled.subject: La teva comanda {{order_number}} ha estat cancel·lat
 order.cancelled.body.intro: "Hola,\n<br>\nHo sentim, però s'ha cancel·lat la vostra\
   \ comanda.\n"
-order.delayed.subject: La teva comanda %order.number% s'ha endarrerit
-order.delayed.body: "Hola,\n<br>\nHo sentim, però la vostra comanda es retardarà %delay%\
+order.delayed.subject: La teva comanda {{order_number}} s'ha endarrerit
+order.delayed.body: "Hola,\n<br>\nHo sentim, però la vostra comanda es retardarà {{delay}}\
   \ minuts.\n<br>\nDemanem disculpes per les molèsties.\n"
-task.done.subject: 'Tasca #%task.id% finalitzat'
-task.done.body: "Hola,\n<br>\nTasca #%task.id% s’ha completat\n"
-task.failed.subject: "Tasca #%task.id% no s'ha pogut completar"
-task.failed.body: "Hola,\n<br>\nTasca #%task.id% no s'ha pogut completar.\n"
+task.done.subject: 'Tasca #{{task_id}} finalitzat'
+task.done.body: "Hola,\n<br>\nTasca #{{task_id}} s’ha completat\n"
+task.failed.subject: "Tasca #{{task_id}} no s'ha pogut completar"
+task.failed.body: "Hola,\n<br>\nTasca #{{task_id}} no s'ha pogut completar.\n"
 order.payment.body: "Hola,\n<br>\nHem completat un lliurament que ens ha demanat.\n\
   <br>\nA continuació trobarà un enllaç que li permet pagar amb targeta de crèdit.\n"
-order.payment.subject: Pagament de la teva comanda %order.number%
+order.payment.subject: Pagament de la teva comanda {{order_number}}
 admin.send_invitation.create_password: Crear la meva contrasenya
 admin.send_invitation.body: "Hola,\n<br>\nAquest correu és una invitació\
   \ al teu espai CoopCycle, per a acabar la creació del seu compte, si us plau faci\
   \ un clic en el següent enllaç.\n"
 admin.send_invitation.subject: Invitació a CoopCycle!
 order.foodtech.accepted.collection.disclaimer: Si té algun problema, contacti amb
-  <strong>%name%</strong> a <strong>%phone_number%</strong> amb suficient antelació
+  <strong>{{name}}</strong> a <strong>{{phone_number}}</strong> amb suficient antelació
   per a cancel·lar la seva comanda.
 order.foodtech.accepted.collection: 'Haurà de recollir-ho en el següent horari:'
 order.foodtech.accepted.delivery.disclaimer: Ens posarem en contacte en el cas de
   trobar problemes amb la seva adreça
 order.foodtech.accepted.delivery: 'Se li lliurarà en el següent horari:'
-order.expiring_authorization.text: L'autorització del pagament per la comanda <strong>%order.number%</strong>
+order.expiring_authorization.text: L'autorització del pagament per la comanda <strong>{{order_number}}</strong>
   caducarà aviat. <br> Hauries de completar la comanda abans que l'autorització caduqui
   per evitar perdre els diners.
 order.expiring_authorization.subject: Una autorització de pagament caducarà aviat

@@ -1,53 +1,53 @@
 registration.email.subject: "Potvrzení e-mailem\n"
 admin.order.created.body: "Dobrý den,\n<br>\nByla vytvořena nová objednávka.\n"
 admin.order.created.subject: Nová objednávka bude potvrzena
-order.foodtech.cancelled: "Restaurace nedokáže připravit vaši objednávku %order.number%.\n\
+order.foodtech.cancelled: "Restaurace nedokáže připravit vaši objednávku {{order_number}}.\n\
   <br>\nVaše peníze budou automaticky převedeny zpět během následujících 5 dnů.\n"
 order.foodtech.accepted.collection.disclaimer: Máte-li problém, kontaktujte předem
-  <strong>%name% </strong> na <strong>%phone_number% </strong> a zrušte svou objednávku.
+  <strong>{{name}} </strong> na <strong>{{phone_number}} </strong> a zrušte svou objednávku.
 order.foodtech.accepted.collection: 'Budete jej muset vyzvednout v následujícím čase:'
 order.foodtech.accepted.delivery.disclaimer: V případě problému s nalezením adresy
   vás budeme kontaktovat
 order.foodtech.accepted.delivery: 'Bude vám doručena v následující době:'
-order.public_url: "Chcete-li sledovat stav své objednávky, <a href=\"%order.public_url%\"\
+order.public_url: "Chcete-li sledovat stav své objednávky, <a href=\"{{order_public_url}}\"\
   > klikněte sem </a>.\n"
 order.view: Zobrazit objednávku
 resetting.email.reset: Resetovat heslo
-resetting.email.message: <h2>Dobrý den, %username%</h2> Chcete-li obnovit své heslo,
+resetting.email.message: <h2>Dobrý den, {{username}}</h2> Chcete-li obnovit své heslo,
   klikněte na tlačítko níže.
-registration.email.textMessage: "Vítejte v %brand_name%, %username%,\\n\\n\nTuto zprávu\
-  \ jste obdrželi, protože jste se nedávno zaregistrovali k účtu %brand_name%. \\\
-  n\nChcete-li svůj e-mail potvrdit, klikněte na následující odkaz: <a href=\"%confirmationUrl%\"\
-  \ rel=\"notrack\">%confirmationUrl%</a>.\n"
+registration.email.textMessage: "Vítejte v {{brand_name}}, {{username}},\\n\\n\nTuto zprávu\
+  \ jste obdrželi, protože jste se nedávno zaregistrovali k účtu {{brand_name}}. \\\
+  n\nChcete-li svůj e-mail potvrdit, klikněte na následující odkaz: <a href=\"{{confirmationUrl}}\"\
+  \ rel=\"notrack\">{{confirmationUrl}}</a>.\n"
 registration.email.disclaimer: Tento odkaz lze použít pouze jednou k ověření vašeho
   účtu
 registration.email.confirm: Potvrdit e-mail
-registration.email.message: "<h2> Vítejte v %brand_name%, %username%</h2>\nTuto zprávu\
-  \ jste obdrželi, protože jste se nedávno zaregistrovali k %brand_name%.\n<br>\n\
+registration.email.message: "<h2> Vítejte v {{brand_name}}, {{username}}</h2>\nTuto zprávu\
+  \ jste obdrželi, protože jste se nedávno zaregistrovali k {{brand_name}}.\n<br>\n\
   Potvrďte svou e-mailovou adresu kliknutím na tlačítko níže.\n"
 order.payment.body: "Dobrý den,\n<br>\nDokončili jsme dodávku, kterou jste si u nás\
   \ objednali.\n<br>\nNíže naleznete odkaz, který vám umožní platit kreditní kartou.\n"
-order.payment.subject: Platba vaší objednávky %order.number%
-task.failed.body: "Dobrý den,\n<br>\nÚkol #%task.id% nelze dokončit.\n"
-task.failed.subject: 'Úkol #%task.id% nelze dokončit'
-task.done.body: "Dobrý den,\n<br>\nÚkol #%task.id% byl dokončen.\n"
-task.done.subject: 'Úkol #%task.id% dokončen'
+order.payment.subject: Platba vaší objednávky {{order_number}}
+task.failed.body: "Dobrý den,\n<br>\nÚkol #{{task_id}} nelze dokončit.\n"
+task.failed.subject: 'Úkol #{{task_id}} nelze dokončit'
+task.done.body: "Dobrý den,\n<br>\nÚkol #{{task_id}} byl dokončen.\n"
+task.done.subject: 'Úkol #{{task_id}} dokončen'
 order.delayed.body: "Dobrý den,\n<br>\nJe nám líto, ale vaše objednávka bude zpožděna\
-  \ o %delay% minut.\n<br>\nOmlouváme se za nepříjemnosti.\n"
-order.delayed.subject: Vaše objednávka %order.number% byla zpožděna
+  \ o {{delay}} minut.\n<br>\nOmlouváme se za nepříjemnosti.\n"
+order.delayed.subject: Vaše objednávka {{order_number}} byla zpožděna
 order.cancelled.body.intro: "Dobrý den,\n<br>\nJe nám líto, ale vaše objednávka byla\
   \ zrušena.\n"
-order.cancelled.subject: Vaše objednávka %order.number% byla zrušena
+order.cancelled.subject: Vaše objednávka {{order_number}} byla zrušena
 order.accepted.body.intro: "Dobrý den,\n<br>\nVaše objednávka je potvrzena."
-order.accepted.subject: Objednávka %order.number% byla potvrzena
+order.accepted.subject: Objednávka {{order_number}} byla potvrzena
 order.created.body: "Dobrý den,\n<br>\nObdrželi jsme vaši objednávku.\n<br>\nVaši\
   \ objednávku zkontrolujeme co nejdříve a po potvrzení vám zašleme e-mail.\n"
-order.created.subject: Objednávka %order.number% byla přijata
-owner.order.created.body: "Dobrý den,\n<br>\nByla zadána nová objednávka pro <strong>%restaurant.name%</strong>.\n"
+order.created.subject: Objednávka {{order_number}} byla přijata
+owner.order.created.body: "Dobrý den,\n<br>\nByla zadána nová objednávka pro <strong>{{restaurant_name}}</strong>.\n"
 owner.order.created.subject: Nová objednávka k potvrzení
-user.pledge.body: "Dobrý den,\n<br>\ndíky vám je nyní %pledge.name% na CoopCycle!\n"
+user.pledge.body: "Dobrý den,\n<br>\ndíky vám je nyní {{pledge_name}} na CoopCycle!\n"
 user.pledge.subject: Váš návrh je nyní na CoopCycle!
-admin.pledge.body: "Dobrý den,\n<br>\n%username% si přeje, aby %pledge.name% byl na\
+admin.pledge.body: "Dobrý den,\n<br>\n{{username}} si přeje, aby {{pledge_name}} byl na\
   \ CoopCycle!\n"
 admin.send_invitation.create_password: Vytvořit mé heslo
 admin.send_invitation.body: "Dobrý den,\n<br>\nToto je pozvání do aplikace\
@@ -55,8 +55,8 @@ admin.send_invitation.body: "Dobrý den,\n<br>\nToto je pozvání do aplikace\
 admin.send_invitation.subject: Pozvání do CoopCycle!
 admin.pledge.subject: Byl odeslán nový návrh!
 admin.order_foodtech.created.body: "Dobrý den,\n<br>\nByla vytvořena nová objednávka\
-  \ pro <strong>%restaurant.name%</strong>.\n"
-order.expiring_authorization.text: Autorizace platby pro objednávku <strong>%order.number%
+  \ pro <strong>{{restaurant_name}}</strong>.\n"
+order.expiring_authorization.text: Autorizace platby pro objednávku <strong>{{order_number}}
   </strong> brzy vyprší. <br> Měli byste dokončit objednávku před vypršením autorizace,
   abyste předešli ztrátě peněz.
 order.expiring_authorization.subject: Platnost autorizace platby brzy vyprší
@@ -65,10 +65,10 @@ order.payment_failed.body: "Ahoj,\n<br>\nJe nám líto, při zpracování vaší
   \ k chybě. Zkuste to prosím znovu s jinou platební metodou."
 order.payment_failed.subject: Při zpracování platby došlo k chybě
 order.receipt.body: "Ahoj,\n<br>\nV příloze naleznete potvrzení o vaší objednávce."
-order.receipt.subject: Potvrzení za vaši objednávku %order.number%
+order.receipt.subject: Potvrzení za vaši objednávku {{order_number}}
 order.loopeat.accepted: "<p>Gratulujeme vám k vaší objednávce s nulovým odpadem u\
-  \ našeho partnera \" %name% \".</p>\n<p>Své opakovaně použitelné krabičky můžete\
-  \ bezplatně vrátit v síti našich partnerů (seznam najdete na svém účtu \" %name%\
+  \ našeho partnera \" {{name}} \".</p>\n<p>Své opakovaně použitelné krabičky můžete\
+  \ bezplatně vrátit v síti našich partnerů (seznam najdete na svém účtu \" {{name}}\
   \ \") nebo požádat svého kurýra, aby to udělal za vás při další objednávce.</p>\n\
   <p>Nezapomeňte vrátit plátěnou tašku!</p>\n"
 registration.company: Žádost o registraci firmy
@@ -76,24 +76,24 @@ registration.restaurant: Žádost o přidání nové restaurace
 order.adhoc.body: "Dobrý den,\n<br>\nByla pro vás vytvořena nová objednávka.\n<br>\n\
   Chcete-li dokončit svou objednávku, klikněte na odkaz níže, zadejte svou adresu,\
   \ vyberte místo pro doručení a zaplaťte kreditní kartou.\n"
-business_account.send_invitation.body: "Dobrý den %name%,\n<br>\nToto je pozvánka\
+business_account.send_invitation.body: "Dobrý den {{name}},\n<br>\nToto je pozvánka\
   \ ke konfiguraci firemního účtu v CoopCycle, pro pokračování v aktivaci klikněte\
   \ na následující odkaz.\n"
-task.pickup.done.subject: 'Zásilka #%id% byla vyzvednuta'
-task.pickup.done.body: "Dobrý den,\n<br>\n<br>\nZásilka <strong>#%id%</strong> byla\
-  \ vyzvednuta na následující adrese:\n<br>\n%address%\n"
-task.pickup.failed.subject: 'Zásilku #%id% nebylo možné vyzvednout'
-task.pickup.failed.body: "Dobrý den,\n<br>\n<br>\nZásilku <strong>#%id%</strong> nebylo\
-  \ možné vyzvednout na následující adrese:\n<br>\n%address%\n"
-task.dropoff.failed.subject: 'Zásilku #%id% se nepodařilo doručit'
-task.dropoff.failed.body: "Dobrý den,\n<br>\n<br>\nZásilku <strong>#%id%</strong>\
-  \ nebylo možné doručit na následující adresu:\n<br>\n%address%\n"
-task.dropoff.done.body: "Dobrý den,\n<br>\n<br>\nZásilka <strong>#%id%</strong> byla\
-  \ doručena na následující adresu:\n<br>\n%address%\n"
-task.dropoff.done.subject: 'Zásilka #%id% byla doručena'
+task.pickup.done.subject: 'Zásilka #{{id}} byla vyzvednuta'
+task.pickup.done.body: "Dobrý den,\n<br>\n<br>\nZásilka <strong>#{{id}}</strong> byla\
+  \ vyzvednuta na následující adrese:\n<br>\n{{address}}\n"
+task.pickup.failed.subject: 'Zásilku #{{id}} nebylo možné vyzvednout'
+task.pickup.failed.body: "Dobrý den,\n<br>\n<br>\nZásilku <strong>#{{id}}</strong> nebylo\
+  \ možné vyzvednout na následující adrese:\n<br>\n{{address}}\n"
+task.dropoff.failed.subject: 'Zásilku #{{id}} se nepodařilo doručit'
+task.dropoff.failed.body: "Dobrý den,\n<br>\n<br>\nZásilku <strong>#{{id}}</strong>\
+  \ nebylo možné doručit na následující adresu:\n<br>\n{{address}}\n"
+task.dropoff.done.body: "Dobrý den,\n<br>\n<br>\nZásilka <strong>#{{id}}</strong> byla\
+  \ doručena na následující adresu:\n<br>\n{{address}}\n"
+task.dropoff.done.subject: 'Zásilka #{{id}} byla doručena'
 business_account.send_invitation.cta: Pokračujte v aktivaci
 order.loopeat.accepted.with_fee: "<p>Gratulujeme vám k vaší objednávce s nulovým odpadem\
-  \ u našeho partnera \" %name% \".</p>\n<p>Své opakovaně použitelné krabičky můžete\
-  \ bezplatně vrátit v síti našich partnerů (seznam na vašem účtu \" %name% \") nebo\
-  \ požádat svého kurýra, aby to udělal za vás při další objednávce (poplatek %amount%).</p>\n\
+  \ u našeho partnera \" {{name}} \".</p>\n<p>Své opakovaně použitelné krabičky můžete\
+  \ bezplatně vrátit v síti našich partnerů (seznam na vašem účtu \" {{name}} \") nebo\
+  \ požádat svého kurýra, aby to udělal za vás při další objednávce (poplatek {{amount}}).</p>\n\
   <p>Nezapomeňte vrátit totebag!</p>\n"
