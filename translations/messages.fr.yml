@@ -946,6 +946,7 @@ form.package.tags.label: Tags à appliquer automatiquement aux tâches
 form.package.average_weight.label: Poids moyen (kg)
 form.package.max_weight.label: Poids maximum (kg)
 form.package.shortCode.label: Code de 2 lettres
+form.package.shortCode.help: Limité à 2 caractères
 form.time_slot.interval.label: Intervalle
 form.delivery.packages.label: Marchandise
 form.delivery.package.label: Emballage

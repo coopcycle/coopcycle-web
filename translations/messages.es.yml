@@ -816,6 +816,7 @@ form.package.max_volume_units: Este valor se utilizará para calcular los precio
 form.package.average_weight.label: Peso promedio (kg)
 form.package.max_weight.label: Peso máximo (kg)
 form.package.shortCode.label: Código de 2 letras
+form.package.shortCode.help: Limitado a 2 caracteres
 form.package.volume_units.label: Unidades de volumen
 basics.date_range: Desde %start% hasta %end%
 basics.total_including_tax: Total incluyendo todos los impuestos

@@ -59,7 +59,11 @@ class PackageType extends AbstractType
             ])
             ->add('shortCode', TextType::class, [
                 'label' => 'form.package.shortCode.label',
-                'required' => false
+                'help' => 'form.package.shortCode.help',
+                'required' => false,
+                'attr' => [
+                    'maxlength' => 2,
+                ],
             ])
             ->add(
                 'tags',
@@ -81,7 +85,7 @@ class PackageType extends AbstractType
             $package = $event->getForm()->getData();
 
             $shortCode = $package->getShortCode();
-            if (is_null($shortCode)) {
+            if (empty($shortCode)) {
                 $package->setShortCode(strtoupper(substr($package->getName(), 0 ,2)));
             }
 

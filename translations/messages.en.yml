@@ -813,6 +813,7 @@ form.package.average_weight.label: Average weight (kg)
 form.package.max_weight.label: Max weight (kg)
 form.package.tags.label: Tags to apply automatically to tasks
 form.package.shortCode.label: 2 letter code
+form.package.shortCode.help: Limited to 2 characters
 form.package.volume_units.label: Volume unit
 form.reusable_packaging.name.label: Name
 form.reusable_packaging.is_tracked.label: Tracking enabled
