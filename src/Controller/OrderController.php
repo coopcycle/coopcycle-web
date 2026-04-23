@@ -25,6 +25,7 @@ use AppBundle\Security\OrderAccessTokenManager;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Service\StripeManager;
+use AppBundle\Payment\PaymentMethodsResolver;
 use AppBundle\Service\TimingRegistry;
 use AppBundle\Sylius\Cart\SessionStorage as CartStorage;
 use AppBundle\Sylius\Order\OrderFactory;
@@ -393,6 +394,7 @@ class OrderController extends AbstractController
     #[Route(path: '/order/payment-method', name: 'order_select_payment_method', methods: ['POST'])]
     public function selectPaymentMethodAction(Request $request,
         CartContextInterface $cartContext,
+        PaymentMethodsResolver $paymentMethodsResolver,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         EntityManagerInterface $entityManager,
         NormalizerInterface $normalizer,
@@ -415,6 +417,7 @@ class OrderController extends AbstractController
         return $this->selectPaymentMethodForOrder(
             $order,
             $request,
+            $paymentMethodsResolver,
             $paymentMethodRepository,
             $entityManager,
             $normalizer,
@@ -427,6 +430,7 @@ class OrderController extends AbstractController
     #[Route(path: '/order/{hashid}/payment-method', name: 'order_by_hashid16_select_payment_method', methods: ['POST'])]
     public function selectPaymentMethodByHashid16Action($hashid, Request $request,
         OrderRepository $orderRepository,
+        PaymentMethodsResolver $paymentMethodsResolver,
         PaymentMethodRepositoryInterface $paymentMethodRepository,
         EntityManagerInterface $entityManager,
         NormalizerInterface $normalizer,
@@ -458,6 +462,7 @@ class OrderController extends AbstractController
         return $this->selectPaymentMethodForOrder(
             $order,
             $request,
+            $paymentMethodsResolver,
             $paymentMethodRepository,
             $entityManager,
             $normalizer,
