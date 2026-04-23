@@ -283,4 +283,99 @@ class InternalDeliveryCreatorTest extends TestCase
         $this->assertEquals($expectedDoneAfter->format('Y-m-d H:i:s'), $dropoff->getDoneAfter()->format('Y-m-d H:i:s'));
         $this->assertEquals($expectedDoneBefore->format('Y-m-d H:i:s'), $dropoff->getDoneBefore()->format('Y-m-d H:i:s'));
     }
+
+    /**
+     * Test end-to-end delivery creation with ServiceRequest DTO populated from real SPEC data.
+     * Uses actual address structure with addressLines, multiple contacts (CUSTOMER_DISPATCH),
+     * external references (REQUESTOR_ID, PROVIDER_ID), and nested time ranges from spec.
+     */
+    public function testCreateDeliveryWithRealSpecServiceRequest(): void
+    {
+        // Create ServiceRequest DTO with data from SPEC lines 626-785
+        $orderData = new ServiceRequest(
+            addresses: [
+                'pickup' => new ServiceRequestAddress(
+                    streetAddress: '16 Bd sde l\'industrie ZI D',
+                    postalCode: '49000',
+                    city: 'ECOUFLANT',
+                    country: 'FR',
+                ),
+                'dropoff' => new ServiceRequestAddress(
+                    streetAddress: '21 rue Jean Predali',
+                    postalCode: '49100',
+                    city: 'ANGERS',
+                    country: 'FR',
+                ),
+            ],
+            timeSlots: [
+                'pickup' => new TimeSlot(
+                    start: new DateTimeImmutable('2025-12-26T07:00:00.000Z'),
+                    end: new DateTimeImmutable('2025-12-26T08:00:00.000Z'),
+                ),
+                'dropoff' => new TimeSlot(
+                    start: new DateTimeImmutable('2025-12-26T09:00:00.000Z'),
+                    end: new DateTimeImmutable('2025-12-26T09:45:59.999Z'),
+                ),
+            ],
+            contacts: [
+                'CUSTOMER_DISPATCH' => new ServiceRequestContact(
+                    name: '',
+                    phone: '03.04.05.06.07',
+                    email: '',
+                ),
+            ],
+            externalRef: 'C145237/1',
+            barcode: null,
+            contractRef: '45687G/1.12',
+        );
+
+        $store = $this->prophesize(Store::class)->reveal();
+
+        $loUri = 'http://localhost:8080/services/ec1697f082';
+        $delivery = $this->creator->createDelivery($orderData, $store, $loUri);
+
+        $this->assertInstanceOf(Delivery::class, $delivery);
+        $this->assertSame($store, $delivery->getStore());
+
+        // Verify pickup task with real spec address data
+        $pickup = $delivery->getPickup();
+        $this->assertInstanceOf(\AppBundle\Entity\Task::class, $pickup);
+        $this->assertNotNull($pickup->getAddress());
+        $this->assertEquals("16 Bd sde l'industrie ZI D", $pickup->getAddress()->getStreetAddress());
+        $this->assertEquals('49000', $pickup->getAddress()->getPostalCode());
+        $this->assertEquals('ECOUFLANT', $pickup->getAddress()->getAddressLocality());
+        $this->assertEquals('FR', $pickup->getAddress()->getAddressCountry());
+
+        // Verify pickup time window from spec
+        $this->assertNotNull($pickup->getDoneAfter());
+        $this->assertNotNull($pickup->getDoneBefore());
+
+        // Verify dropoff task with real spec address data
+        $dropoff = $delivery->getDropoff();
+        $this->assertInstanceOf(\AppBundle\Entity\Task::class, $dropoff);
+        $this->assertNotNull($dropoff->getAddress());
+        $this->assertEquals('21 rue Jean Predali', $dropoff->getAddress()->getStreetAddress());
+        $this->assertEquals('49100', $dropoff->getAddress()->getPostalCode());
+        $this->assertEquals('ANGERS', $dropoff->getAddress()->getAddressLocality());
+        $this->assertEquals('FR', $dropoff->getAddress()->getAddressCountry());
+
+        // Verify dropoff time window from spec
+        $this->assertNotNull($dropoff->getDoneAfter());
+        $this->assertNotNull($dropoff->getDoneBefore());
+
+        // Verify task chain
+        $this->assertSame($dropoff, $pickup->getNext());
+        $this->assertSame($pickup, $dropoff->getPrevious());
+
+        // Verify metadata with real spec data
+        $metadata = $pickup->getMetadata();
+        $this->assertArrayHasKey('rdc_lo_uri', $metadata);
+        $this->assertArrayHasKey('rdc_external_ref', $metadata);
+        $this->assertArrayHasKey('rdc_contract_ref', $metadata);
+        $this->assertArrayHasKey('rdc_created_at', $metadata);
+
+        $this->assertEquals($loUri, $metadata['rdc_lo_uri']);
+        $this->assertEquals('C145237/1', $metadata['rdc_external_ref']);
+        $this->assertEquals('45687G/1.12', $metadata['rdc_contract_ref']);
+    }
 }

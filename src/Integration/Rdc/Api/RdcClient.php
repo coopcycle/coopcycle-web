@@ -78,6 +78,7 @@ class RdcClient implements RdcClientInterface
         array $additionalHeaders = [],
     ): \Symfony\Contracts\HttpClient\ResponseInterface {
         $attempt = 0;
+        /** @var \Throwable|null $lastException */
         $lastException = null;
 
         while ($attempt < self::MAX_RETRIES) {
@@ -100,8 +101,13 @@ class RdcClient implements RdcClientInterface
             }
         }
 
+        $errorMessage = 'Unknown error';
+        if ($lastException !== null) {
+            $errorMessage = $lastException->getMessage();
+        }
+
         throw new RdcException(
-            'RDC API request failed after ' . self::MAX_RETRIES . ' retries: ' . ($lastException?->getMessage() ?? 'Unknown error'),
+            'RDC API request failed after ' . self::MAX_RETRIES . ' retries: ' . $errorMessage,
             previous: $lastException
         );
     }

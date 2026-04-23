@@ -235,4 +235,180 @@ class ServiceRequestMapperTest extends TestCase
 
         $this->assertEmpty($result->contacts);
     }
+
+    /**
+     * Test mapping with real service-request payload from SPEC (lines 626-785).
+     * Uses actual address structure with addressLines, addressCountry, addressLocality.
+     * Tests CUSTOMER_DISPATCH contact extraction, multiple external references,
+     * serviceAgreementReference mapping, and nested time ranges.
+     */
+    public function testMapWithRealSpecServiceRequestPayload(): void
+    {
+        $serviceRequest = [
+            'requestStatus' => 'REQUESTED',
+            'requestDateTime' => '2025-12-23T09:00:00.000Z',
+            'provider' => ['legalEntityName' => 'CARGOBIKE'],
+            'requestor' => ['legalEntityName' => 'SHIPPER'],
+            'incoterm' => 'DDP',
+            'isDangerous' => false,
+            'serviceAgreementReference' => '45687G/1.12',
+            'contacts' => [
+                [
+                    'role' => 'CUSTOMER_DISPATCH',
+                    'telephone' => '03.04.05.06.07',
+                    'email' => ''
+                ],
+                [
+                    'role' => 'PROVIDER_DISPATCH',
+                    'telephone' => '01.02.03.04.05',
+                    'email' => ''
+                ]
+            ],
+            'externalReferences' => [
+                [
+                    'description' => 'Service request n° C145237/1 for shipper',
+                    'reference' => 'C145237/1',
+                    'externalReferenceType' => 'CUSTOMER_ID'
+                ]
+            ],
+            'startLocation' => [
+                'location' => [
+                    'address' => [
+                        'addressCountry' => [
+                            'countryCode' => 'FR',
+                            'countryName' => 'France'
+                        ],
+                        'addressLocality' => 'ECOUFLANT',
+                        'postalCode' => '49000',
+                        'addressLines' => [
+                            '16 Bd sde l\'industrie ZI D'
+                        ]
+                    ],
+                    'locationName' => 'SHIPPER BUILDING'
+                ],
+                'requestedStartTimeRange' => [
+                    'earliestDateTime' => '2025-12-26T07:00:00.000Z',
+                    'latestDateTime' => '2025-12-26T07:30:00.000Z'
+                ],
+                'requestedEndTimeRange' => [
+                    'earliestDateTime' => '2025-12-26T07:30:00.000Z',
+                    'latestDateTime' => '2025-12-26T08:00:00.000Z'
+                ],
+                'actions' => [
+                    [
+                        'actionName' => 'Loading',
+                        'actionState' => 'REQUESTED',
+                        'actionType' => 'HANDLING',
+                        'actionSubtype' => 'LOADING',
+                        'sequenceNumber' => 1
+                    ]
+                ]
+            ],
+            'endLocation' => [
+                'location' => [
+                    'address' => [
+                        'addressCountry' => [
+                            'countryCode' => 'FR',
+                            'countryName' => 'France'
+                        ],
+                        'addressLocality' => 'ANGERS',
+                        'postalCode' => '49100',
+                        'addressLines' => [
+                            '21 rue Jean Predali'
+                        ]
+                    ],
+                    'locationName' => 'CONSIGNEE BUILDING'
+                ],
+                'requestedStartTimeRange' => [
+                    'earliestDateTime' => '2025-12-26T09:00:00.000Z',
+                    'latestDateTime' => '2025-12-26T09:30:59.999Z'
+                ],
+                'requestedEndTimeRange' => [
+                    'earliestDateTime' => '2025-12-26T09:15:00.000Z',
+                    'latestDateTime' => '2025-12-26T09:45:59.999Z'
+                ],
+                'actions' => [
+                    [
+                        'actionName' => 'Unloading',
+                        'actionState' => 'REQUESTED',
+                        'actionType' => 'HANDLING',
+                        'actionSubtype' => 'UNLOADING',
+                        'sequenceNumber' => 1
+                    ]
+                ]
+            ]
+        ];
+
+        $result = $this->mapper->map($serviceRequest);
+
+        $this->assertInstanceOf(ServiceRequest::class, $result);
+
+        // Verify contract reference mapping
+        $this->assertEquals('45687G/1.12', $result->contractRef);
+
+        // Verify pickup address with addressLines structure
+        $pickupAddress = $result->addresses['pickup'];
+        $this->assertEquals("16 Bd sde l'industrie ZI D", $pickupAddress->streetAddress);
+        $this->assertEquals('49000', $pickupAddress->postalCode);
+        $this->assertEquals('ECOUFLANT', $pickupAddress->city);
+        $this->assertEquals('FR', $pickupAddress->country);
+
+        // Verify dropoff address with addressLines structure
+        $dropoffAddress = $result->addresses['dropoff'];
+        $this->assertEquals('21 rue Jean Predali', $dropoffAddress->streetAddress);
+        $this->assertEquals('49100', $dropoffAddress->postalCode);
+        $this->assertEquals('ANGERS', $dropoffAddress->city);
+        $this->assertEquals('FR', $dropoffAddress->country);
+
+        // Verify CUSTOMER_DISPATCH contact extraction
+        $this->assertArrayHasKey('CUSTOMER_DISPATCH', $result->contacts);
+        $customerDispatch = $result->contacts['CUSTOMER_DISPATCH'];
+        $this->assertInstanceOf(ServiceRequestContact::class, $customerDispatch);
+        $this->assertEquals('03.04.05.06.07', $customerDispatch->phone);
+        $this->assertEquals('', $customerDispatch->email);
+
+        // Verify external references (CUSTOMER_ID maps to externalRef via REQUESTOR_ID enum)
+        $this->assertEquals('C145237/1', $result->externalRef);
+
+        // Verify time slots are extracted correctly
+        $pickupSlot = $result->timeSlots['pickup'];
+        $this->assertInstanceOf(TimeSlot::class, $pickupSlot);
+        $this->assertNotNull($pickupSlot->start);
+        $this->assertNotNull($pickupSlot->end);
+        $this->assertEquals('2025-12-26', $pickupSlot->start->format('Y-m-d'));
+        $this->assertEquals('07:00:00', $pickupSlot->start->format('H:i:s'));
+
+        $dropoffSlot = $result->timeSlots['dropoff'];
+        $this->assertInstanceOf(TimeSlot::class, $dropoffSlot);
+        $this->assertNotNull($dropoffSlot->start);
+        $this->assertNotNull($dropoffSlot->end);
+        $this->assertEquals('2025-12-26', $dropoffSlot->start->format('Y-m-d'));
+        $this->assertEquals('09:00:00', $dropoffSlot->start->format('H:i:s'));
+    }
+
+    /**
+     * Test mapping with external references using REQUESTOR_ID and PROVIDER_ID types.
+     */
+    public function testMapWithMultipleExternalReferenceTypes(): void
+    {
+        $serviceRequest = [
+            'externalReferences' => [
+                [
+                    'reference' => 'ABC12548',
+                    'description' => 'service n° ABC12548',
+                    'externalReferenceType' => 'PROVIDER_ID'
+                ],
+                [
+                    'reference' => 'C145237/2',
+                    'description' => 'Service n° C145237/2',
+                    'externalReferenceType' => 'REQUESTOR_ID'
+                ]
+            ],
+        ];
+
+        $result = $this->mapper->map($serviceRequest);
+
+        // REQUESTOR_ID maps to externalRef
+        $this->assertEquals('C145237/2', $result->externalRef);
+    }
 }

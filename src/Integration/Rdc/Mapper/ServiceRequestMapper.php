@@ -73,7 +73,7 @@ class ServiceRequestMapper
 
             $contactData = new ServiceRequestContact(
                 name: $contact['name'] ?? '',
-                phone: $contact['phone'] ?? '',
+                phone: $contact['phone'] ?? $contact['telephone'] ?? '',  // Handle both 'phone' and 'telephone' from spec
                 email: $contact['email'] ?? '',
             );
 
@@ -91,7 +91,7 @@ class ServiceRequestMapper
     }
 
     /**
-     * @param array<array{type: string, reference: string}> $refs
+     * @param array<array{type?: string, reference?: string, externalReferenceType?: string}> $refs
      * @return array{externalRef: string|null, barcode: string|null}
      */
     public function getExternalReferences(array $refs): array
@@ -100,18 +100,22 @@ class ServiceRequestMapper
         $barcode = null;
 
         foreach ($refs as $ref) {
-            if (!isset($ref['type'], $ref['reference'])) {
+            $type = $ref['type'] ?? $ref['externalReferenceType'] ?? null;
+            $reference = $ref['reference'] ?? null;
+
+            if ($type === null || $reference === null) {
                 continue;
             }
 
-            $type = ExternalReferenceType::tryFrom($ref['type']);
+            $enumType = ExternalReferenceType::tryFrom($type);
 
-            switch ($type) {
+            switch ($enumType) {
                 case ExternalReferenceType::REQUESTOR_ID:
-                    $externalRef = $ref['reference'];
+                case ExternalReferenceType::CUSTOMER_ID:
+                    $externalRef = $reference;
                     break;
                 case ExternalReferenceType::REQUESTOR_LABEL_ID:
-                    $barcode = $ref['reference'];
+                    $barcode = $reference;
                     break;
                 default:
                     break;
