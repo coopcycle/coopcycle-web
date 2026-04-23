@@ -96,6 +96,7 @@ services:
       $transportersConfig: '%transporters_config%'
       $billingEnabled: '%billing_enabled%'
       $standtrackEnabled: '%env(STANDTRACK_API_KEY)%'
+      $rdcConnections: '%rdc_connections%'
     tags: [ form.type ]
 
   AppBundle\Form\MenuEditor\TaxonProductType:

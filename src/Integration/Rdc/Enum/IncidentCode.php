@@ -1,0 +1,19 @@
+<?php
+
+namespace AppBundle\Integration\Rdc\Enum;
+
+enum IncidentCode: string
+{
+    case CONTAINER_DAMAGED = 'CONTAINER_DAMAGED';
+    case GOODS_ISSUE = 'GOODS_ISSUE';
+    case ITEM_DAMAGED = 'ITEM_DAMAGED';
+    case LATE_ARRIVAL = 'LATE_ARRIVAL';
+    case LATE_DELIVERY = 'LATE_DELIVERY';
+    case LATE_DEPARTURE = 'LATE_DEPARTURE';
+    case PIECE_DAMAGED = 'PIECE_DAMAGED';
+    case SERVICE_PENDING = 'SERVICE_PENDING';
+    case LATE_PICKUP = 'LATE_PICKUP';
+    case RECIPIENT_ABSENT = 'RECIPIENT_ABSENT';
+    case ACCESS_IMPOSSIBLE = 'ACCESS_IMPOSSIBLE';
+    case ITEM_MISSING = 'ITEM_MISSING';
+}

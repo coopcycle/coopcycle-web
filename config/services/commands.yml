@@ -216,3 +216,7 @@ services:
   AppBundle\Command\Paygreen\CheckStatusCommand:
     tags:
       - { name: 'console.command', command: 'coopcycle:paygreen:check-status' }
+
+  AppBundle\Command\RdcTestConnectionCommand:
+    tags:
+      - { name: 'console.command', command: 'rdc:test-connection' }
