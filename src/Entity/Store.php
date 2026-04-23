@@ -34,12 +34,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use AppBundle\Action\TimeSlot\StoreTimeSlots;
 use AppBundle\Action\Store\Packages;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * A retail good store.
  *
  * @see http://schema.org/Store Documentation on Schema.org
  */
+#[ORM\Entity(repositoryClass: StoreRepository::class)]
 #[Vich\Uploadable]
 #[ApiResource(
     types: ['http://schema.org/Store'],

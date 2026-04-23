@@ -1638,6 +1638,19 @@ services:
 
   AppBundle\Integration\Rdc\Webhook\RdcIdempotencyChecker: ~
 
+  AppBundle\Integration\Rdc\Coopcycle\InternalDeliveryCreator:
+    arguments:
+      $entityManager: '@doctrine.orm.entity_manager'
+      $deliveryOrderManager: '@AppBundle\Service\DeliveryOrderManager'
+      $logger: '@logger'
+
+  AppBundle\Integration\Rdc\RdcStoreResolver:
+    arguments:
+      $entityManager: '@doctrine.orm.entity_manager'
+      $logger: '@logger'
+
+  AppBundle\Integration\Rdc\Mapper\ServiceRequestMapper: ~
+
   AppBundle\Controller\Api\RdcWebhookController:
     arguments:
       $rdcWebhookSecret: '%env(RDC_WEBHOOK_SECRET)%'
