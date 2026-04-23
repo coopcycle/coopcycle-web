@@ -65,6 +65,7 @@ parameters:
   group_orders_enabled: '%env(bool:GROUP_ORDERS_ENABLED)%'
   business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
   transporters_config: '%env(json:TRANSPORTERS_CONFIG)%'
+  rdc_connections: '%env(json:RDC_CONNECTIONS)%'
   billing_enabled: '%env(bool:BILLING_ENABLED)%'
   package_delivery_ui_price_breakdown_enabled_default: true
   package_delivery_ui_price_breakdown_enabled: '%env(default:package_delivery_ui_price_breakdown_enabled_default:bool:PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED)%'
@@ -1629,18 +1630,9 @@ services:
     arguments:
       $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
 
-  AppBundle\Integration\Rdc\Api\RdcClientInterface:
-    class: AppBundle\Integration\Rdc\Api\RdcClient
+  AppBundle\Integration\Rdc\Api\RdcClientFactory:
     arguments:
-      $keycloakBaseUrl: '%env(KEYCLOAK_BASE_URL)%'
-      $keycloakRealm: '%env(KEYCLOAK_REALM)%'
-      $keycloakClientId: '%env(KEYCLOAK_CLIENT_ID)%'
-      $keycloakClientSecret: '%env(KEYCLOAK_CLIENT_SECRET)%'
-      $keycloakUsername: '%env(KEYCLOAK_USERNAME)%'
-      $keycloakPassword: '%env(KEYCLOAK_PASSWORD)%'
-      $rdcInstanceBaseUrl: '%env(RDC_INSTANCE_BASE_URL)%'
-      $memberProvider: '%env(RDC_MEMBER_PROVIDER)%'
-      $aclAuthorizations: '%env(json:RDC_ACL_AUTHORIZATIONS)%'
+      $rdcConnections: '%rdc_connections%'
 
   AppBundle\Integration\Rdc\Webhook\WebhookPayloadParser: ~
 

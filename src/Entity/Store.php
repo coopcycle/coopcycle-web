@@ -187,6 +187,8 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private ?string $transporter = null;
 
+    private ?string $rdcConnectionId = null;
+
     /**
      * The deliveries of this store will be linked by default to this rider
      * @var User
@@ -617,6 +619,17 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     public function setTransporter(?string $transporter): Store
     {
         $this->transporter = $transporter;
+        return $this;
+    }
+
+    public function getRdcConnectionId(): ?string
+    {
+        return $this->rdcConnectionId;
+    }
+
+    public function setRdcConnectionId(?string $rdcConnectionId): Store
+    {
+        $this->rdcConnectionId = $rdcConnectionId;
         return $this;
     }
 
