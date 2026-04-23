@@ -65,25 +65,32 @@
       <div id="results-{{ this.cacheKey }}" class="grid restaurant-list mb-4">
         {% if page > 1 %}
           {# 🦊 #}
-          {# Adding a fake "previous page" div is enough to trick the system #}
-          {# It must have the same ID than the original page #}
-          <div id="page--{{ page - 1 }}" data-live-ignore="true"></div>
+          {# A fake "previous page" div per already-loaded page is needed to trick the system #}
+          {# Each must have the same ID as its original page so morphdom keeps them via data-live-ignore #}
+          {% for i in 1..page - 1 %}
+            <div id="page--{{ i }}" data-live-ignore="true"></div>
+          {% endfor %}
         {% endif %}
         {# https://caniuse.com/css-display-contents #}
         <div id="page--{{ page }}" data-live-ignore="true" style="display: contents;">
           {% include "_partials/restaurant/shops_list.html.twig" with { restaurants: this.shops } %}
         </div>
-        <span class="overlay" data-loading="show">
-          <span class="loader"></span>
-        </span>
       </div>
-      <div class="text-center">
-        {% if this.hasMore %}
-          <a class="btn btn-lg btn-link" {{ live_action('more') }}>
-            ↓ {{ 'basics.more_results'|trans }}
-          </a>
-        {% endif %}
+      <div class="text-center my-4" data-loading="show" style="display: none;">
+        <i class="fa fa-spinner fa-spin fa-2x" aria-hidden="true"></i>
       </div>
+      {% if this.hasMore %}
+        {# Sentinel: when it scrolls into view the IntersectionObserver fires the appear event,  #}
+        {# which is routed to the live component's `more` action. Kept outside the grid div so   #}
+        {# morphdom's ID-based diffing on the grid is not disturbed by the appear controller.    #}
+        <div {{ stimulus_controller('appear') }}>
+          <div
+            data-appear-target="loader"
+            data-action="appear->live#action"
+            data-live-action-param="debounce(750)|more"
+          ></div>
+        </div>
+      {% endif %}
     {% endif %}
   </div>
 </div>
