@@ -115,6 +115,20 @@ class StoreType extends LocalBusinessType
                     'required' => false,
                 ]);
             }
+
+            if (!empty($this->rdcConnections)) {
+                $choices = array_reduce(array_keys($this->rdcConnections), function ($acc, $key) {
+                    $acc[$this->rdcConnections[$key]['name'] ?? $key] = $key;
+                    return $acc;
+                });
+
+                $builder->add('rdcConnectionId', ChoiceType::class, [
+                    'label' => 'RDC Connection',
+                    'help' => 'Select an RDC connection for this store',
+                    'choices' => $choices,
+                    'required' => false,
+                ]);
+            }
         }
 
         //TODO(r0xsh): add check if StandTrack is enabled

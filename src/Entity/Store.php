@@ -34,12 +34,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use AppBundle\Action\TimeSlot\StoreTimeSlots;
 use AppBundle\Action\Store\Packages;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * A retail good store.
  *
  * @see http://schema.org/Store Documentation on Schema.org
  */
+#[ORM\Entity(repositoryClass: StoreRepository::class)]
 #[Vich\Uploadable]
 #[ApiResource(
     types: ['http://schema.org/Store'],
@@ -186,6 +188,8 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     private $timeSlots;
 
     private ?string $transporter = null;
+
+    private ?string $rdcConnectionId = null;
 
     /**
      * The deliveries of this store will be linked by default to this rider
@@ -617,6 +621,17 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     public function setTransporter(?string $transporter): Store
     {
         $this->transporter = $transporter;
+        return $this;
+    }
+
+    public function getRdcConnectionId(): ?string
+    {
+        return $this->rdcConnectionId;
+    }
+
+    public function setRdcConnectionId(?string $rdcConnectionId): Store
+    {
+        $this->rdcConnectionId = $rdcConnectionId;
         return $this;
     }
 
