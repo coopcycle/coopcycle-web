@@ -1,33 +1,33 @@
 registration.email.subject: |
   Email confirmation
 registration.email.message: |
-  <h2>Welcome to %brand_name%, %username%</h2>
-  You’re receiving this message because you recently signed up for a %brand_name% account.
+  <h2>Welcome to {{brand_name}}, {{username}}</h2>
+  You’re receiving this message because you recently signed up for a {{brand_name}} account.
   <br>
   Confirm your email address by clicking the button below.
 registration.email.confirm: Confirm email
 registration.email.disclaimer: This link can only be used once to validate your account
 registration.email.textMessage: |
-  Welcome to %brand_name%, %username%,\n\n
-  You’re receiving this message because you recently signed up for a %brand_name% account.\n
-  To confirm your email, please click the following link: <a href="%confirmationUrl%" rel="notrack">%confirmationUrl%</a>.
+  Welcome to {{brand_name}}, {{username}},\n\n
+  You’re receiving this message because you recently signed up for a {{brand_name}} account.\n
+  To confirm your email, please click the following link: <a href="{{confirmationUrl}}" rel="notrack">{{confirmationUrl}}</a>.
 registration.company: Company registration request
 registration.restaurant: New restaurant addition request
 
-resetting.email.message: <h2>Hello %username%</h2> To reset your password, please
+resetting.email.message: <h2>Hello {{username}}</h2> To reset your password, please
   click the button below.
 resetting.email.reset: Reset password
 order.view: View order
 order.public_url: |
-  To track the status of your order, <a href="%order.public_url%">click here</a>.
+  To track the status of your order, <a href="{{order_public_url}}">click here</a>.
 order.foodtech.accepted.delivery: "It will be delivered to you at the following time:"
 order.foodtech.accepted.delivery.disclaimer: "We will contact you in case of a problem\
   \ to find your address"
 order.foodtech.accepted.collection: "You will have to collect it at the following\
   \ time:"
-order.foodtech.accepted.collection.disclaimer: "If you have a problem, contact <strong>%name%</strong>\
-  \ at <strong>%phone_number%</strong> in advance enough to cancel your order."
-order.foodtech.cancelled: "The restaurant is unable to prepare your order %order.number%.\n\
+order.foodtech.accepted.collection.disclaimer: "If you have a problem, contact <strong>{{name}}</strong>\
+  \ at <strong>{{phone_number}}</strong> in advance enough to cancel your order."
+order.foodtech.cancelled: "The restaurant is unable to prepare your order {{order_number}}.\n\
   <br>\nYour money will be automatically transfered back within the next 5 days.\n"
 admin.order.created.subject: New order to be confirmed
 admin.order.created.body: |
@@ -37,7 +37,7 @@ admin.order.created.body: |
 admin.order_foodtech.created.body: |
   Hello,
   <br>
-  A new order has been created for <strong>%restaurant.name%</strong>.
+  A new order has been created for <strong>{{restaurant_name}}</strong>.
 admin.pledge.subject: A new suggestion has been sent!
 admin.send_invitation.subject: Invitation to CoopCycle!
 admin.send_invitation.body: |
@@ -48,53 +48,53 @@ admin.send_invitation.create_password: Create my password
 admin.pledge.body: |
   Hello,
   <br>
-  %username% would like %pledge.name% to be on CoopCycle!
+  {{username}} would like {{pledge_name}} to be on CoopCycle!
 user.pledge.subject: Your suggestion is now on CoopCycle!
 user.pledge.body: |
   Hello,
   <br>
-  thanks to you, %pledge.name% is now on CoopCycle!
+  thanks to you, {{pledge_name}} is now on CoopCycle!
 owner.order.created.subject: New order to confirm
 owner.order.created.body: |
   Hi,
   <br>
-  A new order has been placed for <strong>%restaurant.name%</strong>.
-order.created.subject: Order %order.number% has been received
+  A new order has been placed for <strong>{{restaurant_name}}</strong>.
+order.created.subject: Order {{order_number}} has been received
 order.created.body: "Hello,\n<br>\nWe have received your order.\n<br>\nWe will check\
   \ your order as soon as possible and send you an email when it is confirmed.\n"
-order.accepted.subject: Order %order.number% has been confirmed
+order.accepted.subject: Order {{order_number}} has been confirmed
 order.accepted.body.intro: "Hello,\n<br>\nYour order is confirmed."
-order.cancelled.subject: Your order %order.number% has been cancelled
+order.cancelled.subject: Your order {{order_number}} has been cancelled
 order.cancelled.body.intro: |
   Hello,
   <br>
   We are sorry, but your order has been cancelled.
-order.delayed.subject: Your order %order.number% has been delayed
+order.delayed.subject: Your order {{order_number}} has been delayed
 order.delayed.body: |
   Hello,
   <br>
-  We are sorry, but your order will be delayed by %delay% minutes.
+  We are sorry, but your order will be delayed by {{delay}} minutes.
   <br>
   We apologize for the inconvenience.
-task.done.subject: 'Task #%task.id% completed'
+task.done.subject: 'Task #{{task_id}} completed'
 task.done.body: |
   Hello,
   <br>
-  Task #%task.id% has been completed.
-task.failed.subject: 'Task #%task.id% could not be completed'
+  Task #{{task_id}} has been completed.
+task.failed.subject: 'Task #{{task_id}} could not be completed'
 task.failed.body: |
   Hello,
   <br>
-  Task #%task.id% could not be completed.
-order.payment.subject: Payment of your order %order.number%
+  Task #{{task_id}} could not be completed.
+order.payment.subject: Payment of your order {{order_number}}
 order.payment.body: "Hello,\n<br>\nYou have ordered a delivery service from us.\n<br>\nYou will find below a link allowing you to pay by credit card.\n"
 
 order.expiring_authorization.subject: A payment authorization will expire soon
-order.expiring_authorization.text: The payment authorization for order <strong>%order.number%</strong>
+order.expiring_authorization.text: The payment authorization for order <strong>{{order_number}}</strong>
   will expire soon. <br> You should complete the order before the authorization expires
   to avoid losing money.
 
-order.receipt.subject: Receipt for your order %order.number%
+order.receipt.subject: Receipt for your order {{order_number}}
 order.receipt.body: "Hello,\n<br>\nPlease find attached the receipt for your order."
 
 order.payment_failed.subject: There was an error processing your payment
@@ -103,50 +103,50 @@ order.payment_failed.body: "Hello,\n<br>\nWe are sorry, there was an error proce
 order.payment_failed.return_to_order: Return to order
 
 order.loopeat.accepted: |
-  <p>Congratulations on your zero-waste order with our partner « %name% ».</p>
-  <p>You can return your reusable boxes free of charge to our network of partners (list on your « %name% » account) or ask your courier to do it for you on your next order.</p>
+  <p>Congratulations on your zero-waste order with our partner « {{name}} ».</p>
+  <p>You can return your reusable boxes free of charge to our network of partners (list on your « {{name}} » account) or ask your courier to do it for you on your next order.</p>
   <p>Don't forget to return the totebag!</p>
 
 order.loopeat.accepted.with_fee: |
-  <p>Congratulations on your zero-waste order with our partner « %name% ».</p>
-  <p>You can return your reusable boxes free of charge to our network of partners (list on your « %name% » account) or ask your courier to do it for you on your next order (%amount% fee).</p>
+  <p>Congratulations on your zero-waste order with our partner « {{name}} ».</p>
+  <p>You can return your reusable boxes free of charge to our network of partners (list on your « {{name}} » account) or ask your courier to do it for you on your next order ({{amount}} fee).</p>
   <p>Don't forget to return the totebag!</p>
 
-task.pickup.done.subject: 'The delivery #%id% has been picked'
+task.pickup.done.subject: 'The delivery #{{id}} has been picked'
 task.pickup.done.body: |
   Hello,
   <br>
   <br>
-  The delivery <strong>#%id%</strong> has been picked at the following address:
+  The delivery <strong>#{{id}}</strong> has been picked at the following address:
   <br>
-  %address%
+  {{address}}
 
-task.pickup.failed.subject: "The delivery #%id% could not be picked"
+task.pickup.failed.subject: "The delivery #{{id}} could not be picked"
 task.pickup.failed.body: |
   Bonjour,
   <br>
   <br>
-  The delivery <strong>#%id%</strong> could not be picked at the following address:
+  The delivery <strong>#{{id}}</strong> could not be picked at the following address:
   <br>
-  %address%
+  {{address}}
 
-task.dropoff.done.subject: 'The delivery #%id% has been dropped'
+task.dropoff.done.subject: 'The delivery #{{id}} has been dropped'
 task.dropoff.done.body: |
   Bonjour,
   <br>
   <br>
-  The delivery <strong>#%id%</strong> has been dropped at the following address:
+  The delivery <strong>#{{id}}</strong> has been dropped at the following address:
   <br>
-  %address%
+  {{address}}
 
-task.dropoff.failed.subject: "The delivery #%id% could not be dropped"
+task.dropoff.failed.subject: "The delivery #{{id}} could not be dropped"
 task.dropoff.failed.body: |
   Bonjour,
   <br>
   <br>
-  The delivery <strong>#%id%</strong> could not be dropped at the following address:
+  The delivery <strong>#{{id}}</strong> could not be dropped at the following address:
   <br>
-  %address%
+  {{address}}
 
 order.adhoc.body: |
   Hello,
@@ -156,7 +156,7 @@ order.adhoc.body: |
   In order to finalize your order, click on the link below to specify your address, choose a delivery slot, and pay by credit card.
 
 business_account.send_invitation.body: |
-  Hello %name%,
+  Hello {{name}},
   <br>
   This is an invitation to configure the business account in CoopCycle, to continue with the activation please click on the following link.
 business_account.send_invitation.cta: Continue to activate

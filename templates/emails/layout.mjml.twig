@@ -7,7 +7,7 @@
       <mj-all font-family="'Open Sans', Arial, sans-serif" />
     </mj-attributes>
   </mj-head>
-  <mj-body background-color="#eee">
+  <mj-body background-color="{{ coopcycle_theme_color('secondary', '#eeeeee') }}">
     <mj-section>
 		  <mj-column>
 		    <mj-text font-family="Raleway, Arial, sans-serif">
@@ -15,9 +15,11 @@
 		    </mj-text>
 		  </mj-column>
 		</mj-section>
-    <mj-section background-color="#fff">
-    {% block content %}
-    {% endblock %}
+    <mj-section background-color="{{ coopcycle_theme_color('secondary-content', '#ffffff') }}">
+      <mj-column>
+      {% block content %}
+      {% endblock %}
+      </mj-column>
     </mj-section>
     <mj-section>
 		  <mj-column>

@@ -150,6 +150,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 use Twig\Environment as TwigEnvironment;
 use phpcent\Client as CentrifugoClient;
+use AppBundle\Service\EmailTemplateManager;
 
 class AdminController extends AbstractController
 {
@@ -2567,6 +2568,183 @@ class AdminController extends AbstractController
             'delivery_forms' => $deliveryForms,
             'shop_collections' => $shopCollections,
         ]));
+    }
+
+    public function customizeEmailsAction(Request $request, EmailTemplateManager $emailTemplateManager)
+    {
+        $isDemo = $this->getParameter('is_demo');
+
+        if ($isDemo) {
+            throw $this->createNotFoundException();
+        }
+
+        $supportedLocales = $emailTemplateManager->getSupportedLocales();
+
+        // Build email type metadata for every supported locale so the JS knows
+        // which locale×type combinations already have a custom template.
+        $emailTypes = [];
+        foreach ($supportedLocales as $locale => $localeLabel) {
+            foreach ($emailTemplateManager->getEmailTypes($locale) as $type => $meta) {
+                $emailTypes[$type]['label_by_locale'][$locale] = $meta['label'];
+                $emailTypes[$type]['variables']                = $meta['variables'];
+                $emailTypes[$type]['slots']                    = $meta['slots'];
+                $emailTypes[$type]['is_custom_by_locale'][$locale] =
+                    $emailTemplateManager->getCustomTemplate($type, $locale) !== null;
+            }
+        }
+
+        $layoutIsCustomByLocale = [];
+        foreach ($supportedLocales as $locale => $localeLabel) {
+            $layoutIsCustomByLocale[$locale] = $emailTemplateManager->getCustomLayout($locale) !== null;
+        }
+
+        return $this->render('admin/customize_emails.html.twig', $this->auth([
+            'email_types'              => $emailTypes,
+            'supported_locales'        => $supportedLocales,
+            'layout_is_custom_by_locale' => $layoutIsCustomByLocale,
+        ]));
+    }
+
+    /**
+     * GET/POST/DELETE /admin/customize/emails/layout
+     *
+     * Manages the shared layout template that wraps all per-type fragments.
+     */
+    public function emailLayoutAction(Request $request, EmailTemplateManager $emailTemplateManager): JsonResponse
+    {
+        $isDemo = $this->getParameter('is_demo');
+
+        if ($isDemo) {
+            return $this->json(['error' => 'Not available in demo'], 403);
+        }
+
+        $locale = $request->query->get('locale', 'en');
+        if (!$emailTemplateManager->isValidLocale($locale)) {
+            $locale = 'en';
+        }
+
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            $mjml = trim($data['mjml'] ?? '');
+
+            if (empty($mjml)) {
+                return $this->json(['error' => 'Empty template'], 400);
+            }
+
+            $emailTemplateManager->saveLayout($locale, $mjml);
+
+            return $this->json(['success' => true, 'is_custom' => true]);
+        }
+
+        if ($request->isMethod('DELETE')) {
+            $emailTemplateManager->deleteLayout($locale);
+
+            return $this->json([
+                'success'   => true,
+                'is_custom' => false,
+                'mjml'      => $emailTemplateManager->getDefaultLayout(),
+            ]);
+        }
+
+        // GET: return the layout MJML (custom or default)
+        $custom = $emailTemplateManager->getCustomLayout($locale);
+
+        return $this->json([
+            'mjml'      => $custom ?? $emailTemplateManager->getDefaultLayout(),
+            'is_custom' => $custom !== null,
+        ]);
+    }
+
+    /**
+     * GET/POST/DELETE /admin/customize/emails/{type}
+     *
+     * Manages per-email-type fragments (inner mj-section blocks only, no wrapper).
+     * GET returns a GrapeJS-ready shell (fragment wrapped in layout head + body).
+     * POST stores the raw fragment sent by the JS (body children only).
+     */
+    public function emailTemplateAction(string $type, Request $request, EmailTemplateManager $emailTemplateManager): JsonResponse
+    {
+        $isDemo = $this->getParameter('is_demo');
+
+        if ($isDemo) {
+            return $this->json(['error' => 'Not available in demo'], 403);
+        }
+
+        if (!$emailTemplateManager->isValidType($type)) {
+            return $this->json(['error' => 'Unknown email type'], 404);
+        }
+
+        $locale = $request->query->get('locale', 'en');
+        if (!$emailTemplateManager->isValidLocale($locale)) {
+            $locale = 'en';
+        }
+
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            $mjml = trim($data['mjml'] ?? '');
+
+            if (empty($mjml)) {
+                return $this->json(['error' => 'Empty template'], 400);
+            }
+
+            // Normalise: if the editor sent a full MJML document (e.g. legacy),
+            // extract only the body content so we always store a pure fragment.
+            $emailTemplateManager->saveTemplate($type, $emailTemplateManager->ensureFragment($mjml), $locale);
+
+            return $this->json(['success' => true]);
+        }
+
+        if ($request->isMethod('DELETE')) {
+            $emailTemplateManager->deleteTemplate($type, $locale);
+
+            ['mjml' => $mjml, 'is_custom' => $isCustom] = $emailTemplateManager->buildEditorMjml($type, $locale);
+            return $this->json(['success' => true, 'is_custom' => false, 'mjml' => $mjml]);
+        }
+
+        // GET: return the full stitched MJML (layout + fragment) for GrapeJS
+        ['mjml' => $mjml, 'is_custom' => $isCustom] = $emailTemplateManager->buildEditorMjml($type, $locale);
+
+        return $this->json(['mjml' => $mjml, 'is_custom' => $isCustom]);
+    }
+
+    public function emailStyleSettingsAction(Request $request, EmailTemplateManager $emailTemplateManager, SettingsManager $settingsManager): JsonResponse
+    {
+        $isDemo = $this->getParameter('is_demo');
+
+        if ($isDemo) {
+            return $this->json(['error' => 'Not available in demo'], 403);
+        }
+
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+
+            // Accepted DaisyUI theme keys that map to email colours
+            $allowed = ['primary', 'primary-content', 'secondary', 'secondary-content'];
+            foreach ($allowed as $key) {
+                if (isset($data[$key])) {
+                    $value = $data[$key];
+                    // Accept #rrggbb or #rgb hex colours only
+                    if (!preg_match('/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $value)) {
+                        return $this->json(['error' => sprintf('Invalid colour value for %s', $key)], 400);
+                    }
+                }
+            }
+
+            // Merge into existing theme JSON (preserve keys managed by other features)
+            $existing = $settingsManager->get('theme');
+            $theme    = $existing ? (json_decode($existing, true) ?? []) : [];
+            foreach ($allowed as $key) {
+                if (isset($data[$key])) {
+                    $theme[$key] = $data[$key];
+                }
+            }
+            $settingsManager->set('theme', json_encode($theme));
+            $settingsManager->flush();
+
+            return $this->json(['success' => true]);
+        }
+
+        return $this->json($emailTemplateManager->getEmailStyleSettings());
     }
 
     private function handleHubForm(Hub $hub, Request $request)
