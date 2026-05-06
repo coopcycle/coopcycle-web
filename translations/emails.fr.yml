@@ -170,3 +170,6 @@ business_account.send_invitation.body: |
   <br>
   Ceci est une invitation à configurer le compte entreprise sur CoopCycle, pour continuer l'activation veuillez cliquer sur le lien suivant.
 business_account.send_invitation.cta: "Continuer l'activation"
+
+two_factor.email.intro: "Votre code de vérification pour vous connecter à <strong>%brand_name%</strong> :"
+two_factor.email.disclaimer: "Ce code expire rapidement. Ne le partagez avec personne. Si vous n'avez pas tenté de vous connecter, veuillez sécuriser votre compte."

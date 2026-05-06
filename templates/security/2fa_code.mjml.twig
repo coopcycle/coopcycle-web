@@ -3,14 +3,13 @@
 {% block content %}
 <mj-column>
   <mj-text align="left" line-height="24px">
-    Your login verification code for <strong>{{ brandName }}</strong>:
+    {{ 'two_factor.email.intro' | trans({'%brand_name%': brandName}, 'emails') | raw }}
   </mj-text>
   <mj-text align="center" font-size="32px" font-family="Raleway, Arial, sans-serif" color="#10ac84" font-weight="bold" letter-spacing="8px">
     {{ authCode }}
   </mj-text>
   <mj-text align="left" line-height="20px" font-size="13px" color="#888">
-    This code expires shortly. Do not share it with anyone.
-    If you did not attempt to log in, please secure your account.
+    {{ 'two_factor.email.disclaimer' | trans({}, 'emails') }}
   </mj-text>
 </mj-column>
 {% endblock %}

@@ -112,3 +112,6 @@ task.pickup.done.subject: 'El pedido #%id% ha sido recogido'
 task.pickup.done.body: "Hola,\n<br>\n<br>\nEl pedido <strong>#%id%</strong> ha sido\
   \ recogido en la dirección:\n<br>\n%address%\n"
 task.pickup.failed.subject: 'No ha sido posible recoger el pedido #%id%'
+
+two_factor.email.intro: "Tu código de verificación para iniciar sesión en <strong>%brand_name%</strong>:"
+two_factor.email.disclaimer: "Este código expira en breve. No lo compartas con nadie. Si no intentaste iniciar sesión, asegura tu cuenta."

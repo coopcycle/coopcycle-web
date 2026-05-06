@@ -1780,3 +1780,8 @@ promotions.human_readable.rule_items_total_above: "a partir de %amount%"
 promotions.human_readable.rule_cart_quantity: "a partir de %count% artículos comprados"
 promotions.human_readable.coupon: "%description% with coupon %code%"
 promotions.human_readable.text: "%name%: %description%"
+
+two_factor.title: Autenticación de dos factores
+two_factor.subtitle: "Se ha enviado un código de verificación a tu dirección de correo electrónico. Por favor, introdúcelo a continuación."
+two_factor.code.label: Código de verificación
+two_factor.submit: Verificar
