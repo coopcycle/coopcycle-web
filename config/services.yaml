@@ -787,6 +787,13 @@ services:
     class: AppBundle\EventListener\AuthenticationWebSuccessHandler
     arguments: ['@security.http_utils', '@router']
 
+  coopcycle.two_factor_success_handler:
+    class: AppBundle\EventListener\AuthenticationWebSuccessHandler
+    arguments: ['@security.http_utils', '@router']
+    calls:
+      - [setFirewallName, ['web']]
+      - [setOptions, [{ default_target_path: '/' }]]
+
   AppBundle\Security\UserManager:
     arguments:
       $decorated: '@nucleos_user.user_manager.default'
