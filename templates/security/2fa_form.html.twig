@@ -1,5 +1,30 @@
 {% extends "frontend.html.twig" %}
 
+{% block styles %}
+<style>
+.two-factor-digits {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 24px 0 28px;
+}
+.two-factor-digits input {
+  width: 48px;
+  height: 58px;
+  font-size: 24px;
+  text-align: center;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.15s;
+  caret-color: transparent;
+}
+.two-factor-digits input:focus {
+  border-color: #10ac84;
+}
+</style>
+{% endblock %}
+
 {% block body %}
 <div class="login-container">
   <div class="login-container__content">
@@ -16,20 +41,19 @@
             {{ 'two_factor.subtitle' | trans({}, 'messages') }}
           </p>
 
-          <form method="post" action="{{ path('2fa_login_check') }}">
+          <form id="two-factor-form" method="post" action="{{ path('2fa_login_check') }}">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('two_factor') }}" />
-            <div class="form-group">
-              <label for="auth_code">{{ 'two_factor.code.label' | trans({}, 'messages') }}</label>
-              <input class="form-control input-lg text-center"
-                     type="text"
-                     id="auth_code"
-                     name="_auth_code"
-                     autocomplete="one-time-code"
-                     inputmode="numeric"
-                     pattern="[0-9]*"
-                     autofocus
-                     required />
+            <input type="hidden" name="_auth_code" id="auth_code_value" />
+
+            <div class="two-factor-digits">
+              <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" />
+              <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" />
+              <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" />
+              <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" />
+              <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" />
+              <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" />
             </div>
+
             <div class="form-group">
               <button class="btn btn-block btn-lg btn-primary" type="submit">{{ 'two_factor.submit' | trans({}, 'messages') }}</button>
             </div>
@@ -40,4 +64,70 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  const form    = document.getElementById('two-factor-form');
+  const hidden  = document.getElementById('auth_code_value');
+  const inputs  = Array.from(document.querySelectorAll('.two-factor-digits input'));
+
+  inputs[0].focus();
+
+  function getCode() {
+    return inputs.map(i => i.value).join('');
+  }
+
+  function trySubmit() {
+    const code = getCode();
+    if (code.length === 6) {
+      hidden.value = code;
+      form.submit();
+    }
+  }
+
+  inputs.forEach((input, index) => {
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Backspace' && input.value === '' && index > 0) {
+        inputs[index - 1].focus();
+        inputs[index - 1].value = '';
+      }
+    });
+
+    input.addEventListener('input', function () {
+      // Keep only the last character and ensure it's a digit
+      input.value = input.value.replace(/\D/g, '').slice(-1);
+
+      if (input.value !== '') {
+        if (index < inputs.length - 1) {
+          inputs[index + 1].focus();
+        }
+        trySubmit();
+      }
+    });
+
+    // Handle paste on any digit field
+    input.addEventListener('paste', function (e) {
+      e.preventDefault();
+      const pasted = (e.clipboardData || window.clipboardData)
+        .getData('text')
+        .replace(/\D/g, '')
+        .slice(0, 6);
+
+      pasted.split('').forEach((char, i) => {
+        if (inputs[index + i]) inputs[index + i].value = char;
+      });
+
+      const next = index + pasted.length;
+      (inputs[next] || inputs[inputs.length - 1]).focus();
+      trySubmit();
+    });
+  });
+
+  form.addEventListener('submit', function () {
+    hidden.value = getCode();
+  });
+})();
+</script>
 {% endblock %}
