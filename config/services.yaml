@@ -810,6 +810,10 @@ services:
     arguments:
       $transactionalAddress: "%transactional_address%"
 
+  AppBundle\Security\TwoFactor\EmailAuthCodeMailer:
+    arguments:
+      $transactionalAddress: "%transactional_address%"
+
   AppBundle\Service\RemotePushNotificationManager: ~
 
   AppBundle\Geocoder\RateLimiterStore:

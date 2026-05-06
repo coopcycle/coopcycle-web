@@ -18,6 +18,7 @@ use AppBundle\Api\State\StripePaymentMethodsProvider;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use AppBundle\Sylius\Product\ProductInterface;
 use Nucleos\UserBundle\Model\User as BaseUser;
+use Scheb\TwoFactorBundle\Model\Email\TwoFactorInterface as EmailTwoFactorInterface;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUserInterface;
@@ -51,7 +52,7 @@ use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterfac
 )]
 #[UniqueEntity('facebookId')]
 #[ApiFilter(filterClass: UserRoleFilter::class, properties: ['roles'])]
-class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, LegacyPasswordAuthenticatedUserInterface, Serializable
+class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, LegacyPasswordAuthenticatedUserInterface, Serializable, EmailTwoFactorInterface
 {
     use Timestampable;
 
@@ -89,6 +90,8 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
     protected ?string $salt = null;
 
     private $businessAccount;
+
+    private ?string $emailAuthCode = null;
 
     /**
      * Only to keep data in form flow
@@ -474,6 +477,26 @@ class User extends BaseUser implements JWTUserInterface, ChannelAwareInterface, 
     public function setTermsAndConditionsAndPrivacyPolicy($termsAndConditionsAndPrivacyPolicy) {
         $this->termsAndConditionsAndPrivacyPolicy = $termsAndConditionsAndPrivacyPolicy;
         return $this;
+    }
+
+    public function isEmailAuthEnabled(): bool
+    {
+        return $this->hasRole('ROLE_ADMIN');
+    }
+
+    public function getEmailAuthRecipient(): string
+    {
+        return (string) $this->getEmail();
+    }
+
+    public function getEmailAuthCode(): ?string
+    {
+        return $this->emailAuthCode;
+    }
+
+    public function setEmailAuthCode(string $authCode): void
+    {
+        $this->emailAuthCode = $authCode;
     }
 
     /**

@@ -1,0 +1,43 @@
+{% extends "frontend.html.twig" %}
+
+{% block body %}
+<div class="login-container">
+  <div class="login-container__content">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+
+          {% if authenticationError %}
+          <div class="alert alert-danger">{{ authenticationError.messageKey | trans(authenticationError.messageData, 'SchebTwoFactorBundle') }}</div>
+          {% endif %}
+
+          <h3 class="text-center">Two-factor authentication</h3>
+          <p class="text-center text-muted">
+            A verification code has been sent to your email address. Please enter it below.
+          </p>
+
+          <form method="post" action="{{ path('2fa_login_check') }}">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('two_factor') }}" />
+            <div class="form-group">
+              <label for="auth_code">Verification code</label>
+              <input class="form-control input-lg text-center"
+                     type="text"
+                     id="auth_code"
+                     name="_auth_code"
+                     autocomplete="one-time-code"
+                     inputmode="numeric"
+                     pattern="[0-9]*"
+                     autofocus
+                     required />
+            </div>
+            <div class="form-group">
+              <button class="btn btn-block btn-lg btn-primary" type="submit">Verify</button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
