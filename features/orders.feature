@@ -142,6 +142,7 @@ Feature: Orders
         },
         "telephone":"+33612345678",
         "loopeatEnabled":false,
+        "loopeatMandatory":false,
         "isOpen":false,
         "nextOpeningDate":"@string@.isDateTime()",
         "tags":@array@,
@@ -319,6 +320,7 @@ Feature: Orders
         },
         "telephone":"+33612345678",
         "loopeatEnabled":false,
+        "loopeatMandatory":false,
         "isOpen":false,
         "nextOpeningDate":"@string@.isDateTime()",
         "tags":@array@,
@@ -643,6 +645,7 @@ Feature: Orders
         "isOpen":false,
         "nextOpeningDate":"@string@.isDateTime()",
         "loopeatEnabled":false,
+        "loopeatMandatory":false,
         "tags":@array@,
         "badges":@array@
       },
@@ -810,6 +813,7 @@ Feature: Orders
           "isOpen":true,
           "nextOpeningDate":"@string@.isDateTime()",
           "loopeatEnabled":false,
+          "loopeatMandatory":false,
           "tags":@array@,
           "badges":@array@
         },
