@@ -52,7 +52,9 @@ class ContentController extends AbstractController
 
         $key = array_key_exists($locale, $files) ? $locale : 'en';
 
-        return file_get_contents($files[$key]);
+        $context = stream_context_create(['http' => ['timeout' => 5]]);
+
+        return file_get_contents($files[$key], false, $context);
     }
 
     #[Route(path: '/legal', name: 'legal')]
