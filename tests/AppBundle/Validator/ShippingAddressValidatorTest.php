@@ -8,6 +8,7 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Vendor;
+use AppBundle\Entity\LocalBusiness\DayOfWeekDeliveryPerimeterExpression;
 use AppBundle\Service\RoutingInterface;
 use AppBundle\Utils\DateUtils;
 use AppBundle\Utils\PriceFormatter;
@@ -388,6 +389,103 @@ class ShippingAddressValidatorTest extends ConstraintValidatorTestCase
         $this->routing
             ->getDuration(Argument::type(GeoCoordinates::class), Argument::type(GeoCoordinates::class))
             ->shouldNotHaveBeenCalled();
+    }
+
+    private function createRestaurantWithDayOfWeekExpression(
+        Address $address,
+        string $defaultExpression,
+        string $daysOfWeek,
+        string $dayExpression
+    ): LocalBusiness {
+        $restaurant = new LocalBusiness();
+        $restaurant->setAddress($address);
+        $restaurant->setDeliveryPerimeterExpression($defaultExpression);
+
+        $entry = new DayOfWeekDeliveryPerimeterExpression();
+        $entry->setDaysOfWeek($daysOfWeek);
+        $entry->setExpression($dayExpression);
+        $restaurant->addDayOfWeekDeliveryPerimeterExpression($entry);
+
+        return $restaurant;
+    }
+
+    public function testAddressTooFarWithDayOfWeekRestrictedZone()
+    {
+        $shippingAddressCoords  = new GeoCoordinates();
+        $restaurantAddressCoords = new GeoCoordinates();
+
+        $restaurantAddress = $this->createAddress($restaurantAddressCoords);
+        $shippingAddress   = $this->createAddress($shippingAddressCoords);
+
+        // Default allows up to 3000 m, but every day of the week restricts to 1000 m
+        $restaurant = $this->createRestaurantWithDayOfWeekExpression(
+            $restaurantAddress,
+            'distance < 3000',
+            'Mo,Tu,We,Th,Fr,Sa,Su',
+            'distance < 1000'
+        );
+
+        $order = $this->prophesize(Order::class);
+        $order->getId()->willReturn(null);
+        $order->hasVendor()->willReturn(true);
+        $order->isTakeaway()->willReturn(false);
+        $order->isBusiness()->willReturn(false);
+        $order->getItemsTotal()->willReturn(2500);
+        $order->getShippingAddress()->willReturn($shippingAddress);
+        $order->getPickupAddress()->willReturn($restaurantAddress);
+        $order->getVendorConditions()->willReturn($restaurant);
+
+        $this->routing
+            ->getDistance($restaurantAddressCoords, $shippingAddressCoords)
+            ->willReturn(1500);
+
+        $this->setObject($order->reveal());
+
+        $constraint = new ShippingAddressConstraint();
+        $this->validator->validate($shippingAddress, $constraint);
+
+        $this->buildViolation($constraint->addressTooFarMessage)
+            ->atPath('property.path')
+            ->setCode(ShippingAddressConstraint::ADDRESS_TOO_FAR)
+            ->assertRaised();
+    }
+
+    public function testAddressWithinDayOfWeekExtendedZone()
+    {
+        $shippingAddressCoords  = new GeoCoordinates();
+        $restaurantAddressCoords = new GeoCoordinates();
+
+        $restaurantAddress = $this->createAddress($restaurantAddressCoords);
+        $shippingAddress   = $this->createAddress($shippingAddressCoords);
+
+        // Default restricts to 3000 m, but every day of the week extends to 5000 m
+        $restaurant = $this->createRestaurantWithDayOfWeekExpression(
+            $restaurantAddress,
+            'distance < 3000',
+            'Mo,Tu,We,Th,Fr,Sa,Su',
+            'distance < 5000'
+        );
+
+        $order = $this->prophesize(Order::class);
+        $order->getId()->willReturn(null);
+        $order->hasVendor()->willReturn(true);
+        $order->isTakeaway()->willReturn(false);
+        $order->isBusiness()->willReturn(false);
+        $order->getItemsTotal()->willReturn(2500);
+        $order->getShippingAddress()->willReturn($shippingAddress);
+        $order->getPickupAddress()->willReturn($restaurantAddress);
+        $order->getVendorConditions()->willReturn($restaurant);
+
+        $this->routing
+            ->getDistance($restaurantAddressCoords, $shippingAddressCoords)
+            ->willReturn(4000);
+
+        $this->setObject($order->reveal());
+
+        $constraint = new ShippingAddressConstraint();
+        $this->validator->validate($shippingAddress, $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testOrderIsValid()

@@ -191,6 +191,7 @@ restaurant.form.exclusive.docs_path: /en/food-tech/restaurants/general-settings/
 restaurant.form.quotes_allowed.label: 'This restaurant also accepts quotes (e.g.: catering)'
 restaurant.form.quotes_allowed.docs_path: /en/food-tech/restaurants/general-settings/#quotes-allowed
 restaurant.form.loopeat_enabled.label: Enable LoopEat deposit-refund system
+restaurant.form.loopeat_mandatory.label: Make %name% mandatory for all orders
 restaurant.form.loopeat_disconnect.label: Disconnect %name%
 restaurant.form.featured.label: This restaurant is featured on homepage
 restaurant.form.featured.docs_path: /en/food-tech/restaurants/general-settings/#featured
@@ -812,6 +813,7 @@ form.package.average_weight.label: Average weight (kg)
 form.package.max_weight.label: Max weight (kg)
 form.package.tags.label: Tags to apply automatically to tasks
 form.package.shortCode.label: 2 letter code
+form.package.shortCode.help: Limited to 2 characters
 form.package.volume_units.label: Volume unit
 form.reusable_packaging.name.label: Name
 form.reusable_packaging.is_tracked.label: Tracking enabled
@@ -1684,8 +1686,8 @@ pricing.rule.humanizer.packages_contains_at_least_one: packages %package_name%
 pricing.rule.humanizer.price_range: '%unit_price% per %step%'
 pricing.rule.humanizer.price_range_with_threshold: 'above %threshold% - %unit_price% per %step%'
 pricing.rule.humanizer.price_per_package: '%unit_price% per %package_name%'
-adminDashboard.promotions.ongoing: Ongoing promotions
-adminDashboard.promotions.past: Past promotions
+adminDashboard.promotions.ongoing: Ongoing promotions (%count%)
+adminDashboard.promotions.past: Past promotions (%count%)
 order.download_receipt: Download receipt
 order.generate_receipt: Generate receipt
 form.settings.pawapay_api_key.label: Pawapay API key
@@ -1717,6 +1719,12 @@ form.delivery.errors.not_reversable: You can only reverse deliveries with 1 pick
 form.store.document: Document
 basics.upload: Upload
 form.product.options.add: Add an option
+form.day_of_week_address.days_of_week.label: Days of the week
+localBusiness.form.day_of_week_addresses.label: Addresses depending on the day of the week
+localBusiness.form.day_of_week_addresses.add: Add address
+localBusiness.form.day_of_week_addresses.help: Use this if the address changes during the week (i.e foodtrucks)
+localBusiness.form.day_of_week_delivery_perimeter_expressions.label: Delivery perimeter depending on the day of the week
+localBusiness.form.day_of_week_delivery_perimeter_expressions.add: Add delivery perimeter
 form.api_app.store.placeholder: Choose a store to restrict access
 form.api_app.store.help: You can also leave empty if you want to allow access to all orders
 form.api_app.scopes.label: Scopes
@@ -1725,6 +1733,7 @@ form.api_app.scope.deliveries: Deliveries
 form.api_app.scope.tasks: Tasks
 form.api_app.scope.orders: Orders
 form.api_app.scope.orders_all: All orders
+form.api_app.scope.tasks_all: All tasks
 form.order.payment_refund.tooltip: To refund, create an incident first
 form.credit_note.deprecated_warning: Creating credit notes via this page is deprecated, create an incident
 order.create_credit_note: Create a credit note
@@ -1739,3 +1748,8 @@ form.theme.primary-content.label: Primary content
 form.theme.primary-content.help: Foreground content color to use on primary color
 pagination.items_per_page: Items per page
 restaurant.form.en_boite_le_plat_platform_fee.label: The deposit should be collected by the platform
+
+two_factor.title: Two-factor authentication
+two_factor.subtitle: "A verification code has been sent to your email address. Please enter it below."
+two_factor.code.label: Verification code
+two_factor.submit: Verify

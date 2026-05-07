@@ -45,6 +45,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -67,6 +68,12 @@ trait StoreTrait
         ->createQueryBuilder('c')
         ->orderBy('c.name', 'ASC');
 
+        if ($request->query->has('q')) {
+            $qb
+                ->andWhere('LOWER(c.name) LIKE :q')
+                ->setParameter('q', '%' . strtolower($request->query->get('q')) . '%');
+        }
+
         $STORES_PER_PAGE = 20;
 
         $stores = $paginator->paginate(
@@ -76,6 +83,19 @@ trait StoreTrait
         );
 
         $routes = $request->attributes->get('routes');
+
+        if ('json' === $request->query->get('format')) {
+            $results = [];
+            foreach ($stores as $store) {
+                $results[] = [
+                    'id'   => $store->getId(),
+                    'name' => $store->getName(),
+                    'path' => $this->generateUrl($routes['store'], ['id' => $store->getId()]),
+                ];
+            }
+
+            return new JsonResponse($results);
+        }
 
         return $this->render($request->attributes->get('template'), $this->auth([
             'stores' => $stores,

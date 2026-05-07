@@ -96,13 +96,22 @@ class CheckoutAddressType extends AbstractType
 
                     $this->loopeatContextInitializer->initialize($order, $this->loopeatContext);
 
-                    $form->add('reusablePackagingEnabled', CheckboxType::class, [
+                    $loopeatMandatory = $restaurant->isLoopeatMandatory();
+                    $loopeatOptions = [
                         'required' => false,
                         'label' => 'form.checkout_address.reusable_packaging_loopeat_enabled.label',
                         'attr' => [
                             'data-loopeat' => 'true',
                         ],
-                    ]);
+                    ];
+
+                    if ($loopeatMandatory) {
+                        $loopeatOptions['disabled'] = true;
+                        $loopeatOptions['data'] = true;
+                        $loopeatOptions['empty_data'] = true;
+                    }
+
+                    $form->add('reusablePackagingEnabled', CheckboxType::class, $loopeatOptions);
 
                 } elseif (!$order->isMultiVendor() && $restaurant->isVytalEnabled()) {
 

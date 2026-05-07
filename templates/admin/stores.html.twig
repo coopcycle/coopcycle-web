@@ -10,10 +10,25 @@
 {% endblock %}
 
 {% block content %}
-  <div class="text-right mb-4">
+  <div class="d-flex justify-content-between mb-4">
+    <div id="stores-search">
+      <input type="text" class="form-control" placeholder="{{ 'basics.search'|trans }}" disabled />
+    </div>
     <a href="{{ path('admin_store_new') }}" class="btn btn-success">
       <i class="fa fa-plus"></i> {% trans %}adminDashboard.stores.createNew{% endtrans %}
     </a>
   </div>
   {% include "store/list.html.twig" %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+new CoopCycle.Search(document.querySelector('#stores-search'), {
+  url: "{{ path('admin_stores', { format: 'json' }) }}",
+  placeholder: "{{ 'basics.search'|trans }}",
+  onSuggestionSelected: function(suggestion) {
+    window.location.href = suggestion.path;
+  }
+});
+</script>
 {% endblock %}

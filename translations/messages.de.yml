@@ -502,6 +502,7 @@ form.package.max_volume_units: Dieser Wert wird verwendet, um die Preise basiere
 form.package.average_weight.label: Durchschnittsgewicht (kg)
 form.package.max_weight.label: Maximalgewicht (kg)
 form.package.shortCode.label: 2-Buchstaben-Code
+form.package.shortCode.help: Auf 2 Zeichen begrenzt
 form.package.enter_details: Details ein-/ausblenden
 form.package_set.packages.label: Verpackungen
 form.package_set.name.label: Name

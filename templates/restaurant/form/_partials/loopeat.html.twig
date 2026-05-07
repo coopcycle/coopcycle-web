@@ -2,6 +2,10 @@
   {{ form_row(form.enabled) }}
 {% endif %}
 
+{% if form.mandatory is defined %}
+  {{ form_row(form.mandatory) }}
+{% endif %}
+
 {% set enabled = form.enabled.vars.data %}
 
 {% if enabled and loopeat_authorize_url is defined %}
@@ -14,4 +18,3 @@
     <p><a href="{{ loopeat_authorize_url }}" class="btn btn-success btn-sm">{% trans with { '%name%': loopeat_name() } %}profile.loopeat.connect{% endtrans %}</a></p>
   {% endif %}
 {% endif %}
-

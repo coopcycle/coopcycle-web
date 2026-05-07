@@ -112,6 +112,7 @@ class ApiAppType extends AbstractType
                             // It is automatically added when in restaurant context
                             // 'form.api_app.scope.orders' => 'orders',
                             'form.api_app.scope.orders_all' => 'orders:all',
+                            'form.api_app.scope.tasks_all' => 'tasks:all',
                         ],
                         'expanded' => true,
                         'multiple' => true,

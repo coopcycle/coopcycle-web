@@ -179,6 +179,8 @@
         "symfony/ux-icons": "^2.32",
         "symfony/ux-twig-component": "^2.32",
         "symfony/ux-autocomplete": "^2.32",
+        "scheb/2fa-bundle": "^7.0",
+        "scheb/2fa-email": "^7.0",
         "islesurlasorguetourisme/daisyui-form-bundle": "^0.2.0"
     },
     "require-dev": {
@@ -213,7 +215,7 @@
         },
         {
             "type": "vcs",
-            "url": "git@github.com:rkeet/behatch-contexts.git"
+            "url": "https://github.com/rkeet/behatch-contexts"
         },
         {
           "type": "vcs",

@@ -211,7 +211,7 @@ class UserController extends AbstractController
             } else {
                 $loggedInUser = $security->getUser();
 
-                if ($loggedInUser) {
+                if ($loggedInUser && null !== $businessAccountInvitation) {
                     return $this->render('profile/associate_loggedin_user_to_business_account.html.twig', [
                         'show_left_menu' => false,
                         'businessAccountInvitation' => $businessAccountInvitation

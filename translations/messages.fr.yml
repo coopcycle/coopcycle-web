@@ -143,6 +143,7 @@ restaurant.form.exclusive.label: Ce restaurant est une exclusivité
 restaurant.form.quotes_allowed.label: 'Ce restaurant accepte également des commandes
   sur devis (ex : traiteur)'
 restaurant.form.loopeat_enabled.label: Activer le système de consignes %name%
+restaurant.form.loopeat_mandatory.label: Rendre %name% obligatoire pour toutes les commandes
 restaurant.form.loopeat_disconnect.label: Déconnecter mon compte %name%
 restaurant.form.featured.label: Ce restaurant apparaît sur la page d'accueil
 restaurant.form.fulfillment_methods.label: Modes d'exécution
@@ -945,6 +946,7 @@ form.package.tags.label: Tags à appliquer automatiquement aux tâches
 form.package.average_weight.label: Poids moyen (kg)
 form.package.max_weight.label: Poids maximum (kg)
 form.package.shortCode.label: Code de 2 lettres
+form.package.shortCode.help: Limité à 2 caractères
 form.time_slot.interval.label: Intervalle
 form.delivery.packages.label: Marchandise
 form.delivery.package.label: Emballage
@@ -1625,8 +1627,8 @@ pricing.rule.humanizer.packages_contains_at_least_one: 'colis %package_name%'
 pricing.rule.humanizer.price_range: '%unit_price% par %step%'
 pricing.rule.humanizer.price_range_with_threshold: 'au-dessus de %threshold% - %unit_price% par %step%'
 pricing.rule.humanizer.price_per_package: '%unit_price% par %package_name%'
-adminDashboard.promotions.ongoing: Promotions actives
-adminDashboard.promotions.past: Promotions passées
+adminDashboard.promotions.ongoing: Promotions actives (%count%)
+adminDashboard.promotions.past: Promotions passées (%count%)
 order.download_receipt: Télécharger le reçu
 order.generate_receipt: Générer le reçu
 promotions.feature: Afficher
@@ -1654,6 +1656,12 @@ form.delivery.errors.not_reversable: Vous pouvez seulement inverser les livraiso
 form.store.document: Document
 basics.upload: Télécharger
 form.product.options.add: Ajouter une option
+form.day_of_week_address.days_of_week.label: Jours de la semaine
+localBusiness.form.day_of_week_addresses.label: Adresses en fonction du jour de la semaine
+localBusiness.form.day_of_week_addresses.add: Ajouter une adresse
+localBusiness.form.day_of_week_addresses.help: "Utilisez si l'adresse change durant la semaine (ex : foodtrucks)"
+localBusiness.form.day_of_week_delivery_perimeter_expressions.label: Périmètre de livraison en fonction du jour de la semaine
+localBusiness.form.day_of_week_delivery_perimeter_expressions.add: Ajouter un périmètre de livraison
 form.api_app.type.label: Mécanisme d'authentification
 form.api_app.store.placeholder: Choisissez un magasin pour restreindre l'accès
 form.api_app.store.help: Vous pouvez également laisser vide pour autoriser l'accès à toutes les commandes
@@ -1663,6 +1671,7 @@ form.api_app.scope.deliveries: Livraisons
 form.api_app.scope.tasks: Tâches
 form.api_app.scope.orders: Commandes
 form.api_app.scope.orders_all: Toutes les commandes
+form.api_app.scope.tasks_all: Toutes les tâches
 form.order.payment_refund.tooltip: Pour rembourser, créez d'abord un incident
 form.credit_note.deprecated_warning: Créer un avoir commercial pour un problème sur une commande via cette page est obsolète, créez plutôt un incident
 order.create_credit_note: Créer un avoir commercial
@@ -1672,3 +1681,8 @@ form.product_option_value.depends_on.placeholder: Sélectionnez une valeur
 form.product_option_value.depends_on.tooltip: Sélectionnez une autre valeur dont cette valeur dépend
 pagination.items_per_page: Nombre d'éléments par page
 restaurant.form.en_boite_le_plat_platform_fee.label: Le montant de la consigne est collecté par la plateforme
+
+two_factor.title: Authentification à deux facteurs
+two_factor.subtitle: "Un code de vérification a été envoyé à votre adresse e-mail. Veuillez le saisir ci-dessous."
+two_factor.code.label: Code de vérification
+two_factor.submit: Vérifier

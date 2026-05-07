@@ -66,6 +66,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\LocalBusiness\AddressResolver;
 use AppBundle\Entity\LoopEat\OrderCredentials;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\Store;
@@ -1462,7 +1463,11 @@ class Order extends BaseOrder implements OrderInterface
     public function getPickupAddress(): ?Address
     {
         if ($this->hasVendor()) {
-            return $this->getVendor()->getAddress();
+            $vendor = $this->getVendor();
+            if ($vendor instanceof LocalBusiness) {
+                return AddressResolver::resolveAddress($vendor);
+            }
+            return $vendor->getAddress();
         }
 
         return null;
@@ -1815,7 +1820,7 @@ class Order extends BaseOrder implements OrderInterface
 
     public function getPickupAddresses(): Collection
     {
-        return $this->getRestaurants()->map(fn(LocalBusiness $restaurant): Address => $restaurant->getAddress());
+        return $this->getRestaurants()->map(fn(LocalBusiness $restaurant): Address => AddressResolver::resolveAddress($restaurant));
     }
 
     /**
