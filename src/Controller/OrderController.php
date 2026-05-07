@@ -38,6 +38,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToCheckFileExistence;
+use League\Flysystem\UnableToReadFile;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use phpcent\Client as CentrifugoClient;
@@ -513,7 +514,7 @@ class OrderController extends AbstractController
             if ($assetsFilesystem->fileExists('order_confirm.md')) {
                 $customMessage = $assetsFilesystem->read('order_confirm.md');
             }
-        } catch (UnableToCheckFileExistence $e) {
+        } catch (UnableToCheckFileExistence|UnableToReadFile $e) {
             $this->checkoutLogger->error($e->getMessage());
         }
 
