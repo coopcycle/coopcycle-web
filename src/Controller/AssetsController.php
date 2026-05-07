@@ -8,6 +8,8 @@ use AppBundle\Pixabay\Client as PixabayClient;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToCheckFileExistence;
+use League\Flysystem\UnableToReadFile;
+use League\Flysystem\UnableToWriteFile;
 use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
 use Liip\ImagineBundle\Exception\Imagine\Filter\NonExistingFilterException;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
@@ -42,12 +44,16 @@ class AssetsController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $svg = $appCache->get('banner_svg', function (ItemInterface $item) use ($assetsFilesystem) {
+        try {
+            $svg = $appCache->get('banner_svg', function (ItemInterface $item) use ($assetsFilesystem) {
 
-            $item->expiresAfter(3600);
+                $item->expiresAfter(3600);
 
-            return $assetsFilesystem->read('banner.svg');
-        });
+                return $assetsFilesystem->read('banner.svg');
+            });
+        } catch (UnableToReadFile $e) {
+            throw $this->createNotFoundException();
+        }
 
         $response = new Response((string) $svg);
 
@@ -87,14 +93,23 @@ class AssetsController extends AbstractController
     {
         $path = "placeholders/{$hashid}.jpg";
 
-        if (!$restaurantImagesFilesystem->fileExists($path)) {
+        try {
+            $exists = $restaurantImagesFilesystem->fileExists($path);
+        } catch (UnableToCheckFileExistence $e) {
+            $exists = true; // assume it exists, skip the write
+        }
 
+        if (!$exists) {
             $results = $pixabay->search('', rand(1, 10));
-
-            $restaurantImagesFilesystem->write(
-                $path,
-                file_get_contents($results[rand(0, 19)]['webformatURL'])
-            );
+            $context = stream_context_create(['http' => ['timeout' => 5]]);
+            try {
+                $restaurantImagesFilesystem->write(
+                    $path,
+                    file_get_contents($results[rand(0, 19)]['webformatURL'], false, $context)
+                );
+            } catch (UnableToWriteFile $e) {
+                // TODO Log error
+            }
         }
 
         return $this->redirectToRoute('liip_imagine_cache', [
