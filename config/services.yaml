@@ -1148,6 +1148,9 @@ services:
             key: '%env(S3_CREDENTIALS_KEY)%'
             secret: '%env(S3_CREDENTIALS_SECRET)%'
           use_path_style_endpoint: true
+          http:
+            connect_timeout: 5
+            timeout: 15
 
   AppBundle\Service\StripeManager:
     tags:
