@@ -96,7 +96,7 @@ class Settings
             if ($this->assetsFilesystem->fileExists('order_confirm.md')) {
                 $orderConfirmMessage = $this->assetsFilesystem->read('order_confirm.md');
             }
-        } catch (UnableToCheckFileExistence $e) {
+        } catch (UnableToCheckFileExistence|UnableToReadFile $e) {
             // TODO Log error
         }
         $data['order_confirm_message'] = $orderConfirmMessage;
