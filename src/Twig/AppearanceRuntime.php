@@ -5,6 +5,8 @@ namespace AppBundle\Twig;
 use AppBundle\Service\SettingsManager;
 use Intervention\Image\ImageManager;
 use League\Flysystem\Filesystem;
+use League\Flysystem\UnableToCheckFileExistence;
+use League\Flysystem\UnableToReadFile;
 use Liip\ImagineBundle\Service\FilterService;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -35,10 +37,13 @@ class AppearanceRuntime implements RuntimeExtensionInterface
     public function logo()
     {
         $companyLogo = $this->settingsManager->get('company_logo');
-        if (!empty($companyLogo) && $this->assetsFilesystem->fileExists($companyLogo)) {
 
-            return $this->imagineFilter->getUrlOfFilteredImage($companyLogo, 'logo_thumbnail');
-        }
+        try {
+            if (!empty($companyLogo) && $this->assetsFilesystem->fileExists($companyLogo)) {
+
+                return $this->imagineFilter->getUrlOfFilteredImage($companyLogo, 'logo_thumbnail');
+            }
+        } catch (UnableToCheckFileExistence|UnableToReadFile $e) {}
     }
 
     public function companyLogo()
@@ -47,13 +52,19 @@ class AppearanceRuntime implements RuntimeExtensionInterface
 
             $item->expiresAfter(60 * 60 * 24);
 
-            $companyLogo = $this->settingsManager->get('company_logo');
-
             $imageManager = ImageManager::gd();
 
-            if (!empty($companyLogo) && $this->assetsFilesystem->fileExists($companyLogo)) {
-                $image = $imageManager->read($this->assetsFilesystem->read($companyLogo));
-            } else {
+            try {
+
+                $companyLogo = $this->settingsManager->get('company_logo');
+
+                if (!empty($companyLogo) && $this->assetsFilesystem->fileExists($companyLogo)) {
+                    $image = $imageManager->read($this->assetsFilesystem->read($companyLogo));
+                } else {
+                    $image = $imageManager->read(file_get_contents($this->logoFallback));
+                }
+
+            } catch (UnableToCheckFileExistence|UnableToReadFile $e) {
                 $image = $imageManager->read(file_get_contents($this->logoFallback));
             }
 
@@ -64,10 +75,20 @@ class AppearanceRuntime implements RuntimeExtensionInterface
     public function hasAboutUs()
     {
         return $this->appCache->get('content.about_us.exists', function (ItemInterface $item) {
+            try {
 
-            $item->expiresAfter(60 * 60 * 24);
+                $exists = $this->assetsFilesystem->fileExists('about_us.md');
 
-            return $this->assetsFilesystem->fileExists('about_us.md');
+                $item->expiresAfter(60 * 60 * 24);
+
+                return $exists;
+
+            } catch (UnableToCheckFileExistence|UnableToReadFile $e) {
+
+                $item->expiresAfter(60 * 5);
+
+                return false;
+            }
         });
     }
 }
