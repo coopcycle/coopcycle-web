@@ -97,18 +97,6 @@ body {
   }
 }
 
-.about-us {
-  font-size: $font-size-large;
-  letter-spacing: 0.02em;
-  h1, h2, h3, h4 {
-    font-weight: 700;
-  }
-  table {
-    @extend .table;
-    @extend .table-bordered;
-  }
-}
-
 .table-order-items {
   tbody tr,
   tfoot tr {

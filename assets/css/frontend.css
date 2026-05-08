@@ -22,6 +22,7 @@
 @source "../../js/app/restaurant/components";
 
 @plugin "daisyui";
+@plugin "@tailwindcss/typography";
 
 @import "font-awesome/css/font-awesome.min.css";
 @import "beautifymarker/leaflet-beautify-marker-icon.css";
