@@ -91,4 +91,15 @@ class AppearanceRuntime implements RuntimeExtensionInterface
             }
         });
     }
+
+    public function getTheme()
+    {
+        $theme = $this->settingsManager->get('theme');
+
+        if ($theme) {
+            return json_decode($theme, true);
+        }
+
+        return [];
+    }
 }

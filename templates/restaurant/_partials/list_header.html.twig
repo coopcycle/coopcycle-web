@@ -1,16 +1,10 @@
-<header class="restaurant-list-header" data-search="address"
+<header class="restaurant-list-header bg-blue-400 mb-4" data-search="address"
   data-addresses="{{ addresses_normalized()|json_encode()|e('html') }}"
   data-tracking-category="RestaurantList">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-6 col-md-offset-3">
-        <div data-element>
-          <!-- This will be replaced by React -->
-          <div class="form-group">
-            <input class="form-control" />
-          </div>
-        </div>
-      </div>
+  <div class="mx-auto p-4 md:w-1/2">
+    <div data-element>
+      <!-- This will be replaced by React -->
+      <input class="form-control" />
     </div>
   </div>
   <!-- Do NOT put the search component inside the form -->

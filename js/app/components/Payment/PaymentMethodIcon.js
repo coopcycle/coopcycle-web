@@ -8,44 +8,54 @@ import restoflashLogo from './restoflash.svg'
 import conecsLogo from './conecs.svg'
 import swileLogo from './Swile_black.png'
 
-export default ({ code, height }) => {
-  const heightPx = typeof height === 'number' || (typeof height === 'string' && !height.endsWith('px'))
-    ? `${height}px`
-    : height
+const sizeToStyle = {
+  md: {
+    height: '2.5em',
+    maxWidth: '5em',
+  },
+  xs: {
+    height: '1.25em',
+    maxWidth: '2.5em',
+  }
+}
+
+export default ({ code, size = "md" }) => {
+
+  const props = { style: sizeToStyle[size] || sizeToStyle['md']  }
 
   switch (code.toLowerCase()) {
 
     case 'card':
       return (
-        <span className="d-flex gap-1">
-          <img src={ visa } style={{ height: heightPx }} className="mr-2" />
-          <img src={ mastercard } style={{ height: heightPx }} />
+        <span style={{ display: 'flex', gap: '0.5em' }}>
+          <img src={visa} {...props} />
+          <img src={ mastercard } {...props} />
         </span>
       )
 
     case 'edenred':
       return (
-        <img src={ edenredLogo } style={{ height: heightPx }} />
+        <img src={ edenredLogo } {...props} />
       )
 
     case 'cash_on_delivery':
       return (
-        <img src={ cashLogo } style={{ height: heightPx }} />
+        <img src={ cashLogo } {...props} />
       )
 
     case 'restoflash':
       return (
-        <img src={ restoflashLogo } style={{ height: heightPx, maxWidth: '80px' }} />
+        <img src={ restoflashLogo } {...props} />
       )
 
     case 'conecs':
       return (
-        <img src={ conecsLogo } style={{ height: heightPx }} />
+        <img src={ conecsLogo } {...props} />
       )
 
     case 'swile':
       return (
-        <img src={ swileLogo } style={{ height: heightPx, maxWidth: '60px', objectFit: 'contain' }} />
+        <img src={ swileLogo } style={{ ...props.style, objectFit: 'contain' }} />
       )
   }
 

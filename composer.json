@@ -180,7 +180,8 @@
         "symfony/ux-twig-component": "^2.32",
         "symfony/ux-autocomplete": "^2.32",
         "scheb/2fa-bundle": "^7.0",
-        "scheb/2fa-email": "^7.0"
+        "scheb/2fa-email": "^7.0",
+        "islesurlasorguetourisme/daisyui-form-bundle": "^0.2.0"
     },
     "require-dev": {
         "symfony/debug-bundle": "*",

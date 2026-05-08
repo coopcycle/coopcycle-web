@@ -1,1 +1,19 @@
 @import "./packages.scss";
+
+.bike-icon {
+
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto;
+
+  &--bike {
+    background-image: url(../../../assets/svg/noun_1149947_cc.svg);
+  }
+
+  &--cargo_bike {
+    background-image: url(../../../assets/svg/noun_1149946_cc.svg);
+  }
+}

@@ -281,3 +281,6 @@ services:
 
   AppBundle\Form\ProductOptionValueType:
     tags: [ form.type ]
+
+  AppBundle\Form\ThemeType:
+    tags: [ form.type ]

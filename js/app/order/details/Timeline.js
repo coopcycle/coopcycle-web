@@ -63,12 +63,12 @@ export default ({ order }) => {
   };
 
   return (
-    <div className="border mb-3">
-      <h4 className="bg-light p-3 m-0 clearfix">
+    <div className="border border-base-300 mb-3">
+      <h4 className="bg-base-200 p-3 flex items-center justify-between">
         <ShippingTimeRange value={order.shippingTimeRange} />
         <button
           onClick={refetch}
-          className="btn btn-default btn-sm pull-right"
+          className="btn btn-default btn-sm"
           disabled={isFetching}
           title="Refresh events">
           <i className={`fa fa-refresh ${isFetching ? 'fa-spin' : ''}`}></i>

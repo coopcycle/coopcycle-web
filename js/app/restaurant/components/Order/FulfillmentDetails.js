@@ -59,8 +59,8 @@ export default function FulfillmentDetails() {
     }
   }
 
-  return (<div className="panel panel-default">
-      <div className="panel-body">
+  return (<div className="card bg-base-300 text-base-content">
+      <div className="card-body">
         <div className="fulfillment-details"
              data-testid="cart.fulfillmentDetails">
           <FulfillmentMethod
@@ -68,7 +68,8 @@ export default function FulfillmentDetails() {
             shippingAddress={ cart.shippingAddress }
             onClick={ changeFulfillmentMethod }
             allowEdit={ isOrderAdmin } />
-          { isFulfilmentTimeSlotsAvailable ? (<Time
+          {isFulfilmentTimeSlotsAvailable ? (
+          <Time
             timeRange={ fulfilmentTimeRange }
             onClick={ changeTimeSlot }
             allowEdit={ isOrderAdmin } />) : t('NOT_AVAILABLE_ATM') }

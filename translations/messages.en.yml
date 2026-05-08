@@ -1741,6 +1741,11 @@ form.product_option_value.product.tooltip: Link a product so that when the produ
 form.product_option_value.product.placeholder: Search a product…
 form.product_option_value.depends_on.placeholder: Select a value
 form.product_option_value.depends_on.tooltip: Select another value which this value depends on
+form.customize.theme.label: Theme
+form.theme.primary.label: Primary
+form.theme.primary.help: Primary brand color, The main color of your brand
+form.theme.primary-content.label: Primary content
+form.theme.primary-content.help: Foreground content color to use on primary color
 pagination.items_per_page: Items per page
 restaurant.form.en_boite_le_plat_platform_fee.label: The deposit should be collected by the platform
 

@@ -34,7 +34,7 @@ export default function (el) {
   }
 
   new AddressAutosuggest(
-    el.closest('.form-group'),
+    el.closest('.form-group') || el.parentElement,
     {
       required: el.required,
       address,

@@ -4,26 +4,25 @@ import _ from 'lodash'
 import clsx from 'clsx'
 import PaymentMethodIcon from './PaymentMethodIcon'
 
-const methodPickerStyles = {
-  display: 'flex',
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  marginTop: '8px'
+const Wrapper = ({ children, ...props }) => {
+
+  return (
+    <div className="flex flex-col gap-2" {...props}>
+      {children}
+    </div>
+  )
 }
 
-const methodPickerBtnClassNames = {
-  'btn': true,
-  'btn-default': true,
-  'p-2': true,
-  'w-100': true,
-}
+const Button = ({ method, isSelected, onClick }) => {
 
-const methodStyles = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'start',
-  justifyContent: 'space-between',
+  return (
+    <button
+      type="button"
+      className={clsx('btn btn-lg', isSelected && 'btn-active')}
+      onClick={ onClick }>
+      <PaymentMethodIcon code={ method } size="md" />
+    </button>
+  )
 }
 
 export default function PaymentMethodPicker({ methods, onSelect }) {
@@ -39,91 +38,68 @@ export default function PaymentMethodPicker({ methods, onSelect }) {
   }, [ method ])
 
   return (
-    <div style={ methodPickerStyles }>
+    <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-2">
       { _.map(methods, m => {
 
         switch (m.type) {
 
           case 'card':
             return (
-              <div style={ methodStyles } key={ m.type }>
-                <label>{ t('PM_CREDIT_OR_DEBIT_CARD') }</label>
-                <button type="button" className={ clsx({ ...methodPickerBtnClassNames, active: method === 'card' }) }
-                        onClick={ () => setMethod('card') }>
-                  <PaymentMethodIcon code={ m.type } height="45" />
-                </button>
-              </div>
+              <Wrapper key={ m.type }>
+                <label>{t('PM_CREDIT_OR_DEBIT_CARD')}</label>
+                <Button method={m.type} isSelected={method === m.type} onClick={ () => setMethod('card') } />
+              </Wrapper>
             )
 
           case 'edenred':
 
             return (
-              <div style={ methodStyles } key={ m.type }>
-                <label>{ t('PM_EDENRED') }</label>
-                <button type="button" className={ clsx({ ...methodPickerBtnClassNames, active: method === m.type }) }
-                        onClick={ () => {
-
-                          if (!m.data.edenredIsConnected) {
-                            window.location.href = m.data.edenredAuthorizeUrl
-                            return
-                          }
-
-                          setMethod(m.type)
-                        }}>
-                  <PaymentMethodIcon code={ m.type } height="45" />
-                </button>
-              </div>
+              <Wrapper key={ m.type }>
+                <label>{t('PM_EDENRED')}</label>
+                <Button method={m.type} isSelected={method === m.type} onClick={ () => {
+                  if (!m.data.edenredIsConnected) {
+                    window.location.href = m.data.edenredAuthorizeUrl
+                    return
+                  }
+                  setMethod(m.type)
+                }} />
+              </Wrapper>
             )
 
           case 'cash_on_delivery':
 
             return (
-              <div style={ methodStyles } key={ m.type } data-testid="pm.cash">
+              <Wrapper key={ m.type } data-testid="pm.cash">
                 <label>{ t('PM_CASH') }</label>
-                <button type="button" className={ clsx({ ...methodPickerBtnClassNames, active: method === m.type }) }
-                        onClick={ () => setMethod('cash_on_delivery') }>
-                  <PaymentMethodIcon code={ m.type } height="45" />
-                </button>
-              </div>
+                <Button method={m.type} isSelected={method === m.type} onClick={ () => setMethod('cash_on_delivery') } />
+              </Wrapper>
             )
 
           case 'restoflash':
 
             return (
-              <div style={ methodStyles } key={ m.type } data-testid="pm.restoflash">
+              <Wrapper key={ m.type } data-testid="pm.restoflash">
                 <label>{ t('PM_RESTOFLASH') }</label>
-                <button
-                  type="button" className={ clsx({ ...methodPickerBtnClassNames, active: method === m.type }) }
-                  onClick={ () => setMethod('restoflash') }>
-                  <PaymentMethodIcon code={ m.type } height="45" />
-                </button>
-              </div>
+                <Button method={m.type} isSelected={method === m.type} onClick={ () => setMethod('restoflash') } />
+              </Wrapper>
             )
 
           case 'conecs':
 
             return (
-              <div style={ methodStyles } key={ m.type } data-testid="pm.conecs">
+              <Wrapper key={ m.type } data-testid="pm.conecs">
                 <label>{ t('PM_CONECS') }</label>
-                <button
-                  type="button" className={ clsx({ ...methodPickerBtnClassNames, active: method === m.type }) }
-                  onClick={ () => setMethod('conecs') }>
-                  <PaymentMethodIcon code={ m.type } height="45" />
-                </button>
-              </div>
+                <Button method={m.type} isSelected={method === m.type} onClick={ () => setMethod('conecs') } />
+              </Wrapper>
             )
 
           case 'swile':
 
             return (
-              <div style={ methodStyles } key={ m.type } data-testid="pm.swile">
+              <Wrapper key={ m.type } data-testid="pm.swile">
                 <label>{ t('PM_SWILE') }</label>
-                <button
-                  type="button" className={ clsx({ ...methodPickerBtnClassNames, active: method === m.type }) }
-                  onClick={ () => setMethod('swile') }>
-                  <PaymentMethodIcon code={ m.type } height="45" />
-                </button>
-              </div>
+                <Button method={m.type} isSelected={method === m.type} onClick={ () => setMethod('swile') } />
+              </Wrapper>
             )
 
         }

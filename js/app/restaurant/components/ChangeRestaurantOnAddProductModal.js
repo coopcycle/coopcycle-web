@@ -20,7 +20,7 @@ class ChangeRestaurantOnAddProductModal extends Component {
 
     return (
       <div>
-        <div className="text-center">
+        <div className="text-center mb-4">
           <p>
             { this.props.t('CART_CHANGE_RESTAURANT_MODAL_TEXT_LINE_1') }
             <br />
