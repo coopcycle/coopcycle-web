@@ -44,14 +44,19 @@ class AssetsController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        try {
-            $svg = $appCache->get('banner_svg', function (ItemInterface $item) use ($assetsFilesystem) {
+        $svg = $appCache->get('banner_svg', function (ItemInterface $item) use ($assetsFilesystem) {
 
-                $item->expiresAfter(3600);
+            $item->expiresAfter(3600);
 
+            try {
                 return $assetsFilesystem->read('banner.svg');
-            });
-        } catch (UnableToReadFile $e) {
+            } catch (UnableToReadFile $e) {
+                $item->expiresAfter(0);
+                return null;
+            }
+        });
+
+        if (null === $svg) {
             throw $this->createNotFoundException();
         }
 
