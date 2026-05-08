@@ -4,6 +4,10 @@ namespace AppBundle\Form;
 
 use AppBundle\Service\SettingsManager;
 use League\Flysystem\Filesystem;
+use League\Flysystem\UnableToCheckFileExistence;
+use League\Flysystem\UnableToDeleteFile;
+use League\Flysystem\UnableToReadFile;
+use League\Flysystem\UnableToWriteFile;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -23,18 +27,15 @@ class CustomizeType extends AbstractType
 
     private function getContentData($filename)
     {
-        if ($this->assetsFilesystem->fileExists($filename)) {
-
-            return [
-                $content = $this->assetsFilesystem->read($filename),
-                true
-            ];
+        try {
+            if ($this->assetsFilesystem->fileExists($filename)) {
+                return [$this->assetsFilesystem->read($filename), true];
+            }
+        } catch (UnableToCheckFileExistence|UnableToReadFile $e) {
+            // TODO Log error
         }
 
-        return [
-            '',
-            false
-        ];
+        return ['', false];
     }
 
     private function onContentSubmit($filename, $content, $enabled)
@@ -44,10 +45,18 @@ class CustomizeType extends AbstractType
         }
 
         if ($enabled) {
-            $this->assetsFilesystem->write($filename, $content);
+            try {
+                $this->assetsFilesystem->write($filename, $content);
+            } catch (UnableToWriteFile $e) {
+                // TODO Log error
+            }
         } else {
-            if ($this->assetsFilesystem->fileExists($filename)) {
-                $this->assetsFilesystem->delete($filename);
+            try {
+                if ($this->assetsFilesystem->fileExists($filename)) {
+                    $this->assetsFilesystem->delete($filename);
+                }
+            } catch (UnableToCheckFileExistence|UnableToDeleteFile $e) {
+                // TODO Log error
             }
         }
     }

@@ -1138,6 +1138,20 @@ services:
 
   # https://digitalist.se/blogg/using-open-source-minio-and-flysystem-s3-module-handle-drupal-files
   # https://github.com/minio/cookbook/blob/master/docs/how-to-use-minio-as-laravel-file-storage.md
+  s3_client_assets:
+    class: Aws\S3\S3Client
+    arguments:
+        - endpoint: '%env(S3_ENDPOINT)%'
+          version: latest
+          region: '%env(S3_REGION)%'
+          credentials:
+            key: '%env(S3_CREDENTIALS_KEY)%'
+            secret: '%env(S3_CREDENTIALS_SECRET)%'
+          use_path_style_endpoint: true
+          http:
+            connect_timeout: 2
+            timeout: 3
+
   s3_client:
     class: Aws\S3\S3Client
     arguments:
@@ -1148,6 +1162,9 @@ services:
             key: '%env(S3_CREDENTIALS_KEY)%'
             secret: '%env(S3_CREDENTIALS_SECRET)%'
           use_path_style_endpoint: true
+          http:
+            connect_timeout: 5
+            timeout: 15
 
   AppBundle\Service\StripeManager:
     tags:

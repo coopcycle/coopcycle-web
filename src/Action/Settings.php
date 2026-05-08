@@ -7,6 +7,7 @@ use AppBundle\Service\TimeRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToCheckFileExistence;
+use League\Flysystem\UnableToReadFile;
 use Liip\ImagineBundle\Service\FilterService;
 use Misd\PhoneNumberBundle\Serializer\Normalizer\PhoneNumberNormalizer;
 use Symfony\Component\Routing\Attribute\Route;
@@ -70,7 +71,7 @@ class Settings
             if (!empty($companyLogo) && $this->assetsFilesystem->fileExists($companyLogo)) {
                 $data['logo'] = $this->imagineFilter->getUrlOfFilteredImage($companyLogo, 'logo_thumbnail');
             }
-        } catch (UnableToCheckFileExistence $e) {
+        } catch (UnableToCheckFileExistence|UnableToReadFile $e) {
             // TODO Log error
         }
 
@@ -95,14 +96,14 @@ class Settings
             if ($this->assetsFilesystem->fileExists('order_confirm.md')) {
                 $orderConfirmMessage = $this->assetsFilesystem->read('order_confirm.md');
             }
-        } catch (UnableToCheckFileExistence $e) {
+        } catch (UnableToCheckFileExistence|UnableToReadFile $e) {
             // TODO Log error
         }
         $data['order_confirm_message'] = $orderConfirmMessage;
 
         $data['edenred_client_id'] = $this->edenredClientId;
         $data['edenred_authorization_endpoint'] = $this->edenredAuthorizationEndpoint;
-        
+
         if ($request->query->has('format') && 'hash' === $request->query->get('format')) {
             return new JsonResponse(sha1(json_encode($data)));
         }
