@@ -110,6 +110,15 @@ const TaskTags = ({ task }) => {
 const TaskIconRight = ({ task, onRemove }) => {
 
   const { t } = useTranslation()
+
+  if (task.status === 'DONE') {
+    return (
+      <span className="task__icon task__icon--right">
+        <i className="fa fa-check"></i>
+      </span>
+    )
+  }
+
   if (task.isAssigned) {
     switch (task.status) {
     case 'TODO':
@@ -130,13 +139,6 @@ const TaskIconRight = ({ task, onRemove }) => {
       return (
         <span className="task__icon task__icon--right">
           <i className="fa fa-play"></i>
-        </span>
-      )
-
-    case 'DONE':
-      return (
-        <span className="task__icon task__icon--right">
-          <i className="fa fa-check"></i>
         </span>
       )
 
