@@ -8,7 +8,7 @@ import { Draggable } from "@hello-pangea/dnd"
 
 
 import { setCurrentTask, toggleTask, selectTask, selectTasksByIds } from '../redux/actions'
-import { selectSettings, selectStandaloneTasks, selectVisibleTaskIds } from '../redux/selectors'
+import { selectSettings, selectStandaloneTasks, selectVisibleTaskIds, selectLoadingTaskIds } from '../redux/selectors'
 import { selectSelectedDate, selectTasksWithColor } from '../../coopcycle-frontend-js/logistics/redux'
 
 import { addressAsText } from '../utils'
@@ -235,7 +235,7 @@ class Task extends React.Component {
       return <></>
     }
 
-    const { color, task, selected, isVisible, date, showWeightAndVolumeUnit } = this.props
+    const { color, task, selected, isVisible, isLoading, date, showWeightAndVolumeUnit } = this.props
 
     const classNames = [
       'no-select',
@@ -265,6 +265,7 @@ class Task extends React.Component {
       ...taskAttributes,
       style: {
         display: isVisible ? 'block' : 'none',
+        opacity: isLoading ? 0.5 : 1,
       },
       key: task['@id'],
       className: classNames.join(' '),
@@ -366,6 +367,7 @@ function mapStateToProps(state, ownProps) {
     color,
     date: selectSelectedDate(state),
     isVisible: _.includes(visibleTaskIds, task['@id']),
+    isLoading: selectLoadingTaskIds(state).includes(task['@id']),
     visibleTaskIds: visibleTaskIds,
     showWeightAndVolumeUnit: showWeightAndVolumeUnit
   }

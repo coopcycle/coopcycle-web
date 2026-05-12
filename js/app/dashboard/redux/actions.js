@@ -231,6 +231,7 @@ export function modifyTaskListRequestSuccess(taskList) {
 }
 
 export const setTaskListsLoading = createAction('SET_TASKLISTS_LOADING')
+export const setLoadingTaskIds = createAction('SET_LOADING_TASK_IDS')
 export const setTaskListVehicleRequest = createAction('SET_TASK_LIST_VEHICLE_REQUEST')
 export const setTaskListTrailerRequest = createAction('SET_TASK_LIST_TRAILER_REQUEST')
 
@@ -854,14 +855,16 @@ export function completeTasks(tasks) {
   return async function(dispatch, getState) {
 
     const { jwt } = getState()
+    const taskIds = tasks.map(t => t['@id'])
 
-    dispatch(createTaskRequest())
+    dispatch(setLoadingTaskIds(taskIds))
+    dispatch(setTaskListsLoading(true))
 
     try {
       const response = await createClient(dispatch).request({
         method: 'put',
         url: '/api/tasks/done',
-        data: { tasks: tasks.map(t => t['@id']) },
+        data: { tasks: taskIds },
         headers: {
           'Authorization': `Bearer ${jwt}`,
           'Accept': 'application/ld+json',
@@ -869,10 +872,12 @@ export function completeTasks(tasks) {
         }
       })
 
-      dispatch(createTaskSuccess())
       response.data.success.forEach(task => dispatch(updateTask(task)))
     } catch (error) {
       dispatch(startTaskFailure(error))
+    } finally {
+      dispatch(setLoadingTaskIds([]))
+      dispatch(setTaskListsLoading(false))
     }
   }
 }
