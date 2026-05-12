@@ -178,4 +178,33 @@ class ClientTest extends TestCase
 
         $this->assertEquals(1200, $this->client->getMaxAmount($order->reveal()));
     }
+
+    public function testGetBalanceWithEdenredPlus()
+    {
+        $order = $this->prophesize(Order::class);
+
+        $customer = new Customer();
+        $customer->setEdenredAccessToken('access_123');
+        $customer->setEdenredRefreshToken('refresh_123');
+
+        $this->edenredAuth->userInfo($customer)->willReturn(['username' => 'John']);
+
+        $order->getTotal()->willReturn(3000);
+        $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT)->willReturn(350);
+        $order->getAdjustmentsTotal(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)->willReturn(0);
+        $order->getCustomer()->willReturn($customer);
+
+        $this->mockHandler->append(
+            new Response(200, [], json_encode([
+                'data' => [
+                    [
+                        'product_class' => 'ETR2',
+                        'available_amount' => 3800,
+                    ]
+                ]
+            ]))
+        );
+
+        $this->assertEquals(3800, $this->client->getBalance($customer));
+    }
 }
