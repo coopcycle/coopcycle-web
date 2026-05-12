@@ -849,6 +849,34 @@ export function startTasks(tasks) {
   }
 }
 
+export function completeTasks(tasks) {
+
+  return async function(dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    try {
+      const response = await createClient(dispatch).request({
+        method: 'put',
+        url: '/api/tasks/done',
+        data: { tasks: tasks.map(t => t['@id']) },
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      })
+
+      dispatch(createTaskSuccess())
+      response.data.success.forEach(task => dispatch(updateTask(task)))
+    } catch (error) {
+      dispatch(startTaskFailure(error))
+    }
+  }
+}
+
 export function duplicateTask(task) {
 
   return function(dispatch, getState) {

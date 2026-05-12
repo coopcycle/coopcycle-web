@@ -466,6 +466,7 @@
         "ADMIN_NO_APPLICATIONS": "Aún no está en uso",
         "ADMIN_APPLIED_TO": "Aplicado a {{count}} elemento(s)",
         "ADMIN_DASHBOARD_START_TASKS_MULTI": "Iniciar {{count}} tarea(s)",
+        "ADMIN_DASHBOARD_COMPLETE_TASKS_MULTI": "Completar {{count}} tarea(s)",
         "TRANSPORTER_MESSAGE_TYPE_SCONTR": "Tarea importada del transportista",
         "TRANSPORTER_MESSAGE_TYPE_REPORT": "Informe del estado de la tarea",
         "TRANSPORTER_SITUATION_AAR": "En el muelle",

@@ -565,6 +565,7 @@
         "ADMIN_NO_APPLICATIONS": "Pas encore utilisé",
         "ADMIN_APPLIED_TO": "Appliqué à {{count}} élément(s)",
         "ADMIN_DASHBOARD_START_TASKS_MULTI": "Démarrer {{count}} tâche(s)",
+        "ADMIN_DASHBOARD_COMPLETE_TASKS_MULTI": "Terminer {{count}} tâche(s)",
         "TRANSPORTER_MESSAGE_TYPE_SCONTR": "Tâche importée depuis le transporteur",
         "TRANSPORTER_MESSAGE_TYPE_REPORT": "Rapport de l'état de la tâche",
         "TRANSPORTER_SITUATION_AAR": "À quai",

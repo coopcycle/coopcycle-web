@@ -10,6 +10,7 @@ import moment from 'moment'
 
 import {
   cancelTasks,
+  completeTasks,
   createTaskList,
   putTaskListItems,
   moveTasksToNextDay,
@@ -61,6 +62,7 @@ export const CREATE_DELIVERY = 'CREATE_DELIVERY'
 export const CREATE_TOUR = 'CREATE_TOUR'
 export const REPORT_INCIDENT = 'REPORT_INCIDENT'
 export const TAG_MULTI = 'TAG_MULTI'
+export const COMPLETE_TASKS_MULTI = 'COMPLETE_TASKS_MULTI'
 
 const BulkTagsEditor = ({ tags, selectedTasks }) => {
 
@@ -189,6 +191,7 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
     if (isMultiple) {
 
       actions.push(START_TASKS_MULTI)
+      actions.push(COMPLETE_TASKS_MULTI)
 
       if (tasksToUnassign.length > 0) {
         actions.push(UNASSIGN_MULTI)
@@ -238,6 +241,7 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
 
       actions.push(CANCEL_MULTI)
       actions.push(START_TASKS_MULTI)
+      actions.push(COMPLETE_TASKS_MULTI)
       actions.push(RESCHEDULE)
       actions.push(REPORT_INCIDENT)
 
@@ -421,6 +425,12 @@ const DynamicMenu = () => {
         onClick={() => dispatch(startTasks(selectedTasks))}
       >
         {t('ADMIN_DASHBOARD_START_TASKS_MULTI', {count: selectedTasks.length})}
+      </Item>
+      <Item
+        hidden={!actions.includes(COMPLETE_TASKS_MULTI)}
+        onClick={() => dispatch(completeTasks(selectedTasks))}
+      >
+        {t('ADMIN_DASHBOARD_COMPLETE_TASKS_MULTI', {count: selectedTasks.length})}
       </Item>
       { !noActionAvailable && <Separator /> }
       <Item
