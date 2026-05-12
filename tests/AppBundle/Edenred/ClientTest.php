@@ -70,7 +70,6 @@ class ClientTest extends TestCase
             new Response(200, [], json_encode([
                 'data' => [
                     [
-                        'product_class' => 'ETR',
                         'available_amount' => 3800,
                     ]
                 ]
@@ -103,7 +102,6 @@ class ClientTest extends TestCase
             new Response(200, [], json_encode([
                 'data' => [
                     [
-                        'product_class' => 'ETR',
                         'available_amount' => 3800,
                     ]
                 ]
@@ -136,7 +134,6 @@ class ClientTest extends TestCase
             new Response(200, [], json_encode([
                 'data' => [
                     [
-                        'product_class' => 'ETR',
                         'available_amount' => 3800,
                     ]
                 ]
@@ -169,8 +166,7 @@ class ClientTest extends TestCase
             new Response(200, [], json_encode([
                 'data' => [
                     [
-                        'product_class' => 'ETR',
-                        'available_amount' => 1200
+                        'available_amount' => 1200,
                     ]
                 ]
             ]))
@@ -179,28 +175,28 @@ class ClientTest extends TestCase
         $this->assertEquals(1200, $this->client->getMaxAmount($order->reveal()));
     }
 
-    public function testGetBalanceWithEdenredPlus()
+    public function testGetBalanceSumsAllEntriesWithAvailableAmount()
     {
-        $order = $this->prophesize(Order::class);
-
         $customer = new Customer();
         $customer->setEdenredAccessToken('access_123');
         $customer->setEdenredRefreshToken('refresh_123');
 
         $this->edenredAuth->userInfo($customer)->willReturn(['username' => 'John']);
 
-        $order->getTotal()->willReturn(3000);
-        $order->getAdjustmentsTotal(AdjustmentInterface::DELIVERY_ADJUSTMENT)->willReturn(350);
-        $order->getAdjustmentsTotal(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)->willReturn(0);
-        $order->getCustomer()->willReturn($customer);
-
+        // Two entries with available_amount (product_class is irrelevant),
+        // one entry without available_amount (should be ignored).
         $this->mockHandler->append(
             new Response(200, [], json_encode([
                 'data' => [
                     [
-                        'product_class' => 'ETR2',
-                        'available_amount' => 3800,
-                    ]
+                        'available_amount' => 2000,
+                    ],
+                    [
+                        'available_amount' => 1800,
+                    ],
+                    [
+                        'some_other_field' => 'ignored',
+                    ],
                 ]
             ]))
         );
