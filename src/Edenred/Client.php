@@ -73,7 +73,8 @@ class Client
             $data = json_decode((string) $response->getBody(), true);
 
             foreach ($data['data'] as $balance) {
-                if ($balance['product_class'] === 'ETR') {
+                // ETR2 is for Edenred Plus
+                if ($balance['product_class'] === 'ETR' || $balance['product_class'] === 'ETR2') {
                     return $balance['available_amount'];
                 }
             }
