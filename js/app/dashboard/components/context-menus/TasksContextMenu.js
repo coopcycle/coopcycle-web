@@ -352,6 +352,7 @@ const DynamicMenu = () => {
 
   const selectedTask = selectedTasks.length > 0 ? selectedTasks[0] : undefined
   const noActionAvailable = selectedTasks.length > 0 && actions.length === 0
+  const allSelectedTasksDone = selectedTasks.length > 0 && selectedTasks.every(t => t.status === 'DONE')
 
   return (
     <Menu id="task-contextmenu">
@@ -428,6 +429,7 @@ const DynamicMenu = () => {
       </Item>
       <Item
         hidden={!actions.includes(COMPLETE_TASKS_MULTI)}
+        disabled={allSelectedTasksDone}
         onClick={() => dispatch(completeTasks(selectedTasks))}
       >
         {t('ADMIN_DASHBOARD_COMPLETE_TASKS_MULTI', {count: selectedTasks.length})}
