@@ -2566,6 +2566,7 @@ class AdminController extends AbstractController
             'shop_types' => $shopTypes,
             'delivery_forms' => $deliveryForms,
             'shop_collections' => $shopCollections,
+            'edenred_enabled' => $this->getParameter('edenred_enabled'),
         ]));
     }
 

@@ -44,7 +44,7 @@ const swiperOpts = {
   observeParents: true,
 }
 
-const ComponentCascader = ({ placeholder, cuisines, customCollections, onChange, defaultValue }) => {
+const ComponentCascader = ({ placeholder, cuisines, customCollections, edenredEnabled, onChange, defaultValue }) => {
 
   const { t } = useTranslation();
 
@@ -76,10 +76,10 @@ const ComponentCascader = ({ placeholder, cuisines, customCollections, onChange,
         label: 'Exclusive',
         value: 'exclusive'
       },
-      {
+      ...(edenredEnabled ? [{
         label: 'Edenred',
         value: 'edenred'
-      },
+      }] : []),
       {
         label: 'Cuisine',
         value: 'cuisine',
@@ -91,7 +91,7 @@ const ComponentCascader = ({ placeholder, cuisines, customCollections, onChange,
       ...otherOptions
     ]
 
-  }, [customCollections])
+  }, [customCollections, edenredEnabled])
 
   return (
     <Cascader
@@ -212,6 +212,7 @@ export default class ShopCollection {
         defaultValue={ this._getDefaultValue()  }
         cuisines={this.config.cuisines}
         customCollections={this.config.customCollections}
+        edenredEnabled={this.config.edenredEnabled}
         placeholder={this.api.i18n.t('select_value')}
         onChange={(value) => {
 

@@ -19,7 +19,7 @@ const sanitizeBlocks = (blocks) => blocks.filter(block => block.type !== 'paragr
 const updatePreview = _.debounce((data) => channel.postMessage({ ...data, blocks: sanitizeBlocks(data.blocks) }), 500)
 
 // https://dev.to/sumankalia/how-to-integrate-editorjs-in-reactjs-2l6l
-const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryForms, shopCollections, t }, ref) => {
+const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryForms, shopCollections, edenredEnabled, t }, ref) => {
 
   useEffect(() => {
 
@@ -35,6 +35,7 @@ const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, delive
               cuisines,
               shopTypes,
               customCollections: shopCollections,
+              edenredEnabled,
             }
           },
           banner: Banner,
@@ -81,7 +82,7 @@ const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, delive
   )
 })
 
-export default function({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryForms, shopCollections }) {
+export default function({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryForms, shopCollections, edenredEnabled }) {
 
   const ref = useRef();
   const { t } = useTranslation();
@@ -110,6 +111,7 @@ export default function({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryF
         uploadEndpoint={uploadEndpoint}
         deliveryForms={deliveryForms}
         shopCollections={shopCollections}
+        edenredEnabled={edenredEnabled}
         t={t} />
       <Flex justify="flex-end" gap="small">
         <Button icon={<EyeOutlined />} onClick={() => {
