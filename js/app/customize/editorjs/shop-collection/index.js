@@ -81,6 +81,10 @@ const ComponentCascader = ({ placeholder, cuisines, customCollections, edenredEn
         value: 'edenred'
       }] : []),
       {
+        label: 'Zero Waste',
+        value: 'zerowaste'
+      },
+      {
         label: 'Cuisine',
         value: 'cuisine',
         children: cuisines.map(({ label, value }) => ({
