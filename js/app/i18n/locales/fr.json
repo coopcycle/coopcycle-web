@@ -798,6 +798,7 @@
         },
         "HOMEPAGE_EDITOR": {
             "placeholder": "Tapez \"/\" pour insérer un bloc",
+            "published": "Publié",
             "messages": {
                 "toolNames": {
                     "Shop Collection": "Collection de boutiques",

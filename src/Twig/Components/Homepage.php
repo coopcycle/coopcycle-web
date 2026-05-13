@@ -11,6 +11,7 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\UI\HomepageBlock;
 use AppBundle\Form\DeliveryEmbedType;
+use AppBundle\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -30,7 +31,8 @@ class Homepage
         private LocalBusinessRepository $shopRepository,
         private IriConverterInterface $iriConverter,
         private TranslatorInterface $translator,
-        private AuthorizationCheckerInterface $authorizationChecker)
+        private AuthorizationCheckerInterface $authorizationChecker,
+        private SettingsManager $settingsManager)
     {}
 
     public function getZeroWasteCount(): int
@@ -137,6 +139,12 @@ class Homepage
             if (json_validate($json)) {
                 return json_decode($json, true);
             }
+        }
+
+        $published = $this->settingsManager->getBoolean('homepage_published');
+
+        if (!$published) {
+            return $this->getDefaultBlocks();
         }
 
         $blocks = $this->entityManager->getRepository(HomepageBlock::class)->findAll();

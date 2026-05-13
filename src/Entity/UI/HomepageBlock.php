@@ -7,7 +7,11 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Put;
 use AppBundle\Api\Dto\HomepageBlocks;
+use AppBundle\Api\Dto\HomepageInput;
+use AppBundle\Api\Dto\HomepageOutput;
 use AppBundle\Api\State\HomepageBlockProcessor;
+use AppBundle\Api\State\HomepagePublishedProcessor;
+use AppBundle\Api\State\HomepagePublishedProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Gedmo\Timestampable\Traits\Timestampable;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -21,6 +25,19 @@ use Symfony\Component\Serializer\Annotation\Groups;
             uriTemplate: '/ui/homepage/blocks',
             processor: HomepageBlockProcessor::class,
             input: HomepageBlocks::class,
+            security: 'is_granted("ROLE_ADMIN")'
+        ),
+        new Get(
+            uriTemplate: '/ui/homepage',
+            output: HomepageOutput::class,
+            provider: HomepagePublishedProvider::class,
+            security: 'is_granted("ROLE_ADMIN")'
+        ),
+        new Put(
+            uriTemplate: '/ui/homepage',
+            processor: HomepagePublishedProcessor::class,
+            input: HomepageInput::class,
+            output: HomepageOutput::class,
             security: 'is_granted("ROLE_ADMIN")'
         ),
     ],

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, forwardRef, useState } from 'react'
-import { Button, Flex } from 'antd';
+import { Button, Flex, Switch, Typography } from 'antd';
 import { EyeOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import _ from 'lodash';
@@ -88,8 +88,18 @@ export default function({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryF
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false)
   const [isPreviewEnabled, setIsPreviewEnabled] = useState(false)
+  const [isPublished, setIsPublished] = useState(false)
+  const [isPublishLoading, setIsPublishLoading] = useState(false)
 
   const httpClient = new window._auth.httpClient();
+
+  useEffect(() => {
+    httpClient.get('/api/ui/homepage').then(({ response }) => {
+      if (response) {
+        setIsPublished(response.published)
+      }
+    })
+  }, [])
 
   useEffect(() => {
     async function doUpdatePreview() {
@@ -113,7 +123,19 @@ export default function({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryF
         shopCollections={shopCollections}
         edenredEnabled={edenredEnabled}
         t={t} />
-      <Flex justify="flex-end" gap="small">
+      <Flex justify="flex-end" align="center" gap="small">
+        <Typography.Text>{ t('HOMEPAGE_EDITOR.published') }</Typography.Text>
+        <Switch
+          checked={isPublished}
+          loading={isPublishLoading}
+          onChange={async (checked) => {
+            setIsPublishLoading(true)
+            const { response } = await httpClient.put('/api/ui/homepage', { published: checked })
+            if (response) {
+              setIsPublished(response.published)
+            }
+            setIsPublishLoading(false)
+          }} />
         <Button icon={<EyeOutlined />} onClick={() => {
           setIsPreviewEnabled(!isPreviewEnabled)
         }}>{ t(isPreviewEnabled ? 'HOMEPAGE_EDITOR.disable_preview' : 'HOMEPAGE_EDITOR.enable_preview') }</Button>
