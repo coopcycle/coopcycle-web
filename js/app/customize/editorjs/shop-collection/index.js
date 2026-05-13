@@ -77,6 +77,10 @@ const ComponentCascader = ({ placeholder, cuisines, customCollections, onChange,
         value: 'exclusive'
       },
       {
+        label: 'Edenred',
+        value: 'edenred'
+      },
+      {
         label: 'Cuisine',
         value: 'cuisine',
         children: cuisines.map(({ label, value }) => ({

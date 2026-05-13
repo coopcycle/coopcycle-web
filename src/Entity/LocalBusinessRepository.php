@@ -262,6 +262,17 @@ class LocalBusinessRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    public function findEdenredEnabled()
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->andWhere('r.edenredEnabled = :edenredEnabled')
+            ->setParameter('edenredEnabled', true);
+
+        $this->addBusinessContextClause($qb, 'r');
+
+        return $qb->getQuery()->getResult();
+    }
+
     public function findLatest($limit = self::LATESTS_SHOPS_LIMIT)
     {
         $qb = $this->createQueryBuilder('r');
