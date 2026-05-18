@@ -19,6 +19,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class RdcWebhookController extends AbstractController
 {
+    private const WEBHOOK_MEMBER_HEADER = 'X-webhook-Source';
     private const WEBHOOK_SECRET_HEADER = 'X-webhook-Secret';
     private const IDEMPOTENCY_TTL = 21600;
     private const CACHE_KEY_PREFIX = 'rdc_webhook_payload:';
@@ -40,6 +41,10 @@ class RdcWebhookController extends AbstractController
         $payloadHash = hash('sha256', $request->getContent());
         if ($this->isDuplicatePayload($payloadHash)) {
             return new JsonResponse(['status' => 'duplicate', 'hash' => $payloadHash], Response::HTTP_CONFLICT);
+        }
+
+        if (!$this->isValidBOLMember($request)) {
+            return new JsonResponse(['error' => 'Invalid BOL member'], Response::HTTP_UNAUTHORIZED);
         }
 
         $payload = $this->parsePayload($request);
@@ -67,7 +72,7 @@ class RdcWebhookController extends AbstractController
             return $this->acceptedResponse($loUri, $eventType, $metadata['resourceType'], $loRevision);
         }
 
-        $store = $this->storeResolver->resolveStore();
+        $store = $this->storeResolver->resolveStore($request->headers->get(self::WEBHOOK_MEMBER_HEADER));
         if (is_null($store)) {
             $this->logger->error('Store not found for RDC servicerequest', ['contract_ref' => $dto->getContractRef()]);
             return new JsonResponse(['error' => 'Store not found'], Response::HTTP_BAD_REQUEST);
@@ -145,4 +150,12 @@ class RdcWebhookController extends AbstractController
         }
         return new JsonResponse($response, Response::HTTP_ACCEPTED);
     }
+
+    private function isValidBOLMember(Request $request): bool
+    {
+        $members = array_keys($this->getParameter('rdc_connections'));
+        $providedMember = $request->headers->get(self::WEBHOOK_MEMBER_HEADER);
+        return in_array($providedMember, $members, true);
+    }
+
 }
