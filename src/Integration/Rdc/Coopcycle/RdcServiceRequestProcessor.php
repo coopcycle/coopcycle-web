@@ -46,7 +46,11 @@ class RdcServiceRequestProcessor
                 $apiRequest,
                 $apiRequest->getBarcode(),
                 $apiRequest->getContractRef(),
-                $originNodeUri
+                $originNodeUri,
+                $this->mapper->mapPickupAddress($apiRequest),
+                $this->mapper->mapDropoffAddress($apiRequest),
+                $this->mapper->mapTimeSlot($apiRequest->getPickupTimeSlot()),
+                $this->mapper->mapTimeSlot($apiRequest->getDropoffTimeSlot())
             );
 
             $pickupTaskId = (string) $delivery->getPickup()->getId();
