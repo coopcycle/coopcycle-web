@@ -66,7 +66,7 @@ trait RdcStatusUpdateHandlerTrait
         }
 
         $address = $task->getAddress();
-        $location = $this->buildLocationUpdate($address, $config['actionType'], $actionTime);
+        $location = $this->buildLocationUpdate($address, $config['actionType'], $actionTime, $task);
 
         if ($message->coopcycleStatus === Task::STATUS_DOING) {
             return;
@@ -173,8 +173,10 @@ trait RdcStatusUpdateHandlerTrait
         return sprintf('%s.transport', $taskId);
     }
 
-    private function buildLocationUpdate(Address $address, string $actionType, \DateTimeImmutable $actionTime): array
+    private function buildLocationUpdate(Address $address, string $actionType, \DateTimeImmutable $actionTime, ?Task $task = null): array
     {
+        $isDropoff = $task !== null && $task->getType() === Task::TYPE_DROPOFF;
+
         return [
             'address' => [
                 'addressCountry' => ['countryCode' => 'FR', 'countryName' => 'France'],
@@ -184,9 +186,11 @@ trait RdcStatusUpdateHandlerTrait
             ],
             'locationName' => '',
             'actualStartDateTime' => $actionTime->format(\DateTimeInterface::ATOM),
-            'actualEndDateTime' => $actionTime->format(\DateTimeInterface::ATOM),
+            'actualEndDateTime' => $isDropoff
+                ? $actionTime->modify('+5 minutes')->format(\DateTimeInterface::ATOM)
+                : $actionTime->format(\DateTimeInterface::ATOM),
             'action' => [
-                'actionName' => $actionType === 'UNLOADING' ? 'Déchargement' : 'Chargement',
+                'actionName' => $isDropoff ? 'Déchargement' : 'Chargement',
                 'actionState' => ActionState::ACTUAL->value,
                 'actionType' => 'HANDLING',
                 'actionSubtype' => $actionType,

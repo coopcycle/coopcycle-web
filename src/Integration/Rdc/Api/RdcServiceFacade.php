@@ -39,34 +39,16 @@ class RdcServiceFacade
         return $this->getClient();
     }
 
-    /**
-     * Creates both a Service and linked Activity in one operation.
-     */
-    public function createServiceWithActivity(
-        string $serviceId,
-        array $pickupAddress,
-        array $dropoffAddress,
-        array $pickupTimeSlot,
-        array $dropoffTimeSlot,
-        ?RdcApiServiceRequest $apiRequest = null,
-        ?string $barcode = null,
-        ?string $contractRef = null,
-        ?string $serviceRequestUri = null,
-    ): array
-    {
-        $serviceUri = $this->createService($serviceId, $apiRequest, $barcode, $contractRef, $serviceRequestUri);
-        $activityId = $this->createActivity($serviceId, $serviceUri, $pickupAddress, $dropoffAddress, $pickupTimeSlot, $dropoffTimeSlot);
-        $this->linkActivityToService($serviceId, $activityId);
-
-        return [$serviceId, $activityId];
-    }
-
     public function createService(
         string $serviceId,
         ?RdcApiServiceRequest $apiRequest = null,
         ?string $barcode = null,
         ?string $contractRef = null,
         ?string $serviceRequestUri = null,
+        array $pickupAddress = [],
+        array $dropoffAddress = [],
+        array $pickupTimeSlot = [],
+        array $dropoffTimeSlot = [],
     ): string
     {
         $this->logger->info('Creating RDC service', [
@@ -75,7 +57,17 @@ class RdcServiceFacade
             'contract_ref' => $contractRef,
         ]);
 
-        $serviceData = $this->buildServiceData($serviceId, $apiRequest, $barcode, $contractRef, $serviceRequestUri);
+        $serviceData = $this->buildServiceData(
+            $serviceId,
+            $apiRequest,
+            $barcode,
+            $contractRef,
+            $serviceRequestUri,
+            $pickupAddress,
+            $dropoffAddress,
+            $pickupTimeSlot,
+            $dropoffTimeSlot
+        );
 
         $response = $this->getClient()->post(
             '/services',
@@ -114,6 +106,10 @@ class RdcServiceFacade
         ?string $barcode = null,
         ?string $contractRef = null,
         ?string $serviceRequestUri = null,
+        array $pickupAddress = [],
+        array $dropoffAddress = [],
+        array $pickupTimeSlot = [],
+        array $dropoffTimeSlot = [],
     ): array
     {
         $serviceData = [
@@ -132,6 +128,14 @@ class RdcServiceFacade
 
         if ($serviceRequestUri !== null) {
             $serviceData['serviceRequests'] = [['uri' => $serviceRequestUri]];
+        }
+
+        if ($pickupAddress !== []) {
+            $serviceData['startLocation'] = $this->buildServiceLocation($pickupAddress, $pickupTimeSlot, 'LOADING');
+        }
+
+        if ($dropoffAddress !== []) {
+            $serviceData['endLocation'] = $this->buildServiceLocation($dropoffAddress, $dropoffTimeSlot, 'UNLOADING');
         }
 
         return $serviceData;
@@ -220,6 +224,16 @@ class RdcServiceFacade
 
     public function buildActivityLocation(array $address, array $timeSlot, string $actionType): array
     {
+        return $this->buildLocation($address, $timeSlot, $actionType, true);
+    }
+
+    public function buildServiceLocation(array $address, array $timeSlot, string $actionType): array
+    {
+        return $this->buildLocation($address, $timeSlot, $actionType, false);
+    }
+
+    private function buildLocation(array $address, array $timeSlot, string $actionType): array
+    {
         $location = [
             'location' => [
                 'address' => [
@@ -236,24 +250,20 @@ class RdcServiceFacade
         ];
 
         if ($timeSlot !== []) {
-            $location['plannedStartTimeRange'] = [
-                'earliestDateTime' => $timeSlot['start']->format('Y-m-d\TH:i:s\Z'),
-            ];
-            $location['plannedEndTimeRange'] = [
-                'latestDateTime' => $timeSlot['end']->format('Y-m-d\TH:i:s\Z'),
-            ];
+            $location['plannedStartTimeRange'] = ['earliestDateTime' => $timeSlot['start']->format('Y-m-d\TH:i:s\Z')];
+            $location['plannedEndTimeRange'] = ['latestDateTime' => $timeSlot['end']->format('Y-m-d\TH:i:s\Z')];
         }
 
         $actionName = $actionType === 'LOADING' ? 'Chargement' : 'Déchargement';
-        $location['actions'] = [
-            [
-                'actionName' => $actionName,
-                'actionState' => ActionState::SCHEDULED->value,
-                'actionType' => 'HANDLING',
-                'actionSubtype' => $actionType,
-                'sequenceNumber' => 1,
-            ],
+        $action = [
+            'actionName' => $actionName,
+            'actionState' => ActionState::SCHEDULED->value,
+            'actionType' => 'HANDLING',
+            'actionSubtype' => $actionType,
+            'sequenceNumber' => 1,
         ];
+
+        $location['actions'] = [$action];
 
         return $location;
     }
@@ -379,7 +389,7 @@ class RdcServiceFacade
 
         $connectionId = $this->connectionId;
 
-        if (is_null($connectionId) || $connectionId === '') {
+        if (empty($connectionId)) {
             $ids = $this->rdcClientFactory->getConnectionIds();
             if ($ids !== []) {
                 $connectionId = $ids[0];
