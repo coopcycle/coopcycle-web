@@ -204,7 +204,7 @@ const MapProvider = (props) => {
       onPickupClusterClick: (a) => {
 
         const childMarkers = a.layer.getAllChildMarkers()
-        const tasks = childMarkers.map(m => m.options.task)
+        const tasks = childMarkers.map(m => m.options.task).filter(Boolean)
 
         const el = document.createElement('div')
 
