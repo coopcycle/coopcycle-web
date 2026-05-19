@@ -486,11 +486,14 @@ export default class MapProxy {
   }
 
   _warehouseIconFor(taskCount) {
-    const color = taskCount > 0 ? '#27AE60' : '#95A5A6'
+    const isEmpty = taskCount === 0
+    const color = isEmpty ? '#95A5A6' : '#27AE60'
     return L.BeautifyIcon.icon({
       icon: 'home',
       iconShape: 'circle',
-      borderColor: color,
+      borderColor: isEmpty ? color : '#52D68A',
+      borderWidth: isEmpty ? 1 : 3,
+      borderStyle: 'solid',
       textColor: 'white',
       backgroundColor: color,
       iconSize: [30, 30],
