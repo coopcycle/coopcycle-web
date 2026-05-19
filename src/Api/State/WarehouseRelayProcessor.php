@@ -1,8 +1,10 @@
 <?php
 
-namespace AppBundle\Action\Warehouse;
+namespace AppBundle\Api\State;
 
-use ApiPlatform\Api\IriConverterInterface;
+use ApiPlatform\Doctrine\Orm\State\ItemProvider;
+use ApiPlatform\Metadata\Operation;
+use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Api\Dto\RelayInput;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\Warehouse;
@@ -11,29 +13,30 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class Relay
+class WarehouseRelayProcessor implements ProcessorInterface
 {
     public function __construct(
-        private readonly IriConverterInterface $iriConverter,
+        private readonly ItemProvider $provider,
         private readonly EntityManagerInterface $entityManager,
         private readonly NormalizerInterface $normalizer,
     ) {}
 
-    public function __invoke(Warehouse $data, RelayInput $input): JsonResponse
+    /**
+     * @param RelayInput $data
+     */
+    public function process($data, Operation $operation, array $uriVariables = [], array $context = []): JsonResponse
     {
-        $tasks = array_map(
-            fn($iri) => $this->iriConverter->getResourceFromIri($iri),
-            $input->tasks
-        );
+        /** @var Warehouse */
+        $warehouse = $this->provider->provide($operation, $uriVariables, $context);
 
-        $pickupTask  = current(array_filter($tasks, fn($t) => $t instanceof Task && $t->isPickup()));
-        $dropoffTask = current(array_filter($tasks, fn($t) => $t instanceof Task && $t->isDropoff()));
+        $pickupTask  = current(array_filter($data->tasks, fn(Task $t) => $t->isPickup()));
+        $dropoffTask = current(array_filter($data->tasks, fn(Task $t) => $t->isDropoff()));
 
         if (!$pickupTask || !$dropoffTask) {
             throw new BadRequestHttpException('tasks must contain exactly one PICKUP and one DROPOFF');
         }
 
-        $warehouseAddress = $data->getAddress();
+        $warehouseAddress = $warehouse->getAddress();
 
         // Drop at hub: copies pickup's time window
         $hubDropoff = new Task();
