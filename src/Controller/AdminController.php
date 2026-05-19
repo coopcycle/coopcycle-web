@@ -2979,8 +2979,11 @@ class AdminController extends AbstractController
         TranslatorInterface $translator,
         Request $request)
     {
+        $componentNames = ['zerowaste' => 'ZeroWaste'];
+        $componentName = $componentNames[$component] ?? ucfirst($component);
+
         return $this->render('admin/shop_collection_preview.html.twig', [
-            'component' => 'ShopCollection:'.ucfirst($component),
+            'component' => 'ShopCollection:'.$componentName,
             'props' => $request->query->all(),
         ]);
     }
