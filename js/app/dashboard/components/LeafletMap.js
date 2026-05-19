@@ -251,10 +251,10 @@ class LeafletMap extends Component {
         useAvatarColors={ this.props.useAvatarColors }
       >
         <CourierMapLayer />
+        <WarehouseMapLayer />
         <TaskMapLayer />
         <PolylineMapLayer />
         <ClustersMapToggle />
-        <WarehouseMapLayer />
       </MapProvider>
     )
   }

@@ -62,6 +62,7 @@ export default class MapProxy {
     this.courierLayerGroup.addTo(this.map)
 
     this.warehouseMarkers = new Map()
+    this.warehouseAddressIds = new Set()
     this.warehouseLayerGroup = new L.LayerGroup()
     this.warehouseLayerGroup.addTo(this.map)
 
@@ -241,7 +242,7 @@ export default class MapProxy {
       this.onTaskMouseDown(task)
     })
 
-    if (task.type === 'PICKUP' && isRestaurantAddress) {
+    if ((task.type === 'PICKUP' && isRestaurantAddress) || this.warehouseAddressIds.has(task.address['@id'])) {
       this.pickupClusterGroup.addLayer(marker)
     } else {
       this.tasksLayerGroup.addLayer(marker)
@@ -475,6 +476,7 @@ export default class MapProxy {
   addWarehouses(warehouses) {
     this.warehouseLayerGroup.clearLayers()
     this.warehouseMarkers.clear()
+    this.warehouseAddressIds.clear()
 
     warehouses.forEach(warehouse => {
       if (!warehouse.address?.geo) return
@@ -493,6 +495,18 @@ export default class MapProxy {
       marker.bindTooltip(warehouse.name, { direction: 'top', offset: [0, -10] })
       this.warehouseLayerGroup.addLayer(marker)
       this.warehouseMarkers.set(warehouse['@id'], marker)
+      this.warehouseAddressIds.add(warehouse.address['@id'])
+    })
+
+    // Rebalance any task markers already placed before warehouses were loaded
+    this.taskMarkers.forEach((marker) => {
+      const task = marker.options.task
+      if (!task) return
+      if (this.warehouseAddressIds.has(task.address['@id'])) {
+        this.tasksLayerGroup.removeLayer(marker)
+        this.clusterGroup.removeLayer(marker)
+        this.pickupClusterGroup.addLayer(marker)
+      }
     })
   }
 }
