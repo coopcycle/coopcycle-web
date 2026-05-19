@@ -1595,6 +1595,9 @@ export function sendToWarehouse(tasks, warehouse) {
       .then((response) => {
         dispatch(updateTask(response.data.hubDropoff))
         dispatch(updateTask(response.data.hubPickup))
+        // The backend updated dropoff.previous → hubPickup. Mirror that in the store
+        // so groupLinkedTasks can colour all four tasks consistently right away.
+        dispatch(updateTask({ ...dropoff, previous: response.data.hubPickup['@id'] }))
         dispatch(closeSendToWarehouseModal())
       })
       .catch(() => {
