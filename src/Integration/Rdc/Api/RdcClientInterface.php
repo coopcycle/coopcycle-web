@@ -25,9 +25,9 @@ interface RdcClientInterface
     public function patch(string $path, array $data, array $headers = []): ResponseInterface;
 
     /**
-     * Perform a POST request to a remote URL with optional token override.
+     * Perform a POST request to a remote URL.
      */
-    public function postRemote(string $url, array $data, ?string $tokenOverride = null): ResponseInterface;
+    public function postRemote(string $url, array $data): ResponseInterface;
 
     public function getBaseUrl(): string;
 }

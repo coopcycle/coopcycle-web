@@ -12,6 +12,7 @@ class RdcClient implements RdcClientInterface
     private const RETRY_DELAY_MS = 1000;
 
     private ?string $traceparent = null;
+    private ?TokenManagerInterface $remoteTokenManager = null;
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
@@ -36,14 +37,44 @@ class RdcClient implements RdcClientInterface
         return $this->request('PATCH', $path, [], $data, $headers);
     }
 
-    public function postRemote(string $url, array $data, ?string $tokenOverride = null): \Symfony\Contracts\HttpClient\ResponseInterface
+    public function postRemote(string $url, array $data): \Symfony\Contracts\HttpClient\ResponseInterface
     {
-        return $this->requestRemote('POST', $url, $data, $tokenOverride);
+        return $this->requestRemote('POST', $url, $data);
     }
 
     public function getBaseUrl(): string
     {
         return $this->config->getApiBaseUrl();
+    }
+
+    private function getRemoteTokenManager(): TokenManagerInterface
+    {
+        if (is_null($this->remoteTokenManager)) {
+            if (
+                is_null($this->config->remoteKeycloakRealm) ||
+                is_null($this->config->remoteKeycloakUsername) ||
+                is_null($this->config->remoteKeycloakPassword) ||
+                is_null($this->config->remoteKeycloakClientId) ||
+                is_null($this->config->remoteKeycloakClientSecret) ||
+                is_null($this->config->remoteMemberProvider)
+            ) {
+                throw new \RuntimeException('Remote credentials not configured for notifyRemote');
+            }
+
+            $this->remoteTokenManager = new TokenManager(
+                $this->httpClient,
+                $this->logger,
+                new KeycloakTokenConfig(
+                    keycloakBaseUrl: $this->config->keycloakBaseUrl,
+                    keycloakRealm: $this->config->remoteKeycloakRealm,
+                    keycloakClientId: $this->config->remoteKeycloakClientId,
+                    keycloakClientSecret: $this->config->remoteKeycloakClientSecret,
+                    keycloakUsername: $this->config->remoteKeycloakUsername,
+                    keycloakPassword: $this->config->remoteKeycloakPassword,
+                ),
+            );
+        }
+        return $this->remoteTokenManager;
     }
 
     private function request(
@@ -63,10 +94,9 @@ class RdcClient implements RdcClientInterface
         string $method,
         string $url,
         array $body,
-        ?string $tokenOverride = null,
     ): \Symfony\Contracts\HttpClient\ResponseInterface {
         return $this->executeWithRetry(
-            fn () => $this->doRequestRemote($method, $url, $body, $tokenOverride),
+            fn () => $this->doRequestRemote($method, $url, $body),
             [ClientException::class, \Symfony\Component\HttpClient\Exception\ServerException::class],
         );
     }
@@ -125,7 +155,6 @@ class RdcClient implements RdcClientInterface
         string $method,
         string $url,
         array $body,
-        ?string $tokenOverride = null,
     ): \Symfony\Contracts\HttpClient\ResponseInterface {
         $headers = [
             'traceparent' => $this->getTraceparent(),
@@ -133,13 +162,10 @@ class RdcClient implements RdcClientInterface
             'Accept' => 'application/json',
         ];
 
-        // Only add Authorization header if tokenOverride is not empty string
-        // Empty string signals "no auth" for testing with mock servers
-        if ($tokenOverride !== '') {
-            $token = $tokenOverride ?? $this->tokenManager->getValidToken();
-            $headers['Authorization'] = sprintf('Bearer %s', $token);
-            $headers['X-BOL-Member-Identifier'] = sprintf('BOL.MEMBER.%s', $this->config->memberProvider);
-        }
+        $tokenManager = $this->getRemoteTokenManager();
+        $token = $tokenManager->getValidToken();
+        $headers['Authorization'] = sprintf('Bearer %s', $token);
+        $headers['X-BOL-Member-Identifier'] = sprintf('BOL.MEMBER.%s', $this->config->remoteMemberProvider);
 
         $options = [
             'headers' => $headers,

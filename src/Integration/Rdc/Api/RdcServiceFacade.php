@@ -348,6 +348,10 @@ class RdcServiceFacade
             ],
         ];
 
+        $operations = array_values(array_filter($operations, function ($operation) {
+            return !empty($operation['value']);
+        }));
+
         $changeRequest = [
             'logisticsObjectRevision' => $loRevision,
             'operations' => $operations,
