@@ -38,10 +38,17 @@ class WarehouseRelayProcessor implements ProcessorInterface
 
         $warehouseAddress = $warehouse->getAddress();
 
-        // Both hub tasks share the time window between pickup end and dropoff start,
-        // so they sort visually between the original tasks.
-        $hubWindowAfter  = $pickupTask->getDoneBefore();
-        $hubWindowBefore = $dropoffTask->getDoneAfter();
+        // Hub tasks share a time window that places them visually between the originals.
+        // When there is a genuine gap between pickup end and dropoff start, use that gap.
+        // When the windows overlap or are equal, fall back to the pickup's window; the
+        // previous-chain and delivery_position then handle display ordering.
+        if ($pickupTask->getDoneBefore() < $dropoffTask->getDoneAfter()) {
+            $hubWindowAfter  = $pickupTask->getDoneBefore();
+            $hubWindowBefore = $dropoffTask->getDoneAfter();
+        } else {
+            $hubWindowAfter  = $pickupTask->getDoneAfter();
+            $hubWindowBefore = $pickupTask->getDoneBefore();
+        }
 
         // Drop at hub
         $hubDropoff = new Task();
