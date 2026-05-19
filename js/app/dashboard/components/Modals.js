@@ -183,7 +183,7 @@ function Modals(props) {
         style={customStyle}
         isOpen={props.isSendToWarehouseModalVisible}
         onRequestClose={props.closeSendToWarehouseModal}
-        className="ReactModal__Content--select-courier"
+        className="ReactModal__Content--send-to-warehouse"
         shouldCloseOnOverlayClick={true}>
         <SendToWarehouseModalContent />
       </Modal>

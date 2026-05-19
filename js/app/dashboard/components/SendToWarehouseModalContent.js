@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { Form, Button, Select } from 'antd'
+import { Alert, Form, Button, Select } from 'antd'
 
 import { sendToWarehouse } from '../redux/actions'
 import { selectSelectedTasks } from '../redux/selectors'
@@ -13,6 +13,12 @@ const SendToWarehouseModalContent = ({ selectedTasks, warehouses, onSubmit }) =>
 
   return (
     <div className="px-5 pt-5">
+      <Alert
+        type="info"
+        showIcon
+        message={ t('ADMIN_DASHBOARD_SEND_TO_WAREHOUSE_HELP') }
+        style={{ marginBottom: 16 }}
+      />
       <Form
         name="send-to-warehouse"
         labelCol={{ span: 8 }}
@@ -24,9 +30,14 @@ const SendToWarehouseModalContent = ({ selectedTasks, warehouses, onSubmit }) =>
           name="warehouse"
           rules={[{ required: true }]}
         >
-          <Select onChange={ (value) => setWarehouse(warehouses.find(w => w['@id'] === value)) }>
+          <Select optionLabelProp="label" onChange={ (value) => setWarehouse(warehouses.find(w => w['@id'] === value)) }>
             {warehouses.map((w) => (
-              <Select.Option key={w['@id']} value={w['@id']}>{w.name}</Select.Option>
+              <Select.Option key={w['@id']} value={w['@id']} label={w.name}>
+                <div>{w.name}</div>
+                { w.address?.streetAddress && (
+                  <div style={{ fontSize: '0.85em', color: '#888' }}>{w.address.streetAddress}</div>
+                )}
+              </Select.Option>
             ))}
           </Select>
         </Form.Item>
