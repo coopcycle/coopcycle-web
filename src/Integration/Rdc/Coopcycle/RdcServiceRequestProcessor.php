@@ -76,7 +76,7 @@ class RdcServiceRequestProcessor
                 $originNodeUri ?? $apiRequest->getUri(),
                 $serviceId,
                 $apiRequest,
-                is_null($loRevision) ? null : $loRevision + 1
+                $loRevision ?? null
             );
 
         } catch (\Throwable $e) {

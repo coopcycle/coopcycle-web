@@ -14,6 +14,12 @@ class RdcClientConfig
         public readonly string $rdcInstanceBaseUrl,
         public readonly string $memberProvider,
         public readonly array $aclAuthorizations = [],
+        public readonly ?string $remoteKeycloakRealm = null,
+        public readonly ?string $remoteKeycloakUsername = null,
+        public readonly ?string $remoteKeycloakPassword = null,
+        public readonly ?string $remoteKeycloakClientId = null,
+        public readonly ?string $remoteKeycloakClientSecret = null,
+        public readonly ?string $remoteMemberProvider = null,
     ) {
         if ($keycloakBaseUrl === '') {
             throw new \InvalidArgumentException('keycloakBaseUrl cannot be empty');

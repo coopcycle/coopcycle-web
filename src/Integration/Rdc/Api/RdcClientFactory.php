@@ -62,6 +62,12 @@ class RdcClientFactory
                     sprintf('memberProvider is required for RDC connection "%s"', $connectionId)
                 ),
                 aclAuthorizations: $config['aclAuthorizations'] ?? [],
+                remoteKeycloakRealm: $config['remoteKeycloakRealm'] ?? null,
+                remoteKeycloakUsername: $config['remoteKeycloakUsername'] ?? null,
+                remoteKeycloakPassword: $config['remoteKeycloakPassword'] ?? null,
+                remoteKeycloakClientId: $config['remoteKeycloakClientId'] ?? null,
+                remoteKeycloakClientSecret: $config['remoteKeycloakClientSecret'] ?? null,
+                remoteMemberProvider: $config['remoteMemberProvider'] ?? null,
             ),
             new TokenManager(
                 $this->httpClient,
