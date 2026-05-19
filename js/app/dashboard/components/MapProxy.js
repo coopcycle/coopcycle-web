@@ -493,6 +493,8 @@ export default class MapProxy {
       borderColor: color,
       textColor: 'white',
       backgroundColor: color,
+      iconSize: [30, 30],
+      innerIconAnchor: [0, 6],
     })
   }
 
