@@ -61,6 +61,10 @@ export default class MapProxy {
     this.courierLayerGroup = new L.LayerGroup()
     this.courierLayerGroup.addTo(this.map)
 
+    this.warehouseMarkers = new Map()
+    this.warehouseLayerGroup = new L.LayerGroup()
+    this.warehouseLayerGroup.addTo(this.map)
+
     this.drawPolylineLayerGroup = new L.LayerGroup()
     this.drawPolylineLayerGroup.addTo(this.map)
 
@@ -466,5 +470,29 @@ export default class MapProxy {
 
   hideNext() {
     this.swoopyLayerGroup.clearLayers()
+  }
+
+  addWarehouses(warehouses) {
+    this.warehouseLayerGroup.clearLayers()
+    this.warehouseMarkers.clear()
+
+    warehouses.forEach(warehouse => {
+      if (!warehouse.address?.geo) return
+
+      const coords = [warehouse.address.geo.latitude, warehouse.address.geo.longitude]
+      const marker = L.marker(coords, {
+        icon: L.BeautifyIcon.icon({
+          icon: 'home',
+          iconShape: 'circle',
+          borderColor: '#E74C3C',
+          textColor: 'white',
+          backgroundColor: '#E74C3C',
+        })
+      })
+
+      marker.bindTooltip(warehouse.name, { direction: 'top', offset: [0, -10] })
+      this.warehouseLayerGroup.addLayer(marker)
+      this.warehouseMarkers.set(warehouse['@id'], marker)
+    })
   }
 }

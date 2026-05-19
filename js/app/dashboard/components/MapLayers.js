@@ -5,6 +5,7 @@ import _ from 'lodash'
 import { selectVisibleOnMapTaskIds, selectHiddenOnMapTaskIds, selectPolylines, selectAsTheCrowFlies,
   selectPositions, selectSelectedTasks, selectRestaurantAddressIds, selectTourIdToColorMap, selectSettings } from '../redux/selectors'
 import { selectAllTasks } from '../../coopcycle-frontend-js/logistics/redux'
+import { selectAllWarehouses } from '../../../shared/src/logistics/redux/selectors'
 
 import { useMap } from './LeafletMap'
 import { selectTaskIdToTourIdMap, selectTourPolylines } from '../../../shared/src/logistics/redux/selectors'
@@ -144,7 +145,18 @@ function mapStateToPropsClusters(state) {
   }
 }
 
+const WarehouseLayer = ({ warehouses }) => {
+  const map = useMap()
+
+  React.useEffect(() => {
+    map.addWarehouses(warehouses)
+  }, [ warehouses ])
+
+  return null
+}
+
 export const CourierMapLayer = connect(state => ({ positions: selectPositions(state) }))(CourierLayer)
 export const PolylineMapLayer = connect(mapStateToPropsPolyline)(PolylineLayer)
 export const TaskMapLayer = connect(mapStateToPropsTask)(TaskLayer)
 export const ClustersMapToggle = connect(mapStateToPropsClusters)(ClustersToggle)
+export const WarehouseMapLayer = connect(state => ({ warehouses: selectAllWarehouses(state) }))(WarehouseLayer)
