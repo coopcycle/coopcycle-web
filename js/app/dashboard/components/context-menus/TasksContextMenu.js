@@ -22,6 +22,7 @@ import {
   openCreateGroupModal,
   openCreateTourModal,
   openReportIncidentModal,
+  openSendToWarehouseModal,
   openTaskRescheduleModal,
   openTaskTaskList,
   removeTasksFromGroup,
@@ -59,6 +60,7 @@ export const REMOVE_FROM_GROUP = 'REMOVE_FROM_GROUP'
 export const RESTORE = 'RESTORE'
 export const RESCHEDULE = 'RESCHEDULE'
 export const CREATE_DELIVERY = 'CREATE_DELIVERY'
+export const SEND_TO_WAREHOUSE = 'SEND_TO_WAREHOUSE'
 export const CREATE_TOUR = 'CREATE_TOUR'
 export const REPORT_INCIDENT = 'REPORT_INCIDENT'
 export const TAG_MULTI = 'TAG_MULTI'
@@ -175,6 +177,7 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
 
   const selectedTasksByType = _.countBy(selectedTasks, t => t.type)
   const containsOnePickupAndAtLeastOneDropoff = selectedTasksByType.PICKUP === 1 && selectedTasksByType.DROPOFF > 0
+  const containsExactlyOnePickupAndOneDropoff = selectedTasksByType.PICKUP === 1 && selectedTasksByType.DROPOFF === 1 && selectedTasks.length === 2
 
   if (selectedTasksBelongsToTour) {
     return []
@@ -214,6 +217,10 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
         if (!containsOnlyLinkedTasks) {
           actions.push(CREATE_DELIVERY)
         }
+      }
+
+      if (containsExactlyOnePickupAndOneDropoff) {
+        actions.push(SEND_TO_WAREHOUSE)
       }
 
     } else {
@@ -458,6 +465,12 @@ const DynamicMenu = () => {
         onClick={ () => dispatch(openCreateDeliveryModal()) }
       >
         { t('ADMIN_DASHBOARD_CREATE_DELIVERY') }
+      </Item>
+      <Item
+        hidden={ !actions.includes(SEND_TO_WAREHOUSE) }
+        onClick={ () => dispatch(openSendToWarehouseModal()) }
+      >
+        { t('ADMIN_DASHBOARD_SEND_TO_WAREHOUSE') }
       </Item>
       <Item
         hidden={ !actions.includes(CREATE_TOUR) }
