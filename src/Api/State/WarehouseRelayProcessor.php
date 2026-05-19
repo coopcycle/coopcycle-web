@@ -38,28 +38,52 @@ class WarehouseRelayProcessor implements ProcessorInterface
 
         $warehouseAddress = $warehouse->getAddress();
 
-        // Drop at hub: copies pickup's time window
+        // Both hub tasks share the time window between pickup end and dropoff start,
+        // so they sort visually between the original tasks.
+        $hubWindowAfter  = $pickupTask->getDoneBefore();
+        $hubWindowBefore = $dropoffTask->getDoneAfter();
+
+        // Drop at hub
         $hubDropoff = new Task();
         $hubDropoff->setType(Task::TYPE_DROPOFF);
         $hubDropoff->setAddress($warehouseAddress);
-        $hubDropoff->setDoneAfter($pickupTask->getDoneAfter());
-        $hubDropoff->setDoneBefore($pickupTask->getDoneBefore());
+        $hubDropoff->setDoneAfter($hubWindowAfter);
+        $hubDropoff->setDoneBefore($hubWindowBefore);
         $hubDropoff->setComments($pickupTask->getComments());
         $hubDropoff->setWeight($pickupTask->getWeight());
         foreach ($pickupTask->getPackages() as $pkg) {
             $hubDropoff->addPackageWithQuantity($pkg->getPackage(), $pkg->getQuantity());
         }
 
-        // Pickup from hub: copies dropoff's time window
+        // Pickup from hub
         $hubPickup = new Task();
         $hubPickup->setType(Task::TYPE_PICKUP);
         $hubPickup->setAddress($warehouseAddress);
-        $hubPickup->setDoneAfter($dropoffTask->getDoneAfter());
-        $hubPickup->setDoneBefore($dropoffTask->getDoneBefore());
+        $hubPickup->setDoneAfter($hubWindowAfter);
+        $hubPickup->setDoneBefore($hubWindowBefore);
         $hubPickup->setComments($dropoffTask->getComments());
         $hubPickup->setWeight($dropoffTask->getWeight());
         foreach ($dropoffTask->getPackages() as $pkg) {
             $hubPickup->addPackageWithQuantity($pkg->getPackage(), $pkg->getQuantity());
+        }
+
+        // Establish the logical chain: pickup → hubDropoff → hubPickup → dropoff
+        $hubDropoff->setPrevious($pickupTask);
+        $hubPickup->setPrevious($hubDropoff);
+        if (!$dropoffTask->hasPrevious() || $dropoffTask->getPrevious() === $pickupTask) {
+            $dropoffTask->setPrevious($hubPickup);
+        }
+
+        // If the original tasks belong to a delivery, insert hub tasks into it
+        $delivery = $pickupTask->getDelivery() ?? $dropoffTask->getDelivery();
+        if ($delivery !== null) {
+            $pickupPosition = $delivery->findTaskPosition($pickupTask);
+            $delivery->addTask($hubDropoff, $pickupPosition + 1);
+            $delivery->addTask($hubPickup, $pickupPosition + 2);
+            // Refresh all delivery_position metadata to reflect new positions
+            foreach ($delivery->getItems() as $item) {
+                $item->getTask()->setMetadata('delivery_position', $item->getPosition() + 1);
+            }
         }
 
         $this->entityManager->persist($hubDropoff);

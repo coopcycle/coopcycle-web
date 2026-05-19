@@ -58,10 +58,10 @@ Feature: Warehouses
       }
       """
     Then the response status code should be 201
-    And the JSON node "hubDropoff.doneAfter" should contain "2018-12-01T10:00:00"
-    And the JSON node "hubDropoff.doneBefore" should contain "2018-12-01T12:00:00"
-    And the JSON node "hubPickup.doneAfter" should contain "2018-12-01T14:00:00"
-    And the JSON node "hubPickup.doneBefore" should contain "2018-12-01T18:30:00"
+    And the JSON node "hubDropoff.doneAfter" should contain "2018-12-01T12:00:00"
+    And the JSON node "hubDropoff.doneBefore" should contain "2018-12-01T14:00:00"
+    And the JSON node "hubPickup.doneAfter" should contain "2018-12-01T12:00:00"
+    And the JSON node "hubPickup.doneBefore" should contain "2018-12-01T14:00:00"
 
   Scenario: Relay tasks through a warehouse requires authentication
     Given the fixtures files are loaded:
