@@ -20,7 +20,6 @@ final class RdcApiService
     /**
      * @param array<int, array> $contacts
      * @param array<int, array> $externalReferences
-     * @param array<int, array> $actions
      * @param array<int, array> $saleOperations
      * @param array<int, array> $specialCharacteristics
      * @param array<int, array> $specialInstructions

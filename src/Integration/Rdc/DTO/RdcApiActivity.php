@@ -14,7 +14,6 @@ final class RdcApiActivity
     /**
      * @param array<int, array> $contacts
      * @param array<int, array> $externalReferences
-     * @param array<int, array> $actions
      * @param array<int, array> $specialCharacteristics
      * @param array<int, array> $specialInstructions
      * @param array<int, array> $documents

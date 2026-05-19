@@ -16,10 +16,10 @@ class RdcClientFactory
 
     public function create(string $connectionId): ?RdcClientInterface
     {
-        if (!is_array($this->rdcConnections) || !isset($this->rdcConnections[$connectionId])) {
+        if (!isset($this->rdcConnections[$connectionId])) {
             $this->logger->warning('RDC connection not found', [
                 'connection_id' => $connectionId,
-                'available_connections' => is_array($this->rdcConnections) ? array_keys($this->rdcConnections) : [],
+                'available_connections' => array_keys($this->rdcConnections),
             ]);
             return null;
         }
@@ -113,6 +113,6 @@ class RdcClientFactory
      */
     public function getConnectionIds(): array
     {
-        return is_array($this->rdcConnections) ? array_keys($this->rdcConnections) : [];
+        return array_keys($this->rdcConnections);
     }
 }

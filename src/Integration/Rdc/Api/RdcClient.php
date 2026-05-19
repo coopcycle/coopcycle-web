@@ -222,7 +222,7 @@ class RdcClient implements RdcClientInterface
 
         $this->logger->error('RDC request failed after all retries', [
             'max_retries' => self::MAX_RETRIES,
-            'last_exception' => $lastException?->getMessage(),
+            'last_exception' => $lastException?->getMessage(), // @phpstan-ignore-line
         ]);
 
         throw RdcException::requestFailed(
