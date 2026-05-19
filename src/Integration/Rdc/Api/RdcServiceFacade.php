@@ -26,7 +26,7 @@ class RdcServiceFacade
     public function __construct(
         private readonly RdcClientFactory $rdcClientFactory,
         private readonly LoggerInterface $logger,
-        private readonly string $connectionId = '',
+        private readonly string $connectionId = '', //FIXME: Should use sort of ctx resolver instead.
     ) {}
 
     public function getConnectionId(): string
@@ -126,6 +126,9 @@ class RdcServiceFacade
             'externalReferences' => $this->mapExternalReferences($barcode, $contractRef),
         ];
 
+        //FIXME: Add legal requestor here.
+        $serviceData['requestor'] = ['legalEntityName' => 'APPLICOLIS'];
+
         if ($serviceRequestUri !== null) {
             $serviceData['serviceRequests'] = [['uri' => $serviceRequestUri]];
         }
@@ -224,12 +227,12 @@ class RdcServiceFacade
 
     public function buildActivityLocation(array $address, array $timeSlot, string $actionType): array
     {
-        return $this->buildLocation($address, $timeSlot, $actionType, true);
+        return $this->buildLocation($address, $timeSlot, $actionType);
     }
 
     public function buildServiceLocation(array $address, array $timeSlot, string $actionType): array
     {
-        return $this->buildLocation($address, $timeSlot, $actionType, false);
+        return $this->buildLocation($address, $timeSlot, $actionType);
     }
 
     private function buildLocation(array $address, array $timeSlot, string $actionType): array
@@ -383,6 +386,7 @@ class RdcServiceFacade
 
     private function getClient(): RdcClientInterface
     {
+        //FIXME: This must use context
         if (!is_null($this->client) && $this->connectedConnectionId === $this->connectionId) {
             return $this->client;
         }

@@ -19,8 +19,13 @@ class RdcException extends \RuntimeException
 
     public static function requestFailed(string $reason, ?\Throwable $previous = null): self
     {
+        $message = sprintf('RDC request failed: %s', $reason);
+        if (is_null($previous) === false) {
+            $message = sprintf('%s: %s', $message, $previous->getMessage());
+        }
+
         return new self(
-            sprintf('RDC request failed: %s', $reason),
+            $message,
             self::ERROR_REQUEST_FAILED,
             $previous
         );

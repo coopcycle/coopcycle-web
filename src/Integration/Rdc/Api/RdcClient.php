@@ -139,10 +139,6 @@ class RdcClient implements RdcClientInterface
             $token = $tokenOverride ?? $this->tokenManager->getValidToken();
             $headers['Authorization'] = sprintf('Bearer %s', $token);
             $headers['X-BOL-Member-Identifier'] = sprintf('BOL.MEMBER.%s', $this->config->memberProvider);
-
-            if (!empty($this->config->aclAuthorizations)) {
-                $headers['X-BOL-ACL-authorizations'] = json_encode($this->config->aclAuthorizations);
-            }
         }
 
         $options = [

@@ -52,7 +52,7 @@ class RdcWebhookController extends AbstractController
             return new JsonResponse(['error' => 'Invalid JSON'], Response::HTTP_BAD_REQUEST);
         }
 
-        $metadata = $payload[0]['metadata'] ?? [];
+        $metadata = $payload[0]['notificationMetadata'] ?? [];
         $lo = $payload[0]['lo'] ?? null;
 
         if ($this->isInvalidMetadata($lo, $metadata)) {
@@ -65,14 +65,15 @@ class RdcWebhookController extends AbstractController
         }
 
         $loUri = $metadata['loUri'];
-        $eventType = $metadata['eventType'];
+        $loMember = $request->headers->get(self::WEBHOOK_MEMBER_HEADER) ?? $metadata['loMemberIdentifier'];
+        $eventType = $metadata['notificationType'];
         $loRevision = $metadata['loRevision'] ?? null;
 
         if (strtolower($metadata['resourceType']) !== 'servicerequest') {
             return $this->acceptedResponse($loUri, $eventType, $metadata['resourceType'], $loRevision);
         }
 
-        $store = $this->storeResolver->resolveStore($request->headers->get(self::WEBHOOK_MEMBER_HEADER));
+        $store = $this->storeResolver->resolveStore($loMember);
         if (is_null($store)) {
             $this->logger->error('Store not found for RDC servicerequest', ['contract_ref' => $dto->getContractRef()]);
             return new JsonResponse(['error' => 'Store not found'], Response::HTTP_BAD_REQUEST);
@@ -120,7 +121,7 @@ class RdcWebhookController extends AbstractController
 
     private function isInvalidMetadata(?array $lo, array $metadata): bool
     {
-        return is_null($lo) || is_null($metadata['loUri']) || is_null($metadata['eventType']);
+        return is_null($lo) || is_null($metadata['loUri']) || is_null($metadata['notificationType']);
     }
 
     private function parseDto(?string $resourceType, array $lo): ?object
