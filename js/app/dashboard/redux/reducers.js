@@ -49,6 +49,8 @@ import {
   RESTORE_TASK_FAILURE,
   OPEN_CREATE_DELIVERY_MODAL,
   CLOSE_CREATE_DELIVERY_MODAL,
+  OPEN_SEND_TO_WAREHOUSE_MODAL,
+  CLOSE_SEND_TO_WAREHOUSE_MODAL,
   OPEN_TASK_RESCHEDULE_MODAL,
   CLOSE_TASK_RESCHEDULE_MODAL,
   CREATE_TOUR_REQUEST,
@@ -95,6 +97,7 @@ const initialState = {
   reportIncidentModalIsOpen: false,
   isCreateGroupButtonLoading: false,
   isCreateDeliveryModalVisible: false,
+  isSendToWarehouseModalVisible: false,
   isCreateTourModalVisible: false,
   isCreateTourButtonLoading: false,
   isTaskRescheduleModalVisible: false,
@@ -525,6 +528,17 @@ export const isTaskRescheduleModalVisible = (state = initialState.isTaskReschedu
     case OPEN_TASK_RESCHEDULE_MODAL:
       return true
     case CLOSE_TASK_RESCHEDULE_MODAL:
+      return false
+    default:
+      return state
+  }
+}
+
+export const isSendToWarehouseModalVisible = (state = false, action) => {
+  switch (action.type) {
+    case OPEN_SEND_TO_WAREHOUSE_MODAL:
+      return true
+    case CLOSE_SEND_TO_WAREHOUSE_MODAL:
       return false
     default:
       return state

@@ -636,6 +636,8 @@
         "SEARCH_ORDER_NUMBER_ERROR": "Entrez un numéro de commande valide",
         "ADD_PRODUCTS_TO_ORDER_TITLE": "Ajouter des produits à la commande #{{number}}",
         "ADMIN_DASHBOARD_CREATE_DELIVERY": "Créer une livraison",
+        "ADMIN_DASHBOARD_SEND_TO_WAREHOUSE": "Envoyer vers un entrepôt",
+        "ADMIN_DASHBOARD_CHOOSE_WAREHOUSE_LABEL": "Choisir un entrepôt",
         "ADMIN_DASHBOARD_CHOOSE_STORE_LABEL": "Choisir un magasin",
         "COPY": "Copier",
         "COPIED": "Copié",

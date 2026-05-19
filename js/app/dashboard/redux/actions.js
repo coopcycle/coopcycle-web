@@ -105,6 +105,9 @@ export const CREATE_GROUP_SUCCESS = 'CREATE_GROUP_SUCCESS'
 export const OPEN_CREATE_DELIVERY_MODAL = 'OPEN_CREATE_DELIVERY_MODAL'
 export const CLOSE_CREATE_DELIVERY_MODAL = 'CLOSE_CREATE_DELIVERY_MODAL'
 
+export const OPEN_SEND_TO_WAREHOUSE_MODAL = 'OPEN_SEND_TO_WAREHOUSE_MODAL'
+export const CLOSE_SEND_TO_WAREHOUSE_MODAL = 'CLOSE_SEND_TO_WAREHOUSE_MODAL'
+
 export const OPEN_TASK_RESCHEDULE_MODAL = 'OPEN_TASK_RESCHEDULE_MODAL'
 export const CLOSE_TASK_RESCHEDULE_MODAL = 'CLOSE_TASK_RESCHEDULE_MODAL'
 
@@ -1560,6 +1563,44 @@ export function openTaskRescheduleModal() {
 
 export function closeTaskRescheduleModal() {
   return { type: CLOSE_TASK_RESCHEDULE_MODAL }
+}
+
+export function openSendToWarehouseModal() {
+  return { type: OPEN_SEND_TO_WAREHOUSE_MODAL }
+}
+
+export function closeSendToWarehouseModal() {
+  return { type: CLOSE_SEND_TO_WAREHOUSE_MODAL }
+}
+
+export function sendToWarehouse(tasks, warehouse) {
+  return function(dispatch, getState) {
+    const { jwt } = getState()
+
+    const pickup  = tasks.find(t => t.type === 'PICKUP')
+    const dropoff = tasks.find(t => t.type === 'DROPOFF')
+
+    createClient(dispatch).request({
+      method: 'post',
+      url: `${warehouse['@id']}/relay`,
+      data: {
+        tasks: [pickup['@id'], dropoff['@id']],
+      },
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json',
+      }
+    })
+      .then((response) => {
+        dispatch(updateTask(response.data.hubDropoff))
+        dispatch(updateTask(response.data.hubPickup))
+        dispatch(closeSendToWarehouseModal())
+      })
+      .catch(() => {
+        dispatch(closeSendToWarehouseModal())
+      })
+  }
 }
 
 export function createTourRequest() {

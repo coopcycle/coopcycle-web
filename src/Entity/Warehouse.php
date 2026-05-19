@@ -11,6 +11,8 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
+use AppBundle\Action\Warehouse\Relay as WarehouseRelay;
+use AppBundle\Api\Dto\RelayInput;
 use AppBundle\Api\State\ValidationAwareRemoveProcessor;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -28,7 +30,16 @@ use Gedmo\Timestampable\Traits\Timestampable;
             processor: ValidationAwareRemoveProcessor::class
         ),
         new GetCollection(security: 'is_granted(\'ROLE_DISPATCHER\')'),
-        new Post(security: 'is_granted(\'ROLE_ADMIN\')')
+        new Post(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new Post(
+            uriTemplate: '/warehouses/{id}/relay',
+            controller: WarehouseRelay::class,
+            openapiContext: ['summary' => 'Creates hub relay tasks through this warehouse'],
+            input: RelayInput::class,
+            security: "is_granted('ROLE_DISPATCHER')",
+            read: true,
+            write: false,
+        ),
     ],
     normalizationContext: ['groups' => ['warehouse', 'address']],
     denormalizationContext: ['groups' => ['warehouse_create', 'address_create']]
