@@ -220,9 +220,7 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
       }
 
       if (containsExactlyOnePickupAndOneDropoff) {
-        if (!containsOnlyLinkedTasks) {
-          actions.push(SEND_TO_WAREHOUSE)
-        }
+        actions.push(SEND_TO_WAREHOUSE)
       }
 
     } else {
