@@ -37,6 +37,7 @@ use Gedmo\Timestampable\Traits\Timestampable;
             openapiContext: ['summary' => 'Creates hub relay tasks through this warehouse'],
             input: RelayInput::class,
             security: "is_granted('ROLE_DISPATCHER')",
+            denormalizationContext: ['groups' => ['warehouse_relay']]
         ),
     ],
     normalizationContext: ['groups' => ['warehouse', 'address']],
