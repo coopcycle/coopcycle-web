@@ -265,7 +265,9 @@ class LocalBusinessRepository extends EntityRepository
     public function findEdenredEnabled()
     {
         $qb = $this->createQueryBuilder('r')
+            // Same as LocalBusiness::supportsEdenred()
             ->andWhere('r.edenredEnabled = :edenredEnabled')
+            ->andWhere('r.edenredMerchantId IS NOT NULL')
             ->setParameter('edenredEnabled', true);
 
         $this->addBusinessContextClause($qb, 'r');
