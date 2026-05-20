@@ -23,13 +23,13 @@
         {% if this.types|length > 1 %}
         {% for type in this.types %}
         <li class="nav-item swiper-slide">
-          <a class="nav-link {% if this.type == type|local_business_type_key %}active{% endif %}" {{ live_action('setType', { type: type|local_business_type_key }) }}>{{ type|local_business_type }}</a>
+          <a class="nav-link {% if this.type == type|local_business_type_key %}active{% endif %}" {{ live_action('filterByType', { type: type|local_business_type_key }) }}>{{ type|local_business_type }}</a>
         </li>
         {% endfor %}
         {% endif %}
         {% for category in this.categories %}
         <li class="nav-item swiper-slide">
-          <a class="nav-link {% if category.key == this.category %}active{% endif %}" {{ live_action('setCategory', { key: category.key }) }}>{{ category.transKey|trans }}</a>
+          <a class="nav-link {% if category.key == this.category %}active{% endif %}" {{ live_action('filterByCategory', { key: category.key }) }}>{{ category.transKey|trans }}</a>
         </li>
         {% endfor %}
       </ul>
