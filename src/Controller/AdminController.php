@@ -408,7 +408,8 @@ class AdminController extends AbstractController
     #[Route(path: '/admin/orders/search', name: 'admin_orders_search')]
     public function searchOrdersAction(
         Request $request,
-        OrderRepository $orderRepository
+        OrderRepository $orderRepository,
+        \AppBundle\Utils\TsRangeFormatter $tsRangeFormatter,
     )
     {
         $qb = $orderRepository->search($request->query->get('q'));
@@ -422,14 +423,15 @@ class AdminController extends AbstractController
 
         $data = [];
         foreach ($results as $order) {
+            $range = $order->getShippingTimeRange();
             $data[] = [
-                'id'        => $order->getId(),
-                'number'    => $order->getNumber(),
-                'email'     => $order->getCustomer()?->getEmailCanonical(),
-                'fullName'  => $order->getCustomer()?->getFullName() ?: null,
-                'total'     => $order->getTotal(),
-                'shippedAt' => $order->getShippedAt()?->format('Y-m-d H:i'),
-                'path'      => $this->generateUrl('admin_order', ['id' => $order->getId()]),
+                'id'       => $order->getId(),
+                'number'   => $order->getNumber(),
+                'email'    => $order->getCustomer()?->getEmailCanonical(),
+                'fullName' => $order->getCustomer()?->getFullName() ?: null,
+                'total'    => $order->getTotal(),
+                'date'     => $range ? $tsRangeFormatter->formatShort($range) : null,
+                'path'     => $this->generateUrl('admin_order', ['id' => $order->getId()]),
             ];
         }
 

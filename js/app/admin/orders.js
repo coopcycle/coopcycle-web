@@ -250,7 +250,7 @@ const OrderSearch = ({ searchUrl, placeholder }) => {
             {order.fullName && <span style={{ marginLeft: 8 }}>{order.fullName}</span>}
             {order.email && <span style={{ marginLeft: 8, color: '#888', fontSize: '0.85em' }}>{order.email}</span>}
           </div>
-          {order.shippedAt && <span style={{ color: '#aaa', fontSize: '0.8em' }}>{order.shippedAt}</span>}
+          {order.date && <span style={{ color: '#aaa', fontSize: '0.8em' }}>{order.date}</span>}
         </div>
       )}
       style={{ width: '100%' }}

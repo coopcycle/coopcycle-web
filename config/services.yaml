@@ -1755,3 +1755,5 @@ services:
     decorates: api_platform.name_converter
     arguments:
       - '@.inner'
+      -
+  AppBundle\Utils\TsRangeFormatter: ~
