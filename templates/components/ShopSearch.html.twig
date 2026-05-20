@@ -39,7 +39,7 @@
       <ul class="swiper-wrapper nav">
       {% for cuisine in cuisines %}
         <li class="nav-item swiper-slide">
-          <a class="nav-link text-center {% if cuisine.value in this.cuisine %}active{% endif %}" {{ live_action('toggleCuisine', { name: cuisine.value }) }}>
+          <a class="nav-link text-center d-flex flex-column align-items-center gap-1 {% if cuisine.value in this.cuisine %}active{% endif %}" {{ live_action('toggleCuisine', { name: cuisine.value }) }}>
             <span class="d-block">
               {{ ux_icon(cuisine.icon, { style: 'font-size: 30px' }) }}
             </span>
