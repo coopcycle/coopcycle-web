@@ -58,6 +58,7 @@ class WarehouseRelayProcessor implements ProcessorInterface
         $hubDropoff->setDoneBefore($hubWindowBefore);
         $hubDropoff->setComments($pickupTask->getComments());
         $hubDropoff->setWeight($pickupTask->getWeight());
+        $hubDropoff->setTags($pickupTask->getTags());
         foreach ($pickupTask->getPackages() as $pkg) {
             $hubDropoff->addPackageWithQuantity($pkg->getPackage(), $pkg->getQuantity());
         }
@@ -70,6 +71,7 @@ class WarehouseRelayProcessor implements ProcessorInterface
         $hubPickup->setDoneBefore($hubWindowBefore);
         $hubPickup->setComments($dropoffTask->getComments());
         $hubPickup->setWeight($dropoffTask->getWeight());
+        $hubPickup->setTags($dropoffTask->getTags());
         foreach ($dropoffTask->getPackages() as $pkg) {
             $hubPickup->addPackageWithQuantity($pkg->getPackage(), $pkg->getQuantity());
         }
