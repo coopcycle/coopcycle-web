@@ -413,6 +413,9 @@ class AdminController extends AbstractController
     {
         $qb = $orderRepository->search($request->query->get('q'));
 
+        $qb->andWhere('o.state != :state')
+            ->setParameter('state', OrderInterface::STATE_CART);
+
         $qb->setMaxResults(10);
 
         $results = $qb->getQuery()->getResult();
