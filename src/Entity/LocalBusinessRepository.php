@@ -262,19 +262,6 @@ class LocalBusinessRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findEdenredEnabled()
-    {
-        $qb = $this->createQueryBuilder('r')
-            // Same as LocalBusiness::supportsEdenred()
-            ->andWhere('r.edenredEnabled = :edenredEnabled')
-            ->andWhere('r.edenredMerchantId IS NOT NULL')
-            ->setParameter('edenredEnabled', true);
-
-        $this->addBusinessContextClause($qb, 'r');
-
-        return $qb->getQuery()->getResult();
-    }
-
     public function findLatest($limit = self::LATESTS_SHOPS_LIMIT)
     {
         $qb = $this->createQueryBuilder('r');
@@ -398,6 +385,12 @@ class LocalBusinessRepository extends EntityRepository
                                         $qb->expr()->eq('r.loopeatEnabled', ':enabled'))
                                     )
                                     ->setParameter('enabled', true);
+                                break;
+                            case 'edenred':
+                                $qb
+                                    ->andWhere('r.edenredEnabled = :edenredEnabled')
+                                    ->andWhere('r.edenredMerchantId IS NOT NULL')
+                                    ->setParameter('edenredEnabled', true);
                                 break;
                             default:
                                 break;

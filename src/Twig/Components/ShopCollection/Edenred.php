@@ -23,7 +23,7 @@ class Edenred extends ShopCollection
 
     protected function doGetShops(): array
     {
-        $shops = $this->repository->findEdenredEnabled();
+        $shops = $this->repository->findByFilters(['category' => 'edenred']);
         $iterator = new SortableRestaurantIterator($shops, $this->timingRegistry);
 
         return iterator_to_array($iterator);
