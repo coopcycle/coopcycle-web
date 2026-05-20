@@ -1,8 +1,10 @@
 import { createRoot } from 'react-dom/client'
+import { Select } from 'antd'
+import debounce from 'lodash/debounce'
 import cubejs from '@cubejs-client/core';
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin, Popover, Button } from 'antd';
-import React, { useImperativeHandle, createRef, forwardRef, useState } from 'react';
+import React, { useImperativeHandle, createRef, forwardRef, useState, useCallback } from 'react';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, PointElement, Tooltip, Legend } from 'chart.js'
 import { Line } from 'react-chartjs-2';
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Tooltip, Legend)
@@ -214,3 +216,54 @@ document.querySelectorAll('[data-customer]').forEach(customerEl => {
     ref.current.open();
   })
 })
+
+const OrderSearch = ({ searchUrl, placeholder }) => {
+  const [options, setOptions] = useState([])
+  const [fetching, setFetching] = useState(false)
+
+  const fetchOptions = useCallback(
+    debounce(async (q) => {
+      if (!q) { setOptions([]); return }
+      setFetching(true)
+      const res = await fetch(`${searchUrl}?q=${encodeURIComponent(q)}`)
+      const data = await res.json()
+      setOptions(data.map(order => ({ value: order.path, order })))
+      setFetching(false)
+    }, 300),
+    [searchUrl]
+  )
+
+  return (
+    <Select
+      showSearch
+      filterOption={false}
+      onSearch={fetchOptions}
+      options={options}
+      loading={fetching}
+      notFoundContent={null}
+      placeholder={placeholder}
+      onChange={(path) => { window.location.href = path }}
+      optionRender={({ data: { order } }) => (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <strong>{order.number}</strong>
+            {order.fullName && <span style={{ marginLeft: 8 }}>{order.fullName}</span>}
+            {order.email && <span style={{ marginLeft: 8, color: '#888', fontSize: '0.85em' }}>{order.email}</span>}
+          </div>
+          {order.shippedAt && <span style={{ color: '#aaa', fontSize: '0.8em' }}>{order.shippedAt}</span>}
+        </div>
+      )}
+      style={{ width: '100%' }}
+    />
+  )
+}
+
+const searchEl = document.querySelector('#orders-search')
+if (searchEl) {
+  createRoot(searchEl).render(
+    <OrderSearch
+      searchUrl={searchEl.dataset.url}
+      placeholder={searchEl.dataset.placeholder}
+    />
+  )
+}

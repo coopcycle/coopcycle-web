@@ -422,21 +422,14 @@ class AdminController extends AbstractController
 
         $data = [];
         foreach ($results as $order) {
-
-            if (null !== $order->getCustomer()) {
-                $name = sprintf(
-                    '%s (%s)',
-                    $order->getNumber(),
-                    $order->getCustomer()->getEmailCanonical()
-                );
-            } else {
-                $name = $order->getNumber();
-            }
-
             $data[] = [
-                'id' => $order->getId(),
-                'name' => $name,
-                'path' => $this->generateUrl('admin_order', ['id' => $order->getId()]),
+                'id'        => $order->getId(),
+                'number'    => $order->getNumber(),
+                'email'     => $order->getCustomer()?->getEmailCanonical(),
+                'fullName'  => $order->getCustomer()?->getFullName() ?: null,
+                'total'     => $order->getTotal(),
+                'shippedAt' => $order->getShippedAt()?->format('Y-m-d H:i'),
+                'path'      => $this->generateUrl('admin_order', ['id' => $order->getId()]),
             ];
         }
 
