@@ -1,6 +1,4 @@
 @import "../../../assets/css/vars.scss";
-@import "bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
-@import "bootstrap-sass/assets/stylesheets/bootstrap/_forms.scss";
 // @import "../../../assets/css/mixins/card";
 
 .button-reset {
@@ -18,11 +16,6 @@
 .restaurant-menu {
   padding: 1rem 0;
 
-  // On mobile, add a margin to allow scrolling
-  @media (max-width: $screen-xs-max) {
-    margin-bottom: $navbar-height;
-  }
-
   &__section-name {
     margin: 0;
     font-weight: 600;
@@ -35,19 +28,6 @@
     https://css-tricks.com/preventing-a-grid-blowout/
      */
 
-    padding-top: 16px;
-    padding-bottom: 64px;
-    display: grid;
-    grid-gap: 24px;
-    grid-template-columns: repeat(1, minmax(0, 1fr));
-
-    @media (min-width: $screen-md-min) {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    @media (min-width: 1720px) {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
   }
 }
 

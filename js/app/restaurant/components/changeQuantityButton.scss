@@ -1,7 +1,5 @@
 @import "../../../../assets/css/vars.scss";
 
-@import "bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
-
 .quantity-change-button {
   min-width: 3rem;
   min-height: 3rem;
@@ -22,10 +20,5 @@
     &:hover {
       background-color: $gray;
     }
-  }
-
-  &[disabled] {
-    cursor: $cursor-disabled;
-    @include opacity(.65);
   }
 }

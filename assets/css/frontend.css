@@ -20,6 +20,8 @@
 @source "../../js/app/components/order";
 @source "../../js/app/components/Payment";
 @source "../../js/app/restaurant/components";
+@source "../../js/app/register";
+@source "../../js/app/optins";
 
 @plugin "daisyui";
 @plugin "@tailwindcss/typography";

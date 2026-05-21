@@ -5,7 +5,7 @@ import './changeQuantityButton.scss'
 function ChangeQuantityButton({ children, onClick, disabled }) {
   return (
     <button
-      className="quantity-change-button"
+      className="quantity-change-button disabled:opacity-65 disabled:cursor-not-allowed"
       type="button"
       disabled={ disabled }
       onClick={ onClick }>

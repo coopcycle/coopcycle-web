@@ -1,5 +1,4 @@
 @import "../../../../../assets/css/vars.scss";
-@import "bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
 
 $card-padding: 1rem;
 $card-padding-lg: 2rem;
@@ -85,12 +84,6 @@ $card-padding-lg: 2rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
-
-  @media (min-width: $screen-lg-min) {
-    margin: 0 (-$card-padding-lg) 0;
-    padding: 0 $card-padding-lg 0;
-    overflow-y: auto;
-  }
 
   .cart__item:not(:last-child) {
     border-bottom: 1px solid $gray-100;
