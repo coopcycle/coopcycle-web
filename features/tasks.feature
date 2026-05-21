@@ -231,6 +231,7 @@ Feature: Tasks
             "tags":@array@,
             "doorstep":@boolean@,
             "metadata": {
+              "has_loopeat_returns": false
             },
             "weight":null,
             "hasIncidents": false,
@@ -257,6 +258,7 @@ Feature: Tasks
             "tags":@array@,
             "doorstep":@boolean@,
             "metadata": {
+              "has_loopeat_returns": false
             },
             "weight":null,
             "hasIncidents": false,
@@ -1910,7 +1912,8 @@ Feature: Tasks
               "zero_waste": false,
               "order_id": 1,
               "order_number": "A1",
-              "order_total": "@integer@"
+              "order_total": "@integer@",
+              "has_loopeat_returns": false
             },
             "weight": null,
             "incidents": [],
@@ -1950,7 +1953,8 @@ Feature: Tasks
               "zero_waste": false,
               "order_id": 1,
               "order_number": "A1",
-              "order_total": "@integer@"
+              "order_total": "@integer@",
+              "has_loopeat_returns": false
             },
             "weight": null,
             "incidents": [],

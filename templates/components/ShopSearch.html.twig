@@ -23,13 +23,13 @@
         {% if this.types|length > 1 %}
         {% for type in this.types %}
         <li class="swiper-slide">
-          <a class="py-2 px-4 cursor-pointer {% if this.type == type|local_business_type_key %}font-semibold{% endif %}" {{ live_action('setType', { type: type|local_business_type_key }) }}>{{ type|local_business_type }}</a>
+          <a class="py-2 px-4 cursor-pointer {% if this.type == type|local_business_type_key %}font-semibold{% endif %}" {{ live_action('filterByType', { type: type|local_business_type_key }) }}>{{ type|local_business_type }}</a>
         </li>
         {% endfor %}
         {% endif %}
         {% for category in this.categories %}
         <li class="swiper-slide">
-          <a class="py-2 px-4 cursor-pointer {% if category.key == this.category %}font-semibold{% endif %}" {{ live_action('setCategory', { key: category.key }) }}>{{ category.transKey|trans }}</a>
+          <a class="py-2 px-4 cursor-pointer {% if category.key == this.category %}font-semibold{% endif %}" {{ live_action('filterByCategory', { key: category.key }) }}>{{ category.transKey|trans }}</a>
         </li>
         {% endfor %}
       </ul>
@@ -54,7 +54,7 @@
   </div>
 
   <div class="mx-auto px-4">
-    {% if this.shops|length == 0 %}
+    {% if this.shops|length == 0 and page == 1 %}
       <div class="alert alert-warning text-center">
         {{ 'restaurants.no_results'|trans|raw }}
       </div>

@@ -1404,6 +1404,7 @@ form.store_type.defaultCourier.help: Orders placed for this store will be automa
 homepage.featured: Featured
 homepage.exclusive: Exclusives
 homepage.shops.new: New shops
+homepage.edenred: Edenred
 users.disabled: Disabled
 shops.filters.clear_all: Clear all
 shops.filters.title.types: Types

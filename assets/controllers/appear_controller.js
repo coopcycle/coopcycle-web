@@ -12,7 +12,7 @@ export default class extends Controller {
                     );
                 }
             });
-        });
+        }, { rootMargin: '0px 0px 100px 0px' });
         this.observer.observe(element);
     }
 

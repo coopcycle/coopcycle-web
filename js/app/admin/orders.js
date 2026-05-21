@@ -1,8 +1,10 @@
 import { createRoot } from 'react-dom/client'
+import { Select } from 'antd'
+import debounce from 'lodash/debounce'
 import cubejs from '@cubejs-client/core';
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin, Popover, Button } from 'antd';
-import React, { useImperativeHandle, createRef, forwardRef, useState } from 'react';
+import React, { useImperativeHandle, createRef, forwardRef, useState, useCallback } from 'react';
 import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, PointElement, Tooltip, Legend } from 'chart.js'
 import { Line } from 'react-chartjs-2';
 ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Tooltip, Legend)
@@ -214,3 +216,74 @@ document.querySelectorAll('[data-customer]').forEach(customerEl => {
     ref.current.open();
   })
 })
+
+const OrderSearch = ({ searchUrl, placeholder }) => {
+  const { t } = useTranslation()
+  const [options, setOptions] = useState([])
+  const [fetching, setFetching] = useState(false)
+  const [query, setQuery] = useState('')
+
+  const fetchOptions = useCallback(
+    debounce(async (q) => {
+      setQuery(q)
+      if (!q) { setOptions([]); return }
+      setFetching(true)
+      const res = await fetch(`${searchUrl}?q=${encodeURIComponent(q)}`)
+      const data = await res.json()
+      setOptions(data.map(order => ({ value: order.path, order })))
+      setFetching(false)
+    }, 300),
+    [searchUrl]
+  )
+
+  return (
+    <Select
+      showSearch
+      filterOption={false}
+      onSearch={fetchOptions}
+      options={options}
+      loading={fetching}
+      notFoundContent={null}
+      placeholder={placeholder}
+      onChange={(path) => { window.location.href = path }}
+      optionRender={({ data: { order } }) => (
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <strong>{order.number}</strong>
+            {order.date && <span style={{ color: '#aaa', fontSize: '0.85em' }}>{order.date}</span>}
+          </div>
+          {(order.fullName || order.email) && (
+            <div style={{ fontSize: '0.85em', color: '#888' }}>
+              {order.fullName && <span>{order.fullName}</span>}
+              {order.fullName && order.email && <span> · </span>}
+              {order.email && <span>{order.email}</span>}
+            </div>
+          )}
+        </div>
+      )}
+      popupRender={(menu) => (
+        <>
+          {menu}
+          {query && (
+            <div style={{ borderTop: '1px solid #f0f0f0', padding: '6px 12px' }}>
+              <a href={window.Routing.generate('admin_orders', { q: query })}>
+                {t('SHOW_MORE_RESULTS', { query })}
+              </a>
+            </div>
+          )}
+        </>
+      )}
+      style={{ width: '100%' }}
+    />
+  )
+}
+
+const searchEl = document.querySelector('#orders-search')
+if (searchEl) {
+  createRoot(searchEl).render(
+    <OrderSearch
+      searchUrl={searchEl.dataset.url}
+      placeholder={searchEl.dataset.placeholder}
+    />
+  )
+}

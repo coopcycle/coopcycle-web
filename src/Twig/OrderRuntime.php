@@ -3,6 +3,7 @@
 namespace AppBundle\Twig;
 
 use AppBundle\DataType\TsRange;
+use AppBundle\Utils\TsRangeFormatter;
 use Carbon\Carbon;
 use Twig\Extension\RuntimeExtensionInterface;
 use Redis;
@@ -10,16 +11,13 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class OrderRuntime implements RuntimeExtensionInterface
 {
-    private $translator;
-    private $redis;
-    private $locale;
+    public function __construct(
+        private TranslatorInterface $translator,
+        private Redis $redis,
+        private string $locale,
+        private TsRangeFormatter $tsRangeFormatter,
+    ) {}
 
-    public function __construct(TranslatorInterface $translator, Redis $redis, string $locale)
-    {
-        $this->translator = $translator;
-        $this->redis = $redis;
-        $this->locale = $locale;
-    }
 
     /**
      * @param TsRange|string $range
@@ -61,23 +59,13 @@ class OrderRuntime implements RuntimeExtensionInterface
      * @param TsRange|string $range
      * @return string
      */
-    public function timeRangeForHumansShort($range)
+    public function timeRangeForHumansShort($range): string
     {
         if (!$range instanceof TsRange) {
             $range = TsRange::parse($range);
         }
 
-        $lower = Carbon::instance($range->getLower())->locale($this->locale);
-
-        $rangeAsText = implode(' - ', [
-            $lower->isoFormat('LT'),
-            Carbon::instance($range->getUpper())->locale($this->locale)->isoFormat('LT')
-        ]);
-
-        return sprintf('%s %s',
-            $lower->isoFormat('L'),
-            $rangeAsText
-        );
+        return $this->tsRangeFormatter->formatShort($range);
     }
 
     public function hasDelayConfigured(): bool

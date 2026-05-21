@@ -565,6 +565,7 @@
         "ADMIN_NO_APPLICATIONS": "Pas encore utilisé",
         "ADMIN_APPLIED_TO": "Appliqué à {{count}} élément(s)",
         "ADMIN_DASHBOARD_START_TASKS_MULTI": "Démarrer {{count}} tâche(s)",
+        "ADMIN_DASHBOARD_COMPLETE_TASKS_MULTI": "Terminer {{count}} tâche(s)",
         "TRANSPORTER_MESSAGE_TYPE_SCONTR": "Tâche importée depuis le transporteur",
         "TRANSPORTER_MESSAGE_TYPE_REPORT": "Rapport de l'état de la tâche",
         "TRANSPORTER_SITUATION_AAR": "À quai",
@@ -635,6 +636,9 @@
         "SEARCH_ORDER_NUMBER_ERROR": "Entrez un numéro de commande valide",
         "ADD_PRODUCTS_TO_ORDER_TITLE": "Ajouter des produits à la commande #{{number}}",
         "ADMIN_DASHBOARD_CREATE_DELIVERY": "Créer une livraison",
+        "ADMIN_DASHBOARD_SEND_TO_WAREHOUSE": "Envoyer vers un entrepôt",
+        "ADMIN_DASHBOARD_SEND_TO_WAREHOUSE_HELP": "Cela va insérer deux tâches intermédiaires : un dépôt à l'entrepôt et un enlèvement depuis l'entrepôt. Les tâches d'enlèvement et de livraison d'origine sont conservées.",
+        "ADMIN_DASHBOARD_CHOOSE_WAREHOUSE_LABEL": "Choisir un entrepôt",
         "ADMIN_DASHBOARD_CHOOSE_STORE_LABEL": "Choisir un magasin",
         "COPY": "Copier",
         "COPIED": "Copié",
@@ -797,6 +801,7 @@
         },
         "HOMEPAGE_EDITOR": {
             "placeholder": "Tapez \"/\" pour insérer un bloc",
+            "published": "Publié",
             "messages": {
                 "toolNames": {
                     "Shop Collection": "Collection de boutiques",

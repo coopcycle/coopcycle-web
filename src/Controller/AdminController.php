@@ -408,10 +408,14 @@ class AdminController extends AbstractController
     #[Route(path: '/admin/orders/search', name: 'admin_orders_search')]
     public function searchOrdersAction(
         Request $request,
-        OrderRepository $orderRepository
+        OrderRepository $orderRepository,
+        \AppBundle\Utils\TsRangeFormatter $tsRangeFormatter,
     )
     {
         $qb = $orderRepository->search($request->query->get('q'));
+
+        $qb->andWhere('o.state != :state')
+            ->setParameter('state', OrderInterface::STATE_CART);
 
         $qb->setMaxResults(10);
 
@@ -419,21 +423,15 @@ class AdminController extends AbstractController
 
         $data = [];
         foreach ($results as $order) {
-
-            if (null !== $order->getCustomer()) {
-                $name = sprintf(
-                    '%s (%s)',
-                    $order->getNumber(),
-                    $order->getCustomer()->getEmailCanonical()
-                );
-            } else {
-                $name = $order->getNumber();
-            }
-
+            $range = $order->getShippingTimeRange();
             $data[] = [
-                'id' => $order->getId(),
-                'name' => $name,
-                'path' => $this->generateUrl('admin_order', ['id' => $order->getId()]),
+                'id'       => $order->getId(),
+                'number'   => $order->getNumber(),
+                'email'    => $order->getCustomer()?->getEmailCanonical(),
+                'fullName' => $order->getCustomer()?->getFullName() ?: null,
+                'total'    => $order->getTotal(),
+                'date'     => $range ? $tsRangeFormatter->formatShort($range) : null,
+                'path'     => $this->generateUrl('admin_order', ['id' => $order->getId()]),
             ];
         }
 
@@ -2566,6 +2564,7 @@ class AdminController extends AbstractController
             'shop_types' => $shopTypes,
             'delivery_forms' => $deliveryForms,
             'shop_collections' => $shopCollections,
+            'edenred_enabled' => $this->getParameter('edenred_enabled'),
         ]));
     }
 
@@ -2978,8 +2977,11 @@ class AdminController extends AbstractController
         TranslatorInterface $translator,
         Request $request)
     {
+        $componentNames = ['zerowaste' => 'ZeroWaste'];
+        $componentName = $componentNames[$component] ?? ucfirst($component);
+
         return $this->render('admin/shop_collection_preview.html.twig', [
-            'component' => 'ShopCollection:'.ucfirst($component),
+            'component' => 'ShopCollection:'.$componentName,
             'props' => $request->query->all(),
         ]);
     }

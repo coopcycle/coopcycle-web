@@ -100,6 +100,7 @@ if (homepageEditorEl) {
       uploadEndpoint={homepageEditorEl.dataset.uploadEndpoint}
       deliveryForms={JSON.parse(homepageEditorEl.dataset.deliveryForms)}
       shopCollections={JSON.parse(homepageEditorEl.dataset.shopCollections)}
+      edenredEnabled={homepageEditorEl.dataset.edenredEnabled === 'true'}
     />
   )
 }
