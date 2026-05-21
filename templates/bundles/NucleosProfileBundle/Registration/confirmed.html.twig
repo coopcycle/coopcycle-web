@@ -3,16 +3,14 @@
 {% trans_default_domain 'NucleosProfileBundle' %}
 
 {% block body %}
-  <div class="navbar-coopcycle">
-    <div class="container">
-      <h5>{{ 'registration.navigation.title'|trans({}, 'messages') }}</h5>
-    </div>
-  </div>
-  <div class="main">
-    <div class="mx-auto px-4">
+  <div class="mx-auto px-4">
+    <div class="py-4 mb-4">
+      <div class="navbar bg-base-100 mb-4 shadow-sm">
+        <h5 class="px-4">{{ 'registration.navigation.title'|trans({}, 'messages') }}</h5>
+      </div>
       {% block nucleos_user_content %}
         <div class="flex justify-center">
-          <div class="info-section text-center rounded">
+          <div class="flex flex-col items-center justify-center">
             <img src="{{ asset('img/registration-congrats.svg') }}">
             <h5>{{ 'registration.congratulations'|trans }}</h5>
             <strong>{% trans with { '%username%': user.username } %}registration.confirmed{% endtrans %}</strong>
@@ -55,9 +53,6 @@
             </div>
           </div>
         {% endif %}
-        <div class="flex">
-          <img src="{{ asset('img/registration-image.svg') }}">
-        </div>
       {% endblock nucleos_user_content %}
     </div>
   </div>
