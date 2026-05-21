@@ -218,11 +218,14 @@ document.querySelectorAll('[data-customer]').forEach(customerEl => {
 })
 
 const OrderSearch = ({ searchUrl, placeholder }) => {
+  const { t } = useTranslation()
   const [options, setOptions] = useState([])
   const [fetching, setFetching] = useState(false)
+  const [query, setQuery] = useState('')
 
   const fetchOptions = useCallback(
     debounce(async (q) => {
+      setQuery(q)
       if (!q) { setOptions([]); return }
       setFetching(true)
       const res = await fetch(`${searchUrl}?q=${encodeURIComponent(q)}`)
@@ -252,6 +255,18 @@ const OrderSearch = ({ searchUrl, placeholder }) => {
           </div>
           {order.date && <span style={{ color: '#aaa', fontSize: '0.8em' }}>{order.date}</span>}
         </div>
+      )}
+      popupRender={(menu) => (
+        <>
+          {menu}
+          {query && (
+            <div style={{ borderTop: '1px solid #f0f0f0', padding: '6px 12px' }}>
+              <a href={window.Routing.generate('admin_orders', { q: query })}>
+                {t('SHOW_MORE_RESULTS', { query })}
+              </a>
+            </div>
+          )}
+        </>
       )}
       style={{ width: '100%' }}
     />
