@@ -30,7 +30,7 @@
 
     {{ form_widget(form) }}
 
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between my-4">
       <div>
         <img src="{{ loopeat_context.logoUrl }}" class="mb-4 w-24">
       </div>
@@ -99,7 +99,7 @@
         {% if loopeat_context.hasCredentials %}
           <button
             type="button"
-            class="btn btn-md btn-default"
+            class="btn btn-md"
             data-target="#modal-loopeat"
             data-customer-containers="{{ loopeat_context.containers|json_encode|e('html_attr') }}"
             data-formats="{{ loopeat_context.formats|json_encode|e('html_attr') }}"
@@ -111,7 +111,7 @@
             data-oauth-url="{{ loopeat_authorization_url(order, loopeat_context.requiredAmount, true)|e('html_attr') }}"
           >
             <i class="fa fa-sliders mr-1"></i>
-            <span>{{ (loopeat_trans_prefix ~ '.manage_deposit')|trans }}</span>
+            <span class="whitespace-nowrap">{{ (loopeat_trans_prefix ~ '.manage_deposit')|trans }}</span>
           </button>
         {% else %}
           <a class="btn btn-md btn-default" href="{{ loopeat_authorization_url(order, loopeat_context.requiredAmount) }}">{{ (loopeat_trans_prefix ~ '.connect_account')|trans({ '%name%': loopeat_context.name }) }}</a>
