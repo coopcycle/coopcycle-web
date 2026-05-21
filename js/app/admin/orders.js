@@ -247,13 +247,18 @@ const OrderSearch = ({ searchUrl, placeholder }) => {
       placeholder={placeholder}
       onChange={(path) => { window.location.href = path }}
       optionRender={({ data: { order } }) => (
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <strong>{order.number}</strong>
-            {order.fullName && <span style={{ marginLeft: 8 }}>{order.fullName}</span>}
-            {order.email && <span style={{ marginLeft: 8, color: '#888', fontSize: '0.85em' }}>{order.email}</span>}
+            {order.date && <span style={{ color: '#aaa', fontSize: '0.85em' }}>{order.date}</span>}
           </div>
-          {order.date && <span style={{ color: '#aaa', fontSize: '0.8em' }}>{order.date}</span>}
+          {(order.fullName || order.email) && (
+            <div style={{ fontSize: '0.85em', color: '#888' }}>
+              {order.fullName && <span>{order.fullName}</span>}
+              {order.fullName && order.email && <span> · </span>}
+              {order.email && <span>{order.email}</span>}
+            </div>
+          )}
         </div>
       )}
       popupRender={(menu) => (
