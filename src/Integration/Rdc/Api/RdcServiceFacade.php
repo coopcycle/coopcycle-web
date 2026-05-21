@@ -355,6 +355,7 @@ class RdcServiceFacade
         $changeRequest = [
             'logisticsObjectRevision' => $loRevision,
             'operations' => $operations,
+            'requestorMemberIdentifier' => $this->getClient()->getMemberIdentifier(),
         ];
 
         $remoteChangeRequestUrl = sprintf('%s/change-requests', $loUri);

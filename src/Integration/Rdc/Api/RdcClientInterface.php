@@ -30,4 +30,6 @@ interface RdcClientInterface
     public function postRemote(string $url, array $data): ResponseInterface;
 
     public function getBaseUrl(): string;
+
+    public function getMemberIdentifier(): string;
 }
