@@ -47,6 +47,11 @@ class RdcClient implements RdcClientInterface
         return $this->config->getApiBaseUrl();
     }
 
+    public function getMemberIdentifier(): string
+    {
+        return sprintf('BOL.MEMBER.%s', $this->config->memberProvider);
+    }
+
     private function getRemoteTokenManager(): TokenManagerInterface
     {
         if (is_null($this->remoteTokenManager)) {
