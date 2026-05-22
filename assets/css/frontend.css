@@ -34,12 +34,6 @@
 @import "./react-modal.css";
 
 /*
-@import "font-awesome/scss/_variables.scss";
-@import "font-awesome/scss/_mixins.scss";
-@import "font-awesome/scss/_animated.scss";
-*/
-
-/*
 @import "utils.scss";
 
 @import "styles.scss";
@@ -49,8 +43,6 @@
 
 @import "stripe.scss";
 
-@import "account-creation.scss";
-
 @import "antd.scss";
 */
 
@@ -58,23 +50,6 @@
 // Allows to stick the footer to the bottom
 .content {
   flex: 1;
-}
-
-.btn-facebook {
-  background: #3B5998;
-  border-radius: 0;
-  color: #fff;
-  border-width: 1px;
-  border-style: solid;
-  border-color: #263961;
-}
-
-.btn-facebook:link, .btn-facebook:visited {
-  color: #fff;
-}
-.btn-facebook:active, .btn-facebook:hover {
-  background: #263961;
-  color: #fff;
 }
 
 .homepage-zerowaste {
