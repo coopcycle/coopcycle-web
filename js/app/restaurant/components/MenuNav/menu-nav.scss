@@ -21,10 +21,6 @@
     overflow: hidden;
   }
 
-  .ant-affix {
-    z-index: 1;
-  }
-
   .ant-anchor-ink {
     display: none;
   }
@@ -54,12 +50,6 @@
     &:hover {
       background-color: transparent;
     }
-  }
-}
-
-.ReactModal__Body--open {
-  .ant-affix {
-    z-index: inherit;
   }
 }
 
