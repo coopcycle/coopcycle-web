@@ -1,12 +1,18 @@
 {% extends "profile.html.twig" %}
 
-{% form_theme form 'bootstrap_3_layout.html.twig' %}
+{% form_theme form '@DaisyuiForm/form/daisyui_layout.html.twig' %}
 
 {% block content %}
   {{ form_start(form) }}
     <div class="form-section">
-      <div class="header rounded-top">
-        <h2>{{ 'registration.step.personal'|trans }}</h2>
+      <div class="flex justify-between items-center">
+        <h2 class="font-bold text-lg mb-4">{{ 'registration.step.personal'|trans }}</h2>
+        <div>
+          <a class="btn btn-primary btn-link" href="{{ path('nucleos_user_change_password') }}">{% trans %}profile.password.change{% endtrans %}</a>
+          {% if form.loopeatDisconnect is defined %}
+          {{ form_widget(form.loopeatDisconnect, { attr: { class: 'btn-primary btn-sm' } }) }}
+          {% endif %}
+        </div>
       </div>
       <div>
         <div class="row">
@@ -20,21 +26,11 @@
         {{ form_row(form.email) }}
         {{ form_row(form.telephone) }}
 
-        <div>
-          <a class="btn btn-primary btn-link" href="{{ path('nucleos_user_change_password') }}">{% trans %}profile.password.change{% endtrans %}</a>
-        </div>
-
-        {% if form.loopeatDisconnect is defined %}
-          <div class="form-group">
-            {{ form_widget(form.loopeatDisconnect, { attr: { class: 'btn-primary' } }) }}
-          </div>
-        {% endif %}
-
         {{ form_rest(form) }}
       </div>
     </div>
     <div class="flex justify-between">
-      <button type="button" onclick="delete_my_account()" class="btn btn-outline btn-warning">{% trans %}profile.delete_my_account{% endtrans %}</button>
+      <button type="button" onclick="delete_my_account()" class="btn btn-outline btn-error">{% trans %}profile.delete_my_account{% endtrans %}</button>
       <button type="submit" class="btn btn-primary">{% trans %}basics.save{% endtrans %}</button>
     </div>
   {{ form_end(form) }}
