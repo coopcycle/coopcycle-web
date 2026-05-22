@@ -196,7 +196,7 @@ export default function TimeRangeChangedModal() {
       contentLabel={t('CART_CHANGE_TIME_MODAL_LABEL')}
       className="TimeRangeChangedModal__Content">
       <div data-testid="order.timeRangeChangedModal">
-        <h4>{t('CART_TIME_RANGE_CHANGED_MODAL_TITLE')}</h4>
+        <h4 className="font-bold text-lg mb-4">{t('CART_TIME_RANGE_CHANGED_MODAL_TITLE')}</h4>
         <Alert warning icon="warning">
           {t('CART_TIME_RANGE_CHANGED_MODAL_MESSAGE')}
         </Alert>
