@@ -71,7 +71,7 @@
           <div id="card-errors" role="alert"></div>
 
           <div class="text-center">
-            <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" disabled="disabled">
+            <button type="submit" class="btn btn-block btn-lg btn-primary btn-payment" data-payment-button disabled="disabled">
               <span class="loading loading-spinner hidden"></span> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
             </button>
           </div>

@@ -48,10 +48,10 @@ export default function(formSelector, options) {
 
   function setLoading(isLoading) {
     if (isLoading) {
-      document.querySelector('.btn-payment > .loading').classList.remove('hidden')
+      document.querySelector('[data-payment-button] > .loading').classList.remove('hidden')
       disableBtn(submitButton)
     } else {
-      document.querySelector('.btn-payment > .loading').classList.add('hidden')
+      document.querySelector('[data-payment-button] > .loading').classList.add('hidden')
       enableBtn(submitButton)
     }
   }

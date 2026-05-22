@@ -81,7 +81,7 @@
       <div id="order__fulfilment_time_range__container" class="py-4">
       </div>
       <div>
-        <button type="submit" class="btn btn-lg btn-primary btn-payment" disabled="disabled">
+        <button type="submit" class="btn btn-lg btn-primary btn-payment" data-payment-button disabled="disabled">
           <span class="loading loading-spinner hidden"></span> {% trans with { '%total%': order.total|price_format } %}order.payment.total{% endtrans %}
         </button>
       </div>
