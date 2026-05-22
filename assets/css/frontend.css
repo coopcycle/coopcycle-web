@@ -135,6 +135,12 @@
 }
 */
 
+/* PayGreen's CDN CSS defines an unlayered `summary { display: list-item }` which beats
+   DaisyUI's layered btn styles. This unlayered rule has higher specificity and wins. */
+details.dropdown > summary {
+  display: inline-flex;
+}
+
 .btn-google-play {
   display: inline-block;
   width: 180px;
