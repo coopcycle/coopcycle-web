@@ -10,21 +10,25 @@ import SavedCreditCard from './SavedCreditCard'
 import MealVoucherDetails from './MealVoucherDetails'
 import { isGuest } from './utils'
 
-const style = {
+const baseStyle = {
+  fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+  fontSmoothing: 'antialiased',
+  fontSize: '16px',
+}
+
+const style = (isDark) => ({
   base: {
-    color: '#32325d',
-    fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-    fontSmoothing: 'antialiased',
-    fontSize: '16px',
+    ...baseStyle,
+    color: isDark ? '#e2e8f0' : '#32325d',
     '::placeholder': {
-      color: '#aab7c4'
-    }
+      color: isDark ? '#6b7280' : '#aab7c4',
+    },
   },
   invalid: {
     color: '#fa755a',
-    iconColor: '#fa755a'
-  }
-}
+    iconColor: '#fa755a',
+  },
+})
 
 function handleSaveOfPaymentMethod(el) {
   return new Promise((resolve) => {
@@ -126,6 +130,16 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, cards, onSaveCr
   const { t } = useTranslation()
 
   const [addNewCard, setAddNewCard] = useState(false)
+  const [isDark, setIsDark] = useState(
+    () => window.matchMedia('(prefers-color-scheme: dark)').matches
+  )
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    const handler = (e) => setIsDark(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
 
   const edenred = !!options && _.find(options.payments, p => p.method.code === 'EDENRED')
   const card    = !!options && _.find(options.payments, p => p.method.code === 'CARD')
@@ -193,7 +207,7 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, cards, onSaveCr
             <CardholderNameInput onChange={ onCardholderNameChange } />
           </fieldset>
           <div className="border border-base-content rounded-md p-3 mb-3">
-            <CardElement options={{ style, hidePostalCode: true }} onChange={ onChange } />
+            <CardElement options={{ style: style(isDark), hidePostalCode: true }} onChange={ onChange } />
           </div>
           {
             !isGuest(formOptions) ?
