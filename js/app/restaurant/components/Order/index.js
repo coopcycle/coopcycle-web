@@ -39,7 +39,7 @@ function StickyOrder() {
 
   return (
     <div className="hidden lg:block lg:w-full">
-      <div className="card bg-base-100 shadow-sm">
+      <div className="card bg-base-300 text-base-content shadow-sm">
         <div className="card-body">
           <CartWrapper />
         </div>

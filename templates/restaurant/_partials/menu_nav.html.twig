@@ -1,4 +1,4 @@
-<nav id="restaurant-menu-nav" class="restaurant-menu-nav">
+<nav id="restaurant-menu-nav" class="restaurant-menu-nav bg-base-100">
   {% set section_names = sections|map(s => { name: s.name }) %}
   <div {{ react_component('MenuNav', { sections: section_names }) }}>
     {# server side rendered content; will be replaced by react #}
