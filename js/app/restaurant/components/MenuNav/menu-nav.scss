@@ -10,23 +10,6 @@
   }
 }
 
-@mixin ant-anchor-link-title__text() {
-  .ant-anchor-link-title {
-    color: color-mix(in oklch, var(--color-base-content) 55%, transparent);
-    white-space: nowrap;
-
-    &:hover,
-    &:focus {
-      text-decoration: none;
-    }
-  }
-
-  // Selected state
-  .ant-anchor-link-title-active {
-    color: var(--color-primary);
-  }
-}
-
 
 .restaurant-menu-nav {
   // Ant Design's anchor wrapper has a hardcoded white background; make it
@@ -60,8 +43,6 @@
   .ant-anchor-link-active {
     border-bottom: 1px solid var(--color-primary);
   }
-
-  @include ant-anchor-link-title__text();
 
   .ant-anchor-link-title {
     padding: 0.5rem 1.5rem;
@@ -110,8 +91,6 @@
 
   @include ant-anchor-link--no-padding();
   @include ant-anchor-link--max-width();
-
-  @include ant-anchor-link-title__text();
 
   .ant-anchor-link-title {
     padding: 0.5rem 0;
