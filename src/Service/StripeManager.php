@@ -10,7 +10,7 @@ use Sylius\Component\Payment\Model\PaymentInterface;
 
 class StripeManager
 {
-    const STRIPE_API_VERSION = '2019-09-09';
+    const STRIPE_API_VERSION = '2023-08-16';
 
     public function __construct(
         private readonly SettingsManager $settingsManager,
