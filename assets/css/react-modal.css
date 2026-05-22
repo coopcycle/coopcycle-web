@@ -19,7 +19,8 @@ Copy default styles to be able to use CSS classes
   right: auto;
   bottom: auto;
   overflow: auto;
-  background-color: var(--color-neutral-50);
+  background-color: var(--color-base-100);
+  color: var(--color-base-content);
   outline: none;
   padding: 1rem;
   margin-right: -50%;
@@ -49,7 +50,7 @@ https://github.com/reactjs/react-modal/blob/master/docs/styles/classes.md#for-th
   min-width: 60%;
   border-width: 1px;
   border-style: solid;
-  border-color: var(--color-neutral-200);
+  border-color: var(--color-base-200);
   padding: 15px;
   max-height: calc(100vh - 30px);
 }
