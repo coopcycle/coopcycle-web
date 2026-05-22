@@ -2,6 +2,14 @@ import React, { useState } from 'react'
 import { Flex } from 'antd'
 import ColorPicker from './color-picker'
 
+// https://daisyui.com/docs/colors/
+const DEFAULTS = {
+  'primary':           '#422ad5',
+  'primary-content':   '#e0e7ff',
+  'secondary':         '#f43098',
+  'secondary-content': '#f9e4f0',
+}
+
 const COLORS = [
   { key: 'primary',           inputId: 'customize_theme_primary',          label: 'Primary' },
   { key: 'primary-content',   inputId: 'customize_theme_primary-content',  label: 'Primary content' },
@@ -10,7 +18,11 @@ const COLORS = [
 ]
 
 export default function ThemeColorPicker({ initialValues }) {
-  const [values, setValues] = useState(initialValues)
+  const [values, setValues] = useState(
+    Object.fromEntries(
+      Object.entries(DEFAULTS).map(([k, def]) => [k, initialValues[k] || def])
+    )
+  )
 
   const handleChange = (key, inputId, color) => {
     const hex = color.toHexString()
@@ -25,7 +37,7 @@ export default function ThemeColorPicker({ initialValues }) {
         <div key={key}>
           <div style={{ marginBottom: 4, fontSize: 12, color: '#666' }}>{label}</div>
           <ColorPicker
-            value={values[key] || undefined}
+            value={values[key]}
             showText
             onChange={(color) => handleChange(key, inputId, color)}
           />
