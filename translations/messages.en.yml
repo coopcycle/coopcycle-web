@@ -1747,6 +1747,10 @@ form.theme.primary.label: Primary
 form.theme.primary.help: Primary brand color, The main color of your brand
 form.theme.primary-content.label: Primary content
 form.theme.primary-content.help: Foreground content color to use on primary color
+form.theme.secondary.label: Secondary
+form.theme.secondary.help: Secondary brand color
+form.theme.secondary-content.label: Secondary content
+form.theme.secondary-content.help: Foreground content color to use on secondary color
 pagination.items_per_page: Items per page
 restaurant.form.en_boite_le_plat_platform_fee.label: The deposit should be collected by the platform
 

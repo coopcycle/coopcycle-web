@@ -17,7 +17,17 @@
   {{ form_row(form.motto) }}
   <hr>
 
-  {{ form_row(form.theme) }}
+  <div class="form-group">
+    <label class="control-label">{{ 'form.customize.theme.label'|trans }}</label>
+    <div hidden>{{ form_widget(form.theme) }}</div>
+    <div id="theme-color-pickers"
+      data-primary="{{ form.theme.primary.vars.value }}"
+      data-primary-content="{{ form.theme['primary-content'].vars.value }}"
+      data-secondary="{{ form.theme.secondary.vars.value }}"
+      data-secondary-content="{{ form.theme['secondary-content'].vars.value }}">
+    </div>
+    {{ form_errors(form.theme) }}
+  </div>
 
   {{ form_row(form.aboutUsEnabled) }}
   <div class="form-group">

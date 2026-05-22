@@ -28,6 +28,15 @@ class ThemeType extends AbstractType
                 'label' => 'form.theme.primary-content.label',
                 'required' => false,
             ])
+            ->add('secondary', TextType::class, [
+                'label' => 'form.theme.secondary.label',
+                'help' => 'form.theme.secondary.help',
+                'required' => false,
+            ])
+            ->add('secondary-content', TextType::class, [
+                'label' => 'form.theme.secondary-content.label',
+                'required' => false,
+            ])
             ;
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
