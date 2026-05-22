@@ -8,6 +8,7 @@ Copy default styles to be able to use CSS classes
   left: 0;
   right: 0;
   bottom: 0;
+  z-index: 1000;
   background-color: rgba(0, 0, 0, 0.5);
 }
 
