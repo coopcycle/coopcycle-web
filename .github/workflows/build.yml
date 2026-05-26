@@ -23,7 +23,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: composer install --prefer-dist --no-progress --no-scripts
-      - run: npm ci
+      - run: npm install
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
