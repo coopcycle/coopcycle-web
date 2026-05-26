@@ -8,6 +8,7 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToCheckFileExistence;
 use League\Flysystem\UnableToReadFile;
 use Liip\ImagineBundle\Service\FilterService;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -19,19 +20,22 @@ class AppearanceRuntime implements RuntimeExtensionInterface
     private $imagineFilter;
     private $appCache;
     private $logoFallback;
+    private bool $isDemo;
 
     public function __construct(
         SettingsManager $settingsManager,
         Filesystem $assetsFilesystem,
         FilterService $imagineFilter,
         CacheInterface $appCache,
-        string $logoFallback
+        string $logoFallback,
+        #[Autowire('%is_demo%')] bool $isDemo = false,
     ) {
         $this->settingsManager = $settingsManager;
         $this->assetsFilesystem = $assetsFilesystem;
         $this->imagineFilter = $imagineFilter;
         $this->appCache = $appCache;
         $this->logoFallback = $logoFallback;
+        $this->isDemo = $isDemo;
     }
 
     public function logo()
@@ -92,8 +96,28 @@ class AppearanceRuntime implements RuntimeExtensionInterface
         });
     }
 
+    private function generateDemoTheme(): array
+    {
+        $hue = random_int(0, 359);
+        $complementaryHue = ($hue + 180) % 360;
+
+        return [
+            'primary'           => sprintf('oklch(0.45 0.20 %d)', $hue),
+            'primary-content'   => sprintf('oklch(0.95 0.03 %d)', $hue),
+            'secondary'         => sprintf('oklch(0.50 0.18 %d)', $complementaryHue),
+            'secondary-content' => sprintf('oklch(0.95 0.02 %d)', $complementaryHue),
+        ];
+    }
+
     public function getTheme()
     {
+        if ($this->isDemo) {
+            return $this->appCache->get('demo.theme', function (ItemInterface $item) {
+                $item->expiresAfter(60 * 60 * 24);
+                return $this->generateDemoTheme();
+            });
+        }
+
         $theme = $this->settingsManager->get('theme');
 
         if ($theme) {
