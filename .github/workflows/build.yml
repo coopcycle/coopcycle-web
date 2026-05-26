@@ -9,9 +9,9 @@ jobs:
     env:
       CYPRESS_INSTALL_BINARY: '0'
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v2
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.x'
       - name: Setup PHP
