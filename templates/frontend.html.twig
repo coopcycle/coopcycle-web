@@ -32,15 +32,9 @@
 
 {% block banner %}
   {% if is_demo %}
-    <section class="banner">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-8 col-md-offset-2 text-center">
-            <h3>{{ 'demo.disclaimer'|trans|raw }}</h3>
-            <h4 class="hidden-xs">{{ 'demo.disclaimer.subtitle'|trans|raw }}</h4>
-          </div>
-        </div>
-      </div>
+    <section class="alert alert-info alert-soft flex flex-col justify-center gap-1">
+      <h3 class="text-center">{{ 'demo.disclaimer'|trans|raw }}</h3>
+      <h4 class="text-center hidden sm:block">{{ 'demo.disclaimer.subtitle'|trans|raw }}</h4>
     </section>
   {% endif %}
   {% include '_partials/maintenance.html.twig' %}
