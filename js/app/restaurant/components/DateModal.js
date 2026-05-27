@@ -66,6 +66,7 @@ class DateModal extends Component {
         onRequestClose={ this.closeModal.bind(this) }
         shouldCloseOnOverlayClick={ true }
         contentLabel={ this.props.t('CART_CHANGE_TIME_MODAL_LABEL') }
+        overlayClassName="ReactModal__Overlay"
         className="ReactModal__Content--date">
         <form name="cart_time" className="p-4">
           <h4 className="text-center mb-4">{ this.props.t('CART_CHANGE_TIME_MODAL_TITLE') }</h4>
