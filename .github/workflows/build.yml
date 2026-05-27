@@ -24,9 +24,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: composer install --prefer-dist --no-progress --no-scripts
       - run: npm ci
-      - run: |
-          npm install --legacy-peer-deps --include=optional
-          npm rebuild lightningcss
+      # - run: |
+      #    npm install --legacy-peer-deps --include=optional
+      #    npm rebuild lightningcss
       # - name: Install lightningcss Linux x64 native binding
       #   run: |
       #     LCSS_VER=$(node -p "require('./node_modules/lightningcss/package.json').version")
