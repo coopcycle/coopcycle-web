@@ -24,12 +24,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: composer install --prefer-dist --no-progress --no-scripts
       - run: npm ci
-      - name: Install lightningcss Linux x64 native binding
+      - name: Install @tailwindcss/oxide Linux x64 native binding
         run: |
-          LCSS_VER=$(node -p "require('./node_modules/lightningcss/package.json').version")
-          URL="https://registry.npmjs.org/lightningcss-linux-x64-gnu/-/lightningcss-linux-x64-gnu-${LCSS_VER}.tgz"
-          mkdir -p node_modules/lightningcss-linux-x64-gnu
-          curl -sL "$URL" | tar xzf - -C node_modules/lightningcss-linux-x64-gnu --strip-components=1
+          OXIDE_VER=$(node -p "require('./node_modules/@tailwindcss/oxide/package.json').version")
+          URL="https://registry.npmjs.org/@tailwindcss/oxide-linux-x64-gnu/-/oxide-linux-x64-gnu-${OXIDE_VER}.tgz"
+          mkdir -p "node_modules/@tailwindcss/oxide-linux-x64-gnu"
+          curl -sL "$URL" | tar xzf - -C "node_modules/@tailwindcss/oxide-linux-x64-gnu" --strip-components=1
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
