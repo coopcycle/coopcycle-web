@@ -67,9 +67,9 @@ class DateModal extends Component {
         shouldCloseOnOverlayClick={ true }
         contentLabel={ this.props.t('CART_CHANGE_TIME_MODAL_LABEL') }
         className="ReactModal__Content--date">
-        <form name="cart_time">
-          <h4 className="text-center">{ this.props.t('CART_CHANGE_TIME_MODAL_TITLE') }</h4>
-          <div className="text-center">
+        <form name="cart_time" className="p-4">
+          <h4 className="text-center mb-4">{ this.props.t('CART_CHANGE_TIME_MODAL_TITLE') }</h4>
+          <div className="text-center mb-4">
             { this.props.behavior === 'time_slot' && (
               <TimeSlotPicker
                 choices={ this.props.ranges }
@@ -84,24 +84,20 @@ class DateModal extends Component {
             )}
           </div>
           { this.props.isPreOrder && (
-            <div className="text-center">
+            <div className="text-center mb-4">
               <a href="#" className="ReactModal__Date__asap text-success" onClick={ this._onClickAsap.bind(this) }>
                 { this.props.t('CART_DELIVERY_TIME_ASAP') }
               </a>
             </div>
           ) }
-          <hr />
-          <div className="row" >
-            <div className="col-sm-4 col-xs-6">
-              <button type="button" className="btn btn-block btn-default" onClick={ () => this.props.setDateModalOpen(false) }>
-                { this.props.t('CART_DELIVERY_TIME_CANCEL') }
-              </button>
-            </div>
-            <div className="col-sm-8 col-xs-6">
-              <button type="button" className="btn btn-block btn-success" onClick={ this._onClickSubmit.bind(this) } data-testid="cart.time.submit">
-                { this.props.t('CART_DELIVERY_TIME_SUBMIT') }
-              </button>
-            </div>
+          <div className="divider"></div>
+          <div className="flex gap-4">
+            <button type="button" className="btn btn-block btn-default flex-1" onClick={ () => this.props.setDateModalOpen(false) }>
+              { this.props.t('CART_DELIVERY_TIME_CANCEL') }
+            </button>
+            <button type="button" className="btn btn-block btn-success flex-2" onClick={ this._onClickSubmit.bind(this) } data-testid="cart.time.submit">
+              { this.props.t('CART_DELIVERY_TIME_SUBMIT') }
+            </button>
           </div>
         </form>
       </Modal>
