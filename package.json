@@ -214,8 +214,5 @@
     "webpack": "^5.99.9",
     "webpack-cli": "^5.1.4",
     "x-data-spreadsheet": "^1.1.9"
-  },
-  "optionalDependencies": {
-    "lightningcss-linux-x64-gnu": "1.32.0"
   }
 }

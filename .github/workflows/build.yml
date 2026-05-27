@@ -24,6 +24,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: composer install --prefer-dist --no-progress --no-scripts
       - run: npm install
+      - run: npm install --no-save "lightningcss-linux-x64-gnu@$(node -p "require('./node_modules/lightningcss/package.json').version")"
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
