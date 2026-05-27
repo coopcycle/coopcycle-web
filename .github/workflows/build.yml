@@ -27,10 +27,9 @@ jobs:
       - name: Install lightningcss Linux x64 native binding
         run: |
           LCSS_VER=$(node -p "require('./node_modules/lightningcss/package.json').version")
-          npm pack "lightningcss-linux-x64-gnu@${LCSS_VER}" --quiet
+          URL="https://registry.npmjs.org/lightningcss-linux-x64-gnu/-/lightningcss-linux-x64-gnu-${LCSS_VER}.tgz"
           mkdir -p node_modules/lightningcss-linux-x64-gnu
-          tar xzf "lightningcss-linux-x64-gnu-${LCSS_VER}.tgz" -C node_modules/lightningcss-linux-x64-gnu --strip-components=1
-          rm "lightningcss-linux-x64-gnu-${LCSS_VER}.tgz"
+          curl -sL "$URL" | tar xzf - -C node_modules/lightningcss-linux-x64-gnu --strip-components=1
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
