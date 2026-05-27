@@ -24,15 +24,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: composer install --prefer-dist --no-progress --no-scripts
       - run: npm ci
-      # - run: |
-      #    npm install --legacy-peer-deps --include=optional
-      #    npm rebuild lightningcss
-      # - name: Install lightningcss Linux x64 native binding
-      #   run: |
-      #     LCSS_VER=$(node -p "require('./node_modules/lightningcss/package.json').version")
-      #     URL="https://registry.npmjs.org/lightningcss-linux-x64-gnu/-/lightningcss-linux-x64-gnu-${LCSS_VER}.tgz"
-      #     mkdir -p node_modules/lightningcss-linux-x64-gnu
-      #     curl -sL "$URL" | tar xzf - -C node_modules/lightningcss-linux-x64-gnu --strip-components=1
+      - name: Install lightningcss Linux x64 native binding
+        run: |
+          LCSS_VER=$(node -p "require('./node_modules/lightningcss/package.json').version")
+          URL="https://registry.npmjs.org/lightningcss-linux-x64-gnu/-/lightningcss-linux-x64-gnu-${LCSS_VER}.tgz"
+          mkdir -p node_modules/lightningcss-linux-x64-gnu
+          curl -sL "$URL" | tar xzf - -C node_modules/lightningcss-linux-x64-gnu --strip-components=1
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
