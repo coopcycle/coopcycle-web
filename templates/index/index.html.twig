@@ -2,11 +2,11 @@
 
 {% block body %}
 
-<header class="bg-blue-400" data-search="address"
+<header class="bg-blue-400 homepage-search" data-search="address"
   data-addresses="{{ addresses_normalized()|json_encode()|e('html') }}"
   data-tracking-category="Homepage"
   data-restaurants="{{ coopcycle_restaurants_suggestions()|json_encode()|e('html') }}">
-    <div class="relative mx-auto w-8/10 md:w-5/10 mb-16">
+  <div class="relative mx-auto w-8/10 md:w-5/10 mb-16">
     {% set motto = coopcycle_setting('motto') %}
     <h1 class="font-title text-center text-white pt-4 pb-16 text-2xl md:text-3xl lg:text-4xl font-bold">
       {{ motto is not empty ? motto : ('index.banner'|trans) }}
