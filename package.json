@@ -216,7 +216,8 @@
     "x-data-spreadsheet": "^1.1.9"
   },
   "optionalDependencies": {
-    "lightningcss-linux-x64-gnu": "^1.32.0"
+    "lightningcss-linux-x64-gnu": "^1.32.0",
+    "@tailwindcss/oxide-linux-x64-gnu": "^4.3.0"
   },
   "overrides": {
     "react-aria": "3.47.0",
