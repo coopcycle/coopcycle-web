@@ -217,5 +217,9 @@
   },
   "optionalDependencies": {
     "lightningcss-linux-x64-gnu": "^1.32.0"
+  },
+  "overrides": {
+    "react-aria": "3.47.0",
+    "@tenphi/tasty": "2.6.1"
   }
 }
