@@ -26,8 +26,7 @@ jobs:
       - run: npm ci
       - name: Install @tailwindcss/oxide Linux x64 native binding
         run: |
-          OXIDE_VER=$(node -p "require('./node_modules/@tailwindcss/oxide/package.json').version")
-          URL="https://registry.npmjs.org/@tailwindcss/oxide-linux-x64-gnu/-/oxide-linux-x64-gnu-${OXIDE_VER}.tgz"
+          URL=$(node -p "require('./package-lock.json').packages['node_modules/@tailwindcss/oxide-linux-x64-gnu'].resolved")
           mkdir -p "node_modules/@tailwindcss/oxide-linux-x64-gnu"
           curl -sL "$URL" | tar xzf - -C "node_modules/@tailwindcss/oxide-linux-x64-gnu" --strip-components=1
       - name: Install dependencies
