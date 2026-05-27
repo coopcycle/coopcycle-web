@@ -24,7 +24,7 @@ $card-padding-lg: 2rem;
   right: 0;
   transform: translateY(calc(100% - #{$navbar-height}));
   transition: transform 0.4s;
-  z-index: 2;
+  z-index: 20;
 
   flex-direction: column;
 
