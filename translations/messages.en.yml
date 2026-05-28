@@ -1767,8 +1767,6 @@ rfm.segment.recent_customers: Recent Customers
 rfm.segment.recent_customers.description: Bought most recently but not often yet
 rfm.segment.promising: Promising
 rfm.segment.promising.description: Recent shoppers with low but growing frequency
-rfm.segment.need_attention: Need Attention
-rfm.segment.need_attention.description: Average recency and frequency
 rfm.segment.at_risk: At Risk
 rfm.segment.at_risk.description: Used to be frequent, but haven't ordered recently
 rfm.segment.cant_lose_them: Can't Lose Them

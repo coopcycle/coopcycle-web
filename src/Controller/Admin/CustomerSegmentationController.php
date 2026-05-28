@@ -100,7 +100,6 @@ class CustomerSegmentationController extends AbstractController
                 WHEN r_score >= 3 AND f_score = 2      THEN 'potential_loyalists'
                 WHEN r_score = 1 AND f_score = 1       THEN 'lost'
                 WHEN r_score <= 2 AND f_score <= 2     THEN 'hibernating'
-                ELSE 'need_attention'
             END AS segment
         FROM rfm_scores
         ORDER BY segment, id
@@ -115,7 +114,6 @@ class CustomerSegmentationController extends AbstractController
             'potential_loyalists' => ['style' => 'info',    'icon' => 'thumbs-up'],
             'recent_customers'    => ['style' => 'info',    'icon' => 'clock-o'],
             'promising'           => ['style' => 'info',    'icon' => 'arrow-up'],
-            'need_attention'      => ['style' => 'warning', 'icon' => 'exclamation-triangle'],
             'at_risk'             => ['style' => 'warning', 'icon' => 'exclamation-circle'],
             'cant_lose_them'      => ['style' => 'danger',  'icon' => 'fire'],
             'hibernating'         => ['style' => 'default', 'icon' => 'moon-o'],

@@ -1704,8 +1704,6 @@ rfm.segment.recent_customers: Clients récents
 rfm.segment.recent_customers.description: Ont commandé récemment mais pas encore souvent
 rfm.segment.promising: Prometteurs
 rfm.segment.promising.description: Clients récents avec une fréquence faible mais croissante
-rfm.segment.need_attention: Besoin d'attention
-rfm.segment.need_attention.description: Récence et fréquence moyennes
 rfm.segment.at_risk: À risque
 rfm.segment.at_risk.description: Commandaient souvent, mais n'ont plus commandé récemment
 rfm.segment.cant_lose_them: À ne pas perdre

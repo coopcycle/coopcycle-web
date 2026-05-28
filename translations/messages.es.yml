@@ -1803,8 +1803,6 @@ rfm.segment.recent_customers: Clientes recientes
 rfm.segment.recent_customers.description: Han comprado recientemente pero todavía no con frecuencia
 rfm.segment.promising: Prometedores
 rfm.segment.promising.description: Compradores recientes con frecuencia baja pero creciente
-rfm.segment.need_attention: Necesitan atención
-rfm.segment.need_attention.description: Recencia y frecuencia promedio
 rfm.segment.at_risk: En riesgo
 rfm.segment.at_risk.description: Solían pedir con frecuencia, pero no han pedido recientemente
 rfm.segment.cant_lose_them: No podemos perderlos
