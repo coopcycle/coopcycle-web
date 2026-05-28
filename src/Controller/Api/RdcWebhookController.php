@@ -40,7 +40,7 @@ class RdcWebhookController extends AbstractController
 
         $payloadHash = hash('sha256', $request->getContent());
         if ($this->isDuplicatePayload($payloadHash)) {
-            return new JsonResponse(['status' => 'duplicate', 'hash' => $payloadHash], Response::HTTP_CONFLICT);
+            return new JsonResponse(['status' => 'duplicate', 'hash' => $payloadHash], Response::HTTP_OK);
         }
 
         if (!$this->isValidBOLMember($request)) {
