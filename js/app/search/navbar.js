@@ -136,11 +136,11 @@ function ComboBox({ t }) {
   // TODO Re-add loading
   return (
     <>
-      <div className={cx('relative', /*isLoading && 'has-loader-loading'*/)}>
+      <div className={cx('relative w-full md:w-auto', /*isLoading && 'has-loader-loading'*/)}>
         {/* FIXME
         The "label" HTML tag style is overriden by Bootstrap in AddressAutosuggest
         Use a span atm */}
-        <span className="input input-bordered bg-base-100 text-base-content w-24 md:w-auto">
+        <span className="input input-bordered bg-base-100 text-base-content w-full md:w-auto">
           <i className="fa fa-search"></i>
           <input
             placeholder={t('SEARCH_PLACEHOLDER')}
