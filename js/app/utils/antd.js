@@ -1,7 +1,7 @@
 import moment from 'moment'
 import { ConfigProvider, theme } from 'antd'
 import { antdLocale } from '../i18n'
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 
 moment.locale($('html').attr('lang'))
 
@@ -16,21 +16,10 @@ export const timePickerProps = {
 }
 
 export const AntdConfigProvider = ({ children }) => {
-  const [isDark, setIsDark] = useState(
-    () => window.matchMedia('(prefers-color-scheme: dark)').matches
-  )
-
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-color-scheme: dark)')
-    const handler = (e) => setIsDark(e.matches)
-    mq.addEventListener('change', handler)
-    return () => mq.removeEventListener('change', handler)
-  }, [])
-
   return (
     <ConfigProvider
       theme={{
-        algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
+        algorithm: theme.defaultAlgorithm,
         token: {
           // Seed Token
           //TODO: switch to CoopCycle Brand Red
