@@ -66,14 +66,14 @@
   <h3 style="margin:0;">
     <i class="fa fa-{{ segment_meta[active_segment].icon }}"></i>
     {{ ('rfm.segment.' ~ active_segment)|trans }}
-    <span class="badge">{{ customers|length }}</span>
+    <span class="badge">{{ customers.totalItemCount }}</span>
   </h3>
   <a href="{{ path('admin_customer_segmentation') }}" class="btn btn-default btn-sm">
     <i class="fa fa-times"></i> {% trans %}rfm.clear_filter{% endtrans %}
   </a>
 </div>
 
-{% if customers|length > 0 %}
+{% if customers.totalItemCount > 0 %}
 <table class="table">
   <thead>
     <tr>
@@ -117,6 +117,9 @@
     {% endfor %}
   </tbody>
 </table>
+<nav class="text-center">
+  {{ knp_pagination_render(customers) }}
+</nav>
 {% else %}
 <div class="alert alert-info">{% trans %}rfm.no_customers{% endtrans %}</div>
 {% endif %}

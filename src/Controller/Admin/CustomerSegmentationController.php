@@ -3,6 +3,7 @@
 namespace AppBundle\Controller\Admin;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,8 +13,10 @@ class CustomerSegmentationController extends AbstractController
 {
     public function __construct(private readonly bool $rfmEnabled) {}
 
+    private const ITEMS_PER_PAGE = 20;
+
     #[Route('/admin/customers/segmentation', name: 'admin_customer_segmentation', methods: ['GET'])]
-    public function __invoke(Request $request, EntityManagerInterface $entityManager): Response
+    public function __invoke(Request $request, EntityManagerInterface $entityManager, PaginatorInterface $paginator): Response
     {
         if (!$this->rfmEnabled) {
             throw $this->createNotFoundException();
@@ -43,9 +46,11 @@ class CustomerSegmentationController extends AbstractController
             $activeSegment = null;
         }
 
-        $customers = ($activeSegment !== null && isset($segments[$activeSegment]))
-            ? $segments[$activeSegment]
-            : [];
+        $customers = $paginator->paginate(
+            $activeSegment !== null ? ($segments[$activeSegment] ?? []) : [],
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE
+        );
 
         return $this->render('admin/customer_segmentation.html.twig', [
             'segment_cards'  => $segmentCards,
