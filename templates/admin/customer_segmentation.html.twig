@@ -79,7 +79,7 @@
     <tr>
       <th>{% trans %}profile.email{% endtrans %}</th>
       <th>{% trans %}profile.fullName{% endtrans %}</th>
-      <th class="text-right">{% trans %}rfm.column.recency_days{% endtrans %}</th>
+      <th class="text-right">{% trans %}rfm.column.last_order{% endtrans %}</th>
       <th class="text-right">{% trans %}rfm.column.frequency{% endtrans %}</th>
       <th class="text-right">{% trans %}rfm.column.monetary{% endtrans %}</th>
       <th class="text-right">R</th>
@@ -99,7 +99,7 @@
           {{ customer.first_name }} {{ customer.last_name }}
         {% endif %}
       </td>
-      <td class="text-right">{{ customer.recency_days }}</td>
+      <td class="text-right">{{ customer.last_order_at|ago }}</td>
       <td class="text-right">{{ customer.frequency }}</td>
       <td class="text-right">{{ customer.monetary|price_format }}</td>
       <td class="text-right"><span class="badge">{{ customer.r_score }}</span></td>

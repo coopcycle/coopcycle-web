@@ -72,7 +72,7 @@ class CustomerSegmentationController extends AbstractController
                 u.username,
                 COUNT(o.id)::integer                                       AS frequency,
                 SUM(o.total)::integer                                      AS monetary,
-                DATE_PART('day', NOW() - MAX(o.created_at))::integer       AS recency_days
+                MAX(o.created_at)                                          AS last_order_at
             FROM sylius_customer c
             INNER JOIN sylius_order o ON o.customer_id = c.id
             LEFT  JOIN api_user u     ON u.customer_id = c.id
@@ -81,14 +81,14 @@ class CustomerSegmentationController extends AbstractController
         ),
         rfm_scores AS (
             SELECT *,
-                NTILE(4) OVER (ORDER BY recency_days DESC) AS r_score,
-                NTILE(4) OVER (ORDER BY frequency ASC)    AS f_score,
-                NTILE(4) OVER (ORDER BY monetary ASC)     AS m_score
+                NTILE(4) OVER (ORDER BY last_order_at ASC) AS r_score,
+                NTILE(4) OVER (ORDER BY frequency ASC)     AS f_score,
+                NTILE(4) OVER (ORDER BY monetary ASC)      AS m_score
             FROM rfm_data
         )
         SELECT
             id, email, first_name, last_name, username,
-            frequency, monetary, recency_days,
+            frequency, monetary, last_order_at,
             r_score, f_score, m_score,
             CASE
                 WHEN r_score = 4 AND f_score = 4       THEN 'champions'

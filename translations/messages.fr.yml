@@ -1691,7 +1691,7 @@ rfm.title: Segmentation clients
 rfm.clear_filter: Effacer le filtre
 rfm.no_customers: Aucun client dans ce segment.
 rfm.view_profile: Voir le profil
-rfm.column.recency_days: Jours depuis la dernière commande
+rfm.column.last_order: Dernière commande
 rfm.column.frequency: Commandes
 rfm.column.monetary: Total dépensé
 rfm.segment.champions: Champions

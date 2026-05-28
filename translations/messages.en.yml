@@ -1754,7 +1754,7 @@ rfm.title: Customer Segmentation
 rfm.clear_filter: Clear filter
 rfm.no_customers: No customers in this segment.
 rfm.view_profile: View profile
-rfm.column.recency_days: Days since last order
+rfm.column.last_order: Last order
 rfm.column.frequency: Orders
 rfm.column.monetary: Total spent
 rfm.segment.champions: Champions

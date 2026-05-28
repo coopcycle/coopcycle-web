@@ -1790,7 +1790,7 @@ rfm.title: Segmentación de clientes
 rfm.clear_filter: Borrar filtro
 rfm.no_customers: No hay clientes en este segmento.
 rfm.view_profile: Ver perfil
-rfm.column.recency_days: Días desde el último pedido
+rfm.column.last_order: Último pedido
 rfm.column.frequency: Pedidos
 rfm.column.monetary: Total gastado
 rfm.segment.champions: Campeones
