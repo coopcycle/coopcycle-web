@@ -171,7 +171,7 @@ module.exports = {
   // you may use transformIgnorePatterns to allow transpiling such modules
   transformIgnorePatterns: [
     // "node_modules/(?!(react-native|my-project|react-native-button)/)"
-    "node_modules/(?!(coopcycle-frontend-js|astronomia|@uidotdev/usehooks)/)"
+    "node_modules/(?!(coopcycle-frontend-js|astronomia|@uidotdev/usehooks|@standard-schema/utils)/)"
   ],
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them
