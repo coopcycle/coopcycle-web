@@ -33,7 +33,7 @@ const ValuesRange = ({ option, isInvalid = false }) => {
 
   if (range) {
     return (
-      <small className={classNames('product-option-group__values_range', { 'text-error': isInvalid })}>{ range }</small>
+      <small className={clsx('product-option-group__values_range', { 'text-error': isInvalid })}>{ range }</small>
     )
   } else {
     return null
