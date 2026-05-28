@@ -3,10 +3,15 @@
 {% block styles_common %}
   {{ encore_entry_link_tags('frontend') }}
   {% block styles %}{% endblock %}
-  {% if coopcycle_has_banner() %}
+  {% set banner_background_url = coopcycle_banner_background_url() %}
+  {% if coopcycle_has_banner() or banner_background_url %}
   <style>
   .homepage-search, .restaurant-list-header {
-    background-image: url({{ url('assets_banner_svg')  }});
+    background-image: url({% if banner_background_url %}'{{ banner_background_url }}'{% else %}{{ url('assets_banner_svg') }}{% endif %});
+    {% if banner_background_url %}
+    background-size: cover;
+    background-position: center;
+    {% endif %}
   }
   </style>
   {% set theme = coopcycle_theme() %}

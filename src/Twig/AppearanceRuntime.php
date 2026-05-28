@@ -109,6 +109,22 @@ class AppearanceRuntime implements RuntimeExtensionInterface
         ];
     }
 
+    public function getBannerBackgroundUrl(): ?string
+    {
+        $filename = $this->settingsManager->get('banner_background_image');
+        if (!$filename) {
+            return null;
+        }
+        try {
+            if (!$this->assetsFilesystem->fileExists($filename)) {
+                return null;
+            }
+        } catch (UnableToCheckFileExistence|UnableToReadFile) {
+            return null;
+        }
+        return '/assets/banner_background';
+    }
+
     public function getTheme()
     {
         if ($this->isDemo) {

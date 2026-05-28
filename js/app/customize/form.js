@@ -74,7 +74,7 @@ const dzEl = document.getElementById('banner-dropzone')
 if (dzEl) {
   new Dropzone(dzEl, {
     url: dzEl.dataset.dropzoneUrl,
-    acceptedFiles: 'image/svg,image/svg+xml',
+    acceptedFiles: 'image/svg,image/svg+xml,image/jpeg,image/png',
     // dictDefaultMessage: t('DROPZONE_DEFAULT_MESSAGE'),
     maxFiles: 1,
     // params,

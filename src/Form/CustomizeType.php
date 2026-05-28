@@ -185,6 +185,7 @@ class CustomizeType extends AbstractType
                 $this->settingsManager->set('motto', $motto);
                 $this->settingsManager->flush();
             }
+
         });
     }
 }
