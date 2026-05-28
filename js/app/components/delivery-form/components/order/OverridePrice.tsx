@@ -28,8 +28,9 @@ export const OverridePrice = ({ overridePrice, setOverridePrice }: Props) => {
     if (taxRatesData) {
       const taxRates = taxRatesData['hydra:member'];
       return (
-        taxRates.find(tax => tax.category === 'SERVICE') ||
-        taxRates.find(tax => tax.category === 'BASE_STANDARD')
+        taxRates?.find(tax => tax.category === 'SERVICE') ||
+        taxRates?.find(tax => tax.category === 'BASE_STANDARD') ||
+        null
       );
     }
 

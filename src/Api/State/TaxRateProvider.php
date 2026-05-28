@@ -18,17 +18,20 @@ final class TaxRateProvider implements ProviderInterface
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
-        $taxRates = $this->taxesHelper->getBaseRates();
-        foreach ($taxRates as $taxRate) {
+        $result = [];
+
+        foreach ($this->taxesHelper->getBaseRates() as $taxRate) {
             $alternativeRates = $this->taxesHelper->getAlternativeTaxRateCodes($taxRate->getCode());
-            yield new TaxRate($taxRate, $this->taxesHelper->translate($taxRate->getCode()), $alternativeRates);
+            $result[] = new TaxRate($taxRate, $this->taxesHelper->translate($taxRate->getCode()), $alternativeRates);
         }
 
         $serviceTaxRateCode = $this->taxesHelper->getServiceTaxRateCode();
 
         if (null !== $serviceTaxRateCode) {
             $serviceTaxRate = $this->entityManager->getRepository(BaseTaxRate::class)->findOneByCode($serviceTaxRateCode);
-            yield new TaxRate($serviceTaxRate, $this->taxesHelper->translate($serviceTaxRate->getCode()));
+            $result[] = new TaxRate($serviceTaxRate, $this->taxesHelper->translate($serviceTaxRate->getCode()));
         }
+
+        return $result;
     }
 }
