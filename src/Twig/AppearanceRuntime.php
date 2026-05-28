@@ -109,6 +109,11 @@ class AppearanceRuntime implements RuntimeExtensionInterface
         ];
     }
 
+    public function getBannerBackgroundTone(): string
+    {
+        return $this->settingsManager->get('banner_background_image_tone') ?? 'dark';
+    }
+
     public function getBannerBackgroundUrl(): ?string
     {
         $filename = $this->settingsManager->get('banner_background_image');

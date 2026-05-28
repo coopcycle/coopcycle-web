@@ -13,6 +13,12 @@
     background-position: center;
     {% endif %}
   }
+  {% if banner_background_url %}
+  {% set banner_tone = coopcycle_banner_background_tone() %}
+  .homepage-search, .restaurant-list-header {
+    color: {{ banner_tone == 'light' ? '#1a1a1a' : '#ffffff' }};
+  }
+  {% endif %}
   </style>
   {% set theme = coopcycle_theme() %}
 

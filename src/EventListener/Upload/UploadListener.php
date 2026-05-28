@@ -223,6 +223,34 @@ final class UploadListener
                 }
             } catch (\Exception) {}
             $this->settingsManager->set('banner_background_image', "banner_background.{$ext}");
+
+            $gdImage = imagecreatefromstring($file->getFileSystem()->read($file->getPathname()));
+            if ($gdImage !== false) {
+                if (!imageistruecolor($gdImage)) {
+                    imagepalettetotruecolor($gdImage);
+                }
+                $width = imagesx($gdImage);
+                $height = imagesy($gdImage);
+                $totalLuminance = 0.0;
+                $gridSize = 10;
+                for ($xi = 0; $xi < $gridSize; $xi++) {
+                    for ($yi = 0; $yi < $gridSize; $yi++) {
+                        $packed = imagecolorat($gdImage, (int)($width * ($xi + 0.5) / $gridSize), (int)($height * ($yi + 0.5) / $gridSize));
+                        // GD alpha: 0=opaque, 127=transparent — blend transparent pixels with white
+                        $alpha = ($packed >> 24) & 0x7F;
+                        $blend = $alpha / 127.0;
+                        $r = (int)((($packed >> 16) & 0xFF) * (1 - $blend) + 255 * $blend);
+                        $g = (int)((($packed >> 8) & 0xFF) * (1 - $blend) + 255 * $blend);
+                        $b = (int)(($packed & 0xFF) * (1 - $blend) + 255 * $blend);
+                        $totalLuminance += 0.299 * $r + 0.587 * $g + 0.114 * $b;
+                    }
+                }
+                imagedestroy($gdImage);
+                $luminance = $totalLuminance / ($gridSize * $gridSize) / 255;
+            } else {
+                $luminance = 0.0;
+            }
+            $this->settingsManager->set('banner_background_image_tone', $luminance >= 0.5 ? 'light' : 'dark');
             $this->settingsManager->flush();
         } else {
             $this->appCache->delete('banner_svg_stat');
