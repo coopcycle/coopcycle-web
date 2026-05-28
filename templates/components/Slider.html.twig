@@ -4,10 +4,10 @@
       <ol class="swiper-wrapper">
         {% for slide in this.filteredSlides %}
         <li class="swiper-slide">
-          <a href="{{ slide.href }}" target="_blank" style="display: contents; background-color: {{ slide.backgroundColor }};">
+          <a href="{{ slide.href }}" target="_blank" style="display: contents;">
             {# This wrapper <div> is needed for the CSS shadow to work #}
             <div class="px-1 py-2 h-full">
-              <div class="card shadow-sm h-full flex flex-row">
+              <div class="card shadow-sm h-full flex flex-row" style="background-color: {{ slide.backgroundColor }};">
                 <div class="swiper-slide-content-left">
                   <h4 class="coopcycle-homepage-bg-{{ slide.colorScheme ?? 'light' }}">{{ slide.title }}</h4>
                   <p class="coopcycle-homepage-bg-{{ slide.colorScheme ?? 'light' }}">{{ slide.text }}</p>
