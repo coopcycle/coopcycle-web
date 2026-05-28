@@ -10,9 +10,15 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class CustomerSegmentationController extends AbstractController
 {
+    public function __construct(private readonly bool $rfmEnabled) {}
+
     #[Route('/admin/customers/segmentation', name: 'admin_customer_segmentation', methods: ['GET'])]
     public function __invoke(Request $request, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->rfmEnabled) {
+            throw $this->createNotFoundException();
+        }
+
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $conn = $entityManager->getConnection();
