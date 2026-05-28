@@ -1686,3 +1686,31 @@ two_factor.title: Authentification à deux facteurs
 two_factor.subtitle: "Un code de vérification a été envoyé à votre adresse e-mail. Veuillez le saisir ci-dessous."
 two_factor.code.label: Code de vérification
 two_factor.submit: Vérifier
+
+rfm.title: Segmentation clients
+rfm.clear_filter: Effacer le filtre
+rfm.no_customers: Aucun client dans ce segment.
+rfm.view_profile: Voir le profil
+rfm.column.recency_days: Jours depuis la dernière commande
+rfm.column.frequency: Commandes
+rfm.column.monetary: Total dépensé
+rfm.segment.champions: Champions
+rfm.segment.champions.description: Achats récents, fréquents et dépenses les plus élevées
+rfm.segment.loyal_customers: Clients fidèles
+rfm.segment.loyal_customers.description: Commandent régulièrement et répondent aux promotions
+rfm.segment.potential_loyalists: Fidèles potentiels
+rfm.segment.potential_loyalists.description: Clients récents avec une fréquence en croissance
+rfm.segment.recent_customers: Clients récents
+rfm.segment.recent_customers.description: Ont commandé récemment mais pas encore souvent
+rfm.segment.promising: Prometteurs
+rfm.segment.promising.description: Clients récents avec une fréquence faible mais croissante
+rfm.segment.need_attention: Besoin d'attention
+rfm.segment.need_attention.description: Récence et fréquence moyennes
+rfm.segment.at_risk: À risque
+rfm.segment.at_risk.description: Commandaient souvent, mais n'ont plus commandé récemment
+rfm.segment.cant_lose_them: À ne pas perdre
+rfm.segment.cant_lose_them.description: Gros dépensiers qui ne sont plus revenus depuis longtemps
+rfm.segment.hibernating: En hibernation
+rfm.segment.hibernating.description: Dernier achat il y a longtemps avec un faible nombre de commandes
+rfm.segment.lost: Perdus
+rfm.segment.lost.description: Scores de récence et de fréquence les plus bas
