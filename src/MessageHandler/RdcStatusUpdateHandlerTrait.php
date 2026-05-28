@@ -15,6 +15,7 @@ use AppBundle\Integration\Rdc\Enum\EventCode;
 use AppBundle\Integration\Rdc\Enum\EventDomain;
 use AppBundle\Integration\Rdc\Enum\EventType;
 use AppBundle\Integration\Rdc\Enum\ExecutionStatus;
+use AppBundle\Integration\Rdc\Enum\ServiceStatus;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -56,52 +57,22 @@ trait RdcStatusUpdateHandlerTrait
         }
 
         $delivery = $task->getDelivery();
-        $serviceId = (string) $delivery->getId();
+        $serviceId = sprintf('%s', $delivery->getId());
         $actionTime = $message->actionTime ?? new \DateTimeImmutable();
 
-        if ($task->getType() === Task::TYPE_DROPOFF) {
-            $activityId = $this->getActivityId((string) $delivery->getPickup()->getId());
-        } else {
-            $activityId = $this->getActivityId((string) $message->taskId);
-        }
+        $activityId = $task->getType() === Task::TYPE_DROPOFF
+            ? $this->getActivityId(sprintf('%s', $delivery->getPickup()->getId()))
+            : $this->getActivityId(sprintf('%s', $message->taskId));
 
         $address = $task->getAddress();
         $location = $this->buildLocationUpdate($address, $config['actionType'], $actionTime, $task);
 
-        if ($message->coopcycleStatus === Task::STATUS_DOING) {
-            return;
-        }
-
-        if ($message->coopcycleStatus === Task::STATUS_DONE) {
-            if ($config['shouldPatch']) {
-                $this->patchService($rdcClient, $serviceId, ExecutionStatus::FINISHED->value, $location, true);
-                $this->patchActivity($rdcClient, $activityId, ExecutionStatus::FINISHED->value, $location, true);
-            }
-
-            foreach ($config['serviceEvents'] as $event) {
-                $this->postServiceEvent(
-                    $rdcClient,
-                    $serviceId,
-                    $event['code'],
-                    $event['type'],
-                    $location,
-                    sprintf($event['description'], $serviceId),
-                    $actionTime
-                );
-            }
-
-            foreach ($config['activityEvents'] as $event) {
-                $this->postActivityEvent(
-                    $rdcClient,
-                    $activityId,
-                    $event['code'],
-                    $event['type'],
-                    $location,
-                    sprintf($event['description'], $activityId),
-                    $actionTime
-                );
-            }
-        }
+        match ($message->coopcycleStatus) {
+            Task::STATUS_DOING => $this->handleStatusDoing($rdcClient, $serviceId, $activityId, $location, $actionTime, $config),
+            Task::STATUS_DONE => $this->handleStatusDone($rdcClient, $serviceId, $activityId, $location, $actionTime, $config),
+            Task::STATUS_CANCELLED => $this->handleStatusCancelled($rdcClient, $serviceId, $activityId, $location, $actionTime, $config),
+            default => null,
+        };
 
         $this->logger->info('Processed RDC status update', [
             'task_id' => $message->taskId,
@@ -110,54 +81,110 @@ trait RdcStatusUpdateHandlerTrait
         ]);
     }
 
-    private function patchService(RdcClientInterface $rdcClient, string $serviceId, string $executionStatus, array $location, bool $isEndLocation = false): void
-    {
-        $payload = $isEndLocation
-            ? ['executionStatus' => $executionStatus, 'endLocation' => $location]
-            : ['executionStatus' => $executionStatus, 'startLocation' => $location];
-
-        $rdcClient->patch(sprintf('/services/%s', $serviceId), $payload);
-    }
-
-    private function patchActivity(RdcClientInterface $rdcClient, string $activityId, string $executionStatus, array $location, bool $isEndLocation = false): void
-    {
-        $payload = $isEndLocation
-            ? ['executionStatus' => $executionStatus, 'endLocation' => $location]
-            : ['executionStatus' => $executionStatus, 'startLocation' => $location];
-
-        $rdcClient->patch(sprintf('/activities/%s', $activityId), $payload);
-    }
-
-    private function postServiceEvent(
+    private function handleStatusDoing(
         RdcClientInterface $rdcClient,
         string $serviceId,
-        EventCode $code,
-        EventType $eventType,
+        string $activityId,
         array $location,
-        string $description,
-        \DateTimeImmutable $actionTime
+        \DateTimeImmutable $actionTime,
+        array $config
     ): void {
-        $rdcClient->post(sprintf('/services/%s/events', $serviceId), [
-            'eventType' => $eventType->value,
-            'code' => $code->value,
-            'domain' => EventDomain::BUSINESS->value,
-            'description' => $description,
-            'location' => $location,
-            'actualDateTime' => $actionTime->format(\DateTimeInterface::ATOM),
-            'creationDateTime' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
+        if ($config['shouldPatch'] ?? false) {
+            $this->patchExecution($rdcClient, 'services', $serviceId, ExecutionStatus::STARTED->value, $location, false);
+            $this->patchExecution($rdcClient, 'activities', $activityId, ExecutionStatus::STARTED->value, $location, false);
+        }
+
+        $this->postEvents($rdcClient, 'services', $serviceId, $config['startServiceEvents'] ?? [], $location, $actionTime);
+        $this->postEvents($rdcClient, 'activities', $activityId, $config['startActivityEvents'] ?? [], $location, $actionTime);
+    }
+
+    private function handleStatusDone(
+        RdcClientInterface $rdcClient,
+        string $serviceId,
+        string $activityId,
+        array $location,
+        \DateTimeImmutable $actionTime,
+        array $config
+    ): void {
+        if ($config['shouldPatch'] ?? false) {
+            $this->patchExecution($rdcClient, 'services', $serviceId, ExecutionStatus::FINISHED->value, $location, true);
+            $this->patchExecution($rdcClient, 'activities', $activityId, ExecutionStatus::FINISHED->value, $location, true);
+        }
+
+        $this->postEvents($rdcClient, 'services', $serviceId, $config['serviceEvents'] ?? [], $location, $actionTime);
+        $this->postEvents($rdcClient, 'activities', $activityId, $config['activityEvents'] ?? [], $location, $actionTime);
+    }
+
+    private function handleStatusCancelled(
+        RdcClientInterface $rdcClient,
+        string $serviceId,
+        string $activityId,
+        array $location,
+        \DateTimeImmutable $actionTime,
+        array $config
+    ): void {
+        if ($config['shouldPatch'] ?? false) {
+            $this->patchExecution($rdcClient, 'services', $serviceId, ExecutionStatus::CANCELLED->value, $location, true);
+            $this->patchExecution($rdcClient, 'activities', $activityId, ExecutionStatus::CANCELLED->value, $location, true);
+            $this->patchServiceStatus($rdcClient, $serviceId, ServiceStatus::CANCELLED);
+        }
+    }
+
+    private function patchExecution(
+        RdcClientInterface $rdcClient,
+        string $resourceType,
+        string $resourceId,
+        string $executionStatus,
+        array $location,
+        bool $isEndLocation = false
+    ): void {
+        $payload = $isEndLocation
+            ? ['executionStatus' => $executionStatus, 'endLocation' => $location]
+            : ['executionStatus' => $executionStatus, 'startLocation' => $location];
+
+        $rdcClient->patch(sprintf('/%s/%s', $resourceType, $resourceId), $payload);
+    }
+
+    private function patchServiceStatus(RdcClientInterface $rdcClient, string $serviceId, ServiceStatus $status): void
+    {
+        $rdcClient->patch(sprintf('/services/%s', $serviceId), [
+            'status' => $status->value,
         ]);
     }
 
-    private function postActivityEvent(
+    private function postEvents(
         RdcClientInterface $rdcClient,
-        string $activityId,
+        string $resourceType,
+        string $resourceId,
+        array $events,
+        array $location,
+        \DateTimeImmutable $actionTime
+    ): void {
+        foreach ($events as $event) {
+            $this->postExecutionEvent(
+                $rdcClient,
+                $resourceType,
+                $resourceId,
+                $event['code'],
+                $event['type'],
+                $location,
+                sprintf($event['description'], $resourceId),
+                $actionTime
+            );
+        }
+    }
+
+    private function postExecutionEvent(
+        RdcClientInterface $rdcClient,
+        string $resourceType,
+        string $resourceId,
         EventCode $code,
         EventType $eventType,
         array $location,
         string $description,
         \DateTimeImmutable $actionTime
     ): void {
-        $rdcClient->post(sprintf('/activities/%s/events', $activityId), [
+        $rdcClient->post(sprintf('/%s/%s/events', $resourceType, $resourceId), [
             'eventType' => $eventType->value,
             'code' => $code->value,
             'domain' => EventDomain::BUSINESS->value,
@@ -175,7 +202,7 @@ trait RdcStatusUpdateHandlerTrait
 
     private function buildLocationUpdate(Address $address, string $actionType, \DateTimeImmutable $actionTime, ?Task $task = null): array
     {
-        $isDropoff = $task !== null && $task->getType() === Task::TYPE_DROPOFF;
+        $isDropoff = !is_null($task) && $task->getType() === Task::TYPE_DROPOFF;
 
         return [
             'address' => [

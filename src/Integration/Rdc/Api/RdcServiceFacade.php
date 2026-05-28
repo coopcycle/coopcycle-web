@@ -358,7 +358,7 @@ class RdcServiceFacade
             'requestorMemberIdentifier' => $this->getClient()->getMemberIdentifier(),
         ];
 
-        $remoteChangeRequestUrl = sprintf('%s/change-requests', $loUri);
+        $remoteChangeRequestUrl = sprintf('%s/change-requests?source=true', $loUri);
 
         $response = $this->getClient()->postRemote($remoteChangeRequestUrl, $changeRequest);
 
