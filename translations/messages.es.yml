@@ -1785,3 +1785,31 @@ two_factor.title: Autenticación de dos factores
 two_factor.subtitle: "Se ha enviado un código de verificación a tu dirección de correo electrónico. Por favor, introdúcelo a continuación."
 two_factor.code.label: Código de verificación
 two_factor.submit: Verificar
+
+rfm.title: Segmentación de clientes
+rfm.clear_filter: Borrar filtro
+rfm.no_customers: No hay clientes en este segmento.
+rfm.view_profile: Ver perfil
+rfm.column.recency_days: Días desde el último pedido
+rfm.column.frequency: Pedidos
+rfm.column.monetary: Total gastado
+rfm.segment.champions: Campeones
+rfm.segment.champions.description: Compran recientemente, con frecuencia y gastan más
+rfm.segment.loyal_customers: Clientes leales
+rfm.segment.loyal_customers.description: Piden regularmente y responden a las promociones
+rfm.segment.potential_loyalists: Leales potenciales
+rfm.segment.potential_loyalists.description: Clientes recientes con frecuencia creciente
+rfm.segment.recent_customers: Clientes recientes
+rfm.segment.recent_customers.description: Han comprado recientemente pero todavía no con frecuencia
+rfm.segment.promising: Prometedores
+rfm.segment.promising.description: Compradores recientes con frecuencia baja pero creciente
+rfm.segment.need_attention: Necesitan atención
+rfm.segment.need_attention.description: Recencia y frecuencia promedio
+rfm.segment.at_risk: En riesgo
+rfm.segment.at_risk.description: Solían pedir con frecuencia, pero no han pedido recientemente
+rfm.segment.cant_lose_them: No podemos perderlos
+rfm.segment.cant_lose_them.description: Grandes gastadores que no han vuelto en mucho tiempo
+rfm.segment.hibernating: En hibernación
+rfm.segment.hibernating.description: Último pedido hace mucho tiempo con bajo número de pedidos
+rfm.segment.lost: Perdidos
+rfm.segment.lost.description: Puntuaciones de recencia y frecuencia más bajas

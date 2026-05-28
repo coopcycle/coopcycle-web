@@ -1,0 +1,126 @@
+{% extends "admin.html.twig" %}
+
+{% block prepare_title %}
+  {{ add_title_prefix('rfm.title'|trans) }}
+{% endblock %}
+
+{% block styles %}
+<style>
+.panel--active {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, .25);
+}
+.segment-card {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.segment-card:hover,
+.segment-card:focus {
+  text-decoration: none;
+  color: inherit;
+}
+.segment-card .panel {
+  transition: box-shadow .15s ease-in-out;
+}
+.segment-card:hover .panel {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, .15);
+}
+</style>
+{% endblock %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_customer_segmentation') }}">{% trans %}rfm.title{% endtrans %}</a></li>
+{% if active_segment %}
+<li>{{ ('rfm.segment.' ~ active_segment)|trans }}</li>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  {% for key, card in segment_cards %}
+  <div class="col-sm-6 col-md-4 col-lg-3" style="margin-bottom: 16px;">
+    <a href="{{ path('admin_customer_segmentation', { segment: key }) }}" class="segment-card">
+      <div class="panel panel-{{ card.style }}{% if active_segment == key %} panel--active{% endif %}" style="margin-bottom: 0;">
+        <div class="panel-heading">
+          <div class="d-flex justify-content-between align-items-center" style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-weight:600;">
+              <i class="fa fa-{{ card.icon }}"></i>
+              {{ ('rfm.segment.' ~ key)|trans }}
+            </span>
+            <span class="badge">{{ card.count }}</span>
+          </div>
+        </div>
+        <div class="panel-body">
+          <p class="text-muted" style="font-size:12px;margin:0;">{{ ('rfm.segment.' ~ key ~ '.description')|trans }}</p>
+        </div>
+      </div>
+    </a>
+  </div>
+  {% endfor %}
+</div>
+
+{% if active_segment %}
+<hr>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+  <h3 style="margin:0;">
+    <i class="fa fa-{{ segment_meta[active_segment].icon }}"></i>
+    {{ ('rfm.segment.' ~ active_segment)|trans }}
+    <span class="badge">{{ customers|length }}</span>
+  </h3>
+  <a href="{{ path('admin_customer_segmentation') }}" class="btn btn-default btn-sm">
+    <i class="fa fa-times"></i> {% trans %}rfm.clear_filter{% endtrans %}
+  </a>
+</div>
+
+{% if customers|length > 0 %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>{% trans %}profile.email{% endtrans %}</th>
+      <th>{% trans %}profile.fullName{% endtrans %}</th>
+      <th class="text-right">{% trans %}rfm.column.recency_days{% endtrans %}</th>
+      <th class="text-right">{% trans %}rfm.column.frequency{% endtrans %}</th>
+      <th class="text-right">{% trans %}rfm.column.monetary{% endtrans %}</th>
+      <th class="text-right">R</th>
+      <th class="text-right">F</th>
+      <th class="text-right">M</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for customer in customers %}
+    <tr>
+      <td>
+        <span class="text-monospace">{{ customer.email }}</span>
+      </td>
+      <td>
+        {% if customer.first_name or customer.last_name %}
+          {{ customer.first_name }} {{ customer.last_name }}
+        {% endif %}
+      </td>
+      <td class="text-right">{{ customer.recency_days }}</td>
+      <td class="text-right">{{ customer.frequency }}</td>
+      <td class="text-right">{{ customer.monetary|price_format }}</td>
+      <td class="text-right"><span class="badge">{{ customer.r_score }}</span></td>
+      <td class="text-right"><span class="badge">{{ customer.f_score }}</span></td>
+      <td class="text-right"><span class="badge">{{ customer.m_score }}</span></td>
+      <td class="text-right">
+        {% if customer.username %}
+        <a href="{{ path('admin_user_edit', { username: customer.username }) }}"
+           class="btn btn-xs btn-default">
+          <i class="fa fa-user"></i> {% trans %}rfm.view_profile{% endtrans %}
+        </a>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div class="alert alert-info">{% trans %}rfm.no_customers{% endtrans %}</div>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}
