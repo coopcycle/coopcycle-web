@@ -1749,3 +1749,31 @@ two_factor.title: Two-factor authentication
 two_factor.subtitle: "A verification code has been sent to your email address. Please enter it below."
 two_factor.code.label: Verification code
 two_factor.submit: Verify
+
+rfm.title: Customer Segmentation
+rfm.clear_filter: Clear filter
+rfm.no_customers: No customers in this segment.
+rfm.view_profile: View profile
+rfm.column.recency_days: Days since last order
+rfm.column.frequency: Orders
+rfm.column.monetary: Total spent
+rfm.segment.champions: Champions
+rfm.segment.champions.description: Bought recently, buy often, and spend the most
+rfm.segment.loyal_customers: Loyal Customers
+rfm.segment.loyal_customers.description: Order regularly and respond to promotions
+rfm.segment.potential_loyalists: Potential Loyalists
+rfm.segment.potential_loyalists.description: Recent customers with growing frequency
+rfm.segment.recent_customers: Recent Customers
+rfm.segment.recent_customers.description: Bought most recently but not often yet
+rfm.segment.promising: Promising
+rfm.segment.promising.description: Recent shoppers with low but growing frequency
+rfm.segment.need_attention: Need Attention
+rfm.segment.need_attention.description: Average recency and frequency
+rfm.segment.at_risk: At Risk
+rfm.segment.at_risk.description: Used to be frequent, but haven't ordered recently
+rfm.segment.cant_lose_them: Can't Lose Them
+rfm.segment.cant_lose_them.description: Big spenders who haven't returned in a long time
+rfm.segment.hibernating: Hibernating
+rfm.segment.hibernating.description: Last purchase was long ago with low order count
+rfm.segment.lost: Lost
+rfm.segment.lost.description: Lowest recency and frequency scores
