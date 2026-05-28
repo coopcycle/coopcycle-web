@@ -1,5 +1,4 @@
 @import "../../../assets/css/vars.scss";
-// @import "../../../assets/css/mixins/card";
 
 .button-reset {
   // Reset button styles based on https://gist.github.com/MoOx/9137295
@@ -34,27 +33,6 @@
 $item-height: 9rem;
 
 .menu-item {
-
-  &__inner-wrapper {
-    flex: 1;
-    display: flex;
-    overflow: hidden;
-  }
-
-  &--unavailable {
-    .menu-item__inner-wrapper {
-      color: $gray;
-      cursor: default;
-
-      &:hover {
-        text-decoration: none;
-      }
-    }
-
-    .menu-item-inner__price {
-      text-decoration: line-through;
-    }
-  }
 
   &__add-wrapper {
     border: 1px solid $light-gray;

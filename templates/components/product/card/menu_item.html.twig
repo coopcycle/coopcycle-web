@@ -1,6 +1,6 @@
 {# TODO Skip if no variant is defined #}
 {% if product.enabled %}
-  <div class="menu-item card bg-base-300 text-base-content cursor-pointer">
+  <div class="menu-item h-full card bg-base-300 text-base-content cursor-pointer">
     <div class="card-body flex flex-row justify-between">
       <button
         class="w-full flex flex-row justify-between gap-4"
@@ -26,9 +26,9 @@
     </div>
   </div>
 {% else %}
-  <div class="menu-item menu-item--unavailable">
-    <a class="menu-item__inner-wrapper">
+  <div class="menu-item h-full card bg-base-200 text-base-content menu-item--unavailable">
+    <div class="card-body flex flex-row justify-between">
       {% include 'components/product/card/menu_item_inner.html.twig' %}
-    </a>
+    </div>
   </div>
 {% endif %}
