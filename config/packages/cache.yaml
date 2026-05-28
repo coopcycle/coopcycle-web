@@ -20,3 +20,6 @@ framework:
                 adapters:
                   - cache.adapter.array
                   - cache.app
+            translations.cache:
+                adapters:
+                  - cache.app
