@@ -42,6 +42,11 @@ class RdcClient implements RdcClientInterface
         return $this->requestRemote('POST', $url, $data);
     }
 
+    public function getRemote(string $url): \Symfony\Contracts\HttpClient\ResponseInterface
+    {
+        return $this->requestRemote('GET', $url);
+    }
+
     public function getBaseUrl(): string
     {
         return $this->config->getApiBaseUrl();
@@ -98,7 +103,7 @@ class RdcClient implements RdcClientInterface
     private function requestRemote(
         string $method,
         string $url,
-        array $body,
+        ?array $body = null,
     ): \Symfony\Contracts\HttpClient\ResponseInterface {
         return $this->executeWithRetry(
             fn () => $this->doRequestRemote($method, $url, $body),
@@ -128,7 +133,7 @@ class RdcClient implements RdcClientInterface
             $headers['X-BOL-ACL-authorizations'] = json_encode($this->config->aclAuthorizations);
         }
 
-        $url = $this->config->getApiBaseUrl() . '/' . ltrim($path, '/');
+        $url = sprintf('%s/%s', $this->config->getApiBaseUrl(), ltrim($path, '/'));
 
         $options = ['headers' => $headers];
 
@@ -136,14 +141,14 @@ class RdcClient implements RdcClientInterface
             $options['query'] = $query;
         }
 
-        if ($body !== null) {
+        if (!is_null($body)) {
             $options['json'] = $body;
         }
 
         $this->logger->debug('RDC API request', [
             'method' => $method,
             'url' => $url,
-            'has_body' => $body !== null,
+            'has_body' => !is_null($body),
         ]);
 
         $response = $this->httpClient->request($method, $url, $options);
@@ -159,7 +164,7 @@ class RdcClient implements RdcClientInterface
     private function doRequestRemote(
         string $method,
         string $url,
-        array $body,
+        ?array $body = null,
     ): \Symfony\Contracts\HttpClient\ResponseInterface {
         $headers = [
             'traceparent' => $this->getTraceparent(),
@@ -172,15 +177,16 @@ class RdcClient implements RdcClientInterface
         $headers['Authorization'] = sprintf('Bearer %s', $token);
         $headers['X-BOL-Member-Identifier'] = sprintf('BOL.MEMBER.%s', $this->config->remoteMemberProvider);
 
-        $options = [
-            'headers' => $headers,
-            'json' => $body,
-        ];
+        $options = ['headers' => $headers];
+
+        if (!is_null($body)) {
+            $options['json'] = $body;
+        }
 
         $this->logger->debug('RDC API remote request', [
             'method' => $method,
             'url' => $url,
-            'has_body' => true,
+            'has_body' => !is_null($body),
             'headers' => $headers,
             'body' => $body,
         ]);
@@ -244,12 +250,12 @@ class RdcClient implements RdcClientInterface
 
     private function getTraceparent(): string
     {
-        if ($this->traceparent === null) {
+        if (is_null($this->traceparent)) {
             $version = '00';
             $traceId = bin2hex(random_bytes(16));
             $spanId = bin2hex(random_bytes(8));
             $flags = '01';
-            $this->traceparent = implode('-', [$version, $traceId, $spanId, $flags]);
+            $this->traceparent = sprintf('%s-%s-%s-%s', $version, $traceId, $spanId, $flags);
         }
         return $this->traceparent;
     }
