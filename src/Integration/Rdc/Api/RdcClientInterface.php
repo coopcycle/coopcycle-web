@@ -29,6 +29,11 @@ interface RdcClientInterface
      */
     public function postRemote(string $url, array $data): ResponseInterface;
 
+    /**
+     * Perform a GET request to a remote URL.
+     */
+    public function getRemote(string $url): ResponseInterface;
+
     public function getBaseUrl(): string;
 
     public function getMemberIdentifier(): string;
