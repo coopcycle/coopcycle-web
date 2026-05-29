@@ -25,7 +25,7 @@ class RdcServiceRequestProcessor
 
     public function process(RdcApiServiceRequest $apiRequest, Store $store, ?string $originNodeUri = null, ?int $loRevision = null): Delivery
     {
-        $delivery = $this->mapper->mapToDelivery($apiRequest, $store);
+        $delivery = $this->mapper->mapToDelivery($apiRequest, $store, $originNodeUri);
 
         $this->entityManager->persist($delivery);
         $this->deliveryOrderManager->createOrder($delivery, [
@@ -76,7 +76,7 @@ class RdcServiceRequestProcessor
                 $originNodeUri ?? $apiRequest->getUri(),
                 $serviceId,
                 $apiRequest,
-                $loRevision ?? null
+                $loRevision
             );
 
         } catch (\Throwable $e) {

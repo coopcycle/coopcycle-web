@@ -31,10 +31,11 @@ class RdcServiceRequestMapper
 
     public function mapToDelivery(
         RdcApiServiceRequest $apiRequest,
-        Store $store
+        Store $store,
+        ?string $originNodeUri = null
     ): Delivery {
         $this->validateForCreate($apiRequest);
-        $loUri = $apiRequest->getUri();
+        $loUri = $originNodeUri ?? $apiRequest->getUri();
 
         $delivery = new Delivery();
         $delivery->setStore($store);
