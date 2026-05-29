@@ -153,7 +153,7 @@ function ComboBox({ t }) {
         {...getMenuProps()}
         className={cx(
           (isOpen && items.length > 0) && 'border border-gray-200 rounded-b-md',
-          'absolute h-screen max-h-[60vh] overflow-auto z-2 bg-base-100'
+          'absolute h-screen max-h-[60vh] overflow-auto z-2 bg-base-100 text-base-content'
         )}
       >
         { isOpen &&
