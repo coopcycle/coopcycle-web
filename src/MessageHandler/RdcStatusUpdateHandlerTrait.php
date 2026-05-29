@@ -7,6 +7,7 @@ namespace AppBundle\MessageHandler;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Task;
 use AppBundle\Integration\Rdc\Api\RdcClientFactory;
+use AppBundle\Integration\Rdc\Enum\ResponseStatus;
 use AppBundle\Message\RdcDropoffStatusUpdateMessage;
 use AppBundle\Message\RdcPickupStatusUpdateMessage;
 use AppBundle\Integration\Rdc\Api\RdcClientInterface;
@@ -67,11 +68,12 @@ trait RdcStatusUpdateHandlerTrait
         $address = $task->getAddress();
         $location = $this->buildLocationUpdate($address, $config['actionType'], $actionTime, $task);
 
-        match ($message->coopcycleStatus) {
-            Task::STATUS_DOING => $this->handleStatusDoing($rdcClient, $serviceId, $activityId, $location, $actionTime, $config),
-            Task::STATUS_DONE => $this->handleStatusDone($rdcClient, $serviceId, $activityId, $location, $actionTime, $config),
-            Task::STATUS_CANCELLED => $this->handleStatusCancelled($rdcClient, $serviceId, $activityId, $location, $actionTime, $config),
-            default => null,
+        match ([$message->coopcycleStatus, $task->getType()]) {
+            [Task::STATUS_DONE, Task::TYPE_PICKUP] => $this->handleStatusDoing($rdcClient, $serviceId, $activityId, $location, $actionTime, $config),
+            [Task::STATUS_DONE, Task::TYPE_DROPOFF] => $this->handleStatusDone($rdcClient, $serviceId, $activityId, $location, $actionTime, $config),
+            [Task::STATUS_CANCELLED, Task::TYPE_PICKUP] => $this->handleStatusCancelled($rdcClient, $serviceId, $activityId, $location, $actionTime, $config, $task),
+            [Task::STATUS_CANCELLED, Task::TYPE_DROPOFF] => $this->handleStatusCancelled($rdcClient, $serviceId, $activityId, $location, $actionTime, $config, $task),
+            default => null
         };
 
         $this->logger->info('Processed RDC status update', [
@@ -89,10 +91,8 @@ trait RdcStatusUpdateHandlerTrait
         \DateTimeImmutable $actionTime,
         array $config
     ): void {
-        if ($config['shouldPatch'] ?? false) {
-            $this->patchExecution($rdcClient, 'services', $serviceId, ExecutionStatus::STARTED->value, $location, false);
-            $this->patchExecution($rdcClient, 'activities', $activityId, ExecutionStatus::STARTED->value, $location, false);
-        }
+        $this->patchExecution($rdcClient, 'services', $serviceId, ExecutionStatus::STARTED->value, $location, false);
+        $this->patchExecution($rdcClient, 'activities', $activityId, ExecutionStatus::STARTED->value, $location, false);
 
         $this->postEvents($rdcClient, 'services', $serviceId, $config['startServiceEvents'] ?? [], $location, $actionTime);
         $this->postEvents($rdcClient, 'activities', $activityId, $config['startActivityEvents'] ?? [], $location, $actionTime);
@@ -106,10 +106,8 @@ trait RdcStatusUpdateHandlerTrait
         \DateTimeImmutable $actionTime,
         array $config
     ): void {
-        if ($config['shouldPatch'] ?? false) {
-            $this->patchExecution($rdcClient, 'services', $serviceId, ExecutionStatus::FINISHED->value, $location, true);
-            $this->patchExecution($rdcClient, 'activities', $activityId, ExecutionStatus::FINISHED->value, $location, true);
-        }
+        $this->patchExecution($rdcClient, 'services', $serviceId, ExecutionStatus::FINISHED->value, $location, true);
+        $this->patchExecution($rdcClient, 'activities', $activityId, ExecutionStatus::FINISHED->value, $location, true);
 
         $this->postEvents($rdcClient, 'services', $serviceId, $config['serviceEvents'] ?? [], $location, $actionTime);
         $this->postEvents($rdcClient, 'activities', $activityId, $config['activityEvents'] ?? [], $location, $actionTime);
@@ -121,12 +119,121 @@ trait RdcStatusUpdateHandlerTrait
         string $activityId,
         array $location,
         \DateTimeImmutable $actionTime,
-        array $config
+        array $config,
+        Task $task
     ): void {
-        if ($config['shouldPatch'] ?? false) {
-            $this->patchExecution($rdcClient, 'services', $serviceId, ExecutionStatus::CANCELLED->value, $location, true);
-            $this->patchExecution($rdcClient, 'activities', $activityId, ExecutionStatus::CANCELLED->value, $location, true);
-            $this->patchServiceStatus($rdcClient, $serviceId, ServiceStatus::CANCELLED);
+        $this->patchExecution($rdcClient, 'services', $serviceId, ExecutionStatus::CANCELLED->value, $location, true);
+        $this->patchExecution($rdcClient, 'activities', $activityId, ExecutionStatus::CANCELLED->value, $location, true);
+        $this->notifyRemoteCancellation($rdcClient, $task);
+    }
+
+    private function notifyRemoteCancellation(RdcClientInterface $rdcClient, Task $task): void
+    {
+        $pickup = $this->extractPickup($task);
+        if (is_null($pickup)) {
+            return;
+        }
+
+        $loUri = $this->extractLoUri($pickup);
+        if (is_null($loUri)) {
+            $this->logger->warning('No rdc_lo_uri found in pickup metadata', [
+                'delivery_id' => $task->getDelivery()?->getId(),
+            ]);
+            return;
+        }
+
+        $loRevision = $this->fetchLoRevision($rdcClient, $loUri);
+        if (is_null($loRevision)) {
+            return;
+        }
+
+        $changeRequest = $this->buildCancellationChangeRequest($loRevision, $rdcClient->getMemberIdentifier());
+        $this->postCancellationChangeRequest($rdcClient, $loUri, $changeRequest);
+    }
+
+    private function extractPickup(Task $task): ?Task
+    {
+        $delivery = $task->getDelivery();
+        if (is_null($delivery)) {
+            return null;
+        }
+
+        return $delivery->getPickup();
+    }
+
+    private function extractLoUri(Task $pickup): ?string
+    {
+        $metadata = $pickup->getMetadata();
+
+        return $metadata['rdc_lo_uri'] ?? null;
+    }
+
+    private function fetchLoRevision(RdcClientInterface $rdcClient, string $loUri): ?string
+    {
+        try {
+            $response = $rdcClient->getRemote($loUri);
+            $loRevision = $response->getHeaders(false)['x-revision'][0] ?? null;
+
+            if (is_null($loRevision)) {
+                $this->logger->warning('No revision found in remote response', [
+                    'lo_uri' => $loUri,
+                ]);
+            }
+
+            return $loRevision;
+        } catch (\Throwable $e) {
+            $this->logger->error('Failed to fetch remote revision', [
+                'lo_uri' => $loUri,
+                'error' => $e->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
+
+    private function buildCancellationChangeRequest(string $loRevision, string $memberIdentifier): array
+    {
+        return [
+            'logisticsObjectRevision' => $loRevision,
+            'operations' => [
+    [
+                'op' => 'add',
+                'path' => '/responseStatus',
+                'value' => ResponseStatus::CANCELLED->value,
+    ]
+            ],
+            'requestorMemberIdentifier' => $memberIdentifier,
+        ];
+    }
+
+    private function postCancellationChangeRequest(
+        RdcClientInterface $rdcClient,
+        string $loUri,
+        array $changeRequest
+    ): void {
+        $remoteChangeRequestUrl = sprintf('%s/change-requests?source=true', $loUri);
+
+        try {
+            $response = $rdcClient->postRemote($remoteChangeRequestUrl, $changeRequest);
+
+            $statusCode = $response->getStatusCode();
+            if ($statusCode >= 400) {
+                $this->logger->error('Remote cancellation failed', [
+                    'lo_uri' => $loUri,
+                    'status' => $statusCode,
+                ]);
+                throw new \RuntimeException(sprintf('Remote cancellation failed: HTTP %d', $statusCode));
+            }
+
+            $this->logger->info('Remote cancellation notified successfully', [
+                'lo_uri' => $loUri,
+            ]);
+        } catch (\Throwable $e) {
+            $this->logger->error('Failed to post cancellation change request', [
+                'lo_uri' => $loUri,
+                'error' => $e->getMessage(),
+            ]);
+            throw $e;
         }
     }
 
@@ -143,13 +250,6 @@ trait RdcStatusUpdateHandlerTrait
             : ['executionStatus' => $executionStatus, 'startLocation' => $location];
 
         $rdcClient->patch(sprintf('/%s/%s', $resourceType, $resourceId), $payload);
-    }
-
-    private function patchServiceStatus(RdcClientInterface $rdcClient, string $serviceId, ServiceStatus $status): void
-    {
-        $rdcClient->patch(sprintf('/services/%s', $serviceId), [
-            'status' => $status->value,
-        ]);
     }
 
     private function postEvents(
