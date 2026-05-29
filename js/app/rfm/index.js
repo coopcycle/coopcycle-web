@@ -9,6 +9,7 @@ import {
   PointElement,
   CategoryScale,
   LinearScale,
+  LogarithmicScale,
   Tooltip,
   Legend,
 } from 'chart.js'
@@ -23,6 +24,7 @@ Chart.register(
   PointElement,
   CategoryScale,
   LinearScale,
+  LogarithmicScale,
   Tooltip,
   Legend
 )
