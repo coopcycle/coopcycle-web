@@ -139,7 +139,7 @@ function renderBounds(chartData) {
     if (!canvas || !bounds[dim]) continue
 
     const scores = [1, 2, 3, 4]
-    const data   = scores.map(s => bounds[dim][s] ? [bounds[dim][s][0], bounds[dim][s][1]] : null)
+    const data   = scores.map(s => bounds[dim][s] ? [Math.max(1, bounds[dim][s][0]), bounds[dim][s][1]] : null)
 
     new Chart(canvas, {
       type: 'bar',
@@ -166,7 +166,7 @@ function renderBounds(chartData) {
           },
         },
         scales: {
-          x: { ticks: { callback: v => fmt(v) } },
+          x: { type: 'logarithmic', ticks: { callback: v => fmt(v) } },
         },
       },
     })
