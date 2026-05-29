@@ -1,0 +1,234 @@
+{% extends "admin.html.twig" %}
+
+{% block prepare_title %}
+  {{ add_title_prefix('rfm.title'|trans) }}
+{% endblock %}
+
+{% block styles %}
+<style>
+.panel--active {
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, .25);
+}
+.segment-card {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.segment-card:hover,
+.segment-card:focus {
+  text-decoration: none;
+  color: inherit;
+}
+.segment-card .panel {
+  transition: box-shadow .15s ease-in-out;
+}
+.segment-card:hover .panel {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, .15);
+}
+.rfm-segments-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.rfm-segments-grid .segment-card {
+  display: flex;
+  flex-direction: column;
+}
+.rfm-segments-grid .segment-card .panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+}
+.rfm-segments-grid .segment-card .panel-body {
+  flex: 1;
+}
+</style>
+{% endblock %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_customer_segmentation') }}">{% trans %}rfm.title{% endtrans %}</a></li>
+{% if active_segment %}
+<li>{{ ('rfm.segment.' ~ active_segment)|trans }}</li>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="alert alert-info" role="alert">
+  <h4><i class="fa fa-info-circle"></i> {% trans %}rfm.info.title{% endtrans %}</h4>
+  <p>{% trans %}rfm.info.body{% endtrans %}</p>
+  <ul>
+    <li>{% trans %}rfm.info.recency{% endtrans %}</li>
+    <li>{% trans %}rfm.info.frequency{% endtrans %}</li>
+    <li>{% trans %}rfm.info.monetary{% endtrans %}</li>
+  </ul>
+  <p>{% trans %}rfm.info.quartiles{% endtrans %}</p>
+</div>
+
+{% set thresholds_has_errors = thresholds_form.vars.submitted and not thresholds_form.vars.valid %}
+{% form_theme thresholds_form 'bootstrap_3_layout.html.twig' %}
+<div class="panel panel-default">
+  <div class="panel-heading" style="cursor:pointer;" data-toggle="collapse" data-target="#rfm-thresholds-panel" aria-expanded="{{ thresholds_has_errors ? 'true' : 'false' }}">
+    <i class="fa fa-sliders"></i> {% trans %}rfm.thresholds.configure{% endtrans %}
+    <span class="pull-right"><i class="fa fa-chevron-down"></i></span>
+  </div>
+  <div id="rfm-thresholds-panel" class="panel-collapse collapse{% if thresholds_has_errors %} in{% endif %}">
+    <div class="panel-body">
+      {{ form_start(thresholds_form) }}
+      <div class="row">
+        <div class="col-md-6">
+          <h5>{% trans %}rfm.thresholds.recency{% endtrans %}</h5>
+          {{ form_row(thresholds_form.rfm_r_score4_max_days) }}
+          {{ form_row(thresholds_form.rfm_r_score3_max_days) }}
+          {{ form_row(thresholds_form.rfm_r_score2_max_days) }}
+        </div>
+        <div class="col-md-6">
+          <h5>{% trans %}rfm.thresholds.frequency{% endtrans %}</h5>
+          {{ form_row(thresholds_form.rfm_f_score4_min_orders) }}
+          {{ form_row(thresholds_form.rfm_f_score3_min_orders) }}
+          {{ form_row(thresholds_form.rfm_f_score2_min_orders) }}
+        </div>
+      </div>
+      {{ form_errors(thresholds_form) }}
+      <button type="submit" class="btn btn-primary">{% trans %}basics.save{% endtrans %}</button>
+      {{ form_end(thresholds_form) }}
+    </div>
+  </div>
+</div>
+
+{% if chart_data is not empty %}
+{% set segment_cards_labelled = {} %}
+{% for key, card in segment_cards %}
+  {% set segment_cards_labelled = segment_cards_labelled|merge({ (key): card|merge({ label: ('rfm.segment.' ~ key)|trans }) }) %}
+{% endfor %}
+<div id="rfm-charts"
+  data-chart-data="{{ chart_data|json_encode|e('html_attr') }}"
+  data-segment-meta="{{ segment_cards_labelled|json_encode|e('html_attr') }}">
+  <div class="row">
+    <div class="col-md-4" style="margin-bottom:24px;">
+      <h4 class="text-center">{% trans %}rfm.chart.segment_distribution{% endtrans %}</h4>
+      <canvas id="rfm-chart-pie"></canvas>
+    </div>
+    <div class="col-md-8" style="margin-bottom:24px;">
+      <h4 class="text-center">{% trans %}rfm.chart.avg_spend{% endtrans %}</h4>
+      <canvas id="rfm-chart-avg-spend"></canvas>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4" style="margin-bottom:24px;">
+      <h4 class="text-center">{% trans %}rfm.chart.bounds_r{% endtrans %}</h4>
+      <canvas id="rfm-chart-bounds-r"></canvas>
+    </div>
+    <div class="col-md-4" style="margin-bottom:24px;">
+      <h4 class="text-center">{% trans %}rfm.chart.bounds_f{% endtrans %}</h4>
+      <canvas id="rfm-chart-bounds-f"></canvas>
+    </div>
+    <div class="col-md-4" style="margin-bottom:24px;">
+      <h4 class="text-center">{% trans %}rfm.chart.bounds_m{% endtrans %}</h4>
+      <canvas id="rfm-chart-bounds-m"></canvas>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3" style="margin-bottom:24px;">
+      <h4 class="text-center">{% trans %}rfm.chart.bubble{% endtrans %}</h4>
+      <canvas id="rfm-chart-bubble"></canvas>
+    </div>
+  </div>
+  <hr>
+</div>
+{% endif %}
+
+<div class="rfm-segments-grid">
+  {% for key, card in segment_cards %}
+  <a href="{{ path('admin_customer_segmentation', { segment: key }) }}" class="segment-card">
+    <div class="panel panel-{{ card.style }}{% if active_segment == key %} panel--active{% endif %}">
+      <div class="panel-heading">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-weight:600;">
+            <i class="fa fa-{{ card.icon }}"></i>
+            {{ ('rfm.segment.' ~ key)|trans }}
+          </span>
+          <span class="badge">{{ card.count }}</span>
+        </div>
+      </div>
+      <div class="panel-body">
+        <p class="text-muted" style="font-size:12px;margin:0;">{{ ('rfm.segment.' ~ key ~ '.description')|trans }}</p>
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+
+{% if active_segment %}
+<hr>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+  <h3 style="margin:0;">
+    <i class="fa fa-{{ segment_meta[active_segment].icon }}"></i>
+    {{ ('rfm.segment.' ~ active_segment)|trans }}
+    <span class="badge">{{ customers.totalItemCount }}</span>
+  </h3>
+  <a href="{{ path('admin_customer_segmentation') }}" class="btn btn-default btn-sm">
+    <i class="fa fa-times"></i> {% trans %}rfm.clear_filter{% endtrans %}
+  </a>
+</div>
+
+{% if customers.totalItemCount > 0 %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>{% trans %}profile.email{% endtrans %}</th>
+      <th>{% trans %}profile.fullName{% endtrans %}</th>
+      <th class="text-right">{% trans %}rfm.column.last_order{% endtrans %}</th>
+      <th class="text-right">{% trans %}rfm.column.frequency{% endtrans %}</th>
+      <th class="text-right">{% trans %}rfm.column.monetary{% endtrans %}</th>
+      <th class="text-right">R</th>
+      <th class="text-right">F</th>
+      <th class="text-right">M</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for customer in customers %}
+    <tr>
+      <td>
+        <span class="text-monospace">{{ customer.email }}</span>
+      </td>
+      <td>
+        {% if customer.first_name or customer.last_name %}
+          {{ customer.first_name }} {{ customer.last_name }}
+        {% endif %}
+      </td>
+      <td class="text-right">{{ customer.last_order_at|ago }}</td>
+      <td class="text-right">{{ customer.frequency }}</td>
+      <td class="text-right">{{ customer.monetary|price_format }}</td>
+      <td class="text-right"><span class="badge">{{ customer.r_score }}</span></td>
+      <td class="text-right"><span class="badge">{{ customer.f_score }}</span></td>
+      <td class="text-right"><span class="badge">{{ customer.m_score }}</span></td>
+      <td class="text-right">
+        {% if customer.username %}
+        <a href="{{ path('admin_user_edit', { username: customer.username }) }}"
+           class="btn btn-xs btn-default">
+          <i class="fa fa-user"></i> {% trans %}rfm.view_profile{% endtrans %}
+        </a>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<nav class="text-center">
+  {{ knp_pagination_render(customers) }}
+</nav>
+{% else %}
+<div class="alert alert-info">{% trans %}rfm.no_customers{% endtrans %}</div>
+{% endif %}
+
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('rfm') }}
+{% endblock %}

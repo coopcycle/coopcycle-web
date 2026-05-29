@@ -1759,3 +1759,53 @@ two_factor.title: Two-factor authentication
 two_factor.subtitle: "A verification code has been sent to your email address. Please enter it below."
 two_factor.code.label: Verification code
 two_factor.submit: Verify
+
+rfm.title: Customer Segmentation
+rfm.clear_filter: Clear filter
+rfm.no_customers: No customers in this segment.
+rfm.view_profile: View profile
+rfm.column.last_order: Last order
+rfm.column.frequency: Orders
+rfm.column.monetary: Total spent
+rfm.segment.champions: Champions
+rfm.segment.champions.description: Bought recently, buy often, and spend the most
+rfm.segment.loyal_customers: Loyal Customers
+rfm.segment.loyal_customers.description: Order regularly and respond to promotions
+rfm.segment.potential_loyalists: Potential Loyalists
+rfm.segment.potential_loyalists.description: Recent customers with growing frequency
+rfm.segment.recent_customers: Recent Customers
+rfm.segment.recent_customers.description: Bought most recently but not often yet
+rfm.segment.promising: Promising
+rfm.segment.promising.description: Recent shoppers with low but growing frequency
+rfm.segment.at_risk: At Risk
+rfm.segment.at_risk.description: Used to be frequent, but haven't ordered recently
+rfm.segment.cant_lose_them: Can't Lose Them
+rfm.segment.cant_lose_them.description: Big spenders who haven't returned in a long time
+rfm.segment.hibernating: Hibernating
+rfm.segment.hibernating.description: Last purchase was long ago with low order count
+rfm.segment.lost: Lost
+rfm.segment.lost.description: Lowest recency and frequency scores
+rfm.chart.segment_distribution: Segment distribution
+rfm.chart.avg_spend: Average spend per segment
+rfm.chart.bounds_r: Recency score ranges (days since last order)
+rfm.chart.bounds_f: Frequency score ranges (orders)
+rfm.chart.bounds_m: Monetary score ranges
+rfm.chart.bubble: Customer density by R×F score
+rfm.info.title: How does customer segmentation work?
+rfm.info.body: "RFM analysis scores every customer on three dimensions based on their order history:"
+rfm.info.recency: "Recency (R): how recently did the customer last order?"
+rfm.info.frequency: "Frequency (F): how many orders have they placed in total?"
+rfm.info.monetary: "Monetary (M): how much have they spent in total?"
+rfm.info.quartiles: "R and F are scored 1–4 using configurable absolute thresholds (e.g. ordered within 30 days = R4, 10+ orders = F4). M is scored relative to the rest of the customer base. Customers are assigned to a named segment based on the combination of their R and F scores."
+rfm.thresholds.configure: Configure thresholds
+rfm.thresholds.recency: Recency (R)
+rfm.thresholds.frequency: Frequency (F)
+rfm.thresholds.saved: RFM thresholds saved successfully.
+rfm.thresholds.error.r_order: Recency thresholds must be in ascending order (Score 4 < Score 3 < Score 2).
+rfm.thresholds.error.f_order: Frequency thresholds must be in ascending order (Score 2 < Score 3 < Score 4).
+rfm.thresholds.rfm_r_score4_max_days: Score 4 — max days since last order
+rfm.thresholds.rfm_r_score3_max_days: Score 3 — max days since last order
+rfm.thresholds.rfm_r_score2_max_days: Score 2 — max days since last order
+rfm.thresholds.rfm_f_score4_min_orders: Score 4 — min number of orders
+rfm.thresholds.rfm_f_score3_min_orders: Score 3 — min number of orders
+rfm.thresholds.rfm_f_score2_min_orders: Score 2 — min number of orders
