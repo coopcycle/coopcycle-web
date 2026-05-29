@@ -28,7 +28,7 @@ parameters:
   database_user:     "%env(COOPCYCLE_DB_USER)%"
   database_password: "%env(COOPCYCLE_DB_PASSWORD)%"
   locale_regex: an|ca|fr|en|es|eu|de|hu|it|pl|pt_BR|pt_PT|da
-  rdc_webhook_secret: '%env(RDC_WEBHOOK_SECRET)%'
+  rdc_webhook_secret: '%env(default::RDC_WEBHOOK_SECRET)%'
   router.request_context.scheme: 'http'
   router.request_context.host: "%env(APP_HOST)%"
   loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
@@ -66,7 +66,8 @@ parameters:
   group_orders_enabled: '%env(bool:GROUP_ORDERS_ENABLED)%'
   business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
   transporters_config: '%env(json:TRANSPORTERS_CONFIG)%'
-  rdc_connections: '%env(json:RDC_CONNECTIONS)%'
+  rdc_connections_default: []
+  rdc_connections: '%env(default:rdc_connections_default:json:RDC_CONNECTIONS)%'
   billing_enabled: '%env(bool:BILLING_ENABLED)%'
   package_delivery_ui_price_breakdown_enabled_default: true
   package_delivery_ui_price_breakdown_enabled: '%env(default:package_delivery_ui_price_breakdown_enabled_default:bool:PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED)%'
