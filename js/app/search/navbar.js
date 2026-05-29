@@ -49,7 +49,7 @@ const Section = withTranslation()(({ items, title, highlightedIndex, getItemProp
               className={cx(
                 'cursor-pointer',
                 'py-2 px-3',
-                highlightedIndex === indexWithOffset && 'bg-sky-50',
+                highlightedIndex === indexWithOffset && 'bg-base-200',
               )}
               key={`search-result-${index}`}
               { ...getItemProps({ item, index: indexWithOffset }) }
