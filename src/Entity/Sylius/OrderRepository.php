@@ -325,4 +325,52 @@ class OrderRepository extends BaseOrderRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function getCustomerInsights(CustomerInterface $customer): array
+    {
+        $qb = $this->createQueryBuilder('o')
+            ->andWhere('o.customer = :customer')
+            ->andWhere('o.state = :fulfilled')
+            ->setParameter('customer', $customer)
+            ->setParameter('fulfilled', OrderInterface::STATE_FULFILLED);
+
+        $numberOfOrders = (clone $qb)
+            ->select('COUNT(o.id)')
+            ->getQuery()->getSingleScalarResult();
+
+        $averageOrderTotal = (clone $qb)
+            ->select('COALESCE(AVG(o.total), 0)')
+            ->getQuery()->getSingleScalarResult();
+
+        $firstOrderedAt = (clone $qb)
+            ->select('MIN(o.createdAt)')
+            ->getQuery()->getSingleScalarResult();
+
+        $lastOrderedAt = (clone $qb)
+            ->select('MAX(o.createdAt)')
+            ->getQuery()->getSingleScalarResult();
+
+        $favoriteRestaurant = null;
+        $favResult = (clone $qb)
+            ->select('r.id', 'r.name', 'COUNT(o.id) AS number_of_orders')
+            ->leftJoin(OrderVendor::class, 'v', Join::WITH, 'v.order = o.id')
+            ->leftJoin(LocalBusiness::class, 'r', Join::WITH, 'v.restaurant = r.id')
+            ->groupBy('r.id')
+            ->orderBy('number_of_orders', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()->getOneOrNullResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+
+        if ($favResult && $favResult['id']) {
+            $favoriteRestaurant = $this->getEntityManager()
+                ->getRepository(LocalBusiness::class)->find($favResult['id']);
+        }
+
+        return [
+            'numberOfOrders'    => (int) $numberOfOrders,
+            'averageOrderTotal' => (int) $averageOrderTotal,
+            'firstOrderedAt'    => $firstOrderedAt ? new \DateTime($firstOrderedAt) : null,
+            'lastOrderedAt'     => $lastOrderedAt  ? new \DateTime($lastOrderedAt)  : null,
+            'favoriteRestaurant' => $favoriteRestaurant,
+        ];
+    }
 }
