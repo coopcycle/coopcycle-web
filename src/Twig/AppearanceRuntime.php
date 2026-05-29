@@ -111,7 +111,58 @@ class AppearanceRuntime implements RuntimeExtensionInterface
 
     public function getBannerBackgroundTone(): string
     {
-        return $this->settingsManager->get('banner_background_image_tone') ?? 'dark';
+        $filename = $this->settingsManager->get('banner_background_image');
+        if (!$filename) {
+            return 'dark';
+        }
+
+        return $this->appCache->get('banner_background_image_tone', function (ItemInterface $item) use ($filename) {
+            $item->expiresAfter(60 * 60 * 24);
+
+            try {
+                $content = $this->assetsFilesystem->read($filename);
+            } catch (UnableToReadFile $e) {
+                return 'dark';
+            }
+
+            $img = imagecreatefromstring($content);
+            if (!$img) {
+                return 'dark';
+            }
+
+            if (!imageistruecolor($img)) {
+                imagepalettetotruecolor($img);
+            }
+
+            $width = imagesx($img);
+            $height = imagesy($img);
+            $steps = 10;
+            $totalLuminance = 0.0;
+            $count = 0;
+
+            for ($i = 0; $i < $steps; $i++) {
+                for ($j = 0; $j < $steps; $j++) {
+                    $x = (int)($width * ($i + 0.5) / $steps);
+                    $y = (int)($height * ($j + 0.5) / $steps);
+                    $rgba = imagecolorat($img, $x, $y);
+                    $a = ($rgba >> 24) & 0x7F; // 0=opaque, 127=transparent
+                    $r = ($rgba >> 16) & 0xFF;
+                    $g = ($rgba >> 8) & 0xFF;
+                    $b = $rgba & 0xFF;
+                    $alpha = $a / 127.0;
+                    $r = (int)($r * (1 - $alpha) + 255 * $alpha);
+                    $g = (int)($g * (1 - $alpha) + 255 * $alpha);
+                    $b = (int)($b * (1 - $alpha) + 255 * $alpha);
+                    $totalLuminance += (0.299 * $r + 0.587 * $g + 0.114 * $b) / 255;
+                    $count++;
+                }
+            }
+
+            imagedestroy($img);
+
+            $avgLuminance = $count > 0 ? $totalLuminance / $count : 0.0;
+            return $avgLuminance >= 0.5 ? 'light' : 'dark';
+        });
     }
 
     public function getBannerBackgroundUrl(): ?string
