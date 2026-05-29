@@ -1712,3 +1712,9 @@ rfm.segment.hibernating: En hibernation
 rfm.segment.hibernating.description: Dernier achat il y a longtemps avec un faible nombre de commandes
 rfm.segment.lost: Perdus
 rfm.segment.lost.description: Scores de récence et de fréquence les plus bas
+rfm.chart.segment_distribution: Répartition par segment
+rfm.chart.avg_spend: Dépense moyenne par segment
+rfm.chart.bounds_r: "Plages du score de récence (jours depuis la dernière commande)"
+rfm.chart.bounds_f: "Plages du score de fréquence (commandes)"
+rfm.chart.bounds_m: Plages du score monétaire
+rfm.chart.bubble: "Densité des clients par score R×F"

@@ -1775,3 +1775,9 @@ rfm.segment.hibernating: Hibernating
 rfm.segment.hibernating.description: Last purchase was long ago with low order count
 rfm.segment.lost: Lost
 rfm.segment.lost.description: Lowest recency and frequency scores
+rfm.chart.segment_distribution: Segment distribution
+rfm.chart.avg_spend: Average spend per segment
+rfm.chart.bounds_r: Recency score ranges (days since last order)
+rfm.chart.bounds_f: Frequency score ranges (orders)
+rfm.chart.bounds_m: Monetary score ranges
+rfm.chart.bubble: Customer density by R×F score

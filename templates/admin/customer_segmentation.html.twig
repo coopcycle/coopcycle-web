@@ -37,6 +37,44 @@
 
 {% block content %}
 
+{% if chart_data is not empty %}
+<div id="rfm-charts"
+  data-chart-data="{{ chart_data|json_encode|e('html_attr') }}"
+  data-segment-meta="{{ segment_cards|json_encode|e('html_attr') }}">
+  <div class="row">
+    <div class="col-md-4" style="margin-bottom:24px;">
+      <h4 class="text-center">{% trans %}rfm.chart.segment_distribution{% endtrans %}</h4>
+      <canvas id="rfm-chart-pie"></canvas>
+    </div>
+    <div class="col-md-8" style="margin-bottom:24px;">
+      <h4 class="text-center">{% trans %}rfm.chart.avg_spend{% endtrans %}</h4>
+      <canvas id="rfm-chart-avg-spend"></canvas>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4" style="margin-bottom:24px;">
+      <h4 class="text-center">{% trans %}rfm.chart.bounds_r{% endtrans %}</h4>
+      <canvas id="rfm-chart-bounds-r"></canvas>
+    </div>
+    <div class="col-md-4" style="margin-bottom:24px;">
+      <h4 class="text-center">{% trans %}rfm.chart.bounds_f{% endtrans %}</h4>
+      <canvas id="rfm-chart-bounds-f"></canvas>
+    </div>
+    <div class="col-md-4" style="margin-bottom:24px;">
+      <h4 class="text-center">{% trans %}rfm.chart.bounds_m{% endtrans %}</h4>
+      <canvas id="rfm-chart-bounds-m"></canvas>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3" style="margin-bottom:24px;">
+      <h4 class="text-center">{% trans %}rfm.chart.bubble{% endtrans %}</h4>
+      <canvas id="rfm-chart-bubble"></canvas>
+    </div>
+  </div>
+  <hr>
+</div>
+{% endif %}
+
 <div class="row">
   {% for key, card in segment_cards %}
   <div class="col-sm-6 col-md-4 col-lg-3" style="margin-bottom: 16px;">
@@ -126,4 +164,8 @@
 
 {% endif %}
 
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('rfm') }}
 {% endblock %}

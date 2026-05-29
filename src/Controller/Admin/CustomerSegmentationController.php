@@ -57,6 +57,7 @@ class CustomerSegmentationController extends AbstractController
             'active_segment' => $activeSegment,
             'customers'      => $customers,
             'segment_meta'   => $segmentMeta,
+            'chart_data'     => $this->buildChartData($rows),
         ]);
     }
 
@@ -104,6 +105,63 @@ class CustomerSegmentationController extends AbstractController
         FROM rfm_scores
         ORDER BY segment, id
         SQL;
+    }
+
+    private function buildChartData(array $rows): array
+    {
+        if (empty($rows)) {
+            return [];
+        }
+
+        $segmentCounts   = [];
+        $segmentMonetary = [];
+        $quartileValues  = ['r' => [], 'f' => [], 'm' => []];
+        $bubbleCells     = [];
+
+        foreach ($rows as $row) {
+            $seg = $row['segment'];
+
+            $segmentCounts[$seg] = ($segmentCounts[$seg] ?? 0) + 1;
+
+            $segmentMonetary[$seg]['sum']   = ($segmentMonetary[$seg]['sum']   ?? 0) + $row['monetary'];
+            $segmentMonetary[$seg]['count'] = ($segmentMonetary[$seg]['count'] ?? 0) + 1;
+
+            $daysAgo = (int) ceil((time() - strtotime($row['last_order_at'])) / 86400);
+            $quartileValues['r'][$row['r_score']][] = $daysAgo;
+            $quartileValues['f'][$row['f_score']][] = (int) $row['frequency'];
+            $quartileValues['m'][$row['m_score']][] = (int) $row['monetary'];
+
+            $key = $row['r_score'] . '_' . $row['f_score'];
+            if (!isset($bubbleCells[$key])) {
+                $bubbleCells[$key] = [
+                    'r'       => (int) $row['r_score'],
+                    'f'       => (int) $row['f_score'],
+                    'segment' => $seg,
+                    'count'   => 0,
+                ];
+            }
+            $bubbleCells[$key]['count']++;
+        }
+
+        $quartileBounds = [];
+        foreach ($quartileValues as $dim => $byScore) {
+            ksort($byScore);
+            foreach ($byScore as $score => $values) {
+                $quartileBounds[$dim][$score] = [min($values), max($values)];
+            }
+        }
+
+        $segmentAvgMonetary = array_map(
+            fn($d) => (int) round($d['sum'] / $d['count']),
+            $segmentMonetary
+        );
+
+        return [
+            'segment_counts'      => $segmentCounts,
+            'segment_avg_monetary' => $segmentAvgMonetary,
+            'quartile_bounds'     => $quartileBounds,
+            'bubble_cells'        => array_values($bubbleCells),
+        ];
     }
 
     private function getSegmentMeta(): array

@@ -46,6 +46,7 @@ Encore
   .addEntry('foodtech-dashboard', './js/app/foodtech/dashboard/index.js')
   .addEntry('metrics', './js/app/metrics/index.js')
   .addEntry('metrics-admin', './js/app/metrics/admin.js')
+  .addEntry('rfm', './js/app/rfm/index.js')
   .addEntry('metrics-loopeat', './js/app/metrics/loopeat.js')
   .addEntry('optins', './js/app/optins/index.js')
   // FoodTech checkout; "Address" page (path: '/order/')
