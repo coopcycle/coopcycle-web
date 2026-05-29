@@ -15,7 +15,7 @@
   }
   {% if banner_background_url %}
   {% set banner_tone = coopcycle_banner_background_tone() %}
-  .homepage-search, .restaurant-list-header {
+  .homepage-search h1 {
     color: {{ banner_tone == 'light' ? '#1a1a1a' : '#ffffff' }};
   }
   {% endif %}
