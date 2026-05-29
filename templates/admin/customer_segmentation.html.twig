@@ -25,6 +25,25 @@
 .segment-card:hover .panel {
   box-shadow: 0 0 0 2px rgba(0, 0, 0, .15);
 }
+.rfm-segments-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.rfm-segments-grid .segment-card {
+  display: flex;
+  flex-direction: column;
+}
+.rfm-segments-grid .segment-card .panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+}
+.rfm-segments-grid .segment-card .panel-body {
+  flex: 1;
+}
 </style>
 {% endblock %}
 
@@ -75,26 +94,24 @@
 </div>
 {% endif %}
 
-<div class="row">
+<div class="rfm-segments-grid">
   {% for key, card in segment_cards %}
-  <div class="col-sm-6 col-md-4 col-lg-3" style="margin-bottom: 16px;">
-    <a href="{{ path('admin_customer_segmentation', { segment: key }) }}" class="segment-card">
-      <div class="panel panel-{{ card.style }}{% if active_segment == key %} panel--active{% endif %}" style="margin-bottom: 0;">
-        <div class="panel-heading">
-          <div class="d-flex justify-content-between align-items-center" style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-weight:600;">
-              <i class="fa fa-{{ card.icon }}"></i>
-              {{ ('rfm.segment.' ~ key)|trans }}
-            </span>
-            <span class="badge">{{ card.count }}</span>
-          </div>
-        </div>
-        <div class="panel-body">
-          <p class="text-muted" style="font-size:12px;margin:0;">{{ ('rfm.segment.' ~ key ~ '.description')|trans }}</p>
+  <a href="{{ path('admin_customer_segmentation', { segment: key }) }}" class="segment-card">
+    <div class="panel panel-{{ card.style }}{% if active_segment == key %} panel--active{% endif %}">
+      <div class="panel-heading">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-weight:600;">
+            <i class="fa fa-{{ card.icon }}"></i>
+            {{ ('rfm.segment.' ~ key)|trans }}
+          </span>
+          <span class="badge">{{ card.count }}</span>
         </div>
       </div>
-    </a>
-  </div>
+      <div class="panel-body">
+        <p class="text-muted" style="font-size:12px;margin:0;">{{ ('rfm.segment.' ~ key ~ '.description')|trans }}</p>
+      </div>
+    </div>
+  </a>
   {% endfor %}
 </div>
 
