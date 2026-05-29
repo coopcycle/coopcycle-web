@@ -1817,3 +1817,9 @@ rfm.chart.bounds_r: "Rangos de puntuación de recencia (días desde el último p
 rfm.chart.bounds_f: "Rangos de puntuación de frecuencia (pedidos)"
 rfm.chart.bounds_m: Rangos de puntuación monetaria
 rfm.chart.bubble: "Densidad de clientes por puntuación R×F"
+rfm.info.title: ¿Cómo funciona la segmentación de clientes?
+rfm.info.body: "El análisis RFM puntúa a cada cliente en tres dimensiones basándose en su historial de pedidos:"
+rfm.info.recency: "Recencia (R): ¿cuándo realizó el cliente su último pedido?"
+rfm.info.frequency: "Frecuencia (F): ¿cuántos pedidos ha realizado en total?"
+rfm.info.monetary: "Importe (M): ¿cuánto ha gastado en total?"
+rfm.info.quartiles: "Cada dimensión se puntúa de 1 (más bajo) a 4 (más alto) dividiendo toda la base de clientes en cuatro grupos iguales (cuartiles). Los clientes se asignan luego a un segmento con nombre según la combinación de sus puntuaciones R y F."

@@ -1781,3 +1781,9 @@ rfm.chart.bounds_r: Recency score ranges (days since last order)
 rfm.chart.bounds_f: Frequency score ranges (orders)
 rfm.chart.bounds_m: Monetary score ranges
 rfm.chart.bubble: Customer density by R×F score
+rfm.info.title: How does customer segmentation work?
+rfm.info.body: "RFM analysis scores every customer on three dimensions based on their order history:"
+rfm.info.recency: "Recency (R): how recently did the customer last order?"
+rfm.info.frequency: "Frequency (F): how many orders have they placed in total?"
+rfm.info.monetary: "Monetary (M): how much have they spent in total?"
+rfm.info.quartiles: "Each dimension is scored from 1 (lowest) to 4 (highest) by splitting the entire customer base into four equal groups (quartiles). Customers are then assigned to a named segment based on the combination of their R and F scores."

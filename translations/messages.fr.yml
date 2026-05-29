@@ -1718,3 +1718,9 @@ rfm.chart.bounds_r: "Plages du score de récence (jours depuis la dernière comm
 rfm.chart.bounds_f: "Plages du score de fréquence (commandes)"
 rfm.chart.bounds_m: Plages du score monétaire
 rfm.chart.bubble: "Densité des clients par score R×F"
+rfm.info.title: Comment fonctionne la segmentation clients ?
+rfm.info.body: "L'analyse RFM attribue à chaque client un score sur trois dimensions, basé sur son historique de commandes :"
+rfm.info.recency: "Récence (R) : quand le client a-t-il passé sa dernière commande ?"
+rfm.info.frequency: "Fréquence (F) : combien de commandes a-t-il passées au total ?"
+rfm.info.monetary: "Montant (M) : combien a-t-il dépensé au total ?"
+rfm.info.quartiles: "Chaque dimension est notée de 1 (le plus bas) à 4 (le plus élevé) en divisant l'ensemble de la base clients en quatre groupes égaux (quartiles). Les clients sont ensuite affectés à un segment nommé selon la combinaison de leurs scores R et F."

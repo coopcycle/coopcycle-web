@@ -56,6 +56,17 @@
 
 {% block content %}
 
+<div class="alert alert-info" role="alert">
+  <h4><i class="fa fa-info-circle"></i> {% trans %}rfm.info.title{% endtrans %}</h4>
+  <p>{% trans %}rfm.info.body{% endtrans %}</p>
+  <ul>
+    <li>{% trans %}rfm.info.recency{% endtrans %}</li>
+    <li>{% trans %}rfm.info.frequency{% endtrans %}</li>
+    <li>{% trans %}rfm.info.monetary{% endtrans %}</li>
+  </ul>
+  <p>{% trans %}rfm.info.quartiles{% endtrans %}</p>
+</div>
+
 {% if chart_data is not empty %}
 {% set segment_cards_labelled = {} %}
 {% for key, card in segment_cards %}
