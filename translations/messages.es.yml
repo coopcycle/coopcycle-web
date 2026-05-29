@@ -1822,4 +1822,16 @@ rfm.info.body: "El análisis RFM puntúa a cada cliente en tres dimensiones bas�
 rfm.info.recency: "Recencia (R): ¿cuándo realizó el cliente su último pedido?"
 rfm.info.frequency: "Frecuencia (F): ¿cuántos pedidos ha realizado en total?"
 rfm.info.monetary: "Importe (M): ¿cuánto ha gastado en total?"
-rfm.info.quartiles: "Cada dimensión se puntúa de 1 (más bajo) a 4 (más alto) dividiendo toda la base de clientes en cuatro grupos iguales (cuartiles). Los clientes se asignan luego a un segmento con nombre según la combinación de sus puntuaciones R y F."
+rfm.info.quartiles: "R y F se puntúan del 1 al 4 usando umbrales absolutos configurables (p. ej. pedido en los últimos 30 días = R4, 10 o más pedidos = F4). M se puntúa de forma relativa al resto de la base de clientes. Los clientes se asignan a un segmento con nombre según la combinación de sus puntuaciones R y F."
+rfm.thresholds.configure: Configurar umbrales
+rfm.thresholds.recency: Recencia (R)
+rfm.thresholds.frequency: Frecuencia (F)
+rfm.thresholds.saved: Umbrales RFM guardados correctamente.
+rfm.thresholds.error.r_order: Los umbrales de recencia deben estar en orden ascendente (Puntuación 4 < Puntuación 3 < Puntuación 2).
+rfm.thresholds.error.f_order: Los umbrales de frecuencia deben estar en orden ascendente (Puntuación 2 < Puntuación 3 < Puntuación 4).
+rfm.thresholds.rfm_r_score4_max_days: Puntuación 4 — días máx desde el último pedido
+rfm.thresholds.rfm_r_score3_max_days: Puntuación 3 — días máx desde el último pedido
+rfm.thresholds.rfm_r_score2_max_days: Puntuación 2 — días máx desde el último pedido
+rfm.thresholds.rfm_f_score4_min_orders: Puntuación 4 — número mín de pedidos
+rfm.thresholds.rfm_f_score3_min_orders: Puntuación 3 — número mín de pedidos
+rfm.thresholds.rfm_f_score2_min_orders: Puntuación 2 — número mín de pedidos

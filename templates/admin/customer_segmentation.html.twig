@@ -67,6 +67,37 @@
   <p>{% trans %}rfm.info.quartiles{% endtrans %}</p>
 </div>
 
+{% set thresholds_has_errors = thresholds_form.vars.submitted and not thresholds_form.vars.valid %}
+{% form_theme thresholds_form 'bootstrap_3_layout.html.twig' %}
+<div class="panel panel-default">
+  <div class="panel-heading" style="cursor:pointer;" data-toggle="collapse" data-target="#rfm-thresholds-panel" aria-expanded="{{ thresholds_has_errors ? 'true' : 'false' }}">
+    <i class="fa fa-sliders"></i> {% trans %}rfm.thresholds.configure{% endtrans %}
+    <span class="pull-right"><i class="fa fa-chevron-down"></i></span>
+  </div>
+  <div id="rfm-thresholds-panel" class="panel-collapse collapse{% if thresholds_has_errors %} in{% endif %}">
+    <div class="panel-body">
+      {{ form_start(thresholds_form) }}
+      <div class="row">
+        <div class="col-md-6">
+          <h5>{% trans %}rfm.thresholds.recency{% endtrans %}</h5>
+          {{ form_row(thresholds_form.rfm_r_score4_max_days) }}
+          {{ form_row(thresholds_form.rfm_r_score3_max_days) }}
+          {{ form_row(thresholds_form.rfm_r_score2_max_days) }}
+        </div>
+        <div class="col-md-6">
+          <h5>{% trans %}rfm.thresholds.frequency{% endtrans %}</h5>
+          {{ form_row(thresholds_form.rfm_f_score4_min_orders) }}
+          {{ form_row(thresholds_form.rfm_f_score3_min_orders) }}
+          {{ form_row(thresholds_form.rfm_f_score2_min_orders) }}
+        </div>
+      </div>
+      {{ form_errors(thresholds_form) }}
+      <button type="submit" class="btn btn-primary">{% trans %}basics.save{% endtrans %}</button>
+      {{ form_end(thresholds_form) }}
+    </div>
+  </div>
+</div>
+
 {% if chart_data is not empty %}
 {% set segment_cards_labelled = {} %}
 {% for key, card in segment_cards %}

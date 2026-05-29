@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller\Admin;
 
+use AppBundle\Form\RfmThresholdsType;
+use AppBundle\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,11 +13,17 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class CustomerSegmentationController extends AbstractController
 {
-    public function __construct(private readonly bool $rfmEnabled) {}
-
     private const ITEMS_PER_PAGE = 20;
 
-    #[Route('/admin/customers/segmentation', name: 'admin_customer_segmentation', methods: ['GET'])]
+    private const R_DEFAULTS = [30, 90, 365];
+    private const F_DEFAULTS = [2, 5, 10];
+
+    public function __construct(
+        private readonly bool            $rfmEnabled,
+        private readonly SettingsManager $settingsManager,
+    ) {}
+
+    #[Route('/admin/customers/segmentation', name: 'admin_customer_segmentation', methods: ['GET', 'POST'])]
     public function __invoke(Request $request, EntityManagerInterface $entityManager, PaginatorInterface $paginator): Response
     {
         if (!$this->rfmEnabled) {
@@ -24,8 +32,22 @@ class CustomerSegmentationController extends AbstractController
 
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
+        $thresholds = $this->getThresholds();
+        $thresholdsForm = $this->createForm(RfmThresholdsType::class, $thresholds);
+        $thresholdsForm->handleRequest($request);
+
+        if ($thresholdsForm->isSubmitted() && $thresholdsForm->isValid()) {
+            foreach ($thresholdsForm->getData() as $key => $value) {
+                $this->settingsManager->set($key, (string) $value);
+            }
+            $this->settingsManager->flush();
+            $this->addFlash('notice', 'rfm.thresholds.saved');
+
+            return $this->redirectToRoute('admin_customer_segmentation');
+        }
+
         $conn = $entityManager->getConnection();
-        $rows = $conn->executeQuery($this->buildSql())->fetchAllAssociative();
+        $rows = $conn->executeQuery($this->buildSql($thresholds))->fetchAllAssociative();
 
         $segments = [];
         foreach ($rows as $row) {
@@ -53,16 +75,36 @@ class CustomerSegmentationController extends AbstractController
         );
 
         return $this->render('admin/customer_segmentation.html.twig', [
-            'segment_cards'  => $segmentCards,
-            'active_segment' => $activeSegment,
-            'customers'      => $customers,
-            'segment_meta'   => $segmentMeta,
-            'chart_data'     => $this->buildChartData($rows),
+            'segment_cards'   => $segmentCards,
+            'active_segment'  => $activeSegment,
+            'customers'       => $customers,
+            'segment_meta'    => $segmentMeta,
+            'chart_data'      => $this->buildChartData($rows),
+            'thresholds_form' => $thresholdsForm,
         ]);
     }
 
-    private function buildSql(): string
+    private function getThresholds(): array
     {
+        return [
+            'rfm_r_score4_max_days'   => (int) ($this->settingsManager->get('rfm_r_score4_max_days')   ?? self::R_DEFAULTS[0]),
+            'rfm_r_score3_max_days'   => (int) ($this->settingsManager->get('rfm_r_score3_max_days')   ?? self::R_DEFAULTS[1]),
+            'rfm_r_score2_max_days'   => (int) ($this->settingsManager->get('rfm_r_score2_max_days')   ?? self::R_DEFAULTS[2]),
+            'rfm_f_score4_min_orders' => (int) ($this->settingsManager->get('rfm_f_score4_min_orders') ?? self::F_DEFAULTS[2]),
+            'rfm_f_score3_min_orders' => (int) ($this->settingsManager->get('rfm_f_score3_min_orders') ?? self::F_DEFAULTS[1]),
+            'rfm_f_score2_min_orders' => (int) ($this->settingsManager->get('rfm_f_score2_min_orders') ?? self::F_DEFAULTS[0]),
+        ];
+    }
+
+    private function buildSql(array $t): string
+    {
+        $r4 = $t['rfm_r_score4_max_days'];
+        $r3 = $t['rfm_r_score3_max_days'];
+        $r2 = $t['rfm_r_score2_max_days'];
+        $f4 = $t['rfm_f_score4_min_orders'];
+        $f3 = $t['rfm_f_score3_min_orders'];
+        $f2 = $t['rfm_f_score2_min_orders'];
+
         return <<<SQL
         WITH rfm_data AS (
             SELECT
@@ -82,9 +124,19 @@ class CustomerSegmentationController extends AbstractController
         ),
         rfm_scores AS (
             SELECT *,
-                NTILE(4) OVER (ORDER BY last_order_at ASC) AS r_score,
-                NTILE(4) OVER (ORDER BY frequency ASC)     AS f_score,
-                NTILE(4) OVER (ORDER BY monetary ASC)      AS m_score
+                CASE
+                    WHEN DATE_PART('day', NOW() - last_order_at) <= $r4 THEN 4
+                    WHEN DATE_PART('day', NOW() - last_order_at) <= $r3 THEN 3
+                    WHEN DATE_PART('day', NOW() - last_order_at) <= $r2 THEN 2
+                    ELSE 1
+                END AS r_score,
+                CASE
+                    WHEN frequency >= $f4 THEN 4
+                    WHEN frequency >= $f3 THEN 3
+                    WHEN frequency >= $f2 THEN 2
+                    ELSE 1
+                END AS f_score,
+                NTILE(4) OVER (ORDER BY monetary ASC)                      AS m_score
             FROM rfm_data
         )
         SELECT
@@ -157,10 +209,10 @@ class CustomerSegmentationController extends AbstractController
         );
 
         return [
-            'segment_counts'      => $segmentCounts,
+            'segment_counts'       => $segmentCounts,
             'segment_avg_monetary' => $segmentAvgMonetary,
-            'quartile_bounds'     => $quartileBounds,
-            'bubble_cells'        => array_values($bubbleCells),
+            'quartile_bounds'      => $quartileBounds,
+            'bubble_cells'         => array_values($bubbleCells),
         ];
     }
 

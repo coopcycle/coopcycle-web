@@ -1786,4 +1786,16 @@ rfm.info.body: "RFM analysis scores every customer on three dimensions based on 
 rfm.info.recency: "Recency (R): how recently did the customer last order?"
 rfm.info.frequency: "Frequency (F): how many orders have they placed in total?"
 rfm.info.monetary: "Monetary (M): how much have they spent in total?"
-rfm.info.quartiles: "Each dimension is scored from 1 (lowest) to 4 (highest) by splitting the entire customer base into four equal groups (quartiles). Customers are then assigned to a named segment based on the combination of their R and F scores."
+rfm.info.quartiles: "R and F are scored 1–4 using configurable absolute thresholds (e.g. ordered within 30 days = R4, 10+ orders = F4). M is scored relative to the rest of the customer base. Customers are assigned to a named segment based on the combination of their R and F scores."
+rfm.thresholds.configure: Configure thresholds
+rfm.thresholds.recency: Recency (R)
+rfm.thresholds.frequency: Frequency (F)
+rfm.thresholds.saved: RFM thresholds saved successfully.
+rfm.thresholds.error.r_order: Recency thresholds must be in ascending order (Score 4 < Score 3 < Score 2).
+rfm.thresholds.error.f_order: Frequency thresholds must be in ascending order (Score 2 < Score 3 < Score 4).
+rfm.thresholds.rfm_r_score4_max_days: Score 4 — max days since last order
+rfm.thresholds.rfm_r_score3_max_days: Score 3 — max days since last order
+rfm.thresholds.rfm_r_score2_max_days: Score 2 — max days since last order
+rfm.thresholds.rfm_f_score4_min_orders: Score 4 — min number of orders
+rfm.thresholds.rfm_f_score3_min_orders: Score 3 — min number of orders
+rfm.thresholds.rfm_f_score2_min_orders: Score 2 — min number of orders

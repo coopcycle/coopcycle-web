@@ -320,7 +320,8 @@ services:
 
   AppBundle\Controller\Admin\CustomerSegmentationController:
     arguments:
-      $rfmEnabled: '%env(bool:RFM_ENABLED)%'
+      $rfmEnabled:      '%env(bool:RFM_ENABLED)%'
+      $settingsManager: '@AppBundle\Service\SettingsManager'
 
   AppBundle\Controller\AssetsController:
     arguments:

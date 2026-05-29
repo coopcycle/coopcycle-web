@@ -1723,4 +1723,16 @@ rfm.info.body: "L'analyse RFM attribue à chaque client un score sur trois dimen
 rfm.info.recency: "Récence (R) : quand le client a-t-il passé sa dernière commande ?"
 rfm.info.frequency: "Fréquence (F) : combien de commandes a-t-il passées au total ?"
 rfm.info.monetary: "Montant (M) : combien a-t-il dépensé au total ?"
-rfm.info.quartiles: "Chaque dimension est notée de 1 (le plus bas) à 4 (le plus élevé) en divisant l'ensemble de la base clients en quatre groupes égaux (quartiles). Les clients sont ensuite affectés à un segment nommé selon la combinaison de leurs scores R et F."
+rfm.info.quartiles: "R et F sont notés de 1 à 4 selon des seuils absolus configurables (ex. commande dans les 30 derniers jours = R4, 10 commandes ou plus = F4). M est noté relativement au reste de la base clients. Les clients sont ensuite affectés à un segment nommé selon la combinaison de leurs scores R et F."
+rfm.thresholds.configure: Configurer les seuils
+rfm.thresholds.recency: Récence (R)
+rfm.thresholds.frequency: Fréquence (F)
+rfm.thresholds.saved: Seuils RFM enregistrés avec succès.
+rfm.thresholds.error.r_order: Les seuils de récence doivent être en ordre croissant (Score 4 < Score 3 < Score 2).
+rfm.thresholds.error.f_order: Les seuils de fréquence doivent être en ordre croissant (Score 2 < Score 3 < Score 4).
+rfm.thresholds.rfm_r_score4_max_days: Score 4 — jours max depuis la dernière commande
+rfm.thresholds.rfm_r_score3_max_days: Score 3 — jours max depuis la dernière commande
+rfm.thresholds.rfm_r_score2_max_days: Score 2 — jours max depuis la dernière commande
+rfm.thresholds.rfm_f_score4_min_orders: Score 4 — nombre min de commandes
+rfm.thresholds.rfm_f_score3_min_orders: Score 3 — nombre min de commandes
+rfm.thresholds.rfm_f_score2_min_orders: Score 2 — nombre min de commandes
