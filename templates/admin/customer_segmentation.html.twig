@@ -57,9 +57,13 @@
 {% block content %}
 
 {% if chart_data is not empty %}
+{% set segment_cards_labelled = {} %}
+{% for key, card in segment_cards %}
+  {% set segment_cards_labelled = segment_cards_labelled|merge({ (key): card|merge({ label: ('rfm.segment.' ~ key)|trans }) }) %}
+{% endfor %}
 <div id="rfm-charts"
   data-chart-data="{{ chart_data|json_encode|e('html_attr') }}"
-  data-segment-meta="{{ segment_cards|json_encode|e('html_attr') }}">
+  data-segment-meta="{{ segment_cards_labelled|json_encode|e('html_attr') }}">
   <div class="row">
     <div class="col-md-4" style="margin-bottom:24px;">
       <h4 class="text-center">{% trans %}rfm.chart.segment_distribution{% endtrans %}</h4>
