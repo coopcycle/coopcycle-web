@@ -327,6 +327,29 @@ services:
     profiles:
       - devOdoo
 
+  recommender:
+    build:
+      dockerfile: './recommender/Dockerfile'
+      context: '.'
+    image: coopcycle/recommender
+    depends_on:
+      - postgres
+    environment:
+      - COOPCYCLE_DB_HOST=${COOPCYCLE_DB_HOST}
+      - COOPCYCLE_DB_PORT=${COOPCYCLE_DB_PORT}
+      - COOPCYCLE_DB_NAME=${COOPCYCLE_DB_NAME}
+      - COOPCYCLE_DB_USER=${COOPCYCLE_DB_USER}
+      - COOPCYCLE_DB_PASSWORD=${COOPCYCLE_DB_PASSWORD}
+      - MODEL_DIR=/models
+    volumes:
+      - recommender_models:/models
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+
 volumes:
   clickhouse_data:
   clickhouse_logs:
@@ -340,3 +363,4 @@ volumes:
   php_public_images:
   odoo-web-data:
   odoo-db-data:
+  recommender_models:

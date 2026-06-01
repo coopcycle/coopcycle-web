@@ -82,6 +82,7 @@ services:
       $packageDeliveryUiPriceBreakdownEnabled: "%package_delivery_ui_price_breakdown_enabled%"
       $taxIncl: '%env(bool:COOPCYCLE_TAX_INCL)%'
       $appName: '%env(COOPCYCLE_APP_NAME)%'
+      Symfony\Contracts\HttpClient\HttpClientInterface $recommenderClient: '@recommender.client'
 
   # For some cache pools, want *STABLE* cache keys between deploys.
   # To achieve this, we *EXPLICITLY* set a namespace,

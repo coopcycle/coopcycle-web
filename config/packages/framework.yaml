@@ -47,6 +47,8 @@ framework:
                 timeout: 5.0
             cubejs.client:
                 base_uri: "%env(CUBEJS_API_URL)%/"
+            recommender.client:
+                base_uri: "http://recommender:8000/"
             woopit.http_client:
                 base_uri: '%env(WOOPIT_CARRIER_API_URL)%/'
                 headers:
