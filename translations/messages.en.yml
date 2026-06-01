@@ -1813,4 +1813,7 @@ customer.order_history.vendor: Vendor / Store
 customer.order_history.method: Method
 customer.order_history.total: Total
 customer.order_history.empty: This customer has no orders yet.
+customer.recommendations.title: Recommendations
+customer.recommendations.restaurants: Recommended restaurants
+customer.recommendations.products: Recommended products
 rfm.order_history: Order history
