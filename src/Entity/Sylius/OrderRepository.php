@@ -331,6 +331,10 @@ class OrderRepository extends BaseOrderRepository
         $qb = $this->createQueryBuilder('o')
             ->andWhere('o.customer = :customer')
             ->andWhere('o.state = :fulfilled')
+            ->andWhere(sprintf(
+                'EXISTS (SELECT 1 FROM %s v WHERE v.order = o)',
+                OrderVendor::class
+            ))
             ->setParameter('customer', $customer)
             ->setParameter('fulfilled', OrderInterface::STATE_FULFILLED);
 

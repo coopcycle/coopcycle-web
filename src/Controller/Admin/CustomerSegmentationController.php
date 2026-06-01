@@ -120,6 +120,7 @@ class CustomerSegmentationController extends AbstractController
             INNER JOIN sylius_order o ON o.customer_id = c.id
             LEFT  JOIN api_user u     ON u.customer_id = c.id
             WHERE o.state = 'fulfilled'
+              AND EXISTS (SELECT 1 FROM sylius_order_vendor ov WHERE ov.order_id = o.id)
             GROUP BY c.id, c.email_canonical, c.first_name, c.last_name, u.username
         ),
         rfm_scores AS (
