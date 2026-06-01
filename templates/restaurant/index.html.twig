@@ -18,7 +18,7 @@
   {% set preorder_warning = ( restaurant.isFulfillmentMethodEnabled('delivery') and restaurant.getFulfillmentMethod('delivery').orderingDelayMinutes > 0 ) %}
 
   {% if disabled_warning or preorder_warning %}
-  <nav class="restaurant-banner {% if embed_context.enabled %}mt-0{% endif %}">
+  <nav class="mx-auto px-4 {% if not embed_context.enabled %}mt-4{% endif %}">
     <div class="alert alert-warning text-center">
       {% if disabled_warning %}
       <p class="mb-0">{{ 'restaurant.disabledWarning'|trans({ '%restaurantEditUrl%': restaurant_edit_url }) | raw }}</p>
@@ -35,7 +35,7 @@
   {% if restaurant.hasFeaturedPromotion() %}
     {% set featured_promotion = restaurant.getFeaturedPromotion() %}
     {% if featured_promotion|is_promotion_not_expired %}
-    <nav class="restaurant-banner">
+    <nav class="mx-auto px-4 mt-4">
       <div class="alert alert-warning text-center">
         <i class="fa fa-xl fa-gift mr-2"></i><span>{{ restaurant.getFeaturedPromotion()|humanize_promotion }}</span>
       </div>
