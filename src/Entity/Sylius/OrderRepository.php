@@ -332,7 +332,7 @@ class OrderRepository extends BaseOrderRepository
             ->andWhere('o.customer = :customer')
             ->andWhere('o.state = :fulfilled')
             ->andWhere(sprintf(
-                'EXISTS (SELECT 1 FROM %s v WHERE v.order = o)',
+                'EXISTS (SELECT 1 FROM %s ov WHERE ov.order = o)',
                 OrderVendor::class
             ))
             ->setParameter('customer', $customer)
