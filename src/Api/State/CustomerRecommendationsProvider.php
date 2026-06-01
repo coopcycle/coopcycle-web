@@ -2,6 +2,7 @@
 
 namespace AppBundle\Api\State;
 
+use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Doctrine\Orm\State\ItemProvider;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProviderInterface;
@@ -16,18 +17,18 @@ final class CustomerRecommendationsProvider implements ProviderInterface
         private readonly ItemProvider $provider,
         private readonly HttpClientInterface $recommenderClient,
         private readonly RequestStack $requestStack,
+        private readonly IriConverterInterface $iriConverter,
     ) {}
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
-        $this->provider->provide($operation, $uriVariables, $context);
+        $customer = $this->provider->provide($operation, $uriVariables, $context);
 
         $request = $this->requestStack->getCurrentRequest();
         $type = $request?->query->get('type', 'product') ?? 'product';
         $n = (int) ($request?->query->get('n', 5) ?? 5);
 
-        $customerId = $uriVariables['id'];
-        $customerIri = "/api/customers/{$customerId}";
+        $customerIri = $this->iriConverter->getIriFromResource($customer);
 
         $dto = new CustomerRecommendationsDto();
 
