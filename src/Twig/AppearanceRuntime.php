@@ -138,7 +138,6 @@ class AppearanceRuntime implements RuntimeExtensionInterface
             $height = imagesy($img);
             $steps = 10;
             $totalLuminance = 0.0;
-            $count = 0;
 
             for ($i = 0; $i < $steps; $i++) {
                 for ($j = 0; $j < $steps; $j++) {
@@ -154,14 +153,12 @@ class AppearanceRuntime implements RuntimeExtensionInterface
                     $g = (int)($g * (1 - $alpha) + 255 * $alpha);
                     $b = (int)($b * (1 - $alpha) + 255 * $alpha);
                     $totalLuminance += (0.299 * $r + 0.587 * $g + 0.114 * $b) / 255;
-                    $count++;
                 }
             }
 
             imagedestroy($img);
 
-            $avgLuminance = $count > 0 ? $totalLuminance / $count : 0.0;
-            return $avgLuminance >= 0.5 ? 'light' : 'dark';
+            return ($totalLuminance / ($steps * $steps)) >= 0.5 ? 'light' : 'dark';
         });
     }
 
