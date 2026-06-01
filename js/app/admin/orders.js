@@ -5,9 +5,9 @@ import cubejs from '@cubejs-client/core';
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin, Popover, Button } from 'antd';
 import React, { useImperativeHandle, createRef, forwardRef, useState, useCallback } from 'react';
-import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, PointElement, Tooltip, Legend } from 'chart.js'
+import { Chart as ChartJS, CategoryScale, LinearScale, LineElement, BarElement, PointElement, Tooltip, Legend } from 'chart.js'
 import { Line } from 'react-chartjs-2';
-ChartJS.register(CategoryScale, LinearScale, LineElement, PointElement, Tooltip, Legend)
+ChartJS.register(CategoryScale, LinearScale, LineElement, BarElement, PointElement, Tooltip, Legend)
 import moment from 'moment'
 import { ThreeDots } from 'react-loader-spinner'
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
@@ -54,13 +54,22 @@ if (rootElement) {
     const data = {
       labels: resultSet.categories().map((c) => moment(c.x).format('L')),
       datasets: resultSet.series().map((s, index) => ({
+        type: index === 0 ? 'line' : 'bar',
         label: s.title,
         data: s.series.map((r) => r.value),
         borderColor: COLORS_SERIES[index],
+        backgroundColor: index === 0 ? undefined : COLORS_SERIES[index] + '80',
         fill: false,
+        yAxisID: index === 0 ? 'y' : 'y1',
       })),
     };
-    const options = { ...commonOptions };
+    const options = {
+      ...commonOptions,
+      scales: {
+        y:  { type: 'linear', position: 'left' },
+        y1: { type: 'linear', position: 'right', grid: { drawOnChartArea: false } },
+      },
+    };
     return <Line data={data} options={options} />;
 
   };
@@ -70,7 +79,8 @@ if (rootElement) {
       <QueryRenderer
         query={{
           "measures": [
-            "PlatformFee.totalAmount"
+            "PlatformFee.totalAmount",
+            "Order.count"
           ],
           "timeDimensions": [
             {
