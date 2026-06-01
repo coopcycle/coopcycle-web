@@ -1788,7 +1788,6 @@ two_factor.submit: Verificar
 rfm.title: Segmentación de clientes
 rfm.clear_filter: Borrar filtro
 rfm.no_customers: No hay clientes en este segmento.
-rfm.view_profile: Ver perfil
 rfm.column.last_order: Último pedido
 rfm.column.frequency: Pedidos
 rfm.column.monetary: Total gastado
@@ -1834,3 +1833,19 @@ rfm.thresholds.rfm_r_score2_max_days: Puntuación 2 — días máx desde el últ
 rfm.thresholds.rfm_f_score4_min_orders: Puntuación 4 — número mín de pedidos
 rfm.thresholds.rfm_f_score3_min_orders: Puntuación 3 — número mín de pedidos
 rfm.thresholds.rfm_f_score2_min_orders: Puntuación 2 — número mín de pedidos
+customer.badge.guest: Invitado
+customer.badge.registered: Registrado
+customer.insights.total_orders: Pedidos completados
+customer.insights.average_order: Ticket medio
+customer.insights.first_order: Primer pedido
+customer.insights.last_order: Último pedido
+customer.insights.favourite_restaurant: Restaurante favorito
+customer.order_history.title: Historial de pedidos
+customer.order_history.date: Fecha
+customer.order_history.order: "Pedido n.º"
+customer.order_history.status: Estado
+customer.order_history.vendor: Vendedor / Tienda
+customer.order_history.method: Método
+customer.order_history.total: Total
+customer.order_history.empty: Este cliente aún no tiene pedidos.
+rfm.order_history: Historial de pedidos

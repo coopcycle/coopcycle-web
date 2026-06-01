@@ -1689,7 +1689,6 @@ two_factor.submit: Vérifier
 rfm.title: Segmentation clients
 rfm.clear_filter: Effacer le filtre
 rfm.no_customers: Aucun client dans ce segment.
-rfm.view_profile: Voir le profil
 rfm.column.last_order: Dernière commande
 rfm.column.frequency: Commandes
 rfm.column.monetary: Total dépensé
@@ -1735,3 +1734,19 @@ rfm.thresholds.rfm_r_score2_max_days: Score 2 — jours max depuis la dernière 
 rfm.thresholds.rfm_f_score4_min_orders: Score 4 — nombre min de commandes
 rfm.thresholds.rfm_f_score3_min_orders: Score 3 — nombre min de commandes
 rfm.thresholds.rfm_f_score2_min_orders: Score 2 — nombre min de commandes
+customer.badge.guest: Invité
+customer.badge.registered: Inscrit
+customer.insights.total_orders: Commandes livrées
+customer.insights.average_order: Panier moyen
+customer.insights.first_order: Première commande
+customer.insights.last_order: Dernière commande
+customer.insights.favourite_restaurant: Restaurant favori
+customer.order_history.title: Historique des commandes
+customer.order_history.date: Date
+customer.order_history.order: "Commande n°"
+customer.order_history.status: Statut
+customer.order_history.vendor: Vendeur / Boutique
+customer.order_history.method: Mode
+customer.order_history.total: Total
+customer.order_history.empty: Ce client n'a pas encore de commandes.
+rfm.order_history: Historique des commandes

@@ -207,12 +207,10 @@
       <td class="text-right"><span class="badge">{{ customer.f_score }}</span></td>
       <td class="text-right"><span class="badge">{{ customer.m_score }}</span></td>
       <td class="text-right">
-        {% if customer.username %}
-        <a href="{{ path('admin_user_edit', { username: customer.username }) }}"
+        <a href="{{ path('admin_customer', { id: customer.id }) }}"
            class="btn btn-xs btn-default">
-          <i class="fa fa-user"></i> {% trans %}rfm.view_profile{% endtrans %}
+          <i class="fa fa-history"></i> {% trans %}rfm.order_history{% endtrans %}
         </a>
-        {% endif %}
       </td>
     </tr>
     {% endfor %}
