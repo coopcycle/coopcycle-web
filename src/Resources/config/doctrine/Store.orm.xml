@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd" xmlns:gedmo="http://gediminasm.org/schemas/orm/doctrine-extensions-mapping">
-  <entity name="AppBundle\Entity\Store" table="store">
+  <entity name="AppBundle\Entity\Store" table="store" repository-class="AppBundle\Entity\StoreRepository">
     <id name="id" type="integer" column="id">
       <generator strategy="IDENTITY"/>
     </id>
@@ -31,6 +31,7 @@
     <field name="multiDropEnabled" type="boolean" column="multi_drop_enabled"/>
     <field name="multiPickupEnabled" type="boolean" column="multi_pickup_enabled"/>
     <field name="transporter" type="string" column="transporter" nullable="true" unique="true" />
+    <field name="rdcConnectionId" type="string" column="rdc_connection_id" nullable="true" />
     <field name="billingMethod" type="string" column="billing_method" nullable="false">
       <options>
         <option name="default">unit</option>
