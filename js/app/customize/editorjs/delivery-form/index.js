@@ -47,23 +47,23 @@ const DeliveryFormPreview = ({ defaultTitle, defaultText, onChange }) => {
   });
 
   return (
-    <div style={{ backgroundColor: '#212121' }}>
-      <section className="homepage-delivery">
-        <div className="homepage-delivery-text">
+    <section className="mb-4 bg-base-100 mx-auto p-4">
+      <div className="flex flex-col gap-4 md:flex-row">
+        <div className="md:order-2 md:w-1/2">
           <h2 ref={titleRef} onBlur={() => sanitize(title, titleEdit)}>{title}</h2>
           <p ref={textRef} onBlur={() => sanitize(text, textEdit)}>{text}</p>
         </div>
-        <div className="homepage-delivery-form">
-          <form className="form-horizontal">
-            <div className="ssc">
-              <div className="mb ssc-head-line w-100"></div>
-              <div className="mb ssc-head-line w-100"></div>
-            </div>
-            <button type="button" className="btn btn-block btn-lg btn-primary">Suivant →</button>
-          </form>
+        <div className="md:order-1 md:w-1/2 bg-base-300 p-8 shadow-sm rounded-lg">
+          <div className="ssc mb-4">
+            <div className="mb ssc-head-line w-100"></div>
+          </div>
+          <div className="ssc mb-4">
+            <div className="mb ssc-head-line w-100"></div>
+          </div>
+          <button type="button" className="btn btn-block btn-lg btn-primary">Suivant →</button>
         </div>
-      </section>
-    </div>
+      </div>
+    </section>
   )
 }
 
