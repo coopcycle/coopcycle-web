@@ -1,7 +1,3 @@
-@import "bootstrap-sass/assets/stylesheets/bootstrap/_variables";
-@import "bootstrap-sass/assets/stylesheets/bootstrap/_mixins";
-@import "bootstrap-sass/assets/stylesheets/bootstrap/_forms";
-
 @import "font-awesome/scss/_variables";
 @import "font-awesome/scss/_mixins";
 @import "font-awesome/scss/_animated";
@@ -16,7 +12,7 @@
     display: block;
     position: absolute;
     top: calc(50% - 7px);
-    right: $padding-base-horizontal;
+    right: 12px;
     display: none;
   }
 }

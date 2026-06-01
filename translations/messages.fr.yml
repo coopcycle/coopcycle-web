@@ -1142,8 +1142,7 @@ basics.updated_at: Mis à jour le %date%
 basics.description: Description
 basics.import: Importer
 activity.task.started: "@%owner% a démarré la tâche #task/%aggregate_id%\n"
-form.customize.custom_banner.help: Assurez-vous que la bannière est un motif SVG qui
-  se répète
+form.customize.custom_banner.help: "Formats acceptés : SVG (motif répétable), JPG ou PNG (image de fond complète)"
 form.customize.custom_banner.label: Bannière personnalisée
 form.customize.custom_privacy.label: Contenu de la politique de confidentialité personnalisée
 form.customize.custom_privacy_enabled.label: Activer la politique de confidentialité

@@ -66,6 +66,8 @@ oneup_uploader:
                 text/html: ['svg']
                 image/svg+xml: ['svg']
                 image/svg: ['svg']
+                image/jpeg: ['jpg', 'jpeg']
+                image/png: ['png']
         homepage_slider:
             frontend: dropzone
             storage:

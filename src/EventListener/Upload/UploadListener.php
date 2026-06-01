@@ -205,14 +205,30 @@ final class UploadListener
 
     private function onBannerUpload(PostPersistEvent $event)
     {
-        $event->getFile();
+        $file = $event->getFile();
 
         if ($this->isDemo) {
             throw new UploadException('Banner can\'t be changed in demo mode');
         }
 
-        $this->appCache->delete('banner_svg_stat');
-        $this->appCache->delete('banner_svg');
+        $mimeType = $file->getMimeType();
+
+        if (in_array($mimeType, ['image/jpeg', 'image/jpg', 'image/png'])) {
+            $ext = $mimeType === 'image/png' ? 'png' : 'jpg';
+            $otherExt = $ext === 'png' ? 'jpg' : 'png';
+            try {
+                $fs = $file->getFileSystem();
+                if ($fs->fileExists("banner_background.{$otherExt}")) {
+                    $fs->delete("banner_background.{$otherExt}");
+                }
+            } catch (\Exception) {}
+            $this->settingsManager->set('banner_background_image', "banner_background.{$ext}");
+            $this->settingsManager->flush();
+            $this->appCache->delete('banner_background_image_tone');
+        } else {
+            $this->appCache->delete('banner_svg_stat');
+            $this->appCache->delete('banner_svg');
+        }
     }
 
     private function onHomepageSlideUpload(PostPersistEvent $event)

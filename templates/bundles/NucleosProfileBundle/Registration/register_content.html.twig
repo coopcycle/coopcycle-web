@@ -1,60 +1,60 @@
-{% form_theme form 'bootstrap_3_layout.html.twig' %}
+{% form_theme form '@DaisyuiForm/form/daisyui_layout.html.twig' %}
 
 {% trans_default_domain 'NucleosProfileBundle' %}
 
-<div class="row">
-  <div class="col-md-6 col-md-offset-3">
-
-    <div class="text-center">
-      <a href="{{ hwi_oauth_authorization_url('facebook')|oauth2_proxy }}" class="btn btn-facebook" alt="{{ 'social.sign_in_with_facebook'|trans }}" rel="nofollow">
-        <i class="fa fa-facebook-official"></i>  {{ 'social.sign_in_with_facebook'|trans({}, 'messages') }}
-      </a>
-    </div>
-
-    <hr>
-    {{ form_start(form, {'method': 'post', 'action': path('nucleos_profile_registration_register'), 'attr': {'class': 'nucleos_profile_registration_register'}}) }}
-      {{ form_row(form.email) }}
-      <div id="existing_user_error" class="alert alert-warning mt-1 hidden">
-        <i class="fa fa-warning mr-1"></i>
-        {{ 'registration.email.taken'|trans({}, 'messages') }}
-        <a id="link_to_login" href="#">{{ 'registration.link.to.login'|trans({}, 'messages') }}</a>
-        {{ 'registration.email.taken.use.another'|trans({}, 'messages') }}
-      </div>
-      {{ form_row(form.username) }}
-      {{ form_row(form.plainPassword) }}
-
-      {% if form.legal is defined %}
-        {{ form_row(form.legal) }}
-      {% elseif form.termsAndConditionsAndPrivacyPolicy is defined %}
-        {{ form_row(form.termsAndConditionsAndPrivacyPolicy) }}
-      {% endif %}
-
-      {% for optin in form.optins.vars.value|split(',') %}
-        {{ form_row(form[optin]) }}
-      {% endfor %}
-
-      {# TODO Add other fields #}
-
-      {{ form_widget(form.save, { attr: { class: 'btn btn-block btn-lg btn-primary' } }) }}
-      <div class="help-block">
-        {% trans from 'messages' %}authentication.unsubscribe{% endtrans %}
-      </div>
-    {{ form_end(form) }}
-    <div id="existing_user_login_form" class="hidden">
-      {% include '_partials/profile/existing_user_ask_login_form.html.twig' with {
-        form: form,
-        action_path: path('nucleos_user_security_check'),
-        warning_message: 'registration.email.taken.loggin.warning_message'|trans({}, 'messages')
-      } %}
-    </div>
-    <hr>
-    <div class="panel panel-default">
-      <a class="panel-body d-block text-center" href="{{ path('nucleos_user_security_login') }}">
-        <span>{% trans from 'messages' %}authentication.already_registered{% endtrans %}</span>
-        <span>{% trans from 'messages' %}authentication.sign_in{% endtrans %}</span>
-      </a>
-    </div>
+<div class="mx-auto px-4">
+  <div class="text-center mt-4">
+    {# https://daisyui.com/components/button/#login-buttons #}
+    <a href="{{ hwi_oauth_authorization_url('facebook')|oauth2_proxy }}" class="btn bg-[#1A77F2] text-white border-[#005fd8]" alt="{{ 'social.sign_in_with_facebook'|trans }}" rel="nofollow">
+      <i class="fa fa-facebook-official"></i>  {{ 'social.sign_in_with_facebook'|trans({}, 'messages') }}
+    </a>
   </div>
+
+  <div class="divider"></div>
+
+  {{ form_start(form, {'method': 'post', 'action': path('nucleos_profile_registration_register'), 'attr': {'class': 'nucleos_profile_registration_register'}}) }}
+    {{ form_row(form.email) }}
+    <div id="existing_user_error" class="alert alert-warning mt-1 hidden">
+      <i class="fa fa-warning mr-1"></i>
+      {{ 'registration.email.taken'|trans({}, 'messages') }}
+      <a id="link_to_login" href="#">{{ 'registration.link.to.login'|trans({}, 'messages') }}</a>
+      {{ 'registration.email.taken.use.another'|trans({}, 'messages') }}
+    </div>
+    {{ form_row(form.username) }}
+    {{ form_row(form.plainPassword) }}
+
+    {% if form.legal is defined %}
+      {{ form_row(form.legal) }}
+    {% elseif form.termsAndConditionsAndPrivacyPolicy is defined %}
+      {{ form_row(form.termsAndConditionsAndPrivacyPolicy) }}
+    {% endif %}
+
+    {% for optin in form.optins.vars.value|split(',') %}
+      {{ form_row(form[optin]) }}
+    {% endfor %}
+
+    {# TODO Add other fields #}
+
+    {{ form_widget(form.save, { attr: { class: 'btn btn-block btn-lg btn-primary' } }) }}
+    <div class="text-xs text-base-content/60 mt-2">
+      {% trans from 'messages' %}authentication.unsubscribe{% endtrans %}
+    </div>
+  {{ form_end(form) }}
+
+  <div id="existing_user_login_form" class="hidden">
+    {% include '_partials/profile/existing_user_ask_login_form.html.twig' with {
+      form: form,
+      action_path: path('nucleos_user_security_check'),
+      warning_message: 'registration.email.taken.loggin.warning_message'|trans({}, 'messages')
+    } %}
+  </div>
+
+  <div class="divider"></div>
+
+  <a class="btn btn-outline w-full mb-4" href="{{ path('nucleos_user_security_login') }}">
+    <span>{% trans from 'messages' %}authentication.already_registered{% endtrans %}</span>
+    <span>{% trans from 'messages' %}authentication.sign_in{% endtrans %}</span>
+  </a>
 </div>
 
 {% if form.termsAndConditionsAndPrivacyPolicy is defined %}

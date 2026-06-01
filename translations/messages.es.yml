@@ -1191,8 +1191,7 @@ delivery.table.heading.owner: Dueño
 authentication.choose_password: Elije una contraseña
 basics.configure: Configurar
 basics.description: Descripción
-form.customize.custom_banner.help: Asegurate que la bannar es un patrón repetetivo
-  de SVG
+form.customize.custom_banner.help: "Formatos aceptados: SVG (patrón repetible), JPG o PNG (imagen de fondo completa)"
 form.customize.custom_banner.label: Bannar personalizada
 form.customize.custom_privacy.label: Contenido de la página de política de privacidad
 form.customize.custom_privacy_enabled.label: Habilitar política de privacidad personalizado

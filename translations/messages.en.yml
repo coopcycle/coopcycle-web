@@ -839,7 +839,8 @@ form.customize.custom_terms.label: Custom terms & conditions page content
 form.customize.custom_privacy_enabled.label: Enable custom privacy policy
 form.customize.custom_privacy.label: Custom privacy policy page content
 form.customize.custom_banner.label: Custom banner
-form.customize.custom_banner.help: Make sure that the banner is a repeatable SVG pattern
+form.customize.custom_banner.help: "Accepted formats: SVG (repeatable pattern), JPG or PNG (full background image)"
+form.customize.banner_background_image.label: Banner background image (JPG/PNG)
 promotion_coupon.used.label: Number of uses
 product_option.strategy.free: Free
 product_option.strategy.option_value: Custom price
@@ -1742,6 +1743,15 @@ form.product_option_value.product.tooltip: Link a product so that when the produ
 form.product_option_value.product.placeholder: Search a product…
 form.product_option_value.depends_on.placeholder: Select a value
 form.product_option_value.depends_on.tooltip: Select another value which this value depends on
+form.customize.theme.label: Theme
+form.theme.primary.label: Primary
+form.theme.primary.help: Primary brand color, The main color of your brand
+form.theme.primary-content.label: Primary content
+form.theme.primary-content.help: Foreground content color to use on primary color
+form.theme.secondary.label: Secondary
+form.theme.secondary.help: Secondary brand color
+form.theme.secondary-content.label: Secondary content
+form.theme.secondary-content.help: Foreground content color to use on secondary color
 pagination.items_per_page: Items per page
 restaurant.form.en_boite_le_plat_platform_fee.label: The deposit should be collected by the platform
 

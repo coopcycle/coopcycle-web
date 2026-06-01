@@ -19,7 +19,6 @@ import {
   selectOrderNodeId,
   setShippingTimeRange,
 } from '../../../entities/order/reduxSlice'
-import Spinner from '../../core/Spinner'
 import TimeSlotPicker from '../TimeSlotPicker'
 import DatePicker from '../DatePicker'
 import Button from '../../core/Button'
@@ -45,7 +44,7 @@ function LoadingContent() {
       <div className="ReactModal__Content__body">
         <p>{t('CART_TIME_RANGE_CHANGED_MODAL_CHOOSE_TIME_RANGE_TEXT')}</p>
         <p>
-          <Spinner />
+          <span className="loading loading-spinner loading-md"></span>
         </p>
       </div>
       <div className="ReactModal__Content__buttons">
@@ -197,7 +196,7 @@ export default function TimeRangeChangedModal() {
       contentLabel={t('CART_CHANGE_TIME_MODAL_LABEL')}
       className="TimeRangeChangedModal__Content">
       <div data-testid="order.timeRangeChangedModal">
-        <h4>{t('CART_TIME_RANGE_CHANGED_MODAL_TITLE')}</h4>
+        <h4 className="font-bold text-lg mb-4">{t('CART_TIME_RANGE_CHANGED_MODAL_TITLE')}</h4>
         <Alert warning icon="warning">
           {t('CART_TIME_RANGE_CHANGED_MODAL_MESSAGE')}
         </Alert>

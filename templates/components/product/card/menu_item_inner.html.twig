@@ -36,7 +36,7 @@
         {% endif %}
 
       </div>
-      <span class="menu-item-inner__price">
+      <span class="menu-item-inner__price {% if not product.enabled %}line-through{% endif %}">
         {{ variant.price|price_format }}
       </span>
     </div>

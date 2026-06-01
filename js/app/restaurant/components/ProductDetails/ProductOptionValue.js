@@ -20,8 +20,8 @@ export const OptionValue = ({ index, option, optionValue }) => {
 
   return (
     <div
-      className="radio m-0 product-option-item product-option-item-single-choice">
-      <label>
+      className="product-option-item product-option-item-single-choice">
+      <label className="flex items-center gap-2 hover:bg-base-300 cursor-pointer">
         <input
           type="radio"
           name={`options[${index}][code]`}
@@ -58,6 +58,7 @@ export const AdditionalOptionValue = ({
         type="hidden" name={`options[${realIndex}][code]`}
         value={optionValue.identifier}/>
       <label
+        className="hover:bg-base-300 cursor-pointer"
         htmlFor={''}
         onClick={() => {
           incrementValueQuantity(option, optionValue)
@@ -69,6 +70,7 @@ export const AdditionalOptionValue = ({
           decrementValueQuantity(option, optionValue)
         } } />
       <input
+        className="input"
         name={`options[${realIndex}][quantity]`}
         type="number"
         step="1"

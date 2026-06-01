@@ -1,5 +1,6 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
+import ThemeColorPicker from './ThemeColorPicker'
 import ReactMarkdown from 'react-markdown'
 import CodeMirror from 'codemirror/lib/codemirror'
 import 'codemirror/mode/markdown/markdown'
@@ -34,6 +35,19 @@ import '../delivery/homepage.scss'
 
 Dropzone.autoDiscover = false
 
+const themeEl = document.getElementById('theme-color-pickers')
+if (themeEl) {
+  const { dataset } = themeEl
+  createRoot(themeEl).render(
+    <ThemeColorPicker initialValues={{
+      'primary':           dataset.primary,
+      'primary-content':   dataset.primaryContent,
+      'secondary':         dataset.secondary,
+      'secondary-content': dataset.secondaryContent,
+    }} />
+  )
+}
+
 document.querySelectorAll('textarea[data-preview]').forEach((textarea) => {
 
   const preview = document.querySelector(
@@ -60,7 +74,7 @@ const dzEl = document.getElementById('banner-dropzone')
 if (dzEl) {
   new Dropzone(dzEl, {
     url: dzEl.dataset.dropzoneUrl,
-    acceptedFiles: 'image/svg,image/svg+xml',
+    acceptedFiles: 'image/svg,image/svg+xml,image/jpeg,image/png',
     // dictDefaultMessage: t('DROPZONE_DEFAULT_MESSAGE'),
     maxFiles: 1,
     // params,

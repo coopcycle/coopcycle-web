@@ -2,6 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import _ from 'lodash'
+import { ShoppingBag } from 'lucide-react'
 
 import CartItem from './CartItem'
 import {
@@ -12,15 +13,13 @@ import {
   selectPlayersGroups,
 } from '../../redux/selectors'
 
-import cartEmptySvg from '../../../../../assets/svg/cart_empty.svg'
-
 function ListOfItems({ items }) {
   // Make sure items are always in the same order
   // We order them by id asc
   items.sort((a, b) => a.id - b.id)
 
   return (
-    <div className="cart__items">
+    <div className="cart__items xl:-mx-8 xl:px-8 xl:overflow-y-auto">
       { items.map((item) => (
         <CartItem
           key={ `cart-item-${ item.id }` }
@@ -44,10 +43,12 @@ export default function Cart() {
 
   if (items.length === 0) {
     return (
-      <div className="cart__empty" data-testid="cart.empty">
-        <img src={ cartEmptySvg } />
-        <div className="alert alert-info w-100 mt-3">
-          <i className="fa fa-info-circle"></i>&nbsp;{ t('CART_EMPTY') }
+      <div className="flex flex-col items-center" data-testid="cart.empty">
+        <div className="py-8">
+          <ShoppingBag className="text-neutral-content" size="32" />
+        </div>
+        <div className="alert alert-info alert-soft w-full">
+          <i className="fa fa-info-circle"></i><span>{ t('CART_EMPTY') }</span>
         </div>
       </div>
     )

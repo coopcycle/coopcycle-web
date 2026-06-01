@@ -1,9 +1,9 @@
-<div class="alert alert-danger">
+<div class="alert alert-error alert-outline mb-4">
   {% for propertyPath, violationList in errors %}
     {% for violation in violationList %}
-      <p>
+      <span>
         {{ violation.message }}
-      </p>
+      </span>
     {% endfor %}
   {% endfor %}
 </div>
