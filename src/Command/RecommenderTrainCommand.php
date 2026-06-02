@@ -17,6 +17,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 )]
 class RecommenderTrainCommand extends Command
 {
+    private const CHUNK_SIZE = 1000;
+
     public function __construct(
         private readonly Connection $connection,
         #[Autowire(service: 'recommender.client')] private readonly HttpClientInterface $recommenderClient,
@@ -30,8 +32,17 @@ class RecommenderTrainCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $io->title(sprintf('Training recommender for instance "%s"', $this->databaseName));
 
-        $io->section('Fetching product interactions...');
-        $productInteractions = $this->connection->fetchAllAssociative('
+        try {
+            $this->recommenderClient->request('POST', '/train/start', [
+                'json' => ['instance' => $this->databaseName],
+            ])->getStatusCode();
+        } catch (\Throwable $e) {
+            $io->error(sprintf('Cannot reach recommender: %s', $e->getMessage()));
+            return Command::FAILURE;
+        }
+
+        $io->section('Pushing product interactions...');
+        $productCount = $this->streamInteractions($io, 'product', '
             SELECT o.customer_id, pv.product_id AS item_id, COUNT(*) AS interaction_count
             FROM sylius_order_item oi
             JOIN sylius_order o ON o.id = oi.order_id
@@ -43,9 +54,19 @@ class RecommenderTrainCommand extends Command
               AND p.enabled = TRUE
               AND p.restaurant_id IS NOT NULL
             GROUP BY o.customer_id, pv.product_id
-        ', ['state' => 'fulfilled']);
+        ');
 
-        $productPopular = $this->connection->fetchFirstColumn('
+        $io->section('Pushing restaurant interactions...');
+        $restaurantCount = $this->streamInteractions($io, 'restaurant', '
+            SELECT o.customer_id, ov.restaurant_id AS item_id, COUNT(*) AS interaction_count
+            FROM sylius_order_vendor ov
+            JOIN sylius_order o ON o.id = ov.order_id
+            WHERE o.state = :state
+              AND o.customer_id IS NOT NULL
+            GROUP BY o.customer_id, ov.restaurant_id
+        ');
+
+        $productPopular = array_map('intval', $this->connection->fetchFirstColumn('
             SELECT pv.product_id
             FROM sylius_order_item oi
             JOIN sylius_order o ON o.id = oi.order_id
@@ -58,21 +79,9 @@ class RecommenderTrainCommand extends Command
             GROUP BY pv.product_id
             ORDER BY COUNT(*) DESC
             LIMIT 20
-        ', ['state' => 'fulfilled']);
+        ', ['state' => 'fulfilled']));
 
-        $io->writeln(sprintf('  Found %d product interactions, %d popular products.', count($productInteractions), count($productPopular)));
-
-        $io->section('Fetching restaurant interactions...');
-        $restaurantInteractions = $this->connection->fetchAllAssociative('
-            SELECT o.customer_id, ov.restaurant_id AS item_id, COUNT(*) AS interaction_count
-            FROM sylius_order_vendor ov
-            JOIN sylius_order o ON o.id = ov.order_id
-            WHERE o.state = :state
-              AND o.customer_id IS NOT NULL
-            GROUP BY o.customer_id, ov.restaurant_id
-        ', ['state' => 'fulfilled']);
-
-        $restaurantPopular = $this->connection->fetchFirstColumn('
+        $restaurantPopular = array_map('intval', $this->connection->fetchFirstColumn('
             SELECT ov.restaurant_id
             FROM sylius_order_vendor ov
             JOIN sylius_order o ON o.id = ov.order_id
@@ -80,32 +89,74 @@ class RecommenderTrainCommand extends Command
             GROUP BY ov.restaurant_id
             ORDER BY COUNT(*) DESC
             LIMIT 10
-        ', ['state' => 'fulfilled']);
+        ', ['state' => 'fulfilled']));
 
-        $io->writeln(sprintf('  Found %d restaurant interactions, %d popular restaurants.', count($restaurantInteractions), count($restaurantPopular)));
-
-        $io->section('Pushing to recommender...');
+        $io->section('Committing training...');
         try {
-            $response = $this->recommenderClient->request('POST', '/train', [
+            $response = $this->recommenderClient->request('POST', '/train/commit', [
                 'json' => [
-                    'instance'                 => $this->databaseName,
-                    'product_interactions'     => $productInteractions,
-                    'product_popular'          => array_map('intval', $productPopular),
-                    'restaurant_interactions'  => $restaurantInteractions,
-                    'restaurant_popular'       => array_map('intval', $restaurantPopular),
+                    'instance'           => $this->databaseName,
+                    'product_popular'    => $productPopular,
+                    'restaurant_popular' => $restaurantPopular,
                 ],
             ]);
             $data = $response->toArray();
             $io->success(sprintf(
-                'Training complete for instance "%s" (trained at %s).',
+                'Training complete for instance "%s": %d product interactions, %d restaurant interactions (trained at %s).',
                 $data['instance'],
+                $data['product_interactions'],
+                $data['restaurant_interactions'],
                 $data['trained_at'],
             ));
         } catch (\Throwable $e) {
-            $io->error(sprintf('Failed to push to recommender: %s', $e->getMessage()));
+            $io->error(sprintf('Commit failed: %s', $e->getMessage()));
             return Command::FAILURE;
         }
 
         return Command::SUCCESS;
+    }
+
+    private function streamInteractions(SymfonyStyle $io, string $type, string $sql): int
+    {
+        $result = $this->connection->executeQuery($sql, ['state' => 'fulfilled']);
+        $chunk = [];
+        $total = 0;
+        $chunkIndex = 0;
+
+        while ($row = $result->fetchAssociative()) {
+            $chunk[] = [
+                'customer_id'       => (int) $row['customer_id'],
+                'item_id'           => (int) $row['item_id'],
+                'interaction_count' => (int) $row['interaction_count'],
+            ];
+
+            if (count($chunk) === self::CHUNK_SIZE) {
+                $this->pushChunk($type, $chunk, ++$chunkIndex, $io);
+                $total += count($chunk);
+                $chunk = [];
+            }
+        }
+
+        if ($chunk !== []) {
+            $this->pushChunk($type, $chunk, ++$chunkIndex, $io);
+            $total += count($chunk);
+        }
+
+        $io->writeln(sprintf('  Pushed %d %s interactions in %d chunk(s).', $total, $type, $chunkIndex));
+
+        return $total;
+    }
+
+    private function pushChunk(string $type, array $chunk, int $index, SymfonyStyle $io): void
+    {
+        $io->writeln(sprintf('  Chunk %d: %d rows...', $index, count($chunk)), OutputInterface::VERBOSITY_VERBOSE);
+
+        $this->recommenderClient->request('POST', '/train/push', [
+            'json' => [
+                'instance'     => $this->databaseName,
+                'type'         => $type,
+                'interactions' => $chunk,
+            ],
+        ])->getStatusCode();
     }
 }

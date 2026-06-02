@@ -1,30 +1,27 @@
+import datetime
 import json
 import os
 import threading
 from contextlib import asynccontextmanager
 from pathlib import Path
+from typing import Literal
 
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel
 
 MODEL_DIR = Path(os.environ.get("MODEL_DIR", "/models"))
 
-_models: dict[str, dict] = {}  # {instance: {"product": model, "restaurant": model}}
-_lock = threading.Lock()
+_models: dict[str, dict] = {}       # {instance: {"product": model, "restaurant": model}}
+_staging: dict[str, dict] = {}      # {instance: {"product": [...rows], "restaurant": [...rows]}}
+_locks: dict[str, threading.Lock] = {}
+_global_lock = threading.Lock()
 
 
-class Interaction(BaseModel):
-    customer_id: int
-    item_id: int
-    interaction_count: int
-
-
-class TrainRequest(BaseModel):
-    instance: str
-    product_interactions: list[Interaction] = []
-    product_popular: list[int] = []
-    restaurant_interactions: list[Interaction] = []
-    restaurant_popular: list[int] = []
+def _instance_lock(instance: str) -> threading.Lock:
+    with _global_lock:
+        if instance not in _locks:
+            _locks[instance] = threading.Lock()
+        return _locks[instance]
 
 
 def _instance_dir(instance: str) -> Path:
@@ -37,19 +34,19 @@ def _load_all_instances() -> None:
     if not MODEL_DIR.exists():
         return
 
-    with _lock:
-        for instance_dir in MODEL_DIR.iterdir():
-            if not instance_dir.is_dir():
-                continue
-            instance = instance_dir.name
-            entry: dict = {}
-            for kind in ("product", "restaurant"):
-                path = instance_dir / f"{kind}_recommender.joblib"
-                if path.exists():
-                    entry[kind] = CollaborativeFilteringRecommender.load(str(path))
-            if entry:
+    for instance_dir in MODEL_DIR.iterdir():
+        if not instance_dir.is_dir():
+            continue
+        instance = instance_dir.name
+        entry: dict = {}
+        for kind in ("product", "restaurant"):
+            path = instance_dir / f"{kind}_recommender.joblib"
+            if path.exists():
+                entry[kind] = CollaborativeFilteringRecommender.load(str(path))
+        if entry:
+            with _instance_lock(instance):
                 _models[instance] = entry
-                print(f"Loaded models for instance '{instance}'")
+            print(f"Loaded models for instance '{instance}'")
 
 
 @asynccontextmanager
@@ -61,16 +58,39 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="CoopCycle Recommender", version="2.0.0", lifespan=lifespan)
 
 
+class StartRequest(BaseModel):
+    instance: str
+
+
+class Interaction(BaseModel):
+    customer_id: int
+    item_id: int
+    interaction_count: int
+
+
+class PushRequest(BaseModel):
+    instance: str
+    type: Literal["product", "restaurant"]
+    interactions: list[Interaction]
+
+
+class CommitRequest(BaseModel):
+    instance: str
+    product_popular: list[int] = []
+    restaurant_popular: list[int] = []
+
+
 @app.get("/health")
 def health():
     instances = {}
-    for instance_dir in MODEL_DIR.iterdir() if MODEL_DIR.exists() else []:
-        if not instance_dir.is_dir():
-            continue
-        metadata_path = instance_dir / "metadata.json"
-        if metadata_path.exists():
-            with open(metadata_path) as f:
-                instances[instance_dir.name] = json.load(f)
+    if MODEL_DIR.exists():
+        for instance_dir in MODEL_DIR.iterdir():
+            if not instance_dir.is_dir():
+                continue
+            metadata_path = instance_dir / "metadata.json"
+            if metadata_path.exists():
+                with open(metadata_path) as f:
+                    instances[instance_dir.name] = json.load(f)
     return {
         "status": "ok",
         "instances": instances,
@@ -78,12 +98,34 @@ def health():
     }
 
 
-@app.post("/train")
-def train(body: TrainRequest):
+@app.post("/train/start")
+def train_start(body: StartRequest):
+    with _instance_lock(body.instance):
+        _staging[body.instance] = {"product": [], "restaurant": []}
+    return {"instance": body.instance}
+
+
+@app.post("/train/push")
+def train_push(body: PushRequest):
+    with _instance_lock(body.instance):
+        if body.instance not in _staging:
+            raise HTTPException(status_code=400, detail=f"No active training session for '{body.instance}'. Call POST /train/start first.")
+        _staging[body.instance][body.type].extend(r.model_dump() for r in body.interactions)
+    return {"instance": body.instance, "type": body.type, "pushed": len(body.interactions)}
+
+
+@app.post("/train/commit")
+def train_commit(body: CommitRequest):
     from recommender import CollaborativeFilteringRecommender
 
-    product_interactions = [i.model_dump() for i in body.product_interactions]
-    restaurant_interactions = [i.model_dump() for i in body.restaurant_interactions]
+    with _instance_lock(body.instance):
+        if body.instance not in _staging:
+            raise HTTPException(status_code=400, detail=f"No active training session for '{body.instance}'. Call POST /train/start first.")
+
+        staged = _staging.pop(body.instance)
+
+    product_interactions = staged["product"]
+    restaurant_interactions = staged["restaurant"]
 
     product_rec = CollaborativeFilteringRecommender()
     product_rec.fit(product_interactions, body.product_popular, item_key="item_id")
@@ -97,7 +139,6 @@ def train(body: TrainRequest):
     product_rec.save(str(instance_dir / "product_recommender.joblib"))
     restaurant_rec.save(str(instance_dir / "restaurant_recommender.joblib"))
 
-    import datetime
     metadata = {
         "trained_at": datetime.datetime.now(datetime.UTC).isoformat(),
         "product_interactions": len(product_interactions),
@@ -106,7 +147,7 @@ def train(body: TrainRequest):
     with open(instance_dir / "metadata.json", "w") as f:
         json.dump(metadata, f)
 
-    with _lock:
+    with _instance_lock(body.instance):
         _models[body.instance] = {"product": product_rec, "restaurant": restaurant_rec}
 
     return {
