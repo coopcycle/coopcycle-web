@@ -8,7 +8,9 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Api\Dto\CustomerInsightsDto;
+use AppBundle\Api\Dto\CustomerRecommendationsDto;
 use AppBundle\Api\State\CustomerInsightsProvider;
+use AppBundle\Api\State\CustomerRecommendationsProvider;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\LoopEat\CustomerCredentials;
 use AppBundle\Entity\Edenred\CustomerCredentials as EdenredCustomerCredentials;
@@ -39,6 +41,12 @@ use AppBundle\Entity\Model\TaggableTrait;
             security: 'is_granted("ROLE_ADMIN")',
             provider: CustomerInsightsProvider::class,
             output: CustomerInsightsDto::class,
+        ),
+        new Get(
+            uriTemplate: '/customers/{id}/recommendations',
+            security: 'is_granted("ROLE_ADMIN") or user.getCustomer() == object',
+            provider: CustomerRecommendationsProvider::class,
+            output: CustomerRecommendationsDto::class,
         ),
         new Put(
             denormalizationContext: ['groups' => ['customer_update']],

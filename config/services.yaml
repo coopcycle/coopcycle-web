@@ -16,6 +16,7 @@ parameters:
   env(APP_PUBLIC_DIR): "%kernel.project_dir%/web"
   env(APP_LOG_DIR): "%kernel.logs_dir%"
   env(APP_VERSION): dev-master
+  env(COOPCYCLE_RECOMMENDER_URL): 'http://recommender:8000/'
   secret: "%env(APP_SECRET)%"
   country_iso: "%env(COOPCYCLE_COUNTRY)%"
   region_iso: "%env(COOPCYCLE_REGION)%"
@@ -82,6 +83,7 @@ services:
       $packageDeliveryUiPriceBreakdownEnabled: "%package_delivery_ui_price_breakdown_enabled%"
       $taxIncl: '%env(bool:COOPCYCLE_TAX_INCL)%'
       $appName: '%env(COOPCYCLE_APP_NAME)%'
+      Symfony\Contracts\HttpClient\HttpClientInterface $recommenderClient: '@recommender.client'
 
   # For some cache pools, want *STABLE* cache keys between deploys.
   # To achieve this, we *EXPLICITLY* set a namespace,
