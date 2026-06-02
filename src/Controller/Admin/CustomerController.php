@@ -68,7 +68,7 @@ class CustomerController extends AbstractController
             fn($r) => ['day' => $r['day'], 'value' => (int) $r['value']],
             $calendarRows
         );
-        $calendarFrom = empty($calendarData) ? date('Y-01-01') : $calendarData[0]['day'];
+        $calendarFrom = date('Y-01-01', strtotime('-1 year'));
         $calendarTo   = date('Y-12-31');
 
         $recommendedRestaurants = $this->fetchRecommendations(
