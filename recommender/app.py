@@ -111,3 +111,9 @@ def trigger_training(background_tasks: BackgroundTasks):
         return {"message": "Training already in progress"}
     background_tasks.add_task(_run_training)
     return {"message": "Training started in background"}
+
+
+@app.post("/reload")
+def reload_models():
+    _load_models()
+    return {"message": "Models reloaded from disk"}

@@ -57,3 +57,9 @@ def train():
 
 if __name__ == "__main__":
     train()
+    try:
+        import urllib.request
+        urllib.request.urlopen("http://localhost:8000/reload", data=b"", timeout=5)
+        print("Models reloaded in running server.")
+    except Exception:
+        print("Note: server reload skipped (not reachable). Restart the container to apply new models.")
