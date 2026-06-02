@@ -48,7 +48,7 @@ framework:
             cubejs.client:
                 base_uri: "%env(CUBEJS_API_URL)%/"
             recommender.client:
-                base_uri: "http://recommender:8000/"
+                base_uri: "%env(COOPCYCLE_RECOMMENDER_URL)%"
             woopit.http_client:
                 base_uri: '%env(WOOPIT_CARRIER_API_URL)%/'
                 headers:
