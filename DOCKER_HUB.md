@@ -16,6 +16,6 @@ docker push coopcycle/webpack:latest
 ```
 
 ```
-docker compose build --no-cache recommender
+DOCKER_DEFAULT_PLATFORM=linux/amd64 docker compose build --no-cache recommender
 docker push coopcycle/recommender:latest
 ```
