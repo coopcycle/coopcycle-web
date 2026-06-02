@@ -1,8 +1,7 @@
 import React, { useMemo } from 'react'
 import { ResponsiveCalendar } from '@nivo/calendar'
 
-// YlGn ColorBrewer scale: yellow (low) → green (high)
-const COLORS = ['#ffffcc', '#c2e699', '#78c679', '#31a354', '#006837']
+const COLORS = ['#aceebb', '#57bb74', '#2d9044', '#196830', '#116329']
 
 function formatAmount(cents) {
   return (cents / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -26,7 +25,7 @@ export default function OrderCalendar({ data, from, to }) {
         data={data}
         from={from}
         to={to}
-        emptyColor="#f0f0f0"
+        emptyColor="#eff2f5"
         colors={COLORS}
         minValue={0}
         maxValue={max}
