@@ -95,6 +95,6 @@ class CustomerController extends AbstractController
 
         $ids = array_filter(array_map(fn(string $iri) => (int) basename($iri), $iris));
 
-        return $em->getRepository($entityClass)->findBy(['id' => $ids]);
+        return $em->getRepository($entityClass)->findBy(['id' => $ids, 'enabled' => true]);
     }
 }
