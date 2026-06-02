@@ -2,85 +2,124 @@ import json
 import os
 import threading
 from contextlib import asynccontextmanager
+from pathlib import Path
 
-from apscheduler.schedulers.background import BackgroundScheduler
-from fastapi import BackgroundTasks, FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query
+from pydantic import BaseModel
 
-MODEL_DIR = os.environ.get("MODEL_DIR", "/models")
+MODEL_DIR = Path(os.environ.get("MODEL_DIR", "/models"))
 
-_models: dict = {"product": None, "restaurant": None}
+_models: dict[str, dict] = {}  # {instance: {"product": model, "restaurant": model}}
 _lock = threading.Lock()
-_training = False
 
 
-def _models_exist() -> bool:
-    return all(
-        os.path.exists(f"{MODEL_DIR}/{k}_recommender.joblib")
-        for k in ("product", "restaurant")
-    )
+class Interaction(BaseModel):
+    customer_id: int
+    item_id: int
+    interaction_count: int
 
 
-def _load_models() -> None:
+class TrainRequest(BaseModel):
+    instance: str
+    product_interactions: list[Interaction] = []
+    product_popular: list[int] = []
+    restaurant_interactions: list[Interaction] = []
+    restaurant_popular: list[int] = []
+
+
+def _instance_dir(instance: str) -> Path:
+    return MODEL_DIR / instance
+
+
+def _load_all_instances() -> None:
     from recommender import CollaborativeFilteringRecommender
 
+    if not MODEL_DIR.exists():
+        return
+
     with _lock:
-        for kind in ("product", "restaurant"):
-            path = f"{MODEL_DIR}/{kind}_recommender.joblib"
-            if os.path.exists(path):
-                _models[kind] = CollaborativeFilteringRecommender.load(path)
-                print(f"Loaded {kind} model from {path}")
-
-
-def _run_training() -> None:
-    global _training
-    _training = True
-    try:
-        import train as train_module
-        train_module.train()
-        _load_models()
-    except Exception as e:
-        print(f"Training failed: {e}")
-    finally:
-        _training = False
+        for instance_dir in MODEL_DIR.iterdir():
+            if not instance_dir.is_dir():
+                continue
+            instance = instance_dir.name
+            entry: dict = {}
+            for kind in ("product", "restaurant"):
+                path = instance_dir / f"{kind}_recommender.joblib"
+                if path.exists():
+                    entry[kind] = CollaborativeFilteringRecommender.load(str(path))
+            if entry:
+                _models[instance] = entry
+                print(f"Loaded models for instance '{instance}'")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    if not _models_exist():
-        print("No trained models found — starting initial training in background...")
-        threading.Thread(target=_run_training, daemon=True).start()
-    else:
-        _load_models()
-
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(_run_training, "cron", hour=3, minute=0)
-    scheduler.start()
-
+    _load_all_instances()
     yield
 
-    scheduler.shutdown(wait=False)
 
-
-app = FastAPI(title="CoopCycle Recommender", version="1.0.0", lifespan=lifespan)
+app = FastAPI(title="CoopCycle Recommender", version="2.0.0", lifespan=lifespan)
 
 
 @app.get("/health")
 def health():
-    metadata_path = f"{MODEL_DIR}/metadata.json"
-    metadata: dict = {}
-    if os.path.exists(metadata_path):
-        with open(metadata_path) as f:
-            metadata = json.load(f)
+    instances = {}
+    for instance_dir in MODEL_DIR.iterdir() if MODEL_DIR.exists() else []:
+        if not instance_dir.is_dir():
+            continue
+        metadata_path = instance_dir / "metadata.json"
+        if metadata_path.exists():
+            with open(metadata_path) as f:
+                instances[instance_dir.name] = json.load(f)
     return {
         "status": "ok",
-        "models_loaded": _models["product"] is not None and _models["restaurant"] is not None,
-        "training_in_progress": _training,
-        **metadata,
+        "instances": instances,
+        "loaded": list(_models.keys()),
+    }
+
+
+@app.post("/train")
+def train(body: TrainRequest):
+    from recommender import CollaborativeFilteringRecommender
+
+    product_interactions = [i.model_dump() for i in body.product_interactions]
+    restaurant_interactions = [i.model_dump() for i in body.restaurant_interactions]
+
+    product_rec = CollaborativeFilteringRecommender()
+    product_rec.fit(product_interactions, body.product_popular, item_key="item_id")
+
+    restaurant_rec = CollaborativeFilteringRecommender()
+    restaurant_rec.fit(restaurant_interactions, body.restaurant_popular, item_key="item_id")
+
+    instance_dir = _instance_dir(body.instance)
+    instance_dir.mkdir(parents=True, exist_ok=True)
+
+    product_rec.save(str(instance_dir / "product_recommender.joblib"))
+    restaurant_rec.save(str(instance_dir / "restaurant_recommender.joblib"))
+
+    import datetime
+    metadata = {
+        "trained_at": datetime.datetime.now(datetime.UTC).isoformat(),
+        "product_interactions": len(product_interactions),
+        "restaurant_interactions": len(restaurant_interactions),
+    }
+    with open(instance_dir / "metadata.json", "w") as f:
+        json.dump(metadata, f)
+
+    with _lock:
+        _models[body.instance] = {"product": product_rec, "restaurant": restaurant_rec}
+
+    return {
+        "instance": body.instance,
+        "product_interactions": len(product_interactions),
+        "restaurant_interactions": len(restaurant_interactions),
+        "trained_at": metadata["trained_at"],
     }
 
 
 @app.get("/recommendations")
 def recommendations(
+    instance: str = Query(..., description="Instance identifier, e.g. coopcycle_paris"),
     customer: str = Query(..., description="Customer IRI e.g. /api/customers/1"),
     type: str = Query(..., description="'product' or 'restaurant'"),
     n: int = Query(5, ge=1, le=20),
@@ -88,11 +127,13 @@ def recommendations(
     if type not in ("product", "restaurant"):
         raise HTTPException(status_code=400, detail="type must be 'product' or 'restaurant'")
 
-    model = _models.get(type)
+    instance_models = _models.get(instance)
+    if instance_models is None:
+        raise HTTPException(status_code=503, detail=f"No trained model for instance '{instance}'. Run coopcycle:recommender:train.")
+
+    model = instance_models.get(type)
     if model is None:
-        if _training:
-            raise HTTPException(status_code=503, detail="Model training in progress, please retry shortly")
-        raise HTTPException(status_code=503, detail="Model not loaded. Trigger POST /train to train.")
+        raise HTTPException(status_code=503, detail=f"No {type} model for instance '{instance}'.")
 
     try:
         customer_id = int(customer.rstrip("/").split("/")[-1])
@@ -103,17 +144,3 @@ def recommendations(
 
     prefix = "/api/products" if type == "product" else "/api/restaurants"
     return {"recommendations": [f"{prefix}/{item_id}" for item_id in item_ids]}
-
-
-@app.post("/train", status_code=202)
-def trigger_training(background_tasks: BackgroundTasks):
-    if _training:
-        return {"message": "Training already in progress"}
-    background_tasks.add_task(_run_training)
-    return {"message": "Training started in background"}
-
-
-@app.post("/reload")
-def reload_models():
-    _load_models()
-    return {"message": "Models reloaded from disk"}
