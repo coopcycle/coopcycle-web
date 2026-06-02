@@ -44,7 +44,7 @@ def train():
     print("  Restaurant model saved.")
 
     metadata = {
-        "trained_at": datetime.datetime.utcnow().isoformat() + "Z",
+        "trained_at": datetime.datetime.now(datetime.UTC).isoformat(),
         "product_interactions": len(product_interactions),
         "restaurant_interactions": len(restaurant_interactions),
     }
