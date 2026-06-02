@@ -53,6 +53,24 @@ class CustomerController extends AbstractController
 
         $insights = $orderRepo->getCustomerInsights($customer);
 
+        $calendarRows = $em->getConnection()->executeQuery(
+            "SELECT TO_CHAR(o.created_at, 'YYYY-MM-DD') AS day, SUM(o.total) AS value
+             FROM sylius_order o
+             WHERE o.customer_id = :id
+               AND o.state != 'cart'
+               AND EXISTS (SELECT 1 FROM sylius_order_vendor ov WHERE ov.order_id = o.id)
+             GROUP BY TO_CHAR(o.created_at, 'YYYY-MM-DD')
+             ORDER BY day",
+            ['id' => $id]
+        )->fetchAllAssociative();
+
+        $calendarData = array_map(
+            fn($r) => ['day' => $r['day'], 'value' => (int) $r['value']],
+            $calendarRows
+        );
+        $calendarFrom = empty($calendarData) ? date('Y-01-01') : $calendarData[0]['day'];
+        $calendarTo   = date('Y-12-31');
+
         $recommendedRestaurants = $this->fetchRecommendations(
             $id, 'restaurant', $recommenderClient, $em, LocalBusiness::class
         );
@@ -70,6 +88,9 @@ class CustomerController extends AbstractController
             'favorite_restaurant'      => $insights['favoriteRestaurant'],
             'recommended_restaurants'  => $recommendedRestaurants,
             'recommended_products'     => $recommendedProducts,
+            'calendar_data'            => $calendarData,
+            'calendar_from'            => $calendarFrom,
+            'calendar_to'              => $calendarTo,
         ]);
     }
 

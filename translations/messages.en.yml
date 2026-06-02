@@ -1812,6 +1812,7 @@ customer.order_history.status: Status
 customer.order_history.vendor: Vendor / Store
 customer.order_history.method: Method
 customer.order_history.total: Total
+customer.order_history.calendar: Order activity
 customer.order_history.empty: This customer has no orders yet.
 customer.recommendations.title: Recommendations
 customer.recommendations.restaurants: Recommended restaurants

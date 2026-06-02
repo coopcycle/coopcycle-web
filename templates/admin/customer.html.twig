@@ -139,6 +139,15 @@
 </div>
 {% endif %}
 
+{% if calendar_data is not empty %}
+<h4>{% trans %}customer.order_history.calendar{% endtrans %}</h4>
+<div id="customer-order-calendar"
+  data-days="{{ calendar_data|json_encode|e('html_attr') }}"
+  data-from="{{ calendar_from }}"
+  data-to="{{ calendar_to }}">
+</div>
+{% endif %}
+
 {# ── Order history ── #}
 <h4>{% trans %}customer.order_history.title{% endtrans %}</h4>
 
@@ -182,4 +191,8 @@
 <div class="alert alert-info">{% trans %}customer.order_history.empty{% endtrans %}</div>
 {% endif %}
 
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('customer') }}
 {% endblock %}

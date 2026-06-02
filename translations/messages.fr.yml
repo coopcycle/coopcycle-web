@@ -1749,6 +1749,7 @@ customer.order_history.status: Statut
 customer.order_history.vendor: Vendeur / Boutique
 customer.order_history.method: Mode
 customer.order_history.total: Total
+customer.order_history.calendar: Activité des commandes
 customer.order_history.empty: Ce client n'a pas encore de commandes.
 customer.recommendations.title: Recommandations
 customer.recommendations.restaurants: Restaurants recommandés

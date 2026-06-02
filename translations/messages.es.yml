@@ -1848,5 +1848,6 @@ customer.order_history.status: Estado
 customer.order_history.vendor: Vendedor / Tienda
 customer.order_history.method: Método
 customer.order_history.total: Total
+customer.order_history.calendar: Actividad de pedidos
 customer.order_history.empty: Este cliente aún no tiene pedidos.
 rfm.order_history: Historial de pedidos
