@@ -25,6 +25,7 @@ def get_product_interactions(conn) -> list[dict]:
               AND o.customer_id IS NOT NULL
               AND p.deleted_at IS NULL
               AND p.enabled = TRUE
+              AND p.restaurant_id IS NOT NULL
             GROUP BY o.customer_id, pv.product_id
         """)
         return [dict(row) for row in cur.fetchall()]
@@ -54,6 +55,7 @@ def get_popular_products(conn, limit: int = 20) -> list[int]:
             WHERE o.state = 'fulfilled'
               AND p.deleted_at IS NULL
               AND p.enabled = TRUE
+              AND p.restaurant_id IS NOT NULL
             GROUP BY pv.product_id
             ORDER BY COUNT(*) DESC
             LIMIT %s
