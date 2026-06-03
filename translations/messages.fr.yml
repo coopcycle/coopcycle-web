@@ -1754,4 +1754,5 @@ customer.order_history.empty: Ce client n'a pas encore de commandes.
 customer.recommendations.title: Recommandations
 customer.recommendations.restaurants: Restaurants recommandés
 customer.recommendations.products: Produits recommandés
+checkout.recommendations.title: Vous aimerez peut-être aussi...
 rfm.order_history: Historique des commandes

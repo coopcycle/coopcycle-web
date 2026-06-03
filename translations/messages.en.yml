@@ -1817,4 +1817,5 @@ customer.order_history.empty: This customer has no orders yet.
 customer.recommendations.title: Recommendations
 customer.recommendations.restaurants: Recommended restaurants
 customer.recommendations.products: Recommended products
+checkout.recommendations.title: You might also like...
 rfm.order_history: Order history
