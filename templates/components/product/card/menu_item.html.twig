@@ -17,15 +17,15 @@
       {% endif %}
     </button>
     {% if not product.hasOptions() %}
-      <form
-        method="post"
-        action="{{ path('restaurant_add_product_to_cart', { id: product.restaurant.id, code: product.code }) }}"
-        data-product-simple
-        class="menu-item__add-wrapper menu-item__add-wrapper--active">
-        <button class="button-reset add-button" type="submit">
+      <div class="menu-item__add-wrapper menu-item__add-wrapper--active">
+        <button
+          class="button-reset add-button"
+          type="button"
+          data-product-simple
+          data-form-action="{{ path('restaurant_add_product_to_cart', { id: product.restaurant.id, code: product.code }) }}">
           +
         </button>
-      </form>
+      </div>
     {% endif %}
   </div>
 {% else %}
