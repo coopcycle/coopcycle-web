@@ -31,6 +31,8 @@ import {
 import TimeRangeChangedModal
   from '../components/order/timeRange/TimeRangeChangedModal'
 import TimeRange from '../components/order/timeRange/TimeRange'
+import ProductOptionsModal from '../restaurant/components/ProductDetails/ProductOptionsModal'
+import { openProductOptionsModal } from '../restaurant/redux/actions'
 import { accountSlice } from '../entities/account/reduxSlice'
 import { guestSlice } from '../entities/guest/reduxSlice'
 import { buildGuestInitialState } from '../entities/guest/utils'
@@ -263,6 +265,40 @@ const buildInitialState = () => {
 
 const store = createStoreFromPreloadedState(buildInitialState())
 
+// Product recommendations: open options modal or add simple product
+document.addEventListener('click', (e) => {
+  const productSimple = e.target.closest('[data-product-simple]')
+  if (productSimple) {
+    window._auth.httpClient.post(productSimple.dataset.formAction, { quantity: 1 })
+      .then(() => window.location.reload())
+    return
+  }
+
+  const productDetails = e.target.closest('[data-modal="product-details"]')
+  if (productDetails) {
+    const product    = JSON.parse(productDetails.dataset.product)
+    const options    = JSON.parse(productDetails.dataset.productOptions)
+    const images     = JSON.parse(productDetails.dataset.productImages)
+    const price      = JSON.parse(productDetails.dataset.productPrice)
+    const formAction = productDetails.dataset.formAction
+    store.dispatch(openProductOptionsModal(product, options, images, price, formAction))
+  }
+})
+
+// Reload after product is added via the options modal so the server-rendered cart updates
+let prevModalOpen = false
+store.subscribe(() => {
+  const state = store.getState()
+  const modalOpen = state.isProductOptionsModalOpen
+  const fetching  = state.isFetching
+  const hasAdd    = state.lastAddItemRequest !== null
+
+  if (prevModalOpen && !modalOpen && !fetching && hasAdd) {
+    window.location.reload()
+  }
+  prevModalOpen = modalOpen
+})
+
 const form = document.querySelector('form[name="checkout_address"]')
 
 form.addEventListener('submit', async function(event) {
@@ -301,6 +337,7 @@ root.render(
     <I18nextProvider i18n={ i18n }>
       {createPortal(<TimeRange />, fulfilmentTimeRangeContainer) }
       <TimeRangeChangedModal />
+      <ProductOptionsModal />
     </I18nextProvider>
   </Provider>
 )

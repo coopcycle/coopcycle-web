@@ -4,6 +4,12 @@ import { accountSlice } from '../../entities/account/reduxSlice'
 import { guestSlice } from '../../entities/guest/reduxSlice'
 import { orderSlice } from '../../entities/order/reduxSlice'
 import { apiSlice } from '../../api/slice'
+import {
+  isFetching,
+  isProductOptionsModalOpen,
+  productOptionsModalContext,
+  lastAddItemRequest,
+} from '../../restaurant/redux/reducers'
 
 export function createStoreFromPreloadedState(preloadedState) {
   return configureStore({
@@ -13,6 +19,10 @@ export function createStoreFromPreloadedState(preloadedState) {
       [orderSlice.name]: orderSlice.reducer,
       [timeRangeSlice.name]: timeRangeSlice.reducer,
       [apiSlice.reducerPath]: apiSlice.reducer,
+      isFetching,
+      isProductOptionsModalOpen,
+      productOptionsModalContext,
+      lastAddItemRequest,
     },
     preloadedState,
     middleware: getDefaultMiddleware =>
