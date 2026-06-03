@@ -46,6 +46,13 @@ $vytalGreen: #53b848;
   justify-content: space-between;
 }
 
+.recommendations-swiper {
+  .swiper-slide {
+    // https://github.com/nolimits4web/swiper/issues/2372#issuecomment-349004052
+    height: auto;
+  }
+}
+
 .loopeat-links {
   opacity: 0.6;
   > a {

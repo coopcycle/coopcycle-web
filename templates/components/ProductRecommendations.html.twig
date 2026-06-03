@@ -6,7 +6,7 @@
     <div class="swiper recommendations-swiper mb-2">
       <div class="swiper-wrapper">
         {% for product in products %}
-          <div class="swiper-slide h-auto">
+          <div class="swiper-slide">
             {{ component('MenuItem', { product: product, class: 'h-full' }) }}
           </div>
         {% endfor %}
