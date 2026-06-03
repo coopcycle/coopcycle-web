@@ -38,9 +38,9 @@ function OrderOverlay() {
 function StickyOrder() {
 
   return (
-    <div className="hidden lg:block lg:w-full">
-      <div className="card bg-base-300 text-base-content shadow-sm">
-        <div className="card-body">
+    <div className="hidden lg:block lg:w-full sticky top-4">
+      <div className="card bg-base-300 text-base-content shadow-sm flex flex-col max-h-[calc(100vh-2rem)]">
+        <div className="card-body flex flex-col overflow-hidden min-h-0">
           <CartWrapper />
         </div>
       </div>

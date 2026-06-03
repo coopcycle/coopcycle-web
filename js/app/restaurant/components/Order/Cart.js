@@ -19,7 +19,7 @@ function ListOfItems({ items }) {
   items.sort((a, b) => a.id - b.id)
 
   return (
-    <div className="cart__items xl:-mx-8 xl:px-8 xl:overflow-y-auto">
+    <div className="cart__items xl:-mx-8 xl:px-8 overflow-y-auto">
       { items.map((item) => (
         <CartItem
           key={ `cart-item-${ item.id }` }
