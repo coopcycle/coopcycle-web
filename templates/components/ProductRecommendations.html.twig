@@ -1,0 +1,21 @@
+<div {{ attributes }}>
+  {% set products = this.products %}
+  {% if products|length > 0 %}
+    <h5 style="margin-bottom:12px;">{{ 'checkout.recommendations.title'|trans }}</h5>
+    <div style="display:flex; gap:12px; overflow-x:auto; padding-bottom:4px; margin-bottom:24px;">
+      {% for product in products %}
+        {{ component('MenuItem', { product: product }) }}
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+{% macro placeholder(props) %}
+  <div style="display:flex; gap:12px; overflow-x:auto; padding-bottom:4px; margin-bottom:24px;">
+    {% for i in 1..3 %}
+      <div class="menu-item ssc">
+        <div class="ssc-square"></div>
+      </div>
+    {% endfor %}
+  </div>
+{% endmacro %}

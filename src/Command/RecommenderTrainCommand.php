@@ -91,13 +91,26 @@ class RecommenderTrainCommand extends Command
             LIMIT 10
         ', ['state' => 'fulfilled']));
 
+        $io->section('Fetching product→restaurant map...');
+        $productRestaurantRows = $this->connection->fetchAllKeyValue('
+            SELECT id, restaurant_id
+            FROM sylius_product
+            WHERE restaurant_id IS NOT NULL
+              AND enabled = TRUE
+              AND deleted_at IS NULL
+        ');
+        // Cast keys and values to int; JSON object keys will be strings on the Python side
+        $productRestaurantMap = array_map('intval', $productRestaurantRows);
+        $io->writeln(sprintf('  Mapped %d products to restaurants.', count($productRestaurantMap)));
+
         $io->section('Committing training...');
         try {
             $response = $this->recommenderClient->request('POST', '/train/commit', [
                 'json' => [
-                    'instance'           => $this->databaseName,
-                    'product_popular'    => $productPopular,
-                    'restaurant_popular' => $restaurantPopular,
+                    'instance'               => $this->databaseName,
+                    'product_popular'        => $productPopular,
+                    'restaurant_popular'     => $restaurantPopular,
+                    'product_restaurant_map' => $productRestaurantMap,
                 ],
             ]);
             $data = $response->toArray();

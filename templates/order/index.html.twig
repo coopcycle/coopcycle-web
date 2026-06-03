@@ -111,6 +111,7 @@
           </div>
         </div>
 
+        {{ component('ProductRecommendations', { order: order, loading: 'lazy' }) }}
 
         {% if order.takeaway %}
         <div class="alert alert-warning">
@@ -211,7 +212,8 @@
 <div id="js-order-data"
      data-order-node-id="{{ order|get_iri_from_item }}"
      data-order-shipping-time-range="{{ shipping_time_range is not null ? shipping_time_range|json_encode|e('html_attr') }}"
-     data-order-access-token="{{ order_access_token is defined ? order_access_token }}"></div>
+     data-order-access-token="{{ order_access_token is defined ? order_access_token }}"
+"></div>
 
 <div id="optins"
   data-brand-name={{ coopcycle_setting('brand_name')|json_encode|e('html_attr') }}></div>
