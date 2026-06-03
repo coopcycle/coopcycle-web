@@ -254,7 +254,12 @@ dialog::backdrop {
 }
 
 dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
   border-radius: 8px;
   padding: 0;
   border: none;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
 }
