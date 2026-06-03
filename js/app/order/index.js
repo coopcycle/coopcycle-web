@@ -32,7 +32,7 @@ import TimeRangeChangedModal
   from '../components/order/timeRange/TimeRangeChangedModal'
 import TimeRange from '../components/order/timeRange/TimeRange'
 import ProductOptionsModal from '../restaurant/components/ProductDetails/ProductOptionsModal'
-import { openProductOptionsModal } from '../restaurant/redux/actions'
+import { openProductOptionsModal, addItem } from '../restaurant/redux/actions'
 import { accountSlice } from '../entities/account/reduxSlice'
 import { guestSlice } from '../entities/guest/reduxSlice'
 import { buildGuestInitialState } from '../entities/guest/utils'
@@ -269,8 +269,7 @@ const store = createStoreFromPreloadedState(buildInitialState())
 document.addEventListener('click', (e) => {
   const productSimple = e.target.closest('[data-product-simple]')
   if (productSimple) {
-    window._auth.httpClient.post(productSimple.dataset.formAction, { quantity: 1 })
-      .then(() => window.location.reload())
+    store.dispatch(addItem(productSimple.dataset.formAction, 1))
     return
   }
 
