@@ -9,6 +9,7 @@ import {
   isProductOptionsModalOpen,
   productOptionsModalContext,
   lastAddItemRequest,
+  player,
 } from '../../restaurant/redux/reducers'
 
 export function createStoreFromPreloadedState(preloadedState) {
@@ -23,6 +24,7 @@ export function createStoreFromPreloadedState(preloadedState) {
       isProductOptionsModalOpen,
       productOptionsModalContext,
       lastAddItemRequest,
+      player,
     },
     preloadedState,
     middleware: getDefaultMiddleware =>
