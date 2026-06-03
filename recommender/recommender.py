@@ -14,8 +14,9 @@ class CollaborativeFilteringRecommender:
         self.item_reverse: dict[int, int] = {}
         self.popular_items: list[int] = []
 
-    def fit(self, interactions: list[dict], popular_items: list[int], item_key: str = "product_id") -> None:
+    def fit(self, interactions: list[dict], popular_items: list[int], item_key: str = "product_id", product_restaurant_map: dict[int, int] | None = None) -> None:
         self.popular_items = popular_items
+        self.product_restaurant_map: dict[int, int] = product_restaurant_map or {}
 
         if not interactions:
             return
@@ -41,9 +42,14 @@ class CollaborativeFilteringRecommender:
         self.model.set_params(n_neighbors=n)
         self.model.fit(self.user_item_matrix)
 
-    def recommend(self, customer_id: int, n: int = 5) -> list[int]:
+    def _filter_by_restaurant(self, items: list[int], restaurant_id: int | None) -> list[int]:
+        if not restaurant_id or not self.product_restaurant_map:
+            return items
+        return [pid for pid in items if self.product_restaurant_map.get(pid) == restaurant_id]
+
+    def recommend(self, customer_id: int, n: int = 5, restaurant_id: int | None = None) -> list[int]:
         if self.user_item_matrix is None or customer_id not in self.user_index:
-            return self.popular_items[:n]
+            return self._filter_by_restaurant(self.popular_items, restaurant_id)[:n]
 
         user_idx = self.user_index[customer_id]
         user_vector = self.user_item_matrix[user_idx]
@@ -63,12 +69,13 @@ class CollaborativeFilteringRecommender:
                     item_scores[item_col] = item_scores.get(item_col, 0.0) + similarity
 
         sorted_items = sorted(item_scores.items(), key=lambda x: x[1], reverse=True)
-        recommendations = [self.item_reverse[col] for col, _ in sorted_items[:n]]
+        candidates = [self.item_reverse[col] for col, _ in sorted_items]
+        recommendations = self._filter_by_restaurant(candidates, restaurant_id)[:n]
 
         # pad with popular items if not enough recommendations
         if len(recommendations) < n:
             seen = set(recommendations) | {self.item_reverse.get(c) for c in already_ordered}
-            for item_id in self.popular_items:
+            for item_id in self._filter_by_restaurant(self.popular_items, restaurant_id):
                 if item_id not in seen:
                     recommendations.append(item_id)
                     if len(recommendations) >= n:
