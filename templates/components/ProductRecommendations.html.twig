@@ -1,12 +1,12 @@
 <div {{ attributes }}>
   {% set products = this.products %}
   {% if products|length > 0 %}
-  <div class="p-3 mb-4" style="background-color:#FAFAFA;">
+  <div class="p-3 mb-4">
     <h5 class="mb-3">{{ 'checkout.recommendations.title'|trans }}</h5>
     <div class="swiper recommendations-swiper mb-2">
       <div class="swiper-wrapper">
         {% for product in products %}
-          <div class="swiper-slide">
+          <div class="swiper-slide h-auto">
             {{ component('MenuItem', { product: product }) }}
           </div>
         {% endfor %}
