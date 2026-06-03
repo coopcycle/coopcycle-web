@@ -1,7 +1,12 @@
 {# TODO Skip if no variant is defined #}
 {% if product.enabled %}
-  <div class="menu-item h-full card bg-base-300 text-base-content cursor-pointer">
-    <div class="card-body flex flex-row justify-between">
+  <div class="card card-side h-full bg-base-300 text-base-content cursor-pointer">
+    {% if card_product_image is not empty %}
+    <figure>
+      <img src="{{ card_product_image }}" />
+    </figure>
+    {% endif %}
+    <div class="card-body w-2/3 flex flex-row justify-between">
       <button
         type="button"
         class="w-full flex flex-row justify-between gap-4"
@@ -26,8 +31,13 @@
     </div>
   </div>
 {% else %}
-  <div class="menu-item h-full card bg-base-200 text-base-content menu-item--unavailable">
-    <div class="card-body flex flex-row justify-between">
+  <div class="card card-side h-full bg-base-200 text-base-content">
+    {% if card_product_image is not empty %}
+    <figure>
+      <img src="{{ card_product_image }}" />
+    </figure>
+    {% endif %}
+    <div class="card-body w-2/3 flex flex-row justify-between">
       {% include 'components/product/card/menu_item_inner.html.twig' %}
     </div>
   </div>
