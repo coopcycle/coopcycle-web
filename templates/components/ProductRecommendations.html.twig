@@ -2,10 +2,16 @@
   {% set products = this.products %}
   {% if products|length > 0 %}
     <h5 style="margin-bottom:12px;">{{ 'checkout.recommendations.title'|trans }}</h5>
-    <div style="display:flex; gap:12px; overflow-x:auto; padding-bottom:4px; margin-bottom:8px;">
-      {% for product in products %}
-        {{ component('MenuItem', { product: product }) }}
-      {% endfor %}
+    <div class="swiper recommendations-swiper" style="margin-bottom:8px;">
+      <div class="swiper-wrapper">
+        {% for product in products %}
+          <div class="swiper-slide">
+            {{ component('MenuItem', { product: product }) }}
+          </div>
+        {% endfor %}
+      </div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
     </div>
     <p style="font-size:12px; color:#888; margin-bottom:24px;">
       <a href="#" onclick="document.getElementById('recommendations-dialog').showModal(); return false;">

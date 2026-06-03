@@ -1,3 +1,7 @@
+import Swiper from 'swiper'
+import { Navigation } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/navigation'
 import Inputmask from 'inputmask'
 import numbro from 'numbro'
 import _ from 'lodash'
@@ -298,6 +302,29 @@ store.subscribe(() => {
   }
   prevModalOpen = modalOpen
 })
+
+// Initialize Swiper for recommendations once the lazy component has rendered
+const swiperObserver = new MutationObserver(() => {
+  const el = document.querySelector('.recommendations-swiper')
+  if (el && !el.swiper) {
+    new Swiper(el, {
+      modules: [Navigation],
+      slidesPerView: 1,
+      slidesPerGroup: 1,
+      spaceBetween: 12,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      breakpoints: {
+        576: { slidesPerView: 2 },
+        768: { slidesPerView: 3 },
+      },
+    })
+    swiperObserver.disconnect()
+  }
+})
+swiperObserver.observe(document.body, { childList: true, subtree: true })
 
 const form = document.querySelector('form[name="checkout_address"]')
 
