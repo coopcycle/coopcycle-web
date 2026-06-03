@@ -2,6 +2,7 @@
 
 @import "bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
 @import "../restaurant/menu.scss";
+@import "../restaurant/components/Order/index.scss";
 
 .ReactModal__Overlay {
   z-index: 1050; // Above Bootstrap form stacking contexts
