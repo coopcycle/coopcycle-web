@@ -2,11 +2,32 @@
   {% set products = this.products %}
   {% if products|length > 0 %}
     <h5 style="margin-bottom:12px;">{{ 'checkout.recommendations.title'|trans }}</h5>
-    <div style="display:flex; gap:12px; overflow-x:auto; padding-bottom:4px; margin-bottom:24px;">
+    <div style="display:flex; gap:12px; overflow-x:auto; padding-bottom:4px; margin-bottom:8px;">
       {% for product in products %}
         {{ component('MenuItem', { product: product }) }}
       {% endfor %}
     </div>
+    <p style="font-size:12px; color:#888; margin-bottom:24px;">
+      <a href="#" onclick="document.getElementById('recommendations-dialog').showModal(); return false;">
+        {{ 'checkout.recommendations.how_generated'|trans }}
+      </a>
+    </p>
+
+    <dialog id="recommendations-dialog" style="max-width:480px; border-radius:8px; border:1px solid #ddd; padding:24px;">
+      <h5 style="margin-top:0;">{{ 'checkout.recommendations.dialog.title'|trans }}</h5>
+      <p>{{ 'checkout.recommendations.dialog.privacy'|trans }}</p>
+      <p>{{ 'checkout.recommendations.dialog.explanation'|trans }}</p>
+      <p>
+        <a href="https://github.com/coopcycle/coopcycle-web/tree/master/recommender" target="_blank" rel="noopener">
+          {{ 'checkout.recommendations.dialog.github'|trans }}
+        </a>
+      </p>
+      <div style="text-align:right; margin-top:16px;">
+        <button type="button" class="btn btn-default btn-sm" onclick="this.closest('dialog').close()">
+          {{ 'checkout.recommendations.dialog.close'|trans }}
+        </button>
+      </div>
+    </dialog>
   {% endif %}
 </div>
 

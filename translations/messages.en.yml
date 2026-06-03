@@ -1818,4 +1818,10 @@ customer.recommendations.title: Recommendations
 customer.recommendations.restaurants: Recommended restaurants
 customer.recommendations.products: Recommended products
 checkout.recommendations.title: You might also like...
+checkout.recommendations.how_generated: How are these results generated?
+checkout.recommendations.dialog.title: How do we generate recommendations?
+checkout.recommendations.dialog.privacy: Your data is never shared with any third-party service. Recommendations are calculated entirely on our own servers.
+checkout.recommendations.dialog.explanation: We analyse which products are frequently ordered together by customers with similar tastes — a technique called collaborative filtering, similar to how streaming services suggest films. Customers who have never ordered here before see the most popular items at this restaurant instead.
+checkout.recommendations.dialog.github: See the source code on GitHub →
+checkout.recommendations.dialog.close: Close
 rfm.order_history: Order history
