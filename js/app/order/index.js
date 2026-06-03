@@ -269,6 +269,7 @@ const store = createStoreFromPreloadedState(buildInitialState())
 document.addEventListener('click', (e) => {
   const productSimple = e.target.closest('[data-product-simple]')
   if (productSimple) {
+    window._paq.push(['trackEvent', 'Checkout', 'addRecommendedItem'])
     store.dispatch(addItem(productSimple.dataset.formAction, 1))
     return
   }
@@ -289,10 +290,10 @@ let prevModalOpen = false
 store.subscribe(() => {
   const state = store.getState()
   const modalOpen = state.isProductOptionsModalOpen
-  const fetching  = state.isFetching
   const hasAdd    = state.lastAddItemRequest !== null
 
-  if (prevModalOpen && !modalOpen && !fetching && hasAdd) {
+  if (prevModalOpen && !modalOpen && hasAdd) {
+    window._paq.push(['trackEvent', 'Checkout', 'addRecommendedItem'])
     window.location.reload()
   }
   prevModalOpen = modalOpen
