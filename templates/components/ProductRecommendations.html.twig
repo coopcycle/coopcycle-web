@@ -21,19 +21,21 @@
       </a>
     </p>
 
-    <dialog id="recommendations-dialog" class="p-4" style="max-width:480px;">
-      <h5 class="mt-0">{{ 'checkout.recommendations.dialog.title'|trans }}</h5>
-      <p>{{ 'checkout.recommendations.dialog.privacy'|trans }}</p>
-      <p>{{ 'checkout.recommendations.dialog.explanation'|trans }}</p>
-      <p>
-        <a href="https://github.com/coopcycle/coopcycle-web/tree/master/recommender" target="_blank" rel="noopener">
-          {{ 'checkout.recommendations.dialog.github'|trans }}
-        </a>
-      </p>
-      <div class="text-right mt-3">
-        <button type="button" class="btn btn-default btn-sm" onclick="this.closest('dialog').close()">
-          {{ 'checkout.recommendations.dialog.close'|trans }}
-        </button>
+    <dialog id="recommendations-dialog" class="modal">
+      <div class="modal-box">
+        <h5 class="text-lg font-bold mb-4">{{ 'checkout.recommendations.dialog.title'|trans }}</h5>
+        <p>{{ 'checkout.recommendations.dialog.privacy'|trans }}</p>
+        <p>{{ 'checkout.recommendations.dialog.explanation'|trans }}</p>
+        <p class="mt-3">
+          <a class="link" href="https://github.com/coopcycle/coopcycle-web/tree/master/recommender" target="_blank" rel="noopener">
+            {{ 'checkout.recommendations.dialog.github'|trans }}
+          </a>
+        </p>
+        <div class="text-right mt-3">
+          <button type="button" class="btn btn-sm" onclick="this.closest('dialog').close()">
+            {{ 'checkout.recommendations.dialog.close'|trans }}
+          </button>
+        </div>
       </div>
     </dialog>
   </div>
