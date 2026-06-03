@@ -16,6 +16,7 @@ class EDIFACTMessage
     const MESSAGE_TYPE_SCONTR = 'SCONTR';
     const MESSAGE_TYPE_PICKUP = 'PICKUP';
     const MESSAGE_TYPE_REPORT = 'REPORT';
+    const MESSAGE_TYPE_DISPOR = 'DISPOR';
 
     private int $id;
 

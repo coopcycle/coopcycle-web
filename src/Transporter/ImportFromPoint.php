@@ -62,6 +62,7 @@ class ImportFromPoint {
         $taskType = match ($point->getType()) {
             INOVERTMessageType::SCONTR => Task::TYPE_DROPOFF,
             INOVERTMessageType::PICKUP => Task::TYPE_PICKUP,
+            INOVERTMessageType::DISPOR => Task::TYPE_DROPOFF,
         };
 
         $task = new Task();
