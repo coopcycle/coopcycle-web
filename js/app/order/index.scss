@@ -3,6 +3,10 @@
 @import "bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
 @import "../restaurant/menu.scss";
 
+.ReactModal__Overlay {
+  z-index: 1050; // Above Bootstrap form stacking contexts
+}
+
 #modal-loopeat {
   @media (max-width: $screen-xs-max) {
     .modal-dialog {
