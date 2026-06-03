@@ -2,6 +2,7 @@
 {% if product.enabled %}
   <div class="menu-item">
     <button
+      type="button"
       class="button-reset menu-item__inner-wrapper"
       data-modal="product-details"
       data-form-action="{{ path('restaurant_add_product_to_cart', { id: product.restaurant.id, code: product.code })|e('html_attr') }}"
