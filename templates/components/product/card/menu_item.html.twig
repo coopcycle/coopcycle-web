@@ -3,6 +3,7 @@
   <div class="menu-item h-full card bg-base-300 text-base-content cursor-pointer">
     <div class="card-body flex flex-row justify-between">
       <button
+        type="button"
         class="w-full flex flex-row justify-between gap-4"
         data-modal="product-details"
         data-form-action="{{ path('restaurant_add_product_to_cart', { id: product.restaurant.id, code: product.code })|e('html_attr') }}"
@@ -16,12 +17,11 @@
         {% endif %}
       </button>
       {% if not product.hasOptions() %}
-        <form
-          method="post"
-          action="{{ path('restaurant_add_product_to_cart', { id: product.restaurant.id, code: product.code }) }}"
-          data-product-simple>
-          <button class="btn h-full" type="submit">+</button>
-        </form>
+        <button
+          class="btn h-full"
+          type="button"
+          data-product-simple
+          data-form-action="{{ path('restaurant_add_product_to_cart', { id: product.restaurant.id, code: product.code }) }}">+</button>
       {% endif %}
     </div>
   </div>

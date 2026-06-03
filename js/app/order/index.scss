@@ -1,5 +1,8 @@
 @use "sass:math";
 
+@import "../restaurant/menu.scss";
+@import "../restaurant/components/Order/index.scss";
+
 $vytalGreen: #53b848;
 
 .vytal-logo-white {
@@ -50,4 +53,3 @@ $vytalGreen: #53b848;
     font-weight: 600;
   }
 }
-

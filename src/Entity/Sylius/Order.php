@@ -61,6 +61,8 @@ use AppBundle\Api\State\OrderRefundProcessor;
 use AppBundle\Api\State\OrderRefundsProvider;
 use AppBundle\Api\State\MyOrdersProvider;
 use AppBundle\Api\State\ValidateOrderProvider;
+use AppBundle\Api\State\OrderProductRecommendationsProvider;
+use AppBundle\Api\Dto\CustomerRecommendationsDto;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
@@ -238,6 +240,12 @@ use Webmozart\Assert\Assert as WMAssert;
                 ]
             ],
             security: 'is_granted(\'view\', object)'
+        ),
+        new Get(
+            uriTemplate: '/orders/{id}/product_recommendations',
+            normalizationContext: ['groups' => ['customer']],
+            provider: OrderProductRecommendationsProvider::class,
+            output: CustomerRecommendationsDto::class,
         ),
         new Get(
             uriTemplate: '/orders/{id}/validate',

@@ -101,6 +101,53 @@
   </div>
 </div>
 
+{# ── Recommendations ── #}
+{% if recommended_restaurants is not empty or recommended_products is not empty %}
+<h4>{% trans %}customer.recommendations.title{% endtrans %}</h4>
+<div class="row" style="margin-bottom:24px;">
+  {% if recommended_restaurants is not empty %}
+  <div class="col-sm-6">
+    <div class="panel panel-default">
+      <div class="panel-heading"><strong>{% trans %}customer.recommendations.restaurants{% endtrans %}</strong></div>
+      <ul class="list-group">
+        {% for restaurant in recommended_restaurants %}
+        <li class="list-group-item">
+          <a href="{{ path('admin_restaurant', { id: restaurant.id }) }}">{{ restaurant.name }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+  {% if recommended_products is not empty %}
+  <div class="col-sm-6">
+    <div class="panel panel-default">
+      <div class="panel-heading"><strong>{% trans %}customer.recommendations.products{% endtrans %}</strong></div>
+      <ul class="list-group">
+        {% for product in recommended_products %}
+        <li class="list-group-item">
+          {{ product.name }}
+          {% if product.restaurant %}
+            <small class="text-muted">— <a href="{{ path('admin_restaurant', { id: product.restaurant.id }) }}">{{ product.restaurant.name }}</a></small>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+
+{% if calendar_data is not empty %}
+<h4>{% trans %}customer.order_history.calendar{% endtrans %}</h4>
+<div id="customer-order-calendar"
+  data-days="{{ calendar_data|json_encode|e('html_attr') }}"
+  data-from="{{ calendar_from }}"
+  data-to="{{ calendar_to }}">
+</div>
+{% endif %}
+
 {# ── Order history ── #}
 <h4>{% trans %}customer.order_history.title{% endtrans %}</h4>
 
@@ -144,4 +191,8 @@
 <div class="alert alert-info">{% trans %}customer.order_history.empty{% endtrans %}</div>
 {% endif %}
 
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('customer') }}
 {% endblock %}
