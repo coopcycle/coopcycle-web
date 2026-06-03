@@ -78,6 +78,7 @@ class CommitRequest(BaseModel):
     instance: str
     product_popular: list[int] = []
     restaurant_popular: list[int] = []
+    product_restaurant_map: dict[str, int] = {}  # product_id (str) → restaurant_id
 
 
 @app.get("/health")
@@ -127,8 +128,12 @@ def train_commit(body: CommitRequest):
     product_interactions = staged["product"]
     restaurant_interactions = staged["restaurant"]
 
+    # JSON object keys are always strings; convert to int for the model
+    product_restaurant_map = {int(k): v for k, v in body.product_restaurant_map.items()}
+
     product_rec = CollaborativeFilteringRecommender()
-    product_rec.fit(product_interactions, body.product_popular, item_key="item_id")
+    product_rec.fit(product_interactions, body.product_popular, item_key="item_id",
+                    product_restaurant_map=product_restaurant_map)
 
     restaurant_rec = CollaborativeFilteringRecommender()
     restaurant_rec.fit(restaurant_interactions, body.restaurant_popular, item_key="item_id")
@@ -164,6 +169,7 @@ def recommendations(
     customer: str = Query(..., description="Customer IRI e.g. /api/customers/1"),
     type: str = Query(..., description="'product' or 'restaurant'"),
     n: int = Query(5, ge=1, le=20),
+    restaurant: str | None = Query(None, description="Restaurant IRI to scope product recommendations, e.g. /api/restaurants/1"),
 ):
     if type not in ("product", "restaurant"):
         raise HTTPException(status_code=400, detail="type must be 'product' or 'restaurant'")
@@ -181,7 +187,9 @@ def recommendations(
     except (ValueError, IndexError):
         raise HTTPException(status_code=400, detail="Invalid customer IRI — expected /api/customers/{id}")
 
-    item_ids = model.recommend(customer_id, n=n)
+    restaurant_id = int(restaurant.rstrip("/").split("/")[-1]) if restaurant else None
+
+    item_ids = model.recommend(customer_id, n=n, restaurant_id=restaurant_id)
 
     prefix = "/api/products" if type == "product" else "/api/restaurants"
     return {"recommendations": [f"{prefix}/{item_id}" for item_id in item_ids]}

@@ -111,6 +111,7 @@
           </div>
         </div>
 
+        {{ component('ProductRecommendations', { order: order, loading: 'lazy' }) }}
 
         {% if order.takeaway %}
         <div class="alert alert-warning">

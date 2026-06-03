@@ -1,3 +1,7 @@
+import Swiper from 'swiper'
+import { Navigation } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/navigation'
 import Inputmask from 'inputmask'
 import numbro from 'numbro'
 import _ from 'lodash'
@@ -31,6 +35,8 @@ import {
 import TimeRangeChangedModal
   from '../components/order/timeRange/TimeRangeChangedModal'
 import TimeRange from '../components/order/timeRange/TimeRange'
+import ProductOptionsModal from '../restaurant/components/ProductDetails/ProductOptionsModal'
+import { openProductOptionsModal, addItem } from '../restaurant/redux/actions'
 import { accountSlice } from '../entities/account/reduxSlice'
 import { guestSlice } from '../entities/guest/reduxSlice'
 import { buildGuestInitialState } from '../entities/guest/utils'
@@ -263,6 +269,63 @@ const buildInitialState = () => {
 
 const store = createStoreFromPreloadedState(buildInitialState())
 
+// Product recommendations: open options modal or add simple product
+document.addEventListener('click', (e) => {
+  const productSimple = e.target.closest('[data-product-simple]')
+  if (productSimple) {
+    window._paq.push(['trackEvent', 'Checkout', 'addRecommendedItem'])
+    store.dispatch(addItem(productSimple.dataset.formAction, 1))
+    return
+  }
+
+  const productDetails = e.target.closest('[data-modal="product-details"]')
+  if (productDetails) {
+    const product    = JSON.parse(productDetails.dataset.product)
+    const options    = JSON.parse(productDetails.dataset.productOptions)
+    const images     = JSON.parse(productDetails.dataset.productImages)
+    const price      = JSON.parse(productDetails.dataset.productPrice)
+    const formAction = productDetails.dataset.formAction
+    store.dispatch(openProductOptionsModal(product, options, images, price, formAction))
+  }
+})
+
+// Reload after product is added via the options modal so the server-rendered cart updates
+let prevModalOpen = false
+store.subscribe(() => {
+  const state = store.getState()
+  const modalOpen = state.isProductOptionsModalOpen
+  const hasAdd    = state.lastAddItemRequest !== null
+
+  if (prevModalOpen && !modalOpen && hasAdd) {
+    window._paq.push(['trackEvent', 'Checkout', 'addRecommendedItem'])
+    window.location.reload()
+  }
+  prevModalOpen = modalOpen
+})
+
+// Initialize Swiper for recommendations once the lazy component has rendered
+const swiperObserver = new MutationObserver(() => {
+  const el = document.querySelector('.recommendations-swiper')
+  if (el && !el.swiper) {
+    new Swiper(el, {
+      modules: [Navigation],
+      slidesPerView: 1,
+      slidesPerGroup: 1,
+      spaceBetween: 12,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      breakpoints: {
+        576: { slidesPerView: 2 },
+        768: { slidesPerView: 3 },
+      },
+    })
+    swiperObserver.disconnect()
+  }
+})
+swiperObserver.observe(document.body, { childList: true, subtree: true })
+
 const form = document.querySelector('form[name="checkout_address"]')
 
 form.addEventListener('submit', async function(event) {
@@ -301,6 +364,7 @@ root.render(
     <I18nextProvider i18n={ i18n }>
       {createPortal(<TimeRange />, fulfilmentTimeRangeContainer) }
       <TimeRangeChangedModal />
+      <ProductOptionsModal />
     </I18nextProvider>
   </Provider>
 )
