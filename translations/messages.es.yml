@@ -837,7 +837,7 @@ form.delivery.view_order: Ver pedido
 form.delivery.time_slot.label: Intervalo de tiempo
 form.delivery.has_order.info: Esta entrega esta vinculada a una orden
 form.delivery.to_be_confirmed.warning: Usted debe confirmar la orden
-order_item.adjustment_type.reusable_packaging: '%quantity% × paquete(s)'
+order_item.adjustment_type.reusable_packaging: '%quantity% × « %name% » paquete(s)'
 order.adjustment_type.reusable_packaging: Embalaje
 order.reusable_packaging.alert: Este pedido debe estar en un paquete reutilizable
 form.user.quotes_allowed.label: Permitir a este cliente solicitar un presupuesto

@@ -950,7 +950,7 @@ form.package.shortCode.help: Limité à 2 caractères
 form.time_slot.interval.label: Intervalle
 form.delivery.packages.label: Marchandise
 form.delivery.package.label: Emballage
-order_item.adjustment_type.reusable_packaging: '%quantity% × emballage(s)'
+order_item.adjustment_type.reusable_packaging: '%quantity% × « %name% » emballage(s)'
 order.reusable_packaging.alert: Cette commande doit être conditionnée dans des emballages
   réutilisables
 deliveries.sort.newest: Les plus récentes

@@ -316,7 +316,7 @@ order.adjustment_type.delivery: Entregue
 order.adjustment_type.platform_fees: Taxas CoopCycle
 order.adjustment_type.reusable_packaging: Embalagem
 order.adjustment_type.tip: Gorjeta
-order_item.adjustment_type.reusable_packaging: '%quantity% × embalagen(s)'
+order_item.adjustment_type.reusable_packaging: '%quantity% × « %name% » embalagen(s)'
 order.list.total: Total
 order.list.shippedAt: Horário de entrega
 order.list.type: Tipo
