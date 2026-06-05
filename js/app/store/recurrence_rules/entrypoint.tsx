@@ -11,6 +11,8 @@ import { formSlice } from '../../components/delivery-form/redux/formSlice';
 import { AppRootWithDefaults } from '../../utils/react';
 import FlagsContext from '../../components/delivery-form/FlagsContext';
 
+import '@uppy/core/css/style.min.css';
+import '@uppy/dashboard/css/style.min.css';
 import '../../bootstrap-reset.scss';
 import { UserContext } from '../../UserContext';
 
