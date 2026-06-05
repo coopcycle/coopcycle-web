@@ -103,6 +103,11 @@ class RecommenderTrainCommand extends Command
         $productRestaurantMap = array_map('intval', $productRestaurantRows);
         $io->writeln(sprintf('  Mapped %d products to restaurants.', count($productRestaurantMap)));
 
+        if ($productCount === 0 && $restaurantCount === 0) {
+            $io->warning('No interactions found — skipping commit.');
+            return Command::SUCCESS;
+        }
+
         $io->section('Committing training...');
         try {
             $response = $this->recommenderClient->request('POST', '/train/commit', [
