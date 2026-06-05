@@ -65,6 +65,23 @@ export default function(formSelector, options) {
 
   disableBtn(submitButton)
 
+  const showCardSkeleton = () => {
+    document.getElementById('card-element').innerHTML = `
+      <div id="card-element-skeleton" class="space-y-3">
+        <fieldset class="fieldset mb-3">
+          <div class="skeleton h-4 w-52 mb-2 rounded"></div>
+          <div class="skeleton h-10 w-64 rounded-md"></div>
+        </fieldset>
+        <div class="border border-base-300 rounded-md p-3 mb-3">
+          <div class="skeleton h-6 w-full rounded"></div>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="skeleton size-5 rounded"></div>
+          <div class="skeleton h-4 w-52 rounded"></div>
+        </div>
+      </div>`
+  }
+
   let cc
   let payments = []
 
@@ -260,6 +277,7 @@ export default function(formSelector, options) {
             const hasCard = !!_.find(response.data.payments, p => p.method.code === 'CARD')
 
             if (hasCard) {
+              showCardSkeleton()
               cc.mount(document.getElementById('card-element'), value, response.data, options)
                 .then((shouldEnableBtn = true) => {
                   document.getElementById('card-onmount-focus').scrollIntoView()
