@@ -177,7 +177,15 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
 
   const selectedTasksByType = _.countBy(selectedTasks, t => t.type)
   const containsOnePickupAndAtLeastOneDropoff = selectedTasksByType.PICKUP === 1 && selectedTasksByType.DROPOFF > 0
-  const containsExactlyOnePickupAndOneDropoff = selectedTasksByType.PICKUP === 1 && selectedTasksByType.DROPOFF === 1 && selectedTasks.length === 2
+
+  const selectedPickups = selectedTasks.filter(t => t.type === 'PICKUP')
+  const selectedDropoffs = selectedTasks.filter(t => t.type === 'DROPOFF')
+  const selectedPickupIds = new Set(selectedPickups.map(t => t['@id']))
+  const containsLinkedPickupDropoffPairs =
+    selectedPickups.length > 0 &&
+    selectedPickups.length === selectedDropoffs.length &&
+    selectedDropoffs.every(d => d.previous && selectedPickupIds.has(d.previous)) &&
+    new Set(selectedDropoffs.map(d => d.previous)).size === selectedPickups.length
 
   if (selectedTasksBelongsToTour) {
     return []
@@ -219,7 +227,7 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
         }
       }
 
-      if (containsExactlyOnePickupAndOneDropoff) {
+      if (containsLinkedPickupDropoffPairs) {
         actions.push(SEND_TO_WAREHOUSE)
       }
 
