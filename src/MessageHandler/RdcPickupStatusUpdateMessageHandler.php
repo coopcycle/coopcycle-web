@@ -26,18 +26,27 @@ final class RdcPickupStatusUpdateMessageHandler
 
     private const CONFIG = [
         'actionType' => 'LOADING',
-        'shouldPatch' => true,
         'startServiceEvents' => [
             [
                 'code' => EventCode::SERVICE_STARTED,
                 'type' => EventType::SCHEDULE,
                 'description' => 'Service livraison %s démarrée',
             ],
+            [
+                'code' => EventCode::DEPARTURE,
+                'type' => EventType::TRANSPORT,
+                'description' => 'Service livraison %s démarré',
+            ],
         ],
         'startActivityEvents' => [
             [
                 'code' => EventCode::ACTIVITY_STARTED,
                 'type' => EventType::SCHEDULE,
+                'description' => 'Activité %s démarrée',
+            ],
+            [
+                'code' => EventCode::DEPARTURE,
+                'type' => EventType::TRANSPORT,
                 'description' => 'Activité %s démarrée',
             ],
         ],
