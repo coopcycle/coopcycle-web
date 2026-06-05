@@ -47,6 +47,7 @@ class ChangeRestaurantOnAddProductModal extends Component {
         onAfterOpen={ this.afterOpenModal.bind(this) }
         onRequestClose={ this.closeModal.bind(this) }
         shouldCloseOnOverlayClick={ false }
+        overlayClassName="ReactModal__Overlay"
         contentLabel={ this.props.t('CART_CHANGE_RESTAURANT_MODAL_LABEL') }
         className="ReactModal__Content--restaurant">
         { this.renderModalContent() }
