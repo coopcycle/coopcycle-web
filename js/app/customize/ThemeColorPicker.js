@@ -10,14 +10,26 @@ const DEFAULTS = {
   'secondary-content': '#f9e4f0',
 }
 
-const COLORS = [
-  { key: 'primary',           inputId: 'customize_theme_primary',          label: 'Primary' },
-  { key: 'primary-content',   inputId: 'customize_theme_primary-content',  label: 'Primary content' },
-  { key: 'secondary',         inputId: 'customize_theme_secondary',         label: 'Secondary' },
-  { key: 'secondary-content', inputId: 'customize_theme_secondary-content', label: 'Secondary content' },
+const GROUPS = [
+  {
+    groupKey:    'primaryGroup',
+    helpKey:     'helpPrimaryGroup',
+    fields: [
+      { key: 'primary',         inputId: 'customize_theme_primary',          labelKey: 'primary' },
+      { key: 'primary-content', inputId: 'customize_theme_primary-content',  labelKey: 'primaryContent' },
+    ],
+  },
+  {
+    groupKey:    'secondaryGroup',
+    helpKey:     'helpSecondaryGroup',
+    fields: [
+      { key: 'secondary',         inputId: 'customize_theme_secondary',         labelKey: 'secondary' },
+      { key: 'secondary-content', inputId: 'customize_theme_secondary-content', labelKey: 'secondaryContent' },
+    ],
+  },
 ]
 
-export default function ThemeColorPicker({ initialValues }) {
+export default function ThemeColorPicker({ initialValues, labels = {} }) {
   const [values, setValues] = useState(
     Object.fromEntries(
       Object.entries(DEFAULTS).map(([k, def]) => [k, initialValues[k] || def])
@@ -32,15 +44,31 @@ export default function ThemeColorPicker({ initialValues }) {
   }
 
   return (
-    <Flex gap="large" wrap="wrap">
-      {COLORS.map(({ key, inputId, label }) => (
-        <div key={key}>
-          <div style={{ marginBottom: 4, fontSize: 12, color: '#666' }}>{label}</div>
-          <ColorPicker
-            value={values[key]}
-            showText
-            onChange={(color) => handleChange(key, inputId, color)}
-          />
+    <Flex vertical gap="large">
+      {GROUPS.map(({ groupKey, helpKey, fields }) => (
+        <div key={groupKey}>
+          <div style={{ fontWeight: 600, marginBottom: 4 }}>
+            {labels[groupKey] || groupKey}
+          </div>
+          {labels[helpKey] && (
+            <div style={{ fontSize: 12, color: '#888', marginBottom: 8 }}>
+              {labels[helpKey]}
+            </div>
+          )}
+          <Flex gap="large" wrap="wrap">
+            {fields.map(({ key, inputId, labelKey }) => (
+              <div key={key}>
+                <div style={{ marginBottom: 4, fontSize: 12, color: '#666' }}>
+                  {labels[labelKey] || labelKey}
+                </div>
+                <ColorPicker
+                  value={values[key]}
+                  showText
+                  onChange={(color) => handleChange(key, inputId, color)}
+                />
+              </div>
+            ))}
+          </Flex>
         </div>
       ))}
     </Flex>

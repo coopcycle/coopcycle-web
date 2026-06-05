@@ -1850,3 +1850,11 @@ customer.order_history.total: Total
 customer.order_history.calendar: Actividad de pedidos
 customer.order_history.empty: Este cliente aún no tiene pedidos.
 rfm.order_history: Historial de pedidos
+form.theme.primary_group.label: Colores primarios
+form.theme.primary_group.help: "Usado para barras de navegación y botones"
+form.theme.primary.label: Color de fondo
+form.theme.primary-content.label: Color de fuente
+form.theme.secondary_group.label: Colores secundarios
+form.theme.secondary_group.help: "Usado para resaltes y acentos"
+form.theme.secondary.label: Color de fondo
+form.theme.secondary-content.label: Color de fuente

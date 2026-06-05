@@ -39,12 +39,24 @@ const themeEl = document.getElementById('theme-color-pickers')
 if (themeEl) {
   const { dataset } = themeEl
   createRoot(themeEl).render(
-    <ThemeColorPicker initialValues={{
-      'primary':           dataset.primary,
-      'primary-content':   dataset.primaryContent,
-      'secondary':         dataset.secondary,
-      'secondary-content': dataset.secondaryContent,
-    }} />
+    <ThemeColorPicker
+      initialValues={{
+        'primary':           dataset.primary,
+        'primary-content':   dataset.primaryContent,
+        'secondary':         dataset.secondary,
+        'secondary-content': dataset.secondaryContent,
+      }}
+      labels={{
+        primaryGroup:        dataset.labelPrimaryGroup,
+        helpPrimaryGroup:    dataset.helpPrimaryGroup,
+        primary:             dataset.labelPrimary,
+        primaryContent:      dataset.labelPrimaryContent,
+        secondaryGroup:      dataset.labelSecondaryGroup,
+        helpSecondaryGroup:  dataset.helpSecondaryGroup,
+        secondary:           dataset.labelSecondary,
+        secondaryContent:    dataset.labelSecondaryContent,
+      }}
+    />
   )
 }
 

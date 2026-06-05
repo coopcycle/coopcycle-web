@@ -1744,14 +1744,14 @@ form.product_option_value.product.placeholder: Search a product…
 form.product_option_value.depends_on.placeholder: Select a value
 form.product_option_value.depends_on.tooltip: Select another value which this value depends on
 form.customize.theme.label: Theme
-form.theme.primary.label: Primary
-form.theme.primary.help: Primary brand color, The main color of your brand
-form.theme.primary-content.label: Primary content
-form.theme.primary-content.help: Foreground content color to use on primary color
-form.theme.secondary.label: Secondary
-form.theme.secondary.help: Secondary brand color
-form.theme.secondary-content.label: Secondary content
-form.theme.secondary-content.help: Foreground content color to use on secondary color
+form.theme.primary_group.label: Primary colors
+form.theme.primary_group.help: "Used for navbars and buttons"
+form.theme.primary.label: Background color
+form.theme.primary-content.label: Font color
+form.theme.secondary_group.label: Secondary colors
+form.theme.secondary_group.help: "Used for highlights and accents"
+form.theme.secondary.label: Background color
+form.theme.secondary-content.label: Font color
 pagination.items_per_page: Items per page
 restaurant.form.en_boite_le_plat_platform_fee.label: The deposit should be collected by the platform
 

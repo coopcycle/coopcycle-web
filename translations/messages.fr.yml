@@ -1761,3 +1761,11 @@ checkout.recommendations.dialog.explanation: Nous analysons quels produits sont 
 checkout.recommendations.dialog.github: Voir le code source sur GitHub →
 checkout.recommendations.dialog.close: Fermer
 rfm.order_history: Historique des commandes
+form.theme.primary_group.label: Couleurs primaires
+form.theme.primary_group.help: "Utilisé pour les barres de navigation et les boutons"
+form.theme.primary.label: "Couleur d'arrière-plan"
+form.theme.primary-content.label: Couleur de police
+form.theme.secondary_group.label: Couleurs secondaires
+form.theme.secondary_group.help: "Utilisé pour les mises en évidence et les accents"
+form.theme.secondary.label: "Couleur d'arrière-plan"
+form.theme.secondary-content.label: Couleur de police
