@@ -211,3 +211,12 @@ AppBundle\Entity\Store:
     timeSlot: '@time_slot_1'
     __calls:
       - addAddress: ['@address_1']
+  store_11:
+    name: 'Taliae'
+    address: '@address_2'
+    enabled: true
+    transporter: 'TELIAE'
+    pricingRuleSet: '@pricing_rule_set_4'
+    timeSlot: '@time_slot_1'
+    __calls:
+      - addAddress: ['@address_2']

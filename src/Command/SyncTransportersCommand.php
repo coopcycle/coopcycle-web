@@ -325,7 +325,12 @@ class SyncTransportersCommand extends Command {
         match($point->getType()) {
             INOVERTMessageType::SCONTR => $this->importScontrTask($point, $edi),
             INOVERTMessageType::PICKUP => $this->importPickupTask($point, $edi),
+            INOVERTMessageType::DISPOR => $this->importDisporTask($point, $edi),
         };
+    }
+
+    private function importDisporTask(Point $point, EDIFACTMessage $edi): void {
+        $this->importScontrTask($point, $edi);
     }
 
     private function importScontrTask(Point $point, EDIFACTMessage $edi): void {
@@ -422,7 +427,8 @@ class SyncTransportersCommand extends Command {
     {
         $messageType = match ($task->getType()) {
             INOVERTMessageType::SCONTR => EDIFACTMessage::MESSAGE_TYPE_SCONTR,
-            INOVERTMessageType::PICKUP => EDIFACTMessage::MESSAGE_TYPE_PICKUP
+            INOVERTMessageType::PICKUP => EDIFACTMessage::MESSAGE_TYPE_PICKUP,
+            INOVERTMessageType::DISPOR => EDIFACTMessage::MESSAGE_TYPE_DISPOR,
         };
         $edi = new EDIFACTMessage();
         $edi->setMessageType($messageType);
