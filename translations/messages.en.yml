@@ -379,7 +379,7 @@ order.adjustment_type.platform_fees: CoopCycle fees
 order.adjustment_type.reusable_packaging: Packaging
 order.adjustment_type.tip: Tip
 order.adjustment_type.incident: Incident
-order_item.adjustment_type.reusable_packaging: '%quantity% × packaging(s)'
+order_item.adjustment_type.reusable_packaging: '%quantity% × « %name% » packaging(s)'
 order.list.total: Total
 order.list.shippedAt: Shipping time
 order.list.type: Type

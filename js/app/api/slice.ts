@@ -53,7 +53,10 @@ export const apiSlice = createApi({
   // uri is passed in JSON-LD '@id' key, https://www.w3.org/TR/2014/REC-json-ld-20140116/#node-identifiers
   endpoints: builder => ({
     getTaxRates: builder.query<HydraCollection<TaxRate>, void>({
-      query: () => `api/tax_rates`,
+      query: () => ({
+        url: `api/tax_rates`,
+        headers: { Accept: 'application/ld+json' },
+      }),
     }),
     getTags: builder.query<Tag[], void>({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {

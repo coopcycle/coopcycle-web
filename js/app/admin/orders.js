@@ -58,9 +58,10 @@ if (rootElement) {
         label: s.title,
         data: s.series.map((r) => r.value),
         borderColor: COLORS_SERIES[index],
-        backgroundColor: index === 0 ? undefined : COLORS_SERIES[index] + '80',
+        backgroundColor: index === 0 ? undefined : 'rgba(255, 100, 146, 0.35)',
         fill: false,
         yAxisID: index === 0 ? 'y' : 'y1',
+        barPercentage: index === 0 ? undefined : 0.6,
       })),
     };
     const options = {
