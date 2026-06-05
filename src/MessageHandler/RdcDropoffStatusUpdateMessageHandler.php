@@ -26,7 +26,6 @@ final class RdcDropoffStatusUpdateMessageHandler
 
     private const CONFIG = [
         'actionType' => 'UNLOADING',
-        'shouldPatch' => true,
         'serviceEvents' => [
             [
                 'code' => EventCode::SERVICE_FINISHED,
