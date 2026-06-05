@@ -28,6 +28,29 @@ export function withoutItemsIRIs(currentItems, toRemoveItems) {
   )
 }
 
+/**
+ * Topologically sort tasks so that every predecessor (task.previous) appears
+ * before its successor within the same selection.
+ * Tasks not linked to others in the selection are preserved in their current order.
+ */
+export function sortByPreviousChain(tasks) {
+  const taskById = new Map(tasks.map(t => [t['@id'], t]))
+  const result = []
+  const visited = new Set()
+
+  const visit = (task) => {
+    if (visited.has(task['@id'])) return
+    visited.add(task['@id'])
+    if (task.previous && taskById.has(task.previous)) {
+      visit(taskById.get(task.previous))
+    }
+    result.push(task)
+  }
+
+  tasks.forEach(t => visit(t))
+  return result
+}
+
 export function withOrderTasks(selectedTasks, allTasks, taskIdToTourIdMap) {
 
   if (!Array.isArray(selectedTasks)) {

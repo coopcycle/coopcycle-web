@@ -161,8 +161,8 @@ describe('handleDragEnd', () => {
         expect.objectContaining({'@id': '/api/tours/111'}),
         [
           '/api/tasks/729',
+          '/api/tasks/735', // pickup before dropoff (task 734 has previous: task 735)
           '/api/tasks/734',
-          '/api/tasks/735',
           '/api/tasks/730',
           '/api/tasks/731',
           '/api/tasks/727',
@@ -270,9 +270,9 @@ describe('handleDragEnd', () => {
       expect(mockModifyTaskList).toHaveBeenCalledTimes(0)
     })
 
-    it ('should move unassigned tasks in the order they are in the unassigned tasks panel when they were reordered', async () => {
+    it ('should always keep pickup before dropoff regardless of their order in the unassigned tasks panel', async () => {
 
-      // revert order of tasks in unassigned tasks compared to previous test
+      // place task 738 (dropoff) before task 737 (pickup) in the unassigned panel
       store.dispatch(insertInUnassignedTasks({tasksToInsert: [{'@id': '/api/tasks/738'}], index: 1}))
 
 
@@ -292,8 +292,8 @@ describe('handleDragEnd', () => {
         expect.objectContaining({'@id': '/api/tours/114'}),
         [
           '/api/tasks/733',
-          '/api/tasks/738', // reverted compare to previous test
-          '/api/tasks/737',
+          '/api/tasks/737', // pickup always before its dropoff (task 738 has previous: task 737)
+          '/api/tasks/738',
           '/api/tasks/732'
         ]
       )
@@ -511,6 +511,36 @@ describe('handleDragEnd - edge cases', () => {
       ]
     )
     expect(mockModifyTaskList).not.toHaveBeenCalled()
+  })
+
+  it('should assign pickup before dropoff even when dropoff has a lower task ID', () => {
+    // Regression: groupLinkedTasks sorts group members by IRI, so when the dropoff ID is
+    // lower than the pickup ID (e.g. task/734 dropoff → previous task/735 pickup), it was
+    // emitted first, producing a dropoff-before-pickup payload.
+    const store = createStoreFromPreloadedState(storeFixture)
+    const dispatch = jest.fn()
+    const mockModifyTaskList = jest.fn()
+
+    // task 734 is the dropoff (previous: '/api/tasks/735'), task 735 is the pickup.
+    // Both are unassigned; in unassignedTasksIdsOrder 734 appears at index 3, 735 at index 4.
+    // Without the fix, both orderings (IRI sort and panel order) produce [734, 735] = [dropoff, pickup].
+    handleDragEnd(
+      {
+        draggableId: '/api/tasks/734',
+        source: { droppableId: 'unassigned', index: 3 },
+        destination: { droppableId: 'assigned:admin', index: 0 },
+      },
+      mockModifyTaskList
+    )(dispatch, store.getState)
+
+    expect(mockModifyTaskList).toHaveBeenCalledWith(
+      'admin',
+      [
+        '/api/tasks/735', // pickup must come first
+        '/api/tasks/734', // dropoff after its pickup
+        '/api/tours/111',
+      ]
+    )
   })
 
   it('should move a task from a courier tasklist into a tour', () => {

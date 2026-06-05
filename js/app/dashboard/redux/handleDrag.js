@@ -11,7 +11,7 @@ import { clearSelectedTasks,
   removePreviouslyAssignedTasks,
 } from "./actions"
 import { belongsToTour, selectGroups, selectOrderOfUnassignedTasks, selectSelectedTasks } from "./selectors"
-import { isValidTasksMultiSelect, withOrderTasks } from "./utils"
+import { isValidTasksMultiSelect, sortByPreviousChain, withOrderTasks } from "./utils"
 import { toast } from 'react-toastify'
 import i18next from "i18next"
 
@@ -167,6 +167,9 @@ export function handleDragEnd(
     }
 
     selectedTasks = sortSelectedTasks(selectedTasks, result, getState, isTourDrag)
+    if (!isTourDrag) {
+      selectedTasks = sortByPreviousChain(selectedTasks)
+    }
 
     // --- REORDERING (same source and destination) ---
     if (source.droppableId === destination.droppableId) {
