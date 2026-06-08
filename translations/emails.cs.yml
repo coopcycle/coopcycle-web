@@ -79,18 +79,18 @@ order.adhoc.body: "Dobrý den,\n<br>\nByla pro vás vytvořena nová objednávka
 business_account.send_invitation.body: "Dobrý den {{name}},\n<br>\nToto je pozvánka\
   \ ke konfiguraci firemního účtu v CoopCycle, pro pokračování v aktivaci klikněte\
   \ na následující odkaz.\n"
-task.pickup.done.subject: 'Zásilka #{{id}} byla vyzvednuta'
-task.pickup.done.body: "Dobrý den,\n<br>\n<br>\nZásilka <strong>#{{id}}</strong> byla\
+task.pickup.done.subject: 'Zásilka #{{delivery_id}} byla vyzvednuta'
+task.pickup.done.body: "Dobrý den,\n<br>\n<br>\nZásilka <strong>#{{delivery_id}}</strong> byla\
   \ vyzvednuta na následující adrese:\n<br>\n{{address}}\n"
-task.pickup.failed.subject: 'Zásilku #{{id}} nebylo možné vyzvednout'
-task.pickup.failed.body: "Dobrý den,\n<br>\n<br>\nZásilku <strong>#{{id}}</strong> nebylo\
+task.pickup.failed.subject: 'Zásilku #{{delivery_id}} nebylo možné vyzvednout'
+task.pickup.failed.body: "Dobrý den,\n<br>\n<br>\nZásilku <strong>#{{delivery_id}}</strong> nebylo\
   \ možné vyzvednout na následující adrese:\n<br>\n{{address}}\n"
-task.dropoff.failed.subject: 'Zásilku #{{id}} se nepodařilo doručit'
-task.dropoff.failed.body: "Dobrý den,\n<br>\n<br>\nZásilku <strong>#{{id}}</strong>\
+task.dropoff.failed.subject: 'Zásilku #{{delivery_id}} se nepodařilo doručit'
+task.dropoff.failed.body: "Dobrý den,\n<br>\n<br>\nZásilku <strong>#{{delivery_id}}</strong>\
   \ nebylo možné doručit na následující adresu:\n<br>\n{{address}}\n"
-task.dropoff.done.body: "Dobrý den,\n<br>\n<br>\nZásilka <strong>#{{id}}</strong> byla\
+task.dropoff.done.body: "Dobrý den,\n<br>\n<br>\nZásilka <strong>#{{delivery_id}}</strong> byla\
   \ doručena na následující adresu:\n<br>\n{{address}}\n"
-task.dropoff.done.subject: 'Zásilka #{{id}} byla doručena'
+task.dropoff.done.subject: 'Zásilka #{{delivery_id}} byla doručena'
 business_account.send_invitation.cta: Pokračujte v aktivaci
 order.loopeat.accepted.with_fee: "<p>Gratulujeme vám k vaší objednávce s nulovým odpadem\
   \ u našeho partnera \" {{name}} \".</p>\n<p>Své opakovaně použitelné krabičky můžete\

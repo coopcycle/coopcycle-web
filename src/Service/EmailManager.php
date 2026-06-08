@@ -268,7 +268,7 @@ class EmailManager
     {
         $key = sprintf('task.%s.%s.subject', strtolower($task->getType()), $task->isDone() ? 'done' : 'failed');
 
-        $subject = $this->translator->trans($key, ['{{id}}' => $task->getDelivery()->getId()], 'emails');
+        $subject = $this->translator->trans($key, ['{{delivery_id}}' => $task->getDelivery()->getId()], 'emails');
 
         $trackingUrl = $this->urlGenerator->generate(
             'dashboard_delivery',
