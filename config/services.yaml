@@ -320,6 +320,7 @@ services:
       $optinExportUsersEnabled: '%env(bool:OPTIN_EXPORT_USERS_ENABLED)%'
       $incidentImagesFilesystem: '@incident_images_filesystem'
       $edifactFilesystem: '@edi_messages_filesystem'
+      $platformLocale: '%env(COOPCYCLE_LOCALE)%'
 
   AppBundle\Controller\Admin\CustomerSegmentationController:
     arguments:

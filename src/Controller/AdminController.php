@@ -213,6 +213,7 @@ class AdminController extends AbstractController
         protected CollectionFinderInterface $typesenseShopsFinder,
         protected Filesystem $incidentImagesFilesystem,
         protected Filesystem $edifactFilesystem,
+        protected string $platformLocale,
         protected PricingRuleSetManager $pricingRuleSetManager,
         protected JWTTokenManagerInterface $JWTTokenManager,
         protected TimeSlotManager $timeSlotManager,
@@ -2578,6 +2579,13 @@ class AdminController extends AbstractController
         }
 
         $supportedLocales = $emailTemplateManager->getSupportedLocales();
+
+        // Put the platform's primary locale first so it's the default tab
+        $platformLocale = $this->platformLocale;
+        if (isset($supportedLocales[$platformLocale])) {
+            $supportedLocales = [$platformLocale => $supportedLocales[$platformLocale]]
+                + $supportedLocales;
+        }
 
         // Build email type metadata for every supported locale so the JS knows
         // which locale×type combinations already have a custom template.
