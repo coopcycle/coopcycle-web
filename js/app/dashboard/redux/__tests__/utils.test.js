@@ -1,6 +1,7 @@
 import {
   withoutTasks,
   withOrderTasks,
+  sortByPreviousChain,
   timeframeToPercentage,
   nowToPercentage,
   isInDateRange,
@@ -253,6 +254,44 @@ describe('withOrderTasks', () => {
     ])
   })
 
+})
+
+describe('sortByPreviousChain', () => {
+
+  it('should keep pickup before dropoff when already in correct order', () => {
+    const pickup = { '@id': '/api/tasks/1' }
+    const dropoff = { '@id': '/api/tasks/2', previous: '/api/tasks/1' }
+    expect(sortByPreviousChain([pickup, dropoff])).toEqual([pickup, dropoff])
+  })
+
+  it('should fix dropoff-before-pickup when dropoff has a lower task ID', () => {
+    // Reproduces the real bug: dropoff IRI sorts before pickup IRI
+    const dropoff = { '@id': '/api/tasks/1', previous: '/api/tasks/2' }
+    const pickup  = { '@id': '/api/tasks/2' }
+    expect(sortByPreviousChain([dropoff, pickup])).toEqual([pickup, dropoff])
+  })
+
+  it('should respect chains longer than two tasks', () => {
+    const a = { '@id': '/api/tasks/1' }
+    const b = { '@id': '/api/tasks/2', previous: '/api/tasks/1' }
+    const c = { '@id': '/api/tasks/3', previous: '/api/tasks/2' }
+    // present in reverse order
+    expect(sortByPreviousChain([c, b, a])).toEqual([a, b, c])
+  })
+
+  it('should leave unlinked tasks in their original order', () => {
+    const t1 = { '@id': '/api/tasks/1' }
+    const t2 = { '@id': '/api/tasks/2' }
+    const t3 = { '@id': '/api/tasks/3' }
+    expect(sortByPreviousChain([t1, t2, t3])).toEqual([t1, t2, t3])
+  })
+
+  it('should not move a task whose predecessor is not in the selection', () => {
+    // previous points to a task not in this selection — treat as standalone
+    const dropoff = { '@id': '/api/tasks/5', previous: '/api/tasks/4' }
+    const other   = { '@id': '/api/tasks/6' }
+    expect(sortByPreviousChain([other, dropoff])).toEqual([other, dropoff])
+  })
 })
 
 describe('timeframeToPercentage', () => {

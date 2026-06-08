@@ -14,3 +14,8 @@ docker push coopcycle/php:8.3
 DOCKER_DEFAULT_PLATFORM=linux/amd64 docker compose build --no-cache webpack
 docker push coopcycle/webpack:latest
 ```
+
+```
+DOCKER_DEFAULT_PLATFORM=linux/amd64 docker compose build --no-cache recommender
+docker push coopcycle/recommender:latest
+```

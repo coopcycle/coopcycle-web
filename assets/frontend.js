@@ -1,7 +1,7 @@
 import Alpine from 'alpinejs'
 import collapse from '@alpinejs/collapse'
 
-import './css/frontend.scss';
+import './css/frontend.css';
 
 // https://alpinejs.dev/essentials/installation
 window.Alpine = Alpine

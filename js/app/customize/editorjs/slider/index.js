@@ -161,11 +161,11 @@ const SlideContent = ({ slide, index, uploadEndpoint, onChange }) => {
   }, [index, onChange, uniqueKey, uploadEndpoint])
 
   return (
-    <a href="#" onClick={(e) => e.preventDefault()} style={{
-      backgroundColor: slide.backgroundColor || '#ffffff',
-      opacity: isExpired(slide) ? 0.6 : 1,
-    }}>
-      <div className={ `swiper-slide-content` }>
+    <div className="px-1 py-2 h-full">
+      <div className="card shadow-sm h-full flex flex-row" style={{
+        backgroundColor: slide.backgroundColor || '#ffffff',
+        opacity: isExpired(slide) ? 0.6 : 1,
+      }}>
         <div className="swiper-slide-content-left" style={{ position: 'relative' }}>
           <h4
             ref={titleRef}
@@ -226,7 +226,7 @@ const SlideContent = ({ slide, index, uploadEndpoint, onChange }) => {
           </span>
         </div>
       </div>
-    </a>
+    </div>
   )
 }
 

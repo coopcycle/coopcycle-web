@@ -122,6 +122,7 @@ class TaskNormalizer implements NormalizerInterface, ContextAwareDenormalizerInt
                     $data['metadata']['order_id'] = $order->getId();
                     $data['metadata']['order_number'] = $order->getNumber();
                     $data['metadata']['order_total'] = $order->getTotal();
+                    $data['metadata']['has_loopeat_returns'] = $object->isDropoff() && $order->hasLoopeatReturns();
                 }
 
                 if (null !== ($store = $delivery->getStore())) {

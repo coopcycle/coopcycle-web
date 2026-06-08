@@ -1,5 +1,7 @@
 {% extends "admin.html.twig" %}
 
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
 {% set business_account = form.vars.data %}
 {% set is_new_business_account = (business_account.id is null) %}
 

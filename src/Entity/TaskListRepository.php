@@ -290,10 +290,10 @@ class TaskListRepository extends ServiceEntityRepository
         return $paymentMethods[0];
     }
 
-    private function getLoopeatReturns(?int $orderId, $task, $row): ?bool
+    private function getLoopeatReturns(?int $orderId, $task, $row): bool
     {
         if (null === $orderId) {
-            return null;
+            return false;
         }
 
         if (!$task->isDropoff()) {

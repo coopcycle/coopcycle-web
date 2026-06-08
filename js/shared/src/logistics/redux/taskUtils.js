@@ -6,7 +6,7 @@ const colorHash = new ColorHash()
 export function groupLinkedTasks(tasks) {
   /*
     Given a list of tasks objects, returns the list of linked taskIds for each task.
-    
+
     Output
     [
       '/api/tasks/1': [ '/api/tasks/1', '/api/tasks/2', '/api/tasks/3' ],
@@ -27,20 +27,17 @@ export function groupLinkedTasks(tasks) {
       const prevTask = _.find(tasks, t => t['@id'] === task.previous)
 
       if (prevTask) {
-        if (groups[prevTask['@id']]) {
+        // Merge: take whatever group prevTask and task are already in (if any),
+        // plus both tasks themselves, and unify under one group entry.
+        // This correctly handles chains longer than 2 regardless of processing order.
+        const prevGroup = groups[prevTask['@id']] || [ prevTask['@id'] ]
+        const taskGroup = groups[task['@id']] || []
 
-          const newIris = _.reduce(groups[prevTask['@id']], function(result, value) {
-            return result.concat([ value ])
-          }, [ task['@id'] ])
+        const newIris = _.uniq([ task['@id'], ...prevGroup, ...taskGroup ])
 
-          newIris.forEach(iri => {
-            groups[iri] = newIris
-          })
-
-        } else {
-          groups[task['@id']] = [ prevTask['@id'], task['@id'] ]
-          groups[prevTask['@id']] = [ prevTask['@id'], task['@id'] ]
-        }
+        newIris.forEach(iri => {
+          groups[iri] = newIris
+        })
       }
     }
   }

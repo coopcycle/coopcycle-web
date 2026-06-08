@@ -1,37 +1,44 @@
 {# TODO Skip if no variant is defined #}
 {% if product.enabled %}
-  <div class="menu-item">
-    <button
-      class="button-reset menu-item__inner-wrapper"
-      data-modal="product-details"
-      data-form-action="{{ path('restaurant_add_product_to_cart', { id: product.restaurant.id, code: product.code })|e('html_attr') }}"
-      data-product="{{ product|serialize('jsonld', { groups: ['product'] })|e('html_attr') }}"
-      data-product-images="{{ product_images|json_encode|e('html_attr') }}"
-      data-product-price="{{ (product|sylius_resolve_variant).price|e('html_attr') }}"
-      data-product-options="{{ product.options|serialize('jsonld', { groups: ['restaurant_menu'] })|e('html_attr') }}">
-      {% include 'components/product/card/menu_item_inner.html.twig' %}
-      {% if product.hasOptions() %}
-        <div class="menu-item__add-wrapper">
-          <div class="add-button">+</div>
-        </div>
-      {% endif %}
-    </button>
-    {% if not product.hasOptions() %}
-      <form
-        method="post"
-        action="{{ path('restaurant_add_product_to_cart', { id: product.restaurant.id, code: product.code }) }}"
-        data-product-simple
-        class="menu-item__add-wrapper menu-item__add-wrapper--active">
-        <button class="button-reset add-button" type="submit">
-          +
-        </button>
-      </form>
+  <div class="card card-side h-full bg-base-300 text-base-content cursor-pointer">
+    {% if card_product_image is not empty %}
+    <figure>
+      <img src="{{ card_product_image }}" />
+    </figure>
     {% endif %}
+    <div class="card-body w-2/3 flex flex-row justify-between">
+      <button
+        type="button"
+        class="w-full flex flex-row justify-between gap-4"
+        data-modal="product-details"
+        data-form-action="{{ path('restaurant_add_product_to_cart', { id: product.restaurant.id, code: product.code })|e('html_attr') }}"
+        data-product="{{ product|serialize('jsonld', { groups: ['product'] })|e('html_attr') }}"
+        data-product-images="{{ product_images|json_encode|e('html_attr') }}"
+        data-product-price="{{ (product|sylius_resolve_variant).price|e('html_attr') }}"
+        data-product-options="{{ product.options|serialize('jsonld', { groups: ['restaurant_menu'] })|e('html_attr') }}">
+        {% include 'components/product/card/menu_item_inner.html.twig' %}
+        {% if product.hasOptions() %}
+          <a class="btn btn-circle self-end">+</a>
+        {% endif %}
+      </button>
+      {% if not product.hasOptions() %}
+        <button
+          class="btn btn-circle self-end"
+          type="button"
+          data-product-simple
+          data-form-action="{{ path('restaurant_add_product_to_cart', { id: product.restaurant.id, code: product.code }) }}">+</button>
+      {% endif %}
+    </div>
   </div>
 {% else %}
-  <div class="menu-item menu-item--unavailable">
-    <a class="menu-item__inner-wrapper">
+  <div class="card card-side h-full bg-base-200 text-base-content">
+    {% if card_product_image is not empty %}
+    <figure>
+      <img src="{{ card_product_image }}" />
+    </figure>
+    {% endif %}
+    <div class="card-body w-2/3 flex flex-row justify-between">
       {% include 'components/product/card/menu_item_inner.html.twig' %}
-    </a>
+    </div>
   </div>
 {% endif %}

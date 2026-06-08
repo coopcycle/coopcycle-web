@@ -1,29 +1,7 @@
 @use "sass:math";
 
-@import "bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
-
-#modal-loopeat {
-  @media (max-width: $screen-xs-max) {
-    .modal-dialog {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 10px;
-      .modal-content {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        .modal-body {
-          flex: 1;
-          .embed-responsive.embed-responsive-16by9 {
-            height: 100%;
-            padding-bottom: 0;
-          }
-        }
-      }
-    }
-  }
-}
+@import "../restaurant/menu.scss";
+@import "../restaurant/components/Order/index.scss";
 
 $vytalGreen: #53b848;
 
@@ -68,6 +46,13 @@ $vytalGreen: #53b848;
   justify-content: space-between;
 }
 
+.recommendations-swiper {
+  .swiper-slide {
+    // https://github.com/nolimits4web/swiper/issues/2372#issuecomment-349004052
+    height: auto;
+  }
+}
+
 .loopeat-links {
   opacity: 0.6;
   > a {
@@ -75,4 +60,3 @@ $vytalGreen: #53b848;
     font-weight: 600;
   }
 }
-

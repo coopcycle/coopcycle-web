@@ -3,6 +3,8 @@
 namespace AppBundle\Controller;
 
 use League\Flysystem\Filesystem;
+use League\Flysystem\UnableToCheckFileExistence;
+use League\Flysystem\UnableToReadFile;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,7 +19,13 @@ class ContentController extends AbstractController
     #[Route(path: ['an' => '/sobre-nosotros', 'ca' => '/sobre-nosaltres', 'da' => '/om-os', 'de' => '/uber-uns', 'en' => '/about-us', 'es' => '/sobre-nosotros', 'eu' => '/guri-buruz', 'fr' => '/a-propos', 'hu' => '/rolunk', 'it' => '/riguardo-a-noi', 'pl' => '/o-nas', 'pt_BR' => '/sobre-nos', 'pt_PT' => '/sobre-nos'], name: 'about_us')]
     public function aboutUsAction(Request $request, Filesystem $assetsFilesystem, CacheInterface $appCache)
     {
-        if (!$assetsFilesystem->fileExists('about_us.md')) {
+        try {
+            $fileExists = $assetsFilesystem->fileExists('about_us.md');
+        } catch (UnableToCheckFileExistence $e) {
+            throw $this->createNotFoundException();
+        }
+
+        if (!$fileExists) {
             throw $this->createNotFoundException();
         }
 
@@ -44,14 +52,26 @@ class ContentController extends AbstractController
 
         $key = array_key_exists($locale, $files) ? $locale : 'en';
 
-        return file_get_contents($files[$key]);
+        $context = stream_context_create(['http' => ['timeout' => 5]]);
+
+        return file_get_contents($files[$key], false, $context);
     }
 
     #[Route(path: '/legal', name: 'legal')]
     public function legalAction(Request $request, Filesystem $assetsFilesystem)
     {
-        if ($assetsFilesystem->fileExists('custom_legal.md')) {
-            $text = $assetsFilesystem->read('custom_legal.md');
+        try {
+            $customExists = $assetsFilesystem->fileExists('custom_legal.md');
+        } catch (UnableToCheckFileExistence $e) {
+            $customExists = false;
+        }
+
+        if ($customExists) {
+            try {
+                $text = $assetsFilesystem->read('custom_legal.md');
+            } catch (UnableToReadFile $e) {
+                $text = $this->localizeRemoteFile($request, 'legal');
+            }
         } else {
             $text = $this->localizeRemoteFile($request, 'legal');
         }
@@ -64,8 +84,18 @@ class ContentController extends AbstractController
     #[Route(path: '/terms', name: 'terms')]
     public function termsAction(Request $request, Filesystem $assetsFilesystem)
     {
-        if ($assetsFilesystem->fileExists('custom_terms.md')) {
-            $text = $assetsFilesystem->read('custom_terms.md');
+        try {
+            $customExists = $assetsFilesystem->fileExists('custom_terms.md');
+        } catch (UnableToCheckFileExistence $e) {
+            $customExists = false;
+        }
+
+        if ($customExists) {
+            try {
+                $text = $assetsFilesystem->read('custom_terms.md');
+            } catch (UnableToReadFile $e) {
+                $text = $this->localizeRemoteFile($request, 'terms');
+            }
         } else {
             $text = $this->localizeRemoteFile($request, 'terms');
         }
@@ -78,8 +108,18 @@ class ContentController extends AbstractController
     #[Route(path: '/privacy', name: 'privacy')]
     public function privacyAction(Request $request, Filesystem $assetsFilesystem)
     {
-        if ($assetsFilesystem->fileExists('custom_privacy.md')) {
-            $text = $assetsFilesystem->read('custom_privacy.md');
+        try {
+            $customExists = $assetsFilesystem->fileExists('custom_privacy.md');
+        } catch (UnableToCheckFileExistence $e) {
+            $customExists = false;
+        }
+
+        if ($customExists) {
+            try {
+                $text = $assetsFilesystem->read('custom_privacy.md');
+            } catch (UnableToReadFile $e) {
+                $text = $this->localizeRemoteFile($request, 'privacy');
+            }
         } else {
             $text = $this->localizeRemoteFile($request, 'privacy');
         }
@@ -103,8 +143,18 @@ class ContentController extends AbstractController
     #[Route(path: '/terms-text', name: 'terms-text')]
     public function termsTextAction(Request $request, Filesystem $assetsFilesystem)
     {
-        if ($assetsFilesystem->fileExists('custom_terms.md')) {
-            $text = $assetsFilesystem->read('custom_terms.md');
+        try {
+            $customExists = $assetsFilesystem->fileExists('custom_terms.md');
+        } catch (UnableToCheckFileExistence $e) {
+            $customExists = false;
+        }
+
+        if ($customExists) {
+            try {
+                $text = $assetsFilesystem->read('custom_terms.md');
+            } catch (UnableToReadFile $e) {
+                $text = $this->localizeRemoteFile($request, 'terms');
+            }
         } else {
             $text = $this->localizeRemoteFile($request, 'terms');
         }
@@ -117,8 +167,18 @@ class ContentController extends AbstractController
     #[Route(path: '/privacy-text', name: 'privacy-text')]
     public function privacyTextAction(Request $request, Filesystem $assetsFilesystem)
     {
-        if ($assetsFilesystem->fileExists('custom_privacy.md')) {
-            $text = $assetsFilesystem->read('custom_privacy.md');
+        try {
+            $customExists = $assetsFilesystem->fileExists('custom_privacy.md');
+        } catch (UnableToCheckFileExistence $e) {
+            $customExists = false;
+        }
+
+        if ($customExists) {
+            try {
+                $text = $assetsFilesystem->read('custom_privacy.md');
+            } catch (UnableToReadFile $e) {
+                $text = $this->localizeRemoteFile($request, 'privacy');
+            }
         } else {
             $text = $this->localizeRemoteFile($request, 'privacy');
         }

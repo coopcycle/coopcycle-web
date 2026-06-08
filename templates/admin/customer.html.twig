@@ -1,0 +1,198 @@
+{% extends "admin.html.twig" %}
+
+{% block prepare_title %}
+  {{ add_title_prefix(customer.email) }}
+{% endblock %}
+
+{% block breadcrumb %}
+<li><a href="{{ path('admin_users') }}">{% trans %}adminDashboard.users.title{% endtrans %}</a></li>
+<li>{{ customer.email }}</li>
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex align-items-center" style="display:flex;align-items:center;margin-bottom:20px;">
+  <h2 style="margin:0 16px 0 0;">
+    {% if customer.fullName is not empty %}{{ customer.fullName }}{% else %}{{ customer.email }}{% endif %}
+  </h2>
+  {% if customer.user %}
+    <span class="label label-primary" style="font-size:13px;">
+      <i class="fa fa-user"></i> {{ customer.user.username }}
+    </span>
+  {% else %}
+    <span class="label label-default" style="font-size:13px;">
+      {% trans %}customer.badge.guest{% endtrans %}
+    </span>
+  {% endif %}
+</div>
+
+<div class="row" style="margin-bottom:24px;">
+  <div class="col-sm-6 col-md-3">
+    <strong>{% trans %}profile.email{% endtrans %}</strong><br>
+    <span class="text-monospace">{{ customer.email }}</span>
+  </div>
+  {% if customer.phoneNumber is not empty %}
+  <div class="col-sm-6 col-md-3">
+    <strong>{% trans %}profile.telephone{% endtrans %}</strong><br>
+    {{ customer.phoneNumber }}
+  </div>
+  {% endif %}
+  <div class="col-sm-6 col-md-3">
+    <strong>{% trans %}adminDashboard.users.registered_at{% endtrans %}</strong><br>
+    {{ customer.createdAt|time_diff }}
+  </div>
+  {% if customer.tags is not empty %}
+  <div class="col-sm-6 col-md-3">
+    <strong>{% trans %}adminDashboard.tags.title{% endtrans %}</strong><br>
+    {% for tag in customer.tags|expand_tags %}
+      <span class="label label-default" style="background-color:{{ tag.color }};">{{ tag.slug }}</span>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+
+{# ── Insights ── #}
+<div class="row" style="margin-bottom:24px;">
+  <div class="col-xs-6 col-sm-4 col-md-2">
+    <div class="panel panel-default text-center">
+      <div class="panel-body">
+        <div style="font-size:24px;font-weight:700;">{{ number_of_orders }}</div>
+        <div class="text-muted" style="font-size:12px;">{% trans %}customer.insights.total_orders{% endtrans %}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-6 col-sm-4 col-md-2">
+    <div class="panel panel-default text-center">
+      <div class="panel-body">
+        <div style="font-size:24px;font-weight:700;">{{ average_order_total|price_format }}</div>
+        <div class="text-muted" style="font-size:12px;">{% trans %}customer.insights.average_order{% endtrans %}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-6 col-sm-4 col-md-3">
+    <div class="panel panel-default text-center">
+      <div class="panel-body">
+        <div style="font-size:18px;font-weight:700;">
+          {% if first_ordered_at %}{{ first_ordered_at|ago }}{% else %}—{% endif %}
+        </div>
+        <div class="text-muted" style="font-size:12px;">{% trans %}customer.insights.first_order{% endtrans %}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-6 col-sm-4 col-md-3">
+    <div class="panel panel-default text-center">
+      <div class="panel-body">
+        <div style="font-size:18px;font-weight:700;">
+          {% if last_ordered_at %}{{ last_ordered_at|ago }}{% else %}—{% endif %}
+        </div>
+        <div class="text-muted" style="font-size:12px;">{% trans %}customer.insights.last_order{% endtrans %}</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-12 col-sm-4 col-md-2">
+    <div class="panel panel-default text-center">
+      <div class="panel-body">
+        <div style="font-size:16px;font-weight:700;">
+          {% if favorite_restaurant %}{{ favorite_restaurant.name }}{% else %}—{% endif %}
+        </div>
+        <div class="text-muted" style="font-size:12px;">{% trans %}customer.insights.favourite_restaurant{% endtrans %}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ── Recommendations ── #}
+{% if recommended_restaurants is not empty or recommended_products is not empty %}
+<h4>{% trans %}customer.recommendations.title{% endtrans %}</h4>
+<div class="row" style="margin-bottom:24px;">
+  {% if recommended_restaurants is not empty %}
+  <div class="col-sm-6">
+    <div class="panel panel-default">
+      <div class="panel-heading"><strong>{% trans %}customer.recommendations.restaurants{% endtrans %}</strong></div>
+      <ul class="list-group">
+        {% for restaurant in recommended_restaurants %}
+        <li class="list-group-item">
+          <a href="{{ path('admin_restaurant', { id: restaurant.id }) }}">{{ restaurant.name }}</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+  {% if recommended_products is not empty %}
+  <div class="col-sm-6">
+    <div class="panel panel-default">
+      <div class="panel-heading"><strong>{% trans %}customer.recommendations.products{% endtrans %}</strong></div>
+      <ul class="list-group">
+        {% for product in recommended_products %}
+        <li class="list-group-item">
+          {{ product.name }}
+          {% if product.restaurant %}
+            <small class="text-muted">— <a href="{{ path('admin_restaurant', { id: product.restaurant.id }) }}">{{ product.restaurant.name }}</a></small>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+
+{% if calendar_data is not empty %}
+<h4>{% trans %}customer.order_history.calendar{% endtrans %}</h4>
+<div id="customer-order-calendar"
+  data-days="{{ calendar_data|json_encode|e('html_attr') }}"
+  data-from="{{ calendar_from }}"
+  data-to="{{ calendar_to }}">
+</div>
+{% endif %}
+
+{# ── Order history ── #}
+<h4>{% trans %}customer.order_history.title{% endtrans %}</h4>
+
+{% if orders.totalItemCount > 0 %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>{% trans %}customer.order_history.date{% endtrans %}</th>
+      <th>{% trans %}customer.order_history.order{% endtrans %}</th>
+      <th>{% trans %}customer.order_history.status{% endtrans %}</th>
+      <th>{% trans %}customer.order_history.vendor{% endtrans %}</th>
+      <th>{% trans %}customer.order_history.method{% endtrans %}</th>
+      <th class="text-right">{% trans %}customer.order_history.total{% endtrans %}</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for order in orders %}
+    <tr>
+      <td>{{ order.createdAt|date('d/m/Y H:i') }}</td>
+      <td>
+        <a href="{{ path('admin_order', { id: order.id }) }}">#{{ order.number }}</a>
+      </td>
+      <td>{% include '_partials/order/state.html.twig' %}</td>
+      <td>
+        {% if order.vendor %}
+          {{ order.vendor.name }}
+        {% elseif order.delivery and order.delivery.store %}
+          {{ order.delivery.store.name }}
+        {% endif %}
+      </td>
+      <td>{{ ('fulfillment_method.' ~ order.fulfillmentMethod)|trans }}</td>
+      <td class="text-right">{{ order.total|price_format }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<nav class="text-center">
+  {{ knp_pagination_render(orders) }}
+</nav>
+{% else %}
+<div class="alert alert-info">{% trans %}customer.order_history.empty{% endtrans %}</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+{{ encore_entry_script_tags('customer') }}
+{% endblock %}

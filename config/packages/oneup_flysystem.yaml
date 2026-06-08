@@ -2,7 +2,7 @@ oneup_flysystem:
     adapters:
         assets:
             awss3v3:
-                client: s3_client
+                client: s3_client_assets
                 bucket: '%env(S3_BUCKET)%'
                 prefix: assets
         product_images:

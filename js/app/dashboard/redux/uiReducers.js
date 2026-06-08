@@ -19,6 +19,7 @@ import {
   loadVehiclesSuccess,
   loadTrailersSuccess,
   setTaskListsLoading,
+  setLoadingTaskIds,
   loadWarehousesSuccess,
   setOptimResult,
   startOptimRequest
@@ -50,6 +51,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         taskListsLoading: action.payload,
+      }
+
+    case setLoadingTaskIds.type:
+      return {
+        ...state,
+        loadingTaskIds: action.payload,
       }
 
     case OPEN_NEW_TASK_MODAL:

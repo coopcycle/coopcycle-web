@@ -73,6 +73,7 @@ export const selectIsFleetManagementLoaded = state => !selectVehiclesLoading(sta
 
 export const selectOptimLoading = state => state.logistics.ui.optimLoading
 export const selectUnassignedTasksLoading = state => state.logistics.ui.unassignedTasksLoading
+export const selectLoadingTaskIds = state => state.logistics.ui.loadingTaskIds ?? []
 export const selectOrderOfUnassignedTasks = state => state.logistics.ui.unassignedTasksIdsOrder
 export const selectOrderOfUnassignedToursAndGroups = state => state.logistics.ui.unassignedToursOrGroupsOrderIds
 

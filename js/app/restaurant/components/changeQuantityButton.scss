@@ -1,7 +1,3 @@
-@import "../../../../assets/css/vars.scss";
-
-@import "bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
-
 .quantity-change-button {
   min-width: 3rem;
   min-height: 3rem;
@@ -13,19 +9,15 @@
   > div {
     min-width: 2rem;
     min-height: 2rem;
-    background-color: $light-gray;
+    background-color: var(--color-base-200);
+    color: var(--color-base-content);
     border-radius: 0.25rem;
     display: flex;
     align-items: center;
     justify-content: center;
 
     &:hover {
-      background-color: $gray;
+      background-color: var(--color-base-300);
     }
-  }
-
-  &[disabled] {
-    cursor: $cursor-disabled;
-    @include opacity(.65);
   }
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d61a26ad35c4403369f4a29521ef0535",
+    "content-hash": "b6ea7643c9a7b917ef977671582634e5",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -1430,12 +1430,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/transporter.git",
-                "reference": "f2c54c997f4b0e4578a86dbb3deec9244ef4c23f"
+                "reference": "6cf3b2bd62f43d2997ef97d279c0c0d34ba9d1aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/f2c54c997f4b0e4578a86dbb3deec9244ef4c23f",
-                "reference": "f2c54c997f4b0e4578a86dbb3deec9244ef4c23f",
+                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/6cf3b2bd62f43d2997ef97d279c0c0d34ba9d1aa",
+                "reference": "6cf3b2bd62f43d2997ef97d279c0c0d34ba9d1aa",
                 "shasum": ""
             },
             "require": {
@@ -1465,7 +1465,7 @@
                 "source": "https://github.com/coopcycle/transporter/tree/master",
                 "issues": "https://github.com/coopcycle/transporter/issues"
             },
-            "time": "2025-12-16T14:58:51+00:00"
+            "time": "2026-06-02T14:04:22+00:00"
         },
         {
             "name": "craue/config-bundle",
@@ -7123,6 +7123,64 @@
             "time": "2025-12-30T11:30:49+00:00"
         },
         {
+            "name": "islesurlasorguetourisme/daisyui-form-bundle",
+            "version": "v0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Isle-sur-la-Sorgue-Tourisme/daisyui-form-bundle.git",
+                "reference": "40af22e48fa7e503355980dc585c19928402d342"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Isle-sur-la-Sorgue-Tourisme/daisyui-form-bundle/zipball/40af22e48fa7e503355980dc585c19928402d342",
+                "reference": "40af22e48fa7e503355980dc585c19928402d342",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1",
+                "symfony/http-kernel": "^6.4 || ^7.0",
+                "symfony/twig-bridge": "^6.4 || ^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^9.5 || ^10.0",
+                "symfony/form": "^6.4 || ^7.0",
+                "symfony/intl": "^6.4 || ^7.0",
+                "symfony/security-csrf": "^6.4 || ^7.0",
+                "symfony/test-pack": "^1.0",
+                "symfony/translation": "^6.4 || ^7.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Islesurlasorguetourisme\\DaisyuiFormBundle\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Enzo Brigati",
+                    "email": "ebrigati@islesurlasorguetourisme.com"
+                }
+            ],
+            "description": "A Symfony form theme bundle that provides seamless DaisyUI integration for automatically generated forms",
+            "homepage": "https://github.com/islesurlasorguetourisme/daisyui-form-bundle",
+            "keywords": [
+                "DaisyUI",
+                "bundle",
+                "form",
+                "symfony",
+                "theme"
+            ],
+            "support": {
+                "issues": "https://github.com/Isle-sur-la-Sorgue-Tourisme/daisyui-form-bundle/issues",
+                "source": "https://github.com/Isle-sur-la-Sorgue-Tourisme/daisyui-form-bundle/tree/v0.2"
+            },
+            "time": "2025-11-17T15:04:43+00:00"
+        },
+        {
             "name": "jaybizzle/crawler-detect",
             "version": "v1.3.8",
             "source": {
@@ -12163,12 +12221,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/edifact-mapping.git",
-                "reference": "c4067f69ceee888f26d7cbc7ef401fbb01e1a7b1"
+                "reference": "66e3425cec77b7be4c93c43bf9bd21dcfb39c8f1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/edifact-mapping/zipball/c4067f69ceee888f26d7cbc7ef401fbb01e1a7b1",
-                "reference": "c4067f69ceee888f26d7cbc7ef401fbb01e1a7b1",
+                "url": "https://api.github.com/repos/coopcycle/edifact-mapping/zipball/66e3425cec77b7be4c93c43bf9bd21dcfb39c8f1",
+                "reference": "66e3425cec77b7be4c93c43bf9bd21dcfb39c8f1",
                 "shasum": ""
             },
             "default-branch": true,
@@ -12193,7 +12251,7 @@
             "support": {
                 "source": "https://github.com/coopcycle/edifact-mapping/tree/master"
             },
-            "time": "2025-12-16T14:43:20+00:00"
+            "time": "2026-05-21T12:08:29+00:00"
         },
         {
             "name": "php-http/client-common",
@@ -14656,6 +14714,126 @@
                 "source": "https://github.com/php-edifact/edifact/tree/0.6.1"
             },
             "time": "2023-06-19T09:31:51+00:00"
+        },
+        {
+            "name": "scheb/2fa-bundle",
+            "version": "v7.13.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/scheb/2fa-bundle.git",
+                "reference": "edcc14456b508aab37ec792cfc36793d04226784"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/scheb/2fa-bundle/zipball/edcc14456b508aab37ec792cfc36793d04226784",
+                "reference": "edcc14456b508aab37ec792cfc36793d04226784",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
+                "symfony/config": "^6.4 || ^7.0",
+                "symfony/dependency-injection": "^6.4 || ^7.0",
+                "symfony/event-dispatcher": "^6.4 || ^7.0",
+                "symfony/framework-bundle": "^6.4 || ^7.0",
+                "symfony/http-foundation": "^6.4 || ^7.0",
+                "symfony/http-kernel": "^6.4 || ^7.0",
+                "symfony/property-access": "^6.4 || ^7.0",
+                "symfony/security-bundle": "^6.4 || ^7.0",
+                "symfony/service-contracts": "^2.5|^3",
+                "symfony/twig-bundle": "^6.4 || ^7.0"
+            },
+            "conflict": {
+                "scheb/two-factor-bundle": "*"
+            },
+            "suggest": {
+                "scheb/2fa-backup-code": "Emergency codes when you have no access to other methods",
+                "scheb/2fa-email": "Send codes by email",
+                "scheb/2fa-google-authenticator": "Google Authenticator support",
+                "scheb/2fa-totp": "Temporary one-time password (TOTP) support (Google Authenticator compatible)",
+                "scheb/2fa-trusted-device": "Trusted devices support"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Scheb\\TwoFactorBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Scheb",
+                    "email": "me@christianscheb.de"
+                }
+            ],
+            "description": "A generic interface to implement two-factor authentication in Symfony applications",
+            "homepage": "https://github.com/scheb/2fa",
+            "keywords": [
+                "2fa",
+                "Authentication",
+                "symfony",
+                "two-factor",
+                "two-step"
+            ],
+            "support": {
+                "source": "https://github.com/scheb/2fa-bundle/tree/v7.13.1"
+            },
+            "time": "2025-12-18T15:29:07+00:00"
+        },
+        {
+            "name": "scheb/2fa-email",
+            "version": "v7.13.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/scheb/2fa-email.git",
+                "reference": "ee70a062dde6aa9d566f99d2b1ae40b544ddbcef"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/scheb/2fa-email/zipball/ee70a062dde6aa9d566f99d2b1ae40b544ddbcef",
+                "reference": "ee70a062dde6aa9d566f99d2b1ae40b544ddbcef",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
+                "scheb/2fa-bundle": "self.version"
+            },
+            "suggest": {
+                "symfony/mailer": "Needed if you want to use the default mailer implementation"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Scheb\\TwoFactorBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Scheb",
+                    "email": "me@christianscheb.de"
+                }
+            ],
+            "description": "Extends scheb/2fa-bundle with two-factor authentication via email",
+            "homepage": "https://github.com/scheb/2fa",
+            "keywords": [
+                "2fa",
+                "Authentication",
+                "email",
+                "symfony",
+                "two-factor",
+                "two-step"
+            ],
+            "support": {
+                "source": "https://github.com/scheb/2fa-email/tree/v7.13.1"
+            },
+            "time": "2025-11-20T13:35:24+00:00"
         },
         {
             "name": "sebastian/comparator",
@@ -30319,16 +30497,16 @@
     ],
     "minimum-stability": "dev",
     "stability-flags": {
-        "drupal/core-vendor-hardening": 20,
-        "shahonseven/php-color-hash": 20,
+        "behatch/contexts": 20,
         "coopcycle/transporter": 20,
-        "behatch/contexts": 20
+        "drupal/core-vendor-hardening": 20,
+        "shahonseven/php-color-hash": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.2"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
 }

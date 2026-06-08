@@ -20,7 +20,6 @@ Encore
 
   .addEntry('app', './assets/app.js')
   .addEntry('admin', './assets/admin.js')
-  .addEntry('admin-cube', './js/app/admin/cube.js')
   .addEntry('admin-orders', './js/app/admin/orders.js')
   .addEntry('admin-restaurants', './js/app/admin/restaurants.js')
   .addEntry('admin-foodtech-dashboard', './js/app/admin/foodtech/dashboard.js')
@@ -47,6 +46,8 @@ Encore
   .addEntry('foodtech-dashboard', './js/app/foodtech/dashboard/index.js')
   .addEntry('metrics', './js/app/metrics/index.js')
   .addEntry('metrics-admin', './js/app/metrics/admin.js')
+  .addEntry('rfm', './js/app/rfm/index.js')
+  .addEntry('customer', './js/app/customer/index.jsx')
   .addEntry('metrics-loopeat', './js/app/metrics/loopeat.js')
   .addEntry('optins', './js/app/optins/index.js')
   // FoodTech checkout; "Address" page (path: '/order/')

@@ -16,6 +16,7 @@ parameters:
   env(APP_PUBLIC_DIR): "%kernel.project_dir%/web"
   env(APP_LOG_DIR): "%kernel.logs_dir%"
   env(APP_VERSION): dev-master
+  env(COOPCYCLE_RECOMMENDER_URL): 'http://recommender:8000/'
   secret: "%env(APP_SECRET)%"
   country_iso: "%env(COOPCYCLE_COUNTRY)%"
   region_iso: "%env(COOPCYCLE_REGION)%"
@@ -82,6 +83,7 @@ services:
       $packageDeliveryUiPriceBreakdownEnabled: "%package_delivery_ui_price_breakdown_enabled%"
       $taxIncl: '%env(bool:COOPCYCLE_TAX_INCL)%'
       $appName: '%env(COOPCYCLE_APP_NAME)%'
+      Symfony\Contracts\HttpClient\HttpClientInterface $recommenderClient: '@recommender.client'
 
   # For some cache pools, want *STABLE* cache keys between deploys.
   # To achieve this, we *EXPLICITLY* set a namespace,
@@ -318,6 +320,11 @@ services:
       $optinExportUsersEnabled: '%env(bool:OPTIN_EXPORT_USERS_ENABLED)%'
       $incidentImagesFilesystem: '@incident_images_filesystem'
       $edifactFilesystem: '@edi_messages_filesystem'
+
+  AppBundle\Controller\Admin\CustomerSegmentationController:
+    arguments:
+      $rfmEnabled:      '%env(bool:RFM_ENABLED)%'
+      $settingsManager: '@AppBundle\Service\SettingsManager'
 
   AppBundle\Controller\AssetsController:
     arguments:
@@ -788,6 +795,13 @@ services:
     class: AppBundle\EventListener\AuthenticationWebSuccessHandler
     arguments: ['@security.http_utils', '@router']
 
+  coopcycle.two_factor_success_handler:
+    class: AppBundle\EventListener\AuthenticationWebSuccessHandler
+    arguments: ['@security.http_utils', '@router']
+    calls:
+      - [setFirewallName, ['web']]
+      - [setOptions, [{ default_target_path: '/' }]]
+
   AppBundle\Security\UserManager:
     arguments:
       $decorated: '@nucleos_user.user_manager.default'
@@ -811,6 +825,14 @@ services:
     arguments:
       $transactionalAddress: "%transactional_address%"
       $hashids16: '@hashids.16'
+
+  AppBundle\Security\TwoFactor\EmailAuthCodeMailer:
+    arguments:
+      $transactionalAddress: "%transactional_address%"
+
+  AppBundle\Security\TwoFactor\TwoFactorCondition:
+    arguments:
+      $isDemo: "%is_demo%"
 
   AppBundle\Service\RemotePushNotificationManager: ~
 
@@ -1125,6 +1147,20 @@ services:
 
   # https://digitalist.se/blogg/using-open-source-minio-and-flysystem-s3-module-handle-drupal-files
   # https://github.com/minio/cookbook/blob/master/docs/how-to-use-minio-as-laravel-file-storage.md
+  s3_client_assets:
+    class: Aws\S3\S3Client
+    arguments:
+        - endpoint: '%env(S3_ENDPOINT)%'
+          version: latest
+          region: '%env(S3_REGION)%'
+          credentials:
+            key: '%env(S3_CREDENTIALS_KEY)%'
+            secret: '%env(S3_CREDENTIALS_SECRET)%'
+          use_path_style_endpoint: true
+          http:
+            connect_timeout: 2
+            timeout: 3
+
   s3_client:
     class: Aws\S3\S3Client
     arguments:
@@ -1135,6 +1171,9 @@ services:
             key: '%env(S3_CREDENTIALS_KEY)%'
             secret: '%env(S3_CREDENTIALS_SECRET)%'
           use_path_style_endpoint: true
+          http:
+            connect_timeout: 5
+            timeout: 15
 
   AppBundle\Service\StripeManager:
     tags:
@@ -1725,3 +1764,5 @@ services:
     decorates: api_platform.name_converter
     arguments:
       - '@.inner'
+
+  AppBundle\Utils\TsRangeFormatter: ~

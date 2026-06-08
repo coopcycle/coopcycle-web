@@ -6,6 +6,8 @@ use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\Delivery\FailureReasonSet;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Enum\FoodEstablishment;
+use AppBundle\Form\Restaurant\DayOfWeekAddressType;
+use AppBundle\Form\Restaurant\DayOfWeekDeliveryPerimeterExpressionType;
 use AppBundle\Form\Restaurant\FulfillmentMethodType;
 use AppBundle\Form\Restaurant\LoopeatType;
 use AppBundle\Form\Restaurant\ShippingOptionsTrait;
@@ -14,7 +16,6 @@ use AppBundle\Form\Type\LocalBusinessTypeChoiceType;
 use AppBundle\Form\Type\QueryBuilder\OrderByNameQueryBuilder;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -71,6 +72,22 @@ class RestaurantType extends LocalBusinessType
                 'label' => false,
                 'help' => 'localBusiness.form.business_address.help',
                 'required' => false,
+            ])
+            ->add('dayOfWeekAddresses', CollectionType::class, [
+                'label' => 'localBusiness.form.day_of_week_addresses.label',
+                'help' => 'localBusiness.form.day_of_week_addresses.help',
+                'entry_type' => DayOfWeekAddressType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+            ])
+            ->add('dayOfWeekDeliveryPerimeterExpressions', CollectionType::class, [
+                'label' => 'localBusiness.form.day_of_week_delivery_perimeter_expressions.label',
+                'help' => 'localBusiness.form.day_of_week_addresses.help',
+                'entry_type' => DayOfWeekDeliveryPerimeterExpressionType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
             ])
             ;
 

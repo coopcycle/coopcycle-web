@@ -3,12 +3,34 @@
 {% block styles_common %}
   {{ encore_entry_link_tags('frontend') }}
   {% block styles %}{% endblock %}
-  {% if coopcycle_has_banner() %}
+  {% set banner_background_url = coopcycle_banner_background_url() %}
+  {% if coopcycle_has_banner() or banner_background_url %}
   <style>
   .homepage-search, .restaurant-list-header {
-    background-image: url({{ url('assets_banner_svg')  }});
+    background-image: url({% if banner_background_url %}'{{ banner_background_url }}'{% else %}{{ url('assets_banner_svg') }}{% endif %});
+    {% if banner_background_url %}
+    background-size: cover;
+    background-position: center;
+    {% endif %}
   }
+  {% if banner_background_url %}
+  {% set banner_tone = coopcycle_banner_background_tone() %}
+  .homepage-search h1 {
+    color: {{ banner_tone == 'light' ? '#1a1a1a' : '#ffffff' }};
+  }
+  {% endif %}
   </style>
+  {% set theme = coopcycle_theme() %}
+
+  {% if theme|length > 0 %}
+    <style>
+      :root {
+      {% for theme_variable, theme_value in theme %}
+        --color-{{ theme_variable }}: {{ theme_value }};
+      {% endfor %}
+      }
+    </style>
+  {% endif %}
   {% endif %}
 {% endblock %}
 
@@ -16,19 +38,14 @@
   {% if not embed_context.enabled %}
   {% include "menu.html.twig" %}
   {% endif %}
+
 {% endblock %}
 
 {% block banner %}
   {% if is_demo %}
-    <section class="banner">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-8 col-md-offset-2 text-center">
-            <h3>{{ 'demo.disclaimer'|trans|raw }}</h3>
-            <h4 class="hidden-xs">{{ 'demo.disclaimer.subtitle'|trans|raw }}</h4>
-          </div>
-        </div>
-      </div>
+    <section class="alert alert-info alert-soft flex flex-col justify-center gap-1">
+      <h3 class="text-center">{{ 'demo.disclaimer'|trans|raw }}</h3>
+      <h4 class="text-center hidden sm:block">{{ 'demo.disclaimer.subtitle'|trans|raw }}</h4>
     </section>
   {% endif %}
   {% include '_partials/maintenance.html.twig' %}

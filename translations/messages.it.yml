@@ -128,7 +128,7 @@ localBusiness.form.orderingDelayMinutes.help: Usa questo campo per inserire del 
 localBusiness.form.orderingDelayHours: Ora(e)
 restaurant.contract.feeRate.help: Questa percentuale verrà trattenuta dalla piattaforma
   sul totale dei prodotti
-order_item.adjustment_type.reusable_packaging: '%quantity% × collo/i'
+order_item.adjustment_type.reusable_packaging: '%quantity% × « %name% » collo/i'
 localBusiness.form.orderingDelayDays: Giorno(i)
 localBusiness.form.name: Nome
 localBusiness.form.description: Descrizione
@@ -683,6 +683,7 @@ form.package.max_volume_units: Questo valore verrà utilizzato per calcolare i p
 form.package.average_weight.label: Peso medio (kg)
 form.package.max_weight.label: Peso massimo (kg)
 form.package.shortCode.label: Codice di 2 lettere
+form.package.shortCode.help: Limitato a 2 caratteri
 form.package.enter_details: Mostra/nascondi i dettagli
 form.reusable_packaging.name.label: Nome
 form.reusable_packaging.is_tracked.label: Abilità tracciamento

@@ -3,7 +3,7 @@
   {% if block.type is defined and block.data is defined %}
     {% if block.type == 'shop_collection' %}
       {% if block.data.component is defined and block.data.component is not empty %}
-        {{ component(('ShopCollection:' ~ (block.data.component|capitalize)), block.data.args ?? []) }}
+        {{ component(('ShopCollection:' ~ (block.data.component == 'zerowaste' ? 'ZeroWaste' : block.data.component|capitalize)), block.data.args ?? []) }}
       {% endif %}
     {% endif %}
     {% if block.type == 'banner' %}

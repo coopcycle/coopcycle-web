@@ -100,7 +100,7 @@ export default function ({ order, liablePartyForm }) {
       key: 'paymentMethod',
       render: (method) => (
         <span title={method.code}>
-          <PaymentMethodIcon code={method.code} height={24} />
+          <PaymentMethodIcon code={method.code} size="xs" />
         </span>
       )
     },

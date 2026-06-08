@@ -327,6 +327,22 @@ services:
     profiles:
       - devOdoo
 
+  recommender:
+    build:
+      dockerfile: './recommender/Dockerfile'
+      context: '.'
+    image: coopcycle/recommender
+    environment:
+      - MODEL_DIR=/models
+    volumes:
+      - recommender_models:/models
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
 volumes:
   clickhouse_data:
   clickhouse_logs:
@@ -340,3 +356,4 @@ volumes:
   php_public_images:
   odoo-web-data:
   odoo-db-data:
+  recommender_models:

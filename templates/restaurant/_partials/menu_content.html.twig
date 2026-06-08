@@ -1,12 +1,12 @@
 {% set max_displayed_products = 10 %}
 {% set displayed_products = 0 %}
-<div class="restaurant-menu">
+<div class="restaurant-menu max-md:mb-[50px]">
   {% for section in sections %}
     <h4 id={{ section.name|url_encode }} class="restaurant-menu__section-name">{{ section.name }}</h4>
     {% if section.description is not empty %}
       <div class="text-muted">{{ section.description }}</div>
     {% endif %}
-    <div class="restaurant-menu__section">
+    <div class="restaurant-menu__section grid gap-6 pt-4 pb-16 grid-cols-1 md:grid-cols-2 2xl:grid-cols-3">
       {% for product in section.products %}
         {% set props = { product: product } %}
         {# If there are more than X products, they rest will be lazy loaded #}

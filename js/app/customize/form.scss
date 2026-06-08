@@ -34,3 +34,15 @@
   color: #ced4da;
   font-style: italic;
 }
+
+// Reset Bootstrap 3 link styles inside the homepage preview wrapper
+.homepage-preview {
+  a {
+    color: inherit;
+    text-decoration: none;
+    &:hover {
+      color: inherit;
+      text-decoration: underline;
+    }
+  }
+}

@@ -9,9 +9,9 @@ jobs:
     env:
       CYPRESS_INSTALL_BINARY: '0'
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v2
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.x'
       - name: Setup PHP
@@ -24,6 +24,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: composer install --prefer-dist --no-progress --no-scripts
       - run: npm ci
+      - name: Install @tailwindcss/oxide Linux x64 native binding
+        run: |
+          URL=$(node -p "require('./package-lock.json').packages['node_modules/@tailwindcss/oxide-linux-x64-gnu'].resolved")
+          mkdir -p "node_modules/@tailwindcss/oxide-linux-x64-gnu"
+          curl -sL "$URL" | tar xzf - -C "node_modules/@tailwindcss/oxide-linux-x64-gnu" --strip-components=1
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip

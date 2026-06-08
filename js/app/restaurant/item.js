@@ -63,16 +63,13 @@ function init() {
     return
   }
 
-  document.addEventListener('submit', (e) => {
-    const productSimple = e.target.closest('form[data-product-simple]');
-    if (productSimple) {
-      e.preventDefault();
-      // $(e.currentTarget).closest('.modal').modal('hide')
-      store.dispatch(queueAddItem(productSimple.getAttribute('action'), 1))
-    }
-  })
-
   document.addEventListener('click', (e) => {
+    const productSimple = e.target.closest('[data-product-simple]');
+    if (productSimple) {
+      store.dispatch(queueAddItem(productSimple.dataset.formAction, 1))
+      return
+    }
+
     const productDetails = e.target.closest('[data-modal="product-details"]');
     if (productDetails) {
       const product    = JSON.parse(productDetails.dataset.product)

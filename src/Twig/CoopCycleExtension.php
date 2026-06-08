@@ -89,6 +89,8 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('stripe_can_enable_testmode', array(StripeResolver::class, 'canEnableTestmode')),
             new TwigFunction('coopcycle_logo', array(AppearanceRuntime::class, 'logo')),
             new TwigFunction('coopcycle_company_logo', array(AppearanceRuntime::class, 'companyLogo')),
+            new TwigFunction('coopcycle_banner_background_url', array(AppearanceRuntime::class, 'getBannerBackgroundUrl')),
+            new TwigFunction('coopcycle_banner_background_tone', array(AppearanceRuntime::class, 'getBannerBackgroundTone')),
             new TwigFunction('coopcycle_asset', array(AssetsRuntime::class, 'asset')),
             new TwigFunction('coopcycle_asset_base64', array(AssetsRuntime::class, 'assetBase64')),
             new TwigFunction('local_business_path', array(UrlGeneratorRuntime::class, 'localBusinessPath')),
@@ -116,6 +118,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('coopcycle_version', array(SettingResolver::class, 'getVersion')),
             new TwigFunction('coopcycle_github_release_link', array(SettingResolver::class, 'getGithubReleaseLink')),
             new TwigFunction('addresses_normalized', array(UserRuntime::class, 'getUserAddresses')),
+            new TwigFunction('coopcycle_theme', array(AppearanceRuntime::class, 'getTheme')),
         );
     }
 

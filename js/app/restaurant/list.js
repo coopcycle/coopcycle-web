@@ -90,8 +90,8 @@ new Swiper('.swiper-homepage', {
   slidesPerGroup: 1,
   spaceBetween: 20,
   navigation: {
-    nextEl: '.swiper-button-next',
-    prevEl: '.swiper-button-prev',
+    nextEl: '.swiper-nav-next',
+    prevEl: '.swiper-nav-prev',
   },
   // https://getbootstrap.com/docs/5.3/layout/breakpoints/
   breakpoints: {

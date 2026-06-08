@@ -29,11 +29,11 @@ function disableScopes(selectEl) {
   var checkboxesToDisable = [];
   var checkboxesToEnable = [];
   if (!selectEl.value) {
-    checkboxesToDisable = Array.from(document.querySelectorAll('#api_app_scopes input[type="checkbox"]:not([value="orders:all"])'));
-    checkboxesToEnable = Array.from(document.querySelectorAll('#api_app_scopes input[type="checkbox"][value="orders:all"]'));
+    checkboxesToDisable = Array.from(document.querySelectorAll('#api_app_scopes input[type="checkbox"]:not([value="orders:all"]):not([value="tasks:all"])'));
+    checkboxesToEnable = Array.from(document.querySelectorAll('#api_app_scopes input[type="checkbox"][value="orders:all"], #api_app_scopes input[type="checkbox"][value="tasks:all"]'));
   } else {
-    checkboxesToDisable = Array.from(document.querySelectorAll('#api_app_scopes input[type="checkbox"][value="orders:all"]'));
-    checkboxesToEnable = Array.from(document.querySelectorAll('#api_app_scopes input[type="checkbox"]:not([value="orders:all"])'));
+    checkboxesToDisable = Array.from(document.querySelectorAll('#api_app_scopes input[type="checkbox"][value="orders:all"], #api_app_scopes input[type="checkbox"][value="tasks:all"]'));
+    checkboxesToEnable = Array.from(document.querySelectorAll('#api_app_scopes input[type="checkbox"]:not([value="orders:all"]):not([value="tasks:all"])'));
   }
   checkboxesToDisable.forEach(function (checkbox) {
     checkbox.setAttribute('disabled', true);

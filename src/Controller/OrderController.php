@@ -38,6 +38,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToCheckFileExistence;
+use League\Flysystem\UnableToReadFile;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use phpcent\Client as CentrifugoClient;
@@ -265,7 +266,7 @@ class OrderController extends AbstractController
             }
         }
 
-        return $this->render('order/index.html.twig', [
+        return $this->render('order/index.html.twig', $this->auth([
             'order' => $order,
             'shipping_time_range' => $this->getShippingTimeRange($order),
             'pre_submit_errors' => $form->isSubmitted() ? null : ValidationUtils::serializeViolationList($orderErrors),
@@ -275,7 +276,7 @@ class OrderController extends AbstractController
             'form_coupon' => $couponForm->createView(),
             'form_vytal' => $vytalForm->createView(),
             'form_loopeat_returns' => $loopeatReturnsForm->createView(),
-        ]);
+        ]));
     }
 
     private function getShippingTimeRange(OrderInterface $order)
@@ -513,7 +514,7 @@ class OrderController extends AbstractController
             if ($assetsFilesystem->fileExists('order_confirm.md')) {
                 $customMessage = $assetsFilesystem->read('order_confirm.md');
             }
-        } catch (UnableToCheckFileExistence $e) {
+        } catch (UnableToCheckFileExistence|UnableToReadFile $e) {
             $this->checkoutLogger->error($e->getMessage());
         }
 

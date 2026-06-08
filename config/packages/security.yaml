@@ -80,6 +80,12 @@ security:
             stateless: true
             bearer_token: true
 
+        api_tasks:
+            pattern:   ^/api/tasks$
+            methods: [ GET ]
+            stateless: true
+            bearer_token: true
+
         api_tasks_import:
             pattern:   ^/api/tasks/import
             methods: [ POST ]
@@ -329,6 +335,10 @@ security:
             form_login:
                 provider: nucleos_userbundle
                 success_handler: coopcycle.web_success_handler
+            two_factor:
+                auth_form_path: 2fa_login
+                check_path: 2fa_login_check
+                success_handler: coopcycle.two_factor_success_handler
             oauth:
                 resource_owners:
                     facebook:             "/login/check-facebook"
@@ -346,6 +356,8 @@ security:
             lazy: true
 
     access_control:
+        - { path: ^/2fa$, role: IS_AUTHENTICATED_2FA_IN_PROGRESS }
+        - { path: ^/2fa_check$, role: IS_AUTHENTICATED_2FA_IN_PROGRESS }
         - { path: ^/login, role: PUBLIC_ACCESS }
         - { path: ^/register, role: PUBLIC_ACCESS }
         - { path: ^/resetting, role: PUBLIC_ACCESS }

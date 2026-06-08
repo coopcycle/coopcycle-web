@@ -72,6 +72,7 @@ Feature: Manage shops
         "nextOpeningDate":"@string@.isDateTime()",
         "hub":null,
         "loopeatEnabled":false,
+        "loopeatMandatory":false,
         "tags":@array@,
         "badges":@array@,
         "autoAcceptOrdersEnabled": @boolean@,

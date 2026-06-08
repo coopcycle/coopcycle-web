@@ -386,6 +386,12 @@ class LocalBusinessRepository extends EntityRepository
                                     )
                                     ->setParameter('enabled', true);
                                 break;
+                            case 'edenred':
+                                $qb
+                                    ->andWhere('r.edenredEnabled = :edenredEnabled')
+                                    ->andWhere('r.edenredMerchantId IS NOT NULL')
+                                    ->setParameter('edenredEnabled', true);
+                                break;
                             default:
                                 break;
                         }

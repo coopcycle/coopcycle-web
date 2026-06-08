@@ -168,6 +168,7 @@ class ReusablePackaging implements StockableInterface
 
         return $translator->trans('order_item.adjustment_type.reusable_packaging', [
             '%quantity%' => $units,
+            '%name%' => $this->getName(),
         ]);
     }
 }

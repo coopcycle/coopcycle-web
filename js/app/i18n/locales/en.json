@@ -181,6 +181,7 @@
         "ADMIN_DASHBOARD_WEIGHT": "Weight",
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_DAY_MULTI": "Move {{count}} tasks to next day",
         "ADMIN_DASHBOARD_START_TASKS_MULTI": "Start {{count}} tasks",
+        "ADMIN_DASHBOARD_COMPLETE_TASKS_MULTI": "Complete {{count}} task(s)",
         "ADMIN_DASHBOARD_MOVE_TO_NEXT_WORKING_DAY_MULTI": "Move {{count}} tasks to next working day ({{nextWorkingDay}})",
         "ADMIN_DASHBOARD_VIEW_MODE_DROPOFF_ASC": "Display by dropoff asc.",
         "ADMIN_DASHBOARD_RECURRENCE_RULE_MODAL_TITLE": "Recurrence rule",
@@ -508,6 +509,9 @@
         "SEARCH_ORDER_NUMBER_ERROR": "Enter a valid order number",
         "ADD_PRODUCTS_TO_ORDER_TITLE": "Add products to order #{{number}}",
         "ADMIN_DASHBOARD_CREATE_DELIVERY": "Create delivery",
+        "ADMIN_DASHBOARD_SEND_TO_WAREHOUSE": "Send to warehouse",
+        "ADMIN_DASHBOARD_SEND_TO_WAREHOUSE_HELP": "This will insert two intermediate tasks: a drop-off at the warehouse and a pick-up from the warehouse. The original pick-up and drop-off tasks are kept as-is.",
+        "ADMIN_DASHBOARD_CHOOSE_WAREHOUSE_LABEL": "Choose a warehouse",
         "ADMIN_DASHBOARD_CHOOSE_STORE_LABEL": "Choose a store",
         "SEARCH_SHOPS": "Shops",
         "SEARCH_PRODUCTS": "Products",
@@ -812,6 +816,7 @@
             "enable_preview": "Enable preview",
             "disable_preview": "Disable preview",
             "placeholder": "Type \"/\" to insert a block",
+            "published": "Published",
             "messages": {
                 "tools": {
                     "shop_collection": {

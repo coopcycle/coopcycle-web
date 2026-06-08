@@ -43,6 +43,7 @@ twig:
         group_orders_enabled: '%group_orders_enabled%'
         business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
         odoo_url: '%env(ODOO_URL)%'
+        rfm_enabled: '%env(bool:RFM_ENABLED)%'
         invitation_link_provider: '@AppBundle\Service\InvitationLinkProviderService'
         paygreen_environment: '%env(PAYGREEN_ENVIRONMENT)%'
 

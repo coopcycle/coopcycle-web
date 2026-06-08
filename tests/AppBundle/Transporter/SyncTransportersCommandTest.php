@@ -39,6 +39,10 @@ class SyncTransportersCommandTest extends KernelTestCase {
     UNA:+,? ' UNB+UNOC:1+123456789:22+987654321:22+240325:1951+2206' UNH+1+SCONTR:3:2:GT:GTF210+ACG' BGM++240325' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC' DTM+DEP+240325' NAD+DP+98765432100010:05++COOPCYCLE TESTING INC' TSR+++3' CAG+P+V' TDT++++3' DOC+730+++ACG+2278663' UNS+D' RFF+CN+JOY0123456789' GID++1:23+1:21' MSE+CGW+15:KG' NAD+CN+++JOHN DOE:ZIMP COMPANY+INVALID ADDRESS+VOID CITY++00+FR' NAD+CO+++HOME DEPOT+54 ROUTE DE TREGUIER:BP 8+LOUANNEC++22+FR' DTM+DES+240322' NAD+FW+12345678900935:05++DBSCHENKER TESTING INC+LE BREHAT:ALLEE DES CHATELETS+PLOUFRAGAN++22440+FR' CAG+P+V+++++++++227004' TSR++D:E+3' GDS+G+DIVERS' PCI+23' GIN+BN+*2222121907222700470100691001300' DOC+WBL::JOY0123456789+++ACG+70100691+219072' DOC+824+++PRI+FRSBK830689437' UNS+S' UNT+26+1' UNZ+1+2206'
     EDI;
 
+    const EDI_DISPOR_SAMPLE = <<<EDI
+    UNA:+,? ' UNB+UNOC:1+349669192:22+942803198:22+260602:1341+999901484802' UNH+1484802+DISPOR:3:2:GT:GTF110' BGM++1484802' TSR+++3' CAG+P+V' NAD+CO+40017751500048:05++ORLEANS LOG PC LA ROSEE' DTM+DEP+260602' NAD+FW+94280319800020:05++CYCLOGIK' GDS+G+.' TDT++++3' DOC+730+++ACG+78822' UNS+D' RFF+SEN+LACOURSERIETEST' GID++1:23' MSE+CGW+16,000:KG' NAD+CN+++TEST LA COURSERIE+64 RUE ALEXANDRE DUMAS+PARIS++75+FR' CTA++:TEST MTO+06 01 02 03 04:TE+mtor@tel.fr:TM' NAD+OS+++ORLEANS LOG PC LA ROSEE+7 ROUTE DE BOIGNY+SAINT JEAN DE BRAYE++45800+FR' CAG+P+V+++++LRC++++LRC' TSR+++3' TXT+DEL+TEST A SUPPRIMER' GDS+G+TEST' PCI+23' GIN+BN+*69069000000000LRC01699848001300' DOC+WBL+++PRI+1699848' DOC+150+++PRI+LACOURSERIETEST' UNS+S' UNT+27+1484802' UNZ+1+999901484802'
+    EDI;
+
     const PARTIAL_REPORT_EDI_SAMPLE = <<<EDI
     UNB+UNOC:1+4447190000:22+0000011:22+
     NAD+MR+4447190000:5++Coopcycle Testing Inc.'
@@ -72,6 +76,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
     EDI;
 
     const FS_MASK_DBS = 'testingdbs';
+    const FS_MASK_TALIAE = 'testingtaliae';
 
     protected EntityManagerInterface $entityManager;
     protected TaskManager $taskManager;
@@ -80,6 +85,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
     protected Filesystem $syncDBSchenkerFs;
     protected Filesystem $syncInBMVFs;
     protected Filesystem $syncOutBMVFs;
+    protected Filesystem $syncTaliaeFs;
     protected Filesystem $edifactFs;
     protected DeliveryOrderManager $deliveryOrderManager;
     protected $params;
@@ -102,6 +108,7 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->syncDBSchenkerFs = new Filesystem(new InMemoryFilesystemAdapter());
         $this->syncInBMVFs = new Filesystem(new InMemoryFilesystemAdapter());
         $this->syncOutBMVFs = new Filesystem(new InMemoryFilesystemAdapter());
+        $this->syncTaliaeFs = new Filesystem(new InMemoryFilesystemAdapter());
         $this->edifactFs = new Filesystem(new InMemoryFilesystemAdapter());
         $this->deliveryOrderManager = self::getContainer()->get(DeliveryOrderManager::class);
 
@@ -157,11 +164,23 @@ class SyncTransportersCommandTest extends KernelTestCase {
                             'uri' => $this->syncOutBMVFs
                         ]
                     ]
+                ],
+                'TELIAE' => [
+                    'enabled' => true,
+                    'name' => 'Taliae test',
+                    'legal_name' => 'Taliae Testing Inc.',
+                    'legal_id' => '0000044',
+                    'sync' => [
+                        'filemask' => self::FS_MASK_TALIAE,
+                        'uri' => $this->syncTaliaeFs,
+                    ]
                 ]
             ]);
 
         $this->syncDBSchenkerFs->createDirectory(sprintf('to_%s', self::FS_MASK_DBS));
         $this->syncDBSchenkerFs->createDirectory(sprintf('from_%s', self::FS_MASK_DBS));
+        $this->syncTaliaeFs->createDirectory(sprintf('to_%s', self::FS_MASK_TALIAE));
+        $this->syncTaliaeFs->createDirectory(sprintf('from_%s', self::FS_MASK_TALIAE));
     }
 
     protected function initCommand(): Command
@@ -898,6 +917,164 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $dir_list = $this->syncInBMVFs->listContents('/')->toArray();
         $this->assertCount(1, $dir_list);
         $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('BMV');
+        $this->assertCount(0, $unsynced);
+    }
+
+    public function testValidSyncOneDisporTask(): void
+    {
+        // Insert edi to sync
+        $this->syncTaliaeFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_TALIAE),
+            self::EDI_DISPOR_SAMPLE
+        );
+
+        // Valid the file is there
+        $dir_list = $this->syncTaliaeFs->listContents(sprintf('to_%s', self::FS_MASK_TALIAE))->toArray();
+        $this->assertCount(1, $dir_list);
+
+        $command = $this->initCommand();
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'transporter' => 'TELIAE'
+        ]);
+
+        // Check command output
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 1 tasks', $output);
+        $this->assertStringContainsString('No messages to send', $output);
+
+        // Check if command removed the file to sync
+        $dir_list = $this->syncTaliaeFs->listContents(sprintf('to_%s', self::FS_MASK_TALIAE))->toArray();
+        $this->assertCount(0, $dir_list);
+
+        $delivery = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $this->assertCount(1, $delivery);
+
+        /** @var Delivery $delivery */
+        $delivery = array_shift($delivery);
+        $this->assertCount(2, $delivery->getTasks());
+
+
+        /** @var Task $pickup */
+        $pickup = $delivery->getPickup();
+        /** @var Task $dropoff */
+        $dropoff = $delivery->getDropoff();
+
+
+        $this->assertEquals('Taliae', $delivery->getStore()->getName());
+
+        $this->assertEquals(
+            '18, avenue Ledru-Rollin 75012 Paris 12ème',
+            $pickup->getAddress()->getStreetaddress()
+        );
+        $this->assertEquals(new GeoCoordinates(48.864577, 2.333338), $pickup->getAddress()->getGeo());
+
+
+
+        $this->assertEquals(
+            'Rue Alexandre Dumas 64, 75011 Paris',
+            $dropoff->getAddress()->getStreetaddress()
+        );
+        $this->assertEquals(new GeoCoordinates(48.854034, 2.395023), $dropoff->getAddress()->getGeo());
+        $this->assertEquals(
+            'Country Code: 33 National Number: 601020304',
+            $dropoff->getAddress()->getTelephone()->__toString()
+        );
+        $this->assertEquals(
+            'TEST LA COURSERIE',
+            $dropoff->getAddress()->getCompany()
+        );
+        $this->assertEquals(
+            'TEST MTO',
+            $dropoff->getAddress()->getContactName()
+        );
+        $this->assertEquals(
+            'TEST A SUPPRIMER',
+            $dropoff->getComments()
+        );
+
+        $this->assertEquals(16000, $delivery->getWeight());
+        $this->assertEquals($pickup, $dropoff->getPrevious());
+
+        $ediMessage = $dropoff->getImportMessage();
+        $this->assertNotNull($ediMessage);
+        $this->assertEquals('LACOURSERIETEST', $ediMessage->getReference());
+        $this->assertEquals('TELIAE', $ediMessage->getTransporter());
+        $this->assertEquals(
+            EDIFACTMessage::DIRECTION_INBOUND,
+            $ediMessage->getDirection()
+        );
+
+        $this->assertEquals(
+            EDIFACTMessage::MESSAGE_TYPE_DISPOR,
+            $ediMessage->getMessageType()
+        );
+
+
+        $this->assertCount(1, $dropoff->getEdifactMessages());
+        $this->taskManager->start($pickup);
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($pickup);
+        $this->entityManager->flush();
+        $this->taskManager->start($dropoff);
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($dropoff);
+        $this->entityManager->flush();
+
+        $this->assertCount(3, $pickup->getEdifactMessages());
+        $this->assertCount(2, $dropoff->getEdifactMessages());
+
+        $pickupReportEDIMessage = $pickup->getEdifactMessages()->map(function (EDIFACTMessage $message) {
+            return [$message->getMessageType(), $message->getSubMessageType()];
+        });
+        $this->assertEquals(
+            [
+                [EDIFACTMessage::MESSAGE_TYPE_DISPOR, null],
+                [EDIFACTMessage::MESSAGE_TYPE_REPORT, 'AAR|CFM'],
+                [EDIFACTMessage::MESSAGE_TYPE_REPORT, 'MLV|CFM'],
+            ],
+            $pickupReportEDIMessage->toArray()
+        );
+
+        /** @var EDIFACTMessage $reportEDIMessage */
+        $dropoffReportEDIMessage = $dropoff->getEdifactMessages()->last();
+
+        $this->assertEquals('LACOURSERIETEST', $dropoffReportEDIMessage->getReference());
+        $this->assertEquals('TELIAE', $dropoffReportEDIMessage->getTransporter());
+        $this->assertEquals(
+            EDIFACTMessage::MESSAGE_TYPE_REPORT,
+            $dropoffReportEDIMessage->getMessageType()
+        );
+        $this->assertEquals(
+            EDIFACTMessage::DIRECTION_OUTBOUND,
+            $dropoffReportEDIMessage->getDirection()
+        );
+        $this->assertEquals(
+            'LIV|CFM',
+            $dropoffReportEDIMessage->getSubMessageType()
+        );
+        $this->assertNull($dropoffReportEDIMessage->getSyncedAt());
+
+
+        $this->assertCount(0, $this->syncTaliaeFs->listContents(sprintf('from_%s', self::FS_MASK_TALIAE))->toArray());
+        $this->assertCount(0, $this->syncOutBMVFs->listContents('/')->toArray());
+
+        $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('TELIAE');
+        $this->assertCount(3, $unsynced);
+
+        $commandTester->execute([
+            'transporter' => 'TELIAE'
+        ]);
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 0 tasks', $output);
+        $this->assertStringContainsString('3 messages to send', $output);
+
+
+        $this->assertCount(0, $this->syncOutBMVFs->listContents('/')->toArray());
+        $dir_list = $this->syncTaliaeFs->listContents(sprintf('from_%s', self::FS_MASK_TALIAE))->toArray();
+        $this->assertCount(1, $dir_list);
+        $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('TELIAE');
         $this->assertCount(0, $unsynced);
     }
 

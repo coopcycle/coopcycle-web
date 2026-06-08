@@ -79,6 +79,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -585,10 +586,17 @@ trait RestaurantTrait
                 ->setParameter('q', '%' . strtolower($request->query->get('q')) . '%');
         }
 
+        $perPage = 10;
+        if ($request->query->has('per_page')) {
+            $perPage = $request->query->getInt('per_page');
+        } elseif ($request->cookies->has('__products_per_page')) {
+            $perPage = $request->cookies->getInt('__products_per_page');
+        }
+
         $products = $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
-            10,
+            $perPage,
             [
                 PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 't.name',
                 PaginatorInterface::DEFAULT_SORT_DIRECTION => 'asc',
@@ -658,13 +666,19 @@ trait RestaurantTrait
             return $this->redirectToRoute($routes['products'], ['id' => $destId]);
         }
 
-        return $this->render($request->attributes->get('template'), $this->auth($this->withRoutes([
+        $response = $this->render($request->attributes->get('template'), $this->auth($this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'products' => $products,
             'restaurant' => $restaurant,
             'restaurant_iri' => $iriConverter->getIriFromResource($restaurant),
             'copy_form' => $copyForm->createView(),
         ], $routes)));
+
+        if ($request->query->has('per_page')) {
+            $response->headers->setCookie(new Cookie('__products_per_page', $perPage));
+        }
+
+        return $response;
     }
 
     public function restaurantProductAction($restaurantId, $productId, Request $request,

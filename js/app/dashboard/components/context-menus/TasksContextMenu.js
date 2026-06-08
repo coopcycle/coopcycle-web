@@ -10,6 +10,7 @@ import moment from 'moment'
 
 import {
   cancelTasks,
+  completeTasks,
   createTaskList,
   putTaskListItems,
   moveTasksToNextDay,
@@ -21,6 +22,7 @@ import {
   openCreateGroupModal,
   openCreateTourModal,
   openReportIncidentModal,
+  openSendToWarehouseModal,
   openTaskRescheduleModal,
   openTaskTaskList,
   removeTasksFromGroup,
@@ -58,9 +60,11 @@ export const REMOVE_FROM_GROUP = 'REMOVE_FROM_GROUP'
 export const RESTORE = 'RESTORE'
 export const RESCHEDULE = 'RESCHEDULE'
 export const CREATE_DELIVERY = 'CREATE_DELIVERY'
+export const SEND_TO_WAREHOUSE = 'SEND_TO_WAREHOUSE'
 export const CREATE_TOUR = 'CREATE_TOUR'
 export const REPORT_INCIDENT = 'REPORT_INCIDENT'
 export const TAG_MULTI = 'TAG_MULTI'
+export const COMPLETE_TASKS_MULTI = 'COMPLETE_TASKS_MULTI'
 
 const BulkTagsEditor = ({ tags, selectedTasks }) => {
 
@@ -173,6 +177,16 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
 
   const selectedTasksByType = _.countBy(selectedTasks, t => t.type)
   const containsOnePickupAndAtLeastOneDropoff = selectedTasksByType.PICKUP === 1 && selectedTasksByType.DROPOFF > 0
+  const containsExactlyOnePickupAndOneDropoff = selectedTasksByType.PICKUP === 1 && selectedTasksByType.DROPOFF === 1 && selectedTasks.length === 2
+
+  const selectedPickups = selectedTasks.filter(t => t.type === 'PICKUP')
+  const selectedDropoffs = selectedTasks.filter(t => t.type === 'DROPOFF')
+  const selectedPickupIds = new Set(selectedPickups.map(t => t['@id']))
+  const containsLinkedPickupDropoffPairs =
+    selectedPickups.length > 0 &&
+    selectedPickups.length === selectedDropoffs.length &&
+    selectedDropoffs.every(d => d.previous && selectedPickupIds.has(d.previous)) &&
+    new Set(selectedDropoffs.map(d => d.previous)).size === selectedPickups.length
 
   if (selectedTasksBelongsToTour) {
     return []
@@ -189,6 +203,7 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
     if (isMultiple) {
 
       actions.push(START_TASKS_MULTI)
+      actions.push(COMPLETE_TASKS_MULTI)
 
       if (tasksToUnassign.length > 0) {
         actions.push(UNASSIGN_MULTI)
@@ -211,6 +226,10 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
         if (!containsOnlyLinkedTasks) {
           actions.push(CREATE_DELIVERY)
         }
+      }
+
+      if (containsLinkedPickupDropoffPairs || containsExactlyOnePickupAndOneDropoff) {
+        actions.push(SEND_TO_WAREHOUSE)
       }
 
     } else {
@@ -238,6 +257,7 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
 
       actions.push(CANCEL_MULTI)
       actions.push(START_TASKS_MULTI)
+      actions.push(COMPLETE_TASKS_MULTI)
       actions.push(RESCHEDULE)
       actions.push(REPORT_INCIDENT)
 
@@ -348,6 +368,7 @@ const DynamicMenu = () => {
 
   const selectedTask = selectedTasks.length > 0 ? selectedTasks[0] : undefined
   const noActionAvailable = selectedTasks.length > 0 && actions.length === 0
+  const allSelectedTasksDone = selectedTasks.length > 0 && selectedTasks.every(t => t.status === 'DONE')
 
   return (
     <Menu id="task-contextmenu">
@@ -422,6 +443,13 @@ const DynamicMenu = () => {
       >
         {t('ADMIN_DASHBOARD_START_TASKS_MULTI', {count: selectedTasks.length})}
       </Item>
+      <Item
+        hidden={!actions.includes(COMPLETE_TASKS_MULTI)}
+        disabled={allSelectedTasksDone}
+        onClick={() => dispatch(completeTasks(selectedTasks))}
+      >
+        {t('ADMIN_DASHBOARD_COMPLETE_TASKS_MULTI', {count: selectedTasks.length})}
+      </Item>
       { !noActionAvailable && <Separator /> }
       <Item
         hidden={ !actions.includes(CREATE_GROUP) }
@@ -446,6 +474,12 @@ const DynamicMenu = () => {
         onClick={ () => dispatch(openCreateDeliveryModal()) }
       >
         { t('ADMIN_DASHBOARD_CREATE_DELIVERY') }
+      </Item>
+      <Item
+        hidden={ !actions.includes(SEND_TO_WAREHOUSE) }
+        onClick={ () => dispatch(openSendToWarehouseModal()) }
+      >
+        { t('ADMIN_DASHBOARD_SEND_TO_WAREHOUSE') }
       </Item>
       <Item
         hidden={ !actions.includes(CREATE_TOUR) }
