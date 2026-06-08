@@ -285,7 +285,8 @@ class EmailManager
             'delivery_id'  => $task->getDelivery()->getId(),
             'tracking_url' => $trackingUrl,
         ]) ?? $this->mjml->render($this->templating->render($twigTemplate, [
-            'task' => $task,
+            'task'         => $task,
+            'tracking_url' => $trackingUrl,
         ]));
 
         return $this->createHtmlMessage($subject, $body);
