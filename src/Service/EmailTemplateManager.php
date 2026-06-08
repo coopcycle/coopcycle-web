@@ -36,7 +36,7 @@ class EmailTemplateManager
         ],
         'order_payment' => [
             'label_key' => 'customize.email_editor.email_type.order_payment',
-            'variables'  => ['brand_name', 'order_number'],
+            'variables'  => ['brand_name', 'order_number', 'order_url'],
             'slots'      => ['order_items'],
         ],
         'order_receipt' => [

@@ -225,7 +225,8 @@ class EmailManager
 
         $body = $this->renderCustom('order_payment', [
             'order_number' => $order->getNumber(),
-        ], $orderItemsSlot) ?? $this->renderTwigMjml('emails/order/payment.mjml.twig', ['order' => $order], $orderItemsSlot);
+            'order_url'    => $this->orderUrl($order),
+        ], $orderItemsSlot) ?? $this->renderTwigMjml('emails/order/payment.mjml.twig', ['order' => $order, 'order_url' => $this->orderUrl($order)], $orderItemsSlot);
 
         return $this->createHtmlMessage($subject, $body);
     }
