@@ -123,7 +123,7 @@ export default ({termsAndConditionsCheck, privacyPolicyCheck}) => {
     <Modal
         isOpen={termsAndConditionsOpen || privacyPolicyOpen}
         shouldCloseOnOverlayClick={false}
-        className="ReactModal__Content--termsAndPolicy"
+        className="ReactModal__Content--termsAndPolicy w-[calc(100%-30px)] md:w-2/3 xl:w-1/2"
         overlayClassName="ReactModal__Overlay--termsAndPolicy">
         {
           loadingText ? _renderLoading() :

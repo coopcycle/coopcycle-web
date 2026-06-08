@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Incident\IncidentImage;
 use AppBundle\Entity\TaskImage;
 use AppBundle\Pixabay\Client as PixabayClient;
+use AppBundle\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToCheckFileExistence;
@@ -65,6 +66,26 @@ class AssetsController extends AbstractController
         $response->headers->add(['Content-Type' => 'image/svg+xml']);
 
         return $response;
+    }
+
+    #[Route(path: '/assets/banner_background', name: 'assets_banner_background')]
+    public function bannerBackgroundAction(Filesystem $assetsFilesystem, SettingsManager $settingsManager): Response
+    {
+        $filename = $settingsManager->get('banner_background_image');
+        if (!$filename) {
+            throw $this->createNotFoundException();
+        }
+
+        try {
+            if (!$assetsFilesystem->fileExists($filename)) {
+                throw $this->createNotFoundException();
+            }
+            $content = $assetsFilesystem->read($filename);
+        } catch (UnableToCheckFileExistence|UnableToReadFile $e) {
+            throw $this->createNotFoundException();
+        }
+        $mimeType = str_ends_with($filename, '.png') ? 'image/png' : 'image/jpeg';
+        return new Response($content, 200, ['Content-Type' => $mimeType]);
     }
 
     /**

@@ -1,5 +1,3 @@
-@import "../../../../../assets/css/vars";
-
 @mixin ant-anchor-link--no-padding() {
   .ant-anchor-link {
     padding: 0;
@@ -12,33 +10,15 @@
   }
 }
 
-@mixin ant-anchor-link-title__text() {
-  .ant-anchor-link-title {
-    color: $gray-300;
-    white-space: nowrap;
-
-    &:hover,
-    &:focus {
-      text-decoration: none;
-    }
-  }
-
-  // Selected state
-  .ant-anchor-link-title-active {
-    color: $primary-default;
-  }
-}
-
 
 .restaurant-menu-nav {
+  // Ant Design's anchor wrapper has a hardcoded white background; make it
+  // transparent so the outer nav's bg-base-100 shows through in all themes.
+  .ant-anchor-wrapper,
   .ant-anchor {
+    background: transparent;
     width: 100%;
     overflow: hidden;
-    background-color: $white;
-  }
-
-  .ant-affix {
-    z-index: 1;
   }
 
   .ant-anchor-ink {
@@ -48,19 +28,18 @@
   @include ant-anchor-link--no-padding();
 
   .ant-anchor-link {
-    border-bottom: 1px solid $gray-100;
+    padding-block: 0.25rem;
+    border-bottom: 1px solid var(--color-base-300);
 
     &:hover {
-      background-color: $nav-link-hover-bg;
+      background-color: var(--color-base-200);
     }
   }
 
   // Selected state
   .ant-anchor-link-active {
-    border-bottom: 1px solid $primary-default;
+    border-bottom: 1px solid var(--color-primary);
   }
-
-  @include ant-anchor-link-title__text();
 
   .ant-anchor-link-title {
     padding: 0.5rem 1.5rem;
@@ -72,12 +51,6 @@
     &:hover {
       background-color: transparent;
     }
-  }
-}
-
-.ReactModal__Body--open {
-  .ant-affix {
-    z-index: inherit;
   }
 }
 
@@ -103,14 +76,12 @@
 
   .ant-dropdown-menu-item {
     &:hover {
-      background-color: $nav-link-hover-bg;
+      background-color: var(--color-base-200);
     }
   }
 
   @include ant-anchor-link--no-padding();
   @include ant-anchor-link--max-width();
-
-  @include ant-anchor-link-title__text();
 
   .ant-anchor-link-title {
     padding: 0.5rem 0;

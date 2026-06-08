@@ -78,7 +78,9 @@ const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, delive
   }, []);
 
   return (
-    <div id="editorjs"></div>
+    <div className="homepage-preview" data-theme="light">
+      <div id="editorjs"></div>
+    </div>
   )
 })
 

@@ -74,7 +74,7 @@ class CartItem extends React.Component {
           </span>
           { this.renderAdjustments() }
         </div>
-        <div className="mt-2 d-flex align-items-center justify-content-between">
+        <div className="mt-2 flex items-center justify-between">
           <div className="cart__item__quantity">
             <DecrementQuantityButton
               disabled={ this.props.loading }

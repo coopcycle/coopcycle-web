@@ -10,21 +10,25 @@ import SavedCreditCard from './SavedCreditCard'
 import MealVoucherDetails from './MealVoucherDetails'
 import { isGuest } from './utils'
 
-const style = {
+const baseStyle = {
+  fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+  fontSmoothing: 'antialiased',
+  fontSize: '16px',
+}
+
+const style = (isDark) => ({
   base: {
-    color: '#32325d',
-    fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-    fontSmoothing: 'antialiased',
-    fontSize: '16px',
+    ...baseStyle,
+    color: isDark ? '#e2e8f0' : '#32325d',
     '::placeholder': {
-      color: '#aab7c4'
-    }
+      color: isDark ? '#6b7280' : '#aab7c4',
+    },
   },
   invalid: {
     color: '#fa755a',
-    iconColor: '#fa755a'
-  }
-}
+    iconColor: '#fa755a',
+  },
+})
 
 function handleSaveOfPaymentMethod(el) {
   return new Promise((resolve) => {
@@ -109,12 +113,12 @@ const CardholderNameInput = ({ onChange }) => {
 
   return (
     <React.Fragment>
-      <label className="control-label required">
+      <legend className="control-label required">
         { t('PAYMENT_FORM_CARDHOLDER_NAME') }
-      </label>
+      </legend>
       <input type="text"
-        required="required"
-        className="form-control"
+        required
+        className="input"
         value={ cardholderName }
         onChange={ e => setCardholderName(e.target.value) } />
     </React.Fragment>
@@ -126,6 +130,16 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, cards, onSaveCr
   const { t } = useTranslation()
 
   const [addNewCard, setAddNewCard] = useState(false)
+  const [isDark, setIsDark] = useState(
+    () => window.matchMedia('(prefers-color-scheme: dark)').matches
+  )
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    const handler = (e) => setIsDark(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
 
   const edenred = !!options && _.find(options.payments, p => p.method.code === 'EDENRED')
   const card    = !!options && _.find(options.payments, p => p.method.code === 'CARD')
@@ -163,48 +177,45 @@ const StripeForm = ({ onChange, onCardholderNameChange, options, cards, onSaveCr
       )}
       {
         thereAreCardsToShow ?
-        <div>
-          <div className="form-group">
-            <label className="control-label">
+        <div className="mb-4">
+          <fieldset className="fieldset border border-base-300 rounded-box p-4 mb-4">
+            <legend className="fieldset-legend">
               {t('PAY_WITH_SAVED_CREDIT_CARD')}
-            </label>
+            </legend>
             {
               cards.map((c) => {
                 return (
-                  <div className="d-flex align-items-center mb-2" key={c.id}>
-                    <input type="radio" name="credit-cards" id={c.id} className="mr-4" onClick={(e) => handleCardClicked(e, c)} />
+                  <div className="flex items-center gap-2 mb-2" key={c.id}>
+                    <input type="radio" name="credit-cards" id={c.id} className="radio" onClick={(e) => handleCardClicked(e, c)} />
                     <SavedCreditCard card={c.card} />
                   </div>
                 )
               })
             }
+          </fieldset>
+          <div className="flex justify-end">
+              <button type="button" className="btn btn-sm btn-secondary" onClick={() => toggleCardForm()}>
+                {t('ADD_NEW_CREDIT_CARD')}
+              </button>
           </div>
-          <button type="button" className="btn btn-primary mb-4" onClick={() => toggleCardForm()}>
-            {t('ADD_NEW_CREDIT_CARD')}
-          </button>
         </div> : null
       }
       {
         (addNewCard || !thereAreCardsToShow || isGuest(formOptions)) ?
         <div id="card-form">
-          <div className="form-group">
+          <fieldset className="fieldset mb-3">
             <CardholderNameInput onChange={ onCardholderNameChange } />
-          </div>
-          <div className="form-group">
-            <label className="control-label hidden">
-              { t('PAYMENT_FORM_TITLE') }
-            </label>
-            <CardElement options={{ style, hidePostalCode: true }} onChange={ onChange } />
+          </fieldset>
+          <div className="border border-base-content rounded-md p-3 mb-3">
+            <CardElement options={{ style: style(isDark), hidePostalCode: true }} onChange={ onChange } />
           </div>
           {
             !isGuest(formOptions) ?
-            <div className="form-group">
-              <div className="checkbox">
-                <label>
-                  <input type="checkbox" onChange={(e) => onSaveCreditCardChange(e.target.checked)}/>
-                    {t('SAVE_CREDIT_CARD')}
-                </label>
-              </div>
+            <div>
+              <label className="label">
+                <input type="checkbox" className="checkbox" onChange={(e) => onSaveCreditCardChange(e.target.checked)}/>
+                  {t('SAVE_CREDIT_CARD')}
+              </label>
             </div> : null
           }
         </div> : null
