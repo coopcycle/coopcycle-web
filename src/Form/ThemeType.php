@@ -57,6 +57,7 @@ class ThemeType extends AbstractType
             $theme = $event->getData();
 
             $this->settingsManager->set('theme', json_encode($theme));
+            $this->settingsManager->flush();
         });
     }
 }
