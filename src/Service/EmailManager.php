@@ -276,10 +276,13 @@ class EmailManager
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 
-        $body = $this->renderCustom('task_completed', [
+        $customType = $task->isDone() ? 'task_completed' : 'task_failed';
+        $twigTemplate = $task->isDone() ? 'emails/task/completed.mjml.twig' : 'emails/task/failed.mjml.twig';
+
+        $body = $this->renderCustom($customType, [
             'delivery_id'  => $task->getDelivery()->getId(),
             'tracking_url' => $trackingUrl,
-        ]) ?? $this->mjml->render($this->templating->render('emails/task/completed.mjml.twig', [
+        ]) ?? $this->mjml->render($this->templating->render($twigTemplate, [
             'task' => $task,
         ]));
 

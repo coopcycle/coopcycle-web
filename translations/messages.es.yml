@@ -1788,7 +1788,8 @@ customize.email_editor.email_type.order_cancelled: Pedido cancelado
 customize.email_editor.email_type.order_delayed: Pedido retrasado
 customize.email_editor.email_type.order_payment: Confirmación de pago
 customize.email_editor.email_type.order_receipt: Recibo del pedido
-customize.email_editor.email_type.task_completed: Entrega completada / fallida
+customize.email_editor.email_type.task_completed: Entrega completada
+customize.email_editor.email_type.task_failed: Entrega fallida
 customize.email_editor.save: Guardar
 customize.email_editor.reset: Restablecer por defecto
 customize.email_editor.status.default: Plantilla por defecto — guarde para personalizar

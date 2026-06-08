@@ -48,6 +48,11 @@ class EmailTemplateManager
             'variables'  => ['brand_name', 'delivery_id', 'tracking_url'],
             'slots'      => [],
         ],
+        'task_failed' => [
+            'label_key' => 'customize.email_editor.email_type.task_failed',
+            'variables'  => ['brand_name', 'delivery_id', 'tracking_url'],
+            'slots'      => [],
+        ],
     ];
 
     public const SUPPORTED_LOCALES = [
@@ -334,6 +339,11 @@ MJML;
             'task_completed' => [
                 'heading' => $t('task.dropoff.done.subject'),
                 'body'    => $t('task.dropoff.done.body'),
+                'cta'     => null,
+            ],
+            'task_failed' => [
+                'heading' => $t('task.dropoff.failed.subject'),
+                'body'    => $t('task.dropoff.failed.body'),
                 'cta'     => null,
             ],
         ];
