@@ -2606,9 +2606,10 @@ class AdminController extends AbstractController
         }
 
         return $this->render('admin/customize_emails.html.twig', $this->auth([
-            'email_types'              => $emailTypes,
-            'supported_locales'        => $supportedLocales,
+            'email_types'                => $emailTypes,
+            'supported_locales'          => $supportedLocales,
             'layout_is_custom_by_locale' => $layoutIsCustomByLocale,
+            'theme_palette'              => $emailTemplateManager->getThemePalette(),
         ]));
     }
 

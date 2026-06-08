@@ -55,6 +55,7 @@ const supportedLocales     = JSON.parse(root.dataset.supportedLocales)  // { en:
 const i18n                 = JSON.parse(root.dataset.i18n)              // server-translated UI strings
 const apiBaseUrl           = root.dataset.apiUrl                         // /admin/customize/emails/__TYPE__
 const layoutApiUrl         = root.dataset.layoutUrl                      // /admin/customize/emails/layout
+const themePalette         = JSON.parse(root.dataset.themePalette || '[]') // hex colours from the active theme
 // The Symfony app locale (user's own UI language), used for GrapeJS UI strings
 const appLocale            = root.dataset.locale || 'en'
 
@@ -480,6 +481,10 @@ function initEditor(mjml, isLayout = false) {
       },
     },
     storageManager: false,
+    colorPicker: {
+      showPalette: true,
+      palette: [themePalette],
+    },
     components: mjml,
   })
 

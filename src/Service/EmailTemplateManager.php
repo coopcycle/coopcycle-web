@@ -192,6 +192,20 @@ class EmailTemplateManager
     }
 
     /**
+     * Returns the theme colours as a flat list for use as colour-picker presets.
+     */
+    public function getThemePalette(): array
+    {
+        $t = $this->getThemeColors();
+        return array_values(array_unique([
+            $t['primary'],
+            $t['primary-content'],
+            $t['secondary'],
+            $t['secondary-content'],
+        ]));
+    }
+
+    /**
      * Parses the 'theme' JSON from settings and returns colour values with defaults.
      *
      * @return array{primary: string, primary-content: string, secondary: string, secondary-content: string, accent: string, accent-content: string}
