@@ -55,7 +55,6 @@ const supportedLocales     = JSON.parse(root.dataset.supportedLocales)  // { en:
 const i18n                 = JSON.parse(root.dataset.i18n)              // server-translated UI strings
 const apiBaseUrl           = root.dataset.apiUrl                         // /admin/customize/emails/__TYPE__
 const layoutApiUrl         = root.dataset.layoutUrl                      // /admin/customize/emails/layout
-const styleSettingsUrl     = root.dataset.styleSettingsUrl              // /admin/customize/emails/settings
 // The Symfony app locale (user's own UI language), used for GrapeJS UI strings
 const appLocale            = root.dataset.locale || 'en'
 
@@ -65,7 +64,6 @@ let currentType      = null
 let currentLocale    = Object.keys(supportedLocales)[0]
 let editor           = null
 let isSaving         = false
-let styleView        = false    // true when the Global Style panel is shown
 let isEditingLayout  = false    // true when editing the shared layout
 let originalMjmlHead = ''       // preserved from the loaded template; GrapeJS breaks mj-head on parse
 
@@ -103,19 +101,7 @@ function setActiveLocaleTab(locale) {
 function buildSidebar() {
   const sidebar = document.getElementById('ee-sidebar')
 
-  // Global Style button — always at the top
-  const styleBtn = document.createElement('button')
-  styleBtn.type = 'button'
-  styleBtn.id = 'ee-global-style-btn'
-  styleBtn.className = 'ee-email-btn ee-global-style-btn'
-  styleBtn.innerHTML = `
-    <span class="ee-email-label">${i18n.global_style}</span>
-    <span class="ee-style-icon">&#9881;</span>
-  `
-  styleBtn.addEventListener('click', () => showStylePanel())
-  sidebar.appendChild(styleBtn)
-
-  // Layout button — below Global Style, above email types
+  // Layout button — at the top, above email types
   const layoutBtn = document.createElement('button')
   layoutBtn.type = 'button'
   layoutBtn.id = 'ee-layout-btn'
@@ -169,7 +155,6 @@ function setActiveEmailBtn(type) {
   })
   if (type !== null) {
     document.getElementById('ee-layout-btn')?.classList.remove('is-active')
-    document.getElementById('ee-global-style-btn')?.classList.remove('is-active')
   }
 }
 
@@ -212,122 +197,6 @@ function setStatus(msg, type = 'info') {
   const el = document.getElementById('ee-status')
   el.textContent = msg
   el.className = 'ee-status ee-status--' + type
-}
-
-// ─── Global Style panel ───────────────────────────────────────────────────────
-
-function buildStylePanel() {
-  const panel = document.createElement('div')
-  panel.id = 'ee-style-panel'
-  panel.className = 'ee-style-panel'
-  panel.style.display = 'none'
-  panel.innerHTML = `
-    <div class="ee-style-panel-inner">
-      <h4 class="ee-style-panel-title">${i18n.global_style}</h4>
-      <div class="ee-style-field">
-        <label for="ee-color-primary">${i18n.primary_color}</label>
-        <input type="color" id="ee-color-primary" value="#10ac84">
-      </div>
-      <div class="ee-style-field">
-        <label for="ee-color-primary-content">${i18n.primary_content_color}</label>
-        <input type="color" id="ee-color-primary-content" value="#ffffff">
-      </div>
-      <div class="ee-style-field">
-        <label for="ee-color-bg">${i18n.background_color}</label>
-        <input type="color" id="ee-color-bg" value="#eeeeee">
-      </div>
-      <div class="ee-style-field">
-        <label for="ee-color-content-bg">${i18n.content_background_color}</label>
-        <input type="color" id="ee-color-content-bg" value="#ffffff">
-      </div>
-      <div class="ee-style-actions">
-        <button id="ee-save-style" class="btn btn-success btn-sm" type="button">
-          ${i18n.save_style}
-        </button>
-        <span id="ee-style-status" class="ee-status ee-status--info"></span>
-      </div>
-    </div>
-  `
-  document.getElementById('ee-canvas').insertAdjacentElement('afterend', panel)
-}
-
-async function loadStyleSettings() {
-  try {
-    const res = await fetch(styleSettingsUrl, { headers: { Accept: 'application/json' } })
-    if (!res.ok) return
-    const data = await res.json()
-    if (data['primary'])           document.getElementById('ee-color-primary').value         = data['primary']
-    if (data['primary-content'])   document.getElementById('ee-color-primary-content').value  = data['primary-content']
-    if (data['secondary'])         document.getElementById('ee-color-bg').value               = data['secondary']
-    if (data['secondary-content']) document.getElementById('ee-color-content-bg').value       = data['secondary-content']
-  } catch (_) { /* silent */ }
-}
-
-async function handleSaveStyle() {
-  const btn = document.getElementById('ee-save-style')
-  const statusEl = document.getElementById('ee-style-status')
-  btn.disabled = true
-  statusEl.textContent = ''
-  statusEl.className = 'ee-status ee-status--info'
-
-  try {
-    const body = {
-      'primary':           document.getElementById('ee-color-primary').value,
-      'primary-content':   document.getElementById('ee-color-primary-content').value,
-      'secondary':         document.getElementById('ee-color-bg').value,
-      'secondary-content': document.getElementById('ee-color-content-bg').value,
-    }
-    const res = await fetch(styleSettingsUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-    })
-    if (!res.ok) throw new Error(`HTTP ${res.status}`)
-    statusEl.textContent = i18n.style_saved
-    statusEl.className = 'ee-status ee-status--success'
-  } catch (err) {
-    statusEl.textContent = 'Error: ' + err.message
-    statusEl.className = 'ee-status ee-status--error'
-  } finally {
-    btn.disabled = false
-  }
-}
-
-function showStylePanel() {
-  styleView = true
-  isEditingLayout = false
-  currentType = null
-
-  document.getElementById('ee-canvas').style.display = 'none'
-  document.getElementById('ee-style-panel').style.display = ''
-
-  // Toolbar: hide save/reset, clear status
-  document.getElementById('ee-save').style.display  = 'none'
-  document.getElementById('ee-reset').style.display = 'none'
-  document.getElementById('ee-variables-bar') && (document.getElementById('ee-variables-bar').style.display = 'none')
-  setStatus('')
-
-  // Highlight the global style button, deactivate others
-  document.querySelectorAll('.ee-email-btn').forEach(b => b.classList.remove('is-active'))
-  document.getElementById('ee-global-style-btn').classList.add('is-active')
-
-  // Destroy any open GrapeJS instance
-  if (editor) {
-    editor.destroy()
-    editor = null
-  }
-
-  loadStyleSettings()
-}
-
-function hideStylePanel() {
-  styleView = false
-  document.getElementById('ee-canvas').style.display = ''
-  document.getElementById('ee-style-panel').style.display = 'none'
-  document.getElementById('ee-save').style.display  = ''
-  document.getElementById('ee-reset').style.display = ''
-  const varsBar = document.getElementById('ee-variables-bar')
-  if (varsBar) varsBar.style.display = ''
 }
 
 // ─── API ──────────────────────────────────────────────────────────────────────
@@ -622,7 +491,6 @@ function initEditor(mjml, isLayout = false) {
 // ─── Interaction handlers ─────────────────────────────────────────────────────
 
 async function selectLayout() {
-  if (styleView) hideStylePanel()
   isEditingLayout = true
   currentType = null
 
@@ -647,7 +515,6 @@ async function selectLayout() {
 }
 
 async function selectEmail(type) {
-  if (styleView) hideStylePanel()
   isEditingLayout = false
 
   currentType = type
@@ -750,11 +617,9 @@ async function handleReset() {
 applyI18n()
 buildLocaleTabs()
 buildSidebar()
-buildStylePanel()
 
 document.getElementById('ee-save').addEventListener('click', handleSave)
 document.getElementById('ee-reset').addEventListener('click', handleReset)
-document.getElementById('ee-save-style').addEventListener('click', handleSaveStyle)
 
 // Auto-select the layout on first load
 selectLayout()

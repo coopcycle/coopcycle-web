@@ -1696,13 +1696,6 @@ customize.email_editor.status.default: Modèle par défaut — enregistrez pour 
 customize.email_editor.status.custom: Modèle personnalisé
 customize.email_editor.variables: Variables disponibles
 customize.email_editor.layout: Mise en page
-customize.email_editor.global_style: Style global
-customize.email_editor.primary_color: Couleur principale (fond du bouton)
-customize.email_editor.primary_content_color: Couleur du texte principal (texte du bouton)
-customize.email_editor.background_color: Couleur de fond
-customize.email_editor.content_background_color: Couleur de fond du contenu
-customize.email_editor.save_style: Enregistrer le style global
-customize.email_editor.style_saved: Style global enregistré
 two_factor.title: Authentification à deux facteurs
 two_factor.subtitle: "Un code de vérification a été envoyé à votre adresse e-mail. Veuillez le saisir ci-dessous."
 two_factor.code.label: Code de vérification

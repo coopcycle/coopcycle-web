@@ -227,22 +227,6 @@ class EmailTemplateManager
     }
 
     /**
-     * Returns the current global email colour settings with their defaults.
-     * Keys use the DaisyUI theme naming from the 'theme' JSON in settings.
-     */
-    public function getEmailStyleSettings(): array
-    {
-        $theme = $this->getThemeColors();
-
-        return [
-            'primary'           => $theme['primary'],
-            'primary-content'   => $theme['primary-content'],
-            'secondary'         => $theme['secondary'],
-            'secondary-content' => $theme['secondary-content'],
-        ];
-    }
-
-    /**
      * Generates the default layout MJML (full document) with a content slot.
      * This is what the layout editor starts with when no custom layout is saved.
      */

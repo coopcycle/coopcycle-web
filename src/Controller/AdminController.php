@@ -2706,46 +2706,6 @@ class AdminController extends AbstractController
         return $this->json(['mjml' => $mjml, 'is_custom' => $isCustom]);
     }
 
-    public function emailStyleSettingsAction(Request $request, EmailTemplateManager $emailTemplateManager, SettingsManager $settingsManager): JsonResponse
-    {
-        $isDemo = $this->getParameter('is_demo');
-
-        if ($isDemo) {
-            return $this->json(['error' => 'Not available in demo'], 403);
-        }
-
-        if ($request->isMethod('POST')) {
-            $data = json_decode($request->getContent(), true);
-
-            // Accepted DaisyUI theme keys that map to email colours
-            $allowed = ['primary', 'primary-content', 'secondary', 'secondary-content'];
-            foreach ($allowed as $key) {
-                if (isset($data[$key])) {
-                    $value = $data[$key];
-                    // Accept #rrggbb or #rgb hex colours only
-                    if (!preg_match('/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $value)) {
-                        return $this->json(['error' => sprintf('Invalid colour value for %s', $key)], 400);
-                    }
-                }
-            }
-
-            // Merge into existing theme JSON (preserve keys managed by other features)
-            $existing = $settingsManager->get('theme');
-            $theme    = $existing ? (json_decode($existing, true) ?? []) : [];
-            foreach ($allowed as $key) {
-                if (isset($data[$key])) {
-                    $theme[$key] = $data[$key];
-                }
-            }
-            $settingsManager->set('theme', json_encode($theme));
-            $settingsManager->flush();
-
-            return $this->json(['success' => true]);
-        }
-
-        return $this->json($emailTemplateManager->getEmailStyleSettings());
-    }
-
     private function handleHubForm(Hub $hub, Request $request)
     {
         $form = $this->createForm(HubType::class, $hub);
