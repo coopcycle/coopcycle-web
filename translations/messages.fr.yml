@@ -1689,8 +1689,10 @@ customize.email_editor.email_type.order_cancelled: Commande annulée
 customize.email_editor.email_type.order_delayed: Commande retardée
 customize.email_editor.email_type.order_payment: Confirmation de paiement
 customize.email_editor.email_type.order_receipt: Reçu de commande
-customize.email_editor.email_type.task_completed: Livraison terminée
-customize.email_editor.email_type.task_failed: Livraison échouée
+customize.email_editor.email_type.task_dropoff_completed: Dépôt effectué
+customize.email_editor.email_type.task_pickup_completed: Enlèvement effectué
+customize.email_editor.email_type.task_dropoff_failed: Dépôt échoué
+customize.email_editor.email_type.task_pickup_failed: Enlèvement échoué
 customize.email_editor.save: Enregistrer
 customize.email_editor.reset: Réinitialiser par défaut
 customize.email_editor.status.default: Modèle par défaut — enregistrez pour personnaliser

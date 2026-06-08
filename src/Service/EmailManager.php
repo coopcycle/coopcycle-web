@@ -276,8 +276,10 @@ class EmailManager
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 
-        $customType = $task->isDone() ? 'task_completed' : 'task_failed';
-        $twigTemplate = $task->isDone() ? 'emails/task/completed.mjml.twig' : 'emails/task/failed.mjml.twig';
+        $taskType = strtolower($task->getType());
+        $outcome  = $task->isDone() ? 'completed' : 'failed';
+        $customType   = "task_{$taskType}_{$outcome}";
+        $twigTemplate = "emails/task/{$taskType}_{$outcome}.mjml.twig";
 
         $body = $this->renderCustom($customType, [
             'delivery_id'  => $task->getDelivery()->getId(),

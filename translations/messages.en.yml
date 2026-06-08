@@ -1763,8 +1763,10 @@ customize.email_editor.email_type.order_cancelled: Order Cancelled
 customize.email_editor.email_type.order_delayed: Order Delayed
 customize.email_editor.email_type.order_payment: Payment Confirmation
 customize.email_editor.email_type.order_receipt: Order Receipt
-customize.email_editor.email_type.task_completed: Delivery Completed
-customize.email_editor.email_type.task_failed: Delivery Failed
+customize.email_editor.email_type.task_dropoff_completed: Dropoff Completed
+customize.email_editor.email_type.task_pickup_completed: Pickup Completed
+customize.email_editor.email_type.task_dropoff_failed: Dropoff Failed
+customize.email_editor.email_type.task_pickup_failed: Pickup Failed
 customize.email_editor.save: Save
 customize.email_editor.reset: Reset to default
 customize.email_editor.status.default: Showing default template — save to customise

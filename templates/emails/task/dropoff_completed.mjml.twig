@@ -2,8 +2,7 @@
 
 {% block content %}
   <mj-text align="left" line-height="20px">
-  {% set trans_key = 'task.%s.failed.body'|format(task.type|lower) %}
-  {{ trans_key|trans({
+  {{ 'task.dropoff.done.body'|trans({
     '{{delivery_id}}': (task.delivery.order ? task.delivery.order.number : task.delivery.id),
     '{{address}}': task.address.streetAddress,
   }, 'emails') | raw }}

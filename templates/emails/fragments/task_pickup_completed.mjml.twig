@@ -1,0 +1,5 @@
+<mj-text align="left" line-height="24px">
+  <h3>{{ 'task.pickup.done.subject' | trans({}, 'emails', locale) }}</h3>
+  <p>{{ 'task.pickup.done.body' | trans({}, 'emails', locale) | raw }}</p>
+</mj-text>
+<mj-button href="{{ tracking_url }}" background-color="{{ primary_color }}" color="{{ primary_content_color }}" font-family="Raleway, Arial, sans-serif">{{ 'basics.view' | trans({}, 'messages', locale) }}</mj-button>

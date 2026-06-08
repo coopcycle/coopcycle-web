@@ -44,13 +44,23 @@ class EmailTemplateManager
             'variables'  => ['brand_name', 'order_number'],
             'slots'      => ['order_items'],
         ],
-        'task_completed' => [
-            'label_key' => 'customize.email_editor.email_type.task_completed',
+        'task_dropoff_completed' => [
+            'label_key' => 'customize.email_editor.email_type.task_dropoff_completed',
             'variables'  => ['brand_name', 'delivery_id', 'tracking_url'],
             'slots'      => [],
         ],
-        'task_failed' => [
-            'label_key' => 'customize.email_editor.email_type.task_failed',
+        'task_pickup_completed' => [
+            'label_key' => 'customize.email_editor.email_type.task_pickup_completed',
+            'variables'  => ['brand_name', 'delivery_id', 'tracking_url'],
+            'slots'      => [],
+        ],
+        'task_dropoff_failed' => [
+            'label_key' => 'customize.email_editor.email_type.task_dropoff_failed',
+            'variables'  => ['brand_name', 'delivery_id', 'tracking_url'],
+            'slots'      => [],
+        ],
+        'task_pickup_failed' => [
+            'label_key' => 'customize.email_editor.email_type.task_pickup_failed',
             'variables'  => ['brand_name', 'delivery_id', 'tracking_url'],
             'slots'      => [],
         ],
