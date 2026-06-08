@@ -27,21 +27,21 @@
       </a>
       {% if is_granted('ROLE_DISPATCHER') %}
       <a class="link" href="{{ path('admin_index') }}" title="{{ 'adminDashboard.title'|trans|e('html_attr') }}">
-        <i class="fa fa-lock"></i><span class="ml-2 hidden md:inline">{{ 'adminDashboard.title'|trans }}</span>
+        <i class="fa fa-lock"></i><span class="ml-2 hidden lg:inline">{{ 'adminDashboard.title'|trans }}</span>
       </a>
       {% endif %}
     </div>
-    <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="inline-flex items-center p-2 ms-3 w-10 h-10 justify-center w-10 h-10 justify-center text-heading bg-neutral-primary box-border border border-transparent hover:bg-neutral-secondary-medium focus:ring-4 focus:ring-neutral-tertiary font-medium leading-5 rounded-base focus:outline-none md:hidden" aria-controls="navbar-dropdown" aria-expanded="false">
+    <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="inline-flex items-center p-2 ms-3 w-10 h-10 justify-center w-10 h-10 justify-center text-heading bg-neutral-primary box-border border border-transparent hover:bg-neutral-secondary-medium focus:ring-4 focus:ring-neutral-tertiary font-medium leading-5 rounded-base focus:outline-none lg:hidden" aria-controls="navbar-dropdown" aria-expanded="false">
       <span class="sr-only">Open main menu</span>
       <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5 7h14M5 12h14M5 17h14"/></svg>
     </button>
-    <div class="hidden w-full md:block md:w-auto" :class="{ 'hidden' : !mobileMenuOpen}">
-      <ul class="flex flex-col font-medium mt-4 rounded-base bg-neutral-secondary-soft md:flex-row md:items-center md:mt-0 md:text-sm gap-4 pb-2 md:px-0 md:pb-0">
-        <li class="w-full md:w-auto">
+    <div class="hidden w-full lg:block lg:w-auto" :class="{ 'hidden' : !mobileMenuOpen}">
+      <ul class="flex flex-col font-medium mt-4 rounded-base bg-neutral-secondary-soft lg:flex-row lg:items-center lg:mt-0 lg:text-sm gap-2 lg:gap-4 px-2 lg:px-0 pb-2 lg:pb-0">
+        <li class="w-full lg:w-auto">
           {# We need the "relative" class on the container element,
           so that the dropdown menu is relative to it  #}
           <div class="relative w-full" {{ react_component('NavBarSearch') }}>
-            <input type="text" class="input input-bordered w-full md:w-auto" placeholder="{{ 'basics.search'|trans }}" />
+            <input type="text" class="input input-bordered w-full lg:w-auto" placeholder="{{ 'basics.search'|trans }}" />
           </div>
         </li>
         {% if coopcycle_setting('foodtech_enabled') %}
@@ -54,12 +54,12 @@
         {% endif %}
         <li>
           {% if app.user %}
-            <details class="dropdown w-full md:w-auto">
-              <summary class="btn btn-ghost w-full justify-start md:w-auto md:justify-center">
+            <details class="dropdown w-full lg:w-auto">
+              <summary class="btn btn-ghost w-full justify-start lg:w-auto lg:justify-center">
                 <img src="{{ path('user_avatar', { username: app.user.username }) }}" width="20" height="20" />
                 <span>{{ app.user.username }}</span>
               </summary>
-              <ul class="menu dropdown-content bg-base-100 text-base-content rounded-t-none p-2 z-2 w-full md:w-auto">
+              <ul class="menu dropdown-content bg-base-100 text-base-content rounded-t-none p-2 z-2 w-full lg:w-auto">
                 <li>
                   <a href="{{ path('profile_edit') }}">
                     {% trans %}navbar.myAccount{% endtrans %}
@@ -81,9 +81,9 @@
           </a>
         </li>
         <li>
-          <details class="dropdown w-full md:w-auto md:dropdown-end">
-            <summary class="btn btn-ghost w-full justify-start md:w-auto md:justify-center">{{ current_locale }}</summary>
-            <ul class="menu dropdown-content bg-base-100 text-base-content rounded-t-none p-2 z-2 w-full md:w-auto">
+          <details class="dropdown w-full lg:w-auto lg:dropdown-end">
+            <summary class="btn btn-ghost w-full justify-start lg:w-auto lg:justify-center">{{ current_locale }}</summary>
+            <ul class="menu dropdown-content bg-base-100 text-base-content rounded-t-none p-2 z-2 w-full lg:w-auto">
               {% for locale, label in locales %}
                 {% if locale != app.request.locale %}
                 <li>
