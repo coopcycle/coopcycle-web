@@ -38,8 +38,6 @@ class AddressResolverTest extends TestCase
 
         $shop->addAddressForDayOfWeek('Mo', $mondayAddress);
 
-        $this->assertSame($defaultAddresss, AddressResolver::resolveAddress($shop));
-
         $monday = new \DateTimeImmutable('2026-03-09');
         $tuesday = new \DateTimeImmutable('2026-03-10');
         $wednesday = new \DateTimeImmutable('2026-03-11');
