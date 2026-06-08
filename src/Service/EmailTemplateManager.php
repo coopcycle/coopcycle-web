@@ -5,6 +5,7 @@ namespace AppBundle\Service;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment as TwigEnvironment;
 
 class EmailTemplateManager
 {
@@ -65,6 +66,7 @@ class EmailTemplateManager
         private Filesystem $emailTemplatesFilesystem,
         private SettingsManager $settingsManager,
         private TranslatorInterface $translator,
+        private TwigEnvironment $twig,
     ) {}
 
     public function getEmailTypes(string $locale = 'en'): array
@@ -251,44 +253,7 @@ class EmailTemplateManager
      */
     public function getDefaultLayout(): string
     {
-        $theme          = $this->getThemeColors();
-        $brandName      = htmlspecialchars($this->settingsManager->get('brand_name') ?? '{{brand_name}}', ENT_QUOTES);
-        $bgColor        = htmlspecialchars($theme['secondary'], ENT_QUOTES);
-        $contentBgColor = htmlspecialchars($theme['secondary-content'], ENT_QUOTES);
-
-        return <<<MJML
-<mjml>
-  <mj-head>
-    <mj-font name="Raleway" href="https://fonts.googleapis.com/css?family=Raleway:400,700" />
-    <mj-font name="Open Sans" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" />
-    <mj-attributes>
-      <mj-text align="center" color="#555" />
-      <mj-all font-family="'Open Sans', Arial, sans-serif" />
-    </mj-attributes>
-  </mj-head>
-  <mj-body background-color="{$bgColor}">
-    <mj-section>
-      <mj-column>
-        <mj-text font-family="Raleway, Arial, sans-serif" align="left">
-          <h2>{$brandName}</h2>
-        </mj-text>
-      </mj-column>
-    </mj-section>
-    <mj-section background-color="{$contentBgColor}">
-      <mj-column>
-        <mj-raw data-slot="content"></mj-raw>
-      </mj-column>
-    </mj-section>
-    <mj-section>
-      <mj-column>
-        <mj-text align="center" font-size="12px" color="#999999">
-          Powered by CoopCycle
-        </mj-text>
-      </mj-column>
-    </mj-section>
-  </mj-body>
-</mjml>
-MJML;
+        return $this->twig->render('emails/layout_with_slot.mjml.twig');
     }
 
     /**
@@ -298,83 +263,15 @@ MJML;
      */
     public function getDefaultFragment(string $type, string $locale = 'en'): string
     {
-        $theme          = $this->getThemeColors();
-        $primaryColor   = $theme['primary'];
-        $primaryContent = $theme['primary-content'];
+        $theme = $this->getThemeColors();
 
-        $t = fn(string $key, array $params = []) =>
-            $this->translator->trans($key, $params, 'emails', $locale);
-
-        $contents = [
-            'order_created' => [
-                'heading' => $t('order.created.subject'),
-                'body'    => $t('order.created.body'),
-                'cta'     => ['label' => $t('order.view'), 'href' => '{{order_url}}'],
-            ],
-            'order_accepted' => [
-                'heading' => $t('order.accepted.subject'),
-                'body'    => $t('order.accepted.body.intro'),
-                'cta'     => ['label' => $t('order.view'), 'href' => '{{order_url}}'],
-            ],
-            'order_cancelled' => [
-                'heading' => $t('order.cancelled.subject'),
-                'body'    => $t('order.cancelled.body.intro'),
-                'cta'     => null,
-            ],
-            'order_delayed' => [
-                'heading' => $t('order.delayed.subject'),
-                'body'    => $t('order.delayed.body'),
-                'cta'     => null,
-            ],
-            'order_payment' => [
-                'heading' => $t('order.payment.subject'),
-                'body'    => $t('order.payment.body'),
-                'cta'     => null,
-            ],
-            'order_receipt' => [
-                'heading' => $t('order.receipt.subject'),
-                'body'    => $t('order.receipt.body'),
-                'cta'     => null,
-            ],
-            'task_completed' => [
-                'heading' => $t('task.dropoff.done.subject'),
-                'body'    => $t('task.dropoff.done.body'),
-                'cta'     => null,
-            ],
-            'task_failed' => [
-                'heading' => $t('task.dropoff.failed.subject'),
-                'body'    => $t('task.dropoff.failed.body'),
-                'cta'     => null,
-            ],
-        ];
-
-        $c       = $contents[$type] ?? ['heading' => '', 'body' => '', 'cta' => null];
-        $body    = trim(preg_replace('/\s+/', ' ', $c['body']));
-        $heading = htmlspecialchars($c['heading'], ENT_QUOTES);
-
-        $ctaMjml = '';
-        if ($c['cta'] !== null) {
-            $ctaMjml = sprintf(
-                "\n<mj-button href=\"%s\" background-color=\"%s\" color=\"%s\" font-family=\"Raleway, Arial, sans-serif\">%s</mj-button>",
-                htmlspecialchars($c['cta']['href'], ENT_QUOTES),
-                htmlspecialchars($primaryColor, ENT_QUOTES),
-                htmlspecialchars($primaryContent, ENT_QUOTES),
-                htmlspecialchars($c['cta']['label'], ENT_QUOTES)
-            );
-        }
-
-        $slots     = self::CUSTOMER_EMAILS[$type]['slots'] ?? [];
-        $slotsMjml = '';
-        foreach ($slots as $slotName) {
-            $slotsMjml .= "\n<mj-raw data-slot=\"{$slotName}\"></mj-raw>";
-        }
-
-        return <<<MJML
-<mj-text align="left" line-height="24px">
-  <h3>{$heading}</h3>
-  <p>{$body}</p>
-</mj-text>{$slotsMjml}{$ctaMjml}
-MJML;
+        return $this->twig->render("emails/fragments/{$type}.mjml.twig", [
+            'locale'                => $locale,
+            'primary_color'         => $theme['primary'],
+            'primary_content_color' => $theme['primary-content'],
+            'order_url'             => '{{order_url}}',
+            'tracking_url'          => '{{tracking_url}}',
+        ]);
     }
 
     /**

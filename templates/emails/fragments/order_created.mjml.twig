@@ -1,0 +1,6 @@
+<mj-text align="left" line-height="24px">
+  <h3>{{ 'order.created.subject' | trans({}, 'emails', locale) }}</h3>
+  <p>{{ 'order.created.body' | trans({}, 'emails', locale) | raw }}</p>
+</mj-text>
+<mj-raw data-slot="order_items"></mj-raw>
+<mj-button href="{{ order_url }}" background-color="{{ primary_color }}" color="{{ primary_content_color }}" font-family="Raleway, Arial, sans-serif">{{ 'order.view' | trans({}, 'emails', locale) }}</mj-button>
