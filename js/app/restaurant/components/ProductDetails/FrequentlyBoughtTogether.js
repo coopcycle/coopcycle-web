@@ -6,7 +6,7 @@ import { Navigation } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/navigation'
 
-import { openProductOptionsModal, queueAddItem } from '../../redux/actions'
+import { queueAddItem } from '../../redux/actions'
 
 function FbtCard({ item, onAddToCart }) {
   const product = item.product
@@ -63,16 +63,7 @@ export default function FrequentlyBoughtTogether({ product }) {
   }, [product?.['@id']])
 
   const handleAddToCart = (item) => {
-    const hasOptions = item.options?.length > 0
-
-    if (hasOptions) {
-      const p      = item.product
-      const images = (p.images ?? []).map(img => img.url).filter(Boolean)
-      const price  = p.offers?.price ?? 0
-      dispatch(openProductOptionsModal(p, item.options, images, price, item.formAction))
-    } else {
-      dispatch(queueAddItem(item.formAction, 1))
-    }
+    dispatch(queueAddItem(item.formAction, 1))
   }
 
   if (loading || items.length === 0) return null

@@ -71,6 +71,10 @@ final class ProductFbtProvider implements ProviderInterface
             );
 
             foreach ($products as $p) {
+                if ($p->hasOptions()) {
+                    continue;
+                }
+
                 $restaurantId = $p->getRestaurant()?->getId();
                 if (!$restaurantId) {
                     continue;
@@ -78,9 +82,6 @@ final class ProductFbtProvider implements ProviderInterface
 
                 $dto->items[] = [
                     'product'    => $this->serializer->normalize($p, 'jsonld', ['groups' => ['product']]),
-                    'options'    => array_values(
-                        $this->serializer->normalize($p->getOptions()->toArray(), null, ['groups' => ['restaurant_menu']]) ?? []
-                    ),
                     'formAction' => $this->router->generate('restaurant_add_product_to_cart', [
                         'id'   => $restaurantId,
                         'code' => $p->getCode(),
