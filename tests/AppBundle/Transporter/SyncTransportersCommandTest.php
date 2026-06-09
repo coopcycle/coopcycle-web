@@ -12,6 +12,7 @@ use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TaskManager;
 use AppBundle\Transporter\ImportFromPoint;
 use AppBundle\Transporter\ReportFromCC;
+use AppBundle\Transporter\TransporterHelpers;
 use Doctrine\ORM\EntityManagerInterface;
 use Fidry\AliceDataFixtures\LoaderInterface;
 use League\Flysystem\Filesystem;
@@ -1076,6 +1077,109 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertCount(1, $dir_list);
         $unsynced = $this->entityManager->getRepository(EDIFACTMessage::class)->getUnsynced('TELIAE');
         $this->assertCount(0, $unsynced);
+    }
+
+
+    public function testParseSyncOptionsFtpDecodesUrlEncodedCredentials(): void
+    {
+        // user "user@coop" and password "p@ss:123" require percent-encoding
+        // inside the URL, otherwise the '@' would be parsed as host separator
+        $uri = 'ftp://user%40coop:p%40ss%3A123@ftp.example.com:21/remote/path';
+
+        $fs = TransporterHelpers::parseSyncOptions($uri);
+
+        $this->assertInstanceOf(Filesystem::class, $fs);
+
+        $adapterRef = new \ReflectionProperty($fs, 'adapter');
+        $adapterRef->setAccessible(true);
+        $adapter = $adapterRef->getValue($fs);
+
+        $optionsRef = new \ReflectionProperty($adapter, 'connectionOptions');
+        $optionsRef->setAccessible(true);
+        $options = $optionsRef->getValue($adapter);
+
+        $this->assertEquals('user@coop', $options->username());
+        $this->assertEquals('p@ss:123', $options->password());
+        $this->assertEquals('ftp.example.com', $options->host());
+        $this->assertEquals(21, $options->port());
+        $this->assertEquals('/remote/path', $options->root());
+    }
+
+    public function testParseSyncOptionsFtpRejectsUnencodedAtInUser(): void
+    {
+        // Sanity check: without urldecode() an unencoded '@' in the user
+        // would be misinterpreted by parse_url() and the host/user split
+        // would be wrong. This documents the failure mode urldecode() fixes.
+        $uri = 'ftp://user%40coop:p%40ss@ftp.example.com:21/remote/path';
+
+        $fs = TransporterHelpers::parseSyncOptions($uri);
+
+        $adapterRef = new \ReflectionProperty($fs, 'adapter');
+        $adapterRef->setAccessible(true);
+        $adapter = $adapterRef->getValue($fs);
+
+        $optionsRef = new \ReflectionProperty($adapter, 'connectionOptions');
+        $optionsRef->setAccessible(true);
+        $options = $optionsRef->getValue($adapter);
+
+        $this->assertEquals('user@coop', $options->username());
+        $this->assertEquals('p@ss', $options->password());
+        $this->assertEquals('ftp.example.com', $options->host());
+    }
+
+    public function testParseSyncOptionsSftpDecodesUrlEncodedCredentials(): void
+    {
+        $uri = 'sftp://svc%40acme:s%3Aecret%21@files.example.com:2222/outbox';
+
+        $fs = TransporterHelpers::parseSyncOptions($uri);
+
+        $this->assertInstanceOf(Filesystem::class, $fs);
+
+        // For SFTP, the SftpAdapter wraps a ConnectionProvider that holds
+        // the (decoded) host/username/password.
+        $adapterRef = new \ReflectionProperty($fs, 'adapter');
+        $adapterRef->setAccessible(true);
+        $adapter = $adapterRef->getValue($fs);
+
+        $providerRef = new \ReflectionProperty($adapter, 'connectionProvider');
+        $providerRef->setAccessible(true);
+        $provider = $providerRef->getValue($adapter);
+
+        $hostRef = new \ReflectionProperty($provider, 'host');
+        $hostRef->setAccessible(true);
+        $this->assertEquals('files.example.com', $hostRef->getValue($provider));
+
+        $usernameRef = new \ReflectionProperty($provider, 'username');
+        $usernameRef->setAccessible(true);
+        $this->assertEquals('svc@acme', $usernameRef->getValue($provider));
+
+        $passwordRef = new \ReflectionProperty($provider, 'password');
+        $passwordRef->setAccessible(true);
+        $this->assertEquals('s:ecret!', $passwordRef->getValue($provider));
+
+        $portRef = new \ReflectionProperty($provider, 'port');
+        $portRef->setAccessible(true);
+        $this->assertEquals(2222, $portRef->getValue($provider));
+    }
+
+    public function testParseSyncOptionsFtpWithoutPortDefaultsTo21(): void
+    {
+        $uri = 'ftp://user%40coop:p%40ss@ftp.example.com/remote';
+
+        $fs = TransporterHelpers::parseSyncOptions($uri);
+
+        $adapterRef = new \ReflectionProperty($fs, 'adapter');
+        $adapterRef->setAccessible(true);
+        $adapter = $adapterRef->getValue($fs);
+
+        $optionsRef = new \ReflectionProperty($adapter, 'connectionOptions');
+        $optionsRef->setAccessible(true);
+        $options = $optionsRef->getValue($adapter);
+
+        $this->assertEquals(21, $options->port());
+        $this->assertEquals('/remote', $options->root());
+        $this->assertEquals('user@coop', $options->username());
+        $this->assertEquals('p@ss', $options->password());
     }
 
 }

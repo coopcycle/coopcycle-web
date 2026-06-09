@@ -29,8 +29,8 @@ class TransporterHelpers {
                 $adapter = new FtpAdapter(
                     FtpConnectionOptions::fromArray([
                         'host' => $auth_details['host'],
-                        'username' => $auth_details['user'],
-                        'password' => $auth_details['pass'],
+                        'username' => urldecode($auth_details['user']),
+                        'password' => urldecode($auth_details['pass']),
                         'port' => $auth_details['port'] ?? 21,
                         'root' => $auth_details['path'] ?? '',
                         'ssl' => false,
@@ -41,8 +41,8 @@ class TransporterHelpers {
                 $adapter = new SftpAdapter(
                     SftpConnectionProvider::fromArray([
                         'host' => $auth_details['host'],
-                        'username' => $auth_details['user'],
-                        'password' => $auth_details['pass'],
+                        'username' => urldecode($auth_details['user']),
+                        'password' => urldecode($auth_details['pass']),
                         'port' => $auth_details['port'] ?? 22,
                     ]),
                     $auth_details['path'] ?? ''

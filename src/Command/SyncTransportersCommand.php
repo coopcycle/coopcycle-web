@@ -15,7 +15,6 @@ use AppBundle\Transporter\ImportFromPoint;
 use AppBundle\Transporter\ReportFromCC;
 use AppBundle\Transporter\TransporterHelpers;
 use Carbon\Carbon;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use League\Flysystem\Filesystem;
@@ -42,7 +41,6 @@ use Transporter\TransporterSyncOptions;
 
 class SyncTransportersCommand extends Command {
 
-    public $logger;
     use LockableTrait;
 
     private string $transporter;
@@ -147,6 +145,8 @@ class SyncTransportersCommand extends Command {
             return Command::FAILURE;
         }
 
+        $this->output = $output;
+        $this->dryRun = $input->getOption('dry-run');
 
         try {
             $this->setup($transporterName);
@@ -158,85 +158,84 @@ class SyncTransportersCommand extends Command {
             throw $e;
         }
 
-        $this->dryRun = $input->getOption('dry-run');
-        $this->output = $output;
-
-        $config = $this->params->get('transporters_config');
-        if (!($config[$this->transporter]['enabled'] ?? false)) {
-            $this->transporterLogger->warning(
-                sprintf('%s is not configured or enabled', $this->transporter),
-                ['transporter' => $this->transporter]
-            );
-            throw new Exception(sprintf('%s is not configured or enabled', $this->transporter));
-        }
-        $config = $config[$this->transporter];
-
-        if (isset($config['sync']['uri'])) {
-            $inFs = $outFs = $this->initTransporterSyncOptions($config['sync']);
-        }
-        elseif (isset($config['sync']['in']) && isset($config['sync']['out'])) {
-            $inFs = $this->initTransporterSyncOptions($config['sync']['in']);
-            $outFs = $this->initTransporterSyncOptions($config['sync']['out']);
-        } else {
-            $this->transporterLogger->critical(
-                'Sync not configured',
-                ['transporter' => $this->transporter]
-            );
-            return Command::FAILURE;
-        }
-
-        $opts = new TransporterOptions(
-            $transporterName,
-            $this->companyLegalName, $this->companyLegalID,
-            $config['legal_name'], $config['legal_id'],
-            $outFs, $inFs
-        );
-
-        /** @var TransporterSync $sync */
-        $sync = new ($this->impl->sync)($opts);
-
-        if ($this->dryRun) {
-            $output->writeln("Dry run mode, nothing will be imported");
-        }
-
-        $this->transporterLogger->info(
-            sprintf(
-                'Syncing %s with %s',
-                $this->appName,
-                $this->transporter
-            ),
-            ['transporter' => $this->transporter]
-        );
-
         try {
-            $this->importAllTasks($sync);
-        } catch (Exception $e) {
-            $this->transporterLogger->critical(
+            $config = $this->params->get('transporters_config');
+            if (!($config[$this->transporter]['enabled'] ?? false)) {
+                $this->transporterLogger->warning(
+                    sprintf('%s is not configured or enabled', $this->transporter),
+                    ['transporter' => $this->transporter]
+                );
+                throw new Exception(sprintf('%s is not configured or enabled', $this->transporter));
+            }
+            $config = $config[$this->transporter];
+
+            if (isset($config['sync']['uri'])) {
+                $inFs = $outFs = $this->initTransporterSyncOptions($config['sync']);
+            }
+            elseif (isset($config['sync']['in']) && isset($config['sync']['out'])) {
+                $inFs = $this->initTransporterSyncOptions($config['sync']['in']);
+                $outFs = $this->initTransporterSyncOptions($config['sync']['out']);
+            } else {
+                $this->transporterLogger->critical(
+                    'Sync not configured',
+                    ['transporter' => $this->transporter]
+                );
+                return Command::FAILURE;
+            }
+
+            $opts = new TransporterOptions(
+                $transporterName,
+                $this->companyLegalName, $this->companyLegalID,
+                $config['legal_name'], $config['legal_id'],
+                $outFs, $inFs
+            );
+
+            /** @var TransporterSync $sync */
+            $sync = new ($this->impl->sync)($opts);
+
+            if ($this->dryRun) {
+                $output->writeln("Dry run mode, nothing will be imported");
+            }
+
+            $this->transporterLogger->info(
                 sprintf(
-                    'Failed to import tasks: %s',
-                    $e->getMessage()
+                    'Syncing %s with %s',
+                    $this->appName,
+                    $this->transporter
                 ),
                 ['transporter' => $this->transporter]
             );
-            throw $e;
+
+            try {
+                $this->importAllTasks($sync);
+            } catch (Exception $e) {
+                $this->transporterLogger->critical(
+                    sprintf(
+                        'Failed to import tasks: %s',
+                        $e->getMessage()
+                    ),
+                    ['transporter' => $this->transporter]
+                );
+                throw $e;
+            }
+
+            try {
+                $this->sendReports($sync, $opts);
+            } catch (Exception $e) {
+                $this->transporterLogger->critical(
+                    sprintf(
+                        'Failed to send reports: %s',
+                        $e->getMessage()
+                    ),
+                    ['transporter' => $this->transporter]
+                );
+                throw $e;
+            }
+
+            return Command::SUCCESS;
+        } finally {
+            $this->release();
         }
-
-        try {
-            $this->sendReports($sync, $opts);
-        } catch (Exception $e) {
-            $this->transporterLogger->critical(
-                sprintf(
-                    'Failed to send reports: %s',
-                    $e->getMessage()
-                ),
-                ['transporter' => $this->transporter]
-            );
-            throw $e;
-        }
-
-        $this->release();
-
-        return Command::SUCCESS;
     }
 
     /**
@@ -454,7 +453,7 @@ class SyncTransportersCommand extends Command {
         try {
             $fs = TransporterHelpers::parseSyncOptions($config['uri']);
         } catch (\Exception $e) {
-            $this->logger->critical($e->getMessage(), ['transporter' => $this->transporter]);
+            $this->transporterLogger->critical($e->getMessage(), ['transporter' => $this->transporter]);
             throw $e;
         }
 
@@ -466,7 +465,9 @@ class SyncTransportersCommand extends Command {
 
     private function debugPoint(Point $point): void {
         $this->output->writeln("Task ID: ".$point->getId()."\n");
-        $this->output->writeln("Recipient address: ".$point->getNamesAndAddresses(NameAndAddressType::RECIPIENT)[0]->getAddress());
+        $recipients = $point->getNamesAndAddresses(NameAndAddressType::RECIPIENT);
+        $recipientAddress = isset($recipients[0]) ? $recipients[0]->getAddress() : '(none)';
+        $this->output->writeln("Recipient address: " . $recipientAddress);
         $this->output->write("Times: ");
         $this->output->writeln(collect($point->getDates())->map(fn($date) => $date->getEvent()->name . ' -> ' . $date->getDate()->format('d/m/Y'))->join("\n"));
         $this->output->writeln("Number of packages: " . count($point->getPackages()));
