@@ -19,9 +19,14 @@ class EmailTemplateManager
             'variables'  => ['brand_name', 'order_number', 'order_url'],
             'slots'      => ['order_items'],
         ],
-        'order_accepted_foodtech' => [
-            'label_key' => 'customize.email_editor.email_type.order_accepted_foodtech',
-            'variables'  => ['brand_name', 'order_number', 'fulfillment_body', 'shipping_time_range', 'disclaimer', 'order_url'],
+        'order_accepted_foodtech_delivery' => [
+            'label_key' => 'customize.email_editor.email_type.order_accepted_foodtech_delivery',
+            'variables'  => ['brand_name', 'order_number', 'shipping_time_range', 'order_url'],
+            'slots'      => ['loopeat_info'],
+        ],
+        'order_accepted_foodtech_collection' => [
+            'label_key' => 'customize.email_editor.email_type.order_accepted_foodtech_collection',
+            'variables'  => ['brand_name', 'order_number', 'shipping_time_range', 'vendor_name', 'phone_number', 'order_url'],
             'slots'      => ['loopeat_info'],
         ],
         'order_accepted_lastmile' => [
@@ -286,9 +291,9 @@ class EmailTemplateManager
             'primary_content_color' => $theme['primary-content'],
             'order_url'             => '{{order_url}}',
             'tracking_url'          => '{{tracking_url}}',
-            'fulfillment_body'      => '{{fulfillment_body}}',
             'shipping_time_range'   => '{{shipping_time_range}}',
-            'disclaimer'            => '{{disclaimer}}',
+            'vendor_name'           => '{{vendor_name}}',
+            'phone_number'          => '{{phone_number}}',
             'public_url_text'       => '{{public_url_text}}',
         ]);
     }

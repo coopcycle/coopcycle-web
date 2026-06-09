@@ -1783,7 +1783,8 @@ promotions.human_readable.text: "%name%: %description%"
 # Editor de emails
 customize.emails: Personalizar correos electrónicos
 customize.email_editor.email_type.order_created: Pedido confirmado (cliente)
-customize.email_editor.email_type.order_accepted_foodtech: Pedido aceptado (Restaurante)
+customize.email_editor.email_type.order_accepted_foodtech_delivery: Pedido aceptado – Entrega
+customize.email_editor.email_type.order_accepted_foodtech_collection: Pedido aceptado – Recogida
 customize.email_editor.email_type.order_accepted_lastmile: Pedido aceptado (Última milla)
 customize.email_editor.email_type.order_cancelled: Pedido cancelado
 customize.email_editor.email_type.order_delayed: Pedido retrasado

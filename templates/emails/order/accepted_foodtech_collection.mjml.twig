@@ -2,16 +2,16 @@
 
 {% block content %}
   <mj-text align="left" line-height="20px">
-  {{ body_intro | raw }}
+  {{ 'order.accepted.body.intro' | trans({}, 'emails') | raw }}
   </mj-text>
   <mj-text align="left" line-height="20px">
-  {{ fulfillment_body | raw }}
+  {{ 'order.foodtech.accepted.collection' | trans({}, 'emails') | raw }}
   </mj-text>
   <mj-text align="center" line-height="20px" font-weight="700" container-background-color="#f7d794">
   {{ shipping_time_range }}
   </mj-text>
   <mj-text align="left" line-height="20px">
-  {{ disclaimer | raw }}
+  {{ 'order.foodtech.accepted.collection.disclaimer' | trans({'{{name}}': vendor_name, '{{phone_number}}': phone_number}, 'emails') | raw }}
   </mj-text>
   <mj-raw data-slot="loopeat_info"></mj-raw>
   <mj-button href="{{ order_url }}" background-color="{{ primary_color }}" color="{{ primary_content_color }}" font-family="Raleway, Arial, sans-serif">

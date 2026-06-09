@@ -260,7 +260,6 @@ class EmailManager
         $subject = $this->translator->trans('order.accepted.subject', ['{{order_number}}' => $order->getNumber()], 'emails');
 
         $theme = $this->emailTemplateManager->getThemeColors();
-        $bodyIntro = $this->translator->trans('order.accepted.body.intro', [], 'emails');
 
         if ($order->hasVendor()) {
             $loopeatSlot = $order->isLoopeat()
@@ -268,27 +267,32 @@ class EmailManager
                 : '';
 
             $fulfillmentMethod = $order->getFulfillmentMethod();
-            $phoneNumber = $this->localBusinessRuntime->resolvePhoneNumber($order);
-            $formattedPhone = $phoneNumber
-                ? PhoneNumberUtil::getInstance()->format($phoneNumber, PhoneNumberFormat::NATIONAL)
-                : 'N/A';
-
-            $variables = [
+            $baseVariables = [
                 'order_number'          => $order->getNumber(),
-                'body_intro'            => $bodyIntro,
-                'fulfillment_body'      => $this->translator->trans("order.foodtech.accepted.{$fulfillmentMethod}", [], 'emails'),
                 'shipping_time_range'   => $this->orderRuntime->timeRangeForHumans($order->getShippingTimeRange()),
-                'disclaimer'            => $this->translator->trans("order.foodtech.accepted.{$fulfillmentMethod}.disclaimer", [
-                    '{{name}}'         => $order->getVendor()->getName(),
-                    '{{phone_number}}' => $formattedPhone,
-                ], 'emails'),
                 'order_url'             => $this->orderUrl($order),
                 'primary_color'         => $theme['primary'],
                 'primary_content_color' => $theme['primary-content'],
             ];
 
-            $body = $this->renderCustom('order_accepted_foodtech', $variables, ['loopeat_info' => $loopeatSlot])
-                ?? $this->renderTwigMjml('emails/order/accepted_foodtech.mjml.twig', $variables, ['loopeat_info' => $loopeatSlot]);
+            if ($fulfillmentMethod === 'collection') {
+                $phoneNumber = $this->localBusinessRuntime->resolvePhoneNumber($order);
+                $variables = $baseVariables + [
+                    'vendor_name'  => $order->getVendor()->getName(),
+                    'phone_number' => $phoneNumber
+                        ? PhoneNumberUtil::getInstance()->format($phoneNumber, PhoneNumberFormat::NATIONAL)
+                        : 'N/A',
+                ];
+                $customType   = 'order_accepted_foodtech_collection';
+                $twigTemplate = 'emails/order/accepted_foodtech_collection.mjml.twig';
+            } else {
+                $variables    = $baseVariables;
+                $customType   = 'order_accepted_foodtech_delivery';
+                $twigTemplate = 'emails/order/accepted_foodtech_delivery.mjml.twig';
+            }
+
+            $body = $this->renderCustom($customType, $variables, ['loopeat_info' => $loopeatSlot])
+                ?? $this->renderTwigMjml($twigTemplate, $variables, ['loopeat_info' => $loopeatSlot]);
         } else {
             $publicUrl = $this->urlGenerator->generate('public_order', [
                 'hashid' => $this->hashids8->encode($order->getId()),
@@ -296,7 +300,6 @@ class EmailManager
 
             $variables = [
                 'order_number'    => $order->getNumber(),
-                'body_intro'      => $bodyIntro,
                 'public_url_text' => $this->translator->trans('order.public_url', [
                     '{{order_public_url}}' => $publicUrl,
                 ], 'emails'),

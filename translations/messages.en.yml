@@ -1758,7 +1758,8 @@ restaurant.form.en_boite_le_plat_platform_fee.label: The deposit should be colle
 # Email editor
 customize.emails: Customize emails
 customize.email_editor.email_type.order_created: Order Confirmed (Customer)
-customize.email_editor.email_type.order_accepted_foodtech: Order Accepted (Restaurant)
+customize.email_editor.email_type.order_accepted_foodtech_delivery: Order Accepted – Delivery
+customize.email_editor.email_type.order_accepted_foodtech_collection: Order Accepted – Collection
 customize.email_editor.email_type.order_accepted_lastmile: Order Accepted (Last Mile)
 customize.email_editor.email_type.order_cancelled: Order Cancelled
 customize.email_editor.email_type.order_delayed: Order Delayed
