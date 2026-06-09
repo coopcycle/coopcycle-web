@@ -25,7 +25,7 @@ const BackButton = ({ restaurant, closeAddressModal, isAddressTooFar, shippingAd
     // if user is in a restaurant page we should just keep the user in that page
     return (
       <a
-        className="text-muted"
+        className="text-base-content/50"
         href="#"
         onClick={e => {
           e.preventDefault()
@@ -49,7 +49,7 @@ const BackButton = ({ restaurant, closeAddressModal, isAddressTooFar, shippingAd
 
   return (
     <a
-      className="text-muted"
+      className="text-base-content/50"
       href={window.Routing.generate('restaurants', params)}>
       <i className="fa fa-arrow-left mr-2"></i>
       <span>{t('CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS')}</span>
@@ -76,7 +76,7 @@ class AddressModal extends Component {
         className="ReactModal__Content--enter-address bg-base-100! text-base-content!"
         htmlOpenClassName="ReactModal__Html--open"
         bodyOpenClassName="ReactModal__Body--open">
-        <header className="flex items-center justify-between mb-5">
+        <header className="flex items-center justify-between gap-2 mb-5">
           <BackButton
             restaurant={this.props.restaurant}
             closeAddressModal={this.props.closeAddressModal}
@@ -84,7 +84,6 @@ class AddressModal extends Component {
             shippingAddress={this.props.shippingAddress} />
           <button
             type="button"
-            className="close pl-4"
             onClick={this.props.closeAddressModal}>
             <i className="fa fa-close"></i>
           </button>
