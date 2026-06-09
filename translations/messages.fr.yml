@@ -1684,7 +1684,8 @@ restaurant.form.en_boite_le_plat_platform_fee.label: Le montant de la consigne e
 # Éditeur d'emails
 customize.emails: Personnaliser les emails
 customize.email_editor.email_type.order_created: Commande confirmée (client)
-customize.email_editor.email_type.order_accepted: Commande acceptée
+customize.email_editor.email_type.order_accepted_foodtech: Commande acceptée (Restaurant)
+customize.email_editor.email_type.order_accepted_lastmile: Commande acceptée (Livraison)
 customize.email_editor.email_type.order_cancelled: Commande annulée
 customize.email_editor.email_type.order_delayed: Commande retardée
 customize.email_editor.email_type.order_payment: Confirmation de paiement

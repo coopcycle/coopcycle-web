@@ -10,7 +10,11 @@ use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\Task;
 use AppBundle\LoopEat\Context as LoopeatContext;
 use AppBundle\LoopEat\ContextInitializer as LoopeatContextInitializer;
+use AppBundle\Twig\LocalBusinessRuntime;
+use AppBundle\Twig\OrderRuntime;
 use Hashids\Hashids;
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\PhoneNumberUtil;
 use NotFloran\MjmlBundle\Renderer\RendererInterface;
 use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Model\OrderInterface;
@@ -44,7 +48,10 @@ class EmailManager
         private EmailTemplateManager $emailTemplateManager,
         private UrlGeneratorInterface $urlGenerator,
         private Hashids $hashids16,
-        private RequestStack $requestStack)
+        private RequestStack $requestStack,
+        private Hashids $hashids8,
+        private OrderRuntime $orderRuntime,
+        private LocalBusinessRuntime $localBusinessRuntime)
     {
         $this->mailer = $mailer;
         $this->templating = $templating;
@@ -252,15 +259,52 @@ class EmailManager
 
         $subject = $this->translator->trans('order.accepted.subject', ['{{order_number}}' => $order->getNumber()], 'emails');
 
-        $loopeatSlot = $order->isLoopeat()
-            ? $this->templating->render('emails/order/_partials/loopeat_info.mjml.twig', ['order' => $order])
-            : '';
+        $theme = $this->emailTemplateManager->getThemeColors();
+        $bodyIntro = $this->translator->trans('order.accepted.body.intro', [], 'emails');
 
-        $body = $this->renderCustom('order_accepted', [
-            'order_number' => $order->getNumber(),
-            'order_url'    => $this->orderUrl($order),
-        ], ['loopeat_info' => $loopeatSlot])
-            ?? $this->renderTwigMjml('emails/order/accepted.mjml.twig', ['order' => $order], ['loopeat_info' => $loopeatSlot]);
+        if ($order->hasVendor()) {
+            $loopeatSlot = $order->isLoopeat()
+                ? $this->templating->render('emails/order/_partials/loopeat_info.mjml.twig', ['order' => $order])
+                : '';
+
+            $fulfillmentMethod = $order->getFulfillmentMethod();
+            $phoneNumber = $this->localBusinessRuntime->resolvePhoneNumber($order);
+            $formattedPhone = $phoneNumber
+                ? PhoneNumberUtil::getInstance()->format($phoneNumber, PhoneNumberFormat::NATIONAL)
+                : 'N/A';
+
+            $variables = [
+                'order_number'          => $order->getNumber(),
+                'body_intro'            => $bodyIntro,
+                'fulfillment_body'      => $this->translator->trans("order.foodtech.accepted.{$fulfillmentMethod}", [], 'emails'),
+                'shipping_time_range'   => $this->orderRuntime->timeRangeForHumans($order->getShippingTimeRange()),
+                'disclaimer'            => $this->translator->trans("order.foodtech.accepted.{$fulfillmentMethod}.disclaimer", [
+                    '{{name}}'         => $order->getVendor()->getName(),
+                    '{{phone_number}}' => $formattedPhone,
+                ], 'emails'),
+                'order_url'             => $this->orderUrl($order),
+                'primary_color'         => $theme['primary'],
+                'primary_content_color' => $theme['primary-content'],
+            ];
+
+            $body = $this->renderCustom('order_accepted_foodtech', $variables, ['loopeat_info' => $loopeatSlot])
+                ?? $this->renderTwigMjml('emails/order/accepted_foodtech.mjml.twig', $variables, ['loopeat_info' => $loopeatSlot]);
+        } else {
+            $publicUrl = $this->urlGenerator->generate('public_order', [
+                'hashid' => $this->hashids8->encode($order->getId()),
+            ], UrlGeneratorInterface::ABSOLUTE_URL);
+
+            $variables = [
+                'order_number'    => $order->getNumber(),
+                'body_intro'      => $bodyIntro,
+                'public_url_text' => $this->translator->trans('order.public_url', [
+                    '{{order_public_url}}' => $publicUrl,
+                ], 'emails'),
+            ];
+
+            $body = $this->renderCustom('order_accepted_lastmile', $variables)
+                ?? $this->renderTwigMjml('emails/order/accepted_lastmile.mjml.twig', $variables);
+        }
 
         return $this->createHtmlMessageWithReplyTo($subject, $body);
     }

@@ -1,0 +1,20 @@
+{% extends 'emails/layout.mjml.twig' %}
+
+{% block content %}
+  <mj-text align="left" line-height="20px">
+  {{ body_intro | raw }}
+  </mj-text>
+  <mj-text align="left" line-height="20px">
+  {{ fulfillment_body | raw }}
+  </mj-text>
+  <mj-text align="center" line-height="20px" font-weight="700" container-background-color="#f7d794">
+  {{ shipping_time_range }}
+  </mj-text>
+  <mj-text align="left" line-height="20px">
+  {{ disclaimer | raw }}
+  </mj-text>
+  <mj-raw data-slot="loopeat_info"></mj-raw>
+  <mj-button href="{{ order_url }}" background-color="{{ primary_color }}" color="{{ primary_content_color }}" font-family="Raleway, Arial, sans-serif">
+    {{ 'order.view' | trans({}, 'emails') }}
+  </mj-button>
+{% endblock %}

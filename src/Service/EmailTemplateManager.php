@@ -19,10 +19,15 @@ class EmailTemplateManager
             'variables'  => ['brand_name', 'order_number', 'order_url'],
             'slots'      => ['order_items'],
         ],
-        'order_accepted' => [
-            'label_key' => 'customize.email_editor.email_type.order_accepted',
-            'variables'  => ['brand_name', 'order_number', 'order_url'],
+        'order_accepted_foodtech' => [
+            'label_key' => 'customize.email_editor.email_type.order_accepted_foodtech',
+            'variables'  => ['brand_name', 'order_number', 'fulfillment_body', 'shipping_time_range', 'disclaimer', 'order_url'],
             'slots'      => ['loopeat_info'],
+        ],
+        'order_accepted_lastmile' => [
+            'label_key' => 'customize.email_editor.email_type.order_accepted_lastmile',
+            'variables'  => ['brand_name', 'order_number', 'public_url_text'],
+            'slots'      => [],
         ],
         'order_cancelled' => [
             'label_key' => 'customize.email_editor.email_type.order_cancelled',
@@ -227,7 +232,7 @@ class EmailTemplateManager
      *
      * @return array{primary: string, primary-content: string, secondary: string, secondary-content: string, accent: string, accent-content: string}
      */
-    private function getThemeColors(): array
+    public function getThemeColors(): array
     {
         $defaults = [
             'primary'           => '#10ac84',
@@ -281,6 +286,10 @@ class EmailTemplateManager
             'primary_content_color' => $theme['primary-content'],
             'order_url'             => '{{order_url}}',
             'tracking_url'          => '{{tracking_url}}',
+            'fulfillment_body'      => '{{fulfillment_body}}',
+            'shipping_time_range'   => '{{shipping_time_range}}',
+            'disclaimer'            => '{{disclaimer}}',
+            'public_url_text'       => '{{public_url_text}}',
         ]);
     }
 

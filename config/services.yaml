@@ -826,6 +826,7 @@ services:
     arguments:
       $transactionalAddress: "%transactional_address%"
       $hashids16: '@hashids.16'
+      $hashids8: '@hashids.8'
 
   AppBundle\Security\TwoFactor\EmailAuthCodeMailer:
     arguments:
