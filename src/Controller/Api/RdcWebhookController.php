@@ -22,7 +22,7 @@ class RdcWebhookController extends AbstractController
     private const WEBHOOK_MEMBER_HEADER = 'X-webhook-Source';
     private const WEBHOOK_SECRET_HEADER = 'X-webhook-Secret';
     private const IDEMPOTENCY_TTL = 21600;
-    private const CACHE_KEY_PREFIX = 'rdc_webhook_payload:';
+    private const CACHE_KEY_PREFIX = 'rdc_webhook_event:';
 
     public function __construct(
         private readonly LoggerInterface $logger,
@@ -38,50 +38,89 @@ class RdcWebhookController extends AbstractController
             return new JsonResponse(['error' => 'Invalid webhook secret'], Response::HTTP_UNAUTHORIZED);
         }
 
-        $payloadHash = hash('sha256', $request->getContent());
-        if ($this->isDuplicatePayload($payloadHash)) {
-            return new JsonResponse(['status' => 'duplicate', 'hash' => $payloadHash], Response::HTTP_OK);
-        }
-
         if (!$this->isValidBOLMember($request)) {
             return new JsonResponse(['error' => 'Invalid BOL member'], Response::HTTP_UNAUTHORIZED);
         }
 
-        $payload = $this->parsePayload($request);
-        if (is_null($payload)) {
+        $events = $this->parsePayload($request);
+        if (is_null($events)) {
             return new JsonResponse(['error' => 'Invalid JSON'], Response::HTTP_BAD_REQUEST);
         }
 
-        $metadata = $payload[0]['notificationMetadata'] ?? [];
-        $lo = $payload[0]['lo'] ?? null;
+        $results = [];
+        foreach ($events as $event) {
+            $results[] = $this->handleEvent($event, $request);
+        }
+
+        return new JsonResponse(['results' => $results], Response::HTTP_ACCEPTED);
+    }
+
+    private function handleEvent(array $event, Request $request): array
+    {
+        $metadata = $event['notificationMetadata'] ?? [];
+        $lo = $event['lo'] ?? null;
 
         if ($this->isInvalidMetadata($lo, $metadata)) {
-            return new JsonResponse(['error' => 'Missing required metadata'], Response::HTTP_BAD_REQUEST);
+            return ['status' => 'error', 'error' => 'Missing required metadata'];
+        }
+
+        $eventHash = $this->hashEvent($metadata);
+        if ($this->isDuplicateEvent($eventHash)) {
+            $this->logger->info('RDC webhook event already processed', ['hash' => $eventHash]);
+            return [
+                'status' => 'duplicate',
+                'hash' => $eventHash,
+                'lo_uri' => $metadata['loUri'],
+            ];
         }
 
         $dto = $this->parseDto($metadata['resourceType'] ?? null, $lo);
         if (is_null($dto)) {
-            return new JsonResponse(['error' => 'Unsupported resource type'], Response::HTTP_BAD_REQUEST);
+            return ['status' => 'error', 'error' => 'Unsupported resource type'];
         }
 
         $loUri = $metadata['loUri'];
         $loMember = $request->headers->get(self::WEBHOOK_MEMBER_HEADER) ?? $metadata['loMemberIdentifier'];
         $eventType = $metadata['notificationType'];
         $loRevision = $metadata['loRevision'] ?? null;
+        $triggerType = $metadata['triggerType'] ?? null;
+        $resourceType = $metadata['resourceType'];
 
-        if (strtolower($metadata['resourceType']) !== 'servicerequest') {
-            return $this->acceptedResponse($loUri, $eventType, $metadata['resourceType'], $loRevision);
+        if (strtolower($resourceType) !== 'servicerequest') {
+            return $this->buildResult(
+                $this->acceptedResponseArray($loUri, $eventType, $resourceType, $loRevision)
+            );
+        }
+
+        if (strtolower((string) $triggerType) !== 'create') {
+            return $this->buildResult(
+                $this->acceptedResponseArray($loUri, $eventType, 'ServiceRequest', $loRevision)
+            );
         }
 
         $store = $this->storeResolver->resolveStore($loMember);
         if (is_null($store)) {
             $this->logger->error('Store not found for RDC servicerequest', ['contract_ref' => $dto->getContractRef()]);
-            return new JsonResponse(['error' => 'Store not found'], Response::HTTP_BAD_REQUEST);
+            return ['status' => 'error', 'error' => 'Store not found'];
         }
 
         $delivery = $this->processor->process($dto, $store, $loUri, $loRevision);
 
-        return $this->acceptedResponse($loUri, $eventType, 'ServiceRequest', $loRevision, $delivery->getId());
+        return $this->buildResult(
+            $this->acceptedResponseArray($loUri, $eventType, 'ServiceRequest', $loRevision, $delivery->getId())
+        );
+    }
+
+    private function buildResult(array $accepted): array
+    {
+        return [
+            'status' => $accepted['status'],
+            'lo_uri' => $accepted['lo_uri'],
+            'event_type' => $accepted['event_type'],
+            'resource_type' => $accepted['resource_type'],
+            'revision' => $accepted['revision'],
+            'delivery_id' => $accepted['delivery_id'] ?? null,
+        ];
     }
 
     private function isValidSecret(Request $request): bool
@@ -94,11 +133,21 @@ class RdcWebhookController extends AbstractController
         return true;
     }
 
-    private function isDuplicatePayload(string $payloadHash): bool
+    private function hashEvent(array $metadata): string
     {
-        $cacheKey = sprintf('%s%s', self::CACHE_KEY_PREFIX, $payloadHash);
+        return hash('sha256', json_encode([
+            'loUri' => $metadata['loUri'] ?? null,
+            'loRevision' => $metadata['loRevision'] ?? null,
+            'notificationType' => $metadata['notificationType'] ?? null,
+            'triggerType' => $metadata['triggerType'] ?? null,
+            'triggerDate' => $metadata['triggerDate'] ?? null,
+        ]));
+    }
+
+    private function isDuplicateEvent(string $eventHash): bool
+    {
+        $cacheKey = sprintf('%s%s', self::CACHE_KEY_PREFIX, $eventHash);
         if ($this->redis->exists($cacheKey)) {
-            $this->logger->info('RDC webhook already processed', ['hash' => $payloadHash]);
             return true;
         }
         $this->redis->setex($cacheKey, self::IDEMPOTENCY_TTL, (string) time());
@@ -112,7 +161,7 @@ class RdcWebhookController extends AbstractController
             $this->logger->warning('RDC webhook payload is not valid JSON', ['error' => json_last_error_msg()]);
             return null;
         }
-        if (!is_array($payload) || !isset($payload[0])) {
+        if (!is_array($payload) || empty($payload[0])) {
             $this->logger->warning('RDC webhook payload is empty or invalid');
             return null;
         }
@@ -137,7 +186,7 @@ class RdcWebhookController extends AbstractController
         };
     }
 
-    private function acceptedResponse(string $loUri, string $eventType, string $resourceType, ?int $loRevision, ?int $deliveryId = null): JsonResponse
+    private function acceptedResponseArray(string $loUri, string $eventType, string $resourceType, ?int $loRevision, ?int $deliveryId = null): array
     {
         $response = [
             'status' => 'accepted',
@@ -149,7 +198,7 @@ class RdcWebhookController extends AbstractController
         if (!is_null($deliveryId)) {
             $response['delivery_id'] = $deliveryId;
         }
-        return new JsonResponse($response, Response::HTTP_ACCEPTED);
+        return $response;
     }
 
     private function isValidBOLMember(Request $request): bool

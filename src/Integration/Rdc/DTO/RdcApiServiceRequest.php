@@ -11,6 +11,7 @@ use AppBundle\Integration\Rdc\Enum\ServiceNature;
 use AppBundle\Integration\Rdc\Enum\ServiceStatus;
 use AppBundle\Integration\Rdc\Enum\ServiceSubtype;
 use AppBundle\Integration\Rdc\Enum\ServiceType;
+use Carbon\Carbon;
 use DateTimeImmutable;
 
 final class RdcApiServiceRequest
@@ -183,8 +184,8 @@ final class RdcApiServiceRequest
     {
         $range = $this->startLocation['requestedStartTimeRange'] ?? [];
         return new TimeSlot(
-            start: isset($range['earliestDateTime']) ? new DateTimeImmutable($range['earliestDateTime']) : null,
-            end: isset($range['latestDateTime']) ? new DateTimeImmutable($range['latestDateTime']) : null,
+            start: isset($range['earliestDateTime']) ? Carbon::parse($range['earliestDateTime'])->utc()->toDateTimeImmutable() : null,
+            end: isset($range['latestDateTime']) ? Carbon::parse($range['latestDateTime'])->utc()->toDateTimeImmutable() : null,
         );
     }
 
@@ -192,8 +193,8 @@ final class RdcApiServiceRequest
     {
         $range = $this->endLocation['requestedEndTimeRange'] ?? [];
         return new TimeSlot(
-            start: isset($range['earliestDateTime']) ? new DateTimeImmutable($range['earliestDateTime']) : null,
-            end: isset($range['latestDateTime']) ? new DateTimeImmutable($range['latestDateTime']) : null,
+            start: isset($range['earliestDateTime']) ? Carbon::parse($range['earliestDateTime'])->utc()->toDateTimeImmutable() : null,
+            end: isset($range['latestDateTime']) ? Carbon::parse($range['latestDateTime'])->utc()->toDateTimeImmutable() : null,
         );
     }
 
