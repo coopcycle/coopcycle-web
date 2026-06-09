@@ -18,12 +18,10 @@ function FbtCard({ item, onAddToCart }) {
       type="button"
       className="w-full text-left card bg-base-200 cursor-pointer hover:bg-base-300 transition-colors"
       onClick={() => onAddToCart(item)}>
-      {image && (
-        <figure className="aspect-square overflow-hidden rounded-t-xl">
-          <img src={image} alt={product.name} className="w-full h-full object-cover" />
-        </figure>
-      )}
-      <div className="card-body p-2 gap-1">
+      <figure className="aspect-square overflow-hidden rounded-t-xl bg-base-300">
+        {image && <img src={image} alt={product.name} className="w-full h-full object-cover" />}
+      </figure>
+      <div className="card-body gap-1">
         <p className="text-sm font-medium line-clamp-2 leading-tight">{product.name}</p>
         {price !== undefined && (
           <p className="text-sm text-base-content/60">{(price / 100).formatMoney()}</p>
