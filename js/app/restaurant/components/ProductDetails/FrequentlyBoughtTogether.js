@@ -21,10 +21,10 @@ function FbtCard({ item, onAddToCart }) {
       <figure className="aspect-square overflow-hidden rounded-t-xl bg-base-300">
         {image && <img src={image} alt={product.name} className="w-full h-full object-cover" />}
       </figure>
-      <div className="card-body gap-1">
-        <p className="text-sm font-medium line-clamp-2 leading-tight">{product.name}</p>
+      <div className="card-body gap-1 basis-32 shrink-0 overflow-hidden">
+        <p className="text-sm font-medium line-clamp-3 leading-tight">{product.name}</p>
         {price !== undefined && (
-          <p className="text-sm text-base-content/60">{(price / 100).formatMoney()}</p>
+          <p className="text-sm text-base-content/60 grow-0">{(price / 100).formatMoney()}</p>
         )}
       </div>
     </button>
