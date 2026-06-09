@@ -2656,9 +2656,10 @@ class AdminController extends AbstractController
 
         // GET: return the layout MJML (custom or default)
         $custom = $emailTemplateManager->getCustomLayout($locale);
+        $mjml = $custom ?? $emailTemplateManager->getDefaultLayout();
 
         return $this->json([
-            'mjml'      => $custom ?? $emailTemplateManager->getDefaultLayout(),
+            'mjml'      => $emailTemplateManager->forEditor($mjml),
             'is_custom' => $custom !== null,
         ]);
     }

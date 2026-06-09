@@ -83,6 +83,8 @@ class EmailManager
             ->from($this->getFrom());
 
         if ($body) {
+            // Custom templates saved via the editor use /img/logo.png; restore cid: for email clients.
+            $body = str_replace('/img/logo.png', 'cid:logo', $body);
             $message = $message->html($body);
         }
 

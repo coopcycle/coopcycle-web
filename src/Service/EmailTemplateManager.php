@@ -273,7 +273,17 @@ class EmailTemplateManager
      */
     public function getDefaultLayout(): string
     {
-        return $this->twig->render('emails/layout_with_slot.mjml.twig');
+        return $this->twig->render('emails/layout_with_slot.mjml.twig', ['logo_src' => '/img/logo.png']);
+    }
+
+    /**
+     * Replaces the email-only cid:logo URI with a browser-accessible path so the
+     * logo renders correctly in the GrapeJS editor canvas.
+     * Safe to call multiple times; a no-op when the URL is already set correctly.
+     */
+    public function forEditor(string $mjml): string
+    {
+        return str_replace('"cid:logo"', '"/img/logo.png"', $mjml);
     }
 
     /**
@@ -368,7 +378,7 @@ class EmailTemplateManager
 
         $stitched = $this->resolveSlots($layoutMjml, ['content' => $fragmentWithMarkers]);
 
-        return ['mjml' => $stitched, 'is_custom' => $isCustom];
+        return ['mjml' => $this->forEditor($stitched), 'is_custom' => $isCustom];
     }
 
     /**

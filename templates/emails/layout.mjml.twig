@@ -27,7 +27,7 @@
 		      {{ 'basics.powered_by'|trans|raw }}
 		    </mj-text>
         <mj-spacer height="1px" />
-        <mj-image alt="CoopCycle" width="24px" src="cid:logo" />
+        <mj-image alt="CoopCycle" width="24px" src="{{ logo_src | default('cid:logo') }}" />
 		  </mj-column>
 		</mj-section>
   </mj-body>
