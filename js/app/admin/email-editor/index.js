@@ -200,6 +200,14 @@ function setStatus(msg, type = 'info') {
   el.className = 'ee-status ee-status--' + type
 }
 
+function showLoader() {
+  document.getElementById('ee-loader').removeAttribute('hidden')
+}
+
+function hideLoader() {
+  document.getElementById('ee-loader').setAttribute('hidden', '')
+}
+
 // ─── API ──────────────────────────────────────────────────────────────────────
 
 function templateApiUrl(type, locale) {
@@ -506,15 +514,18 @@ async function selectLayout() {
   setStatus('Loading…')
   document.getElementById('ee-save').disabled  = true
   document.getElementById('ee-reset').disabled = true
+  showLoader()
 
   try {
     const { mjml, is_custom } = await loadLayout(currentLocale)
     initEditor(mjml, true)
+    hideLoader()
     updateLayoutBadge(currentLocale, is_custom)
     setStatus(is_custom ? i18n.status_custom : i18n.status_default, 'info')
     document.getElementById('ee-save').disabled  = false
     document.getElementById('ee-reset').disabled = !is_custom
   } catch (err) {
+    hideLoader()
     setStatus('Failed to load layout: ' + err.message, 'error')
   }
 }
@@ -528,15 +539,18 @@ async function selectEmail(type) {
   setStatus('Loading…')
   document.getElementById('ee-save').disabled  = true
   document.getElementById('ee-reset').disabled = true
+  showLoader()
 
   try {
     const { mjml, is_custom } = await loadTemplate(type, currentLocale)
     initEditor(mjml, false)
+    hideLoader()
     updateCustomBadge(type, currentLocale, is_custom)
     setStatus(is_custom ? i18n.status_custom : i18n.status_default, 'info')
     document.getElementById('ee-save').disabled  = false
     document.getElementById('ee-reset').disabled = !is_custom
   } catch (err) {
+    hideLoader()
     setStatus('Failed to load template: ' + err.message, 'error')
   }
 }

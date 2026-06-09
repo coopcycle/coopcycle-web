@@ -255,16 +255,50 @@
 
 /* ─── GrapeJS canvas wrapper ─────────────────────────────────────────────── */
 
+.ee-canvas-wrapper {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
 /*
- * #ee-canvas fills the remaining vertical space inside .ee-main.
+ * #ee-canvas fills .ee-canvas-wrapper.
  * GrapeJS is told height:'100%' at init time, so it sizes itself to this.
  * We must NOT override .gjs-cv-canvas positioning or GrapeJS's right panel
  * (Style Manager / Traits) will disappear behind the canvas.
  */
 #ee-canvas {
-  flex: 1;
-  min-height: 0;   /* required so flex child can shrink below its content */
+  height: 100%;
   position: relative;
+}
+
+/* ─── Canvas loader overlay ──────────────────────────────────────────────── */
+
+#ee-loader {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.75);
+  z-index: 100;
+}
+
+#ee-loader[hidden] {
+  display: none;
+}
+
+@keyframes ee-spin {
+  to { transform: rotate(360deg); }
+}
+
+.ee-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #dee2e6;
+  border-top-color: #10ac84;
+  border-radius: 50%;
+  animation: ee-spin 0.7s linear infinite;
 }
 
 /* Make the root GrapeJS wrapper fill our container */
