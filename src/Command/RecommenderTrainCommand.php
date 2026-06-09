@@ -66,6 +66,9 @@ class RecommenderTrainCommand extends Command
             GROUP BY o.customer_id, ov.restaurant_id
         ');
 
+        $io->section('Pushing co-occurrence items...');
+        $cooccurrenceCount = $this->streamCooccurrenceItems($io);
+
         $productPopular = array_map('intval', $this->connection->fetchFirstColumn('
             SELECT pv.product_id
             FROM sylius_order_item oi
@@ -103,7 +106,7 @@ class RecommenderTrainCommand extends Command
         $productRestaurantMap = array_map('intval', $productRestaurantRows);
         $io->writeln(sprintf('  Mapped %d products to restaurants.', count($productRestaurantMap)));
 
-        if ($productCount === 0 && $restaurantCount === 0) {
+        if ($productCount === 0 && $restaurantCount === 0 && $cooccurrenceCount === 0) {
             $io->warning('No interactions found — skipping commit.');
             return Command::SUCCESS;
         }
@@ -120,10 +123,11 @@ class RecommenderTrainCommand extends Command
             ]);
             $data = $response->toArray();
             $io->success(sprintf(
-                'Training complete for instance "%s": %d product interactions, %d restaurant interactions (trained at %s).',
+                'Training complete for instance "%s": %d product interactions, %d restaurant interactions, %d co-occurrence items (trained at %s).',
                 $data['instance'],
                 $data['product_interactions'],
                 $data['restaurant_interactions'],
+                $data['cooccurrence_items'] ?? 0,
                 $data['trained_at'],
             ));
         } catch (\Throwable $e) {
@@ -174,6 +178,59 @@ class RecommenderTrainCommand extends Command
                 'instance'     => $this->databaseName,
                 'type'         => $type,
                 'interactions' => $chunk,
+            ],
+        ])->getStatusCode();
+    }
+
+    private function streamCooccurrenceItems(SymfonyStyle $io): int
+    {
+        $result = $this->connection->executeQuery('
+            SELECT DISTINCT oi.order_id, pv.product_id AS item_id
+            FROM sylius_order_item oi
+            JOIN sylius_order o ON o.id = oi.order_id
+            JOIN sylius_product_variant pv ON pv.id = oi.variant_id
+            JOIN sylius_product p ON p.id = pv.product_id
+            WHERE o.state = :state
+              AND p.deleted_at IS NULL
+              AND p.enabled = TRUE
+              AND p.restaurant_id IS NOT NULL
+        ', ['state' => 'fulfilled']);
+
+        $chunk = [];
+        $total = 0;
+        $chunkIndex = 0;
+
+        while ($row = $result->fetchAssociative()) {
+            $chunk[] = [
+                'order_id' => (int) $row['order_id'],
+                'item_id'  => (int) $row['item_id'],
+            ];
+
+            if (count($chunk) === self::CHUNK_SIZE) {
+                $this->pushCooccurrenceChunk($chunk, ++$chunkIndex, $io);
+                $total += count($chunk);
+                $chunk = [];
+            }
+        }
+
+        if ($chunk !== []) {
+            $this->pushCooccurrenceChunk($chunk, ++$chunkIndex, $io);
+            $total += count($chunk);
+        }
+
+        $io->writeln(sprintf('  Pushed %d co-occurrence items in %d chunk(s).', $total, $chunkIndex));
+
+        return $total;
+    }
+
+    private function pushCooccurrenceChunk(array $chunk, int $index, SymfonyStyle $io): void
+    {
+        $io->writeln(sprintf('  Chunk %d: %d rows...', $index, count($chunk)), OutputInterface::VERBOSITY_VERBOSE);
+
+        $this->recommenderClient->request('POST', '/train/push-cooccurrence', [
+            'json' => [
+                'instance' => $this->databaseName,
+                'items'    => $chunk,
             ],
         ])->getStatusCode();
     }
