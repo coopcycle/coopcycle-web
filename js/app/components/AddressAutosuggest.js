@@ -378,7 +378,9 @@ const SuggestionsContainer = ({
 
   return (
     <div {...containerProps}>
-      {children}
+      <div className="tw:max-h-52 tw:overflow-y-auto">
+        {children}
+      </div>
       {Array.isArray(children) && (
       <div
         className={clsx(
@@ -408,6 +410,7 @@ const SuggestionsContainer = ({
       )}
     </div>
   )
+
 }
 
 class AddressAutosuggest extends Component {

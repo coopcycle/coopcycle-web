@@ -75,7 +75,8 @@ class AddressModal extends Component {
         overlayClassName="ReactModal__Overlay--cart"
         className="ReactModal__Content--enter-address bg-base-100! text-base-content!"
         htmlOpenClassName="ReactModal__Html--open"
-        bodyOpenClassName="ReactModal__Body--open">
+        bodyOpenClassName="ReactModal__Body--open"
+        style={{ content: { overflow: 'visible' } }}>
         <header className="flex items-center justify-between gap-2 mb-5">
           <BackButton
             restaurant={this.props.restaurant}
