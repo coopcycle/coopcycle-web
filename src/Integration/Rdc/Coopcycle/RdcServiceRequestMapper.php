@@ -14,6 +14,7 @@ use AppBundle\Integration\Rdc\DTO\ServiceRequestContact;
 use AppBundle\Integration\Rdc\DTO\TimeSlot;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
+use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\PhoneNumberUtil;
 use Psr\Log\LoggerInterface;
@@ -72,6 +73,12 @@ class RdcServiceRequestMapper
             'rdc_created_at' => (new DateTime())->format(DateTimeInterface::ATOM),
         ]);
 
+        // Dropoff comments from special instructions
+        $dropoffComments = $this->buildCommentsFromSpecialInstructions($apiRequest->specialInstructions);
+        if (!is_null($dropoffComments)) {
+            $dropoff->setComments($dropoffComments);
+        }
+
         // Recipient contact
         $recipient = $apiRequest->getRecipientContact();
         if ($this->isContactNotEmpty($recipient)) {
@@ -106,8 +113,8 @@ class RdcServiceRequestMapper
             );
         }
 
-        $hasExternalRef = $apiRequest->getExternalRef() !== null;
-        $hasBarcode = $apiRequest->getBarcode() !== null;
+        $hasExternalRef = !empty($apiRequest->getExternalRef());
+        $hasBarcode = !empty($apiRequest->getBarcode());
 
         if (!$hasExternalRef && !$hasBarcode) {
             throw new \InvalidArgumentException(
@@ -145,17 +152,46 @@ class RdcServiceRequestMapper
         // timeSlot.start = earliestDateTime (lower bound)
         // timeSlot.end = latestDateTime (upper bound)
         // Task "after" = lower bound, Task "before" = upper bound
+        // The DTO holds UTC-anchored instants; convert to the instance's local TZ.
+        $tz = date_default_timezone_get();
+
         if ($timeSlot->start !== null) {
-            $task->setDoneAfter(\DateTime::createFromImmutable($timeSlot->start));
+            $task->setDoneAfter(Carbon::instance($timeSlot->start)->tz($tz)->toDateTime());
         }
         if ($timeSlot->end !== null) {
-            $task->setDoneBefore(\DateTime::createFromImmutable($timeSlot->end));
+            $task->setDoneBefore(Carbon::instance($timeSlot->end)->tz($tz)->toDateTime());
         }
     }
 
     private function isContactNotEmpty(ServiceRequestContact $contact): bool
     {
-        return $contact->name !== '' || $contact->phone !== '' || $contact->email !== '';
+        return !empty($contact->name) || !empty($contact->phone) || !empty($contact->email);
+    }
+
+    private function buildCommentsFromSpecialInstructions(?array $specialInstructions): ?string
+    {
+        if (empty($specialInstructions)) {
+            return null;
+        }
+
+        $emojiByCode = [
+            'COMMENT' => '💬',
+            'DIGICODE' => '🔢',
+            'FLOOR' => '🏢',
+        ];
+
+        $lines = [];
+        foreach ($specialInstructions as $instruction) {
+            $code = $instruction['instructionCode'] ?? null;
+            $description = $instruction['description'] ?? null;
+            if (empty($code) || empty($description)) {
+                continue;
+            }
+            $emoji = $emojiByCode[$code] ?? '📌';
+            $lines[] = sprintf('%s %s: %s', $emoji, $code, $description);
+        }
+
+        return empty($lines) ? null : implode("\n", $lines);
     }
 
     public function mapPickupAddress(RdcApiServiceRequest $apiRequest): array
@@ -192,12 +228,14 @@ class RdcServiceRequestMapper
 
     public function mapTimeSlot(TimeSlot $timeSlot): array
     {
+        // The DTO holds UTC instants; the BOL outbound payload appends a hard-coded "Z" suffix
+        // (see RdcServiceFacade::buildServiceLocation), so we must emit UTC-anchored DateTimes.
         return [
             'start' => $timeSlot->start
-                ? \DateTime::createFromImmutable($timeSlot->start)
+                ? Carbon::instance($timeSlot->start)->utc()->toDateTime()
                 : new \DateTime(),
             'end' => $timeSlot->end
-                ? \DateTime::createFromImmutable($timeSlot->end)
+                ? Carbon::instance($timeSlot->end)->utc()->toDateTime()
                 : new \DateTime(),
         ];
     }
