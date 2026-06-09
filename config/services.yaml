@@ -200,6 +200,7 @@ services:
   League\Flysystem\Filesystem $ediMessagesFilesystem: '@edi_messages_filesystem'
   League\Flysystem\Filesystem $incidentImagesFilesystem: '@incident_images_filesystem'
   League\Flysystem\Filesystem $documentsFilesystem: '@documents_filesystem'
+  League\Flysystem\Filesystem $emailTemplatesFilesystem: '@email_templates_filesystem'
 
   Nucleos\UserBundle\Util\Canonicalizer: '@nucleos_user.util.canonicalizer.simple'
 
@@ -319,6 +320,7 @@ services:
       $optinExportUsersEnabled: '%env(bool:OPTIN_EXPORT_USERS_ENABLED)%'
       $incidentImagesFilesystem: '@incident_images_filesystem'
       $edifactFilesystem: '@edi_messages_filesystem'
+      $platformLocale: '%env(COOPCYCLE_LOCALE)%'
 
   AppBundle\Controller\Admin\CustomerSegmentationController:
     arguments:
@@ -823,6 +825,8 @@ services:
   AppBundle\Service\EmailManager:
     arguments:
       $transactionalAddress: "%transactional_address%"
+      $hashids16: '@hashids.16'
+      $hashids8: '@hashids.8'
 
   AppBundle\Security\TwoFactor\EmailAuthCodeMailer:
     arguments:

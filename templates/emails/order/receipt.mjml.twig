@@ -1,10 +1,8 @@
 {% extends 'emails/layout.mjml.twig' %}
 
 {% block content %}
-<mj-column>
   <mj-text align="left" line-height="20px">
   {{ 'order.receipt.body' | trans({}, 'emails') | raw }}
   </mj-text>
-  {% include 'emails/order/_partials/items.mjml.twig' %}
-</mj-column>
+  <mj-raw data-slot="order_items"></mj-raw>
 {% endblock %}
