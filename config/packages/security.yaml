@@ -395,4 +395,6 @@ security:
         - { path: ^/api/urbantz, roles: [ ROLE_USER, ROLE_API_APP ], methods: [ GET, POST, PUT, DELETE ] }
         - { path: ^/api/woopit, roles: [ ROLE_USER, ROLE_API_APP ] }
 
+        - { path: ^/api/products/[0-9]+/recommendations$, roles: PUBLIC_ACCESS, methods: [ GET ] }
+
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
