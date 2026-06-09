@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { withTranslation } from 'react-i18next'
+import { withTranslation, useTranslation } from 'react-i18next'
 import _ from 'lodash'
 import Modal from 'react-modal'
 import clsx from 'clsx'
@@ -17,49 +17,52 @@ import { selectIsCollectionEnabled } from '../redux/selectors'
 const ADDRESS_TOO_FAR = 'Order::ADDRESS_TOO_FAR'
 const ADDRESS_NOT_PRECISE = 'Order::ADDRESS_NOT_PRECISE'
 
+const BackButton = ({ restaurant, closeAddressModal, isAddressTooFar, shippingAddress }) => {
+
+  const { t } = useTranslation();
+
+  if (restaurant) {
+    // if user is in a restaurant page we should just keep the user in that page
+    return (
+      <a
+        className="text-muted"
+        href="#"
+        onClick={e => {
+          e.preventDefault()
+          closeAddressModal()
+        }}>
+        <i className="fa fa-arrow-left mr-2"></i>
+        <span>{t('CART_ADDRESS_MODAL_BACK_TO_RESTAURANT')}</span>
+      </a>
+    )
+  }
+
+  let params = {}
+  if (isAddressTooFar && shippingAddress?.geo) {
+    const { latitude, longitude } = shippingAddress.geo
+    const geohash = ngeohash.encode(latitude, longitude, 11)
+    params = {
+      ...params,
+      geohash,
+    }
+  }
+
+  return (
+    <a
+      className="text-muted"
+      href={window.Routing.generate('restaurants', params)}>
+      <i className="fa fa-arrow-left mr-2"></i>
+      <span>{t('CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS')}</span>
+    </a>
+  )
+}
+
 class AddressModal extends Component {
   afterOpenModal() {
     window._paq.push(['trackEvent', 'Checkout', 'openModal', 'enterAddress'])
   }
 
   closeModal() { }
-
-  renderBackButton() {
-    if (this.props.restaurant) {
-      // if user is in a restaurant page we should just keep the user in that page
-      return (
-        <a
-          className="text-muted"
-          href="#"
-          onClick={e => {
-            e.preventDefault()
-            this.props.closeAddressModal()
-          }}>
-          <i className="fa fa-arrow-left mr-2"></i>
-          <span>{this.props.t('CART_ADDRESS_MODAL_BACK_TO_RESTAURANT')}</span>
-        </a>
-      )
-    }
-
-    let params = {}
-    if (this.props.isAddressTooFar && this.props.shippingAddress?.geo) {
-      const { latitude, longitude } = this.props.shippingAddress.geo
-      const geohash = ngeohash.encode(latitude, longitude, 11)
-      params = {
-        ...params,
-        geohash,
-      }
-    }
-
-    return (
-      <a
-        className="text-muted"
-        href={window.Routing.generate('restaurants', params)}>
-        <i className="fa fa-arrow-left mr-2"></i>
-        <span>{this.props.t('CART_ADDRESS_MODAL_BACK_TO_RESTAURANTS')}</span>
-      </a>
-    )
-  }
 
   render() {
     return (
@@ -74,7 +77,11 @@ class AddressModal extends Component {
         htmlOpenClassName="ReactModal__Html--open"
         bodyOpenClassName="ReactModal__Body--open">
         <header className="flex items-center justify-between mb-5">
-          {this.renderBackButton()}
+          <BackButton
+            restaurant={this.props.restaurant}
+            closeAddressModal={this.props.closeAddressModal}
+            isAddressTooFar={this.props.isAddressTooFar}
+            shippingAddress={this.props.shippingAddress} />
           <button
             type="button"
             className="close pl-4"
