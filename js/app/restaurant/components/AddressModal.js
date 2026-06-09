@@ -84,6 +84,7 @@ class AddressModal extends Component {
             shippingAddress={this.props.shippingAddress} />
           <button
             type="button"
+            className="text-2xl lg:text-lg"
             onClick={this.props.closeAddressModal}>
             <i className="fa fa-close"></i>
           </button>
