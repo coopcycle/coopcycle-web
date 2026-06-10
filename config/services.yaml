@@ -1711,9 +1711,7 @@ services:
   AppBundle\Controller\Api\RdcWebhookController:
     arguments:
       $logger: '@logger'
-      $processor: '@AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestProcessor'
-      $storeResolver: '@AppBundle\Integration\Rdc\RdcStoreResolver'
-      $redis: '@snc_redis.default'
+      $messageBus: '@messenger.default_bus'
     tags:
       - { name: monolog.logger, channel: rdc }
 

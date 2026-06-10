@@ -83,3 +83,4 @@ framework:
             'AppBundle\Message\Task\PublishLiveUpdate': async
             'AppBundle\Message\RdcPickupStatusUpdateMessage': async
             'AppBundle\Message\RdcDropoffStatusUpdateMessage': async
+            'AppBundle\Message\RdcMessage': async
