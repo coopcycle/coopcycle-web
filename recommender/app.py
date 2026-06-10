@@ -29,7 +29,7 @@ def _instance_dir(instance: str) -> Path:
 
 
 def _load_all_instances() -> None:
-    from recommender import CollaborativeFilteringRecommender
+    from recommender import CollaborativeFilteringRecommender, FrequentlyBoughtTogetherRecommender
 
     if not MODEL_DIR.exists():
         return
@@ -43,6 +43,9 @@ def _load_all_instances() -> None:
             path = instance_dir / f"{kind}_recommender.joblib"
             if path.exists():
                 entry[kind] = CollaborativeFilteringRecommender.load(str(path))
+        fbt_path = instance_dir / "fbt_recommender.joblib"
+        if fbt_path.exists():
+            entry["fbt"] = FrequentlyBoughtTogetherRecommender.load(str(fbt_path))
         if entry:
             with _instance_lock(instance):
                 _models[instance] = entry
@@ -74,6 +77,16 @@ class PushRequest(BaseModel):
     interactions: list[Interaction]
 
 
+class OrderItem(BaseModel):
+    order_id: int
+    item_id: int
+
+
+class PushCooccurrenceRequest(BaseModel):
+    instance: str
+    items: list[OrderItem]
+
+
 class CommitRequest(BaseModel):
     instance: str
     product_popular: list[int] = []
@@ -102,7 +115,7 @@ def health():
 @app.post("/train/start")
 def train_start(body: StartRequest):
     with _instance_lock(body.instance):
-        _staging[body.instance] = {"product": [], "restaurant": []}
+        _staging[body.instance] = {"product": [], "restaurant": [], "cooccurrence": []}
     return {"instance": body.instance}
 
 
@@ -115,9 +128,18 @@ def train_push(body: PushRequest):
     return {"instance": body.instance, "type": body.type, "pushed": len(body.interactions)}
 
 
+@app.post("/train/push-cooccurrence")
+def train_push_cooccurrence(body: PushCooccurrenceRequest):
+    with _instance_lock(body.instance):
+        if body.instance not in _staging:
+            raise HTTPException(status_code=400, detail=f"No active training session for '{body.instance}'. Call POST /train/start first.")
+        _staging[body.instance]["cooccurrence"].extend(r.model_dump() for r in body.items)
+    return {"instance": body.instance, "pushed": len(body.items)}
+
+
 @app.post("/train/commit")
 def train_commit(body: CommitRequest):
-    from recommender import CollaborativeFilteringRecommender
+    from recommender import CollaborativeFilteringRecommender, FrequentlyBoughtTogetherRecommender
 
     with _instance_lock(body.instance):
         if body.instance not in _staging:
@@ -127,6 +149,7 @@ def train_commit(body: CommitRequest):
 
     product_interactions = staged["product"]
     restaurant_interactions = staged["restaurant"]
+    cooccurrence_items = staged.get("cooccurrence", [])
 
     # JSON object keys are always strings; convert to int for the model
     product_restaurant_map = {int(k): v for k, v in body.product_restaurant_map.items()}
@@ -138,27 +161,33 @@ def train_commit(body: CommitRequest):
     restaurant_rec = CollaborativeFilteringRecommender()
     restaurant_rec.fit(restaurant_interactions, body.restaurant_popular, item_key="item_id")
 
+    fbt_rec = FrequentlyBoughtTogetherRecommender()
+    fbt_rec.fit(cooccurrence_items, product_restaurant_map)
+
     instance_dir = _instance_dir(body.instance)
     instance_dir.mkdir(parents=True, exist_ok=True)
 
     product_rec.save(str(instance_dir / "product_recommender.joblib"))
     restaurant_rec.save(str(instance_dir / "restaurant_recommender.joblib"))
+    fbt_rec.save(str(instance_dir / "fbt_recommender.joblib"))
 
     metadata = {
         "trained_at": datetime.datetime.now(datetime.UTC).isoformat(),
         "product_interactions": len(product_interactions),
         "restaurant_interactions": len(restaurant_interactions),
+        "cooccurrence_items": len(cooccurrence_items),
     }
     with open(instance_dir / "metadata.json", "w") as f:
         json.dump(metadata, f)
 
     with _instance_lock(body.instance):
-        _models[body.instance] = {"product": product_rec, "restaurant": restaurant_rec}
+        _models[body.instance] = {"product": product_rec, "restaurant": restaurant_rec, "fbt": fbt_rec}
 
     return {
         "instance": body.instance,
         "product_interactions": len(product_interactions),
         "restaurant_interactions": len(restaurant_interactions),
+        "cooccurrence_items": len(cooccurrence_items),
         "trained_at": metadata["trained_at"],
     }
 
@@ -193,3 +222,29 @@ def recommendations(
 
     prefix = "/api/products" if type == "product" else "/api/restaurants"
     return {"recommendations": [f"{prefix}/{item_id}" for item_id in item_ids]}
+
+
+@app.get("/recommendations/frequently-bought-together")
+def frequently_bought_together(
+    instance: str = Query(..., description="Instance identifier, e.g. coopcycle_paris"),
+    product: str = Query(..., description="Seed product IRI e.g. /api/products/1"),
+    restaurant: str | None = Query(None, description="Restaurant IRI to scope results, e.g. /api/restaurants/1"),
+    n: int = Query(5, ge=1, le=20),
+):
+    instance_models = _models.get(instance)
+    if instance_models is None:
+        raise HTTPException(status_code=503, detail=f"No trained model for instance '{instance}'. Run coopcycle:recommender:train.")
+
+    model = instance_models.get("fbt")
+    if model is None:
+        raise HTTPException(status_code=503, detail=f"No FBT model for instance '{instance}'.")
+
+    try:
+        product_id = int(product.rstrip("/").split("/")[-1])
+    except (ValueError, IndexError):
+        raise HTTPException(status_code=400, detail="Invalid product IRI — expected /api/products/{id}")
+
+    restaurant_id = int(restaurant.rstrip("/").split("/")[-1]) if restaurant else None
+
+    item_ids = model.recommend(product_id, restaurant_id=restaurant_id, n=n)
+    return {"recommendations": [f"/api/products/{pid}" for pid in item_ids]}

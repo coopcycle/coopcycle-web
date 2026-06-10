@@ -103,4 +103,14 @@
   .modal-footer {
     text-align: inherit;
   }
+
+  .fbt-nav-btn {
+    &.swiper-button-disabled {
+      opacity: 0.3;
+      pointer-events: none;
+    }
+    &.swiper-button-lock {
+      display: none;
+    }
+  }
 }

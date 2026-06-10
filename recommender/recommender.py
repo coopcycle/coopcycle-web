@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 import numpy as np
 import joblib
 from scipy.sparse import csr_matrix
@@ -88,4 +90,84 @@ class CollaborativeFilteringRecommender:
 
     @classmethod
     def load(cls, path: str) -> "CollaborativeFilteringRecommender":
+        return joblib.load(path)
+
+
+class FrequentlyBoughtTogetherRecommender:
+    def __init__(self):
+        self.cooccurrence: dict[int, dict[int, int]] = {}
+        self.product_counts: dict[int, int] = {}
+        self.total_orders: int = 0
+        self.product_restaurant_map: dict[int, int] = {}
+        self.popular_by_restaurant: dict[int, list[int]] = {}
+
+    def fit(self, order_items: list[dict], product_restaurant_map: dict[int, int]) -> None:
+        self.product_restaurant_map = product_restaurant_map
+
+        orders: dict[int, set[int]] = defaultdict(set)
+        for item in order_items:
+            orders[item["order_id"]].add(item["item_id"])
+
+        self.total_orders = len(orders)
+        cooccurrence: dict = defaultdict(lambda: defaultdict(int))
+        product_counts: dict = defaultdict(int)
+
+        for items in orders.values():
+            items_list = list(items)
+            for pid in items_list:
+                product_counts[pid] += 1
+            for i, a in enumerate(items_list):
+                for b in items_list[i + 1:]:
+                    cooccurrence[a][b] += 1
+                    cooccurrence[b][a] += 1
+
+        self.cooccurrence = {k: dict(v) for k, v in cooccurrence.items()}
+        self.product_counts = dict(product_counts)
+
+        by_restaurant: dict = defaultdict(list)
+        for pid, _ in sorted(product_counts.items(), key=lambda x: -x[1]):
+            rest = product_restaurant_map.get(pid)
+            if rest:
+                by_restaurant[rest].append(pid)
+        self.popular_by_restaurant = dict(by_restaurant)
+
+    def recommend(self, product_id: int, restaurant_id: int | None = None, n: int = 5) -> list[int]:
+        candidates = dict(self.cooccurrence.get(product_id, {}))
+
+        if restaurant_id:
+            candidates = {
+                pid: c for pid, c in candidates.items()
+                if self.product_restaurant_map.get(pid) == restaurant_id
+            }
+
+        if not candidates:
+            fallback = self.popular_by_restaurant.get(restaurant_id, []) if restaurant_id else []
+            return [pid for pid in fallback if pid != product_id][:n]
+
+        count_a = self.product_counts.get(product_id, 1)
+        scored = []
+        for pid, cooc_count in candidates.items():
+            count_b = self.product_counts.get(pid, 1)
+            # lift: how much more likely A and B are bought together vs. independently
+            lift = (cooc_count * self.total_orders) / (count_a * count_b)
+            scored.append((pid, lift))
+
+        scored.sort(key=lambda x: -x[1])
+        result = [pid for pid, _ in scored[:n]]
+
+        if len(result) < n and restaurant_id:
+            seen = set(result) | {product_id}
+            for pid in self.popular_by_restaurant.get(restaurant_id, []):
+                if pid not in seen:
+                    result.append(pid)
+                    if len(result) >= n:
+                        break
+
+        return result
+
+    def save(self, path: str) -> None:
+        joblib.dump(self, path)
+
+    @classmethod
+    def load(cls, path: str) -> "FrequentlyBoughtTogetherRecommender":
         return joblib.load(path)
