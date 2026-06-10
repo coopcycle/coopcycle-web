@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -24,7 +24,7 @@ final class ProductFbtProvider implements ProviderInterface
         private readonly RequestStack $requestStack,
         private readonly EntityManagerInterface $entityManager,
         private readonly RouterInterface $router,
-        private readonly SerializerInterface $serializer,
+        private readonly NormalizerInterface $normalizer,
         private readonly IriConverterInterface $iriConverter,
     ) {}
 
@@ -81,7 +81,7 @@ final class ProductFbtProvider implements ProviderInterface
                 }
 
                 $dto->items[] = [
-                    'product'    => $this->serializer->normalize($p, 'jsonld', ['groups' => ['product']]),
+                    'product'    => $this->normalizer->normalize($p, 'jsonld', ['groups' => ['product']]),
                     'formAction' => $this->router->generate('restaurant_add_product_to_cart', [
                         'id'   => $restaurantId,
                         'code' => $p->getCode(),
