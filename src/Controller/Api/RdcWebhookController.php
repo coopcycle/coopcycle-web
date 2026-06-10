@@ -53,9 +53,9 @@ class RdcWebhookController extends AbstractController
     {
         $metadata = $event['notificationMetadata'] ?? [];
         $lo = $event['lo'] ?? null;
-        $resourceType = strtolower((string) ($metadata['resourceType'] ?? ''));
-        $triggerType = $metadata['triggerType'] ?? null;
-        $loMember = (string) ($request->headers->get(self::WEBHOOK_MEMBER_HEADER) ?? ($metadata['loMemberIdentifier'] ?? ''));
+        $resourceType = strtolower($metadata['resourceType'] ?? '');
+        $triggerType = strtolower($metadata['triggerType'] ?? '');
+        $loMember = $request->headers->get(self::WEBHOOK_MEMBER_HEADER) ?? ($metadata['loMemberIdentifier'] ?? '');
 
         $dto = $this->parseDto($resourceType, $lo);
         if (is_null($dto)) {
@@ -71,7 +71,7 @@ class RdcWebhookController extends AbstractController
         $this->messageBus->dispatch(new RdcMessage(
             loPayload: $lo,
             loMember: $loMember,
-            loUri: (string) $metadata['loUri'],
+            loUri: $metadata['loUri'],
             loRevision: isset($metadata['loRevision']) ? (int) $metadata['loRevision'] : null,
             notificationMetadata: $metadata,
         ));
@@ -113,9 +113,9 @@ class RdcWebhookController extends AbstractController
             || is_null($metadata['notificationType'] ?? null);
     }
 
-    private function isSkippedTrigger(string $resourceType, ?string $triggerType): bool
+    private function isSkippedTrigger(string $resourceType, string $triggerType): bool
     {
-        return $resourceType === 'servicerequest' && strtolower((string) $triggerType) !== 'create';
+        return $resourceType === 'servicerequest' && $triggerType !== 'create';
     }
 
     private function isValidSecret(Request $request): bool
@@ -141,19 +141,16 @@ class RdcWebhookController extends AbstractController
         return in_array($providedMember, $members, true);
     }
 
-    private function buildResponse(string $status, array $metadata, string $resourceType, ?string $triggerType): array
+    private function buildResponse(string $status, array $metadata, string $resourceType, string $triggerType): array
     {
-        $response = [
+        return [
             'status' => $status,
             'lo_uri' => $metadata['loUri'],
             'event_type' => $metadata['notificationType'],
+            'trigger_type' => $triggerType,
             'resource_type' => $resourceType,
             'revision' => $metadata['loRevision'] ?? null,
         ];
-        if (!empty($triggerType)) {
-            $response['trigger_type'] = $triggerType;
-        }
-        return $response;
     }
 
     private function errorResult(string $message): array
