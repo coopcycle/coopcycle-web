@@ -61,6 +61,7 @@ export default function FrequentlyBoughtTogether({ product }) {
   }, [product?.['@id']])
 
   const handleAddToCart = (item) => {
+    window._paq.push(['trackEvent', 'Checkout', 'addRecommendedItem'])
     dispatch(queueAddItem(item.formAction, 1))
   }
 
