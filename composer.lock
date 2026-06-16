@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b6ea7643c9a7b917ef977671582634e5",
+    "content-hash": "f1f8486f78c3da487d79b1157020dcc0",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -1430,12 +1430,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/transporter.git",
-                "reference": "1e218a86307301316f0d488826617cdb7a26018e"
+                "reference": "968181aba6c2edc521696997383766ab43a27eb5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/1e218a86307301316f0d488826617cdb7a26018e",
-                "reference": "1e218a86307301316f0d488826617cdb7a26018e",
+                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/968181aba6c2edc521696997383766ab43a27eb5",
+                "reference": "968181aba6c2edc521696997383766ab43a27eb5",
                 "shasum": ""
             },
             "require": {
@@ -1465,7 +1465,7 @@
                 "source": "https://github.com/coopcycle/transporter/tree/master",
                 "issues": "https://github.com/coopcycle/transporter/issues"
             },
-            "time": "2026-06-09T07:57:49+00:00"
+            "time": "2026-06-16T13:58:57+00:00"
         },
         {
             "name": "craue/config-bundle",
