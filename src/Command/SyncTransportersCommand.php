@@ -443,15 +443,13 @@ class SyncTransportersCommand extends Command {
      */
     private function initTransporterSyncOptions(array $config = []): TransporterSyncOptions
     {
-        // Every sync config key (filemask, region, customer_id, ...) is
-        // forwarded as a PathTemplate attribute, except the keys that
-        // have a structural role on TransporterSyncOptions itself.
         $attributes = array_diff_key(
             $config,
             array_flip(['uri', 'pushPath', 'pullPath'])
         );
-        $pushPath = $config['pushPath'] ?? null;
-        $pullPath = $config['pullPath'] ?? null;
+
+        $pushPath = isset($config['pushPath']) ? str_replace('`', "'", $config['pushPath']) : null;
+        $pullPath = isset($config['pullPath']) ? str_replace('`', "'", $config['pullPath']) : null;
 
         // This is used for testing purposes
         if ($config['uri'] instanceof Filesystem) {

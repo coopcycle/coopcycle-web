@@ -1490,4 +1490,62 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $delivery = $this->entityManager->getRepository(Delivery::class)->findAll();
         $this->assertCount(1, $delivery);
     }
+
+    public function testBackticksInTemplateAreConvertedToSingleQuotesForPathTemplate(): void
+    {
+        // Backticks survive shell and Symfony dotenv quoting untouched
+        // (unlike single quotes), so config authors can write {{date(`YmdHis`)}}
+        // directly. SyncTransportersCommand converts them to single quotes
+        // before handing the template to PathTemplate.
+        $this->syncDBSchenkerFs->createDirectory(sprintf('to_%s', self::FS_MASK_DBS));
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+
+        $command = $this->buildCommandWithConfig([
+            'DBSCHENKER' => [
+                'enabled' => true,
+                'name' => 'DBSchenker test',
+                'legal_name' => 'DBSchenker Testing Inc.',
+                'legal_id' => '0000011',
+                'sync' => [
+                    'filemask' => self::FS_MASK_DBS,
+                    'uri' => $this->syncDBSchenkerFs,
+                    'pushPath' => 'from_{filemask}/REP_{filemask}.{{date(`YmdHis`)}}_{{uniqid()}}',
+                ],
+            ],
+        ]);
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 1 tasks', $output);
+
+        $delivery = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $delivery = array_shift($delivery);
+        $pickup = $delivery->getPickup();
+        $dropoff = $delivery->getDropoff();
+        $this->taskManager->start($pickup);
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($pickup);
+        $this->entityManager->flush();
+        $this->taskManager->start($dropoff);
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($dropoff);
+        $this->entityManager->flush();
+
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('3 messages to send', $output);
+
+        $expectedDate = date('Ymd');
+        $files = $this->syncDBSchenkerFs
+            ->listContents(sprintf('from_%s', self::FS_MASK_DBS))->toArray();
+        $this->assertCount(1, $files);
+        $this->assertStringContainsString($expectedDate, $files[0]['path']);
+        $this->assertStringContainsString('REP_' . self::FS_MASK_DBS, $files[0]['path']);
+    }
 }
