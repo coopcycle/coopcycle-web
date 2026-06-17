@@ -41,17 +41,6 @@ class RestaurantPromotionType extends AbstractType
         $builder->remove('appliesToDiscounted');
         $builder->remove('priority');
 
-        if ($this->authorizationChecker->isGranted('ROLE_DISPATCHER')) {
-            $builder
-                ->add('decrasePlatformFee', CheckboxType::class, [
-                    'mapped' => false,
-                    'required' => false,
-                    'label' => 'form.offer_delivery.decrease_platform_fee.label',
-                    'help' => 'form.offer_delivery.decrease_platform_fee.help',
-                    'priority' => -1,
-                ]);
-        }
-
         // The "code" field is added via AddCodeFormSubscriber
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $event->getForm()->remove('code');
@@ -100,6 +89,37 @@ class RestaurantPromotionType extends AbstractType
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $this->moveTo($event->getForm(), 'rules', -2);
             $this->moveTo($event->getForm(), 'actions', -3);
+        });
+
+        $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
+
+            if ($this->authorizationChecker->isGranted('ROLE_DISPATCHER')) {
+
+                $form = $event->getForm();
+                $promotion = $event->getData();
+
+                $data = false;
+
+                if (null !== $promotion && null !== $promotion->getId()) {
+                    foreach ($promotion->getActions() as $action) {
+                        $configuration = $action->getConfiguration();
+                        if (isset($configuration['decrase_platform_fee']) && true === $configuration['decrase_platform_fee']) {
+                            $data = true;
+                            break;
+                        }
+                    }
+                }
+
+                $form
+                    ->add('decrasePlatformFee', CheckboxType::class, [
+                        'mapped' => false,
+                        'required' => false,
+                        'label' => 'form.offer_delivery.decrease_platform_fee.label',
+                        'help' => 'form.offer_delivery.decrease_platform_fee.help',
+                        'priority' => -1,
+                        'data' => $data,
+                    ]);
+            }
         });
 
         $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
@@ -171,4 +191,3 @@ class RestaurantPromotionType extends AbstractType
         $resolver->setAllowedTypes('local_business', LocalBusiness::class);
     }
 }
-
