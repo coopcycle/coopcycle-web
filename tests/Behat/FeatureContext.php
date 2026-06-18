@@ -608,6 +608,13 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->settingsManager->flush();
     }
 
+    #[Given('the setting :name has value:')]
+    public function theSettingHasMultilineValue(string $name, PyStringNode $value): void
+    {
+        $this->settingsManager->set($name, $value->getRaw());
+        $this->settingsManager->flush();
+    }
+
     #[Given('the restaurant with id :id has products:')]
     public function theRestaurantWithIdHasProducts($id, TableNode $table)
     {

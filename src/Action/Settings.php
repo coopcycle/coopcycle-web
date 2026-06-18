@@ -104,6 +104,9 @@ class Settings
         $data['edenred_client_id'] = $this->edenredClientId;
         $data['edenred_authorization_endpoint'] = $this->edenredAuthorizationEndpoint;
 
+        $theme = $this->settingsManager->get('theme');
+        $data['theme'] = $theme ? json_decode($theme, true) : [];
+
         if ($request->query->has('format') && 'hash' === $request->query->get('format')) {
             return new JsonResponse(sha1(json_encode($data)));
         }
