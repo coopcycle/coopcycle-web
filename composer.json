@@ -181,7 +181,7 @@
         "symfony/ux-autocomplete": "^2.32",
         "scheb/2fa-bundle": "^7.0",
         "scheb/2fa-email": "^7.0",
-        "islesurlasorguetourisme/daisyui-form-bundle": "^0.2.0"
+        "islesurlasorguetourisme/daisyui-form-bundle": "dev-main"
     },
     "require-dev": {
         "symfony/debug-bundle": "*",
@@ -228,6 +228,10 @@
         {
           "type": "vcs",
           "url": "https://github.com/coopcycle/edifact-generator"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/coopcycle/daisyui-form-bundle"
         }
     ],
     "minimum-stability": "dev",
