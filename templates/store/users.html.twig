@@ -1,5 +1,7 @@
 {% extends 'store/layout.html.twig' %}
 
+{% form_theme invite_form 'bootstrap_3_layout.html.twig' %}
+
 {% block breadcrumb %}
 <li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
 <li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
