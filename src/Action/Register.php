@@ -14,6 +14,7 @@ use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
 use Lexik\Bundle\JWTAuthenticationBundle\Response\JWTAuthenticationSuccessResponse;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
@@ -42,7 +43,8 @@ class Register
         RegistrationMailer $mailer,
         ValidatorInterface $validator,
         private ConstraintViolationListNormalizer $constraintViolationListNormalizer,
-        bool $confirmationEnabled)
+        bool $confirmationEnabled,
+        private RepositoryInterface $customerRepository)
     {
         $this->userManager = $userManager;
         $this->jwtManager = $jwtManager;
@@ -85,6 +87,18 @@ class Register
         $form->submit($data);
 
         $user = $form->getData();
+
+        $this->userManager->updateCanonicalFields($user);
+
+        // A guest who previously ordered has a sylius_customer row but no user account.
+        // Reuse it instead of inserting a duplicate that would violate the email unique constraint.
+        $emailCanonical = $user->getCustomer()?->getEmailCanonical();
+        if ($emailCanonical) {
+            $existingCustomer = $this->customerRepository->findOneBy(['emailCanonical' => $emailCanonical]);
+            if ($existingCustomer !== null && !$existingCustomer->hasUser()) {
+                $user->setCustomer($existingCustomer);
+            }
+        }
 
         try {
             $this->validator->validate($user, ['groups' => ['Registration', 'Default']]);

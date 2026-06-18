@@ -17,6 +17,7 @@ use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\ReusablePackagings;
 use AppBundle\Entity\Store;
+use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Task;
@@ -385,6 +386,17 @@ class FeatureContext implements Context, SnippetAcceptingContext
         if ($needsUpdate) {
             $this->userManager->updateUser($user);
         }
+    }
+
+    #[Given('there is a guest customer with email :email')]
+    public function thereIsAGuestCustomerWithEmail(string $email): void
+    {
+        $customer = new Customer();
+        $customer->setEmail($email);
+        $customer->setEmailCanonical(strtolower($email));
+
+        $this->entityManager->persist($customer);
+        $this->entityManager->flush();
     }
 
     #[Given('the user is loaded:')]
