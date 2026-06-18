@@ -54,6 +54,10 @@ class SettingsManager
         'guest_checkout_enabled',
     ];
 
+    private static $integer = [
+        'new_shop_days',
+    ];
+
     private $cache = [];
 
     public function __construct(
@@ -141,6 +145,10 @@ class SettingsManager
 
             if (in_array($name, self::$boolean)) {
                 $value = (bool) $value;
+            }
+
+            if (in_array($name, self::$integer)) {
+                $value = (int) $value;
             }
 
             $this->cache[$name] = $value;
@@ -336,6 +344,10 @@ class SettingsManager
 
                 if (in_array($name, self::$boolean)) {
                     $value = (bool) $value;
+                }
+
+                if (in_array($name, self::$integer)) {
+                    $value = (int) $value;
                 }
 
                 $settings->$name = $value;
