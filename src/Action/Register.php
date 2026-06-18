@@ -6,6 +6,7 @@ use ApiPlatform\Problem\Serializer\ConstraintViolationListNormalizer;
 use ApiPlatform\Validator\ValidatorInterface;
 use ApiPlatform\Validator\Exception\ValidationException;
 use AppBundle\Entity\User;
+use AppBundle\Sylius\Customer\CustomerInterface;
 use Nucleos\ProfileBundle\Form\Type\RegistrationFormType;
 use Nucleos\ProfileBundle\Mailer\RegistrationMailer;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
@@ -94,6 +95,7 @@ class Register
         // Reuse it instead of inserting a duplicate that would violate the email unique constraint.
         $emailCanonical = $user->getCustomer()?->getEmailCanonical();
         if ($emailCanonical) {
+            /** @var CustomerInterface|null $existingCustomer */
             $existingCustomer = $this->customerRepository->findOneBy(['emailCanonical' => $emailCanonical]);
             if ($existingCustomer !== null && !$existingCustomer->hasUser()) {
                 $user->setCustomer($existingCustomer);
