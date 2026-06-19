@@ -17,12 +17,14 @@ $card-padding-lg: 2rem;
 // mobile (and small tablets)
 .order-overlay {
 
+  --heading-height: 50px;
+
   position: fixed;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  transform: translateY(calc(100% - #{$navbar-height}));
+  transform: translateY(calc(100% - var(--heading-height)));
   transition: transform 0.4s;
   z-index: 20;
 
@@ -40,27 +42,8 @@ $card-padding-lg: 2rem;
 }
 
 .order-overlay__heading {
-  cursor: pointer;
-
   .panel-heading {
-    position: relative;
     height: $navbar-height;
-    display: flex;
-    align-items: center;
-    color: $white !important;
-    background-color: $main-blue-light !important;
-
-    &--warning {
-      background-color: $state-warning-bg !important;
-      color: $state-warning-text !important;
-    }
-
-    &__body {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
   }
 }
 

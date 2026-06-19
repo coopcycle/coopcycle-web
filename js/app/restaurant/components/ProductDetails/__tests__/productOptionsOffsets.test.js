@@ -1,3 +1,9 @@
+// ProductOptionsModalContent pulls in FrequentlyBoughtTogether -> redux/actions,
+// which transitively imports i18n/AddressAutosuggest (antd locales, react-leaflet)
+// that aren't transformable in the Jest environment. Stub it out since this
+// suite only exercises the pure getOffsets() helper.
+jest.mock('../../../redux/actions', () => ({}))
+
 import { getOffsets } from '../ProductOptionsModalContent'
 
 describe('getOffsets', () => {

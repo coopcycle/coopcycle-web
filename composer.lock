@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b6ea7643c9a7b917ef977671582634e5",
+    "content-hash": "7e207e4febb68bb0dc0ecdbfbe323bbb",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -1430,12 +1430,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/coopcycle/transporter.git",
-                "reference": "6cf3b2bd62f43d2997ef97d279c0c0d34ba9d1aa"
+                "reference": "968181aba6c2edc521696997383766ab43a27eb5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/6cf3b2bd62f43d2997ef97d279c0c0d34ba9d1aa",
-                "reference": "6cf3b2bd62f43d2997ef97d279c0c0d34ba9d1aa",
+                "url": "https://api.github.com/repos/coopcycle/transporter/zipball/968181aba6c2edc521696997383766ab43a27eb5",
+                "reference": "968181aba6c2edc521696997383766ab43a27eb5",
                 "shasum": ""
             },
             "require": {
@@ -1465,7 +1465,7 @@
                 "source": "https://github.com/coopcycle/transporter/tree/master",
                 "issues": "https://github.com/coopcycle/transporter/issues"
             },
-            "time": "2026-06-02T14:04:22+00:00"
+            "time": "2026-06-16T13:58:57+00:00"
         },
         {
             "name": "craue/config-bundle",
@@ -7124,16 +7124,16 @@
         },
         {
             "name": "islesurlasorguetourisme/daisyui-form-bundle",
-            "version": "v0.2",
+            "version": "dev-main",
             "source": {
                 "type": "git",
-                "url": "https://github.com/Isle-sur-la-Sorgue-Tourisme/daisyui-form-bundle.git",
-                "reference": "40af22e48fa7e503355980dc585c19928402d342"
+                "url": "https://github.com/coopcycle/daisyui-form-bundle.git",
+                "reference": "a677ac68e20fcee79e3041694a673c056011f983"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Isle-sur-la-Sorgue-Tourisme/daisyui-form-bundle/zipball/40af22e48fa7e503355980dc585c19928402d342",
-                "reference": "40af22e48fa7e503355980dc585c19928402d342",
+                "url": "https://api.github.com/repos/coopcycle/daisyui-form-bundle/zipball/a677ac68e20fcee79e3041694a673c056011f983",
+                "reference": "a677ac68e20fcee79e3041694a673c056011f983",
                 "shasum": ""
             },
             "require": {
@@ -7149,13 +7149,23 @@
                 "symfony/test-pack": "^1.0",
                 "symfony/translation": "^6.4 || ^7.0"
             },
+            "default-branch": true,
             "type": "symfony-bundle",
             "autoload": {
                 "psr-4": {
                     "Islesurlasorguetourisme\\DaisyuiFormBundle\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Islesurlasorguetourisme\\DaisyuiFormBundle\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "vendor/bin/phpunit"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -7168,17 +7178,17 @@
             "description": "A Symfony form theme bundle that provides seamless DaisyUI integration for automatically generated forms",
             "homepage": "https://github.com/islesurlasorguetourisme/daisyui-form-bundle",
             "keywords": [
-                "DaisyUI",
                 "bundle",
+                "daisyui",
                 "form",
                 "symfony",
                 "theme"
             ],
             "support": {
-                "issues": "https://github.com/Isle-sur-la-Sorgue-Tourisme/daisyui-form-bundle/issues",
-                "source": "https://github.com/Isle-sur-la-Sorgue-Tourisme/daisyui-form-bundle/tree/v0.2"
+                "source": "https://github.com/coopcycle/daisyui-form-bundle/tree/main",
+                "issues": "https://github.com/coopcycle/daisyui-form-bundle/issues"
             },
-            "time": "2025-11-17T15:04:43+00:00"
+            "time": "2026-06-18T14:17:56+00:00"
         },
         {
             "name": "jaybizzle/crawler-detect",
@@ -30497,16 +30507,17 @@
     ],
     "minimum-stability": "dev",
     "stability-flags": {
-        "behatch/contexts": 20,
-        "coopcycle/transporter": 20,
         "drupal/core-vendor-hardening": 20,
-        "shahonseven/php-color-hash": 20
+        "shahonseven/php-color-hash": 20,
+        "coopcycle/transporter": 20,
+        "islesurlasorguetourisme/daisyui-form-bundle": 20,
+        "behatch/contexts": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.2"
     },
-    "platform-dev": {},
-    "plugin-api-version": "2.9.0"
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
 }

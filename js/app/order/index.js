@@ -13,18 +13,11 @@ import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
 import axios from 'axios'
 
-import { MantineProvider } from '@mantine/core';
-import { LoadingOverlay } from '@mantine/core';
-
 import i18n, { getCurrencySymbol } from '../i18n'
 import LoopeatModal from './LoopeatModal'
 
 import './index.scss'
 import '../components/order/index.scss'
-
-// https://mantine.dev/styles/mantine-styles/#css-layers
-import '@mantine/core/styles.layer.css';
-import '@mantine/core/styles/LoadingOverlay.layer.css';
 
 import { disableBtn, enableBtn } from '../widgets/button'
 import { createStoreFromPreloadedState } from './redux/store'
@@ -81,13 +74,18 @@ function enableTipInput() {
 
 const loadingOverlayRoot = createRoot(document.getElementById('loading-overlay'))
 
+function SimpleLoadingOverlay({ visible }) {
+  if (!visible) return null
+  return (
+    <div className="absolute inset-0 flex items-center justify-center bg-base-100/60 backdrop-blur-sm" style={{ zIndex: 1 }}>
+      <span className="loading loading-spinner loading-lg"></span>
+    </div>
+  )
+}
+
 function setLoading(isLoading) {
 
-  loadingOverlayRoot.render(
-    <MantineProvider>
-      <LoadingOverlay visible={isLoading} zIndex={1} overlayProps={{ radius: "sm", blur: 2 }} />
-    </MantineProvider>
-  )
+  loadingOverlayRoot.render(<SimpleLoadingOverlay visible={isLoading} />)
   if (isLoading) {
     disableBtn(submitPageBtn)
     submitPageBtn.querySelector('.loading').classList.remove('hidden')

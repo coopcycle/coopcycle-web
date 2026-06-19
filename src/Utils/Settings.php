@@ -100,4 +100,6 @@ class Settings
     public $paygreen_shop_id;
 
     public $pawapay_api_key;
+
+    public $new_shop_days = 90;
 }

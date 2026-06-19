@@ -1119,6 +1119,8 @@ restaurant.embed.step_2: "Ajoutez l'attribut <code>data-coopcycle-embed=\"%url%\
 restaurant.embed.greeting: C'est tout ! Désormais, quand les visiteurs cliquent sur
   le bouton, une fenêtre s'ouvre directement sur votre site.
 form.settings.guest_checkout_enabled.label: Autoriser à commander sans créer de compte
+form.settings.new_shop_days.label: Fenêtre « nouveau commerce » (jours)
+form.settings.new_shop_days.help: Nombre de jours après la création pendant lesquels un commerce est considéré comme nouveau
 homepage.form.title: Vous avez besoin d'une livraison ?
 homepage.form.content: "<strong>%brand_name%</strong> propose des services locaux\
   \ et non polluants de livraison à vélo à la demande. Expédiez un colis ponctuellement\

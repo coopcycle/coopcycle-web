@@ -23,7 +23,15 @@ trait EDIFACTMessageAwareTrait
     public function getImportMessage(): ?EDIFACTMessage
     {
         return collect($this->edifactMessages)
-            ->filter(fn (EDIFACTMessage $message) => in_array($message->getMessageType(), [EDIFACTMessage::MESSAGE_TYPE_SCONTR, EDIFACTMessage::MESSAGE_TYPE_PICKUP, EDIFACTMessage::MESSAGE_TYPE_DISPOR]))
+            ->filter(
+                fn (EDIFACTMessage $message) => in_array(
+                    $message->getMessageType(),
+                    [
+                        EDIFACTMessage::MESSAGE_TYPE_SCONTR,
+                        EDIFACTMessage::MESSAGE_TYPE_PICKUP,
+                        EDIFACTMessage::MESSAGE_TYPE_DISPOR
+                    ]
+                ))
             ->first();
     }
 

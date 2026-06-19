@@ -722,6 +722,9 @@ services:
       - method: setBusinessContext
         arguments:
             - '@AppBundle\Business\Context'
+      - method: setSettingsManager
+        arguments:
+            - '@AppBundle\Service\SettingsManager'
 
   AppBundle\Entity\HubRepository:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]

@@ -84,10 +84,11 @@ export default function(formSelector, options) {
 
   let cc
   let payments = []
+  let gatewayForCard = 'stripe'
 
   if (containsMethod(methods, 'card')) {
 
-    const gatewayForCard = options.card || 'stripe'
+    gatewayForCard = options.card || 'stripe'
     const gatewayConfig = options.gatewayConfigs ? options.gatewayConfigs[gatewayForCard] : { publishableKey: options.publishableKey }
 
     switch (gatewayForCard) {
@@ -277,7 +278,7 @@ export default function(formSelector, options) {
             const hasCard = !!_.find(response.data.payments, p => p.method.code === 'CARD')
 
             if (hasCard) {
-              showCardSkeleton()
+              if (gatewayForCard === 'stripe') showCardSkeleton()
               cc.mount(document.getElementById('card-element'), value, response.data, options)
                 .then((shouldEnableBtn = true) => {
                   document.getElementById('card-onmount-focus').scrollIntoView()
@@ -327,6 +328,7 @@ export default function(formSelector, options) {
     .forEach(el => el.parentElement.classList.add('hidden'))
 
   if (methods.length === 1 && containsMethod(methods, 'card')) {
+    if (gatewayForCard === 'stripe') showCardSkeleton()
     axios
       .post(options.selectPaymentMethodURL, { method: 'CARD' })
       .then(response => {

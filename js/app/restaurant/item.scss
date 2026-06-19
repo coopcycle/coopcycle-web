@@ -25,7 +25,6 @@
 }
 
 .ReactModal__Content--enter-address {
-  overflow: inherit;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -37,7 +36,6 @@
   }
   @media (max-width: $screen-xs-max) {
     width: calc(100% - 30px);
-    height: calc(100% - 30px);
   }
 }
 

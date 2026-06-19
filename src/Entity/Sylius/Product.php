@@ -11,7 +11,9 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Api\Dto\DisableProduct;
+use AppBundle\Api\Dto\ProductFbtDto;
 use AppBundle\Api\State\DisableProductProcessor;
+use AppBundle\Api\State\ProductFbtProvider;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\ReusablePackagings;
@@ -41,7 +43,12 @@ use Symfony\Component\Validator\Constraints as Assert;
             input: DisableProduct::class,
             denormalizationContext: ['groups' => ['product_disable']],
             security: 'is_granted(\'edit\', object)'
-        )
+        ),
+        new Get(
+            uriTemplate: '/products/{id}/recommendations',
+            provider: ProductFbtProvider::class,
+            output: ProductFbtDto::class,
+        ),
     ],
     normalizationContext: ['groups' => ['product']]
 )]

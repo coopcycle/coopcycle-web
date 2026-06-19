@@ -7,7 +7,7 @@
 
       {% if authenticationError %}
       <div class="alert alert-error mb-4">
-        <span>{{ authenticationError.messageKey | trans(authenticationError.messageData, 'SchebTwoFactorBundle') }}</span>
+        <span>{{ authenticationError.messageKey | trans(authenticationError.messageData ?? {}, 'SchebTwoFactorBundle') }}</span>
       </div>
       {% endif %}
 

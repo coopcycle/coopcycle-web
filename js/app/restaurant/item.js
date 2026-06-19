@@ -5,8 +5,6 @@ import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
 import Modal from 'react-modal'
 import _ from 'lodash'
-import { createTheme, MantineProvider } from '@mantine/core';
-
 import i18n, { getCountry } from '../i18n'
 import { createStoreFromPreloadedState } from './redux/store'
 import {
@@ -19,19 +17,11 @@ import {
 import storage from '../search/address-storage'
 import { initLoopeatContext } from './loopeat'
 
-const theme = createTheme({
-  /** Your theme override here */
-});
-
 import './item.scss'
 import './header.scss'
 import './menu.scss'
 import './components/Order/index.scss'
 import '../components/order/index.scss'
-
-// https://mantine.dev/styles/mantine-styles/#css-layers
-import '@mantine/core/styles.layer.css';
-import '@mantine/core/styles/LoadingOverlay.layer.css';
 
 import ProductOptionsModal from './components/ProductDetails/ProductOptionsModal'
 import ChangeRestaurantOnAddProductModal from './components/ChangeRestaurantOnAddProductModal'
@@ -185,18 +175,16 @@ function init() {
     <StrictMode>
       <Provider store={store}>
         <I18nextProvider i18n={i18n}>
-          <MantineProvider theme={theme}>
-            <OrderLayout />
-            <ProductOptionsModal />
-            <ChangeRestaurantOnAddProductModal />
-            <InvitePeopleToOrderModal />
-            <SetGuestCustomerEmailModal />
-            <LoopeatModal />
-            {createPortal(
-              <LoadingOverlay />,
-              document.getElementById('loading-overlay')
-            )}
-          </MantineProvider>
+          <OrderLayout />
+          <ProductOptionsModal />
+          <ChangeRestaurantOnAddProductModal />
+          <InvitePeopleToOrderModal />
+          <SetGuestCustomerEmailModal />
+          <LoopeatModal />
+          {createPortal(
+            <LoadingOverlay />,
+            document.getElementById('loading-overlay')
+          )}
         </I18nextProvider>
       </Provider>
     </StrictMode>,

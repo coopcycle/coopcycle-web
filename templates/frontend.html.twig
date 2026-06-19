@@ -20,8 +20,8 @@
   }
   {% endif %}
   </style>
+  {% endif %}
   {% set theme = coopcycle_theme() %}
-
   {% if theme|length > 0 %}
     <style>
       :root {
@@ -30,7 +30,6 @@
       {% endfor %}
       }
     </style>
-  {% endif %}
   {% endif %}
 {% endblock %}
 

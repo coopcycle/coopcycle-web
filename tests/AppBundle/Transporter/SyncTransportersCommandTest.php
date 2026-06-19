@@ -12,6 +12,7 @@ use AppBundle\Service\SettingsManager;
 use AppBundle\Service\TaskManager;
 use AppBundle\Transporter\ImportFromPoint;
 use AppBundle\Transporter\ReportFromCC;
+use AppBundle\Transporter\TransporterHelpers;
 use Doctrine\ORM\EntityManagerInterface;
 use Fidry\AliceDataFixtures\LoaderInterface;
 use League\Flysystem\Filesystem;
@@ -22,6 +23,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Transporter\TransporterException;
 
 class SyncTransportersCommandTest extends KernelTestCase {
 
@@ -1078,4 +1080,472 @@ class SyncTransportersCommandTest extends KernelTestCase {
         $this->assertCount(0, $unsynced);
     }
 
+
+    public function testParseSyncOptionsFtpDecodesUrlEncodedCredentials(): void
+    {
+        // user "user@coop" and password "p@ss:123" require percent-encoding
+        // inside the URL, otherwise the '@' would be parsed as host separator
+        $uri = 'ftp://user%40coop:p%40ss%3A123@ftp.example.com:21/remote/path';
+
+        $fs = TransporterHelpers::parseSyncOptions($uri);
+
+        $this->assertInstanceOf(Filesystem::class, $fs);
+
+        $adapterRef = new \ReflectionProperty($fs, 'adapter');
+        $adapterRef->setAccessible(true);
+        $adapter = $adapterRef->getValue($fs);
+
+        $optionsRef = new \ReflectionProperty($adapter, 'connectionOptions');
+        $optionsRef->setAccessible(true);
+        $options = $optionsRef->getValue($adapter);
+
+        $this->assertEquals('user@coop', $options->username());
+        $this->assertEquals('p@ss:123', $options->password());
+        $this->assertEquals('ftp.example.com', $options->host());
+        $this->assertEquals(21, $options->port());
+        $this->assertEquals('/remote/path', $options->root());
+    }
+
+    public function testParseSyncOptionsFtpRejectsUnencodedAtInUser(): void
+    {
+        // Sanity check: without urldecode() an unencoded '@' in the user
+        // would be misinterpreted by parse_url() and the host/user split
+        // would be wrong. This documents the failure mode urldecode() fixes.
+        $uri = 'ftp://user%40coop:p%40ss@ftp.example.com:21/remote/path';
+
+        $fs = TransporterHelpers::parseSyncOptions($uri);
+
+        $adapterRef = new \ReflectionProperty($fs, 'adapter');
+        $adapterRef->setAccessible(true);
+        $adapter = $adapterRef->getValue($fs);
+
+        $optionsRef = new \ReflectionProperty($adapter, 'connectionOptions');
+        $optionsRef->setAccessible(true);
+        $options = $optionsRef->getValue($adapter);
+
+        $this->assertEquals('user@coop', $options->username());
+        $this->assertEquals('p@ss', $options->password());
+        $this->assertEquals('ftp.example.com', $options->host());
+    }
+
+    public function testParseSyncOptionsSftpDecodesUrlEncodedCredentials(): void
+    {
+        $uri = 'sftp://svc%40acme:s%3Aecret%21@files.example.com:2222/outbox';
+
+        $fs = TransporterHelpers::parseSyncOptions($uri);
+
+        $this->assertInstanceOf(Filesystem::class, $fs);
+
+        // For SFTP, the SftpAdapter wraps a ConnectionProvider that holds
+        // the (decoded) host/username/password.
+        $adapterRef = new \ReflectionProperty($fs, 'adapter');
+        $adapterRef->setAccessible(true);
+        $adapter = $adapterRef->getValue($fs);
+
+        $providerRef = new \ReflectionProperty($adapter, 'connectionProvider');
+        $providerRef->setAccessible(true);
+        $provider = $providerRef->getValue($adapter);
+
+        $hostRef = new \ReflectionProperty($provider, 'host');
+        $hostRef->setAccessible(true);
+        $this->assertEquals('files.example.com', $hostRef->getValue($provider));
+
+        $usernameRef = new \ReflectionProperty($provider, 'username');
+        $usernameRef->setAccessible(true);
+        $this->assertEquals('svc@acme', $usernameRef->getValue($provider));
+
+        $passwordRef = new \ReflectionProperty($provider, 'password');
+        $passwordRef->setAccessible(true);
+        $this->assertEquals('s:ecret!', $passwordRef->getValue($provider));
+
+        $portRef = new \ReflectionProperty($provider, 'port');
+        $portRef->setAccessible(true);
+        $this->assertEquals(2222, $portRef->getValue($provider));
+    }
+
+    public function testParseSyncOptionsFtpWithoutPortDefaultsTo21(): void
+    {
+        $uri = 'ftp://user%40coop:p%40ss@ftp.example.com/remote';
+
+        $fs = TransporterHelpers::parseSyncOptions($uri);
+
+        $adapterRef = new \ReflectionProperty($fs, 'adapter');
+        $adapterRef->setAccessible(true);
+        $adapter = $adapterRef->getValue($fs);
+
+        $optionsRef = new \ReflectionProperty($adapter, 'connectionOptions');
+        $optionsRef->setAccessible(true);
+        $options = $optionsRef->getValue($adapter);
+
+        $this->assertEquals(21, $options->port());
+        $this->assertEquals('/remote', $options->root());
+        $this->assertEquals('user@coop', $options->username());
+        $this->assertEquals('p@ss', $options->password());
+    }
+
+
+    //
+    // TESTING PUSH/PULL PATH TEMPLATES
+    //
+
+    /**
+     * Builds a SyncTransportersCommand wired to a freshly-prophesied
+     * SettingsManager / ParameterBag pair. Used by the path-template
+     * tests below, which each need a different `transporters_config`
+     * (custom pullPath / pushPath / unknown property / null function).
+     */
+    private function buildCommandWithConfig(array $transportersConfig): Command
+    {
+        $settingManager = $this->prophesize(SettingsManager::class);
+        $settingManager->get('latlng')
+            ->willReturn('48.8534,2.3488');
+        $settingManager->get('company_legal_name')
+            ->willReturn('Coopcycle Testing Inc.');
+        $settingManager->get('company_legal_id')
+            ->willReturn('4447190000');
+
+        $params = $this->prophesize(ParameterBagInterface::class);
+        $params->get('transporters_config')
+            ->willReturn($transportersConfig);
+
+        return new SyncTransportersCommand(
+            'test',
+            $this->entityManager,
+            $params->reveal(),
+            $settingManager->reveal(),
+            $this->logger,
+            self::getContainer()->get(ImportFromPoint::class),
+            self::getContainer()->get(ReportFromCC::class),
+            $this->edifactFs,
+            $this->deliveryOrderManager,
+        );
+    }
+
+    public function testCustomPullPathTemplateResolvesFilemask(): void
+    {
+        // Default pullPath for DBSchenker is 'to_{filemask}'. Use a
+        // non-default template pointing at a dedicated directory to
+        // assert the configured template is what the sync actually uses.
+        $customDir = 'inbox';
+        $this->syncDBSchenkerFs->createDirectory(sprintf('%s/%s', $customDir, self::FS_MASK_DBS));
+        $this->syncDBSchenkerFs->write(
+            sprintf('%s/%s/test.edi', $customDir, self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+        // Sentinel file in the *default* pullPath location: must remain
+        // untouched, proving the configured pullPath (not the default) was used.
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/sentinel.edi', self::FS_MASK_DBS),
+            'SENTINEL_SHOULD_NOT_BE_CONSUMED'
+        );
+
+        $command = $this->buildCommandWithConfig([
+            'DBSCHENKER' => [
+                'enabled' => true,
+                'name' => 'DBSchenker test',
+                'legal_name' => 'DBSchenker Testing Inc.',
+                'legal_id' => '0000011',
+                'sync' => [
+                    'filemask' => self::FS_MASK_DBS,
+                    'uri' => $this->syncDBSchenkerFs,
+                    'pullPath' => sprintf('%s/{filemask}', $customDir),
+                ],
+            ],
+        ]);
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 1 tasks', $output);
+
+        // The file at the custom pullPath was consumed
+        $this->assertCount(
+            0,
+            $this->syncDBSchenkerFs->listContents(sprintf('%s/%s', $customDir, self::FS_MASK_DBS))->toArray()
+        );
+        // The sentinel in the *default* pullPath is still there, proving
+        // the configured custom pullPath — not the default — was used.
+        $sentinelList = $this->syncDBSchenkerFs
+            ->listContents(sprintf('to_%s', self::FS_MASK_DBS))->toArray();
+        $this->assertCount(1, $sentinelList);
+        $this->assertEquals('sentinel.edi', basename($sentinelList[0]['path']));
+
+        $delivery = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $this->assertCount(1, $delivery);
+    }
+
+    public function testCustomPushPathTemplateResolvesFilemask(): void
+    {
+        // Default pushPath for DBSchenker is 'from_{filemask}/{filemask}.{{...}}'.
+        // Use a deterministic custom template so we can assert exactly
+        // where the report lands and that the default location stays empty.
+        $customDir = 'custom_outbox';
+        $this->syncDBSchenkerFs->createDirectory(sprintf('to_%s', self::FS_MASK_DBS));
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+
+        $command = $this->buildCommandWithConfig([
+            'DBSCHENKER' => [
+                'enabled' => true,
+                'name' => 'DBSchenker test',
+                'legal_name' => 'DBSchenker Testing Inc.',
+                'legal_id' => '0000011',
+                'sync' => [
+                    'filemask' => self::FS_MASK_DBS,
+                    'uri' => $this->syncDBSchenkerFs,
+                    'pushPath' => sprintf('%s/{filemask}/report.edi', $customDir),
+                ],
+            ],
+        ]);
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 1 tasks', $output);
+        $this->assertStringContainsString('No messages to send', $output);
+
+        // Move tasks along to generate outbound reports
+        $delivery = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $delivery = array_shift($delivery);
+        $pickup = $delivery->getPickup();
+        $dropoff = $delivery->getDropoff();
+        $this->taskManager->start($pickup);
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($pickup);
+        $this->entityManager->flush();
+        $this->taskManager->start($dropoff);
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($dropoff);
+        $this->entityManager->flush();
+
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('3 messages to send', $output);
+
+        // The default 'from_<filemask>' was NOT used
+        $this->assertCount(
+            0,
+            $this->syncDBSchenkerFs->listContents(sprintf('from_%s', self::FS_MASK_DBS))->toArray()
+        );
+
+        // The custom pushPath directory contains exactly one report file
+        $files = $this->syncDBSchenkerFs
+            ->listContents(sprintf('%s/%s', $customDir, self::FS_MASK_DBS))->toArray();
+        $this->assertCount(1, $files);
+        $this->assertEquals(
+            sprintf('%s/%s/report.edi', $customDir, self::FS_MASK_DBS),
+            $files[0]['path']
+        );
+    }
+
+    public function testPushPathTemplateEvaluatesFunctionExpression(): void
+    {
+        $this->syncDBSchenkerFs->createDirectory(sprintf('to_%s', self::FS_MASK_DBS));
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+
+        // {{date('Ymd')}} is evaluated by PathTemplate, so the file
+        // name embeds today's date — we assert that to confirm eval() ran.
+        $command = $this->buildCommandWithConfig([
+            'DBSCHENKER' => [
+                'enabled' => true,
+                'name' => 'DBSchenker test',
+                'legal_name' => 'DBSchenker Testing Inc.',
+                'legal_id' => '0000011',
+                'sync' => [
+                    'filemask' => self::FS_MASK_DBS,
+                    'uri' => $this->syncDBSchenkerFs,
+                    'pushPath' => 'reports/{filemask}/REPORT-{{date(\'Ymd\')}}.edi',
+                ],
+            ],
+        ]);
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 1 tasks', $output);
+
+        $delivery = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $delivery = array_shift($delivery);
+        $pickup = $delivery->getPickup();
+        $dropoff = $delivery->getDropoff();
+        $this->taskManager->start($pickup);
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($pickup);
+        $this->entityManager->flush();
+        $this->taskManager->start($dropoff);
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($dropoff);
+        $this->entityManager->flush();
+
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('3 messages to send', $output);
+
+        $expectedDate = date('Ymd');
+        $files = $this->syncDBSchenkerFs
+            ->listContents(sprintf('reports/%s', self::FS_MASK_DBS))->toArray();
+        $this->assertCount(1, $files);
+        $this->assertStringContainsString($expectedDate, $files[0]['path']);
+        $this->assertStringContainsString('REPORT-', $files[0]['path']);
+    }
+
+    public function testPullPathTemplateThrowsOnUnknownProperty(): void
+    {
+        $command = $this->buildCommandWithConfig([
+            'DBSCHENKER' => [
+                'enabled' => true,
+                'name' => 'DBSchenker test',
+                'legal_name' => 'DBSchenker Testing Inc.',
+                'legal_id' => '0000011',
+                'sync' => [
+                    'filemask' => self::FS_MASK_DBS,
+                    'uri' => $this->syncDBSchenkerFs,
+                    // {undefined_property} is not in TransporterSyncOptions attributes
+                    'pullPath' => 'inbox/{undefined_property}',
+                ],
+            ],
+        ]);
+
+        $this->expectException(TransporterException::class);
+        $this->expectExceptionMessage("PathTemplate: unknown property 'undefined_property'");
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+    }
+
+    public function testPullPathTemplateThrowsOnNullFunctionResult(): void
+    {
+        $command = $this->buildCommandWithConfig([
+            'DBSCHENKER' => [
+                'enabled' => true,
+                'name' => 'DBSchenker test',
+                'legal_name' => 'DBSchenker Testing Inc.',
+                'legal_id' => '0000011',
+                'sync' => [
+                    'filemask' => self::FS_MASK_DBS,
+                    'uri' => $this->syncDBSchenkerFs,
+                    // {{null}} evaluates to null, which PathTemplate rejects
+                    'pullPath' => 'inbox/{{null}}',
+                ],
+            ],
+        ]);
+
+        $this->expectException(TransporterException::class);
+        $this->expectExceptionMessage("PathTemplate: expression 'null' did not return a usable value");
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+    }
+
+    public function testArbitrarySyncConfigKeyIsAvailableAsPathTemplateAttribute(): void
+    {
+        // The command forwards every sync config key (except uri, pushPath,
+        // pullPath) as a PathTemplate attribute. {region} is not a reserved
+        // key, just a user-defined one — it must resolve to 'eu-west'.
+        $this->syncDBSchenkerFs->createDirectory('inbox/eu-west');
+        $this->syncDBSchenkerFs->write(
+            'inbox/eu-west/test.edi',
+            self::EDI_SAMPLE
+        );
+
+        $command = $this->buildCommandWithConfig([
+            'DBSCHENKER' => [
+                'enabled' => true,
+                'name' => 'DBSchenker test',
+                'legal_name' => 'DBSchenker Testing Inc.',
+                'legal_id' => '0000011',
+                'sync' => [
+                    'filemask' => self::FS_MASK_DBS,
+                    'uri' => $this->syncDBSchenkerFs,
+                    'region' => 'eu-west',
+                    'pullPath' => 'inbox/{region}',
+                ],
+            ],
+        ]);
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 1 tasks', $output);
+
+        // The file at the resolved {region} directory was consumed
+        $this->assertCount(
+            0,
+            $this->syncDBSchenkerFs->listContents('inbox/eu-west')->toArray()
+        );
+
+        $delivery = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $this->assertCount(1, $delivery);
+    }
+
+    public function testBackticksInTemplateAreConvertedToSingleQuotesForPathTemplate(): void
+    {
+        // Backticks survive shell and Symfony dotenv quoting untouched
+        // (unlike single quotes), so config authors can write {{date(`YmdHis`)}}
+        // directly. SyncTransportersCommand converts them to single quotes
+        // before handing the template to PathTemplate.
+        $this->syncDBSchenkerFs->createDirectory(sprintf('to_%s', self::FS_MASK_DBS));
+        $this->syncDBSchenkerFs->write(
+            sprintf('to_%s/test.edi', self::FS_MASK_DBS),
+            self::EDI_SAMPLE
+        );
+
+        $command = $this->buildCommandWithConfig([
+            'DBSCHENKER' => [
+                'enabled' => true,
+                'name' => 'DBSchenker test',
+                'legal_name' => 'DBSchenker Testing Inc.',
+                'legal_id' => '0000011',
+                'sync' => [
+                    'filemask' => self::FS_MASK_DBS,
+                    'uri' => $this->syncDBSchenkerFs,
+                    'pushPath' => 'from_{filemask}/REP_{filemask}.{{date(`YmdHis`)}}_{{uniqid()}}',
+                ],
+            ],
+        ]);
+
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+
+        $commandTester->assertCommandIsSuccessful();
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('imported 1 tasks', $output);
+
+        $delivery = $this->entityManager->getRepository(Delivery::class)->findAll();
+        $delivery = array_shift($delivery);
+        $pickup = $delivery->getPickup();
+        $dropoff = $delivery->getDropoff();
+        $this->taskManager->start($pickup);
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($pickup);
+        $this->entityManager->flush();
+        $this->taskManager->start($dropoff);
+        $this->entityManager->flush();
+        $this->taskManager->markAsDone($dropoff);
+        $this->entityManager->flush();
+
+        $commandTester->execute(['transporter' => 'DBSCHENKER']);
+        $output = $commandTester->getDisplay();
+        $this->assertStringContainsString('3 messages to send', $output);
+
+        $expectedDate = date('Ymd');
+        $files = $this->syncDBSchenkerFs
+            ->listContents(sprintf('from_%s', self::FS_MASK_DBS))->toArray();
+        $this->assertCount(1, $files);
+        $this->assertStringContainsString($expectedDate, $files[0]['path']);
+        $this->assertStringContainsString('REP_' . self::FS_MASK_DBS, $files[0]['path']);
+    }
 }
