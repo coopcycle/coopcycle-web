@@ -109,7 +109,7 @@ class EmailTemplateManager
                 'label'     => $this->translator->trans($meta['label_key'], [], 'messages', $locale),
                 'variables' => $meta['variables'],
                 'slots'     => $meta['slots'],
-                'folder'    => $meta['folder'] ?? null,
+                'folder'    => $meta['folder'],
             ];
         }
         return $types;
