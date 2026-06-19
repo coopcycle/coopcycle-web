@@ -10,6 +10,7 @@ use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Events;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 
 #[AsEntityListener(event: Events::postPersist, entity: Incident::class)]
 final class IncidentRdcListener
@@ -25,6 +26,9 @@ final class IncidentRdcListener
             return;
         }
 
-        $this->messageBus->dispatch(new IncidentRdcMessage($incidentId));
+        $this->messageBus->dispatch(
+            new IncidentRdcMessage($incidentId),
+            [new DelayStamp(45000)]
+        );
     }
 }

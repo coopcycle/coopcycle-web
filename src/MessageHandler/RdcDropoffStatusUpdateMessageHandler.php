@@ -12,6 +12,7 @@ use AppBundle\Message\RdcDropoffStatusUpdateMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AsMessageHandler]
 final class RdcDropoffStatusUpdateMessageHandler
@@ -22,6 +23,7 @@ final class RdcDropoffStatusUpdateMessageHandler
         private readonly EntityManagerInterface $entityManager,
         private readonly RdcClientFactory $rdcClientFactory,
         private readonly LoggerInterface $logger,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {}
 
     private const CONFIG = [

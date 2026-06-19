@@ -6,6 +6,7 @@ namespace AppBundle\MessageHandler;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\TaskImage;
 use AppBundle\Integration\Rdc\Api\RdcClientFactory;
 use AppBundle\Integration\Rdc\Enum\ResponseStatus;
 use AppBundle\Message\RdcDropoffStatusUpdateMessage;
@@ -19,6 +20,7 @@ use AppBundle\Integration\Rdc\Enum\ExecutionStatus;
 use AppBundle\Integration\Rdc\Enum\ServiceStatus;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 trait RdcStatusUpdateHandlerTrait
 {
@@ -69,8 +71,8 @@ trait RdcStatusUpdateHandlerTrait
         $location = $this->buildLocationUpdate($address, $config['actionType'], $actionTime, $task);
 
         match ([$message->coopcycleStatus, $task->getType()]) {
-            [Task::STATUS_DONE, Task::TYPE_PICKUP] => $this->handleStatusDoing($rdcClient, $serviceId, $activityId, $location, $actionTime, $config),
-            [Task::STATUS_DONE, Task::TYPE_DROPOFF] => $this->handleStatusDone($rdcClient, $serviceId, $activityId, $location, $actionTime, $config),
+            [Task::STATUS_DONE, Task::TYPE_PICKUP] => $this->handleStatusDoing($rdcClient, $serviceId, $activityId, $location, $actionTime, $config, $task),
+            [Task::STATUS_DONE, Task::TYPE_DROPOFF] => $this->handleStatusDone($rdcClient, $serviceId, $activityId, $location, $actionTime, $config, $task),
             [Task::STATUS_CANCELLED, Task::TYPE_PICKUP] => $this->handleStatusCancelled($rdcClient, $serviceId, $activityId, $location, $actionTime, $config, $task),
             [Task::STATUS_CANCELLED, Task::TYPE_DROPOFF] => $this->handleStatusCancelled($rdcClient, $serviceId, $activityId, $location, $actionTime, $config, $task),
             default => null
@@ -89,13 +91,14 @@ trait RdcStatusUpdateHandlerTrait
         string $activityId,
         array $location,
         \DateTimeImmutable $actionTime,
-        array $config
+        array $config,
+        Task $task
     ): void {
         $this->patchExecution($rdcClient, 'services', $serviceId, ExecutionStatus::STARTED->value, $location, false);
         $this->patchExecution($rdcClient, 'activities', $activityId, ExecutionStatus::STARTED->value, $location, false);
 
-        $this->postEvents($rdcClient, 'services', $serviceId, $config['startServiceEvents'] ?? [], $location, $actionTime);
-        $this->postEvents($rdcClient, 'activities', $activityId, $config['startActivityEvents'] ?? [], $location, $actionTime);
+        $this->postEvents($rdcClient, 'services', $serviceId, $config['startServiceEvents'] ?? [], $location, $actionTime, $task);
+        $this->postEvents($rdcClient, 'activities', $activityId, $config['startActivityEvents'] ?? [], $location, $actionTime, $task);
     }
 
     private function handleStatusDone(
@@ -104,13 +107,14 @@ trait RdcStatusUpdateHandlerTrait
         string $activityId,
         array $location,
         \DateTimeImmutable $actionTime,
-        array $config
+        array $config,
+        Task $task
     ): void {
         $this->patchExecution($rdcClient, 'services', $serviceId, ExecutionStatus::FINISHED->value, $location, true);
         $this->patchExecution($rdcClient, 'activities', $activityId, ExecutionStatus::FINISHED->value, $location, true);
 
-        $this->postEvents($rdcClient, 'services', $serviceId, $config['serviceEvents'] ?? [], $location, $actionTime);
-        $this->postEvents($rdcClient, 'activities', $activityId, $config['activityEvents'] ?? [], $location, $actionTime);
+        $this->postEvents($rdcClient, 'services', $serviceId, $config['serviceEvents'] ?? [], $location, $actionTime, $task);
+        $this->postEvents($rdcClient, 'activities', $activityId, $config['activityEvents'] ?? [], $location, $actionTime, $task);
     }
 
     private function handleStatusCancelled(
@@ -258,8 +262,10 @@ trait RdcStatusUpdateHandlerTrait
         string $resourceId,
         array $events,
         array $location,
-        \DateTimeImmutable $actionTime
+        \DateTimeImmutable $actionTime,
+        Task $task
     ): void {
+        $documents = $this->buildDocumentsFromTask($task);
         foreach ($events as $event) {
             $this->postExecutionEvent(
                 $rdcClient,
@@ -269,7 +275,8 @@ trait RdcStatusUpdateHandlerTrait
                 $event['type'],
                 $location,
                 sprintf($event['description'], $resourceId),
-                $actionTime
+                $actionTime,
+                $documents
             );
         }
     }
@@ -282,9 +289,10 @@ trait RdcStatusUpdateHandlerTrait
         EventType $eventType,
         array $location,
         string $description,
-        \DateTimeImmutable $actionTime
+        \DateTimeImmutable $actionTime,
+        array $documents = []
     ): void {
-        $rdcClient->post(sprintf('/%s/%s/events', $resourceType, $resourceId), [
+        $payload = [
             'eventType' => $eventType->value,
             'code' => $code->value,
             'domain' => EventDomain::BUSINESS->value,
@@ -292,7 +300,36 @@ trait RdcStatusUpdateHandlerTrait
             'location' => $location,
             'actualDateTime' => $actionTime->format(\DateTimeInterface::ATOM),
             'creationDateTime' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
-        ]);
+        ];
+        if (!empty($documents)) {
+            $payload['documents'] = $documents;
+        }
+
+        $rdcClient->post(sprintf('/%s/%s/events', $resourceType, $resourceId), $payload);
+    }
+
+    private function buildDocumentsFromTask(Task $task): array
+    {
+        $documents = [];
+        $subtype = $task->isPickup() ? 'DELIVERY_ADDITIONAL_EVIDENCE' : 'PROOF_OF_DELIVERY';
+        foreach ($task->getImages() as $image) {
+            $documents[] = $this->buildDocumentFromImage($image, $subtype);
+        }
+        return $documents;
+    }
+
+    private function buildDocumentFromImage(TaskImage $image, string $subtype): array
+    {
+        return [
+            'cmsUri' => $this->urlGenerator->generate(
+                'task_image_public',
+                ['path' => $image->getImageName()],
+                UrlGeneratorInterface::ABSOLUTE_URL
+            ),
+            'documentName' => 'Photo de preuve de livraison',
+            'documentType' => 'TRANSPORT',
+            'documentSubtype' => $subtype,
+        ];
     }
 
     private function getActivityId(string $taskId): string

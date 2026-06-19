@@ -10,6 +10,7 @@ use AppBundle\Message\RdcPickupStatusUpdateMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DelayStamp;
 
 class TaskRdcStatusListener
 {
@@ -44,7 +45,8 @@ class TaskRdcStatusListener
                     taskId: $task->getId(),
                     coopcycleStatus: $changeSet['status'][1],
                     actionTime: $actionTime,
-                )
+                ),
+                [new DelayStamp(45000)]
             );
         } else {
             $this->messageBus->dispatch(
@@ -52,7 +54,8 @@ class TaskRdcStatusListener
                     taskId: $task->getId(),
                     coopcycleStatus: $changeSet['status'][1],
                     actionTime: $actionTime,
-                )
+                ),
+                [new DelayStamp(45000)]
             );
         }
     }

@@ -12,6 +12,7 @@ use AppBundle\Message\RdcPickupStatusUpdateMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AsMessageHandler]
 final class RdcPickupStatusUpdateMessageHandler
@@ -22,6 +23,7 @@ final class RdcPickupStatusUpdateMessageHandler
         private readonly EntityManagerInterface $entityManager,
         private readonly RdcClientFactory $rdcClientFactory,
         private readonly LoggerInterface $logger,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {}
 
     private const CONFIG = [
