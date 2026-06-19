@@ -54,6 +54,7 @@ const emailTypes           = JSON.parse(root.dataset.emailTypes)        // { typ
 const supportedLocales     = JSON.parse(root.dataset.supportedLocales)  // { en: 'English', fr: 'Français', ... }
 const i18n                 = JSON.parse(root.dataset.i18n)              // server-translated UI strings
 const apiBaseUrl           = root.dataset.apiUrl                         // /admin/customize/emails/__TYPE__
+const sendTestBaseUrl      = root.dataset.sendTestUrl                    // /admin/customize/emails/__TYPE__/send-test
 const layoutApiUrl         = root.dataset.layoutUrl                      // /admin/customize/emails/layout
 const themePalette         = JSON.parse(root.dataset.themePalette || '[]') // hex colours from the active theme
 // The Symfony app locale (user's own UI language), used for GrapeJS UI strings
@@ -220,9 +221,14 @@ function updateVariablesPanel(type, overrideVars = null) {
 }
 
 function applyI18n() {
-  document.getElementById('ee-save-label').textContent   = i18n.save
-  document.getElementById('ee-reset-label').textContent  = i18n.reset
-  document.getElementById('ee-variables-label').textContent = i18n.variables + ':'
+  document.getElementById('ee-save-label').textContent        = i18n.save
+  document.getElementById('ee-reset-label').textContent       = i18n.reset
+  document.getElementById('ee-test-label').textContent        = i18n.send_test
+  document.getElementById('ee-variables-label').textContent   = i18n.variables + ':'
+  document.getElementById('ee-test-dialog-title').textContent = i18n.send_test_title
+  document.getElementById('ee-test-dialog-desc').textContent  = i18n.send_test_description
+  document.getElementById('ee-test-send-btn').textContent     = i18n.send_test_send
+  document.getElementById('ee-test-cancel').textContent       = i18n.send_test_cancel
 }
 
 function setStatus(msg, type = 'info') {
@@ -545,6 +551,8 @@ async function selectLayout() {
   setStatus('Loading…')
   document.getElementById('ee-save').disabled  = true
   document.getElementById('ee-reset').disabled = true
+  document.getElementById('ee-test').hidden    = true
+  document.getElementById('ee-test').disabled  = true
   showLoader()
 
   try {
@@ -580,6 +588,8 @@ async function selectEmail(type) {
     setStatus(is_custom ? i18n.status_custom : i18n.status_default, 'info')
     document.getElementById('ee-save').disabled  = false
     document.getElementById('ee-reset').disabled = !is_custom
+    document.getElementById('ee-test').hidden    = false
+    document.getElementById('ee-test').disabled  = false
   } catch (err) {
     hideLoader()
     setStatus('Failed to load template: ' + err.message, 'error')
@@ -662,6 +672,52 @@ async function handleReset() {
   }
 }
 
+// ─── Test email dialog ────────────────────────────────────────────────────────
+
+function openTestDialog() {
+  const statusEl = document.getElementById('ee-test-dialog-status')
+  statusEl.textContent = ''
+  statusEl.hidden = true
+  statusEl.className = 'ee-test-dialog-status'
+  document.getElementById('ee-test-email').value = ''
+  document.getElementById('ee-test-dialog').showModal()
+}
+
+async function handleSendTest() {
+  const email    = document.getElementById('ee-test-email').value.trim()
+  const statusEl = document.getElementById('ee-test-dialog-status')
+  const sendBtn  = document.getElementById('ee-test-send-btn')
+
+  statusEl.hidden = false
+  statusEl.className = 'ee-test-dialog-status'
+  statusEl.textContent = 'Sending…'
+  sendBtn.disabled = true
+
+  try {
+    const url = sendTestBaseUrl.replace('__TYPE__', currentType) + '?locale=' + currentLocale
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    })
+    const data = await res.json()
+
+    if (!res.ok || data.error) {
+      statusEl.className = 'ee-test-dialog-status ee-test-dialog-status--error'
+      statusEl.textContent = data.error ?? `HTTP ${res.status}`
+    } else {
+      statusEl.className = 'ee-test-dialog-status ee-test-dialog-status--success'
+      statusEl.textContent = i18n.send_test_success
+      setTimeout(() => document.getElementById('ee-test-dialog').close(), 1500)
+    }
+  } catch (err) {
+    statusEl.className = 'ee-test-dialog-status ee-test-dialog-status--error'
+    statusEl.textContent = err.message
+  } finally {
+    sendBtn.disabled = false
+  }
+}
+
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 applyI18n()
@@ -670,6 +726,13 @@ buildSidebar()
 
 document.getElementById('ee-save').addEventListener('click', handleSave)
 document.getElementById('ee-reset').addEventListener('click', handleReset)
+document.getElementById('ee-test').addEventListener('click', openTestDialog)
+document.getElementById('ee-test-send-btn').addEventListener('click', handleSendTest)
+document.getElementById('ee-test-cancel').addEventListener('click', () =>
+  document.getElementById('ee-test-dialog').close())
+document.getElementById('ee-test-email').addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleSendTest()
+})
 
 // Auto-select the layout on first load
 selectLayout()

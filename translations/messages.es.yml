@@ -1802,6 +1802,12 @@ customize.email_editor.variables: Variables disponibles
 customize.email_editor.layout: Diseño
 customize.email_editor.folder.foodtech: Foodtech
 customize.email_editor.folder.lastmile: Última milla
+customize.email_editor.send_test: Enviar prueba
+customize.email_editor.send_test_title: Enviar correo de prueba
+customize.email_editor.send_test_description: "Introduce una dirección para recibir una vista previa de esta plantilla con datos de muestra."
+customize.email_editor.send_test_send: Enviar
+customize.email_editor.send_test_cancel: Cancelar
+customize.email_editor.send_test_success: "¡Correo de prueba enviado!"
 two_factor.title: Autenticación de dos factores
 two_factor.subtitle: "Se ha enviado un código de verificación a tu dirección de correo electrónico. Por favor, introdúcelo a continuación."
 two_factor.code.label: Código de verificación

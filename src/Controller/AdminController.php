@@ -151,6 +151,8 @@ use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 use Twig\Environment as TwigEnvironment;
 use phpcent\Client as CentrifugoClient;
 use AppBundle\Service\EmailTemplateManager;
+use NotFloran\MjmlBundle\Renderer\RendererInterface;
+use Symfony\Component\Mailer\MailerInterface;
 
 class AdminController extends AbstractController
 {
@@ -2715,6 +2717,54 @@ class AdminController extends AbstractController
         ['mjml' => $mjml, 'is_custom' => $isCustom] = $emailTemplateManager->buildEditorMjml($type, $locale);
 
         return $this->json(['mjml' => $mjml, 'is_custom' => $isCustom]);
+    }
+
+    /**
+     * POST /admin/customize/emails/{type}/send-test
+     *
+     * Renders the given email type with synthetic placeholder data and sends it
+     * to the address supplied in the request body {"email": "..."}.
+     */
+    public function emailSendTestAction(
+        string $type,
+        Request $request,
+        EmailTemplateManager $emailTemplateManager,
+        RendererInterface $mjml,
+        EmailManager $emailManager,
+        MailerInterface $mailer
+    ): JsonResponse {
+        if ($this->getParameter('is_demo')) {
+            return $this->json(['error' => 'Not available in demo'], 403);
+        }
+
+        if (!$emailTemplateManager->isValidType($type)) {
+            return $this->json(['error' => 'Unknown email type'], 404);
+        }
+
+        $locale = $request->query->get('locale', 'en');
+        if (!$emailTemplateManager->isValidLocale($locale)) {
+            $locale = 'en';
+        }
+
+        $data  = json_decode($request->getContent(), true);
+        $email = trim($data['email'] ?? '');
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return $this->json(['error' => 'Invalid email address'], 400);
+        }
+
+        try {
+            $mjmlContent = $emailTemplateManager->renderTestTemplate($type, $locale);
+            $html        = $mjml->render($mjmlContent);
+            $label       = $emailTemplateManager->getEmailTypes($locale)[$type]['label'] ?? $type;
+            $message     = $emailManager->createHtmlMessage(sprintf('[Test] %s', $label), $html);
+            $message->to($email);
+            $mailer->send($message);
+
+            return $this->json(['success' => true]);
+        } catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     private function handleHubForm(Hub $hub, Request $request)

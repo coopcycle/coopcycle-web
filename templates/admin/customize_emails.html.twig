@@ -13,6 +13,7 @@
      data-email-types="{{ email_types | json_encode | e('html_attr') }}"
      data-supported-locales="{{ supported_locales | json_encode | e('html_attr') }}"
      data-api-url="{{ path('admin_customize_email_template', {type: '__TYPE__'}) }}"
+     data-send-test-url="{{ path('admin_customize_email_send_test', {type: '__TYPE__'}) }}"
      data-layout-url="{{ path('admin_customize_email_layout') }}"
      data-layout-is-custom="{{ layout_is_custom_by_locale | json_encode | e('html_attr') }}"
      data-theme-palette="{{ theme_palette | json_encode | e('html_attr') }}"
@@ -24,7 +25,13 @@
        variables:                 'customize.email_editor.variables'                 | trans,
        layout:                    'customize.email_editor.layout'                    | trans,
        folder_foodtech:           'customize.email_editor.folder.foodtech'           | trans,
-       folder_lastmile:           'customize.email_editor.folder.lastmile'           | trans
+       folder_lastmile:           'customize.email_editor.folder.lastmile'           | trans,
+       send_test:                 'customize.email_editor.send_test'                 | trans,
+       send_test_title:           'customize.email_editor.send_test_title'           | trans,
+       send_test_description:     'customize.email_editor.send_test_description'     | trans,
+       send_test_send:            'customize.email_editor.send_test_send'            | trans,
+       send_test_cancel:          'customize.email_editor.send_test_cancel'          | trans,
+       send_test_success:         'customize.email_editor.send_test_success'         | trans
      } | json_encode | e('html_attr') }}">
 
   {# ── Sidebar: list of editable email types ── #}
@@ -42,6 +49,9 @@
     <div class="ee-toolbar">
       <span class="ee-toolbar-title">MJML Email Editor</span>
       <span id="ee-status" class="ee-status ee-status--info"></span>
+      <button id="ee-test" class="btn btn-default btn-sm" type="button" disabled hidden>
+        <span id="ee-test-label"></span>
+      </button>
       <button id="ee-reset" class="btn btn-default btn-sm" type="button" disabled>
         <span id="ee-reset-label"></span>
       </button>
@@ -63,6 +73,18 @@
     </div>
 
   </div>
+
+  {# ── Send-test dialog ── #}
+  <dialog id="ee-test-dialog" class="ee-test-dialog">
+    <h4 id="ee-test-dialog-title" class="ee-test-dialog-title"></h4>
+    <p id="ee-test-dialog-desc" class="ee-test-dialog-desc"></p>
+    <input type="email" id="ee-test-email" class="form-control" />
+    <p id="ee-test-dialog-status" class="ee-test-dialog-status" hidden></p>
+    <div class="ee-test-dialog-footer">
+      <button type="button" id="ee-test-cancel" class="btn btn-default btn-sm"></button>
+      <button type="button" id="ee-test-send-btn" class="btn btn-primary btn-sm"></button>
+    </div>
+  </dialog>
 
 </div>
 

@@ -281,6 +281,81 @@ class EmailTemplateManager
     }
 
     /**
+     * Builds fully-rendered MJML for a test email of the given type.
+     *
+     * Uses the current custom layout + fragment (with locale → en fallback), or
+     * defaults. All {{variables}} are replaced with synthetic placeholder values
+     * so the admin can see a realistic preview; slot markers are filled with
+     * stub content. Returns MJML ready to pass to the MJML renderer.
+     */
+    public function renderTestTemplate(string $type, string $locale = 'en'): string
+    {
+        $locales = array_unique([$locale, 'en']);
+
+        // Resolve layout
+        $layoutMjml = null;
+        foreach ($locales as $l) {
+            $layoutMjml = $this->getCustomLayout($l);
+            if ($layoutMjml !== null) break;
+        }
+        $layoutMjml = $layoutMjml ?? $this->getDefaultLayout();
+
+        // Resolve fragment
+        $fragmentMjml = null;
+        foreach ($locales as $l) {
+            $fragmentMjml = $this->getCustomTemplate($type, $l);
+            if ($fragmentMjml !== null) break;
+        }
+        $fragment = $fragmentMjml !== null
+            ? $this->ensureFragment($fragmentMjml)
+            : $this->getDefaultFragment($type, $locale);
+
+        // Stitch layout + fragment
+        $mjml = $this->resolveSlots($layoutMjml, ['content' => $fragment]);
+
+        // Ensure logo URL is browser-safe for rendering (createHtmlMessage() reverses this)
+        $mjml = $this->forEditor($mjml);
+
+        // Substitute all {{variables}} with synthetic test values
+        $theme    = $this->getThemeColors();
+        $testVars = [
+            'brand_name'             => $this->settingsManager->get('brand_name') ?? 'CoopCycle',
+            'order_number'           => '#1234',
+            'order_url'              => 'https://demo.coopcycle.org/order/1234',
+            'shipping_time_range'    => '12:00 – 13:00',
+            'vendor_name'            => 'Demo Restaurant',
+            'phone_number'           => '+33 1 23 45 67 89',
+            'public_url_text'        => 'Track your order',
+            'tracking_url'           => 'https://demo.coopcycle.org/tracking/5678',
+            'delivery_id'            => '#5678',
+            'delay'                  => '15 minutes',
+            'primary_color'          => $theme['primary'],
+            'primary_content_color'  => $theme['primary-content'],
+            'secondary_color'        => $theme['secondary'],
+            'secondary_content_color'=> $theme['secondary-content'],
+        ];
+        $mjml = $this->substituteVariables($mjml, $testVars);
+
+        // Fill any remaining slot markers with stubs
+        return $this->resolveSlots($mjml, $this->getTestSlotStubs($type));
+    }
+
+    private function getTestSlotStubs(string $type): array
+    {
+        $stubs = [];
+        foreach (self::CUSTOMER_EMAILS[$type]['slots'] ?? [] as $slot) {
+            $stubs[$slot] = match ($slot) {
+                'order_items' =>
+                    '<mj-text align="left" line-height="20px">' .
+                    '<strong>1× Burger – €12.00</strong><br />2× Frites – €5.00' .
+                    '</mj-text>',
+                default => '',
+            };
+        }
+        return $stubs;
+    }
+
+    /**
      * Generates the default layout MJML (full document) with a content slot.
      * This is what the layout editor starts with when no custom layout is saved.
      */
