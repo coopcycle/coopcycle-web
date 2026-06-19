@@ -1687,6 +1687,8 @@ services:
       $entityManager: '@doctrine.orm.entity_manager'
       $logger: '@logger'
 
+  AppBundle\Integration\Rdc\RdcTaskContextResolver: ~
+
   AppBundle\Integration\Rdc\Api\RdcServiceFacade:
     arguments:
       $rdcClientFactory: '@AppBundle\Integration\Rdc\Api\RdcClientFactory'
