@@ -286,7 +286,10 @@ class EmailTemplateManager
      */
     public function getDefaultLayout(): string
     {
-        return $this->twig->render('emails/layout_with_slot.mjml.twig', ['logo_src' => '/img/logo.png']);
+        return $this->twig->render('emails/layout_with_slot.mjml.twig', [
+            'logo_src'   => '/img/logo.png',
+            'brand_name' => '{{brand_name}}',
+        ]);
     }
 
     /**
@@ -439,10 +442,11 @@ class EmailTemplateManager
 
         $theme    = $this->getThemeColors();
         $defaults = [
+            'brand_name'               => $this->settingsManager->get('brand_name') ?? '',
             'primary_color'            => $theme['primary'],
             'primary_content_color'    => $theme['primary-content'],
-            'background_color'         => $theme['secondary'],
-            'content_background_color' => $theme['secondary-content'],
+            'secondary_color'          => $theme['secondary'],
+            'secondary_content_color'  => $theme['secondary-content'],
         ];
 
         return $this->substituteVariables($mjml, array_merge($defaults, $variables));

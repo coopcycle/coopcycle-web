@@ -39,10 +39,10 @@ const BOUNDARY_SLOTS = new Set(['content_start', 'content_end'])
 // Variables available in the layout template (shown in the variables bar)
 const LAYOUT_VARIABLES = [
   'brand_name',
-  'background_color',
-  'content_background_color',
   'primary_color',
   'primary_content_color',
+  'secondary_color',
+  'secondary_content_color',
 ]
 
 // ─── Bootstrap: read config from DOM ─────────────────────────────────────────
