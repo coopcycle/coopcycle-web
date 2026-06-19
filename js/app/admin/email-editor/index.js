@@ -3,7 +3,7 @@ import mjmlPlugin from 'grapesjs-mjml'
 
 import 'grapesjs/dist/css/grapes.min.css'
 
-import './style.css'
+import '../../../../assets/css/email-editor.css'
 
 // GrapeJS core locale messages (keyed by locale code)
 import gjsEn from 'grapesjs/locale/en'
@@ -110,7 +110,7 @@ function buildSidebar() {
   layoutBtn.className = 'ee-email-btn ee-layout-btn'
   layoutBtn.innerHTML = `
     <span class="ee-email-label">${i18n.layout}</span>
-    <span class="ee-badge" style="display:none">custom</span>
+    <span class="ee-badge tw-badge tw-badge-success tw-badge-sm" style="display:none">custom</span>
   `
   layoutBtn.addEventListener('click', () => selectLayout())
   sidebar.appendChild(layoutBtn)
@@ -153,7 +153,7 @@ function buildSidebar() {
       btn.dataset.type = type
       btn.innerHTML = `
         <span class="ee-email-label"></span>
-        <span class="ee-badge" style="display:none">custom</span>
+        <span class="ee-badge tw-badge tw-badge-success tw-badge-sm" style="display:none">custom</span>
       `
       btn.addEventListener('click', () => selectEmail(type))
       content.appendChild(btn)
