@@ -11,7 +11,7 @@ use AppBundle\Integration\Rdc\Enum\ActionState;
 use AppBundle\Integration\Rdc\Enum\EventCode;
 use AppBundle\Integration\Rdc\Enum\EventDomain;
 use AppBundle\Integration\Rdc\Enum\EventType;
-use AppBundle\Integration\Rdc\RdcContext;
+use AppBundle\Integration\Rdc\RdcEventDispatcher;
 use AppBundle\Integration\Rdc\RdcTaskContextResolver;
 use AppBundle\Message\IncidentRdcMessage;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,6 +26,7 @@ final class IncidentRdcMessageHandler
         private readonly EntityManagerInterface $entityManager,
         private readonly RdcTaskContextResolver $rdcTaskContextResolver,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly RdcEventDispatcher $eventDispatcher,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -71,12 +72,9 @@ final class IncidentRdcMessageHandler
             'actualDateTime' => $actualDateTime->format(\DateTimeInterface::ATOM),
             'creationDateTime' => $now->format(\DateTimeInterface::ATOM),
         ];
-        if (!empty($documents)) {
-            $payload['documents'] = $documents;
-        }
 
-        $this->postEvent($context, 'services', $context->serviceId, $payload, $incident);
-        $this->postEvent($context, 'activities', $context->activityId, $payload, $incident);
+        $this->eventDispatcher->dispatch($context->client, 'services', $context->serviceId, $payload, $documents);
+        $this->eventDispatcher->dispatch($context->client, 'activities', $context->activityId, $payload, $documents);
 
         $this->logger->info('RDC incident event dispatched', [
             'incident_id' => $incident->getId(),
@@ -84,24 +82,6 @@ final class IncidentRdcMessageHandler
             'code' => $code->value,
             'documents_count' => count($documents),
         ]);
-    }
-
-    private function postEvent(RdcContext $context, string $resourceType, string $resourceId, array $payload, Incident $incident): void
-    {
-        try {
-            $context->client->post(
-                sprintf('/%s/%s/events', $resourceType, $resourceId),
-                $payload
-            );
-        } catch (\Throwable $e) {
-            $this->logger->error('Failed to post RDC incident event', [
-                'incident_id' => $incident->getId(),
-                'resource_type' => $resourceType,
-                'resource_id' => $resourceId,
-                'error' => $e->getMessage(),
-            ]);
-            throw $e;
-        }
     }
 
     private function buildDocumentsFromTask(Task $task): array

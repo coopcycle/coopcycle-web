@@ -8,6 +8,7 @@ use AppBundle\Entity\Task;
 use AppBundle\Integration\Rdc\Api\RdcClientFactory;
 use AppBundle\Integration\Rdc\Enum\EventCode;
 use AppBundle\Integration\Rdc\Enum\EventType;
+use AppBundle\Integration\Rdc\RdcEventDispatcher;
 use AppBundle\Message\RdcDropoffStatusUpdateMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -24,6 +25,7 @@ final class RdcDropoffStatusUpdateMessageHandler
         private readonly RdcClientFactory $rdcClientFactory,
         private readonly LoggerInterface $logger,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly RdcEventDispatcher $eventDispatcher,
     ) {}
 
     private const CONFIG = [

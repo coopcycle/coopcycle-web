@@ -110,7 +110,8 @@ trait RdcStatusUpdateHandlerTrait
         array $config,
         Task $task
     ): void {
-        $this->patchExecution($rdcClient, 'services', $serviceId, ExecutionStatus::FINISHED->value, $location, true);
+        $documents = $this->buildDocumentsFromTask($task);
+        $this->patchExecution($rdcClient, 'services', $serviceId, ExecutionStatus::FINISHED->value, $location, true, $documents);
         $this->patchExecution($rdcClient, 'activities', $activityId, ExecutionStatus::FINISHED->value, $location, true);
 
         $this->postEvents($rdcClient, 'services', $serviceId, $config['serviceEvents'] ?? [], $location, $actionTime, $task);
@@ -247,11 +248,16 @@ trait RdcStatusUpdateHandlerTrait
         string $resourceId,
         string $executionStatus,
         array $location,
-        bool $isEndLocation = false
+        bool $isEndLocation = false,
+        array $documents = []
     ): void {
         $payload = $isEndLocation
             ? ['executionStatus' => $executionStatus, 'endLocation' => $location]
             : ['executionStatus' => $executionStatus, 'startLocation' => $location];
+
+        if (!empty($documents)) {
+            $payload['documents'] = $documents;
+        }
 
         $rdcClient->patch(sprintf('/%s/%s', $resourceType, $resourceId), $payload);
     }
@@ -301,11 +307,8 @@ trait RdcStatusUpdateHandlerTrait
             'actualDateTime' => $actionTime->format(\DateTimeInterface::ATOM),
             'creationDateTime' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
         ];
-        if (!empty($documents)) {
-            $payload['documents'] = $documents;
-        }
 
-        $rdcClient->post(sprintf('/%s/%s/events', $resourceType, $resourceId), $payload);
+        $this->eventDispatcher->dispatch($rdcClient, $resourceType, $resourceId, $payload, $documents);
     }
 
     private function buildDocumentsFromTask(Task $task): array

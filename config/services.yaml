@@ -1682,6 +1682,10 @@ services:
     arguments:
       $rdcConnections: '%rdc_connections%'
 
+  AppBundle\Integration\Rdc\RdcEventDispatcher:
+    arguments:
+      $logger: '@logger'
+
   AppBundle\Integration\Rdc\RdcStoreResolver:
     arguments:
       $entityManager: '@doctrine.orm.entity_manager'

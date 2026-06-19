@@ -81,6 +81,5 @@ framework:
             'AppBundle\Message\ResetRushMode': async
             'AppBundle\Message\SoftDelete\CleanupProductOption': async
             'AppBundle\Message\Task\PublishLiveUpdate': async
-            'AppBundle\Message\RdcPickupStatusUpdateMessage': async
-            'AppBundle\Message\RdcDropoffStatusUpdateMessage': async
             'AppBundle\Message\RdcMessage': async
+            'AppBundle\Message\IncidentRdcMessage': async

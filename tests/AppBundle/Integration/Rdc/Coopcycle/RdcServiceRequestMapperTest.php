@@ -142,9 +142,351 @@ class RdcServiceRequestMapperTest extends TestCase
         $this->assertNull($comments);
     }
 
+    public function testExtractWeightFromLocationReturnsNullForNullInput(): void
+    {
+        $this->assertNull($this->invokeExtractWeight(null));
+    }
+
+    public function testExtractWeightFromLocationReturnsNullForEmptyArray(): void
+    {
+        $this->assertNull($this->invokeExtractWeight([]));
+    }
+
+    public function testExtractWeightFromLocationReturnsNullWhenActionsKeyMissing(): void
+    {
+        $this->assertNull($this->invokeExtractWeight(['location' => ['address' => []]]));
+    }
+
+    public function testExtractWeightFromLocationReturnsNullWhenNoBatches(): void
+    {
+        $this->assertNull($this->invokeExtractWeight(['actions' => []]));
+    }
+
+    public function testExtractWeightFromLocationHandlesNullActionEntry(): void
+    {
+        $location = [
+            'actions' => [
+                null,
+                [
+                    'compositionMovements' => [
+                        ['containedBatchesOfGoods' => [['weight' => ['value' => 3, 'unit' => 'KG']]]],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertSame(3000, $this->invokeExtractWeight($location));
+    }
+
+    public function testExtractWeightFromLocationHandlesNullCompositionMovementEntry(): void
+    {
+        $location = [
+            'actions' => [
+                [
+                    'compositionMovements' => [
+                        null,
+                        ['containedBatchesOfGoods' => [['weight' => ['value' => 4, 'unit' => 'KG']]]],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertSame(4000, $this->invokeExtractWeight($location));
+    }
+
+    public function testExtractWeightFromLocationHandlesNullBatchEntry(): void
+    {
+        $location = [
+            'actions' => [
+                [
+                    'compositionMovements' => [
+                        [
+                            'containedBatchesOfGoods' => [
+                                null,
+                                ['weight' => ['value' => 6, 'unit' => 'KG']],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertSame(6000, $this->invokeExtractWeight($location));
+    }
+
+    public function testExtractWeightFromLocationSkipsBatchWithoutWeightKey(): void
+    {
+        $location = [
+            'actions' => [
+                [
+                    'compositionMovements' => [
+                        [
+                            'containedBatchesOfGoods' => [
+                                ['containerType' => 'PARCEL', 'containerSubtype' => 'CARDBOARD'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertNull($this->invokeExtractWeight($location));
+    }
+
+    public function testExtractWeightFromLocationSkipsExplicitNullWeight(): void
+    {
+        $location = [
+            'actions' => [
+                [
+                    'compositionMovements' => [
+                        [
+                            'containedBatchesOfGoods' => [
+                                ['weight' => null],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertNull($this->invokeExtractWeight($location));
+    }
+
+    public function testExtractWeightFromLocationSkipsWeightMissingValueKey(): void
+    {
+        $location = [
+            'actions' => [
+                [
+                    'compositionMovements' => [
+                        [
+                            'containedBatchesOfGoods' => [
+                                ['weight' => ['unit' => 'KG']],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertNull($this->invokeExtractWeight($location));
+    }
+
+    public function testExtractWeightFromLocationSumsAcrossMultipleActions(): void
+    {
+        $location = [
+            'actions' => [
+                [
+                    'compositionMovements' => [
+                        [
+                            'containedBatchesOfGoods' => [
+                                ['weight' => ['value' => 1, 'unit' => 'KG']],
+                                ['weight' => ['value' => 2, 'unit' => 'KG']],
+                            ],
+                        ],
+                    ],
+                ],
+                [
+                    'compositionMovements' => [
+                        [
+                            'containedBatchesOfGoods' => [
+                                ['weight' => ['value' => 3, 'unit' => 'KG']],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertSame(6000, $this->invokeExtractWeight($location));
+    }
+
+    public function testExtractWeightFromLocationSumsAllKgBatchesInGrams(): void
+    {
+        $location = [
+            'actions' => [
+                [
+                    'compositionMovements' => [
+                        [
+                            'containedBatchesOfGoods' => [
+                                ['weight' => ['value' => 5, 'unit' => 'KG']],
+                                ['weight' => ['value' => 7.5, 'unit' => 'KG']],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertSame(12500, $this->invokeExtractWeight($location));
+    }
+
+    public function testExtractWeightFromLocationTreatsMissingUnitAsKg(): void
+    {
+        $location = [
+            'actions' => [
+                [
+                    'compositionMovements' => [
+                        [
+                            'containedBatchesOfGoods' => [
+                                ['weight' => ['value' => 2]],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertSame(2000, $this->invokeExtractWeight($location));
+    }
+
+    public function testExtractWeightFromLocationSkipsNonKgUnits(): void
+    {
+        $location = [
+            'actions' => [
+                [
+                    'compositionMovements' => [
+                        [
+                            'containedBatchesOfGoods' => [
+                                ['weight' => ['value' => 100, 'unit' => 'LB']],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertNull($this->invokeExtractWeight($location));
+    }
+
+    public function testExtractWeightFromLocationSkipsNonNumericValues(): void
+    {
+        $location = [
+            'actions' => [
+                [
+                    'compositionMovements' => [
+                        [
+                            'containedBatchesOfGoods' => [
+                                ['weight' => ['value' => 'not-a-number', 'unit' => 'KG']],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertNull($this->invokeExtractWeight($location));
+    }
+
+    public function testMapToDeliveryWritesBarcodeToMetadataBarcodeKey(): void
+    {
+        $apiRequest = $this->buildApiRequestWithBarcode('TEST-001');
+
+        $delivery = $this->mapper->mapToDelivery($apiRequest, new \AppBundle\Entity\Store());
+
+        $pickupMetadata = $delivery->getPickup()->getMetadata();
+        $this->assertArrayHasKey('barcode', $pickupMetadata);
+        $this->assertSame('TEST-001', $pickupMetadata['barcode']);
+        $this->assertArrayNotHasKey('rdc_barcode', $pickupMetadata);
+    }
+
+    public function testMapToDeliverySetsWeightOnDropoffFromStartLocationBatches(): void
+    {
+        $apiRequest = $this->buildApiRequestWithBarcode('TEST-WEIGHT');
+        $apiRequest = new \AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest(
+            id: $apiRequest->id,
+            uri: $apiRequest->uri,
+            externalReferences: $apiRequest->externalReferences,
+            startLocation: [
+                'actions' => [
+                    [
+                        'compositionMovements' => [
+                            [
+                                'containedBatchesOfGoods' => [
+                                    ['weight' => ['value' => 5, 'unit' => 'KG']],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            endLocation: $apiRequest->endLocation,
+        );
+
+        $delivery = $this->mapper->mapToDelivery($apiRequest, new \AppBundle\Entity\Store());
+
+        $this->assertSame(5000, $delivery->getDropoff()->getWeight());
+    }
+
+    public function testMapToDeliveryLeavesDropoffWeightNullWhenPayloadHasNoWeight(): void
+    {
+        $apiRequest = $this->buildApiRequestWithBarcode('TEST-NO-WEIGHT');
+
+        $delivery = $this->mapper->mapToDelivery($apiRequest, new \AppBundle\Entity\Store());
+
+        $this->assertNull($delivery->getDropoff()->getWeight());
+    }
+
+    public function testMapToDeliveryLeavesDropoffWeightNullWhenStartLocationIsNull(): void
+    {
+        $apiRequest = new \AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest(
+            externalReferences: [
+                ['externalReferenceType' => 'REQUESTOR_LABEL_ID', 'reference' => 'TEST-NULL-LOC'],
+            ],
+            endLocation: [
+                'location' => [
+                    'address' => [
+                        'addressCountry' => ['countryCode' => 'FR'],
+                        'addressLocality' => 'Lyon',
+                        'postalCode' => '69001',
+                        'addressLines' => ['1 place Bellecour'],
+                    ],
+                ],
+            ],
+        );
+
+        $delivery = $this->mapper->mapToDelivery($apiRequest, new \AppBundle\Entity\Store());
+
+        $this->assertNull($delivery->getDropoff()->getWeight());
+    }
+
     private function invokeBuildComments(?array $specialInstructions): ?string
     {
         $method = new ReflectionMethod($this->mapper, 'buildCommentsFromSpecialInstructions');
         return $method->invoke($this->mapper, $specialInstructions);
+    }
+
+    private function invokeExtractWeight(?array $location): ?int
+    {
+        $method = new ReflectionMethod($this->mapper, 'extractWeightFromLocation');
+        return $method->invoke($this->mapper, $location);
+    }
+
+    private function buildApiRequestWithBarcode(string $barcode): \AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest
+    {
+        return new \AppBundle\Integration\Rdc\DTO\RdcApiServiceRequest(
+            externalReferences: [
+                ['externalReferenceType' => 'REQUESTOR_LABEL_ID', 'reference' => $barcode],
+            ],
+            startLocation: [
+                'location' => [
+                    'address' => [
+                        'addressCountry' => ['countryCode' => 'FR'],
+                        'addressLocality' => 'Paris',
+                        'postalCode' => '75001',
+                        'addressLines' => ['1 rue de Rivoli'],
+                    ],
+                ],
+            ],
+            endLocation: [
+                'location' => [
+                    'address' => [
+                        'addressCountry' => ['countryCode' => 'FR'],
+                        'addressLocality' => 'Lyon',
+                        'postalCode' => '69001',
+                        'addressLines' => ['1 place Bellecour'],
+                    ],
+                ],
+            ],
+        );
     }
 }

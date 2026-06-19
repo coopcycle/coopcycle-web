@@ -68,10 +68,19 @@ class RdcServiceRequestMapper
         $pickup->setMetadata([
             'rdc_lo_uri' => $loUri,
             'rdc_external_ref' => $apiRequest->getExternalRef(),
-            'rdc_barcode' => $apiRequest->getBarcode(),
             'rdc_contract_ref' => $apiRequest->getContractRef(),
             'rdc_created_at' => (new DateTime())->format(DateTimeInterface::ATOM),
         ]);
+
+        $barcode = $apiRequest->getBarcode();
+        if (!is_null($barcode)) {
+            $pickup->setBarcode($barcode);
+        }
+
+        $weightGrams = $this->extractWeightFromLocation($apiRequest->startLocation);
+        if (!is_null($weightGrams)) {
+            $dropoff->setWeight($weightGrams);
+        }
 
         // Dropoff comments from special instructions
         $dropoffComments = $this->buildCommentsFromSpecialInstructions($apiRequest->specialInstructions);
@@ -161,6 +170,41 @@ class RdcServiceRequestMapper
         if ($timeSlot->end !== null) {
             $task->setDoneBefore(Carbon::instance($timeSlot->end)->tz($tz)->toDateTime());
         }
+    }
+
+    private function extractWeightFromLocation(?array $location): ?int
+    {
+        if (is_null($location)) {
+            return null;
+        }
+
+        $totalKg = 0.0;
+        $foundAny = false;
+        foreach ($location['actions'] ?? [] as $action) {
+            foreach ($action['compositionMovements'] ?? [] as $movement) {
+                foreach ($movement['containedBatchesOfGoods'] ?? [] as $batch) {
+                    $weight = $batch['weight'] ?? null;
+                    if (!is_array($weight)) {
+                        continue;
+                    }
+                    $unit = $weight['unit'] ?? 'KG';
+                    if ($unit !== 'KG') {
+                        $this->logger->warning('Unsupported weight unit, skipping', [
+                            'unit' => $unit,
+                        ]);
+                        continue;
+                    }
+                    $value = $weight['value'] ?? null;
+                    if (!is_numeric($value)) {
+                        continue;
+                    }
+                    $totalKg += (float) $value;
+                    $foundAny = true;
+                }
+            }
+        }
+
+        return $foundAny ? (int) round($totalKg * 1000) : null;
     }
 
     private function isContactNotEmpty(ServiceRequestContact $contact): bool
