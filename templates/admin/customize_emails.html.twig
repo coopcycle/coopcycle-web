@@ -37,7 +37,7 @@
   {# ── Sidebar ── #}
   <aside class="ee-sidebar">
     <div class="ee-sidebar-header">
-      <div id="ee-locale-tabs" class="tw-flex"></div>
+      <div id="ee-locale-tabs" class="tw:flex"></div>
     </div>
     <div id="ee-sidebar"></div>
   </aside>
@@ -48,41 +48,41 @@
     <div class="ee-toolbar">
       <span class="ee-toolbar-title">MJML Email Editor</span>
       <span id="ee-status" class="ee-status ee-status--info"></span>
-      <button id="ee-test" class="tw-btn tw-btn-ghost tw-btn-sm" type="button" disabled hidden>
+      <button id="ee-test" class="tw:btn tw:btn-ghost tw:btn-sm" type="button" disabled hidden>
         <span id="ee-test-label"></span>
       </button>
-      <button id="ee-reset" class="tw-btn tw-btn-ghost tw-btn-sm" type="button" disabled>
+      <button id="ee-reset" class="tw:btn tw:btn-ghost tw:btn-sm" type="button" disabled>
         <span id="ee-reset-label"></span>
       </button>
-      <button id="ee-save" class="tw-btn tw-btn-success tw-btn-sm" type="button" disabled>
+      <button id="ee-save" class="tw:btn tw:btn-success tw:btn-sm" type="button" disabled>
         <span id="ee-save-label"></span>
       </button>
     </div>
 
     <div id="ee-variables-bar" class="ee-variables-bar">
-      <strong id="ee-variables-label" class="tw-text-[#856404] tw-whitespace-nowrap"></strong>
+      <strong id="ee-variables-label" class="tw:text-[#856404] tw:whitespace-nowrap"></strong>
       <span id="ee-variables"><em>—</em></span>
     </div>
 
     <div class="ee-canvas-wrapper">
       <div id="ee-canvas"></div>
       <div id="ee-loader" hidden aria-hidden="true">
-        <span class="tw-loading tw-loading-spinner tw-loading-md tw-text-[#10ac84]"></span>
+        <span class="tw:loading tw:loading-spinner tw:loading-md tw:text-[#10ac84]"></span>
       </div>
     </div>
 
   </div>
 
   {# ── Send-test dialog (DaisyUI modal) ── #}
-  <dialog id="ee-test-dialog" class="tw-modal">
-    <div class="tw-modal-box tw-max-w-sm">
-      <h4 id="ee-test-dialog-title" class="tw-font-semibold tw-text-base tw-mb-2"></h4>
-      <p id="ee-test-dialog-desc" class="tw-text-sm tw-text-base-content/60 tw-mb-4"></p>
-      <input type="email" id="ee-test-email" class="tw-input tw-input-bordered tw-input-sm tw-w-full" />
+  <dialog id="ee-test-dialog" class="tw:modal">
+    <div class="tw:modal-box tw:max-w-sm">
+      <h4 id="ee-test-dialog-title" class="tw:font-semibold tw:text-base tw:mb-2"></h4>
+      <p id="ee-test-dialog-desc" class="tw:text-sm tw:text-base-content/60 tw:mb-4"></p>
+      <input type="email" id="ee-test-email" class="tw:input tw:input-bordered tw:input-sm tw:w-full" />
       <div id="ee-test-dialog-status" class="ee-test-dialog-status" hidden></div>
-      <div class="tw-modal-action">
-        <button type="button" id="ee-test-cancel" class="tw-btn tw-btn-ghost tw-btn-sm"></button>
-        <button type="button" id="ee-test-send-btn" class="tw-btn tw-btn-primary tw-btn-sm"></button>
+      <div class="tw:modal-action">
+        <button type="button" id="ee-test-cancel" class="tw:btn tw:btn-ghost tw:btn-sm"></button>
+        <button type="button" id="ee-test-send-btn" class="tw:btn tw:btn-primary tw:btn-sm"></button>
       </div>
     </div>
   </dialog>
