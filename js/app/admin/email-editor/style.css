@@ -356,6 +356,11 @@
 /* ─── Send-test dialog ───────────────────────────────────────────────────── */
 
 .ee-test-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
   border: 1px solid #ddd;
   border-radius: 6px;
   padding: 24px;
