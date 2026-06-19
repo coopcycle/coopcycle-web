@@ -1777,6 +1777,8 @@ customize.email_editor.status.default: Showing default template — save to cust
 customize.email_editor.status.custom: Showing custom template
 customize.email_editor.variables: Available variables
 customize.email_editor.layout: Layout
+customize.email_editor.folder.foodtech: Foodtech
+customize.email_editor.folder.lastmile: Last Mile
 two_factor.title: Two-factor authentication
 two_factor.subtitle: "A verification code has been sent to your email address. Please enter it below."
 two_factor.code.label: Verification code

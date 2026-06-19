@@ -200,6 +200,58 @@
   margin: 4px 0;
 }
 
+/* ─── Sidebar folders ────────────────────────────────────────────────────── */
+
+.ee-folder-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 12px 6px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6c757d;
+  text-align: left;
+}
+
+.ee-folder-header:hover {
+  background: #e9ecef;
+  color: #333;
+}
+
+.ee-folder-chevron {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 5px solid currentColor;
+  transition: transform 0.15s;
+  flex-shrink: 0;
+}
+
+.ee-folder.is-open .ee-folder-chevron {
+  transform: rotate(90deg);
+}
+
+.ee-folder-content {
+  display: none;
+}
+
+.ee-folder.is-open .ee-folder-content {
+  display: block;
+}
+
+.ee-folder .ee-email-btn {
+  padding-left: 22px;
+}
+
 /* ─── Global Style panel ─────────────────────────────────────────────────── */
 
 .ee-style-panel {

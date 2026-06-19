@@ -18,61 +18,73 @@ class EmailTemplateManager
             'label_key' => 'customize.email_editor.email_type.order_created',
             'variables'  => ['brand_name', 'order_number', 'order_url'],
             'slots'      => ['order_items'],
+            'folder'     => 'foodtech',
         ],
         'order_accepted_foodtech_delivery' => [
             'label_key' => 'customize.email_editor.email_type.order_accepted_foodtech_delivery',
             'variables'  => ['brand_name', 'order_number', 'shipping_time_range', 'order_url'],
             'slots'      => ['loopeat_info'],
+            'folder'     => 'foodtech',
         ],
         'order_accepted_foodtech_collection' => [
             'label_key' => 'customize.email_editor.email_type.order_accepted_foodtech_collection',
             'variables'  => ['brand_name', 'order_number', 'shipping_time_range', 'vendor_name', 'phone_number', 'order_url'],
             'slots'      => ['loopeat_info'],
+            'folder'     => 'foodtech',
         ],
         'order_accepted_lastmile' => [
             'label_key' => 'customize.email_editor.email_type.order_accepted_lastmile',
             'variables'  => ['brand_name', 'order_number', 'public_url_text'],
             'slots'      => [],
+            'folder'     => 'lastmile',
         ],
         'order_cancelled' => [
             'label_key' => 'customize.email_editor.email_type.order_cancelled',
             'variables'  => ['brand_name', 'order_number'],
             'slots'      => [],
+            'folder'     => 'foodtech',
         ],
         'order_delayed' => [
             'label_key' => 'customize.email_editor.email_type.order_delayed',
             'variables'  => ['brand_name', 'order_number', 'delay'],
             'slots'      => [],
+            'folder'     => 'foodtech',
         ],
         'order_payment' => [
             'label_key' => 'customize.email_editor.email_type.order_payment',
             'variables'  => ['brand_name', 'order_number', 'order_url'],
             'slots'      => ['order_items'],
+            'folder'     => 'foodtech',
         ],
         'order_receipt' => [
             'label_key' => 'customize.email_editor.email_type.order_receipt',
             'variables'  => ['brand_name', 'order_number'],
             'slots'      => ['order_items'],
+            'folder'     => 'foodtech',
         ],
         'task_dropoff_completed' => [
             'label_key' => 'customize.email_editor.email_type.task_dropoff_completed',
             'variables'  => ['brand_name', 'delivery_id', 'tracking_url'],
             'slots'      => [],
+            'folder'     => 'lastmile',
         ],
         'task_pickup_completed' => [
             'label_key' => 'customize.email_editor.email_type.task_pickup_completed',
             'variables'  => ['brand_name', 'delivery_id', 'tracking_url'],
             'slots'      => [],
+            'folder'     => 'lastmile',
         ],
         'task_dropoff_failed' => [
             'label_key' => 'customize.email_editor.email_type.task_dropoff_failed',
             'variables'  => ['brand_name', 'delivery_id', 'tracking_url'],
             'slots'      => [],
+            'folder'     => 'lastmile',
         ],
         'task_pickup_failed' => [
             'label_key' => 'customize.email_editor.email_type.task_pickup_failed',
             'variables'  => ['brand_name', 'delivery_id', 'tracking_url'],
             'slots'      => [],
+            'folder'     => 'lastmile',
         ],
     ];
 
@@ -97,6 +109,7 @@ class EmailTemplateManager
                 'label'     => $this->translator->trans($meta['label_key'], [], 'messages', $locale),
                 'variables' => $meta['variables'],
                 'slots'     => $meta['slots'],
+                'folder'    => $meta['folder'] ?? null,
             ];
         }
         return $types;

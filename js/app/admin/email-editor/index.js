@@ -119,18 +119,49 @@ function buildSidebar() {
   divider.className = 'ee-sidebar-divider'
   sidebar.appendChild(divider)
 
+  // Group types by folder, preserving declaration order
+  const folders = new Map()
   for (const [type, meta] of Object.entries(emailTypes)) {
-    const btn = document.createElement('button')
-    btn.type = 'button'
-    btn.className = 'ee-email-btn'
-    btn.dataset.type = type
-    btn.innerHTML = `
-      <span class="ee-email-label"></span>
-      <span class="ee-badge" style="display:none">custom</span>
-    `
-    btn.addEventListener('click', () => selectEmail(type))
-    sidebar.appendChild(btn)
+    const folder = meta.folder ?? 'other'
+    if (!folders.has(folder)) folders.set(folder, [])
+    folders.get(folder).push(type)
   }
+
+  for (const [folder, types] of folders) {
+    const folderEl = document.createElement('div')
+    folderEl.className = 'ee-folder is-open'
+    folderEl.dataset.folder = folder
+
+    const header = document.createElement('button')
+    header.type = 'button'
+    header.className = 'ee-folder-header'
+    header.innerHTML = `
+      <span class="ee-folder-label">${i18n['folder_' + folder] ?? folder}</span>
+      <span class="ee-folder-chevron"></span>
+    `
+    header.addEventListener('click', () => folderEl.classList.toggle('is-open'))
+    folderEl.appendChild(header)
+
+    const content = document.createElement('div')
+    content.className = 'ee-folder-content'
+
+    for (const type of types) {
+      const btn = document.createElement('button')
+      btn.type = 'button'
+      btn.className = 'ee-email-btn'
+      btn.dataset.type = type
+      btn.innerHTML = `
+        <span class="ee-email-label"></span>
+        <span class="ee-badge" style="display:none">custom</span>
+      `
+      btn.addEventListener('click', () => selectEmail(type))
+      content.appendChild(btn)
+    }
+
+    folderEl.appendChild(content)
+    sidebar.appendChild(folderEl)
+  }
+
   refreshSidebar()
 }
 

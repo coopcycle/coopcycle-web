@@ -1703,6 +1703,8 @@ customize.email_editor.status.default: Modèle par défaut — enregistrez pour 
 customize.email_editor.status.custom: Modèle personnalisé
 customize.email_editor.variables: Variables disponibles
 customize.email_editor.layout: Mise en page
+customize.email_editor.folder.foodtech: Foodtech
+customize.email_editor.folder.lastmile: Dernier kilomètre
 two_factor.title: Authentification à deux facteurs
 two_factor.subtitle: "Un code de vérification a été envoyé à votre adresse e-mail. Veuillez le saisir ci-dessous."
 two_factor.code.label: Code de vérification
