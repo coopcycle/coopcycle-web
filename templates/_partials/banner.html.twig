@@ -1,13 +1,5 @@
 {% if coopcycle_banner() %}
-  <section class="banner">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-8 col-md-offset-2 text-center">
-          <div class="banner-message">
-            <i class="fa fa-warning"></i> {{ coopcycle_banner_message()|markdown_to_html }}
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  <div role="alert" class="alert alert-warning alert-soft rounded-none">
+    <i class="fa fa-warning"></i> {{ coopcycle_banner_message()|markdown_to_html }}
+  </div>
 {% endif %}
