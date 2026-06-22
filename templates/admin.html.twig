@@ -5,7 +5,11 @@
 {% endblock %}
 
 {% block banner %}
-  {% include '_partials/maintenance.html.twig' %}
+  {% if is_granted('ROLE_ADMIN') and coopcycle_maintenance() %}
+  <div class="alert alert-danger text-center" style="margin-top: -20px;">
+    {{ 'maintenance.disclaimer'|trans|raw }}
+  </div>
+  {% endif %}
   {% set error_messages = coopcycle_configtest() %}
   {% if error_messages is not empty %}
   <div class="alert alert-danger" style="margin-top: -20px;">

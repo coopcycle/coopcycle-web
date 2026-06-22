@@ -8,8 +8,8 @@
     {{ encore_entry_link_tags('frontend') }}
   </head>
   <body>
-    <div class="container container--full-height container--center">
-      <div class="maintenance">
+    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+      <div role="alert" class="alert alert-error">
         <i class="fa fa-warning"></i>
         <br />
         {% if message is not empty %}
