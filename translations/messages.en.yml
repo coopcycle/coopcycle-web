@@ -1771,6 +1771,8 @@ customize.email_editor.email_type.task_dropoff_completed: Dropoff Completed
 customize.email_editor.email_type.task_pickup_completed: Pickup Completed
 customize.email_editor.email_type.task_dropoff_failed: Dropoff Failed
 customize.email_editor.email_type.task_pickup_failed: Pickup Failed
+customize.email_editor.email_type.resetting: Password Reset
+customize.email_editor.email_type.registration: Registration Confirmation
 customize.email_editor.save: Save
 customize.email_editor.reset: Reset to default
 customize.email_editor.status.default: Showing default template — save to customise
@@ -1779,6 +1781,7 @@ customize.email_editor.variables: Available variables
 customize.email_editor.layout: Layout
 customize.email_editor.folder.foodtech: Foodtech
 customize.email_editor.folder.lastmile: Last Mile
+customize.email_editor.folder.account: Account
 customize.email_editor.send_test: Send test
 customize.email_editor.send_test_title: Send test email
 customize.email_editor.send_test_description: "Enter an address to receive a preview of this template with sample data."

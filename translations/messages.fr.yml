@@ -1697,6 +1697,8 @@ customize.email_editor.email_type.task_dropoff_completed: Dépôt effectué
 customize.email_editor.email_type.task_pickup_completed: Enlèvement effectué
 customize.email_editor.email_type.task_dropoff_failed: Dépôt échoué
 customize.email_editor.email_type.task_pickup_failed: Enlèvement échoué
+customize.email_editor.email_type.resetting: Réinitialisation du mot de passe
+customize.email_editor.email_type.registration: "Confirmation d'inscription"
 customize.email_editor.save: Enregistrer
 customize.email_editor.reset: Réinitialiser par défaut
 customize.email_editor.status.default: Modèle par défaut — enregistrez pour personnaliser
@@ -1705,6 +1707,7 @@ customize.email_editor.variables: Variables disponibles
 customize.email_editor.layout: Mise en page
 customize.email_editor.folder.foodtech: Foodtech
 customize.email_editor.folder.lastmile: Dernier kilomètre
+customize.email_editor.folder.account: Compte
 customize.email_editor.send_test: Envoyer un test
 customize.email_editor.send_test_title: Envoyer un e-mail de test
 customize.email_editor.send_test_description: "Entrez une adresse pour recevoir un aperçu de ce modèle avec des données fictives."

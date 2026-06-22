@@ -1,0 +1,12 @@
+<mj-column>
+  <mj-text align="left" line-height="20px">
+    {{ 'resetting.email.message'|trans({ '{{username}}': '{{username}}' }, 'emails')|raw }}
+  </mj-text>
+  <mj-button font-family="Raleway, Arial, sans-serif"
+    background-color="{{ primary_color }}"
+    color="{{ primary_content_color }}"
+    href="{{ confirmation_url }}"
+    rel="notrack">
+    {{ 'resetting.email.reset'|trans({}, 'emails') }}
+  </mj-button>
+</mj-column>

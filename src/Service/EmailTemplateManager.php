@@ -88,6 +88,21 @@ class EmailTemplateManager
         ],
     ];
 
+    public const ACCOUNT_EMAILS = [
+        'resetting' => [
+            'label_key' => 'customize.email_editor.email_type.resetting',
+            'variables'  => ['brand_name', 'username', 'confirmation_url'],
+            'slots'      => [],
+            'folder'     => 'account',
+        ],
+        'registration' => [
+            'label_key' => 'customize.email_editor.email_type.registration',
+            'variables'  => ['brand_name', 'username', 'confirmation_url'],
+            'slots'      => [],
+            'folder'     => 'account',
+        ],
+    ];
+
     public const SUPPORTED_LOCALES = [
         'en' => 'English',
         'fr' => 'Français',
@@ -104,7 +119,7 @@ class EmailTemplateManager
     public function getEmailTypes(string $locale = 'en'): array
     {
         $types = [];
-        foreach (self::CUSTOMER_EMAILS as $type => $meta) {
+        foreach (array_merge(self::CUSTOMER_EMAILS, self::ACCOUNT_EMAILS) as $type => $meta) {
             $types[$type] = [
                 'label'     => $this->translator->trans($meta['label_key'], [], 'messages', $locale),
                 'variables' => $meta['variables'],
@@ -122,7 +137,7 @@ class EmailTemplateManager
 
     public function isValidType(string $type): bool
     {
-        return isset(self::CUSTOMER_EMAILS[$type]);
+        return isset(self::CUSTOMER_EMAILS[$type]) || isset(self::ACCOUNT_EMAILS[$type]);
     }
 
     public function isValidLocale(string $locale): bool
@@ -329,6 +344,8 @@ class EmailTemplateManager
             'tracking_url'           => 'https://demo.coopcycle.org/tracking/5678',
             'delivery_id'            => '#5678',
             'delay'                  => '15 minutes',
+            'username'               => 'john_doe',
+            'confirmation_url'       => 'https://demo.coopcycle.org/resetting/reset/abc123',
             'primary_color'          => $theme['primary'],
             'primary_content_color'  => $theme['primary-content'],
             'secondary_color'        => $theme['secondary'],
@@ -343,7 +360,8 @@ class EmailTemplateManager
     private function getTestSlotStubs(string $type): array
     {
         $stubs = [];
-        foreach (self::CUSTOMER_EMAILS[$type]['slots'] ?? [] as $slot) {
+        $allEmails = array_merge(self::CUSTOMER_EMAILS, self::ACCOUNT_EMAILS);
+        foreach ($allEmails[$type]['slots'] ?? [] as $slot) {
             $stubs[$slot] = match ($slot) {
                 'order_items' =>
                     '<mj-text align="left" line-height="20px">' .
@@ -378,6 +396,22 @@ class EmailTemplateManager
     }
 
     /**
+     * Returns the fragment for the given type: custom (with locale→en fallback) or the default.
+     * Used by the `email_fragment()` Twig function so bundle email templates pick up customisations.
+     */
+    public function getFragment(string $type, string $locale = 'en'): string
+    {
+        $locales = array_unique([$locale, 'en']);
+        foreach ($locales as $l) {
+            $custom = $this->getCustomTemplate($type, $l);
+            if ($custom !== null) {
+                return $this->ensureFragment($custom);
+            }
+        }
+        return $this->getDefaultFragment($type, $locale);
+    }
+
+    /**
      * Returns the inner column content (fragment) for the given email type.
      * Contains only mj-text / mj-button / mj-raw children — no mj-section or
      * mj-column wrapper, because the layout now owns that wrapper.
@@ -396,6 +430,7 @@ class EmailTemplateManager
             'vendor_name'           => '{{vendor_name}}',
             'phone_number'          => '{{phone_number}}',
             'public_url_text'       => '{{public_url_text}}',
+            'confirmation_url'      => '{{confirmation_url}}',
         ]);
     }
 

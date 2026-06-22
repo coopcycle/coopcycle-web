@@ -1794,6 +1794,8 @@ customize.email_editor.email_type.task_dropoff_completed: Entrega completada
 customize.email_editor.email_type.task_pickup_completed: Recogida completada
 customize.email_editor.email_type.task_dropoff_failed: Entrega fallida
 customize.email_editor.email_type.task_pickup_failed: Recogida fallida
+customize.email_editor.email_type.resetting: "Restablecimiento de contraseña"
+customize.email_editor.email_type.registration: "Confirmación de registro"
 customize.email_editor.save: Guardar
 customize.email_editor.reset: Restablecer por defecto
 customize.email_editor.status.default: Plantilla por defecto — guarde para personalizar
@@ -1802,6 +1804,7 @@ customize.email_editor.variables: Variables disponibles
 customize.email_editor.layout: Diseño
 customize.email_editor.folder.foodtech: Foodtech
 customize.email_editor.folder.lastmile: Última milla
+customize.email_editor.folder.account: Cuenta
 customize.email_editor.send_test: Enviar prueba
 customize.email_editor.send_test_title: Enviar correo de prueba
 customize.email_editor.send_test_description: "Introduce una dirección para recibir una vista previa de esta plantilla con datos de muestra."
