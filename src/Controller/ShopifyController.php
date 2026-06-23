@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -29,7 +30,7 @@ class ShopifyController extends AbstractController
         $shop = $request->query->get('shop');
 
         if (!$shop || !$this->isValidShopDomain($shop)) {
-            throw $this->createBadRequestException('Invalid shop domain.');
+            throw new BadRequestHttpException('Invalid shop domain.');
         }
 
         $state = bin2hex(random_bytes(16));
@@ -60,22 +61,22 @@ class ShopifyController extends AbstractController
         $hmac  = $request->query->get('hmac');
 
         if (!$shop || !$code || !$state || !$hmac) {
-            throw $this->createBadRequestException('Missing required parameters.');
+            throw new BadRequestHttpException('Missing required parameters.');
         }
 
         $sessionState = $request->getSession()->get('shopify_oauth_state');
         if (!$sessionState || !hash_equals($sessionState, $state)) {
-            throw $this->createBadRequestException('Invalid state parameter.');
+            throw new BadRequestHttpException('Invalid state parameter.');
         }
         $request->getSession()->remove('shopify_oauth_state');
 
         if (!$this->verifyHmac($request->query->all(), $hmac)) {
-            throw $this->createBadRequestException('HMAC verification failed.');
+            throw new BadRequestHttpException('HMAC verification failed.');
         }
 
         $accessToken = $this->exchangeCodeForToken($shop, $code);
         if (!$accessToken) {
-            throw $this->createBadRequestException('Failed to obtain access token.');
+            throw new BadRequestHttpException('Failed to obtain access token.');
         }
 
         $shopEntity = $this->entityManager->getRepository(ShopifyShop::class)
