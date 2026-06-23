@@ -1,16 +1,14 @@
-<mj-column>
-  <mj-text align="left" line-height="20px">
-    {{ 'registration.email.message'|trans({ '{{brand_name}}': '{{brand_name}}', '{{username}}': '{{username}}' }, 'emails')|raw }}
-  </mj-text>
-  <mj-button font-family="Raleway, Arial, sans-serif"
-    background-color="{{ primary_color }}"
-    color="{{ primary_content_color }}"
-    href="{{ confirmation_url }}"
-    rel="notrack">
-    {{ 'registration.email.confirm'|trans({}, 'emails') }}
-  </mj-button>
-  <mj-divider border-width="1px" border-style="solid" border-color="#eeeeee" />
-  <mj-text align="left" line-height="20px">
-    {{ 'registration.email.disclaimer'|trans({}, 'emails') }}
-  </mj-text>
-</mj-column>
+<mj-text align="left" line-height="20px">
+  {{ 'registration.email.message'|trans({ '{{brand_name}}': '{{brand_name}}', '{{username}}': '{{username}}' }, 'emails')|raw }}
+</mj-text>
+<mj-button font-family="Raleway, Arial, sans-serif"
+  background-color="{{ primary_color }}"
+  color="{{ primary_content_color }}"
+  href="{{ confirmation_url }}"
+  rel="notrack">
+  {{ 'registration.email.confirm'|trans({}, 'emails') }}
+</mj-button>
+<mj-divider border-width="1px" border-style="solid" border-color="#eeeeee" />
+<mj-text align="left" line-height="20px">
+  {{ 'registration.email.disclaimer'|trans({}, 'emails') }}
+</mj-text>

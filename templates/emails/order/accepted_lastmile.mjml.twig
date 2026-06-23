@@ -2,7 +2,7 @@
 
 {% block content %}
   <mj-text align="left" line-height="20px">
-  {{ body_intro | raw }}
+  {{ 'order.accepted.body.intro' | trans({}, 'emails') | raw }}
   </mj-text>
   <mj-text align="left" line-height="20px">
   {{ public_url_text | raw }}
