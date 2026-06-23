@@ -7,15 +7,15 @@
       <mj-all font-family="'Open Sans', Arial, sans-serif" />
     </mj-attributes>
   </mj-head>
-  <mj-body background-color="{{ secondary_color | default(coopcycle_theme_color('secondary', '#eeeeee')) }}">
-    <mj-section>
+  <mj-body background-color="#eeeeee">
+    <mj-section background-color="{{ primary_color | default(coopcycle_theme_color('primary', '#10ac84')) }}">
 		  <mj-column>
-		    <mj-text font-family="Raleway, Arial, sans-serif">
+		    <mj-text font-family="Raleway, Arial, sans-serif" color="{{ primary_content_color | default(coopcycle_theme_color('primary-content', '#ffffff')) }}">
 		      <h2>{{ brand_name | default(coopcycle_setting('brand_name')) }}</h2>
 		    </mj-text>
 		  </mj-column>
 		</mj-section>
-    <mj-section background-color="{{ secondary_content_color | default(coopcycle_theme_color('secondary-content', '#ffffff')) }}">
+    <mj-section background-color="#ffffff">
       <mj-column>
     {% block content %}
     {% endblock %}

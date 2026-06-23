@@ -348,8 +348,6 @@ class EmailTemplateManager
             'confirmation_url'       => 'https://demo.coopcycle.org/resetting/reset/abc123',
             'primary_color'          => $theme['primary'],
             'primary_content_color'  => $theme['primary-content'],
-            'secondary_color'        => $theme['secondary'],
-            'secondary_content_color'=> $theme['secondary-content'],
         ];
         $mjml = $this->substituteVariables($mjml, $testVars);
 
