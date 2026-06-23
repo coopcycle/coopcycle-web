@@ -7,14 +7,11 @@ namespace Application\Migrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version20260622140318 extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return '';
+        return 'Create tables for Shopify';
     }
 
     public function up(Schema $schema): void
@@ -29,17 +26,10 @@ final class Version20260622140318 extends AbstractMigration
         $this->addSql('ALTER TABLE shopify_order ADD CONSTRAINT FK_42167EC412136921 FOREIGN KEY (delivery_id) REFERENCES delivery (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE shopify_order ADD CONSTRAINT FK_42167EC44D16C4DD FOREIGN KEY (shop_id) REFERENCES shopify_shop (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
         $this->addSql('ALTER TABLE shopify_shop ADD CONSTRAINT FK_2EDB2BDCB092A811 FOREIGN KEY (store_id) REFERENCES store (id) NOT DEFERRABLE INITIALLY IMMEDIATE');
-        $this->addSql('COMMENT ON COLUMN city_zone.polygon IS \'(DC2Type:geojson)\'');
-        $this->addSql('COMMENT ON COLUMN zone.polygon IS \'(DC2Type:geojson)\'');
     }
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
-        $this->addSql('CREATE SCHEMA public');
-        $this->addSql('CREATE SCHEMA tiger_data');
-        $this->addSql('CREATE SCHEMA tiger');
-        $this->addSql('CREATE SCHEMA topology');
         $this->addSql('ALTER TABLE shopify_order DROP CONSTRAINT FK_42167EC412136921');
         $this->addSql('ALTER TABLE shopify_order DROP CONSTRAINT FK_42167EC44D16C4DD');
         $this->addSql('ALTER TABLE shopify_shop DROP CONSTRAINT FK_2EDB2BDCB092A811');
