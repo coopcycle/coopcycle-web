@@ -553,8 +553,6 @@ class EmailTemplateManager
             'brand_name'               => $this->settingsManager->get('brand_name') ?? '',
             'primary_color'            => $theme['primary'],
             'primary_content_color'    => $theme['primary-content'],
-            'secondary_color'          => $theme['secondary'],
-            'secondary_content_color'  => $theme['secondary-content'],
         ];
 
         return $this->substituteVariables($mjml, array_merge($defaults, $variables));
