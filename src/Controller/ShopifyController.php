@@ -7,6 +7,7 @@ use AppBundle\Service\ShopifyClient;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +20,7 @@ class ShopifyController extends AbstractController
     public function __construct(
         private string $shopifyApiKey,
         private string $shopifyApiSecret,
+        private string $shopifyGatewaySecret,
         private EntityManagerInterface $entityManager,
         private ShopifyClient $shopifyClient,
         private LoggerInterface $logger,
@@ -79,15 +81,53 @@ class ShopifyController extends AbstractController
             throw new BadRequestHttpException('Failed to obtain access token.');
         }
 
+        $this->setupShop($shop, $accessToken);
+
+        return $this->render('shopify/installed.html.twig', [
+            'shop' => $shop,
+        ]);
+    }
+
+    /**
+     * Called by the Shopify gateway after a successful OAuth flow.
+     * Expects JSON body: {"shop_domain": "...", "access_token": "..."}.
+     * Authenticated via Authorization: Bearer {SHOPIFY_GATEWAY_SECRET}.
+     */
+    #[Route(path: '/connect/shopify/provision', name: 'shopify_provision', methods: ['POST'])]
+    public function provision(Request $request): JsonResponse
+    {
+        $token = $request->headers->get('Authorization', '');
+        $token = str_starts_with($token, 'Bearer ') ? substr($token, 7) : '';
+
+        if (!$this->shopifyGatewaySecret || !hash_equals($this->shopifyGatewaySecret, $token)) {
+            return new JsonResponse(['error' => 'Unauthorized'], 401);
+        }
+
+        $data        = json_decode($request->getContent(), true) ?? [];
+        $shopDomain  = $data['shop_domain'] ?? null;
+        $accessToken = $data['access_token'] ?? null;
+
+        if (!$shopDomain || !$accessToken) {
+            return new JsonResponse(['error' => 'Missing shop_domain or access_token'], 400);
+        }
+
+        $this->setupShop($shopDomain, $accessToken);
+
+        return new JsonResponse(['success' => true]);
+    }
+
+    private function setupShop(string $shopDomain, string $accessToken): void
+    {
         $shopEntity = $this->entityManager->getRepository(ShopifyShop::class)
-            ->findOneBy(['shopDomain' => $shop]);
+            ->findOneBy(['shopDomain' => $shopDomain]);
 
         if (!$shopEntity) {
             $shopEntity = new ShopifyShop();
-            $shopEntity->setShopDomain($shop);
+            $shopEntity->setShopDomain($shopDomain);
         }
 
         $shopEntity->setAccessToken($accessToken);
+        // Shopify signs all webhooks with the app's API secret.
         $shopEntity->setWebhookSecret($this->shopifyApiSecret);
 
         $this->entityManager->persist($shopEntity);
@@ -95,11 +135,7 @@ class ShopifyController extends AbstractController
 
         $this->registerWebhooksAndFulfillmentService($shopEntity);
 
-        $this->logger->info(sprintf('Shopify shop "%s" successfully installed.', $shop));
-
-        return $this->render('shopify/installed.html.twig', [
-            'shop' => $shop,
-        ]);
+        $this->logger->info(sprintf('Shopify shop "%s" installed/updated.', $shopDomain));
     }
 
     private function registerWebhooksAndFulfillmentService(ShopifyShop $shopEntity): void
