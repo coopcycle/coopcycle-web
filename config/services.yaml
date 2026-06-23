@@ -69,6 +69,8 @@ parameters:
   billing_enabled: '%env(bool:BILLING_ENABLED)%'
   package_delivery_ui_price_breakdown_enabled_default: true
   package_delivery_ui_price_breakdown_enabled: '%env(default:package_delivery_ui_price_breakdown_enabled_default:bool:PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED)%'
+  shopify_api_key: '%env(SHOPIFY_API_KEY)%'
+  shopify_api_secret: '%env(SHOPIFY_API_SECRET)%'
 
 services:
 
@@ -84,6 +86,8 @@ services:
       $taxIncl: '%env(bool:COOPCYCLE_TAX_INCL)%'
       $appName: '%env(COOPCYCLE_APP_NAME)%'
       Symfony\Contracts\HttpClient\HttpClientInterface $recommenderClient: '@recommender.client'
+      $shopifyApiKey: '%shopify_api_key%'
+      $shopifyApiSecret: '%shopify_api_secret%'
 
   # For some cache pools, want *STABLE* cache keys between deploys.
   # To achieve this, we *EXPLICITLY* set a namespace,
