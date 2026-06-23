@@ -39,6 +39,18 @@ details.dropdown > summary {
   display: inline-flex;
 }
 
+dialog#order-receipt-modal {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  padding: 0;
+  min-width: 420px;
+  max-width: 90vw;
+}
+
+dialog#order-receipt-modal::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
 .btn-google-play {
   display: inline-block;
   width: 180px;
