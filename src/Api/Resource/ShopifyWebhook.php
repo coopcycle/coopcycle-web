@@ -21,6 +21,10 @@ use AppBundle\Api\State\ShopifyWebhookProvider;
             uriTemplate: '/shopify/webhook/{id}',
             status: 200,
             openapiContext: ['summary' => 'Receives a webhook from Shopify (orders/create, orders/cancelled).'],
+            // The provider reads the raw body for HMAC verification and populates the object manually.
+            // We must skip API Platform's deserialization so the Shopify order's "id" field
+            // does not overwrite the shop ID that the provider stores in $webhook->id.
+            deserialize: false,
             provider: ShopifyWebhookProvider::class,
             processor: ShopifyWebhookProcessor::class,
         ),

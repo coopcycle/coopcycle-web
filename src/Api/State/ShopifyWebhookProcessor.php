@@ -13,6 +13,7 @@ use AppBundle\Entity\Shopify\ShopifyShop;
 use AppBundle\Entity\Task;
 use AppBundle\Service\DeliveryManager;
 use AppBundle\Service\Geocoder;
+use AppBundle\Service\TaskManager;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use libphonenumber\NumberParseException;
@@ -24,6 +25,7 @@ class ShopifyWebhookProcessor implements ProcessorInterface
     public function __construct(
         private EntityManagerInterface $entityManager,
         private DeliveryManager $deliveryManager,
+        private TaskManager $taskManager,
         private Geocoder $geocoder,
         private PhoneNumberUtil $phoneNumberUtil,
         private LoggerInterface $logger,
@@ -121,7 +123,7 @@ class ShopifyWebhookProcessor implements ProcessorInterface
 
         foreach ($delivery->getTasks() as $task) {
             if (!$task->isCancelled()) {
-                $task->cancel();
+                $this->taskManager->cancel($task);
             }
         }
 
@@ -160,6 +162,11 @@ class ShopifyWebhookProcessor implements ProcessorInterface
         if (!empty($orderNote)) {
             $dropoff->setComments($orderNote);
         }
+
+        // Default window: today, as a fallback for TaskListener::fixTimeWindow which requires $before.
+        // applyTimeWindow may narrow this if the customer specified a date.
+        $dropoff->setBefore(Carbon::now()->endOfDay()->toDateTime());
+        $dropoff->setAfter(Carbon::now()->toDateTime());
 
         // Requested delivery time window from order note attributes (optional)
         $this->applyTimeWindow($dropoff, $order);

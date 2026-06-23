@@ -291,6 +291,10 @@ security:
             refresh_jwt:
                 provider: nucleos_userbundle
 
+        api_shopify:
+            pattern:   ^/api/shopify
+            security: false
+
         api_docs:
             pattern:   ^/api/docs
             security: false
@@ -396,5 +400,6 @@ security:
         - { path: ^/api/woopit, roles: [ ROLE_USER, ROLE_API_APP ] }
 
         - { path: ^/api/products/[0-9]+/recommendations$, roles: PUBLIC_ACCESS, methods: [ GET ] }
+        - { path: ^/api/shopify, roles: PUBLIC_ACCESS }
 
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
