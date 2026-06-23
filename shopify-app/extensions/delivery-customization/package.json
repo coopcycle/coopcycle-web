@@ -1,0 +1,12 @@
+{
+  "name": "coopcycle-delivery-zone-filter",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "npx --yes @shopify/shopify-functions-javy@latest build -i src/index.js -o dist/index.wasm",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0"
+  }
+}

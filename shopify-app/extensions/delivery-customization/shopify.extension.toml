@@ -1,0 +1,16 @@
+api_version = "2024-10"
+
+[[extensions]]
+name = "CoopCycle Delivery Zone Filter"
+handle = "delivery-zone-filter"
+type = "delivery_customization"
+
+  [extensions.build]
+  command = "npm run build"
+  path = "dist/index.wasm"
+  watch = ["src/**/*.{js,graphql}"]
+
+  [[extensions.targeting]]
+  module = "./src/index.js"
+  target = "purchase.delivery-customization.run"
+  input_query = "./src/index.graphql"

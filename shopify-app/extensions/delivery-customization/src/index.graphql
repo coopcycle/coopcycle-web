@@ -1,0 +1,18 @@
+query Input {
+  cart {
+    deliveryGroups {
+      deliveryAddress {
+        zip
+      }
+      deliveryOptions {
+        handle
+        title
+      }
+    }
+  }
+  shop {
+    metafield(namespace: "coopcycle", key: "delivery_postal_codes") {
+      value
+    }
+  }
+}
