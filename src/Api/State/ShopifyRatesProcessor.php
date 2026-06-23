@@ -36,6 +36,7 @@ class ShopifyRatesProcessor implements ProcessorInterface
         $shop = $this->entityManager->getRepository(ShopifyShop::class)->find($data->id);
 
         if (!$shop || !$shop->getStore()) {
+            $this->logger->warning(sprintf('Shopify rates request for unknown shop id %d.', $data->id));
             $data->rates = [];
 
             return $data;
@@ -46,6 +47,7 @@ class ShopifyRatesProcessor implements ProcessorInterface
         $origin = $rate['origin'] ?? null;
 
         if (!$destination || !$origin) {
+            $this->logger->warning('Shopify rates request missing origin or destination.');
             $data->rates = [];
 
             return $data;
@@ -54,6 +56,7 @@ class ShopifyRatesProcessor implements ProcessorInterface
         $delivery = $this->buildDeliveryForQuote($origin, $destination);
 
         if (!$delivery) {
+            $this->logger->warning('Could not geocode origin or destination for Shopify rates request.');
             $data->rates = [];
 
             return $data;
@@ -68,6 +71,7 @@ class ShopifyRatesProcessor implements ProcessorInterface
         }
 
         if (null === $amount) {
+            $this->logger->info(sprintf('No pricing rule matched for Shopify rates request on shop id %d.', $data->id));
             $data->rates = [];
 
             return $data;

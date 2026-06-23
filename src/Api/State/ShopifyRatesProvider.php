@@ -16,7 +16,6 @@ final class ShopifyRatesProvider implements ProviderInterface
     public function __construct(
         private EntityManagerInterface $entityManager,
         private RequestStack $requestStack,
-        private string $shopifyApiSecret,
     ) {}
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
