@@ -291,6 +291,11 @@ security:
             refresh_jwt:
                 provider: nucleos_userbundle
 
+        shopify_provision:
+            pattern:   ^/connect/shopify/provision$
+            methods:   [POST]
+            security:  false
+
         api_shopify:
             pattern:   ^/api/shopify
             security: false
