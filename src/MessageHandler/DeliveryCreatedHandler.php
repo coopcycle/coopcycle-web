@@ -5,7 +5,6 @@ namespace AppBundle\MessageHandler;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Message\DeliveryCreated;
-use AppBundle\Message\Email;
 use AppBundle\Message\PushNotification;
 use AppBundle\Security\UserManager;
 use AppBundle\Service\EmailManager;
@@ -115,9 +114,7 @@ class DeliveryCreatedHandler
 
         $emailMessage = $this->emailManager->createHtmlMessage($message, $body);
 
-        $this->messageBus->dispatch(
-            new Email($emailMessage, $adminEmail)
-        );
+        $this->emailManager->sendTo($emailMessage, $adminEmail);
     }
 
     private function parseTitleAndBodyForPushNotification(Delivery $delivery): array

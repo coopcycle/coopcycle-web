@@ -80,6 +80,7 @@ class CoopCycleExtension extends AbstractExtension
     {
         return array(
             new TwigFunction('coopcycle_setting', array(SettingResolver::class, 'resolveSetting')),
+            new TwigFunction('coopcycle_theme_color', array(SettingResolver::class, 'resolveThemeColor')),
             new TwigFunction('coopcycle_maintenance', array(MaintenanceResolver::class, 'isEnabled')),
             new TwigFunction('coopcycle_banner', array(BannerResolver::class, 'isEnabled')),
             new TwigFunction('coopcycle_banner_message', array(BannerResolver::class, 'getMessage')),
@@ -118,6 +119,7 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('coopcycle_github_release_link', array(SettingResolver::class, 'getGithubReleaseLink')),
             new TwigFunction('addresses_normalized', array(UserRuntime::class, 'getUserAddresses')),
             new TwigFunction('coopcycle_theme', array(AppearanceRuntime::class, 'getTheme')),
+            new TwigFunction('email_fragment', array(EmailTemplateRuntime::class, 'getFragment')),
         );
     }
 

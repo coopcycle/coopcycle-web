@@ -1,0 +1,8 @@
+<mj-text align="left" line-height="20px">
+{% set returns_fee = loopeat_returns_fee(order) %}
+{% if returns_fee > 0 %}
+{{ ('order.loopeat.accepted.with_fee')|trans({ '{{name}}': loopeat_context.name, '{{amount}}': returns_fee|price_format }, 'emails')|raw }}
+{% else %}
+{{ ('order.loopeat.accepted')|trans({ '{{name}}': loopeat_context.name }, 'emails')|raw }}
+{% endif %}
+</mj-text>

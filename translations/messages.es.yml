@@ -1780,6 +1780,37 @@ promotions.human_readable.rule_cart_quantity: "a partir de %count% artículos co
 promotions.human_readable.coupon: "%description% with coupon %code%"
 promotions.human_readable.text: "%name%: %description%"
 
+# Editor de emails
+customize.emails: Personalizar correos electrónicos
+customize.email_editor.email_type.order_created: Pedido confirmado (cliente)
+customize.email_editor.email_type.order_accepted_foodtech_delivery: Pedido aceptado – Entrega
+customize.email_editor.email_type.order_accepted_foodtech_collection: Pedido aceptado – Recogida
+customize.email_editor.email_type.order_accepted_lastmile: Pedido aceptado (Última milla)
+customize.email_editor.email_type.order_cancelled: Pedido cancelado
+customize.email_editor.email_type.order_delayed: Pedido retrasado
+customize.email_editor.email_type.order_payment: Confirmación de pago
+customize.email_editor.email_type.order_receipt: Recibo del pedido
+customize.email_editor.email_type.task_dropoff_completed: Entrega completada
+customize.email_editor.email_type.task_pickup_completed: Recogida completada
+customize.email_editor.email_type.task_dropoff_failed: Entrega fallida
+customize.email_editor.email_type.task_pickup_failed: Recogida fallida
+customize.email_editor.email_type.resetting: "Restablecimiento de contraseña"
+customize.email_editor.email_type.registration: "Confirmación de registro"
+customize.email_editor.save: Guardar
+customize.email_editor.reset: Restablecer por defecto
+customize.email_editor.status.default: Plantilla por defecto — guarde para personalizar
+customize.email_editor.status.custom: Plantilla personalizada
+customize.email_editor.variables: Variables disponibles
+customize.email_editor.layout: Diseño
+customize.email_editor.folder.foodtech: Foodtech
+customize.email_editor.folder.lastmile: Última milla
+customize.email_editor.folder.account: Cuenta
+customize.email_editor.send_test: Enviar prueba
+customize.email_editor.send_test_title: Enviar correo de prueba
+customize.email_editor.send_test_description: "Introduce una dirección para recibir una vista previa de esta plantilla con datos de muestra."
+customize.email_editor.send_test_send: Enviar
+customize.email_editor.send_test_cancel: Cancelar
+customize.email_editor.send_test_success: "¡Correo de prueba enviado!"
 two_factor.title: Autenticación de dos factores
 two_factor.subtitle: "Se ha enviado un código de verificación a tu dirección de correo electrónico. Por favor, introdúcelo a continuación."
 two_factor.code.label: Código de verificación

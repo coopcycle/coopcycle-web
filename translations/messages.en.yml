@@ -1757,6 +1757,37 @@ form.theme.secondary-content.label: Font color
 pagination.items_per_page: Items per page
 restaurant.form.en_boite_le_plat_platform_fee.label: The deposit should be collected by the platform
 
+# Email editor
+customize.emails: Customize emails
+customize.email_editor.email_type.order_created: Order Confirmed (Customer)
+customize.email_editor.email_type.order_accepted_foodtech_delivery: Order Accepted – Delivery
+customize.email_editor.email_type.order_accepted_foodtech_collection: Order Accepted – Collection
+customize.email_editor.email_type.order_accepted_lastmile: Order Accepted (Last Mile)
+customize.email_editor.email_type.order_cancelled: Order Cancelled
+customize.email_editor.email_type.order_delayed: Order Delayed
+customize.email_editor.email_type.order_payment: Payment Confirmation
+customize.email_editor.email_type.order_receipt: Order Receipt
+customize.email_editor.email_type.task_dropoff_completed: Dropoff Completed
+customize.email_editor.email_type.task_pickup_completed: Pickup Completed
+customize.email_editor.email_type.task_dropoff_failed: Dropoff Failed
+customize.email_editor.email_type.task_pickup_failed: Pickup Failed
+customize.email_editor.email_type.resetting: Password Reset
+customize.email_editor.email_type.registration: Registration Confirmation
+customize.email_editor.save: Save
+customize.email_editor.reset: Reset to default
+customize.email_editor.status.default: Showing default template — save to customise
+customize.email_editor.status.custom: Showing custom template
+customize.email_editor.variables: Available variables
+customize.email_editor.layout: Layout
+customize.email_editor.folder.foodtech: Foodtech
+customize.email_editor.folder.lastmile: Last Mile
+customize.email_editor.folder.account: Account
+customize.email_editor.send_test: Send test
+customize.email_editor.send_test_title: Send test email
+customize.email_editor.send_test_description: "Enter an address to receive a preview of this template with sample data."
+customize.email_editor.send_test_send: Send
+customize.email_editor.send_test_cancel: Cancel
+customize.email_editor.send_test_success: Test email sent!
 two_factor.title: Two-factor authentication
 two_factor.subtitle: "A verification code has been sent to your email address. Please enter it below."
 two_factor.code.label: Verification code

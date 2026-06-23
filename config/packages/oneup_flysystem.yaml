@@ -65,6 +65,11 @@ oneup_flysystem:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: documents
+        email_templates:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: email_templates
     filesystems:
         assets:
             adapter: assets
@@ -118,3 +123,7 @@ oneup_flysystem:
             adapter: documents
             alias: documents_filesystem
             mount: documents
+        email_templates:
+            adapter: email_templates
+            alias: email_templates_filesystem
+            mount: email_templates
