@@ -23,6 +23,7 @@ framework:
                 # https://symfony.com/doc/current/messenger.html#middleware-for-doctrine
                 middleware:
                     # service ids that implement Symfony\Component\Messenger\Middleware\MiddlewareInterface
+                    - 'AppBundle\Messenger\RenderEmailMiddleware'
                     - 'AppBundle\Messenger\RequestContextMiddleware'
                     - 'AppBundle\Messenger\EventStoreMiddleware'
                     # each time a message is handled, the Doctrine connection
