@@ -1868,3 +1868,4 @@ checkout.recommendations.dialog.explanation: We analyse which products are frequ
 checkout.recommendations.dialog.github: See the source code on GitHub →
 checkout.recommendations.dialog.close: Close
 rfm.order_history: Order history
+customize.email_alert: New! Customize emails

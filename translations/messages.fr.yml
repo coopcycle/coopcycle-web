@@ -1802,3 +1802,4 @@ form.theme.secondary_group.label: Couleurs secondaires
 form.theme.secondary_group.help: "Utilisé pour les mises en évidence et les accents"
 form.theme.secondary.label: "Couleur d'arrière-plan"
 form.theme.secondary-content.label: Couleur de police
+customize.emails_alert: Nouveau ! Personnalisez les emails
