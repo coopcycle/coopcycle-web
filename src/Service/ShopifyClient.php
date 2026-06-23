@@ -71,6 +71,39 @@ class ShopifyClient
         return $response['carrier_shipping_rate']['id'] ?? null;
     }
 
+    /**
+     * Syncs postal codes to a shop metafield read by the Delivery Customization Function.
+     *
+     * @param string[] $postalCodes
+     */
+    public function updateDeliveryPostalCodes(ShopifyShop $shop, array $postalCodes): bool
+    {
+        $value    = json_encode(array_values($postalCodes));
+        $existing = $this->request(
+            $shop,
+            'GET',
+            'metafields.json?namespace=coopcycle&key=delivery_postal_codes'
+        );
+
+        if ($existing !== null && !empty($existing['metafields'])) {
+            $metafieldId = $existing['metafields'][0]['id'];
+            $result      = $this->request($shop, 'PUT', "metafields/{$metafieldId}.json", [
+                'metafield' => ['value' => $value, 'type' => 'json'],
+            ]);
+        } else {
+            $result = $this->request($shop, 'POST', 'metafields.json', [
+                'metafield' => [
+                    'namespace' => 'coopcycle',
+                    'key'       => 'delivery_postal_codes',
+                    'value'     => $value,
+                    'type'      => 'json',
+                ],
+            ]);
+        }
+
+        return $result !== null;
+    }
+
     public function acceptFulfillmentRequest(ShopifyShop $shop, string $fulfillmentOrderId): bool
     {
         $response = $this->request(

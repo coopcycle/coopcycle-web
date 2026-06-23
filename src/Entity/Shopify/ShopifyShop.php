@@ -23,6 +23,8 @@ class ShopifyShop
 
     private ?Store $store = null;
 
+    private array $postalCodes = [];
+
     public function getId(): ?int
     {
         return $this->id;
@@ -84,6 +86,18 @@ class ShopifyShop
     public function setShippingRateHandle(?string $shippingRateHandle): self
     {
         $this->shippingRateHandle = $shippingRateHandle;
+
+        return $this;
+    }
+
+    public function getPostalCodes(): array
+    {
+        return $this->postalCodes;
+    }
+
+    public function setPostalCodes(array $postalCodes): self
+    {
+        $this->postalCodes = $postalCodes;
 
         return $this;
     }
