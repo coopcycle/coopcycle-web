@@ -9,48 +9,90 @@ CoopCycle is a **multi-tenant** platform: each cooperative runs its own instance
 a **single fixed App URL** and a **single OAuth redirect URI** registered in the Shopify Partner
 dashboard. Pointing the App Store directly at one cooperative's URL would exclude all others.
 
-This gateway solves the problem by sitting in front of all cooperative instances:
+This gateway solves the problem by sitting in front of all cooperative instances.
+
+## Install flow
 
 ```
-Merchant (App Store)
+Shopify App Store
         │
-        ▼  GET /shopify/install?shop=merchant.myshopify.com
-┌───────────────────────────┐
-│  shopify-gateway          │  ← one Docker container, one domain
-│  (this service)           │
-│                           │
-│  1. Shows cooperative     │
-│     picker form           │
-│  2. Starts Shopify OAuth  │
-│     (redirect_uri = self) │
-│  3. Receives callback,    │
-│     exchanges code        │
-│  4. POST /connect/shopify │
-│       /provision          │
-└───────────┬───────────────┘
-            │  Bearer {GATEWAY_SECRET}
-            │  {shop_domain, access_token}
-            ▼
-┌───────────────────────────┐
-│  paris.coopcycle.org      │  (or any other tenant)
-│                           │
-│  Creates ShopifyShop,     │
-│  registers webhooks &     │
-│  FulfillmentService       │
-└───────────────────────────┘
+        ▼  GET /shopify/install?shop=merchant.myshopify.com&hmac=...
+┌─────────────────────────────────┐
+│  shopify-gateway                │
+│                                 │
+│  1. Verify Shopify install HMAC │
+│  2. Show cooperative picker     │
+│     (tenant URL input form)     │
+└──────────────┬──────────────────┘
+               │  POST /shopify/start
+               │  {shop, tenant_url}
+               │
+               │  Builds signed state token:
+               │  base64({shop, tenant, nonce, return_to})
+               │  sig = HMAC(state, GATEWAY_SECRET)
+               ▼
+┌─────────────────────────────────┐
+│  paris.coopcycle.org            │
+│  GET /connect/shopify/choose-   │
+│      store?state=...&sig=...    │
+│                                 │
+│  3. If not logged in →          │
+│     redirect to CoopCycle login │
+│  4. Show dropdown of stores     │
+│     the merchant manages        │
+│  5. Merchant picks a store      │
+│  6. Sign response:              │
+│     return_sig = HMAC(          │
+│       state + ':' + store_id,   │
+│       GATEWAY_SECRET)           │
+└──────────────┬──────────────────┘
+               │  GET /shopify/oauth
+               │  ?state=...&store_id=42&return_sig=...
+               ▼
+┌─────────────────────────────────┐
+│  shopify-gateway                │
+│                                 │
+│  7. Verify return_sig           │
+│  8. Start Shopify OAuth:        │
+│     state = base64(             │
+│       {tenant, store_id})       │
+└──────────────┬──────────────────┘
+               │  Shopify OAuth consent screen
+               ▼
+┌─────────────────────────────────┐
+│  shopify-gateway                │
+│  GET /shopify/callback          │
+│                                 │
+│  9.  Verify Shopify HMAC        │
+│  10. Exchange code for token    │
+│  11. POST /connect/shopify/     │
+│        provision                │
+│      {shop_domain,              │
+│       access_token, store_id}   │
+│      Authorization: Bearer ...  │
+└──────────────┬──────────────────┘
+               ▼
+┌─────────────────────────────────┐
+│  paris.coopcycle.org            │
+│                                 │
+│  Creates/updates ShopifyShop,   │
+│  links it to the chosen Store,  │
+│  registers webhooks &           │
+│  FulfillmentService             │
+└─────────────────────────────────┘
 ```
 
-Only the gateway's URL needs to be registered in the Shopify Partner dashboard. Each
+Only the gateway's domain needs to be registered in the Shopify Partner dashboard. Each
 cooperative's instance never communicates directly with Shopify during the install flow.
 
 ## Environment variables
 
-| Variable           | Description |
-|--------------------|-------------|
-| `SHOPIFY_API_KEY`  | Client ID from the Shopify Partner dashboard |
+| Variable             | Description |
+|----------------------|-------------|
+| `SHOPIFY_API_KEY`    | Client ID from the Shopify Partner dashboard |
 | `SHOPIFY_API_SECRET` | Client secret from the Shopify Partner dashboard |
-| `GATEWAY_SECRET`   | A strong random secret (≥ 32 chars). Every CoopCycle tenant must set `SHOPIFY_GATEWAY_SECRET` to this same value. Generate with `openssl rand -hex 32`. |
-| `APP_URL`          | The public HTTPS URL of this gateway, **without** a trailing slash. Example: `https://shopify-gateway.coopcycle.org` |
+| `GATEWAY_SECRET`     | A strong random secret (≥ 32 chars). Every CoopCycle tenant must set `SHOPIFY_GATEWAY_SECRET` to this same value. Generate with `openssl rand -hex 32`. |
+| `APP_URL`            | The public HTTPS URL of this gateway, **without** a trailing slash. Example: `https://shopify-gateway.coopcycle.org` |
 
 ## Running with Docker
 
@@ -77,13 +119,19 @@ Each CoopCycle cooperative must configure:
 
 ```dotenv
 # .env on the cooperative's server
-SHOPIFY_API_KEY=          # same as the gateway
+SHOPIFY_API_KEY=          # same as the gateway (used to initiate OAuth from the install page)
 SHOPIFY_API_SECRET=       # same as the gateway (used for webhook HMAC verification)
 SHOPIFY_GATEWAY_SECRET=   # same as the gateway's GATEWAY_SECRET
 ```
 
-The tenant exposes a `POST /connect/shopify/provision` endpoint (part of `coopcycle-web`)
-that the gateway calls after a successful OAuth flow.
+The tenant exposes two endpoints (part of `coopcycle-web`):
+
+- `GET|POST /connect/shopify/choose-store` — shown to the merchant after they pick the
+  cooperative. Requires the merchant to be logged in to CoopCycle with `ROLE_STORE`. Shows
+  only the stores they manage.
+- `POST /connect/shopify/provision` — called server-to-server by the gateway after OAuth
+  completes. Accepts `{shop_domain, access_token, store_id}`. Authenticated via
+  `Authorization: Bearer {GATEWAY_SECRET}`.
 
 ## Development
 
@@ -95,19 +143,20 @@ APP_ENV=dev php -S localhost:8080 -t public
 docker compose up --build
 ```
 
-To test the full flow locally, you can use [ngrok](https://ngrok.com) to expose the gateway and
-a local CoopCycle instance to Shopify:
+To test the full flow locally, use [ngrok](https://ngrok.com) to expose both services:
 
 ```bash
-ngrok http 8080   # for the gateway
-ngrok http 8000   # for the local CoopCycle tenant
+ngrok http 8080   # for the gateway  → set APP_URL to this
+ngrok http 8000   # for the CoopCycle tenant
 ```
 
-Update `APP_URL` and `SHOPIFY_GATEWAY_SECRET` accordingly in both services.
+Update `APP_URL` in `shopify-gateway/.env` and `SHOPIFY_GATEWAY_SECRET` in both services.
 
 ## Security notes
 
-- The gateway never stores the Shopify access token. It is forwarded directly to the tenant over HTTPS and immediately discarded.
-- Gateway → tenant calls are authenticated with `Authorization: Bearer {GATEWAY_SECRET}`.
-- The OAuth callback HMAC (signed by Shopify with the API secret) is verified before the code is exchanged, preventing request forgery.
-- The tenant URL is embedded in the OAuth `state` parameter, which is covered by Shopify's HMAC, making it tamper-proof.
+- **Shopify install HMAC**: verified at `GET /shopify/install` to confirm the request came from Shopify.
+- **Gateway → CoopCycle state token**: `base64({shop, tenant, nonce, return_to})` signed with `HMAC(state, GATEWAY_SECRET)`. CoopCycle verifies this before showing the store picker.
+- **CoopCycle → Gateway return signature**: `HMAC(state + ':' + store_id, GATEWAY_SECRET)`. The gateway verifies this at `GET /shopify/oauth` to confirm CoopCycle authorised the chosen store — preventing a forged `store_id` in the redirect URL.
+- **Shopify OAuth callback HMAC**: verified before the code is exchanged, preventing request forgery. The `{tenant, store_id}` Shopify state param is covered by this HMAC, making it tamper-proof.
+- **Provision endpoint**: authenticated with `Authorization: Bearer {GATEWAY_SECRET}`. Never accessible publicly (token required).
+- The gateway never stores the Shopify access token — it is forwarded to the tenant over HTTPS and immediately discarded.
