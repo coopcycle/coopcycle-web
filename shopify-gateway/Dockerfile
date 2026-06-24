@@ -9,9 +9,9 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --no-script
 
 COPY . .
 
-EXPOSE 8081
+EXPOSE 8082
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s \
-    CMD php -r "exit((int)(false === file_get_contents('http://localhost:8081/health')));"
+    CMD php -r "exit((int)(false === file_get_contents('http://localhost:8082/health')));"
 
-CMD ["php", "-S", "0.0.0.0:8081", "-t", "public"]
+CMD ["php", "-S", "0.0.0.0:8082", "-t", "public"]

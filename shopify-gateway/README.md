@@ -102,7 +102,7 @@ cp .env.example .env
 docker compose up --build
 ```
 
-The service listens on port **8081** by default.
+The service listens on port **8082** by default.
 
 ## Shopify Partner dashboard setup
 
@@ -137,7 +137,7 @@ The tenant exposes two endpoints (part of `coopcycle-web`):
 
 ```bash
 # Start the gateway locally
-APP_ENV=dev php -S localhost:8081 -t public
+APP_ENV=dev php -S localhost:8082 -t public
 
 # Or with Docker
 docker compose up --build
@@ -146,7 +146,7 @@ docker compose up --build
 To test the full flow locally, use [ngrok](https://ngrok.com) to expose both services:
 
 ```bash
-ngrok http 8081   # for the gateway  → set APP_URL to this
+ngrok http 8082   # for the gateway  → set APP_URL to this
 ngrok http 80     # for the local CoopCycle tenant (served by nginx)
 ```
 
