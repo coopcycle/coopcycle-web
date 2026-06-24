@@ -24,6 +24,7 @@ $path   = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
 
 try {
     match (true) {
+        $method === 'GET'  && $path === '/'                 => $handler->redirectToInstall(),
         $method === 'GET'  && $path === '/shopify/install'  => $handler->install(),
         $method === 'POST' && $path === '/shopify/start'    => $handler->start(),
         $method === 'GET'  && $path === '/shopify/oauth'    => $handler->oauth(),
