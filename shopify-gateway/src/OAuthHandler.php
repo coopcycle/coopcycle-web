@@ -177,6 +177,18 @@ class OAuthHandler
         $this->render('success', ['shop' => $shop, 'tenantUrl' => $tenantUrl]);
     }
 
+    /**
+     * Shopify sometimes calls the root URL instead of /shopify/install.
+     * Redirect preserving all query parameters.
+     */
+    public function redirectToInstall(): void
+    {
+        $qs = $_SERVER['QUERY_STRING'] ?? '';
+        $location = $this->appUrl . '/shopify/install' . ($qs ? '?' . $qs : '');
+        header('Location: ' . $location, true, 302);
+        exit;
+    }
+
     public function health(): void
     {
         header('Content-Type: application/json');
@@ -247,7 +259,15 @@ class OAuthHandler
         $data = $params;
         unset($data['hmac'], $data['signature']);
         ksort($data);
-        $message  = http_build_query($data);
+
+        // Build the message from raw (URL-decoded) values — NOT http_build_query,
+        // which re-encodes characters like = and + that Shopify leaves unencoded
+        // when it computes the HMAC.
+        $pairs = [];
+        foreach ($data as $key => $value) {
+            $pairs[] = $key . '=' . $value;
+        }
+        $message  = implode('&', $pairs);
         $computed = hash_hmac('sha256', $message, $this->apiSecret);
         return hash_equals($computed, $hmac);
     }
