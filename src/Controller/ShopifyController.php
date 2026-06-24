@@ -233,7 +233,7 @@ class ShopifyController extends AbstractController
     private function registerWebhooksAndFulfillmentService(ShopifyShop $shopEntity): void
     {
         $webhookUrl = $this->generateUrl(
-            'api_shopify_webhooks_post_collection',
+            '_api_/shopify/webhook/{id}_post',
             ['id' => $shopEntity->getId()],
             UrlGeneratorInterface::ABSOLUTE_URL
         );
@@ -245,7 +245,7 @@ class ShopifyController extends AbstractController
 
         // Register as a fulfillment service so Shopify notifies us of fulfillment requests
         $fulfillmentCallbackUrl = $this->generateUrl(
-            'api_shopify_webhooks_post_collection',
+            '_api_/shopify/webhook/{id}_post',
             ['id' => $shopEntity->getId()],
             UrlGeneratorInterface::ABSOLUTE_URL
         );
