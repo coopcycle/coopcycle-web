@@ -6,7 +6,8 @@ namespace CoopCycle\ShopifyGateway;
 
 class OAuthHandler
 {
-    private const SCOPES = 'read_orders,write_fulfillments,read_fulfillments,write_shipping';
+    private const SCOPES = 'read_orders,write_fulfillments,read_fulfillments,write_shipping,'
+                         . 'write_delivery_customizations,read_delivery_customizations';
 
     public function __construct(
         private readonly string $apiKey,
@@ -16,17 +17,28 @@ class OAuthHandler
     ) {}
 
     /**
-     * Entry point from the Shopify App Store. Shows the cooperative picker form.
-     * Shopify calls: GET {APP_URL}/shopify/install?shop=merchant.myshopify.com
+     * Entry point from the Shopify App Store.
+     * Shopify calls: GET {APP_URL}/shopify/install?shop=merchant.myshopify.com&hmac=...
      */
     public function install(): void
     {
         $shop = trim($_GET['shop'] ?? '');
+
+        // Verify Shopify's install HMAC when present.
+        if ($shop && isset($_GET['hmac'])) {
+            if (!$this->verifyCallbackHmac($_GET, $_GET['hmac'])) {
+                http_response_code(403);
+                $this->render('error', ['message' => 'HMAC verification failed. This request did not come from Shopify.']);
+                return;
+            }
+        }
+
         $this->render('install', ['shop' => $shop]);
     }
 
     /**
-     * Receives the cooperative picker form submission and initiates the OAuth flow.
+     * Receives the cooperative picker form and redirects the merchant to
+     * CoopCycle to authenticate and choose which store to connect.
      */
     public function start(): void
     {
@@ -43,9 +55,66 @@ class OAuthHandler
             return;
         }
 
-        // Embed the tenant URL in the OAuth state.
-        // The state is protected against tampering by Shopify's HMAC on the callback.
-        $state       = base64_encode(json_encode(['tenant' => $tenantUrl]));
+        // Build a signed state token embedding shop, tenant, and the gateway's
+        // OAuth entry-point URL. The token travels through CoopCycle unchanged.
+        $state = base64_encode(json_encode([
+            'shop'      => $shop,
+            'tenant'    => $tenantUrl,
+            'nonce'     => bin2hex(random_bytes(8)),
+            'return_to' => $this->appUrl . '/shopify/oauth',
+        ]));
+        $sig = hash_hmac('sha256', $state, $this->gatewaySecret);
+
+        $chooseStoreUrl = $tenantUrl . '/connect/shopify/choose-store?' . http_build_query([
+            'state' => $state,
+            'sig'   => $sig,
+        ]);
+
+        header('Location: ' . $chooseStoreUrl, true, 302);
+        exit;
+    }
+
+    /**
+     * Called after CoopCycle redirects back with the merchant's chosen store.
+     * Verifies CoopCycle's signature then launches the Shopify OAuth flow.
+     *
+     * CoopCycle calls: GET {APP_URL}/shopify/oauth?state=...&store_id=42&return_sig=...
+     */
+    public function oauth(): void
+    {
+        $state     = $_GET['state']      ?? '';
+        $storeId   = (int) ($_GET['store_id']   ?? 0);
+        $returnSig = $_GET['return_sig'] ?? '';
+
+        if (!$state || !$storeId || !$returnSig) {
+            $this->render('error', ['message' => 'Missing required parameters from CoopCycle.']);
+            return;
+        }
+
+        // The return_sig proves CoopCycle generated this response.
+        $expected = hash_hmac('sha256', $state . ':' . $storeId, $this->gatewaySecret);
+        if (!hash_equals($expected, $returnSig)) {
+            http_response_code(403);
+            $this->render('error', ['message' => 'Invalid signature from CoopCycle. The response may have been tampered with.']);
+            return;
+        }
+
+        $stateData = json_decode(base64_decode($state), true);
+        $shop      = $stateData['shop']   ?? null;
+        $tenant    = $stateData['tenant'] ?? null;
+
+        if (!$shop || !$tenant) {
+            $this->render('error', ['message' => 'Malformed state token.']);
+            return;
+        }
+
+        // Encode {tenant, store_id} into the Shopify OAuth state.
+        // Shopify's HMAC on the callback guarantees this cannot be tampered with.
+        $shopifyState = base64_encode(json_encode([
+            'tenant'   => $tenant,
+            'store_id' => $storeId,
+        ]));
+
         $callbackUrl = $this->appUrl . '/shopify/callback';
 
         $authUrl = sprintf(
@@ -54,7 +123,7 @@ class OAuthHandler
             rawurlencode($this->apiKey),
             self::SCOPES,
             rawurlencode($callbackUrl),
-            rawurlencode($state),
+            rawurlencode($shopifyState),
         );
 
         header('Location: ' . $authUrl, true, 302);
@@ -67,10 +136,10 @@ class OAuthHandler
      */
     public function callback(): void
     {
-        $shop  = trim($_GET['shop'] ?? '');
-        $code  = trim($_GET['code'] ?? '');
+        $shop  = trim($_GET['shop']  ?? '');
+        $code  = trim($_GET['code']  ?? '');
         $state = $_GET['state'] ?? '';
-        $hmac  = $_GET['hmac'] ?? '';
+        $hmac  = $_GET['hmac']  ?? '';
 
         if (!$shop || !$code || !$state || !$hmac) {
             $this->render('error', ['message' => 'Missing required OAuth parameters.']);
@@ -84,7 +153,8 @@ class OAuthHandler
         }
 
         $stateData = json_decode(base64_decode($state), true);
-        $tenantUrl = $stateData['tenant'] ?? null;
+        $tenantUrl = $stateData['tenant']   ?? null;
+        $storeId   = isset($stateData['store_id']) ? (int) $stateData['store_id'] : null;
 
         if (!$tenantUrl || !filter_var($tenantUrl, FILTER_VALIDATE_URL)) {
             $this->render('error', ['message' => 'Invalid or missing CoopCycle tenant URL in OAuth state.']);
@@ -98,7 +168,7 @@ class OAuthHandler
         }
 
         try {
-            $this->provisionTenant($tenantUrl, $shop, $accessToken);
+            $this->provisionTenant($tenantUrl, $shop, $accessToken, $storeId);
         } catch (\RuntimeException $e) {
             $this->render('error', ['message' => $e->getMessage()]);
             return;
@@ -141,13 +211,21 @@ class OAuthHandler
     }
 
     /**
-     * Calls the CoopCycle tenant's /connect/shopify/provision endpoint to register the shop.
+     * Calls the CoopCycle tenant's provision endpoint to register the shop
+     * and link it to the chosen Store.
      */
-    private function provisionTenant(string $tenantUrl, string $shopDomain, string $accessToken): void
+    private function provisionTenant(string $tenantUrl, string $shopDomain, string $accessToken, ?int $storeId): void
     {
-        $url  = $tenantUrl . '/connect/shopify/provision';
-        $body = json_encode(['shop_domain' => $shopDomain, 'access_token' => $accessToken]);
+        $payload = [
+            'shop_domain'  => $shopDomain,
+            'access_token' => $accessToken,
+        ];
+        if ($storeId !== null) {
+            $payload['store_id'] = $storeId;
+        }
 
+        $url      = $tenantUrl . '/connect/shopify/provision';
+        $body     = json_encode($payload);
         $response = $this->httpPost($url, $body, [
             'Content-Type: application/json',
             'Accept: application/json',
