@@ -26,6 +26,7 @@ try {
     match (true) {
         $method === 'GET'  && $path === '/shopify/install'  => $handler->install(),
         $method === 'POST' && $path === '/shopify/start'    => $handler->start(),
+        $method === 'GET'  && $path === '/shopify/oauth'    => $handler->oauth(),
         $method === 'GET'  && $path === '/shopify/callback' => $handler->callback(),
         $method === 'GET'  && $path === '/health'           => $handler->health(),
         default                                             => $handler->notFound(),

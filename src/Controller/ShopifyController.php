@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Shopify\ShopifyShop;
+use AppBundle\Entity\Store;
 use AppBundle\Service\ShopifyClient;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -89,8 +90,80 @@ class ShopifyController extends AbstractController
     }
 
     /**
+     * Step 2 of the install flow: the merchant arrives from the gateway, must be
+     * authenticated, and picks which CoopCycle Store to link to their Shopify shop.
+     *
+     * GET  — shows the store picker (requires login; Symfony redirects to /login if not).
+     * POST — validates the selection, signs the response, redirects back to the gateway.
+     */
+    #[Route(path: '/connect/shopify/choose-store', name: 'shopify_choose_store', methods: ['GET', 'POST'])]
+    public function chooseStore(Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_REMEMBERED');
+
+        $state = $request->get('state', '');
+        $sig   = $request->get('sig', '');
+
+        // Verify the gateway's HMAC so we know this request originated from our gateway.
+        $expectedSig = hash_hmac('sha256', $state, $this->shopifyGatewaySecret);
+        if (!$state || !$sig || !hash_equals($expectedSig, $sig)) {
+            throw new BadRequestHttpException('Invalid or missing gateway signature.');
+        }
+
+        $stateData = json_decode(base64_decode($state), true);
+        $shop      = $stateData['shop']      ?? null;
+        $returnTo  = $stateData['return_to'] ?? null;
+
+        if (!$shop || !$returnTo || !filter_var($returnTo, FILTER_VALIDATE_URL)) {
+            throw new BadRequestHttpException('Malformed state token.');
+        }
+
+        if ($request->isMethod('POST')) {
+            $storeId = (int) $request->request->get('store_id', 0);
+
+            if (!$storeId) {
+                return $this->render('shopify/choose_store.html.twig', [
+                    'shop'   => $shop,
+                    'state'  => $state,
+                    'sig'    => $sig,
+                    'stores' => $this->getAuthorizedStores(),
+                    'error'  => 'Please select a store.',
+                ]);
+            }
+
+            // Verify this user is actually allowed to manage the chosen store.
+            $store = $this->entityManager->getRepository(Store::class)->find($storeId);
+            if (!$store) {
+                throw $this->createNotFoundException('Store not found.');
+            }
+
+            if (!$this->isGranted('ROLE_ADMIN') && !$this->getUser()->getStores()->contains($store)) {
+                throw $this->createAccessDeniedException('You do not manage this store.');
+            }
+
+            // Sign the response so the gateway can verify CoopCycle authorised this store_id.
+            $returnSig   = hash_hmac('sha256', $state . ':' . $storeId, $this->shopifyGatewaySecret);
+            $redirectUrl = $returnTo . '?' . http_build_query([
+                'state'      => $state,
+                'store_id'   => $storeId,
+                'return_sig' => $returnSig,
+            ]);
+
+            return new RedirectResponse($redirectUrl);
+        }
+
+        return $this->render('shopify/choose_store.html.twig', [
+            'shop'   => $shop,
+            'state'  => $state,
+            'sig'    => $sig,
+            'stores' => $this->getAuthorizedStores(),
+            'error'  => null,
+        ]);
+    }
+
+    /**
      * Called by the Shopify gateway after a successful OAuth flow.
-     * Expects JSON body: {"shop_domain": "...", "access_token": "..."}.
+     * Expects JSON body: {"shop_domain": "...", "access_token": "...", "store_id": 42}.
      * Authenticated via Authorization: Bearer {SHOPIFY_GATEWAY_SECRET}.
      */
     #[Route(path: '/connect/shopify/provision', name: 'shopify_provision', methods: ['POST'])]
@@ -111,12 +184,24 @@ class ShopifyController extends AbstractController
             return new JsonResponse(['error' => 'Missing shop_domain or access_token'], 400);
         }
 
-        $this->setupShop($shopDomain, $accessToken);
+        $storeId = isset($data['store_id']) ? (int) $data['store_id'] : null;
+
+        $this->setupShop($shopDomain, $accessToken, $storeId);
 
         return new JsonResponse(['success' => true]);
     }
 
-    private function setupShop(string $shopDomain, string $accessToken): void
+    /** @return Store[] */
+    private function getAuthorizedStores(): array
+    {
+        if ($this->isGranted('ROLE_ADMIN')) {
+            return $this->entityManager->getRepository(Store::class)->findAll();
+        }
+
+        return $this->getUser()->getStores()->toArray();
+    }
+
+    private function setupShop(string $shopDomain, string $accessToken, ?int $storeId = null): void
     {
         $shopEntity = $this->entityManager->getRepository(ShopifyShop::class)
             ->findOneBy(['shopDomain' => $shopDomain]);
@@ -129,6 +214,13 @@ class ShopifyController extends AbstractController
         $shopEntity->setAccessToken($accessToken);
         // Shopify signs all webhooks with the app's API secret.
         $shopEntity->setWebhookSecret($this->shopifyApiSecret);
+
+        if ($storeId !== null) {
+            $store = $this->entityManager->getRepository(Store::class)->find($storeId);
+            if ($store) {
+                $shopEntity->setStore($store);
+            }
+        }
 
         $this->entityManager->persist($shopEntity);
         $this->entityManager->flush();
