@@ -16,26 +16,6 @@ class ShopifyClient
         private LoggerInterface $logger = new NullLogger(),
     ) {}
 
-    public function registerFulfillmentService(ShopifyShop $shop, string $callbackUrl): ?string
-    {
-        $response = $this->request($shop, 'POST', 'fulfillment_services.json', [
-            'fulfillment_service' => [
-                'name'                    => 'CoopCycle',
-                'callback_url'            => $callbackUrl,
-                'inventory_management'    => false,
-                'tracking_support'        => true,
-                'requires_shipping_method' => false,
-                'format'                  => 'json',
-            ],
-        ]);
-
-        if (!$response) {
-            return null;
-        }
-
-        return (string) ($response['fulfillment_service']['id'] ?? null);
-    }
-
     public function registerWebhook(ShopifyShop $shop, string $topic, string $callbackUrl): ?string
     {
         $response = $this->request($shop, 'POST', 'webhooks.json', [
@@ -53,36 +33,6 @@ class ShopifyClient
         return (string) ($response['webhook']['id'] ?? null);
     }
 
-    public function createShippingZoneRate(ShopifyShop $shop, string $shippingZoneId, string $name, int $priceInCents): ?string
-    {
-        $priceInMajor = number_format($priceInCents / 100, 2, '.', '');
-
-        $response = $this->request($shop, 'POST', "shipping_zones/{$shippingZoneId}/carrier_shipping_rates.json", [
-            'carrier_shipping_rate' => [
-                'name'  => $name,
-                'price' => $priceInMajor,
-            ],
-        ]);
-
-        if (!$response) {
-            return null;
-        }
-
-        return $response['carrier_shipping_rate']['id'] ?? null;
-    }
-
-    public function acceptFulfillmentRequest(ShopifyShop $shop, string $fulfillmentOrderId): bool
-    {
-        $response = $this->request(
-            $shop,
-            'POST',
-            "fulfillment_orders/{$fulfillmentOrderId}/fulfillment_request/accept.json",
-            ['message' => 'CoopCycle has accepted the fulfillment request.']
-        );
-
-        return $response !== null;
-    }
-
     public function updateFulfillment(ShopifyShop $shop, string $fulfillmentOrderId, string $status, ?string $trackingUrl = null): bool
     {
         $payload = [
@@ -94,19 +44,15 @@ class ShopifyClient
         ];
 
         if ($trackingUrl) {
-            $payload['fulfillment']['tracking_info'] = [
-                'url' => $trackingUrl,
-            ];
+            $payload['fulfillment']['tracking_info'] = ['url' => $trackingUrl];
         }
 
-        $response = $this->request($shop, 'POST', 'fulfillments.json', $payload);
-
-        return $response !== null;
+        return $this->request($shop, 'POST', 'fulfillments.json', $payload) !== null;
     }
 
     private function request(ShopifyShop $shop, string $method, string $path, array $body = []): ?array
     {
-        $url = sprintf('https://%s/admin/api/2024-10/%s', $shop->getShopDomain(), $path);
+        $url = sprintf('https://%s/admin/api/2025-10/%s', $shop->getShopDomain(), $path);
 
         try {
             $options = [
@@ -120,7 +66,7 @@ class ShopifyClient
                 $options['json'] = $body;
             }
 
-            $response = $this->httpClient->request($method, $url, $options);
+            $response   = $this->httpClient->request($method, $url, $options);
             $statusCode = $response->getStatusCode();
 
             if ($statusCode >= 200 && $statusCode < 300) {

@@ -33,6 +33,15 @@ class OAuthHandler
             }
         }
 
+        // 'session' is the App Bridge session token — only present when the merchant opens
+        // the app from within the Shopify admin, not during a fresh install.
+        if (!empty($_GET['session'])) {
+            $host    = base64_decode($_GET['host'] ?? '', strict: false);
+            $backUrl = $host ? 'https://' . $host . '/settings/shipping' : null;
+            $this->render('home', ['shop' => $shop, 'backUrl' => $backUrl]);
+            return;
+        }
+
         $this->render('install', ['shop' => $shop]);
     }
 

@@ -225,12 +225,12 @@ class ShopifyController extends AbstractController
         $this->entityManager->persist($shopEntity);
         $this->entityManager->flush();
 
-        $this->registerWebhooksAndFulfillmentService($shopEntity);
+        $this->registerWebhooks($shopEntity);
 
         $this->logger->info(sprintf('Shopify shop "%s" installed/updated.', $shopDomain));
     }
 
-    private function registerWebhooksAndFulfillmentService(ShopifyShop $shopEntity): void
+    private function registerWebhooks(ShopifyShop $shopEntity): void
     {
         $webhookUrl = $this->generateUrl(
             '_api_/shopify/webhook/{id}_post',
@@ -238,24 +238,8 @@ class ShopifyController extends AbstractController
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 
-        // Register orders/create webhook to receive new orders
         $this->shopifyClient->registerWebhook($shopEntity, 'orders/create', $webhookUrl);
-        // Register orders/cancelled webhook to cancel deliveries
         $this->shopifyClient->registerWebhook($shopEntity, 'orders/cancelled', $webhookUrl);
-
-        // Register as a fulfillment service so Shopify notifies us of fulfillment requests
-        $fulfillmentCallbackUrl = $this->generateUrl(
-            '_api_/shopify/webhook/{id}_post',
-            ['id' => $shopEntity->getId()],
-            UrlGeneratorInterface::ABSOLUTE_URL
-        );
-
-        $fulfillmentServiceId = $this->shopifyClient->registerFulfillmentService($shopEntity, $fulfillmentCallbackUrl);
-
-        if ($fulfillmentServiceId) {
-            $shopEntity->setFulfillmentServiceId($fulfillmentServiceId);
-            $this->entityManager->flush();
-        }
     }
 
     private function exchangeCodeForToken(string $shop, string $code): ?string
