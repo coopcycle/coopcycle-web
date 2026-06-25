@@ -41,7 +41,7 @@ class ShopifyController extends AbstractController
 
         $redirectUri = $this->generateUrl('shopify_callback', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        $scopes = 'read_orders,write_fulfillments,read_fulfillments,write_shipping';
+        $scopes = 'read_orders,write_fulfillments,read_fulfillments';
 
         $authUrl = sprintf(
             'https://%s/admin/oauth/authorize?client_id=%s&scope=%s&redirect_uri=%s&state=%s',

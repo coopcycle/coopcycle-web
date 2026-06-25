@@ -215,25 +215,41 @@ class ShopifyWebhookProcessor implements ProcessorInterface
 
     private function applyTimeWindow(Task $task, array $order): void
     {
-        // Shopify stores custom note_attributes — merchants can add a
-        // "requested_delivery_date" attribute from the storefront.
         $noteAttributes = $order['note_attributes'] ?? [];
-        $deliveryDate = null;
+        $deliveryDate   = null;
+        $deliveryTime   = null;
+
+        // Shopify's native local delivery date picker stores date/time in note_attributes.
+        // The attribute names depend on what the merchant configured in their Shopify admin
+        // (typically "Delivery Date" and "Delivery Time").
+        $dateKeys = ['delivery date', 'requested_delivery_date', 'delivery_date'];
+        $timeKeys = ['delivery time', 'delivery slot', 'delivery_time'];
 
         foreach ($noteAttributes as $attr) {
-            if (($attr['name'] ?? '') === 'requested_delivery_date') {
+            $name = strtolower(trim($attr['name'] ?? ''));
+            if (in_array($name, $dateKeys, true)) {
                 $deliveryDate = $attr['value'] ?? null;
-                break;
+            } elseif (in_array($name, $timeKeys, true)) {
+                $deliveryTime = $attr['value'] ?? null;
             }
         }
 
-        if ($deliveryDate) {
-            try {
-                $after  = Carbon::parse($deliveryDate)->startOfDay();
-                $before = Carbon::parse($deliveryDate)->endOfDay();
-                $task->setAfter($after->toDateTime());
-                $task->setBefore($before->toDateTime());
-            } catch (\Exception) {}
+        if (!$deliveryDate) {
+            return;
         }
+
+        try {
+            $after  = Carbon::parse($deliveryDate)->startOfDay();
+            $before = Carbon::parse($deliveryDate)->endOfDay();
+
+            // "14:00 - 16:00" or "14:00-16:00" — narrow the window to the slot.
+            if ($deliveryTime && preg_match('/(\d{1,2}:\d{2})\s*[-–]\s*(\d{1,2}:\d{2})/', $deliveryTime, $m)) {
+                $after  = Carbon::parse($deliveryDate . ' ' . $m[1]);
+                $before = Carbon::parse($deliveryDate . ' ' . $m[2]);
+            }
+
+            $task->setAfter($after->toDateTime());
+            $task->setBefore($before->toDateTime());
+        } catch (\Exception) {}
     }
 }
