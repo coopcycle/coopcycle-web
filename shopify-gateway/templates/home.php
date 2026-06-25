@@ -78,6 +78,22 @@
             margin-top: 1rem;
         }
 
+        .btn-setup {
+            display: block;
+            text-align: center;
+            padding: 0.75rem;
+            background: #059669;
+            color: #fff;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            margin-bottom: 0.75rem;
+            transition: background .15s;
+        }
+
+        .btn-setup:hover { background: #047857; }
+
         .btn-back {
             display: block;
             text-align: center;
@@ -103,24 +119,29 @@
     <div class="logo">CoopCycle</div>
     <div class="badge">Active</div>
 
-    <h1>Delivery customization is running</h1>
+    <h1>CoopCycle is connected</h1>
 
     <?php if ($shop): ?>
-        <p>Your Shopify store <strong><?= htmlspecialchars($shop, ENT_QUOTES) ?></strong> is connected to CoopCycle.</p>
+        <p>Your Shopify store <strong><?= htmlspecialchars($shop, ENT_QUOTES) ?></strong> is connected to CoopCycle. Orders placed with local delivery will automatically appear in your CoopCycle dispatch.</p>
     <?php else: ?>
-        <p>Your Shopify store is connected to CoopCycle.</p>
+        <p>Your Shopify store is connected to CoopCycle. Orders placed with local delivery will automatically appear in your CoopCycle dispatch.</p>
     <?php endif; ?>
 
-    <p>The delivery zone filter is active at checkout. Buyers outside your cooperative's delivery area will not see the CoopCycle shipping option.</p>
-
     <div class="steps">
-        <p style="font-size:0.875rem;font-weight:600;color:#333;margin-bottom:0.5rem;">To configure delivery postal codes:</p>
+        <p style="font-size:0.875rem;font-weight:600;color:#333;margin-bottom:0.5rem;">One more step: configure your delivery zone in Shopify</p>
         <ol>
-            <li>Log in to your CoopCycle admin</li>
-            <li>Go to <strong>Stores → your store → Shopify</strong></li>
-            <li>Enter the postal codes for your delivery zone</li>
+            <li>Click the button below to open your local delivery settings</li>
+            <li>Add your delivery zone (postal codes or radius)</li>
+            <li>Set a price and minimum order amount if needed</li>
+            <li>Enable the <strong>delivery date picker</strong> so customers can choose a date</li>
         </ol>
     </div>
+
+    <?php if ($shop): ?>
+        <a class="btn-setup" href="https://<?= htmlspecialchars($shop, ENT_QUOTES) ?>/admin/settings/shipping/local-delivery" target="_blank">
+            Configure local delivery zone &#x2197;
+        </a>
+    <?php endif; ?>
 
     <?php if ($backUrl): ?>
         <a class="btn-back" href="<?= htmlspecialchars($backUrl, ENT_QUOTES) ?>">
