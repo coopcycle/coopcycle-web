@@ -77,8 +77,7 @@ Shopify App Store
 │                                 │
 │  Creates/updates ShopifyShop,   │
 │  links it to the chosen Store,  │
-│  registers webhooks &           │
-│  FulfillmentService             │
+│  registers webhooks             │
 └─────────────────────────────────┘
 ```
 
