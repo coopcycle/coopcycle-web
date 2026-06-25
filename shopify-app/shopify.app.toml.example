@@ -4,7 +4,7 @@ application_url = "https://YOUR_GATEWAY_URL/shopify/install"
 embedded = false
 
 [access_scopes]
-scopes = "read_orders,write_fulfillments,read_fulfillments,write_shipping,write_delivery_customizations,read_delivery_customizations"
+scopes = "read_orders,write_fulfillments,read_fulfillments"
 
 [auth]
 redirect_urls = [
@@ -16,7 +16,7 @@ automatically_update_urls_on_dev = false
 dev_store_url = ""
 
 [webhooks]
-api_version = "2024-10"
+api_version = "2025-10"
 
 [pos]
 embedded = false
