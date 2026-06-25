@@ -16,7 +16,7 @@ automatically_update_urls_on_dev = false
 dev_store_url = ""
 
 [webhooks]
-api_version = "2024-10"
+api_version = "2025-10"
 
 [pos]
 embedded = false

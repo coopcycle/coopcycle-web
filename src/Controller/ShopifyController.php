@@ -256,6 +256,8 @@ class ShopifyController extends AbstractController
             $shopEntity->setFulfillmentServiceId($fulfillmentServiceId);
             $this->entityManager->flush();
         }
+
+        $this->shopifyClient->enableDeliveryCustomization($shopEntity);
     }
 
     private function exchangeCodeForToken(string $shop, string $code): ?string

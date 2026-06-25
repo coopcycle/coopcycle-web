@@ -137,9 +137,74 @@ class ShopifyClient
         return $response !== null;
     }
 
+    /**
+     * Finds our delivery customization function and creates an enabled DeliveryCustomization.
+     * Must be called after the app is installed (access token required).
+     */
+    public function enableDeliveryCustomization(ShopifyShop $shop): bool
+    {
+        // Find our app's delivery customization function.
+        $result = $this->graphqlRequest($shop, '{
+            shopifyFunctions(first: 25) {
+                nodes { id apiType }
+            }
+        }');
+
+        $functionId = null;
+        foreach ($result['data']['shopifyFunctions']['nodes'] ?? [] as $fn) {
+            if ($fn['apiType'] === 'delivery_customization') {
+                $functionId = $fn['id'];
+                break;
+            }
+        }
+
+        if (!$functionId) {
+            $this->logger->warning('Shopify delivery customization function not found — is the app deployed?');
+            return false;
+        }
+
+        $result = $this->graphqlRequest($shop,
+            'mutation Create($input: DeliveryCustomizationInput!) {
+                deliveryCustomizationCreate(deliveryCustomization: $input) {
+                    deliveryCustomization { id }
+                    userErrors { field message }
+                }
+            }',
+            ['input' => ['functionId' => $functionId, 'title' => 'CoopCycle Delivery Zone Filter', 'enabled' => true]]
+        );
+
+        $errors = $result['data']['deliveryCustomizationCreate']['userErrors'] ?? [];
+        if ($errors) {
+            $this->logger->error('deliveryCustomizationCreate errors: ' . json_encode($errors));
+            return false;
+        }
+
+        return true;
+    }
+
+    private function graphqlRequest(ShopifyShop $shop, string $query, array $variables = []): array
+    {
+        $url = sprintf('https://%s/admin/api/2025-10/graphql.json', $shop->getShopDomain());
+
+        try {
+            $response = $this->httpClient->request('POST', $url, [
+                'headers' => [
+                    'X-Shopify-Access-Token' => $shop->getAccessToken(),
+                    'Content-Type'           => 'application/json',
+                ],
+                'json' => array_filter(['query' => $query, 'variables' => $variables ?: null]),
+            ]);
+
+            return $response->toArray(false);
+        } catch (HttpExceptionInterface | TransportExceptionInterface $e) {
+            $this->logger->error(sprintf('Shopify GraphQL error: %s', $e->getMessage()));
+            return [];
+        }
+    }
+
     private function request(ShopifyShop $shop, string $method, string $path, array $body = []): ?array
     {
-        $url = sprintf('https://%s/admin/api/2024-10/%s', $shop->getShopDomain(), $path);
+        $url = sprintf('https://%s/admin/api/2025-10/%s', $shop->getShopDomain(), $path);
 
         try {
             $options = [

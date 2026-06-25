@@ -1,4 +1,4 @@
-api_version = "2024-10"
+api_version = "2025-10"
 
 [[extensions]]
 name = "CoopCycle Delivery Zone Filter"
