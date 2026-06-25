@@ -16,26 +16,43 @@ shopify-app/
 └── extensions/
     └── delivery-customization/
         ├── shopify.extension.toml      — Extension config (type, target)
-        ├── package.json
+        ├── package.json                — codegen config lives here under "codegen" key
         ├── src/
         │   ├── index.js                — Function logic (ES module)
-        │   └── index.graphql           — Input query (cart + shop metafield)
+        │   ├── index.graphql           — Input query (cart + shop metafield)
+        │   ├── schema.graphql          — Minimal local schema for codegen type generation
+        │   └── run.types.d.ts          — Generated TypeScript types (git-ignored)
         └── dist/
             └── index.wasm              — Compiled output (git-ignored)
 ```
 
 ## Prerequisites
 
-- [Shopify CLI v3](https://shopify.dev/docs/apps/tools/cli)
-- Node.js 18+
+- [Shopify CLI v3](https://shopify.dev/docs/api/shopify-cli) — handles JS → Wasm compilation
+- Node.js 22+
 
 ## Development
 
+Building and deploying is done via the Shopify CLI from the `shopify-app/` directory:
+
 ```bash
+# Install dependencies first (only needed once)
 cd extensions/delivery-customization
 npm install
-npm run build          # Compiles src/index.js → dist/index.wasm
+
+# Build the function locally (runs graphql-codegen then compiles JS → Wasm)
+shopify app function build
+
+# Deploy everything to Shopify
+shopify app deploy
 ```
+
+> **Note on the build pipeline:** `shopify app function build` first runs
+> `graphql-code-generator --config package.json` (config lives under the `"codegen"` key
+> in `package.json`, not at the top level). It generates `src/run.types.d.ts` from
+> `src/schema.graphql` + `src/index.graphql` using the standard `typescript` and
+> `typescript-operations` plugins. Then it compiles `src/index.js` → `dist/index.wasm`
+> via esbuild + Javy.
 
 ## How the zone filter works
 

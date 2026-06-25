@@ -3,10 +3,29 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "npx --yes @shopify/shopify-functions-javy@latest build -i src/index.js -o dist/index.wasm",
-    "test": "node --experimental-vm-modules node_modules/.bin/jest"
+    "build": "shopify app function build",
+    "preview": "shopify app function run"
+  },
+  "dependencies": {
+    "@shopify/shopify_function": "~2.0.0"
   },
   "devDependencies": {
-    "jest": "^29.0.0"
+    "@graphql-codegen/cli": "5.0.2",
+    "@graphql-codegen/typescript": "^4.0.0",
+    "@graphql-codegen/typescript-operations": "^4.0.0"
+  },
+  "codegen": {
+    "schema": "./src/schema.graphql",
+    "documents": "./src/index.graphql",
+    "generates": {
+      "./src/run.types.d.ts": {
+        "plugins": ["typescript", "typescript-operations"],
+        "config": {
+          "onlyOperationTypes": true,
+          "flattenGeneratedTypes": true,
+          "namingConvention": "keep"
+        }
+      }
+    }
   }
 }
