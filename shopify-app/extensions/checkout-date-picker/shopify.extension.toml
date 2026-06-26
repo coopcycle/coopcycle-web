@@ -5,7 +5,7 @@ api_version = "2025-10"
 uid = "d3bec40f-2390-cc35-a669-fa3bf9f0440218ff55a3"
 
 [[targeting]]
-  module = "./src/index.jsx"
+  module = "./src/index.js"
   target = "purchase.checkout.block.render"
 
 [capabilities]

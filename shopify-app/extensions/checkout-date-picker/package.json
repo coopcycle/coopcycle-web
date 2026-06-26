@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "@shopify/ui-extensions-react": "2024.7.0",
-    "@shopify/ui-extensions": "2024.7.0",
-    "react": "^18.3.0",
-    "react-reconciler": "^0.29.0"
+    "@shopify/ui-extensions": "2024.7.0"
   }
 }
