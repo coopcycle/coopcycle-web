@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import {
   reactExtension,
   useShop,
-  useAppMetafields,
+  useSettings,
   useDeliveryGroups,
   useApplyAttributeChange,
   BlockStack,
@@ -17,7 +17,7 @@ export default reactExtension("purchase.checkout.block.render", () => <DatePicke
 
 function DatePicker() {
   const { myshopifyDomain } = useShop();
-  const metafields = useAppMetafields();
+  const { tenant_url: tenantUrl } = useSettings();
   const deliveryGroups = useDeliveryGroups();
   const applyAttributeChange = useApplyAttributeChange();
 
@@ -30,10 +30,6 @@ function DatePicker() {
   const isLocalDelivery = deliveryGroups.some(
     (g) => g.selectedDeliveryOption?.type === "local"
   );
-
-  const tenantUrl = metafields.find(
-    (m) => m.metafield.namespace === "coopcycle" && m.metafield.key === "tenant_url"
-  )?.metafield.value;
 
   useEffect(() => {
     if (!tenantUrl || !isLocalDelivery) {

@@ -85,7 +85,7 @@ class ShopifyController extends AbstractController
             throw new BadRequestHttpException('Failed to obtain access token.');
         }
 
-        $this->setupShop($shop, $accessToken, null, $request->getSchemeAndHttpHost());
+        $this->setupShop($shop, $accessToken);
 
         return $this->render('shopify/installed.html.twig', [
             'shop' => $shop,
@@ -189,7 +189,7 @@ class ShopifyController extends AbstractController
 
         $storeId = isset($data['store_id']) ? (int) $data['store_id'] : null;
 
-        $this->setupShop($shopDomain, $accessToken, $storeId, $request->getSchemeAndHttpHost());
+        $this->setupShop($shopDomain, $accessToken, $storeId);
 
         return new JsonResponse(['success' => true]);
     }
@@ -246,7 +246,7 @@ class ShopifyController extends AbstractController
         return new JsonResponse(['slots' => $slots], 200, $corsHeaders);
     }
 
-    private function setupShop(string $shopDomain, string $accessToken, ?int $storeId = null, ?string $tenantUrl = null): void
+    private function setupShop(string $shopDomain, string $accessToken, ?int $storeId = null): void
     {
         $shopEntity = $this->entityManager->getRepository(ShopifyShop::class)
             ->findOneBy(['shopDomain' => $shopDomain]);
@@ -271,10 +271,6 @@ class ShopifyController extends AbstractController
         $this->entityManager->flush();
 
         $this->registerWebhooks($shopEntity);
-
-        if ($tenantUrl) {
-            $this->shopifyClient->setShopMetafield($shopEntity, 'coopcycle', 'tenant_url', $tenantUrl);
-        }
 
         $this->logger->info(sprintf('Shopify shop "%s" installed/updated.', $shopDomain));
     }
