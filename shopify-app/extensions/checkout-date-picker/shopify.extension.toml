@@ -1,0 +1,15 @@
+name = "CoopCycle Date Picker"
+handle = "coopcycle-date-picker"
+type = "ui_extension"
+api_version = "2025-10"
+
+[[targeting]]
+  module = "./src/index.jsx"
+  target = "purchase.checkout.block.render"
+
+[capabilities]
+  network_access = true
+
+[[metafields]]
+  namespace = "coopcycle"
+  key = "tenant_url"

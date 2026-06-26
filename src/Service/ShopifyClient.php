@@ -33,6 +33,27 @@ class ShopifyClient
         return (string) ($response['webhook']['id'] ?? null);
     }
 
+    public function setShopMetafield(ShopifyShop $shop, string $namespace, string $key, string $value): bool
+    {
+        $existing = $this->request($shop, 'GET', "metafields.json?namespace={$namespace}&key={$key}");
+
+        if ($existing !== null && !empty($existing['metafields'])) {
+            $id = $existing['metafields'][0]['id'];
+            return $this->request($shop, 'PUT', "metafields/{$id}.json", [
+                'metafield' => ['value' => $value, 'type' => 'single_line_text_field'],
+            ]) !== null;
+        }
+
+        return $this->request($shop, 'POST', 'metafields.json', [
+            'metafield' => [
+                'namespace' => $namespace,
+                'key'       => $key,
+                'value'     => $value,
+                'type'      => 'single_line_text_field',
+            ],
+        ]) !== null;
+    }
+
     public function updateFulfillment(ShopifyShop $shop, string $fulfillmentOrderId, string $status, ?string $trackingUrl = null): bool
     {
         $payload = [

@@ -4,7 +4,9 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Shopify\ShopifyShop;
 use AppBundle\Entity\Store;
+use AppBundle\Form\Type\TimeSlotChoiceLoader;
 use AppBundle\Service\ShopifyClient;
+use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,6 +24,7 @@ class ShopifyController extends AbstractController
         private string $shopifyApiKey,
         private string $shopifyApiSecret,
         private string $shopifyGatewaySecret,
+        private string $country,
         private EntityManagerInterface $entityManager,
         private ShopifyClient $shopifyClient,
         private LoggerInterface $logger,
@@ -82,7 +85,7 @@ class ShopifyController extends AbstractController
             throw new BadRequestHttpException('Failed to obtain access token.');
         }
 
-        $this->setupShop($shop, $accessToken);
+        $this->setupShop($shop, $accessToken, null, $request->getSchemeAndHttpHost());
 
         return $this->render('shopify/installed.html.twig', [
             'shop' => $shop,
@@ -186,7 +189,7 @@ class ShopifyController extends AbstractController
 
         $storeId = isset($data['store_id']) ? (int) $data['store_id'] : null;
 
-        $this->setupShop($shopDomain, $accessToken, $storeId);
+        $this->setupShop($shopDomain, $accessToken, $storeId, $request->getSchemeAndHttpHost());
 
         return new JsonResponse(['success' => true]);
     }
@@ -201,7 +204,49 @@ class ShopifyController extends AbstractController
         return $this->getUser()->getStores()->toArray();
     }
 
-    private function setupShop(string $shopDomain, string $accessToken, ?int $storeId = null): void
+    #[Route('/api/shopify/slots', name: 'shopify_slots', methods: ['GET', 'OPTIONS'])]
+    public function slots(Request $request): JsonResponse
+    {
+        $corsHeaders = [
+            'Access-Control-Allow-Origin'  => '*',
+            'Access-Control-Allow-Methods' => 'GET, OPTIONS',
+            'Access-Control-Allow-Headers' => 'Content-Type',
+        ];
+
+        if ($request->isMethod('OPTIONS')) {
+            return new JsonResponse(null, 204, $corsHeaders);
+        }
+
+        $domain = $request->query->get('domain', '');
+
+        $shop = $domain
+            ? $this->entityManager->getRepository(ShopifyShop::class)->findOneBy(['shopDomain' => $domain])
+            : null;
+
+        if (!$shop || !$shop->getStore() || !$shop->getStore()->getTimeSlot()) {
+            return new JsonResponse(['slots' => []], 200, $corsHeaders);
+        }
+
+        $loader  = new TimeSlotChoiceLoader($shop->getStore()->getTimeSlot(), $this->country);
+        $byDate  = [];
+
+        foreach ($loader->loadChoiceList()->getChoices() as $choice) {
+            [$start, $end] = $choice->getTimeRange();
+            $date  = Carbon::instance($choice->getDate())->format('Y-m-d');
+            $label = "{$start} - {$end}";
+            $byDate[$date][] = ['value' => $label, 'label' => $label];
+        }
+
+        $slots = array_map(
+            fn($date, $times) => ['date' => $date, 'times' => $times],
+            array_keys($byDate),
+            array_values($byDate)
+        );
+
+        return new JsonResponse(['slots' => $slots], 200, $corsHeaders);
+    }
+
+    private function setupShop(string $shopDomain, string $accessToken, ?int $storeId = null, ?string $tenantUrl = null): void
     {
         $shopEntity = $this->entityManager->getRepository(ShopifyShop::class)
             ->findOneBy(['shopDomain' => $shopDomain]);
@@ -226,6 +271,10 @@ class ShopifyController extends AbstractController
         $this->entityManager->flush();
 
         $this->registerWebhooks($shopEntity);
+
+        if ($tenantUrl) {
+            $this->shopifyClient->setShopMetafield($shopEntity, 'coopcycle', 'tenant_url', $tenantUrl);
+        }
 
         $this->logger->info(sprintf('Shopify shop "%s" installed/updated.', $shopDomain));
     }

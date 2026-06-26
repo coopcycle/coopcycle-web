@@ -1,0 +1,9 @@
+{
+  "name": "coopcycle-date-picker",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@shopify/ui-extensions-react": "^2024.10.3",
+    "react": "^18.2.0"
+  }
+}
