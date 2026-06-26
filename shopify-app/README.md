@@ -59,8 +59,8 @@ The CLI compiles the Checkout UI Extension (via Vite) and uploads it to
 Shopify. No manual build step is needed.
 
 After deploying, the merchant must add the date picker block to their checkout
-layout: **Online Store → Customize → Checkout** → add the
-**CoopCycle Date Picker** block.
+layout: **Online Store → Themes → Customize** (on the active theme) →
+switch to **Checkout** at the top → add the **CoopCycle Date Picker** block.
 
 ## Checkout UI Extension
 

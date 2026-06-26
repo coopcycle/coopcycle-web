@@ -1,8 +1,11 @@
 {
   "name": "coopcycle-date-picker",
-  "version": "1.0.0",
   "private": true,
+  "version": "1.0.0",
+  "license": "UNLICENSED",
   "dependencies": {
-    "@shopify/ui-extensions": "2024.7.0"
+    "preact": "^10.10.x",
+    "@preact/signals": "^2.3.x",
+    "@shopify/ui-extensions": "2026.4.x"
   }
 }

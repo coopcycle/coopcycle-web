@@ -1,23 +1,21 @@
+api_version = "2026-04"
+
+[[extensions]]
 name = "CoopCycle Date Picker"
 handle = "coopcycle-date-picker"
 type = "ui_extension"
-api_version = "2025-10"
 uid = "d3bec40f-2390-cc35-a669-fa3bf9f0440218ff55a3"
 
-[[targeting]]
-  module = "./src/index.js"
+[[extensions.targeting]]
+  module = "./src/index.jsx"
   target = "purchase.checkout.block.render"
 
-[capabilities]
+[extensions.capabilities]
   network_access = true
 
-[settings]
-  [[settings.fields]]
+[extensions.settings]
+  [[extensions.settings.fields]]
     key = "tenant_url"
     type = "single_line_text_field"
-    name = "CoopCycle Tenant URL"
-    description = "Base URL of the CoopCycle instance, e.g. https://paris.coopcycle.org"
-
-[[metafields]]
-  namespace = "coopcycle"
-  key = "tenant_url"
+    name = "CoopCycle tenant URL"
+    description = "Base URL of the CoopCycle instance, e.g. https://demo.coopcycle.org"

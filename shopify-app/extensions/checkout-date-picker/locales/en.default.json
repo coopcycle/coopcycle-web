@@ -1,0 +1,6 @@
+{
+  "welcome": "Welcome to the {{target}} extension!",
+  "iWouldLikeAFreeGiftWithMyOrder": "I would like to receive a free gift with my order",
+  "addAFreeGiftToMyOrder": "Add a free gift to my order",
+  "metafieldChangesAreNotSupported": "Cart metafield changes are not supported in this checkout"
+}
