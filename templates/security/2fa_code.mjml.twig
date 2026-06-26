@@ -1,7 +1,6 @@
 {% extends 'emails/layout.mjml.twig' %}
 
 {% block content %}
-<mj-column>
   <mj-text align="left" line-height="24px">
     {{ 'two_factor.email.intro' | trans({'%brand_name%': brandName}, 'emails') | raw }}
   </mj-text>
@@ -11,5 +10,4 @@
   <mj-text align="left" line-height="20px" font-size="13px" color="#888">
     {{ 'two_factor.email.disclaimer' | trans({}, 'emails') }}
   </mj-text>
-</mj-column>
 {% endblock %}
