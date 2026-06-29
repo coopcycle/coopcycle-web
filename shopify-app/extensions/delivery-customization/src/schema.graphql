@@ -1,0 +1,30 @@
+type Query {
+  cart: Cart
+  shop: Shop
+}
+
+type Cart {
+  deliveryGroups: [DeliveryGroup!]!
+}
+
+type DeliveryGroup {
+  deliveryAddress: DeliveryAddress
+  deliveryOptions: [DeliveryOption!]!
+}
+
+type DeliveryAddress {
+  zip: String
+}
+
+type DeliveryOption {
+  handle: String!
+  title: String!
+}
+
+type Shop {
+  metafield(namespace: String!, key: String!): Metafield
+}
+
+type Metafield {
+  value: String!
+}

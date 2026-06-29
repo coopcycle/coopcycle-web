@@ -1,0 +1,31 @@
+{
+  "name": "coopcycle-delivery-zone-filter",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "shopify app function build",
+    "preview": "shopify app function run"
+  },
+  "dependencies": {
+    "@shopify/shopify_function": "~2.0.0"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "5.0.2",
+    "@graphql-codegen/typescript": "^4.0.0",
+    "@graphql-codegen/typescript-operations": "^4.0.0"
+  },
+  "codegen": {
+    "schema": "./src/schema.graphql",
+    "documents": "./src/index.graphql",
+    "generates": {
+      "./src/run.types.d.ts": {
+        "plugins": ["typescript", "typescript-operations"],
+        "config": {
+          "onlyOperationTypes": true,
+          "flattenGeneratedTypes": true,
+          "namingConvention": "keep"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{% extends 'store/layout.html.twig' %}
+
+{% block breadcrumb %}
+<li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
+<li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
+<li>Shopify</li>
+{% endblock %}
+
+{% block store_content %}
+
+<h4>Shopify — delivery zone postal codes</h4>
+
+{% if not shopify_shop %}
+  <div class="alert alert-warning">
+    No Shopify shop is connected to this store yet. Install the CoopCycle app from the Shopify App Store first.
+  </div>
+{% else %}
+
+  {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
+
+  {% if success %}
+    <div class="alert alert-success">Postal codes saved and synced to Shopify.</div>
+  {% endif %}
+
+  <p>
+    Enter the postal codes that are inside the cooperative's delivery zone, one per line (or comma-separated).
+    These will be pushed to your Shopify store as a metafield so the <strong>CoopCycle Delivery Zone Filter</strong>
+    function can hide the CoopCycle shipping option at checkout for customers outside the zone.
+  </p>
+
+  <form method="post">
+    <div class="form-group">
+      <label for="postal_codes">Postal codes</label>
+      <textarea
+        id="postal_codes"
+        name="postal_codes"
+        class="form-control"
+        rows="12"
+        placeholder="e.g.&#10;75010&#10;75011&#10;75012"
+      >{{ shopify_shop.postalCodes | join("\n") }}</textarea>
+      <p class="help-block">Connected shop: <strong>{{ shopify_shop.shopDomain }}</strong></p>
+    </div>
+    <button type="submit" class="btn btn-primary">Save &amp; sync to Shopify</button>
+  </form>
+
+{% endif %}
+
+{% endblock %}

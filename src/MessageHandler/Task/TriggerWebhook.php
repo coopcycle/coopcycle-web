@@ -9,7 +9,9 @@ use AppBundle\Domain\Task\Event\TaskDone;
 use AppBundle\Domain\Task\Event\TaskFailed;
 use AppBundle\Domain\Task\Event\TaskIncidentReported;
 use AppBundle\Domain\Task\Event\TaskStarted;
+use AppBundle\Entity\Shopify\ShopifyOrder;
 use AppBundle\Entity\Woopit\Delivery as WoopitDelivery;
+use AppBundle\Message\ShopifyWebhook;
 use AppBundle\Message\Webhook;
 use AppBundle\Message\WoopitWebhook;
 use Doctrine\ORM\EntityManagerInterface;
@@ -49,6 +51,19 @@ class TriggerWebhook
                 new WoopitWebhook(
                     $this->iriConverter->getIriFromResource($task->getDelivery()),
                     $this->getWoopitEventName($event)
+                )
+            );
+        }
+
+        $shopifyOrder = $this->entityManager
+            ->getRepository(ShopifyOrder::class)
+            ->findOneBy(['delivery' => $task->getDelivery()]);
+
+        if ($shopifyOrder) {
+            $this->messageBus->dispatch(
+                new ShopifyWebhook(
+                    $this->iriConverter->getIriFromResource($task->getDelivery()),
+                    $this->getEventName($event)
                 )
             );
         }

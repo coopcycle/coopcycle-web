@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CoopCycle — Connect Shopify</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.1);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .logo { font-size: 1.75rem; font-weight: 700; color: #e84e4e; margin-bottom: 0.25rem; }
+
+    h1 { font-size: 1.25rem; font-weight: 600; color: #1a1a1a; margin-bottom: 0.5rem; }
+
+    p { color: #555; line-height: 1.5; margin-bottom: 1.5rem; }
+
+    .shop-badge {
+      display: inline-block;
+      font-family: monospace;
+      background: #f0f0f0;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 0.9rem;
+      color: #333;
+    }
+
+    .alert-error {
+      background: #fff0f0;
+      border: 1px solid #f5c6cb;
+      border-radius: 6px;
+      color: #a00;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.9rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 0.375rem;
+    }
+
+    select {
+      width: 100%;
+      padding: 0.625rem 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 1rem;
+      color: #1a1a1a;
+      margin-bottom: 1.25rem;
+      background: #fff;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #e84e4e;
+      box-shadow: 0 0 0 3px rgba(232,78,78,.15);
+    }
+
+    .no-stores {
+      background: #fffbe6;
+      border: 1px solid #ffe58f;
+      border-radius: 6px;
+      padding: 1rem;
+      color: #7a5300;
+      margin-bottom: 1.25rem;
+      font-size: 0.9rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      background: #e84e4e;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s;
+    }
+
+    button:hover { background: #cf3a3a; }
+    button:disabled { background: #ccc; cursor: default; }
+
+    .footer { margin-top: 1.5rem; font-size: 0.8rem; color: #aaa; text-align: center; }
+
+    .user-info { font-size: 0.85rem; color: #888; margin-bottom: 1.5rem; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">CoopCycle</div>
+  <h1>Connect your Shopify store</h1>
+
+  <p>
+    Linking <span class="shop-badge">{{ shop }}</span> to your CoopCycle account.
+    Choose which store will handle deliveries for this Shopify shop.
+  </p>
+
+  <p class="user-info">
+    Signed in as <strong>{{ app.user.username }}</strong>.
+    Not you? <a href="{{ path('nucleos_user_security_logout') }}">Sign out</a>
+  </p>
+
+  {% if error %}
+    <div class="alert-error">{{ error }}</div>
+  {% endif %}
+
+  {% if stores is empty %}
+    <div class="no-stores">
+      Your account is not associated with any CoopCycle store.
+      Please ask your cooperative administrator to add you as a store manager.
+    </div>
+  {% else %}
+    <form method="POST">
+      <input type="hidden" name="state" value="{{ state }}">
+      <input type="hidden" name="sig"   value="{{ sig }}">
+
+      <label for="store_id">CoopCycle store</label>
+      <select id="store_id" name="store_id" required>
+        <option value="">— select a store —</option>
+        {% for store in stores %}
+          <option value="{{ store.id }}">{{ store.name }}</option>
+        {% endfor %}
+      </select>
+
+      <button type="submit">Connect &#x2192;</button>
+    </form>
+  {% endif %}
+
+  <p class="footer">
+    After connecting, you will be asked to authorise the CoopCycle app on Shopify.
+  </p>
+</div>
+</body>
+</html>
