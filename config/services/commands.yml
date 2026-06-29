@@ -218,3 +218,5 @@ services:
       - { name: 'console.command', command: 'coopcycle:paygreen:check-status' }
 
   AppBundle\Command\RecommenderTrainCommand: ~
+
+  AppBundle\Command\ShopifySyncSlotsCommand: ~

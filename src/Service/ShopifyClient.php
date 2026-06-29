@@ -54,6 +54,33 @@ class ShopifyClient
         ]) !== null;
     }
 
+    public function syncTenantUrl(ShopifyShop $shop, string $tenantUrl): bool
+    {
+        return $this->setShopMetafield($shop, 'coopcycle', 'tenant_url', $tenantUrl);
+    }
+
+    public function syncSlotsSpec(ShopifyShop $shop, array $openingHoursSpec): bool
+    {
+        $value    = json_encode($openingHoursSpec);
+        $existing = $this->request($shop, 'GET', 'metafields.json?namespace=coopcycle&key=slots_spec');
+
+        if ($existing !== null && !empty($existing['metafields'])) {
+            $id = $existing['metafields'][0]['id'];
+            return $this->request($shop, 'PUT', "metafields/{$id}.json", [
+                'metafield' => ['value' => $value, 'type' => 'json'],
+            ]) !== null;
+        }
+
+        return $this->request($shop, 'POST', 'metafields.json', [
+            'metafield' => [
+                'namespace' => 'coopcycle',
+                'key'       => 'slots_spec',
+                'value'     => $value,
+                'type'      => 'json',
+            ],
+        ]) !== null;
+    }
+
     public function updateFulfillment(ShopifyShop $shop, string $fulfillmentOrderId, string $status, ?string $trackingUrl = null): bool
     {
         $payload = [

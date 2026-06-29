@@ -10,12 +10,6 @@ uid = "d3bec40f-2390-cc35-a669-fa3bf9f0440218ff55a3"
   module = "./src/index.jsx"
   target = "purchase.checkout.block.render"
 
-[extensions.capabilities]
-  network_access = true
-
-[extensions.settings]
-  [[extensions.settings.fields]]
-    key = "tenant_url"
-    type = "single_line_text_field"
-    name = "CoopCycle tenant URL"
-    description = "Base URL of the CoopCycle instance, e.g. https://demo.coopcycle.org"
+[[extensions.metafields]]
+  namespace = "coopcycle"
+  key = "slots_spec"

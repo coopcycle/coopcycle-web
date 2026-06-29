@@ -1523,6 +1523,10 @@ services:
     factory: ['Lcobucci\JWT\Configuration', 'forSymmetricSigner']
     arguments: ['@cubejs.jwt.signer', '@cubejs.jwt.key']
 
+  AppBundle\Command\ShopifySyncSlotsCommand:
+    arguments:
+      $tenantUrl: '%router.request_context.scheme%://%router.request_context.host%'
+
   AppBundle\CubeJs\TokenFactory:
     arguments:
       $databaseName: '%database_name%'
