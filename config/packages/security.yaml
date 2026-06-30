@@ -299,6 +299,10 @@ security:
             pattern:   ^/api$
             security: false
 
+        api_zelty_webhook:
+            pattern:   ^/api/zelty/webhook
+            security: false
+
         api:
             pattern:   ^/api
             stateless: true

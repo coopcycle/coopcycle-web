@@ -35,7 +35,6 @@ class ZeltyTaxonMapper
             $this->importMenuParts($menu, $taxon, $productsMap, $menuPartsMap, $locale, $restaurant);
             $taxonMap[$taxon->getCode()] = $taxon;
         }
-        $this->em->flush();
         return $taxonMap;
     }
 
@@ -49,7 +48,6 @@ class ZeltyTaxonMapper
             $taxon = $this->importTagAsTaxon($tag, $parentTaxon, $locale);
             $this->linkProductsToTaxon($taxon, $tag->itemIds, $productsMap);
         }
-        $this->em->flush();
     }
 
     private function importMenuAsTaxon(ZeltyItem $menu, Taxon $parentTaxon, string $locale): Taxon

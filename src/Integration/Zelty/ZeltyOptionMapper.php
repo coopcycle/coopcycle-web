@@ -146,9 +146,7 @@ class ZeltyOptionMapper
             $option->setName($zeltyOption->name);
         }
 
-        //FIXME: Should persist at the end or option import loop
         $this->em->persist($option);
-        $this->em->flush();
 
         return $option;
     }
@@ -231,7 +229,6 @@ class ZeltyOptionMapper
 
         $option->addValue($value);
         $this->em->persist($value);
-        $this->em->flush();
 
         return $value;
     }

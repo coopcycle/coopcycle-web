@@ -85,10 +85,7 @@ class ZeltyProductMapper
         $this->importProductVariant($product, $dish, $taxesMap, $defaultTaxCategory);
 
         $this->em->persist($product);
-        $this->em->flush();
-
         $this->linkOptions($product, $dish, $optionsMap);
-        $this->em->flush();
 
         return $product;
     }
@@ -242,23 +239,18 @@ class ZeltyProductMapper
      */
     private function linkOptionToProductIfNotExists(Product $product, $option): void
     {
-        $optionId = $option->getId();
-
-        if ($optionId === null) {
-            throw new \Exception("No option id");
-        }
-
         if ($product->hasOption($option)) {
             return;
         }
 
         $productId = $product->getId();
-        if ($productId !== null) {
-            $existingProductOptions = $this->em->getRepository(ProductOptions::class)->findOneBy([
+        $optionId = $option->getId();
+        if ($productId !== null && $optionId !== null) {
+            $existing = $this->em->getRepository(ProductOptions::class)->findOneBy([
                 'product' => $productId,
                 'option' => $optionId,
             ]);
-            if ($existingProductOptions !== null) {
+            if ($existing !== null) {
                 return;
             }
         }

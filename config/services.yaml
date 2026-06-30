@@ -1779,6 +1779,7 @@ services:
   AppBundle\Integration\Zelty\ZeltyTaxesMapper: ~
   AppBundle\Integration\Zelty\ZeltyClient: ~
   AppBundle\Integration\Zelty\ZeltyImportService: ~
-  AppBundle\Controller\ZeltyController: ~
+  AppBundle\Integration\Zelty\ZeltyCatalogDenormalizer: ~
+  AppBundle\Integration\Zelty\ZeltyCatalogProcessor: ~
 
   AppBundle\Utils\TsRangeFormatter: ~

@@ -6,7 +6,6 @@ use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Sylius\Taxon;
 use AppBundle\Integration\Zelty\Dto\ZeltyCatalog;
-use AppBundle\Integration\Zelty\Dto\ZeltyCatalogParser;
 use Cocur\Slugify\SlugifyInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -18,7 +17,6 @@ use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 class ZeltyImportService
 {
     public function __construct(
-        private ZeltyCatalogParser $parser,
         private ZeltyOptionMapper $optionMapper,
         private ZeltyProductMapper $productMapper,
         private ZeltyMenuMapper $menuMapper,
@@ -32,22 +30,15 @@ class ZeltyImportService
 
     /**
      * Import a complete Zelty catalog for a restaurant.
-     *
-     * @param array $payload The raw Zelty catalog payload
-     * @param LocalBusiness $restaurant The restaurant to import into
      */
-    public function import(array $payload, LocalBusiness $restaurant): void
+    public function import(ZeltyCatalog $catalog, LocalBusiness $restaurant): void
     {
-
         if (!$restaurant->hasZeltyApiKey()) {
             throw new \Exception(sprintf('No Zelty key set for business: %s', $restaurant->getName()));
         }
 
         $this->logInfo(sprintf('Starting Zelty catalog import for restaurant %d', $restaurant->getId()));
 
-        $catalog = $this->parser->parse($payload);
-        /* dump($catalog); */
-        /* die(); */
         $locale = $this->localeProvider->getDefaultLocaleCode();
 
         $this->taxesMapper->setZeltyApiKey($restaurant->getZeltyApiKey());
@@ -203,7 +194,6 @@ class ZeltyImportService
         $taxon->setEnabled(true);
 
         $em->persist($taxon);
-        $em->flush();
 
         return $taxon;
     }
@@ -259,7 +249,6 @@ class ZeltyImportService
         $taxon->setParent($rootTaxon);
 
         $em->persist($taxon);
-        $em->flush();
 
         return $taxon;
     }
@@ -276,7 +265,5 @@ class ZeltyImportService
             $productTaxon->setPosition(0);
             $em->persist($productTaxon);
         }
-
-        $em->flush();
     }
 }

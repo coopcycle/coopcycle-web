@@ -9,7 +9,7 @@ Feature: Zelty catalog push webhook
       {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
       """
     When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/zelty/webhook/catalog/1" with body:
+    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
       """
       {
         "data": {
@@ -72,7 +72,7 @@ Feature: Zelty catalog push webhook
       {"taxes":[{"id":1,"name":"TVA 10%","rate":1000},{"id":2,"name":"TVA 20%","rate":2000}]}
       """
     When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/zelty/webhook/catalog/1" with body:
+    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
       """
       {
         "data": {
@@ -192,7 +192,7 @@ Feature: Zelty catalog push webhook
       {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
       """
     When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/zelty/webhook/catalog/1" with body:
+    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
       """
       {
         "data": {
@@ -297,7 +297,7 @@ Feature: Zelty catalog push webhook
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
     When I add "Content-Type" header equal to "application/json"
-    And I send a "POST" request to "/zelty/webhook/catalog/999" with body:
+    And I send a "POST" request to "/api/zelty/webhook/catalog/999" with body:
       """
       {
         "data": {
