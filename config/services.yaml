@@ -722,14 +722,10 @@ services:
           - '@coopcycle.utils.restaurant_filter'
       - method: setBusinessContext
         arguments:
-<<<<<<< HEAD
           - '@AppBundle\Business\Context'
-=======
-            - '@AppBundle\Business\Context'
       - method: setSettingsManager
         arguments:
             - '@AppBundle\Service\SettingsManager'
->>>>>>> master
 
   AppBundle\Entity\HubRepository:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
@@ -1174,7 +1170,6 @@ services:
   s3_client:
     class: Aws\S3\S3Client
     arguments:
-<<<<<<< HEAD
       - endpoint: '%env(S3_ENDPOINT)%'
         version: latest
         region: '%env(S3_REGION)%'
@@ -1182,18 +1177,9 @@ services:
           key: '%env(S3_CREDENTIALS_KEY)%'
           secret: '%env(S3_CREDENTIALS_SECRET)%'
         use_path_style_endpoint: true
-=======
-        - endpoint: '%env(S3_ENDPOINT)%'
-          version: latest
-          region: '%env(S3_REGION)%'
-          credentials:
-            key: '%env(S3_CREDENTIALS_KEY)%'
-            secret: '%env(S3_CREDENTIALS_SECRET)%'
-          use_path_style_endpoint: true
-          http:
-            connect_timeout: 5
-            timeout: 15
->>>>>>> master
+        http:
+          connect_timeout: 5
+          timeout: 15
 
   AppBundle\Service\StripeManager:
     tags:
