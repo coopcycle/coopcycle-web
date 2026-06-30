@@ -598,7 +598,17 @@ admin_store_recurrence_rules:
       store: admin_store
       store_addresses: admin_store_addresses
       store_recurrence_rule: admin_store_recurrence_rule
+      store_recurrence_rule_toggle_pause: admin_store_recurrence_rule_toggle_pause
   methods:  [ GET ]
+
+admin_store_recurrence_rule_toggle_pause:
+  path: /admin/stores/{storeId}/recurrence-rules/{recurrenceRuleId}/toggle-pause
+  defaults:
+    _controller: AppBundle\Controller\AdminController::togglePauseRecurrenceRuleAction
+    layout: 'admin.html.twig'
+    routes:
+      store_recurrence_rules: admin_store_recurrence_rules
+  methods:  [ POST ]
 
 admin_store_delivery_new:
     path: /admin/stores/{id}/deliveries/new

@@ -425,6 +425,28 @@ trait StoreTrait
         ]));
     }
 
+    public function togglePauseRecurrenceRuleAction(
+        $storeId,
+        $recurrenceRuleId,
+        Request $request,
+        EntityManagerInterface $entityManager
+    ) {
+        $recurrenceRule = $entityManager
+            ->getRepository(RecurrenceRule::class)
+            ->find($recurrenceRuleId);
+
+        $store = $recurrenceRule->getStore();
+
+        $this->denyAccessUnlessGranted('view', $store);
+
+        $recurrenceRule->setPaused(!$recurrenceRule->isPaused());
+        $entityManager->flush();
+
+        $routes = $request->attributes->get('routes');
+
+        return $this->redirectToRoute($routes['store_recurrence_rules'], ['id' => $storeId]);
+    }
+
     public function storeAction($id, Request $request, TranslatorInterface $translator)
     {
         $store = $this->entityManager->getRepository(Store::class)->find($id);
@@ -640,6 +662,7 @@ trait StoreTrait
             'pagination' => $recurrenceRules,
             'routes' => [
                 'view' => $routes['store_recurrence_rule'],
+                'toggle_pause' => $routes['store_recurrence_rule_toggle_pause'],
             ],
             'stores_route' => $routes['stores'],
             'store_route' => $routes['store'],
