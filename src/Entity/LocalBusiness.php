@@ -319,13 +319,11 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected bool $pawapayEnabled = true;
 
-<<<<<<< HEAD
     protected ?string $zeltyApiKey = null;
-=======
+
     protected $dayOfWeekAddresses;
 
     protected $dayOfWeekDeliveryPerimeterExpressions;
->>>>>>> master
 
     public function __construct()
     {
