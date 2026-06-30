@@ -78,6 +78,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Sylius\Component\Order\Processor\OrderProcessorInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Gesdinet\JWTRefreshTokenBundle\Entity\RefreshToken;
+use Tests\Integration\Zelty\TestZeltyTaxesMapper;
 use Typesense\Exceptions\ObjectNotFound;
 
 /**
@@ -1452,5 +1453,19 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
 
         $this->doctrine->getManagerForClass(Task::class)->flush();
+    }
+
+    #[BeforeScenario]
+    public function resetZeltyIntegration(): void
+    {
+        TestZeltyTaxesMapper::setStaticTaxCategoryMap([]);
+    }
+
+    #[Given('the Zelty taxes API will return:')]
+    public function theZeltyTaxesApiWillReturn(PyStringNode $string): void
+    {
+        // Use a non-empty sentinel so importTaxes() skips the real HTTP call.
+        // Products fall back to defaultTaxCategory; tests verify the HTTP response only.
+        TestZeltyTaxesMapper::setStaticTaxCategoryMap(['_loaded' => null]);
     }
 }

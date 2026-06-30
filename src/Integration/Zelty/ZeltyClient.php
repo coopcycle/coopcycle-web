@@ -14,6 +14,8 @@ class ZeltyClient
     private const DEFAULT_SOURCE = 'WEB|MOBILE';
     private const DEFAULT_MODE = 'delivery';
 
+    private ?string $authToken = null;
+
     public function __construct(
         private HttpClientInterface $zeltyClient
     ) {}
@@ -23,9 +25,12 @@ class ZeltyClient
      */
     public function setAuth(string $token): void
     {
-        $this->zeltyClient = $this->zeltyClient->withOptions([
-            'auth_bearer' => $token
-        ]);
+        $this->authToken = $token;
+    }
+
+    private function authOptions(): array
+    {
+        return $this->authToken !== null ? ['auth_bearer' => $this->authToken] : [];
     }
 
     /**
@@ -35,9 +40,9 @@ class ZeltyClient
     {
         $payload = $this->buildOrderPayload($order);
 
-        $this->zeltyClient->request('POST', 'orders', [
+        $this->zeltyClient->request('POST', 'orders', array_merge($this->authOptions(), [
             'body' => json_encode($payload),
-        ]);
+        ]));
     }
 
     /**
@@ -68,9 +73,9 @@ class ZeltyClient
     {
         $payload = $this->buildWebhookPayload($event, $url, $secretKey);
 
-        $this->zeltyClient->request('POST', 'webhooks', [
+        $this->zeltyClient->request('POST', 'webhooks', array_merge($this->authOptions(), [
             'body' => json_encode($payload),
-        ]);
+        ]));
     }
 
     /**
@@ -95,7 +100,7 @@ class ZeltyClient
      */
     public function getTaxes(): array
     {
-        $response = $this->zeltyClient->request('GET', 'catalog/taxes');
+        $response = $this->zeltyClient->request('GET', 'catalog/taxes', $this->authOptions());
         return json_decode($response->getContent(), true);
     }
 }

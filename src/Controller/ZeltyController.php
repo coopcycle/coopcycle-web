@@ -35,7 +35,6 @@ class ZeltyController extends AbstractController
         } catch (\Exception $e) {
             $this->entityManager->getConnection()->rollBack();
             throw $e;
-            /* return new JsonResponse(['error' => $e->getMessage()], 500); */
         }
     }
 }
