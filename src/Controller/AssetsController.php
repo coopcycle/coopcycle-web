@@ -5,9 +5,12 @@ namespace AppBundle\Controller;
 use AppBundle\Entity\Incident\IncidentImage;
 use AppBundle\Entity\TaskImage;
 use AppBundle\Pixabay\Client as PixabayClient;
+use AppBundle\Service\SettingsManager;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToCheckFileExistence;
+use League\Flysystem\UnableToReadFile;
+use League\Flysystem\UnableToWriteFile;
 use Liip\ImagineBundle\Exception\Binary\Loader\NotLoadableException;
 use Liip\ImagineBundle\Exception\Imagine\Filter\NonExistingFilterException;
 use Liip\ImagineBundle\Imagine\Cache\CacheManager;
@@ -46,14 +49,43 @@ class AssetsController extends AbstractController
 
             $item->expiresAfter(3600);
 
-            return $assetsFilesystem->read('banner.svg');
+            try {
+                return $assetsFilesystem->read('banner.svg');
+            } catch (UnableToReadFile $e) {
+                $item->expiresAfter(0);
+                return null;
+            }
         });
+
+        if (null === $svg) {
+            throw $this->createNotFoundException();
+        }
 
         $response = new Response((string) $svg);
 
         $response->headers->add(['Content-Type' => 'image/svg+xml']);
 
         return $response;
+    }
+
+    #[Route(path: '/assets/banner_background', name: 'assets_banner_background')]
+    public function bannerBackgroundAction(Filesystem $assetsFilesystem, SettingsManager $settingsManager): Response
+    {
+        $filename = $settingsManager->get('banner_background_image');
+        if (!$filename) {
+            throw $this->createNotFoundException();
+        }
+
+        try {
+            if (!$assetsFilesystem->fileExists($filename)) {
+                throw $this->createNotFoundException();
+            }
+            $content = $assetsFilesystem->read($filename);
+        } catch (UnableToCheckFileExistence|UnableToReadFile $e) {
+            throw $this->createNotFoundException();
+        }
+        $mimeType = str_ends_with($filename, '.png') ? 'image/png' : 'image/jpeg';
+        return new Response($content, 200, ['Content-Type' => $mimeType]);
     }
 
     /**
@@ -87,14 +119,23 @@ class AssetsController extends AbstractController
     {
         $path = "placeholders/{$hashid}.jpg";
 
-        if (!$restaurantImagesFilesystem->fileExists($path)) {
+        try {
+            $exists = $restaurantImagesFilesystem->fileExists($path);
+        } catch (UnableToCheckFileExistence $e) {
+            $exists = true; // assume it exists, skip the write
+        }
 
+        if (!$exists) {
             $results = $pixabay->search('', rand(1, 10));
-
-            $restaurantImagesFilesystem->write(
-                $path,
-                file_get_contents($results[rand(0, 19)]['webformatURL'])
-            );
+            $context = stream_context_create(['http' => ['timeout' => 5]]);
+            try {
+                $restaurantImagesFilesystem->write(
+                    $path,
+                    file_get_contents($results[rand(0, 19)]['webformatURL'], false, $context)
+                );
+            } catch (UnableToWriteFile $e) {
+                // TODO Log error
+            }
         }
 
         return $this->redirectToRoute('liip_imagine_cache', [

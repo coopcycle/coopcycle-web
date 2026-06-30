@@ -6,30 +6,28 @@ use AppBundle\Entity\ApiApp;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Security\Authentication\Token\ApiKeyToken;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
 use League\Bundle\OAuth2ServerBundle\Manager\AccessTokenManagerInterface;
 
 class TokenStoreExtractor
 {
     private $doctrine;
-    private $tokenStorage;
     private $accessTokenManager;
 
     public function __construct(
         EntityManagerInterface $doctrine,
-        TokenStorageInterface $tokenStorage,
+        private Security $security,
         AccessTokenManagerInterface $accessTokenManager)
     {
         $this->doctrine = $doctrine;
-        $this->tokenStorage = $tokenStorage;
         $this->accessTokenManager = $accessTokenManager;
     }
 
     public function extractStore()
     {
 
-        if (null === ($token = $this->tokenStorage->getToken())) {
+        if (null === ($token = $this->security->getToken())) {
             return;
         }
 
@@ -57,7 +55,7 @@ class TokenStoreExtractor
 
     public function extractShop(): ?LocalBusiness
     {
-        if (null === ($token = $this->tokenStorage->getToken())) {
+        if (null === ($token = $this->security->getToken())) {
 
             return null;
         }

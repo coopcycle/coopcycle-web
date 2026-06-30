@@ -17,6 +17,7 @@ league_oauth2_server:
             - deliveries
             - orders
             - orders:all
+            - tasks:all
         default:
             - deliveries
     persistence:

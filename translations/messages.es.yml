@@ -816,6 +816,7 @@ form.package.max_volume_units: Este valor se utilizará para calcular los precio
 form.package.average_weight.label: Peso promedio (kg)
 form.package.max_weight.label: Peso máximo (kg)
 form.package.shortCode.label: Código de 2 letras
+form.package.shortCode.help: Limitado a 2 caracteres
 form.package.volume_units.label: Unidades de volumen
 basics.date_range: Desde %start% hasta %end%
 basics.total_including_tax: Total incluyendo todos los impuestos
@@ -836,7 +837,7 @@ form.delivery.view_order: Ver pedido
 form.delivery.time_slot.label: Intervalo de tiempo
 form.delivery.has_order.info: Esta entrega esta vinculada a una orden
 form.delivery.to_be_confirmed.warning: Usted debe confirmar la orden
-order_item.adjustment_type.reusable_packaging: '%quantity% × paquete(s)'
+order_item.adjustment_type.reusable_packaging: '%quantity% × « %name% » paquete(s)'
 order.adjustment_type.reusable_packaging: Embalaje
 order.reusable_packaging.alert: Este pedido debe estar en un paquete reutilizable
 form.user.quotes_allowed.label: Permitir a este cliente solicitar un presupuesto
@@ -887,6 +888,7 @@ form.price_with_tax.tax_incl.label: Precio (IVA incl.)
 deliveries.filter.clear: Mostrar todo
 restaurant.form.loopeat_enabled.label: Habilite el sistema de depósito y reembolso
   de LoopEat
+restaurant.form.loopeat_mandatory.label: Hacer %name% obligatorio para todos los pedidos
 food_establishment.BAKERY: Panadería
 restaurant.contract.variableDeliveryPrice.placeholder: Por favor seleccione un conjunto
   de reglas de precios
@@ -1189,8 +1191,7 @@ delivery.table.heading.owner: Dueño
 authentication.choose_password: Elije una contraseña
 basics.configure: Configurar
 basics.description: Descripción
-form.customize.custom_banner.help: Asegurate que la bannar es un patrón repetetivo
-  de SVG
+form.customize.custom_banner.help: "Formatos aceptados: SVG (patrón repetible), JPG o PNG (imagen de fondo completa)"
 form.customize.custom_banner.label: Bannar personalizada
 form.customize.custom_privacy.label: Contenido de la página de política de privacidad
 form.customize.custom_privacy_enabled.label: Habilitar política de privacidad personalizado
@@ -1778,3 +1779,113 @@ promotions.human_readable.rule_items_total_above: "a partir de %amount%"
 promotions.human_readable.rule_cart_quantity: "a partir de %count% artículos comprados"
 promotions.human_readable.coupon: "%description% with coupon %code%"
 promotions.human_readable.text: "%name%: %description%"
+
+# Editor de emails
+customize.emails: Personalizar correos electrónicos
+customize.email_editor.email_type.order_created: Pedido confirmado (cliente)
+customize.email_editor.email_type.order_accepted_foodtech_delivery: Pedido aceptado – Entrega
+customize.email_editor.email_type.order_accepted_foodtech_collection: Pedido aceptado – Recogida
+customize.email_editor.email_type.order_accepted_lastmile: Pedido aceptado (Última milla)
+customize.email_editor.email_type.order_cancelled: Pedido cancelado
+customize.email_editor.email_type.order_delayed: Pedido retrasado
+customize.email_editor.email_type.order_payment: Confirmación de pago
+customize.email_editor.email_type.order_receipt: Recibo del pedido
+customize.email_editor.email_type.task_dropoff_completed: Entrega completada
+customize.email_editor.email_type.task_pickup_completed: Recogida completada
+customize.email_editor.email_type.task_dropoff_failed: Entrega fallida
+customize.email_editor.email_type.task_pickup_failed: Recogida fallida
+customize.email_editor.email_type.resetting: "Restablecimiento de contraseña"
+customize.email_editor.email_type.registration: "Confirmación de registro"
+customize.email_editor.save: Guardar
+customize.email_editor.reset: Restablecer por defecto
+customize.email_editor.status.default: Plantilla por defecto — guarde para personalizar
+customize.email_editor.status.custom: Plantilla personalizada
+customize.email_editor.variables: Variables disponibles
+customize.email_editor.layout: Diseño
+customize.email_editor.folder.foodtech: Foodtech
+customize.email_editor.folder.lastmile: Última milla
+customize.email_editor.folder.account: Cuenta
+customize.email_editor.send_test: Enviar prueba
+customize.email_editor.send_test_title: Enviar correo de prueba
+customize.email_editor.send_test_description: "Introduce una dirección para recibir una vista previa de esta plantilla con datos de muestra."
+customize.email_editor.send_test_send: Enviar
+customize.email_editor.send_test_cancel: Cancelar
+customize.email_editor.send_test_success: "¡Correo de prueba enviado!"
+two_factor.title: Autenticación de dos factores
+two_factor.subtitle: "Se ha enviado un código de verificación a tu dirección de correo electrónico. Por favor, introdúcelo a continuación."
+two_factor.code.label: Código de verificación
+two_factor.submit: Verificar
+
+rfm.title: Segmentación de clientes
+rfm.clear_filter: Borrar filtro
+rfm.no_customers: No hay clientes en este segmento.
+rfm.column.last_order: Último pedido
+rfm.column.frequency: Pedidos
+rfm.column.monetary: Total gastado
+rfm.segment.champions: Campeones
+rfm.segment.champions.description: Compran recientemente, con frecuencia y gastan más
+rfm.segment.loyal_customers: Clientes leales
+rfm.segment.loyal_customers.description: Piden regularmente y responden a las promociones
+rfm.segment.potential_loyalists: Leales potenciales
+rfm.segment.potential_loyalists.description: Clientes recientes con frecuencia creciente
+rfm.segment.recent_customers: Clientes recientes
+rfm.segment.recent_customers.description: Han comprado recientemente pero todavía no con frecuencia
+rfm.segment.promising: Prometedores
+rfm.segment.promising.description: Compradores recientes con frecuencia baja pero creciente
+rfm.segment.at_risk: En riesgo
+rfm.segment.at_risk.description: Solían pedir con frecuencia, pero no han pedido recientemente
+rfm.segment.cant_lose_them: No podemos perderlos
+rfm.segment.cant_lose_them.description: Grandes gastadores que no han vuelto en mucho tiempo
+rfm.segment.hibernating: En hibernación
+rfm.segment.hibernating.description: Último pedido hace mucho tiempo con bajo número de pedidos
+rfm.segment.lost: Perdidos
+rfm.segment.lost.description: Puntuaciones de recencia y frecuencia más bajas
+rfm.chart.segment_distribution: Distribución por segmento
+rfm.chart.avg_spend: Gasto medio por segmento
+rfm.chart.bounds_r: "Rangos de puntuación de recencia (días desde el último pedido)"
+rfm.chart.bounds_f: "Rangos de puntuación de frecuencia (pedidos)"
+rfm.chart.bounds_m: Rangos de puntuación monetaria
+rfm.chart.bubble: "Densidad de clientes por puntuación R×F"
+rfm.info.title: ¿Cómo funciona la segmentación de clientes?
+rfm.info.body: "El análisis RFM puntúa a cada cliente en tres dimensiones basándose en su historial de pedidos:"
+rfm.info.recency: "Recencia (R): ¿cuándo realizó el cliente su último pedido?"
+rfm.info.frequency: "Frecuencia (F): ¿cuántos pedidos ha realizado en total?"
+rfm.info.monetary: "Importe (M): ¿cuánto ha gastado en total?"
+rfm.info.quartiles: "R y F se puntúan del 1 al 4 usando umbrales absolutos configurables (p. ej. pedido en los últimos 30 días = R4, 10 o más pedidos = F4). M se puntúa de forma relativa al resto de la base de clientes. Los clientes se asignan a un segmento con nombre según la combinación de sus puntuaciones R y F."
+rfm.thresholds.configure: Configurar umbrales
+rfm.thresholds.recency: Recencia (R)
+rfm.thresholds.frequency: Frecuencia (F)
+rfm.thresholds.saved: Umbrales RFM guardados correctamente.
+rfm.thresholds.error.r_order: Los umbrales de recencia deben estar en orden ascendente (Puntuación 4 < Puntuación 3 < Puntuación 2).
+rfm.thresholds.error.f_order: Los umbrales de frecuencia deben estar en orden ascendente (Puntuación 2 < Puntuación 3 < Puntuación 4).
+rfm.thresholds.rfm_r_score4_max_days: Puntuación 4 — días máx desde el último pedido
+rfm.thresholds.rfm_r_score3_max_days: Puntuación 3 — días máx desde el último pedido
+rfm.thresholds.rfm_r_score2_max_days: Puntuación 2 — días máx desde el último pedido
+rfm.thresholds.rfm_f_score4_min_orders: Puntuación 4 — número mín de pedidos
+rfm.thresholds.rfm_f_score3_min_orders: Puntuación 3 — número mín de pedidos
+rfm.thresholds.rfm_f_score2_min_orders: Puntuación 2 — número mín de pedidos
+customer.badge.guest: Invitado
+customer.badge.registered: Registrado
+customer.insights.total_orders: Pedidos completados
+customer.insights.average_order: Ticket medio
+customer.insights.first_order: Primer pedido
+customer.insights.last_order: Último pedido
+customer.insights.favourite_restaurant: Restaurante favorito
+customer.order_history.title: Historial de pedidos
+customer.order_history.date: Fecha
+customer.order_history.order: "Pedido n.º"
+customer.order_history.status: Estado
+customer.order_history.vendor: Vendedor / Tienda
+customer.order_history.method: Método
+customer.order_history.total: Total
+customer.order_history.calendar: Actividad de pedidos
+customer.order_history.empty: Este cliente aún no tiene pedidos.
+rfm.order_history: Historial de pedidos
+form.theme.primary_group.label: Colores primarios
+form.theme.primary_group.help: "Usado para barras de navegación y botones"
+form.theme.primary.label: Color de fondo
+form.theme.primary-content.label: Color de fuente
+form.theme.secondary_group.label: Colores secundarios
+form.theme.secondary_group.help: "Usado para resaltes y acentos"
+form.theme.secondary.label: Color de fondo
+form.theme.secondary-content.label: Color de fuente

@@ -1,15 +1,13 @@
 import React from 'react'
-import { LoadingOverlay } from '@mantine/core';
 import { useSelector } from 'react-redux';
 import { selectIsLoadingOverlayVisible } from '../redux/selectors'
 
-export default () => {
-
+export default function LoadingOverlay() {
   const isVisible = useSelector(selectIsLoadingOverlayVisible);
-
-  console.log('isVisible', isVisible)
-
+  if (!isVisible) return null;
   return (
-    <LoadingOverlay visible={isVisible} zIndex={1000} overlayProps={{ radius: "sm", blur: 2 }} />
-  )
+    <div className="absolute inset-0 flex items-center justify-center bg-base-100/60 backdrop-blur-sm" style={{ zIndex: 1000 }}>
+      <span className="loading loading-spinner loading-lg"></span>
+    </div>
+  );
 }

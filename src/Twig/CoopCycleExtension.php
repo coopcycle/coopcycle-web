@@ -80,6 +80,7 @@ class CoopCycleExtension extends AbstractExtension
     {
         return array(
             new TwigFunction('coopcycle_setting', array(SettingResolver::class, 'resolveSetting')),
+            new TwigFunction('coopcycle_theme_color', array(SettingResolver::class, 'resolveThemeColor')),
             new TwigFunction('coopcycle_maintenance', array(MaintenanceResolver::class, 'isEnabled')),
             new TwigFunction('coopcycle_banner', array(BannerResolver::class, 'isEnabled')),
             new TwigFunction('coopcycle_banner_message', array(BannerResolver::class, 'getMessage')),
@@ -88,6 +89,8 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('stripe_can_enable_testmode', array(StripeResolver::class, 'canEnableTestmode')),
             new TwigFunction('coopcycle_logo', array(AppearanceRuntime::class, 'logo')),
             new TwigFunction('coopcycle_company_logo', array(AppearanceRuntime::class, 'companyLogo')),
+            new TwigFunction('coopcycle_banner_background_url', array(AppearanceRuntime::class, 'getBannerBackgroundUrl')),
+            new TwigFunction('coopcycle_banner_background_tone', array(AppearanceRuntime::class, 'getBannerBackgroundTone')),
             new TwigFunction('coopcycle_asset', array(AssetsRuntime::class, 'asset')),
             new TwigFunction('coopcycle_asset_base64', array(AssetsRuntime::class, 'assetBase64')),
             new TwigFunction('local_business_path', array(UrlGeneratorRuntime::class, 'localBusinessPath')),
@@ -115,6 +118,8 @@ class CoopCycleExtension extends AbstractExtension
             new TwigFunction('coopcycle_version', array(SettingResolver::class, 'getVersion')),
             new TwigFunction('coopcycle_github_release_link', array(SettingResolver::class, 'getGithubReleaseLink')),
             new TwigFunction('addresses_normalized', array(UserRuntime::class, 'getUserAddresses')),
+            new TwigFunction('coopcycle_theme', array(AppearanceRuntime::class, 'getTheme')),
+            new TwigFunction('email_fragment', array(EmailTemplateRuntime::class, 'getFragment')),
         );
     }
 
@@ -181,9 +186,19 @@ class CoopCycleExtension extends AbstractExtension
     {
         $locale = $context['app']->getRequest()->getLocale();
 
-        $carbon = Carbon::parse($date);
-
-        return strtolower($carbon->locale($locale)->calendar());
+        $carbon = Carbon::parse($date)->locale($locale);
+        if ($carbon->isToday()) {
+            return strtolower($carbon->isoFormat('[Today at] LT'));
+        } elseif ($carbon->isTomorrow()) {
+            return strtolower($carbon->isoFormat('[Tomorrow at] LT'));
+        } elseif ($carbon->isYesterday()) {
+            return strtolower($carbon->isoFormat('[Yesterday at] LT'));
+        } elseif ($carbon->isFuture() && $carbon->diffInDays() < 7) {
+            return strtolower($carbon->isoFormat('dddd [at] LT'));
+        } elseif ($carbon->isPast() && Carbon::now()->diffInDays($carbon) < 7) {
+            return strtolower($carbon->isoFormat('[Last] dddd [at] LT'));
+        }
+        return strtolower($carbon->isoFormat('L'));
     }
 
     public function hashid(object $object, $minHashLength = 8)

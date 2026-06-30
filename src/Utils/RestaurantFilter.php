@@ -5,6 +5,7 @@ namespace AppBundle\Utils;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Base\GeoCoordinates;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\LocalBusiness\AddressResolver;
 use AppBundle\Service\RoutingInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 use Symfony\Component\Stopwatch\Stopwatch;
@@ -39,7 +40,7 @@ class RestaurantFilter
         $source = new GeoCoordinates($latitude, $longitude);
 
         $destinations =
-            array_map(fn($restaurant) => $restaurant->getAddress()->getGeo(), $restaurants);
+            array_map(fn(LocalBusiness $restaurant) => AddressResolver::resolveAddress($restaurant)->getGeo(), $restaurants);
 
         $matches = [];
         $distances = $this->routing->getDistances($source, ...$destinations);

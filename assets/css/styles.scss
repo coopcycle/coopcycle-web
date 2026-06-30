@@ -42,10 +42,12 @@ body {
   border-radius: 0;
   border-bottom: 2px solid #ecf0f1;
 
+  /*
   .nav--to-dispatch {
     text-decoration: underline;
     font-weight: 700;
   }
+  */
 }
 
 .page-header {
@@ -77,14 +79,6 @@ body {
   }
 }
 
-.btn > .btn__loading_indicator {
-  display:none;
-}
-
-.btn--loading > .btn__loading_indicator {
-  display:inline-block;
-}
-
 .text-monospace {
   font-family: "Roboto Mono", "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
 }
@@ -100,18 +94,6 @@ body {
   margin-bottom: 20px;
   &__map {
     flex: 1;
-  }
-}
-
-.about-us {
-  font-size: $font-size-large;
-  letter-spacing: 0.02em;
-  h1, h2, h3, h4 {
-    font-weight: 700;
-  }
-  table {
-    @extend .table;
-    @extend .table-bordered;
   }
 }
 

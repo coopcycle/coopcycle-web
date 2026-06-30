@@ -6,10 +6,10 @@ use ApiPlatform\Api\IriConverterInterface;
 use AppBundle\Entity\Task;
 use AppBundle\Service\TaskManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\DBAL\LockMode;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use AppBundle\Message\CalculateTaskDistance;
@@ -27,7 +27,6 @@ class BulkMarkAsDone extends Base
     private $normalizerInterface;
 
     public function __construct(
-        TokenStorageInterface $tokenStorage,
         TaskManager $taskManager,
         IriConverterInterface $iriConverter,
         EntityManagerInterface $entityManager,
@@ -35,7 +34,7 @@ class BulkMarkAsDone extends Base
         private MessageBusInterface $eventBus,
     )
     {
-        parent::__construct($tokenStorage, $taskManager);
+        parent::__construct($taskManager);
 
         $this->iriConverter = $iriConverter;
         $this->entityManager = $entityManager;
@@ -52,32 +51,46 @@ class BulkMarkAsDone extends Base
         }
 
         $tasks = $payload["tasks"];
-        $tasksObjs = array_map(function ($taskIri) { return $this->iriConverter->getResourceFromIri($taskIri); }, $tasks);
 
+        $tasksObjs = [];
         $tasksResults= [];
         $tasksFailed= [];
 
-        // sort tasks
-        // if tasks are in a delivery make sure that the delivery order is respected so we avoid validation errors
-        usort($tasksObjs, function(Task $a, Task $b) {
-            if ($a->getDelivery() && $b->getDelivery()) {
-                $aPos = $a->getDelivery()->findTaskPosition($a);
-                $bPos = $b->getDelivery()->findTaskPosition($b);
-                return $aPos < $bPos ? -1 : 1;
-            } else {
-                return $a->getId() < $b->getId() ? -1 : 1;
-            }
-        });
+        $connection = $this->entityManager->getConnection();
+        $connection->beginTransaction();
+        try {
+            $tasksObjs = array_map(function ($taskIri) {
+                $task = $this->iriConverter->getResourceFromIri($taskIri);
+                $this->entityManager->lock($task, LockMode::PESSIMISTIC_WRITE);
+                return $task;
+            }, $tasks);
 
-        foreach($tasksObjs as $task) {
-            try {
-                $tasksResults[] = $this->done($task, $request, calculateCO2: false);
-            } catch(BadRequestHttpException $e) {
-                $tasksFailed[$this->iriConverter->getIriFromResource($task)] = $e->getMessage();
+            // sort tasks
+            // if tasks are in a delivery make sure that the delivery order is respected so we avoid validation errors
+            usort($tasksObjs, function(Task $a, Task $b) {
+                if ($a->getDelivery() && $b->getDelivery()) {
+                    $aPos = $a->getDelivery()->findTaskPosition($a);
+                    $bPos = $b->getDelivery()->findTaskPosition($b);
+                    return $aPos < $bPos ? -1 : 1;
+                } else {
+                    return $a->getId() < $b->getId() ? -1 : 1;
+                }
+            });
+
+            foreach($tasksObjs as $task) {
+                try {
+                    $tasksResults[] = $this->done($task, $request, calculateCO2: false);
+                } catch(BadRequestHttpException $e) {
+                    $tasksFailed[$this->iriConverter->getIriFromResource($task)] = $e->getMessage();
+                }
             }
+
+            $this->entityManager->flush();
+            $connection->commit();
+        } catch (\Throwable $e) {
+            $connection->rollBack();
+            throw $e;
         }
-
-        $this->entityManager->flush();
 
 
         //TODO: Check if BulkMarkAsDone can be called on different TaskList.

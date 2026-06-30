@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { AutoComplete, Checkbox, DatePicker, Divider, Flex, Select, Tag, Button, Typography, Spin } from 'antd';
+import { DatePicker, Divider, Flex, Select, Tag, Button, Typography, Spin, Switch } from 'antd';
 import qs from 'qs'
 import _ from 'lodash'
 import moment from 'moment'
@@ -53,12 +53,7 @@ export default function OrderListFilters({ defaultFilters }) {
   const { t } = useTranslation();
   const [filters, setFilters] = useState(transformDefaultFilters(defaultFilters));
   const [owners, setOwners] = useState([])
-  const [ownerValue, setOwnerValue] = useState()
   const [isFetching, setIsFetching] = useState(false)
-
-  useEffect(() => {
-    console.log(qs.stringify(filters))
-  }, [filters]);
 
   let datePickerProps = {}
   if (defaultFilters.date) {
@@ -106,7 +101,6 @@ export default function OrderListFilters({ defaultFilters }) {
         <Select
           mode="multiple"
           tagRender={tagRender}
-          defaultValue={[]}
           style={{ minWidth: '150px' }}
           options={options}
           defaultValue={ defaultFilters.state }
@@ -138,6 +132,16 @@ export default function OrderListFilters({ defaultFilters }) {
           style={{ minWidth: '150px' }}
           placeholder={t('ADMIN_DASHBOARD_SEARCH')}
         />
+        <Switch
+          size="small"
+          disabled={_.isEmpty(filters.owner)}
+          defaultChecked={filters.owner_include}
+          onChange={(checked) => {
+            setFilters({
+              ...filters,
+              owner_include: checked
+            })
+          }} />
         <Divider type="vertical" />
         <Button
           type="primary"

@@ -191,6 +191,7 @@ restaurant.form.exclusive.docs_path: /en/food-tech/restaurants/general-settings/
 restaurant.form.quotes_allowed.label: 'This restaurant also accepts quotes (e.g.: catering)'
 restaurant.form.quotes_allowed.docs_path: /en/food-tech/restaurants/general-settings/#quotes-allowed
 restaurant.form.loopeat_enabled.label: Enable LoopEat deposit-refund system
+restaurant.form.loopeat_mandatory.label: Make %name% mandatory for all orders
 restaurant.form.loopeat_disconnect.label: Disconnect %name%
 restaurant.form.featured.label: This restaurant is featured on homepage
 restaurant.form.featured.docs_path: /en/food-tech/restaurants/general-settings/#featured
@@ -378,7 +379,7 @@ order.adjustment_type.platform_fees: CoopCycle fees
 order.adjustment_type.reusable_packaging: Packaging
 order.adjustment_type.tip: Tip
 order.adjustment_type.incident: Incident
-order_item.adjustment_type.reusable_packaging: '%quantity% × packaging(s)'
+order_item.adjustment_type.reusable_packaging: '%quantity% × « %name% » packaging(s)'
 order.list.total: Total
 order.list.shippedAt: Shipping time
 order.list.type: Type
@@ -812,6 +813,7 @@ form.package.average_weight.label: Average weight (kg)
 form.package.max_weight.label: Max weight (kg)
 form.package.tags.label: Tags to apply automatically to tasks
 form.package.shortCode.label: 2 letter code
+form.package.shortCode.help: Limited to 2 characters
 form.package.volume_units.label: Volume unit
 form.reusable_packaging.name.label: Name
 form.reusable_packaging.is_tracked.label: Tracking enabled
@@ -837,7 +839,8 @@ form.customize.custom_terms.label: Custom terms & conditions page content
 form.customize.custom_privacy_enabled.label: Enable custom privacy policy
 form.customize.custom_privacy.label: Custom privacy policy page content
 form.customize.custom_banner.label: Custom banner
-form.customize.custom_banner.help: Make sure that the banner is a repeatable SVG pattern
+form.customize.custom_banner.help: "Accepted formats: SVG (repeatable pattern), JPG or PNG (full background image)"
+form.customize.banner_background_image.label: Banner background image (JPG/PNG)
 promotion_coupon.used.label: Number of uses
 product_option.strategy.free: Free
 product_option.strategy.option_value: Custom price
@@ -934,6 +937,8 @@ basics.powered_by: Powered by <a href="https://coopcycle.org">CoopCycle</a>
 basics.add: Add
 basics.edit: Edit
 basics.editing: Editing
+basics.pause: Pause
+basics.resume: Resume
 basics.delete: Delete
 basics.cancel: Cancel
 basics.clone: Clone
@@ -1245,6 +1250,8 @@ restaurant.embed.step_2: 'Add the <code>data-coopcycle-embed="%url%"</code> to a
 restaurant.embed.greeting: That's all! Now when visitors click on the button, it opens
   a window directly on your website.
 form.settings.guest_checkout_enabled.label: Enable guest checkout
+form.settings.new_shop_days.label: New shop window (days)
+form.settings.new_shop_days.help: Number of days after creation during which a shop is considered new
 order.list.reorder: Reorder
 homepage.form.title: Do you need something delivered?
 homepage.form.content: "<strong>%brand_name%</strong> is operating local and non polluting\
@@ -1402,6 +1409,7 @@ form.store_type.defaultCourier.help: Orders placed for this store will be automa
 homepage.featured: Featured
 homepage.exclusive: Exclusives
 homepage.shops.new: New shops
+homepage.edenred: Edenred
 users.disabled: Disabled
 shops.filters.clear_all: Clear all
 shops.filters.title.types: Types
@@ -1684,8 +1692,8 @@ pricing.rule.humanizer.packages_contains_at_least_one: packages %package_name%
 pricing.rule.humanizer.price_range: '%unit_price% per %step%'
 pricing.rule.humanizer.price_range_with_threshold: 'above %threshold% - %unit_price% per %step%'
 pricing.rule.humanizer.price_per_package: '%unit_price% per %package_name%'
-adminDashboard.promotions.ongoing: Ongoing promotions
-adminDashboard.promotions.past: Past promotions
+adminDashboard.promotions.ongoing: Ongoing promotions (%count%)
+adminDashboard.promotions.past: Past promotions (%count%)
 order.download_receipt: Download receipt
 order.generate_receipt: Generate receipt
 form.settings.pawapay_api_key.label: Pawapay API key
@@ -1717,6 +1725,12 @@ form.delivery.errors.not_reversable: You can only reverse deliveries with 1 pick
 form.store.document: Document
 basics.upload: Upload
 form.product.options.add: Add an option
+form.day_of_week_address.days_of_week.label: Days of the week
+localBusiness.form.day_of_week_addresses.label: Addresses depending on the day of the week
+localBusiness.form.day_of_week_addresses.add: Add address
+localBusiness.form.day_of_week_addresses.help: Use this if the address changes during the week (i.e foodtrucks)
+localBusiness.form.day_of_week_delivery_perimeter_expressions.label: Delivery perimeter depending on the day of the week
+localBusiness.form.day_of_week_delivery_perimeter_expressions.add: Add delivery perimeter
 form.api_app.store.placeholder: Choose a store to restrict access
 form.api_app.store.help: You can also leave empty if you want to allow access to all orders
 form.api_app.scopes.label: Scopes
@@ -1725,6 +1739,7 @@ form.api_app.scope.deliveries: Deliveries
 form.api_app.scope.tasks: Tasks
 form.api_app.scope.orders: Orders
 form.api_app.scope.orders_all: All orders
+form.api_app.scope.tasks_all: All tasks
 form.order.payment_refund.tooltip: To refund, create an incident first
 form.credit_note.deprecated_warning: Creating credit notes via this page is deprecated, create an incident
 order.create_credit_note: Create a credit note
@@ -1732,3 +1747,127 @@ form.product_option_value.product.tooltip: Link a product so that when the produ
 form.product_option_value.product.placeholder: Search a product…
 form.product_option_value.depends_on.placeholder: Select a value
 form.product_option_value.depends_on.tooltip: Select another value which this value depends on
+form.customize.theme.label: Theme
+form.theme.primary_group.label: Primary colors
+form.theme.primary_group.help: "Used for navbars and buttons"
+form.theme.primary.label: Background color
+form.theme.primary-content.label: Font color
+form.theme.secondary_group.label: Secondary colors
+form.theme.secondary_group.help: "Used for highlights and accents"
+form.theme.secondary.label: Background color
+form.theme.secondary-content.label: Font color
+pagination.items_per_page: Items per page
+restaurant.form.en_boite_le_plat_platform_fee.label: The deposit should be collected by the platform
+
+# Email editor
+customize.emails: Customize emails
+customize.email_editor.email_type.order_created: Order Confirmed (Customer)
+customize.email_editor.email_type.order_accepted_foodtech_delivery: Order Accepted – Delivery
+customize.email_editor.email_type.order_accepted_foodtech_collection: Order Accepted – Collection
+customize.email_editor.email_type.order_accepted_lastmile: Order Accepted (Last Mile)
+customize.email_editor.email_type.order_cancelled: Order Cancelled
+customize.email_editor.email_type.order_delayed: Order Delayed
+customize.email_editor.email_type.order_payment: Payment Confirmation
+customize.email_editor.email_type.order_receipt: Order Receipt
+customize.email_editor.email_type.task_dropoff_completed: Dropoff Completed
+customize.email_editor.email_type.task_pickup_completed: Pickup Completed
+customize.email_editor.email_type.task_dropoff_failed: Dropoff Failed
+customize.email_editor.email_type.task_pickup_failed: Pickup Failed
+customize.email_editor.email_type.resetting: Password Reset
+customize.email_editor.email_type.registration: Registration Confirmation
+customize.email_editor.save: Save
+customize.email_editor.reset: Reset to default
+customize.email_editor.status.default: Showing default template — save to customise
+customize.email_editor.status.custom: Showing custom template
+customize.email_editor.variables: Available variables
+customize.email_editor.layout: Layout
+customize.email_editor.folder.foodtech: Foodtech
+customize.email_editor.folder.lastmile: Last Mile
+customize.email_editor.folder.account: Account
+customize.email_editor.send_test: Send test
+customize.email_editor.send_test_title: Send test email
+customize.email_editor.send_test_description: "Enter an address to receive a preview of this template with sample data."
+customize.email_editor.send_test_send: Send
+customize.email_editor.send_test_cancel: Cancel
+customize.email_editor.send_test_success: Test email sent!
+two_factor.title: Two-factor authentication
+two_factor.subtitle: "A verification code has been sent to your email address. Please enter it below."
+two_factor.code.label: Verification code
+two_factor.submit: Verify
+
+rfm.title: Customer Segmentation
+rfm.clear_filter: Clear filter
+rfm.no_customers: No customers in this segment.
+rfm.column.last_order: Last order
+rfm.column.frequency: Orders
+rfm.column.monetary: Total spent
+rfm.segment.champions: Champions
+rfm.segment.champions.description: Bought recently, buy often, and spend the most
+rfm.segment.loyal_customers: Loyal Customers
+rfm.segment.loyal_customers.description: Order regularly and respond to promotions
+rfm.segment.potential_loyalists: Potential Loyalists
+rfm.segment.potential_loyalists.description: Recent customers with growing frequency
+rfm.segment.recent_customers: Recent Customers
+rfm.segment.recent_customers.description: Bought most recently but not often yet
+rfm.segment.promising: Promising
+rfm.segment.promising.description: Recent shoppers with low but growing frequency
+rfm.segment.at_risk: At Risk
+rfm.segment.at_risk.description: Used to be frequent, but haven't ordered recently
+rfm.segment.cant_lose_them: Can't Lose Them
+rfm.segment.cant_lose_them.description: Big spenders who haven't returned in a long time
+rfm.segment.hibernating: Hibernating
+rfm.segment.hibernating.description: Last purchase was long ago with low order count
+rfm.segment.lost: Lost
+rfm.segment.lost.description: Lowest recency and frequency scores
+rfm.chart.segment_distribution: Segment distribution
+rfm.chart.avg_spend: Average spend per segment
+rfm.chart.bounds_r: Recency score ranges (days since last order)
+rfm.chart.bounds_f: Frequency score ranges (orders)
+rfm.chart.bounds_m: Monetary score ranges
+rfm.chart.bubble: Customer density by R×F score
+rfm.info.title: How does customer segmentation work?
+rfm.info.body: "RFM analysis scores every customer on three dimensions based on their order history:"
+rfm.info.recency: "Recency (R): how recently did the customer last order?"
+rfm.info.frequency: "Frequency (F): how many orders have they placed in total?"
+rfm.info.monetary: "Monetary (M): how much have they spent in total?"
+rfm.info.quartiles: "R and F are scored 1–4 using configurable absolute thresholds (e.g. ordered within 30 days = R4, 10+ orders = F4). M is scored relative to the rest of the customer base. Customers are assigned to a named segment based on the combination of their R and F scores."
+rfm.thresholds.configure: Configure thresholds
+rfm.thresholds.recency: Recency (R)
+rfm.thresholds.frequency: Frequency (F)
+rfm.thresholds.saved: RFM thresholds saved successfully.
+rfm.thresholds.error.r_order: Recency thresholds must be in ascending order (Score 4 < Score 3 < Score 2).
+rfm.thresholds.error.f_order: Frequency thresholds must be in ascending order (Score 2 < Score 3 < Score 4).
+rfm.thresholds.rfm_r_score4_max_days: Score 4 — max days since last order
+rfm.thresholds.rfm_r_score3_max_days: Score 3 — max days since last order
+rfm.thresholds.rfm_r_score2_max_days: Score 2 — max days since last order
+rfm.thresholds.rfm_f_score4_min_orders: Score 4 — min number of orders
+rfm.thresholds.rfm_f_score3_min_orders: Score 3 — min number of orders
+rfm.thresholds.rfm_f_score2_min_orders: Score 2 — min number of orders
+customer.badge.guest: Guest
+customer.badge.registered: Registered
+customer.insights.total_orders: Fulfilled orders
+customer.insights.average_order: Avg. order value
+customer.insights.first_order: First order
+customer.insights.last_order: Last order
+customer.insights.favourite_restaurant: Favourite restaurant
+customer.order_history.title: Order history
+customer.order_history.date: Date
+customer.order_history.order: "Order #"
+customer.order_history.status: Status
+customer.order_history.vendor: Vendor / Store
+customer.order_history.method: Method
+customer.order_history.total: Total
+customer.order_history.calendar: Order activity
+customer.order_history.empty: This customer has no orders yet.
+customer.recommendations.title: Recommendations
+customer.recommendations.restaurants: Recommended restaurants
+customer.recommendations.products: Recommended products
+checkout.recommendations.title: You might also like...
+checkout.recommendations.how_generated: How are these results generated?
+checkout.recommendations.dialog.title: How do we generate recommendations?
+checkout.recommendations.dialog.privacy: Your data is never shared with any third-party service. Recommendations are calculated entirely on our own servers.
+checkout.recommendations.dialog.explanation: We analyse which products are frequently ordered together by customers with similar tastes — a technique called collaborative filtering, similar to how streaming services suggest films. Customers who have never ordered here before see the most popular items at this restaurant instead.
+checkout.recommendations.dialog.github: See the source code on GitHub →
+checkout.recommendations.dialog.close: Close
+rfm.order_history: Order history
+customize.email_alert: New! Customize emails

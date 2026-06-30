@@ -8,7 +8,9 @@ use AppBundle\Domain\Order\Event\OrderFulfilled;
 use AppBundle\Domain\Task\Event\TaskDone;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 
 /**
  * Re-triggers an event in the order domain.
@@ -50,7 +52,9 @@ use Symfony\Component\Messenger\MessageBusInterface;
                 $shouldCompletePayment = false;
             }
 
-            $this->eventBus->dispatch(new OrderFulfilled($order, $shouldCompletePayment));
+            $this->eventBus->dispatch(
+                (new Envelope(new OrderFulfilled($order, $shouldCompletePayment)))->with(new DispatchAfterCurrentBusStamp())
+            );
         }
     }
 }

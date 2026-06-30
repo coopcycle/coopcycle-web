@@ -131,7 +131,7 @@ class ProfileController extends AbstractController
 
         $user = $this->getUser();
 
-        $editForm = $this->createForm(UpdateProfileType::class, $user);
+        $editForm = $this->createForm(UpdateProfileType::class, $user, ['with_admin_controls' => false]);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {

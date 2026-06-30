@@ -19,6 +19,7 @@ import {
   loadVehiclesSuccess,
   loadTrailersSuccess,
   setTaskListsLoading,
+  setLoadingTaskIds,
   loadWarehousesSuccess,
   setOptimResult,
   startOptimRequest
@@ -50,6 +51,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         taskListsLoading: action.payload,
+      }
+
+    case setLoadingTaskIds.type:
+      return {
+        ...state,
+        loadingTaskIds: action.payload,
       }
 
     case OPEN_NEW_TASK_MODAL:
@@ -120,7 +127,7 @@ export default (state = initialState, action) => {
       let unassignedToursOrGroupsOrderIds
       unassignedToursOrGroupsOrderIds = [...state.unassignedToursOrGroupsOrderIds]
       _.remove(unassignedToursOrGroupsOrderIds, t => action.payload.itemsToRemoveIds.includes(t))
-      unassignedToursOrGroupsOrderIds = [...unassignedToursOrGroupsOrderIds, ...action.payload.itemsToAppendIds]
+      unassignedToursOrGroupsOrderIds = _.uniq([...unassignedToursOrGroupsOrderIds, ...action.payload.itemsToAppendIds])
       return {
         ...state,
         unassignedToursOrGroupsOrderIds: unassignedToursOrGroupsOrderIds,

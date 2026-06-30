@@ -44,7 +44,7 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
 
         $this->now = Carbon::now();
 
-        $this->maxDate = $maxDate ?? $this->now->copy()->add($timeSlot->getInterval());
+        $this->maxDate = $maxDate ?? $this->now->clone()->add($timeSlot->getInterval());
 
         $this->workingDaysOnly = $timeSlot->isWorkingDaysOnly();
 
@@ -118,7 +118,7 @@ class TimeSlotChoiceLoader implements ChoiceLoaderInterface
 
             if (!empty($this->timeSlot->getSameDayCutoff())
             && $carbonCursor->isSameDay($this->now)) {
-                $cutoff = $this->now->copy()->setTimeFromTimeString(
+                $cutoff = $this->now->clone()->setTimeFromTimeString(
                     $this->timeSlot->getSameDayCutoff()
                 );
                 if ($this->now > $cutoff) {

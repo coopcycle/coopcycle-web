@@ -8,7 +8,7 @@ import moment from 'moment'
 import clsx from 'clsx'
 
 import { setCurrentTask, assignAfter, selectTask, selectTasksByIds, toggleTask } from '../redux/actions'
-import { CourierMapLayer, TaskMapLayer, PolylineMapLayer, ClustersMapToggle } from './MapLayers'
+import { CourierMapLayer, TaskMapLayer, PolylineMapLayer, ClustersMapToggle, WarehouseMapLayer } from './MapLayers'
 
 
 const sortByBefore = task => moment(task.before)
@@ -204,7 +204,7 @@ const MapProvider = (props) => {
       onPickupClusterClick: (a) => {
 
         const childMarkers = a.layer.getAllChildMarkers()
-        const tasks = childMarkers.map(m => m.options.task)
+        const tasks = childMarkers.map(m => m.options.task).filter(Boolean)
 
         const el = document.createElement('div')
 
@@ -251,6 +251,7 @@ class LeafletMap extends Component {
         useAvatarColors={ this.props.useAvatarColors }
       >
         <CourierMapLayer />
+        <WarehouseMapLayer />
         <TaskMapLayer />
         <PolylineMapLayer />
         <ClustersMapToggle />

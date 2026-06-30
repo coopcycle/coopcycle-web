@@ -251,3 +251,7 @@ Sylius\Component\Promotion\Model\PromotionCoupon:
   attributes:
     code:
       groups: ['promotion']
+    used:
+      groups: ['promotion']
+    updatedAt:
+      groups: ['promotion']

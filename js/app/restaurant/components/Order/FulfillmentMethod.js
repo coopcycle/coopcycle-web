@@ -23,7 +23,7 @@ export default function FulfillmentMethod({
   const { t } = useTranslation()
 
   return (
-    <div className="d-flex justify-content-between">
+    <div className="flex justify-between">
       <span>
         {value === 'collection' && (
           <React.Fragment>

@@ -9,7 +9,7 @@ import moment from 'moment'
 
 it('displays a default rule', () => {
   cy.stub(hookModule, 'useDeliveryFormFormikContext').returns({
-    rruleValue: null,
+    rruleValue: undefined,
     setFieldValue: cy.stub(),
   })
 

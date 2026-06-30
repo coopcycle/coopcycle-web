@@ -1,6 +1,7 @@
 Feature: Invoicing
 
   Scenario: Get invoice line items
+    Given the PHP memory limit is set to "1024M"
     Given the fixtures files are loaded with purge:
       | setup_default.yml |
     Given the fixtures files are loaded:
@@ -113,6 +114,7 @@ Feature: Invoicing
       """
 
   Scenario: Get invoice line items filtered by store
+    Given the PHP memory limit is set to "1024M"
     Given the fixtures files are loaded with purge:
       | setup_default.yml |
     Given the fixtures files are loaded:
@@ -200,6 +202,7 @@ Feature: Invoicing
       """
 
   Scenario: Get invoice line items filtered by multiple stores
+    Given the PHP memory limit is set to "1024M"
     Given the fixtures files are loaded with purge:
       | setup_default.yml |
     Given the fixtures files are loaded:
@@ -287,6 +290,7 @@ Feature: Invoicing
       """
 
   Scenario: Get invoice line items grouped by organization
+    Given the PHP memory limit is set to "1024M"
     Given the fixtures files are loaded with purge:
       | setup_default.yml |
     Given the fixtures files are loaded:
@@ -371,6 +375,7 @@ Feature: Invoicing
       """
 
   Scenario: Get invoice line items by date
+    Given the PHP memory limit is set to "1024M"
     Given the fixtures files are loaded with purge:
       | setup_default.yml |
     Given the fixtures files are loaded:

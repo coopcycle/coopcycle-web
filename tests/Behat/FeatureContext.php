@@ -17,6 +17,7 @@ use AppBundle\Entity\RemotePushToken;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\ReusablePackagings;
 use AppBundle\Entity\Store;
+use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Task;
@@ -36,6 +37,12 @@ use Behat\Behat\Hook\Scope\AfterStepScope;
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
+use Behat\Hook\AfterScenario;
+use Behat\Hook\AfterStep;
+use Behat\Hook\BeforeScenario;
+use Behat\Step\Given;
+use Behat\Step\Then;
+use Behat\Step\When;
 use Behat\Testwork\Tester\Result\TestResult;
 use Behat\Testwork\Tester\Result\ExceptionResult;
 use Doctrine\ORM\EntityManagerInterface;
@@ -132,18 +139,14 @@ class FeatureContext implements Context, SnippetAcceptingContext
         return $this->kernel->getContainer();
     }
 
-    /**
-     * @BeforeScenario
-     */
+    #[BeforeScenario]
     public function logScenarioName(BeforeScenarioScope $scope)
     {
         $scenario = $scope->getScenario();
         $this->logger->info(sprintf("TestRun: Before test: %s", $scenario->getTitle()));
     }
 
-    /**
-     * @BeforeScenario
-     */
+    #[BeforeScenario]
     public function gatherContexts(BeforeScenarioScope $scope)
     {
         /** @var \Behat\Behat\Context\Environment\InitializedContextEnvironment */
@@ -153,9 +156,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->minkContext = $environment->getContext('Behat\MinkExtension\Context\MinkContext');
     }
 
-    /**
-     * @BeforeScenario
-     */
+    #[BeforeScenario]
     public function clearData()
     {
         $this->databasePurger->purge();
@@ -163,26 +164,20 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
     }
 
-    /**
-     * @BeforeScenario
-     */
+    #[BeforeScenario]
     public function resetSequences()
     {
         $this->databasePurger->resetSequences();
     }
 
-    /**
-     * @BeforeScenario
-     */
+    #[BeforeScenario]
     public function clearAuthentication()
     {
         $this->tokens = [];
         $this->oAuthTokens = [];
     }
 
-    /**
-     * @BeforeScenario
-     */
+    #[BeforeScenario]
     public function setupMandatoryEntities()
     {
         $this->fixturesLoader->load([
@@ -191,12 +186,11 @@ class FeatureContext implements Context, SnippetAcceptingContext
         ], $_SERVER, [], PurgeMode::createNoPurgeMode());
     }
 
-    /**
-     * @BeforeScenario
-     */
+    #[BeforeScenario]
     public function createTypesenseCollections()
     {
         $defs = $this->typesenseCollectionManager->getCollectionDefinitions();
+
         foreach ($defs as $name => $def) {
             try {
                 $this->typesenseCollectionManager->deleteCollection($name);
@@ -206,9 +200,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
     }
 
-    /**
-     * @AfterScenario
-     */
+    #[AfterScenario]
     public function unSetCarbon()
     {
         Carbon::setTestNow();
@@ -216,9 +208,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->redis->del('datetime:now');
     }
 
-    /**
-     * @AfterScenario
-     */
+    #[AfterScenario]
     public function disableMaintenance()
     {
         $this->redis->del('maintenance');
@@ -226,10 +216,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
     /**
      * @see https://pscheit.medium.com/display-a-short-stacktrace-in-behat-for-php-when-test-as-thrown-an-exception-df65ab85ddb2
-     *
-     * @AfterStep
-     * @param AfterStepScope $scope
      */
+    #[AfterStep]
     public function printSmallStacktraceAfterFailure(AfterStepScope $scope)
     {
         $testResult = $scope->getTestResult();
@@ -240,9 +228,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
     }
 
-    /**
-     * @Given the fixtures file :filename is loaded
-     */
+    #[Given('the fixtures file :filename is loaded')]
     public function theFixturesFileIsLoaded($filename)
     {
         $filename = $this->transformFixtureFilename($filename);
@@ -253,9 +239,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->entityManager->flush();
     }
 
-    /**
-     * @Given the fixtures files are loaded:
-     */
+    #[Given('the fixtures files are loaded:')]
     public function theFixturesFilesAreLoaded(TableNode $table)
     {
         $filenames = array_map(function (array $row) {
@@ -268,9 +252,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->entityManager->flush();
     }
 
-    /**
-     * @Given the fixtures file :filename is loaded with purge
-     */
+    #[Given('the fixtures file :filename is loaded with purge')]
     public function theFixturesFileIsLoadedWithPurge($filename)
     {
         $filename = $this->transformFixtureFilename($filename);
@@ -281,9 +263,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->entityManager->flush();
     }
 
-    /**
-     * @Given the fixtures files are loaded with purge:
-     */
+    #[Given('the fixtures files are loaded with purge:')]
     public function theFixturesFilesAreLoadedWithPurge(TableNode $table)
     {
         $filenames = array_map(function (array $row) {
@@ -303,9 +283,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         return $dir . $filename;
     }
 
-    /**
-     * @Given the redis database is empty
-     */
+    #[Given('the redis database is empty')]
     public function theRedisDatabaseIsEmpty()
     {
         foreach ($this->redis->keys('*') as $key) {
@@ -316,9 +294,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
     }
 
-    /**
-     * @Given the current time is :datetime
-     */
+    #[Given('the current time is :datetime')]
     public function currentTimeIs(string $datetime)
     {
         Carbon::setTestNow(Carbon::parse($datetime));
@@ -332,18 +308,14 @@ class FeatureContext implements Context, SnippetAcceptingContext
         );
     }
 
-    /**
-     * @Given the maintenance mode is on
-     */
+    #[Given('the maintenance mode is on')]
     public function enableMaintenance()
     {
         $this->redis->set('maintenance', '1');
     }
 
-    /**
-     * @Given the async messages are consumed
-     * @Given the async messages are consumed with time limit :timeLimit seconds
-     */
+    #[Given('the async messages are consumed')]
+    #[Given('the async messages are consumed with time limit :timeLimit seconds')]
     public function theAsyncMessagesAreConsumed(int $timeLimit = 5)
     {
         // https://symfony.com/doc/6.4/console/command_in_controller.html
@@ -416,9 +388,18 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
     }
 
-    /**
-     * @Given the user is loaded:
-     */
+    #[Given('there is a guest customer with email :email')]
+    public function thereIsAGuestCustomerWithEmail(string $email): void
+    {
+        $customer = new Customer();
+        $customer->setEmail($email);
+        $customer->setEmailCanonical(strtolower($email));
+
+        $this->entityManager->persist($customer);
+        $this->entityManager->flush();
+    }
+
+    #[Given('the user is loaded:')]
     public function theUserIsLoaded(TableNode $table)
     {
         $data = $table->getRowsHash();
@@ -426,9 +407,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->createUser($data['username'], $data['email'], $data['password'], $data);
     }
 
-    /**
-     * @Given the user :username is loaded:
-     */
+    #[Given('the user :username is loaded:')]
     public function theUserWithUsernameIsLoaded($username, TableNode $table)
     {
         $data = $table->getRowsHash();
@@ -436,9 +415,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->createUser($username, $data['email'], $data['password'], $data);
     }
 
-    /**
-     * @Given the courier is loaded:
-     */
+    #[Given('the courier is loaded:')]
     public function theCourierIsLoaded(TableNode $table)
     {
         $data = $table->getRowsHash();
@@ -451,9 +428,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->userManager->updateUser($user);
     }
 
-    /**
-     * @Given the user :username has role :role
-     */
+    #[Given('the user :username has role :role')]
     public function theUserHasRole($username, $role)
     {
         $user = $this->userManager->findUserByUsername($username);
@@ -462,9 +437,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->userManager->updateUser($user);
     }
 
-    /**
-     * @Given the courier :username is loaded:
-     */
+    #[Given('the courier :username is loaded:')]
     public function theCourierWithUsernameIsLoaded($username, TableNode $table)
     {
         $data = $table->getRowsHash();
@@ -477,9 +450,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->userManager->updateUser($user);
     }
 
-    /**
-     * @Given the user :username has delivery address:
-     */
+    #[Given('the user :username has delivery address:')]
     public function theUserHasDeliveryAddress($username, TableNode $table)
     {
         $data = $table->getRowsHash();
@@ -501,9 +472,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $em->flush();
     }
 
-    /**
-     * @Given the user :username is authenticated
-     */
+    #[Given('the user :username is authenticated')]
     public function theUserIsAuthenticated($username)
     {
         $jwtManager = $this->getContainer()->get('lexik_jwt_authentication.jwt_manager');
@@ -514,9 +483,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->tokens[$username] = $token;
     }
 
-    /**
-     * @Given the store with name :storeName has an API key
-     */
+    #[Given('the store with name :storeName has an API key')]
     public function theStoreWithNameHasAnApiKey($storeName)
     {
         $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
@@ -535,27 +502,21 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->apiKeys[$storeName] = $apiKey;
     }
 
-    /**
-     * @When I send an authenticated :method request to :url
-     */
+    #[When('I send an authenticated :method request to :url')]
     public function iSendAnAuthenticatedRequestTo($method, $url, ?PyStringNode $body = null)
     {
         $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->jwt);
         $this->restContext->iSendARequestTo($method, $url, $body);
     }
 
-    /**
-     * @When I send an authenticated :method request to :url with body:
-     */
+    #[When('I send an authenticated :method request to :url with body:')]
     public function iSendAnAuthenticatedRequestToWithBody($method, $url, PyStringNode $body)
     {
         $this->restContext->iAddHeaderEqualTo('Authorization', 'Bearer ' . $this->jwt);
         $this->restContext->iSendARequestTo($method, $url, $body);
     }
 
-    /**
-     * @When the user :username sends a :method request to :url
-     */
+    #[When('the user :username sends a :method request to :url')]
     public function theUserSendsARequestTo($username, $method, $url)
     {
         if (!isset($this->tokens[$username])) {
@@ -566,9 +527,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->restContext->iSendARequestTo($method, $url);
     }
 
-    /**
-     * @When the user :username sends a :method request to :url with body:
-     */
+    #[When('the user :username sends a :method request to :url with body:')]
     public function theUserSendsARequestToWithBody($username, $method, $url, PyStringNode $body)
     {
         if (!isset($this->tokens[$username])) {
@@ -579,9 +538,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->restContext->iSendARequestTo($method, $url, $body);
     }
 
-    /**
-     * @When the user :username sends a :method request to :url with parameters:
-     */
+    #[When('the user :username sends a :method request to :url with parameters:')]
     public function theUserSendsARequestToWithParameters($username, $method, $url, TableNode $data)
     {
         if (!isset($this->tokens[$username])) {
@@ -592,9 +549,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->restContext->iSendARequestToWithParameters($method, $url, $data);
     }
 
-    /**
-     * @When the OAuth client :clientName sends a :method request to :url
-     */
+    #[When('the OAuth client :clientName sends a :method request to :url')]
     public function theOAuthClientSendsARequestTo($clientName, $method, $url)
     {
         if (!isset($this->oAuthTokens[$clientName])) {
@@ -605,9 +560,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->restContext->iSendARequestTo($method, $url);
     }
 
-    /**
-     * @When the OAuth client :clientName sends a :method request to :url with body:
-     */
+    #[When('the OAuth client :clientName sends a :method request to :url with body:')]
     public function theOAuthClientSendsARequestToWithBody($clientName, $method, $url, PyStringNode $body)
     {
         if (!isset($this->oAuthTokens[$clientName])) {
@@ -618,9 +571,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->restContext->iSendARequestTo($method, $url, $body);
     }
 
-    /**
-     * @When the store with name :storeName sends a :method request to :url
-     */
+    #[When('the store with name :storeName sends a :method request to :url')]
     public function theStoreWithNameSendsARequestTo($storeName, $method, $url)
     {
         if (!isset($this->apiKeys[$storeName])) {
@@ -631,9 +582,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->restContext->iSendARequestTo($method, $url);
     }
 
-    /**
-     * @When the store with name :storeName sends a :method request to :url with body:
-     */
+    #[When('the store with name :storeName sends a :method request to :url with body:')]
     public function theStoreWithNameSendsARequestToWithBody($storeName, $method, $url, PyStringNode $body)
     {
         if (!isset($this->apiKeys[$storeName])) {
@@ -644,9 +593,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->restContext->iSendARequestTo($method, $url, $body);
     }
 
-    /**
-     * @Given the tasks with comments matching :comments are assigned to :username
-     */
+    #[Given('the tasks with comments matching :comments are assigned to :username')]
     public function theTaskWithCommentsMatchingAreAssignedTo($comments, $username)
     {
         $user = $this->doctrine->getRepository(User::class)->findOneBy(["username" => $username]);
@@ -666,18 +613,21 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->doctrine->getManagerForClass(Task::class)->flush();
     }
 
-    /**
-     * @Given the setting :name has value :value
-     */
+    #[Given('the setting :name has value :value')]
     public function theSettingHasValue($name, $value)
     {
         $this->settingsManager->set($name, $value);
         $this->settingsManager->flush();
     }
 
-    /**
-     * @Given the restaurant with id :id has products:
-     */
+    #[Given('the setting :name has value:')]
+    public function theSettingHasMultilineValue(string $name, PyStringNode $value): void
+    {
+        $this->settingsManager->set($name, $value->getRaw());
+        $this->settingsManager->flush();
+    }
+
+    #[Given('the restaurant with id :id has products:')]
     public function theRestaurantWithIdHasProducts($id, TableNode $table)
     {
         $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
@@ -694,9 +644,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->doctrine->getManagerForClass(LocalBusiness::class)->flush();
     }
 
-    /**
-     * @Given the restaurant with id :id has menu:
-     */
+    #[Given('the restaurant with id :id has menu:')]
     public function theRestaurantWithIdHasMenu($id, TableNode $table)
     {
         $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
@@ -731,9 +679,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->doctrine->getManagerForClass(LocalBusiness::class)->flush();
     }
 
-    /**
-     * @Given the store with name :name belongs to user :username
-     */
+    #[Given('the store with name :name belongs to user :username')]
     public function theStoreWithNameBelongsToUser($name, $username)
     {
         $user = $this->userManager->findUserByUsername($username);
@@ -744,9 +690,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->userManager->updateUser($user);
     }
 
-    /**
-     * @Given the store with name :name has cash on delivery enabled
-     */
+    #[Given('the store with name :name has cash on delivery enabled')]
     public function theStoreWithNameHasCashOnDeliveryEnabled($name)
     {
         $store = $this->doctrine->getRepository(Store::class)->findOneByName($name);
@@ -755,9 +699,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->doctrine->getManagerForClass(Store::class)->flush();
     }
 
-    /**
-     * @Given the restaurant with id :id belongs to user :username
-     */
+    #[Given('the restaurant with id :id belongs to user :username')]
     public function theRestaurantWithIdBelongsToUser($id, $username)
     {
         $user = $this->userManager->findUserByUsername($username);
@@ -819,10 +761,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
         return $order;
     }
 
-    /**
-     * FIXME This assumes the order is in state "new"
-     * @Given the user :username has ordered something at the restaurant with id :id
-     */
+    // FIXME This assumes the order is in state "new"
+    #[Given('the user :username has ordered something at the restaurant with id :id')]
     public function theUserHasOrderedSomethingAtTheRestaurantWithId($username, $id)
     {
         $user = $this->userManager->findUserByUsername($username);
@@ -836,9 +776,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->getContainer()->get('sylius.manager.order')->flush();
     }
 
-    /**
-     * @Given the user :username has ordered something for :date at the restaurant with id :id
-     */
+    #[Given('the user :username has ordered something for :date at the restaurant with id :id')]
     public function theUserHasOrderedSomethingForAtRestaurantWithId($username, $date, $id)
     {
         $user = $this->userManager->findUserByUsername($username);
@@ -852,9 +790,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->getContainer()->get('sylius.manager.order')->flush();
     }
 
-    /**
-     * @Given the user :username has ordered something for :date at the restaurant with id :id and the order is fulfilled
-     */
+    #[Given('the user :username has ordered something for :date at the restaurant with id :id and the order is fulfilled')]
     public function theUserHasOrderedSomethingForAtRestaurantWithIdAndTheOrderIsFulfilled($username, $date, $id)
     {
         $user = $this->userManager->findUserByUsername($username);
@@ -889,9 +825,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->getContainer()->get('sylius.manager.order')->flush();
     }
 
-    /**
-     * @Given the product with code :code is soft deleted
-     */
+    #[Given('the product with code :code is soft deleted')]
     public function softDeleteProductWithCode($code)
     {
         $product = $this->getContainer()
@@ -904,9 +838,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $em->flush();
     }
 
-    /**
-     * @Given the store with name :storeName has an OAuth client named :clientName
-     */
+    #[Given('the store with name :storeName has an OAuth client named :clientName')]
     public function createOauthClientForStore($storeName, $clientName)
     {
         $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
@@ -933,9 +865,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->doctrine->getManagerForClass(ApiApp::class)->flush();
     }
 
-    /**
-     * @Given the restaurant with name :restaurantName has an OAuth client named :clientName
-     */
+    #[Given('the restaurant with name :restaurantName has an OAuth client named :clientName')]
     public function createOauthClientForRestaurant($restaurantName, $clientName)
     {
         $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->findOneByName($restaurantName);
@@ -961,9 +891,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->doctrine->getManagerForClass(ApiApp::class)->flush();
     }
 
-    /**
-     * @Given the OAuth client with name :name has an access token
-     */
+    #[Given('the OAuth client with name :name has an access token')]
     public function createAccessTokenForOauthClient($name)
     {
         $apiApp = $this->doctrine->getRepository(ApiApp::class)->findOneByName($name);
@@ -992,9 +920,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->oAuthTokens[$name] = $data['access_token'];
     }
 
-    /**
-     * @Given the store with name :storeName has check expression :expression
-     */
+    #[Given('the store with name :storeName has check expression :expression')]
     public function storeHasCheckExpression($storeName, $expression)
     {
         $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
@@ -1004,9 +930,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->doctrine->getManagerForClass(Store::class)->flush();
     }
 
-    /**
-     * @Given the user :username has created a cart at restaurant with id :id
-     */
+    #[Given('the user :username has created a cart at restaurant with id :id')]
     public function theUserHasCreatedACartAtRestaurantWithId($username, $id)
     {
         $user = $this->userManager->findUserByUsername($username);
@@ -1024,9 +948,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->getContainer()->get('sylius.manager.order')->flush();
     }
 
-    /**
-     * @Given a guest has added a payment to order at restaurant with id :id
-     */
+    #[Given('a guest has added a payment to order at restaurant with id :id')]
     public function aGuestAddAPaymentToOrderAtRestaurantWithId($id)
     {
         $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
@@ -1044,9 +966,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->getContainer()->get('sylius.manager.order')->flush();
     }
 
-    /**
-     * @Given there is a cart at restaurant with id :id
-     */
+    #[Given('there is a cart at restaurant with id :id')]
     public function createCartAtRestaurantWithId($id)
     {
         $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
@@ -1075,9 +995,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         return array_pop($carts);
     }
 
-    /**
-     * @Given there is a token for the last cart at restaurant with id :id
-     */
+    #[Given('there is a token for the last cart at restaurant with id :id')]
     public function thereIsATokenForTheLastCartAtRestaurantWithId($id)
     {
         $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
@@ -1091,9 +1009,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->jwt = $jwtEncoder->encode($payload);
     }
 
-    /**
-     * @Given there is an expired token for the last cart at restaurant with id :id
-     */
+    #[Given('there is an expired token for the last cart at restaurant with id :id')]
     public function thereIsAnExpiredTokenForTheLastCartAtRestaurantWithId($id)
     {
         $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
@@ -1108,9 +1024,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->jwt = $jwtEncoder->encode($payload);
     }
 
-    /**
-     * @Given the client is authenticated with last response token
-     */
+    #[Given('the client is authenticated with last response token')]
     public function theClientIsAuthenticatedWithLastResponseToken()
     {
         $content = $this->minkContext->getSession()->getPage()->getContent();
@@ -1120,9 +1034,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->jwt = $data['token'];
     }
 
-    /**
-     * @When the :headerName header contains last response token
-     */
+    #[When('the :headerName header contains last response token')]
     public function theHeaderContainsLastResponseToken($headerName)
     {
         $content = $this->minkContext->getSession()->getPage()->getContent();
@@ -1132,9 +1044,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->restContext->iAddHeaderEqualTo($headerName, sprintf('Bearer %s', $data['token']));
     }
 
-    /**
-     * @When the :headerName header contains a token for the last cart at restaurant with id :id
-     */
+    #[When('the :headerName header contains a token for the last cart at restaurant with id :id')]
     public function theHeaderContainsATokenForTheLastCartAtRestaurantWithId($headerName, $id)
     {
         $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
@@ -1149,9 +1059,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->restContext->iAddHeaderEqualTo($headerName, sprintf('Bearer %s', $jwtEncoder->encode($payload)));
     }
 
-    /**
-     * @Given the restaurant with id :id is closed between :start and :end
-     */
+    #[Given('the restaurant with id :id is closed between :start and :end')]
     public function theRestaurantWithIdIsClosedBetweenAnd($id, $start, $end)
     {
         $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
@@ -1166,9 +1074,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $em->flush();
     }
 
-    /**
-     * @Then the Tile38 collection :collectionName should contain key :keyName with point :value
-     */
+    #[Then('the Tile38 collection :collectionName should contain key :keyName with point :value')]
     public function assertTile38CollectionContainsKeyWithPoint($collectionName, $keyName, $value)
     {
         $response =
@@ -1185,9 +1091,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         Assert::assertEquals([ $longitude, $latitude, $timestamp ], $data['coordinates']);
     }
 
-    /**
-     * @Given the user :username has a remote push token with value :value for platform :platform
-     */
+    #[Given('the user :username has a remote push token with value :value for platform :platform')]
     public function userHasRemotePushTokenWithValueForPlatform($username, $value, $platform)
     {
         $user = $this->userManager->findUserByUsername($username);
@@ -1201,9 +1105,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->userManager->updateUser($user);
     }
 
-    /**
-     * @Given the restaurant with id :id has deposit-refund enabled
-     */
+    #[Given('the restaurant with id :id has deposit-refund enabled')]
     public function enableDepositRefund($id)
     {
         $restaurant = $this->doctrine->getRepository(LocalBusiness::class)->find($id);
@@ -1213,9 +1115,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $em->flush();
     }
 
-    /**
-     * @Given the product with code :code has reusable packaging :name enabled with unit :units
-     */
+    #[Given('the product with code :code has reusable packaging :name enabled with unit :units')]
     public function enableReusablePackagingForProductWithQuantity($code, $name, $unit)
     {
         $product = $this->doctrine->getRepository(Product::class)->findOneByCode($code);
@@ -1234,9 +1134,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $em->flush();
     }
 
-    /**
-     * @Then all the tasks should belong to organization with name :orgName
-     */
+    #[Then('all the tasks should belong to organization with name :orgName')]
     public function allTheTasksShouldBelongToOrganizationWithName($orgName)
     {
         $org = $this->doctrine->getRepository(Organization::class)->findOneByName($orgName);
@@ -1255,9 +1153,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
     }
 
-    /**
-     * @Given the store with name :storeName has imported tasks:
-     */
+    #[Given('the store with name :storeName has imported tasks:')]
     public function theStoreWithNameHasImportedTasks($storeName, TableNode $table)
     {
         $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
@@ -1289,9 +1185,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->doctrine->getManagerForClass(Task\Group::class)->flush();
     }
 
-    /**
-     * @Given a task with ref :ref exists and is attached to store with name :storeName
-     */
+    #[Given('a task with ref :ref exists and is attached to store with name :storeName')]
     public function aTaskWithRefExistsAndIsAttachedToStoreWithName($ref, $storeName)
     {
         $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
@@ -1316,9 +1210,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->doctrine->getManagerForClass(Task::class)->flush();
     }
 
-    /**
-     * @Given the user :username has a refresh token :refreshToken
-     */
+    #[Given('the user :username has a refresh token :refreshToken')]
     public function theUserHasARefreshToken($username, $refreshToken)
     {
         $tok = new RefreshToken();
@@ -1330,9 +1222,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->doctrine->getManagerForClass(RefreshToken::class)->flush();
     }
 
-    /**
-     * @Given the store with name :name is associated with Urbantz hub :hub
-     */
+    #[Given('the store with name :name is associated with Urbantz hub :hub')]
     public function theStoreWithNameIsAssociatedWithUrbantzHub($storeName, $hub)
     {
         $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
@@ -1345,9 +1235,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->doctrine->getManagerForClass(UrbantzHub::class)->flush();
     }
 
-    /**
-     * @Given the geojson file :filename for a zone is loaded
-     */
+    #[Given('the geojson file :filename for a zone is loaded')]
     public function theZoneFileIsLoaded($filename)
     {
         $filePath = __DIR__.'/../../fixtures/'.$filename.'.geojson';
@@ -1369,9 +1257,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->doctrine->getManagerForClass(Zone::class)->flush();
     }
 
-    /**
-     * @Given the store with name :storeName has a check expression for zone :zoneName
-     */
+    #[Given('the store with name :storeName has a check expression for zone :zoneName')]
     public function theStoreWithNameHasACheckExpressionForZone($storeName, $zoneName)
     {
         $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
@@ -1381,18 +1267,14 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->doctrine->getManagerForClass(Store::class)->flush();
     }
 
-    /**
-     * @Given the store with name :storeName has order creation enabled
-     */
+    #[Given('the store with name :storeName has order creation enabled')]
     public function theStoreWithNameHasOrderCreationEnabled($storeName)
     {
         $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
         $this->doctrine->getManagerForClass(Store::class)->flush();
     }
 
-    /**
-     * @Given stripe client is ready to use
-     */
+    #[Given('stripe client is ready to use')]
     public function theStripeClientIsReadyToUse()
     {
         $stripeMockApiBase = getenv('STRIPE_MOCK_API_BASE');
@@ -1404,9 +1286,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         Stripe::$apiBase = $stripeMockApiBase;
     }
 
-    /**
-     * @Given the task with id :taskId belongs to organization with name :orgName
-     */
+    #[Given('the task with id :taskId belongs to organization with name :orgName')]
     public function theTaskWithIdBelongsToOrganizationWithName($taskId, $orgName)
     {
         $task = $this->doctrine->getRepository(Task::class)->find($taskId);
@@ -1417,9 +1297,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->doctrine->getManagerForClass(Task::class)->flush();
     }
 
-    /**
-     * @Given the store with name :storeName has failure reason set :failureReasonSet
-     */
+    #[Given('the store with name :storeName has failure reason set :failureReasonSet')]
     public function theStoreWithNameHasFailureReasonSet($storeName, $failureReasonSet)
     {
         $failureReasonSet = $this->doctrine->getRepository(FailureReasonSet::class)->findOneByName($failureReasonSet);
@@ -1430,9 +1308,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->doctrine->getManagerForClass(Store::class)->flush();
     }
 
-    /**
-     * @Given the store with name :storeName has a default courier with username :username
-     */
+    #[Given('the store with name :storeName has a default courier with username :username')]
     public function theStoreWithNameHasADefaultCourierWithUsername($storeName, $username)
     {
         $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
@@ -1443,9 +1319,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->doctrine->getManagerForClass(Store::class)->flush();
     }
 
-    /**
-     * @Then the database should contain an order with a total price :price
-     */
+    #[Then('the database should contain an order with a total price :price')]
     public function theDatabaseShouldContainAnOrderWithATotalPrice($price)
     {
         $order = $this->doctrine->getRepository(Order::class)->findOneBy(['total' => $price]);
@@ -1455,9 +1329,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
     }
 
-    /**
-     * @Then the database should contain a payment with method :methodCode and amount :amount
-     */
+    #[Then('the database should contain a payment with method :methodCode and amount :amount')]
     public function theDatabaseShouldContainAPaymentWithMethod($methodCode, $amount)
     {
         $paymentMethodRepository = $this->getContainer()->get('sylius.repository.payment_method');
@@ -1482,9 +1354,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         ));
     }
 
-    /**
-     * @Then the database entity :className should have a property :fieldName with value :value
-     */
+    #[Then('the database entity :className should have a property :fieldName with value :value')]
     public function theDatabaseEntityShouldHaveAPropertyWithValue($className, $fieldName, $value)
     {
         $object = $this->doctrine->getRepository($className)->findOneBy([$fieldName => $value]);
@@ -1494,9 +1364,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
     }
 
-    /**
-     * @Then the database entity :className with id :id should have a property :fieldName with value :value
-     */
+    #[Then('the database entity :className with id :id should have a property :fieldName with value :value')]
     public function theDatabaseEntityWithIdShouldHaveAPropertyWithValue($className, $id, $fieldName, $value): void
     {
         $object = $this->doctrine->getRepository($className)->find($id);
@@ -1504,9 +1372,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         Assert::assertEquals($value, $this->propertyAccessor->getValue($object, $fieldName));
     }
 
-    /**
-     * @Given the store with name :name has document :document
-     */
+    #[Given('the store with name :name has document :document')]
     public function theStoreWithNameHasDocument($name, $document): void
     {
         $store = $this->doctrine->getRepository(Store::class)->findOneByName($name);
@@ -1515,9 +1381,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->doctrine->getManagerForClass(Store::class)->flush();
     }
 
-    /**
-     * @Given there is an OAuth client named :name with scopes :scopes
-     */
+    #[Given('there is an OAuth client named :name with scopes :scopes')]
     public function createOauthClientWithScopes($name, $scopes): void
     {
         $identifier = hash('md5', random_bytes(16));
@@ -1542,9 +1406,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->doctrine->getManagerForClass(ApiApp::class)->flush();
     }
 
-    /**
-     * @Given the OAuth client with name :name has an access token with scope :scope
-     */
+    #[Given('the OAuth client with name :name has an access token with scope :scope')]
     public function createAccessTokenForOauthClientWithScopes(string $name, string $scope)
     {
         $apiApp = $this->doctrine->getRepository(ApiApp::class)->findOneByName($name);
@@ -1571,5 +1433,24 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $data = json_decode($response->getBody(), true);
 
         $this->oAuthTokens[$name] = $data['access_token'];
+    }
+
+    #[Given('the PHP memory limit is set to :value')]
+    public function setPhpMemoryLimit($value): void
+    {
+        ini_set('memory_limit', $value);
+    }
+
+    #[Given('the tasks with ids :ids are assigned to :username')]
+    public function theTasksWithIdsAreAssignedTo($ids, $username): void
+    {
+        $user = $this->doctrine->getRepository(User::class)->findOneBy(["username" => $username]);
+
+        foreach (explode(',', $ids) as $id) {
+            $task = $this->doctrine->getRepository(Task::class)->find($id);
+             $task->assignTo($user);
+        }
+
+        $this->doctrine->getManagerForClass(Task::class)->flush();
     }
 }

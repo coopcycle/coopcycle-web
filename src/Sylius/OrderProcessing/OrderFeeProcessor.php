@@ -163,6 +163,16 @@ final class OrderFeeProcessor implements OrderProcessorInterface
             }
         }
 
+        if ($order->isEnBoiteLePlat() && $order->isEnBoiteLePlatPlatformFee()) {
+            $reusablePackagingTotal = $order->getAdjustmentsTotal(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT);
+            if ($reusablePackagingTotal > 0) {
+                $businessAmount += $reusablePackagingTotal;
+
+                $this->logger->info(sprintf('OrderFeeProcessor | business amount: %d | added reusable packaging fees', $businessAmount),
+                    ['order' => $this->loggingUtils->getOrderId($order)]);
+            }
+        }
+
         $feeRate = $order->isTakeAway() ? $contract->getTakeAwayFeeRate() : $contract->getFeeRate();
 
         $feeAmount = (int) (($order->getItemsTotal() * $feeRate) + $businessAmount);

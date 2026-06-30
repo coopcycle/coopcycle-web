@@ -16,6 +16,7 @@ const SetGuestCustomerEmailModal = ({ isOpen, closeInvitePeopleToOrderModal, t, 
     <Modal
       isOpen={ isOpen }
       onRequestClose={ () => closeInvitePeopleToOrderModal() }
+      overlayClassName="ReactModal__Overlay"
       contentLabel={ t('GROUP_ORDER_TITLE') }
       className="ReactModal__Content--invite-people-to-order">
       <Formik

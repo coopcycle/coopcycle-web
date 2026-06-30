@@ -116,6 +116,7 @@ use Redis;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
+use Sylius\Component\Promotion\Checker\Eligibility\PromotionCouponEligibilityCheckerInterface;
 use Sylius\Component\Promotion\Factory\PromotionCouponFactoryInterface;
 use Sylius\Component\Promotion\Model\PromotionCouponInterface;
 use Sylius\Component\Promotion\Model\PromotionInterface;
@@ -149,6 +150,9 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 use Twig\Environment as TwigEnvironment;
 use phpcent\Client as CentrifugoClient;
+use AppBundle\Service\EmailTemplateManager;
+use NotFloran\MjmlBundle\Renderer\RendererInterface;
+use Symfony\Component\Mailer\MailerInterface;
 
 class AdminController extends AbstractController
 {
@@ -211,6 +215,7 @@ class AdminController extends AbstractController
         protected CollectionFinderInterface $typesenseShopsFinder,
         protected Filesystem $incidentImagesFilesystem,
         protected Filesystem $edifactFilesystem,
+        protected string $platformLocale,
         protected PricingRuleSetManager $pricingRuleSetManager,
         protected JWTTokenManagerInterface $JWTTokenManager,
         protected TimeSlotManager $timeSlotManager,
@@ -227,7 +232,10 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_dashboard');
     }
 
-    protected function getOrderList(Request $request, PaginatorInterface $paginator, IriConverterInterface $iriConverter, $showCanceled = false)
+    protected function getOrderList(Request $request, Response $response,
+        PaginatorInterface $paginator,
+        IriConverterInterface $iriConverter,
+        $showCanceled = false)
     {
         if ($request->query->has('q')) {
             $qb = $this->orderRepository->search($request->query->get('q'));
@@ -256,13 +264,16 @@ class AdminController extends AbstractController
         }
 
         if ($request->query->has('owner')) {
+
+            $ownerInclude = $request->query->getBoolean('owner_include', true);
+
             try {
                 $owner = $iriConverter->getResourceFromIri($request->query->get('owner'));
                 if ($owner instanceof Store) {
                     $qb
                         ->join(Delivery::class, 'd', Expr\Join::WITH, 'd.order = o.id')
                         ->join(Store::class, 's', Expr\Join::WITH, 'd.store = s.id')
-                        ->andWhere('s.id = :store')
+                        ->andWhere($ownerInclude ? $qb->expr()->eq('s.id', ':store') : $qb->expr()->neq('s.id', ':store'))
                         ->setParameter('store', $owner)
                         ;
                 }
@@ -282,10 +293,18 @@ class AdminController extends AbstractController
                 ->setParameter('state_cancelled', OrderInterface::STATE_CANCELLED);
         }
 
+        $perPage = self::ITEMS_PER_PAGE;
+        if ($request->query->has('per_page')) {
+            $perPage = $request->query->getInt('per_page');
+            $response->headers->setCookie(new Cookie('__per_page', $perPage));
+        } elseif ($request->cookies->has('__per_page')) {
+            $perPage = $request->cookies->getInt('__per_page');
+        }
+
         return $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
-            self::ITEMS_PER_PAGE,
+            $perPage,
             [
                 PaginatorInterface::DISTINCT => false,
             ]
@@ -332,8 +351,12 @@ class AdminController extends AbstractController
             }
         }
 
+        if ($request->query->has('owner_include')) {
+            $filters['owner_include'] = $request->query->getBoolean('owner_include');
+        }
+
         $parameters = [
-            'orders' => $this->getOrderList($request, $paginator, $iriConverter, $showCanceled),
+            'orders' => $this->getOrderList($request, $response, $paginator, $iriConverter, $showCanceled),
             'routes' => $request->attributes->get('routes'),
             'show_canceled' => $showCanceled,
             'filters' => $filters,
@@ -389,10 +412,14 @@ class AdminController extends AbstractController
     #[Route(path: '/admin/orders/search', name: 'admin_orders_search')]
     public function searchOrdersAction(
         Request $request,
-        OrderRepository $orderRepository
+        OrderRepository $orderRepository,
+        \AppBundle\Utils\TsRangeFormatter $tsRangeFormatter,
     )
     {
         $qb = $orderRepository->search($request->query->get('q'));
+
+        $qb->andWhere('o.state != :state')
+            ->setParameter('state', OrderInterface::STATE_CART);
 
         $qb->setMaxResults(10);
 
@@ -400,21 +427,15 @@ class AdminController extends AbstractController
 
         $data = [];
         foreach ($results as $order) {
-
-            if (null !== $order->getCustomer()) {
-                $name = sprintf(
-                    '%s (%s)',
-                    $order->getNumber(),
-                    $order->getCustomer()->getEmailCanonical()
-                );
-            } else {
-                $name = $order->getNumber();
-            }
-
+            $range = $order->getShippingTimeRange();
             $data[] = [
-                'id' => $order->getId(),
-                'name' => $name,
-                'path' => $this->generateUrl('admin_order', ['id' => $order->getId()]),
+                'id'       => $order->getId(),
+                'number'   => $order->getNumber(),
+                'email'    => $order->getCustomer()?->getEmailCanonical(),
+                'fullName' => $order->getCustomer()?->getFullName() ?: null,
+                'total'    => $order->getTotal(),
+                'date'     => $range ? $tsRangeFormatter->formatShort($range) : null,
+                'path'     => $this->generateUrl('admin_order', ['id' => $order->getId()]),
             ];
         }
 
@@ -1969,18 +1990,28 @@ class AdminController extends AbstractController
     }
 
     #[Route(path: '/admin/promotions', name: 'admin_promotions')]
-    public function promotionsAction(EntityManagerInterface $entityManager)
+    public function promotionsAction(EntityManagerInterface $entityManager,
+        PromotionCouponEligibilityCheckerInterface $promotionCouponExpirationChecker)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $qb = $this->entityManager->getRepository(PromotionCouponInterface::class)->createQueryBuilder('c');
-        $qb->andWhere('c.expiresAt IS NULL OR c.expiresAt > :date');
-        $qb->setParameter('date', new \DateTime());
 
         $promotionCoupons = $qb->getQuery()->getResult();
 
+        $ongoing = $past = [];
+
+        foreach ($promotionCoupons as $promotionCoupon) {
+            if (!$promotionCouponExpirationChecker->isEligible(new Order(), $promotionCoupon)) {
+                $past[] = $promotionCoupon;
+            } else {
+                $ongoing[] = $promotionCoupon;
+            }
+        }
+
         return $this->render('admin/promotions.html.twig', [
-            'promotion_coupons' => $promotionCoupons,
+            'ongoing' => $ongoing,
+            'past' => $past,
         ]);
     }
 
@@ -2537,7 +2568,203 @@ class AdminController extends AbstractController
             'shop_types' => $shopTypes,
             'delivery_forms' => $deliveryForms,
             'shop_collections' => $shopCollections,
+            'edenred_enabled' => $this->getParameter('edenred_enabled'),
         ]));
+    }
+
+    public function customizeEmailsAction(Request $request, EmailTemplateManager $emailTemplateManager)
+    {
+        $isDemo = $this->getParameter('is_demo');
+
+        if ($isDemo) {
+            throw $this->createNotFoundException();
+        }
+
+        $supportedLocales = $emailTemplateManager->getSupportedLocales();
+
+        // Put the platform's primary locale first so it's the default tab
+        $platformLocale = $this->platformLocale;
+        if (isset($supportedLocales[$platformLocale])) {
+            $supportedLocales = [$platformLocale => $supportedLocales[$platformLocale]]
+                + $supportedLocales;
+        }
+
+        // Build email type metadata for every supported locale so the JS knows
+        // which locale×type combinations already have a custom template.
+        $emailTypes = [];
+        foreach ($supportedLocales as $locale => $localeLabel) {
+            foreach ($emailTemplateManager->getEmailTypes($locale) as $type => $meta) {
+                $emailTypes[$type]['label_by_locale'][$locale] = $meta['label'];
+                $emailTypes[$type]['variables']                = $meta['variables'];
+                $emailTypes[$type]['slots']                    = $meta['slots'];
+                $emailTypes[$type]['folder']                   = $meta['folder'];
+                $emailTypes[$type]['is_custom_by_locale'][$locale] =
+                    $emailTemplateManager->getCustomTemplate($type, $locale) !== null;
+            }
+        }
+
+        $layoutIsCustomByLocale = [];
+        foreach ($supportedLocales as $locale => $localeLabel) {
+            $layoutIsCustomByLocale[$locale] = $emailTemplateManager->getCustomLayout($locale) !== null;
+        }
+
+        return $this->render('admin/customize_emails.html.twig', $this->auth([
+            'email_types'                => $emailTypes,
+            'supported_locales'          => $supportedLocales,
+            'layout_is_custom_by_locale' => $layoutIsCustomByLocale,
+            'theme_palette'              => $emailTemplateManager->getThemePalette(),
+        ]));
+    }
+
+    /**
+     * GET/POST/DELETE /admin/customize/emails/layout
+     *
+     * Manages the shared layout template that wraps all per-type fragments.
+     */
+    public function emailLayoutAction(Request $request, EmailTemplateManager $emailTemplateManager): JsonResponse
+    {
+        $isDemo = $this->getParameter('is_demo');
+
+        if ($isDemo) {
+            return $this->json(['error' => 'Not available in demo'], 403);
+        }
+
+        $locale = $request->query->get('locale', 'en');
+        if (!$emailTemplateManager->isValidLocale($locale)) {
+            $locale = 'en';
+        }
+
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            $mjml = trim($data['mjml'] ?? '');
+
+            if (empty($mjml)) {
+                return $this->json(['error' => 'Empty template'], 400);
+            }
+
+            $emailTemplateManager->saveLayout($locale, $mjml);
+
+            return $this->json(['success' => true, 'is_custom' => true]);
+        }
+
+        if ($request->isMethod('DELETE')) {
+            $emailTemplateManager->deleteLayout($locale);
+
+            return $this->json([
+                'success'   => true,
+                'is_custom' => false,
+                'mjml'      => $emailTemplateManager->getDefaultLayout(),
+            ]);
+        }
+
+        // GET: return the layout MJML (custom or default)
+        $custom = $emailTemplateManager->getCustomLayout($locale);
+        $mjml = $custom ?? $emailTemplateManager->getDefaultLayout();
+
+        return $this->json([
+            'mjml'      => $emailTemplateManager->forEditor($mjml),
+            'is_custom' => $custom !== null,
+        ]);
+    }
+
+    /**
+     * GET/POST/DELETE /admin/customize/emails/{type}
+     *
+     * Manages per-email-type fragments (inner mj-section blocks only, no wrapper).
+     * GET returns a GrapeJS-ready shell (fragment wrapped in layout head + body).
+     * POST stores the raw fragment sent by the JS (body children only).
+     */
+    public function emailTemplateAction(string $type, Request $request, EmailTemplateManager $emailTemplateManager): JsonResponse
+    {
+        $isDemo = $this->getParameter('is_demo');
+
+        if ($isDemo) {
+            return $this->json(['error' => 'Not available in demo'], 403);
+        }
+
+        if (!$emailTemplateManager->isValidType($type)) {
+            return $this->json(['error' => 'Unknown email type'], 404);
+        }
+
+        $locale = $request->query->get('locale', 'en');
+        if (!$emailTemplateManager->isValidLocale($locale)) {
+            $locale = 'en';
+        }
+
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            $mjml = trim($data['mjml'] ?? '');
+
+            if (empty($mjml)) {
+                return $this->json(['error' => 'Empty template'], 400);
+            }
+
+            // Normalise: if the editor sent a full MJML document (e.g. legacy),
+            // extract only the body content so we always store a pure fragment.
+            $emailTemplateManager->saveTemplate($type, $emailTemplateManager->ensureFragment($mjml), $locale);
+
+            return $this->json(['success' => true]);
+        }
+
+        if ($request->isMethod('DELETE')) {
+            $emailTemplateManager->deleteTemplate($type, $locale);
+
+            ['mjml' => $mjml, 'is_custom' => $isCustom] = $emailTemplateManager->buildEditorMjml($type, $locale);
+            return $this->json(['success' => true, 'is_custom' => false, 'mjml' => $mjml]);
+        }
+
+        // GET: return the full stitched MJML (layout + fragment) for GrapeJS
+        ['mjml' => $mjml, 'is_custom' => $isCustom] = $emailTemplateManager->buildEditorMjml($type, $locale);
+
+        return $this->json(['mjml' => $mjml, 'is_custom' => $isCustom]);
+    }
+
+    /**
+     * POST /admin/customize/emails/{type}/send-test
+     *
+     * Renders the given email type with synthetic placeholder data and sends it
+     * to the address supplied in the request body {"email": "..."}.
+     */
+    public function emailSendTestAction(
+        string $type,
+        Request $request,
+        EmailTemplateManager $emailTemplateManager,
+        RendererInterface $mjml,
+        EmailManager $emailManager,
+        MailerInterface $mailer
+    ): JsonResponse {
+        if ($this->getParameter('is_demo')) {
+            return $this->json(['error' => 'Not available in demo'], 403);
+        }
+
+        if (!$emailTemplateManager->isValidType($type)) {
+            return $this->json(['error' => 'Unknown email type'], 404);
+        }
+
+        $locale = $request->query->get('locale', 'en');
+        if (!$emailTemplateManager->isValidLocale($locale)) {
+            $locale = 'en';
+        }
+
+        $data  = json_decode($request->getContent(), true);
+        $email = trim($data['email'] ?? '');
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return $this->json(['error' => 'Invalid email address'], 400);
+        }
+
+        try {
+            $mjmlContent = $emailTemplateManager->renderTestTemplate($type, $locale);
+            $html        = $mjml->render($mjmlContent);
+            $label       = $emailTemplateManager->getEmailTypes($locale)[$type]['label'] ?? $type;
+            $message     = $emailManager->createHtmlMessage(sprintf('[Test] %s', $label), $html);
+            $message->to($email);
+            $mailer->send($message);
+
+            return $this->json(['success' => true]);
+        } catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     private function handleHubForm(Hub $hub, Request $request)
@@ -2925,16 +3152,6 @@ class AdminController extends AbstractController
         return $this->render('admin/warehouses.html.twig', $this->auth([]));
     }
 
-    #[Route(path: '/admin/cube', name: 'admin_cube')]
-    public function cubeAction(CubeJsTokenFactory $tokenFactory)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        return $this->render('admin/cube.html.twig', [
-            'cube_token' => $tokenFactory->createToken(),
-        ]);
-    }
-
     #[Route(path: '/admin/invoicing', name: 'admin_invoicing')]
     public function invoicingAction()
     {
@@ -2949,8 +3166,11 @@ class AdminController extends AbstractController
         TranslatorInterface $translator,
         Request $request)
     {
+        $componentNames = ['zerowaste' => 'ZeroWaste'];
+        $componentName = $componentNames[$component] ?? ucfirst($component);
+
         return $this->render('admin/shop_collection_preview.html.twig', [
-            'component' => 'ShopCollection:'.ucfirst($component),
+            'component' => 'ShopCollection:'.$componentName,
             'props' => $request->query->all(),
         ]);
     }

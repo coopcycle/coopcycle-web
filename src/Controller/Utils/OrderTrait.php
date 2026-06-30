@@ -29,7 +29,7 @@ trait OrderTrait
 
         $this->denyAccessUnlessGranted('view', $order);
 
-        $output = $generator->render($order);
+        $output = $generator->render($order, create: true);
 
         return new Response($output, 200, [
             'Content-Type' => 'application/pdf',

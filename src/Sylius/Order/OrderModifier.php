@@ -8,14 +8,14 @@ use Psr\Log\LoggerInterface;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Model\OrderItemInterface;
 use Sylius\Component\Order\Modifier\OrderModifierInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 
 final class OrderModifier implements OrderModifierInterface
 {
 	public function __construct(
         private OrderModifierInterface $orderModifier,
         private OrderInvitationContext $context,
-        private TokenStorageInterface $tokenStorage,
+        private Security $security,
     	private LoggerInterface $logger,
         private LoggerInterface $checkoutLogger,
         private LoggingUtils $loggingUtils)
@@ -34,9 +34,9 @@ final class OrderModifier implements OrderModifierInterface
             $cartItem->setCustomer($customer);
             $this->logger->debug("OrderModifier | adding item by {$customer->getEmail()}");
         } else {
+            $user = $this->security->getUser();
             if (
-                !is_null($token = $this->tokenStorage->getToken()) &&
-                !is_null($user = $token->getUser()) &&
+                !is_null($user) &&
                 // Make sure it doesn't break when authenticated with OAuth
                 // because we have an instance of League\Bundle\OAuth2ServerBundle\Security\User\NullUser
                 $user instanceof User

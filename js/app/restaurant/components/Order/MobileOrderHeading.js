@@ -31,20 +31,17 @@ export default function MobileOrderHeading() {
 
   return (
     <div
-      className={ clsx(
-        'order-overlay__heading',
-        'panel',
-        'panel-default',
-      ) }>
+      className="cursor-pointer">
       <div
-        className={ clsx('panel-heading', {
-          'panel-heading--warning': errors.length > 0,
+        className={clsx('flex items-center px-2 h-(--heading-height)', {
+          'bg-primary text-primary-content': errors.length === 0,
+          'bg-warning text-warning-content': errors.length > 0,
         }) }
         onClick={ handleClick }>
-        <div className="panel-heading__body">
+        <div className="flex flex-1 items-center justify-center">
           { isMobileCartVisible ? (<span>{t('CART_TITLE')}</span>) : (<OrderState />) }
         </div>
-        <span className="panel-heading__right">
+        <span className="justify-self-end">
           <i className={ isMobileCartVisible
             ? 'fa fa-chevron-up'
             : 'fa fa-chevron-down' } />

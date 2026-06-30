@@ -91,6 +91,7 @@ Feature: Stores
       }
       """
 
+  @debug
   Scenario: List stores
     Given the fixtures files are loaded:
       | stores.yml          |
@@ -130,7 +131,7 @@ Feature: Stores
           },
           "@array_previous_repeat@"
         ],
-        "hydra:totalItems": 9
+        "hydra:totalItems": 10
       }
       """
 

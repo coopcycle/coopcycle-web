@@ -82,6 +82,7 @@
       </join-table>
     </many-to-many>
     <field name="stripeCustomerId" type="string" column="stripe_customer_id" nullable="true"/>
+    <field name="emailAuthCode" type="string" column="email_auth_code" nullable="true"/>
     <many-to-one field="businessAccount" target-entity="AppBundle\Entity\BusinessAccount" inversed-by="employees">
       <cascade>
         <cascade-persist/>

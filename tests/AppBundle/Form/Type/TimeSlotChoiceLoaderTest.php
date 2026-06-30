@@ -385,7 +385,7 @@ class TimeSlotChoiceLoaderTest extends TestCase
         $slot->setOpeningHours(['Mo-Fr 10:00-12:00', 'Mo-Fr 12:00-14:00']);
         $slot->setInterval('1 month');
 
-        $choiceLoader = new TimeSlotChoiceLoader($slot, 'fr', null, $now->copy()->add(1, 'day'));
+        $choiceLoader = new TimeSlotChoiceLoader($slot, 'fr', null, $now->clone()->add(1, 'day'));
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
 
@@ -423,7 +423,7 @@ class TimeSlotChoiceLoaderTest extends TestCase
 
         $closingRules->add($closingRule);
 
-        $choiceLoader = new TimeSlotChoiceLoader($slot, 'fr', $closingRules, $now->copy()->add(7, 'days'));
+        $choiceLoader = new TimeSlotChoiceLoader($slot, 'fr', $closingRules, $now->clone()->add(7, 'days'));
         $choiceList = $choiceLoader->loadChoiceList();
         $choices = $choiceList->getChoices();
 

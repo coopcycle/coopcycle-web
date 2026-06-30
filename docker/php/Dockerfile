@@ -1,4 +1,4 @@
-FROM php:8.3-fpm-alpine3.18
+FROM php:8.3-fpm-alpine3.23
 
 RUN apk update
 
@@ -47,9 +47,29 @@ RUN set -xe \
         apcu-${APCU_VERSION} \
         redis-${PHPREDIS_VERSION} \
     && docker-php-ext-enable --ini-name 20-apcu.ini apcu \
-    && docker-php-ext-enable --ini-name 05-opcache.ini opcache \
+    && docker-php-ext-enable opcache \
     && docker-php-ext-enable redis \
     && apk del .build-deps
+
+# Install Imagick to avoid OOM errors with GD in dev/test
+# https://zerifa.com/blog/install-imagick-php-8-3-docker-alpine-linux
+RUN apk add --update --no-cache \
+    imagemagick \
+    imagemagick-dev \
+    gcc \
+    g++ \
+    make \
+    autoconf \
+    pkgconfig && \
+    git clone https://github.com/Imagick/imagick.git --depth 1 /tmp/imagick && \
+    cd /tmp/imagick && \
+    phpize && \
+    ./configure && \
+    make && \
+    make install && \
+    docker-php-ext-enable imagick && \
+    apk del gcc g++ make autoconf pkgconfig imagemagick-dev && \
+    rm -rf /var/cache/apk/* /tmp/imagick
 
 COPY docker/php/php.ini /usr/local/etc/php/php.ini
 

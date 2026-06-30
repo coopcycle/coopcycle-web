@@ -63,9 +63,19 @@
   </tbody>
 </table>
 
-<nav class="text-center">
-  {{ knp_pagination_render(products) }}
-</nav>
+<div class="d-flex align-items-center justify-content-center gap-4">
+  <form action="{{ path(products_route, { id: restaurant.id }) }}" class="form-inline" method="get">
+    <div class="form-group">
+      <label for="products_per_page">{{ 'pagination.items_per_page'|trans }}</label>
+      <select id="products_per_page" name="per_page" class="form-control" style="max-width: 5em;">
+        <option {% if products.itemNumberPerPage == 10 %}selected="selected"{% endif %}>10</option>
+        <option {% if products.itemNumberPerPage == 20 %}selected="selected"{% endif %}>20</option>
+        <option {% if products.itemNumberPerPage == 50 %}selected="selected"{% endif %}>50</option>
+      </select>
+    </div>
+  </form>
+  {{ knp_pagination_render(products, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
+</div>
 
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="products-import-modal-label" id="products-import-modal">
   <div class="modal-dialog" role="document">
@@ -117,6 +127,10 @@
 {% block scripts %}
 {{ encore_entry_script_tags('product-list') }}
 <script>
+document.querySelector('[name="per_page"]').addEventListener('change', function (e) {
+  e.target.closest('form').submit();
+});
+
 new CoopCycle.Search(document.querySelector('#products-search'), {
   url: "{{ path(products_route, { id: restaurant.id, format: 'json'  }) }}",
   placeholder: "{{ 'basics.search'|trans }}",

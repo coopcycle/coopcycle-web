@@ -32,8 +32,8 @@ const LoopeatModal = function({ customerContainers, formats, formatsToDeliver, i
   }, [])
 
   return (
-    <div className="p-4">
-      <h4>{ t('CART_LOOPEAT_MODAL_RETURN_SECTION_TITLE', { count: containersCount }) }</h4>
+    <div>
+      <h4 className="bg-base-200 text-base-content p-4 mb-4">{ t('CART_LOOPEAT_MODAL_RETURN_SECTION_TITLE', { count: containersCount }) }</h4>
       <p className="text-muted">{ t('CART_LOOPEAT_MODAL_RETURN_SECTION_SUBTITLE') }</p>
       <section>
         <table className="table">
@@ -62,8 +62,9 @@ const LoopeatModal = function({ customerContainers, formats, formatsToDeliver, i
                   }} />
                 </td>
                 <td>{ `${getNameFromId(container.format_id, formats)} (${(getPriceFromId(container.format_id, formats) / 100).formatMoney()})` }</td>
-                <td style={{ width: '1px', whiteSpace: 'nowrap' }}>
-                  <input type="number" className="form-control"
+                <td className="text-sm text-right whitespace-nowrap">
+                  <input type="number"
+                    className="input"
                     disabled={ !isSelected }
                     style={{ width: '5em' }}
                     defaultValue={ container.quantity }
@@ -85,11 +86,11 @@ const LoopeatModal = function({ customerContainers, formats, formatsToDeliver, i
           </tbody>
         </table>
       </section>
-      <h4>{ t('CART_LOOPEAT_MODAL_WALLET_SECTION_TITLE', { count: (creditsCountCents / 100).formatMoney() }) }</h4>
+      <h4 className="bg-base-200 text-base-content p-4 mb-4">{ t('CART_LOOPEAT_MODAL_WALLET_SECTION_TITLE', { count: (creditsCountCents / 100).formatMoney() }) }</h4>
       <section>
         <a href={ oauthUrl} className="btn btn-default btn-lg btn-block">{ t('CART_LOOPEAT_MODAL_ADD_CREDITS') }</a>
       </section>
-      <hr />
+      <div className="divider"></div>
       <section>
         <h5>{ t('CART_LOOPEAT_RETURNS_SUMMARY') }</h5>
         <table className="table table-condensed">
@@ -119,7 +120,8 @@ const LoopeatModal = function({ customerContainers, formats, formatsToDeliver, i
             </tr>
           </tfoot>
         </table>
-        <p className={ clsx({
+        <p className={clsx({
+          'py-2': true,
           'text-center': true,
           'text-success': missing <= 0,
           'text-danger': missing > 0,

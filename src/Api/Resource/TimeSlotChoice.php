@@ -50,20 +50,21 @@ final class TimeSlotChoice
             Carbon::instance($period->end)->tz('UTC')->toIso8601ZuluString()
         ]);
 
-        $calendar = Carbon::instance($period->start)
-            ->locale($locale)
-            ->calendar(null, [
-                'sameDay' => '[' . $translator->trans('basics.today') . ']',
-                'nextDay' => '[' . $translator->trans('basics.tomorrow') . ']',
-                'nextWeek' => 'dddd',
-            ]);
+        $carbon = Carbon::instance($period->start)->locale($locale);
+        if ($carbon->isToday()) {
+            $day = $translator->trans('basics.today');
+        } elseif ($carbon->isTomorrow()) {
+            $day = $translator->trans('basics.tomorrow');
+        } else {
+            $day = $carbon->isoFormat('dddd');
+        }
 
         $fmt = new \IntlDateFormatter($locale,
             \IntlDateFormatter::NONE,
             \IntlDateFormatter::SHORT);
 
         $this->label = $translator->trans('time_slot.human_readable', [
-            '%day%' => ucfirst(strtolower($calendar)),
+            '%day%' => ucfirst(strtolower($day)),
             '%start%' => $fmt->format($period->start),
             '%end%' => $fmt->format($period->end),
         ]);

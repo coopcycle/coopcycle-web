@@ -66,6 +66,7 @@
             <li><a href="{{ path('admin_activity') }}">{% trans %}adminDashboard.activity.title{% endtrans %}</a></li>
             {% if is_granted('ROLE_ADMIN') %}
             <li><a href="{{ path('admin_metrics') }}">{% trans %}adminDashboard.metrics.title{% endtrans %}</a></li>
+            {% if rfm_enabled %}<li><a href="{{ path('admin_customer_segmentation') }}">{% trans %}rfm.title{% endtrans %}</a></li>{% endif %}
             {% endif %}
             {% if odoo_url is not empty %}
             <li><a href="{{ odoo_url }}" target="_blank">Odoo</a></li>

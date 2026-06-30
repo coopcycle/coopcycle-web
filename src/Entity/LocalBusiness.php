@@ -24,9 +24,13 @@ use AppBundle\Api\State\RestaurantProvider;
 use AppBundle\Api\State\RestaurantMenuProcessor;
 use AppBundle\Api\State\RestaurantTimingProvider;
 use AppBundle\Entity\Base\LocalBusiness as BaseLocalBusiness;
+use AppBundle\Entity\Address;
 use AppBundle\Entity\LocalBusiness\CatalogInterface;
 use AppBundle\Entity\LocalBusiness\CatalogTrait;
 use AppBundle\Entity\LocalBusiness\ClosingRulesTrait;
+use AppBundle\Entity\LocalBusiness\DayOfWeekAddress;
+use AppBundle\Entity\LocalBusiness\DayOfWeekDeliveryPerimeterExpression;
+use AppBundle\Entity\LocalBusiness\DeliveryPerimeterExpressionResolver;
 use AppBundle\Entity\LocalBusiness\FoodEstablishmentTrait;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethod;
 use AppBundle\Entity\LocalBusiness\FulfillmentMethodsTrait;
@@ -44,6 +48,7 @@ use AppBundle\OpeningHours\OpenCloseInterface;
 use AppBundle\OpeningHours\OpenCloseTrait;
 use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Validator\Constraints\IsActivableRestaurant as AssertIsActivableRestaurant;
+use Carbon\Carbon;
 use Cocur\Slugify\Slugify;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -213,6 +218,12 @@ class LocalBusiness extends BaseLocalBusiness implements
     #[Groups(['order'])]
     protected $loopeatEnabled = false;
 
+    /**
+     * @var bool
+     */
+    #[Groups(['order'])]
+    protected $loopeatMandatory = false;
+
     protected $pledge;
 
     /**
@@ -289,6 +300,8 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected $enBoitLePlatEnabled = false;
 
+    protected $enBoitLePlatPlatformFee = false;
+
     protected $cashOnDeliveryEnabled = false;
 
     protected ?int $rateLimitRangeDuration;
@@ -306,7 +319,13 @@ class LocalBusiness extends BaseLocalBusiness implements
 
     protected bool $pawapayEnabled = true;
 
+<<<<<<< HEAD
     protected ?string $zeltyApiKey = null;
+=======
+    protected $dayOfWeekAddresses;
+
+    protected $dayOfWeekDeliveryPerimeterExpressions;
+>>>>>>> master
 
     public function __construct()
     {
@@ -320,6 +339,8 @@ class LocalBusiness extends BaseLocalBusiness implements
         $this->preparationTimeRules = new ArrayCollection();
         $this->reusablePackagings = new ArrayCollection();
         $this->promotions = new ArrayCollection();
+        $this->dayOfWeekAddresses = new ArrayCollection();
+        $this->dayOfWeekDeliveryPerimeterExpressions = new ArrayCollection();
 
         $this->fulfillmentMethods = new ArrayCollection();
         $this->addFulfillmentMethod('delivery', true);
@@ -694,6 +715,18 @@ class LocalBusiness extends BaseLocalBusiness implements
         return $this;
     }
 
+    public function isLoopeatMandatory(): bool
+    {
+        return $this->loopeatMandatory;
+    }
+
+    public function setLoopeatMandatory(bool $loopeatMandatory): self
+    {
+        $this->loopeatMandatory = $loopeatMandatory;
+
+        return $this;
+    }
+
     public function getType()
     {
         return $this->type;
@@ -991,6 +1024,26 @@ class LocalBusiness extends BaseLocalBusiness implements
         return $this;
     }
 
+    /**
+     * @return bool
+     */
+    public function isEnBoitLePlatPlatformFee()
+    {
+        return $this->enBoitLePlatPlatformFee;
+    }
+
+    /**
+     * @param bool $platformFee
+     *
+     * @return self
+     */
+    public function setEnBoitLePlatPlatformFee(bool $platformFee)
+    {
+        $this->enBoitLePlatPlatformFee = $platformFee;
+
+        return $this;
+    }
+
     #[SerializedName('facets')]
     #[Groups('restaurant_list')]
     public function getFacets()
@@ -1230,5 +1283,54 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function hasZeltyApiKey(): bool
     {
         return null !== $this->zeltyApiKey && '' !== $this->zeltyApiKey;
+    public function getDayOfWeekAddresses()
+    {
+        return $this->dayOfWeekAddresses;
+    }
+
+    public function addDayOfWeekAddress(DayOfWeekAddress $dayOfWeekAddress)
+    {
+        $dayOfWeekAddress->setRestaurant($this);
+
+        $this->dayOfWeekAddresses->add($dayOfWeekAddress);
+    }
+
+    public function removeDayOfWeekAddress(DayOfWeekAddress $dayOfWeekAddress)
+    {
+        if ($this->dayOfWeekAddresses->contains($dayOfWeekAddress)) {
+            $this->dayOfWeekAddresses->removeElement($dayOfWeekAddress);
+        }
+    }
+
+    public function addAddressForDayOfWeek(string $daysOfWeek, Address $address)
+    {
+        $dayOfWeekAddress = new DayOfWeekAddress();
+        $dayOfWeekAddress->setRestaurant($this);
+        $dayOfWeekAddress->setAddress($address);
+        $dayOfWeekAddress->setDaysOfWeek($daysOfWeek);
+
+        $this->dayOfWeekAddresses->add($dayOfWeekAddress);
+    }
+
+    public function getDayOfWeekDeliveryPerimeterExpressions()
+    {
+        return $this->dayOfWeekDeliveryPerimeterExpressions;
+    }
+
+    public function addDayOfWeekDeliveryPerimeterExpression(DayOfWeekDeliveryPerimeterExpression $entry): void
+    {
+        $entry->setRestaurant($this);
+
+        $this->dayOfWeekDeliveryPerimeterExpressions->add($entry);
+    }
+
+    public function removeDayOfWeekDeliveryPerimeterExpression(DayOfWeekDeliveryPerimeterExpression $entry): void
+    {
+        $this->dayOfWeekDeliveryPerimeterExpressions->removeElement($entry);
+    }
+
+    protected function resolveDeliveryPerimeterExpression(): string
+    {
+        return DeliveryPerimeterExpressionResolver::resolve($this);
     }
 }

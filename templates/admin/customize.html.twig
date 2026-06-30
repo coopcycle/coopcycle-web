@@ -12,10 +12,34 @@
   <a href="{{ path('admin_customize_homepage') }}">✨ {{ 'customize.homepage'|trans }}</a>
 </div>
 
+<div class="alert alert-info">
+  <a href="{{ path('admin_customize_emails') }}">✉️ {{ 'customize.emails_alert'|trans }}</a>
+</div>
+
 {{ form_start(form) }}
 
   {{ form_row(form.motto) }}
   <hr>
+
+  <div class="form-group">
+    <label class="control-label">{{ 'form.customize.theme.label'|trans }}</label>
+    <div hidden>{{ form_widget(form.theme) }}</div>
+    <div id="theme-color-pickers"
+      data-primary="{{ form.theme.primary.vars.value }}"
+      data-primary-content="{{ form.theme['primary-content'].vars.value }}"
+      data-secondary="{{ form.theme.secondary.vars.value }}"
+      data-secondary-content="{{ form.theme['secondary-content'].vars.value }}"
+      data-label-primary-group="{{ 'form.theme.primary_group.label'|trans }}"
+      data-help-primary-group="{{ 'form.theme.primary_group.help'|trans }}"
+      data-label-primary="{{ 'form.theme.primary.label'|trans }}"
+      data-label-primary-content="{{ 'form.theme.primary-content.label'|trans }}"
+      data-label-secondary-group="{{ 'form.theme.secondary_group.label'|trans }}"
+      data-help-secondary-group="{{ 'form.theme.secondary_group.help'|trans }}"
+      data-label-secondary="{{ 'form.theme.secondary.label'|trans }}"
+      data-label-secondary-content="{{ 'form.theme.secondary-content.label'|trans }}">
+    </div>
+    {{ form_errors(form.theme) }}
+  </div>
 
   {{ form_row(form.aboutUsEnabled) }}
   <div class="form-group">
@@ -61,12 +85,16 @@
   </div>
   <hr>
 
+  {% set banner_background_url = coopcycle_banner_background_url() %}
   <div class="form-group">
     <label class="control-label">{{ 'form.customize.custom_banner.label'|trans }}</label>
     <div>
       <div class="dropzone dropzone--blue mb-3"
         id="banner-dropzone"
-        data-dropzone-url="{{ oneup_uploader_endpoint('banner') }}" {% if coopcycle_has_banner() %}data-dropzone-image="{{ url('assets_banner_svg') }}"{% endif %}></div>
+        data-dropzone-url="{{ oneup_uploader_endpoint('banner') }}"
+        {% if banner_background_url %}data-dropzone-image="{{ banner_background_url }}"
+        {% elseif coopcycle_has_banner() %}data-dropzone-image="{{ url('assets_banner_svg') }}"
+        {% endif %}></div>
     </div>
     <span class="help-block">{{ 'form.customize.custom_banner.help'|trans }}</span>
   </div>

@@ -1,6 +1,6 @@
 <span class="d-block">
   <a
-    href="{{ customer.hasUser() ? path('admin_user_details', { username: customer.username }) : '#' }}"
+    href="{{ path('admin_customer', { id: customer.id }) }}"
     class="text-truncate"
     style="max-width: 240px;"
     title="{{ (customer.hasUser() ? customer.user.username : customer.emailCanonical)|e('html_attr') }}"

@@ -21,6 +21,7 @@ class TaskManagerFunctionalTest extends KernelTestCase
     {
         parent::setUp();
         self::bootKernel();
+
         $this->entityManager = self::getContainer()->get(EntityManagerInterface::class);
         $this->taskManager = self::getContainer()->get(TaskManager::class);
         $this->fixturesLoader = self::getContainer()->get('fidry_alice_data_fixtures.loader.doctrine');

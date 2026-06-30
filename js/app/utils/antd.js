@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { ConfigProvider } from 'antd'
+import { ConfigProvider, theme } from 'antd'
 import { antdLocale } from '../i18n'
 import React from 'react'
 
@@ -19,17 +19,11 @@ export const AntdConfigProvider = ({ children }) => {
   return (
     <ConfigProvider
       theme={{
+        algorithm: theme.defaultAlgorithm,
         token: {
           // Seed Token
           //TODO: switch to CoopCycle Brand Red
           // colorPrimary: '#F05A58',
-        },
-        components: {
-          // Button: {
-          //   //Blue 400
-          //   colorPrimary: '#3D7DFA',
-          //   algorithm: true,
-          // },
         },
       }}
       locale={antdLocale}>

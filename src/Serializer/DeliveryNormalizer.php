@@ -145,7 +145,7 @@ class DeliveryNormalizer implements NormalizerInterface, ContextAwareDenormalize
                 $tz = date_default_timezone_get();
 
                 // FIXME Catch Exception
-                $period = CarbonPeriod::createFromIso($data['timeSlot']);
+                $period = CarbonPeriod::create($data['timeSlot']);
 
                 $task->setAfter($period->getStartDate()->tz($tz)->toDateTime());
                 $task->setBefore($period->getEndDate()->tz($tz)->toDateTime());

@@ -93,7 +93,7 @@ class TourSubscriber
         // phpstan struggles with "populating" the inversed side of the one-one - ref https://github.com/phpstan/phpstan-doctrine/issues/244
         /** @phpstan-ignore function.impossibleType */
         if (!is_null($item)) {
-            if (!$removed && $task->isAssigned() !== $item->getParent()->getCourier()) { // tour is assigned and the item belongs to it
+            if (!$removed && $task->getAssignedCourier() !== $item->getParent()->getCourier()) { // tour is assigned and the item belongs to it
                 $item = $taskCollection->getTaskListItem();
                 $taskList = $item->getParent();
                 $this->logger->debug(sprintf('Tour modification: Task #%d needs to be assigned', $taskCollectionItem->getTask()->getId()));

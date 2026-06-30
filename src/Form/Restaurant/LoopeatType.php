@@ -37,6 +37,17 @@ class LoopeatType extends AbstractType
 
             $form->get('enabled')->setData($restaurant->isLoopeatEnabled());
 
+            if ($restaurant->isLoopeatEnabled()) {
+                $form->add('mandatory', CheckboxType::class, [
+                    'label' => 'restaurant.form.loopeat_mandatory.label',
+                    'label_translation_parameters' => [
+                        '%name%' => $initiative['name'],
+                    ],
+                    'required' => false,
+                    'data' => $restaurant->isLoopeatMandatory(),
+                ]);
+            }
+
             if ($restaurant->hasLoopEatCredentials()) {
                 $form
                     ->add('disconnect', SubmitType::class, [
@@ -56,6 +67,12 @@ class LoopeatType extends AbstractType
 
             $enabled = $form->get('enabled')->getData();
             $restaurant->setLoopeatEnabled($enabled);
+
+            if ($form->has('mandatory')) {
+                $restaurant->setLoopeatMandatory($form->get('mandatory')->getData());
+            } else {
+                $restaurant->setLoopeatMandatory(false);
+            }
 
             if ($form->getClickedButton() && 'disconnect' === $form->getClickedButton()->getName()) {
                 $restaurant->clearLoopEatCredentials();

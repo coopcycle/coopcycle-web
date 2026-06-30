@@ -112,6 +112,7 @@ export default {
 
     // In case of payment error, will be used to render an error box
     this.el = el
+    el.innerHTML = ''
 
     this.config.gatewayConfig = {
       ...this.config.gatewayConfig,

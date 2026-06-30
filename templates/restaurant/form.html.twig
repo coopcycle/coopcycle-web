@@ -137,7 +137,7 @@
           </a>
         </li>
         {% endif %}
-        {% if form.enBoitLePlatEnabled is defined %}
+        {% if form.enBoitLePlatEnabled is defined and form.enBoitLePlatPlatformFee is defined %}
         <li role="presentation">
           <a role="tab" data-toggle="tab" href="#en-boite-le-plat" aria-controls="en-boite-le-plat">
             {{ 'restaurant.form.section.en_boite_le_plat'|trans }}
@@ -187,9 +187,10 @@
           {{ form_row(form.vytalEnabled) }}
         </div>
         {% endif %}
-        {% if form.enBoitLePlatEnabled is defined %}
+        {% if form.enBoitLePlatEnabled is defined and form.enBoitLePlatPlatformFee is defined %}
         <div role="tabpanel" class="tab-pane" id="en-boite-le-plat">
           {{ form_row(form.enBoitLePlatEnabled) }}
+          {{ form_row(form.enBoitLePlatPlatformFee) }}
         </div>
         {% endif %}
         {% if restaurant.id is not null %}

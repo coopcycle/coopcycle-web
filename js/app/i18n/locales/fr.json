@@ -188,6 +188,9 @@
         "RESTAURANT_LIST_FILTER_LATER": "Plus tard",
         "RESTAURANT_SECTIONS_MORE": "Voir plus",
         "ADD_TO_CART": "Ajouter au panier",
+        "FREQUENTLY_BOUGHT_TOGETHER": "Souvent achetés ensemble",
+        "PREVIOUS": "Précédent",
+        "NEXT": "Suivant",
         "CART_TOTAL": "Total",
         "CART_TOTAL_PRODUCTS": "Total produits",
         "ENTER_YOUR_ADDRESS": "Saisissez votre adresse",
@@ -565,6 +568,7 @@
         "ADMIN_NO_APPLICATIONS": "Pas encore utilisé",
         "ADMIN_APPLIED_TO": "Appliqué à {{count}} élément(s)",
         "ADMIN_DASHBOARD_START_TASKS_MULTI": "Démarrer {{count}} tâche(s)",
+        "ADMIN_DASHBOARD_COMPLETE_TASKS_MULTI": "Terminer {{count}} tâche(s)",
         "TRANSPORTER_MESSAGE_TYPE_SCONTR": "Tâche importée depuis le transporteur",
         "TRANSPORTER_MESSAGE_TYPE_REPORT": "Rapport de l'état de la tâche",
         "TRANSPORTER_SITUATION_AAR": "À quai",
@@ -635,6 +639,9 @@
         "SEARCH_ORDER_NUMBER_ERROR": "Entrez un numéro de commande valide",
         "ADD_PRODUCTS_TO_ORDER_TITLE": "Ajouter des produits à la commande #{{number}}",
         "ADMIN_DASHBOARD_CREATE_DELIVERY": "Créer une livraison",
+        "ADMIN_DASHBOARD_SEND_TO_WAREHOUSE": "Envoyer vers un entrepôt",
+        "ADMIN_DASHBOARD_SEND_TO_WAREHOUSE_HELP": "Cela va insérer deux tâches intermédiaires : un dépôt à l'entrepôt et un enlèvement depuis l'entrepôt. Les tâches d'enlèvement et de livraison d'origine sont conservées.",
+        "ADMIN_DASHBOARD_CHOOSE_WAREHOUSE_LABEL": "Choisir un entrepôt",
         "ADMIN_DASHBOARD_CHOOSE_STORE_LABEL": "Choisir un magasin",
         "COPY": "Copier",
         "COPIED": "Copié",
@@ -687,6 +694,8 @@
         "DELIVERY_FORM_HOW_IS_PRICE_CALCULATED": "Comment le prix est-il calculé ?",
         "DELIVERY_FORM_PRICE_CALCULATION_RULES": "Règles de tarification appliquées",
         "DELIVERY_FORM_PRICE_CALCULATION_VIEW_PRICING_RULE_SET": "Voir la configuration de tarification",
+        "DELIVERY_FORM_TASK_DOCUMENTS": "Documents",
+        "DELIVERY_FORM_TASK_DOCUMENT_UPLOAD": "Ajouter un document",
         "SHOW_BARCODES" : "Voir les codes-barres",
         "ADMIN_INVOICING_TITLE": "Facturation",
         "ADMIN_ORDERS_TO_INVOICE_TITLE": "Commandes à facturer",
@@ -797,6 +806,7 @@
         },
         "HOMEPAGE_EDITOR": {
             "placeholder": "Tapez \"/\" pour insérer un bloc",
+            "published": "Publié",
             "messages": {
                 "toolNames": {
                     "Shop Collection": "Collection de boutiques",
@@ -814,7 +824,10 @@
                         "link": "Lien"
                     }
                 }
-            }
+            },
+            "slider_title_placeholder": "Titre du slide",
+            "slider_text_placeholder": "Texte du slide",
+            "slider_button_text_placeholder": "Texte du bouton"
         },
         "DELIVERY_FORM_ADD_REVERSE": "Créer aussi une livraison inversée",
         "DELIVERY_FORM_ADD_REVERSE_HELP": "Après avoir sauvegardé, vous serez redirigé·e vers une nouvelle page avec le retrait et le dépôt inversés",
@@ -852,6 +865,7 @@
         "CREATE_CREDIT_NOTE": "Créer un avoir commercial",
         "REFUND": "Rembourser",
         "CREDIT_NOTE_AMOUNT": "Montant de l'avoir",
+        "CREDIT_NOTES": "Avoirs commerciaux",
         "REFUND_AMOUNT": "Montant du remboursement",
         "LIABLE_PARTY": "Partie responsable",
         "LIABLE_PART_HELP": "Qui est responsable de l'incident ?",
@@ -863,6 +877,8 @@
         "PAYMENT_AMOUNT": "Montant",
         "PAYMENT_REFUNDED_AMOUNT": "Montant remboursé",
         "PAYMENT_METHOD": "Moyen de paiement",
-        "PAYMENT_UPDATED_AT": "Dernière mise à jour"
+        "PAYMENT_UPDATED_AT": "Dernière mise à jour",
+        "COUPON_CODE_NOT_USED": "Pas encore utilisé",
+        "COUPON_CODE_USED": "Utilisé {{ago}}"
     }
 }

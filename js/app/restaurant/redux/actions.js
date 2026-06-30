@@ -112,14 +112,12 @@ function serializeForm(withTime = false) {
 
   const cartForm = document.querySelector('form[name="cart"]')
   if (cartForm) {
-    new FormData(cartForm).forEach((value, name) => params.append(name, value))
-  }
-
-  if (withTime) {
-    const cartTimeForm = document.querySelector('form[name="cart_time"]')
-    if (cartTimeForm) {
-      new FormData(cartTimeForm).forEach((value, name) => params.append(name, value))
-    }
+    new FormData(cartForm).forEach((value, name) => {
+      if (!withTime && name === 'cart[timeSlot]') {
+        return
+      }
+      params.append(name, value)
+    })
   }
 
   return params

@@ -852,7 +852,7 @@ order.reusable_packaging.alert: Aquesta comanda ha d'estar en un paquet reutilit
 order.public_link: Enllaç per a compartir
 order.payments: Pagaments
 order.adjustment_type.reusable_packaging: Embalatge
-order_item.adjustment_type.reusable_packaging: '%quantity% × paquet(s)'
+order_item.adjustment_type.reusable_packaging: '%quantity% × « %name% » paquet(s)'
 form.task.address.label: Adreça
 form.task.recipient.help: Especifiqui nom de la persona de contacte
 form.task.dropoff.doorstep.label: Llindar de lliurament

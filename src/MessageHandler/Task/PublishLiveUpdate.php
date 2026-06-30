@@ -3,35 +3,20 @@
 namespace AppBundle\MessageHandler\Task;
 
 use AppBundle\Domain\Task\Event as TaskEvent;
-use AppBundle\Domain\Task\Event\TaskUpdated;
-use AppBundle\Domain\TaskList\Event as TaskListEvent;
-use AppBundle\Domain\Tour\Event as TourEvent;
-use AppBundle\Service\LiveUpdates;
+use AppBundle\Message\Task\PublishLiveUpdate as PublishLiveUpdateMessage;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 #[AsMessageHandler]
 class PublishLiveUpdate
 {
-    private $liveUpdates;
-    private $roles = ['ROLE_ADMIN','ROLE_DISPATCHER'];
+    public function __construct(private MessageBusInterface $messageBus)
+    {}
 
-    public function __construct(LiveUpdates $liveUpdates)
-    {
-        $this->liveUpdates = $liveUpdates;
-    }
-    
     public function __invoke(TaskEvent $event)
     {
-        $user = null;
-
-        if($event instanceof TaskUpdated) {
-            $user = $event->getCourier();
-        }
-
-        if (is_null($user)) {
-            $this->liveUpdates->toRoles($this->roles, $event);
-        } else {
-            $this->liveUpdates->toUserAndRoles($user, $this->roles, $event);
-        }   
+        $this->messageBus->dispatch(
+            new PublishLiveUpdateMessage($event->getTask()->getId(), get_class($event))
+        );
     }
 }

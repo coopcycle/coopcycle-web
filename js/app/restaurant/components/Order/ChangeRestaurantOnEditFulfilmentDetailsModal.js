@@ -23,6 +23,7 @@ export default function ChangeRestaurantOnEditFulfilmentDetailsModal({
           'changeRestaurantOnEditFulfilmentDetails',
         )
       }
+      overlayClassName="ReactModal__Overlay"
       contentLabel={t('CART_CHANGE_RESTAURANT_MODAL_LABEL')}
       className="ReactModal__Content--restaurant">
       <div>

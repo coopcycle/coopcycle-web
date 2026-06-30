@@ -3,7 +3,6 @@
 namespace AppBundle\Service;
 
 use AppBundle\Action\Incident\CreateIncident;
-use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Incident\Incident;
 use AppBundle\Entity\Store;
@@ -18,15 +17,13 @@ use AppBundle\Pricing\PricingManager;
 use AppBundle\Sylius\Order\OrderFactory;
 use AppBundle\Sylius\Order\OrderInterface;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class DeliveryOrderManager
 {
-    use TokenStorageTrait;
-
     public function __construct(
-        TokenStorageInterface $tokenStorage,
+        private readonly Security $security,
         private readonly EntityManagerInterface $entityManager,
         private readonly TranslatorInterface $translator,
         private readonly ProductRepository $productRepository,
@@ -37,7 +34,6 @@ class DeliveryOrderManager
         private readonly CreateIncident $createIncident,
         private readonly bool $cashEnabled,
     ) {
-        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -110,7 +106,7 @@ class DeliveryOrderManager
 
             $this->entityManager->flush();
 
-            $user = $this->getUser();
+            $user = $this->security->getUser();
 
             $isUserWithAccount = $user instanceof User && null !== $user->getId();
             // If it's not a user with an account, it could be an ApiApp

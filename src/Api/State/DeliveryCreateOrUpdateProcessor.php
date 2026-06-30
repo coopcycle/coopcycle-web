@@ -58,6 +58,7 @@ class DeliveryCreateOrUpdateProcessor implements ProcessorInterface
         array $uriVariables = [],
         array $context = []
     ): Delivery {
+
         /** @var Delivery $delivery */
         $delivery = $this->decorated->process($data, $operation, $uriVariables, $context);
 

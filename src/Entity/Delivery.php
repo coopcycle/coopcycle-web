@@ -676,7 +676,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
 
         $reverse->setPickupRange($this->getDropoff()->getAfter(), $this->getDropoff()->getBefore());
 
-        $seconds = $this->getDuration();
+        $seconds = (int) $this->getDuration();
         if ($seconds > 0) {
             $after = Carbon::make($reverse->getPickup()->getBefore())->addSeconds($seconds);
         } else {
@@ -684,7 +684,7 @@ class Delivery extends TaskCollection implements TaskCollectionInterface, Packag
             $after = Carbon::make($reverse->getPickup()->getBefore())->addHour();
         }
 
-        $before = Carbon::make($after)->addMinutes('15');
+        $before = Carbon::make($after)->addMinutes(15);
 
         $reverse->setDropoffRange($after, $before);
 

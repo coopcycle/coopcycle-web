@@ -74,7 +74,11 @@ module.exports = {
   // @see https://jestjs.io/docs/en/webpack
   moduleNameMapper: {
     "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/js/app/__mocks__/fileMock.js",
-    "\\.(s?css|less)$": "<rootDir>/js/app/__mocks__/styleMock.js"
+    "\\.(s?css|less)$": "<rootDir>/js/app/__mocks__/styleMock.js",
+    "^swiper/react$": "<rootDir>/js/app/__mocks__/swiperReactMock.js",
+    "^swiper/modules$": "<rootDir>/js/app/__mocks__/swiperModulesMock.js",
+    "^swiper/css.*$": "<rootDir>/js/app/__mocks__/styleMock.js",
+    "^antd/es/locale/(.*)$": "antd/lib/locale/$1"
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
@@ -171,7 +175,7 @@ module.exports = {
   // you may use transformIgnorePatterns to allow transpiling such modules
   transformIgnorePatterns: [
     // "node_modules/(?!(react-native|my-project|react-native-button)/)"
-    "node_modules/(?!(coopcycle-frontend-js|astronomia|@uidotdev/usehooks)/)"
+    "node_modules/(?!(coopcycle-frontend-js|astronomia|@uidotdev/usehooks|@standard-schema)/)"
   ],
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them

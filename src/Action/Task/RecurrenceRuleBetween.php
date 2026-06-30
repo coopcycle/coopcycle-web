@@ -23,6 +23,10 @@ class RecurrenceRuleBetween
 
     public function __invoke($data, Request $request)
     {
+        if ($data->isPaused()) {
+            return [];
+        }
+
         $template = $data->getTemplate();
 
         if (empty($template)) {

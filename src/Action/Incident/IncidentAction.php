@@ -201,11 +201,8 @@ class IncidentAction extends Base
         }
         $createdAt = new \DateTime($createdAt);
 
-        /** @var mixed $pods */
-        $pods = $params->get("pods", []);
-        if (!is_array($pods)) {
-            throw new \InvalidArgumentException("pods is required, and must be an array");
-        }
+        /** @var array $pods */
+        $pods = $params->all("pods");
 
         $appointment = $params->get("appointment", null);
 

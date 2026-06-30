@@ -49,6 +49,7 @@ class InvitePeopleToOrderModal extends Component {
         isOpen={this.props.isOpen}
         onAfterOpen={ this.afterOpen.bind(this) }
         onRequestClose={() => this.props.closeInvitePeopleToOrderModal() }
+        overlayClassName="ReactModal__Overlay"
         contentLabel={this.props.t('INVITE_PEOPLE_TO_ADD_ITEMS')}
         className="ReactModal__Content--invite-people-to-order">
         <div className="text-center w-50 mx-auto p-3">

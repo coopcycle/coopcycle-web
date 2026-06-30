@@ -95,9 +95,9 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
                 CarbonPeriod::EXCLUDE_END_DATE
             );
 
-            foreach ($period as $date) {
+            foreach ($period->toArray() as $date) {
                 $choices[] = new TsRangeChoice(
-                    TsRange::create($date, $date->copy()->add($this->rangeDuration, 'minutes'))
+                    TsRange::create($date, $date->clone()->add($this->rangeDuration, 'minutes'))
                 );
             }
 
@@ -120,12 +120,12 @@ class AsapChoiceLoader implements ChoiceLoaderInterface
                 CarbonPeriod::EXCLUDE_END_DATE
             );
 
-            foreach ($period as $date) {
+            foreach ($period->toArray() as $date) {
 
                 $cursor = $date;
                 if ($date < $max) {
                     $choices[] = new TsRangeChoice(
-                        TsRange::create($date, $date->copy()->add($this->rangeDuration, 'minutes'))
+                        TsRange::create($date, $date->clone()->add($this->rangeDuration, 'minutes'))
                     );
                 }
             }

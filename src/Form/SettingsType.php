@@ -26,6 +26,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 
@@ -135,6 +136,13 @@ class SettingsType extends AbstractType
                 'data' => $onDemandDeliveryProduct->getName()
             ]);
         }
+
+        $builder->add('new_shop_days', IntegerType::class, [
+            'required' => false,
+            'label' => 'form.settings.new_shop_days.label',
+            'help' => 'form.settings.new_shop_days.help',
+            'attr' => ['min' => 1],
+        ]);
 
         // When cash on delivery is enabled, we want customers to register
         if (!$this->cashEnabled) {

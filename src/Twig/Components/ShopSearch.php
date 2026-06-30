@@ -225,7 +225,7 @@ class ShopSearch
     }
 
     #[LiveAction]
-    public function setCategory(#[LiveArg] string $key)
+    public function filterByCategory(#[LiveArg] string $key)
     {
         $this->category = $key;
         $this->type = '';
@@ -233,7 +233,7 @@ class ShopSearch
     }
 
     #[LiveAction]
-    public function setType(#[LiveArg] string $type)
+    public function filterByType(#[LiveArg] string $type)
     {
         $this->type = $type;
         $this->category = '';

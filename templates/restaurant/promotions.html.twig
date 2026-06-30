@@ -14,8 +14,8 @@
 </div>
 
 <ul class="nav nav-tabs" role="tablist">
-  <li role="presentation" class="active"><a href="#ongoing" aria-controls="ongoing" role="tab" data-toggle="tab">{{ 'adminDashboard.promotions.ongoing'|trans }}</a></li>
-  <li role="presentation"><a href="#past" aria-controls="past" role="tab" data-toggle="tab">{{ 'adminDashboard.promotions.past'|trans }}</a></li>
+  <li role="presentation" class="active"><a href="#ongoing" aria-controls="ongoing" role="tab" data-toggle="tab">{{ 'adminDashboard.promotions.ongoing'|trans({ '%count%': ongoing_promotions|length }) }}</a></li>
+  <li role="presentation"><a href="#past" aria-controls="past" role="tab" data-toggle="tab">{{ 'adminDashboard.promotions.past'|trans|trans({ '%count%': past_promotions|length }) }}</a></li>
 </ul>
 
 <!-- Tab panes -->

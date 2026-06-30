@@ -48,10 +48,10 @@ export default function(formSelector, options) {
 
   function setLoading(isLoading) {
     if (isLoading) {
-      $('.btn-payment').addClass('btn--loading')
+      document.querySelector('[data-payment-button] > .loading').classList.remove('hidden')
       disableBtn(submitButton)
     } else {
-      $('.btn-payment').removeClass('btn--loading')
+      document.querySelector('[data-payment-button] > .loading').classList.add('hidden')
       enableBtn(submitButton)
     }
   }
@@ -65,12 +65,30 @@ export default function(formSelector, options) {
 
   disableBtn(submitButton)
 
+  const showCardSkeleton = () => {
+    document.getElementById('card-element').innerHTML = `
+      <div id="card-element-skeleton" class="space-y-3">
+        <fieldset class="fieldset mb-3">
+          <div class="skeleton h-4 w-52 mb-2 rounded"></div>
+          <div class="skeleton h-10 w-64 rounded-md"></div>
+        </fieldset>
+        <div class="border border-base-300 rounded-md p-3 mb-3">
+          <div class="skeleton h-6 w-full rounded"></div>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="skeleton size-5 rounded"></div>
+          <div class="skeleton h-4 w-52 rounded"></div>
+        </div>
+      </div>`
+  }
+
   let cc
   let payments = []
+  let gatewayForCard = 'stripe'
 
   if (containsMethod(methods, 'card')) {
 
-    const gatewayForCard = options.card || 'stripe'
+    gatewayForCard = options.card || 'stripe'
     const gatewayConfig = options.gatewayConfigs ? options.gatewayConfigs[gatewayForCard] : { publishableKey: options.publishableKey }
 
     switch (gatewayForCard) {
@@ -260,6 +278,7 @@ export default function(formSelector, options) {
             const hasCard = !!_.find(response.data.payments, p => p.method.code === 'CARD')
 
             if (hasCard) {
+              if (gatewayForCard === 'stripe') showCardSkeleton()
               cc.mount(document.getElementById('card-element'), value, response.data, options)
                 .then((shouldEnableBtn = true) => {
                   document.getElementById('card-onmount-focus').scrollIntoView()
@@ -305,10 +324,11 @@ export default function(formSelector, options) {
   // Replace radio buttons
 
   document
-    .querySelectorAll('#checkout_payment_method .radio')
-    .forEach(el => el.classList.add('d-none'))
+    .querySelectorAll('#checkout_payment_method input[type="radio"]')
+    .forEach(el => el.parentElement.classList.add('hidden'))
 
   if (methods.length === 1 && containsMethod(methods, 'card')) {
+    if (gatewayForCard === 'stripe') showCardSkeleton()
     axios
       .post(options.selectPaymentMethodURL, { method: 'CARD' })
       .then(response => {

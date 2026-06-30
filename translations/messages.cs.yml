@@ -314,7 +314,7 @@ order.adjustment_type.delivery: Doručení
 order.adjustment_type.platform_fees: poplatky CoopCycle
 order.adjustment_type.reusable_packaging: Balení
 order.adjustment_type.tip: Spropitné
-order_item.adjustment_type.reusable_packaging: '%quantity% × obal(y)'
+order_item.adjustment_type.reusable_packaging: '%quantity% × « %name% » obal(y)'
 order.list.total: Celkem
 order.list.shippedAt: Čas doručení
 order.list.type: Typ
@@ -1517,6 +1517,7 @@ form.package.average_weight.label: Průměrná hmotnost (kg)
 form.package.max_weight.label: Maximální váha (kg)
 form.package.tags.label: Automatické použití značek na úkoly
 form.package.shortCode.label: 2 písmenný kód
+form.package.shortCode.help: Omezeno na 2 znaky
 roles.ROLE_DISPATCHER: Dispečer
 user.edit.disabled.label: Vypnuto
 stores.deliveries.heading2: Doručení %delivery_id%

@@ -3,6 +3,7 @@
 namespace AppBundle\MessageHandler\Order;
 
 use AppBundle\Domain\Order\Event;
+use AppBundle\Domain\Order\FrontendEvent;
 use AppBundle\Service\LiveUpdates;
 use AppBundle\Sylius\Customer\CustomerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -33,7 +34,7 @@ class PublishLiveUpdate
 
         $this->liveUpdates->toOrderWatchers($order, $event);
 
-        if ($customer->hasUser()) {
+        if ($customer->hasUser() && $event instanceof FrontendEvent) {
             $this->liveUpdates->toUserAndAdmins($customer->getUser(), $event);
         } else {
             $this->liveUpdates->toAdmins($event);

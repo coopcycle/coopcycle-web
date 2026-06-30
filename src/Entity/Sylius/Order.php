@@ -61,11 +61,14 @@ use AppBundle\Api\State\OrderRefundProcessor;
 use AppBundle\Api\State\OrderRefundsProvider;
 use AppBundle\Api\State\MyOrdersProvider;
 use AppBundle\Api\State\ValidateOrderProvider;
+use AppBundle\Api\State\OrderProductRecommendationsProvider;
+use AppBundle\Api\Dto\CustomerRecommendationsDto;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\LocalBusiness\AddressResolver;
 use AppBundle\Entity\LoopEat\OrderCredentials;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\Store;
@@ -237,6 +240,12 @@ use Webmozart\Assert\Assert as WMAssert;
                 ]
             ],
             security: 'is_granted(\'view\', object)'
+        ),
+        new Get(
+            uriTemplate: '/orders/{id}/product_recommendations',
+            normalizationContext: ['groups' => ['customer']],
+            provider: OrderProductRecommendationsProvider::class,
+            output: CustomerRecommendationsDto::class,
         ),
         new Get(
             uriTemplate: '/orders/{id}/validate',
@@ -1462,7 +1471,11 @@ class Order extends BaseOrder implements OrderInterface
     public function getPickupAddress(): ?Address
     {
         if ($this->hasVendor()) {
-            return $this->getVendor()->getAddress();
+            $vendor = $this->getVendor();
+            if ($vendor instanceof LocalBusiness) {
+                return AddressResolver::resolveAddress($vendor);
+            }
+            return $vendor->getAddress();
         }
 
         return null;
@@ -1815,7 +1828,7 @@ class Order extends BaseOrder implements OrderInterface
 
     public function getPickupAddresses(): Collection
     {
-        return $this->getRestaurants()->map(fn(LocalBusiness $restaurant): Address => $restaurant->getAddress());
+        return $this->getRestaurants()->map(fn(LocalBusiness $restaurant): Address => AddressResolver::resolveAddress($restaurant));
     }
 
     /**
@@ -2023,5 +2036,25 @@ class Order extends BaseOrder implements OrderInterface
         }
 
         return null;
+    }
+
+    public function isEnBoiteLePlat(): bool
+    {
+        if (!$this->hasVendor() || $this->isMultiVendor() || !$this->isReusablePackagingEnabled()) {
+
+            return false;
+        }
+
+        return $this->getRestaurant()->isEnBoitLePlatEnabled();
+    }
+
+    public function isEnBoiteLePlatPlatformFee(): bool
+    {
+        if (!$this->hasVendor() || $this->isMultiVendor() || !$this->isReusablePackagingEnabled()) {
+
+            return false;
+        }
+
+        return $this->getRestaurant()->isEnBoitLePlatPlatformFee();
     }
 }

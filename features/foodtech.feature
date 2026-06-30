@@ -623,6 +623,7 @@ Feature: Food Tech
         "nextOpeningDate":@string@,
         "hub":null,
         "loopeatEnabled":false,
+        "loopeatMandatory":false,
         "tags":@array@,
         "badges":@array@,
         "autoAcceptOrdersEnabled": @boolean@,
@@ -692,6 +693,7 @@ Feature: Food Tech
         "nextOpeningDate":@string@,
         "hub":null,
         "loopeatEnabled":false,
+        "loopeatMandatory":false,
         "tags":@array@,
         "badges":@array@,
         "autoAcceptOrdersEnabled": @boolean@,
@@ -826,7 +828,9 @@ Feature: Food Tech
           {
             "@type": "PromotionCoupon",
             "@id": @string@,
-            "code": @string@
+            "code": @string@,
+            "used": 0,
+            "updatedAt": "@string@.isDateTime()"
           }
         ]
       }

@@ -396,6 +396,12 @@ html, body {
 .ReactModal__Content--task-report-incident {
   min-width: 40%;
 }
+
+.ReactModal__Content--send-to-warehouse {
+  min-width: 0;
+  width: 40%;
+  padding: 0;
+}
 .ReactModal__Content--filters {
   min-width: 66.666%;
 }

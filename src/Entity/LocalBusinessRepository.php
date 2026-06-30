@@ -15,6 +15,7 @@ use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Entity\Sylius\ProductOptions;
 use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Entity\Sylius\ProductVariant;
+use AppBundle\Service\SettingsManager;
 use AppBundle\Utils\RestaurantFilter;
 use Carbon\Carbon;
 use DeepCopy\Filter\KeepFilter;
@@ -34,6 +35,7 @@ class LocalBusinessRepository extends EntityRepository
 {
     private $businessContext;
     private $restaurantFilter;
+    private $settingsManager;
     private $context = FoodEstablishment::class;
     private $typeFilter = FoodEstablishment::RESTAURANT;
     const LATESTS_SHOPS_LIMIT = 12;
@@ -57,6 +59,17 @@ class LocalBusinessRepository extends EntityRepository
         $this->businessContext = $businessContext;
 
         return $this;
+    }
+
+    public function setSettingsManager(SettingsManager $settingsManager): void
+    {
+        $this->settingsManager = $settingsManager;
+    }
+
+    private function getNewShopDays(): int
+    {
+        $days = $this->settingsManager?->get('new_shop_days');
+        return $days ? (int) $days : 90;
     }
 
     public function setContext(string $context)
@@ -269,6 +282,8 @@ class LocalBusinessRepository extends EntityRepository
         $this->addBusinessContextClause($qb, 'r');
 
         $qb
+            ->andWhere('r.createdAt > :since')
+            ->setParameter('since', (new \DateTime())->modify(sprintf('-%d days', $this->getNewShopDays())))
             ->setMaxResults($limit)
             ->orderBy('r.createdAt', 'DESC');
 
@@ -374,6 +389,8 @@ class LocalBusinessRepository extends EntityRepository
                                 break;
                             case 'new':
                                 $qb
+                                    ->andWhere('r.createdAt > :since')
+                                    ->setParameter('since', (new \DateTime())->modify(sprintf('-%d days', $this->getNewShopDays())))
                                     ->setMaxResults(self::LATESTS_SHOPS_LIMIT)
                                     ->orderBy('r.createdAt', 'DESC');
                                 break;
@@ -385,6 +402,12 @@ class LocalBusinessRepository extends EntityRepository
                                         $qb->expr()->eq('r.loopeatEnabled', ':enabled'))
                                     )
                                     ->setParameter('enabled', true);
+                                break;
+                            case 'edenred':
+                                $qb
+                                    ->andWhere('r.edenredEnabled = :edenredEnabled')
+                                    ->andWhere('r.edenredMerchantId IS NOT NULL')
+                                    ->setParameter('edenredEnabled', true);
                                 break;
                             default:
                                 break;
@@ -469,6 +492,8 @@ class LocalBusinessRepository extends EntityRepository
         $qb = $this->createQueryBuilder('r');
         $qb
             ->select('r.id')
+            ->andWhere('r.createdAt > :since')
+            ->setParameter('since', (new \DateTime())->modify(sprintf('-%d days', $this->getNewShopDays())))
             ->setMaxResults(self::LATESTS_SHOPS_LIMIT)
             ->orderBy('r.createdAt', 'DESC');
 
@@ -631,17 +656,6 @@ class LocalBusinessRepository extends EntityRepository
         $this->addBusinessContextClause($qb, 'r');
 
         return $qb->getQuery()->getSingleScalarResult();
-    }
-
-    public function findNew($since = '3 months')
-    {
-        $qb = $this->createQueryBuilder('r')
-            ->andWhere('r.createdAt > :since')
-            ->setParameter('since', date('Y-m-d', strtotime($since)));
-
-        $this->addBusinessContextClause($qb, 'r');
-
-        return $qb->getQuery()->getResult();
     }
 
     public function findByCollection(string $slug)

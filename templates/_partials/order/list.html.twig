@@ -74,8 +74,7 @@
       </a>
       {% elseif order.hasVendor() and order.state == 'fulfilled' %}
         <button type="button" class="btn btn-xs btn-default"
-          data-toggle="modal" data-target="#order-receipt-modal"
-          data-action="{{ path(routes.order_receipt_generate, { orderNumber: order.number }) }}">{{ 'order.list.generate_receipt'|trans }}</button>
+          data-receipt-action="{{ path(routes.order_receipt_generate, { orderNumber: order.number }) }}">{{ 'order.list.generate_receipt'|trans }}</button>
       {% endif %}
     </td>
     {% endif %}
@@ -85,7 +84,7 @@
       {% if order.hasVendor() and not order.isMultiVendor() and order.vendor.enabled %}
       <a class="btn btn-sm btn-success" href="{{ path('order_reorder', { hashid: order|hashid(16) }) }}">
         <i class="fa fa-shopping-basket mr-1"></i>
-        <span>{{ 'order.list.reorder'|trans }}</span>
+        <span class="whitespace-nowrap">{{ 'order.list.reorder'|trans }}</span>
       </a>
       {% endif %}
     </td>

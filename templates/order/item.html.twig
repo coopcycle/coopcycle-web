@@ -126,6 +126,9 @@
 
 {% block scripts %}
 {{ encore_entry_script_tags('order-item') }}
+{% if is_granted('ROLE_DISPATCHER') %}
+{{ encore_entry_script_tags('admin-orders') }}
+{% endif %}
 <script>
 {% include "_partials/order/receipt_modal.js.twig" %}
 </script>

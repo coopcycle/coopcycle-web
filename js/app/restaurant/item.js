@@ -5,8 +5,6 @@ import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
 import Modal from 'react-modal'
 import _ from 'lodash'
-import { createTheme, MantineProvider } from '@mantine/core';
-
 import i18n, { getCountry } from '../i18n'
 import { createStoreFromPreloadedState } from './redux/store'
 import {
@@ -19,19 +17,11 @@ import {
 import storage from '../search/address-storage'
 import { initLoopeatContext } from './loopeat'
 
-const theme = createTheme({
-  /** Your theme override here */
-});
-
 import './item.scss'
 import './header.scss'
 import './menu.scss'
 import './components/Order/index.scss'
 import '../components/order/index.scss'
-
-// https://mantine.dev/styles/mantine-styles/#css-layers
-import '@mantine/core/styles.layer.css';
-import '@mantine/core/styles/LoadingOverlay.layer.css';
 
 import ProductOptionsModal from './components/ProductDetails/ProductOptionsModal'
 import ChangeRestaurantOnAddProductModal from './components/ChangeRestaurantOnAddProductModal'
@@ -63,16 +53,13 @@ function init() {
     return
   }
 
-  document.addEventListener('submit', (e) => {
-    const productSimple = e.target.closest('form[data-product-simple]');
-    if (productSimple) {
-      e.preventDefault();
-      // $(e.currentTarget).closest('.modal').modal('hide')
-      store.dispatch(queueAddItem(productSimple.getAttribute('action'), 1))
-    }
-  })
-
   document.addEventListener('click', (e) => {
+    const productSimple = e.target.closest('[data-product-simple]');
+    if (productSimple) {
+      store.dispatch(queueAddItem(productSimple.dataset.formAction, 1))
+      return
+    }
+
     const productDetails = e.target.closest('[data-modal="product-details"]');
     if (productDetails) {
       const product    = JSON.parse(productDetails.dataset.product)
@@ -188,18 +175,16 @@ function init() {
     <StrictMode>
       <Provider store={store}>
         <I18nextProvider i18n={i18n}>
-          <MantineProvider theme={theme}>
-            <OrderLayout />
-            <ProductOptionsModal />
-            <ChangeRestaurantOnAddProductModal />
-            <InvitePeopleToOrderModal />
-            <SetGuestCustomerEmailModal />
-            <LoopeatModal />
-            {createPortal(
-              <LoadingOverlay />,
-              document.getElementById('loading-overlay')
-            )}
-          </MantineProvider>
+          <OrderLayout />
+          <ProductOptionsModal />
+          <ChangeRestaurantOnAddProductModal />
+          <InvitePeopleToOrderModal />
+          <SetGuestCustomerEmailModal />
+          <LoopeatModal />
+          {createPortal(
+            <LoadingOverlay />,
+            document.getElementById('loading-overlay')
+          )}
         </I18nextProvider>
       </Provider>
     </StrictMode>,

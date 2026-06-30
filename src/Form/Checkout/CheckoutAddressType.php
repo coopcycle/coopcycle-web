@@ -96,13 +96,22 @@ class CheckoutAddressType extends AbstractType
 
                     $this->loopeatContextInitializer->initialize($order, $this->loopeatContext);
 
-                    $form->add('reusablePackagingEnabled', CheckboxType::class, [
+                    $loopeatMandatory = $restaurant->isLoopeatMandatory();
+                    $loopeatOptions = [
                         'required' => false,
                         'label' => 'form.checkout_address.reusable_packaging_loopeat_enabled.label',
                         'attr' => [
                             'data-loopeat' => 'true',
                         ],
-                    ]);
+                    ];
+
+                    if ($loopeatMandatory) {
+                        $loopeatOptions['disabled'] = true;
+                        $loopeatOptions['data'] = true;
+                        $loopeatOptions['empty_data'] = true;
+                    }
+
+                    $form->add('reusablePackagingEnabled', CheckboxType::class, $loopeatOptions);
 
                 } elseif (!$order->isMultiVendor() && $restaurant->isVytalEnabled()) {
 
@@ -116,7 +125,7 @@ class CheckoutAddressType extends AbstractType
 
                 } elseif (!$order->isMultiVendor() && $restaurant->isEnBoitLePlatEnabled()) {
 
-                    $form->add('reusablePackagingEnabled', CheckboxType::class, [
+                    $enBoiteLePlatOptions = [
                         'required' => false,
                         'label' => 'form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label',
                         'label_translation_parameters' => [
@@ -126,7 +135,15 @@ class CheckoutAddressType extends AbstractType
                         'attr' => [
                             'data-en-boite-le-plat' => 'true',
                         ],
-                    ]);
+                    ];
+
+                    if (!$restaurant->isDepositRefundOptin()) {
+                        $enBoiteLePlatOptions['disabled'] = true;
+                        $enBoiteLePlatOptions['data'] = true;
+                        $enBoiteLePlatOptions['empty_data'] = true;
+                    }
+
+                    $form->add('reusablePackagingEnabled', CheckboxType::class, $enBoiteLePlatOptions);
 
                 } elseif ($restaurant->isDepositRefundEnabled() && $restaurant->isDepositRefundOptin()) {
 

@@ -1,5 +1,18 @@
 Feature: Settings
 
+  Scenario: Retrieve settings with custom theme
+    Given the setting "theme" has value:
+      """
+      {"primary":"oklch(0.45 0.20 210)","primary-content":"oklch(0.95 0.03 210)"}
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And I send a "GET" request to "/api/settings"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON node "theme.primary" should be equal to "oklch(0.45 0.20 210)"
+    And the JSON node "theme.primary-content" should be equal to "oklch(0.95 0.03 210)"
+
   Scenario: Retrieve settings
     Given the setting "latlng" has value "48.856613,2.352222"
     And the setting "brand_name" has value "CoopCycle"
@@ -36,6 +49,7 @@ Feature: Settings
         "order_confirm_message": @string@,
         "edenred_client_id": "@string@",
         "edenred_authorization_endpoint": "@string@",
-        "paygreen_public_key": "@null@"
+        "paygreen_public_key": "@null@",
+        "theme": @array@
       }
       """

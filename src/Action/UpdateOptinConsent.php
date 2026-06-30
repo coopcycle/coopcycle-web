@@ -2,27 +2,22 @@
 
 namespace AppBundle\Action;
 
-use AppBundle\Action\Utils\TokenStorageTrait;
-use AppBundle\Entity\OptinConsent;
-use Doctrine\Persistence\ManagerRegistry;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class UpdateOptinConsent
 {
     public $userManager;
-    use TokenStorageTrait;
 
-    public function __construct(TokenStorageInterface $tokenStorage, UserManagerInterface $userManager)
+    public function __construct(private Security $security, UserManagerInterface $userManager)
     {
-        $this->tokenStorage = $tokenStorage;
         $this->userManager = $userManager;
     }
 
     public function __invoke($data)
     {
-        $user = $this->getUser();
+        $user = $this->security->getUser();
 
         foreach($user->getOptinConsents() as $userOptinConsent) {
             if ($userOptinConsent->getType() === $data->getType()) {

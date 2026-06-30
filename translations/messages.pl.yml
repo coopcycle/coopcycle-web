@@ -332,7 +332,7 @@ payment.state.failed: Nieudana
 order.adjustment_type.tip: Napiwek dla kuriera/kurierki
 order.adjustment_type.reusable_packaging: Opakowanie
 order.adjustment_type.delivery: Dostawa
-order_item.adjustment_type.reusable_packaging: '%quantity% × opakowanie'
+order_item.adjustment_type.reusable_packaging: '%quantity% × « %name% » opakowanie'
 order.list.total: Suma
 order.list.shippedAt: Czas dostawy
 order.list.customer: Klient

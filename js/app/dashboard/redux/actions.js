@@ -105,6 +105,9 @@ export const CREATE_GROUP_SUCCESS = 'CREATE_GROUP_SUCCESS'
 export const OPEN_CREATE_DELIVERY_MODAL = 'OPEN_CREATE_DELIVERY_MODAL'
 export const CLOSE_CREATE_DELIVERY_MODAL = 'CLOSE_CREATE_DELIVERY_MODAL'
 
+export const OPEN_SEND_TO_WAREHOUSE_MODAL = 'OPEN_SEND_TO_WAREHOUSE_MODAL'
+export const CLOSE_SEND_TO_WAREHOUSE_MODAL = 'CLOSE_SEND_TO_WAREHOUSE_MODAL'
+
 export const OPEN_TASK_RESCHEDULE_MODAL = 'OPEN_TASK_RESCHEDULE_MODAL'
 export const CLOSE_TASK_RESCHEDULE_MODAL = 'CLOSE_TASK_RESCHEDULE_MODAL'
 
@@ -231,6 +234,7 @@ export function modifyTaskListRequestSuccess(taskList) {
 }
 
 export const setTaskListsLoading = createAction('SET_TASKLISTS_LOADING')
+export const setLoadingTaskIds = createAction('SET_LOADING_TASK_IDS')
 export const setTaskListVehicleRequest = createAction('SET_TASK_LIST_VEHICLE_REQUEST')
 export const setTaskListTrailerRequest = createAction('SET_TASK_LIST_TRAILER_REQUEST')
 
@@ -846,6 +850,38 @@ export function startTasks(tasks) {
         values.forEach(response => dispatch(updateTask(response.data)))
       })
       .catch(error => dispatch(startTaskFailure(error)))
+  }
+}
+
+export function completeTasks(tasks) {
+
+  return async function(dispatch, getState) {
+
+    const { jwt } = getState()
+    const taskIds = tasks.map(t => t['@id'])
+
+    dispatch(setLoadingTaskIds(taskIds))
+    dispatch(setTaskListsLoading(true))
+
+    try {
+      const response = await createClient(dispatch).request({
+        method: 'put',
+        url: '/api/tasks/done',
+        data: { tasks: taskIds },
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      })
+
+      response.data.success.forEach(task => dispatch(updateTask(task)))
+    } catch (error) {
+      dispatch(startTaskFailure(error))
+    } finally {
+      dispatch(setLoadingTaskIds([]))
+      dispatch(setTaskListsLoading(false))
+    }
   }
 }
 
@@ -1527,6 +1563,47 @@ export function openTaskRescheduleModal() {
 
 export function closeTaskRescheduleModal() {
   return { type: CLOSE_TASK_RESCHEDULE_MODAL }
+}
+
+export function openSendToWarehouseModal() {
+  return { type: OPEN_SEND_TO_WAREHOUSE_MODAL }
+}
+
+export function closeSendToWarehouseModal() {
+  return { type: CLOSE_SEND_TO_WAREHOUSE_MODAL }
+}
+
+export function sendToWarehouse(tasks, warehouse) {
+  return function(dispatch, getState) {
+    const { jwt } = getState()
+
+    const pickup  = tasks.find(t => t.type === 'PICKUP')
+    const dropoff = tasks.find(t => t.type === 'DROPOFF')
+
+    createClient(dispatch).request({
+      method: 'post',
+      url: `${warehouse['@id']}/relay`,
+      data: {
+        tasks: [pickup['@id'], dropoff['@id']],
+      },
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json',
+      }
+    })
+      .then((response) => {
+        dispatch(updateTask(response.data.hubDropoff))
+        dispatch(updateTask(response.data.hubPickup))
+        // The backend updated dropoff.previous → hubPickup. Mirror that in the store
+        // so groupLinkedTasks can colour all four tasks consistently right away.
+        dispatch(updateTask({ ...dropoff, previous: response.data.hubPickup['@id'] }))
+        dispatch(closeSendToWarehouseModal())
+      })
+      .catch(() => {
+        dispatch(closeSendToWarehouseModal())
+      })
+  }
 }
 
 export function createTourRequest() {

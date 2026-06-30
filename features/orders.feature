@@ -142,6 +142,7 @@ Feature: Orders
         },
         "telephone":"+33612345678",
         "loopeatEnabled":false,
+        "loopeatMandatory":false,
         "isOpen":false,
         "nextOpeningDate":"@string@.isDateTime()",
         "tags":@array@,
@@ -319,6 +320,7 @@ Feature: Orders
         },
         "telephone":"+33612345678",
         "loopeatEnabled":false,
+        "loopeatMandatory":false,
         "isOpen":false,
         "nextOpeningDate":"@string@.isDateTime()",
         "tags":@array@,
@@ -643,6 +645,7 @@ Feature: Orders
         "isOpen":false,
         "nextOpeningDate":"@string@.isDateTime()",
         "loopeatEnabled":false,
+        "loopeatMandatory":false,
         "tags":@array@,
         "badges":@array@
       },
@@ -810,6 +813,7 @@ Feature: Orders
           "isOpen":true,
           "nextOpeningDate":"@string@.isDateTime()",
           "loopeatEnabled":false,
+          "loopeatMandatory":false,
           "tags":@array@,
           "badges":@array@
         },
@@ -1658,6 +1662,7 @@ Feature: Orders
   Scenario: Retrieve all orders via OAuth, then retrieve one order
     Given the fixtures files are loaded with purge:
       | setup_default.yml |
+    And the PHP memory limit is set to "1024M"
     Given the fixtures files are loaded:
       | package_delivery_orders.yml ||
     And there is an OAuth client named "Acme" with scopes "orders:all"

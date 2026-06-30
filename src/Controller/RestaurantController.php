@@ -14,6 +14,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessRestaurantGroup;
 use AppBundle\Entity\Hub;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\LocalBusiness\AddressResolver;
 use AppBundle\Entity\LocalBusinessRepository;
 use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\Sylius\Product;
@@ -603,12 +604,14 @@ class RestaurantController extends AbstractController
 
             return array_map(function (LocalBusiness $restaurant) use ($slugify) {
 
+                $geo = AddressResolver::resolveAddress($restaurant)->getGeo();
+
                 return [
                     'name' => $restaurant->getName(),
                     'address' => [
                         'geo' => [
-                            'latitude'  => $restaurant->getAddress()->getGeo()->getLatitude(),
-                            'longitude' => $restaurant->getAddress()->getGeo()->getLongitude(),
+                            'latitude'  => $geo->getLatitude(),
+                            'longitude' => $geo->getLongitude(),
                         ]
                     ],
                     'url' => $this->generateUrl('restaurant', [

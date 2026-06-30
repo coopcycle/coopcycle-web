@@ -26,59 +26,21 @@
   </div>
 </div>
 
-<table class="table">
-  <thead>
-    <th>{% trans %}sylius.ui.code{% endtrans %}</th>
-    <th>{% trans %}sylius.form.promotion.rules{% endtrans %}</th>
-    <th>{% trans %}sylius.form.promotion.actions{% endtrans %}</th>
-    <th>{% trans %}sylius.form.promotion_coupon.usage_limit{% endtrans %}</th>
-    <th>{% trans %}sylius.form.promotion_coupon.per_customer_usage_limit{% endtrans %}</th>
-    <th>{% trans %}sylius.form.promotion_coupon.expires_at{% endtrans %}</th>
-    <th class="text-right">{% trans %}promotion_coupon.used.label{% endtrans %}</th>
-  </thead>
-  <tbody>
-  {% for coupon in promotion_coupons %}
-    <tr>
-      <td width="5%">
-        <a href="{{ path('admin_promotion_coupon', { id: coupon.promotion.id, code: coupon.code }) }}">
-          {{ coupon.code }}
-        </a>
-      </td>
-      <td>
-        <ul class="list-unstyled">
-        {% for promotion_rule in coupon.promotion.rules %}
-          <li>
-            <small>{{ promotion_rule|promotion_rule_for_humans }}</small>
-          </li>
-        {% endfor %}
-        </ul>
-      </td>
-      <td>
-        <ul class="list-unstyled">
-        {% for promotion_action in coupon.promotion.actions %}
-          <li>
-            <small>{{ promotion_action|promotion_action_for_humans }}</small>
-          </li>
-        {% endfor %}
-        </ul>
-      </td>
-      <td>
-        {{ coupon.usageLimit }}
-      </td>
-      <td>
-        {{ coupon.perCustomerUsageLimit }}
-      </td>
-      <td>
-        {% if coupon.expiresAt is not empty %}
-          {{ coupon.expiresAt|format_datetime('short', 'short') }}
-        {% endif %}
-      </td>
-      <td class="text-right">
-        {{ coupon.used }}
-      </td>
-    </tr>
-  {% endfor %}
-  </tbody>
-</table>
+{% if past|length > 0 %}
+<ul class="nav nav-tabs" role="tablist">
+  <li role="presentation" class="active"><a href="#ongoing" aria-controls="ongoing" role="tab" data-toggle="tab">{{ 'adminDashboard.promotions.ongoing'|trans({ '%count%': ongoing|length }) }}</a></li>
+  <li role="presentation"><a href="#past" aria-controls="past" role="tab" data-toggle="tab">{{ 'adminDashboard.promotions.past'|trans({ '%count%': past|length }) }}</a></li>
+</ul>
+<div class="tab-content">
+  <div role="tabpanel" class="tab-pane active" id="ongoing">
+    {% include 'admin/_partials/promotion_coupon_list.html.twig' with { promotion_coupons: ongoing } %}
+  </div>
+  <div role="tabpanel" class="tab-pane" id="past">
+    {% include 'admin/_partials/promotion_coupon_list.html.twig' with { promotion_coupons: past } %}
+  </div>
+</div>
+{% else %}
+  {% include 'admin/_partials/promotion_coupon_list.html.twig' with { promotion_coupons: ongoing } %}
+{% endif %}
 
 {% endblock %}

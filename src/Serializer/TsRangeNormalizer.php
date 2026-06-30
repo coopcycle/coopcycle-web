@@ -64,7 +64,7 @@ class TsRangeNormalizer implements NormalizerInterface, DenormalizerInterface
                 $tz = date_default_timezone_get();
 
                 // FIXME Catch Exception
-                $period = CarbonPeriod::createFromIso($data);
+                $period = CarbonPeriod::create($data);
 
                 $lower = $period->getStartDate()->tz($tz)->toDateTime();
                 $upper = $period->getEndDate()->tz($tz)->toDateTime();
