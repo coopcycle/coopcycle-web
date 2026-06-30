@@ -17,6 +17,7 @@ $handler = new OAuthHandler(
     apiSecret:     env('SHOPIFY_API_SECRET'),
     gatewaySecret: env('GATEWAY_SECRET'),
     appUrl:        rtrim(env('APP_URL'), '/'),
+    tenantsEnv:    env('TENANTS'),
 );
 
 $method = $_SERVER['REQUEST_METHOD'];

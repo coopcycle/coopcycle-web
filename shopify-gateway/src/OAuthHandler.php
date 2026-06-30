@@ -14,7 +14,38 @@ class OAuthHandler
         private readonly string $apiSecret,
         private readonly string $gatewaySecret,
         private readonly string $appUrl,
+        private readonly string $tenantsEnv = '',
     ) {}
+
+    /**
+     * Parse TENANTS env var into [{name, url}] pairs.
+     * Format: "Name:https://url.org,Name+with+spaces:https://url2.org"
+     * Returns empty array when env var is not set.
+     *
+     * @return array<array{name: string, url: string}>
+     */
+    private function parseTenants(): array
+    {
+        if ($this->tenantsEnv === '') {
+            return [];
+        }
+
+        $tenants = [];
+        foreach (explode(',', $this->tenantsEnv) as $entry) {
+            $entry = trim($entry);
+            if ($entry === '') continue;
+            // Split on first colon only so the URL's "https://" is preserved.
+            $pos = strpos($entry, ':');
+            if ($pos === false) continue;
+            $name = urldecode(substr($entry, 0, $pos));
+            $url  = rtrim(substr($entry, $pos + 1), '/');
+            if ($name !== '' && filter_var($url, FILTER_VALIDATE_URL)) {
+                $tenants[] = ['name' => $name, 'url' => $url];
+            }
+        }
+
+        return $tenants;
+    }
 
     /**
      * Entry point from the Shopify App Store.
@@ -42,7 +73,7 @@ class OAuthHandler
             return;
         }
 
-        $this->render('install', ['shop' => $shop]);
+        $this->render('install', ['shop' => $shop, 'tenants' => $this->parseTenants()]);
     }
 
     /**
@@ -62,6 +93,15 @@ class OAuthHandler
         if (!$tenantUrl || !filter_var($tenantUrl, FILTER_VALIDATE_URL)) {
             $this->render('error', ['message' => 'The CoopCycle URL you entered is not valid. It should look like https://paris.coopcycle.org.']);
             return;
+        }
+
+        $tenants = $this->parseTenants();
+        if ($tenants !== []) {
+            $allowed = array_column($tenants, 'url');
+            if (!in_array($tenantUrl, $allowed, true)) {
+                $this->render('error', ['message' => 'The selected CoopCycle cooperative is not allowed.']);
+                return;
+            }
         }
 
         // Build a signed state token embedding shop, tenant, and the gateway's

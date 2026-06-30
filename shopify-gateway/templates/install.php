@@ -50,7 +50,7 @@
             margin-bottom: 0.375rem;
         }
 
-        input[type="text"], input[type="url"] {
+        input[type="text"], input[type="url"], select {
             width: 100%;
             padding: 0.625rem 0.75rem;
             border: 1px solid #d1d5db;
@@ -59,9 +59,10 @@
             color: #1a1a1a;
             margin-bottom: 1.25rem;
             transition: border-color .15s;
+            background: #fff;
         }
 
-        input[type="text"]:focus, input[type="url"]:focus {
+        input[type="text"]:focus, input[type="url"]:focus, select:focus {
             outline: none;
             border-color: #e84e4e;
             box-shadow: 0 0 0 3px rgba(232,78,78,.15);
@@ -109,20 +110,32 @@
     <form method="POST" action="/shopify/start">
         <input type="hidden" name="shop" value="<?= htmlspecialchars($shop ?? '', ENT_QUOTES) ?>">
 
-        <label for="tenant_url">Your CoopCycle cooperative's URL</label>
-        <input
-            type="url"
-            id="tenant_url"
-            name="tenant_url"
-            placeholder="https://paris.coopcycle.org"
-            required
-            autofocus
-        >
-        <p class="hint">
-            Not sure? Contact your local cooperative or visit
-            <a href="https://coopcycle.org" target="_blank" rel="noopener">coopcycle.org</a>
-            to find one near you.
-        </p>
+        <?php if (!empty($tenants)): ?>
+            <label for="tenant_url">Your CoopCycle cooperative</label>
+            <select id="tenant_url" name="tenant_url" required autofocus>
+                <option value="">— Select a cooperative —</option>
+                <?php foreach ($tenants as $tenant): ?>
+                    <option value="<?= htmlspecialchars($tenant['url'], ENT_QUOTES) ?>">
+                        <?= htmlspecialchars($tenant['name'], ENT_QUOTES) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+        <?php else: ?>
+            <label for="tenant_url">Your CoopCycle cooperative's URL</label>
+            <input
+                type="url"
+                id="tenant_url"
+                name="tenant_url"
+                placeholder="https://paris.coopcycle.org"
+                required
+                autofocus
+            >
+            <p class="hint">
+                Not sure? Contact your local cooperative or visit
+                <a href="https://coopcycle.org" target="_blank" rel="noopener">coopcycle.org</a>
+                to find one near you.
+            </p>
+        <?php endif; ?>
 
         <button type="submit">Connect &#x2192;</button>
     </form>
