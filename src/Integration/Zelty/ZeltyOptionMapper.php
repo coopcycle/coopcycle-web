@@ -28,7 +28,7 @@ class ZeltyOptionMapper
      * @param array<ZeltyOptionValue> $optionValues Array of ZeltyOptionValue objects
      * @param LocalBusiness $restaurant The restaurant
      * @param string $locale The locale code
-     * @return array<int,ProductOption> Map of option codes/IDs to ProductOption entities
+     * @return array<string, ProductOption> Map of option codes/IDs to ProductOption entities
      */
     public function importOptions(
         array $options,
@@ -52,9 +52,9 @@ class ZeltyOptionMapper
 
     /**
      * Index option values by their ID.
-     * @param array<ZeltyOption> $optionValues
+     * @param array<ZeltyOptionValue> $optionValues
      *
-     * @return array<int, ZeltyOptionValue>
+     * @return array<string, ZeltyOptionValue>
      */
     private function indexOptionValuesById(array $optionValues): array
     {
