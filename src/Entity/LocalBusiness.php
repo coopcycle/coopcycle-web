@@ -1281,6 +1281,8 @@ class LocalBusiness extends BaseLocalBusiness implements
     public function hasZeltyApiKey(): bool
     {
         return null !== $this->zeltyApiKey && '' !== $this->zeltyApiKey;
+    }
+
     public function getDayOfWeekAddresses()
     {
         return $this->dayOfWeekAddresses;
