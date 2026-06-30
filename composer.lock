@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7e207e4febb68bb0dc0ecdbfbe323bbb",
+    "content-hash": "29678742ad6a00a23f0c2d06aac0212d",
     "packages": [
         {
             "name": "acseo/typesense-bundle",
@@ -28186,6 +28186,130 @@
             "time": "2026-01-23T15:30:45+00:00"
         },
         {
+            "name": "macpaw/behat-orm-context",
+            "version": "v2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/MacPaw/behat-orm-context.git",
+                "reference": "654c271c30ca1ffd7c336e32536d19f213467bb8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/MacPaw/behat-orm-context/zipball/654c271c30ca1ffd7c336e32536d19f213467bb8",
+                "reference": "654c271c30ca1ffd7c336e32536d19f213467bb8",
+                "shasum": ""
+            },
+            "require": {
+                "behat/behat": "^3.0",
+                "doctrine/orm": "^2.0 || ^3.0",
+                "ext-json": "*",
+                "macpaw/similar-arrays": "^1.0",
+                "php": "^8.1",
+                "symfony/config": "^6.4 || ^7.0 || ^8.0",
+                "symfony/dependency-injection": "^6.4 || ^7.0 || ^8.0",
+                "symfony/http-kernel": "^6.4 || ^7.0 || ^8.0",
+                "symfony/yaml": "^6.4 || ^7.0 || ^8.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^2.0",
+                "phpstan/phpstan-doctrine": "^2.0",
+                "phpunit/phpunit": "^10.5 || ^11.0",
+                "rector/rector": "^1.0 || ^2.0",
+                "slevomat/coding-standard": "^8.0",
+                "squizlabs/php_codesniffer": "^4.0"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "BehatOrmContext\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vladislav Hanziuk",
+                    "email": "ganzyukv@macpaw.com",
+                    "homepage": "https://macpaw.com/",
+                    "role": "Software Engineer"
+                },
+                {
+                    "name": "Serhii Donii",
+                    "email": "serhii.donii@macpaw.com",
+                    "homepage": "https://macpaw.com/",
+                    "role": "Software Engineer"
+                },
+                {
+                    "name": "Yozhef Hisem",
+                    "email": "hisemjo@gmail.com",
+                    "homepage": "https://macpaw.com/",
+                    "role": "Software Engineer"
+                }
+            ],
+            "description": "Behat Context for testing Symfony ORM",
+            "keywords": [
+                "BDD",
+                "Behat",
+                "Context",
+                "MacPaw",
+                "orm",
+                "symfony"
+            ],
+            "support": {
+                "issues": "https://github.com/MacPaw/behat-orm-context/issues",
+                "source": "https://github.com/MacPaw/behat-orm-context/tree/v2.0.0"
+            },
+            "time": "2026-03-30T10:12:00+00:00"
+        },
+        {
+            "name": "macpaw/similar-arrays",
+            "version": "v1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/MacPaw/similar-arrays.git",
+                "reference": "bf7c555c22758f4a2c1b40fb1f798c77186181b2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/MacPaw/similar-arrays/zipball/bf7c555c22758f4a2c1b40fb1f798c77186181b2",
+                "reference": "bf7c555c22758f4a2c1b40fb1f798c77186181b2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1.2",
+                "phpunit/phpunit": "^7.5 || ^8.5 || ^9.5",
+                "slevomat/coding-standard": "^7.0",
+                "squizlabs/php_codesniffer": "^3.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "SimilarArrays\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Check is similar arrays",
+            "keywords": [
+                "MacPaw",
+                "check-similar-array",
+                "similar",
+                "similar-array"
+            ],
+            "support": {
+                "issues": "https://github.com/MacPaw/similar-arrays/issues",
+                "source": "https://github.com/MacPaw/similar-arrays/tree/v1.0.3"
+            },
+            "time": "2026-01-30T18:15:04+00:00"
+        },
+        {
             "name": "masterminds/html5",
             "version": "2.10.0",
             "source": {
@@ -30507,17 +30631,17 @@
     ],
     "minimum-stability": "dev",
     "stability-flags": {
-        "drupal/core-vendor-hardening": 20,
-        "shahonseven/php-color-hash": 20,
+        "behatch/contexts": 20,
         "coopcycle/transporter": 20,
+        "drupal/core-vendor-hardening": 20,
         "islesurlasorguetourisme/daisyui-form-bundle": 20,
-        "behatch/contexts": 20
+        "shahonseven/php-color-hash": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=8.2"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
 }

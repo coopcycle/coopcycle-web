@@ -52,6 +52,16 @@ Feature: Zelty catalog push webhook
       """
       {"status":"success"}
       """
+    And I see 1 entities "AppBundle\Entity\Sylius\Product"
+    And I see entity "AppBundle\Entity\Sylius\Product" with properties:
+      """
+      {"code": "1001", "enabled": true}
+      """
+    And I see 1 entities "AppBundle\Entity\Sylius\ProductVariant"
+    And I see entity "AppBundle\Entity\Sylius\ProductVariant" with properties:
+      """
+      {"code": "1001_variant", "price": 1200}
+      """
 
   Scenario: Import catalog with multiple dishes and a menu
     Given the fixtures files are loaded:
@@ -147,6 +157,31 @@ Feature: Zelty catalog push webhook
       """
       {"status":"success"}
       """
+    And I see 3 entities "AppBundle\Entity\Sylius\Product"
+    And I see entity "AppBundle\Entity\Sylius\Product" with properties:
+      """
+      {"code": "2001"}
+      """
+    And I see entity "AppBundle\Entity\Sylius\Product" with properties:
+      """
+      {"code": "2002"}
+      """
+    And I see entity "AppBundle\Entity\Sylius\Product" with properties:
+      """
+      {"code": "3001"}
+      """
+    And I see entity "AppBundle\Entity\Sylius\ProductVariant" with properties:
+      """
+      {"code": "2001_variant", "price": 1200}
+      """
+    And I see entity "AppBundle\Entity\Sylius\ProductVariant" with properties:
+      """
+      {"code": "2002_variant", "price": 1400}
+      """
+    And I see entity "AppBundle\Entity\Sylius\ProductVariant" with properties:
+      """
+      {"code": "3001_variant", "price": 1500}
+      """
 
   Scenario: Import catalog with a dish having options
     Given the fixtures files are loaded:
@@ -236,6 +271,26 @@ Feature: Zelty catalog push webhook
     And the JSON should match:
       """
       {"status":"success"}
+      """
+    And I see 1 entities "AppBundle\Entity\Sylius\Product"
+    And I see entity "AppBundle\Entity\Sylius\Product" with properties:
+      """
+      {"code": "4001", "enabled": true}
+      """
+    And I see 1 entities "AppBundle\Entity\Sylius\ProductVariant"
+    And I see entity "AppBundle\Entity\Sylius\ProductVariant" with properties:
+      """
+      {"code": "4001_variant", "price": 1300}
+      """
+    And I see 1 entities "AppBundle\Entity\Sylius\ProductOption"
+    And I see 2 entities "AppBundle\Entity\Sylius\ProductOptionValue"
+    And I see entity "AppBundle\Entity\Sylius\ProductOptionValue" with properties:
+      """
+      {"price": 50, "enabled": true}
+      """
+    And I see entity "AppBundle\Entity\Sylius\ProductOptionValue" with properties:
+      """
+      {"price": 100, "enabled": true}
       """
 
   Scenario: Restaurant not found returns 404
