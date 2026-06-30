@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class ZeltyCatalogProcessor implements ProcessorInterface
 {
@@ -28,6 +29,8 @@ class ZeltyCatalogProcessor implements ProcessorInterface
             return new JsonResponse(['error' => 'Restaurant not found'], Response::HTTP_NOT_FOUND);
         }
 
+        $this->verifySignature($request, $restaurant);
+
         $this->em->getConnection()->beginTransaction();
         try {
             $this->importService->import($data, $restaurant);
@@ -39,5 +42,23 @@ class ZeltyCatalogProcessor implements ProcessorInterface
         }
 
         return new JsonResponse(['status' => 'success']);
+    }
+
+    private function verifySignature(\Symfony\Component\HttpFoundation\Request $request, LocalBusiness $restaurant): void
+    {
+        $secretKey = $restaurant->getZeltyWebhookSecretKey();
+        if ($secretKey === null) {
+            return;
+        }
+
+        $signature = $request->headers->get('x-zelty-hmac-sha256');
+        if ($signature === null) {
+            throw new AccessDeniedHttpException('Missing webhook signature');
+        }
+
+        $expected = hash_hmac('sha256', $request->getContent(), $secretKey);
+        if (!hash_equals($expected, $signature)) {
+            throw new AccessDeniedHttpException('Invalid webhook signature');
+        }
     }
 }

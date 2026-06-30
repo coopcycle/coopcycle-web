@@ -63,34 +63,23 @@ class ZeltyClient
     }
 
     /**
-     * Upsert a webhook configuration.
+     * Upsert a webhook configuration and return the secret key provided by Zelty.
      *
-     * @param string $event The webhook event type
-     * @param string|null $url The target URL (null to disable webhook)
-     * @param string $secretKey The secret key for webhook signing
+     * @param string $event The webhook event type (e.g. "catalog.push")
+     * @param string|null $url The target URL (null to disable the webhook)
+     * @return string The secret key returned by Zelty for HMAC verification
      */
-    public function upsertWebhook(string $event, ?string $url, string $secretKey): void
+    public function upsertWebhook(string $event, ?string $url): string
     {
-        $payload = $this->buildWebhookPayload($event, $url, $secretKey);
+        $webhookConfig = $url !== null ? ['target' => $url, 'version' => 'v2'] : null;
 
-        $this->zeltyClient->request('POST', 'webhooks', array_merge($this->authOptions(), [
-            'body' => json_encode($payload),
+        $response = $this->zeltyClient->request('POST', 'webhooks', array_merge($this->authOptions(), [
+            'json' => ['webhooks' => [$event => $webhookConfig]],
         ]));
-    }
 
-    /**
-     * Build webhook payload based on whether URL is provided.
-     */
-    private function buildWebhookPayload(string $event, ?string $url, string $secretKey): array
-    {
-        $webhookConfig = $url !== null
-            ? ['target' => $url, 'version' => 'v2']
-            : null;
+        $data = json_decode($response->getContent(), true);
 
-        return [
-            'webhooks' => [$event => $webhookConfig],
-            'secret_key' => $secretKey,
-        ];
+        return $data['secret_key'];
     }
 
     /**

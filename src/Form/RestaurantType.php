@@ -14,6 +14,7 @@ use AppBundle\Form\Restaurant\ShippingOptionsTrait;
 use AppBundle\Form\Restaurant\FulfillmentMethodsTrait;
 use AppBundle\Form\Type\LocalBusinessTypeChoiceType;
 use AppBundle\Form\Type\QueryBuilder\OrderByNameQueryBuilder;
+use AppBundle\Form\Restaurant\ZeltyType;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormEvent;
@@ -22,7 +23,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -222,15 +222,10 @@ class RestaurantType extends LocalBusinessType
                         ]);
                     }
 
-                    if ($options['zelty_enabled']) {
-                        $form->add('zeltyApiKey', PasswordType::class, [
-                            'always_empty' => false,
-                            'label' => 'restaurant.form.zelty_api_key',
-                            'required' => false,
-                            'mapped' => true,
-                            'attr' => ['placeholder' => $restaurant->getMaskedZeltyApiKey() ]
+                    if ($this->zeltyEnabled) {
+                        $form->add('zelty', ZeltyType::class, [
+                            'mapped' => false,
                         ]);
-                        dump($restaurant->getMaskedZeltyApiKey());
                     }
 
 
@@ -338,6 +333,7 @@ class RestaurantType extends LocalBusinessType
                     $usePaygreen = $form->get('usePaygreen')->getData();
                     $restaurant->setPaymentGateway($usePaygreen ? 'paygreen': 'stripe');
                 }
+
             }
         );
     }
@@ -352,7 +348,6 @@ class RestaurantType extends LocalBusinessType
             'edenred_enabled' => false,
             'vytal_enabled' => false,
             'en_boite_le_plat_enabled' => false,
-            'zelty_enabled' => false,
         ));
     }
 }

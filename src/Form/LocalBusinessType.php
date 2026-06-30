@@ -45,7 +45,8 @@ abstract class LocalBusinessType extends AbstractType
         protected bool $cashOnDeliveryOptinEnabled = false,
         protected array $transportersConfig = [],
         protected bool $billingEnabled = false,
-        ?string $standtrackEnabled = null
+        ?string $standtrackEnabled = null,
+        protected bool $zeltyEnabled = false,
     )
     {
         $this->transportersEnabled = !empty($transportersConfig);
