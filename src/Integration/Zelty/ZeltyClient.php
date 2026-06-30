@@ -2,27 +2,17 @@
 
 namespace AppBundle\Integration\Zelty;
 
-use Sylius\Component\Order\Model\OrderInterface;
+use AppBundle\Sylius\Order\OrderInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-/**
- * Client for interacting with the Zelty API.
- */
 class ZeltyClient
 {
-    private const DEFAULT_FULFILLMENT_TYPE = 'deliver_by_partner';
-    private const DEFAULT_SOURCE = 'WEB|MOBILE';
-    private const DEFAULT_MODE = 'delivery';
-
     private ?string $authToken = null;
 
     public function __construct(
         private HttpClientInterface $zeltyClient
     ) {}
 
-    /**
-     * Set authentication token for API requests.
-     */
     public function setAuth(string $token): void
     {
         $this->authToken = $token;
@@ -33,42 +23,87 @@ class ZeltyClient
         return $this->authToken !== null ? ['auth_bearer' => $this->authToken] : [];
     }
 
-    /**
-     * Push an order to Zelty.
-     */
     public function pushToZelty(OrderInterface $order): void
     {
-        $payload = $this->buildOrderPayload($order);
-
         $this->zeltyClient->request('POST', 'orders', array_merge($this->authOptions(), [
-            'body' => json_encode($payload),
+            'json' => $this->buildOrderPayload($order),
         ]));
     }
 
-    /**
-     * Build the order payload for Zelty API.
-     */
     private function buildOrderPayload(OrderInterface $order): array
     {
+        $payload = [
+            'remote_id'        => (string) $order->getId(),
+            'display_id'       => substr($order->getNumber(), 0, 10),
+            'fulfillment_type' => 'deliver_by_partner',
+            'mode'             => 'delivery',
+            'source'           => 'web',
+            'due_date'         => $order->getShippedAt()?->format(\DateTime::ATOM),
+            'customer'         => $this->buildCustomerPayload($order),
+            'address'          => $this->buildAddressPayload($order),
+            'items'            => $this->buildItemsPayload($order),
+            'total'            => $order->getItemsTotal(),
+        ];
+
+        if ($order->getNotes() !== null) {
+            $payload['comment'] = substr($order->getNotes(), 0, 256);
+        }
+
+        return $payload;
+    }
+
+    private function buildCustomerPayload(OrderInterface $order): ?array
+    {
+        $customer = $order->getCustomer();
+        if ($customer === null) {
+            return null;
+        }
+
         return [
-            'remote_id' => $order->getId(),
-            'display_id' => $order->getNumber(),
-            'fulfillment_type' => self::DEFAULT_FULFILLMENT_TYPE,
-            'due_date' => 'ESTIMATED PICKUP TIME',
-            'source' => self::DEFAULT_SOURCE,
-            'mode' => self::DEFAULT_MODE,
-            'customer' => null,
-            'address' => [],
+            'remote_id' => (string) $customer->getId(),
+            'fname'     => $customer->getFirstName(),
+            'name'      => $customer->getLastName(),
+            'mail'      => $customer->getEmail(),
+            'phone'     => $customer->getTelephone(),
         ];
     }
 
-    /**
-     * Upsert a webhook configuration and return the secret key provided by Zelty.
-     *
-     * @param string $event The webhook event type (e.g. "catalog.push")
-     * @param string|null $url The target URL (null to disable the webhook)
-     * @return string The secret key returned by Zelty for HMAC verification
-     */
+    private function buildAddressPayload(OrderInterface $order): ?array
+    {
+        $address = $order->getShippingAddress();
+        if ($address === null) {
+            return null;
+        }
+
+        return [
+            'name'     => $address->getName() ?? $address->getContactName() ?? $address->getStreetAddress(),
+            'street'   => $address->getStreetAddress(),
+            'zip_code' => $address->getPostalCode(),
+            'city'     => $address->getAddressLocality(),
+        ];
+    }
+
+    private function buildItemsPayload(OrderInterface $order): array
+    {
+        $items = [];
+
+        foreach ($order->getItems() as $item) {
+            $variant = $item->getVariant();
+
+            $entry = [
+                'remote_id' => $variant?->getCode(),
+                'type'      => 'dish',
+                'price'     => $item->getUnitPrice(),
+            ];
+
+            for ($i = 0; $i < $item->getQuantity(); $i++) {
+                $items[] = $entry;
+            }
+        }
+
+        return $items;
+    }
+
     public function upsertWebhook(string $event, ?string $url): string
     {
         $webhookConfig = $url !== null ? ['target' => $url, 'version' => 'v2'] : null;
@@ -82,11 +117,6 @@ class ZeltyClient
         return $data['secret_key'];
     }
 
-    /**
-     * Get catalog taxes from Zelty.
-     *
-     * @return array Parsed tax data from Zelty API
-     */
     public function getTaxes(): array
     {
         $response = $this->zeltyClient->request('GET', 'catalog/taxes', $this->authOptions());
