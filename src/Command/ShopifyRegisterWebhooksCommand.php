@@ -7,6 +7,7 @@ use AppBundle\Service\ShopifyClient;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -26,6 +27,11 @@ class ShopifyRegisterWebhooksCommand extends Command
         parent::__construct();
     }
 
+    protected function configure(): void
+    {
+        $this->addArgument('webhook-url', InputArgument::OPTIONAL, 'Override the webhook URL (e.g. https://your-ngrok.ngrok-free.app/api/shopify/webhook)');
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
@@ -37,11 +43,8 @@ class ShopifyRegisterWebhooksCommand extends Command
             return Command::SUCCESS;
         }
 
-        $webhookUrl = $this->urlGenerator->generate(
-            '_api_/shopify/webhook_post',
-            [],
-            UrlGeneratorInterface::ABSOLUTE_URL
-        );
+        $webhookUrl = $input->getArgument('webhook-url')
+            ?? $this->urlGenerator->generate('_api_/shopify/webhook_post', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
         $io->info(sprintf('Webhook URL: %s', $webhookUrl));
 
