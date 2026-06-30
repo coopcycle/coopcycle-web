@@ -1,0 +1,34 @@
+AppBundle\Entity\Base\GeoCoordinates:
+  shopify_geo_1:
+    __construct: ['48.864577', '2.333338']
+
+AppBundle\Entity\Address:
+  shopify_address_1:
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '272, rue Saint Honoré 75001 Paris 1er'
+    geo: '@shopify_geo_1'
+
+AppBundle\Entity\TimeSlot:
+  shopify_time_slot_1:
+    name: 'Shopify time slot'
+    workingDaysOnly: false
+    openingHours:
+      - 'Mo-Su 10:00-12:00'
+      - 'Mo-Su 14:00-17:00'
+
+AppBundle\Entity\Store:
+  shopify_store_1:
+    name: 'Shopify Store'
+    address: '@shopify_address_1'
+    enabled: true
+    timeSlot: '@shopify_time_slot_1'
+    __calls:
+      - addAddress: ['@shopify_address_1']
+
+AppBundle\Entity\Shopify\ShopifyShop:
+  shopify_shop_1:
+    shopDomain: 'test-shop.myshopify.com'
+    accessToken: 'shpat_test_token'
+    webhookSecret: 'test_webhook_secret'
+    store: '@shopify_store_1'

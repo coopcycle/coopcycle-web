@@ -7,6 +7,7 @@ use AppBundle\Service\ShopifyClient;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -23,6 +24,11 @@ class ShopifySyncSlotsCommand extends Command
         private string $tenantUrl,
     ) {
         parent::__construct();
+    }
+
+    protected function configure(): void
+    {
+        $this->addArgument('tenant-url', InputArgument::OPTIONAL, 'Override the tenant URL (e.g. https://your-ngrok.ngrok-free.app)');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -56,7 +62,8 @@ class ShopifySyncSlotsCommand extends Command
 
             $spec = $timeSlot->getOpeningHoursSpecification();
 
-            $this->shopifyClient->syncTenantUrl($shop, $this->tenantUrl);
+            $tenantUrl = $input->getArgument('tenant-url') ?? $this->tenantUrl;
+            $this->shopifyClient->syncTenantUrl($shop, $tenantUrl);
 
             if ($this->shopifyClient->syncSlotsSpec($shop, $spec)) {
                 $io->success(sprintf('Synced slots spec for %s.', $shop->getShopDomain()));

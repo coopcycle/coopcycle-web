@@ -166,6 +166,12 @@ class ShopifyWebhookProcessor implements ProcessorInterface
         // Requested delivery time window from order note attributes (optional)
         $this->applyTimeWindow($dropoff, $order);
 
+        // Fall back to today's window if no date was provided so the task is always schedulable.
+        if ($dropoff->getBefore() === null) {
+            $dropoff->setAfter(Carbon::now()->startOfDay()->toDateTime());
+            $dropoff->setBefore(Carbon::now()->endOfDay()->toDateTime());
+        }
+
         return $delivery;
     }
 

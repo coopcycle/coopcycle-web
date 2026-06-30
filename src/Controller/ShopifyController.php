@@ -270,10 +270,7 @@ class ShopifyController extends AbstractController
         $this->entityManager->persist($shopEntity);
         $this->entityManager->flush();
 
-        // feature-preview.myshopify.com is Shopify's synthetic sandbox — API calls are rejected.
-        if (!str_ends_with($shopDomain, 'feature-preview.myshopify.com')) {
-            $this->registerWebhooks($shopEntity);
-        }
+        $this->registerWebhooks($shopEntity);
 
         if ($tenantUrl !== null) {
             $this->shopifyClient->syncTenantUrl($shopEntity, $tenantUrl);

@@ -21,6 +21,9 @@ use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\Delivery;
+use AppBundle\Entity\Shopify\ShopifyOrder;
+use AppBundle\Entity\Shopify\ShopifyShop;
 use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
 use AppBundle\Fixtures\DatabasePurger;
 use AppBundle\Service\SettingsManager;
@@ -1452,5 +1455,119 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
 
         $this->doctrine->getManagerForClass(Task::class)->flush();
+    }
+
+    // --- Shopify steps ---
+
+    private function getShopifyShop(string $shopDomain): ShopifyShop
+    {
+        $shop = $this->doctrine->getRepository(ShopifyShop::class)->findOneBy(['shopDomain' => $shopDomain]);
+        if (!$shop) {
+            throw new \RuntimeException("ShopifyShop not found for domain: {$shopDomain}");
+        }
+        return $shop;
+    }
+
+    private function shopifyHmac(string $body, string $secret): string
+    {
+        return base64_encode(hash_hmac('sha256', $body, $secret, true));
+    }
+
+    #[When('I send a Shopify webhook for shop :shopDomain with topic :topic and body:')]
+    public function iSendShopifyWebhook(string $shopDomain, string $topic, PyStringNode $body): void
+    {
+        $shop = $this->getShopifyShop($shopDomain);
+        $rawBody = $body->getRaw();
+        $hmac = $this->shopifyHmac($rawBody, $shop->getWebhookSecret());
+
+        $this->restContext->iAddHeaderEqualTo('Content-Type', 'application/json');
+        $this->restContext->iAddHeaderEqualTo('X-Shopify-Topic', $topic);
+        $this->restContext->iAddHeaderEqualTo('X-Shopify-Shop-Domain', $shopDomain);
+        $this->restContext->iAddHeaderEqualTo('X-Shopify-Hmac-SHA256', $hmac);
+        $this->restContext->iSendARequestTo('POST', '/api/shopify/webhook', $body);
+    }
+
+    #[When('I send a Shopify webhook for shop :shopDomain with topic :topic and invalid HMAC and body:')]
+    public function iSendShopifyWebhookWithInvalidHmac(string $shopDomain, string $topic, PyStringNode $body): void
+    {
+        $this->restContext->iAddHeaderEqualTo('Content-Type', 'application/json');
+        $this->restContext->iAddHeaderEqualTo('X-Shopify-Topic', $topic);
+        $this->restContext->iAddHeaderEqualTo('X-Shopify-Shop-Domain', $shopDomain);
+        $this->restContext->iAddHeaderEqualTo('X-Shopify-Hmac-SHA256', base64_encode('invalid'));
+        $this->restContext->iSendARequestTo('POST', '/api/shopify/webhook', $body);
+    }
+
+    #[Given('a Shopify order :shopifyOrderId exists for shop :shopDomain with a delivery')]
+    public function aShopifyOrderExistsWithDelivery(string $shopifyOrderId, string $shopDomain): void
+    {
+        $shop = $this->getShopifyShop($shopDomain);
+
+        $delivery = new Delivery();
+        $shop->getStore()->addDelivery($delivery);
+        $this->entityManager->persist($delivery);
+
+        $order = new ShopifyOrder();
+        $order->setShopifyOrderId($shopifyOrderId);
+        $order->setShopifyOrderName('#' . $shopifyOrderId);
+        $order->setDelivery($delivery);
+        $order->setShop($shop);
+        $this->entityManager->persist($order);
+
+        $this->entityManager->flush();
+    }
+
+    #[Then('a delivery should have been created for Shopify order :shopifyOrderId')]
+    public function aDeliveryShouldHaveBeenCreatedForShopifyOrder(string $shopifyOrderId): void
+    {
+        $shopifyOrder = $this->doctrine->getRepository(ShopifyOrder::class)
+            ->findOneBy(['shopifyOrderId' => $shopifyOrderId]);
+
+        Assert::assertNotNull($shopifyOrder, "No ShopifyOrder found for id {$shopifyOrderId}");
+        Assert::assertNotNull($shopifyOrder->getDelivery(), "ShopifyOrder has no delivery");
+    }
+
+    #[Then('the delivery dropoff should be after :datetime')]
+    public function theDeliveryDropoffShouldBeAfter(string $datetime): void
+    {
+        // The last created delivery — fine for single-scenario use
+        $deliveries = $this->doctrine->getRepository(Delivery::class)->findBy([], ['id' => 'DESC'], 1);
+        Assert::assertNotEmpty($deliveries, 'No deliveries found');
+        $after = $deliveries[0]->getDropoff()->getAfter();
+        Assert::assertNotNull($after);
+        Assert::assertGreaterThanOrEqual(
+            new \DateTime($datetime),
+            $after,
+            "Dropoff after {$after->format('Y-m-d H:i:s')} is not >= {$datetime}"
+        );
+    }
+
+    #[Then('the delivery dropoff should be before :datetime')]
+    public function theDeliveryDropoffShouldBeBefore(string $datetime): void
+    {
+        $deliveries = $this->doctrine->getRepository(Delivery::class)->findBy([], ['id' => 'DESC'], 1);
+        Assert::assertNotEmpty($deliveries, 'No deliveries found');
+        $before = $deliveries[0]->getDropoff()->getBefore();
+        Assert::assertNotNull($before);
+        Assert::assertLessThanOrEqual(
+            new \DateTime($datetime),
+            $before,
+            "Dropoff before {$before->format('Y-m-d H:i:s')} is not <= {$datetime}"
+        );
+    }
+
+    #[Then('the delivery for Shopify order :shopifyOrderId should be cancelled')]
+    public function theDeliveryForShopifyOrderShouldBeCancelled(string $shopifyOrderId): void
+    {
+        $shopifyOrder = $this->doctrine->getRepository(ShopifyOrder::class)
+            ->findOneBy(['shopifyOrderId' => $shopifyOrderId]);
+
+        Assert::assertNotNull($shopifyOrder, "No ShopifyOrder found for id {$shopifyOrderId}");
+
+        $delivery = $shopifyOrder->getDelivery();
+        Assert::assertNotNull($delivery);
+
+        foreach ($delivery->getTasks() as $task) {
+            Assert::assertTrue($task->isCancelled(), "Task {$task->getId()} is not cancelled");
+        }
     }
 }

@@ -1197,7 +1197,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
     public static function fixTimeWindow(Task $task)
     {
-        if (null === $task->getAfter()) {
+        if (null === $task->getAfter() && null !== $task->getBefore()) {
             $after = clone $task->getBefore();
             $after->modify('-15 minutes');
             $task->setAfter($after);

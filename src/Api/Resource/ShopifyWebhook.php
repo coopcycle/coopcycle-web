@@ -21,15 +21,18 @@ use AppBundle\Api\State\ShopifyWebhookProvider;
         new Post(
             uriTemplate: '/shopify/webhook/{id}',
             status: 200,
+            deserialize: false,
             openapiContext: ['summary' => 'Receives a Shopify webhook identified by shop DB id.'],
             provider: ShopifyWebhookProvider::class,
             processor: ShopifyWebhookProcessor::class,
         ),
-        // Managed-webhook endpoint: shop identified from X-Shopify-Shop-Domain header
+        // Shop identified from X-Shopify-Shop-Domain header
         new Post(
             uriTemplate: '/shopify/webhook',
             status: 200,
-            openapiContext: ['summary' => 'Receives a Shopify managed webhook (shop identified from header).'],
+            read: true,
+            deserialize: false,
+            openapiContext: ['summary' => 'Receives a Shopify webhook (shop identified from header).'],
             provider: ShopifyWebhookProvider::class,
             processor: ShopifyWebhookProcessor::class,
         ),

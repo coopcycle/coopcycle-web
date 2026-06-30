@@ -52,12 +52,12 @@ class ShopifyRegisterWebhooksCommand extends Command
         $err = 0;
 
         foreach ($shops as $shop) {
-            if (str_ends_with($shop->getShopDomain(), 'feature-preview.myshopify.com')) {
-                $io->note(sprintf('Skipping sandbox domain %s', $shop->getShopDomain()));
-                continue;
-            }
-
             foreach (['orders/create', 'orders/cancelled'] as $topic) {
+                foreach ($this->shopifyClient->getWebhookIds($shop, $topic) as $id) {
+                    $this->shopifyClient->deleteWebhook($shop, $id);
+                    $io->note(sprintf('[%s] Deleted existing "%s" webhook %s', $shop->getShopDomain(), $topic, $id));
+                }
+
                 $result = $this->shopifyClient->registerWebhook($shop, $topic, $webhookUrl);
                 if ($result !== null) {
                     $io->success(sprintf('[%s] Registered "%s"', $shop->getShopDomain(), $topic));

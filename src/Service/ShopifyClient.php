@@ -33,6 +33,38 @@ class ShopifyClient
         return (string) ($response['webhook']['id'] ?? null);
     }
 
+    /** @return string[] existing webhook IDs for the given topic */
+    public function getWebhookIds(ShopifyShop $shop, string $topic): array
+    {
+        $response = $this->request($shop, 'GET', 'webhooks.json?topic=' . urlencode($topic));
+
+        if (!$response) {
+            return [];
+        }
+
+        return array_map(
+            fn($w) => (string) $w['id'],
+            $response['webhooks'] ?? []
+        );
+    }
+
+    public function deleteWebhook(ShopifyShop $shop, string $id): bool
+    {
+        $url = sprintf('https://%s/admin/api/2025-10/webhooks/%s.json', $shop->getShopDomain(), $id);
+
+        try {
+            $response = $this->httpClient->request('DELETE', $url, [
+                'headers' => ['X-Shopify-Access-Token' => $shop->getAccessToken()],
+            ]);
+
+            return $response->getStatusCode() === 200;
+        } catch (HttpExceptionInterface | TransportExceptionInterface $e) {
+            $this->logger->error(sprintf('Shopify API error: %s', $e->getMessage()));
+
+            return false;
+        }
+    }
+
     public function setShopMetafield(ShopifyShop $shop, string $namespace, string $key, string $value): bool
     {
         $existing = $this->request($shop, 'GET', "metafields.json?namespace={$namespace}&key={$key}");
