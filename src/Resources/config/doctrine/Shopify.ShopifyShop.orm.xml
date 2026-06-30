@@ -8,7 +8,6 @@
     <field name="accessToken" type="string" column="access_token"/>
     <field name="webhookSecret" type="string" column="webhook_secret"/>
     <field name="fulfillmentServiceId" type="string" column="fulfillment_service_id" nullable="true"/>
-    <field name="shippingRateHandle" type="string" column="shipping_rate_handle" nullable="true"/>
     <many-to-one field="store" target-entity="AppBundle\Entity\Store">
       <join-columns>
         <join-column name="store_id" referenced-column-name="id" nullable="true"/>

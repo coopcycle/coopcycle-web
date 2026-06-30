@@ -19,8 +19,6 @@ class ShopifyShop
 
     private ?string $fulfillmentServiceId = null;
 
-    private ?string $shippingRateHandle = null;
-
     private ?Store $store = null;
 
     public function getId(): ?int
@@ -72,18 +70,6 @@ class ShopifyShop
     public function setFulfillmentServiceId(?string $fulfillmentServiceId): self
     {
         $this->fulfillmentServiceId = $fulfillmentServiceId;
-
-        return $this;
-    }
-
-    public function getShippingRateHandle(): ?string
-    {
-        return $this->shippingRateHandle;
-    }
-
-    public function setShippingRateHandle(?string $shippingRateHandle): self
-    {
-        $this->shippingRateHandle = $shippingRateHandle;
 
         return $this;
     }
