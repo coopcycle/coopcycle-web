@@ -220,3 +220,5 @@ services:
   AppBundle\Command\RecommenderTrainCommand: ~
 
   AppBundle\Command\ShopifySyncSlotsCommand: ~
+
+  AppBundle\Command\ShopifyRegisterWebhooksCommand: ~

@@ -270,7 +270,10 @@ class ShopifyController extends AbstractController
         $this->entityManager->persist($shopEntity);
         $this->entityManager->flush();
 
-        $this->registerWebhooks($shopEntity);
+        // feature-preview.myshopify.com is Shopify's synthetic sandbox — API calls are rejected.
+        if (!str_ends_with($shopDomain, 'feature-preview.myshopify.com')) {
+            $this->registerWebhooks($shopEntity);
+        }
 
         if ($tenantUrl !== null) {
             $this->shopifyClient->syncTenantUrl($shopEntity, $tenantUrl);
@@ -282,8 +285,8 @@ class ShopifyController extends AbstractController
     private function registerWebhooks(ShopifyShop $shopEntity): void
     {
         $webhookUrl = $this->generateUrl(
-            '_api_/shopify/webhook/{id}_post',
-            ['id' => $shopEntity->getId()],
+            '_api_/shopify/webhook_post',
+            [],
             UrlGeneratorInterface::ABSOLUTE_URL
         );
 

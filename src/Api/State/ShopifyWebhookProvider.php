@@ -20,15 +20,17 @@ final class ShopifyWebhookProvider implements ProviderInterface
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
-        $shopId = (int) $uriVariables['id'];
+        $request = $this->requestStack->getCurrentRequest();
 
-        $shop = $this->entityManager->getRepository(ShopifyShop::class)->find($shopId);
+        $shop = isset($uriVariables['id'])
+            ? $this->entityManager->getRepository(ShopifyShop::class)->find((int) $uriVariables['id'])
+            : $this->entityManager->getRepository(ShopifyShop::class)
+                ->findOneBy(['shopDomain' => $request->headers->get('X-Shopify-Shop-Domain')]);
 
         if (!$shop) {
-            throw new NotFoundHttpException(sprintf('Shopify shop with id %d not found.', $shopId));
+            throw new NotFoundHttpException('Shopify shop not found.');
         }
 
-        $request = $this->requestStack->getCurrentRequest();
         $rawBody = $request->getContent();
         $shopifyHmac = $request->headers->get('X-Shopify-Hmac-SHA256');
         $topic = $request->headers->get('X-Shopify-Topic');
@@ -37,7 +39,7 @@ final class ShopifyWebhookProvider implements ProviderInterface
             throw new AccessDeniedHttpException('Invalid Shopify HMAC signature.');
         }
 
-        $webhook = new ShopifyWebhook($shopId);
+        $webhook = new ShopifyWebhook($shop->getId());
         $webhook->payload = json_decode($rawBody, true) ?? [];
         $webhook->topic = $topic;
 

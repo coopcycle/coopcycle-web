@@ -17,10 +17,19 @@ use AppBundle\Api\State\ShopifyWebhookProvider;
             output: false,
             read: false
         ),
+        // Legacy per-shop endpoint (kept for backwards compat with manually registered webhooks)
         new Post(
             uriTemplate: '/shopify/webhook/{id}',
             status: 200,
-            openapiContext: ['summary' => 'Receives a webhook from Shopify (orders/create, orders/cancelled).'],
+            openapiContext: ['summary' => 'Receives a Shopify webhook identified by shop DB id.'],
+            provider: ShopifyWebhookProvider::class,
+            processor: ShopifyWebhookProcessor::class,
+        ),
+        // Managed-webhook endpoint: shop identified from X-Shopify-Shop-Domain header
+        new Post(
+            uriTemplate: '/shopify/webhook',
+            status: 200,
+            openapiContext: ['summary' => 'Receives a Shopify managed webhook (shop identified from header).'],
             provider: ShopifyWebhookProvider::class,
             processor: ShopifyWebhookProcessor::class,
         ),
