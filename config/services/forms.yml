@@ -259,9 +259,6 @@ services:
   AppBundle\Form\Restaurant\LoopeatType:
     tags: [ form.type ]
 
-  AppBundle\Form\Restaurant\ZeltyType:
-    tags: [ form.type ]
-
   AppBundle\Form\BusinessAccountType:
     tags: [ form.type ]
 

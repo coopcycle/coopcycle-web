@@ -5,6 +5,7 @@ imports:
   - { resource: services/validators.yml }
   - { resource: services/commands.yml }
   - { resource: services/doctrine_extensions.yml }
+  - { resource: services/zelty.yml }
 
 # Learn more about services, parameters and containers at
 # http://symfony.com/doc/current/book/service_container.html
@@ -69,14 +70,7 @@ parameters:
   billing_enabled: '%env(bool:BILLING_ENABLED)%'
   package_delivery_ui_price_breakdown_enabled_default: true
   package_delivery_ui_price_breakdown_enabled: '%env(default:package_delivery_ui_price_breakdown_enabled_default:bool:PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED)%'
-  zelty_enabled: '%env(bool:ZELTY_ENABLED)%'
-
 services:
-
-  # Excluded from autoconfigure to prevent it from being registered in the
-  # global serializer chain — it is only used internally by ZeltyClient.
-  AppBundle\Integration\Zelty\ZeltyOrderNormalizer:
-    autoconfigure: false
 
   _defaults:
     autowire: true
@@ -1775,16 +1769,5 @@ services:
     decorates: api_platform.name_converter
     arguments:
       - '@.inner'
-
-  AppBundle\Integration\Zelty\Dto\ZeltyCatalogParser: ~
-  AppBundle\Integration\Zelty\ZeltyOptionMapper: ~
-  AppBundle\Integration\Zelty\ZeltyProductMapper: ~
-  AppBundle\Integration\Zelty\ZeltyMenuMapper: ~
-  AppBundle\Integration\Zelty\ZeltyTaxonMapper: ~
-  AppBundle\Integration\Zelty\ZeltyTaxesMapper: ~
-  AppBundle\Integration\Zelty\ZeltyClient: ~
-  AppBundle\Integration\Zelty\ZeltyImportService: ~
-  AppBundle\Integration\Zelty\ZeltyCatalogDenormalizer: ~
-  AppBundle\Integration\Zelty\ZeltyCatalogProcessor: ~
 
   AppBundle\Utils\TsRangeFormatter: ~
