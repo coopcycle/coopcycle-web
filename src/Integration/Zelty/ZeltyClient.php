@@ -26,7 +26,7 @@ class ZeltyClient
         return $this->authToken !== null ? ['auth_bearer' => $this->authToken] : [];
     }
 
-    public function pushToZelty(OrderInterface $order): void
+    public function pushToZelty(OrderInterface $order): int
     {
         $payload = $this->orderNormalizer->normalize($order);
 
@@ -39,7 +39,8 @@ class ZeltyClient
             $response = $this->zeltyClient->request('POST', 'orders', array_merge($this->authOptions(), [
                 'json' => $payload,
             ]));
-            $response->getContent();
+            $data = json_decode($response->getContent(), true);
+            return $data['order']['id'];
         } catch (ClientExceptionInterface $e) {
             $body = $e->getResponse()->getContent(false);
             throw new \RuntimeException(sprintf('Zelty order push failed: %s', $body), 0, $e);
