@@ -736,6 +736,8 @@ basics.continue: Continuer
 basics.powered_by: Propulsé par <a href="https://coopcycle.org">CoopCycle</a>
 basics.edit: Modifier
 basics.editing: Édition
+basics.pause: Mettre en pause
+basics.resume: Reprendre
 basics.add: Ajouter
 basics.view: Voir
 basics.delete: Supprimer
@@ -1683,6 +1685,37 @@ form.product_option_value.depends_on.tooltip: Sélectionnez une autre valeur don
 pagination.items_per_page: Nombre d'éléments par page
 restaurant.form.en_boite_le_plat_platform_fee.label: Le montant de la consigne est collecté par la plateforme
 
+# Éditeur d'emails
+customize.emails: Personnaliser les emails
+customize.email_editor.email_type.order_created: Commande confirmée (client)
+customize.email_editor.email_type.order_accepted_foodtech_delivery: Commande acceptée – Livraison
+customize.email_editor.email_type.order_accepted_foodtech_collection: Commande acceptée – Collecte
+customize.email_editor.email_type.order_accepted_lastmile: Commande acceptée (Dernier km)
+customize.email_editor.email_type.order_cancelled: Commande annulée
+customize.email_editor.email_type.order_delayed: Commande retardée
+customize.email_editor.email_type.order_payment: Confirmation de paiement
+customize.email_editor.email_type.order_receipt: Reçu de commande
+customize.email_editor.email_type.task_dropoff_completed: Dépôt effectué
+customize.email_editor.email_type.task_pickup_completed: Enlèvement effectué
+customize.email_editor.email_type.task_dropoff_failed: Dépôt échoué
+customize.email_editor.email_type.task_pickup_failed: Enlèvement échoué
+customize.email_editor.email_type.resetting: Réinitialisation du mot de passe
+customize.email_editor.email_type.registration: "Confirmation d'inscription"
+customize.email_editor.save: Enregistrer
+customize.email_editor.reset: Réinitialiser par défaut
+customize.email_editor.status.default: Modèle par défaut — enregistrez pour personnaliser
+customize.email_editor.status.custom: Modèle personnalisé
+customize.email_editor.variables: Variables disponibles
+customize.email_editor.layout: Mise en page
+customize.email_editor.folder.foodtech: Foodtech
+customize.email_editor.folder.lastmile: Dernier kilomètre
+customize.email_editor.folder.account: Compte
+customize.email_editor.send_test: Envoyer un test
+customize.email_editor.send_test_title: Envoyer un e-mail de test
+customize.email_editor.send_test_description: "Entrez une adresse pour recevoir un aperçu de ce modèle avec des données fictives."
+customize.email_editor.send_test_send: Envoyer
+customize.email_editor.send_test_cancel: Annuler
+customize.email_editor.send_test_success: "E-mail de test envoyé !"
 two_factor.title: Authentification à deux facteurs
 two_factor.subtitle: "Un code de vérification a été envoyé à votre adresse e-mail. Veuillez le saisir ci-dessous."
 two_factor.code.label: Code de vérification
@@ -1771,3 +1804,4 @@ form.theme.secondary_group.label: Couleurs secondaires
 form.theme.secondary_group.help: "Utilisé pour les mises en évidence et les accents"
 form.theme.secondary.label: "Couleur d'arrière-plan"
 form.theme.secondary-content.label: Couleur de police
+customize.emails_alert: Nouveau ! Personnalisez les emails

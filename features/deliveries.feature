@@ -4527,7 +4527,8 @@ Feature: Deliveries
             "store": "\/api\/stores\/1",
             "orgName": "Acme",
             "arbitraryPriceTemplate": null,
-            "isCancelled": false
+            "isCancelled": false,
+            "paused": false
           }
         ],
         "hydra:totalItems": 1

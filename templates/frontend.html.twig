@@ -47,7 +47,11 @@
       <h4 class="text-center hidden sm:block">{{ 'demo.disclaimer.subtitle'|trans|raw }}</h4>
     </section>
   {% endif %}
-  {% include '_partials/maintenance.html.twig' %}
+  {% if is_granted('ROLE_ADMIN') and coopcycle_maintenance() %}
+    <div role="alert" class="alert alert-error justify-center rounded-none">
+      {{ 'maintenance.disclaimer'|trans|raw }}
+    </div>
+  {% endif %}
   {% include '_partials/banner.html.twig' %}
 {% endblock %}
 
