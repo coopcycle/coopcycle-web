@@ -7,7 +7,7 @@ use AppBundle\Integration\Zelty\ZeltyClient;
 use AppBundle\Message\Zelty\PushOrder;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-#[AsMessageHandler]
+#[AsMessageHandler(bus: 'command.bus')]
 class PushOrderHandler
 {
     public function __construct(
