@@ -48,14 +48,24 @@ class ZeltyType extends AbstractType
             $restaurant->setZeltyApiKey($newApiKey);
 
             if ($newApiKey !== $originalApiKey) {
-                $webhookUrl = $this->urlGenerator->generate(
+                $this->zeltyClient->setAuth($newApiKey);
+
+                $catalogWebhookUrl = $this->urlGenerator->generate(
                     '_api_/zelty/webhook/catalog/{restaurantId}_post',
                     ['restaurantId' => $restaurant->getId()],
                     UrlGeneratorInterface::ABSOLUTE_URL
                 );
-                $this->zeltyClient->setAuth($newApiKey);
-                $secretKey = $this->zeltyClient->upsertWebhook('catalog.push', $webhookUrl);
+                $secretKey = $this->zeltyClient->upsertWebhook('catalog.push', $catalogWebhookUrl);
                 $restaurant->setZeltyWebhookSecretKey($secretKey);
+
+                foreach ([
+                    'dish.update'              => '_api_/zelty/webhook/dish.update_post',
+                    'dish.delete'              => '_api_/zelty/webhook/dish.delete_post',
+                    'dish.availability_update' => '_api_/zelty/webhook/dish.availability_update_post',
+                ] as $event => $routeName) {
+                    $url = $this->urlGenerator->generate($routeName, [], UrlGeneratorInterface::ABSOLUTE_URL);
+                    $this->zeltyClient->upsertWebhook($event, $url);
+                }
             }
         });
     }
