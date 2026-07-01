@@ -29,6 +29,7 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 )]
 class ProductOption extends BaseProductOption implements ProductOptionInterface
 {
+    use \AppBundle\Integration\Zelty\HasZeltyMetadata;
     /**
      * @var string
      */

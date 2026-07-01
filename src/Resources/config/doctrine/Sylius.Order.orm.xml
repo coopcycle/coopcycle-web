@@ -130,6 +130,7 @@
         <cascade-all/>
       </cascade>
     </one-to-many>
+    <field name="zeltyOrderId" type="integer" nullable="true" column="zelty_order_id" />
     <many-to-one field="subscription" target-entity="AppBundle\Entity\Task\RecurrenceRule">
       <join-columns>
         <join-column name="subscription_id" referenced-column-name="id" nullable="true" on-delete="SET NULL" />

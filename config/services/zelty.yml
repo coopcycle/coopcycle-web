@@ -1,0 +1,36 @@
+parameters:
+  zelty_enabled: '%env(bool:ZELTY_ENABLED)%'
+
+services:
+
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  AppBundle\Integration\Zelty\Dto\ZeltyCatalogParser: ~
+  AppBundle\Integration\Zelty\ZeltyOptionMapper: ~
+  AppBundle\Integration\Zelty\ZeltyProductMapper: ~
+  AppBundle\Integration\Zelty\ZeltyMenuMapper: ~
+  AppBundle\Integration\Zelty\ZeltyTaxonMapper: ~
+  AppBundle\Integration\Zelty\ZeltyTaxesMapper: ~
+  AppBundle\Integration\Zelty\ZeltyClient: ~
+  AppBundle\Integration\Zelty\ZeltyImportService: ~
+  AppBundle\Integration\Zelty\ZeltyCatalogDenormalizer: ~
+  AppBundle\Integration\Zelty\ZeltyCatalogProcessor: ~
+  AppBundle\Integration\Zelty\ZeltyDishWebhookDenormalizer: ~
+  AppBundle\Integration\Zelty\ZeltyDishWebhookProcessor: ~
+  AppBundle\Integration\Zelty\ZeltyMenuWebhookDenormalizer: ~
+  AppBundle\Integration\Zelty\ZeltyMenuWebhookProcessor: ~
+  AppBundle\Integration\Zelty\ZeltyOptionWebhookDenormalizer: ~
+  AppBundle\Integration\Zelty\ZeltyOptionWebhookProcessor: ~
+  AppBundle\Integration\Zelty\ZeltyOrderStatusWebhookDenormalizer: ~
+  AppBundle\Integration\Zelty\ZeltyOrderStatusWebhookProcessor: ~
+  AppBundle\MessageHandler\Order\CloseZeltyOrder: ~
+
+  # Excluded from autoconfigure to prevent it from being registered in the
+  # global serializer chain — it is only used internally by ZeltyClient.
+  AppBundle\Integration\Zelty\ZeltyOrderNormalizer:
+    autoconfigure: false
+
+  AppBundle\Form\Restaurant\ZeltyType:
+    tags: [ form.type ]

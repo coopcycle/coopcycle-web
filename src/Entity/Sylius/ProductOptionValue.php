@@ -30,6 +30,7 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 class ProductOptionValue extends BaseProductOptionValue implements ProductOptionValueInterface
 {
     use ToggleableTrait;
+    use \AppBundle\Integration\Zelty\HasZeltyMetadata;
 
     /**
      * @var int

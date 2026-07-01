@@ -377,4 +377,9 @@ class OrderRepository extends BaseOrderRepository
             'favoriteRestaurant' => $favoriteRestaurant,
         ];
     }
+
+    public function findByZeltyOrderId(int $zeltyOrderId): ?OrderInterface
+    {
+        return $this->findOneBy(['zeltyOrderId' => $zeltyOrderId]);
+    }
 }

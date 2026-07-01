@@ -78,6 +78,8 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 )]
 class Taxon extends BaseTaxon implements Comparable
 {
+    use \AppBundle\Integration\Zelty\HasZeltyMetadata;
+
     private $taxonProducts;
 
     public function __construct()

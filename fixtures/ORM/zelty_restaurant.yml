@@ -1,0 +1,49 @@
+AppBundle\Entity\Sylius\TaxRate:
+  zelty_tax_rate_intermediary:
+    name: "TVA 10%"
+    code: "ZELTY_BASE_INTERMEDIARY"
+    amount: 0.1
+    includedInPrice: true
+    calculator: default
+    country: fr
+
+AppBundle\Entity\Sylius\TaxCategory:
+  zelty_base_tax_category:
+    code: BASE_INTERMEDIARY
+    name: "TVA intermédiaire"
+    rates: ["@zelty_tax_rate_intermediary"]
+
+AppBundle\Entity\Base\GeoCoordinates:
+  zelty_restaurant_geo:
+    __construct: ["48.864577", "2.333338"]
+
+AppBundle\Entity\Address:
+  zelty_restaurant_address:
+    addressLocality: 'Paris'
+    postalCode: '75001'
+    streetAddress: '1, rue de la Paix 75001 Paris'
+    geo: "@zelty_restaurant_geo"
+
+AppBundle\Entity\Contract:
+  zelty_restaurant_contract:
+    flatDeliveryPrice: 350
+    customerAmount: 350
+    feeRate: 0.00
+
+AppBundle\Entity\LocalBusiness:
+  zelty_restaurant:
+    name: 'Pizza Roma'
+    address: "@zelty_restaurant_address"
+    openingHours: ['Mo-Su 11:30-22:30']
+    enabled: true
+    contract: "@zelty_restaurant_contract"
+    telephone: <identity(\libphonenumber\PhoneNumberUtil::getInstance()->parse('+33612345678'))>
+    zeltyApiKey: 'test-zelty-api-key'
+    edenredEnabled: false
+    edenredSyncSent: false
+    edenredTRCardEnabled: false
+    __calls:
+      - addFulfillmentMethod: ['delivery', true]
+      - setOpeningHours:
+        - ['Mo-Su 11:30-22:30']
+        - 'delivery'
