@@ -17,6 +17,8 @@ services:
   AppBundle\Integration\Zelty\ZeltyImportService: ~
   AppBundle\Integration\Zelty\ZeltyCatalogDenormalizer: ~
   AppBundle\Integration\Zelty\ZeltyCatalogProcessor: ~
+  AppBundle\Integration\Zelty\ZeltyDishWebhookDenormalizer: ~
+  AppBundle\Integration\Zelty\ZeltyDishWebhookProcessor: ~
 
   # Excluded from autoconfigure to prevent it from being registered in the
   # global serializer chain — it is only used internally by ZeltyClient.

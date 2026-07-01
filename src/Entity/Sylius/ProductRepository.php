@@ -22,4 +22,14 @@ class ProductRepository extends BaseProductRepository
     {
         return $this->findOneBy(['code' => 'CPCCL-ODDLVR']);
     }
+
+    public function findByZeltyDishId(string $id): ?Product
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.code = :id OR JSON_GET_FIELD_AS_TEXT(p.metadata, \'zelty_internal_id\') = :id')
+            ->setParameter('id', $id)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
