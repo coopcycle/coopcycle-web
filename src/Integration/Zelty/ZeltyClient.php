@@ -47,6 +47,21 @@ class ZeltyClient
         }
     }
 
+    public function closeOrder(int $zeltyOrderId): void
+    {
+        $this->logger->info('Zelty close order', ['zelty_order_id' => $zeltyOrderId]);
+
+        try {
+            $this->zeltyClient->request('POST', sprintf('orders/%d/closure', $zeltyOrderId), $this->authOptions());
+        } catch (ClientExceptionInterface $e) {
+            $body = $e->getResponse()->getContent(false);
+            $this->logger->error('Zelty close order failed', [
+                'zelty_order_id' => $zeltyOrderId,
+                'error'          => $body,
+            ]);
+        }
+    }
+
     public function upsertWebhook(string $event, ?string $url): string
     {
         $webhookConfig = $url !== null ? ['target' => $url, 'version' => 'v2'] : null;
