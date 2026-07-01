@@ -241,6 +241,22 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->entityManager->getFilters()->enable($filterName);
     }
 
+    #[Given('there is a Zelty order with zelty id :zeltyId in state :state')]
+    public function thereIsAZeltyOrderInState(int $zeltyId, string $state): void
+    {
+        $restaurant = $this->doctrine->getRepository(LocalBusiness::class)
+            ->findOneBy(['zeltyApiKey' => 'test-zelty-api-key']);
+
+        $order = $this->getContainer()->get('sylius.factory.order')
+            ->createForRestaurant($restaurant);
+
+        $order->setState($state);
+        $order->setZeltyOrderId($zeltyId);
+
+        $this->entityManager->persist($order);
+        $this->entityManager->flush();
+    }
+
     #[Given('the fixtures file :filename is loaded')]
     public function theFixturesFileIsLoaded($filename)
     {

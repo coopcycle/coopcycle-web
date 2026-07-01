@@ -1113,6 +1113,74 @@ Feature: Zelty catalog push webhook
       """
     Given the "disabled_filter" filter is enabled
 
+  Scenario: order.status.update with production status starts preparing the order
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml  |
+      | zelty_restaurant.yml |
+    And there is a Zelty order with zelty id 55001 in state "accepted"
+    When I add "Content-Type" header equal to "application/json"
+    And I send a "POST" request to "/api/zelty/webhook/order.status.update" with body:
+      """
+      {
+        "event_id": "aaa111",
+        "event_name": "order.status.update",
+        "created_at": "2026-01-01T00:00:00Z",
+        "version": "v2",
+        "brand_id": 1,
+        "restaurant_id": 1,
+        "data": {
+          "id": 55001,
+          "restaurant_id": 1,
+          "status": "production",
+          "kitchen_status": "preparation"
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {"status":"success"}
+      """
+    And I see entity "AppBundle\Entity\Sylius\Order" with properties:
+      """
+      {"zeltyOrderId": 55001, "state": "started"}
+      """
+
+  Scenario: order.status.update with ready status finishes preparing the order
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml  |
+      | zelty_restaurant.yml |
+    And there is a Zelty order with zelty id 55002 in state "started"
+    When I add "Content-Type" header equal to "application/json"
+    And I send a "POST" request to "/api/zelty/webhook/order.status.update" with body:
+      """
+      {
+        "event_id": "bbb222",
+        "event_name": "order.status.update",
+        "created_at": "2026-01-01T00:00:00Z",
+        "version": "v2",
+        "brand_id": 1,
+        "restaurant_id": 1,
+        "data": {
+          "id": 55002,
+          "restaurant_id": 1,
+          "status": "ready",
+          "kitchen_status": "ready"
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {"status":"success"}
+      """
+    And I see entity "AppBundle\Entity\Sylius\Order" with properties:
+      """
+      {"zeltyOrderId": 55002, "state": "ready"}
+      """
+
   Scenario: Restaurant not found returns 404
     Given the fixtures files are loaded:
       | sylius_taxation.yml |

@@ -67,6 +67,7 @@ class ZeltyType extends AbstractType
                     'menu.availability_update'           => '_api_/zelty/webhook/menu.availability_update_post',
                     'option.update'                      => '_api_/zelty/webhook/option.update_post',
                     'option_value.availability_update'   => '_api_/zelty/webhook/option_value.availability_update_post',
+                    'order.status.update'                => '_api_/zelty/webhook/order.status.update_post',
                 ] as $event => $routeName) {
                     $url = $this->urlGenerator->generate($routeName, [], UrlGeneratorInterface::ABSOLUTE_URL);
                     $this->zeltyClient->upsertWebhook($event, $url);
