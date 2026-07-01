@@ -62,9 +62,11 @@ class ZeltyType extends AbstractType
                     'dish.update'              => '_api_/zelty/webhook/dish.update_post',
                     'dish.delete'              => '_api_/zelty/webhook/dish.delete_post',
                     'dish.availability_update' => '_api_/zelty/webhook/dish.availability_update_post',
-                    'menu.update'              => '_api_/zelty/webhook/menu.update_post',
-                    'menu.delete'              => '_api_/zelty/webhook/menu.delete_post',
-                    'menu.availability_update' => '_api_/zelty/webhook/menu.availability_update_post',
+                    'menu.update'                        => '_api_/zelty/webhook/menu.update_post',
+                    'menu.delete'                        => '_api_/zelty/webhook/menu.delete_post',
+                    'menu.availability_update'           => '_api_/zelty/webhook/menu.availability_update_post',
+                    'option.update'                      => '_api_/zelty/webhook/option.update_post',
+                    'option_value.availability_update'   => '_api_/zelty/webhook/option_value.availability_update_post',
                 ] as $event => $routeName) {
                     $url = $this->urlGenerator->generate($routeName, [], UrlGeneratorInterface::ABSOLUTE_URL);
                     $this->zeltyClient->upsertWebhook($event, $url);

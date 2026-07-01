@@ -229,6 +229,18 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
     }
 
+    #[Given('the :filterName filter is disabled')]
+    public function theFilterIsDisabled(string $filterName): void
+    {
+        $this->entityManager->getFilters()->disable($filterName);
+    }
+
+    #[Given('the :filterName filter is enabled')]
+    public function theFilterIsEnabled(string $filterName): void
+    {
+        $this->entityManager->getFilters()->enable($filterName);
+    }
+
     #[Given('the fixtures file :filename is loaded')]
     public function theFixturesFileIsLoaded($filename)
     {

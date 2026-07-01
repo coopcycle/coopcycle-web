@@ -890,6 +890,229 @@ Feature: Zelty catalog push webhook
       {"code": "8030", "enabled": false}
       """
 
+  Scenario: option.update disables option values and updates their prices
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml  |
+      | zelty_restaurant.yml |
+    And the Zelty taxes API will return:
+      """
+      {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
+      """
+    When I add "Content-Type" header equal to "application/json"
+    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+      """
+      {
+        "data": {
+          "id": 100,
+          "name": "Pizza Roma Catalog",
+          "locale": "fr",
+          "currency": "EUR",
+          "tags": [],
+          "items": [
+            {
+              "id": 9001,
+              "type": "dish",
+              "name": "Calzone",
+              "description": null,
+              "img": null,
+              "disabled": false,
+              "is_sold_out": false,
+              "price": {"price": 1300, "is_fixed": true, "prevent_discounts": false, "overrides": []},
+              "tax_rules": {"tax_id": 1},
+              "option_ids": [901],
+              "parts": []
+            }
+          ],
+          "menuParts": [],
+          "options": [
+            {
+              "id": 901,
+              "name": "Garnitures",
+              "value_ids": [9011, 9012],
+              "minimum_choices": 0,
+              "maximum_choices": 2
+            }
+          ],
+          "optionValues": [
+            {
+              "id": 9011,
+              "name": "Olives",
+              "description": null,
+              "img": null,
+              "disabled": false,
+              "is_sold_out": false,
+              "price": {"price": 50, "is_fixed": true, "prevent_discounts": false, "overrides": []},
+              "availability": null
+            },
+            {
+              "id": 9012,
+              "name": "Anchois",
+              "description": null,
+              "img": null,
+              "disabled": false,
+              "is_sold_out": false,
+              "price": {"price": 100, "is_fixed": true, "prevent_discounts": false, "overrides": []},
+              "availability": null
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 200
+    And I see entity "AppBundle\Entity\Sylius\ProductOptionValue" with properties:
+      """
+      {"price": 50, "enabled": true}
+      """
+    And I see entity "AppBundle\Entity\Sylius\ProductOptionValue" with properties:
+      """
+      {"price": 100, "enabled": true}
+      """
+    When I add "Content-Type" header equal to "application/json"
+    And I send a "POST" request to "/api/zelty/webhook/option.update" with body:
+      """
+      {
+        "event_id": "ddd444",
+        "event_name": "option.update",
+        "created_at": "2026-01-01T00:00:00Z",
+        "version": "v2",
+        "brand_id": 1,
+        "restaurant_id": 1,
+        "data": {
+          "options": [
+            {
+              "id": 901,
+              "max_choices": 2,
+              "disable": true,
+              "values": [
+                {"id": 9011, "name": "Olives", "price": 75},
+                {"id": 9012, "name": "Anchois", "price": 150}
+              ]
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {"status":"success"}
+      """
+    Given the "disabled_filter" filter is disabled
+    And I see entity "AppBundle\Entity\Sylius\ProductOptionValue" with properties:
+      """
+      {"price": 75, "enabled": false}
+      """
+    And I see entity "AppBundle\Entity\Sylius\ProductOptionValue" with properties:
+      """
+      {"price": 150, "enabled": false}
+      """
+    Given the "disabled_filter" filter is enabled
+
+  Scenario: option_value.availability_update marks a single option value as out of stock
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml  |
+      | zelty_restaurant.yml |
+    And the Zelty taxes API will return:
+      """
+      {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
+      """
+    When I add "Content-Type" header equal to "application/json"
+    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+      """
+      {
+        "data": {
+          "id": 100,
+          "name": "Pizza Roma Catalog",
+          "locale": "fr",
+          "currency": "EUR",
+          "tags": [],
+          "items": [
+            {
+              "id": 9002,
+              "type": "dish",
+              "name": "Calzone",
+              "description": null,
+              "img": null,
+              "disabled": false,
+              "is_sold_out": false,
+              "price": {"price": 1300, "is_fixed": true, "prevent_discounts": false, "overrides": []},
+              "tax_rules": {"tax_id": 1},
+              "option_ids": [902],
+              "parts": []
+            }
+          ],
+          "menuParts": [],
+          "options": [
+            {
+              "id": 902,
+              "name": "Garnitures",
+              "value_ids": [9021, 9022],
+              "minimum_choices": 0,
+              "maximum_choices": 2
+            }
+          ],
+          "optionValues": [
+            {
+              "id": 9021,
+              "name": "Mozza",
+              "description": null,
+              "img": null,
+              "disabled": false,
+              "is_sold_out": false,
+              "price": {"price": 60, "is_fixed": true, "prevent_discounts": false, "overrides": []},
+              "availability": null
+            },
+            {
+              "id": 9022,
+              "name": "Tomates séchées",
+              "description": null,
+              "img": null,
+              "disabled": false,
+              "is_sold_out": false,
+              "price": {"price": 80, "is_fixed": true, "prevent_discounts": false, "overrides": []},
+              "availability": null
+            }
+          ]
+        }
+      }
+      """
+    Then the response status code should be 200
+    And I see 2 entities "AppBundle\Entity\Sylius\ProductOptionValue"
+    When I add "Content-Type" header equal to "application/json"
+    And I send a "POST" request to "/api/zelty/webhook/option_value.availability_update" with body:
+      """
+      {
+        "event_id": "eee555",
+        "event_name": "option_value.availability_update",
+        "created_at": "2026-01-01T00:00:00Z",
+        "version": "v2",
+        "brand_id": 1,
+        "restaurant_id": 1,
+        "data": {
+          "options_values_availabilities": [
+            {"id_dish_option_value": 9021, "id_restaurant": 1, "outofstock": true}
+          ]
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {"status":"success"}
+      """
+    Given the "disabled_filter" filter is disabled
+    And I see entity "AppBundle\Entity\Sylius\ProductOptionValue" with properties:
+      """
+      {"price": 60, "enabled": false}
+      """
+    And I see entity "AppBundle\Entity\Sylius\ProductOptionValue" with properties:
+      """
+      {"price": 80, "enabled": true}
+      """
+    Given the "disabled_filter" filter is enabled
+
   Scenario: Restaurant not found returns 404
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
