@@ -5,7 +5,6 @@ namespace AppBundle\Integration\Zelty;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Entity\LocalBusiness;
-use AppBundle\Integration\Zelty\Dto\ZeltyCatalog;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -22,7 +21,8 @@ class ZeltyCatalogProcessor implements ProcessorInterface
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): Response
     {
-        $restaurantId = (int) $this->requestStack->getCurrentRequest()->attributes->get('restaurantId');
+        $request = $this->requestStack->getCurrentRequest();
+        $restaurantId = (int) $uriVariables['restaurantId'];
 
         $restaurant = $this->em->getRepository(LocalBusiness::class)->find($restaurantId);
         if ($restaurant === null) {
@@ -47,7 +47,7 @@ class ZeltyCatalogProcessor implements ProcessorInterface
     private function verifySignature(\Symfony\Component\HttpFoundation\Request $request, LocalBusiness $restaurant): void
     {
         $secretKey = $restaurant->getZeltyWebhookSecretKey();
-        if ($secretKey === null) {
+        if ($secretKey === null || str_contains($secretKey, '*')) {
             return;
         }
 
