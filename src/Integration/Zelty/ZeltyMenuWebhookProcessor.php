@@ -5,12 +5,12 @@ namespace AppBundle\Integration\Zelty;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Entity\Sylius\ProductRepository;
-use AppBundle\Integration\Zelty\Dto\ZeltyDishWebhookPayload;
+use AppBundle\Integration\Zelty\Dto\ZeltyMenuWebhookPayload;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class ZeltyDishWebhookProcessor implements ProcessorInterface
+class ZeltyMenuWebhookProcessor implements ProcessorInterface
 {
     public function __construct(
         private readonly ProductRepository $productRepository,
@@ -19,14 +19,14 @@ class ZeltyDishWebhookProcessor implements ProcessorInterface
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): Response
     {
-        if (!$data instanceof ZeltyDishWebhookPayload) {
+        if (!$data instanceof ZeltyMenuWebhookPayload) {
             return new JsonResponse(['status' => 'success']);
         }
 
         match ($data->eventName) {
-            'dish.update'              => $this->handleDishUpdate($data->data['dishes'] ?? []),
-            'dish.delete'              => $this->handleDishDelete($data->data['dishes'] ?? []),
-            'dish.availability_update' => $this->handleAvailabilityUpdate($data->data),
+            'menu.update'              => $this->handleMenuUpdate($data->data['menus'] ?? []),
+            'menu.delete'              => $this->handleMenuDelete($data->data['menus'] ?? []),
+            'menu.availability_update' => $this->handleAvailabilityUpdate($data->data),
             default                    => null,
         };
 
@@ -35,21 +35,21 @@ class ZeltyDishWebhookProcessor implements ProcessorInterface
         return new JsonResponse(['status' => 'success']);
     }
 
-    private function handleDishUpdate(array $dishes): void
+    private function handleMenuUpdate(array $menus): void
     {
-        foreach ($dishes as $dish) {
-            $product = $this->productRepository->findByZeltyItemId((string) $dish['id']);
+        foreach ($menus as $menu) {
+            $product = $this->productRepository->findByZeltyItemId((string) $menu['id']);
             if ($product === null) {
                 continue;
             }
-            $product->setEnabled(!($dish['disable'] ?? false));
+            $product->setEnabled(!($menu['disable'] ?? false));
         }
     }
 
-    private function handleDishDelete(array $dishes): void
+    private function handleMenuDelete(array $menus): void
     {
-        foreach ($dishes as $dish) {
-            $product = $this->productRepository->findByZeltyItemId((string) $dish['id']);
+        foreach ($menus as $menu) {
+            $product = $this->productRepository->findByZeltyItemId((string) $menu['id']);
             if ($product === null) {
                 continue;
             }
@@ -59,11 +59,11 @@ class ZeltyDishWebhookProcessor implements ProcessorInterface
 
     private function handleAvailabilityUpdate(array $data): void
     {
-        if (!isset($data['id_dish'])) {
+        if (!isset($data['id_menu'])) {
             return;
         }
 
-        $product = $this->productRepository->findByZeltyItemId((string) $data['id_dish']);
+        $product = $this->productRepository->findByZeltyItemId((string) $data['id_menu']);
         if ($product === null) {
             return;
         }
