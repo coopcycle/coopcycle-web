@@ -73,6 +73,11 @@ parameters:
 
 services:
 
+  # Excluded from autoconfigure to prevent it from being registered in the
+  # global serializer chain — it is only used internally by ZeltyClient.
+  AppBundle\Integration\Zelty\ZeltyOrderNormalizer:
+    autoconfigure: false
+
   _defaults:
     autowire: true
     autoconfigure: true
