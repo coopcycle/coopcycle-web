@@ -47,6 +47,26 @@ class ZeltyClient
         }
     }
 
+    public function addTransaction(int $zeltyOrderId, int $amount): void
+    {
+        $this->logger->info('Zelty add transaction', ['zelty_order_id' => $zeltyOrderId, 'amount' => $amount]);
+
+        try {
+            $this->zeltyClient->request('POST', sprintf('orders/%d/transactions', $zeltyOrderId), array_merge($this->authOptions(), [
+                'json' => [
+                    'transactions'  => [['name' => 'CB', 'price' => $amount]],
+                    'close_if_paid' => false,
+                ],
+            ]));
+        } catch (ClientExceptionInterface $e) {
+            $body = $e->getResponse()->getContent(false);
+            $this->logger->error('Zelty add transaction failed', [
+                'zelty_order_id' => $zeltyOrderId,
+                'error'          => $body,
+            ]);
+        }
+    }
+
     public function closeOrder(int $zeltyOrderId): void
     {
         $this->logger->info('Zelty close order', ['zelty_order_id' => $zeltyOrderId]);

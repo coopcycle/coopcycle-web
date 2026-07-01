@@ -29,6 +29,7 @@ class PushOrderHandler
 
         $this->zeltyClient->setAuth($restaurant->getZeltyApiKey());
         $zeltyOrderId = $this->zeltyClient->pushToZelty($order);
+        $this->zeltyClient->addTransaction($zeltyOrderId, $order->getItemsTotal());
 
         $order->setZeltyOrderId($zeltyOrderId);
         $this->entityManager->flush();
