@@ -88,7 +88,8 @@ class ZeltyTaxonMapper
         $taxon->setEnabled(!$item->disabled);
         $taxon->setSlug($this->generateSlug($item->name, $item->id));
         $taxon->setParent($parentTaxon);
-        $taxon->setZeltyCode($item->id);
+        $taxon->setZeltyId($item->id);
+        $taxon->setZeltyInternalId($item->internalId);
     }
 
     private function updateTaxonFromTag(Taxon $taxon, ZeltyTag $tag, Taxon $parentTaxon): void
@@ -98,7 +99,8 @@ class ZeltyTaxonMapper
         $taxon->setEnabled(!$tag->disabled);
         $taxon->setSlug($this->generateSlug($tag->name, $tag->id));
         $taxon->setParent($parentTaxon);
-        $taxon->setZeltyCode($tag->id);
+        $taxon->setZeltyId($tag->id);
+        $taxon->setZeltyInternalId($tag->internalId);
     }
 
     private function generateSlug(?string $name, string $id): string
@@ -155,7 +157,8 @@ class ZeltyTaxonMapper
         /** @var Taxon $section */
         $section = $this->taxonFactory->createNew();
         $section->setCode($partId);
-        $section->setZeltyCode($partId);
+        $section->setZeltyId($partId);
+        $section->setZeltyInternalId($part->internalId);
         $section->setCurrentLocale($locale);
         $section->setName(sprintf('%s - %s', $menu->name, $part->name));
         $section->setEnabled(!$menu->disabled);

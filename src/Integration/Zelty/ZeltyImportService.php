@@ -259,6 +259,14 @@ class ZeltyImportService
     private function linkMenuProductsToTaxon($em, array $menusMap, Taxon $taxon): void
     {
         foreach ($menusMap as $menuProduct) {
+            $existing = $em->getRepository(ProductTaxon::class)->findOneBy([
+                'product' => $menuProduct,
+                'taxon'   => $taxon,
+            ]);
+            if ($existing !== null) {
+                continue;
+            }
+
             $productTaxon = new ProductTaxon();
             $productTaxon->setProduct($menuProduct);
             $productTaxon->setTaxon($taxon);

@@ -6,6 +6,7 @@ class ZeltyOptionValue
 {
     public function __construct(
         public readonly string $id,
+        public readonly ?string $internalId = null,
         public readonly ?string $name = null,
         public readonly ?string $description = null,
         public readonly ?string $img = null,

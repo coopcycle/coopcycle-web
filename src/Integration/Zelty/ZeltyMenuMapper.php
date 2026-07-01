@@ -104,7 +104,8 @@ class ZeltyMenuMapper
         /** @var Product $product */
         $product = $this->productFactory->createNew();
         $product->setCode($menu->id);
-        $product->setZeltyCode($menu->id);
+        $product->setZeltyId($menu->id);
+        $product->setZeltyInternalId($menu->internalId);
         $product->setRestaurant($restaurant);
         $product->setSlug($this->generateMenuSlug($menu));
         $product->setCurrentLocale($locale);
@@ -403,7 +404,8 @@ class ZeltyMenuMapper
         if ($value === null) {
             $value = new ProductOptionValue();
             $value->setCode($valueCode);
-            $value->setZeltyCode($dishId);
+            $value->setZeltyId($dishId);
+            $value->setZeltyInternalId(isset($productsMap[$dishId]) ? $productsMap[$dishId]->getZeltyInternalId() : null);
             $value->setCurrentLocale($locale);
 
             [$dishName] = $this->extractDishInfo($dishId, $productsMap);

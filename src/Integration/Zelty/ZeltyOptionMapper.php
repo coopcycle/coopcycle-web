@@ -212,7 +212,8 @@ class ZeltyOptionMapper
     ): ProductOptionValue {
         $value = new ProductOptionValue();
         $value->setCode($valueCode);
-        $value->setZeltyCode($zeltyValue->id);
+        $value->setZeltyId($zeltyValue->id);
+        $value->setZeltyInternalId($zeltyValue->internalId);
         $value->setCurrentLocale($locale);
         $value->setValue($zeltyValue->name);
 

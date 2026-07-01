@@ -35,6 +35,7 @@ class ZeltyCatalogParser
     {
         return new ZeltyTag(
             id: $data['id'],
+            internalId: $data['internal_id'] ?? null,
             name: $data['name'] ?? null,
             description: $data['description'] ?? null,
             img: $data['image'] ?? null,
@@ -57,6 +58,7 @@ class ZeltyCatalogParser
         return new ZeltyItem(
             id: $data['id'],
             type: $data['type'],
+            internalId: $data['internal_id'] ?? null,
             name: $data['name'] ?? null,
             description: $data['description'] ?? null,
             img: $data['img'] ?? null,
@@ -73,6 +75,7 @@ class ZeltyCatalogParser
     {
         return new ZeltyMenuPart(
             id: $data['id'],
+            internalId: $data['internal_id'] ?? null,
             name: $data['name'] ?? null,
             dishIds: $data['dish_ids'] ?? [],
         );
@@ -82,6 +85,7 @@ class ZeltyCatalogParser
     {
         return new ZeltyOption(
             id: $data['id'],
+            internalId: $data['internal_id'] ?? null,
             name: $data['name'] ?? null,
             valueIds: $data['value_ids'] ?? [],
             min_choices: $data['minimum_choices'] ?? 0,
@@ -93,6 +97,7 @@ class ZeltyCatalogParser
     {
         return new ZeltyOptionValue(
             id: $data['id'],
+            internalId: $data['internal_id'] ?? null,
             name: $data['name'] ?? null,
             description: $data['description'] ?? null,
             img: $data['img'] ?? null,

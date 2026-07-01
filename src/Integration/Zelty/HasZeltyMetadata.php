@@ -30,29 +30,32 @@ trait HasZeltyMetadata
         return $this;
     }
 
-    /**
-     * Get the Zelty external code.
-     */
-    public function getZeltyCode(): ?string
+    public function getZeltyId(): ?string
     {
-        return $this->metadata['zelty_code'] ?? null;
+        return $this->metadata['zelty_id'] ?? null;
     }
 
-    /**
-     * Set the Zelty external code.
-     */
-    public function setZeltyCode(?string $code): self
+    public function setZeltyId(?string $id): self
     {
-        $this->metadata['zelty_code'] = $code;
+        $this->metadata['zelty_id'] = $id;
 
         return $this;
     }
 
-    /**
-     * Check if a Zelty code is set.
-     */
-    public function hasZeltyCode(): bool
+    public function hasZeltyId(): bool
     {
-        return isset($this->metadata['zelty_code']) && $this->metadata['zelty_code'] !== null;
+        return isset($this->metadata['zelty_id']) && $this->metadata['zelty_id'] !== null;
+    }
+
+    public function getZeltyInternalId(): ?string
+    {
+        return $this->metadata['zelty_internal_id'] ?? null;
+    }
+
+    public function setZeltyInternalId(?string $internalId): self
+    {
+        $this->metadata['zelty_internal_id'] = $internalId;
+
+        return $this;
     }
 }

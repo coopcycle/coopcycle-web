@@ -293,6 +293,120 @@ Feature: Zelty catalog push webhook
       {"price": 100, "enabled": true}
       """
 
+  Scenario: Two consecutive catalog pushes do not cause duplicate key errors
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml  |
+      | zelty_restaurant.yml |
+    And the Zelty taxes API will return:
+      """
+      {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
+      """
+    When I add "Content-Type" header equal to "application/json"
+    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+      """
+      {
+        "data": {
+          "id": 100,
+          "name": "Pizza Roma Catalog",
+          "locale": "fr",
+          "currency": "EUR",
+          "tags": [],
+          "items": [
+            {
+              "id": 5001,
+              "type": "dish",
+              "name": "Margherita",
+              "description": "Tomate, Mozzarella",
+              "img": null,
+              "disabled": false,
+              "is_sold_out": false,
+              "price": {"price": 1200, "is_fixed": true, "prevent_discounts": false, "overrides": []},
+              "tax_rules": {"tax_id": 1},
+              "option_ids": [],
+              "parts": []
+            },
+            {
+              "id": 6001,
+              "type": "menu",
+              "name": "Formula Déjeuner",
+              "description": null,
+              "img": null,
+              "disabled": false,
+              "is_sold_out": false,
+              "price": {"price": 1500, "is_fixed": true, "prevent_discounts": false, "overrides": []},
+              "tax_rules": {"tax_id": 1},
+              "option_ids": [],
+              "parts": [
+                {"menu_part_id": 201, "has_combination": false, "prevent_customisation": false}
+              ]
+            }
+          ],
+          "menuParts": [
+            {"id": 201, "name": "Choisissez votre pizza", "dish_ids": [5001]}
+          ],
+          "options": [],
+          "optionValues": []
+        }
+      }
+      """
+    Then the response status code should be 200
+    When I add "Content-Type" header equal to "application/json"
+    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+      """
+      {
+        "data": {
+          "id": 100,
+          "name": "Pizza Roma Catalog",
+          "locale": "fr",
+          "currency": "EUR",
+          "tags": [],
+          "items": [
+            {
+              "id": 5001,
+              "type": "dish",
+              "name": "Margherita",
+              "description": "Tomate, Mozzarella",
+              "img": null,
+              "disabled": false,
+              "is_sold_out": false,
+              "price": {"price": 1200, "is_fixed": true, "prevent_discounts": false, "overrides": []},
+              "tax_rules": {"tax_id": 1},
+              "option_ids": [],
+              "parts": []
+            },
+            {
+              "id": 6001,
+              "type": "menu",
+              "name": "Formula Déjeuner",
+              "description": null,
+              "img": null,
+              "disabled": false,
+              "is_sold_out": false,
+              "price": {"price": 1500, "is_fixed": true, "prevent_discounts": false, "overrides": []},
+              "tax_rules": {"tax_id": 1},
+              "option_ids": [],
+              "parts": [
+                {"menu_part_id": 201, "has_combination": false, "prevent_customisation": false}
+              ]
+            }
+          ],
+          "menuParts": [
+            {"id": 201, "name": "Choisissez votre pizza", "dish_ids": [5001]}
+          ],
+          "options": [],
+          "optionValues": []
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {"status":"success"}
+      """
+    And I see 2 entities "AppBundle\Entity\Sylius\Product"
+    And I see 1 entities "AppBundle\Entity\Sylius\ProductTaxon"
+
   Scenario: Restaurant not found returns 404
     Given the fixtures files are loaded:
       | sylius_taxation.yml |

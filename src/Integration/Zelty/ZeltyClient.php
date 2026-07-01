@@ -3,6 +3,7 @@
 namespace AppBundle\Integration\Zelty;
 
 use AppBundle\Sylius\Order\OrderInterface;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ZeltyClient
@@ -10,7 +11,8 @@ class ZeltyClient
     private ?string $authToken = null;
 
     public function __construct(
-        private HttpClientInterface $zeltyClient
+        private HttpClientInterface $zeltyClient,
+        private \Psr\Log\LoggerInterface $logger,
     ) {}
 
     public function setAuth(string $token): void
@@ -25,9 +27,22 @@ class ZeltyClient
 
     public function pushToZelty(OrderInterface $order): void
     {
-        $this->zeltyClient->request('POST', 'orders', array_merge($this->authOptions(), [
-            'json' => $this->buildOrderPayload($order),
-        ]));
+        $payload = $this->buildOrderPayload($order);
+
+        $this->logger->info('Zelty order push payload', [
+            'order_id' => $order->getId(),
+            'payload'  => $payload,
+        ]);
+
+        try {
+            $response = $this->zeltyClient->request('POST', 'orders', array_merge($this->authOptions(), [
+                'json' => $payload,
+            ]));
+            $response->getContent();
+        } catch (ClientExceptionInterface $e) {
+            $body = $e->getResponse()->getContent(false);
+            throw new \RuntimeException(sprintf('Zelty order push failed: %s', $body), 0, $e);
+        }
     }
 
     private function buildOrderPayload(OrderInterface $order): array
@@ -89,12 +104,29 @@ class ZeltyClient
 
         foreach ($order->getItems() as $item) {
             $variant = $item->getVariant();
+            $product = $variant?->getProduct();
 
             $entry = [
+                'id'        => $product?->getZeltyId(),
                 'remote_id' => $variant?->getCode(),
                 'type'      => 'dish',
                 'price'     => $item->getUnitPrice(),
             ];
+
+            if ($variant !== null) {
+                $modifiers = [];
+                foreach ($variant->getOptionValues() as $optionValue) {
+                    if ($optionValue->getZeltyId()) {
+                        $modifiers[] = [
+                            'id'    => $optionValue->getZeltyId(),
+                            'price' => $optionValue->getPrice() ?? 0,
+                        ];
+                    }
+                }
+                if ($modifiers) {
+                    $entry['modifiers'] = $modifiers;
+                }
+            }
 
             for ($i = 0; $i < $item->getQuantity(); $i++) {
                 $items[] = $entry;
