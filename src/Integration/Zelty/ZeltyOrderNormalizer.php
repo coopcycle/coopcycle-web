@@ -18,7 +18,7 @@ class ZeltyOrderNormalizer implements NormalizerInterface
             'fulfillment_type' => 'deliver_by_partner',
             'mode'             => 'delivery',
             'source'           => 'web',
-            'due_date'         => $order->getShippedAt()?->format(\DateTime::ATOM),
+            'due_date'         => $order->getPickupExpectedAt()?->format(\DateTime::ATOM),
             'customer'         => $this->normalizeCustomer($order),
             'address'          => $this->normalizeAddress($order),
             'items'            => $this->normalizeItems($order),
