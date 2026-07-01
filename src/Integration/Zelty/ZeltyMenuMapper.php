@@ -104,8 +104,6 @@ class ZeltyMenuMapper
         /** @var Product $product */
         $product = $this->productFactory->createNew();
         $product->setCode($menu->id);
-        $product->setZeltyId($menu->id);
-        $product->setZeltyInternalId($menu->internalId);
         $product->setRestaurant($restaurant);
         $product->setSlug($this->generateMenuSlug($menu));
         $product->setCurrentLocale($locale);
@@ -140,6 +138,8 @@ class ZeltyMenuMapper
         }
 
         $product->setEnabled(!$menu->disabled);
+        $product->setZeltyId($menu->id);
+        $product->setZeltyInternalId($menu->internalId);
     }
 
     /**
@@ -381,7 +381,8 @@ class ZeltyMenuMapper
         string $dishId,
         array $productsMap
     ): void {
-        // Metadata is already set on existing values, no need to update
+        $value->setZeltyId($dishId);
+        $value->setZeltyInternalId(isset($productsMap[$dishId]) ? $productsMap[$dishId]->getZeltyInternalId() : null);
     }
 
     /**

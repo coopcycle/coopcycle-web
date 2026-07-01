@@ -108,8 +108,6 @@ class ZeltyProductMapper
         /** @var Product $product */
         $product = $this->productFactory->createNew();
         $product->setCode($dish->id);
-        $product->setZeltyId($dish->id);
-        $product->setZeltyInternalId($dish->internalId);
         $product->setRestaurant($restaurant);
         $product->setSlug($this->generateProductSlug($dish));
         $product->setCurrentLocale($locale);
@@ -142,6 +140,8 @@ class ZeltyProductMapper
         }
 
         $product->setEnabled(!$dish->disabled);
+        $product->setZeltyId($dish->id);
+        $product->setZeltyInternalId($dish->internalId);
     }
 
     /**

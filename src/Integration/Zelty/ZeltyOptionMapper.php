@@ -170,6 +170,8 @@ class ZeltyOptionMapper
         $value = $this->findOptionValueByCode($option, $valueCode);
 
         if ($value !== null) {
+            $value->setZeltyId($zeltyValue->id);
+            $value->setZeltyInternalId($zeltyValue->internalId);
             return $value;
         }
 

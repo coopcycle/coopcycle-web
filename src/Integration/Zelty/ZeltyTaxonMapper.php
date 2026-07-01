@@ -183,6 +183,8 @@ class ZeltyTaxonMapper
         $section->setName(sprintf('%s - %s', $menu->name, $part->name));
         $section->setEnabled(!$menu->disabled);
         $section->setSlug($this->generateSlug($part->name, $partId));
+        $section->setZeltyId($partId);
+        $section->setZeltyInternalId($part->internalId);
         $this->ensureRestaurantHasTaxon($restaurant, $section);
 
         return $section;
