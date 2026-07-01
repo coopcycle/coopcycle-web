@@ -15,7 +15,9 @@ const guestCheckoutEndpoints = [
 const baseQuery = fetchBaseQuery({
   baseUrl: '/',
   prepareHeaders: (headers, { getState, endpoint }) => {
-    headers.set('Accept', 'application/ld+json')
+    if (!headers.has('Accept')) {
+      headers.set('Accept', 'application/ld+json')
+    }
 
     const accessToken = selectAccessToken(getState());
 
