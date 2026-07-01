@@ -107,7 +107,7 @@ class ZeltyClient
             $product = $variant?->getProduct();
 
             $entry = [
-                'id'        => $product?->getZeltyId(),
+                'id'        => $product?->getZeltyInternalId(),
                 'remote_id' => $variant?->getCode(),
                 'type'      => 'dish',
                 'price'     => $item->getUnitPrice(),
@@ -116,9 +116,9 @@ class ZeltyClient
             if ($variant !== null) {
                 $modifiers = [];
                 foreach ($variant->getOptionValues() as $optionValue) {
-                    if ($optionValue->getZeltyId()) {
+                    if ($optionValue->getZeltyInternalId()) {
                         $modifiers[] = [
-                            'id'    => $optionValue->getZeltyId(),
+                            'id'    => $optionValue->getZeltyInternalId(),
                             'price' => $optionValue->getPrice() ?? 0,
                         ];
                     }
