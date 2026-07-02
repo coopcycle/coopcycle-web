@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { HolidayRequest, PlanningUser, Shift, Uri } from '../../../api/types';
 import ShiftCard from './ShiftCard';
+import OpenSlotCard from './OpenSlotCard';
 import HolidayBar from './HolidayBar';
 import {
   findOverlappingShift,
@@ -92,7 +93,7 @@ export default function PlanningGrid({
             className="shift-planning__cell shift-planning__cell--clickable"
             onClick={() => onCreate(day)}>
             {openShifts.filter(s => shiftIsOnDay(s, day)).map(shift => (
-              <ShiftCard key={shift['@id']} shift={shift} onClick={onEdit} />
+              <OpenSlotCard key={shift['@id']} shift={shift} onClick={onEdit} />
             ))}
             <AddShiftButton onClick={() => onCreate(day)} />
           </div>

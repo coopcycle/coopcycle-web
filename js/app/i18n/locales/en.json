@@ -935,6 +935,8 @@
         "SHIFT_PLANNING_REMOVE_DISABLED": "Assigned to a shift this week",
         "SHIFT_PLANNING_OVERLAP_TOOLTIP": "Overlaps with {{type}} {{start}} - {{end}}",
         "SHIFT_PLANNING_SHIFT_CONFLICT": "{{name}} is already assigned to {{type}} {{start}} - {{end}}",
-        "SHIFT_PLANNING_OVERSTAFFED": "You are assigning {{assigned}} people to a shift that needs {{slots}}"
+        "SHIFT_PLANNING_OVERSTAFFED": "You are assigning {{assigned}} people to a shift that needs {{slots}}",
+        "SHIFT_PLANNING_SLOTS_TO_FILL": "{{count}} slot to fill",
+        "SHIFT_PLANNING_SLOTS_TO_FILL_plural": "{{count}} slots to fill"
       }
 }

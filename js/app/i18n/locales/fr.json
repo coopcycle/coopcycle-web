@@ -907,6 +907,8 @@
         "SHIFT_PLANNING_OVERLAP_TOOLTIP": "Chevauche {{type}} {{start}} - {{end}}",
         "SHIFT_PLANNING_SHIFT_CONFLICT": "{{name}} est déjà assigné(e) à {{type}} {{start}} - {{end}}",
         "SHIFT_PLANNING_OVERSTAFFED": "Vous assignez {{assigned}} personnes à un créneau qui en nécessite {{slots}}",
+        "SHIFT_PLANNING_SLOTS_TO_FILL": "{{count}} place à pourvoir",
+        "SHIFT_PLANNING_SLOTS_TO_FILL_plural": "{{count}} places à pourvoir",
         "ADMIN_DASHBOARD_TAG_TASKS": "Modifier les tags",
         "CREATE_CREDIT_NOTE": "Créer un avoir commercial",
         "REFUND": "Rembourser",
