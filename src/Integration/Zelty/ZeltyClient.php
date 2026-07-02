@@ -33,6 +33,7 @@ class ZeltyClient
         $this->logger->info('Zelty order push payload', [
             'order_id' => $order->getId(),
             'payload'  => $payload,
+            'json'     => json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE),
         ]);
 
         try {

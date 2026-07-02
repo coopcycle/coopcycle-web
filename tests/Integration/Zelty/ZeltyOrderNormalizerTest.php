@@ -6,6 +6,7 @@ use AppBundle\Entity\Address;
 use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\OrderItem;
 use AppBundle\Entity\Sylius\Product;
+use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Entity\Sylius\ProductVariant;
 use AppBundle\Integration\Zelty\ZeltyOrderNormalizer;
@@ -55,7 +56,7 @@ class ZeltyOrderNormalizerTest extends TestCase
         $order = $this->createMock(OrderInterface::class);
         $order->method('getId')->willReturn(751);
         $order->method('getNumber')->willReturn('QF12345678');
-        $order->method('getShippedAt')->willReturn($shippedAt);
+        $order->method('getPickupExpectedAt')->willReturn($shippedAt);
         $order->method('getCustomer')->willReturn($customer);
         $order->method('getShippingAddress')->willReturn($address);
         $order->method('getItems')->willReturn(new ArrayCollection([$item]));
@@ -90,7 +91,7 @@ class ZeltyOrderNormalizerTest extends TestCase
 
         $this->assertCount(1, $payload['items']);
         $this->assertSame([
-            'id'        => '1269330',
+            'id'        => 1269330,
             'remote_id' => 'ZD1269330_variant',
             'type'      => 'dish',
             'price'     => 600,
@@ -118,19 +119,23 @@ class ZeltyOrderNormalizerTest extends TestCase
 
         $this->assertCount(3, $payload['items']);
         foreach ($payload['items'] as $entry) {
-            $this->assertSame('1983', $entry['id']);
+            $this->assertSame(1983, $entry['id']);
             $this->assertSame(1200, $entry['price']);
         }
     }
 
-    public function testItemWithModifiers(): void
+    public function testDishItemWithModifiers(): void
     {
         $product = new Product();
         $product->setMetadata(['zelty_id' => 'ZD1976713', 'zelty_internal_id' => '1976713']);
 
+        $option = new ProductOption();
+        $option->setCode('ZO276829_46');
+
         $optionValueWithZelty = new ProductOptionValue();
         $optionValueWithZelty->setMetadata(['zelty_id' => 'ZOV1403530', 'zelty_internal_id' => '1403530']);
-        $optionValueWithZelty->setPrice(0);
+        $optionValueWithZelty->setPrice(200);
+        $optionValueWithZelty->setOption($option);
 
         $optionValueWithoutZelty = new ProductOptionValue();
 
@@ -151,9 +156,61 @@ class ZeltyOrderNormalizerTest extends TestCase
         $payload = $this->normalizer->normalize($order);
 
         $this->assertCount(1, $payload['items']);
+        $this->assertSame(1976713, $payload['items'][0]['id']);
+        $this->assertSame('dish', $payload['items'][0]['type']);
         $this->assertSame([
-            ['id' => '1403530', 'price' => 0],
+            [
+                'option_id'       => 276829,
+                'option_value_id' => 1403530,
+                'quantity'        => 1,
+                'price'           => 200,
+            ],
         ], $payload['items'][0]['modifiers']);
+    }
+
+    public function testMenuItemWithDishes(): void
+    {
+        $product = new Product();
+        $product->setMetadata(['zelty_id' => 'ZM87499', 'zelty_internal_id' => '87499']);
+
+        $menuPartOption1 = new ProductOption();
+        $menuPartOption1->setCode('ZMP141228');
+
+        $menuPartOption2 = new ProductOption();
+        $menuPartOption2->setCode('ZMP141229');
+
+        $dishValue1 = new ProductOptionValue();
+        $dishValue1->setMetadata(['zelty_id' => 'ZD1976713', 'zelty_internal_id' => '1976713']);
+        $dishValue1->setOption($menuPartOption1);
+
+        $dishValue2 = new ProductOptionValue();
+        $dishValue2->setMetadata(['zelty_id' => 'ZD907281', 'zelty_internal_id' => '907281']);
+        $dishValue2->setOption($menuPartOption2);
+
+        $variant = $this->createMock(ProductVariant::class);
+        $variant->method('getCode')->willReturn('ZM87499_variant');
+        $variant->method('getProduct')->willReturn($product);
+        $variant->method('getOptionValues')->willReturn(
+            new ArrayCollection([$dishValue1, $dishValue2])
+        );
+
+        $item = $this->createMock(OrderItem::class);
+        $item->method('getVariant')->willReturn($variant);
+        $item->method('getUnitPrice')->willReturn(1670);
+        $item->method('getQuantity')->willReturn(1);
+
+        $order = $this->buildMinimalOrder([$item], 1670);
+
+        $payload = $this->normalizer->normalize($order);
+
+        $this->assertCount(1, $payload['items']);
+        $this->assertSame(87499, $payload['items'][0]['id']);
+        $this->assertSame('menu', $payload['items'][0]['type']);
+        $this->assertSame([
+            ['id_part' => 'ZMP141228', 'id' => 'ZD1976713'],
+            ['id_part' => 'ZMP141229', 'id' => 'ZD907281'],
+        ], $payload['items'][0]['dishes']);
+        $this->assertArrayNotHasKey('modifiers', $payload['items'][0]);
     }
 
     public function testNotesAreTruncatedTo256Characters(): void
@@ -182,7 +239,7 @@ class ZeltyOrderNormalizerTest extends TestCase
         $order = $this->createMock(OrderInterface::class);
         $order->method('getId')->willReturn(1);
         $order->method('getNumber')->willReturn('ABC123');
-        $order->method('getShippedAt')->willReturn(null);
+        $order->method('getPickupExpectedAt')->willReturn(null);
         $order->method('getCustomer')->willReturn(null);
         $order->method('getShippingAddress')->willReturn(null);
         $order->method('getItems')->willReturn(new ArrayCollection($items));

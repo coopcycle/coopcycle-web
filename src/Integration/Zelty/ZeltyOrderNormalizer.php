@@ -80,26 +80,26 @@ class ZeltyOrderNormalizer implements NormalizerInterface
         foreach ($order->getItems() as $item) {
             $variant = $item->getVariant();
             $product = $variant?->getProduct();
+            $isMenu  = str_starts_with($product?->getZeltyId() ?? '', 'ZM');
 
             $entry = [
-                'id'        => $product?->getZeltyInternalId(),
+                'id'        => (int) $product?->getZeltyInternalId(),
                 'remote_id' => $variant?->getCode(),
-                'type'      => 'dish',
+                'type'      => $isMenu ? 'menu' : 'dish',
                 'price'     => $item->getUnitPrice(),
             ];
 
             if ($variant !== null) {
-                $modifiers = [];
-                foreach ($variant->getOptionValues() as $optionValue) {
-                    if ($optionValue->getZeltyInternalId()) {
-                        $modifiers[] = [
-                            'id'    => $optionValue->getZeltyInternalId(),
-                            'price' => $optionValue->getPrice() ?? 0,
-                        ];
+                if ($isMenu) {
+                    $dishes = $this->normalizeMenuDishes($variant);
+                    if ($dishes) {
+                        $entry['dishes'] = $dishes;
                     }
-                }
-                if ($modifiers) {
-                    $entry['modifiers'] = $modifiers;
+                } else {
+                    $modifiers = $this->normalizeModifiers($variant);
+                    if ($modifiers) {
+                        $entry['modifiers'] = $modifiers;
+                    }
                 }
             }
 
@@ -109,5 +109,48 @@ class ZeltyOrderNormalizer implements NormalizerInterface
         }
 
         return $items;
+    }
+
+    private function normalizeMenuDishes(mixed $variant): array
+    {
+        $dishes = [];
+        foreach ($variant->getOptionValues() as $optionValue) {
+            $zeltyId = $optionValue->getZeltyId();
+            if (!str_starts_with($zeltyId ?? '', 'ZD')) {
+                continue;
+            }
+            $dishes[] = [
+                'id_part' => $optionValue->getOption()->getCode(),
+                'id'      => $zeltyId,
+            ];
+        }
+        return $dishes;
+    }
+
+    private function normalizeModifiers(mixed $variant): array
+    {
+        $modifiers = [];
+        foreach ($variant->getOptionValues() as $optionValue) {
+            if (!$optionValue->getZeltyInternalId()) {
+                continue;
+            }
+            $optionCode = $optionValue->getOption()?->getCode() ?? '';
+            $modifiers[] = [
+                'option_id'       => $this->extractOptionId($optionCode),
+                'option_value_id' => (int) $optionValue->getZeltyInternalId(),
+                'quantity'        => 1,
+                'price'           => $optionValue->getPrice() ?? 0,
+            ];
+        }
+        return $modifiers;
+    }
+
+    private function extractOptionId(string $optionCode): int
+    {
+        // Code format: ZO{zeltyOptionId}_{restaurantId}
+        if (preg_match('/^ZO(\d+)_\d+$/', $optionCode, $matches)) {
+            return (int) $matches[1];
+        }
+        return 0;
     }
 }
