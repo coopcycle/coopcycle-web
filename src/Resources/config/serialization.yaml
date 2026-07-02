@@ -1,7 +1,7 @@
 AppBundle\Entity\User:
   attributes:
     username:
-      groups: ['user', 'order']
+      groups: ['user', 'order', 'shift', 'holiday_request']
     email:
       groups: ['user', 'order']
     addresses:

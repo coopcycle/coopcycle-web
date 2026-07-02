@@ -59,6 +59,13 @@
             <span>{% trans %}profile.myTracking{% endtrans %}</span>
           </a>
         </li>
+        <li
+          class="{{ app.request.attributes.get('_route') == 'profile_shifts' ? 'active' : '' }}">
+          <a href="{{ path('profile_shifts') }}">
+            <i class="fa fa-calendar mr-1"></i>
+            <span>{{ 'profile.myShifts'|trans }}</span>
+          </a>
+        </li>
         {% endif %}
         {% if loopeat_enabled and is_granted('ROLE_LOOPEAT') %}
         <li

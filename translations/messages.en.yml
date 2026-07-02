@@ -18,6 +18,8 @@ adminDashboard.tooltip.deliveries: Manage deliveries
 adminDashboard.tooltip.stores: Manage stores
 adminDashboard.tooltip.restaurants: Manage restaurants
 adminDashboard.tooltip.users: Manage user accounts
+adminDashboard.tooltip.shifts: Manage shift planning
+adminDashboard.shifts.title: Shifts
 adminDashboard.tooltip.organizations: Organization management
 adminDashboard.dashboard.title: Dashboard
 adminDashboard.dashboard.import: Import
@@ -294,6 +296,7 @@ profile.myRestaurants: My restaurants
 profile.myRestaurants.noRestaurants: You don't have any restaurants yet
 profile.myAccount: My account
 profile.myTracking: My tracking
+profile.myShifts: My shifts
 profile.myOrders: My orders
 profile.myAddresses: My addresses
 profile.myPersonalInfo: My personal information
@@ -1281,6 +1284,10 @@ notifications.tap_to_open: Tap to open
 notifications.delivery_created: A delivery to be picked up %date% has been created
 notifications.tasks_changed: Tasks for %date% changed!
 notifications.tasks_changed_today: Your tasks for today have been updated
+notifications.shifts.assigned: You have been assigned a shift on %date%
+notifications.shifts.week_assigned: Your shifts for the week of %date% have been published
+notifications.holiday_request.approved: Your holiday request from %start% to %end% has been approved
+notifications.holiday_request.rejected: Your holiday request from %start% to %end% has been rejected
 notifications.restaurant.new_order: New order to accept
 notifications.restaurant.accepted_order: New order
 notifications.messenger_approaching: Hey %customer%! Our messenger %messenger% is

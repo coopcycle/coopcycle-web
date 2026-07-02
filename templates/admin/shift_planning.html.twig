@@ -1,0 +1,19 @@
+{% extends "admin.html.twig" %}
+
+{% block prepare_title %}
+  {{ add_title_prefix('adminDashboard.shifts.title'|trans) }}
+{% endblock %}
+
+{% block content %}
+  <div id="react-root" data-shift-types="{{ shift_types|json_encode|e('html_attr') }}">
+    {# Managed with React #}
+  </div>
+{% endblock %}
+
+{% block styles %}
+  {{ encore_entry_link_tags('admin-shift-planning') }}
+{% endblock %}
+
+{% block scripts %}
+  {{ encore_entry_script_tags('admin-shift-planning') }}
+{% endblock %}

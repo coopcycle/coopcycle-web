@@ -21,6 +21,8 @@ adminDashboard.tooltip.stores: Gestion des magasins
 adminDashboard.tooltip.restaurants: Gestion des restaurants
 adminDashboard.tooltip.organizations: Gestion des organisations
 adminDashboard.tooltip.users: Gestion des comptes utilisateurs
+adminDashboard.tooltip.shifts: Gérer le planning des créneaux
+adminDashboard.shifts.title: Planning
 adminDashboard.dashboard.title: Tableau de bord
 adminDashboard.dashboard.import: Importer
 adminDashboard.dashboard.export: Exporter
@@ -247,6 +249,7 @@ profile.myRestaurants: Mes restaurants
 profile.myRestaurants.noRestaurants: Vous n'avez pas encore de restaurants
 profile.myAccount: Mon compte
 profile.myTracking: Mes itinéraires
+profile.myShifts: Mes créneaux
 profile.myOrders: Mes commandes
 profile.myAddresses: Mes adresses
 profile.myPersonalInfo: Mes données personnelles
@@ -787,6 +790,10 @@ notifications.tap_to_open: Appuyez pour ouvrir
 notifications.delivery_created: Une livraison avec enlèvement %date% a été créée
 notifications.tasks_changed: Les tâches du %date% ont changé !
 notifications.tasks_changed_today: Vos tâches pour aujourd'hui ont été mises à jour
+notifications.shifts.assigned: Un créneau vous a été assigné le %date%
+notifications.shifts.week_assigned: Vos créneaux pour la semaine du %date% ont été publiés
+notifications.holiday_request.approved: Votre demande de congés du %start% au %end% a été approuvée
+notifications.holiday_request.rejected: Votre demande de congés du %start% au %end% a été refusée
 notifications.restaurant.new_order: Nouvelle commande à confirmer
 notifications.restaurant.accepted_order: "Nouvelle commande"
 notifications.messenger_approaching: Bonjour %customer% ! Votre livreur·se %messenger%

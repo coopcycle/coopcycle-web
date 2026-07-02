@@ -608,3 +608,68 @@ export type PaymentMethod = {
 export type PaymentMethodsOutput = {
   methods: PaymentMethod[];
 };
+
+// Shift planning
+
+export type PlanningUser = JsonLdEntity & {
+  username: string;
+  roles?: string[];
+};
+
+export type ShiftAssignment = {
+  user: PlanningUser;
+  createdAt: string;
+};
+
+export type Shift = JsonLdEntity & {
+  id: number;
+  type: string;
+  startsAt: string;
+  endsAt: string;
+  slots: number;
+  assignments: ShiftAssignment[];
+};
+
+export type ShiftPayload = {
+  type: string;
+  startsAt: string;
+  endsAt: string;
+  slots: number;
+  users: Uri[];
+};
+
+export type PutShiftRequest = ShiftPayload & { '@id': Uri };
+
+export type DateRangeArgs = {
+  after: string;
+  before: string;
+};
+
+export type GetHolidayRequestsArgs = DateRangeArgs & {
+  status?: string[];
+};
+
+export type HolidayRequestStatus = 'pending' | 'approved' | 'rejected';
+
+export type HolidayRequest = JsonLdEntity & {
+  id: number;
+  user: PlanningUser;
+  startDate: string;
+  endDate: string;
+  status: HolidayRequestStatus;
+  comment: string | null;
+  actionedBy: PlanningUser | null;
+  actionedAt: string | null;
+  createdAt: string;
+};
+
+export type PostHolidayRequestRequest = {
+  startDate: string;
+  endDate: string;
+  comment?: string;
+};
+
+export type CopyWeekRequest = {
+  sourceWeek: string;
+  targetWeek: string;
+};

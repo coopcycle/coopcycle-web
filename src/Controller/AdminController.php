@@ -3160,6 +3160,16 @@ class AdminController extends AbstractController
         return $this->render('admin/invoicing.html.twig', $this->auth([]));
     }
 
+    #[Route(path: '/admin/shifts', name: 'admin_shift_planning')]
+    public function shiftPlanningAction()
+    {
+        $this->denyAccessUnlessGranted('ROLE_DISPATCHER');
+
+        return $this->render('admin/shift_planning.html.twig', $this->auth([
+            'shift_types' => $this->getParameter('shift_types'),
+        ]));
+    }
+
     #[Route(path: '/admin/shop-collections/preview/{component}', name: 'admin_shop_collection_preview')]
     public function shopCollectionPreviewAction($component,
         EntityManagerInterface $entityManager,

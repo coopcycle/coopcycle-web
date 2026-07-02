@@ -42,13 +42,22 @@ import {
   User,
   TaskEvent,
   PaymentMethodsOutput,
+  Shift,
+  ShiftPayload,
+  PutShiftRequest,
+  DateRangeArgs,
+  GetHolidayRequestsArgs,
+  HolidayRequest,
+  PostHolidayRequestRequest,
+  CopyWeekRequest,
+  PlanningUser,
 } from './types';
 
 // Define our single API slice object
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['PricingRuleSet'],
+  tagTypes: ['PricingRuleSet', 'Shift', 'HolidayRequest'],
   // The "endpoints" represent operations and requests for this server
   // uri is passed in JSON-LD '@id' key, https://www.w3.org/TR/2014/REC-json-ld-20140116/#node-identifiers
   endpoints: builder => ({
@@ -358,6 +367,110 @@ export const apiSlice = createApi({
         method: 'DELETE',
       }),
     }),
+
+    getShifts: builder.query<HydraCollection<Shift>, DateRangeArgs>({
+      query: ({ after, before }) => ({
+        url: 'api/shifts',
+        params: { 'date[after]': after, 'date[before]': before },
+      }),
+      providesTags: ['Shift'],
+    }),
+    getMyShifts: builder.query<HydraCollection<Shift>, DateRangeArgs>({
+      query: ({ after, before }) => ({
+        url: 'api/me/shifts',
+        params: { 'date[after]': after, 'date[before]': before },
+      }),
+      providesTags: ['Shift'],
+    }),
+    postShift: builder.mutation<Shift, ShiftPayload>({
+      query: body => ({
+        url: 'api/shifts',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Shift'],
+    }),
+    putShift: builder.mutation<Shift, PutShiftRequest>({
+      query: ({ '@id': uri, ...body }) => ({
+        url: uri,
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['Shift'],
+    }),
+    deleteShift: builder.mutation<void, Uri>({
+      query: uri => ({
+        url: uri,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Shift'],
+    }),
+    copyWeek: builder.mutation<void, CopyWeekRequest>({
+      query: body => ({
+        url: 'api/shifts/copy_week',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Shift'],
+    }),
+    getHolidayRequests: builder.query<
+      HydraCollection<HolidayRequest>,
+      GetHolidayRequestsArgs
+    >({
+      query: ({ after, before, status }) => {
+        const params = new URLSearchParams({
+          'date[after]': after,
+          'date[before]': before,
+        });
+        (status || []).forEach(s => params.append('status[]', s));
+        return { url: `api/holiday_requests?${params.toString()}` };
+      },
+      providesTags: ['HolidayRequest'],
+    }),
+    getMyHolidayRequests: builder.query<HydraCollection<HolidayRequest>, void>({
+      query: () => 'api/me/holiday_requests',
+      providesTags: ['HolidayRequest'],
+    }),
+    postHolidayRequest: builder.mutation<
+      HolidayRequest,
+      PostHolidayRequestRequest
+    >({
+      query: body => ({
+        url: 'api/holiday_requests',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['HolidayRequest'],
+    }),
+    approveHolidayRequest: builder.mutation<HolidayRequest, Uri>({
+      query: uri => ({
+        url: `${uri}/approve`,
+        method: 'PUT',
+        body: {},
+      }),
+      invalidatesTags: ['HolidayRequest'],
+    }),
+    rejectHolidayRequest: builder.mutation<HolidayRequest, Uri>({
+      query: uri => ({
+        url: `${uri}/reject`,
+        method: 'PUT',
+        body: {},
+      }),
+      invalidatesTags: ['HolidayRequest'],
+    }),
+    deleteHolidayRequest: builder.mutation<void, Uri>({
+      query: uri => ({
+        url: uri,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['HolidayRequest'],
+    }),
+    getPlanningUsers: builder.query<PlanningUser[], void>({
+      query: () =>
+        'api/users?roles[]=ROLE_COURIER&roles[]=ROLE_DISPATCHER&roles[]=ROLE_ADMIN',
+      transformResponse: (response: HydraCollection<PlanningUser>) =>
+        response['hydra:member'],
+    }),
   }),
 });
 
@@ -400,4 +513,17 @@ export const {
   useUpdateShopCollectionMutation,
   useCreateShopCollectionMutation,
   useDeleteShopCollectionMutation,
+  useGetShiftsQuery,
+  useGetMyShiftsQuery,
+  usePostShiftMutation,
+  usePutShiftMutation,
+  useDeleteShiftMutation,
+  useCopyWeekMutation,
+  useGetHolidayRequestsQuery,
+  useGetMyHolidayRequestsQuery,
+  usePostHolidayRequestMutation,
+  useApproveHolidayRequestMutation,
+  useRejectHolidayRequestMutation,
+  useDeleteHolidayRequestMutation,
+  useGetPlanningUsersQuery,
 } = apiSlice;
