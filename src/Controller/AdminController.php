@@ -3163,6 +3163,10 @@ class AdminController extends AbstractController
     #[Route(path: '/admin/shifts', name: 'admin_shift_planning')]
     public function shiftPlanningAction()
     {
+        if (!$this->getParameter('shift_planning_enabled')) {
+            throw $this->createNotFoundException();
+        }
+
         $this->denyAccessUnlessGranted('ROLE_DISPATCHER');
 
         return $this->render('admin/shift_planning.html.twig', $this->auth([

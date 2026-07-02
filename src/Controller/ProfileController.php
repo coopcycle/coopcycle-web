@@ -290,6 +290,10 @@ class ProfileController extends AbstractController
     #[Route(path: '/profile/shifts', name: 'profile_shifts')]
     public function shiftsAction()
     {
+        if (!$this->getParameter('shift_planning_enabled')) {
+            throw $this->createNotFoundException();
+        }
+
         $this->denyAccessUnlessGranted('ROLE_COURIER');
 
         return $this->render('profile/shifts.html.twig', $this->auth([]));
