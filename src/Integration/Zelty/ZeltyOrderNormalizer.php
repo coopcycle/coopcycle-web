@@ -120,8 +120,8 @@ class ZeltyOrderNormalizer implements NormalizerInterface
                 continue;
             }
             $dishes[] = [
-                'id_part' => $optionValue->getOption()->getCode(),
-                'id'      => $zeltyId,
+                'id_part' => (int) str_replace('ZMP', '', $optionValue->getOption()->getCode()),
+                'id'      => (int) str_replace('ZD', '', $zeltyId),
             ];
         }
         return $dishes;

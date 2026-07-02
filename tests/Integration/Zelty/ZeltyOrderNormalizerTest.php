@@ -207,8 +207,8 @@ class ZeltyOrderNormalizerTest extends TestCase
         $this->assertSame(87499, $payload['items'][0]['id']);
         $this->assertSame('menu', $payload['items'][0]['type']);
         $this->assertSame([
-            ['id_part' => 'ZMP141228', 'id' => 'ZD1976713'],
-            ['id_part' => 'ZMP141229', 'id' => 'ZD907281'],
+            ['id_part' => 141228, 'id' => 1976713],
+            ['id_part' => 141229, 'id' => 907281],
         ], $payload['items'][0]['dishes']);
         $this->assertArrayNotHasKey('modifiers', $payload['items'][0]);
     }
