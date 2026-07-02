@@ -194,7 +194,6 @@ class ZeltyMenuMapper
         string $locale
     ): void {
         $existingOptions = $this->indexOptionsByCode($menuProduct);
-        $partOptionValuesMap = [];
 
         foreach ($menu->parts as $partId) {
             if (!isset($menuPartsMap[$partId])) {
@@ -214,7 +213,7 @@ class ZeltyMenuMapper
                 $partOptionValue = $partOptionValues[$dishId] ?? null;
 
                 foreach ($dishProduct->getOptions() as $dishOption) {
-                    $this->linkOptionToProduct($menuProduct, $dishOption);
+                    $this->linkOptionToProduct($menuProduct, $dishOption, false);
 
                     if ($partOptionValue !== null) {
                         foreach ($dishOption->getValues() as $dishOptionValue) {
@@ -295,25 +294,44 @@ class ZeltyMenuMapper
     /**
      * Link a product option to a menu product if not already linked.
      */
-    private function linkOptionToProduct(Product $menuProduct, ProductOption $option): void
+    private function linkOptionToProduct(Product $menuProduct, ProductOption $option, bool $enabled = true): void
     {
+        $productId = $menuProduct->getId();
+        $optionId = $option->getId();
+
         if ($menuProduct->hasOption($option)) {
+            // Option already linked in memory — update enabled on the join entity.
+            foreach ($menuProduct->getProductOptions() as $productOptions) {
+                if ($productOptions->getOption() === $option) {
+                    $productOptions->setEnabled($enabled);
+                    break;
+                }
+            }
             return;
         }
 
-        $productId = $menuProduct->getId();
-        $optionId = $option->getId();
         if ($productId !== null && $optionId !== null) {
             $existing = $this->em->getRepository(ProductOptions::class)->findOneBy([
                 'product' => $productId,
-                'option' => $optionId,
+                'option'  => $optionId,
             ]);
             if ($existing !== null) {
+                $existing->setEnabled($enabled);
                 return;
             }
         }
 
         $menuProduct->addOption($option);
+
+        // Set enabled on the newly created join entity.
+        if (!$enabled) {
+            foreach ($menuProduct->getProductOptions() as $productOptions) {
+                if ($productOptions->getOption() === $option) {
+                    $productOptions->setEnabled(false);
+                    break;
+                }
+            }
+        }
     }
 
     /**
