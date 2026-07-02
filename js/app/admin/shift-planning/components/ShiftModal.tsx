@@ -25,6 +25,7 @@ import {
   wallClock,
   wallClockTime,
 } from '../utils/date';
+import { shiftTypeColor } from '../utils/shiftTypeColor';
 
 export type ShiftModalState = {
   shift?: Shift;
@@ -210,7 +211,20 @@ export default function ShiftModal({
           name="type"
           label={t('SHIFT_PLANNING_TYPE')}
           rules={[{ required: true }]}>
-          <Select options={shiftTypes.map(type => ({ value: type, label: type }))} />
+          <Select
+            options={shiftTypes.map(type => ({
+              value: type,
+              label: (
+                <span>
+                  <span
+                    className="shift-type-dot"
+                    style={{ backgroundColor: shiftTypeColor(type) }}
+                  />
+                  {type}
+                </span>
+              ),
+            }))}
+          />
         </Form.Item>
         <Form.Item
           name="date"

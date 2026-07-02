@@ -28,7 +28,7 @@ export default function OpenSlotCard({ shift, onClick }: Props) {
       <div className="shift-card__type">
         <span>
           <span
-            className="open-slot-card__dot"
+            className="shift-type-dot"
             style={{ backgroundColor: shiftTypeColor(shift.type) }}
           />
           {shift.type}
