@@ -106,6 +106,13 @@
   font-size: 12px;
   line-height: 1.4;
   cursor: pointer;
+  transition: box-shadow 0.15s, transform 0.15s, border-color 0.15s;
+
+  &:hover {
+    border-color: rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+  }
 
   &__type {
     font-weight: 600;
