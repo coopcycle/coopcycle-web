@@ -105,3 +105,8 @@ phpstan.neon
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
+
+shopify-app/shopify.app.toml
+shopify-app/extensions/delivery-customization/dist/
+shopify-app/extensions/delivery-customization/src/run.types.d.ts
+shopify-gateway/.env

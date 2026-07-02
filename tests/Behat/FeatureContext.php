@@ -21,6 +21,8 @@ use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Task;
+use AppBundle\Entity\Shopify\ShopifyOrder;
+use AppBundle\Entity\Shopify\ShopifyShop;
 use AppBundle\Entity\Urbantz\Hub as UrbantzHub;
 use AppBundle\Fixtures\DatabasePurger;
 use AppBundle\Service\SettingsManager;
@@ -94,6 +96,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
     private $oAuthTokens;
 
     private $apiKeys;
+
+    /** @var ShopifyShop[] indexed by store name */
+    private array $shopifyShops = [];
 
     /**
      * Initializes context.
@@ -1452,5 +1457,154 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
 
         $this->doctrine->getManagerForClass(Task::class)->flush();
+    }
+
+    // ---------------------------------------------------------------------------
+    // Shopify steps
+    // ---------------------------------------------------------------------------
+
+    #[Given('the store with name :storeName has a Shopify shop')]
+    public function theStoreWithNameHasAShopifyShop(string $storeName): void
+    {
+        $store = $this->doctrine->getRepository(Store::class)->findOneByName($storeName);
+
+        $shop = new ShopifyShop();
+        $shop->setShopDomain(strtolower(str_replace(' ', '-', $storeName)) . '.myshopify.com');
+        $shop->setAccessToken('test-access-token');
+        $shop->setWebhookSecret('test-webhook-secret');
+        $shop->setStore($store);
+
+        $this->doctrine->getManagerForClass(ShopifyShop::class)->persist($shop);
+        $this->doctrine->getManagerForClass(ShopifyShop::class)->flush();
+
+        $this->shopifyShops[$storeName] = $shop;
+    }
+
+    #[Given('a Shopify order :shopifyOrderId exists for store :storeName')]
+    public function aShopifyOrderExistsForStore(string $shopifyOrderId, string $storeName): void
+    {
+        if (!isset($this->shopifyShops[$storeName])) {
+            throw new \RuntimeException("Shopify shop for store '{$storeName}' does not exist. Call 'the store with name X has a Shopify shop' first.");
+        }
+
+        $shop = $this->shopifyShops[$storeName];
+
+        $pickupAddress = new Address();
+        $pickupAddress->setStreetAddress('272 Rue Saint-Honoré, 75001 Paris');
+        $pickupAddress->setGeo(new GeoCoordinates(48.864577, 2.333338));
+
+        $dropoffAddress = new Address();
+        $dropoffAddress->setStreetAddress('18 Avenue Ledru-Rollin, 75012 Paris');
+        $dropoffAddress->setGeo(new GeoCoordinates(48.846656, 2.369052));
+
+        $after  = new \DateTime('+1 hour');
+        $before = new \DateTime('+2 hours');
+
+        $pickup = new Task();
+        $pickup->setType(Task::TYPE_PICKUP);
+        $pickup->setAddress($pickupAddress);
+        $pickup->setAfter($after);
+        $pickup->setBefore($before);
+
+        $dropoff = new Task();
+        $dropoff->setType(Task::TYPE_DROPOFF);
+        $dropoff->setAddress($dropoffAddress);
+        $dropoff->setAfter($after);
+        $dropoff->setBefore($before);
+
+        $delivery = \AppBundle\Entity\Delivery::createWithTasks($pickup, $dropoff);
+        $shop->getStore()->addDelivery($delivery);
+
+        $this->doctrine->getManagerForClass(\AppBundle\Entity\Delivery::class)->persist($delivery);
+
+        $shopifyOrder = new ShopifyOrder();
+        $shopifyOrder->setShopifyOrderId($shopifyOrderId);
+        $shopifyOrder->setShopifyOrderName('#' . substr($shopifyOrderId, -4));
+        $shopifyOrder->setDelivery($delivery);
+        $shopifyOrder->setShop($shop);
+
+        $this->doctrine->getManagerForClass(ShopifyOrder::class)->persist($shopifyOrder);
+        $this->doctrine->getManagerForClass(ShopifyOrder::class)->flush();
+    }
+
+    #[When('the Shopify shop for store :storeName sends a :topic webhook with body:')]
+    public function theShopifyShopForStoreSendsAWebhook(string $storeName, string $topic, PyStringNode $body): void
+    {
+        if (!isset($this->shopifyShops[$storeName])) {
+            throw new \RuntimeException("Shopify shop for store '{$storeName}' does not exist.");
+        }
+
+        $shop   = $this->shopifyShops[$storeName];
+        $raw    = (string) $body;
+        $hmac   = base64_encode(hash_hmac('sha256', $raw, $shop->getWebhookSecret(), true));
+
+        $this->restContext->iAddHeaderEqualTo('X-Shopify-Topic', $topic);
+        $this->restContext->iAddHeaderEqualTo('X-Shopify-Hmac-SHA256', $hmac);
+        $this->restContext->iSendARequestTo('POST', '/api/shopify/webhook/' . $shop->getId(), $body);
+    }
+
+    #[When('the Shopify shop for store :storeName sends a CarrierService rates request with body:')]
+    public function theShopifyShopForStoreSendsARatesRequest(string $storeName, PyStringNode $body): void
+    {
+        if (!isset($this->shopifyShops[$storeName])) {
+            throw new \RuntimeException("Shopify shop for store '{$storeName}' does not exist.");
+        }
+
+        $shop = $this->shopifyShops[$storeName];
+        $raw  = (string) $body;
+        $hmac = base64_encode(hash_hmac('sha256', $raw, $shop->getWebhookSecret(), true));
+
+        $this->restContext->iAddHeaderEqualTo('X-Shopify-Hmac-SHA256', $hmac);
+        $this->restContext->iSendARequestTo('POST', '/api/shopify/rates/' . $shop->getId(), $body);
+    }
+
+    #[Then('a Shopify delivery should have been created for order :shopifyOrderId')]
+    public function aShopifyDeliveryShouldHaveBeenCreatedForOrder(string $shopifyOrderId): void
+    {
+        $shopifyOrder = $this->doctrine->getRepository(ShopifyOrder::class)
+            ->findOneBy(['shopifyOrderId' => $shopifyOrderId]);
+
+        Assert::assertNotNull(
+            $shopifyOrder,
+            "Expected a ShopifyOrder record for Shopify order id {$shopifyOrderId}, but none was found."
+        );
+        Assert::assertNotNull(
+            $shopifyOrder->getDelivery(),
+            "ShopifyOrder {$shopifyOrderId} exists but has no linked Delivery."
+        );
+    }
+
+    #[Then('exactly :count Shopify delivery exists for order :shopifyOrderId')]
+    public function exactlyNShopifyDeliveriesExistForOrder(int $count, string $shopifyOrderId): void
+    {
+        $records = $this->doctrine->getRepository(ShopifyOrder::class)
+            ->findBy(['shopifyOrderId' => $shopifyOrderId]);
+
+        Assert::assertCount(
+            $count,
+            $records,
+            "Expected exactly {$count} ShopifyOrder record(s) for order id {$shopifyOrderId}, got " . count($records) . "."
+        );
+    }
+
+    #[Then('the tasks for Shopify order :shopifyOrderId should be cancelled')]
+    public function theTasksForShopifyOrderShouldBeCancelled(string $shopifyOrderId): void
+    {
+        $this->entityManager->clear();
+
+        $shopifyOrder = $this->doctrine->getRepository(ShopifyOrder::class)
+            ->findOneBy(['shopifyOrderId' => $shopifyOrderId]);
+
+        Assert::assertNotNull($shopifyOrder, "No ShopifyOrder found for id {$shopifyOrderId}.");
+
+        $delivery = $shopifyOrder->getDelivery();
+        Assert::assertNotNull($delivery, "ShopifyOrder {$shopifyOrderId} has no linked Delivery.");
+
+        foreach ($delivery->getTasks() as $task) {
+            Assert::assertTrue(
+                $task->isCancelled(),
+                "Task {$task->getId()} for Shopify order {$shopifyOrderId} is not cancelled."
+            );
+        }
     }
 }

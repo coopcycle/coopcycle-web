@@ -1,0 +1,12 @@
+api_version = "2025-10"
+
+[[extensions]]
+name = "CoopCycle Delivery Zone Filter"
+handle = "delivery-zone-filter"
+uid = "e428980f-1231-7aaf-8ad3-e3677d6b67b78f6c6c18"
+type = "function"
+
+  [[extensions.targeting]]
+  target = "purchase.delivery-customization.run"
+  input_query = "src/index.graphql"
+  export = "run"

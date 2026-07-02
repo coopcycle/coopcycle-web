@@ -291,6 +291,18 @@ security:
             refresh_jwt:
                 provider: nucleos_userbundle
 
+        shopify_provision:
+            pattern:   ^/connect/shopify/provision$
+            methods:   [POST]
+            security:  false
+
+        # choose-store intentionally has NO entry here so it falls through
+        # to the "web" firewall, which enforces login and session handling.
+
+        api_shopify:
+            pattern:   ^/api/shopify
+            security: false
+
         api_docs:
             pattern:   ^/api/docs
             security: false
@@ -358,6 +370,7 @@ security:
     access_control:
         - { path: ^/2fa$, role: IS_AUTHENTICATED_2FA_IN_PROGRESS }
         - { path: ^/2fa_check$, role: IS_AUTHENTICATED_2FA_IN_PROGRESS }
+        - { path: ^/connect/shopify/choose-store, roles: IS_AUTHENTICATED_REMEMBERED }
         - { path: ^/login, role: PUBLIC_ACCESS }
         - { path: ^/register, role: PUBLIC_ACCESS }
         - { path: ^/resetting, role: PUBLIC_ACCESS }
@@ -396,5 +409,6 @@ security:
         - { path: ^/api/woopit, roles: [ ROLE_USER, ROLE_API_APP ] }
 
         - { path: ^/api/products/[0-9]+/recommendations$, roles: PUBLIC_ACCESS, methods: [ GET ] }
+        - { path: ^/api/shopify, roles: PUBLIC_ACCESS }
 
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
