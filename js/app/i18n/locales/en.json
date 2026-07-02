@@ -929,6 +929,9 @@
         "SHIFT_PLANNING_REQUEST_HOLIDAY": "Request holiday",
         "SHIFT_PLANNING_REQUEST_SENT": "Your holiday request has been sent",
         "SHIFT_PLANNING_MY_REQUESTS": "My holiday requests",
-        "SHIFT_PLANNING_NO_REQUESTS": "No holiday requests yet"
+        "SHIFT_PLANNING_NO_REQUESTS": "No holiday requests yet",
+        "SHIFT_PLANNING_ADD_USER": "Add user",
+        "SHIFT_PLANNING_REMOVE": "Remove from planning",
+        "SHIFT_PLANNING_REMOVE_DISABLED": "Assigned to a shift this week"
       }
 }

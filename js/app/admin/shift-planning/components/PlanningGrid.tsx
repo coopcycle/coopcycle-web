@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Button, Select } from 'antd';
+import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
 import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
@@ -12,8 +14,11 @@ type Props = {
   shifts: Shift[];
   holidayRequests: HolidayRequest[];
   users: PlanningUser[];
+  allUsers: PlanningUser[];
   onCreate: (day: Dayjs, userUri?: Uri) => void;
   onEdit: (shift: Shift) => void;
+  onAddUser: (userUri: Uri) => void;
+  onRemoveUser: (userUri: Uri) => void;
 };
 
 export default function PlanningGrid({
@@ -21,15 +26,23 @@ export default function PlanningGrid({
   shifts,
   holidayRequests,
   users,
+  allUsers,
   onCreate,
   onEdit,
+  onAddUser,
+  onRemoveUser,
 }: Props) {
   const { t } = useTranslation();
+
+  const [isAdding, setIsAdding] = useState(false);
 
   const days = [...Array(7)].map((_, i) => weekStart.add(i, 'day'));
   const today = dayjs().format('YYYY-MM-DD');
 
   const openShifts = shifts.filter(s => s.assignments.length < s.slots);
+
+  const visibleUris = new Set(users.map(u => u['@id']));
+  const candidates = allUsers.filter(u => !visibleUris.has(u['@id']));
 
   return (
     <div className="shift-planning__grid-container">
@@ -48,7 +61,7 @@ export default function PlanningGrid({
         ))}
 
         <div className="shift-planning__row-label">
-          {t('SHIFT_PLANNING_OPEN_SLOTS')}
+          <span>{t('SHIFT_PLANNING_OPEN_SLOTS')}</span>
         </div>
         {days.map(day => (
           <div
@@ -68,10 +81,25 @@ export default function PlanningGrid({
           const userHolidays = holidayRequests.filter(
             h => h.user['@id'] === user['@id'],
           );
+          const hasShifts = userShifts.length > 0;
 
           return (
             <React.Fragment key={user['@id']}>
-              <div className="shift-planning__row-label">{user.username}</div>
+              <div className="shift-planning__row-label">
+                <span>{user.username}</span>
+                <Button
+                  type="text"
+                  size="small"
+                  icon={<CloseOutlined />}
+                  disabled={hasShifts}
+                  title={
+                    hasShifts
+                      ? t('SHIFT_PLANNING_REMOVE_DISABLED')
+                      : t('SHIFT_PLANNING_REMOVE')
+                  }
+                  onClick={() => onRemoveUser(user['@id'])}
+                />
+              </div>
               {days.map(day => (
                 <div
                   key={day.format('YYYY-MM-DD')}
@@ -92,6 +120,42 @@ export default function PlanningGrid({
             </React.Fragment>
           );
         })}
+
+        <div className="shift-planning__row-label">
+          {isAdding ? (
+            <Select
+              autoFocus
+              defaultOpen
+              showSearch
+              size="small"
+              style={{ width: '100%' }}
+              placeholder={t('SHIFT_PLANNING_ADD_USER')}
+              optionFilterProp="label"
+              options={candidates.map(u => ({
+                value: u['@id'],
+                label: u.username,
+              }))}
+              onChange={(uri: Uri) => {
+                onAddUser(uri);
+                setIsAdding(false);
+              }}
+              onBlur={() => setIsAdding(false)}
+            />
+          ) : (
+            <Button
+              type="dashed"
+              size="small"
+              block
+              icon={<PlusOutlined />}
+              disabled={candidates.length === 0}
+              onClick={() => setIsAdding(true)}>
+              {t('SHIFT_PLANNING_ADD_USER')}
+            </Button>
+          )}
+        </div>
+        {days.map(day => (
+          <div key={day.format('YYYY-MM-DD')} className="shift-planning__cell" />
+        ))}
       </div>
     </div>
   );

@@ -71,6 +71,46 @@ const Planning = ({ shiftTypes }: Props) => {
     [users],
   );
 
+  // The grid only shows users with a shift or holiday in the visible week,
+  // plus the ones added manually (until they are removed again)
+  const [addedUris, setAddedUris] = useState<Uri[]>([]);
+  const [removedUris, setRemovedUris] = useState<Uri[]>([]);
+
+  const shiftUserUris = useMemo(
+    () =>
+      new Set(shifts.flatMap(s => s.assignments.map(a => a.user['@id']))),
+    [shifts],
+  );
+  const holidayUserUris = useMemo(
+    () => new Set(weekHolidays.map(h => h.user['@id'])),
+    [weekHolidays],
+  );
+
+  const visibleUsers = useMemo(
+    () =>
+      sortedUsers.filter(user => {
+        const uri = user['@id'];
+        if (shiftUserUris.has(uri)) {
+          return true;
+        }
+        if (removedUris.includes(uri)) {
+          return false;
+        }
+        return holidayUserUris.has(uri) || addedUris.includes(uri);
+      }),
+    [sortedUsers, shiftUserUris, holidayUserUris, addedUris, removedUris],
+  );
+
+  const addUser = (uri: Uri) => {
+    setAddedUris(uris => [...uris, uri]);
+    setRemovedUris(uris => uris.filter(u => u !== uri));
+  };
+
+  const removeUser = (uri: Uri) => {
+    setAddedUris(uris => uris.filter(u => u !== uri));
+    setRemovedUris(uris => [...uris, uri]);
+  };
+
   return (
     <div className="shift-planning">
       <TopNav>{t('SHIFT_PLANNING_TITLE')}</TopNav>
@@ -97,11 +137,14 @@ const Planning = ({ shiftTypes }: Props) => {
           weekStart={weekStart}
           shifts={shifts}
           holidayRequests={weekHolidays}
-          users={sortedUsers}
+          users={visibleUsers}
+          allUsers={sortedUsers}
           onCreate={(day: Dayjs, userUri?: Uri) =>
             setModalState({ date: day, userUri })
           }
           onEdit={(shift: Shift) => setModalState({ shift })}
+          onAddUser={addUser}
+          onRemoveUser={removeUser}
         />
       </Spin>
       <ShiftModal
