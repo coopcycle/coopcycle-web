@@ -859,7 +859,8 @@
             "PRESET_THIS_MONTH": "Ce mois-ci",
             "PRESET_LAST_MONTH": "Le mois dernier",
             "PRESET_LAST_3_MONTHS": "Les 3 derniers mois",
-            "PRESET_LAST_6_MONTHS": "Les 6 derniers mois",
+            "PRESET_LAST_6_MONTHS": "Les 6 derniers mois"
+      },
         "SHIFT_PLANNING_TITLE": "Planning des créneaux",
         "SHIFT_PLANNING_THIS_WEEK": "Cette semaine",
         "SHIFT_PLANNING_OPEN_SLOTS": "Créneaux à pourvoir",
@@ -899,8 +900,7 @@
         "SHIFT_PLANNING_REQUEST_HOLIDAY": "Demander des congés",
         "SHIFT_PLANNING_REQUEST_SENT": "Votre demande de congés a été envoyée",
         "SHIFT_PLANNING_MY_REQUESTS": "Mes demandes de congés",
-        "SHIFT_PLANNING_NO_REQUESTS": "Aucune demande de congés"
-      },
+        "SHIFT_PLANNING_NO_REQUESTS": "Aucune demande de congés",
         "ADMIN_DASHBOARD_TAG_TASKS": "Modifier les tags",
         "CREATE_CREDIT_NOTE": "Créer un avoir commercial",
         "REFUND": "Rembourser",
