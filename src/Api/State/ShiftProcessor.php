@@ -34,6 +34,12 @@ class ShiftProcessor implements ProcessorInterface
             $added = $this->shiftManager->syncAssignments($data, $users);
         }
 
+        // All assigned users (not only the newly added ones),
+        // so that couriers are added to the dispatch when a shift changes date
+        foreach ($data->getAssignedUsers() as $user) {
+            $this->shiftManager->addToDispatch($user, $data->getStartsAt());
+        }
+
         $result = $this->persistProcessor->process($data, $operation, $uriVariables, $context);
 
         if (count($added) > 0) {

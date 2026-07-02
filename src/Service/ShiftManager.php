@@ -5,6 +5,7 @@ namespace AppBundle\Service;
 use AppBundle\Entity\HolidayRequestRepository;
 use AppBundle\Entity\Shift;
 use AppBundle\Entity\ShiftAssignment;
+use AppBundle\Entity\TaskList;
 use AppBundle\Message\PushNotification;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -14,6 +15,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ShiftManager
 {
+    private array $ensuredTaskLists = [];
+
     public function __construct(
         private EntityManagerInterface $entityManager,
         private MessageBusInterface $messageBus,
@@ -48,6 +51,40 @@ class ShiftManager
         }
 
         return $added;
+    }
+
+    /**
+     * Makes sure a courier assigned to a shift shows up in the dispatch,
+     * by creating an empty TaskList for the day of the shift.
+     *
+     * Users without the ROLE_COURIER role are skipped.
+     */
+    public function addToDispatch(UserInterface $user, \DateTimeInterface $date): void
+    {
+        if (!in_array('ROLE_COURIER', $user->getRoles(), true)) {
+            return;
+        }
+
+        $day = new \DateTime($date->format('Y-m-d'));
+        $key = sprintf('%s|%s', $user->getUserIdentifier(), $day->format('Y-m-d'));
+
+        // TaskLists persisted in this request are not visible
+        // to findOneBy() until the next flush
+        if (isset($this->ensuredTaskLists[$key])) {
+            return;
+        }
+        $this->ensuredTaskLists[$key] = true;
+
+        $taskList = $this->entityManager
+            ->getRepository(TaskList::class)
+            ->findOneBy(['courier' => $user, 'date' => $day]);
+
+        if (null === $taskList) {
+            $taskList = new TaskList();
+            $taskList->setCourier($user);
+            $taskList->setDate($day);
+            $this->entityManager->persist($taskList);
+        }
     }
 
     /**
@@ -89,6 +126,8 @@ class ShiftManager
                 $assignment = new ShiftAssignment();
                 $assignment->setUser($user);
                 $copy->addAssignment($assignment);
+
+                $this->addToDispatch($user, $copy->getStartsAt());
 
                 $assignedUsers[$user->getUsername()] = $user;
             }

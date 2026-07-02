@@ -442,3 +442,49 @@ Feature: Shifts
         "hydra:search":"@*@"
       }
       """
+
+  Scenario: Assigning a courier to a shift adds them to the dispatch
+    Given the courier "sarah" is loaded:
+      | email    | sarah@coopcycle.org |
+      | password | 123456              |
+    And the user "bob" is loaded:
+      | email    | bob@coopcycle.org |
+      | password | 123456            |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts" with body:
+      """
+      {
+        "type": "drive",
+        "startsAt": "2026-06-29T09:00:00",
+        "endsAt": "2026-06-29T17:00:00",
+        "users": ["/api/users/1"]
+      }
+      """
+    Then the response status code should be 201
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/task_lists?date=2026-06-29"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/TaskList",
+        "@id":"/api/task_lists",
+        "@type":"hydra:Collection",
+        "hydra:member":[
+          {
+            "username":"sarah",
+            "date":"2026-06-29",
+            "items":[],
+            "@*@":"@*@"
+          }
+        ],
+        "hydra:totalItems":1,
+        "hydra:view":"@*@",
+        "hydra:search":"@*@"
+      }
+      """

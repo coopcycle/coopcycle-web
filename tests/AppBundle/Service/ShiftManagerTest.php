@@ -7,6 +7,8 @@ use AppBundle\Entity\HolidayRequestRepository;
 use AppBundle\Entity\Shift;
 use AppBundle\Entity\ShiftAssignment;
 use AppBundle\Entity\ShiftRepository;
+use AppBundle\Entity\TaskList;
+use AppBundle\Entity\TaskListRepository;
 use AppBundle\Entity\User;
 use AppBundle\Service\ShiftManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -38,6 +40,7 @@ class ShiftManagerTest extends TestCase
 
         $this->shiftRepository = $this->prophesize(ShiftRepository::class);
         $this->holidayRequestRepository = $this->prophesize(HolidayRequestRepository::class);
+        $this->taskListRepository = $this->prophesize(TaskListRepository::class);
 
         $this->entityManager
             ->getRepository(Shift::class)
@@ -45,6 +48,9 @@ class ShiftManagerTest extends TestCase
         $this->entityManager
             ->getRepository(HolidayRequest::class)
             ->willReturn($this->holidayRequestRepository->reveal());
+        $this->entityManager
+            ->getRepository(TaskList::class)
+            ->willReturn($this->taskListRepository->reveal());
 
         $this->translator
             ->trans(Argument::type('string'), Argument::any())
@@ -178,6 +184,101 @@ class ShiftManagerTest extends TestCase
 
         $this->assertEquals(new \DateTime('2026-07-13 08:00:00'), $copies[0]->getStartsAt());
         $this->assertEquals(new \DateTime('2026-07-13 13:00:00'), $copies[0]->getEndsAt());
+    }
+
+    public function testAddToDispatchCreatesTaskListForCourier()
+    {
+        $sarah = $this->createUser('sarah');
+        $sarah->addRole('ROLE_COURIER');
+
+        $this->taskListRepository
+            ->findOneBy(Argument::any())
+            ->willReturn(null);
+
+        $persisted = [];
+        $this->entityManager
+            ->persist(Argument::type(TaskList::class))
+            ->will(function ($args) use (&$persisted) {
+                $persisted[] = $args[0];
+            });
+
+        $this->shiftManager->addToDispatch($sarah, new \DateTime('2026-06-29 09:00:00'));
+
+        $this->assertCount(1, $persisted);
+        $this->assertSame($sarah, $persisted[0]->getCourier());
+        $this->assertEquals(new \DateTime('2026-06-29 00:00:00'), $persisted[0]->getDate());
+
+        // Idempotent within the same request
+        $this->shiftManager->addToDispatch($sarah, new \DateTime('2026-06-29 15:00:00'));
+        $this->assertCount(1, $persisted);
+    }
+
+    public function testAddToDispatchDoesNothingWhenTaskListExists()
+    {
+        $sarah = $this->createUser('sarah');
+        $sarah->addRole('ROLE_COURIER');
+
+        $this->taskListRepository
+            ->findOneBy(Argument::any())
+            ->willReturn(new TaskList());
+
+        $this->entityManager->persist(Argument::any())->shouldNotBeCalled();
+
+        $this->shiftManager->addToDispatch($sarah, new \DateTime('2026-06-29 09:00:00'));
+    }
+
+    public function testAddToDispatchSkipsNonCouriers()
+    {
+        $bob = $this->createUser('bob');
+        $bob->addRole('ROLE_DISPATCHER');
+
+        $this->taskListRepository->findOneBy(Argument::any())->shouldNotBeCalled();
+        $this->entityManager->persist(Argument::any())->shouldNotBeCalled();
+
+        $this->shiftManager->addToDispatch($bob, new \DateTime('2026-06-29 09:00:00'));
+    }
+
+    public function testCopyWeekAddsCouriersToDispatch()
+    {
+        $sarah = $this->createUser('sarah');
+        $sarah->addRole('ROLE_COURIER');
+
+        $shift = new Shift();
+        $shift->setType('drive');
+        $shift->setStartsAt(new \DateTime('2026-06-23 09:00:00'));
+        $shift->setEndsAt(new \DateTime('2026-06-23 17:00:00'));
+
+        $assignment = new ShiftAssignment();
+        $assignment->setUser($sarah);
+        $shift->addAssignment($assignment);
+
+        $this->shiftRepository
+            ->findOverlappingRange(Argument::cetera())
+            ->willReturn([$shift]);
+        $this->holidayRequestRepository
+            ->hasApprovedHolidayOnDate(Argument::cetera())
+            ->willReturn(false);
+        $this->taskListRepository
+            ->findOneBy(Argument::any())
+            ->willReturn(null);
+
+        $persistedTaskLists = [];
+        $this->entityManager
+            ->persist(Argument::any())
+            ->will(function ($args) use (&$persistedTaskLists) {
+                if ($args[0] instanceof TaskList) {
+                    $persistedTaskLists[] = $args[0];
+                }
+            });
+        $this->entityManager->flush()->shouldBeCalled();
+
+        $this->shiftManager->copyWeek(
+            new \DateTimeImmutable('2026-06-22'),
+            new \DateTimeImmutable('2026-06-29')
+        );
+
+        $this->assertCount(1, $persistedTaskLists);
+        $this->assertEquals(new \DateTime('2026-06-30 00:00:00'), $persistedTaskLists[0]->getDate());
     }
 
     public function testCopyWeekSkipsUsersOnApprovedHoliday()
