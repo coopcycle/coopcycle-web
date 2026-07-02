@@ -2,6 +2,7 @@
 
 namespace AppBundle\Integration\Zelty;
 
+use AppBundle\Entity\Sylius\Customer;
 use AppBundle\Sylius\Order\OrderInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
@@ -44,6 +45,7 @@ class ZeltyOrderNormalizer implements NormalizerInterface
 
     private function normalizeCustomer(OrderInterface $order): ?array
     {
+        /** @var Customer|null $customer */
         $customer = $order->getCustomer();
         if ($customer === null) {
             return null;
@@ -66,7 +68,7 @@ class ZeltyOrderNormalizer implements NormalizerInterface
         }
 
         return [
-            'name'     => $address->getName() ?? $address->getContactName() ?? $address->getStreetAddress(),
+            'name'     => $address->getName() ?: $address->getContactName() ?: $address->getStreetAddress(),
             'street'   => $address->getStreetAddress(),
             'zip_code' => $address->getPostalCode(),
             'city'     => $address->getAddressLocality(),
