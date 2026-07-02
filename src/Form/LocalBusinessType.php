@@ -30,6 +30,8 @@ abstract class LocalBusinessType extends AbstractType
 {
     protected bool $transportersEnabled;
     protected bool $standtrackEnabled;
+    protected array $rdcConnections = [];
+    protected bool $rdcEnabled = false;
 
     public function __construct(
         protected AuthorizationCheckerInterface $authorizationChecker,
@@ -45,11 +47,15 @@ abstract class LocalBusinessType extends AbstractType
         protected bool $cashOnDeliveryOptinEnabled = false,
         protected array $transportersConfig = [],
         protected bool $billingEnabled = false,
-        ?string $standtrackEnabled = null
+        ?string $standtrackEnabled = null,
+        array $rdcConnections = [],
+        bool $rdcEnabled = false
     )
     {
         $this->transportersEnabled = !empty($transportersConfig);
         $this->standtrackEnabled = !empty($standtrackEnabled);
+        $this->rdcConnections = $rdcConnections;
+        $this->rdcEnabled = $rdcEnabled;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
