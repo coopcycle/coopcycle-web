@@ -9,6 +9,23 @@ import ShiftCard from './ShiftCard';
 import HolidayBar from './HolidayBar';
 import { holidayCoversDay, shiftIsOnDay } from '../utils/date';
 
+function AddShiftButton({ onClick }: { onClick: () => void }) {
+  const { t } = useTranslation();
+
+  return (
+    <button
+      type="button"
+      className="shift-planning__add-shift"
+      title={t('SHIFT_PLANNING_NEW_SHIFT')}
+      onClick={e => {
+        e.stopPropagation();
+        onClick();
+      }}>
+      <PlusOutlined />
+    </button>
+  );
+}
+
 type Props = {
   weekStart: Dayjs;
   shifts: Shift[];
@@ -71,6 +88,7 @@ export default function PlanningGrid({
             {openShifts.filter(s => shiftIsOnDay(s, day)).map(shift => (
               <ShiftCard key={shift['@id']} shift={shift} onClick={onEdit} />
             ))}
+            <AddShiftButton onClick={() => onCreate(day)} />
           </div>
         ))}
 
@@ -115,6 +133,9 @@ export default function PlanningGrid({
                       onClick={onEdit}
                     />
                   ))}
+                  <AddShiftButton
+                    onClick={() => onCreate(day, user['@id'])}
+                  />
                 </div>
               ))}
             </React.Fragment>
