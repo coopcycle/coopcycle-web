@@ -28,11 +28,16 @@ final class IncidentRdcMessageHandler
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly RdcEventDispatcher $eventDispatcher,
         private readonly LoggerInterface $logger,
+        private readonly bool $rdcEnabled = false,
     ) {
     }
 
     public function __invoke(IncidentRdcMessage $message): void
     {
+        if (!$this->rdcEnabled) {
+            return;
+        }
+
         $incident = $this->entityManager->find(Incident::class, $message->incidentId);
         if (is_null($incident)) {
             $this->logger->warning('Incident not found, skipping RDC dispatch', [

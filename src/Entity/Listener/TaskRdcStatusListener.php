@@ -17,10 +17,15 @@ class TaskRdcStatusListener
     public function __construct(
         private readonly MessageBusInterface $messageBus,
         private readonly EntityManagerInterface $entityManager,
+        private readonly bool $rdcEnabled = false,
     ) {}
 
     public function postUpdate(Task $task, PostUpdateEventArgs $event): void
     {
+        if (!$this->rdcEnabled) {
+            return;
+        }
+
         $changeSet = $this->entityManager->getUnitOfWork()->getEntityChangeSet($task);
 
         if (!isset($changeSet['status'])) {

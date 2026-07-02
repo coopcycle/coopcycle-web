@@ -46,6 +46,10 @@ trait RdcStatusUpdateHandlerTrait
 
     public function processStatusUpdate(RdcPickupStatusUpdateMessage|RdcDropoffStatusUpdateMessage $message, array $config): void
     {
+        if (!$this->rdcEnabled) {
+            return;
+        }
+
         $task = $this->entityManager->find(Task::class, $message->taskId);
         if (is_null($task)) {
             return;

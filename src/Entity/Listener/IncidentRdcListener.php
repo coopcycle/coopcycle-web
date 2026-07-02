@@ -15,12 +15,18 @@ use Symfony\Component\Messenger\Stamp\DelayStamp;
 #[AsEntityListener(event: Events::postPersist, entity: Incident::class)]
 final class IncidentRdcListener
 {
-    public function __construct(private readonly MessageBusInterface $messageBus)
-    {
+    public function __construct(
+        private readonly MessageBusInterface $messageBus,
+        private readonly bool $rdcEnabled = false,
+    ) {
     }
 
     public function postPersist(Incident $incident, PostPersistEventArgs $args): void
     {
+        if (!$this->rdcEnabled) {
+            return;
+        }
+
         $incidentId = $incident->getId();
         if (is_null($incidentId)) {
             return;

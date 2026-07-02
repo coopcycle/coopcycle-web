@@ -26,6 +26,7 @@ final class RdcDropoffStatusUpdateMessageHandler
         private readonly LoggerInterface $logger,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly RdcEventDispatcher $eventDispatcher,
+        private readonly bool $rdcEnabled = false,
     ) {}
 
     private const CONFIG = [

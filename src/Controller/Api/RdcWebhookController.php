@@ -24,11 +24,16 @@ class RdcWebhookController extends AbstractController
     public function __construct(
         private readonly LoggerInterface $logger,
         private readonly MessageBusInterface $messageBus,
+        private readonly bool $rdcEnabled = false,
     ) {}
 
     #[Route(path: '/api/v1/webhooks/rdc', name: 'api_v1_webhooks_rdc', methods: ['POST'])]
     public function handleWebhook(Request $request): JsonResponse
     {
+        if (!$this->rdcEnabled) {
+            return $this->errorResponse('Not Found', Response::HTTP_NOT_FOUND);
+        }
+
         if (!$this->isValidSecret($request)) {
             return $this->errorResponse('Invalid webhook secret', Response::HTTP_UNAUTHORIZED);
         }

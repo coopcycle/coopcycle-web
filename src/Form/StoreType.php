@@ -116,7 +116,7 @@ class StoreType extends LocalBusinessType
                 ]);
             }
 
-            if (!empty($this->rdcConnections)) {
+            if ($this->rdcEnabled && !empty($this->rdcConnections)) {
                 $choices = array_reduce(array_keys($this->rdcConnections), function ($acc, $key) {
                     $acc[$this->rdcConnections[$key]['name'] ?? $key] = $key;
                     return $acc;

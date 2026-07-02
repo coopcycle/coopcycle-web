@@ -23,10 +23,15 @@ final class RdcMessageHandler
         private readonly RdcStoreResolver $storeResolver,
         private readonly Redis $redis,
         private readonly LoggerInterface $logger,
+        private readonly bool $rdcEnabled = false,
     ) {}
 
     public function __invoke(RdcMessage $message): void
     {
+        if (!$this->rdcEnabled) {
+            return;
+        }
+
         $eventHash = self::hashMetadata($message->notificationMetadata);
 
         $key = sprintf('%s%s', self::CACHE_KEY_PREFIX, $eventHash);

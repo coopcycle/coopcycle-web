@@ -13,6 +13,7 @@ class DebugRdcGetCommand extends Command
 {
     public function __construct(
         private readonly RdcClientFactory $rdcClientFactory,
+        private readonly bool $rdcEnabled = false,
     ) {
         parent::__construct();
     }
@@ -28,6 +29,13 @@ class DebugRdcGetCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
+
+        if (!$this->rdcEnabled) {
+            $io->error('RDC feature is disabled');
+
+            return Command::FAILURE;
+        }
+
         $url = $input->getArgument('url');
 
         $io->title(sprintf('GET %s', $url));
