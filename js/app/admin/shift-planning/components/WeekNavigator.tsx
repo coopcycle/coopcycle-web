@@ -6,12 +6,16 @@ import dayjs from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import weekYear from 'dayjs/plugin/weekYear';
+import weekday from 'dayjs/plugin/weekday';
+import localeData from 'dayjs/plugin/localeData';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import { useTranslation } from 'react-i18next';
 
 dayjs.extend(isoWeek);
 dayjs.extend(weekOfYear);
 dayjs.extend(weekYear);
+dayjs.extend(weekday);
+dayjs.extend(localeData);
 dayjs.extend(advancedFormat);
 
 type Props = {
