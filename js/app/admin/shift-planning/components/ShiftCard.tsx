@@ -42,7 +42,12 @@ export default function ShiftCard({ shift, onClick, conflictWith }: Props) {
           {' - '}
           {wallClockTime(shift.endsAt)}
         </span>
-        <span>
+        <span
+          className={
+            shift.assignments.length > shift.slots
+              ? 'shift-card__count--over'
+              : undefined
+          }>
           <i className="fa fa-user" aria-hidden="true"></i>{' '}
           {shift.assignments.length}/{shift.slots}
         </span>

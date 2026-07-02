@@ -99,6 +99,10 @@ export default function ShiftModal({
   const selectedDate = Form.useWatch('date', form);
   const selectedTimes = Form.useWatch('times', form);
   const selectedUsers = Form.useWatch('users', form) || [];
+  const selectedSlots = Form.useWatch('slots', form);
+
+  const isOverstaffed =
+    typeof selectedSlots === 'number' && selectedUsers.length > selectedSlots;
 
   const usernameOf = (uri: Uri) =>
     users.find(u => u['@id'] === uri)?.username || uri;
@@ -248,6 +252,17 @@ export default function ShiftModal({
             className="mb-2"
             message={t('SHIFT_PLANNING_HOLIDAY_CONFLICT', {
               names: conflictNames,
+            })}
+          />
+        )}
+        {isOverstaffed && (
+          <Alert
+            type="warning"
+            showIcon
+            className="mb-2"
+            message={t('SHIFT_PLANNING_OVERSTAFFED', {
+              assigned: selectedUsers.length,
+              slots: selectedSlots,
             })}
           />
         )}

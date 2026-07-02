@@ -125,6 +125,11 @@
     color: #d4380d;
   }
 
+  &__count--over {
+    color: #d46b08;
+    font-weight: 700;
+  }
+
   &__meta {
     display: flex;
     justify-content: space-between;
