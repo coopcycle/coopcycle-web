@@ -55,9 +55,9 @@ export default function MyHolidayRequestsList() {
           <List.Item.Meta
             title={
               <>
-                {moment(request.startDate).format('ll')}
+                {moment(request.startDate.slice(0, 10)).format('ll')}
                 {' - '}
-                {moment(request.endDate).format('ll')}{' '}
+                {moment(request.endDate.slice(0, 10)).format('ll')}{' '}
                 <Tag color={STATUS_COLORS[request.status]}>
                   {t(`SHIFT_PLANNING_STATUS_${request.status.toUpperCase()}`)}
                 </Tag>

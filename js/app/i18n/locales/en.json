@@ -932,6 +932,8 @@
         "SHIFT_PLANNING_NO_REQUESTS": "No holiday requests yet",
         "SHIFT_PLANNING_ADD_USER": "Add user",
         "SHIFT_PLANNING_REMOVE": "Remove from planning",
-        "SHIFT_PLANNING_REMOVE_DISABLED": "Assigned to a shift this week"
+        "SHIFT_PLANNING_REMOVE_DISABLED": "Assigned to a shift this week",
+        "SHIFT_PLANNING_OVERLAP_TOOLTIP": "Overlaps with {{type}} {{start}} - {{end}}",
+        "SHIFT_PLANNING_SHIFT_CONFLICT": "{{name}} is already assigned to {{type}} {{start}} - {{end}}"
       }
 }

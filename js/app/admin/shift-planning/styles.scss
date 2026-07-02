@@ -116,6 +116,13 @@
 
   &__type {
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__conflict {
+    color: #d4380d;
   }
 
   &__meta {

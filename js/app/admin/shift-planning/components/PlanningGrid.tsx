@@ -7,7 +7,12 @@ import { useTranslation } from 'react-i18next';
 import { HolidayRequest, PlanningUser, Shift, Uri } from '../../../api/types';
 import ShiftCard from './ShiftCard';
 import HolidayBar from './HolidayBar';
-import { holidayCoversDay, shiftIsOnDay } from '../utils/date';
+import {
+  findOverlappingShift,
+  holidayCoversDay,
+  shiftIsOnDay,
+  sortByStart,
+} from '../utils/date';
 
 function AddShiftButton({ onClick }: { onClick: () => void }) {
   const { t } = useTranslation();
@@ -56,7 +61,8 @@ export default function PlanningGrid({
   const days = [...Array(7)].map((_, i) => weekStart.add(i, 'day'));
   const today = dayjs().format('YYYY-MM-DD');
 
-  const openShifts = shifts.filter(s => s.assignments.length < s.slots);
+  const sortedShifts = sortByStart(shifts);
+  const openShifts = sortedShifts.filter(s => s.assignments.length < s.slots);
 
   const visibleUris = new Set(users.map(u => u['@id']));
   const candidates = allUsers.filter(u => !visibleUris.has(u['@id']));
@@ -93,7 +99,7 @@ export default function PlanningGrid({
         ))}
 
         {users.map(user => {
-          const userShifts = shifts.filter(s =>
+          const userShifts = sortedShifts.filter(s =>
             s.assignments.some(a => a.user['@id'] === user['@id']),
           );
           const userHolidays = holidayRequests.filter(
@@ -131,6 +137,7 @@ export default function PlanningGrid({
                       key={shift['@id']}
                       shift={shift}
                       onClick={onEdit}
+                      conflictWith={findOverlappingShift(shift, userShifts)}
                     />
                   ))}
                   <AddShiftButton

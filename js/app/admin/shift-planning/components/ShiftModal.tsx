@@ -19,7 +19,12 @@ import {
   usePutShiftMutation,
 } from '../../../api/slice';
 import { HolidayRequest, PlanningUser, Shift, Uri } from '../../../api/types';
-import { holidayCoversDay } from '../utils/date';
+import {
+  holidayCoversDay,
+  rangesOverlap,
+  wallClock,
+  wallClockTime,
+} from '../utils/date';
 
 export type ShiftModalState = {
   shift?: Shift;
@@ -32,6 +37,7 @@ type Props = {
   shiftTypes: string[];
   users: PlanningUser[];
   holidayRequests: HolidayRequest[];
+  shifts: Shift[];
   onClose: () => void;
 };
 
@@ -48,6 +54,7 @@ export default function ShiftModal({
   shiftTypes,
   users,
   holidayRequests,
+  shifts,
   onClose,
 }: Props) {
   const { t } = useTranslation();
@@ -67,8 +74,11 @@ export default function ShiftModal({
     if (state.shift) {
       form.setFieldsValue({
         type: state.shift.type,
-        date: dayjs(state.shift.startsAt),
-        times: [dayjs(state.shift.startsAt), dayjs(state.shift.endsAt)],
+        date: dayjs(wallClock(state.shift.startsAt)),
+        times: [
+          dayjs(wallClock(state.shift.startsAt)),
+          dayjs(wallClock(state.shift.endsAt)),
+        ],
         slots: state.shift.slots,
         users: state.shift.assignments.map(a => a.user['@id']),
       });
@@ -87,7 +97,11 @@ export default function ShiftModal({
   }, [state, form, shiftTypes]);
 
   const selectedDate = Form.useWatch('date', form);
+  const selectedTimes = Form.useWatch('times', form);
   const selectedUsers = Form.useWatch('users', form) || [];
+
+  const usernameOf = (uri: Uri) =>
+    users.find(u => u['@id'] === uri)?.username || uri;
 
   const conflicts = selectedDate
     ? selectedUsers.filter(uri =>
@@ -100,9 +114,31 @@ export default function ShiftModal({
       )
     : [];
 
-  const conflictNames = conflicts
-    .map(uri => users.find(u => u['@id'] === uri)?.username || uri)
-    .join(', ');
+  const conflictNames = conflicts.map(usernameOf).join(', ');
+
+  // Other shifts the selected users are already assigned to at the same time
+  let shiftConflicts: { uri: Uri; shift: Shift }[] = [];
+  if (selectedDate && selectedTimes?.[0] && selectedTimes?.[1]) {
+    const date = selectedDate.format('YYYY-MM-DD');
+    const start = `${date}T${selectedTimes[0].format('HH:mm:ss')}`;
+    const end = `${date}T${selectedTimes[1].format('HH:mm:ss')}`;
+
+    shiftConflicts = selectedUsers.flatMap(uri =>
+      shifts
+        .filter(
+          s =>
+            s['@id'] !== shift?.['@id'] &&
+            s.assignments.some(a => a.user['@id'] === uri) &&
+            rangesOverlap(
+              start,
+              end,
+              wallClock(s.startsAt),
+              wallClock(s.endsAt),
+            ),
+        )
+        .map(s => ({ uri, shift: s })),
+    );
+  }
 
   const onFinish = async (values: FormValues) => {
     const date = values.date.format('YYYY-MM-DD');
@@ -209,9 +245,30 @@ export default function ShiftModal({
           <Alert
             type="warning"
             showIcon
+            className="mb-2"
             message={t('SHIFT_PLANNING_HOLIDAY_CONFLICT', {
               names: conflictNames,
             })}
+          />
+        )}
+        {shiftConflicts.length > 0 && (
+          <Alert
+            type="warning"
+            showIcon
+            message={
+              <>
+                {shiftConflicts.map(({ uri, shift: s }) => (
+                  <div key={`${uri}|${s['@id']}`}>
+                    {t('SHIFT_PLANNING_SHIFT_CONFLICT', {
+                      name: usernameOf(uri),
+                      type: s.type,
+                      start: wallClockTime(s.startsAt),
+                      end: wallClockTime(s.endsAt),
+                    })}
+                  </div>
+                ))}
+              </>
+            }
           />
         )}
       </Form>

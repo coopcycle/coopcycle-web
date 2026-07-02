@@ -152,6 +152,7 @@ const Planning = ({ shiftTypes }: Props) => {
         shiftTypes={shiftTypes}
         users={sortedUsers}
         holidayRequests={weekHolidays}
+        shifts={shifts}
         onClose={() => setModalState(null)}
       />
       <HolidayRequestsDrawer

@@ -904,6 +904,8 @@
         "SHIFT_PLANNING_ADD_USER": "Ajouter un utilisateur",
         "SHIFT_PLANNING_REMOVE": "Retirer du planning",
         "SHIFT_PLANNING_REMOVE_DISABLED": "Assigné(e) à un créneau cette semaine",
+        "SHIFT_PLANNING_OVERLAP_TOOLTIP": "Chevauche {{type}} {{start}} - {{end}}",
+        "SHIFT_PLANNING_SHIFT_CONFLICT": "{{name}} est déjà assigné(e) à {{type}} {{start}} - {{end}}",
         "ADMIN_DASHBOARD_TAG_TASKS": "Modifier les tags",
         "CREATE_CREDIT_NOTE": "Créer un avoir commercial",
         "REFUND": "Rembourser",

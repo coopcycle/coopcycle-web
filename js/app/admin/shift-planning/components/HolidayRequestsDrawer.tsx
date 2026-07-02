@@ -50,7 +50,9 @@ export default function HolidayRequestsDrawer({
     {
       title: t('SHIFT_PLANNING_PERIOD'),
       render: (r: HolidayRequest) =>
-        `${moment(r.startDate).format('ll')} - ${moment(r.endDate).format('ll')}`,
+        `${moment(r.startDate.slice(0, 10)).format('ll')} - ${moment(
+          r.endDate.slice(0, 10),
+        ).format('ll')}`,
     },
     {
       title: t('SHIFT_PLANNING_COMMENT'),

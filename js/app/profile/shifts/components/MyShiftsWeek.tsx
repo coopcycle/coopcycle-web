@@ -5,7 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { useGetMyShiftsQuery } from '../../../api/slice';
 import WeekNavigator from '../../../admin/shift-planning/components/WeekNavigator';
 import ShiftCard from '../../../admin/shift-planning/components/ShiftCard';
-import { shiftIsOnDay } from '../../../admin/shift-planning/utils/date';
+import {
+  shiftIsOnDay,
+  sortByStart,
+} from '../../../admin/shift-planning/utils/date';
 
 export default function MyShiftsWeek() {
   const { t } = useTranslation();
@@ -19,7 +22,7 @@ export default function MyShiftsWeek() {
     before: weekStart.add(6, 'day').format('YYYY-MM-DD'),
   });
 
-  const shifts = data?.['hydra:member'] ?? [];
+  const shifts = sortByStart(data?.['hydra:member'] ?? []);
   const days = [...Array(7)].map((_, i) => weekStart.add(i, 'day'));
 
   return (
