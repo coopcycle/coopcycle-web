@@ -5,7 +5,7 @@ import { Tooltip } from 'antd'
 
 import { selectSelectedDate } from '../../coopcycle-frontend-js/logistics/redux'
 import { shiftTypeColor } from '../../admin/shift-planning/utils/shiftTypeColor'
-import { wallClockTime } from '../../admin/shift-planning/utils/date'
+import { sortByStart, wallClockTime } from '../../admin/shift-planning/utils/date'
 
 // The shifts of the day are fetched once, and shared by all the task lists
 const cache = new Map()
@@ -58,8 +58,12 @@ export default ({ username }) => {
     }
   }, [jwt, date])
 
-  const myShifts = shifts.filter(shift =>
-    shift.assignments.some(assignment => assignment.user.username === username)
+  const myShifts = sortByStart(
+    shifts.filter(shift =>
+      shift.assignments.some(
+        assignment => assignment.user.username === username,
+      ),
+    )
   )
 
   if (myShifts.length === 0) {
