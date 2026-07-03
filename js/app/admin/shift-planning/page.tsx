@@ -10,6 +10,7 @@ import { store } from './redux/store';
 import {
   useGetHolidayRequestsQuery,
   useGetPlanningUsersQuery,
+  useGetShiftSettingsQuery,
   useGetShiftsQuery,
 } from '../../api/slice';
 import { Shift, Uri } from '../../api/types';
@@ -21,6 +22,7 @@ import CopyWeekButton from './components/CopyWeekButton';
 import ShiftTypeFilter, {
   ShiftTypeFilterHandle,
 } from './components/ShiftTypeFilter';
+import ShiftSettingsModal from './components/ShiftSettingsModal';
 
 dayjs.extend(isoWeek);
 
@@ -54,6 +56,8 @@ const Planning = ({ shiftTypes }: Props) => {
     status: ['approved', 'pending'],
   });
   const { data: users } = useGetPlanningUsersQuery();
+  const { data: shiftSettings } = useGetShiftSettingsQuery();
+  const typeColors = shiftSettings?.typeColors;
 
   // All the requests around today, for the review drawer
   const reviewRange = useMemo(
@@ -141,6 +145,7 @@ const Planning = ({ shiftTypes }: Props) => {
             shiftTypes={shiftTypes}
             value={typeFilter}
             onChange={setTypeFilter}
+            typeColors={typeColors}
           />
         </Space>
         <Space>
@@ -151,6 +156,7 @@ const Planning = ({ shiftTypes }: Props) => {
               {t('SHIFT_PLANNING_HOLIDAY_REQUESTS')}
             </Button>
           </Badge>
+          <ShiftSettingsModal shiftTypes={shiftTypes} />
           <CopyWeekButton weekStart={weekStart} />
           <Button
             type="primary"
@@ -172,6 +178,7 @@ const Planning = ({ shiftTypes }: Props) => {
           onEdit={(shift: Shift) => setModalState({ shift })}
           onAddUser={addUser}
           onRemoveUser={removeUser}
+          typeColors={typeColors}
         />
       </Spin>
       <ShiftModal
@@ -180,6 +187,7 @@ const Planning = ({ shiftTypes }: Props) => {
         users={sortedUsers}
         holidayRequests={weekHolidays}
         shifts={shifts}
+        typeColors={typeColors}
         onClose={() => setModalState(null)}
       />
       <HolidayRequestsDrawer

@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 import { Empty, Spin } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import { useTranslation } from 'react-i18next';
-import { useGetMyShiftsQuery } from '../../../api/slice';
+import {
+  useGetMyShiftsQuery,
+  useGetShiftSettingsQuery,
+} from '../../../api/slice';
 import WeekNavigator from '../../../admin/shift-planning/components/WeekNavigator';
 import ShiftCard from '../../../admin/shift-planning/components/ShiftCard';
 import {
@@ -21,6 +24,7 @@ export default function MyShiftsWeek() {
     after: weekStart.format('YYYY-MM-DD'),
     before: weekStart.add(6, 'day').format('YYYY-MM-DD'),
   });
+  const { data: shiftSettings } = useGetShiftSettingsQuery();
 
   const shifts = sortByStart(data?.['hydra:member'] ?? []);
   const days = [...Array(7)].map((_, i) => weekStart.add(i, 'day'));
@@ -43,7 +47,11 @@ export default function MyShiftsWeek() {
               <div key={day.format('YYYY-MM-DD')} className="mb-3">
                 <strong>{day.format('dddd DD MMM')}</strong>
                 {dayShifts.map(shift => (
-                  <ShiftCard key={shift['@id']} shift={shift} />
+                  <ShiftCard
+                    key={shift['@id']}
+                    shift={shift}
+                    typeColors={shiftSettings?.typeColors}
+                  />
                 ))}
               </div>
             );

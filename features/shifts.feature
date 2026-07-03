@@ -488,3 +488,83 @@ Feature: Shifts
         "hydra:search":"@*@"
       }
       """
+
+  Scenario: Dispatcher customizes shift type colors
+    Given the user "bob" is loaded:
+      | email    | bob@coopcycle.org |
+      | password | 123456            |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/shift_settings"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ShiftSettings",
+        "@id":"/api/shift_settings",
+        "@type":"ShiftSettings",
+        "typeColors":[]
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/shift_settings" with body:
+      """
+      {
+        "typeColors": {
+          "drive": "#ff0000",
+          "dispatch": "not-a-color"
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ShiftSettings",
+        "@id":"/api/shift_settings",
+        "@type":"ShiftSettings",
+        "typeColors":{
+          "drive":"#ff0000"
+        }
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/shift_settings"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/ShiftSettings",
+        "@id":"/api/shift_settings",
+        "@type":"ShiftSettings",
+        "typeColors":{
+          "drive":"#ff0000"
+        }
+      }
+      """
+
+  Scenario: Courier can read but not change shift settings
+    Given the courier "sarah" is loaded:
+      | email    | sarah@coopcycle.org |
+      | password | 123456              |
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "GET" request to "/api/shift_settings"
+    Then the response status code should be 200
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "PUT" request to "/api/shift_settings" with body:
+      """
+      {
+        "typeColors": { "drive": "#ff0000" }
+      }
+      """
+    Then the response status code should be 403

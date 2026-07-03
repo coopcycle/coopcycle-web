@@ -10,15 +10,21 @@ type Props = {
   shift: Shift;
   onClick?: (shift: Shift) => void;
   conflictWith?: Shift;
+  typeColors?: Record<string, string>;
 };
 
-export default function ShiftCard({ shift, onClick, conflictWith }: Props) {
+export default function ShiftCard({
+  shift,
+  onClick,
+  conflictWith,
+  typeColors,
+}: Props) {
   const { t } = useTranslation();
 
   return (
     <div
       className="shift-card"
-      style={{ backgroundColor: shiftTypeColor(shift.type) }}
+      style={{ backgroundColor: shiftTypeColor(shift.type, typeColors) }}
       onClick={e => {
         e.stopPropagation();
         onClick && onClick(shift);

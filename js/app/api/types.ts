@@ -675,3 +675,11 @@ export type CopyWeekRequest = {
   sourceWeek: string;
   targetWeek: string;
 };
+
+export type ShiftSettings = JsonLdEntity & {
+  typeColors: Record<string, string>;
+};
+
+export type PutShiftSettingsRequest = {
+  typeColors: Record<string, string>;
+};

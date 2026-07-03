@@ -43,6 +43,7 @@ type Props = {
   onEdit: (shift: Shift) => void;
   onAddUser: (userUri: Uri) => void;
   onRemoveUser: (userUri: Uri) => void;
+  typeColors?: Record<string, string>;
 };
 
 export default function PlanningGrid({
@@ -55,6 +56,7 @@ export default function PlanningGrid({
   onEdit,
   onAddUser,
   onRemoveUser,
+  typeColors,
 }: Props) {
   const { t } = useTranslation();
 
@@ -94,7 +96,12 @@ export default function PlanningGrid({
             className="shift-planning__cell shift-planning__cell--clickable shift-planning__cell--open-slots"
             onClick={() => onCreate(day)}>
             {openShifts.filter(s => shiftIsOnDay(s, day)).map(shift => (
-              <OpenSlotCard key={shift['@id']} shift={shift} onClick={onEdit} />
+              <OpenSlotCard
+                key={shift['@id']}
+                shift={shift}
+                onClick={onEdit}
+                typeColors={typeColors}
+              />
             ))}
             <AddShiftButton onClick={() => onCreate(day)} />
           </div>
@@ -154,6 +161,7 @@ export default function PlanningGrid({
                       shift={shift}
                       onClick={onEdit}
                       conflictWith={findOverlappingShift(shift, userShifts)}
+                      typeColors={typeColors}
                     />
                   ))}
                   <AddShiftButton

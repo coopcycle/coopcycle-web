@@ -51,13 +51,15 @@ import {
   PostHolidayRequestRequest,
   CopyWeekRequest,
   PlanningUser,
+  ShiftSettings,
+  PutShiftSettingsRequest,
 } from './types';
 
 // Define our single API slice object
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['PricingRuleSet', 'Shift', 'HolidayRequest'],
+  tagTypes: ['PricingRuleSet', 'Shift', 'HolidayRequest', 'ShiftSettings'],
   // The "endpoints" represent operations and requests for this server
   // uri is passed in JSON-LD '@id' key, https://www.w3.org/TR/2014/REC-json-ld-20140116/#node-identifiers
   endpoints: builder => ({
@@ -471,6 +473,22 @@ export const apiSlice = createApi({
       transformResponse: (response: HydraCollection<PlanningUser>) =>
         response['hydra:member'],
     }),
+
+    getShiftSettings: builder.query<ShiftSettings, void>({
+      query: () => 'api/shift_settings',
+      providesTags: ['ShiftSettings'],
+    }),
+    putShiftSettings: builder.mutation<
+      ShiftSettings,
+      PutShiftSettingsRequest
+    >({
+      query: body => ({
+        url: 'api/shift_settings',
+        method: 'PUT',
+        body,
+      }),
+      invalidatesTags: ['ShiftSettings'],
+    }),
   }),
 });
 
@@ -526,4 +544,6 @@ export const {
   useRejectHolidayRequestMutation,
   useDeleteHolidayRequestMutation,
   useGetPlanningUsersQuery,
+  useGetShiftSettingsQuery,
+  usePutShiftSettingsMutation,
 } = apiSlice;

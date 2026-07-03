@@ -940,6 +940,10 @@
         "SHIFT_PLANNING_SLOTS_TO_FILL": "{{count}} slot to fill",
         "SHIFT_PLANNING_SLOTS_TO_FILL_plural": "{{count}} slots to fill",
         "SHIFT_PLANNING_WEEK_LABEL": "Week {{week}} - {{year}}",
-        "SHIFT_PLANNING_FILTER_TYPE": "Filter by type"
+        "SHIFT_PLANNING_FILTER_TYPE": "Filter by type",
+        "SHIFT_PLANNING_SETTINGS": "Settings",
+        "SHIFT_PLANNING_CANCEL": "Cancel",
+        "SHIFT_PLANNING_TYPE_COLORS_HELP": "Customize the color used for each shift type across the planning.",
+        "SHIFT_PLANNING_RESET_COLOR": "Reset to default color"
       }
 }
