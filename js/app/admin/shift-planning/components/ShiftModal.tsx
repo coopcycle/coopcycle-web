@@ -26,6 +26,7 @@ import {
   wallClockTime,
 } from '../utils/date';
 import { shiftTypeColor } from '../utils/shiftTypeColor';
+import { datePickerProps } from '../../../utils/antd';
 
 export type ShiftModalState = {
   shift?: Shift;
@@ -230,7 +231,11 @@ export default function ShiftModal({
           name="date"
           label={t('SHIFT_PLANNING_DATE')}
           rules={[{ required: true }]}>
-          <DatePicker style={{ width: '100%' }} allowClear={false} />
+          <DatePicker
+            style={{ width: '100%' }}
+            allowClear={false}
+            format={datePickerProps.format}
+          />
         </Form.Item>
         <Form.Item
           name="times"

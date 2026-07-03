@@ -3,6 +3,7 @@ import { App, Button, DatePicker, Form, Input } from 'antd';
 import { Dayjs } from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { usePostHolidayRequestMutation } from '../../../api/slice';
+import { datePickerProps } from '../../../utils/antd';
 
 type FormValues = {
   range: [Dayjs, Dayjs];
@@ -36,7 +37,10 @@ export default function HolidayRequestForm() {
         name="range"
         label={t('SHIFT_PLANNING_PERIOD')}
         rules={[{ required: true }]}>
-        <DatePicker.RangePicker style={{ width: '100%' }} />
+        <DatePicker.RangePicker
+          style={{ width: '100%' }}
+          format={datePickerProps.format}
+        />
       </Form.Item>
       <Form.Item name="comment" label={t('SHIFT_PLANNING_COMMENT')}>
         <Input.TextArea rows={2} />
