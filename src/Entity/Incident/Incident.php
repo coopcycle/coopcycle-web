@@ -36,7 +36,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
     operations: [
         new GetCollection(
             uriTemplate: '/incidents/filters',
-            /* security: 'is_granted("ROLE_DISPATCHER")', */
+            security: 'is_granted("ROLE_DISPATCHER")',
             controller: IncidentFastList::class,
             serialize: false
         ),

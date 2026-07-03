@@ -86,8 +86,12 @@ final class IncidentFilter extends AbstractFilter
 
         if ($hasCustomer) {
             $queryBuilder->join('d.order', 'o_order');
+            $queryBuilder->join('o_order.customer', 'incident_customer');
+            // Customer::$user is the inverse side of User::$customer, so it can't be
+            // used as a bare path expression in DQL — it needs an explicit join.
+            $queryBuilder->join('incident_customer.user', 'incident_customer_user');
             $param = $queryNameGenerator->generateParameterName('customer');
-            $queryBuilder->andWhere(sprintf('o_order.customer IN (:%s)', $param));
+            $queryBuilder->andWhere(sprintf('incident_customer_user IN (:%s)', $param));
             $queryBuilder->setParameter($param, $customerEntities);
         }
 
