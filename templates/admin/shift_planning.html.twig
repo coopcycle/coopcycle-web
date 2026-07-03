@@ -4,6 +4,10 @@
   {{ add_title_prefix('adminDashboard.shifts.title'|trans) }}
 {% endblock %}
 
+{% block breadcrumb %}
+<li>{% trans %}adminDashboard.shifts.title{% endtrans %}</li>
+{% endblock %}
+
 {% block content %}
   <div id="react-root" data-shift-types="{{ shift_types|json_encode|e('html_attr') }}">
     {# Managed with React #}

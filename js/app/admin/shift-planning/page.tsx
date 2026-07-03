@@ -5,7 +5,6 @@ import { CarryOutOutlined } from '@ant-design/icons';
 import dayjs, { Dayjs } from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import { useTranslation } from 'react-i18next';
-import { TopNav } from '../../components/TopNav';
 import { store } from './redux/store';
 import {
   useGetHolidayRequestsQuery,
@@ -113,7 +112,6 @@ const Planning = ({ shiftTypes }: Props) => {
 
   return (
     <div className="shift-planning">
-      <TopNav>{t('SHIFT_PLANNING_TITLE')}</TopNav>
       <div className="shift-planning__toolbar">
         <WeekNavigator value={weekStart} onChange={setWeekStart} />
         <Space>

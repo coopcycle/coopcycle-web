@@ -922,7 +922,8 @@
         "SHIFT_PLANNING_REJECT": "Reject",
         "SHIFT_PLANNING_REJECT_CONFIRM": "Reject this holiday request?",
         "SHIFT_PLANNING_COPY_LAST_WEEK": "Copy last week",
-        "SHIFT_PLANNING_COPY_CONFIRM": "Copy all shifts from the week of {{source}} to the week of {{target}}? Riders on approved holiday will be skipped.",
+        "SHIFT_PLANNING_COPY_CONFIRM": "Copy all shifts from the week of {{source}} to the week of {{target}}?",
+        "SHIFT_PLANNING_COPY_CONFIRM_NOTE": "Riders on approved holiday will be skipped.",
         "SHIFT_PLANNING_COPY_SUCCESS": "Last week's schedule has been copied",
         "SHIFT_PLANNING_MY_SHIFTS": "My shifts",
         "SHIFT_PLANNING_NO_SHIFTS": "No shifts this week",
@@ -937,6 +938,7 @@
         "SHIFT_PLANNING_SHIFT_CONFLICT": "{{name}} is already assigned to {{type}} {{start}} - {{end}}",
         "SHIFT_PLANNING_OVERSTAFFED": "You are assigning {{assigned}} people to a shift that needs {{slots}}",
         "SHIFT_PLANNING_SLOTS_TO_FILL": "{{count}} slot to fill",
-        "SHIFT_PLANNING_SLOTS_TO_FILL_plural": "{{count}} slots to fill"
+        "SHIFT_PLANNING_SLOTS_TO_FILL_plural": "{{count}} slots to fill",
+        "SHIFT_PLANNING_WEEK_LABEL": "Week {{week}} - {{year}}"
       }
 }

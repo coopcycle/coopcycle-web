@@ -36,6 +36,12 @@ export default function WeekNavigator({ value, onChange }: Props) {
         picker="week"
         allowClear={false}
         value={value}
+        format={d =>
+          t('SHIFT_PLANNING_WEEK_LABEL', {
+            week: d.isoWeek(),
+            year: d.isoWeekYear(),
+          })
+        }
         onChange={d => d && onChange(d.startOf('isoWeek'))}
       />
       <Button

@@ -2,8 +2,13 @@ import React from 'react';
 import { App, Button, Popconfirm } from 'antd';
 import { CopyOutlined } from '@ant-design/icons';
 import { Dayjs } from 'dayjs';
+import moment from 'moment';
 import { useTranslation } from 'react-i18next';
 import { useCopyWeekMutation } from '../../../api/slice';
+
+// moment (locale-aware, see utils/antd.js) is used for display,
+// parsing the plain date to stay independent of the browser timezone
+const formatDay = (day: Dayjs) => moment(day.format('YYYY-MM-DD')).format('LL');
 
 type Props = {
   weekStart: Dayjs;
@@ -31,10 +36,20 @@ export default function CopyWeekButton({ weekStart }: Props) {
 
   return (
     <Popconfirm
-      title={t('SHIFT_PLANNING_COPY_CONFIRM', {
-        source: sourceWeek.format('LL'),
-        target: weekStart.format('LL'),
-      })}
+      title={
+        <>
+          <div>
+            {t('SHIFT_PLANNING_COPY_CONFIRM', {
+              source: formatDay(sourceWeek),
+              target: formatDay(weekStart),
+            })}
+          </div>
+          <div className="text-muted">
+            {t('SHIFT_PLANNING_COPY_CONFIRM_NOTE')}
+          </div>
+        </>
+      }
+      overlayStyle={{ maxWidth: 420 }}
       onConfirm={onConfirm}>
       <Button icon={<CopyOutlined />} loading={isLoading}>
         {t('SHIFT_PLANNING_COPY_LAST_WEEK')}
