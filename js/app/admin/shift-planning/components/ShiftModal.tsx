@@ -186,7 +186,7 @@ export default function ShiftModal({
       open={state !== null}
       title={shift ? t('SHIFT_PLANNING_EDIT_SHIFT') : t('SHIFT_PLANNING_NEW_SHIFT')}
       onCancel={onClose}
-      destroyOnClose
+      destroyOnHidden
       footer={[
         shift ? (
           <Popconfirm

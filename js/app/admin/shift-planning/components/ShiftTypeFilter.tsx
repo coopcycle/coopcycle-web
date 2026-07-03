@@ -39,7 +39,7 @@ const ShiftTypeFilter = forwardRef<ShiftTypeFilterHandle, Props>(
         mode="multiple"
         allowClear
         open={open}
-        onDropdownVisibleChange={setOpen}
+        onOpenChange={setOpen}
         style={{ minWidth: 200 }}
         placeholder={
           <span>
