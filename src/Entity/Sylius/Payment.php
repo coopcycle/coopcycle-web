@@ -2,6 +2,11 @@
 
 namespace AppBundle\Entity\Sylius;
 
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Post;
+use AppBundle\Api\Dto\PaymentRefundInput;
+use AppBundle\Api\State\CreatePaymentRefundProcessor;
 use AppBundle\Sylius\Payment\EdenredTrait;
 use AppBundle\Sylius\Payment\MercadopagoTrait;
 use AppBundle\Sylius\Payment\PaygreenTrait;
@@ -13,6 +18,20 @@ use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Order\Model\OrderAwareInterface;
 use Sylius\Component\Payment\Model\Payment as BasePayment;
 
+#[ApiResource(
+    operations: [
+        new Get(security: 'is_granted("ROLE_DISPATCHER")'),
+        new Post(
+            uriTemplate: '/payments/{id}/refunds',
+            processor: CreatePaymentRefundProcessor::class,
+            input: PaymentRefundInput::class,
+            openapiContext: ['summary' => 'Adds a refunds to a Payment resource.'],
+            security: 'is_granted("ROLE_DISPATCHER")',
+            denormalizationContext: ['groups' => ['payment_refund']],
+        ),
+    ],
+    normalizationContext: ['groups' => ['payment']]
+)]
 class Payment extends BasePayment implements OrderAwareInterface
 {
     use StripeTrait;

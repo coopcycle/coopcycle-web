@@ -3,10 +3,10 @@
 namespace AppBundle\Service;
 
 use AppBundle\Exception\PaygreenException;
+use AppBundle\Exception\RefundException;
 use AppBundle\Sylius\Order\AdjustmentInterface;
 use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Utils\Defaults;
-use Carbon\Carbon;
 use Hashids\Hashids;
 use Paygreen\Sdk\Payment\V3\Client as PaygreenClient;
 use Paygreen\Sdk\Payment\V3\Model as PaygreenModel;
@@ -282,6 +282,11 @@ class PaygreenManager
 
         $details = $payment->getDetails();
 
-        $this->paygreenClient->refundPaymentOrder($details['paygreen_payment_order_id'], $details['paygreen_operation_id'], $amount);
+        $response = $this->paygreenClient->refundPaymentOrder($details['paygreen_payment_order_id'], $details['paygreen_operation_id'], (int) $amount);
+
+        if ($response->getStatusCode() !== 200) {
+            $data = json_decode($response->getBody()->getContents(), true);
+            throw new RefundException($data['message']);
+        }
     }
 }

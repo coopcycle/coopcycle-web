@@ -2,6 +2,7 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { I18nextProvider } from 'react-i18next'
 import Modal from 'react-modal'
+import axios from 'axios'
 
 import i18n from '../i18n'
 
@@ -23,7 +24,7 @@ const init = async () => {
     let httpClient = null;
 
     try {
-      result = await $.getJSON(fetchToken)
+      result = (await axios.get(fetchToken)).data
     } catch (err) {
       // when user is not logged in the request fails
     }
@@ -32,7 +33,7 @@ const init = async () => {
       httpClient = createHttpClient(
         result.jwt,
         () => new Promise((resolve) => {
-          $.getJSON(fetchToken).then(result => resolve(result.jwt))
+          axios.get(fetchToken).then(res => resolve(res.data.jwt))
         })
       )
     }

@@ -2,8 +2,9 @@
 
 namespace AppBundle\EventListener;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
+use Doctrine\ORM\Events;
 use Doctrine\ORM\Id\IdentityGenerator;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 use Sylius\Component\Resource\Model\ResourceInterface;
@@ -11,15 +12,9 @@ use Sylius\Component\Resource\Model\ResourceInterface;
 /**
  * This class is needed because Sylius uses the "AUTO" strategy, which doesn't work in PostgreSQL.
  */
-class SyliusIdGeneratorSubscriber implements EventSubscriber
+#[AsDoctrineListener(event: Events::loadClassMetadata, connection: 'default')]
+class SyliusIdGeneratorSubscriber
 {
-    public function getSubscribedEvents()
-    {
-        return array(
-            'loadClassMetadata',
-        );
-    }
-
     public function loadClassMetadata(LoadClassMetadataEventArgs $args)
     {
         $metadata = $args->getClassMetadata();

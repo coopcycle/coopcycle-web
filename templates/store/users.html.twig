@@ -1,5 +1,7 @@
 {% extends 'store/layout.html.twig' %}
 
+{% form_theme invite_form 'bootstrap_3_layout.html.twig' %}
+
 {% block breadcrumb %}
 <li><a href="{{ path(stores_route) }}">{% trans %}adminDashboard.stores.title{% endtrans %}</a></li>
 <li><a href="{{ path(store_route, { id: store.id }) }}">{{ store.name }}</a></li>
@@ -69,7 +71,7 @@
 <script>
 new CoopCycle.Search(document.querySelector('#user-search'), {
   url: "{{ path('admin_users_search', { format: 'json'  }) }}",
-  placeholder: "Rechercher un utilisateur…",
+  placeholder: "{{ 'search.users'|trans }}",
   onSuggestionSelected: function(suggestion) {
     $('#add_user_user').val(suggestion.id);
     $('#add_user_user').closest('form').submit();

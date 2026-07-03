@@ -1,6 +1,6 @@
-{% extends "base.html.twig" %}
+{% extends "frontend.html.twig" %}
 
-{% form_theme form with ['form/delivery.html.twig', 'form/delivery_embed.html.twig'] %}
+{% form_theme form 'form/delivery_embed.html.twig' %}
 
 {% block banner %}{% endblock %}
 {% block menu %}{% endblock %}
@@ -8,9 +8,9 @@
 
 {% block body %}
 
-<div style="padding: 20px;">
+<div class="p-4">
 
-  {% include "embed/delivery/breadcrumb.html.twig" %}
+  {% include "embed/delivery/breadcrumb.html.twig" with { step: 1 } %}
 
   {{ form_start(form, { attr: { autocomplete: 'off' } }) }}
 
@@ -22,20 +22,24 @@
       {{ form_row(form.vehicle) }}
     {% endif %}
 
-    <h3>{{ 'embed.delivery.contact_heading'|trans }}</h3>
+    <h3 class="text-lg mb-2">{{ 'embed.delivery.contact_heading'|trans }}</h3>
 
     {{ form_row(form.name) }}
     {{ form_row(form.email) }}
     {{ form_row(form.telephone) }}
 
-    <p class="text-center">
-        <a role="button" data-toggle="collapse" data-target="#billing-address" aria-expanded="false" aria-controls="billing-address">
-        {{ 'embed.delivery.specify_billing_address'|trans }}
-      </a>
-    </p>
-    <div class="collapse" id="billing-address">
-      <h3>{{ 'embed.delivery.billing_address'|trans }}</h3>
-      {{ form_widget(form.billingAddress) }}
+    <div x-data="{ expanded: false }"
+      x-init="$watch('expanded', value => toggleBillingAddressRequired(value))"
+      class="mb-4">
+      <p class="text-center">
+        <a role="button" @click.prevent="expanded = ! expanded" href="#">
+          {{ 'embed.delivery.specify_billing_address'|trans }}
+        </a>
+      </p>
+      <div x-show="expanded" x-collapse>
+        <h3 class="text-lg mb-2">{{ 'embed.delivery.billing_address'|trans }}</h3>
+        {{ form_widget(form.billingAddress) }}
+      </div>
     </div>
 
     <hr>
@@ -55,4 +59,13 @@
 
 {% block scripts %}
 {{ encore_entry_script_tags('delivery-embed-start-form') }}
+<script>
+function toggleBillingAddressRequired(required) {
+  if (required) {
+    document.querySelector('#delivery_billingAddress_streetAddress').setAttribute('required', true)
+  } else {
+    document.querySelector('#delivery_billingAddress_streetAddress').removeAttribute('required')
+  }
+}
+</script>
 {% endblock %}

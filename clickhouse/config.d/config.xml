@@ -1,0 +1,7 @@
+<clickhouse>
+    <listen_host>0.0.0.0</listen_host>
+    <logger>
+        <level>warning</level>
+        <console>true</console>
+    </logger>
+</clickhouse>

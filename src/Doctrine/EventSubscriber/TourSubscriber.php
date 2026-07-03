@@ -6,14 +6,16 @@ use AppBundle\Domain\Tour\Event\TourCreated;
 use AppBundle\Domain\Tour\Event\TourUpdated;
 use AppBundle\Entity\TaskCollectionItem;
 use AppBundle\Entity\Tour;
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class TourSubscriber implements EventSubscriber
+#[AsDoctrineListener(event: Events::onFlush, priority: 48, connection: 'default')]
+#[AsDoctrineListener(event: Events::postFlush, priority: 48, connection: 'default')]
+class TourSubscriber
 {
 
     private $insertedTours = [];
@@ -24,14 +26,6 @@ class TourSubscriber implements EventSubscriber
         private LoggerInterface $logger,
         private MessageBusInterface $eventBus
     ) {}
-
-    public function getSubscribedEvents()
-    {
-        return array(
-            Events::onFlush,
-            Events::postFlush
-        );
-    }
 
     /**
      * Trickles down the assignment information from tour to tasks.
@@ -99,7 +93,7 @@ class TourSubscriber implements EventSubscriber
         // phpstan struggles with "populating" the inversed side of the one-one - ref https://github.com/phpstan/phpstan-doctrine/issues/244
         /** @phpstan-ignore function.impossibleType */
         if (!is_null($item)) {
-            if (!$removed && $task->isAssigned() !== $item->getParent()->getCourier()) { // tour is assigned and the item belongs to it
+            if (!$removed && $task->getAssignedCourier() !== $item->getParent()->getCourier()) { // tour is assigned and the item belongs to it
                 $item = $taskCollection->getTaskListItem();
                 $taskList = $item->getParent();
                 $this->logger->debug(sprintf('Tour modification: Task #%d needs to be assigned', $taskCollectionItem->getTask()->getId()));

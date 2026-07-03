@@ -770,7 +770,7 @@ allergens.NUTS: Nuts
 order.list.type: Tipo
 order.list.shippedAt: Hora de entrega
 order.list.total: Total
-order_item.adjustment_type.reusable_packaging: '%quantidade% × pacote(s)'
+order_item.adjustment_type.reusable_packaging: '%quantity% × « %name% » pacote(s)'
 order.adjustment_type.tip: Gorgeta
 order.adjustment_type.reusable_packaging: Embalagem
 order.adjustment_type.platform_fees: Taxa CoopCycle

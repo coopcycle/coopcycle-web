@@ -6,7 +6,6 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Sylius\Payment;
 use AppBundle\Form\Checkout\CheckoutPayment;
 use AppBundle\Form\Checkout\CheckoutPaymentType;
-use AppBundle\Form\Order\AdhocOrderType;
 use AppBundle\Service\OrderManager;
 use AppBundle\Service\StripeManager;
 use AppBundle\Sylius\Order\OrderInterface;
@@ -162,87 +161,5 @@ class PublicController extends AbstractController
             'centrifugo_token' => $token,
             'centrifugo_channel' => $channel,
         ]);
-    }
-
-    #[Route(path: '/ado/{hashid}', name: 'public_adhoc_order')]
-    public function adhocOrderAction($hashid, Request $request,
-        EntityManagerInterface $objectManager,
-        OrderManager $orderManager,
-        Hashids $hashids8)
-    {
-        $order = $this->decodeOrderFromHashid($hashid, $hashids8);
-        $payment = $order->getLastPayment();
-
-        $form = $this->createForm(AdhocOrderType::class, $order);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $objectManager->flush();
-
-            return $this->redirectToRoute('public_adhoc_order_payment', [
-                'hashid' => $hashid,
-            ]);
-        }
-
-        return $this->render('public/adhoc_order.html.twig', [
-            'order' => $order,
-            'form' => $form->createView(),
-            'payment' => $payment,
-        ]);
-    }
-
-    #[Route(path: '/ado/{hashid}/p', name: 'public_adhoc_order_payment')]
-    public function adhocOrderPaymentAction($hashid, Request $request,
-        EntityManagerInterface $objectManager,
-        OrderManager $orderManager,
-        Hashids $hashids8)
-    {
-        $order = $this->decodeOrderFromHashid($hashid, $hashids8);
-        $payment = $order->getLastPayment();
-
-        $form = $this->createForm(AdhocOrderType::class, $order, [
-            'with_payment' => true,
-        ]);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $orderManager->checkout($order, [
-                'stripeToken' => $form->get('payment')->get('stripeToken')->getData()
-            ]);
-
-            $orderManager->accept($order);
-
-            $objectManager->flush();
-
-            return $this->redirectToRoute('public_adhoc_order', [
-                'hashid' => $hashid,
-            ]);
-        }
-
-        return $this->render('public/adhoc_order.html.twig', [
-            'order' => $order,
-            'form' => $form->createView(),
-            'payment' => $payment,
-        ]);
-    }
-
-    private function decodeOrderFromHashid($hashid, Hashids $hashids8)
-    {
-        $decoded = $hashids8->decode($hashid);
-
-        if (count($decoded) !== 1) {
-            throw new BadRequestHttpException(sprintf('Hashid "%s" could not be decoded', $hashid));
-        }
-
-        $id = current($decoded);
-        $order = $this->orderRepository->find($id);
-
-        if (null === $order) {
-            throw new NotFoundHttpException(sprintf('Order #%d does not exist', $id));
-        }
-
-        return $order;
     }
 }

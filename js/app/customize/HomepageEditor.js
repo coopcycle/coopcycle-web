@@ -1,0 +1,153 @@
+import React, { useEffect, useRef, forwardRef, useState } from 'react'
+import { Button, Flex, Switch, Typography } from 'antd';
+import { EyeOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
+import _ from 'lodash';
+
+import EditorJS from '@editorjs/editorjs';
+import ShopCollection from './editorjs/shop-collection'
+import Banner from './editorjs/banner'
+import Slider from './editorjs/slider'
+import DeliveryForm from './editorjs/delivery-form'
+
+// https://blog.bitsrc.io/4-ways-to-communicate-across-browser-tabs-in-realtime-e4f5f6cbedca
+const channel = new BroadcastChannel('homepage-preview');
+
+// https://github.com/codex-team/editor.js/discussions/1897
+const sanitizeBlocks = (blocks) => blocks.filter(block => block.type !== 'paragraph')
+
+const updatePreview = _.debounce((data) => channel.postMessage({ ...data, blocks: sanitizeBlocks(data.blocks) }), 500)
+
+// https://dev.to/sumankalia/how-to-integrate-editorjs-in-reactjs-2l6l
+const Editor = forwardRef(({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryForms, shopCollections, edenredEnabled, t }, ref) => {
+
+  useEffect(() => {
+
+    if (!ref.current) {
+
+      const editor = new EditorJS({
+        placeholder: t('HOMEPAGE_EDITOR.placeholder'),
+        holder: 'editorjs',
+        tools: {
+          shop_collection: {
+            class: ShopCollection,
+            config: {
+              cuisines,
+              shopTypes,
+              customCollections: shopCollections,
+              edenredEnabled,
+            }
+          },
+          banner: Banner,
+          slider: {
+            class: Slider,
+            config: {
+              uploadEndpoint,
+            }
+          },
+          delivery_form: {
+            class: DeliveryForm,
+            config: {
+              forms: deliveryForms,
+            }
+          }
+        },
+        autofocus: false,
+        // Height of Editor's bottom area that allows to set focus on the last Block
+        minHeight: 200,
+        onReady: () => {
+          ref.current = editor;
+        },
+        data: {
+          blocks,
+        },
+        // https://editorjs.io/i18n/
+        i18n: t('HOMEPAGE_EDITOR', { returnObjects: true }),
+        onChange: async (api, event) => {
+          const data = await editor.save();
+          updatePreview(data);
+        },
+      });
+    }
+
+    return () => {
+      ref?.current?.destroy();
+      ref.current = null;
+    };
+
+  }, []);
+
+  return (
+    <div className="homepage-preview" data-theme="light">
+      <div id="editorjs"></div>
+    </div>
+  )
+})
+
+export default function({ blocks, cuisines, shopTypes, uploadEndpoint, deliveryForms, shopCollections, edenredEnabled }) {
+
+  const ref = useRef();
+  const { t } = useTranslation();
+  const [isLoading, setIsLoading] = useState(false)
+  const [isPreviewEnabled, setIsPreviewEnabled] = useState(false)
+  const [isPublished, setIsPublished] = useState(false)
+  const [isPublishLoading, setIsPublishLoading] = useState(false)
+
+  const httpClient = new window._auth.httpClient();
+
+  useEffect(() => {
+    httpClient.get('/api/ui/homepage').then(({ response }) => {
+      if (response) {
+        setIsPublished(response.published)
+      }
+    })
+  }, [])
+
+  useEffect(() => {
+    async function doUpdatePreview() {
+        const data = await ref.current.save()
+        window.open(window.Routing.generate('homepage'), '_blank').focus();
+        setTimeout(() => updatePreview(data), 1000);
+    }
+    if (isPreviewEnabled) {
+      doUpdatePreview();
+    }
+  }, [isPreviewEnabled])
+
+  return (
+    <div>
+      <Editor ref={ref}
+        blocks={blocks}
+        cuisines={cuisines}
+        shopTypes={shopTypes}
+        uploadEndpoint={uploadEndpoint}
+        deliveryForms={deliveryForms}
+        shopCollections={shopCollections}
+        edenredEnabled={edenredEnabled}
+        t={t} />
+      <Flex justify="flex-end" align="center" gap="small">
+        <Typography.Text>{ t('HOMEPAGE_EDITOR.published') }</Typography.Text>
+        <Switch
+          checked={isPublished}
+          loading={isPublishLoading}
+          onChange={async (checked) => {
+            setIsPublishLoading(true)
+            const { response } = await httpClient.put('/api/ui/homepage', { published: checked })
+            if (response) {
+              setIsPublished(response.published)
+            }
+            setIsPublishLoading(false)
+          }} />
+        <Button icon={<EyeOutlined />} onClick={() => {
+          setIsPreviewEnabled(!isPreviewEnabled)
+        }}>{ t(isPreviewEnabled ? 'HOMEPAGE_EDITOR.disable_preview' : 'HOMEPAGE_EDITOR.enable_preview') }</Button>
+        <Button type="primary" loading={isLoading} onClick={async () => {
+          setIsLoading(true)
+          const data = await ref.current.save()
+          const { response } = await httpClient.put('/api/ui/homepage/blocks', { blocks: sanitizeBlocks(data.blocks) });
+          setIsLoading(false)
+        }}>{ t('SAVE_BUTTON') }</Button>
+      </Flex>
+    </div>
+  )
+}

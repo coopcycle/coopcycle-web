@@ -18,12 +18,12 @@ class DeliveryListener
         protected TourRepository $tourRepository
     )
     {
-        
+
     }
     public function prePersist(Delivery $delivery, LifecycleEventArgs $args)
     {
         $comments = '';
-        
+
         if ($delivery->hasPackages()) {
             foreach ($delivery->getPackages() as $package) {
                 $comments .= $package->getQuantity() .' × ' . $package->getPackage()->getName();
@@ -63,13 +63,22 @@ class DeliveryListener
                 }
             }
         }
+
+        if (null !== $delivery->getStore() && $delivery->getStore()->hasDocument()) {
+            foreach ($delivery->getTasks() as $task) {
+                $metadata = $task->getMetadata();
+                $documents = isset($metadata['documents']) ? $metadata['documents'] : [];
+                $documents[] = $delivery->getStore()->getDocument();
+                $task->setMetadata('documents', $documents);
+            }
+        }
     }
 
     public function postPersist(Delivery $delivery)
     {
         if ($delivery->getStore() && $delivery->getStore()->getDefaultCourier()) {
             $courier = $delivery->getStore()->getDefaultCourier();
-            
+
             foreach ($delivery->getTasks() as $task) {
                 // Ignore tasks that are part of a tour, that is the tour itself that should be assigned
                 if ($this->tourRepository->findOneByTask($task)) {
@@ -79,7 +88,7 @@ class DeliveryListener
                 $taskList = $this->taskListProvider->getTaskList($task, $courier);
                 $taskList->appendTask($task);
             }
-            
+
             $this->entityManager->flush();
         }
     }

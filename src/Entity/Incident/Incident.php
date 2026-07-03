@@ -14,6 +14,8 @@ use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Api\Filter\IncidentFilter;
+use AppBundle\Api\Dto\IncidentMetadataInput;
+use AppBundle\Api\State\AddIncidentMetadataProcessor;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Task;
@@ -58,6 +60,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new Post(
             controller: CreateIncident::class,
             security: 'is_granted("ROLE_COURIER")'
+        ),
+        new Post(
+            uriTemplate: '/incidents/{id}/metadata',
+            processor: AddIncidentMetadataProcessor::class,
+            input: IncidentMetadataInput::class,
+            security: 'is_granted("ROLE_COURIER")',
+            denormalizationContext: ['groups' => ['incident']],
+            status: 200,
         ),
     ],
     normalizationContext: ['groups' => ['incident']]

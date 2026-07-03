@@ -96,10 +96,13 @@ services:
             # - [ setClock, [ '@clock' ] ]
 
 
-    coopcycle.listener.post_soft_delete:
-        class: AppBundle\Doctrine\EventSubscriber\PostSoftDeleteSubscriber
+    AppBundle\Doctrine\EventSubscriber\PostSoftDeleteSubscriber:
+        arguments:
+            $messageBus: "@event.bus"
         tags:
-            #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
+            # FIXME
+            # doctrine.event_subscriber is deprecated, but this doesn't work
+            # with doctrine.event_listener or #[AsDoctrineListener] attribute
             - { name: doctrine.event_subscriber }
 
     postgis.event_subscriber:

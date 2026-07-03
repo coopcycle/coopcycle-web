@@ -31,7 +31,7 @@ async function deliveriesCount(id, { from, to }) {
 async function downloadZIP(id, { from, to }) {
   const httpClient = new window._auth.httpClient()
   const { response, error } = await httpClient.post(
-    window.Routing.generate('_api_/deliveries/pod_export_post'),
+    window.Routing.generate('_api_/stores/{id}/pod_export_post', {id}),
     {
       store: id,
       from: from.toISOString(),
@@ -67,7 +67,7 @@ export default function DeliveriesProofs({ store_id = null }) {
   return (
     <>
       <a href="#" onClick={() => setVisible(true)}>
-        <i class="fa fa-flag-checkered mr-2"></i>
+        <i className="fa fa-flag-checkered mr-2"></i>
         <span>{t('DELIVERY_PROOFS_LINK_TEXT')}</span>
       </a>
       <Modal
@@ -79,7 +79,7 @@ export default function DeliveriesProofs({ store_id = null }) {
           downloadZIP(storeID, week.current)
         }}
         okText={t('DELIVERY_PROOFS_DOWNLOAD_BUTTON')}>
-        <p>
+        <div>
           {t('DELIVERY_PROOFS_CHOOSE_WEEK')}:
           <DatePicker
             picker="week"
@@ -91,7 +91,7 @@ export default function DeliveriesProofs({ store_id = null }) {
               setLoading(false)
             }}
           />
-        </p>
+        </div>
         <Card>
           <div className="d-flex align-items-center justify-content-between">
             <strong>{t('DELIVERY_PROOFS_TOTAL_DELIVERIES')}</strong>

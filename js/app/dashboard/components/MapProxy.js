@@ -61,12 +61,16 @@ export default class MapProxy {
     this.courierLayerGroup = new L.LayerGroup()
     this.courierLayerGroup.addTo(this.map)
 
+    this.warehouseMarkers = new Map()
+    this.warehouseStates = new Map() // keyed by address['@id']: { clusterGroup, marker, iconRef, taskCount }
+
     this.drawPolylineLayerGroup = new L.LayerGroup()
     this.drawPolylineLayerGroup.addTo(this.map)
 
     this.onEditClick = options.onEditClick
     this.selectTaskOnMarkerClick = options.selectTaskOnMarkerClick
     this.toggleTaskOnMarkerClick = options.toggleTaskOnMarkerClick
+    this.onPickupClusterClick = options.onPickupClusterClick
 
     this.tasksLayerGroup = new L.LayerGroup()
     this.tasksLayerGroup.addTo(this.map)
@@ -237,7 +241,14 @@ export default class MapProxy {
       this.onTaskMouseDown(task)
     })
 
-    if (task.type === 'PICKUP' && isRestaurantAddress) {
+    const warehouseState = this.warehouseStates.get(task.address['@id'])
+    if (warehouseState) {
+      if (!warehouseState.clusterGroup.hasLayer(marker)) {
+        warehouseState.clusterGroup.addLayer(marker)
+        warehouseState.taskCount++
+        this._updateWarehouseIcon(task.address['@id'])
+      }
+    } else if (task.type === 'PICKUP' && isRestaurantAddress) {
       this.pickupClusterGroup.addLayer(marker)
     } else {
       this.tasksLayerGroup.addLayer(marker)
@@ -284,6 +295,12 @@ export default class MapProxy {
       this.tasksLayerGroup.removeLayer(marker)
       this.clusterGroup.removeLayer(marker)
       this.pickupClusterGroup.removeLayer(marker)
+      const warehouseState = this.warehouseStates.get(task.address['@id'])
+      if (warehouseState && warehouseState.clusterGroup.hasLayer(marker)) {
+        warehouseState.clusterGroup.removeLayer(marker)
+        warehouseState.taskCount = Math.max(0, warehouseState.taskCount - 1)
+        this._updateWarehouseIcon(task.address['@id'])
+      }
     }
   }
 
@@ -466,5 +483,85 @@ export default class MapProxy {
 
   hideNext() {
     this.swoopyLayerGroup.clearLayers()
+  }
+
+  _warehouseIconFor(taskCount) {
+    const isEmpty = taskCount === 0
+    const color = isEmpty ? '#95A5A6' : '#27AE60'
+    return L.BeautifyIcon.icon({
+      icon: 'home',
+      iconShape: 'circle',
+      borderColor: isEmpty ? color : '#52D68A',
+      borderWidth: isEmpty ? 1 : 3,
+      borderStyle: 'solid',
+      textColor: 'white',
+      backgroundColor: color,
+      iconSize: [30, 30],
+      innerIconAnchor: [0, isEmpty ? 7 : 6],
+    })
+  }
+
+  _updateWarehouseIcon(addressId) {
+    const state = this.warehouseStates.get(addressId)
+    if (!state) return
+    const icon = this._warehouseIconFor(state.taskCount)
+    state.iconRef.current = icon
+    state.marker.setIcon(icon)
+    state.clusterGroup.refreshClusters()
+  }
+
+  addWarehouses(warehouses) {
+    this.warehouseStates.forEach(({ clusterGroup }) => clusterGroup.removeFrom(this.map))
+    this.warehouseStates.clear()
+    this.warehouseMarkers.clear()
+
+    warehouses.forEach(warehouse => {
+      if (!warehouse.address?.geo) return
+
+      const addressId = warehouse.address['@id']
+      const coords = [warehouse.address.geo.latitude, warehouse.address.geo.longitude]
+
+      const iconRef = { current: this._warehouseIconFor(0) }
+
+      const clusterGroup = L.markerClusterGroup({
+        showCoverageOnHover: false,
+        spiderfyOnMaxZoom: false,
+        zoomToBoundsOnClick: false,
+        maxClusterRadius: (zoom) => zoom >= 14 ? 0 : 50,
+        iconCreateFunction: () => iconRef.current,
+      })
+
+      clusterGroup.on('clusterclick', (a) => {
+        L.popup({ offset: [0, -15], className: 'leaflet-popup-pickup-group' })
+          .setLatLng(a.latlng)
+          .setContent(this.onPickupClusterClick(a))
+          .openOn(this.map)
+      })
+
+      const marker = L.marker(coords, { icon: iconRef.current })
+      marker.bindTooltip(warehouse.name, { direction: 'top', offset: [0, -10] })
+      clusterGroup.addLayer(marker)
+      clusterGroup.addTo(this.map)
+
+      this.warehouseMarkers.set(warehouse['@id'], marker)
+      this.warehouseStates.set(addressId, { clusterGroup, marker, iconRef, taskCount: 0 })
+    })
+
+    // Rebalance task markers already placed before warehouses loaded
+    this.taskMarkers.forEach((marker) => {
+      const task = marker.options.task
+      if (!task) return
+      const state = this.warehouseStates.get(task.address['@id'])
+      if (state) {
+        this.tasksLayerGroup.removeLayer(marker)
+        this.clusterGroup.removeLayer(marker)
+        this.pickupClusterGroup.removeLayer(marker)
+        state.clusterGroup.addLayer(marker)
+        state.taskCount++
+      }
+    })
+
+    // Update icons after rebalancing to reflect actual task counts
+    this.warehouseStates.forEach((_, addressId) => this._updateWarehouseIcon(addressId))
   }
 }

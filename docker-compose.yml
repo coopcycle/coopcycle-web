@@ -81,6 +81,7 @@ services:
     build:
       dockerfile: './docker/php_worker/Dockerfile'
       context: '.'
+    image: coopcycle/php_worker:${PHP_VERSION:-8.3}
     depends_on:
       - php
     restart: always
@@ -178,6 +179,7 @@ services:
       /bin/sh -c "
       /usr/bin/mc config host add coopcycle http://minio:9000 $S3_CREDENTIALS_KEY $S3_CREDENTIALS_SECRET;
       /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/edifact/;
+      /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/exports/;
       /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/;
       /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/assets/;
       /usr/bin/mc mb --region $S3_REGION --ignore-existing coopcycle/images/products/;
@@ -233,12 +235,13 @@ services:
 
   # https://cube.dev/docs/getting-started-docker
   cube:
-    image: cubejs/cube:v0.34
+    image: cubejs/cube:v1.2
     ports:
       - 4000:4000
     depends_on:
       - postgres
       - minio
+      - clickhouse
     environment:
       - CUBEJS_DB_TYPE=postgres
       - CUBEJS_DB_HOST=${COOPCYCLE_DB_HOST}
@@ -251,16 +254,39 @@ services:
       - CUBEJS_API_SECRET
       - CUBEJS_SCHEMA_PATH=schema
       - CUBEJS_CACHE_AND_QUEUE_DRIVER=memory
-      - CUBEJS_DB_DUCKDB_S3_ENDPOINT=${CUBEJS_DUCKDB_S3_ENDPOINT}
-      - CUBEJS_DB_DUCKDB_S3_REGION=${CUBEJS_DUCKDB_S3_REGION}
-      - CUBEJS_DB_DUCKDB_S3_ACCESS_KEY_ID=${CUBEJS_DUCKDB_S3_ACCESS_KEY_ID}
-      - CUBEJS_DB_DUCKDB_S3_SECRET_ACCESS_KEY=${CUBEJS_DUCKDB_S3_SECRET_ACCESS_KEY}
-      - CUBEJS_DB_DUCKDB_S3_USE_SSL=false
-      - CUBEJS_DB_DUCKDB_S3_URL_STYLE=path
+      - CLICKHOUSE_DB=${CLICKHOUSE_DB:-coopcycle}
+      - CLICKHOUSE_USER=${CLICKHOUSE_USER:-coopcycle}
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD:-coopcycle}
     volumes:
       - ./cube:/cube/conf/schema
       - ./cube.js:/cube/conf/cube.js
     attach: false
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:25.8
+    hostname: clickhouse
+    ports:
+      - "8123:8123"
+      - "9002:9000"
+    depends_on:
+      - minio
+    environment:
+      # https://hub.docker.com/r/clickhouse/clickhouse-server/#how-to-create-default-database-and-user-on-starting
+      - CLICKHOUSE_DB=${CLICKHOUSE_DB:-coopcycle}
+      - CLICKHOUSE_USER=${CLICKHOUSE_USER:-coopcycle}
+      - CLICKHOUSE_PASSWORD=${CLICKHOUSE_PASSWORD:-coopcycle}
+      # https://clickhouse.com/docs/integrations/s3
+      - AWS_ACCESS_KEY_ID=${S3_CREDENTIALS_KEY:-minio}
+      - AWS_SECRET_ACCESS_KEY=${S3_CREDENTIALS_SECRET:-coopcycle}
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - clickhouse_logs:/var/log/clickhouse-server
+      - ./clickhouse/config.d:/etc/clickhouse-server/config.d:ro
+      - ./clickhouse/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d:ro
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
 
   typesense:
     image: typesense/typesense:0.22.2
@@ -301,7 +327,25 @@ services:
     profiles:
       - devOdoo
 
+  recommender:
+    build:
+      dockerfile: './recommender/Dockerfile'
+      context: '.'
+    image: coopcycle/recommender
+    environment:
+      - MODEL_DIR=/models
+    volumes:
+      - recommender_models:/models
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
 volumes:
+  clickhouse_data:
+  clickhouse_logs:
   pg_data:
   php_cache:
   php_profiles:
@@ -312,3 +356,4 @@ volumes:
   php_public_images:
   odoo-web-data:
   odoo-db-data:
+  recommender_models:

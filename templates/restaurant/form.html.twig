@@ -137,17 +137,10 @@
           </a>
         </li>
         {% endif %}
-        {% if form.enBoitLePlatEnabled is defined %}
+        {% if form.enBoitLePlatEnabled is defined and form.enBoitLePlatPlatformFee is defined %}
         <li role="presentation">
           <a role="tab" data-toggle="tab" href="#en-boite-le-plat" aria-controls="en-boite-le-plat">
             {{ 'restaurant.form.section.en_boite_le_plat'|trans }}
-          </a>
-        </li>
-        {% endif %}
-        {% if form.dabba is defined %}
-        <li role="presentation">
-          <a role="tab" data-toggle="tab" href="#dabba" aria-controls="dabba">
-            {{ 'restaurant.form.section.dabba'|trans }}
           </a>
         </li>
         {% endif %}
@@ -194,14 +187,10 @@
           {{ form_row(form.vytalEnabled) }}
         </div>
         {% endif %}
-        {% if form.enBoitLePlatEnabled is defined %}
+        {% if form.enBoitLePlatEnabled is defined and form.enBoitLePlatPlatformFee is defined %}
         <div role="tabpanel" class="tab-pane" id="en-boite-le-plat">
           {{ form_row(form.enBoitLePlatEnabled) }}
-        </div>
-        {% endif %}
-        {% if form.dabba is defined %}
-        <div role="tabpanel" class="tab-pane" id="dabba">
-          {{ form_row(form.dabba) }}
+          {{ form_row(form.enBoitLePlatPlatformFee) }}
         </div>
         {% endif %}
         {% if restaurant.id is not null %}
@@ -238,7 +227,7 @@
   data-restaurant-id="{{ restaurant.id }}"
   data-restaurant-image="{{ coopcycle_asset(restaurant, 'imageFile', 'restaurant_thumbnail') }}"
   data-restaurant-banner-image="{{ coopcycle_asset(restaurant, 'bannerImageFile', 'restaurant_banner') }}"
-  data-image-from-url-route="{{ image_from_url_route|e('html_attr') }}"></div>
+  data-image-from-pixabay-route="{{ image_from_pixabay_route|e('html_attr') }}"></div>
 
 {% endblock %}
 

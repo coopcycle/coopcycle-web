@@ -8,22 +8,17 @@ use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Edifact\EDIFACTMessage;
 use AppBundle\Entity\Edifact\EDIFACTMessageRepository;
 use AppBundle\Entity\Store;
+use AppBundle\Entity\Sylius\CalculateUsingPricingRules;
+use AppBundle\Service\DeliveryOrderManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Transporter\ImportFromPoint;
 use AppBundle\Transporter\ReportFromCC;
 use AppBundle\Transporter\TransporterHelpers;
 use Carbon\Carbon;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemException;
-use League\Flysystem\Ftp\FtpAdapter;
-use League\Flysystem\Ftp\FtpConnectionOptions;
-use League\Flysystem\InMemory\InMemoryFilesystemAdapter;
-use League\Flysystem\Local\LocalFilesystemAdapter;
-use League\Flysystem\PhpseclibV3\SftpAdapter;
-use League\Flysystem\PhpseclibV3\SftpConnectionProvider;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputArgument;
@@ -46,7 +41,6 @@ use Transporter\TransporterSyncOptions;
 
 class SyncTransportersCommand extends Command {
 
-    public $logger;
     use LockableTrait;
 
     private string $transporter;
@@ -69,7 +63,8 @@ class SyncTransportersCommand extends Command {
         private LoggerInterface $transporterLogger,
         private ImportFromPoint $importFromPoint,
         private ReportFromCC $reportFromCC,
-        private Filesystem $edifactFs
+        private Filesystem $edifactFs,
+        private DeliveryOrderManager $deliveryOrderManager,
     )
     { parent::__construct(); }
 
@@ -150,6 +145,8 @@ class SyncTransportersCommand extends Command {
             return Command::FAILURE;
         }
 
+        $this->output = $output;
+        $this->dryRun = $input->getOption('dry-run');
 
         try {
             $this->setup($transporterName);
@@ -161,85 +158,84 @@ class SyncTransportersCommand extends Command {
             throw $e;
         }
 
-        $this->dryRun = $input->getOption('dry-run');
-        $this->output = $output;
-
-        $config = $this->params->get('transporters_config');
-        if (!($config[$this->transporter]['enabled'] ?? false)) {
-            $this->transporterLogger->warning(
-                sprintf('%s is not configured or enabled', $this->transporter),
-                ['transporter' => $this->transporter]
-            );
-            throw new Exception(sprintf('%s is not configured or enabled', $this->transporter));
-        }
-        $config = $config[$this->transporter];
-
-        if (isset($config['sync']['uri'])) {
-            $inFs = $outFs = $this->initTransporterSyncOptions($config['sync']);
-        }
-        elseif (isset($config['sync']['in']) && isset($config['sync']['out'])) {
-            $inFs = $this->initTransporterSyncOptions($config['sync']['in']);
-            $outFs = $this->initTransporterSyncOptions($config['sync']['out']);
-        } else {
-            $this->transporterLogger->critical(
-                'Sync not configured',
-                ['transporter' => $this->transporter]
-            );
-            return Command::FAILURE;
-        }
-
-        $opts = new TransporterOptions(
-            $transporterName,
-            $this->companyLegalName, $this->companyLegalID,
-            $config['legal_name'], $config['legal_id'],
-            $outFs, $inFs
-        );
-
-        /** @var TransporterSync $sync */
-        $sync = new ($this->impl->sync)($opts);
-
-        if ($this->dryRun) {
-            $output->writeln("Dry run mode, nothing will be imported");
-        }
-
-        $this->transporterLogger->info(
-            sprintf(
-                'Syncing %s with %s',
-                $this->appName,
-                $this->transporter
-            ),
-            ['transporter' => $this->transporter]
-        );
-
         try {
-            $this->importAllTasks($sync);
-        } catch (Exception $e) {
-            $this->transporterLogger->critical(
+            $config = $this->params->get('transporters_config');
+            if (!($config[$this->transporter]['enabled'] ?? false)) {
+                $this->transporterLogger->warning(
+                    sprintf('%s is not configured or enabled', $this->transporter),
+                    ['transporter' => $this->transporter]
+                );
+                throw new Exception(sprintf('%s is not configured or enabled', $this->transporter));
+            }
+            $config = $config[$this->transporter];
+
+            if (isset($config['sync']['uri'])) {
+                $inFs = $outFs = $this->initTransporterSyncOptions($config['sync']);
+            }
+            elseif (isset($config['sync']['in']) && isset($config['sync']['out'])) {
+                $inFs = $this->initTransporterSyncOptions($config['sync']['in']);
+                $outFs = $this->initTransporterSyncOptions($config['sync']['out']);
+            } else {
+                $this->transporterLogger->critical(
+                    'Sync not configured',
+                    ['transporter' => $this->transporter]
+                );
+                return Command::FAILURE;
+            }
+
+            $opts = new TransporterOptions(
+                $transporterName,
+                $this->companyLegalName, $this->companyLegalID,
+                $config['legal_name'], $config['legal_id'],
+                $outFs, $inFs
+            );
+
+            /** @var TransporterSync $sync */
+            $sync = new ($this->impl->sync)($opts);
+
+            if ($this->dryRun) {
+                $output->writeln("Dry run mode, nothing will be imported");
+            }
+
+            $this->transporterLogger->info(
                 sprintf(
-                    'Failed to import tasks: %s',
-                    $e->getMessage()
+                    'Syncing %s with %s',
+                    $this->appName,
+                    $this->transporter
                 ),
                 ['transporter' => $this->transporter]
             );
-            throw $e;
+
+            try {
+                $this->importAllTasks($sync);
+            } catch (Exception $e) {
+                $this->transporterLogger->critical(
+                    sprintf(
+                        'Failed to import tasks: %s',
+                        $e->getMessage()
+                    ),
+                    ['transporter' => $this->transporter]
+                );
+                throw $e;
+            }
+
+            try {
+                $this->sendReports($sync, $opts);
+            } catch (Exception $e) {
+                $this->transporterLogger->critical(
+                    sprintf(
+                        'Failed to send reports: %s',
+                        $e->getMessage()
+                    ),
+                    ['transporter' => $this->transporter]
+                );
+                throw $e;
+            }
+
+            return Command::SUCCESS;
+        } finally {
+            $this->release();
         }
-
-        try {
-            $this->sendReports($sync, $opts);
-        } catch (Exception $e) {
-            $this->transporterLogger->critical(
-                sprintf(
-                    'Failed to send reports: %s',
-                    $e->getMessage()
-                ),
-                ['transporter' => $this->transporter]
-            );
-            throw $e;
-        }
-
-        $this->release();
-
-        return Command::SUCCESS;
     }
 
     /**
@@ -287,13 +283,21 @@ class SyncTransportersCommand extends Command {
     {
         $count = 0;
         foreach ($sync->pull() as $content) {
-            $messages = Transporter::parse(
+            [$type, $messages] = Transporter::parse(
                 $content,
-                INOVERTMessageType::SCONTR,
                 TransporterName::from($this->transporter)
             );
+
+            if (count($messages) > 1) {
+                $this->transporterLogger->notice(
+                    sprintf("%s messages to import from a single EDIFACT", count($messages)),
+                );
+            }
+
             $filename = sprintf(
-                "SCONTR-%s_%s.%s.edi", mb_strtolower($this->transporter),
+                "%s-%s_%s.%s.edi",
+                mb_strtoupper($type->value),
+                mb_strtolower($this->transporter),
                 date('Y-m-d_His'), uniqid()
             );
 
@@ -303,7 +307,7 @@ class SyncTransportersCommand extends Command {
 
             foreach ($messages as $tasks) {
                 foreach ($tasks->getTasks() as $task) {
-                    $edifactMessage = $this->storeSCONTR($task, $filename);
+                    $edifactMessage = $this->storeInboundEdi($task, $filename);
                     $this->importTask($task, $edifactMessage);
                     $count++;
                 }
@@ -317,32 +321,93 @@ class SyncTransportersCommand extends Command {
     }
 
     private function importTask(Point $point, EDIFACTMessage $edi): void {
+        match($point->getType()) {
+            INOVERTMessageType::SCONTR => $this->importScontrTask($point, $edi),
+            INOVERTMessageType::PICKUP => $this->importPickupTask($point, $edi),
+            INOVERTMessageType::DISPOR => $this->importDisporTask($point, $edi),
+        };
+    }
+
+    private function importDisporTask(Point $point, EDIFACTMessage $edi): void {
+        $this->importScontrTask($point, $edi);
+    }
+
+    private function importScontrTask(Point $point, EDIFACTMessage $edi): void {
         if ($this->output->isVerbose()) {
             $this->debugPoint($point);
         }
 
         // PICKUP SETUP
-        $pickup = $this->importFromPoint->buildPickupTask($this->HQAddress->clone(), $edi);
+        $pickup = $this->importFromPoint
+            ->buildScontr2PickupTask($this->HQAddress->clone(), $edi);
 
         // DROPOFF SETUP
-        $task = $this->importFromPoint->import($point, $edi);
-        $task->setPrevious($pickup);
+        $dropoff = $this->importFromPoint->import($point, $edi);
 
+        $pickup->setNext($dropoff);
+        $dropoff->setPrevious($pickup);
+
+
+        $pickup->setAfter($this->startOfDay());
+        $pickup->setBefore($this->endOfDay());
+        $dropoff->setAfter($this->startOfDay());
+        $dropoff->setBefore($this->endOfDay());
 
         // DELIVERY SETUP
         $delivery = new Delivery();
-        $delivery->setTasks([$pickup, $task]);
+        $delivery->setTasks([$pickup, $dropoff]);
         $delivery->setStore($this->store);
-
-        //TODO: Change this, methods are marked as deprecated
-        $delivery->setPickupRange($this->startOfDay(), $this->endOfDay());
-        $delivery->setDropoffRange($this->startOfDay(), $this->endOfDay());
 
         if (!$this->dryRun) {
             $this->entityManager->persist($edi);
             $this->entityManager->persist($pickup);
-            $this->entityManager->persist($task);
+            $this->entityManager->persist($dropoff);
             $this->entityManager->persist($delivery);
+            $this->createOrderForDelivery($delivery);
+            $this->entityManager->flush();
+        }
+    }
+
+    private function createOrderForDelivery(Delivery $delivery): void {
+        $this->deliveryOrderManager->createOrder($delivery, [
+            'pricingStrategy' => new CalculateUsingPricingRules(),
+            /* 'persist' => false, */
+            /* 'throwException' => false, */
+        ]);
+    }
+
+    private function importPickupTask(Point $point, EDIFACTMessage $edi): void {
+        if ($this->output->isVerbose()) {
+            $this->debugPoint($point);
+        }
+
+
+        // PICKUP SETUP
+        $pickup = $this->importFromPoint->import($point, $edi);
+
+        // DROPOFF SETUP
+        $dropoff = $this->importFromPoint
+            ->buildPickup2DropoffTask($this->HQAddress->clone(), $edi);
+
+        $pickup->setNext($dropoff);
+        $dropoff->setPrevious($pickup);
+
+        $pickup->setAfter($this->startOfDay());
+        $pickup->setBefore($this->endOfDay());
+        $dropoff->setAfter($this->startOfDay());
+        $dropoff->setBefore($this->endOfDay());
+
+        // DELIVERY SETUP
+        $delivery = new Delivery();
+        $delivery->setTasks([$pickup, $dropoff]);
+        $delivery->setStore($this->store);
+
+        if (!$this->dryRun) {
+            $this->entityManager->persist($edi);
+            $this->entityManager->persist($pickup);
+            $this->entityManager->persist($dropoff);
+            $this->entityManager->persist($delivery);
+            $this->createOrderForDelivery($delivery);
             $this->entityManager->flush();
         }
     }
@@ -357,10 +422,15 @@ class SyncTransportersCommand extends Command {
         return $carbon->endOfDay()->toDateTime();
     }
 
-    private function storeSCONTR(Point $task, string $filename): EDIFACTMessage
+    private function storeInboundEdi(Point $task, string $filename): EDIFACTMessage
     {
+        $messageType = match ($task->getType()) {
+            INOVERTMessageType::SCONTR => EDIFACTMessage::MESSAGE_TYPE_SCONTR,
+            INOVERTMessageType::PICKUP => EDIFACTMessage::MESSAGE_TYPE_PICKUP,
+            INOVERTMessageType::DISPOR => EDIFACTMessage::MESSAGE_TYPE_DISPOR,
+        };
         $edi = new EDIFACTMessage();
-        $edi->setMessageType(EDIFACTMessage::MESSAGE_TYPE_SCONTR);
+        $edi->setMessageType($messageType);
         $edi->setReference($task->getId());
         $edi->setTransporter($this->transporter);
         $edi->setDirection(EDIFACTMessage::DIRECTION_INBOUND);
@@ -373,29 +443,45 @@ class SyncTransportersCommand extends Command {
      */
     private function initTransporterSyncOptions(array $config = []): TransporterSyncOptions
     {
+        $attributes = array_diff_key(
+            $config,
+            array_flip(['uri', 'pushPath', 'pullPath'])
+        );
+
+        $pushPath = isset($config['pushPath']) ? str_replace('`', "'", $config['pushPath']) : null;
+        $pullPath = isset($config['pullPath']) ? str_replace('`', "'", $config['pullPath']) : null;
+
         // This is used for testing purposes
         if ($config['uri'] instanceof Filesystem) {
-            return new TransporterSyncOptions($config['uri'], [
-                'filemask' => $config['filemask'] ?? null
-            ]);
+            return new TransporterSyncOptions(
+                $config['uri'],
+                $attributes,
+                $pushPath,
+                $pullPath
+            );
         }
 
         try {
             $fs = TransporterHelpers::parseSyncOptions($config['uri']);
         } catch (\Exception $e) {
-            $this->logger->critical($e->getMessage(), ['transporter' => $this->transporter]);
+            $this->transporterLogger->critical($e->getMessage(), ['transporter' => $this->transporter]);
             throw $e;
         }
 
 
-        return new TransporterSyncOptions($fs, [
-            'filemask' => $config['filemask'] ?? null
-        ]);
+        return new TransporterSyncOptions(
+            $fs,
+            $attributes,
+            $pushPath,
+            $pullPath
+        );
     }
 
     private function debugPoint(Point $point): void {
         $this->output->writeln("Task ID: ".$point->getId()."\n");
-        $this->output->writeln("Recipient address: ".$point->getNamesAndAddresses(NameAndAddressType::RECIPIENT)[0]->getAddress());
+        $recipients = $point->getNamesAndAddresses(NameAndAddressType::RECIPIENT);
+        $recipientAddress = isset($recipients[0]) ? $recipients[0]->getAddress() : '(none)';
+        $this->output->writeln("Recipient address: " . $recipientAddress);
         $this->output->write("Times: ");
         $this->output->writeln(collect($point->getDates())->map(fn($date) => $date->getEvent()->name . ' -> ' . $date->getDate()->format('d/m/Y'))->join("\n"));
         $this->output->writeln("Number of packages: " . count($point->getPackages()));

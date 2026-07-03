@@ -22,7 +22,6 @@ use Ramsey\Uuid\Uuid;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Product\Factory\ProductVariantFactoryInterface;
 use Sylius\Component\Product\Model\ProductAttributeValue;
-use Sylius\Component\Product\Resolver\ProductVariantResolverInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Resource\Repository\RepositoryInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -146,6 +145,8 @@ class ProductType extends AbstractType
                 'entry_options' => [ 'label' => false ],
                 'mapped' => false,
                 'data' => $this->getSortedOptions($product, $options),
+                'allow_add' => true,
+                'allow_delete' => true,
             ]);
 
             if (null !== $product->getId()) {
@@ -204,16 +205,6 @@ class ProductType extends AbstractType
             $form = $event->getForm();
             $data = $event->getData();
 
-            // This is a delete button (used in list of products)
-            if (count($data) === 1 && isset($data['delete'])) {
-                foreach (array_keys($form->all()) as $key) {
-                    if ($key !== 'delete') {
-                        $form->remove($key);
-                    }
-                }
-                return;
-            }
-
             $product = $form->getData();
             $name = $data['name'];
 
@@ -261,17 +252,7 @@ class ProductType extends AbstractType
             }
 
             if ($form->has('options')) {
-                $opts = $form->get('options')->getData();
-                foreach ($opts as $opt) {
-                    $product->addOptionAt($opt['option'], $opt['position']);
-                    $product->setOptionEnabled($opt['option'], $opt['enabled']);
-                }
-            }
-
-            // This is a delete button (used in list of products)
-            if (count($form) === 1 && $form->has('delete')) {
-
-                return;
+                $this->postSubmitOptions($product, $form->get('options'));
             }
 
             $priceFormName = $this->taxIncl ? 'taxIncluded' : 'taxExcluded';
@@ -412,6 +393,26 @@ class ProductType extends AbstractType
         $variant->setBusinessRestaurantGroup($businessRestaurantGroupPrice->getBusinessRestaurantGroup());
 
         $product->addVariant($variant);
+    }
+
+    private function postSubmitOptions(Product $product, FormInterface $form)
+    {
+        // Index the array by option id
+        $data = array_column($form->getData(), null, 'option');
+
+        $qb = $this->entityManager->getRepository(ProductOption::class)
+            ->createQueryBuilder('opt')
+            ->andWhere('opt.id IN (:ids)')
+            ->setParameter('ids', array_keys($data));
+
+        // https://www.doctrine-project.org/projects/doctrine-orm/en/2.20/reference/batch-processing.html#iterating-large-results-for-data-processing
+        $query = $qb->getQuery();
+        foreach ($query->toIterable() as $option) {
+            $product->addOptionAt($option, (int) ($data[$option->getId()]['position'] ?? 0));
+            $product->setOptionEnabled($option, $data[$option->getId()]['enabled']);
+            // FIXME Doesn't work, produces duplicate key
+            // $this->entityManager->detach($option);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver)

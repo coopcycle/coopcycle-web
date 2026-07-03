@@ -68,15 +68,27 @@ security:
             pattern: ^/api/google_sign_in/login$
             security: false
 
+        api_rdc_webhook:
+            pattern:   ^/api/v1/webhooks/rdc$
+            methods: [ POST ]
+            stateless: true
+            security: false
+
         api_deliveries:
             pattern:   ^/api/deliveries
             methods: [ GET, POST, PUT, DELETE ]
             stateless: true
             bearer_token: true
-        
+
         api_deliveries_import_async:
             pattern:   ^api/deliveries/import_async$
             methods: [ POST ]
+            stateless: true
+            bearer_token: true
+
+        api_tasks:
+            pattern:   ^/api/tasks$
+            methods: [ GET ]
             stateless: true
             bearer_token: true
 
@@ -252,6 +264,12 @@ security:
             stateless: true
             bearer_token: true
 
+        api_orders:
+            pattern:   ^/api/orders$
+            methods: [ GET ]
+            stateless: true
+            bearer_token: true
+
         api_me:
             pattern:   ^/api/me$
             methods: [ GET ]
@@ -323,6 +341,10 @@ security:
             form_login:
                 provider: nucleos_userbundle
                 success_handler: coopcycle.web_success_handler
+            two_factor:
+                auth_form_path: 2fa_login
+                check_path: 2fa_login_check
+                success_handler: coopcycle.two_factor_success_handler
             oauth:
                 resource_owners:
                     facebook:             "/login/check-facebook"
@@ -340,6 +362,8 @@ security:
             lazy: true
 
     access_control:
+        - { path: ^/2fa$, role: IS_AUTHENTICATED_2FA_IN_PROGRESS }
+        - { path: ^/2fa_check$, role: IS_AUTHENTICATED_2FA_IN_PROGRESS }
         - { path: ^/login, role: PUBLIC_ACCESS }
         - { path: ^/register, role: PUBLIC_ACCESS }
         - { path: ^/resetting, role: PUBLIC_ACCESS }
@@ -363,6 +387,7 @@ security:
         - { path: ^/api/settings, roles: PUBLIC_ACCESS }
 
         - { path: ^/api/restaurants, roles: PUBLIC_ACCESS, methods: [ GET ] }
+        - { path: ^/api/shop_collections, roles: PUBLIC_ACCESS, methods: [ GET ] }
         - { path: ^/api/search/shops_products, roles: PUBLIC_ACCESS, methods: [ GET ] }
         - { path: ^/api/carts/session$, roles: PUBLIC_ACCESS, methods: [ POST ] }
         - { path: ^/api/orders/timing, roles: PUBLIC_ACCESS }
@@ -375,5 +400,8 @@ security:
         - { path: ^/api/webhooks, roles: [ ROLE_USER, ROLE_API_APP ] }
         - { path: ^/api/urbantz, roles: [ ROLE_USER, ROLE_API_APP ], methods: [ GET, POST, PUT, DELETE ] }
         - { path: ^/api/woopit, roles: [ ROLE_USER, ROLE_API_APP ] }
+        - { path: ^/api/v1/webhooks/rdc, roles: PUBLIC_ACCESS }
+
+        - { path: ^/api/products/[0-9]+/recommendations$, roles: PUBLIC_ACCESS, methods: [ GET ] }
 
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

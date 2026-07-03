@@ -77,7 +77,6 @@ class DeliveryEmbedType extends DeliveryType
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'with_tags' => false,
             'asap_timing' => true,
             // Disable CSRF protection to allow being used in iframes
             // @see https://github.com/coopcycle/coopcycle-web/issues/735

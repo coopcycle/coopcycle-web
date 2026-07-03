@@ -1,4 +1,4 @@
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/_modals";
+@import "bootstrap-sass/assets/stylesheets/bootstrap/_modals";
 
 @mixin modal-content-border() {
   border-radius: 8px;
@@ -66,6 +66,19 @@
 .modal-footer {
   @media (min-width: $screen-md-min) {
     padding: $modal-padding-md;
+  }
+}
+
+// ------------------ Receipt dialog ------------------
+
+dialog#order-receipt-modal {
+  padding: 0;
+  border: none;
+  min-width: 420px;
+  max-width: 90vw;
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.5);
   }
 }
 

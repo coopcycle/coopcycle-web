@@ -79,6 +79,7 @@ AppBundle\Entity\LocalBusiness:
       - '@pizza_topping'
       - '@gluten_intolerance'
     servesCuisine:
+      - '@cuisine_italian'
       - '@cuisine_asian'
     featured: true
     exclusive: true

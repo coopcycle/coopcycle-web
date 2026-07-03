@@ -6,6 +6,7 @@ use ACSEO\TypesenseBundle\Finder\CollectionFinderInterface;
 use ACSEO\TypesenseBundle\Finder\TypesenseQuery;
 use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Exception\ItemNotFoundException;
 use AppBundle\Annotation\HideSoftDeleted;
 use AppBundle\Api\Dto\ResourceApplication;
 use AppBundle\Controller\Utils\AccessControlTrait;
@@ -20,9 +21,9 @@ use AppBundle\Controller\Utils\StoreTrait;
 use AppBundle\Controller\Utils\UserTrait;
 use AppBundle\CubeJs\TokenFactory as CubeJsTokenFactory;
 use AppBundle\Entity\ApiApp;
-use AppBundle\Entity\Nonprofit;
 use AppBundle\Entity\Sylius\ArbitraryPrice;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\DeliveryForm;
 use AppBundle\Entity\DeliveryRepository;
@@ -33,6 +34,7 @@ use AppBundle\Entity\BusinessAccountInvitation;
 use AppBundle\Entity\Invitation;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\LocalBusinessRepository;
+use AppBundle\Entity\LocalBusiness\Collection as ShopCollection;
 use AppBundle\Entity\PackageSet;
 use AppBundle\Entity\Restaurant\Pledge;
 use AppBundle\Entity\BusinessRestaurantGroup;
@@ -45,6 +47,7 @@ use AppBundle\Entity\Sylius\TaxRate;
 use AppBundle\Entity\Tag;
 use AppBundle\Entity\Task;
 use AppBundle\Entity\TimeSlot;
+use AppBundle\Entity\UI\HomepageBlock;
 use AppBundle\Entity\Woopit\WoopitIntegration;
 use AppBundle\Entity\Zone;
 use AppBundle\Form\AttachToOrganizationType;
@@ -64,7 +67,7 @@ use AppBundle\Form\MaintenanceType;
 use AppBundle\Form\MercadopagoLivemodeType;
 use AppBundle\Form\Model\Promotion as PromotionDto;
 use AppBundle\Form\NewCustomOrderType;
-use AppBundle\Form\NonprofitType;
+use AppBundle\Form\OrderExportType;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\PackageSetType;
 use AppBundle\Form\PricingRuleSetType;
@@ -77,6 +80,7 @@ use AppBundle\Form\TimeSlotType;
 use AppBundle\Form\UpdateProfileType;
 use AppBundle\Form\UsersExportType;
 use AppBundle\Form\ZoneCollectionType;
+use AppBundle\Message\ExportOrders;
 use AppBundle\Pricing\PricingManager;
 use AppBundle\Serializer\ApplicationsNormalizer;
 use AppBundle\Service\ActivityManager;
@@ -112,6 +116,7 @@ use Redis;
 use Sylius\Bundle\OrderBundle\NumberAssigner\OrderNumberAssignerInterface;
 use Sylius\Bundle\PromotionBundle\Form\Type\PromotionCouponType;
 use Sylius\Component\Order\Repository\OrderRepositoryInterface;
+use Sylius\Component\Promotion\Checker\Eligibility\PromotionCouponEligibilityCheckerInterface;
 use Sylius\Component\Promotion\Factory\PromotionCouponFactoryInterface;
 use Sylius\Component\Promotion\Model\PromotionCouponInterface;
 use Sylius\Component\Promotion\Model\PromotionInterface;
@@ -125,13 +130,16 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bridge\Twig\Mime\BodyRenderer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -142,7 +150,9 @@ use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Vich\UploaderBundle\Templating\Helper\UploaderHelper;
 use Twig\Environment as TwigEnvironment;
 use phpcent\Client as CentrifugoClient;
-
+use AppBundle\Service\EmailTemplateManager;
+use NotFloran\MjmlBundle\Renderer\RendererInterface;
+use Symfony\Component\Mailer\MailerInterface;
 
 class AdminController extends AbstractController
 {
@@ -185,7 +195,7 @@ class AdminController extends AbstractController
             'reusable_packaging_new' => 'admin_restaurant_new_reusable_packaging',
             'mercadopago_oauth_redirect' => 'admin_restaurant_mercadopago_oauth_redirect',
             'mercadopago_oauth_remove' => 'admin_restaurant_mercadopago_oauth_remove',
-            'image_from_url' => 'admin_restaurant_image_from_url',
+            'image_from_pixabay' => 'admin_restaurant_image_from_pixabay',
         ];
     }
 
@@ -203,9 +213,9 @@ class AdminController extends AbstractController
         protected UploaderHelper $uploaderHelper,
         protected bool $optinExportUsersEnabled,
         protected CollectionFinderInterface $typesenseShopsFinder,
-        protected bool $adhocOrderEnabled,
         protected Filesystem $incidentImagesFilesystem,
         protected Filesystem $edifactFilesystem,
+        protected string $platformLocale,
         protected PricingRuleSetManager $pricingRuleSetManager,
         protected JWTTokenManagerInterface $JWTTokenManager,
         protected TimeSlotManager $timeSlotManager,
@@ -222,21 +232,60 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_dashboard');
     }
 
-    protected function getOrderList(Request $request, PaginatorInterface $paginator, $showCanceled = false)
+    protected function getOrderList(Request $request, Response $response,
+        PaginatorInterface $paginator,
+        IriConverterInterface $iriConverter,
+        $showCanceled = false)
     {
         if ($request->query->has('q')) {
             $qb = $this->orderRepository->search($request->query->get('q'));
         } else {
             $qb = $this->orderRepository
                 ->createOptimizedQueryBuilder('o');
+        }
+
+        if ($request->query->has('date')) {
+            $date = new \DateTimeImmutable($request->query->get('date'));
+            $qb
+                ->andWhere('OVERLAPS(o.shippingTimeRange, CAST(:range AS tsrange)) = TRUE')
+                ->setParameter('range', sprintf('[%s, %s]', $date->format('Y-m-d 00:00:00'), $date->format('Y-m-d 23:59:59')));
+        }
+
+        // TODO Don't allow state=cart
+        if ($request->query->has('state')) {
+            $state = $request->query->all('state');
+            $qb
+                ->andWhere('o.state IN (:state)')
+                ->setParameter('state', $state);
+        } else {
             $qb
                 ->andWhere('o.state != :state')
-                ->setParameter('state', OrderInterface::STATE_CART)
-                ->orderBy('LOWER(o.shippingTimeRange)', 'DESC')
-                ->setFirstResult(($request->query->getInt('p', 1) - 1) * self::ITEMS_PER_PAGE)
-                ->setMaxResults(self::ITEMS_PER_PAGE)
-                ;
+                ->setParameter('state', OrderInterface::STATE_CART);
         }
+
+        if ($request->query->has('owner')) {
+
+            $ownerInclude = $request->query->getBoolean('owner_include', true);
+
+            try {
+                $owner = $iriConverter->getResourceFromIri($request->query->get('owner'));
+                if ($owner instanceof Store) {
+                    $qb
+                        ->join(Delivery::class, 'd', Expr\Join::WITH, 'd.order = o.id')
+                        ->join(Store::class, 's', Expr\Join::WITH, 'd.store = s.id')
+                        ->andWhere($ownerInclude ? $qb->expr()->eq('s.id', ':store') : $qb->expr()->neq('s.id', ':store'))
+                        ->setParameter('store', $owner)
+                        ;
+                }
+                if ($owner instanceof LocalBusiness) {
+                    $qb = OrderRepository::addVendorClause($qb, 'o', $owner);
+                }
+            } catch (ItemNotFoundException $e) {
+                // Do nothing
+            }
+        }
+
+        $qb->addOrderBy('LOWER(o.shippingTimeRange)', 'DESC');
 
         if (!$showCanceled) {
             $qb
@@ -244,23 +293,133 @@ class AdminController extends AbstractController
                 ->setParameter('state_cancelled', OrderInterface::STATE_CANCELLED);
         }
 
+        $perPage = self::ITEMS_PER_PAGE;
+        if ($request->query->has('per_page')) {
+            $perPage = $request->query->getInt('per_page');
+            $response->headers->setCookie(new Cookie('__per_page', $perPage));
+        } elseif ($request->cookies->has('__per_page')) {
+            $perPage = $request->cookies->getInt('__per_page');
+        }
+
         return $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
-            self::ITEMS_PER_PAGE,
+            $perPage,
             [
                 PaginatorInterface::DISTINCT => false,
             ]
         );
     }
 
+    public function orderListAction(Request $request,
+        TranslatorInterface $translator,
+        PaginatorInterface $paginator,
+        CubeJsTokenFactory $tokenFactory,
+        MessageBusInterface $messageBus,
+        IriConverterInterface $iriConverter
+    )
+    {
+        $response = new Response();
+
+        $showCanceled = false;
+        if ($request->query->has('show_canceled')) {
+            $showCanceled = $request->query->getBoolean('show_canceled');
+            $response->headers->setCookie(new Cookie('__show_canceled', $showCanceled ? 'on' : 'off'));
+        } elseif ($request->cookies->has('__show_canceled')) {
+            $showCanceled = $request->cookies->getBoolean('__show_canceled');
+        }
+
+        $filters = [];
+
+        if ($request->query->has('date')) {
+            $filters['date'] = $request->query->get('date');
+        }
+
+        if ($request->query->has('state')) {
+            $filters['state'] = $request->query->all('state');
+        }
+
+        if ($request->query->has('owner')) {
+            try {
+                $owner = $iriConverter->getResourceFromIri($request->query->get('owner'));
+                $filters['owner'] = [
+                    'label' => $owner->getName(),
+                    'value' => $request->query->get('owner')
+                ];
+            } catch (ItemNotFoundException $e) {
+                // Do nothing
+            }
+        }
+
+        if ($request->query->has('owner_include')) {
+            $filters['owner_include'] = $request->query->getBoolean('owner_include');
+        }
+
+        $parameters = [
+            'orders' => $this->getOrderList($request, $response, $paginator, $iriConverter, $showCanceled),
+            'routes' => $request->attributes->get('routes'),
+            'show_canceled' => $showCanceled,
+            'filters' => $filters,
+        ];
+
+        if ($this->isGranted('ROLE_ADMIN')) {
+
+            $orderExportForm = $this->createForm(OrderExportType::class);
+            $orderExportForm->handleRequest($request);
+
+            if ($orderExportForm->isSubmitted() && $orderExportForm->isValid()) {
+
+                $start = $orderExportForm->get('start')->getData();
+                $end = $orderExportForm->get('end')->getData();
+
+                $withMessenger = $orderExportForm->has('messenger') && $orderExportForm->get('messenger')->getData();
+
+                //HERE
+                $envelope = $messageBus->dispatch(new ExportOrders(
+                    $start,
+                    $end,
+                    $withMessenger
+                ));
+
+                /** @var HandledStamp $handledStamp */
+                $handledStamp = $envelope->last(HandledStamp::class);
+                $stats = $handledStamp->getResult();
+
+                if (is_null($stats)) {
+                    $this->addFlash('error', $translator->trans('order.export.empty'));
+
+                    return $this->redirectToRoute($request->attributes->get('_route'));
+                }
+
+                $filename = sprintf('coopcycle-orders-%s-%s.csv', $start->format('Y-m-d'), $end->format('Y-m-d'));
+
+                $response = new Response($stats);
+                $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
+                    ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+                    $filename
+                ));
+
+                return $response;
+            }
+
+            $parameters['order_export_form'] = $orderExportForm->createView();
+            $parameters['cube_token'] = $tokenFactory->createToken();
+        }
+
+        return $this->render($request->attributes->get('template'), $this->auth($parameters), $response);
+    }
+
     #[Route(path: '/admin/orders/search', name: 'admin_orders_search')]
     public function searchOrdersAction(
         Request $request,
-        OrderRepository $orderRepository
+        OrderRepository $orderRepository,
+        \AppBundle\Utils\TsRangeFormatter $tsRangeFormatter,
     )
     {
         $qb = $orderRepository->search($request->query->get('q'));
+
+        $qb->andWhere('o.state != :state')
+            ->setParameter('state', OrderInterface::STATE_CART);
 
         $qb->setMaxResults(10);
 
@@ -268,21 +427,15 @@ class AdminController extends AbstractController
 
         $data = [];
         foreach ($results as $order) {
-
-            if (null !== $order->getCustomer()) {
-                $name = sprintf(
-                    '%s (%s)',
-                    $order->getNumber(),
-                    $order->getCustomer()->getEmailCanonical()
-                );
-            } else {
-                $name = $order->getNumber();
-            }
-
+            $range = $order->getShippingTimeRange();
             $data[] = [
-                'id' => $order->getId(),
-                'name' => $name,
-                'path' => $this->generateUrl('admin_order', ['id' => $order->getId()]),
+                'id'       => $order->getId(),
+                'number'   => $order->getNumber(),
+                'email'    => $order->getCustomer()?->getEmailCanonical(),
+                'fullName' => $order->getCustomer()?->getFullName() ?: null,
+                'total'    => $order->getTotal(),
+                'date'     => $range ? $tsRangeFormatter->formatShort($range) : null,
+                'path'     => $this->generateUrl('admin_order', ['id' => $order->getId()]),
             ];
         }
 
@@ -332,33 +485,6 @@ class AdminController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             if ($form->getClickedButton()) {
-
-                if ('refund' === $form->getClickedButton()->getName()) {
-                    foreach ($form->get('payments') as $paymentForm) {
-                        if (!$paymentForm->has('refund')) {
-                            continue;
-                        }
-                        /** @var \Symfony\Component\Form\ClickableInterface $refundButton */
-                        $refundButton = $paymentForm->get('refund');
-                        if ($refundButton->isClicked()) {
-                            $payment = $paymentForm->getData();
-                            $amount = $paymentForm->get('amount')->getData();
-                            $liableParty = $paymentForm->get('liable')->getData();
-                            $comments = $paymentForm->get('comments')->getData();
-
-                            $orderManager->refundPayment($payment, $amount, $liableParty, $comments);
-
-                            $this->entityManager->flush();
-
-                            $this->addFlash(
-                                'notice',
-                                $this->translator->trans('orders.payment_refunded')
-                            );
-
-                            return $this->redirectToRoute('admin_order', ['id' => $id]);
-                        }
-                    }
-                }
 
                 if ('accept' === $form->getClickedButton()->getName()) {
                     $orderManager->accept($order);
@@ -742,27 +868,6 @@ class AdminController extends AbstractController
         }
 
         return $this->userTracking($user, 'admin');
-    }
-
-    protected function getRestaurantList(Request $request)
-    {
-        $repository = $this->entityManager->getRepository(LocalBusiness::class);
-
-        $countAll = $repository
-            ->createQueryBuilder('r')->select('COUNT(r)')
-            ->getQuery()->getSingleScalarResult();
-
-        $pages = ceil($countAll / self::ITEMS_PER_PAGE);
-        $page = $request->query->getInt('p', 1);
-
-        $offset = self::ITEMS_PER_PAGE * ($page - 1);
-
-        $restaurants = $repository->findBy([], [
-            'enabled' => 'DESC',
-            'name' => 'ASC',
-        ], self::ITEMS_PER_PAGE, $offset);
-
-        return [ $restaurants, $pages, $page ];
     }
 
     #[Route(path: '/admin/deliveries', name: 'admin_deliveries')]
@@ -1729,8 +1834,7 @@ class AdminController extends AbstractController
 
         $qb = $this->entityManager
             ->getRepository(ApiApp::class)
-            ->createQueryBuilder('a')
-            ->andWhere('a.store IS NOT NULL');
+            ->createQueryBuilder('a');
 
         $apiApps = $qb->getQuery()->getResult();
 
@@ -1886,18 +1990,28 @@ class AdminController extends AbstractController
     }
 
     #[Route(path: '/admin/promotions', name: 'admin_promotions')]
-    public function promotionsAction(EntityManagerInterface $entityManager)
+    public function promotionsAction(EntityManagerInterface $entityManager,
+        PromotionCouponEligibilityCheckerInterface $promotionCouponExpirationChecker)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         $qb = $this->entityManager->getRepository(PromotionCouponInterface::class)->createQueryBuilder('c');
-        $qb->andWhere('c.expiresAt IS NULL OR c.expiresAt > :date');
-        $qb->setParameter('date', new \DateTime());
 
         $promotionCoupons = $qb->getQuery()->getResult();
 
+        $ongoing = $past = [];
+
+        foreach ($promotionCoupons as $promotionCoupon) {
+            if (!$promotionCouponExpirationChecker->isEligible(new Order(), $promotionCoupon)) {
+                $past[] = $promotionCoupon;
+            } else {
+                $ongoing[] = $promotionCoupon;
+            }
+        }
+
         return $this->render('admin/promotions.html.twig', [
-            'promotion_coupons' => $promotionCoupons,
+            'ongoing' => $ongoing,
+            'past' => $past,
         ]);
     }
 
@@ -1941,6 +2055,7 @@ class AdminController extends AbstractController
 
         $promotion = new PromotionDto();
 
+        $order = null;
         if ($request->query->has('order')) {
             $order = $this->entityManager->getRepository(Order::class)->find($request->query->has('order'));
             /** @var CustomerInterface */
@@ -1968,9 +2083,10 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_promotions');
         }
 
-        return $this->render('admin/promotion_credit_note.html.twig', [
+        return $this->render('admin/promotion_credit_note.html.twig', $this->auth([
             'form' => $form->createView(),
-        ]);
+            'order' => $order,
+        ]));
     }
 
     #[Route(path: '/admin/promotions/coupons/new', name: 'admin_new_promotion_coupon_from_template')]
@@ -2374,44 +2490,6 @@ class AdminController extends AbstractController
         return $this->renderPackageSetForm($request, $packageSet, $objectManager);
     }
 
-    public function newOrderAction(
-        Request $request,
-        EntityManagerInterface $objectManager,
-        OrderFactory $orderFactory,
-        OrderNumberAssignerInterface $orderNumberAssigner,
-        PricingManager $pricingManager,
-    )
-    {
-        $delivery = new Delivery();
-        $form = $this->createForm(NewCustomOrderType::class, $delivery);
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $delivery = $form->getData();
-
-            $variantName = $form->get('variantName')->getData();
-            $variantPrice = $form->get('variantPrice')->getData();
-
-            $order = $orderFactory->createForDelivery($delivery);
-            $pricingManager->processDeliveryOrder($order, [$pricingManager->getCustomProductVariant($delivery, new ArbitraryPrice($variantName, $variantPrice))]);
-
-            $order->setState(OrderInterface::STATE_ACCEPTED);
-
-            $objectManager->persist($order);
-            $objectManager->flush();
-
-            $orderNumberAssigner->assignNumber($order);
-
-            $objectManager->flush();
-
-            return $this->redirectToRoute('admin_order', [ 'id' => $order->getId() ]);
-        }
-
-        return $this->render('admin/new_order.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
     public function taskReceiptAction($id, TwigEnvironment $twig)
     {
         $task = $this->entityManager->getRepository(Task::class)->find($id);
@@ -2460,6 +2538,233 @@ class AdminController extends AbstractController
         return $this->render('admin/customize.html.twig', [
             'form' => $form->createView(),
         ]);
+    }
+
+    public function customizeHomepageAction(TranslatorInterface $translator, Request $request)
+    {
+        $isDemo = $this->getParameter('is_demo');
+
+        if ($isDemo) {
+            throw $this->createNotFoundException();
+        }
+
+        $blocks = $this->entityManager->getRepository(HomepageBlock::class)->findAll();
+
+        $cuisines = $this->entityManager->getRepository(LocalBusiness::class)->findCuisinesByFilters();
+        $shopTypes = array_map(fn ($t) => LocalBusiness::getKeyForType($t), array_keys($this->entityManager->getRepository(LocalBusiness::class)->countByType()));
+
+        $deliveryForms = $this->entityManager->getRepository(DeliveryForm::class)->findAll();
+
+        $shopCollections = $this->entityManager->getRepository(ShopCollection::class)->findAll();
+
+        return $this->render('admin/customize_homepage.html.twig', $this->auth([
+            'blocks' => $blocks,
+            'cuisines' => array_map(function ($c) use ($translator) {
+                return [
+                    'label' => $translator->trans($c->getName(), [], 'cuisines'),
+                    'value' => $c->getName(),
+                ];
+            }, $cuisines),
+            'shop_types' => $shopTypes,
+            'delivery_forms' => $deliveryForms,
+            'shop_collections' => $shopCollections,
+            'edenred_enabled' => $this->getParameter('edenred_enabled'),
+        ]));
+    }
+
+    public function customizeEmailsAction(Request $request, EmailTemplateManager $emailTemplateManager)
+    {
+        $isDemo = $this->getParameter('is_demo');
+
+        if ($isDemo) {
+            throw $this->createNotFoundException();
+        }
+
+        $supportedLocales = $emailTemplateManager->getSupportedLocales();
+
+        // Put the platform's primary locale first so it's the default tab
+        $platformLocale = $this->platformLocale;
+        if (isset($supportedLocales[$platformLocale])) {
+            $supportedLocales = [$platformLocale => $supportedLocales[$platformLocale]]
+                + $supportedLocales;
+        }
+
+        // Build email type metadata for every supported locale so the JS knows
+        // which locale×type combinations already have a custom template.
+        $emailTypes = [];
+        foreach ($supportedLocales as $locale => $localeLabel) {
+            foreach ($emailTemplateManager->getEmailTypes($locale) as $type => $meta) {
+                $emailTypes[$type]['label_by_locale'][$locale] = $meta['label'];
+                $emailTypes[$type]['variables']                = $meta['variables'];
+                $emailTypes[$type]['slots']                    = $meta['slots'];
+                $emailTypes[$type]['folder']                   = $meta['folder'];
+                $emailTypes[$type]['is_custom_by_locale'][$locale] =
+                    $emailTemplateManager->getCustomTemplate($type, $locale) !== null;
+            }
+        }
+
+        $layoutIsCustomByLocale = [];
+        foreach ($supportedLocales as $locale => $localeLabel) {
+            $layoutIsCustomByLocale[$locale] = $emailTemplateManager->getCustomLayout($locale) !== null;
+        }
+
+        return $this->render('admin/customize_emails.html.twig', $this->auth([
+            'email_types'                => $emailTypes,
+            'supported_locales'          => $supportedLocales,
+            'layout_is_custom_by_locale' => $layoutIsCustomByLocale,
+            'theme_palette'              => $emailTemplateManager->getThemePalette(),
+        ]));
+    }
+
+    /**
+     * GET/POST/DELETE /admin/customize/emails/layout
+     *
+     * Manages the shared layout template that wraps all per-type fragments.
+     */
+    public function emailLayoutAction(Request $request, EmailTemplateManager $emailTemplateManager): JsonResponse
+    {
+        $isDemo = $this->getParameter('is_demo');
+
+        if ($isDemo) {
+            return $this->json(['error' => 'Not available in demo'], 403);
+        }
+
+        $locale = $request->query->get('locale', 'en');
+        if (!$emailTemplateManager->isValidLocale($locale)) {
+            $locale = 'en';
+        }
+
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            $mjml = trim($data['mjml'] ?? '');
+
+            if (empty($mjml)) {
+                return $this->json(['error' => 'Empty template'], 400);
+            }
+
+            $emailTemplateManager->saveLayout($locale, $mjml);
+
+            return $this->json(['success' => true, 'is_custom' => true]);
+        }
+
+        if ($request->isMethod('DELETE')) {
+            $emailTemplateManager->deleteLayout($locale);
+
+            return $this->json([
+                'success'   => true,
+                'is_custom' => false,
+                'mjml'      => $emailTemplateManager->getDefaultLayout(),
+            ]);
+        }
+
+        // GET: return the layout MJML (custom or default)
+        $custom = $emailTemplateManager->getCustomLayout($locale);
+        $mjml = $custom ?? $emailTemplateManager->getDefaultLayout();
+
+        return $this->json([
+            'mjml'      => $emailTemplateManager->forEditor($mjml),
+            'is_custom' => $custom !== null,
+        ]);
+    }
+
+    /**
+     * GET/POST/DELETE /admin/customize/emails/{type}
+     *
+     * Manages per-email-type fragments (inner mj-section blocks only, no wrapper).
+     * GET returns a GrapeJS-ready shell (fragment wrapped in layout head + body).
+     * POST stores the raw fragment sent by the JS (body children only).
+     */
+    public function emailTemplateAction(string $type, Request $request, EmailTemplateManager $emailTemplateManager): JsonResponse
+    {
+        $isDemo = $this->getParameter('is_demo');
+
+        if ($isDemo) {
+            return $this->json(['error' => 'Not available in demo'], 403);
+        }
+
+        if (!$emailTemplateManager->isValidType($type)) {
+            return $this->json(['error' => 'Unknown email type'], 404);
+        }
+
+        $locale = $request->query->get('locale', 'en');
+        if (!$emailTemplateManager->isValidLocale($locale)) {
+            $locale = 'en';
+        }
+
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            $mjml = trim($data['mjml'] ?? '');
+
+            if (empty($mjml)) {
+                return $this->json(['error' => 'Empty template'], 400);
+            }
+
+            // Normalise: if the editor sent a full MJML document (e.g. legacy),
+            // extract only the body content so we always store a pure fragment.
+            $emailTemplateManager->saveTemplate($type, $emailTemplateManager->ensureFragment($mjml), $locale);
+
+            return $this->json(['success' => true]);
+        }
+
+        if ($request->isMethod('DELETE')) {
+            $emailTemplateManager->deleteTemplate($type, $locale);
+
+            ['mjml' => $mjml, 'is_custom' => $isCustom] = $emailTemplateManager->buildEditorMjml($type, $locale);
+            return $this->json(['success' => true, 'is_custom' => false, 'mjml' => $mjml]);
+        }
+
+        // GET: return the full stitched MJML (layout + fragment) for GrapeJS
+        ['mjml' => $mjml, 'is_custom' => $isCustom] = $emailTemplateManager->buildEditorMjml($type, $locale);
+
+        return $this->json(['mjml' => $mjml, 'is_custom' => $isCustom]);
+    }
+
+    /**
+     * POST /admin/customize/emails/{type}/send-test
+     *
+     * Renders the given email type with synthetic placeholder data and sends it
+     * to the address supplied in the request body {"email": "..."}.
+     */
+    public function emailSendTestAction(
+        string $type,
+        Request $request,
+        EmailTemplateManager $emailTemplateManager,
+        RendererInterface $mjml,
+        EmailManager $emailManager,
+        MailerInterface $mailer
+    ): JsonResponse {
+        if ($this->getParameter('is_demo')) {
+            return $this->json(['error' => 'Not available in demo'], 403);
+        }
+
+        if (!$emailTemplateManager->isValidType($type)) {
+            return $this->json(['error' => 'Unknown email type'], 404);
+        }
+
+        $locale = $request->query->get('locale', 'en');
+        if (!$emailTemplateManager->isValidLocale($locale)) {
+            $locale = 'en';
+        }
+
+        $data  = json_decode($request->getContent(), true);
+        $email = trim($data['email'] ?? '');
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return $this->json(['error' => 'Invalid email address'], 400);
+        }
+
+        try {
+            $mjmlContent = $emailTemplateManager->renderTestTemplate($type, $locale);
+            $html        = $mjml->render($mjmlContent);
+            $label       = $emailTemplateManager->getEmailTypes($locale)[$type]['label'] ?? $type;
+            $message     = $emailManager->createHtmlMessage(sprintf('[Test] %s', $label), $html);
+            $message->to($email);
+            $mailer->send($message);
+
+            return $this->json(['success' => true]);
+        } catch (\Exception $e) {
+            return $this->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     private function handleHubForm(Hub $hub, Request $request)
@@ -2743,7 +3048,7 @@ class AdminController extends AbstractController
 
 
     #[HideSoftDeleted]
-    public function restaurantListAction(Request $request, SettingsManager $settingsManager)
+    public function restaurantListAction(Request $request, SettingsManager $settingsManager, PaginatorInterface $paginator)
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -2790,13 +3095,20 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_restaurants');
         }
 
-        [ $restaurants, $pages, $page ] = $this->getRestaurantList($request);
+        $qb = $this->entityManager->getRepository(LocalBusiness::class)->createQueryBuilder('r');
+        $qb
+            ->addOrderBy('r.enabled', 'DESC')
+            ->addOrderBy('r.name', 'ASC');
+
+        $restaurants = $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            self::ITEMS_PER_PAGE
+        );
 
         return $this->render($request->attributes->get('template'), $this->auth([
             'layout' => $request->attributes->get('layout'),
             'restaurants' => $restaurants,
-            'pages' => $pages,
-            'page' => $page,
             'dashboard_route' => $routes['dashboard'],
             'menu_taxon_route' => $routes['menu_taxon'],
             'menu_taxons_route' => $routes['menu_taxons'],
@@ -2804,89 +3116,9 @@ class AdminController extends AbstractController
             'products_route' => $routes['products'],
             'pledge_count' => $pledgeCount,
             'pledge_form' => $pledgeForm->createView(),
-            'nonprofits_enabled' => $this->getParameter('nonprofits_enabled'),
         ]));
     }
 
-
-    /**
-     * @return RedirectResponse|Response
-     */
-    private function handleNonprofitForm(Nonprofit $nonprofit, Request $request)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        $form = $this->createForm(NonprofitType::class, $nonprofit);
-
-        if ($request->isMethod('POST') && $form->handleRequest($request)->isValid()) {
-            $this->entityManager->persist($nonprofit);
-            $this->entityManager->flush();
-
-            $this->addFlash(
-                'notice',
-                $this->translator->trans('global.changesSaved')
-            );
-
-            return $this->redirectToRoute('admin_nonprofits');
-        }
-
-        return $this->render('admin/nonprofit.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
-     * Handle POST request from nonprofit form
-     *
-     * @return RedirectResponse|Response
-     */
-    public function newNonprofitAction(Request $request)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        $nonprofit = new Nonprofit();
-
-        return $this->handleNonprofitForm($nonprofit, $request);
-    }
-
-    /**
-     * Build and return the form of a specific nonprofit
-     *
-     * @return RedirectResponse|Response
-     */
-    public function nonprofitAction(int $id, Request $request)
-    {
-        $nonprofit = $this->entityManager->getRepository(Nonprofit::class)->find($id);
-
-        if (!$nonprofit) {
-            throw $this->createNotFoundException(sprintf('Nonprofit #%d does not exist', $id));
-        }
-
-        return $this->handleNonprofitForm($nonprofit, $request);
-    }
-
-    public function deleteNonprofitAction(int $id, Request $request): RedirectResponse
-    {
-        $nonprofit = $this->entityManager->getRepository(Nonprofit::class)->find($id);
-        $this->entityManager->remove($nonprofit);
-        $this->entityManager->flush();
-
-        return $this->redirectToRoute('admin_nonprofits');
-    }
-
-    /**
-     * Build the nonprofit list page
-     */
-    public function nonProfitsActionListAction(
-        Request $request
-    ): Response
-    {
-        $nonprofits = $this->entityManager->getRepository(Nonprofit::class)->findAll();
-
-        return $this->render('admin/nonprofits.html.twig', [
-            'nonprofits' => $nonprofits
-        ]);
-    }
 
     public function metricsAction(
         LocalBusinessRepository $localBusinessRepository,
@@ -2920,21 +3152,47 @@ class AdminController extends AbstractController
         return $this->render('admin/warehouses.html.twig', $this->auth([]));
     }
 
-    #[Route(path: '/admin/cube', name: 'admin_cube')]
-    public function cubeAction(CubeJsTokenFactory $tokenFactory)
-    {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
-        return $this->render('admin/cube.html.twig', [
-            'cube_token' => $tokenFactory->createToken(),
-        ]);
-    }
-
     #[Route(path: '/admin/invoicing', name: 'admin_invoicing')]
     public function invoicingAction()
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         return $this->render('admin/invoicing.html.twig', $this->auth([]));
+    }
+
+    #[Route(path: '/admin/shop-collections/preview/{component}', name: 'admin_shop_collection_preview')]
+    public function shopCollectionPreviewAction($component,
+        EntityManagerInterface $entityManager,
+        TranslatorInterface $translator,
+        Request $request)
+    {
+        $componentNames = ['zerowaste' => 'ZeroWaste'];
+        $componentName = $componentNames[$component] ?? ucfirst($component);
+
+        return $this->render('admin/shop_collection_preview.html.twig', [
+            'component' => 'ShopCollection:'.$componentName,
+            'props' => $request->query->all(),
+        ]);
+    }
+
+    public function customizeShopCollectionsAction(EntityManagerInterface $entityManager)
+    {
+        $collections = $entityManager->getRepository(ShopCollection::class)->findAll();
+        $shops = $entityManager->getRepository(LocalBusiness::class)->findAll();
+
+        return $this->render('admin/customize_shop_collection.html.twig', $this->auth([
+            'collections' => $collections,
+            'shops' => $shops,
+        ]));
+    }
+
+    #[Route(path: '/admin/cuisine-icons', name: 'admin_cuisine_icons')]
+    public function cuisineIconsAction(EntityManagerInterface $entityManager)
+    {
+        $cuisines = $entityManager->getRepository(Cuisine::class)->findAll();
+
+        return $this->render('admin/cuisine_icons.html.twig', [
+            'cuisines' => $cuisines,
+        ]);
     }
 }

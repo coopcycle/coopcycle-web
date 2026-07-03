@@ -7,7 +7,7 @@ import { DeleteOutlined } from '@ant-design/icons'
 import moment from 'moment'
 import { Formik } from 'formik'
 import { useTranslation } from 'react-i18next'
-import classNames from 'classnames'
+import clsx from 'clsx'
 import Popconfirm from 'antd/lib/popconfirm'
 
 import TimeRange from '../../utils/TimeRange'
@@ -148,7 +148,7 @@ export default function ModalContent() {
               )}
             </div>
             <div
-              className={classNames({
+              className={clsx({
                 'd-flex': true,
                 'p-4': true,
                 'justify-content-end': !isSaved,

@@ -131,16 +131,12 @@ class ProfileController extends AbstractController
 
         $user = $this->getUser();
 
-        $editForm = $this->createForm(UpdateProfileType::class, $user);
+        $editForm = $this->createForm(UpdateProfileType::class, $user, ['with_admin_controls' => false]);
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             if ($editForm->getClickedButton() && 'loopeatDisconnect' === $editForm->getClickedButton()->getName()) {
                 $user->getCustomer()->clearLoopEatCredentials();
-            }
-
-            if ($editForm->getClickedButton() && 'dabbaDisconnect' === $editForm->getClickedButton()->getName()) {
-                $user->getCustomer()->clearDabbaCredentials();
             }
 
             $userManager->updateUser($user);
@@ -156,7 +152,7 @@ class ProfileController extends AbstractController
         )));
     }
 
-    protected function getOrderList(Request $request, PaginatorInterface $paginator, $showCanceled = false)
+    protected function getOrderList(Request $request, PaginatorInterface $paginator)
     {
         Assert::isInstanceOf($this->orderRepository, EntityRepository::class);
 
@@ -176,6 +172,16 @@ class ProfileController extends AbstractController
                 PaginatorInterface::DISTINCT => false,
             ]
         );
+    }
+
+    public function orderListAction(Request $request, PaginatorInterface $paginator)
+    {
+        $parameters = [
+            'orders' => $this->getOrderList($request, $paginator),
+            'routes' => $request->attributes->get('routes'),
+        ];
+
+        return $this->render($request->attributes->get('template'), $this->auth($parameters));
     }
 
     public function orderAction($id, Request $request,

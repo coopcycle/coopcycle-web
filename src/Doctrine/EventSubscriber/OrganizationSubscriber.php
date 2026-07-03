@@ -7,11 +7,12 @@ use AppBundle\Entity\Organization;
 use AppBundle\Entity\Store;
 use AppBundle\Entity\Task;
 use AppBundle\Security\TokenStoreExtractor;
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
 
-class OrganizationSubscriber implements EventSubscriber
+#[AsDoctrineListener(event: Events::prePersist, connection: 'default')]
+class OrganizationSubscriber
 {
     private $storeExtractor;
 
@@ -19,13 +20,6 @@ class OrganizationSubscriber implements EventSubscriber
         TokenStoreExtractor $storeExtractor)
     {
         $this->storeExtractor = $storeExtractor;
-    }
-
-    public function getSubscribedEvents()
-    {
-        return array(
-            Events::prePersist,
-        );
     }
 
     /**

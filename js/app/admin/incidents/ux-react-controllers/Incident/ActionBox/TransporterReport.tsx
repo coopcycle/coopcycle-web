@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import {
   Alert,
   Select,
@@ -103,7 +103,7 @@ function ImagesSelector({ images, onChange }) {
                   height="128px"
                   src={image.thumbnail}
                   preview={{ src: image.full }}
-                  className={classNames('p-2, border', {
+                  className={clsx('p-2, border', {
                     'border-primary': selected,
                     'border-default': !selected,
                   })}

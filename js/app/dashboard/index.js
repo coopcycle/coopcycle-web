@@ -29,7 +29,6 @@ const dashboardEl = document.getElementById('dashboard')
 const date = moment(dashboardEl.dataset.date)
 const jwtToken = dashboardEl.dataset.jwt
 
-
 async function start(tasksRequest, tasksListsRequest, toursRequest) {
 
   let allTasks

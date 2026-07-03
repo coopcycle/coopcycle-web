@@ -11,7 +11,6 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Api\Dto\CartItemInput;
-use AppBundle\Api\State\CartItemProcessor;
 use AppBundle\Api\State\DeleteCartItemProcessor;
 use AppBundle\Api\State\UpdateCartItemProcessor;
 use AppBundle\Entity\ReusablePackaging;
@@ -51,26 +50,6 @@ use Sylius\Component\Order\Model\OrderItemInterface as BaseOrderItemInterface;
         'id' => new Link(fromClass: self::class),
     ],
     normalizationContext: ['groups' => ['order']],
-)]
-// https://github.com/api-platform/api-platform/issues/571#issuecomment-1473665701
-#[ApiResource(
-    uriTemplate: '/orders/{id}/items',
-    operations: [
-        new Post(
-            openapiContext: ['summary' => 'Adds items to a Order resource.'],
-            normalizationContext: ['groups' => ['cart']],
-            denormalizationContext: ['groups' => ['cart']],
-            validationContext: ['groups' => ['cart']],
-            input: CartItemInput::class,
-            read: false,
-            // FIXME Implement security
-            // security: 'is_granted(\'edit\', object)',
-            processor: CartItemProcessor::class
-        )
-    ],
-    uriVariables: [
-        'id' => new Link(fromClass: Order::class, fromProperty: 'items')
-    ]
 )]
 class OrderItem extends BaseOrderItem implements OrderItemInterface
 {

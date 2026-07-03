@@ -26,9 +26,9 @@ class TaskManager
         private MessageBusInterface $commandBus
     ) {}
 
-    public function markAsDone(Task $task, $notes = null, $contactName = null)
+    public function markAsDone(Task $task, $notes = null, $contactName = null, bool $calculateCO2 = true)
     {
-        $this->commandBus->dispatch(new MarkAsDone($task, $notes, $contactName));
+        $this->commandBus->dispatch(new MarkAsDone($task, $notes, $contactName, $calculateCO2));
     }
 
     public function cancel(Task $task, bool $recalculatePrice = false)

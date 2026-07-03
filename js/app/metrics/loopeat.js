@@ -13,7 +13,7 @@ const rootElement = document.getElementById('cubejs');
 
 if (rootElement) {
 
-  const cubejsApi = cubejs(
+  const cubeApi = cubejs(
     rootElement.dataset.token,
     { apiUrl: rootElement.dataset.apiUrl }
   );
@@ -44,7 +44,7 @@ if (rootElement) {
     return (
       <QueryRenderer
         query={JSON.parse(rootElement.dataset.query)}
-        cubejsApi={cubejsApi}
+        cubeApi={cubeApi}
         resetResultSetOnChange={false}
         render={(props) => renderChart({
           ...props,

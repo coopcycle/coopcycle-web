@@ -6,7 +6,7 @@ const ProductOptionsModalProvider = (props) => {
   const init = () => {
     const options = props.options.map(option => ({
       ...option,
-      values: option.values.map(optionValue => ({
+      hasMenuItem: option.hasMenuItem.map(optionValue => ({
         ...optionValue,
         quantity: 0,
       })),

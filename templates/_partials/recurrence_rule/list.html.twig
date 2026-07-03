@@ -1,12 +1,13 @@
 {% if items|length > 0 %}
   <table class="table table-condensed">
     <thead>
-    <th>{{ 'delivery.table.heading.summary'|trans }}</th>
-    <th>{% trans %}basics.price{% endtrans %}</th>
-    <th>{{ 'recurrence_rules.table.repeat'|trans }}</th>
-    <th>{{ 'recurrence_rules.table.generate_orders'|trans }}</th>
-    <th>{{ 'recurrence_rules.table.created_at'|trans }}</th>
-    <th></th>
+      <th></th>
+      <th>{{ 'delivery.table.heading.summary'|trans }}</th>
+      <th>{% trans %}basics.price{% endtrans %}</th>
+      <th>{{ 'recurrence_rules.table.repeat'|trans }}</th>
+      <th>{{ 'recurrence_rules.table.generate_orders'|trans }}</th>
+      <th>{{ 'recurrence_rules.table.created_at'|trans }}</th>
+      <th></th>
     </thead>
     <tbody>
     {% for item in items %}
@@ -16,6 +17,15 @@
       {% set templateOrder = item.templateOrder %}
 
       <tr data-testid="recurrence-list-item">
+        <td width="1%">
+          {% if not item.isLegacy %}
+            <form method="post" action="{{ path(routes.toggle_pause, { storeId: store.id, recurrenceRuleId: recurrenceRule.id }) }}">
+              <button type="submit" class="btn btn-sm btn-default" title="{{ (recurrenceRule.isPaused() ? 'basics.resume' : 'basics.pause')|trans }}">
+                {{ ux_icon(recurrenceRule.isPaused() ? 'lucide:play' : 'lucide:pause', { width: 18, height: 18 }) }}
+              </button>
+            </form>
+          {% endif %}
+        </td>
         <td>
           <ul class="list-unstyled">
             {% for task in templateTasks %}
@@ -38,7 +48,7 @@
             {% endif %}
             {% if templateDelivery.hasPackages() %}
               {% for package_quantity in templateDelivery.packages %}
-                {% set details = details|merge([ package_quantity.quantity ~ ' × ' ~ package_quantity.package.name ]) %}
+                {% set details = details|merge([ package_quantity.quantity ~ ' × ' ~ package_quantity.package.name ]) %}
               {% endfor %}
             {% endif %}
             <small>{{ details|join(' - ') }}</small>

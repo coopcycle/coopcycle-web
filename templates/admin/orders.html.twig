@@ -21,7 +21,9 @@
 <div class="d-flex flex-row mb-4">
   <div class="w-50">
     <form method="get">
-      <div id="orders-search"></div>
+      <div id="orders-search"
+           data-url="{{ path('admin_orders_search') }}"
+           data-placeholder="{{ 'search.orders'|trans }}"></div>
     </form>
   </div>
   <div class="w-50 text-right">
@@ -48,8 +50,21 @@
   style="min-height: 180px;"></div>
 {% endif %}
 
+<div {{ react_component('OrderListFilters', { defaultFilters: filters }) }}></div>
+<hr/>
 {% include "_partials/order/list.html.twig" %}
-<div class="text-center">
+
+<div class="d-flex align-items-center justify-content-center gap-4">
+  <form action="{{ path('admin_orders') }}" class="form-inline" method="get">
+    <div class="form-group">
+      <label for="items_per_page">{{ 'pagination.items_per_page'|trans }}</label>
+      <select id="items_per_page" name="per_page" class="form-control" style="max-width: 5em;">
+        <option>20</option>
+        <option {% if orders.itemNumberPerPage == 50 %}selected="selected"{% endif %}>50</option>
+        <option {% if orders.itemNumberPerPage == 100 %}selected="selected"{% endif %}>100</option>
+      </select>
+    </div>
+  </form>
   {{ knp_pagination_render(orders, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
 </div>
 
@@ -117,14 +132,9 @@ new CoopCycle.Switch(document.querySelector('#show-cancelled-switch'), {
   }
 });
 
-new CoopCycle.Search(document.querySelector('#orders-search'), {
-  url: "{{ path('admin_orders_search') }}",
-  placeholder: "{{ 'search.orders'|trans }}",
-  onSuggestionSelected: function(suggestion) {
-    window.location.href = suggestion.path;
-  },
-  searchOnEnter: true,
-  initialValue: "{{ app.request.get('q', '') }}"
+
+document.querySelector('[name="per_page"]').addEventListener('change', function (e) {
+  e.target.closest('form').submit();
 });
 
 </script>

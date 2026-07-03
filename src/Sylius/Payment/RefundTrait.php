@@ -4,6 +4,8 @@ namespace AppBundle\Sylius\Payment;
 
 use AppBundle\Entity\Refund;
 use Stripe\Refund as StripeRefund;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 trait RefundTrait
 {
@@ -51,6 +53,8 @@ trait RefundTrait
         return $this->refunds;
     }
 
+    #[SerializedName('refundedAmount')]
+    #[Groups(['payment', 'payment_refund'])]
     public function getRefundTotal()
     {
         $total = 0;

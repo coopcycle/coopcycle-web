@@ -1,6 +1,6 @@
 import React, { useState, useEffect, createRef } from 'react'
 import { Carousel } from 'antd'
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 import '../../../../../assets/css/dotstyle.css'
 import './dotstyle.scss'
@@ -31,7 +31,7 @@ export default ({ images }) => {
           <ul>
             {images.map((image, index) => (
               <li key={`dot-${index}`}
-                  className={classNames({ current: index === slide })}>
+                  className={clsx({ current: index === slide })}>
                 <a href="#" onClick={e => {
                   e.preventDefault()
                   setSlide(index)

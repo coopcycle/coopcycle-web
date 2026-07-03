@@ -17,8 +17,8 @@ use Gedmo\Timestampable\Traits\Timestampable;
 #[ApiResource(
     operations: [
         new Delete(security: 'is_granted(\'ROLE_ADMIN\')'),
-        new Post(),
-        new GetCollection()
+        new Post(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new GetCollection(security: 'is_granted(\'ROLE_ADMIN\')')
     ]
 )]
 class DeliveryForm

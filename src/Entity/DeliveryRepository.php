@@ -63,8 +63,8 @@ class DeliveryRepository extends EntityRepository
             ->andWhere('t.doneBefore >= :after')
             ->andWhere('t.doneAfter <= :before')
             ->setParameter('pickup', Task::TYPE_PICKUP)
-            ->setParameter('after', $today->copy()->startOfDay())
-            ->setParameter('before', $today->copy()->endOfDay())
+            ->setParameter('after', $today->clone()->startOfDay())
+            ->setParameter('before', $today->clone()->endOfDay())
             ;
     }
 
@@ -76,7 +76,7 @@ class DeliveryRepository extends EntityRepository
             ->andWhere('t.type = :pickup')
             ->andWhere('t.doneAfter > :endOfToday')
             ->setParameter('pickup', Task::TYPE_PICKUP)
-            ->setParameter('endOfToday', $today->copy()->endOfDay())
+            ->setParameter('endOfToday', $today->clone()->endOfDay())
             ->orderBy('t.doneBefore', 'asc')
             ;
     }
@@ -89,7 +89,7 @@ class DeliveryRepository extends EntityRepository
             ->andWhere('t.type = :pickup')
             ->andWhere('t.doneBefore < :startOfToday')
             ->setParameter('pickup', Task::TYPE_PICKUP)
-            ->setParameter('startOfToday', $today->copy()->startOfDay())
+            ->setParameter('startOfToday', $today->clone()->startOfDay())
             ;
     }
     /**
@@ -158,6 +158,24 @@ class DeliveryRepository extends EntityRepository
             ->setParameter('dateB', $dateB)
             ->getQuery()
             ->getResult();
+    }
+
+    public function findByLoUri(string $loUri): ?Delivery
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = "SELECT DISTINCT d.id FROM delivery d
+            JOIN task_collection_item tci ON tci.parent = d.id
+            JOIN task t ON tci.task_id = t.id
+            WHERE t.metadata->>'rdc_lo_uri' = :loUri";
+
+        $result = $conn->executeQuery($sql, ['lo_uri' => $loUri])->fetchOne();
+
+        if ($result === false) {
+            return null;
+        }
+
+        return $this->find($result);
     }
 
 }

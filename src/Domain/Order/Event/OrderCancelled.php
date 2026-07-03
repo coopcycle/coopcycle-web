@@ -5,8 +5,9 @@ namespace AppBundle\Domain\Order\Event;
 use AppBundle\Domain\DomainEvent;
 use AppBundle\Domain\Order\Event;
 use AppBundle\Sylius\Order\OrderInterface;
+use AppBundle\Domain\Order\FrontendEvent;
 
-class OrderCancelled extends Event implements DomainEvent
+class OrderCancelled extends Event implements DomainEvent, FrontendEvent
 {
     private $reason;
 

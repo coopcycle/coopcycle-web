@@ -250,12 +250,12 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Put(
             uriTemplate: '/tasks/{id}/append_to_comment',
             controller: TaskAppendToComment::class,
-            security: 'is_granted(\'view\', object)'
+            security: 'is_granted(\'edit\', object)'
         ),
         new GetCollection(
             paginationEnabled: false,
             paginationClientEnabled: true,
-            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_COURIER\')',
+            security: 'is_granted(\'ROLE_DISPATCHER\') or is_granted(\'ROLE_COURIER\') or is_granted(\'ROLE_OAUTH2_TASKS:ALL\')',
             provider: TasksProvider::class
         ),
         new Post(
@@ -685,7 +685,7 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
         if ($event->getName() === 'task:updated' && $this->containsEventWithName('task:updated')) {
             return;
         }
-        
+
         $this->events->add($event);
     }
 
@@ -857,6 +857,12 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
 
         return $this;
     }
+
+    public function incrementImageCount()
+    {
+        $this->imageCount = $this->imageCount + 1;
+    }
+
     /**
      * @return Task
      */
@@ -1036,12 +1042,12 @@ class Task implements TaggableInterface, OrganizationAwareInterface, PackagesAwa
     /**
      * @return void
      */
-    public function setMetadata($key)
+    public function setMetadata(...$args)
     {
-        if (func_num_args() === 1 && is_array(func_get_arg(0))) {
-            $this->metadata = func_get_arg(0);
-        } elseif (func_num_args() === 2) {
-            $this->metadata[func_get_arg(0)] = func_get_arg(1);
+        if (count($args) === 1 && is_array($args[0])) {
+            $this->metadata = $args[0];
+        } elseif (count($args) === 2) {
+            $this->metadata[$args[0]] = $args[1];
         }
     }
     /**

@@ -12,7 +12,7 @@
 
 {% block content %}
 
-<div class="d-flex flex-column justify-content-between">
+<div class="d-flex flex-column justify-content-between mb-4">
   <div class="d-flex align-items-center justify-content-between">
     <div id="search-restaurants" class="w-25 mr-4">
       <input type="text" class="form-control">
@@ -65,14 +65,6 @@
               {{ 'restaurants.meal_vouchers_transactions.title'|trans }}
             </a>
           </li>
-          {% if nonprofits_enabled %}
-            <li role="separator" class="divider"></li>
-            <li>
-              <a href="{{ path('admin_nonprofits') }}">
-                {{ 'adminDashboard.nonprofits.title'|trans }}
-              </a>
-            </li>
-          {% endif %}
         </ul>
       </div>
       <a href="{{ path('admin_restaurant_new') }}" class="btn btn-success ml-4">
@@ -81,9 +73,11 @@
     </div>
   </div>
 </div>
-{% include "admin/pagination.html.twig" %}
+
 {% include "_partials/restaurant/list.html.twig" %}
-{% include "admin/pagination.html.twig" %}
+<div class="text-center">
+  {{ knp_pagination_render(restaurants, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
+</div>
 
 {% endblock %}
 

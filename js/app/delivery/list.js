@@ -3,7 +3,7 @@ import DateRangePicker from '../widgets/DateRangePicker'
 import Input from '../widgets/Input'
 import axios from 'axios'
 import Papa from 'papaparse'
-import classNames from 'classnames'
+import clsx from 'clsx'
 import _ from 'lodash'
 import { Tooltip } from 'antd'
 import Modal from 'react-modal'
@@ -106,7 +106,7 @@ function SpreadsheetViewer({ data, errors }) {
 
         return (
           <th
-            className={ classNames('Spreadsheet__header', {
+            className={ clsx('Spreadsheet__header', {
               'Spreadsheet__header--selected': selected,
             })}
             tabIndex={ 0 }

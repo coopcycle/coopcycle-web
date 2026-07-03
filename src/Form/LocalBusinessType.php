@@ -18,7 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -30,10 +30,12 @@ abstract class LocalBusinessType extends AbstractType
 {
     protected bool $transportersEnabled;
     protected bool $standtrackEnabled;
+    protected array $rdcConnections = [];
+    protected bool $rdcEnabled = false;
 
     public function __construct(
         protected AuthorizationCheckerInterface $authorizationChecker,
-        protected TokenStorageInterface $tokenStorage,
+        protected Security $security,
         protected EntityManagerInterface $entityManager,
         protected SerializerInterface $serializer,
         protected GatewayResolver $gatewayResolver,
@@ -45,11 +47,15 @@ abstract class LocalBusinessType extends AbstractType
         protected bool $cashOnDeliveryOptinEnabled = false,
         protected array $transportersConfig = [],
         protected bool $billingEnabled = false,
-        ?string $standtrackEnabled = null
+        ?string $standtrackEnabled = null,
+        array $rdcConnections = [],
+        bool $rdcEnabled = false
     )
     {
         $this->transportersEnabled = !empty($transportersConfig);
         $this->standtrackEnabled = !empty($standtrackEnabled);
+        $this->rdcConnections = $rdcConnections;
+        $this->rdcEnabled = $rdcEnabled;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)

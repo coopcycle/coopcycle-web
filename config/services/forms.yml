@@ -42,34 +42,14 @@ services:
     arguments:
       $routing: '@routing_service'
       $translator: '@translator'
-      $authorizationChecker: '@security.authorization_checker'
       $country: '%country_iso%'
       $locale: '%env(COOPCYCLE_LOCALE)%'
-      $orderManager: '@AppBundle\Service\OrderManager'
     tags: [ form.type ]
 
   AppBundle\Form\DeliveryEmbedType:
     parent: AppBundle\Form\DeliveryType
     autowire: false
     autoconfigure: false
-    tags: [ form.type ]
-
-  AppBundle\Form\NewCustomOrderType:
-    parent: AppBundle\Form\DeliveryType
-    autowire: false
-    autoconfigure: false
-    tags: [ form.type ]
-
-  AppBundle\Form\Order\NewOrderType:
-    parent: AppBundle\Form\DeliveryType
-    tags: [ form.type ]
-
-  AppBundle\Form\Order\ExistingOrderType:
-    parent: AppBundle\Form\DeliveryType
-    tags: [ form.type ]
-
-  AppBundle\Form\Order\ExistingRecurrenceRuleType:
-    parent: AppBundle\Form\DeliveryType
     tags: [ form.type ]
 
   AppBundle\Form\OrderType:
@@ -81,10 +61,6 @@ services:
 
   AppBundle\Form\AddUserType:
     arguments: [ '@doctrine' ]
-    tags: [ form.type ]
-
-  AppBundle\Form\PaymentType:
-    arguments: [ '@sm.factory', '@security.authorization_checker' ]
     tags: [ form.type ]
 
   AppBundle\Form\TaskExportType:
@@ -103,8 +79,6 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\TaskType:
-    arguments:
-      $locale: '%env(COOPCYCLE_LOCALE)%'
     tags: [ form.type ]
 
   AppBundle\Form\RestaurantType:
@@ -122,6 +96,7 @@ services:
       $transportersConfig: '%transporters_config%'
       $billingEnabled: '%billing_enabled%'
       $standtrackEnabled: '%env(STANDTRACK_API_KEY)%'
+      $rdcConnections: '%rdc_connections%'
     tags: [ form.type ]
 
   AppBundle\Form\MenuEditor\TaxonProductType:
@@ -139,8 +114,7 @@ services:
 
   AppBundle\Form\Checkout\CheckoutAddressType:
     arguments:
-      $nonProfitsEnabled: '%env(bool:NONPROFITS_ENABLED)%'
-      $enBoitLePlatUrl: '%env(EN_BOITE_LE_PLAT_URL)'
+      $enBoitLePlatUrl: '%env(EN_BOITE_LE_PLAT_URL)%'
     tags: [ form.type ]
 
   AppBundle\Form\Checkout\CheckoutCustomerType:
@@ -154,11 +128,6 @@ services:
   AppBundle\Form\MaintenanceType:
     arguments:
       - '@snc_redis.default'
-    tags: [ form.type ]
-
-  AppBundle\Form\AddressBookType:
-    arguments:
-      $country: '%country_iso%'
     tags: [ form.type ]
 
   sylius.form.extension.type.promotion_coupon:
@@ -189,9 +158,6 @@ services:
   AppBundle\Form\DeliveryImportType:
     tags: [ form.type ]
 
-  AppBundle\Form\ProductOptionWithPositionType:
-    tags: [ form.type ]
-
   AppBundle\Form\TimeSlotType:
     tags: [ form.type ]
 
@@ -201,12 +167,7 @@ services:
   AppBundle\Form\Type\LocalBusinessTypeChoiceType:
     tags: [ form.type ]
 
-  AppBundle\Form\Sylius\Promotion\OfferDeliveryType:
-    arguments:
-      $promotionRuleFactory: '@sylius.factory.promotion_rule'
-    tags: [ form.type ]
-
-  AppBundle\Form\Sylius\Promotion\ItemsTotalBasedPromotionType:
+  AppBundle\Form\Sylius\Promotion\RestaurantPromotionType:
     arguments:
       $promotionRuleFactory: '@sylius.factory.promotion_rule'
     tags: [ form.type ]
@@ -287,9 +248,6 @@ services:
         colisactiv_all: '@colisactiv_all'
     tags: [ form.type ]
 
-  AppBundle\Form\Order\AdhocOrderType:
-    tags: [ form.type ]
-
   AppBundle\Form\InviteUserType:
     arguments:
       - '@security.authorization_checker'
@@ -314,4 +272,16 @@ services:
     tags: [ form.type ]
 
   AppBundle\Form\PricingRuleSetType:
+    tags: [ form.type ]
+
+  AppBundle\Form\Sylius\Promotion\CurrencyAwareFixedDiscountConfigurationType:
+    tags: [ form.type ]
+
+  AppBundle\Form\Sylius\Promotion\Rule\IsItemsTotalAboveConfigurationType:
+    tags: [ form.type ]
+
+  AppBundle\Form\ProductOptionValueType:
+    tags: [ form.type ]
+
+  AppBundle\Form\ThemeType:
     tags: [ form.type ]

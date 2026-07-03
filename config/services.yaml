@@ -16,6 +16,7 @@ parameters:
   env(APP_PUBLIC_DIR): "%kernel.project_dir%/web"
   env(APP_LOG_DIR): "%kernel.logs_dir%"
   env(APP_VERSION): dev-master
+  env(COOPCYCLE_RECOMMENDER_URL): 'http://recommender:8000/'
   secret: "%env(APP_SECRET)%"
   country_iso: "%env(COOPCYCLE_COUNTRY)%"
   region_iso: "%env(COOPCYCLE_REGION)%"
@@ -28,6 +29,7 @@ parameters:
   database_user:     "%env(COOPCYCLE_DB_USER)%"
   database_password: "%env(COOPCYCLE_DB_PASSWORD)%"
   locale_regex: an|ca|fr|en|es|eu|de|hu|it|pl|pt_BR|pt_PT|da
+  rdc_webhook_secret: '%env(default::RDC_WEBHOOK_SECRET)%'
   router.request_context.scheme: 'http'
   router.request_context.host: "%env(APP_HOST)%"
   loopeat_enabled: '%env(bool:LOOPEAT_ENABLED)%'
@@ -58,18 +60,15 @@ parameters:
   craue_config.cache_adapter.class: Craue\ConfigBundle\CacheAdapter\SymfonyCacheComponentAdapter
   vytal_enabled: '%env(bool:VYTAL_ENABLED)%'
   en_boite_le_plat_enabled: '%env(bool:EN_BOITE_LE_PLAT_ENABLED)%'
-  nonprofits_enabled: '%env(bool:NONPROFITS_ENABLED)%'
   dv4cul_enabled: '%env(bool:DV4CUL_ENABLED)%'
-  dabba_enabled: '%env(bool:DABBA_ENABLED)%'
-  dabba_base_url: '%env(DABBA_BASE_URL)%'
-  dabba_client_id: '%env(DABBA_CLIENT_ID)%'
-  dabba_client_secret: '%env(DABBA_CLIENT_SECRET)%'
   typesense_shops_collection_name: "shops"
   typesense_products_collection_name: "products"
   colisactiv_enabled: '%env(bool:COLISACTIV_ENABLED)%'
   group_orders_enabled: '%env(bool:GROUP_ORDERS_ENABLED)%'
   business_account_enabled: '%env(bool:BUSINESS_ACCOUNT_ENABLED)%'
   transporters_config: '%env(json:TRANSPORTERS_CONFIG)%'
+  rdc_connections_default: []
+  rdc_connections: '%env(default:rdc_connections_default:json:RDC_CONNECTIONS)%'
   billing_enabled: '%env(bool:BILLING_ENABLED)%'
   package_delivery_ui_price_breakdown_enabled_default: true
   package_delivery_ui_price_breakdown_enabled: '%env(default:package_delivery_ui_price_breakdown_enabled_default:bool:PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED)%'
@@ -86,6 +85,8 @@ services:
       $environment: "%kernel.environment%"
       $packageDeliveryUiPriceBreakdownEnabled: "%package_delivery_ui_price_breakdown_enabled%"
       $taxIncl: '%env(bool:COOPCYCLE_TAX_INCL)%'
+      $appName: '%env(COOPCYCLE_APP_NAME)%'
+      Symfony\Contracts\HttpClient\HttpClientInterface $recommenderClient: '@recommender.client'
 
   # For some cache pools, want *STABLE* cache keys between deploys.
   # To achieve this, we *EXPLICITLY* set a namespace,
@@ -121,6 +122,9 @@ services:
   AppBundle\MessageHandler\:
     resource: '../src/MessageHandler/*'
 
+  AppBundle\Scheduler\:
+    resource: '../src/Scheduler/*'
+
   AppBundle\Controller\:
     resource: '../src/Controller'
     tags: ['controller.service_arguments']
@@ -140,6 +144,12 @@ services:
 
   AppBundle\Pricing\:
     resource: '../src/Pricing/*'
+
+  AppBundle\Doctrine\EntityPreloader\:
+    resource: '../src/Doctrine/EntityPreloader/*'
+
+  AppBundle\Twig\Components\:
+    resource: '../src/Twig/Components/*'
 
   coopcycle.repository.restaurant: '@AppBundle\Entity\RestaurantRepository'
 
@@ -172,7 +182,6 @@ services:
 
   Doctrine\ORM\Mapping\Driver\AttributeReader: ~
 
-  Sylius\Component\Product\Resolver\ProductVariantResolverInterface: '@sylius.product_variant_resolver.default'
   Sylius\Component\Currency\Context\CurrencyContextInterface: '@sylius.context.currency'
   Sylius\Component\Order\Context\CartContextInterface: '@sylius.context.cart.composite'
   Sylius\Component\Channel\Repository\ChannelRepositoryInterface: '@sylius.repository.channel'
@@ -193,6 +202,9 @@ services:
   League\Flysystem\Filesystem $receiptsFilesystem: '@receipts_filesystem'
   League\Flysystem\Filesystem $ediMessagesFilesystem: '@edi_messages_filesystem'
   League\Flysystem\Filesystem $incidentImagesFilesystem: '@incident_images_filesystem'
+  League\Flysystem\Filesystem $documentsFilesystem: '@documents_filesystem'
+  League\Flysystem\Filesystem $emailTemplatesFilesystem: '@email_templates_filesystem'
+
   Nucleos\UserBundle\Util\Canonicalizer: '@nucleos_user.util.canonicalizer.simple'
 
   Spatie\GuzzleRateLimiterMiddleware\Store: '@AppBundle\Geocoder\RateLimiterStore'
@@ -204,6 +216,8 @@ services:
   Sylius\Component\Resource\Factory\FactoryInterface $taxonFactory: '@sylius.factory.taxon'
   Sylius\Component\Resource\Factory\FactoryInterface $productFactory: '@sylius.factory.product'
   Sylius\Component\Resource\Factory\FactoryInterface $productOptionFactory: '@sylius.factory.product_option'
+  Sylius\Component\Resource\Factory\FactoryInterface $promotionRuleFactory: '@sylius.factory.promotion_rule'
+  Sylius\Component\Resource\Factory\FactoryInterface $promotionFactory: '@sylius.factory.promotion'
   League\Flysystem\Filesystem $assetsFilesystem: '@assets_filesystem'
   Redis $tile38: '@snc_redis.tile38'
   Sylius\Component\Resource\Repository\RepositoryInterface $taxRateRepository: '@sylius.repository.tax_rate'
@@ -213,6 +227,7 @@ services:
   Hashids\Hashids $hashids8: '@hashids.8'
   Hashids\Hashids $hashids12: '@hashids.12'
   Hashids\Hashids $hashids16: '@hashids.16'
+  Hashids\Hashids $hashids32: '@hashids.32'
   BenjaminFavre\OAuthHttpClient\OAuthHttpClient $woopitClient: '@woopit.oauth_http_client'
   ACSEO\TypesenseBundle\Finder\CollectionFinderInterface $typesenseShopsFinder: '@typesense.finder.shops'
   ACSEO\TypesenseBundle\Manager\CollectionManager: '@typesense.collection_manager'
@@ -306,18 +321,19 @@ services:
       $promotionRuleFactory: '@sylius.factory.promotion_rule'
       $promotionFactory: '@sylius.factory.promotion'
       $optinExportUsersEnabled: '%env(bool:OPTIN_EXPORT_USERS_ENABLED)%'
-      $adhocOrderEnabled: '%env(bool:ADHOC_ORDER_ENABLED)%'
       $incidentImagesFilesystem: '@incident_images_filesystem'
       $edifactFilesystem: '@edi_messages_filesystem'
+      $platformLocale: '%env(COOPCYCLE_LOCALE)%'
+
+  AppBundle\Controller\Admin\CustomerSegmentationController:
+    arguments:
+      $rfmEnabled:      '%env(bool:RFM_ENABLED)%'
+      $settingsManager: '@AppBundle\Service\SettingsManager'
 
   AppBundle\Controller\AssetsController:
     arguments:
       $taskImagesFilesystem: '@task_images_filesystem'
       $incidentImagesFilesystem: '@incident_images_filesystem'
-
-  AppBundle\Controller\DashboardController:
-    arguments:
-      $adhocOrderEnabled: '%env(bool:ADHOC_ORDER_ENABLED)%'
 
   AppBundle\EventListener\LocaleListener:
     arguments: ['%env(COOPCYCLE_LOCALE)%']
@@ -472,7 +488,7 @@ services:
     tags:
       - name: sylius.promotion_action
         type: delivery_percentage_discount
-        label: 'Delivery percentage discount'
+        label: 'sylius.form.promotion_action.delivery_percentage_discount'
         form_type: Sylius\Bundle\PromotionBundle\Form\Type\Action\PercentageDiscountConfigurationType
 
   sylius.promotion_action.fixed_discount:
@@ -482,8 +498,8 @@ services:
     tags:
       - name: sylius.promotion_action
         type: order_fixed_discount
-        label: 'Fixed discount'
-        form_type: Sylius\Bundle\PromotionBundle\Form\Type\Action\FixedDiscountConfigurationType
+        label: 'sylius.form.promotion_action.order_fixed_discount'
+        form_type: AppBundle\Form\Sylius\Promotion\CurrencyAwareFixedDiscountConfigurationType
 
   sylius.promotion_action.percentage_discount:
     class: AppBundle\Sylius\Promotion\Action\PercentageDiscountPromotionActionCommand
@@ -492,7 +508,7 @@ services:
     tags:
       - name: sylius.promotion_action
         type: order_percentage_discount
-        label: 'Percentage discount'
+        label: 'sylius.form.promotion_action.order_percentage_discount'
         form_type: Sylius\Bundle\PromotionBundle\Form\Type\Action\PercentageDiscountConfigurationType
 
   sylius.promotion.eligibility_checker.promotion_coupon_per_customer_usage_limit:
@@ -520,7 +536,7 @@ services:
     tags:
       - name: sylius.promotion_rule_checker
         type: is_items_total_above
-        label: 'Is items total above'
+        label: 'sylius.form.promotion_rule.item_total'
         form_type: AppBundle\Form\Sylius\Promotion\Rule\IsItemsTotalAboveConfigurationType
 
   AppBundle\Sylius\Product\ProductOptionValueFactory:
@@ -547,6 +563,9 @@ services:
       - "@sylius.product_variant_resolver.default"
       - "@sylius.factory.product_variant"
     public: true
+
+  # We override the default variant resolver
+  Sylius\Component\Product\Resolver\ProductVariantResolverInterface: '@coopcycle.sylius.product_variant_resolver.lazy'
 
   AppBundle\Sylius\Cart\RestaurantResolver:
     tags:
@@ -603,18 +622,13 @@ services:
     tags:
       - { name: kernel.event_subscriber }
 
-  AppBundle\EventListener\SyliusIdGeneratorSubscriber:
-    tags:
-      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
-      - { name: doctrine.event_subscriber, connection: default }
+  AppBundle\EventListener\SyliusIdGeneratorSubscriber: ~
 
   AppBundle\EventListener\LogoutSubscriber: ~
 
   AppBundle\EventListener\TaggableSubscriber:
     arguments: [ '@coopcycle.tag_manager' ]
     tags:
-      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
-      - { name: doctrine.event_subscriber, connection: default }
       - { name: monolog.logger, channel: coopcycle.tagging }
 
   AppBundle\Service\DeliveryManager:
@@ -683,6 +697,10 @@ services:
     tags:
       - { name: doctrine.orm.entity_listener }
 
+  AppBundle\Entity\Listener\TaskRdcStatusListener:
+    tags:
+      - { name: doctrine.orm.entity_listener, event: postUpdate, entity: AppBundle\Entity\Task }
+
   AppBundle\EventListener\Edifact\TaskChangedNotifier:
     tags:
       -
@@ -711,6 +729,9 @@ services:
       - method: setBusinessContext
         arguments:
             - '@AppBundle\Business\Context'
+      - method: setSettingsManager
+        arguments:
+            - '@AppBundle\Service\SettingsManager'
 
   AppBundle\Entity\HubRepository:
     factory: ['@doctrine.orm.default_entity_manager', getRepository]
@@ -785,6 +806,13 @@ services:
     class: AppBundle\EventListener\AuthenticationWebSuccessHandler
     arguments: ['@security.http_utils', '@router']
 
+  coopcycle.two_factor_success_handler:
+    class: AppBundle\EventListener\AuthenticationWebSuccessHandler
+    arguments: ['@security.http_utils', '@router']
+    calls:
+      - [setFirewallName, ['web']]
+      - [setOptions, [{ default_target_path: '/' }]]
+
   AppBundle\Security\UserManager:
     arguments:
       $decorated: '@nucleos_user.user_manager.default'
@@ -807,6 +835,16 @@ services:
   AppBundle\Service\EmailManager:
     arguments:
       $transactionalAddress: "%transactional_address%"
+      $hashids16: '@hashids.16'
+      $hashids8: '@hashids.8'
+
+  AppBundle\Security\TwoFactor\EmailAuthCodeMailer:
+    arguments:
+      $transactionalAddress: "%transactional_address%"
+
+  AppBundle\Security\TwoFactor\TwoFactorCondition:
+    arguments:
+      $isDemo: "%is_demo%"
 
   AppBundle\Service\RemotePushNotificationManager: ~
 
@@ -838,8 +876,6 @@ services:
   AppBundle\Doctrine\EventSubscriber\TourSubscriber:
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
-      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
-      - { name: doctrine.event_subscriber, connection: default, priority: 48 }
 
   AppBundle\Doctrine\EventSubscriber\TaskSubscriber:
     tags:
@@ -848,38 +884,20 @@ services:
   AppBundle\Doctrine\EventSubscriber\TaskCollectionSubscriber:
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
-      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
-      - { name: doctrine.event_subscriber, connection: default, priority: 16 }
 
   AppBundle\Doctrine\EventSubscriber\TaskListSubscriber:
     tags:
       - { name: monolog.logger, channel: coopcycle.logistics }
-      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
-      - { name: doctrine.event_subscriber, connection: default, priority: 16 }
 
-  AppBundle\Doctrine\EventSubscriber\OrganizationSubscriber:
-    tags:
-      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
-      - { name: doctrine.event_subscriber }
+  AppBundle\Doctrine\EventSubscriber\OrganizationSubscriber: ~
 
   AppBundle\Doctrine\EventSubscriber\SearchDeliveriesSubscriber:
     tags:
       - { name: monolog.logger, channel: coopcycle.search }
-      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
-      - { name: doctrine.event_subscriber }
 
-  AppBundle\Doctrine\EventSubscriber\DeliverySubscriber:
-    tags:
-      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
-      - { name: doctrine.event_subscriber }
+  AppBundle\Doctrine\EventSubscriber\DeliverySubscriber: ~
 
-  # needs to be run last to take into account all changes
-  AppBundle\Doctrine\EventSubscriber\LoggerSubscriber:
-    tags:
-      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
-      - { name: doctrine.event_subscriber, priority: -100 }
-
-  AppBundle\Doctrine\EventSubscriber\RestaurantStateSubscriber: ~
+  AppBundle\Doctrine\EventSubscriber\LoggerSubscriber: ~
 
   AppBundle\Api\EventSubscriber\DeliverySubscriber:
     tags: [ 'kernel.event_subscriber' ]
@@ -916,10 +934,8 @@ services:
       - { name: kernel.event_subscriber }
       - { name: monolog.logger, channel: urbantz }
 
-  AppBundle\Doctrine\EventSubscriber\ShopsEventsForTypesenseSubscriber:
-    tags:
-      #FIXME: Doctrine subscriber is deprecated. Use #[AsDocumentListener] instead
-      - { name: doctrine.event_subscriber }
+  AppBundle\Doctrine\EventSubscriber\ShopsEventsForTypesenseSubscriber: ~
+  AppBundle\Doctrine\EventSubscriber\DisabledProductListener: ~
 
   AppBundle\Action\Settings:
     public: true
@@ -1143,6 +1159,20 @@ services:
 
   # https://digitalist.se/blogg/using-open-source-minio-and-flysystem-s3-module-handle-drupal-files
   # https://github.com/minio/cookbook/blob/master/docs/how-to-use-minio-as-laravel-file-storage.md
+  s3_client_assets:
+    class: Aws\S3\S3Client
+    arguments:
+        - endpoint: '%env(S3_ENDPOINT)%'
+          version: latest
+          region: '%env(S3_REGION)%'
+          credentials:
+            key: '%env(S3_CREDENTIALS_KEY)%'
+            secret: '%env(S3_CREDENTIALS_SECRET)%'
+          use_path_style_endpoint: true
+          http:
+            connect_timeout: 2
+            timeout: 3
+
   s3_client:
     class: Aws\S3\S3Client
     arguments:
@@ -1153,6 +1183,9 @@ services:
             key: '%env(S3_CREDENTIALS_KEY)%'
             secret: '%env(S3_CREDENTIALS_SECRET)%'
           use_path_style_endpoint: true
+          http:
+            connect_timeout: 5
+            timeout: 15
 
   AppBundle\Service\StripeManager:
     tags:
@@ -1227,7 +1260,6 @@ services:
   AppBundle\MessageHandler\ExportOrdersHandler:
     arguments:
       $defaultLocale: "%kernel.default_locale%"
-      $nonProfitsEnabled: "%nonprofits_enabled%"
 
   AppBundle\Service\MaintenanceManager: ~
 
@@ -1357,6 +1389,9 @@ services:
     tags: [ 'security.voter' ]
 
   AppBundle\Security\IncidentVoter:
+    tags: [ 'security.voter' ]
+
+  AppBundle\Security\RestaurantMenuVoter:
     tags: [ 'security.voter' ]
 
   # While adding a priority is optional, it’s recommended to add one to make sure the expected value is injected.
@@ -1493,7 +1528,6 @@ services:
     arguments:
       $databaseName: '%database_name%'
       $baseUrl: '%router.request_context.scheme%://%router.request_context.host%'
-      $s3Path: '%env(CUBEJS_DUCKDB_S3_PATH)%'
       $appName: '%env(COOPCYCLE_APP_NAME)%'
 
   AppBundle\Translation\DatePeriodFormatter:
@@ -1516,6 +1550,10 @@ services:
     class: Hashids\Hashids
     arguments: ['%secret%', 16]
 
+  hashids.32:
+    class: Hashids\Hashids
+    arguments: ['%secret%', 32]
+
   woopit.grant_type:
     class: BenjaminFavre\OAuthHttpClient\GrantType\ClientCredentialsGrantType
     arguments: [
@@ -1531,16 +1569,6 @@ services:
         '@woopit.http_client',
         '@woopit.grant_type'
       ]
-
-  AppBundle\Dabba\Client:
-    arguments:
-      $baseUrl: "%dabba_base_url%"
-      $clientId: "%dabba_client_id%"
-      $clientSecret: "%dabba_client_secret%"
-
-  AppBundle\Dabba\Context:
-    tags:
-      - { name: monolog.logger, channel: dabba }
 
   AppBundle\Typesense\Converter\:
     resource: '../src/Typesense/Converter/*'
@@ -1654,6 +1682,49 @@ services:
     arguments:
       $standtrackApiKey: '%env(STANDTRACK_API_KEY)%'
 
+  AppBundle\Integration\Rdc\Api\RdcClientFactory:
+    arguments:
+      $rdcConnections: '%rdc_connections%'
+
+  AppBundle\Integration\Rdc\RdcEventDispatcher:
+    arguments:
+      $logger: '@logger'
+
+  AppBundle\Integration\Rdc\RdcStoreResolver:
+    arguments:
+      $entityManager: '@doctrine.orm.entity_manager'
+      $logger: '@logger'
+
+  AppBundle\Integration\Rdc\RdcTaskContextResolver: ~
+
+  AppBundle\Integration\Rdc\Api\RdcServiceFacade:
+    arguments:
+      $rdcClientFactory: '@AppBundle\Integration\Rdc\Api\RdcClientFactory'
+      $logger: '@logger'
+      $connectionId: ''
+
+  AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestMapper:
+    arguments:
+      $deliveryManager: '@AppBundle\Service\DeliveryManager'
+      $geocoder: '@AppBundle\Service\Geocoder'
+      $phoneUtil: '@libphonenumber\PhoneNumberUtil'
+      $logger: '@logger'
+
+  AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestProcessor:
+    arguments:
+      $entityManager: '@doctrine.orm.entity_manager'
+      $deliveryOrderManager: '@AppBundle\Service\DeliveryOrderManager'
+      $serviceFacade: '@AppBundle\Integration\Rdc\Api\RdcServiceFacade'
+      $mapper: '@AppBundle\Integration\Rdc\Coopcycle\RdcServiceRequestMapper'
+      $logger: '@logger'
+
+  AppBundle\Controller\Api\RdcWebhookController:
+    arguments:
+      $logger: '@logger'
+      $messageBus: '@messenger.default_bus'
+    tags:
+      - { name: monolog.logger, channel: rdc }
+
   AppBundle\Utils\Defaults: ~
 
   AppBundle\Api\Filter\AssignedFilter:
@@ -1676,18 +1747,12 @@ services:
       - '@translator'
       - '%secret%'
 
-  AppBundle\MessageHandler\Task\NotifyUrbantz:
-    arguments:
-      - '@urbantz.client'
-      - '@doctrine.orm.default_entity_manager'
-      - '%secret%'
-      - '@monolog.logger.urbantz'
+  AppBundle\MessageHandler\Task\NotifyUrbantz: ~
 
   AppBundle\MessageHandler\Task\NotifyLoopeat:
     arguments:
       - '@AppBundle\LoopEat\Client'
       - '@monolog.logger.loopeat'
-
 
   AppBundle\Session\NativeSessionStorageFactory:
     decorates: session.storage.factory.native
@@ -1739,3 +1804,20 @@ services:
     factory: '@AppBundle\Payment\PawapayClientFactory'
     arguments: ['%env(PAWAPAY_API_URL)%']
     lazy: true
+
+  # This service decorates the "type" field in Sylius\Bundle\PromotionBundle\Form\Type\PromotionRuleType
+  # It will filter out some rules defined in the 3rd argument
+  AppBundle\Form\Sylius\Promotion\Type\FilteringPromotionRuleChoiceType:
+    decorates: sylius.form.type.promotion_rule_choice
+    arguments:
+      - '@.inner'
+      - '%sylius.promotion_rules%'
+      - ['is_customer', 'is_restaurant']
+
+  # Custom NameConverter, mainly for Taxon class
+  AppBundle\Serializer\NameConverter:
+    decorates: api_platform.name_converter
+    arguments:
+      - '@.inner'
+
+  AppBundle\Utils\TsRangeFormatter: ~

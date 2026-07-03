@@ -13,6 +13,7 @@ final class ChannelResolver implements RequestResolverInterface
     const HEADER_NAME = 'x-coopcycle-channel';
 
     private $channelRepository;
+    private $cache = [];
 
     public function __construct(ChannelRepositoryInterface $channelRepository)
     {
@@ -24,20 +25,40 @@ final class ChannelResolver implements RequestResolverInterface
         if ($request->headers->has(self::HEADER_NAME)) {
 
             $code = $request->headers->get(self::HEADER_NAME);
-            if ($channel = $this->channelRepository->findOneByCode($code)) {
+            if ($channel = $this->doGetChannel($code)) {
 
                 return $channel;
             }
+
+
         }
 
         $isApiRequest = $request->attributes->has('_api_resource_class');
 
         $code = $isApiRequest ? 'app' : 'web';
 
-        if (!$channel = $this->channelRepository->findOneByCode($code)) {
-            throw new ChannelNotFoundException();
+        if ($channel = $this->doGetChannel($code)) {
+
+            return $channel;
         }
 
-        return $channel;
+        throw new ChannelNotFoundException();
+    }
+
+    private function doGetChannel(string $code): ?ChannelInterface
+    {
+        if (isset($this->cache[$code])) {
+
+            return $this->cache[$code];
+        }
+
+        if ($channel = $this->channelRepository->findOneByCode($code)) {
+
+            $this->cache[$code] = $channel;
+
+            return $channel;
+        }
+
+        return null;
     }
 }

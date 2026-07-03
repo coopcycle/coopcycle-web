@@ -1,0 +1,82 @@
+include:
+  - address_warehouse.yml
+  - address_client_1.yml
+  - user_courier.yml
+
+AppBundle\Entity\Base\GeoCoordinates:
+  geo_client_2:
+    __construct: [ "48.8582441", "2.3433684" ]
+
+AppBundle\Entity\Address:
+  address_client_2:
+    addressLocality: 'Paris'
+    postalCode: '75007'
+    streetAddress: '5, avenue Anatole France, 75007 Paris, France'
+    geo: "@geo_client_2"
+
+AppBundle\Entity\Task:
+  pickup_1:
+    type: 'PICKUP'
+    status: 'DONE'
+    doneAfter: <identity(new \DateTime('today 08:00:00'))>
+    doneBefore: <identity(new \DateTime('today 09:00:00'))>
+    address: "@address_warehouse"
+    __calls:
+      - assignTo: [ "@jane", <identity(new \DateTime('today'))> ]
+
+  dropoff_1:
+    type: 'DROPOFF'
+    status: 'TODO'
+    doneAfter: <identity(new \DateTime('today 09:00:00'))>
+    doneBefore: <identity(new \DateTime('today 10:00:00'))>
+    address: "@address_client_1"
+    __calls:
+      - assignTo: [ "@jane", <identity(new \DateTime('today'))> ]
+
+  pickup_2:
+    type: 'PICKUP'
+    status: 'DONE'
+    doneAfter: <identity(new \DateTime('today 10:00:00'))>
+    doneBefore: <identity(new \DateTime('today 11:00:00'))>
+    address: "@address_warehouse"
+    __calls:
+      - assignTo: [ "@jane", <identity(new \DateTime('today'))> ]
+
+  dropoff_2:
+    type: 'DROPOFF'
+    status: 'TODO'
+    doneAfter: <identity(new \DateTime('today 11:00:00'))>
+    doneBefore: <identity(new \DateTime('today 12:00:00'))>
+    address: "@address_client_2"
+    __calls:
+      - assignTo: [ "@jane", <identity(new \DateTime('today'))> ]
+
+AppBundle\Entity\Delivery:
+  delivery_1:
+    __factory:
+      createWithTasks:
+        - '@pickup_1'
+        - '@dropoff_1'
+
+  delivery_2:
+    __factory:
+      createWithTasks:
+        - '@pickup_2'
+        - '@dropoff_2'
+
+AppBundle\Entity\Sylius\Order:
+  order_1:
+    __factory:
+      '@sylius.factory.order::createForDelivery':
+        - "@delivery_1"
+    __calls:
+      - setNumber: [ "A1" ]
+      - setState: [ 'new' ]
+
+  order_2:
+    __factory:
+      '@sylius.factory.order::createForDelivery':
+        - "@delivery_2"
+    __calls:
+      - setNumber: [ "A2" ]
+      - setState: [ 'new' ]

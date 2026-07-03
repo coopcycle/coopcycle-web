@@ -6,7 +6,7 @@ use AppBundle\Sylius\Promotion\Checker\Rule\IsCustomerRuleChecker;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Sylius\Component\Promotion\Model\PromotionSubjectInterface;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class IsCustomerRuleCheckerTest extends TestCase

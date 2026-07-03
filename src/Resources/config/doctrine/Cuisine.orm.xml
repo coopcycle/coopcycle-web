@@ -5,6 +5,7 @@
       <generator strategy="IDENTITY"/>
     </id>
     <field name="name" type="string" column="name" nullable="true"/>
+    <field name="icon" type="string" column="icon" nullable="true"/>
     <many-to-many field="restaurants" mapped-by="servesCuisine" target-entity="AppBundle\Entity\LocalBusiness"/>
   </entity>
 </doctrine-mapping>

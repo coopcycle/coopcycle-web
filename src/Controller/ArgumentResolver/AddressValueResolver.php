@@ -10,7 +10,7 @@ use AppBundle\Entity\Base\GeoCoordinates;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 
 /**
  * Yields an Address object if defined in the query string as a base64 encoded IRI.

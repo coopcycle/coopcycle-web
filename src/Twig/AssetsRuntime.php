@@ -22,7 +22,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
         private CacheManager $cacheManager,
         private Filesystem $assetsFilesystem,
         private UrlGeneratorInterface $urlGenerator,
-        private CacheInterface $projectCache,
+        private CacheInterface $appCache,
         private PlaceholderImageResolver $placeholderImageResolver)
     {}
 
@@ -68,7 +68,7 @@ class AssetsRuntime implements RuntimeExtensionInterface
 
     public function hasCustomBanner(): bool
     {
-        return $this->projectCache->get('banner_svg_stat', function (ItemInterface $item) {
+        return $this->appCache->get('banner_svg_stat', function (ItemInterface $item) {
 
             $item->expiresAfter(3600);
 

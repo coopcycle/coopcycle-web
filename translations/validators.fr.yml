@@ -58,8 +58,6 @@ time_range_jump.next_day: Il n'est plus possible de commander pour aujourd'hui
 
 order.shippingTimeRange.notAvailable: Indisponible pour l'instant
 
-dabba.insufficient_wallet: Il vous manque %amount% sur votre cagnotte Dabba
-
 googlemaps.api_key.invalid: La clé d'API Google Maps n'est pas valide. %error%
 
 spreadsheet.missing_column: Vous devez définir une colonne « %column% »
@@ -76,3 +74,5 @@ pricing_rule.expression.syntax_error: Erreur de syntaxe dans l'expression "%expr
 order.adjustments.unexpectedCount: Nombre inattendu d'ajustements "%type%"
 
 form.package_set.duplicatePackageNames: Les noms de paquet doivent être uniques
+
+store.packages_required.package_set_required: Un ensemble de paquets doit être sélectionné quand la marchandise est exigée

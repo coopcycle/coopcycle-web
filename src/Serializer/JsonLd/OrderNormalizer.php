@@ -6,6 +6,8 @@ use ApiPlatform\Api\IriConverterInterface;
 use ApiPlatform\JsonLd\Serializer\ItemNormalizer;
 use ApiPlatform\Metadata\Resource\Factory\ResourceMetadataCollectionFactoryInterface;
 use AppBundle\Edenred\Client as EdenredClient;
+use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\LocalBusiness\AddressResolver;
 use AppBundle\Entity\Sylius\Order;
 use AppBundle\LoopEat\Client as LoopeatClient;
 use AppBundle\LoopEat\Context as LoopeatContext;
@@ -102,10 +104,7 @@ class OrderNormalizer implements NormalizerInterface, ContextAwareDenormalizerIn
         // Suggest the customer to use reusable packaging via order payload
         if (null !== $restaurant &&
             $object->isEligibleToReusablePackaging() &&
-            $restaurant->isDepositRefundOptin() &&
-            // We don't allow (yet) to toggle reusable packaging for Dabba
-            // https://github.com/coopcycle/coopcycle-app/issues/1503
-            !$restaurant->isDabbaEnabled()) {
+            $restaurant->isDepositRefundOptin()) {
 
             $transKey = 'form.checkout_address.reusable_packaging_enabled.label';
             $packagingAmount = $object->getReusablePackagingAmount();
@@ -159,14 +158,18 @@ class OrderNormalizer implements NormalizerInterface, ContextAwareDenormalizerIn
                     }
                 }
 
+                $vendorAddress = $vendor instanceof LocalBusiness
+                    ? AddressResolver::resolveAddress($vendor)
+                    : $vendor->getAddress();
+
                 $data['vendor'] = [
                     'id' => $vendor->getId(),
                     'variableCustomerAmountEnabled' =>
                         $vendorConditions->getContract() !== null ? $vendorConditions->getContract()->isVariableCustomerAmountEnabled() : false,
                     'address' => [
                         'latlng' => [
-                            $vendor->getAddress()->getGeo()->getLatitude(),
-                            $vendor->getAddress()->getGeo()->getLongitude(),
+                            $vendorAddress->getGeo()->getLatitude(),
+                            $vendorAddress->getGeo()->getLongitude(),
                         ]
                     ],
                     'fulfillmentMethods' => $fulfillmentMethods,

@@ -1,16 +1,29 @@
 import React from 'react'
-import { QueryRenderer } from '@cubejs-client/react';
+import { useCubeQuery } from '@cubejs-client/react';
 import { Spin, Statistic } from 'antd';
 
 import { getCurrencySymbol } from '../../i18n'
 import { getCubeDateRange } from '../utils'
 
-const renderChart = ({ resultSet, error }) => {
+const Chart = ({ dateRange }) => {
+
+  const { resultSet, isLoading, error } = useCubeQuery({
+    "measures": [
+      "OrderExport.total_incl_tax_avg"
+    ],
+    "timeDimensions": [
+      {
+        "dimension": "OrderExport.completed_at",
+        "dateRange": getCubeDateRange(dateRange)
+      }
+    ],
+  });
+
   if (error) {
     return <div>{error.toString()}</div>;
   }
 
-  if (!resultSet) {
+  if (isLoading || !resultSet) {
     return <Spin />;
   }
 
@@ -25,39 +38,6 @@ const renderChart = ({ resultSet, error }) => {
     ))}
     </React.Fragment>
   )
-};
-
-const Chart = ({ cubejsApi, dateRange }) => {
-
-  return (
-    <QueryRenderer
-      query={{
-        "measures": [
-          "OrderExport.total_incl_tax_avg"
-        ],
-        "timeDimensions": [
-          {
-            "dimension": "OrderExport.completed_at",
-            "dateRange": getCubeDateRange(dateRange)
-          }
-        ],
-      }}
-      cubejsApi={cubejsApi}
-      resetResultSetOnChange={false}
-      render={(props) => renderChart({
-        ...props,
-        chartType: 'line',
-        pivotConfig: {
-          "x": [],
-          "y": [
-            "measures"
-          ],
-          "fillMissingDates": true,
-          "joinDateRange": false
-        }
-      })}
-    />
-  );
 };
 
 export default Chart

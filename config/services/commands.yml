@@ -81,6 +81,7 @@ services:
       $locale: '%env(COOPCYCLE_LOCALE)%'
       $country: "%country_iso%"
       $localeRegex: "%locale_regex%"
+      $locator: "@file_locator"
       $cityZonesUrl: "%env(CITY_ZONES_URL)%"
       $cityZonesProvider: "%env(CITY_ZONES_PROVIDER)%"
       $cityZonesOptions: "%env(json:CITY_ZONES_OPTIONS)%"
@@ -211,3 +212,13 @@ services:
         proximus: '@AppBundle\Transporter\Proximus\ProximusTransformer'
     tags:
       - { name: 'console.command', command: 'coopcycle:deliveries:import' }
+
+  AppBundle\Command\Paygreen\CheckStatusCommand:
+    tags:
+      - { name: 'console.command', command: 'coopcycle:paygreen:check-status' }
+
+  AppBundle\Command\RecommenderTrainCommand: ~
+  
+  AppBundle\Command\DebugRdcGetCommand:
+    tags:
+      - { name: 'console.command', command: 'debug:rdc-get' }

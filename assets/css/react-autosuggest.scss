@@ -1,7 +1,6 @@
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
-@import "~font-awesome/scss/_variables.scss";
-@import "~font-awesome/scss/_mixins.scss";
-@import "~font-awesome/scss/_animated.scss";
+@import "font-awesome/scss/_variables";
+@import "font-awesome/scss/_mixins";
+@import "font-awesome/scss/_animated";
 
 .react-autosuggest__container {
   position: relative;
@@ -13,7 +12,7 @@
     display: block;
     position: absolute;
     top: calc(50% - 7px);
-    right: $padding-base-horizontal;
+    right: 12px;
     display: none;
   }
 }

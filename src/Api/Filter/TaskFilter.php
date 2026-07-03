@@ -8,7 +8,7 @@ use ApiPlatform\Metadata\Operation;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 
 final class TaskFilter extends AbstractFilter
@@ -36,7 +36,7 @@ final class TaskFilter extends AbstractFilter
             return;
         }
 
-        if (!($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_DISPATCHER')) && $user->hasRole('ROLE_COURIER')) {
+        if ($user instanceof \AppBundle\Entity\User && !($user->hasRole('ROLE_ADMIN') || $user->hasRole('ROLE_DISPATCHER')) && $user->hasRole('ROLE_COURIER')) {
 
             $parameterName = $queryNameGenerator->generateParameterName('user');
             $queryBuilder

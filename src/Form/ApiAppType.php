@@ -7,6 +7,7 @@ use AppBundle\Entity\Store;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -30,18 +31,8 @@ class ApiAppType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'form.api_app.name.label',
+                'priority' => 3,
             ]);
-
-        if ($options['with_stores']) {
-            $builder
-                ->add('type', ChoiceType::class, [
-                    'label' => 'form.api_app.type.label',
-                    'choices' => [
-                        'form.api_app.type.oauth.label' => 'oauth',
-                        'form.api_app.type.api_key.label' => 'api_key',
-                    ],
-                ]);
-        }
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) use ($options) {
 
@@ -56,6 +47,10 @@ class ApiAppType extends AbstractType
                 },
                 'label' => 'form.api_app.store.label',
                 'choice_label' => 'name',
+                'placeholder' => 'form.api_app.store.placeholder',
+                'required' => false,
+                'help' => 'form.api_app.store.help',
+                'priority' => 0,
             ];
 
             if (null !== $apiApp->getId()) {
@@ -69,6 +64,7 @@ class ApiAppType extends AbstractType
                             'data' => $apiApp->getApiKey(),
                             'disabled' => true,
                             'mapped' => false,
+                            'priority' => -1,
                         ]);
                         break;
                     case 'oauth':
@@ -78,12 +74,14 @@ class ApiAppType extends AbstractType
                             'data' => $apiApp->getOauth2Client()->getIdentifier(),
                             'disabled' => true,
                             'mapped' => false,
+                            'priority' => -1,
                         ]);
                         $form->add('client_secret', TextType::class, [
                             'label' => 'form.api_app.client_secret.label',
                             'data' => $apiApp->getOauth2Client()->getSecret(),
                             'disabled' => true,
                             'mapped' => false,
+                            'priority' => -2,
                         ]);
                         break;
                 }
@@ -92,7 +90,38 @@ class ApiAppType extends AbstractType
             }
 
             if ($options['with_stores']) {
-                $form->add('store', EntityType::class, $storeOptions);
+
+                $disabled = null !== $apiApp->getId();
+
+                $form
+                    ->add('type', ChoiceType::class, [
+                        'label' => 'form.api_app.type.label',
+                        'choices' => [
+                            'form.api_app.type.oauth.label' => 'oauth',
+                            'form.api_app.type.api_key.label' => 'api_key',
+                        ],
+                        'disabled' => $disabled,
+                    ])
+                    ->add('scopes', ChoiceType::class, [
+                        'label' => 'form.api_app.scopes.label',
+                        'help' => 'form.api_app.scopes.help',
+                        'choices' => [
+                            'form.api_app.scope.deliveries' => 'deliveries',
+                            'form.api_app.scope.tasks' => 'tasks',
+                            // The "orders" scope does not belong here,
+                            // It is automatically added when in restaurant context
+                            // 'form.api_app.scope.orders' => 'orders',
+                            'form.api_app.scope.orders_all' => 'orders:all',
+                            'form.api_app.scope.tasks_all' => 'tasks:all',
+                        ],
+                        'expanded' => true,
+                        'multiple' => true,
+                        'mapped' => false,
+                        'disabled' => $disabled,
+                        'data' => null !== $apiApp->getId() ? array_map(fn ($scope) => (string) $scope, $apiApp->getOauth2Client()->getScopes()) : null
+                    ])
+                    ->add('store', EntityType::class, $storeOptions)
+                    ;
             }
         });
 
@@ -112,10 +141,7 @@ class ApiAppType extends AbstractType
                     new Scope('orders'),
                 ];
             } else {
-                $scopes = [
-                    new Scope('tasks'),
-                    new Scope('deliveries'),
-                ];
+                $scopes = array_map(fn ($scope) => new Scope($scope), $form->get('scopes')->getData());
             }
             $client->setScopes(...$scopes);
 

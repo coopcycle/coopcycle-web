@@ -25,6 +25,8 @@ class Cuisine
 
     protected $restaurants;
 
+    protected $icon;
+
     public function __construct()
     {
         $this->restaurants = new ArrayCollection();
@@ -82,5 +84,20 @@ class Cuisine
         $this->restaurants = $restaurants;
 
         return $this;
+    }
+
+    public function setIcon($icon)
+    {
+        $this->icon = $icon;
+    }
+
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
+    public function hasIcon()
+    {
+        return null !== $this->icon;
     }
 }

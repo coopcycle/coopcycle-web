@@ -1,5 +1,5 @@
 import React from 'react';
-import { CubeProvider, useCubeQuery } from '@cubejs-client/react';
+import { useCubeQuery } from '@cubejs-client/react';
 import { Spin } from 'antd';
 import { getCubeDateRange } from '../utils'
 
@@ -205,12 +205,4 @@ const App = ({ dateRange, fixedCosts }) => {
 
 };
 
-const ChartRenderer = ({ cubejsApi, dateRange, fixedCosts = 0 }) => {
-  return (
-    <CubeProvider cubeApi={cubejsApi}>
-      <App dateRange={ dateRange } fixedCosts={ fixedCosts } />
-    </CubeProvider>
-  )
-};
-
-export default ChartRenderer;
+export default App;

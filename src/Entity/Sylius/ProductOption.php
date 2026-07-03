@@ -12,7 +12,10 @@ use AppBundle\DataType\NumRange;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use AppBundle\Validator\Constraints\ProductOption as AssertProductOption;
+use Doctrine\Common\Collections\Criteria;
 use Sylius\Component\Product\Model\ProductOption as BaseProductOption;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\SerializedName;
 
 #[ApiResource(operations: [new Get()], normalizationContext: ['groups' => ['product_option']])]
 #[AssertProductOption]
@@ -97,5 +100,43 @@ class ProductOption extends BaseProductOption implements ProductOptionInterface
         $this->valuesRange = $range;
 
         return $this;
+    }
+
+    #[Groups(['product', 'restaurant_menu', 'restaurant_menus'])]
+    public function getIdentifier()
+    {
+        return $this->getCode();
+    }
+
+    #[Groups(['product', 'restaurant_menu', 'restaurant_menus'])]
+    public function getAdditionalType()
+    {
+        return $this->getStrategy();
+    }
+
+    // TODO Add Behat test with valuesRange matcher
+    // TODO Have only one serialization format for valuesRange (see NumRangeNormalizer & usage in JS)
+    #[Groups(['product', 'restaurant_menu', 'restaurant_menus'])]
+    #[SerializedName('valuesRange')]
+    public function getSerializedValuesRangeForProduct()
+    {
+        if (null !== $this->valuesRange) {
+
+            return implode('', [
+                '[',
+                $this->valuesRange->getLower(),
+                ',',
+                $this->valuesRange->isUpperInfinite() ? '' : $this->valuesRange->getUpper(),
+                ']',
+            ]);
+        }
+
+        return null;
+    }
+
+    #[Groups(['product', 'restaurant_menu', 'restaurant_menus'])]
+    public function getHasMenuItem()
+    {
+        return $this->getValues();
     }
 }

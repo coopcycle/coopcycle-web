@@ -13,7 +13,7 @@ const Adjustment = ({ adjustment, tooltip }) => (
   <div>
     <span>{ adjustment.label }</span>
     { tooltip && (
-      <span className="ml-1" data-toggle="tooltip" data-placement="right" title={ tooltip }>
+      <span className="tooltip tooltip-right ml-1" data-tip={ tooltip }>
         <i className="fa fa-info-circle"></i>
       </span>
     ) }
@@ -43,14 +43,6 @@ const groupTaxAdjustments = (adjustments, items) => {
 }
 
 class CartTotal extends React.Component {
-
-  componentDidMount() {
-    if (this.props.variableCustomerAmountEnabled) {
-      $('body').tooltip({
-        selector: '[data-toggle="tooltip"]'
-      })
-    }
-  }
 
   renderAdjustments() {
 

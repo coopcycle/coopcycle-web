@@ -1,0 +1,62 @@
+@import "./fonts.css";
+
+/* https://tailwindcss.com/docs/installation/framework-guides/symfony *
+/* https://tailwindcss.com/docs/detecting-classes-in-source-files#disabling-automatic-detection */
+@import "tailwindcss" source(none);
+
+/* Define theme */
+@theme {
+  --font-sans: "Open Sans", sans-serif;
+  --font-mono: "Roboto Mono", "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+  --font-raleway: "Raleway", Helvetica, Arial, sans-serif;
+}
+
+@source "../../templates/**/*.html.twig";
+@source "../../vendor/islesurlasorguetourisme/daisyui-form-bundle/templates/**/*.html.twig";
+
+/* Do not scan all JS files atm */
+/* @source "../../js/app"; */
+@source "../../js/app/search/navbar.js";
+@source "../../js/app/components/order";
+@source "../../js/app/components/Payment";
+@source "../../js/app/restaurant/components";
+@source "../../js/app/register";
+@source "../../js/app/optins";
+
+@plugin "daisyui";
+@plugin "@tailwindcss/typography";
+
+@import "font-awesome/css/font-awesome.min.css";
+@import "beautifymarker/leaflet-beautify-marker-icon.css";
+
+@import "leaflet/dist/leaflet.css";
+
+@import "./react-modal.css";
+
+/* PayGreen's CDN CSS defines an unlayered `summary { display: list-item }` which beats
+   DaisyUI's layered btn styles. This unlayered rule has higher specificity and wins. */
+details.dropdown > summary {
+  display: inline-flex;
+}
+
+dialog#order-receipt-modal {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  padding: 0;
+  min-width: 420px;
+  max-width: 90vw;
+}
+
+dialog#order-receipt-modal::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.btn-google-play {
+  display: inline-block;
+  width: 180px;
+  margin-right: -12px;
+  & > img {
+    display: inline-block;
+    width: 100%;
+  }
+}

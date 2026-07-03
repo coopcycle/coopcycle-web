@@ -34,8 +34,8 @@ class MyTaskMetadataDtoNormalizer implements ContextAwareNormalizerInterface, No
             'order_number',
             'payment_method',
             'order_total',
-            'has_loopeat_returns',
-            'zero_waste'
+            'zero_waste',
+            'documents',
         ]);
 
         return $data;

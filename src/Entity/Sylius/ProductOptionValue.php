@@ -6,10 +6,15 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use AppBundle\Entity\Delivery\PricingRule;
+use AppBundle\Sylius\Product\ProductOptionInterface;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Sylius\Component\Resource\Model\ToggleableTrait;
 use Sylius\Component\Product\Model\ProductOptionValue as BaseProductOptionValue;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\SerializedName;
 
 #[ApiResource(
     operations: [
@@ -38,9 +43,20 @@ class ProductOptionValue extends BaseProductOptionValue implements ProductOption
      */
     protected $pricingRule;
 
+    /**
+     * A ProductOptionValue may be linked to a Product.
+     * When a Product is linked, it allows synchronizing the "enabled" property.
+     * i.e when the linked Product is disabled, the ProductOptionValue is disabled as well.
+     */
+    protected $product = null;
+
+    protected $dependsOn;
+
     public function __construct()
     {
         parent::__construct();
+
+        $this->dependsOn = new ArrayCollection();
     }
 
     /**
@@ -67,5 +83,56 @@ class ProductOptionValue extends BaseProductOptionValue implements ProductOption
     public function setPricingRule(?PricingRule $pricingRule): void
     {
         $this->pricingRule = $pricingRule;
+    }
+
+    #[Groups(['product', 'restaurant_menu', 'restaurant_menus'])]
+    public function getIdentifier(): string
+    {
+        return $this->getCode();
+    }
+
+    #[Groups(['product', 'restaurant_menu', 'restaurant_menus'])]
+    public function getOffers(): array
+    {
+        $price = 0;
+        switch ($this->getOption()->getStrategy()) {
+            case ProductOptionInterface::STRATEGY_OPTION_VALUE:
+                $price = $this->getPrice();
+                break;
+        }
+
+        return [
+            '@type' => 'Offer',
+            'price' => $price,
+        ];
+    }
+
+    #[Groups(['product', 'restaurant_menu', 'restaurant_menus'])]
+    #[SerializedName('name')]
+    public function getSerializedName(): string
+    {
+        return $this->getValue();
+    }
+
+    public function getProduct(): ?Product
+    {
+        return $this->product;
+    }
+
+    public function setProduct(?Product $product)
+    {
+        $this->product = $product;
+    }
+
+    #[Groups(['product', 'restaurant_menu', 'restaurant_menus'])]
+    #[SerializedName('dependsOn')]
+    public function getDependsOn(): Collection
+    {
+        return $this->dependsOn;
+    }
+
+    public function setDependsOn(Collection $dependsOn)
+    {
+        $this->dependsOn = $dependsOn;
     }
 }

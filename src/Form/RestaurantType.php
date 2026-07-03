@@ -6,7 +6,8 @@ use AppBundle\Entity\Cuisine;
 use AppBundle\Entity\Delivery\FailureReasonSet;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Enum\FoodEstablishment;
-use AppBundle\Form\Restaurant\DabbaType;
+use AppBundle\Form\Restaurant\DayOfWeekAddressType;
+use AppBundle\Form\Restaurant\DayOfWeekDeliveryPerimeterExpressionType;
 use AppBundle\Form\Restaurant\FulfillmentMethodType;
 use AppBundle\Form\Restaurant\LoopeatType;
 use AppBundle\Form\Restaurant\ShippingOptionsTrait;
@@ -15,7 +16,6 @@ use AppBundle\Form\Type\LocalBusinessTypeChoiceType;
 use AppBundle\Form\Type\QueryBuilder\OrderByNameQueryBuilder;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -72,6 +72,22 @@ class RestaurantType extends LocalBusinessType
                 'label' => false,
                 'help' => 'localBusiness.form.business_address.help',
                 'required' => false,
+            ])
+            ->add('dayOfWeekAddresses', CollectionType::class, [
+                'label' => 'localBusiness.form.day_of_week_addresses.label',
+                'help' => 'localBusiness.form.day_of_week_addresses.help',
+                'entry_type' => DayOfWeekAddressType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
+            ])
+            ->add('dayOfWeekDeliveryPerimeterExpressions', CollectionType::class, [
+                'label' => 'localBusiness.form.day_of_week_delivery_perimeter_expressions.label',
+                'help' => 'localBusiness.form.day_of_week_addresses.help',
+                'entry_type' => DayOfWeekDeliveryPerimeterExpressionType::class,
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
             ])
             ;
 
@@ -144,12 +160,10 @@ class RestaurantType extends LocalBusinessType
                 'required' => false,
                 'disabled' => !$this->authorizationChecker->isGranted('ROLE_ADMIN'),
             ]);
-        }
-
-        if ($options['dabba_enabled']) {
-            $builder->add('dabba', DabbaType::class, [
-                'mapped' => false,
-                'allow_toggle' => $this->authorizationChecker->isGranted('ROLE_ADMIN'),
+            $builder->add('enBoitLePlatPlatformFee', CheckboxType::class, [
+                'label' => 'restaurant.form.en_boite_le_plat_platform_fee.label',
+                'required' => false,
+                'disabled' => !$this->authorizationChecker->isGranted('ROLE_ADMIN'),
             ]);
         }
 
@@ -234,6 +248,13 @@ class RestaurantType extends LocalBusinessType
             }
         });
 
+        $builder->get('description')->addEventListener(
+            FormEvents::PRE_SUBMIT,
+            function (FormEvent $event) {
+                $event->setData(strip_tags($event->getData()));
+            }
+        );
+
         $builder->addEventListener(
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) {
@@ -317,7 +338,6 @@ class RestaurantType extends LocalBusinessType
             'edenred_enabled' => false,
             'vytal_enabled' => false,
             'en_boite_le_plat_enabled' => false,
-            'dabba_enabled' => false,
         ));
     }
 }

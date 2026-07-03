@@ -15,7 +15,7 @@ jobs:
       COOPCYCLE_COUNTRY: ${{ matrix.country }}
       COOPCYCLE_LOCALE: ${{ matrix.country }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Run Cypress
         uses: cypress-io/github-action@v6
         with:

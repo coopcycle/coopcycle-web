@@ -11,7 +11,7 @@ use AppBundle\Message\PushNotification;
 use AppBundle\Service\RemotePushNotificationManager;
 use AppBundle\Service\RoutingInterface;
 use Carbon\Carbon;
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
@@ -21,7 +21,10 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class TaskListSubscriber implements EventSubscriber
+#[AsDoctrineListener(event: Events::prePersist, priority: 16, connection: 'default')]
+#[AsDoctrineListener(event: Events::onFlush, priority: 16, connection: 'default')]
+#[AsDoctrineListener(event: Events::postFlush, priority: 16, connection: 'default')]
+class TaskListSubscriber
 {
     private $taskLists = [];
 
@@ -33,15 +36,6 @@ class TaskListSubscriber implements EventSubscriber
         private readonly LoggerInterface $logger
     )
     {
-    }
-
-    public function getSubscribedEvents()
-    {
-        return array(
-            Events::prePersist,
-            Events::onFlush,
-            Events::postFlush,
-        );
     }
 
     private function calculate(TaskList $taskList)

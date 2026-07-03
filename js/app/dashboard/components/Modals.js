@@ -20,6 +20,7 @@ import {
   closeCreateDeliveryModal,
   closeCreateTourModal,
   closeReportIncidentModal,
+  closeSendToWarehouseModal,
   closeTaskRescheduleModal,
 } from '../redux/actions';
 import TaskModalContent from './TaskModalContent';
@@ -35,6 +36,7 @@ import CreateDeliveryModalContent from './CreateDeliveryModalContent';
 import CreateTourModalContent from './CreateTourModalContent';
 import TaskRescheduleModalContent from './TaskRescheduleModalContent';
 import TaskReportIncidentModalContent from './TaskReportIncidentModalContent';
+import SendToWarehouseModalContent from './SendToWarehouseModalContent';
 import { usePreloadedState } from '../hooks/usePreloadedState';
 
 function Modals(props) {
@@ -176,6 +178,15 @@ function Modals(props) {
         shouldCloseOnOverlayClick={true}>
         <TaskReportIncidentModalContent />
       </Modal>
+      <Modal
+        appElement={document.getElementById('dashboard')}
+        style={customStyle}
+        isOpen={props.isSendToWarehouseModalVisible}
+        onRequestClose={props.closeSendToWarehouseModal}
+        className="ReactModal__Content--send-to-warehouse"
+        shouldCloseOnOverlayClick={true}>
+        <SendToWarehouseModalContent />
+      </Modal>
     </React.Fragment>
   );
 }
@@ -193,6 +204,7 @@ function mapStateToProps(state) {
     createGroupModalIsOpen: state.createGroupModalIsOpen,
     addTaskToGroupModalIsOpen: state.addTaskToGroupModalIsOpen,
     isCreateDeliveryModalVisible: state.isCreateDeliveryModalVisible,
+    isSendToWarehouseModalVisible: state.isSendToWarehouseModalVisible,
     isCreateTourModalVisible: state.isCreateTourModalVisible,
     isTaskRescheduleModalVisible: state.isTaskRescheduleModalVisible,
     reportIncidentModalIsOpen: state.reportIncidentModalIsOpen,
@@ -215,6 +227,7 @@ function mapDispatchToProps(dispatch) {
     exportTasks: (start, end) => dispatch(exportTasks(start, end)),
     closeAddTaskToGroupModal: () => dispatch(closeAddTaskToGroupModal()),
     closeCreateDeliveryModal: () => dispatch(closeCreateDeliveryModal()),
+    closeSendToWarehouseModal: () => dispatch(closeSendToWarehouseModal()),
     closeCreateTourModal: () => dispatch(closeCreateTourModal()),
     closeTaskRescheduleModal: () => dispatch(closeTaskRescheduleModal()),
     closeReportIncidentModal: () => dispatch(closeReportIncidentModal()),

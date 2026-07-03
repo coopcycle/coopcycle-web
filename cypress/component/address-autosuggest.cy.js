@@ -56,7 +56,7 @@ describe('Address Autosuggest', () => {
       .click()
 
     cy.get('[data-cy-root]')
-      .find('.address-autosuggest__addon')
+      .find('[data-addon="postcode"]')
       .should('have.text', 'YO24 4ND')
 
   })

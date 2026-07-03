@@ -3,26 +3,27 @@
 namespace AppBundle\Message\Order\Command;
 
 use AppBundle\Entity\Refund as RefundEntity;
+use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 
 class Refund
 {
-    private $payment;
+    private $subject;
     private $amount;
     private $liableParty;
     private $comments;
 
-    public function __construct(PaymentInterface $payment, $amount = null, $liableParty = RefundEntity::LIABLE_PARTY_PLATFORM, $comments = '')
+    public function __construct(OrderInterface|PaymentInterface $subject, $amount = null, $liableParty = RefundEntity::LIABLE_PARTY_PLATFORM, $comments = '')
     {
-        $this->payment = $payment;
+        $this->subject = $subject;
         $this->amount = $amount;
         $this->liableParty = $liableParty;
         $this->comments = $comments;
     }
 
-    public function getPayment()
+    public function getSubject(): OrderInterface|PaymentInterface
     {
-        return $this->payment;
+        return $this->subject;
     }
 
     public function getAmount()

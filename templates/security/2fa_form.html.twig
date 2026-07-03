@@ -1,0 +1,102 @@
+{% extends "frontend.html.twig" %}
+
+{% block body %}
+<div class="min-h-[60vh] flex items-center justify-center py-12 px-4">
+  <div class="card w-full max-w-md bg-base-100 shadow-xl">
+    <div class="card-body">
+
+      {% if authenticationError %}
+      <div class="alert alert-error mb-4">
+        <span>{{ authenticationError.messageKey | trans(authenticationError.messageData ?? {}, 'SchebTwoFactorBundle') }}</span>
+      </div>
+      {% endif %}
+
+      <h2 class="card-title justify-center text-2xl">{{ 'two_factor.title' | trans({}, 'messages') }}</h2>
+      <p class="text-center text-base-content/60">
+        {{ 'two_factor.subtitle' | trans({}, 'messages') }}
+      </p>
+
+      <form id="two-factor-form" method="post" action="{{ path('2fa_login_check') }}">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token('two_factor') }}" />
+        <input type="hidden" name="_auth_code" id="auth_code_value" />
+
+        <div class="flex gap-3 justify-center my-6">
+          {% for i in 1..6 %}
+          <input type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off"
+            class="input input-bordered w-12 h-14 text-2xl text-center px-0 caret-transparent" />
+          {% endfor %}
+        </div>
+
+        <button class="btn btn-primary btn-block btn-lg" type="submit">
+          {{ 'two_factor.submit' | trans({}, 'messages') }}
+        </button>
+      </form>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  const form    = document.getElementById('two-factor-form');
+  const hidden  = document.getElementById('auth_code_value');
+  const inputs  = Array.from(document.querySelectorAll('#two-factor-form input[type="text"]'));
+
+  inputs[0].focus();
+
+  function getCode() {
+    return inputs.map(i => i.value).join('');
+  }
+
+  function trySubmit() {
+    const code = getCode();
+    if (code.length === 6) {
+      hidden.value = code;
+      form.submit();
+    }
+  }
+
+  inputs.forEach((input, index) => {
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Backspace' && input.value === '' && index > 0) {
+        inputs[index - 1].focus();
+        inputs[index - 1].value = '';
+      }
+    });
+
+    input.addEventListener('input', function () {
+      input.value = input.value.replace(/\D/g, '').slice(-1);
+
+      if (input.value !== '') {
+        if (index < inputs.length - 1) {
+          inputs[index + 1].focus();
+        }
+        trySubmit();
+      }
+    });
+
+    input.addEventListener('paste', function (e) {
+      e.preventDefault();
+      const pasted = (e.clipboardData || window.clipboardData)
+        .getData('text')
+        .replace(/\D/g, '')
+        .slice(0, 6);
+
+      pasted.split('').forEach((char, i) => {
+        if (inputs[index + i]) inputs[index + i].value = char;
+      });
+
+      const next = index + pasted.length;
+      (inputs[next] || inputs[inputs.length - 1]).focus();
+      trySubmit();
+    });
+  });
+
+  form.addEventListener('submit', function () {
+    hidden.value = getCode();
+  });
+})();
+</script>
+{% endblock %}

@@ -44,7 +44,7 @@ class MessengerRequestContextProcessor
             $record['extra']['user_agent'] = $userAgent;
         }
 
-        if (!$record['extra']['token']) {
+        if (!isset($record['extra']['token']) || !$record['extra']['token']) {
             $record['extra']['token'] = [];
         }
 

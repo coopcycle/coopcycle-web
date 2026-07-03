@@ -40,7 +40,6 @@ export default function Dashboard({ onDateChange }) {
   const showSettings = useSelector(state => state.showSettings)
   const showSearch = useSelector(state => state.showSearch)
   const initialOrder = useSelector(state => state.initialOrder)
-  const adhocOrderEnabled = useSelector(state => state.adhocOrderEnabled)
 
   const activeTab = useSelector(state => state.activeTab)
   const modalIsOpen = useSelector(state => state.order !== null)
@@ -126,18 +125,6 @@ export default function Dashboard({ onDateChange }) {
             </div>
           </div>
         ) }
-        {
-          adhocOrderEnabled && restaurant && (
-            <div>
-              <a href={ window.Routing.generate(
-                'dashboard_restaurant_new_adhoc_order',
-                { restaurantId: restaurant.id }) }
-                 className="btn btn-sm btn-success">
-                { t('CREATE_ORDER') }
-              </a>
-            </div>
-          )
-        }
         <div>
           <AntdConfigProvider>
             <DatePicker

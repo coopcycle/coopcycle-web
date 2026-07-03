@@ -5,9 +5,10 @@ namespace AppBundle\Domain\Order\Event;
 use AppBundle\Domain\DomainEvent;
 use AppBundle\Domain\HasIconInterface;
 use AppBundle\Domain\Order\Event;
+use AppBundle\Domain\Order\FrontendEvent;
 use AppBundle\Sylius\Order\OrderInterface;
 
-class OrderRefused extends Event implements DomainEvent, HasIconInterface
+class OrderRefused extends Event implements DomainEvent, HasIconInterface, FrontendEvent
 {
     private $reason;
 

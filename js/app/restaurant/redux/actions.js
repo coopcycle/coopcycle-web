@@ -49,6 +49,8 @@ export const STOP_ASKING_ENABLE_REUSABLE_PACKAGING = 'STOP_ASKING_ENABLE_REUSABL
 export const DISABLE_REUSABLE_PACKAGING = 'DISABLE_REUSABLE_PACKAGING'
 export const ENABLE_REUSABLE_PACKAGING = 'ENABLE_REUSABLE_PACKAGING'
 
+export const SET_LOADING_OVERLAY_VISIBLE = 'SET_LOADING_OVERLAY_VISIBLE';
+
 export const fetchRequest = createFsAction(FETCH_REQUEST)
 export const fetchSuccess = createFsAction(FETCH_SUCCESS)
 export const fetchFailure = createFsAction(FETCH_FAILURE)
@@ -89,6 +91,8 @@ export const stopAskingToEnableReusablePackaging = createFsAction(STOP_ASKING_EN
 
 export const updateCartTiming = createAction("UPDATE_CART_TIMING")
 
+export const setLoadingOverlayVisible = createAction(SET_LOADING_OVERLAY_VISIBLE)
+
 const httpClient = axios.create()
 function getRoutingParams(params) {
 
@@ -106,13 +110,13 @@ function serializeForm(withTime = false) {
 
   const params = new URLSearchParams()
 
-  $('form[name="cart"]').serializeArray().forEach(field => {
-    params.append(field.name, field.value)
-  })
-
-  if (withTime) {
-    $('form[name="cart_time"]').serializeArray().forEach(field => {
-      params.append(field.name, field.value)
+  const cartForm = document.querySelector('form[name="cart"]')
+  if (cartForm) {
+    new FormData(cartForm).forEach((value, name) => {
+      if (!withTime && name === 'cart[timeSlot]') {
+        return
+      }
+      params.append(name, value)
     })
   }
 
@@ -121,7 +125,7 @@ function serializeForm(withTime = false) {
 
 function postForm() {
 
-  const $form = $('form[name="cart"]')
+  const form = document.querySelector('form[name="cart"]')
 
   return httpClient.request({
     method: 'POST',
@@ -129,14 +133,14 @@ function postForm() {
       'Content-Type': 'application/x-www-form-urlencoded',
       'X-Requested-With': 'XMLHttpRequest'
     },
-    url: $form.data('cartUrl'),
+    url: form.dataset.cartUrl,
     data: serializeForm().toString(),
   }).then(res => res.data)
 }
 
 function postFormWithTime() {
 
-  const $form = $('form[name="cart"]')
+  const form = document.querySelector('form[name="cart"]')
 
   return httpClient.request({
     method: 'POST',
@@ -144,7 +148,7 @@ function postFormWithTime() {
       'Content-Type': 'application/x-www-form-urlencoded',
       'X-Requested-With': 'XMLHttpRequest'
     },
-    url: $form.data('cartUrl'),
+    url: form.dataset.cartUrl,
     data: serializeForm(true).toString(),
   }).then(res => res.data)
 }
@@ -165,7 +169,7 @@ function handleAjaxResponse(res, dispatch, broadcast = true) {
     dispatch(setOrderAccessToken({ orderNodeId, orderAccessToken }))
   }
 
-  $('#menu').LoadingOverlay('hide')
+  dispatch(setLoadingOverlayVisible(false))
   if (broadcast) {
     notifyListeners(res.cart)
   }
@@ -321,7 +325,7 @@ function geocodeAndSync() {
 
     // No need to sync address for guests
     if (isPlayer) {
-      $('#menu').LoadingOverlay('hide')
+      dispatch(setLoadingOverlayVisible(false))
       return
     }
 
@@ -334,11 +338,20 @@ function geocodeAndSync() {
       return
     }
 
+    if (cart.shippingAddress?.provider !== null) {
+      dispatch(changeAddress({
+        ...cart.shippingAddress,
+        isPrecise: true,
+      }))
+
+      return
+    }
+
     dispatch(fetchRequest())
 
     geocode(cart.shippingAddress.streetAddress).then(address => {
 
-      $('#menu').LoadingOverlay('hide')
+      dispatch(setLoadingOverlayVisible(false))
 
       if (address) {
         dispatch(geocodingSuccess())
@@ -360,7 +373,7 @@ export function sync() {
     const { cart, player: { player } } = getState()
 
     if (cart.takeaway) {
-      $('#menu').LoadingOverlay('hide')
+      dispatch(setLoadingOverlayVisible(false))
       return
     }
 
@@ -419,7 +432,7 @@ export function changeAddress(address) {
       restaurant
     } = getState()
 
-    if (address.isPrecise || address.provider === 'MAP_PICKER') {
+    if (address.isPrecise || address?.provider !== null) {
 
       // Change field value immediately
       dispatch(setStreetAddress(address.streetAddress))
@@ -436,9 +449,11 @@ export function changeAddress(address) {
         const url =
           window.Routing.generate('restaurant_cart_address', getRoutingParams({ id: restaurant.id }))
 
-        $.post(url, { address: address['@id'] })
-          .then(res => handleAjaxResponse(res, dispatch, false))
-          .fail(e => handleAjaxError(e, dispatch))
+        httpClient.post(url, qs.stringify({ address: address['@id'] }), {
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        })
+          .then(res => handleAjaxResponse(res.data, dispatch, false))
+          .catch(e => handleAjaxError(e, dispatch))
 
       } else {
 
@@ -476,9 +491,9 @@ export function clearDate() {
 
     dispatch(fetchRequest())
 
-    $.post(url)
-      .then(res => handleAjaxResponse(res, dispatch, false))
-      .fail(e => handleAjaxError(e, dispatch))
+    httpClient.post(url)
+      .then(res => handleAjaxResponse(res.data, dispatch, false))
+      .catch(e => handleAjaxError(e, dispatch))
 
   }
 }
@@ -490,12 +505,11 @@ export function enableTakeaway(post = true) {
 
   return (dispatch) => {
 
-    const $form = $('form[name="cart"]')
-    const $takeaway = $form.find('input[name="cart[takeaway]"]')
+    const takeaway = document.querySelector('form[name="cart"] input[name="cart[takeaway]"]')
 
-    if ($takeaway.length === 1) {
+    if (takeaway) {
 
-      $takeaway.prop('checked', true)
+      takeaway.checked = true
 
       dispatch(_enableTakeaway())
 
@@ -513,12 +527,11 @@ export function disableTakeaway(post = true) {
 
   return (dispatch) => {
 
-    const $form = $('form[name="cart"]')
-    const $takeaway = $form.find('input[name="cart[takeaway]"]')
+    const takeaway = document.querySelector('form[name="cart"] input[name="cart[takeaway]"]')
 
-    if ($takeaway.length === 1) {
+    if (takeaway) {
 
-      $takeaway.prop('checked', false)
+      takeaway.checked = false
 
       dispatch(_disableTakeaway())
 
@@ -556,12 +569,18 @@ export function retryLastAddItemRequest() {
       data = { ...data, _clear: 'yes' }
     }
 
-    $.post(lastAddItemRequest.url, data)
+    const postData = Array.isArray(data)
+      ? qs.stringify(data.reduce((acc, { name, value }) => ({ ...acc, [name]: value }), {}))
+      : qs.stringify(data)
+
+    httpClient.post(lastAddItemRequest.url, postData, {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    })
       .then(res => {
         dispatch(clearLastAddItemRequest())
-        handleAjaxResponse(res, dispatch)
+        handleAjaxResponse(res.data, dispatch)
       })
-      .fail(e => handleAjaxError(e, dispatch))
+      .catch(e => handleAjaxError(e, dispatch))
   }
 }
 
@@ -634,12 +653,11 @@ export function toggleReusablePackaging(checked = true) {
 
   return (dispatch) => {
 
-    const $form = $('form[name="cart"]')
-    const $reusablePackagingEnabled = $form.find('input[name="cart[reusablePackagingEnabled]"]')
+    const reusablePackagingEnabled = document.querySelector('form[name="cart"] input[name="cart[reusablePackagingEnabled]"]')
 
-    if ($reusablePackagingEnabled.length === 1) {
+    if (reusablePackagingEnabled) {
 
-      $reusablePackagingEnabled.prop('checked', checked)
+      reusablePackagingEnabled.checked = checked
 
       if (checked) {
         dispatch(_enableReusablePackaging())

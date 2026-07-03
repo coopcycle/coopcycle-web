@@ -10,6 +10,7 @@ import ProductModalHeader from './ProductModalHeader'
 import { OptionGroup } from './ProductOptionGroup'
 import ProductInfo from './ProductInfo'
 import ProductQuantity from './ProductQuantity'
+import FrequentlyBoughtTogether from './FrequentlyBoughtTogether'
 import { isMandatory, isValid } from './useProductOptions'
 
 const getOffset = (options, index) => {
@@ -21,7 +22,7 @@ const getOffset = (options, index) => {
   const prevOption = options[index - 1]
   const prevOffset = getOffset(options, (index - 1))
 
-  return prevOffset + (prevOption.additional ? prevOption.values.length : 1)
+  return prevOffset + (prevOption.additional ? prevOption.hasMenuItem.length : 1)
 }
 
 /* Exported to be able to test it */
@@ -87,6 +88,7 @@ export default forwardRef((props, ref) => {
             index={ offsets[index] }
             option={ option } />
         )) }
+        <FrequentlyBoughtTogether product={ product } />
       </main>
       <footer className="modal-footer">
         { (missingMandatoryOptions === 0 && invalidOptions === 0) ? (

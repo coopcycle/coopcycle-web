@@ -52,8 +52,10 @@ class Address extends BaseAddress implements SoftDeleteableInterface
     use SoftDeleteable;
 
     const PROVIDER_MAPPICKER = 'MAP_PICKER';
+    const PROVIDER_PLUS_CODE = 'PLUS_CODE';
     const PROVIDERS = [
-        self::PROVIDER_MAPPICKER
+        self::PROVIDER_MAPPICKER,
+        self::PROVIDER_PLUS_CODE
     ];
 
     /**

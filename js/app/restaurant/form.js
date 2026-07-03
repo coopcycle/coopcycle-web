@@ -13,6 +13,8 @@ import { useTranslation } from 'react-i18next'
 
 import i18n from '../i18n'
 import DropzoneWidget from '../widgets/Dropzone'
+import AddressAutosuggestFormGroup from '../widgets/AddressAutosuggestFormGroup'
+import DeliveryZonePicker from '../components/DeliveryZonePicker'
 
 import 'prismjs/themes/prism.css'
 import 'prismjs/plugins/toolbar/prism-toolbar.css'
@@ -30,7 +32,7 @@ function renderSwitch($input) {
 
   const $parent = $input.closest('div.checkbox').parent()
 
-  const $switch = $('<div class="display-inline-block">')
+  const $switch = $('<div class="d-inline-block">')
   const $hidden = $('<input>')
 
   $switch.addClass('switch')
@@ -134,7 +136,7 @@ const StockPhotoSearch = ({ url }) => {
                       method: 'POST',
                       url,
                       data: {
-                        url: result.webformatURL
+                        pixabay_id: result.id
                       }
                     }).then(() => window.document.location.reload())
                   }}>{ t('RESTAURANT_STOCK_PHOTOS_SELECT') }</a>
@@ -223,7 +225,7 @@ $(function() {
   const $bannerDropzoneContainer = $('<div>')
   const $bannerStockPhotoContainer = $('<div>')
 
-  const imageFromURL = window.Routing.generate(formData.dataset.imageFromUrlRoute, { id: formData.dataset.restaurantId })
+  const imageFromURL = window.Routing.generate(formData.dataset.imageFromPixabayRoute, { id: formData.dataset.restaurantId })
 
   createRoot($bannerStockPhotoContainer.get(0)).render(<StockPhotoSearch url={ imageFromURL } />)
 
@@ -293,3 +295,124 @@ $('#restaurant_delete').on('click', e => {
     e.preventDefault()
   }
 })
+
+document.getElementById('day-of-week-address-add').addEventListener('click', (e) => {
+  const container = document.getElementById('restaurant_dayOfWeekAddresses')
+  const item = document.createElement('li');
+
+  item.innerHTML = container
+    .dataset
+    .prototype
+    .replace(
+      /__name__/g,
+      container.children.length
+    );
+
+  new AddressAutosuggestFormGroup(item.querySelector('[data-widget="address-input"'))
+
+  const hiddenInput = item
+    .querySelector('[data-widget="days_of_week"]')
+    .querySelector('input[type="hidden"]')
+
+  const checkboxes = item
+    .querySelector('[data-widget="days_of_week"]')
+    .querySelectorAll('input[type="checkbox"]')
+
+  checkboxes
+    .forEach((checkbox) => {
+      checkbox.addEventListener('change', (e) => {
+        const values = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+        hiddenInput.value = values.join(',');
+      })
+    })
+
+ item
+    .querySelector('[data-action="delete"]')
+    .addEventListener('click', (e) => {
+      e.preventDefault()
+      e.target.closest('li').remove()
+    })
+
+  container.appendChild(item);
+})
+
+document.getElementById('restaurant_dayOfWeekAddresses')
+  .querySelectorAll('[data-action="delete"]')
+  .forEach(el => {
+    el.addEventListener('click', (e) => {
+      e.preventDefault()
+      e.target.closest('li').remove()
+    })
+  })
+
+function initDayOfWeekCheckboxes(item) {
+  const widget = item.querySelector('[data-widget="days_of_week"]')
+  if (!widget) return
+
+  const hiddenInput = widget.querySelector('input[type="hidden"]')
+  const checkboxes = widget.querySelectorAll('input[type="checkbox"]')
+
+  checkboxes.forEach((checkbox) => {
+    checkbox.addEventListener('change', () => {
+      hiddenInput.value = Array.from(checkboxes)
+        .filter(cb => cb.checked)
+        .map(cb => cb.value)
+        .join(',')
+    })
+  })
+}
+
+function initDeliveryPerimeterExpressionWidget(el) {
+  const input = el.querySelector('input[type="hidden"]')
+  if (!input) return
+
+  const container = document.createElement('div')
+
+  createRoot(container).render(
+    <DeliveryZonePicker
+      zones={ JSON.parse(el.dataset.zones) }
+      expression={ el.dataset.defaultValue || '' }
+      onExprChange={ expr => { input.value = expr } }
+    />
+  )
+
+  el.appendChild(container)
+}
+
+const addDeliveryPerimeterBtn = document.getElementById('day-of-week-delivery-perimeter-expression-add')
+
+if (addDeliveryPerimeterBtn) {
+
+  const container = document.getElementById('restaurant_dayOfWeekDeliveryPerimeterExpressions')
+
+  // Init delete + checkbox sync on items that already exist on page load
+  container.querySelectorAll('li').forEach(item => {
+    initDayOfWeekCheckboxes(item)
+    item.querySelectorAll('[data-action="delete"]').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault()
+        e.target.closest('li').remove()
+      })
+    })
+  })
+
+  addDeliveryPerimeterBtn.addEventListener('click', () => {
+    const item = document.createElement('li')
+
+    item.innerHTML = container.dataset.prototype.replace(/__name__/g, container.children.length)
+
+    initDayOfWeekCheckboxes(item)
+
+    const widgetEl = item.querySelector('[data-widget="delivery-perimeter-expression"]')
+    if (widgetEl) {
+      initDeliveryPerimeterExpressionWidget(widgetEl)
+    }
+
+    item.querySelector('[data-action="delete"]').addEventListener('click', (e) => {
+      e.preventDefault()
+      e.target.closest('li').remove()
+    })
+
+    container.appendChild(item)
+  })
+}

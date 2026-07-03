@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 
 import ChartPanel from './ChartPanel'
 import AverageDistance from './AverageDistance'
@@ -30,17 +31,18 @@ const gridWithFilterStyle = {
   paddingTop: 8,
 }
 
-const Dashboard = ({ cubejsApi, dateRange, allTags, tasksMetricsEnabled }) => {
+const Dashboard = ({ dateRange, allTags, tasksMetricsEnabled }) => {
   const [ selectedTags, setSelectedTags ] = useState([])
+  const { t } = useTranslation()
 
   return (
     <div>
       <div className="metrics-grid">
-        <ChartPanel title="Number of stores">
-          <StoreCumulativeCount cubejsApi={ cubejsApi } dateRange={ dateRange } />
+        <ChartPanel title={t('METRICS.NUMBER_OF_STORES')}>
+          <StoreCumulativeCount dateRange={ dateRange } />
         </ChartPanel>
-        <ChartPanel title="Average distance">
-          <AverageDistance cubejsApi={ cubejsApi } dateRange={ dateRange } />
+        <ChartPanel title={t('METRICS.AVERAGE_DISTANCE')}>
+          <AverageDistance dateRange={ dateRange } />
         </ChartPanel>
       </div>
       <div style={selectedTags.length > 0 ? hasFilterContainerStyle : baseContainerStyle}>
@@ -48,21 +50,19 @@ const Dashboard = ({ cubejsApi, dateRange, allTags, tasksMetricsEnabled }) => {
                     defaultValue={ selectedTags }
                     onChange={ tags => setSelectedTags(tags) } />
         <div className="metrics-grid" style={gridWithFilterStyle}>
-          <ChartPanel title="Number of tasks">
-            <NumberOfTasks cubejsApi={ cubejsApi } dateRange={ dateRange } tags={ selectedTags } />
+          <ChartPanel title={t('METRICS.NUMBER_OF_TASKS')}>
+            <NumberOfTasks dateRange={ dateRange } tags={ selectedTags } />
           </ChartPanel>
           {tasksMetricsEnabled && (
             <>
-              <ChartPanel title="Tasks done on time, too early or too late" featurePreview={true}>
+              <ChartPanel title={t('METRICS.TASKS_TIMING')} featurePreview={true}>
                 <TasksDoneTiming
-                  cubejsApi={ cubejsApi }
                   dateRange={ dateRange }
                   tags={ selectedTags } />
               </ChartPanel>
               <div/>
-              <ChartPanel title="Average number of minutes Tasks are done too early/late" featurePreview={true}>
+              <ChartPanel title={t('METRICS.AVERAGE_TASK_TIMING_MINUTES')} featurePreview={true}>
                 <AverageTiming
-                  cubejsApi={ cubejsApi }
                   dateRange={ dateRange }
                   tags={ selectedTags } />
               </ChartPanel>
@@ -72,33 +72,29 @@ const Dashboard = ({ cubejsApi, dateRange, allTags, tasksMetricsEnabled }) => {
       </div>
       <div className="metrics-grid">
         {tasksMetricsEnabled && (
-          <ChartPanel title="Number Of PICKUPs done X minutes earlier/later than planned" featurePreview={true}>
+          <ChartPanel title={t('METRICS.PICKUPS_TIMING_DISTRIBUTION')} featurePreview={true}>
             <DistributionOfTasksByTiming
-              cubejsApi={ cubejsApi }
               dateRange={ dateRange }
               taskType="PICKUP"/>
           </ChartPanel>
         )}
         {tasksMetricsEnabled && (
-          <ChartPanel title="Number Of DROPOFFs done X minutes earlier/later than planned" featurePreview={true}>
+          <ChartPanel title={t('METRICS.DROPOFFS_TIMING_DISTRIBUTION')} featurePreview={true}>
             <DistributionOfTasksByTiming
-              cubejsApi={ cubejsApi }
               dateRange={ dateRange }
               taskType="DROPOFF"/>
           </ChartPanel>
         )}
         {tasksMetricsEnabled && (
-          <ChartPanel title="Number Of PICKUPs done % earlier/later than planned" featurePreview={true}>
+          <ChartPanel title={t('METRICS.PICKUPS_PERCENTAGE_DISTRIBUTION')} featurePreview={true}>
             <DistributionOfTasksByPercentage
-              cubejsApi={ cubejsApi }
               dateRange={ dateRange }
               taskType="PICKUP"/>
           </ChartPanel>
         )}
         {tasksMetricsEnabled && (
-          <ChartPanel title="Number Of DROPOFFs done % earlier/later than planned" featurePreview={true}>
+          <ChartPanel title={t('METRICS.DROPOFFS_PERCENTAGE_DISTRIBUTION')} featurePreview={true}>
             <DistributionOfTasksByPercentage
-              cubejsApi={ cubejsApi }
               dateRange={ dateRange }
               taskType="DROPOFF"/>
           </ChartPanel>

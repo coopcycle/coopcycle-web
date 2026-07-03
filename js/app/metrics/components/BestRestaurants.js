@@ -1,8 +1,9 @@
 import React from 'react'
-import { QueryRenderer } from '@cubejs-client/react';
+import { useCubeQuery } from '@cubejs-client/react';
 import { Spin } from 'antd';
-import 'chart.js/auto'; // ideally we should only import the component that we need: https://react-chartjs-2.js.org/docs/migration-to-v4/#tree-shaking
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 import { Pie } from 'react-chartjs-2';
+ChartJS.register(ArcElement, Tooltip, Legend)
 import chroma from 'chroma-js'
 
 const commonOptions = {
@@ -11,13 +12,44 @@ const commonOptions = {
 
 import { getCubeDateRange } from '../utils'
 
-const renderChart = ({ resultSet, error }) => {
+const Chart = ({ dateRange }) => {
+
+  const { resultSet, isLoading, error } = useCubeQuery({
+    "dimensions": [
+      "OrderExport.restaurant"
+    ],
+    "measures": [
+      "OrderExport.count"
+    ],
+    "filters": [
+      {
+        // FIXME
+        // Naming things is hard...
+        // This is all we have to distinguish foodtech/last-mile orders
+        "member": "OrderExport.applied_billing",
+        "operator": "equals",
+        "values": [
+          "FOODTECH"
+        ]
+      }
+    ],
+    "timeDimensions": [
+      {
+        "dimension": "OrderExport.completed_at",
+        "dateRange": getCubeDateRange(dateRange)
+      }
+    ],
+    "order": {
+      "OrderExport.count": "desc"
+    },
+    "limit": 10
+  });
 
   if (error) {
     return <div>{error.toString()}</div>;
   }
 
-  if (!resultSet) {
+  if (isLoading || !resultSet) {
     return <Spin />;
   }
 
@@ -37,7 +69,6 @@ const renderChart = ({ resultSet, error }) => {
     }),
   };
 
-
   const options = {
     ...commonOptions,
     plugins: {
@@ -48,48 +79,6 @@ const renderChart = ({ resultSet, error }) => {
   };
 
   return <Pie data={data} options={options} />;
-};
-
-const Chart = ({ cubejsApi, dateRange }) => {
-
-  return (
-    <QueryRenderer
-      query={{
-        "dimensions": [
-          "OrderExport.restaurant"
-        ],
-        "measures": [
-          "OrderExport.count"
-        ],
-        "timeDimensions": [
-          {
-            "dimension": "OrderExport.completed_at",
-            "dateRange": getCubeDateRange(dateRange)
-          }
-        ],
-        "order": {
-          "OrderExport.count": "desc"
-        },
-        "limit": 10
-      }}
-      cubejsApi={cubejsApi}
-      resetResultSetOnChange={false}
-      render={(props) => renderChart({
-        ...props,
-        chartType: 'pie',
-        pivotConfig: {
-          "x": [
-            "OrderExport.restaurant"
-          ],
-          "y": [
-            "measures"
-          ],
-          "fillMissingDates": true,
-          "joinDateRange": false
-        }
-      })}
-    />
-  );
 };
 
 export default Chart

@@ -2,24 +2,19 @@
 
 namespace AppBundle\Action;
 
-use AppBundle\Action\Utils\TokenStorageTrait;
-use AppBundle\Entity\User;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Nucleos\UserBundle\Model\UserManager as UserManagerInterface;
 
 class DeleteMe
 {
-    use TokenStorageTrait;
-
     public function __construct(
-        TokenStorageInterface $tokenStorage,
+        private Security $security,
         private UserManagerInterface $userManager)
     {
-        $this->tokenStorage = $tokenStorage;
     }
 
     public function __invoke()
     {
-        $this->userManager->deleteUser($this->getUser());
+        $this->userManager->deleteUser($this->security->getUser());
     }
 }

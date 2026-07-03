@@ -2,7 +2,7 @@ import ColorPicker from './ColorPicker'
 import ConfirmDelete from './ConfirmDelete'
 import Dropzone from './Dropzone'
 import OpeningHoursInput from './OpeningHoursInput'
-import Switch from './Switch'
+import Search from './Search'
 
 import 'prismjs'
 import 'prismjs/plugins/toolbar/prism-toolbar'
@@ -18,4 +18,4 @@ window.CoopCycle.ColorPicker = ColorPicker
 window.CoopCycle.ConfirmDelete = ConfirmDelete
 window.CoopCycle.Dropzone = Dropzone
 window.CoopCycle.OpeningHoursInput = OpeningHoursInput
-window.CoopCycle.Switch = Switch
+window.CoopCycle.Search = Search

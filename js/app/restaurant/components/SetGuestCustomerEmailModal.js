@@ -16,6 +16,7 @@ const SetGuestCustomerEmailModal = ({ isOpen, closeInvitePeopleToOrderModal, t, 
     <Modal
       isOpen={ isOpen }
       onRequestClose={ () => closeInvitePeopleToOrderModal() }
+      overlayClassName="ReactModal__Overlay"
       contentLabel={ t('GROUP_ORDER_TITLE') }
       className="ReactModal__Content--invite-people-to-order">
       <Formik
@@ -57,7 +58,7 @@ const SetGuestCustomerEmailModal = ({ isOpen, closeInvitePeopleToOrderModal, t, 
                   value={ values.email }
                   placeholder={ t('GROUP_ORDER_PLAYER_EMAIL_LABEL') } />
               </div>
-              <button type="submit" className="btn btn-md btn-block btn-primary">{ t('ADHOC_ORDER_SAVE') }</button>
+              <button type="submit" className="btn btn-md btn-block btn-primary">{ t('SAVE_BUTTON') }</button>
             </form>
           </div>
         )}

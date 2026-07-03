@@ -72,13 +72,14 @@ class Client
 
             $data = json_decode((string) $response->getBody(), true);
 
+            $total = 0;
             foreach ($data['data'] as $balance) {
-                if ($balance['product_class'] === 'ETR') {
-                    return $balance['available_amount'];
+                if (isset($balance['available_amount'])) {
+                    $total += $balance['available_amount'];
                 }
             }
 
-            return 0;
+            return $total;
 
         } catch (BadResponseException $e) {
             // This means the refresh token has expired

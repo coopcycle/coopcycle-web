@@ -336,7 +336,7 @@ order.adjustment_type.delivery: 'Entrega'
 order.adjustment_type.platform_fees: 'Comisión CoopCycle'
 order.adjustment_type.reusable_packaging: 'Empaquetache'
 order.adjustment_type.tip: 'Propina'
-order_item.adjustment_type.reusable_packaging: '%quantity% × paquet(z)'
+order_item.adjustment_type.reusable_packaging: '%quantity% × « %name% » paquet(z)'
 order.list.total: 'Total'
 order.list.shippedAt: 'Hora d''entrega'
 order.list.type: 'Tipo'
@@ -1064,8 +1064,6 @@ form.package_with_quantity.package.placeholder: 'Tría un tipo de paquet'
 form.time_slot.same_day_cutoff.label: 'Cutoff mesmo día'
 form.time_slot.same_day_cutoff.help: 'Per eixemplo, si seleccionas las 11:00, las
   opcions d''o mesmo día no s''amostrarán dimpués d''as 11:00'
-order.reusable_packaging.pledge_return.disclaimer: 'Lo/la client ha indicau que se
-  tornarán %count% paquetz'
 form:
   restaurant:
     name:

@@ -38,8 +38,10 @@ use AppBundle\Action\Order\Timing as OrderTiming;
 use AppBundle\Api\Dto\CartItemInput;
 use AppBundle\Api\Dto\ConfigurePaymentInput;
 use AppBundle\Api\Dto\ConfigurePaymentOutput;
+use AppBundle\Api\Dto\CreditNoteInput;
 use AppBundle\Api\Dto\InvoiceLineItemGroupedByOrganization;
 use AppBundle\Api\Dto\PaymentMethodsOutput;
+use AppBundle\Api\Dto\PaymentRefundInput;
 use AppBundle\Api\Dto\StripePaymentMethodOutput;
 use AppBundle\Api\Dto\LoopeatFormats;
 use AppBundle\Api\Dto\LoopeatReturns;
@@ -48,20 +50,28 @@ use AppBundle\Api\Filter\OrderDateFilter;
 use AppBundle\Api\Filter\OrderStoreFilter;
 use AppBundle\Api\State\CartItemProcessor;
 use AppBundle\Api\State\ConfigurePaymentProcessor;
+use AppBundle\Api\State\CreateCreditNoteProcessor;
 use AppBundle\Api\State\EdenredCredentialsProcessor;
 use AppBundle\Api\State\InvoiceLineItemsGroupedByOrganizationProvider;
 use AppBundle\Api\State\InvoiceLineItemsProvider;
 use AppBundle\Api\State\LoopeatFormatsProcessor;
 use AppBundle\Api\State\LoopeatReturnsProcessor;
+use AppBundle\Api\State\OrderPaymentsProvider;
+use AppBundle\Api\State\OrderRefundProcessor;
+use AppBundle\Api\State\OrderRefundsProvider;
 use AppBundle\Api\State\MyOrdersProvider;
 use AppBundle\Api\State\ValidateOrderProvider;
+use AppBundle\Api\State\OrderProductRecommendationsProvider;
+use AppBundle\Api\Dto\CustomerRecommendationsDto;
 use AppBundle\DataType\TsRange;
 use AppBundle\Entity\Address;
 use AppBundle\Entity\BusinessAccount;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\LocalBusiness;
+use AppBundle\Entity\LocalBusiness\AddressResolver;
 use AppBundle\Entity\LoopEat\OrderCredentials;
 use AppBundle\Entity\ReusablePackaging;
+use AppBundle\Entity\Store;
 use AppBundle\Entity\Task\RecurrenceRule;
 use AppBundle\Entity\Vendor;
 use AppBundle\Payment\MercadopagoPreferenceResponse;
@@ -72,7 +82,6 @@ use AppBundle\Sylius\Order\OrderInterface;
 use AppBundle\Sylius\Order\OrderItemInterface;
 use AppBundle\Sylius\Product\ProductOptionValueInterface;
 use Doctrine\ORM\EntityNotFoundException;
-use AppBundle\Validator\Constraints\DabbaOrder as AssertDabbaOrder;
 use AppBundle\Validator\Constraints\IsOrderModifiable as AssertOrderIsModifiable;
 use AppBundle\Validator\Constraints\LoopEatOrder as AssertLoopEatOrder;
 use AppBundle\Validator\Constraints\Order as AssertOrder;
@@ -190,6 +199,16 @@ use Webmozart\Assert\Assert as WMAssert;
             security: 'is_granted(\'edit\', object)',
             validationContext: ['groups' => ['cart']]
         ),
+        new Post(
+            openapiContext: ['summary' => 'Adds items to a Order resource.'],
+            uriTemplate: '/orders/{id}/items',
+            normalizationContext: ['groups' => ['cart']],
+            denormalizationContext: ['groups' => ['cart']],
+            validationContext: ['groups' => ['cart']],
+            input: CartItemInput::class,
+            processor: CartItemProcessor::class,
+            security: 'is_granted(\'edit\', object)',
+        ),
         new Get(
             uriTemplate: '/orders/{id}/timing',
             controller: OrderTiming::class,
@@ -221,6 +240,12 @@ use Webmozart\Assert\Assert as WMAssert;
                 ]
             ],
             security: 'is_granted(\'view\', object)'
+        ),
+        new Get(
+            uriTemplate: '/orders/{id}/product_recommendations',
+            normalizationContext: ['groups' => ['customer']],
+            provider: OrderProductRecommendationsProvider::class,
+            output: CustomerRecommendationsDto::class,
         ),
         new Get(
             uriTemplate: '/orders/{id}/validate',
@@ -284,7 +309,11 @@ use Webmozart\Assert\Assert as WMAssert;
             security: 'is_granted(\'edit\', object)',
             validate: false
         ),
-        new Post(uriTemplate: '/orders/{id}/players', controller: AddPlayer::class),
+        new Post(
+            uriTemplate: '/orders/{id}/players',
+            controller: AddPlayer::class,
+            security: 'is_granted(\'edit\', object)',
+        ),
         new Get(
             uriTemplate: '/orders/{id}/loopeat_formats',
             controller: LoopeatFormatsController::class,
@@ -337,7 +366,10 @@ use Webmozart\Assert\Assert as WMAssert;
             validate: false,
             processor: ConfigurePaymentProcessor::class
         ),
-        new GetCollection(security: 'is_granted(\'ROLE_ADMIN\')'),
+        new GetCollection(
+            security: 'is_granted("ROLE_ADMIN") or is_granted("ROLE_OAUTH2_ORDERS:ALL")',
+            normalizationContext: ['groups' => ['order:list']]
+        ),
         new Post(
             denormalizationContext: ['groups' => ['order_create', 'address_create']]
         ),
@@ -376,7 +408,13 @@ use Webmozart\Assert\Assert as WMAssert;
             denormalizationContext: ['groups' => ['order_create', 'address_create']],
             write: false
         ),
-        new GetCollection(uriTemplate: '/me/orders', provider: MyOrdersProvider::class),
+        new GetCollection(
+            uriTemplate: '/me/orders',
+            provider: MyOrdersProvider::class,
+            // Optimize performance
+            // https://api-platform.com/docs/v3.4/core/pagination/#controlling-the-behavior-of-the-doctrine-orm-paginator
+            paginationFetchJoinCollection: false
+        ),
         new GetCollection(
             // FIXME Maybe it shouldn't be a path param
             // It should be like /invoice_line_items?grouped_by_organization=1
@@ -414,7 +452,38 @@ use Webmozart\Assert\Assert as WMAssert;
             normalizationContext: ['groups' => ['odoo_export_invoice_line_item']],
             security: 'is_granted(\'ROLE_ADMIN\')',
             provider: InvoiceLineItemsProvider::class
-        )
+        ),
+        new Post(
+            uriTemplate: '/orders/{id}/credit_notes',
+            processor: CreateCreditNoteProcessor::class,
+            input: CreditNoteInput::class,
+            openapiContext: ['summary' => 'Creates a credit note for an Order resource.'],
+            security: 'is_granted("ROLE_DISPATCHER")',
+            denormalizationContext: ['groups' => ['order_credit_note']],
+            normalizationContext: ['groups' => ['promotion']],
+        ),
+        new Get(
+            uriTemplate: '/orders/{id}/payments',
+            openapiContext: ['summary' => 'Retrieves payments for an Order resource.'],
+            security: 'is_granted("ROLE_DISPATCHER")',
+            provider: OrderPaymentsProvider::class,
+            normalizationContext: ['groups' => ['payment']],
+        ),
+        new Put(
+            uriTemplate: '/orders/{id}/refund',
+            openapiContext: ['summary' => 'Refunds an Order resource.'],
+            security: 'is_granted("ROLE_DISPATCHER")',
+            input: PaymentRefundInput::class,
+            processor: OrderRefundProcessor::class,
+            denormalizationContext: ['groups' => ['payment_refund']],
+        ),
+        new GetCollection(
+            uriTemplate: '/orders/{id}/refunds',
+            openapiContext: ['summary' => 'Retrieves refunds for an Order resource.'],
+            security: 'is_granted("ROLE_DISPATCHER")',
+            normalizationContext: ['groups' => ['order_refunds']],
+            provider: OrderRefundsProvider::class,
+        ),
     ],
     normalizationContext: ['groups' => ['order', 'address']],
     denormalizationContext: ['groups' => ['order_create']]
@@ -422,7 +491,6 @@ use Webmozart\Assert\Assert as WMAssert;
 #[AssertOrder(groups: ['Default'])]
 #[AssertOrderIsModifiable(groups: ['cart'])]
 #[AssertLoopEatOrder(groups: ['loopeat'])]
-#[AssertDabbaOrder(groups: ['dabba'])]
 #[ApiFilter(filterClass: OrderDateFilter::class, properties: ['date' => 'exact'])]
 #[ApiFilter(filterClass: SearchFilter::class, properties: ['state' => 'exact'])]
 #[ApiFilter(filterClass: ExistsFilter::class, properties: ['exports'])]
@@ -462,8 +530,6 @@ class Order extends BaseOrder implements OrderInterface
 
     protected $reusablePackagingEnabled = false;
 
-    protected $reusablePackagingPledgeReturn = 0;
-
     protected $receipt;
 
     /**
@@ -473,9 +539,6 @@ class Order extends BaseOrder implements OrderInterface
 
     #[AssertShippingTimeRange(groups: ['Default', 'ShippingTime'])]
     protected $shippingTimeRange;
-
-
-    protected $nonprofit;
 
 
     #[Assert\Expression("!this.isTakeaway() or (this.isTakeaway() and this.getVendor().isFulfillmentMethodEnabled('collection'))", message: 'order.collection.not_available', groups: ['cart'])]
@@ -991,7 +1054,6 @@ class Order extends BaseOrder implements OrderInterface
             !$restaurant->isDepositRefundEnabled()
             && !$restaurant->isLoopeatEnabled()
             && !$restaurant->isVytalEnabled()
-            && !$restaurant->isDabbaEnabled()
         ) {
             return false;
         }
@@ -1027,17 +1089,6 @@ class Order extends BaseOrder implements OrderInterface
         $this->reusablePackagingEnabled = $reusablePackagingEnabled;
 
         return $this;
-    }
-
-    public function setReusablePackagingPledgeReturn(int $reusablePackagingPledgeReturn)
-    {
-        $this->reusablePackagingPledgeReturn = $reusablePackagingPledgeReturn;
-        return $this;
-    }
-
-    public function getReusablePackagingPledgeReturn()
-    {
-        return $this->reusablePackagingPledgeReturn;
     }
 
     public function getReusablePackagingQuantity(): int
@@ -1236,7 +1287,7 @@ class Order extends BaseOrder implements OrderInterface
     }
 
     #[SerializedName('assignedTo')]
-    #[Groups(['order', 'foodtech_order_minimal'])]
+    #[Groups(['order', 'foodtech_order_minimal', 'order:list'])]
     public function getAssignedTo()
     {
         if (null !== $this->getDelivery()) {
@@ -1420,7 +1471,11 @@ class Order extends BaseOrder implements OrderInterface
     public function getPickupAddress(): ?Address
     {
         if ($this->hasVendor()) {
-            return $this->getVendor()->getAddress();
+            $vendor = $this->getVendor();
+            if ($vendor instanceof LocalBusiness) {
+                return AddressResolver::resolveAddress($vendor);
+            }
+            return $vendor->getAddress();
         }
 
         return null;
@@ -1488,16 +1543,6 @@ class Order extends BaseOrder implements OrderInterface
     public function isFree(): bool
     {
         return !$this->isEmpty() && $this->getItemsTotal() > 0 && $this->getTotal() === 0;
-    }
-
-    public function getNonprofit()
-    {
-        return $this->nonprofit;
-    }
-
-    public function setNonprofit($nonprofit)
-    {
-        $this->nonprofit = $nonprofit;
     }
 
     public function getInvitation()
@@ -1783,7 +1828,7 @@ class Order extends BaseOrder implements OrderInterface
 
     public function getPickupAddresses(): Collection
     {
-        return $this->getRestaurants()->map(fn(LocalBusiness $restaurant): Address => $restaurant->getAddress());
+        return $this->getRestaurants()->map(fn(LocalBusiness $restaurant): Address => AddressResolver::resolveAddress($restaurant));
     }
 
     /**
@@ -1978,5 +2023,38 @@ class Order extends BaseOrder implements OrderInterface
     public function getExports(): Collection
     {
         return $this->exports;
+    }
+
+    public function getClient(): LocalBusiness|Store|null
+    {
+        if ($this->hasVendor() and !$this->isMultiVendor()) {
+            return $this->getRestaurant();
+        }
+
+        if (null !== $this->getDelivery()) {
+            return $this->getDelivery()->getStore();
+        }
+
+        return null;
+    }
+
+    public function isEnBoiteLePlat(): bool
+    {
+        if (!$this->hasVendor() || $this->isMultiVendor() || !$this->isReusablePackagingEnabled()) {
+
+            return false;
+        }
+
+        return $this->getRestaurant()->isEnBoitLePlatEnabled();
+    }
+
+    public function isEnBoiteLePlatPlatformFee(): bool
+    {
+        if (!$this->hasVendor() || $this->isMultiVendor() || !$this->isReusablePackagingEnabled()) {
+
+            return false;
+        }
+
+        return $this->getRestaurant()->isEnBoitLePlatPlatformFee();
     }
 }

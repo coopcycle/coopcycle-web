@@ -5,10 +5,10 @@ import MapHelper from '../../MapHelper'
 import MapProxy from './MapProxy'
 import _ from 'lodash'
 import moment from 'moment'
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 import { setCurrentTask, assignAfter, selectTask, selectTasksByIds, toggleTask } from '../redux/actions'
-import { CourierMapLayer, TaskMapLayer, PolylineMapLayer, ClustersMapToggle } from './MapLayers'
+import { CourierMapLayer, TaskMapLayer, PolylineMapLayer, ClustersMapToggle, WarehouseMapLayer } from './MapLayers'
 
 
 const sortByBefore = task => moment(task.before)
@@ -68,7 +68,7 @@ const GroupTable = ({ tasks, onEditClick, onMouseEnter, onMouseLeave }) => {
               </a>
             </td>
             <td className="text-right">
-              <i className={ classNames({
+              <i className={ clsx({
                 'fa': true,
                 'fa-check': task.status === 'DONE',
                 'fa-play':  task.status === 'DOING',
@@ -84,7 +84,7 @@ const GroupTable = ({ tasks, onEditClick, onMouseEnter, onMouseLeave }) => {
         { pagesArray.map(p =>
           <a key={ `p-${p}` }
             href="#"
-            className={ classNames({
+            className={ clsx({
               'p-2': true,
               'bg-light': p === page
             }) }
@@ -204,7 +204,7 @@ const MapProvider = (props) => {
       onPickupClusterClick: (a) => {
 
         const childMarkers = a.layer.getAllChildMarkers()
-        const tasks = childMarkers.map(m => m.options.task)
+        const tasks = childMarkers.map(m => m.options.task).filter(Boolean)
 
         const el = document.createElement('div')
 
@@ -251,6 +251,7 @@ class LeafletMap extends Component {
         useAvatarColors={ this.props.useAvatarColors }
       >
         <CourierMapLayer />
+        <WarehouseMapLayer />
         <TaskMapLayer />
         <PolylineMapLayer />
         <ClustersMapToggle />

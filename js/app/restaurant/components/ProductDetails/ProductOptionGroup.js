@@ -1,11 +1,11 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 import { AdditionalOptionValue, OptionValue } from './ProductOptionValue'
 import { getValuesRange, isMandatory, isValid } from './useProductOptions'
 
-const ValuesRange = ({ option }) => {
+const ValuesRange = ({ option, isInvalid = false }) => {
 
   const { t } = useTranslation()
   let range = ''
@@ -33,7 +33,7 @@ const ValuesRange = ({ option }) => {
 
   if (range) {
     return (
-      <small className="product-option-group__values_range">{ range }</small>
+      <small className={clsx('product-option-group__values_range', { 'text-error': isInvalid })}>{ range }</small>
     )
   } else {
     return null
@@ -44,14 +44,13 @@ export const OptionGroup = ({ index, option }) => {
   const isSelectedAndNotValid = !isMandatory(option) && !isValid(option)
 
   return (
-    <div id={ `product-option-group-${ option.code }` }
-         className={ classNames('product-option-group', {
-           'product-option-group--invalid': isSelectedAndNotValid,
-         }) }>
-      <div className="product-option-group__name">{ option.name }</div>
-      <ValuesRange option={ option } />
+    <div
+      id={`product-option-group-${option.identifier}`}
+      className="border-t border-base-300 pt-3">
+      <h5 className={clsx('product-option-group__name', { 'text-error': isSelectedAndNotValid })}>{ option.name }</h5>
+      <ValuesRange option={ option } isInvalid={isSelectedAndNotValid} />
       <div className="mt-2">
-        { option.values.map((optionValue, optionValueIndex) => (
+        { option.hasMenuItem.map((optionValue, optionValueIndex) => (
           <div key={ `option-value-${ optionValueIndex }` }>
             { !option.additional && <OptionValue
               option={ option }

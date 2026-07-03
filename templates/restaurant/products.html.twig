@@ -7,18 +7,25 @@
 {% endblock %}
 
 {% block content %}
-<p class="text-right">
-  {% if is_granted('ROLE_ADMIN') %}
-  <a href="#" class="btn btn-success mr-2" data-toggle="modal" data-target="#products-copy-modal">
-    <i class="fa fa-clone"></i> {% trans %}basics.copy{% endtrans %}
-  </a>
-  {% endif %}
-  <a href="#" class="btn btn-success mr-2" data-toggle="modal" data-target="#products-import-modal">
-    <i class="fa fa-upload"></i> {% trans %}basics.import{% endtrans %}
-  </a>
-  <a href="{{ path(new_product_route, { id: restaurant.id }) }}"
-    class="btn btn-success"><i class="fa fa-plus"></i> {{ 'basics.add'|trans }}</a>
-</p>
+
+<div class="d-flex justify-content-between mb-4">
+  <div id="products-search">
+    <input type="text" class="form-control" placeholder="{{ 'basics.search'|trans }}" disabled />
+  </div>
+  <div>
+    {% if is_granted('ROLE_ADMIN') %}
+    <a href="#" class="btn btn-success mr-2" data-toggle="modal" data-target="#products-copy-modal">
+      <i class="fa fa-clone"></i> {% trans %}basics.copy{% endtrans %}
+    </a>
+    {% endif %}
+    <a href="#" class="btn btn-success mr-2" data-toggle="modal" data-target="#products-import-modal">
+      <i class="fa fa-upload"></i> {% trans %}basics.import{% endtrans %}
+    </a>
+    <a href="{{ path(new_product_route, { id: restaurant.id }) }}"
+      class="btn btn-success"><i class="fa fa-plus"></i> {{ 'basics.add'|trans }}</a>
+  </div>
+</div>
+
 <table class="table" data-entity="product">
   <thead>
     <th></th>
@@ -48,19 +55,27 @@
         <a href="{{ path(product_route, { restaurantId: restaurant.id, productId: product.id }) }}"
           class="btn btn-xs btn-default"><i class="fa fa-pencil"></i> {{ 'basics.edit'|trans }}</a>
       </td>
-      <td class="text-right" data-cell="delete">
-        <a href="#">
-          <span class="glyphicon glyphicon-trash"></span>
-        </a>
+      <td class="text-right">
+        <span {{ react_component('DeleteIcon', { objectId: product.id, objectName: product.name, deleteUrl: '_api_/products/{id}{._format}_delete'}) }}></span>
       </td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
 
-<nav class="text-center">
-  {{ knp_pagination_render(products) }}
-</nav>
+<div class="d-flex align-items-center justify-content-center gap-4">
+  <form action="{{ path(products_route, { id: restaurant.id }) }}" class="form-inline" method="get">
+    <div class="form-group">
+      <label for="products_per_page">{{ 'pagination.items_per_page'|trans }}</label>
+      <select id="products_per_page" name="per_page" class="form-control" style="max-width: 5em;">
+        <option {% if products.itemNumberPerPage == 10 %}selected="selected"{% endif %}>10</option>
+        <option {% if products.itemNumberPerPage == 20 %}selected="selected"{% endif %}>20</option>
+        <option {% if products.itemNumberPerPage == 50 %}selected="selected"{% endif %}>50</option>
+      </select>
+    </div>
+  </form>
+  {{ knp_pagination_render(products, '@KnpPaginator/Pagination/twitter_bootstrap_v3_pagination.html.twig') }}
+</div>
 
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="products-import-modal-label" id="products-import-modal">
   <div class="modal-dialog" role="document">
@@ -111,4 +126,17 @@
 
 {% block scripts %}
 {{ encore_entry_script_tags('product-list') }}
+<script>
+document.querySelector('[name="per_page"]').addEventListener('change', function (e) {
+  e.target.closest('form').submit();
+});
+
+new CoopCycle.Search(document.querySelector('#products-search'), {
+  url: "{{ path(products_route, { id: restaurant.id, format: 'json'  }) }}",
+  placeholder: "{{ 'basics.search'|trans }}",
+  onSuggestionSelected: function(suggestion) {
+    window.location.href = suggestion.path;
+  }
+});
+</script>
 {% endblock %}

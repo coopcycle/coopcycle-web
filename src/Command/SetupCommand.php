@@ -30,6 +30,7 @@ use Sylius\Component\Payment\Model\PaymentMethod;
 use Sylius\Component\Promotion\Model\PromotionAction;
 use Sylius\Component\Promotion\Repository\PromotionRepositoryInterface;
 use Sylius\Component\Taxation\Repository\TaxCategoryRepositoryInterface;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
@@ -37,7 +38,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Logger\ConsoleLogger;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Yaml\Parser as YamlParser;
+use Symfony\Component\Yaml\Yaml;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use ACSEO\TypesenseBundle\Manager\CollectionManager;
+use Typesense\Exceptions\ObjectAlreadyExists;
 
 class SetupCommand extends Command
 {
@@ -92,12 +97,14 @@ class SetupCommand extends Command
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly CreateWebhookEndpointHandler $createWebhookEndpointHandler,
         private readonly CityZoneImporter $cityZoneImporter,
+        private readonly FileLocator $locator,
         private readonly string $locale,
         private readonly string $country,
         private readonly string $localeRegex,
         private readonly string $cityZonesUrl,
         private readonly string $cityZonesProvider,
-        private readonly array $cityZonesOptions)
+        private readonly array $cityZonesOptions,
+        private readonly CollectionManager $collectionManager)
     {
         parent::__construct();
     }
@@ -138,6 +145,9 @@ class SetupCommand extends Command
 
         $output->writeln('<info>Checking Sylius payment methods are present…</info>');
         $this->createSyliusPaymentMethods($output);
+
+        $output->writeln('<info>Initializing Typesense collections…</info>');
+        $this->initializeTypesenseCollections($output);
 
         $output->writeln('<info>Checking « on demand delivery » product is present…</info>');
         $this->createOnDemandDeliveryProduct($output);
@@ -335,6 +345,20 @@ class SetupCommand extends Command
         $this->productManager->flush();
     }
 
+    private function initializeTypesenseCollections(OutputInterface $output)
+    {
+        $collectionDefinitions = $this->collectionManager->getCollectionDefinitions();
+
+        foreach ($collectionDefinitions as $name => $definition) {
+            try {
+                $this->collectionManager->createCollection($name);
+                $output->writeln(sprintf('Created Typesense collection "%s"', $name));
+            } catch (ObjectAlreadyExists $e) {
+                $output->writeln(sprintf('Typesense collection "%s" already exists', $name));
+            }
+        }
+    }
+
     private function createAllergensAttributes(OutputInterface $output)
     {
         /** @var ProductAttribute|null $attribute */
@@ -437,6 +461,11 @@ class SetupCommand extends Command
 
         $cuisineRepository = $this->doctrine->getRepository(Cuisine::class);
 
+        $iconsConfigPath = $this->locator->locate('@AppBundle/Resources/config/cuisine_icons.yml');
+
+        $parser = new YamlParser();
+        $iconsConfig = $parser->parseFile($iconsConfigPath, Yaml::PARSE_CONSTANT);
+
         $flush = false;
         foreach ($slugs as $slug) {
 
@@ -453,7 +482,14 @@ class SetupCommand extends Command
                 $output->writeln(sprintf('Creating cuisine « %s »', $slug));
 
             } else {
-                $output->writeln(sprintf('Cuisine « %s » already exists', $slug));
+
+                if (isset($iconsConfig[$slug]) && !$cuisine->hasIcon()) {
+                    $cuisine->setIcon($iconsConfig[$slug]);
+                    $flush = true;
+                    $output->writeln(sprintf('Updating icon for cuisine « %s »', $slug));
+                } else {
+                    $output->writeln(sprintf('Cuisine « %s » already exists', $slug));
+                }
             }
         }
 

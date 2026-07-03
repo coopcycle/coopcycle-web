@@ -47,12 +47,14 @@ framework:
                 timeout: 5.0
             cubejs.client:
                 base_uri: "%env(CUBEJS_API_URL)%/"
+            recommender.client:
+                base_uri: "%env(COOPCYCLE_RECOMMENDER_URL)%"
+                query:
+                    instance: "%database_name%"
             woopit.http_client:
                 base_uri: '%env(WOOPIT_CARRIER_API_URL)%/'
                 headers:
                     X-Api-Version: '%env(WOOPIT_API_VERSION)%'
-            dabba.client:
-                base_uri: "%env(DABBA_BASE_URL)%/"
             umap.client:
                 base_uri: "https://umap.openstreetmap.fr/"
             unsplash.client:

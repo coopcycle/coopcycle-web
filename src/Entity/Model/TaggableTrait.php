@@ -43,6 +43,11 @@ trait TaggableTrait
             $this->tags = array_unique($this->tags);
             $this->tagsCallable = null;
         }
+
+        if (property_exists($this, 'updatedAt')) {
+            // Make sure to trigger a Doctrine update
+            $this->updatedAt = new \DateTime();
+        }
     }
 
     public function addTags(array|string $tags): void

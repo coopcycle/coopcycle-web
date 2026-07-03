@@ -37,7 +37,6 @@ class DashboardController extends AbstractController
     public function __construct(
         private readonly EntityManagerInterface $entityManager,
         private readonly TranslatorInterface $translator,
-        private readonly bool $adhocOrderEnabled,
         private readonly JWTTokenManagerInterface $JWTTokenManager,
         protected NormalizerInterface $normalizer,
         protected SerializerInterface $serializer
@@ -71,7 +70,7 @@ class DashboardController extends AbstractController
             'reusable_packaging_new' => 'dashboard_restaurant_new_reusable_packaging',
             'mercadopago_oauth_redirect' => 'dashboard_restaurant_mercadopago_oauth_redirect',
             'mercadopago_oauth_remove' => 'dashboard_restaurant_mercadopago_oauth_remove',
-            'image_from_url' => 'dashboard_restaurant_image_from_url',
+            'image_from_pixabay' => 'dashboard_restaurant_image_from_pixabay',
         ];
     }
 
@@ -86,11 +85,6 @@ class DashboardController extends AbstractController
             'store_addresses' => 'dashboard_store_addresses',
             'download_images' => 'dashboard_store_delivery_download_images',
         ];
-    }
-
-    protected function getOrderList(Request $request, PaginatorInterface $paginator, $showCanceled = false)
-    {
-        return [];
     }
 
     public function indexAction(Request $request,

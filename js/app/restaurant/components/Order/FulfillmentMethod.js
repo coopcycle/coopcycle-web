@@ -1,11 +1,11 @@
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 const Icon = ({ type }) => (
   <span className="mr-2">
     <i
-      className={classNames({
+      className={clsx({
         fa: true,
         'fa-bicycle': type === 'delivery',
         'fa-cube': type === 'collection',
@@ -23,7 +23,7 @@ export default function FulfillmentMethod({
   const { t } = useTranslation()
 
   return (
-    <div className="d-flex justify-content-between">
+    <div className="flex justify-between">
       <span>
         {value === 'collection' && (
           <React.Fragment>
@@ -41,12 +41,12 @@ export default function FulfillmentMethod({
             <span data-testid="cart.shippingAddress">
               {shippingAddress?.streetAddress}
             </span>
-            {shippingAddress?.provider === 'MAP_PICKER' && (
+            { shippingAddress?.provider ? (
               <span className="text-info small" style={{ display: 'block', marginTop: '3px' }}>
                 <i className="fa fa-map-marker" aria-hidden="true" style={{ marginRight: '5px' }}></i>
-                {t('CART_SHIPPING_ADDRESS_MAP_PICKED')}
+                {t(`CART_SHIPPING_ADDRESS_${shippingAddress?.provider}`)}
               </span>
-            )}
+            ) : null }
           </React.Fragment>
         )}
       </span>

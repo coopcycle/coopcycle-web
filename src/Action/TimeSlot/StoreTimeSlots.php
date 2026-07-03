@@ -4,7 +4,6 @@ namespace AppBundle\Action\TimeSlot;
 
 use AppBundle\Api\Resource\TimeSlotChoice;
 use AppBundle\Api\Resource\TimeSlotChoices;
-use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Form\Type\TimeSlotChoiceLoader;
 use AppBundle\Security\TokenStoreExtractor;
 use Carbon\Carbon;

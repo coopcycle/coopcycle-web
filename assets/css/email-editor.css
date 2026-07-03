@@ -1,0 +1,206 @@
+@import "tailwindcss" source(none) prefix(tw);
+
+@source "../../js/app/admin/email-editor/index.js";
+@source "../../templates/admin/customize_emails.html.twig";
+
+@plugin "daisyui" {
+  themes: light --default;
+}
+
+/* ── Email Editor component styles ────────────────────────────────────────── */
+/* Written as plain CSS (not @apply) because source(none) prevents utility   */
+/* generation before @layer components is parsed.                             */
+
+.ee-layout {
+  display: flex;
+  height: calc(100vh - 120px);
+  min-height: 600px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ── Sidebar ──────────────────────────────────────────────────────────────── */
+
+.ee-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: #f8f9fa;
+  border-right: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.ee-sidebar-header {
+  border-bottom: 1px solid #ddd;
+  background: #fff;
+}
+
+.ee-sidebar-divider {
+  height: 1px;
+  background: #ddd;
+  margin: 4px 0;
+}
+
+/* Locale tab buttons */
+.ee-locale-btn {
+  flex: 1;
+  padding: 8px 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6c757d;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color 0.1s, border-color 0.1s;
+}
+.ee-locale-btn:hover    { color: #333; }
+.ee-locale-btn.is-active { color: #10ac84; border-bottom-color: #10ac84; }
+
+/* Sidebar email type buttons */
+.ee-email-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 14px;
+  text-align: left;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  font-size: 13px;
+  color: #333;
+  gap: 6px;
+  transition: background 0.1s;
+}
+.ee-email-btn:hover    { background: #e9ecef; }
+.ee-email-btn.is-active { background: #10ac84; color: #fff; }
+.ee-email-btn.is-active .ee-badge { background: rgba(255,255,255,0.3); color: #fff; border-color: transparent; }
+
+.ee-email-label { flex: 1; line-height: 1.3; }
+
+/* Collapsible folders */
+.ee-folder-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 12px 6px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6c757d;
+  text-align: left;
+}
+.ee-folder-header:hover { background: #e9ecef; color: #333; }
+
+/* CSS triangle — cannot be expressed as a utility class */
+.ee-folder-chevron {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  border-left: 5px solid currentColor;
+  transition: transform 0.15s;
+  flex-shrink: 0;
+}
+.ee-folder.is-open .ee-folder-chevron { transform: rotate(90deg); }
+.ee-folder-content                    { display: none; }
+.ee-folder.is-open .ee-folder-content { display: block; }
+.ee-folder .ee-email-btn              { padding-left: 22px; }
+
+/* ── Main area ────────────────────────────────────────────────────────────── */
+
+.ee-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ee-toolbar {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: #fff;
+  border-bottom: 1px solid #ddd;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.ee-toolbar-title { font-size: 13px; color: #6c757d; flex: 1; }
+
+/* Status pill */
+.ee-status          { font-size: 12px; padding: 3px 8px; border-radius: 3px; }
+.ee-status--info    { color: #6c757d; }
+.ee-status--success { color: #155724; background: #d4edda; }
+.ee-status--error   { color: #721c24; background: #f8d7da; }
+
+/* Variables bar */
+.ee-variables-bar {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  background: #fffdf0;
+  border-bottom: 1px solid #ffeaa7;
+  font-size: 12px;
+  gap: 6px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.ee-var {
+  display: inline-block;
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-family: monospace;
+  font-size: 11px;
+  color: #664d03;
+  cursor: copy;
+  user-select: all;
+}
+.ee-var:hover { background: #ffc107; }
+
+/* ── Canvas + loader ──────────────────────────────────────────────────────── */
+
+.ee-canvas-wrapper { position: relative; flex: 1; min-height: 0; }
+#ee-canvas         { height: 100%; position: relative; }
+
+#ee-loader { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.75); z-index: 100; }
+#ee-loader[hidden] { display: none; }
+
+/* ── Test-dialog status messages ──────────────────────────────────────────── */
+
+.ee-test-dialog-status {
+  margin-top: 8px;
+  font-size: 13px;
+  padding: 6px 10px;
+  border-radius: 4px;
+}
+.ee-test-dialog-status--success { background: #d4edda; color: #155724; }
+.ee-test-dialog-status--error   { background: #f8d7da; color: #721c24; }
+
+/* ── GrapeJS vendor overrides ─────────────────────────────────────────────── */
+
+#ee-canvas > .gjs-editor-cont,
+#ee-canvas > .gjs-editor-cont > .gjs-editor {
+  height: 100%;
+}
+
+#ee-canvas .gjs-pn-panel.gjs-pn-options { right: 0; }
+#ee-canvas .gjs-pn-views-container { width: 260px; }
+#ee-canvas .gjs-cv-canvas { width: calc(100% - 260px); }

@@ -1,5 +1,25 @@
 {
     "controllers": {
+        "@symfony/ux-autocomplete": {
+            "autocomplete": {
+                "enabled": true,
+                "fetch": "eager",
+                "autoimport": {
+                    "tom-select/dist/css/tom-select.default.css": true,
+                    "tom-select/dist/css/tom-select.bootstrap4.css": false,
+                    "tom-select/dist/css/tom-select.bootstrap5.css": false
+                }
+            }
+        },
+        "@symfony/ux-live-component": {
+            "live": {
+                "enabled": true,
+                "fetch": "eager",
+                "autoimport": {
+                    "@symfony/ux-live-component/dist/live.min.css": true
+                }
+            }
+        },
         "@symfony/ux-react": {
             "react": {
                 "enabled": true,

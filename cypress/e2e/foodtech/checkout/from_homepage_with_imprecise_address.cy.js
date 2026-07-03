@@ -17,7 +17,7 @@ context('Checkout', () => {
       .contains('Rue de Rivoli, Paris, France')
       .click()
 
-    cy.urlmatch(/\/fr\/restaurants$/)
+    cy.urlmatch(/\/fr\/shops/)
 
     cy.contains('Crazy Hamburger').click()
 

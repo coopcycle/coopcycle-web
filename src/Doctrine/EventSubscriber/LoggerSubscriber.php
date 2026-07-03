@@ -2,7 +2,7 @@
 
 namespace AppBundle\Doctrine\EventSubscriber;
 
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
@@ -11,7 +11,9 @@ use Exception;
 use Psr\Log\LoggerInterface;
 use ReflectionClass;
 
-class LoggerSubscriber implements EventSubscriber
+#[AsDoctrineListener(event: Events::onFlush, priority: -100, connection: 'default')]
+#[AsDoctrineListener(event: Events::postFlush, priority: -100, connection: 'default')]
+class LoggerSubscriber
 {
 
     /** @var EntityItem[] */
@@ -24,14 +26,6 @@ class LoggerSubscriber implements EventSubscriber
     public function __construct(
         private readonly LoggerInterface $databaseLogger)
     {
-    }
-
-    public function getSubscribedEvents(): array
-    {
-        return array(
-            Events::onFlush,
-            Events::postFlush,
-        );
     }
 
     public function onFlush(OnFlushEventArgs $args): void

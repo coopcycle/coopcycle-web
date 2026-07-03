@@ -5,11 +5,12 @@ namespace AppBundle\Controller;
 use AppBundle\Controller\Utils\OrderConfirmTrait;
 use AppBundle\Service\PaygreenManager;
 use AppBundle\Service\OrderManager;
+use AppBundle\Entity\Sylius\Order;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Query\Expr;
 use Hashids\Hashids;
 use Paygreen\Sdk\Payment\V3\Model as PaygreenModel;
 use Sylius\Component\Payment\Model\PaymentInterface;
-use Sylius\Component\Order\Context\CartContextInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -78,11 +79,22 @@ class PaygreenController extends AbstractController
     }
 
     #[Route(path: '/paygreen/return', name: 'paygreen_return')]
-    public function return(CartContextInterface $cartContext, OrderManager $orderManager, Request $request)
+    public function return(OrderManager $orderManager, Request $request)
     {
-        $order = $cartContext->getCart();
-
         $paymentOrderId = $request->query->get('po_id');
+
+        $qb = $this->entityManager->getRepository(Order::class)
+            ->createQueryBuilder('o')
+            ->join(PaymentInterface::class, 'p', Expr\Join::WITH, 'p.order = o.id')
+            ->andWhere('JSON_GET_FIELD_AS_TEXT(p.details, \'paygreen_payment_order_id\') = :payment_order_id')
+            ->setParameter('payment_order_id', $paymentOrderId)
+            ;
+
+        $order = $qb->getQuery()->getOneOrNullResult();
+
+        if (null === $order) {
+            return $this->redirectToRoute('order_payment');
+        }
 
         // There is a "status" query parameter,
         // but do not trust it as it could be changed
@@ -109,7 +121,7 @@ class PaygreenController extends AbstractController
     }
 
     #[Route(path: '/paygreen/cancel', name: 'paygreen_cancel')]
-    public function cancel(CartContextInterface $cartContext, Request $request)
+    public function cancel()
     {
         return $this->redirectToRoute('order_payment');
     }

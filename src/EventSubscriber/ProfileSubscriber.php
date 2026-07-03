@@ -10,12 +10,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class ProfileSubscriber implements EventSubscriberInterface
 {
-    private $tokenStorage;
     private $urlGenerator;
 
     private static $blacklist = [
@@ -23,9 +22,8 @@ class ProfileSubscriber implements EventSubscriberInterface
         'profile_jwt',
     ];
 
-    public function __construct(TokenStorageInterface $tokenStorage, UrlGeneratorInterface $urlGenerator)
+    public function __construct(private Security $security, UrlGeneratorInterface $urlGenerator)
     {
-        $this->tokenStorage = $tokenStorage;
         $this->urlGenerator = $urlGenerator;
     }
 
@@ -75,14 +73,9 @@ class ProfileSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (null === $token = $this->tokenStorage->getToken()) {
+        if (null === $user = $this->security->getUser()) {
 
             return;
-        }
-
-        if (!is_object($user = $token->getUser())) {
-
-            return; // e.g. anonymous authentication
         }
 
         if (!$user->hasRole('ROLE_STORE') && !$user->hasRole('ROLE_RESTAURANT')) {

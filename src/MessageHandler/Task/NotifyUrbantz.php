@@ -17,24 +17,22 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Contracts\HttpClient\Exception\HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AsMessageHandler()]
 class NotifyUrbantz
 {
-    private $urbantzClient;
     private $logger;
-    private $secret;
 
     public function __construct(
-        HttpClientInterface $urbantzClient,
+        private HttpClientInterface $urbantzClient,
         private EntityManagerInterface $entityManager,
-        string $secret,
+        private Hashids $hashids8,
+        private Hashids $hashids32,
+        private UrlGeneratorInterface $urlGenerator,
         ?LoggerInterface $logger = null)
     {
-        $this->urbantzClient = $urbantzClient;
-        $this->entityManager = $entityManager;
         $this->logger = $logger ?? new NullLogger();
-        $this->secret = $secret;
     }
 
     public function __invoke(TaskAssigned|TaskStarted|TaskDone|TaskFailed $event)
@@ -66,6 +64,9 @@ class NotifyUrbantz
             sprintf('Notifying Urbantz for event "%s"', $event->messageName())
         );
 
+        $trackingPageUrl = $this->urlGenerator->generate('public_delivery',
+            ['hashid'=> $this->hashids8->encode($delivery->getId())], UrlGeneratorInterface::ABSOLUTE_URL);
+
         switch (get_class($event)) {
             // https://docs.urbantz.com/#operation/AssignTask
             // https://api.urbantz.com/v2/carrier/external/task/ext-123456/complete
@@ -73,8 +74,19 @@ class NotifyUrbantz
                 $this->request($delivery, 'assign', [
                     'arrived' => [
                         'total' => true,
-                    ]
+                    ],
+                    'metadata' => [
+                        'Ext_Tracking_Page' => $trackingPageUrl
+                    ],
                 ]);
+                break;
+            // https://docs.urbantz.com/#tag/External-Carrier/operation/StartTask
+            // https://api.urbantz.com/v2/carrier/external/task/{extTrackId}/start
+            case TaskStarted::class:
+                // TODO
+                // Maybe we could implement start here?
+                // But this means that messengers *MUST* start tasks
+                // Atm, starting a task = pickup is completed
                 break;
             // https://docs.urbantz.com/#operation/CompleteTask
             case TaskDone::class:
@@ -86,7 +98,10 @@ class NotifyUrbantz
                     ]
                     :
                     [
-                        'departed' => [ 'total'=> true ]
+                        'departed' => [ 'total'=> true ],
+                        'metadata' => [
+                            'Ext_Tracking_Page' => $trackingPageUrl
+                        ],
                     ];
 
                 $this->request($delivery, $operation, $payload);
@@ -96,9 +111,7 @@ class NotifyUrbantz
 
     private function request(Delivery $delivery, string $operation, array $payload = [])
     {
-        $hashids = new Hashids($this->secret, 32);
-
-        $hashid = $hashids->encode($delivery->getId());
+        $hashid = $this->hashids32->encode($delivery->getId());
         $extTrackId = "dlv_{$hashid}";
 
         try {

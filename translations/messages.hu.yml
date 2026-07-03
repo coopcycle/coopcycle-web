@@ -213,7 +213,7 @@ order.adjustment_type.delivery: 'Kiszállítás'
 order.adjustment_type.platform_fees: 'CoopCycle díjak'
 order.adjustment_type.reusable_packaging: 'Csomagolás'
 order.adjustment_type.tip: 'Borravaló'
-order_item.adjustment_type.reusable_packaging: '%quantity% × csomagok'
+order_item.adjustment_type.reusable_packaging: '%quantity% × « %name% » csomagok'
 order.list.total: 'Összesen'
 order.list.shippedAt: 'Kiszállítási idő'
 order.list.type: 'Típus'
@@ -684,8 +684,6 @@ form.package_with_quantity.package.placeholder: 'Válassza ki a csomag típusát
 form.time_slot.same_day_cutoff.label: 'Aznapi határidő'
 form.time_slot.same_day_cutoff.help: 'Ha például 11:00 órát választasz, az ugyanazon
   a napon történő választások nem jelennek meg 11:00 óra után'
-order.reusable_packaging.pledge_return.disclaimer: 'Az ügyfél jelezte, hogy %count%
-  csomagot fog visszaküldeni'
 form:
   restaurant:
     name:
@@ -842,15 +840,9 @@ form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: 'Szeret
   <a href="https://enboiteleplat.fr/rennes/" target="_blank">En Boîte Le Plat</a>
   újrafelhasználható edényeket.'
 order.cart.donation: 'Adományozás'
-order.export.heading.nonprofit: 'Nonprofit'
-adminDashboard.nonprofits.createNew: 'Új nonprofit hozzáadása'
-adminDashboard.nonprofits.title: 'Nonprofitok'
-adminDashboard.nonprofits.confirm_delete: 'Biztos, hogy törölni akarod ezt a nonprofit
-  szervezetet?'
 order.cart.donation.disclaimer: 'Felajánljuk Neked, hogy a megrendelésedből származó
   bevételeknek %percentage% valamelyik partneregyesületünknek adományozzuk. Te nem
   fogsz többet fizetni.'
-form.checkout_address.nonprofit.placeholder: 'Válaszd ki a kedvenc nonprofit szervezeted'
 form.delivery.arbitrary_price.label: 'Ár beállítása manuálisan'
 stores.createNewOrder: 'Új rendelés létrehozása'
 stores.orders: 'Rendelések'

@@ -10,7 +10,7 @@ export const updateQueryString = ({ getState }) => {
       document.title,
       window.Routing.generate('admin_metrics', {
         view: state.view,
-        range: state.dateRange
+        range: state.dateRange.join(',')
       })
     )
 

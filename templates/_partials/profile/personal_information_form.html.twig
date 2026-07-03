@@ -11,6 +11,11 @@
       <a id="link_to_login" href="#">{{ 'registration.link.to.login'|trans }}</a>
       {{ 'registration.email.taken.use.another'|trans }}
     </div>
+    {% if form.plainPassword.vars.errors|length > 0 %}
+      <div class="has-error">
+        {{ form_errors(form.plainPassword) }}
+      </div>
+    {% endif %}
     <div class="row">
     <div class="col-md-6">
       {{ form_row(form.plainPassword.first) }}

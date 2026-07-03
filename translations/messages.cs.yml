@@ -314,7 +314,7 @@ order.adjustment_type.delivery: Doručení
 order.adjustment_type.platform_fees: poplatky CoopCycle
 order.adjustment_type.reusable_packaging: Balení
 order.adjustment_type.tip: Spropitné
-order_item.adjustment_type.reusable_packaging: '%quantity% × obal(y)'
+order_item.adjustment_type.reusable_packaging: '%quantity% × « %name% » obal(y)'
 order.list.total: Celkem
 order.list.shippedAt: Čas doručení
 order.list.type: Typ
@@ -937,8 +937,6 @@ nav.about_us: O nás
 receipt.line_item.tax_total: DPH
 form.settings.subject_to_vat.label: S DPH
 form.customize.motto.label: Slogan
-order.reusable_packaging.pledge_return.disclaimer: Zákazník uvedl, že %count% balíčků
-  bude vráceno
 form.time_slot.same_day_cutoff.help: Například podle vašeho výběru 11:00 se volby
   ve stejný den nebudou zobrazovat po 11:00
 form.time_slot.same_day_cutoff.label: Ve stejný den
@@ -1238,15 +1236,8 @@ restaurant.form.en_boite_le_plat_enabled.label: Povolit zálohový systém na mi
 form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: Chci zálohované
   <a href="%url%" target="_blank">Krabičky </a> na jídlo.
 order.cart.donation: Dary
-order.export.heading.nonprofit: Neziskové organizace
-adminDashboard.nonprofits.createNew: Přidat novou neziskovou organizaci
-adminDashboard.nonprofits.title: Neziskovky
-adminDashboard.nonprofits.confirm_delete: Opravdu chcete tuto neziskovou organizaci
-  smazat?
 order.cart.donation.disclaimer: Nabízíme vám možnost věnovat %percentage% z příjmů
   z vaší objednávky jednomu z našich partnerských sdružení. Nebudete platit více.
-form.checkout_address.nonprofit.placeholder: Vyberte si svou oblíbenou neziskovou
-  organizaci
 form.delivery.arbitrary_price.label: Definujte cenu ručně
 adminDashboard.users.confirmDeleteUser: Opravdu chcete odstranit uživatele s e-mailem
   %email%?
@@ -1403,7 +1394,6 @@ payment_method:
   restoflash: Restoflash
 form.local_business.mercadopago.remove.connection: Odstranit spojení s Mercadopago
 form.task_export.dv4cul.label: Export ve formátu DV4CUL
-restaurant.form.dabba_enabled.label: Povolení systému vracení záloh Dabba
 adminDashboard.integrations.help: Umožňuje konfigurovat omezení integrace
 form.integration.maxLength.label: Maximální povolená délka (cm)
 tasks.mark_as_done.has_previous: 'Úkol #%failed_task% nemohl být dokončen, protože
@@ -1517,17 +1507,6 @@ form.checkout_address.reusable_packaging.loopeat.connect_account: Připojit se k
 form.checkout_address.reusable_packaging.loopeat.add_credits: Přidat kredity do mé
   peněženky
 form.checkout_address.reusable_packaging.loopeat.manage_deposit: Správa mého vkladu
-form.checkout_address.reusable_packaging_dabba_enabled.label: Chci použít odnosné
-  dózy s víkem
-form.checkout_address.reusable_packaging.dabba.learn_more: Více info k odnosným dózám
-  s víkem
-form.checkout_address.reusable_packaging.dabba.wallet.label: V peněžence Dabba máte
-  <strong>%amount%</strong>
-form.checkout_address.reusable_packaging.dabba.wallet.help: (%price% za krabičku na
-  oběd)
-form.checkout_address.reusable_packaging.dabba.return_pledge_label: Kurýrovi vrátíte
-  zálohu (zálohy) %field%
-form.checkout_address.reusable_packaging.dabba.add: Přidejte %missing% do své peněženky
 form.embed_settings.show_home_page.label: Zobrazit na úvodní stránce
 form.package.enter_details: Zobrazit/skrýt detaily
 form.package.description.label: Popis pro zákazníka
@@ -1538,6 +1517,7 @@ form.package.average_weight.label: Průměrná hmotnost (kg)
 form.package.max_weight.label: Maximální váha (kg)
 form.package.tags.label: Automatické použití značek na úkoly
 form.package.shortCode.label: 2 písmenný kód
+form.package.shortCode.help: Omezeno na 2 znaky
 roles.ROLE_DISPATCHER: Dispečer
 user.edit.disabled.label: Vypnuto
 stores.deliveries.heading2: Doručení %delivery_id%
@@ -1550,9 +1530,6 @@ activity.order.restored: 'Objednávka #order/%aggregate_id% byla obnovena'
 basics.delete_selected: Smazat vybrané
 basics.address: Adresa
 loopeat.how_it_works.step_1.title: Zaregistruji se
-dabba.oauth_connect.success: Účet na zálohované boxy na jídlo úspěšně připojen!
-dabba.oauth_redirect.warning: Budete přesměrováni na webovou stránku Poskytovatele
-  boxů na jídlo, kde se můžete přihlásit nebo si vytvořit účet
 loopeat.how_it_works.step_1.text: Při dokončování objednávky se zaregistrujte na %name%.
 loopeat.how_it_works.step_2.title: Zaplatím první zálohu
 loopeat.how_it_works.step_3.title: Objednávám
@@ -1604,8 +1581,6 @@ vehicles.breadcrumb: Vozidla
 vehicles.breadcrumb.help: Definujte vozový park
 warehouses.breadcrumb: Sklady
 warehouses.breadcrumb.help: Definujte sklady
-restaurant.form.section.dabba: Dabba
-restaurant.form.dabba_code.label: Kód restaurace Dabba
 adminDashboard.integrations.title: Integrace
 integrations.breadcrumb: Integrace
 form.integration.name.label: Název Integrace
@@ -1617,7 +1592,6 @@ form.integration.maxWidth.label: Maximální povolená šířka (cm)
 form.integration.productTypes.label: Povolené typy produktů
 form.integration.woopitStoreId.label: Identifikátor obchodu Woopit
 integration.created.message: Integrace byla vytvořena.
-profile.dabba.disconnect: Odpojit Dabba
 form.task_export.colisactiv.label: Export ve formátu ColivActiv
 form.task_export.format.label: Formát exportu
 import.errors.at.row: Chyby na řádku %row_number%

@@ -7,15 +7,15 @@ import ZeroWasteDashboard from './ZeroWasteDashboard'
 import ProfitabilityDashboard from './ProfitabilityDashboard'
 import Navbar from './Navbar'
 
-const Dashboard = ({ cubejsApi, view }) => {
+const Dashboard = ({ view }) => {
 
   return (
     <React.Fragment>
       <Navbar />
-      { view === 'marketplace' && <MarketplaceDashboard cubejsApi={ cubejsApi } /> }
-      { view === 'logistics'   && <LogisticsDashboard cubejsApi={ cubejsApi } /> }
-      { view === 'zerowaste'   && <ZeroWasteDashboard cubejsApi={ cubejsApi } /> }
-      { view === 'profitability' && <ProfitabilityDashboard cubejsApi={ cubejsApi } /> }
+      { view === 'marketplace'   && <MarketplaceDashboard /> }
+      { view === 'logistics'     && <LogisticsDashboard /> }
+      { view === 'zerowaste'     && <ZeroWasteDashboard /> }
+      { view === 'profitability' && <ProfitabilityDashboard /> }
     </React.Fragment>
   )
 }

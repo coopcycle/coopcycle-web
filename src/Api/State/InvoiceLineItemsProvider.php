@@ -25,7 +25,7 @@ use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
 use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class InvoiceLineItemsProvider implements ProviderInterface

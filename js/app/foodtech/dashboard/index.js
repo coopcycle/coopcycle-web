@@ -41,10 +41,6 @@ export function renderDashboard(el, options) {
     preloadedState.initialOrder = JSON.parse(el.dataset.initialOrder)
   }
 
-  if ('adhocOrderEnabled' in el.dataset) {
-    preloadedState.adhocOrderEnabled = el.dataset.adhocOrderEnabled === 'true'
-  }
-
   if ('preparationDelay' in el.dataset) {
     preloadedState.preparationDelay = parseInt(el.dataset.preparationDelay)
   }

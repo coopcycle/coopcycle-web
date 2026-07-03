@@ -42,8 +42,6 @@ class HideSoftDeletedSubscriber implements EventSubscriberInterface
             array_map(fn($attribute) => $attribute->getName(), $method->getAttributes())
         );
 
-        // var_dump(count($method->getAttributes()));
-
         if (!$hasClassAnnotation && !$hasMethodAnnotation) {
             return;
         }

@@ -12,10 +12,15 @@ use Symfony\Component\Messenger\Exception\HandlerFailedException;
 
 trait DoneTrait
 {
-    protected function done(Task $task, Request $request)
+    protected function done(Task $task, Request $request, bool $calculateCO2 = true)
     {
         try {
-            $this->taskManager->markAsDone($task, $this->getNotes($request), $this->getContactName($request));
+            $this->taskManager->markAsDone(
+                $task,
+                $this->getNotes($request),
+                $this->getContactName($request),
+                $calculateCO2
+            );
         } catch (HandlerFailedException $e) {
             $child = $e->getPrevious();
 

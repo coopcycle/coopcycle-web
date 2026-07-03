@@ -5,27 +5,21 @@ namespace AppBundle\Doctrine\EventSubscriber;
 use AppBundle\Entity\Delivery;
 use AppBundle\Entity\Task;
 use AppBundle\Message\IndexDeliveries;
-use Doctrine\Common\EventSubscriber;
+use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Events;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-class SearchDeliveriesSubscriber implements EventSubscriber
+#[AsDoctrineListener(event: Events::onFlush, connection: 'default')]
+#[AsDoctrineListener(event: Events::postFlush, connection: 'default')]
+class SearchDeliveriesSubscriber
 {
     private $deliveries = [];
 
     public function __construct(private MessageBusInterface $messageBus)
     {}
-
-    public function getSubscribedEvents()
-    {
-        return array(
-            Events::onFlush,
-            Events::postFlush,
-        );
-    }
 
     public function onFlush(OnFlushEventArgs $args)
     {

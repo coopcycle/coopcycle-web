@@ -16,7 +16,7 @@ import {
   selectTaskLists,
 } from './selectors';
 import { createAction } from '@reduxjs/toolkit'
-import { selectTaskById, selectTaskListByUsername } from '../../../shared/src/logistics/redux/selectors'
+import { selectTaskById, selectTaskListByUsername, selectItemAssignedTo } from '../../../shared/src/logistics/redux/selectors'
 import { createClient } from '../utils/client'
 
 export const UPDATE_TASK = 'UPDATE_TASK'
@@ -104,6 +104,9 @@ export const CREATE_GROUP_SUCCESS = 'CREATE_GROUP_SUCCESS'
 
 export const OPEN_CREATE_DELIVERY_MODAL = 'OPEN_CREATE_DELIVERY_MODAL'
 export const CLOSE_CREATE_DELIVERY_MODAL = 'CLOSE_CREATE_DELIVERY_MODAL'
+
+export const OPEN_SEND_TO_WAREHOUSE_MODAL = 'OPEN_SEND_TO_WAREHOUSE_MODAL'
+export const CLOSE_SEND_TO_WAREHOUSE_MODAL = 'CLOSE_SEND_TO_WAREHOUSE_MODAL'
 
 export const OPEN_TASK_RESCHEDULE_MODAL = 'OPEN_TASK_RESCHEDULE_MODAL'
 export const CLOSE_TASK_RESCHEDULE_MODAL = 'CLOSE_TASK_RESCHEDULE_MODAL'
@@ -231,6 +234,7 @@ export function modifyTaskListRequestSuccess(taskList) {
 }
 
 export const setTaskListsLoading = createAction('SET_TASKLISTS_LOADING')
+export const setLoadingTaskIds = createAction('SET_LOADING_TASK_IDS')
 export const setTaskListVehicleRequest = createAction('SET_TASK_LIST_VEHICLE_REQUEST')
 export const setTaskListTrailerRequest = createAction('SET_TASK_LIST_TRAILER_REQUEST')
 
@@ -846,6 +850,38 @@ export function startTasks(tasks) {
         values.forEach(response => dispatch(updateTask(response.data)))
       })
       .catch(error => dispatch(startTaskFailure(error)))
+  }
+}
+
+export function completeTasks(tasks) {
+
+  return async function(dispatch, getState) {
+
+    const { jwt } = getState()
+    const taskIds = tasks.map(t => t['@id'])
+
+    dispatch(setLoadingTaskIds(taskIds))
+    dispatch(setTaskListsLoading(true))
+
+    try {
+      const response = await createClient(dispatch).request({
+        method: 'put',
+        url: '/api/tasks/done',
+        data: { tasks: taskIds },
+        headers: {
+          'Authorization': `Bearer ${jwt}`,
+          'Accept': 'application/ld+json',
+          'Content-Type': 'application/ld+json'
+        }
+      })
+
+      response.data.success.forEach(task => dispatch(updateTask(task)))
+    } catch (error) {
+      dispatch(startTaskFailure(error))
+    } finally {
+      dispatch(setLoadingTaskIds([]))
+      dispatch(setTaskListsLoading(false))
+    }
   }
 }
 
@@ -1529,6 +1565,47 @@ export function closeTaskRescheduleModal() {
   return { type: CLOSE_TASK_RESCHEDULE_MODAL }
 }
 
+export function openSendToWarehouseModal() {
+  return { type: OPEN_SEND_TO_WAREHOUSE_MODAL }
+}
+
+export function closeSendToWarehouseModal() {
+  return { type: CLOSE_SEND_TO_WAREHOUSE_MODAL }
+}
+
+export function sendToWarehouse(tasks, warehouse) {
+  return function(dispatch, getState) {
+    const { jwt } = getState()
+
+    const pickup  = tasks.find(t => t.type === 'PICKUP')
+    const dropoff = tasks.find(t => t.type === 'DROPOFF')
+
+    createClient(dispatch).request({
+      method: 'post',
+      url: `${warehouse['@id']}/relay`,
+      data: {
+        tasks: [pickup['@id'], dropoff['@id']],
+      },
+      headers: {
+        'Authorization': `Bearer ${jwt}`,
+        'Accept': 'application/ld+json',
+        'Content-Type': 'application/ld+json',
+      }
+    })
+      .then((response) => {
+        dispatch(updateTask(response.data.hubDropoff))
+        dispatch(updateTask(response.data.hubPickup))
+        // The backend updated dropoff.previous → hubPickup. Mirror that in the store
+        // so groupLinkedTasks can colour all four tasks consistently right away.
+        dispatch(updateTask({ ...dropoff, previous: response.data.hubPickup['@id'] }))
+        dispatch(closeSendToWarehouseModal())
+      })
+      .catch(() => {
+        dispatch(closeSendToWarehouseModal())
+      })
+  }
+}
+
 export function createTourRequest() {
   return { type: CREATE_TOUR_REQUEST }
 }
@@ -1791,5 +1868,160 @@ export function loadWarehouses() {
       }
     })
     dispatch(loadWarehousesSuccess(data))
+  }
+}
+
+/**
+ * Removes tasks from task list belonging to username
+ * @param {Array.Object} items - Items (tasks) to be removed
+ * @param {string} username - Username of the rider
+ */
+export function removeTasksFromTaskList(items, username) {
+
+  if (!Array.isArray(items)) {
+    items = [ items ]
+  }
+
+  return function(dispatch, getState) {
+
+    if (items.length === 0) {
+      return
+    }
+
+    const taskList = selectTaskListByUsername(getState(), {username: username}),
+      toRemove = items.map(i => i['@id'])
+
+    dispatch(modifyTaskListRequest(username, withoutItemsIRIs(taskList.items, toRemove)))
+  }
+}
+
+/**
+ * Removes previously assigned tasks to others than username from the state
+ * @param {string} username - Username of the rider
+ * @param {Array.Object} items - Items (tasks) to be removed
+ */
+export function removePreviouslyAssignedTasks(username, items) {
+
+  if (!Array.isArray(items)) {
+    items = [ items ]
+  }
+
+  return function(dispatch, getState) {
+
+    if (items.length === 0) {
+      return
+    }
+
+    const previouslyAssignedTo = items.reduce(
+      (result, t) => {
+        const previousAssignedTo = selectItemAssignedTo(getState(), t['@id']);
+        if (previousAssignedTo && previousAssignedTo !== username) {
+          result.push({ username: previousAssignedTo, task: t })
+        }
+        return result
+      },
+      []
+    );
+
+    const grouped = _.mapValues(
+      _.groupBy(previouslyAssignedTo, (i) => i.username),
+      (v) => v.map(u => u.task)
+    );
+
+    _.forEach(grouped, (tasks, username) => {
+      dispatch(removeTasksFromTaskList(tasks, username));
+    })
+  }
+}
+
+export function addTagToTasks(slug, tasks) {
+
+  return function (dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    const httpClient = createClient(dispatch)
+
+    const requests = tasks.reduce((reqs, task) => {
+
+      const existingTags = task.tags.map(t => t.slug);
+      const newTags = _.uniq(existingTags.concat([slug]));
+
+      if (_.isEqual(newTags, existingTags)) {
+        return reqs;
+      }
+
+      return [
+        ...reqs,
+        httpClient.request({
+          method: 'put',
+          url: task['@id'],
+          data: {
+            tags: newTags
+          },
+          headers: {
+            'Authorization': `Bearer ${jwt}`,
+            'Accept': 'application/ld+json',
+            'Content-Type': 'application/ld+json'
+          }
+        })
+      ]
+
+    }, [])
+
+    Promise.all(requests)
+      .then(values => {
+        dispatch(createTaskSuccess())
+        values.forEach(response => dispatch(updateTask(response.data)))
+      })
+      .catch(error => dispatch(startTaskFailure(error)))
+  }
+}
+
+export function removeTagFromTasks(slug, tasks) {
+
+  return function (dispatch, getState) {
+
+    const { jwt } = getState()
+
+    dispatch(createTaskRequest())
+
+    const httpClient = createClient(dispatch)
+
+    const requests = tasks.reduce((reqs, task) => {
+
+      const existingTags = task.tags.map(t => t.slug);
+      const newTags = _.without(existingTags, slug);
+
+      if (_.isEqual(newTags, existingTags)) {
+        return reqs;
+      }
+
+      return [
+        ...reqs,
+        httpClient.request({
+          method: 'put',
+          url: task['@id'],
+          data: {
+            tags: newTags
+          },
+          headers: {
+            'Authorization': `Bearer ${jwt}`,
+            'Accept': 'application/ld+json',
+            'Content-Type': 'application/ld+json'
+          }
+        })
+      ]
+
+    }, [])
+
+    Promise.all(requests)
+      .then(values => {
+        dispatch(createTaskSuccess())
+        values.forEach(response => dispatch(updateTask(response.data)))
+      })
+      .catch(error => dispatch(startTaskFailure(error)))
   }
 }

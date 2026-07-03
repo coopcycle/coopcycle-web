@@ -60,7 +60,7 @@ function convertValuesToDeliveryPayload(
     };
   }
 
-  if (values.variantIncVATPrice) {
+  if (typeof values.variantIncVATPrice === 'number') {
     data.order.arbitraryPrice = {
       variantName: values.variantName ?? '',
       variantPrice: values.variantIncVATPrice,
@@ -116,7 +116,7 @@ function convertValuesToRecurrenceRulePayload(values) {
     },
   };
 
-  if (values.variantIncVATPrice) {
+  if (typeof values.variantIncVATPrice === 'number') {
     data.arbitraryPriceTemplate = {
       variantName: values.variantName ?? '',
       variantPrice: values.variantIncVATPrice,
@@ -277,6 +277,10 @@ export default function useSubmit(
 
       setIsSubmitted(true);
 
+      const { addReverse } = values;
+
+      const storeId = storeNodeId.split('/').pop();
+
       if (modeIn(mode, [Mode.DELIVERY_CREATE, Mode.DELIVERY_UPDATE])) {
         const delivery = data as Delivery;
         const deliveryId = delivery.id;
@@ -284,17 +288,20 @@ export default function useSubmit(
         const orderId = orderUri?.split('/').pop();
 
         if (isDispatcher) {
-          if (orderId) {
-            window.location = `/admin/orders/${orderId}`;
+          if (addReverse) {
+            window.location.href = `/admin/stores/${storeId}/deliveries/new?from=${orderUri}&action=reverse`;
           } else {
-            window.location = `/admin/deliveries/${deliveryId}`;
+            if (orderId) {
+              window.location.href = `/admin/orders/${orderId}`;
+            } else {
+              window.location.href = `/admin/deliveries/${deliveryId}`;
+            }
           }
         } else {
-          window.location = `/dashboard/deliveries/${deliveryId}`;
+          window.location.href = `/dashboard/deliveries/${deliveryId}`;
         }
       } else if (mode === Mode.RECURRENCE_RULE_UPDATE) {
-        const storeId = storeNodeId.split('/').pop();
-        window.location = `/admin/stores/${storeId}/recurrence-rules`;
+        window.location.href = `/admin/stores/${storeId}/recurrence-rules`;
       }
     },
     [

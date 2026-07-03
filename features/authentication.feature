@@ -320,6 +320,19 @@ Feature: Authenticate
     }
     """
 
+  Scenario: Register failure (guest customer with same email)
+    Given there is a guest customer with email "bob@coopcycle.org"
+    When I add "Accept" header equal to "application/ld+json"
+    And I send a "POST" request to "/api/register" with parameters:
+      | key         | value             |
+      | _email      | bob@coopcycle.org |
+      | _username   | bob               |
+      | _password   | 123456            |
+      | _givenName  | Bob               |
+      | _familyName | Doe               |
+      | _telephone  | +33612345678      |
+    Then the response status code should be 200
+
   Scenario: Confirm registration success
     Given the user is loaded:
       | email             | bob@coopcycle.org |

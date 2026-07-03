@@ -14,10 +14,13 @@ use AppBundle\Api\State\RemotePushTokenProvider;
 
 #[ApiResource(
     operations: [
-        new Get(),
+        new Get(
+            security: 'object.getUser() == user'
+        ),
         new Delete(
             uriTemplate: '/me/remote_push_tokens/{token}',
             provider: RemotePushTokenProvider::class,
+            security: 'object.getUser() == user',
         ),
         new Post(
             uriTemplate: '/me/remote_push_tokens',

@@ -85,6 +85,9 @@ class StoreType extends LocalBusinessType
                 ))
                 ->add('checkExpression', HiddenType::class, [
                     'label' => 'form.store.check_expression'
+                ])
+                ->add('document', HiddenType::class, [
+                    'label' => 'form.store.document'
                 ]);
 
             if ($this->cashOnDeliveryOptinEnabled) {
@@ -108,6 +111,20 @@ class StoreType extends LocalBusinessType
                 $builder->add('transporter', ChoiceType::class, [
                     'label' => 'This store is managed by the transporter',
                     'help' => 'Select a transporter to manage this store',
+                    'choices' => $choices,
+                    'required' => false,
+                ]);
+            }
+
+            if ($this->rdcEnabled && !empty($this->rdcConnections)) {
+                $choices = array_reduce(array_keys($this->rdcConnections), function ($acc, $key) {
+                    $acc[$this->rdcConnections[$key]['name'] ?? $key] = $key;
+                    return $acc;
+                });
+
+                $builder->add('rdcConnectionId', ChoiceType::class, [
+                    'label' => 'RDC Connection',
+                    'help' => 'Select an RDC connection for this store',
                     'choices' => $choices,
                     'required' => false,
                 ]);
@@ -168,6 +185,10 @@ class StoreType extends LocalBusinessType
 
             $form = $event->getForm();
             $store = $event->getData();
+
+            if (null === $store->getPackageSet()) {
+                $store->setPackagesRequired(false);
+            }
 
             if (null === $store->getId()) {
                 $defaultAddress = $store->getAddress();

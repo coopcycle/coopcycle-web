@@ -21,6 +21,7 @@ Feature: Search
                   "exclusive"
                ],
                "cuisine":[
+                  "italian",
                   "asian"
                ],
                "enabled":true,

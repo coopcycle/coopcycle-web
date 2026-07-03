@@ -19,6 +19,7 @@ use AppBundle\Entity\Sylius\Order;
 use AppBundle\Entity\Sylius\OrderRepository;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductImage;
+use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Sylius\ProductVariant;
 use AppBundle\Entity\Sylius\ProductVariantTranslation;
@@ -28,8 +29,6 @@ use AppBundle\Entity\Sylius\TaxCategory;
 use AppBundle\Entity\Sylius\TaxonRepository;
 use AppBundle\Form\ApiAppType;
 use AppBundle\Form\ClosingRuleType;
-use AppBundle\Form\MenuEditorType;
-use AppBundle\Form\MenuTaxonType;
 use AppBundle\Form\MenuType;
 use AppBundle\Form\PreparationTimeRulesType;
 use AppBundle\Form\ProductOptionType;
@@ -38,16 +37,15 @@ use AppBundle\Form\Restaurant\DepositRefundSettingsType;
 use AppBundle\Form\Restaurant\ReusablePackagingType;
 use AppBundle\Form\RestaurantType;
 use AppBundle\Form\ReusablePackagingChoiceLoader;
-use AppBundle\Form\Sylius\Promotion\ItemsTotalBasedPromotionType;
-use AppBundle\Form\Sylius\Promotion\OfferDeliveryType;
+use AppBundle\Form\Sylius\Promotion\RestaurantPromotionType;
 use AppBundle\Form\Type\ProductTaxCategoryChoiceType;
 use AppBundle\LoopEat\Client as LoopeatClient;
 use AppBundle\Message\CopyProducts;
+use AppBundle\Pixabay\Client as PixabayClient;
 use AppBundle\Service\MercadopagoManager;
 use AppBundle\Service\SettingsManager;
 use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Sylius\Taxation\TaxesHelper;
-use AppBundle\Utils\MenuEditor;
 use AppBundle\Utils\PreparationTimeCalculator;
 use AppBundle\Utils\RestaurantStats;
 use AppBundle\Utils\ValidationUtils;
@@ -62,11 +60,14 @@ use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use MercadoPago;
 use Ramsey\Uuid\Uuid;
+use Sylius\Bundle\PromotionBundle\Form\Type\PromotionType;
+use ShipMonk\DoctrineEntityPreloader\EntityPreloader;
 use Sylius\Component\Locale\Provider\LocaleProviderInterface;
 use Sylius\Component\Order\Model\OrderInterface;
 use Sylius\Component\Payment\Model\PaymentInterface;
 use Sylius\Component\Payment\Model\PaymentMethodInterface;
 use Sylius\Component\Product\Model\ProductTranslation;
+use Sylius\Component\Product\Model\ProductOptionTranslation;
 use Sylius\Component\Product\Repository\ProductOptionRepositoryInterface;
 use Sylius\Component\Resource\Factory\FactoryInterface;
 use Sylius\Component\Promotion\Checker\Eligibility\PromotionEligibilityCheckerInterface;
@@ -78,6 +79,7 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -133,7 +135,6 @@ trait RestaurantTrait
             'edenred_enabled' => $this->getParameter('edenred_enabled'),
             'vytal_enabled' => $this->getParameter('vytal_enabled'),
             'en_boite_le_plat_enabled' => $this->getParameter('en_boite_le_plat_enabled'),
-            'dabba_enabled' => $this->getParameter('dabba_enabled'),
         ]);
 
         /** @var \Symfony\Component\HttpFoundation\Session\Session $session */
@@ -162,7 +163,6 @@ trait RestaurantTrait
 
         $wasDepositRefundEnabled = $restaurant->isDepositRefundEnabled();
         $wasVytalEnabled = $restaurant->isVytalEnabled();
-        $wasDabbaEnabled = $restaurant->isDabbaEnabled();
 
         $activationErrors = [];
         $formErrors = [];
@@ -201,21 +201,6 @@ trait RestaurantTrait
                         $reusablePackaging = new ReusablePackaging();
                         $reusablePackaging->setName('Vytal');
                         $reusablePackaging->setType(ReusablePackaging::TYPE_VYTAL);
-                        $reusablePackaging->setPrice(0);
-                        $reusablePackaging->setOnHold(0);
-                        $reusablePackaging->setOnHand(9999);
-                        $reusablePackaging->setTracked(false);
-
-                        $restaurant->addReusablePackaging($reusablePackaging);
-                    }
-                }
-
-                if (!$wasDabbaEnabled && $restaurant->isDabbaEnabled()) {
-
-                    if (!$restaurant->hasReusablePackagingWithName('Dabba')) {
-                        $reusablePackaging = new ReusablePackaging();
-                        $reusablePackaging->setName('Dabba');
-                        $reusablePackaging->setType(ReusablePackaging::TYPE_DABBA);
                         $reusablePackaging->setPrice(0);
                         $reusablePackaging->setOnHold(0);
                         $reusablePackaging->setOnHand(9999);
@@ -346,38 +331,6 @@ trait RestaurantTrait
         return $this->renderRestaurantForm($restaurant, $request, $validator, $jwtEncoder, $iriConverter, $translator, $loopeatClient, $appCache);
     }
 
-    public function restaurantNewAdhocOrderAction($restaurantId, Request $request,
-        JWTTokenManagerInterface $jwtManager)
-    {
-        $restaurant = $this->entityManager
-            ->getRepository(LocalBusiness::class)
-            ->find($restaurantId);
-
-        $form = $this->createFormBuilder()
-            ->add('taxCategory', ProductTaxCategoryChoiceType::class)
-            ->getForm();
-
-        $view = $form->get('taxCategory')->createView();
-
-        $taxCategories = [];
-        foreach($view->vars['choices'] as $taxCategoryView) {
-            $taxCategories[] = [
-                'name' => $taxCategoryView->label,
-                'code' => $taxCategoryView->value,
-            ];
-        }
-
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
-            'layout' => $request->attributes->get('layout'),
-            'restaurant_normalized' => $this->normalizer->normalize($restaurant, 'jsonld', [
-                'groups' => ['restaurant']
-            ]),
-            'restaurant' => $restaurant,
-            'jwt' => $jwtManager->create($this->getUser()),
-            'taxCategories' => $taxCategories,
-        ], []));
-    }
-
     public function restaurantDashboardAction($restaurantId, Request $request,
         EntityManagerInterface $entityManager,
         IriConverterInterface $iriConverter,
@@ -434,7 +387,6 @@ trait RestaurantTrait
             'initial_order' => $request->query->get('order'),
             'routes' => $routes,
             'date' => $date,
-            'adhoc_order_enabled' => $this->adhocOrderEnabled && $restaurant->belongsToHub(),
         ], $routes));
     }
 
@@ -446,11 +398,6 @@ trait RestaurantTrait
 
         $routes = $request->attributes->get('routes');
         $menus = $restaurant->getTaxons();
-
-        $forms = [];
-        foreach ($menus as $menu) {
-            $forms[$menu->getId()] = $this->createForm(MenuTaxonType::class, $menu)->createView();
-        }
 
         $form = $this->createFormBuilder()
             ->add('name', TextType::class)
@@ -479,13 +426,12 @@ trait RestaurantTrait
             ]);
         }
 
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
+        return $this->render($request->attributes->get('template'), $this->auth($this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'menus' => $menus,
             'restaurant' => $restaurant,
-            'forms' => $forms,
             'form' => $form->createView(),
-        ], $routes));
+        ], $routes)));
     }
 
     public function activateRestaurantMenuTaxonAction($restaurantId, $menuId, Request $request,
@@ -517,39 +463,10 @@ trait RestaurantTrait
         ]);
     }
 
-
-    public function deleteRestaurantMenuTaxonChildAction($restaurantId, $menuId, $sectionId, Request $request,
-        TaxonRepository $taxonRepository,
-        EntityManagerInterface $entityManager)
-    {
-        $restaurant = $this->entityManager
-            ->getRepository(LocalBusiness::class)
-            ->find($restaurantId);
-
-        $this->accessControl($restaurant);
-
-        $menuTaxon = $taxonRepository->find($menuId);
-        $toRemove = $taxonRepository->find($sectionId);
-
-        $menuTaxon->removeChild($toRemove);
-
-        $entityManager->flush();
-
-        $routes = $request->attributes->get('routes');
-
-        return $this->redirectToRoute($routes['menu_taxon'], [
-            'restaurantId' => $restaurant->getId(),
-            'menuId' => $menuTaxon->getId()
-        ]);
-    }
-
     #[HideSoftDeleted]
     public function restaurantMenuTaxonAction($restaurantId, $menuId, Request $request,
         TaxonRepository $taxonRepository,
-        FactoryInterface $taxonFactory,
-        EntityManagerInterface $entityManager,
-        EventDispatcherInterface $dispatcher,
-        TranslatorInterface $translator)
+        EntityManagerInterface $entityManager)
     {
         $routes = $request->attributes->get('routes');
 
@@ -562,130 +479,16 @@ trait RestaurantTrait
         $menuTaxon = $taxonRepository
             ->find($menuId);
 
-        // Handle deletion
-        $menuForm = $this->createForm(MenuTaxonType::class, $menuTaxon);
-        $menuForm->handleRequest($request);
-        if ($menuForm->isSubmitted() && $menuForm->isValid()) {
-            if ($menuForm->getClickedButton() && 'delete' === $menuForm->getClickedButton()->getName()) {
+        $preloader = new EntityPreloader($entityManager);
+        $preloader->preload([$menuTaxon], 'children');
+        $children = $preloader->preload($menuTaxon->getChildren()->toArray(), 'taxonProducts');
+        $preloader->preload($children, 'product');
 
-                $restaurant->removeTaxon($menuTaxon);
-                $entityManager->remove($menuTaxon);
-
-                $entityManager->flush();
-
-                return $this->redirectToRoute($routes['menu_taxons'], ['id' => $restaurantId]);
-            }
-        }
-
-        $form = $this->createFormBuilder()
-            ->add('name', TextType::class)
-            ->getForm();
-
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $name = $form->get('name')->getData();
-
-            $uuid = Uuid::uuid1()->toString();
-
-            $child = $taxonFactory->createNew();
-            $child->setCode($uuid);
-            $child->setSlug($uuid);
-            $child->setName($name);
-
-            $menuTaxon->addChild($child);
-            $entityManager->flush();
-
-            $this->addFlash(
-                'notice',
-                $translator->trans('global.changesSaved')
-            );
-
-            return $this->redirect($request->headers->get('referer'));
-        }
-
-        $menuEditor = new MenuEditor($restaurant, $menuTaxon);
-        $menuEditorForm = $this->createForm(MenuEditorType::class, $menuEditor);
-
-        $originalTaxonProducts = new \SplObjectStorage();
-        foreach ($menuEditor->getChildren() as $child) {
-            $taxonProducts = new ArrayCollection();
-            foreach ($child->getTaxonProducts() as $taxonProduct) {
-                $taxonProducts->add($taxonProduct);
-            }
-
-            $originalTaxonProducts[$child] = $taxonProducts;
-        }
-
-        // This will be used to determine if sections have been reordered
-        $originalSectionPositions = [];
-        foreach ($menuEditor->getChildren() as $child) {
-            $originalSectionPositions[$child->getPosition()] = $child->getId();
-        }
-        ksort($originalSectionPositions);
-        $originalSectionPositions = array_values($originalSectionPositions);
-
-        $menuEditorForm->handleRequest($request);
-        if ($menuEditorForm->isSubmitted() && $menuEditorForm->isValid()) {
-
-            $menuEditor = $menuEditorForm->getData();
-
-            $newSectionPositions = [];
-
-            foreach ($menuEditor->getChildren() as $child) {
-
-                // The section is empty
-                if (count($originalTaxonProducts[$child]) > 0 && count($child->getTaxonProducts()) === 0) {
-                    foreach ($originalTaxonProducts[$child] as $originalTaxonProduct) {
-                        $originalTaxonProducts[$child]->removeElement($originalTaxonProduct);
-                        $entityManager->remove($originalTaxonProduct);
-                    }
-                    continue;
-                }
-
-                $newSectionPositions[$child->getPosition()] = $child->getId();
-
-                foreach ($child->getTaxonProducts() as $taxonProduct) {
-
-                    $taxonProduct->setTaxon($child);
-
-                    foreach ($originalTaxonProducts[$child] as $originalTaxonProduct) {
-                        if (!$child->getTaxonProducts()->contains($originalTaxonProduct)) {
-                            $child->getTaxonProducts()->removeElement($originalTaxonProduct);
-                            $entityManager->remove($originalTaxonProduct);
-                        }
-                    }
-                }
-            }
-
-            ksort($newSectionPositions);
-            $newSectionPositions = array_values($newSectionPositions);
-
-            if ($originalSectionPositions !== $newSectionPositions) {
-                $taxonRepository->reorder($menuTaxon, 'position');
-            }
-
-            $entityManager->flush();
-
-            if ($restaurant->getMenuTaxon() === $menuTaxon) {
-                $dispatcher->dispatch(new GenericEvent($restaurant), 'catalog.updated');
-            }
-
-            $this->addFlash(
-                'notice',
-                $translator->trans('global.changesSaved')
-            );
-
-            return $this->redirect($request->headers->get('referer'));
-        }
-
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
+        return $this->render($request->attributes->get('template'), $this->auth($this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'menu' => $menuTaxon,
-            'form' => $form->createView(),
-            'menu_editor_form' => $menuEditorForm->createView(),
-        ], $routes));
+        ], $routes)));
     }
 
     public function restaurantPlanningAction($id, Request $request, TranslatorInterface $translator)
@@ -730,20 +533,21 @@ trait RestaurantTrait
         return $this->createForm(ProductType::class, $product, [
             'owner' => $restaurant,
             'with_reusable_packaging' =>
-                $restaurant->isDepositRefundEnabled() || $restaurant->isLoopeatEnabled() || $restaurant->isDabbaEnabled(),
+                $restaurant->isDepositRefundEnabled() || $restaurant->isLoopeatEnabled(),
             'reusable_packaging_choice_loader' => new ReusablePackagingChoiceLoader($restaurant, $loopeatClient, $entityManager),
-            'options_loader' => function (ProductInterface $product) use ($restaurant) {
+            'options_loader' => function (ProductInterface $product) {
 
                 $opts = [];
-                foreach ($restaurant->getProductOptions() as $opt) {
+                foreach ($product->getProductOptions() as $opt) {
                     $opts[] = [
-                        'product'  => $product,
-                        'option'   => $opt,
-                        'position' => $product->getPositionForOption($opt)
+                        'option'   => $opt->getOption()->getId(),
+                        'name'     => $opt->getOption()->getName(),
+                        'position' => $opt->getPosition(),
+                        'enabled'  => $opt->isEnabled(),
                     ];
                 }
 
-                uasort($opts, function ($a, $b) {
+                usort($opts, function ($a, $b) {
                     if ($a['position'] === $b['position']) return 0;
                     if ($a['position'] === -1) return 1;
                     if ($b['position'] === -1) return -1;
@@ -776,10 +580,23 @@ trait RestaurantTrait
         $qb->andWhere('p.restaurant = :restaurant');
         $qb->setParameter('restaurant', $restaurant);
 
+        if ($request->query->has('q')) {
+            $qb
+                ->andWhere('LOWER(t.name) LIKE :q')
+                ->setParameter('q', '%' . strtolower($request->query->get('q')) . '%');
+        }
+
+        $perPage = 10;
+        if ($request->query->has('per_page')) {
+            $perPage = $request->query->getInt('per_page');
+        } elseif ($request->cookies->has('__products_per_page')) {
+            $perPage = $request->cookies->getInt('__products_per_page');
+        }
+
         $products = $paginator->paginate(
             $qb,
             $request->query->getInt('page', 1),
-            10,
+            $perPage,
             [
                 PaginatorInterface::DEFAULT_SORT_FIELD_NAME => 't.name',
                 PaginatorInterface::DEFAULT_SORT_DIRECTION => 'asc',
@@ -788,6 +605,19 @@ trait RestaurantTrait
         );
 
         $routes = $request->attributes->get('routes');
+
+        if ('json' === $request->query->get('format')) {
+            $results = array_map(fn ($p) => [
+                'id' => $p->getId(),
+                'name' => $p->getName(),
+                'path' => $this->generateUrl($routes['product'], [
+                    'restaurantId' => $restaurant->getId(),
+                    'productId' => $p->getId(),
+                ]),
+            ], iterator_to_array($products));
+
+            return new JsonResponse($results);
+        }
 
         $copyForm = $this->createFormBuilder()
             ->add('restaurant', ChoiceType::class, [
@@ -836,13 +666,19 @@ trait RestaurantTrait
             return $this->redirectToRoute($routes['products'], ['id' => $destId]);
         }
 
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
+        $response = $this->render($request->attributes->get('template'), $this->auth($this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'products' => $products,
             'restaurant' => $restaurant,
             'restaurant_iri' => $iriConverter->getIriFromResource($restaurant),
             'copy_form' => $copyForm->createView(),
-        ], $routes));
+        ], $routes)));
+
+        if ($request->query->has('per_page')) {
+            $response->headers->setCookie(new Cookie('__products_per_page', $perPage));
+        }
+
+        return $response;
     }
 
     public function restaurantProductAction($restaurantId, $productId, Request $request,
@@ -987,7 +823,8 @@ trait RestaurantTrait
     }
 
     #[HideSoftDeleted]
-    public function restaurantProductOptionsAction($id, Request $request)
+    public function restaurantProductOptionsAction($id, Request $request,
+        PaginatorInterface $paginator)
     {
         $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
@@ -995,11 +832,51 @@ trait RestaurantTrait
 
         $this->accessControl($restaurant);
 
+        $qb = $this->entityManager
+            ->getRepository(ProductOption::class)
+            ->createQueryBuilder('opt')
+            ->innerJoin(ProductOptionTranslation::class, 't', Expr\Join::WITH, 't.translatable = opt.id')
+            ->andWhere('opt.restaurant = :restaurant')
+            ->setParameter('restaurant', $restaurant);
+
+        $qb->addOrderBy('t.name', 'ASC');
+
+        if ($request->query->has('q')) {
+            $qb
+                ->andWhere('LOWER(t.name) LIKE :q')
+                ->setParameter('q', '%' . strtolower($request->query->get('q')) . '%');
+        }
+
+        $options = $paginator->paginate(
+            $qb,
+            $request->query->getInt('page', 1),
+            10
+        );
+
         $routes = $request->attributes->get('routes');
+
+        $request->attributes->get('_route');
+
+        if ('json' === $request->query->get('format')) {
+
+            $results = [];
+            foreach ($options as $option) {
+                $results[] = [
+                    'id'   => $option->getId(),
+                    'name' => $option->getName(),
+                    'path' => $this->generateUrl($routes['product_option'], [
+                        'restaurantId' => $restaurant->getId(),
+                        'optionId' => $option->getId()
+                    ]),
+                ];
+            }
+
+            return new JsonResponse($results);
+        }
 
         return $this->render($request->attributes->get('template'), $this->withRoutes([
             'layout' => $request->attributes->get('layout'),
-            'options' => $restaurant->getProductOptions(),
+            'options' => $options,
             'restaurant' => $restaurant,
         ], $routes));
     }
@@ -1056,11 +933,11 @@ trait RestaurantTrait
             return $this->redirect($request->headers->get('referer'));
         }
 
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
+        return $this->render($request->attributes->get('template'), $this->auth($this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'form' => $form->createView(),
-        ], $routes));
+        ], $routes)));
     }
 
     public function restaurantProductOptionPreviewAction(Request $request,
@@ -1098,7 +975,7 @@ trait RestaurantTrait
 
             return new JsonResponse(
                 $normalizer->normalize($productOption, context: [
-                    'groups' => ['product_option'],
+                    'groups' => ['restaurant_menu'],
                     // Disable IRI generation as objects don't have ids
                     'iri' => false,
                 ])
@@ -1142,11 +1019,11 @@ trait RestaurantTrait
             return $this->redirectToRoute($routes['product_options'], ['id' => $id]);
         }
 
-        return $this->render($request->attributes->get('template'), $this->withRoutes([
+        return $this->render($request->attributes->get('template'), $this->auth($this->withRoutes([
             'layout' => $request->attributes->get('layout'),
             'restaurant' => $restaurant,
             'form' => $form->createView(),
-        ], $routes));
+        ], $routes)));
     }
 
     public function stripeOAuthRedirectAction($id, Request $request,
@@ -1396,7 +1273,6 @@ trait RestaurantTrait
             $taxesHelper,
             withVendorName: false,
             withMessenger: false,
-            nonProfitsEnabled: $this->getParameter('nonprofits_enabled'),
             showOnlyMealVouchers: $showOnlyMealVouchers
         );
 
@@ -1550,9 +1426,9 @@ trait RestaurantTrait
                 foreach ($promotion->getCoupons() as $coupon) {
 
                     if (!$promotionCouponExpirationChecker->isEligible(new Order(), $coupon)) {
-                        $past[] = $coupon;
+                        $past[] = $promotion;
                     } else {
-                        $ongoing[] = $coupon;
+                        $ongoing[] = $promotion;
                     }
                 }
             } else {
@@ -1582,68 +1458,27 @@ trait RestaurantTrait
 
         $routes = $this->getRestaurantRoutes();
 
-        if ($request->query->has('type')) {
+        $form = $this->createForm(RestaurantPromotionType::class, null, [
+            'local_business' => $restaurant,
+        ]);
 
-            $type = $request->query->get('type');
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
 
-            switch ($type) {
-                case 'offer_delivery':
+            $promotion = $form->getData();
 
-                    $form = $this->createForm(OfferDeliveryType::class, null, [
-                        'local_business' => $restaurant
-                    ]);
+            $restaurant->addPromotion($promotion);
 
-                    $form->handleRequest($request);
-                    if ($form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->flush();
 
-                        $coupon = $form->get('coupon')->getData();
-
-                        $restaurant->addPromotion($coupon->getPromotion());
-
-                        $this->entityManager->flush();
-
-                        return $this->redirectToRoute($routes['promotions'], ['id' => $id]);
-                    }
-
-                    return $this->render('restaurant/promotion.html.twig', $this->withRoutes([
-                        'layout' => $request->attributes->get('layout'),
-                        'restaurant' => $restaurant,
-                        'form' => $form->createView(),
-                        'promotion_type' => $type,
-                    ]));
-
-                case 'items_total':
-                    $form = $this->createForm(ItemsTotalBasedPromotionType::class, null, [
-                        'local_business' => $restaurant
-                    ]);
-
-                    $form->handleRequest($request);
-                    if ($form->isSubmitted() && $form->isValid()) {
-
-                        $promotion = $form->getData();
-
-                        $restaurant->addPromotion($promotion);
-
-                        $this->entityManager->flush();
-
-                        // $this->addFlash(
-                        //     'notice',
-                        //     $translator->trans('global.changesSaved')
-                        // );
-
-                        return $this->redirectToRoute($routes['promotions'], ['id' => $id]);
-                    }
-
-                    return $this->render('restaurant/promotion.html.twig', $this->withRoutes([
-                        'layout' => $request->attributes->get('layout'),
-                        'restaurant' => $restaurant,
-                        'form' => $form->createView(),
-                        'promotion_type' => $type,
-                    ]));
-            }
+            return $this->redirectToRoute($routes['promotions'], ['id' => $id]);
         }
 
-        return $this->redirectToRoute($routes['promotions'], ['id' => $id]);
+        return $this->render('restaurant/promotion.html.twig', $this->withRoutes([
+            'layout' => $request->attributes->get('layout'),
+            'restaurant' => $restaurant,
+            'form' => $form->createView(),
+        ]));
     }
 
     public function restaurantPromotionAction($restaurantId, $promotionId, TranslatorInterface $translator, Request $request)
@@ -1660,7 +1495,7 @@ trait RestaurantTrait
             throw $this->createAccessDeniedException();
         }
 
-        $form = $this->createForm(ItemsTotalBasedPromotionType::class, $promotion, [
+        $form = $this->createForm(RestaurantPromotionType::class, $promotion, [
             'local_business' => $restaurant
         ]);
 
@@ -1684,48 +1519,6 @@ trait RestaurantTrait
             'restaurant' => $restaurant,
             'form' => $form->createView(),
             'promotion_type' => 'items_total',
-        ]));
-    }
-
-    public function restaurantPromotionCouponAction($restaurantId, $promotionId, $couponId, TranslatorInterface $translator, Request $request)
-    {
-        $restaurant = $this->entityManager
-            ->getRepository(LocalBusiness::class)
-            ->find($restaurantId);
-
-        $coupon = $this->entityManager
-            ->getRepository(PromotionCoupon::class)
-            ->find($couponId);
-
-        $promotion = $coupon->getPromotion();
-
-        if (!$restaurant->hasPromotion($promotion)) {
-            throw $this->createAccessDeniedException();
-        }
-
-        $form = $this->createForm(OfferDeliveryType::class, $coupon, [
-            'local_business' => $restaurant
-        ]);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $this->entityManager->flush();
-
-            $this->addFlash(
-                'notice',
-                $translator->trans('global.changesSaved')
-            );
-
-            $routes = $this->getRestaurantRoutes();
-
-            return $this->redirectToRoute($routes['promotions'], ['id' => $restaurantId]);
-        }
-
-        return $this->render('restaurant/promotion.html.twig', $this->withRoutes([
-            'layout' => $request->attributes->get('layout'),
-            'restaurant' => $restaurant,
-            'form' => $form->createView(),
-            'promotion_type' => 'offer_delivery',
         ]));
     }
 
@@ -1946,22 +1739,27 @@ trait RestaurantTrait
         ], $routes));
     }
 
-    public function restaurantImageFromUrlAction($id, Request $request,
+    public function restaurantImageFromPixabayAction($id, Request $request,
         UploadHandler $uploadHandler,
-        EntityManagerInterface $entityManager)
+        EntityManagerInterface $entityManager,
+        PixabayClient $pixabayClient)
     {
         $restaurant = $this->entityManager
             ->getRepository(LocalBusiness::class)
             ->find($id);
 
-        $url = $request->request->get('url');
+        $pixabayId = $request->request->get('pixabay_id');
 
         // https://stackoverflow.com/questions/40454950/set-symfony-uploaded-file-by-url-input
+        $webformatURL = $pixabayClient->getWebformatURLById($pixabayId);
+        if (null === $webformatURL) {
+            throw new BadRequestHttpException(sprintf('Image %s not found on Pixabay', $pixabayId));
+        }
 
         $file = tmpfile();
         $newfile = stream_get_meta_data($file)['uri'];
 
-        copy($url, $newfile);
+        copy($webformatURL, $newfile);
         $mimeType = mime_content_type($newfile);
         $size = filesize($newfile);
         $finalName = md5(uniqid(rand(), true)) . '.jpg';
@@ -2161,45 +1959,49 @@ trait RestaurantTrait
             ->getRepository(LocalBusiness::class)
             ->find($restaurantId);
 
-        // TODO Access control
+        $this->denyAccessUnlessGranted('edit', $restaurant);
 
         if ($request->isMethod('POST')) {
 
-            $type = $request->request->get('type');
+            $couponBased = $request->request->getBoolean('coupon_based');
             $id = $request->request->getInt('id');
 
-            foreach ($restaurant->getPromotions() as $promotion) {
-                $promotion->setFeatured(false);
-                if ($promotion->isCouponBased()) {
-                    foreach ($promotion->getCoupons() as $coupon) {
-                        $coupon->setFeatured(false);
-                    }
-                }
-            }
+            $target = null;
 
-            if ($type === 'coupon') {
-
+            if ($couponBased) {
                 foreach ($restaurant->getPromotions() as $promotion) {
                     if ($promotion->isCouponBased()) {
                         foreach ($promotion->getCoupons() as $coupon) {
                             if ($id === $coupon->getId()) {
-                                $coupon->setFeatured(true);
+                                $target = $coupon;
                                 break 2;
                             }
                         }
                     }
                 }
-
-            } elseif ($type === 'promotion') {
-
+            } else {
                 foreach ($restaurant->getPromotions() as $promotion) {
                     if (!$promotion->isCouponBased() && $id === $promotion->getId()) {
-                        $promotion->setFeatured(true);
-                        $this->entityManager->flush();
+                        $target = $promotion;
                         break;
                     }
                 }
+            }
 
+            if (null !== $target) {
+
+                $wasFeatured = $target->isFeatured();
+
+                // Clear previously featured promotions
+                foreach ($restaurant->getPromotions() as $promotion) {
+                    $promotion->setFeatured(false);
+                    if ($promotion->isCouponBased()) {
+                        foreach ($promotion->getCoupons() as $coupon) {
+                            $coupon->setFeatured(false);
+                        }
+                    }
+                }
+                $target->setFeatured(!$wasFeatured);
             }
 
             $this->entityManager->flush();

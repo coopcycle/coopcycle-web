@@ -1,9 +1,7 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { Anchor } from 'antd'
 import useSize from '@react-hook/size'
-
-const { Link } = Anchor
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 import './menu-nav.scss'
 import MoreMenu from './MoreMenu'
@@ -73,24 +71,50 @@ export default function MenuNav(props) {
     }
   }
 
+  // This is used by the cart sidebar to position sticky element
+  useEffect(() => {
+    const height = rootRef.current.clientHeight
+    document.documentElement.style.setProperty(
+      '--restaurant-menu-nav-height',
+      `${height}px`,
+    )
+  }, [rootRef])
+
+  const items = props.sections.map(section => ({
+    key: sectionElementId(section),
+    href: sectionToLink(section),
+    title: section.name,
+  }))
+
   return (
-    <Anchor
-      getCurrentAnchor={ getCurrentAnchor }
-      onChange={ onChange }
-      targetOffset={ height }>
-      <div className="custom-container pt-3 d-flex"
-           ref={ rootRef }>
+    <div ref={ rootRef }>
+      {/* Hidden anchor used only for scroll-position tracking */}
+      <Anchor
+        affix={ false }
+        style={{ display: 'none' }}
+        items={ items }
+        getCurrentAnchor={ getCurrentAnchor }
+        onChange={ onChange }
+        targetOffset={ height }
+      />
+      <div className="mx-auto px-4 flex">
         { displaySections.map((section) => (
           <div
             key={ sectionElementId(section) }
             id={ sectionElementId(section) }
-            className={ classNames(
+            className={ clsx(
               {
                 'overflow-hidden': section.isVisible,
-                'display-none': !section.isVisible,
+                'hidden': !section.isVisible,
               },
             ) }>
-            <Link href={ sectionToLink(section) } title={ section.name } />
+            <div className={ clsx('ant-anchor-link', { 'ant-anchor-link-active': currentAnchor === sectionToLink(section) }) }>
+              <a
+                className={ clsx('ant-anchor-link-title', { 'ant-anchor-link-title-active': currentAnchor === sectionToLink(section) }) }
+                href={ sectionToLink(section) }>
+                { section.name }
+              </a>
+            </div>
           </div>
         )) }
         <MoreMenu
@@ -98,6 +122,6 @@ export default function MenuNav(props) {
           currentSection={ currentSection(props.sections, currentAnchor) }
           targetOffset={ height } />
       </div>
-    </Anchor>
+    </div>
   )
 }

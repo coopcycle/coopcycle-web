@@ -527,6 +527,99 @@ Feature: Deliveries
       }
       """
 
+  Scenario: Create delivery with packages does not cause double normalization
+    # Regression test: TaskNormalizer and DeliveryNormalizer lacked ALREADY_CALLED guards.
+    # Without the guards, the serializer re-entered both normalizers for every task in the delivery,
+    # causing objectNormalizer->normalize($package) to run twice per task without serialization groups,
+    # which followed Doctrine associations (Package → PackageSet → Store → all store Deliveries)
+    # and exhausted memory (OOM at AbstractObjectNormalizer::getCacheKey, line 821).
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | store_with_packages.yml |
+    And the store with name "Acme" has an OAuth client named "Acme"
+    And the OAuth client with name "Acme" has an access token
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the OAuth client "Acme" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "pickup": {
+          "doneBefore": "tomorrow 13:00"
+        },
+        "dropoff": {
+          "address": "48, Rue de Rivoli",
+          "doneBefore": "tomorrow 13:30",
+          "weight": 4000,
+          "packages": [
+            {"type": "SMALL", "quantity": 1},
+            {"type": "MEDIUM", "quantity": 2},
+            {"type": "XL", "quantity": 1}
+          ]
+        }
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"@string@.startsWith('/api/deliveries')",
+        "@type":"http://schema.org/ParcelDelivery",
+        "id":@integer@,
+        "pickup":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "type":"PICKUP",
+          "packages": [
+            {
+              "type": "SMALL",
+              "quantity": 1,
+              "@*@": "@*@"
+            },
+            {
+              "type": "MEDIUM",
+              "quantity": 2,
+              "@*@": "@*@"
+            },
+            {
+              "type": "XL",
+              "quantity": 1,
+              "@*@": "@*@"
+            }
+          ],
+          "@*@":"@*@"
+        },
+        "dropoff":{
+          "@id":"@string@.startsWith('/api/tasks')",
+          "@type":"Task",
+          "type":"DROPOFF",
+          "packages": [
+            {
+              "type": "SMALL",
+              "quantity": 1,
+              "@*@": "@*@"
+            },
+            {
+              "type": "MEDIUM",
+              "quantity": 2,
+              "@*@": "@*@"
+            },
+            {
+              "type": "XL",
+              "quantity": 1,
+              "@*@": "@*@"
+            }
+          ],
+          "@*@":"@*@"
+        },
+        "trackingUrl": @string@,
+        "@*@":"@*@"
+      }
+      """
+
   Scenario: Create delivery with weight and packages then update packages
     Given the fixtures files are loaded:
       | sylius_products.yml |
@@ -4434,7 +4527,8 @@ Feature: Deliveries
             "store": "\/api\/stores\/1",
             "orgName": "Acme",
             "arbitraryPriceTemplate": null,
-            "isCancelled": false
+            "isCancelled": false,
+            "paused": false
           }
         ],
         "hydra:totalItems": 1
@@ -6061,5 +6155,279 @@ Feature: Deliveries
         "hydra:title": "An error occurred",
         "hydra:description": "order.paymentMethod is not valid",
         "trace":@array@
+      }
+      """
+
+  Scenario: Create delivery with documents & update documents
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | store_with_cash_on_delivery.yml |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "tasks": [
+          {
+            "type": "PICKUP",
+            "address": "24, Rue de la Paix Paris",
+            "after": "tomorrow 12:00",
+            "before": "tomorrow 13:00",
+            "metadata": {
+              "documents": [
+                "https://demo.coopcycle.org/documents/file.pdf"
+              ]
+            }
+          },
+          {
+            "type": "DROPOFF",
+            "address": "48, Rue de Rivoli Paris",
+            "after": "tomorrow 13:30",
+            "before": "tomorrow 14:30"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"/api/deliveries/1",
+        "@type":"http://schema.org/ParcelDelivery",
+        "pickup":{
+          "@id":"/api/tasks/2",
+          "@type":"Task",
+          "type":"PICKUP",
+          "metadata":{
+            "documents":[
+              "https://demo.coopcycle.org/documents/file.pdf"
+            ],
+            "delivery_position": 1,
+            "@*@":"@*@"
+          },
+          "@*@":"@*@"
+        },
+        "dropoff":{
+          "@id":"/api/tasks/1",
+          "@type":"Task",
+          "type":"DROPOFF",
+          "metadata":{
+            "delivery_position": 2,
+            "@*@":"@*@"
+          },
+          "@*@":"@*@"
+        },
+        "tasks":[
+          {
+            "@id":"/api/tasks/2",
+            "@type":"Task",
+            "type":"PICKUP",
+            "metadata":{
+              "documents":[
+                "https://demo.coopcycle.org/documents/file.pdf"
+              ],
+              "delivery_position": 1,
+              "@*@":"@*@"
+            },
+            "@*@":"@*@"
+          },
+          {
+            "@id":"/api/tasks/1",
+            "@type":"Task",
+            "id":1,
+            "type":"DROPOFF",
+            "metadata":{
+              "delivery_position": 2,
+              "@*@":"@*@"
+            },
+            "@*@":"@*@"
+          }
+        ],
+        "trackingUrl":@string@,
+        "@*@":"@*@"
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "PUT" request to "/api/deliveries/1" with body:
+      """
+      {
+        "tasks": [
+          {
+            "@id": "/api/tasks/2",
+            "id": 2,
+            "metadata":{
+              "documents":[
+                "https://demo.coopcycle.org/documents/file.pdf",
+                "https://demo.coopcycle.org/documents/another_file.pdf"
+              ]
+            }
+          },
+          {
+            "@id": "/api/tasks/1",
+            "id": 1
+          }
+        ]
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"/api/deliveries/1",
+        "@type":"http://schema.org/ParcelDelivery",
+        "pickup":{
+          "@id":"/api/tasks/2",
+          "@type":"Task",
+          "type":"PICKUP",
+          "metadata":{
+            "documents":[
+              "https://demo.coopcycle.org/documents/file.pdf",
+              "https://demo.coopcycle.org/documents/another_file.pdf"
+            ],
+            "delivery_position": 1,
+            "@*@":"@*@"
+          },
+          "@*@":"@*@"
+        },
+        "dropoff":{
+          "@id":"/api/tasks/1",
+          "@type":"Task",
+          "type":"DROPOFF",
+          "@*@":"@*@"
+        },
+        "tasks":[
+          {
+            "@id":"/api/tasks/2",
+            "@type":"Task",
+            "type":"PICKUP",
+            "metadata":{
+              "documents":[
+                "https://demo.coopcycle.org/documents/file.pdf",
+                "https://demo.coopcycle.org/documents/another_file.pdf"
+              ],
+              "delivery_position": 1,
+              "@*@":"@*@"
+            },
+            "@*@":"@*@"
+          },
+          {
+            "@id":"/api/tasks/1",
+            "@type":"Task",
+            "id":1,
+            "type":"DROPOFF",
+            "@*@":"@*@"
+          }
+        ],
+        "trackingUrl":@string@,
+        "@*@":"@*@"
+      }
+      """
+
+  Scenario: Store with default document is added to task metadata
+    Given the fixtures files are loaded:
+      | sylius_products.yml |
+      | sylius_taxation.yml |
+      | payment_methods.yml |
+      | store_with_cash_on_delivery.yml |
+    And the user "bob" is loaded:
+      | email      | bob@coopcycle.org |
+      | password   | 123456            |
+    And the store with name "Acme" has document "https://demo.coopcycle.org/documents/file.pdf"
+    And the user "bob" has role "ROLE_ADMIN"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/deliveries" with body:
+      """
+      {
+        "store": "/api/stores/1",
+        "tasks": [
+          {
+            "type": "PICKUP",
+            "address": "24, Rue de la Paix Paris",
+            "after": "tomorrow 12:00",
+            "before": "tomorrow 13:00"
+          },
+          {
+            "type": "DROPOFF",
+            "address": "48, Rue de Rivoli Paris",
+            "after": "tomorrow 13:30",
+            "before": "tomorrow 14:30"
+          }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/Delivery",
+        "@id":"/api/deliveries/1",
+        "@type":"http://schema.org/ParcelDelivery",
+        "pickup":{
+          "@id":"/api/tasks/2",
+          "@type":"Task",
+          "type":"PICKUP",
+          "metadata":{
+            "documents":[
+              "https://demo.coopcycle.org/documents/file.pdf"
+            ],
+            "delivery_position": 1,
+            "@*@":"@*@"
+          },
+          "@*@":"@*@"
+        },
+        "dropoff":{
+          "@id":"/api/tasks/1",
+          "@type":"Task",
+          "type":"DROPOFF",
+          "metadata":{
+            "delivery_position": 2,
+            "@*@":"@*@"
+          },
+          "@*@":"@*@"
+        },
+        "tasks":[
+          {
+            "@id":"/api/tasks/2",
+            "@type":"Task",
+            "type":"PICKUP",
+            "metadata":{
+              "documents":[
+                "https://demo.coopcycle.org/documents/file.pdf"
+              ],
+              "delivery_position": 1,
+              "@*@":"@*@"
+            },
+            "@*@":"@*@"
+          },
+          {
+            "@id":"/api/tasks/1",
+            "@type":"Task",
+            "id":1,
+            "type":"DROPOFF",
+            "metadata":{
+              "delivery_position": 2,
+              "@*@":"@*@"
+            },
+            "@*@":"@*@"
+          }
+        ],
+        "trackingUrl":@string@,
+        "@*@":"@*@"
       }
       """

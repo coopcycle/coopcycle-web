@@ -1,29 +1,7 @@
 @use "sass:math";
 
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/_variables.scss";
-
-#modal-loopeat {
-  @media (max-width: $screen-xs-max) {
-    .modal-dialog {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 10px;
-      .modal-content {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        .modal-body {
-          flex: 1;
-          .embed-responsive.embed-responsive-16by9 {
-            height: 100%;
-            padding-bottom: 0;
-          }
-        }
-      }
-    }
-  }
-}
+@import "../restaurant/menu.scss";
+@import "../restaurant/components/Order/index.scss";
 
 $vytalGreen: #53b848;
 
@@ -68,16 +46,10 @@ $vytalGreen: #53b848;
   justify-content: space-between;
 }
 
-.nonprofit-card {
-  .thumbnail {
-    cursor: pointer;
-    height: 340px;
-  }
-   &.active {
-    .thumbnail {
-      border: 1px solid #66afe9;
-      background-color: #f3faff;
-    }
+.recommendations-swiper {
+  .swiper-slide {
+    // https://github.com/nolimits4web/swiper/issues/2372#issuecomment-349004052
+    height: auto;
   }
 }
 
@@ -87,34 +59,4 @@ $vytalGreen: #53b848;
     color: #1D1D1D;
     font-weight: 600;
   }
-}
-
-#dabba-block {
-
-  background-color: #FEF9F4;
-  color: #F96C26;
-  position: relative;
-
-  & img.dabba-logo {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 1rem;
-    height: calc(100% - 4rem);
-    @media (min-width: $screen-sm-min) {
-      height: calc(100% - 2rem);
-    }
-  }
-
-  & #checkout_address_reusablePackagingPledgeReturn {
-    display: inline-block;
-    width: 3em;
-    padding: .1em .1em .1em .3em;
-    height: auto;
-    &::-webkit-inner-spin-button,
-    &::-webkit-outer-spin-button {
-     opacity: 1;
-    }
-  }
-
 }

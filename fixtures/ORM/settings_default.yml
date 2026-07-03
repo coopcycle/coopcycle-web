@@ -11,3 +11,7 @@ AppBundle\Entity\Setting:
     section: general
     name: accounting_account
     value: '411100'
+  setting_new_shop_days:
+    section: general
+    name: new_shop_days
+    value: '90'

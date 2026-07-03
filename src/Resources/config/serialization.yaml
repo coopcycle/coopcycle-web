@@ -30,9 +30,9 @@ AppBundle\Entity\Sylius\Customer:
 
 AppBundle\Entity\Sylius\Taxon:
   attributes:
-    code:
-      groups: ['restaurant_menu', 'restaurant_menus']
     name:
+      groups: ['restaurant_menu', 'restaurant_menus', 'restaurant_menu_without_options']
+    description:
       groups: ['restaurant_menu', 'restaurant_menus']
 
 AppBundle\Entity\Sylius\OrderEvent:
@@ -55,31 +55,31 @@ Sylius\Component\Order\Model\Order:
     vendor:
       groups: ['order', 'foodtech_order_minimal']
     shippingAddress:
-      groups: ['order', 'order_create', 'cart', 'order_update', 'foodtech_order_minimal']
+      groups: ['order', 'order_create', 'cart', 'order_update', 'foodtech_order_minimal', 'order:list']
     shippedAt:
       groups: ['order', 'order_create', 'cart', 'order_update']
     shippingTimeRange:
-      groups: ['order', 'order_create', 'cart', 'order_update', 'foodtech_order_minimal']
+      groups: ['order', 'order_create', 'cart', 'order_update', 'foodtech_order_minimal', 'order:list']
     customer:
       groups: ['order', 'cart', 'foodtech_order_minimal']
     items:
       groups: ['order', 'order_create', 'cart', 'pricing_deliveries']
     total:
-      groups: ['order', 'cart', 'pricing_deliveries', 'foodtech_order_minimal', 'package_delivery_order_minimal']
+      groups: ['order', 'cart', 'pricing_deliveries', 'foodtech_order_minimal', 'package_delivery_order_minimal', 'order:list']
     number:
-      groups: ['order', 'foodtech_order_minimal', 'package_delivery_order_minimal']
+      groups: ['order', 'foodtech_order_minimal', 'package_delivery_order_minimal', 'order:list']
     itemsTotal:
       groups: ['order', 'cart']
     taxTotal:
       groups: ['order', 'pricing_deliveries', 'package_delivery_order_minimal']
     state:
-      groups: ['order', 'foodtech_order_minimal']
+      groups: ['order', 'foodtech_order_minimal', 'order:list']
     events:
       groups: ['order']
     notes:
       groups: ['order', 'cart', 'order_update', 'foodtech_order_minimal']
     createdAt:
-      groups: ['order']
+      groups: ['order', 'order:list']
     timeline:
       groups: ['order_timeline']
     preparationExpectedAt:
@@ -87,8 +87,6 @@ Sylius\Component\Order\Model\Order:
     pickupExpectedAt:
       groups: ['order']
     reusablePackagingEnabled:
-      groups: ['order', 'cart', 'order_update']
-    reusablePackagingPledgeReturn:
       groups: ['order', 'cart', 'order_update']
     reusablePackagingQuantity:
       groups: ['order', 'cart', 'order_update']
@@ -104,6 +102,8 @@ Sylius\Component\Order\Model\Order:
       groups: ['order', 'order_update', 'foodtech_order_minimal']
     hasEdenredCredentials:
       groups: ['cart', 'order', 'order_update']
+    client:
+      groups: ['order:list']
 
 Sylius\Component\Order\Model\OrderItem:
   attributes:
@@ -147,13 +147,15 @@ Sylius\Component\Product\Model\Product:
     id:
       groups: ['product']
     name:
-      groups: ['product']
+      groups: ['product', 'restaurant_menu', 'restaurant_menu_without_options']
     description:
-      groups: ['product']
+      groups: ['product', 'restaurant_menu']
     code:
       groups: ['product']
     enabled:
-      groups: ['product', 'product_update']
+      groups: ['product', 'product_update', 'restaurant_menu']
+    reusablePackagingEnabled:
+      groups: ['product', 'restaurant_menu']
 
 Sylius\Component\Product\Model\ProductVariant:
   attributes:
@@ -167,7 +169,7 @@ Sylius\Component\Product\Model\ProductVariant:
 Sylius\Component\Product\Model\ProductOption:
   attributes:
     name:
-      groups: ['product_option']
+      groups: ['product_option', 'restaurant_menu']
     code:
       groups: ['product_option']
     values:
@@ -175,12 +177,14 @@ Sylius\Component\Product\Model\ProductOption:
     strategy:
       groups: ['product_option']
     additional:
-      groups: ['product_option']
+      groups: ['product_option', 'restaurant_menu']
     valuesRange:
       groups: ['product_option']
 
 Sylius\Component\Product\Model\ProductOptionValue:
   attributes:
+    name:
+      groups: ['product_option']
     value:
       groups: ['product_option']
     code:
@@ -228,8 +232,26 @@ Sylius\Component\Payment\Model\Payment:
       groups: ['payment', 'order_configure_payment', 'payment_details']
     method:
       groups: ['payment', 'order_configure_payment', 'payment_details']
+    updatedAt:
+      groups: ['payment', 'order_configure_payment', 'payment_details']
 
 Sylius\Component\Payment\Model\PaymentMethod:
   attributes:
     code:
       groups: ['payment', 'order_configure_payment', 'payment_details']
+
+Sylius\Component\Promotion\Model\Promotion:
+  attributes:
+    name:
+      groups: ['promotion']
+    coupons:
+      groups: ['promotion']
+
+Sylius\Component\Promotion\Model\PromotionCoupon:
+  attributes:
+    code:
+      groups: ['promotion']
+    used:
+      groups: ['promotion']
+    updatedAt:
+      groups: ['promotion']

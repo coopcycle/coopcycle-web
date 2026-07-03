@@ -2,21 +2,17 @@
 
 namespace AppBundle\Action;
 
-use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Entity\OptinConsent;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class MyOptinConsents
 {
-    use TokenStorageTrait;
-
     protected $doctrine;
 
-    public function __construct(TokenStorageInterface $tokenStorage, ManagerRegistry $doctrine)
+    public function __construct(private Security $security, ManagerRegistry $doctrine)
     {
-        $this->tokenStorage = $tokenStorage;
         $this->doctrine = $doctrine;
     }
 
@@ -24,6 +20,6 @@ class MyOptinConsents
     {
         return $this->doctrine
             ->getRepository(OptinConsent::class)
-            ->findByUser($this->getUser());
+            ->findByUser($this->security->getUser());
     }
 }

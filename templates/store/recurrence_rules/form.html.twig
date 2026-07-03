@@ -19,19 +19,7 @@
 
 {% endblock %}
 
-{% block subnav %}
-  {% if is_granted('ROLE_DISPATCHER') %}
-    {% include 'delivery/_partials/navbar.html.twig' %}
-  {% endif %}
-{% endblock %}
-
 {% block content %}
-
-  {% if is_granted('ROLE_DISPATCHER') %}
-    <div class="alert alert-info">
-      To access the legacy version of this page <a data-testid="go-to-legacy-form" class="text-decoration-underline" href="{{ path('admin_store_recurrence_rule_legacy', { storeId: store.id, recurrenceRuleId: recurrenceRule.id }) }}">click here</a>.
-    </div>
-  {% endif %}
 
   {% block alerts %}
     {% if recurrenceRule.isCancelled() %}
@@ -52,6 +40,7 @@
       data-is-dispatcher="{{ isDispatcher ? 'true' : 'false' }}"
       data-is-debug-pricing="{{ debug_pricing ? 'true' : 'false' }}"
       data-is-price-breakdown-enabled="{{ ui_package_delivery_price_breakdown_enabled ? 'true' : 'false' }}"
+      data-document-upload-endpoint="{{ oneup_uploader_endpoint('documents')|e('html_attr') }}"
     >
       {# Managed with React #}
     </div>

@@ -1,6 +1,7 @@
 import { storeFixture } from './storeFixture'
-import { handleDragEnd } from '../handleDrag';
-import { insertInUnassignedTasks, toggleTask } from '../actions';
+import { handleDragStart, handleDragEnd } from '../handleDrag';
+import { clearSelectedTasks, insertInUnassignedTasks, insertInUnassignedTours, toggleTask } from '../actions';
+import { setIsTourDragging } from '../../../coopcycle-frontend-js/logistics/redux'
 import { createStoreFromPreloadedState } from '../store';
 
 describe('handleDragEnd', () => {
@@ -160,8 +161,8 @@ describe('handleDragEnd', () => {
         expect.objectContaining({'@id': '/api/tours/111'}),
         [
           '/api/tasks/729',
+          '/api/tasks/735', // pickup before dropoff (task 734 has previous: task 735)
           '/api/tasks/734',
-          '/api/tasks/735',
           '/api/tasks/730',
           '/api/tasks/731',
           '/api/tasks/727',
@@ -269,9 +270,9 @@ describe('handleDragEnd', () => {
       expect(mockModifyTaskList).toHaveBeenCalledTimes(0)
     })
 
-    it ('should move unassigned tasks in the order they are in the unassigned tasks panel when they were reordered', async () => {
+    it ('should always keep pickup before dropoff regardless of their order in the unassigned tasks panel', async () => {
 
-      // revert order of tasks in unassigned tasks compared to previous test
+      // place task 738 (dropoff) before task 737 (pickup) in the unassigned panel
       store.dispatch(insertInUnassignedTasks({tasksToInsert: [{'@id': '/api/tasks/738'}], index: 1}))
 
 
@@ -291,8 +292,8 @@ describe('handleDragEnd', () => {
         expect.objectContaining({'@id': '/api/tours/114'}),
         [
           '/api/tasks/733',
-          '/api/tasks/738', // reverted compare to previous test
-          '/api/tasks/737',
+          '/api/tasks/737', // pickup always before its dropoff (task 738 has previous: task 737)
+          '/api/tasks/738',
           '/api/tasks/732'
         ]
       )
@@ -324,3 +325,258 @@ describe('handleDragEnd', () => {
       )
     })
   })
+
+describe('handleDragStart', () => {
+  // fixture has selectedTasks: ['/api/tasks/733']
+
+  it('should clear selection when dragging an unselected item', () => {
+    const store = createStoreFromPreloadedState(storeFixture)
+    const dispatch = jest.fn()
+    handleDragStart({ draggableId: '/api/tasks/729' })(dispatch, store.getState)
+    expect(dispatch).toHaveBeenCalledWith(clearSelectedTasks())
+  })
+
+  it('should not clear selection when dragging the selected item', () => {
+    const store = createStoreFromPreloadedState(storeFixture)
+    const dispatch = jest.fn()
+    handleDragStart({ draggableId: '/api/tasks/733' })(dispatch, store.getState)
+    expect(dispatch).not.toHaveBeenCalledWith(clearSelectedTasks())
+  })
+
+  it('should set isTourDragging when dragging a tour', () => {
+    const store = createStoreFromPreloadedState(storeFixture)
+    const dispatch = jest.fn()
+    handleDragStart({ draggableId: 'tour:/api/tours/111' })(dispatch, store.getState)
+    expect(dispatch).toHaveBeenCalledWith(setIsTourDragging(true))
+  })
+
+  it('should clear isTourDragging when dragging a task', () => {
+    const store = createStoreFromPreloadedState(storeFixture)
+    const dispatch = jest.fn()
+    handleDragStart({ draggableId: '/api/tasks/729' })(dispatch, store.getState)
+    expect(dispatch).toHaveBeenCalledWith(setIsTourDragging(false))
+  })
+})
+
+describe('handleDragEnd - edge cases', () => {
+  it('should do nothing when dropped outside any droppable', () => {
+    const store = createStoreFromPreloadedState(storeFixture)
+    const dispatch = jest.fn()
+    const mockModifyTaskList = jest.fn()
+    const mockModifyTour = jest.fn()
+
+    handleDragEnd(
+      { draggableId: '/api/tasks/729', source: { droppableId: 'assigned:admin', index: 0 }, destination: null },
+      mockModifyTaskList, mockModifyTour
+    )(dispatch, store.getState)
+
+    expect(dispatch).not.toHaveBeenCalled()
+    expect(mockModifyTaskList).not.toHaveBeenCalled()
+    expect(mockModifyTour).not.toHaveBeenCalled()
+  })
+
+  it('should do nothing when dropped in the same position', () => {
+    const store = createStoreFromPreloadedState(storeFixture)
+    const dispatch = jest.fn()
+    const mockModifyTaskList = jest.fn()
+    const mockModifyTour = jest.fn()
+
+    handleDragEnd(
+      {
+        draggableId: '/api/tasks/729',
+        source: { droppableId: 'assigned:admin', index: 0 },
+        destination: { droppableId: 'assigned:admin', index: 0 },
+      },
+      mockModifyTaskList, mockModifyTour
+    )(dispatch, store.getState)
+
+    expect(dispatch).not.toHaveBeenCalled()
+    expect(mockModifyTaskList).not.toHaveBeenCalled()
+    expect(mockModifyTour).not.toHaveBeenCalled()
+  })
+
+  it('should reorder a tour within the unassigned tours panel', () => {
+    const store = createStoreFromPreloadedState(storeFixture)
+    const dispatch = jest.fn()
+
+    handleDragEnd({
+      draggableId: 'tour:/api/tours/114',
+      source: { droppableId: 'unassigned_tours', index: 0 },
+      destination: { droppableId: 'unassigned_tours', index: 1 },
+    })(dispatch, store.getState)
+
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: insertInUnassignedTours.type,
+        payload: { itemId: '/api/tours/114', index: 1 },
+      })
+    )
+  })
+
+  it('should reorder tasks within the unassigned tasks panel', () => {
+    const store = createStoreFromPreloadedState(storeFixture)
+    const dispatch = jest.fn()
+
+    // task 733 is at index 2 in unassignedTasksIdsOrder; move it to the front
+    handleDragEnd({
+      draggableId: '/api/tasks/733',
+      source: { droppableId: 'unassigned', index: 2 },
+      destination: { droppableId: 'unassigned', index: 0 },
+    })(dispatch, store.getState)
+
+    expect(dispatch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: insertInUnassignedTasks.type,
+        payload: expect.objectContaining({
+          index: 0,
+          tasksToInsert: expect.arrayContaining([
+            expect.objectContaining({ '@id': '/api/tasks/733' }),
+          ]),
+        }),
+      })
+    )
+  })
+
+  it('should reorder a task within a courier tasklist', () => {
+    const store = createStoreFromPreloadedState(storeFixture)
+    const dispatch = jest.fn()
+    const mockModifyTaskList = jest.fn()
+
+    // Admin tasklist items: ['/api/tours/111']
+    // Dragging task 729 at the root level of admin's list to index 1 appends it after the tour
+    handleDragEnd(
+      {
+        draggableId: '/api/tasks/729',
+        source: { droppableId: 'assigned:admin', index: 0 },
+        destination: { droppableId: 'assigned:admin', index: 1 },
+      },
+      mockModifyTaskList
+    )(dispatch, store.getState)
+
+    expect(mockModifyTaskList).toHaveBeenCalledWith(
+      'admin',
+      ['/api/tours/111', '/api/tasks/729']
+    )
+  })
+
+  it('should remove a task from a tour when dragged to unassigned', () => {
+    const store = createStoreFromPreloadedState(storeFixture)
+    const dispatch = jest.fn()
+    const mockModifyTaskList = jest.fn()
+    const mockModifyTour = jest.fn()
+    const mockUnassignTasks = jest.fn()
+    const mockRemoveTasksFromTour = jest.fn()
+
+    // task 729 is in tour 111; it has no linked tasks (no previous/next)
+    handleDragEnd(
+      {
+        draggableId: '/api/tasks/729',
+        source: { droppableId: 'tour:/api/tours/111', index: 0 },
+        destination: { droppableId: 'unassigned' },
+      },
+      mockModifyTaskList, mockModifyTour, mockUnassignTasks, mockRemoveTasksFromTour
+    )(dispatch, store.getState)
+
+    expect(mockRemoveTasksFromTour).toHaveBeenCalledWith(
+      expect.objectContaining({ '@id': '/api/tours/111' }),
+      expect.arrayContaining([expect.objectContaining({ '@id': '/api/tasks/729' })])
+    )
+    expect(mockUnassignTasks).not.toHaveBeenCalled()
+    expect(mockModifyTaskList).not.toHaveBeenCalled()
+  })
+
+  it('should reorder a task within the same tour', () => {
+    const store = createStoreFromPreloadedState(storeFixture)
+    const dispatch = jest.fn()
+    const mockModifyTaskList = jest.fn()
+    const mockModifyTour = jest.fn()
+
+    // Tour 111 items: [729, 730, 731, 727]; move task 731 from index 2 to index 0
+    handleDragEnd(
+      {
+        draggableId: '/api/tasks/731',
+        source: { droppableId: 'tour:/api/tours/111', index: 2 },
+        destination: { droppableId: 'tour:/api/tours/111', index: 0 },
+      },
+      mockModifyTaskList, mockModifyTour
+    )(dispatch, store.getState)
+
+    expect(mockModifyTour).toHaveBeenCalledWith(
+      expect.objectContaining({ '@id': '/api/tours/111' }),
+      [
+        '/api/tasks/731',
+        '/api/tasks/729',
+        '/api/tasks/730',
+        '/api/tasks/727',
+      ]
+    )
+    expect(mockModifyTaskList).not.toHaveBeenCalled()
+  })
+
+  it('should assign pickup before dropoff even when dropoff has a lower task ID', () => {
+    // Regression: groupLinkedTasks sorts group members by IRI, so when the dropoff ID is
+    // lower than the pickup ID (e.g. task/734 dropoff → previous task/735 pickup), it was
+    // emitted first, producing a dropoff-before-pickup payload.
+    const store = createStoreFromPreloadedState(storeFixture)
+    const dispatch = jest.fn()
+    const mockModifyTaskList = jest.fn()
+
+    // task 734 is the dropoff (previous: '/api/tasks/735'), task 735 is the pickup.
+    // Both are unassigned; in unassignedTasksIdsOrder 734 appears at index 3, 735 at index 4.
+    // Without the fix, both orderings (IRI sort and panel order) produce [734, 735] = [dropoff, pickup].
+    handleDragEnd(
+      {
+        draggableId: '/api/tasks/734',
+        source: { droppableId: 'unassigned', index: 3 },
+        destination: { droppableId: 'assigned:admin', index: 0 },
+      },
+      mockModifyTaskList
+    )(dispatch, store.getState)
+
+    expect(mockModifyTaskList).toHaveBeenCalledWith(
+      'admin',
+      [
+        '/api/tasks/735', // pickup must come first
+        '/api/tasks/734', // dropoff after its pickup
+        '/api/tours/111',
+      ]
+    )
+  })
+
+  it('should move a task from a courier tasklist into a tour', () => {
+    const store = createStoreFromPreloadedState(storeFixture)
+    const dispatch = jest.fn()
+    const mockModifyTaskList = jest.fn()
+    const mockModifyTour = jest.fn()
+    const mockUnassignTasks = jest.fn()
+
+    // tasks 737 and 738 are linked (737.next = 738); both assigned to admin, neither in a tour
+    // Tour 114 items: [733, 732]; dropping at index 1
+    handleDragEnd(
+      {
+        draggableId: '/api/tasks/737',
+        source: { droppableId: 'assigned:admin', index: 0 },
+        destination: { droppableId: 'tour:/api/tours/114', index: 1 },
+      },
+      mockModifyTaskList, mockModifyTour, mockUnassignTasks
+    )(dispatch, store.getState)
+
+    expect(mockUnassignTasks).toHaveBeenCalledWith(
+      'admin',
+      expect.arrayContaining([
+        expect.objectContaining({ '@id': '/api/tasks/737' }),
+        expect.objectContaining({ '@id': '/api/tasks/738' }),
+      ])
+    )
+    expect(mockModifyTour).toHaveBeenCalledWith(
+      expect.objectContaining({ '@id': '/api/tours/114' }),
+      [
+        '/api/tasks/733',
+        '/api/tasks/737',
+        '/api/tasks/738',
+        '/api/tasks/732',
+      ]
+    )
+    expect(mockModifyTaskList).not.toHaveBeenCalled()
+  })
+})

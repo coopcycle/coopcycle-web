@@ -592,6 +592,7 @@ class OrderFeeProcessorTest extends KernelTestCase
         $order->getTipAmount()->willReturn(null);
 
         $order->isLoopeat()->willReturn(true);
+        $order->isEnBoiteLePlat()->willReturn(false);
         $order->getAdjustmentsTotal(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)
             ->willReturn(90);
 
@@ -713,5 +714,107 @@ class OrderFeeProcessorTest extends KernelTestCase
 
         $this->assertCount(1, $feeAdjustments);
         $this->assertEquals(0, $order->getFeeTotal());
+    }
+
+    public function testDeliveryPromotionDoesNotAddNegativeAdjustment()
+    {
+        $contract = self::createContract(300, 350, 0.00);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+
+        $order = new Order();
+        $order->setRestaurant($restaurant);
+        $order->addItem($this->createOrderItem(1000));
+
+        $promotion = new Promotion();
+        $promotion->setCode('BIG_DISCOUNT');
+
+        $promotionAction = new PromotionAction();
+        $promotionAction->setType(DeliveryPercentageDiscountPromotionActionCommand::TYPE);
+        $promotionAction->setConfiguration([
+            'percentage' => 1.0,
+        ]);
+
+        $promotion->addAction($promotionAction);
+
+        $this->promotionRepository
+            ->findOneBy(['code' => 'BIG_DISCOUNT'])
+            ->willReturn($promotion);
+
+        $freeDeliveryAdjustment = new Adjustment();
+        $freeDeliveryAdjustment->setType(AdjustmentInterface::DELIVERY_PROMOTION_ADJUSTMENT);
+        $freeDeliveryAdjustment->setLabel('Big discount');
+        $freeDeliveryAdjustment->setAmount(-500);
+        $freeDeliveryAdjustment->setOriginCode('BIG_DISCOUNT');
+
+        $order->addAdjustment($freeDeliveryAdjustment);
+
+        $deliveryAdjustment = new Adjustment();
+        $deliveryAdjustment->setType(AdjustmentInterface::DELIVERY_ADJUSTMENT);
+        $deliveryAdjustment->setLabel('Delivery');
+        $deliveryAdjustment->setAmount(350);
+
+        $order->addAdjustment($deliveryAdjustment);
+
+        $this->orderFeeProcessor->process($order);
+
+        $feeAdjustments = $order->getAdjustments(AdjustmentInterface::FEE_ADJUSTMENT);
+
+        $this->assertCount(1, $feeAdjustments);
+        $this->assertEquals(0, $order->getFeeTotal());
+    }
+
+    public function orderWithEnBoiteLePlatProvider()
+    {
+        return [
+            // When the deposit is collected by the restaurant, the platform fee is not increased
+            [false, 500],
+            // When the deposit is collected by the plaform, the platform fee is increased
+            [true, 800],
+        ];
+    }
+
+    /**
+     * @dataProvider orderWithEnBoiteLePlatProvider
+     */
+    public function testOrderWithEnBoiteLePlat(bool $enBoiteLePlatPlatformFee, int $expectedPlatformFee)
+    {
+        $contract = self::createContract(500, 0, 0.00);
+
+        $restaurant = new Restaurant();
+        $restaurant->setContract($contract);
+        $restaurant->setEnBoitLePlatEnabled(true);
+        $restaurant->setEnBoitLePlatPlatformFee(true);
+
+        $order = $this->prophesize(OrderInterface::class); // new Order();
+        $order->hasVendor()->willReturn(true);
+        $order->getVendorConditions()->willReturn($restaurant);
+        $order->isTakeAway()->willReturn(false);
+        $order->getItemsTotal()->willReturn(2000);
+
+        $order->getAdjustments(Argument::type('string'))
+            ->willReturn(new ArrayCollection([]));
+
+        $order->getAdjustmentsTotal(AdjustmentInterface::TIP_ADJUSTMENT)
+            ->willReturn(0);
+
+        $order->getTipAmount()->willReturn(null);
+
+        $order->isLoopeat()->willReturn(false);
+        $order->isEnBoiteLePlat()->willReturn(true);
+        $order->isEnBoiteLePlatPlatformFee()->willReturn($enBoiteLePlatPlatformFee);
+        $order->getAdjustmentsTotal(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT)
+            ->willReturn(300);
+
+        $order->removeAdjustments(Argument::that(function ($adjustment) {
+            return AdjustmentInterface::DELIVERY_ADJUSTMENT === $adjustment;
+        }))->shouldBeCalled();
+
+        $this->orderFeeProcessor->process($order->reveal());
+
+        $order->addAdjustment(Argument::that(function ($adjustment) use ($expectedPlatformFee) {
+            return AdjustmentInterface::FEE_ADJUSTMENT === $adjustment->getType() && $expectedPlatformFee === $adjustment->getAmount();
+        }))->shouldBeCalledOnce();
     }
 }

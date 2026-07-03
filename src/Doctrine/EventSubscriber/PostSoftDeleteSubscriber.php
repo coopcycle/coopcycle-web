@@ -10,14 +10,19 @@ use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductTaxon;
 use AppBundle\Entity\Trailer;
 use AppBundle\Entity\Vehicle;
+use AppBundle\Message\SoftDelete\CleanupProductOption;
 use AppBundle\Sylius\Product\ProductInterface;
 use AppBundle\Sylius\Product\ProductOptionInterface;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Gedmo\SoftDeleteable\SoftDeleteableListener;
+use Symfony\Component\Messenger\MessageBusInterface;
 
 class PostSoftDeleteSubscriber implements EventSubscriber
 {
+    public function __construct(private MessageBusInterface $messageBus)
+    {}
+
     /**
      * {@inheritdoc}
      */
@@ -53,26 +58,7 @@ class PostSoftDeleteSubscriber implements EventSubscriber
         }
 
         if ($entity instanceof ProductOptionInterface) {
-
-            // FIXME Use ProductInterface
-            $productRepository = $objectManager->getRepository(Product::class);
-            $restaurantRepository = $objectManager->getRepository(LocalBusiness::class);
-
-            $products = $productRepository->findByOption($entity);
-            foreach ($products as $product) {
-                foreach ($product->getProductOptions() as $productOption) {
-                    if ($productOption->getOption() === $entity) {
-                        $unitOfWork->scheduleForDelete($productOption);
-                    }
-                }
-            }
-
-            $restaurants = $restaurantRepository->findByOption($entity);
-            foreach ($restaurants as $restaurant) {
-                $restaurant->removeProductOption($entity);
-            }
-
-            $unitOfWork->computeChangeSets();
+            $this->messageBus->dispatch(new CleanupProductOption($entity));
         }
 
         if ($entity instanceof LocalBusiness || $entity instanceof Store) {

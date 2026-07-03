@@ -1,13 +1,16 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect, useState, useMemo } from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import _ from 'lodash'
 import {useTranslation} from 'react-i18next'
-import {Item, Menu, Submenu, Separator, useContextMenu} from 'react-contexify'
+import { Item, Menu, Submenu, Separator, useContextMenu } from 'react-contexify'
+import { Checkbox } from 'antd';
+import { useDebounce } from "@uidotdev/usehooks";
 
 import moment from 'moment'
 
 import {
   cancelTasks,
+  completeTasks,
   createTaskList,
   putTaskListItems,
   moveTasksToNextDay,
@@ -19,6 +22,7 @@ import {
   openCreateGroupModal,
   openCreateTourModal,
   openReportIncidentModal,
+  openSendToWarehouseModal,
   openTaskRescheduleModal,
   openTaskTaskList,
   removeTasksFromGroup,
@@ -28,9 +32,11 @@ import {
   startTasks,
   toggleTasksGroupPanelExpanded,
   toggleTourPanelExpanded,
-  unassignTasks
+  unassignTasks,
+  addTagToTasks,
+  removeTagFromTasks,
 } from '../../redux/actions'
-import {selectCouriersWithExclude, selectExpandedTasksGroupsPanelsIds, selectExpandedTourPanelsIds, selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks, selectTaskListsLoading, selectTaskToShow} from '../../redux/selectors'
+import {selectCouriersWithExclude, selectExpandedTasksGroupsPanelsIds, selectExpandedTourPanelsIds, selectLinkedTasksIds, selectNextWorkingDay, selectSelectedTasks, selectTaskListsLoading, selectTaskToShow, selectAllTags} from '../../redux/selectors'
 import {selectUnassignedTasks} from '../../../coopcycle-frontend-js/logistics/redux'
 
 import 'react-contexify/dist/ReactContexify.css'
@@ -54,8 +60,87 @@ export const REMOVE_FROM_GROUP = 'REMOVE_FROM_GROUP'
 export const RESTORE = 'RESTORE'
 export const RESCHEDULE = 'RESCHEDULE'
 export const CREATE_DELIVERY = 'CREATE_DELIVERY'
+export const SEND_TO_WAREHOUSE = 'SEND_TO_WAREHOUSE'
 export const CREATE_TOUR = 'CREATE_TOUR'
 export const REPORT_INCIDENT = 'REPORT_INCIDENT'
+export const TAG_MULTI = 'TAG_MULTI'
+export const COMPLETE_TASKS_MULTI = 'COMPLETE_TASKS_MULTI'
+
+const BulkTagsEditor = ({ tags, selectedTasks }) => {
+
+  const dispatch = useDispatch()
+
+  const tasksByTag = useMemo(() => {
+    let result = selectedTasks.reduce((acc, task) => {
+      task.tags.forEach(t => {
+        acc = {
+          ...acc,
+          [t.slug]: (acc[t.slug] ?? []).concat([task['@id']])
+        }
+      })
+      return acc
+    }, {})
+
+    tags.forEach((t) => {
+      if (!result[t.slug]) {
+        result = {
+          ...result,
+          [t.slug]: [],
+        }
+      }
+    })
+
+    return result
+
+  }, [selectedTasks])
+
+  const [checkedList, setCheckedList] = useState(tasksByTag)
+  const checkedListDebounced = useDebounce(checkedList, 300);
+
+  useEffect(() => {
+    Object.keys(checkedListDebounced).map((tag) => {
+      const tasks = checkedListDebounced[tag];
+      // Skip "indeterminate" checkboxes
+      if (tasks.length === selectedTasks.length || tasks.length === 0) {
+        if (tasks.length === selectedTasks.length) {
+          dispatch(addTagToTasks(tag, selectedTasks));
+        } else {
+          dispatch(removeTagFromTasks(tag, selectedTasks));
+        }
+      }
+    })
+  }, [checkedListDebounced])
+
+  return (
+    <>
+      {tags.map((tag, index) => (
+      <Item closeOnClick={false} key={`tags-${index}`}>
+        <Checkbox
+          checked={checkedList[tag.slug].length > 0}
+          indeterminate={checkedList[tag.slug].length > 0 && checkedList[tag.slug].length < selectedTasks.length}
+          onChange={(e) => {
+            if (e.target.checked) {
+              setCheckedList({
+                ...checkedList,
+                [tag.slug]: selectedTasks.map((t) => t['@id']),
+              })
+            } else {
+              setCheckedList({
+                ...checkedList,
+                [tag.slug]: []
+              })
+            }
+          }}>
+            <span>
+            <i className="fa fa-circle mr-1" style={{ color: tag.color }}></i>
+            <span>{tag.name}</span>
+          </span>
+        </Checkbox>
+      </Item>
+      ))}
+    </>
+  )
+}
 
 const useAssignAction = function() {
   const dispatch = useDispatch()
@@ -92,6 +177,16 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
 
   const selectedTasksByType = _.countBy(selectedTasks, t => t.type)
   const containsOnePickupAndAtLeastOneDropoff = selectedTasksByType.PICKUP === 1 && selectedTasksByType.DROPOFF > 0
+  const containsExactlyOnePickupAndOneDropoff = selectedTasksByType.PICKUP === 1 && selectedTasksByType.DROPOFF === 1 && selectedTasks.length === 2
+
+  const selectedPickups = selectedTasks.filter(t => t.type === 'PICKUP')
+  const selectedDropoffs = selectedTasks.filter(t => t.type === 'DROPOFF')
+  const selectedPickupIds = new Set(selectedPickups.map(t => t['@id']))
+  const containsLinkedPickupDropoffPairs =
+    selectedPickups.length > 0 &&
+    selectedPickups.length === selectedDropoffs.length &&
+    selectedDropoffs.every(d => d.previous && selectedPickupIds.has(d.previous)) &&
+    new Set(selectedDropoffs.map(d => d.previous)).size === selectedPickups.length
 
   if (selectedTasksBelongsToTour) {
     return []
@@ -108,6 +203,7 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
     if (isMultiple) {
 
       actions.push(START_TASKS_MULTI)
+      actions.push(COMPLETE_TASKS_MULTI)
 
       if (tasksToUnassign.length > 0) {
         actions.push(UNASSIGN_MULTI)
@@ -119,6 +215,7 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
         actions.push(CANCEL_MULTI)
         actions.push(CREATE_GROUP)
         actions.push(CREATE_TOUR)
+        actions.push(TAG_MULTI)
       }
 
       if (containsOnlyGroupedTasks) {
@@ -129,6 +226,10 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
         if (!containsOnlyLinkedTasks) {
           actions.push(CREATE_DELIVERY)
         }
+      }
+
+      if (containsLinkedPickupDropoffPairs || containsExactlyOnePickupAndOneDropoff) {
+        actions.push(SEND_TO_WAREHOUSE)
       }
 
     } else {
@@ -156,6 +257,7 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
 
       actions.push(CANCEL_MULTI)
       actions.push(START_TASKS_MULTI)
+      actions.push(COMPLETE_TASKS_MULTI)
       actions.push(RESCHEDULE)
       actions.push(REPORT_INCIDENT)
 
@@ -180,6 +282,9 @@ export function getAvailableActionsForTasks(selectedTasks, unassignedTasks, link
 const DynamicMenu = () => {
 
   const { t } = useTranslation()
+
+
+  const allTags = useSelector(selectAllTags)
 
   const allTasks = useSelector(selectAllTasks)
   const selectedTasks = useSelector(selectSelectedTasks)
@@ -263,6 +368,7 @@ const DynamicMenu = () => {
 
   const selectedTask = selectedTasks.length > 0 ? selectedTasks[0] : undefined
   const noActionAvailable = selectedTasks.length > 0 && actions.length === 0
+  const allSelectedTasksDone = selectedTasks.length > 0 && selectedTasks.every(t => t.status === 'DONE')
 
   return (
     <Menu id="task-contextmenu">
@@ -321,6 +427,9 @@ const DynamicMenu = () => {
           </Item>
       )}
       </Submenu>
+      <Submenu label={t('ADMIN_DASHBOARD_TAG_TASKS', { count: selectedTasks.length })} hidden={ !actions.includes(TAG_MULTI)}>
+        <BulkTagsEditor tags={allTags} selectedTasks={selectedTasks} />
+      </Submenu>
       { !noActionAvailable && <Separator /> }
       <Item
         hidden={ !actions.includes(CANCEL_MULTI) }
@@ -333,6 +442,13 @@ const DynamicMenu = () => {
         onClick={() => dispatch(startTasks(selectedTasks))}
       >
         {t('ADMIN_DASHBOARD_START_TASKS_MULTI', {count: selectedTasks.length})}
+      </Item>
+      <Item
+        hidden={!actions.includes(COMPLETE_TASKS_MULTI)}
+        disabled={allSelectedTasksDone}
+        onClick={() => dispatch(completeTasks(selectedTasks))}
+      >
+        {t('ADMIN_DASHBOARD_COMPLETE_TASKS_MULTI', {count: selectedTasks.length})}
       </Item>
       { !noActionAvailable && <Separator /> }
       <Item
@@ -358,6 +474,12 @@ const DynamicMenu = () => {
         onClick={ () => dispatch(openCreateDeliveryModal()) }
       >
         { t('ADMIN_DASHBOARD_CREATE_DELIVERY') }
+      </Item>
+      <Item
+        hidden={ !actions.includes(SEND_TO_WAREHOUSE) }
+        onClick={ () => dispatch(openSendToWarehouseModal()) }
+      >
+        { t('ADMIN_DASHBOARD_SEND_TO_WAREHOUSE') }
       </Item>
       <Item
         hidden={ !actions.includes(CREATE_TOUR) }

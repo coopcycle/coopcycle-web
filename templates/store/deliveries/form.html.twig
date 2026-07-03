@@ -56,12 +56,6 @@
   {% endif %}
 {% endblock %}
 
-{% block subnav %}
-  {% if is_granted('ROLE_DISPATCHER') %}
-    {% include 'delivery/_partials/navbar.html.twig' %}
-  {% endif %}
-{% endblock %}
-
 {% block dashboard_subnav %}
   <div class="d-flex justify-content-between align-items-center">
     <a href="{{ path(routes.back) }}">
@@ -78,20 +72,14 @@
 
 {% block content %}
 
-  {% if is_granted('ROLE_DISPATCHER') %}
-    {% if is_new %}
-      <div class="alert alert-info">
-        To access the legacy version of the delivery form <a data-testid="go-to-legacy-form" class="text-decoration-underline" href="{{ path('admin_store_delivery_new_legacy', { id: store.id }) }}">click here</a>.
-      </div>
-    {% else %}
-      <div class="alert alert-info">
-        To access the legacy version of the delivery form <a data-testid="go-to-legacy-form" class="text-decoration-underline" href="{{ path('admin_delivery_legacy', { id: delivery.id }) }}">click here</a>.
-      </div>
-    {% endif %}
+  {% set has_from_order = from_order is defined and from_order is not empty %}
+  {% if errors is defined and errors is not empty %}
+    {% for error in errors %}
+      <div class="alert alert-danger">{{ error|trans }}</div>
+    {% endfor %}
+  {% elseif has_from_order %}
+    <div class="alert alert-info">{{ ('form.delivery.' ~ from_action ~ '_disclaimer')|trans({ '%number%': from_order.number }) }}</div>
   {% endif %}
-
-  {% block alerts %}
-  {% endblock %}
 
   <div
     id="delivery-form"
@@ -104,9 +92,12 @@
     data-is-dispatcher="{{ isDispatcher ? 'true' : 'false' }}"
     data-is-debug-pricing="{{ debug_pricing ? 'true' : 'false' }}"
     data-is-price-breakdown-enabled="{{ ui_package_delivery_price_breakdown_enabled ? 'true' : 'false' }}"
+    data-is-reverse-delivery-enabled={{ (not has_from_order)|json_encode|e('html_attr') }}
+    data-document-upload-endpoint="{{ oneup_uploader_endpoint('documents')|e('html_attr') }}"
   >
     {# Managed with React #}
   </div>
+
 {% endblock %}
 
 {% block styles %}

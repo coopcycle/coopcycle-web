@@ -52,12 +52,11 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
 
         $data = $this->normalizer->normalize($object, $format, $context);
 
-        $data['@type'] = $object->getType();
-
-        if (isset($data['closingRules'])) {
-            $data['specialOpeningHoursSpecification'] = $data['closingRules'];
-            unset($data['closingRules']);
+        if (is_string($data)) {
+            return $data;
         }
+
+        $data['@type'] = $object->getType();
 
         $imagePath = $this->uploaderHelper->asset($object, 'imageFile');
         if (empty($imagePath)) {
@@ -104,6 +103,7 @@ class RestaurantNormalizer implements NormalizerInterface, DenormalizerInterface
         if (isset($data['facets'])) {
             $cuisines =
                 array_map(fn ($c) => $this->translator->trans($c, [], 'cuisines'), $data['facets']['cuisine']);
+            sort($cuisines);
             $data['facets']['cuisine'] = $cuisines;
 
             $data['facets']['type'] =

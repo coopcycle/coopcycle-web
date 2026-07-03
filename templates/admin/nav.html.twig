@@ -43,14 +43,6 @@
             <span class="navbar-label">{% trans %}adminDashboard.deliveries.title{% endtrans %}</span>
           </a>
         </li>
-        {% if coopcycle_setting('b2b_enabled') %}
-        <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.organizations{% endtrans %}">
-          <a class="admin-navbar__link" href="{{ path('admin_organizations') }}">
-            <i class="fa fa-building-o"></i>
-            <span class="navbar-label">{% trans %}adminDashboard.organizations.title{% endtrans %}</span>
-          </a>
-        </li>
-        {% endif %}
         {% if is_granted('ROLE_ADMIN') %}
         <li data-toggle="tooltip" data-placement="bottom" title="{% trans %}adminDashboard.tooltip.restaurants{% endtrans %}">
           <a class="admin-navbar__link" href="{{ path('admin_restaurants') }}">
@@ -74,6 +66,7 @@
             <li><a href="{{ path('admin_activity') }}">{% trans %}adminDashboard.activity.title{% endtrans %}</a></li>
             {% if is_granted('ROLE_ADMIN') %}
             <li><a href="{{ path('admin_metrics') }}">{% trans %}adminDashboard.metrics.title{% endtrans %}</a></li>
+            {% if rfm_enabled %}<li><a href="{{ path('admin_customer_segmentation') }}">{% trans %}rfm.title{% endtrans %}</a></li>{% endif %}
             {% endif %}
             {% if odoo_url is not empty %}
             <li><a href="{{ odoo_url }}" target="_blank">Odoo</a></li>

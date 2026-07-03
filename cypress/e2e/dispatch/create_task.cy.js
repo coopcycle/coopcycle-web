@@ -33,7 +33,7 @@ context('Dispatch', () => {
     cy.get('.ReactModal__Content--task-form')
       .should('be.visible')
 
-    cy.get('.ReactModal__Content--task-form .address-autosuggest__container  input[type="search"]')
+    cy.get('.ReactModal__Content--task-form [role="combobox"] input[type="search"]')
       .should('have.value', '272, rue Saint Honoré 75001 Paris 1er')
 
     cy.get('.ReactModal__Content--task-form .modal-header .fa-times')
@@ -62,7 +62,7 @@ context('Dispatch', () => {
 
     cy.get('[data-testid="more-button"]').click();
     cy.contains('span.ant-dropdown-menu-title-content', 'Créer une tâche autonome (obsolète)').click();
-    
+
     cy.get('.ReactModal__Content--task-form input[type="search"]')
       .type('91 rue de rivoli paris', { timeout: 5000, delay: 30 })
 

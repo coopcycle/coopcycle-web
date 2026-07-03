@@ -28,10 +28,13 @@ class MyTaskMetadataDto
     public readonly ?int $order_total;
 
     #[Groups(["task"])]
-    public readonly ?bool $has_loopeat_returns;
+    public readonly bool $has_loopeat_returns;
 
     #[Groups(["task"])]
     public readonly ?bool $zero_waste;
+
+    #[Groups(["task"])]
+    public readonly ?array $documents;
 
     public function __construct(
         ?int $delivery_position,
@@ -40,8 +43,9 @@ class MyTaskMetadataDto
         ?string $order_number,
         ?string $payment_method,
         ?int $order_total,
-        ?bool $has_loopeat_returns,
-        ?bool $zero_waste
+        bool $has_loopeat_returns,
+        ?bool $zero_waste,
+        ?array $documents
     )
     {
         $this->delivery_position = $delivery_position;
@@ -52,5 +56,6 @@ class MyTaskMetadataDto
         $this->order_total = $order_total;
         $this->has_loopeat_returns = $has_loopeat_returns;
         $this->zero_waste = $zero_waste;
+        $this->documents = $documents;
     }
 }

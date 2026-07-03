@@ -259,12 +259,9 @@ class OrderRepository extends BaseOrderRepository
                 $qb->expr()->gt('SIMILARITY(o.number, :q)', 0),
                 $qb->expr()->gt('SIMILARITY(c.email, :q)', 0)
             ))
-            ->andWhere($qb->expr()->neq('o.state', ':state_cart'))
             ->addOrderBy('SIMILARITY(o.number, :q)', 'DESC')
             ->addOrderBy('SIMILARITY(c.email, :q)', 'DESC')
-            ->addOrderBy('o.createdAt', 'DESC')
-            ->setParameter('q', strtolower($q))
-            ->setParameter('state_cart', OrderInterface::STATE_CART);
+            ->setParameter('q', strtolower($q));
 
         return $qb;
     }
@@ -327,5 +324,57 @@ class OrderRepository extends BaseOrderRepository
             ->setParameter('subscription', $subscription)
             ->getQuery()
             ->getResult();
+    }
+
+    public function getCustomerInsights(CustomerInterface $customer): array
+    {
+        $qb = $this->createQueryBuilder('o')
+            ->andWhere('o.customer = :customer')
+            ->andWhere('o.state = :fulfilled')
+            ->andWhere(sprintf(
+                'EXISTS (SELECT 1 FROM %s ov WHERE ov.order = o)',
+                OrderVendor::class
+            ))
+            ->setParameter('customer', $customer)
+            ->setParameter('fulfilled', OrderInterface::STATE_FULFILLED);
+
+        $numberOfOrders = (clone $qb)
+            ->select('COUNT(o.id)')
+            ->getQuery()->getSingleScalarResult();
+
+        $averageOrderTotal = (clone $qb)
+            ->select('COALESCE(AVG(o.total), 0)')
+            ->getQuery()->getSingleScalarResult();
+
+        $firstOrderedAt = (clone $qb)
+            ->select('MIN(o.createdAt)')
+            ->getQuery()->getSingleScalarResult();
+
+        $lastOrderedAt = (clone $qb)
+            ->select('MAX(o.createdAt)')
+            ->getQuery()->getSingleScalarResult();
+
+        $favoriteRestaurant = null;
+        $favResult = (clone $qb)
+            ->select('r.id', 'r.name', 'COUNT(o.id) AS number_of_orders')
+            ->leftJoin(OrderVendor::class, 'v', Join::WITH, 'v.order = o.id')
+            ->leftJoin(LocalBusiness::class, 'r', Join::WITH, 'v.restaurant = r.id')
+            ->groupBy('r.id')
+            ->orderBy('number_of_orders', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()->getOneOrNullResult(\Doctrine\ORM\Query::HYDRATE_ARRAY);
+
+        if ($favResult && $favResult['id']) {
+            $favoriteRestaurant = $this->getEntityManager()
+                ->getRepository(LocalBusiness::class)->find($favResult['id']);
+        }
+
+        return [
+            'numberOfOrders'    => (int) $numberOfOrders,
+            'averageOrderTotal' => (int) $averageOrderTotal,
+            'firstOrderedAt'    => $firstOrderedAt ? new \DateTime($firstOrderedAt) : null,
+            'lastOrderedAt'     => $lastOrderedAt  ? new \DateTime($lastOrderedAt)  : null,
+            'favoriteRestaurant' => $favoriteRestaurant,
+        ];
     }
 }

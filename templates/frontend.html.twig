@@ -1,0 +1,67 @@
+{% extends "base.html.twig" %}
+
+{% block styles_common %}
+  {{ encore_entry_link_tags('frontend') }}
+  {% block styles %}{% endblock %}
+  {% set banner_background_url = coopcycle_banner_background_url() %}
+  {% if coopcycle_has_banner() or banner_background_url %}
+  <style>
+  .homepage-search, .restaurant-list-header {
+    background-image: url({% if banner_background_url %}'{{ banner_background_url }}'{% else %}{{ url('assets_banner_svg') }}{% endif %});
+    {% if banner_background_url %}
+    background-size: cover;
+    background-position: center;
+    {% endif %}
+  }
+  {% if banner_background_url %}
+  {% set banner_tone = coopcycle_banner_background_tone() %}
+  .homepage-search h1 {
+    color: {{ banner_tone == 'light' ? '#1a1a1a' : '#ffffff' }};
+  }
+  {% endif %}
+  </style>
+  {% endif %}
+  {% set theme = coopcycle_theme() %}
+  {% if theme|length > 0 %}
+    <style>
+      :root {
+      {% for theme_variable, theme_value in theme %}
+        --color-{{ theme_variable }}: {{ theme_value }};
+      {% endfor %}
+      }
+    </style>
+  {% endif %}
+{% endblock %}
+
+{% block menu %}
+  {% if not embed_context.enabled %}
+  {% include "menu.html.twig" %}
+  {% endif %}
+
+{% endblock %}
+
+{% block banner %}
+  {% if is_demo %}
+    <section class="alert alert-info alert-soft flex flex-col justify-center gap-1">
+      <h3 class="text-center">{{ 'demo.disclaimer'|trans|raw }}</h3>
+      <h4 class="text-center hidden sm:block">{{ 'demo.disclaimer.subtitle'|trans|raw }}</h4>
+    </section>
+  {% endif %}
+  {% if is_granted('ROLE_ADMIN') and coopcycle_maintenance() %}
+    <div role="alert" class="alert alert-error justify-center rounded-none">
+      {{ 'maintenance.disclaimer'|trans|raw }}
+    </div>
+  {% endif %}
+  {% include '_partials/banner.html.twig' %}
+{% endblock %}
+
+{% block footer %}
+  {% if not embed_context.enabled %}
+  {% include "footer.html.twig" %}
+  {% endif %}
+{% endblock %}
+
+{% block scripts_common %}
+  {{ encore_entry_script_tags('frontend') }}
+  {% block scripts %}{% endblock %}
+{% endblock %}

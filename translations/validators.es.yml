@@ -70,7 +70,6 @@ order.shippingTimeRange.notAvailable: No esta disponible en estos momentos
 pricing_rule.expression.syntax_error: Error de sintax en la expresión "%expression%"
 order.adjustments.unexpectedCount: Número inesperado de "%type%" ajustes
 siret.head_office: Debe facilitar un número SIRET de establecimiento, no de sede social.
-dabba.insufficient_wallet: Tu cartera Dabba ha desaparecido %amount%
 googlemaps.api_key.invalid: El Google Maps API Key no es válido. %error%
 loopeat.insufficient_stock: Cantidad insuficiente de envases reutilizables parar «
   %name% »

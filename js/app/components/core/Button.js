@@ -1,5 +1,5 @@
 import React from 'react'
-import classNames from 'classnames'
+import clsx from 'clsx'
 
 // Bootstrap-based button
 export default ({
@@ -18,7 +18,7 @@ export default ({
     <button
       data-testid={testID}
       onClick={onClick}
-      className={classNames({
+      className={clsx({
         btn: true,
         'btn-primary': primary,
         'btn-success': success,

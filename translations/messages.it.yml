@@ -128,7 +128,7 @@ localBusiness.form.orderingDelayMinutes.help: Usa questo campo per inserire del 
 localBusiness.form.orderingDelayHours: Ora(e)
 restaurant.contract.feeRate.help: Questa percentuale verrà trattenuta dalla piattaforma
   sul totale dei prodotti
-order_item.adjustment_type.reusable_packaging: '%quantity% × collo/i'
+order_item.adjustment_type.reusable_packaging: '%quantity% × « %name% » collo/i'
 localBusiness.form.orderingDelayDays: Giorno(i)
 localBusiness.form.name: Nome
 localBusiness.form.description: Descrizione
@@ -683,6 +683,7 @@ form.package.max_volume_units: Questo valore verrà utilizzato per calcolare i p
 form.package.average_weight.label: Peso medio (kg)
 form.package.max_weight.label: Peso massimo (kg)
 form.package.shortCode.label: Codice di 2 lettere
+form.package.shortCode.help: Limitato a 2 caratteri
 form.package.enter_details: Mostra/nascondi i dettagli
 form.reusable_packaging.name.label: Nome
 form.reusable_packaging.is_tracked.label: Abilità tracciamento
@@ -1028,8 +1029,6 @@ form:
       label: Persona di contatto per il ristorante
     name:
       label: Nome del ristorante
-order.reusable_packaging.pledge_return.disclaimer: Il cliente ha indicato che %count%
-  pacchetti saranno restituiti
 form.time_slot.same_day_cutoff.help: Per esempio, selezionando 11.00, opzioni del
   giorno stesso non verranno mostrate dopo le 11.00
 form.time_slot.same_day_cutoff.label: Soglia giornaliera
@@ -1323,12 +1322,6 @@ localBusiness.form.business_address.help: Questo indirizzo sarà usato per le ri
 form.local_business.mercadopago.connected: Connesso
 restaurant.form.section.en_boite_le_plat: En Boîte Le Plat
 order.cart.donation: Donazione
-order.export.heading.nonprofit: No profit
-adminDashboard.nonprofits.createNew: Aggiungere una nuova no profit
-adminDashboard.nonprofits.title: No profit
-adminDashboard.nonprofits.confirm_delete: Sei sicuro di voler eliminare questa no
-  profit?
 order.cart.donation.disclaimer: Ti proponiamo di donare %percentage% del ricavo del
   tuo ordine a una delle nostre associazioni partner. Non pagherai di più.
-form.checkout_address.nonprofit.placeholder: Scegli la tua no profit preferita
 form.delivery.arbitrary_price.label: Definisci il prezzo manualmente

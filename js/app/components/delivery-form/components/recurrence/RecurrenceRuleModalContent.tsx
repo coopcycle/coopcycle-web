@@ -7,7 +7,7 @@ import { Button, Checkbox, Collapse, Input } from 'antd';
 import moment from 'moment';
 import { Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import classNames from 'classnames';
+import clsx from 'clsx';
 
 import TimeRange from '../../../../utils/TimeRange';
 import RecurrenceRuleAsText from './RecurrenceRuleAsText';
@@ -48,6 +48,14 @@ const RecurrenceEditor = ({ recurrence, onChange }) => {
     option => option.value === ruleObj.options.freq,
   );
 
+  // Only use byweekday from the parsed rule when BYDAY is explicitly present in
+  // the string. Without BYDAY, rrule auto-fills today's weekday into options.byweekday,
+  // which would incorrectly pre-check today's day.
+  const hasByday = /BYDAY=/i.test(recurrence);
+  const byweekday: number[] = hasByday
+    ? (ruleObj.options.byweekday as number[]) ?? []
+    : [];
+
   return (
     <div>
       {/* It is not possible to change FREQ atm */}
@@ -63,7 +71,7 @@ const RecurrenceEditor = ({ recurrence, onChange }) => {
       <div className="mb-2">
         <Checkbox.Group
           options={byDayOptions}
-          defaultValue={ruleObj.options.byweekday}
+          value={byweekday}
           onChange={opts => onChange({ ...ruleObj.options, byweekday: opts })}
         />
       </div>
@@ -99,6 +107,16 @@ const validateForm = values => {
 
 const defaultRecurrenceRule =
   'FREQ=WEEKLY;BYDAY=' + moment().locale('en').format('dd').toUpperCase();
+
+// Returns the rule string to use as Formik's initial value:
+// - existing rule string → use as-is
+// - null (user explicitly cleared) → 'FREQ=WEEKLY' so Checkbox.Group mounts with no days checked
+// - undefined (never set) → default to today's weekday
+const getInitialRule = (recurrenceRule: string | null | undefined): string => {
+  if (recurrenceRule) return recurrenceRule;
+  if (recurrenceRule === null) return 'FREQ=WEEKLY';
+  return defaultRecurrenceRule;
+};
 
 const ModalContent = () => {
   const { rruleValue: recurrenceRule, setFieldValue: setSharedFieldValue } =
@@ -141,7 +159,7 @@ const ModalContent = () => {
         </h4>
       </div>
       <Formik
-        initialValues={{ rule: recurrenceRule ?? defaultRecurrenceRule }}
+        initialValues={{ rule: getInitialRule(recurrenceRule) }}
         validate={validateForm}
         onSubmit={values => {
           let rrule;
@@ -216,7 +234,7 @@ const ModalContent = () => {
               </Panel>
             </Collapse>
             <div
-              className={classNames({
+              className={clsx({
                 'd-flex': true,
                 'p-4': true,
                 'justify-content-end': true,

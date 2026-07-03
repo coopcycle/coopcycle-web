@@ -1,33 +1,4 @@
-{% extends "bootstrap_3_layout.html.twig" %}
-
-{% block choice_widget_expanded %}
-  {% if name == 'createDeliveryAddress' %}
-    <div class="form-group">
-      <div class="btn-group" data-toggle="buttons">
-      {% for child in form %}
-        {{ form_widget(child, { 'label_attr': {'class': 'btn btn-primary'} }) }}
-      {% endfor %}
-      </div>
-    </div>
-  {% else %}
-    {{ parent() }}
-  {% endif %}
-{% endblock choice_widget_expanded %}
-
-{% block radio_widget -%}
-  {% set parent_label_class = parent_label_class|default(label_attr.class|default('')) %}
-  {% if 'btn' in parent_label_class %}
-    {% if checked %}
-      {% set parent_label_class = parent_label_class ~ ' active' %}
-    {% endif %}
-    {{ form_label(form, null, {
-      widget: block('radio_widget', 'form_div_layout.html.twig'),
-      label_attr: {class: parent_label_class}
-    }) }}
-  {% else %}
-    {{ parent() }}
-  {%- endif %}
-{%- endblock radio_widget %}
+{% extends "@DaisyuiForm/form/daisyui_layout.html.twig" %}
 
 {% block _checkout_address_shippingAddress_streetAddress_row %}
   {% set address = form.parent.vars.value %}
@@ -44,7 +15,6 @@
   {% set isLoopeat = attr['data-loopeat'] is defined and attr['data-loopeat'] == 'true' %}
   {% set isVytal   = attr['data-vytal'] is defined and attr['data-vytal'] == 'true' %}
   {% set isEnBoiteLePlat = attr['data-en-boite-le-plat'] is defined and attr['data-en-boite-le-plat'] == 'true' %}
-  {% set isDabba = attr['data-dabba'] is defined and attr['data-dabba'] == 'true' %}
   {% set isChecked = form.vars.data %}
 
   {% if isLoopeat %}
@@ -60,15 +30,15 @@
 
     {{ form_widget(form) }}
 
-    <div class="d-flex flex-sm-row flex-column align-items-center justify-content-between mb-4">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between my-4">
       <div>
-        <img src="{{ loopeat_context.logoUrl }}" class="mb-4" height="96">
+        <img src="{{ loopeat_context.logoUrl }}" class="mb-4 w-24">
       </div>
-      <div class="w-75 mx-3 mb-4">
+      <div class="md: w-3/4 mx-3 mb-4">
         <div>
           {% if isChecked %}
           <div class="mb-3">
-            <ul class="list-unstyled">
+            <ul class="text-sm">
               <li>{{ (loopeat_trans_prefix ~ '.reusable_quantity.label')|trans({
                 '%count%': order.reusablePackagingQuantity,
                 '%amount%': loopeat_context.requiredAmount|price_format
@@ -118,8 +88,8 @@
             <div>{{ (loopeat_trans_prefix ~ '.enable_zero_waste')|trans }}</div>
           </div>
           {% endif %}
-          <div class="d-flex justify-content-between loopeat-links">
-            <a href="#" data-toggle="modal" data-target="#modal-loopeat-howitworks">{{ (loopeat_trans_prefix ~ '.how_it_works')|trans }} ›</a>
+          <div class="flex justify-between loopeat-links">
+            <a href="#" data-target="#modal-loopeat-howitworks">{{ (loopeat_trans_prefix ~ '.how_it_works')|trans }} ›</a>
             <a href="{{ loopeat_context.customerAppUrl }}" target="_blank">{{ (loopeat_trans_prefix ~ '.website')|trans({ '%name%': loopeat_context.name }) }} ›</a>
           </div>
         </div>
@@ -127,8 +97,9 @@
       <div>
       {% if isChecked %}
         {% if loopeat_context.hasCredentials %}
-          <a class="btn btn-md btn-default" href="#"
-            data-toggle="modal"
+          <button
+            type="button"
+            class="btn btn-md"
             data-target="#modal-loopeat"
             data-customer-containers="{{ loopeat_context.containers|json_encode|e('html_attr') }}"
             data-formats="{{ loopeat_context.formats|json_encode|e('html_attr') }}"
@@ -140,8 +111,8 @@
             data-oauth-url="{{ loopeat_authorization_url(order, loopeat_context.requiredAmount, true)|e('html_attr') }}"
           >
             <i class="fa fa-sliders mr-1"></i>
-            <span>{{ (loopeat_trans_prefix ~ '.manage_deposit')|trans }}</span>
-          </a>
+            <span class="whitespace-nowrap">{{ (loopeat_trans_prefix ~ '.manage_deposit')|trans }}</span>
+          </button>
         {% else %}
           <a class="btn btn-md btn-default" href="{{ loopeat_authorization_url(order, loopeat_context.requiredAmount) }}">{{ (loopeat_trans_prefix ~ '.connect_account')|trans({ '%name%': loopeat_context.name }) }}</a>
         {% endif %}
@@ -149,28 +120,26 @@
       </div>
     </div>
 
-    <div class="modal fade" id="modal-loopeat-howitworks" tabindex="-1" role="dialog" aria-hidden="true">
-      <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <span>{{ 'loopeat.how_it_works.title'|trans({ '%name%': loopeat_context.name }) }}</span>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <dialog id="modal-loopeat-howitworks">
+      <div class="modal-content">
+        <div class="modal-header d-flex">
+          <span>{{ 'loopeat.how_it_works.title'|trans({ '%name%': loopeat_context.name }) }}</span>
+          <button type="button" class="close" onclick="document.querySelector('#modal-loopeat-howitworks').close();"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body mb-0 p-4">
+          <div class="d-flex justify-content-between">
+            {% for loopeat_step in 1..4 %}
+              <div class="text-center w-25">
+                <span class="badge" style="background-color: #e17e3f;">{{ loopeat_step - 1 }}</span>
+                <h5 class="font-weight-bold mb-1" style="color: #e17e3f;">{{ ('loopeat.how_it_works.step_' ~ loopeat_step ~ '.title')|trans({ '%name%': loopeat_context.name }) }}</h5>
+                <p>{{ ('loopeat.how_it_works.step_' ~ loopeat_step ~ '.text')|trans({ '%name%': loopeat_context.name }) }}</p>
+              </div>
+            {% endfor %}
           </div>
-          <div class="modal-body mb-0 p-4">
-            <div class="d-flex justify-content-between">
-              {% for loopeat_step in 1..4 %}
-                <div class="text-center w-25">
-                  <span class="badge" style="background-color: #e17e3f;">{{ loopeat_step - 1 }}</span>
-                  <h5 class="font-weight-bold mb-1" style="color: #e17e3f;">{{ ('loopeat.how_it_works.step_' ~ loopeat_step ~ '.title')|trans({ '%name%': loopeat_context.name }) }}</h5>
-                  <p>{{ ('loopeat.how_it_works.step_' ~ loopeat_step ~ '.text')|trans({ '%name%': loopeat_context.name }) }}</p>
-                </div>
-              {% endfor %}
-            </div>
-            <img src="{{ asset('img/loopeat/how_it_works.svg') }}" class="w-100" />`
-          </div>
+          <img src="{{ asset('img/loopeat/how_it_works.svg') }}" class="w-100" />`
         </div>
       </div>
-    </div>
+    </dialog>
 
   {% elseif isVytal %}
     <div>
@@ -193,109 +162,12 @@
         <span class="en-boite-le-plat-logo-orange my-3"></span>
       </div>
     </div>
-  {% elseif isDabba %}
-
-    {% set order = form.parent.vars.data %}
-    {% set missing = dabba_context.getMissing(order) %}
-
-    <div id="dabba-block" class="p-3{{ isChecked ? " active": "" }}">
-      <div class="py-0 m-0">
-        {{ form_widget(form) }}
-      </div>
-      {% if isChecked %}
-        <div>
-          <ul class="list-unstyled loopeat-summary">
-            <li>
-              <span>
-                {{ 'form.checkout_address.reusable_packaging.loopeat.reusable_quantity.label'|trans({
-                  '%count%': order.reusablePackagingQuantity
-                })|raw }}
-              </span>
-            </li>
-            <li>
-              <span>
-                {{ 'form.checkout_address.reusable_packaging.dabba.wallet.label'|trans({
-                  '%amount%': (dabba_context.wallet * 100)|price_format
-                })|raw }}
-                <em>{{ 'form.checkout_address.reusable_packaging.dabba.wallet.help'|trans({
-                  '%price%': (dabba_context.unitPrice * 100)|price_format
-                }) }}</em>
-              </span>
-            </li>
-            {# {{ form_row(form.parent.reusablePackagingPledgeReturn) }} #}
-            <li>
-              {% if missing > 0 %}
-                <strong>{{ 'dabba.insufficient_wallet'|trans({ '%amount%': (missing * 100)|price_format }, 'validators') }}</strong>
-              {% else %}
-                <strong>{{ 'form.checkout_address.reusable_packaging.loopeat.enough_credits'|trans }}</strong>
-              {% endif %}
-            </li>
-          </ul>
-          <div id="dabba-buttons" class="{% if missing == 0 %}d-none{% endif %}">
-            <div class="d-flex flex-row justify-content-between ">
-              <button type="button" id="checkout_address_cancelReusablePackaging" class="btn btn-link btn">
-                {{ 'basics.cancel'|trans }}
-              </button>
-              {% if missing > 0 %}
-              <a id="dabba-add-credit" href="" class="btn btn-default">
-                {{ 'form.checkout_address.reusable_packaging.dabba.add'|trans({ '%missing%': (missing * 100)|price_format }) }}
-              </a>
-              {% endif %}
-            </div>
-          </div>
-        </div>
-      {% else %}
-        {# <div class="d-none">
-          {{ form_widget(form.parent.reusablePackagingPledgeReturn) }}
-        </div> #}
-        <div class="my-2">
-          <a href="https://www.dabba-consigne.fr/" target="_blank">
-            <span class="mr-2">{{ 'form.checkout_address.reusable_packaging.dabba.learn_more'|trans }}</span>
-            <i class="fa fa-external-link"></i>
-          </a>
-        </div>
-        <img class="dabba-logo" src="{{ asset('img/dabba/dabba-logo.png') }}" alt="Dabba" />
-      {% endif %}
-    </div>
   {% else %}
     <div>
       <div class="alert alert-info py-0 m-0">
         {{ form_widget(form) }}
       </div>
     </div>
-  {% endif %}
-{% endblock %}
-
-{% block _checkout_address_reusablePackagingPledgeReturn_row %}
-
-  {% set is_dabba = form.parent.reusablePackagingEnabled.vars.attr['data-dabba'] is defined and form.parent.reusablePackagingEnabled.vars.attr['data-dabba'] == 'true' %}
-
-  {% if is_dabba %}
-    {% set max = dabba_context.containers %}
-    <li>
-      <span>
-        {% if max > 0 %}
-          {{ form_widget(form) }}
-        {% else %}
-          {{ 'form.checkout_address.reusable_packaging.loopeat.no_pledge_label'|trans }}
-        {% endif %}
-      </span>
-    </li>
-  {% endif %}
-{% endblock %}
-
-{% block _checkout_address_reusablePackagingPledgeReturn_widget %}
-
-  {% set is_dabba = form.parent.reusablePackagingEnabled.vars.attr['data-dabba'] is defined and form.parent.reusablePackagingEnabled.vars.attr['data-dabba'] == 'true' %}
-
-  {% if is_dabba %}
-    {% set max = dabba_context.containers %}
-    {% set attr = attr|merge({ 'min': 0, 'max': max }) %}
-    <label for="{{ form.parent.reusablePackagingPledgeReturn.vars.id }}">
-      {{ 'form.checkout_address.reusable_packaging.dabba.return_pledge_label'|trans({
-        '%field%': form_widget(form, { attr: attr, label_attr: { class: 'm-0' } })
-      })|raw }}
-    </label>
   {% endif %}
 {% endblock %}
 
@@ -336,25 +208,3 @@
   </div>
 {% endif %}
 {% endblock %}
-
-{#
-{% block _checkout_address_nonprofit_row %}
-  <input name="{{ form.vars.full_name }}" type="number" hidden="hidden" id="nonprofit_input" value="{{ form.vars.value }}">
-  {% for row in form.vars.choices|batch(3) %}
-   <div class="row">
-     {% for nonprofit in row %}
-       <div class="col-sm-6 col-md-4 nonprofit-card {% if form.vars.value == nonprofit.data.id %} active {% endif %}"
-            data-value="{{ nonprofit.data.id }}" onclick="setNonprofit(this)">
-         <div class="thumbnail">
-           <!--<img src="#" alt="...">-->
-           <div class="caption">
-             <h3>{{ nonprofit.data.name }}</h3>
-             <p>{{ nonprofit.data.description }}</p>
-           </div>
-         </div>
-       </div>
-     {% endfor %}
-   </div>
-  {% endfor %}
-{% endblock %}
-#}

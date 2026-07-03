@@ -5,9 +5,10 @@ namespace AppBundle\Domain\Order\Event;
 use AppBundle\Domain\DomainEvent;
 use AppBundle\Domain\HasIconInterface;
 use AppBundle\Domain\Order\Event;
+use AppBundle\Domain\Order\FrontendEvent;
 use AppBundle\Sylius\Order\OrderInterface;
 
-class OrderFulfilled extends Event implements DomainEvent, HasIconInterface
+class OrderFulfilled extends Event implements DomainEvent, HasIconInterface, FrontendEvent
 {
     private $shouldCompletePayment = true;
 
@@ -33,4 +34,3 @@ class OrderFulfilled extends Event implements DomainEvent, HasIconInterface
         return $this->shouldCompletePayment;
     }
 }
-

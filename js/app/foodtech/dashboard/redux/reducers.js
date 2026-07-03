@@ -59,7 +59,6 @@ export const initialState = {
   activeTab: 'new',
   httpClient: null,
   initialOrder: null,
-  adhocOrderEnabled: false,
   reusablePackagings: {},
   isLoopeatSectionOpen: false,
   loopeatFormats: [],

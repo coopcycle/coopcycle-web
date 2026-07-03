@@ -1,7 +1,9 @@
 import React from 'react';
-import { QueryRenderer } from '@cubejs-client/react';
+import { useCubeQuery } from '@cubejs-client/react';
 import { Spin } from 'antd';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from 'chart.js'
 import { Bar } from 'react-chartjs-2';
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend)
 import dayjs from 'dayjs'
 import localeData from 'dayjs/plugin/localeData'
 
@@ -84,12 +86,36 @@ const BarChartRenderer = ({ resultSet, pivotConfig, fixedCosts }) => {
   );
 };
 
-const renderChart = ({ resultSet, error, pivotConfig, fixedCosts }) => {
+const pivotConfig = {
+  "x": [
+    "OrderExport.completed_at.week"
+  ],
+  "y": [
+    "measures"
+  ],
+  "fillMissingDates": true,
+  "joinDateRange": false
+};
+
+const ChartRenderer = ({ dateRange, fixedCosts = 0 }) => {
+  const { resultSet, isLoading, error } = useCubeQuery({
+    "measures": [
+      "OrderExport.income"
+    ],
+    "timeDimensions": [
+      {
+        "dimension": "OrderExport.completed_at",
+        "granularity": "week",
+        "dateRange": getCubeDateRange(dateRange)
+      }
+    ]
+  });
+
   if (error) {
     return <div>{error.toString()}</div>;
   }
 
-  if (!resultSet) {
+  if (isLoading || !resultSet) {
     return <Spin />;
   }
 
@@ -98,44 +124,6 @@ const renderChart = ({ resultSet, error, pivotConfig, fixedCosts }) => {
       resultSet={resultSet}
       pivotConfig={pivotConfig}
       fixedCosts={fixedCosts}
-    />
-);
-
-};
-
-const ChartRenderer = ({ cubejsApi, dateRange, fixedCosts = 0 }) => {
-
-  return (
-    <QueryRenderer
-      query={{
-        "measures": [
-          "OrderExport.income"
-        ],
-        "timeDimensions": [
-          {
-            "dimension": "OrderExport.completed_at",
-            "granularity": "week",
-            "dateRange": getCubeDateRange(dateRange)
-          }
-        ]
-      }}
-      cubejsApi={cubejsApi}
-      resetResultSetOnChange={false}
-      render={(props) => renderChart({
-        ...props,
-        chartType: 'bar',
-        pivotConfig: {
-          "x": [
-            "OrderExport.completed_at.week"
-          ],
-          "y": [
-            "measures"
-          ],
-          "fillMissingDates": true,
-          "joinDateRange": false
-        },
-        fixedCosts
-      })}
     />
   );
 };

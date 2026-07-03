@@ -11,6 +11,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use AppBundle\Api\State\StoreAddressProcessor;
 use AppBundle\Action\MyStores;
+use AppBundle\Action\Delivery\PODExport as PODExportDelivery;
 use AppBundle\Action\Store\AddAddress;
 use AppBundle\Action\Store\PaymentMethods as StorePaymentMethods;
 use AppBundle\Entity\Base\LocalBusiness;
@@ -33,12 +34,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use AppBundle\Action\TimeSlot\StoreTimeSlots;
 use AppBundle\Action\Store\Packages;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * A retail good store.
  *
  * @see http://schema.org/Store Documentation on Schema.org
  */
+#[ORM\Entity(repositoryClass: StoreRepository::class)]
 #[Vich\Uploadable]
 #[ApiResource(
     types: ['http://schema.org/Store'],
@@ -75,7 +78,15 @@ use AppBundle\Action\Store\Packages;
         new GetCollection(
             security: "is_granted('ROLE_DISPATCHER')"
         ),
-        new GetCollection(uriTemplate: '/me/stores', controller: MyStores::class)
+        new GetCollection(uriTemplate: '/me/stores', controller: MyStores::class),
+        new Post(
+            uriTemplate: '/stores/{id}/pod_export',
+            controller: PODExportDelivery::class,
+            /* input: DeliveryPODExportInput::class, */
+            write: false,
+            deserialize: false,
+            security: "is_granted('edit', object)",
+        ),
     ],
     normalizationContext: ['groups' => ['store', 'address']]
 )]
@@ -160,6 +171,7 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     #[Groups(['store'])]
     private $weightRequired = false;
 
+    #[Assert\Expression('!value or this.getPackageSet() != null', message: 'store.packages_required.package_set_required')]
     #[Groups(['store'])]
     private $packagesRequired = false;
 
@@ -177,6 +189,8 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private ?string $transporter = null;
 
+    private ?string $rdcConnectionId = null;
+
     /**
      * The deliveries of this store will be linked by default to this rider
      * @var User
@@ -192,6 +206,8 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     #[Groups(['store'])]
     protected $cashOnDeliveryEnabled = false;
+
+    private ?string $document;
 
     public function __construct()
     {
@@ -608,6 +624,17 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         return $this;
     }
 
+    public function getRdcConnectionId(): ?string
+    {
+        return $this->rdcConnectionId;
+    }
+
+    public function setRdcConnectionId(?string $rdcConnectionId): Store
+    {
+        $this->rdcConnectionId = $rdcConnectionId;
+        return $this;
+    }
+
     public function getDefaultCourier(): ?User
     {
         return $this->defaultCourier;
@@ -676,5 +703,20 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
         $this->cashOnDeliveryEnabled = $enabled;
 
         return $this;
+    }
+
+    public function setDocument(?string $document = null)
+    {
+        $this->document = $document;
+    }
+
+    public function getDocument(): string
+    {
+        return $this->document;
+    }
+
+    public function hasDocument(): bool
+    {
+        return !empty($this->document);
     }
 }

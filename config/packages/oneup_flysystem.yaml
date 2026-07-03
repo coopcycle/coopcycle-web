@@ -2,7 +2,7 @@ oneup_flysystem:
     adapters:
         assets:
             awss3v3:
-                client: s3_client
+                client: s3_client_assets
                 bucket: '%env(S3_BUCKET)%'
                 prefix: assets
         product_images:
@@ -45,11 +45,6 @@ oneup_flysystem:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: delivery_imports
-        nonprofits_images:
-            awss3v3:
-                client: s3_client
-                bucket: '%env(S3_BUCKET)%'
-                prefix: nonprofits
         edi_messages:
             awss3v3:
                 client: s3_client
@@ -60,7 +55,21 @@ oneup_flysystem:
                 client: s3_client
                 bucket: '%env(S3_BUCKET)%'
                 prefix: incidents
-
+        homepage_slider_images:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: assets/slides
+        documents:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: documents
+        email_templates:
+            awss3v3:
+                client: s3_client
+                bucket: '%env(S3_BUCKET)%'
+                prefix: email_templates
     filesystems:
         assets:
             adapter: assets
@@ -98,10 +107,6 @@ oneup_flysystem:
             adapter: delivery_imports
             alias: delivery_imports_filesystem
             mount: delivery_imports
-        nonprofits_images:
-            adapter: nonprofits_images
-            alias: nonprofits_images_filesystem
-            mount: nonprofits_images
         edi_messages:
             adapter: edi_messages
             alias: edi_messages_filesystem
@@ -110,3 +115,15 @@ oneup_flysystem:
             adapter: incident_images
             alias: incident_images_filesystem
             mount: incident_images
+        homepage_slider_images:
+            adapter: homepage_slider_images
+            alias: homepage_slider_images_filesystem
+            mount: homepage_slider_images
+        documents:
+            adapter: documents
+            alias: documents_filesystem
+            mount: documents
+        email_templates:
+            adapter: email_templates
+            alias: email_templates_filesystem
+            mount: email_templates

@@ -3,22 +3,12 @@
 namespace AppBundle\Doctrine\EventSubscriber;
 
 use Carbon\Carbon;
-use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
 use Gedmo\Timestampable\Traits\Timestampable;
 
-class MockDateSubscriber implements EventSubscriber
+class MockDateSubscriber
 {
-
-    public function getSubscribedEvents()
-    {
-        return [
-            Events::prePersist,
-            Events::preUpdate,
-        ];
-    }
-
     public function prePersist(LifecycleEventArgs $args)
     {
         $entity = $args->getObject();

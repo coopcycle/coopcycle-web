@@ -12,14 +12,14 @@ use AppBundle\Service\LoggingUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Security\Authenticator\Token\JWTPostAuthenticationToken;
 use Psr\Log\LoggerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class CartSessionProcessor implements ProcessorInterface
 {
     public function __construct(
         private readonly OrderFactory $orderFactory,
-        private readonly TokenStorageInterface $tokenStorage,
+        private readonly Security $security,
         private readonly OrderAccessTokenManager $orderAccessTokenManager,
         private readonly EntityManagerInterface $entityManager,
         private readonly LoggerInterface $checkoutLogger,
@@ -30,7 +30,7 @@ class CartSessionProcessor implements ProcessorInterface
 
     private function getCartFromSession()
     {
-        if (null !== $token = $this->tokenStorage->getToken()) {
+        if (null !== $token = $this->security->getToken()) {
             if ($token instanceof JWTPostAuthenticationToken && $token->hasAttribute('cart')) {
                 return $token->getAttribute('cart');
             }
@@ -39,7 +39,7 @@ class CartSessionProcessor implements ProcessorInterface
 
     private function getUserFromToken()
     {
-        if (null !== $token = $this->tokenStorage->getToken()) {
+        if (null !== $token = $this->security->getToken()) {
             if ($token instanceof JWTPostAuthenticationToken && is_object($token->getUser())) {
                 return $token->getUser();
             }

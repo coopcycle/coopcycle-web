@@ -11,8 +11,7 @@
         <option name="default">0</option>
       </options>
     </field>
-    <field name="defaultNonprofit" type="integer" nullable="true"/>
-    <field name="salt" column="salt" type="string" nullable="true"/>
+<field name="salt" column="salt" type="string" nullable="true"/>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>
@@ -83,6 +82,7 @@
       </join-table>
     </many-to-many>
     <field name="stripeCustomerId" type="string" column="stripe_customer_id" nullable="true"/>
+    <field name="emailAuthCode" type="string" column="email_auth_code" nullable="true"/>
     <many-to-one field="businessAccount" target-entity="AppBundle\Entity\BusinessAccount" inversed-by="employees">
       <cascade>
         <cascade-persist/>

@@ -67,8 +67,6 @@ pricing_rule.expression.syntax_error: Syntax error in expression "%expression%"
 
 order.adjustments.unexpectedCount: Unexpected number of "%type%" adjustments
 
-dabba.insufficient_wallet: Your Dabba wallet is missing %amount%
-
 googlemaps.api_key.invalid: The Google Maps API Key is not valid. %error%
 
 spreadsheet.missing_column: You must provide a « %column% » column
@@ -85,3 +83,5 @@ restaurant.paygreenShopId.notSet: Configure the Paygreen Shop ID
 delivery.price.error.noPricingRuleSet: No pricing configured
 
 incident.metadata.suggestion.invalid: The suggestion field in metadata is not valid
+
+store.packages_required.package_set_required: A package set must be selected when packages are required

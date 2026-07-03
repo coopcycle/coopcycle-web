@@ -1,6 +1,6 @@
 import React from 'react';
 import moment from 'moment';
-import classNames from 'classnames';
+import clsx from 'clsx';
 import { money } from '../../utils';
 
 import { TFunction, useTranslation } from 'react-i18next';
@@ -169,7 +169,7 @@ function Avatar({ event }: { event: IncidentEvent }) {
 export function IncidentEventView({ event }: Props) {
   const eventType = event.type !== 'commented';
   return (
-    <div className={classNames('media', { event: eventType })}>
+    <div className={clsx('media', { event: eventType })}>
       <div className="media-left media-top">
         <Avatar event={event} />
       </div>

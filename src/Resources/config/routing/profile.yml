@@ -67,7 +67,6 @@ dashboard_restaurant_dashboard:
             order_delay: dashboard_order_delay
             order_fulfill: dashboard_order_fulfill
             user_details: user
-            restaurant_new_adhoc_order: dashboard_restaurant_new_adhoc_order
     methods: [ GET ]
 
 dashboard_restaurant_preparation_time:
@@ -108,18 +107,6 @@ dashboard_restaurant_deposit_refund:
             restaurants: dashboard_restaurants
             restaurant: dashboard_restaurant
     methods: [ GET, POST ]
-
-dashboard_restaurant_new_adhoc_order:
-    path: /dashboard/restaurants/{restaurantId}/orders/adhoc/new
-    defaults:
-        _controller: AppBundle\Controller\DashboardController::restaurantNewAdhocOrderAction
-        layout: 'dashboard.html.twig'
-        template: 'restaurant/new_adhoc_order.html.twig'
-        routes:
-            restaurants: dashboard_restaurants
-            restaurant: dashboard_restaurant
-            dashboard: dashboard_restaurant_dashboard
-    methods: [ GET ]
 
 dashboard_order_accept:
     path: /dashboard/orders/{id}/accept
@@ -189,15 +176,6 @@ dashboard_restaurant_menu_taxon_activate:
             menu_taxons: dashboard_restaurant_menu_taxons
     methods: [ POST ]
 
-dashboard_delete_restaurant_menu_taxon_child:
-    path: /dashboard/restaurants/{restaurantId}/menus/{menuId}/sections/{sectionId}/delete
-    defaults:
-        _controller: AppBundle\Controller\DashboardController::deleteRestaurantMenuTaxonChildAction
-        layout: 'dashboard.html.twig'
-        routes:
-            menu_taxon: dashboard_restaurant_menu_taxon
-    methods: [ POST ]
-
 dashboard_restaurant_products:
     path: /dashboard/restaurants/{id}/products
     defaults:
@@ -238,6 +216,7 @@ dashboard_restaurant_product:
             restaurants: dashboard_restaurants
             restaurant: dashboard_restaurant
             products: dashboard_restaurant_products
+            product_options: dashboard_restaurant_product_options
 
 dashboard_restaurant_planning:
     path: /dashboard/restaurants/{id}/planning
@@ -273,6 +252,7 @@ dashboard_restaurant_product_option_new:
         routes:
             restaurants: dashboard_restaurants
             restaurant: dashboard_restaurant
+            products: dashboard_restaurant_products
             product_options: dashboard_restaurant_product_options
     methods: [ GET, POST ]
 
@@ -353,15 +333,6 @@ dashboard_restaurant_promotion:
     path: /dashboard/restaurants/{restaurantId}/promotions/{promotionId}
     defaults:
         _controller: AppBundle\Controller\DashboardController::restaurantPromotionAction
-        layout: 'dashboard.html.twig'
-        routes:
-            restaurant_promotions: dashboard_restaurant_promotions
-    methods: [ GET, POST ]
-
-dashboard_restaurant_promotion_coupon:
-    path: /dashboard/restaurants/{restaurantId}/promotions/{promotionId}/coupons/{couponId}
-    defaults:
-        _controller: AppBundle\Controller\AdminController::restaurantPromotionCouponAction
         layout: 'dashboard.html.twig'
         routes:
             restaurant_promotions: dashboard_restaurant_promotions
@@ -476,10 +447,10 @@ profile_redirect_to_dashboard:
         _controller: AppBundle\Controller\ProfileController::redirectToDashboardAction
     methods:  [ GET ]
 
-dashboard_restaurant_image_from_url:
+dashboard_restaurant_image_from_pixabay:
     path: /dashboard/restaurants/{id}/image-from-url
     defaults:
-        _controller: AppBundle\Controller\DashboardController::restaurantImageFromUrlAction
+        _controller: AppBundle\Controller\DashboardController::restaurantImageFromPixabayAction
         layout: 'dashboard.html.twig'
         routes:
             restaurants: dashboard_restaurants

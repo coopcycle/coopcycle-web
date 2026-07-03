@@ -816,6 +816,7 @@ form.package.max_volume_units: Este valor se utilizará para calcular los precio
 form.package.average_weight.label: Peso promedio (kg)
 form.package.max_weight.label: Peso máximo (kg)
 form.package.shortCode.label: Código de 2 letras
+form.package.shortCode.help: Limitado a 2 caracteres
 form.package.volume_units.label: Unidades de volumen
 basics.date_range: Desde %start% hasta %end%
 basics.total_including_tax: Total incluyendo todos los impuestos
@@ -836,7 +837,7 @@ form.delivery.view_order: Ver pedido
 form.delivery.time_slot.label: Intervalo de tiempo
 form.delivery.has_order.info: Esta entrega esta vinculada a una orden
 form.delivery.to_be_confirmed.warning: Usted debe confirmar la orden
-order_item.adjustment_type.reusable_packaging: '%quantity% × paquete(s)'
+order_item.adjustment_type.reusable_packaging: '%quantity% × « %name% » paquete(s)'
 order.adjustment_type.reusable_packaging: Embalaje
 order.reusable_packaging.alert: Este pedido debe estar en un paquete reutilizable
 form.user.quotes_allowed.label: Permitir a este cliente solicitar un presupuesto
@@ -887,6 +888,7 @@ form.price_with_tax.tax_incl.label: Precio (IVA incl.)
 deliveries.filter.clear: Mostrar todo
 restaurant.form.loopeat_enabled.label: Habilite el sistema de depósito y reembolso
   de LoopEat
+restaurant.form.loopeat_mandatory.label: Hacer %name% obligatorio para todos los pedidos
 food_establishment.BAKERY: Panadería
 restaurant.contract.variableDeliveryPrice.placeholder: Por favor seleccione un conjunto
   de reglas de precios
@@ -949,8 +951,7 @@ store.SPORTING_GOODS_STORE: Tienda de deporte
 form.local_business_type.help: Los tipos están usando el<a href="https://schema.org/">schema.org</a>
   vocabulario para <a href="https://schema.org/FoodEstablishment">establecimientos
   de comida</a> y <a href="https://schema.org/Store">tiendas</a>
-restaurant_promotion.offer_delivery.help: Esto le permite ofrecer los gastos de envío
-  <strong>con tu propio dinero</strong>. Su margen se verá disminuido por el monto
+restaurant_promotion.disclaimer: Su margen se verá disminuido por el monto
   de los gastos de envío. Esto<strong>no disminuirá</strong> las tarifas percibidas
   por la plataforma.
 form.offer_delivery.coupon_code.help: Es su responsabilidad comunicar este código
@@ -1082,7 +1083,6 @@ store.PHARMACY: Farmacia
 form.local_business_type.food_establishment: Establecimiento de comida
 form.local_business_type.store: Tienda
 form.local_business_type.label: Tipo de negocio
-restaurant_promotion.offer_delivery: Ofrecer tarifas de entrega
 form.offer_delivery.coupon_code.error.exists: Este código ya existe
 users.store_owners: Dueños de tiendas
 users.administrators: Administradores
@@ -1166,8 +1166,6 @@ form:
       label: Persona de contacto para el restaurante
     name:
       label: Nombre del restaurante
-order.reusable_packaging.pledge_return.disclaimer: El cilente a indicado que %count%
-  envases serán devueltos
 form.time_slot.same_day_cutoff.help: Por ejemplo, si selecionas 11.00, opciones del
   mismo día no se mostrarán después de las 11.00
 form.time_slot.same_day_cutoff.label: Hora de límite diario
@@ -1193,8 +1191,7 @@ delivery.table.heading.owner: Dueño
 authentication.choose_password: Elije una contraseña
 basics.configure: Configurar
 basics.description: Descripción
-form.customize.custom_banner.help: Asegurate que la bannar es un patrón repetetivo
-  de SVG
+form.customize.custom_banner.help: "Formatos aceptados: SVG (patrón repetible), JPG o PNG (imagen de fondo completa)"
 form.customize.custom_banner.label: Bannar personalizada
 form.customize.custom_privacy.label: Contenido de la página de política de privacidad
 form.customize.custom_privacy_enabled.label: Habilitar política de privacidad personalizado
@@ -1327,7 +1324,6 @@ form.fulfillment_method.options.range_duration.label: Margen de tolerancia
 form.fulfillment_method.pre_ordering_allowed.label: Permitir pedidos anticipados
 profile.dashboard_suggest: ¿Necesita administrar sus pedidos y entregas? <a href="%link%">Descubra
   el nuevo panel de administración</a> ✨
-restaurant_promotion.items_total: Basado en el total de productos
 order.export.heading.refund_total: Reembolsos
 order.adjustment_type.reusable_packaging.loopeat: Cuota por servicio sin residuos
 form.items_total_promotion.items_total.label: Por encima del total de productos
@@ -1354,9 +1350,6 @@ restaurants.meal_vouchers_transactions.disclaimer: Esta página muestra todos lo
   recolectado por el comercio. Por lo tanto, debe mandar una factura a cada comercio
   para reclamar las comisiones pendientes de pago.
 adminDashboard.metrics.title: Estadísticas
-restaurant_promotion.items_total.help: Esto le permite aplicar un descuento sobre
-  una cierta cantidad. Su ganancia va a disminuir por el descuento. Esto <strong>no
-  disminuirá</strong> la tarifa percibida por la plataforma.
 form.items_total_promotion.fixed_discount_amount.label: Aplicar un descuento de
 order.preparation_expected_for: Preparación esperada a las %date%
 homepage.featured: Destacados
@@ -1597,13 +1590,9 @@ store.form.cash_on_delivery_enabled.help: Esto permitirá clientes pagar en efec
 roles.ROLE_DISPATCHER.help: "Dispatcher: Acceso total a las tareas\n"
 activity.order.restored: 'El pedido #order/%aggregate_id% ha sido restablecido'
 order.cart.donation: Donación
-form.checkout_address.nonprofit.placeholder: Elige tu organización sin ánimo de lucro
-  favorita
 users.disabled: Desactivado
 vehicles.breadcrumb.help: Definir flota de vehículos
 vehicles.breadcrumb: Vehículos
-restaurant.form.section.dabba: Dabba
-form.checkout_address.reusable_packaging_dabba_enabled.label: Quiero usar tupers Dabba
 form.task_export.colisactiv.label: Exportar con el formato ColivActiv
 adminDashboard.incidents.createNew: Crear una nueva incidencia
 order.export.heading.billing_method: Modo de facturación
@@ -1632,8 +1621,6 @@ roles.ROLE_DISPATCHER: Dispatcher
 basics.send_invitation.invitated_user_after_password_confirmation: Su cuenta ha sido
   creada, por favor compruebe su <a target="_blank" href="%restaurantEditUrl%"> información
   personal </a>
-dabba.oauth_redirect.warning: Se le redirigirá al sitio web de Dabba para que inicie
-  sesión o cree su cuenta.
 loopeat.how_it_works.title: "Su restaurante forma parte del « %name% » red: disfrute\
   \ de la comida para llevar o entregar en cajas reutilizables. Puede desactivar esta\
   \ opción en cualquier momento en su cesta de pedido.\n"
@@ -1642,13 +1629,9 @@ loopeat.manage_modal.text: Puede liquidar el depósito con un importe a cargo de
 form.business_account.hub.label: Hub
 form.api_app.type.label: Mecanismo de autenticación de la API
 form.api_app.type.api_key.label: API Key - para Urbantz
-adminDashboard.nonprofits.confirm_delete: ¿Estás seguro de que quieres eliminar esta
-  organización sin ánimo de lucro?
 order.cart.donation.disclaimer: Le proponemos donar %percentage% de los ingresos de
   tu pedido a una de nuestras asociaciones colaboradoras. No pagarás más.
 form.task_export.dv4cul.label: Exportar en formato DV4CUL
-restaurant.form.dabba_enabled.label: Activar el sistema de depósito y devolución Dabba
-profile.dabba.disconnect: Desconectar Dabba
 activity.task.rescheduled: "@%owner% ha reprogramado la tarea #task/%aggregate_id%\n"
 form.store_type.failure_reason_set.help: Seleccione una lista de<a href="%failure_reason_set%">
   incidencias </a> para ser usado en %entity%
@@ -1703,13 +1686,6 @@ form.checkout_address.reusable_packaging.loopeat.add_credits: Añadir créditos 
 form.checkout_address.reusable_packaging.loopeat.manage_deposit: Gestionar mi fianza
 form.checkout_address.reusable_packaging.loopeat.suggest_returns.label: Te sugerimos
   que devuelva sus tapers en el momento de la entrega
-form.checkout_address.reusable_packaging.dabba.learn_more: Saber mas sobre Dabba
-form.checkout_address.reusable_packaging.dabba.wallet.label: Tienes <strong>%amount%</strong>
-  en su cartera Dabba
-form.checkout_address.reusable_packaging.dabba.wallet.help: (%price% por tupper)
-form.checkout_address.reusable_packaging.dabba.return_pledge_label: Vas a devolver
-  %field% Dabba fianzas al repartidor
-form.checkout_address.reusable_packaging.dabba.add: Añadir %missing% a su cartera
 form.package.color.label: Color (haga clic para seleccionar)
 form.package.maxWeight.help: (Todavía no se utiliza en ninguna otra parte de la plataforma)
 activity.order.cancelled: "El pedido #order/#%aggregate_id% está cancelado\n"
@@ -1717,7 +1693,6 @@ authentication.unsubscribe: Puede darse de baja fácilmente en cualquier momento
   través de los enlaces para darse de baja que encontrará en cada uno de nuestros
   correos electrónicos
 users.dispatchers: Dispatchers
-dabba.oauth_connect.success: ¡Cuenta Dabba conectada con éxito!
 loopeat.how_it_works.step_1.title: Me apunto
 loopeat.how_it_works.step_1.text: Inscríbete en %name% al finalizar su pedido.
 loopeat.how_it_works.step_2.title: Pago mi primer depósito
@@ -1734,9 +1709,6 @@ form.business_account.hub.placeholder: Elegir hub
 form.api_app.type.oauth.label: OAuth - para WordPress
 form.settings.mercadopago.client_secret.label: Cliente secreto
 localBusiness.form.business_address.help: Esta dirección se utilizará en los recibos
-order.export.heading.nonprofit: Sin ánimo de lucro
-adminDashboard.nonprofits.createNew: Añadir una nueva organización sin ánimo de lucro
-adminDashboard.nonprofits.title: Organizaciones sin ánimo de lucro
 form.delivery.arbitrary_price.label: Definir el precio manualmente
 form.store_type.time_slots.label: Franjas horarias
 form.store_type.time_slots.set_as_default: Establecer como franja horaria por defecto
@@ -1745,7 +1717,6 @@ form.vehicle.max_weight.label: Peso máximo (kg)
 restaurant.form.section.en_boite_le_plat: En Boîte Le Plat
 restaurant.form.en_boite_le_plat_enabled.label: ActivarEn Boîte Le Plat deposit-refund
   system
-restaurant.form.dabba_code.label: Código restaurante Dabba
 form.task_export.format.label: Formato de exportación
 stores.filters.input.placeholder: 'Buscar por dirección, nombre o #id'
 basics.filter: Filtro
@@ -1802,3 +1773,119 @@ pricing.rule.humanizer.packages_contains_at_least_one: 'paquetes %package_name%'
 pricing.rule.humanizer.price_range: '%unit_price% por %step%'
 pricing.rule.humanizer.price_range_with_threshold: 'por encima de %threshold% - %unit_price% por %step%'
 pricing.rule.humanizer.price_per_package: '%unit_price% por %package_name%'
+promotions.human_readable.action: "%discount_amount% de descuento"
+promotions.human_readable.delivery_action: "%discount_amount% de descuento en la entrega"
+promotions.human_readable.rule_items_total_above: "a partir de %amount%"
+promotions.human_readable.rule_cart_quantity: "a partir de %count% artículos comprados"
+promotions.human_readable.coupon: "%description% with coupon %code%"
+promotions.human_readable.text: "%name%: %description%"
+
+# Editor de emails
+customize.emails: Personalizar correos electrónicos
+customize.email_editor.email_type.order_created: Pedido confirmado (cliente)
+customize.email_editor.email_type.order_accepted_foodtech_delivery: Pedido aceptado – Entrega
+customize.email_editor.email_type.order_accepted_foodtech_collection: Pedido aceptado – Recogida
+customize.email_editor.email_type.order_accepted_lastmile: Pedido aceptado (Última milla)
+customize.email_editor.email_type.order_cancelled: Pedido cancelado
+customize.email_editor.email_type.order_delayed: Pedido retrasado
+customize.email_editor.email_type.order_payment: Confirmación de pago
+customize.email_editor.email_type.order_receipt: Recibo del pedido
+customize.email_editor.email_type.task_dropoff_completed: Entrega completada
+customize.email_editor.email_type.task_pickup_completed: Recogida completada
+customize.email_editor.email_type.task_dropoff_failed: Entrega fallida
+customize.email_editor.email_type.task_pickup_failed: Recogida fallida
+customize.email_editor.email_type.resetting: "Restablecimiento de contraseña"
+customize.email_editor.email_type.registration: "Confirmación de registro"
+customize.email_editor.save: Guardar
+customize.email_editor.reset: Restablecer por defecto
+customize.email_editor.status.default: Plantilla por defecto — guarde para personalizar
+customize.email_editor.status.custom: Plantilla personalizada
+customize.email_editor.variables: Variables disponibles
+customize.email_editor.layout: Diseño
+customize.email_editor.folder.foodtech: Foodtech
+customize.email_editor.folder.lastmile: Última milla
+customize.email_editor.folder.account: Cuenta
+customize.email_editor.send_test: Enviar prueba
+customize.email_editor.send_test_title: Enviar correo de prueba
+customize.email_editor.send_test_description: "Introduce una dirección para recibir una vista previa de esta plantilla con datos de muestra."
+customize.email_editor.send_test_send: Enviar
+customize.email_editor.send_test_cancel: Cancelar
+customize.email_editor.send_test_success: "¡Correo de prueba enviado!"
+two_factor.title: Autenticación de dos factores
+two_factor.subtitle: "Se ha enviado un código de verificación a tu dirección de correo electrónico. Por favor, introdúcelo a continuación."
+two_factor.code.label: Código de verificación
+two_factor.submit: Verificar
+
+rfm.title: Segmentación de clientes
+rfm.clear_filter: Borrar filtro
+rfm.no_customers: No hay clientes en este segmento.
+rfm.column.last_order: Último pedido
+rfm.column.frequency: Pedidos
+rfm.column.monetary: Total gastado
+rfm.segment.champions: Campeones
+rfm.segment.champions.description: Compran recientemente, con frecuencia y gastan más
+rfm.segment.loyal_customers: Clientes leales
+rfm.segment.loyal_customers.description: Piden regularmente y responden a las promociones
+rfm.segment.potential_loyalists: Leales potenciales
+rfm.segment.potential_loyalists.description: Clientes recientes con frecuencia creciente
+rfm.segment.recent_customers: Clientes recientes
+rfm.segment.recent_customers.description: Han comprado recientemente pero todavía no con frecuencia
+rfm.segment.promising: Prometedores
+rfm.segment.promising.description: Compradores recientes con frecuencia baja pero creciente
+rfm.segment.at_risk: En riesgo
+rfm.segment.at_risk.description: Solían pedir con frecuencia, pero no han pedido recientemente
+rfm.segment.cant_lose_them: No podemos perderlos
+rfm.segment.cant_lose_them.description: Grandes gastadores que no han vuelto en mucho tiempo
+rfm.segment.hibernating: En hibernación
+rfm.segment.hibernating.description: Último pedido hace mucho tiempo con bajo número de pedidos
+rfm.segment.lost: Perdidos
+rfm.segment.lost.description: Puntuaciones de recencia y frecuencia más bajas
+rfm.chart.segment_distribution: Distribución por segmento
+rfm.chart.avg_spend: Gasto medio por segmento
+rfm.chart.bounds_r: "Rangos de puntuación de recencia (días desde el último pedido)"
+rfm.chart.bounds_f: "Rangos de puntuación de frecuencia (pedidos)"
+rfm.chart.bounds_m: Rangos de puntuación monetaria
+rfm.chart.bubble: "Densidad de clientes por puntuación R×F"
+rfm.info.title: ¿Cómo funciona la segmentación de clientes?
+rfm.info.body: "El análisis RFM puntúa a cada cliente en tres dimensiones basándose en su historial de pedidos:"
+rfm.info.recency: "Recencia (R): ¿cuándo realizó el cliente su último pedido?"
+rfm.info.frequency: "Frecuencia (F): ¿cuántos pedidos ha realizado en total?"
+rfm.info.monetary: "Importe (M): ¿cuánto ha gastado en total?"
+rfm.info.quartiles: "R y F se puntúan del 1 al 4 usando umbrales absolutos configurables (p. ej. pedido en los últimos 30 días = R4, 10 o más pedidos = F4). M se puntúa de forma relativa al resto de la base de clientes. Los clientes se asignan a un segmento con nombre según la combinación de sus puntuaciones R y F."
+rfm.thresholds.configure: Configurar umbrales
+rfm.thresholds.recency: Recencia (R)
+rfm.thresholds.frequency: Frecuencia (F)
+rfm.thresholds.saved: Umbrales RFM guardados correctamente.
+rfm.thresholds.error.r_order: Los umbrales de recencia deben estar en orden ascendente (Puntuación 4 < Puntuación 3 < Puntuación 2).
+rfm.thresholds.error.f_order: Los umbrales de frecuencia deben estar en orden ascendente (Puntuación 2 < Puntuación 3 < Puntuación 4).
+rfm.thresholds.rfm_r_score4_max_days: Puntuación 4 — días máx desde el último pedido
+rfm.thresholds.rfm_r_score3_max_days: Puntuación 3 — días máx desde el último pedido
+rfm.thresholds.rfm_r_score2_max_days: Puntuación 2 — días máx desde el último pedido
+rfm.thresholds.rfm_f_score4_min_orders: Puntuación 4 — número mín de pedidos
+rfm.thresholds.rfm_f_score3_min_orders: Puntuación 3 — número mín de pedidos
+rfm.thresholds.rfm_f_score2_min_orders: Puntuación 2 — número mín de pedidos
+customer.badge.guest: Invitado
+customer.badge.registered: Registrado
+customer.insights.total_orders: Pedidos completados
+customer.insights.average_order: Ticket medio
+customer.insights.first_order: Primer pedido
+customer.insights.last_order: Último pedido
+customer.insights.favourite_restaurant: Restaurante favorito
+customer.order_history.title: Historial de pedidos
+customer.order_history.date: Fecha
+customer.order_history.order: "Pedido n.º"
+customer.order_history.status: Estado
+customer.order_history.vendor: Vendedor / Tienda
+customer.order_history.method: Método
+customer.order_history.total: Total
+customer.order_history.calendar: Actividad de pedidos
+customer.order_history.empty: Este cliente aún no tiene pedidos.
+rfm.order_history: Historial de pedidos
+form.theme.primary_group.label: Colores primarios
+form.theme.primary_group.help: "Usado para barras de navegación y botones"
+form.theme.primary.label: Color de fondo
+form.theme.primary-content.label: Color de fuente
+form.theme.secondary_group.label: Colores secundarios
+form.theme.secondary_group.help: "Usado para resaltes y acentos"
+form.theme.secondary.label: Color de fondo
+form.theme.secondary-content.label: Color de fuente

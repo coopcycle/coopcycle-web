@@ -1,3 +1,48 @@
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+
 .CodeMirror {
   height: 400px;
+}
+
+.codex-editor {
+  .swiper {
+    z-index: 0;
+  }
+}
+
+// https://github.com/codex-team/editor.js/discussions/1891#discussioncomment-1983770
+.ce-block__content,
+.ce-toolbar__content {
+  max-width: 850px;
+}
+
+// https://github.com/codex-team/editor.js/discussions/1897
+.ce-popover__items {
+  .ce-popover-item[data-item-name="paragraph"] {
+    display: none;
+  }
+}
+
+// Can be imported twice
+// @import './swiper-homepage.scss'
+
+/* https://axorax.medium.com/add-placeholder-text-to-div-with-contenteditable-true-ac8b3246b55e */
+/* https://stackoverflow.com/questions/37844735/custom-placeholder-with-contenteditable-element */
+[data-placeholder]:empty:before{
+  content: attr(data-placeholder);
+  color: #ced4da;
+  font-style: italic;
+}
+
+// Reset Bootstrap 3 link styles inside the homepage preview wrapper
+.homepage-preview {
+  a {
+    color: inherit;
+    text-decoration: none;
+    &:hover {
+      color: inherit;
+      text-decoration: underline;
+    }
+  }
 }

@@ -53,7 +53,10 @@ export const apiSlice = createApi({
   // uri is passed in JSON-LD '@id' key, https://www.w3.org/TR/2014/REC-json-ld-20140116/#node-identifiers
   endpoints: builder => ({
     getTaxRates: builder.query<HydraCollection<TaxRate>, void>({
-      query: () => `api/tax_rates`,
+      query: () => ({
+        url: `api/tax_rates`,
+        headers: { Accept: 'application/ld+json' },
+      }),
     }),
     getTags: builder.query<Tag[], void>({
       queryFn: async (args, queryApi, extraOptions, baseQuery) => {
@@ -352,6 +355,32 @@ export const apiSlice = createApi({
     >({
       query: () => 'api/incidents/filters',
     }),
+    // TODO Add types
+    updateShopCollection: builder.mutation({
+      query({ '@id': uri, ...body }) {
+        return {
+          url: uri,
+          method: 'PUT',
+          body,
+        };
+      },
+    }),
+    // TODO Add types
+    createShopCollection: builder.mutation({
+      query(body) {
+        return {
+          url: `/api/shop_collections`,
+          method: 'POST',
+          body,
+        };
+      },
+    }),
+    deleteShopCollection: builder.mutation<void, string>({
+      query: uri => ({
+        url: uri,
+        method: 'DELETE',
+      }),
+    }),
   }),
 });
 
@@ -393,4 +422,7 @@ export const {
   useGetTaskIncidentsQuery,
   useGetIncidentsQuery,
   useGetIncidentFiltersQuery,
+  useUpdateShopCollectionMutation,
+  useCreateShopCollectionMutation,
+  useDeleteShopCollectionMutation,
 } = apiSlice;

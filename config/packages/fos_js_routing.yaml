@@ -13,6 +13,7 @@ fos_js_routing:
         - restaurant_cart_address
         - restaurant_cart_clear_time
         - restaurant_modify_cart_item_quantity
+        - admin_customize_shop_collections
         - admin_deliveries
         - admin_delivery
         - admin_deliveries_pricing_ruleset
@@ -30,10 +31,11 @@ fos_js_routing:
         - admin_order_cancel
         - admin_order_delay
         - admin_order_fulfill
+        - admin_orders
         - admin_restaurant
         - admin_store
         - admin_restaurant_dashboard
-        - admin_restaurant_image_from_url
+        - admin_restaurant_image_from_pixabay
         - admin_restaurant_stats
         - admin_business_restaurant_group
         - admin_tags
@@ -56,13 +58,15 @@ fos_js_routing:
         - dashboard_order_delay
         - dashboard_order_fulfill
         - dashboard_restaurant_dashboard
-        - dashboard_restaurant_image_from_url
+        - dashboard_restaurant_image_from_pixabay
         - dashboard_restaurant_stats
+        - homepage
         - routing_route
         - user_avatar
-        - dashboard_restaurant_new_adhoc_order
         - public_share_order
         - order_set_guest_customer_email
+        - profile_task_complete
+        - profile_tasks
         - _api_/orders/{id}/players_post
         - _api_/orders/{id}/create_invitation_post
         - _api_/incidents/{id}/comments_post
@@ -104,5 +108,8 @@ fos_js_routing:
         - _api_/trailers/{id}/vehicles_put
         - task_label_pdf
         - _api_/stores/{id}/deliveries_get_collection
-        - _api_/deliveries/pod_export_post
+        - _api_/stores/{id}/pod_export_post
         - _api_/addresses/{id}{._format}_delete
+        - _api_/restaurants/{id}/products_get_collection
+        - _api_/restaurants/menus/{id}_delete
+        - _api_/products/{id}{._format}_delete

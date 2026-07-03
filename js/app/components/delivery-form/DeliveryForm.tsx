@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { Button, Checkbox } from 'antd';
+import { Button, Checkbox, Tooltip } from 'antd';
 import { Formik, Form, FieldArray, FormikErrors } from 'formik';
 import moment, { Moment } from 'moment';
+import { InfoCircleOutlined } from '@ant-design/icons'
 
 import Spinner from '../../components/core/Spinner.js';
 import BarcodesModal from '../../../../assets/react/controllers/BarcodesModal.jsx';
@@ -42,6 +43,7 @@ import {
 } from '../../api/types';
 import { useDatadog } from '../../hooks/useDatadog';
 import { UserContext } from '../../UserContext';
+import FlagsContext from './FlagsContext';
 import { generateTempId } from './idUtils';
 
 const getTaskId = (task: TaskType): string | null => {
@@ -168,6 +170,7 @@ const DeliveryForm = ({
   preLoadedFormData,
 }: Props) => {
   const { isDispatcher } = useContext(UserContext);
+  const { isReverseDeliveryEnabled } = useContext(FlagsContext);
 
   const mode = useSelector(selectMode);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -348,6 +351,7 @@ const DeliveryForm = ({
       }
 
       setInitialValues(initialValues);
+
 
       // For simple deliveries, expand all tasks by default
       if (initialValues.tasks.length <= 2) {
@@ -705,6 +709,23 @@ const DeliveryForm = ({
                       }}>
                       {t('DELIVERY_FORM_SAVED_ORDER')}
                     </Checkbox>
+                  </div>
+                ) : null}
+
+                {mode === Mode.DELIVERY_CREATE && isDispatcher && isReverseDeliveryEnabled ? (
+                  <div
+                    className="border-top py-3">
+                    <Checkbox
+                      name="delivery.add_reverse"
+                      onChange={e => {
+                        e.stopPropagation();
+                        setFieldValue('addReverse', e.target.checked);
+                      }}>
+                      {t('DELIVERY_FORM_ADD_REVERSE')}
+                    </Checkbox>
+                    <Tooltip title={t('DELIVERY_FORM_ADD_REVERSE_HELP')}>
+                      <InfoCircleOutlined />
+                    </Tooltip>
                   </div>
                 ) : null}
 

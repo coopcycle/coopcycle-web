@@ -2,7 +2,6 @@
 
 namespace AppBundle\Service;
 
-use AppBundle\Action\Utils\TokenStorageTrait;
 use AppBundle\Domain\HumanReadableEventInterface;
 use AppBundle\Domain\NamedMessage;
 use AppBundle\Domain\SerializableEventInterface;
@@ -13,20 +12,16 @@ use AppBundle\Service\NotificationPreferences;
 use AppBundle\Sylius\Order\OrderInterface;
 use phpcent\Client as CentrifugoClient;
 use Psr\Log\LoggerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Messenger\MessageBusInterface;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class LiveUpdates
 {
-    use TokenStorageTrait;
-
-    protected $tokenStorage;
-
     public function __construct(
-        TokenStorageInterface $tokenStorage,
+        private Security $security,
         private UserManager $userManager,
         private SerializerInterface $serializer,
         private TranslatorInterface $translator,
@@ -36,7 +31,6 @@ class LiveUpdates
         private LoggerInterface $realTimeMessageLogger,
         private string $namespace)
     {
-        $this->tokenStorage = $tokenStorage;
     }
 
     public function toAdmins($message, array $data = [])
@@ -108,6 +102,10 @@ class LiveUpdates
      */
     public function toUsers($users, $message, array $data = [])
     {
+        if (count($users) === 0) {
+            return;
+        }
+
         $messageName = $message instanceof NamedMessage ? $message::messageName() : $message;
 
         if ($message instanceof SerializableEventInterface && empty($data)) {
@@ -168,7 +166,7 @@ class LiveUpdates
                 return $user->getUserIdentifier();
             }, $users);
 
-            $text = $message->forHumans($this->translator, $this->getUser());
+            $text = $message->forHumans($this->translator, $this->security->getUser());
 
             $this->messageBus->dispatch(
                 new TopBarNotification($usernames, $text)

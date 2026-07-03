@@ -10,9 +10,15 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\ApiProperty;
 use ApiPlatform\Metadata\ApiFilter;
+use AppBundle\Api\Dto\DisableProduct;
+use AppBundle\Api\Dto\ProductFbtDto;
+use AppBundle\Api\State\DisableProductProcessor;
+use AppBundle\Api\State\ProductFbtProvider;
 use AppBundle\Entity\LocalBusiness;
 use AppBundle\Entity\ReusablePackaging;
 use AppBundle\Entity\ReusablePackagings;
+use AppBundle\Enum\Allergen;
+use AppBundle\Enum\RestrictedDiet;
 use AppBundle\Sylius\Product\ProductInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -22,13 +28,27 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteable;
 use Sylius\Component\Product\Model\Product as BaseProduct;
 use Sylius\Component\Product\Model\ProductOptionValueInterface;
 use Sylius\Component\Product\Model\ProductOptionInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Serializer\Attribute\SerializedName;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ApiResource(
     operations: [
         new Get(),
         new Put(denormalizationContext: ['groups' => ['product_update']], security: 'is_granted(\'edit\', object)'),
-        new Delete(security: 'is_granted(\'edit\', object)')
+        new Delete(security: 'is_granted(\'edit\', object)'),
+        new Put(
+            uriTemplate: '/products/{id}/disable',
+            processor: DisableProductProcessor::class,
+            input: DisableProduct::class,
+            denormalizationContext: ['groups' => ['product_disable']],
+            security: 'is_granted(\'edit\', object)'
+        ),
+        new Get(
+            uriTemplate: '/products/{id}/recommendations',
+            provider: ProductFbtProvider::class,
+            output: ProductFbtDto::class,
+        ),
     ],
     normalizationContext: ['groups' => ['product']]
 )]
@@ -139,7 +159,7 @@ class Product extends BaseProduct implements ProductInterface, Comparable, SoftD
     {
         $options = $this->options->toArray();
 
-        uasort($options, function ($a, $b) {
+        usort($options, function ($a, $b) {
             if ($a->getPosition() === $b->getPosition()) return 0;
             return $a->getPosition() < $b->getPosition() ? -1 : 1;
         });
@@ -151,6 +171,7 @@ class Product extends BaseProduct implements ProductInterface, Comparable, SoftD
             $options
         );
 
+        /** @var ArrayCollection<array-key, ProductOptionInterface> */
         return new ArrayCollection($values);
     }
     /**
@@ -282,5 +303,74 @@ class Product extends BaseProduct implements ProductInterface, Comparable, SoftD
         }
 
         return false;
+    }
+
+    // FIXME
+    // Not sure we need "identifier" with groups = ["product"]
+    // Check if it's needed in the app
+    #[Groups(['product', 'restaurant_menu'])]
+    public function getIdentifier()
+    {
+        return $this->getCode();
+    }
+
+    // FIXME
+    // Weird it is not serialized for the "product" group
+    // It is probably because when used on the /api/restaurants/{id}/products endpoint,
+    // we don't use this type of data for display
+    #[Groups(['restaurant_menu'])]
+    public function getMenuAddOn()
+    {
+        return $this->getOptions();
+    }
+
+    #[Groups(['product', 'restaurant_menu'])]
+    public function getSuitableForDiet()
+    {
+        $restrictedDiets = $this->getRestrictedDiets();
+        if (count($restrictedDiets) > 0) {
+
+            // https://schema.org/suitableForDiet
+            return array_values(array_map(function ($constantName) {
+                $reflect = new \ReflectionClass(RestrictedDiet::class);
+                return $reflect->getConstant($constantName);
+            }, $restrictedDiets));
+        }
+
+        return null;
+    }
+
+    #[Groups(['product', 'restaurant_menu'])]
+    #[SerializedName('allergens')]
+    public function getSerializedAllergens()
+    {
+        $allergens = $this->getAllergens();
+        if (count($allergens) > 0) {
+
+            return array_values(array_map(function ($constantName) {
+                $reflect = new \ReflectionClass(Allergen::class);
+                return $reflect->getConstant($constantName);
+            }, $allergens));
+        }
+
+        return null;
+    }
+
+    #[Groups(['product', 'restaurant_menu'])]
+    #[SerializedName('images')]
+    public function getSerializedImages()
+    {
+        // The "url" key will be added by ProductNormalizer
+        return array_map(fn ($ratio) => ['ratio' => $ratio, 'url' => null], ['1:1', '16:9']);
+    }
+
+    #[Groups(['product', 'restaurant_menu'])]
+    public function getOffers()
+    {
+        // The "price" key will be added by ProductNormalizer
+        return [
+            '@type' => 'Offer',
+            'price' => null,
+        ];
     }
 }

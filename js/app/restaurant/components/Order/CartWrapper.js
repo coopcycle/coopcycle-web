@@ -1,5 +1,5 @@
 import React from 'react'
-import classNames from 'classnames'
+import clsx from 'clsx'
 import _ from 'lodash'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -48,29 +48,23 @@ export default function CartWrapper() {
     selectReusablePackagingFeatureEnabled)
 
   return (
-    <div className={ classNames(
-      'panel',
-      'panel-default',
-      'panel-cart-wrapper') }>
-      <div className="panel-body">
-        { cartItemsRelatedErrors.length > 0 ? (
-          <div className="alert alert-warning">
-            <i className="fa fa-warning"></i>
-            &nbsp;
-            <span>{ _.first(cartItemsRelatedErrors) }</span>
-          </div>) : null }
-        <Cart />
-        { (hasItems || isFetching) ? (<div className="cart__footer">
-          { reusablePackagingFeatureEnabled ? (
-            <ReusablePackagingSwitch />) : null }
-          <CartTotal />
-          <div
-            className="mt-4 d-flex align-items-center justify-content-center flex-wrap">
-            <InvitePeopleToOrderButton />
-            <CartButton />
-          </div>
-        </div>) : (<div><InvitePeopleToOrderButton /></div>) }
-      </div>
+    <div className="flex flex-col flex-1 min-h-0">
+      { cartItemsRelatedErrors.length > 0 ? (
+        <div className="alert alert-soft alert-warning">
+          <i className="fa fa-warning"></i>
+          <span>{ _.first(cartItemsRelatedErrors) }</span>
+        </div>) : null }
+      <Cart />
+      { (hasItems || isFetching) ? (<div className="cart__footer">
+        { reusablePackagingFeatureEnabled ? (
+          <ReusablePackagingSwitch />) : null }
+        <CartTotal />
+        <div
+          className="mt-4 flex flex-wrap">
+          <InvitePeopleToOrderButton />
+          <CartButton />
+        </div>
+      </div>) : (<div><InvitePeopleToOrderButton /></div>) }
     </div>
   )
 }

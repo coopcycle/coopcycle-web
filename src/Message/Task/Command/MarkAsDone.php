@@ -6,29 +6,32 @@ use AppBundle\Entity\Task;
 
 class MarkAsDone
 {
-    private $task;
-    private $notes;
-    private $contactName;
 
-    public function __construct(Task $task, $notes = null, $contactName = null)
-    {
-        $this->task = $task;
-        $this->notes = $notes;
-        $this->contactName = $contactName;
-    }
+    public function __construct(
+        private Task $task,
+        private $notes = null,
+        private $contactName = null,
+        private bool $calculateCO2 = true
+    )
+    { }
 
-    public function getTask()
+    public function getTask(): Task
     {
         return $this->task;
     }
 
-    public function getNotes()
+    public function getNotes(): ?string
     {
         return $this->notes;
     }
 
-    public function getContactName()
+    public function getContactName(): ?string
     {
         return $this->contactName;
+    }
+
+    public function getCalculateCO2(): bool
+    {
+        return $this->calculateCO2;
     }
 }

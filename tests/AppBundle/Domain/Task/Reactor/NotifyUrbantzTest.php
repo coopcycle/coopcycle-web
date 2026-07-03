@@ -10,13 +10,16 @@ use AppBundle\Entity\Task;
 use AppBundle\Entity\Urbantz\Delivery as UrbantzDelivery;
 use AppBundle\Entity\User;
 use AppBundle\MessageHandler\Task\NotifyUrbantz;
+use Coduo\PHPMatcher\PHPMatcher;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectRepository;
+use Hashids\Hashids;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class NotifyUrbantzTest extends TestCase
 {
@@ -34,6 +37,11 @@ class NotifyUrbantzTest extends TestCase
 
         $this->urbantzDeliveryRepository = $this->prophesize(ObjectRepository::class);
 
+        $this->hashids8 = $this->prophesize(Hashids::class);
+        $this->hashids12 = $this->prophesize(Hashids::class);
+
+        $this->urlGenerator = $this->prophesize(UrlGeneratorInterface::class);
+
         $this->entityManager
             ->getRepository(UrbantzDelivery::class)
             ->willReturn($this->urbantzDeliveryRepository->reveal());
@@ -41,7 +49,9 @@ class NotifyUrbantzTest extends TestCase
         $this->notifyUrbantz = new NotifyUrbantz(
             $this->client,
             $this->entityManager->reveal(),
-            '1234567890'
+            $this->hashids8->reveal(),
+            $this->hashids12->reveal(),
+            $this->urlGenerator->reveal()
         );
     }
 
@@ -76,12 +86,14 @@ class NotifyUrbantzTest extends TestCase
                 $delivery->reveal(),
                 $event = new TaskAssigned($dropoff, $user),
                 1,
+                '{"updatedTime":"@string@.isDateTime()","updateType":"total","arrived":{"total":true},"metadata":{"Ext_Tracking_Page":"@string@"}}',
                 'carrier/external/task/dlv_g01RzjwPbJ4qDpLKPYVWN3dvoQO5rM8K/assign'
             ],
             [
                 $delivery->reveal(),
                 $event = new TaskDone($dropoff),
                 1,
+                '{"updatedTime":"@string@.isDateTime()","updateType":"total","delivered":{"total":true}}',
                 'carrier/external/task/dlv_g01RzjwPbJ4qDpLKPYVWN3dvoQO5rM8K/complete'
             ],
             [
@@ -93,6 +105,7 @@ class NotifyUrbantzTest extends TestCase
                 $delivery->reveal(),
                 $event = new TaskDone($pickup),
                 1,
+                '{"updatedTime":"@string@.isDateTime()","updateType":"total","departed":{"total":true},"metadata":{"Ext_Tracking_Page":"@string@"}}',
                 'carrier/external/task/dlv_g01RzjwPbJ4qDpLKPYVWN3dvoQO5rM8K/start'
             ],
         ];
@@ -101,8 +114,11 @@ class NotifyUrbantzTest extends TestCase
     /**
      * @dataProvider sendRequestToUrbantzProvider
      */
-    public function testSendsRequestToUrbantz(Delivery $delivery, TaskEvent $event,
+    public function testSendsRequestToUrbantz(
+        Delivery $delivery,
+        TaskEvent $event,
         int $expectedRequestsCount,
+        string $expectedBody = '',
         string $expectedPath = '')
     {
         $urbantzDelivery = new UrbantzDelivery();
@@ -110,6 +126,16 @@ class NotifyUrbantzTest extends TestCase
         $this->urbantzDeliveryRepository
             ->findOneBy(['delivery' => $delivery])
             ->willReturn($urbantzDelivery);
+
+        $hashid = 'AbcDef123';
+
+        $this->hashids8->encode(Argument::type('int'))
+            ->willReturn($hashid);
+
+        $this->hashids12->encode(1)->willReturn('g01RzjwPbJ4qDpLKPYVWN3dvoQO5rM8K');
+
+        $this->urlGenerator->generate('public_delivery', ['hashid'=> $hashid], UrlGeneratorInterface::ABSOLUTE_URL)
+            ->willReturn('http://demo.coopcycle.org/fr/pub/d/AbcDef123');
 
         call_user_func_array($this->notifyUrbantz, [ $event ]);
 
@@ -123,6 +149,12 @@ class NotifyUrbantzTest extends TestCase
             );
 
             $body = $this->mockResponse->getRequestOptions()['body'];
+
+            $phpMatcher = new PHPMatcher();
+
+            $phpMatcher->match($body, $expectedBody);
+
+            $this->assertTrue($phpMatcher->match($body, $expectedBody), 'Failed asserting that body matches expected body');
         }
     }
 }

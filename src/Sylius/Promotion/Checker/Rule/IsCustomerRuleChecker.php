@@ -2,7 +2,7 @@
 
 namespace AppBundle\Sylius\Promotion\Checker\Rule;
 
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 use Sylius\Component\Promotion\Checker\Rule\RuleCheckerInterface;
 use Sylius\Component\Promotion\Model\PromotionSubjectInterface;
 

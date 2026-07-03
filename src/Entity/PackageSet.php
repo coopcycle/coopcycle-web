@@ -34,8 +34,12 @@ use Symfony\Component\Validator\Constraints as Assert;
             openapiContext: ['summary' => 'Get the objects to which this pricing rule set is applied'],
             security: 'is_granted(\'ROLE_ADMIN\')'
         ),
-        new Post(),
-        new GetCollection()
+        new Post(
+            security: 'is_granted(\'ROLE_ADMIN\')'
+        ),
+        new GetCollection(
+            security: 'is_granted(\'ROLE_ADMIN\')'
+        )
     ]
 )]
 #[AssertCanDelete(groups: ['deleteValidation'])]

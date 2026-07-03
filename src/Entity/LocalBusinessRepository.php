@@ -7,12 +7,15 @@ use AppBundle\Sylius\Product\ProductOptionInterface;
 use AppBundle\Enum\FoodEstablishment;
 use AppBundle\Enum\Store;
 use AppBundle\Entity\Cuisine;
+use AppBundle\Entity\LocalBusiness\Collection as ShopCollection;
+use AppBundle\Entity\LocalBusiness\CollectionItem as ShopCollectionItem;
 use AppBundle\Entity\Sylius\Product;
 use AppBundle\Entity\Sylius\ProductImage;
 use AppBundle\Entity\Sylius\ProductOption;
 use AppBundle\Entity\Sylius\ProductOptions;
 use AppBundle\Entity\Sylius\ProductOptionValue;
 use AppBundle\Entity\Sylius\ProductVariant;
+use AppBundle\Service\SettingsManager;
 use AppBundle\Utils\RestaurantFilter;
 use Carbon\Carbon;
 use DeepCopy\Filter\KeepFilter;
@@ -32,6 +35,7 @@ class LocalBusinessRepository extends EntityRepository
 {
     private $businessContext;
     private $restaurantFilter;
+    private $settingsManager;
     private $context = FoodEstablishment::class;
     private $typeFilter = FoodEstablishment::RESTAURANT;
     const LATESTS_SHOPS_LIMIT = 12;
@@ -55,6 +59,17 @@ class LocalBusinessRepository extends EntityRepository
         $this->businessContext = $businessContext;
 
         return $this;
+    }
+
+    public function setSettingsManager(SettingsManager $settingsManager): void
+    {
+        $this->settingsManager = $settingsManager;
+    }
+
+    private function getNewShopDays(): int
+    {
+        $days = $this->settingsManager?->get('new_shop_days');
+        return $days ? (int) $days : 90;
     }
 
     public function setContext(string $context)
@@ -260,13 +275,15 @@ class LocalBusinessRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findLatest($limit)
+    public function findLatest($limit = self::LATESTS_SHOPS_LIMIT)
     {
         $qb = $this->createQueryBuilder('r');
 
         $this->addBusinessContextClause($qb, 'r');
 
         $qb
+            ->andWhere('r.createdAt > :since')
+            ->setParameter('since', (new \DateTime())->modify(sprintf('-%d days', $this->getNewShopDays())))
             ->setMaxResults($limit)
             ->orderBy('r.createdAt', 'DESC');
 
@@ -275,46 +292,71 @@ class LocalBusinessRepository extends EntityRepository
 
     public function countByCuisine(): array
     {
-        $qb = $this->createQueryBuilder('r')
-            ->select('COUNT(r.id) AS cnt')
-            ->addSelect('c.id')
-            ->addSelect('c.name')
-            ->innerJoin('r.servesCuisine', 'c');
+        $qb = $this->createQueryBuilder('r');
+        $qb
+            ->innerJoin('r.servesCuisine', 'c')
+            ->select('c.name')
+            ->addSelect('COUNT(r.id) AS cnt');
 
         $this->addBusinessContextClause($qb, 'r');
 
         $qb
-            ->groupBy('c.id')
+            ->groupBy('c.name')
             ->orderBy('cnt', 'DESC');
 
-        return $qb->getQuery()->getResult();
+        $result = $qb->getQuery()->getArrayResult();
+
+        return array_combine(
+            array_map(fn ($res) => $res['name'], $result),
+            array_map(fn ($res) => $res['cnt'], $result)
+        );
     }
 
-    public function findByCuisine($cuisine) {
+    public function findByCuisine(string $cuisine)
+    {
         $qb = $this->createQueryBuilder('r')
             ->innerJoin('r.servesCuisine', 'c')
-            ->andWhere('c.id = :cuisine_id')
-            ->setParameter('cuisine_id', $cuisine);
+            ->andWhere('c.name = :cuisine')
+            ->setParameter('cuisine', $cuisine);
 
         $this->addBusinessContextClause($qb, 'r');
 
         return $qb->getQuery()->getResult();
     }
 
-    public function findExistingCuisines() {
-        $qb = $this->createQueryBuilder('r')
-            ->select('c')
-            ->from(Cuisine::class, 'c')
-            ->innerJoin('c.restaurants', 'cr');
+    public function findCuisinesByFilters(array $filters = [])
+    {
+        if (empty($filters)) {
 
-        $this->addBusinessContextClause($qb, 'r');
+            $names = array_keys($this->countByCuisine());
 
-        $qb->orderBy('c.name');
+            if (count($names) === 0) {
+                return [];
+            }
+
+            $qb = $this->getEntityManager()->getRepository(Cuisine::class)
+                ->createQueryBuilder('c')
+                ->andWhere('c.name IN (:cuisines)')
+                ->setParameter('cuisines', $names);
+
+            return $qb->getQuery()->getResult();
+        }
+
+        unset($filters['cuisine']);
+
+        $subquery = $this->findByFilters($filters, true);
+        $subquery->select('r.id');
+
+        $qb = $this->getEntityManager()->getRepository(Cuisine::class)
+                ->createQueryBuilder('c');
+        $qb->innerJoin('c.restaurants', 'rc', Expr\Join::WITH, $qb->expr()->in('rc.id', $subquery->getDQL()));
+        $qb->setParameters($subquery->getQuery()->getParameters());
+
 
         return $qb->getQuery()->getResult();
     }
 
-    public function findByFilters($filters)
+    public function findByFilters(array $filters, bool $asQueryBuilder = false)
     {
         $qb = $this->createQueryBuilder('r');
 
@@ -330,8 +372,8 @@ class LocalBusinessRepository extends EntityRepository
                         break;
                     case 'cuisine':
                         $qb
-                            ->innerJoin('r.servesCuisine', 'c', 'WITH', $qb->expr()->in('c.id', ':cuisineIds'))
-                            ->setParameter('cuisineIds', $value);
+                            ->innerJoin('r.servesCuisine', 'c', Expr\Join::WITH, $qb->expr()->in('c.name', ':cuisines'))
+                            ->setParameter('cuisines', $value);
                         break;
                     case 'category':
                         switch($value) {
@@ -347,6 +389,8 @@ class LocalBusinessRepository extends EntityRepository
                                 break;
                             case 'new':
                                 $qb
+                                    ->andWhere('r.createdAt > :since')
+                                    ->setParameter('since', (new \DateTime())->modify(sprintf('-%d days', $this->getNewShopDays())))
                                     ->setMaxResults(self::LATESTS_SHOPS_LIMIT)
                                     ->orderBy('r.createdAt', 'DESC');
                                 break;
@@ -359,16 +403,31 @@ class LocalBusinessRepository extends EntityRepository
                                     )
                                     ->setParameter('enabled', true);
                                 break;
+                            case 'edenred':
+                                $qb
+                                    ->andWhere('r.edenredEnabled = :edenredEnabled')
+                                    ->andWhere('r.edenredMerchantId IS NOT NULL')
+                                    ->setParameter('edenredEnabled', true);
+                                break;
                             default:
                                 break;
                         }
+                        break;
+
+                    case 'collection':
+                        $qb
+                            ->innerJoin(ShopCollectionItem::class, 'collection_item', Expr\Join::WITH, 'collection_item.shop = r.id')
+                            ->innerJoin(ShopCollection::class, 'collection', Expr\Join::WITH, 'collection_item.collection = collection.id')
+                            ->andWhere('collection.slug = :slug')
+                            ->setParameter('slug', $value);
+                        break;
                     default:
                         break;
                 }
             }
         }
 
-        return $qb->getQuery()->getResult();
+        return $asQueryBuilder ? $qb : $qb->getQuery()->getResult();
     }
 
     public function countZeroWaste()
@@ -433,6 +492,8 @@ class LocalBusinessRepository extends EntityRepository
         $qb = $this->createQueryBuilder('r');
         $qb
             ->select('r.id')
+            ->andWhere('r.createdAt > :since')
+            ->setParameter('since', (new \DateTime())->modify(sprintf('-%d days', $this->getNewShopDays())))
             ->setMaxResults(self::LATESTS_SHOPS_LIMIT)
             ->orderBy('r.createdAt', 'DESC');
 
@@ -571,5 +632,42 @@ class LocalBusinessRepository extends EntityRepository
         }
 
         $this->getEntityManager()->flush();
+    }
+
+    public function countFeatured(): int
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->select('COUNT(r.id)')
+            ->andWhere('r.featured = :featured')
+            ->setParameter('featured', true);
+
+        $this->addBusinessContextClause($qb, 'r');
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function countExclusive(): int
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->select('COUNT(r.id)')
+            ->andWhere('r.exclusive = :exclusive')
+            ->setParameter('exclusive', true);
+
+        $this->addBusinessContextClause($qb, 'r');
+
+        return $qb->getQuery()->getSingleScalarResult();
+    }
+
+    public function findByCollection(string $slug)
+    {
+        $qb = $this->createQueryBuilder('r')
+            ->innerJoin(ShopCollectionItem::class, 'collection_item', Expr\Join::WITH, 'collection_item.shop = r.id')
+            ->innerJoin(ShopCollection::class, 'collection', Expr\Join::WITH, 'collection_item.collection = collection.id')
+            ->andWhere('collection.slug = :slug')
+            ->setParameter('slug', $slug);
+
+        $this->addBusinessContextClause($qb, 'r');
+
+        return $qb->getQuery()->getResult();
     }
 }

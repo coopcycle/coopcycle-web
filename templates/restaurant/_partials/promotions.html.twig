@@ -17,118 +17,69 @@
   <tbody>
 
   {% for promotion in promotions %}
-    {% if promotion is instanceof('Sylius\\Component\\Promotion\\Model\\PromotionCoupon') %}
-      <tr>
-        <td><a href="{{ path(promotion_coupon_route, {
-          restaurantId: restaurant.id,
-          promotionId: promotion.promotion.id,
-          couponId: promotion.id}) }}">#{{ promotion.id }}</a></td>
-        <td>{{ promotion.promotion.name }}</td>
-        <td>
-          {{ promotion.code }}
-        </td>
-        <td>
+    {% set coupon = null %}
+    {% if promotion.isCouponBased %}
+      {% set coupon = promotion.coupons|first %}
+    {% endif %}
+    <tr>
+      <td><a href="{{ path(promotion_route, {
+        restaurantId: restaurant.id,
+        promotionId: promotion.id }) }}">#{{ promotion.id }}</a>
+      </td>
+      <td>
+        <span class="d-block">{{ promotion.name }}</span>
+        <small>{{ promotion|humanize_promotion }}</small>
+      </td>
+      <td>
+        {% if promotion.isCouponBased %}
+          <span class="text-monospace">{{ coupon.code }}</span>
+        {% endif %}
+      </td>
+      <td>
+        {% if promotion.isCouponBased %}
+          {{ coupon.usageLimit }}
+        {% else %}
           {{ promotion.usageLimit }}
-        </td>
-        <td>
-          {{ promotion.perCustomerUsageLimit }}
-        </td>
-        <td>
-          {% if promotion.expiresAt is not empty %}
-            {{ promotion.expiresAt|format_datetime('medium', 'short') }}
-          {% endif %}
-        </td>
-        <td class="text-right">
-          {{ promotion.used }}
-        </td>
-        {% if show_feature %}
-        <td>
-          <form method="post" action="{{ path(promotion_feature_route, {restaurantId: restaurant.id }) }}">
-            <input type="hidden" name="type" value="coupon" />
-            <input type="hidden" name="id" value={{ promotion.id }} />
-            <button class="btn btn-sm {% if promotion.featured %}btn-success{% endif %}">
-              {% if promotion.featured %}
-                <i class="fa fa-check mr-1"></i><span>{{ 'promotions.featured'|trans }}</span>
-              {% else %}
-                <i class="fa fa-arrow-right mr-1"></i><span>{{ 'promotions.feature'|trans }}</span>
-              {% endif %}
-            </button>
-          </form>
-        </td>
         {% endif %}
-        {% if show_archive %}
-        <td class="text-right">
-          <form method="post" action="{{ path(promotion_archive_route, {restaurantId: restaurant.id}) }}">
-            <input type="hidden" name="type" value="coupon" />
-            <input type="hidden" name="id" value={{ promotion.id }} />
-            <button class="btn btn-sm btn-default" title="Archive" type="submit" onclick="return window.confirm('{{ 'basics.are_you_sure'|trans|escape('js') }}')">
-              <i class="fa fa-archive"></i>
-            </button>
-          </form>
-        </td>
+      </td>
+      <td>
+        {% if promotion.isCouponBased %}
+          {{ coupon.perCustomerUsageLimit }}
         {% endif %}
-      </tr>
-    {% else %}
-      <tr>
-        <td><a href="{{ path(promotion_route, {
-          restaurantId: restaurant.id,
-          promotionId: promotion.id }) }}">#{{ promotion.id }}</a>
-        </td>
-        <td>
-          <span>{{ promotion.name }}</span>
-          <ul class="list-unstyled">
-          {% for promotion_rule in promotion.rules %}
-            <li>
-              <small>{{ promotion_rule|promotion_rule_for_humans }}</small>
-            </li>
-          {% endfor %}
-          </ul>
-          <ul class="list-unstyled">
-          {% for promotion_action in promotion.actions %}
-            <li>
-              <small>{{ promotion_action|promotion_action_for_humans }}</small>
-            </li>
-          {% endfor %}
-          </ul>
-        </td>
-        <td></td>
-        <td>
-          {{ promotion.usageLimit }}
-        </td>
-        <td></td>
-        <td>
-          {% if promotion.endsAt is not empty %}
-            {{ promotion.endsAt|format_datetime('medium', 'short') }}
-          {% endif %}
-        </td>
-        <td class="text-right"></td>
-        {% if show_feature %}
-        <td>
-          <form method="post" action="{{ path(promotion_feature_route, {restaurantId: restaurant.id }) }}">
-            <input type="hidden" name="type" value="promotion" />
-            <input type="hidden" name="id" value={{ promotion.id }} />
-            <button class="btn btn-sm {% if promotion.featured %}btn-success{% endif %}">
-              {% if promotion.featured %}
-                <i class="fa fa-check mr-1"></i><span>{{ 'promotions.featured'|trans }}</span>
-              {% else %}
-                <i class="fa fa-arrow-right mr-1"></i><span>{{ 'promotions.feature'|trans }}</span>
-              {% endif %}
-            </button>
-          </form>
-        </td>
+      </td>
+      <td>
+        {% if promotion.endsAt is not empty %}
+          {{ promotion.endsAt|format_datetime('medium', 'short') }}
         {% endif %}
-        {% if show_archive %}
-        <td class="text-right">
-          <form method="post" action="{{ path(promotion_archive_route, {restaurantId: restaurant.id}) }}">
-            <input type="hidden" name="type" value="promotion" />
-            <input type="hidden" name="id" value={{ promotion.id }} />
-            <button class="btn btn-sm btn-default" title="Archive" type="submit" onclick="return window.confirm('{{ 'basics.are_you_sure'|trans|escape('js') }}')">
-              <i class="fa fa-archive"></i>
-            </button>
-          </form>
-        </td>
-        {% endif %}
-      </tr>
+      </td>
+      <td class="text-right"></td>
+      {% if show_feature %}
+      {% set is_featured = promotion.isCouponBased ? coupon.featured : promotion.featured %}
+      <td>
+        <form method="post" action="{{ path(promotion_feature_route, {restaurantId: restaurant.id }) }}">
+          <input type="hidden" name="id" value={{ promotion.isCouponBased ? coupon.id : promotion.id }} />
+          <input type="hidden" name="coupon_based" value="{{ promotion.isCouponBased ? '1' : '0' }}" />
+          <button class="btn btn-sm {% if is_featured %}btn-success{% endif %}">
+            {% if is_featured %}
+              <i class="fa fa-check mr-1"></i><span>{{ 'promotions.featured'|trans }}</span>
+            {% else %}
+              <i class="fa fa-arrow-right mr-1"></i><span>{{ 'promotions.feature'|trans }}</span>
+            {% endif %}
+          </button>
+        </form>
+      </td>
+      {% endif %}
+      {% if show_archive %}
+      <td class="text-right">
+        <form method="post" action="{{ path(promotion_archive_route, {restaurantId: restaurant.id}) }}">
+          <input type="hidden" name="type" value="promotion" />
+          <input type="hidden" name="id" value={{ promotion.id }} />
+          <button class="btn btn-sm btn-default" title="Archive" type="submit" onclick="return window.confirm('{{ 'basics.are_you_sure'|trans|escape('js') }}')">
+            <i class="fa fa-archive"></i>
+          </button>
+        </form>
+      </td>
+    </tr>
     {% endif %}
   {% endfor %}
   </tbody>

@@ -9,6 +9,7 @@ import { createAction } from 'redux-actions'
 import '../i18n'
 import { calculate } from '../utils/tax'
 import { openEditor } from './image-editor'
+import Search from '../widgets/Search'
 
 Dropzone.autoDiscover = false
 
@@ -84,12 +85,6 @@ if (addReusablePackaging) {
 
 $(document).on('click', '[data-reusable-packaging-delete]', function(e) {
   $(e.currentTarget).closest('li').remove()
-})
-
-document.querySelectorAll('#product_options > div').forEach(el => {
-  const icon = document.createElement('i')
-  icon.className = 'fa fa-bars handle'
-  el.appendChild(icon)
 })
 
 new Sortable(document.querySelector('#product_options'), {
@@ -234,3 +229,37 @@ $("#product_businessRestaurantGroupPrices").on('click', '[data-delete]', functio
 
   target.remove()
 })
+
+new Search(document.querySelector('#product-options-search'), {
+  url: formData.dataset.productOptionsSearchUrl,
+  placeholder: formData.dataset.productOptionsSearchPlaceholder,
+  clearOnSelect: true,
+  onSuggestionSelected: function (suggestion) {
+
+    const collectionHolder = document.querySelector('#product_options');
+
+    const productOptionId = suggestion.id
+    const productOptionsIds = Array.from(collectionHolder.querySelectorAll('[data-name="option"]')).map(el => parseInt(el.value, 10))
+
+    // Prevent adding the option twice
+    if (productOptionsIds.includes(productOptionId)) {
+      return;
+    }
+
+    const item = document.createElement('div');
+
+    item.innerHTML = collectionHolder
+      .dataset
+      .prototype
+      .replace(
+        /__name__/g,
+        collectionHolder.children.length
+      );
+
+    item.querySelector('[data-product-option-prop="name"]').innerHTML = suggestion.name
+    item.querySelector('[data-name="position"]').value = collectionHolder.children.length
+    item.querySelector('[data-name="option"]').value = productOptionId
+
+    collectionHolder.appendChild(item.querySelector('.form-group'));
+  }
+});

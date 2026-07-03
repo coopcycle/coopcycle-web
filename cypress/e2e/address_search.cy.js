@@ -17,10 +17,10 @@ context('Address search', () => {
       .should('include', '4 Avenue Victoria, 75004 Paris, France')
 
     // Lose focus
-    cy.get('.react-autosuggest__input.address-autosuggest__input').blur()
+    cy.get('[data-search="address"] input[type="search"]').blur()
 
     // Set focus again
-    cy.get('.react-autosuggest__input.address-autosuggest__input').focus()
+    cy.get('[data-search="address"] input[type="search"]').focus()
 
     cy.get('[data-search="address"]')
       .find('ul[role="listbox"] li', { timeout: 5000 })

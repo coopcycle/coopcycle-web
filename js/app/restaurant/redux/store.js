@@ -27,6 +27,7 @@ import {
   restaurant,
   restaurantTiming,
   shouldAskToEnableReusablePackaging,
+  isLoadingOverlayVisible,
 } from './reducers'
 import { playerWebsocket, updateFormElements } from './middlewares'
 import { timeRangeSlice } from '../../components/order/timeRange/reduxSlice'
@@ -77,6 +78,7 @@ export const createStoreFromPreloadedState = preloadedState => {
       player,
       isGroupOrdersEnabled,
       shouldAskToEnableReusablePackaging,
+      isLoadingOverlayVisible,
       [timeRangeSlice.name]: timeRangeSlice.reducer,
     }),
     preloadedState,

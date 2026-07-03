@@ -55,6 +55,13 @@ class ReceiptGenerator
             $this->addAdjustmentFooterItem($receipt, $deliveryAdjustments->first());
         }
 
+        $reusablePackagingAdjustments = $order->getAdjustments(AdjustmentInterface::REUSABLE_PACKAGING_ADJUSTMENT);
+        if (count($reusablePackagingAdjustments) > 0) {
+            foreach ($reusablePackagingAdjustments as $reusablePackagingAdjustment) {
+                $this->addAdjustmentFooterItem($receipt, $reusablePackagingAdjustment);
+            }
+        }
+
         foreach ($taxRates as $taxRate) {
             /** @var TaxRateInterface $taxRate */
             $taxTotal = $order->getTaxTotalByRate($taxRate);
@@ -89,9 +96,9 @@ class ReceiptGenerator
         $this->filesystem->write($filename, $this->render($order));
     }
 
-    public function render(OrderInterface $order): string
+    public function render(OrderInterface $order, bool $create = false): string
     {
-        if (!$order->hasReceipt()) {
+        if (!$order->hasReceipt() || $create) {
             $order->setReceipt(
                 $this->create($order)
             );

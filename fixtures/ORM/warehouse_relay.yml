@@ -1,0 +1,21 @@
+include:
+  - users.yml
+  - addresses.yml
+
+AppBundle\Entity\Warehouse:
+  warehouse_relay:
+    name: 'Relay Hub'
+    address: "@address_3"
+
+AppBundle\Entity\Task:
+  task_pickup:
+    type: PICKUP
+    address: "@address_1"
+    doneAfter: <identity(new \DateTime('2018-12-01 10:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-12-01 12:00:00'))>
+    weight: 500
+  task_dropoff:
+    address: "@address_2"
+    doneAfter: <identity(new \DateTime('2018-12-01 14:00:00'))>
+    doneBefore: <identity(new \DateTime('2018-12-01 18:30:00'))>
+    weight: 500

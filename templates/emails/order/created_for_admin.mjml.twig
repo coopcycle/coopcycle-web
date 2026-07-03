@@ -1,0 +1,19 @@
+{% extends 'emails/layout.mjml.twig' %}
+
+{% block content %}
+  <mj-text align="left" line-height="20px">
+  {% if order.hasVendor() %}
+    {{ 'admin.order_foodtech.created.body' | trans({
+      '{{order_url}}': url('admin_order', { id: order.id }),
+      '{{restaurant_name}}': order.vendor.name
+    }, 'emails') | raw }}
+  {% else %}
+    {{ 'admin.order.created.body' | trans({
+      '{{order_url}}': url('admin_order', { id: order.id }),
+    }, 'emails') | raw }}
+  {% endif %}
+  </mj-text>
+  <mj-button href="{{ url('admin_order', { id: order.id }) }}" background-color="{{ coopcycle_theme_color('primary', '#10ac84') }}" color="{{ coopcycle_theme_color('primary-content', 'white') }}" font-family="Raleway, Arial, sans-serif">
+    {{ 'order.view' | trans({}, 'emails') }}
+  </mj-button>
+{% endblock %}

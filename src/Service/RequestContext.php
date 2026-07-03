@@ -2,8 +2,8 @@
 
 namespace AppBundle\Service;
 
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * Stores request context data such as request_id, route, controller etc.
@@ -24,7 +24,7 @@ class RequestContext
 
     public function __construct(
         private readonly RequestStack $requestStack,
-        private readonly TokenStorageInterface $tokenStorage
+        private readonly Security $security
     ) {
     }
 
@@ -104,13 +104,8 @@ class RequestContext
             return $this->username;
         }
 
-        $token = $this->tokenStorage->getToken();
-        if (null === $token) {
-            return null;
-        }
-
-        $user = $token->getUser();
-        if (!is_object($user)) {
+        $user = $this->security->getUser();
+        if (null === $user) {
             return null;
         }
 
@@ -123,7 +118,7 @@ class RequestContext
             return $this->roles ?? [];
         }
 
-        return $this->tokenStorage->getToken()?->getRoleNames() ?? [];
+        return $this->security->getToken()?->getRoleNames() ?? [];
     }
 
     /**

@@ -1,88 +1,108 @@
 @use "sass:math";
 
-@import "../../../assets/css/vars.scss";
-@import "~bootstrap-sass/assets/stylesheets/bootstrap/_mixins.scss";
-@import "~skeleton-screen-css/dist/index.scss";
+@import "skeleton-screen-css/dist/index.scss";
 
 @import "./restaurant-card.scss";
+@import "./swiper.scss";
+@import '../customize/swiper-homepage.scss';
 
-.shops-content {
-  display: flex;
-  flex-direction: row;
-}
-
-.shops-list-paginator {
-  text-align: center;
-  font-size: $font-size-h2;
-}
-
-.restaurant-side-bar {
-  min-width: 20%;
-}
-
-.restaurant-main-content {
-  min-width: 80%;
-}
-
-.restaurant-list {
-  // gap: 32px;
-  h1 {
-    display: inline-block;
-  }
-}
-
-.filter-section-btn {
-  outline: none !important;
-}
-
-.filter-caret {
-  transform: scale(1.6) rotate(-180deg);
-  margin-left: 8px;
-  margin-top: -4px;
-}
-button[aria-expanded='false'] .filter-caret {
-  transform: scale(1.6) rotate(0deg);
-}
+@import "font-awesome/scss/_variables.scss";
+@import "font-awesome/scss/_mixins.scss";
 
 .restaurant-list-header {
-  margin-top: -20px;
-  padding-top: $bs-base-margin;
-  margin-bottom: $bs-base-margin;
-  background-color: $main-blue-light;
   background-image: url(../../../assets/pattern.svg);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center center;
 }
 
-.swiper {
-  figcaption {
-    font-size: $font-size-h4;
+.restaurant-list-header .react-autosuggest__container {
+  margin-bottom: 0;
+}
+
+.filters {
+  width: 100%;
+  // https://stackoverflow.com/questions/64240299/how-to-make-auto-slides-per-view-with-dynamic-content-using-swiper-reactjs
+  .swiper-slide {
+    width: auto !important;
   }
 }
-.swiper-nav-prev,
-.swiper-nav-next {
-  position: absolute;
-  top: 35%;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  outline: none !important;
-  z-index: 10;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--swiper-navigation-color, var(--swiper-theme-color));
+
+.cuisines {
+  .swiper-button-next,
+  .swiper-button-prev {
+    padding: calc(var(--swiper-navigation-size) / 2);
+    border-radius: calc(var(--swiper-navigation-size) / 2);
+  }
+  .swiper-button-next {
+    &:after {
+      @include fa-icon();
+      content: $fa-var-arrow-right;
+    }
+  }
+  .swiper-button-prev {
+    &:after {
+      @include fa-icon();
+      content: $fa-var-arrow-left;
+    }
+  }
 }
-.swiper-button-disabled {
-  display: none;
-}
-.swiper-nav-prev {
-  left: 10px;
-  right: auto;
-}
-.swiper-nav-next {
-  right: 10px;
-  left: auto;
+
+// https://blog.logrocket.com/css-overlay/
+.restaurant-list {
+
+  position: relative;
+
+  h1 {
+    display: inline-block;
+  }
+
+  &--loading {
+    &:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.1);
+      z-index: 1;
+    }
+  }
+
+  .overlay {
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.1);
+
+    .loader {
+
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+
+      width: 48px;
+      height: 48px;
+      border: 5px solid #FFF;
+      border-bottom-color: transparent;
+      border-radius: 50%;
+      display: inline-block;
+      box-sizing: border-box;
+      animation: rotation 1s linear infinite;
+    }
+
+    @keyframes rotation {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  }
+
 }

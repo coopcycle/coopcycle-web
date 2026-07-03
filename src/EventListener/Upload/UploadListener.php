@@ -15,12 +15,14 @@ use AppBundle\Utils\ValidationUtils;
 use AppBundle\Validator\Constraints\Spreadsheet as AssertSpreadsheet;
 use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
+use Liip\ImagineBundle\Service\FilterService;
 use Oneup\UploaderBundle\Event\PostPersistEvent;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Vich\UploaderBundle\Handler\UploadHandler;
 use Vich\UploaderBundle\Mapping\PropertyMappingFactory;
@@ -36,8 +38,10 @@ final class UploadListener
         private readonly MessageBusInterface $messageBus,
         private readonly ProductSpreadsheetParser $productSpreadsheetParser,
         private readonly IriConverterInterface $iriConverter,
-        private readonly CacheInterface $projectCache,
+        private readonly CacheInterface $appCache,
         private readonly ValidatorInterface $validator,
+        private readonly FilterService $imagineFilter,
+        private readonly UrlGeneratorInterface $urlGenerator,
         private readonly string $secret,
         private readonly bool $isDemo,
         private readonly LoggerInterface $logger)
@@ -96,6 +100,14 @@ final class UploadListener
             return $this->onTasksUpload($event);
         }
 
+        if ($type === 'homepage_slide') {
+            return $this->onHomepageSlideUpload($event);
+        }
+
+        if ($type === 'document') {
+            return $this->onDocumentUpload($event);
+        }
+
         if ($type === 'restaurant' || $type === 'restaurant_banner') {
             $object = $this->entityManager->getRepository(LocalBusiness::class)->find(
                 $request->get('id')
@@ -148,7 +160,7 @@ final class UploadListener
         $this->settingsManager->set('company_logo', $file->getBasename());
         $this->settingsManager->flush();
 
-        $this->projectCache->delete('content.company_logo.base_64');
+        $this->appCache->delete('content.company_logo.base_64');
     }
 
     private function onTasksUpload(PostPersistEvent $event)
@@ -193,13 +205,63 @@ final class UploadListener
 
     private function onBannerUpload(PostPersistEvent $event)
     {
-        $event->getFile();
+        $file = $event->getFile();
 
         if ($this->isDemo) {
             throw new UploadException('Banner can\'t be changed in demo mode');
         }
 
-        $this->projectCache->delete('banner_svg_stat');
-        $this->projectCache->delete('banner_svg');
+        $mimeType = $file->getMimeType();
+
+        if (in_array($mimeType, ['image/jpeg', 'image/jpg', 'image/png'])) {
+            $ext = $mimeType === 'image/png' ? 'png' : 'jpg';
+            $otherExt = $ext === 'png' ? 'jpg' : 'png';
+            try {
+                $fs = $file->getFileSystem();
+                if ($fs->fileExists("banner_background.{$otherExt}")) {
+                    $fs->delete("banner_background.{$otherExt}");
+                }
+            } catch (\Exception) {}
+            $this->settingsManager->set('banner_background_image', "banner_background.{$ext}");
+            $this->settingsManager->flush();
+            $this->appCache->delete('banner_background_image_tone');
+        } else {
+            $this->appCache->delete('banner_svg_stat');
+            $this->appCache->delete('banner_svg');
+        }
+    }
+
+    private function onHomepageSlideUpload(PostPersistEvent $event)
+    {
+        $file = $event->getFile();
+        $fileSystem = $file->getFilesystem();
+
+        if ($this->isDemo) {
+            throw new UploadException('Slides can\'t be uploaded in demo mode');
+        }
+
+        $url = $this->imagineFilter->getUrlOfFilteredImage($file->getPathname(), 'homepage_slider_images_thumbnail');
+
+        $response = $event->getResponse();
+        $response['url'] = $url;
+
+        return $response;
+    }
+
+    private function onDocumentUpload(PostPersistEvent $event)
+    {
+        $file = $event->getFile();
+        $fileSystem = $file->getFilesystem();
+
+        $url = $this->urlGenerator->generate(
+            'document_public',
+            ['path' => $file->getPathname()],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+
+        $response = $event->getResponse();
+        $response['url'] = $url;
+
+        return $response;
     }
 }

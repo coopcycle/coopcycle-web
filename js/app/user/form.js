@@ -12,7 +12,7 @@ function renderSwitch($input) {
 
   const $parent = $input.closest('div.checkbox').parent()
 
-  const $switch = $('<div class="display-inline-block">')
+  const $switch = $('<div class="d-inline-block">')
   const $hidden = $('<input>')
 
   $switch.addClass('switch')
@@ -33,9 +33,9 @@ function renderSwitch($input) {
 
     const el = document.createElement('div')
     tagsEl.closest('.form-group').appendChild(el)
-  
+
     tagsEl.classList.add('d-none')
-  
+
     const tags = JSON.parse(tagsEl.dataset.tags)
 
     const defaultValue = tagsEl.value

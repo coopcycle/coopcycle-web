@@ -60,7 +60,7 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
 
         $restaurant = $order->getRestaurant();
 
-        if (!$restaurant->isDepositRefundEnabled() && !$restaurant->isLoopeatEnabled() && !$restaurant->isDabbaEnabled()) {
+        if (!$restaurant->isDepositRefundEnabled() && !$restaurant->isLoopeatEnabled()) {
             return;
         }
 
@@ -71,6 +71,8 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
         }
 
         $totalAmount = 0;
+        $containsReusablePackagings = false;
+
         foreach ($order->getItems() as $item) {
 
             $product = $item->getVariant()->getProduct();
@@ -99,8 +101,13 @@ final class OrderDepositRefundProcessor implements OrderProcessorInterface
                     ));
 
                     $totalAmount += $amount;
+                    $containsReusablePackagings = true;
                 }
             }
+        }
+
+        if ($containsReusablePackagings && !$order->isReusablePackagingEnabled()) {
+            $order->setReusablePackagingEnabled(true);
         }
 
         // Collect an additional fee for LoopEat, *PER ORDER*

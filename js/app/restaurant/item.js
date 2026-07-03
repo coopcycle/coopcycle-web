@@ -1,10 +1,10 @@
 import React, { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { createPortal } from 'react-dom'
 import { Provider } from 'react-redux'
 import { I18nextProvider } from 'react-i18next'
 import Modal from 'react-modal'
 import _ from 'lodash'
-
 import i18n, { getCountry } from '../i18n'
 import { createStoreFromPreloadedState } from './redux/store'
 import {
@@ -12,11 +12,10 @@ import {
   openProductOptionsModal,
   fetchRequest,
   fetchFailure,
+  setLoadingOverlayVisible,
 } from './redux/actions'
 import storage from '../search/address-storage'
 import { initLoopeatContext } from './loopeat'
-
-require('gasparesganga-jquery-loading-overlay')
 
 import './item.scss'
 import './header.scss'
@@ -30,6 +29,7 @@ import InvitePeopleToOrderModal from './components/InvitePeopleToOrderModal'
 import SetGuestCustomerEmailModal from './components/SetGuestCustomerEmailModal'
 import LoopeatModal from './components/LoopeatModal'
 import { OrderLayout } from './components/Order'
+import LoadingOverlay from './components/LoadingOverlay'
 import {
   selectCanAddToExistingCart,
   selectCartShippingTimeRange,
@@ -46,18 +46,6 @@ window._paq = window._paq || []
 
 let store
 
-function setMenuLoading(isLoading) {
-  if (isLoading) {
-    $('#menu').LoadingOverlay('show', {
-      image: false,
-    })
-  } else {
-    $('#menu').LoadingOverlay('hide', {
-      image: false,
-    })
-  }
-}
-
 function init() {
   const container = document.getElementById('cart')
 
@@ -65,22 +53,23 @@ function init() {
     return
   }
 
-  $('form[data-product-simple]').on('submit', function(e) {
-    e.preventDefault()
-    $(e.currentTarget).closest('.modal').modal('hide')
-    store.dispatch(queueAddItem($(this).attr('action'), 1))
-  })
+  document.addEventListener('click', (e) => {
+    const productSimple = e.target.closest('[data-product-simple]');
+    if (productSimple) {
+      store.dispatch(queueAddItem(productSimple.dataset.formAction, 1))
+      return
+    }
 
-  document.querySelectorAll('[data-modal="product-details"]').forEach(el => {
-    el.addEventListener('click', () => {
-      const product    = JSON.parse(el.dataset.product)
-      const options    = JSON.parse(el.dataset.productOptions)
-      const images     = JSON.parse(el.dataset.productImages)
-      const price      = JSON.parse(el.dataset.productPrice)
-      const formAction = el.dataset.formAction
+    const productDetails = e.target.closest('[data-modal="product-details"]');
+    if (productDetails) {
+      const product    = JSON.parse(productDetails.dataset.product)
+      const options    = JSON.parse(productDetails.dataset.productOptions)
+      const images     = JSON.parse(productDetails.dataset.productImages)
+      const price      = JSON.parse(productDetails.dataset.productPrice)
+      const formAction = productDetails.dataset.formAction
 
       store.dispatch(openProductOptionsModal(product, options, images, price, formAction))
-    })
+    }
   })
 
   const cartForm = document.querySelector('form[name="cart"]')
@@ -88,7 +77,7 @@ function init() {
   cartForm.addEventListener('submit', async function(event) {
     event.preventDefault()
 
-    setMenuLoading(true)
+    store.dispatch(setLoadingOverlayVisible(true))
     store.dispatch(fetchRequest()) // will trigger loading state in some react components
 
     const canAddToExistingCart = selectCanAddToExistingCart(store.getState())
@@ -102,7 +91,7 @@ function init() {
         try {
           await checkTimeRange(displayedTiming?.range, store.getState, store.dispatch)
         } catch (error) {
-          setMenuLoading(false)
+          store.dispatch(setLoadingOverlayVisible(false))
           store.dispatch(fetchFailure()) // only to hide loading state in some react components
           return
         }
@@ -192,11 +181,14 @@ function init() {
           <InvitePeopleToOrderModal />
           <SetGuestCustomerEmailModal />
           <LoopeatModal />
+          {createPortal(
+            <LoadingOverlay />,
+            document.getElementById('loading-overlay')
+          )}
         </I18nextProvider>
       </Provider>
     </StrictMode>,
   )
 }
 
-setMenuLoading(true)
 init()

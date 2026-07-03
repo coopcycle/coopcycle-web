@@ -38,6 +38,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Hashids\Hashids;
 use League\Flysystem\Filesystem;
 use League\Flysystem\UnableToCheckFileExistence;
+use League\Flysystem\UnableToReadFile;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWSProvider\JWSProviderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use phpcent\Client as CentrifugoClient;
@@ -119,34 +120,11 @@ class OrderController extends AbstractController
 
             $order->setCustomer($user->getCustomer());
 
-            // Make sure to move Dabba credentials if any
-            $dabbaAccessTokenKey =
-                sprintf('dabba.order.%d.access_token', $order->getId());
-            $dabbaRefreshTokenKey =
-                sprintf('dabba.order.%d.refresh_token', $order->getId());
-
-            $session = $request->getSession();
-
-            if ($session->has($dabbaAccessTokenKey) && $session->has($dabbaRefreshTokenKey)) {
-                $order->getCustomer()->setDabbaAccessToken(
-                    $session->get($dabbaAccessTokenKey)
-                );
-                $order->getCustomer()->setDabbaRefreshToken(
-                    $session->get($dabbaRefreshTokenKey)
-                );
-            }
-
             $this->objectManager->flush();
-
-            if ($session->has($dabbaAccessTokenKey) && $session->has($dabbaRefreshTokenKey)) {
-                $session->remove($dabbaAccessTokenKey);
-                $session->remove($dabbaRefreshTokenKey);
-            }
         }
 
         $originalPromotionCoupon = $order->getPromotionCoupon();
         $wasReusablePackagingEnabled = $order->isReusablePackagingEnabled();
-        $originalReusablePackagingPledgeReturn = $order->getReusablePackagingPledgeReturn();
 
         $tipForm = $this->createForm(CheckoutTipType::class);
         $tipForm->handleRequest($request);
@@ -244,15 +222,11 @@ class OrderController extends AbstractController
             $reusablePackagingWasChanged =
                 $wasReusablePackagingEnabled !== $order->isReusablePackagingEnabled();
 
-            $reusablePackagingPledgeReturnWasChanged =
-                $originalReusablePackagingPledgeReturn !== $order->getReusablePackagingPledgeReturn();
-
             // In those cases, we always reload the page
-            if ($reusablePackagingWasChanged || $reusablePackagingPledgeReturnWasChanged) {
+            if ($reusablePackagingWasChanged) {
 
                 // Make sure to reset return counter
                 if (!$order->isReusablePackagingEnabled()) {
-                    $order->setReusablePackagingPledgeReturn(0);
                     $order->setLoopeatReturns([]);
                 }
 
@@ -292,7 +266,7 @@ class OrderController extends AbstractController
             }
         }
 
-        return $this->render('order/index.html.twig', [
+        return $this->render('order/index.html.twig', $this->auth([
             'order' => $order,
             'shipping_time_range' => $this->getShippingTimeRange($order),
             'pre_submit_errors' => $form->isSubmitted() ? null : ValidationUtils::serializeViolationList($orderErrors),
@@ -302,7 +276,7 @@ class OrderController extends AbstractController
             'form_coupon' => $couponForm->createView(),
             'form_vytal' => $vytalForm->createView(),
             'form_loopeat_returns' => $loopeatReturnsForm->createView(),
-        ]);
+        ]));
     }
 
     private function getShippingTimeRange(OrderInterface $order)
@@ -523,28 +497,6 @@ class OrderController extends AbstractController
 
         // TODO Check if order is in expected state (new or superior)
 
-        $dabbaAccessTokenKey =
-            sprintf('dabba.order.%d.access_token', $id);
-        $dabbaRefreshTokenKey =
-            sprintf('dabba.order.%d.refresh_token', $id);
-
-        $session = $request->getSession();
-
-        if ($session->has($dabbaAccessTokenKey) && $session->has($dabbaRefreshTokenKey)) {
-
-            $order->getCustomer()->setDabbaAccessToken(
-                $session->get($dabbaAccessTokenKey)
-            );
-            $order->getCustomer()->setDabbaRefreshToken(
-                $session->get($dabbaRefreshTokenKey)
-            );
-
-            $this->objectManager->flush();
-
-            $session->remove($dabbaAccessTokenKey);
-            $session->remove($dabbaRefreshTokenKey);
-        }
-
         /** @var Session $session */
         $session = $request->getSession();
         $flashBag = $session->getFlashBag();
@@ -562,7 +514,7 @@ class OrderController extends AbstractController
             if ($assetsFilesystem->fileExists('order_confirm.md')) {
                 $customMessage = $assetsFilesystem->read('order_confirm.md');
             }
-        } catch (UnableToCheckFileExistence $e) {
+        } catch (UnableToCheckFileExistence|UnableToReadFile $e) {
             $this->checkoutLogger->error($e->getMessage());
         }
 
@@ -707,7 +659,7 @@ class OrderController extends AbstractController
 
         return $this->render('restaurant/index.html.twig', $this->auth([
             'restaurant' => $order->getRestaurant(),
-            'restaurant_timing' => $this->timingRegistry->getAllFulfilmentMethodsForObject($order->getRestaurant()),
+            'restaurant_timing' => $this->timingRegistry->getAllFulfillmentMethodsForObject($order->getRestaurant()),
             'cart_form' => $cartForm->createView(),
             'cart_timing' => $orderTimeHelper->getTimeInfo($order),
             'order_access_token' => $this->orderAccessTokenManager->create($order),

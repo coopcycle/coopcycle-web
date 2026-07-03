@@ -143,6 +143,7 @@ restaurant.form.exclusive.label: Ce restaurant est une exclusivité
 restaurant.form.quotes_allowed.label: 'Ce restaurant accepte également des commandes
   sur devis (ex : traiteur)'
 restaurant.form.loopeat_enabled.label: Activer le système de consignes %name%
+restaurant.form.loopeat_mandatory.label: Rendre %name% obligatoire pour toutes les commandes
 restaurant.form.loopeat_disconnect.label: Déconnecter mon compte %name%
 restaurant.form.featured.label: Ce restaurant apparaît sur la page d'accueil
 restaurant.form.fulfillment_methods.label: Modes d'exécution
@@ -378,6 +379,7 @@ form.store_type.defaultAddress.label: Adresse par défaut
 form.store_type.time_slot.label: Tranche horaire
 form.store_type.weight_required.label: Exiger le poids
 form.store_type.packages_required.label: Exiger la marchandise
+form.store_type.packages_required.disabled_help: Veuillez configurer un ensemble de paquets dʼabord
 form.delivery.vehicle.placeholder: Choisissez un type de véhicule
 form.delivery.pickup.label: Retrait
 form.delivery.pickup.address_placeholder: Entrez l'adresse de retrait
@@ -645,7 +647,7 @@ form.api_app.client_secret.label: Clé secrète
 form.credit_note.user_search.help: La réduction ne sera utilisable que par cet utilisateur
 form.credit_note.amount.label: Montant
 form.credit_note.name.label: Nom
-form.credit_note.name.help: Le nom de la réduction qui sera affiché dans le panier
+form.credit_note.name.help: Le nom de la réduction qui sera affichée dans le panier
 form.credit_note.restaurant.help: La réduction ne sera utilisable qu'en cas de commande
   dans ce restaurant. Laissez vide pour appliquer à tous les restaurants.
 form.embed_settings.with_vehicle.label: Ajouter le choix du type de véhicule
@@ -734,6 +736,8 @@ basics.continue: Continuer
 basics.powered_by: Propulsé par <a href="https://coopcycle.org">CoopCycle</a>
 basics.edit: Modifier
 basics.editing: Édition
+basics.pause: Mettre en pause
+basics.resume: Reprendre
 basics.add: Ajouter
 basics.view: Voir
 basics.delete: Supprimer
@@ -944,10 +948,11 @@ form.package.tags.label: Tags à appliquer automatiquement aux tâches
 form.package.average_weight.label: Poids moyen (kg)
 form.package.max_weight.label: Poids maximum (kg)
 form.package.shortCode.label: Code de 2 lettres
+form.package.shortCode.help: Limité à 2 caractères
 form.time_slot.interval.label: Intervalle
 form.delivery.packages.label: Marchandise
 form.delivery.package.label: Emballage
-order_item.adjustment_type.reusable_packaging: '%quantity% × emballage(s)'
+order_item.adjustment_type.reusable_packaging: '%quantity% × « %name% » emballage(s)'
 order.reusable_packaging.alert: Cette commande doit être conditionnée dans des emballages
   réutilisables
 deliveries.sort.newest: Les plus récentes
@@ -1010,7 +1015,6 @@ order.export.heading.platform_fee: Frais Plateforme
 order.export.heading.net_revenue: Revenu net
 order.export.heading.completed_by: Livrée par
 order.export.heading.refund_total: Remboursements
-order.export.heading.nonprofit: Association
 order.export.heading.incident_adjustments: Ajustements des incidents
 order.export.heading.incidents: Incidents
 order.export.heading.payment_gateway: Plateforme de paiement
@@ -1018,9 +1022,7 @@ form.order_export.messenger.label: Inclure une colonne avec le coursier ayant li
   la commande
 basics.show: Afficher
 basics.hide: Masquer
-restaurant_promotion.offer_delivery: Offrir les frais de livraison
-restaurant_promotion.offer_delivery.help: Cela vous permet d'offrir les frais de livraison
-  <strong>sur votre propre part</strong>. Votre marge sera réduite du montant des
+restaurant_promotion.disclaimer: Votre marge sera réduite du montant des
   frais de livraison. Cela ne <strong>diminuera pas</strong> les frais perçus par
   la plate-forme.
 form.offer_delivery.coupon_code.error.exists: Ce code existe déjà
@@ -1064,8 +1066,6 @@ form.package_with_quantity.package.placeholder: Choisissez un type de marchandis
 form.time_slot.same_day_cutoff.label: Cutoff pour le jour même
 form.time_slot.same_day_cutoff.help: Par exemple si vous sélectionnez 11h, les choix
   pour le jour même ne seront pas affichés après 11h
-order.reusable_packaging.pledge_return.disclaimer: Le client a indiqué que %count%
-  emballages seront retournés
 form.customize.about_us_enabled.label: Activer la page à propos
 form.customize.motto.label: Slogan
 form.customize.motto.help: Ceci sera affiché sur la page d'accueil
@@ -1121,6 +1121,8 @@ restaurant.embed.step_2: "Ajoutez l'attribut <code>data-coopcycle-embed=\"%url%\
 restaurant.embed.greeting: C'est tout ! Désormais, quand les visiteurs cliquent sur
   le bouton, une fenêtre s'ouvre directement sur votre site.
 form.settings.guest_checkout_enabled.label: Autoriser à commander sans créer de compte
+form.settings.new_shop_days.label: Fenêtre « nouveau commerce » (jours)
+form.settings.new_shop_days.help: Nombre de jours après la création pendant lesquels un commerce est considéré comme nouveau
 homepage.form.title: Vous avez besoin d'une livraison ?
 homepage.form.content: "<strong>%brand_name%</strong> propose des services locaux\
   \ et non polluants de livraison à vélo à la demande. Expédiez un colis ponctuellement\
@@ -1144,8 +1146,7 @@ basics.updated_at: Mis à jour le %date%
 basics.description: Description
 basics.import: Importer
 activity.task.started: "@%owner% a démarré la tâche #task/%aggregate_id%\n"
-form.customize.custom_banner.help: Assurez-vous que la bannière est un motif SVG qui
-  se répète
+form.customize.custom_banner.help: "Formats acceptés : SVG (motif répétable), JPG ou PNG (image de fond complète)"
 form.customize.custom_banner.label: Bannière personnalisée
 form.customize.custom_privacy.label: Contenu de la politique de confidentialité personnalisée
 form.customize.custom_privacy_enabled.label: Activer la politique de confidentialité
@@ -1243,10 +1244,6 @@ restaurant.stats.view_simple: Affichage simple
 restaurant.stats.view_detailed: Affichage détaillé
 form.items_total_promotion.items_total.label: À partir de
 form.items_total_promotion.fixed_discount_amount.label: Appliquer une réduction de
-restaurant_promotion.items_total.help: Cela vous permet d'appliquer une réduction
-  à partir d'un montant d'achat. Votre marge sera réduite du montant de la réduction.
-  Cela ne <strong>diminuera pas</strong> les frais perçus par la plate-forme.
-restaurant_promotion.items_total: À partir d'un montant d'achats
 restaurants.meal_vouchers_transactions.disclaimer: Cette page liste l'ensemble des commandes
   payées en titres-restaurant, en partie ou en totalité. Pour ces commandes, l'ensemble de
   l'argent a été perçu par le restaurant. Vous devez donc envoyer une facture à chaque
@@ -1275,10 +1272,6 @@ store.form.cash_on_delivery_enabled.label: Activer le paiement en contre-rembour
 store.form.cash_on_delivery_enabled.help: Cela permettra aux clients de payer en
   espèces. À utiliser avec précaution.
 localBusiness.form.business_address.help: Cette adresse sera utilisée dans les reçus
-adminDashboard.nonprofits.createNew: Ajouter une nouvelle association
-adminDashboard.nonprofits.title: Associations
-adminDashboard.nonprofits.confirm_delete: Êtes-vous sûr de supprimer cette association
-  ?
 restaurants.pre_order: Pré-commander
 restaurant.closedOpensTodayLaterWarning: Cette boutique est fermée maintenant mais ouvre
   aujourd'hui à <strong>%time%</strong>.
@@ -1301,7 +1294,6 @@ adminDashboard.users.userHasBeenDeleted: L'utilisateur a été supprimé.
 order.cart.donation.disclaimer: Nous vous proposons de consacrer %percentage% des
   revenus tirés de votre commmande à l'une de nos associations partenaires. Vous ne
   paierez pas plus cher.
-form.checkout_address.nonprofit.placeholder: Choisissez votre association préférée
 form.delivery.arbitrary_price.label: Definir le prix manuellement
 form.delivery.bookmark.label: Ajouter aux Commandes enregistrées
 form.store_type.time_slots.label: Tranches horaires
@@ -1318,14 +1310,6 @@ shops.filters.title.types: Type de commerce
 shops.filters.title.categories: Catégories
 shops.filters.title.cuisines: Cuisines
 shops.filters.title: Filtres
-form.checkout_address.reusable_packaging_dabba_enabled.label: Je veux utiliser des consignes Dabba
-form.checkout_address.reusable_packaging.dabba.wallet.label: Vous avez <strong>%amount%</strong> sur votre cagnotte Dabba
-form.checkout_address.reusable_packaging.dabba.wallet.help: (%price% par consigne)
-form.checkout_address.reusable_packaging.dabba.return_pledge_label: Vous allez rendre
-  %field% consigne(s) Dabba au coursier
-form.checkout_address.reusable_packaging.dabba.learn_more: En savoir plus sur Dabba
-form.checkout_address.reusable_packaging.dabba.add: Ajouter %missing% sur votre cagnotte
-restaurant.form.dabba_code.label: Code restaurant Dabba
 adminDashboard.integrations.title : Intégrations
 adminDashboard.integrations.help : Permet de configurer les contraintes d'une intégration
 integrations.breadcrumb : Intégrations
@@ -1339,8 +1323,6 @@ form.integration.maxLength.label : Longueur maximale autorisée (cm)
 form.integration.productTypes.label : Types de produits autorisés
 form.integration.woopitStoreId.label : Identifiant du magasin Woopit
 integration.created.message : L'intégration a été créée.
-dabba.oauth_redirect.warning: Vous allez être redirigé·e vers le site de Dabba pour vous identifier ou créer votre compte
-profile.dabba.disconnect: Déconnecter mon compte Dabba
 security.login.remember_me: Se souvenir de moi
 loopeat.how_it_works.title: |
   Votre restaurant fait partie du réseau « %name% » : bénéficiez de plats à emporter ou livrés en boîtes consignées. Vous pouvez désactiver cette option à tout moment dans votre panier de commande.
@@ -1533,7 +1515,6 @@ form.local_business_type.label: "Type d'entreprise"
 form.local_business_type.help: "Les types utilisent le vocabulaire de <a href=\"https://schema.org/\">schema.org</a> pour les <a href=\"https://schema.org/FoodEstablishment\">établissements alimentaires</a> et les <a href=\"https://schema.org/Store\">magasins</a>"
 users.dispatchers: "Dispatcheurs"
 refund.list.disclaimer.admin: "Lorsque la plateforme est responsable de l'incident, cela signifie que la plateforme doit au commerçant le montant du remboursement, car le commerçant a effectivement remboursé le client."
-dabba.oauth_connect.success: "Compte Dabba connecté avec succès !"
 promotion_action.percentage_discount: "%percentage% de réduction"
 promotion_action.delivery_percentage_discount: "%percentage% de réduction sur les frais de livraison"
 promotion_action.fixed_discount: "%amount% de réduction"
@@ -1649,13 +1630,178 @@ pricing.rule.humanizer.packages_contains_at_least_one: 'colis %package_name%'
 pricing.rule.humanizer.price_range: '%unit_price% par %step%'
 pricing.rule.humanizer.price_range_with_threshold: 'au-dessus de %threshold% - %unit_price% par %step%'
 pricing.rule.humanizer.price_per_package: '%unit_price% par %package_name%'
-adminDashboard.promotions.ongoing: Promotions actives
-adminDashboard.promotions.past: Promotions passées
+adminDashboard.promotions.ongoing: Promotions actives (%count%)
+adminDashboard.promotions.past: Promotions passées (%count%)
 order.download_receipt: Télécharger le reçu
 order.generate_receipt: Générer le reçu
 promotions.feature: Afficher
 promotions.featured: Affiché
-promotions.human_readable.discount_items_total_above: "%name% : %discount_amount% de réduction à partir de %amount% dʼachats"
-promotions.human_readable.coupon: "%name% avec le code %code%"
+promotions.human_readable.action: "%discount_amount% de réduction"
+promotions.human_readable.delivery_action: "%discount_amount% de réduction sur les frais de livraison"
+promotions.human_readable.rule_items_total_above: "à partir de %amount% dʼachats"
+promotions.human_readable.rule_cart_quantity: "à partir de %count% article(s) acheté(s)"
+promotions.human_readable.coupon: "%description% avec le code %code%"
+promotions.human_readable.text: "%name% : %description%"
 form.offer_delivery.decrease_platform_fee.label: Diminuer les frais de plateforme
 form.offer_delivery.decrease_platform_fee.help: Les frais de plateforme seront diminués pour appliquer cette promotion
+basics.more_results: Plus de résultats
+sylius.form.promotion_action.delivery_percentage_discount: 'Remise en pourcentage sur les frais de livraison'
+restaurant_promotion.rules.help: Ajoutez des règles pour définir ce qui déclenche l'application de la promotion
+restaurant_promotion.actions.help: Ajoutez des actions pour définir comment la promotion est appliquée
+restaurants.on_sale: En promo
+customize.homepage: Nouveau ! Personnalisez la page d'accueil
+basics.clone: Cloner
+basics.reverse: Inverser
+basics.use_legacy_version: Utiliser la version obsolète
+form.delivery.clone_disclaimer: Vous êtes en train de cloner la commande %number%
+form.delivery.reverse_disclaimer: Vous êtes en train d'inverser la commande %number%
+form.delivery.errors.not_reversable: Vous pouvez seulement inverser les livraisons avec 1 pickup et 1 dropoff
+form.store.document: Document
+basics.upload: Télécharger
+form.product.options.add: Ajouter une option
+form.day_of_week_address.days_of_week.label: Jours de la semaine
+localBusiness.form.day_of_week_addresses.label: Adresses en fonction du jour de la semaine
+localBusiness.form.day_of_week_addresses.add: Ajouter une adresse
+localBusiness.form.day_of_week_addresses.help: "Utilisez si l'adresse change durant la semaine (ex : foodtrucks)"
+localBusiness.form.day_of_week_delivery_perimeter_expressions.label: Périmètre de livraison en fonction du jour de la semaine
+localBusiness.form.day_of_week_delivery_perimeter_expressions.add: Ajouter un périmètre de livraison
+form.api_app.type.label: Mécanisme d'authentification
+form.api_app.store.placeholder: Choisissez un magasin pour restreindre l'accès
+form.api_app.store.help: Vous pouvez également laisser vide pour autoriser l'accès à toutes les commandes
+form.api_app.scopes.label: Périmètre
+form.api_app.scopes.help: Celà permet de limiter ce à quoi le client d'API est autorisé à accéder
+form.api_app.scope.deliveries: Livraisons
+form.api_app.scope.tasks: Tâches
+form.api_app.scope.orders: Commandes
+form.api_app.scope.orders_all: Toutes les commandes
+form.api_app.scope.tasks_all: Toutes les tâches
+form.order.payment_refund.tooltip: Pour rembourser, créez d'abord un incident
+form.credit_note.deprecated_warning: Créer un avoir commercial pour un problème sur une commande via cette page est obsolète, créez plutôt un incident
+order.create_credit_note: Créer un avoir commercial
+form.product_option_value.product.tooltip: Liez un produit de sorte que quand le produit est désactivé, cette option sera désactivée aussi
+form.product_option_value.product.placeholder: Rechercher un produit…
+form.product_option_value.depends_on.placeholder: Sélectionnez une valeur
+form.product_option_value.depends_on.tooltip: Sélectionnez une autre valeur dont cette valeur dépend
+pagination.items_per_page: Nombre d'éléments par page
+restaurant.form.en_boite_le_plat_platform_fee.label: Le montant de la consigne est collecté par la plateforme
+
+# Éditeur d'emails
+customize.emails: Personnaliser les emails
+customize.email_editor.email_type.order_created: Commande confirmée (client)
+customize.email_editor.email_type.order_accepted_foodtech_delivery: Commande acceptée – Livraison
+customize.email_editor.email_type.order_accepted_foodtech_collection: Commande acceptée – Collecte
+customize.email_editor.email_type.order_accepted_lastmile: Commande acceptée (Dernier km)
+customize.email_editor.email_type.order_cancelled: Commande annulée
+customize.email_editor.email_type.order_delayed: Commande retardée
+customize.email_editor.email_type.order_payment: Confirmation de paiement
+customize.email_editor.email_type.order_receipt: Reçu de commande
+customize.email_editor.email_type.task_dropoff_completed: Dépôt effectué
+customize.email_editor.email_type.task_pickup_completed: Enlèvement effectué
+customize.email_editor.email_type.task_dropoff_failed: Dépôt échoué
+customize.email_editor.email_type.task_pickup_failed: Enlèvement échoué
+customize.email_editor.email_type.resetting: Réinitialisation du mot de passe
+customize.email_editor.email_type.registration: "Confirmation d'inscription"
+customize.email_editor.save: Enregistrer
+customize.email_editor.reset: Réinitialiser par défaut
+customize.email_editor.status.default: Modèle par défaut — enregistrez pour personnaliser
+customize.email_editor.status.custom: Modèle personnalisé
+customize.email_editor.variables: Variables disponibles
+customize.email_editor.layout: Mise en page
+customize.email_editor.folder.foodtech: Foodtech
+customize.email_editor.folder.lastmile: Dernier kilomètre
+customize.email_editor.folder.account: Compte
+customize.email_editor.send_test: Envoyer un test
+customize.email_editor.send_test_title: Envoyer un e-mail de test
+customize.email_editor.send_test_description: "Entrez une adresse pour recevoir un aperçu de ce modèle avec des données fictives."
+customize.email_editor.send_test_send: Envoyer
+customize.email_editor.send_test_cancel: Annuler
+customize.email_editor.send_test_success: "E-mail de test envoyé !"
+two_factor.title: Authentification à deux facteurs
+two_factor.subtitle: "Un code de vérification a été envoyé à votre adresse e-mail. Veuillez le saisir ci-dessous."
+two_factor.code.label: Code de vérification
+two_factor.submit: Vérifier
+
+rfm.title: Segmentation clients
+rfm.clear_filter: Effacer le filtre
+rfm.no_customers: Aucun client dans ce segment.
+rfm.column.last_order: Dernière commande
+rfm.column.frequency: Commandes
+rfm.column.monetary: Total dépensé
+rfm.segment.champions: Champions
+rfm.segment.champions.description: Achats récents, fréquents et dépenses les plus élevées
+rfm.segment.loyal_customers: Clients fidèles
+rfm.segment.loyal_customers.description: Commandent régulièrement et répondent aux promotions
+rfm.segment.potential_loyalists: Fidèles potentiels
+rfm.segment.potential_loyalists.description: Clients récents avec une fréquence en croissance
+rfm.segment.recent_customers: Clients récents
+rfm.segment.recent_customers.description: Ont commandé récemment mais pas encore souvent
+rfm.segment.promising: Prometteurs
+rfm.segment.promising.description: Clients récents avec une fréquence faible mais croissante
+rfm.segment.at_risk: À risque
+rfm.segment.at_risk.description: Commandaient souvent, mais n'ont plus commandé récemment
+rfm.segment.cant_lose_them: À ne pas perdre
+rfm.segment.cant_lose_them.description: Gros dépensiers qui ne sont plus revenus depuis longtemps
+rfm.segment.hibernating: En hibernation
+rfm.segment.hibernating.description: Dernier achat il y a longtemps avec un faible nombre de commandes
+rfm.segment.lost: Perdus
+rfm.segment.lost.description: Scores de récence et de fréquence les plus bas
+rfm.chart.segment_distribution: Répartition par segment
+rfm.chart.avg_spend: Dépense moyenne par segment
+rfm.chart.bounds_r: "Plages du score de récence (jours depuis la dernière commande)"
+rfm.chart.bounds_f: "Plages du score de fréquence (commandes)"
+rfm.chart.bounds_m: Plages du score monétaire
+rfm.chart.bubble: "Densité des clients par score R×F"
+rfm.info.title: Comment fonctionne la segmentation clients ?
+rfm.info.body: "L'analyse RFM attribue à chaque client un score sur trois dimensions, basé sur son historique de commandes :"
+rfm.info.recency: "Récence (R) : quand le client a-t-il passé sa dernière commande ?"
+rfm.info.frequency: "Fréquence (F) : combien de commandes a-t-il passées au total ?"
+rfm.info.monetary: "Montant (M) : combien a-t-il dépensé au total ?"
+rfm.info.quartiles: "R et F sont notés de 1 à 4 selon des seuils absolus configurables (ex. commande dans les 30 derniers jours = R4, 10 commandes ou plus = F4). M est noté relativement au reste de la base clients. Les clients sont ensuite affectés à un segment nommé selon la combinaison de leurs scores R et F."
+rfm.thresholds.configure: Configurer les seuils
+rfm.thresholds.recency: Récence (R)
+rfm.thresholds.frequency: Fréquence (F)
+rfm.thresholds.saved: Seuils RFM enregistrés avec succès.
+rfm.thresholds.error.r_order: Les seuils de récence doivent être en ordre croissant (Score 4 < Score 3 < Score 2).
+rfm.thresholds.error.f_order: Les seuils de fréquence doivent être en ordre croissant (Score 2 < Score 3 < Score 4).
+rfm.thresholds.rfm_r_score4_max_days: Score 4 — jours max depuis la dernière commande
+rfm.thresholds.rfm_r_score3_max_days: Score 3 — jours max depuis la dernière commande
+rfm.thresholds.rfm_r_score2_max_days: Score 2 — jours max depuis la dernière commande
+rfm.thresholds.rfm_f_score4_min_orders: Score 4 — nombre min de commandes
+rfm.thresholds.rfm_f_score3_min_orders: Score 3 — nombre min de commandes
+rfm.thresholds.rfm_f_score2_min_orders: Score 2 — nombre min de commandes
+customer.badge.guest: Invité
+customer.badge.registered: Inscrit
+customer.insights.total_orders: Commandes livrées
+customer.insights.average_order: Panier moyen
+customer.insights.first_order: Première commande
+customer.insights.last_order: Dernière commande
+customer.insights.favourite_restaurant: Restaurant favori
+customer.order_history.title: Historique des commandes
+customer.order_history.date: Date
+customer.order_history.order: "Commande n°"
+customer.order_history.status: Statut
+customer.order_history.vendor: Vendeur / Boutique
+customer.order_history.method: Mode
+customer.order_history.total: Total
+customer.order_history.calendar: Activité des commandes
+customer.order_history.empty: Ce client n'a pas encore de commandes.
+customer.recommendations.title: Recommandations
+customer.recommendations.restaurants: Restaurants recommandés
+customer.recommendations.products: Produits recommandés
+checkout.recommendations.title: Vous aimerez peut-être aussi...
+checkout.recommendations.how_generated: Comment ces résultats sont-ils générés ?
+checkout.recommendations.dialog.title: Comment générons-nous ces recommandations ?
+checkout.recommendations.dialog.privacy: Vos données ne sont jamais partagées avec un service tiers. Les recommandations sont calculées entièrement sur nos propres serveurs.
+checkout.recommendations.dialog.explanation: Nous analysons quels produits sont fréquemment commandés ensemble par des clients aux goûts similaires — une technique appelée filtrage collaboratif, similaire à celle utilisée par les services de streaming pour suggérer des films. Les nouveaux clients voient à la place les produits les plus populaires de ce restaurant.
+checkout.recommendations.dialog.github: Voir le code source sur GitHub →
+checkout.recommendations.dialog.close: Fermer
+rfm.order_history: Historique des commandes
+form.theme.primary_group.label: Couleurs primaires
+form.theme.primary_group.help: "Utilisé pour les barres de navigation et les boutons"
+form.theme.primary.label: "Couleur d'arrière-plan"
+form.theme.primary-content.label: Couleur de police
+form.theme.secondary_group.label: Couleurs secondaires
+form.theme.secondary_group.help: "Utilisé pour les mises en évidence et les accents"
+form.theme.secondary.label: "Couleur d'arrière-plan"
+form.theme.secondary-content.label: Couleur de police
+customize.emails_alert: Nouveau ! Personnalisez les emails

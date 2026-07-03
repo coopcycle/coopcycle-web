@@ -1,8 +1,9 @@
-import { QueryRenderer } from '@cubejs-client/react';
+import { useCubeQuery } from '@cubejs-client/react';
 import { Spin } from 'antd';
 import React from 'react';
-import 'chart.js/auto'; // ideally we should only import the component that we need: https://react-chartjs-2.js.org/docs/migration-to-v4/#tree-shaking
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from 'chart.js'
 import { Bar } from 'react-chartjs-2';
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend)
 import { getCubeDateRange, getTasksFilters } from '../utils'
 import { useDeepCompareMemo } from 'use-deep-compare';
 import {
@@ -116,7 +117,19 @@ function timingToString(timing) {
   }
 }
 
-const BarChartRenderer = ({ resultSet, pivotConfig }) => {
+const pivotConfig = {
+  "x": [
+    "Task.intervalEndAt.day",
+  ],
+  "y": [
+    "Task.type",
+    "measures"
+  ],
+  "fillMissingDates": true,
+  "joinDateRange": false
+}
+
+const BarChartRenderer = ({ resultSet }) => {
   let visibleSeries = [
     "Task.countTooLate",
     "Task.countOnTime",
@@ -174,7 +187,6 @@ const BarChartRenderer = ({ resultSet, pivotConfig }) => {
     () => resultSet.series().filter(s => isVisible(s)),
     [resultSet])
 
-
   const data = {
     labels: resultSet.categories().map((c) => formatDayDimension(c.x)),
     datasets,
@@ -210,65 +222,42 @@ const BarChartRenderer = ({ resultSet, pivotConfig }) => {
   return <Bar type="bar" data={data} options={options} />;
 };
 
-const renderChart = ({ resultSet, error, pivotConfig }) => {
+const ChartRenderer = ({ dateRange, tags }) => {
+
+  const { resultSet, isLoading, error } = useCubeQuery({
+    "measures": [
+      "Task.countTooLate",
+      "Task.countOnTime",
+      "Task.countTooEarly",
+      "Task.countDone",
+    ],
+    "timeDimensions": [
+      {
+        "dimension": "Task.intervalEndAt",
+        "granularity": "week",
+        "dateRange": getCubeDateRange(dateRange)
+      }
+    ],
+    "order": {
+      "Task.type": "desc"
+    },
+    "filters": getTasksFilters(tags),
+    "dimensions": [
+      "Task.type"
+    ],
+    "limit": 5000,
+    "segments": []
+  });
+
   if (error) {
     return <div>{error.toString()}</div>;
   }
 
-  if (!resultSet) {
+  if (isLoading || !resultSet) {
     return <Spin />;
   }
 
-  return <BarChartRenderer resultSet={resultSet} pivotConfig={pivotConfig} />;
-
-};
-
-const ChartRenderer = ({ cubejsApi, dateRange, tags }) => {
-  return (
-  <QueryRenderer
-    query={{
-      "measures": [
-        "Task.countTooLate",
-        "Task.countOnTime",
-        "Task.countTooEarly",
-        "Task.countDone",
-      ],
-      "timeDimensions": [
-        {
-          "dimension": "Task.intervalEndAt",
-          "granularity": "week",
-          "dateRange": getCubeDateRange(dateRange)
-        }
-      ],
-      "order": {
-        "Task.type": "desc"
-      },
-      "filters": getTasksFilters(tags),
-      "dimensions": [
-        "Task.type"
-      ],
-      "limit": 5000,
-      "segments": []
-    }}
-    cubejsApi={cubejsApi}
-    resetResultSetOnChange={false}
-    render={(props) => renderChart({
-      ...props,
-      chartType: 'bar',
-      pivotConfig: {
-        "x": [
-          "Task.intervalEndAt.day",
-        ],
-        "y": [
-          "Task.type",
-          "measures"
-        ],
-        "fillMissingDates": true,
-        "joinDateRange": false
-      }
-    })}
-  />
-  );
+  return <BarChartRenderer resultSet={resultSet} />;
 };
 
 export default ChartRenderer

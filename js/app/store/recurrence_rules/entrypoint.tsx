@@ -10,7 +10,10 @@ import { Mode } from '../../components/delivery-form/mode';
 import { formSlice } from '../../components/delivery-form/redux/formSlice';
 import { AppRootWithDefaults } from '../../utils/react';
 import FlagsContext from '../../components/delivery-form/FlagsContext';
+import UploadContext from '../../components/delivery-form/UploadContext';
 
+import '@uppy/core/css/style.min.css';
+import '@uppy/dashboard/css/style.min.css';
 import '../../bootstrap-reset.scss';
 import { UserContext } from '../../UserContext';
 
@@ -43,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const isDebugPricing = container.dataset.isDebugPricing === 'true';
     const isPriceBreakdownEnabled =
       container.dataset.isPriceBreakdownEnabled === 'true';
+    const documentUploadEndpoint = container.dataset.documentUploadEndpoint;
 
     Modal.setAppElement('.content');
 
@@ -53,14 +57,16 @@ document.addEventListener('DOMContentLoaded', () => {
           <UserContext.Provider value={{ isDispatcher }}>
             <FlagsContext.Provider
               value={{ isDebugPricing, isPriceBreakdownEnabled }}>
-              <DeliveryForm
-                storeNodeId={storeNodeId}
-                //FIXME; might lead to bugs
-                deliveryId={recurrenceRuleId}
-                //FIXME; might lead to bugs
-                deliveryNodeId={recurrenceRuleNodeId}
-                preLoadedFormData={preLoadedFormData}
-              />
+              <UploadContext.Provider value={{ endpoint: documentUploadEndpoint }}>
+                <DeliveryForm
+                  storeNodeId={storeNodeId}
+                  //FIXME; might lead to bugs
+                  deliveryId={recurrenceRuleId}
+                  //FIXME; might lead to bugs
+                  deliveryNodeId={recurrenceRuleNodeId}
+                  preLoadedFormData={preLoadedFormData}
+                />
+              </UploadContext.Provider>
             </FlagsContext.Provider>
           </UserContext.Provider>
         </Provider>

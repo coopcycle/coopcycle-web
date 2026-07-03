@@ -3,8 +3,9 @@ import { createRoot } from 'react-dom/client'
 import cubejs from '@cubejs-client/core';
 import { QueryRenderer } from '@cubejs-client/react';
 import { Spin, DatePicker, Select } from 'antd';
-import 'chart.js/auto'; // ideally we should only import the component that we need: https://react-chartjs-2.js.org/docs/migration-to-v4/#tree-shaking
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, Legend } from 'chart.js'
 import { Bar } from 'react-chartjs-2';
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend)
 import moment from 'moment'
 
 import './index.scss'
@@ -19,7 +20,9 @@ const rootElement = document.getElementById('cubejs');
 
 if (rootElement) {
 
-  const cubejsApi = cubejs(
+
+
+  const cubeApi = cubejs(
     rootElement.dataset.token,
     { apiUrl: rootElement.dataset.apiUrl }
   );
@@ -79,7 +82,7 @@ if (rootElement) {
             }
           ]
         }}
-        cubejsApi={cubejsApi}
+        cubeApi={cubeApi}
         resetResultSetOnChange={false}
         render={(props) => renderChart({
           ...props,
