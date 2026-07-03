@@ -85,13 +85,13 @@ export default function PlanningGrid({
           </div>
         ))}
 
-        <div className="shift-planning__row-label">
+        <div className="shift-planning__row-label shift-planning__row-label--open-slots">
           <span>{t('SHIFT_PLANNING_OPEN_SLOTS')}</span>
         </div>
         {days.map(day => (
           <div
             key={day.format('YYYY-MM-DD')}
-            className="shift-planning__cell shift-planning__cell--clickable"
+            className="shift-planning__cell shift-planning__cell--clickable shift-planning__cell--open-slots"
             onClick={() => onCreate(day)}>
             {openShifts.filter(s => shiftIsOnDay(s, day)).map(shift => (
               <OpenSlotCard key={shift['@id']} shift={shift} onClick={onEdit} />

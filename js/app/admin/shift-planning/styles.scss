@@ -48,6 +48,24 @@
     background: #fafafa;
   }
 
+  // The "Open slots" row is a summary of unfilled shifts,
+  // set apart from the per-rider rows below it
+  &__row-label--open-slots {
+    background: #eef2f8;
+    font-style: italic;
+    color: rgba(0, 0, 0, 0.6);
+    border-bottom: 2px solid #d0d7e2;
+  }
+
+  &__cell--open-slots {
+    background: #f6f8fc;
+    border-bottom: 2px solid #d0d7e2;
+
+    &.shift-planning__cell--clickable:hover {
+      background: #eef2f8;
+    }
+  }
+
   &__user {
     display: flex;
     align-items: center;
