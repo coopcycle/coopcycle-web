@@ -614,6 +614,8 @@ export type PaymentMethodsOutput = {
 export type PlanningUser = JsonLdEntity & {
   username: string;
   roles?: string[];
+  givenName?: string | null;
+  familyName?: string | null;
 };
 
 export type ShiftAssignment = {

@@ -5,6 +5,7 @@ import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { HolidayRequest, PlanningUser, Shift, Uri } from '../../../api/types';
+import Avatar from '../../../components/Avatar';
 import ShiftCard from './ShiftCard';
 import OpenSlotCard from './OpenSlotCard';
 import HolidayBar from './HolidayBar';
@@ -108,10 +109,24 @@ export default function PlanningGrid({
           );
           const hasShifts = userShifts.length > 0;
 
+          const fullName = [user.givenName, user.familyName]
+            .filter(Boolean)
+            .join(' ');
+
           return (
             <React.Fragment key={user['@id']}>
               <div className="shift-planning__row-label">
-                <span>{user.username}</span>
+                <span className="shift-planning__user">
+                  <Avatar username={user.username} size="24" />
+                  <span className="shift-planning__user-names">
+                    <span>{user.username}</span>
+                    {fullName && (
+                      <span className="shift-planning__user-fullname">
+                        {fullName}
+                      </span>
+                    )}
+                  </span>
+                </span>
                 <Button
                   type="text"
                   size="small"
