@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { Provider } from 'react-redux';
 import { Badge, Button, Space, Spin } from 'antd';
 import { CarryOutOutlined } from '@ant-design/icons';
+import { useHotkey } from '@tanstack/react-hotkeys';
 import dayjs, { Dayjs } from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import { useTranslation } from 'react-i18next';
@@ -17,6 +18,9 @@ import PlanningGrid from './components/PlanningGrid';
 import ShiftModal, { ShiftModalState } from './components/ShiftModal';
 import HolidayRequestsDrawer from './components/HolidayRequestsDrawer';
 import CopyWeekButton from './components/CopyWeekButton';
+import ShiftTypeFilter, {
+  ShiftTypeFilterHandle,
+} from './components/ShiftTypeFilter';
 
 dayjs.extend(isoWeek);
 
@@ -32,6 +36,10 @@ const Planning = ({ shiftTypes }: Props) => {
   );
   const [modalState, setModalState] = useState<ShiftModalState>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [typeFilter, setTypeFilter] = useState<string[]>([]);
+
+  const typeFilterRef = useRef<ShiftTypeFilterHandle>(null);
+  useHotkey('Mod+F', () => typeFilterRef.current?.focus());
 
   const after = weekStart.format('YYYY-MM-DD');
   const before = weekStart.add(6, 'day').format('YYYY-MM-DD');
@@ -58,6 +66,17 @@ const Planning = ({ shiftTypes }: Props) => {
   const { data: reviewHolidaysData } = useGetHolidayRequestsQuery(reviewRange);
 
   const shifts = shiftsData?.['hydra:member'] ?? [];
+
+  // Filtered shifts drive what the grid shows (cards + which rider rows appear);
+  // the unfiltered `shifts` stay available to the modal for conflict detection
+  const filteredShifts = useMemo(
+    () =>
+      typeFilter.length === 0
+        ? shifts
+        : shifts.filter(s => typeFilter.includes(s.type)),
+    [shifts, typeFilter],
+  );
+
   const weekHolidays = weekHolidaysData?.['hydra:member'] ?? [];
   const reviewHolidays = reviewHolidaysData?.['hydra:member'] ?? [];
   const pendingCount = reviewHolidays.filter(
@@ -77,8 +96,10 @@ const Planning = ({ shiftTypes }: Props) => {
 
   const shiftUserUris = useMemo(
     () =>
-      new Set(shifts.flatMap(s => s.assignments.map(a => a.user['@id']))),
-    [shifts],
+      new Set(
+        filteredShifts.flatMap(s => s.assignments.map(a => a.user['@id'])),
+      ),
+    [filteredShifts],
   );
   const holidayUserUris = useMemo(
     () => new Set(weekHolidays.map(h => h.user['@id'])),
@@ -113,7 +134,15 @@ const Planning = ({ shiftTypes }: Props) => {
   return (
     <div className="shift-planning">
       <div className="shift-planning__toolbar">
-        <WeekNavigator value={weekStart} onChange={setWeekStart} />
+        <Space>
+          <WeekNavigator value={weekStart} onChange={setWeekStart} />
+          <ShiftTypeFilter
+            ref={typeFilterRef}
+            shiftTypes={shiftTypes}
+            value={typeFilter}
+            onChange={setTypeFilter}
+          />
+        </Space>
         <Space>
           <Badge count={pendingCount}>
             <Button
@@ -133,7 +162,7 @@ const Planning = ({ shiftTypes }: Props) => {
       <Spin spinning={isFetching}>
         <PlanningGrid
           weekStart={weekStart}
-          shifts={shifts}
+          shifts={filteredShifts}
           holidayRequests={weekHolidays}
           users={visibleUsers}
           allUsers={sortedUsers}

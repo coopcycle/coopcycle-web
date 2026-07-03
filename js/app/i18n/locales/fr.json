@@ -911,6 +911,7 @@
         "SHIFT_PLANNING_SLOTS_TO_FILL": "{{count}} place à pourvoir",
         "SHIFT_PLANNING_SLOTS_TO_FILL_plural": "{{count}} places à pourvoir",
         "SHIFT_PLANNING_WEEK_LABEL": "Semaine {{week}} - {{year}}",
+        "SHIFT_PLANNING_FILTER_TYPE": "Filtrer par type",
         "ADMIN_DASHBOARD_TAG_TASKS": "Modifier les tags",
         "CREATE_CREDIT_NOTE": "Créer un avoir commercial",
         "REFUND": "Rembourser",

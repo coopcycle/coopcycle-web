@@ -939,6 +939,7 @@
         "SHIFT_PLANNING_OVERSTAFFED": "You are assigning {{assigned}} people to a shift that needs {{slots}}",
         "SHIFT_PLANNING_SLOTS_TO_FILL": "{{count}} slot to fill",
         "SHIFT_PLANNING_SLOTS_TO_FILL_plural": "{{count}} slots to fill",
-        "SHIFT_PLANNING_WEEK_LABEL": "Week {{week}} - {{year}}"
+        "SHIFT_PLANNING_WEEK_LABEL": "Week {{week}} - {{year}}",
+        "SHIFT_PLANNING_FILTER_TYPE": "Filter by type"
       }
 }
