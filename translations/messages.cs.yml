@@ -1341,6 +1341,7 @@ delivery.failure_reason:
     closed_store: Uzavřený obchod
     address_review_needed: Nutná kontrola adresy
     not_at_home: Zákazník není doma
+    price_review_needed: Nutná kontrola ceny
   transporter:
     reason:
       ava: Poškozeno
