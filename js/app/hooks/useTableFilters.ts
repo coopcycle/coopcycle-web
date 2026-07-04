@@ -25,6 +25,7 @@ interface UseTableFiltersConfig {
   single?: string[];
   multiple?: SimpleFilter[];
   iriMappings?: IriFilter[];
+  initialFilters?: Record<string, string[]>;
 }
 
 interface TableFilters {
@@ -41,7 +42,9 @@ interface OnChangeProps {
 }
 
 export function useTableFilters(config: UseTableFiltersConfig) {
-  const [filters, setFilters] = useState<Record<string, string[]>>({});
+  const [filters, setFilters] = useState<Record<string, string[]>>(
+    config.initialFilters || {},
+  );
   const [page, setPage] = useState(1);
 
   const onChange = useCallback(
@@ -125,6 +128,7 @@ export function useTableFilters(config: UseTableFiltersConfig) {
 
   return {
     filters,
+    setFilters,
     searchParams,
     onChange,
     page,

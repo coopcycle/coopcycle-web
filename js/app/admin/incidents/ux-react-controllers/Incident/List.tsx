@@ -1,5 +1,15 @@
 import React, { useMemo, useState } from 'react';
-import { Table, Tag, Avatar, Row, Col, Badge, Tooltip, Space } from 'antd';
+import {
+  Table,
+  Tag,
+  Avatar,
+  Row,
+  Col,
+  Badge,
+  Tooltip,
+  Space,
+  Checkbox,
+} from 'antd';
 import IncidentItem from './IncidentItem';
 import { useTranslation } from 'react-i18next';
 import { moment } from '../../../../../shared';
@@ -83,22 +93,24 @@ function List() {
 
   const { data: filtersData } = useGetIncidentFiltersQuery();
 
-  const { searchParams, onChange, page, setPage } = useTableFilters({
-    single: ['status', 'priority'],
-    iriMappings: [
-      {
-        columnKey: 'context',
-        mappings: [
-          { iriPrefix: '/api/stores/', paramKey: 'store' },
-          { iriPrefix: '/api/restaurants/', paramKey: 'restaurant' },
-        ],
-      },
-    ],
-    multiple: [
-      { columnKey: 'customer', paramKey: 'customer' },
-      { columnKey: 'createdBy', paramKey: 'createdBy' },
-    ],
-  });
+  const { filters, setFilters, searchParams, onChange, page, setPage } =
+    useTableFilters({
+      single: ['status', 'priority'],
+      initialFilters: { status: ['OPEN'] },
+      iriMappings: [
+        {
+          columnKey: 'context',
+          mappings: [
+            { iriPrefix: '/api/stores/', paramKey: 'store' },
+            { iriPrefix: '/api/restaurants/', paramKey: 'restaurant' },
+          ],
+        },
+      ],
+      multiple: [
+        { columnKey: 'customer', paramKey: 'customer' },
+        { columnKey: 'createdBy', paramKey: 'createdBy' },
+      ],
+    });
 
   const [activePreset, setActivePreset] = useState<string | null>(null);
 
@@ -120,6 +132,22 @@ function List() {
 
   const togglePreset = (key: string) => {
     setActivePreset(prev => (prev === key ? null : key));
+    setPage(1);
+  };
+
+  const [showClosed, setShowClosed] = useState(false);
+
+  const toggleShowClosed = (checked: boolean) => {
+    setShowClosed(checked);
+    setFilters(prev => {
+      const next = { ...prev };
+      if (checked) {
+        delete next.status;
+      } else {
+        next.status = ['OPEN'];
+      }
+      return next;
+    });
     setPage(1);
   };
 
@@ -175,6 +203,11 @@ function List() {
     [filtersData],
   );
 
+  const contextFilteredValue = [
+    ...(filters['store[]'] || []),
+    ...(filters['restaurant[]'] || []),
+  ];
+
   const columns = [
     {
       title: t('TITLE'),
@@ -190,6 +223,7 @@ function List() {
         { text: t('MEDIUM'), value: 'MEDIUM' },
         { text: t('HIGH'), value: 'HIGH' },
       ],
+      filteredValue: filters.priority || null,
       sorter: true,
       render: (priority: number) => {
         const { text, status } = _showPriority(priority);
@@ -204,6 +238,7 @@ function List() {
         { text: t('OPEN'), value: 'OPEN' },
         { text: t('CLOSED'), value: 'CLOSED' },
       ],
+      filteredValue: filters.status || null,
       render: (text: string) => (
         <Tag color={text === 'OPEN' ? 'green' : 'red'}>{text}</Tag>
       ),
@@ -214,6 +249,7 @@ function List() {
       filters: contextFilters,
       filterSearch: true,
       filterMode: 'tree' as const,
+      filteredValue: contextFilteredValue.length > 0 ? contextFilteredValue : null,
       render: _statusCtx,
     },
     {
@@ -221,6 +257,7 @@ function List() {
       dataIndex: ['order', 'customer', 'username'],
       filters: customerFilters,
       filterSearch: true,
+      filteredValue: filters['customer[]'] || null,
       key: 'customer',
     },
     {
@@ -229,6 +266,7 @@ function List() {
       key: 'createdBy',
       filters: authorFilters,
       filterSearch: true,
+      filteredValue: filters['createdBy[]'] || null,
       render: ({ username }: { username: string }) => (
         <>
           <Avatar
@@ -274,6 +312,13 @@ function List() {
           </Tag.CheckableTag>
         ))}
       </Space>
+      <div style={{ marginBottom: 16 }}>
+        <Checkbox
+          checked={showClosed}
+          onChange={e => toggleShowClosed(e.target.checked)}>
+          {t('SHOW_CLOSED_INCIDENTS')}
+        </Checkbox>
+      </div>
       <Table
         columns={columns}
         loading={isFetching}
