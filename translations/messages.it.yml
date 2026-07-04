@@ -1271,6 +1271,7 @@ delivery.failure_reason:
     packaging_problems: "Problemi di imballaggio"
     holiday_closure: "Chiusura per festività"
     closed_store: "Negozio chiuso"
+    price_review_needed: "Verifica del prezzo necessaria"
 adminDashboard.failureSet.title: "Motivi di Fallimento"
 adminDashboard.failureSet.help: "Imposta i motivi per cui le tue consegne possono fallire."
 adminDashboard.failureSet.nofailureSet: "Nessun motivo di fallimento"

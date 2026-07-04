@@ -8,8 +8,15 @@ use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\ApiProperty;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Metadata\ApiFilter;
+use AppBundle\Api\Filter\IncidentFilter;
 use AppBundle\Api\Dto\IncidentMetadataInput;
 use AppBundle\Api\State\AddIncidentMetadataProcessor;
+use AppBundle\Api\State\IncidentFiltersProvider;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Task;
@@ -17,14 +24,22 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use AppBundle\Action\Incident\CreateComment;
 use AppBundle\Action\Incident\IncidentAction;
-use AppBundle\Action\Incident\IncidentFastList;
 use AppBundle\Action\Incident\CreateIncident;
 use AppBundle\Validator\Constraints as AppAssert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ApiFilter(IncidentFilter::class, properties: ['status', 'priority', 'failureReasonCode', 'store', 'restaurant', 'customer', 'createdBy'])]
+#[ApiFilter(OrderFilter::class, properties: ['createdAt', 'priority'])]
+#[ApiFilter(DateFilter::class, properties: ['createdAt'])]
 #[ApiResource(
     operations: [
+        new GetCollection(
+            uriTemplate: '/incidents/filters',
+            security: 'is_granted("ROLE_DISPATCHER")',
+            provider: IncidentFiltersProvider::class,
+            serialize: false
+        ),
         new Get(security: 'is_granted("view", object)'),
         new Patch(security: 'is_granted("ROLE_COURIER")'),
         new Put(security: 'is_granted("ROLE_COURIER")'),
@@ -39,8 +54,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
             security: 'is_granted("ROLE_COURIER")'
         ),
         new GetCollection(
-            controller: IncidentFastList::class,
-            security: 'is_granted("ROLE_COURIER")'
+            security: 'is_granted("ROLE_COURIER")',
+            order: ['id' => 'DESC']
         ),
         new Post(
             controller: CreateIncident::class,
@@ -53,7 +68,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
             security: 'is_granted("ROLE_COURIER")',
             denormalizationContext: ['groups' => ['incident']],
             status: 200,
-        )
+        ),
     ],
     normalizationContext: ['groups' => ['incident']]
 )]
