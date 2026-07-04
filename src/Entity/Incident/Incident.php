@@ -16,6 +16,7 @@ use ApiPlatform\Metadata\ApiFilter;
 use AppBundle\Api\Filter\IncidentFilter;
 use AppBundle\Api\Dto\IncidentMetadataInput;
 use AppBundle\Api\State\AddIncidentMetadataProcessor;
+use AppBundle\Api\State\IncidentFiltersProvider;
 use AppBundle\Entity\Model\TaggableInterface;
 use AppBundle\Entity\Model\TaggableTrait;
 use AppBundle\Entity\Task;
@@ -23,7 +24,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use AppBundle\Action\Incident\CreateComment;
 use AppBundle\Action\Incident\IncidentAction;
-use AppBundle\Action\Incident\IncidentFastList;
 use AppBundle\Action\Incident\CreateIncident;
 use AppBundle\Validator\Constraints as AppAssert;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -37,7 +37,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         new GetCollection(
             uriTemplate: '/incidents/filters',
             security: 'is_granted("ROLE_DISPATCHER")',
-            controller: IncidentFastList::class,
+            provider: IncidentFiltersProvider::class,
             serialize: false
         ),
         new Get(security: 'is_granted("view", object)'),
