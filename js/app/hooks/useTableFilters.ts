@@ -80,10 +80,14 @@ export function useTableFilters(config: UseTableFiltersConfig) {
           if (config.multiple) {
             config.multiple.forEach(({ columnKey, paramKey }) => {
               const values = tableFilters[columnKey] as string[] | undefined;
+              // PHP/Symfony only builds an array from repeated query params
+              // when the key ends in `[]` — without it, `key=a&key=b` collapses
+              // to the last value, silently dropping the rest.
+              const key = `${paramKey}[]`;
               if (values && values.length > 0) {
-                newFilters[paramKey] = values;
+                newFilters[key] = values;
               } else {
-                delete newFilters[paramKey];
+                delete newFilters[key];
               }
             });
           }
@@ -94,15 +98,16 @@ export function useTableFilters(config: UseTableFiltersConfig) {
               if (values && values.length > 0) {
                 mappings.forEach(({ iriPrefix, paramKey }) => {
                   const matchingValues = parseIriFilter(values, iriPrefix);
+                  const key = `${paramKey}[]`;
                   if (matchingValues.length > 0) {
-                    newFilters[paramKey] = matchingValues;
+                    newFilters[key] = matchingValues;
                   } else {
-                    delete newFilters[paramKey];
+                    delete newFilters[key];
                   }
                 });
               } else {
                 mappings.forEach(({ paramKey }) => {
-                  delete newFilters[paramKey];
+                  delete newFilters[`${paramKey}[]`];
                 });
               }
             });

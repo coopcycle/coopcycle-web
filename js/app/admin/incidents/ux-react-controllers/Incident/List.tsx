@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Table, Tag, Avatar, Row, Col, Badge, Tooltip } from 'antd';
+import { Table, Tag, Avatar, Row, Col, Badge, Tooltip, Space } from 'antd';
 import IncidentItem from './IncidentItem';
 import { useTranslation } from 'react-i18next';
 import { moment } from '../../../../../shared';
@@ -8,9 +8,37 @@ import {
   useGetIncidentFiltersQuery,
 } from '../../../../api/slice';
 import { useTableFilters } from '../../../../hooks/useTableFilters';
-import { toFilterOptions } from '../../../../utils/filter';
+import { toFilterOptions, buildSearchParams } from '../../../../utils/filter';
 import { storeToIri, restaurantToIri, userToIri } from '../../../../utils/iri';
 import { connectWithRedux } from './store';
+
+const INCIDENT_PRESETS = [
+  {
+    key: 'price_review_needed',
+    label: 'INCIDENT_PRESET_PRICE_REVIEW_NEEDED',
+    failureReasonCode: ['PRICE_REVIEW_NEEDED'],
+  },
+  {
+    key: 'refund_needed',
+    label: 'INCIDENT_PRESET_REFUND_NEEDED',
+    failureReasonCode: ['DAMAGED', 'ITEM_MISSING', 'INCORRECT_ITEM'],
+  },
+  {
+    key: 'address_review_needed',
+    label: 'INCIDENT_PRESET_ADDRESS_REVIEW_NEEDED',
+    failureReasonCode: ['ADDRESS_REVIEW_NEEDED'],
+  },
+  {
+    key: 'store_unavailable',
+    label: 'INCIDENT_PRESET_STORE_UNAVAILABLE',
+    failureReasonCode: ['CLOSED_STORE', 'HOLIDAY'],
+  },
+  {
+    key: 'delivery_delays',
+    label: 'INCIDENT_PRESET_DELIVERY_DELAYS',
+    failureReasonCode: ['TRAFFIC', 'ROUTE_ISSUE', 'VEHICLE_BREAKDOWN', 'WEATHER'],
+  },
+];
 
 function _showPriority(priority: number) {
   switch (priority) {
@@ -72,7 +100,16 @@ function List() {
     ],
   });
 
-  const params = searchParams ? [searchParams] : [];
+  const [activePreset, setActivePreset] = useState<string | null>(null);
+
+  const presetParams = useMemo(() => {
+    const preset = INCIDENT_PRESETS.find(p => p.key === activePreset);
+    return preset
+      ? buildSearchParams({ 'failureReasonCode[]': preset.failureReasonCode })
+      : '';
+  }, [activePreset]);
+
+  const params = [searchParams, presetParams].filter(Boolean);
 
   const { data: incidentsData, isFetching } = useGetIncidentsQuery({
     page,
@@ -80,6 +117,11 @@ function List() {
     params,
   });
   const incidents = incidentsData?.['hydra:member'];
+
+  const togglePreset = (key: string) => {
+    setActivePreset(prev => (prev === key ? null : key));
+    setPage(1);
+  };
 
   const storeFilters = useMemo(
     () =>
@@ -221,33 +263,45 @@ function List() {
   ];
 
   return (
-    <Table
-      columns={columns}
-      loading={isFetching}
-      dataSource={incidents}
-      onChange={onChange}
-      pagination={{
-        current: page,
-        pageSize,
-        total: incidentsData?.['hydra:totalItems'] || 0,
-        onChange: (newPage: number, newPageSize: number) => {
-          setPage(newPage);
-          setPageSize(newPageSize);
-        },
-        showSizeChanger: true,
-      }}
-      expandedRowRender={record => (
-        <Row gutter={[16, 16]}>
-          <Col span={18}>
-            <p>{record.description}</p>
-          </Col>
-          <Col span={6}>
-            <IncidentItem task={record.task} />
-          </Col>
-        </Row>
-      )}
-      rowKey="id"
-    />
+    <>
+      <Space wrap style={{ marginBottom: 16 }}>
+        {INCIDENT_PRESETS.map(preset => (
+          <Tag.CheckableTag
+            key={preset.key}
+            checked={activePreset === preset.key}
+            onChange={() => togglePreset(preset.key)}>
+            {t(preset.label)}
+          </Tag.CheckableTag>
+        ))}
+      </Space>
+      <Table
+        columns={columns}
+        loading={isFetching}
+        dataSource={incidents}
+        onChange={onChange}
+        pagination={{
+          current: page,
+          pageSize,
+          total: incidentsData?.['hydra:totalItems'] || 0,
+          onChange: (newPage: number, newPageSize: number) => {
+            setPage(newPage);
+            setPageSize(newPageSize);
+          },
+          showSizeChanger: true,
+        }}
+        expandedRowRender={record => (
+          <Row gutter={[16, 16]}>
+            <Col span={18}>
+              <p>{record.description}</p>
+            </Col>
+            <Col span={6}>
+              <IncidentItem task={record.task} />
+            </Col>
+          </Row>
+        )}
+        rowKey="id"
+      />
+    </>
   );
 }
 

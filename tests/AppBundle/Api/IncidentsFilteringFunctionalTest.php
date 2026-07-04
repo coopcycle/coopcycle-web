@@ -110,6 +110,62 @@ class IncidentsFilteringFunctionalTest extends ApiTestCase
         $this->assertSame(0, $response->toArray()['hydra:totalItems']);
     }
 
+    public function testFailureReasonCodeFilterSupportsMultipleValues(): void
+    {
+        $userManipulator = self::getContainer()->get(UserManipulator::class);
+        $userManager = self::getContainer()->get(UserManagerInterface::class);
+        $jwtManager = self::getContainer()->get(JWTTokenManagerInterface::class);
+        $fixturesLoader = self::getContainer()->get('fidry_alice_data_fixtures.loader.doctrine');
+
+        $fixturesLoader->load([
+            __DIR__.'/../../../fixtures/ORM/tasks.yml',
+        ]);
+
+        $userManipulator->create('dispatcher', 'password123', 'dispatcher@coopcycle.org', true, false);
+        $userManipulator->addRole('dispatcher', 'ROLE_DISPATCHER');
+        $dispatcher = $userManager->findUserByUsername('dispatcher');
+
+        $task1 = $this->entityManager->getRepository(\AppBundle\Entity\Task::class)->find(1);
+        $task2 = $this->entityManager->getRepository(\AppBundle\Entity\Task::class)->find(2);
+
+        $damaged = new Incident();
+        $damaged->setTask($task1);
+        $damaged->setTitle('Damaged');
+        $damaged->setFailureReasonCode('DAMAGED');
+        $damaged->setCreatedBy($dispatcher);
+
+        $priceReview = new Incident();
+        $priceReview->setTask($task2);
+        $priceReview->setTitle('Price review');
+        $priceReview->setFailureReasonCode('PRICE_REVIEW_NEEDED');
+        $priceReview->setCreatedBy($dispatcher);
+
+        $this->entityManager->persist($damaged);
+        $this->entityManager->persist($priceReview);
+        $this->entityManager->flush();
+
+        $token = $jwtManager->create($dispatcher);
+        $client = static::createClient(defaultOptions: [
+            'headers' => [
+                'authorization' => 'Bearer '.$token,
+            ],
+        ]);
+
+        // Repeated bare keys (failureReasonCode=A&failureReasonCode=B) collapse to the
+        // last value in PHP's query parser — the `[]` suffix is required for an array.
+        $response = $client->request('GET', '/api/incidents?failureReasonCode[]=DAMAGED&failureReasonCode[]=ITEM_MISSING&failureReasonCode[]=INCORRECT_ITEM');
+        $this->assertResponseStatusCodeSame(200);
+        $data = $response->toArray();
+        $this->assertSame(1, $data['hydra:totalItems']);
+        $this->assertSame($damaged->getId(), $data['hydra:member'][0]['id']);
+
+        $response = $client->request('GET', '/api/incidents?failureReasonCode[]=PRICE_REVIEW_NEEDED');
+        $this->assertResponseStatusCodeSame(200);
+        $data = $response->toArray();
+        $this->assertSame(1, $data['hydra:totalItems']);
+        $this->assertSame($priceReview->getId(), $data['hydra:member'][0]['id']);
+    }
+
     public function testFiltersEndpointRequiresDispatcherRole(): void
     {
         $userManipulator = self::getContainer()->get(UserManipulator::class);

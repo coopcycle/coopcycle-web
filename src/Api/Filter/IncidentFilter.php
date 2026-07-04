@@ -44,6 +44,7 @@ final class IncidentFilter extends AbstractFilter
         match ($property) {
             'status' => $this->addStringFilter($queryBuilder, $property, $queryNameGenerator->generateParameterName($property), $value),
             'priority' => $this->addPriorityFilter($queryBuilder, $queryNameGenerator, $value),
+            'failureReasonCode' => $this->addInFilter($queryBuilder, 'failureReasonCode', $queryNameGenerator->generateParameterName('failureReasonCode'), $values),
             'store' => $this->storeIri = array_merge($this->storeIri, $values),
             'restaurant' => $this->restaurantIri = array_merge($this->restaurantIri, $values),
             'customer' => $this->customerIri = array_merge($this->customerIri, $values),
@@ -137,6 +138,12 @@ final class IncidentFilter extends AbstractFilter
         $queryBuilder->setParameter($parameterName, $entities);
     }
 
+    private function addInFilter(QueryBuilder $queryBuilder, string $property, string $parameterName, array $values): void
+    {
+        $queryBuilder->andWhere(sprintf('o.%s IN (:%s)', $property, $parameterName));
+        $queryBuilder->setParameter($parameterName, $values);
+    }
+
     private function irisToEntities(array $iris): array
     {
         return array_map(fn($iri) => $this->iriConverter->getResourceFromIri($iri), $iris);
@@ -153,6 +160,11 @@ final class IncidentFilter extends AbstractFilter
             'priority' => [
                 'property' => 'priority',
                 'type' => 'int',
+                'required' => false,
+            ],
+            'failureReasonCode' => [
+                'property' => 'failureReasonCode',
+                'type' => 'string',
                 'required' => false,
             ],
             'store' => [

@@ -29,7 +29,7 @@ use AppBundle\Validator\Constraints as AppAssert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-#[ApiFilter(IncidentFilter::class, properties: ['status', 'priority', 'store', 'restaurant', 'customer', 'createdBy'])]
+#[ApiFilter(IncidentFilter::class, properties: ['status', 'priority', 'failureReasonCode', 'store', 'restaurant', 'customer', 'createdBy'])]
 #[ApiFilter(OrderFilter::class, properties: ['createdAt', 'priority'])]
 #[ApiFilter(DateFilter::class, properties: ['createdAt'])]
 #[ApiResource(
