@@ -9,7 +9,9 @@ import {
   Tooltip,
   Space,
   Checkbox,
+  Button,
 } from 'antd';
+import { FilterOutlined } from '@ant-design/icons';
 import IncidentItem from './IncidentItem';
 import { useTranslation } from 'react-i18next';
 import { moment } from '../../../../../shared';
@@ -304,12 +306,13 @@ function List() {
     <>
       <Space wrap style={{ marginBottom: 16 }}>
         {INCIDENT_PRESETS.map(preset => (
-          <Tag.CheckableTag
+          <Button
             key={preset.key}
-            checked={activePreset === preset.key}
-            onChange={() => togglePreset(preset.key)}>
+            type={activePreset === preset.key ? 'primary' : 'dashed'}
+            icon={<FilterOutlined />}
+            onClick={() => togglePreset(preset.key)}>
             {t(preset.label)}
-          </Tag.CheckableTag>
+          </Button>
         ))}
       </Space>
       <div style={{ marginBottom: 16 }}>
