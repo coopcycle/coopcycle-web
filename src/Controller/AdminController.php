@@ -3167,7 +3167,7 @@ class AdminController extends AbstractController
             throw $this->createNotFoundException();
         }
 
-        $this->denyAccessUnlessGranted('ROLE_DISPATCHER');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
         return $this->render('admin/shift_planning.html.twig', $this->auth([
             'shift_types' => $this->getParameter('shift_types'),
