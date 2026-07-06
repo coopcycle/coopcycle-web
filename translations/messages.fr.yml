@@ -1375,6 +1375,7 @@ delivery.failure_reason:
     closed_store: "Magasin fermé"
     address_review_needed: "Nécessité d'un réexamen de l'adresse"
     not_at_home: "Client absent"
+    price_review_needed: "Nécessité d'un réexamen du prix"
 adminDashboard.failureSet.title: "Motifs d'échec"
 adminDashboard.failureSet.help: "Définissez les motifs pour lesquelles vos livraisons peuvent échouer."
 adminDashboard.failureSet.nofailureSet: "Aucun motif d'échec"

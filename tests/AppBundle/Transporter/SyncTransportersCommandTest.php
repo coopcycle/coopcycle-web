@@ -650,6 +650,21 @@ class SyncTransportersCommandTest extends KernelTestCase {
         );
         $this->assertNull($dropoffReportEDIMessage->getSyncedAt());
 
+        // LIV|CFM message starts with no PODs: nothing has attached PODs yet.
+        $this->assertEmpty($dropoffReportEDIMessage->getPods());
+
+        // Simulate the IncidentAction::createTransporterReport path: operator
+        // files a transporter report incident with POD URLs, which calls
+        // EDIFACTMessage::setPods() on the LIV|CFM message.
+        $dropoffReportEDIMessage->setPods(['https://urldetracking.com/monexpedition']);
+        $this->entityManager->flush();
+
+        // PODs are stored on the message and round-tripped through the DB.
+        $this->assertEquals(
+            ['https://urldetracking.com/monexpedition'],
+            $dropoffReportEDIMessage->getPods()
+        );
+
 
         $this->assertCount(0, $this->syncDBSchenkerFs->listContents(sprintf('from_%s', self::FS_MASK_DBS))->toArray());
         $this->assertCount(0, $this->syncOutBMVFs->listContents('/')->toArray());
@@ -681,6 +696,27 @@ class SyncTransportersCommandTest extends KernelTestCase {
                 $reportContent
             );
         }
+
+        // POD URL attached to the LIV|CFM report must be emitted as a COM segment
+        // in the EDIFACT file, following the COM+<url>:FT' format produced by
+        // EDI\Generator\Report::setPOD(). Note the `?:` escape: the URL
+        // contains a `:` (from `https://`) which the EDIFACT encoder prefixes
+        // with the release character `?` (default in UNA), yielding `https?://`.
+        $this->assertStringContainsString(
+            "COM+https?://urldetracking.com/monexpedition:FT'",
+            $reportContent
+        );
+
+        // After sync: reload the LIV|CFM message from DB and verify the
+        // post-sync state — syncedAt/edifactFile are populated, PODs persist
+        // (ReportFromCC::generateReport re-persists them).
+        $this->entityManager->refresh($dropoffReportEDIMessage);
+        $this->assertNotNull($dropoffReportEDIMessage->getSyncedAt());
+        $this->assertNotNull($dropoffReportEDIMessage->getEdiMessage());
+        $this->assertEquals(
+            ['https://urldetracking.com/monexpedition'],
+            $dropoffReportEDIMessage->getPods()
+        );
 
     }
 
@@ -809,6 +845,21 @@ class SyncTransportersCommandTest extends KernelTestCase {
         );
         $this->assertNull($dropoffReportEDIMessage->getSyncedAt());
 
+        // LIV|CFM message starts with no PODs: nothing has attached PODs yet.
+        $this->assertEmpty($dropoffReportEDIMessage->getPods());
+
+        // Simulate the IncidentAction::createTransporterReport path: operator
+        // files a transporter report incident with POD URLs, which calls
+        // EDIFACTMessage::setPods() on the LIV|CFM message.
+        $dropoffReportEDIMessage->setPods(['https://urldetracking.com/monexpedition']);
+        $this->entityManager->flush();
+
+        // PODs are stored on the message and round-tripped through the DB.
+        $this->assertEquals(
+            ['https://urldetracking.com/monexpedition'],
+            $dropoffReportEDIMessage->getPods()
+        );
+
 
         $this->assertCount(0, $this->syncDBSchenkerFs->listContents(sprintf('from_%s', self::FS_MASK_DBS))->toArray());
         $this->assertCount(0, $this->syncOutBMVFs->listContents('/')->toArray());
@@ -840,6 +891,27 @@ class SyncTransportersCommandTest extends KernelTestCase {
                 $reportContent
             );
         }
+
+        // POD URL attached to the LIV|CFM report must be emitted as a COM segment
+        // in the EDIFACT file, following the COM+<url>:FT' format produced by
+        // EDI\Generator\Report::setPOD(). Note the `?:` escape: the URL
+        // contains a `:` (from `https://`) which the EDIFACT encoder prefixes
+        // with the release character `?` (default in UNA), yielding `https?://`.
+        $this->assertStringContainsString(
+            "COM+https?://urldetracking.com/monexpedition:FT'",
+            $reportContent
+        );
+
+        // After sync: reload the LIV|CFM message from DB and verify the
+        // post-sync state — syncedAt/edifactFile are populated, PODs persist
+        // (ReportFromCC::generateReport re-persists them).
+        $this->entityManager->refresh($dropoffReportEDIMessage);
+        $this->assertNotNull($dropoffReportEDIMessage->getSyncedAt());
+        $this->assertNotNull($dropoffReportEDIMessage->getEdiMessage());
+        $this->assertEquals(
+            ['https://urldetracking.com/monexpedition'],
+            $dropoffReportEDIMessage->getPods()
+        );
 
     }
 

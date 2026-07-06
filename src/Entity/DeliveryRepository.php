@@ -160,4 +160,22 @@ class DeliveryRepository extends EntityRepository
             ->getResult();
     }
 
+    public function findByLoUri(string $loUri): ?Delivery
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = "SELECT DISTINCT d.id FROM delivery d
+            JOIN task_collection_item tci ON tci.parent = d.id
+            JOIN task t ON tci.task_id = t.id
+            WHERE t.metadata->>'rdc_lo_uri' = :loUri";
+
+        $result = $conn->executeQuery($sql, ['lo_uri' => $loUri])->fetchOne();
+
+        if ($result === false) {
+            return null;
+        }
+
+        return $this->find($result);
+    }
+
 }

@@ -218,3 +218,7 @@ services:
       - { name: 'console.command', command: 'coopcycle:paygreen:check-status' }
 
   AppBundle\Command\RecommenderTrainCommand: ~
+  
+  AppBundle\Command\DebugRdcGetCommand:
+    tags:
+      - { name: 'console.command', command: 'debug:rdc-get' }

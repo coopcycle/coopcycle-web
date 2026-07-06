@@ -326,7 +326,7 @@ export const apiSlice = createApi({
     }),
     incidentAction: builder.mutation<
       Incident,
-      { incidentId: number; action: string, diff?: number }
+      { incidentId: number; action: string; diff?: number }
     >({
       query: ({ incidentId, ...body }) => ({
         url: `api/incidents/${incidentId}/action`,
@@ -346,6 +346,29 @@ export const apiSlice = createApi({
       query: (taskUri: string) => `${taskUri}/incidents`,
       transformResponse: (response: HydraCollection<Incident>) =>
         response['hydra:member'],
+    }),
+    getIncidents: builder.query<
+      HydraCollection<Incident>,
+      { page: number; pageSize: number; params?: string[] }
+    >({
+      query: ({ page, pageSize, params = [] }) => ({
+        url: `api/incidents?${params.join('&')}`,
+        params: {
+          page,
+          itemsPerPage: pageSize,
+        },
+      }),
+    }),
+    getIncidentFilters: builder.query<
+      {
+        stores: { id: number; name: string }[];
+        restaurants: { id: number; name: string }[];
+        authors: { id: number; username: string }[];
+        customers: { id: number; username: string }[];
+      },
+      void
+    >({
+      query: () => 'api/incidents/filters',
     }),
     // TODO Add types
     updateShopCollection: builder.mutation({
@@ -558,6 +581,8 @@ export const {
   useGetUserQuery,
   useGetTaskEventsQuery,
   useGetTaskIncidentsQuery,
+  useGetIncidentsQuery,
+  useGetIncidentFiltersQuery,
   useUpdateShopCollectionMutation,
   useCreateShopCollectionMutation,
   useDeleteShopCollectionMutation,
