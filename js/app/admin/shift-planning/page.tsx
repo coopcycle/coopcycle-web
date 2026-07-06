@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Provider } from 'react-redux';
 import { Badge, Button, Space, Spin } from 'antd';
 import { CarryOutOutlined } from '@ant-design/icons';
@@ -24,6 +24,7 @@ import ShiftTypeFilter, {
 } from './components/ShiftTypeFilter';
 import ShiftSettingsModal from './components/ShiftSettingsModal';
 import GenerateScheduleButton from './components/GenerateScheduleButton';
+import { syncWeekToUrl, weekFromParams } from './utils/weekUrl';
 
 dayjs.extend(isoWeek);
 
@@ -34,12 +35,17 @@ type Props = {
 const Planning = ({ shiftTypes }: Props) => {
   const { t } = useTranslation();
 
-  const [weekStart, setWeekStart] = useState<Dayjs>(() =>
-    dayjs().startOf('isoWeek'),
+  const [weekStart, setWeekStart] = useState<Dayjs>(
+    () => weekFromParams(window.location.search) ?? dayjs().startOf('isoWeek'),
   );
   const [modalState, setModalState] = useState<ShiftModalState>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [typeFilter, setTypeFilter] = useState<string[]>([]);
+
+  // Keep the URL (?year=&week=) in sync so weeks are shareable/deep-linkable
+  useEffect(() => {
+    syncWeekToUrl(weekStart);
+  }, [weekStart]);
 
   const typeFilterRef = useRef<ShiftTypeFilterHandle>(null);
   useHotkey('Mod+F', () => typeFilterRef.current?.focus());
