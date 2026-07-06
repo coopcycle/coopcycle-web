@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { App, Button, ColorPicker, Modal, Space, Tooltip } from 'antd';
+import {
+  App,
+  Button,
+  ColorPicker,
+  Divider,
+  InputNumber,
+  Modal,
+  Slider,
+  Space,
+  Tooltip,
+} from 'antd';
 import { SettingOutlined, UndoOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import {
@@ -18,6 +28,8 @@ export default function ShiftSettingsModal({ shiftTypes }: Props) {
 
   const [open, setOpen] = useState(false);
   const [colors, setColors] = useState<Record<string, string>>({});
+  const [throughput, setThroughput] = useState<number>(2.5);
+  const [serviceLevel, setServiceLevel] = useState<number>(0.8);
 
   const { data } = useGetShiftSettingsQuery();
   const [putShiftSettings, { isLoading }] = usePutShiftSettingsMutation();
@@ -31,12 +43,20 @@ export default function ShiftSettingsModal({ shiftTypes }: Props) {
         seed[type] = shiftTypeColor(type, data?.typeColors);
       });
       setColors(seed);
+      if (data) {
+        setThroughput(data.throughput);
+        setServiceLevel(data.serviceLevel);
+      }
     }
   }, [open, shiftTypes, data]);
 
   const onSave = async () => {
     try {
-      await putShiftSettings({ typeColors: colors }).unwrap();
+      await putShiftSettings({
+        typeColors: colors,
+        throughput,
+        serviceLevel,
+      }).unwrap();
       message.success(t('SHIFT_PLANNING_SAVED'));
       setOpen(false);
     } catch (e) {
@@ -104,6 +124,40 @@ export default function ShiftSettingsModal({ shiftTypes }: Props) {
             </div>
           ))}
         </Space>
+
+        <Divider />
+
+        <p>{t('SHIFT_PLANNING_DEMAND_SETTINGS_HELP')}</p>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: 12,
+          }}>
+          <span>{t('SHIFT_PLANNING_THROUGHPUT')}</span>
+          <InputNumber
+            min={0.5}
+            max={20}
+            step={0.5}
+            value={throughput}
+            onChange={v => v != null && setThroughput(v)}
+            addonAfter={t('SHIFT_PLANNING_PER_HOUR')}
+          />
+        </div>
+        <div>
+          <span>
+            {t('SHIFT_PLANNING_SERVICE_LEVEL')}:{' '}
+            <strong>{Math.round(serviceLevel * 100)}%</strong>
+          </span>
+          <Slider
+            min={50}
+            max={99}
+            value={Math.round(serviceLevel * 100)}
+            onChange={v => setServiceLevel(v / 100)}
+            tooltip={{ formatter: v => `${v}%` }}
+          />
+        </div>
       </Modal>
     </>
   );

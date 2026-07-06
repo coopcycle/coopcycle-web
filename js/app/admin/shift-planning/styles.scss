@@ -226,3 +226,60 @@
     border-style: dashed;
   }
 }
+
+.schedule-suggestion {
+  &__legend {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.65);
+    margin-bottom: 8px;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+  }
+
+  &__swatch {
+    display: inline-block;
+    width: 14px;
+    height: 3px;
+    border-radius: 2px;
+
+    &--demand {
+      background: rgba(22, 119, 255, 0.5);
+      border-top: 2px solid #1677ff;
+    }
+
+    &--coverage {
+      background: #52c41a;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+
+  &__day {
+    border: 1px solid #f0f0f0;
+    border-radius: 6px;
+    padding: 8px;
+  }
+
+  &__day-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+    text-transform: capitalize;
+  }
+
+  &__chart {
+    height: 120px;
+  }
+}

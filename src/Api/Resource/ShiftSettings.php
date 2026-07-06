@@ -36,13 +36,21 @@ final class ShiftSettings
      * @var array<string, string>
      */
     #[Groups(['shift_settings'])]
-    public array $typeColors = [];
+    public array $typeColors;
+
+    #[Groups(['shift_settings'])]
+    public float $throughput;
+
+    #[Groups(['shift_settings'])]
+    public float $serviceLevel;
 
     /**
      * @param array<string, string> $typeColors
      */
-    public function __construct(array $typeColors = [])
+    public function __construct(array $typeColors = [], float $throughput = 0.0, float $serviceLevel = 0.0)
     {
         $this->typeColors = $typeColors;
+        $this->throughput = $throughput;
+        $this->serviceLevel = $serviceLevel;
     }
 }

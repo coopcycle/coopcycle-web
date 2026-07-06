@@ -678,8 +678,46 @@ export type CopyWeekRequest = {
 
 export type ShiftSettings = JsonLdEntity & {
   typeColors: Record<string, string>;
+  throughput: number;
+  serviceLevel: number;
 };
 
 export type PutShiftSettingsRequest = {
   typeColors: Record<string, string>;
+  throughput?: number;
+  serviceLevel?: number;
+};
+
+export type ProposedShift = {
+  type: string;
+  startsAt: string;
+  endsAt: string;
+  slots: number;
+};
+
+export type DemandBucket = {
+  hour: number;
+  demand: number;
+  coverage: number;
+};
+
+export type ScheduleDay = {
+  date: string;
+  dow: number;
+  buckets: DemandBucket[];
+};
+
+export type ShiftScheduleSuggestion = JsonLdEntity & {
+  shifts: ProposedShift[];
+  days: ScheduleDay[];
+  meta: {
+    lookbackWeeks: number;
+    serviceLevel: number;
+    throughput: number;
+    observations: number;
+  };
+};
+
+export type ShiftBatchResult = JsonLdEntity & {
+  created: number;
 };

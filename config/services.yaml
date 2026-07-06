@@ -779,9 +779,16 @@ services:
 
   AppBundle\Entity\TaskListRepository: ~
 
+  AppBundle\Entity\TaskRepository:
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - AppBundle\Entity\Task
+
   AppBundle\Entity\TourRepository: ~
 
   AppBundle\Entity\Task\RecurrenceRuleRepository: ~
+
+  AppBundle\Service\Shift\DemandForecaster: '@AppBundle\Service\Shift\HeuristicDemandForecaster'
 
   AppBundle\Service\Routing\Osrm: ~
 

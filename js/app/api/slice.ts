@@ -53,6 +53,9 @@ import {
   PlanningUser,
   ShiftSettings,
   PutShiftSettingsRequest,
+  ShiftScheduleSuggestion,
+  ShiftBatchResult,
+  ProposedShift,
 } from './types';
 
 // Define our single API slice object
@@ -489,6 +492,25 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['ShiftSettings'],
     }),
+
+    generateSchedule: builder.mutation<ShiftScheduleSuggestion, { week: string }>({
+      query: body => ({
+        url: 'api/shifts/generate_schedule',
+        method: 'POST',
+        body,
+      }),
+    }),
+    batchCreateShifts: builder.mutation<
+      ShiftBatchResult,
+      { shifts: ProposedShift[] }
+    >({
+      query: body => ({
+        url: 'api/shifts/batch',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Shift'],
+    }),
   }),
 });
 
@@ -546,4 +568,6 @@ export const {
   useGetPlanningUsersQuery,
   useGetShiftSettingsQuery,
   usePutShiftSettingsMutation,
+  useGenerateScheduleMutation,
+  useBatchCreateShiftsMutation,
 } = apiSlice;
