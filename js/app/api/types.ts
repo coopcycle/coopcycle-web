@@ -721,3 +721,7 @@ export type ShiftScheduleSuggestion = JsonLdEntity & {
 export type ShiftBatchResult = JsonLdEntity & {
   created: number;
 };
+
+export type ShiftDispatchSyncResult = JsonLdEntity & {
+  added: number;
+};

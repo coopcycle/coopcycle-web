@@ -57,12 +57,18 @@ class ShiftManager
      * Makes sure a courier assigned to a shift shows up in the dispatch,
      * by creating an empty TaskList for the day of the shift.
      *
-     * Users without the ROLE_COURIER role are skipped.
+     * Users without the ROLE_COURIER role are skipped. This is a manual,
+     * dispatcher-triggered action (see addWeekToDispatch()) — shifts do NOT
+     * do this automatically on create/update/copy, since a shift assignment
+     * doesn't always mean the dispatcher wants that day's dispatch touched yet.
+     *
+     * @return bool true if a TaskList was created, false if one already
+     *              existed or the user isn't a courier
      */
-    public function addToDispatch(UserInterface $user, \DateTimeInterface $date): void
+    public function addToDispatch(UserInterface $user, \DateTimeInterface $date): bool
     {
         if (!in_array('ROLE_COURIER', $user->getRoles(), true)) {
-            return;
+            return false;
         }
 
         $day = new \DateTime($date->format('Y-m-d'));
@@ -71,7 +77,7 @@ class ShiftManager
         // TaskLists persisted in this request are not visible
         // to findOneBy() until the next flush
         if (isset($this->ensuredTaskLists[$key])) {
-            return;
+            return false;
         }
         $this->ensuredTaskLists[$key] = true;
 
@@ -79,12 +85,44 @@ class ShiftManager
             ->getRepository(TaskList::class)
             ->findOneBy(['courier' => $user, 'date' => $day]);
 
-        if (null === $taskList) {
-            $taskList = new TaskList();
-            $taskList->setCourier($user);
-            $taskList->setDate($day);
-            $this->entityManager->persist($taskList);
+        if (null !== $taskList) {
+            return false;
         }
+
+        $taskList = new TaskList();
+        $taskList->setCourier($user);
+        $taskList->setDate($day);
+        $this->entityManager->persist($taskList);
+
+        return true;
+    }
+
+    /**
+     * Adds every courier assigned to a shift in the given week to the
+     * dispatch, by creating an empty TaskList for the day of each of their
+     * shifts. Triggered manually by a dispatcher from the planning UI.
+     *
+     * @return UserInterface[] couriers newly added to the dispatch
+     */
+    public function addWeekToDispatch(\DateTimeImmutable $weekStart): array
+    {
+        $start = $weekStart->setTime(0, 0);
+        $end = $start->modify('+7 days');
+
+        $shifts = $this->entityManager->getRepository(Shift::class)->findOverlappingRange($start, $end);
+
+        $added = [];
+        foreach ($shifts as $shift) {
+            foreach ($shift->getAssignedUsers() as $user) {
+                if ($this->addToDispatch($user, $shift->getStartsAt())) {
+                    $added[$user->getUsername()] = $user;
+                }
+            }
+        }
+
+        $this->entityManager->flush();
+
+        return array_values($added);
     }
 
     /**
@@ -126,8 +164,6 @@ class ShiftManager
                 $assignment = new ShiftAssignment();
                 $assignment->setUser($user);
                 $copy->addAssignment($assignment);
-
-                $this->addToDispatch($user, $copy->getStartsAt());
 
                 $assignedUsers[$user->getUsername()] = $user;
             }

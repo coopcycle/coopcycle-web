@@ -55,6 +55,7 @@ import {
   PutShiftSettingsRequest,
   ShiftScheduleSuggestion,
   ShiftBatchResult,
+  ShiftDispatchSyncResult,
   ProposedShift,
 } from './types';
 
@@ -511,6 +512,13 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ['Shift'],
     }),
+    syncDispatch: builder.mutation<ShiftDispatchSyncResult, { week: string }>({
+      query: body => ({
+        url: 'api/shifts/dispatch_sync',
+        method: 'POST',
+        body,
+      }),
+    }),
   }),
 });
 
@@ -570,4 +578,5 @@ export const {
   usePutShiftSettingsMutation,
   useGenerateScheduleMutation,
   useBatchCreateShiftsMutation,
+  useSyncDispatchMutation,
 } = apiSlice;

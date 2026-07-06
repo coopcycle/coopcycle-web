@@ -960,6 +960,10 @@
         "SHIFT_PLANNING_DEMAND_SETTINGS_HELP": "Tune how the demand-based schedule generator sizes shifts.",
         "SHIFT_PLANNING_THROUGHPUT": "Deliveries per courier",
         "SHIFT_PLANNING_PER_HOUR": "/ hour",
-        "SHIFT_PLANNING_SERVICE_LEVEL": "Service level"
+        "SHIFT_PLANNING_SERVICE_LEVEL": "Service level",
+        "SHIFT_PLANNING_ADD_TO_DISPATCH": "Add to dispatch",
+        "SHIFT_PLANNING_ADD_TO_DISPATCH_CONFIRM": "Add every courier assigned to a shift this week to the dispatch (an empty task list for each of their working days)?",
+        "SHIFT_PLANNING_DISPATCH_SYNCED": "{{count}} courier added to the dispatch",
+        "SHIFT_PLANNING_DISPATCH_SYNCED_plural": "{{count}} couriers added to the dispatch"
       }
 }

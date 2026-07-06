@@ -443,7 +443,7 @@ Feature: Shifts
       }
       """
 
-  Scenario: Assigning a courier to a shift adds them to the dispatch
+  Scenario: Assigning a courier to a shift does NOT automatically add them to the dispatch
     Given the courier "sarah" is loaded:
       | email    | sarah@coopcycle.org |
       | password | 123456              |
@@ -475,6 +475,62 @@ Feature: Shifts
         "@context":"/api/contexts/TaskList",
         "@id":"/api/task_lists",
         "@type":"hydra:Collection",
+        "hydra:member":[],
+        "hydra:totalItems":0,
+        "hydra:view":"@*@",
+        "hydra:search":"@*@"
+      }
+      """
+
+  Scenario: Dispatcher manually adds shift-assigned couriers to the dispatch
+    Given the courier "sarah" is loaded:
+      | email    | sarah@coopcycle.org |
+      | password | 123456              |
+    And the user "bob" is loaded:
+      | email    | bob@coopcycle.org |
+      | password | 123456            |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts" with body:
+      """
+      {
+        "type": "drive",
+        "startsAt": "2026-06-29T09:00:00",
+        "endsAt": "2026-06-29T17:00:00",
+        "users": ["/api/users/1"]
+      }
+      """
+    Then the response status code should be 201
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts/dispatch_sync" with body:
+      """
+      { "week": "2026-06-29" }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"@string@",
+        "@id":"@string@",
+        "@type":"ShiftDispatchSync",
+        "added":1
+      }
+      """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/task_lists?date=2026-06-29"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"/api/contexts/TaskList",
+        "@id":"/api/task_lists",
+        "@type":"hydra:Collection",
         "hydra:member":[
           {
             "username":"sarah",
@@ -488,6 +544,36 @@ Feature: Shifts
         "hydra:search":"@*@"
       }
       """
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts/dispatch_sync" with body:
+      """
+      { "week": "2026-06-29" }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"@string@",
+        "@id":"@string@",
+        "@type":"ShiftDispatchSync",
+        "added":0
+      }
+      """
+
+  Scenario: Courier can not manually sync the dispatch
+    Given the courier "sarah" is loaded:
+      | email    | sarah@coopcycle.org |
+      | password | 123456              |
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "POST" request to "/api/shifts/dispatch_sync" with body:
+      """
+      { "week": "2026-06-29" }
+      """
+    Then the response status code should be 403
 
   Scenario: Dispatcher customizes shift type colors
     Given the user "bob" is loaded:

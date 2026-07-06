@@ -24,6 +24,7 @@ import ShiftTypeFilter, {
 } from './components/ShiftTypeFilter';
 import ShiftSettingsModal from './components/ShiftSettingsModal';
 import GenerateScheduleButton from './components/GenerateScheduleButton';
+import AddToDispatchButton from './components/AddToDispatchButton';
 import { syncWeekToUrl, weekFromParams } from './utils/weekUrl';
 
 dayjs.extend(isoWeek);
@@ -166,6 +167,7 @@ const Planning = ({ shiftTypes }: Props) => {
           <ShiftSettingsModal shiftTypes={shiftTypes} />
           <CopyWeekButton weekStart={weekStart} />
           <GenerateScheduleButton weekStart={weekStart} />
+          <AddToDispatchButton weekStart={weekStart} />
           <Button
             type="primary"
             onClick={() => setModalState({ date: weekStart })}>
