@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, InputNumber } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { money } from '../../../utils';
+import { amountInputNumberProps } from '../../../../../utils/format';
 
 async function _handleApplyPriceDiff(id, diff) {
   const httpClient = new window._auth.httpClient();
@@ -28,6 +29,7 @@ export default function ({ incident, order }) {
         style={{ width: '100%' }}
         value={value}
         onChange={setValue}
+        {...amountInputNumberProps}
       />
       {value && (
         <p className="text-center my-2" style={{ fontSize: '1.2em' }}>
