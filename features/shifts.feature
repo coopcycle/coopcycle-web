@@ -506,7 +506,9 @@ Feature: Shifts
         "@context":"/api/contexts/ShiftSettings",
         "@id":"/api/shift_settings",
         "@type":"ShiftSettings",
-        "typeColors":[]
+        "typeColors":[],
+        "throughput":@double@,
+        "serviceLevel":@double@
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -530,7 +532,9 @@ Feature: Shifts
         "@type":"ShiftSettings",
         "typeColors":{
           "drive":"#ff0000"
-        }
+        },
+        "throughput":@double@,
+        "serviceLevel":@double@
       }
       """
     When I add "Content-Type" header equal to "application/ld+json"
@@ -546,7 +550,9 @@ Feature: Shifts
         "@type":"ShiftSettings",
         "typeColors":{
           "drive":"#ff0000"
-        }
+        },
+        "throughput":@double@,
+        "serviceLevel":@double@
       }
       """
 
@@ -568,3 +574,78 @@ Feature: Shifts
       }
       """
     Then the response status code should be 403
+
+  Scenario: Dispatcher generates a schedule suggestion from demand
+    Given the user "bob" is loaded:
+      | email    | bob@coopcycle.org |
+      | password | 123456            |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts/generate_schedule" with body:
+      """
+      {
+        "week": "2026-07-13"
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"@string@",
+        "@id":"@string@",
+        "@type":"ShiftScheduleSuggestion",
+        "shifts":@array@,
+        "days":@array@,
+        "meta":{
+          "lookbackWeeks":@integer@,
+          "serviceLevel":@double@,
+          "throughput":@double@,
+          "observations":@integer@
+        }
+      }
+      """
+
+  Scenario: Courier can not generate a schedule
+    Given the courier "sarah" is loaded:
+      | email    | sarah@coopcycle.org |
+      | password | 123456              |
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "POST" request to "/api/shifts/generate_schedule" with body:
+      """
+      { "week": "2026-07-13" }
+      """
+    Then the response status code should be 403
+
+  Scenario: Dispatcher batch-creates shifts
+    Given the user "bob" is loaded:
+      | email    | bob@coopcycle.org |
+      | password | 123456            |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts/batch" with body:
+      """
+      {
+        "shifts": [
+          { "type": "drive", "startsAt": "2026-07-13T12:00:00", "endsAt": "2026-07-13T15:00:00", "slots": 2 },
+          { "type": "drive", "startsAt": "2026-07-13T19:00:00", "endsAt": "2026-07-13T22:00:00", "slots": 1 }
+        ]
+      }
+      """
+    Then the response status code should be 201
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"@string@",
+        "@id":"@string@",
+        "@type":"ShiftBatch",
+        "created":2
+      }
+      """
