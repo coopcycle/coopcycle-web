@@ -99,6 +99,11 @@ class StoreType extends LocalBusinessType
                     ->add('cykeUserToken', TextType::class, [
                         'label' => 'form.store.cyke_user_token',
                         'required' => false,
+                    ])
+                    ->add('cykeWebhookSecret', TextType::class, [
+                        'label' => 'form.store.cyke_webhook_secret.label',
+                        'help' => 'form.store.cyke_webhook_secret.help',
+                        'required' => false,
                     ]);
             }
 

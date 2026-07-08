@@ -1149,6 +1149,11 @@ services:
       - { name: monolog.logger, channel: urbantz }
       - { name: api_platform.state_processor }
 
+  AppBundle\Api\State\CykeWebhookProcessor:
+    tags:
+      - { name: monolog.logger, channel: cyke }
+      - { name: api_platform.state_processor }
+
   AppBundle\Twig\CoopCycleExtension:
     arguments:
       $secret: '%secret%'

@@ -57,10 +57,6 @@ class CreateCykeDelivery
             return;
         }
 
-        $this->logger->info(
-            sprintf('Notifying Cyke for delivery #%d', $delivery->getId())
-        );
-
         $dropoff = $delivery->getDropoff();
         $address = $dropoff->getAddress();
 
@@ -80,13 +76,26 @@ class CreateCykeDelivery
                     'address_instructions' => $address->getDescription(),
                 ],
             ],
-            'packages' => array_values(array_map(fn($packageWithQuantity) => [
-                'name' => $packageWithQuantity->getPackage()->getName(),
-                'amount' => $packageWithQuantity->getQuantity(),
-            ], $delivery->getPackages()->toArray())),
+            // weight_kg/volume_dm3 are documented as optional but Cyke actually rejects
+            // packages missing either one with a 422, so always send a numeric value
+            'packages' => array_values(array_map(function ($packageWithQuantity) {
+                $package = $packageWithQuantity->getPackage();
+
+                return [
+                    'name' => $package->getName(),
+                    'amount' => $packageWithQuantity->getQuantity(),
+                    'weight_kg' => $package->getAverageWeight() ?? $package->getMaxWeight() ?? 1,
+                    'volume_dm3' => $package->getAverageVolumeUnits() ?? $package->getMaxVolumeUnits() ?? 1,
+                ];
+            }, $delivery->getPackages()->toArray())),
             'comments' => $dropoff->getComments(),
             'client_order_reference' => (string) $delivery->getId(),
         ];
+
+        $this->logger->info(
+            sprintf('Sending delivery #%d to Cyke', $delivery->getId()),
+            ['payload' => $payload]
+        );
 
         try {
             $response = $this->cykeClient->request('POST', 'deliveries', [
@@ -99,6 +108,11 @@ class CreateCykeDelivery
 
             $data = $response->toArray();
 
+            $this->logger->info(
+                sprintf('Cyke accepted delivery #%d', $delivery->getId()),
+                ['response' => $data]
+            );
+
             $cykeDelivery = new CykeDelivery();
             $cykeDelivery->setDelivery($delivery);
             $cykeDelivery->setCykeId((string) $data['id']);
@@ -106,8 +120,19 @@ class CreateCykeDelivery
             $this->entityManager->persist($cykeDelivery);
             $this->entityManager->flush();
 
-        } catch (HttpExceptionInterface | TransportExceptionInterface $e) {
-            $this->logger->error($e->getMessage());
+        } catch (HttpExceptionInterface $e) {
+            $this->logger->error(
+                sprintf('Cyke rejected delivery #%d: %s', $delivery->getId(), $e->getMessage()),
+                [
+                    'payload' => $payload,
+                    'response' => $e->getResponse()->getContent(false),
+                ]
+            );
+        } catch (TransportExceptionInterface $e) {
+            $this->logger->error(
+                sprintf('Cyke request failed for delivery #%d: %s', $delivery->getId(), $e->getMessage()),
+                ['payload' => $payload]
+            );
         }
     }
 }

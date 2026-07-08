@@ -1660,6 +1660,8 @@ form.local_business.iso_code.fr.siret.help: Find the SIRET number on <a href="ht
 form.store.urbantz_hub_id: Urbantz Hub Id
 form.store.cyke_user_email: Cyke user email
 form.store.cyke_user_token: Cyke API token
+form.store.cyke_webhook_secret.label: Cyke webhook secret
+form.store.cyke_webhook_secret.help: Must match the secret configured for the webhook pointing to /api/cyke/webhook in your Cyke account (Account > Manage my company > Webhooks)
 form.payment.edenred.refund_amount.help: Edenred does not support partial refunds.
 restaurant.form.use_paygreen.label: Use Paygreen for this shop
 restaurant.meal_vouchers_transactions.emitter: Emitter

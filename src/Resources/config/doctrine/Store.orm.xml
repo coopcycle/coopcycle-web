@@ -46,6 +46,7 @@
     <field name="document" type="text" column="document" nullable="true"/>
     <field name="cykeUserEmail" type="string" column="cyke_user_email" nullable="true"/>
     <field name="cykeUserToken" type="string" column="cyke_user_token" nullable="true"/>
+    <field name="cykeWebhookSecret" type="string" column="cyke_webhook_secret" nullable="true"/>
     <one-to-many field="deliveries" target-entity="AppBundle\Entity\Delivery" mapped-by="store">
       <cascade>
         <cascade-persist/>

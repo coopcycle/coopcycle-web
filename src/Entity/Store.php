@@ -213,6 +213,8 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private ?string $cykeUserToken = null;
 
+    private ?string $cykeWebhookSecret = null;
+
     public function __construct()
     {
         $this->deliveries = new ArrayCollection();
@@ -751,5 +753,17 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     public function isCykeEnabled(): bool
     {
         return !empty($this->cykeUserEmail) && !empty($this->cykeUserToken);
+    }
+
+    public function getCykeWebhookSecret(): ?string
+    {
+        return $this->cykeWebhookSecret;
+    }
+
+    public function setCykeWebhookSecret(?string $cykeWebhookSecret): Store
+    {
+        $this->cykeWebhookSecret = $cykeWebhookSecret;
+
+        return $this;
     }
 }
