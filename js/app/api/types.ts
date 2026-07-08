@@ -725,3 +725,12 @@ export type ShiftBatchResult = JsonLdEntity & {
 export type ShiftDispatchSyncResult = JsonLdEntity & {
   added: number;
 };
+
+export type BankHoliday = {
+  date: string;
+  name: string;
+};
+
+export type BankHolidays = JsonLdEntity & {
+  holidays: BankHoliday[];
+};

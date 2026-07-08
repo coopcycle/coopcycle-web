@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Empty, Spin } from 'antd';
+import { Empty, Spin, Tooltip } from 'antd';
+import { StarFilled } from '@ant-design/icons';
 import dayjs, { Dayjs } from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import {
+  useGetBankHolidaysQuery,
   useGetMyShiftsQuery,
   useGetShiftSettingsQuery,
 } from '../../../api/slice';
@@ -20,11 +22,20 @@ export default function MyShiftsWeek() {
     dayjs().startOf('isoWeek'),
   );
 
-  const { data, isFetching } = useGetMyShiftsQuery({
-    after: weekStart.format('YYYY-MM-DD'),
-    before: weekStart.add(6, 'day').format('YYYY-MM-DD'),
-  });
+  const after = weekStart.format('YYYY-MM-DD');
+  const before = weekStart.add(6, 'day').format('YYYY-MM-DD');
+
+  const { data, isFetching } = useGetMyShiftsQuery({ after, before });
   const { data: shiftSettings } = useGetShiftSettingsQuery();
+  const { data: bankHolidaysData } = useGetBankHolidaysQuery({
+    after,
+    before,
+  });
+
+  const bankHolidays: Record<string, string> = {};
+  (bankHolidaysData?.holidays ?? []).forEach(h => {
+    bankHolidays[h.date] = h.name;
+  });
 
   const shifts = sortByStart(data?.['hydra:member'] ?? []);
   const days = [...Array(7)].map((_, i) => weekStart.add(i, 'day'));
@@ -43,9 +54,21 @@ export default function MyShiftsWeek() {
             if (dayShifts.length === 0) {
               return null;
             }
+            const dayKey = day.format('YYYY-MM-DD');
+            const holidayName = bankHolidays[dayKey];
             return (
-              <div key={day.format('YYYY-MM-DD')} className="mb-3">
-                <strong>{day.format('dddd DD MMM')}</strong>
+              <div key={dayKey} className="mb-3">
+                <strong>
+                  {holidayName && (
+                    <Tooltip
+                      title={t('SHIFT_PLANNING_BANK_HOLIDAY', {
+                        name: holidayName,
+                      })}>
+                      <StarFilled className="shift-planning__holiday-icon" />
+                    </Tooltip>
+                  )}
+                  {day.format('dddd DD MMM')}
+                </strong>
                 {dayShifts.map(shift => (
                   <ShiftCard
                     key={shift['@id']}

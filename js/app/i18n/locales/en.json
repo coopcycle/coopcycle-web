@@ -969,6 +969,7 @@
         "SHIFT_PLANNING_ADD_TO_DISPATCH": "Add to dispatch",
         "SHIFT_PLANNING_ADD_TO_DISPATCH_CONFIRM": "Add every courier assigned to a shift this week to the dispatch (an empty task list for each of their working days)?",
         "SHIFT_PLANNING_DISPATCH_SYNCED": "{{count}} courier added to the dispatch",
-        "SHIFT_PLANNING_DISPATCH_SYNCED_plural": "{{count}} couriers added to the dispatch"
+        "SHIFT_PLANNING_DISPATCH_SYNCED_plural": "{{count}} couriers added to the dispatch",
+        "SHIFT_PLANNING_BANK_HOLIDAY": "Bank holiday: {{name}}"
       }
 }

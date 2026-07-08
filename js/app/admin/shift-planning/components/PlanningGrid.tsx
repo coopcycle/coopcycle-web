@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Select } from 'antd';
-import { CloseOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Select, Tooltip } from 'antd';
+import { CloseOutlined, PlusOutlined, StarFilled } from '@ant-design/icons';
 import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
@@ -44,6 +44,8 @@ type Props = {
   onAddUser: (userUri: Uri) => void;
   onRemoveUser: (userUri: Uri) => void;
   typeColors?: Record<string, string>;
+  /** Map of "YYYY-MM-DD" -> bank holiday name, for the day header highlight */
+  bankHolidays?: Record<string, string>;
 };
 
 export default function PlanningGrid({
@@ -57,6 +59,7 @@ export default function PlanningGrid({
   onAddUser,
   onRemoveUser,
   typeColors,
+  bankHolidays,
 }: Props) {
   const { t } = useTranslation();
 
@@ -75,17 +78,30 @@ export default function PlanningGrid({
     <div className="shift-planning__grid-container">
       <div className="shift-planning__grid">
         <div className="shift-planning__header-cell" />
-        {days.map(day => (
-          <div
-            key={day.format('YYYY-MM-DD')}
-            className={`shift-planning__header-cell ${
-              day.format('YYYY-MM-DD') === today
-                ? 'shift-planning__header-cell--today'
-                : ''
-            }`}>
-            {day.format('ddd DD MMM')}
-          </div>
-        ))}
+        {days.map(day => {
+          const dayKey = day.format('YYYY-MM-DD');
+          const holidayName = bankHolidays?.[dayKey];
+
+          return (
+            <div
+              key={dayKey}
+              className={`shift-planning__header-cell ${
+                dayKey === today ? 'shift-planning__header-cell--today' : ''
+              } ${holidayName ? 'shift-planning__header-cell--holiday' : ''}`}>
+              {holidayName ? (
+                <Tooltip
+                  title={t('SHIFT_PLANNING_BANK_HOLIDAY', {
+                    name: holidayName,
+                  })}>
+                  <StarFilled className="shift-planning__holiday-icon" />
+                  {day.format('ddd DD MMM')}
+                </Tooltip>
+              ) : (
+                day.format('ddd DD MMM')
+              )}
+            </div>
+          );
+        })}
 
         <div className="shift-planning__row-label shift-planning__row-label--open-slots">
           <span>{t('SHIFT_PLANNING_OPEN_SLOTS')}</span>

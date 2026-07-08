@@ -8,6 +8,7 @@ import isoWeek from 'dayjs/plugin/isoWeek';
 import { useTranslation } from 'react-i18next';
 import { store } from './redux/store';
 import {
+  useGetBankHolidaysQuery,
   useGetHolidayRequestsQuery,
   useGetPlanningUsersQuery,
   useGetShiftSettingsQuery,
@@ -66,6 +67,18 @@ const Planning = ({ shiftTypes }: Props) => {
   const { data: users } = useGetPlanningUsersQuery();
   const { data: shiftSettings } = useGetShiftSettingsQuery();
   const typeColors = shiftSettings?.typeColors;
+
+  const { data: bankHolidaysData } = useGetBankHolidaysQuery({
+    after,
+    before,
+  });
+  const bankHolidays = useMemo(() => {
+    const map: Record<string, string> = {};
+    (bankHolidaysData?.holidays ?? []).forEach(h => {
+      map[h.date] = h.name;
+    });
+    return map;
+  }, [bankHolidaysData]);
 
   // All the requests around today, for the review drawer
   const reviewRange = useMemo(
@@ -189,6 +202,7 @@ const Planning = ({ shiftTypes }: Props) => {
           onAddUser={addUser}
           onRemoveUser={removeUser}
           typeColors={typeColors}
+          bankHolidays={bankHolidays}
         />
       </Spin>
       <ShiftModal

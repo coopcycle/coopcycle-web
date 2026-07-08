@@ -34,6 +34,20 @@
     &--today {
       background: #e6f4ff;
     }
+
+    // Visual indicator only — a bank holiday never blocks anything,
+    // so it layers on top of --today (a top accent) rather than
+    // fighting over the background color
+    &--holiday {
+      box-shadow: inset 0 2px 0 0 #d48806;
+    }
+  }
+
+  &__holiday-icon {
+    color: #d48806;
+    font-size: 10px;
+    margin-right: 4px;
+    vertical-align: 1px;
   }
 
   &__row-label {

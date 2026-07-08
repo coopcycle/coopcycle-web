@@ -57,6 +57,7 @@ import {
   ShiftBatchResult,
   ShiftDispatchSyncResult,
   ProposedShift,
+  BankHolidays,
 } from './types';
 
 // Define our single API slice object
@@ -542,6 +543,13 @@ export const apiSlice = createApi({
         body,
       }),
     }),
+
+    getBankHolidays: builder.query<BankHolidays, DateRangeArgs>({
+      query: ({ after, before }) => ({
+        url: 'api/bank_holidays',
+        params: { 'date[after]': after, 'date[before]': before },
+      }),
+    }),
   }),
 });
 
@@ -604,4 +612,5 @@ export const {
   useGenerateScheduleMutation,
   useBatchCreateShiftsMutation,
   useSyncDispatchMutation,
+  useGetBankHolidaysQuery,
 } = apiSlice;
