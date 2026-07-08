@@ -629,6 +629,7 @@ export type Shift = JsonLdEntity & {
   startsAt: string;
   endsAt: string;
   slots: number;
+  comment: string | null;
   assignments: ShiftAssignment[];
 };
 
@@ -637,6 +638,7 @@ export type ShiftPayload = {
   startsAt: string;
   endsAt: string;
   slots: number;
+  comment?: string | null;
   users: Uri[];
 };
 

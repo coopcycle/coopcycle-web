@@ -58,6 +58,11 @@ export default function ShiftCard({
           {shift.assignments.length}/{shift.slots}
         </span>
       </div>
+      {shift.comment && (
+        <div className="shift-card__comment" title={shift.comment}>
+          {shift.comment}
+        </div>
+      )}
     </div>
   );
 }

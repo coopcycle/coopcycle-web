@@ -21,6 +21,7 @@ Feature: Shifts
         "startsAt": "2026-06-29T09:00:00",
         "endsAt": "2026-06-29T17:00:00",
         "slots": 2,
+        "comment": "Bring your own bike lock",
         "users": ["/api/users/1", "/api/users/2"]
       }
       """
@@ -37,6 +38,7 @@ Feature: Shifts
         "startsAt":"@string@.isDateTime()",
         "endsAt":"@string@.isDateTime()",
         "slots":2,
+        "comment":"Bring your own bike lock",
         "assignments":[
           {
             "@id":"@string@",
@@ -103,6 +105,7 @@ Feature: Shifts
         "type": "drive",
         "startsAt": "2026-06-29T09:00:00",
         "endsAt": "2026-06-29T17:00:00",
+        "comment": "Bring your own bike lock",
         "users": ["/api/users/1"]
       }
       """
@@ -140,6 +143,7 @@ Feature: Shifts
             "startsAt":"@string@.isDateTime()",
             "endsAt":"@string@.isDateTime()",
             "slots":1,
+            "comment":"Bring your own bike lock",
             "assignments":"@array@"
           }
         ],

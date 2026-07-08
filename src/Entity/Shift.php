@@ -82,6 +82,10 @@ class Shift
     #[Assert\Range(min: 1)]
     protected int $slots = 1;
 
+    #[Groups(['shift', 'shift_create'])]
+    #[Assert\Length(max: 65535)]
+    protected ?string $comment = null;
+
     protected ?UserInterface $createdBy = null;
 
     #[Groups(['shift'])]
@@ -153,6 +157,18 @@ class Shift
     public function setSlots(int $slots): self
     {
         $this->slots = $slots;
+
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
 
         return $this;
     }

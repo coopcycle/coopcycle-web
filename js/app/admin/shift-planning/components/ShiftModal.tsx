@@ -5,6 +5,7 @@ import {
   Button,
   DatePicker,
   Form,
+  Input,
   InputNumber,
   Modal,
   Popconfirm,
@@ -49,6 +50,7 @@ type FormValues = {
   date: Dayjs;
   times: [Dayjs, Dayjs];
   slots: number;
+  comment?: string;
   users: Uri[];
 };
 
@@ -84,6 +86,7 @@ export default function ShiftModal({
           dayjs(wallClock(state.shift.endsAt)),
         ],
         slots: state.shift.slots,
+        comment: state.shift.comment ?? undefined,
         users: state.shift.assignments.map(a => a.user['@id']),
       });
     } else {
@@ -95,6 +98,7 @@ export default function ShiftModal({
           (state.date || dayjs()).hour(17).minute(0),
         ],
         slots: 1,
+        comment: undefined,
         users: state.userUri ? [state.userUri] : [],
       });
     }
@@ -155,6 +159,7 @@ export default function ShiftModal({
       startsAt: `${date}T${values.times[0].format('HH:mm:ss')}`,
       endsAt: `${date}T${values.times[1].format('HH:mm:ss')}`,
       slots: values.slots,
+      comment: values.comment || null,
       users: values.users,
     };
 
@@ -267,6 +272,9 @@ export default function ShiftModal({
               label: u.username,
             }))}
           />
+        </Form.Item>
+        <Form.Item name="comment" label={t('SHIFT_PLANNING_COMMENT')}>
+          <Input.TextArea rows={2} maxLength={65535} />
         </Form.Item>
         {conflicts.length > 0 && (
           <Alert

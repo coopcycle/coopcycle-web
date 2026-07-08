@@ -197,6 +197,16 @@
     display: flex;
     justify-content: space-between;
   }
+
+  &__comment {
+    margin-top: 2px;
+    font-size: 11px;
+    font-style: italic;
+    color: rgba(0, 0, 0, 0.55);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .shift-type-dot {

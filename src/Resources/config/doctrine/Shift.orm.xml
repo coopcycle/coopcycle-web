@@ -15,6 +15,7 @@
         <option name="default">1</option>
       </options>
     </field>
+    <field name="comment" type="text" column="comment" nullable="true"/>
     <field name="createdAt" type="datetime" column="created_at">
       <gedmo:timestampable on="create"/>
     </field>
