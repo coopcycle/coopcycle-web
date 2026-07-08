@@ -88,15 +88,19 @@ class StoreType extends LocalBusinessType
                 ])
                 ->add('document', HiddenType::class, [
                     'label' => 'form.store.document'
-                ])
-                ->add('cykeUserEmail', TextType::class, [
-                    'label' => 'form.store.cyke_user_email',
-                    'required' => false,
-                ])
-                ->add('cykeUserToken', TextType::class, [
-                    'label' => 'form.store.cyke_user_token',
-                    'required' => false,
                 ]);
+
+            if ($this->cykeEnabled) {
+                $builder
+                    ->add('cykeUserEmail', TextType::class, [
+                        'label' => 'form.store.cyke_user_email',
+                        'required' => false,
+                    ])
+                    ->add('cykeUserToken', TextType::class, [
+                        'label' => 'form.store.cyke_user_token',
+                        'required' => false,
+                    ]);
+            }
 
             if ($this->cashOnDeliveryOptinEnabled) {
                 $builder

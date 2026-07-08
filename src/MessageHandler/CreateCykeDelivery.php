@@ -25,6 +25,7 @@ class CreateCykeDelivery
         private HttpClientInterface $cykeClient,
         private EntityManagerInterface $entityManager,
         private PhoneNumberUtil $phoneNumberUtil,
+        private bool $cykeEnabled = false,
         ?LoggerInterface $logger = null)
     {
         $this->logger = $logger ?? new NullLogger();
@@ -32,6 +33,10 @@ class CreateCykeDelivery
 
     public function __invoke(DeliveryCreated $message)
     {
+        if (!$this->cykeEnabled) {
+            return;
+        }
+
         $delivery = $this->entityManager->getRepository(Delivery::class)->find($message->getDeliveryId());
 
         if (!$delivery) {

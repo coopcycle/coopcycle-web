@@ -70,6 +70,7 @@ parameters:
   rdc_connections_default: []
   rdc_connections: '%env(default:rdc_connections_default:json:RDC_CONNECTIONS)%'
   billing_enabled: '%env(bool:BILLING_ENABLED)%'
+  cyke_enabled: '%env(bool:CYKE_ENABLED)%'
   package_delivery_ui_price_breakdown_enabled_default: true
   package_delivery_ui_price_breakdown_enabled: '%env(default:package_delivery_ui_price_breakdown_enabled_default:bool:PACKAGE_DELIVERY_UI_PRICE_BREAKDOWN_ENABLED)%'
 
@@ -1779,6 +1780,8 @@ services:
   AppBundle\MessageHandler\Task\NotifyUrbantz: ~
 
   AppBundle\MessageHandler\CreateCykeDelivery:
+    arguments:
+      $cykeEnabled: '%cyke_enabled%'
     tags:
       - { name: monolog.logger, channel: cyke }
 

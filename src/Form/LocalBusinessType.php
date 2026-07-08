@@ -49,7 +49,8 @@ abstract class LocalBusinessType extends AbstractType
         protected bool $billingEnabled = false,
         ?string $standtrackEnabled = null,
         array $rdcConnections = [],
-        bool $rdcEnabled = false
+        bool $rdcEnabled = false,
+        protected bool $cykeEnabled = false
     )
     {
         $this->transportersEnabled = !empty($transportersConfig);
