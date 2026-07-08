@@ -760,6 +760,8 @@
         "DELIVERY_PROOFS_CONTENTS_VALUE": "Photos & Reports",
         "DELIVERY_PROOFS_FILE_TYPE": "File Type",
         "DELIVERY_PROOFS_FILE_TYPE_VALUE": "ZIP archive",
+        "DELIVERY_PROOFS_LOAD_ERROR": "Could not load deliveries",
+        "DELIVERY_PROOFS_DOWNLOAD_ERROR": "Could not download deliveries",
         "DELIVERY_FORM_ADD_PICKUP": "Add a pickup",
         "DELIVERY_FORM_REMOVE_PICKUP": "Remove this pickup",
         "DELIVERY_FORM_MULTIPICKUP": "Multiple pickups are available",

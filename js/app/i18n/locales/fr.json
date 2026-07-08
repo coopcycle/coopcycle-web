@@ -745,6 +745,8 @@
         "DELIVERY_PROOFS_CONTENTS_VALUE": "Photos et Rapports",
         "DELIVERY_PROOFS_FILE_TYPE": "Type de Fichier",
         "DELIVERY_PROOFS_FILE_TYPE_VALUE": "Archive ZIP",
+        "DELIVERY_PROOFS_LOAD_ERROR": "Impossible de charger les livraisons",
+        "DELIVERY_PROOFS_DOWNLOAD_ERROR": "Impossible de télécharger les livraisons",
         "NO": "Non",
         "YES": "Oui",
         "RULE_TARGET_DELIVERY_HELP": "Ajouter des règles à appliquer une fois par commande",
