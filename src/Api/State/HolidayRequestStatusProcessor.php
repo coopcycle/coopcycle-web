@@ -2,6 +2,7 @@
 
 namespace AppBundle\Api\State;
 
+use ApiPlatform\Metadata\HttpOperation;
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
 use AppBundle\Entity\HolidayRequest;
@@ -30,7 +31,13 @@ class HolidayRequestStatusProcessor implements ProcessorInterface
             );
         }
 
-        $status = str_contains($operation->getUriTemplate(), 'approve') ?
+        // This processor is only ever wired to the /approve and /reject HTTP
+        // PUT operations, both of which are HttpOperation instances
+        if (!$operation instanceof HttpOperation) {
+            throw new \LogicException(sprintf('Expected an instance of %s.', HttpOperation::class));
+        }
+
+        $status = str_contains($operation->getUriTemplate() ?? '', 'approve') ?
             HolidayRequest::STATUS_APPROVED : HolidayRequest::STATUS_REJECTED;
 
         $data->setStatus($status);
