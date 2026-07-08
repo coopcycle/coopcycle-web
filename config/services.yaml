@@ -1778,6 +1778,10 @@ services:
 
   AppBundle\MessageHandler\Task\NotifyUrbantz: ~
 
+  AppBundle\MessageHandler\CreateCykeDelivery:
+    tags:
+      - { name: monolog.logger, channel: cyke }
+
   AppBundle\MessageHandler\Task\NotifyLoopeat:
     arguments:
       - '@AppBundle\LoopEat\Client'

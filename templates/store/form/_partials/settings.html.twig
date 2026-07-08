@@ -101,6 +101,12 @@
   {{ form_row(form.storeGLN) }}
 {% endif %}
 
+{% if form.cykeUserEmail is defined %}
+  <hr>
+  {{ form_row(form.cykeUserEmail) }}
+  {{ form_row(form.cykeUserToken) }}
+{% endif %}
+
 {% if form.document is defined %}
   <hr>
   {{ form_row(form.document) }}

@@ -209,6 +209,10 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
 
     private ?string $document;
 
+    private ?string $cykeUserEmail = null;
+
+    private ?string $cykeUserToken = null;
+
     public function __construct()
     {
         $this->deliveries = new ArrayCollection();
@@ -718,5 +722,34 @@ class Store extends LocalBusiness implements TaggableInterface, OrganizationAwar
     public function hasDocument(): bool
     {
         return !empty($this->document);
+    }
+
+    public function getCykeUserEmail(): ?string
+    {
+        return $this->cykeUserEmail;
+    }
+
+    public function setCykeUserEmail(?string $cykeUserEmail): Store
+    {
+        $this->cykeUserEmail = $cykeUserEmail;
+
+        return $this;
+    }
+
+    public function getCykeUserToken(): ?string
+    {
+        return $this->cykeUserToken;
+    }
+
+    public function setCykeUserToken(?string $cykeUserToken): Store
+    {
+        $this->cykeUserToken = $cykeUserToken;
+
+        return $this;
+    }
+
+    public function isCykeEnabled(): bool
+    {
+        return !empty($this->cykeUserEmail) && !empty($this->cykeUserToken);
     }
 }
