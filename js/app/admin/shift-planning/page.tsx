@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Provider } from 'react-redux';
-import { Badge, Button, Space, Spin } from 'antd';
+import { Badge, Button, Segmented, Space, Spin } from 'antd';
 import { CarryOutOutlined } from '@ant-design/icons';
 import { useHotkey } from '@tanstack/react-hotkeys';
 import dayjs, { Dayjs } from 'dayjs';
@@ -26,7 +26,10 @@ import ShiftTypeFilter, {
 import ShiftSettingsModal from './components/ShiftSettingsModal';
 import GenerateScheduleButton from './components/GenerateScheduleButton';
 import AddToDispatchButton from './components/AddToDispatchButton';
+import ShiftsDashboard from './components/ShiftsDashboard';
 import { syncWeekToUrl, weekFromParams } from './utils/weekUrl';
+
+type View = 'planning' | 'dashboard';
 
 dayjs.extend(isoWeek);
 
@@ -43,6 +46,7 @@ const Planning = ({ shiftTypes }: Props) => {
   const [modalState, setModalState] = useState<ShiftModalState>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [typeFilter, setTypeFilter] = useState<string[]>([]);
+  const [view, setView] = useState<View>('planning');
 
   // Keep the URL (?year=&week=) in sync so weeks are shareable/deep-linkable
   useEffect(() => {
@@ -160,51 +164,69 @@ const Planning = ({ shiftTypes }: Props) => {
     <div className="shift-planning">
       <div className="shift-planning__toolbar">
         <Space>
-          <WeekNavigator value={weekStart} onChange={setWeekStart} />
-          <ShiftTypeFilter
-            ref={typeFilterRef}
-            shiftTypes={shiftTypes}
-            value={typeFilter}
-            onChange={setTypeFilter}
-            typeColors={typeColors}
+          <Segmented
+            value={view}
+            onChange={value => setView(value as View)}
+            options={[
+              { label: t('SHIFT_PLANNING_VIEW_PLANNING'), value: 'planning' },
+              { label: t('SHIFT_PLANNING_DASHBOARD'), value: 'dashboard' },
+            ]}
           />
+          {view === 'planning' && (
+            <>
+              <WeekNavigator value={weekStart} onChange={setWeekStart} />
+              <ShiftTypeFilter
+                ref={typeFilterRef}
+                shiftTypes={shiftTypes}
+                value={typeFilter}
+                onChange={setTypeFilter}
+                typeColors={typeColors}
+              />
+            </>
+          )}
         </Space>
-        <Space>
-          <Badge count={pendingCount}>
+        {view === 'planning' && (
+          <Space>
+            <Badge count={pendingCount}>
+              <Button
+                icon={<CarryOutOutlined />}
+                onClick={() => setDrawerOpen(true)}>
+                {t('SHIFT_PLANNING_HOLIDAY_REQUESTS')}
+              </Button>
+            </Badge>
+            <ShiftSettingsModal shiftTypes={shiftTypes} />
+            <CopyWeekButton weekStart={weekStart} />
+            <GenerateScheduleButton weekStart={weekStart} />
+            <AddToDispatchButton weekStart={weekStart} />
             <Button
-              icon={<CarryOutOutlined />}
-              onClick={() => setDrawerOpen(true)}>
-              {t('SHIFT_PLANNING_HOLIDAY_REQUESTS')}
+              type="primary"
+              onClick={() => setModalState({ date: weekStart })}>
+              {t('SHIFT_PLANNING_NEW_SHIFT')}
             </Button>
-          </Badge>
-          <ShiftSettingsModal shiftTypes={shiftTypes} />
-          <CopyWeekButton weekStart={weekStart} />
-          <GenerateScheduleButton weekStart={weekStart} />
-          <AddToDispatchButton weekStart={weekStart} />
-          <Button
-            type="primary"
-            onClick={() => setModalState({ date: weekStart })}>
-            {t('SHIFT_PLANNING_NEW_SHIFT')}
-          </Button>
-        </Space>
+          </Space>
+        )}
       </div>
-      <Spin spinning={isFetching}>
-        <PlanningGrid
-          weekStart={weekStart}
-          shifts={filteredShifts}
-          holidayRequests={weekHolidays}
-          users={visibleUsers}
-          allUsers={sortedUsers}
-          onCreate={(day: Dayjs, userUri?: Uri) =>
-            setModalState({ date: day, userUri })
-          }
-          onEdit={(shift: Shift) => setModalState({ shift })}
-          onAddUser={addUser}
-          onRemoveUser={removeUser}
-          typeColors={typeColors}
-          bankHolidays={bankHolidays}
-        />
-      </Spin>
+      {view === 'dashboard' ? (
+        <ShiftsDashboard />
+      ) : (
+        <Spin spinning={isFetching}>
+          <PlanningGrid
+            weekStart={weekStart}
+            shifts={filteredShifts}
+            holidayRequests={weekHolidays}
+            users={visibleUsers}
+            allUsers={sortedUsers}
+            onCreate={(day: Dayjs, userUri?: Uri) =>
+              setModalState({ date: day, userUri })
+            }
+            onEdit={(shift: Shift) => setModalState({ shift })}
+            onAddUser={addUser}
+            onRemoveUser={removeUser}
+            typeColors={typeColors}
+            bankHolidays={bankHolidays}
+          />
+        </Spin>
+      )}
       <ShiftModal
         state={modalState}
         shiftTypes={shiftTypes}

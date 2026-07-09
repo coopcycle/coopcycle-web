@@ -1813,3 +1813,21 @@ form.theme.secondary_group.help: "Utilisé pour les mises en évidence et les ac
 form.theme.secondary.label: "Couleur d'arrière-plan"
 form.theme.secondary-content.label: Couleur de police
 customize.emails_alert: Nouveau ! Personnalisez les emails
+hr.tab.title: RH
+hr.contractStartDate: Date de début de contrat
+hr.dateOfBirth: Date de naissance
+hr.address.street: Rue
+hr.address.postalCode: Code postal
+hr.address.locality: Ville
+hr.address.country: Pays
+hr.salaryType: Type de salaire
+hr.salaryType.hourly: Horaire
+hr.salaryType.monthly: Mensuel
+hr.salaryAmount: Montant du salaire brut
+hr.weeklyContractedHours: Heures contractuelles par semaine
+hr.holidaysHistory.title: Historique des congés
+hr.holidaysHistory.empty: Aucune demande de congé pour le moment.
+hr.holidaysHistory.from: Du
+hr.holidaysHistory.to: Au
+hr.holidaysHistory.status: Statut
+hr.holidaysHistory.comment: Commentaire

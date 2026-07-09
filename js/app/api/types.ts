@@ -690,6 +690,25 @@ export type PutShiftSettingsRequest = {
   serviceLevel?: number;
 };
 
+export type ShiftDashboardWeekStatus = 'draft' | 'in_progress' | 'complete';
+
+export type ShiftDashboardWeek = {
+  weekStart: string;
+  weekEnd: string;
+  totalSlots: number;
+  totalAssignments: number;
+  fillRate: number;
+  status: ShiftDashboardWeekStatus;
+};
+
+export type ShiftDashboard = JsonLdEntity & {
+  weeks: ShiftDashboardWeek[];
+};
+
+export type GetShiftDashboardArgs = {
+  weeks?: number;
+};
+
 export type ProposedShift = {
   type: string;
   startsAt: string;

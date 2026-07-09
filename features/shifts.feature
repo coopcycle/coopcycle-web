@@ -201,6 +201,7 @@ Feature: Shifts
         "startsAt":"@string@.isDateTime()",
         "endsAt":"@string@.isDateTime()",
         "slots":1,
+        "comment":null,
         "assignments":[
           {
             "@id":"@string@",
@@ -427,6 +428,7 @@ Feature: Shifts
             "startsAt":"@string@.isDateTime()",
             "endsAt":"@string@.isDateTime()",
             "slots":2,
+            "comment":null,
             "assignments":[
               {
                 "@id":"@string@",
@@ -739,3 +741,92 @@ Feature: Shifts
         "created":2
       }
       """
+
+  Scenario: Dispatcher views the shifts dashboard fill rate by week
+    Given the current time is "2026-06-29 10:00:00"
+    And the courier "sarah" is loaded:
+      | email    | sarah@coopcycle.org |
+      | password | 123456              |
+    And the courier "alice" is loaded:
+      | email    | alice@coopcycle.org |
+      | password | 123456              |
+    And the user "bob" is loaded:
+      | email    | bob@coopcycle.org |
+      | password | 123456            |
+    And the user "bob" has role "ROLE_DISPATCHER"
+    And the user "bob" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts" with body:
+      """
+      {
+        "type": "drive",
+        "startsAt": "2026-06-29T09:00:00",
+        "endsAt": "2026-06-29T17:00:00",
+        "slots": 2,
+        "users": ["/api/users/1"]
+      }
+      """
+    Then the response status code should be 201
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "POST" request to "/api/shifts" with body:
+      """
+      {
+        "type": "drive",
+        "startsAt": "2026-07-06T09:00:00",
+        "endsAt": "2026-07-06T17:00:00",
+        "slots": 4,
+        "users": ["/api/users/1", "/api/users/2"]
+      }
+      """
+    Then the response status code should be 201
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "bob" sends a "GET" request to "/api/shifts/dashboard?weeks=3"
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {
+        "@context":"@string@",
+        "@id":"@string@",
+        "@type":"ShiftDashboard",
+        "weeks":[
+          {
+            "weekStart":"2026-06-29",
+            "weekEnd":"2026-07-05",
+            "totalSlots":2,
+            "totalAssignments":1,
+            "fillRate":0.5,
+            "status":"in_progress"
+          },
+          {
+            "weekStart":"2026-07-06",
+            "weekEnd":"2026-07-12",
+            "totalSlots":4,
+            "totalAssignments":2,
+            "fillRate":0.5,
+            "status":"in_progress"
+          },
+          {
+            "weekStart":"2026-07-13",
+            "weekEnd":"2026-07-19",
+            "totalSlots":0,
+            "totalAssignments":0,
+            "fillRate":0,
+            "status":"draft"
+          }
+        ]
+      }
+      """
+
+  Scenario: Courier can not view the shifts dashboard
+    Given the courier "sarah" is loaded:
+      | email    | sarah@coopcycle.org |
+      | password | 123456              |
+    And the user "sarah" is authenticated
+    When I add "Content-Type" header equal to "application/ld+json"
+    And I add "Accept" header equal to "application/ld+json"
+    And the user "sarah" sends a "GET" request to "/api/shifts/dashboard"
+    Then the response status code should be 403

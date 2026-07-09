@@ -1879,3 +1879,21 @@ checkout.recommendations.dialog.github: See the source code on GitHub →
 checkout.recommendations.dialog.close: Close
 rfm.order_history: Order history
 customize.email_alert: New! Customize emails
+hr.tab.title: HR
+hr.contractStartDate: Contract start date
+hr.dateOfBirth: Date of birth
+hr.address.street: Street
+hr.address.postalCode: Postal code
+hr.address.locality: City
+hr.address.country: Country
+hr.salaryType: Salary type
+hr.salaryType.hourly: Hourly
+hr.salaryType.monthly: Monthly
+hr.salaryAmount: Gross salary amount
+hr.weeklyContractedHours: Weekly contracted hours
+hr.holidaysHistory.title: Holiday history
+hr.holidaysHistory.empty: No holiday requests yet.
+hr.holidaysHistory.from: From
+hr.holidaysHistory.to: To
+hr.holidaysHistory.status: Status
+hr.holidaysHistory.comment: Comment

@@ -58,6 +58,8 @@ import {
   ShiftDispatchSyncResult,
   ProposedShift,
   BankHolidays,
+  ShiftDashboard,
+  GetShiftDashboardArgs,
 } from './types';
 
 // Define our single API slice object
@@ -550,6 +552,14 @@ export const apiSlice = createApi({
         params: { 'date[after]': after, 'date[before]': before },
       }),
     }),
+
+    getShiftDashboard: builder.query<ShiftDashboard, GetShiftDashboardArgs>({
+      query: ({ weeks } = {}) => ({
+        url: 'api/shifts/dashboard',
+        params: weeks ? { weeks } : undefined,
+      }),
+      providesTags: ['Shift'],
+    }),
   }),
 });
 
@@ -613,4 +623,5 @@ export const {
   useBatchCreateShiftsMutation,
   useSyncDispatchMutation,
   useGetBankHolidaysQuery,
+  useGetShiftDashboardQuery,
 } = apiSlice;

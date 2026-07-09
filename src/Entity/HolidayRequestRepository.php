@@ -29,6 +29,19 @@ class HolidayRequestRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * @return HolidayRequest[]
+     */
+    public function findByUser(User $user): array
+    {
+        return $this->createQueryBuilder('h')
+            ->andWhere('h.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('h.startDate', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function hasApprovedHolidayOnDate(User $user, \DateTimeInterface $date): bool
     {
         $count = $this->createQueryBuilder('h')
