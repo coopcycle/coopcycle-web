@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Integration\Zelty;
+namespace Tests\AppBundle\Integration\Zelty;
 
 use AppBundle\Entity\Address;
 use AppBundle\Entity\Sylius\Customer;
