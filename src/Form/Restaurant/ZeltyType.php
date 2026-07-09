@@ -33,6 +33,8 @@ class ZeltyType extends AbstractType
     {
         $builder->add('zeltyApiKey', TextType::class, [
             'label' => 'restaurant.form.zelty_api_key',
+            'help' => 'restaurant.form.zelty_api_key.help',
+            'help_html' => true,
             'required' => false,
             'mapped' => false,
         ]);
