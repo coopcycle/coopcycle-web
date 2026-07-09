@@ -82,17 +82,32 @@ class ZeltyClient
         }
     }
 
-    public function upsertWebhook(string $event, ?string $url): string
+    /**
+     * Register multiple webhooks in a single API call.
+     * Keys are Zelty event names, values are target URLs (or null to deregister).
+     * Returns the shared webhook secret key.
+     *
+     * @param array<string, string|null> $webhooks
+     */
+    public function upsertWebhooks(array $webhooks): string
     {
-        $webhookConfig = $url !== null ? ['target' => $url, 'version' => 'v2'] : null;
+        $payload = [];
+        foreach ($webhooks as $event => $url) {
+            $payload[$event] = $url !== null ? ['target' => $url, 'version' => 'v2'] : null;
+        }
 
         $response = $this->zeltyClient->request('POST', 'webhooks', array_merge($this->authOptions(), [
-            'json' => ['webhooks' => [$event => $webhookConfig]],
+            'json' => ['webhooks' => $payload],
         ]));
 
         $data = json_decode($response->getContent(), true);
 
         return $data['secret_key'];
+    }
+
+    public function upsertWebhook(string $event, ?string $url): string
+    {
+        return $this->upsertWebhooks([$event => $url]);
     }
 
     public function getTaxes(): array

@@ -15,7 +15,19 @@ class ZeltyType extends AbstractType
     public function __construct(
         private readonly ZeltyClient $zeltyClient,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly string $webhookBaseUrl = '',
     ) {}
+
+    private function webhookUrl(string $route, array $params = []): string
+    {
+        $path = $this->urlGenerator->generate($route, $params);
+
+        if ($this->webhookBaseUrl !== '') {
+            return rtrim($this->webhookBaseUrl, '/') . $path;
+        }
+
+        return $this->urlGenerator->generate($route, $params, UrlGeneratorInterface::ABSOLUTE_URL);
+    }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -50,28 +62,21 @@ class ZeltyType extends AbstractType
             if ($newApiKey !== $originalApiKey) {
                 $this->zeltyClient->setAuth($newApiKey);
 
-                $catalogWebhookUrl = $this->urlGenerator->generate(
-                    '_api_/zelty/webhook/catalog/{restaurantId}_post',
-                    ['restaurantId' => $restaurant->getId()],
-                    UrlGeneratorInterface::ABSOLUTE_URL
-                );
-                $secretKey = $this->zeltyClient->upsertWebhook('catalog.push', $catalogWebhookUrl);
-                $restaurant->setZeltyWebhookSecretKey($secretKey);
+                $webhooks = [
+                    'catalog.push'                     => $this->webhookUrl('_api_/zelty/webhook/catalog/{restaurantId}_post', ['restaurantId' => $restaurant->getId()]),
+                    'dish.update'                      => $this->webhookUrl('_api_/zelty/webhook/dish.update_post'),
+                    'dish.delete'                      => $this->webhookUrl('_api_/zelty/webhook/dish.delete_post'),
+                    'dish.availability_update'         => $this->webhookUrl('_api_/zelty/webhook/dish.availability_update_post'),
+                    'menu.update'                      => $this->webhookUrl('_api_/zelty/webhook/menu.update_post'),
+                    'menu.delete'                      => $this->webhookUrl('_api_/zelty/webhook/menu.delete_post'),
+                    'menu.availability_update'         => $this->webhookUrl('_api_/zelty/webhook/menu.availability_update_post'),
+                    'option.update'                    => $this->webhookUrl('_api_/zelty/webhook/option.update_post'),
+                    'option_value.availability_update' => $this->webhookUrl('_api_/zelty/webhook/option_value.availability_update_post'),
+                    'order.status.update'              => $this->webhookUrl('_api_/zelty/webhook/order.status.update_post'),
+                ];
 
-                foreach ([
-                    'dish.update'              => '_api_/zelty/webhook/dish.update_post',
-                    'dish.delete'              => '_api_/zelty/webhook/dish.delete_post',
-                    'dish.availability_update' => '_api_/zelty/webhook/dish.availability_update_post',
-                    'menu.update'                        => '_api_/zelty/webhook/menu.update_post',
-                    'menu.delete'                        => '_api_/zelty/webhook/menu.delete_post',
-                    'menu.availability_update'           => '_api_/zelty/webhook/menu.availability_update_post',
-                    'option.update'                      => '_api_/zelty/webhook/option.update_post',
-                    'option_value.availability_update'   => '_api_/zelty/webhook/option_value.availability_update_post',
-                    'order.status.update'                => '_api_/zelty/webhook/order.status.update_post',
-                ] as $event => $routeName) {
-                    $url = $this->urlGenerator->generate($routeName, [], UrlGeneratorInterface::ABSOLUTE_URL);
-                    $this->zeltyClient->upsertWebhook($event, $url);
-                }
+                $secretKey = $this->zeltyClient->upsertWebhooks($webhooks);
+                $restaurant->setZeltyWebhookSecretKey($secretKey);
             }
         });
     }

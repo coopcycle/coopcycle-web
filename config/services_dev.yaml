@@ -1,3 +1,11 @@
 # Uncomment to send emails in dev
 # parameters:
 #     nucleos_profile.registration.confirmation.enabled: true
+
+# Uncomment to create Zelty webhooks using a tunnel (like ngrok)
+# services:
+#     AppBundle\Form\Restaurant\ZeltyType:
+#         autowire: true
+#         tags: [ form.type ]
+#         arguments:
+#             $webhookBaseUrl: 'https://echo-take-skirt.ngrok-free.dev'
