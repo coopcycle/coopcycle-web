@@ -1661,7 +1661,7 @@ form.store.urbantz_hub_id: Urbantz Hub Id
 form.store.cyke_user_email: Cyke user email
 form.store.cyke_user_token: Cyke API token
 form.store.cyke_webhook_secret.label: Cyke webhook secret
-form.store.cyke_webhook_secret.help: Must match the secret configured for the webhook pointing to /api/cyke/webhook in your Cyke account (Account > Manage my company > Webhooks)
+form.store.cyke_webhook_secret.help: Automatically generated. Copy it and paste it as the secret of the webhook pointing to /api/cyke/webhook in your Cyke account (Account > Manage my company > Webhooks)
 form.store.cyke_package_type_id.label: Package type
 form.store.cyke_package_type_id.help: The package type sent to Cyke for every delivery created from this store
 form.store.cyke_package_type_id.placeholder: Select a package type

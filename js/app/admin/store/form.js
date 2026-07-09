@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client'
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard';
 import XHR from '@uppy/xhr-upload';
+import ClipboardJS from 'clipboard'
 
 import TagsSelect from '../../components/TagsSelect'
 import { addressMapper } from '../../widgets/addressForm'
@@ -268,6 +269,24 @@ if (cykePackageTypeWidget) {
   }
 
   loadPackageTypes()
+}
+
+const cykeWebhookSecretWidget = document.querySelector('[data-widget="cyke-webhook-secret"]')
+
+if (cykeWebhookSecretWidget) {
+  const secretInput = cykeWebhookSecretWidget.querySelector('[data-role="secret-input"]')
+  const toggleBtn = cykeWebhookSecretWidget.querySelector('[data-role="toggle-visibility"]')
+  const copyBtn = cykeWebhookSecretWidget.querySelector('[data-role="copy"]')
+
+  toggleBtn.addEventListener('click', () => {
+    const isHidden = secretInput.type === 'password'
+    secretInput.type = isHidden ? 'text' : 'password'
+    toggleBtn.querySelector('i').classList.toggle('fa-eye', !isHidden)
+    toggleBtn.querySelector('i').classList.toggle('fa-eye-slash', isHidden)
+    toggleBtn.setAttribute('title', isHidden ? toggleBtn.dataset.hideTitle : toggleBtn.dataset.showTitle)
+  })
+
+  new ClipboardJS(copyBtn)
 }
 
 // Delete confirmation

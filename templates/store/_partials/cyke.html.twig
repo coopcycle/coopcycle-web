@@ -1,6 +1,25 @@
 {{ form_row(form.cykeUserEmail) }}
 {{ form_row(form.cykeUserToken) }}
-{{ form_row(form.cykeWebhookSecret) }}
+
+{% if store.cykeWebhookSecret is not empty %}
+<div class="form-group" data-widget="cyke-webhook-secret">
+  <label>{{ 'form.store.cyke_webhook_secret.label'|trans }}</label>
+  <div class="input-group">
+    <input type="password" class="form-control" id="store_cykeWebhookSecret" readonly
+      value="{{ store.cykeWebhookSecret }}" data-role="secret-input">
+    <span class="input-group-btn">
+      <button type="button" class="btn btn-default" data-role="toggle-visibility"
+        title="{{ 'basics.show'|trans }}" data-show-title="{{ 'basics.show'|trans }}" data-hide-title="{{ 'basics.hide'|trans }}">
+        <i class="fa fa-eye"></i>
+      </button>
+      <button type="button" class="btn btn-default" data-role="copy" data-clipboard-target="#store_cykeWebhookSecret" title="{{ 'basics.copy'|trans }}">
+        <i class="fa fa-copy"></i>
+      </button>
+    </span>
+  </div>
+  <span class="help-block">{{ 'form.store.cyke_webhook_secret.help'|trans }}</span>
+</div>
+{% endif %}
 
 <div class="form-group" data-widget="cyke-package-type"
   data-endpoint="{{ path('admin_store_cyke_package_types') }}"
