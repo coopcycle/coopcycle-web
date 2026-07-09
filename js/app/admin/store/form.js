@@ -271,11 +271,13 @@ if (cykePackageTypeWidget) {
   loadPackageTypes()
 }
 
-const cykeWebhookSecretWidget = document.querySelector('[data-widget="cyke-webhook-secret"]')
+document.querySelectorAll('[data-role="toggle-visibility"]').forEach(toggleBtn => {
+  const inputGroup = toggleBtn.closest('.input-group')
+  const secretInput = inputGroup ? inputGroup.querySelector('[data-role="secret-input"]') : null
 
-if (cykeWebhookSecretWidget) {
-  const secretInput = cykeWebhookSecretWidget.querySelector('[data-role="secret-input"]')
-  const toggleBtn = cykeWebhookSecretWidget.querySelector('[data-role="toggle-visibility"]')
+  if (!secretInput) {
+    return
+  }
 
   toggleBtn.addEventListener('click', () => {
     const isHidden = secretInput.type === 'password'
@@ -284,7 +286,7 @@ if (cykeWebhookSecretWidget) {
     toggleBtn.querySelector('i').classList.toggle('fa-eye-slash', isHidden)
     toggleBtn.setAttribute('title', isHidden ? toggleBtn.dataset.hideTitle : toggleBtn.dataset.showTitle)
   })
-}
+})
 
 if (document.querySelector('[data-clipboard-target]')) {
   new ClipboardJS('[data-clipboard-target]')

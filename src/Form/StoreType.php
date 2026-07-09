@@ -96,6 +96,10 @@ class StoreType extends LocalBusinessType
                         'label' => 'form.store.cyke_user_email',
                         'required' => false,
                     ])
+                    // Rendered as password-masked in the template (see store/_partials/cyke.html.twig):
+                    // PasswordType always clears its value on a non-submitted render
+                    // (regardless of always_empty), which isn't what we want here — this
+                    // is a token to review/copy, not a login password typed once.
                     ->add('cykeUserToken', TextType::class, [
                         'label' => 'form.store.cyke_user_token',
                         'required' => false,

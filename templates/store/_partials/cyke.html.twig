@@ -1,5 +1,18 @@
 {{ form_row(form.cykeUserEmail) }}
-{{ form_row(form.cykeUserToken) }}
+
+<div class="form-group">
+  {{ form_label(form.cykeUserToken) }}
+  <div class="input-group">
+    {{ form_widget(form.cykeUserToken, { type: 'password', attr: { 'data-role': 'secret-input' } }) }}
+    <span class="input-group-btn">
+      <button type="button" class="btn btn-default" data-role="toggle-visibility"
+        title="{{ 'basics.show'|trans }}" data-show-title="{{ 'basics.show'|trans }}" data-hide-title="{{ 'basics.hide'|trans }}">
+        <i class="fa fa-eye"></i>
+      </button>
+    </span>
+  </div>
+  {{ form_errors(form.cykeUserToken) }}
+</div>
 
 <div class="form-group" data-widget="cyke-webhook-url">
   <label>{{ 'form.store.cyke_webhook_url.label'|trans }}</label>
