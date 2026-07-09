@@ -196,6 +196,79 @@ if (packageSetSelect && packagesRequiredCheckbox) {
   packageSetSelect.addEventListener('change', updatePackagesRequiredState)
 }
 
+const cykePackageTypeWidget = document.querySelector('[data-widget="cyke-package-type"]')
+
+if (cykePackageTypeWidget) {
+  const endpoint = cykePackageTypeWidget.dataset.endpoint
+  const emailInput = document.querySelector(cykePackageTypeWidget.dataset.emailInput)
+  const tokenInput = document.querySelector(cykePackageTypeWidget.dataset.tokenInput)
+  const targetInput = document.querySelector(cykePackageTypeWidget.dataset.targetInput)
+  const select = cykePackageTypeWidget.querySelector('[data-role="select"]')
+  const placeholderText = select.querySelector('option').textContent
+
+  let debounceTimer = null
+
+  const populateOptions = (packageTypes) => {
+    const currentValue = targetInput.value
+
+    select.innerHTML = ''
+
+    const placeholder = document.createElement('option')
+    placeholder.value = ''
+    placeholder.textContent = placeholderText
+    select.appendChild(placeholder)
+
+    packageTypes.forEach(packageType => {
+      const option = document.createElement('option')
+      option.value = packageType.id
+      option.textContent = packageType.label
+      select.appendChild(option)
+    })
+
+    select.value = currentValue
+  }
+
+  const loadPackageTypes = () => {
+    const email = emailInput.value.trim()
+    const token = tokenInput.value.trim()
+
+    if (!email || !token) {
+      return
+    }
+
+    fetch(endpoint, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, token }),
+    })
+      .then(res => res.ok ? res.json() : Promise.reject(res))
+      .then(packageTypes => populateOptions(packageTypes))
+      .catch(() => {
+        // Leave the select as-is (still showing the currently configured value, if any)
+        // when credentials are invalid or the Cyke API is unreachable.
+      })
+  }
+
+  select.addEventListener('change', () => {
+    targetInput.value = select.value
+  })
+
+  ;[emailInput, tokenInput].forEach(input => {
+    input.addEventListener('input', () => {
+      clearTimeout(debounceTimer)
+      debounceTimer = setTimeout(loadPackageTypes, 500)
+    })
+  })
+
+  if (targetInput.value) {
+    populateOptions([{ id: targetInput.value, label: targetInput.value }])
+  }
+
+  loadPackageTypes()
+}
 
 // Delete confirmation
 $('#store_delete').on('click', e => {

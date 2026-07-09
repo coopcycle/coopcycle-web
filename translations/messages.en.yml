@@ -1662,6 +1662,10 @@ form.store.cyke_user_email: Cyke user email
 form.store.cyke_user_token: Cyke API token
 form.store.cyke_webhook_secret.label: Cyke webhook secret
 form.store.cyke_webhook_secret.help: Must match the secret configured for the webhook pointing to /api/cyke/webhook in your Cyke account (Account > Manage my company > Webhooks)
+form.store.cyke_package_type_id.label: Package type
+form.store.cyke_package_type_id.help: The package type sent to Cyke for every delivery created from this store
+form.store.cyke_package_type_id.placeholder: Select a package type
+store.form.section.cyke: Cyke
 form.payment.edenred.refund_amount.help: Edenred does not support partial refunds.
 restaurant.form.use_paygreen.label: Use Paygreen for this shop
 restaurant.meal_vouchers_transactions.emitter: Emitter

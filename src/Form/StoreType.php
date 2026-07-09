@@ -104,6 +104,14 @@ class StoreType extends LocalBusinessType
                         'label' => 'form.store.cyke_webhook_secret.label',
                         'help' => 'form.store.cyke_webhook_secret.help',
                         'required' => false,
+                    ])
+                    // Populated client-side from the Cyke API (see store-form.js):
+                    // the list of package types depends on credentials that may not
+                    // be persisted yet, so it can't be resolved as a normal ChoiceType.
+                    ->add('cykePackageTypeId', HiddenType::class, [
+                        'label' => 'form.store.cyke_package_type_id.label',
+                        'help' => 'form.store.cyke_package_type_id.help',
+                        'required' => false,
                     ]);
             }
 

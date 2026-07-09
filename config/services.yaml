@@ -1630,6 +1630,8 @@ services:
     arguments:
       $lang: "%env(COOPCYCLE_LOCALE)%"
 
+  AppBundle\Cyke\Client: ~
+
   AppBundle\Assets\PlaceholderImageResolver:
     arguments:
       $pixabayApiKey: '%env(PIXABAY_API_KEY)%'

@@ -76,18 +76,15 @@ class CreateCykeDelivery
                     'address_instructions' => $address->getDescription(),
                 ],
             ],
-            // weight_kg/volume_dm3 are documented as optional but Cyke actually rejects
-            // packages missing either one with a 422, so always send a numeric value
-            'packages' => array_values(array_map(function ($packageWithQuantity) {
-                $package = $packageWithQuantity->getPackage();
-
-                return [
-                    'name' => $package->getName(),
-                    'amount' => $packageWithQuantity->getQuantity(),
-                    'weight_kg' => $package->getAverageWeight() ?? $package->getMaxWeight() ?? 1,
-                    'volume_dm3' => $package->getAverageVolumeUnits() ?? $package->getMaxVolumeUnits() ?? 1,
-                ];
-            }, $delivery->getPackages()->toArray())),
+            // CoopCycle doesn't track per-delivery package details for every store,
+            // and Cyke requires at least one package, so we always send the single
+            // default package type configured for the store, with a quantity of 1.
+            'packages' => [
+                [
+                    'package_type_id' => (int) $store->getCykePackageTypeId(),
+                    'amount' => 1,
+                ],
+            ],
             'comments' => $dropoff->getComments(),
             'client_order_reference' => (string) $delivery->getId(),
         ];

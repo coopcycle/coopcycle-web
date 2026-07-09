@@ -1,0 +1,16 @@
+{{ form_row(form.cykeUserEmail) }}
+{{ form_row(form.cykeUserToken) }}
+{{ form_row(form.cykeWebhookSecret) }}
+
+<div class="form-group" data-widget="cyke-package-type"
+  data-endpoint="{{ path('admin_store_cyke_package_types') }}"
+  data-email-input="#{{ form.cykeUserEmail.vars.id }}"
+  data-token-input="#{{ form.cykeUserToken.vars.id }}"
+  data-target-input="#{{ form.cykePackageTypeId.vars.id }}">
+  <label>{{ 'form.store.cyke_package_type_id.label'|trans }}</label>
+  <select class="form-control" data-role="select">
+    <option value="">{{ 'form.store.cyke_package_type_id.placeholder'|trans }}</option>
+  </select>
+  <span class="help-block">{{ 'form.store.cyke_package_type_id.help'|trans }}</span>
+</div>
+{{ form_widget(form.cykePackageTypeId) }}
