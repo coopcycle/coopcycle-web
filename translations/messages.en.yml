@@ -1477,6 +1477,7 @@ delivery.failure_reason:
     closed_store: "Closed Store"
     address_review_needed: "Address Review Needed"
     not_at_home: "Customer not at home"
+    price_review_needed: "Price Review Needed"
   transporter:
     state:
       aar: "À quai"

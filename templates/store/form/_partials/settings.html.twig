@@ -53,6 +53,11 @@
   {{ form_row(form.transporter) }}
 {% endif %}
 
+{% if form.rdcConnectionId is defined %}
+  <hr>
+  {{ form_row(form.rdcConnectionId) }}
+{% endif %}
+
 {% if form.vars.data.id is not null %}
   <hr>
   <div {{ react_component('Store/TimeSlot', {

@@ -5,6 +5,7 @@ import {
 } from 'antd';
 import '../Style.scss';
 import { useTranslation } from 'react-i18next';
+import { centsInputNumberProps } from '../../../../../utils/format';
 
 export default function ({ incident, order, form }) {
   const { t } = useTranslation();
@@ -53,8 +54,7 @@ export default function ({ incident, order, form }) {
           min={0}
           max={order.total}
           defaultValue={order.total}
-          parser={(value) => value * 100}
-          formatter={(value) => value / 100}
+          {...centsInputNumberProps}
           step={50} />
       </Form.Item>
     </Form>
