@@ -1,7 +1,6 @@
 {% extends 'emails/layout.mjml.twig' %}
 
 {% block content %}
-<mj-column>
   <mj-text align="left" line-height="20px">
     {{ body }}
   </mj-text>
@@ -12,5 +11,4 @@
     font-family="Raleway, Arial, sans-serif">
     {{ 'basics.view'|trans({}, 'messages') }}
   </mj-button>
-</mj-column>
 {% endblock %}
