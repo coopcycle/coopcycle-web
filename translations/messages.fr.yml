@@ -1687,6 +1687,8 @@ pagination.items_per_page: Nombre d'éléments par page
 restaurant.form.en_boite_le_plat_platform_fee.label: Le montant de la consigne est collecté par la plateforme
 restaurant.form.zelty_api_key: Clé API Zelty
 restaurant.form.zelty_api_key.help: "Activez l'application CoopCycle sur le <a href=\"https://bo.zelty.fr/marketplace/coopcycle/status\" target=\"_blank\">Marketplace Zelty</a> pour obtenir votre clé API."
+restaurant.form.zelty_webhook_secret_key: Clé secrète webhook Zelty
+restaurant.form.zelty_webhook_secret_key.help: "Zelty peut retourner une clé secrète webhook masquée lors de l'enregistrement des webhooks. Si la clé n'a pas été enregistrée automatiquement, retrouvez la valeur réelle dans votre back-office Zelty et saisissez-la ici. Elle est utilisée pour vérifier l'authenticité des appels webhook entrants. Laissez vide pour ignorer la vérification de signature."
 
 # Éditeur d'emails
 customize.emails: Personnaliser les emails

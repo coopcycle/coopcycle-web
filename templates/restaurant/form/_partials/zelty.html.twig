@@ -1,1 +1,4 @@
 {{ form_row(form.zeltyApiKey) }}
+{% if form.zeltyWebhookSecretKey is defined %}
+    {{ form_row(form.zeltyWebhookSecretKey) }}
+{% endif %}

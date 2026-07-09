@@ -1398,6 +1398,8 @@ restaurant.form.section.en_boite_le_plat: En Boîte Le Plat
 restaurant.form.en_boite_le_plat_enabled.label: Enable En Boîte Le Plat deposit-refund system
 restaurant.form.zelty_api_key: Zelty API key
 restaurant.form.zelty_api_key.help: 'Activate the CoopCycle app on the <a href="https://bo.zelty.fr/marketplace/coopcycle/status" target="_blank">Zelty Marketplace</a> to obtain your API key.'
+restaurant.form.zelty_webhook_secret_key: Zelty Webhook Secret Key
+restaurant.form.zelty_webhook_secret_key.help: 'Zelty may return an obfuscated webhook secret when registering webhooks. If the secret was not saved automatically, find the real value in your Zelty back-office and enter it here. It is used to verify the authenticity of incoming webhook calls. Leave blank to skip signature verification.'
 form.checkout_address.reusable_packaging_en_boite_le_plat_enabled.label: 'I want <a href="%url%" target="_blank">En Boîte Le Plat</a> reusable containers.'
 order.cart.donation: Donation
 order.cart.donation.disclaimer: We offer you to donate %percentage% of the revenue from your order to one of our partner associations. You will not pay more.
