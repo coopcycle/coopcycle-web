@@ -19,6 +19,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Comparable;
 use Sylius\Component\Product\Model\ProductInterface;
 use Sylius\Component\Taxonomy\Model\Taxon as BaseTaxon;
+use AppBundle\Integration\Zelty\HasZeltyMetadata;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Serializer\Attribute\SerializedName;
 
@@ -78,7 +79,7 @@ use Symfony\Component\Serializer\Attribute\SerializedName;
 )]
 class Taxon extends BaseTaxon implements Comparable
 {
-    use \AppBundle\Integration\Zelty\HasZeltyMetadata;
+    use HasZeltyMetadata;
 
     private $taxonProducts;
 
