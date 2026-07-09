@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Col, Row, Tag } from 'antd';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { useGetShiftDashboardQuery } from '../../../api/slice';
 import { ShiftDashboardWeekStatus } from '../../../api/types';
@@ -11,7 +11,11 @@ const STATUS_COLORS: Record<ShiftDashboardWeekStatus, string> = {
   complete: 'success',
 };
 
-export default function ShiftsDashboard() {
+type Props = {
+  onSelectWeek: (weekStart: Dayjs) => void;
+};
+
+export default function ShiftsDashboard({ onSelectWeek }: Props) {
   const { t } = useTranslation();
   const { data, isFetching } = useGetShiftDashboardQuery({ weeks: 5 });
 
@@ -22,7 +26,9 @@ export default function ShiftsDashboard() {
       {weeks.map(week => (
         <Col key={week.weekStart} xs={24} sm={12} md={8} lg={24 / 5}>
           <Card
+            hoverable
             loading={isFetching}
+            onClick={() => onSelectWeek(dayjs(week.weekStart))}
             title={t('SHIFT_PLANNING_DASHBOARD_WEEK_LABEL', {
               week: dayjs(week.weekStart).isoWeek(),
             })}

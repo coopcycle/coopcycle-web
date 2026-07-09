@@ -207,7 +207,12 @@ const Planning = ({ shiftTypes }: Props) => {
         )}
       </div>
       {view === 'dashboard' ? (
-        <ShiftsDashboard />
+        <ShiftsDashboard
+          onSelectWeek={week => {
+            setWeekStart(week.startOf('isoWeek'));
+            setView('planning');
+          }}
+        />
       ) : (
         <Spin spinning={isFetching}>
           <PlanningGrid
