@@ -276,7 +276,6 @@ const cykeWebhookSecretWidget = document.querySelector('[data-widget="cyke-webho
 if (cykeWebhookSecretWidget) {
   const secretInput = cykeWebhookSecretWidget.querySelector('[data-role="secret-input"]')
   const toggleBtn = cykeWebhookSecretWidget.querySelector('[data-role="toggle-visibility"]')
-  const copyBtn = cykeWebhookSecretWidget.querySelector('[data-role="copy"]')
 
   toggleBtn.addEventListener('click', () => {
     const isHidden = secretInput.type === 'password'
@@ -285,8 +284,10 @@ if (cykeWebhookSecretWidget) {
     toggleBtn.querySelector('i').classList.toggle('fa-eye-slash', isHidden)
     toggleBtn.setAttribute('title', isHidden ? toggleBtn.dataset.hideTitle : toggleBtn.dataset.showTitle)
   })
+}
 
-  new ClipboardJS(copyBtn)
+if (document.querySelector('[data-clipboard-target]')) {
+  new ClipboardJS('[data-clipboard-target]')
 }
 
 // Delete confirmation

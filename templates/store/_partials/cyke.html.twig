@@ -1,6 +1,20 @@
 {{ form_row(form.cykeUserEmail) }}
 {{ form_row(form.cykeUserToken) }}
 
+<div class="form-group" data-widget="cyke-webhook-url">
+  <label>{{ 'form.store.cyke_webhook_url.label'|trans }}</label>
+  <div class="input-group">
+    <input type="text" class="form-control" id="store_cykeWebhookUrl" readonly
+      value="{{ url('_api_/cyke/webhook_post') }}">
+    <span class="input-group-btn">
+      <button type="button" class="btn btn-default" data-role="copy" data-clipboard-target="#store_cykeWebhookUrl" title="{{ 'basics.copy'|trans }}">
+        <i class="fa fa-copy"></i>
+      </button>
+    </span>
+  </div>
+  <span class="help-block">{{ 'form.store.cyke_webhook_url.help'|trans }}</span>
+</div>
+
 {% if store.cykeWebhookSecret is not empty %}
 <div class="form-group" data-widget="cyke-webhook-secret">
   <label>{{ 'form.store.cyke_webhook_secret.label'|trans }}</label>
