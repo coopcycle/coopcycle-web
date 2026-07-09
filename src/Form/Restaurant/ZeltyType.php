@@ -4,7 +4,7 @@ namespace AppBundle\Form\Restaurant;
 
 use AppBundle\Integration\Zelty\ZeltyClient;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -31,8 +31,7 @@ class ZeltyType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('zeltyApiKey', PasswordType::class, [
-            'always_empty' => false,
+        $builder->add('zeltyApiKey', TextType::class, [
             'label' => 'restaurant.form.zelty_api_key',
             'required' => false,
             'mapped' => false,
@@ -40,7 +39,9 @@ class ZeltyType extends AbstractType
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, function (FormEvent $event) {
             $restaurant = $event->getForm()->getParent()->getData();
-            $event->getForm()->get('zeltyApiKey')->setData($restaurant?->getZeltyApiKey());
+            $event->getForm()->get('zeltyApiKey')->setData(
+                $restaurant?->getMaskedZeltyApiKey()
+            );
         });
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
@@ -57,6 +58,12 @@ class ZeltyType extends AbstractType
             }
 
             $originalApiKey = $restaurant->getZeltyApiKey();
+
+            // User left the masked placeholder untouched — treat as no change.
+            if ($restaurant->hasZeltyApiKey() && $newApiKey === $restaurant->getMaskedZeltyApiKey()) {
+                return;
+            }
+
             $restaurant->setZeltyApiKey($newApiKey);
 
             if ($newApiKey !== $originalApiKey) {
