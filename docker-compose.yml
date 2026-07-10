@@ -261,6 +261,8 @@ services:
       - ./cube:/cube/conf/schema
       - ./cube.js:/cube/conf/cube.js
     attach: false
+    profiles:
+      - data
 
   clickhouse:
     image: clickhouse/clickhouse-server:25.8
@@ -287,6 +289,8 @@ services:
       nofile:
         soft: 262144
         hard: 262144
+    profiles:
+      - data
 
   typesense:
     image: typesense/typesense:0.22.2
