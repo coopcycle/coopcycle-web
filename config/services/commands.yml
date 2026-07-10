@@ -220,5 +220,7 @@ services:
   AppBundle\Command\RecommenderTrainCommand: ~
   
   AppBundle\Command\DebugRdcGetCommand:
+    arguments:
+      $rdcEnabled: '%env(bool:RDC_ENABLED)%'
     tags:
       - { name: 'console.command', command: 'debug:rdc-get' }

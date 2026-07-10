@@ -236,7 +236,7 @@ trait StoreTrait
             }
 
             $rdcConnectionId = $store->getRdcConnectionId();
-            if (!empty($rdcConnectionId)) {
+            if ($this->rdcEnabled && !empty($rdcConnectionId)) {
                 $fstore = $this->entityManager->getRepository(Store::class)
                     ->findOneByRdcConnectionId($rdcConnectionId);
 
