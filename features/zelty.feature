@@ -1288,6 +1288,98 @@ Feature: Zelty catalog push webhook
       {"code": "10002", "enabled": false}
       """
 
+  Scenario: Tags define catalog sections and link both dishes and menus
+    Given the fixtures files are loaded:
+      | sylius_taxation.yml  |
+      | zelty_restaurant.yml |
+    And the Zelty taxes API will return:
+      """
+      {"taxes":[{"id":1,"name":"TVA 10%","rate":1000}]}
+      """
+    When I add "Content-Type" header equal to "application/json"
+    And I send a "POST" request to "/api/zelty/webhook/catalog/1" with body:
+      """
+      {
+        "data": {
+          "id": 100,
+          "name": "Test Catalog",
+          "locale": "fr",
+          "currency": "EUR",
+          "tags": [
+            {
+              "id": "ZT100",
+              "internal_id": "100",
+              "name": "Nos Burgers",
+              "description": null,
+              "image": null,
+              "color": null,
+              "disabled": false,
+              "item_ids": ["ZD200", "ZM300"]
+            }
+          ],
+          "items": [
+            {
+              "id": "ZD200",
+              "internal_id": "200",
+              "type": "dish",
+              "name": "Burger Classique",
+              "description": null,
+              "img": null,
+              "disabled": false,
+              "is_sold_out": false,
+              "price": {"price": 1200, "is_fixed": true, "prevent_discounts": false, "overrides": []},
+              "tax_rules": {"tax_id": 1},
+              "option_ids": [],
+              "parts": []
+            },
+            {
+              "id": "ZM300",
+              "internal_id": "300",
+              "type": "menu",
+              "name": "Formule Burger",
+              "description": null,
+              "img": null,
+              "disabled": false,
+              "is_sold_out": false,
+              "price": {"price": 1500, "is_fixed": true, "prevent_discounts": false, "overrides": []},
+              "tax_rules": {"tax_id": 1},
+              "option_ids": [],
+              "parts": [
+                {"menu_part_id": "ZMP400", "has_combination": false, "prevent_customisation": false}
+              ]
+            }
+          ],
+          "menuParts": [
+            {
+              "id": "ZMP400",
+              "internal_id": "400",
+              "type": "menu_part",
+              "name": "Choisissez votre burger",
+              "disabled": false,
+              "is_sold_out": false,
+              "minimum_choices": 1,
+              "maximum_choices": 1,
+              "dish_ids": ["ZD200"]
+            }
+          ],
+          "options": [],
+          "optionValues": []
+        }
+      }
+      """
+    Then the response status code should be 200
+    And the response should be in JSON
+    And the JSON should match:
+      """
+      {"status":"success"}
+      """
+    And I see 2 entities "AppBundle\Entity\Sylius\Product"
+    And I see entity "AppBundle\Entity\Sylius\Taxon" with properties:
+      """
+      {"code": "ZT100"}
+      """
+    And I see 2 entities "AppBundle\Entity\Sylius\ProductTaxon"
+
   Scenario: Restaurant not found returns 404
     Given the fixtures files are loaded:
       | sylius_taxation.yml |
